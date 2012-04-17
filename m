@@ -1,46 +1,36 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 24 Apr 2012 05:28:32 +0000
-Subject: Re: [PATCH] drivers/input/tablet/aiptek.c: adjust error-handling code label
-Message-Id: <20120424052832.GA28787@core.coreip.homeip.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Apr 2012 06:30:22 +0000
+Subject: [patch] usb: gadget: add a sparse endian notation
+Message-Id: <20120417063022.GC26756@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334609092-15338-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1334609092-15338-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 16, 2012 at 10:44:52PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> At the point of this error-handling code, aiptek->urb has been allocated,
-> and it does not appear to be less necessary to free it here than in the
-> error-handling code just below.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The original code works fine, but Sparse complains because it isn't
+annotated properly.
 
-Applied, thank you Julia.
+drivers/usb/gadget/composite.c:793:26: warning: incorrect type in assignment (different base types)
+drivers/usb/gadget/composite.c:793:26:    expected unsigned short [unsigned] [usertype] language
+devel/drivers/usb/gadget/composite.c:793:26:    got restricted __le16 [usertype] <noident>
+devel/drivers/usb/gadget/composite.c:795:29: warning: restricted __le16 degrades to integer
+drivers/usb/gadget/composite.c:798:24: warning: incorrect type in assignment (different base types)
+drivers/usb/gadget/composite.c:798:24:    expected restricted __le16 [usertype] <noident>
+devel/drivers/usb/gadget/composite.c:798:24:    got unsigned short [unsigned] [usertype] language
 
-> 
-> ---
->  drivers/input/tablet/aiptek.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/tablet/aiptek.c b/drivers/input/tablet/aiptek.c
-> index 205d16a..a33d347 100644
-> --- a/drivers/input/tablet/aiptek.c
-> +++ b/drivers/input/tablet/aiptek.c
-> @@ -1856,7 +1856,7 @@ aiptek_probe(struct usb_interface *intf, const struct usb_device_id *id)
->  	if (i = ARRAY_SIZE(speeds)) {
->  		dev_info(&intf->dev,
->  			 "Aiptek tried all speeds, no sane response\n");
-> -		goto fail2;
-> +		goto fail3;
->  	}
->  
->  	/* Associate this driver's struct with the usb interface.
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Dmitry
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index baaebf2..4672651 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -785,7 +785,7 @@ done:
+ static void collect_langs(struct usb_gadget_strings **sp, __le16 *buf)
+ {
+ 	const struct usb_gadget_strings	*s;
+-	u16				language;
++	__le16				language;
+ 	__le16				*tmp;
+ 
+ 	while (*sp) {
