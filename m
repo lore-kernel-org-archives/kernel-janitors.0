@@ -1,29 +1,69 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Apr 2012 13:37:51 +0000
-Subject: [patch] c/r: ipc: uninitialized variable in compat_do_msg_fill()
-Message-Id: <20120413133751.GA26645@elgon.mountain>
+Date: Tue, 17 Apr 2012 06:47:25 +0000
+Subject: [patch] Staging: wlags49_h2: reading past the end of array
+Message-Id: <20120417064724.GH26756@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Stanislav Kinsbursky <skinsbursky@parallels.com>
-Cc: Chris Metcalf <cmetcalf@tilera.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We never initialize "msgp".  It's unfortunate that GCC doesn't warn
-about this.
+The original code had some confusion about the dimensions of the array.
+It should have been an array of 2 element arrays but it was declared as
+an array of 50 element arrays.
+
+The limitter on the outside array should have been
+ARRAY_SIZE(chan_freq_list) or 26 but instead 50 was used.  It meant that
+we read past the end.  It's probably harmless but it's obviously worth
+fixing.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/ipc/compat.c b/ipc/compat.c
-index 6da376b..0c2ebd0 100644
---- a/ipc/compat.c
-+++ b/ipc/compat.c
-@@ -363,7 +363,7 @@ static long compat_do_msg_steal(void __user *dest, struct msg_msg *msg, size_t b
+diff --git a/drivers/staging/wlags49_h2/wl_util.c b/drivers/staging/wlags49_h2/wl_util.c
+index f104e6f..404ec7d 100644
+--- a/drivers/staging/wlags49_h2/wl_util.c
++++ b/drivers/staging/wlags49_h2/wl_util.c
+@@ -98,8 +98,7 @@
+  ******************************************************************************/
  
- long compat_do_msg_fill(void __user *dest, struct msg_msg *msg, size_t bufsz)
- {
--	struct compat_msgbuf __user *msgp;
-+	struct compat_msgbuf __user *msgp = dest;
- 	size_t msgsz;
+ /* A matrix which maps channels to frequencies */
+-#define MAX_CHAN_FREQ_MAP_ENTRIES   50
+-static const long chan_freq_list[][MAX_CHAN_FREQ_MAP_ENTRIES] +static const long chan_freq_list[][2]  {
+     {1,2412},
+     {2,2417},
+@@ -846,7 +845,7 @@ int wl_is_a_valid_chan( int channel )
+     }
  
- 	if (put_user(msg->m_type, &msgp->mtype))
+     /* Iterate through the matrix and retrieve the frequency */
+-    for( i = 0; i < MAX_CHAN_FREQ_MAP_ENTRIES; i++ ) {
++    for( i = 0; i < ARRAY_SIZE(chan_freq_list); i++ ) {
+         if( chan_freq_list[i][0] = channel ) {
+             return 1;
+         }
+@@ -884,7 +883,7 @@ int wl_is_a_valid_freq( long frequency )
+ 
+ 
+     /* Iterate through the matrix and retrieve the channel */
+-    for( i = 0; i < MAX_CHAN_FREQ_MAP_ENTRIES; i++ ) {
++    for( i = 0; i < ARRAY_SIZE(chan_freq_list); i++ ) {
+         if( chan_freq_list[i][1] = frequency ) {
+             return 1;
+         }
+@@ -927,7 +926,7 @@ long wl_get_freq_from_chan( int channel )
+     }
+ 
+     /* Iterate through the matrix and retrieve the frequency */
+-    for( i = 0; i < MAX_CHAN_FREQ_MAP_ENTRIES; i++ ) {
++    for( i = 0; i < ARRAY_SIZE(chan_freq_list); i++ ) {
+         if( chan_freq_list[i][0] = channel ) {
+             return chan_freq_list[i][1];
+         }
+@@ -965,7 +964,7 @@ int wl_get_chan_from_freq( long frequency )
+ 
+ 
+     /* Iterate through the matrix and retrieve the channel */
+-    for( i = 0; i < MAX_CHAN_FREQ_MAP_ENTRIES; i++ ) {
++    for( i = 0; i < ARRAY_SIZE(chan_freq_list); i++ ) {
+         if( chan_freq_list[i][1] = frequency ) {
+             return chan_freq_list[i][0];
+         }
