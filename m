@@ -1,55 +1,61 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 19 Apr 2012 11:03:58 +0000
-Subject: [PATCH] drivers/staging/wlags49_h2/wl_pci.c: add missing wl_device_dealloc and wl_remove
-Message-Id: <1334833438-23016-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Apr 2012 20:37:31 +0000
+Subject: [patch v2] Staging: rtl8192u: fix some memory corruption
+Message-Id: <20120417203553.GA18206@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Henk de Groot <pe1dnn@amsat.org>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+When we received a command we incremented a stat counter depending on
+the type of message.  The problem is there were 8 types of commands but
+there were only 4 counters allocated so it corrupted memory past the
+end of the rxcmdpkt[] array.
 
-The need for wl_device_dealloc is motivated by the error-handling code for
-the failure of wl_adapter_insert.  The need for wl_remove in the third case
-is motivated by the code in the definition of wl_pci_remove.
+The fix is just to remove the counters because they aren't used.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
 ---
-Not tested.
+v2:  fixed typo in commit message:  recieved => received
 
- drivers/staging/wlags49_h2/wl_pci.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/staging/wlags49_h2/wl_pci.c b/drivers/staging/wlags49_h2/wl_pci.c
-index 3df990c..0b31b01 100644
---- a/drivers/staging/wlags49_h2/wl_pci.c
-+++ b/drivers/staging/wlags49_h2/wl_pci.c
-@@ -524,6 +524,7 @@ int wl_pci_setup( struct pci_dev *pdev )
-     /* Make sure that space was allocated for our private adapter struct */
-     if( dev->priv = NULL ) {
-         DBG_ERROR( DbgInfo, "Private adapter struct was not allocated!!!\n" );
-+	wl_device_dealloc(dev);
-         DBG_LEAVE( DbgInfo );
-         return -ENOMEM;
-     }
-@@ -532,6 +533,7 @@ int wl_pci_setup( struct pci_dev *pdev )
-     /* Allocate DMA Descriptors */
-     if( wl_pci_dma_alloc( pdev, dev->priv ) < 0 ) {
-         DBG_ERROR( DbgInfo, "Could not allocate DMA descriptor memory!!!\n" );
-+	wl_device_dealloc(dev);
-         DBG_LEAVE( DbgInfo );
-         return -ENOMEM;
-     }
-@@ -561,6 +563,8 @@ int wl_pci_setup( struct pci_dev *pdev )
-     result = request_irq(dev->irq, wl_isr, SA_SHIRQ, dev->name, dev);
-     if( result ) {
-         DBG_WARNING( DbgInfo, "Could not register ISR!!!\n" );
-+	wl_remove(dev);
-+	wl_device_dealloc(dev);
-         DBG_LEAVE( DbgInfo );
-         return result;
- 	}
+diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
+index 9b81f26..43d459d 100644
+--- a/drivers/staging/rtl8192u/r8192U.h
++++ b/drivers/staging/rtl8192u/r8192U.h
+@@ -610,7 +610,6 @@ typedef struct Stats
+ //	unsigned long rxnopointer;
+ 	unsigned long rxok;
+ 	unsigned long rxframgment;
+-	unsigned long rxcmdpkt[4];		//08/05/08 amy rx cmd element txfeedback/bcn report/cfg set/query
+ 	unsigned long rxurberr;
+ 	unsigned long rxstaterr;
+ 	unsigned long received_rate_histogram[4][32];	//0: Total, 1:OK, 2:CRC, 3:ICV, 2007 07 03 cosa
+diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+index 0cb28c7..9348f42 100644
+--- a/drivers/staging/rtl8192u/r819xU_cmdpkt.c
++++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
+@@ -697,7 +697,6 @@ cmpk_message_handle_rx(
+ 	struct ieee80211_rx_stats *pstats)
+ {
+ //	u32			debug_level = DBG_LOUD;
+-	struct r8192_priv *priv = ieee80211_priv(dev);
+ 	int			total_length;
+ 	u8			cmd_length, exe_cnt = 0;
+ 	u8			element_id;
+@@ -779,9 +778,6 @@ cmpk_message_handle_rx(
+ 		// 2007/01/22 MH Add to display tx statistic.
+ 		//cmpk_DisplayTxStatistic(pAdapter);
+ 
+-		/* 2007/03/09 MH Collect sidderent cmd element pkt num. */
+-		priv->stats.rxcmdpkt[element_id]++;
+-
+ 		total_length -= cmd_length;
+ 		pcmd_buff    += cmd_length;
+ 	}	/* while (total_length > 0) */
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
