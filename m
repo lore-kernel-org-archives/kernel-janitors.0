@@ -1,35 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 16 Apr 2012 15:22:12 +0000
-Subject: [PATCH] drivers/net/wan/farsync.c: add missing iounmap
-Message-Id: <1334589732-25876-1-git-send-email-Julia.Lawall@lip6.fr>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 18 Apr 2012 02:33:07 +0000
+Subject: Re: [PATCH] drivers/net/wan/farsync.c: add missing iounmap
+Message-Id: <20120417.223307.693772402010148380.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1334589732-25876-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1334589732-25876-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kevin Curtis <kevin.curtis@farsite.co.uk>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia.Lawall@lip6.fr
+Cc: kevin.curtis@farsite.co.uk, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 16 Apr 2012 17:22:12 +0200
 
-Free card->mem in the error-handling code since it was successfully
-allocated just above.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Free card->mem in the error-handling code since it was successfully
+> allocated just above.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/wan/farsync.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/wan/farsync.c b/drivers/net/wan/farsync.c
-index ebb9f24..1a62318 100644
---- a/drivers/net/wan/farsync.c
-+++ b/drivers/net/wan/farsync.c
-@@ -2483,6 +2483,7 @@ fst_add_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		pr_err("Control memory remap failed\n");
- 		pci_release_regions(pdev);
- 		pci_disable_device(pdev);
-+		iounmap(card->mem);
- 		kfree(card);
- 		return -ENODEV;
- 	}
-
+Applied, thanks Julia.
