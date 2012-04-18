@@ -1,58 +1,52 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Sun, 01 Apr 2012 16:49:05 +0000
-Subject: Re: Disregard my patch: x86, vsyscall: Fix sparse warning: Using plain integer as NULL
-Message-Id: <CALCETrWKXYjBaahh-wEscy16AB5YdFd8i83Sy96Xd9UXxdn_-A@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 18 Apr 2012 06:53:42 +0000
+Subject: [patch] bnx2x: off by one in bnx2x_ets_e3b0_sp_pri_to_cos_set()
+Message-Id: <20120418065342.GC12831@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1333289891.2531.5.camel@debian>
-In-Reply-To: <1333289891.2531.5.camel@debian>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Eilon Greenstein <eilong@broadcom.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Apr 1, 2012 at 7:18 AM, Emil Goode <emilgoode@gmail.com> wrote:
-> Please disregard my previous patch.
-> I missed the comment saying "0 is a valid user pointer".
+The sp_pri_to_cos[] array size depends on the config but lets say it is
+BX_E3B0_MAX_NUM_COS_PORT0 and max_num_of_cos is also
+DCBX_E3B0_MAX_NUM_COS_PORT0.  In the original code
+"pri = max_num_of_cos" was accepted but it is one past the end of the
+array.
 
-The comment could be changed to "NULL", though.
+Also we used "pri" before capping it.  It's a harmless read past the end
+of the array, but it would affect which error message gets printed.
 
---Andy
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->
-> Best regards,
-> Emil Goode
->
-> On Sun, 2012-04-01 at 01:59 +0200, Emil Goode wrote:
->> This patch silences the following sparse warning:
->> arch/x86/kernel/vsyscall_64.c:250:34:
->> =A0 =A0 =A0 =A0warning: Using plain integer as NULL pointer
->>
->> Signed-off-by: Emil Goode <emilgoode@gmail.com>
->> ---
->> =A0arch/x86/kernel/vsyscall_64.c | =A0 =A02 +-
->> =A01 files changed, 1 insertions(+), 1 deletions(-)
->>
->> diff --git a/arch/x86/kernel/vsyscall_64.c b/arch/x86/kernel/vsyscall_64=
-.c
->> index f386dc4..6170ff9 100644
->> --- a/arch/x86/kernel/vsyscall_64.c
->> +++ b/arch/x86/kernel/vsyscall_64.c
->> @@ -247,7 +247,7 @@ bool emulate_vsyscall(struct pt_regs *regs, unsigned=
- long address)
->>
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D sys_getcpu((unsigned __user *)regs->=
-di,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(unsigned=
- __user *)regs->si,
->> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A00);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0NULL);
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->> =A0 =A0 =A0 }
->>
->
->
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+index ff882a4..6b21b21 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+@@ -922,6 +922,12 @@ static int bnx2x_ets_e3b0_sp_pri_to_cos_set(const struct link_params *params,
+ 	const u8 max_num_of_cos = (port) ? DCBX_E3B0_MAX_NUM_COS_PORT1 :
+ 		DCBX_E3B0_MAX_NUM_COS_PORT0;
+ 
++	if (pri >= max_num_of_cos) {
++		DP(NETIF_MSG_LINK, "bnx2x_ets_e3b0_sp_pri_to_cos_set invalid "
++		   "parameter Illegal strict priority\n");
++	    return -EINVAL;
++	}
++
+ 	if (sp_pri_to_cos[pri] != DCBX_INVALID_COS) {
+ 		DP(NETIF_MSG_LINK, "bnx2x_ets_e3b0_sp_pri_to_cos_set invalid "
+ 				   "parameter There can't be two COS's with "
+@@ -929,12 +935,6 @@ static int bnx2x_ets_e3b0_sp_pri_to_cos_set(const struct link_params *params,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (pri > max_num_of_cos) {
+-		DP(NETIF_MSG_LINK, "bnx2x_ets_e3b0_sp_pri_to_cos_set invalid "
+-		   "parameter Illegal strict priority\n");
+-	    return -EINVAL;
+-	}
+-
+ 	sp_pri_to_cos[pri] = cos_entry;
+ 	return 0;
+ 
