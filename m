@@ -1,68 +1,44 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Tue, 03 Apr 2012 11:59:18 +0000
-Subject: [PATCH] Driver: Atm:  Remove 'break' after 'return' statement.
-Message-Id: <1333453638-6235-1-git-send-email-santoshprasadnayak@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 18 Apr 2012 14:02:02 +0000
+Subject: [PATCH] drivers/pcmcia/electra_cf.c: add missing iounmap and kfree
+Message-Id: <1334757722-16187-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: chas@cmf.nrl.navy.mil
-Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: linux-pcmcia@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-'break' is unnecessary after 'return' statement.
-Remove all such 'break' as clean up.
+cf and cf->mem_base have been allocated at the point of this failure, so
+they should be freed before leaving the function.
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/atm/horizon.c |    5 -----
- 1 files changed, 0 insertions(+), 5 deletions(-)
+I'm not sure to understand how the call to device_init_wakeup(&ofdev->dev,
+0); fits in, but there seems to be no reason why this would more
+appropriate in the error case a few lines below than in the error case here.
 
-diff --git a/drivers/atm/horizon.c b/drivers/atm/horizon.c
-index b812103..71c801b 100644
---- a/drivers/atm/horizon.c
-+++ b/drivers/atm/horizon.c
-@@ -2183,7 +2183,6 @@ static int hrz_open (struct atm_vcc *atm_vcc)
-     default:
-       PRINTD (DBG_QOS|DBG_VCC, "Bad AAL!");
-       return -EINVAL;
--      break;
-   }
-   
-   // TX traffic parameters
-@@ -2358,7 +2357,6 @@ static int hrz_open (struct atm_vcc *atm_vcc)
-       default: {
- 	PRINTD (DBG_QOS, "unsupported TX traffic class");
- 	return -EINVAL;
--	break;
-       }
-     }
-   }
-@@ -2434,7 +2432,6 @@ static int hrz_open (struct atm_vcc *atm_vcc)
-       default: {
- 	PRINTD (DBG_QOS, "unsupported RX traffic class");
- 	return -EINVAL;
--	break;
-       }
-     }
-   }
-@@ -2582,7 +2579,6 @@ static int hrz_getsockopt (struct atm_vcc * atm_vcc, int level, int optname,
- //	  break;
- 	default:
- 	  return -ENOPROTOOPT;
--	  break;
-       };
-       break;
-   }
-@@ -2602,7 +2598,6 @@ static int hrz_setsockopt (struct atm_vcc * atm_vcc, int level, int optname,
- //	  break;
- 	default:
- 	  return -ENOPROTOOPT;
--	  break;
-       };
-       break;
-   }
--- 
-1.7.4.4
+ drivers/pcmcia/electra_cf.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pcmcia/electra_cf.c b/drivers/pcmcia/electra_cf.c
+index 7647d23..558d706 100644
+--- a/drivers/pcmcia/electra_cf.c
++++ b/drivers/pcmcia/electra_cf.c
+@@ -214,8 +214,10 @@ static int __devinit electra_cf_probe(struct platform_device *ofdev)
+ 	cf->io_size = PAGE_ALIGN(resource_size(&io));
+ 
+ 	area = __get_vm_area(cf->io_size, 0, PHB_IO_BASE, PHB_IO_END);
+-	if (area = NULL)
+-		return -ENOMEM;
++	if (area = NULL) {
++		status = -ENOMEM;
++		goto fail1;
++	}
+ 
+ 	cf->io_virt = (void __iomem *)(area->addr);
+ 
 
