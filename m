@@ -1,30 +1,36 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 18 Apr 2012 07:15:16 +0000
-Subject: Re: [patch] target/iscsi: cleanup some allocation style issues
-Message-Id: <1334733316.15333.5.camel@haakon2.linux-iscsi.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 18 Apr 2012 20:07:11 +0000
+Subject: [PATCH] drivers/video/mbx/mbxfb.c: correct ioremap_nocache test
+Message-Id: <1334779631-4361-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120417063359.GF26756@elgon.mountain>
-In-Reply-To: <20120417063359.GF26756@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2012-04-17 at 09:33 +0300, Dan Carpenter wrote:
-> We can use kcalloc() here instead of kzalloc().  It's better style and
-> it has overflow checking built in.
-> 
-> Also -ENOMEM is the correct error code for allocation errors.  -1 means
-> -EPERM.  None of the callers preserve the error codes so it doesn't
-> matter except as a cleanup.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Also applied to lio-core.  I'll make sure to include these into the next
-target-pending update.
+The test tested not the most recently allocated value but a previously
+allocated one.
 
-Thanks Dan!
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---nab
+---
+ drivers/video/mbx/mbxfb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/mbx/mbxfb.c b/drivers/video/mbx/mbxfb.c
+index 55bf619..ab0a8e5 100644
+--- a/drivers/video/mbx/mbxfb.c
++++ b/drivers/video/mbx/mbxfb.c
+@@ -950,7 +950,7 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
+ 
+ 	mfbi->fb_virt_addr = ioremap_nocache(mfbi->fb_phys_addr,
+ 					     res_size(mfbi->fb_req));
+-	if (!mfbi->reg_virt_addr) {
++	if (!mfbi->fb_virt_addr) {
+ 		dev_err(&dev->dev, "failed to ioremap frame buffer\n");
+ 		ret = -EINVAL;
+ 		goto err4;
 
