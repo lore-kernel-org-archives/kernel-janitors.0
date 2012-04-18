@@ -1,90 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Apr 2012 06:33:59 +0000
-Subject: [patch] target/iscsi: cleanup some allocation style issues
-Message-Id: <20120417063359.GF26756@elgon.mountain>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Date: Wed, 18 Apr 2012 07:15:16 +0000
+Subject: Re: [patch] target/iscsi: cleanup some allocation style issues
+Message-Id: <1334733316.15333.5.camel@haakon2.linux-iscsi.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120417063359.GF26756@elgon.mountain>
+In-Reply-To: <20120417063359.GF26756@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We can use kcalloc() here instead of kzalloc().  It's better style and
-it has overflow checking built in.
+On Tue, 2012-04-17 at 09:33 +0300, Dan Carpenter wrote:
+> We can use kcalloc() here instead of kzalloc().  It's better style and
+> it has overflow checking built in.
+> 
+> Also -ENOMEM is the correct error code for allocation errors.  -1 means
+> -EPERM.  None of the callers preserve the error codes so it doesn't
+> matter except as a cleanup.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
 
-Also -ENOMEM is the correct error code for allocation errors.  -1 means
--EPERM.  None of the callers preserve the error codes so it doesn't
-matter except as a cleanup.
+Also applied to lio-core.  I'll make sure to include these into the next
+target-pending update.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks Dan!
 
-diff --git a/drivers/target/iscsi/iscsi_target_seq_pdu_list.c b/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
-index 7d0effa..85a306e 100644
---- a/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
-+++ b/drivers/target/iscsi/iscsi_target_seq_pdu_list.c
-@@ -141,11 +141,11 @@ redo:
- 			seq_count++;
- 			continue;
- 		}
--		array = kzalloc(seq_count * sizeof(u32), GFP_KERNEL);
-+		array = kcalloc(seq_count, sizeof(u32), GFP_KERNEL);
- 		if (!array) {
- 			pr_err("Unable to allocate memory"
- 				" for random array.\n");
--			return -1;
-+			return -ENOMEM;
- 		}
- 		iscsit_create_random_array(array, seq_count);
- 
-@@ -161,11 +161,11 @@ redo:
- 	}
- 
- 	if (seq_count) {
--		array = kzalloc(seq_count * sizeof(u32), GFP_KERNEL);
-+		array = kcalloc(seq_count, sizeof(u32), GFP_KERNEL);
- 		if (!array) {
- 			pr_err("Unable to allocate memory for"
- 				" random array.\n");
--			return -1;
-+			return -ENOMEM;
- 		}
- 		iscsit_create_random_array(array, seq_count);
- 
-@@ -193,10 +193,10 @@ static int iscsit_randomize_seq_lists(
- 	if (!seq_count)
- 		return 0;
- 
--	array = kzalloc(seq_count * sizeof(u32), GFP_KERNEL);
-+	array = kcalloc(seq_count, sizeof(u32), GFP_KERNEL);
- 	if (!array) {
- 		pr_err("Unable to allocate memory for random array.\n");
--		return -1;
-+		return -ENOMEM;
- 	}
- 	iscsit_create_random_array(array, seq_count);
- 
-@@ -546,21 +546,21 @@ int iscsit_build_pdu_and_seq_lists(
- 	iscsit_determine_counts_for_list(cmd, &bl, &seq_count, &pdu_count);
- 
- 	if (!conn->sess->sess_ops->DataSequenceInOrder) {
--		seq = kzalloc(seq_count * sizeof(struct iscsi_seq), GFP_ATOMIC);
-+		seq = kcalloc(seq_count, sizeof(struct iscsi_seq), GFP_ATOMIC);
- 		if (!seq) {
- 			pr_err("Unable to allocate struct iscsi_seq list\n");
--			return -1;
-+			return -ENOMEM;
- 		}
- 		cmd->seq_list = seq;
- 		cmd->seq_count = seq_count;
- 	}
- 
- 	if (!conn->sess->sess_ops->DataPDUInOrder) {
--		pdu = kzalloc(pdu_count * sizeof(struct iscsi_pdu), GFP_ATOMIC);
-+		pdu = kcalloc(pdu_count, sizeof(struct iscsi_pdu), GFP_ATOMIC);
- 		if (!pdu) {
- 			pr_err("Unable to allocate struct iscsi_pdu list.\n");
- 			kfree(seq);
--			return -1;
-+			return -ENOMEM;
- 		}
- 		cmd->pdu_list = pdu;
- 		cmd->pdu_count = pdu_count;
+--nab
+
