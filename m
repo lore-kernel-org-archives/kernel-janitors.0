@@ -1,7 +1,7 @@
-From: David Sterba <dave@jikos.cz>
-Date: Wed, 18 Apr 2012 10:14:07 +0000
+From: Jan Schmidt <list.btrfs@jan-o-sch.net>
+Date: Wed, 18 Apr 2012 11:29:46 +0000
 Subject: Re: [patch 1/2] Btrfs: double unlock bug in error handling
-Message-Id: <20120418101407.GG20982@twin.jikos.cz>
+Message-Id: <4F8EA5AA.2080202@jan-o-sch.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120418065903.GE12831@elgon.mountain>
 In-Reply-To: <20120418065903.GE12831@elgon.mountain>
@@ -11,11 +11,48 @@ Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Chris Mason <chris.mason@oracle.com>, Jeff Mahoney <jeffm@suse.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Apr 18, 2012 at 09:59:03AM +0300, Dan Carpenter wrote:
+On 18.04.2012 08:59, Dan Carpenter wrote:
 > The caller expects this function to return with the lock held and
 > releases it immediately on error.
-> 
+>
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.cz>
+>
+> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+> index 2b35f8d..a0bb9dc 100644
+> --- a/fs/btrfs/extent-tree.c
+> +++ b/fs/btrfs/extent-tree.c
+> @@ -2301,6 +2301,7 @@ static noinline int run_clustered_refs(struct
+btrfs_trans_handle *trans,
+>
+>  				if (ret) {
+>  					printk(KERN_DEBUG "btrfs: run_delayed_extent_op returned %d\n",
+ret);
+> +					spin_lock(&delayed_refs->lock);
+>  					return ret;
+>  				}
+>
+> @@ -2331,6 +2332,7 @@ static noinline int run_clustered_refs(struct
+btrfs_trans_handle *trans,
+>
+>  		if (ret) {
+>  			printk(KERN_DEBUG "btrfs: run_one_delayed_ref returned %d\n", ret);
+> +			spin_lock(&delayed_refs->lock);
+>  			return ret;
+>  		}
 
-Good catch, thanks.
+I think the correct way to fix this is:
+
+diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+index a844204..9af261a 100644
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -2450,7 +2450,6 @@ again:
+
+                ret = run_clustered_refs(trans, root, &cluster);
+                if (ret < 0) {
+-                       spin_unlock(&delayed_refs->lock);
+                        btrfs_abort_transaction(trans, root, ret);
+                        return ret;
+                }
+
+-Jan
