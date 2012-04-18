@@ -1,36 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 22 Apr 2012 11:37:09 +0000
-Subject: [PATCH] drivers/staging/comedi/comedi_fops.c: add missing vfree
-Message-Id: <1335094629-15879-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 18 Apr 2012 11:28:10 +0000
+Subject: [patch] debugobjects: fill_pool() returns void now
+Message-Id: <20120418112810.GA2669@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ian Abbott <abbotti@mev.co.uk>
-Cc: kernel-janitors@vger.kernel.org, Mori Hess <fmhess@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+There was a return missed in 1fda107d44 "debugobjects: Remove unused
+return value from fill_pool()".  It makes gcc complain:
 
-aux_free is freed on all other exits from the function.  By removing the
-return, we can benefit from the vfree already at the end of the function.
+	lib/debugobjects.c: In function ‘fill_pool’:
+	lib/debugobjects.c:98:4: warning: ‘return’ with a value, in
+		function returning void [enabled by default]
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
- drivers/staging/comedi/comedi_fops.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-index a0861fb..06fc656 100644
---- a/drivers/staging/comedi/comedi_fops.c
-+++ b/drivers/staging/comedi/comedi_fops.c
-@@ -301,7 +301,7 @@ static int do_devconfig_ioctl(struct comedi_device *dev,
- 	if (ret = 0) {
- 		if (!try_module_get(dev->driver->module)) {
- 			comedi_device_detach(dev);
--			return -ENOSYS;
-+			ret = -ENOSYS;
- 		}
- 	}
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 1b6c00a..d11808c 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -95,7 +95,7 @@ static void fill_pool(void)
  
-
+ 		new = kmem_cache_zalloc(obj_cache, gfp);
+ 		if (!new)
+-			return obj_pool_free;
++			return;
+ 
+ 		raw_spin_lock_irqsave(&pool_lock, flags);
+ 		hlist_add_head(&new->node, &obj_pool);
