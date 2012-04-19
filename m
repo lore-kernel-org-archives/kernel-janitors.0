@@ -1,73 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 10 Apr 2012 06:42:55 +0000
-Subject: Re: [PATCH] sound/oss/msnd_pinnacle.c: add vfrees
-Message-Id: <s5hpqbgulxs.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Apr 2012 10:46:08 +0000
+Subject: [patch] USB: bcma: suspend() only takes one argument now
+Message-Id: <20120419104608.GA30011@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1333959392-18933-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1333959392-18933-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, Andrew Veliath <andrewtv@usa.net>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-At Mon,  9 Apr 2012 10:16:32 +0200,
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> At the point of this error-handling code, HAVE_DSPCODEH may be undefined,
-> so free INITCODE and PERMCODE as done elsewhere.  A jump and label are
-> introduced to avoid code duplication.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+We changed the API here a couple months ago.  It suspend() only takes
+one argument now.  GCC complains about this:
 
-Thanks, applied now.
+    drivers/usb/host/bcma-hcd.c:320:2: warning: initialization from
+        incompatible pointer type [enabled by default]
+    drivers/usb/host/bcma-hcd.c:320:2: warning: (near initialization
+        for ‘bcma_hcd_driver.suspend’) [enabled by default]
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Takashi
-
-> 
-> ---
->  sound/oss/msnd_pinnacle.c |    8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/oss/msnd_pinnacle.c b/sound/oss/msnd_pinnacle.c
-> index 2c79d60..536c4c0 100644
-> --- a/sound/oss/msnd_pinnacle.c
-> +++ b/sound/oss/msnd_pinnacle.c
-> @@ -1294,6 +1294,8 @@ static int __init calibrate_adc(WORD srate)
->  
->  static int upload_dsp_code(void)
->  {
-> +	int ret = 0;
-> +
->  	msnd_outb(HPBLKSEL_0, dev.io + HP_BLKS);
->  #ifndef HAVE_DSPCODEH
->  	INITCODESIZE = mod_firmware_load(INITCODEFILE, &INITCODE);
-> @@ -1312,7 +1314,8 @@ static int upload_dsp_code(void)
->  	memcpy_toio(dev.base, PERMCODE, PERMCODESIZE);
->  	if (msnd_upload_host(&dev, INITCODE, INITCODESIZE) < 0) {
->  		printk(KERN_WARNING LOGNAME ": Error uploading to DSP\n");
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto out;
->  	}
->  #ifdef HAVE_DSPCODEH
->  	printk(KERN_INFO LOGNAME ": DSP firmware uploaded (resident)\n");
-> @@ -1320,12 +1323,13 @@ static int upload_dsp_code(void)
->  	printk(KERN_INFO LOGNAME ": DSP firmware uploaded\n");
->  #endif
->  
-> +out:
->  #ifndef HAVE_DSPCODEH
->  	vfree(INITCODE);
->  	vfree(PERMCODE);
->  #endif
->  
-> -	return 0;
-> +	return ret;
->  }
->  
->  #ifdef MSND_CLASSIC
-> 
+diff --git a/drivers/usb/host/bcma-hcd.c b/drivers/usb/host/bcma-hcd.c
+index afec047..0b35d42 100644
+--- a/drivers/usb/host/bcma-hcd.c
++++ b/drivers/usb/host/bcma-hcd.c
+@@ -286,7 +286,7 @@ static void bcma_hcd_shutdown(struct bcma_device *dev)
+ 
+ #ifdef CONFIG_PM
+ 
+-static int bcma_hcd_suspend(struct bcma_device *dev, pm_message_t state)
++static int bcma_hcd_suspend(struct bcma_device *dev)
+ {
+ 	bcma_core_disable(dev, 0);
+ 
