@@ -1,35 +1,78 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 19 Apr 2012 07:00:53 +0000
-Subject: [patch] cpu: remove some dead code in store_cache_disable()
-Message-Id: <20120419070053.GB16645@elgon.mountain>
+From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+Date: Thu, 19 Apr 2012 08:30:02 +0000
+Subject: Re: [patch] cpu: remove some dead code in store_cache_disable()
+Message-Id: <4F8FCA3A.5060504@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120419070053.GB16645@elgon.mountain>
+In-Reply-To: <20120419070053.GB16645@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Frank Arnold <frank.arnold@amd.com>, Borislav Petkov <borislav.petkov@amd.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Frank Arnold <frank.arnold@amd.com>, Borislav Petkov <borislav.petkov@amd.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-amd_set_l3_disable_slot() never returns -EEXIST, it only returns -EINVAL
-or zero.
+On 04/19/2012 12:30 PM, Dan Carpenter wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> amd_set_l3_disable_slot() never returns -EEXIST, it only returns -EINVAL
+> or zero.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
+> index 73d08ed..7b4e294 100644
+> --- a/arch/x86/kernel/cpu/intel_cacheinfo.c
+> +++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
+> @@ -466,12 +466,9 @@ static ssize_t store_cache_disable(struct _cpuid4_info *this_leaf,
+>  		return -EINVAL;
+> 
+>  	err = amd_set_l3_disable_slot(this_leaf->base.nb, cpu, slot, val);
+> -	if (err) {
+> -		if (err = -EEXIST)
+> -			printk(KERN_WARNING "L3 disable slot %d in use!\n",
+> -					    slot);
+> +	if (err)
+>  		return err;
+> -	}
+> +
+>  	return count;
+>  }
+> 
+
+
+Looking at the comments around the code and the print statement your patch
+is trying to remove, I wonder if it would be more appropriate to return
+-EEXIST in amd_set_l3_disable_slot(), like this:
+
+---
+From: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+Subject: [PATCH] cpu: Fix error return code in amd_set_l3_disable_slot()
+
+If the L3 disable slot is already in use, return -EEXIST instead of -EINVAL.
+The caller, store_cache_disable(), checks this return value to print an
+appropriate warning.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+---
+
+ arch/x86/kernel/cpu/intel_cacheinfo.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
-index 73d08ed..7b4e294 100644
+index 73d08ed..0b49e29 100644
 --- a/arch/x86/kernel/cpu/intel_cacheinfo.c
 +++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
-@@ -466,12 +466,9 @@ static ssize_t store_cache_disable(struct _cpuid4_info *this_leaf,
+@@ -433,7 +433,7 @@ int amd_set_l3_disable_slot(struct amd_northbridge *nb, int cpu, unsigned slot,
+ 	/*  check if @slot is already used or the index is already disabled */
+ 	ret = amd_get_l3_disable_slot(nb, slot);
+ 	if (ret >= 0)
+-		return -EINVAL;
++		return -EEXIST;
+ 
+ 	if (index > nb->l3_cache.indices)
  		return -EINVAL;
- 
- 	err = amd_set_l3_disable_slot(this_leaf->base.nb, cpu, slot, val);
--	if (err) {
--		if (err = -EEXIST)
--			printk(KERN_WARNING "L3 disable slot %d in use!\n",
--					    slot);
-+	if (err)
- 		return err;
--	}
-+
- 	return count;
- }
- 
+
+
+Regards,
+Srivatsa S. Bhat
+
