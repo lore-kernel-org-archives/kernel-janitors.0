@@ -1,56 +1,37 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Tue, 17 Apr 2012 17:39:45 +0000
-Subject: Re: [patch] Staging: rtl8192e: remove some dead code
-Message-Id: <4F8DAAE1.7020909@lwfinger.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 19 Apr 2012 16:12:40 +0000
+Subject: [PATCH] drivers/tty/amiserial.c: add missing tty_unlock
+Message-Id: <1334851960-29409-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120417064558.GA29411@elgon.mountain>
-In-Reply-To: <20120417064558.GA29411@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/17/2012 01:45 AM, Dan Carpenter wrote:
-> We don't use the rxcmdpkt[] counters at all and we can remove them.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
->
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
+tty_unlock is used on all other exits from the function.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.h b/drivers/staging/rtl8192e/rtl8192e/rtl_core.h
-> index 2a2519c..cebb748 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.h
-> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.h
-> @@ -353,7 +353,6 @@ struct rt_stats {
->   	unsigned long rxrdu;
->   	unsigned long rxok;
->   	unsigned long rxframgment;
-> -	unsigned long rxcmdpkt[8];
->   	unsigned long rxurberr;
->   	unsigned long rxstaterr;
->   	unsigned long rxdatacrcerr;
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_cmdpkt.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_cmdpkt.c
-> index 58d044e..ea91744 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/r8192E_cmdpkt.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_cmdpkt.c
-> @@ -342,7 +342,6 @@ static	void cmpk_handle_tx_rate_history(struct net_device *dev, u8 *pmsg)
->   u32 cmpk_message_handle_rx(struct net_device *dev,
->   			   struct rtllib_rx_stats *pstats)
->   {
-> -	struct r8192_priv *priv = rtllib_priv(dev);
->   	int			total_length;
->   	u8			cmd_length, exe_cnt = 0;
->   	u8			element_id;
-> @@ -409,8 +408,6 @@ u32 cmpk_message_handle_rx(struct net_device *dev,
->   			return 1;
->   		}
->
-> -		priv->stats.rxcmdpkt[element_id]++;
-> -
->   		total_length -= cmd_length;
->   		pcmd_buff    += cmd_length;
->   	}
->
+---
+ drivers/tty/amiserial.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/amiserial.c b/drivers/tty/amiserial.c
+index 24145c3..6cc4358 100644
+--- a/drivers/tty/amiserial.c
++++ b/drivers/tty/amiserial.c
+@@ -1073,8 +1073,10 @@ static int set_serial_info(struct tty_struct *tty, struct serial_state *state,
+ 		    (new_serial.close_delay != port->close_delay) ||
+ 		    (new_serial.xmit_fifo_size != state->xmit_fifo_size) ||
+ 		    ((new_serial.flags & ~ASYNC_USR_MASK) !-		     (port->flags & ~ASYNC_USR_MASK)))
++		     (port->flags & ~ASYNC_USR_MASK))) {
++			tty_unlock();
+ 			return -EPERM;
++		}
+ 		port->flags = ((port->flags & ~ASYNC_USR_MASK) |
+ 			       (new_serial.flags & ASYNC_USR_MASK));
+ 		state->custom_divisor = new_serial.custom_divisor;
 
