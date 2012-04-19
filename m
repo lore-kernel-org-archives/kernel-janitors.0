@@ -1,46 +1,35 @@
-From: James Morris <jmorris@namei.org>
-Date: Mon, 23 Apr 2012 07:21:33 +0000
-Subject: Re: [patch] Yama: remove an unused variable
-Message-Id: <alpine.LRH.2.02.1204231721090.28016@tundra.namei.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="1665246916-1927817337-1335165693=:28016"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Apr 2012 07:00:53 +0000
+Subject: [patch] cpu: remove some dead code in store_cache_disable()
+Message-Id: <20120419070053.GB16645@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120420133524.GC26339@elgon.mountain>
-In-Reply-To: <20120420133524.GC26339@elgon.mountain>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Frank Arnold <frank.arnold@amd.com>, Borislav Petkov <borislav.petkov@amd.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+amd_set_l3_disable_slot() never returns -EEXIST, it only returns -EINVAL
+or zero.
 
---1665246916-1927817337-1335165693=:28016
-Content-Type: TEXT/PLAIN; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, 20 Apr 2012, Kees Cook wrote:
-
-> On Fri, Apr 20, 2012 at 6:35 AM, Dan Carpenter <dan.carpenter@oracle.com>=
- wrote:
-> > GCC complains that we don't use "one" any more after 389da25f93 "Yama:
-> > add additional ptrace scopes".
-> >
-> > security/yama/yama_lsm.c:322:12: warning: ?one? defined but not used
-> > =A0 =A0 =A0 =A0[-Wunused-variable]
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> Acked-by: Kees Cook <keescook@chromium.org>
->=20
-> Thanks for catching that! I was still building with another set of
-> patches that used it. Whoops! :)
-
-Thanks, applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git ne=
-xt
-
-
-
-- James
---=20
-James Morris
-<jmorris@namei.org>
---1665246916-1927817337-1335165693=:28016--
+diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
+index 73d08ed..7b4e294 100644
+--- a/arch/x86/kernel/cpu/intel_cacheinfo.c
++++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
+@@ -466,12 +466,9 @@ static ssize_t store_cache_disable(struct _cpuid4_info *this_leaf,
+ 		return -EINVAL;
+ 
+ 	err = amd_set_l3_disable_slot(this_leaf->base.nb, cpu, slot, val);
+-	if (err) {
+-		if (err = -EEXIST)
+-			printk(KERN_WARNING "L3 disable slot %d in use!\n",
+-					    slot);
++	if (err)
+ 		return err;
+-	}
++
+ 	return count;
+ }
+ 
