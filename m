@@ -1,57 +1,55 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Thu, 05 Apr 2012 06:13:08 +0000
-Subject: [PATCH 1/2] Agp: Remove 'break' after 'return' statement.
-Message-Id: <1333605668-18622-1-git-send-email-santoshprasadnayak@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 19 Apr 2012 11:03:58 +0000
+Subject: [PATCH] drivers/staging/wlags49_h2/wl_pci.c: add missing wl_device_dealloc and wl_remove
+Message-Id: <1334833438-23016-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: Henk de Groot <pe1dnn@amsat.org>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-'break' is unnecessary after 'return' statement.
-Remove all such 'break' as clean up.
+The need for wl_device_dealloc is motivated by the error-handling code for
+the failure of wl_adapter_insert.  The need for wl_remove in the third case
+is motivated by the code in the definition of wl_pci_remove.
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/char/agp/generic.c |    2 --
- drivers/char/agp/sgi-agp.c |    1 -
- 2 files changed, 0 insertions(+), 3 deletions(-)
+Not tested.
 
-diff --git a/drivers/char/agp/generic.c b/drivers/char/agp/generic.c
-index 17e05d1..38022ea 100644
---- a/drivers/char/agp/generic.c
-+++ b/drivers/char/agp/generic.c
-@@ -1010,7 +1010,6 @@ int agp_generic_free_gatt_table(struct agp_bridge_data *bridge)
- 	case LVL2_APER_SIZE:
- 		/* The generic routines can't deal with 2 level gatt's */
- 		return -EINVAL;
--		break;
- 	default:
- 		page_order = 0;
- 		break;
-@@ -1077,7 +1076,6 @@ int agp_generic_insert_memory(struct agp_memory * mem, off_t pg_start, int type)
- 	case LVL2_APER_SIZE:
- 		/* The generic routines can't deal with 2 level gatt's */
- 		return -EINVAL;
--		break;
- 	default:
- 		num_entries = 0;
- 		break;
-diff --git a/drivers/char/agp/sgi-agp.c b/drivers/char/agp/sgi-agp.c
-index ffa888c..1920003 100644
---- a/drivers/char/agp/sgi-agp.c
-+++ b/drivers/char/agp/sgi-agp.c
-@@ -158,7 +158,6 @@ static int sgi_tioca_insert_memory(struct agp_memory *mem, off_t pg_start,
- 		break;
- 	case LVL2_APER_SIZE:
- 		return -EINVAL;
--		break;
- 	default:
- 		num_entries = 0;
- 		break;
--- 
-1.7.4.4
+ drivers/staging/wlags49_h2/wl_pci.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/staging/wlags49_h2/wl_pci.c b/drivers/staging/wlags49_h2/wl_pci.c
+index 3df990c..0b31b01 100644
+--- a/drivers/staging/wlags49_h2/wl_pci.c
++++ b/drivers/staging/wlags49_h2/wl_pci.c
+@@ -524,6 +524,7 @@ int wl_pci_setup( struct pci_dev *pdev )
+     /* Make sure that space was allocated for our private adapter struct */
+     if( dev->priv = NULL ) {
+         DBG_ERROR( DbgInfo, "Private adapter struct was not allocated!!!\n" );
++	wl_device_dealloc(dev);
+         DBG_LEAVE( DbgInfo );
+         return -ENOMEM;
+     }
+@@ -532,6 +533,7 @@ int wl_pci_setup( struct pci_dev *pdev )
+     /* Allocate DMA Descriptors */
+     if( wl_pci_dma_alloc( pdev, dev->priv ) < 0 ) {
+         DBG_ERROR( DbgInfo, "Could not allocate DMA descriptor memory!!!\n" );
++	wl_device_dealloc(dev);
+         DBG_LEAVE( DbgInfo );
+         return -ENOMEM;
+     }
+@@ -561,6 +563,8 @@ int wl_pci_setup( struct pci_dev *pdev )
+     result = request_irq(dev->irq, wl_isr, SA_SHIRQ, dev->name, dev);
+     if( result ) {
+         DBG_WARNING( DbgInfo, "Could not register ISR!!!\n" );
++	wl_remove(dev);
++	wl_device_dealloc(dev);
+         DBG_LEAVE( DbgInfo );
+         return result;
+ 	}
 
