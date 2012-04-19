@@ -1,45 +1,51 @@
-From: David Sterba <dave@jikos.cz>
-Date: Mon, 16 Apr 2012 14:02:07 +0000
-Subject: Re: [PATCH] fs/btrfs/volumes.c: add missing free_fs_devices
-Message-Id: <20120416140207.GB20982@twin.jikos.cz>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 19 Apr 2012 06:40:40 +0000
+Subject: [PATCH] sound/isa/sc6000.c: add missing sc6000_setup_board
+Message-Id: <1334817640-15426-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334395473-16667-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1334395473-16667-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Chris Mason <chris.mason@oracle.com>, kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Apr 14, 2012 at 11:24:33AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Free fs_devices as done in the error-handling code just below.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  fs/btrfs/volumes.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index a872b48..5d246c3 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -4334,8 +4334,10 @@ static int open_seed_devices(struct btrfs_root *root, u8 *fsid)
->  
->  	ret = __btrfs_open_devices(fs_devices, FMODE_READ,
->  				   root->fs_info->bdev_holder);
-> -	if (ret)
-> +	if (ret) {
-> +		free_fs_devices(fs_devices);
->  		goto out;
-> +	}
->  
->  	if (!fs_devices->seeding) {
->  		__btrfs_close_devices(fs_devices);
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Reviewed-by: David Sterba <dsterba@suse.cz>
+There seems to be no interaction between *port and the requested region, so
+the clearing of *vport should take place if the request_region fails.
 
-thanks,
-david
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.  sc6000_setup_board seems rather complicated, so my reasoning
+could be completely wrong.
+
+ sound/isa/sc6000.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/isa/sc6000.c b/sound/isa/sc6000.c
+index d97d0f3..57679cb 100644
+--- a/sound/isa/sc6000.c
++++ b/sound/isa/sc6000.c
+@@ -594,7 +594,7 @@ static int __devinit snd_sc6000_probe(struct device *devptr, unsigned int dev)
+ 		snd_printk(KERN_ERR PFX
+ 			   "I/O port cannot be iomaped.\n");
+ 		err = -EBUSY;
+-		goto err_unmap1;
++		goto err_unmap0;
+ 	}
+ 
+ 	/* to make it marked as used */
+@@ -678,9 +678,10 @@ static int __devinit snd_sc6000_probe(struct device *devptr, unsigned int dev)
+ 	return 0;
+ 
+ err_unmap2:
+-	sc6000_setup_board(*vport, 0);
+ 	release_region(mss_port[dev], 4);
+ err_unmap1:
++	sc6000_setup_board(*vport, 0);
++err_unmap0:
+ 	release_region(port[dev], 0x10);
+ err_exit:
+ 	snd_card_free(card);
+
