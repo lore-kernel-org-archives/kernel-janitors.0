@@ -1,39 +1,47 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 09 Apr 2012 09:01:09 +0000
-Subject: [PATCH] net/wireless/wext-core.c: add missing kfree
-Message-Id: <1333962069-20801-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Apr 2012 06:44:44 +0000
+Subject: [patch 2/2] ath6kl: fix an indenting issue
+Message-Id: <20120420064444.GD22649@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This is supposed to be pushed in one indent level.
 
-Free extra as done in the error-handling code just above.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- net/wireless/wext-core.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
-index 9f544c9..22adfeb 100644
---- a/net/wireless/wext-core.c
-+++ b/net/wireless/wext-core.c
-@@ -781,8 +781,10 @@ static int ioctl_standard_iw_point(struct iw_point *iwp, unsigned int cmd,
- 		if (cmd = SIOCSIWENCODEEXT) {
- 			struct iw_encode_ext *ee = (void *) extra;
- 
--			if (iwp->length < sizeof(*ee) + ee->key_len)
--				return -EFAULT;
-+			if (iwp->length < sizeof(*ee) + ee->key_len) {
-+				err = -EFAULT;
-+				goto out;
-+			}
+diff --git a/drivers/net/wireless/ath/ath6kl/htc_mbox.c b/drivers/net/wireless/ath/ath6kl/htc_mbox.c
+index 065e615..d82020e 100644
+--- a/drivers/net/wireless/ath/ath6kl/htc_mbox.c
++++ b/drivers/net/wireless/ath/ath6kl/htc_mbox.c
+@@ -793,16 +793,17 @@ static void ath6kl_htc_tx_bundle(struct htc_endpoint *endpoint,
+ 				 * itself
+ 				 */
+ 				txb_mask = ((1 << ac) - 1);
+-		/*
+-		 * when the scatter request resources drop below a
+-		 * certain threshold, disable Tx bundling for all
+-		 * AC's with priority lower than the current requesting
+-		 * AC. Otherwise re-enable Tx bundling for them
+-		 */
+-		if (scat_req->scat_q_depth < ATH6KL_SCATTER_REQS)
+-			target->tx_bndl_mask &= ~txb_mask;
+-		else
+-			target->tx_bndl_mask |= txb_mask;
++
++			/*
++			 * when the scatter request resources drop below a
++			 * certain threshold, disable Tx bundling for all
++			 * AC's with priority lower than the current requesting
++			 * AC. Otherwise re-enable Tx bundling for them
++			 */
++			if (scat_req->scat_q_depth < ATH6KL_SCATTER_REQS)
++				target->tx_bndl_mask &= ~txb_mask;
++			else
++				target->tx_bndl_mask |= txb_mask;
  		}
- 	}
  
-
+ 		ath6kl_dbg(ATH6KL_DBG_HTC, "htc tx pkts to scatter: %d\n",
