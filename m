@@ -1,51 +1,64 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Fri, 20 Apr 2012 15:52:34 +0000
-Subject: [PATCH] drivers/tty: Use get_user instead of dereferencing user pointer
-Message-Id: <1334937154-23037-1-git-send-email-emilgoode@gmail.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Fri, 20 Apr 2012 20:59:48 +0000
+Subject: Re: [PATCH] drivers/tty: Use get_user instead of dereferencing user pointer
+Message-Id: <20120420220010.0fa29bee@pyramind.ukuu.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1334937154-23037-1-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1334937154-23037-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+To: Emil Goode <emilgoode@gmail.com>
+Cc: gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should use the get_user macro instead of dereferencing user
-pointers directly.
+On Fri, 20 Apr 2012 17:52:34 +0200
+Emil Goode <emilgoode@gmail.com> wrote:
 
-This patch fixes the following sparse warning:
-drivers/tty/n_tty.c:1648:51: warning:
-	dereference of noderef expression
+> We should use the get_user macro instead of dereferencing user
+> pointers directly.
+> 
+> This patch fixes the following sparse warning:
+> drivers/tty/n_tty.c:1648:51: warning:
+> 	dereference of noderef expression
+> 
+> Signed-off-by: Emil Goode <emilgoode@gmail.com>
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
-I'm a newbie so please review carefully.
-Not sure if I should add error handling for the get_user call here.
+So I gave it a five second glance and thought "must be a crazy newbie",
+then I looked harder 8)
 
- drivers/tty/n_tty.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> I'm a newbie so please review carefully.
+> Not sure if I should add error handling for the get_user call here.
 
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index 94b6eda..5ff63cc 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -1630,6 +1630,7 @@ static int copy_from_read_buf(struct tty_struct *tty,
- 	int retval;
- 	size_t n;
- 	unsigned long flags;
-+	unsigned char ch;
- 
- 	retval = 0;
- 	spin_lock_irqsave(&tty->read_lock, flags);
-@@ -1645,7 +1646,8 @@ static int copy_from_read_buf(struct tty_struct *tty,
- 		tty->read_cnt -= n;
- 		/* Turn single EOF into zero-length read */
- 		if (L_EXTPROC(tty) && tty->icanon && n = 1) {
--			if (!tty->read_cnt && (*b)[n-1] = EOF_CHAR(tty))
-+			get_user(ch, b[n-1]);
-+			if (!tty->read_cnt && ch = EOF_CHAR(tty))
- 				n--;
- 		}
- 		spin_unlock_irqrestore(&tty->read_lock, flags);
--- 
-1.7.9.5
+You are correct, and it's been wrong for ages. You are also the first
+person to my knowledge to actually dig into that sparse warning and fix
+it!
 
+>  		/* Turn single EOF into zero-length read */
+>  		if (L_EXTPROC(tty) && tty->icanon && n = 1) {
+> -			if (!tty->read_cnt && (*b)[n-1] = EOF_CHAR(tty))
+> +			get_user(ch, b[n-1]);
+> +			if (!tty->read_cnt && ch = EOF_CHAR(tty))
+>  				n--;
+>  		}
+
+The real question is what this code should be doing. The only case it can
+be triggered as far as I can see is:
+
+User provides buffer one byte shorter than the size passed to the syscall
+Data is copied and copy_to_user returns 1 byte uncopied
+n ends up as one
+
+At this point we can take this path. What I don't understand at this
+point is what this code path is actually *supposed* to do.
+
+I think it should be testing against the value of n before the n -retval, and also checking the data it copied *from* in kernel space, not
+the user size. The user data might be changed by another thread.
+
+First problem therefore is to figure out what this code is supposed to be
+doing. However you are right that the code is incorrect, and if it was a
+simple bug your fix would also be correct.
+
+It's not simple however, so can anyone work out or remember wtf the code
+should be doing ???
+
+Alan
