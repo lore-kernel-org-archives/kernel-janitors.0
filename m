@@ -1,34 +1,54 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Apr 2012 06:28:47 +0000
-Subject: [patch] wlcore: fixup an allocation
-Message-Id: <20120417062847.GA26756@elgon.mountain>
+Date: Fri, 20 Apr 2012 06:33:31 +0000
+Subject: [patch] USB: wwan: remove an unneeded check
+Message-Id: <20120420063331.GB22649@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Luciano Coelho <coelho@ti.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Eliad Peller <eliad@wizery.com>, Arik Nemtsov <arik@wizery.com>, Shahar Levi <shahar_levi@ti.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-GFP_DMA isn't supposed to be used by itself.  This allocation is allowed
-to sleep so it should be ORing it with GFP_KERNEL.
-Also we should check for allocations errors.
+We already verified that "status" was zero on this else branch.  Since
+zero is not equal to -ESHUTDOWN, this condition is always true.  I
+removed it and pull everything in an indent level.
+
+This doesn't change how the code works, it's just a cleanup.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-I don't have the hardware to test this.  Sorry.
+It could also be that it's supposed to be checking something else.  I
+read through the history but status has always been zero here.
 
-diff --git a/drivers/net/wireless/ti/wlcore/cmd.c b/drivers/net/wireless/ti/wlcore/cmd.c
-index 5c4716c..7ea10e1 100644
---- a/drivers/net/wireless/ti/wlcore/cmd.c
-+++ b/drivers/net/wireless/ti/wlcore/cmd.c
-@@ -123,7 +123,9 @@ static int wl1271_cmd_wait_for_event_or_timeout(struct wl1271 *wl, u32 mask)
- 	unsigned long timeout;
- 	int ret = 0;
+diff --git a/drivers/usb/serial/usb_wwan.c b/drivers/usb/serial/usb_wwan.c
+index c88657d..a38b980 100644
+--- a/drivers/usb/serial/usb_wwan.c
++++ b/drivers/usb/serial/usb_wwan.c
+@@ -307,20 +307,17 @@ static void usb_wwan_indat_callback(struct urb *urb)
+ 		}
  
--	events_vector = kmalloc(sizeof(*events_vector), GFP_DMA);
-+	events_vector = kmalloc(sizeof(*events_vector), GFP_KERNEL | GFP_DMA);
-+	if (!events_vector)
-+		return -ENOMEM;
- 
- 	timeout = jiffies + msecs_to_jiffies(WL1271_EVENT_TIMEOUT);
+ 		/* Resubmit urb so we continue receiving */
+-		if (status != -ESHUTDOWN) {
+-			err = usb_submit_urb(urb, GFP_ATOMIC);
+-			if (err) {
+-				if (err != -EPERM) {
+-					printk(KERN_ERR "%s: resubmit read urb failed. "
+-						"(%d)", __func__, err);
+-					/* busy also in error unless we are killed */
+-					usb_mark_last_busy(port->serial->dev);
+-				}
+-			} else {
++		err = usb_submit_urb(urb, GFP_ATOMIC);
++		if (err) {
++			if (err != -EPERM) {
++				printk(KERN_ERR "%s: resubmit read urb failed. "
++					"(%d)", __func__, err);
++				/* busy also in error unless we are killed */
+ 				usb_mark_last_busy(port->serial->dev);
+ 			}
++		} else {
++			usb_mark_last_busy(port->serial->dev);
+ 		}
+-
+ 	}
+ }
  
