@@ -1,24 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 13 Apr 2012 15:05:38 +0000
-Subject: Re: [PATCH] net/key/af_key.c: add missing kfree_skb
-Message-Id: <20120413.110538.449625213257927113.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Apr 2012 13:35:24 +0000
+Subject: [patch] Yama: remove an unused variable
+Message-Id: <20120420133524.GC26339@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1333960870-19735-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1333960870-19735-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon,  9 Apr 2012 10:41:10 +0200
+GCC complains that we don't use "one" any more after 389da25f93 "Yama:
+add additional ptrace scopes".
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> At the point of this error-handling code, alloc_skb has succeded, so free
-> the resulting skb by jumping to the err label.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+security/yama/yama_lsm.c:322:12: warning: ‘one’ defined but not used
+	[-Wunused-variable]
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index afb04cb..c852f74 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -319,7 +319,6 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
+ }
+ 
+ static int zero;
+-static int one = 1;
+ static int max_scope = YAMA_SCOPE_NO_ATTACH;
+ 
+ struct ctl_path yama_sysctl_path[] = {
