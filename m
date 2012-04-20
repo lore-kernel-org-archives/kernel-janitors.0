@@ -1,47 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 22 Apr 2012 12:44:15 +0000
-Subject: [PATCH] drivers/parport/parport_gsc.c: add missing kfree
-Message-Id: <1335098655-18387-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Apr 2012 06:50:45 +0000
+Subject: [patch] [media] saa7164: saa7164_vbi_stop_port() returns linux error codes
+Message-Id: <20120420065045.GF22649@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The saa7164_vbi_stop_port() changes the SAA_ERR_ALREADY_STOPPED result
+code to -EIO before returning.
 
-Free ops as done just below.
-Adjust some spacing to please checkpatch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/parport/parport_gsc.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/parport/parport_gsc.c b/drivers/parport/parport_gsc.c
-index 5d6de38..d2dcb27 100644
---- a/drivers/parport/parport_gsc.c
-+++ b/drivers/parport/parport_gsc.c
-@@ -270,15 +270,16 @@ struct parport *__devinit parport_gsc_probe_port (unsigned long base,
- 	p->physport = p;
- 	if (!parport_SPP_supported (p)) {
- 		/* No port. */
--		kfree (priv);
-+		kfree(priv);
-+		kfree(ops);
- 		return NULL;
- 	}
- 	parport_PS2_supported (p);
+diff --git a/drivers/media/video/saa7164/saa7164-vbi.c b/drivers/media/video/saa7164/saa7164-vbi.c
+index 273cf80..d8e6c8f 100644
+--- a/drivers/media/video/saa7164/saa7164-vbi.c
++++ b/drivers/media/video/saa7164/saa7164-vbi.c
+@@ -952,7 +952,7 @@ static int saa7164_vbi_start_streaming(struct saa7164_port *port)
  
- 	if (!(p = parport_register_port(base, PARPORT_IRQ_NONE,
- 					PARPORT_DMA_NONE, ops))) {
--		kfree (priv);
--		kfree (ops);
-+		kfree(priv);
-+		kfree(ops);
- 		return NULL;
- 	}
- 
-
+ 		/* Stop the hardware, regardless */
+ 		result = saa7164_vbi_stop_port(port);
+-		if ((result != SAA_OK) && (result != SAA_ERR_ALREADY_STOPPED)) {
++		if (result != SAA_OK) {
+ 			printk(KERN_ERR "%s() pause/forced stop transition "
+ 				"failed, res = 0x%x\n", __func__, result);
+ 		}
+@@ -971,7 +971,7 @@ static int saa7164_vbi_start_streaming(struct saa7164_port *port)
+ 		/* Stop the hardware, regardless */
+ 		result = saa7164_vbi_acquire_port(port);
+ 		result = saa7164_vbi_stop_port(port);
+-		if ((result != SAA_OK) && (result != SAA_ERR_ALREADY_STOPPED)) {
++		if (result != SAA_OK) {
+ 			printk(KERN_ERR "%s() run/forced stop transition "
+ 				"failed, res = 0x%x\n", __func__, result);
+ 		}
