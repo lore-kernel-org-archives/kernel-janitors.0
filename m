@@ -1,64 +1,97 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Fri, 20 Apr 2012 20:59:48 +0000
+From: Jiri Slaby <jslaby@suse.cz>
+Date: Sat, 21 Apr 2012 09:04:04 +0000
 Subject: Re: [PATCH] drivers/tty: Use get_user instead of dereferencing user pointer
-Message-Id: <20120420220010.0fa29bee@pyramind.ukuu.org.uk>
+Message-Id: <4F927804.4090208@suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334937154-23037-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1334937154-23037-1-git-send-email-emilgoode@gmail.com>
+References: <1334937154-23037-1-git-send-email-emilgoode@gmail.com> <20120420220010.0fa29bee@pyramind.ukuu.org.uk>
+In-Reply-To: <20120420220010.0fa29bee@pyramind.ukuu.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Emil Goode <emilgoode@gmail.com>, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, hyc@symas.com, Jiri Slaby <jirislaby@gmail.com>
 
-On Fri, 20 Apr 2012 17:52:34 +0200
-Emil Goode <emilgoode@gmail.com> wrote:
+On 04/20/2012 11:00 PM, Alan Cox wrote:
+> It's not simple however, so can anyone work out or remember wtf the code
+> should be doing ???
 
-> We should use the get_user macro instead of dereferencing user
-> pointers directly.
-> 
-> This patch fixes the following sparse warning:
-> drivers/tty/n_tty.c:1648:51: warning:
-> 	dereference of noderef expression
-> 
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Huh.
 
-So I gave it a five second glance and thought "must be a crazy newbie",
-then I looked harder 8)
+The code was added by:
+commit 26df6d13406d1a53b0bda08bd712f1924affd7cd
+Author: hyc@symas.com <hyc@symas.com>
+Date:   Tue Jun 22 10:14:49 2010 -0700
 
-> I'm a newbie so please review carefully.
-> Not sure if I should add error handling for the get_user call here.
+    tty: Add EXTPROC support for LINEMODE
 
-You are correct, and it's been wrong for ages. You are also the first
-person to my knowledge to actually dig into that sparse warning and fix
-it!
+==
 
->  		/* Turn single EOF into zero-length read */
->  		if (L_EXTPROC(tty) && tty->icanon && n = 1) {
-> -			if (!tty->read_cnt && (*b)[n-1] = EOF_CHAR(tty))
-> +			get_user(ch, b[n-1]);
-> +			if (!tty->read_cnt && ch = EOF_CHAR(tty))
->  				n--;
->  		}
+The code is now:
 
-The real question is what this code should be doing. The only case it can
-be triggered as far as I can see is:
+retval = copy_to_user(*b, &tty->read_buf[tty->read_tail], n);
+n -= retval;
+tty_audit_add_data(tty, &tty->read_buf[tty->read_tail], n);
+spin_lock_irqsave(&tty->read_lock, flags);
+tty->read_tail = (tty->read_tail + n) & (N_TTY_BUF_SIZE-1);
+tty->read_cnt -= n;
+if (L_EXTPROC(tty) && tty->icanon && n = 1) {
+        if (!tty->read_cnt && (*b)[n-1] = EOF_CHAR(tty))
+                n--;
+}
 
-User provides buffer one byte shorter than the size passed to the syscall
-Data is copied and copy_to_user returns 1 byte uncopied
-n ends up as one
+==
 
-At this point we can take this path. What I don't understand at this
-point is what this code path is actually *supposed* to do.
+n after "n -= retval" means number of successfully copied chars. So the
+test "n = 1" along with "!tty->read_cnt" actually should ensure we
+copied everything and that is exactly one char. Further we test if that
+one is EOF. If so, ignore that char by pretending we copied nothing.
 
-I think it should be testing against the value of n before the n -retval, and also checking the data it copied *from* in kernel space, not
-the user size. The user data might be changed by another thread.
+However the implementation does not count with buffer wrapped like:
+EOF..........................something
+                             ^----- tail
 
-First problem therefore is to figure out what this code is supposed to be
-doing. However you are right that the code is incorrect, and if it was a
-simple bug your fix would also be correct.
+Here, the first call to copy_from_read_buf copies "something" and the
+second one is to copy single EOF. But that would be ignored! Is this
+expected?
 
-It's not simple however, so can anyone work out or remember wtf the code
-should be doing ???
 
-Alan
+So to fix the user buffer dereference, the following diff should help.
+In any case the wrapped buffer is still to be fixed... (Or ignored.)
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -1630,6 +1630,7 @@ static int copy_from_read_buf(struct tty_struct *tty,
+        int retval;
+        size_t n;
+        unsigned long flags;
++       bool is_eof;
+
+        retval = 0;
+        spin_lock_irqsave(&tty->read_lock, flags);
+@@ -1639,15 +1640,15 @@ static int copy_from_read_buf(struct tty_struct
+*tty,
+        if (n) {
+                retval = copy_to_user(*b,
+&tty->read_buf[tty->read_tail], n);
+                n -= retval;
++               is_eof = n = 1 &&
++                       tty->read_buf[tty->read_tail] = EOF_CHAR(tty);
+                tty_audit_add_data(tty, &tty->read_buf[tty->read_tail], n);
+                spin_lock_irqsave(&tty->read_lock, flags);
+                tty->read_tail = (tty->read_tail + n) & (N_TTY_BUF_SIZE-1);
+                tty->read_cnt -= n;
+                /* Turn single EOF into zero-length read */
+-               if (L_EXTPROC(tty) && tty->icanon && n = 1) {
+-                       if (!tty->read_cnt && (*b)[n-1] = EOF_CHAR(tty))
+-                               n--;
+-               }
++               if (L_EXTPROC(tty) && tty->icanon && is_eof &&
+!tty->read_cnt)
++                       n = 0;
+                spin_unlock_irqrestore(&tty->read_lock, flags);
+                *b += n;
+                *nr -= n;
+
+thanks,
+-- 
+js
+suse labs
