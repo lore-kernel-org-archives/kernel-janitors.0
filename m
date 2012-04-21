@@ -1,54 +1,50 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Mon, 30 Apr 2012 07:58:21 +0000
-Subject: Re: [patch] [SCSI] mptfusion: unlock on error in mpt_config()
-Message-Id: <CA+_b7DJn_Nnx=NQKOfQawpy9Q_306P5dUc=nYCqA8wf4YJiX=A@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 21 Apr 2012 14:08:19 +0000
+Subject: [PATCH] drivers/block/cciss.c: correct size computation
+Message-Id: <1335017299-30356-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20110827095930.GK3775@shale.localdomain>
-	<A6888A6805518E4EA4AF7072A28264A6042AD54397@inbmail02.lsi.com>
-In-Reply-To: <A6888A6805518E4EA4AF7072A28264A6042AD54397@inbmail02.lsi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
-Cc: "Moore, Eric" <Eric.Moore@lsi.com>, "Desai, Kashyap" <Kashyap.Desai@lsi.com>, Support <support@lsi.com>, DL-MPT Fusion Linux <DL-MPTFusionLinux@lsi.com>, "open list:LSILOGIC MPT FUSI..." <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mike Miller <mike.miller@hp.com>
+Cc: kernel-janitors@vger.kernel.org, iss_storagedev@hp.com, linux-kernel@vger.kernel.org
 
-Ping?
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-regards,
-dan carpenter
+The size argument to remap_pci_mem should be the size of desired structure,
+not the pointer to it.
 
-On 8/30/11, Nandigama, Nagalakshmi <Nagalakshmi.Nandigama@lsi.com> wrote:
-> The patch seem to be fine. Please consider this patch as Acked-by:
-> "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
->
->
-> Regards,
-> Nagalakshmi
->
->
-> -----Original Message-----
-> From: Dan Carpenter [mailto:error27@gmail.com]
-> Sent: Saturday, August 27, 2011 3:30 PM
-> To: Moore, Eric; Desai, Kashyap
-> Cc: Support; DL-MPT Fusion Linux; open list:LSILOGIC MPT FUSI...;
-> kernel-janitors@vger.kernel.org
-> Subject: [patch] [SCSI] mptfusion: unlock on error in mpt_config()
->
-> We introduced a new return here and forgot to unlock the mutex.
->
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
->
-> diff --git a/drivers/message/fusion/mptbase.c
-> b/drivers/message/fusion/mptbase.c
-> index e9c6a60..e72320e 100644
-> --- a/drivers/message/fusion/mptbase.c
-> +++ b/drivers/message/fusion/mptbase.c
-> @@ -6482,6 +6482,7 @@ mpt_config(MPT_ADAPTER *ioc, CONFIGPARMS *pCfg)
->  				printk(MYIOC_s_INFO_FMT "%s: host reset in"
->  					" progress mpt_config timed out.!!\n",
->  					__func__, ioc->name);
-> +				mutex_unlock(&ioc->mptbase_cmds.mutex);
->  				return -EFAULT;
->  			}
->  			spin_unlock_irqrestore(&ioc->taskmgmt_lock, flags);
->
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@expression@
+expression *x;
+@@
+
+x  <+...
+-sizeof(x)
++sizeof(*x)
+...+>
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/block/cciss.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
+index b0f553b..9f50d7d 100644
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -4209,7 +4209,7 @@ static int __devinit cciss_find_cfgtables(ctlr_info_t *h)
+ 	if (rc)
+ 		return rc;
+ 	h->cfgtable = remap_pci_mem(pci_resource_start(h->pdev,
+-		cfg_base_addr_index) + cfg_offset, sizeof(h->cfgtable));
++		cfg_base_addr_index) + cfg_offset, sizeof(*h->cfgtable));
+ 	if (!h->cfgtable)
+ 		return -ENOMEM;
+ 	rc = write_driver_ver_to_cfgtable(h->cfgtable);
+
