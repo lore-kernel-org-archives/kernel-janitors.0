@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 21 Apr 2012 14:59:52 +0000
+Date: Sat, 21 Apr 2012 15:12:35 +0000
 Subject: Re: [patch] wireless: at76c50x: allocating too much data
-Message-Id: <20120421145952.GL27101@mwanda>
+Message-Id: <20120421151235.GM27101@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120420064705.GE22649@elgon.mountain>
  <CAGRGNgVgtAYknmpB_8Q0OpcUWFjTxBistG+RNs1ORDZeckGsWw@mail.gmail.com>
@@ -33,13 +33,17 @@ On Sat, Apr 21, 2012 at 05:51:41PM +0300, Dan Carpenter wrote:
 > uh...  I'm going to rewrite mine as well to be more generic.  :P)
 > 
 
-The other thing would be to look for places that do:
-	func(x, sizeof(x);
+Hm...  Smatch is not really the right tool here.  By the time Sparse
+gives you the sizeof(foo) information, it just looks like a number
+8.
 
-Of course, you've found a lot of memset()/memcpy() bugs like that in
-the past, but probably it could be made more generic so it checks
-every function.
+I hacked up Sparse a bit so it works for simple expressions which
+are one token in from the c tokenizer.  So:
+
+	foo = kmalloc(sizeof(foo), GFP_KERNEL); => error.
+	foo->bar = kmalloc(sizeof(foo->bar), GFP_KERNEL); => tricky.
+
+It's not ideal.  Coccinelle is better for this.
 
 regards,
 dan carpenter
-
