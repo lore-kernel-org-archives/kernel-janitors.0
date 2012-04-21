@@ -1,44 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 22 Apr 2012 09:57:40 +0000
-Subject: [PATCH] drivers/video/xen-fbfront.c: add missing cleanup code
-Message-Id: <1335088660-13219-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 21 Apr 2012 12:23:44 +0000
+Subject: [patch v2] wireless: at76c50x: allocating too much data
+Message-Id: <20120421122344.GA15362@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <87vcku9sob.fsf@purkki.adurom.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>, Julian Calaby <julian.calaby@gmail.com>, Kalle Valo <kvalo@adurom.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This is a cut and paste mistake, sizeof(struct mib_local) was intended
+instead of sizeof(struct mib_phy).  The call to at76_get_mib() uses
+sizeof(struct mib_local) correctly, although I changed that to
+sizeof(*m) for style reasons after discussion with some of the wireless
+maintainers.
 
-The operations in the subsequent error-handling code appear to be also
-useful here.
+The current code works fine because mib_phy structs are larger than
+mib_local structs.  But we may as well clean it up.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Not tested.
+v2: use sizeof(*m) instead of sizeof(struct mib_local).
 
- drivers/video/xen-fbfront.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/video/xen-fbfront.c b/drivers/video/xen-fbfront.c
-index cb4529c..b0bd59c 100644
---- a/drivers/video/xen-fbfront.c
-+++ b/drivers/video/xen-fbfront.c
-@@ -458,8 +458,13 @@ static int __devinit xenfb_probe(struct xenbus_device *dev,
- 	xenfb_init_shared_page(info, fb_info);
+diff --git a/drivers/net/wireless/at76c50x-usb.c b/drivers/net/wireless/at76c50x-usb.c
+index faa8bcb..3036c0b 100644
+--- a/drivers/net/wireless/at76c50x-usb.c
++++ b/drivers/net/wireless/at76c50x-usb.c
+@@ -1122,12 +1122,12 @@ exit:
+ static void at76_dump_mib_local(struct at76_priv *priv)
+ {
+ 	int ret;
+-	struct mib_local *m = kmalloc(sizeof(struct mib_phy), GFP_KERNEL);
++	struct mib_local *m = kmalloc(sizeof(*m), GFP_KERNEL);
  
- 	ret = xenfb_connect_backend(dev, info);
--	if (ret < 0)
-+	if (ret < 0) {
-+		fb_deferred_io_cleanup(fb_info);
-+		fb_dealloc_cmap(&fb_info->cmap);
-+		framebuffer_release(fb_info);
-+		xenbus_dev_fatal(dev, ret, "xenfb_connect_backend");
- 		goto error;
-+	}
+ 	if (!m)
+ 		return;
  
- 	ret = register_framebuffer(fb_info);
- 	if (ret) {
-
+-	ret = at76_get_mib(priv->udev, MIB_LOCAL, m, sizeof(struct mib_local));
++	ret = at76_get_mib(priv->udev, MIB_LOCAL, m, sizeof(*m));
+ 	if (ret < 0) {
+ 		wiphy_err(priv->hw->wiphy,
+ 			  "at76_get_mib (LOCAL) failed: %d\n", ret);
