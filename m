@@ -1,35 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 22 Apr 2012 12:02:13 +0000
-Subject: [PATCH] drivers/staging/rtl8192u/ieee80211/ieee80211_module.c: add missing free_netdev
-Message-Id: <1335096133-16951-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Sean MacLennan <seanm@seanm.ca>
+Date: Sun, 22 Apr 2012 19:25:14 +0000
+Subject: Re: [PATCH] drivers/staging/rtl8192u/ieee80211/ieee80211_module.c: add missing free_netdev
+Message-Id: <20120422152514.60e66f04@lappy.seanm.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1335096133-16951-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1335096133-16951-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, 22 Apr 2012 14:02:13 +0200
+Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-Free dev on failure as done elsewhere in the function.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Free dev on failure as done elsewhere in the function.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/staging/rtl8192u/ieee80211/ieee80211_module.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
+> b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c index
+> e3d47bc..82d4bf6 100644 ---
+> a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c +++
+> b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c @@ -161,7
+> +161,7 @@ struct net_device *alloc_ieee80211(int sizeof_priv) if
+> (ieee->pHTInfo = NULL) {
+>  		IEEE80211_DEBUG(IEEE80211_DL_ERR, "can't alloc
+> memory for HTInfo\n");
+> -		return NULL;
+> +		goto failed;
+>  	}
+>  	HTUpdateDefaultSetting(ieee);
+>  	HTInitializeHTInfo(ieee); //may move to other place.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+It looks like the rtl8192e/rtllib_module.c alloc_rtllib has the same
+error. They probably where based on the same function.
 
----
- drivers/staging/rtl8192u/ieee80211/ieee80211_module.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-index e3d47bc..82d4bf6 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-@@ -161,7 +161,7 @@ struct net_device *alloc_ieee80211(int sizeof_priv)
- 	if (ieee->pHTInfo = NULL)
- 	{
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "can't alloc memory for HTInfo\n");
--		return NULL;
-+		goto failed;
- 	}
- 	HTUpdateDefaultSetting(ieee);
- 	HTInitializeHTInfo(ieee); //may move to other place.
-
+Cheers,
+   Sean
