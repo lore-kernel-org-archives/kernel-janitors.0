@@ -1,44 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 21 Apr 2012 12:23:44 +0000
-Subject: [patch v2] wireless: at76c50x: allocating too much data
-Message-Id: <20120421122344.GA15362@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 22 Apr 2012 11:37:09 +0000
+Subject: [PATCH] drivers/staging/comedi/comedi_fops.c: add missing vfree
+Message-Id: <1335094629-15879-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <87vcku9sob.fsf@purkki.adurom.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>, Julian Calaby <julian.calaby@gmail.com>, Kalle Valo <kvalo@adurom.com>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ian Abbott <abbotti@mev.co.uk>
+Cc: kernel-janitors@vger.kernel.org, Mori Hess <fmhess@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-This is a cut and paste mistake, sizeof(struct mib_local) was intended
-instead of sizeof(struct mib_phy).  The call to at76_get_mib() uses
-sizeof(struct mib_local) correctly, although I changed that to
-sizeof(*m) for style reasons after discussion with some of the wireless
-maintainers.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The current code works fine because mib_phy structs are larger than
-mib_local structs.  But we may as well clean it up.
+aux_free is freed on all other exits from the function.  By removing the
+return, we can benefit from the vfree already at the end of the function.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-v2: use sizeof(*m) instead of sizeof(struct mib_local).
+ drivers/staging/comedi/comedi_fops.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/at76c50x-usb.c b/drivers/net/wireless/at76c50x-usb.c
-index faa8bcb..3036c0b 100644
---- a/drivers/net/wireless/at76c50x-usb.c
-+++ b/drivers/net/wireless/at76c50x-usb.c
-@@ -1122,12 +1122,12 @@ exit:
- static void at76_dump_mib_local(struct at76_priv *priv)
- {
- 	int ret;
--	struct mib_local *m = kmalloc(sizeof(struct mib_phy), GFP_KERNEL);
-+	struct mib_local *m = kmalloc(sizeof(*m), GFP_KERNEL);
+diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
+index a0861fb..06fc656 100644
+--- a/drivers/staging/comedi/comedi_fops.c
++++ b/drivers/staging/comedi/comedi_fops.c
+@@ -301,7 +301,7 @@ static int do_devconfig_ioctl(struct comedi_device *dev,
+ 	if (ret = 0) {
+ 		if (!try_module_get(dev->driver->module)) {
+ 			comedi_device_detach(dev);
+-			return -ENOSYS;
++			ret = -ENOSYS;
+ 		}
+ 	}
  
- 	if (!m)
- 		return;
- 
--	ret = at76_get_mib(priv->udev, MIB_LOCAL, m, sizeof(struct mib_local));
-+	ret = at76_get_mib(priv->udev, MIB_LOCAL, m, sizeof(*m));
- 	if (ret < 0) {
- 		wiphy_err(priv->hw->wiphy,
- 			  "at76_get_mib (LOCAL) failed: %d\n", ret);
+
