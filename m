@@ -1,51 +1,70 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Mon, 23 Apr 2012 17:23:44 +0000
-Subject: [PATCH] staging: android: binder: fix some sparse warnings and long lines
-Message-Id: <1335201824-17879-1-git-send-email-emilgoode@gmail.com>
+From: Marcos Souza <marcos.souza.org@gmail.com>
+Date: Mon, 23 Apr 2012 17:35:44 +0000
+Subject: Re: [PATCH] staging: android: binder: fix some sparse warnings and long lines
+Message-Id: <CAH0vN5+w3npzPi_CqcH2Q8XM=Zgf-eRQwEzkyrXy5tGY=EnkOw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1335201824-17879-1-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1335201824-17879-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="ibm866"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-This patch silences some sparse warnings and adds some line breaks
-to take the 80 char limit coding style rule in consideration.
-
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
- drivers/staging/android/binder.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
-index c283212..5d31417 100644
---- a/drivers/staging/android/binder.c
-+++ b/drivers/staging/android/binder.c
-@@ -1600,15 +1600,21 @@ static void binder_transaction(struct binder_proc *proc,
- 		case BINDER_TYPE_BINDER:
- 		case BINDER_TYPE_WEAK_BINDER: {
- 			struct binder_ref *ref;
--			struct binder_node *node = binder_get_node(proc, fp->binder);
-+			struct binder_node *node = binder_get_node(proc, 
-+						     (void __user *)fp->binder);
- 			if (node = NULL) {
--				node = binder_new_node(proc, fp->binder, fp->cookie);
-+				node = binder_new_node(proc, 
-+						(void __user *)fp->binder, 
-+						(void __user *)fp->cookie);
- 				if (node = NULL) {
- 					return_error = BR_FAILED_REPLY;
- 					goto err_binder_new_node_failed;
- 				}
--				node->min_priority = fp->flags & FLAT_BINDER_FLAG_PRIORITY_MASK;
--				node->accept_fds = !!(fp->flags & FLAT_BINDER_FLAG_ACCEPTS_FDS);
-+				node->min_priority = fp->flags & 
-+						FLAT_BINDER_FLAG_PRIORITY_MASK;
-+				
-+				node->accept_fds = !!(fp->flags & 
-+						FLAT_BINDER_FLAG_ACCEPTS_FDS);
- 			}
- 			if (fp->cookie != node->cookie) {
- 				binder_user_error("binder: %d:%d sending u%p "
--- 
-1.7.9.5
-
+UmVzZW5kIGluIHBsYWluIHRleHQsIHNvcnJ5Li4uCgo+IEVtIDIzIGRlIGFicmlsIGRlIDIwMTIg
+MTQ6MjMsIEVtaWwgR29vZGUgPGVtaWxnb29kZUBnbWFpbC5jb20+IGVzY3JldmV1Ogo+Cj4+IFRo
+aXMgcGF0Y2ggc2lsZW5jZXMgc29tZSBzcGFyc2Ugd2FybmluZ3MgYW5kIGFkZHMgc29tZSBsaW5l
+IGJyZWFrcwo+PiB0byB0YWtlIHRoZSA4MCBjaGFyIGxpbWl0IGNvZGluZyBzdHlsZSBydWxlIGlu
+IGNvbnNpZGVyYXRpb24uCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEVtaWwgR29vZGUgPGVtaWxnb29k
+ZUBnbWFpbC5jb20+Cj4KPgo+IE5pY2Ugd29yayBFbWlsIQo+Cj4gV2hhdCBkbyB5b3UgdGhpbmsg
+dG8gcHV0IHRoZSBzcGFyc2Ugd2FybmluZ3MgaW4gdGhlIGNvbW1pdCBtZXNzYWdlPwo+Cj4gSSB0
+aGluayBpdCBpcyBiZXR0ZXIgdG8gdW5kZXJzdGFuZKAgd2hhdCBhcmUgeW91IHRyeWluZyB0byBm
+aXguCj4KPj4KPj4gLS0tCj4+IKBkcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9iaW5kZXIuYyB8IKAg
+MTQgKysrKysrKysrKy0tLS0KPj4goDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCA0
+IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQv
+YmluZGVyLmMKPj4gYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9iaW5kZXIuYwo+PiBpbmRleCBj
+MjgzMjEyLi41ZDMxNDE3IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9i
+aW5kZXIuYwo+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9iaW5kZXIuYwo+PiBAQCAt
+MTYwMCwxNSArMTYwMCwyMSBAQCBzdGF0aWMgdm9pZCBiaW5kZXJfdHJhbnNhY3Rpb24oc3RydWN0
+IGJpbmRlcl9wcm9jCj4+ICpwcm9jLAo+PiCgIKAgoCCgIKAgoCCgIKBjYXNlIEJJTkRFUl9UWVBF
+X0JJTkRFUjoKPj4goCCgIKAgoCCgIKAgoCCgY2FzZSBCSU5ERVJfVFlQRV9XRUFLX0JJTkRFUjog
+ewo+PiCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoHN0cnVjdCBiaW5kZXJfcmVmICpyZWY7Cj4+IC0g
+oCCgIKAgoCCgIKAgoCCgIKAgoCCgIHN0cnVjdCBiaW5kZXJfbm9kZSAqbm9kZSA9IGJpbmRlcl9n
+ZXRfbm9kZShwcm9jLAo+PiBmcC0+YmluZGVyKTsKPj4gKyCgIKAgoCCgIKAgoCCgIKAgoCCgIKAg
+c3RydWN0IGJpbmRlcl9ub2RlICpub2RlID0gYmluZGVyX2dldF9ub2RlKHByb2MsCj4+ICsgoCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgKHZvaWQgX191
+c2VyCj4+ICopZnAtPmJpbmRlcik7Cj4+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgaWYgKG5vZGUg
+PSBOVUxMKSB7Cj4+IC0goCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgbm9kZSA9IGJpbmRl
+cl9uZXdfbm9kZShwcm9jLCBmcC0+YmluZGVyLAo+PiBmcC0+Y29va2llKTsKPj4gKyCgIKAgoCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCBub2RlID0gYmluZGVyX25ld19ub2RlKHByb2MsCj4+ICsg
+oCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgICh2b2lkIF9fdXNl
+cgo+PiAqKWZwLT5iaW5kZXIsCj4+ICsgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCg
+IKAgoCCgIKAgoCCgICh2b2lkIF9fdXNlcgo+PiAqKWZwLT5jb29raWUpOwo+PiCgIKAgoCCgIKAg
+oCCgIKAgoCCgIKAgoCCgIKAgoCCgaWYgKG5vZGUgPSBOVUxMKSB7Cj4+IKAgoCCgIKAgoCCgIKAg
+oCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoHJldHVybl9lcnJvciA9IEJSX0ZBSUxFRF9SRVBMWTsK
+Pj4goCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgZ290byBlcnJfYmluZGVy
+X25ld19ub2RlX2ZhaWxlZDsKPj4goCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoH0KPj4g
+LSCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCBub2RlLT5taW5fcHJpb3JpdHkgPSBmcC0+
+ZmxhZ3MgJgo+PiBGTEFUX0JJTkRFUl9GTEFHX1BSSU9SSVRZX01BU0s7Cj4+IC0goCCgIKAgoCCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgbm9kZS0+YWNjZXB0X2ZkcyA9ICEhKGZwLT5mbGFncyAmCj4+
+IEZMQVRfQklOREVSX0ZMQUdfQUNDRVBUU19GRFMpOwo+PiArIKAgoCCgIKAgoCCgIKAgoCCgIKAg
+oCCgIKAgoCCgIG5vZGUtPm1pbl9wcmlvcml0eSA9IGZwLT5mbGFncyAmCj4+ICsKPj4gRkxBVF9C
+SU5ERVJfRkxBR19QUklPUklUWV9NQVNLOwo+PiArCj4+ICsgoCCgIKAgoCCgIKAgoCCgIKAgoCCg
+IKAgoCCgIKAgbm9kZS0+YWNjZXB0X2ZkcyA9ICEhKGZwLT5mbGFncyAmCj4+ICsKPj4gRkxBVF9C
+SU5ERVJfRkxBR19BQ0NFUFRTX0ZEUyk7Cj4+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgfQo+PiCg
+IKAgoCCgIKAgoCCgIKAgoCCgIKAgoGlmIChmcC0+Y29va2llICE9IG5vZGUtPmNvb2tpZSkgewo+
+PiCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgIKAgoCCgYmluZGVyX3VzZXJfZXJyb3IoImJpbmRl
+cjogJWQ6JWQgc2VuZGluZwo+PiB1JXAgIgo+PiAtLQo+PiAxLjcuOS41Cj4+Cj4+IC0tCj4+IFRv
+IHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZQo+
+PiBrZXJuZWwtamFuaXRvcnMiIGluCj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRv
+bW9Admdlci5rZXJuZWwub3JnCj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgoGh0dHA6Ly92Z2Vy
+Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Cj4KPgo+Cj4gLS0KPiBBdHQsCj4KPiBN
+YXJjb3MgUGF1bG8gZGUgU291emEKPiBBY2Fk6m1pY28gZGUgQ2llbmNpYSBkYSBDb21wdXRh5+Nv
+IC0gRlVSQiAtIFNDCj4gIlVtYSB2aWRhIHNlbSBkZXNhZmlvcyDpIHVtYSB2aWRhIHNlbSByYXrj
+byIKPiAiQSBsaWZlIHdpdGhvdXQgY2hhbGxlbmdlcywgaXMgYSBub24gcmVhc29uIGxpZmUiCgoK
+CgotLQpBdHQsCgpNYXJjb3MgUGF1bG8gZGUgU291emEKQWNhZOptaWNvIGRlIENpZW5jaWEgZGEg
+Q29tcHV0YefjbyAtIEZVUkIgLSBTQwoiVW1hIHZpZGEgc2VtIGRlc2FmaW9zIOkgdW1hIHZpZGEg
+c2VtIHJheuNvIgoiQSBsaWZlIHdpdGhvdXQgY2hhbGxlbmdlcywgaXMgYSBub24gcmVhc29uIGxp
+ZmUiCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1
+YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpv
+cmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2Vy
+Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
