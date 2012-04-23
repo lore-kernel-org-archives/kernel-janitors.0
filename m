@@ -1,37 +1,53 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 18 Apr 2012 07:12:53 +0000
-Subject: Re: [patch 2/2] target: usb-gadget: cleanup duplicate initialization
-Message-Id: <1334733173.15333.2.camel@haakon2.linux-iscsi.org>
+From: Ryosuke Saito <raitosyo@gmail.com>
+Date: Mon, 23 Apr 2012 10:47:17 +0000
+Subject: [PATCH] mtd: block2mtd: page_read() never returns NULL
+Message-Id: <1335178037.3060.7.camel@HDL00099>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120417063215.GE26756@elgon.mountain>
-In-Reply-To: <20120417063215.GE26756@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-mtd@lists.infradead.org
+Cc: artem.bityutskiy@linux.intel.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2012-04-17 at 09:32 +0300, Dan Carpenter wrote:
-> Sparse points out that we initialize .bAlternateSetting twice.  But
-> fortunately USB_G_ALT_INT_BBB is zero so we initialize it to the same
-> value both times.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/target/usb-gadget/usb_gadget.c b/drivers/target/usb-gadget/usb_gadget.c
-> index ba62bef..78aa37e 100644
-> --- a/drivers/target/usb-gadget/usb_gadget.c
-> +++ b/drivers/target/usb-gadget/usb_gadget.c
-> @@ -1977,7 +1977,6 @@ static void usbg_deregister_configfs(void)
->  static struct usb_interface_descriptor bot_intf_desc = {
->  	.bLength =              sizeof(bot_intf_desc),
->  	.bDescriptorType =      USB_DT_INTERFACE,
-> -	.bAlternateSetting =	0,
->  	.bNumEndpoints =        2,
->  	.bAlternateSetting =	USB_G_ALT_INT_BBB,
->  	.bInterfaceClass =      USB_CLASS_MASS_STORAGE,
-> --
+page_read() never returns NULL, so we can remove the NULL check here.
 
-Applied.  Thanks DanC!
+Signed-off-by: Ryosuke Saito <raitosyo@gmail.com>
+---
+ drivers/mtd/devices/block2mtd.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---nab
+diff --git a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
+index a4a80b7..300aeb8 100644
+--- a/drivers/mtd/devices/block2mtd.c
++++ b/drivers/mtd/devices/block2mtd.c
+@@ -52,8 +52,6 @@ static int _block2mtd_erase(struct block2mtd_dev *dev, loff_t to, size_t len)
+ 
+ 	while (pages) {
+ 		page = page_read(mapping, index);
+-		if (!page)
+-			return -ENOMEM;
+ 		if (IS_ERR(page))
+ 			return PTR_ERR(page);
+ 
+@@ -112,8 +110,6 @@ static int block2mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 		len = len - cpylen;
+ 
+ 		page = page_read(dev->blkdev->bd_inode->i_mapping, index);
+-		if (!page)
+-			return -ENOMEM;
+ 		if (IS_ERR(page))
+ 			return PTR_ERR(page);
+ 
+@@ -148,8 +144,6 @@ static int _block2mtd_write(struct block2mtd_dev *dev, const u_char *buf,
+ 		len = len - cpylen;
+ 
+ 		page = page_read(mapping, index);
+-		if (!page)
+-			return -ENOMEM;
+ 		if (IS_ERR(page))
+ 			return PTR_ERR(page);
+ 
+-- 
+1.7.9.6
+
 
