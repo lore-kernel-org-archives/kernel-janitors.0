@@ -1,52 +1,51 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Sat, 28 Apr 2012 11:58:33 +0000
-Subject: Re: [PATCH] mtd: block2mtd: page_read() never returns NULL
-Message-Id: <1335614313.1937.11.camel@koala>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-ZR4h+uVcq+YhJ9S2s/AQ"
+From: Emil Goode <emilgoode@gmail.com>
+Date: Mon, 23 Apr 2012 17:23:44 +0000
+Subject: [PATCH] staging: android: binder: fix some sparse warnings and long lines
+Message-Id: <1335201824-17879-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1335178037.3060.7.camel@HDL00099>
-In-Reply-To: <1335178037.3060.7.camel@HDL00099>
-To: Ryosuke Saito <raitosyo@gmail.com>
-Cc: artem.bityutskiy@linux.intel.com, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-
-
---=-ZR4h+uVcq+YhJ9S2s/AQ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2012-04-23 at 19:47 +0900, Ryosuke Saito wrote:
-> page_read() never returns NULL, so we can remove the NULL check here.
->=20
-> Signed-off-by: Ryosuke Saito <raitosyo@gmail.com>
-
-Pushed to l2-mtd.git, thanks!
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-ZR4h+uVcq+YhJ9S2s/AQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+This patch silences some sparse warnings and adds some line breaks
+to take the 80 char limit coding style rule in consideration.
 
-iQIcBAABAgAGBQJPm9tpAAoJECmIfjd9wqK0v2YP/ioq2oahVcooAX7+ejoNUbUy
-Kmkyty85dz+EC4pzP6gX1bYcJGWscxwffAU7EfutO2kVfFuLne0UndiHCj4j1c0V
-x4pDsM5qz/kYDLMrln5AQjQ/9L8tcvfHPqmRJeY6d9iDP/Uw7y9Ruy7lGy+tNUlZ
-dIsGizZ3s6fM7Vm4DHwep1avxAKNK0t9ggapXDoquzSppwCHDY6F3pGZQgDoG1AH
-RBuz7nPXSYcZZvkEFXaVRUUK+cOmzE3hHF3CpHWStSaJBXmIy807jRHSGNep4TaD
-lU4NsHQ8uENQb6Od9ZnqdQQA0ImrT0depd3f0cuRqDleHPpjmpC9NrUehj2TwyEu
-Qr3X8MzLr15SwQXTCfaCF3OTK/QKFb4+wzRG6AW6S+LCe/onzgexGEm26ZnEP9Ud
-Uq3+Y+jUcBdTjmYeR8PqE9uIcmKVazI2OuxCiqcotbv1R7Ve7YqAcbkYWEincfzf
-nDNvmvY+DIMKlx9PQlGdGIuMraaVVQz85+7evjUBGYaGbfctIoVobXjo8yA8jLfH
-j4TPWzFnHjaTQZAfg3rJApr6UUEiDEbnslHyjJ5/jMhYaX3OG4yj2b+L6ANv+VPp
-fvwnq3C8sXKClpXeVM3GSI4XHkCfcBOh4v0RDzNdLdHCW1WsZWp6P2kIWAzzvcZ3
-1p3Btrr4x7F9d4m25duF
-=9RXd
------END PGP SIGNATURE-----
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/staging/android/binder.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---=-ZR4h+uVcq+YhJ9S2s/AQ--
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index c283212..5d31417 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -1600,15 +1600,21 @@ static void binder_transaction(struct binder_proc *proc,
+ 		case BINDER_TYPE_BINDER:
+ 		case BINDER_TYPE_WEAK_BINDER: {
+ 			struct binder_ref *ref;
+-			struct binder_node *node = binder_get_node(proc, fp->binder);
++			struct binder_node *node = binder_get_node(proc, 
++						     (void __user *)fp->binder);
+ 			if (node = NULL) {
+-				node = binder_new_node(proc, fp->binder, fp->cookie);
++				node = binder_new_node(proc, 
++						(void __user *)fp->binder, 
++						(void __user *)fp->cookie);
+ 				if (node = NULL) {
+ 					return_error = BR_FAILED_REPLY;
+ 					goto err_binder_new_node_failed;
+ 				}
+-				node->min_priority = fp->flags & FLAT_BINDER_FLAG_PRIORITY_MASK;
+-				node->accept_fds = !!(fp->flags & FLAT_BINDER_FLAG_ACCEPTS_FDS);
++				node->min_priority = fp->flags & 
++						FLAT_BINDER_FLAG_PRIORITY_MASK;
++				
++				node->accept_fds = !!(fp->flags & 
++						FLAT_BINDER_FLAG_ACCEPTS_FDS);
+ 			}
+ 			if (fp->cookie != node->cookie) {
+ 				binder_user_error("binder: %d:%d sending u%p "
+-- 
+1.7.9.5
 
