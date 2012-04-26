@@ -1,43 +1,119 @@
-From: Jeff Layton <jlayton@redhat.com>
-Date: Mon, 30 Apr 2012 15:15:14 +0000
-Subject: Re: [patch v2] cifs: fix revalidation test in cifs_llseek()
-Message-Id: <20120430111514.72b54efa@corrin.poochiereds.net>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Date: Thu, 26 Apr 2012 21:42:22 +0000
+Subject: Re: [Xen-devel] [PATCH] drivers/video/xen-fbfront.c: add missing cleanup code
+Message-Id: <20120426214222.GA11289@phenom.dumpdata.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120419210619.GA19074@elgon.mountain>
-	<CAKywueQrrHdqXXrHQbP=vjs_MLjksvR09cpax0iWw-PS6ms=fg@mail.gmail.com>
-	<20120430143621.GK6447@mwanda>
-In-Reply-To: <20120430143621.GK6447@mwanda>
+References: <1335088660-13219-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1335088660-13219-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Pavel Shilovsky <piastryyy-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, Josef Bacik <josef-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>, FlorianSchandinat@gmx.de
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, virtualization@lists.linux-foundation.org
 
-On Mon, 30 Apr 2012 17:36:21 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> This test is always true so it means we revalidate the length every
-> time, which generates more network traffic.  When it is SEEK_SET or
-> SEEK_CUR, then we don't need to revalidate.
+On Sun, Apr 22, 2012 at 11:57:40AM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> The operations in the subsequent error-handling code appear to be also
+> useful here.
+
+How about doing it this way?
+Florian, are you OK me carrying this patch in my tree for Linus or would
+you prefer to do it?
+
+commit a833fb9973b47cb30d1086e73f20b62a425bcd85
+Author: Julia Lawall <Julia.Lawall@lip6.fr>
+Date:   Sun Apr 22 11:57:40 2012 +0200
+
+    drivers/video/xen-fbfront.c: add missing cleanup code
+    
+    The operations in the subsequent error-handling code appear to be also
+    useful here.
+    
+    Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+    [v1: Collapse some of the error handling functions]
+    Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+
+diff --git a/drivers/video/xen-fbfront.c b/drivers/video/xen-fbfront.c
+index cb4529c..aa42160 100644
+--- a/drivers/video/xen-fbfront.c
++++ b/drivers/video/xen-fbfront.c
+@@ -458,26 +458,31 @@ static int __devinit xenfb_probe(struct xenbus_device *dev,
+ 	xenfb_init_shared_page(info, fb_info);
+ 
+ 	ret = xenfb_connect_backend(dev, info);
+-	if (ret < 0)
+-		goto error;
++	if (ret < 0) {
++		xenbus_dev_fatal(dev, ret, "xenfb_connect_backend");
++		goto error_fb;
++	}
+ 
+ 	ret = register_framebuffer(fb_info);
+ 	if (ret) {
+-		fb_deferred_io_cleanup(fb_info);
+-		fb_dealloc_cmap(&fb_info->cmap);
+-		framebuffer_release(fb_info);
+ 		xenbus_dev_fatal(dev, ret, "register_framebuffer");
+-		goto error;
++		goto error_fb;
+ 	}
+ 	info->fb_info = fb_info;
+ 
+ 	xenfb_make_preferred_console();
+ 	return 0;
+ 
+- error_nomem:
+-	ret = -ENOMEM;
+-	xenbus_dev_fatal(dev, ret, "allocating device memory");
+- error:
++error_fb:
++	fb_deferred_io_cleanup(fb_info);
++	fb_dealloc_cmap(&fb_info->cmap);
++	framebuffer_release(fb_info);
++error_nomem:
++	if (!ret) {
++		ret = -ENOMEM;
++		xenbus_dev_fatal(dev, ret, "allocating device memory");
++	}
++error:
+ 	xenfb_remove(dev);
+ 	return ret;
+ }
+
+
+
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
 > ---
-> v2:  I had the test reversed in the first version.
+> Not tested.
 > 
-> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-> index 811245b..4a6ad20 100644
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@ -699,7 +699,7 @@ static loff_t cifs_llseek(struct file *file, loff_t offset, int origin)
->  	 * origin = SEEK_END || SEEK_DATA || SEEK_HOLE => we must revalidate
->  	 * the cached file length
->  	 */
-> -	if (origin != SEEK_SET || origin != SEEK_CUR) {
-> +	if (origin != SEEK_SET && origin != SEEK_CUR) {
->  		int rc;
->  		struct inode *inode = file->f_path.dentry->d_inode;
+>  drivers/video/xen-fbfront.c |    7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/video/xen-fbfront.c b/drivers/video/xen-fbfront.c
+> index cb4529c..b0bd59c 100644
+> --- a/drivers/video/xen-fbfront.c
+> +++ b/drivers/video/xen-fbfront.c
+> @@ -458,8 +458,13 @@ static int __devinit xenfb_probe(struct xenbus_device *dev,
+>  	xenfb_init_shared_page(info, fb_info);
 >  
-
-Looks good.
-
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
+>  	ret = xenfb_connect_backend(dev, info);
+> -	if (ret < 0)
+> +	if (ret < 0) {
+> +		fb_deferred_io_cleanup(fb_info);
+> +		fb_dealloc_cmap(&fb_info->cmap);
+> +		framebuffer_release(fb_info);
+> +		xenbus_dev_fatal(dev, ret, "xenfb_connect_backend");
+>  		goto error;
+> +	}
+>  
+>  	ret = register_framebuffer(fb_info);
+>  	if (ret) {
+> 
+> 
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xen.org
+> http://lists.xen.org/xen-devel
