@@ -1,37 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 19 Apr 2012 21:06:19 +0000
-Subject: [patch] cifs: fix revalidation test in cifs_llseek()
-Message-Id: <20120419210619.GA19074@elgon.mountain>
+From: Pavel Shilovsky <piastryyy@gmail.com>
+Date: Fri, 27 Apr 2012 12:59:07 +0000
+Subject: Re: [patch] cifs: fix revalidation test in cifs_llseek()
+Message-Id: <CAKywueQrrHdqXXrHQbP=vjs_MLjksvR09cpax0iWw-PS6ms=fg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120419210619.GA19074@elgon.mountain>
+In-Reply-To: <20120419210619.GA19074-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>
-Cc: linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org, samba-technical@lists.samba.org, Josef Bacik <josef@redhat.com>
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, Josef Bacik <josef-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 
-This test is always true so it means we revalidate the length every
-time, which generates more network traffic.  This was introduced in
-06222e491e "fs: handle SEEK_HOLE/SEEK_DATA properly in all fs's that
-define their own llseek".
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Josef, there were three other places that had this same problem but I
-think they've all been fixed now.  Except that I had a question about
-nfs_file_llseek().  Isn't that reversed?  It seems like it only
-revalidates when it's not supposed to.  I chose to copy what
-fuse_file_llseek() does instead.
-
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index d342128..97d26c7 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -695,7 +695,7 @@ static loff_t cifs_llseek(struct file *file, loff_t offset, int origin)
- 	 * origin = SEEK_END || SEEK_DATA || SEEK_HOLE => we must revalidate
- 	 * the cached file length
- 	 */
--	if (origin != SEEK_SET || origin != SEEK_CUR) {
-+	if (origin = SEEK_SET || origin = SEEK_CUR) {
- 		int rc;
- 		struct inode *inode = file->f_path.dentry->d_inode;
- 
+MjAgwdDSxczRIDIwMTKaxy4gMTowNiDQz8zY2s/XwdTFzNggRGFuIENhcnBlbnRlcgo8ZGFuLmNh
+cnBlbnRlckBvcmFjbGUuY29tPiDOwdDJ08HMOgo+IFRoaXMgdGVzdCBpcyBhbHdheXMgdHJ1ZSBz
+byBpdCBtZWFucyB3ZSByZXZhbGlkYXRlIHRoZSBsZW5ndGggZXZlcnkKPiB0aW1lLCB3aGljaCBn
+ZW5lcmF0ZXMgbW9yZSBuZXR3b3JrIHRyYWZmaWMuIJpUaGlzIHdhcyBpbnRyb2R1Y2VkIGluCj4g
+MDYyMjJlNDkxZSAiZnM6IGhhbmRsZSBTRUVLX0hPTEUvU0VFS19EQVRBIHByb3Blcmx5IGluIGFs
+bCBmcydzIHRoYXQKPiBkZWZpbmUgdGhlaXIgb3duIGxsc2VlayIuCj4KPiBTaWduZWQtb2ZmLWJ5
+OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+Cj4gLS0tCj4gSm9zZWYs
+IHRoZXJlIHdlcmUgdGhyZWUgb3RoZXIgcGxhY2VzIHRoYXQgaGFkIHRoaXMgc2FtZSBwcm9ibGVt
+IGJ1dCBJCj4gdGhpbmsgdGhleSd2ZSBhbGwgYmVlbiBmaXhlZCBub3cuIJpFeGNlcHQgdGhhdCBJ
+IGhhZCBhIHF1ZXN0aW9uIGFib3V0Cj4gbmZzX2ZpbGVfbGxzZWVrKCkuIJpJc24ndCB0aGF0IHJl
+dmVyc2VkPyCaSXQgc2VlbXMgbGlrZSBpdCBvbmx5Cj4gcmV2YWxpZGF0ZXMgd2hlbiBpdCdzIG5v
+dCBzdXBwb3NlZCB0by4gmkkgY2hvc2UgdG8gY29weSB3aGF0Cj4gZnVzZV9maWxlX2xsc2Vlaygp
+IGRvZXMgaW5zdGVhZC4KPgo+IGRpZmYgLS1naXQgYS9mcy9jaWZzL2NpZnNmcy5jIGIvZnMvY2lm
+cy9jaWZzZnMuYwo+IGluZGV4IGQzNDIxMjguLjk3ZDI2YzcgMTAwNjQ0Cj4gLS0tIGEvZnMvY2lm
+cy9jaWZzZnMuYwo+ICsrKyBiL2ZzL2NpZnMvY2lmc2ZzLmMKPiBAQCAtNjk1LDcgKzY5NSw3IEBA
+IHN0YXRpYyBsb2ZmX3QgY2lmc19sbHNlZWsoc3RydWN0IGZpbGUgKmZpbGUsIGxvZmZfdCBvZmZz
+ZXQsIGludCBvcmlnaW4pCj4gmiCaIJogmiAqIG9yaWdpbiA9IFNFRUtfRU5EIHx8IFNFRUtfREFU
+QSB8fCBTRUVLX0hPTEUgPT4gd2UgbXVzdCByZXZhbGlkYXRlCj4gmiCaIJogmiAqIHRoZSBjYWNo
+ZWQgZmlsZSBsZW5ndGgKPiCaIJogmiCaICovCj4gLSCaIJogmiBpZiAob3JpZ2luICE9IFNFRUtf
+U0VUIHx8IG9yaWdpbiAhPSBTRUVLX0NVUikgewo+ICsgmiCaIJogaWYgKG9yaWdpbiA9IFNFRUtf
+U0VUIHx8IG9yaWdpbiA9IFNFRUtfQ1VSKSB7Cj4gmiCaIJogmiCaIJogmiCaaW50IHJjOwo+IJog
+miCaIJogmiCaIJogmnN0cnVjdCBpbm9kZSAqaW5vZGUgPSBmaWxlLT5mX3BhdGguZGVudHJ5LT5k
+X2lub2RlOwo+CgpJbiB0aGlzIGNhc2UgdGhlIHNlbWFudGljIGNvbnRyYWRpY3QgdGhlIGNvbW1l
+bnQgYWJvdmUuIE1heSBiZSBpdApzaG91bGQgYmUgImlmIChvcmlnaW4gIT0gU0VFS19TRVQgJiYg
+b3JpZ2luICE9IFNFRUtfQ1VSKSI/CgotLSAKQmVzdCByZWdhcmRzLApQYXZlbCBTaGlsb3Zza3ku
+Ci0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNj
+cmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRv
+bW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
+cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
