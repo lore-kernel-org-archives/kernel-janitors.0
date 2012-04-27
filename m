@@ -1,72 +1,56 @@
-From: Pankaj Baranwal <Pankaj.Baranwal@hcl.in>
-Date: Fri, 27 Apr 2012 13:20:57 +0000
-Subject: RE: [patch] cifs: fix revalidation test in cifs_llseek()
-Message-Id: <AD32159B1843864D8CB027AD1A54E8375187694FB6@CHN-HCLT-EVS09.HCLT.CORP.HCL.IN>
+From: Jeff Layton <jlayton@samba.org>
+Date: Fri, 27 Apr 2012 13:40:33 +0000
+Subject: Re: [patch] cifs: fix revalidation test in cifs_llseek()
+Message-Id: <20120427094033.18733a5f@corrin.poochiereds.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120419210619.GA19074@elgon.mountain>
- <CAKywueQrrHdqXXrHQbP=vjs_MLjksvR09cpax0iWw-PS6ms=fg@mail.gmail.com>
-In-Reply-To: <CAKywueQrrHdqXXrHQbP=vjs_MLjksvR09cpax0iWw-PS6ms=fg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+	<CAKywueQrrHdqXXrHQbP=vjs_MLjksvR09cpax0iWw-PS6ms=fg@mail.gmail.com>
+In-Reply-To: <CAKywueQrrHdqXXrHQbP=vjs_MLjksvR09cpax0iWw-PS6ms=fg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="koi8-r"
-Content-Transfer-Encoding: base64
-To: Pavel Shilovsky <piastryyy-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org" <samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org>, Josef Bacik <josef-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Pavel Shilovsky <piastryyy@gmail.com>
+Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org, Steve French <sfrench@samba.org>, Dan Carpenter <dan.carpenter@oracle.com>, Josef Bacik <josef@redhat.com>
 
-Q291bGQgeW91IHBsZWFzZSB1bnNjcmliZSBtZSBmcm9tIHRoaXMgbGlzdAoKLS0tLS1PcmlnaW5h
-bCBNZXNzYWdlLS0tLS0KRnJvbTogc2FtYmEtdGVjaG5pY2FsLWJvdW5jZXNAbGlzdHMuc2FtYmEu
-b3JnIFttYWlsdG86c2FtYmEtdGVjaG5pY2FsLWJvdW5jZXNAbGlzdHMuc2FtYmEub3JnXSBPbiBC
-ZWhhbGYgT2YgUGF2ZWwgU2hpbG92c2t5ClNlbnQ6IEZyaWRheSwgQXByaWwgMjcsIDIwMTIgNjoy
-OSBQTQpUbzogRGFuIENhcnBlbnRlcgpDYzogU3RldmUgRnJlbmNoOyBsaW51eC1jaWZzQHZnZXIu
-a2VybmVsLm9yZzsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgc2FtYmEtdGVjaG5p
-Y2FsQGxpc3RzLnNhbWJhLm9yZzsgSm9zZWYgQmFjaWsKU3ViamVjdDogUmU6IFtwYXRjaF0gY2lm
-czogZml4IHJldmFsaWRhdGlvbiB0ZXN0IGluIGNpZnNfbGxzZWVrKCkKCjIwIMHQ0sXM0SAyMDEy
-IMcuIDE6MDYg0M/M2NrP18HUxczYIERhbiBDYXJwZW50ZXIKPGRhbi5jYXJwZW50ZXJAb3JhY2xl
-LmNvbT4gzsHQydPBzDoKPiBUaGlzIHRlc3QgaXMgYWx3YXlzIHRydWUgc28gaXQgbWVhbnMgd2Ug
-cmV2YWxpZGF0ZSB0aGUgbGVuZ3RoIGV2ZXJ5Cj4gdGltZSwgd2hpY2ggZ2VuZXJhdGVzIG1vcmUg
-bmV0d29yayB0cmFmZmljLiAgVGhpcyB3YXMgaW50cm9kdWNlZCBpbgo+IDA2MjIyZTQ5MWUgImZz
-OiBoYW5kbGUgU0VFS19IT0xFL1NFRUtfREFUQSBwcm9wZXJseSBpbiBhbGwgZnMncyB0aGF0Cj4g
-ZGVmaW5lIHRoZWlyIG93biBsbHNlZWsiLgo+Cj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRl
-ciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPgo+IC0tLQo+IEpvc2VmLCB0aGVyZSB3ZXJlIHRo
-cmVlIG90aGVyIHBsYWNlcyB0aGF0IGhhZCB0aGlzIHNhbWUgcHJvYmxlbSBidXQgSQo+IHRoaW5r
-IHRoZXkndmUgYWxsIGJlZW4gZml4ZWQgbm93LiAgRXhjZXB0IHRoYXQgSSBoYWQgYSBxdWVzdGlv
-biBhYm91dAo+IG5mc19maWxlX2xsc2VlaygpLiAgSXNuJ3QgdGhhdCByZXZlcnNlZD8gIEl0IHNl
-ZW1zIGxpa2UgaXQgb25seQo+IHJldmFsaWRhdGVzIHdoZW4gaXQncyBub3Qgc3VwcG9zZWQgdG8u
-ICBJIGNob3NlIHRvIGNvcHkgd2hhdAo+IGZ1c2VfZmlsZV9sbHNlZWsoKSBkb2VzIGluc3RlYWQu
-Cj4KPiBkaWZmIC0tZ2l0IGEvZnMvY2lmcy9jaWZzZnMuYyBiL2ZzL2NpZnMvY2lmc2ZzLmMKPiBp
-bmRleCBkMzQyMTI4Li45N2QyNmM3IDEwMDY0NAo+IC0tLSBhL2ZzL2NpZnMvY2lmc2ZzLmMKPiAr
-KysgYi9mcy9jaWZzL2NpZnNmcy5jCj4gQEAgLTY5NSw3ICs2OTUsNyBAQCBzdGF0aWMgbG9mZl90
-IGNpZnNfbGxzZWVrKHN0cnVjdCBmaWxlICpmaWxlLCBsb2ZmX3Qgb2Zmc2V0LCBpbnQgb3JpZ2lu
-KQo+ICAgICAgICAgKiBvcmlnaW4gPSBTRUVLX0VORCB8fCBTRUVLX0RBVEEgfHwgU0VFS19IT0xF
-ID0+IHdlIG11c3QgcmV2YWxpZGF0ZQo+ICAgICAgICAgKiB0aGUgY2FjaGVkIGZpbGUgbGVuZ3Ro
-Cj4gICAgICAgICAqLwo+IC0gICAgICAgaWYgKG9yaWdpbiAhPSBTRUVLX1NFVCB8fCBvcmlnaW4g
-IT0gU0VFS19DVVIpIHsKPiArICAgICAgIGlmIChvcmlnaW4gPSBTRUVLX1NFVCB8fCBvcmlnaW4g
-PSBTRUVLX0NVUikgewo+ICAgICAgICAgICAgICAgIGludCByYzsKPiAgICAgICAgICAgICAgICBz
-dHJ1Y3QgaW5vZGUgKmlub2RlID0gZmlsZS0+Zl9wYXRoLmRlbnRyeS0+ZF9pbm9kZTsKPgoKSW4g
-dGhpcyBjYXNlIHRoZSBzZW1hbnRpYyBjb250cmFkaWN0IHRoZSBjb21tZW50IGFib3ZlLiBNYXkg
-YmUgaXQKc2hvdWxkIGJlICJpZiAob3JpZ2luICE9IFNFRUtfU0VUICYmIG9yaWdpbiAhPSBTRUVL
-X0NVUikiPwoKLS0KQmVzdCByZWdhcmRzLApQYXZlbCBTaGlsb3Zza3kuCgoKCjo6RElTQ0xBSU1F
-Ujo6Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tCgpUaGUgY29udGVudHMgb2YgdGhpcyBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50
-KHMpIGFyZSBjb25maWRlbnRpYWwgYW5kIGludGVuZGVkIGZvciB0aGUgbmFtZWQgcmVjaXBpZW50
-KHMpIG9ubHkuCkUtbWFpbCB0cmFuc21pc3Npb24gY2Fubm90IGJlIGd1YXJhbnRlZWQgdG8gYmUg
-c2VjdXJlIG9yIGVycm9yLWZyZWUgYXMgaW5mb3JtYXRpb24gY291bGQgYmUgaW50ZXJjZXB0ZWQs
-IGNvcnJ1cHRlZCwKbG9zdCwgZGVzdHJveWVkLCBhcnJpdmUgbGF0ZSBvciBpbmNvbXBsZXRlLCBv
-ciBjb250YWluIHZpcnVzZXMuVGhlIGUgbWFpbCBhbmQgaXRzIGNvbnRlbnRzICh3aXRoIG9yIHdp
-dGhvdXQgcmVmZXJyZWQKZXJyb3JzKSBzaGFsbCB0aGVyZWZvcmUgbm90IGF0dGFjaCBhbnkgbGlh
-YmlsaXR5IG9uIHRoZSBvcmlnaW5hdG9yIG9yIEhDTCBvciBpdHMgYWZmaWxpYXRlcy4gQW55IHZp
-ZXdzIG9yIG9waW5pb25zCnByZXNlbnRlZCBpbiB0aGlzIGVtYWlsIGFyZSBzb2xlbHkgdGhvc2Ug
-b2YgdGhlIGF1dGhvciBhbmQgbWF5IG5vdCBuZWNlc3NhcmlseSByZWZsZWN0IHRoZSBvcGluaW9u
-cyBvZiBIQ0wgb3IgaXRzCmFmZmlsaWF0ZXMuIEFueSBmb3JtIG9mIHJlcHJvZHVjdGlvbiwgZGlz
-c2VtaW5hdGlvbiwgY29weWluZywgZGlzY2xvc3VyZSwgTW9kaWZpY2F0aW9uLCBkaXN0cmlidXRp
-b24gYW5kL29yIHB1YmxpY2F0aW9uCm9mIHRoaXMgbWVzc2FnZSB3aXRob3V0IHRoZSBwcmlvciB3
-cml0dGVuIGNvbnNlbnQgb2YgdGhlIGF1dGhvciBvZiB0aGlzIGUtbWFpbCBpcyBzdHJpY3RseSBw
-cm9oaWJpdGVkLiBJZiB5b3UgaGF2ZQpyZWNlaXZlZCB0aGlzIGVtYWlsIGluIGVycm9yIHBsZWFz
-ZSBkZWxldGUgaXQgYW5kIG5vdGlmeSB0aGUgc2VuZGVyIGltbWVkaWF0ZWx5LiBCZWZvcmUgb3Bl
-bmluZyBhbnkgbWFpbCBhbmQgYXR0YWNobWVudHMKcGxlYXNlIGNoZWNrIHRoZW0gZm9yIHZpcnVz
-ZXMgYW5kIGRlZmVjdC4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
-ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9m
-IGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGlu
-Zm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+On Fri, 27 Apr 2012 16:59:07 +0400
+Pavel Shilovsky <piastryyy@gmail.com> wrote:
+
+> 20 апреля 2012 г. 1:06 пользователь Dan Carpenter
+> <dan.carpenter@oracle.com> написал:
+> > This test is always true so it means we revalidate the length every
+> > time, which generates more network traffic.  This was introduced in
+> > 06222e491e "fs: handle SEEK_HOLE/SEEK_DATA properly in all fs's that
+> > define their own llseek".
+> >
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > Josef, there were three other places that had this same problem but I
+> > think they've all been fixed now.  Except that I had a question about
+> > nfs_file_llseek().  Isn't that reversed?  It seems like it only
+> > revalidates when it's not supposed to.  I chose to copy what
+> > fuse_file_llseek() does instead.
+> >
+> > diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+> > index d342128..97d26c7 100644
+> > --- a/fs/cifs/cifsfs.c
+> > +++ b/fs/cifs/cifsfs.c
+> > @@ -695,7 +695,7 @@ static loff_t cifs_llseek(struct file *file, loff_t offset, int origin)
+> >         * origin = SEEK_END || SEEK_DATA || SEEK_HOLE => we must revalidate
+> >         * the cached file length
+> >         */
+> > -       if (origin != SEEK_SET || origin != SEEK_CUR) {
+> > +       if (origin = SEEK_SET || origin = SEEK_CUR) {
+> >                int rc;
+> >                struct inode *inode = file->f_path.dentry->d_inode;
+> >
+> 
+> In this case the semantic contradict the comment above. May be it
+> should be "if (origin != SEEK_SET && origin != SEEK_CUR)"?
+> 
+
+Agreed, I think Pavel is correct here. The stuff inside the if block
+revalidates the file size, and we only need to do that if whence is not
+SEEK_SET or SEEK_CUR.
+
+-- 
+Jeff Layton <jlayton@samba.org>
