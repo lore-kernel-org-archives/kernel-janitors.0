@@ -1,53 +1,37 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Apr 2012 05:58:58 +0000
-Subject: [PATCH] drivers/edac/i3200_edac.c: add missing iounmap
-Message-Id: <1335765538-30399-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Apr 2012 20:14:44 +0000
+Subject: [PATCH] drivers/scsi/scsi_debug.c: add missing vfrees
+Message-Id: <1335730484-21083-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Thompson <dougthompson@xmission.com>
-Cc: kernel-janitors@vger.kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Add iounmap in the case where window has already been allocated.
-Reorganize the error handling code at the end of the function so that if is
-not needed.
+Free dif_storep and fake_storep on failure as done in nearby error-handling
+code.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/edac/i3200_edac.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/scsi/scsi_debug.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/edac/i3200_edac.c b/drivers/edac/i3200_edac.c
-index 046808c..55c4336 100644
---- a/drivers/edac/i3200_edac.c
-+++ b/drivers/edac/i3200_edac.c
-@@ -338,8 +338,10 @@ static int i3200_probe1(struct pci_dev *pdev, int dev_idx)
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 182d5a5..16e44f8 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -3393,7 +3393,8 @@ static int __init scsi_debug_init(void)
+ 			printk(KERN_ERR
+ 			       "%s: ERR: unmap_granularity < unmap_alignment\n",
+ 			       __func__);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto free_vm;
+ 		}
  
- 	mci = edac_mc_alloc(sizeof(struct i3200_priv), I3200_RANKS,
- 		nr_channels, 0);
--	if (!mci)
--		return -ENOMEM;
-+	if (!mci) {
-+		rc = -ENOMEM;
-+		goto fail_alloc;
-+	}
- 
- 	debugf3("MC: %s(): init mci\n", __func__);
- 
-@@ -404,9 +406,9 @@ static int i3200_probe1(struct pci_dev *pdev, int dev_idx)
- 	return 0;
- 
- fail:
-+	edac_mc_free(mci);
-+fail_alloc:
- 	iounmap(window);
--	if (mci)
--		edac_mc_free(mci);
- 
- 	return rc;
- }
+ 		map_size = (sdebug_store_sectors / scsi_debug_unmap_granularity);
 
