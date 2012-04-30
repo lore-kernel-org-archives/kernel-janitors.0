@@ -1,27 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Apr 2012 10:57:02 +0000
-Subject: [patch] wlcore: release lock on error in wl1271_op_suspend()
-Message-Id: <20120416105702.GA25234@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Apr 2012 05:58:58 +0000
+Subject: [PATCH] drivers/edac/i3200_edac.c: add missing iounmap
+Message-Id: <1335765538-30399-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Luciano Coelho <coelho@ti.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Eliad Peller <eliad@wizery.com>, Arik Nemtsov <arik@wizery.com>, Shahar Levi <shahar_levi@ti.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Doug Thompson <dougthompson@xmission.com>
+Cc: kernel-janitors@vger.kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should release this lock before returning.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add iounmap in the case where window has already been allocated.
+Reorganize the error handling code at the end of the function so that if is
+not needed.
 
-diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
-index 2b0f987..23fc0d2 100644
---- a/drivers/net/wireless/ti/wlcore/main.c
-+++ b/drivers/net/wireless/ti/wlcore/main.c
-@@ -1364,6 +1364,7 @@ static int wl1271_op_suspend(struct ieee80211_hw *hw,
- 	wl12xx_for_each_wlvif(wl, wlvif) {
- 		ret = wl1271_configure_suspend(wl, wlvif);
- 		if (ret < 0) {
-+			mutex_unlock(&wl->mutex);
- 			wl1271_warning("couldn't prepare device to suspend");
- 			return ret;
- 		}
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/edac/i3200_edac.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/edac/i3200_edac.c b/drivers/edac/i3200_edac.c
+index 046808c..55c4336 100644
+--- a/drivers/edac/i3200_edac.c
++++ b/drivers/edac/i3200_edac.c
+@@ -338,8 +338,10 @@ static int i3200_probe1(struct pci_dev *pdev, int dev_idx)
+ 
+ 	mci = edac_mc_alloc(sizeof(struct i3200_priv), I3200_RANKS,
+ 		nr_channels, 0);
+-	if (!mci)
+-		return -ENOMEM;
++	if (!mci) {
++		rc = -ENOMEM;
++		goto fail_alloc;
++	}
+ 
+ 	debugf3("MC: %s(): init mci\n", __func__);
+ 
+@@ -404,9 +406,9 @@ static int i3200_probe1(struct pci_dev *pdev, int dev_idx)
+ 	return 0;
+ 
+ fail:
++	edac_mc_free(mci);
++fail_alloc:
+ 	iounmap(window);
+-	if (mci)
+-		edac_mc_free(mci);
+ 
+ 	return rc;
+ }
+
