@@ -1,61 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Apr 2012 20:37:31 +0000
-Subject: [patch v2] Staging: rtl8192u: fix some memory corruption
-Message-Id: <20120417203553.GA18206@mwanda>
+From: Dan Carpenter <error27@gmail.com>
+Date: Mon, 30 Apr 2012 16:03:46 +0000
+Subject: Re: [patch 2/2] [SCSI] pmcraid: cpu_to_le32() => cpu_to_le64()
+Message-Id: <CA+_b7DK0SogSMQVKP0KoBwOpCoidO=U__AaUr4YuEd4DJV4k=g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20111216102137.GB4287@elgon.mountain>
+In-Reply-To: <20111216102137.GB4287@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Anil Ravindranath <anil_ravindranath@pmc-sierra.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-When we received a command we incremented a stat counter depending on
-the type of message.  The problem is there were 8 types of commands but
-there were only 4 counters allocated so it corrupted memory past the
-end of the rxcmdpkt[] array.
+ping?
 
-The fix is just to remove the counters because they aren't used.
+regards,
+dan carpenter
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
----
-v2:  fixed typo in commit message:  recieved => received
-
-diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
-index 9b81f26..43d459d 100644
---- a/drivers/staging/rtl8192u/r8192U.h
-+++ b/drivers/staging/rtl8192u/r8192U.h
-@@ -610,7 +610,6 @@ typedef struct Stats
- //	unsigned long rxnopointer;
- 	unsigned long rxok;
- 	unsigned long rxframgment;
--	unsigned long rxcmdpkt[4];		//08/05/08 amy rx cmd element txfeedback/bcn report/cfg set/query
- 	unsigned long rxurberr;
- 	unsigned long rxstaterr;
- 	unsigned long received_rate_histogram[4][32];	//0: Total, 1:OK, 2:CRC, 3:ICV, 2007 07 03 cosa
-diff --git a/drivers/staging/rtl8192u/r819xU_cmdpkt.c b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-index 0cb28c7..9348f42 100644
---- a/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-+++ b/drivers/staging/rtl8192u/r819xU_cmdpkt.c
-@@ -697,7 +697,6 @@ cmpk_message_handle_rx(
- 	struct ieee80211_rx_stats *pstats)
- {
- //	u32			debug_level = DBG_LOUD;
--	struct r8192_priv *priv = ieee80211_priv(dev);
- 	int			total_length;
- 	u8			cmd_length, exe_cnt = 0;
- 	u8			element_id;
-@@ -779,9 +778,6 @@ cmpk_message_handle_rx(
- 		// 2007/01/22 MH Add to display tx statistic.
- 		//cmpk_DisplayTxStatistic(pAdapter);
- 
--		/* 2007/03/09 MH Collect sidderent cmd element pkt num. */
--		priv->stats.rxcmdpkt[element_id]++;
--
- 		total_length -= cmd_length;
- 		pcmd_buff    += cmd_length;
- 	}	/* while (total_length > 0) */
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+On 12/16/11, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> The cpu_to_le32() truncates the address to 32 bits.  All the other
+> places that set .address use cpu_to_le64().
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> What about if dma_addr_t is 32 bits on a big endian system?  Can that
+> happen?
+>
+> diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+> index d6bc4e6..8a239ea 100644
+> --- a/drivers/scsi/pmcraid.c
+> +++ b/drivers/scsi/pmcraid.c
+> @@ -1242,7 +1242,7 @@ static struct pmcraid_cmd *pmcraid_init_hcam
+>
+>  	ioadl[0].flags |= IOADL_FLAGS_READ_LAST;
+>  	ioadl[0].data_len = cpu_to_le32(rcb_size);
+> -	ioadl[0].address = cpu_to_le32(dma);
+> +	ioadl[0].address = cpu_to_le64(dma);
+>
+>  	cmd->cmd_done = cmd_done;
+>  	return cmd;
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
