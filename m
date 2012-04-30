@@ -1,69 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Apr 2012 06:47:25 +0000
-Subject: [patch] Staging: wlags49_h2: reading past the end of array
-Message-Id: <20120417064724.GH26756@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Apr 2012 05:46:52 +0000
+Subject: [PATCH] drivers/edac/i82875p_edac.c: eliminate double definition
+Message-Id: <1335764812-29927-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Doug Thompson <dougthompson@xmission.com>
+Cc: kernel-janitors@vger.kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The original code had some confusion about the dimensions of the array.
-It should have been an array of 2 element arrays but it was declared as
-an array of 50 element arrays.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The limitter on the outside array should have been
-ARRAY_SIZE(chan_freq_list) or 26 but instead 50 was used.  It meant that
-we read past the end.  It's probably harmless but it's obviously worth
-fixing.
+The first thing that i82875p_setup_overfl_dev does is overwrite the value
+of ovrfl_pdev and perform the same call to pci_get_device as is done here.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/drivers/staging/wlags49_h2/wl_util.c b/drivers/staging/wlags49_h2/wl_util.c
-index f104e6f..404ec7d 100644
---- a/drivers/staging/wlags49_h2/wl_util.c
-+++ b/drivers/staging/wlags49_h2/wl_util.c
-@@ -98,8 +98,7 @@
-  ******************************************************************************/
+---
+ drivers/edac/i82875p_edac.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/edac/i82875p_edac.c b/drivers/edac/i82875p_edac.c
+index 10f15d8..22ecc54 100644
+--- a/drivers/edac/i82875p_edac.c
++++ b/drivers/edac/i82875p_edac.c
+@@ -391,8 +391,6 @@ static int i82875p_probe1(struct pci_dev *pdev, int dev_idx)
  
- /* A matrix which maps channels to frequencies */
--#define MAX_CHAN_FREQ_MAP_ENTRIES   50
--static const long chan_freq_list[][MAX_CHAN_FREQ_MAP_ENTRIES] +static const long chan_freq_list[][2]  {
-     {1,2412},
-     {2,2417},
-@@ -846,7 +845,7 @@ int wl_is_a_valid_chan( int channel )
-     }
+ 	debugf0("%s()\n", __func__);
  
-     /* Iterate through the matrix and retrieve the frequency */
--    for( i = 0; i < MAX_CHAN_FREQ_MAP_ENTRIES; i++ ) {
-+    for( i = 0; i < ARRAY_SIZE(chan_freq_list); i++ ) {
-         if( chan_freq_list[i][0] = channel ) {
-             return 1;
-         }
-@@ -884,7 +883,7 @@ int wl_is_a_valid_freq( long frequency )
- 
- 
-     /* Iterate through the matrix and retrieve the channel */
--    for( i = 0; i < MAX_CHAN_FREQ_MAP_ENTRIES; i++ ) {
-+    for( i = 0; i < ARRAY_SIZE(chan_freq_list); i++ ) {
-         if( chan_freq_list[i][1] = frequency ) {
-             return 1;
-         }
-@@ -927,7 +926,7 @@ long wl_get_freq_from_chan( int channel )
-     }
- 
-     /* Iterate through the matrix and retrieve the frequency */
--    for( i = 0; i < MAX_CHAN_FREQ_MAP_ENTRIES; i++ ) {
-+    for( i = 0; i < ARRAY_SIZE(chan_freq_list); i++ ) {
-         if( chan_freq_list[i][0] = channel ) {
-             return chan_freq_list[i][1];
-         }
-@@ -965,7 +964,7 @@ int wl_get_chan_from_freq( long frequency )
- 
- 
-     /* Iterate through the matrix and retrieve the channel */
--    for( i = 0; i < MAX_CHAN_FREQ_MAP_ENTRIES; i++ ) {
-+    for( i = 0; i < ARRAY_SIZE(chan_freq_list); i++ ) {
-         if( chan_freq_list[i][1] = frequency ) {
-             return chan_freq_list[i][0];
-         }
+-	ovrfl_pdev = pci_get_device(PCI_VEND_DEV(INTEL, 82875_6), NULL);
+-
+ 	if (i82875p_setup_overfl_dev(pdev, &ovrfl_pdev, &ovrfl_window))
+ 		return -ENODEV;
+ 	drc = readl(ovrfl_window + I82875P_DRC);
+
