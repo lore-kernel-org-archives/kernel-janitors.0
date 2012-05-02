@@ -1,54 +1,43 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Mon, 28 May 2012 15:34:19 +0000
-Subject: Re: [PATCH] video: bfin_adv7393fb: Fix cleanup code
-Message-Id: <1338219259.3521.1.camel@debian>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 May 2012 06:14:47 +0000
+Subject: [patch 2/2] RDMA/ocrdma: tiny locking cleanup
+Message-Id: <20120502061447.GB28894@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1338216019-1288-1-git-send-email-emilgoode@gmail.com>
-	 <20120528152601.GE4637@mwanda>
-In-Reply-To: <20120528152601.GE4637@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: FlorianSchandinat@gmx.de, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Parav Pandit <parav.pandit-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Thanks Dan, I'll resend with these modifications.
+We only need to disable the IRQs one time.
 
-Best regards, 
-Emil Goode
-On Mon, 2012-05-28 at 18:26 +0300, Dan Carpenter wrote:
-> On Mon, May 28, 2012 at 04:40:19PM +0200, Emil Goode wrote:
-> > This patch fixes the cleanup code of the bfin_adv7393_fb_probe
-> > function by changing the order in which cleanup is performed
-> > and by adding one label.
-> > 
-> 
-> Could you list the actual bugs which were fixed:
-> 
-> 1) The resources were not freed in the order that we allocated them
->    so we call dma_free_coherent() before it was allocated.
-> 2) The labels weren't in the right place which also meant that we
->    freed resources that weren't allocated.
-> 3) We should free gpio_free(P_IDENT(P_PPI0_FS3)) before returning.
-> 
-> The new gpio_free() is more important than the added label.
-> 
-> Since you're changing all these, you may as well fix the label names
-> as well.  The out_9 style labels suck.  The right way is to give
-> them meaningful labels instead of GW-BASIC style labels.
-> 
-> Labels should be named after what happens when you arrive.  Some
-> people name them after the start of the journey but that's a
-> mistake.  It's just like the town of Chicago is still called Chicago
-> even though you might goto Chicago starting from Boston.  Like this:
-> 
-> err_ppi:
-> 	free_dma(CH_PPI);
-> 	fb_dealloc_cmap(&fbdev->info.cmap);
-> err_palette:
-> 	kfree(fbdev->info.pseudo_palette);
-> 
-> regards,
-> dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index 0d1872f..df7836d 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -1431,7 +1431,7 @@ int ocrdma_destroy_qp(struct ib_qp *ibqp)
+ 	struct ocrdma_dev *dev;
+ 	struct ib_qp_attr attrs;
+ 	int attr_mask = IB_QP_STATE;
+-	unsigned long wq_flags = 0, rq_flags = 0;
++	unsigned long wq_flags;
+ 
+ 	qp = get_ocrdma_qp(ibqp);
+ 	dev = qp->dev;
+@@ -1455,12 +1455,12 @@ int ocrdma_destroy_qp(struct ib_qp *ibqp)
+ 	 */
+ 	spin_lock_irqsave(&qp->sq_cq->cq_lock, wq_flags);
+ 	if (qp->rq_cq && (qp->rq_cq != qp->sq_cq))
+-		spin_lock_irqsave(&qp->rq_cq->cq_lock, rq_flags);
++		spin_lock(&qp->rq_cq->cq_lock);
+ 
+ 	ocrdma_del_qpn_map(dev, qp);
+ 
+ 	if (qp->rq_cq && (qp->rq_cq != qp->sq_cq))
+-		spin_unlock_irqrestore(&qp->rq_cq->cq_lock, rq_flags);
++		spin_unlock(&qp->rq_cq->cq_lock);
+ 	spin_unlock_irqrestore(&qp->sq_cq->cq_lock, wq_flags);
+ 
+ 	if (!pd->uctx) {
