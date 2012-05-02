@@ -1,33 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 May 2012 20:56:46 +0000
-Subject: [patch] Staging: wlags49_h2: potential NULL dereference
-Message-Id: <20120514205646.GC20836@elgon.mountain>
+Date: Wed, 02 May 2012 06:13:57 +0000
+Subject: [patch 1/2] RDMA/ocrdma: checking for NULL instead of IS_ERR
+Message-Id: <20120502061357.GA28894@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Parav Pandit <parav.pandit-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-wl_device_dealloc() dereferences the "dev" paramter, so let's move it
-under the check for NULL.
+The ocrdma_alloc_lkey() function never returns NULL pointers, it
+returns ERR_PTRs.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Static checker stuff.  I don't know if "dev" can actually be NULL here.
 
-diff --git a/drivers/staging/wlags49_h2/wl_cs.c b/drivers/staging/wlags49_h2/wl_cs.c
-index 7084f41..7c7c77f 100644
---- a/drivers/staging/wlags49_h2/wl_cs.c
-+++ b/drivers/staging/wlags49_h2/wl_cs.c
-@@ -177,10 +177,9 @@ static void wl_adapter_detach(struct pcmcia_device *link)
- 	if (dev) {
- 		unregister_wlags_sysfs(dev);
- 		unregister_netdev(dev);
-+		wl_device_dealloc(dev);
- 	}
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index eb55c80..0d1872f 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -486,8 +486,8 @@ struct ib_mr *ocrdma_get_dma_mr(struct ib_pd *ibpd, int acc)
+ 	struct ocrdma_mr *mr;
  
--	wl_device_dealloc(dev);
--
- 	DBG_LEAVE(DbgInfo);
- } /* wl_adapter_detach */
- /*======================================*/
+ 	mr = ocrdma_alloc_lkey(ibpd, acc, 0, OCRDMA_ADDR_CHECK_DISABLE);
+-	if (!mr)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(mr))
++		return ERR_CAST(mr);
+ 
+ 	return &mr->ibmr;
+ }
