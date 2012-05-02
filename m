@@ -1,33 +1,82 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Date: Mon, 21 May 2012 14:40:53 +0000
-Subject: Re: [patch] hvc_xen: NULL dereference on allocation failure
-Message-Id: <20120521144053.GA24239@phenom.dumpdata.com>
+From: Tomas Melin <tomas.melin@iki.fi>
+Date: Wed, 02 May 2012 16:14:34 +0000
+Subject: [PATCH 1/2] Staging: Comedi adv_pci1710 : Corrected over 80 column warnings
+Message-Id: <1335975274-5933-1-git-send-email-tomas.melin@iki.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120515084746.GC30265@elgon.mountain>
- <alpine.DEB.2.00.1205151119260.26786@kaball-desktop>
-In-Reply-To: <alpine.DEB.2.00.1205151119260.26786@kaball-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Dan Carpenter <dan.carpenter@oracle.com>, Alan Cox <alan@linux.intel.com>
+To: kernel-janitors@vger.kernel.org
 
-On Tue, May 15, 2012 at 11:20:23AM +0100, Stefano Stabellini wrote:
-> On Tue, 15 May 2012, Dan Carpenter wrote:
-> > If kzalloc() returns a NULL here, we pass a NULL to
-> > xencons_disconnect_backend() which will cause an Oops.
-> > 
-> > Also I removed the __GFP_ZERO while I was at it since kzalloc() implies
-> > __GFP_ZERO.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Various comments and code lines longer than 80 chars fixed in file adv_pci1710.c.
 
-applied.
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Signed-off-by: Tomas Melin <tomas.melin@iki.fi>
+---
+ drivers/staging/comedi/drivers/adv_pci1710.c |   27 ++++++++++++-------------
+ 1 files changed, 13 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
+index 8318c82..dd40fd3 100644
+--- a/drivers/staging/comedi/drivers/adv_pci1710.c
++++ b/drivers/staging/comedi/drivers/adv_pci1710.c
+@@ -982,14 +982,13 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
+ #ifdef PCI171X_EXTDEBUG
+ 		pci171x_cmdtest_out(1, cmd);
+ #endif
+-		DPRINTK
+-		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=1\n",
+-		     err);
++		DPRINTK(
++		"adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=1\n",
++		err);
+ 		return 1;
+ 	}
+ 
+-	/* step 2: make sure trigger sources are unique and mutually compatible */
+-
++	/* step 2: make sure trigger srcs are unique and mutually compatible */
+ 	if (cmd->start_src != TRIG_NOW && cmd->start_src != TRIG_EXT) {
+ 		cmd->start_src = TRIG_NOW;
+ 		err++;
+@@ -1015,9 +1014,9 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
+ #ifdef PCI171X_EXTDEBUG
+ 		pci171x_cmdtest_out(2, cmd);
+ #endif
+-		DPRINTK
+-		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=2\n",
+-		     err);
++		DPRINTK(
++		"adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=2\n",
++		err);
+ 		return 2;
+ 	}
+ 
+@@ -1065,9 +1064,9 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
+ #ifdef PCI171X_EXTDEBUG
+ 		pci171x_cmdtest_out(3, cmd);
+ #endif
+-		DPRINTK
+-		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=3\n",
+-		     err);
++		DPRINTK(
++		"adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=3\n",
++		err);
+ 		return 3;
+ 	}
+ 
+@@ -1085,9 +1084,9 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
+ 	}
+ 
+ 	if (err) {
+-		DPRINTK
+-		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=4\n",
+-		     err);
++		DPRINTK(
++		"adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=4\n",
++		err);
+ 		return 4;
+ 	}
+ 
+-- 
+1.7.5.4
+
