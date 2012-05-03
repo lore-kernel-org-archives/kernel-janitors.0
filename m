@@ -1,173 +1,238 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 02 May 2012 21:24:27 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 May 2012 08:17:49 +0000
 Subject: Re: [PATCH] Staging: Comedi adv_pci1710: Cleaned up function check_channel_list
-Message-Id: <4FA1A60B.80505@bfs.de>
+Message-Id: <20120503081749.GC13252@mwanda>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="xHFwDpU9dbj6ez1V"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1335975217-5895-1-git-send-email-tomas.melin@iki.fi>
 In-Reply-To: <1335975217-5895-1-git-send-email-tomas.melin@iki.fi>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Am 02.05.2012 20:10, schrieb Tomas Melin:
-> Hi,
->> the fix is nice but the org code has  if (!n_char > 1) return 1 but now you have
->> if (nchar = 1 ) is there any reason not to use ( nchar <= 1 ) ?
->> (i do not see the whole code and it is not clear from your changelog)
-> You are missing out the last "else", basically the original code was
-> if n_chan <1
->      return 0
-> if n_chan >1
->      //do some counting
->      return count
-> else
->     return 1
-> 
-> For n_chan=1 the function doesn't actually do anything clever, that's
-> why I made the return right at the beginning.
-> 
-> Tomas
+On Wed, May 02, 2012 at 07:13:37PM +0300, Tomas Melin wrote:
+> -Simplified function logic by assuming that n_chan >1 if not <=1. Removes
+> one level of indentation.
+> -> readability improved and code fits into 80 chars
+> - Code indentation fixes, corrected comments
+> - Added braces to if() for readability
 > 
 
-ok i understand.
+Greg of course is the Boss-man and he already explained that this
+needed to get broken up, but yeah I also wanted to say that as well.
+The first patch should just pull the if (n_chan == 1) forward,
+remove the else clause, and pull the indent level in.
+
+When I review this stuff I have a script called rename_rev.pl
+(attached) and I `cat your_patch.txt | rename_rev.pl`.  It removes
+the indenting changes and only shows the logic changes.  So the
+solid block of changes becomes a two liner which takes 10 seconds
+to review.  The other changes to line breaks and comments and curly
+parens are much simpler to review on their own.  10 seconds for
+each.  It's way way easier to review one liner changes than a
+tangled block of changes.
+
+regards,
+dan carpenter
 
 
->>
->> re,
->>  wh
-> 
-> 
-> 
-> On Wed, May 2, 2012 at 8:41 PM, walter harms <wharms@bfs.de> wrote:
->>
->>
->> Am 02.05.2012 18:13, schrieb Tomas Melin:
->>> -Simplified function logic by assuming that n_chan >1 if not <=1. Removes
->>> one level of indentation.
->>> -> readability improved and code fits into 80 chars
->>> - Code indentation fixes, corrected comments
->>> - Added braces to if() for readability
->>>
->>> Signed-off-by: Tomas Melin <tomas.melin@iki.fi>
->>> ---
->>>  drivers/staging/comedi/drivers/adv_pci1710.c |   84 +++++++++++++-------------
->>>  1 files changed, 43 insertions(+), 41 deletions(-)
->>>
->>> diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
->>> index 8318c82..fa4a6fb 100644
->>> --- a/drivers/staging/comedi/drivers/adv_pci1710.c
->>> +++ b/drivers/staging/comedi/drivers/adv_pci1710.c
->>> @@ -1142,9 +1142,9 @@ static int pci171x_ai_cmd(struct comedi_device *dev, struct comedi_subdevice *s)
->>>
->>>  /*
->>>  =======================================
->>> - Check if channel list from user is builded correctly
->>> - If it's ok, then program scan/gain logic.
->>> - This works for all cards.
->>> + * Check if channel list from user is build correctly
->>> + * If it's ok, then program scan/gain logic.
->>> + * This works for all cards.
->>>  */
->>>  static int check_channel_list(struct comedi_device *dev,
->>>                             struct comedi_subdevice *s,
->>> @@ -1160,48 +1160,50 @@ static int check_channel_list(struct comedi_device *dev,
->>>               return 0;
->>>       }
->>>
->>> -     if (n_chan > 1) {
->>> -             chansegment[0] = chanlist[0];   /*  first channel is every time ok */
->>> -             for (i = 1, seglen = 1; i < n_chan; i++, seglen++) {    /*  build part of chanlist */
->>> -                     /*  printk("%d. %d %d\n",i,CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
->>> -                     if (chanlist[0] = chanlist[i])
->>> -                             break;  /*  we detect loop, this must by finish */
->>> -                     if (CR_CHAN(chanlist[i]) & 1)   /*  odd channel cann't by differencial */
->>> -                             if (CR_AREF(chanlist[i]) = AREF_DIFF) {
->>> -                                     comedi_error(dev,
->>> -                                                  "Odd channel can't be differential input!\n");
->>> -                                     return 0;
->>> -                             }
->>> -                     nowmustbechan >>> -                         (CR_CHAN(chansegment[i - 1]) + 1) % s->n_chan;
->>> -                     if (CR_AREF(chansegment[i - 1]) = AREF_DIFF)
->>> -                             nowmustbechan = (nowmustbechan + 1) % s->n_chan;
->>> -                     if (nowmustbechan != CR_CHAN(chanlist[i])) {    /*  channel list isn't continuous :-( */
->>> -                             printk
->>> -                                 ("channel list must be continuous! chanlist[%i]=%d but must be %d or %d!\n",
->>> -                                  i, CR_CHAN(chanlist[i]), nowmustbechan,
->>> -                                  CR_CHAN(chanlist[0]));
->>> +     if (n_chan = 1)
->>> +             return 1; /* seglen=1 */
->>> +
->>> +     /* n_chan must be >1 */
->>> +     /* first channel is every time ok */
->>> +     chansegment[0] = chanlist[0];
->>> +     /*  build part of chanlist */
->>> +     for (i = 1, seglen = 1; i < n_chan; i++, seglen++) {
->>> +             if (chanlist[0] = chanlist[i])
->>> +                     break; /* detected loop, done */
->>> +             if (CR_CHAN(chanlist[i]) & 1) {
->>> +                     if (CR_AREF(chanlist[i]) = AREF_DIFF) {
->>> +                             comedi_error(dev,
->>> +                             "Odd channel can't be differential input!\n");
->>>                               return 0;
->>>                       }
->>> -                     chansegment[i] = chanlist[i];   /*  well, this is next correct channel in list */
->>>               }
->>> -
->>> -             for (i = 0, segpos = 0; i < n_chan; i++) {      /*  check whole chanlist */
->>> -                     /* printk("%d %d=%d %d\n",CR_CHAN(chansegment[i%seglen]),CR_RANGE(chansegment[i%seglen]),CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
->>> -                     if (chanlist[i] != chansegment[i % seglen]) {
->>> -                             printk
->>> -                                 ("bad channel, reference or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
->>> -                                  i, CR_CHAN(chansegment[i]),
->>> -                                  CR_RANGE(chansegment[i]),
->>> -                                  CR_AREF(chansegment[i]),
->>> -                                  CR_CHAN(chanlist[i % seglen]),
->>> -                                  CR_RANGE(chanlist[i % seglen]),
->>> -                                  CR_AREF(chansegment[i % seglen]));
->>> -                             return 0;       /*  chan/gain list is strange */
->>> -                     }
->>> +             nowmustbechan = (CR_CHAN(chansegment[i - 1]) + 1) % s->n_chan;
->>> +             if (CR_AREF(chansegment[i - 1]) = AREF_DIFF)
->>> +                     nowmustbechan = (nowmustbechan + 1) % s->n_chan;
->>> +             /*  channel list isn't continuous :-( */
->>> +             if (nowmustbechan != CR_CHAN(chanlist[i])) {
->>> +                     printk(
->>> +                             "channel list must be continuous! chanlist[%i]=%d but must be %d or %d!\n",
->>> +                             i, CR_CHAN(chanlist[i]), nowmustbechan,
->>> +                             CR_CHAN(chanlist[0]));
->>> +                     return 0;
->>> +             }
->>> +             /*  well, this is next correct channel in list */
->>> +             chansegment[i] = chanlist[i];
->>> +     }
->>> +     /*  check whole chanlist */
->>> +     for (i = 0, segpos = 0; i < n_chan; i++) {
->>> +             if (chanlist[i] != chansegment[i % seglen]) {
->>> +                     printk(
->>> +                             "bad channel, reference or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
->>> +                             i, CR_CHAN(chansegment[i]),
->>> +                             CR_RANGE(chansegment[i]),
->>> +                             CR_AREF(chansegment[i]),
->>> +                             CR_CHAN(chanlist[i % seglen]),
->>> +                             CR_RANGE(chanlist[i % seglen]),
->>> +                             CR_AREF(chansegment[i % seglen]));
->>> +                     return 0; /*  chan/gain list is strange */
->>>               }
->>> -     } else {
->>> -             seglen = 1;
->>>       }
->>>       return seglen;
->>>  }
->>
->> hi Tomas,
->> the fix is nice but the org code has  if (!n_char > 1) return 1 but now you have
->> if (nchar = 1 ) is there any reason not to use ( nchar <= 1 ) ?
->> (i do not see the whole code and it is not clear from your changelog)
->>
->> re,
->>  wh
-> 
-> 
+--xHFwDpU9dbj6ez1V
+Content-Type: text/x-perl; charset=us-ascii
+Content-Disposition: attachment; filename="rename_rev.pl"
+
+#!/usr/bin/perl
+
+# This is a tool to help review variable rename patches. The goal is
+# to strip out the automatic sed renames and the white space changes
+# and leaves the interesting code changes.
+#
+# Example 1: A patch renames openInfo to open_info:
+#     cat diff | rename_review.pl openInfo open_info
+#
+# Example 2: A patch swaps the first two arguments to some_func():
+#     cat diff | rename_review.pl \
+#                    -e 's/some_func\((.*?),(.*?),/some_func\($2, $1,/'
+#
+# Example 3: A patch removes the xkcd_ prefix from some but not all the
+# variables.  Instead of trying to figure out which variables were renamed
+# just remove the prefix from them all:
+#     cat diff | rename_review.pl -ea 's/xkcd_//g'
+#
+# Example 4: A patch renames 20 CamelCase variables.  To review this let's
+# just ignore all case changes and all '_' chars.
+#     cat diff | rename_review -ea 'tr/[A-Z]/[a-z]/' -ea 's/_//g'
+#
+# The other arguments are:
+# -nc removes comments
+# -ns removes '\' chars if they are at the end of the line.
+
+use strict;
+use File::Temp qw/ :mktemp  /;
+
+sub usage() {
+    print "usage: cat diff | $0 old new old new old new...\n";
+    print "   or: cat diff | $0 -e 's/old/new/g'\n";
+    print " -e : execute on old lines\n";
+    print " -ea: execute on all lines\n";
+    print " -nc: no comments\n";
+    print " -nb: no unneeded braces\n";
+    print " -ns: no slashes at the end of a line\n";
+    exit(1);
+}
+my @subs;
+my @cmds;
+my $strip_comments;
+my $strip_braces;
+my $strip_slashes;
+
+sub filter($) {
+    my $_ = shift();
+    my $old = 0;
+    if ($_ =~ /^-/) {
+        $old = 1;
+    }
+    # remove the first char
+    s/^[ +-]//;
+    if ($strip_comments) {
+        s/\/\*.*?\*\///g;
+        s/\/\/.*//;
+    }
+    foreach my $cmd (@cmds) {
+        if ($old || $cmd->[0] =~ /^-ea$/) {
+		eval $cmd->[1];
+	}
+    }
+    foreach my $sub (@subs) {
+	if ($old) {
+		s/$sub->[0]/$sub->[1]/g;
+	}
+    }
+    return $_;
+}
+
+while (my $param1 = shift()) {
+    if ($param1 =~ /^-nc$/) {
+        $strip_comments = 1;
+        next;
+    }
+    if ($param1 =~ /^-nb$/) {
+        $strip_braces = 1;
+        next;
+    }
+    if ($param1 =~ /^-ns$/) {
+        $strip_slashes = 1;
+        next;
+    }
+    my $param2 = shift();
+    if ($param2 =~ /^$/) {
+	usage();
+    }
+    if ($param1 =~ /^-e(a|)$/) {
+        push @cmds, [$param1, $param2];
+	next;
+    }
+    push @subs, [$param1, $param2];
+}
+
+my ($oldfh, $oldfile) = mkstemp("/tmp/oldXXXXX");
+my ($newfh, $newfile) = mkstemp("/tmp/newXXXXX");
+
+while (<>) {
+    if ($_ =~ /^(---|\+\+\+)/) {
+	next;
+    }
+    my $output = filter($_);
+    if ($_ =~ /^-/) {
+	print $oldfh $output;
+	next;
+    }
+    if ($_ =~ /^\+/) {
+	print $newfh $output;
+	next;
+    }
+    print $oldfh $output;
+    print $newfh $output;
+}
+
+my $hunk;
+my $old_txt;
+my $new_txt;
+
+open diff, "diff -uw $oldfile $newfile |";
+while (<diff>) {
+    if ($_ =~ /^(---|\+\+\+)/) {
+	next;
+    }
+
+    if ($_ =~ /^@/) {
+        if ($strip_comments) {
+            $old_txt =~ s/\/\*.*?\*\///g;
+            $new_txt =~ s/\/\*.*?\*\///g;
+        }
+        if ($strip_braces) {
+            $old_txt =~ s/{([^;{]*?);}/$1;/g;
+            $new_txt =~ s/{([^;{]*?);}/$1;/g;
+	    # this is a hack because i don't know how to replace nested
+	    # unneeded curly braces.
+            $old_txt =~ s/{([^;{]*?);}/$1;/g;
+            $new_txt =~ s/{([^;{]*?);}/$1;/g;
+	}
+
+       if ($old_txt ne $new_txt) {
+ 	    print $hunk;
+	    print $_;
+	}
+	$hunk = "";
+	$old_txt = "";
+	$new_txt = "";
+	next;
+    }
+
+    $hunk = $hunk . $_;
+
+    if ($strip_slashes) {
+	s/\\$//;
+    }
+
+    if ($_ =~ /^-/) {
+	s/-//;
+	s/[ \t\n]//g;
+	$old_txt = $old_txt . $_;
+	next;
+    }
+    if ($_ =~ /^\+/) {
+	s/\+//;
+	s/[ \t\n]//g;
+	$new_txt = $new_txt . $_;
+	next;
+    }
+    if ($_ =~ /^ /) {
+	s/^ //;
+	s/[ \t\n]//g;
+	$old_txt = $old_txt . $_;
+	$new_txt = $new_txt . $_;
+    }
+}
+if ($old_txt ne $new_txt) {
+    if ($strip_comments) {
+        $old_txt =~ s/\/\*.*?\*\///g;
+        $new_txt =~ s/\/\*.*?\*\///g;
+    }
+    if ($strip_braces) {
+        $old_txt =~ s/{([^;{]*?);}/$1;/g;
+        $new_txt =~ s/{([^;{]*?);}/$1;/g;
+        $old_txt =~ s/{([^;{]*?);}/$1;/g;
+        $new_txt =~ s/{([^;{]*?);}/$1;/g;
+    }
+
+    print $hunk;
+}
+
+unlink($oldfile);
+unlink($newfile);
+
+--xHFwDpU9dbj6ez1V--
