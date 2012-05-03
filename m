@@ -1,42 +1,74 @@
-From: Mike Christie <michaelc@cs.wisc.edu>
-Date: Thu, 17 May 2012 15:55:41 +0000
-Subject: Re: [patch] [SCSI] qla4xxx: don't free pool that wasn't allocated
-Message-Id: <4FB51F7D.9070105@cs.wisc.edu>
+From: Tomas Melin <tomas.melin@iki.fi>
+Date: Thu, 03 May 2012 15:27:36 +0000
+Subject: [PATCH] Staging: Comedi adv_pci1710 : Corrected DPRINTK formatting
+Message-Id: <1336058856-5203-1-git-send-email-tomas.melin@iki.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120517071120.GG14660@elgon.mountain>
-In-Reply-To: <20120517071120.GG14660@elgon.mountain>
+References: <1335628246-3003-1-git-send-email-tomas.melin@iki.fi>
+In-Reply-To: <1335628246-3003-1-git-send-email-tomas.melin@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ravi Anand <ravi.anand@qlogic.com>, Vikas Chaudhary <vikas.chaudhary@qlogic.com>, iscsi-driver@qlogic.com, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 05/17/2012 02:11 AM, Dan Carpenter wrote:
-> In the original code if dma_pool_alloc() fails then we call
-> dma_pool_free().  The problem is that "chap_table" is NULL and
-> "chap_dma" is uninitialized so it will cause an error.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/qla4xxx/ql4_mbx.c b/drivers/scsi/qla4xxx/ql4_mbx.c
-> index 7ac21da..21dce92 100644
-> --- a/drivers/scsi/qla4xxx/ql4_mbx.c
-> +++ b/drivers/scsi/qla4xxx/ql4_mbx.c
-> @@ -1329,10 +1329,8 @@ int qla4xxx_get_chap(struct scsi_qla_host *ha, char *username, char *password,
->  	dma_addr_t chap_dma;
->  
->  	chap_table = dma_pool_alloc(ha->chap_dma_pool, GFP_KERNEL, &chap_dma);
-> -	if (chap_table = NULL) {
-> -		ret = -ENOMEM;
-> -		goto exit_get_chap;
-> -	}
-> +	if (chap_table = NULL)
-> +		return -ENOMEM;
->  
->  	chap_size = sizeof(struct ql4_chap_table);
->  	memset(chap_table, 0, chap_size);
+Corrected formatting for several DPRINT messages.
 
-I thought dma_pool_free checked the vaddr/chap_table like how kfree
-checks for nulls. You are right. Looks ok to me.
+Signed-off-by: Tomas Melin <tomas.melin@iki.fi>
+---
+ drivers/staging/comedi/drivers/adv_pci1710.c |   20 ++++++++------------
+ 1 files changed, 8 insertions(+), 12 deletions(-)
 
-Reviewed-by: Mike Christie <michaelc@cs.wisc.edu>
+diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
+index 8318c82..1256321 100644
+--- a/drivers/staging/comedi/drivers/adv_pci1710.c
++++ b/drivers/staging/comedi/drivers/adv_pci1710.c
+@@ -982,9 +982,8 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
+ #ifdef PCI171X_EXTDEBUG
+ 		pci171x_cmdtest_out(1, cmd);
+ #endif
+-		DPRINTK
+-		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=1\n",
+-		     err);
++		DPRINTK("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=1\n",
++			err);
+ 		return 1;
+ 	}
+ 
+@@ -1015,9 +1014,8 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
+ #ifdef PCI171X_EXTDEBUG
+ 		pci171x_cmdtest_out(2, cmd);
+ #endif
+-		DPRINTK
+-		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=2\n",
+-		     err);
++		DPRINTK("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=2\n",
++			err);
+ 		return 2;
+ 	}
+ 
+@@ -1065,9 +1063,8 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
+ #ifdef PCI171X_EXTDEBUG
+ 		pci171x_cmdtest_out(3, cmd);
+ #endif
+-		DPRINTK
+-		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=3\n",
+-		     err);
++		DPRINTK("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=3\n",
++			err);
+ 		return 3;
+ 	}
+ 
+@@ -1085,9 +1082,8 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
+ 	}
+ 
+ 	if (err) {
+-		DPRINTK
+-		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=4\n",
+-		     err);
++		DPRINTK("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=4\n",
++			err);
+ 		return 4;
+ 	}
+ 
+-- 
+1.7.5.4
+
