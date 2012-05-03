@@ -1,30 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 18 May 2012 07:36:47 +0000
-Subject: [patch] NFC: potential integer overflow problem in check_crc()
-Message-Id: <20120518073647.GB4136@elgon.mountain>
+From: Luciano Coelho <coelho@ti.com>
+Date: Thu, 03 May 2012 12:54:55 +0000
+Subject: Re: [patch] wlcore: fixup an allocation
+Message-Id: <1336049695.12189.29.camel@cumari.coelho.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120417062847.GA26756@elgon.mountain>
+In-Reply-To: <20120417062847.GA26756@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
-Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Eliad Peller <eliad@wizery.com>, Arik Nemtsov <arik@wizery.com>, Shahar Levi <shahar_levi@ti.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If "buf[0]" is 255 then "len" gets set to 0.  The call to
-"crc_ccitt(0xffff, buf, len - 2);" casts the "len - 2" to a high
-positive number which is ugly.
+On Tue, 2012-04-17 at 09:28 +0300, Dan Carpenter wrote:
+> GFP_DMA isn't supposed to be used by itself.  This allocation is allowed
+> to sleep so it should be ORing it with GFP_KERNEL.
+> Also we should check for allocations errors.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I don't have the hardware to test this.  Sorry.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied, thanks! I ran some very basic tests on it.
 
-diff --git a/drivers/nfc/pn544_hci.c b/drivers/nfc/pn544_hci.c
-index 46f4a9f..281f18c 100644
---- a/drivers/nfc/pn544_hci.c
-+++ b/drivers/nfc/pn544_hci.c
-@@ -232,7 +232,7 @@ static int pn544_hci_i2c_write(struct i2c_client *client, u8 *buf, int len)
- 
- static int check_crc(u8 *buf, int buflen)
- {
--	u8 len;
-+	int len;
- 	u16 crc;
- 
- 	len = buf[0] + 1;
