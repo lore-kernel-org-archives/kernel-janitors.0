@@ -1,108 +1,43 @@
-From: Tomas Melin <tomas.melin@iki.fi>
-Date: Mon, 07 May 2012 19:49:11 +0000
-Subject: [PATCH 1/4] Staging: Comedi adv_pci1710: Move check forward
-Message-Id: <1336420151-31137-1-git-send-email-tomas.melin@iki.fi>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 04 May 2012 14:00:47 +0000
+Subject: [PATCH] isci: Argument of function prototype is of wrong type
+Message-Id: <1336140047-31009-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: intel-linux-scu@intel.com, dan.j.williams@intel.com, dave.jiang@intel.com, edmund.nadolski@intel.com, JBottomley@parallels.com
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-Simplifies function logic by assuming that n_chan >1 if not <=1.
-Removes one level of indentation.
+The second argument of the sci_remote_node_context_suspend
+function prototype should be an enum.
 
-Signed-off-by: Tomas Melin <tomas.melin@iki.fi>
+Sparse is warning about this:
+
+drivers/scsi/isci/remote_node_context.c:567:17: error:
+	symbol 'sci_remote_node_context_suspend'
+	redeclared with different type (originally declared 
+	at drivers/scsi/isci/remote_node_context.h:214)
+	- incompatible argument 2 (different signedness)
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
- drivers/staging/comedi/drivers/adv_pci1710.c |   73 +++++++++++++-------------
- 1 file changed, 36 insertions(+), 37 deletions(-)
+ drivers/scsi/isci/remote_node_context.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
-index 8318c82..2048b19 100644
---- a/drivers/staging/comedi/drivers/adv_pci1710.c
-+++ b/drivers/staging/comedi/drivers/adv_pci1710.c
-@@ -1160,48 +1160,47 @@ static int check_channel_list(struct comedi_device *dev,
- 		return 0;
- 	}
- 
--	if (n_chan > 1) {
--		chansegment[0] = chanlist[0];	/*  first channel is every time ok */
--		for (i = 1, seglen = 1; i < n_chan; i++, seglen++) {	/*  build part of chanlist */
--			/*  printk("%d. %d %d\n",i,CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
--			if (chanlist[0] = chanlist[i])
--				break;	/*  we detect loop, this must by finish */
--			if (CR_CHAN(chanlist[i]) & 1)	/*  odd channel cann't by differencial */
--				if (CR_AREF(chanlist[i]) = AREF_DIFF) {
--					comedi_error(dev,
--						     "Odd channel can't be differential input!\n");
--					return 0;
--				}
--			nowmustbechan -			    (CR_CHAN(chansegment[i - 1]) + 1) % s->n_chan;
--			if (CR_AREF(chansegment[i - 1]) = AREF_DIFF)
--				nowmustbechan = (nowmustbechan + 1) % s->n_chan;
--			if (nowmustbechan != CR_CHAN(chanlist[i])) {	/*  channel list isn't continuous :-( */
--				printk
--				    ("channel list must be continuous! chanlist[%i]=%d but must be %d or %d!\n",
--				     i, CR_CHAN(chanlist[i]), nowmustbechan,
--				     CR_CHAN(chanlist[0]));
-+	if (n_chan = 1)
-+		return 1; /* seglen=1 */
-+
-+	chansegment[0] = chanlist[0];	/*  first channel is every time ok */
-+	for (i = 1, seglen = 1; i < n_chan; i++, seglen++) {	/*  build part of chanlist */
-+		/*  printk("%d. %d %d\n",i,CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
-+		if (chanlist[0] = chanlist[i])
-+			break;	/*  we detect loop, this must by finish */
-+		if (CR_CHAN(chanlist[i]) & 1)	/*  odd channel cann't by differencial */
-+			if (CR_AREF(chanlist[i]) = AREF_DIFF) {
-+				comedi_error(dev,
-+					     "Odd channel can't be differential input!\n");
- 				return 0;
- 			}
--			chansegment[i] = chanlist[i];	/*  well, this is next correct channel in list */
-+		nowmustbechan +			(CR_CHAN(chansegment[i - 1]) + 1) % s->n_chan;
-+		if (CR_AREF(chansegment[i - 1]) = AREF_DIFF)
-+			nowmustbechan = (nowmustbechan + 1) % s->n_chan;
-+		if (nowmustbechan != CR_CHAN(chanlist[i])) {	/*  channel list isn't continuous :-( */
-+			printk
-+				("channel list must be continuous! chanlist[%i]=%d but must be %d or %d!\n",
-+				 i, CR_CHAN(chanlist[i]), nowmustbechan,
-+				 CR_CHAN(chanlist[0]));
-+			return 0;
- 		}
-+		chansegment[i] = chanlist[i];	/*  well, this is next correct channel in list */
-+	}
- 
--		for (i = 0, segpos = 0; i < n_chan; i++) {	/*  check whole chanlist */
--			/* printk("%d %d=%d %d\n",CR_CHAN(chansegment[i%seglen]),CR_RANGE(chansegment[i%seglen]),CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
--			if (chanlist[i] != chansegment[i % seglen]) {
--				printk
--				    ("bad channel, reference or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
--				     i, CR_CHAN(chansegment[i]),
--				     CR_RANGE(chansegment[i]),
--				     CR_AREF(chansegment[i]),
--				     CR_CHAN(chanlist[i % seglen]),
--				     CR_RANGE(chanlist[i % seglen]),
--				     CR_AREF(chansegment[i % seglen]));
--				return 0;	/*  chan/gain list is strange */
--			}
-+	for (i = 0, segpos = 0; i < n_chan; i++) {	/*  check whole chanlist */
-+		/* printk("%d %d=%d %d\n",CR_CHAN(chansegment[i%seglen]),CR_RANGE(chansegment[i%seglen]),CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
-+		if (chanlist[i] != chansegment[i % seglen]) {
-+			printk
-+				("bad channel, reference or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
-+				 i, CR_CHAN(chansegment[i]),
-+				 CR_RANGE(chansegment[i]),
-+				 CR_AREF(chansegment[i]),
-+				 CR_CHAN(chanlist[i % seglen]),
-+				 CR_RANGE(chanlist[i % seglen]),
-+				 CR_AREF(chansegment[i % seglen]));
-+			return 0;	/*  chan/gain list is strange */
- 		}
--	} else {
--		seglen = 1;
- 	}
- 	return seglen;
- }
+diff --git a/drivers/scsi/isci/remote_node_context.h b/drivers/scsi/isci/remote_node_context.h
+index a703b9c..1177204 100644
+--- a/drivers/scsi/isci/remote_node_context.h
++++ b/drivers/scsi/isci/remote_node_context.h
+@@ -212,7 +212,7 @@ enum sci_status sci_remote_node_context_destruct(struct sci_remote_node_context
+ 						      scics_sds_remote_node_context_callback callback,
+ 						      void *callback_parameter);
+ enum sci_status sci_remote_node_context_suspend(struct sci_remote_node_context *sci_rnc,
+-						     u32 suspend_type,
++						     enum sci_remote_node_suspension_reasons,
+ 						     u32 suspension_code);
+ enum sci_status sci_remote_node_context_resume(struct sci_remote_node_context *sci_rnc,
+ 						    scics_sds_remote_node_context_callback cb_fn,
 -- 
 1.7.9.5
 
