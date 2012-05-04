@@ -1,47 +1,70 @@
-From: Chad Dupuis <chad.dupuis@qlogic.com>
-Date: Thu, 17 May 2012 17:04:56 +0000
-Subject: Re: [patch] [SCSI] qla2xxx: don't free pool that wasn't allocated
-Message-Id: <alpine.WNT.2.00.1205171303550.6448@N5102REMCQXM4BS.qlogic.org>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 04 May 2012 09:33:37 +0000
+Subject: [PATCH] [media] cx88: Remove duplicate const
+Message-Id: <1336124017-19538-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120517071340.GH14660@elgon.mountain>
-In-Reply-To: <20120517071340.GH14660@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Vasquez <andrew.vasquez@qlogic.com>, Dept-Eng Linux Driver <Linux-Driver@qlogic.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: mchehab@infradead.org, rusty@rustcorp.com.au, hans.verkuil@cisco.com, istvan_v@mailbox.hu, jrnieder@gmail.com, dheitmueller@kernellabs.com, thunder.mmm@gmail.com
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
+This patch fixes the following sparse warnings
+by removing use of duplicate const.
 
-On Thu, 17 May 2012, Dan Carpenter wrote:
+drivers/media/video/cx88/cx88.h:152:40:
+	warning: duplicate const
+drivers/media/video/cx88/cx88-core.c:256:33:
+	warning: duplicate const
+drivers/media/video/cx88/cx88-alsa.c:769:41:
+	warning: duplicate const
 
-> In the original code, if dma_pool_alloc() fails then we call
-> dma_pool_free().  It causes an error, possibly a NULL dereference.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/scsi/qla2xxx/qla_iocb.c b/drivers/scsi/qla2xxx/qla_iocb.c
-> index c17975d..44380d3 100644
-> --- a/drivers/scsi/qla2xxx/qla_iocb.c
-> +++ b/drivers/scsi/qla2xxx/qla_iocb.c
-> @@ -2386,7 +2386,7 @@ sufficient_dsds:
->               if (!ctx->fcp_cmnd) {
->                       ql_log(ql_log_fatal, vha, 0x3011,
->                           "Failed to allocate fcp_cmnd for cmd=%p.\n", cmd);
-> -                     goto queuing_error_fcp_cmnd;
-> +                     goto queuing_error;
->               }
->
->               /* Initialize the DSD list and dma handle */
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/media/video/cx88/cx88-alsa.c |    2 +-
+ drivers/media/video/cx88/cx88-core.c |    2 +-
+ drivers/media/video/cx88/cx88.h      |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks for the patch.
-
-Acked-by: Chad Dupuis <chad.dupuis@qlogic.com>
-
-This message and any attached documents contain information from QLogic Corporation or its wholly-owned subsidiaries that may be confidential. If you are not the intended recipient, you may not read, copy, distribute, or use this information. If you have received this transmission in error, please notify the sender immediately by reply e-mail and then delete this message.
+diff --git a/drivers/media/video/cx88/cx88-alsa.c b/drivers/media/video/cx88/cx88-alsa.c
+index 04bf662..408e3c9 100644
+--- a/drivers/media/video/cx88/cx88-alsa.c
++++ b/drivers/media/video/cx88/cx88-alsa.c
+@@ -766,7 +766,7 @@ static struct snd_kcontrol_new snd_cx88_alc_switch = {
+  * Only boards with eeprom and byte 1 at eeprom=1 have it
+  */
+ 
+-static const struct pci_device_id const cx88_audio_pci_tbl[] __devinitdata = {
++static const struct pci_device_id cx88_audio_pci_tbl[] __devinitdata = {
+ 	{0x14f1,0x8801,PCI_ANY_ID,PCI_ANY_ID,0,0,0},
+ 	{0x14f1,0x8811,PCI_ANY_ID,PCI_ANY_ID,0,0,0},
+ 	{0, }
+diff --git a/drivers/media/video/cx88/cx88-core.c b/drivers/media/video/cx88/cx88-core.c
+index fbfdd80..dbd2fa2 100644
+--- a/drivers/media/video/cx88/cx88-core.c
++++ b/drivers/media/video/cx88/cx88-core.c
+@@ -253,7 +253,7 @@ cx88_free_buffer(struct videobuf_queue *q, struct cx88_buffer *buf)
+  *    0x0c00 -           FIFOs
+  */
+ 
+-const struct sram_channel const cx88_sram_channels[] = {
++const struct sram_channel cx88_sram_channels[] = {
+ 	[SRAM_CH21] = {
+ 		.name       = "video y / packed",
+ 		.cmds_start = 0x180040,
+diff --git a/drivers/media/video/cx88/cx88.h b/drivers/media/video/cx88/cx88.h
+index c9659de..aabec7e 100644
+--- a/drivers/media/video/cx88/cx88.h
++++ b/drivers/media/video/cx88/cx88.h
+@@ -149,7 +149,7 @@ struct sram_channel {
+ 	u32  cnt1_reg;
+ 	u32  cnt2_reg;
+ };
+-extern const struct sram_channel const cx88_sram_channels[];
++extern const struct sram_channel cx88_sram_channels[];
+ 
+ /* ----------------------------------------------------------- */
+ /* card configuration                                          */
+-- 
+1.7.9.5
 
