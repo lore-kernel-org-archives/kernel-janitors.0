@@ -1,32 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 22 May 2012 14:52:34 +0000
-Subject: [patch] sched/numa: checking for NULL instead of IS_ERR()
-Message-Id: <20120522145233.GA17419@elgon.mountain>
+Date: Fri, 04 May 2012 17:39:55 +0000
+Subject: [patch] rbd: endian bug in rbd_req_cb()
+Message-Id: <20120504173954.GA18827@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Yehuda Sadeh <yehuda@hq.newdream.net>
+Cc: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If mpol_new() is called with MPOL_BIND then it can't return a NULL
-pointer.  We should be checking IS_ERR() here.
+Sparse complains about this because:
+drivers/block/rbd.c:996:20: warning: cast to restricted __le32
+drivers/block/rbd.c:996:20: warning: cast from restricted __le16
+
+These are set in osd_req_encode_op() and they are le16.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/kernel/sched/numa.c b/kernel/sched/numa.c
-index 1149993..36d27ac 100644
---- a/kernel/sched/numa.c
-+++ b/kernel/sched/numa.c
-@@ -1481,9 +1481,9 @@ SYSCALL_DEFINE4(numa_mbind, unsigned long, addr, unsigned long, len,
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index c1f7701..64d3d6f 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -993,7 +993,7 @@ static void rbd_req_cb(struct ceph_osd_request *req, struct ceph_msg *msg)
+ 	op = (void *)(replyhead + 1);
+ 	rc = le32_to_cpu(replyhead->result);
+ 	bytes = le64_to_cpu(op->extent.length);
+-	read_op = (le32_to_cpu(op->op) = CEPH_OSD_OP_READ);
++	read_op = (le16_to_cpu(op->op) = CEPH_OSD_OP_READ);
  
- 	mask = nodemask_of_node(ng->numa_entity.node);
- 	mpol = mpol_new(MPOL_BIND, 0, &mask);
--	if (!mpol) {
-+	if (IS_ERR(mpol)) {
- 		ng_put(ng);
--		return -ENOMEM;
-+		return PTR_ERR(mpol);
- 	}
- 	mpol->flags |= MPOL_MF_LAZY;
- 	mpol->numa_group = ng;
+ 	dout("rbd_req_cb bytes=%lld readop=%d rc=%d\n", bytes, read_op, rc);
+ 
