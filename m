@@ -1,57 +1,67 @@
-From: Aaron Lu <aaron.lu@amd.com>
-Date: Sat, 19 May 2012 03:38:21 +0000
-Subject: Re: [patch] [SCSI] scsi_pm: passing wrong pointer to resume()
-Message-Id: <20120519033821.GA2425@localhost.localdomain>
+From: Tomas Melin <tomas.melin@iki.fi>
+Date: Mon, 07 May 2012 19:50:55 +0000
+Subject: [PATCH 4/4] Staging: Comedi adv_pci1710: Fixed indentation
+Message-Id: <1336420255-31277-1-git-send-email-tomas.melin@iki.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120518140827.GA1584@elgon.mountain>
- <2FB252790F768E479D722B6F9B6D68C4B03E50@SCYBEXDAG02.amd.com>
-In-Reply-To: <2FB252790F768E479D722B6F9B6D68C4B03E50@SCYBEXDAG02.amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, Alan Stern <stern@rowland.harvard.edu>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Aaron Lu <aaron.lwe@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-> From: Dan Carpenter [dan.carpenter@oracle.com]
-> To: James E.J. Bottomley; Lu, Aaron
-> Cc: linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Alan Stern
-> Subject: [patch] [SCSI] scsi_pm: passing wrong pointer to resume()
-> 
-> This gets caught by GCC:
-> drivers/scsi/scsi_pm.c:30:5: warning: passing argument 1 of
->         ‘scsi_device_resume’ from incompatible pointer type
->         [enabled by default]
+Fixed indentation for print messages and code.
 
-Thanks for pointing this out.
-I've posted v2 the other day and James is aware of this already:
-http://marc.info/?l=linux-scsi&m3706440112890&w=2
+Signed-off-by: Tomas Melin <tomas.melin@iki.fi>
+---
+ drivers/staging/comedi/drivers/adv_pci1710.c |   27 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-> 
-> It probably would have been caught in testing as well, but it's on an
-> error path.
+diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
+index 9c17cd1..906eb52 100644
+--- a/drivers/staging/comedi/drivers/adv_pci1710.c
++++ b/drivers/staging/comedi/drivers/adv_pci1710.c
+@@ -1172,15 +1172,13 @@ static int check_channel_list(struct comedi_device *dev,
+ 			comedi_error(dev, "Odd channel cannot be differential input!\n");
+ 			return 0;
+ 		}
+-		nowmustbechan -			(CR_CHAN(chansegment[i - 1]) + 1) % s->n_chan;
++		nowmustbechan = (CR_CHAN(chansegment[i - 1]) + 1) % s->n_chan;
+ 		if (CR_AREF(chansegment[i - 1]) = AREF_DIFF)
+ 			nowmustbechan = (nowmustbechan + 1) % s->n_chan;
+ 		if (nowmustbechan != CR_CHAN(chanlist[i])) {
+-			printk
+-				("channel list must be continuous! chanlist[%i]=%d but must be %d or %d!\n",
+-				 i, CR_CHAN(chanlist[i]), nowmustbechan,
+-				 CR_CHAN(chanlist[0]));
++			printk("channel list must be continuous! chanlist[%i]=%d but must be %d or %d!\n",
++			       i, CR_CHAN(chanlist[i]), nowmustbechan,
++			       CR_CHAN(chanlist[0]));
+ 			return 0;
+ 		}
+ 		chansegment[i] = chanlist[i]; /* next correct channel in list */
+@@ -1188,15 +1186,14 @@ static int check_channel_list(struct comedi_device *dev,
+ 
+ 	for (i = 0, segpos = 0; i < n_chan; i++) {
+ 		if (chanlist[i] != chansegment[i % seglen]) {
+-			printk
+-				("bad channel, reference or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
+-				 i, CR_CHAN(chansegment[i]),
+-				 CR_RANGE(chansegment[i]),
+-				 CR_AREF(chansegment[i]),
+-				 CR_CHAN(chanlist[i % seglen]),
+-				 CR_RANGE(chanlist[i % seglen]),
+-				 CR_AREF(chansegment[i % seglen]));
+-			return 0; /*  chan/gain list is strange */
++			printk("bad channel, reference or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
++			       i, CR_CHAN(chansegment[i]),
++			       CR_RANGE(chansegment[i]),
++			       CR_AREF(chansegment[i]),
++			       CR_CHAN(chanlist[i % seglen]),
++			       CR_RANGE(chanlist[i % seglen]),
++			       CR_AREF(chansegment[i % seglen]));
++			return 0;
+ 		}
+ 	}
+ 	return seglen;
+-- 
+1.7.9.5
 
-I'm dealing with such error so developed this patch. But there are other
-changes too in my code, so I prepared this patch in another clean repo
-and made the mistake, sorry for not testing it before submit. 
-
--Aaron
-
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I haven't tested this.  :/  Sorry for that.
-> 
-> diff --git a/drivers/scsi/scsi_pm.c b/drivers/scsi/scsi_pm.c
-> index 9bd2c41..d4201de 100644
-> --- a/drivers/scsi/scsi_pm.c
-> +++ b/drivers/scsi/scsi_pm.c
-> @@ -27,7 +27,7 @@ static int scsi_dev_type_suspend(struct device *dev, pm_message_t msg)
->                 if (drv && drv->suspend) {
->                         err = drv->suspend(dev, msg);
->                         if (err)
-> -                               scsi_device_resume(dev);
-> +                               scsi_device_resume(to_scsi_device(dev));
->                 }
->         }
->         dev_dbg(dev, "scsi suspend: %d\n", err);
-> 
