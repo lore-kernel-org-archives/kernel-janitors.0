@@ -1,55 +1,74 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Sun, 13 May 2012 20:50:50 +0000
-Subject: Re: [PATCH] drivers/video/intelfb/intelfbdrv.c: add missing agp_backend_release
-Message-Id: <4FB01EAA.8040504@gmx.de>
+From: Tomas Melin <tomas.melin@iki.fi>
+Date: Mon, 07 May 2012 19:49:48 +0000
+Subject: [PATCH 2/4] Staging: Comedi adv_pci1710: Cleaned up comments
+Message-Id: <1336420188-31181-1-git-send-email-tomas.melin@iki.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1334854553-30067-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1334854553-30067-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Maik Broemme <mbroemme@plusserver.de>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 04/19/2012 04:55 PM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Release bridge, as done on all other paths out of the function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Removed useless comments and cleaned up text.
 
-Looks good to me, applied.
+Signed-off-by: Tomas Melin <tomas.melin@iki.fi>
+---
+ drivers/staging/comedi/drivers/adv_pci1710.c |   20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-
-Thanks,
-
-Florian Tobias Schandinat
-
-> 
-> ---
->  drivers/video/intelfb/intelfbdrv.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/video/intelfb/intelfbdrv.c b/drivers/video/intelfb/intelfbdrv.c
-> index 02fd226..bdcbfba 100644
-> --- a/drivers/video/intelfb/intelfbdrv.c
-> +++ b/drivers/video/intelfb/intelfbdrv.c
-> @@ -680,6 +680,7 @@ static int __devinit intelfb_pci_register(struct pci_dev *pdev,
->  		 + dinfo->fb.size);
->  	if (!dinfo->aperture.virtual) {
->  		ERR_MSG("Cannot remap FB region.\n");
-> +		agp_backend_release(bridge);
->  		cleanup(dinfo);
->  		return -ENODEV;
->  	}
-> @@ -689,6 +690,7 @@ static int __devinit intelfb_pci_register(struct pci_dev *pdev,
->  					      INTEL_REG_SIZE);
->  	if (!dinfo->mmio_base) {
->  		ERR_MSG("Cannot remap MMIO region.\n");
-> +		agp_backend_release(bridge);
->  		cleanup(dinfo);
->  		return -ENODEV;
->  	}
-> 
-> 
+diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
+index 2048b19..ef8b429 100644
+--- a/drivers/staging/comedi/drivers/adv_pci1710.c
++++ b/drivers/staging/comedi/drivers/adv_pci1710.c
+@@ -1163,33 +1163,31 @@ static int check_channel_list(struct comedi_device *dev,
+ 	if (n_chan = 1)
+ 		return 1; /* seglen=1 */
+ 
+-	chansegment[0] = chanlist[0];	/*  first channel is every time ok */
+-	for (i = 1, seglen = 1; i < n_chan; i++, seglen++) {	/*  build part of chanlist */
+-		/*  printk("%d. %d %d\n",i,CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
++	chansegment[0] = chanlist[0]; /*  first channel is every time ok */
++	for (i = 1, seglen = 1; i < n_chan; i++, seglen++) {
+ 		if (chanlist[0] = chanlist[i])
+-			break;	/*  we detect loop, this must by finish */
+-		if (CR_CHAN(chanlist[i]) & 1)	/*  odd channel cann't by differencial */
++			break;	/*  we detected a loop, stop */
++		if (CR_CHAN(chanlist[i]) & 1)
+ 			if (CR_AREF(chanlist[i]) = AREF_DIFF) {
+ 				comedi_error(dev,
+-					     "Odd channel can't be differential input!\n");
++					     "Odd channel cannot be differential input!\n");
+ 				return 0;
+ 			}
+ 		nowmustbechan  			(CR_CHAN(chansegment[i - 1]) + 1) % s->n_chan;
+ 		if (CR_AREF(chansegment[i - 1]) = AREF_DIFF)
+ 			nowmustbechan = (nowmustbechan + 1) % s->n_chan;
+-		if (nowmustbechan != CR_CHAN(chanlist[i])) {	/*  channel list isn't continuous :-( */
++		if (nowmustbechan != CR_CHAN(chanlist[i])) {
+ 			printk
+ 				("channel list must be continuous! chanlist[%i]=%d but must be %d or %d!\n",
+ 				 i, CR_CHAN(chanlist[i]), nowmustbechan,
+ 				 CR_CHAN(chanlist[0]));
+ 			return 0;
+ 		}
+-		chansegment[i] = chanlist[i];	/*  well, this is next correct channel in list */
++		chansegment[i] = chanlist[i]; /* next correct channel in list */
+ 	}
+ 
+-	for (i = 0, segpos = 0; i < n_chan; i++) {	/*  check whole chanlist */
+-		/* printk("%d %d=%d %d\n",CR_CHAN(chansegment[i%seglen]),CR_RANGE(chansegment[i%seglen]),CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
++	for (i = 0, segpos = 0; i < n_chan; i++) {
+ 		if (chanlist[i] != chansegment[i % seglen]) {
+ 			printk
+ 				("bad channel, reference or range number! chanlist[%i]=%d,%d,%d and not %d,%d,%d!\n",
+@@ -1199,7 +1197,7 @@ static int check_channel_list(struct comedi_device *dev,
+ 				 CR_CHAN(chanlist[i % seglen]),
+ 				 CR_RANGE(chanlist[i % seglen]),
+ 				 CR_AREF(chansegment[i % seglen]));
+-			return 0;	/*  chan/gain list is strange */
++			return 0; /*  chan/gain list is strange */
+ 		}
+ 	}
+ 	return seglen;
+-- 
+1.7.9.5
 
