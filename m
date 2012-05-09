@@ -1,29 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 09 May 2012 06:51:02 +0000
-Subject: Re: [PATCH] crc32.c: cleanup unused variables warning
-Message-Id: <20120509064605.GQ22134@mwanda>
+From: Thiago Rafael Becker <trbecker@trbecker.org>
+Date: Wed, 09 May 2012 23:35:37 +0000
+Subject: [PATCH] crc32.c: cleanup unused variables warning
+Message-Id: <1336606537-11538-1-git-send-email-trbecker@trbecker.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1336527414-18413-1-git-send-email-trbecker@trbecker.org>
 In-Reply-To: <1336527414-18413-1-git-send-email-trbecker@trbecker.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: akpm@linux-foundation.org, djwong@us.ibm.com, kernel-janitors@vger.kernel.org
+Cc: Thiago Rafael Becker <trbecker@trbecker.org>, linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2012 at 10:36:54PM -0300, Thiago Rafael Becker wrote:
-> Variables t4, t5, t6 and t7 are only used when CRC_LE_BITS != 32.
+Variables t4, t5, t6 and t7 are only used when CRC_LE_BITS != 32. This cleans
+the following compilation warnings:
 
+lib/crc32.c: In function 'crc32_body':
+lib/crc32.c:77:55: warning: unused variable 't7'
+lib/crc32.c:77:41: warning: unused variable 't6'
+lib/crc32.c:77:27: warning: unused variable 't5'
+lib/crc32.c:77:13: warning: unused variable 't4'
 
-Looks ok.
+CC: linux-kernel@vger.kernel.org
 
-1) This silences a gcc warning yes?  Put the warning into the commit
-   message.
-2) It needs a Signed-off-by line.
-3) Resend it to the people from scripts/get_maintainer.pl.  CC lkml.
-   The stuff in lib/ is so important and the more review it gets
-   the better.  Even trivial patches benifit from the extra review.
+Signed-off-by: Thiago Rafael Becker <trbecker@trbecker.org>
 
-regards,
-dan carpenter
+---
+ lib/crc32.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/lib/crc32.c b/lib/crc32.c
+index b0d278f..61774b8 100644
+--- a/lib/crc32.c
++++ b/lib/crc32.c
+@@ -74,7 +74,9 @@ crc32_body(u32 crc, unsigned char const *buf, size_t len, const u32 (*tab)[256])
+ 	size_t i;
+ # endif
+ 	const u32 *t0=tab[0], *t1=tab[1], *t2=tab[2], *t3=tab[3];
++# if CRC_LE_BITS != 32
+ 	const u32 *t4 = tab[4], *t5 = tab[5], *t6 = tab[6], *t7 = tab[7];
++# endif
+ 	u32 q;
+ 
+ 	/* Align it */
+-- 
+1.7.10.1
 
