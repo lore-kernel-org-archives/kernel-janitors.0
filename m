@@ -1,54 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 May 2012 08:39:12 +0000
-Subject: Re: [patch] netfilter: potential NULL dereference in get_inner_hdr()
-Message-Id: <20120514083912.GB16999@mwanda>
+From: Thiago Rafael Becker <trbecker@trbecker.org>
+Date: Wed, 09 May 2012 01:36:54 +0000
+Subject: [PATCH] crc32.c: cleanup unused variables warning
+Message-Id: <1336527414-18413-1-git-send-email-trbecker@trbecker.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120512110003.GB19472@elgon.mountain>
- <201205140936.56960.hans.schillstrom@ericsson.com>
-In-Reply-To: <201205140936.56960.hans.schillstrom@ericsson.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Schillstrom <hans.schillstrom@ericsson.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, "netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>, "netfilter@vger.kernel.org" <netfilter@vger.kernel.org>, "coreteam@netfilter.org" <coreteam@netfilter.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Mon, May 14, 2012 at 09:36:55AM +0200, Hans Schillstrom wrote:
-> On Saturday 12 May 2012 13:00:03 Dan Carpenter wrote:
-> > There is a typo in the error checking and "&&" was used instead of "||".
-> > If skb_header_pointer() returns NULL then it leads to a NULL
-> > dereference.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Ack-by: Hans Schillstrom <hans.schillstrom@ericsson.com>
->  
-> > ---
-> > Btw, this is new code and Sparse complains about endian bugs.
-> 
-> Can you give me some hints here, arch , compiler version etc.
-> I guess it was input to hmark_addr_mask() that complains ?
-> 
+Variables t4, t5, t6 and t7 are only used when CRC_LE_BITS != 32.
+---
+ lib/crc32.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Yes.  That was one of the warnings.
-
-http://lwn.net/Articles/205624/
-
-net/netfilter/xt_HMARK.c:87:35: warning: incorrect type in assignment (different base types)
-net/netfilter/xt_HMARK.c:87:35:    expected unsigned short [unsigned] [usertype] src
-net/netfilter/xt_HMARK.c:87:35:    got restricted __be16 [usertype] all
-net/netfilter/xt_HMARK.c:88:35: warning: incorrect type in assignment (different base types)
-net/netfilter/xt_HMARK.c:88:35:    expected unsigned short [unsigned] [usertype] dst
-net/netfilter/xt_HMARK.c:88:35:    got restricted __be16 [usertype] all
-net/netfilter/xt_HMARK.c:181:35: warning: incorrect type in argument 1 (different base types)
-net/netfilter/xt_HMARK.c:181:35:    expected unsigned int const [usertype] *addr32
-net/netfilter/xt_HMARK.c:181:35:    got restricted __be32 *<noident>
-net/netfilter/xt_HMARK.c:182:35: warning: incorrect type in argument 1 (different base types)
-net/netfilter/xt_HMARK.c:182:35:    expected unsigned int const [usertype] *addr32
-net/netfilter/xt_HMARK.c:182:35:    got restricted __be32 *<noident>
-net/netfilter/xt_HMARK.c:261:16: warning: invalid assignment: &net/netfilter/xt_HMARK.c:261:16:    left side has type unsigned int
-net/netfilter/xt_HMARK.c:261:16:    right side has type restricted __be32
-net/netfilter/xt_HMARK.c:262:16: warning: invalid assignment: &net/netfilter/xt_HMARK.c:262:16:    left side has type unsigned int
-net/netfilter/xt_HMARK.c:262:16:    right side has type restricted __be32
-
-regards,
-dan carpenter
+diff --git a/lib/crc32.c b/lib/crc32.c
+index b0d278f..61774b8 100644
+--- a/lib/crc32.c
++++ b/lib/crc32.c
+@@ -74,7 +74,9 @@ crc32_body(u32 crc, unsigned char const *buf, size_t len, const u32 (*tab)[256])
+ 	size_t i;
+ # endif
+ 	const u32 *t0=tab[0], *t1=tab[1], *t2=tab[2], *t3=tab[3];
++# if CRC_LE_BITS != 32
+ 	const u32 *t4 = tab[4], *t5 = tab[5], *t6 = tab[6], *t7 = tab[7];
++# endif
+ 	u32 q;
+ 
+ 	/* Align it */
+-- 
+1.7.10.1
 
