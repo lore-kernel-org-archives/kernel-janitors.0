@@ -1,57 +1,85 @@
-From: InKi Dae <daeinki@gmail.com>
-Date: Mon, 14 May 2012 02:24:29 +0000
-Subject: Re: [PATCH] drm/exynos: Include missing linux/types.h in header
-Message-Id: <CAAQKjZNbu9E+bpt0cC8OiRhcGFe13E17bVU_ZY2EeLCzNpSavA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 May 2012 15:18:36 +0000
+Subject: [patch 1/2] Staging: ipack: returning a freed pointer
+Message-Id: <20120510151836.GA31515@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1336661600-2409-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1336661600-2409-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Emil Goode <emilgoode@gmail.com>
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-2012/5/10 Emil Goode <emilgoode@gmail.com>:
-> Include the linux/types.h file where used types are declared.
->
-> Sparse gives the following warning:
-> /usr/include/drm/exynos_drm.h:92:
-> =A0 =A0 =A0 =A0found __[us]{8,16,32,64} type without
-> =A0 =A0 =A0 =A0#include <linux/types.h>
->
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
-> =A0include/drm/exynos_drm.h | =A0 =A02 ++
-> =A01 file changed, 2 insertions(+)
->
-> diff --git a/include/drm/exynos_drm.h b/include/drm/exynos_drm.h
-> index e478de4..7eb7ae7 100644
-> --- a/include/drm/exynos_drm.h
-> +++ b/include/drm/exynos_drm.h
-> @@ -29,6 +29,8 @@
-> =A0#ifndef _EXYNOS_DRM_H_
-> =A0#define _EXYNOS_DRM_H_
->
-> +#include <linux/types.h>
-> +
+If ipack_device_register() returns an error, then we returned a freed
+pointer.  The caller doesn't use it, but it means we return success to
+the user instead of returning an error code.
 
-applied.
+I kind of rewrote the error handling in this function as a cleanup.
 
-Thanks,
-Inki Dae
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> =A0/**
-> =A0* User-desired buffer creation information structure.
-> =A0*
-> --
-> 1.7.10
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/ipack/bridges/tpci200.c b/drivers/staging/ipack/bridges/tpci200.c
+index 6aeb660..ab6ea0a 100644
+--- a/drivers/staging/ipack/bridges/tpci200.c
++++ b/drivers/staging/ipack/bridges/tpci200.c
+@@ -372,7 +372,7 @@ static struct ipack_device *tpci200_slot_register(const char *board_name,
+ 						  unsigned int slot_position)
+ {
+ 	int found = 0;
+-	struct ipack_device  *dev = NULL;
++	struct ipack_device  *dev;
+ 	struct tpci200_board *tpci200;
+ 
+ 	list_for_each_entry(tpci200, &tpci200_list, list) {
+@@ -390,16 +390,16 @@ static struct ipack_device *tpci200_slot_register(const char *board_name,
+ 	if (slot_position >= TPCI200_NB_SLOT) {
+ 		pr_info("Slot [%s %d:%d] doesn't exist!\n",
+ 			TPCI200_SHORTNAME, tpci200_number, slot_position);
+-		goto out;
++		return NULL;
+ 	}
+ 
+ 	if (mutex_lock_interruptible(&tpci200->mutex))
+-		goto out;
++		return NULL;
+ 
+ 	if (tpci200->slots[slot_position].dev != NULL) {
+ 		pr_err("Slot [%s %d:%d] already installed !\n",
+ 		       TPCI200_SHORTNAME, tpci200_number, slot_position);
+-		goto out_unlock;
++		goto err_unlock;
+ 	}
+ 
+ 	dev = kzalloc(sizeof(struct ipack_device), GFP_KERNEL);
+@@ -407,7 +407,7 @@ static struct ipack_device *tpci200_slot_register(const char *board_name,
+ 		pr_info("Slot [%s %d:%d] Unable to allocate memory for new slot !\n",
+ 			TPCI200_SHORTNAME,
+ 			tpci200_number, slot_position);
+-		goto out_unlock;
++		goto err_unlock;
+ 	}
+ 
+ 	if (size > IPACK_BOARD_NAME_SIZE) {
+@@ -440,15 +440,18 @@ static struct ipack_device *tpci200_slot_register(const char *board_name,
+ 	dev->ops = &tpci200_bus_ops;
+ 	tpci200->slots[slot_position].dev = dev;
+ 
+-	if (ipack_device_register(dev) < 0) {
+-		tpci200_slot_unregister(dev);
+-		kfree(dev);
+-	}
++	if (ipack_device_register(dev) < 0)
++		goto err_unregister;
+ 
+-out_unlock:
+ 	mutex_unlock(&tpci200->mutex);
+-out:
+ 	return dev;
++
++err_unregister:
++	tpci200_slot_unregister(dev);
++	kfree(dev);
++err_unlock:
++	mutex_unlock(&tpci200->mutex);
++	return NULL;
+ }
+ 
+ static ssize_t tpci200_store_board(struct device *pdev, const char *buf,
