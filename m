@@ -1,79 +1,39 @@
-From: Peng Tao <bergwolf@gmail.com>
-Date: Wed, 16 May 2012 00:38:01 +0000
-Subject: Re: [patch] NFS: kmalloc() doesn't return an ERR_PTR()
-Message-Id: <CA+a=Yy5Whh3CEmnazkTVzvBBP0Yu9hDxtzXVigY1R1zVZaZhog@mail.gmail.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Thu, 10 May 2012 14:53:20 +0000
+Subject: [PATCH] drm/exynos: Include missing linux/types.h in header
+Message-Id: <1336661600-2409-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120514194528.GA19613@elgon.mountain> <4FB25EA7.9050702@panasas.com>
- <20120515135733.GJ16984@mwanda> <4FB2659C.5090005@panasas.com> <4FB28911.1070500@bfs.de>
-In-Reply-To: <4FB28911.1070500@bfs.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: wharms@bfs.de
-Cc: Boaz Harrosh <bharrosh@panasas.com>, Dan Carpenter <dan.carpenter@oracle.com>, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Wed, May 16, 2012 at 12:49 AM, walter harms <wharms@bfs.de> wrote:
->
->
-> Am 15.05.2012 16:18, schrieb Boaz Harrosh:
->> On 05/15/2012 04:57 PM, Dan Carpenter wrote:
->>
->>> On Tue, May 15, 2012 at 04:48:23PM +0300, Boaz Harrosh wrote:
->>>> On 05/14/2012 10:45 PM, Dan Carpenter wrote:
->>>>
->>>>> Obviously we should check for NULL here instead of IS_ERR().
->>>>>
->>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>>
->>>>> diff --git a/fs/nfs/idmap.c b/fs/nfs/idmap.c
->>>>> index ba3019f..233beea 100644
->>>>> --- a/fs/nfs/idmap.c
->>>>> +++ b/fs/nfs/idmap.c
->>>>> @@ -644,14 +644,14 @@ static int nfs_idmap_legacy_upcall(struct key_construction *cons,
->>>>>
->>>>>    /* msg and im are freed in idmap_pipe_destroy_msg */
->>>>>    msg = kmalloc(sizeof(*msg), GFP_KERNEL);
->>>>> -  if (IS_ERR(msg)) {
->>>>> -          ret = PTR_ERR(msg);
->>>>> +  if (!msg) {
->>>>
->>>>
->>>> While at it please put an unlikely()
->>>>
->>>
->>> Normally we wouldn't put an unlikely() here.  It makes the code
->>> less readable and it's not going to affect benchmarks.  But I can
->>> add one if people prefer.
->>>
->>
->>
->> Personally It makes it more readable for me. It's like a statement:
->> "error, always slow-path case here". I have brain parsers set
->> for these.
->>
->> Specifically here the if () is very small but if it is more code
->> it is exactly where it counts. But as a general rule I like the
->> error/slow-path case to be in an unlikely(). Later someone
->> might add more code which will matter.
->>
-My impression is these hints are useful iif the code is on performance
-critical path like scheduler, path walking, etc. Apparently nfs idmap
-isn't the case.
+Include the linux/types.h file where used types are declared.
 
-Thanks,
-Tao
->>> regards,
->>> dan carpenter
->>>
->>
->>
->
-> Not long a go we had a hint from one of the developers that this likely()-stuff
-> should be used in the scheduler and has no use outside.
->
-> re,
->  wh
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sparse gives the following warning:
+/usr/include/drm/exynos_drm.h:92:
+	found __[us]{8,16,32,64} type without
+	#include <linux/types.h>
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ include/drm/exynos_drm.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/drm/exynos_drm.h b/include/drm/exynos_drm.h
+index e478de4..7eb7ae7 100644
+--- a/include/drm/exynos_drm.h
++++ b/include/drm/exynos_drm.h
+@@ -29,6 +29,8 @@
+ #ifndef _EXYNOS_DRM_H_
+ #define _EXYNOS_DRM_H_
+ 
++#include <linux/types.h>
++
+ /**
+  * User-desired buffer creation information structure.
+  *
+-- 
+1.7.10
+
