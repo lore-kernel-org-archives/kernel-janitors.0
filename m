@@ -1,57 +1,39 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Tue, 29 May 2012 16:57:00 +0000
-Subject: [PATCH] video: bfin_adv7393fb: Convert to kstrtouint_from_user
-Message-Id: <1338310620-6886-1-git-send-email-emilgoode@gmail.com>
+From: Thiago Rafael Becker <trbecker@trbecker.org>
+Date: Sat, 12 May 2012 19:02:23 +0000
+Subject: [PATCH] kgdb: clear compilation warning
+Message-Id: <1336849343-2701-1-git-send-email-trbecker@trbecker.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: FlorianSchandinat@gmx.de
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Thiago Rafael Becker <trbecker@trbecker.org>, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, a.p.zijlstra@chello.nl, jason.wessel@windriver.com, jan.kiszka@siemens.com, dhowells@redhat.com
 
-This patch removes a call to the deprecated simple_strtoul function
-and simplifies the code by replacing two function calls with one
-call to kstrtouint_from_user.
+In the function kgdb_arch_set_breakpoint, the variable is only used
+if DEBUG_RODATA is configured. This clears the following compilation
+warning:
 
--Simplify the adv7393_write_proc function by replacing the
- simple_strtoul and copy_from_user calls with one call
- to kstrtouint_from_user.
+arch/x86/kernel/kgdb.c:749:7: warning: unused variable 'opc'
 
--Change the count parameter from unsigned long to size_t as
- this is the type that the kstrtouint_from_user function expects.
- (size_t is what will be passed to the adv7393_write_proc function
- by the proc write handler function proc_file_write anyway)
-
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Signed-off-by: Thiago Rafael Becker <trbecker@trbecker.org>
 ---
- drivers/video/bfin_adv7393fb.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/kernel/kgdb.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/video/bfin_adv7393fb.c b/drivers/video/bfin_adv7393fb.c
-index 1a268a2..8c6edfd 100644
---- a/drivers/video/bfin_adv7393fb.c
-+++ b/drivers/video/bfin_adv7393fb.c
-@@ -353,18 +353,16 @@ adv7393_read_proc(char *page, char **start, off_t off,
- 
- static int
- adv7393_write_proc(struct file *file, const char __user * buffer,
--		   unsigned long count, void *data)
-+		   size_t count, void *data)
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 8bfb614..0ea80ef 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -746,7 +746,9 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
+ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
  {
- 	struct adv7393fb_device *fbdev = data;
--	char line[8];
- 	unsigned int val;
- 	int ret;
+ 	int err;
++#ifdef CONFIG_DEBUG_RODATA
+ 	char opc[BREAK_INSTR_SIZE];
++#endif
  
--	ret = copy_from_user(line, buffer, count);
-+	ret = kstrtouint_from_user(buffer, count, 0, &val);
- 	if (ret)
- 		return -EFAULT;
- 
--	val = simple_strtoul(line, NULL, 0);
- 	adv7393_write(fbdev->client, val >> 8, val & 0xff);
- 
- 	return count;
+ 	bpt->type = BP_BREAKPOINT;
+ 	err = probe_kernel_read(bpt->saved_instr, (char *)bpt->bpt_addr,
 -- 
-1.7.10
+1.7.10.1
 
