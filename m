@@ -1,35 +1,50 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 May 2012 07:05:07 +0000
-Subject: Re: [patch] [media] gspca: passing wrong length parameter to reg_w()
-Message-Id: <20120502070507.GO6447@mwanda>
+Date: Sun, 13 May 2012 14:41:04 +0000
+Subject: [patch] ext4: potential NULL dereference on error
+Message-Id: <20120513144104.GA21998@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120502061525.GC28894@elgon.mountain>
- <20120502084758.1a08823f@tele>
-In-Reply-To: <20120502084758.1a08823f@tele>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Francois Moine <moinejf@free.fr>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 02, 2012 at 08:47:58AM +0200, Jean-Francois Moine wrote:
-> Thanks for the patch. The bug is very very old (6 years, at least -
-> neither have I such a webcam).
-> 
+The ext4_get_group_desc() function returns NULL on error, and
+ext4_free_inodes_count() function dereferences it without checking.
+There is a check on the next line, but it's too late.
 
-My guess is that it's harmless to write a few extra garbage bits,
-but it's still worth fixing as a cleanup.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker fix.
 
-> Maybe the fix could have been
-> 
-> 	reg_w(gspca_dev, 0x0010, reg10, sizeof reg10);
-> 
-> but it is OK for me.
-> 
-> Acked-by: Jean-Francois Moine <http://moinejf.free.fr>
-
-Thanks.
-
-regards,
-dan carpenter
-
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index a044a9b..1526f33 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -389,7 +389,7 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent,
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_group_t real_ngroups = ext4_get_groups_count(sb);
+ 	int inodes_per_group = EXT4_INODES_PER_GROUP(sb);
+-	unsigned int freei, avefreei, grp_free;
++	unsigned int freei, avefreei;
+ 	ext4_fsblk_t freeb, avefreec;
+ 	unsigned int ndirs;
+ 	int max_dirs, min_inodes;
+@@ -399,6 +399,7 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent,
+ 	struct orlov_stats stats;
+ 	int flex_size = ext4_flex_bg_size(sbi);
+ 	struct dx_hash_info hinfo;
++	unsigned int grp_free = 0;
+ 
+ 	ngroups = real_ngroups;
+ 	if (flex_size > 1) {
+@@ -508,7 +509,8 @@ fallback_retry:
+ 	for (i = 0; i < ngroups; i++) {
+ 		grp = (parent_group + i) % ngroups;
+ 		desc = ext4_get_group_desc(sb, grp, NULL);
+-		grp_free = ext4_free_inodes_count(sb, desc);
++		if (desc)
++			grp_free = ext4_free_inodes_count(sb, desc);
+ 		if (desc && grp_free && grp_free >= avefreei) {
+ 			*group = grp;
+ 			return 0;
