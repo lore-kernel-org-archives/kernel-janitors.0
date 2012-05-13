@@ -1,36 +1,64 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Apr 2012 05:46:52 +0000
-Subject: [PATCH] drivers/edac/i82875p_edac.c: eliminate double definition
-Message-Id: <1335764812-29927-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Girish Verma <girish@circuitsutra.com>
+Date: Sun, 13 May 2012 01:18:08 +0000
+Subject: [PATCH] USB: XHCI: xhci-ring: Remove unused dma address calculation in inc_enq and inc_deq function
+Message-Id: <CAOf1Mzv=+zSVCDgPcHhVvN6YCbhM8R2w6DDL80EbYTuA0EGpCw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Thompson <dougthompson@xmission.com>
-Cc: kernel-janitors@vger.kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, sarah.a.sharp@linux.intel.com, gregkh@linuxfoundation.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi,
 
-The first thing that i82875p_setup_overfl_dev does is overwrite the value
-of ovrfl_pdev and perform the same call to pci_get_device as is done here.
+in xhci-ring.c, function inc_enq and inc_deq calculate the dma address
+of trb but never used. This calculation may be used for debugging
+purpose, in that case this code should be part of debug flag.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Girish Verma <girish@circuitsutra.com>
 ---
- drivers/edac/i82875p_edac.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/usb/host/xhci-ring.c |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/edac/i82875p_edac.c b/drivers/edac/i82875p_edac.c
-index 10f15d8..22ecc54 100644
---- a/drivers/edac/i82875p_edac.c
-+++ b/drivers/edac/i82875p_edac.c
-@@ -391,8 +391,6 @@ static int i82875p_probe1(struct pci_dev *pdev, int dev_idx)
- 
- 	debugf0("%s()\n", __func__);
- 
--	ovrfl_pdev = pci_get_device(PCI_VEND_DEV(INTEL, 82875_6), NULL);
--
- 	if (i82875p_setup_overfl_dev(pdev, &ovrfl_pdev, &ovrfl_window))
- 		return -ENODEV;
- 	drc = readl(ovrfl_window + I82875P_DRC);
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 3d9422f..dcd67c1 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -146,7 +146,6 @@ static void next_trb(struct xhci_hcd *xhci,
+ static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
+ {
+ 	union xhci_trb *next;
+-	unsigned long long addr;
 
+ 	ring->deq_updates++;
+
+@@ -168,7 +167,6 @@ static void inc_deq(struct xhci_hcd *xhci, struct
+xhci_ring *ring)
+ 		ring->dequeue = ring->deq_seg->trbs;
+ 		next = ring->dequeue;
+ 	}
+-	addr = (unsigned long long) xhci_trb_virt_to_dma(ring->deq_seg,
+ring->dequeue);
+ }
+
+ /*
+@@ -193,7 +191,6 @@ static void inc_enq(struct xhci_hcd *xhci, struct
+xhci_ring *ring,
+ {
+ 	u32 chain;
+ 	union xhci_trb *next;
+-	unsigned long long addr;
+
+ 	chain = le32_to_cpu(ring->enqueue->generic.field[3]) & TRB_CHAIN;
+ 	/* If this is not event ring, there is one less usable TRB */
+@@ -245,7 +242,6 @@ static void inc_enq(struct xhci_hcd *xhci, struct
+xhci_ring *ring,
+ 		ring->enqueue = ring->enq_seg->trbs;
+ 		next = ring->enqueue;
+ 	}
+-	addr = (unsigned long long) xhci_trb_virt_to_dma(ring->enq_seg,
+ring->enqueue);
+ }
+
+ /*
+--
