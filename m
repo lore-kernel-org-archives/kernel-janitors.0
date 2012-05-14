@@ -1,71 +1,33 @@
-From: Tomas Melin <tomas.melin@iki.fi>
-Date: Thu, 03 May 2012 13:55:19 +0000
-Subject: Re: [PATCH] Staging: Comedi adv_pci1710: Cleaned up function check_channel_list
-Message-Id: <CACraW2pi94heTXMwq2n52WUpF+CP-28--oZMVdAG_53GMeEXGA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 May 2012 20:57:29 +0000
+Subject: [patch] brcm80211: remove an unneeded NULL check
+Message-Id: <20120514205729.GD20836@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1335975217-5895-1-git-send-email-tomas.melin@iki.fi>
-In-Reply-To: <1335975217-5895-1-git-send-email-tomas.melin@iki.fi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Brett Rudley <brudley@broadcom.com>
+Cc: Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 2, 2012 at 11:06 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> Please break this up into one-change-per-patch, so it can be reviewed
-> easier and accepted properly.
+This code causes a static checker warning because "pi" gets dereferenced
+before it is checked.  The dereference is inside the write_phy_reg()
+function which is called from wlc_phy_write_txmacreg_nphy().
 
-Ok, got it. I'll get back to you with a patch-series.
+This code is only called from wlc_phy_init_nphy() and "pi" is a
+valid pointer so we can remove the check for NULL.
 
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
->> When I review this stuff I have a script called rename_rev.pl
->> (attached) and I `cat your_patch.txt | rename_rev.pl`.  It removes
->> the indenting changes and only shows the logic changes.  So the
->> solid block of changes becomes a two liner which takes 10 seconds
->> to review.  The other changes to line breaks and comments and curly
->> parens are much simpler to review on their own.  10 seconds for
->> each.  It's way way easier to review one liner changes than a
->> tangled block of changes.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Nice script, thanks.
-
-Tomas
-
-
-
-
-On Thu, May 3, 2012 at 11:40 AM, Nikola Pajkovsky <n.pajkovsky@gmail.com> w=
-rote:
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
->
->> On Wed, May 02, 2012 at 07:13:37PM +0300, Tomas Melin wrote:
->>> -Simplified function logic by assuming that n_chan >1 if not <=3D1. Rem=
-oves
->>> one level of indentation.
->>> -> readability improved and code fits into 80 chars
->>> - Code indentation fixes, corrected comments
->>> - Added braces to if() for readability
->>>
->>
->> Greg of course is the Boss-man and he already explained that this
->> needed to get broken up, but yeah I also wanted to say that as well.
->> The first patch should just pull the if (n_chan =3D 1) forward,
->> remove the else clause, and pull the indent level in.
->>
->> When I review this stuff I have a script called rename_rev.pl
->> (attached) and I `cat your_patch.txt | rename_rev.pl`. =A0It removes
->> the indenting changes and only shows the logic changes. =A0So the
->> solid block of changes becomes a two liner which takes 10 seconds
->> to review. =A0The other changes to line breaks and comments and curly
->> parens are much simpler to review on their own. =A010 seconds for
->> each. =A0It's way way easier to review one liner changes than a
->> tangled block of changes.
->
-> And I have to thank you for the script. thanks.
->
-> --
-> Nikola
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_n.c b/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_n.c
+index 812b6e3..d6380f3 100644
+--- a/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_n.c
++++ b/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_n.c
+@@ -14358,7 +14358,7 @@ void wlc_phy_nphy_tkip_rifs_war(struct brcms_phy *pi, u8 rifs)
+ 
+ 	wlc_phy_write_txmacreg_nphy(pi, holdoff, delay);
+ 
+-	if (pi && pi->sh && (pi->sh->_rifs_phy != rifs))
++	if (pi->sh && (pi->sh->_rifs_phy != rifs))
+ 		pi->sh->_rifs_phy = rifs;
+ }
+ 
