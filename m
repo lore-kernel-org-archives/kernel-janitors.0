@@ -1,43 +1,38 @@
-From: Ian Romanick <idr@freedesktop.org>
-Date: Thu, 17 May 2012 17:05:43 +0000
-Subject: Re: [patch] drm: checking the wrong variable in savage_do_init_bci()
-Message-Id: <4FB52FE7.6070303@freedesktop.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 May 2012 19:45:28 +0000
+Subject: [patch] NFS: kmalloc() doesn't return an ERR_PTR()
+Message-Id: <20120514194528.GA19613@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120517070944.GE14660@elgon.mountain>
-In-Reply-To: <20120517070944.GE14660@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Nicolas Kaiser <nikai@nikai.net>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>, Greg Dietsche <Gregory.Dietsche@cuw.edu>
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/17/2012 12:09 AM, Dan Carpenter wrote:
-> drm_core_ioremap() initializes ->handle.  We already know
-> "dev->agp_buffer_map" is a valid pointer.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+Obviously we should check for NULL here instead of IS_ERR().
 
-I'm surprised that has never been hit.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Ian Romanick <ian.d.romanick@intel.com>
-
->
-> diff --git a/drivers/gpu/drm/savage/savage_bci.c b/drivers/gpu/drm/savage/savage_bci.c
-> index cb1ee4e..6eb507a 100644
-> --- a/drivers/gpu/drm/savage/savage_bci.c
-> +++ b/drivers/gpu/drm/savage/savage_bci.c
-> @@ -735,7 +735,7 @@ static int savage_do_init_bci(struct drm_device * dev, drm_savage_init_t * init)
->   			return -EINVAL;
->   		}
->   		drm_core_ioremap(dev->agp_buffer_map, dev);
-> -		if (!dev->agp_buffer_map) {
-> +		if (!dev->agp_buffer_map->handle) {
->   			DRM_ERROR("failed to ioremap DMA buffer region!\n");
->   			savage_do_cleanup_bci(dev);
->   			return -ENOMEM;
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
-
+diff --git a/fs/nfs/idmap.c b/fs/nfs/idmap.c
+index ba3019f..233beea 100644
+--- a/fs/nfs/idmap.c
++++ b/fs/nfs/idmap.c
+@@ -644,14 +644,14 @@ static int nfs_idmap_legacy_upcall(struct key_construction *cons,
+ 
+ 	/* msg and im are freed in idmap_pipe_destroy_msg */
+ 	msg = kmalloc(sizeof(*msg), GFP_KERNEL);
+-	if (IS_ERR(msg)) {
+-		ret = PTR_ERR(msg);
++	if (!msg) {
++		ret = -ENOMEM;
+ 		goto out0;
+ 	}
+ 
+ 	im = kmalloc(sizeof(*im), GFP_KERNEL);
+-	if (IS_ERR(im)) {
+-		ret = PTR_ERR(im);
++	if (!im) {
++		ret = -ENOMEM;
+ 		goto out1;
+ 	}
+ 
