@@ -1,41 +1,30 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Wed, 09 May 2012 02:28:44 +0000
-Subject: Re: [patch] target: lock => unlock typo
-Message-Id: <1336530524.8722.61.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 May 2012 20:58:37 +0000
+Subject: [patch] fb: handle NULL pointers in framebuffer release
+Message-Id: <20120514205837.GE20836@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120508102858.GA21528@elgon.mountain>
-In-Reply-To: <20120508102858.GA21528@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-On Tue, 2012-05-08 at 13:28 +0300, Dan Carpenter wrote:
-> target_stop_cmd() returns with the lock held and IRQs disabled.  The
-> intent was to unlock here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-> index 0d838ab..8bd9ffe 100644
-> --- a/drivers/target/target_core_transport.c
-> +++ b/drivers/target/target_core_transport.c
-> @@ -3769,7 +3769,7 @@ static int transport_lun_wait_for_tasks(struct se_cmd *cmd, struct se_lun *lun)
->  	    (cmd->transport_state & CMD_T_SENT)) {
->  		if (!target_stop_cmd(cmd, &flags))
->  			ret++;
-> -		spin_lock_irqsave(&cmd->t_state_lock, flags);
-> +		spin_unlock_irqrestore(&cmd->t_state_lock, flags);
->  	} else {
->  		spin_unlock_irqrestore(&cmd->t_state_lock,
->  				flags);
-> --
+This function is called with a potential NULL pointer in
+picolcd_init_framebuffer() and it causes a static checker warning.  This
+used to handle NULL pointers when the picolcd code was written, but a
+couple months later we added the "info->apertures" dereference.
 
-Applied to lio-core, and folding into hch's original commit that
-introduced the bug in for-next.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks Dan!
-
---nab
-
+diff --git a/drivers/video/fbsysfs.c b/drivers/video/fbsysfs.c
+index 67afa9c..a55e366 100644
+--- a/drivers/video/fbsysfs.c
++++ b/drivers/video/fbsysfs.c
+@@ -80,6 +80,8 @@ EXPORT_SYMBOL(framebuffer_alloc);
+  */
+ void framebuffer_release(struct fb_info *info)
+ {
++	if (!info)
++		return;
+ 	kfree(info->apertures);
+ 	kfree(info);
+ }
