@@ -1,55 +1,31 @@
-From: Hans Schillstrom <hans.schillstrom@ericsson.com>
-Date: Mon, 14 May 2012 08:00:00 +0000
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Mon, 14 May 2012 08:22:50 +0000
 Subject: Re: [patch] netfilter: potential NULL dereference in get_inner_hdr()
-Message-Id: <201205141000.12140.hans.schillstrom@ericsson.com>
+Message-Id: <20120514082250.GB9524@1984>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120512110003.GB19472@elgon.mountain> <20120514.033853.1089019132135043947.davem@davemloft.net> <1336981995.8512.56.camel@edumazet-glaptop>
-In-Reply-To: <1336981995.8512.56.camel@edumazet-glaptop>
+References: <20120512110003.GB19472@elgon.mountain>
+ <20120514.033853.1089019132135043947.davem@davemloft.net>
+ <1336981995.8512.56.camel@edumazet-glaptop>
+ <201205141000.12140.hans.schillstrom@ericsson.com>
+In-Reply-To: <201205141000.12140.hans.schillstrom@ericsson.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "pablo@netfilter.org" <pablo@netfilter.org>, "kaber@trash.net" <kaber@trash.net>, "netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>, "netfilter@vger.kernel.org" <netfilter@vger.kernel.org>, "coreteam@netfilter.org" <coreteam@netfilter.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Hans Schillstrom <hans.schillstrom@ericsson.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "kaber@trash.net" <kaber@trash.net>, "netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>, "netfilter@vger.kernel.org" <netfilter@vger.kernel.org>, "coreteam@netfilter.org" <coreteam@netfilter.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Monday 14 May 2012 09:53:15 Eric Dumazet wrote:
-> On Mon, 2012-05-14 at 03:38 -0400, David Miller wrote:
-> 
-> > He said what he's using, "sparse", the semantic parser, which
-> > is largely arch agnostic.
+On Mon, May 14, 2012 at 10:00:00AM +0200, Hans Schillstrom wrote:
 > > 
-> > I guarantee you will see the warnings if you run it on your
-> > system on this code.
+> > http://lwn.net/Articles/205624/
+> > 
+> > make C=2 CF=-D__CHECK_ENDIAN__ net/netfilter/xt_HMARK.o
+> >   CHECK   net/netfilter/xt_HMARK.c
+> > net/netfilter/xt_HMARK.c:87:21: warning: incorrect type in assignment (different base types)
+> > net/netfilter/xt_HMARK.c:87:21:    expected unsigned short [unsigned] [usertype] src
+> > net/netfilter/xt_HMARK.c:87:21:    got restricted __be16 [usertype] all
+[...]
 > 
-> Some more info :
-> 
-> http://lwn.net/Articles/205624/
-> 
-> make C=2 CF=-D__CHECK_ENDIAN__ net/netfilter/xt_HMARK.o
->   CHECK   net/netfilter/xt_HMARK.c
-> net/netfilter/xt_HMARK.c:87:21: warning: incorrect type in assignment (different base types)
-> net/netfilter/xt_HMARK.c:87:21:    expected unsigned short [unsigned] [usertype] src
-> net/netfilter/xt_HMARK.c:87:21:    got restricted __be16 [usertype] all
-> net/netfilter/xt_HMARK.c:88:21: warning: incorrect type in assignment (different base types)
-> net/netfilter/xt_HMARK.c:88:21:    expected unsigned short [unsigned] [usertype] dst
-> net/netfilter/xt_HMARK.c:88:21:    got restricted __be16 [usertype] all
-> net/netfilter/xt_HMARK.c:170:27: warning: incorrect type in argument 2 (different signedness)
-> net/netfilter/xt_HMARK.c:170:27:    expected int *offset
-> net/netfilter/xt_HMARK.c:170:27:    got unsigned int *<noident>
-> net/netfilter/xt_HMARK.c:181:28: warning: incorrect type in argument 1 (different base types)
-> net/netfilter/xt_HMARK.c:181:28:    expected unsigned int const [usertype] *addr32
-> net/netfilter/xt_HMARK.c:181:28:    got restricted __be32 *<noident>
-> net/netfilter/xt_HMARK.c:182:28: warning: incorrect type in argument 1 (different base types)
-> net/netfilter/xt_HMARK.c:182:28:    expected unsigned int const [usertype] *addr32
-> net/netfilter/xt_HMARK.c:182:28:    got restricted __be32 *<noident>
-> net/netfilter/xt_HMARK.c:261:9: warning: invalid assignment: &> net/netfilter/xt_HMARK.c:261:9:    left side has type unsigned int
-> net/netfilter/xt_HMARK.c:261:9:    right side has type restricted __be32
-> net/netfilter/xt_HMARK.c:262:9: warning: invalid assignment: &> net/netfilter/xt_HMARK.c:262:9:    left side has type unsigned int
-> net/netfilter/xt_HMARK.c:262:9:    right side has type restricted __be32
-> 
+> Thanks 
+> I'll try to fix the warnings
 
-Thanks 
-I'll try to fix the warnings
-
--- 
-Regards
-Hans Schillstrom <hans.schillstrom@ericsson.com>
+Ok, wait for that patch, thanks.
