@@ -1,28 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 15 May 2012 08:56:59 +0000
-Subject: [patch] drm/radeon: check kmalloc() for failures
-Message-Id: <20120515085659.GE30265@elgon.mountain>
+From: Michel =?ISO-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
+Date: Tue, 15 May 2012 14:34:57 +0000
+Subject: Re: [patch] drm/radeon: check kmalloc() for failures
+Message-Id: <1337092497.7335.289.camel@thor.local>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120515085659.GE30265@elgon.mountain>
+In-Reply-To: <20120515085659.GE30265@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@amd.com>, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-We can just return -ENOMEM here if the allocation fails.
+On Die, 2012-05-15 at 11:56 +0300, Dan Carpenter wrote: 
+> We can just return -ENOMEM here if the allocation fails.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
 
-diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
-index 0874a6d..fb44e7e 100644
---- a/drivers/gpu/drm/radeon/r100.c
-+++ b/drivers/gpu/drm/radeon/r100.c
-@@ -2008,6 +2008,8 @@ int r100_cs_parse(struct radeon_cs_parser *p)
- 	int r;
- 
- 	track = kzalloc(sizeof(*track), GFP_KERNEL);
-+	if (!track)
-+		return -ENOMEM;
- 	r100_cs_track_clear(p->rdev, track);
- 	p->track = track;
- 	do {
+
+-- 
+Earthling Michel Dänzer           |                   http://www.amd.com
+Libre software enthusiast         |          Debian, X and DRI developer
