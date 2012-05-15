@@ -1,28 +1,28 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Mon, 14 May 2012 20:16:53 +0000
-Subject: Re: [patch] mfd: lm3533: silence a gcc warning
-Message-Id: <20120514201653.GA12740@sortiz-mobl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 May 2012 08:56:59 +0000
+Subject: [patch] drm/radeon: check kmalloc() for failures
+Message-Id: <20120515085659.GE30265@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120512110104.GC19472@elgon.mountain>
-In-Reply-To: <20120512110104.GC19472@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@amd.com>, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
 
-Hi Dan,
+We can just return -ENOMEM here if the allocation fails.
 
-On Sat, May 12, 2012 at 02:01:04PM +0300, Dan Carpenter wrote:
-> This is supposed to be umode_t.  It causes a GCC warning:
-> drivers/mfd/lm3533-core.c:440:2: warning: initialization from incompatible pointer type [enabled by default]
-> drivers/mfd/lm3533-core.c:440:2: warning: (near initialization for ‘lm3533_attribute_group.is_visible’) [enabled by default]
-> 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
+index 0874a6d..fb44e7e 100644
+--- a/drivers/gpu/drm/radeon/r100.c
++++ b/drivers/gpu/drm/radeon/r100.c
+@@ -2008,6 +2008,8 @@ int r100_cs_parse(struct radeon_cs_parser *p)
+ 	int r;
+ 
+ 	track = kzalloc(sizeof(*track), GFP_KERNEL);
++	if (!track)
++		return -ENOMEM;
+ 	r100_cs_track_clear(p->rdev, track);
+ 	p->track = track;
+ 	do {
