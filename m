@@ -1,28 +1,42 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Date: Tue, 15 May 2012 16:57:10 +0000
-Subject: Re: [patch] brcm80211: brcmu_pkt_buf_free_skb() should handle NULL
-Message-Id: <4FB28AE6.3000700@broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 May 2012 08:46:40 +0000
+Subject: [patch v2] ext4: potential NULL dereference on error
+Message-Id: <20120515084640.GB30265@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120515090027.GG30265@elgon.mountain>
- <4FB26664.2080008@broadcom.com> <20120515144443.GH16999@mwanda>
- <alpine.DEB.2.02.1205151706360.2356@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1205151706360.2356@hadrien>
+References: <20120514222535.GW5353@quack.suse.cz>
+In-Reply-To: <20120514222535.GW5353@quack.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Brett Rudley <brudley@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/15/2012 05:07 PM, Julia Lawall wrote:
-> 
->   1 - A marker line containing simply "---".
-> 
->   2 - Any additional comments not suitable for the changelog.
-> 
+The ext4_get_group_desc() function returns NULL on error, and
+ext4_free_inodes_count() function dereferences it without checking.
+There is a check on the next line, but it's too late.
 
-I guess that 1 can be omitted when there is no 2. I was just wondering
-whether the diff command would end up in the changelog when applying the
-patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: cleaned up the style
 
-Gr. AvS
-
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index a044a9b..ea32d7e 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -508,10 +508,12 @@ fallback_retry:
+ 	for (i = 0; i < ngroups; i++) {
+ 		grp = (parent_group + i) % ngroups;
+ 		desc = ext4_get_group_desc(sb, grp, NULL);
+-		grp_free = ext4_free_inodes_count(sb, desc);
+-		if (desc && grp_free && grp_free >= avefreei) {
+-			*group = grp;
+-			return 0;
++		if (desc) {
++			grp_free = ext4_free_inodes_count(sb, desc);
++			if (grp_free && grp_free >= avefreei) {
++				*group = grp;
++				return 0;
++			}
+ 		}
+ 	}
+ 
