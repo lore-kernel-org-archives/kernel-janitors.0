@@ -1,45 +1,30 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 18 May 2012 13:47:32 +0000
-Subject: Re: [patch] ALSA: hda - unlock on error in azx_interrupt()
-Message-Id: <s5h4nrdbnyj.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 May 2012 09:00:27 +0000
+Subject: [patch] brcm80211: brcmu_pkt_buf_free_skb() should handle NULL
+Message-Id: <20120515090027.GG30265@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120518073611.GA4136@elgon.mountain>
-In-Reply-To: <20120518073611.GA4136@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, David Henningsson <david.henningsson@canonical.com>
+To: Brett Rudley <brudley@broadcom.com>
+Cc: Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Greg Kroah-Hartman <gregkh@suse.de>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Fri, 18 May 2012 10:36:11 +0300,
-Dan Carpenter wrote:
-> 
-> There is an spin_unlock() missing on this error path.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This was added recently in a82d51ed2 "ALSA: hda - Support
-> VGA-switcheroo".  I don't have the hardware so I haven't tested it.
+This is potentially called with NULL pointers, for example, look at
+brcmf_c_prec_enq().  Since it's a free() function, probably people
+expect it to handle NULL pointers.
 
-Good catch.  Applied now.
-Thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Takashi
-
-> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> index bbf953f..2b6392b 100644
-> --- a/sound/pci/hda/hda_intel.c
-> +++ b/sound/pci/hda/hda_intel.c
-> @@ -1268,8 +1268,10 @@ static irqreturn_t azx_interrupt(int irq, void *dev_id)
->  
->  	spin_lock(&chip->reg_lock);
->  
-> -	if (chip->disabled)
-> +	if (chip->disabled) {
-> +		spin_unlock(&chip->reg_lock);
->  		return IRQ_NONE;
-> +	}
->  
->  	status = azx_readl(chip, INTSTS);
->  	if (status = 0) {
-> 
+diff --git a/drivers/net/wireless/brcm80211/brcmutil/utils.c b/drivers/net/wireless/brcm80211/brcmutil/utils.c
+index b45ab34..3e6405e 100644
+--- a/drivers/net/wireless/brcm80211/brcmutil/utils.c
++++ b/drivers/net/wireless/brcm80211/brcmutil/utils.c
+@@ -43,6 +43,8 @@ EXPORT_SYMBOL(brcmu_pkt_buf_get_skb);
+ /* Free the driver packet. Free the tag if present */
+ void brcmu_pkt_buf_free_skb(struct sk_buff *skb)
+ {
++	if (!skb)
++		return;
+ 	WARN_ON(skb->next);
+ 	if (skb->destructor)
+ 		/* cannot kfree_skb() on hard IRQ (net/core/skbuff.c) if
