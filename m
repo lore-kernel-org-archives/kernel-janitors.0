@@ -1,41 +1,35 @@
-From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Date: Tue, 22 May 2012 20:49:53 +0000
-Subject: Re: [patch] USB: Checking the wrong variable in usb_disable_lpm()
-Message-Id: <20120522204953.GF5662@xanatos>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 15 May 2012 08:47:47 +0000
+Subject: [patch] hvc_xen: NULL dereference on allocation failure
+Message-Id: <20120515084746.GC30265@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120522175434.GA29755@elgon.mountain>
-In-Reply-To: <20120522175434.GA29755@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Alan Cox <alan@linux.intel.com>
 
-On Tue, May 22, 2012 at 08:54:34PM +0300, Dan Carpenter wrote:
-> We check "u1_params" instead of checking "u2_params".
+If kzalloc() returns a NULL here, we pass a NULL to
+xencons_disconnect_backend() which will cause an Oops.
 
-Thanks for finding this, Dan.  Your patch looks correct.  I'll send it
-off to Greg (along with a fix for the signed-ness issue) soon.
+Also I removed the __GFP_ZERO while I was at it since kzalloc() implies
+__GFP_ZERO.
 
-I suspect the pull will be put off a week or so, since the merge window
-is coming, and Greg's traveling starting today.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Sarah Sharp
-
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static checker stuff, not tested.
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 04fb834..25a7422 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -3379,7 +3379,7 @@ int usb_disable_lpm(struct usb_device *udev)
->  		return 0;
->  
->  	udev->lpm_disable_count++;
-> -	if ((udev->u1_params.timeout = 0 && udev->u1_params.timeout = 0))
-> +	if ((udev->u1_params.timeout = 0 && udev->u2_params.timeout = 0))
->  		return 0;
->  
->  	/* If LPM is enabled, attempt to disable it. */
+diff --git a/drivers/tty/hvc/hvc_xen.c b/drivers/tty/hvc/hvc_xen.c
+index 83d5c88..d3d91da 100644
+--- a/drivers/tty/hvc/hvc_xen.c
++++ b/drivers/tty/hvc/hvc_xen.c
+@@ -430,9 +430,9 @@ static int __devinit xencons_probe(struct xenbus_device *dev,
+ 	if (devid = 0)
+ 		return -ENODEV;
+ 
+-	info = kzalloc(sizeof(struct xencons_info), GFP_KERNEL | __GFP_ZERO);
++	info = kzalloc(sizeof(struct xencons_info), GFP_KERNEL);
+ 	if (!info)
+-		goto error_nomem;
++		return -ENOMEM;
+ 	dev_set_drvdata(&dev->dev, info);
+ 	info->xbdev = dev;
+ 	info->vtermno = xenbus_devid_to_vtermno(devid);
