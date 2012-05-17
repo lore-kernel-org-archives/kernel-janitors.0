@@ -1,82 +1,51 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Thu, 24 May 2012 11:17:37 +0000
-Subject: Re: [patch] staging: comedi: cleanup comedi_recognize()
-Message-Id: <4FBE18D1.8060405@mev.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 May 2012 06:48:12 +0000
+Subject: [patch] hp-wmi: check for allocation failures
+Message-Id: <20120517064812.GA14660@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120524102851.GA4399@elgon.mountain>
-In-Reply-To: <20120524102851.GA4399@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matthew Garrett <mjg@redhat.com>
+Cc: platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2012-05-24 12:16, Dan Carpenter wrote:
-> On Thu, May 24, 2012 at 11:57:44AM +0100, Ian Abbott wrote:
->> On 2012-05-24 11:28, Dan Carpenter wrote:
->>> This function is more complicated than it needs to be because of the
->>> consts.  It's not worth saving them because we drop the consts anyway
->>> when we return (void *)name_ptr.
->>>
->>> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
->>>
->>> diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
->>> index 1c3d638..a8f576d 100644
->>> --- a/drivers/staging/comedi/drivers.c
->>> +++ b/drivers/staging/comedi/drivers.c
->>> @@ -304,14 +304,13 @@ static int postconfig(struct comedi_device *dev)
->>>    * that register their supported board names */
->>>   static void *comedi_recognize(struct comedi_driver *driv, const char *name)
->>>   {
->>> -	unsigned i;
->>> -	const char *const *name_ptr = driv->board_name;
->>> +	char **name_ptr = (char **)driv->board_name;
->>> +	int i;
->>> +
->>>   	for (i = 0; i<   driv->num_names; i++) {
->>>   		if (strcmp(*name_ptr, name) = 0)
->>> -			return (void *)name_ptr;
->>> -		name_ptr >>> -		    (const char *const *)((const char *)name_ptr +
->>> -					  driv->offset);
->>> +			return name_ptr;
->>> +		name_ptr = (char **)((void *)name_ptr + driv->offset);
->>>   	}
->>>
->>>   	return NULL;
->>
->> You could simplify it further by keeping one of the consts:
->>
->> static void *comedi_recognize(struct comedi_driver *driv, const char *name)
->> {
->> 	unsigned i;
->> 	const char **name_ptr = driv->board_name;
->> 	for (i = 0; i<  driv->num_names; i++) {
->> 		if (strcmp(*name_ptr, name) = 0)
->> 			return name_ptr;
->> 		name_ptr = (void *)name_ptr + driv->offset;
->> 	}
->> 	return NULL;
->> }
->
-> Sure.  I'll resend.
+rfkill_alloc() returns NULL on failure.  Check for it, to make the
+static checkers happy.
 
-Actually, my version gives a warning about a dropped qualifier, so the 
-initializer of name_ptr would need a cast after all.  You could keep 
-your version but remove the casts from (void *) when converting to the 
-other pointer types.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-static void *comedi_recognize(struct comedi_driver *driv, const char *name)
-{
-	unsigned i;
-	char **name_ptr = (char **)driv->board_name;
-	for (i = 0; i < driv->num_names; i++) {
-		if (strcmp(*name_ptr, name) = 0)
-			return name_ptr;
-		name_ptr = (void *)name_ptr + driv->offset;
-	}
-
-	return NULL;
-}
-
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
--=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
+diff --git a/drivers/platform/x86/hp-wmi.c b/drivers/platform/x86/hp-wmi.c
+index e2faa3c..387183a 100644
+--- a/drivers/platform/x86/hp-wmi.c
++++ b/drivers/platform/x86/hp-wmi.c
+@@ -634,6 +634,8 @@ static int __devinit hp_wmi_rfkill_setup(struct platform_device *device)
+ 					   RFKILL_TYPE_WLAN,
+ 					   &hp_wmi_rfkill_ops,
+ 					   (void *) HPWMI_WIFI);
++		if (!wifi_rfkill)
++			return -ENOMEM;
+ 		rfkill_init_sw_state(wifi_rfkill,
+ 				     hp_wmi_get_sw_state(HPWMI_WIFI));
+ 		rfkill_set_hw_state(wifi_rfkill,
+@@ -648,6 +650,10 @@ static int __devinit hp_wmi_rfkill_setup(struct platform_device *device)
+ 						RFKILL_TYPE_BLUETOOTH,
+ 						&hp_wmi_rfkill_ops,
+ 						(void *) HPWMI_BLUETOOTH);
++		if (!bluetooth_rfkill) {
++			err = -ENOMEM;
++			goto register_wifi_error;
++		}
+ 		rfkill_init_sw_state(bluetooth_rfkill,
+ 				     hp_wmi_get_sw_state(HPWMI_BLUETOOTH));
+ 		rfkill_set_hw_state(bluetooth_rfkill,
+@@ -662,6 +668,10 @@ static int __devinit hp_wmi_rfkill_setup(struct platform_device *device)
+ 					   RFKILL_TYPE_WWAN,
+ 					   &hp_wmi_rfkill_ops,
+ 					   (void *) HPWMI_WWAN);
++		if (!wwan_rfkill) {
++			err = -ENOMEM;
++			goto register_bluetooth_error;
++		}
+ 		rfkill_init_sw_state(wwan_rfkill,
+ 				     hp_wmi_get_sw_state(HPWMI_WWAN));
+ 		rfkill_set_hw_state(wwan_rfkill,
