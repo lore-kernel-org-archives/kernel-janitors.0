@@ -1,66 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 May 2012 08:38:52 +0000
-Subject: Re: [PATCH 2/3] Staging: Comedi adv_pci1710: Cleaned up function check_channel_list
-Message-Id: <20120504083852.GA22134@mwanda>
+Date: Thu, 17 May 2012 07:08:14 +0000
+Subject: [patch] iscsi-target: remove some dead code
+Message-Id: <20120517070814.GD14660@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1336056521-4589-1-git-send-email-tomas.melin@iki.fi>
-In-Reply-To: <1336056521-4589-1-git-send-email-tomas.melin@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Andy Grover <agrover@redhat.com>, Jesper Juhl <jj@chaosbits.net>, Joern Engel <joern@logfs.org>, Roland Dreier <roland@kernel.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, May 03, 2012 at 05:48:41PM +0300, Tomas Melin wrote:
-> Code indentation fixes, corrected comments.
-> 
-> Signed-off-by: Tomas Melin <tomas.melin@iki.fi>
-> ---
->  drivers/staging/comedi/drivers/adv_pci1710.c |   52 +++++++++++++-------------
->  1 files changed, 26 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
-> index 2048b19..a4c7dbb 100644
-> --- a/drivers/staging/comedi/drivers/adv_pci1710.c
-> +++ b/drivers/staging/comedi/drivers/adv_pci1710.c
-> @@ -1163,43 +1163,43 @@ static int check_channel_list(struct comedi_device *dev,
->  	if (n_chan = 1)
->  		return 1; /* seglen=1 */
->  
-> -	chansegment[0] = chanlist[0];	/*  first channel is every time ok */
-> -	for (i = 1, seglen = 1; i < n_chan; i++, seglen++) {	/*  build part of chanlist */
-> -		/*  printk("%d. %d %d\n",i,CR_CHAN(chanlist[i]),CR_RANGE(chanlist[i])); */
-> +	/* n_chan must be >1
-           ^^^^^^^^^^^^^^^^^
-This kind of comment is just repeated what was already obvious from
-the previous few lines of code.  Just remove it.
+Neither "acceptor_values" nor "proposer_values" can be NULL here.
+Smatch complains because we are not allowed to pass NULL pointers to
+strchr().
 
-> +	 * first channel is every time ok
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This is a good comment because it tells us some assumptions we might
-not have known.
+Also I removed a second later check for "!acceptor_values" because it
+gets checked on the next line in the do while condition.
 
-> +	 * build part of chanlist
-           ^^^^^^^^^^^^^^^^^^^^^^
-This is not really a helpful comment.  It tells what the code does
-which is already pretty obvious.  It's not really needed.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Compile tested only.  Please review carefully.
 
-> +	 */
-> +	chansegment[0] = chanlist[0];
-> +	for (i = 1, seglen = 1; i < n_chan; i++, seglen++) {
->  		if (chanlist[0] = chanlist[i])
-> -			break;	/*  we detect loop, this must by finish */
-> -		if (CR_CHAN(chanlist[i]) & 1)	/*  odd channel cann't by differencial */
-> +			break; /* detected loop, done */
-> +		if (CR_CHAN(chanlist[i]) & 1)
->  			if (CR_AREF(chanlist[i]) = AREF_DIFF) {
->  				comedi_error(dev,
-> -					     "Odd channel can't be differential input!\n");
-> +				"Odd channel can't be differential input!\n");
-
-Don't indent like this.  The original was better even though
-checkpatch.pl complains.
-
-regards,
-dan carpenter
-
-
+diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
+index ad3b3c1..ed5241e 100644
+--- a/drivers/target/iscsi/iscsi_target_parameters.c
++++ b/drivers/target/iscsi/iscsi_target_parameters.c
+@@ -1037,13 +1037,6 @@ static char *iscsi_check_valuelist_for_support(
+ 			tmp2 = strchr(acceptor_values, ',');
+ 			if (tmp2)
+ 				*tmp2 = '\0';
+-			if (!acceptor_values || !proposer_values) {
+-				if (tmp1)
+-					*tmp1 = ',';
+-				if (tmp2)
+-					*tmp2 = ',';
+-				return NULL;
+-			}
+ 			if (!strcmp(acceptor_values, proposer_values)) {
+ 				if (tmp2)
+ 					*tmp2 = ',';
+@@ -1053,8 +1046,6 @@ static char *iscsi_check_valuelist_for_support(
+ 				*tmp2++ = ',';
+ 
+ 			acceptor_values = tmp2;
+-			if (!acceptor_values)
+-				break;
+ 		} while (acceptor_values);
+ 		if (tmp1)
+ 			*tmp1++ = ',';
