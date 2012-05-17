@@ -1,7 +1,7 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Thu, 17 May 2012 07:39:42 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 17 May 2012 09:58:40 +0000
 Subject: Re: [patch] iscsi-target: remove some dead code
-Message-Id: <1337240382.32217.196.camel@haakon2.linux-iscsi.org>
+Message-Id: <4FB4CBD0.8000503@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120517070814.GD14660@elgon.mountain>
 In-Reply-To: <20120517070814.GD14660@elgon.mountain>
@@ -9,11 +9,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andy Grover <agrover@redhat.com>, Jesper Juhl <jj@chaosbits.net>, Joern Engel <joern@logfs.org>, Roland Dreier <roland@kernel.org>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Andy Grover <agrover@redhat.com>, Jesper Juhl <jj@chaosbits.net>, Joern Engel <joern@logfs.org>, Roland Dreier <roland@kernel.org>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello DanC,
 
-On Thu, 2012-05-17 at 10:08 +0300, Dan Carpenter wrote:
+
+Am 17.05.2012 09:08, schrieb Dan Carpenter:
 > Neither "acceptor_values" nor "proposer_values" can be NULL here.
 > Smatch complains because we are not allowed to pass NULL pointers to
 > strchr().
@@ -33,6 +33,10 @@ On Thu, 2012-05-17 at 10:08 +0300, Dan Carpenter wrote:
 >  			tmp2 = strchr(acceptor_values, ',');
 >  			if (tmp2)
 >  				*tmp2 = '\0';
+this looks like strchrnul(). I realy do not know is this supported inside the kernel ?
+
+
+
 > -			if (!acceptor_values || !proposer_values) {
 > -				if (tmp1)
 > -					*tmp1 = ',';
@@ -40,14 +44,6 @@ On Thu, 2012-05-17 at 10:08 +0300, Dan Carpenter wrote:
 > -					*tmp2 = ',';
 > -				return NULL;
 > -			}
-
-Mmmmm, I seem to remember this code being some manner of bugfix when
-these two NULL checks for IS_TYPE_VALUE_LIST() type login parameters
-where originally added into iscsi-target code (circa 2004)..
-
-Looking at iscsi_check_valuelist_for_support() now in modern usage I
-think it's fine to go ahead and drop these checks..  
-
 >  			if (!strcmp(acceptor_values, proposer_values)) {
 >  				if (tmp2)
 >  					*tmp2 = ',';
@@ -61,11 +57,11 @@ think it's fine to go ahead and drop these checks..
 >  		if (tmp1)
 >  			*tmp1++ = ',';
 
-<nod>, looks harmless to drop as well.
 
-Applied to lio-core, and queuing into for-next.
+the changes look reasonable but to be fair the code should have an explanation
+what it is supposed to do. I do not have the feeling that i did understand the
+purpose completely.
 
-Thanks Dan!
-
---nab
+just my 2 cents,
+ wh
 
