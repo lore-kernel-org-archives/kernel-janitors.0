@@ -1,43 +1,34 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Tue, 29 May 2012 15:05:45 +0000
-Subject: Re: [patch] fb: handle NULL pointers in framebuffer release
-Message-Id: <4FC4E5C9.1070408@gmx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 May 2012 07:11:20 +0000
+Subject: [patch] [SCSI] qla4xxx: don't free pool that wasn't allocated
+Message-Id: <20120517071120.GG14660@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120514205837.GE20836@elgon.mountain>
-In-Reply-To: <20120514205837.GE20836@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Ravi Anand <ravi.anand@qlogic.com>
+Cc: Vikas Chaudhary <vikas.chaudhary@qlogic.com>, iscsi-driver@qlogic.com, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/14/2012 08:58 PM, Dan Carpenter wrote:
-> This function is called with a potential NULL pointer in
-> picolcd_init_framebuffer() and it causes a static checker warning.  This
-> used to handle NULL pointers when the picolcd code was written, but a
-> couple months later we added the "info->apertures" dereference.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In the original code if dma_pool_alloc() fails then we call
+dma_pool_free().  The problem is that "chap_table" is NULL and
+"chap_dma" is uninitialized so it will cause an error.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Thanks,
-
-Florian Tobias Schandinat
-
-> 
-> diff --git a/drivers/video/fbsysfs.c b/drivers/video/fbsysfs.c
-> index 67afa9c..a55e366 100644
-> --- a/drivers/video/fbsysfs.c
-> +++ b/drivers/video/fbsysfs.c
-> @@ -80,6 +80,8 @@ EXPORT_SYMBOL(framebuffer_alloc);
->   */
->  void framebuffer_release(struct fb_info *info)
->  {
-> +	if (!info)
-> +		return;
->  	kfree(info->apertures);
->  	kfree(info);
->  }
-> 
-
+diff --git a/drivers/scsi/qla4xxx/ql4_mbx.c b/drivers/scsi/qla4xxx/ql4_mbx.c
+index 7ac21da..21dce92 100644
+--- a/drivers/scsi/qla4xxx/ql4_mbx.c
++++ b/drivers/scsi/qla4xxx/ql4_mbx.c
+@@ -1329,10 +1329,8 @@ int qla4xxx_get_chap(struct scsi_qla_host *ha, char *username, char *password,
+ 	dma_addr_t chap_dma;
+ 
+ 	chap_table = dma_pool_alloc(ha->chap_dma_pool, GFP_KERNEL, &chap_dma);
+-	if (chap_table = NULL) {
+-		ret = -ENOMEM;
+-		goto exit_get_chap;
+-	}
++	if (chap_table = NULL)
++		return -ENOMEM;
+ 
+ 	chap_size = sizeof(struct ql4_chap_table);
+ 	memset(chap_table, 0, chap_size);
