@@ -1,48 +1,30 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Wed, 02 May 2012 20:08:13 +0000
-Subject: Re: [PATCH 1/2] Staging: Comedi adv_pci1710 : Corrected over 80 column warnings
-Message-Id: <20120502200813.GB26017@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 21 May 2012 14:35:26 +0000
+Subject: [patch] dlm: remove stray unlock
+Message-Id: <20120521143526.GB25114@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1335975274-5933-1-git-send-email-tomas.melin@iki.fi>
-In-Reply-To: <1335975274-5933-1-git-send-email-tomas.melin@iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, May 02, 2012 at 07:14:34PM +0300, Tomas Melin wrote:
-> Various comments and code lines longer than 80 chars fixed in file adv_pci1710.c.
-> 
-> Signed-off-by: Tomas Melin <tomas.melin@iki.fi>
-> ---
->  drivers/staging/comedi/drivers/adv_pci1710.c |   27 ++++++++++++-------------
->  1 files changed, 13 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/adv_pci1710.c b/drivers/staging/comedi/drivers/adv_pci1710.c
-> index 8318c82..dd40fd3 100644
-> --- a/drivers/staging/comedi/drivers/adv_pci1710.c
-> +++ b/drivers/staging/comedi/drivers/adv_pci1710.c
-> @@ -982,14 +982,13 @@ static int pci171x_ai_cmdtest(struct comedi_device *dev,
->  #ifdef PCI171X_EXTDEBUG
->  		pci171x_cmdtest_out(1, cmd);
->  #endif
-> -		DPRINTK
-> -		    ("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=1\n",
-> -		     err);
-> +		DPRINTK(
-> +		"adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=1\n",
-> +		err);
+Smatch complains that we unlock this twice.  It looks like an accidental
+to me.
 
-Ick, no, that's not ok.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This was added in 525f31c1f3 ("dlm: fix race between remove and lookup")
+Untested.
 
-It seems checkpatch doesn't realize this is a string, and should be ok.
-
-If anything the line should look like:
-		DPRINTK("adv_pci1710 EDBG: BGN: pci171x_ai_cmdtest(...) err=%d ret=1\n",
-			err);
-
-Care to redo this?
-
-thanks,
-
-greg k-h
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index 06063a3..1c10bf4 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -1570,7 +1570,6 @@ static void wait_pending_remove(struct dlm_rsb *r_new)
+ 			continue;
+ 		if (rsb_cmp(r_new, r->res_name, r->res_length))
+ 			continue;
+-		spin_unlock(&ls->ls_send_remove_spin);
+ 
+ 		log_debug(ls, "delay lookup %p for remove %p dir %d %s",
+ 		  	  r_new, r, r_new->res_dir_nodeid, r_new->res_name);
