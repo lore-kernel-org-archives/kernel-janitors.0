@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 May 2012 11:16:01 +0000
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Thu, 24 May 2012 11:17:37 +0000
 Subject: Re: [patch] staging: comedi: cleanup comedi_recognize()
-Message-Id: <20120524111601.GS4629@mwanda>
+Message-Id: <4FBE18D1.8060405@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120524102851.GA4399@elgon.mountain>
 In-Reply-To: <20120524102851.GA4399@elgon.mountain>
@@ -10,54 +10,73 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, May 24, 2012 at 11:57:44AM +0100, Ian Abbott wrote:
-> On 2012-05-24 11:28, Dan Carpenter wrote:
-> >This function is more complicated than it needs to be because of the
-> >consts.  It's not worth saving them because we drop the consts anyway
-> >when we return (void *)name_ptr.
-> >
-> >Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
-> >
-> >diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
-> >index 1c3d638..a8f576d 100644
-> >--- a/drivers/staging/comedi/drivers.c
-> >+++ b/drivers/staging/comedi/drivers.c
-> >@@ -304,14 +304,13 @@ static int postconfig(struct comedi_device *dev)
-> >   * that register their supported board names */
-> >  static void *comedi_recognize(struct comedi_driver *driv, const char *name)
-> >  {
-> >-	unsigned i;
-> >-	const char *const *name_ptr = driv->board_name;
-> >+	char **name_ptr = (char **)driv->board_name;
-> >+	int i;
-> >+
-> >  	for (i = 0; i<  driv->num_names; i++) {
-> >  		if (strcmp(*name_ptr, name) = 0)
-> >-			return (void *)name_ptr;
-> >-		name_ptr > >-		    (const char *const *)((const char *)name_ptr +
-> >-					  driv->offset);
-> >+			return name_ptr;
-> >+		name_ptr = (char **)((void *)name_ptr + driv->offset);
-> >  	}
-> >
-> >  	return NULL;
-> 
-> You could simplify it further by keeping one of the consts:
-> 
-> static void *comedi_recognize(struct comedi_driver *driv, const char *name)
-> {
-> 	unsigned i;
-> 	const char **name_ptr = driv->board_name;
-> 	for (i = 0; i < driv->num_names; i++) {
-> 		if (strcmp(*name_ptr, name) = 0)
-> 			return name_ptr;
-> 		name_ptr = (void *)name_ptr + driv->offset;
-> 	}
-> 	return NULL;
-> }
+On 2012-05-24 12:16, Dan Carpenter wrote:
+> On Thu, May 24, 2012 at 11:57:44AM +0100, Ian Abbott wrote:
+>> On 2012-05-24 11:28, Dan Carpenter wrote:
+>>> This function is more complicated than it needs to be because of the
+>>> consts.  It's not worth saving them because we drop the consts anyway
+>>> when we return (void *)name_ptr.
+>>>
+>>> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+>>>
+>>> diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+>>> index 1c3d638..a8f576d 100644
+>>> --- a/drivers/staging/comedi/drivers.c
+>>> +++ b/drivers/staging/comedi/drivers.c
+>>> @@ -304,14 +304,13 @@ static int postconfig(struct comedi_device *dev)
+>>>    * that register their supported board names */
+>>>   static void *comedi_recognize(struct comedi_driver *driv, const char *name)
+>>>   {
+>>> -	unsigned i;
+>>> -	const char *const *name_ptr = driv->board_name;
+>>> +	char **name_ptr = (char **)driv->board_name;
+>>> +	int i;
+>>> +
+>>>   	for (i = 0; i<   driv->num_names; i++) {
+>>>   		if (strcmp(*name_ptr, name) = 0)
+>>> -			return (void *)name_ptr;
+>>> -		name_ptr >>> -		    (const char *const *)((const char *)name_ptr +
+>>> -					  driv->offset);
+>>> +			return name_ptr;
+>>> +		name_ptr = (char **)((void *)name_ptr + driv->offset);
+>>>   	}
+>>>
+>>>   	return NULL;
+>>
+>> You could simplify it further by keeping one of the consts:
+>>
+>> static void *comedi_recognize(struct comedi_driver *driv, const char *name)
+>> {
+>> 	unsigned i;
+>> 	const char **name_ptr = driv->board_name;
+>> 	for (i = 0; i<  driv->num_names; i++) {
+>> 		if (strcmp(*name_ptr, name) = 0)
+>> 			return name_ptr;
+>> 		name_ptr = (void *)name_ptr + driv->offset;
+>> 	}
+>> 	return NULL;
+>> }
+>
+> Sure.  I'll resend.
 
-Sure.  I'll resend.
+Actually, my version gives a warning about a dropped qualifier, so the 
+initializer of name_ptr would need a cast after all.  You could keep 
+your version but remove the casts from (void *) when converting to the 
+other pointer types.
 
-regards,
-dan carpenter
+static void *comedi_recognize(struct comedi_driver *driv, const char *name)
+{
+	unsigned i;
+	char **name_ptr = (char **)driv->board_name;
+	for (i = 0; i < driv->num_names; i++) {
+		if (strcmp(*name_ptr, name) = 0)
+			return name_ptr;
+		name_ptr = (void *)name_ptr + driv->offset;
+	}
 
+	return NULL;
+}
+
+-- 
+-=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
+-=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
