@@ -1,39 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 May 2012 10:28:51 +0000
-Subject: [patch] staging: comedi: cleanup comedi_recognize()
-Message-Id: <20120524102851.GA4399@elgon.mountain>
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Thu, 24 May 2012 10:57:44 +0000
+Subject: Re: [patch] staging: comedi: cleanup comedi_recognize()
+Message-Id: <4FBE1428.30909@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120524102851.GA4399@elgon.mountain>
+In-Reply-To: <20120524102851.GA4399@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This function is more complicated than it needs to be because of the
-consts.  It's not worth saving them because we drop the consts anyway
-when we return (void *)name_ptr.
+On 2012-05-24 11:28, Dan Carpenter wrote:
+> This function is more complicated than it needs to be because of the
+> consts.  It's not worth saving them because we drop the consts anyway
+> when we return (void *)name_ptr.
+>
+> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+> index 1c3d638..a8f576d 100644
+> --- a/drivers/staging/comedi/drivers.c
+> +++ b/drivers/staging/comedi/drivers.c
+> @@ -304,14 +304,13 @@ static int postconfig(struct comedi_device *dev)
+>    * that register their supported board names */
+>   static void *comedi_recognize(struct comedi_driver *driv, const char *name)
+>   {
+> -	unsigned i;
+> -	const char *const *name_ptr = driv->board_name;
+> +	char **name_ptr = (char **)driv->board_name;
+> +	int i;
+> +
+>   	for (i = 0; i<  driv->num_names; i++) {
+>   		if (strcmp(*name_ptr, name) = 0)
+> -			return (void *)name_ptr;
+> -		name_ptr > -		    (const char *const *)((const char *)name_ptr +
+> -					  driv->offset);
+> +			return name_ptr;
+> +		name_ptr = (char **)((void *)name_ptr + driv->offset);
+>   	}
+>
+>   	return NULL;
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+You could simplify it further by keeping one of the consts:
 
-diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
-index 1c3d638..a8f576d 100644
---- a/drivers/staging/comedi/drivers.c
-+++ b/drivers/staging/comedi/drivers.c
-@@ -304,14 +304,13 @@ static int postconfig(struct comedi_device *dev)
-  * that register their supported board names */
- static void *comedi_recognize(struct comedi_driver *driv, const char *name)
- {
--	unsigned i;
--	const char *const *name_ptr = driv->board_name;
-+	char **name_ptr = (char **)driv->board_name;
-+	int i;
-+
- 	for (i = 0; i < driv->num_names; i++) {
- 		if (strcmp(*name_ptr, name) = 0)
--			return (void *)name_ptr;
--		name_ptr -		    (const char *const *)((const char *)name_ptr +
--					  driv->offset);
-+			return name_ptr;
-+		name_ptr = (char **)((void *)name_ptr + driv->offset);
- 	}
- 
- 	return NULL;
+static void *comedi_recognize(struct comedi_driver *driv, const char *name)
+{
+	unsigned i;
+	const char **name_ptr = driv->board_name;
+	for (i = 0; i < driv->num_names; i++) {
+		if (strcmp(*name_ptr, name) = 0)
+			return name_ptr;
+		name_ptr = (void *)name_ptr + driv->offset;
+	}
+	return NULL;
+}
+
+-- 
+-=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
+-=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
