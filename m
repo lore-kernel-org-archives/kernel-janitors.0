@@ -1,39 +1,154 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Date: Sat, 05 May 2012 02:26:42 +0000
-Subject: Re: [patch] max17042_battery: fix a couple buffer overflows
-Message-Id: <20120505022642.GA812@lizard>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Mon, 28 May 2012 16:54:51 +0000
+Subject: [PATCH v2] video: bfin_adv7393fb: Fix cleanup code
+Message-Id: <1338224091-8322-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120315113732.GA364@elgon.mountain>
- <4F6224E2.5060006@gmail.com>
-In-Reply-To: <4F6224E2.5060006@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dirk Brandewie <dirk.brandewie@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Philip Rakity <prakity@marvell.com>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: FlorianSchandinat@gmx.de
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Thu, Mar 15, 2012 at 10:20:34AM -0700, Dirk Brandewie wrote:
-> On 03/15/2012 04:37 AM, Dan Carpenter wrote:
-> >There are a couple issues here caused by confusion between sizeof()
-> >and ARRAY_SIZE().  "table_size" should be the number of elements, but we
-> >should allocate it with kcalloc() so that we allocate the correct number
-> >of bytes.
-> >
-> >In max17042_init_model() we don't allocate enough space so we go past
-> >the end of the array in max17042_read_model_data() and
-> >max17042_model_data_compare().
-> >
-> >In max17042_verify_model_lock() we allocate the right amount of space
-> >but we call max17042_read_model_data() with the wrong number of elements
-> >and also in the for loop we go past the end of the array.
-> >
-> >Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
-> Acked-by: Dirk Brandewie <dirk.brandewie@gmail.com>
-> 
-> Typo in first ack :-(
+This patch fixes the cleanup code of the bfin_adv7393_fb_probe
+function.
 
-Applied, thanks! :-)
+1) The resources were not freed in the order that we allocated them
+   so we call dma_free_coherent() before it was allocated.
+2) The labels weren't in the right place which also meant that we
+   freed resources that weren't allocated.
+3) We should free gpio_free(P_IDENT(P_PPI0_FS3)) before returning.
+4) Lets change the label names into something more meaningful.
 
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+v2: Changed the label names as well.
+
+ drivers/video/bfin_adv7393fb.c |   43 +++++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/video/bfin_adv7393fb.c b/drivers/video/bfin_adv7393fb.c
+index 1a268a2..33ea874 100644
+--- a/drivers/video/bfin_adv7393fb.c
++++ b/drivers/video/bfin_adv7393fb.c
+@@ -414,14 +414,14 @@ static int __devinit bfin_adv7393_fb_probe(struct i2c_client *client,
+ 		if (ret) {
+ 			dev_err(&client->dev, "PPI0_FS3 GPIO request failed\n");
+ 			ret = -EBUSY;
+-			goto out_8;
++			goto free_fbdev;
+ 		}
+ 	}
+ 
+ 	if (peripheral_request_list(ppi_pins, DRIVER_NAME)) {
+ 		dev_err(&client->dev, "requesting PPI peripheral failed\n");
+ 		ret = -EFAULT;
+-		goto out_8;
++		goto free_gpio;
+ 	}
+ 
+ 	fbdev->fb_mem @@ -432,7 +432,7 @@ static int __devinit bfin_adv7393_fb_probe(struct i2c_client *client,
+ 		dev_err(&client->dev, "couldn't allocate dma buffer (%d bytes)\n",
+ 		       (u32) fbdev->fb_len);
+ 		ret = -ENOMEM;
+-		goto out_7;
++		goto free_ppi_pins;
+ 	}
+ 
+ 	fbdev->info.screen_base = (void *)fbdev->fb_mem;
+@@ -464,27 +464,27 @@ static int __devinit bfin_adv7393_fb_probe(struct i2c_client *client,
+ 	if (!fbdev->info.pseudo_palette) {
+ 		dev_err(&client->dev, "failed to allocate pseudo_palette\n");
+ 		ret = -ENOMEM;
+-		goto out_6;
++		goto free_fb_mem;
+ 	}
+ 
+ 	if (fb_alloc_cmap(&fbdev->info.cmap, BFIN_LCD_NBR_PALETTE_ENTRIES, 0) < 0) {
+ 		dev_err(&client->dev, "failed to allocate colormap (%d entries)\n",
+ 			   BFIN_LCD_NBR_PALETTE_ENTRIES);
+ 		ret = -EFAULT;
+-		goto out_5;
++		goto free_palette;
+ 	}
+ 
+ 	if (request_dma(CH_PPI, "BF5xx_PPI_DMA") < 0) {
+ 		dev_err(&client->dev, "unable to request PPI DMA\n");
+ 		ret = -EFAULT;
+-		goto out_4;
++		goto free_cmap;
+ 	}
+ 
+ 	if (request_irq(IRQ_PPI_ERROR, ppi_irq_error, 0,
+ 			"PPI ERROR", fbdev) < 0) {
+ 		dev_err(&client->dev, "unable to request PPI ERROR IRQ\n");
+ 		ret = -EFAULT;
+-		goto out_3;
++		goto free_ch_ppi;
+ 	}
+ 
+ 	fbdev->open = 0;
+@@ -494,14 +494,14 @@ static int __devinit bfin_adv7393_fb_probe(struct i2c_client *client,
+ 
+ 	if (ret) {
+ 		dev_err(&client->dev, "i2c attach: init error\n");
+-		goto out_1;
++		goto free_irq_ppi;
+ 	}
+ 
+ 
+ 	if (register_framebuffer(&fbdev->info) < 0) {
+ 		dev_err(&client->dev, "unable to register framebuffer\n");
+ 		ret = -EFAULT;
+-		goto out_1;
++		goto free_irq_ppi;
+ 	}
+ 
+ 	dev_info(&client->dev, "fb%d: %s frame buffer device\n",
+@@ -512,7 +512,7 @@ static int __devinit bfin_adv7393_fb_probe(struct i2c_client *client,
+ 	if (!entry) {
+ 		dev_err(&client->dev, "unable to create /proc entry\n");
+ 		ret = -EFAULT;
+-		goto out_0;
++		goto free_fb;
+ 	}
+ 
+ 	entry->read_proc = adv7393_read_proc;
+@@ -521,22 +521,25 @@ static int __devinit bfin_adv7393_fb_probe(struct i2c_client *client,
+ 
+ 	return 0;
+ 
+- out_0:
++free_fb:
+ 	unregister_framebuffer(&fbdev->info);
+- out_1:
++free_irq_ppi:
+ 	free_irq(IRQ_PPI_ERROR, fbdev);
+- out_3:
++free_ch_ppi:
+ 	free_dma(CH_PPI);
+- out_4:
+-	dma_free_coherent(NULL, fbdev->fb_len, fbdev->fb_mem,
+-			  fbdev->dma_handle);
+- out_5:
++free_cmap:
+ 	fb_dealloc_cmap(&fbdev->info.cmap);
+- out_6:
++free_palette:
+ 	kfree(fbdev->info.pseudo_palette);
+- out_7:
++free_fb_mem:
++	dma_free_coherent(NULL, fbdev->fb_len, fbdev->fb_mem,
++			  fbdev->dma_handle);
++free_ppi_pins:
+ 	peripheral_free_list(ppi_pins);
+- out_8:
++free_gpio:
++	if (ANOMALY_05000400)
++		gpio_free(P_IDENT(P_PPI0_FS3));
++free_fbdev:
+ 	kfree(fbdev);
+ 
+ 	return ret;
 -- 
-Anton Vorontsov
-Email: cbouatmailru@gmail.com
+1.7.10
+
