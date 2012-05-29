@@ -1,7 +1,7 @@
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Date: Mon, 14 May 2012 21:29:03 +0000
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Date: Tue, 29 May 2012 15:05:45 +0000
 Subject: Re: [patch] fb: handle NULL pointers in framebuffer release
-Message-Id: <20120514212903.GA4156@joi.lan>
+Message-Id: <4FC4E5C9.1070408@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120514205837.GE20836@elgon.mountain>
 In-Reply-To: <20120514205837.GE20836@elgon.mountain>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-fbdev@vger.kernel.org
 
-On Mon, May 14, 2012 at 11:58:37PM +0300, Dan Carpenter wrote:
+On 05/14/2012 08:58 PM, Dan Carpenter wrote:
 > This function is called with a potential NULL pointer in
 > picolcd_init_framebuffer() and it causes a static checker warning.  This
 > used to handle NULL pointers when the picolcd code was written, but a
@@ -18,8 +18,14 @@ On Mon, May 14, 2012 at 11:58:37PM +0300, Dan Carpenter wrote:
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+Applied.
 
+
+Thanks,
+
+Florian Tobias Schandinat
+
+> 
 > diff --git a/drivers/video/fbsysfs.c b/drivers/video/fbsysfs.c
 > index 67afa9c..a55e366 100644
 > --- a/drivers/video/fbsysfs.c
@@ -33,3 +39,5 @@ Reviewed-by: Marcin Slusarz <marcin.slusarz@gmail.com>
 >  	kfree(info->apertures);
 >  	kfree(info);
 >  }
+> 
+
