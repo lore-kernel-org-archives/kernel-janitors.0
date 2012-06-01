@@ -1,31 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 07 Jun 2012 08:23:26 +0000
-Subject: [patch] [SCSI] libfcoe: remove and unneeded check
-Message-Id: <20120607082326.GB7582@elgon.mountain>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 01 Jun 2012 19:43:29 +0000
+Subject: [PATCH] pps: Return PTR_ERR on error in device_create
+Message-Id: <1338579809-11637-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robert Love <robert.w.love@intel.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, devel@open-fcoe.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: giometti@enneenne.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-Unsigned values are never less than zero.  We check for an upper bound
-later so that's OK too.
+We should return PTR_ERR if the call to the
+device_create function fails.
+Without this patch we instead return the value
+from a successful call to cdev_add if the call
+to device_create fails.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/pps/pps.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/fcoe/fcoe_sysfs.c b/drivers/scsi/fcoe/fcoe_sysfs.c
-index 2bc1631..6e402f6 100644
---- a/drivers/scsi/fcoe/fcoe_sysfs.c
-+++ b/drivers/scsi/fcoe/fcoe_sysfs.c
-@@ -102,8 +102,8 @@ static int fcoe_str_to_dev_loss(const char *buf, unsigned long *val)
- 	int ret;
+diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+index 98fbe62..e771487 100644
+--- a/drivers/pps/pps.c
++++ b/drivers/pps/pps.c
+@@ -327,8 +327,10 @@ int pps_register_cdev(struct pps_device *pps)
+ 	}
+ 	pps->dev = device_create(pps_class, pps->info.dev, devt, pps,
+ 							"pps%d", pps->id);
+-	if (IS_ERR(pps->dev))
++	if (IS_ERR(pps->dev)) {
++		err = PTR_ERR(pps->dev);
+ 		goto del_cdev;
++	}
  
- 	ret = kstrtoul(buf, 0, val);
--	if (ret || *val < 0)
--		return -EINVAL;
-+	if (ret)
-+		return ret;
- 	/*
- 	 * Check for overflow; dev_loss_tmo is u32
- 	 */
+ 	pps->dev->release = pps_device_destruct;
+ 
+-- 
+1.7.10
+
