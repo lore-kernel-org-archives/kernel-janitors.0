@@ -1,32 +1,45 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Fri, 08 Jun 2012 09:09:48 +0000
-Subject: Re: staging: comedi: amplc_pci230: add a missing unlock
-Message-Id: <4FD1C15C.5080408@mev.co.uk>
+From: InKi Dae <daeinki@gmail.com>
+Date: Mon, 04 Jun 2012 15:52:48 +0000
+Subject: Re: [PATCH] drm/exynos: Include missing linux/types.h in header
+Message-Id: <CAAQKjZMo5pWB+hVudEdTuv1h1L69n=sXTM+VCi9m3AkWPAALiQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120608065258.GA26673@elgon.mountain>
-In-Reply-To: <20120608065258.GA26673@elgon.mountain>
+References: <1336661600-2409-1-git-send-email-emilgoode@gmail.com>
+	<CAAQKjZNbu9E+bpt0cC8OiRhcGFe13E17bVU_ZY2EeLCzNpSavA@mail.gmail.com>
+In-Reply-To: <CAAQKjZNbu9E+bpt0cC8OiRhcGFe13E17bVU_ZY2EeLCzNpSavA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: Emil Goode <emilgoode@gmail.com>
+Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 2012/06/08 07:52 AM, Dan Carpenter wrote:
-> This side of the if else statement returned with the lock held and IRQs
-> disabled.
-
-> --- a/drivers/staging/comedi/drivers/amplc_pci230.c
-> +++ b/drivers/staging/comedi/drivers/amplc_pci230.c
-> @@ -1387,6 +1387,8 @@ static int pci230_ao_inttrig_scan_begin(struct comedi_device *dev,
->  		/* Delay.  Should driver be responsible for this? */
->  		/* XXX TODO: See if DAC busy bit can be used. */
->  		udelay(8);
-> +	} else {
-> +		spin_unlock_irqrestore(&devpriv->ao_stop_spinlock, irqflags);
->  	}
-
-Thanks for catching that!  I'll fix it in the out-of-kernel Comedi
-sources as well.
-
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>             )=-
--=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587              )=-
+SGkgRW1pbCwKCndlIGluY2x1ZGVkICJkcm0uaCIgd2l0aCBnMmQgZHJpdmVyIHBhdGNoIGluc3Rl
+YWQgb2YgIjxsaW51eC90eXBlcy5oPgpzbyB5b3VyIHBhdGNoIHdpbGwgYmUgcmVtb3ZlZCBmcm9t
+IGV4eW5vcy1kcm0tZml4ZXMuIHNvcnJ5IGZvcgpjb25mdXNpbmcuCgpmb3IgdGhpcywgeW91IGNh
+biByZWZlciB0byBiZWxvdyBsaW5rLgpodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvP3A9bGludXgva2Vy
+bmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQ7YT1ibG9iZGlmZjtmPWluY2x1ZGUvZHJtL2V4eW5v
+c19kcm0uaDtotmQ3Y2U5MmVhZGQ2N2E2N2RiMTJiMTliYjBkMzkyMDhiODcwNTExO2hwRGY3OWNm
+NDY4ZDRiN2JhZmYyZTVmNzI4NjY3NDc1YWI5NmY3ZjFlO2hi12YxNjQyYzkwYWI1ZWIyZDdjNDhh
+ZjA1ODFjOTkzMDk0Zjk3ZTFhO2hwYo1jYjk2YjYyOGEwNzQ5MTg0YmJjYzVlNmM5NDQ2M2Y4OTQw
+NWM1OAoKVGhhbmtzLApJbmtpIERhZQoKMjAxMi81LzE0IEluS2kgRGFlIDxkYWVpbmtpQGdtYWls
+LmNvbT46Cj4gMjAxMi81LzEwIEVtaWwgR29vZGUgPGVtaWxnb29kZUBnbWFpbC5jb20+Ogo+PiBJ
+bmNsdWRlIHRoZSBsaW51eC90eXBlcy5oIGZpbGUgd2hlcmUgdXNlZCB0eXBlcyBhcmUgZGVjbGFy
+ZWQuCj4+Cj4+IFNwYXJzZSBnaXZlcyB0aGUgZm9sbG93aW5nIHdhcm5pbmc6Cj4+IC91c3IvaW5j
+bHVkZS9kcm0vZXh5bm9zX2RybS5oOjkyOgo+PiCgIKAgoCCgZm91bmQgX19bdXNdezgsMTYsMzIs
+NjR9IHR5cGUgd2l0aG91dAo+PiCgIKAgoCCgI2luY2x1ZGUgPGxpbnV4L3R5cGVzLmg+Cj4+Cj4+
+IFNpZ25lZC1vZmYtYnk6IEVtaWwgR29vZGUgPGVtaWxnb29kZUBnbWFpbC5jb20+Cj4+IC0tLQo+
+PiCgaW5jbHVkZS9kcm0vZXh5bm9zX2RybS5oIHwgoCCgMiArKwo+PiCgMSBmaWxlIGNoYW5nZWQs
+IDIgaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZXh5bm9zX2Ry
+bS5oIGIvaW5jbHVkZS9kcm0vZXh5bm9zX2RybS5oCj4+IGluZGV4IGU0NzhkZTQuLjdlYjdhZTcg
+MTAwNjQ0Cj4+IC0tLSBhL2luY2x1ZGUvZHJtL2V4eW5vc19kcm0uaAo+PiArKysgYi9pbmNsdWRl
+L2RybS9leHlub3NfZHJtLmgKPj4gQEAgLTI5LDYgKzI5LDggQEAKPj4goCNpZm5kZWYgX0VYWU5P
+U19EUk1fSF8KPj4goCNkZWZpbmUgX0VYWU5PU19EUk1fSF8KPj4KPj4gKyNpbmNsdWRlIDxsaW51
+eC90eXBlcy5oPgo+PiArCj4KPiBhcHBsaWVkLgo+Cj4gVGhhbmtzLAo+IElua2kgRGFlCj4KPj4g
+oC8qKgo+PiCgKiBVc2VyLWRlc2lyZWQgYnVmZmVyIGNyZWF0aW9uIGluZm9ybWF0aW9uIHN0cnVj
+dHVyZS4KPj4goCoKPj4gLS0KPj4gMS43LjEwCj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhp
+cyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRo
+ZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFq
+b3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
+bA==
