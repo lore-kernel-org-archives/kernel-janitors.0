@@ -1,67 +1,74 @@
-From: Mattia Dongili <malattia@linux.it>
-Date: Thu, 07 Jun 2012 21:42:02 +0000
-Subject: Re: [patch] sony-laptop: fix a couple signedness bugs
-Message-Id: <20120607214200.GA10985@kamineko.org>
+From: walter harms <wharms@bfs.de>
+Date: Tue, 05 Jun 2012 10:06:10 +0000
+Subject: Re: [patch] staging: comedi: cleanup comedi_recognize()
+Message-Id: <4FCDDA12.20906@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120607082221.GA7582@elgon.mountain>
- <4FD078B2.3060909@bfs.de>
- <20120607095959.GB13539@mwanda>
- <4FD07FC1.5030306@bfs.de>
-In-Reply-To: <4FD07FC1.5030306@bfs.de>
+References: <20120524102851.GA4399@elgon.mountain>
+In-Reply-To: <20120524102851.GA4399@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 07, 2012 at 12:17:37PM +0200, walter harms wrote:
+
+
+Am 24.05.2012 12:57, schrieb Ian Abbott:
+> On 2012-05-24 11:28, Dan Carpenter wrote:
+>> This function is more complicated than it needs to be because of the
+>> consts.  It's not worth saving them because we drop the consts anyway
+>> when we return (void *)name_ptr.
+>>
+>> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+>>
+>> diff --git a/drivers/staging/comedi/drivers.c
+>> b/drivers/staging/comedi/drivers.c
+>> index 1c3d638..a8f576d 100644
+>> --- a/drivers/staging/comedi/drivers.c
+>> +++ b/drivers/staging/comedi/drivers.c
+>> @@ -304,14 +304,13 @@ static int postconfig(struct comedi_device *dev)
+>>    * that register their supported board names */
+>>   static void *comedi_recognize(struct comedi_driver *driv, const char
+>> *name)
+>>   {
+>> -    unsigned i;
+>> -    const char *const *name_ptr = driv->board_name;
+>> +    char **name_ptr = (char **)driv->board_name;
+>> +    int i;
+>> +
+>>       for (i = 0; i<  driv->num_names; i++) {
+>>           if (strcmp(*name_ptr, name) = 0)
+>> -            return (void *)name_ptr;
+>> -        name_ptr >> -            (const char *const *)((const char *)name_ptr +
+>> -                      driv->offset);
+>> +            return name_ptr;
+>> +        name_ptr = (char **)((void *)name_ptr + driv->offset);
+>>       }
+>>
+>>       return NULL;
 > 
+> You could simplify it further by keeping one of the consts:
 > 
-> Am 07.06.2012 11:59, schrieb Dan Carpenter:
-> > On Thu, Jun 07, 2012 at 11:47:30AM +0200, walter harms wrote:
-> >>
-> >>
-> >> Am 07.06.2012 10:22, schrieb Dan Carpenter:
-> >>> These need to be signed to handle negative error codes.
-> >>>
-> >>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks Dan, I'll take this and the other patch you sent earlier and
-submit to Matthew together with other patches I have pending here.
-See below for a quick comment.
-
-...
-> >> sony_find_snc_handle() should return an int, did something change ?
-> > 
-> > offset is a u64.  It has to be 64 bit.  I thought about changing it
-> > to s64, but decided to just cast it here instead.
-> > 
-> > regards,
-> > dan carpenter
-> > 
+> static void *comedi_recognize(struct comedi_driver *driv, const char *name)
+> {
+>     unsigned i;
+>     const char **name_ptr = driv->board_name;
+>     for (i = 0; i < driv->num_names; i++) {
+>         if (strcmp(*name_ptr, name) = 0)
+>             return name_ptr;
+>         name_ptr = (void *)name_ptr + driv->offset;
+>     }
+>     return NULL;
+> }
 > 
-> If it this function
->  http://lxr.free-electrons.com/source/drivers/platform/x86/sony-laptop.c?a=powerpc#L817
-> it just returns an index expected to be <0x10.
-> also offset was an int
->  http://lxr.free-electrons.com/source/drivers/platform/x86/sony-laptop.c?a=powerpc#L1563
-> 
-> it make we wonder why somebody made the change ...
 
-it was changed to call into sony_nc_buffer_call which is a new function
-(ebcef1b0e41f2ff972e5c5487a30e8f4ee2b6f13).
+Hi all,
+the patch is fine with me but i have a few basic questions:
 
-...
-> >>> -	if (offset < 0)
-> >>> +	if ((int)offset < 0)
-> >>>  		return;
+Why the (void  *) at all ? it returns a name what is a const char *.
 
-This check is actually redundant in a way as
-sony_nc_backlight_ng_read_limits is only called with a valid handle.
-Might as well remove the if statement altogether. sony_nc_rfkill_setup
-has similar code without the check for a valid offset.
+A look at the structure also shows that this is a linked list, why
+using offset instead of driv->next ?
 
-Thanks
--- 
-mattia
-:wq!
+re,
+ wh
+
