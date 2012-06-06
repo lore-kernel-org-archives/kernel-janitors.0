@@ -1,39 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 06 Jun 2012 21:41:39 +0000
-Subject: [PATCH 5/7] drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c: adjust suspicious bit operation
-Message-Id: <1339018901-28439-6-git-send-email-Julia.Lawall@lip6.fr>
+From: "Franky Lin" <frankyl@broadcom.com>
+Date: Wed, 06 Jun 2012 23:43:10 +0000
+Subject: Re: [PATCH 5/7] drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c: adjust suspicious bit
+Message-Id: <4FCFEB0E.2020206@broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1339018901-28439-6-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1339018901-28439-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Brett Rudley <brudley@broadcom.com>, kernel-janitors@vger.kernel.org, Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On 06/06/2012 02:41 PM, Julia Lawall wrote:
+> From: Julia Lawall<Julia.Lawall@lip6.fr>
+>
+> IRQF_TRIGGER_HIGH is 0x00000004, so it seems that&  was intended rather than |.
+>
+> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
+>
+> Signed-off-by: Julia Lawall<julia@diku.dk>
 
-IRQF_TRIGGER_HIGH is 0x00000004, so it seems that & was intended rather than |.
+Thanks, Julia. But this has already been fixed by Joe Perches [1] and 
+the patch has arrived at Linux wireless tree.
 
-This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
+Franky
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c b/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c
-index e2480d1..bed208f 100644
---- a/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/bcmsdh.c
-@@ -91,7 +91,7 @@ int brcmf_sdio_intr_register(struct brcmf_sdio_dev *sdiodev)
- 
- 	/* redirect, configure ane enable io for interrupt signal */
- 	data = SDIO_SEPINT_MASK | SDIO_SEPINT_OE;
--	if (sdiodev->irq_flags | IRQF_TRIGGER_HIGH)
-+	if (sdiodev->irq_flags & IRQF_TRIGGER_HIGH)
- 		data |= SDIO_SEPINT_ACT_HI;
- 	brcmf_sdio_regwb(sdiodev, SDIO_CCCR_BRCM_SEPINT, data, &ret);
- 
+[1] https://lkml.org/lkml/2012/5/30/482
 
