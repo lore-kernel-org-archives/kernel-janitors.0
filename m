@@ -1,40 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 23 Jun 2012 09:15:20 +0000
-Subject: [RFC] ext4: off by one check in ext4_ext_convert_to_initialized()
-Message-Id: <20120623091520.GB26923@elgon.mountain>
+From: Alex Elder <elder@dreamhost.com>
+Date: Wed, 06 Jun 2012 13:55:12 +0000
+Subject: Re: [patch] rbd: endian bug in rbd_req_cb()
+Message-Id: <4FCF6140.10604@dreamhost.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120504173954.GA18827@elgon.mountain>
+In-Reply-To: <20120504173954.GA18827@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, Yongqiang Yang <xiaoqiangnk@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Yehuda Sadeh <yehuda@hq.newdream.net>, Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I am not very familiar with this code, but I think that we should be
-using "<= EXT4_EXT_ZERO_LEN" here instead of "< EXT4_EXT_ZERO_LEN".
+On 05/04/2012 12:39 PM, Dan Carpenter wrote:
+> Sparse complains about this because:
+> drivers/block/rbd.c:996:20: warning: cast to restricted __le32
+> drivers/block/rbd.c:996:20: warning: cast from restricted __le16
+> 
+> These are set in osd_req_encode_op() and they are le16.
 
-1)  The other comparisons with EXT4_EXT_ZERO_LEN use "<=".
+I had made a note to myself to fix this as well--and have a whole
+series of patches in my queue related to improving consistency with
+sizes and signedness.
 
-2)  On the first side of the if else statement we do:
-	if (allocated <= EXT4_EXT_ZERO_LEN ...
-		split_map.m_len = allocated;
-    On this side, it would match to do:
-	if (map->m_lblk - ee_block + map->m_len <= EXT4_EXT_ZERO_LEN ...
-		split_map.m_len = map->m_lblk - ee_block + map->m_len;
+Thank you for sending this, it looks good and I'm about to commit it.
 
-It's not the most air tight of arguments, so I've submitted this with a
-big warning message.
+Reviewed-by: Alex Elder <elder@inktank.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index c1f7701..64d3d6f 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -993,7 +993,7 @@ static void rbd_req_cb(struct ceph_osd_request *req, struct ceph_msg *msg)
+>  	op = (void *)(replyhead + 1);
+>  	rc = le32_to_cpu(replyhead->result);
+>  	bytes = le64_to_cpu(op->extent.length);
+> -	read_op = (le32_to_cpu(op->op) = CEPH_OSD_OP_READ);
+> +	read_op = (le16_to_cpu(op->op) = CEPH_OSD_OP_READ);
+>  
+>  	dout("rbd_req_cb bytes=%lld readop=%d rc=%d\n", bytes, read_op, rc);
+>  
+> --
+> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 91341ec..2df32a4 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -3208,7 +3208,7 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
- 				goto out;
- 			split_map.m_lblk = map->m_lblk;
- 			split_map.m_len = allocated;
--		} else if ((map->m_lblk - ee_block + map->m_len <
-+		} else if ((map->m_lblk - ee_block + map->m_len < 			   EXT4_EXT_ZERO_LEN) &&
- 			   (EXT4_EXT_MAY_ZEROOUT & split_flag)) {
- 			/* case 2 */
