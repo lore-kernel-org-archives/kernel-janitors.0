@@ -1,39 +1,58 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 06 Jun 2012 21:41:41 +0000
-Subject: [PATCH 7/7] drivers/net/can/cc770/cc770_platform.c: adjust suspicious bit operation
-Message-Id: <1339018901-28439-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Wed, 06 Jun 2012 21:52:18 +0000
+Subject: Re: [PATCH 7/7] drivers/net/can/cc770/cc770_platform.c: adjust suspicious bit operation
+Message-Id: <4FCFD112.1070106@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------enigF0B5B7A6CB9E6AD33DD9FC5D"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>
-Cc: kernel-janitors@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
+References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr> <1339018901-28439-8-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1339018901-28439-8-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Wolfgang Grandegger <wg@grandegger.com>, kernel-janitors@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enigF0B5B7A6CB9E6AD33DD9FC5D
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-CPUIF_DSC is 0x40, so it would seem that & is wanted rather than |.
+On 06/06/2012 11:41 PM, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> CPUIF_DSC is 0x40, so it would seem that & is wanted rather than |.
+>=20
+> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
+>=20
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
+Good catch, Joe Perches has already found and fixed that problem. It has
+been fixed in:
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+    dc605db can: cc770: Fix likely misuse of | for &
 
----
- drivers/net/can/cc770/cc770_platform.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The commit is currently in David's net/master, and scheduled for the
+v3.5 release.
 
-diff --git a/drivers/net/can/cc770/cc770_platform.c b/drivers/net/can/cc770/cc770_platform.c
-index 53115ee..688371c 100644
---- a/drivers/net/can/cc770/cc770_platform.c
-+++ b/drivers/net/can/cc770/cc770_platform.c
-@@ -154,7 +154,7 @@ static int __devinit cc770_get_platform_data(struct platform_device *pdev,
- 	struct cc770_platform_data *pdata = pdev->dev.platform_data;
- 
- 	priv->can.clock.freq = pdata->osc_freq;
--	if (priv->cpu_interface | CPUIF_DSC)
-+	if (priv->cpu_interface & CPUIF_DSC)
- 		priv->can.clock.freq /= 2;
- 	priv->clkout = pdata->cor;
- 	priv->bus_config = pdata->bcr;
+Regards, Marc
 
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--------------enigF0B5B7A6CB9E6AD33DD9FC5D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAk/P0RUACgkQjTAFq1RaXHMcbQCgi/Wo716GQYPqfXM9K/0YXMeZ
+84gAoIvJmxcoGBuSuklIYpbxP0e2zPyn
+=8dej
+-----END PGP SIGNATURE-----
+
+--------------enigF0B5B7A6CB9E6AD33DD9FC5D--
