@@ -1,41 +1,42 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Fri, 01 Jun 2012 19:43:29 +0000
-Subject: [PATCH] pps: Return PTR_ERR on error in device_create
-Message-Id: <1338579809-11637-1-git-send-email-emilgoode@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 06 Jun 2012 21:41:40 +0000
+Subject: [PATCH 6/7] drivers/ata/pata_pcmcia.c: adjust suspicious bit operation
+Message-Id: <1339018901-28439-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: giometti@enneenne.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
 
-We should return PTR_ERR if the call to the
-device_create function fails.
-Without this patch we instead return the value
-from a successful call to cdev_add if the call
-to device_create fails.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+IO_DATA_PATH_WIDTH_8 is 0, so a bit-and with it is always false.  The
+value IO_DATA_PATH_WIDTH covers the bits of the IO_DATA_PATH constants, so
+first pick those bits and then make the test using !=.
+
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- drivers/pps/pps.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/ata/pata_pcmcia.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
-index 98fbe62..e771487 100644
---- a/drivers/pps/pps.c
-+++ b/drivers/pps/pps.c
-@@ -327,8 +327,10 @@ int pps_register_cdev(struct pps_device *pps)
+diff --git a/drivers/ata/pata_pcmcia.c b/drivers/ata/pata_pcmcia.c
+index a808ba0..776e749 100644
+--- a/drivers/ata/pata_pcmcia.c
++++ b/drivers/ata/pata_pcmcia.c
+@@ -170,7 +170,8 @@ static int pcmcia_check_one_config(struct pcmcia_device *pdev, void *priv_data)
+ {
+ 	int *is_kme = priv_data;
+ 
+-	if (!(pdev->resource[0]->flags & IO_DATA_PATH_WIDTH_8)) {
++	if ((pdev->resource[0]->flags & IO_DATA_PATH_WIDTH)
++	    != IO_DATA_PATH_WIDTH_8) {
+ 		pdev->resource[0]->flags &= ~IO_DATA_PATH_WIDTH;
+ 		pdev->resource[0]->flags |= IO_DATA_PATH_WIDTH_AUTO;
  	}
- 	pps->dev = device_create(pps_class, pps->info.dev, devt, pps,
- 							"pps%d", pps->id);
--	if (IS_ERR(pps->dev))
-+	if (IS_ERR(pps->dev)) {
-+		err = PTR_ERR(pps->dev);
- 		goto del_cdev;
-+	}
- 
- 	pps->dev->release = pps_device_destruct;
- 
--- 
-1.7.10
 
