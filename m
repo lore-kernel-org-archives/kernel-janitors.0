@@ -1,63 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Jun 2012 19:33:54 +0000
-Subject: Re: [patch -resend] [media] az6007: precedence bug in az6007_i2c_xfer()
-Message-Id: <20120628193354.GL3007@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 06 Jun 2012 21:41:38 +0000
+Subject: [PATCH 4/7] fs/direct-io.c: adjust suspicious bit operation
+Message-Id: <1339018901-28439-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627090644.GP31212@elgon.mountain>
- <4FEB0664.3030408@redhat.com>
-In-Reply-To: <4FEB0664.3030408@redhat.com>
+References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Jose Alberto Reguero <jareguero@telefonica.net>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
 
-On Wed, Jun 27, 2012 at 10:11:00AM -0300, Mauro Carvalho Chehab wrote:
-> Em 27-06-2012 06:06, Dan Carpenter escreveu:
-> > The intent here was to test that the flag was clear but the '!' has
-> > higher precedence than the '&'.  I2C_M_RD is 0x1 so the current code is
-> > equivalent to "&& (!sgs[i].flags) ..."
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > I sent this originally on Wed, 25 Jan 2012 and Emil Goode sent the same
-> > fix on Thu, May 3, 2012.
-> > 
-> > diff --git a/drivers/media/dvb/dvb-usb/az6007.c b/drivers/media/dvb/dvb-usb/az6007.c
-> > index 4008b9c..f6f0cf9 100644
-> > --- a/drivers/media/dvb/dvb-usb/az6007.c
-> > +++ b/drivers/media/dvb/dvb-usb/az6007.c
-> > @@ -711,7 +711,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
-> >   		addr = msgs[i].addr << 1;
-> >   		if (((i + 1) < num)
-> >   		    && (msgs[i].len = 1)
-> > -		    && (!msgs[i].flags & I2C_M_RD)
-> > +		    && (!(msgs[i].flags & I2C_M_RD))
-> >   		    && (msgs[i + 1].flags & I2C_M_RD)
-> >   		    && (msgs[i].addr = msgs[i + 1].addr)) {
-> >   			/*
-> > 
-> 
-> Dan,
-> 
-> Your logic is correct, however, I didn't apply this patch because it broke
-> the driver.
-> 
-> I'll need to re-visit the driver when I have some time, in order to be
-> able to apply this one, without breaking the driver. I'll likely need to
-> change some other things on this routine.
-> 
-> (this has a low priority, as the driver is working properly the way it is).
-> 
-> So, I'm keeping your patch at patchwork, while I don't find some time for it.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-We could just put a comment next to the code and forget about it.
+READ is 0, so the result of the bit-and operation is 0.  Rewrite with = as
+done elsewhere in the same file.
 
-               && (!(msgs[i].flags & I2C_M_RD)) /* the fix needs testing. */
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
 
-Sparse complains about this so it people are going to keep sending
-patches for it.  It's not like you should be stuck doing all the
-work.
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-regards,
-dan carpenter
+---
+ fs/direct-io.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 0c85fae..1faf4cb 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -1258,7 +1258,7 @@ do_blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
+ 	 */
+ 	BUG_ON(retval = -EIOCBQUEUED);
+ 	if (dio->is_async && retval = 0 && dio->result &&
+-	    ((rw & READ) || (dio->result = sdio.size)))
++	    ((rw = READ) || (dio->result = sdio.size)))
+ 		retval = -EIOCBQUEUED;
+ 
+ 	if (retval != -EIOCBQUEUED)
+
