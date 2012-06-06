@@ -1,31 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 29 Jun 2012 06:44:32 +0000
-Subject: Re: [patch] sgi-xp: nested calls to spin_lock_irqsave()
-Message-Id: <20120629064432.GM3007@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 06 Jun 2012 21:41:41 +0000
+Subject: [PATCH 7/7] drivers/net/can/cc770/cc770_platform.c: adjust suspicious bit operation
+Message-Id: <1339018901-28439-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627135155.GA3464@sgi.com>
- <20120628150342.aaa4ad2d.akpm@linux-foundation.org>
-In-Reply-To: <20120628150342.aaa4ad2d.akpm@linux-foundation.org>
+References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Robin Holt <holt@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jack Steiner <steiner@sgi.com>
+To: Wolfgang Grandegger <wg@grandegger.com>
+Cc: kernel-janitors@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
 
-This is actually my patch, so the patch description is my fault.
-It's a static checker patch and I don't have the hardware, but the
-changelog could have been written more clearly as well.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Robin, the trick to resending patches is to put a:
+CPUIF_DSC is 0x40, so it would seem that & is wanted rather than |.
 
-From:  Dan Carpenter <dan.carpenter@oracle.com>
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
 
-before the patch description and then it shows up as mine.
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
-Also, btw, Robin, I'm looking through my mailbox again and you did
-respond to the patch the first time I sent it.  Sorry, that I didn't
-see that before, and thanks for your help on this.
+---
+ drivers/net/can/cc770/cc770_platform.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/net/can/cc770/cc770_platform.c b/drivers/net/can/cc770/cc770_platform.c
+index 53115ee..688371c 100644
+--- a/drivers/net/can/cc770/cc770_platform.c
++++ b/drivers/net/can/cc770/cc770_platform.c
+@@ -154,7 +154,7 @@ static int __devinit cc770_get_platform_data(struct platform_device *pdev,
+ 	struct cc770_platform_data *pdata = pdev->dev.platform_data;
+ 
+ 	priv->can.clock.freq = pdata->osc_freq;
+-	if (priv->cpu_interface | CPUIF_DSC)
++	if (priv->cpu_interface & CPUIF_DSC)
+ 		priv->can.clock.freq /= 2;
+ 	priv->clkout = pdata->cor;
+ 	priv->bus_config = pdata->bcr;
 
