@@ -1,52 +1,36 @@
-From: Yinghai Lu <yinghai@kernel.org>
-Date: Tue, 12 Jun 2012 16:44:45 +0000
-Subject: Re: [patch -next] irq_remap: silence a bogus pr_err()
-Message-Id: <CAE9FiQWG37f4E+ys2uXzrTSHbmhmF2gx+df0eqfRZ_JnKhCC2Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Jun 2012 12:38:37 +0000
+Subject: [patch] ASoC: isabelle: using an uninitialized variable
+Message-Id: <20120607123837.GA7171@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120612162633.GA11077@elgon.mountain>
-In-Reply-To: <20120612162633.GA11077@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, Alexander Gordeev <agordeev@redhat.com>
-Cc: Joerg Roedel <joerg.roedel@amd.com>, Suresh Siddha <suresh.b.siddha@intel.com>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lrg@ti.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, Vishwas A Deshpande <vishwas.a.deshpande@ti.com>, M R Swami Reddy <mr.swami.reddy@ti.com>
 
-On Tue, Jun 12, 2012 at 9:26 AM, Dan Carpenter <dan.carpenter@oracle.com> w=
-rote:
-> There is an extra semicolon here so the pr_err() message is printed when
-> it is not intended.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_ir=
-q_remapping.c
-> index dafbad0..853902a 100644
-> --- a/drivers/iommu/intel_irq_remapping.c
-> +++ b/drivers/iommu/intel_irq_remapping.c
-> @@ -938,7 +938,7 @@ intel_ioapic_set_affinity(struct irq_data *data, cons=
-t struct cpumask *mask,
->
-> =A0 =A0 =A0 =A0err =3D apic->cpu_mask_to_apicid_and(cfg->domain, mask, &d=
-est);
-> =A0 =A0 =A0 =A0if (err) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (assign_irq_vector(irq, cfg, data->affin=
-ity));
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (assign_irq_vector(irq, cfg, data->affin=
-ity))
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pr_err("Failed to recover =
-vector for irq %d\n", irq);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return err;
-> =A0 =A0 =A0 =A0}
+We should set "isabelle_regmap" before using it.  GCC complains.
 
-introduced by:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit ff164324123c0fe181d8de7dadcc7b3fbe25f2cf
-Author: Alexander Gordeev <agordeev@redhat.com>
-Date:   Thu Jun 7 15:15:59 2012 +0200
-
-    x86/apic: Make cpu_mask_to_apicid() operations return error code
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/sound/soc/codecs/isabelle.c b/sound/soc/codecs/isabelle.c
+index bcc77ef..0d62f3b 100644
+--- a/sound/soc/codecs/isabelle.c
++++ b/sound/soc/codecs/isabelle.c
+@@ -1126,8 +1126,6 @@ static int __devinit isabelle_i2c_probe(struct i2c_client *i2c,
+ 	struct regmap *isabelle_regmap;
+ 	int ret = 0;
+ 
+-	i2c_set_clientdata(i2c, isabelle_regmap);
+-
+ 	isabelle_regmap = devm_regmap_init_i2c(i2c, &isabelle_regmap_config);
+ 	if (IS_ERR(isabelle_regmap)) {
+ 		ret = PTR_ERR(isabelle_regmap);
+@@ -1135,6 +1133,7 @@ static int __devinit isabelle_i2c_probe(struct i2c_client *i2c,
+ 			ret);
+ 		return ret;
+ 	}
++	i2c_set_clientdata(i2c, isabelle_regmap);
+ 
+ 	ret =  snd_soc_register_codec(&i2c->dev,
+ 				&soc_codec_dev_isabelle, isabelle_dai,
