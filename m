@@ -1,57 +1,30 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 07 Jun 2012 14:23:18 +0000
+From: Joe Perches <joe@perches.com>
+Date: Thu, 07 Jun 2012 15:05:44 +0000
 Subject: Re: [PATCH 3/7] drivers/usb/gadget/pch_udc.c: adjust suspicious bit operation
-Message-Id: <alpine.DEB.2.02.1206071622350.1807@hadrien>
+Message-Id: <1339081544.6009.44.camel@joe2Laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr> <1339018901-28439-4-git-send-email-Julia.Lawall@lip6.fr> <4FD0A5F9.9050405@mvista.com>
-In-Reply-To: <4FD0A5F9.9050405@mvista.com>
+References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
+	 <1339018901-28439-4-git-send-email-Julia.Lawall@lip6.fr>
+	 <4FD0A5F9.9050405@mvista.com> <alpine.DEB.2.02.1206071622350.1807@hadrien>
+In-Reply-To: <alpine.DEB.2.02.1206071622350.1807@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sshtylyov@mvista.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Felipe Balbi <balbi@ti.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Sergei Shtylyov <sshtylyov@mvista.com>, Felipe Balbi <balbi@ti.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+
+On Thu, 2012-06-07 at 16:23 +0200, Julia Lawall wrote:
+> Oops, thanks for noticing that.  I'll send a corrected version.
+
+Hi Julia.
+
+I should have let you know that I already submitted
+a patch series for a simple treewide
+"s/if (value | UC_CONSTANT)/if (value & UC_CONSTANT)/"
+https://lkml.org/lkml/2012/5/30/625
+
+Felipe has already picked this patch up.
+https://lkml.org/lkml/2012/6/1/83
 
 
 
-On Thu, 7 Jun 2012, Sergei Shtylyov wrote:
-
-> Hello.
->
-> On 07-06-2012 1:41, Julia Lawall wrote:
->
->> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
->> PCH_UDC_DMA_LAST is 0x08000000 so a bit-or with this value always gives a
->> nonzero result.  The test is rewritten as done elsewhere in the same file.
->
->> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
->
->> Signed-off-by: Julia Lawall<julia@diku.dk>
->
->> ---
->>   drivers/usb/gadget/pch_udc.c |    3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/usb/gadget/pch_udc.c b/drivers/usb/gadget/pch_udc.c
->> index 1cfcc9e..79f7a53 100644
->> --- a/drivers/usb/gadget/pch_udc.c
->> +++ b/drivers/usb/gadget/pch_udc.c
->> @@ -2208,7 +2208,8 @@ static void pch_udc_complete_receiver(struct 
->> pch_udc_ep *ep)
->>   			return;
->>   		}
->>   		if ((td->status&  PCH_UDC_BUFF_STS) = PCH_UDC_BS_DMA_DONE)
->> -			if (td->status | PCH_UDC_DMA_LAST) {
->> +			if ((td_data->status&  PCH_UDC_DMA_LAST)
->> +			    = PCH_UDC_DMA_LAST) {
->
->   But why not simply:
->
-> 			if (td_data->status & PCH_UDC_DMA_LAST)
->
-> if the constant is single bit anyway? And are you sure about s/td/td_data/?
-
-Oops, thanks for noticing that.  I'll send a corrected version.
-
-thanks,
-julia
