@@ -1,48 +1,43 @@
-From: Krishna Gudipati <kgudipat@Brocade.com>
-Date: Wed, 27 Jun 2012 17:44:56 +0000
-Subject: RE: [patch -resend] [SCSI] bfa: off by one in bfa_ioc_mbox_isr()
-Message-Id: <B5EE62D80D50B84BB9E5174F7FCCE80A28396BCE90@HQ1-EXCH02.corp.brocade.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jun 2012 06:54:32 +0000
+Subject: [patch 1/2 -next] iio: frequency: adf4350: using an uninitialized variable
+Message-Id: <20120608065432.GC26673@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627085800.GA3007@mwanda>
- <20120627085936.GA31212@elgon.mountain>
-In-Reply-To: <20120627085936.GA31212@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter@oracle.com>, Jing Huang <huangj@Brocade.COM>
-Cc: "'James E.J. Bottomley'" <JBottomley@parallels.com>, "'linux-scsi@vger.kernel.org'" <linux-scsi@vger.kernel.org>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'kernel-janitors@vger.kernel.org'" <kernel-janitors@vger.kernel.org>
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Hennerich <michael.hennerich@analog.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
------Original Message-----
-From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
-Sent: Wednesday, June 27, 2012 2:00 AM
-To: Jing Huang
-Cc: Krishna Gudipati; James E.J. Bottomley; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: [patch -resend] [SCSI] bfa: off by one in bfa_ioc_mbox_isr()
+GCC complains that we use an uninitialized variable if the user passes
+an invalid parameter to adf4350_read().  I decided that we should return
+-EINVAL instead in that case.
 
-If mc = BFI_MC_MAX then we're reading past the end of the
-mod->mbhdlr[] array.
+However, when I looked up at adf4350_write() it returned -ENODEV for
+that condition.  In the end, I decided the -EINVAL was the right thing
+and I change adf4350_write() to match.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Originally sent on Wed, 6 Jul 2011.
 
-diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
-index 14e6284..8cdb79c 100644
---- a/drivers/scsi/bfa/bfa_ioc.c
-+++ b/drivers/scsi/bfa/bfa_ioc.c
-@@ -2357,7 +2357,7 @@ bfa_ioc_mbox_isr(struct bfa_ioc_s *ioc)
- 			return;
- 		}
+diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/adf4350.c
+index fd4c850..4729bba 100644
+--- a/drivers/iio/frequency/adf4350.c
++++ b/drivers/iio/frequency/adf4350.c
+@@ -272,7 +272,7 @@ static ssize_t adf4350_write(struct iio_dev *indio_dev,
+ 		adf4350_sync_config(st);
+ 		break;
+ 	default:
+-		ret = -ENODEV;
++		ret = -EINVAL;
+ 	}
+ 	mutex_unlock(&indio_dev->mlock);
  
--		if ((mc > BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
-+		if ((mc >= BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
- 			return;
+@@ -310,6 +310,8 @@ static ssize_t adf4350_read(struct iio_dev *indio_dev,
+ 	case ADF4350_PWRDOWN:
+ 		val = !!(st->regs[ADF4350_REG2] & ADF4350_REG2_POWER_DOWN_EN);
+ 		break;
++	default:
++		ret = -EINVAL;
+ 	}
+ 	mutex_unlock(&indio_dev->mlock);
  
- 		mod->mbhdlr[mc].cbfn(mod->mbhdlr[mc].cbarg, &m);
-
-
------
-
-Thanks for the patch.
-
-Acked-by: Krishna Gudipati <kgudipat@brocade.com>
