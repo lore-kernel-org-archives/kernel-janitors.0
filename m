@@ -1,58 +1,34 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Date: Wed, 27 Jun 2012 11:09:45 +0000
-Subject: Re: [patch 1/2 -resend] dma-debug: debugfs_create_bool() takes a u32 pointer
-Message-Id: <20120627110945.GB19313@hmsreliant.think-freely.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jun 2012 06:55:37 +0000
+Subject: [patch 2/2 -next] iio: frequency: adf4350: fix an initialization
+Message-Id: <20120608065537.GD26673@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627085800.GA3007@mwanda>
- <20120627090854.GS31212@elgon.mountain>
-In-Reply-To: <20120627090854.GS31212@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Joerg Roedel <joerg.roedel@amd.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Jakub Kicinski <kubakici@wp.pl>, Alan Stern <stern@rowland.harvard.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Hennerich <michael.hennerich@analog.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 27, 2012 at 12:08:55PM +0300, Dan Carpenter wrote:
-> Even though it has "bool" in the name, you have pass a u32 pointer to
-> debugfs_create_bool().  Otherwise you get memory corruption in
-> write_file_bool().  Fortunately in this case the corruption happens in
-> an alignment hole between variables so it doesn't cause any problems.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Sparse complains about this:
+drivers/iio/frequency/adf4350.c:58:29: warning: Initializer entry defined twice
+drivers/iio/frequency/adf4350.c:59:10:   also defined here
 
-> ---
-> This was sent on Fri, 2 Mar 2012.
-> 
-> It's probably my fault the bug is still there.  I submitted the patch
-> but the feed back was that debugfs_create_bool() has a stupid API and
-> should take a pointer to a bool.  I said that yes, probably that is true
-> but only two places use the current API incorrectly and I fixed the
-> other place as well.
-> 
-> I assumed that both my patches would be merged and the person who cared
-> about API would fix the API but neither of my fixes were applied.
-> 
-> diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-> index 518aea7..66ce414 100644
-> --- a/lib/dma-debug.c
-> +++ b/lib/dma-debug.c
-> @@ -78,7 +78,7 @@ static LIST_HEAD(free_entries);
->  static DEFINE_SPINLOCK(free_entries_lock);
->  
->  /* Global disable flag - will be set in case of an error */
-> -static bool global_disable __read_mostly;
-> +static u32 global_disable __read_mostly;
->  
->  /* Global error count */
->  static u32 error_count;
-> @@ -657,7 +657,7 @@ static int dma_debug_fs_init(void)
->  
->  	global_disable_dent = debugfs_create_bool("disabled", 0444,
->  			dma_debug_dent,
-> -			(u32 *)&global_disable);
-> +			&global_disable);
->  	if (!global_disable_dent)
->  		goto out_err;
->  
-> 
+It looks like '|' was intended here instead of ','.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Guess work on my part.
+
+diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/adf4350.c
+index 4729bba..59fbb3ae 100644
+--- a/drivers/iio/frequency/adf4350.c
++++ b/drivers/iio/frequency/adf4350.c
+@@ -54,7 +54,7 @@ struct adf4350_state {
+ static struct adf4350_platform_data default_pdata = {
+ 	.clkin = 122880000,
+ 	.channel_spacing = 10000,
+-	.r2_user_settings = ADF4350_REG2_PD_POLARITY_POS,
++	.r2_user_settings = ADF4350_REG2_PD_POLARITY_POS |
+ 			    ADF4350_REG2_CHARGE_PUMP_CURR_uA(2500),
+ 	.r3_user_settings = ADF4350_REG3_12BIT_CLKDIV_MODE(0),
+ 	.r4_user_settings = ADF4350_REG4_OUTPUT_PWR(3) |
