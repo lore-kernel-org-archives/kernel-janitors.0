@@ -1,28 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Jun 2012 07:43:11 +0000
-Subject: [patch] drbd: potential integer overflow in receive_SyncParam()
-Message-Id: <20120612074310.GC15060@elgon.mountain>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 08 Jun 2012 17:38:50 +0000
+Subject: [PATCH] drm: Remove duplicate assignment
+Message-Id: <1339177130-677-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I believe this comes from the network so there is a risk of integer
-overflow on 32 bit.  Using kcalloc() is a little cleaner as well.
+Lets remove the double assignment of the
+function pointer disable.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Sparse gives a warning:
+drivers/gpu/drm/ast/ast_mode.c:583:10: warning:
+	Initializer entry defined twice
+	drivers/gpu/drm/ast/ast_mode.c:585:10:
+	also defined here
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index ea4836e..1e27876 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -2902,7 +2902,7 @@ static int receive_SyncParam(struct drbd_conf *mdev, enum drbd_packets cmd, unsi
- 
- 			fifo_size = (mdev->sync_conf.c_plan_ahead * 10 * SLEEP_TIME) / HZ;
- 			if (fifo_size != mdev->rs_plan_s.size && fifo_size > 0) {
--				rs_plan_s   = kzalloc(sizeof(int) * fifo_size, GFP_KERNEL);
-+				rs_plan_s = kcalloc(fifo_size, sizeof(int), GFP_KERNEL);
- 				if (!rs_plan_s) {
- 					dev_err(DEV, "kmalloc of fifo_buffer failed");
- 					goto disconnect;
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/gpu/drm/ast/ast_mode.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index 65f9d23..967c6cf 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -580,7 +580,6 @@ static const struct drm_crtc_helper_funcs ast_crtc_helper_funcs = {
+ 	.mode_fixup = ast_crtc_mode_fixup,
+ 	.mode_set = ast_crtc_mode_set,
+ 	.mode_set_base = ast_crtc_mode_set_base,
+-	.disable = ast_crtc_disable,
+ 	.load_lut = ast_crtc_load_lut,
+ 	.disable = ast_crtc_disable,
+ 	.prepare = ast_crtc_prepare,
+-- 
+1.7.10
+
