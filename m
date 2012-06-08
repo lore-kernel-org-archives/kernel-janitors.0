@@ -1,36 +1,38 @@
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
-Date: Tue, 12 Jun 2012 12:25:06 +0000
-Subject: Re: [Drbd-dev] [patch] drbd: potential integer overflow in receive_SyncParam()
-Message-Id: <20120612122506.GF4069@soda.linbit>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Jun 2012 12:31:28 +0000
+Subject: [patch -resend] drbd: fix resync_dump_detail() output
+Message-Id: <20120608123128.GA18293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lars Ellenberg <drbd-dev@lists.linbit.com>
+Cc: drbd-user@lists.linbit.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2012 at 10:43:11AM +0300, Dan Carpenter wrote:
-> I believe this comes from the network so there is a risk of integer
-> overflow on 32 bit.  Using kcalloc() is a little cleaner as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-> index ea4836e..1e27876 100644
-> --- a/drivers/block/drbd/drbd_receiver.c
-> +++ b/drivers/block/drbd/drbd_receiver.c
-> @@ -2902,7 +2902,7 @@ static int receive_SyncParam(struct drbd_conf *mdev, enum drbd_packets cmd, unsi
->  
->  			fifo_size = (mdev->sync_conf.c_plan_ahead * 10 * SLEEP_TIME) / HZ;
->  			if (fifo_size != mdev->rs_plan_s.size && fifo_size > 0) {
-> -				rs_plan_s   = kzalloc(sizeof(int) * fifo_size, GFP_KERNEL);
-> +				rs_plan_s = kcalloc(fifo_size, sizeof(int), GFP_KERNEL);
->  				if (!rs_plan_s) {
->  					dev_err(DEV, "kmalloc of fifo_buffer failed");
->  					goto disconnect;
+The tests here aren't correct.  It should be doing a shift before doing
+the bitwise AND.  (bme->flags & BME_NO_WRITES) is always false and
+(bme->flags & BME_LOCKED) checks for BME_NO_WRITES instead of checking
+for locked.
 
-sync_conf.c_plan_ahead is capped at 300 by drbdsetup.
-But yes, since this is not enforced in kernel code,
-your fix is correct.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I sent this to the drbd-user list in March, but never recieved a
+response.
 
-
-	Lars
+diff --git a/drivers/block/drbd/drbd_proc.c b/drivers/block/drbd/drbd_proc.c
+index 2959cdf..ffe1ee4 100644
+--- a/drivers/block/drbd/drbd_proc.c
++++ b/drivers/block/drbd/drbd_proc.c
+@@ -187,8 +187,10 @@ static void resync_dump_detail(struct seq_file *seq, struct lc_element *e)
+ 	struct bm_extent *bme = lc_entry(e, struct bm_extent, lce);
+ 
+ 	seq_printf(seq, "%5d %s %s\n", bme->rs_left,
+-		   bme->flags & BME_NO_WRITES ? "NO_WRITES" : "---------",
+-		   bme->flags & BME_LOCKED ? "LOCKED" : "------"
++		   test_bit(BME_NO_WRITES, &bme->flags) ?
++			"NO_WRITES" : "---------",
++		   test_bit(BME_LOCKED, &bme->flags) ?
++			"LOCKED" : "------"
+ 		   );
+ }
+ 
