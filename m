@@ -1,30 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 15 Jun 2012 22:31:40 +0000
-Subject: Re: [patch] qlcnic: off by one in qlcnic_init_pci_info()
-Message-Id: <20120615.153140.145606090941949521.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Jun 2012 09:11:29 +0000
+Subject: [patch] eCryptfs: fix ecryptfs_privileged_open() for read only files
+Message-Id: <20120609091129.GD877@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120614183424.GC6383@elgon.mountain>
-	<CC000197.32F56%anirban.chakraborty@qlogic.com>
-In-Reply-To: <CC000197.32F56%anirban.chakraborty@qlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: anirban.chakraborty@qlogic.com
-Cc: dan.carpenter@oracle.com, sony.chacko@qlogic.com, Linux-Driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
-Date: Thu, 14 Jun 2012 21:03:14 -0700
+The intent here is to handle read only opens differently.  For example,
+if we don't want to create the file if it doesn't exist.  The problem
+here is that O_RDONLY is 0 and if (x & 0) {... is always false.
 
-> 
-> 
-> On 6/14/12 11:34 AM, "Dan Carpenter" <dan.carpenter@oracle.com> wrote:
-> 
->>The adapter->npars[] array has QLCNIC_MAX_PCI_FUNC elements.  We
->>allocate it that way a few lines earlier in the function.  So this test
->>is off by one.
->>
->>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
- ...
-> Acked-by: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker bug, and I am not very familiar with eCryptfs.
+Please review carefully.
 
-Applied.
+diff --git a/fs/ecryptfs/kthread.c b/fs/ecryptfs/kthread.c
+index 69f994a..d01b364 100644
+--- a/fs/ecryptfs/kthread.c
++++ b/fs/ecryptfs/kthread.c
+@@ -149,7 +149,7 @@ int ecryptfs_privileged_open(struct file **lower_file,
+ 	(*lower_file) = dentry_open(lower_dentry, lower_mnt, flags, cred);
+ 	if (!IS_ERR(*lower_file))
+ 		goto out;
+-	if (flags & O_RDONLY) {
++	if (!(flags & O_RDWR)) {
+ 		rc = PTR_ERR((*lower_file));
+ 		goto out;
+ 	}
