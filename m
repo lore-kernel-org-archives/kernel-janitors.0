@@ -1,37 +1,45 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2012 09:11:42 +0000
-Subject: [patch -resend] [patch] tlb_uv: remove some dead code in parse_tunables_write()
-Message-Id: <20120627091142.GY31212@elgon.mountain>
+Date: Sat, 09 Jun 2012 09:10:19 +0000
+Subject: [patch] [SCSI] arcmsr: fix misuse of | instead of &
+Message-Id: <20120609091018.GC877@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Cliff Wickman <cpw@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, Jack Steiner <steiner@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: David Howells <dhowells@redhat.com>, Nick Cheng <nick.cheng@areca.com.tw>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This code isn't reachable anymore after f073cc8f39 "x86, UV: Clean up
-uv_tlb.c" because we will always hit a continue statement.  This causes
-a Smatch message:
+ARCMSR_ARC1880_DiagWrite_ENABLE is 0x00000080 so (x | 0x00000080) is
+never zero.  The intent here was to test that loop until
+ARCMSR_ARC1880_DiagWrite_ENABLE was turned on, but because the test was
+wrong, we would do five loops regardless of whether it succeed or not.
 
-arch/x86/platform/uv/tlb_uv.c:1531 parse_tunables_write()
-	info: ignoring unreachable code.
+Also I simplified the condition a little by removing the unused
+assignement.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-I have cleaned up the commit message.  This was originally sent on
-Sun, 7 Aug 2011.
+Static checker stuff.  I do not own this hardware.
 
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index 59880af..d625792 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -1528,8 +1528,6 @@ static int parse_tunables_write(struct bau_control *bcp, char *instr,
- 				*tunables[cnt].tunp = val;
- 			continue;
- 		}
--		if (q = p)
--			break;
- 	}
- 	return 0;
- }
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index cbde1dc..def24a1 100644
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -2821,7 +2821,7 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 	int i, count = 0;
+ 	struct MessageUnit_A __iomem *pmuA = acb->pmuA;
+ 	struct MessageUnit_C __iomem *pmuC = acb->pmuC;
+-	u32 temp = 0;
++
+ 	/* backup pci config data */
+ 	printk(KERN_NOTICE "arcmsr%d: executing hw bus reset .....\n", acb->host->host_no);
+ 	for (i = 0; i < 64; i++) {
+@@ -2839,7 +2839,7 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
+ 			writel(0x2, &pmuC->write_sequence);
+ 			writel(0x7, &pmuC->write_sequence);
+ 			writel(0xD, &pmuC->write_sequence);
+-		} while ((((temp = readl(&pmuC->host_diagnostic)) | ARCMSR_ARC1880_DiagWrite_ENABLE) = 0) && (count < 5));
++		} while (((readl(&pmuC->host_diagnostic) & ARCMSR_ARC1880_DiagWrite_ENABLE) = 0) && (count < 5));
+ 		writel(ARCMSR_ARC1880_RESET_ADAPTER, &pmuC->host_diagnostic);
+ 	} else {
+ 		pci_write_config_byte(acb->pdev, 0x84, 0x20);
