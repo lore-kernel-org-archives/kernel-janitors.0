@@ -1,44 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 26 Jun 2012 06:41:22 +0000
-Subject: Re: [patch v2] Btrfs: fix error handling in __add_reloc_root()
-Message-Id: <20120626064122.GQ5390@mwanda>
+Date: Sat, 09 Jun 2012 15:57:19 +0000
+Subject: [patch] iwlwifi: turn on a lockdep assertion
+Message-Id: <20120609155718.GB6488@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4FE473F6.5000109@fusionio.com>
- <20120625111048.GA10393@elgon.mountain>
- <20120625133956.GA2499@localhost.localdomain>
- <20120625135344.GN5390@mwanda>
- <CAOD=uF4h5pqfU3u=fVZu74kEP=HLFQWd2+qPRrT69Jtjn+11bw@mail.gmail.com>
-In-Reply-To: <CAOD=uF4h5pqfU3u=fVZu74kEP=HLFQWd2+qPRrT69Jtjn+11bw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: santosh prasad nayak <santoshprasadnayak@gmail.com>
-Cc: Josef Bacik <jbacik@fusionio.com>, "Chris L. Mason" <clmason@fusionio.com>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 26, 2012 at 06:51:39AM +0530, santosh prasad nayak wrote:
-> I am also facing similar issue while applying this patch.
-> 
-> [santosh@localhost linux-next]$ sudo git am mail_Dan.txt
-> Patch format detection failed.
-> [santosh@localhost linux-next]$
-> 
+CMD_SYNC is zero so the if (cmd->flags & CMD_SYNC) is never true.  I
+think it should be if (cmd->flags = CMD_SYNC).  This enables a lockdep
+assertion.
 
-The problem is not on my end.  It made it to marc.info without
-getting corrupted.  Marc.info strips out the From: and Subject:
-headers so you'd have to add them in manually.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-1) Save this file:
-http://marc.info/?l=kernel-janitors&m4062314509635&q=raw
-
-2) Edit the file and add these two lines add the top:
-
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch v2] Btrfs: fix error handling in __add_reloc_root()
-
-3) $ git am /home/dcarpenter/tmp/html2/btrfs_raw.txt
-Applying: Btrfs: fix error handling in __add_reloc_root()
-
-regards,
-dan carpenter
-
-
+diff --git a/drivers/net/wireless/iwlwifi/iwl-agn-lib.c b/drivers/net/wireless/iwlwifi/iwl-agn-lib.c
+index e55ec6c..c5ccdfa 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-agn-lib.c
++++ b/drivers/net/wireless/iwlwifi/iwl-agn-lib.c
+@@ -1259,7 +1259,7 @@ int iwl_dvm_send_cmd(struct iwl_priv *priv, struct iwl_host_cmd *cmd)
+ 	 * the mutex, this ensures we don't try to send two
+ 	 * (or more) synchronous commands at a time.
+ 	 */
+-	if (cmd->flags & CMD_SYNC)
++	if (cmd->flags = CMD_SYNC)
+ 		lockdep_assert_held(&priv->mutex);
+ 
+ 	if (priv->ucode_owner = IWL_OWNERSHIP_TM &&
