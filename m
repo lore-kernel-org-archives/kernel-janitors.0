@@ -1,33 +1,38 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 09 Jun 2012 19:07:02 +0000
-Subject: Re: [patch] iwlwifi: turn on a lockdep assertion
-Message-Id: <20120609190702.GE13539@mwanda>
+Date: Sat, 09 Jun 2012 07:47:32 +0000
+Subject: [patch RFC] [media] staging: solo6x10: fix | vs &
+Message-Id: <20120609074732.GA30709@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120609155718.GB6488@elgon.mountain>
- <1339265576.5029.1.camel@jlt3.sipsolutions.net>
-In-Reply-To: <1339265576.5029.1.camel@jlt3.sipsolutions.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Collins <bcollins@bluecherry.net>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jun 09, 2012 at 08:12:56PM +0200, Johannes Berg wrote:
-> On Sat, 2012-06-09 at 18:57 +0300, Dan Carpenter wrote:
-> > CMD_SYNC is zero so the if (cmd->flags & CMD_SYNC) is never true.  I
-> > think it should be if (cmd->flags = CMD_SYNC).  This enables a lockdep
-> > assertion.
-> 
-> Good catch, thanks. It should really be if (!(cmd->flags & CMD_ASYNC))
-> though I think as there could be other flags set which don't make it
-> non-sync.
-> 
-> I'll commit a fix on Monday unless you want to send a separate patch
-> (which I'll then pick up on Monday :-) )
+The test here is never true because '&' was used instead of '|'.  It was
+the same as:
 
+	if (status & ((1<<16) & (1<<17)) ...
 
-Sure.  I'll resend it.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't have this hardware and this one really should be tested or
+checked by someone who knows the spec.  It could be that the intent was
+to do:
 
-regards,
-dan carpenter
+	if ((status & SOLO_IIC_STATE_TRNS) &&
+	    (status & SOLO_IIC_STATE_SIG_ERR) || ...
 
+diff --git a/drivers/staging/media/solo6x10/i2c.c b/drivers/staging/media/solo6x10/i2c.c
+index ef95a50..398070a 100644
+--- a/drivers/staging/media/solo6x10/i2c.c
++++ b/drivers/staging/media/solo6x10/i2c.c
+@@ -175,7 +175,7 @@ int solo_i2c_isr(struct solo_dev *solo_dev)
+ 
+ 	solo_reg_write(solo_dev, SOLO_IRQ_STAT, SOLO_IRQ_IIC);
+ 
+-	if (status & (SOLO_IIC_STATE_TRNS & SOLO_IIC_STATE_SIG_ERR) ||
++	if (status & (SOLO_IIC_STATE_TRNS | SOLO_IIC_STATE_SIG_ERR) ||
+ 	    solo_dev->i2c_id < 0) {
+ 		solo_i2c_stop(solo_dev);
+ 		return -ENXIO;
