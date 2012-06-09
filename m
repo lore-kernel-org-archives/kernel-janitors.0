@@ -1,43 +1,34 @@
-From: "Matt Renzelmann" <mjr@cs.wisc.edu>
-Date: Thu, 28 Jun 2012 19:39:38 +0000
-Subject: RE: [patch -resend] leds-lp5523: BUG() in error handling in probe()
-Message-Id: <00ba01cd5565$c4848750$4d8d95f0$@cs.wisc.edu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 09 Jun 2012 16:08:25 +0000
+Subject: [patch] mtd: cafe_nand: fix an & vs | mistake
+Message-Id: <20120609160825.GC6488@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627085800.GA3007@mwanda> <20120627091055.GW31212@elgon.mountain> <CAK5ve-J9CgB=uz-09=POPoygWvNs7k_R3tbZVAzi0VLKTpvOqA@mail.gmail.com> <20120627105547.GD3007@mwanda>
-In-Reply-To: <20120627105547.GD3007@mwanda>
+In-Reply-To: <20110103191415.GA15176@bicker>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter@oracle.com>, 'Bryan Wu' <bryan.wu@canonical.com>
-Cc: 'Richard Purdie' <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Matt Renzelmann' <mjr@cs.wisc.edu>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Mike Dunn <mikedunn@newsguy.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>
 
-> >
-> > Just be curious, what's kind of the tool here?
-> >
-> 
-> Sorry I should have CC'd Matt on this.  I think it's something he
-> is working on at the University of Wisconsin.  That's all I know.
-> 
-> regards,
-> dan carpenter
-> 
-> > -Bryan
+The intent here was clearly to set result to true if the 0x40000000 flag
+was set.  But instead there was a | vs & typo and we always set result
+to true.
 
-Dan is correct.  We've submitted the project for publication but whether it will
-be accepted is another question.  If it's published I'd be happy to provide a
-reference.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I do not have the hardware to test this.  The original code is clearly
+buggy, but what about if 0x40000000 is the wrong flag?
 
-In a nutshell, the tool we've developed uses symbolic execution to reduce the
-need for device hardware for driver testing and execute real Linux drivers in
-the kernel.  It provides symbolic data in place of hardware input.  The tool
-allows us to run real drivers even if the hardware is unavailable.  It can't
-find all bugs, but it can find many that could manifest in real conditions, e.g.
-null pointer dereferences, incorrect kernel API usage, some "panics" and "BUG"
-calls, etc.
-
-I'll try to remember to write back when it's published, at which point I'd be
-happy to provide more detail.
-
-Thanks for the interest,
-Matt
-
+diff --git a/drivers/mtd/nand/cafe_nand.c b/drivers/mtd/nand/cafe_nand.c
+index f3594a6..ac0d967 100644
+--- a/drivers/mtd/nand/cafe_nand.c
++++ b/drivers/mtd/nand/cafe_nand.c
+@@ -102,7 +102,7 @@ static const char *part_probes[] = { "cmdlinepart", "RedBoot", NULL };
+ static int cafe_device_ready(struct mtd_info *mtd)
+ {
+ 	struct cafe_priv *cafe = mtd->priv;
+-	int result = !!(cafe_readl(cafe, NAND_STATUS) | 0x40000000);
++	int result = !!(cafe_readl(cafe, NAND_STATUS) & 0x40000000);
+ 	uint32_t irqs = cafe_readl(cafe, NAND_IRQ);
+ 
+ 	cafe_writel(cafe, irqs, NAND_IRQ);
