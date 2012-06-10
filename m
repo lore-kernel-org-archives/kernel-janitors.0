@@ -1,35 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 09 Jun 2012 15:56:45 +0000
-Subject: [patch] can: c_can: precedence error in c_can_chip_config()
-Message-Id: <20120609155150.GA6488@elgon.mountain>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Sun, 10 Jun 2012 17:52:50 +0000
+Subject: Re: [patch] can: c_can: precedence error in c_can_chip_config()
+Message-Id: <4FD4DEF2.6070802@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------enigDF9262DCE005C3D320965B72"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfgang Grandegger <wg@grandegger.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, AnilKumar Ch <anilkumar@ti.com>, "David S. Miller" <davem@davemloft.net>, Jiri Kosina <jkosina@suse.cz>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20120609155150.GA6488@elgon.mountain>
+In-Reply-To: <20120609155150.GA6488@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>, AnilKumar Ch <anilkumar@ti.com>, "David S. Miller" <davem@davemloft.net>, Jiri Kosina <jkosina@suse.cz>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-(CAN_CTRLMODE_LISTENONLY & CAN_CTRLMODE_LOOPBACK) is (0x02 & 0x01) which
-is zero so the condition is never true.  The intent here was to test
-that both flags were set.
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enigDF9262DCE005C3D320965B72
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This is a static checker fix.  I'm not super familiar with the c_can
-code.
+On 06/09/2012 05:56 PM, Dan Carpenter wrote:
+> (CAN_CTRLMODE_LISTENONLY & CAN_CTRLMODE_LOOPBACK) is (0x02 & 0x01) whic=
+h
+> is zero so the condition is never true.  The intent here was to test
+> that both flags were set.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This is a static checker fix.  I'm not super familiar with the c_can
+> code.
 
-diff --git a/drivers/net/can/c_can/c_can.c b/drivers/net/can/c_can/c_can.c
-index e2ce508..eea6608 100644
---- a/drivers/net/can/c_can/c_can.c
-+++ b/drivers/net/can/c_can/c_can.c
-@@ -594,8 +594,8 @@ static void c_can_chip_config(struct net_device *dev)
- 	priv->write_reg(priv, C_CAN_CTRL_REG,
- 			CONTROL_ENABLE_AR);
- 
--	if (priv->can.ctrlmode & (CAN_CTRLMODE_LISTENONLY &
--					CAN_CTRLMODE_LOOPBACK)) {
-+	if ((priv->can.ctrlmode & CAN_CTRLMODE_LISTENONLY) &&
-+	    (priv->can.ctrlmode & CAN_CTRLMODE_LOOPBACK)) {
- 		/* loopback + silent mode : useful for hot self-test */
- 		priv->write_reg(priv, C_CAN_CTRL_REG, CONTROL_EIE |
- 				CONTROL_SIE | CONTROL_IE | CONTROL_TEST);
+Good catch. Applied to can-next.
+
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--------------enigDF9262DCE005C3D320965B72
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAk/U3vUACgkQjTAFq1RaXHNiSQCbBRNFpJ4t87JO60VXWO6gYQSt
+qiEAni/2FlRasJZcbIRpE6LzyWYgEUz8
+=TViJ
+-----END PGP SIGNATURE-----
+
+--------------enigDF9262DCE005C3D320965B72--
