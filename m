@@ -1,29 +1,33 @@
-From: Jeff Moyer <jmoyer@redhat.com>
-Date: Thu, 07 Jun 2012 14:24:46 +0000
-Subject: Re: [PATCH 4/7] fs/direct-io.c: adjust suspicious bit operation
-Message-Id: <x49bokvb3o1.fsf@segfault.boston.devel.redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 10 Jun 2012 11:25:22 +0000
+Subject: [patch v2] iwlwifi: turn on a lockdep assertion
+Message-Id: <20120610112521.GA20676@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1339018901-28439-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1339018901-28439-5-git-send-email-Julia.Lawall@lip6.fr> (Julia
-	Lawall's message of "Wed, 6 Jun 2012 23:41:38 +0200")
+In-Reply-To: <1339265576.5029.1.camel@jlt3.sipsolutions.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall <Julia.Lawall@lip6.fr> writes:
+CMD_SYNC is zero so the if (cmd->flags & CMD_SYNC) is never true and we
+never check the assertion.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> READ is 0, so the result of the bit-and operation is 0.  Rewrite with = as
-> done elsewhere in the same file.
->
-> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: enables the assertion even more than v1 (based on feedback from
+Johannes Berg).
 
-Interesting catch, that one.  Yeah, we don't expect any readahead I/O to
-be done via O_DIRECT.  The test for rw = READ all over that file seems
-fine to me, given that.
-
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+diff --git a/drivers/net/wireless/iwlwifi/iwl-agn-lib.c b/drivers/net/wireless/iwlwifi/iwl-agn-lib.c
+index e55ec6c..5c04895 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-agn-lib.c
++++ b/drivers/net/wireless/iwlwifi/iwl-agn-lib.c
+@@ -1259,7 +1259,7 @@ int iwl_dvm_send_cmd(struct iwl_priv *priv, struct iwl_host_cmd *cmd)
+ 	 * the mutex, this ensures we don't try to send two
+ 	 * (or more) synchronous commands at a time.
+ 	 */
+-	if (cmd->flags & CMD_SYNC)
++	if (!(cmd->flags & CMD_ASYNC))
+ 		lockdep_assert_held(&priv->mutex);
+ 
+ 	if (priv->ucode_owner = IWL_OWNERSHIP_TM &&
