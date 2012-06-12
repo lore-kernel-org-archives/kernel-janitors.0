@@ -1,47 +1,45 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Thu, 28 Jun 2012 22:24:52 +0000
-Subject: Re: [patch 2/3] vfio: make count unsigned to prevent integer underflow
-Message-Id: <1340922292.3179.58.camel@ul30vt>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Jun 2012 16:28:50 +0000
+Subject: [patch] ideapad: uninitialized data in ideapad_acpi_add()
+Message-Id: <20120612162850.GB11077@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120628064458.GB11107@elgon.mountain>
-In-Reply-To: <20120628064458.GB11107@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ike Panhc <ike.pan@canonical.com>
+Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2012-06-28 at 09:44 +0300, Dan Carpenter wrote:
-> In vfio_pci_ioctl() there is a potential integer underflow where we
-> might allocate less data than intended.  We check that hdr.count is not
-> too large, but we don't check whether it is negative:
-> 
-> drivers/vfio/pci/vfio_pci.c
->    312          if (hdr.argsz - minsz < hdr.count * size ||
->    313              hdr.count > vfio_pci_get_irq_count(vdev, hdr.index))
->    314                  return -EINVAL;
->    315
->    316          data = kmalloc(hdr.count * size, GFP_KERNEL);
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-> index 300d49b..86ef2da 100644
-> --- a/include/linux/vfio.h
-> +++ b/include/linux/vfio.h
-> @@ -347,7 +347,7 @@ struct vfio_irq_set {
->  #define VFIO_IRQ_SET_ACTION_TRIGGER	(1 << 5) /* Trigger interrupt */
->  	__u32	index;
->  	__s32	start;
-> -	__s32	count;
-> +	__u32	count;
->  	__u8	data[];
->  };
->  #define VFIO_DEVICE_SET_IRQS		_IO(VFIO_TYPE, VFIO_BASE + 10)
+We only initialize the high bits of "cfg".  It probably doesn't cause
+a problem given that this is platform specific code and doesn't have to
+worry about endianness etc.  But it's sort of messy.
 
-Good find.  I've actually trickled this through to change a number of
-the function params to unsigned from int.  Also in this struct, start
-should be unsigned.  Thanks for the report!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker fix and I don't have the hardware.  Sorry.
 
-Alex
-
+diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+index 4f20f8d..17f6dfd 100644
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -694,10 +694,10 @@ MODULE_DEVICE_TABLE(acpi, ideapad_device_ids);
+ static int __devinit ideapad_acpi_add(struct acpi_device *adevice)
+ {
+ 	int ret, i;
+-	unsigned long cfg;
++	int cfg;
+ 	struct ideapad_private *priv;
+ 
+-	if (read_method_int(adevice->handle, "_CFG", (int *)&cfg))
++	if (read_method_int(adevice->handle, "_CFG", &cfg))
+ 		return -ENODEV;
+ 
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+@@ -721,7 +721,7 @@ static int __devinit ideapad_acpi_add(struct acpi_device *adevice)
+ 		goto input_failed;
+ 
+ 	for (i = 0; i < IDEAPAD_RFKILL_DEV_NUM; i++) {
+-		if (test_bit(ideapad_rfk_data[i].cfgbit, &cfg))
++		if (test_bit(ideapad_rfk_data[i].cfgbit, &priv->cfg))
+ 			ideapad_register_rfkill(adevice, i);
+ 		else
+ 			priv->rfk[i] = NULL;
