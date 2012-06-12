@@ -1,37 +1,36 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2012 09:03:23 +0000
-Subject: [patch -resend] sgi-xp: nested calls to spin_lock_irqsave()
-Message-Id: <20120627090322.GI31212@elgon.mountain>
+Date: Tue, 12 Jun 2012 07:37:39 +0000
+Subject: [patch 2/2] NFS: add an endian notation for sparse
+Message-Id: <20120612073737.GB15060@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robin Holt <holt@sgi.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jack Steiner <steiner@sgi.com>
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The code here has a nested spin_lock_irqsave().  It's not needed since
-IRQs are already disabled and it causes a problem because it means that
-IRQs won't be enabled again at the end.  The second call to
-spin_lock_irqsave() will overwrite the value of irq_flags and we can't
-restore the proper settings.
+This is supposed to be a __be32 value.  Sparse complains a lot:
+
+fs/nfs/callback_xdr.c:699:30: warning: incorrect type in initializer (different base types)
+fs/nfs/callback_xdr.c:699:30:    expected unsigned int [unsigned] status
+fs/nfs/callback_xdr.c:699:30:    got restricted __be32 const [usertype] csr_status
+fs/nfs/callback_xdr.c:715:9: warning: cast to restricted __be32
+fs/nfs/callback_xdr.c:716:16: warning: incorrect type in return expression (different base types)
+fs/nfs/callback_xdr.c:716:16:    expected restricted __be32
+fs/nfs/callback_xdr.c:716:16:    got unsigned int [unsigned] status
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I have added Jack Steiner to the CC list.  This was originally sent on
-Thu, 15 Dec 2011.
 
-diff --git a/drivers/misc/sgi-xp/xpc_uv.c b/drivers/misc/sgi-xp/xpc_uv.c
-index 17bbacb..87b251a 100644
---- a/drivers/misc/sgi-xp/xpc_uv.c
-+++ b/drivers/misc/sgi-xp/xpc_uv.c
-@@ -452,9 +452,9 @@ xpc_handle_activate_mq_msg_uv(struct xpc_partition *part,
+diff --git a/fs/nfs/callback_xdr.c b/fs/nfs/callback_xdr.c
+index 27c2969..e64b01d 100644
+--- a/fs/nfs/callback_xdr.c
++++ b/fs/nfs/callback_xdr.c
+@@ -696,7 +696,7 @@ static __be32 encode_cb_sequence_res(struct svc_rqst *rqstp,
+ 				       const struct cb_sequenceres *res)
+ {
+ 	__be32 *p;
+-	unsigned status = res->csr_status;
++	__be32 status = res->csr_status;
  
- 		if (msg->activate_gru_mq_desc_gpa ! 		    part_uv->activate_gru_mq_desc_gpa) {
--			spin_lock_irqsave(&part_uv->flags_lock, irq_flags);
-+			spin_lock(&part_uv->flags_lock);
- 			part_uv->flags &= ~XPC_P_CACHED_ACTIVATE_GRU_MQ_DESC_UV;
--			spin_unlock_irqrestore(&part_uv->flags_lock, irq_flags);
-+			spin_unlock(&part_uv->flags_lock);
- 			part_uv->activate_gru_mq_desc_gpa  			    msg->activate_gru_mq_desc_gpa;
- 		}
+ 	if (unlikely(status != 0))
+ 		goto out;
