@@ -1,37 +1,30 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Tue, 12 Jun 2012 17:52:44 +0000
-Subject: [Q] Cleaning string whitespace trimming. Does it make any sense?
-Message-Id: <CALF0-+V15wjFhZH5P1C+4sJ9QSw7QY5Rk383S4XhVVCBsnXUQw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Jun 2012 18:49:55 +0000
+Subject: Re: [Q] Cleaning string whitespace trimming. Does it make any sense?
+Message-Id: <20120612184955.GN13539@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CALF0-+V15wjFhZH5P1C+4sJ9QSw7QY5Rk383S4XhVVCBsnXUQw@mail.gmail.com>
+In-Reply-To: <CALF0-+V15wjFhZH5P1C+4sJ9QSw7QY5Rk383S4XhVVCBsnXUQw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+We already have strim() which removes leading and trailing
+whitespace.  But sure, that sounds like a good idea.  It would go in
+front of strim() and strim would call it first then strim() would
+look like this:
 
-If you grep "isspace" through the code you will find lots of places
-using, most of them
-for removing leading and/or whitespace from a string.
+char *strim(char *s)
+{
+	trim_trailing(s);
+	return skip_spaces(s);
+}
 
-Examples:
+Good luck on getting everyone to agree on a name for your function.
+Python uses rstrip() for this.  CC Andrew Morton and lkml when you
+have a patch ready.
 
-* sound/usb/card.c -> has a function of its own
-http://tomoyo.sourceforge.jp/cgi-bin/lxr/ident?i=remove_trailing_spaces
-* sound/pci/hda/hda_hwdep.c -> also! has a function of its own
-http://tomoyo.sourceforge.jp/cgi-bin/lxr/ident?i=remove_trail_spaces
-* drivers/char/ipmi/ipmi_si_intf.c -> embeds a custom algorithm ->
-http://tomoyo.sourceforge.jp/cgi-bin/lxr/source/drivers/char/ipmi/ipmi_si_intf.c#L1690
+regards,
+dan carpenter
 
-As we have a special function for this (or could create in case there
-isn't one already)
-I wonder if it makes any sense to do some patches for this, since it
-won't fix anything
-and it's just to improve readability.
-
-What do you think?
-
-Thanks,
-Ezequiel.
-
-PD: Am I too pretty-code paranoid?
