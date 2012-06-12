@@ -1,9 +1,9 @@
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Mon, 11 Jun 2012 17:51:53 +0000
+Date: Tue, 12 Jun 2012 09:37:29 +0000
 Subject: Re: [patch] can: c_can: precedence error in c_can_chip_config()
-Message-Id: <4FD63039.4080104@pengutronix.de>
+Message-Id: <4FD70DD9.4010009@pengutronix.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------enigDA31BE94A4B1E4AEB3931963"
+Content-Type: multipart/mixed; boundary="------------enig1AD2A6F0A8D88757976B66E6"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120609155150.GA6488@elgon.mountain> <4FD4DEF2.6070802@pengutronix.de> <4FD62E21.3020209@hartkopp.net>
 In-Reply-To: <4FD62E21.3020209@hartkopp.net>
@@ -11,7 +11,7 @@ To: Oliver Hartkopp <socketcan@hartkopp.net>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>, Wolfgang Grandegger <wg@grandegger.com>, AnilKumar Ch <anilkumar@ti.com>, "David S. Miller" <davem@davemloft.net>, Jiri Kosina <jkosina@suse.cz>, linux-can@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enigDA31BE94A4B1E4AEB3931963
+--------------enig1AD2A6F0A8D88757976B66E6
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
@@ -38,9 +38,10 @@ ich
 > Shouldn't this fix go through the net-tree and stable instead of net-ne=
 xt?
 
-Indeed.
+Can I add your Acked-by ... when adding to net?
 
 Marc
+
 --=20
 Pengutronix e.K.                  | Marc Kleine-Budde           |
 Industrial Linux Solutions        | Phone: +49-231-2826-924     |
@@ -48,7 +49,7 @@ Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
 Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
 
---------------enigDA31BE94A4B1E4AEB3931963
+--------------enig1AD2A6F0A8D88757976B66E6
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -57,9 +58,9 @@ Content-Disposition: attachment; filename="signature.asc"
 Version: GnuPG v1.4.10 (GNU/Linux)
 Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
 
-iEYEARECAAYFAk/WMD4ACgkQjTAFq1RaXHPkcgCeIIbQjkQ1QGsFgnk6j7+eybnT
-AIUAn1x7jjatrgp25sVlbVCPvp3KEVeC
-=adXJ
+iEYEARECAAYFAk/XDdkACgkQjTAFq1RaXHNXaQCfc021vSacXyaYlFjTpWep0kdw
+kuAAn1T2K7svEH6XZMWiQcSzzo7hD/hf
+=zD3e
 -----END PGP SIGNATURE-----
 
---------------enigDA31BE94A4B1E4AEB3931963--
+--------------enig1AD2A6F0A8D88757976B66E6--
