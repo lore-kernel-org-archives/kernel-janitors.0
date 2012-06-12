@@ -1,51 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 06 Jun 2012 06:57:12 +0000
-Subject: [patch] sony-laptop: fix sony_nc_sysfs_store()
-Message-Id: <20120606065712.GA26869@elgon.mountain>
+Date: Tue, 12 Jun 2012 07:43:11 +0000
+Subject: [patch] drbd: potential integer overflow in receive_SyncParam()
+Message-Id: <20120612074310.GC15060@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mattia Dongili <malattia@linux.it>
-Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We made this an unsigned long and it causes a bug on 64 bit big endian
-systems when we try to pass the value to sony_nc_int_call().
-
-Also value has to be signed because validate() returns negative error
-codes.
+I believe this comes from the network so there is a risk of integer
+overflow on 32 bit.  Using kcalloc() is a little cleaner as well.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Static checker bug.  Not tested, sorry.
 
-diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
-index 210d4ae..7cf0f3d 100644
---- a/drivers/platform/x86/sony-laptop.c
-+++ b/drivers/platform/x86/sony-laptop.c
-@@ -973,7 +973,7 @@ static ssize_t sony_nc_sysfs_store(struct device *dev,
- 			       struct device_attribute *attr,
- 			       const char *buffer, size_t count)
- {
--	unsigned long value = 0;
-+	int value;
- 	int ret = 0;
- 	struct sony_nc_value *item  	    container_of(attr, struct sony_nc_value, devattr);
-@@ -984,7 +984,7 @@ static ssize_t sony_nc_sysfs_store(struct device *dev,
- 	if (count > 31)
- 		return -EINVAL;
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index ea4836e..1e27876 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -2902,7 +2902,7 @@ static int receive_SyncParam(struct drbd_conf *mdev, enum drbd_packets cmd, unsi
  
--	if (kstrtoul(buffer, 10, &value))
-+	if (kstrtoint(buffer, 10, &value))
- 		return -EINVAL;
- 
- 	if (item->validate)
-@@ -994,7 +994,7 @@ static ssize_t sony_nc_sysfs_store(struct device *dev,
- 		return value;
- 
- 	ret = sony_nc_int_call(sony_nc_acpi_handle, *item->acpiset,
--			(int *)&value, NULL);
-+			       &value, NULL);
- 	if (ret < 0)
- 		return -EIO;
- 
+ 			fifo_size = (mdev->sync_conf.c_plan_ahead * 10 * SLEEP_TIME) / HZ;
+ 			if (fifo_size != mdev->rs_plan_s.size && fifo_size > 0) {
+-				rs_plan_s   = kzalloc(sizeof(int) * fifo_size, GFP_KERNEL);
++				rs_plan_s = kcalloc(fifo_size, sizeof(int), GFP_KERNEL);
+ 				if (!rs_plan_s) {
+ 					dev_err(DEV, "kmalloc of fifo_buffer failed");
+ 					goto disconnect;
