@@ -1,52 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2012 10:15:00 +0000
-Subject: Re: [patch 1/2 -resend] SCSI: advansys: handle errors from scsi_dma_map()
-Message-Id: <20120627101500.GB3007@mwanda>
+Date: Tue, 12 Jun 2012 16:26:33 +0000
+Subject: [patch -next] irq_remap: silence a bogus pr_err()
+Message-Id: <20120612162633.GA11077@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627090055.GD31212@elgon.mountain>
- <4FEAD9DD.8080207@bfs.de>
-In-Reply-To: <4FEAD9DD.8080207@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Matthew Wilcox <matthew@wil.cx>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: Suresh Siddha <suresh.b.siddha@intel.com>, Yinghai Lu <yinghai@kernel.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 27, 2012 at 12:01:01PM +0200, walter harms wrote:
-> 
-> 
-> Am 27.06.2012 11:00, schrieb Dan Carpenter:
-> > scsi_dma_map() returns -ENOMEM on error.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > Originally sent on Tue, 20 Sep 2011.
-> > 
-> > diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
-> > index 374c4ed..b2c3a1a 100644
-> > --- a/drivers/scsi/advansys.c
-> > +++ b/drivers/scsi/advansys.c
-> > @@ -8426,6 +8426,12 @@ static int asc_build_req(struct asc_board *boardp, struct scsi_cmnd *scp,
-> >  
-> >  	/* Build ASC_SCSI_Q */
-> >  	use_sg = scsi_dma_map(scp);
-> > +	if (use_sg < 0) {
-> > +		scsi_dma_unmap(scp);
-> > +		scp->result = HOST_BYTE(DID_SOFT_ERROR);
-> > +		return ASC_ERROR;
-> > +	}
-> > +
-> >  	if (use_sg != 0) {
-> >  		int sgcnt;
-> >  		struct scatterlist *slp;
-> 
-> Q:if use_sg = 0 a special case ?
-> 
+There is an extra semicolon here so the pr_err() message is printed when
+it is not intended.
 
-Yes.  scsi_dma_map() returns the number of sg lists actually used,
-zero if the sg lists is NULL, or -ENOMEM if the mapping failed.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
-
+diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+index dafbad0..853902a 100644
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -938,7 +938,7 @@ intel_ioapic_set_affinity(struct irq_data *data, const struct cpumask *mask,
+ 
+ 	err = apic->cpu_mask_to_apicid_and(cfg->domain, mask, &dest);
+ 	if (err) {
+-		if (assign_irq_vector(irq, cfg, data->affinity));
++		if (assign_irq_vector(irq, cfg, data->affinity))
+ 			pr_err("Failed to recover vector for irq %d\n", irq);
+ 		return err;
+ 	}
