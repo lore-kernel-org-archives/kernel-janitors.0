@@ -1,54 +1,32 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Sat, 09 Jun 2012 16:57:56 +0000
-Subject: Re: [patch] ftrace: clear bits properly in reset_iter_read()
-Message-Id: <1339261076.13377.90.camel@gandalf.stny.rr.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Jun 2012 18:35:26 +0000
+Subject: [patch -next] iwlwifi: unlock on error path
+Message-Id: <20120614183526.GD6383@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120609161027.GD6488@elgon.mountain>
-In-Reply-To: <20120609161027.GD6488@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 2012-06-09 at 19:10 +0300, Dan Carpenter wrote:
-> There is a typo here where '&' is used instead of '|' and it turns the
-> statement into a noop.  The original code is equivalent to:
-> 
-> 	iter->flags &= ~((1 << 2) & (1 << 4));
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is a static checker fix and I'm not super familiar with ftrace.
-> Please review carefully.
-> 
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index a008663..97da2dc 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -2358,7 +2358,7 @@ static void reset_iter_read(struct ftrace_iterator *iter)
->  {
->  	iter->pos = 0;
->  	iter->func_pos = 0;
-> -	iter->flags &= ~(FTRACE_ITER_PRINTALL & FTRACE_ITER_HASH);
-> +	iter->flags &= ~(FTRACE_ITER_PRINTALL | FTRACE_ITER_HASH);
+We introduced a lock here in ff1ffb850b ("iwlwifi: fix dynamic
+loading").  But we missed an error path which needs an unlock.
 
-Thanks! This is a real minor bug, but as it is a simple fix I will
-probably queue it up for 3.5 and stable. The reason that it has gone
-unnoticed for so long is that this would only show up if you did a lseek
-on the function list file. Which is not a common operation to do.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I checked the code and if someone were to do an lseek with these flags
-set then they would just get the hash list again (and not the function
-list). It's a bug, yes, but not a big one.
-
-I'll queue it up on Monday.
-
--- Steve
-
-
->  }
->  
->  static void *t_start(struct seq_file *m, loff_t *pos)
-
-
+diff --git a/drivers/net/wireless/iwlwifi/iwl-drv.c b/drivers/net/wireless/iwlwifi/iwl-drv.c
+index 095547b..a175997 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-drv.c
++++ b/drivers/net/wireless/iwlwifi/iwl-drv.c
+@@ -911,8 +911,10 @@ static void iwl_ucode_callback(const struct firmware *ucode_raw, void *context)
+ 		const struct iwl_op_mode_ops *ops = op->ops;
+ 		drv->op_mode = ops->start(drv->trans, drv->cfg, &drv->fw);
+ 
+-		if (!drv->op_mode)
++		if (!drv->op_mode) {
++			mutex_unlock(&iwlwifi_opmode_table_mtx);
+ 			goto out_unbind;
++		}
+ 	} else {
+ 		load_module = true;
+ 	}
