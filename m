@@ -1,32 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 Jun 2012 08:17:05 +0000
-Subject: Re: [patch -next] 6lowpan: double unlock on an error path
-Message-Id: <20120627.011705.1325190861280829179.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Jun 2012 18:34:24 +0000
+Subject: [patch] qlcnic: off by one in qlcnic_init_pci_info()
+Message-Id: <20120614183424.GC6383@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627065309.GA25774@elgon.mountain>
-	<CAJmB2rCwYo1KR_gOQFrvMn2A2px1mPEN5DV+KGtjV914p-o7NA@mail.gmail.com>
-In-Reply-To: <CAJmB2rCwYo1KR_gOQFrvMn2A2px1mPEN5DV+KGtjV914p-o7NA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: alex.bluesman.smirnov@gmail.com
-Cc: dan.carpenter@oracle.com, dbaryshkov@gmail.com, slapin@ossfans.org, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+Cc: Sony Chacko <sony.chacko@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
-Date: Wed, 27 Jun 2012 10:57:18 +0400
+The adapter->npars[] array has QLCNIC_MAX_PCI_FUNC elements.  We
+allocate it that way a few lines earlier in the function.  So this test
+is off by one.
 
-> 2012/6/27 Dan Carpenter <dan.carpenter@oracle.com>:
->> We already unlocked a few lines earlier here, so we can go directly to
->> drop without passing through unlock. =A0This was introduced recently in
->> c5d3687f6c ('6lowpan: read data from skb safely').
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
- ...
-> Acked-by: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+index 33c3e46..212c121 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+@@ -479,7 +479,7 @@ qlcnic_init_pci_info(struct qlcnic_adapter *adapter)
+ 
+ 	for (i = 0; i < QLCNIC_MAX_PCI_FUNC; i++) {
+ 		pfn = pci_info[i].id;
+-		if (pfn > QLCNIC_MAX_PCI_FUNC) {
++		if (pfn >= QLCNIC_MAX_PCI_FUNC) {
+ 			ret = QL_STATUS_INVALID_PARAM;
+ 			goto err_eswitch;
+ 		}
