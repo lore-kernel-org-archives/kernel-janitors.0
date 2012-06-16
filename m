@@ -1,84 +1,76 @@
 From: Fengguang Wu <wfg@linux.intel.com>
-Date: Sat, 16 Jun 2012 09:01:09 +0000
+Date: Sat, 16 Jun 2012 09:17:44 +0000
 Subject: Re: automated warning notifications
-Message-Id: <20120616090109.GA10332@localhost>
+Message-Id: <20120616091744.GB10332@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120614172523.GB4400@mwanda>
  <20120615014835.GA5695@localhost>
  <20120615071222.GZ13539@mwanda>
  <20120615075810.GA13206@localhost>
- <alpine.DEB.2.02.1206150639130.1864@hadrien>
- <20120615111913.GA13539@mwanda>
- <20120615143403.GA18876@localhost>
- <CAM_iQpUPYpYVaZhCk-bfMe9ZvttQYaSYM_xfKJYX=Z494PWv+A@mail.gmail.com>
-In-Reply-To: <CAM_iQpUPYpYVaZhCk-bfMe9ZvttQYaSYM_xfKJYX=Z494PWv+A@mail.gmail.com>
+ <20120615083100.GA29692@leaf>
+ <20120615085405.GB13933@localhost>
+ <4FDB675A.7040808@xenotime.net>
+In-Reply-To: <4FDB675A.7040808@xenotime.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Julia Lawall <julia.lawall@lip6.fr>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Josh Triplett <josh@freedesktop.org>, Randy Dunlap <rdunlap@xenotime.net>, Peter Senna Tschudin <peter.senna@gmail.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Josh Triplett <josh@freedesktop.org>, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Peter Senna Tschudin <peter.senna@gmail.com>, Cong Wang <xiyou.wangcong@gmail.com>
 
-[drop sparse developers]
-
-On Sat, Jun 16, 2012 at 03:50:36PM +0800, Cong Wang wrote:
-> On Fri, Jun 15, 2012 at 10:34 PM, Fengguang Wu <wfg@linux.intel.com> wrote:
-> > On Fri, Jun 15, 2012 at 02:19:14PM +0300, Dan Carpenter wrote:
+On Fri, Jun 15, 2012 at 09:48:26AM -0700, Randy Dunlap wrote:
+> On 06/15/2012 01:54 AM, Fengguang Wu wrote:
+> 
+> > On Fri, Jun 15, 2012 at 01:31:00AM -0700, Josh Triplett wrote:
+> >> On Fri, Jun 15, 2012 at 03:58:10PM +0800, Fengguang Wu wrote:
+> >>> On Fri, Jun 15, 2012 at 10:12:22AM +0300, Dan Carpenter wrote:
+> >>>> On Fri, Jun 15, 2012 at 09:48:35AM +0800, Fengguang Wu wrote:
+> >>>>> In an average working day, 1-2 build errors will be caught and email
+> >>>>> notified. I guess there will be more sparse warnings if it's turned
+> >>>>> on.
+> >>>>>
+> >>>>> Perhaps the sparse warnings can be enabled, but only sent to the patch
+> >>>>> author. If you and anyone else are interested, they could be sent to
+> >>>>> some mailing list, too. One thing I'm sure is, we probably never want
+> >>>>> to disturb the busy maintainers with these warnings.
+> >>>>
+> >>>> Eventually I think we will want to set up a mailing list for this or
+> >>>> we will start sending duplicate messages.
+> >>>
+> >>> Fair enough. How can we setup the mailing list? Once the list up, it
+> >>> would be trivial for me to send sparse warnings out there.
 > >>
-> >> Probably we could use something like the attached script to print
-> >> out the line of code which causes the bug and some other script to
-> >> querry git blame and attach the offending commit?
-> >
-> > cat -n $code_file | tail -n +$(($lineno - (($context + 1) / 2))) | head -n $(($context + 1))
-> >
-> > That's handy, I'll use it to show the source file context for the
-> > first error/warning :-)
+> >> Rather than a mailing list, how about something like test.kernel.org for
+> >> sparse warnings?
+> > 
+> > It's much more trivial to send new build/sparse errors/warnings to a
+> > list than to setup a website :-) As the errors come and go every day,
+> > and they are mostly unstructured, it seems the mailing list would be a
+> > more natural fit. People can search for known errors there and/or CC
+> > fixes there.
+> > 
+> > Anyway, we just sent an request for creating
+> > 
+> >         automated-warnings@vger.kernel.org
 > 
-> Well, you can use sed/awk, it will be much shorter:
 > 
-> cat -n drivers/leds/led-triggers.c | sed -ne '224,230p'
->    224			struct led_classdev *led_cdev;
->    225	
->    226			led_cdev = list_entry(entry, struct led_classdev, trig_list);
->    227			led_set_brightness(led_cdev, brightness);
->    228		}
->    229		read_unlock(&trigger->leddev_list_lock);
->    230	}
-> 
-> (replace the hard-coded "224,230" with a shell variable)
+> and you will let us know when it has been created??
 
-Thanks!  I'll use it this way:
+Well, the request has been rejected anyway..
 
-lineno"7
-context=3
-cat -n drivers/leds/led-triggers.c | sed -e "s/  $lineno\t/> $lineno\t/" -ne "$((lineno - context)),$((lineno + context))p"
-   224                  struct led_classdev *led_cdev;
-   225
-   226                  led_cdev = list_entry(entry, struct led_classdev, trig_list);
- > 227                  led_set_brightness(led_cdev, brightness);
-   228          }
-   229          read_unlock(&trigger->leddev_list_lock);
-   230  }
+> Although I had just as soon use an existing list, like
+> kernel-janitors or kernel-testers.
 
-> And if you want to find the offending commit:
-> 
-> git show `git blame drivers/leds/led-triggers.c | awk 'NR=227{print $1}'`
+From http://kernelnewbies.org/KernelJanitors :
 
-The code offered by Peter should run faster:
+Some suggestions to kernel newbies:
 
-        hash=$(git blame $code_file -L $lineno,$lineno |cut -d " " -f 1)
-        git --no-pager show $hash $code_file
+        avoid fixing compiler warnings  because the goal is to fix the
+        CAUSE of the warnings (which is usually not obvious), not just
+        to make the warnings go away 
 
-Anyway, Dan's original idea of using git blame to find out the offending 
-commit is valuable. The process can be automated like this:
-
-1) use git-blame to find out the commit that changed $lineno in recent 100 days
-2) checkout out $commit and build test and check build error
-3) checkout out $commit~1 and build test and check build error
-
-If (1) succeeded and (2) got the expected build error while (3) don't
-have the build error, we reliably catch the bad commit. Otherwise the
-script may try building test other commits that modified the file
-recently.
+Does that suggest the commit author be the best people to fix
+warnings? The typical situation may be, the author is not aware of the
+warnings at all: they are buried in the tedious output of make...
 
 Thanks,
 Fengguang
