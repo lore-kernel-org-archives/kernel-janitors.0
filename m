@@ -1,76 +1,30 @@
-From: Krishna Gudipati <kgudipat@Brocade.com>
-Date: Wed, 27 Jun 2012 17:45:31 +0000
-Subject: RE: [patch -resend] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
-Message-Id: <B5EE62D80D50B84BB9E5174F7FCCE80A28396BCE91@HQ1-EXCH02.corp.brocade.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 16 Jun 2012 13:19:27 +0000
+Subject: [patch] ASoC: Ux500: unlock on an error path
+Message-Id: <20120616131927.GB17980@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627085800.GA3007@mwanda>
- <20120627085958.GB31212@elgon.mountain>
-In-Reply-To: <20120627085958.GB31212@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter@oracle.com>, Jing Huang <huangj@Brocade.COM>
-Cc: "'James E.J. Bottomley'" <JBottomley@parallels.com>, "'linux-scsi@vger.kernel.org'" <linux-scsi@vger.kernel.org>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'kernel-janitors@vger.kernel.org'" <kernel-janitors@vger.kernel.org>
+To: Liam Girdwood <lrg@ti.com>
+Cc: Ola Lilja <ola.o.lilja@stericsson.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org
 
-
-
------Original Message-----
-From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
-Sent: Wednesday, June 27, 2012 2:00 AM
-To: Jing Huang
-Cc: Krishna Gudipati; James E.J. Bottomley; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: [patch -resend] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
-
-If bfad_thread_workq(bfad) was not BFA_STATUS_OK then we freed "im"
-and then dereferenced it.
-
-I did a little clean up because it seemed nicer to return directly
-instead of doing a superfluous goto.  I looked at other functions in
-this file and it seems like returning directly is standard.
+There is a missing mutex_unlock() here.  The cleanup path also has more
+debug output.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This is the third time I have sent this patch.  It was previously sent
-on Fri, 29 Jul 2011 and Wed, 29 Feb 2012.
 
-diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
-index 1ac09af..2eebf8d 100644
---- a/drivers/scsi/bfa/bfad_im.c
-+++ b/drivers/scsi/bfa/bfad_im.c
-@@ -687,25 +687,21 @@ bfa_status_t
- bfad_im_probe(struct bfad_s *bfad)
- {
- 	struct bfad_im_s      *im;
--	bfa_status_t    rc = BFA_STATUS_OK;
- 
- 	im = kzalloc(sizeof(struct bfad_im_s), GFP_KERNEL);
--	if (im = NULL) {
--		rc = BFA_STATUS_ENOMEM;
--		goto ext;
--	}
-+	if (im = NULL)
-+		return BFA_STATUS_ENOMEM;
- 
- 	bfad->im = im;
- 	im->bfad = bfad;
- 
- 	if (bfad_thread_workq(bfad) != BFA_STATUS_OK) {
- 		kfree(im);
--		rc = BFA_STATUS_FAILED;
-+		return BFA_STATUS_FAILED;
+diff --git a/sound/soc/codecs/ab8500-codec.c b/sound/soc/codecs/ab8500-codec.c
+index 389dd66..3c79592 100644
+--- a/sound/soc/codecs/ab8500-codec.c
++++ b/sound/soc/codecs/ab8500-codec.c
+@@ -1235,7 +1235,8 @@ static int anc_status_control_put(struct snd_kcontrol *kcontrol,
+ 		req != ANC_APPLY_IIR) {
+ 		dev_err(dev, "%s: ERROR: Unsupported status to set '%s'!\n",
+ 			__func__, enum_anc_state[req]);
+-		return -EINVAL;
++		status = -EINVAL;
++		goto cleanup;
  	}
- 
- 	INIT_WORK(&im->aen_im_notify_work, bfad_aen_im_notify_handler);
--ext:
--	return rc;
-+	return BFA_STATUS_OK;
- }
- 
- void
-
------
-
-Thanks for the patch.
-
-Acked-by: Krishna Gudipati <kgudipat@brocade.com>
-
+ 	apply_fir = req = ANC_APPLY_FIR || req = ANC_APPLY_FIR_IIR;
+ 	apply_iir = req = ANC_APPLY_IIR || req = ANC_APPLY_FIR_IIR;
