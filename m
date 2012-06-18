@@ -1,34 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 09 Jun 2012 16:08:25 +0000
-Subject: [patch] mtd: cafe_nand: fix an & vs | mistake
-Message-Id: <20120609160825.GC6488@elgon.mountain>
+From: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Date: Mon, 18 Jun 2012 11:07:55 +0000
+Subject: Re: [patch] mtd: cafe_nand: fix an & vs | mistake
+Message-Id: <1340017675.2420.25.camel@sauron.fi.intel.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-zeGW+D3kpI2c88J/7VPr"
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20110103191415.GA15176@bicker>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+References: <20120609160825.GC6488@elgon.mountain>
+In-Reply-To: <20120609160825.GC6488@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mike Dunn <mikedunn@newsguy.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+
+
+--=-zeGW+D3kpI2c88J/7VPr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, 2012-06-09 at 19:08 +0300, Dan Carpenter wrote:
+> The intent here was clearly to set result to true if the 0x40000000 flag
+> was set.  But instead there was a | vs & typo and we always set result
+> to true.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I do not have the hardware to test this.  The original code is clearly
+> buggy, but what about if 0x40000000 is the wrong flag?
+
+Looks like it is the right flag, I've checked
+
+wiki.laptop.org/images/5/5c/88ALP01_Datasheet_July_2007.pdf
+
+and your patch looks correct.
+
+--=20
+Best Regards,
+Artem Bityutskiy
+
+--=-zeGW+D3kpI2c88J/7VPr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Mike Dunn <mikedunn@newsguy.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>
 
-The intent here was clearly to set result to true if the 0x40000000 flag
-was set.  But instead there was a | vs & typo and we always set result
-to true.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I do not have the hardware to test this.  The original code is clearly
-buggy, but what about if 0x40000000 is the wrong flag?
+iQIcBAABAgAGBQJP3wwLAAoJECmIfjd9wqK0sWoP/1OH3OcGlkOVsQOcWZI7SfjI
+E/AzO7ghRUULV+FSnmhOZvxBhKSmtJQq1fbV5SwTm+v34ZjW+JNaD16yIOFhZc3K
+/+avKjmXqYpXjlrJmctb1d5vZ8NBjOgEFS7rFunKC2OQQJwMOEoc9ISs8zD/tw4R
+Kwrqjk42Xi24QUvWYwVKp/mdnc+IAz5QlJZwxlYqXRHmsNR6GINxj7+dhrJ5lwVl
+SjUS4mwoalYDupkJjg8pEJZJXJ/jM4M3mGFKtVQJk7t9Xz9fkAUXth2a/3lxk2uL
+ctw56v2Chh/KZCDUvPBR8lVLmUJEkIG69EFb8ytgcpm7IVbHf09E+TFs9DYIM8Hu
+RxmTv8kc3A6v6BPYlMl7Y7hfronnxFWxpd3PN5MEGN+h6i16t9IZzvayU/Iq5kE+
+W2RBIcyneHsH7iZqhMohPznsSlIhz1a6vnoYuo9NF7OjrE+rYc72YZ93lY0N4f10
+z6B3qPGGP3+syDaumtScJahsMhoT0nAOGVDDkwcJc6zXLBKVKYcevEhHydCW3aaC
+SC1Ocp/MiHy0ymMH8ePjh+YR9/NiBDvHd4RN6VOWCaH0TJZaTzQjRjnbEOMs/5+G
+rcVPOvAJjBPRrbJ2qwY6l9Cxx2uGZYSCmVPE/eYZL3s7vFyDrCZALfM9pxGiqpxy
+lBUnch+3OeLNyYdAcZYn
+=sGhc
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/mtd/nand/cafe_nand.c b/drivers/mtd/nand/cafe_nand.c
-index f3594a6..ac0d967 100644
---- a/drivers/mtd/nand/cafe_nand.c
-+++ b/drivers/mtd/nand/cafe_nand.c
-@@ -102,7 +102,7 @@ static const char *part_probes[] = { "cmdlinepart", "RedBoot", NULL };
- static int cafe_device_ready(struct mtd_info *mtd)
- {
- 	struct cafe_priv *cafe = mtd->priv;
--	int result = !!(cafe_readl(cafe, NAND_STATUS) | 0x40000000);
-+	int result = !!(cafe_readl(cafe, NAND_STATUS) & 0x40000000);
- 	uint32_t irqs = cafe_readl(cafe, NAND_IRQ);
- 
- 	cafe_writel(cafe, irqs, NAND_IRQ);
+--=-zeGW+D3kpI2c88J/7VPr--
+
