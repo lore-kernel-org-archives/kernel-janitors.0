@@ -1,38 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Jun 2012 19:17:27 +0000
-Subject: Re: [patch] eCryptfs: fix ecryptfs_privileged_open() for read only files
-Message-Id: <20120612191622.GO13539@mwanda>
+From: Alex Elder <elder@inktank.com>
+Date: Tue, 19 Jun 2012 13:57:10 +0000
+Subject: [PATCH] libceph: fix NULL dereference in reset_connection()
+Message-Id: <4FE08536.9040807@inktank.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120609091129.GD877@elgon.mountain>
-In-Reply-To: <20120609091129.GD877@elgon.mountain>
+References: <20120619103339.GB7596@elgon.mountain> <4FE07E37.7000203@inktank.com> <20120619133316.GR4400@mwanda>
+In-Reply-To: <20120619133316.GR4400@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 12, 2012 at 12:02:47PM -0700, Tyler Hicks wrote:
-> On 2012-06-09 12:11:29, Dan Carpenter wrote:
-> > The intent here is to handle read only opens differently.  For example,
-> > if we don't want to create the file if it doesn't exist.  The problem
-> > here is that O_RDONLY is 0 and if (x & 0) {... is always false.
-> >=20
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> Thanks, Dan! I committed a slightly different fix with more context in
-> the commit message (because I had to remind myself what was going on
-> with that conditional in the first place).
->=20
-> http://git.kernel.org/?p=3Dlinux/kernel/git/tyhicks/ecryptfs.git;a=3Dcomm=
-itdiff;h=91425d9b57c024bf8b28055b6a480809fe0941ee
->=20
+I have already incorporated the following in the Ceph master
+branch (which is used for the -next build).  We will also send
+this to Linus soon.
 
-Looks good.
+					-Alex
+====
+We dereference "con->in_msg" on the line after it was set to NULL.
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Alex Elder <elder@inktank.com>
+---
+ net/ceph/messenger.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index 5e9f61d..23073cf 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -440,7 +440,7 @@ static void reset_connection(struct ceph_connection
+*con)
+ 		con->in_msg->con = NULL;
+ 		ceph_msg_put(con->in_msg);
+ 		con->in_msg = NULL;
+-		ceph_con_put(con->in_msg->con);
++		ceph_con_put(con);
+ 	}
+
+ 	con->connect_seq = 0;
+
+
+
