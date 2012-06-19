@@ -1,42 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 06 Jun 2012 21:41:40 +0000
-Subject: [PATCH 6/7] drivers/ata/pata_pcmcia.c: adjust suspicious bit operation
-Message-Id: <1339018901-28439-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 19 Jun 2012 10:30:11 +0000
+Subject: [patch] Btrfs: small naming cleanup in join_transaction()
+Message-Id: <20120619103011.GA7596@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
+To: Chris Mason <chris.mason@fusionio.com>
+Cc: linux-btrfs@vger.kernel.org, Josef Bacik <josef@redhat.com>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+"root->fs_info" and "fs_info" are the same, but "fs_info" is prefered
+because it is shorter and that's what is used in the rest of the
+function.
 
-IO_DATA_PATH_WIDTH_8 is 0, so a bit-and with it is always false.  The
-value IO_DATA_PATH_WIDTH covers the bits of the IO_DATA_PATH constants, so
-first pick those bits and then make the test using !=.
-
-This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/ata/pata_pcmcia.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Also, Smatch doesn't understand that they are the same so it complains
+about the locking.
 
-diff --git a/drivers/ata/pata_pcmcia.c b/drivers/ata/pata_pcmcia.c
-index a808ba0..776e749 100644
---- a/drivers/ata/pata_pcmcia.c
-+++ b/drivers/ata/pata_pcmcia.c
-@@ -170,7 +170,8 @@ static int pcmcia_check_one_config(struct pcmcia_device *pdev, void *priv_data)
- {
- 	int *is_kme = priv_data;
- 
--	if (!(pdev->resource[0]->flags & IO_DATA_PATH_WIDTH_8)) {
-+	if ((pdev->resource[0]->flags & IO_DATA_PATH_WIDTH)
-+	    != IO_DATA_PATH_WIDTH_8) {
- 		pdev->resource[0]->flags &= ~IO_DATA_PATH_WIDTH;
- 		pdev->resource[0]->flags |= IO_DATA_PATH_WIDTH_AUTO;
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index b72b068..e5f1b15 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -100,8 +100,8 @@ loop:
+ 		kmem_cache_free(btrfs_transaction_cachep, cur_trans);
+ 		cur_trans = fs_info->running_transaction;
+ 		goto loop;
+-	} else if (root->fs_info->fs_state & BTRFS_SUPER_FLAG_ERROR) {
+-		spin_unlock(&root->fs_info->trans_lock);
++	} else if (fs_info->fs_state & BTRFS_SUPER_FLAG_ERROR) {
++		spin_unlock(&fs_info->trans_lock);
+ 		kmem_cache_free(btrfs_transaction_cachep, cur_trans);
+ 		return -EROFS;
  	}
-
