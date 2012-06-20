@@ -1,50 +1,28 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Wed, 20 Jun 2012 07:39:39 +0000
-Subject: [PATCH] netxen: Error return off by one in 'netxen_nic_set_pauseparam()'.
-Message-Id: <1340177259-14083-1-git-send-email-santoshprasadnayak@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 20 Jun 2012 07:44:47 +0000
+Subject: Re: [PATCH] netxen: Error return off by one in 'netxen_nic_set_pauseparam()'.
+Message-Id: <20120620074447.GS4400@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1340177259-14083-1-git-send-email-santoshprasadnayak@gmail.com>
+In-Reply-To: <1340177259-14083-1-git-send-email-santoshprasadnayak@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sony.chacko@qlogic.com, rajesh.borundia@qlogic.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
+To: santosh nayak <santoshprasadnayak@gmail.com>
+Cc: sony.chacko@qlogic.com, rajesh.borundia@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Santosh Nayak <santoshprasadnayak@gmail.com>
+On Wed, Jun 20, 2012 at 12:57:39PM +0530, santosh nayak wrote:
+> From: Santosh Nayak <santoshprasadnayak@gmail.com>
+> 
+> There are 'NETXEN_NIU_MAX_GBE_PORTS'  GBE ports. Port indexing starts
+> from zero. 
+> Hence we should also return error for "port = NETXEN_NIU_MAX_GBE_PORTS"
+> 
 
-There are 'NETXEN_NIU_MAX_GBE_PORTS'  GBE ports. Port indexing starts
-from zero. 
-Hence we should also return error for "port = NETXEN_NIU_MAX_GBE_PORTS"
+I don't know this code well enough to say if you are right or not,
+but what about for port = NETXEN_NIU_MAX_XG_PORTS a few lines later
+in both functions?
 
-Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
----
-Destination tree "linux-next"
-
-
- .../ethernet/qlogic/netxen/netxen_nic_ethtool.c    |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
-index 3973040..d4f179f 100644
---- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
-+++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
-@@ -489,7 +489,7 @@ netxen_nic_get_pauseparam(struct net_device *dev,
- 	int port = adapter->physical_port;
- 
- 	if (adapter->ahw.port_type = NETXEN_NIC_GBE) {
--		if ((port < 0) || (port > NETXEN_NIU_MAX_GBE_PORTS))
-+		if ((port < 0) || (port >= NETXEN_NIU_MAX_GBE_PORTS))
- 			return;
- 		/* get flow control settings */
- 		val = NXRD32(adapter, NETXEN_NIU_GB_MAC_CONFIG_0(port));
-@@ -534,7 +534,7 @@ netxen_nic_set_pauseparam(struct net_device *dev,
- 	int port = adapter->physical_port;
- 	/* read mode */
- 	if (adapter->ahw.port_type = NETXEN_NIC_GBE) {
--		if ((port < 0) || (port > NETXEN_NIU_MAX_GBE_PORTS))
-+		if ((port < 0) || (port >= NETXEN_NIU_MAX_GBE_PORTS))
- 			return -EIO;
- 		/* set flow control */
- 		val = NXRD32(adapter, NETXEN_NIU_GB_MAC_CONFIG_0(port));
--- 
-1.7.4.4
+regards,
+dan carpenter
 
