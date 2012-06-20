@@ -1,45 +1,70 @@
-From: InKi Dae <daeinki@gmail.com>
-Date: Mon, 04 Jun 2012 15:52:48 +0000
-Subject: Re: [PATCH] drm/exynos: Include missing linux/types.h in header
-Message-Id: <CAAQKjZMo5pWB+hVudEdTuv1h1L69n=sXTM+VCi9m3AkWPAALiQ@mail.gmail.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Wed, 20 Jun 2012 10:56:44 +0000
+Subject: [PATCH] netxen : Error return off by one for XG port.
+Message-Id: <1340189578-18308-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1336661600-2409-1-git-send-email-emilgoode@gmail.com>
-	<CAAQKjZNbu9E+bpt0cC8OiRhcGFe13E17bVU_ZY2EeLCzNpSavA@mail.gmail.com>
-In-Reply-To: <CAAQKjZNbu9E+bpt0cC8OiRhcGFe13E17bVU_ZY2EeLCzNpSavA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Emil Goode <emilgoode@gmail.com>
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: sony.chacko@qlogic.com, rajesh.borundia@qlogic.com
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-SGkgRW1pbCwKCndlIGluY2x1ZGVkICJkcm0uaCIgd2l0aCBnMmQgZHJpdmVyIHBhdGNoIGluc3Rl
-YWQgb2YgIjxsaW51eC90eXBlcy5oPgpzbyB5b3VyIHBhdGNoIHdpbGwgYmUgcmVtb3ZlZCBmcm9t
-IGV4eW5vcy1kcm0tZml4ZXMuIHNvcnJ5IGZvcgpjb25mdXNpbmcuCgpmb3IgdGhpcywgeW91IGNh
-biByZWZlciB0byBiZWxvdyBsaW5rLgpodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvP3A9bGludXgva2Vy
-bmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQ7YT1ibG9iZGlmZjtmPWluY2x1ZGUvZHJtL2V4eW5v
-c19kcm0uaDtotmQ3Y2U5MmVhZGQ2N2E2N2RiMTJiMTliYjBkMzkyMDhiODcwNTExO2hwRGY3OWNm
-NDY4ZDRiN2JhZmYyZTVmNzI4NjY3NDc1YWI5NmY3ZjFlO2hi12YxNjQyYzkwYWI1ZWIyZDdjNDhh
-ZjA1ODFjOTkzMDk0Zjk3ZTFhO2hwYo1jYjk2YjYyOGEwNzQ5MTg0YmJjYzVlNmM5NDQ2M2Y4OTQw
-NWM1OAoKVGhhbmtzLApJbmtpIERhZQoKMjAxMi81LzE0IEluS2kgRGFlIDxkYWVpbmtpQGdtYWls
-LmNvbT46Cj4gMjAxMi81LzEwIEVtaWwgR29vZGUgPGVtaWxnb29kZUBnbWFpbC5jb20+Ogo+PiBJ
-bmNsdWRlIHRoZSBsaW51eC90eXBlcy5oIGZpbGUgd2hlcmUgdXNlZCB0eXBlcyBhcmUgZGVjbGFy
-ZWQuCj4+Cj4+IFNwYXJzZSBnaXZlcyB0aGUgZm9sbG93aW5nIHdhcm5pbmc6Cj4+IC91c3IvaW5j
-bHVkZS9kcm0vZXh5bm9zX2RybS5oOjkyOgo+PiCgIKAgoCCgZm91bmQgX19bdXNdezgsMTYsMzIs
-NjR9IHR5cGUgd2l0aG91dAo+PiCgIKAgoCCgI2luY2x1ZGUgPGxpbnV4L3R5cGVzLmg+Cj4+Cj4+
-IFNpZ25lZC1vZmYtYnk6IEVtaWwgR29vZGUgPGVtaWxnb29kZUBnbWFpbC5jb20+Cj4+IC0tLQo+
-PiCgaW5jbHVkZS9kcm0vZXh5bm9zX2RybS5oIHwgoCCgMiArKwo+PiCgMSBmaWxlIGNoYW5nZWQs
-IDIgaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZXh5bm9zX2Ry
-bS5oIGIvaW5jbHVkZS9kcm0vZXh5bm9zX2RybS5oCj4+IGluZGV4IGU0NzhkZTQuLjdlYjdhZTcg
-MTAwNjQ0Cj4+IC0tLSBhL2luY2x1ZGUvZHJtL2V4eW5vc19kcm0uaAo+PiArKysgYi9pbmNsdWRl
-L2RybS9leHlub3NfZHJtLmgKPj4gQEAgLTI5LDYgKzI5LDggQEAKPj4goCNpZm5kZWYgX0VYWU5P
-U19EUk1fSF8KPj4goCNkZWZpbmUgX0VYWU5PU19EUk1fSF8KPj4KPj4gKyNpbmNsdWRlIDxsaW51
-eC90eXBlcy5oPgo+PiArCj4KPiBhcHBsaWVkLgo+Cj4gVGhhbmtzLAo+IElua2kgRGFlCj4KPj4g
-oC8qKgo+PiCgKiBVc2VyLWRlc2lyZWQgYnVmZmVyIGNyZWF0aW9uIGluZm9ybWF0aW9uIHN0cnVj
-dHVyZS4KPj4goCoKPj4gLS0KPj4gMS43LjEwCj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCj4+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhp
-cyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRo
-ZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFq
-b3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRt
-bA==
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
+
+There are  NETXEN_NIU_MAX_XG_PORTS ports.
+Port indexing starts from zero.
+Hence we should also return error for  'port = NETXEN_NIU_MAX_XG_PORTS'.
+
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+ .../ethernet/qlogic/netxen/netxen_nic_ethtool.c    |    4 ++--
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
+index d4f179f..9103e3e 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
+@@ -511,7 +511,7 @@ netxen_nic_get_pauseparam(struct net_device *dev,
+ 				break;
+ 		}
+ 	} else if (adapter->ahw.port_type = NETXEN_NIC_XGBE) {
+-		if ((port < 0) || (port > NETXEN_NIU_MAX_XG_PORTS))
++		if ((port < 0) || (port >= NETXEN_NIU_MAX_XG_PORTS))
+ 			return;
+ 		pause->rx_pause = 1;
+ 		val = NXRD32(adapter, NETXEN_NIU_XG_PAUSE_CTL);
+@@ -577,7 +577,7 @@ netxen_nic_set_pauseparam(struct net_device *dev,
+ 		}
+ 		NXWR32(adapter, NETXEN_NIU_GB_PAUSE_CTL, val);
+ 	} else if (adapter->ahw.port_type = NETXEN_NIC_XGBE) {
+-		if ((port < 0) || (port > NETXEN_NIU_MAX_XG_PORTS))
++		if ((port < 0) || (port >= NETXEN_NIU_MAX_XG_PORTS))
+ 			return -EIO;
+ 		val = NXRD32(adapter, NETXEN_NIU_XG_PAUSE_CTL);
+ 		if (port = 0) {
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+index de96a94..946160f 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
+@@ -365,7 +365,7 @@ static int netxen_niu_disable_xg_port(struct netxen_adapter *adapter)
+ 	if (NX_IS_REVISION_P3(adapter->ahw.revision_id))
+ 		return 0;
+ 
+-	if (port > NETXEN_NIU_MAX_XG_PORTS)
++	if (port >= NETXEN_NIU_MAX_XG_PORTS)
+ 		return -EINVAL;
+ 
+ 	mac_cfg = 0;
+@@ -392,7 +392,7 @@ static int netxen_p2_nic_set_promisc(struct netxen_adapter *adapter, u32 mode)
+ 	u32 port = adapter->physical_port;
+ 	u16 board_type = adapter->ahw.board_type;
+ 
+-	if (port > NETXEN_NIU_MAX_XG_PORTS)
++	if (port >= NETXEN_NIU_MAX_XG_PORTS)
+ 		return -EINVAL;
+ 
+ 	mac_cfg = NXRD32(adapter, NETXEN_NIU_XGE_CONFIG_0 + (0x10000 * port));
+-- 
+1.7.4.4
+
