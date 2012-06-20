@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 20 Jun 2012 07:44:47 +0000
+Date: Wed, 20 Jun 2012 07:57:46 +0000
 Subject: Re: [PATCH] netxen: Error return off by one in 'netxen_nic_set_pauseparam()'.
-Message-Id: <20120620074447.GS4400@mwanda>
+Message-Id: <20120620075746.GT4400@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1340177259-14083-1-git-send-email-santoshprasadnayak@gmail.com>
 In-Reply-To: <1340177259-14083-1-git-send-email-santoshprasadnayak@gmail.com>
@@ -19,9 +19,12 @@ On Wed, Jun 20, 2012 at 12:57:39PM +0530, santosh nayak wrote:
 > Hence we should also return error for "port = NETXEN_NIU_MAX_GBE_PORTS"
 > 
 
-I don't know this code well enough to say if you are right or not,
-but what about for port = NETXEN_NIU_MAX_XG_PORTS a few lines later
-in both functions?
+So my understanding is that you are guessing on this based on the
+fact that, "Who counts from 0-4 inclusive?".  I can't argue with
+that logic.
+
+Looking some more at NETXEN_NIU_MAX_XG_PORTS.  It is used off by one
+4 times and it's used correctly 1 time.
 
 regards,
 dan carpenter
