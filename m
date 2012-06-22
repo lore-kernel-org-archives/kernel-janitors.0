@@ -1,58 +1,80 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Wed, 06 Jun 2012 21:52:18 +0000
-Subject: Re: [PATCH 7/7] drivers/net/can/cc770/cc770_platform.c: adjust suspicious bit operation
-Message-Id: <4FCFD112.1070106@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------enigF0B5B7A6CB9E6AD33DD9FC5D"
+From: Richard Genoud <richard.genoud@gmail.com>
+Date: Fri, 22 Jun 2012 13:29:28 +0000
+Subject: [PATCH] Atmel NAND ECC: Remove unaffected config option
+Message-Id: <1340371768-24703-1-git-send-email-richard.genoud@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr> <1339018901-28439-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1339018901-28439-8-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Wolfgang Grandegger <wg@grandegger.com>, kernel-janitors@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, Julia Lawall <julia@diku.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: linux-arm-kernel@lists.infradead.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enigF0B5B7A6CB9E6AD33DD9FC5D
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-On 06/06/2012 11:41 PM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> CPUIF_DSC is 0x40, so it would seem that & is wanted rather than |.
->=20
-> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
->=20
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-
-Good catch, Joe Perches has already found and fixed that problem. It has
-been fixed in:
-
-    dc605db can: cc770: Fix likely misuse of | for &
-
-The commit is currently in David's net/master, and scheduled for the
-v3.5 release.
-
-Regards, Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---------------enigF0B5B7A6CB9E6AD33DD9FC5D
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAk/P0RUACgkQjTAFq1RaXHMcbQCgi/Wo716GQYPqfXM9K/0YXMeZ
-84gAoIvJmxcoGBuSuklIYpbxP0e2zPyn
-=8dej
------END PGP SIGNATURE-----
-
---------------enigF0B5B7A6CB9E6AD33DD9FC5D--
+VGhlIGNvbW1pdCBiZjQyODljYmEwMmI4Y2Y3NzBlY2Q3OTU5Y2E3MDgzOWYwZGQ5ZDNjIHJlbW92
+ZWQgdGhlIHVzZSBvZgpDT05GSUdfTVREX05BTkRfQVRNRUxfRUNDX05PTkUgYW5kIENPTkZJR19N
+VERfTkFORF9BVE1FTF9FQ0NfSFcgYnV0IHRoZQpLY29uZmlnIGZpbGUgd2FzIGZvcmdvdHRlbi4K
+ClRoaXMgcGF0Y2ggcmVtb3ZlIHRob3NlIGlub3BlcmF0aXZlIG9wdGlvbnMuCgpTaWduZWQtb2Zm
+LWJ5OiBSaWNoYXJkIEdlbm91ZCA8cmljaGFyZC5nZW5vdWRAZ21haWwuY29tPgotLS0KIGFyY2gv
+YXJtL2NvbmZpZ3MvYWZlYjkyNjBfZGVmY29uZmlnICAgIHwgICAgMSAtCiBhcmNoL2FybS9jb25m
+aWdzL2F0OTFzYW05MjYzX2RlZmNvbmZpZyB8ICAgIDEgLQogYXJjaC9hcm0vY29uZmlncy9xaWwt
+YTkyNjBfZGVmY29uZmlnICAgfCAgICAxIC0KIGFyY2gvYXJtL2NvbmZpZ3MvdXNiLWE5MjYwX2Rl
+ZmNvbmZpZyAgIHwgICAgMSAtCiBkcml2ZXJzL210ZC9uYW5kL0tjb25maWcgICAgICAgICAgICAg
+ICB8ICAgNDAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDUgZmlsZXMgY2hhbmdl
+ZCwgMCBpbnNlcnRpb25zKCspLCA0NCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL2Fy
+bS9jb25maWdzL2FmZWI5MjYwX2RlZmNvbmZpZyBiL2FyY2gvYXJtL2NvbmZpZ3MvYWZlYjkyNjBf
+ZGVmY29uZmlnCmluZGV4IDJhZmRmNjcuLmMyODVhOWQgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Nv
+bmZpZ3MvYWZlYjkyNjBfZGVmY29uZmlnCisrKyBiL2FyY2gvYXJtL2NvbmZpZ3MvYWZlYjkyNjBf
+ZGVmY29uZmlnCkBAIC0zOSw3ICszOSw2IEBAIENPTkZJR19NVERfQkxPQ0s9eQogQ09ORklHX01U
+RF9EQVRBRkxBU0g9eQogQ09ORklHX01URF9OQU5EPXkKIENPTkZJR19NVERfTkFORF9BVE1FTD15
+Ci1DT05GSUdfTVREX05BTkRfQVRNRUxfRUNDX1NPRlQ9eQogQ09ORklHX0JMS19ERVZfUkFNPXkK
+IENPTkZJR19CTEtfREVWX1JBTV9TSVpFgTkyCiBDT05GSUdfQVRNRUxfU1NDPXkKZGlmZiAtLWdp
+dCBhL2FyY2gvYXJtL2NvbmZpZ3MvYXQ5MXNhbTkyNjNfZGVmY29uZmlnIGIvYXJjaC9hcm0vY29u
+Zmlncy9hdDkxc2FtOTI2M19kZWZjb25maWcKaW5kZXggMWNmOTYyNi4uNTg1ZTdlMCAxMDA2NDQK
+LS0tIGEvYXJjaC9hcm0vY29uZmlncy9hdDkxc2FtOTI2M19kZWZjb25maWcKKysrIGIvYXJjaC9h
+cm0vY29uZmlncy9hdDkxc2FtOTI2M19kZWZjb25maWcKQEAgLTYxLDcgKzYxLDYgQEAgQ09ORklH
+X01URF9EQVRBRkxBU0g9eQogQ09ORklHX01URF9CTE9DSzJNVEQ9eQogQ09ORklHX01URF9OQU5E
+PXkKIENPTkZJR19NVERfTkFORF9BVE1FTD15Ci1DT05GSUdfTVREX05BTkRfQVRNRUxfRUNDX1NP
+RlQ9eQogQ09ORklHX01URF9VQkk9eQogQ09ORklHX01URF9VQklfR0xVRUJJPXkKIENPTkZJR19C
+TEtfREVWX0xPT1A9eQpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vY29uZmlncy9xaWwtYTkyNjBfZGVm
+Y29uZmlnIGIvYXJjaC9hcm0vY29uZmlncy9xaWwtYTkyNjBfZGVmY29uZmlnCmluZGV4IDkxNjBm
+M2IuLjJiYjEwMGIgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2NvbmZpZ3MvcWlsLWE5MjYwX2RlZmNv
+bmZpZworKysgYi9hcmNoL2FybS9jb25maWdzL3FpbC1hOTI2MF9kZWZjb25maWcKQEAgLTUwLDcg
+KzUwLDYgQEAgQ09ORklHX01URF9CTE9DSz15CiBDT05GSUdfTVREX0RBVEFGTEFTSD15CiBDT05G
+SUdfTVREX05BTkQ9eQogQ09ORklHX01URF9OQU5EX0FUTUVMPXkKLUNPTkZJR19NVERfTkFORF9B
+VE1FTF9FQ0NfU09GVD15CiBDT05GSUdfQkxLX0RFVl9MT09QPXkKICMgQ09ORklHX01JU0NfREVW
+SUNFUyBpcyBub3Qgc2V0CiBDT05GSUdfU0NTST15CmRpZmYgLS1naXQgYS9hcmNoL2FybS9jb25m
+aWdzL3VzYi1hOTI2MF9kZWZjb25maWcgYi9hcmNoL2FybS9jb25maWdzL3VzYi1hOTI2MF9kZWZj
+b25maWcKaW5kZXggMmUzOWYzOC4uYTE1MDFlMSAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vY29uZmln
+cy91c2ItYTkyNjBfZGVmY29uZmlnCisrKyBiL2FyY2gvYXJtL2NvbmZpZ3MvdXNiLWE5MjYwX2Rl
+ZmNvbmZpZwpAQCAtNDksNyArNDksNiBAQCBDT05GSUdfTVREX0JMT0NLPXkKIENPTkZJR19NVERf
+REFUQUZMQVNIPXkKIENPTkZJR19NVERfTkFORD15CiBDT05GSUdfTVREX05BTkRfQVRNRUw9eQot
+Q09ORklHX01URF9OQU5EX0FUTUVMX0VDQ19TT0ZUPXkKIENPTkZJR19CTEtfREVWX0xPT1A9eQog
+IyBDT05GSUdfTUlTQ19ERVZJQ0VTIGlzIG5vdCBzZXQKIENPTkZJR19TQ1NJPXkKZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbXRkL25hbmQvS2NvbmZpZyBiL2RyaXZlcnMvbXRkL25hbmQvS2NvbmZpZwpp
+bmRleCAzMWJiN2U1Li4wZDkzNDA3IDEwMDY0NAotLS0gYS9kcml2ZXJzL210ZC9uYW5kL0tjb25m
+aWcKKysrIGIvZHJpdmVycy9tdGQvbmFuZC9LY29uZmlnCkBAIC00MDYsNDYgKzQwNiw2IEBAIGNv
+bmZpZyBNVERfTkFORF9BVE1FTAogCWhlbHAKIAkgIEVuYWJsZXMgc3VwcG9ydCBmb3IgTkFORCBG
+bGFzaCAvIFNtYXJ0IE1lZGlhIENhcmQgaW50ZXJmYWNlCiAJICBvbiBBdG1lbCBBVDkxIGFuZCBB
+VlIzMiBwcm9jZXNzb3JzLgotY2hvaWNlCi0JcHJvbXB0ICJFQ0MgbWFuYWdlbWVudCBmb3IgTkFO
+RCBGbGFzaCAvIFNtYXJ0TWVkaWEgb24gQVQ5MSAvIEFWUjMyIgotCWRlcGVuZHMgb24gTVREX05B
+TkRfQVRNRUwKLQotY29uZmlnIE1URF9OQU5EX0FUTUVMX0VDQ19IVwotCWJvb2wgIkhhcmR3YXJl
+IEVDQyIKLQlkZXBlbmRzIG9uIEFSQ0hfQVQ5MVNBTTkyNjMgfHwgQVJDSF9BVDkxU0FNOTI2MCB8
+fCBBVlIzMgotCWhlbHAKLQkgIFVzZSBoYXJkd2FyZSBFQ0MgaW5zdGVhZCBvZiBzb2Z0d2FyZSBF
+Q0Mgd2hlbiB0aGUgY2hpcAotCSAgc3VwcG9ydHMgaXQuCi0KLQkgIFRoZSBoYXJkd2FyZSBFQ0Mg
+Y29udHJvbGxlciBpcyBjYXBhYmxlIG9mIHNpbmdsZSBiaXQgZXJyb3IKLQkgIGNvcnJlY3Rpb24g
+YW5kIDItYml0IHJhbmRvbSBkZXRlY3Rpb24gcGVyIHBhZ2UuCi0KLQkgIE5CIDogaGFyZHdhcmUg
+YW5kIHNvZnR3YXJlIEVDQyBzY2hlbWVzIGFyZSBpbmNvbXBhdGlibGUuCi0JICBJZiB5b3Ugc3dp
+dGNoIGZyb20gb25lIHRvIGFub3RoZXIsIHlvdSdsbCBoYXZlIHRvIGVyYXNlIHlvdXIKLQkgIG10
+ZCBwYXJ0aXRpb24uCi0KLQkgIElmIHVuc3VyZSwgc2F5IFkKLQotY29uZmlnIE1URF9OQU5EX0FU
+TUVMX0VDQ19TT0ZUCi0JYm9vbCAiU29mdHdhcmUgRUNDIgotCWhlbHAKLQkgIFVzZSBzb2Z0d2Fy
+ZSBFQ0MuCi0KLQkgIE5CIDogaGFyZHdhcmUgYW5kIHNvZnR3YXJlIEVDQyBzY2hlbWVzIGFyZSBp
+bmNvbXBhdGlibGUuCi0JICBJZiB5b3Ugc3dpdGNoIGZyb20gb25lIHRvIGFub3RoZXIsIHlvdSds
+bCBoYXZlIHRvIGVyYXNlIHlvdXIKLQkgIG10ZCBwYXJ0aXRpb24uCi0KLWNvbmZpZyBNVERfTkFO
+RF9BVE1FTF9FQ0NfTk9ORQotCWJvb2wgIk5vIEVDQyAodGVzdGluZyBvbmx5LCBEQU5HRVJPVVMp
+IgotCWRlcGVuZHMgb24gREVCVUdfS0VSTkVMCi0JaGVscAotCSAgTm8gRUNDIHdpbGwgYmUgdXNl
+ZC4KLQkgIEl0J3Mgbm90IGEgZ29vZCBpZGVhIGFuZCBpdCBzaG91bGQgYmUgcmVzZXJ2ZWQgZm9y
+IHRlc3RpbmcKLQkgIHB1cnBvc2Ugb25seS4KLQotCSAgSWYgdW5zdXJlLCBzYXkgTgotCi1lbmRj
+aG9pY2UKIAogY29uZmlnIE1URF9OQU5EX1BYQTN4eAogCXRyaXN0YXRlICJTdXBwb3J0IGZvciBO
+QU5EIGZsYXNoIGRldmljZXMgb24gUFhBM3h4IgotLSAKMS43LjIuNQoKLS0KVG8gdW5zdWJzY3Jp
+YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5p
+dG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5v
+cmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
+bW8taW5mby5odG1s
