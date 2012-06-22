@@ -1,63 +1,36 @@
-From: Ike Panhc <ike.pan@canonical.com>
-Date: Wed, 20 Jun 2012 12:23:13 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Jun 2012 13:57:46 +0000
 Subject: Re: [patch] ideapad: uninitialized data in ideapad_acpi_add()
-Message-Id: <4FE1C0B1.9050901@canonical.com>
+Message-Id: <20120622135746.GG5390@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120612162850.GB11077@elgon.mountain>
-In-Reply-To: <20120612162850.GB11077@elgon.mountain>
+ <4FE1C0B1.9050901@canonical.com>
+In-Reply-To: <4FE1C0B1.9050901@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Ike Panhc <ike.pan@canonical.com>
 Cc: Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
-
-# cat /sys/kernel/debug/ideapad/cfg
-cfg: 0xFFFF8800007DE140
-       ^^^^^^^^ the uninitialized bit
-
-I see your point, perhaps unsigned int will be better then int?
-
-
-On 06/13/2012 12:28 AM, Dan Carpenter wrote:
-> We only initialize the high bits of "cfg".  It probably doesn't cause
-> a problem given that this is platform specific code and doesn't have to
-> worry about endianness etc.  But it's sort of messy.
+On Wed, Jun 20, 2012 at 08:23:13PM +0800, Ike Panhc wrote:
+> Hi Dan,
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is a static checker fix and I don't have the hardware.  Sorry.
+> # cat /sys/kernel/debug/ideapad/cfg
+> cfg: 0xFFFF8800007DE140
+>        ^^^^^^^^ the uninitialized bit
 > 
-> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-> index 4f20f8d..17f6dfd 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -694,10 +694,10 @@ MODULE_DEVICE_TABLE(acpi, ideapad_device_ids);
->  static int __devinit ideapad_acpi_add(struct acpi_device *adevice)
->  {
->  	int ret, i;
-> -	unsigned long cfg;
-> +	int cfg;
->  	struct ideapad_private *priv;
->  
-> -	if (read_method_int(adevice->handle, "_CFG", (int *)&cfg))
-> +	if (read_method_int(adevice->handle, "_CFG", &cfg))
->  		return -ENODEV;
->  
->  	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-> @@ -721,7 +721,7 @@ static int __devinit ideapad_acpi_add(struct acpi_device *adevice)
->  		goto input_failed;
->  
->  	for (i = 0; i < IDEAPAD_RFKILL_DEV_NUM; i++) {
-> -		if (test_bit(ideapad_rfk_data[i].cfgbit, &cfg))
-> +		if (test_bit(ideapad_rfk_data[i].cfgbit, &priv->cfg))
->  			ideapad_register_rfkill(adevice, i);
->  		else
->  			priv->rfk[i] = NULL;
-> --
-> To unsubscribe from this list: send the line "unsubscribe platform-driver-x86" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I see your point, perhaps unsigned int will be better then int?
 > 
+
+I don't know if this is a question or a resend request.
+
+I just chose that base on the fact that we are reading an int from
+ACPI in read_method_int(adevice->handle, "_CFG", &cfg).  Either way
+we're going to run into integer conversion issues if we get passed
+a large or negative int.
+
+I can resend if you want, I don't have strong feelings on this.
+
+regards,
+dan carpenter
 
