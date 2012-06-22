@@ -1,45 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Jun 2012 08:05:00 +0000
-Subject: Re: [patch 1/3] vfio: signedness bug in vfio_config_do_rw()
-Message-Id: <20120628080500.GK5333@mwanda>
+Date: Fri, 22 Jun 2012 07:14:33 +0000
+Subject: [patch] Btrfs: dereferencing free'd memory in panic message
+Message-Id: <20120622071433.GA27618@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120628064425.GA11107@elgon.mountain>
-In-Reply-To: <20120628064425.GA11107@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@fusionio.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 28, 2012 at 09:15:12AM +0200, walter harms wrote:
-> 
-> 
-> Am 28.06.2012 08:44, schrieb Dan Carpenter:
-> > The "count" variable is unsigned here so the test for errors doesn't
-> > work.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-> > index a4f7321..10bc6a8 100644
-> > --- a/drivers/vfio/pci/vfio_pci_config.c
-> > +++ b/drivers/vfio/pci/vfio_pci_config.c
-> > @@ -1487,7 +1487,7 @@ static ssize_t vfio_config_do_rw(struct vfio_pci_device *vdev, char __user *buf,
-> >  		if (perm->readfn) {
-> >  			count = perm->readfn(vdev, *ppos, count,
-> >  					     perm, offset, &val);
-> > -			if (count < 0)
-> > +			if ((ssize_t)count < 0)
-> >  				return count;
-> >  		}
-> >  
-> 
-> hi,
-> I can only find a few references to vfio_config_do_rw(). From the
-> patchit seems to me this is a wrapper for perm->readfn since both
-> return ssize_t so why i count unsigned in the first place ?
+We free "node" and then dereference it in the panic message on the next
+line.  I considered moving the kfree() after the panic given that panic
+can return under certain configurations, but in the end I decided it
+doesn't matter if we leak a bit after a panic.
 
-Yeah.  You're right.  That was stupid of me.  I'll resend.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
+index 790f492..c50d80a 100644
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -1239,7 +1239,6 @@ static int __must_check __add_reloc_root(struct btrfs_root *root)
+ 			      node->bytenr, &node->rb_node);
+ 	spin_unlock(&rc->reloc_root_tree.lock);
+ 	if (rb_node) {
+-		kfree(node);
+ 		btrfs_panic(root->fs_info, -EEXIST, "Duplicate root found "
+ 			    "for start=%llu while inserting into relocation "
+ 			    "tree\n", node->bytenr);
