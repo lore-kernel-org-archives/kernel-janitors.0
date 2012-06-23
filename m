@@ -1,36 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Jun 2012 07:37:39 +0000
-Subject: [patch 2/2] NFS: add an endian notation for sparse
-Message-Id: <20120612073737.GB15060@elgon.mountain>
+Date: Sat, 23 Jun 2012 09:14:46 +0000
+Subject: [patch] hfs: copying wrong data in hfs_readdir()
+Message-Id: <20120623091446.GA26923@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Miklos Szeredi <mszeredi@suse.cz>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is supposed to be a __be32 value.  Sparse complains a lot:
-
-fs/nfs/callback_xdr.c:699:30: warning: incorrect type in initializer (different base types)
-fs/nfs/callback_xdr.c:699:30:    expected unsigned int [unsigned] status
-fs/nfs/callback_xdr.c:699:30:    got restricted __be32 const [usertype] csr_status
-fs/nfs/callback_xdr.c:715:9: warning: cast to restricted __be32
-fs/nfs/callback_xdr.c:716:16: warning: incorrect type in return expression (different base types)
-fs/nfs/callback_xdr.c:716:16:    expected restricted __be32
-fs/nfs/callback_xdr.c:716:16:    got unsigned int [unsigned] status
+Smatch complains that this is copying stack data when then intent was
+to copy fd.key.  The way I have written it matches how hfsplus_readdir()
+is implemented.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I tried to test this, but to reach the memcpy() you would need to make
+one of the calls to filldir() fail and I don't know how to do that.  I
+think that in the original code this would cause a crash when we call
+hfs_find_exit()
 
-diff --git a/fs/nfs/callback_xdr.c b/fs/nfs/callback_xdr.c
-index 27c2969..e64b01d 100644
---- a/fs/nfs/callback_xdr.c
-+++ b/fs/nfs/callback_xdr.c
-@@ -696,7 +696,7 @@ static __be32 encode_cb_sequence_res(struct svc_rqst *rqstp,
- 				       const struct cb_sequenceres *res)
- {
- 	__be32 *p;
--	unsigned status = res->csr_status;
-+	__be32 status = res->csr_status;
- 
- 	if (unlikely(status != 0))
- 		goto out;
+diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+index 62fc14e..f637bd5 100644
+--- a/fs/hfs/dir.c
++++ b/fs/hfs/dir.c
+@@ -162,7 +162,7 @@ static int hfs_readdir(struct file *filp, void *dirent, filldir_t filldir)
+ 		rd->file = filp;
+ 		list_add(&rd->list, &HFS_I(inode)->open_dir_list);
+ 	}
+-	memcpy(&rd->key, &fd.key, sizeof(struct hfs_cat_key));
++	memcpy(&rd->key, fd.key, sizeof(struct hfs_cat_key));
+ out:
+ 	hfs_find_exit(&fd);
+ 	return err;
