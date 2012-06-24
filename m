@@ -1,50 +1,42 @@
-From: Josef Bacik <jbacik@fusionio.com>
-Date: Fri, 22 Jun 2012 13:32:38 +0000
-Subject: Re: [patch] Btrfs: dereferencing free'd memory in panic message
-Message-Id: <4FE473F6.5000109@fusionio.com>
+From: santosh nayak <santoshprasadnayak@gmail.com>
+Date: Sun, 24 Jun 2012 09:30:35 +0000
+Subject: [PATCH] vfs: Release semaphore before returning in lock_mount().
+Message-Id: <1340529515-23436-1-git-send-email-santoshprasadnayak@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120622071433.GA27618@elgon.mountain> <4FE46E70.8070702@fusionio.com> <20120622133015.GF5390@mwanda>
-In-Reply-To: <20120622133015.GF5390@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Chris L. Mason" <clmason@fusionio.com>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, Santosh Nayak <santoshprasadnayak@gmail.com>
 
-On 06/22/2012 09:30 AM, Dan Carpenter wrote:
-> On Fri, Jun 22, 2012 at 09:09:04AM -0400, Josef Bacik wrote:
->> On 06/22/2012 03:14 AM, Dan Carpenter wrote:
->>> We free "node" and then dereference it in the panic message on the next
->>> line.  I considered moving the kfree() after the panic given that panic
->>> can return under certain configurations, but in the end I decided it
->>> doesn't matter if we leak a bit after a panic.
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
->>> index 790f492..c50d80a 100644
->>> --- a/fs/btrfs/relocation.c
->>> +++ b/fs/btrfs/relocation.c
->>> @@ -1239,7 +1239,6 @@ static int __must_check __add_reloc_root(struct btrfs_root *root)
->>>   			      node->bytenr, &node->rb_node);
->>>   	spin_unlock(&rc->reloc_root_tree.lock);
->>>   	if (rb_node) {
->>> -		kfree(node);
->>>   		btrfs_panic(root->fs_info, -EEXIST, "Duplicate root found "
->>>   			    "for start=%llu while inserting into relocation "
->>>   			    "tree\n", node->bytenr);
->>
->> Except btrfs_panic can not panic the box if it's mounted to not
->> panic on errors, so we still need to do the kfree afterwards.
->> Thanks,
->
-> Right.  I mentioned that in my change log, but I figured a one time
-> memory leak was the least of our concerns in that case.  I will
-> resend.  This should probably return -EEXIST here as well yes?
->
+From: Santosh Nayak <santoshprasadnayak@gmail.com>
 
-Ah sorry I thought you were talking about BUG_ON() not actually stopping 
-the box in some cases.  But yes I'd like to not leak anyway and return 
--EEXIST.  Thanks,
+There is a missing "up_write()" here. Semaphore should be released
+before returning.
 
-Josef
+Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
+---
+Destination tree "linux-next"
+
+ fs/namespace.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 8f412ab..d5173df 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1473,8 +1473,10 @@ retry:
+ 	}
+ 	down_write(&namespace_sem);
+ 	mnt = lookup_mnt(path);
+-	if (likely(!mnt))
++	if (likely(!mnt)) {
++		up_write(&namespace_sem);
+ 		return 0;
++	}
+ 	up_write(&namespace_sem);
+ 	mutex_unlock(&path->dentry->d_inode->i_mutex);
+ 	path_put(path);
+-- 
+1.7.4.4
+
