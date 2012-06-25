@@ -1,46 +1,37 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Thu, 28 Jun 2012 22:24:29 +0000
-Subject: Re: [patch 1/3 v2] vfio: signedness bug in vfio_config_do_rw()
-Message-Id: <1340922269.3179.57.camel@ul30vt>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Jun 2012 11:15:23 +0000
+Subject: [patch v2] Btrfs: fix error handling in __add_reloc_root()
+Message-Id: <20120625111048.GA10393@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120628080725.GA22595@elgon.mountain>
-In-Reply-To: <20120628080725.GA22595@elgon.mountain>
+In-Reply-To: <4FE473F6.5000109@fusionio.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
+To: Chris Mason <chris.mason@fusionio.com>
+Cc: linux-btrfs@vger.kernel.org, Josef Bacik <jbacik@fusionio.com>, kernel-janitors@vger.kernel.org
 
-On Thu, 2012-06-28 at 11:07 +0300, Dan Carpenter wrote:
-> The "count" variable needs to be signed here because we use it to store
-> negative error codes.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Just declare count as signed.
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-> index a4f7321..2e00aa8 100644
-> --- a/drivers/vfio/pci/vfio_pci_config.c
-> +++ b/drivers/vfio/pci/vfio_pci_config.c
-> @@ -1419,7 +1419,7 @@ void vfio_config_free(struct vfio_pci_device *vdev)
->  }
->  
->  static ssize_t vfio_config_do_rw(struct vfio_pci_device *vdev, char __user *buf,
-> -				 size_t count, loff_t *ppos, bool iswrite)
-> +				 ssize_t count, loff_t *ppos, bool iswrite)
->  {
->  	struct pci_dev *pdev = vdev->pdev;
->  	struct perm_bits *perm;
+We dereferenced "node" in the error message after freeing it.  Also
+btrfs_panic() can return so we should return an error code instead of
+continuing.
 
-signed doesn't seem right for count since just below this chunk we do:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: in the first version I just deleted the kfree().
 
-        if (*ppos < 0 || *ppos + count > pdev->cfg_size)
-                return -EFAULT;
-
-So then we have to start testing for negative count.  I've added a
-ssize_t variable for return that should clear things up.  Thanks for the
-report!
-
-Alex
-
+diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
+index 790f492..4da0865 100644
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -1239,10 +1239,11 @@ static int __must_check __add_reloc_root(struct btrfs_root *root)
+ 			      node->bytenr, &node->rb_node);
+ 	spin_unlock(&rc->reloc_root_tree.lock);
+ 	if (rb_node) {
+-		kfree(node);
+ 		btrfs_panic(root->fs_info, -EEXIST, "Duplicate root found "
+ 			    "for start=%llu while inserting into relocation "
+ 			    "tree\n", node->bytenr);
++		kfree(node);
++		return -EEXIST;
+ 	}
+ 
+ 	list_add_tail(&root->root_list, &rc->reloc_roots);
