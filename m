@@ -1,37 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2012 09:04:29 +0000
-Subject: [patch 2/3 -resend] [SCSI] pmcraid: cpu_to_le32() => cpu_to_le64()
-Message-Id: <20120627090428.GK31212@elgon.mountain>
+Date: Tue, 26 Jun 2012 08:40:38 +0000
+Subject: [patch] [media] drxk: fix a '&' vs '|' bug
+Message-Id: <20120626084038.GB8946@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627085800.GA3007@mwanda>
-In-Reply-To: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20443.26804.127414.204912@morden.metzler>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Ravindranath <anil_ravindranath@pmc-sierra.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Oliver Endriss <o.endriss@gmx.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Ralph Metzler <rjkm@metzlerbros.de>
 
-The cpu_to_le32() truncates the address to 32 bits.  All the other
-places that set .address use cpu_to_le64().
+IQM_AF_CLKNEG_CLKNEGDATA__M is 0x2 and
+IQM_AF_CLKNEG_CLKNEGDATA_CLK_ADC_DATA_POS is 0.  (clkNeg | 0x2) is never
+equal to zero so the condition can never be true.
+
+I consulted with Ralph Metzler and the '|' should be changed to a '&'.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-What about if dma_addr_t is 32 bits on a big endian system?  Can that
-happen?
+CC: Ralph Metzler <rjkm@metzlerbros.de>
 
-This patch was originally sent on Fri, 16 Dec 2011 and I sent a second
-reminder on Mon, Apr 30, 2012.  I was silently ignored both times.
-
-diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-index d81a159..a38dade 100644
---- a/drivers/scsi/pmcraid.c
-+++ b/drivers/scsi/pmcraid.c
-@@ -1242,7 +1242,7 @@ static struct pmcraid_cmd *pmcraid_init_hcam
- 
- 	ioadl[0].flags |= IOADL_FLAGS_READ_LAST;
- 	ioadl[0].data_len = cpu_to_le32(rcb_size);
--	ioadl[0].address = cpu_to_le32(dma);
-+	ioadl[0].address = cpu_to_le64(dma);
- 
- 	cmd->cmd_done = cmd_done;
- 	return cmd;
+diff --git a/drivers/media/dvb/frontends/drxk_hard.c b/drivers/media/dvb/frontends/drxk_hard.c
+index 60b868f..7f6a7b5 100644
+--- a/drivers/media/dvb/frontends/drxk_hard.c
++++ b/drivers/media/dvb/frontends/drxk_hard.c
+@@ -2977,7 +2977,7 @@ static int ADCSynchronization(struct drxk_state *state)
+ 		status = read16(state, IQM_AF_CLKNEG__A, &clkNeg);
+ 		if (status < 0)
+ 			goto error;
+-		if ((clkNeg | IQM_AF_CLKNEG_CLKNEGDATA__M) =
++		if ((clkNeg & IQM_AF_CLKNEG_CLKNEGDATA__M) =
+ 			IQM_AF_CLKNEG_CLKNEGDATA_CLK_ADC_DATA_POS) {
+ 			clkNeg &= (~(IQM_AF_CLKNEG_CLKNEGDATA__M));
+ 			clkNeg |
