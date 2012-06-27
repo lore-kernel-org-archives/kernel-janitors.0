@@ -1,27 +1,43 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Mon, 11 Jun 2012 06:56:47 +0000
-Subject: Re: [patch v2] iwlwifi: turn on a lockdep assertion
-Message-Id: <1339397807.4520.1.camel@jlt3.sipsolutions.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2012 09:08:25 +0000
+Subject: [patch -resend] [SCSI] megaraid: cleanup type issue in mega_build_cmd()
+Message-Id: <20120627090824.GR31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120610112521.GA20676@elgon.mountain>
-	 (sfid-20120610_132551_124529_BB46BBBB)
-In-Reply-To: <20120610112521.GA20676@elgon.mountain> (sfid-20120610_132551_124529_BB46BBBB)
+References: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wey-Yi Guy <wey-yi.w.guy@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Neela Syam Kolli <megaraidlinux@lsi.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2012-06-10 at 14:25 +0300, Dan Carpenter wrote:
-> CMD_SYNC is zero so the if (cmd->flags & CMD_SYNC) is never true and we
-> never check the assertion.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: enables the assertion even more than v1 (based on feedback from
-> Johannes Berg).
+On 64 bit systems the current code sets 32 bits of "seg" and leaves the
+other 32 uninitialized.  It doesn't matter since the variable is never
+used.  But it's still messy and we should fix it.
 
-Thanks, I picked this up.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Originally sent on Fri, 2 Mar 2012.
 
-johannes
-
+diff --git a/drivers/scsi/megaraid.c b/drivers/scsi/megaraid.c
+index 4d39a9f..97825f1 100644
+--- a/drivers/scsi/megaraid.c
++++ b/drivers/scsi/megaraid.c
+@@ -524,7 +524,7 @@ mega_build_cmd(adapter_t *adapter, Scsi_Cmnd *cmd, int *busy)
+ 	mega_passthru	*pthru;
+ 	scb_t	*scb;
+ 	mbox_t	*mbox;
+-	long	seg;
++	u32	seg;
+ 	char	islogical;
+ 	int	max_ldrv_num;
+ 	int	channel = 0;
+@@ -858,7 +858,7 @@ mega_build_cmd(adapter_t *adapter, Scsi_Cmnd *cmd, int *busy)
+ 
+ 			/* Calculate Scatter-Gather info */
+ 			mbox->m_out.numsgelements = mega_build_sglist(adapter, scb,
+-					(u32 *)&mbox->m_out.xferaddr, (u32 *)&seg);
++					(u32 *)&mbox->m_out.xferaddr, &seg);
+ 
+ 			return scb;
+ 
