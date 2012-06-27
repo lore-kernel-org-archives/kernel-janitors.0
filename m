@@ -1,34 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 18 Jun 2012 07:48:14 +0000
-Subject: [patch] airo: copying wrong data in airo_get_aplist()
-Message-Id: <20120618074814.GA26251@elgon.mountain>
+Date: Wed, 27 Jun 2012 09:02:58 +0000
+Subject: [patch -resend] mmc: ushc: fix an endianness conversion in ushc_request()
+Message-Id: <20120627090258.GH31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>, Frank Seidel <frank@f-seidel.de>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-mmc@vger.kernel.org, David Vrabel <david.vrabel@csr.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"qual" used to be declared on the stack, but then in 998a5a7d6a ("airo:
-reduce stack memory footprint") we made it dynamically allocated.
-Unfortunately the memcpy() here was missed and it's still copying stack
-memory instead of the data that we want.  In other words, "&qual" should
-be "qual".
+The ->cmd_idx field is 8 bits, not 16 so the call to cpu_to_le16()
+will probably set cmd_idx to zero here on big endian systems.  My guess
+is that this works because it has been tested on little endian systems
+where the conversion to le16 is a nop.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't have a way to test this.
 
-diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
-index 252c2c2..f9f15bb 100644
---- a/drivers/net/wireless/airo.c
-+++ b/drivers/net/wireless/airo.c
-@@ -7233,8 +7233,8 @@ static int airo_get_aplist(struct net_device *dev,
- 		}
- 	} else {
- 		dwrq->flags = 1; /* Should be define'd */
--		memcpy(extra + sizeof(struct sockaddr)*i,
--		       &qual,  sizeof(struct iw_quality)*i);
-+		memcpy(extra + sizeof(struct sockaddr) * i, qual,
-+		       sizeof(struct iw_quality) * i);
- 	}
- 	dwrq->length = i;
+I have added a sentence to the changelog.  I have added David Vrabel to
+the CC list.  This was originally sent to the mailing list on Mon, 21
+Nov 2011 and there was no response.
+
+diff --git a/drivers/mmc/host/ushc.c b/drivers/mmc/host/ushc.c
+index c0105a2..25932f5 100644
+--- a/drivers/mmc/host/ushc.c
++++ b/drivers/mmc/host/ushc.c
+@@ -278,7 +278,7 @@ static void ushc_request(struct mmc_host *mmc, struct mmc_request *req)
+ 	ushc->current_req = req;
  
+ 	/* Start cmd with CBW. */
+-	ushc->cbw->cmd_idx = cpu_to_le16(req->cmd->opcode);
++	ushc->cbw->cmd_idx = req->cmd->opcode;
+ 	if (req->data)
+ 		ushc->cbw->block_size = cpu_to_le16(req->data->blksz);
+ 	else
