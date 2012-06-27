@@ -1,54 +1,57 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Mon, 18 Jun 2012 11:20:36 +0000
-Subject: Re: [patch] UBIFS: change | to & in assertion
-Message-Id: <1340018436.2420.30.camel@sauron.fi.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-fGpb/Sk/+dA+NFcp2DrS"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2012 09:10:56 +0000
+Subject: [patch -resend] leds-lp5523: BUG() in error handling in probe()
+Message-Id: <20120627091055.GW31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120609090823.GA877@elgon.mountain>
-In-Reply-To: <20120609090823.GA877@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@intel.com>
-
-
---=-fGpb/Sk/+dA+NFcp2DrS
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, 2012-06-09 at 12:08 +0300, Dan Carpenter wrote:
-> The asserts here never check anything because it uses '|' instead of
-> '&'.  Now if the flags are not set it prints a warning a a stack trace.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Pushed to linux-ubifs.git, thanks!
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-fGpb/Sk/+dA+NFcp2DrS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+In-Reply-To: <20120627085800.GA3007@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Bryan Wu <bryan.wu@canonical.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Inside the error handling in lp5523_init_led(), there is a place that
+calls to led_classdev_unregister().  When we unregister the LED drivers,
+it tries to set the brightness to OFF.  In this driver setting the
+brightness is done through a work queue and the work queue hasn't been
+initialized yet.
 
-iQIcBAABAgAGBQJP3w8EAAoJECmIfjd9wqK0FXYP/R4uMMdvhglAznQLefHiv96I
-YjAVJXKbMI8xeJlTSr7Si0ADkwVapEVRZpPWTy/DmKAIxOmP9KrqTQqc/szn2IZj
-KoVMgjxUYrP0An/UL2vyuba3qR3NAoLvwWQbTWDoUUg+umQrxqT9i2UNzKVENAmC
-3kaEsJwrn52nfPu3uO5g8U9Y67jmBrf5aVZVoKpDtqMf/edXSE9+MBo6ur0kolUs
-mZmk3r08k7v6fUF9685EnRRpixmkawSWAfrXEy8QC3GulLMS8MdcAHPkBMAoPiMY
-fK+zyX0laDmX5MQ5grCUXxgEG6mbTaujhTkQCeOBOaZf880bbtuxAkjpt+zR2zOp
-kRFM6iQat/1643PhsamFp2DJ+qIeNbtmJ01Vv1jMS36/4AsuekWt81OrtyKlq732
-NUWzp7Zq8Xr5zLEYr+TYBCnBdk6My6h94osZbjf4HZV0Me2HbLQC3hiqhwzVUvLU
-8b5COePaM4jbT5P3YAJ+A7azsIikKLdh83frTbMKE0Irhkc6z75b0lYC+vr7wvCP
-DsTK5s0U+qdiIVge8wXrPUQ7vYFJx7G8LIN/4Y1ZCRBhGR9DZbqNjHnXxca0Mh94
-6ner2bQAYNOuQcFksUTteENJXqKOXGDuufLwJF8i4lZ8fpaqJeF00/z2VMm5Jfrv
-NsnOBOryyB++svHH7A+Q
-=YMdv
------END PGP SIGNATURE-----
+The result is that we trigger a WARN_ON() in the __queue_work().
 
---=-fGpb/Sk/+dA+NFcp2DrS--
+The fix is to move the INIT_WORK() in front of the call to
+lp5523_init_led().
 
+Matt Renzelmann found this using a bug finding tool.
+
+Reported-by: Matt Renzelmann <mjr@cs.wisc.edu>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't have this hardware, so I can't test it.  I originally sent this
+on Fri, 13 Apr 2012, and that was before Bryan Wu took on the LED
+subsystem.  Also when I sent it, the WARN_ON() in __queue_work() was
+a BUG_ON() so I've updated the commit message.
+
+diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
+index 857a3e1..e8a2712 100644
+--- a/drivers/leds/leds-lp5523.c
++++ b/drivers/leds/leds-lp5523.c
+@@ -943,6 +943,9 @@ static int __devinit lp5523_probe(struct i2c_client *client,
+ 		if (pdata->led_config[i].led_current = 0)
+ 			continue;
+ 
++		INIT_WORK(&chip->leds[led].brightness_work,
++			lp5523_led_brightness_work);
++
+ 		ret = lp5523_init_led(&chip->leds[led], &client->dev, i, pdata);
+ 		if (ret) {
+ 			dev_err(&client->dev, "error initializing leds\n");
+@@ -956,9 +959,6 @@ static int __devinit lp5523_probe(struct i2c_client *client,
+ 			  LP5523_REG_LED_CURRENT_BASE + chip->leds[led].chan_nr,
+ 			  chip->leds[led].led_current);
+ 
+-		INIT_WORK(&(chip->leds[led].brightness_work),
+-			lp5523_led_brightness_work);
+-
+ 		led++;
+ 	}
+ 
