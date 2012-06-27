@@ -1,52 +1,33 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Date: Fri, 08 Jun 2012 07:24:12 +0000
-Subject: Re: [patch 2/2 -next] iio: frequency: adf4350: fix an initialization
-Message-Id: <4FD1A89C.3050607@analog.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2012 08:59:36 +0000
+Subject: [patch -resend] [SCSI] bfa: off by one in bfa_ioc_mbox_isr()
+Message-Id: <20120627085936.GA31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120608065537.GD26673@elgon.mountain>
-In-Reply-To: <20120608065537.GD26673@elgon.mountain>
+References: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jing Huang <huangj@brocade.com>
+Cc: Krishna C Gudipati <kgudipat@brocade.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 06/08/2012 08:55 AM, Dan Carpenter wrote:
-> Sparse complains about this:
-> drivers/iio/frequency/adf4350.c:58:29: warning: Initializer entry defined twice
-> drivers/iio/frequency/adf4350.c:59:10:   also defined here
->
-> It looks like '|' was intended here instead of ','.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
-> ---
-> Guess work on my part.
->
-> diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/adf4350.c
-> index 4729bba..59fbb3ae 100644
-> --- a/drivers/iio/frequency/adf4350.c
-> +++ b/drivers/iio/frequency/adf4350.c
-> @@ -54,7 +54,7 @@ struct adf4350_state {
->   static struct adf4350_platform_data default_pdata = {
->   	.clkin = 122880000,
->   	.channel_spacing = 10000,
-> -	.r2_user_settings = ADF4350_REG2_PD_POLARITY_POS,
-> +	.r2_user_settings = ADF4350_REG2_PD_POLARITY_POS |
->   			    ADF4350_REG2_CHARGE_PUMP_CURR_uA(2500),
->   	.r3_user_settings = ADF4350_REG3_12BIT_CLKDIV_MODE(0),
->   	.r4_user_settings = ADF4350_REG4_OUTPUT_PWR(3) |
->
+If mc = BFI_MC_MAX then we're reading past the end of the
+mod->mbhdlr[] array.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Originally sent on Wed, 6 Jul 2011.
 
--- 
-Greetings,
-Michael
-
---
-Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
-Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
-Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
-Margaret Seif
-
-
+diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
+index 14e6284..8cdb79c 100644
+--- a/drivers/scsi/bfa/bfa_ioc.c
++++ b/drivers/scsi/bfa/bfa_ioc.c
+@@ -2357,7 +2357,7 @@ bfa_ioc_mbox_isr(struct bfa_ioc_s *ioc)
+ 			return;
+ 		}
+ 
+-		if ((mc > BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
++		if ((mc >= BFI_MC_MAX) || (mod->mbhdlr[mc].cbfn = NULL))
+ 			return;
+ 
+ 		mod->mbhdlr[mc].cbfn(mod->mbhdlr[mc].cbarg, &m);
