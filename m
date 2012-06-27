@@ -1,63 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2012 09:09:18 +0000
-Subject: [patch 2/2 -resend] iommu/amd: fix type bug in flush code
-Message-Id: <20120627090918.GT31212@elgon.mountain>
+Date: Wed, 27 Jun 2012 09:04:29 +0000
+Subject: [patch 2/3 -resend] [SCSI] pmcraid: cpu_to_le32() => cpu_to_le64()
+Message-Id: <20120627090428.GK31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120627085800.GA3007@mwanda>
 In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anil Ravindranath <anil_ravindranath@pmc-sierra.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-write_file_bool() modifies 32 bits of data, so "amd_iommu_unmap_flush"
-needs to be 32 bits as well or we'll corrupt memory.  Fortunately it
-looks like the data is aligned with a gap after the declaration so this
-is harmless in production.
+The cpu_to_le32() truncates the address to 32 bits.  All the other
+places that set .address use cpu_to_le64().
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Originally sent on Fri, 2 Mar 2012.  This is the other patch where I
-guess I was supposed to modify debugfs_create_bool() to take bool
-pointers.
+What about if dma_addr_t is 32 bits on a big endian system?  Can that
+happen?
 
-diff --git a/drivers/iommu/amd_iommu_types.h b/drivers/iommu/amd_iommu_types.h
-index 2435555..c1b1d48 100644
---- a/drivers/iommu/amd_iommu_types.h
-+++ b/drivers/iommu/amd_iommu_types.h
-@@ -652,7 +652,7 @@ extern unsigned long *amd_iommu_pd_alloc_bitmap;
-  * If true, the addresses will be flushed on unmap time, not when
-  * they are reused
-  */
--extern bool amd_iommu_unmap_flush;
-+extern u32 amd_iommu_unmap_flush;
+This patch was originally sent on Fri, 16 Dec 2011 and I sent a second
+reminder on Mon, Apr 30, 2012.  I was silently ignored both times.
+
+diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+index d81a159..a38dade 100644
+--- a/drivers/scsi/pmcraid.c
++++ b/drivers/scsi/pmcraid.c
+@@ -1242,7 +1242,7 @@ static struct pmcraid_cmd *pmcraid_init_hcam
  
- /* Smallest number of PASIDs supported by any IOMMU in the system */
- extern u32 amd_iommu_max_pasids;
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 4127b56..92b9267 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -451,7 +451,7 @@ static void amd_iommu_stats_init(void)
- 		return;
+ 	ioadl[0].flags |= IOADL_FLAGS_READ_LAST;
+ 	ioadl[0].data_len = cpu_to_le32(rcb_size);
+-	ioadl[0].address = cpu_to_le32(dma);
++	ioadl[0].address = cpu_to_le64(dma);
  
- 	de_fflush  = debugfs_create_bool("fullflush", 0444, stats_dir,
--					 (u32 *)&amd_iommu_unmap_flush);
-+					 &amd_iommu_unmap_flush);
- 
- 	amd_iommu_stats_add(&compl_wait);
- 	amd_iommu_stats_add(&cnt_map_single);
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index c04ddca..a33612f 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -129,7 +129,7 @@ u16 amd_iommu_last_bdf;			/* largest PCI device id we have
- 					   to handle */
- LIST_HEAD(amd_iommu_unity_map);		/* a list of required unity mappings
- 					   we find in ACPI */
--bool amd_iommu_unmap_flush;		/* if true, flush on every unmap */
-+u32 amd_iommu_unmap_flush;		/* if true, flush on every unmap */
- 
- LIST_HEAD(amd_iommu_list);		/* list of all AMD IOMMUs in the
- 					   system */
+ 	cmd->cmd_done = cmd_done;
+ 	return cmd;
