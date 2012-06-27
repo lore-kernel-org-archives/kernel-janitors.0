@@ -1,45 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 09 Jun 2012 09:10:19 +0000
-Subject: [patch] [SCSI] arcmsr: fix misuse of | instead of &
-Message-Id: <20120609091018.GC877@elgon.mountain>
+Date: Wed, 27 Jun 2012 09:04:52 +0000
+Subject: [patch 3/3 -resend] [SCSI] pmcraid: find_first_zero_bit() takes bits not bytes
+Message-Id: <20120627090452.GL31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: David Howells <dhowells@redhat.com>, Nick Cheng <nick.cheng@areca.com.tw>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anil Ravindranath <anil_ravindranath@pmc-sierra.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-ARCMSR_ARC1880_DiagWrite_ENABLE is 0x00000080 so (x | 0x00000080) is
-never zero.  The intent here was to test that loop until
-ARCMSR_ARC1880_DiagWrite_ENABLE was turned on, but because the test was
-wrong, we would do five loops regardless of whether it succeed or not.
-
-Also I simplified the condition a little by removing the unused
-assignement.
+The find_first_zero_bit() function takes the size in bits not bytes.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Static checker stuff.  I do not own this hardware.
+This patch was originally sent on Wed, 2 May 2012.
 
-diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-index cbde1dc..def24a1 100644
---- a/drivers/scsi/arcmsr/arcmsr_hba.c
-+++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-@@ -2821,7 +2821,7 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
- 	int i, count = 0;
- 	struct MessageUnit_A __iomem *pmuA = acb->pmuA;
- 	struct MessageUnit_C __iomem *pmuC = acb->pmuC;
--	u32 temp = 0;
-+
- 	/* backup pci config data */
- 	printk(KERN_NOTICE "arcmsr%d: executing hw bus reset .....\n", acb->host->host_no);
- 	for (i = 0; i < 64; i++) {
-@@ -2839,7 +2839,7 @@ static void arcmsr_hardware_reset(struct AdapterControlBlock *acb)
- 			writel(0x2, &pmuC->write_sequence);
- 			writel(0x7, &pmuC->write_sequence);
- 			writel(0xD, &pmuC->write_sequence);
--		} while ((((temp = readl(&pmuC->host_diagnostic)) | ARCMSR_ARC1880_DiagWrite_ENABLE) = 0) && (count < 5));
-+		} while (((readl(&pmuC->host_diagnostic) & ARCMSR_ARC1880_DiagWrite_ENABLE) = 0) && (count < 5));
- 		writel(ARCMSR_ARC1880_RESET_ADAPTER, &pmuC->host_diagnostic);
- 	} else {
- 		pci_write_config_byte(acb->pdev, 0x84, 0x20);
+diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+index a38dade..719619a 100644
+--- a/drivers/scsi/pmcraid.c
++++ b/drivers/scsi/pmcraid.c
+@@ -5376,7 +5376,7 @@ static unsigned short pmcraid_get_minor(void)
+ {
+ 	int minor;
+ 
+-	minor = find_first_zero_bit(pmcraid_minor, sizeof(pmcraid_minor));
++	minor = find_first_zero_bit(pmcraid_minor, PMCRAID_MAX_ADAPTERS);
+ 	__set_bit(minor, pmcraid_minor);
+ 	return minor;
+ }
