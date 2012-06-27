@@ -1,75 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 06 Jun 2012 21:41:34 +0000
-Subject: [PATCH 0/7] adjust suspicious bit operation
-Message-Id: <1339018901-28439-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2012 09:01:18 +0000
+Subject: [patch 2/2 -resend] SCSI: advansys: use a subsystem error code
+Message-Id: <20120627090118.GE31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These patches relate to conditional tests where & is used with a constant
-that is always 0 and where | is used with a constant that is always 0 or
-always non-zero.
+This was supposed to be a subsystem specific error code.  It makes
+static checkers complain because "warn_code" is unsigned short so it
+can't store negatives.
 
-The following semantic match finds these problems
-(http://coccinelle.lip6.fr/):
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Originally sent on Tue, 20 Sep 2011.
 
-@and@
-identifier i;
-expression e;
-position p;
-@@
-
- ((e & i@p) && ...)
-
-@iszera@
-identifier and.i;
-position p;
-@@
-
-#define i 0
-
-@othera@
-identifier and.i;
-expression e!=0;
-@@
-
-#define i e
-
-@script:python depends on iszera && !othera@
-p << and.p;
-@@
-
-cocci.print_main("",p)
-
-@or@
-identifier i;
-expression e;
-position p;
-@@
-
- ((e | i@p) && ...)
-
-
-@iszero@
-identifier or.i;
-position p;
-@@
-
-#define i 0
-
-@othero@
-identifier or.i;
-expression e!=0;
-@@
-
-#define i e
-
-@script:python depends on (othero && !iszero) || (iszero && !othero)@
-p << or.p;
-@@
-
-cocci.print_main("",p)
-
+diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+index b2c3a1a..4212586 100644
+--- a/drivers/scsi/advansys.c
++++ b/drivers/scsi/advansys.c
+@@ -4724,7 +4724,7 @@ static ushort AscInitMicroCodeVar(ASC_DVC_VAR *asc_dvc)
+ 	asc_dvc->overrun_dma = dma_map_single(board->dev, asc_dvc->overrun_buf,
+ 					ASC_OVERRUN_BSIZE, DMA_FROM_DEVICE);
+ 	if (dma_mapping_error(board->dev, asc_dvc->overrun_dma)) {
+-		warn_code = -ENOMEM;
++		warn_code = UW_ERR;
+ 		goto err_dma_map;
+ 	}
+ 	phy_addr = cpu_to_le32(asc_dvc->overrun_dma);
