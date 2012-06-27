@@ -1,29 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 12 Jun 2012 22:52:18 +0000
-Subject: Re: [PATCH 1/7] drivers/ide/ide-cs.c: adjust suspicious bit operation
-Message-Id: <20120612.155218.1712141231523216893.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2012 09:08:55 +0000
+Subject: [patch 1/2 -resend] dma-debug: debugfs_create_bool() takes a u32 pointer
+Message-Id: <20120627090854.GS31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1206080712510.1793@hadrien>
-	<20120611.164316.2252454788889367611.davem@davemloft.net>
-	<alpine.DEB.2.02.1206121016090.1795@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1206121016090.1795@hadrien>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Neil Horman <nhorman@tuxdriver.com>, Jakub Kicinski <kubakici@wp.pl>, Alan Stern <stern@rowland.harvard.edu>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 12 Jun 2012 10:17:25 -0400 (EDT)
+Even though it has "bool" in the name, you have pass a u32 pointer to
+debugfs_create_bool().  Otherwise you get memory corruption in
+write_file_bool().  Fortunately in this case the corruption happens in
+an alignment hole between variables so it doesn't cause any problems.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> IO_DATA_PATH_WIDTH_8 is 0, so a bit-and with it is always false.  The
-> value IO_DATA_PATH_WIDTH covers the bits of the IO_DATA_PATH constants, so
-> first pick those bits and then make the test using !=.
-> 
-> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This was sent on Fri, 2 Mar 2012.
 
-Applied, thanks.
+It's probably my fault the bug is still there.  I submitted the patch
+but the feed back was that debugfs_create_bool() has a stupid API and
+should take a pointer to a bool.  I said that yes, probably that is true
+but only two places use the current API incorrectly and I fixed the
+other place as well.
+
+I assumed that both my patches would be merged and the person who cared
+about API would fix the API but neither of my fixes were applied.
+
+diff --git a/lib/dma-debug.c b/lib/dma-debug.c
+index 518aea7..66ce414 100644
+--- a/lib/dma-debug.c
++++ b/lib/dma-debug.c
+@@ -78,7 +78,7 @@ static LIST_HEAD(free_entries);
+ static DEFINE_SPINLOCK(free_entries_lock);
+ 
+ /* Global disable flag - will be set in case of an error */
+-static bool global_disable __read_mostly;
++static u32 global_disable __read_mostly;
+ 
+ /* Global error count */
+ static u32 error_count;
+@@ -657,7 +657,7 @@ static int dma_debug_fs_init(void)
+ 
+ 	global_disable_dent = debugfs_create_bool("disabled", 0444,
+ 			dma_debug_dent,
+-			(u32 *)&global_disable);
++			&global_disable);
+ 	if (!global_disable_dent)
+ 		goto out_err;
+ 
