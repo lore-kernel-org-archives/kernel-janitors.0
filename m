@@ -1,62 +1,35 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Date: Fri, 08 Jun 2012 07:24:01 +0000
-Subject: Re: [patch 1/2 -next] iio: frequency: adf4350: using an uninitialized variable
-Message-Id: <4FD1A891.3090508@analog.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2012 09:00:30 +0000
+Subject: [patch -resend] [SCSI] megaraid: remove a spurious IRQ enable
+Message-Id: <20120627090030.GC31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120608065432.GC26673@elgon.mountain>
-In-Reply-To: <20120608065432.GC26673@elgon.mountain>
+References: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Neela Syam Kolli <megaraidlinux@lsi.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-On 06/08/2012 08:54 AM, Dan Carpenter wrote:
-> GCC complains that we use an uninitialized variable if the user passes
-> an invalid parameter to adf4350_read().  I decided that we should return
-> -EINVAL instead in that case.
->
-> However, when I looked up at adf4350_write() it returned -ENODEV for
-> that condition.  In the end, I decided the -EINVAL was the right thing
-> and I change adf4350_write() to match.
-Agreed.
->
-> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
->
-> diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/adf4350.c
-> index fd4c850..4729bba 100644
-> --- a/drivers/iio/frequency/adf4350.c
-> +++ b/drivers/iio/frequency/adf4350.c
-> @@ -272,7 +272,7 @@ static ssize_t adf4350_write(struct iio_dev *indio_dev,
->   		adf4350_sync_config(st);
->   		break;
->   	default:
-> -		ret = -ENODEV;
-> +		ret = -EINVAL;
->   	}
->   	mutex_unlock(&indio_dev->mlock);
->
-> @@ -310,6 +310,8 @@ static ssize_t adf4350_read(struct iio_dev *indio_dev,
->   	case ADF4350_PWRDOWN:
->   		val = !!(st->regs[ADF4350_REG2]&  ADF4350_REG2_POWER_DOWN_EN);
->   		break;
-> +	default:
-> +		ret = -EINVAL;
->   	}
->   	mutex_unlock(&indio_dev->mlock);
->
->
+We took this lock with spin_lock() so we should unlock it with
+spin_unlock() instead of spin_unlock_irq().  This was introduced in
+f2c8dc402b "[SCSI] megaraid_mbox: remove scsi_assign_lock usage".
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This was originally sent on Sat, 30 Jul 2011.  I have cleaned up the
+commit message a bit and added Christoph to the CC list.
 
--- 
-Greetings,
-Michael
-
---
-Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
-Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
-Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
-Margaret Seif
-
-
+diff --git a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
+index 35bd138..54b1c5b 100644
+--- a/drivers/scsi/megaraid/megaraid_mbox.c
++++ b/drivers/scsi/megaraid/megaraid_mbox.c
+@@ -2731,7 +2731,7 @@ megaraid_reset_handler(struct scsi_cmnd *scp)
+ 	}
+ 
+  out:
+-	spin_unlock_irq(&adapter->lock);
++	spin_unlock(&adapter->lock);
+ 	return rval;
+ }
+ 
