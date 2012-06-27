@@ -1,51 +1,47 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 19 Jun 2012 13:33:16 +0000
-Subject: Re: [patch -next] libceph: fix NULL dereference in reset_connection()
-Message-Id: <20120619133316.GR4400@mwanda>
+Date: Wed, 27 Jun 2012 09:05:21 +0000
+Subject: [patch -resend] [SCSI] isci: add a couple __iomem annotations
+Message-Id: <20120627090521.GM31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120619103339.GB7596@elgon.mountain>
- <4FE07E37.7000203@inktank.com>
-In-Reply-To: <4FE07E37.7000203@inktank.com>
+References: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Elder <elder@inktank.com>
-Cc: Sage Weil <sage@newdream.net>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Intel SCU Linux support <intel-linux-scu@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ed Nadolski <edmund.nadolski@intel.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jun 19, 2012 at 08:27:19AM -0500, Alex Elder wrote:
-> On 06/19/2012 05:33 AM, Dan Carpenter wrote:
-> > We dereference "con->in_msg" on the line after it was set to NULL.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Yikes.
-> 
-> Actually I think I prefer a different fix, which is
-> simply to call ceph_con_put(con) in the same spot
-> it was called with con->in_msg->con before.  I'd
-> rather drop the message reference before dropping
-> the connection reference.  I.e.:
-> 
-> @@ -440,7 +440,7 @@ static void reset_connection(struct ceph_connection
-> *con)
->  		con->in_msg->con = NULL;
->  		ceph_msg_put(con->in_msg);
->  		con->in_msg = NULL;
-> -		ceph_con_put(con->in_msg->con);
-> +		ceph_con_put(con);
->  	}
-> 
->  	con->connect_seq = 0;
-> 
-> (I crafted that manually--it may not work...)
-> 
-> I will re-post that fix and will credit you with it.  Please acknowledge
-> it's OK with you though.  Thanks a lot.
-> 
+These are __iomem.  Sparse complains if we don't have that.
 
-Yep.  We already know that con->in_msg->con and con are the same
-from the BUG_ON() so this works.  Thanks.
+drivers/scsi/isci/phy.c +149 70: warning:
+        incorrect type in initializer (different address spaces)
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Sent on Wed, 18 Jan 2012.
 
+diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
+index bc8981e..4a095f3 100644
+--- a/drivers/scsi/isci/host.c
++++ b/drivers/scsi/isci/host.c
+@@ -1973,7 +1973,7 @@ static void sci_controller_afe_initialization(struct isci_host *ihost)
+ 	}
+ 
+ 	for (phy_id = 0; phy_id < SCI_MAX_PHYS; phy_id++) {
+-		struct scu_afe_transceiver *xcvr = &afe->scu_afe_xcvr[phy_id];
++		struct scu_afe_transceiver __iomem *xcvr = &afe->scu_afe_xcvr[phy_id];
+ 		const struct sci_phy_oem_params *oem_phy = &oem->phys[phy_id];
+ 		int cable_length_long  			is_long_cable(phy_id, cable_selection_mask);
+diff --git a/drivers/scsi/isci/phy.c b/drivers/scsi/isci/phy.c
+index 18f43d4..7b60353 100644
+--- a/drivers/scsi/isci/phy.c
++++ b/drivers/scsi/isci/phy.c
+@@ -169,7 +169,7 @@ sci_phy_link_layer_initialization(struct isci_phy *iphy,
+ 	phy_cap.gen1_no_ssc = 1;
+ 	if (ihost->oem_parameters.controller.do_enable_ssc) {
+ 		struct scu_afe_registers __iomem *afe = &ihost->scu_registers->afe;
+-		struct scu_afe_transceiver *xcvr = &afe->scu_afe_xcvr[phy_idx];
++		struct scu_afe_transceiver __iomem *xcvr = &afe->scu_afe_xcvr[phy_idx];
+ 		struct isci_pci_info *pci_info = to_pci_info(ihost->pdev);
+ 		bool en_sas = false;
+ 		bool en_sata = false;
