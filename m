@@ -1,15 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2012 08:59:58 +0000
-Subject: [patch -resend] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
-Message-Id: <20120627085958.GB31212@elgon.mountain>
+From: Krishna Gudipati <kgudipat@Brocade.com>
+Date: Wed, 27 Jun 2012 17:45:31 +0000
+Subject: RE: [patch -resend] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
+Message-Id: <B5EE62D80D50B84BB9E5174F7FCCE80A28396BCE91@HQ1-EXCH02.corp.brocade.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120627085800.GA3007@mwanda>
-In-Reply-To: <20120627085800.GA3007@mwanda>
+ <20120627085958.GB31212@elgon.mountain>
+In-Reply-To: <20120627085958.GB31212@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jing Huang <huangj@brocade.com>
-Cc: Krishna C Gudipati <kgudipat@brocade.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: 'Dan Carpenter' <dan.carpenter@oracle.com>, Jing Huang <huangj@Brocade.COM>
+Cc: "'James E.J. Bottomley'" <JBottomley@parallels.com>, "'linux-scsi@vger.kernel.org'" <linux-scsi@vger.kernel.org>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'kernel-janitors@vger.kernel.org'" <kernel-janitors@vger.kernel.org>
+
+
+
+-----Original Message-----
+From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
+Sent: Wednesday, June 27, 2012 2:00 AM
+To: Jing Huang
+Cc: Krishna Gudipati; James E.J. Bottomley; linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: [patch -resend] [SCSI] bfa: dereferencing freed memory in bfad_im_probe()
 
 If bfad_thread_workq(bfad) was not BFA_STATUS_OK then we freed "im"
 and then dereferenced it.
@@ -57,3 +67,10 @@ index 1ac09af..2eebf8d 100644
  }
  
  void
+
+-----
+
+Thanks for the patch.
+
+Acked-by: Krishna Gudipati <kgudipat@brocade.com>
+
