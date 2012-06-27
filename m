@@ -1,37 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2012 09:02:15 +0000
-Subject: [patch -resend] spi/spidev: handle integer wrap in spidev_message()
-Message-Id: <20120627090215.GG31212@elgon.mountain>
+Date: Wed, 27 Jun 2012 09:10:06 +0000
+Subject: [patch -resend] isci: make function declaration match implementation
+Message-Id: <20120627091005.GU31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120627085800.GA3007@mwanda>
 In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: spi-devel-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Intel SCU Linux support <intel-linux-scu@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ed Nadolski <edmund.nadolski@intel.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"k_tmp->len" and "total" are unsigned integers.  The first message
-could be close to "bufsiz" (4096) and then the next message could be
-4GB which would cause an integer overflow.
+Sparse complains that we redeclare this with a different type, because
+in the .c file we use an enum and in the .h file we declare the
+parameter as a u32.  Probably it's best to use an enum in both places.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-I don't have a way to test this.  I originally sent this message on Tue,
-18 Oct 2011.  I'm not totally sure what the implications are but it
-seemed like there might be security implications.  I honestly don't
-know.  I never received any feedback on the patch.
+I originally sent this on Tue, 27 Mar 2012, and Emil Goode sent the same
+patch on Fri, May 4, 2012.  Both were silently ignored.
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 830adbe..aab05e1 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -241,7 +241,7 @@ static int spidev_message(struct spidev_data *spidev,
- 		k_tmp->len = u_tmp->len;
- 
- 		total += k_tmp->len;
--		if (total > bufsiz) {
-+		if (total > bufsiz || total < k_tmp->len) {
- 			status = -EMSGSIZE;
- 			goto done;
- 		}
+diff --git a/drivers/scsi/isci/remote_node_context.h b/drivers/scsi/isci/remote_node_context.h
+index a703b9c..c7ee81d 100644
+--- a/drivers/scsi/isci/remote_node_context.h
++++ b/drivers/scsi/isci/remote_node_context.h
+@@ -212,7 +212,7 @@ enum sci_status sci_remote_node_context_destruct(struct sci_remote_node_context
+ 						      scics_sds_remote_node_context_callback callback,
+ 						      void *callback_parameter);
+ enum sci_status sci_remote_node_context_suspend(struct sci_remote_node_context *sci_rnc,
+-						     u32 suspend_type,
++						     enum sci_remote_node_suspension_reasons reason,
+ 						     u32 suspension_code);
+ enum sci_status sci_remote_node_context_resume(struct sci_remote_node_context *sci_rnc,
+ 						    scics_sds_remote_node_context_callback cb_fn,
