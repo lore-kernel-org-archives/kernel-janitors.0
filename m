@@ -1,40 +1,37 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Date: Thu, 28 Jun 2012 22:25:21 +0000
-Subject: Re: [patch 3/3] vfio: return -EFAULT on failure
-Message-Id: <1340922321.3179.59.camel@ul30vt>
+From: Robin Holt <holt@sgi.com>
+Date: Wed, 27 Jun 2012 13:51:55 +0000
+Subject: [patch] sgi-xp: nested calls to spin_lock_irqsave()
+Message-Id: <20120627135155.GA3464@sgi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120628064524.GC11107@elgon.mountain>
-In-Reply-To: <20120628064524.GC11107@elgon.mountain>
+References: <20111215064805.GA2776@elgon.mountain>
+In-Reply-To: <20111215064805.GA2776@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Robin Holt <holt@sgi.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jack Steiner <steiner@sgi.com>
 
-On Thu, 2012-06-28 at 09:45 +0300, Dan Carpenter wrote:
-> This ioctl function is supposed to return a negative error code or zero
-> on success.  copy_to_user() returns zero or the number of bytes
-> remaining to be copied.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-> index 457acf3..1aa373f 100644
-> --- a/drivers/vfio/vfio.c
-> +++ b/drivers/vfio/vfio.c
-> @@ -1159,6 +1159,8 @@ static long vfio_group_fops_unl_ioctl(struct file *filep,
->  			status.flags |= VFIO_GROUP_FLAGS_CONTAINER_SET;
->  
->  		ret = copy_to_user((void __user *)arg, &status, minsz);
-> +		if (ret)
-> +			ret = -EFAULT;
->  
->  		break;
->  	}
 
-Yes, thank you!  I've folded all of these into the commits on my next
-branch, so they should be cleaned up in tomorrow's tree.  Thanks for the
-reports, please let me know if you find more.
+The code here has a nested spin_lock_irqsave().  It's not needed since
+IRQs are already disabled and it causes a problem because it means that
+IRQs won't be enabled again at the end.  The second call to
+spin_lock_irqsave() will overwrite the value of irq_flags and we can't
+restore the proper settings.
 
-Alex
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Robin Holt <holt@sgi.com>
 
+diff --git a/drivers/misc/sgi-xp/xpc_uv.c b/drivers/misc/sgi-xp/xpc_uv.c
+index 17bbacb..87b251a 100644
+--- a/drivers/misc/sgi-xp/xpc_uv.c
++++ b/drivers/misc/sgi-xp/xpc_uv.c
+@@ -452,9 +452,9 @@ xpc_handle_activate_mq_msg_uv(struct xpc_partition *part,
+ 
+ 		if (msg->activate_gru_mq_desc_gpa ! 		    part_uv->activate_gru_mq_desc_gpa) {
+-			spin_lock_irqsave(&part_uv->flags_lock, irq_flags);
++			spin_lock(&part_uv->flags_lock);
+ 			part_uv->flags &= ~XPC_P_CACHED_ACTIVATE_GRU_MQ_DESC_UV;
+-			spin_unlock_irqrestore(&part_uv->flags_lock, irq_flags);
++			spin_unlock(&part_uv->flags_lock);
+ 			part_uv->activate_gru_mq_desc_gpa  			    msg->activate_gru_mq_desc_gpa;
+ 		}
