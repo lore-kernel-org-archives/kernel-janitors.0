@@ -1,39 +1,37 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Fri, 08 Jun 2012 17:38:50 +0000
-Subject: [PATCH] drm: Remove duplicate assignment
-Message-Id: <1339177130-677-1-git-send-email-emilgoode@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Jun 2012 09:02:15 +0000
+Subject: [patch -resend] spi/spidev: handle integer wrap in spidev_message()
+Message-Id: <20120627090215.GG31212@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120627085800.GA3007@mwanda>
+In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: spi-devel-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Lets remove the double assignment of the
-function pointer disable.
+"k_tmp->len" and "total" are unsigned integers.  The first message
+could be close to "bufsiz" (4096) and then the next message could be
+4GB which would cause an integer overflow.
 
-Sparse gives a warning:
-drivers/gpu/drm/ast/ast_mode.c:583:10: warning:
-	Initializer entry defined twice
-	drivers/gpu/drm/ast/ast_mode.c:585:10:
-	also defined here
-
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/gpu/drm/ast/ast_mode.c |    1 -
- 1 file changed, 1 deletion(-)
+I don't have a way to test this.  I originally sent this message on Tue,
+18 Oct 2011.  I'm not totally sure what the implications are but it
+seemed like there might be security implications.  I honestly don't
+know.  I never received any feedback on the patch.
 
-diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
-index 65f9d23..967c6cf 100644
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -580,7 +580,6 @@ static const struct drm_crtc_helper_funcs ast_crtc_helper_funcs = {
- 	.mode_fixup = ast_crtc_mode_fixup,
- 	.mode_set = ast_crtc_mode_set,
- 	.mode_set_base = ast_crtc_mode_set_base,
--	.disable = ast_crtc_disable,
- 	.load_lut = ast_crtc_load_lut,
- 	.disable = ast_crtc_disable,
- 	.prepare = ast_crtc_prepare,
--- 
-1.7.10
-
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index 830adbe..aab05e1 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -241,7 +241,7 @@ static int spidev_message(struct spidev_data *spidev,
+ 		k_tmp->len = u_tmp->len;
+ 
+ 		total += k_tmp->len;
+-		if (total > bufsiz) {
++		if (total > bufsiz || total < k_tmp->len) {
+ 			status = -EMSGSIZE;
+ 			goto done;
+ 		}
