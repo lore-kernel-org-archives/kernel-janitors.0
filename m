@@ -1,39 +1,32 @@
-From: Ralph Metzler <rjkm@metzlerbros.de>
-Date: Fri, 15 Jun 2012 16:55:09 +0000
-Subject: Re: [patch RFC] [media] staging: solo6x10: fix | vs &
-Message-Id: <20443.26861.684841.155578@morden.metzler>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Jun 2012 06:45:26 +0000
+Subject: [patch 3/3] vfio: return -EFAULT on failure
+Message-Id: <20120628064524.GC11107@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120609074732.GA30709@elgon.mountain>
-	<20120610205804.GG13539@mwanda>
-In-Reply-To: <20120610205804.GG13539@mwanda>
+References: <1340686552.1207.128.camel@bling.home>
+In-Reply-To: <1340686552.1207.128.camel@bling.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ben Collins <bcollins@bluecherry.net>, Mauro Carvalho Chehab <mchehab@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter writes:
- > On Sat, Jun 09, 2012 at 10:47:32AM +0300, Dan Carpenter wrote:
- > > The test here is never true because '&' was used instead of '|'.  It was
- > > the same as:
- > > 
- > > 	if (status & ((1<<16) & (1<<17)) ...
- > > 
- > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
- > > ---
- > > I don't have this hardware and this one really should be tested or
- > > checked by someone who knows the spec.  It could be that the intent was
- > > to do:
- > > 
- > > 	if ((status & SOLO_IIC_STATE_TRNS) &&
- > > 	    (status & SOLO_IIC_STATE_SIG_ERR) || ...
- > > 
- > 
- > It should be this, yes?  For other similar mistakes it was meant to
- > be this way.
+This ioctl function is supposed to return a negative error code or zero
+on success.  copy_to_user() returns zero or the number of bytes
+remaining to be copied.
 
-Yes, looks ok.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Regards,
-Ralph
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index 457acf3..1aa373f 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -1159,6 +1159,8 @@ static long vfio_group_fops_unl_ioctl(struct file *filep,
+ 			status.flags |= VFIO_GROUP_FLAGS_CONTAINER_SET;
+ 
+ 		ret = copy_to_user((void __user *)arg, &status, minsz);
++		if (ret)
++			ret = -EFAULT;
+ 
+ 		break;
+ 	}
