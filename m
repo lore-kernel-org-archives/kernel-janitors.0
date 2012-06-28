@@ -1,44 +1,33 @@
-From: Nikolaus Schulz <mail@microschulz.de>
-Date: Sat, 23 Jun 2012 18:32:35 +0000
-Subject: Re: [PATCH] dvb-core: Release semaphore on error path dvb_register_device().
-Message-Id: <20120623183235.GA16700@zorro.zusammrottung.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 28 Jun 2012 08:07:25 +0000
+Subject: [patch 1/3 v2] vfio: signedness bug in vfio_config_do_rw()
+Message-Id: <20120628080725.GA22595@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1340452794-8117-1-git-send-email-santoshprasadnayak@gmail.com>
-In-Reply-To: <1340452794-8117-1-git-send-email-santoshprasadnayak@gmail.com>
+References: <4FEC0480.7010508@bfs.de>
+In-Reply-To: <4FEC0480.7010508@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: santosh nayak <santoshprasadnayak@gmail.com>
-Cc: mchehab@infradead.org, linux-media@vger.kernel.org, viro@zeniv.linux.org.uk, kernel-janitors@vger.kernel.org, stable@vger.kernel.org
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
 
-CC'ing stable@kernel.org, this bugfix applies to all kernels >> 2.6.28.
+The "count" variable needs to be signed here because we use it to store
+negative error codes.
 
-The patch should also be tagged accordingly.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Just declare count as signed.
 
-On Sat, Jun 23, 2012 at 05:29:54PM +0530, santosh nayak wrote:
-> From: Santosh Nayak <santoshprasadnayak@gmail.com>
-> 
-> There is a missing "up_write()" here. Semaphore should be released
-> before returning error value.
-> 
-> Signed-off-by: Santosh Nayak <santoshprasadnayak@gmail.com>
-> ---
-> Destination tree "linux-next"
-> 
->  drivers/media/dvb/dvb-core/dvbdev.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/media/dvb/dvb-core/dvbdev.c b/drivers/media/dvb/dvb-core/dvbdev.c
-> index 00a6732..39eab73 100644
-> --- a/drivers/media/dvb/dvb-core/dvbdev.c
-> +++ b/drivers/media/dvb/dvb-core/dvbdev.c
-> @@ -243,6 +243,7 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
->  	if (minor = MAX_DVB_MINORS) {
->  		kfree(dvbdevfops);
->  		kfree(dvbdev);
-> +		up_write(&minor_rwsem);
->  		mutex_unlock(&dvbdev_register_lock);
->  		return -EINVAL;
->  	}
-> -- 
-> 1.7.4.4
+diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+index a4f7321..2e00aa8 100644
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -1419,7 +1419,7 @@ void vfio_config_free(struct vfio_pci_device *vdev)
+ }
+ 
+ static ssize_t vfio_config_do_rw(struct vfio_pci_device *vdev, char __user *buf,
+-				 size_t count, loff_t *ppos, bool iswrite)
++				 ssize_t count, loff_t *ppos, bool iswrite)
+ {
+ 	struct pci_dev *pdev = vdev->pdev;
+ 	struct perm_bits *perm;
