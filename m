@@ -1,34 +1,31 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Thu, 28 Jun 2012 22:03:42 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 29 Jun 2012 06:44:32 +0000
 Subject: Re: [patch] sgi-xp: nested calls to spin_lock_irqsave()
-Message-Id: <20120628150342.aaa4ad2d.akpm@linux-foundation.org>
+Message-Id: <20120629064432.GM3007@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120627135155.GA3464@sgi.com>
-In-Reply-To: <20120627135155.GA3464@sgi.com>
+ <20120628150342.aaa4ad2d.akpm@linux-foundation.org>
+In-Reply-To: <20120628150342.aaa4ad2d.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Robin Holt <holt@sgi.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jack Steiner <steiner@sgi.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Robin Holt <holt@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jack Steiner <steiner@sgi.com>
 
-On Wed, 27 Jun 2012 08:51:55 -0500
-Robin Holt <holt@sgi.com> wrote:
+This is actually my patch, so the patch description is my fault.
+It's a static checker patch and I don't have the hardware, but the
+changelog could have been written more clearly as well.
 
-> The code here has a nested spin_lock_irqsave().  It's not needed since
-> IRQs are already disabled and it causes a problem because it means that
-> IRQs won't be enabled again at the end.  The second call to
-> spin_lock_irqsave() will overwrite the value of irq_flags and we can't
-> restore the proper settings.
+Robin, the trick to resending patches is to put a:
 
-Please find large crayon and write on forehead "when fixing a bug,
-be sure to describe the end-user impact of that bug".
+From:  Dan Carpenter <dan.carpenter@oracle.com>
 
-Then others will have a chance of deciding whether the fix should be
-backported.
+before the patch description and then it shows up as mine.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Robin Holt <holt@sgi.com>
+Also, btw, Robin, I'm looking through my mailbox again and you did
+respond to the patch the first time I sent it.  Sorry, that I didn't
+see that before, and thanks for your help on this.
 
-I'm wondering if there should have been a Reported-by:dan in there. 
-He's like that.
+regards,
+dan carpenter
 
