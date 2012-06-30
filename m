@@ -1,53 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 09 Jun 2012 17:05:16 +0000
-Subject: [patch] Staging: rtl8187se, rtl8192e: fix '&' vs '|' bugs
-Message-Id: <20120609170516.GE6488@elgon.mountain>
+Date: Sat, 30 Jun 2012 11:48:53 +0000
+Subject: [patch -next] netfilter: use kfree_skb() not kfree()
+Message-Id: <20120630114853.GA22767@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Bart De Schuymer <bart.de.schuymer@pandora.be>
+Cc: coreteam@netfilter.org, netdev@vger.kernel.org, bridge@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netfilter@vger.kernel.org, netfilter-devel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>, Pablo Neira Ayuso <pablo@netfilter.org>
 
-The original code is equivalent to:
-
-	wrqu->retry.flags = 0x1000 & 0x0002;
-
-so it just sets .flags to zero.  We should be ORing the values together
-like r8192_wx_get_retry() does in drivers/staging/rtl8192u/r8192U_wx.c.
+This was should be a kfree_skb() here to free the sk_buff pointer.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-index 778d7ba..6202358 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-@@ -919,10 +919,10 @@ static int r8192_wx_get_retry(struct net_device *dev,
- 		return -EINVAL;
- 
- 	if (wrqu->retry.flags & IW_RETRY_MAX) {
--		wrqu->retry.flags = IW_RETRY_LIMIT & IW_RETRY_MAX;
-+		wrqu->retry.flags = IW_RETRY_LIMIT | IW_RETRY_MAX;
- 		wrqu->retry.value = priv->retry_rts;
- 	} else {
--		wrqu->retry.flags = IW_RETRY_LIMIT & IW_RETRY_MIN;
-+		wrqu->retry.flags = IW_RETRY_LIMIT | IW_RETRY_MIN;
- 		wrqu->retry.value = priv->retry_data;
+diff --git a/net/bridge/netfilter/ebt_ulog.c b/net/bridge/netfilter/ebt_ulog.c
+index 1bd1732..dfbb019 100644
+--- a/net/bridge/netfilter/ebt_ulog.c
++++ b/net/bridge/netfilter/ebt_ulog.c
+@@ -156,7 +156,7 @@ static void ebt_ulog_packet(unsigned int hooknr, const struct sk_buff *skb,
+ 	nlh = nlmsg_put(ub->skb, 0, ub->qlen, 0,
+ 			size - NLMSG_ALIGN(sizeof(*nlh)), 0);
+ 	if (!nlh) {
+-		kfree(ub->skb);
++		kfree_skb(ub->skb);
+ 		ub->skb = NULL;
+ 		goto unlock;
  	}
- 	return 0;
-diff --git a/drivers/staging/rtl8187se/r8180_wx.c b/drivers/staging/rtl8187se/r8180_wx.c
-index 46ee6f4..52f63d7 100644
---- a/drivers/staging/rtl8187se/r8180_wx.c
-+++ b/drivers/staging/rtl8187se/r8180_wx.c
-@@ -615,10 +615,10 @@ static int r8180_wx_get_retry(struct net_device *dev,
- 		return -EINVAL;
- 
- 	if (wrqu->retry.flags & IW_RETRY_MAX) {
--		wrqu->retry.flags = IW_RETRY_LIMIT & IW_RETRY_MAX;
-+		wrqu->retry.flags = IW_RETRY_LIMIT | IW_RETRY_MAX;
- 		wrqu->retry.value = priv->retry_rts;
- 	} else {
--		wrqu->retry.flags = IW_RETRY_LIMIT & IW_RETRY_MIN;
-+		wrqu->retry.flags = IW_RETRY_LIMIT | IW_RETRY_MIN;
- 		wrqu->retry.value = priv->retry_data;
- 	}
- 
