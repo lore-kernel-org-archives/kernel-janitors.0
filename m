@@ -1,39 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Jun 2012 09:02:58 +0000
-Subject: [patch -resend] mmc: ushc: fix an endianness conversion in ushc_request()
-Message-Id: <20120627090258.GH31212@elgon.mountain>
+Date: Sat, 30 Jun 2012 12:07:55 +0000
+Subject: [patch] wlcore: fix a couple small memory leaks
+Message-Id: <20120630120755.GC22767@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120627085800.GA3007@mwanda>
-In-Reply-To: <20120627085800.GA3007@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Ball <cjb@laptop.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-mmc@vger.kernel.org, David Vrabel <david.vrabel@csr.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Luciano Coelho <coelho@ti.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Arik Nemtsov <arik@wizery.com>, Eliad Peller <eliad@wizery.com>, Ido Yariv <ido@wizery.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The ->cmd_idx field is 8 bits, not 16 so the call to cpu_to_le16()
-will probably set cmd_idx to zero here on big endian systems.  My guess
-is that this works because it has been tested on little endian systems
-where the conversion to le16 is a nop.
+We should free "chunk" here before returning the error code.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I don't have a way to test this.
 
-I have added a sentence to the changelog.  I have added David Vrabel to
-the CC list.  This was originally sent to the mailing list on Mon, 21
-Nov 2011 and there was no response.
-
-diff --git a/drivers/mmc/host/ushc.c b/drivers/mmc/host/ushc.c
-index c0105a2..25932f5 100644
---- a/drivers/mmc/host/ushc.c
-+++ b/drivers/mmc/host/ushc.c
-@@ -278,7 +278,7 @@ static void ushc_request(struct mmc_host *mmc, struct mmc_request *req)
- 	ushc->current_req = req;
+diff --git a/drivers/net/wireless/ti/wlcore/boot.c b/drivers/net/wireless/ti/wlcore/boot.c
+index 8965960..48b2fee 100644
+--- a/drivers/net/wireless/ti/wlcore/boot.c
++++ b/drivers/net/wireless/ti/wlcore/boot.c
+@@ -141,7 +141,7 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
+ 	partition.mem.start = dest;
+ 	ret = wlcore_set_partition(wl, &partition);
+ 	if (ret < 0)
+-		return ret;
++		goto out;
  
- 	/* Start cmd with CBW. */
--	ushc->cbw->cmd_idx = cpu_to_le16(req->cmd->opcode);
-+	ushc->cbw->cmd_idx = req->cmd->opcode;
- 	if (req->data)
- 		ushc->cbw->block_size = cpu_to_le16(req->data->blksz);
- 	else
+ 	/* 10.1 set partition limit and chunk num */
+ 	chunk_num = 0;
+@@ -157,7 +157,7 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
+ 			partition.mem.start = addr;
+ 			ret = wlcore_set_partition(wl, &partition);
+ 			if (ret < 0)
+-				return ret;
++				goto out;
+ 		}
+ 
+ 		/* 10.3 upload the chunk */
