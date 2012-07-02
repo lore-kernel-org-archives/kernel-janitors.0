@@ -1,26 +1,41 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jul 2012 15:47:58 +0000
-Subject: Re: [net-next:master 90/102] net/ipv4/route.c:1283:9: warning: unused variable 'saddr'
-Message-Id: <20120712154758.GF6056@mwanda>
+Date: Mon, 02 Jul 2012 12:45:51 +0000
+Subject: Re: automated warning notifications
+Message-Id: <20120702124551.GD4519@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120712143449.GA19890@localhost>
- <20120712.074058.753681400854318989.davem@davemloft.net>
-In-Reply-To: <20120712.074058.753681400854318989.davem@davemloft.net>
+References: <20120614172523.GB4400@mwanda>
+ <20120615014835.GA5695@localhost>
+In-Reply-To: <20120615014835.GA5695@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: fengguang.wu@intel.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: Fengguang Wu <wfg@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 12, 2012 at 07:40:58AM -0700, David Miller wrote:
+On Fri, Jun 15, 2012 at 09:48:35AM +0800, Fengguang Wu wrote:
+> Hi Dan,
 > 
-> There's not need to report these to kernel-janitors if it's a
-> net-next specific issue and I'm going to fix it up 5 minutes
-> after you report it.
+> On Thu, Jun 14, 2012 at 08:25:23PM +0300, Dan Carpenter wrote:
+> > Hi Fengguang,
+> > 
+> > I also check new static checker warnings and sometimes email people.
+> 
+> That would be nice!
+> 
+> > I wonder if we are duplicating each others work.  For example, did
+> > you send an email asking about the following Sparse warning:
+> > 
+> > sound/soc/codecs/ab8500-codec.c:1959:53: warning: cast truncates bits from constant value (1013 becomes 13)
+> 
+> I did try sending out sparse warnings to people, some time ago...
 
-The kernel-janitors list is CC'd to prevent people from sending
-duplicate messages.  This has happened in the past and it's
-annoying for everyone.
+Apparently you have started up again?  We're starting to trod on
+each other's toes and people are getting annoyed with me because I
+am reporting them after you...  :/
+
+Randy has suggested that we send these automated messages to
+kernel-janitors.  I don't know how the other people on kernel
+janitors feel about this but I would be fine with it.
 
 regards,
 dan carpenter
