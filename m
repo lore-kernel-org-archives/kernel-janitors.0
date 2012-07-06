@@ -1,39 +1,38 @@
-From: Fengguang Wu <wfg@linux.intel.com>
-Date: Wed, 11 Jul 2012 09:44:50 +0000
-Subject: Re: [net-next:master 73/84] net/ipv4/tcp_metrics.c:252:3: error: implicit declaration of function 'i
-Message-Id: <20120711094450.GA24721@localhost>
+From: wfg@linux.intel.com
+Date: Fri, 06 Jul 2012 17:52:21 +0000
+Subject: [tip:perf/core 86/90] arch/x86/kernel/cpu/perf_event.h:377:43: sparse: dubious one-bit signed bitfie
+Message-Id: <20120706175221.GA22130@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120711091233.GA24436@localhost>
- <20120711.023939.1269322960321058056.davem@davemloft.net>
-In-Reply-To: <20120711.023939.1269322960321058056.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 11, 2012 at 02:39:39AM -0700, David Miller wrote:
-> From: wfg@linux.intel.com
-> Date: Wed, 11 Jul 2012 17:12:33 +0800
-> 
-> > net/ipv4/tcp_metrics.c: In function '__tcp_get_metrics_tw':
-> > net/ipv4/tcp_metrics.c:252:3: error: implicit declaration of function 'inet6_twsk' [-Werror=implicit-function-declaration]
-> > net/ipv4/tcp_metrics.c:252:7: warning: assignment makes pointer from integer without a cast [enabled by default]
-> > net/ipv4/tcp_metrics.c:253:41: error: dereferencing pointer to incomplete type
-> 
-> Fixed as follows:
-> 
-> ==========
-> ipv6: Move ipv6 twsk accessors outside of CONFIG_IPV6 ifdefs.
-> 
-> Fixes build when ipv6 is disabled.
-> 
-> Reported-by: Fengguang Wu <wfg@linux.intel.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> ---
->  include/linux/ipv6.h |   32 ++++++++++++++++----------------
->  1 file changed, 16 insertions(+), 16 deletions(-)
+Hi Peter,
 
-It worked, thanks!
+Should we make the bits "unsigned"?
 
-Fengguang
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+head:   6a67943a18c264d5f3df436da38edb3e59adc905
+commit: 3e0091e2b6f8cd59e567f247e345a3a6ad1f6e7e [86/90] perf/x86: Save a few bytes in 'struct x86_pmu'
+
+All sparse warnings:
+
++ arch/x86/kernel/cpu/perf_event.h:377:43: sparse: dubious one-bit signed bitfield
+  arch/x86/kernel/cpu/perf_event.h:378:43: sparse: dubious one-bit signed bitfield
+  arch/x86/kernel/cpu/perf_event.h:379:43: sparse: dubious one-bit signed bitfield
+  arch/x86/kernel/cpu/perf_event.h:380:43: sparse: dubious one-bit signed bitfield
+  arch/x86/kernel/cpu/perf_event.h:381:43: sparse: dubious one-bit signed bitfield
+
+vim +377 arch/x86/kernel/cpu/perf_event.h
+   374		/*
+   375		 * Intel DebugStore bits
+   376		 */
+ > 377		int		bts		:1,
+   378				bts_active	:1,
+   379				pebs		:1,
+   380				pebs_active	:1,
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
