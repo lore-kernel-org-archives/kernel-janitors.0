@@ -1,30 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Jul 2012 07:10:19 +0000
-Subject: [patch] USB: legousbtower.c: remove a bogus NULL check
-Message-Id: <20120720071018.GE11710@elgon.mountain>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 07 Jul 2012 18:44:49 +0000
+Subject: [PATCH] CSR: fix function declaration warnings
+Message-Id: <1341686689-21721-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-"udev" can't be NULL here.  The debugging printk() makes static checkers
-complain when we dereference it later in the function inside the call to
-usb_rcvctrlpipe().
+Sparse is warning about non-ANSI function declaration.
+Add void to the parameterless function.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/staging/csr/csr_wifi_hip_chiphelper.c:633:31: warning:
+	non-ANSI function declaration of function 'ChipHelper_Null'
 
-diff --git a/drivers/usb/misc/legousbtower.c b/drivers/usb/misc/legousbtower.c
-index a2702cb..8089479 100644
---- a/drivers/usb/misc/legousbtower.c
-+++ b/drivers/usb/misc/legousbtower.c
-@@ -868,9 +868,6 @@ static int tower_probe (struct usb_interface *interface, const struct usb_device
+I also fixed this checkpatch error:
+ERROR: "foo* bar" should be "foo *bar"
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/staging/csr/csr_wifi_hip_chiphelper.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/csr/csr_wifi_hip_chiphelper.c b/drivers/staging/csr/csr_wifi_hip_chiphelper.c
+index 0e2477f..5e9851c 100644
+--- a/drivers/staging/csr/csr_wifi_hip_chiphelper.c
++++ b/drivers/staging/csr/csr_wifi_hip_chiphelper.c
+@@ -630,7 +630,7 @@ ChipDescript* ChipHelper_GetVersionUniFi(CsrUint16 ver)
+ }
  
- 	dbg(2, "%s: enter", __func__);
  
--	if (udev = NULL)
--		dev_info(&interface->dev, "udev is NULL.\n");
--
- 	/* allocate memory for our device state and initialize it */
- 
- 	dev = kmalloc (sizeof(struct lego_usb_tower), GFP_KERNEL);
+-ChipDescript* ChipHelper_Null()
++ChipDescript *ChipHelper_Null(void)
+ {
+     return &chip_device_desc_null;
+ }
+-- 
+1.7.10.4
+
