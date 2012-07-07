@@ -1,59 +1,30 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Wed, 18 Jul 2012 13:07:28 +0000
-Subject: Re: [Cocci] [PATCH] scripts/coccinelle/iterators/use_after_iter.cocci: list iterator variable
-Message-Id: <1342616848.7530.23.camel@brekeke>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-iWCVwA4z65xfCXzlq9in"
+From: wfg@linux.intel.com
+Date: Sat, 07 Jul 2012 13:26:27 +0000
+Subject: [staging:staging-next 54/100] WARNING: drivers/iio/dac/ad5064.o(.init.text+0x72): Section mismatch i
+Message-Id: <20120707132627.GA23706@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341866451-24290-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341866451-24290-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Michal Marek <mmarek@suse.cz>, Gilles Muller <Gilles.Muller@lip6.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@diku.dk
-
-
---=-iWCVwA4z65xfCXzlq9in
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2012-07-09 at 22:40 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> If list_for_each_entry, etc complete a traversal of the list, the iterato=
-r
-> variable ends up pointing to an address at an offset from the list head,
-> and not a meaningful structure.  Thus this value should not be used after
-> the end of the iterator.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Acked-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-iWCVwA4z65xfCXzlq9in
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Hi Lars-Peter,
 
-iQIcBAABAgAGBQJQBrUQAAoJECmIfjd9wqK0rDIQAL/c5EvRvD3F11Gx7YaD1PQD
-Q7gGO3A2XNP69M0MWajTK6IdLBAvnEmyDAWFmx3op2ZgOz1AHLmH9Y8drALSFbxk
-O26+2SHvZExB4+sxH+R3KDIoCt7mFothm8dcWWnrgLR/juY7togpGqYo/nQsr4gc
-okhLbEhsKLRV0sSByZsK7HM5QNVwYAW4EpDNwYQyfYY7KgJZprmS8o0XCx4r6Zys
-L/UWovihNKMZSgH6nCc/1n4ya5KuxdV20Ihh3udha6MrrNiYuievIW8pr/i1lrRk
-LzFTs5dhf5NhlHYfikC3xLJbmo0Y8ov2LxtfTF94rAq0Eh201rDhQol7eA4WnsGv
-XFXRk8bWs42EXgjRlCxL7j781Jm3A+H+Xu9WG2jBqCgToWE7I7rvg8R7F+Ze6ryJ
-goTBaPxOsBBPYBDe943sFrlxr7oz+bNh/9pGUQ4JYEBqffQTl1/Ug8hw7IP+HTfp
-Dr5wkCW5EgiKEDZdQ55/iFaEQ2WiXBR17jZwncjPvWA3qoM24RWWnloXWp97llpd
-mcmbaxU+z+XH64qDfe7R1gDJVzGBgsXR4klgHuJRYkpUgZN9FegRtiiuAHkydKqV
-j698+Pj4hHmPakaXFnpoGnFeFsMpmOIK3yT4cVv8OeN9TA4QntcPxY4IiwUFK7+p
-NA8DhaHI2k5h8xmuvggP
-=m5Sg
------END PGP SIGNATURE-----
+There are new compile warnings show up in
 
---=-iWCVwA4z65xfCXzlq9in--
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+head:   0932966b1ca03217c6e0c18375867b1a99ee5af0
+commit: 6a17a0768f77626046aa441843b318a00bac3800 [54/100] iio:dac:ad5064: Add support for the ad5629r and ad5669r
 
+All warnings:
+
+WARNING: drivers/iio/dac/ad5064.o(.init.text+0x72): Section mismatch in reference from the function init_module() to the function .exit.text:ad5064_spi_unregister_driver()
+The function __init init_module() references
+a function __exit ad5064_spi_unregister_driver().
+This is often seen when error handling in the init function
+uses functionality in the exit path.
+The fix is often to remove the __exit annotation of
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
