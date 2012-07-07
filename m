@@ -1,66 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Jul 2012 16:43:02 +0000
-Subject: [PATCH 0/6] ensure a consistent return value in error case
-Message-Id: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 07 Jul 2012 18:53:25 +0000
+Subject: [PATCH] lirc: fix non-ANSI function declaration warning
+Message-Id: <1341687205-21963-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: jarod@wilsonet.com, mchehab@infradead.org, gregkh@linuxfoundation.org, rusty@rustcorp.com.au, davej@redhat.com
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-Typically, the return value desired for the failure of a function with an
-integer return value is a negative integer.  In these cases, the return
-value is sometimes a negative integer and sometimes 0, due to a subsequent
-initialization of the return variable within the loop.
+Sparse is warning about non-ANSI function declaration.
+Add void to the parameterless function.
 
-The semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
+drivers/staging/media/lirc/lirc_bt829.c:174:22: warning:
+	non-ANSI function declaration of function 'poll_main'
 
-//<smpl>
-@r exists@
-identifier ret;
-position p;
-constant C;
-expression e1,e2,e3,e4;
-@@
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/staging/media/lirc/lirc_bt829.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ret = -C
-... when != ret = e1
-    when != ret += e1
-    when any
-if@p (...)
-{
-  ... when != ret = e2
-      when != ret + e2
-  return ret;
-}
-... when any
-if (\(ret != 0\|ret < 0\|ret > 0\) || ...)
-{
-  ...
-  return ...;
-}
-... when != ret = e3
-    when != ret += e3
-    when any
-if@p (...)
-{
-  ... when != ret = e4
-      when != ret += e4
-  return ret;
-}
-
-@@
-identifier r.ret;
-position r.p;
-statement S;
-@@
-
-(
-if@p (<+...ret...+>) S
-|
-*if@p (...) S
-)
-//</smpl>
+diff --git a/drivers/staging/media/lirc/lirc_bt829.c b/drivers/staging/media/lirc/lirc_bt829.c
+index 4d20e9f..951007a 100644
+--- a/drivers/staging/media/lirc/lirc_bt829.c
++++ b/drivers/staging/media/lirc/lirc_bt829.c
+@@ -171,7 +171,7 @@ static void cycle_delay(int cycle)
+ }
+ 
+ 
+-static int poll_main()
++static int poll_main(void)
+ {
+ 	unsigned char status_high, status_low;
+ 
+-- 
+1.7.10.4
 
