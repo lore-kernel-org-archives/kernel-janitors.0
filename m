@@ -1,34 +1,45 @@
-From: Avi Kivity <avi@redhat.com>
-Date: Wed, 18 Jul 2012 08:51:18 +0000
-Subject: Re: [kvm:auto-next 47/61] (.init.rodata+0x830): undefined reference to `x86_hyper_kvm'
-Message-Id: <50067906.7050807@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 11:37:43 +0000
+Subject: [PATCH 6/7] drivers/net/ethernet/broadcom/cnic.c: remove invalid reference to list iterator variable
+Message-Id: <1341747464-1772-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120717175252.GB5545@localhost>
-In-Reply-To: <20120717175252.GB5545@localhost>
+References: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/17/2012 08:52 PM, Fengguang Wu wrote:
-> Hi Prarit,
-> 
-> Kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/virt/kvm/kvm.git auto-next
-> head:   e08b6fd502fcf6f4a03ca56983f97edb6ea6fef8
-> commit: fc73373b33f5f965f2f82bfbc40ef8e6072e986d [47/61] KVM: Add x86_hyper_kvm to complete detect_hypervisor_platform check
-> config: x86_64-allyesdebian (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> arch/x86/built-in.o: In function `interrupt':
-> (.init.rodata+0x830): undefined reference to `x86_hyper_kvm'
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I just saw buildbot complaining about the same thing, and posted a patch.
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.  There does not seem to be a meaningful value to
+provide to netdev_warn.  Replace with pr_warn, since pr_err is used
+elsewhere.
 
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
 
--- 
-error compiling committee.c: too many arguments to function
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/net/ethernet/broadcom/cnic.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/broadcom/cnic.c b/drivers/net/ethernet/broadcom/cnic.c
+index 22ad7b6..6eaca60 100644
+--- a/drivers/net/ethernet/broadcom/cnic.c
++++ b/drivers/net/ethernet/broadcom/cnic.c
+@@ -542,7 +542,8 @@ int cnic_unregister_driver(int ulp_type)
+ 	}
+ 
+ 	if (atomic_read(&ulp_ops->ref_count) != 0)
+-		netdev_warn(dev->netdev, "Failed waiting for ref count to go to zero\n");
++		pr_warn("%s: Failed waiting for ref count to go to zero\n",
++			__func__);
+ 	return 0;
+ 
+ out_unlock:
 
