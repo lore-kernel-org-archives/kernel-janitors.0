@@ -1,55 +1,43 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 29 Jul 2012 14:39:42 +0000
-Subject: Re: [PATCH] netfilter: PTR_RET can be used
-Message-Id: <50154B2E.2090900@bfs.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 11:37:39 +0000
+Subject: [PATCH 2/7] net/rxrpc/ar-peer.c: remove invalid reference to list iterator variable
+Message-Id: <1341747464-1772-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120729004550.GA7049@localhost>
-In-Reply-To: <20120729004550.GA7049@localhost>
+References: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.  This seems to be a copy-paste bug from a previous
+debugging message, and so the meaningless value is just deleted.
 
-Am 29.07.2012 14:14, schrieb Fengguang Wu:
->>> --- linux.orig/net/bridge/netfilter/ebtable_filter.c	2012-07-29 08:41:09.703759534 +0800
->>> +++ linux/net/bridge/netfilter/ebtable_filter.c	2012-07-29 08:41:14.255759643 +0800
->>> @@ -100,9 +100,7 @@ static struct nf_hook_ops ebt_ops_filter
->>>  static int __net_init frame_filter_net_init(struct net *net)
->>>  {
->>>  	net->xt.frame_filter = ebt_register_table(net, &frame_filter);
->>> -	if (IS_ERR(net->xt.frame_filter))
->>> -		return PTR_ERR(net->xt.frame_filter);
->>> -	return 0;
->>> +	return PTR_RET(net->xt.frame_filter);
->>>  }
->>>  
->>
->> i do not understand this,
->> ebt_register_table() return (struct ebt_table *) on success
->>
->> Does PTR_RET really return 0 if this is a propper pointer ?
-> 
-> Right. Here is how PTR_RET defined. This patch does not change any behavior.
-> 
-> static inline int __must_check PTR_RET(const void *ptr)
-> {      
->         if (IS_ERR(ptr))
->                 return PTR_ERR(ptr);
->         else   
->                 return 0;
-> }
-> 
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-ok, my brain mixed it with  PTR_ERR(), leading to the question.
+---
+ net/rxrpc/ar-peer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-re,
- wh
+diff --git a/net/rxrpc/ar-peer.c b/net/rxrpc/ar-peer.c
+index 2754f09..bebaa43 100644
+--- a/net/rxrpc/ar-peer.c
++++ b/net/rxrpc/ar-peer.c
+@@ -229,7 +229,7 @@ found_UDP_peer:
+ 	return peer;
+ 
+ new_UDP_peer:
+-	_net("Rx UDP DGRAM from NEW peer %d", peer->debug_id);
++	_net("Rx UDP DGRAM from NEW peer");
+ 	read_unlock_bh(&rxrpc_peer_lock);
+ 	_leave(" = -EBUSY [new]");
+ 	return ERR_PTR(-EBUSY);
 
-
-> Thanks,
-> Fengguang
-> 
-> 
