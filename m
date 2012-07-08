@@ -1,37 +1,65 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 11 Jul 2012 06:35:08 +0000
-Subject: [patch] tracing: check for allocation failure
-Message-Id: <20120711063507.GF11812@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 21:13:42 +0000
+Subject: [PATCH 2/3] drivers/gpu/drm/gma500/oaktrail_crtc.c: remove invalid reference to list iterator variab
+Message-Id: <1341782023-23868-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1341782023-23868-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1341782023-23868-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Clean up and return -ENOMEM on if the kzalloc() fails.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 814ff30..a120f98 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2390,6 +2390,9 @@ __tracing_open(struct inode *inode, struct file *file)
+A break is added after the switch; the break in the switch would jump out
+of the switch, but not out of the complete iteration.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier c;
+expression E;
+iterator name list_for_each_entry;
+statement S;
+@@
+
+list_for_each_entry(c,...) { ... when != break;
+                                 when forall
+                                 when strict
+}
+...
+(
+c = E
+|
+*c
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Paul Menzel <paulepanter@users.sourceforge.net>
+
+---
+ drivers/gpu/drm/gma500/oaktrail_crtc.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+index f821c83..4b2172e 100644
+--- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
++++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+@@ -329,6 +329,7 @@ static int oaktrail_crtc_mode_set(struct drm_crtc *crtc,
+ 			is_mipi = true;
+ 			break;
+ 		}
++		break;
+ 	}
  
- 	iter->buffer_iter = kzalloc(sizeof(*iter->buffer_iter) * num_possible_cpus(),
- 				    GFP_KERNEL);
-+	if (!iter->buffer_iter)
-+		goto release;
-+
- 	/*
- 	 * We make a copy of the current tracer to avoid concurrent
- 	 * changes on it while we are reading.
-@@ -2451,6 +2454,7 @@ __tracing_open(struct inode *inode, struct file *file)
- 	mutex_unlock(&trace_types_lock);
- 	kfree(iter->trace);
- 	kfree(iter->buffer_iter);
-+release:
- 	seq_release_private(inode, file);
- 	return ERR_PTR(-ENOMEM);
- }
+ 	/* Disable the VGA plane that we never use */
