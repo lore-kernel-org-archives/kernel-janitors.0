@@ -1,24 +1,63 @@
-From: David Howells <dhowells@redhat.com>
-Date: Fri, 20 Jul 2012 15:08:25 +0000
-Subject: Re: [modsign:devel-x509 19/19] gcc: error: security/keys/crypto/x509-asn1.c: No such file or directo
-Message-Id: <1956.1342796905@warthog.procyon.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 13:19:42 +0000
+Subject: [PATCH] fs/ubifs/orphan.c: remove invalid reference to list iterator variable
+Message-Id: <1341753582-3943-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7577.1342794487@warthog.procyon.org.uk>
-In-Reply-To: <7577.1342794487@warthog.procyon.org.uk>
+References: <1341753582-3943-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1341753582-3943-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org
 
-Fengguang Wu <fengguang.wu@intel.com> wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> > I can't reproduce this.  The lib/build_OID_registry error is particularly
-> > odd as the patches are clearly adding and modifying it.  Are you building
-> > into a separate directory to the source tree?
-> 
-> I just reproduced it.  Yes I used KBUILD_OUTPUT.
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.  Replace a field access from orphan by NULL.
 
-Should be sorted now.  The Make experience is such fun... especially when
-enhanced by the kernel's kbuild system.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-David
+// <smpl>
+@@
+identifier c;
+expression E;
+iterator name list_for_each_entry;
+statement S;
+@@
+
+list_for_each_entry(c,...) { ... when != break;
+                                 when forall
+                                 when strict
+}
+...
+(
+c = E
+|
+*c
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ fs/ubifs/orphan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ubifs/orphan.c b/fs/ubifs/orphan.c
+index b02734d..4b7860a 100644
+--- a/fs/ubifs/orphan.c
++++ b/fs/ubifs/orphan.c
+@@ -176,7 +176,7 @@ int ubifs_orphan_start_commit(struct ubifs_info *c)
+ 		*last = orphan;
+ 		last = &orphan->cnext;
+ 	}
+-	*last = orphan->cnext;
++	*last = NULL;
+ 	c->cmt_orphans = c->new_orphans;
+ 	c->new_orphans = 0;
+ 	dbg_cmt("%d orphans to commit", c->cmt_orphans);
+
