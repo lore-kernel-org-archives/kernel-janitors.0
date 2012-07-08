@@ -1,31 +1,131 @@
-From: Brian King <brking@linux.vnet.ibm.com>
-Date: Mon, 30 Jul 2012 12:34:05 +0000
-Subject: Re: [patch 2/2] [SCSI] ipr: remove an unneeded check
-Message-Id: <50167F3D.801@linux.vnet.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 13:19:41 +0000
+Subject: [PATCH] remove invalid reference to list iterator variable
+Message-Id: <1341753582-3943-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120730081822.GF15702@elgon.mountain>
-In-Reply-To: <20120730081822.GF15702@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Brian King <brking@us.ibm.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org
 
-On 07/30/2012 03:18 AM, Dan Carpenter wrote:
-> "rc" is always zero here, so there is no need to check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.
 
-Thanks!
+The complete semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
 
-Acked-by: Brian King <brking@linux.vnet.ibm.com>
+@@
+identifier c,member;
+expression E,x;
+iterator name list_for_each_entry;
+iterator name list_for_each_entry_reverse;
+iterator name list_for_each_entry_continue;
+iterator name list_for_each_entry_continue_reverse;
+iterator name list_for_each_entry_from;
+iterator name list_for_each_entry_safe;
+iterator name list_for_each_entry_safe_continue;
+iterator name list_for_each_entry_safe_from;
+iterator name list_for_each_entry_safe_reverse;
+iterator name hlist_for_each_entry;
+iterator name hlist_for_each_entry_continue;
+iterator name hlist_for_each_entry_from;
+iterator name hlist_for_each_entry_safe;
+statement S;
+@@
 
-
--- 
-Brian King
-Power Linux I/O
-IBM Linux Technology Center
-
-
-
+(
+list_for_each_entry(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_reverse(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_continue(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_continue_reverse(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_from(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_safe(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_safe_continue(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_safe_from(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_safe_reverse(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+)
+...
+(
+list_for_each_entry(c,...) S
+|
+list_for_each_entry_reverse(c,...) S
+|
+list_for_each_entry_continue(c,...) S
+|
+list_for_each_entry_continue_reverse(c,...) S
+|
+list_for_each_entry_from(c,...) S
+|
+list_for_each_entry_safe(c,...) S
+|
+list_for_each_entry_safe(x,c,...) S
+|
+list_for_each_entry_safe_continue(c,...) S
+|
+list_for_each_entry_safe_continue(x,c,...) S
+|
+list_for_each_entry_safe_from(c,...) S
+|
+list_for_each_entry_safe_from(x,c,...) S
+|
+list_for_each_entry_safe_reverse(c,...) S
+|
+list_for_each_entry_safe_reverse(x,c,...) S
+|
+hlist_for_each_entry(c,...) S
+|
+hlist_for_each_entry_continue(c,...) S
+|
+hlist_for_each_entry_from(c,...) S
+|
+hlist_for_each_entry_safe(c,...) S
+|
+list_remove_head(x,c,...)
+|
+sizeof(<+...c...+>)
+|
+&c->member
+|
+c = E
+|
+*c
+)
 
