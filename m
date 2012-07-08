@@ -1,66 +1,131 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Jul 2012 14:43:44 +0000
-Subject: [PATCH 2/7] drivers/usb/host/ehci-s5p.c: use devm_ functions
-Message-Id: <1343659425-24563-6-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 11:37:37 +0000
+Subject: [PATCH 0/7] remove invalid reference to list iterator variable
+Message-Id: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses these functions for data that is allocated in
-the probe function of a platform device and is only freed in the remove
-function.
+The complete semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+@@
+identifier c,member;
+expression E,x;
+iterator name list_for_each_entry;
+iterator name list_for_each_entry_reverse;
+iterator name list_for_each_entry_continue;
+iterator name list_for_each_entry_continue_reverse;
+iterator name list_for_each_entry_from;
+iterator name list_for_each_entry_safe;
+iterator name list_for_each_entry_safe_continue;
+iterator name list_for_each_entry_safe_from;
+iterator name list_for_each_entry_safe_reverse;
+iterator name hlist_for_each_entry;
+iterator name hlist_for_each_entry_continue;
+iterator name hlist_for_each_entry_from;
+iterator name hlist_for_each_entry_safe;
+statement S;
+@@
 
----
-Not compiled
-
- drivers/usb/host/ehci-s5p.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-index 9d8f1dd..d055503 100644
---- a/drivers/usb/host/ehci-s5p.c
-+++ b/drivers/usb/host/ehci-s5p.c
-@@ -128,7 +128,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
- 	}
- 
- 	s5p_ehci->hcd = hcd;
--	s5p_ehci->clk = clk_get(&pdev->dev, "usbhost");
-+	s5p_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
- 
- 	if (IS_ERR(s5p_ehci->clk)) {
- 		dev_err(&pdev->dev, "Failed to get usbhost clock\n");
-@@ -138,7 +138,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
- 
- 	err = clk_enable(s5p_ehci->clk);
- 	if (err)
--		goto fail_clken;
-+		goto fail_clk;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
-@@ -184,8 +184,6 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
- 
- fail_io:
- 	clk_disable(s5p_ehci->clk);
--fail_clken:
--	clk_put(s5p_ehci->clk);
- fail_clk:
- 	usb_put_hcd(hcd);
- 	return err;
-@@ -203,7 +201,6 @@ static int __devexit s5p_ehci_remove(struct platform_device *pdev)
- 		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
- 
- 	clk_disable(s5p_ehci->clk);
--	clk_put(s5p_ehci->clk);
- 
- 	usb_put_hcd(hcd);
- 
+(
+list_for_each_entry(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_reverse(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_continue(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_continue_reverse(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_from(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_safe(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_safe_continue(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_safe_from(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+|
+list_for_each_entry_safe_reverse(c,...,member) { ... when != break;
+                                 when forall
+                                 when strict
+}
+)
+...
+(
+list_for_each_entry(c,...) S
+|
+list_for_each_entry_reverse(c,...) S
+|
+list_for_each_entry_continue(c,...) S
+|
+list_for_each_entry_continue_reverse(c,...) S
+|
+list_for_each_entry_from(c,...) S
+|
+list_for_each_entry_safe(c,...) S
+|
+list_for_each_entry_safe(x,c,...) S
+|
+list_for_each_entry_safe_continue(c,...) S
+|
+list_for_each_entry_safe_continue(x,c,...) S
+|
+list_for_each_entry_safe_from(c,...) S
+|
+list_for_each_entry_safe_from(x,c,...) S
+|
+list_for_each_entry_safe_reverse(c,...) S
+|
+list_for_each_entry_safe_reverse(x,c,...) S
+|
+hlist_for_each_entry(c,...) S
+|
+hlist_for_each_entry_continue(c,...) S
+|
+hlist_for_each_entry_from(c,...) S
+|
+hlist_for_each_entry_safe(c,...) S
+|
+list_remove_head(x,c,...)
+|
+sizeof(<+...c...+>)
+|
+&c->member
+|
+c = E
+|
+*c
+)
 
