@@ -1,44 +1,43 @@
-From: Martyn Welch <martyn.welch@ge.com>
-Date: Fri, 06 Jul 2012 10:35:46 +0000
-Subject: Re: [patch 2/2] Staging: vme: silence a Sparse warning
-Message-Id: <4FF6BF82.8040704@ge.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 11:37:40 +0000
+Subject: [PATCH 3/7] mm/slub.c: remove invalid reference to list iterator variable
+Message-Id: <1341747464-1772-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120706082149.GB12470@elgon.mountain>
-In-Reply-To: <20120706082149.GB12470@elgon.mountain>
+References: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Christoph Lameter <cl@linux-foundation.org>
+Cc: kernel-janitors@vger.kernel.org, Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
 
-On 06/07/12 09:21, Dan Carpenter wrote:
-> Sparse complains that "arg" is not a __user pointer.  The "argp" and
-> "arg" variables are equivalent but argp is declared as a __user pointer.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/vme/devices/vme_user.c b/drivers/staging/vme/devices/vme_user.c
-> index be198c0..4363ed5 100644
-> --- a/drivers/staging/vme/devices/vme_user.c
-> +++ b/drivers/staging/vme/devices/vme_user.c
-> @@ -471,7 +471,7 @@ static int vme_user_ioctl(struct inode *inode, struct file *file,
->  	case CONTROL_MINOR:
->  		switch (cmd) {
->  		case VME_IRQ_GEN:
-> -			copied = copy_from_user(&irq_req, (char *)arg,
-> +			copied = copy_from_user(&irq_req, argp,
->  						sizeof(struct vme_irq_id));
->  			if (copied != 0) {
->  				printk(KERN_WARNING "Partial copy from userspace\n");
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Looks OK to me:
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.  The patch replaces s->name by al->name, which is
+referenced nearby.
 
-Acked-By: Martyn Welch <martyn.welch@ge.com>
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
 
--- 
-Martyn Welch (Lead Software Engineer)  | Registered in England and Wales
-GE Intelligent Platforms               | (3828642) at 100 Barbirolli Square
-T +44(0)1327322748                     | Manchester, M2 3AB
-E martyn.welch@ge.com                  | VAT:GB 927559189
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ mm/slub.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/slub.c b/mm/slub.c
+index cc4ed03..ef9bf01 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -5395,7 +5395,7 @@ static int __init slab_sysfs_init(void)
+ 		err = sysfs_slab_alias(al->s, al->name);
+ 		if (err)
+ 			printk(KERN_ERR "SLUB: Unable to add boot slab alias"
+-					" %s to sysfs\n", s->name);
++					" %s to sysfs\n", al->name);
+ 		kfree(al);
+ 	}
+ 
 
