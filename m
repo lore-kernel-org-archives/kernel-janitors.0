@@ -1,22 +1,89 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 09 Jul 2012 07:16:34 +0000
-Subject: Re: [patch] [AX.25]: small cleanup in ax25_addr_parse()
-Message-Id: <20120709.001634.1183046288317502958.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 11:37:41 +0000
+Subject: [PATCH 4/7] drivers/gpu/drm: remove invalid reference to list iterator variable
+Message-Id: <1341747464-1772-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120705082718.GA14993@elgon.mountain>
-In-Reply-To: <20120705082718.GA14993@elgon.mountain>
+References: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ralf@linux-mips.org, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 5 Jul 2012 11:27:18 +0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> The comments were wrong here because "AX25_MAX_DIGIS" is 8 but the
-> comments say 6.  Also I've changed the "7" to "AX25_ADDR_LEN".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.
 
-Applied, thanks Dan.
+In the first two cases, a a break is added after the switch; the break in
+the switch would jump out of the switch, but not out of the complete
+iteration.
+
+In the first case, the null test on connector is removed, because the
+iterator variable of list_for_each_entry is never null.
+
+In the third case, entry->base.crtc.fb is not a meaningful value.  What
+seems to be intended is crtc->fb, which gets the information from the last
+element of the list.
+
+These problems were found using Coccinelle (http://coccinelle.lip6.fr/).
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/gma500/mdfld_intel_display.c |    4 +---
+ drivers/gpu/drm/gma500/oaktrail_crtc.c       |    1 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c          |    2 +-
+ 3 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/gma500/mdfld_intel_display.c b/drivers/gpu/drm/gma500/mdfld_intel_display.c
+index 3f3cd61..fc1ced0 100644
+--- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
++++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
+@@ -755,9 +755,6 @@ static int mdfld_crtc_mode_set(struct drm_crtc *crtc,
+ 					sizeof(struct drm_display_mode));
+ 
+ 	list_for_each_entry(connector, &mode_config->connector_list, head) {
+-		if (!connector)
+-			continue;
+-
+ 		encoder = connector->encoder;
+ 
+ 		if (!encoder)
+@@ -779,6 +776,7 @@ static int mdfld_crtc_mode_set(struct drm_crtc *crtc,
+ 			is_hdmi = true;
+ 			break;
+ 		}
++		break;
+ 	}
+ 
+ 	/* Disable the VGA plane that we never use */
+diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+index f821c83..4b2172e 100644
+--- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
++++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+@@ -329,6 +329,7 @@ static int oaktrail_crtc_mode_set(struct drm_crtc *crtc,
+ 			is_mipi = true;
+ 			break;
+ 		}
++		break;
+ 	}
+ 
+ 	/* Disable the VGA plane that we never use */
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
+index 070fb23..634611a 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c
+@@ -93,7 +93,7 @@ static int vmw_ldu_commit_list(struct vmw_private *dev_priv)
+ 
+ 		if (crtc = NULL)
+ 			return 0;
+-		fb = entry->base.crtc.fb;
++		fb = crtc->fb;
+ 
+ 		return vmw_kms_write_svga(dev_priv, w, h, fb->pitches[0],
+ 					  fb->bits_per_pixel, fb->depth);
+
