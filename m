@@ -1,36 +1,39 @@
-From: Hannes Reinecke <hare@suse.de>
-Date: Fri, 20 Jul 2012 14:41:34 +0000
-Subject: Re: [patch] [SCSI] aic79xx: NULL dereference in debug code
-Message-Id: <50096E1E.60709@suse.de>
+From: wfg@linux.intel.com
+Date: Sun, 08 Jul 2012 17:17:51 +0000
+Subject: [clk:hb_3.5 11/12] drivers/ata/ahci_platform.c:129:2: warning: initialization discards 'const' quali
+Message-Id: <20120708171751.GA19344@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120720113057.GC22245@elgon.mountain>
-In-Reply-To: <20120720113057.GC22245@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On 07/20/2012 01:30 PM, Dan Carpenter wrote:
-> "ahd" can be NULL here and it gets dereferenced inside the call to
-> ahd_name().
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-Acked-by: Hannes Reinecke <hare@suse.de>
+Hi Rob,
 
-Cheers,
+There are new compile warnings show up in
 
-Hannes
---=20
-Dr. Hannes Reinecke		      zSeries & Storage
-hare@suse.de			      +49 911 74053 688
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: J. Hawn, J. Guild, F. Imend=F6rffer, HRB 16746 (AG N=FCrnberg)
+tree:   git://sources.calxeda.com/kernel/linux.git hb_3.5
+head:   67e0749b2f1c5908346485f5cb54af9f3a01e047
+commit: df55ea8b7785fb704475ad562d445ac402719dc0 [11/12] ahci_platform: add custom hard reset for Calxeda ahci ctrlr
 
+All warnings:
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+        drivers/ata/ahci_platform.c:129:67: sparse: incorrect type in initializer (different modifiers)
+        drivers/ata/ahci_platform.c:129:67:    expected void *data
+        drivers/ata/ahci_platform.c:129:67:    got struct ata_port_info static const [toplevel] *
+        drivers/ata/ahci_platform.c:125:9: sparse: Initializer entry defined twice
+        drivers/ata/ahci_platform.c:125:9:   also defined here
+        drivers/ata/ahci_platform.c:129:2: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+
+vim +129 drivers/ata/ahci_platform.c
+   126	};
+   127	
+   128	static const struct of_device_id ahci_of_match[] = {
+ > 129		{ .compatible = "calxeda,hb-ahci", .data = &ahci_port_info[CALXEDA_AHCI], },
+   130		{},
+   131	};
+   132	MODULE_DEVICE_TABLE(of, ahci_of_match);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
