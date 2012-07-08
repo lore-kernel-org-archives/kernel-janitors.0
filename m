@@ -1,42 +1,75 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 19 Jul 2012 00:06:22 +0000
-Subject: [sfc:for-davem 18/22] sparse: undefined identifier 'MCDI_EVENT_CODE_PTP_PPS'
-Message-Id: <20120719000622.GA5548@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 08 Jul 2012 21:13:41 +0000
+Subject: [PATCH 1/3] drivers/gpu/drm/gma500/mdfld_intel_display.c: remove invalid reference to list iterator
+Message-Id: <1341782023-23868-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-Hi Stuart,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-There are new sparse warnings show up in
+If list_for_each_entry, etc complete a traversal of the list, the iterator
+variable ends up pointing to an address at an offset from the list head,
+and not a meaningful structure.  Thus this value should not be used after
+the end of the iterator.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/bwh/sfc-next for-davem
-head:   2482aab313c3657557f1dad4c1b20c0934b84919
-commit: 3d230d2a2c441aec6ba495341623c8086e926bec [18/22] sfc: Allow efx_mcdi_rpc to be called in two parts
+A break is added after the switch; the break in the switch would jump out
+of the switch, but not out of the complete iteration.  The null test on
+connector is also removed, because the iterator variable of
+list_for_each_entry is never null.
 
-All sparse warnings:
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-+ drivers/net/ethernet/sfc/mcdi.c:583:14: sparse: undefined identifier 'MCDI_EVENT_CODE_PTP_PPS'
-+ drivers/net/ethernet/sfc/mcdi.c:584:17: sparse: undefined identifier 'efx_ptp_event'
-+ drivers/net/ethernet/sfc/mcdi.c:583:14: sparse: incompatible types for 'case' statement
-+ drivers/net/ethernet/sfc/mcdi.c:583:14: sparse: Expected constant expression in case statement
-  drivers/net/ethernet/sfc/mcdi.c: In function 'efx_mcdi_process_event':
-  drivers/net/ethernet/sfc/mcdi.c:583:7: error: 'MCDI_EVENT_CODE_PTP_PPS' undeclared (first use in this function)
-  drivers/net/ethernet/sfc/mcdi.c:583:7: note: each undeclared identifier is reported only once for each function it appears in
-  drivers/net/ethernet/sfc/mcdi.c:584:3: error: implicit declaration of function 'efx_ptp_event' [-Werror=implicit-function-declaration]
-  cc1: some warnings being treated as errors
+// <smpl>
+@@
+identifier c;
+expression E;
+iterator name list_for_each_entry;
+statement S;
+@@
 
-vim +583 drivers/net/ethernet/sfc/mcdi.c
-   580			break;
-   581		case MCDI_EVENT_CODE_PTP_RX:
-   582		case MCDI_EVENT_CODE_PTP_FAULT:
- > 583		case MCDI_EVENT_CODE_PTP_PPS:
-   584			efx_ptp_event(efx, event);
-   585			break;
-   586	
+list_for_each_entry(c,...) { ... when != break;
+                                 when forall
+                                 when strict
+}
+...
+(
+c = E
+|
+*c
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Paul Menzel <paulepanter@users.sourceforge.net>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ drivers/gpu/drm/gma500/mdfld_intel_display.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/gma500/mdfld_intel_display.c b/drivers/gpu/drm/gma500/mdfld_intel_display.c
+index 3f3cd61..fc1ced0 100644
+--- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
++++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
+@@ -755,9 +755,6 @@ static int mdfld_crtc_mode_set(struct drm_crtc *crtc,
+ 					sizeof(struct drm_display_mode));
+ 
+ 	list_for_each_entry(connector, &mode_config->connector_list, head) {
+-		if (!connector)
+-			continue;
+-
+ 		encoder = connector->encoder;
+ 
+ 		if (!encoder)
+@@ -779,6 +776,7 @@ static int mdfld_crtc_mode_set(struct drm_crtc *crtc,
+ 			is_hdmi = true;
+ 			break;
+ 		}
++		break;
+ 	}
+ 
+ 	/* Disable the VGA plane that we never use */
