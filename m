@@ -1,33 +1,59 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 18 Jul 2012 13:54:47 +0000
-Subject: [modsign:modsign 12/27] sparse: symbol 'pgp_pubkey_hash' was not declared. Should it be static?
-Message-Id: <20120718135447.GA8256@localhost>
+From: wfg@linux.intel.com
+Date: Mon, 09 Jul 2012 23:44:04 +0000
+Subject: [ext4:master 4/4] fs/ext4/resize.c:1200:9: warning: unused variable 'ret'
+Message-Id: <20120709234404.GA5584@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: kernel-janitors@vger.kernel.org, Ext4 Developers List <linux-ext4@vger.kernel.org>
 
-Hi David,
+Hi Theodore,
 
-There are new sparse warnings show up in
+There are new compile warnings show up in
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git modsign
-head:   84d2387379da278fa8e8639e37125c72f930743a
-commit: 4f49a5fc6553686e5cb8cc6f09f9342307d2fe07 [12/27] KEYS: PGP-based public key signature verification
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git master
+head:   952fc18ef9ec707ebdc16c0786ec360295e5ff15
+commit: 952fc18ef9ec707ebdc16c0786ec360295e5ff15 [4/4] ext4: fix overhead calculation used by ext4_statfs()
 
-All sparse warnings:
+All warnings:
 
-+ security/keys/crypto/pgp_sig_verify.c:23:3: sparse: symbol 'pgp_pubkey_hash' was not declared. Should it be static?
+fs/ext4/resize.c: In function 'ext4_update_super':
+fs/ext4/resize.c:1200:9: warning: unused variable 'ret' [-Wunused-variable]
 
-vim +23 security/keys/crypto/pgp_sig_verify.c
-    20	
-    21	const struct {
-    22		enum pkey_hash_algo algo : 8;
-  > 23	} pgp_pubkey_hash[PGP_HASH__LAST] = {
-    24		[PGP_HASH_MD5].algo		= PKEY_HASH_MD5,
-    25		[PGP_HASH_SHA1].algo		= PKEY_HASH_SHA1,
-    26		[PGP_HASH_RIPE_MD_160].algo	= PKEY_HASH_RIPE_MD_160,
+vim +1200 fs/ext4/resize.c
+  1197		struct ext4_new_group_data *group_data = flex_gd->groups;
+  1198		struct ext4_sb_info *sbi = EXT4_SB(sb);
+  1199		struct ext4_super_block *es = sbi->s_es;
+> 1200		int i, ret;
+  1201	
+  1202		BUG_ON(flex_gd->count = 0 || group_data = NULL);
+  1203		/*
+
+The unused 'ret' is introduced by:
+
+@@ -1197,7 +1197,7 @@ static void ext4_update_super(struct super_block *sb,
+        struct ext4_new_group_data *group_data = flex_gd->groups;
+        struct ext4_sb_info *sbi = EXT4_SB(sb);
+        struct ext4_super_block *es = sbi->s_es;
+-       int i;
++       int i, ret;
+ 
+        BUG_ON(flex_gd->count = 0 || group_data = NULL);
+        /*
+@@ -1272,6 +1272,11 @@ static void ext4_update_super(struct super_block *sb,
+                           &sbi->s_flex_groups[flex_group].free_inodes);
+        }
+ 
++       /*
++        * Update the fs overhead information
++        */
++       ext4_calculate_overhead(sb);
++
+        if (test_opt(sb, DEBUG))
+                printk(KERN_DEBUG "EXT4-fs: added group %u:"
+                       "%llu blocks(%llu free %llu reserved)\n", flex_gd->count,
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
