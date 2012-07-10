@@ -1,34 +1,38 @@
 From: wfg@linux.intel.com
-Date: Wed, 11 Jul 2012 05:14:16 +0000
-Subject: [ceph:wip-rbd-new 32/33] drivers/block/rbd.c:2547:6: warning: cast from pointer to integer of differ
-Message-Id: <20120711051416.GA10639@localhost>
+Date: Tue, 10 Jul 2012 02:02:36 +0000
+Subject: [net-next:master 64/65] drivers/net/ethernet/realtek/r8169.c:6756:35: sparse: incorrect type in
+Message-Id: <20120710020236.GA8103@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Alex,
+Hi Hayes,
 
-There are new compile warnings show up in
+There are new sparse warnings show up in
 
-tree:   git://github.com/ceph/ceph-client.git wip-rbd-new
-head:   a2f737c12499200a71077524ad70e7c2b1272c96
-commit: 01eb9011a3db646d9d7b661a89fc609407edb273 [32/33] rbd: flesh out header version 2 support
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
+head:   061a5c316b6526dbc729049a16243ec27937cc31
+commit: c558386b836ee97762e12495101c6e373f20e69d [64/65] r8169: support RTL8168G
 
-All warnings:
+All sparse warnings:
 
-drivers/block/rbd.c: In function 'rbd_dev_header_v2':
-drivers/block/rbd.c:2547:6: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
++ drivers/net/ethernet/realtek/r8169.c:6756:35: sparse: incorrect type in argument 1 (different address spaces)
+  drivers/net/ethernet/realtek/r8169.c:6756:35:    expected struct rtl8169_private *tp
+  drivers/net/ethernet/realtek/r8169.c:6756:35:    got void [noderef] <asn:2>*ioaddr
+  drivers/net/ethernet/realtek/r8169.c:6763:35: sparse: incorrect type in argument 1 (different address spaces)
+  drivers/net/ethernet/realtek/r8169.c:6763:35:    expected struct rtl8169_private *tp
+  drivers/net/ethernet/realtek/r8169.c:6763:35:    got void [noderef] <asn:2>*ioaddr
 
-vim +2547 drivers/block/rbd.c
-  2544		*image_size = ceph_decode_64(&p);
-  2545	
-  2546		printk("order %d image_size %lld\n", rbd_dev->header.obj_order,
-> 2547						(long long) image_size);
-  2548		kfree(reply_buf);
-  2549	
-  2550		return 0;
+vim +6756 drivers/net/ethernet/realtek/r8169.c
+  6753		msleep(1);
+  6754		RTL_W8(MCU, RTL_R8(MCU) & ~NOW_IS_OOB);
+  6755	
+> 6756		data = r8168_mac_ocp_read(ioaddr, 0xe8de);
+  6757		data &= ~(1 << 14);
+  6758		r8168_mac_ocp_write(tp, 0xe8de, data);
+  6759	
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
