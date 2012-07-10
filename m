@@ -1,43 +1,76 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 11 Jul 2012 06:40:40 +0000
-Subject: [patch] tty: double unlock on error in ptmx_open()
-Message-Id: <20120711064040.GH11812@elgon.mountain>
+From: Aditya Kali <adityakali@google.com>
+Date: Tue, 10 Jul 2012 01:48:02 +0000
+Subject: Re: linux-next: build failure after merge of the ext4 tree
+Message-Id: <CAGr1F2EB=BR+GSq34TYB+QE+3FNwzvBwBemYPpPu+=wENQf-ZA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120710112312.099a2f602cd6aea90226732c@canb.auug.org.au>
+In-Reply-To: <20120710112312.099a2f602cd6aea90226732c@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, kernel-janitors@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, wfg@linux.intel.com
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Johann Lombardi <johann@whamcloud.com>, ext4 development <linux-ext4@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-The problem here is that we called mutex_unlock(&devpts_mutex) on the
-error path when we weren't holding the lock.
+Sorry for the trouble. The following patch should fix the build.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
-index d855883..a0ca083 100644
---- a/drivers/tty/pty.c
-+++ b/drivers/tty/pty.c
-@@ -618,13 +618,12 @@ static int ptmx_open(struct inode *inode, struct file *filp)
- 	/* find a device that is not in use. */
- 	mutex_lock(&devpts_mutex);
- 	index = devpts_new_index(inode);
-+	mutex_unlock(&devpts_mutex);
- 	if (index < 0) {
- 		retval = index;
- 		goto err_file;
+From: Aditya Kali <adityakali@google.com>
+Date: Mon, 9 Jul 2012 18:42:28 -0700
+Subject: [PATCH] ext4: Fix compilation error for ext4_enable_quotas
+
+ext4_enable_quotas should only be called under CONFIG_QUOTA
+block.
+
+Signed-off-by: Aditya Kali <adityakali@google.com>
+---
+ fs/ext4/super.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index a9b87c3..e4b79fc 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4734,6 +4734,7 @@ static int ext4_remount(struct super_block *sb,
+int *flags, char *data)
+ 	if (enable_quota) {
+ 		if (sb_any_quota_suspended(sb))
+ 			dquot_resume(sb, -1);
++#ifdef CONFIG_QUOTA
+ 		else if (EXT4_HAS_RO_COMPAT_FEATURE(sb,
+ 					EXT4_FEATURE_RO_COMPAT_QUOTA)) {
+ 			err = ext4_enable_quotas(sb);
+@@ -4742,6 +4743,7 @@ static int ext4_remount(struct super_block *sb,
+int *flags, char *data)
+ 				goto restore_opts;
+ 			}
+ 		}
++#endif
  	}
- 
--	mutex_unlock(&devpts_mutex);
--
- 	mutex_lock(&tty_mutex);
- 	tty = tty_init_dev(ptm_driver, index);
- 
-@@ -659,7 +658,6 @@ out:
- 	mutex_unlock(&tty_mutex);
- 	devpts_kill_index(inode, index);
- err_file:
--        mutex_unlock(&devpts_mutex);
- 	tty_free_file(filp);
- 	return retval;
- }
+
+ 	ext4_msg(sb, KERN_INFO, "re-mounted. Opts: %s", orig_data);
+-- 
+1.7.7.3
+
+
+On Mon, Jul 9, 2012 at 6:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Ted,
+>
+> After merging the ext4 tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> fs/ext4/super.c: In function 'ext4_remount':
+> fs/ext4/super.c:4739:4: error: implicit declaration of function 'ext4_enable_quotas' [-Werror=implicit-function-declaration]
+>
+> Caused by commit 182bb8fec8f5 ("ext4: make quota as first class supported
+> feature").  The quota code needs to be protected by CONFIG_QUOTA.
+>
+> I have used the ext4 tree from next-20120709 for today.
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+
+-- 
+
+Aditya
