@@ -1,37 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Jul 2012 14:35:25 +0000
-Subject: Re: [patch] drm/radeon: check for allocation failure in radeon_ring_backup()
-Message-Id: <20120720143525.GE16291@mwanda>
+From: wfg@linux.intel.com
+Date: Tue, 10 Jul 2012 00:15:09 +0000
+Subject: [driver-core:driver-core-linus 6/6] 'syslog_partial' defined but not used on !CONFIG_PRINTK
+Message-Id: <20120710001509.GD5584@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120720111700.GB22245@elgon.mountain>
-	<500960F8.6060906@vodafone.de>
-In-Reply-To: <500960F8.6060906@vodafone.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Christian =?iso-8859-1?Q?K=F6nig?= <deathsimple@vodafone.de>
-Cc: kernel-janitors@vger.kernel.org, Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@amd.com>, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 20, 2012 at 03:45:28PM +0200, Christian K=F6nig wrote:
-> On 20.07.2012 13:17, Dan Carpenter wrote:
-> >Static checkers complain if this we don't check for allocation failure.
-> >Also we can use the new kmalloc_array() function here as a cleanup.
-> >
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> What's the benefit of using kmalloc_array instead of just kmalloc?
->=20
+Hi Kay,
 
-It has built in integer overflow protection.  Whenever I see
-multiplication in kmalloc(), I automatically start to audit for
-overflows, but now, ha ha, just change it to kmalloc_array() and
-forget about it.  (There weren't any integer overflow problems
-in the original code, btw).
+There are new compile warnings show up in
 
-regards,
-dan carpenter
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git driver-core-linus
+head:   eb02dac93708f581c99858a19162af8ca2b6bfcb
+commit: eb02dac93708f581c99858a19162af8ca2b6bfcb [6/6] kmsg: /proc/kmsg - support reading of partial log records
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+All warnings:
+
+kernel/printk.c:220:15: warning: 'syslog_partial' defined but not used [-Wunused-variable]
+
+vim +220 kernel/printk.c
+   217	/* the next printk record to read by syslog(READ) or /proc/kmsg */
+   218	static u64 syslog_seq;
+   219	static u32 syslog_idx;
+ > 220	static size_t syslog_partial;
+   221	
+   222	/* index and sequence number of the first record stored in the buffer */
+   223	static u64 log_first_seq;
+
+The problem is, syslog_partial is defined outside of CONFIG_PRINTK and
+used inside it:
+
+static size_t syslog_partial;
+#ifdef CONFIG_PRINTK
+                        syslog_partial = 0;
+                skip = syslog_partial;
+                if (n - syslog_partial <= size) {
+                        n -= syslog_partial;
+                        syslog_partial = 0;
+                        syslog_partial += n;
+int do_syslog(int type, char __user *buf, int len, bool from_file)
+                        syslog_partial = 0;
+                        error -= syslog_partial;
+        return do_syslog(type, buf, len, SYSLOG_FROM_CALL);
+#endif /* CONFIG_PRINTK */
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
