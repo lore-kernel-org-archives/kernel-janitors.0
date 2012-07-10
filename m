@@ -1,34 +1,35 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Thu, 26 Jul 2012 23:29:20 +0000
-Subject: Re: [nf-next:nf_tables2 2/2] ERROR: "nft_payload_fast_ops" [net/netfilter/nf_tables.ko] undefined!
-Message-Id: <20120726232920.GA8884@1984>
+From: wfg@linux.intel.com
+Date: Tue, 10 Jul 2012 00:40:49 +0000
+Subject: [staging:staging-next 84/99] drivers/staging/iio/adc/max1363_ring.c:87:7: warning: 'rxbuf' may be us
+Message-Id: <20120710004049.GA7404@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5011a101.KfeIRQeAFcxeQB93%fengguang.wu@intel.com>
-In-Reply-To: <5011a101.KfeIRQeAFcxeQB93%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Fengguang,
+Hi Lars-Peter,
 
-On Fri, Jul 27, 2012 at 03:56:49AM +0800, Fengguang Wu wrote:
-> Hi Pablo,
-> 
-> Kernel build failed on
-> 
-> tree:   git://150.214.188.80/nf-next nf_tables2
-> head:   e293718b4f615e155e22ce4d6cc14c98291b69cc
-> commit: e293718b4f615e155e22ce4d6cc14c98291b69cc [2/2] netfilter: nf_tables
-> config: s390-allmodconfig (attached as .config)
-> 
-[...]
-> All related error/warning messages:
-> ERROR: "nft_payload_fast_ops" [net/netfilter/nf_tables.ko] undefined!
+There are new compile warnings show up in
 
-This is fixed in latest nf_tables4. Thanks.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+head:   f12db36d3fd7ab75c29015c32a12d49697e11f61
+commit: da0f01e1ed88b4ac650d884e4e2ee11c9cd4d83b [84/99] staging:iio:max1363: Do not return error code in interrupt handler
 
-This is an experimental forward port of nftables. You may experience
-further issues, this is work in progress.
+All warnings:
 
-Regards.
+drivers/staging/iio/adc/max1363_ring.c: In function 'max1363_trigger_handler':
+drivers/staging/iio/adc/max1363_ring.c:87:7: warning: 'rxbuf' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+vim +87 drivers/staging/iio/adc/max1363_ring.c
+    84	
+    85	done:
+    86		iio_trigger_notify_done(indio_dev->trig);
+  > 87		kfree(rxbuf);
+    88	
+    89		return IRQ_HANDLED;
+    90	}
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
