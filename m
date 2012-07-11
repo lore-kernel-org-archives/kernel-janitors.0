@@ -1,20 +1,33 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Fri, 06 Jul 2012 18:07:35 +0000
-Subject: Re: [random:dev 2/9] drivers/char/random.c:682:62: sparse: Using plain integer as NULL pointer
-Message-Id: <20120706180735.GE10798@thunk.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jul 2012 06:34:43 +0000
+Subject: [patch] iio: double unlock on error path
+Message-Id: <20120711063443.GE11812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120706173117.GA21914@localhost>
-In-Reply-To: <20120706173117.GA21914@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jul 07, 2012 at 01:31:17AM +0800, wfg@linux.intel.com wrote:
-> Hi Theodore,
-> 
-> Some trivial sparse warnings :)
+We should be holding the mutex when we goto error_free_chans.
 
-Thanks, I'll get these fixed up in the next spin of these patches.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	     	       	     	   - Ted
+diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+index e2aded0..b5afc2f 100644
+--- a/drivers/iio/inkern.c
++++ b/drivers/iio/inkern.c
+@@ -198,11 +198,12 @@ struct iio_channel *iio_channel_get_all(const char *name)
+ 		iio_device_get(chans[mapind].indio_dev);
+ 		mapind++;
+ 	}
+-	mutex_unlock(&iio_map_list_lock);
+ 	if (mapind = 0) {
+ 		ret = -ENODEV;
+ 		goto error_free_chans;
+ 	}
++	mutex_unlock(&iio_map_list_lock);
++
+ 	return chans;
+ 
+ error_free_chans:
