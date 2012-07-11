@@ -1,26 +1,29 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Tue, 31 Jul 2012 19:10:53 +0000
-Subject: Re: [next:akpm 121/309] include/linux/page-flags.h:462:2: error: implicit declaration of function 'V
-Message-Id: <20120731121053.5baf91ff.akpm@linux-foundation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jul 2012 06:33:36 +0000
+Subject: [patch] net/mlx4: off by one in parse_trans_rule()
+Message-Id: <20120711063336.GC11812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120722163512.GC13376@localhost>
-In-Reply-To: <20120722163512.GC13376@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Hadar Hen Zion <hadarh@mellanox.co.il>
+Cc: "David S. Miller" <davem@davemloft.net>, Or Gerlitz <ogerlitz@mellanox.com>, Eugenia Emantayev <eugenia@mellanox.co.il>, Yevgeny Petrilin <yevgenyp@mellanox.co.il>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 31 Jul 2012 11:24:06 +0100
-Mel Gorman <mgorman@suse.de> wrote:
+This should be ">=" here instead of ">".  MLX4_NET_TRANS_RULE_NUM is 6.
+We use "spec->id" as an array offset into the __rule_hw_sz[] and
+__sw_id_hw[] arrays which have 6 elements.
 
-> Andrew, can you pick this patch up please? It's a fix for the patch
-> "mm: sl[au]b: add knowledge of PFMEMALLOC reserve pages". When merged,
-> it may collide with the patch immediately after it but the resolution is
-> straight-forward and the end result is the same. Thanks.
-> 
-> ---8<---
-> buildfix: mm: sl[au]b: add knowledge of PFMEMALLOC reserve pages
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-yup, I added this last week.  The -mm code in linux-next is pretty
-old.  I can't do much about that because the trees are such a 
-ghastly mess during the merge window.
+diff --git a/drivers/net/ethernet/mellanox/mlx4/mcg.c b/drivers/net/ethernet/mellanox/mlx4/mcg.c
+index bc62f53..5bac0df 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/mcg.c
++++ b/drivers/net/ethernet/mellanox/mlx4/mcg.c
+@@ -773,7 +773,7 @@ static int parse_trans_rule(struct mlx4_dev *dev, struct mlx4_spec_list *spec,
+ 		[MLX4_NET_TRANS_RULE_ID_UDP]  			sizeof(struct mlx4_net_trans_rule_hw_tcp_udp)
+ 	};
+-	if (spec->id > MLX4_NET_TRANS_RULE_NUM) {
++	if (spec->id >= MLX4_NET_TRANS_RULE_NUM) {
+ 		mlx4_err(dev, "Invalid network rule id. id = %d\n", spec->id);
+ 		return -EINVAL;
+ 	}
