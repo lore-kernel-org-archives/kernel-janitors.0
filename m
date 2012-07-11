@@ -1,38 +1,28 @@
-From: Stefan Roese <sr@denx.de>
-Date: Mon, 16 Jul 2012 09:38:19 +0000
-Subject: Re: [PATCH] drivers/mtd/devices/spear_smi.c: failure test for null rather than negative integer
-Message-Id: <201207161138.19985.sr@denx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jul 2012 06:36:02 +0000
+Subject: [patch] Extcon: Arizona: unlock on an error in arizona_micdet()
+Message-Id: <20120711063602.GG11812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341997118-25042-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341997118-25042-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wednesday 11 July 2012 10:58:38 Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> dev_get_platdata returns a pointer, so the failure value would be NULL
-> rather than a negative integer.
-> 
-> The semantic match that finds this problem is: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,e;
-> statement S1,S2;
-> @@
-> 
-> *x = dev_get_platdata(...)
-> ... when != x = e
-> *if (x < 0) S1 else S2
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Smatch complains about this.  I don't have a way to test this, but it
+does look like we should unlock on error here.
 
-Acked-by: Stefan Roese <sr@denx.de>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+index b068bc9..4782884 100644
+--- a/drivers/extcon/extcon-arizona.c
++++ b/drivers/extcon/extcon-arizona.c
+@@ -154,6 +154,7 @@ static irqreturn_t arizona_micdet(int irq, void *data)
+ 	ret = regmap_read(arizona->regmap, ARIZONA_MIC_DETECT_3, &val);
+ 	if (ret != 0) {
+ 		dev_err(arizona->dev, "Failed to read MICDET: %d\n", ret);
++		mutex_unlock(&info->lock);
+ 		return IRQ_NONE;
+ 	}
  
-Thanks,
-Stefan
