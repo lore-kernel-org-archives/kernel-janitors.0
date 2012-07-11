@@ -1,15 +1,30 @@
-From: Damien Cassou <damien.cassou@lifl.fr>
-Date: Tue, 31 Jul 2012 16:39:17 +0000
-Subject: [PATCH 0/5] use devm_ functions
-Message-Id: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jul 2012 06:41:23 +0000
+Subject: [patch] ASoC: STA529: fix an error message
+Message-Id: <20120711064123.GI11812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343742860-16213-1-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1343742860-16213-1-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: alsa-devel@alsa-project.org, Rajeev Kumar <rajeev-dlh.kumar@st.com>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org
 
-These patches introduce devm_ functions in some video drivers.
+GCC complains that "ret" is uninitialized here.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/soc/codecs/sta529.c b/sound/soc/codecs/sta529.c
+index a9f34c7..0c225cd 100644
+--- a/sound/soc/codecs/sta529.c
++++ b/sound/soc/codecs/sta529.c
+@@ -397,8 +397,9 @@ static __devinit int sta529_i2c_probe(struct i2c_client *i2c,
+ 
+ 	sta529->regmap = devm_regmap_init_i2c(i2c, &sta529_regmap);
+ 	if (IS_ERR(sta529->regmap)) {
++		ret = PTR_ERR(sta529->regmap);
+ 		dev_err(&i2c->dev, "Failed to allocate regmap: %d\n", ret);
+-		return PTR_ERR(sta529->regmap);
++		return ret;
+ 	}
+ 
+ 	i2c_set_clientdata(i2c, sta529);
