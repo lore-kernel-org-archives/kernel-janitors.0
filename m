@@ -1,75 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 08 Jul 2012 21:13:41 +0000
-Subject: [PATCH 1/3] drivers/gpu/drm/gma500/mdfld_intel_display.c: remove invalid reference to list iterator
-Message-Id: <1341782023-23868-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 11 Jul 2012 14:35:45 +0000
+Subject: [memcg:since-3.4 98/99] mm/oom_kill.c:343:27: sparse: context imbalance in 'select_bad_process' - wr
+Message-Id: <20120711143545.GA28535@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi David,
 
-If list_for_each_entry, etc complete a traversal of the list, the iterator
-variable ends up pointing to an address at an offset from the list head,
-and not a meaningful structure.  Thus this value should not be used after
-the end of the iterator.
+There are new sparse warnings show up in
 
-A break is added after the switch; the break in the switch would jump out
-of the switch, but not out of the complete iteration.  The null test on
-connector is also removed, because the iterator variable of
-list_for_each_entry is never null.
+tree:   git://github.com/mstsxfx/memcg-devel.git since-3.4
+head:   2a6e6a4f421b0e721a59ec5c3abe2df931a2ad32
+commit: 7f5e01c90d7e49045455e70f42ea1496fd87deaf [98/99] mm, oom: reduce dependency on tasklist_lock
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+All sparse warnings:
 
-// <smpl>
-@@
-identifier c;
-expression E;
-iterator name list_for_each_entry;
-statement S;
-@@
+  mm/oom_kill.c:140:20: sparse: context imbalance in 'find_lock_task_mm' - wrong count at exit
+  mm/oom_kill.c:198:28: sparse: context imbalance in 'oom_badness' - unexpected unlock
++ mm/oom_kill.c:343:27: sparse: context imbalance in 'select_bad_process' - wrong count at exit
++ mm/oom_kill.c:400:9: sparse: context imbalance in 'dump_tasks' - different lock contexts for basic block
+  mm/memcontrol.c:4257:21: sparse: incompatible types in comparison expression (different address spaces)
+  mm/memcontrol.c:4259:21: sparse: incompatible types in comparison expression (different address spaces)
+  mm/memcontrol.c:5377:31: sparse: incompatible types in comparison expression (different address spaces)
 
-list_for_each_entry(c,...) { ... when != break;
-                                 when forall
-                                 when strict
-}
-...
-(
-c = E
-|
-*c
-)
-// </smpl>
+vim +343 mm/oom_kill.c
+   340	 *
+   341	 * (not docbooked, we don't want this one cluttering up the manual)
+   342	 */
+ > 343	static struct task_struct *select_bad_process(unsigned int *ppoints,
+   344			unsigned long totalpages, const nodemask_t *nodemask,
+   345			bool force_kill)
+   346	{
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Paul Menzel <paulepanter@users.sourceforge.net>
+This return is not handled by the patch:
+
+   363                 case OOM_SCAN_ABORT:
+   364                         return ERR_PTR(-1UL);
 
 ---
- drivers/gpu/drm/gma500/mdfld_intel_display.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/gma500/mdfld_intel_display.c b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-index 3f3cd61..fc1ced0 100644
---- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
-+++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-@@ -755,9 +755,6 @@ static int mdfld_crtc_mode_set(struct drm_crtc *crtc,
- 					sizeof(struct drm_display_mode));
- 
- 	list_for_each_entry(connector, &mode_config->connector_list, head) {
--		if (!connector)
--			continue;
--
- 		encoder = connector->encoder;
- 
- 		if (!encoder)
-@@ -779,6 +776,7 @@ static int mdfld_crtc_mode_set(struct drm_crtc *crtc,
- 			is_hdmi = true;
- 			break;
- 		}
-+		break;
- 	}
- 
- 	/* Disable the VGA plane that we never use */
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
