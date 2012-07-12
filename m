@@ -1,76 +1,47 @@
-From: Kay Sievers <kay@vrfy.org>
-Date: Tue, 10 Jul 2012 21:24:51 +0000
-Subject: Re: [driver-core:driver-core-linus 6/6] 'syslog_partial' defined but not used on !CONFIG_PRINTK
-Message-Id: <1341955491.810.3.camel@mop>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 12 Jul 2012 14:34:49 +0000
+Subject: [net-next:master 90/102] net/ipv4/route.c:1283:9: warning: unused variable 'saddr'
+Message-Id: <20120712143449.GA19890@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120710001509.GD5584@localhost>
-In-Reply-To: <20120710001509.GD5584@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On Tue, 2012-07-10 at 08:15 +0800, wfg@linux.intel.com wrote:
-> There are new compile warnings show up in
-> 
-> vim +220 kernel/printk.c
->    217	/* the next printk record to read by syslog(READ) or /proc/kmsg */
->    218	static u64 syslog_seq;
->    219	static u32 syslog_idx;
->  > 220	static size_t syslog_partial;
+Hi David,
 
-Oh, that again, sorry. :)
+There are new compile warnings show up in
 
-I moved all variables out of the weird ifdef mess now, that should make it
-a bit easier to avoid forgetting that.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
+head:   3ec5a261aef55a32664bffd335e5c32aeadf3215
+commit: e47a185b31dd2acd424fac7dc0efb96fc5b31a33 [90/102] ipv4: Generalize ip_do_redirect() and hook into new dst_ops->redirect.
 
-Thanks,
-Kay
+All warnings:
 
+net/ipv4/route.c: In function 'ip_do_redirect':
+net/ipv4/route.c:1283:9: warning: unused variable 'saddr' [-Wunused-variable]
+net/ipv4/route.c:1282:9: warning: unused variable 'daddr' [-Wunused-variable]
 
-From: Kay Sievers <kay@vrfy.org>
-Subject: kmsg - avoid warning for CONFIG_PRINTK=n compilations
+vim +1283 net/ipv4/route.c
+  1280		__be32 old_gw = ip_hdr(skb)->saddr;
+  1281		struct net_device *dev = skb->dev;
+  1282		__be32 daddr = iph->daddr;
+> 1283		__be32 saddr = iph->saddr;
+  1284		struct in_device *in_dev;
+  1285		struct neighbour *n;
+  1286		struct rtable *rt;
 
-Signed-off-by: Kay Sievers <kay@vrfy.org>
+..because the saddr/daddr variables are used inside
+
+#ifdef CONFIG_IP_ROUTE_VERBOSE
+        if (IN_DEV_LOG_MARTIANS(in_dev))
+                net_info_ratelimited("Redirect from %pI4 on %s about %pI4 ignored\n"
+                                     "  Advised path = %pI4 -> %pI4\n",
+                                     &old_gw, dev->name, &new_gw,
+                                     &saddr, &daddr);
+#endif
+
 ---
-
- kernel/printk.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
---- a/kernel/printk.c
-+++ b/kernel/printk.c
-@@ -216,6 +216,7 @@ struct log {
-  */
- static DEFINE_RAW_SPINLOCK(logbuf_lock);
- 
-+#ifdef CONFIG_PRINTK
- /* the next printk record to read by syslog(READ) or /proc/kmsg */
- static u64 syslog_seq;
- static u32 syslog_idx;
-@@ -228,7 +229,6 @@ static u32 log_first_idx;
- 
- /* index and sequence number of the next record to store in the buffer */
- static u64 log_next_seq;
--#ifdef CONFIG_PRINTK
- static u32 log_next_idx;
- 
- /* the next printk record to read after the last 'clear' command */
-@@ -1631,9 +1631,15 @@ asmlinkage int printk(const char *fmt, .
- }
- EXPORT_SYMBOL(printk);
- 
--#else
-+#else /* CONFIG_PRINTK */
- 
- #define LOG_LINE_MAX 0
-+static u64 syslog_seq;
-+static u32 syslog_idx;
-+static enum log_flags syslog_prev;
-+static u64 log_first_seq;
-+static u32 log_first_idx;
-+static u64 log_next_seq;
- static struct cont {
- 	size_t len;
- 	size_t cons;
-
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
