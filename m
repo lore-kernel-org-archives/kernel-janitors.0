@@ -1,28 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jul 2012 14:47:03 +0000
-Subject: [patch] qlge: fix an "&&" vs "||" bug
-Message-Id: <20120712144702.GB24202@elgon.mountain>
+From: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
+Date: Thu, 12 Jul 2012 18:15:56 +0000
+Subject: RE: [patch] qlge: fix an "&&" vs "||" bug
+Message-Id: <5E4F49720D0BAD499EE1F01232234BA8774378FA29@AVEXMB1.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120712144702.GB24202@elgon.mountain>
+In-Reply-To: <20120712144702.GB24202@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
-Cc: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>, Ron Mercer <ron.mercer@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+Cc: Ron Mercer <ron.mercer@qlogic.com>, Dept-Eng Linux Driver <Linux-Driver@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-The condition is always true so WOL will never work.
+-----Original Message-----
+>From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
+>Sent: Thursday, July 12, 2012 7:47 AM
+>To: Anirban Chakraborty
+>Cc: Jitendra Kalsaria; Ron Mercer; Dept-Eng Linux Driver; netdev; kernel-janitors@vger.kernel.org
+>Subject: [patch] qlge: fix an "&&" vs "||" bug
+>
+>The condition is always true so WOL will never work.
+>
+>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+>diff --git a/drivers/net/ethernet/qlogic/qlge/qlge_ethtool.c b/drivers/net/ethernet/qlogic/qlge/qlge_ethtool.c
+>index 3d4462b..6f316ab 100644
+>--- a/drivers/net/ethernet/qlogic/qlge/qlge_ethtool.c
+>+++ b/drivers/net/ethernet/qlogic/qlge/qlge_ethtool.c
+>@@ -440,7 +440,7 @@ static int ql_set_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
+> 	unsigned short ssys_dev = qdev->pdev->subsystem_device;
+> 
+> 	/* WOL is only supported for mezz card. */
+>-	if (ssys_dev != QLGE_MEZZ_SSYS_ID_068 ||
+>+	if (ssys_dev != QLGE_MEZZ_SSYS_ID_068 &&
+> 			ssys_dev != QLGE_MEZZ_SSYS_ID_180) {
+> 		netif_info(qdev, drv, qdev->ndev,
+> 				"WOL is only supported for mezz card\n");
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
 
-diff --git a/drivers/net/ethernet/qlogic/qlge/qlge_ethtool.c b/drivers/net/ethernet/qlogic/qlge/qlge_ethtool.c
-index 3d4462b..6f316ab 100644
---- a/drivers/net/ethernet/qlogic/qlge/qlge_ethtool.c
-+++ b/drivers/net/ethernet/qlogic/qlge/qlge_ethtool.c
-@@ -440,7 +440,7 @@ static int ql_set_wol(struct net_device *ndev, struct ethtool_wolinfo *wol)
- 	unsigned short ssys_dev = qdev->pdev->subsystem_device;
- 
- 	/* WOL is only supported for mezz card. */
--	if (ssys_dev != QLGE_MEZZ_SSYS_ID_068 ||
-+	if (ssys_dev != QLGE_MEZZ_SSYS_ID_068 &&
- 			ssys_dev != QLGE_MEZZ_SSYS_ID_180) {
- 		netif_info(qdev, drv, qdev->ndev,
- 				"WOL is only supported for mezz card\n");
