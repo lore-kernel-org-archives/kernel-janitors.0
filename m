@@ -1,23 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 11 Jul 2012 08:37:40 +0000
-Subject: Re: [patch -next] net: writes past the end of the struct
-Message-Id: <20120711083740.GC6056@mwanda>
+Date: Thu, 12 Jul 2012 14:48:32 +0000
+Subject: [patch 2/3 -next] tcm_vhost: strlen() doesn't count the terminator
+Message-Id: <20120712144831.GE24202@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120711063214.GA11812@elgon.mountain>
- <20120711.012745.2202204429130083377.davem@davemloft.net>
-In-Reply-To: <20120711.012745.2202204429130083377.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>, Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
 
-On Wed, Jul 11, 2012 at 01:27:45AM -0700, David Miller wrote:
-> I asked him to fix some things, he did too much casting, but he never
-> respun his patch set.  I definitely prefer this gets fixed his way.
-> 
+We do snprintf() from "page" to a buffer with TCM_VHOST_NAMELEN
+characters so the current code will silently truncate the last
+character.
 
-Oooo.  That's a clever trick.  Nice.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
+diff --git a/drivers/vhost/tcm_vhost.c b/drivers/vhost/tcm_vhost.c
+index d217bed..57d39c5 100644
+--- a/drivers/vhost/tcm_vhost.c
++++ b/drivers/vhost/tcm_vhost.c
+@@ -1254,7 +1254,7 @@ static ssize_t tcm_vhost_tpg_store_nexus(
+ 	 * the fabric protocol_id set in tcm_vhost_make_tport(), and call
+ 	 * tcm_vhost_make_nexus().
+ 	 */
+-	if (strlen(page) > TCM_VHOST_NAMELEN) {
++	if (strlen(page) >= TCM_VHOST_NAMELEN) {
+ 		pr_err("Emulated NAA Sas Address: %s, exceeds"
+ 				" max: %d\n", page, TCM_VHOST_NAMELEN);
+ 		return -EINVAL;
