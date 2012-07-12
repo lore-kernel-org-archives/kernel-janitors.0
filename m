@@ -1,35 +1,74 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 28 Jul 2012 12:43:57 +0000
-Subject: [PATCH] pch_uart: check kzalloc result in dma_handle_tx()
-Message-Id: <20120728124357.GA13192@localhost>
+Date: Thu, 12 Jul 2012 23:46:56 +0000
+Subject: [nf-next:mmap-netlink 62/68] net/netlink/af_netlink.c:545:6: sparse: symbol 'netlink_ring_setup_skb'
+Message-Id: <20120712234656.GC5608@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="gBBFr7Ir9EOA20Yy"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tomoya MORINAGA <tomoya.rohm@gmail.com>
-Cc: Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Reported by coccinelle:
 
-drivers/tty/serial/pch_uart.c:979:1-14: alloc with no test, possible model on line 994
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Hi Patrick,
+
+There are new sparse warnings show up in
+
+tree:   git://150.214.188.80/nf-next mmap-netlink
+head:   c7e7243d0b69e2323dde057c28f1102d00e5a3c6
+commit: 23c9e8b9464cfbf148b3ba911f5a67b16bc94aa8 [62/68] netlink: add mmap'ed netlink helper functions
+
+All sparse warnings:
+
+  net/netlink/af_netlink.c:201:39: sparse: incorrect type in return expression (different modifiers)
+  net/netlink/af_netlink.c:201:39:    expected struct page [pure] *
+  net/netlink/af_netlink.c:201:39:    got struct page *
+  net/netlink/af_netlink.c:203:24: sparse: incorrect type in return expression (different modifiers)
+  net/netlink/af_netlink.c:203:24:    expected struct page [pure] *
+  net/netlink/af_netlink.c:203:24:    got struct page *
+  net/netlink/af_netlink.c:404:38: sparse: incorrect type in assignment (different modifiers)
+  net/netlink/af_netlink.c:404:38:    expected struct page *page
+  net/netlink/af_netlink.c:404:38:    got struct page [pure] *
++ net/netlink/af_netlink.c:545:6: sparse: symbol 'netlink_ring_setup_skb' was not declared. Should it be static?
+  net/netlink/af_netlink.c:999:56: sparse: incorrect type in argument 1 (different address spaces)
+  net/netlink/af_netlink.c:999:56:    expected void const *<noident>
+  net/netlink/af_netlink.c:999:56:    got struct listeners [noderef] <asn:4>*listeners
+  net/netlink/af_netlink.c:812:38: sparse: dereference of noderef expression
+  net/netlink/af_netlink.c:422:13: warning: 'netlink_frame_flush_dcache' defined but not used [-Wunused-function]
+
+vim +545 net/netlink/af_netlink.c
+   542		return (struct nl_mmap_hdr *)(skb->head - NL_MMAP_HDRLEN);
+   543	}
+   544	
+ > 545	void netlink_ring_setup_skb(struct sk_buff *skb, struct sock *sk,
+   546				    struct netlink_ring *ring, struct nl_mmap_hdr *hdr)
+   547	{
+   548		unsigned int size;
+
+Please consider folding the attached diff :-)
+
 ---
- drivers/tty/serial/pch_uart.c |    4 ++++
- 1 file changed, 4 insertions(+)
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
 
-WARNING: this may be a superficial fix!
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-23c9e8b.diff"
 
---- linux.orig/drivers/tty/serial/pch_uart.c	2012-06-07 05:39:57.550846385 +0800
-+++ linux/drivers/tty/serial/pch_uart.c	2012-07-28 20:37:27.803145392 +0800
-@@ -974,6 +974,10 @@ static unsigned int dma_handle_tx(struct
- 	priv->tx_dma_use = 1;
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 801eeec..a64011d 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -542,7 +542,7 @@ static struct nl_mmap_hdr *netlink_mmap_hdr(struct sk_buff *skb)
+ 	return (struct nl_mmap_hdr *)(skb->head - NL_MMAP_HDRLEN);
+ }
  
- 	priv->sg_tx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
-+	if (!priv->sg_tx_p) {
-+		dev_err(priv->port.dev, "%s:kzalloc Failed\n", __func__);
-+		return 0;
-+	}
- 
- 	sg_init_table(priv->sg_tx_p, num); /* Initialize SG table */
- 	sg = priv->sg_tx_p;
+-void netlink_ring_setup_skb(struct sk_buff *skb, struct sock *sk,
++static void netlink_ring_setup_skb(struct sk_buff *skb, struct sock *sk,
+ 			    struct netlink_ring *ring, struct nl_mmap_hdr *hdr)
+ {
+ 	unsigned int size;
+
+--gBBFr7Ir9EOA20Yy--
