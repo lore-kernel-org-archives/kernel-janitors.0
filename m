@@ -1,22 +1,35 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 24 Jul 2012 02:59:11 +0000
-Subject: Re: [uapi:uapi-split 25/74] arch/ia64/include/asm/bitops.h:47:1: error: macro "__paravirt_getreg" pa
-Message-Id: <20120724025911.GA6503@localhost>
+Date: Thu, 12 Jul 2012 23:51:45 +0000
+Subject: [nf-next:mmap-netlink 65/68] net/netfilter/nfnetlink_queue_core.c:407:23: warning: unused variable '
+Message-Id: <20120712235145.GD5608@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <23199.1342949300@warthog.procyon.org.uk>
-In-Reply-To: <23199.1342949300@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 24, 2012 at 05:55:54AM +0800, Luck, Tony wrote:
-> > Is it worth marking config PARAVIRT dependent on !IA64 so that
-> > allyes/modconfig builds work?
-> 
-> Sounds like a good idea to me. It will save people time discovering how broken this is.
+Hi Florian,
 
-I have the same feeling, let's do that.  Sorry for the noises!
+There are new compile warnings show up in
 
-Thanks,
-Fengguang
+tree:   git://150.214.188.80/nf-next mmap-netlink
+head:   c7e7243d0b69e2323dde057c28f1102d00e5a3c6
+commit: b55f8ac10d3ef4c4379afabaa1f766de4d81a8a5 [65/68] nfqueue: extend spinlocked section for mmap'd sockets
+
+All warnings:
+
+net/netfilter/nfnetlink_queue_core.c: In function 'nfqnl_enqueue_packet':
+net/netfilter/nfnetlink_queue_core.c:407:23: warning: unused variable 'size' [-Wunused-variable]
+
+vim +407 net/netfilter/nfnetlink_queue_core.c
+   404		int err = -ENOBUFS;
+   405		int failopen = 0;
+   406		struct sk_buff *entskb = entry->skb;
+ > 407		size_t data_len = 0, size;
+   408	
+   409		/* rcu_read_lock()ed by nf_hook_slow() */
+   410		queue = instance_lookup(queuenum);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
