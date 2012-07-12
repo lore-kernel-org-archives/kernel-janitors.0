@@ -1,20 +1,18 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Date: Wed, 11 Jul 2012 23:55:51 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 12 Jul 2012 16:19:29 +0000
 Subject: Re: [patch] Extcon: Arizona: unlock on an error in arizona_micdet()
-Message-Id: <4FFE1287.90403@samsung.com>
+Message-Id: <4FFEF911.5010001@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120711063602.GG11812@elgon.mountain>
 In-Reply-To: <20120711063602.GG11812@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
 
-On 07/11/2012 03:36 PM, Dan Carpenter wrote:
 
+Am 11.07.2012 08:36, schrieb Dan Carpenter:
 > Smatch complains about this.  I don't have a way to test this, but it
 > does look like we should unlock on error here.
 > 
@@ -32,7 +30,11 @@ On 07/11/2012 03:36 PM, Dan Carpenter wrote:
 >  		return IRQ_NONE;
 >  	}
 >  
+> --
+nitpicking:
+normally you unlock before dev_err() and is the msg ok ?
+IMHO  "Failed to read ARIZONA_MIC_DETECT_3:%d\n" seems more obvious,
+(I really do not know that device)
 
-This patch is right.
-
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+re,
+ wh
