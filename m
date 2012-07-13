@@ -1,47 +1,29 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Date: Tue, 10 Jul 2012 07:21:12 +0000
-Subject: Re: [staging:staging-next 84/99] drivers/staging/iio/adc/max1363_ring.c:87:7: warning: 'rxbuf' may b
-Message-Id: <4FFBD7E8.5030107@metafoo.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Jul 2012 10:45:47 +0000
+Subject: [patch -next] tcm_vhost: another strlen() off by one
+Message-Id: <20120713104547.GA31435@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120710004049.GA7404@localhost>
-In-Reply-To: <20120710004049.GA7404@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>, Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
 
-On 07/10/2012 02:40 AM, wfg@linux.intel.com wrote:
-> Hi Lars-Peter,
-> 
-> There are new compile warnings show up in
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
-> head:   f12db36d3fd7ab75c29015c32a12d49697e11f61
-> commit: da0f01e1ed88b4ac650d884e4e2ee11c9cd4d83b [84/99] staging:iio:max1363: Do not return error code in interrupt handler
-> 
-> All warnings:
-> 
-> drivers/staging/iio/adc/max1363_ring.c: In function 'max1363_trigger_handler':
-> drivers/staging/iio/adc/max1363_ring.c:87:7: warning: 'rxbuf' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> 
+strlen() doesn't count the NUL terminator.  I missed this one in the
+patches I sent yesterday.
 
-Yea, known issue. I somehow managed to send out an outdated version of the
-patch, the one I have locally does not have this issue. Will send out a fix
-shortly.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks for reporting.
-- Lars
-
-> vim +87 drivers/staging/iio/adc/max1363_ring.c
->     84	
->     85	done:
->     86		iio_trigger_notify_done(indio_dev->trig);
->   > 87		kfree(rxbuf);
->     88	
->     89		return IRQ_HANDLED;
->     90	}
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Centre
-> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
-
+diff --git a/drivers/vhost/tcm_vhost.c b/drivers/vhost/tcm_vhost.c
+index 29850cb..ea72198 100644
+--- a/drivers/vhost/tcm_vhost.c
++++ b/drivers/vhost/tcm_vhost.c
+@@ -1424,7 +1424,7 @@ static struct se_wwn *tcm_vhost_make_tport(
+ 	return ERR_PTR(-EINVAL);
+ 
+ check_len:
+-	if (strlen(name) > TCM_VHOST_NAMELEN) {
++	if (strlen(name) >= TCM_VHOST_NAMELEN) {
+ 		pr_err("Emulated %s Address: %s, exceeds"
+ 			" max: %d\n", name, tcm_vhost_dump_proto_id(tport),
+ 			TCM_VHOST_NAMELEN);
