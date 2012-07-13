@@ -1,55 +1,36 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Wed, 18 Jul 2012 13:02:05 +0000
-Subject: Re: [PATCH] remove invalid reference to list iterator variable
-Message-Id: <1342616525.7530.22.camel@brekeke>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-W1ZXQZNbbYwATuKYkB/h"
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 13 Jul 2012 20:23:05 +0000
+Subject: [input:next 43/45] drivers/input/keyboard/omap4-keypad.c:218:6: warning: unused variable 'error'
+Message-Id: <20120713202305.GA26333@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341753582-3943-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341753582-3943-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org
-
-
---=-W1ZXQZNbbYwATuKYkB/h
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, 2012-07-08 at 15:19 +0200, Julia Lawall wrote:
-> If list_for_each_entry, etc complete a traversal of the list, the iterato=
-r
-> variable ends up pointing to an address at an offset from the list head,
-> and not a meaningful structure.  Thus this value should not be used after
-> the end of the iterator.
-
-Thanks Julia - this one is very useful!
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-W1ZXQZNbbYwATuKYkB/h
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Sourav Poddar <sourav.poddar@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Hi Sourav,
 
-iQIcBAABAgAGBQJQBrPNAAoJECmIfjd9wqK0vSQP/1sK+Khr5PKw7rAu0dY8QdGz
-QwLgLJ/+9ghWSi2KB1hqjxyUpMgKF1t4mIuh8VjKyCPVQqe2btm5+L4ke2+6pNvE
-wMDpZopVMk+IlrGVydKUBL/PX/MguHtPPgqSPXfC/neAjorptia1SphytNY8mLnW
-k/q7GxLPwUkeym9aCTY/JNUfiR8I2Z4kL+riYfkgIL90jTbNvJXu4TLBqdiLxwiL
-TorlnBbNc5d3rAC5CNmGgjZWrPvtEqhv90Nkgb/gb3DozGsYN5nFMpsLph4vgcG8
-sSoUJN0zd9k0+wXmVg8NnUuBGWOorp49MO694uL1BmT2wqoeQq3KTZA2WoZzeDZU
-/L0dcCz7wxBRfCdfCwjeQjvk5E/74eRlwcnbtPMz1YvhSiIU5AxqgJEFbkwmK1pI
-mL4xQV2/9YLvAQnxQuMaPGJxQQupFDU9kVbn7uoF6sb2RY/X3gQSVukiJ5bgT21E
-gX+FsHAOseZ8XfVKxrmC7XhPbVhTtkENJ7W6NMXakreK+ALCXzAKmhbLIl8kj9JC
-j6wpr2DoCThR6Qhtsi8ebPrAAZmjt8WN8ni/PxXwjA3lSFqIs+k4ERJJdtjFZPCv
-NQ714ftunLxmsHZoPUMXmDwSqFlSLOdnFsHrqNCG1dDYx+35rf3r6PDg2ywOgI+l
-rQ/i8+hfnknDX0hK6QDL
-=vjnG
------END PGP SIGNATURE-----
+There are new compile warnings show up in
 
---=-W1ZXQZNbbYwATuKYkB/h--
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
+head:   7545a8052565aa68eeb4dfb59c1fb5d21a6867e7
+commit: 3dad34659e6646ab578d82b75a023cc4640fe322 [43/45] Input: omap4-keypad - add device tree support
 
+All warnings:
+
+drivers/input/keyboard/omap4-keypad.c: In function 'omap4_keypad_parse_dt':
+drivers/input/keyboard/omap4-keypad.c:218:6: warning: unused variable 'error' [-Wunused-variable]
+
+vim +218 drivers/input/keyboard/omap4-keypad.c
+   215						   struct omap4_keypad *keypad_data)
+   216	{
+   217		struct device_node *np = dev->of_node;
+ > 218		int error;
+   219	
+   220		if (!np) {
+   221			dev_err(dev, "missing DT data");
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
