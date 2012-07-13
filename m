@@ -1,75 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Jul 2012 19:46:09 +0000
-Subject: [PATCH 5/9] drivers/usb/host/ehci-ixp4xx.c: use devm_ functions
-Message-Id: <1343591173-2819-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 13 Jul 2012 06:14:35 +0000
+Subject: [staging:staging-next 98/99] drivers/iio/light/adjd_s311.c:188:12: warning: cast from pointer to int
+Message-Id: <20120713061435.GB16932@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Peter,
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses these functions for data that is allocated in
-the probe function of a platform device and is only freed in the remove
-function.
+There are new compile warnings show up in
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+head:   bd972ff3176caf91a49d1d754848c3f6c5435328
+commit: bbdb822c4c3f8dbefd8f6dc84f6d98c33af6e051 [98/99] iio: add adjd_s311 I2C digital color sensor driver
+
+All warnings:
+
+drivers/iio/light/adjd_s311.c: In function 'adjd_s311_trigger_handler':
+drivers/iio/light/adjd_s311.c:188:12: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/iio/light/adjd_s311.c:188:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+
+vim +188 drivers/iio/light/adjd_s311.c
+   185		}
+   186	
+   187		if (indio_dev->scan_timestamp)
+ > 188			*(s64 *)((phys_addr_t)data->buffer + ALIGN(len, sizeof(s64)))
+   189				= time_ns;
+   190		iio_push_to_buffer(buffer, (u8 *)data->buffer, time_ns);
+   191	
 
 ---
-Not compiled.
-
- drivers/usb/host/ehci-ixp4xx.c |   19 +++----------------
- 1 file changed, 3 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-ixp4xx.c b/drivers/usb/host/ehci-ixp4xx.c
-index 488d401..f224c0a 100644
---- a/drivers/usb/host/ehci-ixp4xx.c
-+++ b/drivers/usb/host/ehci-ixp4xx.c
-@@ -98,30 +98,19 @@ static int ixp4xx_ehci_probe(struct platform_device *pdev)
- 	hcd->rsrc_start = res->start;
- 	hcd->rsrc_len = resource_size(res);
- 
--	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len,
--				driver->description)) {
--		dev_dbg(&pdev->dev, "controller already in use\n");
--		retval = -EBUSY;
--		goto fail_request_resource;
--	}
--
--	hcd->regs = ioremap_nocache(hcd->rsrc_start, hcd->rsrc_len);
-+	hcd->regs = devm_request_and_ioremap(&pdev->dev, res);
- 	if (hcd->regs = NULL) {
- 		dev_dbg(&pdev->dev, "error mapping memory\n");
- 		retval = -EFAULT;
--		goto fail_ioremap;
-+		goto fail_request_resource;
- 	}
- 
- 	retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (retval)
--		goto fail_add_hcd;
-+		goto fail_request_resource;
- 
- 	return retval;
- 
--fail_add_hcd:
--	iounmap(hcd->regs);
--fail_ioremap:
--	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
- fail_request_resource:
- 	usb_put_hcd(hcd);
- fail_create_hcd:
-@@ -134,8 +123,6 @@ static int ixp4xx_ehci_remove(struct platform_device *pdev)
- 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
- 
- 	usb_remove_hcd(hcd);
--	iounmap(hcd->regs);
--	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
- 	usb_put_hcd(hcd);
- 
- 	return 0;
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
