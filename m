@@ -1,57 +1,66 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Fri, 13 Jul 2012 23:28:08 +0000
-Subject: [PATCH] staging: wlan-ng: Fix problem with wrong arguments
-Message-Id: <1342222089-5930-1-git-send-email-emilgoode@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Jul 2012 16:43:02 +0000
+Subject: [PATCH 0/6] ensure a consistent return value in error case
+Message-Id: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: gregkh@linuxfoundation.org, dan.carpenter@oracle.com, krzysztof.wilczynski@linux.com, devendra.aaru@gmail.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-The function pointer scan in struct cfg80211_ops is not
-supposed to be assigned	a function with a struct net_device
-pointer as an argument. Instead access the net_device struct
-in the following way:
+Typically, the return value desired for the failure of a function with an
+integer return value is a negative integer.  In these cases, the return
+value is sometimes a negative integer and sometimes 0, due to a subsequent
+initialization of the return variable within the loop.
 
-struct net_device *dev = request->wdev->netdev;
+The semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
 
-sparse gives these warnings:
+//<smpl>
+@r exists@
+identifier ret;
+position p;
+constant C;
+expression e1,e2,e3,e4;
+@@
 
-drivers/staging/wlan-ng/cfg80211.c:726:17: warning:
-        incorrect type in initializer (incompatible argument 2
-        (different base types))
-        expected int ( *scan )( ... )
-        got int ( extern [toplevel] *<noident> )( ... )
+ret = -C
+... when != ret = e1
+    when != ret += e1
+    when any
+if@p (...)
+{
+  ... when != ret = e2
+      when != ret + e2
+  return ret;
+}
+... when any
+if (\(ret != 0\|ret < 0\|ret > 0\) || ...)
+{
+  ...
+  return ...;
+}
+... when != ret = e3
+    when != ret += e3
+    when any
+if@p (...)
+{
+  ... when != ret = e4
+      when != ret += e4
+  return ret;
+}
 
-drivers/staging/wlan-ng/cfg80211.c:726:2: warning:
-        initialization from incompatible pointer type [enabled by default]
+@@
+identifier r.ret;
+position r.p;
+statement S;
+@@
 
-drivers/staging/wlan-ng/cfg80211.c:726:2: warning:
-        (near initialization for ‘prism2_usb_cfg_ops.scan’)
-        [enabled by default]
-
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
- drivers/staging/wlan-ng/cfg80211.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
-index fabff4d..0970127 100644
---- a/drivers/staging/wlan-ng/cfg80211.c
-+++ b/drivers/staging/wlan-ng/cfg80211.c
-@@ -327,9 +327,9 @@ int prism2_get_station(struct wiphy *wiphy, struct net_device *dev,
- 	return result;
- }
- 
--int prism2_scan(struct wiphy *wiphy, struct net_device *dev,
--		struct cfg80211_scan_request *request)
-+int prism2_scan(struct wiphy *wiphy, struct cfg80211_scan_request *request)
- {
-+	struct net_device *dev = request->wdev->netdev;
- 	struct prism2_wiphy_private *priv = wiphy_priv(wiphy);
- 	wlandevice_t *wlandev = dev->ml_priv;
- 	struct p80211msg_dot11req_scan msg1;
--- 
-1.7.10.4
+(
+if@p (<+...ret...+>) S
+|
+*if@p (...) S
+)
+//</smpl>
 
