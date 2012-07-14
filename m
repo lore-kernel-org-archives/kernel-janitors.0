@@ -1,38 +1,78 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Jul 2012 11:11:57 +0000
-Subject: [patch] [media] dib8000: move dereference after check for NULL
-Message-Id: <20120720111157.GA22245@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 14 Jul 2012 16:43:06 +0000
+Subject: [PATCH 4/6] drivers/cpuidle/sysfs.c: ensure a consistent return value in error case
+Message-Id: <1342284188-19176-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Patrick Boettcher <patrick.boettcher@dibcom.fr>, Olivier Grenie <olivier.grenie@dibcom.fr>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-My static checker complains that we dereference "state" inside the call
-to fft_to_mode() before checking for NULL.  The comments say that it is
-possible for "state" to be NULL so I have moved the dereference after
-the check.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Typically, the return value desired for the failure of a function with an
+integer return value is a negative integer.  In these cases, the return
+value is sometimes a negative integer and sometimes 0, due to a subsequent
+initialization of the return variable within the loop.
 
-diff --git a/drivers/media/dvb/frontends/dib8000.c b/drivers/media/dvb/frontends/dib8000.c
-index 9ca34f4..1f3bcb5 100644
---- a/drivers/media/dvb/frontends/dib8000.c
-+++ b/drivers/media/dvb/frontends/dib8000.c
-@@ -2680,12 +2680,14 @@ static int dib8000_tune(struct dvb_frontend *fe)
+A simplified version of the semantic match that finds this problem is:
+(http://coccinelle.lip6.fr/)
+
+//<smpl>
+@r exists@
+identifier ret;
+position p;
+constant C;
+expression e1,e3,e4;
+statement S;
+@@
+
+ret = -C
+... when != ret = e3
+    when any
+if@p (...) S
+... when any
+if (\(ret != 0\|ret < 0\|ret > 0\) || ...) { ... return ...; }
+... when != ret = e3
+    when any
+*if@p (...)
+{
+  ... when != ret = e4
+  return ret;
+}
+//</smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/cpuidle/sysfs.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
+index 5f809e3..06df57c 100644
+--- a/drivers/cpuidle/sysfs.c
++++ b/drivers/cpuidle/sysfs.c
+@@ -361,15 +361,17 @@ static inline void cpuidle_free_state_kobj(struct cpuidle_device *device, int i)
+  */
+ int cpuidle_add_state_sysfs(struct cpuidle_device *device)
  {
- 	struct dib8000_state *state = fe->demodulator_priv;
- 	int ret = 0;
--	u16 lock, value, mode = fft_to_mode(state);
-+	u16 lock, value, mode;
+-	int i, ret = -ENOMEM;
++	int i, ret;
+ 	struct cpuidle_state_kobj *kobj;
+ 	struct cpuidle_driver *drv = cpuidle_get_driver();
  
- 	// we are already tuned - just resuming from suspend
- 	if (state = NULL)
- 		return -EINVAL;
- 
-+	mode = fft_to_mode(state);
-+
- 	dib8000_set_bandwidth(fe, state->fe[0]->dtv_property_cache.bandwidth_hz / 1000);
- 	dib8000_set_channel(state, 0, 0);
- 
+ 	/* state statistics */
+ 	for (i = 0; i < device->state_count; i++) {
+ 		kobj = kzalloc(sizeof(struct cpuidle_state_kobj), GFP_KERNEL);
+-		if (!kobj)
++		if (!kobj) {
++			ret = -ENOMEM;
+ 			goto error_state;
++		}
+ 		kobj->state = &drv->states[i];
+ 		kobj->state_usage = &device->states_usage[i];
+ 		init_completion(&kobj->kobj_unregister);
+
