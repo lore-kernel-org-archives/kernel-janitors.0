@@ -1,36 +1,105 @@
-From: Shlomo Pongratz <shlomop@mellanox.com>
-Date: Mon, 30 Jul 2012 15:20:30 +0000
-Subject: [for-next PATCH] IB/IPoIB: typo error
-Message-Id: <1343661630-1350-1-git-send-email-shlomop@mellanox.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 15 Jul 2012 09:25:22 +0000
+Subject: [PATCH] drivers/media/dvb/siano/smscoreapi.c: use list_for_each_entry
+Message-Id: <1342344322-11122-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wfg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Shlomo Pongratz <shlomop-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-was is_held should be lockdep_is_held
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Reporetd by: Roland Dreier <roland@kernel.org>
+Use list_for_each_entry and perform some other induced simplifications.
 
-Signed-off-by: Shlomo Pongratz <shlomop@mellanox.com>
+The semantic match that finds the opportunity for this reorganization is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+struct list_head *pos;
+struct list_head *head;
+statement S;
+@@
+
+*for (pos = (head)->next; pos != (head); pos = pos->next)
+S
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Not tested.
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-index 61318a7..f1ff2f4 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -882,7 +882,7 @@ static void __ipoib_reap_neigh(struct ipoib_dev_priv *priv)
- 		struct ipoib_neigh __rcu **np = &htbl->buckets[i];
+ drivers/media/dvb/siano/smscoreapi.c |   39 ++++++++++++++---------------------
+ 1 file changed, 16 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/media/dvb/siano/smscoreapi.c b/drivers/media/dvb/siano/smscoreapi.c
+index 7331e84..9cc5554 100644
+--- a/drivers/media/dvb/siano/smscoreapi.c
++++ b/drivers/media/dvb/siano/smscoreapi.c
+@@ -276,16 +276,13 @@ static void smscore_notify_clients(struct smscore_device_t *coredev)
+ static int smscore_notify_callbacks(struct smscore_device_t *coredev,
+ 				    struct device *device, int arrival)
+ {
+-	struct list_head *next, *first;
++	struct smscore_device_notifyee_t *elem;
+ 	int rc = 0;
  
- 		while ((neigh = rcu_dereference_protected(*np,
--				is_held(&ntbl->rwlock))) != NULL) {
-+				lockdep_is_held(&ntbl->rwlock))) != NULL) {
- 			/* was the neigh idle for two GC periods */
- 			if (time_after(neigh_obsolete, neigh->alive)) {
- 				rcu_assign_pointer(*np,
--- 
-1.7.1
+ 	/* note: must be called under g_deviceslock */
+ 
+-	first = &g_smscore_notifyees;
+-
+-	for (next = first->next; next != first; next = next->next) {
+-		rc = ((struct smscore_device_notifyee_t *) next)->
+-				hotplug(coredev, device, arrival);
++	list_for_each_entry(elem, &g_smscore_notifyees, entry) {
++		rc = elem->hotplug(coredev, device, arrival);
+ 		if (rc < 0)
+ 			break;
+ 	}
+@@ -940,29 +937,25 @@ static struct
+ smscore_client_t *smscore_find_client(struct smscore_device_t *coredev,
+ 				      int data_type, int id)
+ {
+-	struct smscore_client_t *client = NULL;
+-	struct list_head *next, *first;
++	struct list_head *first;
++	struct smscore_client_t *client;
+ 	unsigned long flags;
+-	struct list_head *firstid, *nextid;
+-
++	struct list_head *firstid;
++	struct smscore_idlist_t *client_id;
+ 
+ 	spin_lock_irqsave(&coredev->clientslock, flags);
+ 	first = &coredev->clients;
+-	for (next = first->next;
+-	     (next != first) && !client;
+-	     next = next->next) {
+-		firstid = &((struct smscore_client_t *)next)->idlist;
+-		for (nextid = firstid->next;
+-		     nextid != firstid;
+-		     nextid = nextid->next) {
+-			if ((((struct smscore_idlist_t *)nextid)->id = id) &&
+-			    (((struct smscore_idlist_t *)nextid)->data_type = data_type ||
+-			    (((struct smscore_idlist_t *)nextid)->data_type = 0))) {
+-				client = (struct smscore_client_t *) next;
+-				break;
+-			}
++	list_for_each_entry(client, first, entry) {
++		firstid = &client->idlist;
++		list_for_each_entry(client_id, firstid, entry) {
++			if ((client_id->id = id) &&
++			    (client_id->data_type = data_type ||
++			    (client_id->data_type = 0)))
++				goto found;
+ 		}
+ 	}
++	client = NULL;
++found:
+ 	spin_unlock_irqrestore(&coredev->clientslock, flags);
+ 	return client;
+ }
 
