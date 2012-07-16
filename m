@@ -1,30 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 19 Jul 2012 08:02:28 +0000
-Subject: [patch] ntfs: remove an unneeded NULL check
-Message-Id: <20120719080228.GA13792@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 16 Jul 2012 19:12:55 +0000
+Subject: [drm-intel:drm-intel-next-queued 58/59] drivers/gpu/drm/i915/i915_gem_context.c:454:6: warning: unus
+Message-Id: <20120716191255.GA16255@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anton Altaparmakov <anton@tuxera.com>
-Cc: linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-The "ctx" variable can never be NULL here and also we dereference it
-on the previous line.
+Hi Chris,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There are new compile warnings show up in
 
-diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
-index 7389d2d..4db19f7 100644
---- a/fs/ntfs/file.c
-+++ b/fs/ntfs/file.c
-@@ -309,8 +309,7 @@ do_non_resident_extend:
- done:
- 	flush_dcache_mft_record_page(ctx->ntfs_ino);
- 	mark_mft_record_dirty(ctx->ntfs_ino);
--	if (ctx)
--		ntfs_attr_put_search_ctx(ctx);
-+	ntfs_attr_put_search_ctx(ctx);
- 	if (m)
- 		unmap_mft_record(base_ni);
- 	ntfs_debug("Done, initialized_size 0x%llx, i_size 0x%llx.",
+tree:   git://people.freedesktop.org/~danvet/drm-intel.git drm-intel-next-queued
+head:   3cbf0ed71c262c2f07b3386e3c07c8d41440e050
+commit: 289513fe7d347ce23f4f45906324601bf7df01af [58/59] drm/i915: fix invalid reference handling of the default ctx obj
+
+All warnings:
+
+drivers/gpu/drm/i915/i915_gem_context.c: In function 'i915_switch_context':
+drivers/gpu/drm/i915/i915_gem_context.c:454:6: warning: unused variable 'ret' [-Wunused-variable]
+
+vim +454 drivers/gpu/drm/i915/i915_gem_context.c
+   451		struct drm_i915_file_private *file_priv = NULL;
+   452		struct i915_hw_context *to;
+   453		struct drm_i915_gem_object *from_obj = ring->last_context_obj;
+ > 454		int ret;
+   455	
+   456		if (dev_priv->hw_contexts_disabled)
+   457			return 0;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
