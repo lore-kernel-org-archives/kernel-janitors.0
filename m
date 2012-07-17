@@ -1,24 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 06 Jul 2012 20:14:05 +0000
-Subject: Re: [infiniband:for-next 13/14] drivers/infiniband/hw/qib/qib_keys.c:64:23: sparse: incompatible typ
-Message-Id: <20120706201405.GD8027@mwanda>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 17 Jul 2012 17:42:17 +0000
+Subject: [modsign:modsign 23/27] kernel/module-verify.c:63:15: warning: unused variable 'secsize'
+Message-Id: <20120717174217.GA5545@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120706080229.GB28650@localhost>
-In-Reply-To: <20120706080229.GB28650@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 06, 2012 at 10:07:09PM +0800, Fengguang Wu wrote:
-> > I've added Fengguang's other email address in case wfg isn't fixed
-> > yet.
-> 
-> Thank you! The wfg address seems to work fine except for the previous
-> abnormal case :)
-> 
+Hi David,
 
-Nope.  It's still not working.
+There are new compile warnings show up in
 
-regards,
-dan carpenter
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git modsign
+head:   88883f815418ff31af0e71ece672656ef75a5e88
+commit: 0e3a9d4eb0e62a7133409aaf371f82dedf57bc9e [23/27] MODSIGN: Check the ELF container
+
+All warnings:
+
+kernel/module-verify.c: In function 'module_verify_elf':
+kernel/module-verify.c:63:15: warning: unused variable 'secsize' [-Wunused-variable]
+
+vim +63 kernel/module-verify.c
+    60		const Elf_Shdr *section, *secstop;
+    61		const Elf_Sym *symbols, *symbol, *symstop;
+    62		const char *strtab;
+  > 63		size_t size, secsize, secstrsize, strsize, notesize, notemetasize;
+    64		unsigned line;
+    65	
+    66		size = mvdata->size;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
