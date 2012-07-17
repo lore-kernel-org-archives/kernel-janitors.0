@@ -1,23 +1,37 @@
-From: Shlomo Pongartz <shlomop@mellanox.com>
-Date: Mon, 30 Jul 2012 14:58:48 +0000
-Subject: Re: [for-next PATCH] IB/IPoIB: correct typo errors
-Message-Id: <5016A128.50505@mellanox.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 17 Jul 2012 00:14:10 +0000
+Subject: [nfs:nfs-for-bryan 100/100] net/sunrpc/auth_gss/gss_mech_switch.c:252:5: sparse: context imbalance i
+Message-Id: <20120717001410.GD16944@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343641441-11942-1-git-send-email-shlomop@mellanox.com> <CAL1RGDUGo+VGumt4R9UPhFCK20q+YRb3OU05CoxbBxk=tDAupw@mail.gmail.com>
-In-Reply-To: <CAL1RGDUGo+VGumt4R9UPhFCK20q+YRb3OU05CoxbBxk=tDAupw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wfg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, Linux-NFS <linux-nfs@vger.kernel.org>
 
-On 7/30/2012 5:50 PM, Roland Dreier wrote:
-> On Mon, Jul 30, 2012 at 2:44 AM, Shlomo Pongratz <shlomop@mellanox.com> wrote:
->> -                               lockdep_is_held(&ntbl->lock))) != NULL) {
->> +                               is_held(&ntbl->rwlock))) != NULL) {
-> By the way, I assume this is a typo -- there is no plain "is_held()," is there?
->
->   - R.
->
-You are absolutely right.
-Sorry.
+Hi Chuck,
+
+There are new sparse warnings (likely a true locking bug) show up in
+
+tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git nfs-for-bryan
+head:   6a1a1e34dc55f17e7bd260809207442dbb7a0296
+commit: 6a1a1e34dc55f17e7bd260809207442dbb7a0296 [100/100] SUNRPC: Add rpcauth_list_flavors()
+
+All sparse warnings:
+
+  net/sunrpc/auth_gss/gss_mech_switch.c:143:21: sparse: symbol '_gss_mech_get_by_name' was not declared. Should it be static?
+  net/sunrpc/auth_gss/gss_mech_switch.c:208:21: sparse: symbol '_gss_mech_get_by_pseudoflavor' was not declared. Should it be static?
++ net/sunrpc/auth_gss/gss_mech_switch.c:252:5: sparse: context imbalance in 'gss_mech_list_pseudoflavors' - wrong count at exit
+
+vim +252 net/sunrpc/auth_gss/gss_mech_switch.c
+   249	 * The returned array is not sorted by any policy.  Callers should not
+   250	 * rely on the order of the items in the returned array.
+   251	 */
+ > 252	int gss_mech_list_pseudoflavors(rpc_authflavor_t *array_ptr, int size)
+   253	{
+   254		struct gss_api_mech *pos = NULL;
+   255		int j, i = 0;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
