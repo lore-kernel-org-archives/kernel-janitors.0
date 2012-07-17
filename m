@@ -1,115 +1,35 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Mon, 16 Jul 2012 07:34:09 +0000
-Subject: Re: [PATCH 2/6] drivers/net/can/softing/softing_main.c: ensure a consistent return value in error ca
-Message-Id: <5003C3F1.4050900@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------enigAF96439C739D419C3A81270C"
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 17 Jul 2012 00:10:14 +0000
+Subject: [dlm:next 1/6] fs/dlm/lock.c:1049:9: sparse: context imbalance in 'dlm_master_lookup' - different lo
+Message-Id: <20120717001014.GC16944@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr> <1342284188-19176-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1342284188-19176-3-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Wolfgang Grandegger <wg@grandegger.com>, kernel-janitors@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enigAF96439C739D419C3A81270C
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-On 07/14/2012 06:43 PM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Typically, the return value desired for the failure of a function with =
-an
-> integer return value is a negative integer.  In these cases, the return=
+I don't know enough to tell whether this if false alarm. Would you
+help confirm it? Thank you.
 
-> value is sometimes a negative integer and sometimes 0, due to a subsequ=
-ent
-> initialization of the return variable within the loop.
->=20
-> A simplified version of the semantic match that finds this problem is:
-> (http://coccinelle.lip6.fr/)
->=20
-> //<smpl>
-> @r exists@
-> identifier ret;
-> position p;
-> constant C;
-> expression e1,e3,e4;
-> statement S;
-> @@
->=20
-> ret =3D -C
-> ... when !=3D ret =3D e3
->     when any
-> if@p (...) S
-> ... when any
-> if (\(ret !=3D 0\|ret < 0\|ret > 0\) || ...) { ... return ...; }
-> ... when !=3D ret =3D e3
->     when any
-> *if@p (...)
-> {
->   ... when !=3D ret =3D e4
->   return ret;
-> }
-> //</smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git next
+head:   96006ea6d4eea73466e90ef353bf34e507724e77
+commit: c04fecb4d9f7753e0cbff7edd03ec68f8721cdce [1/6] dlm: use rsbtbl as resource directory
 
-Thanks, applied to can-next
+One new sparse warning is triggered (and there were no old warnings before patch):
 
-Marc
->=20
-> ---
->  drivers/net/can/softing/softing_main.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/can/softing/softing_main.c b/drivers/net/can/s=
-ofting/softing_main.c
-> index a7c77c7..f2a221e 100644
-> --- a/drivers/net/can/softing/softing_main.c
-> +++ b/drivers/net/can/softing/softing_main.c
-> @@ -826,12 +826,12 @@ static __devinit int softing_pdev_probe(struct pl=
-atform_device *pdev)
->  		goto sysfs_failed;
->  	}
-> =20
-> -	ret =3D -ENOMEM;
->  	for (j =3D 0; j < ARRAY_SIZE(card->net); ++j) {
->  		card->net[j] =3D netdev =3D
->  			softing_netdev_create(card, card->id.chip[j]);
->  		if (!netdev) {
->  			dev_alert(&pdev->dev, "failed to make can[%i]", j);
-> +			ret =3D -ENOMEM;
->  			goto netdev_failed;
->  		}
->  		priv =3D netdev_priv(card->net[j]);
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-can" in=
++ fs/dlm/lock.c:1049:9: sparse: context imbalance in 'dlm_master_lookup' - different lock contexts for basic block
 
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+vim +1049 fs/dlm/lock.c
+  1046			unlock_rsb(r);
+  1047			put_rsb(r);
+  1048		}
+> 1049		return 0;
+  1050	
+  1051	 not_found:
+  1052		error = get_rsb_struct(ls, name, len, &r);
 
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---------------enigAF96439C739D419C3A81270C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAlADw/gACgkQjTAFq1RaXHOKygCgjV0oes2BDhZgZqhuzuxfd1+h
-IoQAnRJSCuaiAIuG6wVp9ZfOzXtutsIT
-=maqG
------END PGP SIGNATURE-----
-
---------------enigAF96439C739D419C3A81270C--
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
