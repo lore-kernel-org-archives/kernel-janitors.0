@@ -1,131 +1,55 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 08 Jul 2012 13:19:41 +0000
-Subject: [PATCH] remove invalid reference to list iterator variable
-Message-Id: <1341753582-3943-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Wed, 18 Jul 2012 13:02:05 +0000
+Subject: Re: [PATCH] remove invalid reference to list iterator variable
+Message-Id: <1342616525.7530.22.camel@brekeke>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-W1ZXQZNbbYwATuKYkB/h"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
+References: <1341753582-3943-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1341753582-3943-1-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org
 
-If list_for_each_entry, etc complete a traversal of the list, the iterator
-variable ends up pointing to an address at an offset from the list head,
-and not a meaningful structure.  Thus this value should not be used after
-the end of the iterator.
 
-The complete semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
+--=-W1ZXQZNbbYwATuKYkB/h
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-@@
-identifier c,member;
-expression E,x;
-iterator name list_for_each_entry;
-iterator name list_for_each_entry_reverse;
-iterator name list_for_each_entry_continue;
-iterator name list_for_each_entry_continue_reverse;
-iterator name list_for_each_entry_from;
-iterator name list_for_each_entry_safe;
-iterator name list_for_each_entry_safe_continue;
-iterator name list_for_each_entry_safe_from;
-iterator name list_for_each_entry_safe_reverse;
-iterator name hlist_for_each_entry;
-iterator name hlist_for_each_entry_continue;
-iterator name hlist_for_each_entry_from;
-iterator name hlist_for_each_entry_safe;
-statement S;
-@@
+On Sun, 2012-07-08 at 15:19 +0200, Julia Lawall wrote:
+> If list_for_each_entry, etc complete a traversal of the list, the iterato=
+r
+> variable ends up pointing to an address at an offset from the list head,
+> and not a meaningful structure.  Thus this value should not be used after
+> the end of the iterator.
 
-(
-list_for_each_entry(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-|
-list_for_each_entry_reverse(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-|
-list_for_each_entry_continue(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-|
-list_for_each_entry_continue_reverse(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-|
-list_for_each_entry_from(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-|
-list_for_each_entry_safe(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-|
-list_for_each_entry_safe_continue(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-|
-list_for_each_entry_safe_from(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-|
-list_for_each_entry_safe_reverse(c,...,member) { ... when != break;
-                                 when forall
-                                 when strict
-}
-)
-...
-(
-list_for_each_entry(c,...) S
-|
-list_for_each_entry_reverse(c,...) S
-|
-list_for_each_entry_continue(c,...) S
-|
-list_for_each_entry_continue_reverse(c,...) S
-|
-list_for_each_entry_from(c,...) S
-|
-list_for_each_entry_safe(c,...) S
-|
-list_for_each_entry_safe(x,c,...) S
-|
-list_for_each_entry_safe_continue(c,...) S
-|
-list_for_each_entry_safe_continue(x,c,...) S
-|
-list_for_each_entry_safe_from(c,...) S
-|
-list_for_each_entry_safe_from(x,c,...) S
-|
-list_for_each_entry_safe_reverse(c,...) S
-|
-list_for_each_entry_safe_reverse(x,c,...) S
-|
-hlist_for_each_entry(c,...) S
-|
-hlist_for_each_entry_continue(c,...) S
-|
-hlist_for_each_entry_from(c,...) S
-|
-hlist_for_each_entry_safe(c,...) S
-|
-list_remove_head(x,c,...)
-|
-sizeof(<+...c...+>)
-|
-&c->member
-|
-c = E
-|
-*c
-)
+Thanks Julia - this one is very useful!
+
+--=20
+Best Regards,
+Artem Bityutskiy
+
+--=-W1ZXQZNbbYwATuKYkB/h
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAABAgAGBQJQBrPNAAoJECmIfjd9wqK0vSQP/1sK+Khr5PKw7rAu0dY8QdGz
+QwLgLJ/+9ghWSi2KB1hqjxyUpMgKF1t4mIuh8VjKyCPVQqe2btm5+L4ke2+6pNvE
+wMDpZopVMk+IlrGVydKUBL/PX/MguHtPPgqSPXfC/neAjorptia1SphytNY8mLnW
+k/q7GxLPwUkeym9aCTY/JNUfiR8I2Z4kL+riYfkgIL90jTbNvJXu4TLBqdiLxwiL
+TorlnBbNc5d3rAC5CNmGgjZWrPvtEqhv90Nkgb/gb3DozGsYN5nFMpsLph4vgcG8
+sSoUJN0zd9k0+wXmVg8NnUuBGWOorp49MO694uL1BmT2wqoeQq3KTZA2WoZzeDZU
+/L0dcCz7wxBRfCdfCwjeQjvk5E/74eRlwcnbtPMz1YvhSiIU5AxqgJEFbkwmK1pI
+mL4xQV2/9YLvAQnxQuMaPGJxQQupFDU9kVbn7uoF6sb2RY/X3gQSVukiJ5bgT21E
+gX+FsHAOseZ8XfVKxrmC7XhPbVhTtkENJ7W6NMXakreK+ALCXzAKmhbLIl8kj9JC
+j6wpr2DoCThR6Qhtsi8ebPrAAZmjt8WN8ni/PxXwjA3lSFqIs+k4ERJJdtjFZPCv
+NQ714ftunLxmsHZoPUMXmDwSqFlSLOdnFsHrqNCG1dDYx+35rf3r6PDg2ywOgI+l
+rQ/i8+hfnknDX0hK6QDL
+=vjnG
+-----END PGP SIGNATURE-----
+
+--=-W1ZXQZNbbYwATuKYkB/h--
 
