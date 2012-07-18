@@ -1,35 +1,33 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 13 Jul 2012 06:14:35 +0000
-Subject: [staging:staging-next 98/99] drivers/iio/light/adjd_s311.c:188:12: warning: cast from pointer to int
-Message-Id: <20120713061435.GB16932@localhost>
+Date: Wed, 18 Jul 2012 13:54:47 +0000
+Subject: [modsign:modsign 12/27] sparse: symbol 'pgp_pubkey_hash' was not declared. Should it be static?
+Message-Id: <20120718135447.GA8256@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Peter,
+Hi David,
 
-There are new compile warnings show up in
+There are new sparse warnings show up in
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
-head:   bd972ff3176caf91a49d1d754848c3f6c5435328
-commit: bbdb822c4c3f8dbefd8f6dc84f6d98c33af6e051 [98/99] iio: add adjd_s311 I2C digital color sensor driver
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git modsign
+head:   84d2387379da278fa8e8639e37125c72f930743a
+commit: 4f49a5fc6553686e5cb8cc6f09f9342307d2fe07 [12/27] KEYS: PGP-based public key signature verification
 
-All warnings:
+All sparse warnings:
 
-drivers/iio/light/adjd_s311.c: In function 'adjd_s311_trigger_handler':
-drivers/iio/light/adjd_s311.c:188:12: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-drivers/iio/light/adjd_s311.c:188:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
++ security/keys/crypto/pgp_sig_verify.c:23:3: sparse: symbol 'pgp_pubkey_hash' was not declared. Should it be static?
 
-vim +188 drivers/iio/light/adjd_s311.c
-   185		}
-   186	
-   187		if (indio_dev->scan_timestamp)
- > 188			*(s64 *)((phys_addr_t)data->buffer + ALIGN(len, sizeof(s64)))
-   189				= time_ns;
-   190		iio_push_to_buffer(buffer, (u8 *)data->buffer, time_ns);
-   191	
+vim +23 security/keys/crypto/pgp_sig_verify.c
+    20	
+    21	const struct {
+    22		enum pkey_hash_algo algo : 8;
+  > 23	} pgp_pubkey_hash[PGP_HASH__LAST] = {
+    24		[PGP_HASH_MD5].algo		= PKEY_HASH_MD5,
+    25		[PGP_HASH_SHA1].algo		= PKEY_HASH_SHA1,
+    26		[PGP_HASH_RIPE_MD_160].algo	= PKEY_HASH_RIPE_MD_160,
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
