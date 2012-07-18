@@ -1,73 +1,59 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 09 Jul 2012 07:27:14 +0000
-Subject: [PATCH] fs/ubifs/orphan.c: remove invalid reference to list iterator variable
-Message-Id: <1341818834-2101-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Wed, 18 Jul 2012 15:58:46 +0000
+Subject: Re: [PATCH] fs/ubifs/orphan.c: remove invalid reference to list iterator variable
+Message-Id: <1342627126.9105.1.camel@brekeke>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-s0KIsc7aJHo7+lU1zOK6"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341753582-3943-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341753582-3943-2-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
+References: <1341818834-2101-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1341818834-2101-1-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-If list_for_each_entry, etc complete a traversal of the list, the iterator
-variable ends up pointing to an address at an offset from the list head,
-and not a meaningful structure.  Thus this value should not be used after
-the end of the iterator.  Replace a field access from orphan by NULL in two
-places.
+--=-s0KIsc7aJHo7+lU1zOK6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+On Mon, 2012-07-09 at 09:27 +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> If list_for_each_entry, etc complete a traversal of the list, the iterato=
+r
+> variable ends up pointing to an address at an offset from the list head,
+> and not a meaningful structure.  Thus this value should not be used after
+> the end of the iterator.  Replace a field access from orphan by NULL in t=
+wo
+> places.
 
-// <smpl>
-@@
-identifier c;
-expression E;
-iterator name list_for_each_entry;
-statement S;
-@@
+Pushed to linux-ubifs.git, thanks!
 
-list_for_each_entry(c,...) { ... when != break;
-                                 when forall
-                                 when strict
-}
-...
-(
-c = E
-|
-*c
-)
-// </smpl>
+--=20
+Best Regards,
+Artem Bityutskiy
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+--=-s0KIsc7aJHo7+lU1zOK6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
----
- fs/ubifs/orphan.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-diff --git a/fs/ubifs/orphan.c b/fs/ubifs/orphan.c
-index b02734d..cebf17e 100644
---- a/fs/ubifs/orphan.c
-+++ b/fs/ubifs/orphan.c
-@@ -176,7 +176,7 @@ int ubifs_orphan_start_commit(struct ubifs_info *c)
- 		*last = orphan;
- 		last = &orphan->cnext;
- 	}
--	*last = orphan->cnext;
-+	*last = NULL;
- 	c->cmt_orphans = c->new_orphans;
- 	c->new_orphans = 0;
- 	dbg_cmt("%d orphans to commit", c->cmt_orphans);
-@@ -382,7 +382,7 @@ static int consolidate(struct ubifs_info *c)
- 			last = &orphan->cnext;
- 			cnt += 1;
- 		}
--		*last = orphan->cnext;
-+		*last = NULL;
- 		ubifs_assert(cnt = c->tot_orphans - c->new_orphans);
- 		c->cmt_orphans = cnt;
- 		c->ohead_lnum = c->orph_first;
+iQIcBAABAgAGBQJQBt02AAoJECmIfjd9wqK0x8AP+QGUZ/4APMpNKqkDAB97n81t
+/kUaueQslsGHXI2eW7JDxj9CWLMkkVNGQYu5Z+gurpAYmF3L04GnZ15PgjBVfuQJ
+v6yS6T5L1pPdRcIjOgrFjFG+gJIbKyV9Ua2zf2DNIMTiOdDY1WWgx0EeT7c31T3C
+VxTka/Li6RaKTp2XIj8fp5QBIR464btU36l4hf8v+eeci6TgcuX0/189fOOQVuu/
+LBqGb6DKN9NOz1BtcpP3EhgEdsOh1w3EC7MpOzZbA+/wECz94Pv/WpTaUSju1OJY
+asSEvYoZEeEZdON8jyPjw89bCzzE+WXhXKfh0CV6m2SjBX39p3WQ1PnbOB0M0Hv1
+dXK/FnL+noI8Sjjo+fMnF4w6WefpBjVPVo1Meb04yJO6GyLA4CcLzPYQyfnVYdvO
+UhtNEHbNiAaMgddg1nY4upgpug4lhCvvwrLHHikLXzPh4Hi+fHDwIDBImdOJPCrK
+KYjRgUiFvpITAD4NTXV/y/Gq9pU8utCmbfBGFyNJ6sKk9EZjQF65iU1e0+jcnck1
+QlBxvgO9X6m/Y4XCq3ah95XmxNakPvV4MPlRSzEeuzbMCz4a08sKcePRfHbsCZ7M
++ysg+9bA/vOlw5BV9BjWxnPr1vRE7KpWDYJzr5LIR1tkn1sWNcuAmbWw7Cde4zGe
+h8HOQlmbQOQJPzDtd0fD
+=dDVt
+-----END PGP SIGNATURE-----
+
+--=-s0KIsc7aJHo7+lU1zOK6--
 
