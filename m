@@ -1,61 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 24 Jul 2012 14:16:04 +0000
-Subject: [PATCH] drivers/iommu/intel-iommu.c: add missing free_domain_mem
-Message-Id: <1343139364-26936-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 19 Jul 2012 08:02:28 +0000
+Subject: [patch] ntfs: remove an unneeded NULL check
+Message-Id: <20120719080228.GA13792@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Anton Altaparmakov <anton@tuxera.com>
+Cc: linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+The "ctx" variable can never be NULL here and also we dereference it
+on the previous line.
 
-Add missing free_domain_mem on failure path after alloc_domain.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@km exists@
-local idexpression e;
-expression e1,e2,e3;
-type T,T1;
-identifier f;
-@@
-
-* e = alloc_domain(...)
-... when any
-    when != e = e1
-    when != e1 = (T)e
-    when != e1(...,(T)e,...)
-    when != &e->f
-if(...) { ... when != e2(...,(T1)e,...)
-                 when != e3 = e
-                 when forall
-(
-             return <+...e...+>;
-|
-*             return ...;
-) }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
- drivers/iommu/intel-iommu.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 7469b53..0204b62 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -2008,6 +2008,7 @@ static struct dmar_domain *get_domain_for_dev(struct pci_dev *pdev, int gaw)
- 	if (!drhd) {
- 		printk(KERN_ERR "IOMMU: can't find DMAR for device %s\n",
- 			pci_name(pdev));
-+		free_domain_mem(domain);
- 		return NULL;
- 	}
- 	iommu = drhd->iommu;
-
+diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
+index 7389d2d..4db19f7 100644
+--- a/fs/ntfs/file.c
++++ b/fs/ntfs/file.c
+@@ -309,8 +309,7 @@ do_non_resident_extend:
+ done:
+ 	flush_dcache_mft_record_page(ctx->ntfs_ino);
+ 	mark_mft_record_dirty(ctx->ntfs_ino);
+-	if (ctx)
+-		ntfs_attr_put_search_ctx(ctx);
++	ntfs_attr_put_search_ctx(ctx);
+ 	if (m)
+ 		unmap_mft_record(base_ni);
+ 	ntfs_debug("Done, initialized_size 0x%llx, i_size 0x%llx.",
