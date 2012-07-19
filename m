@@ -1,21 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 01 Jul 2012 00:27:08 +0000
-Subject: Re: [patch -next] netfilter: use kfree_skb() not kfree()
-Message-Id: <20120630.172708.1209859499944103648.davem@davemloft.net>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 19 Jul 2012 00:07:49 +0000
+Subject: [sfc:for-davem 19/22] drivers/net/ethernet/sfc/ptp.c:1007:25: sparse: Using plain integer as NULL po
+Message-Id: <20120719000749.GB5548@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120630114853.GA22767@elgon.mountain>
-In-Reply-To: <20120630114853.GA22767@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, bridge@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, bart.de.schuymer@pandora.be, netfilter-devel@vger.kernel.org, shemminger@vyatta.com, pablo@netfilter.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 30 Jun 2012 14:48:53 +0300
+Hi Stuart,
 
-> This was should be a kfree_skb() here to free the sk_buff pointer.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There are new sparse warnings show up in
 
-My bad, applied, thanks Dan.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/bwh/sfc-next for-davem
+head:   2482aab313c3657557f1dad4c1b20c0934b84919
+commit: 13012ca3419166c44abafd9a6b42dbeb6aa6aa1a [19/22] sfc: Add support for IEEE-1588 PTP
+
+All sparse warnings:
+
++ drivers/net/ethernet/sfc/ptp.c:1007:25: sparse: Using plain integer as NULL pointer
+
+vim +1007 drivers/net/ethernet/sfc/ptp.c
+  1004	
+  1005	fail1:
+  1006		kfree(efx->ptp_data);
+> 1007		efx->ptp_data = 0;
+  1008	
+  1009		return rc;
+  1010	}
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
