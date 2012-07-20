@@ -1,32 +1,60 @@
-From: Jan Kara <jack@suse.cz>
-Date: Mon, 16 Jul 2012 21:29:29 +0000
-Subject: Re: [vfs:for-next 92/99] fs/sync.c:79:3: error: too few arguments to function 'writeback_inodes_sb'
-Message-Id: <20120716212929.GB6534@quack.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Jul 2012 07:07:34 +0000
+Subject: [patch] target: NULL dereference on error path
+Message-Id: <20120720070733.GD11710@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120716095610.GA18633@localhost>
-In-Reply-To: <20120716095610.GA18633@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon 16-07-12 22:01:18, Al Viro wrote:
-> On Mon, Jul 16, 2012 at 05:56:10PM +0800, Fengguang Wu wrote:
-> > Hi Jan,
-> > 
-> > Kernel build failed on
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-next
-> > head:   1073e38331024417f5b0c1fcf7af59b92fb92689
-> > commit: 2420b4fa98f2cac1e765785f2190b16830d8da4b [92/99] vfs: Reorder operations during sys_sync
-> > config: i386-randconfig-b001 (attached as .config)
-> 
-> Both this bisect trap and the one reported in the your next mail should've been dealt with
-> now; new head is 6f27045, when it propagates to git.kernel.org that should be it.
-  Gah, I'm sorry for the breakage. Especially that CONFIG_QUOTA one Stephen
-reported was stupid and unnecessary. Thanks for fixing it.
+We called destroy_workqueue(dev->tmr_wq) before ->tmr_wq was allocated
+which leads to an oops.
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index 7647eca..0eaae23 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -1098,7 +1098,7 @@ struct se_device *transport_add_device_to_core_hba(
+ 	 * Setup the Asymmetric Logical Unit Assignment for struct se_device
+ 	 */
+ 	if (core_setup_alua(dev, force_pt) < 0)
+-		goto out;
++		goto err_dev_list;
+ 
+ 	/*
+ 	 * Startup the struct se_device processing thread
+@@ -1108,7 +1108,7 @@ struct se_device *transport_add_device_to_core_hba(
+ 	if (!dev->tmr_wq) {
+ 		pr_err("Unable to create tmr workqueue for %s\n",
+ 			dev->transport->name);
+-		goto out;
++		goto err_dev_list;
+ 	}
+ 	/*
+ 	 * Setup work_queue for QUEUE_FULL
+@@ -1126,7 +1126,7 @@ struct se_device *transport_add_device_to_core_hba(
+ 		if (!inquiry_prod || !inquiry_rev) {
+ 			pr_err("All non TCM/pSCSI plugins require"
+ 				" INQUIRY consts\n");
+-			goto out;
++			goto err_wq;
+ 		}
+ 
+ 		strncpy(&dev->se_sub_dev->t10_wwn.vendor[0], "LIO-ORG", 8);
+@@ -1136,9 +1136,10 @@ struct se_device *transport_add_device_to_core_hba(
+ 	scsi_dump_inquiry(dev);
+ 
+ 	return dev;
+-out:
+-	destroy_workqueue(dev->tmr_wq);
+ 
++err_wq:
++	destroy_workqueue(dev->tmr_wq);
++err_dev_list:
+ 	spin_lock(&hba->device_lock);
+ 	list_del(&dev->dev_list);
+ 	hba->dev_count--;
