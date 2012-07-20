@@ -1,30 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Jul 2012 11:30:57 +0000
-Subject: [patch] [SCSI] aic79xx: NULL dereference in debug code
-Message-Id: <20120720113057.GC22245@elgon.mountain>
+From: Hannes Reinecke <hare@suse.de>
+Date: Fri, 20 Jul 2012 14:41:34 +0000
+Subject: Re: [patch] [SCSI] aic79xx: NULL dereference in debug code
+Message-Id: <50096E1E.60709@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120720113057.GC22245@elgon.mountain>
+In-Reply-To: <20120720113057.GC22245@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.de>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"ahd" can be NULL here and it gets dereferenced inside the call to
-ahd_name().
+On 07/20/2012 01:30 PM, Dan Carpenter wrote:
+> "ahd" can be NULL here and it gets dereferenced inside the call to
+> ahd_name().
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+Acked-by: Hannes Reinecke <hare@suse.de>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cheers,
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
-index 25417d0..5db8925 100644
---- a/drivers/scsi/aic7xxx/aic79xx_core.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-@@ -6120,7 +6120,8 @@ ahd_alloc(void *platform_arg, char *name)
- #ifdef AHD_DEBUG
- 	if ((ahd_debug & AHD_SHOW_MEMORY) != 0) {
- 		printk("%s: scb size = 0x%x, hscb size = 0x%x\n",
--		       ahd_name(ahd), (u_int)sizeof(struct scb),
-+		       ahd ? ahd_name(ahd) : "(null)",
-+		       (u_int)sizeof(struct scb),
- 		       (u_int)sizeof(struct hardware_scb));
- 	}
- #endif
+Hannes
+--=20
+Dr. Hannes Reinecke		      zSeries & Storage
+hare@suse.de			      +49 911 74053 688
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
+GF: J. Hawn, J. Guild, F. Imend=F6rffer, HRB 16746 (AG N=FCrnberg)
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
