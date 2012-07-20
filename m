@@ -1,30 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 09 Jul 2012 22:24:49 +0000
-Subject: Re: [PATCH 1/7] drivers/isdn/mISDN/stack.c: remove invalid reference to list iterator variable
-Message-Id: <20120709.152449.1208146051989927045.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Jul 2012 11:17:00 +0000
+Subject: [patch] drm/radeon: check for allocation failure in radeon_ring_backup()
+Message-Id: <20120720111700.GB22245@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1341747464-1772-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341747464-1772-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: isdn@linux-pingi.de, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@amd.com>, Jerome Glisse <jglisse@redhat.com>, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun,  8 Jul 2012 13:37:38 +0200
+Static checkers complain if this we don't check for allocation failure.
+Also we can use the new kmalloc_array() function here as a cleanup.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> If list_for_each_entry, etc complete a traversal of the list, the iterator
-> variable ends up pointing to an address at an offset from the list head,
-> and not a meaningful structure.  Thus this value should not be used after
-> the end of the iterator.  The dereferences are just deleted from the
-> debugging statement.
-> 
-> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/gpu/drm/radeon/radeon_ring.c b/drivers/gpu/drm/radeon/radeon_ring.c
+index 75cbe46..5a0ef24 100644
+--- a/drivers/gpu/drm/radeon/radeon_ring.c
++++ b/drivers/gpu/drm/radeon/radeon_ring.c
+@@ -402,7 +402,11 @@ unsigned radeon_ring_backup(struct radeon_device *rdev, struct radeon_ring *ring
+ 	}
+ 
+ 	/* and then save the content of the ring */
+-	*data = kmalloc(size * 4, GFP_KERNEL);
++	*data = kmalloc_array(size, sizeof(uint32_t), GFP_KERNEL);
++	if (!*data) {
++		mutex_unlock(&rdev->ring_lock);
++		return 0;
++	}
+ 	for (i = 0; i < size; ++i) {
+ 		(*data)[i] = ring->ring[ptr++];
+ 		ptr &= ring->ptr_mask;
