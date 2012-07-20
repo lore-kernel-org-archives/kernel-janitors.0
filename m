@@ -1,33 +1,29 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Thu, 12 Jul 2012 21:47:57 +0000
-Subject: Re: [patch 1/3 -next] tcm_vhost: unlock on error in tcm_vhost_drop_nexus()
-Message-Id: <1342129677.18004.99.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Jul 2012 13:32:45 +0000
+Subject: [patch] tty: save newly allocated buffer in tty_free_termios()
+Message-Id: <20120720133245.GD22245@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120712144752.GD24202@elgon.mountain>
-In-Reply-To: <20120712144752.GD24202@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: target-devel <target-devel@vger.kernel.org>, virtualization@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2012-07-12 at 17:47 +0300, Dan Carpenter wrote:
-> We need to unlock here before returning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/vhost/tcm_vhost.c b/drivers/vhost/tcm_vhost.c
-> index da0b8ac..d217bed 100644
-> --- a/drivers/vhost/tcm_vhost.c
-> +++ b/drivers/vhost/tcm_vhost.c
-> @@ -1189,6 +1189,7 @@ static int tcm_vhost_drop_nexus(
->  	}
->  
->  	if (atomic_read(&tpg->tv_tpg_vhost_count)) {
-> +		mutex_unlock(&tpg->tv_tpg_mutex);
->  		pr_err("Unable to remove TCM_vHost I_T Nexus with"
->  			" active TPG vhost count: %d\n",
->  			atomic_read(&tpg->tv_tpg_vhost_count));
+We're trying to save the termios state and we need to allocate a buffer
+to do it.  Smatch complains that the buffer is leaked at the end of the
+function.
 
-Applied.  Thanks Dan!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index be18d60..58a1bdd 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1450,6 +1450,7 @@ void tty_free_termios(struct tty_struct *tty)
+ 			pr_warn("tty: no memory to save termios state.\n");
+ 			return;
+ 		}
++		tty->driver->termios[idx] = tp;
+ 	}
+ 	*tp = tty->termios;
+ }
