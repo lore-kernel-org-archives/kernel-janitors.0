@@ -1,7 +1,7 @@
 From: David Howells <dhowells@redhat.com>
-Date: Fri, 20 Jul 2012 14:52:59 +0000
+Date: Fri, 20 Jul 2012 15:08:25 +0000
 Subject: Re: [modsign:devel-x509 19/19] gcc: error: security/keys/crypto/x509-asn1.c: No such file or directo
-Message-Id: <8055.1342795979@warthog.procyon.org.uk>
+Message-Id: <1956.1342796905@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <7577.1342794487@warthog.procyon.org.uk>
 In-Reply-To: <7577.1342794487@warthog.procyon.org.uk>
@@ -18,9 +18,7 @@ Fengguang Wu <fengguang.wu@intel.com> wrote:
 > 
 > I just reproduced it.  Yes I used KBUILD_OUTPUT.
 
-"make O=foo" does show it for me.  I've fixed the *-asn1.c not found problem,
-now to work on the build_OID_registry problem.
-
-It seems $(obj) doesn't contain what I thought it did.
+Should be sorted now.  The Make experience is such fun... especially when
+enhanced by the kernel's kbuild system.
 
 David
