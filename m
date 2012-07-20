@@ -1,47 +1,29 @@
-From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Date: Mon, 30 Jul 2012 06:13:04 +0000
-Subject: RE: drivers/mfd/tps65090.c: duplicated TPS65090_INT_STS tests
-Message-Id: <D958900912E20642BCBC71664EFECE3E6DDCAC418E@BGMAIL02.nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Jul 2012 07:06:34 +0000
+Subject: [patch] tty: handle NULL parameters in free_tty_struct()
+Message-Id: <20120720070634.GC11710@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120728123441.GB11202@localhost>
-In-Reply-To: <20120728123441.GB11202@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Axel Lin <axel.lin@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks for catching typo.
-Plz push a patch with fix.
+We sometimes pass NULL pointers to free_tty_struct().  One example where
+it can happen is in the error handling code in pty_common_install().
 
-Thanks,
-Venu
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-> -----Original Message-----
-> From: Fengguang Wu [mailto:fengguang.wu@intel.com]
-> Sent: Saturday, July 28, 2012 6:05 PM
-> To: Venu Byravarasu
-> Cc: Samuel Ortiz; Axel Lin; kernel-janitors@vger.kernel.org; LKML
-> Subject: drivers/mfd/tps65090.c: duplicated TPS65090_INT_STS tests
-> 
-> Hi Venu,
-> 
-> Is this coccinelle warning a trivial one, or indicates some copy&paste
-> error? It's introduced by commit 3c33be06 ("mfd: Add support for
-> TPS65090").
-> 
-> drivers/mfd/tps65090.c:239:5-30: duplicated argument to && or ||
-> 
-> vim +239 drivers/mfd/tps65090.c
->    236
->    237	static bool is_volatile_reg(struct device *dev, unsigned int reg)
->    238	{
->  > 239		if ((reg = TPS65090_INT_STS) || (reg = TPS65090_INT_STS))
->    240			return true;
->    241		else
->    242			return false;
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Centre
-> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index ca7c25d..e49b839 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -181,6 +181,8 @@ struct tty_struct *alloc_tty_struct(void)
+ 
+ void free_tty_struct(struct tty_struct *tty)
+ {
++	if (!tty)
++		return;
+ 	if (tty->dev)
+ 		put_device(tty->dev);
+ 	kfree(tty->write_buf);
