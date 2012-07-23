@@ -1,26 +1,33 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Fri, 20 Jul 2012 14:00:45 +0000
-Subject: Re: [patch] tty: save newly allocated buffer in tty_free_termios()
-Message-Id: <20120720150045.43828c39@pyramind.ukuu.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 23 Jul 2012 07:46:28 +0000
+Subject: [patch] openvswitch: potential NULL deref in sample()
+Message-Id: <20120723074628.GA30892@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120720133245.GD22245@elgon.mountain>
-In-Reply-To: <20120720133245.GD22245@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jesse Gross <jesse-l0M0P4e3n4LQT0dZR+AlfA@public.gmane.org>
+Cc: dev-yBygre7rU0TnMu66kgdUjQ@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
 
-On Fri, 20 Jul 2012 16:32:45 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+If there is no OVS_SAMPLE_ATTR_ACTIONS set then "acts_list" is NULL and
+it leads to a NULL dereference when we call nla_len(acts_list).  This
+is a static checker fix, not something I have seen in testing.
 
-> We're trying to save the termios state and we need to allocate a buffer
-> to do it.  Smatch complains that the buffer is leaked at the end of the
-> function.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This applies to Linus's tree.
 
-Acked-by: Alan Cox <alan@linux.intel.com>
-
-(introduced in the recent patches so no need to go back into stable or
-anywhere like that)
+diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+index 48badff..c2351d6 100644
+--- a/net/openvswitch/actions.c
++++ b/net/openvswitch/actions.c
+@@ -325,6 +325,9 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
+ 		}
+ 	}
+ 
++	if (!acts_list)
++		return 0;
++
+ 	return do_execute_actions(dp, skb, nla_data(acts_list),
+ 						 nla_len(acts_list), true);
+ }
