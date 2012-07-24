@@ -1,37 +1,63 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 30 Jul 2012 03:00:27 +0000
-Subject: [nf-next:nf-nat2 7/8] net/netfilter/nf_nat_ftp.c:122:9: sparse: incorrect type in assignment (differ
-Message-Id: <20120730030027.GB7389@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 24 Jul 2012 14:18:14 +0000
+Subject: [PATCH v2] drivers/iommu/intel-iommu.c: add missing free_domain_mem
+Message-Id: <1343139494-26998-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 
-Hi Patrick,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-There are new sparse warnings show up in
+Add missing free_domain_mem on failure path after alloc_domain.
 
-tree:   git://150.214.188.80/nf-next nf-nat2
-head:   2c59d9f21ca33d3f974f45ae1f730982a85bd908
-commit: 148b7e40adbf42204617d31ea5643f11faba3d33 [7/8] netfilter: nf_nat: support IPv6 in FTP NAT helper
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All sparse warnings:
+// <smpl>
+@km exists@
+local idexpression e;
+expression e1,e2,e3;
+type T,T1;
+identifier f;
+@@
 
-+ net/netfilter/nf_nat_ftp.c:122:9: sparse: incorrect type in assignment (different address spaces)
-  net/netfilter/nf_nat_ftp.c:122:9:    expected unsigned int ( *extern [addressable] [toplevel] nf_nat_ftp_hook )( ... )
-  net/netfilter/nf_nat_ftp.c:122:9:    got void [noderef] <asn:4>*<noident>
-+ net/netfilter/nf_nat_ftp.c:129:9: sparse: cannot dereference this type
+* e = alloc_domain(...)
+... when any
+    when != e = e1
+    when != e1 = (T)e
+    when != e1(...,(T)e,...)
+    when != &e->f
+if(...) { ... when != e2(...,(T1)e,...)
+                 when != e3 = e
+                 when forall
+(
+             return <+...e...+>;
+|
+*             return ...;
+) }
+// </smpl>
 
-vim +122 net/netfilter/nf_nat_ftp.c
-   119	
-   120	static void __exit nf_nat_ftp_fini(void)
-   121	{
- > 122		RCU_INIT_POINTER(nf_nat_ftp_hook, NULL);
-   123		synchronize_rcu();
-   124	}
-   125	
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+Email address corrected.
+
+ drivers/iommu/intel-iommu.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 7469b53..0204b62 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2008,6 +2008,7 @@ static struct dmar_domain *get_domain_for_dev(struct pci_dev *pdev, int gaw)
+ 	if (!drhd) {
+ 		printk(KERN_ERR "IOMMU: can't find DMAR for device %s\n",
+ 			pci_name(pdev));
++		free_domain_mem(domain);
+ 		return NULL;
+ 	}
+ 	iommu = drhd->iommu;
+
