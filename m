@@ -1,59 +1,22 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Wed, 18 Jul 2012 15:58:46 +0000
-Subject: Re: [PATCH] fs/ubifs/orphan.c: remove invalid reference to list iterator variable
-Message-Id: <1342627126.9105.1.camel@brekeke>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-s0KIsc7aJHo7+lU1zOK6"
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 25 Jul 2012 13:59:17 +0000
+Subject: bfa_ioc.c: code aligned with following code
+Message-Id: <20120725135917.GB27724@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341818834-2101-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341818834-2101-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, linux-kernel@vger.kernel.org
-
-
---=-s0KIsc7aJHo7+lU1zOK6
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2012-07-09 at 09:27 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> If list_for_each_entry, etc complete a traversal of the list, the iterato=
-r
-> variable ends up pointing to an address at an offset from the list head,
-> and not a meaningful structure.  Thus this value should not be used after
-> the end of the iterator.  Replace a field access from orphan by NULL in t=
-wo
-> places.
-
-Pushed to linux-ubifs.git, thanks!
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-s0KIsc7aJHo7+lU1zOK6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAABAgAGBQJQBt02AAoJECmIfjd9wqK0x8AP+QGUZ/4APMpNKqkDAB97n81t
-/kUaueQslsGHXI2eW7JDxj9CWLMkkVNGQYu5Z+gurpAYmF3L04GnZ15PgjBVfuQJ
-v6yS6T5L1pPdRcIjOgrFjFG+gJIbKyV9Ua2zf2DNIMTiOdDY1WWgx0EeT7c31T3C
-VxTka/Li6RaKTp2XIj8fp5QBIR464btU36l4hf8v+eeci6TgcuX0/189fOOQVuu/
-LBqGb6DKN9NOz1BtcpP3EhgEdsOh1w3EC7MpOzZbA+/wECz94Pv/WpTaUSju1OJY
-asSEvYoZEeEZdON8jyPjw89bCzzE+WXhXKfh0CV6m2SjBX39p3WQ1PnbOB0M0Hv1
-dXK/FnL+noI8Sjjo+fMnF4w6WefpBjVPVo1Meb04yJO6GyLA4CcLzPYQyfnVYdvO
-UhtNEHbNiAaMgddg1nY4upgpug4lhCvvwrLHHikLXzPh4Hi+fHDwIDBImdOJPCrK
-KYjRgUiFvpITAD4NTXV/y/Gq9pU8utCmbfBGFyNJ6sKk9EZjQF65iU1e0+jcnck1
-QlBxvgO9X6m/Y4XCq3ah95XmxNakPvV4MPlRSzEeuzbMCz4a08sKcePRfHbsCZ7M
-+ysg+9bA/vOlw5BV9BjWxnPr1vRE7KpWDYJzr5LIR1tkn1sWNcuAmbWw7Cde4zGe
-h8HOQlmbQOQJPzDtd0fD
-=dDVt
------END PGP SIGNATURE-----
+Hi James,
 
---=-s0KIsc7aJHo7+lU1zOK6--
+coccinelle complaints:
 
+drivers/scsi/bfa/bfa_ioc.c:3397:3-18: code aligned with following code on line 3399
+
+and the code does look weird..
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
