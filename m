@@ -1,24 +1,30 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Fri, 13 Jul 2012 21:09:29 +0000
-Subject: Re: [PATCH] scripts/coccinelle/iterators/use_after_iter.cocci: list iterator variable semantic patch
-Message-Id: <50008E89.1050006@suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 26 Jul 2012 13:05:05 +0000
+Subject: [patch] ocfs2/dlm: use GFP_ATOMIC inside a spin_lock
+Message-Id: <20120726130505.GA30865@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341866451-24290-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341866451-24290-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>, Nicolas Palix <npalix.work@gmail.com>, cocci@diku.dk, linux-kernel@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-Dne 9.7.2012 22:40, Julia Lawall napsal(a):
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> If list_for_each_entry, etc complete a traversal of the list, the iterator
-> variable ends up pointing to an address at an offset from the list head,
-> and not a meaningful structure.  Thus this value should not be used after
-> the end of the iterator.
+My static checker complains that this is called with a spin_lock held
+in dlm_master_requery_handler() from dlmrecovery.c.  Probably the reason
+we have not received any bug reports about this is that recovery is not
+a common operation.
 
-Applied to kbuild.git#misc, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Michal
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 005261c..33ecbe0 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -2020,7 +2020,7 @@ int dlm_dispatch_assert_master(struct dlm_ctxt *dlm,
+ 			       int ignore_higher, u8 request_from, u32 flags)
+ {
+ 	struct dlm_work_item *item;
+-	item = kzalloc(sizeof(*item), GFP_NOFS);
++	item = kzalloc(sizeof(*item), GFP_ATOMIC);
+ 	if (!item)
+ 		return -ENOMEM;
+ 
