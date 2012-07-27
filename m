@@ -1,30 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 26 Jul 2012 13:05:05 +0000
-Subject: [patch] ocfs2/dlm: use GFP_ATOMIC inside a spin_lock
-Message-Id: <20120726130505.GA30865@elgon.mountain>
+From: Mark Fasheh <mfasheh@suse.de>
+Date: Fri, 27 Jul 2012 20:32:33 +0000
+Subject: Re: [patch] ocfs2/dlm: use GFP_ATOMIC inside a spin_lock
+Message-Id: <20120727203233.GB11126@wotan.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120726130505.GA30865@elgon.mountain>
+In-Reply-To: <20120726130505.GA30865@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ocfs2-devel@oss.oracle.com
 
-My static checker complains that this is called with a spin_lock held
-in dlm_master_requery_handler() from dlmrecovery.c.  Probably the reason
-we have not received any bug reports about this is that recovery is not
-a common operation.
+On Thu, Jul 26, 2012 at 04:05:05PM +0300, Dan Carpenter wrote:
+> My static checker complains that this is called with a spin_lock held
+> in dlm_master_requery_handler() from dlmrecovery.c.  Probably the reason
+> we have not received any bug reports about this is that recovery is not
+> a common operation.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Looks reasonable to me. Sunil, we might just want to have that dlm_work_item
+allocated by the caller, yes?
 
-diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
-index 005261c..33ecbe0 100644
---- a/fs/ocfs2/dlm/dlmmaster.c
-+++ b/fs/ocfs2/dlm/dlmmaster.c
-@@ -2020,7 +2020,7 @@ int dlm_dispatch_assert_master(struct dlm_ctxt *dlm,
- 			       int ignore_higher, u8 request_from, u32 flags)
- {
- 	struct dlm_work_item *item;
--	item = kzalloc(sizeof(*item), GFP_NOFS);
-+	item = kzalloc(sizeof(*item), GFP_ATOMIC);
- 	if (!item)
- 		return -ENOMEM;
- 
+Acked-by: Mark Fasheh <mfasheh@suse.de>
+	--Mark
+
+--
+Mark Fasheh
