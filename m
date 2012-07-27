@@ -1,59 +1,66 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 27 Jul 2012 13:02:25 +0000
-Subject: [next:akpm 147/308] net/sunrpc/clnt.c:720:36: sparse: dereference of noderef expression
-Message-Id: <20120727130225.GA29912@localhost>
+From: Mel Gorman <mgorman@suse.de>
+Date: Fri, 27 Jul 2012 14:10:36 +0000
+Subject: Re: [next:akpm 147/308] net/sunrpc/clnt.c:720:36: sparse: dereference of noderef expression
+Message-Id: <20120727141035.GE612@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120727130225.GA29912@localhost>
+In-Reply-To: <20120727130225.GA29912@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Mel,
+On Fri, Jul 27, 2012 at 09:02:25PM +0800, Fengguang Wu wrote:
+> Hi Mel,
+> 
+> There are new sparse warnings show up in
+> 
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
+> head:   247109fa112ac912f31efc28e130ed2a0cc1764c
+> commit: 5bb176c86a868289d5d93d89919c3b5a339d6d20 [147/308] nfs: enable swap on NFS
+> 
 
-There are new sparse warnings show up in
+Thanks (adding Andrew to cc for picking up in mm)
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
-head:   247109fa112ac912f31efc28e130ed2a0cc1764c
-commit: 5bb176c86a868289d5d93d89919c3b5a339d6d20 [147/308] nfs: enable swap on NFS
+How about the following?
 
-All sparse warnings:
+---8<---
 
-  net/sunrpc/clnt.c:1362:39: sparse: incorrect type in initializer (different address spaces)
-  net/sunrpc/clnt.c:1362:39:    expected struct rpc_xprt *xprt
-  net/sunrpc/clnt.c:1362:39:    got struct rpc_xprt [noderef] <asn:4>*cl_xprt
-  net/sunrpc/clnt.c:1954:59: sparse: incorrect type in argument 1 (different address spaces)
-  net/sunrpc/clnt.c:1954:59:    expected struct rpc_xprt *xprt
-  net/sunrpc/clnt.c:1954:59:    got struct rpc_xprt [noderef] <asn:4>*cl_xprt
-  net/sunrpc/clnt.c:1470:39: sparse: incorrect type in initializer (different address spaces)
-  net/sunrpc/clnt.c:1470:39:    expected struct rpc_xprt *xprt
-  net/sunrpc/clnt.c:1470:39:    got struct rpc_xprt [noderef] <asn:4>*cl_xprt
-  net/sunrpc/clnt.c:1648:40: sparse: incorrect type in argument 1 (different address spaces)
-  net/sunrpc/clnt.c:1648:40:    expected struct rpc_wait_queue *<noident>
-  net/sunrpc/clnt.c:1648:40:    got struct rpc_wait_queue [noderef] <asn:4>*<noident>
-  net/sunrpc/clnt.c:1748:51: sparse: incorrect type in argument 1 (different address spaces)
-  net/sunrpc/clnt.c:1748:51:    expected struct rpc_xprt *xprt
-  net/sunrpc/clnt.c:1748:51:    got struct rpc_xprt [noderef] <asn:4>*cl_xprt
-  net/sunrpc/clnt.c:1800:59: sparse: incorrect type in argument 1 (different address spaces)
-  net/sunrpc/clnt.c:1800:59:    expected struct rpc_xprt *xprt
-  net/sunrpc/clnt.c:1800:59:    got struct rpc_xprt [noderef] <asn:4>*cl_xprt
-  net/sunrpc/clnt.c:1564:39: sparse: incorrect type in initializer (different address spaces)
-  net/sunrpc/clnt.c:1564:39:    expected struct rpc_xprt *xprt
-  net/sunrpc/clnt.c:1564:39:    got struct rpc_xprt [noderef] <asn:4>*cl_xprt
-  net/sunrpc/clnt.c:1968:46: sparse: incorrect type in argument 1 (different address spaces)
-  net/sunrpc/clnt.c:1968:46:    expected struct rpc_xprt *xprt
-  net/sunrpc/clnt.c:1968:46:    got struct rpc_xprt [noderef] <asn:4>*cl_xprt
-+ net/sunrpc/clnt.c:720:36: sparse: dereference of noderef expression
-  net/sunrpc/clnt.c:1851:25: sparse: context imbalance in 'call_timeout' - different lock contexts for basic block
+sparsefix: nfs: enable swap on NFS
 
-vim +720 net/sunrpc/clnt.c
-   717			atomic_inc(&clnt->cl_count);
-   718			if (clnt->cl_softrtry)
-   719				task->tk_flags |= RPC_TASK_SOFT;
- > 720			if (task->tk_client->cl_xprt->swapper)
-   721				task->tk_flags |= RPC_TASK_SWAPPER;
-   722			/* Add to the client's list of all tasks */
-   723			spin_lock(&clnt->cl_lock);
+Fengguang Wu reports the following sparse problem
 
+	net/sunrpc/clnt.c:720:36: sparse: dereference of noderef expression
+
+task->tk_client->cl_xprt is RCU protected and must be dereferenced using
+rcu_dereference(). This patch checks if a socket is being used for swap
+and if so it takes the RCU read lock and dereferences properly. This is
+a fix for "nfs: enable swap on NFS"
+
+Signed-off-by: Mel Gorman <mgorman@suse.de>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ net/sunrpc/clnt.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+index 2848e5b..df27890 100644
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -717,8 +717,15 @@ void rpc_task_set_client(struct rpc_task *task, struct rpc_clnt *clnt)
+ 		atomic_inc(&clnt->cl_count);
+ 		if (clnt->cl_softrtry)
+ 			task->tk_flags |= RPC_TASK_SOFT;
+-		if (task->tk_client->cl_xprt->swapper)
+-			task->tk_flags |= RPC_TASK_SWAPPER;
++		if (sk_memalloc_socks()) {
++			struct rpc_xprt *xprt;
++
++			rcu_read_lock();
++			xprt = rcu_dereference(clnt->cl_xprt);
++			if (xprt->swapper)
++				task->tk_flags |= RPC_TASK_SWAPPER;
++			rcu_read_unlock();
++		}
+ 		/* Add to the client's list of all tasks */
+ 		spin_lock(&clnt->cl_lock);
+ 		list_add_tail(&task->tk_task, &clnt->cl_tasks);
