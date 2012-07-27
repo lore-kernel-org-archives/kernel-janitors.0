@@ -1,42 +1,38 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date: Thu, 26 Jul 2012 13:39:48 +0000
-Subject: Re: [s390:for-linus 5/5] arch/s390/include/asm/mmu_context.h:97:3: error: implicit declaration of fu
-Message-Id: <20120726153948.39884318@de.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 27 Jul 2012 11:46:51 +0000
+Subject: [patch] USB: kaweth.c: use GFP_ATOMIC under spin_lock
+Message-Id: <20120727114651.GA15492@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120726102340.GA15269@localhost>
-In-Reply-To: <20120726102340.GA15269@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 26 Jul 2012 18:23:40 +0800
-Fengguang Wu <fengguang.wu@intel.com> wrote:
+The problem is that we call this with a spin lock held.  The call tree
+is:
+	kaweth_start_xmit() holds kaweth->device_lock.
+	-> kaweth_async_set_rx_mode()
+	   -> kaweth_control()
+	      -> kaweth_internal_control_msg()
 
-> Hi Martin,
-> 
-> Kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
-> head:   fb70554e705cb201222a1a7c7b2e94c6522886fa
-> commit: fb70554e705cb201222a1a7c7b2e94c6522886fa [5/5] s390/mm: downgrade page table after fork of a 31 bit process
-> config: s390-allnoconfig (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> In file included from arch/s390/include/asm/elf.h:130:0,
->                  from include/linux/elf.h:7,
->                  from include/linux/module.h:14,
->                  from drivers/s390/cio/airq.c:12:
-> arch/s390/include/asm/mmu_context.h: In function 'arch_dup_mmap':
-> arch/s390/include/asm/mmu_context.h:97:3: error: implicit declaration of function 'crst_table_downgrade' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
+The kaweth_internal_control_msg() function is only called from
+kaweth_control() which used GFP_ATOMIC for its allocations.
 
-Hmm, yes. arch_dup_mmap misses a "#ifdef CONFIG_64BIT". I'll fix it. Thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Applies to Linus's tree.
 
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+diff --git a/drivers/net/usb/kaweth.c b/drivers/net/usb/kaweth.c
+index d8ad552..c3d0349 100644
+--- a/drivers/net/usb/kaweth.c
++++ b/drivers/net/usb/kaweth.c
+@@ -1314,7 +1314,7 @@ static int kaweth_internal_control_msg(struct usb_device *usb_dev,
+         int retv;
+         int length = 0; /* shut up GCC */
+ 
+-        urb = usb_alloc_urb(0, GFP_NOIO);
++	urb = usb_alloc_urb(0, GFP_ATOMIC);
+         if (!urb)
+                 return -ENOMEM;
+ 
