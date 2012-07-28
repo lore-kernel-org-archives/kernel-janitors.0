@@ -1,78 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Jul 2012 16:43:06 +0000
-Subject: [PATCH 4/6] drivers/cpuidle/sysfs.c: ensure a consistent return value in error case
-Message-Id: <1342284188-19176-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 28 Jul 2012 12:43:57 +0000
+Subject: [PATCH] pch_uart: check kzalloc result in dma_handle_tx()
+Message-Id: <20120728124357.GA13192@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Tomoya MORINAGA <tomoya.rohm@gmail.com>
+Cc: Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Reported by coccinelle:
 
-Typically, the return value desired for the failure of a function with an
-integer return value is a negative integer.  In these cases, the return
-value is sometimes a negative integer and sometimes 0, due to a subsequent
-initialization of the return variable within the loop.
+drivers/tty/serial/pch_uart.c:979:1-14: alloc with no test, possible model on line 994
 
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
-
-//<smpl>
-@r exists@
-identifier ret;
-position p;
-constant C;
-expression e1,e3,e4;
-statement S;
-@@
-
-ret = -C
-... when != ret = e3
-    when any
-if@p (...) S
-... when any
-if (\(ret != 0\|ret < 0\|ret > 0\) || ...) { ... return ...; }
-... when != ret = e3
-    when any
-*if@p (...)
-{
-  ... when != ret = e4
-  return ret;
-}
-//</smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
- drivers/cpuidle/sysfs.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/tty/serial/pch_uart.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
-index 5f809e3..06df57c 100644
---- a/drivers/cpuidle/sysfs.c
-+++ b/drivers/cpuidle/sysfs.c
-@@ -361,15 +361,17 @@ static inline void cpuidle_free_state_kobj(struct cpuidle_device *device, int i)
-  */
- int cpuidle_add_state_sysfs(struct cpuidle_device *device)
- {
--	int i, ret = -ENOMEM;
-+	int i, ret;
- 	struct cpuidle_state_kobj *kobj;
- 	struct cpuidle_driver *drv = cpuidle_get_driver();
+WARNING: this may be a superficial fix!
+
+--- linux.orig/drivers/tty/serial/pch_uart.c	2012-06-07 05:39:57.550846385 +0800
++++ linux/drivers/tty/serial/pch_uart.c	2012-07-28 20:37:27.803145392 +0800
+@@ -974,6 +974,10 @@ static unsigned int dma_handle_tx(struct
+ 	priv->tx_dma_use = 1;
  
- 	/* state statistics */
- 	for (i = 0; i < device->state_count; i++) {
- 		kobj = kzalloc(sizeof(struct cpuidle_state_kobj), GFP_KERNEL);
--		if (!kobj)
-+		if (!kobj) {
-+			ret = -ENOMEM;
- 			goto error_state;
-+		}
- 		kobj->state = &drv->states[i];
- 		kobj->state_usage = &device->states_usage[i];
- 		init_completion(&kobj->kobj_unregister);
-
+ 	priv->sg_tx_p = kzalloc(sizeof(struct scatterlist)*num, GFP_ATOMIC);
++	if (!priv->sg_tx_p) {
++		dev_err(priv->port.dev, "%s:kzalloc Failed\n", __func__);
++		return 0;
++	}
+ 
+ 	sg_init_table(priv->sg_tx_p, num); /* Initialize SG table */
+ 	sg = priv->sg_tx_p;
