@@ -1,33 +1,31 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Mon, 30 Jul 2012 14:48:27 +0000
-Subject: Re: [PATCH 1/9] drivers/usb/host/ehci-atmel.c: use devm_ functions
-Message-Id: <Pine.LNX.4.44L0.1207301047260.1386-100000@iolanthe.rowland.org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 28 Jul 2012 12:34:41 +0000
+Subject: drivers/mfd/tps65090.c: duplicated TPS65090_INT_STS tests
+Message-Id: <20120728123441.GB11202@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1343591173-2819-2-git-send-email-Julia.Lawall@lip6.fr>
-References: <1343591173-2819-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1343591173-2819-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Venu Byravarasu <vbyravarasu@nvidia.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Axel Lin <axel.lin@gmail.com>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sun, 29 Jul 2012, Julia Lawall wrote:
+Hi Venu,
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> Not compiled.
+Is this coccinelle warning a trivial one, or indicates some copy&paste
+error? It's introduced by commit 3c33be06 ("mfd: Add support for
+TPS65090").
 
-I have no objections to the patches in this series, but I haven't 
-checked them in detail and I can't compile them either.
+drivers/mfd/tps65090.c:239:5-30: duplicated argument to && or ||
 
-Alan Stern
+vim +239 drivers/mfd/tps65090.c
+   236	
+   237	static bool is_volatile_reg(struct device *dev, unsigned int reg)
+   238	{
+ > 239		if ((reg = TPS65090_INT_STS) || (reg = TPS65090_INT_STS))
+   240			return true;
+   241		else
+   242			return false;
 
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
