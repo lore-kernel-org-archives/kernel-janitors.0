@@ -1,76 +1,75 @@
-From: Aditya Kali <adityakali@google.com>
-Date: Tue, 10 Jul 2012 01:48:02 +0000
-Subject: Re: linux-next: build failure after merge of the ext4 tree
-Message-Id: <CAGr1F2EB=BR+GSq34TYB+QE+3FNwzvBwBemYPpPu+=wENQf-ZA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Jul 2012 19:46:09 +0000
+Subject: [PATCH 5/9] drivers/usb/host/ehci-ixp4xx.c: use devm_ functions
+Message-Id: <1343591173-2819-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120710112312.099a2f602cd6aea90226732c@canb.auug.org.au>
-In-Reply-To: <20120710112312.099a2f602cd6aea90226732c@canb.auug.org.au>
+References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Rothwell <sfr@canb.auug.org.au>, wfg@linux.intel.com
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Johann Lombardi <johann@whamcloud.com>, ext4 development <linux-ext4@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Sorry for the trouble. The following patch should fix the build.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-From: Aditya Kali <adityakali@google.com>
-Date: Mon, 9 Jul 2012 18:42:28 -0700
-Subject: [PATCH] ext4: Fix compilation error for ext4_enable_quotas
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-ext4_enable_quotas should only be called under CONFIG_QUOTA
-block.
-
-Signed-off-by: Aditya Kali <adityakali@google.com>
 ---
- fs/ext4/super.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Not compiled.
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index a9b87c3..e4b79fc 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4734,6 +4734,7 @@ static int ext4_remount(struct super_block *sb,
-int *flags, char *data)
- 	if (enable_quota) {
- 		if (sb_any_quota_suspended(sb))
- 			dquot_resume(sb, -1);
-+#ifdef CONFIG_QUOTA
- 		else if (EXT4_HAS_RO_COMPAT_FEATURE(sb,
- 					EXT4_FEATURE_RO_COMPAT_QUOTA)) {
- 			err = ext4_enable_quotas(sb);
-@@ -4742,6 +4743,7 @@ static int ext4_remount(struct super_block *sb,
-int *flags, char *data)
- 				goto restore_opts;
- 			}
- 		}
-+#endif
+ drivers/usb/host/ehci-ixp4xx.c |   19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-ixp4xx.c b/drivers/usb/host/ehci-ixp4xx.c
+index 488d401..f224c0a 100644
+--- a/drivers/usb/host/ehci-ixp4xx.c
++++ b/drivers/usb/host/ehci-ixp4xx.c
+@@ -98,30 +98,19 @@ static int ixp4xx_ehci_probe(struct platform_device *pdev)
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
+ 
+-	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len,
+-				driver->description)) {
+-		dev_dbg(&pdev->dev, "controller already in use\n");
+-		retval = -EBUSY;
+-		goto fail_request_resource;
+-	}
+-
+-	hcd->regs = ioremap_nocache(hcd->rsrc_start, hcd->rsrc_len);
++	hcd->regs = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (hcd->regs = NULL) {
+ 		dev_dbg(&pdev->dev, "error mapping memory\n");
+ 		retval = -EFAULT;
+-		goto fail_ioremap;
++		goto fail_request_resource;
  	}
-
- 	ext4_msg(sb, KERN_INFO, "re-mounted. Opts: %s", orig_data);
--- 
-1.7.7.3
-
-
-On Mon, Jul 9, 2012 at 6:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Ted,
->
-> After merging the ext4 tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> fs/ext4/super.c: In function 'ext4_remount':
-> fs/ext4/super.c:4739:4: error: implicit declaration of function 'ext4_enable_quotas' [-Werror=implicit-function-declaration]
->
-> Caused by commit 182bb8fec8f5 ("ext4: make quota as first class supported
-> feature").  The quota code needs to be protected by CONFIG_QUOTA.
->
-> I have used the ext4 tree from next-20120709 for today.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-
-
-
--- 
-
-Aditya
+ 
+ 	retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (retval)
+-		goto fail_add_hcd;
++		goto fail_request_resource;
+ 
+ 	return retval;
+ 
+-fail_add_hcd:
+-	iounmap(hcd->regs);
+-fail_ioremap:
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ fail_request_resource:
+ 	usb_put_hcd(hcd);
+ fail_create_hcd:
+@@ -134,8 +123,6 @@ static int ixp4xx_ehci_remove(struct platform_device *pdev)
+ 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+ 
+ 	usb_remove_hcd(hcd);
+-	iounmap(hcd->regs);
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ 	usb_put_hcd(hcd);
+ 
+ 	return 0;
