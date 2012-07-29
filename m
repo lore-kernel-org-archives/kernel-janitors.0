@@ -1,33 +1,84 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 30 Jul 2012 08:15:43 +0000
-Subject: [patch 1/2] Btrfs: checking for NULL instead of IS_ERR
-Message-Id: <20120730081542.GC15702@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Jul 2012 19:46:11 +0000
+Subject: [PATCH 7/9] drivers/usb/host/ehci-msm.c: use devm_ functions
+Message-Id: <1343591173-2819-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@fusionio.com>, Arne Jansen <sensille@gmx.net>
-Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-add_qgroup_rb() never returns NULL, only error pointers.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
+
+The original code was also missing a call to iounmap(hcd->regs); in the
+remove function, so this patch also implicitly fixes a bug.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Applies to linux-next.
+Not compiled.
 
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index bc424ae..b650155 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -1364,8 +1364,10 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans,
- 	spin_lock(&fs_info->qgroup_lock);
+ drivers/usb/host/ehci-msm.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-msm.c b/drivers/usb/host/ehci-msm.c
+index 17dd9e9..4af4dc5 100644
+--- a/drivers/usb/host/ehci-msm.c
++++ b/drivers/usb/host/ehci-msm.c
+@@ -133,7 +133,7 @@ static int ehci_msm_probe(struct platform_device *pdev)
  
- 	dstgroup = add_qgroup_rb(fs_info, objectid);
--	if (!dstgroup)
-+	if (IS_ERR(dstgroup)) {
-+		ret = PTR_ERR(dstgroup);
- 		goto unlock;
-+	}
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
+-	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
++	hcd->regs = devm_ioremap(&pdev->dev, hcd->rsrc_start, hcd->rsrc_len);
+ 	if (!hcd->regs) {
+ 		dev_err(&pdev->dev, "ioremap failed\n");
+ 		ret = -ENOMEM;
+@@ -145,17 +145,17 @@ static int ehci_msm_probe(struct platform_device *pdev)
+ 	 * powering up VBUS, mapping of registers address space and power
+ 	 * management.
+ 	 */
+-	phy = usb_get_phy(USB_PHY_TYPE_USB2);
++	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+ 	if (IS_ERR_OR_NULL(phy)) {
+ 		dev_err(&pdev->dev, "unable to find transceiver\n");
+ 		ret = -ENODEV;
+-		goto unmap;
++		goto put_hcd;
+ 	}
  
- 	if (srcid) {
- 		srcgroup = find_qgroup_rb(fs_info, srcid);
+ 	ret = otg_set_host(phy->otg, &hcd->self);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "unable to register with transceiver\n");
+-		goto put_transceiver;
++		goto put_hcd;
+ 	}
+ 
+ 	device_init_wakeup(&pdev->dev, 1);
+@@ -168,10 +168,6 @@ static int ehci_msm_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-put_transceiver:
+-	usb_put_phy(phy);
+-unmap:
+-	iounmap(hcd->regs);
+ put_hcd:
+ 	usb_put_hcd(hcd);
+ 
+@@ -187,7 +183,6 @@ static int __devexit ehci_msm_remove(struct platform_device *pdev)
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
+ 	otg_set_host(phy->otg, NULL);
+-	usb_put_phy(phy);
+ 
+ 	usb_put_hcd(hcd);
+ 
