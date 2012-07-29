@@ -1,140 +1,98 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Date: Tue, 31 Jul 2012 23:21:48 +0000
-Subject: Re: [PATCH 5/5] drivers/video/exynos/exynos_dp_core.c: use devm_ functions
-Message-Id: <002c01cd6f73$4252b090$c6f811b0$%han@samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Jul 2012 19:46:05 +0000
+Subject: [PATCH 1/9] drivers/usb/host/ehci-atmel.c: use devm_ functions
+Message-Id: <1343591173-2819-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>
- <1343752762-16861-6-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1343752762-16861-6-git-send-email-damien.cassou@lifl.fr>
+References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Damien Cassou' <damien.cassou@lifl.fr>
-Cc: kernel-janitors@vger.kernel.org, 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wednesday, August 01, 2012 1:39 AM Damien Cassou wrote:
-> 
-> From: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
-> 
-> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> ---
->  drivers/video/exynos/exynos_dp_core.c |   27 +++++++--------------------
->  1 file changed, 7 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
-> index c6c016a..00fe4f0 100644
-> --- a/drivers/video/exynos/exynos_dp_core.c
-> +++ b/drivers/video/exynos/exynos_dp_core.c
-> @@ -872,7 +872,7 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
-> 
->  	dp->dev = &pdev->dev;
-> 
-> -	dp->clock = clk_get(&pdev->dev, "dp");
-> +	dp->clock = devm_clk_get(&pdev->dev, "dp");
->  	if (IS_ERR(dp->clock)) {
->  		dev_err(&pdev->dev, "failed to get clock\n");
->  		return PTR_ERR(dp->clock);
-> @@ -881,31 +881,24 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
->  	clk_enable(dp->clock);
-> 
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "failed to get registers\n");
-> -		ret = -EINVAL;
-> -		goto err_clock;
-> -	}
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Why do you remove this return check?
-If there is no reason, please, do it as follows:
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-	if (!res) {
-		dev_err(&pdev->dev, "failed to get registers\n");
--		ret = -EINVAL;
--		goto err_clock;
-+		return -EINVAL;
-	}
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+Not compiled.
 
-Best regards,
-Jingoo Han
+ drivers/usb/host/ehci-atmel.c |   30 ++++++------------------------
+ 1 file changed, 6 insertions(+), 24 deletions(-)
 
-
-> 
->  	dp->reg_base = devm_request_and_ioremap(&pdev->dev, res);
->  	if (!dp->reg_base) {
->  		dev_err(&pdev->dev, "failed to ioremap\n");
-> -		ret = -ENOMEM;
-> -		goto err_clock;
-> +		return -ENOMEM;
->  	}
-> 
->  	dp->irq = platform_get_irq(pdev, 0);
->  	if (!dp->irq) {
->  		dev_err(&pdev->dev, "failed to get irq\n");
-> -		ret = -ENODEV;
-> -		goto err_clock;
-> +		return -ENODEV;
->  	}
-> 
->  	ret = devm_request_irq(&pdev->dev, dp->irq, exynos_dp_irq_handler, 0,
->  				"exynos-dp", dp);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to request irq\n");
-> -		goto err_clock;
-> +		return ret;
->  	}
-> 
->  	dp->video_info = pdata->video_info;
-> @@ -917,7 +910,7 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
->  	ret = exynos_dp_detect_hpd(dp);
->  	if (ret) {
->  		dev_err(&pdev->dev, "unable to detect hpd\n");
-> -		goto err_clock;
-> +		return ret;
->  	}
-> 
->  	exynos_dp_handle_edid(dp);
-> @@ -926,7 +919,7 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
->  				dp->video_info->link_rate);
->  	if (ret) {
->  		dev_err(&pdev->dev, "unable to do link train\n");
-> -		goto err_clock;
-> +		return ret;
->  	}
-> 
->  	exynos_dp_enable_scramble(dp, 1);
-> @@ -940,17 +933,12 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
->  	ret = exynos_dp_config_video(dp, dp->video_info);
->  	if (ret) {
->  		dev_err(&pdev->dev, "unable to config video\n");
-> -		goto err_clock;
-> +		return ret;
->  	}
-> 
->  	platform_set_drvdata(pdev, dp);
-> 
->  	return 0;
-> -
-> -err_clock:
-> -	clk_put(dp->clock);
-> -
-> -	return ret;
->  }
-> 
->  static int __devexit exynos_dp_remove(struct platform_device *pdev)
-> @@ -962,7 +950,6 @@ static int __devexit exynos_dp_remove(struct platform_device *pdev)
->  		pdata->phy_exit();
-> 
->  	clk_disable(dp->clock);
-> -	clk_put(dp->clock);
-> 
->  	return 0;
->  }
-
+diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
+index a47e2cf..411bb74 100644
+--- a/drivers/usb/host/ehci-atmel.c
++++ b/drivers/usb/host/ehci-atmel.c
+@@ -150,31 +150,24 @@ static int __devinit ehci_atmel_drv_probe(struct platform_device *pdev)
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
+ 
+-	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len,
+-				driver->description)) {
+-		dev_dbg(&pdev->dev, "controller already in use\n");
+-		retval = -EBUSY;
+-		goto fail_request_resource;
+-	}
+-
+-	hcd->regs = ioremap_nocache(hcd->rsrc_start, hcd->rsrc_len);
++	hcd->regs = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (hcd->regs = NULL) {
+ 		dev_dbg(&pdev->dev, "error mapping memory\n");
+ 		retval = -EFAULT;
+-		goto fail_ioremap;
++		goto fail_request_resource;
+ 	}
+ 
+-	iclk = clk_get(&pdev->dev, "ehci_clk");
++	iclk = devm_clk_get(&pdev->dev, "ehci_clk");
+ 	if (IS_ERR(iclk)) {
+ 		dev_err(&pdev->dev, "Error getting interface clock\n");
+ 		retval = -ENOENT;
+-		goto fail_get_iclk;
++		goto fail_request_resource;
+ 	}
+-	fclk = clk_get(&pdev->dev, "uhpck");
++	fclk = devm_clk_get(&pdev->dev, "uhpck");
+ 	if (IS_ERR(fclk)) {
+ 		dev_err(&pdev->dev, "Error getting function clock\n");
+ 		retval = -ENOENT;
+-		goto fail_get_fclk;
++		goto fail_request_resource;
+ 	}
+ 
+ 	atmel_start_ehci(pdev);
+@@ -187,13 +180,6 @@ static int __devinit ehci_atmel_drv_probe(struct platform_device *pdev)
+ 
+ fail_add_hcd:
+ 	atmel_stop_ehci(pdev);
+-	clk_put(fclk);
+-fail_get_fclk:
+-	clk_put(iclk);
+-fail_get_iclk:
+-	iounmap(hcd->regs);
+-fail_ioremap:
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ fail_request_resource:
+ 	usb_put_hcd(hcd);
+ fail_create_hcd:
+@@ -209,13 +195,9 @@ static int __devexit ehci_atmel_drv_remove(struct platform_device *pdev)
+ 
+ 	ehci_shutdown(hcd);
+ 	usb_remove_hcd(hcd);
+-	iounmap(hcd->regs);
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ 	usb_put_hcd(hcd);
+ 
+ 	atmel_stop_ehci(pdev);
+-	clk_put(fclk);
+-	clk_put(iclk);
+ 	fclk = iclk = NULL;
+ 
+ 	return 0;
