@@ -1,54 +1,141 @@
-From: "devendra.aaru" <devendra.aaru@gmail.com>
-Date: Sat, 14 Jul 2012 07:31:45 +0000
-Subject: Re: [PATCH] pps: Return PTR_ERR on error in device_create
-Message-Id: <CAHdPZaNQ50Y33Ap7_-9a-brQnOmxOy49GMjYnhHBxeNHjCjgOQ@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Jul 2012 19:46:13 +0000
+Subject: [PATCH 9/9] drivers/usb/host/ehci-mxc.c: use devm_ functions
+Message-Id: <1343591173-2819-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1338579809-11637-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1338579809-11637-1-git-send-email-emilgoode@gmail.com>
+References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Alexander Gordeev <lasaine@lvk.cs.msu.su>, giometti@enneenne.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-CCing Andrew Morton, and Alexander Gordeev based on git log drivers/pps/pps.c
-Pardon me if i made wrong
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Sat, Jun 2, 2012 at 1:28 AM, Emil Goode <emilgoode@gmail.com> wrote:
-> We should return PTR_ERR if the call to the
-> device_create function fails.
-> Without this patch we instead return the value
-> from a successful call to cdev_add if the call
-> to device_create fails.
->
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
->  drivers/pps/pps.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
-> index 98fbe62..e771487 100644
-> --- a/drivers/pps/pps.c
-> +++ b/drivers/pps/pps.c
-> @@ -327,8 +327,10 @@ int pps_register_cdev(struct pps_device *pps)
->         }
->         pps->dev = device_create(pps_class, pps->info.dev, devt, pps,
->                                                         "pps%d", pps->id);
-> -       if (IS_ERR(pps->dev))
-> +       if (IS_ERR(pps->dev)) {
-> +               err = PTR_ERR(pps->dev);
->                 goto del_cdev;
-> +       }
->
->         pps->dev->release = pps_device_destruct;
->
-> --
-> 1.7.10
->
-Acked-By: Devendra Naga <devendra.aaru@gmail.com>
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not compiled.
+
+ drivers/usb/host/ehci-mxc.c |   45 +++++++++-----------------------------------
+ 1 file changed, 10 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-mxc.c b/drivers/usb/host/ehci-mxc.c
+index 3420137..959e1a4 100644
+--- a/drivers/usb/host/ehci-mxc.c
++++ b/drivers/usb/host/ehci-mxc.c
+@@ -121,7 +121,7 @@ static int ehci_mxc_drv_probe(struct platform_device *pdev)
+ 	if (!hcd)
+ 		return -ENOMEM;
+ 
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv) {
+ 		ret = -ENOMEM;
+ 		goto err_alloc;
+@@ -131,34 +131,28 @@ static int ehci_mxc_drv_probe(struct platform_device *pdev)
+ 	if (!res) {
+ 		dev_err(dev, "Found HC with no register addr. Check setup!\n");
+ 		ret = -ENODEV;
+-		goto err_get_resource;
++		goto err_alloc;
+ 	}
+ 
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
+ 
+-	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
+-		dev_dbg(dev, "controller already in use\n");
+-		ret = -EBUSY;
+-		goto err_request_mem;
+-	}
+-
+-	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
++	hcd->regs = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (!hcd->regs) {
+ 		dev_err(dev, "error mapping memory\n");
+ 		ret = -EFAULT;
+-		goto err_ioremap;
++		goto err_alloc;
+ 	}
+ 
+ 	/* enable clocks */
+-	priv->usbclk = clk_get(dev, "ipg");
++	priv->usbclk = devm_clk_get(&pdev->dev, "ipg");
+ 	if (IS_ERR(priv->usbclk)) {
+ 		ret = PTR_ERR(priv->usbclk);
+-		goto err_clk;
++		goto err_alloc;
+ 	}
+ 	clk_prepare_enable(priv->usbclk);
+ 
+-	priv->ahbclk = clk_get(dev, "ahb");
++	priv->ahbclk = devm_clk_get(&pdev->dev, "ahb");
+ 	if (IS_ERR(priv->ahbclk)) {
+ 		ret = PTR_ERR(priv->ahbclk);
+ 		goto err_clk_ahb;
+@@ -166,7 +160,7 @@ static int ehci_mxc_drv_probe(struct platform_device *pdev)
+ 	clk_prepare_enable(priv->ahbclk);
+ 
+ 	/* "dr" device has its own clock on i.MX51 */
+-	priv->phyclk = clk_get(dev, "phy");
++	priv->phyclk = devm_clk_get(&pdev->dev, "phy");
+ 	if (IS_ERR(priv->phyclk))
+ 		priv->phyclk = NULL;
+ 	if (priv->phyclk)
+@@ -245,23 +239,12 @@ err_add:
+ 	if (pdata && pdata->exit)
+ 		pdata->exit(pdev);
+ err_init:
+-	if (priv->phyclk) {
++	if (priv->phyclk)
+ 		clk_disable_unprepare(priv->phyclk);
+-		clk_put(priv->phyclk);
+-	}
+ 
+ 	clk_disable_unprepare(priv->ahbclk);
+-	clk_put(priv->ahbclk);
+ err_clk_ahb:
+ 	clk_disable_unprepare(priv->usbclk);
+-	clk_put(priv->usbclk);
+-err_clk:
+-	iounmap(hcd->regs);
+-err_ioremap:
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+-err_request_mem:
+-err_get_resource:
+-	kfree(priv);
+ err_alloc:
+ 	usb_put_hcd(hcd);
+ 	return ret;
+@@ -280,22 +263,14 @@ static int __exit ehci_mxc_drv_remove(struct platform_device *pdev)
+ 		usb_phy_shutdown(pdata->otg);
+ 
+ 	usb_remove_hcd(hcd);
+-	iounmap(hcd->regs);
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ 	usb_put_hcd(hcd);
+ 	platform_set_drvdata(pdev, NULL);
+ 
+ 	clk_disable_unprepare(priv->usbclk);
+-	clk_put(priv->usbclk);
+ 	clk_disable_unprepare(priv->ahbclk);
+-	clk_put(priv->ahbclk);
+ 
+-	if (priv->phyclk) {
++	if (priv->phyclk)
+ 		clk_disable_unprepare(priv->phyclk);
+-		clk_put(priv->phyclk);
+-	}
+-
+-	kfree(priv);
+ 
+ 	return 0;
+ }
+
