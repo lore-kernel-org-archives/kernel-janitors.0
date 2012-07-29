@@ -1,8 +1,10 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Jul 2012 14:43:42 +0000
-Subject: [PATCH 4/7] drivers/usb/host/ehci-sh.c: use devm_ functions
-Message-Id: <1343659425-24563-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Jul 2012 19:46:10 +0000
+Subject: [PATCH 6/9] drivers/usb/host/ehci-ls1x.c: use devm_ functions
+Message-Id: <1343591173-2819-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -19,89 +21,54 @@ function.
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-Not compiled
+Not compiled.
 
- drivers/usb/host/ehci-sh.c |   35 +++++++----------------------------
- 1 file changed, 7 insertions(+), 28 deletions(-)
+ drivers/usb/host/ehci-ls1x.c |   18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-sh.c b/drivers/usb/host/ehci-sh.c
-index b3f1e36..6081e1e 100644
---- a/drivers/usb/host/ehci-sh.c
-+++ b/drivers/usb/host/ehci-sh.c
-@@ -125,33 +125,27 @@ static int ehci_hcd_sh_probe(struct platform_device *pdev)
- 	hcd->rsrc_start = res->start;
- 	hcd->rsrc_len = resource_size(res);
+diff --git a/drivers/usb/host/ehci-ls1x.c b/drivers/usb/host/ehci-ls1x.c
+index a283e59..aa0f328 100644
+--- a/drivers/usb/host/ehci-ls1x.c
++++ b/drivers/usb/host/ehci-ls1x.c
+@@ -106,29 +106,19 @@ static int ehci_hcd_ls1x_probe(struct platform_device *pdev)
+ 	hcd->rsrc_start	= res->start;
+ 	hcd->rsrc_len	= resource_size(res);
  
--	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len,
--				driver->description)) {
+-	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
 -		dev_dbg(&pdev->dev, "controller already in use\n");
 -		ret = -EBUSY;
--		goto fail_request_resource;
+-		goto err_put_hcd;
 -	}
 -
--	hcd->regs = ioremap_nocache(hcd->rsrc_start, hcd->rsrc_len);
+-	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
 +	hcd->regs = devm_request_and_ioremap(&pdev->dev, res);
  	if (hcd->regs = NULL) {
  		dev_dbg(&pdev->dev, "error mapping memory\n");
- 		ret = -ENXIO;
--		goto fail_ioremap;
-+		goto fail_request_resource;
+ 		ret = -EFAULT;
+-		goto err_release_region;
++		goto err_put_hcd;
  	}
  
--	priv = kmalloc(sizeof(struct ehci_sh_priv), GFP_KERNEL);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(struct ehci_sh_priv),
-+			    GFP_KERNEL);
- 	if (!priv) {
- 		dev_dbg(&pdev->dev, "error allocating priv data\n");
- 		ret = -ENOMEM;
--		goto fail_alloc;
-+		goto fail_request_resource;
- 	}
+ 	ret = usb_add_hcd(hcd, irq, IRQF_DISABLED | IRQF_SHARED);
+ 	if (ret)
+-		goto err_iounmap;
++		goto err_put_hcd;
  
- 	/* These are optional, we don't care if they fail */
--	priv->fclk = clk_get(&pdev->dev, "usb_fck");
-+	priv->fclk = devm_clk_get(&pdev->dev, "usb_fck");
- 	if (IS_ERR(priv->fclk))
- 		priv->fclk = NULL;
+ 	return ret;
  
--	priv->iclk = clk_get(&pdev->dev, "usb_ick");
-+	priv->iclk = devm_clk_get(&pdev->dev, "usb_ick");
- 	if (IS_ERR(priv->iclk))
- 		priv->iclk = NULL;
- 
-@@ -176,14 +170,6 @@ fail_add_hcd:
- 	clk_disable(priv->iclk);
- 	clk_disable(priv->fclk);
- 
--	clk_put(priv->iclk);
--	clk_put(priv->fclk);
--
--	kfree(priv);
--fail_alloc:
+-err_iounmap:
 -	iounmap(hcd->regs);
--fail_ioremap:
+-err_release_region:
 -	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
- fail_request_resource:
+ err_put_hcd:
  	usb_put_hcd(hcd);
- fail_create_hcd:
-@@ -198,19 +184,12 @@ static int __exit ehci_hcd_sh_remove(struct platform_device *pdev)
- 	struct usb_hcd *hcd = priv->hcd;
+ 	return ret;
+@@ -139,8 +129,6 @@ static int ehci_hcd_ls1x_remove(struct platform_device *pdev)
+ 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
  
  	usb_remove_hcd(hcd);
 -	iounmap(hcd->regs);
 -	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
  	usb_put_hcd(hcd);
- 	platform_set_drvdata(pdev, NULL);
  
- 	clk_disable(priv->fclk);
- 	clk_disable(priv->iclk);
- 
--	clk_put(priv->fclk);
--	clk_put(priv->iclk);
--
--	kfree(priv);
--
  	return 0;
- }
- 
-
