@@ -1,38 +1,34 @@
-From: David Howells <dhowells@redhat.com>
-Date: Thu, 19 Jul 2012 11:37:20 +0000
-Subject: Re: [modsign:for-rusty 1/1] include/linux/moduleloader.h:48:2: error: 'mod' undeclared (first use in
-Message-Id: <31265.1342697840@warthog.procyon.org.uk>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 29 Jul 2012 00:48:11 +0000
+Subject: [nf-next:nf_tables4 2/2] net/ipv4/netfilter/nf_table_nat_ipv4.c:184:30: sparse: incompatible types i
+Message-Id: <20120729004811.GB7049@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120718163652.GA9580@localhost>
-In-Reply-To: <20120718163652.GA9580@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Fengguang Wu <fengguang.wu@intel.com> wrote:
+Hi Pablo,
 
-> I cannot quite understand this error. The problem is that I've just
-> setup the blackfin cross compile, and hence it might be an old bug, or
-> even some problem in my build setup..
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git for-rusty
-> head:   b64582d2ab63dabc1b2bf05143900c8b2ff4b4ee
-> commit: b64582d2ab63dabc1b2bf05143900c8b2ff4b4ee [1/1] Make most arch asm/module.h files use asm-generic/module.h
-> config: blackfin-BF526-EZBRD_defconfig (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> In file included from arch/blackfin/kernel/module.c:9:0:
-> include/linux/moduleloader.h: In function 'apply_relocate':
-> include/linux/moduleloader.h:48:2: error: 'mod' undeclared (first use in this function)
-> include/linux/moduleloader.h:48:2: note: each undeclared identifier is reported only once for each function it appears in
+There are new sparse warnings show up in
 
-pr_err() is the problem.  If you're in a file that defines pr_fmt then it will
-use that.  At the top of arch/blackfin/kernel/module.c:
+tree:   git://150.214.188.80/nf-next nf_tables4
+head:   b33538d5361ec09e5c947765a7615fc67640a9fe
+commit: b33538d5361ec09e5c947765a7615fc67640a9fe [2/2] netfilter: nf_tables
 
-	#define pr_fmt(fmt) "module %s: " fmt, mod->name
+All sparse warnings:
 
-I guess you can't use pr_err() in header files.
++ net/ipv4/netfilter/nf_table_nat_ipv4.c:184:30: sparse: incompatible types in comparison expression (different address spaces)
 
-David
+vim +184 net/ipv4/netfilter/nf_table_nat_ipv4.c
+   181		enum nf_nat_manip_type maniptype = HOOK2MANIP(ops->hooknum);
+   182		unsigned int ret;
+   183	
+ > 184		if (ct = NULL || ct = &nf_conntrack_untracked)
+   185			return NF_ACCEPT;
+   186	
+   187		NF_CT_ASSERT(!(ip_hdr(skb)->frag_off & htons(IP_MF | IP_OFFSET)));
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
