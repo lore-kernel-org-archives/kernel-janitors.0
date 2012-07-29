@@ -1,196 +1,172 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Sun, 08 Jul 2012 22:02:40 +0000
-Subject: Re: [PATCH v2] grvga: Fix error handling issues
-Message-Id: <4FFA0380.2050006@gmx.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Jul 2012 19:46:12 +0000
+Subject: [PATCH 8/9] drivers/usb/host/ehci-mv.c: use devm_ functions
+Message-Id: <1343591173-2819-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1340663852-11719-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1340663852-11719-1-git-send-email-emilgoode@gmail.com>
+References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/25/2012 10:37 PM, Emil Goode wrote:
-> This patch fixes two problems with the error handling in the
-> grvga_probe function and simplifies it making the code
-> easier to read.
-> 
-> - If the call to grvga_parse_custom on line 370 fails we use
->   the wrong label so that release_mem_region will be called
->   without a call to request_mem_region being made.
-> 
-> - If the call to ioremap on line 436 fails we should not try
->   to call iounmap in the error handling code.
-> 
-> This patch introduces the following changes:
-> 
-> - Converts request_mem_region into its devm_ equivalent
->   which simplifies the otherwise messy clean up code.
-> 
-> - Changes the labels for correct error handling and their
->   names to make the code easier to read.
-> 
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied.
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
+A new label name is created in one case to better reflect the contents of
+the error-handling code.
 
-Thanks,
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Florian Tobias Schandinat
+---
+Not compiled.
 
-> ---
-> v2: Simplifies the error handling by converting to
->     devm_request_mem_region
-> 
->  drivers/video/grvga.c |   47 ++++++++++++++++++++++-------------------------
->  1 file changed, 22 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/video/grvga.c b/drivers/video/grvga.c
-> index da066c2..5245f9a 100644
-> --- a/drivers/video/grvga.c
-> +++ b/drivers/video/grvga.c
-> @@ -354,7 +354,7 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  	 */
->  	if (fb_get_options("grvga", &options)) {
->  		retval = -ENODEV;
-> -		goto err;
-> +		goto free_fb;
->  	}
->  
->  	if (!options || !*options)
-> @@ -370,7 +370,7 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  			if (grvga_parse_custom(this_opt, &info->var) < 0) {
->  				dev_err(&dev->dev, "Failed to parse custom mode (%s).\n", this_opt);
->  				retval = -EINVAL;
-> -				goto err1;
-> +				goto free_fb;
->  			}
->  		} else if (!strncmp(this_opt, "addr", 4))
->  			grvga_fix_addr = simple_strtoul(this_opt + 5, NULL, 16);
-> @@ -387,10 +387,11 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  	info->flags = FBINFO_DEFAULT | FBINFO_PARTIAL_PAN_OK | FBINFO_HWACCEL_YPAN;
->  	info->fix.smem_len = grvga_mem_size;
->  
-> -	if (!request_mem_region(dev->resource[0].start, resource_size(&dev->resource[0]), "grlib-svgactrl regs")) {
-> +	if (!devm_request_mem_region(&dev->dev, dev->resource[0].start,
-> +		    resource_size(&dev->resource[0]), "grlib-svgactrl regs")) {
->  		dev_err(&dev->dev, "registers already mapped\n");
->  		retval = -EBUSY;
-> -		goto err;
-> +		goto free_fb;
->  	}
->  
->  	par->regs = of_ioremap(&dev->resource[0], 0,
-> @@ -400,14 +401,14 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  	if (!par->regs) {
->  		dev_err(&dev->dev, "failed to map registers\n");
->  		retval = -ENOMEM;
-> -		goto err1;
-> +		goto free_fb;
->  	}
->  
->  	retval = fb_alloc_cmap(&info->cmap, 256, 0);
->  	if (retval < 0) {
->  		dev_err(&dev->dev, "failed to allocate mem with fb_alloc_cmap\n");
->  		retval = -ENOMEM;
-> -		goto err2;
-> +		goto unmap_regs;
->  	}
->  
->  	if (mode_opt) {
-> @@ -415,7 +416,7 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  				      grvga_modedb, sizeof(grvga_modedb), &grvga_modedb[0], 8);
->  		if (!retval || retval = 4) {
->  			retval = -EINVAL;
-> -			goto err3;
-> +			goto dealloc_cmap;
->  		}
->  	}
->  
-> @@ -427,10 +428,11 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  
->  		physical_start = grvga_fix_addr;
->  
-> -		if (!request_mem_region(physical_start, grvga_mem_size, dev->name)) {
-> +		if (!devm_request_mem_region(&dev->dev, physical_start,
-> +					     grvga_mem_size, dev->name)) {
->  			dev_err(&dev->dev, "failed to request memory region\n");
->  			retval = -ENOMEM;
-> -			goto err3;
-> +			goto dealloc_cmap;
->  		}
->  
->  		virtual_start = (unsigned long) ioremap(physical_start, grvga_mem_size);
-> @@ -438,7 +440,7 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  		if (!virtual_start) {
->  			dev_err(&dev->dev, "error mapping framebuffer memory\n");
->  			retval = -ENOMEM;
-> -			goto err4;
-> +			goto dealloc_cmap;
->  		}
->  	} else {	/* Allocate frambuffer memory */
->  
-> @@ -451,7 +453,7 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  				"unable to allocate framebuffer memory (%lu bytes)\n",
->  				grvga_mem_size);
->  			retval = -ENOMEM;
-> -			goto err3;
-> +			goto dealloc_cmap;
->  		}
->  
->  		physical_start = dma_map_single(&dev->dev, (void *)virtual_start, grvga_mem_size, DMA_TO_DEVICE);
-> @@ -484,7 +486,7 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  	retval = register_framebuffer(info);
->  	if (retval < 0) {
->  		dev_err(&dev->dev, "failed to register framebuffer\n");
-> -		goto err4;
-> +		goto free_mem;
->  	}
->  
->  	__raw_writel(physical_start, &par->regs->fb_pos);
-> @@ -493,21 +495,18 @@ static int __devinit grvga_probe(struct platform_device *dev)
->  
->  	return 0;
->  
-> -err4:
-> +free_mem:
->  	dev_set_drvdata(&dev->dev, NULL);
-> -	if (grvga_fix_addr) {
-> -		release_mem_region(physical_start, grvga_mem_size);
-> +	if (grvga_fix_addr)
->  		iounmap((void *)virtual_start);
-> -	} else
-> +	else
->  		kfree((void *)virtual_start);
-> -err3:
-> +dealloc_cmap:
->  	fb_dealloc_cmap(&info->cmap);
-> -err2:
-> +unmap_regs:
->  	of_iounmap(&dev->resource[0], par->regs,
->  		   resource_size(&dev->resource[0]));
-> -err1:
-> -	release_mem_region(dev->resource[0].start, resource_size(&dev->resource[0]));
-> -err:
-> +free_fb:
->  	framebuffer_release(info);
->  
->  	return retval;
-> @@ -524,12 +523,10 @@ static int __devexit grvga_remove(struct platform_device *device)
->  
->  		of_iounmap(&device->resource[0], par->regs,
->  			   resource_size(&device->resource[0]));
-> -		release_mem_region(device->resource[0].start, resource_size(&device->resource[0]));
->  
-> -		if (!par->fb_alloced) {
-> -			release_mem_region(info->fix.smem_start, info->fix.smem_len);
-> +		if (!par->fb_alloced)
->  			iounmap(info->screen_base);
-> -		} else
-> +		else
->  			kfree((void *)info->screen_base);
->  
->  		framebuffer_release(info);
+ drivers/usb/host/ehci-mv.c |   51 ++++++++++++++-------------------------------
+ 1 file changed, 16 insertions(+), 35 deletions(-)
 
+diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
+index f6df1cc..f7bfc0b 100644
+--- a/drivers/usb/host/ehci-mv.c
++++ b/drivers/usb/host/ehci-mv.c
+@@ -161,7 +161,7 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	size = sizeof(*ehci_mv) + sizeof(struct clk *) * pdata->clknum;
+-	ehci_mv = kzalloc(size, GFP_KERNEL);
++	ehci_mv = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
+ 	if (ehci_mv = NULL) {
+ 		dev_err(&pdev->dev, "cannot allocate ehci_hcd_mv\n");
+ 		retval = -ENOMEM;
+@@ -175,12 +175,12 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 	ehci_mv->clknum = pdata->clknum;
+ 	for (clk_i = 0; clk_i < ehci_mv->clknum; clk_i++) {
+ 		ehci_mv->clk[clk_i] -		    clk_get(&pdev->dev, pdata->clkname[clk_i]);
++		    devm_clk_get(&pdev->dev, pdata->clkname[clk_i]);
+ 		if (IS_ERR(ehci_mv->clk[clk_i])) {
+ 			dev_err(&pdev->dev, "error get clck \"%s\"\n",
+ 				pdata->clkname[clk_i]);
+ 			retval = PTR_ERR(ehci_mv->clk[clk_i]);
+-			goto err_put_clk;
++			goto err_clear_drvdata;
+ 		}
+ 	}
+ 
+@@ -188,34 +188,36 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 	if (r = NULL) {
+ 		dev_err(&pdev->dev, "no phy I/O memory resource defined\n");
+ 		retval = -ENODEV;
+-		goto err_put_clk;
++		goto err_clear_drvdata;
+ 	}
+ 
+-	ehci_mv->phy_regs = ioremap(r->start, resource_size(r));
++	ehci_mv->phy_regs = devm_ioremap(&pdev->dev, r->start,
++					 resource_size(r));
+ 	if (ehci_mv->phy_regs = 0) {
+ 		dev_err(&pdev->dev, "failed to map phy I/O memory\n");
+ 		retval = -EFAULT;
+-		goto err_put_clk;
++		goto err_clear_drvdata;
+ 	}
+ 
+ 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "capregs");
+ 	if (!r) {
+ 		dev_err(&pdev->dev, "no I/O memory resource defined\n");
+ 		retval = -ENODEV;
+-		goto err_iounmap_phyreg;
++		goto err_clear_drvdata;
+ 	}
+ 
+-	ehci_mv->cap_regs = ioremap(r->start, resource_size(r));
++	ehci_mv->cap_regs = devm_ioremap(&pdev->dev, r->start,
++					 resource_size(r));
+ 	if (ehci_mv->cap_regs = NULL) {
+ 		dev_err(&pdev->dev, "failed to map I/O memory\n");
+ 		retval = -EFAULT;
+-		goto err_iounmap_phyreg;
++		goto err_clear_drvdata;
+ 	}
+ 
+ 	retval = mv_ehci_enable(ehci_mv);
+ 	if (retval) {
+ 		dev_err(&pdev->dev, "init phy error %d\n", retval);
+-		goto err_iounmap_capreg;
++		goto err_clear_drvdata;
+ 	}
+ 
+ 	offset = readl(ehci_mv->cap_regs) & CAPLENGTH_MASK;
+@@ -239,7 +241,7 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 	ehci_mv->mode = pdata->mode;
+ 	if (ehci_mv->mode = MV_USB_MODE_OTG) {
+ #ifdef CONFIG_USB_OTG_UTILS
+-		ehci_mv->otg = usb_get_phy(USB_PHY_TYPE_USB2);
++		ehci_mv->otg = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+ 		if (IS_ERR_OR_NULL(ehci_mv->otg)) {
+ 			dev_err(&pdev->dev,
+ 				"unable to find transceiver\n");
+@@ -252,7 +254,7 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 			dev_err(&pdev->dev,
+ 				"unable to register with transceiver\n");
+ 			retval = -ENODEV;
+-			goto err_put_transceiver;
++			goto err_disable_clk;
+ 		}
+ 		/* otg will enable clock before use as host */
+ 		mv_ehci_disable(ehci_mv);
+@@ -286,22 +288,10 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ err_set_vbus:
+ 	if (pdata->set_vbus)
+ 		pdata->set_vbus(0);
+-#ifdef CONFIG_USB_OTG_UTILS
+-err_put_transceiver:
+-	if (!IS_ERR_OR_NULL(ehci_mv->otg))
+-		usb_put_phy(ehci_mv->otg);
+-#endif
+ err_disable_clk:
+ 	mv_ehci_disable(ehci_mv);
+-err_iounmap_capreg:
+-	iounmap(ehci_mv->cap_regs);
+-err_iounmap_phyreg:
+-	iounmap(ehci_mv->phy_regs);
+-err_put_clk:
+-	for (clk_i--; clk_i >= 0; clk_i--)
+-		clk_put(ehci_mv->clk[clk_i]);
++err_clear_drvdata:
+ 	platform_set_drvdata(pdev, NULL);
+-	kfree(ehci_mv);
+ err_put_hcd:
+ 	usb_put_hcd(hcd);
+ 
+@@ -317,10 +307,8 @@ static int mv_ehci_remove(struct platform_device *pdev)
+ 	if (hcd->rh_registered)
+ 		usb_remove_hcd(hcd);
+ 
+-	if (!IS_ERR_OR_NULL(ehci_mv->otg)) {
++	if (!IS_ERR_OR_NULL(ehci_mv->otg))
+ 		otg_set_host(ehci_mv->otg->otg, NULL);
+-		usb_put_phy(ehci_mv->otg);
+-	}
+ 
+ 	if (ehci_mv->mode = MV_USB_MODE_HOST) {
+ 		if (ehci_mv->pdata->set_vbus)
+@@ -329,15 +317,8 @@ static int mv_ehci_remove(struct platform_device *pdev)
+ 		mv_ehci_disable(ehci_mv);
+ 	}
+ 
+-	iounmap(ehci_mv->cap_regs);
+-	iounmap(ehci_mv->phy_regs);
+-
+-	for (clk_i = 0; clk_i < ehci_mv->clknum; clk_i++)
+-		clk_put(ehci_mv->clk[clk_i]);
+-
+ 	platform_set_drvdata(pdev, NULL);
+ 
+-	kfree(ehci_mv);
+ 	usb_put_hcd(hcd);
+ 
+ 	return 0;
