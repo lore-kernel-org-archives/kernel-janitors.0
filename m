@@ -1,62 +1,45 @@
-From: Bryan Wu <bryan.wu@canonical.com>
-Date: Fri, 27 Jul 2012 00:20:11 +0000
-Subject: Re: [patch 2/2 -next] LEDS: propagate error codes in blinkm_detect()
-Message-Id: <CAK5ve-KsbC3Z7DHfhAJCTTHjLz5q0CRbREnUh_L22SxPRet6zw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 30 Jul 2012 08:18:22 +0000
+Subject: [patch 2/2] [SCSI] ipr: remove an unneeded check
+Message-Id: <20120730081822.GF15702@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120726080025.GB10842@elgon.mountain>
-In-Reply-To: <20120726080025.GB10842@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Brian King <brking@us.ibm.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Applied to my for-next. Thanks Dan and Jan-Simon,
+"rc" is always zero here, so there is no need to check.
 
--Bryan
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-On Thu, Jul 26, 2012 at 4:05 PM, Jan-Simon M=F6ller
-<jansimon.moeller@gmx.de> wrote:
-> Ack'ed.
->
-> Regards,
-> Jan-Simon
-> Am Donnerstag, 26. Juli 2012, 10:00:25 schrieb Dan Carpenter:
->> Use the error codes from the lower levels instead of -ENODEV.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
->> index ae6ad63..f7c3d7f 100644
->> --- a/drivers/leds/leds-blinkm.c
->> +++ b/drivers/leds/leds-blinkm.c
->> @@ -617,11 +617,11 @@ static int blinkm_detect(struct i2c_client *client,
->> struct i2c_board_info *info) /* Step 1: Read BlinkM address back  -
->> cmd_char 'a' */
->>       ret =3D blinkm_write(client, BLM_GET_ADDR, NULL);
->>       if (ret < 0)
->> -             return -ENODEV;
->> +             return ret;
->>       usleep_range(20000, 30000);     /* allow a small delay */
->>       ret =3D blinkm_read(client, BLM_GET_ADDR, tmpargs);
->>       if (ret < 0)
->> -             return -ENODEV;
->> +             return ret;
->>
->>       if (tmpargs[0] !=3D 0x09) {
->>               dev_err(&client->dev, "enodev DEV ADDR =3D 0x%02X\n", tmpa=
-rgs[0]);
->
-
-
-
---=20
-Bryan Wu <bryan.wu@canonical.com>
-Kernel Developer    +86.186-168-78255 Mobile
-Canonical Ltd.      www.canonical.com
-Ubuntu - Linux for human beings | www.ubuntu.com
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
+index 7a5ccb2c..fc49f17 100644
+--- a/drivers/scsi/ipr.c
++++ b/drivers/scsi/ipr.c
+@@ -5847,7 +5847,7 @@ static int ipr_queuecommand(struct Scsi_Host *shost,
+ 	struct ipr_ioarcb *ioarcb;
+ 	struct ipr_cmnd *ipr_cmd;
+ 	unsigned long lock_flags;
+-	int rc = 0;
++	int rc;
+ 
+ 	ioa_cfg = (struct ipr_ioa_cfg *)shost->hostdata;
+ 
+@@ -5905,12 +5905,10 @@ static int ipr_queuecommand(struct Scsi_Host *shost,
+ 	    (!ipr_is_gscsi(res) || scsi_cmd->cmnd[0] = IPR_QUERY_RSRC_STATE))
+ 		ioarcb->cmd_pkt.request_type = IPR_RQTYPE_IOACMD;
+ 
+-	if (likely(rc = 0)) {
+-		if (ioa_cfg->sis64)
+-			rc = ipr_build_ioadl64(ioa_cfg, ipr_cmd);
+-		else
+-			rc = ipr_build_ioadl(ioa_cfg, ipr_cmd);
+-	}
++	if (ioa_cfg->sis64)
++		rc = ipr_build_ioadl64(ioa_cfg, ipr_cmd);
++	else
++		rc = ipr_build_ioadl(ioa_cfg, ipr_cmd);
+ 
+ 	spin_lock_irqsave(shost->host_lock, lock_flags);
+ 	if (unlikely(rc || (!ioa_cfg->allow_cmds && !ioa_cfg->ioa_is_dead))) {
