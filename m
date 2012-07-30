@@ -1,7 +1,7 @@
-From: Mel Gorman <mgorman@suse.de>
-Date: Wed, 25 Jul 2012 08:09:24 +0000
-Subject: Re: [next:akpm 121/309] include/linux/page-flags.h:462:2: error: implicit declaration of function 'V
-Message-Id: <20120725080924.GX9222@suse.de>
+From: "Luck, Tony" <tony.luck@intel.com>
+Date: Mon, 30 Jul 2012 16:48:14 +0000
+Subject: RE: [next:akpm 121/309] include/linux/page-flags.h:462:2: error: implicit declaration of function 'V
+Message-Id: <3908561D78D1C84285E8C5FCA982C28F193723C9@ORSMSX104.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120722163512.GC13376@localhost>
 In-Reply-To: <20120722163512.GC13376@localhost>
@@ -10,17 +10,15 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 24, 2012 at 09:07:11PM +0000, Luck, Tony wrote:
-> Looks like include/linux/page-flags.h (which uses VM_BUG_ON) needs to have a
-> 
-> #include <linux/mmdebug.h>
-> 
-> to make sure it sees the define.
-> 
+>> Looks like include/linux/page-flags.h (which uses VM_BUG_ON) needs to have a
+>> 
+>> #include <linux/mmdebug.h>
+>> 
+>> to make sure it sees the define.
+>> 
+>
+> There should be a patch in-flight to Andrew's tree that fixes this.
 
-There should be a patch in-flight to Andrew's tree that fixes this.
-Thanks Tony.
+Can you check ... it is still broken in linux-next today (tag = next-20120730)
 
--- 
-Mel Gorman
-SUSE Labs
+-Tony
