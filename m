@@ -1,35 +1,159 @@
-From: Tony Luck <tony.luck@gmail.com>
-Date: Thu, 26 Jul 2012 17:06:41 +0000
-Subject: Re: [next:akpm 129/309] net/core/sock.c:274:36: error: initializer element is not constant
-Message-Id: <CA+8MBbJkGN+zGBdD5Hg26wW_6E9L_ufoutn7wj+Y+nhtW7WKWg@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Jul 2012 14:43:41 +0000
+Subject: [PATCH 5/7] drivers/usb/host/ehci-tegra.c: use devm_ functions
+Message-Id: <1343659425-24563-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120722163058.GB13376@localhost>
-	<20120723111619.GT9222@suse.de>
-	<1343042420.3027.11.camel@dabdike.int.hansenpartnership.com>
-	<20120723114258.GV9222@suse.de>
-	<20120723122905.GA22476@localhost>
-	<BLU0-SMTP2254F8872DDE5FA6035CDE97DD0@phx.gbl>
-	<20120724074844.GA9519@localhost>
-	<BLU0-SMTP6C7CFCFF734FE10A39B6E97DC0@phx.gbl>
-	<1343193053.3139.6.camel@dabdike>
-In-Reply-To: <1343193053.3139.6.camel@dabdike>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: John David Anglin <dave.anglin@bell.net>, Fengguang Wu <fengguang.wu@intel.com>, Mel Gorman <mgorman@suse.de>, kernel-janitors@vger.kernel.org, Kyle McMartin <kyle@parisc-linux.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Parisc List <linux-parisc@vger.kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 24, 2012 at 10:10 PM, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->> Here is the line in sock.i:
->>
->> struct static_key memalloc_socks = ((struct static_key) { .enabled >> ((atomic_t) { (0) }) });
->
-> The above line contains two compound literals.  It also uses a designated
-> initializer to initialize the field enabled.  A compound literal is not a
-> constant expression.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Seeing the same thing on ia64 building next-20120726.  Same fix works
-for me ... so I'll steal this whole changelog and attributes.
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
--Tony
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not compiled
+
+ drivers/usb/host/ehci-tegra.c |   40 +++++++++++++---------------------------
+ 1 file changed, 13 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 950e95e..ba5039f 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -634,7 +634,8 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 
+ 	setup_vbus_gpio(pdev, pdata);
+ 
+-	tegra = kzalloc(sizeof(struct tegra_ehci_hcd), GFP_KERNEL);
++	tegra = devm_kzalloc(&pdev->dev, sizeof(struct tegra_ehci_hcd),
++			     GFP_KERNEL);
+ 	if (!tegra)
+ 		return -ENOMEM;
+ 
+@@ -642,13 +643,12 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 					dev_name(&pdev->dev));
+ 	if (!hcd) {
+ 		dev_err(&pdev->dev, "Unable to create HCD\n");
+-		err = -ENOMEM;
+-		goto fail_hcd;
++		return -ENOMEM;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, tegra);
+ 
+-	tegra->clk = clk_get(&pdev->dev, NULL);
++	tegra->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(tegra->clk)) {
+ 		dev_err(&pdev->dev, "Can't get ehci clock\n");
+ 		err = PTR_ERR(tegra->clk);
+@@ -657,9 +657,9 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 
+ 	err = clk_prepare_enable(tegra->clk);
+ 	if (err)
+-		goto fail_clken;
++		goto fail_clk;
+ 
+-	tegra->emc_clk = clk_get(&pdev->dev, "emc");
++	tegra->emc_clk = devm_clk_get(&pdev->dev, "emc");
+ 	if (IS_ERR(tegra->emc_clk)) {
+ 		dev_err(&pdev->dev, "Can't get emc clock\n");
+ 		err = PTR_ERR(tegra->emc_clk);
+@@ -677,7 +677,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	}
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
+-	hcd->regs = ioremap(res->start, resource_size(res));
++	hcd->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+ 	if (!hcd->regs) {
+ 		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+ 		err = -ENOMEM;
+@@ -702,7 +702,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 		default:
+ 			err = -ENODEV;
+ 			dev_err(&pdev->dev, "unknown usb instance\n");
+-			goto fail_phy;
++			goto fail_io;
+ 		}
+ 	}
+ 
+@@ -712,7 +712,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	if (IS_ERR(tegra->phy)) {
+ 		dev_err(&pdev->dev, "Failed to open USB phy\n");
+ 		err = -ENXIO;
+-		goto fail_phy;
++		goto fail_io;
+ 	}
+ 
+ 	err = tegra_usb_phy_power_on(tegra->phy);
+@@ -733,7 +733,8 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 
+ #ifdef CONFIG_USB_OTG_UTILS
+ 	if (pdata->operating_mode = TEGRA_USB_OTG) {
+-		tegra->transceiver = usb_get_phy(USB_PHY_TYPE_USB2);
++		tegra->transceiver +			devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+ 		if (!IS_ERR_OR_NULL(tegra->transceiver))
+ 			otg_set_host(tegra->transceiver->otg, &hcd->self);
+ 	}
+@@ -757,25 +758,16 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 
+ fail:
+ #ifdef CONFIG_USB_OTG_UTILS
+-	if (!IS_ERR_OR_NULL(tegra->transceiver)) {
++	if (!IS_ERR_OR_NULL(tegra->transceiver))
+ 		otg_set_host(tegra->transceiver->otg, NULL);
+-		usb_put_phy(tegra->transceiver);
+-	}
+ #endif
+ 	tegra_usb_phy_close(tegra->phy);
+-fail_phy:
+-	iounmap(hcd->regs);
+ fail_io:
+ 	clk_disable_unprepare(tegra->emc_clk);
+-	clk_put(tegra->emc_clk);
+ fail_emc_clk:
+ 	clk_disable_unprepare(tegra->clk);
+-fail_clken:
+-	clk_put(tegra->clk);
+ fail_clk:
+ 	usb_put_hcd(hcd);
+-fail_hcd:
+-	kfree(tegra);
+ 	return err;
+ }
+ 
+@@ -792,25 +784,19 @@ static int tegra_ehci_remove(struct platform_device *pdev)
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 
+ #ifdef CONFIG_USB_OTG_UTILS
+-	if (!IS_ERR_OR_NULL(tegra->transceiver)) {
++	if (!IS_ERR_OR_NULL(tegra->transceiver))
+ 		otg_set_host(tegra->transceiver->otg, NULL);
+-		usb_put_phy(tegra->transceiver);
+-	}
+ #endif
+ 
+ 	usb_remove_hcd(hcd);
+ 	usb_put_hcd(hcd);
+ 
+ 	tegra_usb_phy_close(tegra->phy);
+-	iounmap(hcd->regs);
+ 
+ 	clk_disable_unprepare(tegra->clk);
+-	clk_put(tegra->clk);
+ 
+ 	clk_disable_unprepare(tegra->emc_clk);
+-	clk_put(tegra->emc_clk);
+ 
+-	kfree(tegra);
+ 	return 0;
+ }
+ 
+
