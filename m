@@ -1,86 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Jul 2012 19:46:08 +0000
-Subject: [PATCH 4/9] drivers/usb/host/ehci-grlib.c: use devm_ functions
-Message-Id: <1343591173-2819-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 30 Jul 2012 08:16:10 +0000
+Subject: [patch 2/2] Btrfs: fix some error codes in btrfs_qgroup_inherit()
+Message-Id: <20120730081610.GD15702@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Mason <chris.mason@fusionio.com>, Arne Jansen <sensille@gmx.net>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+These are returning zero when it should be returning a negative error
+code.
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses these functions for data that is allocated in
-the probe function of a platform device and is only freed in the remove
-function.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Not compiled.
+Applies to linux-next.
 
- drivers/usb/host/ehci-grlib.c |   18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-grlib.c b/drivers/usb/host/ehci-grlib.c
-index 22ca45c..3180cb3 100644
---- a/drivers/usb/host/ehci-grlib.c
-+++ b/drivers/usb/host/ehci-grlib.c
-@@ -127,12 +127,6 @@ static int __devinit ehci_hcd_grlib_probe(struct platform_device *op)
- 	hcd->rsrc_start = res.start;
- 	hcd->rsrc_len = resource_size(&res);
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index b650155..38b42e7 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -1371,8 +1371,10 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans,
  
--	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
--		printk(KERN_ERR "%s: request_mem_region failed\n", __FILE__);
--		rv = -EBUSY;
--		goto err_rmr;
--	}
--
- 	irq = irq_of_parse_and_map(dn, 0);
- 	if (irq = NO_IRQ) {
- 		printk(KERN_ERR "%s: irq_of_parse_and_map failed\n", __FILE__);
-@@ -140,9 +134,9 @@ static int __devinit ehci_hcd_grlib_probe(struct platform_device *op)
- 		goto err_irq;
+ 	if (srcid) {
+ 		srcgroup = find_qgroup_rb(fs_info, srcid);
+-		if (!srcgroup)
++		if (!srcgroup) {
++			ret = -EINVAL;
+ 			goto unlock;
++		}
+ 		dstgroup->rfer = srcgroup->rfer - level_size;
+ 		dstgroup->rfer_cmpr = srcgroup->rfer_cmpr - level_size;
+ 		srcgroup->excl = level_size;
+@@ -1381,8 +1383,10 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans,
+ 		qgroup_dirty(fs_info, srcgroup);
  	}
  
--	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
-+	hcd->regs = devm_request_and_ioremap(&op->dev, &res);
- 	if (!hcd->regs) {
--		printk(KERN_ERR "%s: ioremap failed\n", __FILE__);
-+		pr_err("%s: devm_request_and_ioremap failed\n", __FILE__);
- 		rv = -ENOMEM;
- 		goto err_ioremap;
- 	}
-@@ -161,17 +155,13 @@ static int __devinit ehci_hcd_grlib_probe(struct platform_device *op)
+-	if (!inherit)
++	if (!inherit) {
++		ret = -EINVAL;
+ 		goto unlock;
++	}
  
- 	rv = usb_add_hcd(hcd, irq, 0);
- 	if (rv)
--		goto err_ehci;
-+		goto err_ioremap;
- 
- 	return 0;
- 
--err_ehci:
--	iounmap(hcd->regs);
- err_ioremap:
- 	irq_dispose_mapping(irq);
- err_irq:
--	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
--err_rmr:
- 	usb_put_hcd(hcd);
- 
- 	return rv;
-@@ -188,9 +178,7 @@ static int ehci_hcd_grlib_remove(struct platform_device *op)
- 
- 	usb_remove_hcd(hcd);
- 
--	iounmap(hcd->regs);
- 	irq_dispose_mapping(hcd->irq);
--	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
- 
- 	usb_put_hcd(hcd);
- 
+ 	i_qgroups = (u64 *)(inherit + 1);
+ 	for (i = 0; i < inherit->num_qgroups; ++i) {
