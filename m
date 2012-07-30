@@ -1,60 +1,70 @@
-From: wfg@linux.intel.com
-Date: Mon, 09 Jul 2012 23:44:04 +0000
-Subject: [ext4:master 4/4] fs/ext4/resize.c:1200:9: warning: unused variable 'ret'
-Message-Id: <20120709234404.GA5584@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Jul 2012 14:43:40 +0000
+Subject: [PATCH 6/7] drivers/usb/host/ehci-vt8500.c: use devm_ functions
+Message-Id: <1343659425-24563-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: kernel-janitors@vger.kernel.org, Ext4 Developers List <linux-ext4@vger.kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Theodore,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-There are new compile warnings show up in
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git master
-head:   952fc18ef9ec707ebdc16c0786ec360295e5ff15
-commit: 952fc18ef9ec707ebdc16c0786ec360295e5ff15 [4/4] ext4: fix overhead calculation used by ext4_statfs()
-
-All warnings:
-
-fs/ext4/resize.c: In function 'ext4_update_super':
-fs/ext4/resize.c:1200:9: warning: unused variable 'ret' [-Wunused-variable]
-
-vim +1200 fs/ext4/resize.c
-  1197		struct ext4_new_group_data *group_data = flex_gd->groups;
-  1198		struct ext4_sb_info *sbi = EXT4_SB(sb);
-  1199		struct ext4_super_block *es = sbi->s_es;
-> 1200		int i, ret;
-  1201	
-  1202		BUG_ON(flex_gd->count = 0 || group_data = NULL);
-  1203		/*
-
-The unused 'ret' is introduced by:
-
-@@ -1197,7 +1197,7 @@ static void ext4_update_super(struct super_block *sb,
-        struct ext4_new_group_data *group_data = flex_gd->groups;
-        struct ext4_sb_info *sbi = EXT4_SB(sb);
-        struct ext4_super_block *es = sbi->s_es;
--       int i;
-+       int i, ret;
- 
-        BUG_ON(flex_gd->count = 0 || group_data = NULL);
-        /*
-@@ -1272,6 +1272,11 @@ static void ext4_update_super(struct super_block *sb,
-                           &sbi->s_flex_groups[flex_group].free_inodes);
-        }
- 
-+       /*
-+        * Update the fs overhead information
-+        */
-+       ext4_calculate_overhead(sb);
-+
-        if (test_opt(sb, DEBUG))
-                printk(KERN_DEBUG "EXT4-fs: added group %u:"
-                       "%llu blocks(%llu free %llu reserved)\n", flex_gd->count,
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+Not compiled
+
+ drivers/usb/host/ehci-vt8500.c |   15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-vt8500.c b/drivers/usb/host/ehci-vt8500.c
+index 4d147c4..a891617 100644
+--- a/drivers/usb/host/ehci-vt8500.c
++++ b/drivers/usb/host/ehci-vt8500.c
+@@ -106,17 +106,11 @@ static int vt8500_ehci_drv_probe(struct platform_device *pdev)
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
+ 
+-	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
+-		pr_debug("request_mem_region failed");
+-		ret = -EBUSY;
+-		goto err1;
+-	}
+-
+-	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
++	hcd->regs = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (!hcd->regs) {
+ 		pr_debug("ioremap failed");
+ 		ret = -ENOMEM;
+-		goto err2;
++		goto err1;
+ 	}
+ 
+ 	ehci = hcd_to_ehci(hcd);
+@@ -129,9 +123,6 @@ static int vt8500_ehci_drv_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	iounmap(hcd->regs);
+-err2:
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ err1:
+ 	usb_put_hcd(hcd);
+ 	return ret;
+@@ -142,8 +133,6 @@ static int vt8500_ehci_drv_remove(struct platform_device *pdev)
+ 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+ 
+ 	usb_remove_hcd(hcd);
+-	iounmap(hcd->regs);
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ 	usb_put_hcd(hcd);
+ 	platform_set_drvdata(pdev, NULL);
+ 
+
