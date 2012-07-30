@@ -1,30 +1,33 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 28 Jul 2012 01:52:51 +0000
-Subject: [next:akpm 233/308] lib/rbtree_test.c:91:30: sparse: constant 3141592653589793238 is so big it is lo
-Message-Id: <20120728015251.GA7527@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 30 Jul 2012 08:15:43 +0000
+Subject: [patch 1/2] Btrfs: checking for NULL instead of IS_ERR
+Message-Id: <20120730081542.GC15702@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@fusionio.com>, Arne Jansen <sensille@gmx.net>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Michel,
+add_qgroup_rb() never returns NULL, only error pointers.
 
-There are new sparse warnings show up in
-
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
-head:   247109fa112ac912f31efc28e130ed2a0cc1764c
-commit: eef00dbbae467827e34273cf4e07a5bebb660108 [233/308] rbtree: performance and correctness test
-
-All sparse warnings:
-
-+ lib/rbtree_test.c:91:30: sparse: constant 3141592653589793238 is so big it is long long
-  include/linux/random.h:87:45: sparse: cast truncates bits from constant value (4f2e5357408c3c09 becomes 408c3c09)
-  lib/rbtree_test.c: In function 'check':
-  lib/rbtree_test.c:76:4: warning: 'blacks' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-Could be fixed by appending 'ULL' to the number.
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+Applies to linux-next.
+
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index bc424ae..b650155 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -1364,8 +1364,10 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans,
+ 	spin_lock(&fs_info->qgroup_lock);
+ 
+ 	dstgroup = add_qgroup_rb(fs_info, objectid);
+-	if (!dstgroup)
++	if (IS_ERR(dstgroup)) {
++		ret = PTR_ERR(dstgroup);
+ 		goto unlock;
++	}
+ 
+ 	if (srcid) {
+ 		srcgroup = find_qgroup_rb(fs_info, srcid);
