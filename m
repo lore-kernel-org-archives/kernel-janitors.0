@@ -1,40 +1,66 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 25 Jul 2012 12:42:38 +0000
-Subject: tg3_phy_copper_begin: duplicated argument to ||
-Message-Id: <20120725124238.GA29871@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Jul 2012 14:43:44 +0000
+Subject: [PATCH 2/7] drivers/usb/host/ehci-s5p.c: use devm_ functions
+Message-Id: <1343659425-24563-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Matt,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-coccinelle complaints about:
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-drivers/net/ethernet/broadcom/tg3.c:4053:8-39: duplicated argument to && or ||
-
-I'm not sure if the code intends to retry the operation (or a silly
-copy&paste error). If it's the former case, it might be better to add
-a comment..
-               
- 4046                 if (!tg3_readphy(tp, MII_BMCR, &orig_bmcr) &&
- 4047                     (bmcr != orig_bmcr)) {
- 4048                         tg3_writephy(tp, MII_BMCR, BMCR_LOOPBACK);
- 4049                         for (i = 0; i < 1500; i++) {
- 4050                                 u32 tmp;
- 4051                           
- 4052                                 udelay(10);
- 4053 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> if (tg3_readphy(tp, MII_BMSR, &tmp) ||
- 4054 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>     tg3_readphy(tp, MII_BMSR, &tmp))
- 4055                                         continue;
- 4056                                 if (!(tmp & BMSR_LSTATUS)) {
- 4057                                         udelay(40);
- 4058                                         break;
- 4059                                 }
- 4060                         }
- 4061                         tg3_writephy(tp, MII_BMCR, bmcr);
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+Not compiled
+
+ drivers/usb/host/ehci-s5p.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 9d8f1dd..d055503 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -128,7 +128,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	s5p_ehci->hcd = hcd;
+-	s5p_ehci->clk = clk_get(&pdev->dev, "usbhost");
++	s5p_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
+ 
+ 	if (IS_ERR(s5p_ehci->clk)) {
+ 		dev_err(&pdev->dev, "Failed to get usbhost clock\n");
+@@ -138,7 +138,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+ 
+ 	err = clk_enable(s5p_ehci->clk);
+ 	if (err)
+-		goto fail_clken;
++		goto fail_clk;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+@@ -184,8 +184,6 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+ 
+ fail_io:
+ 	clk_disable(s5p_ehci->clk);
+-fail_clken:
+-	clk_put(s5p_ehci->clk);
+ fail_clk:
+ 	usb_put_hcd(hcd);
+ 	return err;
+@@ -203,7 +201,6 @@ static int __devexit s5p_ehci_remove(struct platform_device *pdev)
+ 		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+ 
+ 	clk_disable(s5p_ehci->clk);
+-	clk_put(s5p_ehci->clk);
+ 
+ 	usb_put_hcd(hcd);
+ 
+
