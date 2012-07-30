@@ -1,63 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 24 Jul 2012 14:18:14 +0000
-Subject: [PATCH v2] drivers/iommu/intel-iommu.c: add missing free_domain_mem
-Message-Id: <1343139494-26998-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Shlomo Pongratz <shlomop@mellanox.com>
+Date: Mon, 30 Jul 2012 15:20:30 +0000
+Subject: [for-next PATCH] IB/IPoIB: typo error
+Message-Id: <1343661630-1350-1-git-send-email-shlomop@mellanox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+To: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wfg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Shlomo Pongratz <shlomop-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+was is_held should be lockdep_is_held
 
-Add missing free_domain_mem on failure path after alloc_domain.
+Reporetd by: Roland Dreier <roland@kernel.org>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@km exists@
-local idexpression e;
-expression e1,e2,e3;
-type T,T1;
-identifier f;
-@@
-
-* e = alloc_domain(...)
-... when any
-    when != e = e1
-    when != e1 = (T)e
-    when != e1(...,(T)e,...)
-    when != &e->f
-if(...) { ... when != e2(...,(T1)e,...)
-                 when != e3 = e
-                 when forall
-(
-             return <+...e...+>;
-|
-*             return ...;
-) }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Shlomo Pongratz <shlomop@mellanox.com>
 ---
-Email address corrected.
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
- drivers/iommu/intel-iommu.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 7469b53..0204b62 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -2008,6 +2008,7 @@ static struct dmar_domain *get_domain_for_dev(struct pci_dev *pdev, int gaw)
- 	if (!drhd) {
- 		printk(KERN_ERR "IOMMU: can't find DMAR for device %s\n",
- 			pci_name(pdev));
-+		free_domain_mem(domain);
- 		return NULL;
- 	}
- 	iommu = drhd->iommu;
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index 61318a7..f1ff2f4 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -882,7 +882,7 @@ static void __ipoib_reap_neigh(struct ipoib_dev_priv *priv)
+ 		struct ipoib_neigh __rcu **np = &htbl->buckets[i];
+ 
+ 		while ((neigh = rcu_dereference_protected(*np,
+-				is_held(&ntbl->rwlock))) != NULL) {
++				lockdep_is_held(&ntbl->rwlock))) != NULL) {
+ 			/* was the neigh idle for two GC periods */
+ 			if (time_after(neigh_obsolete, neigh->alive)) {
+ 				rcu_assign_pointer(*np,
+-- 
+1.7.1
 
