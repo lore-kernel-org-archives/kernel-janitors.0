@@ -1,40 +1,59 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sat, 07 Jul 2012 18:44:49 +0000
-Subject: [PATCH] CSR: fix function declaration warnings
-Message-Id: <1341686689-21721-1-git-send-email-emilgoode@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 30 Jul 2012 08:10:44 +0000
+Subject: [patch] Btrfs: fix some endian bugs handling the root times
+Message-Id: <20120730081043.GA15702@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@fusionio.com>, Alexander Block <ablock84@googlemail.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Sparse is warning about non-ANSI function declaration.
-Add void to the parameterless function.
+"trans->transid" is cpu endian but we want to store the data as little
+endian.  "item->ctime.nsec" is only 32 bits, not 64.
 
-drivers/staging/csr/csr_wifi_hip_chiphelper.c:633:31: warning:
-	non-ANSI function declaration of function 'ChipHelper_Null'
-
-I also fixed this checkpatch error:
-ERROR: "foo* bar" should be "foo *bar"
-
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/csr/csr_wifi_hip_chiphelper.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applies to linux-next.
 
-diff --git a/drivers/staging/csr/csr_wifi_hip_chiphelper.c b/drivers/staging/csr/csr_wifi_hip_chiphelper.c
-index 0e2477f..5e9851c 100644
---- a/drivers/staging/csr/csr_wifi_hip_chiphelper.c
-+++ b/drivers/staging/csr/csr_wifi_hip_chiphelper.c
-@@ -630,7 +630,7 @@ ChipDescript* ChipHelper_GetVersionUniFi(CsrUint16 ver)
- }
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 43f0012..a1fbca0 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -424,7 +424,7 @@ static noinline int create_subvol(struct btrfs_root *root,
+ 	uuid_le_gen(&new_uuid);
+ 	memcpy(root_item.uuid, new_uuid.b, BTRFS_UUID_SIZE);
+ 	root_item.otime.sec = cpu_to_le64(cur_time.tv_sec);
+-	root_item.otime.nsec = cpu_to_le64(cur_time.tv_nsec);
++	root_item.otime.nsec = cpu_to_le32(cur_time.tv_nsec);
+ 	root_item.ctime = root_item.otime;
+ 	btrfs_set_root_ctransid(&root_item, trans->transid);
+ 	btrfs_set_root_otransid(&root_item, trans->transid);
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index 7ac7cdc..7208ada 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -1061,7 +1061,7 @@ static noinline int create_pending_snapshot(struct btrfs_trans_handle *trans,
+ 	memcpy(new_root_item->parent_uuid, root->root_item.uuid,
+ 			BTRFS_UUID_SIZE);
+ 	new_root_item->otime.sec = cpu_to_le64(cur_time.tv_sec);
+-	new_root_item->otime.nsec = cpu_to_le64(cur_time.tv_nsec);
++	new_root_item->otime.nsec = cpu_to_le32(cur_time.tv_nsec);
+ 	btrfs_set_root_otransid(new_root_item, trans->transid);
+ 	memset(&new_root_item->stime, 0, sizeof(new_root_item->stime));
+ 	memset(&new_root_item->rtime, 0, sizeof(new_root_item->rtime));
+diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
+index 6bb465c..10d8e4d 100644
+--- a/fs/btrfs/root-tree.c
++++ b/fs/btrfs/root-tree.c
+@@ -544,8 +544,8 @@ void btrfs_update_root_times(struct btrfs_trans_handle *trans,
+ 	struct timespec ct = CURRENT_TIME;
  
- 
--ChipDescript* ChipHelper_Null()
-+ChipDescript *ChipHelper_Null(void)
- {
-     return &chip_device_desc_null;
+ 	spin_lock(&root->root_times_lock);
+-	item->ctransid = trans->transid;
++	item->ctransid = cpu_to_le64(trans->transid);
+ 	item->ctime.sec = cpu_to_le64(ct.tv_sec);
+-	item->ctime.nsec = cpu_to_le64(ct.tv_nsec);
++	item->ctime.nsec = cpu_to_le32(ct.tv_nsec);
+ 	spin_unlock(&root->root_times_lock);
  }
--- 
-1.7.10.4
-
