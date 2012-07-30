@@ -1,10 +1,8 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Jul 2012 19:46:12 +0000
-Subject: [PATCH 8/9] drivers/usb/host/ehci-mv.c: use devm_ functions
-Message-Id: <1343591173-2819-9-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 30 Jul 2012 14:43:43 +0000
+Subject: [PATCH 3/7] drivers/usb/host/ehci-sead3.c: use devm_ functions
+Message-Id: <1343659425-24563-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1343591173-2819-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -18,155 +16,55 @@ detaches.  This patch uses these functions for data that is allocated in
 the probe function of a platform device and is only freed in the remove
 function.
 
-A new label name is created in one case to better reflect the contents of
-the error-handling code.
-
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-Not compiled.
+Not compiled
 
- drivers/usb/host/ehci-mv.c |   51 ++++++++++++++-------------------------------
- 1 file changed, 16 insertions(+), 35 deletions(-)
+ drivers/usb/host/ehci-sead3.c |   15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
-index f6df1cc..f7bfc0b 100644
---- a/drivers/usb/host/ehci-mv.c
-+++ b/drivers/usb/host/ehci-mv.c
-@@ -161,7 +161,7 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/usb/host/ehci-sead3.c b/drivers/usb/host/ehci-sead3.c
+index 58c96bd..802dad8 100644
+--- a/drivers/usb/host/ehci-sead3.c
++++ b/drivers/usb/host/ehci-sead3.c
+@@ -112,17 +112,11 @@ static int ehci_hcd_sead3_drv_probe(struct platform_device *pdev)
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
  
- 	size = sizeof(*ehci_mv) + sizeof(struct clk *) * pdata->clknum;
--	ehci_mv = kzalloc(size, GFP_KERNEL);
-+	ehci_mv = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
- 	if (ehci_mv = NULL) {
- 		dev_err(&pdev->dev, "cannot allocate ehci_hcd_mv\n");
- 		retval = -ENOMEM;
-@@ -175,12 +175,12 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 	ehci_mv->clknum = pdata->clknum;
- 	for (clk_i = 0; clk_i < ehci_mv->clknum; clk_i++) {
- 		ehci_mv->clk[clk_i] -		    clk_get(&pdev->dev, pdata->clkname[clk_i]);
-+		    devm_clk_get(&pdev->dev, pdata->clkname[clk_i]);
- 		if (IS_ERR(ehci_mv->clk[clk_i])) {
- 			dev_err(&pdev->dev, "error get clck \"%s\"\n",
- 				pdata->clkname[clk_i]);
- 			retval = PTR_ERR(ehci_mv->clk[clk_i]);
--			goto err_put_clk;
-+			goto err_clear_drvdata;
- 		}
- 	}
- 
-@@ -188,34 +188,36 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 	if (r = NULL) {
- 		dev_err(&pdev->dev, "no phy I/O memory resource defined\n");
- 		retval = -ENODEV;
--		goto err_put_clk;
-+		goto err_clear_drvdata;
- 	}
- 
--	ehci_mv->phy_regs = ioremap(r->start, resource_size(r));
-+	ehci_mv->phy_regs = devm_ioremap(&pdev->dev, r->start,
-+					 resource_size(r));
- 	if (ehci_mv->phy_regs = 0) {
- 		dev_err(&pdev->dev, "failed to map phy I/O memory\n");
- 		retval = -EFAULT;
--		goto err_put_clk;
-+		goto err_clear_drvdata;
- 	}
- 
- 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "capregs");
- 	if (!r) {
- 		dev_err(&pdev->dev, "no I/O memory resource defined\n");
- 		retval = -ENODEV;
--		goto err_iounmap_phyreg;
-+		goto err_clear_drvdata;
- 	}
- 
--	ehci_mv->cap_regs = ioremap(r->start, resource_size(r));
-+	ehci_mv->cap_regs = devm_ioremap(&pdev->dev, r->start,
-+					 resource_size(r));
- 	if (ehci_mv->cap_regs = NULL) {
- 		dev_err(&pdev->dev, "failed to map I/O memory\n");
- 		retval = -EFAULT;
--		goto err_iounmap_phyreg;
-+		goto err_clear_drvdata;
- 	}
- 
- 	retval = mv_ehci_enable(ehci_mv);
- 	if (retval) {
- 		dev_err(&pdev->dev, "init phy error %d\n", retval);
--		goto err_iounmap_capreg;
-+		goto err_clear_drvdata;
- 	}
- 
- 	offset = readl(ehci_mv->cap_regs) & CAPLENGTH_MASK;
-@@ -239,7 +241,7 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 	ehci_mv->mode = pdata->mode;
- 	if (ehci_mv->mode = MV_USB_MODE_OTG) {
- #ifdef CONFIG_USB_OTG_UTILS
--		ehci_mv->otg = usb_get_phy(USB_PHY_TYPE_USB2);
-+		ehci_mv->otg = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
- 		if (IS_ERR_OR_NULL(ehci_mv->otg)) {
- 			dev_err(&pdev->dev,
- 				"unable to find transceiver\n");
-@@ -252,7 +254,7 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev,
- 				"unable to register with transceiver\n");
- 			retval = -ENODEV;
--			goto err_put_transceiver;
-+			goto err_disable_clk;
- 		}
- 		/* otg will enable clock before use as host */
- 		mv_ehci_disable(ehci_mv);
-@@ -286,22 +288,10 @@ static int mv_ehci_probe(struct platform_device *pdev)
- err_set_vbus:
- 	if (pdata->set_vbus)
- 		pdata->set_vbus(0);
--#ifdef CONFIG_USB_OTG_UTILS
--err_put_transceiver:
--	if (!IS_ERR_OR_NULL(ehci_mv->otg))
--		usb_put_phy(ehci_mv->otg);
--#endif
- err_disable_clk:
- 	mv_ehci_disable(ehci_mv);
--err_iounmap_capreg:
--	iounmap(ehci_mv->cap_regs);
--err_iounmap_phyreg:
--	iounmap(ehci_mv->phy_regs);
--err_put_clk:
--	for (clk_i--; clk_i >= 0; clk_i--)
--		clk_put(ehci_mv->clk[clk_i]);
-+err_clear_drvdata:
- 	platform_set_drvdata(pdev, NULL);
--	kfree(ehci_mv);
- err_put_hcd:
- 	usb_put_hcd(hcd);
- 
-@@ -317,10 +307,8 @@ static int mv_ehci_remove(struct platform_device *pdev)
- 	if (hcd->rh_registered)
- 		usb_remove_hcd(hcd);
- 
--	if (!IS_ERR_OR_NULL(ehci_mv->otg)) {
-+	if (!IS_ERR_OR_NULL(ehci_mv->otg))
- 		otg_set_host(ehci_mv->otg->otg, NULL);
--		usb_put_phy(ehci_mv->otg);
+-	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
+-		pr_debug("request_mem_region failed");
+-		ret = -EBUSY;
+-		goto err1;
 -	}
- 
- 	if (ehci_mv->mode = MV_USB_MODE_HOST) {
- 		if (ehci_mv->pdata->set_vbus)
-@@ -329,15 +317,8 @@ static int mv_ehci_remove(struct platform_device *pdev)
- 		mv_ehci_disable(ehci_mv);
+-
+-	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
++	hcd->regs = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (!hcd->regs) {
+ 		pr_debug("ioremap failed");
+ 		ret = -ENOMEM;
+-		goto err2;
++		goto err1;
  	}
  
--	iounmap(ehci_mv->cap_regs);
--	iounmap(ehci_mv->phy_regs);
--
--	for (clk_i = 0; clk_i < ehci_mv->clknum; clk_i++)
--		clk_put(ehci_mv->clk[clk_i]);
--
+ 	/* Root hub has integrated TT. */
+@@ -135,9 +129,6 @@ static int ehci_hcd_sead3_drv_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	iounmap(hcd->regs);
+-err2:
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ err1:
+ 	usb_put_hcd(hcd);
+ 	return ret;
+@@ -148,8 +139,6 @@ static int ehci_hcd_sead3_drv_remove(struct platform_device *pdev)
+ 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
+ 
+ 	usb_remove_hcd(hcd);
+-	iounmap(hcd->regs);
+-	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+ 	usb_put_hcd(hcd);
  	platform_set_drvdata(pdev, NULL);
  
--	kfree(ehci_mv);
- 	usb_put_hcd(hcd);
- 
- 	return 0;
+
