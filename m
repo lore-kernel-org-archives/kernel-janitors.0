@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Jul 2012 14:43:45 +0000
-Subject: [PATCH 1/7] drivers/usb/host/ehci-ppc-of.c: use devm_ functions
-Message-Id: <1343659425-24563-7-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 30 Jul 2012 14:43:42 +0000
+Subject: [PATCH 4/7] drivers/usb/host/ehci-sh.c: use devm_ functions
+Message-Id: <1343659425-24563-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,88 +21,87 @@ Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 ---
 Not compiled
 
- drivers/usb/host/ehci-ppc-of.c |   28 +++++++---------------------
- 1 file changed, 7 insertions(+), 21 deletions(-)
+ drivers/usb/host/ehci-sh.c |   35 +++++++----------------------------
+ 1 file changed, 7 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-ppc-of.c b/drivers/usb/host/ehci-ppc-of.c
-index bbbe89d..fa937d0 100644
---- a/drivers/usb/host/ehci-ppc-of.c
-+++ b/drivers/usb/host/ehci-ppc-of.c
-@@ -114,12 +114,6 @@ static int __devinit ehci_hcd_ppc_of_probe(struct platform_device *op)
- 	hcd->rsrc_start = res.start;
- 	hcd->rsrc_len = resource_size(&res);
+diff --git a/drivers/usb/host/ehci-sh.c b/drivers/usb/host/ehci-sh.c
+index b3f1e36..6081e1e 100644
+--- a/drivers/usb/host/ehci-sh.c
++++ b/drivers/usb/host/ehci-sh.c
+@@ -125,33 +125,27 @@ static int ehci_hcd_sh_probe(struct platform_device *pdev)
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
  
--	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len, hcd_name)) {
--		printk(KERN_ERR "%s: request_mem_region failed\n", __FILE__);
--		rv = -EBUSY;
--		goto err_rmr;
+-	if (!request_mem_region(hcd->rsrc_start, hcd->rsrc_len,
+-				driver->description)) {
+-		dev_dbg(&pdev->dev, "controller already in use\n");
+-		ret = -EBUSY;
+-		goto fail_request_resource;
 -	}
 -
- 	irq = irq_of_parse_and_map(dn, 0);
- 	if (irq = NO_IRQ) {
- 		printk(KERN_ERR "%s: irq_of_parse_and_map failed\n", __FILE__);
-@@ -127,9 +121,9 @@ static int __devinit ehci_hcd_ppc_of_probe(struct platform_device *op)
- 		goto err_irq;
+-	hcd->regs = ioremap_nocache(hcd->rsrc_start, hcd->rsrc_len);
++	hcd->regs = devm_request_and_ioremap(&pdev->dev, res);
+ 	if (hcd->regs = NULL) {
+ 		dev_dbg(&pdev->dev, "error mapping memory\n");
+ 		ret = -ENXIO;
+-		goto fail_ioremap;
++		goto fail_request_resource;
  	}
  
--	hcd->regs = ioremap(hcd->rsrc_start, hcd->rsrc_len);
-+	hcd->regs = devm_request_and_ioremap(&op->dev, &res);
- 	if (!hcd->regs) {
--		printk(KERN_ERR "%s: ioremap failed\n", __FILE__);
-+		pr_err("%s: devm_request_and_ioremap failed\n", __FILE__);
- 		rv = -ENOMEM;
- 		goto err_ioremap;
+-	priv = kmalloc(sizeof(struct ehci_sh_priv), GFP_KERNEL);
++	priv = devm_kzalloc(&pdev->dev, sizeof(struct ehci_sh_priv),
++			    GFP_KERNEL);
+ 	if (!priv) {
+ 		dev_dbg(&pdev->dev, "error allocating priv data\n");
+ 		ret = -ENOMEM;
+-		goto fail_alloc;
++		goto fail_request_resource;
  	}
-@@ -139,8 +133,10 @@ static int __devinit ehci_hcd_ppc_of_probe(struct platform_device *op)
- 	if (np != NULL) {
- 		/* claim we really affected by usb23 erratum */
- 		if (!of_address_to_resource(np, 0, &res))
--			ehci->ohci_hcctrl_reg = ioremap(res.start +
--					OHCI_HCCTRL_OFFSET, OHCI_HCCTRL_LEN);
-+			ehci->ohci_hcctrl_reg +				devm_ioremap(&op->dev,
-+					     res.start + OHCI_HCCTRL_OFFSET,
-+					     OHCI_HCCTRL_LEN);
- 		else
- 			pr_debug("%s: no ohci offset in fdt\n", __FILE__);
- 		if (!ehci->ohci_hcctrl_reg) {
-@@ -169,19 +165,13 @@ static int __devinit ehci_hcd_ppc_of_probe(struct platform_device *op)
  
- 	rv = usb_add_hcd(hcd, irq, 0);
- 	if (rv)
--		goto err_ehci;
-+		goto err_ioremap;
+ 	/* These are optional, we don't care if they fail */
+-	priv->fclk = clk_get(&pdev->dev, "usb_fck");
++	priv->fclk = devm_clk_get(&pdev->dev, "usb_fck");
+ 	if (IS_ERR(priv->fclk))
+ 		priv->fclk = NULL;
  
- 	return 0;
+-	priv->iclk = clk_get(&pdev->dev, "usb_ick");
++	priv->iclk = devm_clk_get(&pdev->dev, "usb_ick");
+ 	if (IS_ERR(priv->iclk))
+ 		priv->iclk = NULL;
  
--err_ehci:
--	if (ehci->has_amcc_usb23)
--		iounmap(ehci->ohci_hcctrl_reg);
+@@ -176,14 +170,6 @@ fail_add_hcd:
+ 	clk_disable(priv->iclk);
+ 	clk_disable(priv->fclk);
+ 
+-	clk_put(priv->iclk);
+-	clk_put(priv->fclk);
+-
+-	kfree(priv);
+-fail_alloc:
 -	iounmap(hcd->regs);
- err_ioremap:
- 	irq_dispose_mapping(irq);
- err_irq:
+-fail_ioremap:
 -	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
--err_rmr:
+ fail_request_resource:
  	usb_put_hcd(hcd);
- 
- 	return rv;
-@@ -202,9 +192,7 @@ static int ehci_hcd_ppc_of_remove(struct platform_device *op)
+ fail_create_hcd:
+@@ -198,19 +184,12 @@ static int __exit ehci_hcd_sh_remove(struct platform_device *pdev)
+ 	struct usb_hcd *hcd = priv->hcd;
  
  	usb_remove_hcd(hcd);
- 
 -	iounmap(hcd->regs);
- 	irq_dispose_mapping(hcd->irq);
 -	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
- 
- 	/* use request_mem_region to test if the ohci driver is loaded.  if so
- 	 * ensure the ohci core is operational.
-@@ -222,8 +210,6 @@ static int ehci_hcd_ppc_of_remove(struct platform_device *op)
- 				pr_debug("%s: no ohci offset in fdt\n", __FILE__);
- 			of_node_put(np);
- 		}
--
--		iounmap(ehci->ohci_hcctrl_reg);
- 	}
  	usb_put_hcd(hcd);
+ 	platform_set_drvdata(pdev, NULL);
+ 
+ 	clk_disable(priv->fclk);
+ 	clk_disable(priv->iclk);
+ 
+-	clk_put(priv->fclk);
+-	clk_put(priv->iclk);
+-
+-	kfree(priv);
+-
+ 	return 0;
+ }
  
 
