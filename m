@@ -1,47 +1,65 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 08 Jul 2012 11:37:44 +0000
-Subject: [PATCH 7/7] drivers/s390/scsi/zfcp_cfdc.c: remove invalid reference to list iterator variable
-Message-Id: <1341747464-1772-8-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 31 Jul 2012 09:21:37 +0000
+Subject: [PATCH 1/3] drivers/media/radio/radio-timb.c: use devm_ functions
+Message-Id: <1343726497-27379-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steffen Maier <maier@linux.vnet.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, linux390@de.ibm.com, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-If list_for_each_entry, etc complete a traversal of the list, the iterator
-variable ends up pointing to an address at an offset from the list head,
-and not a meaningful structure.  Thus this value should not be used after
-the end of the iterator.  Replace port->adapter->scsi_host by
-adapter->scsi_host.
-
-This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-This is not tested, an I am not sure that this is the right change.
-Indeed, I'm not at all sure how the original code could have worked, since
-port->adapter->scsi_host should be a completely random value.
+ drivers/media/radio/radio-timb.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
- drivers/s390/scsi/zfcp_cfdc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/s390/scsi/zfcp_cfdc.c b/drivers/s390/scsi/zfcp_cfdc.c
-index fab2c25..8ed63aa 100644
---- a/drivers/s390/scsi/zfcp_cfdc.c
-+++ b/drivers/s390/scsi/zfcp_cfdc.c
-@@ -293,7 +293,7 @@ void zfcp_cfdc_adapter_access_changed(struct zfcp_adapter *adapter)
+diff --git a/drivers/media/radio/radio-timb.c b/drivers/media/radio/radio-timb.c
+index 7052adc..09fc560 100644
+--- a/drivers/media/radio/radio-timb.c
++++ b/drivers/media/radio/radio-timb.c
+@@ -157,7 +157,7 @@ static int __devinit timbradio_probe(struct platform_device *pdev)
+ 		goto err;
  	}
- 	read_unlock_irqrestore(&adapter->port_list_lock, flags);
  
--	shost_for_each_device(sdev, port->adapter->scsi_host) {
-+	shost_for_each_device(sdev, adapter->scsi_host) {
- 		zfcp_sdev = sdev_to_zfcp(sdev);
- 		status = atomic_read(&zfcp_sdev->status);
- 		if ((status & ZFCP_STATUS_COMMON_ACCESS_DENIED) ||
+-	tr = kzalloc(sizeof(*tr), GFP_KERNEL);
++	tr = devm_kzalloc(&pdev->dev, sizeof(*tr), GFP_KERNEL);
+ 	if (!tr) {
+ 		err = -ENOMEM;
+ 		goto err;
+@@ -177,7 +177,7 @@ static int __devinit timbradio_probe(struct platform_device *pdev)
+ 	strlcpy(tr->v4l2_dev.name, DRIVER_NAME, sizeof(tr->v4l2_dev.name));
+ 	err = v4l2_device_register(NULL, &tr->v4l2_dev);
+ 	if (err)
+-		goto err_v4l2_dev;
++		goto err;
+ 
+ 	tr->video_dev.v4l2_dev = &tr->v4l2_dev;
+ 
+@@ -195,8 +195,6 @@ static int __devinit timbradio_probe(struct platform_device *pdev)
+ err_video_req:
+ 	video_device_release_empty(&tr->video_dev);
+ 	v4l2_device_unregister(&tr->v4l2_dev);
+-err_v4l2_dev:
+-	kfree(tr);
+ err:
+ 	dev_err(&pdev->dev, "Failed to register: %d\n", err);
+ 
+@@ -212,8 +210,6 @@ static int __devexit timbradio_remove(struct platform_device *pdev)
+ 
+ 	v4l2_device_unregister(&tr->v4l2_dev);
+ 
+-	kfree(tr);
+-
+ 	return 0;
+ }
+ 
 
