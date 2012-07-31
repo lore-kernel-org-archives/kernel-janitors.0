@@ -1,62 +1,53 @@
-From: Bryan Schumaker <bjschuma@netapp.com>
-Date: Tue, 31 Jul 2012 12:47:56 +0000
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Date: Tue, 31 Jul 2012 12:55:00 +0000
 Subject: Re: [nfs:devel 46/51] fs/nfs/write.c:1592:5: error: redefinition of 'nfs_commit_inode'
-Message-Id: <5017D3FC.9010905@netapp.com>
+Message-Id: <1343739299.519.1.camel@lade.trondhjem.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120731024328.GA10480@localhost> <4FA345DA4F4AE44899BD2B03EEEC2FA934BE82@SACEXCMBX04-PRD.hq.netapp.com>
-In-Reply-To: <4FA345DA4F4AE44899BD2B03EEEC2FA934BE82@SACEXCMBX04-PRD.hq.netapp.com>
+References: <20120731024328.GA10480@localhost>
+	 <4FA345DA4F4AE44899BD2B03EEEC2FA934BE82@SACEXCMBX04-PRD.hq.netapp.com>
+	 <5017D3FC.9010905@netapp.com>
+In-Reply-To: <5017D3FC.9010905@netapp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, "Schumaker, Bryan" <Bryan.Schumaker@netapp.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+To: "Schumaker, Bryan" <Bryan.Schumaker@netapp.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
 
-On 07/30/2012 11:14 PM, Myklebust, Trond wrote:
-> Bryan,
-> 
-> Why did you switch to using IS_ENABLED in the first place, and why wasn't that put in a separate patch?
-
-IS_ENABLED() will check for CONFIG_NFS_V*_MODULE, last I checked the defined() macro doesn't.  Putting this into a separate patch makes the change non-bisectable since gcc will be checking against CONFIG_NFS_V3 but CONFIG_NFS_V3_MODULE is set.  Should I have changed the CONFIG_ variables instead of using IS_ENABLED()?
-
-> 
-> 
-> 
->> -----Original Message-----
->> From: Fengguang Wu [mailto:fengguang.wu@intel.com]
->> Sent: Monday, July 30, 2012 10:43 PM
->> To: Schumaker, Bryan
->> Cc: kernel-janitors@vger.kernel.org; Myklebust, Trond; linux-
->> nfs@vger.kernel.org
->> Subject: [nfs:devel 46/51] fs/nfs/write.c:1592:5: error: redefinition of
->> 'nfs_commit_inode'
->>
->> Hi Bryan,
->>
->> Kernel build failed on
->>
->> tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git devel
->> head:   5c13c9e1c15ee2ca9ab2b953224001af53d9be09
->> commit: 1c606fb74c758beafd98cbad9a9133eadeec2371 [46/51] NFS: Convert
->> v3 into a module
->> config: blackfin-BF533-EZKIT_defconfig (attached as .config)
->>
->> All related error/warning messages:
->>
->> fs/nfs/write.c:1592:5: error: redefinition of 'nfs_commit_inode'
->> In file included from fs/nfs/write.c:19:0:
->> include/linux/nfs_fs.h:547:1: note: previous definition of 'nfs_commit_inode'
->> was here
->>
->> vim +1592 fs/nfs/write.c
->>   1589		return status;
->>   1590	}
->>   1591
->>> 1592	int nfs_commit_inode(struct inode *inode, int how)
->>   1593	{
->>   1594		LIST_HEAD(head);
->>   1595		struct nfs_commit_info cinfo;
->>
->> ---
->> 0-DAY kernel build testing backend         Open Source Technology Centre
->> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
-
+T24gVHVlLCAyMDEyLTA3LTMxIGF0IDA4OjQ3IC0wNDAwLCBCcnlhbiBTY2h1bWFrZXIgd3JvdGU6
+DQo+IE9uIDA3LzMwLzIwMTIgMTE6MTQgUE0sIE15a2xlYnVzdCwgVHJvbmQgd3JvdGU6DQo+ID4g
+QnJ5YW4sDQo+ID4gDQo+ID4gV2h5IGRpZCB5b3Ugc3dpdGNoIHRvIHVzaW5nIElTX0VOQUJMRUQg
+aW4gdGhlIGZpcnN0IHBsYWNlLCBhbmQgd2h5IHdhc24ndCB0aGF0IHB1dCBpbiBhIHNlcGFyYXRl
+IHBhdGNoPw0KPiANCj4gSVNfRU5BQkxFRCgpIHdpbGwgY2hlY2sgZm9yIENPTkZJR19ORlNfVipf
+TU9EVUxFLCBsYXN0IEkgY2hlY2tlZCB0aGUgZGVmaW5lZCgpIG1hY3JvIGRvZXNuJ3QuICBQdXR0
+aW5nIHRoaXMgaW50byBhIHNlcGFyYXRlIHBhdGNoIG1ha2VzIHRoZSBjaGFuZ2Ugbm9uLWJpc2Vj
+dGFibGUgc2luY2UgZ2NjIHdpbGwgYmUgY2hlY2tpbmcgYWdhaW5zdCBDT05GSUdfTkZTX1YzIGJ1
+dCBDT05GSUdfTkZTX1YzX01PRFVMRSBpcyBzZXQuICBTaG91bGQgSSBoYXZlIGNoYW5nZWQgdGhl
+IENPTkZJR18gdmFyaWFibGVzIGluc3RlYWQgb2YgdXNpbmcgSVNfRU5BQkxFRCgpPw0KDQpXaHkg
+aXMgaXQgZXZhbHVhdGluZyBkaWZmZXJlbnRseSBpbiB0aGUgaW5jbHVkZSBmaWxlIHZzLiB0aGUg
+LmMgZmlsZT8NCkFyZSB3ZSBtaXNzaW5nIGFuIGluY2x1ZGUgaW4gbmZzX2ZzLmg/DQoNCj4gPiAN
+Cj4gPiANCj4gPiANCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJvbTog
+RmVuZ2d1YW5nIFd1IFttYWlsdG86ZmVuZ2d1YW5nLnd1QGludGVsLmNvbV0NCj4gPj4gU2VudDog
+TW9uZGF5LCBKdWx5IDMwLCAyMDEyIDEwOjQzIFBNDQo+ID4+IFRvOiBTY2h1bWFrZXIsIEJyeWFu
+DQo+ID4+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBNeWtsZWJ1c3QsIFRy
+b25kOyBsaW51eC0NCj4gPj4gbmZzQHZnZXIua2VybmVsLm9yZw0KPiA+PiBTdWJqZWN0OiBbbmZz
+OmRldmVsIDQ2LzUxXSBmcy9uZnMvd3JpdGUuYzoxNTkyOjU6IGVycm9yOiByZWRlZmluaXRpb24g
+b2YNCj4gPj4gJ25mc19jb21taXRfaW5vZGUnDQo+ID4+DQo+ID4+IEhpIEJyeWFuLA0KPiA+Pg0K
+PiA+PiBLZXJuZWwgYnVpbGQgZmFpbGVkIG9uDQo+ID4+DQo+ID4+IHRyZWU6ICAgZ2l0Oi8vZ2l0
+LmxpbnV4LW5mcy5vcmcvcHJvamVjdHMvdHJvbmRteS9saW51eC1uZnMuZ2l0IGRldmVsDQo+ID4+
+IGhlYWQ6ICAgNWMxM2M5ZTFjMTVlZTJjYTlhYjJiOTUzMjI0MDAxYWY1M2Q5YmUwOQ0KPiA+PiBj
+b21taXQ6IDFjNjA2ZmI3NGM3NThiZWFmZDk4Y2JhZDlhOTEzM2VhZGVlYzIzNzEgWzQ2LzUxXSBO
+RlM6IENvbnZlcnQNCj4gPj4gdjMgaW50byBhIG1vZHVsZQ0KPiA+PiBjb25maWc6IGJsYWNrZmlu
+LUJGNTMzLUVaS0lUX2RlZmNvbmZpZyAoYXR0YWNoZWQgYXMgLmNvbmZpZykNCj4gPj4NCj4gPj4g
+QWxsIHJlbGF0ZWQgZXJyb3Ivd2FybmluZyBtZXNzYWdlczoNCj4gPj4NCj4gPj4gZnMvbmZzL3dy
+aXRlLmM6MTU5Mjo1OiBlcnJvcjogcmVkZWZpbml0aW9uIG9mICduZnNfY29tbWl0X2lub2RlJw0K
+PiA+PiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gZnMvbmZzL3dyaXRlLmM6MTk6MDoNCj4gPj4gaW5j
+bHVkZS9saW51eC9uZnNfZnMuaDo1NDc6MTogbm90ZTogcHJldmlvdXMgZGVmaW5pdGlvbiBvZiAn
+bmZzX2NvbW1pdF9pbm9kZScNCj4gPj4gd2FzIGhlcmUNCj4gPj4NCj4gPj4gdmltICsxNTkyIGZz
+L25mcy93cml0ZS5jDQo+ID4+ICAgMTU4OQkJcmV0dXJuIHN0YXR1czsNCj4gPj4gICAxNTkwCX0N
+Cj4gPj4gICAxNTkxDQo+ID4+PiAxNTkyCWludCBuZnNfY29tbWl0X2lub2RlKHN0cnVjdCBpbm9k
+ZSAqaW5vZGUsIGludCBob3cpDQo+ID4+ICAgMTU5Mwl7DQo+ID4+ICAgMTU5NAkJTElTVF9IRUFE
+KGhlYWQpOw0KPiA+PiAgIDE1OTUJCXN0cnVjdCBuZnNfY29tbWl0X2luZm8gY2luZm87DQo+ID4+
+DQo+ID4+IC0tLQ0KPiA+PiAwLURBWSBrZXJuZWwgYnVpbGQgdGVzdGluZyBiYWNrZW5kICAgICAg
+ICAgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50cmUNCj4gPj4gRmVuZ2d1YW5nIFd1IDx3ZmdA
+bGludXguaW50ZWwuY29tPiAgICAgICAgICAgICAgICAgICAgIEludGVsIENvcnBvcmF0aW9uDQo+
+IA0KDQo
