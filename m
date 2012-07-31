@@ -1,30 +1,64 @@
-From: wfg@linux.intel.com
-Date: Sat, 07 Jul 2012 13:26:27 +0000
-Subject: [staging:staging-next 54/100] WARNING: drivers/iio/dac/ad5064.o(.init.text+0x72): Section mismatch i
-Message-Id: <20120707132627.GA23706@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 31 Jul 2012 09:21:36 +0000
+Subject: [PATCH 2/3] drivers/media/radio/radio-si4713.c: use devm_ functions
+Message-Id: <1343726497-27379-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Lars-Peter,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-There are new compile warnings show up in
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
-head:   0932966b1ca03217c6e0c18375867b1a99ee5af0
-commit: 6a17a0768f77626046aa441843b318a00bac3800 [54/100] iio:dac:ad5064: Add support for the ad5629r and ad5669r
-
-All warnings:
-
-WARNING: drivers/iio/dac/ad5064.o(.init.text+0x72): Section mismatch in reference from the function init_module() to the function .exit.text:ad5064_spi_unregister_driver()
-The function __init init_module() references
-a function __exit ad5064_spi_unregister_driver().
-This is often seen when error handling in the init function
-uses functionality in the exit path.
-The fix is often to remove the __exit annotation of
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ drivers/media/radio/radio-si4713.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/radio/radio-si4713.c b/drivers/media/radio/radio-si4713.c
+index c54210c..5f366d1 100644
+--- a/drivers/media/radio/radio-si4713.c
++++ b/drivers/media/radio/radio-si4713.c
+@@ -268,7 +268,7 @@ static int radio_si4713_pdriver_probe(struct platform_device *pdev)
+ 		goto exit;
+ 	}
+ 
+-	rsdev = kzalloc(sizeof *rsdev, GFP_KERNEL);
++	rsdev = devm_kzalloc(&pdev->dev, sizeof(*rsdev), GFP_KERNEL);
+ 	if (!rsdev) {
+ 		dev_err(&pdev->dev, "Failed to alloc video device.\n");
+ 		rval = -ENOMEM;
+@@ -278,7 +278,7 @@ static int radio_si4713_pdriver_probe(struct platform_device *pdev)
+ 	rval = v4l2_device_register(&pdev->dev, &rsdev->v4l2_dev);
+ 	if (rval) {
+ 		dev_err(&pdev->dev, "Failed to register v4l2 device.\n");
+-		goto free_rsdev;
++		goto exit;
+ 	}
+ 
+ 	adapter = i2c_get_adapter(pdata->i2c_bus);
+@@ -322,8 +322,6 @@ put_adapter:
+ 	i2c_put_adapter(adapter);
+ unregister_v4l2_dev:
+ 	v4l2_device_unregister(&rsdev->v4l2_dev);
+-free_rsdev:
+-	kfree(rsdev);
+ exit:
+ 	return rval;
+ }
+@@ -342,7 +340,6 @@ static int __exit radio_si4713_pdriver_remove(struct platform_device *pdev)
+ 	video_unregister_device(rsdev->radio_dev);
+ 	i2c_put_adapter(client->adapter);
+ 	v4l2_device_unregister(&rsdev->v4l2_dev);
+-	kfree(rsdev);
+ 
+ 	return 0;
+ }
+
