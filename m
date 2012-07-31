@@ -1,30 +1,84 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 09 Jul 2012 22:24:55 +0000
-Subject: Re: [PATCH 2/7] net/rxrpc/ar-peer.c: remove invalid reference to list iterator variable
-Message-Id: <20120709.152455.950070482948785087.davem@davemloft.net>
+From: Damien Cassou <damien.cassou@lifl.fr>
+Date: Tue, 31 Jul 2012 16:39:19 +0000
+Subject: [PATCH 2/5] drivers/video/gbefb.c: use devm_ functions
+Message-Id: <1343752762-16861-3-git-send-email-damien.cassou@lifl.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341747464-1772-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1341747464-1772-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341747464-1772-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun,  8 Jul 2012 13:37:39 +0200
+From: Damien Cassou <damien.cassou@lifl.fr>
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> If list_for_each_entry, etc complete a traversal of the list, the iterator
-> variable ends up pointing to an address at an offset from the list head,
-> and not a meaningful structure.  Thus this value should not be used after
-> the end of the iterator.  This seems to be a copy-paste bug from a previous
-> debugging message, and so the meaningless value is just deleted.
-> 
-> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-Applied.
+Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+
+---
+ drivers/video/gbefb.c |   15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/video/gbefb.c b/drivers/video/gbefb.c
+index 7e7b7a9..9b79d38 100644
+--- a/drivers/video/gbefb.c
++++ b/drivers/video/gbefb.c
+@@ -1156,7 +1156,8 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
+ 		goto out_release_framebuffer;
+ 	}
+ 
+-	gbe = (struct sgi_gbe *) ioremap(GBE_BASE, sizeof(struct sgi_gbe));
++	gbe = (struct sgi_gbe *) devm_ioremap(&p_dev->dev, GBE_BASE,
++					      sizeof(struct sgi_gbe));
+ 	if (!gbe) {
+ 		printk(KERN_ERR "gbefb: couldn't map mmio region\n");
+ 		ret = -ENXIO;
+@@ -1170,12 +1171,13 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
+ 	if (!gbe_tiles.cpu) {
+ 		printk(KERN_ERR "gbefb: couldn't allocate tiles table\n");
+ 		ret = -ENOMEM;
+-		goto out_unmap;
++		goto out_release_mem_region;
+ 	}
+ 
+ 	if (gbe_mem_phys) {
+ 		/* memory was allocated at boot time */
+-		gbe_mem = ioremap_nocache(gbe_mem_phys, gbe_mem_size);
++		gbe_mem = devm_ioremap_nocache(&p_dev->dev, gbe_mem_phys,
++					       gbe_mem_size);
+ 		if (!gbe_mem) {
+ 			printk(KERN_ERR "gbefb: couldn't map framebuffer\n");
+ 			ret = -ENOMEM;
+@@ -1241,13 +1243,9 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
+ out_gbe_unmap:
+ 	if (gbe_dma_addr)
+ 		dma_free_coherent(NULL, gbe_mem_size, gbe_mem, gbe_mem_phys);
+-	else
+-		iounmap(gbe_mem);
+ out_tiles_free:
+ 	dma_free_coherent(NULL, GBE_TLB_SIZE * sizeof(uint16_t),
+ 			  (void *)gbe_tiles.cpu, gbe_tiles.dma);
+-out_unmap:
+-	iounmap(gbe);
+ out_release_mem_region:
+ 	release_mem_region(GBE_BASE, sizeof(struct sgi_gbe));
+ out_release_framebuffer:
+@@ -1264,12 +1262,9 @@ static int __devexit gbefb_remove(struct platform_device* p_dev)
+ 	gbe_turn_off();
+ 	if (gbe_dma_addr)
+ 		dma_free_coherent(NULL, gbe_mem_size, gbe_mem, gbe_mem_phys);
+-	else
+-		iounmap(gbe_mem);
+ 	dma_free_coherent(NULL, GBE_TLB_SIZE * sizeof(uint16_t),
+ 			  (void *)gbe_tiles.cpu, gbe_tiles.dma);
+ 	release_mem_region(GBE_BASE, sizeof(struct sgi_gbe));
+-	iounmap(gbe);
+ 	gbefb_remove_sysfs(&p_dev->dev);
+ 	framebuffer_release(info);
+ 
+
