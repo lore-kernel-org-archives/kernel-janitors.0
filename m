@@ -1,79 +1,71 @@
-From: Bryan Schumaker <bjschuma@netapp.com>
-Date: Tue, 31 Jul 2012 13:30:03 +0000
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Date: Tue, 31 Jul 2012 13:33:44 +0000
 Subject: Re: [nfs:devel 46/51] fs/nfs/write.c:1592:5: error: redefinition of 'nfs_commit_inode'
-Message-Id: <5017DDDB.6060500@netapp.com>
+Message-Id: <1343741622.519.2.camel@lade.trondhjem.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120731024328.GA10480@localhost>  <4FA345DA4F4AE44899BD2B03EEEC2FA934BE82@SACEXCMBX04-PRD.hq.netapp.com>  <5017D3FC.9010905@netapp.com> <1343739299.519.1.camel@lade.trondhjem.org> <5017D824.209@netapp.com>
-In-Reply-To: <5017D824.209@netapp.com>
+References: <20120731024328.GA10480@localhost>
+	  <4FA345DA4F4AE44899BD2B03EEEC2FA934BE82@SACEXCMBX04-PRD.hq.netapp.com>
+	  <5017D3FC.9010905@netapp.com> <1343739299.519.1.camel@lade.trondhjem.org>
+	 <5017D824.209@netapp.com> <5017DDDB.6060500@netapp.com>
+In-Reply-To: <5017DDDB.6060500@netapp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Cc: "Schumaker, Bryan" <Bryan.Schumaker@netapp.com>, Fengguang Wu <fengguang.wu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+To: "Schumaker, Bryan" <Bryan.Schumaker@netapp.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
 
-On 07/31/2012 09:05 AM, Bryan Schumaker wrote:
-> On 07/31/2012 08:55 AM, Myklebust, Trond wrote:
->> On Tue, 2012-07-31 at 08:47 -0400, Bryan Schumaker wrote:
->>> On 07/30/2012 11:14 PM, Myklebust, Trond wrote:
->>>> Bryan,
->>>>
->>>> Why did you switch to using IS_ENABLED in the first place, and why wasn't that put in a separate patch?
->>>
->>> IS_ENABLED() will check for CONFIG_NFS_V*_MODULE, last I checked the defined() macro doesn't.  Putting this into a separate patch makes the change non-bisectable since gcc will be checking against CONFIG_NFS_V3 but CONFIG_NFS_V3_MODULE is set.  Should I have changed the CONFIG_ variables instead of using IS_ENABLED()?
->>
->> Why is it evaluating differently in the include file vs. the .c file?
->> Are we missing an include in nfs_fs.h?
-> 
-> Good question.  I don't see any reason that it would evaluate differently, but I'm compiling the .config attached to the initial email to try to figure it out.
-> 
-
-Looks like the IS_ENABLED() switch got pushed to the next patch for V3 in include/linux/nfs_fs.h.  Want me to resend the patches?  I took another look at how IS_ENABLED() is defined, and it'll work if I do the switch in the patch before I turn everything into separate modules if you want me to resend everything.
-
-> - Bryan
-> 
->>
->>>>
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Fengguang Wu [mailto:fengguang.wu@intel.com]
->>>>> Sent: Monday, July 30, 2012 10:43 PM
->>>>> To: Schumaker, Bryan
->>>>> Cc: kernel-janitors@vger.kernel.org; Myklebust, Trond; linux-
->>>>> nfs@vger.kernel.org
->>>>> Subject: [nfs:devel 46/51] fs/nfs/write.c:1592:5: error: redefinition of
->>>>> 'nfs_commit_inode'
->>>>>
->>>>> Hi Bryan,
->>>>>
->>>>> Kernel build failed on
->>>>>
->>>>> tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git devel
->>>>> head:   5c13c9e1c15ee2ca9ab2b953224001af53d9be09
->>>>> commit: 1c606fb74c758beafd98cbad9a9133eadeec2371 [46/51] NFS: Convert
->>>>> v3 into a module
->>>>> config: blackfin-BF533-EZKIT_defconfig (attached as .config)
->>>>>
->>>>> All related error/warning messages:
->>>>>
->>>>> fs/nfs/write.c:1592:5: error: redefinition of 'nfs_commit_inode'
->>>>> In file included from fs/nfs/write.c:19:0:
->>>>> include/linux/nfs_fs.h:547:1: note: previous definition of 'nfs_commit_inode'
->>>>> was here
->>>>>
->>>>> vim +1592 fs/nfs/write.c
->>>>>   1589		return status;
->>>>>   1590	}
->>>>>   1591
->>>>>> 1592	int nfs_commit_inode(struct inode *inode, int how)
->>>>>   1593	{
->>>>>   1594		LIST_HEAD(head);
->>>>>   1595		struct nfs_commit_info cinfo;
->>>>>
->>>>> ---
->>>>> 0-DAY kernel build testing backend         Open Source Technology Centre
->>>>> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
->>>
->>
-> 
-
+T24gVHVlLCAyMDEyLTA3LTMxIGF0IDA5OjMwIC0wNDAwLCBCcnlhbiBTY2h1bWFrZXIgd3JvdGU6
+DQo+IE9uIDA3LzMxLzIwMTIgMDk6MDUgQU0sIEJyeWFuIFNjaHVtYWtlciB3cm90ZToNCj4gPiBP
+biAwNy8zMS8yMDEyIDA4OjU1IEFNLCBNeWtsZWJ1c3QsIFRyb25kIHdyb3RlOg0KPiA+PiBPbiBU
+dWUsIDIwMTItMDctMzEgYXQgMDg6NDcgLTA0MDAsIEJyeWFuIFNjaHVtYWtlciB3cm90ZToNCj4g
+Pj4+IE9uIDA3LzMwLzIwMTIgMTE6MTQgUE0sIE15a2xlYnVzdCwgVHJvbmQgd3JvdGU6DQo+ID4+
+Pj4gQnJ5YW4sDQo+ID4+Pj4NCj4gPj4+PiBXaHkgZGlkIHlvdSBzd2l0Y2ggdG8gdXNpbmcgSVNf
+RU5BQkxFRCBpbiB0aGUgZmlyc3QgcGxhY2UsIGFuZCB3aHkgd2Fzbid0IHRoYXQgcHV0IGluIGEg
+c2VwYXJhdGUgcGF0Y2g/DQo+ID4+Pg0KPiA+Pj4gSVNfRU5BQkxFRCgpIHdpbGwgY2hlY2sgZm9y
+IENPTkZJR19ORlNfVipfTU9EVUxFLCBsYXN0IEkgY2hlY2tlZCB0aGUgZGVmaW5lZCgpIG1hY3Jv
+IGRvZXNuJ3QuICBQdXR0aW5nIHRoaXMgaW50byBhIHNlcGFyYXRlIHBhdGNoIG1ha2VzIHRoZSBj
+aGFuZ2Ugbm9uLWJpc2VjdGFibGUgc2luY2UgZ2NjIHdpbGwgYmUgY2hlY2tpbmcgYWdhaW5zdCBD
+T05GSUdfTkZTX1YzIGJ1dCBDT05GSUdfTkZTX1YzX01PRFVMRSBpcyBzZXQuICBTaG91bGQgSSBo
+YXZlIGNoYW5nZWQgdGhlIENPTkZJR18gdmFyaWFibGVzIGluc3RlYWQgb2YgdXNpbmcgSVNfRU5B
+QkxFRCgpPw0KPiA+Pg0KPiA+PiBXaHkgaXMgaXQgZXZhbHVhdGluZyBkaWZmZXJlbnRseSBpbiB0
+aGUgaW5jbHVkZSBmaWxlIHZzLiB0aGUgLmMgZmlsZT8NCj4gPj4gQXJlIHdlIG1pc3NpbmcgYW4g
+aW5jbHVkZSBpbiBuZnNfZnMuaD8NCj4gPiANCj4gPiBHb29kIHF1ZXN0aW9uLiAgSSBkb24ndCBz
+ZWUgYW55IHJlYXNvbiB0aGF0IGl0IHdvdWxkIGV2YWx1YXRlIGRpZmZlcmVudGx5LCBidXQgSSdt
+IGNvbXBpbGluZyB0aGUgLmNvbmZpZyBhdHRhY2hlZCB0byB0aGUgaW5pdGlhbCBlbWFpbCB0byB0
+cnkgdG8gZmlndXJlIGl0IG91dC4NCj4gPiANCj4gDQo+IExvb2tzIGxpa2UgdGhlIElTX0VOQUJM
+RUQoKSBzd2l0Y2ggZ290IHB1c2hlZCB0byB0aGUgbmV4dCBwYXRjaCBmb3IgVjMgaW4gaW5jbHVk
+ZS9saW51eC9uZnNfZnMuaC4gIFdhbnQgbWUgdG8gcmVzZW5kIHRoZSBwYXRjaGVzPyAgSSB0b29r
+IGFub3RoZXIgbG9vayBhdCBob3cgSVNfRU5BQkxFRCgpIGlzIGRlZmluZWQsIGFuZCBpdCdsbCB3
+b3JrIGlmIEkgZG8gdGhlIHN3aXRjaCBpbiB0aGUgcGF0Y2ggYmVmb3JlIEkgdHVybiBldmVyeXRo
+aW5nIGludG8gc2VwYXJhdGUgbW9kdWxlcyBpZiB5b3Ugd2FudCBtZSB0byByZXNlbmQgZXZlcnl0
+aGluZy4NCg0KUGxlYXNlIGp1c3QgbWFrZSBpdCBpbmNyZW1lbnRhbCB0byB0aGUgcGF0Y2ggc2Vy
+aWVzIHRoYXQgaXMgYWxyZWFkeQ0KbWVyZ2VkIGluIHRvZGF5J3MgbmZzLWZvci0zLjYuDQoNCkNo
+ZWVycw0KICBUcm9uZA0KDQo+ID4gLSBCcnlhbg0KPiA+IA0KPiA+Pg0KPiA+Pj4+DQo+ID4+Pj4N
+Cj4gPj4+Pg0KPiA+Pj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+Pj4+PiBGcm9t
+OiBGZW5nZ3VhbmcgV3UgW21haWx0bzpmZW5nZ3Vhbmcud3VAaW50ZWwuY29tXQ0KPiA+Pj4+PiBT
+ZW50OiBNb25kYXksIEp1bHkgMzAsIDIwMTIgMTA6NDMgUE0NCj4gPj4+Pj4gVG86IFNjaHVtYWtl
+ciwgQnJ5YW4NCj4gPj4+Pj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IE15
+a2xlYnVzdCwgVHJvbmQ7IGxpbnV4LQ0KPiA+Pj4+PiBuZnNAdmdlci5rZXJuZWwub3JnDQo+ID4+
+Pj4+IFN1YmplY3Q6IFtuZnM6ZGV2ZWwgNDYvNTFdIGZzL25mcy93cml0ZS5jOjE1OTI6NTogZXJy
+b3I6IHJlZGVmaW5pdGlvbiBvZg0KPiA+Pj4+PiAnbmZzX2NvbW1pdF9pbm9kZScNCj4gPj4+Pj4N
+Cj4gPj4+Pj4gSGkgQnJ5YW4sDQo+ID4+Pj4+DQo+ID4+Pj4+IEtlcm5lbCBidWlsZCBmYWlsZWQg
+b24NCj4gPj4+Pj4NCj4gPj4+Pj4gdHJlZTogICBnaXQ6Ly9naXQubGludXgtbmZzLm9yZy9wcm9q
+ZWN0cy90cm9uZG15L2xpbnV4LW5mcy5naXQgZGV2ZWwNCj4gPj4+Pj4gaGVhZDogICA1YzEzYzll
+MWMxNWVlMmNhOWFiMmI5NTMyMjQwMDFhZjUzZDliZTA5DQo+ID4+Pj4+IGNvbW1pdDogMWM2MDZm
+Yjc0Yzc1OGJlYWZkOThjYmFkOWE5MTMzZWFkZWVjMjM3MSBbNDYvNTFdIE5GUzogQ29udmVydA0K
+PiA+Pj4+PiB2MyBpbnRvIGEgbW9kdWxlDQo+ID4+Pj4+IGNvbmZpZzogYmxhY2tmaW4tQkY1MzMt
+RVpLSVRfZGVmY29uZmlnIChhdHRhY2hlZCBhcyAuY29uZmlnKQ0KPiA+Pj4+Pg0KPiA+Pj4+PiBB
+bGwgcmVsYXRlZCBlcnJvci93YXJuaW5nIG1lc3NhZ2VzOg0KPiA+Pj4+Pg0KPiA+Pj4+PiBmcy9u
+ZnMvd3JpdGUuYzoxNTkyOjU6IGVycm9yOiByZWRlZmluaXRpb24gb2YgJ25mc19jb21taXRfaW5v
+ZGUnDQo+ID4+Pj4+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBmcy9uZnMvd3JpdGUuYzoxOTowOg0K
+PiA+Pj4+PiBpbmNsdWRlL2xpbnV4L25mc19mcy5oOjU0NzoxOiBub3RlOiBwcmV2aW91cyBkZWZp
+bml0aW9uIG9mICduZnNfY29tbWl0X2lub2RlJw0KPiA+Pj4+PiB3YXMgaGVyZQ0KPiA+Pj4+Pg0K
+PiA+Pj4+PiB2aW0gKzE1OTIgZnMvbmZzL3dyaXRlLmMNCj4gPj4+Pj4gICAxNTg5CQlyZXR1cm4g
+c3RhdHVzOw0KPiA+Pj4+PiAgIDE1OTAJfQ0KPiA+Pj4+PiAgIDE1OTENCj4gPj4+Pj4+IDE1OTIJ
+aW50IG5mc19jb21taXRfaW5vZGUoc3RydWN0IGlub2RlICppbm9kZSwgaW50IGhvdykNCj4gPj4+
+Pj4gICAxNTkzCXsNCj4gPj4+Pj4gICAxNTk0CQlMSVNUX0hFQUQoaGVhZCk7DQo+ID4+Pj4+ICAg
+MTU5NQkJc3RydWN0IG5mc19jb21taXRfaW5mbyBjaW5mbzsNCj4gPj4+Pj4NCj4gPj4+Pj4gLS0t
+DQo+ID4+Pj4+IDAtREFZIGtlcm5lbCBidWlsZCB0ZXN0aW5nIGJhY2tlbmQgICAgICAgICBPcGVu
+IFNvdXJjZSBUZWNobm9sb2d5IENlbnRyZQ0KPiA+Pj4+PiBGZW5nZ3VhbmcgV3UgPHdmZ0BsaW51
+eC5pbnRlbC5jb20+ICAgICAgICAgICAgICAgICAgICAgSW50ZWwgQ29ycG9yYXRpb24NCj4gPj4+
+DQo+ID4+DQo+ID4gDQo+IA0KDQo
