@@ -1,15 +1,15 @@
 From: Damien Cassou <damien.cassou@lifl.fr>
-Date: Tue, 31 Jul 2012 16:39:21 +0000
-Subject: [PATCH 4/5] drivers/video/exynos/exynos_mipi_dsi.c: use devm_ functions
-Message-Id: <1343752762-16861-5-git-send-email-damien.cassou@lifl.fr>
+Date: Tue, 31 Jul 2012 16:39:18 +0000
+Subject: [PATCH 3/5] drivers/video/mbx/mbxfb.c: use devm_ functions
+Message-Id: <1343752762-16861-2-git-send-email-damien.cassou@lifl.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>
 In-Reply-To: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Inki Dae <inki.dae@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Damien Cassou <damien.cassou@lifl.fr>
 
@@ -21,136 +21,71 @@ function.
 Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
 
 ---
- drivers/video/exynos/exynos_mipi_dsi.c |   41 ++++++++++++---------------------
- 1 file changed, 15 insertions(+), 26 deletions(-)
+ drivers/video/mbx/mbxfb.c |   22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
-index 4bc2b8a..c277a07 100644
---- a/drivers/video/exynos/exynos_mipi_dsi.c
-+++ b/drivers/video/exynos/exynos_mipi_dsi.c
-@@ -336,7 +336,8 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
- 	struct mipi_dsim_ddi *dsim_ddi;
- 	int ret = -EINVAL;
- 
--	dsim = kzalloc(sizeof(struct mipi_dsim_device), GFP_KERNEL);
-+	dsim = devm_kzalloc(&pdev->dev, sizeof(struct mipi_dsim_device),
-+			    GFP_KERNEL);
- 	if (!dsim) {
- 		dev_err(&pdev->dev, "failed to allocate dsim object.\n");
- 		return -ENOMEM;
-@@ -350,13 +351,13 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
- 	dsim_pd = (struct mipi_dsim_platform_data *)dsim->pd;
- 	if (dsim_pd = NULL) {
- 		dev_err(&pdev->dev, "failed to get platform data for dsim.\n");
--		goto err_clock_get;
-+		goto err_platform_get_irq;
+diff --git a/drivers/video/mbx/mbxfb.c b/drivers/video/mbx/mbxfb.c
+index 85e4f44..9229acf 100644
+--- a/drivers/video/mbx/mbxfb.c
++++ b/drivers/video/mbx/mbxfb.c
+@@ -939,8 +939,9 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
  	}
- 	/* get mipi_dsim_config. */
- 	dsim_config = dsim_pd->dsim_config;
- 	if (dsim_config = NULL) {
- 		dev_err(&pdev->dev, "failed to get dsim config data.\n");
--		goto err_clock_get;
-+		goto err_platform_get_irq;
- 	}
+ 	mfbi->reg_phys_addr = mfbi->reg_res->start;
  
- 	dsim->dsim_config = dsim_config;
-@@ -367,13 +368,13 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
- 	ret = regulator_bulk_get(&pdev->dev, ARRAY_SIZE(supplies), supplies);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to get regulators: %d\n", ret);
--		goto err_clock_get;
-+		goto err_platform_get_irq;
- 	}
- 
--	dsim->clock = clk_get(&pdev->dev, "dsim0");
-+	dsim->clock = devm_clk_get(&pdev->dev, "dsim0");
- 	if (IS_ERR(dsim->clock)) {
- 		dev_err(&pdev->dev, "failed to get dsim clock source\n");
--		goto err_clock_get;
-+		goto err_platform_get_irq;
- 	}
- 
- 	clk_enable(dsim->clock);
-@@ -384,15 +385,17 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
- 		goto err_platform_get;
- 	}
- 
--	dsim->res = request_mem_region(res->start, resource_size(res),
--					dev_name(&pdev->dev));
-+	dsim->res = devm_request_mem_region(&pdev->dev, res->start,
-+					    resource_size(res),
-+					    dev_name(&pdev->dev));
- 	if (!dsim->res) {
- 		dev_err(&pdev->dev, "failed to request io memory region\n");
- 		ret = -ENOMEM;
--		goto err_mem_region;
-+		goto err_platform_get;
- 	}
- 
--	dsim->reg_base = ioremap(res->start, resource_size(res));
-+	dsim->reg_base = devm_ioremap(&pdev->dev, res->start,
-+				      resource_size(res));
- 	if (!dsim->reg_base) {
- 		dev_err(&pdev->dev, "failed to remap io region\n");
- 		ret = -ENOMEM;
-@@ -405,7 +408,7 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
- 	dsim_ddi = exynos_mipi_dsi_bind_lcd_ddi(dsim, dsim_pd->lcd_panel_name);
- 	if (!dsim_ddi) {
- 		dev_err(&pdev->dev, "mipi_dsim_ddi object not found.\n");
--		goto err_bind;
-+		goto err_ioremap;
- 	}
- 
- 	dsim->irq = platform_get_irq(pdev, 0);
-@@ -424,7 +427,7 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "failed to request dsim irq\n");
+-	mfbi->reg_virt_addr = ioremap_nocache(mfbi->reg_phys_addr,
+-					      res_size(mfbi->reg_req));
++	mfbi->reg_virt_addr = devm_ioremap_nocache(&dev->dev,
++						   mfbi->reg_phys_addr,
++						   res_size(mfbi->reg_req));
+ 	if (!mfbi->reg_virt_addr) {
+ 		dev_err(&dev->dev, "failed to ioremap Marathon registers\n");
  		ret = -EINVAL;
--		goto err_bind;
-+		goto err_ioremap;
+@@ -948,12 +949,12 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
+ 	}
+ 	virt_base_2700 = mfbi->reg_virt_addr;
+ 
+-	mfbi->fb_virt_addr = ioremap_nocache(mfbi->fb_phys_addr,
+-					     res_size(mfbi->fb_req));
++	mfbi->fb_virt_addr = devm_ioremap_nocache(&dev->dev, mfbi->fb_phys_addr,
++						  res_size(mfbi->fb_req));
+ 	if (!mfbi->fb_virt_addr) {
+ 		dev_err(&dev->dev, "failed to ioremap frame buffer\n");
+ 		ret = -EINVAL;
+-		goto err4;
++		goto err3;
  	}
  
- 	/* enable interrupts */
-@@ -466,20 +469,11 @@ done:
- 
- 	return 0;
- 
--err_bind:
--	iounmap(dsim->reg_base);
--
- err_ioremap:
- 	release_mem_region(dsim->res->start, resource_size(dsim->res));
- 
--err_mem_region:
--	release_resource(dsim->res);
--
- err_platform_get:
- 	clk_disable(dsim->clock);
--	clk_put(dsim->clock);
--err_clock_get:
--	kfree(dsim);
- 
- err_platform_get_irq:
- 	return ret;
-@@ -491,12 +485,8 @@ static int __devexit exynos_mipi_dsi_remove(struct platform_device *pdev)
- 	struct mipi_dsim_ddi *dsim_ddi, *next;
- 	struct mipi_dsim_lcd_driver *dsim_lcd_drv;
- 
--	iounmap(dsim->reg_base);
--
- 	clk_disable(dsim->clock);
--	clk_put(dsim->clock);
- 
--	release_resource(dsim->res);
- 	release_mem_region(dsim->res->start, resource_size(dsim->res));
- 
- 	list_for_each_entry_safe(dsim_ddi, next, &dsim_ddi_list, list) {
-@@ -514,7 +504,6 @@ static int __devexit exynos_mipi_dsi_remove(struct platform_device *pdev)
+ 	fbi->screen_base = (char __iomem *)(mfbi->fb_virt_addr + 0x60000);
+@@ -971,7 +972,7 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
+ 	if (ret < 0) {
+ 		dev_err(&dev->dev, "fb_alloc_cmap failed\n");
+ 		ret = -EINVAL;
+-		goto err5;
++		goto err3;
  	}
  
- 	regulator_bulk_free(ARRAY_SIZE(supplies), supplies);
--	kfree(dsim);
+ 	platform_set_drvdata(dev, fbi);
+@@ -996,10 +997,6 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
  
- 	return 0;
- }
+ err6:
+ 	fb_dealloc_cmap(&fbi->cmap);
+-err5:
+-	iounmap(mfbi->fb_virt_addr);
+-err4:
+-	iounmap(mfbi->reg_virt_addr);
+ err3:
+ 	release_mem_region(mfbi->reg_res->start, res_size(mfbi->reg_res));
+ err2:
+@@ -1026,10 +1023,7 @@ static int __devexit mbxfb_remove(struct platform_device *dev)
+ 			if (mfbi->platform_remove)
+ 				mfbi->platform_remove(fbi);
+ 
+-			if (mfbi->fb_virt_addr)
+-				iounmap(mfbi->fb_virt_addr);
+-			if (mfbi->reg_virt_addr)
+-				iounmap(mfbi->reg_virt_addr);
++
+ 			if (mfbi->reg_req)
+ 				release_mem_region(mfbi->reg_req->start,
+ 						   res_size(mfbi->reg_req));
 
