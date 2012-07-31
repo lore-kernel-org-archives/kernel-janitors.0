@@ -1,83 +1,126 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Date: Tue, 31 Jul 2012 13:58:44 +0000
+From: Bryan Schumaker <bjschuma@netapp.com>
+Date: Tue, 31 Jul 2012 14:08:56 +0000
 Subject: Re: [nfs:devel 46/51] fs/nfs/write.c:1592:5: error: redefinition of 'nfs_commit_inode'
-Message-Id: <1343743122.519.4.camel@lade.trondhjem.org>
+Message-Id: <5017E6F8.2060706@netapp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120731024328.GA10480@localhost>
-	   <4FA345DA4F4AE44899BD2B03EEEC2FA934BE82@SACEXCMBX04-PRD.hq.netapp.com>
-	   <5017D3FC.9010905@netapp.com> <1343739299.519.1.camel@lade.trondhjem.org>
-	  <5017D824.209@netapp.com> <5017DDDB.6060500@netapp.com>
-	 <1343741622.519.2.camel@lade.trondhjem.org> <5017E13F.4030909@netapp.com>
-In-Reply-To: <5017E13F.4030909@netapp.com>
+References: <20120731024328.GA10480@localhost>    <4FA345DA4F4AE44899BD2B03EEEC2FA934BE82@SACEXCMBX04-PRD.hq.netapp.com>    <5017D3FC.9010905@netapp.com> <1343739299.519.1.camel@lade.trondhjem.org>   <5017D824.209@netapp.com> <5017DDDB.6060500@netapp.com>  <1343741622.519.2.camel@lade.trondhjem.org> <5017E13F.4030909@netapp.com> <1343743122.519.4.camel@lade.trondhjem.org>
+In-Reply-To: <1343743122.519.4.camel@lade.trondhjem.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Schumaker, Bryan" <Bryan.Schumaker@netapp.com>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Cc: "Schumaker, Bryan" <Bryan.Schumaker@netapp.com>, Fengguang Wu <fengguang.wu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
 
-T24gVHVlLCAyMDEyLTA3LTMxIGF0IDA5OjQ0IC0wNDAwLCBCcnlhbiBTY2h1bWFrZXIgd3JvdGU6
-DQo+IE9uIDA3LzMxLzIwMTIgMDk6MzMgQU0sIE15a2xlYnVzdCwgVHJvbmQgd3JvdGU6DQo+ID4g
-T24gVHVlLCAyMDEyLTA3LTMxIGF0IDA5OjMwIC0wNDAwLCBCcnlhbiBTY2h1bWFrZXIgd3JvdGU6
-DQo+ID4+IE9uIDA3LzMxLzIwMTIgMDk6MDUgQU0sIEJyeWFuIFNjaHVtYWtlciB3cm90ZToNCj4g
-Pj4+IE9uIDA3LzMxLzIwMTIgMDg6NTUgQU0sIE15a2xlYnVzdCwgVHJvbmQgd3JvdGU6DQo+ID4+
-Pj4gT24gVHVlLCAyMDEyLTA3LTMxIGF0IDA4OjQ3IC0wNDAwLCBCcnlhbiBTY2h1bWFrZXIgd3Jv
-dGU6DQo+ID4+Pj4+IE9uIDA3LzMwLzIwMTIgMTE6MTQgUE0sIE15a2xlYnVzdCwgVHJvbmQgd3Jv
-dGU6DQo+ID4+Pj4+PiBCcnlhbiwNCj4gPj4+Pj4+DQo+ID4+Pj4+PiBXaHkgZGlkIHlvdSBzd2l0
-Y2ggdG8gdXNpbmcgSVNfRU5BQkxFRCBpbiB0aGUgZmlyc3QgcGxhY2UsIGFuZCB3aHkgd2Fzbid0
-IHRoYXQgcHV0IGluIGEgc2VwYXJhdGUgcGF0Y2g/DQo+ID4+Pj4+DQo+ID4+Pj4+IElTX0VOQUJM
-RUQoKSB3aWxsIGNoZWNrIGZvciBDT05GSUdfTkZTX1YqX01PRFVMRSwgbGFzdCBJIGNoZWNrZWQg
-dGhlIGRlZmluZWQoKSBtYWNybyBkb2Vzbid0LiAgUHV0dGluZyB0aGlzIGludG8gYSBzZXBhcmF0
-ZSBwYXRjaCBtYWtlcyB0aGUgY2hhbmdlIG5vbi1iaXNlY3RhYmxlIHNpbmNlIGdjYyB3aWxsIGJl
-IGNoZWNraW5nIGFnYWluc3QgQ09ORklHX05GU19WMyBidXQgQ09ORklHX05GU19WM19NT0RVTEUg
-aXMgc2V0LiAgU2hvdWxkIEkgaGF2ZSBjaGFuZ2VkIHRoZSBDT05GSUdfIHZhcmlhYmxlcyBpbnN0
-ZWFkIG9mIHVzaW5nIElTX0VOQUJMRUQoKT8NCj4gPj4+Pg0KPiA+Pj4+IFdoeSBpcyBpdCBldmFs
-dWF0aW5nIGRpZmZlcmVudGx5IGluIHRoZSBpbmNsdWRlIGZpbGUgdnMuIHRoZSAuYyBmaWxlPw0K
-PiA+Pj4+IEFyZSB3ZSBtaXNzaW5nIGFuIGluY2x1ZGUgaW4gbmZzX2ZzLmg/DQo+ID4+Pg0KPiA+
-Pj4gR29vZCBxdWVzdGlvbi4gIEkgZG9uJ3Qgc2VlIGFueSByZWFzb24gdGhhdCBpdCB3b3VsZCBl
-dmFsdWF0ZSBkaWZmZXJlbnRseSwgYnV0IEknbSBjb21waWxpbmcgdGhlIC5jb25maWcgYXR0YWNo
-ZWQgdG8gdGhlIGluaXRpYWwgZW1haWwgdG8gdHJ5IHRvIGZpZ3VyZSBpdCBvdXQuDQo+ID4+Pg0K
-PiA+Pg0KPiA+PiBMb29rcyBsaWtlIHRoZSBJU19FTkFCTEVEKCkgc3dpdGNoIGdvdCBwdXNoZWQg
-dG8gdGhlIG5leHQgcGF0Y2ggZm9yIFYzIGluIGluY2x1ZGUvbGludXgvbmZzX2ZzLmguICBXYW50
-IG1lIHRvIHJlc2VuZCB0aGUgcGF0Y2hlcz8gIEkgdG9vayBhbm90aGVyIGxvb2sgYXQgaG93IElT
-X0VOQUJMRUQoKSBpcyBkZWZpbmVkLCBhbmQgaXQnbGwgd29yayBpZiBJIGRvIHRoZSBzd2l0Y2gg
-aW4gdGhlIHBhdGNoIGJlZm9yZSBJIHR1cm4gZXZlcnl0aGluZyBpbnRvIHNlcGFyYXRlIG1vZHVs
-ZXMgaWYgeW91IHdhbnQgbWUgdG8gcmVzZW5kIGV2ZXJ5dGhpbmcuDQo+ID4gDQo+ID4gUGxlYXNl
-IGp1c3QgbWFrZSBpdCBpbmNyZW1lbnRhbCB0byB0aGUgcGF0Y2ggc2VyaWVzIHRoYXQgaXMgYWxy
-ZWFkeQ0KPiA+IG1lcmdlZCBpbiB0b2RheSdzIG5mcy1mb3ItMy42Lg0KPiANCj4gRWFzeSBlbm91
-Z2gsIHRoZSBwYXRjaCB0aGF0IGZpeGVzIGl0IGlzIHRoZSBsYXN0IG9uZSBpbiB0aGUgc2VyaWVz
-IHRoYXQgSSBzZW50IGluIHllc3RlcmRheS4NCg0KSSBkb24ndCB1bmRlcnN0YW5kLiBUaGF0IGlz
-IHRoZSBwYXRjaCBzZXJpZXMgdGhhdCBGZW5nZ3Vhbmcgd2FzIHRlc3RpbmcNCmFmYWlrLiBIaXMg
-dGVzdHMgd2VyZSBvbiANCg0KdHJlZTogICBnaXQ6Ly9naXQubGludXgtbmZzLm9yZy9wcm9qZWN0
-cy90cm9uZG15L2xpbnV4LW5mcy5naXQgZGV2ZWwNCmhlYWQ6ICAgNWMxM2M5ZTFjMTVlZTJjYTlh
-YjJiOTUzMjI0MDAxYWY1M2Q5YmUwOQ0KDQp3aGljaCBpbmNsdWRlcyB5b3VyIHBhdGNoIHNlcmll
-cyBmcm9tIHllc3RlcmRheSwgbm8/DQoNCj4gPiANCj4gPiBDaGVlcnMNCj4gPiAgIFRyb25kDQo+
-ID4gDQo+ID4+PiAtIEJyeWFuDQo+ID4+Pg0KPiA+Pj4+DQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4NCj4g
-Pj4+Pj4+DQo+ID4+Pj4+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4+Pj4+PiBG
-cm9tOiBGZW5nZ3VhbmcgV3UgW21haWx0bzpmZW5nZ3Vhbmcud3VAaW50ZWwuY29tXQ0KPiA+Pj4+
-Pj4+IFNlbnQ6IE1vbmRheSwgSnVseSAzMCwgMjAxMiAxMDo0MyBQTQ0KPiA+Pj4+Pj4+IFRvOiBT
-Y2h1bWFrZXIsIEJyeWFuDQo+ID4+Pj4+Pj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5l
-bC5vcmc7IE15a2xlYnVzdCwgVHJvbmQ7IGxpbnV4LQ0KPiA+Pj4+Pj4+IG5mc0B2Z2VyLmtlcm5l
-bC5vcmcNCj4gPj4+Pj4+PiBTdWJqZWN0OiBbbmZzOmRldmVsIDQ2LzUxXSBmcy9uZnMvd3JpdGUu
-YzoxNTkyOjU6IGVycm9yOiByZWRlZmluaXRpb24gb2YNCj4gPj4+Pj4+PiAnbmZzX2NvbW1pdF9p
-bm9kZScNCj4gPj4+Pj4+Pg0KPiA+Pj4+Pj4+IEhpIEJyeWFuLA0KPiA+Pj4+Pj4+DQo+ID4+Pj4+
-Pj4gS2VybmVsIGJ1aWxkIGZhaWxlZCBvbg0KPiA+Pj4+Pj4+DQo+ID4+Pj4+Pj4gdHJlZTogICBn
-aXQ6Ly9naXQubGludXgtbmZzLm9yZy9wcm9qZWN0cy90cm9uZG15L2xpbnV4LW5mcy5naXQgZGV2
-ZWwNCj4gPj4+Pj4+PiBoZWFkOiAgIDVjMTNjOWUxYzE1ZWUyY2E5YWIyYjk1MzIyNDAwMWFmNTNk
-OWJlMDkNCj4gPj4+Pj4+PiBjb21taXQ6IDFjNjA2ZmI3NGM3NThiZWFmZDk4Y2JhZDlhOTEzM2Vh
-ZGVlYzIzNzEgWzQ2LzUxXSBORlM6IENvbnZlcnQNCj4gPj4+Pj4+PiB2MyBpbnRvIGEgbW9kdWxl
-DQo+ID4+Pj4+Pj4gY29uZmlnOiBibGFja2Zpbi1CRjUzMy1FWktJVF9kZWZjb25maWcgKGF0dGFj
-aGVkIGFzIC5jb25maWcpDQo+ID4+Pj4+Pj4NCj4gPj4+Pj4+PiBBbGwgcmVsYXRlZCBlcnJvci93
-YXJuaW5nIG1lc3NhZ2VzOg0KPiA+Pj4+Pj4+DQo+ID4+Pj4+Pj4gZnMvbmZzL3dyaXRlLmM6MTU5
-Mjo1OiBlcnJvcjogcmVkZWZpbml0aW9uIG9mICduZnNfY29tbWl0X2lub2RlJw0KPiA+Pj4+Pj4+
-IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBmcy9uZnMvd3JpdGUuYzoxOTowOg0KPiA+Pj4+Pj4+IGlu
-Y2x1ZGUvbGludXgvbmZzX2ZzLmg6NTQ3OjE6IG5vdGU6IHByZXZpb3VzIGRlZmluaXRpb24gb2Yg
-J25mc19jb21taXRfaW5vZGUnDQo+ID4+Pj4+Pj4gd2FzIGhlcmUNCj4gPj4+Pj4+Pg0KPiA+Pj4+
-Pj4+IHZpbSArMTU5MiBmcy9uZnMvd3JpdGUuYw0KPiA+Pj4+Pj4+ICAgMTU4OQkJcmV0dXJuIHN0
-YXR1czsNCj4gPj4+Pj4+PiAgIDE1OTAJfQ0KPiA+Pj4+Pj4+ICAgMTU5MQ0KPiA+Pj4+Pj4+PiAx
-NTkyCWludCBuZnNfY29tbWl0X2lub2RlKHN0cnVjdCBpbm9kZSAqaW5vZGUsIGludCBob3cpDQo+
-ID4+Pj4+Pj4gICAxNTkzCXsNCj4gPj4+Pj4+PiAgIDE1OTQJCUxJU1RfSEVBRChoZWFkKTsNCj4g
-Pj4+Pj4+PiAgIDE1OTUJCXN0cnVjdCBuZnNfY29tbWl0X2luZm8gY2luZm87DQo+ID4+Pj4+Pj4N
-Cj4gPj4+Pj4+PiAtLS0NCj4gPj4+Pj4+PiAwLURBWSBrZXJuZWwgYnVpbGQgdGVzdGluZyBiYWNr
-ZW5kICAgICAgICAgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50cmUNCj4gPj4+Pj4+PiBGZW5n
-Z3VhbmcgV3UgPHdmZ0BsaW51eC5pbnRlbC5jb20+ICAgICAgICAgICAgICAgICAgICAgSW50ZWwg
-Q29ycG9yYXRpb24NCj4gPj4+Pj4NCj4gPj4+Pg0KPiA+Pj4NCj4gPj4NCj4gPiANCj4gDQoNCg=
+On 07/31/2012 09:58 AM, Myklebust, Trond wrote:
+> On Tue, 2012-07-31 at 09:44 -0400, Bryan Schumaker wrote:
+>> On 07/31/2012 09:33 AM, Myklebust, Trond wrote:
+>>> On Tue, 2012-07-31 at 09:30 -0400, Bryan Schumaker wrote:
+>>>> On 07/31/2012 09:05 AM, Bryan Schumaker wrote:
+>>>>> On 07/31/2012 08:55 AM, Myklebust, Trond wrote:
+>>>>>> On Tue, 2012-07-31 at 08:47 -0400, Bryan Schumaker wrote:
+>>>>>>> On 07/30/2012 11:14 PM, Myklebust, Trond wrote:
+>>>>>>>> Bryan,
+>>>>>>>>
+>>>>>>>> Why did you switch to using IS_ENABLED in the first place, and why wasn't that put in a separate patch?
+>>>>>>>
+>>>>>>> IS_ENABLED() will check for CONFIG_NFS_V*_MODULE, last I checked the defined() macro doesn't.  Putting this into a separate patch makes the change non-bisectable since gcc will be checking against CONFIG_NFS_V3 but CONFIG_NFS_V3_MODULE is set.  Should I have changed the CONFIG_ variables instead of using IS_ENABLED()?
+>>>>>>
+>>>>>> Why is it evaluating differently in the include file vs. the .c file?
+>>>>>> Are we missing an include in nfs_fs.h?
+>>>>>
+>>>>> Good question.  I don't see any reason that it would evaluate differently, but I'm compiling the .config attached to the initial email to try to figure it out.
+>>>>>
+>>>>
+>>>> Looks like the IS_ENABLED() switch got pushed to the next patch for V3 in include/linux/nfs_fs.h.  Want me to resend the patches?  I took another look at how IS_ENABLED() is defined, and it'll work if I do the switch in the patch before I turn everything into separate modules if you want me to resend everything.
+>>>
+>>> Please just make it incremental to the patch series that is already
+>>> merged in today's nfs-for-3.6.
+>>
+>> Easy enough, the patch that fixes it is the last one in the series that I sent in yesterday.
+> 
+> I don't understand. That is the patch series that Fengguang was testing
+> afaik. His tests were on 
+
+I'm guessing he's checking each patch individually and it notified about the first bad one.  Here is what happened:
+
+In patch 9 (Convert v3 into a module) one of my calls to IS_ENABLED() somehow got pushed into patch 10.  Here is the bit from patch 10 that fixes the problem:
+
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index 4b6043c..2889877 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -538,7 +538,7 @@ extern void nfs_writeback_done(struct rpc_task *, struct nfs_write_data *);
+ extern int nfs_wb_all(struct inode *inode);
+ extern int nfs_wb_page(struct inode *inode, struct page* page);
+ extern int nfs_wb_page_cancel(struct inode *inode, struct page* page);
+-#if defined(CONFIG_NFS_V3) || defined(CONFIG_NFS_V4)
++#if IS_ENABLED(CONFIG_NFS_V3) || IS_ENABLED(CONFIG_NFS_V4)
+ extern int  nfs_commit_inode(struct inode *, int);
+ extern struct nfs_commit_data *nfs_commitdata_alloc(void);
+ extern void nfs_commit_free(struct nfs_commit_data *data);
+
+- Bryan
+
+
+> 
+> tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git devel
+> head:   5c13c9e1c15ee2ca9ab2b953224001af53d9be09
+> 
+> which includes your patch series from yesterday, no?
+> 
+>>>
+>>> Cheers
+>>>   Trond
+>>>
+>>>>> - Bryan
+>>>>>
+>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> -----Original Message-----
+>>>>>>>>> From: Fengguang Wu [mailto:fengguang.wu@intel.com]
+>>>>>>>>> Sent: Monday, July 30, 2012 10:43 PM
+>>>>>>>>> To: Schumaker, Bryan
+>>>>>>>>> Cc: kernel-janitors@vger.kernel.org; Myklebust, Trond; linux-
+>>>>>>>>> nfs@vger.kernel.org
+>>>>>>>>> Subject: [nfs:devel 46/51] fs/nfs/write.c:1592:5: error: redefinition of
+>>>>>>>>> 'nfs_commit_inode'
+>>>>>>>>>
+>>>>>>>>> Hi Bryan,
+>>>>>>>>>
+>>>>>>>>> Kernel build failed on
+>>>>>>>>>
+>>>>>>>>> tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git devel
+>>>>>>>>> head:   5c13c9e1c15ee2ca9ab2b953224001af53d9be09
+>>>>>>>>> commit: 1c606fb74c758beafd98cbad9a9133eadeec2371 [46/51] NFS: Convert
+>>>>>>>>> v3 into a module
+>>>>>>>>> config: blackfin-BF533-EZKIT_defconfig (attached as .config)
+>>>>>>>>>
+>>>>>>>>> All related error/warning messages:
+>>>>>>>>>
+>>>>>>>>> fs/nfs/write.c:1592:5: error: redefinition of 'nfs_commit_inode'
+>>>>>>>>> In file included from fs/nfs/write.c:19:0:
+>>>>>>>>> include/linux/nfs_fs.h:547:1: note: previous definition of 'nfs_commit_inode'
+>>>>>>>>> was here
+>>>>>>>>>
+>>>>>>>>> vim +1592 fs/nfs/write.c
+>>>>>>>>>   1589		return status;
+>>>>>>>>>   1590	}
+>>>>>>>>>   1591
+>>>>>>>>>> 1592	int nfs_commit_inode(struct inode *inode, int how)
+>>>>>>>>>   1593	{
+>>>>>>>>>   1594		LIST_HEAD(head);
+>>>>>>>>>   1595		struct nfs_commit_info cinfo;
+>>>>>>>>>
+>>>>>>>>> ---
+>>>>>>>>> 0-DAY kernel build testing backend         Open Source Technology Centre
+>>>>>>>>> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>
+>>
+> 
+
