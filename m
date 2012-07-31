@@ -1,94 +1,60 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 14 Jul 2012 16:43:03 +0000
-Subject: [PATCH 1/6] drivers/pci/hotplug/cpci_hotplug_core.c: ensure a consistent return value in error case
-Message-Id: <1342284188-19176-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Damien Cassou <damien.cassou@lifl.fr>
+Date: Tue, 31 Jul 2012 16:39:20 +0000
+Subject: [PATCH 1/5] drivers/video/fsl-diu-fb.c: use devm_ functions
+Message-Id: <1343752762-16861-4-git-send-email-damien.cassou@lifl.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1342284188-19176-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Scott Murray <scott@spiteful.org>
-Cc: kernel-janitors@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Damien Cassou <damien.cassou@lifl.fr>
 
-Typically, the return value desired for the failure of a function with an
-integer return value is a negative integer.  In these cases, the return
-value is sometimes a negative integer and sometimes 0, due to a subsequent
-initialization of the return variable within the loop.
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-A simplified version of the semantic match that finds this problem is:
-(http://coccinelle.lip6.fr/)
-
-//<smpl>
-@r exists@
-identifier ret;
-position p;
-constant C;
-expression e1,e3,e4;
-statement S;
-@@
-
-ret = -C
-... when != ret = e3
-    when any
-if@p (...) S
-... when any
-if (\(ret != 0\|ret < 0\|ret > 0\) || ...) { ... return ...; }
-... when != ret = e3
-    when any
-*if@p (...)
-{
-  ... when != ret = e4
-  return ret;
-}
-//</smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
 
 ---
- drivers/pci/hotplug/cpci_hotplug_core.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/video/fsl-diu-fb.c |   11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pci/hotplug/cpci_hotplug_core.c b/drivers/pci/hotplug/cpci_hotplug_core.c
-index 3fadf2f..2b4c412 100644
---- a/drivers/pci/hotplug/cpci_hotplug_core.c
-+++ b/drivers/pci/hotplug/cpci_hotplug_core.c
-@@ -225,7 +225,7 @@ cpci_hp_register_bus(struct pci_bus *bus, u8 first, u8 last)
- 	struct hotplug_slot *hotplug_slot;
- 	struct hotplug_slot_info *info;
- 	char name[SLOT_NAME_SIZE];
--	int status = -ENOMEM;
-+	int status;
- 	int i;
- 
- 	if (!(controller && bus))
-@@ -237,18 +237,24 @@ cpci_hp_register_bus(struct pci_bus *bus, u8 first, u8 last)
- 	 */
- 	for (i = first; i <= last; ++i) {
- 		slot = kzalloc(sizeof (struct slot), GFP_KERNEL);
--		if (!slot)
-+		if (!slot) {
-+			status = -ENOMEM;
- 			goto error;
-+		}
- 
- 		hotplug_slot  			kzalloc(sizeof (struct hotplug_slot), GFP_KERNEL);
--		if (!hotplug_slot)
-+		if (!hotplug_slot) {
-+			status = -ENOMEM;
- 			goto error_slot;
-+		}
- 		slot->hotplug_slot = hotplug_slot;
- 
- 		info = kzalloc(sizeof (struct hotplug_slot_info), GFP_KERNEL);
--		if (!info)
-+		if (!info) {
-+			status = -ENOMEM;
- 			goto error_hpslot;
-+		}
- 		hotplug_slot->info = info;
- 
- 		slot->bus = bus;
+diff --git a/drivers/video/fsl-diu-fb.c b/drivers/video/fsl-diu-fb.c
+index 458c006..19194c5 100644
+--- a/drivers/video/fsl-diu-fb.c
++++ b/drivers/video/fsl-diu-fb.c
+@@ -1501,8 +1501,8 @@ static int __devinit fsl_diu_probe(struct platform_device *pdev)
+ 	unsigned int i;
+ 	int ret;
 
+-	data = dma_alloc_coherent(&pdev->dev, sizeof(struct fsl_diu_data),
+-				  &dma_addr, GFP_DMA | __GFP_ZERO);
++	data = dmam_alloc_coherent(&pdev->dev, sizeof(struct fsl_diu_data),
++				   &dma_addr, GFP_DMA | __GFP_ZERO);
+ 	if (!data)
+ 		return -ENOMEM;
+ 	data->dma_addr = dma_addr;
+@@ -1628,9 +1628,6 @@ error:
+
+ 	iounmap(data->diu_reg);
+
+-	dma_free_coherent(&pdev->dev, sizeof(struct fsl_diu_data), data,
+-			  data->dma_addr);
+-
+ 	return ret;
+ }
+
+@@ -1648,9 +1645,6 @@ static int fsl_diu_remove(struct platform_device *pdev)
+
+ 	iounmap(data->diu_reg);
+
+-	dma_free_coherent(&pdev->dev, sizeof(struct fsl_diu_data), data,
+-			  data->dma_addr);
+-
+ 	return 0;
+ }
