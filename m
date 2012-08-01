@@ -1,64 +1,65 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 25 Aug 2012 19:57:06 +0000
-Subject: [PATCH 3/6] drivers/usb/gadget/lpc32xx_udc.c: adjust inconsistent IS_ERR and PTR_ERR
-Message-Id: <1345924629-16584-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Alexander Block <ablock84@googlemail.com>
+Date: Wed, 01 Aug 2012 12:17:52 +0000
+Subject: Re: [patch] Btrfs: fix some endian bugs handling the root times
+Message-Id: <CAB9VWqACDZoSM7ihQ5mwup+w_LX1rG6G5BOJGz6hC6qKbsDciA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345924629-16584-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345924629-16584-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20120730081043.GA15702@elgon.mountain>
+In-Reply-To: <20120730081043.GA15702@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Felipe Balbi <balbi@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Chris Mason <chris.mason@fusionio.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Mon, Jul 30, 2012 at 10:10 AM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
+> "trans->transid" is cpu endian but we want to store the data as little
+> endian.  "item->ctime.nsec" is only 32 bits, not 64.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Applies to linux-next.
+>
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 43f0012..a1fbca0 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -424,7 +424,7 @@ static noinline int create_subvol(struct btrfs_root *root,
+>         uuid_le_gen(&new_uuid);
+>         memcpy(root_item.uuid, new_uuid.b, BTRFS_UUID_SIZE);
+>         root_item.otime.sec = cpu_to_le64(cur_time.tv_sec);
+> -       root_item.otime.nsec = cpu_to_le64(cur_time.tv_nsec);
+> +       root_item.otime.nsec = cpu_to_le32(cur_time.tv_nsec);
+>         root_item.ctime = root_item.otime;
+>         btrfs_set_root_ctransid(&root_item, trans->transid);
+>         btrfs_set_root_otransid(&root_item, trans->transid);
+> diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+> index 7ac7cdc..7208ada 100644
+> --- a/fs/btrfs/transaction.c
+> +++ b/fs/btrfs/transaction.c
+> @@ -1061,7 +1061,7 @@ static noinline int create_pending_snapshot(struct btrfs_trans_handle *trans,
+>         memcpy(new_root_item->parent_uuid, root->root_item.uuid,
+>                         BTRFS_UUID_SIZE);
+>         new_root_item->otime.sec = cpu_to_le64(cur_time.tv_sec);
+> -       new_root_item->otime.nsec = cpu_to_le64(cur_time.tv_nsec);
+> +       new_root_item->otime.nsec = cpu_to_le32(cur_time.tv_nsec);
+>         btrfs_set_root_otransid(new_root_item, trans->transid);
+>         memset(&new_root_item->stime, 0, sizeof(new_root_item->stime));
+>         memset(&new_root_item->rtime, 0, sizeof(new_root_item->rtime));
+> diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
+> index 6bb465c..10d8e4d 100644
+> --- a/fs/btrfs/root-tree.c
+> +++ b/fs/btrfs/root-tree.c
+> @@ -544,8 +544,8 @@ void btrfs_update_root_times(struct btrfs_trans_handle *trans,
+>         struct timespec ct = CURRENT_TIME;
+>
+>         spin_lock(&root->root_times_lock);
+> -       item->ctransid = trans->transid;
+> +       item->ctransid = cpu_to_le64(trans->transid);
+>         item->ctime.sec = cpu_to_le64(ct.tv_sec);
+> -       item->ctime.nsec = cpu_to_le64(ct.tv_nsec);
+> +       item->ctime.nsec = cpu_to_le32(ct.tv_nsec);
+>         spin_unlock(&root->root_times_lock);
+>  }
 
-Change the call to PTR_ERR to access the value just tested by IS_ERR.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e,e1;
-@@
-
-(
-if (IS_ERR(e)) { ... PTR_ERR(e) ... }
-|
-if (IS_ERR(e=E1)) { ... PTR_ERR(e) ... }
-|
-*if (IS_ERR(e))
- { ...
-*  PTR_ERR(e1)
-   ... }
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/usb/gadget/lpc32xx_udc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/gadget/lpc32xx_udc.c b/drivers/usb/gadget/lpc32xx_=
-udc.c
-index f1ec99e..3a6cdd0 100644
---- a/drivers/usb/gadget/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/lpc32xx_udc.c
-@@ -3208,7 +3208,7 @@ static int __init lpc32xx_udc_probe(struct platform_d=
-evice *pdev)
- 	udc->usb_otg_clk =3D clk_get(&pdev->dev, "ck_usb_otg");
- 	if (IS_ERR(udc->usb_otg_clk)) {
- 		dev_err(udc->dev, "failed to acquire USB otg clock\n");
--		retval =3D PTR_ERR(udc->usb_slv_clk);
-+		retval =3D PTR_ERR(udc->usb_otg_clk);
- 		goto usb_otg_clk_get_fail;
- 	}
-=20
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks. I will include this patch in the next send/receive pull request.
