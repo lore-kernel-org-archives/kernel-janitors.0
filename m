@@ -1,43 +1,62 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 07 Aug 2012 00:43:23 +0000
-Subject: [wireless-testing:master 37/59] drivers/net/wireless/b43/phy_n.c:535:1-56: code aligned with followi
-Message-Id: <20120807004323.GA9903@localhost>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Wed, 01 Aug 2012 13:35:16 +0000
+Subject: Re: [can:master 1/1] drivers/net/can/led.c:41:4: error: implicit declaration of function 'led_trigge
+Message-Id: <50193094.4090704@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------enigECD8088CC41B270EAB26129A"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+References: <20120801125137.GB19751@localhost>
+In-Reply-To: <20120801125137.GB19751@localhost>
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Fabio Baltieri <fabio.baltieri@gmail.com>, kernel-janitors@vger.kernel.org, linux-can@vger.kernel.org
+
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enigECD8088CC41B270EAB26129A
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
 
-Hi Rafa=C5=82,
+On 08/01/2012 02:51 PM, Fengguang Wu wrote:
+> Hi Fabio,
+>=20
+> Kernel build failed on
+>=20
+> tree:   git://gitorious.org/linux-can/linux-can-next master
+> head:   272669c35de610ef75427d2f41b328a5e0f65bfc
+> commit: 272669c35de610ef75427d2f41b328a5e0f65bfc [1/1] can: add tx/rx L=
+ED trigger support
+> config: i386-allmodconfig (attached as .config)
+>=20
+> All related error/warning messages:
+>=20
+> drivers/net/can/led.c: In function 'can_led_event':
+> drivers/net/can/led.c:41:4: error: implicit declaration of function 'le=
+d_trigger_blink_oneshot' [-Werror=3Dimplicit-function-declaration]
 
-FYI, there are new coccinelle warnings show up in
+We have to delay the patch until rc1 or whatever is merged back to net-ne=
+xt.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-tes=
-ting.git master
-head:   e73930134aafdf703d77043a429e46d254176ac8
-commit: 572d37a48557e7d38a5d9b5857627bc29f33a26c [37/59] b43: N-PHY: init 0=
-x2057 radio
+Or I will provide a temporary tree with current mainline as base.
 
-All coccinelle warnings:
+Marc
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
-+ drivers/net/wireless/b43/phy_n.c:535:1-56: code aligned with following co=
-de on line 536
 
-git checkout 572d37a48557e7d38a5d9b5857627bc29f33a26c
-vim +535 drivers/net/wireless/b43/phy_n.c
-   532		b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x55);
-   533		if (!b43_radio_wait_value(dev, R2057_RCCAL_DONE_OSCCAP, 1, 1, 500,
-   534					  5000000))
- > 535		b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x15);
-   536		if (special) {
-   537			b43_radio_write(dev, R2057_RCCAL_MASTER, 0x73);
-   538			b43_radio_write(dev, R2057_RCCAL_X1, 0x28);
+--------------enigECD8088CC41B270EAB26129A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAlAZMJgACgkQjTAFq1RaXHNrzQCfYdsYRCrLYeaTJ9GqJKyO+c3+
+7SQAoI5EZkzwXw3hul7bRJEdZ07ExHbx
+=SWDC
+-----END PGP SIGNATURE-----
+
+--------------enigECD8088CC41B270EAB26129A--
