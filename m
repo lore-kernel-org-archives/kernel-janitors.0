@@ -1,7 +1,7 @@
 From: Zhang Rui <rui.zhang@intel.com>
-Date: Wed, 01 Aug 2012 08:34:16 +0000
+Date: Wed, 01 Aug 2012 08:35:56 +0000
 Subject: Re: [thermal:thermal 5/13] drivers/power/power_supply_core.c:204:6: error: too many arguments to fun
-Message-Id: <1343810056.1682.492.camel@rui.sh.intel.com>
+Message-Id: <1343810156.1682.493.camel@rui.sh.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120801073612.GA11970@localhost>
 In-Reply-To: <20120801073612.GA11970@localhost>
@@ -10,7 +10,10 @@ Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On =E4=B8=89, 2012-08-01 at 15:36 +0800, Fengguang Wu wrote:
+in this case, should I create an incremental patch to fix the problem,
+or should I refresh my patch to cover that?
+
+=E4=B8=89, 2012-08-01 at 15:36 +0800, Fengguang Wu wrote:
 > Hi Zhang,
 >=20
 > Kernel build failed on
@@ -35,10 +38,6 @@ ction 'thermal_zone_device_register'
 >    202			if (psy->properties[i] =3D POWER_SUPPLY_PROP_TEMP) {
 >    203				psy->tzd =3D thermal_zone_device_register(psy->name, 0, 0,
 >  > 204						psy, &psy_tzd_ops, 0, 0, 0, 0);
-Oh,
-I did not notice that we have a new thermal user. :p
-I'll fix that soon.
-
 >    205				if (IS_ERR(psy->tzd))
 >    206					return PTR_ERR(psy->tzd);
 >    207				break;
