@@ -1,65 +1,49 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Thu, 09 Aug 2012 11:28:40 +0000
-Subject: Re: [PATCH] [media] gspca: dubious one-bit signed bitfield
-Message-Id: <50239EE8.2060805@redhat.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 01 Aug 2012 00:33:23 +0000
+Subject: Re: [nfsd:for-3.6 18/29] fs/lockd/host.c:603:21: warning: unused variable 'ln'
+Message-Id: <20120801003323.GA7442@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344170066-19727-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1344170066-19727-1-git-send-email-emilgoode@gmail.com>
+References: <20120730230955.GB5838@localhost>
+In-Reply-To: <20120730230955.GB5838@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: mchehab@infradead.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi,
+On Mon, Jul 30, 2012 at 07:33:54PM -0400, J. Bruce Fields wrote:
+> On Tue, Jul 31, 2012 at 07:09:55AM +0800, Fengguang Wu wrote:
+> > Hi Stanislav,
+> > 
+> > There are new compile warnings show up in
+> > 
+> > tree:   git://git.linux-nfs.org/~bfields/linux.git for-3.6
+> > head:   2c142baa7b237584bae7dc28630851701497e1ef
+> > commit: caa4e76b6f284bab535a98fd37b9c46856158bcb [18/29] LockD: manage used host count per networks namespace
+> > config: x86_64-randconfig-s012 (attached as .config)
+> > 
+> > All error/warnings:
+> > 
+> > fs/lockd/host.c: In function 'nlm_shutdown_hosts_net':
+> > fs/lockd/host.c:603:21: warning: unused variable 'ln' [-Wunused-variable]
+> > 
+> > vim +603 fs/lockd/host.c
+> >    600	
+> >    601		/* complain if any hosts are left */
+> >    602		if (net) {
+> >  > 603			struct lockd_net *ln = net_generic(net, lockd_net_id);
+> >    604	
+> >    605			printk(KERN_WARNING "lockd: couldn't shutdown host module for net %p!\n", net);
+> >    606			dprintk("lockd: %lu hosts left in net %p:\n", ln->nrhosts, net);
+> 
+> Probably ln is unused in the !RPC_DEBUG case.  Do we care?
+> 
+> The declaration could also go under #ifdef RPC_DEBUG, but that's ugly.
+> 
+> Is there some way to tell gcc to just ignore this?
 
-Thanks for the patch, I've added it to my tree for 3.7:
-http://git.linuxtv.org/hgoede/gspca.git/shortlog/refs/heads/media-for_v3.7-wip
+Bruce, we may follow this example:
 
-Regards,
+mm/memcontrol.c:                bool do_numainfo __maybe_unused;
 
-Hans
-
-
-
-On 08/05/2012 02:34 PM, Emil Goode wrote:
-> This patch changes some signed integers to unsigned because
-> they are not intended for negative values and sparse
-> is making noise about it.
->
-> Sparse gives eight of these errors:
-> drivers/media/video/gspca/ov519.c:144:29: error: dubious one-bit signed bitfield
->
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
->   drivers/media/video/gspca/ov519.c |   16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/media/video/gspca/ov519.c b/drivers/media/video/gspca/ov519.c
-> index bfc7cef..c1a21bf 100644
-> --- a/drivers/media/video/gspca/ov519.c
-> +++ b/drivers/media/video/gspca/ov519.c
-> @@ -141,14 +141,14 @@ enum sensors {
->
->   /* table of the disabled controls */
->   struct ctrl_valid {
-> -	int has_brightness:1;
-> -	int has_contrast:1;
-> -	int has_exposure:1;
-> -	int has_autogain:1;
-> -	int has_sat:1;
-> -	int has_hvflip:1;
-> -	int has_autobright:1;
-> -	int has_freq:1;
-> +	unsigned int has_brightness:1;
-> +	unsigned int has_contrast:1;
-> +	unsigned int has_exposure:1;
-> +	unsigned int has_autogain:1;
-> +	unsigned int has_sat:1;
-> +	unsigned int has_hvflip:1;
-> +	unsigned int has_autobright:1;
-> +	unsigned int has_freq:1;
->   };
->
->   static const struct ctrl_valid valid_controls[] = {
->
+Thanks,
+Fengguang
