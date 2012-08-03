@@ -1,23 +1,55 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Thu, 16 Aug 2012 19:04:36 +0000
-Subject: Re: [PATCH] drivers/iio/adc/at91_adc.c: use devm_ functions
-Message-Id: <502D4444.9050400@kernel.org>
+From: Damien Cassou <damien.cassou@lifl.fr>
+Date: Fri, 03 Aug 2012 15:40:14 +0000
+Subject: [PATCH 4/5] drivers/video/msm/mddi_client_dummy.c: use devm_ functions
+Message-Id: <1344008414-2894-6-git-send-email-damien.cassou@lifl.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343729383-30073-1-git-send-email-Julia.Lawall@lip6.fr> <5017D148.6030006@metafoo.de> <alpine.DEB.2.02.1207311509040.1894@hadrien> <502AB5F1.3050908@kernel.org> <502B658F.5040100@metafoo.de> <alpine.DEB.2.02.1208151119290.2000@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1208151119290.2000@localhost6.localdomain6>
+References: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@cam.ac.uk>, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Brown <davidb@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/15/2012 10:20 AM, Julia Lawall wrote:
->> devm_request_and_ioremap will already print a error messages on it's own if
->> something goes wrong. So strictly speaking this one is redundant, but I don't
->> think it is necessary to do a resend just for this, maybe you can remove the
->> extra dev_err when you apply the patch.
-> 
-> Thanks for pointing that out.  I will get rid of the messages in the future.  That seems easier than figuring out how to
-> adapt the message to the new function.
-> 
-merged with that line removed as suggested.  Thanks Julia and Lars-Peter.
+From: Damien Cassou <damien.cassou@lifl.fr>
+
+The various devm_ functions allocate memory that is released when a driver
+detaches. This patch replaces the use of kzalloc by devm_kzalloc.
+
+Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+
+---
+ drivers/video/msm/mddi_client_dummy.c |   12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/video/msm/mddi_client_dummy.c b/drivers/video/msm/mddi_client_dummy.c
+index d2a091c..4c31325 100644
+--- a/drivers/video/msm/mddi_client_dummy.c
++++ b/drivers/video/msm/mddi_client_dummy.c
+@@ -51,7 +51,7 @@ static int mddi_dummy_probe(struct platform_device *pdev)
+ {
+ 	struct msm_mddi_client_data *client_data = pdev->dev.platform_data;
+ 	struct panel_info *panel -		kzalloc(sizeof(struct panel_info), GFP_KERNEL);
++		devm_kzalloc(&pdev->dev, sizeof(struct panel_info), GFP_KERNEL);
+ 	int ret;
+ 	if (!panel)
+ 		return -ENOMEM;
+@@ -67,18 +67,11 @@ static int mddi_dummy_probe(struct platform_device *pdev)
+ 				      client_data->fb_resource, 1);
+ 	panel->panel_data.fb_data = client_data->private_client_data;
+ 	panel->pdev.dev.platform_data = &panel->panel_data;
+-	ret = platform_device_register(&panel->pdev);
+-	if (ret) {
+-		kfree(panel);
+-		return ret;
+-	}
+-	return 0;
++	return platform_device_register(&panel->pdev);
+ }
+
+ static int mddi_dummy_remove(struct platform_device *pdev)
+ {
+-	struct panel_info *panel = platform_get_drvdata(pdev);
+-	kfree(panel);
+ 	return 0;
+ }
