@@ -1,35 +1,50 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 15 Aug 2012 14:50:26 +0000
-Subject: Re: [staging:staging-next 70/73] drivers/staging/comedi/drivers/amplc_dio200.c:1444:2: error: implic
-Message-Id: <20120815145026.GA429@localhost>
+From: Damien Cassou <damien.cassou@lifl.fr>
+Date: Fri, 03 Aug 2012 15:40:13 +0000
+Subject: [PATCH 5/5] drivers/video/msm/mddi_client_nt35399.c: use devm_ functions
+Message-Id: <1344008414-2894-5-git-send-email-damien.cassou@lifl.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <502B71C7.4010005@mev.co.uk>
-In-Reply-To: <502B71C7.4010005@mev.co.uk>
+References: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Brown <davidb@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2012 at 07:47:01AM -0700, Greg KH wrote:
-> On Wed, Aug 15, 2012 at 10:35:05PM +0800, Fengguang Wu wrote:
-> > > Wait, what do you mean by "non-rebaseable"?  I think you mean
-> > > "non-bisectable" right?
-> > 
-> > I mean, the branch will not be rebased to fixup errors in the middle.
-> > Like the Linus' tree, and the tip/net trees.  For these branches that
-> > cannot afford to rebase, bug fixes always get appended rather than get
-> > folded into the buggy commit.
-> > 
-> > For the non-rebaseable branches, I'll first build test the branch HEAD,
-> > and iff it has build errors, go back to locate the first commit that
-> > introduces the errors. This way, it can avoid sending out pointless
-> > warnings about known bugs that are eventually fixed up in the HEAD.
-> 
-> None of my trees and branches should ever be rebased, unless something
-> really wrong goes on.  I think I've only had to ever do this once, for
-> one branch, in the past years that I've been doing this.
+From: Damien Cassou <damien.cassou@lifl.fr>
 
-Got it, thanks!
+The various devm_ functions allocate memory that is released when a driver
+detaches. This patch replaces the use of kzalloc by devm_kzalloc.
 
-Thanks,
-Fengguang
+Additionally, this patch fixes a memory leak: some memory was allocated for
+'panel' but not released when the subsequent call to setup_vsync fails.
+
+Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+
+---
+ drivers/video/msm/mddi_client_nt35399.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/video/msm/mddi_client_nt35399.c b/drivers/video/msm/mddi_client_nt35399.c
+index 7fcd67e..66b314e 100644
+--- a/drivers/video/msm/mddi_client_nt35399.c
++++ b/drivers/video/msm/mddi_client_nt35399.c
+@@ -189,8 +189,9 @@ static int mddi_nt35399_probe(struct platform_device *pdev)
+
+ 	int ret;
+
+-	struct panel_info *panel = kzalloc(sizeof(struct panel_info),
+-					   GFP_KERNEL);
++	struct panel_info *panel = devm_kzalloc(&pdev->dev,
++						sizeof(struct panel_info),
++						GFP_KERNEL);
+
+ 	printk(KERN_DEBUG "%s: enter.\n", __func__);
+
+@@ -233,7 +234,6 @@ static int mddi_nt35399_remove(struct platform_device *pdev)
+ 	struct panel_info *panel = platform_get_drvdata(pdev);
+
+ 	setup_vsync(panel, 0);
+-	kfree(panel);
+ 	return 0;
+ }
