@@ -1,43 +1,100 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Tue, 14 Aug 2012 11:15:32 +0000
-Subject: Re: [patch] [media] em28xx: use after free in em28xx_v4l2_close()
-Message-Id: <CALF0-+XVpGhtODTfeayov1aayQhCihF7FG=vo60XYeHbDhW6Vw@mail.gmail.com>
+From: Damien Cassou <damien.cassou@lifl.fr>
+Date: Fri, 03 Aug 2012 15:40:11 +0000
+Subject: [PATCH 3/5] drivers/video/jz4740_fb.c: use devm_ functions
+Message-Id: <1344008414-2894-3-git-send-email-damien.cassou@lifl.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120814065814.GB4791@elgon.mountain>
-	<CALF0-+UU8dGBdihLgm==d0gCE4aHKdAbEVfe54U1LDjBHss8XQ@mail.gmail.com>
-	<20120814110546.GD4559@mwanda>
-In-Reply-To: <20120814110546.GD4559@mwanda>
+References: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Hans Verkuil <hans.verkuil@cisco.com>, Hans de Goede <hdegoede@redhat.com>, Gianluca Gennari <gennarone@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2012 at 8:05 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Tue, Aug 14, 2012 at 07:50:12AM -0300, Ezequiel Garcia wrote:
->> Hi Dan,
->>
->> On Tue, Aug 14, 2012 at 3:58 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> > We need to move the unlock before the kfree(dev);
->> >
->> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> > ---
->> > Applies to linux-next.
->> >
->> > diff --git a/drivers/media/video/em28xx/em28xx-video.c b/drivers/media/video/em28xx/em28xx-video.c
->> > index ecb23df..78d6ebd 100644
->> > --- a/drivers/media/video/em28xx/em28xx-video.c
->> > +++ b/drivers/media/video/em28xx/em28xx-video.c
->> > @@ -2264,9 +2264,9 @@ static int em28xx_v4l2_close(struct file *filp)
->> >                 if (dev->state & DEV_DISCONNECTED) {
->> >                         em28xx_release_resources(dev);
->>
->> Why not unlocking here?
->
-> I don't see a reason to prefer one over the other.
->
+From: Damien Cassou <damien.cassou@lifl.fr>
 
-Mmm, I see now what you mean,
+The various devm_ functions allocate memory that is released when a driver
+detaches. This patch uses these functions for data that is allocated in the
+probe function of a platform device and is only freed in the remove function.
 
-Thanks and sorry for dumb question,
-Ezequiel.
+Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+
+---
+ drivers/video/jz4740_fb.c |   22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/video/jz4740_fb.c b/drivers/video/jz4740_fb.c
+index de36693..7669770 100644
+--- a/drivers/video/jz4740_fb.c
++++ b/drivers/video/jz4740_fb.c
+@@ -659,25 +659,25 @@ static int __devinit jzfb_probe(struct platform_device *pdev)
+ 	jzfb->pdata = pdata;
+ 	jzfb->mem = mem;
+
+-	jzfb->ldclk = clk_get(&pdev->dev, "lcd");
++	jzfb->ldclk = devm_clk_get(&pdev->dev, "lcd");
+ 	if (IS_ERR(jzfb->ldclk)) {
+ 		ret = PTR_ERR(jzfb->ldclk);
+ 		dev_err(&pdev->dev, "Failed to get lcd clock: %d\n", ret);
+ 		goto err_framebuffer_release;
+ 	}
+
+-	jzfb->lpclk = clk_get(&pdev->dev, "lcd_pclk");
++	jzfb->lpclk = devm_clk_get(&pdev->dev, "lcd_pclk");
+ 	if (IS_ERR(jzfb->lpclk)) {
+ 		ret = PTR_ERR(jzfb->lpclk);
+ 		dev_err(&pdev->dev, "Failed to get lcd pixel clock: %d\n", ret);
+-		goto err_put_ldclk;
++		goto err_framebuffer_release;
+ 	}
+
+-	jzfb->base = ioremap(mem->start, resource_size(mem));
++	jzfb->base = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
+ 	if (!jzfb->base) {
+ 		dev_err(&pdev->dev, "Failed to ioremap register memory region\n");
+ 		ret = -EBUSY;
+-		goto err_put_lpclk;
++		goto err_framebuffer_release;
+ 	}
+
+ 	platform_set_drvdata(pdev, jzfb);
+@@ -693,7 +693,7 @@ static int __devinit jzfb_probe(struct platform_device *pdev)
+ 	ret = jzfb_alloc_devmem(jzfb);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to allocate video memory\n");
+-		goto err_iounmap;
++		goto err_framebuffer_release;
+ 	}
+
+ 	fb->fix = jzfb_fix;
+@@ -734,12 +734,6 @@ err_free_devmem:
+
+ 	fb_dealloc_cmap(&fb->cmap);
+ 	jzfb_free_devmem(jzfb);
+-err_iounmap:
+-	iounmap(jzfb->base);
+-err_put_lpclk:
+-	clk_put(jzfb->lpclk);
+-err_put_ldclk:
+-	clk_put(jzfb->ldclk);
+ err_framebuffer_release:
+ 	framebuffer_release(fb);
+ err_release_mem_region:
+@@ -756,7 +750,6 @@ static int __devexit jzfb_remove(struct platform_device *pdev)
+ 	jz_gpio_bulk_free(jz_lcd_ctrl_pins, jzfb_num_ctrl_pins(jzfb));
+ 	jz_gpio_bulk_free(jz_lcd_data_pins, jzfb_num_data_pins(jzfb));
+
+-	iounmap(jzfb->base);
+ 	release_mem_region(jzfb->mem->start, resource_size(jzfb->mem));
+
+ 	fb_dealloc_cmap(&jzfb->fb->cmap);
+@@ -764,9 +757,6 @@ static int __devexit jzfb_remove(struct platform_device *pdev)
+
+ 	platform_set_drvdata(pdev, NULL);
+
+-	clk_put(jzfb->lpclk);
+-	clk_put(jzfb->ldclk);
+-
+ 	framebuffer_release(jzfb->fb);
+
+ 	return 0;
