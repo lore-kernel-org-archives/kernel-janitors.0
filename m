@@ -1,48 +1,87 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Date: Thu, 09 Aug 2012 10:01:48 +0000
-Subject: Re: [pm:linux-next 22/38] include/linux/pm_domain.h:252:2: error: too many arguments to function '__
-Message-Id: <201208091201.48712.rjw@sisk.pl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 04 Aug 2012 16:50:46 +0000
+Subject: [PATCH 3/6] drivers/char/hw_random/octeon-rng.c: drop frees of devm allocated data
+Message-Id: <1344099049-15212-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120809092312.GA3316@localhost>
-In-Reply-To: <20120809092312.GA3316@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matt Mackall <mpm@selenic.com>
+Cc: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.hengli.com.au>, linux-kernel@vger.kernel.org
 
-Hi,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Thursday, August 09, 2012, Fengguang Wu wrote:
-> Hi Rafael,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-> head:   9ea3f7070730c4148694904a335825f7e4540604
-> commit: 3fca1aaa84488678c2b57d9b35259bbd4efd86ca [22/38] PM / Domains: Make it possible to use domain names when adding devices
-> config: sh-allnoconfig (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> In file included from drivers/sh/pm_runtime.c:15:0:
-> include/linux/pm_domain.h: In function 'pm_genpd_of_add_device':
-> include/linux/pm_domain.h:252:2: error: too many arguments to function '__pm_genpd_of_add_device'
-> include/linux/pm_domain.h:182:19: note: declared here
-> include/linux/pm_domain.h: In function 'pm_genpd_name_add_device':
-> include/linux/pm_domain.h:258:2: warning: passing argument 1 of '__pm_genpd_name_add_device' discards 'const' qualifier from pointer target type [enabled by default]
-> include/linux/pm_domain.h:187:19: note: expected 'char *' but argument is of type 'const char *'
-> 
-> vim +252 include/linux/pm_domain.h
->    249	static inline int pm_genpd_of_add_device(struct device_node *genpd_node,
->    250						 struct device *dev)
->    251	{
->  > 252		return __pm_genpd_of_add_device(genpd_node, dev, NULL);
->    253	}
->    254	
->    255	static inline int pm_genpd_name_add_device(const char *domain_name,
-> 
+devm_kfree and devm_iounmap should not have to be explicitly used.
 
-That is due to CONFIG_PM_GENERIC_DOMAINS unset.  Should be fixed now.
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks,
-Rafael
+// <smpl>
+@@
+expression x,d;
+@@
+
+x = devm_kzalloc(...)
+...
+?-devm_kfree(d,x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/char/hw_random/octeon-rng.c |   17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/char/hw_random/octeon-rng.c b/drivers/char/hw_random/octeon-rng.c
+index 0943edc..5c34c09 100644
+--- a/drivers/char/hw_random/octeon-rng.c
++++ b/drivers/char/hw_random/octeon-rng.c
+@@ -75,42 +75,35 @@ static int __devinit octeon_rng_probe(struct platform_device *pdev)
+ 
+ 	res_ports = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res_ports)
+-		goto err_ports;
++		return -ENOENT;
+ 
+ 	res_result = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	if (!res_result)
+-		goto err_ports;
++		return -ENOENT;
+ 
+ 
+ 	rng->control_status = devm_ioremap_nocache(&pdev->dev,
+ 						   res_ports->start,
+ 						   sizeof(u64));
+ 	if (!rng->control_status)
+-		goto err_ports;
++		return -ENOENT;
+ 
+ 	rng->result = devm_ioremap_nocache(&pdev->dev,
+ 					   res_result->start,
+ 					   sizeof(u64));
+ 	if (!rng->result)
+-		goto err_r;
++		return -ENOENT;
+ 
+ 	rng->ops = ops;
+ 
+ 	dev_set_drvdata(&pdev->dev, &rng->ops);
+ 	ret = hwrng_register(&rng->ops);
+ 	if (ret)
+-		goto err;
++		return -ENOENT;
+ 
+ 	dev_info(&pdev->dev, "Octeon Random Number Generator\n");
+ 
+ 	return 0;
+-err:
+-	devm_iounmap(&pdev->dev, rng->control_status);
+-err_r:
+-	devm_iounmap(&pdev->dev, rng->result);
+-err_ports:
+-	devm_kfree(&pdev->dev, rng);
+-	return -ENOENT;
+ }
+ 
+ static int __exit octeon_rng_remove(struct platform_device *pdev)
+
