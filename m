@@ -1,61 +1,55 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 16 Aug 2012 17:23:47 +0000
-Subject: Re: [patch] driver-core: dev_to_node() should handle NULL pointers
-Message-Id: <20120816172347.GA27415@kroah.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 04 Aug 2012 16:50:48 +0000
+Subject: [PATCH 5/6] drivers/video/backlight/da9052_bl.c: drop devm_kfree of devm_kzalloc'd data
+Message-Id: <1344099049-15212-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120720065622.GA11710@elgon.mountain>
- <20120720150042.GA1996@kroah.com>
- <20120720151846.GQ16348@mwanda>
-In-Reply-To: <20120720151846.GQ16348@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: kernel-janitors@vger.kernel.org, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2012 at 06:18:46PM +0300, Dan Carpenter wrote:
-> On Fri, Jul 20, 2012 at 08:00:42AM -0700, Greg Kroah-Hartman wrote:
-> > On Fri, Jul 20, 2012 at 09:56:23AM +0300, Dan Carpenter wrote:
-> > > What prompted this patch is that in dma_pool_create() we call
-> > > dev_to_node() before checking whether "dev" is NULL.  It looks like
-> > > there are places which call dma_pool_create() with a NULL pointer.  An
-> > > example is in drivers/usb/gadget/amd5536udc.c.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > > Static checker fix.
-> > > 
-> > > diff --git a/include/linux/device.h b/include/linux/device.h
-> > > index aa7b3b4..c80e7a8d 100644
-> > > --- a/include/linux/device.h
-> > > +++ b/include/linux/device.h
-> > > @@ -714,7 +714,9 @@ int dev_set_name(struct device *dev, const char *name, ...);
-> > >  #ifdef CONFIG_NUMA
-> > >  static inline int dev_to_node(struct device *dev)
-> > >  {
-> > > -	return dev->numa_node;
-> > > +	if (dev)
-> > > +		return dev->numa_node;
-> > > +	return -1;
-> > 
-> > What happens if this function returns -1?  Can the callers properly
-> > handle this?
-> > 
-> 
-> Gar.  Now I'm not sure any more.
-> 
-> -1 means no affinity and it's what the dev_to_node() returns if NUMA
-> is disabled.  But now I think probably it's important to get the
-> NUMA node correct in dma_pool_create() so this isn't the right
-> answer.
-> 
-> dma_pool_create() is not correct.  It has code to handle a NULL
-> "dev" pointer, but the dev_to_node() dereference will cause an oops
-> before we reach it.  I'm think this is a real issue that affects a
-> couple drivers.  Maybe those people compile without NUMA?
-> 
-> I'm not sure the right fix now.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Ok, I'll drop this one then.
+devm_kfree should not have to be explicitly used.
 
-greg k-h
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression x,d;
+@@
+
+x = devm_kzalloc(...)
+...
+?-devm_kfree(d,x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/video/backlight/da9052_bl.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/video/backlight/da9052_bl.c b/drivers/video/backlight/da9052_bl.c
+index b628d68..7c8626a 100644
+--- a/drivers/video/backlight/da9052_bl.c
++++ b/drivers/video/backlight/da9052_bl.c
+@@ -129,7 +129,6 @@ static int da9052_backlight_probe(struct platform_device *pdev)
+ 				       &da9052_backlight_ops, &props);
+ 	if (IS_ERR(bl)) {
+ 		dev_err(&pdev->dev, "Failed to register backlight\n");
+-		devm_kfree(&pdev->dev, wleds);
+ 		return PTR_ERR(bl);
+ 	}
+ 
+@@ -149,7 +148,6 @@ static int da9052_backlight_remove(struct platform_device *pdev)
+ 	wleds->state = DA9052_WLEDS_OFF;
+ 	da9052_adjust_wled_brightness(wleds);
+ 	backlight_device_unregister(bl);
+-	devm_kfree(&pdev->dev, wleds);
+ 
+ 	return 0;
+ }
+
