@@ -1,27 +1,121 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Date: Thu, 16 Aug 2012 13:56:30 +0000
-Subject: Re: [patch] TTY: tty_alloc_driver() returns error pointers
-Message-Id: <502CFC0E.9020907@suse.cz>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 04 Aug 2012 18:23:27 +0000
+Subject: [PATCH] drivers/media/video/mx2_emmaprp.c: use devm_kzalloc and devm_clk_get
+Message-Id: <1344104607-18805-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120816131656.GB23279@elgon.mountain>
-In-Reply-To: <20120816131656.GB23279@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/16/2012 03:16 PM, Dan Carpenter wrote:
-> We changed these from alloc_tty_driver() to tty_alloc_driver() so the
-> error handling needs to modified to check for IS_ERR() instead of NULL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Shame.
+Using devm_kzalloc and devm_clk_get simplifies the code and ensures that
+the use of devm_request_irq is safe.  When kzalloc and kfree were used, the
+interrupt could be triggered after the handler's data argument had been
+freed.
 
-Acked-by: Jiri Slaby <jslaby@suse.cz>
+The problem of a free after a devm_request_irq was found using the
+following semantic match (http://coccinelle.lip6.fr/)
 
-thanks,
--- 
-js
-suse labs
+// <smpl>
+@r exists@
+expression e1,e2,x,a,b,c,d;
+identifier free;
+position p1,p2;
+@@
+
+  devm_request_irq@p1(e1,e2,...,x)
+  ... when any
+      when != e2 = a
+      when != x = b
+  if (...) {
+    ... when != e2 = c
+        when != x = d
+    free@p2(...,x,...);
+    ...
+    return ...;
+  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/video/mx2_emmaprp.c |   25 ++++++-------------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/media/video/mx2_emmaprp.c b/drivers/media/video/mx2_emmaprp.c
+index 5f8a6f5..78c5dc9 100644
+--- a/drivers/media/video/mx2_emmaprp.c
++++ b/drivers/media/video/mx2_emmaprp.c
+@@ -874,29 +874,27 @@ static int emmaprp_probe(struct platform_device *pdev)
+ 	int irq_emma;
+ 	int ret;
+ 
+-	pcdev = kzalloc(sizeof *pcdev, GFP_KERNEL);
++	pcdev = devm_kzalloc(&pdev->dev, sizeof(*pcdev), GFP_KERNEL);
+ 	if (!pcdev)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&pcdev->irqlock);
+ 
+-	pcdev->clk_emma = clk_get(&pdev->dev, NULL);
++	pcdev->clk_emma = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(pcdev->clk_emma)) {
+-		ret = PTR_ERR(pcdev->clk_emma);
+-		goto free_dev;
++		return PTR_ERR(pcdev->clk_emma);
+ 	}
+ 
+ 	irq_emma = platform_get_irq(pdev, 0);
+ 	res_emma = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (irq_emma < 0 || res_emma = NULL) {
+ 		dev_err(&pdev->dev, "Missing platform resources data\n");
+-		ret = -ENODEV;
+-		goto free_clk;
++		return -ENODEV;
+ 	}
+ 
+ 	ret = v4l2_device_register(&pdev->dev, &pcdev->v4l2_dev);
+ 	if (ret)
+-		goto free_clk;
++		return ret;
+ 
+ 	mutex_init(&pcdev->dev_mutex);
+ 
+@@ -922,12 +920,7 @@ static int emmaprp_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, pcdev);
+ 
+-	if (devm_request_mem_region(&pdev->dev, res_emma->start,
+-	    resource_size(res_emma), MEM2MEM_NAME) = NULL)
+-		goto rel_vdev;
+-
+-	pcdev->base_emma = devm_ioremap(&pdev->dev, res_emma->start,
+-					resource_size(res_emma));
++	pcdev->base_emma = devm_request_and_ioremap(&pdev->dev, res_emma);
+ 	if (!pcdev->base_emma)
+ 		goto rel_vdev;
+ 
+@@ -969,10 +962,6 @@ rel_vdev:
+ 	video_device_release(vfd);
+ unreg_dev:
+ 	v4l2_device_unregister(&pcdev->v4l2_dev);
+-free_clk:
+-	clk_put(pcdev->clk_emma);
+-free_dev:
+-	kfree(pcdev);
+ 
+ 	return ret;
+ }
+@@ -987,8 +976,6 @@ static int emmaprp_remove(struct platform_device *pdev)
+ 	v4l2_m2m_release(pcdev->m2m_dev);
+ 	vb2_dma_contig_cleanup_ctx(pcdev->alloc_ctx);
+ 	v4l2_device_unregister(&pcdev->v4l2_dev);
+-	clk_put(pcdev->clk_emma);
+-	kfree(pcdev);
+ 
+ 	return 0;
+ }
+
