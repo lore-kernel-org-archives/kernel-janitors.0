@@ -1,95 +1,90 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:37:44 +0000
-Subject: Re: [PATCH 2/5] drivers/video/gbefb.c: use devm_ functions
-Message-Id: <50369498.4010006@gmx.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 04 Aug 2012 17:10:48 +0000
+Subject: [PATCH] drivers/i2c/i2c-smbus.c: convert kzalloc to devm_kzalloc
+Message-Id: <1344100248-16238-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr> <1343752762-16861-3-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1343752762-16861-3-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Damien Cassou <damien.cassou@lifl.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Ben Dooks (embedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "Wolfram Sang (embedded platforms)" <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 07/31/2012 04:39 PM, Damien Cassou wrote:
-> From: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
-> 
-> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied.
+Converting kzalloc to devm_kzalloc simplifies the code and ensures that the
+result, alert, is freed after the irq allocated by the subsequent
+devm_request_irq.  This in turn ensures that when an interrupt can be
+triggered, the alert structure is still available.
 
+The problem of a free after a devm_request_irq was found using the
+following semantic match (http://coccinelle.lip6.fr/)
 
-Thanks,
+// <smpl>
+@r exists@
+expression e1,e2,x,a,b,c,d;
+identifier free;
+position p1,p2;
+@@
 
-Florian Tobias Schandinat
+  devm_request_irq@p1(e1,e2,...,x)
+  ... when any
+      when != e2 = a
+      when != x = b
+  if (...) {
+    ... when != e2 = c
+        when != x = d
+    free@p2(...,x,...);
+    ...
+    return ...;
+  }
+// </smpl>
 
-> 
-> ---
->  drivers/video/gbefb.c |   15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/video/gbefb.c b/drivers/video/gbefb.c
-> index 7e7b7a9..9b79d38 100644
-> --- a/drivers/video/gbefb.c
-> +++ b/drivers/video/gbefb.c
-> @@ -1156,7 +1156,8 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
->  		goto out_release_framebuffer;
->  	}
->  
-> -	gbe = (struct sgi_gbe *) ioremap(GBE_BASE, sizeof(struct sgi_gbe));
-> +	gbe = (struct sgi_gbe *) devm_ioremap(&p_dev->dev, GBE_BASE,
-> +					      sizeof(struct sgi_gbe));
->  	if (!gbe) {
->  		printk(KERN_ERR "gbefb: couldn't map mmio region\n");
->  		ret = -ENXIO;
-> @@ -1170,12 +1171,13 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
->  	if (!gbe_tiles.cpu) {
->  		printk(KERN_ERR "gbefb: couldn't allocate tiles table\n");
->  		ret = -ENOMEM;
-> -		goto out_unmap;
-> +		goto out_release_mem_region;
->  	}
->  
->  	if (gbe_mem_phys) {
->  		/* memory was allocated at boot time */
-> -		gbe_mem = ioremap_nocache(gbe_mem_phys, gbe_mem_size);
-> +		gbe_mem = devm_ioremap_nocache(&p_dev->dev, gbe_mem_phys,
-> +					       gbe_mem_size);
->  		if (!gbe_mem) {
->  			printk(KERN_ERR "gbefb: couldn't map framebuffer\n");
->  			ret = -ENOMEM;
-> @@ -1241,13 +1243,9 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
->  out_gbe_unmap:
->  	if (gbe_dma_addr)
->  		dma_free_coherent(NULL, gbe_mem_size, gbe_mem, gbe_mem_phys);
-> -	else
-> -		iounmap(gbe_mem);
->  out_tiles_free:
->  	dma_free_coherent(NULL, GBE_TLB_SIZE * sizeof(uint16_t),
->  			  (void *)gbe_tiles.cpu, gbe_tiles.dma);
-> -out_unmap:
-> -	iounmap(gbe);
->  out_release_mem_region:
->  	release_mem_region(GBE_BASE, sizeof(struct sgi_gbe));
->  out_release_framebuffer:
-> @@ -1264,12 +1262,9 @@ static int __devexit gbefb_remove(struct platform_device* p_dev)
->  	gbe_turn_off();
->  	if (gbe_dma_addr)
->  		dma_free_coherent(NULL, gbe_mem_size, gbe_mem, gbe_mem_phys);
-> -	else
-> -		iounmap(gbe_mem);
->  	dma_free_coherent(NULL, GBE_TLB_SIZE * sizeof(uint16_t),
->  			  (void *)gbe_tiles.cpu, gbe_tiles.dma);
->  	release_mem_region(GBE_BASE, sizeof(struct sgi_gbe));
-> -	iounmap(gbe);
->  	gbefb_remove_sysfs(&p_dev->dev);
->  	framebuffer_release(info);
->  
-> 
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/i2c/i2c-smbus.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/i2c/i2c-smbus.c b/drivers/i2c/i2c-smbus.c
+index df3e0bf..50a36cf 100644
+--- a/drivers/i2c/i2c-smbus.c
++++ b/drivers/i2c/i2c-smbus.c
+@@ -142,7 +142,8 @@ static int smbalert_probe(struct i2c_client *ara,
+ 	struct i2c_adapter *adapter = ara->adapter;
+ 	int res;
+ 
+-	alert = kzalloc(sizeof(struct i2c_smbus_alert), GFP_KERNEL);
++	alert = devm_kzalloc(&ara->dev, sizeof(struct i2c_smbus_alert),
++			     GFP_KERNEL);
+ 	if (!alert)
+ 		return -ENOMEM;
+ 
+@@ -154,10 +155,8 @@ static int smbalert_probe(struct i2c_client *ara,
+ 	if (setup->irq > 0) {
+ 		res = devm_request_irq(&ara->dev, setup->irq, smbalert_irq,
+ 				       0, "smbus_alert", alert);
+-		if (res) {
+-			kfree(alert);
++		if (res)
+ 			return res;
+-		}
+ 	}
+ 
+ 	i2c_set_clientdata(ara, alert);
+@@ -167,14 +166,12 @@ static int smbalert_probe(struct i2c_client *ara,
+ 	return 0;
+ }
+ 
+-/* IRQ resource is managed so it is freed automatically */
++/* IRQ resource and alert are managed so they are freed automatically */
+ static int smbalert_remove(struct i2c_client *ara)
+ {
+ 	struct i2c_smbus_alert *alert = i2c_get_clientdata(ara);
+ 
+ 	cancel_work_sync(&alert->alert);
+-
+-	kfree(alert);
+ 	return 0;
+ }
+ 
 
