@@ -1,24 +1,55 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Thu, 16 Aug 2012 15:23:44 +0000
-Subject: Re: [patch] [SCSI] mvsas: fix a && vs & bug
-Message-Id: <502D1080.6070307@pobox.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 04 Aug 2012 12:00:30 +0000
+Subject: [PATCH 1/3] drivers/video/auo_k190x.c: drop kfree of devm_kzalloc's data
+Message-Id: <1344081632-4729-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120816110401.GA12318@elgon.mountain>
-In-Reply-To: <20120816110401.GA12318@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, Xiangliang Yu <yuxiangl@marvell.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/16/2012 07:04 AM, Dan Carpenter wrote:
-> The "1 << (slot_idx % 32)" condition is always true.  The intent was to
-> test a bit field here using bitwise AND.  We do the test correctly a few
-> lines later in the do while loop.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Jeff Garzik <jgarzik@redhat.com>
+Using kfree to free data allocated with devm_kzalloc causes double frees.
 
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression x;
+@@
+
+x = devm_kzalloc(...)
+...
+?-kfree(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/video/auo_k190x.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/video/auo_k190x.c b/drivers/video/auo_k190x.c
+index 77da6a2..c03ecdd 100644
+--- a/drivers/video/auo_k190x.c
++++ b/drivers/video/auo_k190x.c
+@@ -987,7 +987,6 @@ err_regfb:
+ 	fb_dealloc_cmap(&info->cmap);
+ err_cmap:
+ 	fb_deferred_io_cleanup(info);
+-	kfree(info->fbdefio);
+ err_defio:
+ 	vfree((void *)info->screen_base);
+ err_irq:
+@@ -1022,7 +1021,6 @@ int  __devexit auok190x_common_remove(struct platform_device *pdev)
+ 	fb_dealloc_cmap(&info->cmap);
+ 
+ 	fb_deferred_io_cleanup(info);
+-	kfree(info->fbdefio);
+ 
+ 	vfree((void *)info->screen_base);
+ 
 
