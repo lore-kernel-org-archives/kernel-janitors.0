@@ -1,28 +1,47 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 17 Aug 2012 03:27:42 +0000
-Subject: drm_fb_helper.c:1247:1-8: alloc with no test
-Message-Id: <20120817032742.GB26867@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 04 Aug 2012 12:00:31 +0000
+Subject: [PATCH 2/3] drivers/mfd/palmas.c: drop kfree of devm_kzalloc's data
+Message-Id: <1344081632-4729-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Daniel,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-FYI, here is a potential problem on memory allocation failure, caught by coccinelle:
+Using kfree to free data allocated with devm_kzalloc causes double frees.
 
-+ drivers/gpu/drm/drm_fb_helper.c:1247:1-8: alloc with no test, possible model on line 1252
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-vim +1247 drivers/gpu/drm/drm_fb_helper.c
-  1244				sizeof(struct drm_fb_helper_crtc *), GFP_KERNEL);
-  1245		modes = kcalloc(dev->mode_config.num_connector,
-  1246				sizeof(struct drm_display_mode *), GFP_KERNEL);
-> 1247		enabled = kcalloc(dev->mode_config.num_connector,
-  1248				  sizeof(bool), GFP_KERNEL);
-  1249	
-  1250		drm_enable_connectors(fb_helper, enabled);
+// <smpl>
+@@
+expression x;
+@@
+
+x = devm_kzalloc(...)
+...
+?-kfree(x);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ drivers/mfd/palmas.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
+index c4a69f1..92c6fc7 100644
+--- a/drivers/mfd/palmas.c
++++ b/drivers/mfd/palmas.c
+@@ -463,7 +463,6 @@ static int __devinit palmas_i2c_probe(struct i2c_client *i2c,
+ 
+ err:
+ 	mfd_remove_devices(palmas->dev);
+-	kfree(palmas);
+ 	return ret;
+ }
+ 
+
