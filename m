@@ -1,57 +1,25 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 04 Aug 2012 12:00:32 +0000
-Subject: [PATCH 3/3] sound/soc/soc-core.c: drop kfree of devm_kzalloc's data
-Message-Id: <1344081632-4729-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Sat, 04 Aug 2012 14:32:04 +0000
+Subject: Re: [PATCH 3/3] sound/soc/soc-core.c: drop kfree of devm_kzalloc's data
+Message-Id: <20120804143200.GD15691@opensource.wolfsonmicro.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1344081632-4729-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344081632-4729-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>, matthias@kaehlcke.net
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, matthias@kaehlcke.net, Liam Girdwood <lrg@ti.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sat, Aug 04, 2012 at 02:00:32PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Using kfree to free data allocated with devm_kzalloc causes double frees.
+> 
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
 
-Using kfree to free data allocated with devm_kzalloc causes double frees.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x;
-@@
-
-x = devm_kzalloc(...)
-...
-?-kfree(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-The kfrees were introduced in b761c0ca.
-
- sound/soc/soc-core.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index f81c597..86d7a36 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -4136,7 +4136,6 @@ int snd_soc_of_parse_audio_routing(struct snd_soc_card *card,
- 			dev_err(card->dev,
- 				"Property '%s' index %d could not be read: %d\n",
- 				propname, 2 * i, ret);
--			kfree(routes);
- 			return -EINVAL;
- 		}
- 		ret = of_property_read_string_index(np, propname,
-@@ -4145,7 +4144,6 @@ int snd_soc_of_parse_audio_routing(struct snd_soc_card *card,
- 			dev_err(card->dev,
- 				"Property '%s' index %d could not be read: %d\n",
- 				propname, (2 * i) + 1, ret);
--			kfree(routes);
- 			return -EINVAL;
- 		}
- 	}
-
+Might it make more sense to devm_kfree() them?  If we don't expect to
+immediately abort driver instantiation it'll save having them lying
+around for the entire lifetime of the device even if they're not
+strictly leaked.
