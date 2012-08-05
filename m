@@ -1,81 +1,72 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 26 Aug 2012 16:01:04 +0000
-Subject: [PATCH 12/13] drivers/amba/bus.c: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <1345996865-32082-13-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 05 Aug 2012 09:52:31 +0000
+Subject: [PATCH 1/6] drivers/edac/i7core_edac.c: fix error return code
+Message-Id: <1344160356-387-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Russell King <linux@arm.linux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Julia Lawall <julia@diku.dk>
 
-Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-clk_enable, and clk_disable and clk_unprepare.  They make the code more
-concise, and ensure that clk_unprepare is called when clk_enable fails.
+Convert a 0 error return code to a negative one, as returned elsewhere in the
+function.
 
-A simplified version of the semantic patch that introduces calls to these
-functions is as follows: (http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression e;
+identifier ret;
+expression e,e1,e2,e3,e4,x;
 @@
 
-- clk_prepare(e);
-- clk_enable(e);
-+ clk_prepare_enable(e);
-
-@@
-expression e;
-@@
-
-- clk_disable(e);
-- clk_unprepare(e);
-+ clk_disable_unprepare(e);
+(
+if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+|
+ret = 0
+)
+... when != ret = e1
+*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+... when != x = e2
+    when != ret = e3
+*if (x = NULL || ...)
+{
+  ... when != ret = e4
+*  return ret;
+}
 // </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/amba/bus.c |   15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ drivers/edac/i7core_edac.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-index e8eb91b..6374ee6 100644
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -329,17 +329,9 @@ static int amba_get_enable_pclk(struct amba_device *pcdev)
- 	if (IS_ERR(pclk))
- 		return PTR_ERR(pclk);
+diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
+index 3672101..64dcc98 100644
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -1177,7 +1177,7 @@ static int i7core_create_sysfs_devices(struct mem_ctl_info *mci)
  
--	ret = clk_prepare(pclk);
--	if (ret) {
--		clk_put(pclk);
--		return ret;
--	}
--
--	ret = clk_enable(pclk);
--	if (ret) {
--		clk_unprepare(pclk);
-+	ret = clk_prepare_enable(pclk);
-+	if (ret)
- 		clk_put(pclk);
--	}
+ 	pvt->addrmatch_dev = kzalloc(sizeof(*pvt->addrmatch_dev), GFP_KERNEL);
+ 	if (!pvt->addrmatch_dev)
+-		return rc;
++		return -ENOMEM;
  
- 	return ret;
- }
-@@ -348,8 +340,7 @@ static void amba_put_disable_pclk(struct amba_device *pcdev)
- {
- 	struct clk *pclk = pcdev->pclk;
+ 	pvt->addrmatch_dev->type = &addrmatch_type;
+ 	pvt->addrmatch_dev->bus = mci->dev.bus;
+@@ -1198,7 +1198,7 @@ static int i7core_create_sysfs_devices(struct mem_ctl_info *mci)
+ 		if (!pvt->chancounts_dev) {
+ 			put_device(pvt->addrmatch_dev);
+ 			device_del(pvt->addrmatch_dev);
+-			return rc;
++			return -ENOMEM;
+ 		}
  
--	clk_disable(pclk);
--	clk_unprepare(pclk);
-+	clk_disable_unprepare(pclk);
- 	clk_put(pclk);
- }
- 
+ 		pvt->chancounts_dev->type = &all_channel_counts_type;
 
