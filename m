@@ -1,50 +1,63 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 16 Aug 2012 23:11:36 +0000
-Subject: Re: [patch] ipv6: move dereference after check in fl_free()
-Message-Id: <87sjbm1lg7.fsf@xmission.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Aug 2012 09:52:36 +0000
+Subject: [PATCH 6/6] drivers/atm/iphase.c: fix error return code
+Message-Id: <1344160356-387-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120816131502.GB23188@elgon.mountain>
-In-Reply-To: <20120816131502.GB23188@elgon.mountain> (Dan Carpenter's message
-	of "Thu, 16 Aug 2012 16:15:02 +0300")
+References: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chas Williams <chas@cmf.nrl.navy.mil>
+Cc: kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+From: Julia Lawall <julia@diku.dk>
 
-> There is a dereference before checking for NULL bug here.  Generally
-> free() functions should accept NULL pointers.  For example, fl_create()
-> can pass a NULL pointer to fl_free() on the error path.
+Convert a 0 error return code to a negative one, as returned elsewhere in the
+function.
 
-Thanks.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Applied to user-namespace.git
+// <smpl>
+@@
+identifier ret;
+expression e,e1,e2,e3,e4,x;
+@@
 
-Eric
+(
+if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+|
+ret = 0
+)
+... when != ret = e1
+*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+... when != x = e2
+    when != ret = e3
+*if (x = NULL || ...)
+{
+  ... when != ret = e4
+*  return ret;
+}
+// </smpl>
 
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Only needed on linux-next.
->
-> diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
-> index c836a6a..90bbefb 100644
-> --- a/net/ipv6/ip6_flowlabel.c
-> +++ b/net/ipv6/ip6_flowlabel.c
-> @@ -91,12 +91,9 @@ static struct ip6_flowlabel *fl_lookup(struct net *net, __be32 label)
->  
->  static void fl_free(struct ip6_flowlabel *fl)
->  {
-> -	switch (fl->share) {
-> -	case IPV6_FL_S_PROCESS:
-> -		put_pid(fl->owner.pid);
-> -		break;
-> -	}
->  	if (fl) {
-> +		if (fl->share = IPV6_FL_S_PROCESS)
-> +			put_pid(fl->owner.pid);
->  		release_net(fl->fl_net);
->  		kfree(fl->opt);
->  	}
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/atm/iphase.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index d438601..96cce6d 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -2362,7 +2362,7 @@ static int __devinit ia_init(struct atm_dev *dev)
+ 	{  
+ 		printk(DEV_LABEL " (itf %d): can't set up page mapping\n",  
+ 			    dev->number);  
+-		return error;  
++		return -ENOMEM;
+ 	}  
+ 	IF_INIT(printk(DEV_LABEL " (itf %d): rev.%d,base=%p,irq=%d\n",  
+ 			dev->number, iadev->pci->revision, base, iadev->irq);)
+
