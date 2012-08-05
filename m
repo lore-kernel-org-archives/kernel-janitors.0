@@ -1,51 +1,66 @@
-From: Stanislav Yakovlev <stas.yakovlev@gmail.com>
-Date: Sun, 19 Aug 2012 10:07:46 +0000
-Subject: Re: [PATCH 1/5] drivers/net/wireless/ipw2x00/ipw2100.c: introduce missing initialization
-Message-Id: <CA++WF2Np75wKXV-2C-FR2vhzcPvMu+z5MixcPy4ajOdHM0K88Q@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 05 Aug 2012 09:52:35 +0000
+Subject: [PATCH 5/6] drivers/char/tlclk.c: fix error return code
+Message-Id: <1344160356-387-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345325159-7365-1-git-send-email-Julia.Lawall@lip6.fr>
-	<CA++WF2MmTe6WP6MQRV-v1VwkpcUrw4hU6yh79NdG-K4snzQkbg@mail.gmail.com>
-	<alpine.DEB.2.02.1208191149400.2031@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1208191149400.2031@localhost6.localdomain6>
+References: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Gross <mark.gross@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-On 19 August 2012 13:49, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> The result of one call to a function is tested, and then at the second call
-> to the same function, the previous result, and not the current result, is
-> tested again.
->
-> Also changed &bssid to bssid, at the suggestion of Stanislav Yakovlev.
->
-> The semantic match that finds the first problem is as follows:
->
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression ret;
-> identifier f;
-> statement S1,S2;
-> @@
->
-> *ret = f(...);
-> if (\(ret != 0\|ret < 0\|ret = NULL\)) S1
-> ... when any
-> *f(...);
-> if (\(ret != 0\|ret < 0\|ret = NULL\)) S2
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
-> v2: changed &bssid to bssid
->
+From: Julia Lawall <julia@diku.dk>
 
-Thank you, Julia.
+Convert a 0 error return code to a negative one, as returned elsewhere in the
+function.
 
-Stanislav.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret;
+expression e,e1,e2,e3,e4,x;
+@@
+
+(
+if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+|
+ret = 0
+)
+... when != ret = e1
+*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+... when != x = e2
+    when != ret = e3
+*if (x = NULL || ...)
+{
+  ... when != ret = e4
+*  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+ drivers/char/tlclk.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/char/tlclk.c b/drivers/char/tlclk.c
+index ce29e7c..e95e0ab 100644
+--- a/drivers/char/tlclk.c
++++ b/drivers/char/tlclk.c
+@@ -784,8 +784,10 @@ static int __init tlclk_init(void)
+ 	}
+ 	tlclk_major = ret;
+ 	alarm_events = kzalloc( sizeof(struct tlclk_alarms), GFP_KERNEL);
+-	if (!alarm_events)
++	if (!alarm_events) {
++		ret = -ENOMEM;
+ 		goto out1;
++	}
+ 
+ 	/* Read telecom clock IRQ number (Set by BIOS) */
+ 	if (!request_region(TLCLK_BASE, 8, "telco_clock")) {
+
