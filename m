@@ -1,7 +1,7 @@
 From: Julia.Lawall@lip6.fr
-Date: Mon, 06 Aug 2012 19:53:19 +0000
+Date: Mon, 06 Aug 2012 19:53:20 +0000
 Subject: Re: [PATCH] drivers/media/video/mx2_emmaprp.c: use devm_kzalloc and devm_clk_get
-Message-Id: <20120806215319.61694sx9o05uxm68@webmail.lip6.fr>
+Message-Id: <20120806215320.21253wg8t8q1evok@webmail.lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1344104607-18805-1-git-send-email-Julia.Lawall@lip6.fr>
  <20120806142323.GO4352@mwanda> <20120806142650.GT4403@mwanda>
