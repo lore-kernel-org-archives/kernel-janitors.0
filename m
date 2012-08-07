@@ -1,57 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 08:44:19 +0000
-Subject: [PATCH 5/14] drivers/power/ab8500_charger.c: fix error return code
-Message-Id: <1345365870-29831-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 07 Aug 2012 00:43:23 +0000
+Subject: [wireless-testing:master 37/59] drivers/net/wireless/b43/phy_n.c:535:1-56: code aligned with followi
+Message-Id: <20120807004323.GA9903@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Anton Vorontsov <cbou@mail.ru>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Rafa=C5=82,
 
-Initialize return variable before exiting on an error path.
+FYI, there are new coccinelle warnings show up in
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-tes=
+ting.git master
+head:   e73930134aafdf703d77043a429e46d254176ac8
+commit: 572d37a48557e7d38a5d9b5857627bc29f33a26c [37/59] b43: N-PHY: init 0=
+x2057 radio
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+All coccinelle warnings:
 
-// </smpl>
++ drivers/net/wireless/b43/phy_n.c:535:1-56: code aligned with following co=
+de on line 536
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+git checkout 572d37a48557e7d38a5d9b5857627bc29f33a26c
+vim +535 drivers/net/wireless/b43/phy_n.c
+   532		b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x55);
+   533		if (!b43_radio_wait_value(dev, R2057_RCCAL_DONE_OSCCAP, 1, 1, 500,
+   534					  5000000))
+ > 535		b43_radio_write(dev, R2057_RCCAL_START_R1_Q1_P1, 0x15);
+   536		if (special) {
+   537			b43_radio_write(dev, R2057_RCCAL_MASTER, 0x73);
+   538			b43_radio_write(dev, R2057_RCCAL_X1, 0x28);
 
 ---
- drivers/power/ab8500_charger.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/power/ab8500_charger.c b/drivers/power/ab8500_charger.c
-index d4f0c98..c2ef947 100644
---- a/drivers/power/ab8500_charger.c
-+++ b/drivers/power/ab8500_charger.c
-@@ -2614,6 +2614,7 @@ static int __devinit ab8500_charger_probe(struct platform_device *pdev)
- 		create_singlethread_workqueue("ab8500_charger_wq");
- 	if (di->charger_wq = NULL) {
- 		dev_err(di->dev, "failed to create work queue\n");
-+		ret = -ENOMEM;
- 		goto free_device_info;
- 	}
- 
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
