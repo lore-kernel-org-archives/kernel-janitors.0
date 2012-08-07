@@ -1,16 +1,34 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 07 Aug 2012 02:47:07 +0000
-Subject: Re: [wireless-testing:master 53/59] drivers/net/wireless/mwifiex/uap_event.c:251:11: warning: compar
-Message-Id: <20120807024707.GA21890@localhost>
+From: Avinash Patil <patila@marvell.com>
+Date: Tue, 07 Aug 2012 06:56:07 +0000
+Subject: RE: [wireless-testing:master 53/59] drivers/net/wireless/mwifiex/uap_event.c:251:11: warning: compar
+Message-Id: <CBACCFA0AEB13A41977475BCF3E896FC1CC7BCF199@SC-VEXCH2.marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120807005524.GD9903@localhost>
  <477F20668A386D41ADCC57781B1F7043083AE3DA2C@SC-VEXCH1.marvell.com>
-In-Reply-To: <477F20668A386D41ADCC57781B1F7043083AE3DA2C@SC-VEXCH1.marvell.com>
+ <20120807024707.GA21890@localhost>
+In-Reply-To: <20120807024707.GA21890@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bing Zhao <bzhao@marvell.com>
-Cc: Avinash Patil <patila@marvell.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, Kiran Divekar <dkiran@marvell.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: Fengguang Wu <fengguang.wu@intel.com>, Bing Zhao <bzhao@marvell.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, Kiran Divekar <dkiran@marvell.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+
+Hi Fengguang,
+
+Thanks for toolchain URL.
+
+I will fix this warning and send a patch to mailing list.
+
+Regards,
+Avinash Patil
+
+
+-----Original Message-----
+From: Fengguang Wu [mailto:fengguang.wu@intel.com] 
+Sent: Tuesday, August 07, 2012 8:17 AM
+To: Bing Zhao
+Cc: Avinash Patil; kernel-janitors@vger.kernel.org; John W. Linville; Kiran Divekar; linux-wireless@vger.kernel.org
+Subject: Re: [wireless-testing:master 53/59] drivers/net/wireless/mwifiex/uap_event.c:251:11: warning: comparison of distinct pointer types lacks a cast
 
 On Mon, Aug 06, 2012 at 07:33:37PM -0700, Bing Zhao wrote:
 > Hi Fengguang,
