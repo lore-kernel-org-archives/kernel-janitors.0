@@ -1,43 +1,60 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Date: Wed, 22 Aug 2012 16:12:26 +0000
-Subject: RE: [PATCH 10/14] drivers/spi/spi-ep93xx.c: fix error return code
-Message-Id: <ADE657CA350FB648AAC2C43247A983F00206B1B19DD6@AUSP01VMBX24.collaborationhost.net>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 07 Aug 2012 16:20:15 +0000
+Subject: [josef-btrfs:master 12/16] fs/btrfs/inode.c:78:19: sparse: symbol 'btrfs_dip_cachep' was not declare
+Message-Id: <20120807162015.GA10779@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="FL5UXtIhxfXey3p5"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
- <1345365870-29831-12-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345365870-29831-12-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Grant Likely <grant.likely@secretlab.ca>
-Cc: "spi-devel-general@lists.sourceforge.net" <spi-devel-general@lists.sourceforge.net>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Sunday, August 19, 2012 1:44 AM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Initialize return variable before exiting on an error path.
 
-<snip>
+--FL5UXtIhxfXey3p5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  drivers/spi/spi-ep93xx.c |    1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-> index f97f1d2..9e7fdfd 100644
-> --- a/drivers/spi/spi-ep93xx.c
-> +++ b/drivers/spi/spi-ep93xx.c
-> @@ -1105,6 +1105,7 @@ static int __devinit ep93xx_spi_probe(struct platform_device *pdev)
->  	espi->wq = create_singlethread_workqueue("ep93xx_spid");
->  	if (!espi->wq) {
->  		dev_err(&pdev->dev, "unable to create workqueue\n");
-> +		error = -ENOMEM;
->  		goto fail_free_dma;
->  	}
->  	INIT_WORK(&espi->msg_work, ep93xx_spi_work);
+Hi Josef,
 
-Looks ok to me... Thanks!
+FYI, there are new sparse warnings show up in
 
-Reviewed-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git master
+head:   1529b67c68e0ac3123a831815c26211d801ab975
+commit: 3f1d28fc7d56b5b6c77af4ca1f258dacdd508ce4 [12/16] Btrfs: use a slab for btrfs_dio_private
+
+All sparse warnings:
+
++ fs/btrfs/inode.c:78:19: sparse: symbol 'btrfs_dip_cachep' was not declared. Should it be static?
+
+vim +78 fs/btrfs/inode.c
+    75	struct kmem_cache *btrfs_transaction_cachep;
+    76	struct kmem_cache *btrfs_path_cachep;
+    77	struct kmem_cache *btrfs_free_space_cachep;
+  > 78	struct kmem_cache *btrfs_dip_cachep;
+    79	
+    80	#define S_SHIFT 12
+    81	static unsigned char btrfs_type_by_mode[S_IFMT >> S_SHIFT] = {
+
+Please consider folding the attached diff :-)
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+
+--FL5UXtIhxfXey3p5
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-3f1d28f.diff"
+
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 351dd3b..7ab714f 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -75,7 +75,7 @@ struct kmem_cache *btrfs_trans_handle_cachep;
+ struct kmem_cache *btrfs_transaction_cachep;
+ struct kmem_cache *btrfs_path_cachep;
+ struct kmem_cache *btrfs_free_space_cachep;
+-struct kmem_cache *btrfs_dip_cachep;
++static struct kmem_cache *btrfs_dip_cachep;
+ 
+ #define S_SHIFT 12
+ static unsigned char btrfs_type_by_mode[S_IFMT >> S_SHIFT] = {
+
+--FL5UXtIhxfXey3p5--
