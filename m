@@ -1,63 +1,62 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Date: Thu, 09 Aug 2012 21:13:09 +0000
-Subject: Re: [pm:linux-next 25/39] arch/arm/mach-shmobile/pm-r8a7779.c:203:2: warning: (near initialization f
-Message-Id: <201208092313.09527.rjw@sisk.pl>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Date: Wed, 08 Aug 2012 22:34:11 +0000
+Subject: Re: [tip:x86:fpu 2/2] arch/x86/kernel/signal.c:626:4: error: implicit declaration of function '__set
+Message-Id: <5022E963.9020809@zytor.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120809173158.GB14562@localhost>
-In-Reply-To: <20120809173158.GB14562@localhost>
+References: <20120725232716.GB5758@localhost> <1343324885.3696.527.camel@sbsiddha-desk.sc.intel.com>
+In-Reply-To: <1343324885.3696.527.camel@sbsiddha-desk.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+On 07/26/2012 10:48 AM, Suresh Siddha wrote:
+>
+> Appended the patch for this. Thanks!
+> ---
+> From: Suresh Siddha <suresh.b.siddha@intel.com>
+> Subject: x86, fpu: fix x86_64 build without CONFIG_IA32_EMULATION
+>
+> Fengguang's automated build reported some compilation failures:
+>> arch/x86/kernel/signal.c: In function 'setup_rt_frame':
+>> arch/x86/kernel/signal.c:626:4: error: implicit declaration of function '__setup_frame'
+>> arch/x86/kernel/xsave.c: In function 'save_fsave_header':
+>> arch/x86/kernel/xsave.c:144:7: error: dereferencing pointer to incomplete type
+>> ...
+>
+> Fix x86_64 kernel build without CONFIG_IA32_EMULATION.
+>
+> Code saving fsave prefix is applicable only for CONFIG_X86_32 or
+> CONFIG_IA32_EMULATION. Use config_enabled() checks to remove the unnecessary
+> code compile-time for x86_64 kernels build without CONFIG_IA32_EMULATION.
+>
+> Also while we are at this, fix a spurious warning:
+>> arch/x86/kernel/xsave.c:209:15: warning: ignoring return value of ‘__clear_user’, declared with attribute warn_unused_result
+>
+> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
 
-On Thursday, August 09, 2012, Fengguang Wu wrote:
-> Hi Rafael,
-> 
-> FYI, there are new compile warnings show up in
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-> head:   d456facb656659ead41e1b3cccf693213e80d04a
-> commit: 85b6dd851494d40ae48895454f836b21d07758cc [25/39] ARM: shmobile: Drop r8a7779_add_device_to_domain()
-> config: arm-marzen_defconfig (attached as .config)
-> 
-> All error/warnings:
-> 
-> arch/arm/mach-shmobile/pm-r8a7779.c:203:2: error: unknown field 'genpd_name' specified in initializer
-> arch/arm/mach-shmobile/pm-r8a7779.c:203:2: warning: missing braces around initializer [-Wmissing-braces]
-> arch/arm/mach-shmobile/pm-r8a7779.c:203:2: warning: (near initialization for 'r8a7779_sh4a.genpd') [-Wmissing-braces]
-> arch/arm/mach-shmobile/pm-r8a7779.c:203:2: warning: initialization from incompatible pointer type [enabled by default]
-> arch/arm/mach-shmobile/pm-r8a7779.c:203:2: warning: (near initialization for 'r8a7779_sh4a.genpd.domain.ops.prepare') [enabled by default]
-> arch/arm/mach-shmobile/pm-r8a7779.c:211:2: error: unknown field 'genpd_name' specified in initializer
-> arch/arm/mach-shmobile/pm-r8a7779.c:211:2: warning: missing braces around initializer [-Wmissing-braces]
-> arch/arm/mach-shmobile/pm-r8a7779.c:211:2: warning: (near initialization for 'r8a7779_sgx.genpd') [-Wmissing-braces]
-> arch/arm/mach-shmobile/pm-r8a7779.c:211:2: warning: initialization from incompatible pointer type [enabled by default]
-> arch/arm/mach-shmobile/pm-r8a7779.c:211:2: warning: (near initialization for 'r8a7779_sgx.genpd.domain.ops.prepare') [enabled by default]
-> arch/arm/mach-shmobile/pm-r8a7779.c:219:2: error: unknown field 'genpd_name' specified in initializer
-> arch/arm/mach-shmobile/pm-r8a7779.c:219:2: warning: missing braces around initializer [-Wmissing-braces]
-> arch/arm/mach-shmobile/pm-r8a7779.c:219:2: warning: (near initialization for 'r8a7779_vdp1.genpd') [-Wmissing-braces]
-> arch/arm/mach-shmobile/pm-r8a7779.c:219:2: warning: initialization from incompatible pointer type [enabled by default]
-> arch/arm/mach-shmobile/pm-r8a7779.c:219:2: warning: (near initialization for 'r8a7779_vdp1.genpd.domain.ops.prepare') [enabled by default]
-> arch/arm/mach-shmobile/pm-r8a7779.c:227:2: error: unknown field 'genpd_name' specified in initializer
-> arch/arm/mach-shmobile/pm-r8a7779.c:227:2: warning: missing braces around initializer [-Wmissing-braces]
-> arch/arm/mach-shmobile/pm-r8a7779.c:227:2: warning: (near initialization for 'r8a7779_impx3.genpd') [-Wmissing-braces]
-> arch/arm/mach-shmobile/pm-r8a7779.c:227:2: warning: initialization from incompatible pointer type [enabled by default]
-> arch/arm/mach-shmobile/pm-r8a7779.c:227:2: warning: (near initialization for 'r8a7779_impx3.genpd.domain.ops.prepare') [enabled by default]
-> 
-> vim +203 arch/arm/mach-shmobile/pm-r8a7779.c
->    200	}
->    201	
->    202	struct r8a7779_pm_domain r8a7779_sh4a = {
->  > 203		.genpd_name = "SH4A",
->    204		.ch = {
->    205			.chan_offs = 0x80, /* PWRSR1 .. PWRER1 */
->    206			.isr_bit = 16, /* SH4A */
-> 
+With this patch applied I get an error at:
 
-Thanks for the report!
+/home/hpa/kernel/tip.x86-fpu/arch/x86/kernel/signal.c:792:12: error: 
+static declaration of ‘x32_setup_rt_frame’ follows non-static declaration
+In file included from 
+/home/hpa/kernel/tip.x86-fpu/arch/x86/kernel/signal.c:29:0:
+/home/hpa/kernel/tip.x86-fpu/arch/x86/include/asm/fpu-internal.h:62:5: 
+note: previous declaration of ‘x32_setup_rt_frame’ was here
+/home/hpa/kernel/tip.x86-fpu/arch/x86/kernel/signal.c:792:12: warning: 
+‘x32_setup_rt_frame’ defined but not used [-Wunused-function]
+make[4]: *** [arch/x86/kernel/signal.o] Error 1
+make[3]: *** [arch/x86/kernel] Error 2
+make[2]: *** [arch/x86] Error 2
+make[1]: *** [sub-make] Error 2
+make[1]: Leaving directory `/home/hpa/kernel/tip.x86-fpu'
 
-This problem should be fixed in linux-pm/linux-next now.
+... for an x86-64 allyesconfig.
 
-Thanks,
-Rafael
+	-hpa
+
+-- 
+H. Peter Anvin, Intel Open Source Technology Center
+I work for Intel.  I don't speak on their behalf.
+
