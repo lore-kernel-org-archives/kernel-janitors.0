@@ -1,29 +1,29 @@
-From: Daniel Drake <dsd@laptop.org>
-Date: Fri, 17 Aug 2012 21:44:19 +0000
-Subject: Re: [patch] mtd: cafe_nand: fix an & vs | mistake
-Message-Id: <CAMLZHHSDCC1MWBLUCrpXHU_EtRPw3bf1kOTFWS-NE8q3Ane41w@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Aug 2012 09:22:58 +0000
+Subject: [patch] ALSA: cs46xx - signedness bug in snd_cs46xx_codec_read()
+Message-Id: <20120810092258.GA26875@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120609160825.GC6488@elgon.mountain>
- <1340018702.2420.32.camel@sauron.fi.intel.com>
-In-Reply-To: <1340018702.2420.32.camel@sauron.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: artem.bityutskiy@linux.intel.com
-Cc: Mike Dunn <mikedunn@newsguy.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jun 18, 2012 at 5:25 AM, Artem Bityutskiy
-<artem.bityutskiy@linux.intel.com> wrote:
-> Pushed this patch to l2-mtd.git and added CC to -stable. The patch seems
-> to be a real bug-fix. Daniel, could you please check it - it will be
-> shame if it hits -stable and breaks something.
+This function returns its own error codes instead of normal negative
+error codes.
 
-Thanks for catching this, sorry for the delay in looking closely at
-it. I double-checked the device specifications and indeed, Dan's
-interpretation is correct.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I also tested the patch. System still remains functional and basic
-nand performance seems to be the same.
-
-Thanks!
-Daniel
+diff --git a/sound/pci/cs46xx/cs46xx_lib.c b/sound/pci/cs46xx/cs46xx_lib.c
+index f75f5ff..a71d1c1 100644
+--- a/sound/pci/cs46xx/cs46xx_lib.c
++++ b/sound/pci/cs46xx/cs46xx_lib.c
+@@ -94,7 +94,7 @@ static unsigned short snd_cs46xx_codec_read(struct snd_cs46xx *chip,
+ 
+ 	if (snd_BUG_ON(codec_index != CS46XX_PRIMARY_CODEC_INDEX &&
+ 		       codec_index != CS46XX_SECONDARY_CODEC_INDEX))
+-		return -EINVAL;
++		return 0xffff;
+ 
+ 	chip->active_ctrl(chip, 1);
+ 
