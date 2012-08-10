@@ -1,29 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 10 Aug 2012 09:22:58 +0000
-Subject: [patch] ALSA: cs46xx - signedness bug in snd_cs46xx_codec_read()
-Message-Id: <20120810092258.GA26875@elgon.mountain>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Fri, 10 Aug 2012 10:12:14 +0000
+Subject: Re: [patch] ALSA: cs46xx - signedness bug in snd_cs46xx_codec_read()
+Message-Id: <s5h8vdnys1t.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120810092258.GA26875@elgon.mountain>
+In-Reply-To: <20120810092258.GA26875@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-This function returns its own error codes instead of normal negative
-error codes.
+At Fri, 10 Aug 2012 12:22:58 +0300,
+Dan Carpenter wrote:
+> 
+> This function returns its own error codes instead of normal negative
+> error codes.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks, applied now.
 
-diff --git a/sound/pci/cs46xx/cs46xx_lib.c b/sound/pci/cs46xx/cs46xx_lib.c
-index f75f5ff..a71d1c1 100644
---- a/sound/pci/cs46xx/cs46xx_lib.c
-+++ b/sound/pci/cs46xx/cs46xx_lib.c
-@@ -94,7 +94,7 @@ static unsigned short snd_cs46xx_codec_read(struct snd_cs46xx *chip,
- 
- 	if (snd_BUG_ON(codec_index != CS46XX_PRIMARY_CODEC_INDEX &&
- 		       codec_index != CS46XX_SECONDARY_CODEC_INDEX))
--		return -EINVAL;
-+		return 0xffff;
- 
- 	chip->active_ctrl(chip, 1);
- 
+
+Takashi
+
+> 
+> diff --git a/sound/pci/cs46xx/cs46xx_lib.c b/sound/pci/cs46xx/cs46xx_lib.c
+> index f75f5ff..a71d1c1 100644
+> --- a/sound/pci/cs46xx/cs46xx_lib.c
+> +++ b/sound/pci/cs46xx/cs46xx_lib.c
+> @@ -94,7 +94,7 @@ static unsigned short snd_cs46xx_codec_read(struct snd_cs46xx *chip,
+>  
+>  	if (snd_BUG_ON(codec_index != CS46XX_PRIMARY_CODEC_INDEX &&
+>  		       codec_index != CS46XX_SECONDARY_CODEC_INDEX))
+> -		return -EINVAL;
+> +		return 0xffff;
+>  
+>  	chip->active_ctrl(chip, 1);
+>  
+> 
