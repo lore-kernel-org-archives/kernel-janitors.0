@@ -1,36 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 06 Aug 2012 20:28:35 +0000
-Subject: Re: [PATCH 6/6] drivers/net/phy/mdio-mux-gpio.c: drop devm_kfree of devm_kzalloc'd data
-Message-Id: <20120806.132835.1454407216893349784.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 10 Aug 2012 09:24:37 +0000
+Subject: [patch] hwmon: (f71882fg) Signedness bug in f71882fg_init()
+Message-Id: <20120810092435.GC26875@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344099049-15212-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344099049-15212-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat,  4 Aug 2012 18:50:49 +0200
+"address" stores and unsigned short on success but a negative on failure
+so it needs to be an int.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> devm_kfree should not have to be explicitly used.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,d;
-> @@
-> 
-> x = devm_kzalloc(...)
-> ...
-> ?-devm_kfree(d,x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Applies to linux-next.  This was introduced in 1f7f944 "hwmon:
+(f71882fg) Fix build warning".
 
-Applied.
+diff --git a/drivers/hwmon/f71882fg.c b/drivers/hwmon/f71882fg.c
+index b6304eb..853f544 100644
+--- a/drivers/hwmon/f71882fg.c
++++ b/drivers/hwmon/f71882fg.c
+@@ -2662,7 +2662,7 @@ exit_device_put:
+ static int __init f71882fg_init(void)
+ {
+ 	int err = -ENODEV;
+-	unsigned short address;
++	int address;
+ 	struct f71882fg_sio_data sio_data;
+ 
+ 	memset(&sio_data, 0, sizeof(sio_data));
