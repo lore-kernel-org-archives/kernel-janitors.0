@@ -1,56 +1,54 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Mon, 13 Aug 2012 06:56:45 +0000
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 13 Aug 2012 13:39:10 +0000
 Subject: Re: [userns:userns-always-map-user-v45 80/99] fs/namespace.c:2290:1: error: unknown type name 'atomi
-Message-Id: <87k3x3z3de.fsf@xmission.com>
+Message-Id: <20120813133910.GA30532@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120812145023.GA17077@localhost>
-In-Reply-To: <20120812145023.GA17077@localhost> (Fengguang Wu's message of
-	"Sun, 12 Aug 2012 22:50:23 +0800")
+ <87k3x3z3de.fsf@xmission.com>
+In-Reply-To: <87k3x3z3de.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, kernel-janitors@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, kernel-janitors@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
 
-Fengguang Wu <fengguang.wu@intel.com> writes:
+On Sun, Aug 12, 2012 at 11:56:45PM -0700, Eric W. Biederman wrote:
+> Fengguang Wu <fengguang.wu@intel.com> writes:
+> 
+> > Hi Geert,
+> >
+> > This is the build error I get, on Eric's userns tree.
+> >
+> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-always-map-user-v45
+> > head:   38a0b1b84f5f613ff4e01fffda27f87d4cb2b649
+> > commit: 5ea9fc30545b658380d4794340227fe821b83701 [80/99] vfs: Add setns support for the mount namespace
+> > config: m68k-m5475evb_defconfig (attached as .config)
+> >
+> > All related error/warning messages:
+> >
+> > fs/namespace.c:2290:1: error: unknown type name 'atomic64_t'
+> > fs/namespace.c:2290:1: error: implicit declaration of function 'ATOMIC64_INIT' [-Werror=implicit-function-declaration]
+> > fs/namespace.c:2290:1: error: initializer element is not constant
+> > fs/namespace.c: In function 'alloc_mnt_ns':
+> > fs/namespace.c:2299:2: error: implicit declaration of function 'atomic64_add_return' [-Werror=implicit-function-declaration]
+> > cc1: some warnings being treated as errors
+> 
+> Fengguang is m68k the only place you are seeing build failures?
 
-> Hi Geert,
->
-> This is the build error I get, on Eric's userns tree.
->
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-always-map-user-v45
-> head:   38a0b1b84f5f613ff4e01fffda27f87d4cb2b649
-> commit: 5ea9fc30545b658380d4794340227fe821b83701 [80/99] vfs: Add setns support for the mount namespace
-> config: m68k-m5475evb_defconfig (attached as .config)
->
-> All related error/warning messages:
->
-> fs/namespace.c:2290:1: error: unknown type name 'atomic64_t'
-> fs/namespace.c:2290:1: error: implicit declaration of function 'ATOMIC64_INIT' [-Werror=implicit-function-declaration]
-> fs/namespace.c:2290:1: error: initializer element is not constant
-> fs/namespace.c: In function 'alloc_mnt_ns':
-> fs/namespace.c:2299:2: error: implicit declaration of function 'atomic64_add_return' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
+Yes.
 
-Fengguang is m68k the only place you are seeing build failures?
+> Exactly how I get a 64bit counter in that code path is not terribly
+> important.  I picked an atomic64_t because it looked simple and cheap.
 
-Exactly how I get a 64bit counter in that code path is not terribly
-important.  I picked an atomic64_t because it looked simple and cheap.
+Fair enough. As long as it's not in hot code path, it definitely helps
+to use simple solutions.
 
-If this is limited to a couple of m68k sub-arches I will let you guys
-finish fixing this up so people can depend on atomic64_t being
-available.  Otherwise it probably makes sense to go to with a different
-abstraction.
+> If this is limited to a couple of m68k sub-arches I will let you guys
+> finish fixing this up so people can depend on atomic64_t being
+> available.  Otherwise it probably makes sense to go to with a different
+> abstraction.
 
-> vim +2290 fs/namespace.c
->   2287	 * number incrementing at 10Ghz will take 12,427 years to wrap which
->   2288	 * is effectively never, so we can ignore the possibility.
->   2289	 */
->> 2290	static atomic64_t mnt_ns_seq = ATOMIC64_INIT(1);
->   2291	
->   2292	static struct mnt_namespace *alloc_mnt_ns(void)
->   2293	{
->
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Centre
-> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+I'd suggest to fix it in m68k and make atomic64_t generally available.
+
+Thanks,
+Fengguang
