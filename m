@@ -1,60 +1,67 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Fri, 17 Aug 2012 17:31:04 +0000
-Subject: [PATCH Resend] staging: wlan-ng: Fix problem with wrong arguments
-Message-Id: <1345224665-22439-1-git-send-email-emilgoode@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 14 Aug 2012 20:38:47 +0000
+Subject: [tip:auto-latest 23/37] kernel/smpboot.c:164:36: sparse: incorrect type in initializer (different ad
+Message-Id: <20120814203847.GC20732@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: gregkh@linuxfoundation.org, dan.carpenter@oracle.com, krzysztof.wilczynski@linux.com, devendra.aaru@gmail.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-The function pointer scan in struct cfg80211_ops is not
-supposed to be assigned a function with a struct net_device
-pointer as an argument. Instead access the net_device struct
-in the following way:
+Hi Thomas,
 
-struct net_device *dev = request->wdev->netdev;
+FYI, there are new sparse warnings show up in
 
-sparse gives these warnings:
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git auto-latest
+head:   e42942691c8262b7fe2a7b88577623082b988217
+commit: f97f8f06a49febbc3cb3635172efbe64ddc79700 [23/37] smpboot: Provide infrastructure for percpu hotplug threads
 
-drivers/staging/wlan-ng/cfg80211.c:726:17: warning:
-        incorrect type in initializer (incompatible argument 2
-        (different base types))
-        expected int ( *scan )( ... )
-        got int ( extern [toplevel] *<noident> )( ... )
+All sparse warnings:
 
-drivers/staging/wlan-ng/cfg80211.c:726:2: warning:
-        initialization from incompatible pointer type [enabled by default]
+  kernel/smpboot.c:23:8: sparse: symbol 'idle_threads' was not declared. Should it be static?
++ kernel/smpboot.c:164:36: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:164:36:    expected void const [noderef] <asn:3>*__vpp_verify
+  kernel/smpboot.c:164:36:    got struct task_struct [noderef] <asn:3>**<noident>
+  kernel/smpboot.c:164:35: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:164:35:    expected struct task_struct *tsk
+  kernel/smpboot.c:164:35:    got struct task_struct [noderef] <asn:3>*<noident>
+  kernel/smpboot.c:184:10: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:184:10:    expected void const [noderef] <asn:3>*__vpp_verify
+  kernel/smpboot.c:184:10:    got struct task_struct [noderef] <asn:3>**<noident>
++ kernel/smpboot.c:184:38: sparse: incorrect type in assignment (different address spaces)
+  kernel/smpboot.c:184:38:    expected struct task_struct [noderef] <asn:3>*<noident>
+  kernel/smpboot.c:184:38:    got struct task_struct *[assigned] tsk
+  kernel/smpboot.c:205:36: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:205:36:    expected void const [noderef] <asn:3>*__vpp_verify
+  kernel/smpboot.c:205:36:    got struct task_struct [noderef] <asn:3>**<noident>
+  kernel/smpboot.c:205:35: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:205:35:    expected struct task_struct *tsk
+  kernel/smpboot.c:205:35:    got struct task_struct [noderef] <asn:3>*<noident>
+  kernel/smpboot.c:222:36: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:222:36:    expected void const [noderef] <asn:3>*__vpp_verify
+  kernel/smpboot.c:222:36:    got struct task_struct [noderef] <asn:3>**<noident>
+  kernel/smpboot.c:222:35: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:222:35:    expected struct task_struct *tsk
+  kernel/smpboot.c:222:35:    got struct task_struct [noderef] <asn:3>*<noident>
+  kernel/smpboot.c:244:44: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:244:44:    expected void const [noderef] <asn:3>*__vpp_verify
+  kernel/smpboot.c:244:44:    got struct task_struct [noderef] <asn:3>**<noident>
+  kernel/smpboot.c:244:43: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:244:43:    expected struct task_struct *tsk
+  kernel/smpboot.c:244:43:    got struct task_struct [noderef] <asn:3>*<noident>
+  kernel/smpboot.c:249:26: sparse: incorrect type in initializer (different address spaces)
+  kernel/smpboot.c:249:26:    expected void const [noderef] <asn:3>*__vpp_verify
+  kernel/smpboot.c:249:26:    got struct task_struct [noderef] <asn:3>**<noident>
 
-drivers/staging/wlan-ng/cfg80211.c:726:2: warning:
-        (near initialization for ‘prism2_usb_cfg_ops.scan’)
-        [enabled by default]
+vim +164 kernel/smpboot.c
+   161	static int
+   162	__smpboot_create_thread(struct smp_hotplug_thread *ht, unsigned int cpu)
+   163	{
+ > 164		struct task_struct *tsk = *per_cpu_ptr(ht->store, cpu);
+   165		struct smpboot_thread_data *td;
+   166	
+   167		if (tsk)
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-This patch depends on the commit fd014284 which is now
-in the staging tree so it can be safely applied.
-
- drivers/staging/wlan-ng/cfg80211.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
-index fabff4d..0970127 100644
---- a/drivers/staging/wlan-ng/cfg80211.c
-+++ b/drivers/staging/wlan-ng/cfg80211.c
-@@ -327,9 +327,9 @@ int prism2_get_station(struct wiphy *wiphy, struct net_device *dev,
- 	return result;
- }
- 
--int prism2_scan(struct wiphy *wiphy, struct net_device *dev,
--		struct cfg80211_scan_request *request)
-+int prism2_scan(struct wiphy *wiphy, struct cfg80211_scan_request *request)
- {
-+	struct net_device *dev = request->wdev->netdev;
- 	struct prism2_wiphy_private *priv = wiphy_priv(wiphy);
- 	wlandevice_t *wlandev = dev->ml_priv;
- 	struct p80211msg_dot11req_scan msg1;
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
