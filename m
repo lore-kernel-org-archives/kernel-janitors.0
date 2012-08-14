@@ -1,66 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 14 Aug 2012 06:47:36 +0000
-Subject: [PATCH 3/5] drivers/usb/wusbcore/wa-hc.c: fix error return code
-Message-Id: <1344926858-1162-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Aug 2012 06:51:20 +0000
+Subject: [patch] [media] it913x-fe: use ARRAY_SIZE() as a cleanup
+Message-Id: <20120814065120.GA4791@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Malcolm Priestley <tvboxspy@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This code looks suspicious, but it turns out that "nv" is an array of u8
+so sizeof() is the same as ARRAY_SIZE().  Using ARRAY_SIZE() is more
+readable though.
 
-Convert a 0 error return code to a negative one, as returned elsewhere in the
-function.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret;
-expression e,e1,e2,e3,e4,x;
-@@
-
-(
-if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
-|
-ret = 0
-)
-... when != ret = e1
-*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
-... when != x = e2
-    when != ret = e3
-*if (x = NULL || ...)
-{
-  ... when != ret = e4
-*  return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/usb/wusbcore/wa-hc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/wusbcore/wa-hc.c b/drivers/usb/wusbcore/wa-hc.c
-index 9e4a924..a09b65e 100644
---- a/drivers/usb/wusbcore/wa-hc.c
-+++ b/drivers/usb/wusbcore/wa-hc.c
-@@ -46,8 +46,10 @@ int wa_create(struct wahc *wa, struct usb_interface *iface)
- 	wa->dto_epd = &iface->cur_altsetting->endpoint[2].desc;
- 	wa->xfer_result_size = usb_endpoint_maxp(wa->dti_epd);
- 	wa->xfer_result = kmalloc(wa->xfer_result_size, GFP_KERNEL);
--	if (wa->xfer_result = NULL)
-+	if (wa->xfer_result = NULL) {
-+		result = -ENOMEM;
- 		goto error_xfer_result_alloc;
-+	}
- 	result = wa_nep_create(wa, iface);
- 	if (result < 0) {
- 		dev_err(dev, "WA-CDS: can't initialize notif endpoint: %d\n",
-
+diff --git a/drivers/media/dvb/frontends/it913x-fe.c b/drivers/media/dvb/frontends/it913x-fe.c
+index 708cbf1..6e1c6eb 100644
+--- a/drivers/media/dvb/frontends/it913x-fe.c
++++ b/drivers/media/dvb/frontends/it913x-fe.c
+@@ -199,7 +199,7 @@ static int it913x_init_tuner(struct it913x_fe_state *state)
+ 
+ 	if (reg < 0)
+ 		return -ENODEV;
+-	else if (reg < sizeof(nv))
++	else if (reg < ARRAY_SIZE(nv))
+ 		nv_val = nv[reg];
+ 	else
+ 		nv_val = 2;
