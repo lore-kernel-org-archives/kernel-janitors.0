@@ -1,51 +1,70 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Wed, 22 Aug 2012 17:00:25 +0000
-Subject: Re: [PATCH 14/14] drivers/spi/spi-s3c24xx.c: fix error return code
-Message-Id: <20120822170025.GV7995@opensource.wolfsonmicro.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="L46vHWpLfEKD8KlK"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 14 Aug 2012 12:58:32 +0000
+Subject: [PATCH 2/5] drivers/dma/amba-pl08x.c: fix error return code
+Message-Id: <1344949115-13266-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
- <1345365870-29831-15-git-send-email-Julia.Lawall@lip6.fr>
- <1b3201cd8049$e753f720$b5fbe560$%kim@samsung.com>
- <20120822114015.GI7995@opensource.wolfsonmicro.com>
- <alpine.DEB.2.02.1208221342240.1991@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1208221342240.1991@hadrien>
-To: linux-arm-kernel@lists.infradead.org
+References: <1344949115-13266-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344949115-13266-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---L46vHWpLfEKD8KlK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Convert a 0 error return code to a negative one, as returned elsewhere in the
+function.
 
-On Wed, Aug 22, 2012 at 01:42:47PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Initialize return variable before exiting on an error path.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Applied, thanks.
+// <smpl>
+@@
+identifier ret;
+expression e,e1,e2,e3,e4,x;
+@@
 
---L46vHWpLfEKD8KlK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+(
+if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+|
+ret = 0
+)
+... when != ret = e1
+*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+... when != x = e2
+    when != ret = e3
+*if (x = NULL || ...)
+{
+  ... when != ret = e4
+*  return ret;
+}
+// </smpl>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-iQIcBAEBAgAGBQJQNRAKAAoJEFJkBDiqVpZ44swP/37K/DW4+jPwNyYfKgYsDNHQ
-u4Q6uJfTi8whnArR9vMhWxWtoWq1uEjt6pyVuawX6krXIJ5Tr576jwsXrS0GSO58
-B/kWCTYqV/lThDPejrQNi7hzVjZZnDqchINDGkqo+wuc71EZ2Qc6kndS64Qn1iOu
-YQ8AQZwBNSvwU8iWBMbFVubxtHGlC1L4dUYS7Js04FqSbYyqoWNdlzajIdQmK/NY
-EtkdUtY37g4yD80R4fjK3soGHNOzv7ofNAtJnby9fRfxed2wC09bC9V0MIaq+7Nu
-ttuD0sJIokbZnMsXDtKqT4k2QOMk7OxxVAYiuRdaEG/YGh7HmHwwVvYryh/rc8Nb
-DD0+QoSXdiMj9kPAkWO35mEvFa0VPivaxNwk3KsAzhO7eje+83SHGwt+LgX00WNT
-cZEoR73h9dyoIZaGO3g5AXTMeYiBC+mmE1RExYWHupH75bchOxvxGmrlVSU37kKH
-4JoPRUN16Jgn3Z+Fx986dU0MzzJhsmL52/+GAIQaH9iip7iH/Dw17KsYmCg8iEM1
-yIgR+ZAO5LscF4o7sx5yGoRWiHaCzUa2kd9ruUp3bXLIwv0T+QFkkUwbM0VX+Ty7
-3XyppW6oRJ7LYISaitHITJw3KANVYr/dMoOcre3DxrBsOzkUwajQVqFOyqWAbI4C
-2AeKAd+K/2hA8atJ5l4A
-=qOlD
------END PGP SIGNATURE-----
+---
+ drivers/dma/amba-pl08x.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---L46vHWpLfEKD8KlK--
+diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+index 6fbeebb..d1cc579 100644
+--- a/drivers/dma/amba-pl08x.c
++++ b/drivers/dma/amba-pl08x.c
+@@ -1892,6 +1892,7 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
+ 	pl08x->pd = dev_get_platdata(&adev->dev);
+ 	if (!pl08x->pd) {
+ 		dev_err(&adev->dev, "no platform data supplied\n");
++		ret = -EINVAL;
+ 		goto out_no_platdata;
+ 	}
+ 
+@@ -1943,6 +1944,7 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
+ 		dev_err(&adev->dev, "%s failed to allocate "
+ 			"physical channel holders\n",
+ 			__func__);
++		ret = -ENOMEM;
+ 		goto out_no_phychans;
+ 	}
+ 
+
