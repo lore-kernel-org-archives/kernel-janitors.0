@@ -1,119 +1,62 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 07:02:53 +0000
-Subject: [PATCH 1/10] sound/soc/ux500/ux500_msp_i2s.c: better use devm functions and fix error return code
-Message-Id: <1345359780-18647-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 14 Aug 2012 15:49:47 +0000
+Subject: [PATCH 4/5] drivers/net/ethernet/ti/davinci_cpdma.c: Remove potential NULL dereference
+Message-Id: <1344959388-19719-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1344959388-19719-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344959388-19719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Remove unnecessary calls to devm_kfree and replace iounmap by devm_iounmap
-(and use resource_size for the third argument).  These changes make it
-possible to remove the error-handling code at the end of
-ux500_msp_i2s_init_msp, and all of the gotos become direct returns.
+If the NULL test is necessary, the initialization involving a dereference of
+the tested value should be moved after the NULL test.
 
-In the case of the second call to devm_kzalloc, the return variable ret was
-not initialized.  Here it is changed to a direct return of -ENOMEM.
-
-A simplified version of the semantic match that finds the second problem is as
-follows: (http://coccinelle.lip6.fr/)
+The sematic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+@@
+type T;
+expression E;
+identifier i,fld;
+statement S;
+@@
 
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- sound/soc/ux500/ux500_msp_i2s.c |   25 +++++--------------------
- 1 file changed, 5 insertions(+), 20 deletions(-)
+ drivers/net/ethernet/ti/davinci_cpdma.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/ux500/ux500_msp_i2s.c b/sound/soc/ux500/ux500_msp_i2s.c
-index 36be11e..1b7c2f5 100644
---- a/sound/soc/ux500/ux500_msp_i2s.c
-+++ b/sound/soc/ux500/ux500_msp_i2s.c
-@@ -663,7 +663,6 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
- 			struct ux500_msp **msp_p,
- 			struct msp_i2s_platform_data *platform_data)
+diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
+index 3b5c457..d15c888 100644
+--- a/drivers/net/ethernet/ti/davinci_cpdma.c
++++ b/drivers/net/ethernet/ti/davinci_cpdma.c
+@@ -538,11 +538,12 @@ EXPORT_SYMBOL_GPL(cpdma_chan_create);
+ 
+ int cpdma_chan_destroy(struct cpdma_chan *chan)
  {
--	int ret = 0;
- 	struct resource *res = NULL;
- 	struct i2s_controller *i2s_cont;
- 	struct ux500_msp *msp;
-@@ -687,15 +686,14 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
- 	if (res = NULL) {
- 		dev_err(&pdev->dev, "%s: ERROR: Unable to get resource!\n",
- 			__func__);
--		ret = -ENOMEM;
--		goto err_res;
-+		return -ENOMEM;
- 	}
+-	struct cpdma_ctlr *ctlr = chan->ctlr;
++	struct cpdma_ctlr *ctlr;
+ 	unsigned long flags;
  
--	msp->registers = ioremap(res->start, (res->end - res->start + 1));
-+	msp->registers = devm_ioremap(&pdev->dev, res->start,
-+				      resource_size(res));
- 	if (msp->registers = NULL) {
- 		dev_err(&pdev->dev, "%s: ERROR: ioremap failed!\n", __func__);
--		ret = -ENOMEM;
--		goto err_res;
-+		return -ENOMEM;
- 	}
+ 	if (!chan)
+ 		return -EINVAL;
++	ctlr = chan->ctlr;
  
- 	msp->msp_state = MSP_STATE_IDLE;
-@@ -707,7 +705,7 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
- 		dev_err(&pdev->dev,
- 			"%s: ERROR: Failed to allocate I2S-controller!\n",
- 			__func__);
--		goto err_i2s_cont;
-+		return -ENOMEM;
- 	}
- 	i2s_cont->dev.parent = &pdev->dev;
- 	i2s_cont->data = (void *)msp;
-@@ -718,14 +716,6 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
- 	msp->i2s_cont = i2s_cont;
- 
- 	return 0;
--
--err_i2s_cont:
--	iounmap(msp->registers);
--
--err_res:
--	devm_kfree(&pdev->dev, msp);
--
--	return ret;
- }
- 
- void ux500_msp_i2s_cleanup_msp(struct platform_device *pdev,
-@@ -734,11 +724,6 @@ void ux500_msp_i2s_cleanup_msp(struct platform_device *pdev,
- 	dev_dbg(msp->dev, "%s: Enter (id = %d).\n", __func__, msp->id);
- 
- 	device_unregister(&msp->i2s_cont->dev);
--	devm_kfree(&pdev->dev, msp->i2s_cont);
--
--	iounmap(msp->registers);
--
--	devm_kfree(&pdev->dev, msp);
- }
- 
- MODULE_LICENSE("GPL v2");
+ 	spin_lock_irqsave(&ctlr->lock, flags);
+ 	if (chan->state != CPDMA_STATE_IDLE)
 
