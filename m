@@ -1,64 +1,64 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Fri, 17 Aug 2012 07:34:07 +0000
-Subject: RE: [patch] [media] mem2mem_testdev: unlock and return error code properly
-Message-Id: <01eb01cd7c4a$b271a9b0$1754fd10$%szyprowski@samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 14 Aug 2012 06:47:33 +0000
+Subject: [PATCH 0/5] fix error return code
+Message-Id: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120814065856.GC4791@elgon.mountain>
-In-Reply-To: <20120814065856.GC4791@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter@oracle.com>, 'Mauro Carvalho Chehab' <mchehab@infradead.org>
-Cc: 'Hans Verkuil' <hans.verkuil@cisco.com>, =?iso-8859-2?Q?'Tomasz_Mo=F1'?= <desowin@gmail.com>, 'Guennadi Liakhovetski' <g.liakhovetski@gmx.de>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+These patches fix cases where the return code appears to be unintentially 0.
 
-On Tuesday, August 14, 2012 8:59 AM Dan Carpenter wrote:
+The complete semantic match that finds the problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> We recently added locking to this function, but there was an error path
-> which accidentally returned holding a lock.  Also we returned zero on
-> failure on some paths instead of the error code.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@r@
+identifier f;
+expression ret,e;
+constant C;
+@@
 
-Thanks for the patch!
+f(...) { <+...
+(
+return -C;
+|
+ret = -C
+... when != ret = e
+return ret;
+|
+if (ret < 0) { ... return ret; }
+)
+...+> }
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+@s@
+identifier r.f,ret;
+@@
 
-> ---
-> Applies to linux-next.
-> 
-> diff --git a/drivers/media/video/mem2mem_testdev.c b/drivers/media/video/mem2mem_testdev.c
-> index 0aa8c47..0b496f3 100644
-> --- a/drivers/media/video/mem2mem_testdev.c
-> +++ b/drivers/media/video/mem2mem_testdev.c
-> @@ -911,10 +911,9 @@ static int m2mtest_open(struct file *file)
->  	v4l2_ctrl_new_custom(hdl, &m2mtest_ctrl_trans_time_msec, NULL);
->  	v4l2_ctrl_new_custom(hdl, &m2mtest_ctrl_trans_num_bufs, NULL);
->  	if (hdl->error) {
-> -		int err = hdl->error;
-> -
-> +		rc = hdl->error;
->  		v4l2_ctrl_handler_free(hdl);
-> -		return err;
-> +		goto open_unlock;
->  	}
->  	ctx->fh.ctrl_handler = hdl;
->  	v4l2_ctrl_handler_setup(hdl);
-> @@ -946,7 +945,7 @@ static int m2mtest_open(struct file *file)
-> 
->  open_unlock:
->  	mutex_unlock(&dev->dev_mutex);
-> -	return 0;
-> +	return rc;
->  }
-> 
->  static int m2mtest_release(struct file *file)
+f(...) { <+... return ret; ...+> }
 
+@@
+identifier r.f,s.ret;
+expression e,e1,e2,e3,e4,x;
+@@
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
-
+f(...) { <+...
+(
+if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+|
+ret = 0
+)
+... when != ret = e1
+*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+... when != x = e2
+    when != ret = e3
+*if (x = NULL || ...)
+{
+  ... when != ret = e4
+*  return ret;
+}
+...+> }
+// </smpl>
 
