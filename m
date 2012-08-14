@@ -1,25 +1,22 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 05 Aug 2012 09:52:33 +0000
-Subject: [PATCH 3/6] arch/powerpc/kvm/e500_tlb.c: fix error return code
-Message-Id: <1344160356-387-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 14 Aug 2012 06:47:34 +0000
+Subject: [PATCH 1/5] drivers/usb/gadget/s3c-hsotg.c: fix error return code
+Message-Id: <1344926858-1162-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Graf <agraf@suse.de>
-Cc: kernel-janitors@vger.kernel.org, Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Felipe Balbi <balbi@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
 Convert a 0 error return code to a negative one, as returned elsewhere in the
 function.
 
-A new label is also added to avoid freeing things that are known to not yet
-be allocated.
-
-A simplified version of the semantic match that finds the first problem is as
+A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
@@ -44,59 +41,38 @@ ret = 0
 }
 // </smpl>
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- arch/powerpc/kvm/e500_tlb.c |   19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/powerpc/kvm/e500_tlb.c b/arch/powerpc/kvm/e500_tlb.c
-index c8f6c58..85fcdf7 100644
---- a/arch/powerpc/kvm/e500_tlb.c
-+++ b/arch/powerpc/kvm/e500_tlb.c
-@@ -1176,21 +1176,27 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index b13e0bb..0bb617e 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -3599,6 +3599,7 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+ 
+ 	if (hsotg->num_of_eps = 0) {
+ 		dev_err(dev, "wrong number of EPs (zero)\n");
++		ret = -EINVAL;
+ 		goto err_supplies;
  	}
  
- 	virt = vmap(pages, num_pages, VM_MAP, PAGE_KERNEL);
--	if (!virt)
-+	if (!virt) {
+@@ -3606,6 +3607,7 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+ 		      GFP_KERNEL);
+ 	if (!eps) {
+ 		dev_err(dev, "cannot get memory\n");
 +		ret = -ENOMEM;
- 		goto err_put_page;
-+	}
+ 		goto err_supplies;
+ 	}
  
- 	privs[0] = kzalloc(sizeof(struct tlbe_priv) * params.tlb_sizes[0],
- 			   GFP_KERNEL);
- 	privs[1] = kzalloc(sizeof(struct tlbe_priv) * params.tlb_sizes[1],
- 			   GFP_KERNEL);
- 
--	if (!privs[0] || !privs[1])
--		goto err_put_page;
-+	if (!privs[0] || !privs[1]) {
+@@ -3622,6 +3624,7 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+ 						     GFP_KERNEL);
+ 	if (!hsotg->ctrl_req) {
+ 		dev_err(dev, "failed to allocate ctrl req\n");
 +		ret = -ENOMEM;
-+		goto err_privs;
-+	}
+ 		goto err_ep_mem;
+ 	}
  
- 	g2h_bitmap = kzalloc(sizeof(u64) * params.tlb_sizes[1],
- 	                     GFP_KERNEL);
--	if (!g2h_bitmap)
--		goto err_put_page;
-+	if (!g2h_bitmap) {
-+		ret = -ENOMEM;
-+		goto err_privs;
-+	}
- 
- 	free_gtlb(vcpu_e500);
- 
-@@ -1230,10 +1236,11 @@ int kvm_vcpu_ioctl_config_tlb(struct kvm_vcpu *vcpu,
- 	kvmppc_recalc_tlb1map_range(vcpu_e500);
- 	return 0;
- 
--err_put_page:
-+err_privs:
- 	kfree(privs[0]);
- 	kfree(privs[1]);
- 
-+err_put_page:
- 	for (i = 0; i < num_pages; i++)
- 		put_page(pages[i]);
- 
+
