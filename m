@@ -1,82 +1,51 @@
 From: Emil Goode <emilgoode@gmail.com>
-Date: Mon, 20 Aug 2012 18:32:25 +0000
-Subject: [PATCH] video: hpfb: Fix error handling
-Message-Id: <1345487545-9590-1-git-send-email-emilgoode@gmail.com>
+Date: Tue, 14 Aug 2012 21:44:42 +0000
+Subject: [PATCH] [media] media: coda: add const qualifiers
+Message-Id: <1344980682-23075-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: FlorianSchandinat@gmx.de
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: mchehab@infradead.org, s.nawrocki@samsung.com, p.zabel@pengutronix.de, javier.martin@vista-silicon.com, hans.verkuil@cisco.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-This patch solves problems with the error handling by
-introducing labels for proper error paths and it also
-frees resources that where missed.
+The commit 98d7bbb9 changed *of_device_id.data to const
+which introduced warnings in various places that have mostly
+been fixed. This patch fixes one such warning by introducing
+two const qualifiers.
+
+GCC warning:
+drivers/media/video/coda.c:1785:16: warning:
+        assignment discards ‘const’ qualifier
+        from pointer target type [enabled by default]
 
 Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
- drivers/video/hpfb.c |   28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ drivers/media/video/coda.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/hpfb.c b/drivers/video/hpfb.c
-index ebf8495..7324865 100644
---- a/drivers/video/hpfb.c
-+++ b/drivers/video/hpfb.c
-@@ -210,6 +210,7 @@ static int __devinit hpfb_init_one(unsigned long phys_base,
- 				   unsigned long virt_base)
- {
- 	unsigned long fboff, fb_width, fb_height, fb_start;
-+	int ret;
+diff --git a/drivers/media/video/coda.c b/drivers/media/video/coda.c
+index 0d6e0a0..6908514 100644
+--- a/drivers/media/video/coda.c
++++ b/drivers/media/video/coda.c
+@@ -118,7 +118,7 @@ struct coda_dev {
+ 	struct v4l2_device	v4l2_dev;
+ 	struct video_device	vfd;
+ 	struct platform_device	*plat_dev;
+-	struct coda_devtype	*devtype;
++	const struct coda_devtype *devtype;
  
- 	fb_regs = virt_base;
- 	fboff = (in_8(fb_regs + HPFB_FBOMSB) << 8) | in_8(fb_regs + HPFB_FBOLSB);
-@@ -290,19 +291,29 @@ static int __devinit hpfb_init_one(unsigned long phys_base,
- 	fb_info.var   = hpfb_defined;
- 	fb_info.screen_base = (char *)fb_start;
+ 	void __iomem		*regs_base;
+ 	struct clk		*clk_per;
+@@ -1687,7 +1687,7 @@ enum coda_platform {
+ 	CODA_IMX27,
+ };
  
--	fb_alloc_cmap(&fb_info.cmap, 1 << hpfb_defined.bits_per_pixel, 0);
-+	ret = fb_alloc_cmap(&fb_info.cmap, 1 << hpfb_defined.bits_per_pixel, 0);
-+	if (ret < 0)
-+		goto unmap_screen_base;
- 
--	if (register_framebuffer(&fb_info) < 0) {
--		fb_dealloc_cmap(&fb_info.cmap);
--		iounmap(fb_info.screen_base);
--		fb_info.screen_base = NULL;
--		return 1;
--	}
-+	ret = register_framebuffer(&fb_info);
-+	if (ret < 0)
-+		goto dealloc_cmap;
- 
- 	printk(KERN_INFO "fb%d: %s frame buffer device\n",
- 	       fb_info.node, fb_info.fix.id);
- 
- 	return 0;
-+
-+dealloc_cmap:
-+	fb_dealloc_cmap(&fb_info.cmap);
-+
-+unmap_screen_base:
-+	if (fb_info.screen_base) {
-+		iounmap(fb_info.screen_base);
-+		fb_info.screen_base = NULL;
-+	}
-+
-+	return ret;
- }
- 
- /* 
-@@ -345,6 +356,9 @@ static void __devexit hpfb_remove_one(struct dio_dev *d)
- 	if (d->scode >= DIOII_SCBASE)
- 		iounmap((void *)fb_regs);
- 	release_mem_region(d->resource.start, resource_size(&d->resource));
-+	fb_dealloc_cmap(&fb_info.cmap);
-+	if (fb_info.screen_base)
-+		iounmap(fb_info.screen_base);
- }
- 
- static struct dio_device_id hpfb_dio_tbl[] = {
+-static struct coda_devtype coda_devdata[] = {
++static const struct coda_devtype coda_devdata[] = {
+ 	[CODA_IMX27] = {
+ 		.firmware    = "v4l-codadx6-imx27.bin",
+ 		.product     = CODA_DX6,
 -- 
 1.7.10.4
 
