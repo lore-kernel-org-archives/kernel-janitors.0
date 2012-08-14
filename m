@@ -1,62 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 08:44:28 +0000
-Subject: [PATCH 9/14] drivers/spi/spi-omap-100k.c: fix error return code
-Message-Id: <1345365870-29831-13-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Aug 2012 07:03:35 +0000
+Subject: [patch] [media] stk1160: remove unneeded check
+Message-Id: <20120814070335.GE4791@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Ezequiel Garcia <elezegarcia@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+"card" is a valid pointer here because we checked snd_card_create() for
+error returns.  Checking after a dereference makes the static checkers
+complain.
 
-Initialize return variable before exiting on an error path.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Actually, omap1_spi100k_reset currently always returns 0, so the test is
-never true.  Perhaps this should be taken into account in some other way.
+Only needed on linux-next.
 
- drivers/spi/spi-omap-100k.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-omap-100k.c b/drivers/spi/spi-omap-100k.c
-index 9bd1c92..b581107 100644
---- a/drivers/spi/spi-omap-100k.c
-+++ b/drivers/spi/spi-omap-100k.c
-@@ -542,7 +542,8 @@ static int __devinit omap1_spi100k_probe(struct platform_device *pdev)
- 		goto err2;
- 	}
+diff --git a/drivers/media/video/stk1160/stk1160-ac97.c b/drivers/media/video/stk1160/stk1160-ac97.c
+index 8d325f5..c8583c2 100644
+--- a/drivers/media/video/stk1160/stk1160-ac97.c
++++ b/drivers/media/video/stk1160/stk1160-ac97.c
+@@ -133,8 +133,7 @@ int stk1160_ac97_register(struct stk1160 *dev)
  
--	if (omap1_spi100k_reset(spi100k) < 0)
-+	status = omap1_spi100k_reset(spi100k);
-+	if (status < 0)
- 		goto err3;
+ err:
+ 	dev->snd_card = NULL;
+-	if (card)
+-		snd_card_free(card);
++	snd_card_free(card);
+ 	return rc;
+ }
  
- 	status = spi_register_master(master);
-
