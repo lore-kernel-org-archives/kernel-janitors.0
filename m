@@ -1,68 +1,29 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:30:02 +0000
-Subject: Re: [PATCH 1/3] drivers/video/auo_k190x.c: drop kfree of devm_kzalloc's data
-Message-Id: <503692CA.8080608@gmx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 14 Aug 2012 07:04:45 +0000
+Subject: [patch] Staging: xgifb: fix bitwise vs logical bug
+Message-Id: <20120814070445.GF4791@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344081632-4729-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344081632-4729-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 08/04/2012 12:00 PM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Using kfree to free data allocated with devm_kzalloc causes double frees.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x;
-> @@
-> 
-> x = devm_kzalloc(...)
-> ...
-> ?-kfree(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This is a static checker fix and not something I can test.  The intent
+of the code here is to set some bit flags.  For a logical OR the ">> 1"
+shift wouldn't make a difference.  So it should be using a bitwise OR.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Thanks,
-
-Florian Tobias Schandinat
-
-> 
-> ---
->  drivers/video/auo_k190x.c |    2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/video/auo_k190x.c b/drivers/video/auo_k190x.c
-> index 77da6a2..c03ecdd 100644
-> --- a/drivers/video/auo_k190x.c
-> +++ b/drivers/video/auo_k190x.c
-> @@ -987,7 +987,6 @@ err_regfb:
->  	fb_dealloc_cmap(&info->cmap);
->  err_cmap:
->  	fb_deferred_io_cleanup(info);
-> -	kfree(info->fbdefio);
->  err_defio:
->  	vfree((void *)info->screen_base);
->  err_irq:
-> @@ -1022,7 +1021,6 @@ int  __devexit auok190x_common_remove(struct platform_device *pdev)
->  	fb_dealloc_cmap(&info->cmap);
->  
->  	fb_deferred_io_cleanup(info);
-> -	kfree(info->fbdefio);
->  
->  	vfree((void *)info->screen_base);
->  
-> 
-> 
-
+diff --git a/drivers/staging/xgifb/vb_init.c b/drivers/staging/xgifb/vb_init.c
+index 80dba6a..fdb7d1a 100644
+--- a/drivers/staging/xgifb/vb_init.c
++++ b/drivers/staging/xgifb/vb_init.c
+@@ -1269,7 +1269,7 @@ static unsigned char GetXG27FPBits(struct vb_device_info *pVBInfo)
+ 	if (temp <= 2)
+ 		temp &= 0x03;
+ 	else
+-		temp = ((temp & 0x04) >> 1) || ((~temp) & 0x01);
++		temp = ((temp & 0x04) >> 1) | ((~temp) & 0x01);
+ 
+ 	xgifb_reg_set(pVBInfo->P3d4, 0x4A, CR4A);
+ 
