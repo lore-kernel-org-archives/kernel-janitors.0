@@ -1,74 +1,66 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Date: Mon, 06 Aug 2012 01:20:50 +0000
-Subject: Re: [PATCH 5/6] drivers/video/backlight/da9052_bl.c: drop devm_kfree of devm_kzalloc'd data
-Message-Id: <000b01cd7371$b7331790$259946b0$%han@samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 14 Aug 2012 06:47:38 +0000
+Subject: [PATCH 5/5] drivers/usb/host/ehci-platform.c: fix error return code
+Message-Id: <1344926858-1162-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344099049-15212-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344099049-15212-5-git-send-email-Julia.Lawall@lip6.fr>
+References: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Julia Lawall' <Julia.Lawall@lip6.fr>, 'Richard Purdie' <rpurdie@rpsys.net>
-Cc: kernel-janitors@vger.kernel.org, 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sunday, August 05, 2012 1:51 AM Julia Lawall wrote:
-> 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> devm_kfree should not have to be explicitly used.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression x,d;
-> @@
-> 
-> x = devm_kzalloc(...)
-> ...
-> ?-devm_kfree(d,x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Convert a possibly 0 error return code to a negative one, as returned
+elsewhere in the function.
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-It looks good.
+// <smpl>
+@@
+identifier ret;
+expression e,e1,e2,e3,e4,x;
+@@
 
-Best regard,
-Jingoo Han
+(
+if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+|
+ret = 0
+)
+... when != ret = e1
+*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+... when != x = e2
+    when != ret = e3
+*if (x = NULL || ...)
+{
+  ... when != ret = e4
+*  return ret;
+}
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> 
-> ---
->  drivers/video/backlight/da9052_bl.c |    2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/da9052_bl.c b/drivers/video/backlight/da9052_bl.c
-> index b628d68..7c8626a 100644
-> --- a/drivers/video/backlight/da9052_bl.c
-> +++ b/drivers/video/backlight/da9052_bl.c
-> @@ -129,7 +129,6 @@ static int da9052_backlight_probe(struct platform_device *pdev)
->  				       &da9052_backlight_ops, &props);
->  	if (IS_ERR(bl)) {
->  		dev_err(&pdev->dev, "Failed to register backlight\n");
-> -		devm_kfree(&pdev->dev, wleds);
->  		return PTR_ERR(bl);
->  	}
-> 
-> @@ -149,7 +148,6 @@ static int da9052_backlight_remove(struct platform_device *pdev)
->  	wleds->state = DA9052_WLEDS_OFF;
->  	da9052_adjust_wled_brightness(wleds);
->  	backlight_device_unregister(bl);
-> -	devm_kfree(&pdev->dev, wleds);
-> 
->  	return 0;
->  }
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+ drivers/usb/host/ehci-platform.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
+index 91acdde..764e010 100644
+--- a/drivers/usb/host/ehci-platform.c
++++ b/drivers/usb/host/ehci-platform.c
+@@ -128,8 +128,10 @@ static int __devinit ehci_platform_probe(struct platform_device *dev)
+ 	}
+ 
+ 	hcd->regs = ioremap_nocache(hcd->rsrc_start, hcd->rsrc_len);
+-	if (!hcd->regs)
++	if (!hcd->regs) {
++		err = -ENOMEM;
+ 		goto err_release_region;
++	}
+ 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (err)
+ 		goto err_iounmap;
 
