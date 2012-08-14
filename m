@@ -1,47 +1,50 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 04 Aug 2012 12:00:31 +0000
-Subject: [PATCH 2/3] drivers/mfd/palmas.c: drop kfree of devm_kzalloc's data
-Message-Id: <1344081632-4729-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 Aug 2012 19:30:22 +0000
+Subject: Re: [PATCH] video/mx3fb: remove stray l from debug output
+Message-Id: <CAMuHMdVpSx_dYUkrS7eNzgzanu6CLNAtzFejwDqcoJodCv++RQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1344843875-8174-1-git-send-email-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <1344843875-8174-1-git-send-email-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-fbdev@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Mon, Aug 13, 2012 at 7:09 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Mon, Aug 13, 2012 at 9:44 AM, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+>> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+>> ---
+>>  drivers/video/mx3fb.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/video/mx3fb.c b/drivers/video/mx3fb.c
+>> index c89f8a8..1dfdeb1 100644
+>> --- a/drivers/video/mx3fb.c
+>> +++ b/drivers/video/mx3fb.c
+>> @@ -771,7 +771,7 @@ static int __set_par(struct fb_info *fbi, bool lock)
+>>                 if (fbi->var.sync & FB_SYNC_SHARP_MODE)
+>>                         mode = IPU_PANEL_SHARP_TFT;
+>>
+>> -               dev_dbg(fbi->device, "pixclock = %ul Hz\n",
+>> +               dev_dbg(fbi->device, "pixclock = %u Hz\n",
+>>                         (u32) (PICOS2KHZ(fbi->var.pixclock) * 1000UL));
+>
+> I think a better fix is to change the dyslectic "%ul" to "%lu", and
+> drop the cast to
+> u32, which was probably only added to kill the compiler warning caused by the
+> dyslectia issue.
 
-Using kfree to free data allocated with devm_kzalloc causes double frees.
+BTW, 'git grep "%ul"' shows a few more of these dyslectia issues.
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Gr{oetje,eeting}s,
 
-// <smpl>
-@@
-expression x;
-@@
+                        Geert
 
-x = devm_kzalloc(...)
-...
-?-kfree(x);
-// </smpl>
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/mfd/palmas.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
-index c4a69f1..92c6fc7 100644
---- a/drivers/mfd/palmas.c
-+++ b/drivers/mfd/palmas.c
-@@ -463,7 +463,6 @@ static int __devinit palmas_i2c_probe(struct i2c_client *i2c,
- 
- err:
- 	mfd_remove_devices(palmas->dev);
--	kfree(palmas);
- 	return ret;
- }
- 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
