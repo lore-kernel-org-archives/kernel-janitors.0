@@ -1,61 +1,61 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 17 Aug 2012 07:46:56 +0000
-Subject: [PATCH 1/3] drivers/net/wimax/i2400m/fw.c: fix error return code
-Message-Id: <1345189618-13758-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 14 Aug 2012 15:49:44 +0000
+Subject: [PATCH 1/5] drivers/block/swim3.c: Remove potential NULL dereference
+Message-Id: <1344959388-19719-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345189618-13758-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345189618-13758-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1344959388-19719-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344959388-19719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-wimax@intel.com, wimax@linuxwimax.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+If the NULL test is necessary, the initialization involving a dereference of
+the tested value should be moved after the NULL test.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The sematic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-identifier ret;
-expression e1,e2;
+type T;
+expression E;
+identifier i,fld;
+statement S;
 @@
 
-if (ret < 0)
- { ... return ret; }
- ... when != ret = e1
-     when forall
-*if(...)
- {
-  ... when != ret = e2
-* return ret;
- }
+- T i = E->fld;
++ T i;
+  ... when != E
+      when != i
+  if (E = NULL) S
++ i = E->fld;
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/net/wimax/i2400m/fw.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/block/swim3.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wimax/i2400m/fw.c b/drivers/net/wimax/i2400m/fw.c
-index 283237f..def12b3 100644
---- a/drivers/net/wimax/i2400m/fw.c
-+++ b/drivers/net/wimax/i2400m/fw.c
-@@ -326,8 +326,10 @@ int i2400m_barker_db_init(const char *_options)
- 		unsigned barker;
+diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
+index 89ddab1..ffecfef 100644
+--- a/drivers/block/swim3.c
++++ b/drivers/block/swim3.c
+@@ -1090,10 +1090,11 @@ static const struct block_device_operations floppy_fops = {
+ static void swim3_mb_event(struct macio_dev* mdev, int mb_state)
+ {
+ 	struct floppy_state *fs = macio_get_drvdata(mdev);
+-	struct swim3 __iomem *sw = fs->swim3;
++	struct swim3 __iomem *sw;
  
- 		options_orig = kstrdup(_options, GFP_KERNEL);
--		if (options_orig = NULL)
-+		if (options_orig = NULL) {
-+			result = -ENOMEM;
- 			goto error_parse;
-+		}
- 		options = options_orig;
+ 	if (!fs)
+ 		return;
++	sw = fs->swim3;
+ 	if (mb_state != MB_FD)
+ 		return;
  
- 		while ((token = strsep(&options, ",")) != NULL) {
 
