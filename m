@@ -1,56 +1,62 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 25 Aug 2012 17:41:35 +0000
-Subject: [PATCH 5/6] i2c: ibm_iic: use devm_ functions
-Message-Id: <1345916499-6657-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 14 Aug 2012 06:47:35 +0000
+Subject: [PATCH 2/5] drivers/tty/moxa.c: fix error return code
+Message-Id: <1344926858-1162-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Jean Delvare (PC drivers core)" <khali@linux-fr.org>
-Cc: kernel-janitors@vger.kernel.org, "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>, "Wolfram Sang (embedded platforms)" <w.sang@pengutronix.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses these functions for data that is allocated in
-the probe function of a platform device and is only freed in the remove
+Convert a 0 error return code to a negative one, as returned elsewhere in the
 function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret;
+expression e,e1,e2,e3,e4,x;
+@@
+
+(
+if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+|
+ret = 0
+)
+... when != ret = e1
+*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+... when != x = e2
+    when != ret = e3
+*if (x = NULL || ...)
+{
+  ... when != ret = e4
+*  return ret;
+}
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-Not compiled.
+ drivers/tty/moxa.c |    1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/i2c/busses/i2c-ibm_iic.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-ibm_iic.c b/drivers/i2c/busses/i2c-ibm_iic.c
-index 806e225..76435c2 100644
---- a/drivers/i2c/busses/i2c-ibm_iic.c
-+++ b/drivers/i2c/busses/i2c-ibm_iic.c
-@@ -699,7 +699,7 @@ static int __devinit iic_probe(struct platform_device *ofdev)
- 	const u32 *freq;
- 	int ret;
- 
--	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+	dev = devm_kzalloc(&ofdev->dev, sizeof(*dev), GFP_KERNEL);
- 	if (!dev) {
- 		dev_err(&ofdev->dev, "failed to allocate device data\n");
- 		return -ENOMEM;
-@@ -774,7 +774,6 @@ error_cleanup:
- 		iounmap(dev->vaddr);
- 
- 	dev_set_drvdata(&ofdev->dev, NULL);
--	kfree(dev);
- 	return ret;
- }
- 
-@@ -795,7 +794,6 @@ static int __devexit iic_remove(struct platform_device *ofdev)
+diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
+index 89cc934..8b510c5 100644
+--- a/drivers/tty/moxa.c
++++ b/drivers/tty/moxa.c
+@@ -967,6 +967,7 @@ static int __devinit moxa_pci_probe(struct pci_dev *pdev,
+ 	board->basemem = ioremap_nocache(pci_resource_start(pdev, 2), 0x4000);
+ 	if (board->basemem = NULL) {
+ 		dev_err(&pdev->dev, "can't remap io space 2\n");
++		retval = -ENOMEM;
+ 		goto err_reg;
  	}
  
- 	iounmap(dev->vaddr);
--	kfree(dev);
- 
- 	return 0;
- }
 
