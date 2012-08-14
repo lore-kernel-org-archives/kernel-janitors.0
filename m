@@ -1,61 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 14 Aug 2012 15:49:44 +0000
-Subject: [PATCH 1/5] drivers/block/swim3.c: Remove potential NULL dereference
-Message-Id: <1344959388-19719-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 14 Aug 2012 20:38:57 +0000
+Subject: [tip:auto-latest 25/37] kernel/softirq.c:843:36: sparse: incorrect type in initializer (different ad
+Message-Id: <20120814203857.GD20732@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344959388-19719-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344959388-19719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Thomas,
 
-If the NULL test is necessary, the initialization involving a dereference of
-the tested value should be moved after the NULL test.
+FYI, there are new sparse warnings show up in
 
-The sematic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git auto-latest
+head:   e42942691c8262b7fe2a7b88577623082b988217
+commit: 3e339b5dae24a7065e196eb8d0145ab2f8cc2d2d [25/37] softirq: Use hotplug thread infrastructure
 
-// <smpl>
-@@
-type T;
-expression E;
-identifier i,fld;
-statement S;
-@@
+All sparse warnings:
 
-- T i = E->fld;
-+ T i;
-  ... when != E
-      when != i
-  if (E = NULL) S
-+ i = E->fld;
-// </smpl>
+  kernel/softirq.c:408:8: sparse: symbol 'tasklet_vec' was not declared. Should it be static?
+  kernel/softirq.c:409:8: sparse: symbol 'tasklet_hi_vec' was not declared. Should it be static?
++ kernel/softirq.c:843:36: sparse: incorrect type in initializer (different address spaces)
+  kernel/softirq.c:843:36:    expected struct task_struct [noderef] <asn:3>**store
+  kernel/softirq.c:843:36:    got struct task_struct *[noderef] [toplevel] <asn:3>*<noident>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+vim +843 kernel/softirq.c
+   840	};
+   841	
+   842	static struct smp_hotplug_thread softirq_threads = {
+ > 843		.store			= &ksoftirqd,
+   844		.thread_should_run	= ksoftirqd_should_run,
+   845		.thread_fn		= run_ksoftirqd,
+   846		.thread_comm		= "ksoftirqd/%u",
 
 ---
- drivers/block/swim3.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
-index 89ddab1..ffecfef 100644
---- a/drivers/block/swim3.c
-+++ b/drivers/block/swim3.c
-@@ -1090,10 +1090,11 @@ static const struct block_device_operations floppy_fops = {
- static void swim3_mb_event(struct macio_dev* mdev, int mb_state)
- {
- 	struct floppy_state *fs = macio_get_drvdata(mdev);
--	struct swim3 __iomem *sw = fs->swim3;
-+	struct swim3 __iomem *sw;
- 
- 	if (!fs)
- 		return;
-+	sw = fs->swim3;
- 	if (mb_state != MB_FD)
- 		return;
- 
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
