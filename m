@@ -1,46 +1,66 @@
-From: Kent Yoder <key@linux.vnet.ibm.com>
-Date: Thu, 30 Aug 2012 14:32:34 +0000
-Subject: Re: [security:next 2/13] drivers/char/tpm/tpm_acpi.c:98:14: sparse: incorrect type in assignment (di
-Message-Id: <20120830143234.GA4991@linux.vnet.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 14 Aug 2012 06:47:36 +0000
+Subject: [PATCH 3/5] drivers/usb/wusbcore/wa-hc.c: fix error return code
+Message-Id: <1344926858-1162-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Fengguang,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Mon, Aug 27, 2012 at 04:02:30PM -0700, Fengguang Wu wrote:
-> Hi Kent,
-> 
-> FYI, there are new sparse warnings show up in
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
-> head:   f84fdff0fdcda7e509ce530e0ee612233a2104fb
-> commit: e5dcd87fee12ed64a9ea911102025facc0c7d10c [2/13] tpm: modularize event log collection
-> config: i386-allmodconfig (attached as .config)
-> 
-> All sparse warnings:
-> 
-> + drivers/char/tpm/tpm_acpi.c:98:14: sparse: incorrect type in assignment (different address spaces)
->   drivers/char/tpm/tpm_acpi.c:98:14:    expected struct acpi_table_header *virt
->   drivers/char/tpm/tpm_acpi.c:98:14:    got void [noderef] <asn:2>*
-> + drivers/char/tpm/tpm_acpi.c:102:30: sparse: incorrect type in argument 1 (different address spaces)
->   drivers/char/tpm/tpm_acpi.c:102:30:    expected void [noderef] <asn:2>*logical_address
->   drivers/char/tpm/tpm_acpi.c:102:30:    got struct acpi_table_header *virt
-> 
-> vim +98 drivers/char/tpm/tpm_acpi.c
->     95	
->     96		log->bios_event_log_end = log->bios_event_log + len;
->     97	
->   > 98		virt = acpi_os_map_memory(start, len);
->     99	
->    100		memcpy(log->bios_event_log, virt, len);
->    101	
+Convert a 0 error return code to a negative one, as returned elsewhere in the
+function.
 
-  This code is now slightly different based on James' lastest updates,
-so I'll send the update to James for this.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Thanks,
-Kent
+// <smpl>
+@@
+identifier ret;
+expression e,e1,e2,e3,e4,x;
+@@
+
+(
+if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+|
+ret = 0
+)
+... when != ret = e1
+*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+... when != x = e2
+    when != ret = e3
+*if (x = NULL || ...)
+{
+  ... when != ret = e4
+*  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/usb/wusbcore/wa-hc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/wusbcore/wa-hc.c b/drivers/usb/wusbcore/wa-hc.c
+index 9e4a924..a09b65e 100644
+--- a/drivers/usb/wusbcore/wa-hc.c
++++ b/drivers/usb/wusbcore/wa-hc.c
+@@ -46,8 +46,10 @@ int wa_create(struct wahc *wa, struct usb_interface *iface)
+ 	wa->dto_epd = &iface->cur_altsetting->endpoint[2].desc;
+ 	wa->xfer_result_size = usb_endpoint_maxp(wa->dti_epd);
+ 	wa->xfer_result = kmalloc(wa->xfer_result_size, GFP_KERNEL);
+-	if (wa->xfer_result = NULL)
++	if (wa->xfer_result = NULL) {
++		result = -ENOMEM;
+ 		goto error_xfer_result_alloc;
++	}
+ 	result = wa_nep_create(wa, iface);
+ 	if (result < 0) {
+ 		dev_err(dev, "WA-CDS: can't initialize notif endpoint: %d\n",
 
