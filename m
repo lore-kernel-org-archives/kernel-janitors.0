@@ -1,75 +1,31 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:41:36 +0000
-Subject: Re: [PATCH 2/5] drivers/video/bf54x-lq043fb.c: use devm_ functions
-Message-Id: <50369580.5010303@gmx.de>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Wed, 15 Aug 2012 05:31:47 +0000
+Subject: Re: [userns:for-next 10/23] ERROR: "free_pid_ns" [net/ipv6/ipv6.ko] undefined!
+Message-Id: <877gt0hgak.fsf@xmission.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr> <1344008414-2894-4-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1344008414-2894-4-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Damien Cassou <damien.cassou@lifl.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 08/03/2012 03:40 PM, Damien Cassou wrote:
-> From: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches. This patch replaces the use of kzalloc by devm_kzalloc.
-> 
-> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+Fengguang Wu <fengguang.wu@intel.com> writes:
 
-Applied.
+> Hi Eric,
+>
+> FYI, kernel build failed on
+>
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-next
+> head:   0625c883bc4b3eba6f93f268cf67b5664244c0fe
+> commit: 4f82f45730c68fdaf9b0472495a965188404866e [10/23] net ip6 flowlabel: Make owner a union of struct pid * and kuid_t
+> config: x86_64-allmodconfig (attached as .config)
+>
+> Build errors:
+>
+> ERROR: "free_pid_ns" [net/ipv6/ipv6.ko] undefined!
 
+Yes, and the next patch fixes that.
 
-Thanks,
+My apologies to git bisect users that the support for modular ipv6 is
+not perfect.
 
-Florian Tobias Schandinat
-
-> 
-> ---
->  drivers/video/bf54x-lq043fb.c |    8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/video/bf54x-lq043fb.c b/drivers/video/bf54x-lq043fb.c
-> index dc2f004..47702ee 100644
-> --- a/drivers/video/bf54x-lq043fb.c
-> +++ b/drivers/video/bf54x-lq043fb.c
-> @@ -601,7 +601,8 @@ static int __devinit bfin_bf54x_probe(struct platform_device *pdev)
-> 
->  	fbinfo->fbops = &bfin_bf54x_fb_ops;
-> 
-> -	fbinfo->pseudo_palette = kzalloc(sizeof(u32) * 16, GFP_KERNEL);
-> +	fbinfo->pseudo_palette = devm_kzalloc(&pdev->dev, sizeof(u32) * 16,
-> +					      GFP_KERNEL);
->  	if (!fbinfo->pseudo_palette) {
->  		printk(KERN_ERR DRIVER_NAME
->  		       "Fail to allocate pseudo_palette\n");
-> @@ -616,7 +617,7 @@ static int __devinit bfin_bf54x_probe(struct platform_device *pdev)
->  		       "Fail to allocate colormap (%d entries)\n",
->  		       BFIN_LCD_NBR_PALETTE_ENTRIES);
->  		ret = -EFAULT;
-> -		goto out5;
-> +		goto out4;
->  	}
-> 
->  	if (request_ports(info)) {
-> @@ -671,8 +672,6 @@ out7:
->  	free_ports(info);
->  out6:
->  	fb_dealloc_cmap(&fbinfo->cmap);
-> -out5:
-> -	kfree(fbinfo->pseudo_palette);
->  out4:
->  	dma_free_coherent(NULL, fbinfo->fix.smem_len, info->fb_buffer,
->  			  info->dma_handle);
-> @@ -699,7 +698,6 @@ static int __devexit bfin_bf54x_remove(struct platform_device *pdev)
->  		dma_free_coherent(NULL, fbinfo->fix.smem_len, info->fb_buffer,
->  				  info->dma_handle);
-> 
-> -	kfree(fbinfo->pseudo_palette);
->  	fb_dealloc_cmap(&fbinfo->cmap);
-> 
->  #ifndef NO_BL_SUPPORT
-> 
-
+Eric
