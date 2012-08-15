@@ -1,68 +1,97 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:36:10 +0000
-Subject: Re: [PATCH 3/5] drivers/video/cobalt_lcdfb.c: use devm_ functions
-Message-Id: <5036943A.80103@gmx.de>
+From: Jonathan Brett <jonbrett.dev@gmail.com>
+Date: Wed, 15 Aug 2012 19:47:32 +0000
+Subject: [PATCH 1/2] staging: asus_oled: Change printk calls to dev_xxx
+Message-Id: <1345060053-14917-1-git-send-email-jonbrett.dev@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343742860-16213-1-git-send-email-damien.cassou@lifl.fr> <1343742860-16213-4-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1343742860-16213-4-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Damien Cassou <damien.cassou@lifl.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 07/31/2012 01:54 PM, Damien Cassou wrote:
-> From: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
-> 
-> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+- Use dev_err whenever a struct device * is present
+- None of the printk calls had levels set, but looked like they should
+  probably be dev_err
 
-Applied.
+Signed-off-by: Jonathan Brett <jonbrett.dev@gmail.com>
+---
+ drivers/staging/asus_oled/asus_oled.c |   18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-
-Thanks,
-
-Florian Tobias Schandinat
-
-> 
-> ---
->  drivers/video/cobalt_lcdfb.c |    5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/video/cobalt_lcdfb.c b/drivers/video/cobalt_lcdfb.c
-> index eae46f6..01a4ee7 100644
-> --- a/drivers/video/cobalt_lcdfb.c
-> +++ b/drivers/video/cobalt_lcdfb.c
-> @@ -348,7 +348,8 @@ static int __devinit cobalt_lcdfb_probe(struct platform_device *dev)
->  	}
->  
->  	info->screen_size = resource_size(res);
-> -	info->screen_base = ioremap(res->start, info->screen_size);
-> +	info->screen_base = devm_ioremap(&dev->dev, res->start,
-> +					 info->screen_size);
->  	info->fbops = &cobalt_lcd_fbops;
->  	info->fix = cobalt_lcdfb_fix;
->  	info->fix.smem_start = res->start;
-> @@ -359,7 +360,6 @@ static int __devinit cobalt_lcdfb_probe(struct platform_device *dev)
->  
->  	retval = register_framebuffer(info);
->  	if (retval < 0) {
-> -		iounmap(info->screen_base);
->  		framebuffer_release(info);
->  		return retval;
->  	}
-> @@ -380,7 +380,6 @@ static int __devexit cobalt_lcdfb_remove(struct platform_device *dev)
->  
->  	info = platform_get_drvdata(dev);
->  	if (info) {
-> -		iounmap(info->screen_base);
->  		unregister_framebuffer(info);
->  		framebuffer_release(info);
->  	}
-> 
-> 
+diff --git a/drivers/staging/asus_oled/asus_oled.c b/drivers/staging/asus_oled/asus_oled.c
+index f63c1d3..9a8843f 100644
+--- a/drivers/staging/asus_oled/asus_oled.c
++++ b/drivers/staging/asus_oled/asus_oled.c
+@@ -42,8 +42,6 @@
+ #define ASUS_OLED_NAME			"asus-oled"
+ #define ASUS_OLED_UNDERSCORE_NAME	"asus_oled"
+ 
+-#define ASUS_OLED_ERROR			"Asus OLED Display Error: "
+-
+ #define ASUS_OLED_STATIC		's'
+ #define ASUS_OLED_ROLL			'r'
+ #define ASUS_OLED_FLASH			'f'
+@@ -383,13 +381,13 @@ static int append_values(struct asus_oled_dev *odev, uint8_t val, size_t count)
+ 
+ 		default:
+ 			i = 0;
+-			printk(ASUS_OLED_ERROR "Unknown OLED Pack Mode: %d!\n",
++			dev_err(odev->dev, "Unknown OLED Pack Mode: %d!\n",
+ 			       odev->pack_mode);
+ 			break;
+ 		}
+ 
+ 		if (i >= odev->buf_size) {
+-			printk(ASUS_OLED_ERROR "Buffer overflow! Report a bug:"
++			dev_err(odev->dev, "Buffer overflow! Report a bug:"
+ 			       "offs: %d >= %d i: %d (x: %d y: %d)\n",
+ 			       (int) odev->buf_offs, (int) odev->buf_size,
+ 			       (int) i, (int) x, (int) y);
+@@ -435,7 +433,7 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev,
+ 		odev->buf = kmalloc(odev->buf_size, GFP_KERNEL);
+ 		if (odev->buf = NULL) {
+ 			odev->buf_size = 0;
+-			printk(ASUS_OLED_ERROR "Out of memory!\n");
++			dev_err(odev->dev, "Out of memory!\n");
+ 			return -ENOMEM;
+ 		}
+ 
+@@ -473,7 +471,7 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev,
+ 			odev->pic_mode = buf[1];
+ 			break;
+ 		default:
+-			printk(ASUS_OLED_ERROR "Wrong picture mode: '%c'.\n",
++			dev_err(odev->dev, "Wrong picture mode: '%c'.\n",
+ 			       buf[1]);
+ 			return -EIO;
+ 			break;
+@@ -533,7 +531,7 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev,
+ 
+ 		if (odev->buf = NULL) {
+ 			odev->buf_size = 0;
+-			printk(ASUS_OLED_ERROR "Out of memory!\n");
++			dev_err(odev->dev, "Out of memory!\n");
+ 			return -ENOMEM;
+ 		}
+ 
+@@ -593,15 +591,15 @@ static ssize_t odev_set_picture(struct asus_oled_dev *odev,
+ 	return count;
+ 
+ error_width:
+-	printk(ASUS_OLED_ERROR "Wrong picture width specified.\n");
++	dev_err(odev->dev, "Wrong picture width specified.\n");
+ 	return -EIO;
+ 
+ error_height:
+-	printk(ASUS_OLED_ERROR "Wrong picture height specified.\n");
++	dev_err(odev->dev, "Wrong picture height specified.\n");
+ 	return -EIO;
+ 
+ error_header:
+-	printk(ASUS_OLED_ERROR "Wrong picture header.\n");
++	dev_err(odev->dev, "Wrong picture header.\n");
+ 	return -EIO;
+ }
+ 
+-- 
+1.7.9.5
 
