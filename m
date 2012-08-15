@@ -1,40 +1,43 @@
-From: Kent Yoder <key@linux.vnet.ibm.com>
-Date: Thu, 30 Aug 2012 19:21:55 +0000
-Subject: Re: [PATCH] tpm: fix tpm_acpi sparse warning on different address spaces
-Message-Id: <20120830192155.GA25524@linux.vnet.ibm.com>
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Wed, 15 Aug 2012 09:54:15 +0000
+Subject: Re: [staging:staging-next 70/73] drivers/staging/comedi/drivers/amplc_dio200.c:1444:2: error: implic
+Message-Id: <502B71C7.4010005@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120830143839.GA9589@linux.vnet.ibm.com>
- <20120830174556.GD20741@mwanda>
-In-Reply-To: <20120830174556.GD20741@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 30, 2012 at 10:45:56AM -0700, Dan Carpenter wrote:
-> On Thu, Aug 30, 2012 at 09:38:41AM -0500, Kent Yoder wrote:
-> > acpi_os_map_memory expects its return value to be in the __iomem address
-> > space. Cast it back later when used in a memcpy to avoid the same sparse
-> > warning there.
-> > 
-> > Signed-off-by: Kent Yoder <key@linux.vnet.ibm.com>
-> 
-> I can't download linux-next right now but I don't think this is the
-> correct fix.  I don't think you can memcpy() directly from __iomem.
-> The static checker is warning about a valid bug which should be
-> addressed instead of just casted away and silenced.
+On 2012-08-15 02:02, Fengguang Wu wrote:
+> Hi Ian,
+>
+> FYI, kernel build failed on
+>
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+> head:   69af59970bec925d182ca5ebd80e643fdd90b1cc
+> commit: b7518888afc14e3d1e988837fef4471cd2b3c820 [70/73] staging: comedi: amplc_dio200: check bus type in detach routine
+> config: i386-allmodconfig (attached as .config)
+>
+> All related error/warning messages:
+>
+> drivers/staging/comedi/drivers/amplc_dio200.c: In function 'dio200_detach':
+> drivers/staging/comedi/drivers/amplc_dio200.c:1444:2: error: implicit declaration of function 'IS_ISA_BOARD' [-Werror=implicit-function-declaration]
+> drivers/staging/comedi/drivers/amplc_dio200.c:1447:2: error: implicit declaration of function 'IS_PCI_BOARD' [-Werror=implicit-function-declaration]
+> cc1: some warnings being treated as errors
+>
+> vim +1444 drivers/staging/comedi/drivers/amplc_dio200.c
+>    1441				}
+>    1442			}
+>    1443		}
+>> 1444		if (IS_ISA_BOARD(thisboard)) {
+>    1445			if (dev->iobase)
+>    1446				release_region(dev->iobase, DIO200_IO_SIZE);
+>    1447		} else if (IS_PCI_BOARD(thisboard)) {
 
-  I took a look at other uses of the return from acpi_os_map_memory(),
-such as acpi_tb_parse_fadt(), which passes the returned pointer to
-acpi_tb_create_local_fadt(), which uses ACPI_MEMCPY on it, which is just
-memcpy.  This code lives in drivers/acpi.
+Well it looks like my patches got applied in the wrong order (1, 3, 2) 
+on Greg's staging-next branch, but as long as all 3 patches are applied 
+it ought to compile okay.
 
-Kent
-
-> 
-> regards,
-> dan carpenter
-> 
-> 
-
+-- 
+-=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
+-=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
