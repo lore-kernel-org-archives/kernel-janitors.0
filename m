@@ -1,40 +1,48 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:30:43 +0000
-Subject: Re: [patch] video: mb862xxfb: prevent divide by zero bug
-Message-Id: <503692F3.40402@gmx.de>
+From: Joel Becker <jlbec@evilplan.org>
+Date: Wed, 15 Aug 2012 06:40:23 +0000
+Subject: Re: [patch] ocfs2/dlm: use GFP_ATOMIC inside a spin_lock
+Message-Id: <20120815064023.GE31083@dhcp-172-17-9-228.mtv.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120818155541.GB22424@elgon.mountain>
-In-Reply-To: <20120818155541.GB22424@elgon.mountain>
+References: <20120726130505.GA30865@elgon.mountain>
+In-Reply-To: <20120726130505.GA30865@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-On 08/18/2012 03:55 PM, Dan Carpenter wrote:
-> Do a sanity check on these before using them as divisors.
+On Thu, Jul 26, 2012 at 04:05:05PM +0300, Dan Carpenter wrote:
+> My static checker complains that this is called with a spin_lock held
+> in dlm_master_requery_handler() from dlmrecovery.c.  Probably the reason
+> we have not received any bug reports about this is that recovery is not
+> a common operation.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+This patch is now part of the fixes branch of ocfs2.git.
 
-
-Thanks,
-
-Florian Tobias Schandinat
+Joel
 
 > 
-> diff --git a/drivers/video/mb862xx/mb862xxfbdrv.c b/drivers/video/mb862xx/mb862xxfbdrv.c
-> index 00ce1f3..57d940b 100644
-> --- a/drivers/video/mb862xx/mb862xxfbdrv.c
-> +++ b/drivers/video/mb862xx/mb862xxfbdrv.c
-> @@ -328,6 +328,8 @@ static int mb862xxfb_ioctl(struct fb_info *fbi, unsigned int cmd,
->  	case MB862XX_L1_SET_CFG:
->  		if (copy_from_user(l1_cfg, argp, sizeof(*l1_cfg)))
->  			return -EFAULT;
-> +		if (l1_cfg->dh = 0 || l1_cfg->dw = 0)
-> +			return -EINVAL;
->  		if ((l1_cfg->sw >= l1_cfg->dw) && (l1_cfg->sh >= l1_cfg->dh)) {
->  			/* downscaling */
->  			outreg(cap, GC_CAP_CSC,
-> 
+> diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+> index 005261c..33ecbe0 100644
+> --- a/fs/ocfs2/dlm/dlmmaster.c
+> +++ b/fs/ocfs2/dlm/dlmmaster.c
+> @@ -2020,7 +2020,7 @@ int dlm_dispatch_assert_master(struct dlm_ctxt *dlm,
+>  			       int ignore_higher, u8 request_from, u32 flags)
+>  {
+>  	struct dlm_work_item *item;
+> -	item = kzalloc(sizeof(*item), GFP_NOFS);
+> +	item = kzalloc(sizeof(*item), GFP_ATOMIC);
+>  	if (!item)
+>  		return -ENOMEM;
+>  
 
+-- 
+
+"We will have to repent in this generation not merely for the
+ vitriolic words and actions of the bad people, but for the 
+ appalling silence of the good people."
+	- Rev. Dr. Martin Luther King, Jr.
+
+			http://www.jlbec.org/
+			jlbec@evilplan.org
