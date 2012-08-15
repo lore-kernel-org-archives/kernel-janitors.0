@@ -1,88 +1,93 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 21 Aug 2012 14:34:23 +0000
-Subject: Re: [memcg:since-3.5 41/99] (.text+0xa0998): undefined reference to `get_kernel_page'
-Message-Id: <20120821143423.GA23278@localhost>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date: Wed, 15 Aug 2012 15:13:37 +0000
+Subject: Re: [samsung:v4l_samsung_for_v3.7 90/99] ERROR: "flexcop_dma_config_timer" [drivers/media/pci/b2c2/b
+Message-Id: <502BBCA1.1020603@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120819235924.GA25856@localhost>
-In-Reply-To: <20120819235924.GA25856@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 21, 2012 at 04:22:39PM +0200, Michal Hocko wrote:
-> On Tue 21-08-12 20:48:34, Wu Fengguang wrote:
-> > On Mon, Aug 20, 2012 at 06:43:00PM +0200, Michal Hocko wrote:
-> > > On Tue 21-08-12 00:28:13, Wu Fengguang wrote:
-> > > > On Mon, Aug 20, 2012 at 05:29:03PM +0200, Michal Hocko wrote:
-> > > [...]
-> > > > > compiles without any issues, right?
-> > > > 
-> > > > It have some other issues instead. You didn't receive emails about
-> > > > them because my system only complaint about "new" issues :-)
-> > > 
-> > > OK
-> > > > 
-> > > > In file included from /c/wfg/linux/arch/m32r/boot/compressed/misc.c:25:0:
-> > > > /c/wfg/linux/arch/m32r/boot/compressed/m32r_sio.c:11:13: warning: conflicting types for built-in function 'putc' [enabled by default]
-> > > >   MODPOST 111 modules
-> > > > ERROR: "memory_start" [fs/udf/udf.ko] undefined!
-> > > > ERROR: "memory_end" [fs/udf/udf.ko] undefined!
-> > > > ERROR: "memory_end" [drivers/scsi/sg.ko] undefined!
-> > > > ERROR: "memory_start" [drivers/scsi/sg.ko] undefined!
-> > > > ERROR: "memory_end" [drivers/i2c/i2c-dev.ko] undefined!
-> > > > ERROR: "memory_start" [drivers/i2c/i2c-dev.ko] undefined!
-> > > >   GZIP    arch/m32r/boot/compressed/vmlinux.bin.gz
-> > > > make[2]: *** [__modpost] Error 1
-> > > > make[1]: *** [modules] Error 2
-> > > > make[1]: *** Waiting for unfinished jobs....
-> > > >   LD      arch/m32r/boot/compressed/piggy.o
-> > > > /usr/local/gcc-4.6.3-nolibc/m32r-linux/bin/m32r-linux-ld: target elf32-m32r not found
-> > > 
-> > > I assume those are present in the mmotm as well.
-> > 
-> > I think so, too.
-> > 
-> > > > > > Btw, is it meaningful for me to test the bisectability of all the
-> > > > > > memcg branches? If not, you may give me a list or pattern for me to
-> > > > > > take care.
-> > > > > 
-> > > > > Well, I do not think that this kind of test makes sense for the tree
-> > > > > because fixups are always done as a separate commits to prevent from
-> > > > > rebasing. Andrew always folds the fixups into the final patch which is
-> > > > > sent to Linus or who ever should push it further.
-> > > > 
-> > > > Yeah the build script have taken care of these follow-up fixes:
-> > > > 
-> > > > has_akpm_fix()
-> > > > {       
-> > > >         [[ $branch = 'next/akpm' || $branch =~ 'memcg/' ]] || return 1
-> > > >         
-> > > >         [[ $(git_commit_subject $commit) =~ (fix|build|error|warning) ]] && return 0
-> > > >         [[ $(git_commit_changelog $commit) =~ (build|compile|gcc|sparse|error|warning) ]] && return 0
-> > > >         
-> > > >         next_commit=$(echo "$*" | sed -ne "$((iterated_commits+2))p")
-> > > >         [[ $(git_commit_subject $next_commit) =~ (fix|build|error|warning) ]] && return 0
-> > > >         [[ $(git_commit_changelog $next_commit) =~ (build|compile|gcc|sparse|error|warning) ]] && return 0
-> > > >         return 1
-> > > > }       
-> > > 
-> > > OK, but I still think that the tree is not constructed to be bisectable.
-> > > It's main purpose is the provide a common code base for -mm tree which
-> > > is easier to work with than linux-next. The compilation coverage is
-> > > really great and thanks a lot for doing that but I think that
-> > > bisectability testing is not needed.
-> > 
-> > Understand. I'll test the HEAD commits only for the memcg branches.
+Em 14-08-2012 14:46, Fengguang Wu escreveu:
+> Hi Mauro,
 > 
-> OK.  I think it is sufficient to test only the last since-X.Y branch
-> (X.Y comes from the last major release).
+> FYI, kernel build failed on
+> 
+> tree:   git://git.infradead.org/users/kmpark/linux-samsung v4l_samsung_for_v3.7
+> head:   880d3853c370664e208865b3f5bc5831353d93ce
+> commit: 3785bc170f79ef04129731582b468c28e1326d6d [90/99] [media] b2c2: break it into common/pci/usb directories
+> config: x86_64-allmodconfig (attached as .config)
+> 
+> All related error/warning messages:
+> 
+> variable with __init* or __refdata (see linux/init.h) or name the variable:
+> *driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+> 
+> WARNING: drivers/staging/ipack/bridges/tpci200.o(.data+0x28): Section mismatch in reference from the variable tpci200_pci_drv to the function .devexit.text:tpci200_pci_remove()
+> The variable tpci200_pci_drv references
+> the function __devexit tpci200_pci_remove()
+> If the reference is valid then annotate the
+> variable with __exit* (see linux/init.h) or name the variable:
+> *driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+> 
+> ERROR: "flexcop_dma_config_timer" [drivers/media/pci/b2c2/b2c2-flexcop-pci.ko] undefined!
+> ERROR: "flexcop_dma_config" [drivers/media/pci/b2c2/b2c2-flexcop-pci.ko] undefined!
+> ERROR: "flexcop_dma_free" [drivers/media/pci/b2c2/b2c2-flexcop-pci.ko] undefined!
+> ERROR: "flexcop_dma_xfer_control" [drivers/media/pci/b2c2/b2c2-flexcop-pci.ko] undefined!
+> ERROR: "flexcop_dma_allocate" [drivers/media/pci/b2c2/b2c2-flexcop-pci.ko] undefined!
+> ERROR: "flexcop_dma_control_timer_irq" [drivers/media/pci/b2c2/b2c2-flexcop-pci.ko] undefined!
+> 
+> ---
+> 0-DAY kernel build testing backend         Open Source Technology Centre
+> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+> 
 
-Yeah that looks reasonable. I'll do it.
+Thanks for report!
 
-> Thanks a lot for doing those tests!
+The enclosed patch should fix it.
 
-You are welcome :)
+Not sure why this error didn't appear before, but it is clear that the
+second rule for b2c2-flexcop-pci-objs was removing flexcop-dma.o from the
+list of object files for b2c2-flexcop-pci.o.
 
-Thanks,
-Fengguang
+-
+
+[media] b2c2: fix driver's build due to the lack of pci DMA code
+
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+Fix a one-character typo at the makefile.
+
+drivers/built-in.o: In function `flexcop_pci_remove':
+flexcop-pci.c:(.text+0x20d1a28): undefined reference to `flexcop_dma_free'
+flexcop-pci.c:(.text+0x20d1a3e): undefined reference to `flexcop_dma_free'
+drivers/built-in.o: In function `flexcop_pci_stream_control':
+flexcop-pci.c:(.text+0x20d2396): undefined reference to `flexcop_dma_config'
+flexcop-pci.c:(.text+0x20d23b3): undefined reference to `flexcop_dma_config'
+flexcop-pci.c:(.text+0x20d23cf): undefined reference to `flexcop_dma_config_timer'
+flexcop-pci.c:(.text+0x20d23f5): undefined reference to `flexcop_dma_xfer_control'
+flexcop-pci.c:(.text+0x20d244c): undefined reference to `flexcop_dma_control_timer_irq'
+flexcop-pci.c:(.text+0x20d24b0): undefined reference to `flexcop_dma_control_timer_irq'
+flexcop-pci.c:(.text+0x20d2507): undefined reference to `flexcop_dma_xfer_control'
+drivers/built-in.o: In function `flexcop_pci_probe':
+flexcop-pci.c:(.text+0x20d28d2): undefined reference to `flexcop_dma_allocate'
+flexcop-pci.c:(.text+0x20d2907): undefined reference to `flexcop_dma_allocate'
+flexcop-pci.c:(.text+0x20d2923): undefined reference to `flexcop_dma_free'
+
+Reported-by: Fengguang Wu <wfg@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/drivers/media/pci/b2c2/Makefile b/drivers/media/pci/b2c2/Makefile
+index aedcac1..b894320 100644
+--- a/drivers/media/pci/b2c2/Makefile
++++ b/drivers/media/pci/b2c2/Makefile
+@@ -2,7 +2,7 @@ ifneq ($(CONFIG_DVB_B2C2_FLEXCOP_PCI),)
+ b2c2-flexcop-pci-objs += flexcop-dma.o
+ endif
+ 
+-b2c2-flexcop-pci-objs = flexcop-pci.o
++b2c2-flexcop-pci-objs += flexcop-pci.o
+ obj-$(CONFIG_DVB_B2C2_FLEXCOP_PCI) += b2c2-flexcop-pci.o
+ 
+ ccflags-y += -Idrivers/media/dvb-core/
+
