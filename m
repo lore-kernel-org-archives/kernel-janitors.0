@@ -1,72 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 26 Aug 2012 16:01:03 +0000
-Subject: [PATCH 11/13] arch/arm/mach-at91/gpio.c: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <1345996865-32082-12-git-send-email-Julia.Lawall@lip6.fr>
+From: Jonathan Brett <jonbrett.dev@gmail.com>
+Date: Wed, 15 Aug 2012 19:47:33 +0000
+Subject: [PATCH 2/2] staging: asus_oled add MODULE_VERSION
+Message-Id: <1345060053-14917-2-git-send-email-jonbrett.dev@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Moved version string from MODULE_DESCRIPTION to MODULE_VERSION
 
-Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-clk_enable, and clk_disable and clk_unprepare.  They make the code more
-concise, and ensure that clk_unprepare is called when clk_enable fails.
-
-A simplified version of the semantic patch that introduces calls to these
-functions is as follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e;
-@@
-
-- clk_prepare(e);
-- clk_enable(e);
-+ clk_prepare_enable(e);
-
-@@
-expression e;
-@@
-
-- clk_disable(e);
-- clk_unprepare(e);
-+ clk_disable_unprepare(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Jonathan Brett <jonbrett.dev@gmail.com>
 ---
- arch/arm/mach-at91/gpio.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/staging/asus_oled/asus_oled.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-at91/gpio.c b/arch/arm/mach-at91/gpio.c
-index be42cf0..7760f35 100644
---- a/arch/arm/mach-at91/gpio.c
-+++ b/arch/arm/mach-at91/gpio.c
-@@ -956,19 +956,14 @@ static int __init at91_gpio_setup_clk(int idx)
- 		goto err;
- 	}
+diff --git a/drivers/staging/asus_oled/asus_oled.c b/drivers/staging/asus_oled/asus_oled.c
+index 9a8843f..42a5e7a 100644
+--- a/drivers/staging/asus_oled/asus_oled.c
++++ b/drivers/staging/asus_oled/asus_oled.c
+@@ -55,8 +55,9 @@
+ #define USB_DEVICE_ID_ASUS_LCM2     0x175b
  
--	if (clk_prepare(at91_gpio->clock))
--		goto clk_prep_err;
--
- 	/* enable PIO controller's clock */
--	if (clk_enable(at91_gpio->clock)) {
-+	if (clk_prepare_enable(at91_gpio->clock)) {
- 		pr_err("at91_gpio.%d, failed to enable clock, ignoring.\n", idx);
--		goto clk_err;
-+		goto clk_prep_err;
- 	}
+ MODULE_AUTHOR("Jakub Schmidtke, sjakub@gmail.com");
+-MODULE_DESCRIPTION("Asus OLED Driver v" ASUS_OLED_VERSION);
++MODULE_DESCRIPTION("Asus OLED Driver");
+ MODULE_LICENSE("GPL");
++MODULE_VERSION(ASUS_OLED_VERSION);
  
- 	return 0;
- 
--clk_err:
--	clk_unprepare(at91_gpio->clock);
- clk_prep_err:
- 	clk_put(at91_gpio->clock);
- err:
+ static struct class *oled_class;
+ static int oled_num;
+-- 
+1.7.9.5
 
