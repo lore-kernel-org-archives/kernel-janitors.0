@@ -1,102 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 16 Aug 2012 13:16:56 +0000
-Subject: [patch] TTY: tty_alloc_driver() returns error pointers
-Message-Id: <20120816131656.GB23279@elgon.mountain>
+From: Jiri Slaby <jslaby@suse.cz>
+Date: Thu, 16 Aug 2012 13:56:30 +0000
+Subject: Re: [patch] TTY: tty_alloc_driver() returns error pointers
+Message-Id: <502CFC0E.9020907@suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120816131656.GB23279@elgon.mountain>
+In-Reply-To: <20120816131656.GB23279@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jslaby@suse.cz>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We changed these from alloc_tty_driver() to tty_alloc_driver() so the
-error handling needs to modified to check for IS_ERR() instead of NULL.
+On 08/16/2012 03:16 PM, Dan Carpenter wrote:
+> We changed these from alloc_tty_driver() to tty_alloc_driver() so the
+> error handling needs to modified to check for IS_ERR() instead of NULL.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Only needed on linux-next.
+Shame.
 
-diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
-index f5a27c6..2bace84 100644
---- a/drivers/tty/pty.c
-+++ b/drivers/tty/pty.c
-@@ -448,14 +448,14 @@ static void __init legacy_pty_init(void)
- 			TTY_DRIVER_RESET_TERMIOS |
- 			TTY_DRIVER_REAL_RAW |
- 			TTY_DRIVER_DYNAMIC_ALLOC);
--	if (!pty_driver)
-+	if (IS_ERR(pty_driver))
- 		panic("Couldn't allocate pty driver");
- 
- 	pty_slave_driver = tty_alloc_driver(legacy_count,
- 			TTY_DRIVER_RESET_TERMIOS |
- 			TTY_DRIVER_REAL_RAW |
- 			TTY_DRIVER_DYNAMIC_ALLOC);
--	if (!pty_slave_driver)
-+	if (IS_ERR(pty_slave_driver))
- 		panic("Couldn't allocate pty slave driver");
- 
- 	pty_driver->driver_name = "pty_master";
-@@ -682,7 +682,7 @@ static void __init unix98_pty_init(void)
- 			TTY_DRIVER_DYNAMIC_DEV |
- 			TTY_DRIVER_DEVPTS_MEM |
- 			TTY_DRIVER_DYNAMIC_ALLOC);
--	if (!ptm_driver)
-+	if (IS_ERR(ptm_driver))
- 		panic("Couldn't allocate Unix98 ptm driver");
- 	pts_driver = tty_alloc_driver(NR_UNIX98_PTY_MAX,
- 			TTY_DRIVER_RESET_TERMIOS |
-@@ -690,7 +690,7 @@ static void __init unix98_pty_init(void)
- 			TTY_DRIVER_DYNAMIC_DEV |
- 			TTY_DRIVER_DEVPTS_MEM |
- 			TTY_DRIVER_DYNAMIC_ALLOC);
--	if (!pts_driver)
-+	if (IS_ERR(pts_driver))
- 		panic("Couldn't allocate Unix98 pts driver");
- 
- 	ptm_driver->driver_name = "pty_master";
-diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
-index 3b17a04..56e616b 100644
---- a/drivers/tty/moxa.c
-+++ b/drivers/tty/moxa.c
-@@ -1048,8 +1048,8 @@ static int __init moxa_init(void)
- 	moxaDriver = tty_alloc_driver(MAX_PORTS + 1,
- 			TTY_DRIVER_REAL_RAW |
- 			TTY_DRIVER_DYNAMIC_DEV);
--	if (!moxaDriver)
--		return -ENOMEM;
-+	if (IS_ERR(moxaDriver))
-+		return PTR_ERR(moxaDriver);
- 
- 	moxaDriver->name = "ttyMX";
- 	moxaDriver->major = ttymajor;
-diff --git a/drivers/char/pcmcia/synclink_cs.c b/drivers/char/pcmcia/synclink_cs.c
-index d9335ae..5db08c7 100644
---- a/drivers/char/pcmcia/synclink_cs.c
-+++ b/drivers/char/pcmcia/synclink_cs.c
-@@ -2813,8 +2813,8 @@ static int __init synclink_cs_init(void)
- 	serial_driver = tty_alloc_driver(MAX_DEVICE_COUNT,
- 			TTY_DRIVER_REAL_RAW |
- 			TTY_DRIVER_DYNAMIC_DEV);
--	if (!serial_driver) {
--		rc = -ENOMEM;
-+	if (IS_ERR(serial_driver)) {
-+		rc = PTR_ERR(serial_driver);
- 		goto err;
- 	}
- 
-diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
-index 561f8aa..af98f6d 100644
---- a/drivers/char/ttyprintk.c
-+++ b/drivers/char/ttyprintk.c
-@@ -187,8 +187,8 @@ static int __init ttyprintk_init(void)
- 			TTY_DRIVER_RESET_TERMIOS |
- 			TTY_DRIVER_REAL_RAW |
- 			TTY_DRIVER_UNNUMBERED_NODE);
--	if (!ttyprintk_driver)
--		return ret;
-+	if (IS_ERR(ttyprintk_driver))
-+		return PTR_ERR(ttyprintk_driver);
- 
- 	ttyprintk_driver->driver_name = "ttyprintk";
- 	ttyprintk_driver->name = "ttyprintk";
+Acked-by: Jiri Slaby <jslaby@suse.cz>
+
+thanks,
+-- 
+js
+suse labs
