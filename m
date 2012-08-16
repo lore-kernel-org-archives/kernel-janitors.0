@@ -1,44 +1,61 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 26 Aug 2012 09:31:13 +0000
-Subject: Re: fs/ntfs/super.c:2717:1-14: alloc with no test
-Message-Id: <20120826093113.GA11809@localhost>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 16 Aug 2012 17:23:47 +0000
+Subject: Re: [patch] driver-core: dev_to_node() should handle NULL pointers
+Message-Id: <20120816172347.GA27415@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120826090447.GA11098@localhost>
- <CAHdPZaNs99QLOD=-QeUvFj5soSJMZCPU24V=5QXuVWx0r1jC5g@mail.gmail.com>
-In-Reply-To: <CAHdPZaNs99QLOD=-QeUvFj5soSJMZCPU24V=5QXuVWx0r1jC5g@mail.gmail.com>
+References: <20120720065622.GA11710@elgon.mountain>
+ <20120720150042.GA1996@kroah.com>
+ <20120720151846.GQ16348@mwanda>
+In-Reply-To: <20120720151846.GQ16348@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "devendra.aaru" <devendra.aaru@gmail.com>
-Cc: Anton Altaparmakov <anton@tuxera.com>, kernel-janitors@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-On Sun, Aug 26, 2012 at 02:42:12PM +0530, devendra.aaru wrote:
-> On Sun, Aug 26, 2012 at 2:34 PM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> >
-> > Hi Anton,
-> >
-> > FYI, coccinelle warns about
-> >
-> > fs/ntfs/super.c:2717:1-14: alloc with no test, possible model on line 2718
-> >
-> > vim +2717 fs/ntfs/super.c
-> >   2714          sb->s_flags |= MS_RDONLY;
-> >   2715  #endif /* ! NTFS_RW */
-> >   2716          /* Allocate a new ntfs_volume and place it in sb->s_fs_info. */
-> >> 2717          sb->s_fs_info = kmalloc(sizeof(ntfs_volume), GFP_NOFS);
+On Fri, Jul 20, 2012 at 06:18:46PM +0300, Dan Carpenter wrote:
+> On Fri, Jul 20, 2012 at 08:00:42AM -0700, Greg Kroah-Hartman wrote:
+> > On Fri, Jul 20, 2012 at 09:56:23AM +0300, Dan Carpenter wrote:
+> > > What prompted this patch is that in dma_pool_create() we call
+> > > dev_to_node() before checking whether "dev" is NULL.  It looks like
+> > > there are places which call dma_pool_create() with a NULL pointer.  An
+> > > example is in drivers/usb/gadget/amd5536udc.c.
+> > > 
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > ---
+> > > Static checker fix.
+> > > 
+> > > diff --git a/include/linux/device.h b/include/linux/device.h
+> > > index aa7b3b4..c80e7a8d 100644
+> > > --- a/include/linux/device.h
+> > > +++ b/include/linux/device.h
+> > > @@ -714,7 +714,9 @@ int dev_set_name(struct device *dev, const char *name, ...);
+> > >  #ifdef CONFIG_NUMA
+> > >  static inline int dev_to_node(struct device *dev)
+> > >  {
+> > > -	return dev->numa_node;
+> > > +	if (dev)
+> > > +		return dev->numa_node;
+> > > +	return -1;
+> > 
+> > What happens if this function returns -1?  Can the callers properly
+> > handle this?
+> > 
 > 
-> That's i think a false alarm.
+> Gar.  Now I'm not sure any more.
 > 
-> >   2718          vol = NTFS_SB(sb);
+> -1 means no affinity and it's what the dev_to_node() returns if NUMA
+> is disabled.  But now I think probably it's important to get the
+> NUMA node correct in dma_pool_create() so this isn't the right
+> answer.
 > 
-> The NTFS_SB(buf) {
->       buf->s_fs_info;
->  }
+> dma_pool_create() is not correct.  It has code to handle a NULL
+> "dev" pointer, but the dev_to_node() dereference will cause an oops
+> before we reach it.  I'm think this is a real issue that affects a
+> couple drivers.  Maybe those people compile without NUMA?
 > 
-> so we are validating the allocated pointer s_fs_info.
+> I'm not sure the right fix now.
 
-Yes, it is. Sorry for the noise!
+Ok, I'll drop this one then.
 
-Thanks,
-Fengguang
-
+greg k-h
