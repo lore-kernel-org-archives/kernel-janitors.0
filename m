@@ -1,63 +1,38 @@
-From: Avinash Patil <patila@marvell.com>
-Date: Tue, 07 Aug 2012 06:56:07 +0000
-Subject: RE: [wireless-testing:master 53/59] drivers/net/wireless/mwifiex/uap_event.c:251:11: warning: compar
-Message-Id: <CBACCFA0AEB13A41977475BCF3E896FC1CC7BCF199@SC-VEXCH2.marvell.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Aug 2012 13:15:02 +0000
+Subject: [patch] ipv6: move dereference after check in fl_free()
+Message-Id: <20120816131502.GB23188@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120807005524.GD9903@localhost>
- <477F20668A386D41ADCC57781B1F7043083AE3DA2C@SC-VEXCH1.marvell.com>
- <20120807024707.GA21890@localhost>
-In-Reply-To: <20120807024707.GA21890@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>, Bing Zhao <bzhao@marvell.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, Kiran Divekar <dkiran@marvell.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Fengguang,
+There is a dereference before checking for NULL bug here.  Generally
+free() functions should accept NULL pointers.  For example, fl_create()
+can pass a NULL pointer to fl_free() on the error path.
 
-Thanks for toolchain URL.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Only needed on linux-next.
 
-I will fix this warning and send a patch to mailing list.
-
-Regards,
-Avinash Patil
-
-
------Original Message-----
-From: Fengguang Wu [mailto:fengguang.wu@intel.com] 
-Sent: Tuesday, August 07, 2012 8:17 AM
-To: Bing Zhao
-Cc: Avinash Patil; kernel-janitors@vger.kernel.org; John W. Linville; Kiran Divekar; linux-wireless@vger.kernel.org
-Subject: Re: [wireless-testing:master 53/59] drivers/net/wireless/mwifiex/uap_event.c:251:11: warning: comparison of distinct pointer types lacks a cast
-
-On Mon, Aug 06, 2012 at 07:33:37PM -0700, Bing Zhao wrote:
-> Hi Fengguang,
-> 
-> > drivers/net/wireless/mwifiex/uap_event.c: In function 'mwifiex_process_uap_event':
-> > drivers/net/wireless/mwifiex/uap_event.c:251:11: warning: comparison of distinct pointer types lacks
-> > a cast [enabled by default]
-> 
-> Thanks for reporting this warning.
-> Could you please share your gcc version (or ppc toolchain version) with me?
-
-Bing, the toolchain is downloaded from
-
-https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.6.3/
-
-Just unpack the powerpc package to /usr/local and run this:
-
-/usr/bin/make ARCH=powerpc CROSS_COMPILE=/usr/local/gcc-4.6.3-nolibc/powerpc64-linux/bin/powerpc64-linux- allmodconfig
-
-The gcc version is:
-
-% /usr/local/gcc-4.6.3-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc -v
-Using built-in specs.
-COLLECT_GCC=/usr/local/gcc-4.6.3-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc
-COLLECT_LTO_WRAPPER=/usr/local/gcc-4.6.3-nolibc/powerpc64-linux/bin/../libexec/gcc/powerpc64-linux/4.6.3/lto-wrapper
-Target: powerpc64-linux
-Configured with: /home/tony/buildall/src/gcc/configure --target=powerpc64-linux --host=x86_64-linux-gnu --build=x86_64-linux-gnu --enable-targets=all --prefix=/opt/cross/gcc-4.6.3-nolibc/powerpc64-linux/ --enable-languages=c --with-newlib --without-headers --enable-sjlj-exceptions --with-system-libunwind --disable-nls --disable-threads --disable-shared --disable-libmudflap --disable-libssp --disable-libgomp --disable-decimal-float --enable-checking=release --with-mpfr=/home/tony/buildall/src/sys-x86_64 --with-gmp=/home/tony/buildall/src/sys-x86_64 --disable-bootstrap --disable-libquadmath
-Thread model: single
-gcc version 4.6.3 (GCC) 
-
-Thanks,
-Fengguang
+diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
+index c836a6a..90bbefb 100644
+--- a/net/ipv6/ip6_flowlabel.c
++++ b/net/ipv6/ip6_flowlabel.c
+@@ -91,12 +91,9 @@ static struct ip6_flowlabel *fl_lookup(struct net *net, __be32 label)
+ 
+ static void fl_free(struct ip6_flowlabel *fl)
+ {
+-	switch (fl->share) {
+-	case IPV6_FL_S_PROCESS:
+-		put_pid(fl->owner.pid);
+-		break;
+-	}
+ 	if (fl) {
++		if (fl->share = IPV6_FL_S_PROCESS)
++			put_pid(fl->owner.pid);
+ 		release_net(fl->fl_net);
+ 		kfree(fl->opt);
+ 	}
