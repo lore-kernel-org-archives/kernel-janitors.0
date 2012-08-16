@@ -1,82 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 04 Aug 2012 16:50:44 +0000
-Subject: [PATCH 1/6] drivers/thermal/rcar_thermal.c: drop frees of devm allocated data
-Message-Id: <1344099049-15212-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Roland Dreier <roland@purestorage.com>
+Date: Thu, 16 Aug 2012 16:05:56 +0000
+Subject: Re: [infiniband:for-next 9/19] drivers/net/ethernet/mellanox/mlx4/mr.c:134:4: error: implicit declar
+Message-Id: <CAL1RGDW0w3oi+HuENWBqzAXMvLpHji_Z+B4qO9XNvvDsKEnrEA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120816003552.GA3532@localhost>
+In-Reply-To: <20120816003552.GA3532@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com
-Cc: kernel-janitors@vger.kernel.org
+To: Fengguang Wu <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Yishai Hadas <yishaih-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Wed, Aug 15, 2012 at 5:35 PM, Fengguang Wu <fengguang.wu@intel.com> wrote:
+> drivers/net/ethernet/mellanox/mlx4/mr.c: In function 'mlx4_buddy_init':
+> drivers/net/ethernet/mellanox/mlx4/mr.c:134:4: error: implicit declaration of function 'vmalloc' [-Werror=implicit-function-declaration]
+> drivers/net/ethernet/mellanox/mlx4/mr.c:134:19: warning: assignment makes pointer from integer without a cast [enabled by default]
+> drivers/net/ethernet/mellanox/mlx4/mr.c:149:4: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+> cc1: some warnings being treated as errors
 
-devm_kfree and devm_iounmap should not have to be explicitly used.
+Stephen caught this in -next testing too, should be fixed today.
 
-The semantic patch that fixes one of these problems is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression x,d;
-@@
-
-x = devm_kzalloc(...)
-...
-?-devm_kfree(d,x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/thermal/rcar_thermal.c |   16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-index 2496b4f..9edbe04 100644
---- a/drivers/thermal/rcar_thermal.c
-+++ b/drivers/thermal/rcar_thermal.c
-@@ -206,16 +206,14 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 					  res->start, resource_size(res));
- 	if (!priv->base) {
- 		dev_err(&pdev->dev, "Unable to ioremap thermal register\n");
--		ret = -ENOMEM;
--		goto error_free_priv;
-+		return -ENOMEM;
- 	}
- 
- 	zone = thermal_zone_device_register("rcar_thermal", 0, priv,
- 					    &rcar_thermal_zone_ops, 0, 0, 0, 0);
- 	if (IS_ERR(zone)) {
- 		dev_err(&pdev->dev, "thermal zone device is NULL\n");
--		ret = PTR_ERR(zone);
--		goto error_iounmap;
-+		return PTR_ERR(zone);
- 	}
- 
- 	platform_set_drvdata(pdev, zone);
-@@ -223,13 +221,6 @@ static int rcar_thermal_probe(struct platform_device *pdev)
- 	dev_info(&pdev->dev, "proved\n");
- 
- 	return 0;
--
--error_iounmap:
--	devm_iounmap(&pdev->dev, priv->base);
--error_free_priv:
--	devm_kfree(&pdev->dev, priv);
--
--	return ret;
- }
- 
- static int rcar_thermal_remove(struct platform_device *pdev)
-@@ -240,9 +231,6 @@ static int rcar_thermal_remove(struct platform_device *pdev)
- 	thermal_zone_device_unregister(zone);
- 	platform_set_drvdata(pdev, NULL);
- 
--	devm_iounmap(&pdev->dev, priv->base);
--	devm_kfree(&pdev->dev, priv);
--
- 	return 0;
- }
- 
-
+Thanks!
+  Roland
