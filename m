@@ -1,41 +1,31 @@
-From: Antti Palosaari <crope@iki.fi>
-Date: Fri, 10 Aug 2012 10:26:49 +0000
-Subject: Re: [patch] [media] qt1010: signedness bug in qt1010_init_meas1()
-Message-Id: <5024E1E9.6090605@iki.fi>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Aug 2012 13:16:19 +0000
+Subject: [patch] sctp: fix bogus if statement in sctp_auth_recv_cid()
+Message-Id: <20120816131618.GA23279@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120810092502.GD26875@elgon.mountain>
-In-Reply-To: <20120810092502.GD26875@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Vlad Yasevich <vyasevich@gmail.com>, Sridhar Samudrala <sri@us.ibm.com>, "David S. Miller" <davem@davemloft.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/10/2012 12:25 PM, Dan Carpenter wrote:
-> qt1010_init_meas2() returns zero on success and negative error codes on
-> failure so the return type should be int instead of u8.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is an extra semi-colon here, so we always return 0 instead of
+calling __sctp_auth_cid().
 
-Acked-by: Antti Palosaari <crope@iki.fi>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Only needed for linux-next.
 
-
->
-> diff --git a/drivers/media/common/tuners/qt1010.c b/drivers/media/common/tuners/qt1010.c
-> index 2d79b1f..bdc39e1 100644
-> --- a/drivers/media/common/tuners/qt1010.c
-> +++ b/drivers/media/common/tuners/qt1010.c
-> @@ -288,7 +288,7 @@ static int qt1010_init_meas1(struct qt1010_priv *priv,
->   	return qt1010_writereg(priv, 0x1e, 0x00);
->   }
->
-> -static u8 qt1010_init_meas2(struct qt1010_priv *priv,
-> +static int qt1010_init_meas2(struct qt1010_priv *priv,
->   			    u8 reg_init_val, u8 *retval)
->   {
->   	u8 i, val;
->
-
-
--- 
-http://palosaari.fi/
+diff --git a/net/sctp/auth.c b/net/sctp/auth.c
+index aaa6c12..159b9bc 100644
+--- a/net/sctp/auth.c
++++ b/net/sctp/auth.c
+@@ -695,7 +695,7 @@ int sctp_auth_recv_cid(sctp_cid_t chunk, const struct sctp_association *asoc)
+ 		return 0;
+ 
+ 	net = sock_net(asoc->base.sk);
+-	if (!net->sctp.auth_enable);
++	if (!net->sctp.auth_enable)
+ 		return 0;
+ 
+ 	return __sctp_auth_cid(chunk,
