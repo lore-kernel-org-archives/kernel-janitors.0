@@ -1,49 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 26 Aug 2012 08:18:34 +0000
-Subject: [PATCH 1/2] tools/power/x86/turbostat/turbostat.c: delete double assignment
-Message-Id: <1345969115-12977-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 17 Aug 2012 03:27:42 +0000
+Subject: drm_fb_helper.c:1247:1-8: alloc with no test
+Message-Id: <20120817032742.GB26867@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Daniel,
 
-Delete successive assignments to the same location.
-Change the second assignment to the corresponding size variable, analogous
-to the code below.
+FYI, here is a potential problem on memory allocation failure, caught by coccinelle:
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
++ drivers/gpu/drm/drm_fb_helper.c:1247:1-8: alloc with no test, possible model on line 1252
 
-// <smpl>
-@@
-expression i;
-@@
-
-*i = ...;
- i = ...;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+vim +1247 drivers/gpu/drm/drm_fb_helper.c
+  1244				sizeof(struct drm_fb_helper_crtc *), GFP_KERNEL);
+  1245		modes = kcalloc(dev->mode_config.num_connector,
+  1246				sizeof(struct drm_display_mode *), GFP_KERNEL);
+> 1247		enabled = kcalloc(dev->mode_config.num_connector,
+  1248				  sizeof(bool), GFP_KERNEL);
+  1249	
+  1250		drm_enable_connectors(fb_helper, enabled);
 
 ---
- tools/power/x86/turbostat/turbostat.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 861d771..fc9b2b0 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -719,7 +719,7 @@ void free_all_buffers(void)
- {
- 	CPU_FREE(cpu_present_set);
- 	cpu_present_set = NULL;
--	cpu_present_set = 0;
-+	cpu_present_setsize = 0;
- 
- 	CPU_FREE(cpu_affinity_set);
- 	cpu_affinity_set = NULL;
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
