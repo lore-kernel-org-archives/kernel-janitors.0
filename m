@@ -1,34 +1,34 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 03 Aug 2012 13:18:41 +0000
-Subject: [sound:for-linus 16/16] sound/soc/soc-core.c:4139:3-8: WARNING: invalid free of devm_ allocated data
-Message-Id: <20120803131841.GB20007@localhost>
+Date: Fri, 17 Aug 2012 03:18:54 +0000
+Subject: [samsung:v4l-exynos-gsc 77/299] drivers/media/video/em28xx/em28xx-video.c:2269:17-20: ERROR: referen
+Message-Id: <20120817031854.GB26261@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-media@vger.kernel.org
 
-Hi Mark,
+Hi Hans,
 
-There are coccinelle warnings in
+FYI, there are new coccinelle warnings show up in
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-linus
-head:   ac190c76680cde6ce379b6be5baf89a970ea13d4
-commit: ac190c76680cde6ce379b6be5baf89a970ea13d4 [16/16] Merge tag 'asoc-3.6' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound into for-linus
+tree:   git://git.infradead.org/users/kmpark/linux-samsung v4l-exynos-gsc
+head:   8ac9447881f291e7b473d946bde20ec952621a23
+commit: 876cb14db3bec19960751bb02f03f72ee024a46f [77/299] [media] em28xx: remove V4L2_FL_LOCK_ALL_FOPS
 
 All coccinelle warnings:
 
-+ sound/soc/soc-core.c:4139:3-8: WARNING: invalid free of devm_ allocated data
-  sound/soc/soc-core.c:4148:3-8: WARNING: invalid free of devm_ allocated data
++ drivers/media/video/em28xx/em28xx-video.c:2269:17-20: ERROR: reference preceded by free on line 2267
 
-vim +4139 sound/soc/soc-core.c
-  4136				dev_err(card->dev,
-  4137					"Property '%s' index %d could not be read: %d\n",
-  4138					propname, 2 * i, ret);
-> 4139				kfree(routes);
-  4140				return -EINVAL;
-  4141			}
-  4142			ret = of_property_read_string_index(np, propname,
+vim +2269 drivers/media/video/em28xx/em28xx-video.c
+  2266				kfree(dev->alt_max_pkt_size);
+  2267				kfree(dev);
+  2268				kfree(fh);
+> 2269				mutex_unlock(&dev->lock);
+  2270				return 0;
+  2271			}
+  2272	
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
