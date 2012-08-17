@@ -1,70 +1,60 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 17 Aug 2012 07:46:58 +0000
-Subject: [PATCH 3/3] drivers/net/irda: fix error return code
-Message-Id: <1345189618-13758-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 17 Aug 2012 17:31:04 +0000
+Subject: [PATCH Resend] staging: wlan-ng: Fix problem with wrong arguments
+Message-Id: <1345224665-22439-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345189618-13758-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345189618-13758-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <samuel@sortiz.org>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: gregkh@linuxfoundation.org, dan.carpenter@oracle.com, krzysztof.wilczynski@linux.com, devendra.aaru@gmail.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The function pointer scan in struct cfg80211_ops is not
+supposed to be assigned a function with a struct net_device
+pointer as an argument. Instead access the net_device struct
+in the following way:
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+struct net_device *dev = request->wdev->netdev;
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+sparse gives these warnings:
 
-// <smpl>
-@@
-identifier ret;
-expression e1,e2;
-@@
+drivers/staging/wlan-ng/cfg80211.c:726:17: warning:
+        incorrect type in initializer (incompatible argument 2
+        (different base types))
+        expected int ( *scan )( ... )
+        got int ( extern [toplevel] *<noident> )( ... )
 
-if (ret < 0)
- { ... return ret; }
- ... when != ret = e1
-     when forall
-*if(...)
- {
-  ... when != ret = e2
-* return ret;
- }
-// </smpl>
+drivers/staging/wlan-ng/cfg80211.c:726:2: warning:
+        initialization from incompatible pointer type [enabled by default]
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+drivers/staging/wlan-ng/cfg80211.c:726:2: warning:
+        (near initialization for ‘prism2_usb_cfg_ops.scan’)
+        [enabled by default]
 
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
- drivers/net/irda/ks959-sir.c    |    1 +
- drivers/net/irda/ksdazzle-sir.c |    1 +
- 2 files changed, 2 insertions(+)
+This patch depends on the commit fd014284 which is now
+in the staging tree so it can be safely applied.
 
-diff --git a/drivers/net/irda/ks959-sir.c b/drivers/net/irda/ks959-sir.c
-index 824e2a9..5f3aeac 100644
---- a/drivers/net/irda/ks959-sir.c
-+++ b/drivers/net/irda/ks959-sir.c
-@@ -542,6 +542,7 @@ static int ks959_net_open(struct net_device *netdev)
- 	sprintf(hwname, "usb#%d", kingsun->usbdev->devnum);
- 	kingsun->irlap = irlap_open(netdev, &kingsun->qos, hwname);
- 	if (!kingsun->irlap) {
-+		err = -ENOMEM;
- 		dev_err(&kingsun->usbdev->dev, "irlap_open failed\n");
- 		goto free_mem;
- 	}
-diff --git a/drivers/net/irda/ksdazzle-sir.c b/drivers/net/irda/ksdazzle-sir.c
-index 5a278ab..2d4b6a1 100644
---- a/drivers/net/irda/ksdazzle-sir.c
-+++ b/drivers/net/irda/ksdazzle-sir.c
-@@ -436,6 +436,7 @@ static int ksdazzle_net_open(struct net_device *netdev)
- 	sprintf(hwname, "usb#%d", kingsun->usbdev->devnum);
- 	kingsun->irlap = irlap_open(netdev, &kingsun->qos, hwname);
- 	if (!kingsun->irlap) {
-+		err = -ENOMEM;
- 		dev_err(&kingsun->usbdev->dev, "irlap_open failed\n");
- 		goto free_mem;
- 	}
+ drivers/staging/wlan-ng/cfg80211.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
+index fabff4d..0970127 100644
+--- a/drivers/staging/wlan-ng/cfg80211.c
++++ b/drivers/staging/wlan-ng/cfg80211.c
+@@ -327,9 +327,9 @@ int prism2_get_station(struct wiphy *wiphy, struct net_device *dev,
+ 	return result;
+ }
+ 
+-int prism2_scan(struct wiphy *wiphy, struct net_device *dev,
+-		struct cfg80211_scan_request *request)
++int prism2_scan(struct wiphy *wiphy, struct cfg80211_scan_request *request)
+ {
++	struct net_device *dev = request->wdev->netdev;
+ 	struct prism2_wiphy_private *priv = wiphy_priv(wiphy);
+ 	wlandevice_t *wlandev = dev->ml_priv;
+ 	struct p80211msg_dot11req_scan msg1;
+-- 
+1.7.10.4
 
