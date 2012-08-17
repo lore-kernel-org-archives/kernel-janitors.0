@@ -1,25 +1,72 @@
-From: Alan Cox <alan@linux.intel.com>
-Date: Fri, 24 Aug 2012 10:17:26 +0000
-Subject: Re: [PATCH] gma500: remove references to drm_display_info raw_edid field
-Message-Id: <20120824111726.79f39143@bob.linux.org.uk>
+From: emilgoode@gmail.com
+Date: Fri, 17 Aug 2012 16:53:26 +0000
+Subject: [PATCH] staging: drm/omap: Add error handling
+Message-Id: <502e7651.241a700a.4d05.7e27@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120824001212.GC25618@localhost>
-	<1345790564-21095-1-git-send-email-jani.nikula@intel.com>
-In-Reply-To: <1345790564-21095-1-git-send-email-jani.nikula@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: airlied@redhat.com, fengguang.wu@intel.com, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: gregkh@linuxfoundation.org, rob@ti.com, andy.gross@ti.com, daniel.vetter@ffwll.ch
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Fri, 24 Aug 2012 09:42:44 +0300
-Jani Nikula <jani.nikula@intel.com> wrote:
+From: Emil Goode <emilgoode@gmail.com>
 
-> Another reference to raw_edid field of struct drm_display_info was
-> added in gma500 while the whole field was being removed, causing build
-> failure. Remove the hopefully last references to raw_edid.
-> 
-> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+This patch adds fail checks for kmalloc and kzalloc calls
+and also adds a error path that frees allocated pages by
+introducing a call to _drm_gem_put_pages.
 
-Signed-off-by: Alan Cox <alan@linux.intel.com>
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/staging/omapdrm/omap_gem.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/omapdrm/omap_gem.c b/drivers/staging/omapdrm/omap_gem.c
+index 74082aa..c828743 100644
+--- a/drivers/staging/omapdrm/omap_gem.c
++++ b/drivers/staging/omapdrm/omap_gem.c
+@@ -226,7 +226,8 @@ static int omap_gem_attach_pages(struct drm_gem_object *obj)
+ 	struct drm_device *dev = obj->dev;
+ 	struct omap_gem_object *omap_obj = to_omap_bo(obj);
+ 	struct page **pages;
+-	int i, npages = obj->size >> PAGE_SHIFT;
++	int npages = obj->size >> PAGE_SHIFT;
++	int i, ret;
+ 	dma_addr_t *addrs;
+ 
+ 	WARN_ON(omap_obj->pages);
+@@ -246,18 +247,32 @@ static int omap_gem_attach_pages(struct drm_gem_object *obj)
+ 	 */
+ 	if (omap_obj->flags & (OMAP_BO_WC|OMAP_BO_UNCACHED)) {
+ 		addrs = kmalloc(npages * sizeof(addrs), GFP_KERNEL);
++		if (!addrs) {
++			ret = -ENOMEM;
++			goto free_pages;
++		}
++
+ 		for (i = 0; i < npages; i++) {
+ 			addrs[i] = dma_map_page(dev->dev, pages[i],
+ 					0, PAGE_SIZE, DMA_BIDIRECTIONAL);
+ 		}
+ 	} else {
+ 		addrs = kzalloc(npages * sizeof(addrs), GFP_KERNEL);
++		if (!addrs) {
++			ret = -ENOMEM;
++			goto free_pages;
++		}
+ 	}
+ 
+ 	omap_obj->addrs = addrs;
+ 	omap_obj->pages = pages;
+ 
+ 	return 0;
++
++free_pages:
++	_drm_gem_put_pages(obj, pages, true, false);
++
++	return ret;
+ }
+ 
+ /** release backing pages */
+-- 
+1.7.10.4
+
