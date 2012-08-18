@@ -1,79 +1,67 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 07:02:57 +0000
-Subject: [PATCH 5/9] sound/atmel/ac97c.c: fix error return code
-Message-Id: <1345359780-18647-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 18 Aug 2012 16:12:48 +0000
+Subject: [PATCH 1/2] tty: serial: Check return code of gpiochip_remove
+Message-Id: <1345306369-10407-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: alan@linux.intel.com, gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The gpiochip_remove function may fail to remove a gpio_chip
+if any GPIOs are still requested. This patch informs the caller
+of such a senario.
 
-In the first case, the second test of whether retval is negative is
-redundant.  It is dropped and the previous and subsequent tests are
-combined.
+Sparse is warning because the function prototype has a
+__must_check annotation.
 
-In the second case, add an initialization of retval on failure of ioremap.
+Sparse warning:
+drivers/tty/serial/max310x.c:1223:18: warning:
+	ignoring return value of ‘gpiochip_remove’,
+	declared with attribute warn_unused_result
+	[-Wunused-result]
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
- sound/atmel/ac97c.c |   12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/tty/serial/max310x.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/sound/atmel/ac97c.c b/sound/atmel/ac97c.c
-index 3c8d3ba..9052aff 100644
---- a/sound/atmel/ac97c.c
-+++ b/sound/atmel/ac97c.c
-@@ -278,14 +278,9 @@ static int atmel_ac97c_capture_hw_params(struct snd_pcm_substream *substream,
- 	if (retval < 0)
- 		return retval;
- 	/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
--	if (cpu_is_at32ap7000()) {
--		if (retval < 0)
--			return retval;
--		/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
--		if (retval = 1)
--			if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
--				dw_dma_cyclic_free(chip->dma.rx_chan);
--	}
-+	if (cpu_is_at32ap7000() && retval = 1)
-+		if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
-+			dw_dma_cyclic_free(chip->dma.rx_chan);
+diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
+index 534e448..06ff5ad 100644
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
+@@ -1207,6 +1207,7 @@ static int __devexit max310x_remove(struct spi_device *spi)
+ {
+ 	struct device *dev = &spi->dev;
+ 	struct max310x_port *s = dev_get_drvdata(dev);
++	int ret = 0;
  
- 	/* Set restrictions to params. */
- 	mutex_lock(&opened_mutex);
-@@ -980,6 +975,7 @@ static int __devinit atmel_ac97c_probe(struct platform_device *pdev)
+ 	dev_dbg(dev, "Removing port\n");
  
- 	if (!chip->regs) {
- 		dev_dbg(&pdev->dev, "could not remap register memory\n");
-+		retval = -ENOMEM;
- 		goto err_ioremap;
- 	}
+@@ -1219,8 +1220,11 @@ static int __devexit max310x_remove(struct spi_device *spi)
+ 	uart_unregister_driver(&s->uart);
  
+ #ifdef CONFIG_GPIOLIB
+-	if (s->pdata->gpio_base)
+-		gpiochip_remove(&s->gpio);
++	if (s->pdata->gpio_base) {
++		ret = gpiochip_remove(&s->gpio);
++		if (ret)
++			dev_err(dev, "Failed to remove gpio chip: %d\n", ret);
++	}
+ #endif
+ 
+ 	dev_set_drvdata(dev, NULL);
+@@ -1232,7 +1236,7 @@ static int __devexit max310x_remove(struct spi_device *spi)
+ 
+ 	devm_kfree(dev, s);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static const struct spi_device_id max310x_id_table[] = {
+-- 
+1.7.10.4
 
