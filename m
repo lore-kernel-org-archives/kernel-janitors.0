@@ -1,44 +1,38 @@
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 27 Aug 2012 01:44:54 +0000
-Subject: Re: [PATCH 4/13] i2c: sirf: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <CAGsJ_4zSsnyJ0sn385g_1OvGXTwXbW-E1P_o7EWtM75+CSxDww@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 18 Aug 2012 15:55:15 +0000
+Subject: [patch] oss/sb_audio: prevent divide by zero bug
+Message-Id: <20120818155515.GA22424@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
- <1345996865-32082-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-2012/8/27 Julia Lawall <Julia.Lawall@lip6.fr>:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-> clk_enable, and clk_disable and clk_unprepare.  They make the code more
-> concise, and ensure that clk_unprepare is called when clk_enable fails.
->
-> A simplified version of the semantic patch that introduces calls to these
-> functions is as follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression e;
-> @@
->
-> - clk_prepare(e);
-> - clk_enable(e);
-> + clk_prepare_enable(e);
->
-> @@
-> expression e;
-> @@
->
-> - clk_disable(e);
-> - clk_unprepare(e);
-> + clk_disable_unprepare(e);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Speed comes from get_user() in audio_ioctl().  We use it to set the "s"
+variable before clamping it to valid values so it could lead to a divide
+by zero bug.
 
-Acked-by: Barry Song <21cnbao@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/oss/sb_audio.c b/sound/oss/sb_audio.c
+index 733b014..b2b3c01 100644
+--- a/sound/oss/sb_audio.c
++++ b/sound/oss/sb_audio.c
+@@ -575,13 +575,15 @@ static int jazz16_audio_set_speed(int dev, int speed)
+ 	if (speed > 0)
+ 	{
+ 		int tmp;
+-		int s = speed * devc->channels;
++		int s;
+ 
+ 		if (speed < 5000)
+ 			speed = 5000;
+ 		if (speed > 44100)
+ 			speed = 44100;
+ 
++		s = speed * devc->channels;
++
+ 		devc->tconst = (256 - ((1000000 + s / 2) / s)) & 0xff;
+ 
+ 		tmp = 256 - devc->tconst;
