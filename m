@@ -1,34 +1,31 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 26 Aug 2012 19:28:29 +0000
-Subject: [vfs:master 32/32] fs/open.c:817:18: sparse: restricted fmode_t degrades to integer
-Message-Id: <20120826192829.GA9431@localhost>
+Date: Sat, 18 Aug 2012 13:46:13 +0000
+Subject: drivers/scsi/ipr.c:8448:2-19: alloc with no test
+Message-Id: <20120818134613.GA11000@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Brian King <brking@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, Wayne Boyer <wayneb@linux.vnet.ibm.com>, linux-scsi@vger.kernel.org
 
-Hi Al,
+Hi Brian,
 
-FYI, there are new sparse warnings show up in
+FYI, coccinelle warns about
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git master
-head:   9283194882d18e3755c4ebc0b86db9f9a4f4c81a
-commit: 9283194882d18e3755c4ebc0b86db9f9a4f4c81a [32/32] don't leak O_CLOEXEC into ->f_flags
+  drivers/scsi/ipr.c:8448:2-19: alloc with no test, possible model on line 8457
 
-All sparse warnings:
+vi +8448 drivers/scsi/ipr.c
 
-+ fs/open.c:817:18: sparse: restricted fmode_t degrades to integer
+  8443         if (ioa_cfg->sis64) {
+  8444                 ioa_cfg->target_ids = kzalloc(sizeof(unsigned long) *
+  8445                                               BITS_TO_LONGS(ioa_cfg->max_devs_supported), GFP_KERNEL);
+  8446                 ioa_cfg->array_ids = kzalloc(sizeof(unsigned long) *
+  8447                                              BITS_TO_LONGS(ioa_cfg->max_devs_supported), GFP_KERNEL);
+> 8448                 ioa_cfg->vset_ids = kzalloc(sizeof(unsigned long) *
+  8449                                             BITS_TO_LONGS(ioa_cfg->max_devs_supported), GFP_KERNEL);
+  8450         }
+  8451   
 
-vim +817 fs/open.c
-   814			op->mode = 0;
-   815	
-   816		/* Must never be set by userspace */
- > 817		flags &= ~FMODE_NONOTIFY & ~O_CLOEXEC;
-   818	
-   819		/*
-   820		 * O_SYNC is implemented as __O_SYNC|O_DSYNC.  As many places only
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+Thanks,
+Fengguang
