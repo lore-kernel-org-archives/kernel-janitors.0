@@ -1,59 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 07:02:54 +0000
-Subject: [PATCH 8/9] sound/pci/rme9652/hdspm.c: fix error return code
-Message-Id: <1345359780-18647-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 18 Aug 2012 15:55:41 +0000
+Subject: [patch] video: mb862xxfb: prevent divide by zero bug
+Message-Id: <20120818155541.GB22424@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat-Mmb7MZpHnFY@public.gmane.org>
+Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, H Hartley Sweeten <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Do a sanity check on these before using them as divisors.
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/pci/rme9652/hdspm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
-index b8ac871..b12308b 100644
---- a/sound/pci/rme9652/hdspm.c
-+++ b/sound/pci/rme9652/hdspm.c
-@@ -6585,7 +6585,7 @@ static int __devinit snd_hdspm_create(struct snd_card *card,
- 		snd_printk(KERN_ERR "HDSPM: "
- 				"unable to kmalloc Mixer memory of %d Bytes\n",
- 				(int)sizeof(struct hdspm_mixer));
--		return err;
-+		return -ENOMEM;
- 	}
- 
- 	hdspm->port_names_in = NULL;
-
+diff --git a/drivers/video/mb862xx/mb862xxfbdrv.c b/drivers/video/mb862xx/mb862xxfbdrv.c
+index 00ce1f3..57d940b 100644
+--- a/drivers/video/mb862xx/mb862xxfbdrv.c
++++ b/drivers/video/mb862xx/mb862xxfbdrv.c
+@@ -328,6 +328,8 @@ static int mb862xxfb_ioctl(struct fb_info *fbi, unsigned int cmd,
+ 	case MB862XX_L1_SET_CFG:
+ 		if (copy_from_user(l1_cfg, argp, sizeof(*l1_cfg)))
+ 			return -EFAULT;
++		if (l1_cfg->dh = 0 || l1_cfg->dw = 0)
++			return -EINVAL;
+ 		if ((l1_cfg->sw >= l1_cfg->dw) && (l1_cfg->sh >= l1_cfg->dh)) {
+ 			/* downscaling */
+ 			outreg(cap, GC_CAP_CSC,
