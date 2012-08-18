@@ -1,50 +1,55 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 20 Aug 2012 19:44:56 +0000
-Subject: Re: [PATCH 2/10] sound/soc/fsl/imx-sgtl5000.c: fix error return code
-Message-Id: <20120820194455.GN26991@opensource.wolfsonmicro.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="5FetH82qe0Z6y/zI"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 18 Aug 2012 21:25:55 +0000
+Subject: [PATCH 1/5] drivers/net/wireless/ipw2x00/ipw2100.c: introduce missing initialization
+Message-Id: <1345325159-7365-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
- <1345359780-18647-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345359780-18647-2-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---5FetH82qe0Z6y/zI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The result of one call to a function is tested, and then at the second call
+to the same function, the previous result, and not the current result, is
+tested again.
 
-On Sun, Aug 19, 2012 at 09:02:52AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Initialize ret on the second call to imx_audmux_v2_configure_port so that
-> the subsequent test checks that result and not the previous one.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied all ASoC patches, thanks.
+// <smpl>
+@@
+expression ret;
+identifier f;
+statement S1,S2;
+@@
 
---5FetH82qe0Z6y/zI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+*ret = f(...);
+if (\(ret != 0\|ret < 0\|ret = NULL\)) S1
+... when any
+*f(...);
+if (\(ret != 0\|ret < 0\|ret = NULL\)) S2
+// </smpl>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-iQIcBAEBAgAGBQJQMpOxAAoJEFJkBDiqVpZ4rF8P/0Zg10jkPs3h1QeygboiX62P
-NbaGfV/tvrUfqE6J/JP+TAXbKAdRKlh+AYISMGhZsCXqD0c5RINrmOEsM3grxI92
-WsM6H8Ca114MFTWEfdQ72JqEjwiXt5Y5iA6i7v54E07DgpWWiGKnZo1UWWdUPGt+
-r4/iz/fhutz+wRH1CA54x3a/+0PdvKQzJQO6R+rFLTHVi2yq/konH1AsI5Vo9DeV
-jI3iCIHc9mLAHQvmnF45lNQLNj/r0XIIPc7tLwweFQnCL8ZJUlNBYj+qJDyPlaC5
-fp071IBepzp0qSQz8vA9CtGCktzXoFzj1sIST4/3++chKe9UdD3ifnw2ANr9mJqm
-+ZWiGCIrsDVL8knupX5Ax4JLMIT7LP6eIHuq0nM8ComR5njGS2bmazA1TupKcslK
-tMnyUXWVYUvRr6RilV87YneN5WIfZpSjMhrYFh5akVh9d0220bFZQ2ZwD0gFT/Ht
-HdLccyqk/UKqg/JrgOd5YKug+Lwb19oFWImcIcQv5dwgsInJ/q112KkyJGlQ+2vF
-/tfA8spkr/L6no432HzOeqjQvPktskzZi5Ubmhh1ilg+i7au8E6YJHsL8jbcDOQc
-0XDdscAnUHjxAIw31kv3OpsPvMaY7KGWOq6NJSxGUA4+IqQtIh1SOE0oKTWoHUVT
-/5jz8POclpcRymOeKlpl
-=yLGW
------END PGP SIGNATURE-----
+---
+ drivers/net/wireless/ipw2x00/ipw2100.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---5FetH82qe0Z6y/zI--
+diff --git a/drivers/net/wireless/ipw2x00/ipw2100.c b/drivers/net/wireless/ipw2x00/ipw2100.c
+index 8a34202..2f3f6f2 100644
+--- a/drivers/net/wireless/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/ipw2x00/ipw2100.c
+@@ -2042,7 +2042,8 @@ static void isr_indicate_associated(struct ipw2100_priv *priv, u32 status)
+ 		return;
+ 	}
+ 	len = ETH_ALEN;
+-	ipw2100_get_ordinal(priv, IPW_ORD_STAT_ASSN_AP_BSSID, &bssid, &len);
++	ret = ipw2100_get_ordinal(priv, IPW_ORD_STAT_ASSN_AP_BSSID, &bssid,
++				  &len);
+ 	if (ret) {
+ 		IPW_DEBUG_INFO("failed querying ordinals at line %d\n",
+ 			       __LINE__);
+
