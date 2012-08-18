@@ -1,33 +1,55 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 31 Aug 2012 19:44:01 +0000
-Subject: Re: [asoc:for-next 127/128] make[1]: *** No rule to make target `sound/soc/ep93xx'.
-Message-Id: <20120831194401.GB13655@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 18 Aug 2012 21:25:58 +0000
+Subject: [PATCH 4/5] drivers/net/wireless/ath/ath6kl/main.c: introduce missing initialization
+Message-Id: <1345325159-7365-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120829053856.GA6107@localhost>
- <20120829201338.bc007a27.shc_work@mail.ru>
-In-Reply-To: <20120829201338.bc007a27.shc_work@mail.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2012 at 08:13:38PM +0400, Alexander Shiyan wrote:
-> On Tue, 28 Aug 2012 22:38:56 -0700
-> Fengguang Wu <fengguang.wu@intel.com> wrote:
-> 
-> > FYI, kernel build failed on
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-> > head:   03a5da2b72ba426ed475795db375fc7780338ff4
-> > commit: 0ed275eff31029c39355828cb48c46c0a006e2f8 [127/128] ASoC: Rename ep93xx soc directory to cirrus
-> > config: x86_64-allyesconfig (attached as .config)
-> > Build errors:
-> > make[1]: *** No rule to make target `sound/soc/ep93xx'.
-> 
-> Cannot reproduce this bug.  Possible this breakage may be resolved by run
-> "make distclean" before "make all".
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Sorry! It's actually a bug of the build system.. I just fixed it.
+The result of one call to a function is tested, and then at the second call
+to the same function, the previous result, and not the current result, is
+tested again.
 
-Thanks,
-Fengguang
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression ret;
+identifier f;
+statement S1,S2;
+@@
+
+*ret = f(...);
+if (\(ret != 0\|ret < 0\|ret = NULL\)) S1
+... when any
+*f(...);
+if (\(ret != 0\|ret < 0\|ret = NULL\)) S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/wireless/ath/ath6kl/main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath6kl/main.c b/drivers/net/wireless/ath/ath6kl/main.c
+index c189e28..c312c61 100644
+--- a/drivers/net/wireless/ath/ath6kl/main.c
++++ b/drivers/net/wireless/ath/ath6kl/main.c
+@@ -322,7 +322,8 @@ int ath6kl_read_fwlogs(struct ath6kl *ar)
+ 
+ 		address = TARG_VTOP(ar->target_type,
+ 				    le32_to_cpu(debug_buf.next));
+-		ath6kl_diag_read(ar, address, &debug_buf, sizeof(debug_buf));
++		ret = ath6kl_diag_read(ar, address, &debug_buf,
++				       sizeof(debug_buf));
+ 		if (ret)
+ 			goto out;
+ 
+
