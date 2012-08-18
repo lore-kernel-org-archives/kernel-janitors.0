@@ -1,40 +1,30 @@
-From: Rupesh Gujare <rgujare@ozmodevices.com>
-Date: Wed, 22 Aug 2012 10:19:48 +0000
-Subject: RE: [staging-next V3] ozwpan: fix memcmp() test in oz_set_active_pd()
-Message-Id: <9DBB4F49862BA041A40EBC6350D9B0683DC988AB@BY2PRD0810MB367.namprd08.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 18 Aug 2012 08:46:37 +0000
+Subject: [patch] [SCSI] bnx2fc: zero out sense buffer properly
+Message-Id: <20120818084637.GA30592@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345394197-6561-1-git-send-email-tomas.winkler@intel.com>
-In-Reply-To: <1345394197-6561-1-git-send-email-tomas.winkler@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Bhanu Prakash Gollapudi <bprakash@broadcom.com>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+->sense_buffer used to be an array but it changed to pointer in
+de25deb180 "[SCSI] use dynamically allocated sense buffer".  This call
+to memset() needs to be updated as well.
 
-________________________________________
-From: Tomas Winkler [tomas.winkler@intel.com]
-Sent: 19 August 2012 17:36
-To: gregkh@linuxfoundation.org
-Cc: alan@linux.intel.com; devel@linuxdriverproject.org; kernel-janitors@vger.kernel.org; Tomas Winkler; Dan Carpenter; Rupesh Gujare
-Subject: [staging-next V3] ozwpan: fix memcmp() test in oz_set_active_pd()
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-"addr" is a pointer so it's either 4 or 8 bytes, but actually we want
-to compare 6 bytes (ETH_ALEN).
-
-As network stack already provides helper function
-is_zero_ether_addr() we use that instead of memcmp
-
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Rupesh Gujare <rgujare@ozmodevices.com>
----
-V1: by Dan Carpenter <dan.carpenter@oracle.com>
-V2: replace memcmp with is_zero_ether_addr
-V3: include <linux/etherdevice.h>
-
-Acked-by: Rupesh Gujare<rgujare@ozmodevices.com> 
-
-
---
-Regards,
-Rupesh Gujare
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
+index 73f231c..8d4626c 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+@@ -1807,7 +1807,7 @@ static void bnx2fc_parse_fcp_rsp(struct bnx2fc_cmd *io_req,
+ 			fcp_sns_len = SCSI_SENSE_BUFFERSIZE;
+ 		}
+ 
+-		memset(sc_cmd->sense_buffer, 0, sizeof(sc_cmd->sense_buffer));
++		memset(sc_cmd->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
+ 		if (fcp_sns_len)
+ 			memcpy(sc_cmd->sense_buffer, rq_data, fcp_sns_len);
+ 
