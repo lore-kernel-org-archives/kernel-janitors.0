@@ -1,55 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 18 Aug 2012 21:25:55 +0000
-Subject: [PATCH 1/5] drivers/net/wireless/ipw2x00/ipw2100.c: introduce missing initialization
-Message-Id: <1345325159-7365-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Stanislav Yakovlev <stas.yakovlev@gmail.com>
+Date: Sun, 19 Aug 2012 09:36:49 +0000
+Subject: Re: [PATCH 1/5] drivers/net/wireless/ipw2x00/ipw2100.c: introduce missing initialization
+Message-Id: <CA++WF2MmTe6WP6MQRV-v1VwkpcUrw4hU6yh79NdG-K4snzQkbg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1345325159-7365-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345325159-7365-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislav Yakovlev <stas.yakovlev@gmail.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Julia,
 
-The result of one call to a function is tested, and then at the second call
-to the same function, the previous result, and not the current result, is
-tested again.
+On 19 August 2012 01:25, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> -       ipw2100_get_ordinal(priv, IPW_ORD_STAT_ASSN_AP_BSSID, &bssid, &len);
+> +       ret = ipw2100_get_ordinal(priv, IPW_ORD_STAT_ASSN_AP_BSSID, &bssid,
+> +                                 &len);
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+This is correct, but this line has one more typo. It should be
 
-// <smpl>
-@@
-expression ret;
-identifier f;
-statement S1,S2;
-@@
+-&bssid
++bssid
 
-*ret = f(...);
-if (\(ret != 0\|ret < 0\|ret = NULL\)) S1
-... when any
-*f(...);
-if (\(ret != 0\|ret < 0\|ret = NULL\)) S2
-// </smpl>
+according to the bssid definition in the beginning of the function:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+u8 bssid[ETH_ALEN];
 
----
- drivers/net/wireless/ipw2x00/ipw2100.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Could you fix this as well?
 
-diff --git a/drivers/net/wireless/ipw2x00/ipw2100.c b/drivers/net/wireless/ipw2x00/ipw2100.c
-index 8a34202..2f3f6f2 100644
---- a/drivers/net/wireless/ipw2x00/ipw2100.c
-+++ b/drivers/net/wireless/ipw2x00/ipw2100.c
-@@ -2042,7 +2042,8 @@ static void isr_indicate_associated(struct ipw2100_priv *priv, u32 status)
- 		return;
- 	}
- 	len = ETH_ALEN;
--	ipw2100_get_ordinal(priv, IPW_ORD_STAT_ASSN_AP_BSSID, &bssid, &len);
-+	ret = ipw2100_get_ordinal(priv, IPW_ORD_STAT_ASSN_AP_BSSID, &bssid,
-+				  &len);
- 	if (ret) {
- 		IPW_DEBUG_INFO("failed querying ordinals at line %d\n",
- 			       __LINE__);
-
+Thanks!
+Stanislav.
