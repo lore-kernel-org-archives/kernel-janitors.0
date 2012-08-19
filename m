@@ -1,29 +1,119 @@
-From: Josef Bacik <jbacik@fusionio.com>
-Date: Mon, 13 Aug 2012 15:33:27 +0000
-Subject: Re: [josef-btrfs:extent-history 20/20] fs/btrfs/delayed-ref.h:125:21: error: field 'trace' has incom
-Message-Id: <20120813153327.GA2133@localhost.localdomain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 07:02:53 +0000
+Subject: [PATCH 1/10] sound/soc/ux500/ux500_msp_i2s.c: better use devm functions and fix error return code
+Message-Id: <1345359780-18647-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120810082047.GA26352@localhost>
-In-Reply-To: <20120810082047.GA26352@localhost>
+References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Josef Bacik <JBacik@fusionio.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+To: Liam Girdwood <lrg@ti.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2012 at 02:20:47AM -0600, Fengguang Wu wrote:
-> Hi Josef,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git extent-history
-> head:   7759db1867be3d642b2411455902ed22dd6d1381
-> commit: 7759db1867be3d642b2411455902ed22dd6d1381 [20/20] Btrfs: extent history debugging patch
-> config: i386-randconfig-k662 (attached as .config)
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This is just a debug patch that's just up so other people can use it in the
-future.  But looks like we just need a CONFIG_STACKTRACE check so I've added
-that and hopefully that fixed it.  Thanks,
+Remove unnecessary calls to devm_kfree and replace iounmap by devm_iounmap
+(and use resource_size for the third argument).  These changes make it
+possible to remove the error-handling code at the end of
+ux500_msp_i2s_init_msp, and all of the gotos become direct returns.
 
-Josef
+In the case of the second call to devm_kzalloc, the return variable ret was
+not initialized.  Here it is changed to a direct return of -ENOMEM.
+
+A simplified version of the semantic match that finds the second problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/ux500/ux500_msp_i2s.c |   25 +++++--------------------
+ 1 file changed, 5 insertions(+), 20 deletions(-)
+
+diff --git a/sound/soc/ux500/ux500_msp_i2s.c b/sound/soc/ux500/ux500_msp_i2s.c
+index 36be11e..1b7c2f5 100644
+--- a/sound/soc/ux500/ux500_msp_i2s.c
++++ b/sound/soc/ux500/ux500_msp_i2s.c
+@@ -663,7 +663,6 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
+ 			struct ux500_msp **msp_p,
+ 			struct msp_i2s_platform_data *platform_data)
+ {
+-	int ret = 0;
+ 	struct resource *res = NULL;
+ 	struct i2s_controller *i2s_cont;
+ 	struct ux500_msp *msp;
+@@ -687,15 +686,14 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
+ 	if (res = NULL) {
+ 		dev_err(&pdev->dev, "%s: ERROR: Unable to get resource!\n",
+ 			__func__);
+-		ret = -ENOMEM;
+-		goto err_res;
++		return -ENOMEM;
+ 	}
+ 
+-	msp->registers = ioremap(res->start, (res->end - res->start + 1));
++	msp->registers = devm_ioremap(&pdev->dev, res->start,
++				      resource_size(res));
+ 	if (msp->registers = NULL) {
+ 		dev_err(&pdev->dev, "%s: ERROR: ioremap failed!\n", __func__);
+-		ret = -ENOMEM;
+-		goto err_res;
++		return -ENOMEM;
+ 	}
+ 
+ 	msp->msp_state = MSP_STATE_IDLE;
+@@ -707,7 +705,7 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
+ 		dev_err(&pdev->dev,
+ 			"%s: ERROR: Failed to allocate I2S-controller!\n",
+ 			__func__);
+-		goto err_i2s_cont;
++		return -ENOMEM;
+ 	}
+ 	i2s_cont->dev.parent = &pdev->dev;
+ 	i2s_cont->data = (void *)msp;
+@@ -718,14 +716,6 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
+ 	msp->i2s_cont = i2s_cont;
+ 
+ 	return 0;
+-
+-err_i2s_cont:
+-	iounmap(msp->registers);
+-
+-err_res:
+-	devm_kfree(&pdev->dev, msp);
+-
+-	return ret;
+ }
+ 
+ void ux500_msp_i2s_cleanup_msp(struct platform_device *pdev,
+@@ -734,11 +724,6 @@ void ux500_msp_i2s_cleanup_msp(struct platform_device *pdev,
+ 	dev_dbg(msp->dev, "%s: Enter (id = %d).\n", __func__, msp->id);
+ 
+ 	device_unregister(&msp->i2s_cont->dev);
+-	devm_kfree(&pdev->dev, msp->i2s_cont);
+-
+-	iounmap(msp->registers);
+-
+-	devm_kfree(&pdev->dev, msp);
+ }
+ 
+ MODULE_LICENSE("GPL v2");
+
