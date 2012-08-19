@@ -1,64 +1,61 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 05 Aug 2012 09:52:30 +0000
-Subject: [PATCH 0/6] fix error return code
-Message-Id: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 08:44:18 +0000
+Subject: [PATCH 6/14] drivers/power/wm97xx_battery.c: fix error return code
+Message-Id: <1345365870-29831-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Anton Vorontsov <cbou@mail.ru>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-These patches fix cases where the return code appears to be unintentially 0.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The complete semantic match that finds the problem is as follows:
-(http://coccinelle.lip6.fr/)
+Initialize return variable before exiting on an error path.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r@
-identifier f;
-expression ret,e;
-constant C;
-@@
-
-f(...) { <+...
 (
-return -C;
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
 |
-ret = -C
-... when != ret = e
-return ret;
-|
-if (ret < 0) { ... return ret; }
-)
-...+> }
-
-@s@
-identifier r.f,ret;
-@@
-
-f(...) { <+... return ret; ...+> }
-
-@@
-identifier r.f,s.ret;
-expression e,e1,e2,e3,e4,x;
-@@
-
-f(...) { <+...
-(
-if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
-|
-ret = 0
+ret@p1 = 0
 )
 ... when != ret = e1
-*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
-... when != x = e2
-    when != ret = e3
-*if (x = NULL || ...)
+    when != &ret
+*if(...)
 {
-  ... when != ret = e4
-*  return ret;
+  ... when != ret = e2
+      when forall
+ return ret;
 }
-...+> }
+
 // </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/power/wm97xx_battery.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/power/wm97xx_battery.c b/drivers/power/wm97xx_battery.c
+index d2d4c08..0ba331a 100644
+--- a/drivers/power/wm97xx_battery.c
++++ b/drivers/power/wm97xx_battery.c
+@@ -212,8 +212,10 @@ static int __devinit wm97xx_bat_probe(struct platform_device *dev)
+ 		props++;	/* POWER_SUPPLY_PROP_VOLTAGE_MIN */
+ 
+ 	prop = kzalloc(props * sizeof(*prop), GFP_KERNEL);
+-	if (!prop)
++	if (!prop) {
++		ret = -ENOMEM;
+ 		goto err3;
++	}
+ 
+ 	prop[i++] = POWER_SUPPLY_PROP_PRESENT;
+ 	if (pdata->charge_gpio >= 0)
 
