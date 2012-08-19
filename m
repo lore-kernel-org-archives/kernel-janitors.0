@@ -1,61 +1,42 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:42:07 +0000
-Subject: Re: [PATCH 5/5] drivers/video/msm/mddi_client_nt35399.c: use devm_ functions
-Message-Id: <5036959F.4010506@gmx.de>
+From: Tomas Winkler <tomas.winkler@intel.com>
+Date: Sun, 19 Aug 2012 16:20:54 +0000
+Subject: [staging-next] ozwpan: fix memcmp() test in oz_set_active_pd()
+Message-Id: <1345393254-6060-1-git-send-email-tomas.winkler@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr> <1344008414-2894-5-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1344008414-2894-5-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Damien Cassou <damien.cassou@lifl.fr>
-Cc: David Brown <davidb@codeaurora.org>, kernel-janitors@vger.kernel.org, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 08/03/2012 03:40 PM, Damien Cassou wrote:
-> From: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches. This patch replaces the use of kzalloc by devm_kzalloc.
-> 
-> Additionally, this patch fixes a memory leak: some memory was allocated for
-> 'panel' but not released when the subsequent call to setup_vsync fails.
-> 
-> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+"addr" is a pointer so it's either 4 or 8 bytes, but actually we want
+to compare 6 bytes (ETH_ALEN).
 
-Applied.
+As network stack already provides helper function
+is_zero_ether_addr() we use that instead of memcmp
 
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Rupesh Gujare <rgujare@ozmodevices.com>
+---
+V1: by Dan Carpenter <dan.carpenter@oracle.com>
+V2: replace memcmp with is_zero_ether_addr
 
-Thanks,
+ drivers/staging/ozwpan/ozcdev.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Florian Tobias Schandinat
-
-> 
-> ---
->  drivers/video/msm/mddi_client_nt35399.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/video/msm/mddi_client_nt35399.c b/drivers/video/msm/mddi_client_nt35399.c
-> index 7fcd67e..66b314e 100644
-> --- a/drivers/video/msm/mddi_client_nt35399.c
-> +++ b/drivers/video/msm/mddi_client_nt35399.c
-> @@ -189,8 +189,9 @@ static int mddi_nt35399_probe(struct platform_device *pdev)
-> 
->  	int ret;
-> 
-> -	struct panel_info *panel = kzalloc(sizeof(struct panel_info),
-> -					   GFP_KERNEL);
-> +	struct panel_info *panel = devm_kzalloc(&pdev->dev,
-> +						sizeof(struct panel_info),
-> +						GFP_KERNEL);
-> 
->  	printk(KERN_DEBUG "%s: enter.\n", __func__);
-> 
-> @@ -233,7 +234,6 @@ static int mddi_nt35399_remove(struct platform_device *pdev)
->  	struct panel_info *panel = platform_get_drvdata(pdev);
-> 
->  	setup_vsync(panel, 0);
-> -	kfree(panel);
->  	return 0;
->  }
-> 
+diff --git a/drivers/staging/ozwpan/ozcdev.c b/drivers/staging/ozwpan/ozcdev.c
+index d983219..77c4104 100644
+--- a/drivers/staging/ozwpan/ozcdev.c
++++ b/drivers/staging/ozwpan/ozcdev.c
+@@ -213,7 +213,7 @@ static int oz_set_active_pd(u8 *addr)
+ 		if (old_pd)
+ 			oz_pd_put(old_pd);
+ 	} else {
+-		if (!memcmp(addr, "\0\0\0\0\0\0", sizeof(addr))) {
++		if (is_zero_ether_addr(addr)) {
+ 			spin_lock_bh(&g_cdev.lock);
+ 			pd = g_cdev.active_pd;
+ 			g_cdev.active_pd = 0;
+-- 
+1.7.4.4
 
