@@ -1,53 +1,61 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Date: Wed, 01 Aug 2012 08:54:26 +0000
-Subject: Re: [thermal:thermal 5/13] drivers/power/power_supply_core.c:204:6: error: too many arguments to fun
-Message-Id: <1343811266.1682.496.camel@rui.sh.intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 08:44:29 +0000
+Subject: [PATCH 13/14] drivers/mtd/ubi/build.c: fix error return code
+Message-Id: <1345365870-29831-14-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120801073612.GA11970@localhost>
-In-Reply-To: <20120801073612.GA11970@localhost>
+References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
 
-On 三, 2012-08-01 at 16:35 +0800, Zhang Rui wrote:
-> in this case, should I create an incremental patch to fix the problem,
-> or should I refresh my patch to cover that?
-> 
-I refreshed the patch to fix the build error. please pull.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-thanks,
-rui
+Initialize return variable before exiting on an error path.
 
-> 三, 2012-08-01 at 15:36 +0800, Fengguang Wu wrote:
-> > Hi Zhang,
-> > 
-> > Kernel build failed on
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git thermal
-> > head:   77fd40968a98055d5e910461be9a8c7a8be63251
-> > commit: 230c4d13a49b0faed79f1273d0f43121fa993ff5 [5/13] Thermal: Remove tc1/tc2 in generic thermal layer.
-> > config: x86_64-randconfig-h021 (attached as .config)
-> > 
-> > All related error/warning messages:
-> > 
-> > drivers/power/power_supply_core.c: In function 'psy_register_thermal':
-> > drivers/power/power_supply_core.c:204:6: error: too many arguments to function 'thermal_zone_device_register'
-> > In file included from drivers/power/power_supply_core.c:20:0:
-> > include/linux/thermal.h:163:29: note: declared here
-> > 
-> > vim +204 drivers/power/power_supply_core.c
-> >    201		for (i = 0; i < psy->num_properties; i++) {
-> >    202			if (psy->properties[i] = POWER_SUPPLY_PROP_TEMP) {
-> >    203				psy->tzd = thermal_zone_device_register(psy->name, 0, 0,
-> >  > 204						psy, &psy_tzd_ops, 0, 0, 0, 0);
-> >    205				if (IS_ERR(psy->tzd))
-> >    206					return PTR_ERR(psy->tzd);
-> >    207				break;
-> > 
-> > ---
-> > 0-DAY kernel build testing backend         Open Source Technology Centre
-> > Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
-> 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mtd/ubi/build.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
+index 7b6b5f9..afe9075 100644
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -1159,8 +1159,10 @@ static int __init ubi_init(void)
+ 	ubi_wl_entry_slab = kmem_cache_create("ubi_wl_entry_slab",
+ 					      sizeof(struct ubi_wl_entry),
+ 					      0, 0, NULL);
+-	if (!ubi_wl_entry_slab)
++	if (!ubi_wl_entry_slab) {
++		err = -ENOMEM;
+ 		goto out_dev_unreg;
++	}
+ 
+ 	err = ubi_debugfs_init();
+ 	if (err)
 
