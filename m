@@ -1,31 +1,58 @@
-From: Damien Cassou <damien.cassou@gmail.com>
-Date: Tue, 28 Aug 2012 08:42:04 +0000
-Subject: Re: [PATCH 4/5] drivers/video/msm/mddi_client_dummy.c: use devm_ functions
-Message-Id: <CA+y5gggtPjPFFvTM5DKEfAALA5p7m96=_j6wBGmc4S7iW5Tk8w@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 08:44:30 +0000
+Subject: [PATCH 14/14] drivers/spi/spi-s3c24xx.c: fix error return code
+Message-Id: <1345365870-29831-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr>
- <1344008414-2894-6-git-send-email-damien.cassou@lifl.fr> <20120809175712.GA24215@codeaurora.org>
-In-Reply-To: <20120809175712.GA24215@codeaurora.org>
+References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Brown <davidb@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Aug 9, 2012 at 7:57 PM, David Brown <davidb@codeaurora.org> wrote:
-> Removing this block causes a warning:
-> kernel/drivers/video/msm/mddi_client_dummy.c: In function 'mddi_dummy_probe':
-> kernel/drivers/video/msm/mddi_client_dummy.c:55:6: warning: unused variable 'ret' [-Wunused-variable]
->
-> Please remove the 'int ret;' line above as well.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thank you for your feedback.
-Please ignore this thread and patch. I've just sent a new email with
-corrected patch.
+Initialize return variable before exiting on an error path.
 
--- 
-Damien Cassou
-http://damiencassou.seasidehosting.st
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-"Lambdas are relegated to relative obscurity until Java makes them
-popular by not having them." James Iry
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Perhaps -EINVAL is not the right value in this case.
+
+ drivers/spi/spi-s3c24xx.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
+index 8ee7d79..a2a080b 100644
+--- a/drivers/spi/spi-s3c24xx.c
++++ b/drivers/spi/spi-s3c24xx.c
+@@ -611,6 +611,7 @@ static int __devinit s3c24xx_spi_probe(struct platform_device *pdev)
+ 	if (!pdata->set_cs) {
+ 		if (pdata->pin_cs < 0) {
+ 			dev_err(&pdev->dev, "No chipselect pin\n");
++			err = -EINVAL;
+ 			goto err_register;
+ 		}
+ 
+
