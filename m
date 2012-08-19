@@ -1,41 +1,110 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 10 Aug 2012 10:12:14 +0000
-Subject: Re: [patch] ALSA: cs46xx - signedness bug in snd_cs46xx_codec_read()
-Message-Id: <s5h8vdnys1t.wl%tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 07:02:51 +0000
+Subject: [PATCH 0/10] fix error return code
+Message-Id: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120810092258.GA26875@elgon.mountain>
-In-Reply-To: <20120810092258.GA26875@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-At Fri, 10 Aug 2012 12:22:58 +0300,
-Dan Carpenter wrote:
-> 
-> This function returns its own error codes instead of normal negative
-> error codes.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+These patches fix cases where the return code appears to be unintentially
+nonnegative.
 
-Thanks, applied now.
+The complete semantic match that finds the problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@ok exists@
+identifier f,ret,i;
+expression e;
+constant c;
+@@
+
+f(...) {
+<+...
+(
+return -c@i;
+|
+ret = -c@i;
+... when != ret = e
+return ret;
+|
+if (ret < 0) { ... return ret; }
+)
+...+> }
+
+@r exists@
+identifier ret,l,ok.f;
+expression e1,e2,e3;
+statement S;
+position p1,p2,p3;
+@@
+
+f(...) {
+... when any
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+(
+ if (<+... ret = e3 ...+>) S
+|
+ if (<+... &ret ...+>) S
+|
+if@p2(...)
+ {
+  ... when != ret = e2
+      when forall
+ return@p3 ret;
+}
+)
+... when any
+}
+
+@bad exists@
+position r.p1,r.p2;
+statement S1,S2;
+identifier r.ret;
+expression e1;
+@@
+
+(
+if@p1 (\(ret < 0\|ret != 0\)) S1
+|
+ret@p1 = 0
+)
+... when any
+ret = e1
+... when any
+if@p2(...) S2
+
+@bad2@
+position r.p1,r.p2;
+identifier r.ret;
+expression e1;
+statement S2;
+@@
+
+ret@p1 = 0
+... when != if (...) { ... ret = e1 ... return ret; }
+    when any
+if@p2(...) S2
 
 
-Takashi
+@script:python depends on !bad && !bad2@
+p1 << r.p1;
+p2 << r.p2;
+p3 << r.p3;
+@@
 
-> 
-> diff --git a/sound/pci/cs46xx/cs46xx_lib.c b/sound/pci/cs46xx/cs46xx_lib.c
-> index f75f5ff..a71d1c1 100644
-> --- a/sound/pci/cs46xx/cs46xx_lib.c
-> +++ b/sound/pci/cs46xx/cs46xx_lib.c
-> @@ -94,7 +94,7 @@ static unsigned short snd_cs46xx_codec_read(struct snd_cs46xx *chip,
->  
->  	if (snd_BUG_ON(codec_index != CS46XX_PRIMARY_CODEC_INDEX &&
->  		       codec_index != CS46XX_SECONDARY_CODEC_INDEX))
-> -		return -EINVAL;
-> +		return 0xffff;
->  
->  	chip->active_ctrl(chip, 1);
->  
-> 
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+cocci.print_secs("",p3)
+// </smpl>
+
