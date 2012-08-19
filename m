@@ -1,35 +1,79 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 17 Aug 2012 03:18:54 +0000
-Subject: [samsung:v4l-exynos-gsc 77/299] drivers/media/video/em28xx/em28xx-video.c:2269:17-20: ERROR: referen
-Message-Id: <20120817031854.GB26261@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 07:02:57 +0000
+Subject: [PATCH 5/9] sound/atmel/ac97c.c: fix error return code
+Message-Id: <1345359780-18647-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-media@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Hans,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-FYI, there are new coccinelle warnings show up in
+In the first case, the second test of whether retval is negative is
+redundant.  It is dropped and the previous and subsequent tests are
+combined.
 
-tree:   git://git.infradead.org/users/kmpark/linux-samsung v4l-exynos-gsc
-head:   8ac9447881f291e7b473d946bde20ec952621a23
-commit: 876cb14db3bec19960751bb02f03f72ee024a46f [77/299] [media] em28xx: remove V4L2_FL_LOCK_ALL_FOPS
+In the second case, add an initialization of retval on failure of ioremap.
 
-All coccinelle warnings:
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-+ drivers/media/video/em28xx/em28xx-video.c:2269:17-20: ERROR: reference preceded by free on line 2267
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-vim +2269 drivers/media/video/em28xx/em28xx-video.c
-  2266				kfree(dev->alt_max_pkt_size);
-  2267				kfree(dev);
-  2268				kfree(fh);
-> 2269				mutex_unlock(&dev->lock);
-  2270				return 0;
-  2271			}
-  2272	
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ sound/atmel/ac97c.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/sound/atmel/ac97c.c b/sound/atmel/ac97c.c
+index 3c8d3ba..9052aff 100644
+--- a/sound/atmel/ac97c.c
++++ b/sound/atmel/ac97c.c
+@@ -278,14 +278,9 @@ static int atmel_ac97c_capture_hw_params(struct snd_pcm_substream *substream,
+ 	if (retval < 0)
+ 		return retval;
+ 	/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
+-	if (cpu_is_at32ap7000()) {
+-		if (retval < 0)
+-			return retval;
+-		/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
+-		if (retval = 1)
+-			if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
+-				dw_dma_cyclic_free(chip->dma.rx_chan);
+-	}
++	if (cpu_is_at32ap7000() && retval = 1)
++		if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
++			dw_dma_cyclic_free(chip->dma.rx_chan);
+ 
+ 	/* Set restrictions to params. */
+ 	mutex_lock(&opened_mutex);
+@@ -980,6 +975,7 @@ static int __devinit atmel_ac97c_probe(struct platform_device *pdev)
+ 
+ 	if (!chip->regs) {
+ 		dev_dbg(&pdev->dev, "could not remap register memory\n");
++		retval = -ENOMEM;
+ 		goto err_ioremap;
+ 	}
+ 
+
