@@ -1,136 +1,96 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 26 Aug 2012 16:01:01 +0000
-Subject: [PATCH 9/13] drivers/tty/serial/amba-pl0{10,11}.c: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <1345996865-32082-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 19 Aug 2012 00:11:42 +0000
+Subject: [josef-btrfs:fsync-work 52/52] fs/btrfs/file.c:905:6: sparse: symbol 'update_extent_generation' was
+Message-Id: <20120819001142.GA14432@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="+QahgC5+KEYLbs62"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-clk_enable, and clk_disable and clk_unprepare.  The9 make the code more
-concise, and ensure that clk_unprepare is called when clk_enable fails.
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-A simplified version of the semantic patch that introduces calls to these
-functions is as follows: (http://coccinelle.lip6.fr/)
+Hi Josef,
 
-// <smpl>
-@@
-expression e;
-@@
+FYI, there are new sparse warnings show up in
 
-- clk_prepare(e);
-- clk_enable(e);
-+ clk_prepare_enable(e);
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git fsync-work
+head:   6792139d008f49bbadff93f06db6f8275157d2bc
+commit: 6792139d008f49bbadff93f06db6f8275157d2bc [52/52] Btrfs: make fsync suck less
 
-@@
-expression e;
-@@
+All sparse warnings:
 
-- clk_disable(e);
-- clk_unprepare(e);
-+ clk_disable_unprepare(e);
-// </smpl>
+  fs/btrfs/file.c:179:21: sparse: symbol 'btrfs_find_defrag_inode' was not declared. Should it be static?
++ fs/btrfs/file.c:905:6: sparse: symbol 'update_extent_generation' was not declared. Should it be static?
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+vim +905 fs/btrfs/file.c
+   902	 * list.  Call this only on extents that actually exist, otherwise this will do
+   903	 * a whole lot of work for nothing.
+   904	 */
+ > 905	void update_extent_generation(struct inode *inode, struct btrfs_path *path,
+   906				      int slot, u64 gen)
+   907	{
+   908		struct btrfs_file_extent_item *fi;
+
+Please consider folding the attached diff :-)
 
 ---
- drivers/tty/serial/amba-pl010.c |   15 ++++-----------
- drivers/tty/serial/amba-pl011.c |   15 ++++-----------
- 2 files changed, 8 insertions(+), 22 deletions(-)
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
 
-diff --git a/drivers/tty/serial/amba-pl010.c b/drivers/tty/serial/amba-pl010.c
-index 0d91a54..22317dd 100644
---- a/drivers/tty/serial/amba-pl010.c
-+++ b/drivers/tty/serial/amba-pl010.c
-@@ -312,16 +312,12 @@ static int pl010_startup(struct uart_port *port)
- 	struct uart_amba_port *uap = (struct uart_amba_port *)port;
- 	int retval;
- 
--	retval = clk_prepare(uap->clk);
--	if (retval)
--		goto out;
--
- 	/*
- 	 * Try to enable the clock producer.
- 	 */
--	retval = clk_enable(uap->clk);
-+	retval = clk_prepare_enable(uap->clk);
- 	if (retval)
--		goto clk_unprep;
-+		goto out;
- 
- 	uap->port.uartclk = clk_get_rate(uap->clk);
- 
-@@ -346,9 +342,7 @@ static int pl010_startup(struct uart_port *port)
- 	return 0;
- 
-  clk_dis:
--	clk_disable(uap->clk);
-- clk_unprep:
--	clk_unprepare(uap->clk);
-+	clk_disable_unprepare(uap->clk);
-  out:
- 	return retval;
- }
-@@ -375,8 +369,7 @@ static void pl010_shutdown(struct uart_port *port)
- 	/*
- 	 * Shut down the clock producer
- 	 */
--	clk_disable(uap->clk);
--	clk_unprepare(uap->clk);
-+	clk_disable_unprepare(uap->clk);
- }
- 
- static void
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index 92b1ac8..3322023 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -1324,16 +1324,12 @@ static int pl011_startup(struct uart_port *port)
- 				"could not set default pins\n");
- 	}
- 
--	retval = clk_prepare(uap->clk);
--	if (retval)
--		goto out;
--
- 	/*
- 	 * Try to enable the clock producer.
- 	 */
--	retval = clk_enable(uap->clk);
-+	retval = clk_prepare_enable(uap->clk);
- 	if (retval)
--		goto clk_unprep;
-+		goto out;
- 
- 	uap->port.uartclk = clk_get_rate(uap->clk);
- 
-@@ -1411,9 +1407,7 @@ static int pl011_startup(struct uart_port *port)
- 	return 0;
- 
-  clk_dis:
--	clk_disable(uap->clk);
-- clk_unprep:
--	clk_unprepare(uap->clk);
-+	clk_disable_unprepare(uap->clk);
-  out:
- 	return retval;
- }
-@@ -1473,8 +1467,7 @@ static void pl011_shutdown(struct uart_port *port)
- 	/*
- 	 * Shut down the clock producer
- 	 */
--	clk_disable(uap->clk);
--	clk_unprepare(uap->clk);
-+	clk_disable_unprepare(uap->clk);
- 	/* Optionally let pins go into sleep states */
- 	if (!IS_ERR(uap->pins_sleep)) {
- 		retval = pinctrl_select_state(uap->pinctrl, uap->pins_sleep);
+--+QahgC5+KEYLbs62
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-6792139.diff"
 
+diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+index 86fbb29..1aa3d8f 100644
+--- a/fs/btrfs/extent_map.c
++++ b/fs/btrfs/extent_map.c
+@@ -317,7 +317,7 @@ static u64 range_end(u64 start, u64 len)
+ 	return start + len;
+ }
+ 
+-struct extent_map *__lookup_extent_mapping(struct extent_map_tree *tree,
++static struct extent_map *__lookup_extent_mapping(struct extent_map_tree *tree,
+ 					   u64 start, u64 len, int strict)
+ {
+ 	struct extent_map *em;
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 8acf72a..3ea526b 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -176,7 +176,7 @@ int btrfs_add_inode_defrag(struct btrfs_trans_handle *trans,
+ /*
+  * must be called with the defrag_inodes lock held
+  */
+-struct inode_defrag *btrfs_find_defrag_inode(struct btrfs_fs_info *info,
++static struct inode_defrag *btrfs_find_defrag_inode(struct btrfs_fs_info *info,
+ 					     u64 root, u64 ino,
+ 					     struct rb_node **next)
+ {
+@@ -902,7 +902,7 @@ static int extent_mergeable(struct extent_buffer *leaf, int slot,
+  * list.  Call this only on extents that actually exist, otherwise this will do
+  * a whole lot of work for nothing.
+  */
+-void update_extent_generation(struct inode *inode, struct btrfs_path *path,
++static void update_extent_generation(struct inode *inode, struct btrfs_path *path,
+ 			      int slot, u64 gen)
+ {
+ 	struct btrfs_file_extent_item *fi;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 3311c39..987223b 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -75,7 +75,7 @@ struct kmem_cache *btrfs_trans_handle_cachep;
+ struct kmem_cache *btrfs_transaction_cachep;
+ struct kmem_cache *btrfs_path_cachep;
+ struct kmem_cache *btrfs_free_space_cachep;
+-struct kmem_cache *btrfs_dip_cachep;
++static struct kmem_cache *btrfs_dip_cachep;
+ 
+ #define S_SHIFT 12
+ static unsigned char btrfs_type_by_mode[S_IFMT >> S_SHIFT] = {
+
+--+QahgC5+KEYLbs62--
