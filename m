@@ -1,61 +1,25 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 07:02:55 +0000
-Subject: [PATCH 7/9] sound/pci/sis7019.c: fix error return code
-Message-Id: <1345359780-18647-5-git-send-email-Julia.Lawall@lip6.fr>
+From: David Dillow <dave@thedillows.org>
+Date: Sun, 19 Aug 2012 23:04:16 +0000
+Subject: Re: [PATCH 7/9] sound/pci/sis7019.c: fix error return code
+Message-Id: <1345417456.5651.4.camel@obelisk.thedillows.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
+	 <1345359780-18647-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345359780-18647-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, 2012-08-19 at 09:02 +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Initialize rc before returning on failure, as done elsewhere in the
+> function.
 
-Initialize rc before returning on failure, as done elsewhere in the
-function.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Acked-by: David Dillow <dave@thedillows.org>
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/pci/sis7019.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/pci/sis7019.c b/sound/pci/sis7019.c
-index 535efe2..51e4340 100644
---- a/sound/pci/sis7019.c
-+++ b/sound/pci/sis7019.c
-@@ -1377,8 +1377,9 @@ static int __devinit sis_chip_create(struct snd_card *card,
- 	if (rc)
- 		goto error_out_cleanup;
- 
--	if (request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
--			sis)) {
-+	rc = request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
-+			 sis);
-+	if (rc) {
- 		dev_err(&pci->dev, "unable to allocate irq %d\n", sis->irq);
- 		goto error_out_cleanup;
- 	}
