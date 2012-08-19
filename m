@@ -1,35 +1,59 @@
-From: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-Date: Sat, 18 Aug 2012 08:53:37 +0000
-Subject: Re: [patch] [SCSI] bnx2fc: zero out sense buffer properly
-Message-Id: <20120818.175337.1305564732068169507.fujita.tomonori@lab.ntt.co.jp>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 07:03:00 +0000
+Subject: [PATCH 4/9] sound/soc/omap/am3517evm.c: fix error return code
+Message-Id: <1345359780-18647-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120818084637.GA30592@elgon.mountain>
-In-Reply-To: <20120818084637.GA30592@elgon.mountain>
+References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: bprakash@broadcom.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-omap@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Sat, 18 Aug 2012 11:46:37 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> ->sense_buffer used to be an array but it changed to pointer in
-> de25deb180 "[SCSI] use dynamically allocated sense buffer".  This call
-> to memset() needs to be updated as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
-> index 73f231c..8d4626c 100644
-> --- a/drivers/scsi/bnx2fc/bnx2fc_io.c
-> +++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
-> @@ -1807,7 +1807,7 @@ static void bnx2fc_parse_fcp_rsp(struct bnx2fc_cmd *io_req,
->  			fcp_sns_len = SCSI_SENSE_BUFFERSIZE;
->  		}
->  
-> -		memset(sc_cmd->sense_buffer, 0, sizeof(sc_cmd->sense_buffer));
-> +		memset(sc_cmd->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
+It was forgotten to initialize ret to the result of calling
+snd_soc_dai_set_sysclk, unlike at the other calls in the same function.
 
-I guess that you can remove the line instead. IIRC, scsi-ml does it
-for LLDs.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/omap/am3517evm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/omap/am3517evm.c b/sound/soc/omap/am3517evm.c
+index 009533a..df65f98 100644
+--- a/sound/soc/omap/am3517evm.c
++++ b/sound/soc/omap/am3517evm.c
+@@ -59,7 +59,7 @@ static int am3517evm_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 	}
+ 
+-	snd_soc_dai_set_sysclk(cpu_dai, OMAP_MCBSP_FSR_SRC_FSX, 0,
++	ret = snd_soc_dai_set_sysclk(cpu_dai, OMAP_MCBSP_FSR_SRC_FSX, 0,
+ 				SND_SOC_CLOCK_IN);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "can't set CPU system clock OMAP_MCBSP_FSR_SRC_FSX\n");
+
