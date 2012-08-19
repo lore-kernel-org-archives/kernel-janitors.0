@@ -1,84 +1,62 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:36:48 +0000
-Subject: Re: [PATCH 1/5] drivers/video/bf537-lq035.c: use devm_ functions
-Message-Id: <50369460.7010303@gmx.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 08:44:26 +0000
+Subject: [PATCH 11/14] drivers/spi/spi-orion.c: fix error return code
+Message-Id: <1345365870-29831-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343742860-16213-1-git-send-email-damien.cassou@lifl.fr> <1343742860-16213-6-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1343742860-16213-6-git-send-email-damien.cassou@lifl.fr>
+References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Damien Cassou <damien.cassou@lifl.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 07/31/2012 01:54 PM, Damien Cassou wrote:
-> From: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
-> 
-> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied.
+Initialize return variable before exiting on an error path.
 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Thanks,
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-Florian Tobias Schandinat
+// </smpl>
 
-> 
-> ---
->  drivers/video/bf537-lq035.c |   12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/video/bf537-lq035.c b/drivers/video/bf537-lq035.c
-> index befbc80..7347aa1 100644
-> --- a/drivers/video/bf537-lq035.c
-> +++ b/drivers/video/bf537-lq035.c
-> @@ -760,18 +760,20 @@ static int __devinit bfin_lq035_probe(struct platform_device *pdev)
->  	bfin_lq035_fb.flags = FBINFO_DEFAULT;
->  
->  
-> -	bfin_lq035_fb.pseudo_palette = kzalloc(sizeof(u32) * 16, GFP_KERNEL);
-> +	bfin_lq035_fb.pseudo_palette = devm_kzalloc(&pdev->dev,
-> +						    sizeof(u32) * 16,
-> +						    GFP_KERNEL);
->  	if (bfin_lq035_fb.pseudo_palette = NULL) {
->  		pr_err("failed to allocate pseudo_palette\n");
->  		ret = -ENOMEM;
-> -		goto out_palette;
-> +		goto out_table;
->  	}
->  
->  	if (fb_alloc_cmap(&bfin_lq035_fb.cmap, NBR_PALETTE, 0) < 0) {
->  		pr_err("failed to allocate colormap (%d entries)\n",
->  			NBR_PALETTE);
->  		ret = -EFAULT;
-> -		goto out_cmap;
-> +		goto out_table;
->  	}
->  
->  	if (register_framebuffer(&bfin_lq035_fb) < 0) {
-> @@ -804,9 +806,6 @@ out_lcd:
->  	unregister_framebuffer(&bfin_lq035_fb);
->  out_reg:
->  	fb_dealloc_cmap(&bfin_lq035_fb.cmap);
-> -out_cmap:
-> -	kfree(bfin_lq035_fb.pseudo_palette);
-> -out_palette:
->  out_table:
->  	dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
->  	fb_buffer = NULL;
-> @@ -834,7 +833,6 @@ static int __devexit bfin_lq035_remove(struct platform_device *pdev)
->  	free_dma(CH_PPI);
->  
->  
-> -	kfree(bfin_lq035_fb.pseudo_palette);
->  	fb_dealloc_cmap(&bfin_lq035_fb.cmap);
->  
->  
-> 
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Actually, orion_spi_reset currently always returns 0, so the test is
+never true.  Perhaps this should be taken into account in some other way.
+
+ drivers/spi/spi-orion.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
+index b17c09c..cc12803 100644
+--- a/drivers/spi/spi-orion.c
++++ b/drivers/spi/spi-orion.c
+@@ -435,7 +435,8 @@ static int __init orion_spi_probe(struct platform_device *pdev)
+ 	}
+ 	spi->base = ioremap(r->start, SZ_1K);
+ 
+-	if (orion_spi_reset(spi) < 0)
++	status = orion_spi_reset(spi);
++	if (status < 0)
+ 		goto out_rel_mem;
+ 
+ 	master->dev.of_node = pdev->dev.of_node;
 
