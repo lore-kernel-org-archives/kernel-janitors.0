@@ -1,40 +1,61 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Wed, 15 Aug 2012 14:37:35 +0000
-Subject: Re: [PATCH 4/5] drivers/usb/host/ohci-platform.c: fix error return code
-Message-Id: <Pine.LNX.4.44L0.1208151037190.1674-100000@iolanthe.rowland.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 07:02:55 +0000
+Subject: [PATCH 7/9] sound/pci/sis7019.c: fix error return code
+Message-Id: <1345359780-18647-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1344926858-1162-5-git-send-email-Julia.Lawall@lip6.fr>
-References: <1344926858-1162-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344926858-1162-5-git-send-email-Julia.Lawall@lip6.fr>
+References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 14 Aug 2012, Julia Lawall wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Convert a possibly 0 error return code to a negative one, as returned
-> elsewhere in the function.
+Initialize rc before returning on failure, as done elsewhere in the
+function.
 
-> diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
-> index 10d85b9..e24ec9f 100644
-> --- a/drivers/usb/host/ohci-platform.c
-> +++ b/drivers/usb/host/ohci-platform.c
-> @@ -130,8 +130,10 @@ static int __devinit ohci_platform_probe(struct platform_device *dev)
->  	}
->  
->  	hcd->regs = ioremap_nocache(hcd->rsrc_start, hcd->rsrc_len);
-> -	if (!hcd->regs)
-> +	if (!hcd->regs) {
-> +		err = -ENOMEM;
->  		goto err_release_region;
-> +	}
->  	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
->  	if (err)
->  		goto err_iounmap;
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/sis7019.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/sis7019.c b/sound/pci/sis7019.c
+index 535efe2..51e4340 100644
+--- a/sound/pci/sis7019.c
++++ b/sound/pci/sis7019.c
+@@ -1377,8 +1377,9 @@ static int __devinit sis_chip_create(struct snd_card *card,
+ 	if (rc)
+ 		goto error_out_cleanup;
+ 
+-	if (request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
+-			sis)) {
++	rc = request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
++			 sis);
++	if (rc) {
+ 		dev_err(&pci->dev, "unable to allocate irq %d\n", sis->irq);
+ 		goto error_out_cleanup;
+ 	}
