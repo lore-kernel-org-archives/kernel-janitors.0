@@ -1,31 +1,57 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Fri, 03 Aug 2012 10:31:09 +0000
-Subject: Re: [signal:execve2 2/11] usr/include/linux/binfmts.h:5: included file 'asm-x86/exec.h' is not expor
-Message-Id: <20120803103109.GE23464@ZenIV.linux.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 19 Aug 2012 08:44:21 +0000
+Subject: [PATCH 3/14] drivers/power/ab8500_fg.c: fix error return code
+Message-Id: <1345365870-29831-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Anton Vorontsov <cbou@mail.ru>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
-On Fri, Aug 03, 2012 at 06:20:41PM +0800, Fengguang Wu wrote:
-> Hi Al,
-> 
-> Kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git execve2
-> head:   760c0f5513e79608f9316997cecf6fcf42f7c386
-> commit: 8c1fa890710d4b7d52cbdab27b2a9231aad012eb [2/11] the only place that needs to include asm/exec.h is linux/binfmts.h
-> config: x86_64-allmodconfig (attached as .config)
-> 
-> All errors/warnings:
-> 
-> usr/include/linux/binfmts.h:5: included file 'asm-x86/exec.h' is not exported
-> usr/include/linux/binfmts.h:5: included file 'asm-x86/exec.h' is not exported
-> usr/include/linux/kexec.h:49: userspace cannot reference function or variable defined in the kernel
-> usr/include/linux/soundcard.h:1054: userspace cannot reference function or variable defined in the kernel
-> usr/include/linux/string.h:8: userspace cannot reference function or variable defined in the kernel
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-IOW, we need to take that include below #ifdef __KERNEL__
+Initialize return variable before exiting on an error path.
 
-Done...
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/power/ab8500_fg.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/power/ab8500_fg.c b/drivers/power/ab8500_fg.c
+index bf02225..11633e3 100644
+--- a/drivers/power/ab8500_fg.c
++++ b/drivers/power/ab8500_fg.c
+@@ -2506,6 +2506,7 @@ static int __devinit ab8500_fg_probe(struct platform_device *pdev)
+ 	di->fg_wq = create_singlethread_workqueue("ab8500_fg_wq");
+ 	if (di->fg_wq = NULL) {
+ 		dev_err(di->dev, "failed to create work queue\n");
++		ret = -ENOMEM;
+ 		goto free_device_info;
+ 	}
+ 
+
