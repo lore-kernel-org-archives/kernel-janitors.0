@@ -1,55 +1,45 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 15 Aug 2012 07:07:47 +0000
-Subject: Re: [userns:for-next 10/23] ERROR: "free_pid_ns" [net/ipv6/ipv6.ko] undefined!
-Message-Id: <20120815070747.GA28146@localhost>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Mon, 20 Aug 2012 14:51:44 +0000
+Subject: Re: [PATCH] netfilter: PTR_RET can be used
+Message-Id: <20120820145144.GA18676@1984>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <877gt0hgak.fsf@xmission.com>
-In-Reply-To: <877gt0hgak.fsf@xmission.com>
+References: <20120729004550.GA7049@localhost>
+ <5015280A.6000105@bfs.de>
+ <20120729121449.GA16489@localhost>
+In-Reply-To: <20120729121449.GA16489@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: walter harms <wharms@bfs.de>, netfilter-devel@vger.kernel.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Aug 14, 2012 at 11:34:58PM -0700, Eric W. Biederman wrote:
-> Fengguang Wu <fengguang.wu@intel.com> writes:
+On Sun, Jul 29, 2012 at 08:14:49PM +0800, Fengguang Wu wrote:
+> > > --- linux.orig/net/bridge/netfilter/ebtable_filter.c	2012-07-29 08:41:09.703759534 +0800
+> > > +++ linux/net/bridge/netfilter/ebtable_filter.c	2012-07-29 08:41:14.255759643 +0800
+> > > @@ -100,9 +100,7 @@ static struct nf_hook_ops ebt_ops_filter
+> > >  static int __net_init frame_filter_net_init(struct net *net)
+> > >  {
+> > >  	net->xt.frame_filter = ebt_register_table(net, &frame_filter);
+> > > -	if (IS_ERR(net->xt.frame_filter))
+> > > -		return PTR_ERR(net->xt.frame_filter);
+> > > -	return 0;
+> > > +	return PTR_RET(net->xt.frame_filter);
+> > >  }
+> > >  
+> > 
+> > i do not understand this,
+> > ebt_register_table() return (struct ebt_table *) on success
+> > 
+> > Does PTR_RET really return 0 if this is a propper pointer ?
 > 
-> > On Tue, Aug 14, 2012 at 10:31:47PM -0700, Eric W. Biederman wrote:
-> >> Fengguang Wu <fengguang.wu@intel.com> writes:
-> >> 
-> >> > Hi Eric,
-> >> >
-> >> > FYI, kernel build failed on
-> >> >
-> >> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-next
-> >> > head:   0625c883bc4b3eba6f93f268cf67b5664244c0fe
-> >> > commit: 4f82f45730c68fdaf9b0472495a965188404866e [10/23] net ip6 flowlabel: Make owner a union of struct pid * and kuid_t
-> >> > config: x86_64-allmodconfig (attached as .config)
-> >> >
-> >> > Build errors:
-> >> >
-> >> > ERROR: "free_pid_ns" [net/ipv6/ipv6.ko] undefined!
-> >> 
-> >> Yes, and the next patch fixes that.
-> >> 
-> >> My apologies to git bisect users that the support for modular ipv6 is
-> >> not perfect.
-> >
-> > Fine for me - I normally build-in everything ;)
+> Right. Here is how PTR_RET defined. This patch does not change any behavior.
 > 
-> I guess that was my long winded way of saying once patches hit my
-> for-next branch I have no intention of rebasing to fix problems.
+> static inline int __must_check PTR_RET(const void *ptr)
+> {      
+>         if (IS_ERR(ptr))
+>                 return PTR_ERR(ptr);
+>         else   
+>                 return 0;
+> }
 
-Fair enough. I'll mark your for-next branch as non-rebaseable, and no
-longer complaint about intermediate errors in it.
-
-> Now if you automated checker had gone to the base of my
-> userns-always-map-user-v46 branch where these patches were staged and
-> complained then I probably would have fixed the problem.
-> 
-> It looks like your checker limits itself to only the last 99 patches in
-> a branch and my branch has about 130 or so.
-
-Good to know that - the limit could be trivially enlarged :)
-
-Thanks,
-Fengguang
+Applied, thanks Fengguang.
