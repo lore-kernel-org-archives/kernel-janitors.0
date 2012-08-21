@@ -1,27 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 31 Aug 2012 20:28:15 +0000
-Subject: Re: [PATCH 5/7] net/xfrm/xfrm_state.c: fix error return code
-Message-Id: <20120831.162815.212003559560432706.davem@davemloft.net>
+From: Vinod Koul <vinod.koul@linux.intel.com>
+Date: Tue, 21 Aug 2012 06:57:02 +0000
+Subject: [PATCH] ASoC: compress - fix code alignment
+Message-Id: <1345531502-20050-1-git-send-email-vinod.koul@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1346258957-7649-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1346258957-7649-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: alsa-devel@alsa-project.org
+Cc: Vinod Koul <vinod.koul@linux.intel.com>, broonie@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, wfg@linux.intel.com, Namarta Kohli <namartax.kohli@intel.com>, lrg@ti.com
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 29 Aug 2012 18:49:15 +0200
+Reported-by: Fengguang Wu <wfg@linux.intel.com>
+Signed-off-by: Namarta Kohli <namartax.kohli@intel.com>
+Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
+---
+ sound/soc/soc-compress.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Initialize return variable before exiting on an error path.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
+index 88d85ba..cc0562d 100644
+--- a/sound/soc/soc-compress.c
++++ b/sound/soc/soc-compress.c
+@@ -104,7 +104,7 @@ static int soc_compr_free(struct snd_compr_stream *cstream)
+ 
+ 	if (platform->driver->compr_ops && platform->driver->compr_ops->free)
+ 		platform->driver->compr_ops->free(cstream);
+-		cpu_dai->runtime = NULL;
++	cpu_dai->runtime = NULL;
+ 
+ 	if (cstream->direction = SND_COMPRESS_PLAYBACK) {
+ 		if (!rtd->pmdown_time || codec->ignore_pmdown_time ||
+-- 
+1.7.0.4
 
-Applied.
