@@ -1,38 +1,34 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Tue, 21 Aug 2012 14:51:59 +0000
-Subject: [PATCH] ASoC: Remove unused variable
-Message-Id: <1345560719-2704-1-git-send-email-emilgoode@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 21 Aug 2012 00:25:16 +0000
+Subject: [asoc:for-next 100/102] sound/soc/soc-compress.c:106:2-45: code aligned with following code on line
+Message-Id: <20120821002516.GB10292@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120821144923.GQ7995@opensource.wolfsonmicro.com>
-In-Reply-To: <20120821144923.GQ7995@opensource.wolfsonmicro.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This patch removes a unused struct snd_soc_dai.
+Hi Namarta,
 
-Sparse is warning:
-sound/soc/soc-compress.c:156:22: warning:
-	unused variable ‘codec_dai’ [-Wunused-variable]
+FYI, there are new coccinelle warnings show up in
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+head:   10e1e44f261e84f8663592f1a33119801b2bae57
+commit: 1245b7005de02d5bfa0c321df925f5b6c83c99e1 [100/102] ASoC: add compress stream support
+
+All coccinelle warnings:
+
++ sound/soc/soc-compress.c:106:2-45: code aligned with following code on line 107
+
+vim +106 sound/soc/soc-compress.c
+   103			rtd->dai_link->compr_ops->shutdown(cstream);
+   104	
+   105		if (platform->driver->compr_ops && platform->driver->compr_ops->free)
+ > 106			platform->driver->compr_ops->free(cstream);
+   107			cpu_dai->runtime = NULL;
+   108	
+   109		if (cstream->direction = SND_COMPRESS_PLAYBACK) {
+
 ---
- sound/soc/soc-compress.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
-index 88d85ba..b837674 100644
---- a/sound/soc/soc-compress.c
-+++ b/sound/soc/soc-compress.c
-@@ -153,7 +153,6 @@ static int soc_compr_set_params(struct snd_compr_stream *cstream,
- {
- 	struct snd_soc_pcm_runtime *rtd = cstream->private_data;
- 	struct snd_soc_platform *platform = rtd->platform;
--	struct snd_soc_dai *codec_dai = rtd->codec_dai;
- 	int ret = 0;
- 
- 	/* first we call set_params for the platform driver
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
