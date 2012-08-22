@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 19:33:56 +0000
+From: Rupesh Gujare <rgujare@ozmodevices.com>
+Date: Wed, 22 Aug 2012 10:19:48 +0000
 Subject: RE: [staging-next V3] ozwpan: fix memcmp() test in oz_set_active_pd()
-Message-Id: <alpine.DEB.2.02.1208192133370.1924@localhost6.localdomain6>
+Message-Id: <9DBB4F49862BA041A40EBC6350D9B0683DC988AB@BY2PRD0810MB367.namprd08.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1345394197-6561-1-git-send-email-tomas.winkler@intel.com>
 In-Reply-To: <1345394197-6561-1-git-send-email-tomas.winkler@intel.com>
@@ -10,24 +10,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, 19 Aug 2012, Winkler, Tomas wrote:
 
->>
->> There seems also to be an opportunity in drivers/scsi/qla2xxx/qla_init.c:
->>
->> memcmp(icb->enode_mac, "\0\0\0\0\0\0", sizeof(icb->enode_mac))
->
-> If you plan do semantic patch then there are also examples of:
->
-> ./drivers/staging/rtl8712/rtl871x_recv.c:
-> if (!memcmp(pattrib->bssid, "\x0\x0\x0\x0\x0\x0", ETH_ALEN) |
->
-> similarly
-> is_broadcast_ether_addr()  to replace memcmp  with 6 off 0xFF
->
-> and endless number of memcmp that can be replaced with
-> ether_addr_equal()
+________________________________________
+From: Tomas Winkler [tomas.winkler@intel.com]
+Sent: 19 August 2012 17:36
+To: gregkh@linuxfoundation.org
+Cc: alan@linux.intel.com; devel@linuxdriverproject.org; kernel-janitors@vger.kernel.org; Tomas Winkler; Dan Carpenter; Rupesh Gujare
+Subject: [staging-next V3] ozwpan: fix memcmp() test in oz_set_active_pd()
 
-OK, thanks for the suggestions.  I will take a look.
+"addr" is a pointer so it's either 4 or 8 bytes, but actually we want
+to compare 6 bytes (ETH_ALEN).
 
-julia
+As network stack already provides helper function
+is_zero_ether_addr() we use that instead of memcmp
+
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Rupesh Gujare <rgujare@ozmodevices.com>
+---
+V1: by Dan Carpenter <dan.carpenter@oracle.com>
+V2: replace memcmp with is_zero_ether_addr
+V3: include <linux/etherdevice.h>
+
+Acked-by: Rupesh Gujare<rgujare@ozmodevices.com> 
+
+
+--
+Regards,
+Rupesh Gujare
