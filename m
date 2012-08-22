@@ -1,61 +1,51 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 22 Aug 2012 11:42:47 +0000
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Wed, 22 Aug 2012 17:00:25 +0000
 Subject: Re: [PATCH 14/14] drivers/spi/spi-s3c24xx.c: fix error return code
-Message-Id: <alpine.DEB.2.02.1208221342240.1991@hadrien>
+Message-Id: <20120822170025.GV7995@opensource.wolfsonmicro.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="L46vHWpLfEKD8KlK"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
  <1345365870-29831-15-git-send-email-Julia.Lawall@lip6.fr>
  <1b3201cd8049$e753f720$b5fbe560$%kim@samsung.com>
  <20120822114015.GI7995@opensource.wolfsonmicro.com>
-In-Reply-To: <20120822114015.GI7995@opensource.wolfsonmicro.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ <alpine.DEB.2.02.1208221342240.1991@hadrien>
+In-Reply-To: <alpine.DEB.2.02.1208221342240.1991@hadrien>
 To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Initialize return variable before exiting on an error path.
+--L46vHWpLfEKD8KlK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+On Wed, Aug 22, 2012 at 01:42:47PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Initialize return variable before exiting on an error path.
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+Applied, thanks.
 
-// </smpl>
+--L46vHWpLfEKD8KlK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
----
-Perhaps -EINVAL is not the right value in this case.
+iQIcBAEBAgAGBQJQNRAKAAoJEFJkBDiqVpZ44swP/37K/DW4+jPwNyYfKgYsDNHQ
+u4Q6uJfTi8whnArR9vMhWxWtoWq1uEjt6pyVuawX6krXIJ5Tr576jwsXrS0GSO58
+B/kWCTYqV/lThDPejrQNi7hzVjZZnDqchINDGkqo+wuc71EZ2Qc6kndS64Qn1iOu
+YQ8AQZwBNSvwU8iWBMbFVubxtHGlC1L4dUYS7Js04FqSbYyqoWNdlzajIdQmK/NY
+EtkdUtY37g4yD80R4fjK3soGHNOzv7ofNAtJnby9fRfxed2wC09bC9V0MIaq+7Nu
+ttuD0sJIokbZnMsXDtKqT4k2QOMk7OxxVAYiuRdaEG/YGh7HmHwwVvYryh/rc8Nb
+DD0+QoSXdiMj9kPAkWO35mEvFa0VPivaxNwk3KsAzhO7eje+83SHGwt+LgX00WNT
+cZEoR73h9dyoIZaGO3g5AXTMeYiBC+mmE1RExYWHupH75bchOxvxGmrlVSU37kKH
+4JoPRUN16Jgn3Z+Fx986dU0MzzJhsmL52/+GAIQaH9iip7iH/Dw17KsYmCg8iEM1
+yIgR+ZAO5LscF4o7sx5yGoRWiHaCzUa2kd9ruUp3bXLIwv0T+QFkkUwbM0VX+Ty7
+3XyppW6oRJ7LYISaitHITJw3KANVYr/dMoOcre3DxrBsOzkUwajQVqFOyqWAbI4C
+2AeKAd+K/2hA8atJ5l4A
+=qOlD
+-----END PGP SIGNATURE-----
 
- drivers/spi/spi-s3c24xx.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index 8ee7d79..a2a080b 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -611,6 +611,7 @@ static int __devinit s3c24xx_spi_probe(struct platform_device *pdev)
- 	if (!pdata->set_cs) {
- 		if (pdata->pin_cs < 0) {
- 			dev_err(&pdev->dev, "No chipselect pin\n");
-+			err = -EINVAL;
- 			goto err_register;
- 		}
-
-
+--L46vHWpLfEKD8KlK--
