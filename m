@@ -1,45 +1,45 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 22 Aug 2012 05:30:44 +0000
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 22 Aug 2012 05:41:42 +0000
 Subject: Re: [PATCH] drivers/dma/sirf-dma.c: fix usage of devm functions
-Message-Id: <alpine.DEB.2.02.1208220729440.1966@localhost6.localdomain6>
+Message-Id: <CAGsJ_4wkyY7VkrgMwGwmFF4kpGiGEtU8Ox46G-yOspAi27Lqgg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1344069330-29569-1-git-send-email-Julia.Lawall@lip6.fr>
  <1345608994.1895.73.camel@vkoul-udesk3>
  <CAGsJ_4yjzE3eNGz=AA7gGxGNkjBH8bKRAUsYXcG+A1p8PtOQPw@mail.gmail.com>
-In-Reply-To: <CAGsJ_4yjzE3eNGz=AA7gGxGNkjBH8bKRAUsYXcG+A1p8PtOQPw@mail.gmail.com>
+ <alpine.DEB.2.02.1208220729440.1966@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1208220729440.1966@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Wed, 22 Aug 2012, Barry Song wrote:
-
-> 2012/8/22 Vinod Koul <vinod.koul@linux.intel.com>:
->> On Sat, 2012-08-04 at 10:35 +0200, Julia Lawall wrote:
->>> From: Julia Lawall <Julia.Lawall@lip6.fr>
+2012/8/22 Julia Lawall <julia.lawall@lip6.fr>:
+> On Wed, 22 Aug 2012, Barry Song wrote:
+>
+>> 2012/8/22 Vinod Koul <vinod.koul@linux.intel.com>:
 >>>
->>> Fix some problems with the use of devm_ functions.
->> Applied, thanks
->
-> the git log "drivers/dma/sirf-dma.c: fix usage of devm functions"
-> should be fixed.
-
-What do you suggest?  The patch is about problems with the use of 
-devm_kzalloc, devm_ioremap, and devm_request_irq.
-
-thanks,
-julia
-
->
+>>> On Sat, 2012-08-04 at 10:35 +0200, Julia Lawall wrote:
+>>>>
+>>>> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>>>>
+>>>> Fix some problems with the use of devm_ functions.
+>>>
+>>> Applied, thanks
 >>
 >>
->> --
->> ~Vinod
->>
+>> the git log "drivers/dma/sirf-dma.c: fix usage of devm functions"
+>> should be fixed.
 >
-> -barry
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
+> What do you suggest?  The patch is about problems with the use of
+> devm_kzalloc, devm_ioremap, and devm_request_irq.
+
+i mean the prefix
+
+dmaengine: sirf: .............
+
+>
+> thanks,
+> julia
+
+-barry
