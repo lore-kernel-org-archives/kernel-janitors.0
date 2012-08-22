@@ -1,114 +1,31 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 25 Aug 2012 17:41:38 +0000
-Subject: [PATCH 2/6] i2c: at91: use devm_ functions
-Message-Id: <1345916499-6657-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date: Wed, 22 Aug 2012 16:57:49 +0000
+Subject: Re: [samsung:v4l-exynos-gsc 89/99] ERROR: "soc_camera_power_off" [drivers/media/i2c/soc_camera/tw991
+Message-Id: <50350F8D.7030609@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Jean Delvare (PC drivers core)" <khali@linux-fr.org>
-Cc: kernel-janitors@vger.kernel.org, "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>, "Wolfram Sang (embedded platforms)" <w.sang@pengutronix.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Em 22-08-2012 13:43, Fengguang Wu escreveu:
+> Hi Mauro,
+> 
+> FYI, kernel build failed on
+> 
+> tree:   git://git.infradead.org/users/kmpark/linux-samsung v4l-exynos-gsc
+> head:   231560807f44daf9d1c2913e749c8a8609fc3c66
+> commit: fccea74ff8b5159935acc7b4b4857ee81ee44661 [89/99] [media] Kconfig: merge all customise options into just one
+> config: x86_64-allmodconfig (attached as .config)
+> 
+> Build errors:
+> 
+> ERROR: "soc_camera_power_off" [drivers/media/i2c/soc_camera/tw9910.ko] undefined!
+> ERROR: "soc_camera_power_on" [drivers/media/i2c/soc_camera/tw9910.ko] undefined!
+> ERROR: "soc_camera_apply_board_flags" [drivers/media/i2c/soc_camera/tw9910.ko] undefined!
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses these functions for data that is allocated in
-the probe function of a platform device and is only freed in the remove
-function.
+This one got fixed by this patch:
+	http://git.linuxtv.org/media_tree.git/commit/a47b6118e134b51562de520d644d3979b3d99e44
 
-This code was missing a free of adapter in the remove function.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not compiled.
-
- drivers/i2c/busses/i2c-at91.c |   37 ++++++++++---------------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
-index e24484b..b921858 100644
---- a/drivers/i2c/busses/i2c-at91.c
-+++ b/drivers/i2c/busses/i2c-at91.c
-@@ -196,30 +196,23 @@ static int __devinit at91_i2c_probe(struct platform_device *pdev)
- 	int rc;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENXIO;
- 
--	if (!request_mem_region(res->start, resource_size(res), "at91_i2c"))
--		return -EBUSY;
--
--	twi_base = ioremap(res->start, resource_size(res));
--	if (!twi_base) {
--		rc = -ENOMEM;
--		goto fail0;
--	}
-+	twi_base = devm_request_and_ioremap(&pdev->dev, res);
-+	if (!twi_base)
-+		return -ENOMEM;
- 
- 	twi_clk = clk_get(NULL, "twi_clk");
- 	if (IS_ERR(twi_clk)) {
- 		dev_err(&pdev->dev, "no clock defined\n");
--		rc = -ENODEV;
--		goto fail1;
-+		return -ENODEV;
- 	}
- 
--	adapter = kzalloc(sizeof(struct i2c_adapter), GFP_KERNEL);
-+	adapter = devm_kzalloc(&pdev->dev, sizeof(struct i2c_adapter),
-+			       GFP_KERNEL);
- 	if (adapter = NULL) {
- 		dev_err(&pdev->dev, "can't allocate inteface!\n");
- 		rc = -ENOMEM;
--		goto fail2;
-+		goto fail1;
- 	}
- 	snprintf(adapter->name, sizeof(adapter->name), "AT91");
- 	adapter->algo = &at91_algorithm;
-@@ -236,22 +229,17 @@ static int __devinit at91_i2c_probe(struct platform_device *pdev)
- 	if (rc) {
- 		dev_err(&pdev->dev, "Adapter %s registration failed\n",
- 				adapter->name);
--		goto fail3;
-+		goto fail2;
- 	}
- 
- 	dev_info(&pdev->dev, "AT91 i2c bus driver.\n");
- 	return 0;
- 
--fail3:
-+fail2:
- 	platform_set_drvdata(pdev, NULL);
--	kfree(adapter);
- 	clk_disable(twi_clk);
--fail2:
--	clk_put(twi_clk);
- fail1:
--	iounmap(twi_base);
--fail0:
--	release_mem_region(res->start, resource_size(res));
-+	clk_put(twi_clk);
- 
- 	return rc;
- }
-@@ -259,16 +247,11 @@ fail0:
- static int __devexit at91_i2c_remove(struct platform_device *pdev)
- {
- 	struct i2c_adapter *adapter = platform_get_drvdata(pdev);
--	struct resource *res;
- 	int rc;
- 
- 	rc = i2c_del_adapter(adapter);
- 	platform_set_drvdata(pdev, NULL);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	iounmap(twi_base);
--	release_mem_region(res->start, resource_size(res));
--
- 	clk_disable(twi_clk);		/* disable peripheral clock */
- 	clk_put(twi_clk);
- 
-
+Regards,
+Mauro
