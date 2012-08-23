@@ -1,133 +1,95 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Mon, 27 Aug 2012 20:12:07 +0000
-Subject: Re: [PATCH 6/13] drivers/iio/adc/at91_adc.c: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <503BD497.9020400@kernel.org>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Date: Thu, 23 Aug 2012 20:37:44 +0000
+Subject: Re: [PATCH 2/5] drivers/video/gbefb.c: use devm_ functions
+Message-Id: <50369498.4010006@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr> <1345996865-32082-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-7-git-send-email-Julia.Lawall@lip6.fr>
+References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr> <1343752762-16861-3-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1343752762-16861-3-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Damien Cassou <damien.cassou@lifl.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/26/2012 05:00 PM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
+On 07/31/2012 04:39 PM, Damien Cassou wrote:
+> From: Damien Cassou <damien.cassou@lifl.fr>
 > 
-> Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-> clk_enable, and clk_disable and clk_unprepare.  They make the code more
-> concise, and ensure that clk_unprepare is called when clk_enable fails.
+> The various devm_ functions allocate memory that is released when a driver
+> detaches.  This patch uses these functions for data that is allocated in
+> the probe function of a platform device and is only freed in the remove
+> function.
 > 
-> A simplified version of the semantic patch that introduces calls to these
-> functions is as follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e;
-> @@
-> 
-> - clk_prepare(e);
-> - clk_enable(e);
-> + clk_prepare_enable(e);
-> 
-> @@
-> expression e;
-> @@
-> 
-> - clk_disable(e);
-> - clk_unprepare(e);
-> + clk_disable_unprepare(e);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-merged to togreg branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+
+Applied.
+
 
 Thanks,
 
-Jonathan
+Florian Tobias Schandinat
+
 > 
 > ---
->  drivers/iio/adc/at91_adc.c |   33 +++++++++------------------------
->  1 file changed, 9 insertions(+), 24 deletions(-)
+>  drivers/video/gbefb.c |   15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-> index 98c96f9..c1e4690 100644
-> --- a/drivers/iio/adc/at91_adc.c
-> +++ b/drivers/iio/adc/at91_adc.c
-> @@ -589,18 +589,13 @@ static int __devinit at91_adc_probe(struct platform_device *pdev)
->  		goto error_free_irq;
+> diff --git a/drivers/video/gbefb.c b/drivers/video/gbefb.c
+> index 7e7b7a9..9b79d38 100644
+> --- a/drivers/video/gbefb.c
+> +++ b/drivers/video/gbefb.c
+> @@ -1156,7 +1156,8 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
+>  		goto out_release_framebuffer;
 >  	}
 >  
-> -	ret = clk_prepare(st->clk);
-> +	ret = clk_prepare_enable(st->clk);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "Could not prepare the clock.\n");
-> +		dev_err(&pdev->dev,
-> +			"Could not prepare or enable the clock.\n");
->  		goto error_free_irq;
+> -	gbe = (struct sgi_gbe *) ioremap(GBE_BASE, sizeof(struct sgi_gbe));
+> +	gbe = (struct sgi_gbe *) devm_ioremap(&p_dev->dev, GBE_BASE,
+> +					      sizeof(struct sgi_gbe));
+>  	if (!gbe) {
+>  		printk(KERN_ERR "gbefb: couldn't map mmio region\n");
+>  		ret = -ENXIO;
+> @@ -1170,12 +1171,13 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
+>  	if (!gbe_tiles.cpu) {
+>  		printk(KERN_ERR "gbefb: couldn't allocate tiles table\n");
+>  		ret = -ENOMEM;
+> -		goto out_unmap;
+> +		goto out_release_mem_region;
 >  	}
 >  
-> -	ret = clk_enable(st->clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Could not enable the clock.\n");
-> -		goto error_unprepare_clk;
-> -	}
-> -
->  	st->adc_clk = devm_clk_get(&pdev->dev, "adc_op_clk");
->  	if (IS_ERR(st->adc_clk)) {
->  		dev_err(&pdev->dev, "Failed to get the ADC clock.\n");
-> @@ -608,18 +603,13 @@ static int __devinit at91_adc_probe(struct platform_device *pdev)
->  		goto error_disable_clk;
->  	}
->  
-> -	ret = clk_prepare(st->adc_clk);
-> +	ret = clk_prepare_enable(st->adc_clk);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "Could not prepare the ADC clock.\n");
-> +		dev_err(&pdev->dev,
-> +			"Could not prepare or enable the ADC clock.\n");
->  		goto error_disable_clk;
->  	}
->  
-> -	ret = clk_enable(st->adc_clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Could not enable the ADC clock.\n");
-> -		goto error_unprepare_adc_clk;
-> -	}
-> -
->  	/*
->  	 * Prescaler rate computation using the formula from the Atmel's
->  	 * datasheet : ADC Clock = MCK / ((Prescaler + 1) * 2), ADC Clock being
-> @@ -681,13 +671,9 @@ error_remove_triggers:
->  error_unregister_buffer:
->  	at91_adc_buffer_remove(idev);
->  error_disable_adc_clk:
-> -	clk_disable(st->adc_clk);
-> -error_unprepare_adc_clk:
-> -	clk_unprepare(st->adc_clk);
-> +	clk_disable_unprepare(st->adc_clk);
->  error_disable_clk:
-> -	clk_disable(st->clk);
-> -error_unprepare_clk:
-> -	clk_unprepare(st->clk);
-> +	clk_disable_unprepare(st->clk);
->  error_free_irq:
->  	free_irq(st->irq, idev);
->  error_free_device:
-> @@ -705,8 +691,7 @@ static int __devexit at91_adc_remove(struct platform_device *pdev)
->  	at91_adc_trigger_remove(idev);
->  	at91_adc_buffer_remove(idev);
->  	clk_disable_unprepare(st->adc_clk);
-> -	clk_disable(st->clk);
-> -	clk_unprepare(st->clk);
-> +	clk_disable_unprepare(st->clk);
->  	free_irq(st->irq, idev);
->  	iio_device_free(idev);
+>  	if (gbe_mem_phys) {
+>  		/* memory was allocated at boot time */
+> -		gbe_mem = ioremap_nocache(gbe_mem_phys, gbe_mem_size);
+> +		gbe_mem = devm_ioremap_nocache(&p_dev->dev, gbe_mem_phys,
+> +					       gbe_mem_size);
+>  		if (!gbe_mem) {
+>  			printk(KERN_ERR "gbefb: couldn't map framebuffer\n");
+>  			ret = -ENOMEM;
+> @@ -1241,13 +1243,9 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
+>  out_gbe_unmap:
+>  	if (gbe_dma_addr)
+>  		dma_free_coherent(NULL, gbe_mem_size, gbe_mem, gbe_mem_phys);
+> -	else
+> -		iounmap(gbe_mem);
+>  out_tiles_free:
+>  	dma_free_coherent(NULL, GBE_TLB_SIZE * sizeof(uint16_t),
+>  			  (void *)gbe_tiles.cpu, gbe_tiles.dma);
+> -out_unmap:
+> -	iounmap(gbe);
+>  out_release_mem_region:
+>  	release_mem_region(GBE_BASE, sizeof(struct sgi_gbe));
+>  out_release_framebuffer:
+> @@ -1264,12 +1262,9 @@ static int __devexit gbefb_remove(struct platform_device* p_dev)
+>  	gbe_turn_off();
+>  	if (gbe_dma_addr)
+>  		dma_free_coherent(NULL, gbe_mem_size, gbe_mem, gbe_mem_phys);
+> -	else
+> -		iounmap(gbe_mem);
+>  	dma_free_coherent(NULL, GBE_TLB_SIZE * sizeof(uint16_t),
+>  			  (void *)gbe_tiles.cpu, gbe_tiles.dma);
+>  	release_mem_region(GBE_BASE, sizeof(struct sgi_gbe));
+> -	iounmap(gbe);
+>  	gbefb_remove_sysfs(&p_dev->dev);
+>  	framebuffer_release(info);
 >  
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
+
