@@ -1,106 +1,102 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 26 Aug 2012 16:00:54 +0000
-Subject: [PATCH 2/13] drivers/spi/spi-{orion,pl022}.c: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <1345996865-32082-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Date: Thu, 23 Aug 2012 20:37:18 +0000
+Subject: Re: [PATCH 3/5] drivers/video/mbx/mbxfb.c: use devm_ functions
+Message-Id: <5036947E.3040707@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr> <1343752762-16861-2-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1343752762-16861-2-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Damien Cassou <damien.cassou@lifl.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On 07/31/2012 04:39 PM, Damien Cassou wrote:
+> From: Damien Cassou <damien.cassou@lifl.fr>
+> 
+> The various devm_ functions allocate memory that is released when a driver
+> detaches.  This patch uses these functions for data that is allocated in
+> the probe function of a platform device and is only freed in the remove
+> function.
+> 
+> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
 
-Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-clk_enable, and clk_disable and clk_unprepare.  They make the code more
-concise, and ensure that clk_unprepare is called when clk_enable fails.
+Applied.
 
-A simplified version of the semantic patch that introduces calls to these
-functions is as follows: (http://coccinelle.lip6.fr/)
 
-// <smpl>
-@@
-expression e;
-@@
+Thanks,
 
-- clk_prepare(e);
-- clk_enable(e);
-+ clk_prepare_enable(e);
+Florian Tobias Schandinat
 
-@@
-expression e;
-@@
-
-- clk_disable(e);
-- clk_unprepare(e);
-+ clk_disable_unprepare(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/spi/spi-orion.c |    3 +--
- drivers/spi/spi-pl022.c |   17 ++++-------------
- 2 files changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
-index b17c09c..b2a7199 100644
---- a/drivers/spi/spi-orion.c
-+++ b/drivers/spi/spi-orion.c
-@@ -416,8 +416,7 @@ static int __init orion_spi_probe(struct platform_device *pdev)
- 		goto out;
- 	}
- 
--	clk_prepare(spi->clk);
--	clk_enable(spi->clk);
-+	clk_prepare_enable(spi->clk);
- 	tclk_hz = clk_get_rate(spi->clk);
- 	spi->max_speed = DIV_ROUND_UP(tclk_hz, 4);
- 	spi->min_speed = DIV_ROUND_UP(tclk_hz, 30);
-diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
-index b0fec03..0d235d4 100644
---- a/drivers/spi/spi-pl022.c
-+++ b/drivers/spi/spi-pl022.c
-@@ -2142,16 +2142,10 @@ pl022_probe(struct amba_device *adev, const struct amba_id *id)
- 		goto err_no_clk;
- 	}
- 
--	status = clk_prepare(pl022->clk);
--	if (status) {
--		dev_err(&adev->dev, "could not prepare SSP/SPI bus clock\n");
--		goto  err_clk_prep;
--	}
--
--	status = clk_enable(pl022->clk);
-+	status = clk_prepare_enable(pl022->clk);
- 	if (status) {
- 		dev_err(&adev->dev, "could not enable SSP/SPI bus clock\n");
--		goto err_no_clk_en;
-+		goto err_clk_prep;
- 	}
- 
- 	/* Initialize transfer pump */
-@@ -2207,9 +2201,7 @@ pl022_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	free_irq(adev->irq[0], pl022);
-  err_no_irq:
--	clk_disable(pl022->clk);
-- err_no_clk_en:
--	clk_unprepare(pl022->clk);
-+	clk_disable_unprepare(pl022->clk);
-  err_clk_prep:
- 	clk_put(pl022->clk);
-  err_no_clk:
-@@ -2243,8 +2235,7 @@ pl022_remove(struct amba_device *adev)
- 		pl022_dma_remove(pl022);
- 
- 	free_irq(adev->irq[0], pl022);
--	clk_disable(pl022->clk);
--	clk_unprepare(pl022->clk);
-+	clk_disable_unprepare(pl022->clk);
- 	clk_put(pl022->clk);
- 	pm_runtime_disable(&adev->dev);
- 	iounmap(pl022->virtbase);
+> 
+> ---
+>  drivers/video/mbx/mbxfb.c |   22 ++++++++--------------
+>  1 file changed, 8 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/video/mbx/mbxfb.c b/drivers/video/mbx/mbxfb.c
+> index 85e4f44..9229acf 100644
+> --- a/drivers/video/mbx/mbxfb.c
+> +++ b/drivers/video/mbx/mbxfb.c
+> @@ -939,8 +939,9 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
+>  	}
+>  	mfbi->reg_phys_addr = mfbi->reg_res->start;
+>  
+> -	mfbi->reg_virt_addr = ioremap_nocache(mfbi->reg_phys_addr,
+> -					      res_size(mfbi->reg_req));
+> +	mfbi->reg_virt_addr = devm_ioremap_nocache(&dev->dev,
+> +						   mfbi->reg_phys_addr,
+> +						   res_size(mfbi->reg_req));
+>  	if (!mfbi->reg_virt_addr) {
+>  		dev_err(&dev->dev, "failed to ioremap Marathon registers\n");
+>  		ret = -EINVAL;
+> @@ -948,12 +949,12 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
+>  	}
+>  	virt_base_2700 = mfbi->reg_virt_addr;
+>  
+> -	mfbi->fb_virt_addr = ioremap_nocache(mfbi->fb_phys_addr,
+> -					     res_size(mfbi->fb_req));
+> +	mfbi->fb_virt_addr = devm_ioremap_nocache(&dev->dev, mfbi->fb_phys_addr,
+> +						  res_size(mfbi->fb_req));
+>  	if (!mfbi->fb_virt_addr) {
+>  		dev_err(&dev->dev, "failed to ioremap frame buffer\n");
+>  		ret = -EINVAL;
+> -		goto err4;
+> +		goto err3;
+>  	}
+>  
+>  	fbi->screen_base = (char __iomem *)(mfbi->fb_virt_addr + 0x60000);
+> @@ -971,7 +972,7 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
+>  	if (ret < 0) {
+>  		dev_err(&dev->dev, "fb_alloc_cmap failed\n");
+>  		ret = -EINVAL;
+> -		goto err5;
+> +		goto err3;
+>  	}
+>  
+>  	platform_set_drvdata(dev, fbi);
+> @@ -996,10 +997,6 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
+>  
+>  err6:
+>  	fb_dealloc_cmap(&fbi->cmap);
+> -err5:
+> -	iounmap(mfbi->fb_virt_addr);
+> -err4:
+> -	iounmap(mfbi->reg_virt_addr);
+>  err3:
+>  	release_mem_region(mfbi->reg_res->start, res_size(mfbi->reg_res));
+>  err2:
+> @@ -1026,10 +1023,7 @@ static int __devexit mbxfb_remove(struct platform_device *dev)
+>  			if (mfbi->platform_remove)
+>  				mfbi->platform_remove(fbi);
+>  
+> -			if (mfbi->fb_virt_addr)
+> -				iounmap(mfbi->fb_virt_addr);
+> -			if (mfbi->reg_virt_addr)
+> -				iounmap(mfbi->reg_virt_addr);
+> +
+>  			if (mfbi->reg_req)
+>  				release_mem_region(mfbi->reg_req->start,
+>  						   res_size(mfbi->reg_req));
+> 
+> 
 
