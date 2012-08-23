@@ -1,65 +1,84 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 29 Aug 2012 16:49:13 +0000
-Subject: [PATCH 3/7] logfs: fix error return code
-Message-Id: <1346258957-7649-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Date: Thu, 23 Aug 2012 20:36:48 +0000
+Subject: Re: [PATCH 1/5] drivers/video/bf537-lq035.c: use devm_ functions
+Message-Id: <50369460.7010303@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1343742860-16213-1-git-send-email-damien.cassou@lifl.fr> <1343742860-16213-6-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1343742860-16213-6-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joern Engel <joern@logfs.org>
-Cc: kernel-janitors@vger.kernel.org, Prasad Joshi <prasadjoshi.linux@gmail.com>, logfs@logfs.org, linux-kernel@vger.kernel.org
+To: Damien Cassou <damien.cassou@lifl.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On 07/31/2012 01:54 PM, Damien Cassou wrote:
+> From: Damien Cassou <damien.cassou@lifl.fr>
+> 
+> The various devm_ functions allocate memory that is released when a driver
+> detaches.  This patch uses these functions for data that is allocated in
+> the probe function of a platform device and is only freed in the remove
+> function.
+> 
+> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
 
-Initialize return variable before exiting on an error path.
+Applied.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+Thanks,
 
-// </smpl>
+Florian Tobias Schandinat
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- fs/logfs/segment.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/logfs/segment.c b/fs/logfs/segment.c
-index 038da09..0cf91e4 100644
---- a/fs/logfs/segment.c
-+++ b/fs/logfs/segment.c
-@@ -601,6 +601,7 @@ static int __logfs_segment_read(struct inode *inode, void *buf,
- 					"%llx: expected %x, got %x\n", ofs,
- 					be32_to_cpu(oh.data_crc),
- 					be32_to_cpu(crc));
-+			err = -EIO;
- 			goto out_err;
- 		}
- 		break;
-@@ -619,6 +620,7 @@ static int __logfs_segment_read(struct inode *inode, void *buf,
- 					be32_to_cpu(oh.data_crc),
- 					be32_to_cpu(crc));
- 			mutex_unlock(&logfs_super(sb)->s_journal_mutex);
-+			err = -EIO;
- 			goto out_err;
- 		}
- 		err = logfs_uncompress(compressor_buf, buf, len, block_len);
+> 
+> ---
+>  drivers/video/bf537-lq035.c |   12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/video/bf537-lq035.c b/drivers/video/bf537-lq035.c
+> index befbc80..7347aa1 100644
+> --- a/drivers/video/bf537-lq035.c
+> +++ b/drivers/video/bf537-lq035.c
+> @@ -760,18 +760,20 @@ static int __devinit bfin_lq035_probe(struct platform_device *pdev)
+>  	bfin_lq035_fb.flags = FBINFO_DEFAULT;
+>  
+>  
+> -	bfin_lq035_fb.pseudo_palette = kzalloc(sizeof(u32) * 16, GFP_KERNEL);
+> +	bfin_lq035_fb.pseudo_palette = devm_kzalloc(&pdev->dev,
+> +						    sizeof(u32) * 16,
+> +						    GFP_KERNEL);
+>  	if (bfin_lq035_fb.pseudo_palette = NULL) {
+>  		pr_err("failed to allocate pseudo_palette\n");
+>  		ret = -ENOMEM;
+> -		goto out_palette;
+> +		goto out_table;
+>  	}
+>  
+>  	if (fb_alloc_cmap(&bfin_lq035_fb.cmap, NBR_PALETTE, 0) < 0) {
+>  		pr_err("failed to allocate colormap (%d entries)\n",
+>  			NBR_PALETTE);
+>  		ret = -EFAULT;
+> -		goto out_cmap;
+> +		goto out_table;
+>  	}
+>  
+>  	if (register_framebuffer(&bfin_lq035_fb) < 0) {
+> @@ -804,9 +806,6 @@ out_lcd:
+>  	unregister_framebuffer(&bfin_lq035_fb);
+>  out_reg:
+>  	fb_dealloc_cmap(&bfin_lq035_fb.cmap);
+> -out_cmap:
+> -	kfree(bfin_lq035_fb.pseudo_palette);
+> -out_palette:
+>  out_table:
+>  	dma_free_coherent(NULL, TOTAL_VIDEO_MEM_SIZE, fb_buffer, 0);
+>  	fb_buffer = NULL;
+> @@ -834,7 +833,6 @@ static int __devexit bfin_lq035_remove(struct platform_device *pdev)
+>  	free_dma(CH_PPI);
+>  
+>  
+> -	kfree(bfin_lq035_fb.pseudo_palette);
+>  	fb_dealloc_cmap(&bfin_lq035_fb.cmap);
+>  
+>  
+> 
+> 
 
