@@ -1,67 +1,71 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 14 Aug 2012 20:38:47 +0000
-Subject: [tip:auto-latest 23/37] kernel/smpboot.c:164:36: sparse: incorrect type in initializer (different ad
-Message-Id: <20120814203847.GC20732@localhost>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Date: Thu, 23 Aug 2012 20:38:20 +0000
+Subject: Re: [PATCH 1/5] drivers/video/fsl-diu-fb.c: use devm_ functions
+Message-Id: <503694BC.8090707@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr> <1343752762-16861-4-git-send-email-damien.cassou@lifl.fr>
+In-Reply-To: <1343752762-16861-4-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Damien Cassou <damien.cassou@lifl.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On 07/31/2012 04:39 PM, Damien Cassou wrote:
+> From: Damien Cassou <damien.cassou@lifl.fr>
+> 
+> The various devm_ functions allocate memory that is released when a driver
+> detaches.  This patch uses these functions for data that is allocated in
+> the probe function of a platform device and is only freed in the remove
+> function.
+> 
+> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
 
-FYI, there are new sparse warnings show up in
+Applied.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git auto-latest
-head:   e42942691c8262b7fe2a7b88577623082b988217
-commit: f97f8f06a49febbc3cb3635172efbe64ddc79700 [23/37] smpboot: Provide infrastructure for percpu hotplug threads
 
-All sparse warnings:
+Thanks,
 
-  kernel/smpboot.c:23:8: sparse: symbol 'idle_threads' was not declared. Should it be static?
-+ kernel/smpboot.c:164:36: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:164:36:    expected void const [noderef] <asn:3>*__vpp_verify
-  kernel/smpboot.c:164:36:    got struct task_struct [noderef] <asn:3>**<noident>
-  kernel/smpboot.c:164:35: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:164:35:    expected struct task_struct *tsk
-  kernel/smpboot.c:164:35:    got struct task_struct [noderef] <asn:3>*<noident>
-  kernel/smpboot.c:184:10: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:184:10:    expected void const [noderef] <asn:3>*__vpp_verify
-  kernel/smpboot.c:184:10:    got struct task_struct [noderef] <asn:3>**<noident>
-+ kernel/smpboot.c:184:38: sparse: incorrect type in assignment (different address spaces)
-  kernel/smpboot.c:184:38:    expected struct task_struct [noderef] <asn:3>*<noident>
-  kernel/smpboot.c:184:38:    got struct task_struct *[assigned] tsk
-  kernel/smpboot.c:205:36: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:205:36:    expected void const [noderef] <asn:3>*__vpp_verify
-  kernel/smpboot.c:205:36:    got struct task_struct [noderef] <asn:3>**<noident>
-  kernel/smpboot.c:205:35: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:205:35:    expected struct task_struct *tsk
-  kernel/smpboot.c:205:35:    got struct task_struct [noderef] <asn:3>*<noident>
-  kernel/smpboot.c:222:36: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:222:36:    expected void const [noderef] <asn:3>*__vpp_verify
-  kernel/smpboot.c:222:36:    got struct task_struct [noderef] <asn:3>**<noident>
-  kernel/smpboot.c:222:35: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:222:35:    expected struct task_struct *tsk
-  kernel/smpboot.c:222:35:    got struct task_struct [noderef] <asn:3>*<noident>
-  kernel/smpboot.c:244:44: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:244:44:    expected void const [noderef] <asn:3>*__vpp_verify
-  kernel/smpboot.c:244:44:    got struct task_struct [noderef] <asn:3>**<noident>
-  kernel/smpboot.c:244:43: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:244:43:    expected struct task_struct *tsk
-  kernel/smpboot.c:244:43:    got struct task_struct [noderef] <asn:3>*<noident>
-  kernel/smpboot.c:249:26: sparse: incorrect type in initializer (different address spaces)
-  kernel/smpboot.c:249:26:    expected void const [noderef] <asn:3>*__vpp_verify
-  kernel/smpboot.c:249:26:    got struct task_struct [noderef] <asn:3>**<noident>
+Florian Tobias Schandinat
 
-vim +164 kernel/smpboot.c
-   161	static int
-   162	__smpboot_create_thread(struct smp_hotplug_thread *ht, unsigned int cpu)
-   163	{
- > 164		struct task_struct *tsk = *per_cpu_ptr(ht->store, cpu);
-   165		struct smpboot_thread_data *td;
-   166	
-   167		if (tsk)
+> 
+> ---
+>  drivers/video/fsl-diu-fb.c |   11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/video/fsl-diu-fb.c b/drivers/video/fsl-diu-fb.c
+> index 458c006..19194c5 100644
+> --- a/drivers/video/fsl-diu-fb.c
+> +++ b/drivers/video/fsl-diu-fb.c
+> @@ -1501,8 +1501,8 @@ static int __devinit fsl_diu_probe(struct platform_device *pdev)
+>  	unsigned int i;
+>  	int ret;
+> 
+> -	data = dma_alloc_coherent(&pdev->dev, sizeof(struct fsl_diu_data),
+> -				  &dma_addr, GFP_DMA | __GFP_ZERO);
+> +	data = dmam_alloc_coherent(&pdev->dev, sizeof(struct fsl_diu_data),
+> +				   &dma_addr, GFP_DMA | __GFP_ZERO);
+>  	if (!data)
+>  		return -ENOMEM;
+>  	data->dma_addr = dma_addr;
+> @@ -1628,9 +1628,6 @@ error:
+> 
+>  	iounmap(data->diu_reg);
+> 
+> -	dma_free_coherent(&pdev->dev, sizeof(struct fsl_diu_data), data,
+> -			  data->dma_addr);
+> -
+>  	return ret;
+>  }
+> 
+> @@ -1648,9 +1645,6 @@ static int fsl_diu_remove(struct platform_device *pdev)
+> 
+>  	iounmap(data->diu_reg);
+> 
+> -	dma_free_coherent(&pdev->dev, sizeof(struct fsl_diu_data), data,
+> -			  data->dma_addr);
+> -
+>  	return 0;
+>  }
+> 
 
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
