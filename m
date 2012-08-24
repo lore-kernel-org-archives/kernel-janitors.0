@@ -1,36 +1,102 @@
 From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 17 Aug 2012 09:59:15 +0000
-Subject: Re: [PATCH] drivers/mtd/devices/spear_smi.c: failure test for null rather than negative integer
-Message-Id: <1345197819.27859.38.camel@sauron.fi.intel.com>
+Date: Fri, 24 Aug 2012 11:35:04 +0000
+Subject: Re: [PATCH] drivers/mtd/devices/spear_smi.c: use devm_ functions consistently
+Message-Id: <1345808104.2848.285.camel@sauron.fi.intel.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-hdjZsFlsIaO4WAkAOnID"
+Content-Type: multipart/mixed; boundary="=-Clpew83sEk/hjVAkQmpY"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1341997118-25042-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1341997118-25042-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Stefan Roese <sr@denx.de>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <1344112598-1051-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344112598-1051-1-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Stefan Roese <sr@denx.de>, Shiraz Hashim <shiraz.hashim@st.com>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
 
 
---=-hdjZsFlsIaO4WAkAOnID
+--=-Clpew83sEk/hjVAkQmpY
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2012-07-11 at 10:58 +0200, Julia Lawall wrote:
+[See here for the original patch:
+ http://lists.infradead.org/pipermail/linux-mtd/2012-August/043112.html]
+
+Julia, sorry for long delay,
+
+aiaiai gives says that this patch introduced 3 warnings:
+
+---------------------------------------------------------------------------=
+-----
+
+Successfully built configuration "arm-spear6xx_defconfig,arm,arm-unknown-li=
+nux-gnueabi-", results:
+
+--- before_patching.log
++++ after_patching.log
+@@ @@
+-drivers/mtd/devices/spear_smi.c: In function 'spear_smi_remove':
+-drivers/mtd/devices/spear_smi.c:1022:30: warning: variable 'pdata' set but=
+ not used [-Wunused-but-set-variable]
++drivers/mtd/devices/spear_smi.c: In function 'spear_smi_remove':
++drivers/mtd/devices/spear_smi.c:1026:9: warning: variable 'irq' set but no=
+t used [-Wunused-but-set-variable]
++drivers/mtd/devices/spear_smi.c:1022:30: warning: variable 'pdata' set but=
+ not used [-Wunused-but-set-variable]
++drivers/mtd/devices/spear_smi.c:1024:19: warning: variable 'smi_base' set =
+but not used [-Wunused-but-set-variable]
+
+---------------------------------------------------------------------------=
+-----
+
+
+On Sat, 2012-08-04 at 22:36 +0200, Julia Lawall wrote:
 > From: Julia Lawall <Julia.Lawall@lip6.fr>
 >=20
-> dev_get_platdata returns a pointer, so the failure value would be NULL
-> rather than a negative integer.
+> Use devm_kzalloc for all calls to kzalloc and not just the first.  Use de=
+vm
+> functions for other allocations as well.
 >=20
-> The semantic match that finds this problem is: (http://coccinelle.lip6.fr=
-/)
+> Move the call to platform_get_resource(pdev, IORESOURCE_MEM, 0) closer to
+> where its result is passed to devm_request_and_ioremap to make the lack o=
+f
+> need for a NULL test more evident.
+>=20
+> The semantic match that finds the inconsistency is as follows:
+> (http://coccinelle.lip6.fr/)
 
-Pushed to l2-mtd.git, thanks!
+...
+
+> @@ -1073,21 +1043,13 @@ static int __devexit spear_smi_remove(struct plat=
+form_device *pdev)
+>  		ret =3D mtd_device_unregister(&flash->mtd);
+>  		if (ret)
+>  			dev_err(&pdev->dev, "error removing mtd\n");
+> -
+> -		iounmap(flash->base_addr);
+> -		kfree(flash);
+>  	}
+> =20
+>  	irq =3D platform_get_irq(pdev, 0);
+> -	free_irq(irq, dev);
+
+I guess 'platform_get_irq()' should be killed as well? Stefan, this is
+strange code - we get irq, without checking for error, and then free it?
+What is the rationale?
+
+>  	clk_disable_unprepare(dev->clk);
+> -	clk_put(dev->clk);
+> -	iounmap(dev->io_base);
+> -	kfree(dev);
+> =20
+>  	smi_base =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	release_mem_region(smi_base->start, resource_size(smi_base));
+>  	platform_set_drvdata(pdev, NULL);
+
+Why do we set platform data to NULL, is this needed?
+
 
 --=20
 Best Regards,
 Artem Bityutskiy
 
---=-hdjZsFlsIaO4WAkAOnID
+--=-Clpew83sEk/hjVAkQmpY
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -38,20 +104,20 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAABAgAGBQJQLhb7AAoJECmIfjd9wqK04nwP/3aqz01ZcFM5HZLsJnWjsizQ
-wBirufEH6EJVPkrEmI82+n5t40Fh4ku/ewnktCjU+SMA2ovj5BUnxJgUVlCo+ToA
-DUwJ05TYmr+n3Y6hAnZjmpr8f/igIQCgkUkm3NGUs/oXMg+sbChXX3IgSTqpACWX
-IR84aTqH89L8syQFU20RLsHFCH8rHpP6VrjW6OpLFZN5R+4G0dtBNhDwekrRoxwG
-vJLgksG1KR5wcNi2vrVt8qn7tmYLVZLIn12I69K+2ZKdgmC8LPJX2GVZrA5trVDb
-hpqA25g/larcxMQibdt7leLwt5oloMdwN+Oe+wlFSFcY5ONK7Tc5xrOqEC7E1nqY
-ZsGFHzvGMJ4dNlljE0UUkj7uvf5WUSHZubntRwK3sekBkgigIgZKWgTAW+Kpn8JP
-TvZR/JFEf7zSX3vlsLVBBoc63SZm+ctcvCC9HXK+y+czw2t9FTycPUlCyYlhNkT6
-33txMVQXO46SvK0triatYhLA1x5oyB3K1i3OiQexhUpAi6juQ9Sg4Vh7PKZxDBeg
-7LzlPc0f8YSFyh4PtbEF7zaCAa+dQ/yJwn/d+hGT4P9VXf9cnIlbga4wt68BtyCh
-0EOxDzBGGcRRq9HQL6YkkeYT6va3kyNNu+dr7OAAun4/iQFiQAZokIsHZ0B9fO4g
-LbKlTkRDOqu7ptK09cyY
-=msXB
+iQIcBAABAgAGBQJQN2boAAoJECmIfjd9wqK0lMcQAIqFtZ4Z/O7w3FW3mRE6zddO
+yYfIdL+F5687ZHQvr7DHOO3CzrRl4z8tZ+n8CRN9Dnf/xB6zewe/wXDxdNz7yKGL
+62xoS4+gPSadkry8BNmDv3II2k+5F56Lc4ouU5MGJlPLdhHVq/trQIPTtV9NWxDQ
+jDOU91GgR2KscyswQeDKP2ScuTgtO3LIPCk7njDKOZqM2YX2qbpb2Sg0IRXAR++z
+V4IkaUHaEMx5jpo90S8kNwHL9zgf1Dz4tPhCt+UiI4K/TFqs9UYpkF9w2LG17wcu
+Wsov+YlIrcmY9zYVUGfgcPAm4aVvjKof9b/nlWcQHlhp8qqMwV12lqRSX4lmfJw2
+bbKLpg2HroYYEQAooOuDvbdxR/d2ETi+ZXVJTXMrwI/ObfGeFadNJVYi1fywTlYI
+Jk3JPak4+P4KBGngI4F7kHryNjZwqhdyna6pl7wKm/952YU6SX1ylyP3y97J/Srt
+VI+/GJ3GjnC2Qw2Zhl6e5KEcpbSbb1thxsB1JzYx3h+L4um6CzGkhieTFNUyhXJE
+Axm0fFhVli/kg1HR8DfN5dfjGFLo/VGyBxF79zf2cAEbS79/janVhB8r/lC22EFQ
+WoB2EC4CV2Ec0CTUnA3HFY1sBt1TML+Pnf8tMWfYIP95EtCHy6Ey8Z3BJA9QN1O+
+ZUgrAz2/bOl+saKrfPta
+=L1km
 -----END PGP SIGNATURE-----
 
---=-hdjZsFlsIaO4WAkAOnID--
+--=-Clpew83sEk/hjVAkQmpY--
 
