@@ -1,96 +1,66 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 19 Aug 2012 00:11:42 +0000
-Subject: [josef-btrfs:fsync-work 52/52] fs/btrfs/file.c:905:6: sparse: symbol 'update_extent_generation' was
-Message-Id: <20120819001142.GA14432@localhost>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="+QahgC5+KEYLbs62"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 25 Aug 2012 19:57:05 +0000
+Subject: [PATCH 2/6] drivers/media/platform/mx2_emmaprp.c: adjust inconsistent IS_ERR and PTR_ERR
+Message-Id: <1345924629-16584-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <1345924629-16584-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345924629-16584-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Change the call to IS_ERR to test the value that was just initialized and
+is returned using PTR_ERR.
 
-Hi Josef,
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-FYI, there are new sparse warnings show up in
+// <smpl>
+@@
+expression e,e1;
+@@
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git fsync-work
-head:   6792139d008f49bbadff93f06db6f8275157d2bc
-commit: 6792139d008f49bbadff93f06db6f8275157d2bc [52/52] Btrfs: make fsync suck less
+(
+if (IS_ERR(e)) { ... PTR_ERR(e) ... }
+|
+if (IS_ERR(e=E1)) { ... PTR_ERR(e) ... }
+|
+*if (IS_ERR(e))
+ { ...
+*  PTR_ERR(e1)
+   ... }
+)
+// </smpl>
 
-All sparse warnings:
-
-  fs/btrfs/file.c:179:21: sparse: symbol 'btrfs_find_defrag_inode' was not declared. Should it be static?
-+ fs/btrfs/file.c:905:6: sparse: symbol 'update_extent_generation' was not declared. Should it be static?
-
-vim +905 fs/btrfs/file.c
-   902	 * list.  Call this only on extents that actually exist, otherwise this will do
-   903	 * a whole lot of work for nothing.
-   904	 */
- > 905	void update_extent_generation(struct inode *inode, struct btrfs_path *path,
-   906				      int slot, u64 gen)
-   907	{
-   908		struct btrfs_file_extent_item *fi;
-
-Please consider folding the attached diff :-)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ drivers/media/platform/mx2_emmaprp.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---+QahgC5+KEYLbs62
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="make-it-static-6792139.diff"
+diff --git a/drivers/media/platform/mx2_emmaprp.c b/drivers/media/platform/=
+mx2_emmaprp.c
+index dab380a..2be1bb1 100644
+--- a/drivers/media/platform/mx2_emmaprp.c
++++ b/drivers/media/platform/mx2_emmaprp.c
+@@ -908,9 +908,8 @@ static int emmaprp_probe(struct platform_device *pdev)
+ 	}
+=20
+ 	pcdev->clk_emma_ahb =3D devm_clk_get(&pdev->dev, "ahb");
+-	if (IS_ERR(pcdev->clk_emma_ipg)) {
++	if (IS_ERR(pcdev->clk_emma_ahb))
+ 		return PTR_ERR(pcdev->clk_emma_ahb);
+-	}
+=20
+ 	irq_emma =3D platform_get_irq(pdev, 0);
+ 	res_emma =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
 
-diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
-index 86fbb29..1aa3d8f 100644
---- a/fs/btrfs/extent_map.c
-+++ b/fs/btrfs/extent_map.c
-@@ -317,7 +317,7 @@ static u64 range_end(u64 start, u64 len)
- 	return start + len;
- }
- 
--struct extent_map *__lookup_extent_mapping(struct extent_map_tree *tree,
-+static struct extent_map *__lookup_extent_mapping(struct extent_map_tree *tree,
- 					   u64 start, u64 len, int strict)
- {
- 	struct extent_map *em;
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 8acf72a..3ea526b 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -176,7 +176,7 @@ int btrfs_add_inode_defrag(struct btrfs_trans_handle *trans,
- /*
-  * must be called with the defrag_inodes lock held
-  */
--struct inode_defrag *btrfs_find_defrag_inode(struct btrfs_fs_info *info,
-+static struct inode_defrag *btrfs_find_defrag_inode(struct btrfs_fs_info *info,
- 					     u64 root, u64 ino,
- 					     struct rb_node **next)
- {
-@@ -902,7 +902,7 @@ static int extent_mergeable(struct extent_buffer *leaf, int slot,
-  * list.  Call this only on extents that actually exist, otherwise this will do
-  * a whole lot of work for nothing.
-  */
--void update_extent_generation(struct inode *inode, struct btrfs_path *path,
-+static void update_extent_generation(struct inode *inode, struct btrfs_path *path,
- 			      int slot, u64 gen)
- {
- 	struct btrfs_file_extent_item *fi;
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 3311c39..987223b 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -75,7 +75,7 @@ struct kmem_cache *btrfs_trans_handle_cachep;
- struct kmem_cache *btrfs_transaction_cachep;
- struct kmem_cache *btrfs_path_cachep;
- struct kmem_cache *btrfs_free_space_cachep;
--struct kmem_cache *btrfs_dip_cachep;
-+static struct kmem_cache *btrfs_dip_cachep;
- 
- #define S_SHIFT 12
- static unsigned char btrfs_type_by_mode[S_IFMT >> S_SHIFT] = {
-
---+QahgC5+KEYLbs62--
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
