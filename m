@@ -1,71 +1,64 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:38:20 +0000
-Subject: Re: [PATCH 1/5] drivers/video/fsl-diu-fb.c: use devm_ functions
-Message-Id: <503694BC.8090707@gmx.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 25 Aug 2012 19:57:08 +0000
+Subject: [PATCH 5/6] drivers/staging/crystalhd/crystalhd_lnx.c: adjust inconsistent IS_ERR and PTR_ERR
+Message-Id: <1345924629-16584-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr> <1343752762-16861-4-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1343752762-16861-4-git-send-email-damien.cassou@lifl.fr>
+References: <1345924629-16584-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345924629-16584-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Damien Cassou <damien.cassou@lifl.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Naren Sankar <nsankar@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, Jarod Wilson <jarod@wilsonet.com>, Scott Davilla <davilla@4pi.com>, Manu Abraham <abraham.manu@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On 07/31/2012 04:39 PM, Damien Cassou wrote:
-> From: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
-> 
-> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied.
+Change the call to PTR_ERR to access the value just tested by IS_ERR.
 
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks,
+// <smpl>
+@@
+expression e,e1;
+@@
 
-Florian Tobias Schandinat
+(
+if (IS_ERR(e)) { ... PTR_ERR(e) ... }
+|
+if (IS_ERR(e=E1)) { ... PTR_ERR(e) ... }
+|
+*if (IS_ERR(e))
+ { ...
+*  PTR_ERR(e1)
+   ... }
+)
+// </smpl>
 
-> 
-> ---
->  drivers/video/fsl-diu-fb.c |   11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/video/fsl-diu-fb.c b/drivers/video/fsl-diu-fb.c
-> index 458c006..19194c5 100644
-> --- a/drivers/video/fsl-diu-fb.c
-> +++ b/drivers/video/fsl-diu-fb.c
-> @@ -1501,8 +1501,8 @@ static int __devinit fsl_diu_probe(struct platform_device *pdev)
->  	unsigned int i;
->  	int ret;
-> 
-> -	data = dma_alloc_coherent(&pdev->dev, sizeof(struct fsl_diu_data),
-> -				  &dma_addr, GFP_DMA | __GFP_ZERO);
-> +	data = dmam_alloc_coherent(&pdev->dev, sizeof(struct fsl_diu_data),
-> +				   &dma_addr, GFP_DMA | __GFP_ZERO);
->  	if (!data)
->  		return -ENOMEM;
->  	data->dma_addr = dma_addr;
-> @@ -1628,9 +1628,6 @@ error:
-> 
->  	iounmap(data->diu_reg);
-> 
-> -	dma_free_coherent(&pdev->dev, sizeof(struct fsl_diu_data), data,
-> -			  data->dma_addr);
-> -
->  	return ret;
->  }
-> 
-> @@ -1648,9 +1645,6 @@ static int fsl_diu_remove(struct platform_device *pdev)
-> 
->  	iounmap(data->diu_reg);
-> 
-> -	dma_free_coherent(&pdev->dev, sizeof(struct fsl_diu_data), data,
-> -			  data->dma_addr);
-> -
->  	return 0;
->  }
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/staging/crystalhd/crystalhd_lnx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/crystalhd/crystalhd_lnx.c b/drivers/staging/cr=
+ystalhd/crystalhd_lnx.c
+index 5909d8d..166203a 100644
+--- a/drivers/staging/crystalhd/crystalhd_lnx.c
++++ b/drivers/staging/crystalhd/crystalhd_lnx.c
+@@ -381,7 +381,7 @@ static int __devinit chd_dec_init_chdev(struct crystalh=
+d_adp *adp)
+ 	dev =3D device_create(crystalhd_class, NULL, MKDEV(adp->chd_dec_major, 0),
+ 			    NULL, "crystalhd");
+ 	if (IS_ERR(dev)) {
+-		rc =3D PTR_ERR(crystalhd_class);
++		rc =3D PTR_ERR(dev);
+ 		BCMLOG_ERR("failed to create device\n");
+ 		goto device_create_fail;
+ 	}
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
