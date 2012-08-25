@@ -1,54 +1,98 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 18 Aug 2012 21:25:57 +0000
-Subject: [PATCH 3/5] drivers/media/video/gspca/cpia1.c: introduce missing initialization
-Message-Id: <1345325159-7365-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 25 Aug 2012 17:41:37 +0000
+Subject: [PATCH 3/6] i2c: au1550: use devm_ functions
+Message-Id: <1345916499-6657-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Jean Delvare (PC drivers core)" <khali@linux-fr.org>
+Cc: kernel-janitors@vger.kernel.org, "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>, "Wolfram Sang (embedded platforms)" <w.sang@pengutronix.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The result of one call to a function is tested, and then at the second call
-to the same function, the previous result, and not the current result, is
-tested again.
+The various devm_ functions allocate memory that is released when a driver
+detaches.  This patch uses these functions for data that is allocated in
+the probe function of a platform device and is only freed in the remove
+function.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression ret;
-identifier f;
-statement S1,S2;
-@@
-
-*ret = f(...);
-if (\(ret != 0\|ret < 0\|ret = NULL\)) S1
-... when any
-*f(...);
-if (\(ret != 0\|ret < 0\|ret = NULL\)) S2
-// </smpl>
+The initial call to platform_get_resource is moved down to the introduced
+call to devm_request_and_ioremap thta uses its result.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/video/gspca/cpia1.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Not compiled.
 
-diff --git a/drivers/media/video/gspca/cpia1.c b/drivers/media/video/gspca/cpia1.c
-index 2499a88..b3ba47d 100644
---- a/drivers/media/video/gspca/cpia1.c
-+++ b/drivers/media/video/gspca/cpia1.c
-@@ -751,7 +751,7 @@ static int goto_high_power(struct gspca_dev *gspca_dev)
- 	if (signal_pending(current))
- 		return -EINTR;
+ drivers/i2c/busses/i2c-au1550.c |   41 +++++++---------------------------------
+ 1 file changed, 8 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-au1550.c b/drivers/i2c/busses/i2c-au1550.c
+index 582d616..0690ef0 100644
+--- a/drivers/i2c/busses/i2c-au1550.c
++++ b/drivers/i2c/busses/i2c-au1550.c
+@@ -320,30 +320,16 @@ i2c_au1550_probe(struct platform_device *pdev)
+ 	struct resource *r;
+ 	int ret;
  
--	do_command(gspca_dev, CPIA_COMMAND_GetCameraStatus, 0, 0, 0, 0);
-+	ret = do_command(gspca_dev, CPIA_COMMAND_GetCameraStatus, 0, 0, 0, 0);
- 	if (ret)
- 		return ret;
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r) {
+-		ret = -ENODEV;
+-		goto out;
+-	}
+-
+-	priv = kzalloc(sizeof(struct i2c_au1550_data), GFP_KERNEL);
+-	if (!priv) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	priv = devm_kzalloc(&pdev->dev, sizeof(struct i2c_au1550_data),
++			    GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
+ 
+-	priv->ioarea = request_mem_region(r->start, resource_size(r),
+-					  pdev->name);
+-	if (!priv->ioarea) {
+-		ret = -EBUSY;
+-		goto out_mem;
+-	}
++	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+-	priv->psc_base = ioremap(r->start, resource_size(r));
+-	if (!priv->psc_base) {
+-		ret = -EIO;
+-		goto out_map;
+-	}
++	priv->psc_base = devm_request_and_ioremap(&pdev->dev, r);
++	if (!priv->psc_base)
++		return -EIO;
+ 	priv->xfer_timeout = 200;
+ 
+ 	priv->adap.nr = pdev->id;
+@@ -362,13 +348,6 @@ i2c_au1550_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	i2c_au1550_disable(priv);
+-	iounmap(priv->psc_base);
+-out_map:
+-	release_resource(priv->ioarea);
+-	kfree(priv->ioarea);
+-out_mem:
+-	kfree(priv);
+-out:
+ 	return ret;
+ }
+ 
+@@ -379,10 +358,6 @@ static int __devexit i2c_au1550_remove(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, NULL);
+ 	i2c_del_adapter(&priv->adap);
+ 	i2c_au1550_disable(priv);
+-	iounmap(priv->psc_base);
+-	release_resource(priv->ioarea);
+-	kfree(priv->ioarea);
+-	kfree(priv);
+ 	return 0;
+ }
  
 
