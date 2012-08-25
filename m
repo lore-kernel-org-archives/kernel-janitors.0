@@ -1,61 +1,54 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 08:44:29 +0000
-Subject: [PATCH 13/14] drivers/mtd/ubi/build.c: fix error return code
-Message-Id: <1345365870-29831-14-git-send-email-Julia.Lawall@lip6.fr>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Sat, 25 Aug 2012 11:10:17 +0000
+Subject: Re: [PATCH 13/14] drivers/mtd/ubi/build.c: fix error return code
+Message-Id: <1345893017.1815.2.camel@kyv>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-GC/AR0VLVxtZ2NnzK35z"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
+ <1345365870-29831-14-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345365870-29831-14-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: David Woodhouse <dwmw2@infradead.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Initialize return variable before exiting on an error path.
+--=-GC/AR0VLVxtZ2NnzK35z
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+On Sun, 2012-08-19 at 10:44 +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Initialize return variable before exiting on an error path.
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+Pushed to linux-ubi.git, thanks!
 
-// </smpl>
+--=20
+Best Regards,
+Artem Bityutskiy
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+--=-GC/AR0VLVxtZ2NnzK35z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
----
- drivers/mtd/ubi/build.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-index 7b6b5f9..afe9075 100644
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -1159,8 +1159,10 @@ static int __init ubi_init(void)
- 	ubi_wl_entry_slab = kmem_cache_create("ubi_wl_entry_slab",
- 					      sizeof(struct ubi_wl_entry),
- 					      0, 0, NULL);
--	if (!ubi_wl_entry_slab)
-+	if (!ubi_wl_entry_slab) {
-+		err = -ENOMEM;
- 		goto out_dev_unreg;
-+	}
- 
- 	err = ubi_debugfs_init();
- 	if (err)
+iQIcBAABAgAGBQJQOLKZAAoJECmIfjd9wqK0FlcQAL45bf4GsfJZHB8dOneVIEzC
+jJS5Ck2X0YmijXq7oH14hcpHMPC/uQz/5xYoq+CxIj1z5HA3CcVC1xZmyeKvQfmJ
+gvmD4e4MjbDpjKfB9SDCVXKar3hq5BWjCVpBChqX8yo+qzFyvWAWchA6F6KRcKlY
+X6QHKffosiMQuMKebJvxbJG0z7MeNxgIhs1dA27Al84K0ZpwhjaDBC9UBiC4jeUN
+dmqJMvNuN2yn/jCc5V7iwDBpacd00OIx/jPQ/i0viYEmcuIo+ePYWTPi0LDvBjnR
+R80XICnXUJKq4Cs1ge/IjSKZ8pFzimI5WEnhfi1f6gMPKzmE+gcid+DXNTbOIyH0
+AaP7qiH5sbeEOgPK8c6PsSrl4K8ZwVmGqVAsZXMIHt5Z66x4zCCz5YDT8267VNoV
+QqfNrkRID7fn0CymeoEMwqhn6/VXO1iCAYA0WlCtTWhB2NQkvMTRJk8hPEga23DP
+EnF8zHYuplTUf2ysIoIKCe+dYCMBRhTkglHsPeUmGsFf3YVAELFSdgcP24lxE+wd
+Stdu3lEQGhGqyJDvlIPgQux/NEyqEtWnLgOMHQ62XwSjkHbSgusRNzW9GT+v0aGd
+25eumBNQsPmrmBpg8vCawr0lOSdzWh8DIfI8EQfmbVi7UU6HjWP0ckVoxLdeRBeU
+Pg6Ln7Vs1TKhqU2sn6nd
+=D5+c
+-----END PGP SIGNATURE-----
+
+--=-GC/AR0VLVxtZ2NnzK35z--
 
