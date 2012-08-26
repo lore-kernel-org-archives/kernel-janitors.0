@@ -1,102 +1,160 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 23 Aug 2012 20:37:18 +0000
-Subject: Re: [PATCH 3/5] drivers/video/mbx/mbxfb.c: use devm_ functions
-Message-Id: <5036947E.3040707@gmx.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:00:52 +0000
+Subject: [PATCH 0/13] use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr> <1343752762-16861-2-git-send-email-damien.cassou@lifl.fr>
-In-Reply-To: <1343752762-16861-2-git-send-email-damien.cassou@lifl.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Damien Cassou <damien.cassou@lifl.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On 07/31/2012 04:39 PM, Damien Cassou wrote:
-> From: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> The various devm_ functions allocate memory that is released when a driver
-> detaches.  This patch uses these functions for data that is allocated in
-> the probe function of a platform device and is only freed in the remove
-> function.
-> 
-> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
-Applied.
+The transformation is made using the following semantic patch
+(http://coccinelle.lip6.fr/).  This semantic patch is not really safe, in
+that it doesn't check for clk_disable's that are relying on the removed
+clk_unprepare's.  These cases have been adjusted by hand.
 
+// <smpl>
+@@
+expression e;
+@@
 
-Thanks,
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
 
-Florian Tobias Schandinat
+@@
+expression e;
+identifier r;
+statement S;
+@@
 
-> 
-> ---
->  drivers/video/mbx/mbxfb.c |   22 ++++++++--------------
->  1 file changed, 8 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/video/mbx/mbxfb.c b/drivers/video/mbx/mbxfb.c
-> index 85e4f44..9229acf 100644
-> --- a/drivers/video/mbx/mbxfb.c
-> +++ b/drivers/video/mbx/mbxfb.c
-> @@ -939,8 +939,9 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
->  	}
->  	mfbi->reg_phys_addr = mfbi->reg_res->start;
->  
-> -	mfbi->reg_virt_addr = ioremap_nocache(mfbi->reg_phys_addr,
-> -					      res_size(mfbi->reg_req));
-> +	mfbi->reg_virt_addr = devm_ioremap_nocache(&dev->dev,
-> +						   mfbi->reg_phys_addr,
-> +						   res_size(mfbi->reg_req));
->  	if (!mfbi->reg_virt_addr) {
->  		dev_err(&dev->dev, "failed to ioremap Marathon registers\n");
->  		ret = -EINVAL;
-> @@ -948,12 +949,12 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
->  	}
->  	virt_base_2700 = mfbi->reg_virt_addr;
->  
-> -	mfbi->fb_virt_addr = ioremap_nocache(mfbi->fb_phys_addr,
-> -					     res_size(mfbi->fb_req));
-> +	mfbi->fb_virt_addr = devm_ioremap_nocache(&dev->dev, mfbi->fb_phys_addr,
-> +						  res_size(mfbi->fb_req));
->  	if (!mfbi->fb_virt_addr) {
->  		dev_err(&dev->dev, "failed to ioremap frame buffer\n");
->  		ret = -EINVAL;
-> -		goto err4;
-> +		goto err3;
->  	}
->  
->  	fbi->screen_base = (char __iomem *)(mfbi->fb_virt_addr + 0x60000);
-> @@ -971,7 +972,7 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
->  	if (ret < 0) {
->  		dev_err(&dev->dev, "fb_alloc_cmap failed\n");
->  		ret = -EINVAL;
-> -		goto err5;
-> +		goto err3;
->  	}
->  
->  	platform_set_drvdata(dev, fbi);
-> @@ -996,10 +997,6 @@ static int __devinit mbxfb_probe(struct platform_device *dev)
->  
->  err6:
->  	fb_dealloc_cmap(&fbi->cmap);
-> -err5:
-> -	iounmap(mfbi->fb_virt_addr);
-> -err4:
-> -	iounmap(mfbi->reg_virt_addr);
->  err3:
->  	release_mem_region(mfbi->reg_res->start, res_size(mfbi->reg_res));
->  err2:
-> @@ -1026,10 +1023,7 @@ static int __devexit mbxfb_remove(struct platform_device *dev)
->  			if (mfbi->platform_remove)
->  				mfbi->platform_remove(fbi);
->  
-> -			if (mfbi->fb_virt_addr)
-> -				iounmap(mfbi->fb_virt_addr);
-> -			if (mfbi->reg_virt_addr)
-> -				iounmap(mfbi->reg_virt_addr);
-> +
->  			if (mfbi->reg_req)
->  				release_mem_region(mfbi->reg_req->start,
->  						   res_size(mfbi->reg_req));
-> 
-> 
+- r = clk_prepare(e); if (r) S
+- clk_enable(e);
++ r = clk_prepare_enable(e); if (r) S
+
+@@
+expression e;
+expression r;
+@@
+
+- clk_prepare(e);
+  r - clk_enable
++ clk_prepare_enable
+  (e);
+  if (r) { ...
+- clk_unprepare(e); // unsafe!
+  ...
+  return ...;
+  }
+
+@@
+expression e;
+expression r;
+@@
+
+- clk_prepare(e);
+  r - clk_enable
++ clk_prepare_enable
+  (e);
+
+@@
+expression e;
+statement S;
+@@
+
+- if (clk_prepare(e)) S
+- clk_enable(e);
++ if (clk_prepare_enable(e)) S
+
+@@
+expression e;
+@@
+
+- clk_prepare(e);
+  if (
+- clk_enable(e)
++ clk_prepare_enable(e)
+  ) { ...
+- clk_unprepare(e); // unsafe!
+  ...
+  return ...;
+  }
+
+@@
+expression e;
+statement S;
+@@
+
+- clk_prepare(e);
+  if (
+- clk_enable(e)
++ clk_prepare_enable(e)
+  ) S
+
+@@
+expression e,r2;
+identifier r1;
+statement S;
+@@
+
+- r1 = clk_prepare(e); if (r1) S
+  r2 -  clk_enable
++  clk_prepare_enable
+   (e);
+  if (r2) { ...
+- clk_unprepare(e); // unsafe!
+  ...
+  return ...;
+  }
+
+@@
+expression e,r2;
+identifier r1;
+statement S;
+@@
+
+- r1 = clk_prepare(e); if (r1) S
+  r2 -  clk_enable
++  clk_prepare_enable
+   (e);
+
+@@
+expression e;
+statement S1;
+@@
+
+- if (clk_prepare(e)) S1
+  if (
+-  clk_enable
++  clk_prepare_enable
+     (e)) { ...
+- clk_unprepare(e); // unsafe!
+  ...
+  return ...;
+  }
+
+@@
+expression e;
+statement S1,S2;
+@@
+
+- if (clk_prepare(e)) S1
+  if (
+-  clk_enable
++  clk_prepare_enable
+     (e)) S2
+
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
 
