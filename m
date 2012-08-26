@@ -1,54 +1,63 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Sat, 25 Aug 2012 11:10:17 +0000
-Subject: Re: [PATCH 13/14] drivers/mtd/ubi/build.c: fix error return code
-Message-Id: <1345893017.1815.2.camel@kyv>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-GC/AR0VLVxtZ2NnzK35z"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:01:05 +0000
+Subject: [PATCH 13/13] drivers/rtc/rtc-coh901331.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-14-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
- <1345365870-29831-14-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345365870-29831-14-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: David Woodhouse <dwmw2@infradead.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-
-
---=-GC/AR0VLVxtZ2NnzK35z
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, 2012-08-19 at 10:44 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Initialize return variable before exiting on an error path.
-
-Pushed to linux-ubi.git, thanks!
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-GC/AR0VLVxtZ2NnzK35z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-iQIcBAABAgAGBQJQOLKZAAoJECmIfjd9wqK0FlcQAL45bf4GsfJZHB8dOneVIEzC
-jJS5Ck2X0YmijXq7oH14hcpHMPC/uQz/5xYoq+CxIj1z5HA3CcVC1xZmyeKvQfmJ
-gvmD4e4MjbDpjKfB9SDCVXKar3hq5BWjCVpBChqX8yo+qzFyvWAWchA6F6KRcKlY
-X6QHKffosiMQuMKebJvxbJG0z7MeNxgIhs1dA27Al84K0ZpwhjaDBC9UBiC4jeUN
-dmqJMvNuN2yn/jCc5V7iwDBpacd00OIx/jPQ/i0viYEmcuIo+ePYWTPi0LDvBjnR
-R80XICnXUJKq4Cs1ge/IjSKZ8pFzimI5WEnhfi1f6gMPKzmE+gcid+DXNTbOIyH0
-AaP7qiH5sbeEOgPK8c6PsSrl4K8ZwVmGqVAsZXMIHt5Z66x4zCCz5YDT8267VNoV
-QqfNrkRID7fn0CymeoEMwqhn6/VXO1iCAYA0WlCtTWhB2NQkvMTRJk8hPEga23DP
-EnF8zHYuplTUf2ysIoIKCe+dYCMBRhTkglHsPeUmGsFf3YVAELFSdgcP24lxE+wd
-Stdu3lEQGhGqyJDvlIPgQux/NEyqEtWnLgOMHQ62XwSjkHbSgusRNzW9GT+v0aGd
-25eumBNQsPmrmBpg8vCawr0lOSdzWh8DIfI8EQfmbVi7UU6HjWP0ckVoxLdeRBeU
-Pg6Ln7Vs1TKhqU2sn6nd
-=D5+c
------END PGP SIGNATURE-----
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
---=-GC/AR0VLVxtZ2NnzK35z--
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+@@
+
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
+
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+I'm not sure about this.  Maybe it would be better to leave the disable and
+unprepare separated, since there is no matching nearby clk_prepare.
+
+ drivers/rtc/rtc-coh901331.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-coh901331.c b/drivers/rtc/rtc-coh901331.c
+index 76b2156..c8115b8 100644
+--- a/drivers/rtc/rtc-coh901331.c
++++ b/drivers/rtc/rtc-coh901331.c
+@@ -276,8 +276,7 @@ static void coh901331_shutdown(struct platform_device *pdev)
+ 
+ 	clk_enable(rtap->clk);
+ 	writel(0, rtap->virtbase + COH901331_IRQ_MASK);
+-	clk_disable(rtap->clk);
+-	clk_unprepare(rtap->clk);
++	clk_disable_unprepare(rtap->clk);
+ }
+ 
+ static struct platform_driver coh901331_driver = {
 
