@@ -1,48 +1,88 @@
-From: Joel Becker <jlbec@evilplan.org>
-Date: Wed, 15 Aug 2012 06:40:23 +0000
-Subject: Re: [patch] ocfs2/dlm: use GFP_ATOMIC inside a spin_lock
-Message-Id: <20120815064023.GE31083@dhcp-172-17-9-228.mtv.corp.google.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:00:59 +0000
+Subject: [PATCH 7/13] drivers/mmc/host/mmci.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120726130505.GA30865@elgon.mountain>
-In-Reply-To: <20120726130505.GA30865@elgon.mountain>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Chris Ball <cjb@laptop.org>
+Cc: kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 26, 2012 at 04:05:05PM +0300, Dan Carpenter wrote:
-> My static checker complains that this is called with a spin_lock held
-> in dlm_master_requery_handler() from dlmrecovery.c.  Probably the reason
-> we have not received any bug reports about this is that recovery is not
-> a common operation.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This patch is now part of the fixes branch of ocfs2.git.
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
-Joel
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
 
-> 
-> diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
-> index 005261c..33ecbe0 100644
-> --- a/fs/ocfs2/dlm/dlmmaster.c
-> +++ b/fs/ocfs2/dlm/dlmmaster.c
-> @@ -2020,7 +2020,7 @@ int dlm_dispatch_assert_master(struct dlm_ctxt *dlm,
->  			       int ignore_higher, u8 request_from, u32 flags)
->  {
->  	struct dlm_work_item *item;
-> -	item = kzalloc(sizeof(*item), GFP_NOFS);
-> +	item = kzalloc(sizeof(*item), GFP_ATOMIC);
->  	if (!item)
->  		return -ENOMEM;
->  
+// <smpl>
+@@
+expression e;
+@@
 
--- 
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
 
-"We will have to repent in this generation not merely for the
- vitriolic words and actions of the bad people, but for the 
- appalling silence of the good people."
-	- Rev. Dr. Martin Luther King, Jr.
+@@
+expression e;
+@@
 
-			http://www.jlbec.org/
-			jlbec@evilplan.org
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mmc/host/mmci.c |   13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+index 50ff19a..edc3e9b 100644
+--- a/drivers/mmc/host/mmci.c
++++ b/drivers/mmc/host/mmci.c
+@@ -1309,14 +1309,10 @@ static int __devinit mmci_probe(struct amba_device *dev,
+ 		goto host_free;
+ 	}
+ 
+-	ret = clk_prepare(host->clk);
++	ret = clk_prepare_enable(host->clk);
+ 	if (ret)
+ 		goto clk_free;
+ 
+-	ret = clk_enable(host->clk);
+-	if (ret)
+-		goto clk_unprep;
+-
+ 	host->plat = plat;
+ 	host->variant = variant;
+ 	host->mclk = clk_get_rate(host->clk);
+@@ -1515,9 +1511,7 @@ static int __devinit mmci_probe(struct amba_device *dev,
+  err_gpio_cd:
+ 	iounmap(host->base);
+  clk_disable:
+-	clk_disable(host->clk);
+- clk_unprep:
+-	clk_unprepare(host->clk);
++	clk_disable_unprepare(host->clk);
+  clk_free:
+ 	clk_put(host->clk);
+  host_free:
+@@ -1564,8 +1558,7 @@ static int __devexit mmci_remove(struct amba_device *dev)
+ 			gpio_free(host->gpio_cd);
+ 
+ 		iounmap(host->base);
+-		clk_disable(host->clk);
+-		clk_unprepare(host->clk);
++		clk_disable_unprepare(host->clk);
+ 		clk_put(host->clk);
+ 
+ 		if (host->vcc)
+
