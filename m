@@ -1,98 +1,72 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 25 Aug 2012 17:41:37 +0000
-Subject: [PATCH 3/6] i2c: au1550: use devm_ functions
-Message-Id: <1345916499-6657-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:00:55 +0000
+Subject: [PATCH 3/13] drivers/gpio/gpio-pxa.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Jean Delvare (PC drivers core)" <khali@linux-fr.org>
-Cc: kernel-janitors@vger.kernel.org, "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>, "Wolfram Sang (embedded platforms)" <w.sang@pengutronix.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: kernel-janitors@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The various devm_ functions allocate memory that is released when a driver
-detaches.  This patch uses these functions for data that is allocated in
-the probe function of a platform device and is only freed in the remove
-function.
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
-The initial call to platform_get_resource is moved down to the introduced
-call to devm_request_and_ioremap thta uses its result.
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+@@
+
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
+
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-Not compiled.
+ drivers/gpio/gpio-pxa.c |    9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
- drivers/i2c/busses/i2c-au1550.c |   41 +++++++---------------------------------
- 1 file changed, 8 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-au1550.c b/drivers/i2c/busses/i2c-au1550.c
-index 582d616..0690ef0 100644
---- a/drivers/i2c/busses/i2c-au1550.c
-+++ b/drivers/i2c/busses/i2c-au1550.c
-@@ -320,30 +320,16 @@ i2c_au1550_probe(struct platform_device *pdev)
- 	struct resource *r;
- 	int ret;
- 
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		ret = -ENODEV;
--		goto out;
--	}
--
--	priv = kzalloc(sizeof(struct i2c_au1550_data), GFP_KERNEL);
--	if (!priv) {
--		ret = -ENOMEM;
--		goto out;
--	}
-+	priv = devm_kzalloc(&pdev->dev, sizeof(struct i2c_au1550_data),
-+			    GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
- 
--	priv->ioarea = request_mem_region(r->start, resource_size(r),
--					  pdev->name);
--	if (!priv->ioarea) {
--		ret = -EBUSY;
--		goto out_mem;
--	}
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
--	priv->psc_base = ioremap(r->start, resource_size(r));
--	if (!priv->psc_base) {
--		ret = -EIO;
--		goto out_map;
--	}
-+	priv->psc_base = devm_request_and_ioremap(&pdev->dev, r);
-+	if (!priv->psc_base)
-+		return -EIO;
- 	priv->xfer_timeout = 200;
- 
- 	priv->adap.nr = pdev->id;
-@@ -362,13 +348,6 @@ i2c_au1550_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index 9528779..bd8fb66 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -589,19 +589,12 @@ static int __devinit pxa_gpio_probe(struct platform_device *pdev)
+ 		iounmap(gpio_reg_base);
+ 		return PTR_ERR(clk);
  	}
+-	ret = clk_prepare(clk);
++	ret = clk_prepare_enable(clk);
+ 	if (ret) {
+ 		clk_put(clk);
+ 		iounmap(gpio_reg_base);
+ 		return ret;
+ 	}
+-	ret = clk_enable(clk);
+-	if (ret) {
+-		clk_unprepare(clk);
+-		clk_put(clk);
+-		iounmap(gpio_reg_base);
+-		return ret;
+-	}
  
- 	i2c_au1550_disable(priv);
--	iounmap(priv->psc_base);
--out_map:
--	release_resource(priv->ioarea);
--	kfree(priv->ioarea);
--out_mem:
--	kfree(priv);
--out:
- 	return ret;
- }
- 
-@@ -379,10 +358,6 @@ static int __devexit i2c_au1550_remove(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, NULL);
- 	i2c_del_adapter(&priv->adap);
- 	i2c_au1550_disable(priv);
--	iounmap(priv->psc_base);
--	release_resource(priv->ioarea);
--	kfree(priv->ioarea);
--	kfree(priv);
- 	return 0;
- }
- 
+ 	/* Initialize GPIO chips */
+ 	info = dev_get_platdata(&pdev->dev);
 
