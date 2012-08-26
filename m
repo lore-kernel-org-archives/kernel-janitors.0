@@ -1,41 +1,122 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Thu, 30 Aug 2012 01:34:51 +0000
-Subject: Re: [PATCH 1/7] ipvs: fix error return code
-Message-Id: <20120830013451.GC8878@1984>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:00:57 +0000
+Subject: [PATCH 5/13] arch/arm: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
- <1346258957-7649-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1346258957-7649-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Wensong Zhang <wensong@linux-vs.org>, kernel-janitors@vger.kernel.org, Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Aug 29, 2012 at 06:49:11PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Initialize return variable before exiting on an error path.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied. Thanks.
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
+
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+@@
+
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
+
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/arm/common/sa1111.c   |    3 +--
+ arch/arm/common/timer-sp.c |   16 ++++------------
+ arch/arm/kernel/smp_twd.c  |   13 +++----------
+ 3 files changed, 8 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+index 9173d11..bd58414 100644
+--- a/arch/arm/common/sa1111.c
++++ b/arch/arm/common/sa1111.c
+@@ -834,8 +834,7 @@ static void __sa1111_remove(struct sa1111 *sachip)
+ 	sa1111_writel(0, irqbase + SA1111_WAKEEN0);
+ 	sa1111_writel(0, irqbase + SA1111_WAKEEN1);
+ 
+-	clk_disable(sachip->clk);
+-	clk_unprepare(sachip->clk);
++	clk_disable_unprepare(sachip->clk);
+ 
+ 	if (sachip->irq != NO_IRQ) {
+ 		irq_set_chained_handler(sachip->irq, NULL);
+diff --git a/arch/arm/common/timer-sp.c b/arch/arm/common/timer-sp.c
+index df13a3f..af1a4ab 100644
+--- a/arch/arm/common/timer-sp.c
++++ b/arch/arm/common/timer-sp.c
+@@ -42,17 +42,10 @@ static long __init sp804_get_clock_rate(const char *name)
+ 		return PTR_ERR(clk);
+ 	}
+ 
+-	err = clk_prepare(clk);
++	err = clk_prepare_enable(clk);
+ 	if (err) {
+-		pr_err("sp804: %s clock failed to prepare: %d\n", name, err);
+-		clk_put(clk);
+-		return err;
+-	}
+-
+-	err = clk_enable(clk);
+-	if (err) {
+-		pr_err("sp804: %s clock failed to enable: %d\n", name, err);
+-		clk_unprepare(clk);
++		pr_err("sp804: %s clock failed to prepare or to enable: %d\n",
++		       name, err);
+ 		clk_put(clk);
+ 		return err;
+ 	}
+@@ -60,8 +53,7 @@ static long __init sp804_get_clock_rate(const char *name)
+ 	rate = clk_get_rate(clk);
+ 	if (rate < 0) {
+ 		pr_err("sp804: %s clock failed to get rate: %ld\n", name, rate);
+-		clk_disable(clk);
+-		clk_unprepare(clk);
++		clk_disable_unprepare(clk);
+ 		clk_put(clk);
+ 	}
+ 
+diff --git a/arch/arm/kernel/smp_twd.c b/arch/arm/kernel/smp_twd.c
+index fef42b2..8c94b8b 100644
+--- a/arch/arm/kernel/smp_twd.c
++++ b/arch/arm/kernel/smp_twd.c
+@@ -204,17 +204,10 @@ static struct clk *twd_get_clock(void)
+ 		return clk;
+ 	}
+ 
+-	err = clk_prepare(clk);
++	err = clk_prepare_enable(clk);
+ 	if (err) {
+-		pr_err("smp_twd: clock failed to prepare: %d\n", err);
+-		clk_put(clk);
+-		return ERR_PTR(err);
+-	}
+-
+-	err = clk_enable(clk);
+-	if (err) {
+-		pr_err("smp_twd: clock failed to enable: %d\n", err);
+-		clk_unprepare(clk);
++		pr_err("smp_twd: clock failed to prepare or to enable: %d\n",
++		       err);
+ 		clk_put(clk);
+ 		return ERR_PTR(err);
+ 	}
+
