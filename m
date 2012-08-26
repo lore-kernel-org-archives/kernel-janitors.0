@@ -1,50 +1,106 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 Aug 2012 19:30:22 +0000
-Subject: Re: [PATCH] video/mx3fb: remove stray l from debug output
-Message-Id: <CAMuHMdVpSx_dYUkrS7eNzgzanu6CLNAtzFejwDqcoJodCv++RQ@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:00:54 +0000
+Subject: [PATCH 2/13] drivers/spi/spi-{orion,pl022}.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344843875-8174-1-git-send-email-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <1344843875-8174-1-git-send-email-u.kleine-koenig@pengutronix.de>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, Aug 13, 2012 at 7:09 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Mon, Aug 13, 2012 at 9:44 AM, Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
->> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
->> ---
->>  drivers/video/mx3fb.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/video/mx3fb.c b/drivers/video/mx3fb.c
->> index c89f8a8..1dfdeb1 100644
->> --- a/drivers/video/mx3fb.c
->> +++ b/drivers/video/mx3fb.c
->> @@ -771,7 +771,7 @@ static int __set_par(struct fb_info *fbi, bool lock)
->>                 if (fbi->var.sync & FB_SYNC_SHARP_MODE)
->>                         mode = IPU_PANEL_SHARP_TFT;
->>
->> -               dev_dbg(fbi->device, "pixclock = %ul Hz\n",
->> +               dev_dbg(fbi->device, "pixclock = %u Hz\n",
->>                         (u32) (PICOS2KHZ(fbi->var.pixclock) * 1000UL));
->
-> I think a better fix is to change the dyslectic "%ul" to "%lu", and
-> drop the cast to
-> u32, which was probably only added to kill the compiler warning caused by the
-> dyslectia issue.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-BTW, 'git grep "%ul"' shows a few more of these dyslectia issues.
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
-Gr{oetje,eeting}s,
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
 
-                        Geert
+// <smpl>
+@@
+expression e;
+@@
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/spi/spi-orion.c |    3 +--
+ drivers/spi/spi-pl022.c |   17 ++++-------------
+ 2 files changed, 5 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/spi/spi-orion.c b/drivers/spi/spi-orion.c
+index b17c09c..b2a7199 100644
+--- a/drivers/spi/spi-orion.c
++++ b/drivers/spi/spi-orion.c
+@@ -416,8 +416,7 @@ static int __init orion_spi_probe(struct platform_device *pdev)
+ 		goto out;
+ 	}
+ 
+-	clk_prepare(spi->clk);
+-	clk_enable(spi->clk);
++	clk_prepare_enable(spi->clk);
+ 	tclk_hz = clk_get_rate(spi->clk);
+ 	spi->max_speed = DIV_ROUND_UP(tclk_hz, 4);
+ 	spi->min_speed = DIV_ROUND_UP(tclk_hz, 30);
+diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
+index b0fec03..0d235d4 100644
+--- a/drivers/spi/spi-pl022.c
++++ b/drivers/spi/spi-pl022.c
+@@ -2142,16 +2142,10 @@ pl022_probe(struct amba_device *adev, const struct amba_id *id)
+ 		goto err_no_clk;
+ 	}
+ 
+-	status = clk_prepare(pl022->clk);
+-	if (status) {
+-		dev_err(&adev->dev, "could not prepare SSP/SPI bus clock\n");
+-		goto  err_clk_prep;
+-	}
+-
+-	status = clk_enable(pl022->clk);
++	status = clk_prepare_enable(pl022->clk);
+ 	if (status) {
+ 		dev_err(&adev->dev, "could not enable SSP/SPI bus clock\n");
+-		goto err_no_clk_en;
++		goto err_clk_prep;
+ 	}
+ 
+ 	/* Initialize transfer pump */
+@@ -2207,9 +2201,7 @@ pl022_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	free_irq(adev->irq[0], pl022);
+  err_no_irq:
+-	clk_disable(pl022->clk);
+- err_no_clk_en:
+-	clk_unprepare(pl022->clk);
++	clk_disable_unprepare(pl022->clk);
+  err_clk_prep:
+ 	clk_put(pl022->clk);
+  err_no_clk:
+@@ -2243,8 +2235,7 @@ pl022_remove(struct amba_device *adev)
+ 		pl022_dma_remove(pl022);
+ 
+ 	free_irq(adev->irq[0], pl022);
+-	clk_disable(pl022->clk);
+-	clk_unprepare(pl022->clk);
++	clk_disable_unprepare(pl022->clk);
+ 	clk_put(pl022->clk);
+ 	pm_runtime_disable(&adev->dev);
+ 	iounmap(pl022->virtbase);
+
