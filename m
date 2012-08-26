@@ -1,33 +1,136 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 14 Aug 2012 07:03:35 +0000
-Subject: [patch] [media] stk1160: remove unneeded check
-Message-Id: <20120814070335.GE4791@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:01:01 +0000
+Subject: [PATCH 9/13] drivers/tty/serial/amba-pl0{10,11}.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Ezequiel Garcia <elezegarcia@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alan Cox <alan@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"card" is a valid pointer here because we checked snd_card_create() for
-error returns.  Checking after a dereference makes the static checkers
-complain.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  The9 make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
+
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+@@
+
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
+
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Only needed on linux-next.
+ drivers/tty/serial/amba-pl010.c |   15 ++++-----------
+ drivers/tty/serial/amba-pl011.c |   15 ++++-----------
+ 2 files changed, 8 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/media/video/stk1160/stk1160-ac97.c b/drivers/media/video/stk1160/stk1160-ac97.c
-index 8d325f5..c8583c2 100644
---- a/drivers/media/video/stk1160/stk1160-ac97.c
-+++ b/drivers/media/video/stk1160/stk1160-ac97.c
-@@ -133,8 +133,7 @@ int stk1160_ac97_register(struct stk1160 *dev)
+diff --git a/drivers/tty/serial/amba-pl010.c b/drivers/tty/serial/amba-pl010.c
+index 0d91a54..22317dd 100644
+--- a/drivers/tty/serial/amba-pl010.c
++++ b/drivers/tty/serial/amba-pl010.c
+@@ -312,16 +312,12 @@ static int pl010_startup(struct uart_port *port)
+ 	struct uart_amba_port *uap = (struct uart_amba_port *)port;
+ 	int retval;
  
- err:
- 	dev->snd_card = NULL;
--	if (card)
--		snd_card_free(card);
-+	snd_card_free(card);
- 	return rc;
+-	retval = clk_prepare(uap->clk);
+-	if (retval)
+-		goto out;
+-
+ 	/*
+ 	 * Try to enable the clock producer.
+ 	 */
+-	retval = clk_enable(uap->clk);
++	retval = clk_prepare_enable(uap->clk);
+ 	if (retval)
+-		goto clk_unprep;
++		goto out;
+ 
+ 	uap->port.uartclk = clk_get_rate(uap->clk);
+ 
+@@ -346,9 +342,7 @@ static int pl010_startup(struct uart_port *port)
+ 	return 0;
+ 
+  clk_dis:
+-	clk_disable(uap->clk);
+- clk_unprep:
+-	clk_unprepare(uap->clk);
++	clk_disable_unprepare(uap->clk);
+  out:
+ 	return retval;
+ }
+@@ -375,8 +369,7 @@ static void pl010_shutdown(struct uart_port *port)
+ 	/*
+ 	 * Shut down the clock producer
+ 	 */
+-	clk_disable(uap->clk);
+-	clk_unprepare(uap->clk);
++	clk_disable_unprepare(uap->clk);
  }
  
+ static void
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 92b1ac8..3322023 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -1324,16 +1324,12 @@ static int pl011_startup(struct uart_port *port)
+ 				"could not set default pins\n");
+ 	}
+ 
+-	retval = clk_prepare(uap->clk);
+-	if (retval)
+-		goto out;
+-
+ 	/*
+ 	 * Try to enable the clock producer.
+ 	 */
+-	retval = clk_enable(uap->clk);
++	retval = clk_prepare_enable(uap->clk);
+ 	if (retval)
+-		goto clk_unprep;
++		goto out;
+ 
+ 	uap->port.uartclk = clk_get_rate(uap->clk);
+ 
+@@ -1411,9 +1407,7 @@ static int pl011_startup(struct uart_port *port)
+ 	return 0;
+ 
+  clk_dis:
+-	clk_disable(uap->clk);
+- clk_unprep:
+-	clk_unprepare(uap->clk);
++	clk_disable_unprepare(uap->clk);
+  out:
+ 	return retval;
+ }
+@@ -1473,8 +1467,7 @@ static void pl011_shutdown(struct uart_port *port)
+ 	/*
+ 	 * Shut down the clock producer
+ 	 */
+-	clk_disable(uap->clk);
+-	clk_unprepare(uap->clk);
++	clk_disable_unprepare(uap->clk);
+ 	/* Optionally let pins go into sleep states */
+ 	if (!IS_ERR(uap->pins_sleep)) {
+ 		retval = pinctrl_select_state(uap->pinctrl, uap->pins_sleep);
+
