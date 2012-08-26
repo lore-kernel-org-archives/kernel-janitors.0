@@ -1,32 +1,82 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 22 Aug 2012 17:33:56 +0000
-Subject: Re: [arm-soc:testing:defconfig-warnings 46/47] drivers/input/touchscreen/egalax_ts.c:184:2: error: i
-Message-Id: <201208221733.56607.arnd@arndb.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:00:56 +0000
+Subject: [PATCH 4/13] i2c: sirf: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120822164411.GB31413@localhost>
-In-Reply-To: <20120822164411.GB31413@localhost>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wednesday 22 August 2012, Fengguang Wu wrote:
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git testing/defconfig-warnings
-> head:   74c41fb6f52268470b4552ca543515be210c71fb
-> commit: 3dfcda60868329af1bb3cc867ee7c7ebedef5176 [46/47] input: egalax: use DT to get gpio line
-> config: m68k-allmodconfig (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> drivers/input/touchscreen/egalax_ts.c: In function 'egalax_ts_probe':
-> drivers/input/touchscreen/egalax_ts.c:184:2: error: implicit declaration of function 'of_get_gpio' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Ah, I was missing an #include <of_gpio.h>, fixed now.
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
-Thanks for the report!
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
 
-	Arnd
+// <smpl>
+@@
+expression e;
+@@
+
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
+
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/i2c/busses/i2c-sirf.c |   14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-sirf.c b/drivers/i2c/busses/i2c-sirf.c
+index 5574a47..110660a 100644
+--- a/drivers/i2c/busses/i2c-sirf.c
++++ b/drivers/i2c/busses/i2c-sirf.c
+@@ -278,18 +278,12 @@ static int __devinit i2c_sirfsoc_probe(struct platform_device *pdev)
+ 		goto err_get_clk;
+ 	}
+ 
+-	err = clk_prepare(clk);
++	err = clk_prepare_enable(clk);
+ 	if (err) {
+-		dev_err(&pdev->dev, "Clock prepare failed\n");
++		dev_err(&pdev->dev, "Clock prepare or enable failed\n");
+ 		goto err_clk_prep;
+ 	}
+ 
+-	err = clk_enable(clk);
+-	if (err) {
+-		dev_err(&pdev->dev, "Clock enable failed\n");
+-		goto err_clk_en;
+-	}
+-
+ 	ctrl_speed = clk_get_rate(clk);
+ 
+ 	siic = devm_kzalloc(&pdev->dev, sizeof(*siic), GFP_KERNEL);
+@@ -376,9 +370,7 @@ static int __devinit i2c_sirfsoc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ out:
+-	clk_disable(clk);
+-err_clk_en:
+-	clk_unprepare(clk);
++	clk_disable_unprepare(clk);
+ err_clk_prep:
+ 	clk_put(clk);
+ err_get_clk:
+
