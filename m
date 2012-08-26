@@ -1,66 +1,81 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 25 Aug 2012 19:57:05 +0000
-Subject: [PATCH 2/6] drivers/media/platform/mx2_emmaprp.c: adjust inconsistent IS_ERR and PTR_ERR
-Message-Id: <1345924629-16584-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:01:04 +0000
+Subject: [PATCH 12/13] drivers/amba/bus.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345924629-16584-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345924629-16584-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Russell King <linux@arm.linux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Change the call to IS_ERR to test the value that was just initialized and
-is returned using PTR_ERR.
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression e,e1;
+expression e;
 @@
 
-(
-if (IS_ERR(e)) { ... PTR_ERR(e) ... }
-|
-if (IS_ERR(e=E1)) { ... PTR_ERR(e) ... }
-|
-*if (IS_ERR(e))
- { ...
-*  PTR_ERR(e1)
-   ... }
-)
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
+
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/media/platform/mx2_emmaprp.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/amba/bus.c |   15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/platform/mx2_emmaprp.c b/drivers/media/platform/=
-mx2_emmaprp.c
-index dab380a..2be1bb1 100644
---- a/drivers/media/platform/mx2_emmaprp.c
-+++ b/drivers/media/platform/mx2_emmaprp.c
-@@ -908,9 +908,8 @@ static int emmaprp_probe(struct platform_device *pdev)
- 	}
-=20
- 	pcdev->clk_emma_ahb =3D devm_clk_get(&pdev->dev, "ahb");
--	if (IS_ERR(pcdev->clk_emma_ipg)) {
-+	if (IS_ERR(pcdev->clk_emma_ahb))
- 		return PTR_ERR(pcdev->clk_emma_ahb);
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index e8eb91b..6374ee6 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -329,17 +329,9 @@ static int amba_get_enable_pclk(struct amba_device *pcdev)
+ 	if (IS_ERR(pclk))
+ 		return PTR_ERR(pclk);
+ 
+-	ret = clk_prepare(pclk);
+-	if (ret) {
+-		clk_put(pclk);
+-		return ret;
 -	}
-=20
- 	irq_emma =3D platform_get_irq(pdev, 0);
- 	res_emma =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-
+-	ret = clk_enable(pclk);
+-	if (ret) {
+-		clk_unprepare(pclk);
++	ret = clk_prepare_enable(pclk);
++	if (ret)
+ 		clk_put(pclk);
+-	}
+ 
+ 	return ret;
+ }
+@@ -348,8 +340,7 @@ static void amba_put_disable_pclk(struct amba_device *pcdev)
+ {
+ 	struct clk *pclk = pcdev->pclk;
+ 
+-	clk_disable(pclk);
+-	clk_unprepare(pclk);
++	clk_disable_unprepare(pclk);
+ 	clk_put(pclk);
+ }
+ 
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
