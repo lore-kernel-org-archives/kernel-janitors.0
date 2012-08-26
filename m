@@ -1,37 +1,122 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 19 Aug 2012 22:23:02 +0000
-Subject: Re: [patch] staging: ozwpan: fix memcmp() test in oz_set_active_pd()
-Message-Id: <CA+_b7DJ52cv_PkhzAqV+Qqm=24ZZkNq59Atixe5DmVMAbe-hxw@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:00:53 +0000
+Subject: [PATCH 1/13] drivers/staging/iio/adc/spear_adc.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120818084759.GB30592@elgon.mountain>
-In-Reply-To: <20120818084759.GB30592@elgon.mountain>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On 8/19/12, Rupesh Gujare <rgujare@ozmodevices.com> wrote:
-> On 19/08/12 13:37, Tomas Winkler wrote:
->>> On 18/08/12 09:47, Dan Carpenter wrote:
->>>> "addr" is a pointer so it's either 4 or 8 bytes, but actually we want
->>>> to compare 6 bytes (ETH_ALEN).
->>>>
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> Acked-by: Rupesh Gujare<rgujare@ozmodevices.com>
->> why not to use 'if (is_zero_ether_addr())" from linux/etherdevice.h
->>
-> Tom,
->
-> Thanks for pointing this out, that looks more efficient. Interested in
-> submitting a patch ?
->
-> Dan,
->
-> What do you think ?
->
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yes yes.  Of course.  It's the weekend and I'm traveling but I can redo this.
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
-regards,
-dan carpenter
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+@@
+
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
+
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/iio/adc/spear_adc.c |   25 ++++++++-----------------
+ 1 file changed, 8 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/staging/iio/adc/spear_adc.c b/drivers/staging/iio/adc/spear_adc.c
+index 675c427..0b83e2e 100644
+--- a/drivers/staging/iio/adc/spear_adc.c
++++ b/drivers/staging/iio/adc/spear_adc.c
+@@ -330,36 +330,30 @@ static int __devinit spear_adc_probe(struct platform_device *pdev)
+ 		goto errout3;
+ 	}
+ 
+-	ret = clk_prepare(info->clk);
+-	if (ret) {
+-		dev_err(dev, "failed preparing clock\n");
+-		goto errout4;
+-	}
+-
+-	ret = clk_enable(info->clk);
++	ret = clk_prepare_enable(info->clk);
+ 	if (ret) {
+ 		dev_err(dev, "failed enabling clock\n");
+-		goto errout5;
++		goto errout4;
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if ((irq < 0) || (irq >= NR_IRQS)) {
+ 		dev_err(dev, "failed getting interrupt resource\n");
+ 		ret = -EINVAL;
+-		goto errout6;
++		goto errout5;
+ 	}
+ 
+ 	ret = devm_request_irq(dev, irq, spear_adc_isr, 0, MOD_NAME, info);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed requesting interrupt\n");
+-		goto errout6;
++		goto errout5;
+ 	}
+ 
+ 	if (of_property_read_u32(np, "sampling-frequency",
+ 				 &info->sampling_freq)) {
+ 		dev_err(dev, "sampling-frequency missing in DT\n");
+ 		ret = -EINVAL;
+-		goto errout6;
++		goto errout5;
+ 	}
+ 
+ 	/*
+@@ -389,16 +383,14 @@ static int __devinit spear_adc_probe(struct platform_device *pdev)
+ 
+ 	ret = iio_device_register(iodev);
+ 	if (ret)
+-		goto errout6;
++		goto errout5;
+ 
+ 	dev_info(dev, "SPEAR ADC driver loaded, IRQ %d\n", irq);
+ 
+ 	return 0;
+ 
+-errout6:
+-	clk_disable(info->clk);
+ errout5:
+-	clk_unprepare(info->clk);
++	clk_disable_unprepare(info->clk);
+ errout4:
+ 	clk_put(info->clk);
+ errout3:
+@@ -416,8 +408,7 @@ static int __devexit spear_adc_remove(struct platform_device *pdev)
+ 
+ 	iio_device_unregister(iodev);
+ 	platform_set_drvdata(pdev, NULL);
+-	clk_disable(info->clk);
+-	clk_unprepare(info->clk);
++	clk_disable_unprepare(info->clk);
+ 	clk_put(info->clk);
+ 	iounmap(info->adc_base_spear6xx);
+ 	iio_device_free(iodev);
+
