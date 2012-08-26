@@ -1,62 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 07:02:56 +0000
-Subject: [PATCH 6/9] sound/pci/ctxfi/ctatc.c: fix error return code
-Message-Id: <1345359780-18647-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 26 Aug 2012 19:12:57 +0000
+Subject: [vfs:master 30/32] fs/proc/fd.c:87:55: sparse: incorrect type in initializer (different base types)
+Message-Id: <20120826191257.GC9107@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345359780-18647-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Cyrill,
 
-Initialize err before returning on failure, as done elsewhere in the
-function.
+FYI, there are new sparse warnings show up in
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git master
+head:   9283194882d18e3755c4ebc0b86db9f9a4f4c81a
+commit: c8506285ded8009f7c1ab937fc0021c6294ba424 [30/32] procfs: Move /proc/pid/fd[info] handling code to fd.[ch]
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+All sparse warnings:
 
-// </smpl>
++ fs/proc/fd.c:87:55: sparse: incorrect type in initializer (different base types)
+  fs/proc/fd.c:87:55:    expected unsigned int [unsigned] f_mode
+  fs/proc/fd.c:87:55:    got restricted fmode_t [usertype] f_mode
++ fs/proc/fd.c:105:54: sparse: restricted fmode_t degrades to integer
+  fs/proc/fd.c:107:54: sparse: restricted fmode_t degrades to integer
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+vim +87 fs/proc/fd.c
+    84				rcu_read_lock();
+    85				file = fcheck_files(files, fd);
+    86				if (file) {
+  > 87					unsigned f_mode = file->f_mode;
+    88	
+    89					rcu_read_unlock();
+    90					put_files_struct(files);
 
 ---
- sound/pci/ctxfi/ctatc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
-index 58b235c..a2f997a 100644
---- a/sound/pci/ctxfi/ctatc.c
-+++ b/sound/pci/ctxfi/ctatc.c
-@@ -1725,8 +1725,10 @@ int __devinit ct_atc_create(struct snd_card *card, struct pci_dev *pci,
- 	atc_connect_resources(atc);
- 
- 	atc->timer = ct_timer_new(atc);
--	if (!atc->timer)
-+	if (!atc->timer) {
-+		err = -ENOMEM;
- 		goto error1;
-+	}
- 
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, atc, &ops);
- 	if (err < 0)
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
