@@ -1,38 +1,72 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 14 Aug 2012 20:38:57 +0000
-Subject: [tip:auto-latest 25/37] kernel/softirq.c:843:36: sparse: incorrect type in initializer (different ad
-Message-Id: <20120814203857.GD20732@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 26 Aug 2012 16:01:03 +0000
+Subject: [PATCH 11/13] arch/arm/mach-at91/gpio.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <1345996865-32082-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Thomas,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-FYI, there are new sparse warnings show up in
+Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+clk_enable, and clk_disable and clk_unprepare.  They make the code more
+concise, and ensure that clk_unprepare is called when clk_enable fails.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git auto-latest
-head:   e42942691c8262b7fe2a7b88577623082b988217
-commit: 3e339b5dae24a7065e196eb8d0145ab2f8cc2d2d [25/37] softirq: Use hotplug thread infrastructure
+A simplified version of the semantic patch that introduces calls to these
+functions is as follows: (http://coccinelle.lip6.fr/)
 
-All sparse warnings:
+// <smpl>
+@@
+expression e;
+@@
 
-  kernel/softirq.c:408:8: sparse: symbol 'tasklet_vec' was not declared. Should it be static?
-  kernel/softirq.c:409:8: sparse: symbol 'tasklet_hi_vec' was not declared. Should it be static?
-+ kernel/softirq.c:843:36: sparse: incorrect type in initializer (different address spaces)
-  kernel/softirq.c:843:36:    expected struct task_struct [noderef] <asn:3>**store
-  kernel/softirq.c:843:36:    got struct task_struct *[noderef] [toplevel] <asn:3>*<noident>
+- clk_prepare(e);
+- clk_enable(e);
++ clk_prepare_enable(e);
 
-vim +843 kernel/softirq.c
-   840	};
-   841	
-   842	static struct smp_hotplug_thread softirq_threads = {
- > 843		.store			= &ksoftirqd,
-   844		.thread_should_run	= ksoftirqd_should_run,
-   845		.thread_fn		= run_ksoftirqd,
-   846		.thread_comm		= "ksoftirqd/%u",
+@@
+expression e;
+@@
+
+- clk_disable(e);
+- clk_unprepare(e);
++ clk_disable_unprepare(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ arch/arm/mach-at91/gpio.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/mach-at91/gpio.c b/arch/arm/mach-at91/gpio.c
+index be42cf0..7760f35 100644
+--- a/arch/arm/mach-at91/gpio.c
++++ b/arch/arm/mach-at91/gpio.c
+@@ -956,19 +956,14 @@ static int __init at91_gpio_setup_clk(int idx)
+ 		goto err;
+ 	}
+ 
+-	if (clk_prepare(at91_gpio->clock))
+-		goto clk_prep_err;
+-
+ 	/* enable PIO controller's clock */
+-	if (clk_enable(at91_gpio->clock)) {
++	if (clk_prepare_enable(at91_gpio->clock)) {
+ 		pr_err("at91_gpio.%d, failed to enable clock, ignoring.\n", idx);
+-		goto clk_err;
++		goto clk_prep_err;
+ 	}
+ 
+ 	return 0;
+ 
+-clk_err:
+-	clk_unprepare(at91_gpio->clock);
+ clk_prep_err:
+ 	clk_put(at91_gpio->clock);
+ err:
+
