@@ -1,7 +1,7 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Date: Sat, 18 Aug 2012 09:19:16 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Mon, 27 Aug 2012 18:01:36 +0000
 Subject: Re: [patch] staging:iio: prevent divide by zero bugs
-Message-Id: <502F5E14.3000003@metafoo.de>
+Message-Id: <503BB600.1070703@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120818084830.GC30592@elgon.mountain>
 In-Reply-To: <20120818084830.GC30592@elgon.mountain>
@@ -9,16 +9,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Hennerich <michael.hennerich@analog.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+Cc: Jonathan Cameron <jic23@cam.ac.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <michael.hennerich@analog.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-On 08/18/2012 10:48 AM, Dan Carpenter wrote:
+On 08/18/2012 09:48 AM, Dan Carpenter wrote:
 > "val" is used as a divisor later, so we should check for zero here to
 > avoid a division by zero.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-
+merged to fixes-togreg branch.
 Thanks.
 
 > 
@@ -100,4 +98,8 @@ Thanks.
 >  
 >  	mutex_lock(&indio_dev->mlock);
 >  
-
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
