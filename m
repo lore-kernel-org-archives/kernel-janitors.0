@@ -1,122 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 26 Aug 2012 16:00:53 +0000
-Subject: [PATCH 1/13] drivers/staging/iio/adc/spear_adc.c: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <1345996865-32082-2-git-send-email-Julia.Lawall@lip6.fr>
+From: viresh kumar <viresh.kumar@linaro.org>
+Date: Mon, 27 Aug 2012 04:13:03 +0000
+Subject: Re: [PATCH 1/13] drivers/staging/iio/adc/spear_adc.c: use clk_prepare_enable and clk_disable_unprepa
+Message-Id: <CAOh2x=mRDLO0fXcZgQ1pa3bAiBksC87cVTniTO_Qz9Ou++OMGg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1345996865-32082-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@cam.ac.uk>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Stefan Roese <sr@denx.de>, Shiraz HASHIM <shiraz.hashim@st.com>
+Cc: Jonathan Cameron <jic23@cam.ac.uk>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, spear-devel <spear-devel@list.st.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, Aug 26, 2012 at 9:30 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
+> clk_enable, and clk_disable and clk_unprepare.  They make the code more
+> concise, and ensure that clk_unprepare is called when clk_enable fails.
+>
+> A simplified version of the semantic patch that introduces calls to these
+> functions is as follows: (http://coccinelle.lip6.fr/)
 
-Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-clk_enable, and clk_disable and clk_unprepare.  They make the code more
-concise, and ensure that clk_unprepare is called when clk_enable fails.
+Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-A simplified version of the semantic patch that introduces calls to these
-functions is as follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e;
-@@
-
-- clk_prepare(e);
-- clk_enable(e);
-+ clk_prepare_enable(e);
-
-@@
-expression e;
-@@
-
-- clk_disable(e);
-- clk_unprepare(e);
-+ clk_disable_unprepare(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/staging/iio/adc/spear_adc.c |   25 ++++++++-----------------
- 1 file changed, 8 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/staging/iio/adc/spear_adc.c b/drivers/staging/iio/adc/spear_adc.c
-index 675c427..0b83e2e 100644
---- a/drivers/staging/iio/adc/spear_adc.c
-+++ b/drivers/staging/iio/adc/spear_adc.c
-@@ -330,36 +330,30 @@ static int __devinit spear_adc_probe(struct platform_device *pdev)
- 		goto errout3;
- 	}
- 
--	ret = clk_prepare(info->clk);
--	if (ret) {
--		dev_err(dev, "failed preparing clock\n");
--		goto errout4;
--	}
--
--	ret = clk_enable(info->clk);
-+	ret = clk_prepare_enable(info->clk);
- 	if (ret) {
- 		dev_err(dev, "failed enabling clock\n");
--		goto errout5;
-+		goto errout4;
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if ((irq < 0) || (irq >= NR_IRQS)) {
- 		dev_err(dev, "failed getting interrupt resource\n");
- 		ret = -EINVAL;
--		goto errout6;
-+		goto errout5;
- 	}
- 
- 	ret = devm_request_irq(dev, irq, spear_adc_isr, 0, MOD_NAME, info);
- 	if (ret < 0) {
- 		dev_err(dev, "failed requesting interrupt\n");
--		goto errout6;
-+		goto errout5;
- 	}
- 
- 	if (of_property_read_u32(np, "sampling-frequency",
- 				 &info->sampling_freq)) {
- 		dev_err(dev, "sampling-frequency missing in DT\n");
- 		ret = -EINVAL;
--		goto errout6;
-+		goto errout5;
- 	}
- 
- 	/*
-@@ -389,16 +383,14 @@ static int __devinit spear_adc_probe(struct platform_device *pdev)
- 
- 	ret = iio_device_register(iodev);
- 	if (ret)
--		goto errout6;
-+		goto errout5;
- 
- 	dev_info(dev, "SPEAR ADC driver loaded, IRQ %d\n", irq);
- 
- 	return 0;
- 
--errout6:
--	clk_disable(info->clk);
- errout5:
--	clk_unprepare(info->clk);
-+	clk_disable_unprepare(info->clk);
- errout4:
- 	clk_put(info->clk);
- errout3:
-@@ -416,8 +408,7 @@ static int __devexit spear_adc_remove(struct platform_device *pdev)
- 
- 	iio_device_unregister(iodev);
- 	platform_set_drvdata(pdev, NULL);
--	clk_disable(info->clk);
--	clk_unprepare(info->clk);
-+	clk_disable_unprepare(info->clk);
- 	clk_put(info->clk);
- 	iounmap(info->adc_base_spear6xx);
- 	iio_device_free(iodev);
-
+@Stefan/Shiraz: Can you update spear-devel mailing list in MAINTAINERS file
+for this driver?
