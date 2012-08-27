@@ -1,66 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 14 Aug 2012 12:58:30 +0000
-Subject: [PATCH 0/5] fix error return code
-Message-Id: <1344949115-13266-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Colin Cross <ccross@android.com>
+Date: Mon, 27 Aug 2012 18:20:46 +0000
+Subject: Re: [leds:for-next 12/12] drivers/leds/led-triggers.c:109:9: error: 'trigger' undeclared (first use
+Message-Id: <CAMbhsRTe=HVqmeScygS0HJ65qM9A531aX3zRSuZHDLZf4bdt8w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-These patches fix cases where the return code appears to be unintentially 0.
+On Mon, Aug 27, 2012 at 9:55 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
+> Hi Colin,
+>
+> FYI, kernel build failed on
+>
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for-next
+> head:   eb28c03e49a43b787a5670e706e7c0aacff23016
+> commit: eb28c03e49a43b787a5670e706e7c0aacff23016 [12/12] leds: triggers: send uevent when changing triggers
+> config: i386-allmodconfig (attached as .config)
+>
+> All related error/warning messages:
+>
+> drivers/leds/led-triggers.c:109:16: sparse: undefined identifier 'trigger'
+> drivers/leds/led-triggers.c: In function 'led_trigger_set':
+> drivers/leds/led-triggers.c:109:9: error: 'trigger' undeclared (first use in this function)
+> drivers/leds/led-triggers.c:109:9: note: each undeclared identifier is reported only once for each function it appears in
+>
+> vim +109 drivers/leds/led-triggers.c
+>    106          char *envp[2];
+>    107          const char *name;
+>    108
+>  > 109          name = trigger ? trigger->name : "none";
+>    110          event = kasprintf(GFP_KERNEL, "TRIGGER=%s", name);
+>    111
+>    112          /* Remove any existing trigger */
 
-The complete semantic match that finds the problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-identifier f;
-expression ret,e;
-constant C;
-@@
-
-f(...) { <+...
-(
-return -C;
-|
-ret = -C
-... when != ret = e
-return ret;
-|
-if (ret < 0) { ... return ret; }
-)
-...+> }
-
-@s@
-identifier r.f,ret;
-@@
-
-f(...) { <+... return ret; ...+> }
-
-@@
-identifier r.f,s.ret;
-expression e,e1,e2,e3,e4,x;
-@@
-
-f(...) { <+...
-(
-if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
-|
-ret = 0
-)
-... when != ret = e1
-*x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
-... when != x = e2
-    when != ret = e3
-*if (x = NULL || ...)
-{
-  ... when != ret = e4
-*  return ret;
-}
-...+> }
-// </smpl>
-
+This is caused by a variable rename in
+eb202621f8c0fb264a35e1b35fc00bdb3114a897 (led-triggers: rename
+*trigger to *trig for unified naming scheme).  Bryan, do you want to
+rename trigger to trig on line 109, or should I post a new patch?
