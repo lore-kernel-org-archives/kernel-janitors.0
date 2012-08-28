@@ -1,63 +1,23 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 26 Aug 2012 16:01:05 +0000
-Subject: [PATCH 13/13] drivers/rtc/rtc-coh901331.c: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <1345996865-32082-14-git-send-email-Julia.Lawall@lip6.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 28 Aug 2012 00:25:51 +0000
+Subject: Re: [PATCH 13/13] drivers/rtc/rtc-coh901331.c: use clk_prepare_enable and clk_disable_unprepare
+Message-Id: <CACRpkdYm9kOSD_czm8Co1cXybzkPXRLHkPH5auN-fPhcBBs0gw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1345996865-32082-14-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1345996865-32082-14-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, Aug 26, 2012 at 9:01 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-clk_enable, and clk_disable and clk_unprepare.  They make the code more
-concise, and ensure that clk_unprepare is called when clk_enable fails.
+> I'm not sure about this.  Maybe it would be better to leave the disable and
+> unprepare separated, since there is no matching nearby clk_prepare.
 
-A simplified version of the semantic patch that introduces calls to these
-functions is as follows: (http://coccinelle.lip6.fr/)
+This is OK.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-// <smpl>
-@@
-expression e;
-@@
-
-- clk_prepare(e);
-- clk_enable(e);
-+ clk_prepare_enable(e);
-
-@@
-expression e;
-@@
-
-- clk_disable(e);
-- clk_unprepare(e);
-+ clk_disable_unprepare(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-I'm not sure about this.  Maybe it would be better to leave the disable and
-unprepare separated, since there is no matching nearby clk_prepare.
-
- drivers/rtc/rtc-coh901331.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-coh901331.c b/drivers/rtc/rtc-coh901331.c
-index 76b2156..c8115b8 100644
---- a/drivers/rtc/rtc-coh901331.c
-+++ b/drivers/rtc/rtc-coh901331.c
-@@ -276,8 +276,7 @@ static void coh901331_shutdown(struct platform_device *pdev)
- 
- 	clk_enable(rtap->clk);
- 	writel(0, rtap->virtbase + COH901331_IRQ_MASK);
--	clk_disable(rtap->clk);
--	clk_unprepare(rtap->clk);
-+	clk_disable_unprepare(rtap->clk);
- }
- 
- static struct platform_driver coh901331_driver = {
-
+Yours,
+Linus Walleij
