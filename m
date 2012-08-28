@@ -1,61 +1,55 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 19 Aug 2012 08:44:18 +0000
-Subject: [PATCH 6/14] drivers/power/wm97xx_battery.c: fix error return code
-Message-Id: <1345365870-29831-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Damien Cassou <damien.cassou@lifl.fr>
+Date: Tue, 28 Aug 2012 08:39:57 +0000
+Subject: [PATCH] drivers/video/msm/mddi_client_dummy.c: use devm_kzalloc function
+Message-Id: <1346143197-10038-1-git-send-email-damien.cassou@lifl.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anton Vorontsov <cbou@mail.ru>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
+To: David Brown <davidb@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Damien Cassou <damien.cassou@lifl.fr>
 
-Initialize return variable before exiting on an error path.
+The various devm_ functions allocate memory that is released when a driver
+detaches. This patch replaces the use of kzalloc by devm_kzalloc.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
 
 ---
- drivers/power/wm97xx_battery.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/video/msm/mddi_client_dummy.c |   13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/power/wm97xx_battery.c b/drivers/power/wm97xx_battery.c
-index d2d4c08..0ba331a 100644
---- a/drivers/power/wm97xx_battery.c
-+++ b/drivers/power/wm97xx_battery.c
-@@ -212,8 +212,10 @@ static int __devinit wm97xx_bat_probe(struct platform_device *dev)
- 		props++;	/* POWER_SUPPLY_PROP_VOLTAGE_MIN */
- 
- 	prop = kzalloc(props * sizeof(*prop), GFP_KERNEL);
--	if (!prop)
-+	if (!prop) {
-+		ret = -ENOMEM;
- 		goto err3;
-+	}
- 
- 	prop[i++] = POWER_SUPPLY_PROP_PRESENT;
- 	if (pdata->charge_gpio >= 0)
+diff --git a/drivers/video/msm/mddi_client_dummy.c b/drivers/video/msm/mddi_client_dummy.c
+index d2a091c..5faa37f 100644
+--- a/drivers/video/msm/mddi_client_dummy.c
++++ b/drivers/video/msm/mddi_client_dummy.c
+@@ -51,8 +51,7 @@ static int mddi_dummy_probe(struct platform_device *pdev)
+ {
+ 	struct msm_mddi_client_data *client_data = pdev->dev.platform_data;
+ 	struct panel_info *panel -		kzalloc(sizeof(struct panel_info), GFP_KERNEL);
+-	int ret;
++		devm_kzalloc(&pdev->dev, sizeof(struct panel_info), GFP_KERNEL);
+ 	if (!panel)
+ 		return -ENOMEM;
+ 	platform_set_drvdata(pdev, panel);
+@@ -67,18 +66,11 @@ static int mddi_dummy_probe(struct platform_device *pdev)
+ 				      client_data->fb_resource, 1);
+ 	panel->panel_data.fb_data = client_data->private_client_data;
+ 	panel->pdev.dev.platform_data = &panel->panel_data;
+-	ret = platform_device_register(&panel->pdev);
+-	if (ret) {
+-		kfree(panel);
+-		return ret;
+-	}
+-	return 0;
++	return platform_device_register(&panel->pdev);
+ }
+
+ static int mddi_dummy_remove(struct platform_device *pdev)
+ {
+-	struct panel_info *panel = platform_get_drvdata(pdev);
+-	kfree(panel);
+ 	return 0;
+ }
 
