@@ -1,28 +1,61 @@
-From: Pavel Roskin <proski@gnu.org>
-Date: Thu, 09 Aug 2012 21:18:19 +0000
-Subject: Re: [patch] wireless: at76c50x: signedness bug in at76_dfu_get_state()
-Message-Id: <20120809171819.00c66bee@mj>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 29 Aug 2012 16:49:14 +0000
+Subject: [PATCH 4/7] net/bluetooth/rfcomm/core.c: fix error return code
+Message-Id: <1346258957-7649-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120809065730.GA7925@elgon.mountain>
-In-Reply-To: <20120809065730.GA7925@elgon.mountain>
+References: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: kernel-janitors@vger.kernel.org, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 9 Aug 2012 09:57:30 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> This return holds the number of bytes transfered (1 byte) or a
-> negative error code.  The type should be int instead of u8.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Initialize return variable before exiting on an error path.
 
-Acked-by: Pavel Roskin <proski@gnu.org>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Nice catch, thanks!
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
--- 
-Regards,
-Pavel Roskin
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ net/bluetooth/rfcomm/core.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/bluetooth/rfcomm/core.c b/net/bluetooth/rfcomm/core.c
+index c75107e..30141c0 100644
+--- a/net/bluetooth/rfcomm/core.c
++++ b/net/bluetooth/rfcomm/core.c
+@@ -2010,8 +2010,10 @@ static int rfcomm_add_listener(bdaddr_t *ba)
+ 
+ 	/* Add listening session */
+ 	s = rfcomm_session_add(sock, BT_LISTEN);
+-	if (!s)
++	if (!s) {
++		err = -ENOMEM;
+ 		goto failed;
++	}
+ 
+ 	rfcomm_session_hold(s);
+ 	return 0;
+
