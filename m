@@ -1,50 +1,73 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 27 Aug 2012 03:59:08 +0000
-Subject: Re: [userns:userns-always-map-user-v47 30/148] include/net/xfrm.h:730: error: expected declaration s
-Message-Id: <20120827035908.GD15084@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 29 Aug 2012 16:49:12 +0000
+Subject: [PATCH 2/7] net: ipv6: fix error return code
+Message-Id: <1346258957-7649-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120823023820.GB5011@localhost>
-In-Reply-To: <20120823023820.GB5011@localhost>
+References: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Aug 26, 2012 at 05:48:31PM -0700, Eric W. Biederman wrote:
-> Fengguang Wu <fengguang.wu@intel.com> writes:
-> 
-> > Hi Eric,
-> >
-> > FYI, kernel build failed on
-> 
-> Now I understand my confusion.  You reported this failure a week ago
-> against x86_64 and I fixed this in to userns-always-map-v48.
-> 
-> So I was confused why this failure was coming up again, but given that
-> you are testing avr32 this makes sense, as it will fail on anything that
-> hits the correct configuration.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Sorry for the duplicate report! It's definitely a problem the avr32
-build was delayed for so long time. I'll take care of this and make
-sure that the slowest builds complete within hours.
+Initialize return variable before exiting on an error path.
 
-The another problem is the errors reported by different gcc versions
-are sometimes not identical:
+The initial initialization of the return variable is also dropped, because
+that value is never used.
 
-new gcc:
-include/net/xfrm.h:730:6: error: unknown type name 'kuidt_t'
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-older gcc:
-include/net/xfrm.h:730: error: expected declaration specifiers or '...' before 'kuidt_t'
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-That makes the build system alert again, and the latter notification
-comes so late, that I've forgot all about the previous one, so send it
-out again..
+// </smpl>
 
-> Regardless thank you for all of your diligent effort testing kernel
-> branches.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-You are welcome.
+---
+ net/ipv6/esp6.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-Fengguang
+diff --git a/net/ipv6/esp6.c b/net/ipv6/esp6.c
+index 6dc7fd3..282f372 100644
+--- a/net/ipv6/esp6.c
++++ b/net/ipv6/esp6.c
+@@ -167,8 +167,6 @@ static int esp6_output(struct xfrm_state *x, struct sk_buff *skb)
+ 	struct esp_data *esp = x->data;
+ 
+ 	/* skb is pure payload to encrypt */
+-	err = -ENOMEM;
+-
+ 	aead = esp->aead;
+ 	alen = crypto_aead_authsize(aead);
+ 
+@@ -203,8 +201,10 @@ static int esp6_output(struct xfrm_state *x, struct sk_buff *skb)
+ 	}
+ 
+ 	tmp = esp_alloc_tmp(aead, nfrags + sglists, seqhilen);
+-	if (!tmp)
++	if (!tmp) {
++		err = -ENOMEM;
+ 		goto error;
++	}
+ 
+ 	seqhi = esp_tmp_seqhi(tmp);
+ 	iv = esp_tmp_iv(aead, tmp, seqhilen);
+
