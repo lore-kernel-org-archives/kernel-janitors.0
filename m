@@ -1,39 +1,59 @@
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Date: Tue, 21 Aug 2012 06:37:31 +0000
-Subject: Re: FW: [asoc:for-next 100/102] sound/soc/soc-compress.c:106:2-45: code aligned with following code
-Message-Id: <1345530331.1895.7.camel@vkoul-udesk3>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 29 Aug 2012 16:49:16 +0000
+Subject: [PATCH 7/7] net/netfilter/nf_conntrack_netlink.c: fix error return code
+Message-Id: <1346258957-7649-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120821002516.GB10292@localhost>
-In-Reply-To: <20120821002516.GB10292@localhost>
+References: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: kernel-janitors@vger.kernel.org, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Wu, Fengguang wrote:
-> 
-> Hi Namarta,
-> 
-> FYI, there are new coccinelle warnings show up in
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-> head:   10e1e44f261e84f8663592f1a33119801b2bae57
-> commit: 1245b7005de02d5bfa0c321df925f5b6c83c99e1 [100/102] ASoC: add compress stream support
-> 
-> All coccinelle warnings:
-> 
-> + sound/soc/soc-compress.c:106:2-45: code aligned with following code on line 107
-> 
-> vim +106 sound/soc/soc-compress.c
->    103			rtd->dai_link->compr_ops->shutdown(cstream);
->    104	
->    105		if (platform->driver->compr_ops && platform->driver->compr_ops->free)
->  > 106			platform->driver->compr_ops->free(cstream);
->    107			cpu_dai->runtime = NULL;
->    108	
->    109		if (cstream->direction = SND_COMPRESS_PLAYBACK) {
-Ah, a bad miss, will send the patch for this
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-~Vinod
+Initialize return variable before exiting on an error path.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ net/netfilter/nf_conntrack_netlink.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+index da4fc37..9807f32 100644
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -2790,7 +2790,8 @@ static int __init ctnetlink_init(void)
+ 		goto err_unreg_subsys;
+ 	}
+ 
+-	if (register_pernet_subsys(&ctnetlink_net_ops)) {
++	ret = register_pernet_subsys(&ctnetlink_net_ops);
++	if (ret < 0) {
+ 		pr_err("ctnetlink_init: cannot register pernet operations\n");
+ 		goto err_unreg_exp_subsys;
+ 	}
 
