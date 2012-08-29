@@ -1,61 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 29 Aug 2012 16:49:14 +0000
-Subject: [PATCH 4/7] net/bluetooth/rfcomm/core.c: fix error return code
-Message-Id: <1346258957-7649-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Wed, 29 Aug 2012 18:23:29 +0000
+Subject: Re: [PATCH 4/7] net/bluetooth/rfcomm/core.c: fix error return code
+Message-Id: <1346264609.23377.6.camel@aeonflux>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1346258957-7649-1-git-send-email-Julia.Lawall@lip6.fr>
+	 <1346258957-7649-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1346258957-7649-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Marcel Holtmann <marcel@holtmann.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Julia,
 
-Initialize return variable before exiting on an error path.
+> Initialize return variable before exiting on an error path.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+> 
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  net/bluetooth/rfcomm/core.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Acked-by: Marcel Holtmann <marcel@holtmann.org>
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+Regards
 
-// </smpl>
+Marcel
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- net/bluetooth/rfcomm/core.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/net/bluetooth/rfcomm/core.c b/net/bluetooth/rfcomm/core.c
-index c75107e..30141c0 100644
---- a/net/bluetooth/rfcomm/core.c
-+++ b/net/bluetooth/rfcomm/core.c
-@@ -2010,8 +2010,10 @@ static int rfcomm_add_listener(bdaddr_t *ba)
- 
- 	/* Add listening session */
- 	s = rfcomm_session_add(sock, BT_LISTEN);
--	if (!s)
-+	if (!s) {
-+		err = -ENOMEM;
- 		goto failed;
-+	}
- 
- 	rfcomm_session_hold(s);
- 	return 0;
 
