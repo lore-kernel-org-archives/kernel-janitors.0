@@ -1,34 +1,46 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 27 Aug 2012 05:18:10 +0000
-Subject: [nouveau:master 39/72] nv50.c:187:1-59: code aligned with following code
-Message-Id: <20120827051810.GA17125@localhost>
+From: Kent Yoder <key@linux.vnet.ibm.com>
+Date: Thu, 30 Aug 2012 14:32:34 +0000
+Subject: Re: [security:next 2/13] drivers/char/tpm/tpm_acpi.c:98:14: sparse: incorrect type in assignment (di
+Message-Id: <20120830143234.GA4991@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Ben,
+Hi Fengguang,
 
-FYI, there are new coccinelle warnings show up in
+On Mon, Aug 27, 2012 at 04:02:30PM -0700, Fengguang Wu wrote:
+> Hi Kent,
+> 
+> FYI, there are new sparse warnings show up in
+> 
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+> head:   f84fdff0fdcda7e509ce530e0ee612233a2104fb
+> commit: e5dcd87fee12ed64a9ea911102025facc0c7d10c [2/13] tpm: modularize event log collection
+> config: i386-allmodconfig (attached as .config)
+> 
+> All sparse warnings:
+> 
+> + drivers/char/tpm/tpm_acpi.c:98:14: sparse: incorrect type in assignment (different address spaces)
+>   drivers/char/tpm/tpm_acpi.c:98:14:    expected struct acpi_table_header *virt
+>   drivers/char/tpm/tpm_acpi.c:98:14:    got void [noderef] <asn:2>*
+> + drivers/char/tpm/tpm_acpi.c:102:30: sparse: incorrect type in argument 1 (different address spaces)
+>   drivers/char/tpm/tpm_acpi.c:102:30:    expected void [noderef] <asn:2>*logical_address
+>   drivers/char/tpm/tpm_acpi.c:102:30:    got struct acpi_table_header *virt
+> 
+> vim +98 drivers/char/tpm/tpm_acpi.c
+>     95	
+>     96		log->bios_event_log_end = log->bios_event_log + len;
+>     97	
+>   > 98		virt = acpi_os_map_memory(start, len);
+>     99	
+>    100		memcpy(log->bios_event_log, virt, len);
+>    101	
 
-tree:   git://git.freedesktop.org/git/nouveau/linux-2.6 master
-head:   fc72098aca323093e899eaa1284686b7d64a4b51
-commit: 505c59fd7c71cffec272fef218c1c49987850fa3 [39/72] drm/nouveau/mxm: split up into bios code and a subdev module
+  This code is now slightly different based on James' lastest updates,
+so I'll send the update to James for this.
 
-All coccinelle warnings:
+Thanks,
+Kent
 
-+ drivers/gpu/drm/nouveau/core/subdev/mxm/nv50.c:187:1-59: code aligned with following code on line 188
-
-vim +187 drivers/gpu/drm/nouveau/core/subdev/mxm/nv50.c
-   184	{
-   185		u64 desc = *(u64 *)data;
-   186		if ((desc & 0xf0) != 0xf0)
- > 187		nv_info(mxm, "unmatched output device 0x%016llx\n", desc);
-   188		return true;
-   189	}
-   190	
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
