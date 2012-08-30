@@ -1,45 +1,29 @@
-From: Kent Yoder <key@linux.vnet.ibm.com>
-Date: Thu, 30 Aug 2012 14:38:41 +0000
-Subject: [PATCH] tpm: fix tpm_acpi sparse warning on different address spaces
-Message-Id: <20120830143839.GA9589@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Aug 2012 17:45:56 +0000
+Subject: Re: [PATCH] tpm: fix tpm_acpi sparse warning on different address spaces
+Message-Id: <20120830174556.GD20741@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120830143839.GA9589@linux.vnet.ibm.com>
+In-Reply-To: <20120830143839.GA9589@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Morris <jmorris@namei.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
+To: Kent Yoder <key@linux.vnet.ibm.com>
+Cc: James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
 
-acpi_os_map_memory expects its return value to be in the __iomem address
-space. Cast it back later when used in a memcpy to avoid the same sparse
-warning there.
+On Thu, Aug 30, 2012 at 09:38:41AM -0500, Kent Yoder wrote:
+> acpi_os_map_memory expects its return value to be in the __iomem address
+> space. Cast it back later when used in a memcpy to avoid the same sparse
+> warning there.
+> 
+> Signed-off-by: Kent Yoder <key@linux.vnet.ibm.com>
 
-Signed-off-by: Kent Yoder <key@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm_acpi.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+I can't download linux-next right now but I don't think this is the
+correct fix.  I don't think you can memcpy() directly from __iomem.
+The static checker is warning about a valid bug which should be
+addressed instead of just casted away and silenced.
 
-diff --git a/drivers/char/tpm/tpm_acpi.c b/drivers/char/tpm/tpm_acpi.c
-index fe3fa94..36bdcfa 100644
---- a/drivers/char/tpm/tpm_acpi.c
-+++ b/drivers/char/tpm/tpm_acpi.c
-@@ -49,7 +49,7 @@ int read_log(struct tpm_bios_log *log)
- {
- 	struct acpi_tcpa *buff;
- 	acpi_status status;
--	struct acpi_table_header *virt;
-+	void __iomem *virt;
- 	u64 len, start;
- 
- 	if (log->bios_event_log != NULL) {
-@@ -102,7 +102,7 @@ int read_log(struct tpm_bios_log *log)
- 		return -EIO;
- 	}
- 
--	memcpy(log->bios_event_log, virt, len);
-+	memcpy(log->bios_event_log, (void *)virt, len);
- 
- 	acpi_os_unmap_memory(virt, len);
- 	return 0;
--- 
-1.7.5.4
+regards,
+dan carpenter
+
 
