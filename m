@@ -1,81 +1,70 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Wed, 15 Aug 2012 22:02:45 +0000
-Subject: Re: [patch] [media] stk1160: unlock on error path stk1160_set_alternate()
-Message-Id: <CALF0-+UYGrq01L63ekLPYc=2YLEAYP-2SGQUat-SEdFG2oFY3A@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 31 Aug 2012 06:54:02 +0000
+Subject: [samsung:devfreq-for-next 3/5] drivers/devfreq/devfreq.c:75:5: sparse: symbol 'devfreq_get_freq_leve
+Message-Id: <20120831065402.GA6761@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="9amGYk9869ThD9tj"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120814065948.GD4791@elgon.mountain>
-	<CALF0-+WGaYErM5SrCGfOJFCS0yqjJ2Oa4+u3_GcHAXR3mwnBmQ@mail.gmail.com>
-	<502C1A5F.7050308@redhat.com>
-In-Reply-To: <502C1A5F.7050308@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 15, 2012 at 6:53 PM, Mauro Carvalho Chehab
-<mchehab@redhat.com> wrote:
-> Em 14-08-2012 07:51, Ezequiel Garcia escreveu:
->> Hi Dan,
->>
->> On Tue, Aug 14, 2012 at 3:59 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>> There are some unlocks missing on error.
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>> ---
->>> Applies on top of linux-next.
->>>
->>> diff --git a/drivers/media/video/stk1160/stk1160-v4l.c b/drivers/media/video/stk1160/stk1160-v4l.c
->>> index 360bdbe..1ad4ac1 100644
->>> --- a/drivers/media/video/stk1160/stk1160-v4l.c
->>> +++ b/drivers/media/video/stk1160/stk1160-v4l.c
->>> @@ -159,8 +159,9 @@ static bool stk1160_set_alternate(struct stk1160 *dev)
->>>
->>>  static int stk1160_start_streaming(struct stk1160 *dev)
->>>  {
->>> -       int i, rc;
->>>         bool new_pkt_size;
->>> +       int rc = 0;
->>> +       int i;
->>>
->>>         /* Check device presence */
->>>         if (!dev->udev)
->>> @@ -183,7 +184,7 @@ static int stk1160_start_streaming(struct stk1160 *dev)
->>>         if (!dev->isoc_ctl.num_bufs || new_pkt_size) {
->>>                 rc = stk1160_alloc_isoc(dev);
->>>                 if (rc < 0)
->>> -                       return rc;
->>> +                       goto out_unlock;
->>>         }
->>>
->>>         /* submit urbs and enables IRQ */
->>> @@ -192,7 +193,7 @@ static int stk1160_start_streaming(struct stk1160 *dev)
->>>                 if (rc) {
->>>                         stk1160_err("cannot submit urb[%d] (%d)\n", i, rc);
->>>                         stk1160_uninit_isoc(dev);
->>> -                       return rc;
->>> +                       goto out_unlock;
->>>                 }
->>>         }
->>>
->>> @@ -205,9 +206,10 @@ static int stk1160_start_streaming(struct stk1160 *dev)
->>>
->>>         stk1160_dbg("streaming started\n");
->>>
->>> +out_unlock:
->>>         mutex_unlock(&dev->v4l_lock);
->>>
->>> -       return 0;
->>> +       return rc;
->>>  }
->>>
->>>  /* Must be called with v4l_lock hold */
->>
->> This and the other stk1160 patch looks good. I'll give them a test.
->
-> Ok, I'll merge them both, with your ack.
 
-That's fine.
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Ezequiel.
+Hi Jonghwa,
+
+FYI, there are new sparse warnings show up in
+
+tree:   git://git.infradead.org/users/kmpark/linux-samsung devfreq-for-next
+head:   90609cd121f47446e6a04862214423dbc75bd493
+commit: 4b77f78761889635ba1abd2f4ec1e7f45012e48c [3/5] devfreq: Add sysfs node for representing frequency transition information.
+
+All sparse warnings:
+
++ drivers/devfreq/devfreq.c:75:5: sparse: symbol 'devfreq_get_freq_level' was not declared. Should it be static?
++ drivers/devfreq/devfreq.c:86:5: sparse: symbol 'devfreq_update_status' was not declared. Should it be static?
+
+vim +75 drivers/devfreq/devfreq.c
+    72		return ERR_PTR(-ENODEV);
+    73	}
+    74	
+  > 75	int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
+    76	{
+    77		int lev;
+    78	
+
+Please consider folding the attached diff :-)
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+
+--9amGYk9869ThD9tj
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-4b77f78.diff"
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 00e326c..e00a386 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -72,7 +72,7 @@ static struct devfreq *find_device_devfreq(struct device *dev)
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
+-int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
++static int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
+ {
+ 	int lev;
+ 
+@@ -83,7 +83,7 @@ int devfreq_get_freq_level(struct devfreq *devfreq, unsigned long freq)
+ 	return -EINVAL;
+ }
+ 
+-int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
++static int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
+ {
+ 	int lev, prev_lev;
+ 	unsigned long cur_time;
+
+--9amGYk9869ThD9tj--
