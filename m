@@ -1,84 +1,62 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 17 Sep 2012 11:35:18 +0000
-Subject: Re: [PATCH 1/4] drivers/mmc/host/dw_mmc.c: fix error return code
-Message-Id: <CA+MoWDqR31XWPT+z9tozLpV6_G9yfUHjzReQmQOLvNJNi-pTnQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 01 Sep 2012 19:54:07 +0000
+Subject: [patch] thinkpad_acpi: buffer overflow in fan_get_status()
+Message-Id: <20120901195407.GF20741@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
-	<016401cd94ba$733937d0$59aba770$%jun@samsung.com>
-In-Reply-To: <016401cd94ba$733937d0$59aba770$%jun@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: cjb@laptop.org, will.newton@imgtec.com, jh80.chung@samsung.com, kyungmin.park@samsung.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
+Cc: Matthew Garrett <mjg@redhat.com>, "open list:THINKPAD ACPI EXT..." <ibm-acpi-devel@lists.sourceforge.net>, "open list:THINKPAD ACPI EXT..." <platform-driver-x86@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Sep 17, 2012 at 11:54 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> On Monday, September 17, 2012, Peter Senna Tschudin <peter.senna@gmail.com> wrote:
->> From: Peter Senna Tschudin <peter.senna@gmail.com>
->>
->> Convert a nonnegative error return code to a negative one, as returned
->> elsewhere in the function.
->>
->> A simplified version of the semantic match that finds this problem is as
->> follows: (http://coccinelle.lip6.fr/)
->>
->> // <smpl>
->> (
->> if@p1 (\(ret < 0\|ret != 0\))
->>  { ... return ret; }
->> |
->> ret@p1 = 0
->> )
->> ... when != ret = e1
->>     when != &ret
->> *if(...)
->> {
->>   ... when != ret = e2
->>       when forall
->>  return ret;
->> }
->> // </smpl>
->>
->> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
->> ---
->>  drivers/mmc/host/dw_mmc.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 36f98c0..7ad5176 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -2039,8 +2039,10 @@ int dw_mci_probe(struct dw_mci *host)
->>       tasklet_init(&host->tasklet, dw_mci_tasklet_func, (unsigned long)host);
->>       host->card_workqueue = alloc_workqueue("dw-mci-card",
->>                       WQ_MEM_RECLAIM | WQ_NON_REENTRANT, 1);
->> -     if (!host->card_workqueue)
->> +     if (!host->card_workqueue) {
->> +             err = -ENOMEM;
-> ret is expected instead of err.
-> err isn't defined.
+The acpi_evalf() function modifies four bytes of data but in
+fan_get_status() we pass a pointer to u8.  I have modified the
+function to use type checking now.
 
-I'm sorry. Somehow I did not compile for testing this one before
-sending. I'll fix, test and resend.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->
-> Thanks,
-> Seungwon Jeon
->
->>               goto err_dmaunmap;
->> +     }
->>       INIT_WORK(&host->card_work, dw_mci_work_routine_card);
->>       ret = request_irq(host->irq, dw_mci_interrupt, host->irq_flags, "dw-mci", host);
->>       if (ret)
->> --
->> 1.7.11.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Peter
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index df3016b..0735fb7 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -545,7 +545,7 @@ TPACPI_HANDLE(hkey, ec, "\\_SB.HKEY",	/* 600e/x, 770e, 770x */
+  */
+ 
+ static int acpi_evalf(acpi_handle handle,
+-		      void *res, char *method, char *fmt, ...)
++		      int *res, char *method, char *fmt, ...)
+ {
+ 	char *fmt0 = fmt;
+ 	struct acpi_object_list params;
+@@ -606,7 +606,7 @@ static int acpi_evalf(acpi_handle handle,
+ 		success = (status = AE_OK &&
+ 			   out_obj.type = ACPI_TYPE_INTEGER);
+ 		if (success && res)
+-			*(int *)res = out_obj.integer.value;
++			*res = out_obj.integer.value;
+ 		break;
+ 	case 'v':		/* void */
+ 		success = status = AE_OK;
+@@ -7386,17 +7386,18 @@ static int fan_get_status(u8 *status)
+ 	 * Add TPACPI_FAN_RD_ACPI_FANS ? */
+ 
+ 	switch (fan_status_access_mode) {
+-	case TPACPI_FAN_RD_ACPI_GFAN:
++	case TPACPI_FAN_RD_ACPI_GFAN: {
+ 		/* 570, 600e/x, 770e, 770x */
++		int res;
+ 
+-		if (unlikely(!acpi_evalf(gfan_handle, &s, NULL, "d")))
++		if (unlikely(!acpi_evalf(gfan_handle, &res, NULL, "d")))
+ 			return -EIO;
+ 
+ 		if (likely(status))
+-			*status = s & 0x07;
++			*status = res & 0x07;
+ 
+ 		break;
+-
++	}
+ 	case TPACPI_FAN_RD_TPEC:
+ 		/* all except 570, 600e/x, 770e, 770x */
+ 		if (unlikely(!acpi_ec_read(fan_status_offset, &s)))
