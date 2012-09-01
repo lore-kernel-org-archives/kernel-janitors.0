@@ -1,56 +1,32 @@
-From: Ben Chan <benchan@chromium.org>
-Date: Mon, 17 Sep 2012 13:54:53 +0000
-Subject: Re: [PATCH] drivers/staging/gdm72xx/gdm_sdio.c: Replace kmalloc+memset for kzalloc
-Message-Id: <CAC5Y2nPYuyXtheGAAzHY1kWWUOwLwppDOFq19i2A-zNFJAJ4sQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 01 Sep 2012 19:57:40 +0000
+Subject: [patch] fddi: 64 bit bug in smt_add_para()
+Message-Id: <20120901195740.GG20741@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120917121831.GA23117@kroah.com> <1347889554-28901-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347889554-28901-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: gregkh@linuxfoundation.org, devendra.aaru@gmail.com, syahn@gctsemi.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
 
-FYI, a similar patch has already been applied: "staging: gdm72xx:
-simplify alloc_tx_struct and alloc_rx_struct (commit
-129575f2a8958a1e90780b0d5b80702bb45b5aac)"
+The intent was to set 4 bytes of data so that's why the sp_len is set
+to 4 on the next line.  The cast to u_long pointer clears 8 bytes
+on 64 bit arches.
 
-Thanks,
-Ben
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Code auditing work.  I don't have this hardware.  This bug is old.
 
-On Mon, Sep 17, 2012 at 6:45 AM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> Replace kmalloc+memset for kzalloc and cleanup related code.
->
-> To be applied after 47ad3428a1086af425447f763705e06b16ae905d:
-> [PATCH 5/9] drivers/staging/gdm72xx/gdm_sdio.c: Remove useless kfree
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
->  drivers/staging/gdm72xx/gdm_sdio.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/staging/gdm72xx/gdm_sdio.c b/drivers/staging/gdm72xx/gdm_sdio.c
-> index a0621d9..2e1a964 100644
-> --- a/drivers/staging/gdm72xx/gdm_sdio.c
-> +++ b/drivers/staging/gdm72xx/gdm_sdio.c
-> @@ -91,14 +91,12 @@ static void free_tx_struct(struct sdio_tx *t)
->
->  static struct sdio_rx *alloc_rx_struct(struct rx_cxt *rx)
->  {
-> -       struct sdio_rx *r = NULL;
-> +       struct sdio_rx *r;
->
-> -       r = kmalloc(sizeof(*r), GFP_ATOMIC);
-> +       r = kzalloc(sizeof(*r), GFP_ATOMIC);
->         if (!r)
->                 return NULL;
->
-> -       memset(r, 0, sizeof(*r));
-> -
->         r->rx_cxt = rx;
->
->         return r;
-> --
-> 1.7.11.4
->
+diff --git a/drivers/net/fddi/skfp/pmf.c b/drivers/net/fddi/skfp/pmf.c
+index 24d8566..441b4dc 100644
+--- a/drivers/net/fddi/skfp/pmf.c
++++ b/drivers/net/fddi/skfp/pmf.c
+@@ -673,7 +673,7 @@ void smt_add_para(struct s_smc *smc, struct s_pcon *pcon, u_short para,
+ 			sm_pm_get_ls(smc,port_to_mib(smc,port))) ;
+ 		break ;
+ 	case SMT_P_REASON :
+-		* (u_long *) to = 0 ;
++		*(u32 *)to = 0 ;
+ 		sp_len = 4 ;
+ 		goto sp_done ;
+ 	case SMT_P1033 :			/* time stamp */
