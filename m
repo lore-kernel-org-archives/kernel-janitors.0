@@ -1,40 +1,108 @@
-From: Andres Lagar-Cavilla <andreslc@gridcentric.ca>
-Date: Sun, 09 Sep 2012 19:49:29 +0000
-Subject: Re: [patch 2/3] xen/privcmd: return -EFAULT on error
-Message-Id: <CBDACA0A-1E68-4FFE-860B-2801019E03E2@gridcentric.ca>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 01 Sep 2012 16:33:11 +0000
+Subject: [PATCH 3/4] drivers/mtd/maps/autcpu12-nvram.c: drop frees of devm_ alloc'd data
+Message-Id: <1346517191-8794-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120908095735.GB608@elgon.mountain>
-In-Reply-To: <20120908095735.GB608@elgon.mountain>
+References: <1346517191-8794-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1346517191-8794-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Andres Lagar-Cavilla <andreslc@gridcentric.ca>, kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Sep 8, 2012, at 5:57 AM, Dan Carpenter wrote:
+devm free functions should not have to be explicitly used.
 
-> __copy_to_user() returns the number of bytes remaining to be copied but
-> we want to return a negative error code here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Andres Lagar-Cavilla <andres@lagarcavilla.org>
-> 
-> diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-> index fdff8f9..0ce006a 100644
-> --- a/drivers/xen/privcmd.c
-> +++ b/drivers/xen/privcmd.c
-> @@ -393,8 +393,11 @@ static long privcmd_ioctl_mmap_batch(void __user *udata, int version)
-> 		state.err      = err_array;
-> 		ret = traverse_pages(m.num, sizeof(xen_pfn_t),
-> 				     &pagelist, mmap_return_errors_v1, &state);
-> -	} else if (version = 2)
-> +	} else if (version = 2) {
-> 		ret = __copy_to_user(m.err, err_array, m.num * sizeof(int));
-> +		if (ret)
-> +			ret = -EFAULT;
-> +	}
-> 
-> 	/* If we have not had any EFAULT-like global errors then set the global
-> 	 * error to -ENOENT if necessary. */
+A semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+@@
+
+(
+* devm_kfree(...);
+|
+* devm_free_irq(...);
+|
+* devm_iounmap(...);
+|
+* devm_release_region(...);
+|
+* devm_release_mem_region(...);
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mtd/maps/autcpu12-nvram.c |   18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/mtd/maps/autcpu12-nvram.c b/drivers/mtd/maps/autcpu12-nvram.c
+index ef420d9..76fb594 100644
+--- a/drivers/mtd/maps/autcpu12-nvram.c
++++ b/drivers/mtd/maps/autcpu12-nvram.c
+@@ -38,7 +38,6 @@ static int __devinit autcpu12_nvram_probe(struct platform_device *pdev)
+ 	map_word tmp, save0, save1;
+ 	struct resource *res;
+ 	struct autcpu12_nvram_priv *priv;
+-	int err;
+ 
+ 	priv = devm_kzalloc(&pdev->dev,
+ 			    sizeof(struct autcpu12_nvram_priv), GFP_KERNEL);
+@@ -50,8 +49,7 @@ static int __devinit autcpu12_nvram_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "failed to get memory resource\n");
+-		err = -ENOENT;
+-		goto out;
++		return -ENOENT;
+ 	}
+ 
+ 	priv->map.bankwidth	= 4;
+@@ -61,8 +59,7 @@ static int __devinit autcpu12_nvram_probe(struct platform_device *pdev)
+ 	strcpy((char *)priv->map.name, res->name);
+ 	if (!priv->map.virt) {
+ 		dev_err(&pdev->dev, "failed to remap mem resource\n");
+-		err = -EBUSY;
+-		goto out;
++		return -EBUSY;
+ 	}
+ 
+ 	simple_map_init(&priv->map);
+@@ -90,8 +87,7 @@ static int __devinit autcpu12_nvram_probe(struct platform_device *pdev)
+ 	priv->mtd = do_map_probe("map_ram", &priv->map);
+ 	if (!priv->mtd) {
+ 		dev_err(&pdev->dev, "probing failed\n");
+-		err = -ENXIO;
+-		goto out;
++		return -ENXIO;
+ 	}
+ 
+ 	priv->mtd->owner	= THIS_MODULE;
+@@ -106,12 +102,7 @@ static int __devinit autcpu12_nvram_probe(struct platform_device *pdev)
+ 
+ 	map_destroy(priv->mtd);
+ 	dev_err(&pdev->dev, "NV-RAM device addition failed\n");
+-	err = -ENOMEM;
+-
+-out:
+-	devm_kfree(&pdev->dev, priv);
+-
+-	return err;
++	return -ENOMEM;
+ }
+ 
+ static int __devexit autcpu12_nvram_remove(struct platform_device *pdev)
+@@ -120,7 +111,6 @@ static int __devexit autcpu12_nvram_remove(struct platform_device *pdev)
+ 
+ 	mtd_device_unregister(priv->mtd);
+ 	map_destroy(priv->mtd);
+-	devm_kfree(&pdev->dev, priv);
+ 
+ 	return 0;
+ }
 
