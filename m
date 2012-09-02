@@ -1,34 +1,56 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 08 Sep 2012 12:34:01 +0000
-Subject: Re: [signal:master 8/62] arch/arm/include/asm/ptrace.h:260:35: error: 'THREAD_SIZE' undeclared (firs
-Message-Id: <20120908123401.GB24182@localhost>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Date: Sun, 02 Sep 2012 15:19:56 +0000
+Subject: Re: [PATCH 3/5] drivers/video/jz4740_fb.c: use devm_ functions
+Message-Id: <5043791C.4050202@metafoo.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120907235029.GB17069@localhost>
-In-Reply-To: <20120907235029.GB17069@localhost>
+References: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr> <1344008414-2894-3-git-send-email-damien.cassou@lifl.fr> <5036955F.6000806@gmx.de>
+In-Reply-To: <5036955F.6000806@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: Damien Cassou <damien.cassou@lifl.fr>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 08, 2012 at 07:47:04AM +0100, Al Viro wrote:
-> On Sat, Sep 08, 2012 at 07:50:29AM +0800, Fengguang Wu wrote:
-> > Hi Al,
-> > 
-> > FYI, kernel build failed on
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git master
-> > head:   811a6550c2567601b6ea4799a44732f7dbab4807
-> > commit: 63840b3cbdf5993b776138111a6b3a0cfb745caa [8/62] arm: optimized current_pt_regs()
-> > config: arm-allnoconfig (attached as .config)
+On 08/23/2012 10:41 PM, Florian Tobias Schandinat wrote:
+> On 08/03/2012 03:40 PM, Damien Cassou wrote:
+>> From: Damien Cassou <damien.cassou@lifl.fr>
+>>
+>> The various devm_ functions allocate memory that is released when a driver
+>> detaches. This patch uses these functions for data that is allocated in the
+>> probe function of a platform device and is only freed in the remove function.
+>>
+>> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
 > 
-> Ho-hum...  That's solved by turning that sucker into a macro, but allnoconfig
-> *still* doesn't build - we end up with no CONFIG_CPU_... defined, which
-> leads to very unhappy build.  Anyway, the mess with undefined symbol had
-> been fixed in my tree (will push shortly), but allnoconfig is a mess I don't
-> want to touch right now - too convoluted Kconfig crap for my taste...
+> Applied.
+> 
+> 
+> Thanks,
+> 
+> Florian Tobias Schandinat
+> 
+>>
+>> ---
+>>  drivers/video/jz4740_fb.c |   22 ++++++----------------
+>>  1 file changed, 6 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/video/jz4740_fb.c b/drivers/video/jz4740_fb.c
+>> index de36693..7669770 100644
+>> --- a/drivers/video/jz4740_fb.c
+>> +++ b/drivers/video/jz4740_fb.c
+>> @@ -659,25 +659,25 @@ static int __devinit jzfb_probe(struct platform_device *pdev)
+>>  	jzfb->pdata = pdata;
+>>  	jzfb->mem = mem;
+>>
+>> -	jzfb->ldclk = clk_get(&pdev->dev, "lcd");
+>> +	jzfb->ldclk = devm_clk_get(&pdev->dev, "lcd");
 
-Fair enough, arm-allnoconfig is not really working well now and let's
-leave it to the arm maintainers ...
+I guess I'm a bit late, but we do not have devm_clk_get on jz4740 (yet), so
+this patch breaks linking for this driver in next. I'll to to have this added
+for the next release, but if I do not succeed we'll have to revert part of this
+patch.
 
-Thanks,
-Fengguang
+Also the driver does not include #include <linux/io.h>, since it is required
+for devm_ioremap compilation is also broken. This one is easy to fix though,
+will send a follow-up patch.
+
+- Lars
