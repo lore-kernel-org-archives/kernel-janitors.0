@@ -1,22 +1,63 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 17 Sep 2012 13:49:15 +0000
-Subject: Re: [PATCH v2 5/9] drivers/staging/gdm72xx/gdm_sdio.c: Remove useless kfree
-Message-Id: <CA+MoWDqux60EpDHZnjt+MGp0U2qxxBdfWX+hF5XbCkt1zfCU-Q@mail.gmail.com>
+From: "Luis G.F" <luisgf@gmail.com>
+Date: Tue, 04 Sep 2012 08:43:27 +0000
+Subject: [PATCH 1/1] mm: Fix unused function warnings in vmstat.c
+Message-Id: <CAHve1mzC+x=z5L4-74EYhAmi7Jqc-XqD7u5yRctbHwgKVyO2dA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347610518-3099-1-git-send-email-peter.senna@gmail.com>
-	<20120917121831.GA23117@kroah.com>
-In-Reply-To: <20120917121831.GA23117@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: wharms@bfs.de, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-> As I already applid your first patch, care to just send an incremental
-> patch that makes the change you did here?
+frag_start(), frag_next(), frag_stop(), walk_zones_in_node() throws
+compilation warnings (-Wunused-function) even when are currently used.
 
-I've just sent a patch for that:
-[PATCH] drivers/staging/gdm72xx/gdm_sdio.c: Replace kmalloc+memset for kzalloc
+This patchs fix the compilation warnings in vmstat.c
 
+Signed-off-by: Luis Gonzalez Fernandez <luisgf@gmail.com>
+---
+ mm/vmstat.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index df7a674..e8f7dbd 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -619,7 +619,8 @@ static char * const migratetype_names[MIGRATE_TYPES] = {
+ 	"Isolate",
+ };
+
+-static void *frag_start(struct seq_file *m, loff_t *pos)
++static void __attribute__((unused)) *frag_start(struct seq_file *m,
++							loff_t *pos)
+ {
+ 	pg_data_t *pgdat;
+ 	loff_t node = *pos;
+@@ -631,7 +632,8 @@ static void *frag_start(struct seq_file *m, loff_t *pos)
+ 	return pgdat;
+ }
+
+-static void *frag_next(struct seq_file *m, void *arg, loff_t *pos)
++static void __attribute__((unused)) *frag_next(struct seq_file *m,
++						void *arg, loff_t *pos)
+ {
+ 	pg_data_t *pgdat = (pg_data_t *)arg;
+
+@@ -639,12 +641,13 @@ static void *frag_next(struct seq_file *m, void
+*arg, loff_t *pos)
+ 	return next_online_pgdat(pgdat);
+ }
+
+-static void frag_stop(struct seq_file *m, void *arg)
++static void __attribute__((unused)) frag_stop(struct seq_file *m, void *arg)
+ {
+ }
+
+ /* Walk all the zones in a node and print using a callback */
+-static void walk_zones_in_node(struct seq_file *m, pg_data_t *pgdat,
++static void __attribute__((unused)) walk_zones_in_node(struct seq_file *m,
++							pg_data_t *pgdat,
+ 		void (*print)(struct seq_file *m, pg_data_t *, struct zone *))
+ {
+ 	struct zone *zone;
 -- 
-Peter
+1.7.9.5
