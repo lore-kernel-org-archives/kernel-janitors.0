@@ -1,40 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Sep 2012 08:21:19 +0000
-Subject: [patch] net/key/af_key.c: add range checks on ->sadb_x_policy_len
-Message-Id: <20120928082119.GA32008@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 04 Sep 2012 12:05:04 +0000
+Subject: [PATCH 2/3] drivers/media/rc/ati_remote.c: fix error return code
+Message-Id: <1346760305-13060-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Eric Dumazet <eric.dumazet@gmail.com>, Stephen Hemminger <shemminger@vyatta.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Because sizeof() is size_t then if "len" is negative, it counts as a
-large positive value.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-The call tree looks like:
-pfkey_sendmsg()
--> pfkey_process()
-   -> pfkey_spdadd()
-      -> parse_ipsecrequests()
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
 ---
-This is a static checker fix.  I'm not very familiar with this code.
-I think if we were to hit this then we would try to parse invalid data
-and it would return -EINVAL or similar error code pretty quickly.
+ drivers/media/rc/ati_remote.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 2ca7d7f..7714df0 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -1923,6 +1923,9 @@ parse_ipsecrequests(struct xfrm_policy *xp, struct sadb_x_policy *pol)
- 	int len = pol->sadb_x_policy_len*8 - sizeof(struct sadb_x_policy);
- 	struct sadb_x_ipsecrequest *rq = (void*)(pol+1);
+diff --git a/drivers/media/rc/ati_remote.c b/drivers/media/rc/ati_remote.c
+index 08aede5..49bb356 100644
+--- a/drivers/media/rc/ati_remote.c
++++ b/drivers/media/rc/ati_remote.c
+@@ -937,8 +937,10 @@ static int ati_remote_probe(struct usb_interface *interface,
+ 	/* Set up and register mouse input device */
+ 	if (mouse) {
+ 		input_dev = input_allocate_device();
+-		if (!input_dev)
++		if (!input_dev) {
++			err = -ENOMEM;
+ 			goto fail4;
++		}
  
-+	if (pol->sadb_x_policy_len * 8 < sizeof(struct sadb_x_policy))
-+		return -EINVAL;
-+
- 	while (len >= sizeof(struct sadb_x_ipsecrequest)) {
- 		if ((err = parse_ipsecrequest(xp, rq)) < 0)
- 			return err;
+ 		ati_remote->idev = input_dev;
+ 		ati_remote_input_init(ati_remote);
+
