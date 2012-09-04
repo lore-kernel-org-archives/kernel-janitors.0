@@ -1,28 +1,33 @@
-From: James Morris <jmorris@namei.org>
-Date: Wed, 12 Sep 2012 03:12:42 +0000
-Subject: Re: [PATCH] tpm: fix tpm_acpi sparse warning on different address spaces
-Message-Id: <alpine.LRH.2.02.1209121312300.4482@tundra.namei.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 04 Sep 2012 17:31:05 +0000
+Subject: Re: [staging-next] ozwpan: fix memcmp() test in oz_set_active_pd()
+Message-Id: <20120904173104.GC19410@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120830143839.GA9589@linux.vnet.ibm.com> <20120830174556.GD20741@mwanda> <20120830192155.GA25524@linux.vnet.ibm.com> <20120902163030.GB1840@mwanda> <20120904161819.GB20588@linux.vnet.ibm.com>
-In-Reply-To: <20120904161819.GB20588@linux.vnet.ibm.com>
+References: <1345393254-6060-1-git-send-email-tomas.winkler@intel.com>
+In-Reply-To: <1345393254-6060-1-git-send-email-tomas.winkler@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kent Yoder <key@linux.vnet.ibm.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, tpmdd-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 4 Sep 2012, Kent Yoder wrote:
-
-> acpi_os_map_memory expects its return value to be in the __iomem address
-> space. Tag the variable we're using as such and use memcpy_fromio to
-> avoid further sparse warnings.
+On Sun, Aug 19, 2012 at 07:20:54PM +0300, Tomas Winkler wrote:
+> "addr" is a pointer so it's either 4 or 8 bytes, but actually we want
+> to compare 6 bytes (ETH_ALEN).
 > 
-> Signed-off-by: Kent Yoder <key@linux.vnet.ibm.com>
+> As network stack already provides helper function
+> is_zero_ether_addr() we use that instead of memcmp
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Rupesh Gujare <rgujare@ozmodevices.com>
+> ---
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+Generally I would frown on patch thievery but since the maintainer
+asked you to then it's fine.
 
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-James Morris
-<jmorris@namei.org>
+regards,
+dan carpenter
+
