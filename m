@@ -1,34 +1,56 @@
-From: Stephen Warren <swarren@nvidia.com>
-Date: Thu, 20 Sep 2012 15:48:53 +0000
-Subject: RE: [mfd:for-next 47/76] drivers/mfd/max8907.c:179:16: sparse: symbol 'max8907_pm_off' was not decla
-Message-Id: <74CDBE0F657A3D45AFBB94109FB122FF17EF5465BB@HQMAIL01.nvidia.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 04 Sep 2012 16:14:26 +0000
+Subject: [PATCH 4/5] drivers/media/platform/vino.c: fix error return code
+Message-Id: <1346775269-12191-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120919233348.GD5607@localhost>
-In-Reply-To: <20120919233348.GD5607@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fengguang Wu wrote at Wednesday, September 19, 2012 5:34 PM:
-> Hi Stephen,
-> 
-> FYI, there are new sparse warnings show up in
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/sameo/mfd-2.6.git for-next
-> head:   144c94c99ad2f20ff37ca77147a10da7718895ad
-> commit: 9582fdcb6fcf1b596a83b161a2ea886272d2a62f [47/76] mfd: max8907: Add power off control
-> 
-> All sparse warnings:
-> 
-> + drivers/mfd/max8907.c:179:16: sparse: symbol 'max8907_pm_off' was not declared. Should it be static?
-...
-> Please consider folding the attached diff :-)
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Yes, the diff is correct; please consider it:
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
--- 
-nvpublic
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/media/platform/vino.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/platform/vino.c b/drivers/media/platform/vino.c
+index cc9110c..6654a28 100644
+--- a/drivers/media/platform/vino.c
++++ b/drivers/media/platform/vino.c
+@@ -2061,6 +2061,7 @@ static int vino_capture_next(struct vino_channel_settings *vcs, int start)
+ 	}
+ 	if (incoming = 0) {
+ 		dprintk("vino_capture_next(): no buffers available\n");
++		err = -ENOMEM;
+ 		goto out;
+ 	}
+ 
 
