@@ -1,66 +1,85 @@
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Date: Thu, 20 Sep 2012 14:40:01 +0000
-Subject: Re: [PATCH 1/2] drivers/s390/char/monreader.c: fix error return code
-Message-Id: <20120920164001.50a4305c@thinkpad>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 04 Sep 2012 16:14:29 +0000
+Subject: [PATCH 1/5] drivers/media/platform/davinci/vpbe.c: fix error return code
+Message-Id: <1346775269-12191-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347869521-2470-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347869521-2470-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 17 Sep 2012 10:12:00 +0200
-Peter Senna Tschudin <peter.senna@gmail.com> wrote:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> // </smpl>
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
->  drivers/s390/char/monreader.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/s390/char/monreader.c b/drivers/s390/char/monreader.c
-> index 5b8b859..f4ff515 100644
-> --- a/drivers/s390/char/monreader.c
-> +++ b/drivers/s390/char/monreader.c
-> @@ -571,8 +571,11 @@ static int __init mon_init(void)
->  	if (rc)
->  		goto out_iucv;
->  	monreader_device = kzalloc(sizeof(struct device), GFP_KERNEL);
-> -	if (!monreader_device)
-> +	if (!monreader_device) {
-> +		rc = -ENOMEM;
->  		goto out_driver;
-> +	}
-> +
->  	dev_set_name(monreader_device, "monreader-dev");
->  	monreader_device->bus = &iucv_bus;
->  	monreader_device->parent = iucv_root;
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-Applied, thanks!
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/media/platform/davinci/vpbe.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index c4a82a1..2e4a0da 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -603,7 +603,6 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	int output_index;
+ 	int num_encoders;
+ 	int ret = 0;
+-	int err;
+ 	int i;
+ 
+ 	/*
+@@ -646,10 +645,10 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	}
+ 	v4l2_info(&vpbe_dev->v4l2_dev, "vpbe v4l2 device registered\n");
+ 
+-	err = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
++	ret = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
+ 			       platform_device_get);
+-	if (err < 0)
+-		return err;
++	if (ret < 0)
++		return ret;
+ 
+ 	vpbe_dev->venc = venc_sub_dev_init(&vpbe_dev->v4l2_dev,
+ 					   vpbe_dev->cfg->venc.module_name);
+@@ -664,11 +663,11 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	osd_device = vpbe_dev->osd_device;
+ 
+ 	if (NULL != osd_device->ops.initialize) {
+-		err = osd_device->ops.initialize(osd_device);
+-		if (err) {
++		ret = osd_device->ops.initialize(osd_device);
++		if (ret) {
+ 			v4l2_err(&vpbe_dev->v4l2_dev,
+ 				 "unable to initialize the OSD device");
+-			err = -ENOMEM;
++			ret = -ENOMEM;
+ 			goto vpbe_fail_v4l2_device;
+ 		}
+ 	}
 
