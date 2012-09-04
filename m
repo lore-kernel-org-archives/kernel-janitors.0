@@ -1,44 +1,60 @@
-From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Date: Mon, 17 Sep 2012 05:50:24 +0000
-Subject: Re: drivers/mfd/tps65090.c: duplicated argument to ||
-Message-Id: <5056B750.6080009@nvidia.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 04 Sep 2012 16:14:25 +0000
+Subject: [PATCH 5/5] drivers/media/platform/omap3isp/isp.c: fix error return code
+Message-Id: <1346775269-12191-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120917004501.GD12394@localhost>
-In-Reply-To: <20120917004501.GD12394@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Pushed a patch to fix this & included you in TO list for review.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Thanks for bringing this to my notice.
-Venu
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-On Monday 17 September 2012 06:15 AM, Fengguang Wu wrote:
-> Hi Venu,
->
-> coccinelle warns about
->
-> drivers/mfd/tps65090.c:239:5-30: duplicated argument to && or ||
->
-> Which is introduced by:
->
-> commit 3c33be06f9aa0949ad24e67dfcae1f2a3006f4e1
-> Author:     Venu Byravarasu <vbyravarasu@nvidia.com>
-> AuthorDate: Fri Mar 16 11:10:19 2012 +0530
-> Commit:     Samuel Ortiz <sameo@linux.intel.com>
-> CommitDate: Tue Mar 20 16:56:33 2012 +0100
->
->      mfd: Add support for TPS65090
->
-> Thanks,
-> Fengguang
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
------------------------------------------------------------------------------------
-This email message is for the sole use of the intended recipient(s) and may contain
-confidential information.  Any unauthorized review, use, disclosure or distribution
-is prohibited.  If you are not the intended recipient, please contact the sender by
-reply email and destroy all copies of the original message.
------------------------------------------------------------------------------------
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/media/platform/omap3isp/isp.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
+index e0096e0..91fcaef 100644
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -2102,8 +2102,10 @@ static int __devinit isp_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto error;
+ 
+-	if (__omap3isp_get(isp, false) = NULL)
++	if (__omap3isp_get(isp, false) = NULL) {
++		ret = -EBUSY; /* Not sure if EBUSY is best for here */
+ 		goto error;
++	}
+ 
+ 	ret = isp_reset(isp);
+ 	if (ret < 0)
+
