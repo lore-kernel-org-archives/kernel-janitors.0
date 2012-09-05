@@ -1,85 +1,83 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 04 Sep 2012 16:14:29 +0000
-Subject: [PATCH 1/5] drivers/media/platform/davinci/vpbe.c: fix error return code
-Message-Id: <1346775269-12191-5-git-send-email-peter.senna@gmail.com>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Wed, 05 Sep 2012 19:25:31 +0000
+Subject: Re: [PATCH 1/5] drivers/media/platform/davinci/vpbe.c: fix error return code
+Message-Id: <CALF0-+Vn33ZtY68JbKSbNbaqkSO6OOfA38Ejoz=Kkz5WmOSFjA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1346775269-12191-5-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346775269-12191-5-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Peter,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+On Tue, Sep 4, 2012 at 1:14 PM, Peter Senna Tschudin
+<peter.senna@gmail.com> wrote:
+> From: Peter Senna Tschudin <peter.senna@gmail.com>
+>
+> Convert a nonnegative error return code to a negative one, as returned
+> elsewhere in the function.
+>
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+>
+> // </smpl>
+>
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+>
+> ---
+>  drivers/media/platform/davinci/vpbe.c |   13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+> index c4a82a1..2e4a0da 100644
+> --- a/drivers/media/platform/davinci/vpbe.c
+> +++ b/drivers/media/platform/davinci/vpbe.c
+> @@ -603,7 +603,6 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+>         int output_index;
+>         int num_encoders;
+>         int ret = 0;
+> -       int err;
+>         int i;
+>
+>         /*
+> @@ -646,10 +645,10 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+>         }
+>         v4l2_info(&vpbe_dev->v4l2_dev, "vpbe v4l2 device registered\n");
+>
+> -       err = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
+> +       ret = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
+>                                platform_device_get);
+> -       if (err < 0)
+> -               return err;
+> +       if (ret < 0)
+> +               return ret;
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+This should be "goto somewhere" (probably vbpe_fail_v4l2_device),
+instead of "return".
+There are several tasks done (like locking a mutex) that need to be undone.
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+Actually, this bug is not directly related to *this* patch, so you
+could send another patch
+fixing this.
 
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
- drivers/media/platform/davinci/vpbe.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index c4a82a1..2e4a0da 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -603,7 +603,6 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	int output_index;
- 	int num_encoders;
- 	int ret = 0;
--	int err;
- 	int i;
- 
- 	/*
-@@ -646,10 +645,10 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	}
- 	v4l2_info(&vpbe_dev->v4l2_dev, "vpbe v4l2 device registered\n");
- 
--	err = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
-+	ret = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
- 			       platform_device_get);
--	if (err < 0)
--		return err;
-+	if (ret < 0)
-+		return ret;
- 
- 	vpbe_dev->venc = venc_sub_dev_init(&vpbe_dev->v4l2_dev,
- 					   vpbe_dev->cfg->venc.module_name);
-@@ -664,11 +663,11 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	osd_device = vpbe_dev->osd_device;
- 
- 	if (NULL != osd_device->ops.initialize) {
--		err = osd_device->ops.initialize(osd_device);
--		if (err) {
-+		ret = osd_device->ops.initialize(osd_device);
-+		if (ret) {
- 			v4l2_err(&vpbe_dev->v4l2_dev,
- 				 "unable to initialize the OSD device");
--			err = -ENOMEM;
-+			ret = -ENOMEM;
- 			goto vpbe_fail_v4l2_device;
- 		}
- 	}
-
+Regards,
+Ezequiel.
