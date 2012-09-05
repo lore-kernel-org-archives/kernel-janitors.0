@@ -1,34 +1,35 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Date: Mon, 17 Sep 2012 05:01:28 +0000
-Subject: Re: [hzhuang1:testing/88pm860x 24/31] drivers/mfd/max8925-core.c:626:10: error: too few arguments to
-Message-Id: <CAN1soZxCHRGSaunH8iyvgV6rddkexKymL4QPRLPAT9-KqTvOcw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Sep 2012 12:30:42 +0000
+Subject: [patch] x86, microcode, AMD: use after free in free_cache()
+Message-Id: <20120905123042.GB6128@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120916215208.GA5637@localhost>
-In-Reply-To: <20120916215208.GA5637@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 17, 2012 at 5:52 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> Hi Haojian,
->
-> FYI, kernel build failed on
->
-> tree:   git://github.com/hzhuang1/linux.git testing/88pm860x
-> head:   87111113a97218c173305b8f01ee7f8977b5d12d
-> commit: d65270f70ae9c24d17916ca30a4cc67b5018373c [24/31] mfd: max8925: use register offset as REG in backlight
-> config: i386-randconfig-b013 (attached as .config)
->
-> All related error/warning messages:
->
-> drivers/mfd/max8925-core.c: In function 'max8925_device_init':
-> drivers/mfd/max8925-core.c:626:10: error: too few arguments to function 'mfd_add_devices'
-> In file included from drivers/mfd/max8925-core.c:18:0:
-> include/linux/mfd/core.h:100:12: note: declared here
->
+list_for_each_entry_reverse() dereferences the iterator, but we already
+freed it.  I don't see a reason that this has to be done in reverse
+order so I've changed it to use list_for_each_entry_safe().
 
-Fixed. Thanks
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is only needed on linux-next.  Sorry, it turns out that I don't
+have any AMD systems right now, so I have not tested this.
 
-Regards
-Haojian
+diff --git a/arch/x86/kernel/microcode_amd.c b/arch/x86/kernel/microcode_amd.c
+index 5511216..7720ff5 100644
+--- a/arch/x86/kernel/microcode_amd.c
++++ b/arch/x86/kernel/microcode_amd.c
+@@ -150,9 +150,9 @@ static void update_cache(struct ucode_patch *new_patch)
+ 
+ static void free_cache(void)
+ {
+-	struct ucode_patch *p;
++	struct ucode_patch *p, *tmp;
+ 
+-	list_for_each_entry_reverse(p, &pcache, plist) {
++	list_for_each_entry_safe(p, tmp, &pcache, plist) {
+ 		__list_del(p->plist.prev, p->plist.next);
+ 		kfree(p->data);
+ 		kfree(p);
