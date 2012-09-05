@@ -1,44 +1,27 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Date: Fri, 28 Sep 2012 19:16:29 +0000
-Subject: Re: [tip:x86/efi 7/11] include/linux/efi.h:501: warning: 'efi_enter_virtual_mode' defined but not us
-Message-Id: <20120928191629.GE5202@jtriplet-mobl1>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Wed, 05 Sep 2012 05:40:25 +0000
+Subject: Re: [alsa-devel] [asoc:for-3.7 95/95] sound/soc/codecs/wm0010.c:850:7-27: ERROR: Threaded IRQ with n
+Message-Id: <20120905054024.GA16276@sirena.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928024115.GD9155@localhost>
-In-Reply-To: <20120928024115.GD9155@localhost>
+References: <20120830151652.GB11964@localhost>
+In-Reply-To: <20120830151652.GB11964@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Fri, Sep 28, 2012 at 10:41:15AM +0800, Fengguang Wu wrote:
-> include/linux/efi.h:501: warning: 'efi_enter_virtual_mode' defined but not used
-> 
-> vim +501 include/linux/efi.h
-> 
-> f383a1e3 (Josh Triplett  2012-09-08  498) #ifdef CONFIG_X86
-> ^1da177e (Linus Torvalds 2005-04-16  499) extern void efi_enter_virtual_mode (void);	/* switch EFI to virtual mode, if possible */
-> f383a1e3 (Josh Triplett  2012-09-08  500) #else
-> f383a1e3 (Josh Triplett  2012-09-08 @501) static void efi_enter_virtual_mode(void) {}
-> f383a1e3 (Josh Triplett  2012-09-08  502) #endif
+On Thu, Aug 30, 2012 at 08:16:52AM -0700, Fengguang Wu wrote:
 
-On Fri, Sep 28, 2012 at 10:45:25AM +0800, Fengguang Wu wrote:
-> include/linux/efi.h:503: warning: 'efi_enter_virtual_mode' defined but not used
-> include/linux/efi.h:504: warning: 'efi_late_init' defined but not used
-> include/linux/efi.h:505: warning: 'efi_free_boot_services' defined but not used
+> [PATCH] wm0010: fix coccinelle warnings
 > 
-> vim +504 include/linux/efi.h
-> 
-> f383a1e3 (Josh Triplett  2012-09-08  498) #ifdef CONFIG_X86
-> ^1da177e (Linus Torvalds 2005-04-16  499) extern void efi_enter_virtual_mode (void);	/* switch EFI to virtual mode, if possible */
-> ba49efa1 (Josh Triplett  2012-09-08  500) extern void efi_late_init(void);
-> 668b132e (Josh Triplett  2012-09-08  501) extern void efi_free_boot_services(void);
-> f383a1e3 (Josh Triplett  2012-09-08  502) #else
-> f383a1e3 (Josh Triplett  2012-09-08  503) static void efi_enter_virtual_mode(void) {}
-> ba49efa1 (Josh Triplett  2012-09-08 @504) static void efi_late_init(void) {}
-> 668b132e (Josh Triplett  2012-09-08  505) static void efi_free_boot_services(void) {}
-> 
-> It's missing 'inline' in the above three lines.
+> /c/kernel-tests/src/linux/sound/soc/codecs/wm0010.c:850:7-27: ERROR: Threaded IRQ with no primary handler requested without IRQF_ONESHOT
 
-Indeed; both of these come from the same issue.  Will fix.
+Gah, just noticed the patch buried in here.  If you're generating stuff
+like this I'd suggest restructuring the submission so it comes out as an
+normal patch, it's not at all obvious that there's a patch in the mail
+and even if one notices.  In this case I'd mostly ignored your mail as I
+expected Dimitris to fix it, will apply now.
 
-- Josh Triplett
+Julia generally does a pretty good job of formatting her mails, perhaps
+there's some scripts she uses whcih would help?
