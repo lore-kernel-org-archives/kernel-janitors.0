@@ -1,60 +1,69 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 15:23:57 +0000
-Subject: [PATCH 4/14] drivers/media/v4l2-core/videobuf2-core.c: fix error return code
-Message-Id: <1346945041-26676-10-git-send-email-peter.senna@gmail.com>
+From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Date: Wed, 05 Sep 2012 22:47:23 +0000
+Subject: Re: [PATCH] USB: XHCI: xhci-ring: Remove unused dma address calculation in inc_enq and inc_deq funct
+Message-Id: <20120905224723.GD8975@xanatos>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1336922942.3945.12.camel@cst-girish-laptop>
+In-Reply-To: <1336922942.3945.12.camel@cst-girish-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Girish Verma <girish@circuitsutra.com>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Girish,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Sorry for taking a really long time to respond!  This is a good idea,
+but your patch doesn't apply any more.  Can you update it against the
+latest kernel and resend it?
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Sarah Sharp
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
- drivers/media/v4l2-core/videobuf2-core.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
-index 4da3df6..f6bc240 100644
---- a/drivers/media/v4l2-core/videobuf2-core.c
-+++ b/drivers/media/v4l2-core/videobuf2-core.c
-@@ -1876,8 +1876,10 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
- 	 */
- 	for (i = 0; i < q->num_buffers; i++) {
- 		fileio->bufs[i].vaddr = vb2_plane_vaddr(q->bufs[i], 0);
--		if (fileio->bufs[i].vaddr = NULL)
-+		if (fileio->bufs[i].vaddr = NULL) {
-+			ret = -EFAULT;
- 			goto err_reqbufs;
-+		}
- 		fileio->bufs[i].size = vb2_plane_size(q->bufs[i], 0);
- 	}
- 
-
+On Sun, May 13, 2012 at 08:59:02PM +0530, Girish Verma wrote:
+> In xhci-ring.c, function inc_enq and inc_deq calculate the dma address
+> of trb but never used. 
+> 
+> Signed-off-by: Girish Verma <girish@circuitsutra.com>
+> ---
+>  drivers/usb/host/xhci-ring.c |    4 ----
+>  1 files changed, 0 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index 3d9422f..dcd67c1 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -146,7 +146,6 @@ static void next_trb(struct xhci_hcd *xhci,
+>  static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
+>  {
+>  	union xhci_trb *next;
+> -	unsigned long long addr;
+>  
+>  	ring->deq_updates++;
+>  
+> @@ -168,7 +167,6 @@ static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
+>  		ring->dequeue = ring->deq_seg->trbs;
+>  		next = ring->dequeue;
+>  	}
+> -	addr = (unsigned long long) xhci_trb_virt_to_dma(ring->deq_seg, ring->dequeue);
+>  }
+>  
+>  /*
+> @@ -193,7 +191,6 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
+>  {
+>  	u32 chain;
+>  	union xhci_trb *next;
+> -	unsigned long long addr;
+>  
+>  	chain = le32_to_cpu(ring->enqueue->generic.field[3]) & TRB_CHAIN;
+>  	/* If this is not event ring, there is one less usable TRB */
+> @@ -245,7 +242,6 @@ static void inc_enq(struct xhci_hcd *xhci, struct xhci_ring *ring,
+>  		ring->enqueue = ring->enq_seg->trbs;
+>  		next = ring->enqueue;
+>  	}
+> -	addr = (unsigned long long) xhci_trb_virt_to_dma(ring->enq_seg, ring->enqueue);
+>  }
+>  
+>  /*
+> -- 
+> 
+> 
