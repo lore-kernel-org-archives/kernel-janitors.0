@@ -1,45 +1,31 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 11 Sep 2012 10:55:00 +0000
-Subject: Re: [balbi-usb:master 33/36] drivers/usb/gadget/serial.c:89:22: sparse: cast truncates bits from con
-Message-Id: <20120911105500.GA1244@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Sep 2012 12:29:46 +0000
+Subject: [patch] ASoC: wm0010: unlock on error path
+Message-Id: <20120905122946.GA6128@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120910164015.GA16252@localhost>
- <504E1DCB.3000003@linutronix.de>
-In-Reply-To: <504E1DCB.3000003-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+To: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@ti.com>
 
-On Mon, Sep 10, 2012 at 07:05:15PM +0200, Sebastian Andrzej Siewior wrote:
-> On 09/10/2012 06:40 PM, Fengguang Wu wrote:
-> >tree:   git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git master
-> >head:   d9c88901337158c9f253a7de58a10b5125d61d26
-> >commit: 7a7322b0a5d984025dd4faea9098b8fef07f8d8f [33/36] usb: gadget: remove usb_gadget_controller_number()
-> >
-> >All sparse warnings:
-> 
-> Once again, thank you.
+We're holding the wm0010->lock mutex when we goto err_core.
 
-You are welcome!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This driver is only in linux-next.
 
-> >   drivers/usb/gadget/f_acm.c:287:9: sparse: advancing past deep designator
-> >   drivers/usb/gadget/f_obex.c:60:9: sparse: advancing past deep designator
-> >   drivers/usb/gadget/f_serial.c:134:9: sparse: advancing past deep designator
-> >   drivers/usb/gadget/serial.c:66:9: sparse: advancing past deep designator
-> 
-> I don't get these. The purpose is an all NULL terminating entry. Could
-> this be a sparse bug or is the [] / {} switch not really good C code?
-
-http://marc.info/?l=linux-sparse&m0673652023059&w=4
-
-According to Dan's explanations, I'll filter out these warnings in future.
-
-> >+ drivers/usb/gadget/serial.c:89:22: sparse: cast truncates bits from constant value (24000000 becomes 0)
-> 
-> I've sent a patch for this.
-
-Thank you!
-
-Fengguang
+diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
+index 5f99148..1c052d6 100644
+--- a/sound/soc/codecs/wm0010.c
++++ b/sound/soc/codecs/wm0010.c
+@@ -663,7 +663,9 @@ abort:
+ 	wm0010_halt(codec);
+ 	mutex_unlock(&wm0010->lock);
+ 	return ret;
++
+ err_core:
++	mutex_unlock(&wm0010->lock);
+ 	regulator_bulk_disable(ARRAY_SIZE(wm0010->core_supplies),
+ 			       wm0010->core_supplies);
+ err:
