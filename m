@@ -1,22 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 18 Sep 2012 20:13:09 +0000
-Subject: Re: [PATCH 2/3] net/openvswitch/vport.c: Remove unecessary semicolon
-Message-Id: <20120918.161309.1362293204678016574.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Sep 2012 12:34:41 +0000
+Subject: [patch] da9052-battery: don't free IRQ that wasn't requested
+Message-Id: <20120905123440.GF6128@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347988245-31413-1-git-send-email-peter.senna@gmail.com>
-	<1347988245-31413-2-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347988245-31413-2-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: jesse@nicira.com, dev@openvswitch.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: Ashish Jangam <ashish.jangam@kpitcummins.com>
+Cc: Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 19:10:44 +0200
+We should decrement "i" before doing the free_irq().  If we call this
+because request_threaded_irq() failed then we don't want to free the
+thing which failed.  Or in the case where we get here because
+power_supply_register() failed then the original codes does a read past
+the end of the array.
 
-> Found by http://coccinelle.lip6.fr/
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/power/da9052-battery.c b/drivers/power/da9052-battery.c
+index 20b86ed..d9d034d 100644
+--- a/drivers/power/da9052-battery.c
++++ b/drivers/power/da9052-battery.c
+@@ -623,7 +623,7 @@ static s32 __devinit da9052_bat_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err:
+-	for (; i >= 0; i--) {
++	while (--i >= 0) {
+ 		irq = platform_get_irq_byname(pdev, da9052_bat_irqs[i]);
+ 		free_irq(bat->da9052->irq_base + irq, bat);
+ 	}
