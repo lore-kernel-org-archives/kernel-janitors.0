@@ -1,7 +1,7 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Wed, 05 Sep 2012 22:20:50 +0000
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 05 Sep 2012 22:39:12 +0000
 Subject: Re: [alsa-devel] [asoc:for-3.7 95/95] sound/soc/codecs/wm0010.c:850:7-27: ERROR: Threaded IRQ with n
-Message-Id: <20120905222048.GB10580@opensource.wolfsonmicro.com>
+Message-Id: <20120905223912.GA9599@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120830151652.GB11964@localhost>
  <20120905054024.GA16276@sirena.org.uk>
@@ -12,17 +12,25 @@ References: <20120830151652.GB11964@localhost>
  <alpine.DEB.2.02.1209051552190.2122@hadrien>
  <20120905140651.GA8947@localhost>
  <alpine.DEB.2.02.1209052200280.1912@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1209052200280.1912@hadrien>
+ <20120905222048.GB10580@opensource.wolfsonmicro.com>
+In-Reply-To: <20120905222048.GB10580@opensource.wolfsonmicro.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, Fengguang Wu <fengguang.wu@intel.com>, kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Julia Lawall <julia.lawall@lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 05, 2012 at 10:01:12PM +0200, Julia Lawall wrote:
+On Thu, Sep 06, 2012 at 06:20:50AM +0800, Mark Brown wrote:
+> On Wed, Sep 05, 2012 at 10:01:12PM +0200, Julia Lawall wrote:
+> 
+> > I'm not sure what could be done better...
+> 
+> The patch itself was fine but it was buried as an attachment to a mail
+> that didn't have anything like a [PATCH] tag or anything so it was very
+> hidden when it turned up in e-mail.
 
-> I'm not sure what could be done better...
+Yes, this is a problem. I'll avoid such hidden coccinelle patches in future.
 
-The patch itself was fine but it was buried as an attachment to a mail
-that didn't have anything like a [PATCH] tag or anything so it was very
-hidden when it turned up in e-mail.
+Thanks for the reminding!
+
+Fengguang
