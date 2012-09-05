@@ -1,35 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 05 Sep 2012 12:30:42 +0000
-Subject: [patch] x86, microcode, AMD: use after free in free_cache()
-Message-Id: <20120905123042.GB6128@elgon.mountain>
+From: Borislav Petkov <bp@amd64.org>
+Date: Wed, 05 Sep 2012 13:20:57 +0000
+Subject: Re: [patch] x86, microcode, AMD: use after free in free_cache()
+Message-Id: <20120905132057.GE25264@aftab.osrc.amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120905123042.GB6128@elgon.mountain>
+In-Reply-To: <20120905123042.GB6128@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-list_for_each_entry_reverse() dereferences the iterator, but we already
-freed it.  I don't see a reason that this has to be done in reverse
-order so I've changed it to use list_for_each_entry_safe().
+On Wed, Sep 05, 2012 at 03:30:42PM +0300, Dan Carpenter wrote:
+> list_for_each_entry_reverse() dereferences the iterator, but we already
+> freed it.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This is only needed on linux-next.  Sorry, it turns out that I don't
-have any AMD systems right now, so I have not tested this.
+Wait a sec, we assign the iterator in each iteration of the loop, right?
 
-diff --git a/arch/x86/kernel/microcode_amd.c b/arch/x86/kernel/microcode_amd.c
-index 5511216..7720ff5 100644
---- a/arch/x86/kernel/microcode_amd.c
-+++ b/arch/x86/kernel/microcode_amd.c
-@@ -150,9 +150,9 @@ static void update_cache(struct ucode_patch *new_patch)
- 
- static void free_cache(void)
- {
--	struct ucode_patch *p;
-+	struct ucode_patch *p, *tmp;
- 
--	list_for_each_entry_reverse(p, &pcache, plist) {
-+	list_for_each_entry_safe(p, tmp, &pcache, plist) {
- 		__list_del(p->plist.prev, p->plist.next);
- 		kfree(p->data);
- 		kfree(p);
+And if so, I don't see a problem: we derefence a new element each time
+and *then* free it...
+
+-- 
+Regards/Gruss,
+Boris.
+
+Advanced Micro Devices GmbH
+Einsteinring 24, 85609 Dornach
+GM: Alberto Bozzo
+Reg: Dornach, Landkreis Muenchen
+HRB Nr. 43632 WEEE Registernr: 129 19551
