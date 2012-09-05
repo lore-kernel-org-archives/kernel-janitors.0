@@ -1,44 +1,37 @@
-From: Zheng Liu <gnehzuil.liu@gmail.com>
-Date: Fri, 28 Sep 2012 14:23:20 +0000
-Subject: Re: [ext4:dev 47/50] fs/ext4/indirect.c:1799 ext4_ind_punch_hole() warn: inconsistent returns mutex:
-Message-Id: <20120928142320.GA9473@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Sep 2012 12:32:53 +0000
+Subject: [patch] virtio-blk: fix NULL checking in virtblk_alloc_req()
+Message-Id: <20120905123252.GE6128@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928060719.GA15218@localhost>
- <20120928132055.GC13352@thunk.org>
-In-Reply-To: <20120928132055.GC13352@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, Zheng Liu <wenqing.lz@taobao.com>, kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org
+To: Asias He <asias@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
 
-On Fri, Sep 28, 2012 at 09:20:55AM -0400, Theodore Ts'o wrote:
-> On Fri, Sep 28, 2012 at 02:07:19PM +0800, Fengguang Wu wrote:
-> > Hi Zheng,
-> > 
-> > FYI, there are new smatch warnings show up in
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-> > head:   b2f1a8e5612e2488a3995ec06b422b44651d088b
-> > commit: 3e1b02687146ddefa8e53c2a5e13d3bd87b16b09 [47/50] ext4: add support for hole punching non-extent-mapped files
-> 
-> I'm going to be dropping the indirect punch hole patches from the ext4
-> dev tree, based on the number of xfstests failures that I found in my
-> overnight testing.
-> 
-> I had hoped the changes were small and localized, and wouldn't cause
-> problems if the punch hole feature wasn't used, but at this point,
-> given that many distributions are starting to use the ext4 file system
-> for legacy ext3 file systems, my judgement is that the risks are too
-> great for the upcoming merge window; so this will probably need to
-> wait for the next development cycle.
+Smatch complains about the inconsistent NULL checking here.  Fix it to
+return NULL on failure.
 
-Hi Ted,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is only needed in linux-next.
 
-These patches would need to do more tests, and I will look at them in
-next development cycle.  I am not sure whether indirect punch hole is
-really useful for us or not.  What do you think about this feature?
-Thanks
-
-Regards,
-Zheng
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 2edfb5c..457db0c 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -90,10 +90,11 @@ static inline struct virtblk_req *virtblk_alloc_req(struct virtio_blk *vblk,
+ 	struct virtblk_req *vbr;
+ 
+ 	vbr = mempool_alloc(vblk->pool, gfp_mask);
+-	if (vbr && use_bio)
+-		sg_init_table(vbr->sg, vblk->sg_elems);
++	if (!vbr)
++		return NULL;
+ 
+-	vbr->vblk = vblk;
++	if (use_bio)
++		sg_init_table(vbr->sg, vblk->sg_elems);
+ 
+ 	return vbr;
+ }
