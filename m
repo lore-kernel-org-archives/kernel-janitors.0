@@ -1,59 +1,38 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Thu, 27 Sep 2012 09:46:48 +0000
-Subject: Re: drivers/staging/comedi/drivers/ni_pcimio.c:1694 pcimio_attach_pci() warn: 'dev->irq' was not rel
-Message-Id: <50642088.2090208@mev.co.uk>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Wed, 05 Sep 2012 20:22:24 +0000
+Subject: [PATCH] ASoC: wm0010: Fix warning, use format %zu for type size_t
+Message-Id: <1346876544-24514-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120927005432.GA7205@localhost>
-In-Reply-To: <20120927005432.GA7205@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-On 2012-09-27 01:54, Fengguang Wu wrote:
-> Hi Bill, Ian,
->
-> FYI, this smatch warning probably exists from day 0 of the driver
-> code:
->
-> + drivers/staging/comedi/drivers/ni_pcimio.c:1694 pcimio_attach_pci() warn: 'dev->irq' was not released on error
->
-> vim +1694 drivers/staging/comedi/drivers/ni_pcimio.c
->    1678		dev->irq = mite_irq(devpriv->mite);
->    1679	
->    1680		if (dev->irq = 0) {
->    1681			pr_warn("unknown irq (bad)\n");
->    1682		} else {
->    1683			pr_debug("( irq = %u )\n", dev->irq);
->    1684			ret = request_irq(dev->irq, ni_E_interrupt, NI_E_IRQ_FLAGS,
->    1685					  DRV_NAME, dev);
->    1686			if (ret < 0) {
->    1687				pr_warn("irq not available\n");
->    1688				dev->irq = 0;
->    1689			}
->    1690		}
->    1691	
->    1692		ret = ni_E_init(dev);
->    1693		if (ret < 0)
->> 1694			return ret;
->    1695	
->    1696		dev->subdevices[NI_AI_SUBDEV].buf_change = &pcimio_ai_change;
->    1697		dev->subdevices[NI_AO_SUBDEV].buf_change = &pcimio_ao_change;
->    1698		dev->subdevices[NI_GPCT_SUBDEV(0)].buf_change = &pcimio_gpct0_change;
->    1699		dev->subdevices[NI_GPCT_SUBDEV(1)].buf_change = &pcimio_gpct1_change;
->    1700		dev->subdevices[NI_DIO_SUBDEV].buf_change = &pcimio_dio_change;
->    1701	
->    1702		return ret;
+Fix warning by using format specifier %zu for type size_t
 
-It should be fine.  `pcimio_attach_pci()` doesn't clean up after itself, 
-but if it returns an error, `pcimio_detach()` will be called to clean up 
-afterwards.  `pcimio_detach()` always executes the following statement:
+Sparse warning:
+sound/soc/codecs/wm0010.c:411:2: warning:
+        format ‘%d’ expects argument of type ‘int’,
+        but argument 4 has type ‘size_t’ [-Wformat]
 
-	if (dev->irq)
-		free_irq(dev->irq, dev);
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ sound/soc/codecs/wm0010.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-where `dev` is the same `dev` that was passed to `pcimio_attach_pci()`.
-
+diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
+index 5f99148..8343d74 100644
+--- a/sound/soc/codecs/wm0010.c
++++ b/sound/soc/codecs/wm0010.c
+@@ -408,7 +408,7 @@ static int wm0010_boot(struct snd_soc_codec *codec)
+ 	wm0010->state = WM0010_BOOTROM;
+ 	spin_unlock_irqrestore(&wm0010->irq_lock, flags);
+ 
+-	dev_dbg(codec->dev, "Downloading %d byte stage 2 loader\n", fw->size);
++	dev_dbg(codec->dev, "Downloading %zu byte stage 2 loader\n", fw->size);
+ 
+ 	/* Copy to local buffer first as vmalloc causes problems for dma */
+ 	img = kzalloc(fw->size, GFP_KERNEL);
 -- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
--=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
+1.7.10.4
+
