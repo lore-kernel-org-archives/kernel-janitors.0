@@ -1,43 +1,32 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 06 Sep 2012 03:18:01 +0000
-Subject: Re: [powerpc:next 11/29] arch/powerpc/platforms/pseries/iommu.c:1064:2: error: implicit declaration
-Message-Id: <20120906031801.GA16913@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Sep 2012 12:32:18 +0000
+Subject: [patch] ALSA: compress_core: integer overflow in snd_compr_allocate_buffer()
+Message-Id: <20120905123217.GD6128@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120906022003.GB16076@localhost>
- <1346899471.19098.14.camel@pasglop>
- <1346899754.19098.15.camel@pasglop>
- <20120906030326.GA16800@localhost>
- <1346900756.19098.20.camel@pasglop>
-In-Reply-To: <1346900756.19098.20.camel@pasglop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Vinod Koul <vinod.koul@linux.intel.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Jesper Juhl <jj@chaosbits.net>, Namarta Kohli <namartax.kohli@intel.com>
 
-On Thu, Sep 06, 2012 at 01:05:56PM +1000, Benjamin Herrenschmidt wrote:
-> On Thu, 2012-09-06 at 11:03 +0800, Fengguang Wu wrote:
-> > 
-> > No problem. Sorry I didn't know that. Will test HEAD commits only for
-> > this branch in future.
-> 
-> Actually, I'd rather you continue doing bisection tests, it's good, I
-> can whack on the head of people who submit stuff with breakage.
+These are 32 bit values that come from the user, we need to check for
+integer overflows or we could end up allocating a smaller buffer than
+expected.
 
-OK.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> In fact, next time around, I'll try to be more pro-active at putting
-> things in my rebase-able test branch so you get a chance to run your
-> tests on it and we can find & fix these before it hits next. I'll let
-> you know when I do it.
-
-That would be great.
-
-> In the meantime, maybe just blacklist those commits ?
-
-Should not necessary if I understand you right. FYI the build system
-will auto ignore all notified build errors and skip compiled commits.
-
-
-Thanks,
-Fengguang
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index ec2118d..5a733e7 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -409,6 +409,10 @@ static int snd_compr_allocate_buffer(struct snd_compr_stream *stream,
+ 	unsigned int buffer_size;
+ 	void *buffer;
+ 
++	if (params->buffer.fragment_size = 0 ||
++	    params->buffer.fragments > SIZE_MAX / params->buffer.fragment_size)
++		return -EINVAL;
++
+ 	buffer_size = params->buffer.fragment_size * params->buffer.fragments;
+ 	if (stream->ops->copy) {
+ 		buffer = NULL;
