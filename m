@@ -1,43 +1,57 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 28 Sep 2012 13:06:08 +0000
-Subject: drivers/net/cris/eth_v10.c:1715:2: error: too many arguments to function 'e100rxtx_interrupt'
-Message-Id: <20120928130608.GA5158@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 06 Sep 2012 15:24:01 +0000
+Subject: [PATCH 14/14] drivers/media/usb/gspca/cpia1.c: fix error return code
+Message-Id: <1346945041-26676-14-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Jesper,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, a rather old build bug that's introduced by
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-bafef0a cris build fixes: update eth_v10.c ethernet driver
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All error/warnings:
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-drivers/net/cris/eth_v10.c: In function 'e100_netpoll':
-drivers/net/cris/eth_v10.c:1715:2: error: too many arguments to function 'e100rxtx_interrupt'
-drivers/net/cris/eth_v10.c:1131:1: note: declared here
+// </smpl>
 
-vim +1715 drivers/net/cris/eth_v10.c
-
-^1da177e (Linus Torvalds 2005-04-16  1710) 
-bafef0ae (Jesper Nilsson 2007-11-14  1711) #ifdef CONFIG_NET_POLL_CONTROLLER
-bafef0ae (Jesper Nilsson 2007-11-14  1712) static void
-bafef0ae (Jesper Nilsson 2007-11-14  1713) e100_netpoll(struct net_device* netdev)
-bafef0ae (Jesper Nilsson 2007-11-14  1714) {
-bafef0ae (Jesper Nilsson 2007-11-14 @1715) 	e100rxtx_interrupt(NETWORK_DMA_TX_IRQ_NBR, netdev, NULL);
-bafef0ae (Jesper Nilsson 2007-11-14  1716) }
-bafef0ae (Jesper Nilsson 2007-11-14  1717) #endif
-bafef0ae (Jesper Nilsson 2007-11-14  1718) 
-^1da177e (Linus Torvalds 2005-04-16  1719) static int
-^1da177e (Linus Torvalds 2005-04-16  1720) etrax_init_module(void)
-^1da177e (Linus Torvalds 2005-04-16  1721) {
-^1da177e (Linus Torvalds 2005-04-16  1722) 	return etrax_ethernet_init();
-^1da177e (Linus Torvalds 2005-04-16  1723) }
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/media/usb/gspca/cpia1.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/gspca/cpia1.c b/drivers/media/usb/gspca/cpia1.c
+index 2499a88..b3ba47d 100644
+--- a/drivers/media/usb/gspca/cpia1.c
++++ b/drivers/media/usb/gspca/cpia1.c
+@@ -751,7 +751,7 @@ static int goto_high_power(struct gspca_dev *gspca_dev)
+ 	if (signal_pending(current))
+ 		return -EINTR;
+ 
+-	do_command(gspca_dev, CPIA_COMMAND_GetCameraStatus, 0, 0, 0, 0);
++	ret = do_command(gspca_dev, CPIA_COMMAND_GetCameraStatus, 0, 0, 0, 0);
+ 	if (ret)
+ 		return ret;
+ 
+
