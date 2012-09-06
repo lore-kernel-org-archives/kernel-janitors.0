@@ -1,44 +1,66 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 27 Sep 2012 01:12:11 +0000
-Subject: [next:akpm 22/413] kernel/audit.c:668:2: error: implicit declaration of function 'audit_get_sessioni
-Message-Id: <20120927011211.GD7205@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 06 Sep 2012 15:23:59 +0000
+Subject: [PATCH 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
+Message-Id: <1346945041-26676-12-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kees,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
-head:   dad0019944369f58c193c1991c39ffda7ff584d2
-commit: e269b4131288512ebfe2adfe69042983cb2e69e5 [22/413] audit.h: replace defines with C stubs
-config: s390-defconfig
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All error/warnings:
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-kernel/audit.c: In function 'audit_receive_msg':
-kernel/audit.c:668:2: error: implicit declaration of function 'audit_get_sessionid' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
---
-drivers/tty/tty_audit.c: In function 'tty_audit_buf_push_current':
-drivers/tty/tty_audit.c:119:2: error: implicit declaration of function 'audit_get_sessionid' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
+// </smpl>
 
-vim +668 kernel/audit.c
-   662			err = PTR_ERR(kauditd_task);
-   663			kauditd_task = NULL;
-   664			return err;
-   665		}
-   666	
-   667		loginuid = audit_get_loginuid(current);
- > 668		sessionid = audit_get_sessionid(current);
-   669		security_task_getsecid(current, &sid);
-   670		seq  = nlh->nlmsg_seq;
-   671		data = nlmsg_data(nlh);
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/media/platform/soc_camera/mx2_camera.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
+index 256187f..f8884a7 100644
+--- a/drivers/media/platform/soc_camera/mx2_camera.c
++++ b/drivers/media/platform/soc_camera/mx2_camera.c
+@@ -1800,13 +1800,16 @@ static int __devinit mx2_camera_probe(struct platform_device *pdev)
+ 
+ 		if (!res_emma || !irq_emma) {
+ 			dev_err(&pdev->dev, "no EMMA resources\n");
++			err = -ENODEV;
+ 			goto exit_free_irq;
+ 		}
+ 
+ 		pcdev->res_emma = res_emma;
+ 		pcdev->irq_emma = irq_emma;
+-		if (mx27_camera_emma_init(pcdev))
++		if (mx27_camera_emma_init(pcdev)) {
++			err = -ENODEV;
+ 			goto exit_free_irq;
++		}
+ 	}
+ 
+ 	pcdev->soc_host.drv_name	= MX2_CAM_DRV_NAME,
+
