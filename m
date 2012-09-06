@@ -1,21 +1,13 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 08:43:45 +0000
-Subject: Fwd: [PATCH v2] drivers/media/platform/s5p-tv/sdo_drv.c: fix error return code
-Message-Id: <CA+MoWDokNqiSqTf6ZZBa_-pa4eAK+-TQ4yRRmibH9cefUhKPzg@mail.gmail.com>
+Date: Thu, 06 Sep 2012 15:23:51 +0000
+Subject: [PATCH 10/14] drivers/media/i2c/mt9m032.c: fix error return code
+Message-Id: <1346945041-26676-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-
----------- Forwarded message ----------
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, Sep 6, 2012 at 10:38 AM
-Subject: [PATCH v2] drivers/media/platform/s5p-tv/sdo_drv.c: fix error
-return code
-To: peter.senna@gmail.com, Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
@@ -46,41 +38,20 @@ ret@p1 = 0
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/media/platform/s5p-tv/sdo_drv.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/i2c/mt9m032.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c
-b/drivers/media/platform/s5p-tv/sdo_drv.c
-index ad68bbe..58cf56d 100644
---- a/drivers/media/platform/s5p-tv/sdo_drv.c
-+++ b/drivers/media/platform/s5p-tv/sdo_drv.c
-@@ -369,6 +369,7 @@ static int __devinit sdo_probe(struct platform_device *pdev)
-        sdev->fout_vpll = clk_get(dev, "fout_vpll");
-        if (IS_ERR_OR_NULL(sdev->fout_vpll)) {
-                dev_err(dev, "failed to get clock 'fout_vpll'\n");
-+               ret = -ENXIO;
-                goto fail_dacphy;
-        }
-        dev_info(dev, "fout_vpll.rate = %lu\n", clk_get_rate(sclk_vpll));
-@@ -377,11 +378,13 @@ static int __devinit sdo_probe(struct
-platform_device *pdev)
-        sdev->vdac = devm_regulator_get(dev, "vdd33a_dac");
-        if (IS_ERR_OR_NULL(sdev->vdac)) {
-                dev_err(dev, "failed to get regulator 'vdac'\n");
-+               ret = -ENXIO;
-                goto fail_fout_vpll;
-        }
-        sdev->vdet = devm_regulator_get(dev, "vdet");
-        if (IS_ERR_OR_NULL(sdev->vdet)) {
-                dev_err(dev, "failed to get regulator 'vdet'\n");
-+               ret = -ENXIO;
-                goto fail_fout_vpll;
-        }
+diff --git a/drivers/media/i2c/mt9m032.c b/drivers/media/i2c/mt9m032.c
+index 445359c..f80c1d7 100644
+--- a/drivers/media/i2c/mt9m032.c
++++ b/drivers/media/i2c/mt9m032.c
+@@ -781,7 +781,7 @@ static int mt9m032_probe(struct i2c_client *client,
+ 	ret = mt9m032_write(client, MT9M032_RESET, 1);	/* reset on */
+ 	if (ret < 0)
+ 		goto error_entity;
+-	mt9m032_write(client, MT9M032_RESET, 0);	/* reset off */
++	ret = mt9m032_write(client, MT9M032_RESET, 0);	/* reset off */
+ 	if (ret < 0)
+ 		goto error_entity;
+ 
 
-
-
-
--- 
-Peter Senna Tschudin
-peter.senna@gmail.com
-gpg id: 48274C36
