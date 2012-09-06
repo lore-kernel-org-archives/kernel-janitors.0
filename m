@@ -1,52 +1,38 @@
-From: "Berg, Johannes" <johannes.berg@intel.com>
-Date: Wed, 19 Sep 2012 06:18:44 +0000
-Subject: RE: [mac80211-next:wip 63/82] debugfs.c:(.text+0x17c4b3): undefined reference to `__ieee80211_suspen
-Message-Id: <1DC40B07CD6EC041A66726C271A73AE6195B1331@IRSMSX102.ger.corp.intel.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 06 Sep 2012 16:09:17 +0000
+Subject: [PATCH 9/10] drivers/net/wireless/rtlwifi/rtl8192de/phy.c: removes unnecessary semicolon
+Message-Id: <1346947757-10481-10-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120918234204.GB7140@localhost>
-In-Reply-To: <20120918234204.GB7140@localhost>
+References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>, Chaoming Li <chaoming_li@realsil.com.cn>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Ouch, thanks. I need to fix that I guess. 
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-johannes
+removes unnecessary semicolon
 
-> -----Original Message-----
-> From: Wu, Fengguang
-> Sent: Wednesday, September 19, 2012 1:42 AM
-> To: Berg, Johannes
-> Cc: kernel-janitors@vger.kernel.org
-> Subject: [mac80211-next:wip 63/82] debugfs.c:(.text+0x17c4b3): undefined
-> reference to `__ieee80211_suspend'
-> 
-> Hi Johannes,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
-> wip
-> head:   0b7b5376b7580f253acbe3746983bc19acbdb394
-> commit: 3a6a0d8ee88d23e7dda28808c2c890c4db50ccb2 [63/82] mac80211:
-> remove unneeded CONFIG_PM ifdef
-> config: i386-randconfig-b034 (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> net/built-in.o: In function `reset_write':
-> debugfs.c:(.text+0x17c4b3): undefined reference to `__ieee80211_suspend'
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Centre
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
-Intel GmbH
-Dornacher Strasse 1
-85622 Feldkirchen/Muenchen, Deutschland
-Sitz der Gesellschaft: Feldkirchen bei Muenchen
-Geschaeftsfuehrer: Peter Gleissner, Christian Lamprechter, Hannes Schwaderer, Douglas Lusk
-Registergericht: Muenchen HRB 47456
-Ust.-IdNr./VAT Registration No.: DE129385895
-Citibank Frankfurt a.M. (BLZ 502 109 00) 600119052
+Found by Coccinelle: http://coccinelle.lip6.fr/
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/net/wireless/rtlwifi/rtl8192de/phy.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/net/wireless/rtlwifi/rtl8192de/phy.c b/drivers/net/wireless/rtlwifi/rtl8192de/phy.c
+--- a/drivers/net/wireless/rtlwifi/rtl8192de/phy.c
++++ b/drivers/net/wireless/rtlwifi/rtl8192de/phy.c
+@@ -1314,7 +1314,7 @@ static void _rtl92d_phy_restore_rf_env(s
+ 	struct bb_reg_def *pphyreg = &rtlphy->phyreg_def[rfpath];
+ 
+ 	RT_TRACE(rtlpriv, COMP_RF, DBG_LOUD, "===>\n");
+-	/*----Restore RFENV control type----*/ ;
++	/*----Restore RFENV control type----*/
+ 	switch (rfpath) {
+ 	case RF90_PATH_A:
+ 	case RF90_PATH_C:
 
