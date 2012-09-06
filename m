@@ -1,83 +1,38 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Wed, 05 Sep 2012 19:25:31 +0000
-Subject: Re: [PATCH 1/5] drivers/media/platform/davinci/vpbe.c: fix error return code
-Message-Id: <CALF0-+Vn33ZtY68JbKSbNbaqkSO6OOfA38Ejoz=Kkz5WmOSFjA@mail.gmail.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 06 Sep 2012 16:09:16 +0000
+Subject: [PATCH 8/10] net/mac80211/scan.c: removes unnecessary semicolon
+Message-Id: <1346947757-10481-9-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346775269-12191-5-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346775269-12191-5-git-send-email-peter.senna@gmail.com>
+References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Peter,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Tue, Sep 4, 2012 at 1:14 PM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
->
-> // </smpl>
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> ---
->  drivers/media/platform/davinci/vpbe.c |   13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-> index c4a82a1..2e4a0da 100644
-> --- a/drivers/media/platform/davinci/vpbe.c
-> +++ b/drivers/media/platform/davinci/vpbe.c
-> @@ -603,7 +603,6 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
->         int output_index;
->         int num_encoders;
->         int ret = 0;
-> -       int err;
->         int i;
->
->         /*
-> @@ -646,10 +645,10 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
->         }
->         v4l2_info(&vpbe_dev->v4l2_dev, "vpbe v4l2 device registered\n");
->
-> -       err = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
-> +       ret = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
->                                platform_device_get);
-> -       if (err < 0)
-> -               return err;
-> +       if (ret < 0)
-> +               return ret;
+removes unnecessary semicolon
 
-This should be "goto somewhere" (probably vbpe_fail_v4l2_device),
-instead of "return".
-There are several tasks done (like locking a mutex) that need to be undone.
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-Actually, this bug is not directly related to *this* patch, so you
-could send another patch
-fixing this.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Regards,
-Ezequiel.
+---
+ net/mac80211/scan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/net/mac80211/scan.c b/net/mac80211/scan.c
+--- a/net/mac80211/scan.c
++++ b/net/mac80211/scan.c
+@@ -407,7 +407,7 @@ static void ieee80211_scan_state_send_pr
+ 	enum ieee80211_band band = local->hw.conf.channel->band;
+ 
+ 	sdata = rcu_dereference_protected(local->scan_sdata,
+-					  lockdep_is_held(&local->mtx));;
++					  lockdep_is_held(&local->mtx));
+ 
+ 	for (i = 0; i < local->scan_req->n_ssids; i++)
+ 		ieee80211_send_probe_req(
+
