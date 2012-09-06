@@ -1,33 +1,38 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 12 Sep 2012 11:03:47 +0000
-Subject: arch/s390/kernel/ptrace.c:63:4: warning: left shift count >= width of type
-Message-Id: <20120912110347.GB6170@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 06 Sep 2012 16:09:13 +0000
+Subject: [PATCH 5/10] drivers/media/dvb-frontends/itd1000.c: removes unnecessary semicolon
+Message-Id: <1346947757-10481-6-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-FYI, a new compile warning in linux-next:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-arch/s390/kernel/ptrace.c:63:4: warning: left shift count >= width of type [enabled by default]
+removes unnecessary semicolon
 
-vim +63 arch/s390/kernel/ptrace.c
-    56		/* Take care of the enable/disable of transactional execution. */
-    57		if (MACHINE_HAS_TE) {
-    58			unsigned long cr0, cr0_new;
-    59	
-    60			__ctl_store(cr0, 0, 0);
-    61			/* set or clear transaction execution bits 8 and 9. */
-    62			if (task->thread.per_flags & PER_FLAG_NO_TE)
-  > 63				cr0_new = cr0 & ~(3UL << 54);
-    64			else
-    65				cr0_new = cr0 | (3UL << 54);
-    66			/* Only load control register 0 if necessary. */
-    67			if (cr0 != cr0_new)
-    68				__ctl_load(cr0_new, 0, 0);
-    69		}
+Found by Coccinelle: http://coccinelle.lip6.fr/
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ drivers/media/dvb-frontends/itd1000.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/media/dvb-frontends/itd1000.c b/drivers/media/dvb-frontends/itd1000.c
+--- a/drivers/media/dvb-frontends/itd1000.c
++++ b/drivers/media/dvb-frontends/itd1000.c
+@@ -231,7 +231,7 @@ static void itd1000_set_lo(struct itd100
+ 	state->frequency = ((plln * 1000) + (pllf * 1000)/1048576) * 2*FREF;
+ 	itd_dbg("frequency: %dkHz (wanted) %dkHz (set), PLLF = %d, PLLN = %d\n", freq_khz, state->frequency, pllf, plln);
+ 
+-	itd1000_write_reg(state, PLLNH, 0x80); /* PLLNH */;
++	itd1000_write_reg(state, PLLNH, 0x80); /* PLLNH */
+ 	itd1000_write_reg(state, PLLNL, plln & 0xff);
+ 	itd1000_write_reg(state, PLLFH, (itd1000_read_reg(state, PLLFH) & 0xf0) | ((pllf >> 16) & 0x0f));
+ 	itd1000_write_reg(state, PLLFM, (pllf >> 8) & 0xff);
+
