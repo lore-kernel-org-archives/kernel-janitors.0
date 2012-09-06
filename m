@@ -1,58 +1,83 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 22 Sep 2012 00:47:39 +0000
-Subject: [modsign:modsign-post-KS 23/26] kernel/module_signing.c:57:2: error: implicit declaration of functio
-Message-Id: <20120922004739.GJ5959@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 06 Sep 2012 16:09:11 +0000
+Subject: [PATCH 3/10] drivers/media/radio/si4713-i2c.c: removes unnecessary semicolon
+Message-Id: <1346947757-10481-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi David,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+removes unnecessary semicolon
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git modsign-post-KS
-head:   c563cc3b00d61b65762c9040689f4ddf416b0557
-commit: 2d5ea48ef9e8bf8beac19ca2641bd9a93b6aa035 [23/26] MODSIGN: Provide Kconfig options
-config: cris-allyesconfig
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-[error]
-kernel/module_signing.c:57:2: error: implicit declaration of function 'IS_ERR' [-Werror=implicit-function-declaration]
-kernel/module_signing.c:58:3: error: implicit declaration of function 'PTR_ERR' [-Werror=implicit-function-declaration]
-kernel/module_signing.c:58:3: error: implicit declaration of function 'ERR_PTR' [-Werror=implicit-function-declaration]
-kernel/module_signing.c:58:3: error: implicit declaration of function 'ERR_CAST' [-Werror=implicit-function-declaration]
-
-[warning]
-kernel/module_signing.c:58:3: warning: return makes pointer from integer without a cast [enabled by default]
-
-vim +57 kernel/module_signing.c
-    41	static struct public_key_signature *mod_make_digest(enum pkey_hash_algo hash,
-    42							    const void *mod,
-    43							    unsigned long modlen)
-    44	{
-    45		struct public_key_signature *pks;
-    46		struct crypto_shash *tfm;
-    47		struct shash_desc *desc;
-    48		size_t digest_size, desc_size;
-    49		int ret;
-    50	
-    51		pr_devel("=>%s()\n", __func__);
-    52		
-    53		/* Allocate the hashing algorithm we're going to need and find out how
-    54		 * big the hash operational data will be.
-    55		 */
-    56		tfm = crypto_alloc_shash(pkey_hash_algo[hash], 0, 0);
-  > 57		if (IS_ERR(tfm))
-    58			return (PTR_ERR(tfm) = -ENOENT) ? ERR_PTR(-ENOPKG) : ERR_CAST(tfm);
-    59	
-    60		desc_size = crypto_shash_descsize(tfm) + sizeof(*desc);
-    61		digest_size = crypto_shash_digestsize(tfm);
-    62	
-    63		/* We allocate the hash operational data storage on the end of our
-    64		 * context data and the digest output buffer on the end of that.
-    65		 */
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ drivers/media/radio/si4713-i2c.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff -u -p a/drivers/media/radio/si4713-i2c.c b/drivers/media/radio/si4713-i2c.c
+--- a/drivers/media/radio/si4713-i2c.c
++++ b/drivers/media/radio/si4713-i2c.c
+@@ -1009,7 +1009,7 @@ static int si4713_choose_econtrol_action
+ 
+ 	default:
+ 		rval = -EINVAL;
+-	};
++	}
+ 
+ 	return rval;
+ }
+@@ -1081,7 +1081,7 @@ static int si4713_write_econtrol_string(
+ 	default:
+ 		rval = -EINVAL;
+ 		break;
+-	};
++	}
+ 
+ exit:
+ 	return rval;
+@@ -1130,7 +1130,7 @@ static int si4713_write_econtrol_tune(st
+ 	default:
+ 		rval = -EINVAL;
+ 		goto unlock;
+-	};
++	}
+ 
+ 	if (sdev->power_state)
+ 		rval = si4713_tx_tune_power(sdev, power, antcap);
+@@ -1420,7 +1420,7 @@ static int si4713_read_econtrol_string(s
+ 	default:
+ 		rval = -EINVAL;
+ 		break;
+-	};
++	}
+ 
+ exit:
+ 	return rval;
+@@ -1473,7 +1473,7 @@ static int si4713_read_econtrol_tune(str
+ 		break;
+ 	default:
+ 		rval = -EINVAL;
+-	};
++	}
+ 
+ unlock:
+ 	mutex_unlock(&sdev->mutex);
+@@ -1698,7 +1698,7 @@ static int si4713_queryctrl(struct v4l2_
+ 	default:
+ 		rval = -EINVAL;
+ 		break;
+-	};
++	}
+ 
+ 	return rval;
+ }
+
