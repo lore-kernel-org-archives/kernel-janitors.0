@@ -1,7 +1,7 @@
 From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Date: Thu, 06 Sep 2012 04:52:53 +0000
+Date: Thu, 06 Sep 2012 05:42:22 +0000
 Subject: RE: [balbi-usb:master 18/19] drivers/usb/musb/musb_core.c:357:21: error: 'struct usb_phy' has no mem
-Message-Id: <D958900912E20642BCBC71664EFECE3E6DDE7753BE@BGMAIL02.nvidia.com>
+Message-Id: <D958900912E20642BCBC71664EFECE3E6DDE775405@BGMAIL02.nvidia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120906021054.GA15892@localhost>
 In-Reply-To: <20120906021054.GA15892@localhost>
@@ -11,8 +11,18 @@ Content-Transfer-Encoding: 7bit
 To: Fengguang Wu <fengguang.wu@intel.com>
 Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
 
-Sorry for the inconvenience caused.
-Will push a patch to fix this ASAP.
+Hi Fengguang,
+
+My apologies for the inconvenience caused.
+
+During phy interface separation from otg.h, as the enum "usb_otg_state"
+was having multiple otg states info, I felt that should remain in otg.h.
+Also as removal of member 'state' of this enum type from usb_phy struct
+did not generate any compilation issues, I removed member state from struct usb_phy.
+
+As this is causing build break in musb code, I pushed a patch to balbi's tree for fixing this.
+Also added you as a reviewer in the to list of the patch.
+Plz verify and let me know if you still see any issues.
 
 Thanks,
 Venu
