@@ -1,27 +1,38 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 22 Sep 2012 00:48:04 +0000
-Subject: [modsign:modsign-post-KS 25/26] make[2]: *** No rule to make target `signing_key.x509', needed by `k
-Message-Id: <20120922004804.GK5959@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 06 Sep 2012 16:09:09 +0000
+Subject: [PATCH 10/10] drivers/block/ataflop.c: removes unnecessary semicolon
+Message-Id: <1346947757-10481-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi David,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+removes unnecessary semicolon
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git modsign-post-KS
-head:   c563cc3b00d61b65762c9040689f4ddf416b0557
-commit: 19ff7238a74b4c9403cd3819986202547c1af391 [25/26] MODSIGN: Provide module signing public keys to the kernel
-config: x86_64-allyesconfig
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-All related error/warning messages:
-
-make[2]: *** No rule to make target `signing_key.x509', needed by `kernel/modsign_pubkey.o'.
-make[2]: Target `__build' not remade because of errors.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/block/ataflop.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/block/ataflop.c b/drivers/block/ataflop.c
+--- a/drivers/block/ataflop.c
++++ b/drivers/block/ataflop.c
+@@ -775,7 +775,7 @@ static void fd_calibrate( void )
+ 	}
+ 
+ 	if (ATARIHW_PRESENT(FDCSPEED))
+-		dma_wd.fdc_speed = 0; 	/* always seek with 8 Mhz */;
++		dma_wd.fdc_speed = 0; 	/* always seek with 8 Mhz */
+ 	DPRINT(("fd_calibrate\n"));
+ 	SET_IRQ_HANDLER( fd_calibrate_done );
+ 	/* we can't verify, since the speed may be incorrect */
+
