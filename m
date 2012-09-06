@@ -1,72 +1,56 @@
-From: Jaeden Amero <jaeden.amero@ni.com>
-Date: Mon, 24 Sep 2012 15:39:45 +0000
-Subject: [PATCH] compat_ioctl: Avoid using undefined RS-485 IOCTLs
-Message-Id: <1348501185-23657-2-git-send-email-jaeden.amero@ni.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 06 Sep 2012 16:09:12 +0000
+Subject: [PATCH 4/10] drivers/media/dvb-frontends/sp8870.c: removes unnecessary semicolon
+Message-Id: <1346947757-10481-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120922005021.GM5959@localhost>
- <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
-In-Reply-To: <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
+References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: fengguang.wu@intel.com
-Cc: linux-next@vger.kernel.org, sfr@canb.auug.org.au, gregkh@linuxfoundation.org, alan@linux.intel.com, kernel-janitors@vger.kernel.org, linux-serial@vger.kernel.org, Jaeden Amero <jaeden.amero@ni.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Wrap the use of TIOCSRS485 and TIOCGRS485 in #ifdef so that we avoid
-adding undefined IOCTLs to the ioctl pointer list as compatible
-ioctls.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-This change was motivated by a build error on a MIPS build.
+removes unnecessary semicolon
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
-tty-next
-head:   ac57e7f38ea6fe7358cd0b7a2f2d21aef5ab70cd
-commit: 84c3b84860440a9e3a3666c14112f41311b8f623 [10/16] compat_ioctl:
-  Add RS-485 IOCTLs to the list
-config: mips-fuloong2e_defconfig
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-All related error/warning messages:
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-fs/compat_ioctl.c:869:1: error: 'TIOCSRS485' undeclared here (not in a
-  function)
-fs/compat_ioctl.c:870:1: error: 'TIOCGRS485' undeclared here (not in a
-  function)
-
-vim +869 fs/compat_ioctl.c
-863 COMPATIBLE_IOCTL(TIOCSPGRP)
-864 COMPATIBLE_IOCTL(TIOCGPGRP)
-865 COMPATIBLE_IOCTL(TIOCGPTN)
-866 COMPATIBLE_IOCTL(TIOCSPTLCK)
-867 COMPATIBLE_IOCTL(TIOCSERGETLSR)
-868 COMPATIBLE_IOCTL(TIOCSIG)
-> 869 COMPATIBLE_IOCTL(TIOCSRS485)
-870 COMPATIBLE_IOCTL(TIOCGRS485)
-871 #ifdef TCGETS2
-872 COMPATIBLE_IOCTL(TCGETS2)
-
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Jaeden Amero <jaeden.amero@ni.com>
 ---
- fs/compat_ioctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/dvb-frontends/sp8870.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 85dfebfe6820856dc3154dfd178acb6fca63bbe9..59f8db4a39a78338b2c7a148122a04e11e026caf 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -866,8 +866,12 @@ COMPATIBLE_IOCTL(TIOCGPTN)
- COMPATIBLE_IOCTL(TIOCSPTLCK)
- COMPATIBLE_IOCTL(TIOCSERGETLSR)
- COMPATIBLE_IOCTL(TIOCSIG)
-+#ifdef TIOCSRS485
- COMPATIBLE_IOCTL(TIOCSRS485)
-+#endif
-+#ifdef TIOCGRS485
- COMPATIBLE_IOCTL(TIOCGRS485)
-+#endif
- #ifdef TCGETS2
- COMPATIBLE_IOCTL(TCGETS2)
- COMPATIBLE_IOCTL(TCSETS2)
--- 
-1.7.12
+diff -u -p a/drivers/media/dvb-frontends/sp8870.c b/drivers/media/dvb-frontends/sp8870.c
+--- a/drivers/media/dvb-frontends/sp8870.c
++++ b/drivers/media/dvb-frontends/sp8870.c
+@@ -188,7 +188,7 @@ static int configure_reg0xc05 (struct dt
+ 		break;
+ 	default:
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	switch (p->hierarchy) {
+ 	case HIERARCHY_NONE:
+@@ -207,7 +207,7 @@ static int configure_reg0xc05 (struct dt
+ 		break;
+ 	default:
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	switch (p->code_rate_HP) {
+ 	case FEC_1_2:
+@@ -229,7 +229,7 @@ static int configure_reg0xc05 (struct dt
+ 		break;
+ 	default:
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	if (known_parameters)
+ 		*reg0xc05 |= (2 << 1);	/* use specified parameters */
 
