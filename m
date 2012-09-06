@@ -1,34 +1,41 @@
-From: Michel Lespinasse <walken@google.com>
-Date: Fri, 28 Sep 2012 22:36:35 +0000
-Subject: Re: [next:akpm 140/423] fs/block_dev.c:135:2: error: implicit declaration of function 'prio_tree_emp
-Message-Id: <CANN689F6AgeKKhumHJNvHtpBgC2_rMPHSJQZLWS=Ju4W3KzQhg@mail.gmail.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Thu, 06 Sep 2012 14:46:20 +0000
+Subject: [PATCH] HID: picoLCD: Remove use of deprecated function
+Message-Id: <1346942780-8091-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928100833.GB29414@localhost>
-In-Reply-To: <20120928100833.GB29414@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: bonbons@linux-vserver.org, jkosina@suse.cz
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Fri, Sep 28, 2012 at 3:08 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> Hi Michel,
->
-> FYI, kernel build failed on
->
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
-> head:   b97e42d4aec6640aeb2a0347d9d40d12db17ded9
-> commit: f7d8d6b34e1d98650967ef035824beabec51019d [140/423] mm: replace vma prio_tree with an interval tree
-> config: x86_64-allmodconfig
->
-> All error/warnings:
->
-> fs/block_dev.c: In function 'set_blocksize':
-> fs/block_dev.c:135:2: error: implicit declaration of function 'prio_tree_empty' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
+The flush_delayed_work_sync function is deprecated,
+we can instead call flush_delayed_work directly.
 
-Yes, Stephen Rothwell posted a fix for this in LKML (use RB_EMPTY_ROOT
-instead of prio_tree_empty)
+Sparse is giving a warning:
+drivers/hid/hid-picolcd_fb.c:611:2: warning:
+	‘flush_delayed_work_sync’ is deprecated
+	(declared at include/linux/workqueue.h:454)
+	[-Wdeprecated-declarations]
 
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/hid/hid-picolcd_fb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-picolcd_fb.c b/drivers/hid/hid-picolcd_fb.c
+index 0008a51..eb00357 100644
+--- a/drivers/hid/hid-picolcd_fb.c
++++ b/drivers/hid/hid-picolcd_fb.c
+@@ -608,7 +608,7 @@ void picolcd_exit_framebuffer(struct picolcd_data *data)
+ 	/* make sure there is no running update - thus that fbdata->picolcd
+ 	 * once obtained under lock is guaranteed not to get free() under
+ 	 * the feet of the deferred work */
+-	flush_delayed_work_sync(&info->deferred_work);
++	flush_delayed_work(&info->deferred_work);
+ 
+ 	data->fb_info = NULL;
+ 	unregister_framebuffer(info);
 -- 
-Michel "Walken" Lespinasse
-A program is never fully debugged until the last user dies.
+1.7.10.4
+
