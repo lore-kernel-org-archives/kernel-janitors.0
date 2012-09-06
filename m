@@ -1,50 +1,37 @@
-From: Glauber Costa <glommer@parallels.com>
-Date: Mon, 10 Sep 2012 14:02:34 +0000
-Subject: Re: [glommer-memcg:kmemcg-slab 57/62] drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token M
-Message-Id: <504DF2FA.2020200@parallels.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date: Thu, 06 Sep 2012 02:44:31 +0000
+Subject: Re: [powerpc:next 11/29] arch/powerpc/platforms/pseries/iommu.c:1064:2: error: implicit declaration
+Message-Id: <1346899471.19098.14.camel@pasglop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120910111638.GC9660@localhost> <20120910125759.GA11808@localhost> <504DE3DA.7000802@parallels.com> <20120910130617.GA11963@localhost>
-In-Reply-To: <20120910130617.GA11963@localhost>
+References: <20120906022003.GB16076@localhost>
+In-Reply-To: <20120906022003.GB16076@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>
+Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-On 09/10/2012 05:06 PM, Fengguang Wu wrote:
-> On Mon, Sep 10, 2012 at 04:58:02PM +0400, Glauber Costa wrote:
->> On 09/10/2012 04:57 PM, Fengguang Wu wrote:
->>> Glauber,
->>>
->>> The patch entitled
->>>
->>>  sl[au]b: Allocate objects from memcg cache
->>>
->>> changes
->>>
->>>  include/linux/slub_def.h |   15 ++++++++++-----
->>>
->>> which triggers this warning:
->>>
->>> drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token MAX_LEVEL redefined
->>>
->>> It's the MAX_LEVEL that is defined in include/linux/idr.h.
->>>
->>> MAX_LEVEL is obviously too generic. Better adding some prefix to it?
->>>
->>
->> I don't see any MAX_LEVEL definition in this patch. You say it is
->> defined in include/linux/idr.h, and as the diffstat shows, I am not
->> touching this file.
+On Thu, 2012-09-06 at 10:20 +0800, Fengguang Wu wrote:
+> Hi Michael,
 > 
-> It's a rather *unexpected* side effect. You changed slub_def.h to
-> include memcontrol.h/cgroup.h which in turn includes idr.h.
+> FYI, kernel build failed on
 > 
-Indeed.
->> I think this needs patching independently.
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/benh/powerpc.git next
+> head:   8b64a9dfb091f1eca8b7e58da82f1e7d1d5fe0ad
+> commit: 474e3d569b63f7275cfec072d7ef7b2ffb8904c8 [11/29] powerpc/pseries: Remove uses of abs_to_virt() and virt_to_abs()
+> config: powerpc-allmodconfig (attached as .config)
 > 
-> Yes, sure. And perhaps send it for quick inclusion before your patches?
+> All related error/warning messages:
 > 
+> arch/powerpc/platforms/pseries/iommu.c: In function 'enable_ddw':
+> arch/powerpc/platforms/pseries/iommu.c:1064:2: error: implicit declaration of function 'memblock_end_of_DRAM' [-Werror=implicit-function-declaration]
+> cc1: some warnings being treated as errors
 
-I agree.
+Thanks. That seems to be building in my tree oddly, I didn't even have a
+warning. Maybe some conditional inclusion ? I will add a commit that
+adds an explicit #include of memblock.h
+
+Cheers,
+Ben.
+
 
