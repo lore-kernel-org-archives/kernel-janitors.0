@@ -1,30 +1,36 @@
-From: "Berg, Johannes" <johannes.berg@intel.com>
-Date: Fri, 07 Sep 2012 07:51:40 +0000
-Subject: RE: [mac80211-next:wip 56/57] net/mac80211/mlme.c:903:43: warning: 'chan_pwr' may be used uninitiali
-Message-Id: <1DC40B07CD6EC041A66726C271A73AE6195AD438@IRSMSX102.ger.corp.intel.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 07 Sep 2012 15:24:47 +0000
+Subject: [PATCH 5/10] drivers/bluetooth/hci_vhci.c: removes unnecessary semicolon
+Message-Id: <1347031488-26598-9-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1DC40B07CD6EC041A66726C271A73AE6195AD1CC@IRSMSX102.ger.corp.intel.com>
-In-Reply-To: <1DC40B07CD6EC041A66726C271A73AE6195AD1CC@IRSMSX102.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> > Also, newer gccs (like my 4.7.1) don't warn here.
-> 
-> I'm also running gcc 4.7.1 and it's behavior is a bit interesting:
-> make allmodconfig is fine while this particular config will trigger the false
-> warning ;)
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Heh, that's interesting! I wonder what that is? I'm mostly building modules only out-of-tree... Odd!
+removes unnecessary semicolon
 
-johannes
-Intel GmbH
-Dornacher Strasse 1
-85622 Feldkirchen/Muenchen, Deutschland
-Sitz der Gesellschaft: Feldkirchen bei Muenchen
-Geschaeftsfuehrer: Peter Gleissner, Christian Lamprechter, Hannes Schwaderer, Douglas Lusk
-Registergericht: Muenchen HRB 47456
-Ust.-IdNr./VAT Registration No.: DE129385895
-Citibank Frankfurt a.M. (BLZ 502 109 00) 600119052
+Found by Coccinelle: http://coccinelle.lip6.fr/
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/bluetooth/hci_vhci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
+--- a/drivers/bluetooth/hci_vhci.c
++++ b/drivers/bluetooth/hci_vhci.c
+@@ -156,7 +156,7 @@ static inline ssize_t vhci_put_user(stru
+ 	case HCI_SCODATA_PKT:
+ 		data->hdev->stat.sco_tx++;
+ 		break;
+-	};
++	}
+ 
+ 	return total;
+ }
 
