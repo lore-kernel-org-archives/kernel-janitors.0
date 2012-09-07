@@ -1,57 +1,73 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Tue, 04 Sep 2012 07:50:25 +0000
-Subject: Re: [PATCH 3/4] drivers/mtd/maps/autcpu12-nvram.c: drop frees of devm_ alloc'd data
-Message-Id: <1346745025.12610.8.camel@sauron.fi.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-bStECJ1vZZCxIlkGac+M"
+From: "Bhanu Prakash Gollapudi" <bprakash@broadcom.com>
+Date: Fri, 07 Sep 2012 18:23:59 +0000
+Subject: Re: [PATCH 2/5] drivers/scsi/bnx2fc/bnx2fc_io.c: Remove potential NULL dereference
+Message-Id: <504A3BBF.5030604@broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346517191-8794-1-git-send-email-Julia.Lawall@lip6.fr>
- <1346517191-8794-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1346517191-8794-5-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-
-
---=-bStECJ1vZZCxIlkGac+M
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, 2012-09-01 at 18:33 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> devm free functions should not have to be explicitly used.
->=20
-> A semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-
-Pushed to l2-mtd.git, thanks!
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-bStECJ1vZZCxIlkGac+M
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+References: <1344959388-19719-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1344959388-19719-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344959388-19719-3-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+On 8/14/2012 8:49 AM, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> If the NULL test is necessary, the initialization involving a dereference of
+> the tested value should be moved after the NULL test.
+>
+> The sematic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @@
+> type T;
+> expression E;
+> identifier i,fld;
+> statement S;
+> @@
+>
+> - T i = E->fld;
+> + T i;
+>    ... when != E
+>        when != i
+>    if (E = NULL) S
+> + i = E->fld;
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> ---
+>   drivers/scsi/bnx2fc/bnx2fc_io.c |    3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
+> index 73f231c..1dd82db 100644
+> --- a/drivers/scsi/bnx2fc/bnx2fc_io.c
+> +++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+> @@ -686,7 +686,7 @@ static int bnx2fc_initiate_tmf(struct scsi_cmnd *sc_cmd, u8 tm_flags)
+>   {
+>   	struct fc_lport *lport;
+>   	struct fc_rport *rport = starget_to_rport(scsi_target(sc_cmd->device));
+> -	struct fc_rport_libfc_priv *rp = rport->dd_data;
+> +	struct fc_rport_libfc_priv *rp;
+>   	struct fcoe_port *port;
+>   	struct bnx2fc_interface *interface;
+>   	struct bnx2fc_rport *tgt;
+> @@ -712,6 +712,7 @@ static int bnx2fc_initiate_tmf(struct scsi_cmnd *sc_cmd, u8 tm_flags)
+>   		rc = FAILED;
+>   		goto tmf_err;
+>   	}
+> +	rp = rport->dd_data;
+>
+>   	rc = fc_block_scsi_eh(sc_cmd);
+>   	if (rc)
+>
+>
+Thanks Julia.
 
-iQIcBAABAgAGBQJQRbLBAAoJECmIfjd9wqK0okkP/2E1NJ2Gmt9Iv+L9hiNdUesK
-3dcR+sYG1eEP/Ac7pwvpSsP8LEa4YtW5XCgsYQ+3lgKiP/q95/eKB+mhjb3mea3h
-Em3ykBMbT2a6C8MlsiIMtlz+tr6AfgYHK3HWu6/Ko9vEZCtfOE2xdISiBzD5mlDN
-32yY+UJrYRE4+OlbsliJkRNZ3BKKR2BQwgFiFYU+LOxbxJTFwyPClb+Z8Y8KPY4F
-VhO+IJd5eD/gvvWMz3us0oElHCRV3tmdSwNJkoNlZm2WehP+0cwUaa7s4QTHwhVg
-a2vG9L/GIa2Iz0ctppX0si6wmZHRkp9K/nIgn9Q+sdEXU6fattVVF8XFLkzeS6zv
-xmKXNykcB6QivLCGHTsTVBKce21FHMzBNpAobrksIBszsPXgJTK28Tv+Nw0aG6Of
-tRFJtuKH5GJIJo8ElJB0mNRA0mi4kVqsA492AvtZWea2RVVAtizboTapfwYg+clH
-CLHcwA0IxxHXSsVGfAIHKL1alrEJ0zU0QdtaOQ6fEf6aqie5ZoQy0achX5j0QI32
-sr8qFvftwphxSrozRsOwVHzDytslU65f6wk6uY6ARcN3oX1O11mxSBelxq1EGuk3
-dTUAjGwkpV7ARkgUMvlfJG/gjfeI0vyWCXQ0YiYb6ScGUr1iv4IfJCk4RfzbA3ae
-C2o0StKIbaIJlF7o5vO8
-=+ODl
------END PGP SIGNATURE-----
+Acked-by: Bhanu Prakash Gollapudi <bprakash@broadcom.com>
 
---=-bStECJ1vZZCxIlkGac+M--
 
