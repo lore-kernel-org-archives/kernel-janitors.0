@@ -1,83 +1,37 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 16:09:11 +0000
-Subject: [PATCH 3/10] drivers/media/radio/si4713-i2c.c: removes unnecessary semicolon
-Message-Id: <1346947757-10481-4-git-send-email-peter.senna@gmail.com>
+Date: Fri, 07 Sep 2012 13:07:15 +0000
+Subject: [PATCH] Unregister device and unlock mutex before exit when error
+Message-Id: <1347023235-10569-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
+References: <1346775269-12191-5-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346775269-12191-5-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-
-removes unnecessary semicolon
-
-Found by Coccinelle: http://coccinelle.lip6.fr/
+To: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
 ---
- drivers/media/radio/si4713-i2c.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Depends on patch 14167: http://patchwork.linuxtv.org/patch/14167/ 
+[PATCH 1/5] drivers/media/platform/davinci/vpbe.c: fix error return code
 
-diff -u -p a/drivers/media/radio/si4713-i2c.c b/drivers/media/radio/si4713-i2c.c
---- a/drivers/media/radio/si4713-i2c.c
-+++ b/drivers/media/radio/si4713-i2c.c
-@@ -1009,7 +1009,7 @@ static int si4713_choose_econtrol_action
+ drivers/media/platform/davinci/vpbe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 2e4a0da..3057030 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -648,7 +648,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	ret = bus_for_each_dev(&platform_bus_type, NULL, vpbe_dev,
+ 			       platform_device_get);
+ 	if (ret < 0)
+-		return ret;
++		goto vpbe_fail_v4l2_device;
  
- 	default:
- 		rval = -EINVAL;
--	};
-+	}
- 
- 	return rval;
- }
-@@ -1081,7 +1081,7 @@ static int si4713_write_econtrol_string(
- 	default:
- 		rval = -EINVAL;
- 		break;
--	};
-+	}
- 
- exit:
- 	return rval;
-@@ -1130,7 +1130,7 @@ static int si4713_write_econtrol_tune(st
- 	default:
- 		rval = -EINVAL;
- 		goto unlock;
--	};
-+	}
- 
- 	if (sdev->power_state)
- 		rval = si4713_tx_tune_power(sdev, power, antcap);
-@@ -1420,7 +1420,7 @@ static int si4713_read_econtrol_string(s
- 	default:
- 		rval = -EINVAL;
- 		break;
--	};
-+	}
- 
- exit:
- 	return rval;
-@@ -1473,7 +1473,7 @@ static int si4713_read_econtrol_tune(str
- 		break;
- 	default:
- 		rval = -EINVAL;
--	};
-+	}
- 
- unlock:
- 	mutex_unlock(&sdev->mutex);
-@@ -1698,7 +1698,7 @@ static int si4713_queryctrl(struct v4l2_
- 	default:
- 		rval = -EINVAL;
- 		break;
--	};
-+	}
- 
- 	return rval;
- }
+ 	vpbe_dev->venc = venc_sub_dev_init(&vpbe_dev->v4l2_dev,
+ 					   vpbe_dev->cfg->venc.module_name);
+-- 
+1.7.11.4
 
