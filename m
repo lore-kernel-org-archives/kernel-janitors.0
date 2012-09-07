@@ -1,7 +1,7 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 04 Sep 2012 12:05:03 +0000
-Subject: [PATCH 3/3] drivers/media/platform/davinci/vpfe_capture.c: fix error return code
-Message-Id: <1346760305-13060-1-git-send-email-peter.senna@gmail.com>
+Date: Fri, 07 Sep 2012 15:24:44 +0000
+Subject: [PATCH 8/10] drivers/media/dvb-core/dvb_demux.c: removes unnecessary semicolon
+Message-Id: <1347031488-26598-6-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,67 +11,45 @@ Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kern
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+removes unnecessary semicolon
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/media/platform/davinci/vpfe_capture.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/media/dvb-core/dvb_demux.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
-index 843b138..f99198c 100644
---- a/drivers/media/platform/davinci/vpfe_capture.c
-+++ b/drivers/media/platform/davinci/vpfe_capture.c
-@@ -1131,11 +1131,11 @@ static int vpfe_s_input(struct file *file, void *priv, unsigned int index)
- 		ret = -EBUSY;
- 		goto unlock_out;
- 	}
--
--	if (vpfe_get_subdev_input_index(vpfe_dev,
--					&subdev_index,
--					&inp_index,
--					index) < 0) {
-+	ret = vpfe_get_subdev_input_index(vpfe_dev,
-+					  &subdev_index,
-+					  &inp_index,
-+					  index);
-+	if (ret < 0) {
- 		v4l2_err(&vpfe_dev->v4l2_dev, "invalid input index\n");
- 		goto unlock_out;
- 	}
-@@ -1748,8 +1748,9 @@ static long vpfe_param_handler(struct file *file, void *priv,
- 					"Error setting parameters in CCDC\n");
- 				goto unlock_out;
- 			}
--			if (vpfe_get_ccdc_image_format(vpfe_dev,
--						       &vpfe_dev->fmt) < 0) {
-+			ret = vpfe_get_ccdc_image_format(vpfe_dev,
-+							 &vpfe_dev->fmt);
-+			if (ret < 0) {
- 				v4l2_dbg(1, debug, &vpfe_dev->v4l2_dev,
- 					"Invalid image format at CCDC\n");
- 				goto unlock_out;
+diff -u -p a/drivers/media/dvb-core/dvb_demux.c b/drivers/media/dvb-core/dvb_demux.c
+--- a/drivers/media/dvb-core/dvb_demux.c
++++ b/drivers/media/dvb-core/dvb_demux.c
+@@ -424,12 +424,12 @@ static void dvb_dmx_swfilter_packet(stru
+ 				printk(KERN_INFO "TS speed %llu Kbits/sec \n",
+ 						div64_u64(speed_bytes,
+ 							speed_timedelta));
+-			};
++			}
+ 
+ 			demux->speed_last_time = cur_time;
+ 			demux->speed_pkts_cnt = 0;
+-		};
+-	};
++		}
++	}
+ 
+ 	if (buf[1] & 0x80) {
+ 		dprintk_tscheck("TEI detected. "
+@@ -451,9 +451,9 @@ static void dvb_dmx_swfilter_packet(stru
+ 						buf[3] & 0xf);
+ 
+ 			demux->cnt_storage[pid] = ((buf[3] & 0xf) + 1)&0xf;
+-		};
++		}
+ 		/* end check */
+-	};
++	}
+ 
+ 	list_for_each_entry(feed, &demux->feed_list, list_head) {
+ 		if ((feed->pid != pid) && (feed->pid != 0x2000))
 
