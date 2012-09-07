@@ -1,28 +1,34 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 20 Sep 2012 12:45:39 +0000
-Subject: Re: [arm-soc:for-next 71/73] drivers/bus/omap_l3_noc.c:31:17: fatal error: soc.h: No such file or di
-Message-Id: <201209201245.39433.arnd@arndb.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Sep 2012 06:47:41 +0000
+Subject: [patch] HID: picoLCD: fix a NULL test in picolcd_raw_cir()
+Message-Id: <20120907064740.GB12028@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120919233046.GB5607@localhost>
-In-Reply-To: <20120919233046.GB5607@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Bruno =?iso-8859-1?Q?Pr=E9mont?= <bonbons@linux-vserver.org>
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wednesday 19 September 2012, Fengguang Wu wrote:
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git for-next
-> head:   8ebc8820187f3c499a55a0faab82292c3db6df54
-> commit: cf3e885b8b87587b304e905201a50aee09de187e [71/73] Merge branch 'testing/__iomem' into for-next
-> config: arm-omap2plus_defconfig
-> 
-> drivers/bus/omap_l3_noc.c:31:17: fatal error: soc.h: No such file or directory
-> 
+Smatch complains that the NULL checking in this function is not
+consistent and could lead to a NULL dereference.  The comments say that
+we should return here if rc_dev is NULL so I've changed the test to
+match the comment.
 
-Thanks a lot for the report, I already found the same problem myself
-but didn't have the time to fix it up yesterday. Same for the other
-one on omap2plus_defconfig.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Only needed in linux-next.  This is a static checker fix and I don't
+have the hardware to test it.  Please review carefully.
 
-	Arnd
+diff --git a/drivers/hid/hid-picolcd_cir.c b/drivers/hid/hid-picolcd_cir.c
+index 14c5ce0..13ca919 100644
+--- a/drivers/hid/hid-picolcd_cir.c
++++ b/drivers/hid/hid-picolcd_cir.c
+@@ -51,7 +51,7 @@ int picolcd_raw_cir(struct picolcd_data *data,
+ 
+ 	/* ignore if rc_dev is NULL or status is shunned */
+ 	spin_lock_irqsave(&data->lock, flags);
+-	if (data->rc_dev && (data->status & PICOLCD_CIR_SHUN)) {
++	if (!data->rc_dev || (data->status & PICOLCD_CIR_SHUN)) {
+ 		spin_unlock_irqrestore(&data->lock, flags);
+ 		return 1;
+ 	}
