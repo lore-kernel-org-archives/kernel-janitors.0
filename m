@@ -1,25 +1,36 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 14 Sep 2012 21:13:59 +0000
-Subject: Re: [memcg:since-3.5 93/137] include/linux/rbtree_augmented.h:123: warning: '__rb_erase_color' decla
-Message-Id: <20120914141359.632d464f.akpm@linux-foundation.org>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 07 Sep 2012 15:24:48 +0000
+Subject: [PATCH 10/10] drivers/bluetooth/btuart_cs.c: removes unnecessary semicolon
+Message-Id: <1347031488-26598-10-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120914025922.GD31454@yliu-dev.sh.intel.com>
-In-Reply-To: <20120914025922.GD31454@yliu-dev.sh.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 14 Sep 2012 14:10:04 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> akpm:/usr/src/25> size lib/rbtree_test.o
->    text    data     bss     dec     hex filename
->    3599     117    5224    8940    22ec lib/rbtree_test.o	(before)
->    4176     117    5384    9677    25cd lib/rbtree_test.o	(after)
-> 
-> that's crazy!
+removes unnecessary semicolon
 
-Although the changelog and Documentation/rbtree.txt do explain the
-situation. Nobody ever reads them.  This explanation should be in a
-big fat comment at the rb_erase_augmented() site, please.
+Found by Coccinelle: http://coccinelle.lip6.fr/
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/bluetooth/btuart_cs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/bluetooth/btuart_cs.c b/drivers/bluetooth/btuart_cs.c
+--- a/drivers/bluetooth/btuart_cs.c
++++ b/drivers/bluetooth/btuart_cs.c
+@@ -446,7 +446,7 @@ static int btuart_hci_send_frame(struct
+ 	case HCI_SCODATA_PKT:
+ 		hdev->stat.sco_tx++;
+ 		break;
+-	};
++	}
+ 
+ 	/* Prepend skb with frame type */
+ 	memcpy(skb_push(skb, 1), &bt_cb(skb)->pkt_type, 1);
+
