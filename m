@@ -1,40 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Sep 2012 10:57:52 +0000
-Subject: Re: [iio:wip] drivers/staging/iio/iio_input.c:189 iio_input_probe() error: don't call input_free_dev
-Message-Id: <20120917105752.GH4587@mwanda>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 07 Sep 2012 15:24:43 +0000
+Subject: [PATCH 9/10] drivers/media/dvb-frontends/tda10071.c: removes unnecessary semicolon
+Message-Id: <1347031488-26598-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120915143547.GB7303@localhost>
-In-Reply-To: <20120915143547.GB7303@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 15, 2012 at 10:35:47PM +0800, Fengguang Wu wrote:
-> Hi Jonathan,
-> 
-> There is a smatch warning in tree
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git wip
-> 
-> + drivers/staging/iio/iio_input.c:189 iio_input_probe() error: don't call input_free_device() after input_unregister_device()
-> 
-> vim +189 drivers/staging/iio/iio_input.c
-> 
->    186	error_unregister_input:
->    187		input_unregister_device(st->idev);
->    188	error_free_idev:
->  > 189		input_free_device(st->idev);
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-In this case, it's obvious that we do reference "st->idev" after
-calling input_unregister_device() so this is a bug.  Normally way
-people write this is to make input_register_device() the last call
-in the probe() function which can fail.  In this case, it's a bit
-awkward to do that it looks like.
+removes unnecessary semicolon
 
-Anyway, it's a double free bug because
-input_register/unregister_device() is ref counted.
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-regards,
-dan carpenter
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/media/dvb-frontends/tda10071.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/drivers/media/dvb-frontends/tda10071.c b/drivers/media/dvb-frontends/tda10071.c
+--- a/drivers/media/dvb-frontends/tda10071.c
++++ b/drivers/media/dvb-frontends/tda10071.c
+@@ -257,7 +257,7 @@ static int tda10071_set_voltage(struct d
+ 				__func__);
+ 		ret = -EINVAL;
+ 		goto error;
+-	};
++	}
+ 
+ 	cmd.args[0] = CMD_LNB_SET_DC_LEVEL;
+ 	cmd.args[1] = 0;
+@@ -369,7 +369,7 @@ static int tda10071_diseqc_recv_slave_re
+ 	if (ret)
+ 		goto error;
+ 
+-	reply->msg_len = tmp & 0x1f; /* [4:0] */;
++	reply->msg_len = tmp & 0x1f; /* [4:0] */
+ 	if (reply->msg_len > sizeof(reply->msg))
+ 		reply->msg_len = sizeof(reply->msg); /* truncate API max */
+ 
 
