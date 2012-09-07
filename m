@@ -1,41 +1,72 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 29 Sep 2012 10:15:55 +0000
-Subject: [josef-btrfs:master 81/82] fs/btrfs/disk-io.c:34:28: fatal error: asm/cpufeature.h: No such file or
-Message-Id: <20120929101555.GA5278@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 07 Sep 2012 15:24:45 +0000
+Subject: [PATCH 7/10] drivers/media/tuners/tda18271-common.c: removes unnecessary semicolon
+Message-Id: <1347031488-26598-7-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Josef Bacik <jbacik@fusionio.com>
-Cc: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Josef,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+removes unnecessary semicolon
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git master
-head:   5aeafaaac9c84f3e2297914c748243bb34b0c5c5
-commit: 5aeafaaac9c84f3e2297914c748243bb34b0c5c5 [81/82] Btrfs: do not async metadata csumming in certain situations
-config: mips-allmodconfig
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-All error/warnings:
-
-fs/btrfs/disk-io.c:34:28: fatal error: asm/cpufeature.h: No such file or directory
-compilation terminated.
-
-vim +34 fs/btrfs/disk-io.c
-
-4b4e25f2 (Chris Mason     2008-11-20  28) #include <linux/freezer.h>
-163e783e (David Woodhouse 2009-04-19  29) #include <linux/crc32c.h>
-5a0e3ad6 (Tejun Heo       2010-03-24  30) #include <linux/slab.h>
-784b4e29 (Chris Mason     2010-11-21  31) #include <linux/migrate.h>
-7a36ddec (David Sterba    2011-05-06  32) #include <linux/ratelimit.h>
-7e75bf3f (David Sterba    2011-03-18  33) #include <asm/unaligned.h>
-5aeafaaa (Josef Bacik     2012-09-25 @34) #include <asm/cpufeature.h>
-4b4e25f2 (Chris Mason     2008-11-20  35) #include "compat.h"
-eb60ceac (Chris Mason     2007-02-02  36) #include "ctree.h"
-eb60ceac (Chris Mason     2007-02-02  37) #include "disk-io.h"
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/media/tuners/tda18271-common.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff -u -p a/drivers/media/tuners/tda18271-common.c b/drivers/media/tuners/tda18271-common.c
+--- a/drivers/media/tuners/tda18271-common.c
++++ b/drivers/media/tuners/tda18271-common.c
+@@ -275,7 +275,7 @@ int tda18271_init_regs(struct dvb_fronte
+ 	case TDA18271HDC2:
+ 		regs[R_ID]   = 0x84;
+ 		break;
+-	};
++	}
+ 
+ 	regs[R_TM]   = 0x08;
+ 	regs[R_PL]   = 0x80;
+@@ -300,7 +300,7 @@ int tda18271_init_regs(struct dvb_fronte
+ 	case TDA18271HDC2:
+ 		regs[R_EB1]  = 0xfc;
+ 		break;
+-	};
++	}
+ 
+ 	regs[R_EB2]  = 0x01;
+ 	regs[R_EB3]  = 0x84;
+@@ -320,7 +320,7 @@ int tda18271_init_regs(struct dvb_fronte
+ 	case TDA18271HDC2:
+ 		regs[R_EB12] = 0x33;
+ 		break;
+-	};
++	}
+ 
+ 	regs[R_EB13] = 0xc1;
+ 	regs[R_EB14] = 0x00;
+@@ -335,7 +335,7 @@ int tda18271_init_regs(struct dvb_fronte
+ 	case TDA18271HDC2:
+ 		regs[R_EB18] = 0x8c;
+ 		break;
+-	};
++	}
+ 
+ 	regs[R_EB19] = 0x00;
+ 	regs[R_EB20] = 0x20;
+@@ -347,7 +347,7 @@ int tda18271_init_regs(struct dvb_fronte
+ 	case TDA18271HDC2:
+ 		regs[R_EB21] = 0xb3;
+ 		break;
+-	};
++	}
+ 
+ 	regs[R_EB22] = 0x48;
+ 	regs[R_EB23] = 0xb0;
+
