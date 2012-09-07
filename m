@@ -1,43 +1,36 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 18 Sep 2012 14:28:42 +0000
-Subject: Re: [usb:usb-next 25/32] drivers/usb/serial/omninet.c:165:6: warning: unused variable 'i'
-Message-Id: <20120918142842.GA15432@kroah.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 07 Sep 2012 15:24:40 +0000
+Subject: [PATCH 2/10] drivers/bluetooth/bluecard_cs.c: removes unnecessary semicolon
+Message-Id: <1347031488-26598-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120918140406.GA16749@localhost>
-In-Reply-To: <20120918140406.GA16749@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2012 at 10:04:06PM +0800, Fengguang Wu wrote:
-> Hi Greg,
-> 
-> FYI, there are new compile warnings show up in
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-next
-> head:   07764958947c381ef095fc69503c1ef1775f316e
-> commit: 6e03b8cecbd836f729afe1a50814544baa5e5f97 [25/32] USB: Serial: omninet.c: remove debug module parameter
-> config: x86_64-allmodconfig
-> 
-> All error/warnings:
-> 
-> drivers/usb/serial/omninet.c: In function 'omninet_read_bulk_callback':
-> drivers/usb/serial/omninet.c:165:6: warning: unused variable 'i' [-Wunused-variable]
-> 
-> vim +165 drivers/usb/serial/omninet.c
->    155	#define OMNINET_HEADERLEN	sizeof(struct omninet_header)
->    156	#define OMNINET_BULKOUTSIZE 	(64 - OMNINET_HEADERLEN)
->    157	
->    158	static void omninet_read_bulk_callback(struct urb *urb)
->    159	{
->    160		struct usb_serial_port 	*port 	= urb->context;
->    161		unsigned char 		*data 	= urb->transfer_buffer;
->    162		struct omninet_header 	*header = (struct omninet_header *) &data[0];
->    163		int status = urb->status;
->    164		int result;
->  > 165		int i;
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Ah, thanks, I missed that, now fixed up.
+removes unnecessary semicolon
 
-greg k-h
+Found by Coccinelle: http://coccinelle.lip6.fr/
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/bluetooth/bluecard_cs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/bluetooth/bluecard_cs.c b/drivers/bluetooth/bluecard_cs.c
+--- a/drivers/bluetooth/bluecard_cs.c
++++ b/drivers/bluetooth/bluecard_cs.c
+@@ -681,7 +681,7 @@ static int bluecard_hci_send_frame(struc
+ 	case HCI_SCODATA_PKT:
+ 		hdev->stat.sco_tx++;
+ 		break;
+-	};
++	}
+ 
+ 	/* Prepend skb with frame type */
+ 	memcpy(skb_push(skb, 1), &bt_cb(skb)->pkt_type, 1);
+
