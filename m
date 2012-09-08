@@ -1,58 +1,48 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 12:08:00 +0000
-Subject: [PATCH 10/10] drivers/video/arcfb.c: fix error return code
-Message-Id: <1347970080-25175-10-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 08 Sep 2012 01:51:06 +0000
+Subject: sound/soc/soc-dapm.c:1023:4: error: implicit declaration of function 'regulator_allow_bypass'
+Message-Id: <20120908015106.GA19743@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
+References: <20120908014450.GB19345@localhost>
+In-Reply-To: <20120908014450.GB19345@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jayalk@intworks.biz
-Cc: FlorianSchandinat@gmx.de, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+[add the missing subject line..]
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
- drivers/video/arcfb.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/video/arcfb.c b/drivers/video/arcfb.c
-index a1d58e9..4659d5d 100644
---- a/drivers/video/arcfb.c
-+++ b/drivers/video/arcfb.c
-@@ -552,6 +552,7 @@ static int __devinit arcfb_probe(struct platform_device *dev)
- 				"arcfb", info)) {
- 			printk(KERN_INFO
- 				"arcfb: Failed req IRQ %d\n", par->irq);
-+			retval = -EBUSY;
- 			goto err1;
- 		}
- 	}
--- 
-1.7.11.4
+On Sat, Sep 08, 2012 at 09:44:50AM +0800, Fengguang Wu wrote:
+> Hi Mark,
+> 
+> FYI, kernel build failed on
+> 
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+> head:   e8bb382aa74747f23e2903c15e48e9f06de5c60a
+> commit: 9ad4ba77112a3700129cdb142796a54680baa266 [100/103] ASoC: dapm: Allow regulators to bypass as well as disable when idle
+> config: x86_64-allmodconfig (attached as .config)
+> 
+> All related error/warning messages:
+> 
+> sound/soc/soc-dapm.c: In function 'dapm_regulator_event':
+> sound/soc/soc-dapm.c:1023:4: error: implicit declaration of function 'regulator_allow_bypass' [-Werror=implicit-function-declaration]
+> cc1: some warnings being treated as errors
+> 
+> vim +1023 sound/soc/soc-dapm.c
+>   1018	{
+>   1019		int ret;
+>   1020	
+>   1021		if (SND_SOC_DAPM_EVENT_ON(event)) {
+>   1022			if (w->invert & SND_SOC_DAPM_REGULATOR_BYPASS) {
+> > 1023				ret = regulator_allow_bypass(w->regulator, true);
+>   1024				if (ret != 0)
+>   1025					dev_warn(w->dapm->dev,
+>   1026						 "Failed to bypass %s: %d\n",
+>   1027						 w->name, ret);
+>   1028			}
+> 
+> ---
+> 0-DAY kernel build testing backend         Open Source Technology Centre
+> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
 
