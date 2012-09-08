@@ -1,21 +1,34 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Wed, 26 Sep 2012 11:36:35 +0000
-Subject: Re: [Patch 1/2] Staging: winbond: Changed c99 comments to c89 comments
-Message-Id: <20120926113634.GA6382@elf.ucw.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 08 Sep 2012 09:59:21 +0000
+Subject: [patch] aoe: cleanup an allocation a bit
+Message-Id: <20120908095921.GD608@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5062937F.3000506@gmail.com>
-In-Reply-To: <5062937F.3000506@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Ed L. Cashin" <ecashin@coraid.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed 2012-09-26 11:02:47, Harsh Kumar wrote:
-> checkpatch cleanup: Changed c99 comments to c89 comments
-> 
-> Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
+We changed this recently so we can just use kzalloc() here instead of
+kcalloc(1, ...).  Kernel style prefers sizeof(*t) over sizeof *t.  The
+kfree(t) is a no-op now as well so that can be removed.
 
-ACK.
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Only applies to linux-next.
+
+diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
+index 5461faa..c0adbbd 100644
+--- a/drivers/block/aoe/aoecmd.c
++++ b/drivers/block/aoe/aoecmd.c
+@@ -1255,9 +1255,8 @@ addtgt(struct aoedev *d, char *addr, ulong nframes)
+ 			"aoe: device addtgt failure; too many targets\n");
+ 		return NULL;
+ 	}
+-	t = kcalloc(1, sizeof *t, GFP_ATOMIC);
++	t = kzalloc(sizeof(*t), GFP_ATOMIC);
+ 	if (!t) {
+-		kfree(t);
+ 		printk(KERN_INFO "aoe: cannot allocate memory to add target\n");
+ 		return NULL;
+ 	}
