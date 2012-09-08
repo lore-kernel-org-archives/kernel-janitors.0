@@ -1,41 +1,40 @@
-From: Maxim Levitsky <maximlevitsky@gmail.com>
-Date: Sat, 29 Sep 2012 22:09:14 +0000
-Subject: Re: [patch 1/2] memstick: use after free in msb_disk_release()
-Message-Id: <1348956554.7401.1.camel@maxim-laptop>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 08 Sep 2012 09:52:08 +0000
+Subject: [patch 1/3] xen/privcmd: check for integer overflow in ioctl
+Message-Id: <20120908095208.GA608@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120929071104.GB10993@elgon.mountain>
-In-Reply-To: <20120929071104.GB10993@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
+To: Andres Lagar-Cavilla <andreslc@gridcentric.ca>
+Cc: kernel-janitors@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, virtualization@lists.linux-foundation.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-On Sat, 2012-09-29 at 10:11 +0300, Dan Carpenter wrote: 
-> The original code dereferenced "msb" after freeing it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-> index c815fe5..a8e8915 100644
-> --- a/drivers/memstick/core/ms_block.c
-> +++ b/drivers/memstick/core/ms_block.c
-> @@ -1983,9 +1983,9 @@ static int msb_disk_release(struct gendisk *disk)
->  			msb->usage_count--;
->  
->  		if (!msb->usage_count) {
-> -			kfree(msb);
->  			disk->private_data = NULL;
->  			idr_remove(&msb_disk_idr, msb->disk_id);
-> +			kfree(msb);
->  			put_disk(disk);
->  		}
->  	}
+If m.num is too large then the "m.num * sizeof(*m.arr)" multiplication
+could overflow and the access_ok() check wouldn't test the right size.
 
-Oops, I added this bug in latest iteration, when removed support for
-major.
-Acked-by: Maxim Levitsky <maximlevitsly@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Only needed in linux-next.
 
-Best regards,
-Maxim Levitsky
-
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index 215a3c0..fdff8f9 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -325,6 +325,8 @@ static long privcmd_ioctl_mmap_batch(void __user *udata, int version)
+ 			return -EFAULT;
+ 		/* Returns per-frame error in m.arr. */
+ 		m.err = NULL;
++		if (m.num > SIZE_MAX / sizeof(*m.arr))
++			return -EINVAL;
+ 		if (!access_ok(VERIFY_WRITE, m.arr, m.num * sizeof(*m.arr)))
+ 			return -EFAULT;
+ 		break;
+@@ -332,6 +334,8 @@ static long privcmd_ioctl_mmap_batch(void __user *udata, int version)
+ 		if (copy_from_user(&m, udata, sizeof(struct privcmd_mmapbatch_v2)))
+ 			return -EFAULT;
+ 		/* Returns per-frame error code in m.err. */
++		if (m.num > SIZE_MAX / sizeof(*m.err))
++			return -EINVAL;
+ 		if (!access_ok(VERIFY_WRITE, m.err, m.num * (sizeof(*m.err))))
+ 			return -EFAULT;
+ 		break;
