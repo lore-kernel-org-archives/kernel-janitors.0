@@ -1,7 +1,7 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Fri, 07 Sep 2012 20:22:14 +0000
+From: Gustavo Padovan <gustavo@padovan.org>
+Date: Sat, 08 Sep 2012 21:37:08 +0000
 Subject: Re: [PATCH 10/10] drivers/bluetooth/btuart_cs.c: removes unnecessary semicolon
-Message-Id: <1347049334.21200.135.camel@aeonflux>
+Message-Id: <20120908213708.GO5788@joana>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1347031488-26598-10-git-send-email-peter.senna@gmail.com>
 In-Reply-To: <1347031488-26598-10-git-send-email-peter.senna@gmail.com>
@@ -9,10 +9,14 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Holtmann <marcel@holtmann.org>, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hi Peter,
 
+* Peter Senna Tschudin <peter.senna@gmail.com> [2012-09-07 17:24:48 +0200]:
+
+> From: Peter Senna Tschudin <peter.senna@gmail.com>
+> 
 > removes unnecessary semicolon
 > 
 > Found by Coccinelle: http://coccinelle.lip6.fr/
@@ -23,10 +27,6 @@ Hi Peter,
 >  drivers/bluetooth/btuart_cs.c |    2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Marcel Holtmann <marcel@holtmann.org>
+Applied, Thanks.
 
-Regards
-
-Marcel
-
-
+	ustavo
