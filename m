@@ -1,22 +1,26 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Fri, 28 Sep 2012 21:14:54 +0000
-Subject: Re: [Patch 5/5] Staging: winbond: usb_free_urb(NULL) is safe
-Message-Id: <20120928211453.GA30718@elf.ucw.cz>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 09 Sep 2012 12:15:11 +0000
+Subject: [block:for-next 7/35] fs/bio.c:363 bio_alloc_bioset() error: we previously assumed 'bs' could be nul
+Message-Id: <20120909121511.GA19841@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50634417.6000109@gmail.com>
-In-Reply-To: <50634417.6000109@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed 2012-09-26 23:36:15, Harsh Kumar wrote:
-> usb_free_urb(NULL) is safe. So, the check was removed.
-> 
-> Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
+Hi Kent,
 
-ACK.
+FYI, there are new smatch warnings show up in
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+head:   5611a9dbd54b993fe24f322a0c310a6605824c0f
+commit: 3f86a82aeb03e6100f7ab39f4702e033a5e38166 [7/35] block: Consolidate bio_alloc_bioset(), bio_kmalloc()
+
+All smatch warnings:
+
++ fs/bio.c:363 bio_alloc_bioset() error: we previously assumed 'bs' could be null (see line 327)
+  arch/x86/include/asm/jump_label.h:25 arch_static_branch() info: ignoring unreachable code.
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
