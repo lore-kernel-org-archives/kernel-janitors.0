@@ -1,40 +1,22 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 10 Sep 2012 13:14:26 +0000
-Subject: [PATCH] idr: Rename MAX_LEVEL to MAX_ID_LEVEL
-Message-Id: <20120910131426.GA12431@localhost>
+From: Glauber Costa <glommer@parallels.com>
+Date: Mon, 10 Sep 2012 14:07:43 +0000
+Subject: Re: [PATCH] idr: Rename MAX_LEVEL to MAX_ID_LEVEL
+Message-Id: <504DF42F.2050504@parallels.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120910131426.GA12431@localhost>
+In-Reply-To: <20120910131426.GA12431@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Glauber Costa <glommer@parallels.com>, kernel-janitors@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>
 
-To avoid name conflicts:
+On 09/10/2012 05:14 PM, Fengguang Wu wrote:
+> To avoid name conflicts:
+> 
+> drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token MAX_LEVEL redefined
+> 
+> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 
-drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token MAX_LEVEL redefined
+Acked-by: Glauber Costa <glommer@parallels.com>
 
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
-
-Andrew: the conflict happens in Glauber's kmemcg-slab tree.  So it's
-better to quickly push this pre-fix to upstream before Glauber's patches.
-
-
- include/linux/idr.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- linux.orig/include/linux/idr.h	2012-09-10 21:08:51.177452944 +0800
-+++ linux/include/linux/idr.h	2012-09-10 21:08:57.729452732 +0800
-@@ -43,10 +43,10 @@
- #define MAX_ID_MASK (MAX_ID_BIT - 1)
- 
- /* Leave the possibility of an incomplete final layer */
--#define MAX_LEVEL (MAX_ID_SHIFT + IDR_BITS - 1) / IDR_BITS
-+#define MAX_ID_LEVEL (MAX_ID_SHIFT + IDR_BITS - 1) / IDR_BITS
- 
- /* Number of id_layer structs to leave in free list */
--#define IDR_FREE_MAX MAX_LEVEL + MAX_LEVEL
-+#define IDR_FREE_MAX MAX_ID_LEVEL + MAX_ID_LEVEL
- 
- struct idr_layer {
- 	unsigned long		 bitmap; /* A zero bit means "space here" */
