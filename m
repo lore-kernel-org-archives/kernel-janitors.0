@@ -1,39 +1,40 @@
-From: Borislav Petkov <bp@amd64.org>
-Date: Wed, 12 Sep 2012 11:00:22 +0000
-Subject: Re: [patch] x86, microcode, AMD: use after free in free_cache()
-Message-Id: <20120912110022.GA6470@aftab.osrc.amd.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 10 Sep 2012 13:14:26 +0000
+Subject: [PATCH] idr: Rename MAX_LEVEL to MAX_ID_LEVEL
+Message-Id: <20120910131426.GA12431@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120905123042.GB6128@elgon.mountain>
-In-Reply-To: <20120905123042.GB6128@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Glauber Costa <glommer@parallels.com>, kernel-janitors@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>
 
-On Wed, Sep 05, 2012 at 03:30:42PM +0300, Dan Carpenter wrote:
-> list_for_each_entry_reverse() dereferences the iterator, but we already
-> freed it.  I don't see a reason that this has to be done in reverse
-> order so I've changed it to use list_for_each_entry_safe().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is only needed on linux-next.  Sorry, it turns out that I don't
-> have any AMD systems right now, so I have not tested this.
+To avoid name conflicts:
 
-Ok, just ran it and it looks good.
+drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token MAX_LEVEL redefined
 
-Acked-by: Borislav Petkov <borislav.petkov@amd.com>
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+---
 
-@hpa, this one should go ontop of tip/x86/microcode.
+Andrew: the conflict happens in Glauber's kmemcg-slab tree.  So it's
+better to quickly push this pre-fix to upstream before Glauber's patches.
 
-Thanks.
 
--- 
-Regards/Gruss,
-Boris.
+ include/linux/idr.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-GM: Alberto Bozzo
-Reg: Dornach, Landkreis Muenchen
-HRB Nr. 43632 WEEE Registernr: 129 19551
+--- linux.orig/include/linux/idr.h	2012-09-10 21:08:51.177452944 +0800
++++ linux/include/linux/idr.h	2012-09-10 21:08:57.729452732 +0800
+@@ -43,10 +43,10 @@
+ #define MAX_ID_MASK (MAX_ID_BIT - 1)
+ 
+ /* Leave the possibility of an incomplete final layer */
+-#define MAX_LEVEL (MAX_ID_SHIFT + IDR_BITS - 1) / IDR_BITS
++#define MAX_ID_LEVEL (MAX_ID_SHIFT + IDR_BITS - 1) / IDR_BITS
+ 
+ /* Number of id_layer structs to leave in free list */
+-#define IDR_FREE_MAX MAX_LEVEL + MAX_LEVEL
++#define IDR_FREE_MAX MAX_ID_LEVEL + MAX_ID_LEVEL
+ 
+ struct idr_layer {
+ 	unsigned long		 bitmap; /* A zero bit means "space here" */
