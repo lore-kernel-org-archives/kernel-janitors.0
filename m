@@ -1,39 +1,32 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 25 Sep 2012 00:52:14 +0000
-Subject: fs/btrfs/disk-io.c:34:28: fatal error: asm/cpufeature.h: No such file or directory
-Message-Id: <20120925005214.GA5678@localhost>
+From: "Berg, Johannes" <johannes.berg@intel.com>
+Date: Mon, 10 Sep 2012 09:53:14 +0000
+Subject: RE: [mac80211-next:wip 5/77] net/mac80211/mlme.c:2635:43: error: 'struct ieee80211_local' has no mem
+Message-Id: <1DC40B07CD6EC041A66726C271A73AE6195AE011@IRSMSX102.ger.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Josef Bacik <jbacik@fusionio.com>
-Cc: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Josef,
+> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-
+> next.git wip
+> > head:   0f15417f09b71b08d651afa6cce95bc786227e3f
+> > commit: 4c29867790131c281ef96af507d85e3e5f829408 [5/77] mac80211:
+> support A-MPDU status reporting
+> 
+> Sorry -- the mac80211-next/wip HEAD c26d3657 does have this build error,
+> however it's not exactly happens for the above commit.. Let me check
+> what went wrong in the build system.
 
-FYI, kernel build failed on
+No worries, I'm aware of the error, some rebasing went wrong.
 
-Commit: d5b04fb3bbb6fce0a834e43f51b6a5251867fcb7 Btrfs: do not async metadata csums if we have hardware crc32c
-Date: Mon Sep 24 14:40:24 2012 -0400
-config: m68k-allmodconfig
+johannes
+Intel GmbH
+Dornacher Strasse 1
+85622 Feldkirchen/Muenchen, Deutschland
+Sitz der Gesellschaft: Feldkirchen bei Muenchen
+Geschaeftsfuehrer: Peter Gleissner, Christian Lamprechter, Hannes Schwaderer, Douglas Lusk
+Registergericht: Muenchen HRB 47456
+Ust.-IdNr./VAT Registration No.: DE129385895
+Citibank Frankfurt a.M. (BLZ 502 109 00) 600119052
 
-All related error/warning messages:
-
-fs/btrfs/disk-io.c:34:28: fatal error: asm/cpufeature.h: No such file or directory
-compilation terminated.
-
-vim +34 fs/btrfs/disk-io.c
-    28	#include <linux/freezer.h>
-    29	#include <linux/crc32c.h>
-    30	#include <linux/slab.h>
-    31	#include <linux/migrate.h>
-    32	#include <linux/ratelimit.h>
-    33	#include <asm/unaligned.h>
-  > 34	#include <asm/cpufeature.h>
-    35	#include "compat.h"
-    36	#include "ctree.h"
-    37	#include "disk-io.h"
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
