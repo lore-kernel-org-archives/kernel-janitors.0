@@ -1,36 +1,54 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Sun, 30 Sep 2012 22:55:11 +0000
-Subject: Re: nfc_llc_init: undefined reference to `nfc_llc_shdlc_register'
-Message-Id: <20120930225511.GC12231@sortiz-mobl>
+From: David Vrabel <david.vrabel@citrix.com>
+Date: Mon, 10 Sep 2012 10:35:11 +0000
+Subject: Re: [Xen-devel] [patch 1/3] xen/privcmd: check for integer overflow in	ioctl
+Message-Id: <504DC25F.7000508@citrix.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120930073504.GA32353@localhost>
-In-Reply-To: <20120930073504.GA32353@localhost>
+References: <20120908095208.GA608@elgon.mountain>
+In-Reply-To: <20120908095208.GA608@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Andres Lagar-Cavilla <andreslc@gridcentric.ca>, kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org
 
-Hi Fengguang,
+On 08/09/12 10:52, Dan Carpenter wrote:
+> If m.num is too large then the "m.num * sizeof(*m.arr)" multiplication
+> could overflow and the access_ok() check wouldn't test the right size.
 
-On Sun, Sep 30, 2012 at 03:35:04PM +0800, Fengguang Wu wrote:
-> Hi Samuel,
-> 
-> FYI, kernel build failed on
-> 
-> commit f4f20d0650e9cd13f65b5e7f93af126b526af721
-> 
->     NFC: Remove unneeded LLC symbols export
-> 
-> All error/warnings:
-> 
-> net/built-in.o: In function `nfc_llc_init':
-> (.text+0x100058): undefined reference to `nfc_llc_shdlc_register'
-This one should be fixed by commit 8a14e8bf386434732eed6678120fe52acee6244a
-from wireless-next. Please let me know if that's not the case.
+m.num is range checked later on so it doesn't matter that the
+access_ok() checks might be wrong.  A bit subtle, perhaps.
 
-Cheers,
-Samuel.
+David
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Only needed in linux-next.
+> 
+> diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+> index 215a3c0..fdff8f9 100644
+> --- a/drivers/xen/privcmd.c
+> +++ b/drivers/xen/privcmd.c
+> @@ -325,6 +325,8 @@ static long privcmd_ioctl_mmap_batch(void __user *udata, int version)
+>  			return -EFAULT;
+>  		/* Returns per-frame error in m.arr. */
+>  		m.err = NULL;
+> +		if (m.num > SIZE_MAX / sizeof(*m.arr))
+> +			return -EINVAL;
+>  		if (!access_ok(VERIFY_WRITE, m.arr, m.num * sizeof(*m.arr)))
+>  			return -EFAULT;
+>  		break;
+> @@ -332,6 +334,8 @@ static long privcmd_ioctl_mmap_batch(void __user *udata, int version)
+>  		if (copy_from_user(&m, udata, sizeof(struct privcmd_mmapbatch_v2)))
+>  			return -EFAULT;
+>  		/* Returns per-frame error code in m.err. */
+> +		if (m.num > SIZE_MAX / sizeof(*m.err))
+> +			return -EINVAL;
+>  		if (!access_ok(VERIFY_WRITE, m.err, m.num * (sizeof(*m.err))))
+>  			return -EFAULT;
+>  		break;
+> 
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xen.org
+> http://lists.xen.org/xen-devel
+
