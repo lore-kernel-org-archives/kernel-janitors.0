@@ -1,96 +1,90 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Date: Thu, 06 Sep 2012 08:29:04 +0000
-Subject: [PATCH] Rename opcode_t in probes.h to ppc_opcode_t
-Message-Id: <20120906081704.GA362@in.ibm.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 10 Sep 2012 11:16:38 +0000
+Subject: [glommer-memcg:kmemcg-slab 53/62] mm/memcontrol.c:755:6: sparse: symbol 'memcg_flush_cache_create_qu
+Message-Id: <20120910111638.GC9660@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="+xNpyl7Qekk2NvDX"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120906021929.GA16076@localhost>
- <1346900172.19098.17.camel@pasglop>
-In-Reply-To: <1346900172.19098.17.camel@pasglop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev@lists.ozlabs.org, Meelis Roos <mroos@linux.ee>, Fengguang Wu <fengguang.wu@intel.com>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 06, 2012 at 12:56:12PM +1000, Benjamin Herrenschmidt wrote:
-> On Thu, 2012-09-06 at 10:19 +0800, Fengguang Wu wrote:
-> > Hi Ananth,
-> > 
-> > FYI, kernel build failed on
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/benh/powerpc.git next
-> > head:   8b64a9dfb091f1eca8b7e58da82f1e7d1d5fe0ad
-> > commit: 8b7b80b9ebb46dd88fbb94e918297295cf312b59 [24/29] powerpc: Uprobes port to powerpc
-> > config: powerpc-allmodconfig (attached as .config)
-> > 
-> > All related error/warning messages:
-> > 
-> > In file included from drivers/atm/fore200e.c:70:0:
-> > drivers/atm/fore200e.h:263:3: error: redefinition of typedef 'opcode_t' with different type
-> > arch/powerpc/include/asm/probes.h:25:13: note: previous declaration of 'opcode_t' was here
-> 
-> This is a bit more annoying. Ananth, do we need that to be called
-> opcode_t for generic reasons or can we make it ppc_opcode_t ? If it has
-> to remain, I suppose we can try to change that ATM driver to use a
-> different type name...
 
-We can make it ppc_opcode_t. Attached is the patch that fixes this.
+--+xNpyl7Qekk2NvDX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regards,
-Ananth
+Hi Glauber,
+
+FYI, there are new sparse warnings show up in
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git kmemcg-slab
+head:   b20a4abf14992a969b761691f8978a28cacdecb4
+commit: db85c41ae676eb65f37b31a59111f2b9b56621ed [53/62] memcg: infrastructure to match an allocation to the right cache
+
+All sparse warnings:
+
+  mm/memcontrol.c:585:12: sparse: symbol 'cache_types' was not declared. Should it be static?
++ mm/memcontrol.c:755:6: sparse: symbol 'memcg_flush_cache_create_queue' was not declared. Should it be static?
+  include/linux/cgroup.h:559:16: sparse: cast removes address space of expression
+  include/linux/cgroup.h:559:16: sparse: incompatible types in comparison expression (different address spaces)
+  include/linux/cgroup.h:559:16: sparse: incompatible types in comparison expression (different address spaces)
+  mm/memcontrol.c:4763:21: sparse: incompatible types in comparison expression (different address spaces)
+  mm/memcontrol.c:4765:21: sparse: incompatible types in comparison expression (different address spaces)
+  mm/memcontrol.c:5946:31: sparse: incompatible types in comparison expression (different address spaces)
+
+vim +755 mm/memcontrol.c
+
+   748	/*
+   749	 * Flush the queue of kmem_caches to create, because we're creating a cgroup.
+   750	 *
+   751	 * We might end up flushing other cgroups' creation requests as well, but
+   752	 * they will just get queued again next time someone tries to make a slab
+   753	 * allocation for them.
+   754	 */
+ > 755	void memcg_flush_cache_create_queue(void)
+   756	{
+   757		struct create_work *cw, *tmp;
+   758		unsigned long flags;
+   759	
+   760		spin_lock_irqsave(&cache_queue_lock, flags);
+   761		list_for_each_entry_safe(cw, tmp, &create_queue, list) {
+   762			list_del(&cw->list);
+   763			kfree(cw);
+   764		}
+   765		spin_unlock_irqrestore(&cache_queue_lock, flags);
+   766	}
+
+Please consider folding the attached diff and ignore conflicts with
+the previous one :-)
+
 ---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
 
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+--+xNpyl7Qekk2NvDX
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-db85c41.diff"
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/benh/powerpc.git next
-head:   8b64a9dfb091f1eca8b7e58da82f1e7d1d5fe0ad
-commit: 8b7b80b9ebb46dd88fbb94e918297295cf312b59 [24/29] powerpc: Uprobes port to powerpc
-config: powerpc-allmodconfig (attached as .config)
-
-All related error/warning messages:
-
-In file included from drivers/atm/fore200e.c:70:0:
-drivers/atm/fore200e.h:263:3: error: redefinition of typedef 'opcode_t' with different type
-arch/powerpc/include/asm/probes.h:25:13: note: previous declaration of 'opcode_t' was here
-
-Fix the namespace clash by making opcode_t in probes.h to ppc_opcode_t.
-
-Signed-off-by: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
----
-Index: linux-tip-22aug/arch/powerpc/include/asm/probes.h
-=================================--- linux-tip-22aug.orig/arch/powerpc/include/asm/probes.h	2012-09-04 20:00:19.747069793 +0530
-+++ linux-tip-22aug/arch/powerpc/include/asm/probes.h	2012-09-04 20:42:08.147286718 +0530
-@@ -22,7 +22,7 @@
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index b85814a..fb7f1ca 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -582,7 +582,7 @@ static struct kmem_cache *kmem_cache_dup(struct mem_cgroup *memcg,
+ 	return new;
+ }
+ 
+-struct ida cache_types;
++static struct ida cache_types;
+ 
+ void memcg_register_cache(struct mem_cgroup *memcg, struct kmem_cache *cachep)
+ {
+@@ -752,7 +752,7 @@ static LIST_HEAD(create_queue);
+  * they will just get queued again next time someone tries to make a slab
+  * allocation for them.
   */
- #include <linux/types.h>
- 
--typedef u32 opcode_t;
-+typedef u32 ppc_opcode_t;
- #define BREAKPOINT_INSTRUCTION	0x7fe00008	/* trap */
- 
- /* Trap definitions per ISA */
-Index: linux-tip-22aug/arch/powerpc/include/asm/uprobes.h
-=================================--- linux-tip-22aug.orig/arch/powerpc/include/asm/uprobes.h	2012-09-04 20:01:30.617071747 +0530
-+++ linux-tip-22aug/arch/powerpc/include/asm/uprobes.h	2012-09-04 20:42:26.657287349 +0530
-@@ -25,7 +25,7 @@
- #include <linux/notifier.h>
- #include <asm/probes.h>
- 
--typedef opcode_t uprobe_opcode_t;
-+typedef ppc_opcode_t uprobe_opcode_t;
- 
- #define MAX_UINSN_BYTES		4
- #define UPROBE_XOL_SLOT_BYTES	(MAX_UINSN_BYTES)
-Index: linux-tip-22aug/arch/powerpc/include/asm/kprobes.h
-=================================--- linux-tip-22aug.orig/arch/powerpc/include/asm/kprobes.h	2012-09-04 20:00:19.747069793 +0530
-+++ linux-tip-22aug/arch/powerpc/include/asm/kprobes.h	2012-09-04 20:42:15.557286955 +0530
-@@ -36,7 +36,7 @@
- struct pt_regs;
- struct kprobe;
- 
--typedef opcode_t kprobe_opcode_t;
-+typedef ppc_opcode_t kprobe_opcode_t;
- #define MAX_INSN_SIZE 1
- 
- #ifdef CONFIG_PPC64
+-void memcg_flush_cache_create_queue(void)
++static void memcg_flush_cache_create_queue(void)
+ {
+ 	struct create_work *cw, *tmp;
+ 	unsigned long flags;
 
+--+xNpyl7Qekk2NvDX--
