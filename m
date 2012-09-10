@@ -1,49 +1,66 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Date: Thu, 20 Sep 2012 21:58:50 +0000
-Subject: Re: [rcu:rcu/next 5/78] kernel/rcutree.c:1131:41: error: 'flags' undeclared
-Message-Id: <20120920215850.GM2449@linux.vnet.ibm.com>
+From: "Jan Beulich" <JBeulich@suse.com>
+Date: Mon, 10 Sep 2012 09:03:26 +0000
+Subject: Re: [Xen-devel] [patch 3/3] xen/privcmd: remove const modifier from declaration
+Message-Id: <504DC8FE020000780009A190@nat28.tlf.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120920212447.GB5446@localhost>
-In-Reply-To: <20120920212447.GB5446@localhost>
+References: <20120908095808.GC608@elgon.mountain>
+In-Reply-To: <20120908095808.GC608@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andres Lagar-Cavilla <andreslc@gridcentric.ca>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, kernel-janitors@vger.kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, virtualization@lists.linux-foundation.org
 
-On Fri, Sep 21, 2012 at 05:24:47AM +0800, Fengguang Wu wrote:
-> Hi Paul,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git rcu/next
-> head:   d58ab773ab8bc98c81c7d49c04bc88b6e7968385
-> commit: 552116942862340a4a0577cbac194ddc6185e4cb [5/78] rcu: Move RCU grace-period cleanup into kthread
-> config: x86_64-allmodconfig
-> 
-> All related error/warning messages:
-> 
-> kernel/rcutree.c: In function 'rcu_gp_kthread':
-> kernel/rcutree.c:1131:41: error: 'flags' undeclared (first use in this function)
-> kernel/rcutree.c:1131:41: note: each undeclared identifier is reported only once for each function it appears in
-> kernel/rcutree.c:1131:74: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> kernel/rcutree.c:1176:74: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> 
-> vim +1131 kernel/rcutree.c
->   1125				if (!ACCESS_ONCE(rnp->qsmask) &&
->   1126				    !rcu_preempt_blocked_readers_cgp(rnp))
->   1127					break;
->   1128				flush_signals(current);
->   1129			}
->   1130	
-> > 1131			raw_spin_lock_irqsave(&rnp->lock, flags);
->   1132			gp_duration = jiffies - rsp->gp_start;
->   1133			if (gp_duration > rsp->gp_max)
->   1134				rsp->gp_max = gp_duration;
+>>> On 08.09.12 at 11:58, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> When we use this pointer, we cast away the const modifier and modify the
+> data.  I think it was an accident to declare it as const.
 
-<facepalm>
+NAK - the const is very valid here, as the v2 interface (as opposed
+to the v1 one) does _not_ modify this array (or if it does, it's a
+bug). This is a guarantee made to user mode, so it should also be
+expressed that way in the interface.
 
-I clearly put the raw_spin_lock_irq() conversion in the wrong commit.
-Fixing, will push the new version shortly.
+But of course the cast used before this patch isn't right either, as
+it indeed inappropriately discards the qualifier. Afaiu this was done
+to simplify the internal workings of the code, but I don't think it's
+desirable to sacrifice type safety for implementation simplicity.
 
-							Thanx, Paul
+Jan
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/include/xen/privcmd.h b/include/xen/privcmd.h
+> index a853168..58ed953 100644
+> --- a/include/xen/privcmd.h
+> +++ b/include/xen/privcmd.h
+> @@ -69,7 +69,7 @@ struct privcmd_mmapbatch_v2 {
+>  	unsigned int num; /* number of pages to populate */
+>  	domid_t dom;      /* target domain */
+>  	__u64 addr;       /* virtual address */
+> -	const xen_pfn_t __user *arr; /* array of mfns */
+> +	xen_pfn_t __user *arr; /* array of mfns */
+>  	int __user *err;  /* array of error codes */
+>  };
+>  
+> diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+> index 0ce006a..fceb83e 100644
+> --- a/drivers/xen/privcmd.c
+> +++ b/drivers/xen/privcmd.c
+> @@ -389,7 +389,7 @@ static long privcmd_ioctl_mmap_batch(void __user *udata, 
+> int version)
+>  
+>  	if (state.global_error && (version = 1)) {
+>  		/* Write back errors in second pass. */
+> -		state.user_mfn = (xen_pfn_t *)m.arr;
+> +		state.user_mfn = m.arr;
+>  		state.err      = err_array;
+>  		ret = traverse_pages(m.num, sizeof(xen_pfn_t),
+>  				     &pagelist, mmap_return_errors_v1, &state);
+> 
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xen.org 
+> http://lists.xen.org/xen-devel 
+
+
 
