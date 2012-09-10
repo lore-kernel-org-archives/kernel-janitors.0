@@ -1,43 +1,33 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 10 Sep 2012 12:45:24 +0000
-Subject: Re: [PATCH v2] drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c: fix error return code
-Message-Id: <CA+MoWDq12HEtA4xODddMzqEOENQDgx4MzbogFe4uprm93CvvOw@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 10 Sep 2012 12:57:59 +0000
+Subject: [glommer-memcg:kmemcg-slab 57/62] drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token MAX_L
+Message-Id: <20120910125759.GA11808@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347112918-7738-1-git-send-email-peter.senna@gmail.com>
-	<CALF0-+U_D4ipSbN=DHSdxRvE1sju-Uq0e_mTE9=QsjLOtpLe1w@mail.gmail.com>
-In-Reply-To: <CALF0-+U_D4ipSbN=DHSdxRvE1sju-Uq0e_mTE9=QsjLOtpLe1w@mail.gmail.com>
+References: <20120910111638.GC9660@localhost>
+In-Reply-To: <20120910111638.GC9660@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ezequiel Garcia <elezegarcia@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, wharms@bfs.de, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Glauber Costa <glommer@parallels.com>
+Cc: kernel-janitors@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>
 
->
-> You're replacing kmemdup for kstrdup, which is great,
-> but that's not anywhere in the commit message.
-Sorry for that.
+Glauber,
 
->
-> I'm not sure if you should re-send, but you should definitely
-> try to have better commit messages in the future!
-I'll kindly ask to ignore the V2 of this patch. I'll send other patch
-to be applied after the V1. The second patch will replace kmemdup for
-kstrdup. Please ignore the patch:
-http://patchwork.linuxtv.org/patch/14237/
+The patch entitled
 
->
-> Not to mention you're doing two things in one patch, and that makes
-> very difficult to bisect.
-This is really bad thing to do in a single patch. Sorry for that too.
+ sl[au]b: Allocate objects from memcg cache
 
->
-> Thanks (and sorry for the nitpick)...
+changes
 
-Thanks!
+ include/linux/slub_def.h |   15 ++++++++++-----
 
-> Ezequiel.
+which triggers this warning:
 
+drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token MAX_LEVEL redefined
 
+It's the MAX_LEVEL that is defined in include/linux/idr.h.
 
--- 
-Peter
+MAX_LEVEL is obviously too generic. Better adding some prefix to it?
+
+Thanks,
+Fengguang
