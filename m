@@ -1,75 +1,49 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Fri, 07 Sep 2012 12:36:37 +0000
-Subject: Re: [PATCH 8/10] net/mac80211/scan.c: removes unnecessary semicolon
-Message-Id: <CA+MoWDpYEsmWFKb0vyR-6Cn7hcYtz161X4iB1ySGGUUSfCxEpg@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 10 Sep 2012 16:40:15 +0000
+Subject: [balbi-usb:master 33/36] drivers/usb/gadget/serial.c:89:22: sparse: cast truncates bits from constan
+Message-Id: <20120910164015.GA16252@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346947757-10481-9-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346947757-10481-9-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Please note that there are some false positives reported by this
-semantic patch, so I'm still working on it. I've removed lists from
-CC, kept only kernel-janitors.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git master
+head:   d9c88901337158c9f253a7de58a10b5125d61d26
+commit: 7a7322b0a5d984025dd4faea9098b8fef07f8d8f [33/36] usb: gadget: remove usb_gadget_controller_number()
 
-// <smpl>
-@r_case@
-position p;
-@@
-switch (...)
-{
-case ...: ...;@p
-}
+All sparse warnings:
 
-@r_default@
-position p;
-@@
-switch (...)
-{
-default: ...;@p
-}
+  drivers/usb/gadget/f_acm.c:287:9: sparse: advancing past deep designator
+  drivers/usb/gadget/f_obex.c:60:9: sparse: advancing past deep designator
+  drivers/usb/gadget/f_serial.c:134:9: sparse: advancing past deep designator
+  drivers/usb/gadget/serial.c:66:9: sparse: advancing past deep designator
++ drivers/usb/gadget/serial.c:89:22: sparse: cast truncates bits from constant value (24000000 becomes 0)
 
-@r1@
-statement S;
-position p1;
-position p != {r_case.p, r_default.p};
-identifier label;
-@@
-(
-label:;
-|
-S@p1;@p
-)
+vim +89 drivers/usb/gadget/serial.c
+    79	static struct usb_device_descriptor device_desc = {
+    80		.bLength =		USB_DT_DEVICE_SIZE,
+    81		.bDescriptorType =	USB_DT_DEVICE,
+    82		.bcdUSB =		cpu_to_le16(0x0200),
+    83		/* .bDeviceClass = f(use_acm) */
+    84		.bDeviceSubClass =	0,
+    85		.bDeviceProtocol =	0,
+    86		/* .bMaxPacketSize0 = f(hardware) */
+    87		.idVendor =		cpu_to_le16(GS_VENDOR_ID),
+    88		/* .idProduct =	f(use_acm) */
+  > 89		.bcdDevice = cpu_to_le16(GS_VERSION_NUM << 16),
+    90		/* .iManufacturer = DYNAMIC */
+    91		/* .iProduct = DYNAMIC */
+    92		.bNumConfigurations =	1,
+    93	};
+    94	
+    95	static struct usb_otg_descriptor otg_descriptor = {
+    96		.bLength =		sizeof otg_descriptor,
+    97		.bDescriptorType =	USB_DT_OTG,
+    98	
+    99		/* REVISIT SRP-only hardware is possible, although
 
-@script:python r2@
-p << r1.p;
-p_case << r_case.p;
-p1 << r1.p1;
-@@
-if p[0].line != p1[0].line_end:
-        cocci.include_match(False)
-@@
-position r1.p;
-@@
--;@p
-// </smpl>
-
-On Fri, Sep 7, 2012 at 1:30 PM, Johannes Berg <johannes@sipsolutions.net> wrote:
-> On Thu, 2012-09-06 at 18:09 +0200, Peter Senna Tschudin wrote:
->> From: Peter Senna Tschudin <peter.senna@gmail.com>
->>
->> removes unnecessary semicolon
->>
->> Found by Coccinelle: http://coccinelle.lip6.fr/
->
-> Applied. It'd be nice to have the spatch, I guess :)
->
-> johannes
->
-
-
-
--- 
-Peter
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
