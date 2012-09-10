@@ -1,38 +1,24 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 16:09:09 +0000
-Subject: [PATCH 10/10] drivers/block/ataflop.c: removes unnecessary semicolon
-Message-Id: <1346947757-10481-2-git-send-email-peter.senna@gmail.com>
+From: "DR.NED OKOH" <emailinfo@ok.net>
+Date: Mon, 10 Sep 2012 12:34:27 +0000
+Subject: NICE DAY
+Message-Id: <SERVER8HhS7PFlOHkd400007cf6@offline.co.il>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Good day my dear,
+I am writing to acknowledged you that this is the second time we are notifying you about your payment worth of US$16.5m USD,with foreign Remittance payment department office which is due to be released into your Account As we begin the first fiscal payment of the year 2012.Please send the information below as needed for your fund release to you OK.
 
-removes unnecessary semicolon
+1)Your Full Name__________________________ _____________
+2)Your Address_______________________ ______________________________
+3)Your Age___________________________ _______________________
+4)Your Direct Telephone Number________________________ ________________
+5)Fax Number________________________ _________________
+6)Occupation____________________ __________________________
 
-Found by Coccinelle: http://coccinelle.lip6.fr/
+We sincerely apologies for our late contact with you, We are committed to serve you better OK and you have been advice to get back to me immediately for more details OK.
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
- drivers/block/ataflop.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/block/ataflop.c b/drivers/block/ataflop.c
---- a/drivers/block/ataflop.c
-+++ b/drivers/block/ataflop.c
-@@ -775,7 +775,7 @@ static void fd_calibrate( void )
- 	}
- 
- 	if (ATARIHW_PRESENT(FDCSPEED))
--		dma_wd.fdc_speed = 0; 	/* always seek with 8 Mhz */;
-+		dma_wd.fdc_speed = 0; 	/* always seek with 8 Mhz */
- 	DPRINT(("fd_calibrate\n"));
- 	SET_IRQ_HANDLER( fd_calibrate_done );
- 	/* we can't verify, since the speed may be incorrect */
-
+Yours in service
+Dr.Ned Okoh
