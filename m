@@ -1,45 +1,23 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Fri, 07 Sep 2012 15:24:46 +0000
-Subject: [PATCH 6/10] drivers/media/i2c/tea6415c.c: removes unnecessary semicolon
-Message-Id: <1347031488-26598-8-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 11 Sep 2012 09:16:37 +0000
+Subject: [glommer-memcg:kmemcg-slab 51/62] slab_common.c:(.init.text+0x12b8): undefined reference to `__kmem_
+Message-Id: <20120911091637.GB29599@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git kmemcg-slab
+head:   b20a4abf14992a969b761691f8978a28cacdecb4
+commit: dd5f38a8831cf1b4d73a2069ab000f847bd617a3 [51/62] provide a common place for initcall processing in kmem_cache
+config: sh-allnoconfig
 
-removes unnecessary semicolon
+All related error/warning messages:
 
-Found by Coccinelle: http://coccinelle.lip6.fr/
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+mm/built-in.o: In function `kmem_cache_initcall':
+slab_common.c:(.init.text+0x12b8): undefined reference to `__kmem_cache_initcall'
 
 ---
- drivers/media/i2c/tea6415c.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff -u -p a/drivers/media/i2c/tea6415c.c b/drivers/media/i2c/tea6415c.c
---- a/drivers/media/i2c/tea6415c.c
-+++ b/drivers/media/i2c/tea6415c.c
-@@ -81,7 +81,7 @@ static int tea6415c_s_routing(struct v4l
- 	case 13:
- 		byte = 0x28;
- 		break;
--	};
-+	}
- 
- 	switch (i) {
- 	case 5:
-@@ -108,7 +108,7 @@ static int tea6415c_s_routing(struct v4l
- 	case 11:
- 		byte |= 0x07;
- 		break;
--	};
-+	}
- 
- 	ret = i2c_smbus_write_byte(client, byte);
- 	if (ret) {
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
