@@ -1,38 +1,37 @@
-From: Jiri Olsa <jolsa@redhat.com>
-Date: Wed, 05 Sep 2012 12:59:34 +0000
-Subject: Re: [patch] perf: off by one test in perf_reg_value()
-Message-Id: <20120905125934.GA1869@krava.brq.redhat.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 11 Sep 2012 14:31:36 +0000
+Subject: [kvm:next 1/1] arch/x86/kvm/emulate.c:232 writeback_registers() error: buffer overflow 'ctxt->_regs'
+Message-Id: <20120911143136.GA5736@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120905123126.GC6128@elgon.mountain>
-In-Reply-To: <20120905123126.GC6128@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Avi Kivity <avi@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, kvm@vger.kernel.org
 
-On Wed, Sep 05, 2012 at 03:31:26PM +0300, Dan Carpenter wrote:
-> The test should be >= ARRAY_SIZE() instead of > ARRAY_SIZE().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hi Avi,
 
-Acked-by: Jiri Olsa <jolsa@redhat.com>
+In the kvm/next branch, sparse warns about
 
-thanks,
-jirka
+arch/x86/kvm/emulate.c:232 writeback_registers() error: buffer overflow 'ctxt->_regs' 9 <= 15
 
-> ---
-> Only needed on linux-next.
-> 
-> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-> index c5a3e5c..e309cc5 100644
-> --- a/arch/x86/kernel/perf_regs.c
-> +++ b/arch/x86/kernel/perf_regs.c
-> @@ -57,7 +57,7 @@ static unsigned int pt_regs_offset[PERF_REG_X86_MAX] = {
->  
->  u64 perf_reg_value(struct pt_regs *regs, int idx)
->  {
-> -	if (WARN_ON_ONCE(idx > ARRAY_SIZE(pt_regs_offset)))
-> +	if (WARN_ON_ONCE(idx >= ARRAY_SIZE(pt_regs_offset)))
->  		return 0;
->  
->  	return regs_get_register(regs, pt_regs_offset[idx]);
+This is because the array definition is ctxt._regs[NR_VCPU_REGS] where
+NR_VCPU_REGS=9 for i386 and 17 for x86_64.
+
+It could be fixed by changing the hard coded 16 to (NR_VCPU_REGS-1).
+And I wonder whether you actually want NR_VCPU_REGS here?
+
+Thanks,
+Fengguang
+---
+--- linux-next.orig/arch/x86/kvm/emulate.c	2012-09-11 20:14:00.537475301 +0800
++++ linux-next/arch/x86/kvm/emulate.c	2012-09-11 22:21:57.569227558 +0800
+@@ -228,7 +228,7 @@ static void writeback_registers(struct x
+ {
+ 	unsigned reg;
+ 
+-	for_each_set_bit(reg, (ulong *)&ctxt->regs_dirty, 16)
++	for_each_set_bit(reg, (ulong *)&ctxt->regs_dirty, NR_VCPU_REGS)
+ 		ctxt->ops->write_gpr(ctxt, reg, ctxt->_regs[reg]);
+ }
+ 
