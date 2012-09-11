@@ -1,22 +1,62 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Thu, 13 Sep 2012 04:30:30 +0000
-Subject: Re: [PATCH 8/9] sound/soc/soc-core.c: Remove useless kfree
-Message-Id: <20120913043028.GD6732@opensource.wolfsonmicro.com>
+From: Haojian Zhuang <haojian.zhuang@gmail.com>
+Date: Tue, 11 Sep 2012 14:09:55 +0000
+Subject: [PATCH] mfd: fix the warning of __devinitdata
+Message-Id: <1347372595-11370-1-git-send-email-haojian.zhuang@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347462407-13499-8-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347462407-13499-8-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 12, 2012 at 05:06:46PM +0200, Peter Senna Tschudin wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> Remove useless kfree() and clean up code related to the removal.
-> 
-> The semantic patch that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+WARNING: drivers/built-in.o(.data+0x1e3c8): Section mismatch in
+reference from the variable bk_devs to the variable
+.devinit.data:bk0_resources
+The variable bk_devs references
+the variable __devinitdata bk0_resources
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the
+variable:
+*driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one,
+*_console
 
-Applied, thanks.
+So add __devinitdata on bk_devs, led_devs & reg_devs.
+
+Signed-off-by: Haojian Zhuang <haojian.zhuang@gmail.com>
+---
+ drivers/mfd/88pm860x-core.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
+index 4927f4e..0c01d74 100644
+--- a/drivers/mfd/88pm860x-core.c
++++ b/drivers/mfd/88pm860x-core.c
+@@ -158,7 +158,7 @@ static struct resource rtc_resources[] __devinitdata = {
+ 	{PM8607_IRQ_RTC, PM8607_IRQ_RTC, "rtc", IORESOURCE_IRQ,},
+ };
+ 
+-static struct mfd_cell bk_devs[] = {
++static struct mfd_cell bk_devs[] __devinitdata = {
+ 	{
+ 		.name = "88pm860x-backlight",
+ 		.id = 0,
+@@ -177,7 +177,7 @@ static struct mfd_cell bk_devs[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell led_devs[] = {
++static struct mfd_cell led_devs[] __devinitdata = {
+ 	{
+ 		.name = "88pm860x-led",
+ 		.id = 0,
+@@ -211,7 +211,7 @@ static struct mfd_cell led_devs[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell reg_devs[] = {
++static struct mfd_cell reg_devs[] __devinitdata = {
+ 	{
+ 		.name = "88pm860x-regulator",
+ 		.id = 0,
+-- 
+1.7.9.5
+
