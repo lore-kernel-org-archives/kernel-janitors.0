@@ -1,35 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 12 Sep 2012 15:45:28 +0000
-Subject: Re: [PATCH] gpio: pcf857x: fixup smatch WARNING
-Message-Id: <CACRpkdYagWXN4zOEVNK==kR96R2x7qjM7UX-NmUhtPwEyx=L_A@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Sep 2012 10:51:27 +0000
+Subject: Re: smatch warnings in current upstream kernel
+Message-Id: <20120911105127.GD19410@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120912031131.GA22076@localhost>
-	<87fw6nn7gx.wl%kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87fw6nn7gx.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 12, 2012 at 7:19 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
+On Tue, Sep 11, 2012 at 06:10:02PM +0800, Fengguang Wu wrote:
+> Here are the 7161 smatch warnings for 2139 files in upstream head
+> 1a95620f45155ac523cd1419d89150fbb4eb858b.  It's not a complete build
+> (no make clean), so does not include all possible warnings.
+> 
 
-> 6e20a0a429bd4dc07d6de16d9c247270e04e4aa0
-> (gpio: pcf857x: enable gpio_to_irq() support)
-> added new smatch warnings
->
-> drivers/gpio/gpio-pcf857x.c:288 pcf857x_probe() error: we previously \
->         assumed 'pdata' could be null (see line 277)
-> drivers/gpio/gpio-pcf857x.c:364 pcf857x_probe() warn: variable dereferenced\
->          before check 'pdata' (see line 292)
-> drivers/gpio/gpio-pcf857x.c:421 pcf857x_remove() error: we previously\
->          assumed 'pdata' could be null (see line 410)
->
-> This patch fixes it
->
-> Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+There are some sparse warnings mixed in as well.  They would have
+been sent to stderr and smatch warnings get sent to stdout.
 
-Applied, thanks!
-Linus Walleij
+But if you want you could look at smatch_scripts/test_kernel.sh
+which allows for a parallel build and saves all the warnings in
+warns.txt.
+
+I guess you have your own parallel build technique as well and that
+works too.
+
+regards,
+dan carpenter
