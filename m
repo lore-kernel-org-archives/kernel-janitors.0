@@ -1,21 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 18 Sep 2012 20:13:03 +0000
-Subject: Re: [PATCH 1/3] net/ieee802154/6lowpan.c: Remove unecessary semicolon
-Message-Id: <20120918.161303.1556095081868359585.davem@davemloft.net>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 11 Sep 2012 03:01:15 +0000
+Subject: [pci:next 84/84] arch/powerpc/platforms/powernv/pci-ioda.c:1164:13: error: 'struct pci_dev' has no m
+Message-Id: <20120911030115.GC23365@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347988245-31413-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347988245-31413-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: alex.bluesman.smirnov@gmail.com, dbaryshkov@gmail.com, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 19:10:43 +0200
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
+head:   488f54cda219cab6e91139b3ba677b4673cdcf20
+commit: 488f54cda219cab6e91139b3ba677b4673cdcf20 [84/84] Merge branch 'pci/gavin-window-alignment' into next
 
-> Found by http://coccinelle.lip6.fr/
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+All related error/warning messages:
 
-Applied.
+arch/powerpc/platforms/powernv/pci-ioda.c: In function 'pnv_pci_window_alignment':
+arch/powerpc/platforms/powernv/pci-ioda.c:1164:13: error: 'struct pci_dev' has no member named 'pcie_type'
+
+vim +1164 arch/powerpc/platforms/powernv/pci-ioda.c
+  1159		struct pnv_phb *phb = hose->private_data;
+  1160		int num_pci_bridges = 0;
+  1161	
+  1162		bridge = bus->self;
+  1163		while (bridge) {
+> 1164			if (bridge->pcie_type = PCI_EXP_TYPE_PCI_BRIDGE) {
+  1165				num_pci_bridges++;
+  1166				if (num_pci_bridges >= 2)
+  1167					return 1;
+  1168			}
+  1169	
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
