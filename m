@@ -1,79 +1,41 @@
-From: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-Date: Thu, 13 Sep 2012 12:43:00 +0000
-Subject: Re: [patch] gcov: cleanup an allocation in new_node()
-Message-Id: <5051D4D4.7060906@linux.vnet.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Sep 2012 11:12:43 +0000
+Subject: [patch] ALSA: compress_core: fix open flags test in snd_compr_open()
+Message-Id: <20120911111243.GC22259@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120911111333.GD22259@elgon.mountain>
-In-Reply-To: <20120911111333.GD22259@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Vinod Koul <vinod.koul@linux.intel.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Jesper Juhl <jj@chaosbits.net>, Namarta Kohli <namartax.kohli@intel.com>
 
-On 11.09.2012 13:13, Dan Carpenter wrote:
-> 1) kcalloc(1, ...) can be replaced with kzalloc().
-> 2) There was a small leak if the debugfs_create_dir() fails.
-> 3) I removed a pr_warning("out of memory\n") because kmalloc() already
->     prints a more useful failure message in the unlikely case of an
->     allocation failure.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/kernel/gcov/fs.c b/kernel/gcov/fs.c
-> index 9bd0934..132168f 100644
-> --- a/kernel/gcov/fs.c
-> +++ b/kernel/gcov/fs.c
-> @@ -437,7 +437,7 @@ static struct gcov_node *new_node(struct gcov_node *parent,
->   	if (!node)
->   		goto err_nomem;
->   	if (info) {
-> -		node->loaded_info = kcalloc(1, sizeof(struct gcov_info *),
-> +		node->loaded_info = kzalloc(sizeof(struct gcov_info *),
->   					   GFP_KERNEL);
+O_RDONLY is zero so the original test (f->f_flags & O_RDONLY) is always
+false and it will never do compress capture.  The test for O_WRONLY is
+also slightly off.  The original test would consider "->flags (O_WRONLY | O_RDWR)" as write only instead of rejecting it as invalid.
 
-I'd like to keep using kcalloc here since node->loaded_info is an array.
+I've also removed the pr_err() because that could flood dmesg.
 
->   		if (!node->loaded_info)
->   			goto err_nomem;
-> @@ -451,8 +451,7 @@ static struct gcov_node *new_node(struct gcov_node *parent,
->   		node->dentry = debugfs_create_dir(node->name, parent->dentry);
->   	if (!node->dentry) {
->   		pr_warning("could not create file\n");
-> -		kfree(node);
-> -		return NULL;
-> +		goto err_info;
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I agree that this is a potential memory leak - good find!
-
->   	}
->   	if (info)
->   		add_links(node, parent->dentry);
-> @@ -461,9 +460,11 @@ static struct gcov_node *new_node(struct gcov_node *parent,
->
->   	return node;
->
-> +err_info:
-> +	if (info)
-> +		kfree(node->loaded_info);
-
-The 'if' here is not necessary: node->loaded_info is either zero (kfree 
-tolerates NULL) or requires freeing. With the removal of the pr_warning 
-below, the additional kfree can also be added to err_nomem (no need for 
-another label) though then it should probably also be renamed.
-
->   err_nomem:
->   	kfree(node);
-> -	pr_warning("out of memory\n");
->   	return NULL;
->   }
->
->
-
-Regards,
-   Peter Oberparleiter
-
--- 
-Peter Oberparleiter
-Linux on System z Development - IBM Germany
-
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index ec2118d..eb60cb8 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -80,14 +80,12 @@ static int snd_compr_open(struct inode *inode, struct file *f)
+ 	int maj = imajor(inode);
+ 	int ret;
+ 
+-	if (f->f_flags & O_WRONLY)
++	if ((f->f_flags & O_ACCMODE) = O_WRONLY)
+ 		dirn = SND_COMPRESS_PLAYBACK;
+-	else if (f->f_flags & O_RDONLY)
++	else if ((f->f_flags & O_ACCMODE) = O_RDONLY)
+ 		dirn = SND_COMPRESS_CAPTURE;
+-	else {
+-		pr_err("invalid direction\n");
++	else
+ 		return -EINVAL;
+-	}
+ 
+ 	if (maj = snd_major)
+ 		compr = snd_lookup_minor_data(iminor(inode),
