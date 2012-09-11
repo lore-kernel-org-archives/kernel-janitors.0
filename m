@@ -1,31 +1,73 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 25 Sep 2012 08:15:02 +0000
-Subject: arch/x86/kernel/traps.c:682 do_iret_error() warn: add some parenthesis here?
-Message-Id: <20120925081502.GB21642@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Sep 2012 11:11:24 +0000
+Subject: [patch v3] [media] rc: divide by zero bugs in s_tx_carrier()
+Message-Id: <20120911111124.GA22259@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20120909222629.GA28355@pequod.mess.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Frederic,
+"carrier" comes from a get_user() in ir_lirc_ioctl().  We need to test
+that it's not zero before using it as a divisor.  It might have been
+nice to test for this ir_lirc_ioctl() but the mceusb driver uses zero to
+disable carrier modulation.
 
-FYI, there are new smatch warnings show up in
+The bug in redrat3 is a little more subtle.  The ->carrier is passed to
+mod_freq_to_val() which uses it as a divisor.
 
-99fc5f65c655ea22ec1afecb7747663956b57f13  x86: Exception hooks for userspace RCU extended QS
-2012-09-24 20:10:00 -0700
-
-All smatch warnings:
-
-  arch/x86/kernel/traps.c:289 do_general_protection() warn: add some parenthesis here?
-  arch/x86/kernel/traps.c:627 math_state_restore() info: ignoring unreachable code.
-+ arch/x86/kernel/traps.c:682 do_iret_error() warn: add some parenthesis here?
-
-vim +682 arch/x86/kernel/traps.c
-
-   681		if (!notify_die(DIE_TRAP, "iret exception", regs, error_code,
- > 682				X86_TRAP_IRET, SIGILL) = NOTIFY_STOP) {
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+v2: tried to add the check to ir_lirc_ioctl() but that doesn't work.
+v3: the same as v1 except that I've added a fix for redrat3 as well.
+
+diff --git a/drivers/media/rc/ene_ir.c b/drivers/media/rc/ene_ir.c
+index 647dd95..d05ac15 100644
+--- a/drivers/media/rc/ene_ir.c
++++ b/drivers/media/rc/ene_ir.c
+@@ -881,10 +881,13 @@ static int ene_set_tx_mask(struct rc_dev *rdev, u32 tx_mask)
+ static int ene_set_tx_carrier(struct rc_dev *rdev, u32 carrier)
+ {
+ 	struct ene_device *dev = rdev->priv;
+-	u32 period = 2000000 / carrier;
++	u32 period;
+ 
+ 	dbg("TX: attempt to set tx carrier to %d kHz", carrier);
++	if (carrier = 0)
++		return -EINVAL;
+ 
++	period = 2000000 / carrier;
+ 	if (period && (period > ENE_CIRMOD_PRD_MAX ||
+ 			period < ENE_CIRMOD_PRD_MIN)) {
+ 
+diff --git a/drivers/media/rc/nuvoton-cir.c b/drivers/media/rc/nuvoton-cir.c
+index 699eef3..2ea913a 100644
+--- a/drivers/media/rc/nuvoton-cir.c
++++ b/drivers/media/rc/nuvoton-cir.c
+@@ -517,6 +517,9 @@ static int nvt_set_tx_carrier(struct rc_dev *dev, u32 carrier)
+ 	struct nvt_dev *nvt = dev->priv;
+ 	u16 val;
+ 
++	if (carrier = 0)
++		return -EINVAL;
++
+ 	nvt_cir_reg_write(nvt, 1, CIR_CP);
+ 	val = 3000000 / (carrier) - 1;
+ 	nvt_cir_reg_write(nvt, val & 0xff, CIR_CC);
+diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
+index 2878b0e..bf8bc74 100644
+--- a/drivers/media/rc/redrat3.c
++++ b/drivers/media/rc/redrat3.c
+@@ -890,6 +890,9 @@ static int redrat3_set_tx_carrier(struct rc_dev *rcdev, u32 carrier)
+ 	struct device *dev = rr3->dev;
+ 
+ 	rr3_dbg(dev, "Setting modulation frequency to %u", carrier);
++	if (carrier = 0)
++		return -EINVAL;
++
+ 	rr3->carrier = carrier;
+ 
+ 	return carrier;
+
