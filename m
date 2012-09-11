@@ -1,7 +1,7 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 11 Sep 2012 11:06:40 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Sep 2012 14:29:26 +0000
 Subject: Re: smatch warnings in current upstream kernel
-Message-Id: <20120911110640.GB1244@localhost>
+Message-Id: <20120911142926.GW19396@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120911105127.GD19410@mwanda>
 In-Reply-To: <20120911105127.GD19410@mwanda>
@@ -10,32 +10,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Sep 11, 2012 at 01:51:27PM +0300, Dan Carpenter wrote:
-> On Tue, Sep 11, 2012 at 06:10:02PM +0800, Fengguang Wu wrote:
-> > Here are the 7161 smatch warnings for 2139 files in upstream head
-> > 1a95620f45155ac523cd1419d89150fbb4eb858b.  It's not a complete build
-> > (no make clean), so does not include all possible warnings.
-> > 
-> 
-> There are some sparse warnings mixed in as well.  They would have
-> been sent to stderr and smatch warnings get sent to stdout.
+On Tue, Sep 11, 2012 at 07:06:40PM +0800, Fengguang Wu wrote:
+> On Tue, Sep 11, 2012 at 01:51:27PM +0300, Dan Carpenter wrote:
+>
+> $SMATCH -p kernel "$@" > $SMATCH_OUT_ROOT/$PPID-$$-$RANDOM
 
-Thanks for pointing this out!
+Some of the warnings you are getting seem to mean that you're not
+picking up the smatch_data/ directory.  For example some of the
+buffer overflow errors:
 
-> But if you want you could look at smatch_scripts/test_kernel.sh
-> which allows for a parallel build and saves all the warnings in
-> warns.txt.
- 
-Yeah I looked at the script, however did not want to touch the source
-tree, so...
+drivers/mtd/ubi/wl.c:336 prot_queue_add() warn: buffer overflow 'ubi->pq' 10 <= 10
 
-> I guess you have your own parallel build technique as well and that
-> works too.
+What is happening in that function is that Smatch sees the:
+	ubi_assert(pq_tail >= 0 && pq_tail < UBI_PROT_QUEUE_LEN);
 
-I have a tiny smatch wrapper script for passing to CHECK=.
-According to your advice, I will only save its stdout:
+and assumes that since there is a test for
+"pq_tail < UBI_PROT_QUEUE_LEN" then it must be possible for
+pq_tail = UBI_PROT_QUEUE_LEN.  There is a file called:
+smatch_data/kernel.ignored_macros which has ubi_assert() and it
+means to ignore everything that happens inside a ubi_assert().
 
-$SMATCH -p kernel "$@" > $SMATCH_OUT_ROOT/$PPID-$$-$RANDOM
+Normally Smatch looks for the data dir with the binary, but you can
+also specify a directory with --data=/path/to/smatch_data/.  Then
+you can test that it's working by doing a:
+	kchecker drivers/mtd/ubi/wl.c
+to verify that the warning goes away.
 
-Thanks,
-Fengguang
+It may cause a lot of new warnings to show up though...
+
+regards,
+dan carpenter
