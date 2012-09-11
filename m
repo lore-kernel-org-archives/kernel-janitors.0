@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 10 Sep 2012 16:12:50 +0000
+From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Date: Tue, 11 Sep 2012 08:27:47 +0000
 Subject: Re: [PATCH] idr: Rename MAX_LEVEL to MAX_ID_LEVEL
-Message-Id: <504E1182.7080300@bfs.de>
+Message-Id: <1347352069.14488.12.camel@thorin>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120910131426.GA12431@localhost>
 In-Reply-To: <20120910131426.GA12431@localhost>
@@ -11,9 +11,9 @@ Content-Transfer-Encoding: 7bit
 To: Fengguang Wu <fengguang.wu@intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Glauber Costa <glommer@parallels.com>, kernel-janitors@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>
 
+Hi!
 
-
-Am 10.09.2012 15:14, schrieb Fengguang Wu:
+On Mon, 2012-09-10 at 21:14 +0800, Fengguang Wu wrote:
 > To avoid name conflicts:
 > 
 > drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token MAX_LEVEL redefined
@@ -36,25 +36,24 @@ Am 10.09.2012 15:14, schrieb Fengguang Wu:
 >  /* Leave the possibility of an incomplete final layer */
 > -#define MAX_LEVEL (MAX_ID_SHIFT + IDR_BITS - 1) / IDR_BITS
 > +#define MAX_ID_LEVEL (MAX_ID_SHIFT + IDR_BITS - 1) / IDR_BITS
->  
+
+And while you are it: Please add '(' and ')' around it as in 
+
+#define MAX_ID_LEVEL ((MAX_ID_SHIFT + IDR_BITS - 1) / IDR_BITS)
+
+
 >  /* Number of id_layer structs to leave in free list */
 > -#define IDR_FREE_MAX MAX_LEVEL + MAX_LEVEL
 > +#define IDR_FREE_MAX MAX_ID_LEVEL + MAX_ID_LEVEL
->  
+#define IDR_FREE_MAX (MAX_ID_LEVEL + MAX_ID_LEVEL)
 
-To be fair, i am a bit confused by the naming.
-There is MAX_id_LEVEL but idr_BITS are these different things ?
-If not i would argue to give both the same names either ID or IDR.
+For starters (sleeping in "cpp-101";-): People may use it as in
+"IDR_FREE_MAX * 2".
+And I didn't look into that file - that should be changed everywhere in
+that way.
 
-re,
- wh
+	Bernd
+-- 
+Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
+                     LUGA : http://www.luga.at
 
-
->  struct idr_layer {
->  	unsigned long		 bitmap; /* A zero bit means "space here" */
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
