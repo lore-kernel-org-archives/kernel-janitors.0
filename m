@@ -1,23 +1,55 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Wed, 12 Sep 2012 20:24:48 +0000
-Subject: Re: [PATCH 2/9] block/blk-tag.c: Remove useless kfree
-Message-Id: <5050EF90.2090802@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Sep 2012 11:13:33 +0000
+Subject: [patch] gcov: cleanup an allocation in new_node()
+Message-Id: <20120911111333.GD22259@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347462407-13499-2-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347462407-13499-2-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org
 
-On 2012-09-12 17:06, Peter Senna Tschudin wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> Remove useless kfree() and clean up code related to the removal.
+1) kcalloc(1, ...) can be replaced with kzalloc().
+2) There was a small leak if the debugfs_create_dir() fails.
+3) I removed a pr_warning("out of memory\n") because kmalloc() already
+   prints a more useful failure message in the unlikely case of an
+   allocation failure.
 
-Thanks, nice cleanup! Applied to for-3.7/core
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Jens Axboe
-
+diff --git a/kernel/gcov/fs.c b/kernel/gcov/fs.c
+index 9bd0934..132168f 100644
+--- a/kernel/gcov/fs.c
++++ b/kernel/gcov/fs.c
+@@ -437,7 +437,7 @@ static struct gcov_node *new_node(struct gcov_node *parent,
+ 	if (!node)
+ 		goto err_nomem;
+ 	if (info) {
+-		node->loaded_info = kcalloc(1, sizeof(struct gcov_info *),
++		node->loaded_info = kzalloc(sizeof(struct gcov_info *),
+ 					   GFP_KERNEL);
+ 		if (!node->loaded_info)
+ 			goto err_nomem;
+@@ -451,8 +451,7 @@ static struct gcov_node *new_node(struct gcov_node *parent,
+ 		node->dentry = debugfs_create_dir(node->name, parent->dentry);
+ 	if (!node->dentry) {
+ 		pr_warning("could not create file\n");
+-		kfree(node);
+-		return NULL;
++		goto err_info;
+ 	}
+ 	if (info)
+ 		add_links(node, parent->dentry);
+@@ -461,9 +460,11 @@ static struct gcov_node *new_node(struct gcov_node *parent,
+ 
+ 	return node;
+ 
++err_info:
++	if (info)
++		kfree(node->loaded_info);
+ err_nomem:
+ 	kfree(node);
+-	pr_warning("out of memory\n");
+ 	return NULL;
+ }
+ 
