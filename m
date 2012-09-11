@@ -1,81 +1,33 @@
-From: Dan Magenheimer <dan.magenheimer@oracle.com>
-Date: Thu, 06 Sep 2012 17:15:48 +0000
-Subject: RE: [patch] staging: ramster: fix range checks in zcache_autocreate_pool()
-Message-Id: <8d085295-c15d-441c-8463-58cfc7ffc139@default>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 11 Sep 2012 09:15:37 +0000
+Subject: [wireless:master 39/40] drivers/net/wireless/ath/ath9k/ar9003_eeprom.c:2987
+Message-Id: <20120911091537.GA29599@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120906124020.GA28946@elgon.mountain>
-In-Reply-To: <20120906124020.GA28946@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Konrad Wilk <konrad.wilk@oracle.com>, devel@driverdev.osuosl.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-> From: Dan Carpenter
-> Sent: Thursday, September 06, 2012 6:40 AM
-> To: Greg Kroah-Hartman
-> Cc: Dan Magenheimer; Konrad Rzeszutek Wilk; devel@driverdev.osuosl.org; linux-mm@kvack.org; kernel-
-> janitors@vger.kernel.org
-> Subject: [patch] staging: ramster: fix range checks in zcache_autocreate_pool()
-> 
-> If "pool_id" is negative then it leads to a read before the start of the
-> array.  If "cli_id" is out of bounds then it leads to a NULL dereference
-> of "cli".  GCC would have warned about that bug except that we
-> initialized the warning message away.
-> 
-> Also it's better to put the parameter names into the function
-> declaration in the .h file.  It serves as a kind of documentation.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless.git master
+head:   4abd044af91057f7ea661a0f10c00a9673beef6b
+commit: 74673db99ca3c09d34ea479f684522ceedb65eb9 [39/40] ath9k: make PA linearization optional, disabled by default and fix checks
 
-Acked-by: Dan Magenheimer <dan.magenheimer@oracle.com>
-Self-flagellated-by: Dan Magenheimer <dan.magenheimer@oracle.com> 
+All smatch warnings:
 
-> ---
-> BTW, This file has a ton of GCC warnings.  This function returns -1
-> on error which is a nonsense return code but the return value is not
-> checked anyway.  *Grumble*.
-> 
-> diff --git a/drivers/staging/ramster/zcache.h b/drivers/staging/ramster/zcache.h
-> index c59666e..81722b3 100644
-> --- a/drivers/staging/ramster/zcache.h
-> +++ b/drivers/staging/ramster/zcache.h
-> @@ -42,7 +42,7 @@ extern void zcache_decompress_to_page(char *, unsigned int, struct page *);
->  #ifdef CONFIG_RAMSTER
->  extern void *zcache_pampd_create(char *, unsigned int, bool, int,
->  				struct tmem_handle *);
-> -extern int zcache_autocreate_pool(int, int, bool);
-> +int zcache_autocreate_pool(unsigned int cli_id, unsigned int pool_id, bool eph);
->  #endif
-> 
->  #define MAX_POOLS_PER_CLIENT 16
-> diff --git a/drivers/staging/ramster/zcache-main.c b/drivers/staging/ramster/zcache-main.c
-> index 24b3d4a..86e19d6 100644
-> --- a/drivers/staging/ramster/zcache-main.c
-> +++ b/drivers/staging/ramster/zcache-main.c
-> @@ -1338,10 +1338,10 @@ static int zcache_local_new_pool(uint32_t flags)
->  	return zcache_new_pool(LOCAL_CLIENT, flags);
->  }
-> 
-> -int zcache_autocreate_pool(int cli_id, int pool_id, bool eph)
-> +int zcache_autocreate_pool(unsigned int cli_id, unsigned int pool_id, bool eph)
->  {
->  	struct tmem_pool *pool;
-> -	struct zcache_client *cli = NULL;
-> +	struct zcache_client *cli;
->  	uint32_t flags = eph ? 0 : TMEM_POOL_PERSIST;
->  	int ret = -1;
-> 
-> @@ -1350,8 +1350,10 @@ int zcache_autocreate_pool(int cli_id, int pool_id, bool eph)
->  		goto out;
->  	if (pool_id >= MAX_POOLS_PER_CLIENT)
->  		goto out;
-> -	else if ((unsigned int)cli_id < MAX_CLIENTS)
-> -		cli = &zcache_clients[cli_id];
-> +	if (cli_id >= MAX_CLIENTS)
-> +		goto out;
-> +
-> +	cli = &zcache_clients[cli_id];
->  	if ((eph && disable_cleancache) || (!eph && disable_frontswap)) {
->  		pr_err("zcache_autocreate_pool: pool type disabled\n");
->  		goto out;
++ drivers/net/wireless/ath/ath9k/ar9003_eeprom.c:2987 ath9k_hw_ar9300_get_eeprom() warn: if();
++ drivers/net/wireless/ath/ath9k/ar9003_eeprom.c:2989 ath9k_hw_ar9300_get_eeprom() info: ignoring unreachable code.
++ drivers/net/wireless/ath/ath9k/ar9003_eeprom.c:2989 ath9k_hw_ar9300_get_eeprom() info: ignoring unreachable code.
+  drivers/net/wireless/ath/ath9k/ar9003_eeprom.c:3372 ath9k_hw_ar9300_fill_eeprom() Error invalid range 4096 to -1
+
+vim +2987 drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
+
+  2984		case EEP_PAPRD:
+  2985			if (AR_SREV_9462(ah))
+  2986				return false;
+> 2987			if (!ah->config.enable_paprd);
+  2988				return false;
+  2989			return !!(pBase->featureEnable & BIT(5));
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
