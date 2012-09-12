@@ -1,70 +1,101 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Sep 2012 08:11:35 +0000
-Subject: [patch 2/2] Staging: silicom: use kstrtoint_from_user()
-Message-Id: <20120914081135.GA11315@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 17:03:12 +0000
+Subject: [PATCH 4/15] drivers/sbus/char: removes unnecessary semicolon
+Message-Id: <1347469402-27557-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The main problem with the hand rolled code was that there weren't any
-range checks so you could corrupt memory by writing too much data to
-the proc file.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+removes unnecessary semicolon
 
-diff --git a/drivers/staging/silicom/bp_mod.c b/drivers/staging/silicom/bp_mod.c
-index 1b3f5e7..f138d29 100644
---- a/drivers/staging/silicom/bp_mod.c
-+++ b/drivers/staging/silicom/bp_mod.c
-@@ -8071,20 +8071,13 @@ int
- set_bypass_wd_pfs(struct file *file, const char *buffer,
- 		  unsigned long count, void *data)
- {
--
--	char kbuf[256];
- 	bpctl_dev_t *pbp_device_block = (bpctl_dev_t *) data;
-+	int timeout;
-+	int ret;
+Found by Coccinelle: http://coccinelle.lip6.fr/
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/sbus/char/display7seg.c |    2 +-
+ drivers/sbus/char/envctrl.c     |    8 ++++----
+ drivers/sbus/char/openprom.c    |    4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
+index 4b99397..b160073 100644
+--- a/drivers/sbus/char/display7seg.c
++++ b/drivers/sbus/char/display7seg.c
+@@ -150,7 +150,7 @@ static long d7s_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 			regs |= D7S_FLIP;
+ 		writeb(regs, p->regs);
+ 		break;
+-	};
++	}
+ 	mutex_unlock(&d7s_mutex);
  
--	unsigned int timeout = 0;
--	char *timeout_ptr = kbuf;
--
--	if (copy_from_user(&kbuf, buffer, count)) {
--		return -1;
--	}
--
--	timeout_ptr = kbuf;
--	timeout = atoi(&timeout_ptr);
--
-+	ret = kstrtoint_from_user(buffer, count, 10, &timeout);
-+	if (ret)
-+		return ret;
- 	set_bypass_wd_fn(pbp_device_block, timeout);
+ 	return error;
+diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
+index 339fd6f..0bc1856 100644
+--- a/drivers/sbus/char/envctrl.c
++++ b/drivers/sbus/char/envctrl.c
+@@ -353,7 +353,7 @@ static int envctrl_i2c_data_translate(unsigned char data, int translate_type,
  
- 	return count;
-@@ -8712,18 +8705,13 @@ int
- set_wd_autoreset_pfs(struct file *file, const char *buffer,
- 		     unsigned long count, void *data)
- {
--	char kbuf[256];
- 	bpctl_dev_t *pbp_device_block = (bpctl_dev_t *) data;
--	u32 timeout = 0;
--	char *timeout_ptr = kbuf;
--
--	if (copy_from_user(&kbuf, buffer, count)) {
--		return -1;
--	}
--
--	timeout_ptr = kbuf;
--	timeout = atoi(&timeout_ptr);
-+	int timeout;
-+	int ret;
+ 	default:
+ 		break;
+-	};
++	}
  
-+	ret = kstrtoint_from_user(buffer, count, 10, &timeout);
-+	if (ret)
-+		return ret;
- 	set_wd_autoreset_fn(pbp_device_block, timeout);
+ 	return len;
+ }
+@@ -644,7 +644,7 @@ envctrl_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+ 	default:
+ 		break;
  
- 	return count;
+-	};
++	}
+ 
+ 	return ret;
+ }
+@@ -687,7 +687,7 @@ envctrl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ 	default:
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	return 0;
+ }
+@@ -947,7 +947,7 @@ static void envctrl_init_i2c_child(struct device_node *dp,
+ 
+ 		default:
+ 			break;
+-		};
++		}
+ 	}
+ }
+ 
+diff --git a/drivers/sbus/char/openprom.c b/drivers/sbus/char/openprom.c
+index 2236aea..5843288 100644
+--- a/drivers/sbus/char/openprom.c
++++ b/drivers/sbus/char/openprom.c
+@@ -222,7 +222,7 @@ static int opromnext(void __user *argp, unsigned int cmd, struct device_node *dp
+ 		case OPROMSETCUR:
+ 		default:
+ 			break;
+-		};
++		}
+ 	} else {
+ 		/* Sibling of node zero is the root node.  */
+ 		if (cmd != OPROMNEXT)
+@@ -588,7 +588,7 @@ static int openprom_bsd_ioctl(struct file * file,
+ 	default:
+ 		err = -EINVAL;
+ 		break;
+-	};
++	}
+ 	mutex_unlock(&openprom_mutex);
+ 
+ 	return err;
+
