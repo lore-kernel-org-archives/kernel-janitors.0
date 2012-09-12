@@ -1,40 +1,37 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 30 Sep 2012 05:54:08 +0000
-Subject: arch/mn10300/kernel/process.c:231:43: error: expected ')' before ';' token
-Message-Id: <20120930055408.GA32054@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 17:03:11 +0000
+Subject: [PATCH 5/15] arch/sparc/kernel/pci_sun4v.c: removes unnecessary semicolon
+Message-Id: <1347469402-27557-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Al,
+removes unnecessary semicolon
 
-FYI, kernel build failed on
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-commit: cc615ab mn10300: convert to generic kernel_thread()
-config: mn10300-asb2364_defconfig
-
-All error/warnings:
-
-arch/mn10300/kernel/process.c: In function 'copy_thread':
-arch/mn10300/kernel/process.c:231:43: error: expected ')' before ';' token
-arch/mn10300/kernel/process.c:238:2: error: expected ';' before '}' token
-
-vim +231 arch/mn10300/kernel/process.c
-
-cc615abc (Al Viro       2012-09-22  230) 	if (unlikely(!kregs)) {
-cc615abc (Al Viro       2012-09-22 @231) 		memset(c_regs, 0, sizeof(struct pt_regs);
-cc615abc (Al Viro       2012-09-22  232) 		c_regs->a0 = c_usp; /* function */
-cc615abc (Al Viro       2012-09-22  233) 		c_regs->d0 = ustk_size; /* argument */
-cc615abc (Al Viro       2012-09-22  234) 		local_save_flags(c_regs->epsw);
-cc615abc (Al Viro       2012-09-22  235) 		c_regs->epsw |= EPSW_IE | EPSW_IM_7;
-cc615abc (Al Viro       2012-09-22  236) 		p->thread.pc	= (unsigned long) ret_from_kernel_thread;
-cc615abc (Al Viro       2012-09-22  237) 		return 0;
-cc615abc (Al Viro       2012-09-22  238) 	}
-db6d428d (Al Viro       2012-09-19  239) 	*c_regs = *kregs;
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ arch/sparc/kernel/pci_sun4v.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sparc/kernel/pci_sun4v.c b/arch/sparc/kernel/pci_sun4v.c
+index 7661e84..051b69c 100644
+--- a/arch/sparc/kernel/pci_sun4v.c
++++ b/arch/sparc/kernel/pci_sun4v.c
+@@ -594,7 +594,7 @@ static int __devinit pci_sun4v_iommu_init(struct pci_pbm_info *pbm)
+ 		printk(KERN_ERR PFX "Strange virtual-dma[%08x:%08x].\n",
+ 		       vdma[0], vdma[1]);
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	dma_mask = (roundup_pow_of_two(vdma[1]) - 1UL);
+ 	num_tsb_entries = vdma[1] / IO_PAGE_SIZE;
+
