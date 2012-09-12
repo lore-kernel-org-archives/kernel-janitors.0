@@ -1,52 +1,80 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 07 Sep 2012 13:11:52 +0000
-Subject: Re: [PATCH] HID: picoLCD: Remove use of deprecated function
-Message-Id: <alpine.LNX.2.00.1209071511060.21679@pobox.suse.cz>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 15:06:47 +0000
+Subject: [PATCH 9/9] drivers/isdn/gigaset/common.c: Remove useless kfree
+Message-Id: <1347462407-13499-9-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346942780-8091-1-git-send-email-emilgoode@gmail.com> <20120906221252.1402ba50@neptune.home> <20120906201538.GK29092@google.com>
-In-Reply-To: <20120906201538.GK29092@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Tejun Heo <tj@kernel.org>
-Cc: =?ISO-8859-15?Q?Bruno_Pr=E9mont?= <bonbons@linux-vserver.org>, Emil Goode <emilgoode@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hansjoerg Lipp <hjlipp@web.de>
+Cc: kernel-janitors@vger.kernel.org, Tilman Schmidt <tilman@imap.cc>, Karsten Keil <isdn@linux-pingi.de>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 6 Sep 2012, Tejun Heo wrote:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> > > The flush_delayed_work_sync function is deprecated,
-> > > we can instead call flush_delayed_work directly.
-> > > 
-> > > Sparse is giving a warning:
-> > > drivers/hid/hid-picolcd_fb.c:611:2: warning:
-> > > 	‘flush_delayed_work_sync’ is deprecated
-> > > 	(declared at include/linux/workqueue.h:454)
-> > > 	[-Wdeprecated-declarations]
-> > > 
-> > > Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> > 
-> > Acked-by: Bruno Prémont <bonbons@linux-vserver.org>
-> > 
-> > This matches a patch by Tejun a few weeks ago which was partially
-> > skipped in -next due to merge conflict with code split in picoLCD.
-> > 
-> > See http://comments.gmane.org/gmane.linux.kernel.next/23740
-> > 
-> > For the sake of proper bisectability, this should go in after
-> > Tejun's workqueue changes (if needed at all depending on how merge
-> > happens during pull by Linus).
-> 
-> Yeah, we either can ask Linus to fix it up during merge or send a
-> separate patch afterwards.  In this case, I don't think it matters too
-> much either way.  I tend to send out pull request fairly early in the
-> merge window, I'll try to remember to poke Linus about the merge
-> conflict.
+Remove useless kfree() and clean up code related to the removal.
 
-Okay, fair enough. I'll try not to forget to CC you on my pull request 
-which will include those picolcd changes, and mention the potential 
-conflict to Linus as well. We'll see which one goes in first :)
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks,
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
 
--- 
-Jiri Kosina
-SUSE Labs
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/isdn/gigaset/common.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/isdn/gigaset/common.c b/drivers/isdn/gigaset/common.c
+index aa41485..30a6b17 100644
+--- a/drivers/isdn/gigaset/common.c
++++ b/drivers/isdn/gigaset/common.c
+@@ -1123,7 +1123,6 @@ struct gigaset_driver *gigaset_initdriver(unsigned minor, unsigned minors,
+ 	return drv;
+ 
+ error:
+-	kfree(drv->cs);
+ 	kfree(drv);
+ 	return NULL;
+ }
+
