@@ -1,66 +1,94 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 15:23:59 +0000
-Subject: [PATCH 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
-Message-Id: <1346945041-26676-12-git-send-email-peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 12:56:03 +0000
+Subject: [PATCH v2 2/8] drivers/media/dvb-frontends/lg2160.c: Removes useless kfree()
+Message-Id: <1347454564-5178-7-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Remove useless kfree() and clean up code related to the removal.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+@r exists@
+position p1,p2;
+expression x;
+@@
 
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
 // </smpl>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/media/platform/soc_camera/mx2_camera.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/dvb-frontends/lg2160.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
-index 256187f..f8884a7 100644
---- a/drivers/media/platform/soc_camera/mx2_camera.c
-+++ b/drivers/media/platform/soc_camera/mx2_camera.c
-@@ -1800,13 +1800,16 @@ static int __devinit mx2_camera_probe(struct platform_device *pdev)
+diff --git a/drivers/media/dvb-frontends/lg2160.c b/drivers/media/dvb-frontends/lg2160.c
+index cc11260..5fd14f8 100644
+--- a/drivers/media/dvb-frontends/lg2160.c
++++ b/drivers/media/dvb-frontends/lg2160.c
+@@ -1421,8 +1421,8 @@ struct dvb_frontend *lg2160_attach(const struct lg2160_config *config,
+ 	       config ? config->i2c_addr : 0);
  
- 		if (!res_emma || !irq_emma) {
- 			dev_err(&pdev->dev, "no EMMA resources\n");
-+			err = -ENODEV;
- 			goto exit_free_irq;
- 		}
+ 	state = kzalloc(sizeof(struct lg216x_state), GFP_KERNEL);
+-	if (state = NULL)
+-		goto fail;
++	if (!state)
++		return NULL;
  
- 		pcdev->res_emma = res_emma;
- 		pcdev->irq_emma = irq_emma;
--		if (mx27_camera_emma_init(pcdev))
-+		if (mx27_camera_emma_init(pcdev)) {
-+			err = -ENODEV;
- 			goto exit_free_irq;
-+		}
- 	}
+ 	state->cfg = config;
+ 	state->i2c_adap = i2c_adap;
+@@ -1449,10 +1449,6 @@ struct dvb_frontend *lg2160_attach(const struct lg2160_config *config,
+ 	state->frontend.dtv_property_cache.atscmh_parade_id = 1;
  
- 	pcdev->soc_host.drv_name	= MX2_CAM_DRV_NAME,
+ 	return &state->frontend;
+-fail:
+-	lg_warn("unable to detect LG216x hardware\n");
+-	kfree(state);
+-	return NULL;
+ }
+ EXPORT_SYMBOL(lg2160_attach);
+ 
 
