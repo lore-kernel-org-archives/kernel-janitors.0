@@ -1,59 +1,37 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 22 Sep 2012 00:24:26 +0000
-Subject: Re: [can:master 118/170] ERROR: "sysctl_llc_station_ack_timeout" [net/llc/llc2.ko] undefined!
-Message-Id: <20120922002426.GB5959@localhost>
+From: Aristeu Rozanski <aris@redhat.com>
+Date: Wed, 12 Sep 2012 14:31:13 +0000
+Subject: [PATCH] xattr: mark variable as uninitialized to make both gcc and smatch happy
+Message-Id: <20120912143112.GE19694@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120921112740.GA15164@localhost>
- <20120921.122418.1595502576924307596.davem@davemloft.net>
-In-Reply-To: <20120921.122418.1595502576924307596.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: ben@decadent.org.uk, kernel-janitors@vger.kernel.org, linux-can@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 21, 2012 at 12:24:18PM -0400, David Miller wrote:
-> From: Fengguang Wu <fengguang.wu@intel.com>
-> Date: Fri, 21 Sep 2012 19:27:40 +0800
-> 
-> > Hi Ben,
-> > 
-> > FYI, kernel build failed on
-> > 
-> > tree:   git://gitorious.org/linux-can/linux-can-next master
-> > head:   029d8ada9150a1177f09148284b5cd27a30d4db7
-> > commit: 025e36332573177ecd7c12730e18a4390f994f05 [118/170] llc2: Remove dead code for state machine
-> > config: x86_64-allmodconfig
-> > 
-> > All related error/warning messages:
-> > 
-> > ERROR: "sysctl_llc_station_ack_timeout" [net/llc/llc2.ko] undefined!
-> 
-> The very next commit, written by me, after Ben's fixes this build
-> error.
+new_xattr in __simple_xattr_set() is only initialized with a valid
+pointer if value is not NULL, which only happens if this function is
+called directly with the intention to remove an existing extended
+attribute. Even being safe to be this way, smatch warns about possible
+NULL dereference. Dan Carpenter suggested using uninitialized_var()
+which will make both gcc and smatch happy.
 
-OK..
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Aristeu Rozanski <aris@redhat.com>
 
-> It wasn't added by the CAN tree so bugging them is very inappropriate,
-> the change came from the net-next tree.
+---
+ fs/xattr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yup, I got an idea to fix it! :)
-
-The root cause is the CAN tree get tested before the net-next tree
-that it bases on, and I'm CCing the CAN list because it "seems" to be
-testing the CAN tree.
-
-The fix is to
-
-a) Test the trees as soon as they are published, which will naturally
-   result in upstream trees being tested first. Currently some of the
-   build threads are overloaded, which leads to out-of-order testing
-   and some missed tests.
-
-b) Use the pair (committer, git tree) to find the related mailing list.
-   The git tree alone is not reliable information, because one tree
-   can pull from the others, in which case the committer is actually
-   more reliable than the git url.
-
-Thanks,
-Fengguang
+--- a/fs/xattr.c	2012-09-12 09:57:35.000000000 -0400
++++ b/fs/xattr.c	2012-09-12 09:58:25.619387047 -0400
+@@ -845,7 +845,7 @@ static int __simple_xattr_set(struct sim
+ 			      const void *value, size_t size, int flags)
+ {
+ 	struct simple_xattr *xattr;
+-	struct simple_xattr *new_xattr = NULL;
++	struct simple_xattr *uninitialized_var(new_xattr);
+ 	int err = 0;
+ 
+ 	/* value = NULL means remove */
