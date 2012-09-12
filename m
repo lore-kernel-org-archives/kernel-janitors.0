@@ -1,70 +1,80 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 21 Sep 2012 12:00:40 +0000
-Subject: Re: sound/pci/hda/patch_ca0132.c: potential null dereference 'dma_engine'
-Message-Id: <s5hk3vnpouv.wl%tiwai@suse.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 15:06:39 +0000
+Subject: [PATCH 1/9] drivers/block/aoe/aoecmd.c: Remove useless kfree
+Message-Id: <1347462407-13499-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120921102242.GA11865@localhost> <s5hmx0jppj9.wl%tiwai@suse.de>
- <505C53EA.2090206@bfs.de>
-In-Reply-To: <505C53EA.2090206@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: alsa-devel@alsa-project.org, Fengguang Wu <fengguang.wu@intel.com>, kernel-janitors@vger.kernel.org, Ian Minett <ian_minett@creativelabs.com>
+To: "Ed L. Cashin" <ecashin@coraid.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-At Fri, 21 Sep 2012 13:47:54 +0200,
-walter harms wrote:
-> 
-> 
-> 
-> Am 21.09.2012 13:46, schrieb Takashi Iwai:
-> > At Fri, 21 Sep 2012 18:22:42 +0800,
-> > Fengguang Wu wrote:
-> >>
-> >> Hi Ian,
-> >>
-> >> FYI, there are new smatch warnings show up in
-> >>
-> >> commit 0b37d4c7982442730061a737c16939e8cc363861
-> >> Author:     Ian Minett <ian_minett@creativelabs.com>
-> >> Commit:     Takashi Iwai <tiwai@suse.de>
-> >> CommitDate: Fri Sep 21 09:54:29 2012 +0200
-> >>
-> >> + sound/pci/hda/patch_ca0132.c:2056 dspxfr_image() error: potential null dereference 'dma_engine'.  (kzalloc returns null)
-> >> + sound/pci/hda/patch_ca0132.c:2056 dspxfr_image() error: we previously assumed 'dma_engine' could be null (see line 1963)
-> > 
-> > Fixed with the patch below.  Thanks!
-> > 
-> > 
-> > Takashi
-> > 
-> > => > Subject: [PATCH] ALSA: hda - Fix NULL dereference in error path of patch_ca0132.c
-> > 
-> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > ---
-> >  sound/pci/hda/patch_ca0132.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-> > index 5c6a056..03f57c9 100644
-> > --- a/sound/pci/hda/patch_ca0132.c
-> > +++ b/sound/pci/hda/patch_ca0132.c
-> > @@ -1960,10 +1960,8 @@ static int dspxfr_image(struct hda_codec *codec,
-> >  		return -EINVAL;
-> >  
-> >  	dma_engine = kzalloc(sizeof(*dma_engine), GFP_KERNEL);
-> > -	if (!dma_engine) {
-> > -		status = -ENOMEM;
-> > -		goto exit;
-> > -	}
-> > +	if (!dma_engine)
-> > +		return -ENOMEM;
-> >  	memset((void *)dma_engine, 0, sizeof(*dma_engine));
-> >  
-> 
-> Why do you need that memset() ? kzalloc() should fill the buffer with 0.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-True.
+Remove useless kfree() and clean up code related to the removal.
 
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Takashi
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
+
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/block/aoe/aoecmd.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
+index 5461faa..cbb0521 100644
+--- a/drivers/block/aoe/aoecmd.c
++++ b/drivers/block/aoe/aoecmd.c
+@@ -1257,7 +1257,6 @@ addtgt(struct aoedev *d, char *addr, ulong nframes)
+ 	}
+ 	t = kcalloc(1, sizeof *t, GFP_ATOMIC);
+ 	if (!t) {
+-		kfree(t);
+ 		printk(KERN_INFO "aoe: cannot allocate memory to add target\n");
+ 		return NULL;
+ 	}
+
