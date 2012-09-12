@@ -1,78 +1,47 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Thu, 20 Sep 2012 21:58:46 +0000
-Subject: Re: [PATCH 2/5] drivers/video/gbefb.c: use devm_ functions
-Message-Id: <505B9196.3040203@gmx.de>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 12 Sep 2012 02:28:13 +0000
+Subject: [cgroup:for-next 5/6] fs/xattr.c:882 __simple_xattr_set() error: potential NULL dereference 'new_xat
+Message-Id: <20120912022813.GA17922@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1343752762-16861-1-git-send-email-damien.cassou@lifl.fr>	<1343752762-16861-3-git-send-email-damien.cassou@lifl.fr>	<50369498.4010006@gmx.de> <CAMuHMdWsiXmt=2uo3C8ZC_apnHRV2aHi3yZrYV_jgwB22=3Mfw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWsiXmt=2uo3C8ZC_apnHRV2aHi3yZrYV_jgwB22=3Mfw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Damien Cassou <damien.cassou@lifl.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Geert,
+Hi Aristeu,
 
-On 09/13/2012 07:06 PM, Geert Uytterhoeven wrote:
-> On Thu, Aug 23, 2012 at 10:37 PM, Florian Tobias Schandinat
-> <FlorianSchandinat@gmx.de> wrote:
->> On 07/31/2012 04:39 PM, Damien Cassou wrote:
->>> From: Damien Cassou <damien.cassou@lifl.fr>
->>>
->>> The various devm_ functions allocate memory that is released when a driver
->>> detaches.  This patch uses these functions for data that is allocated in
->>> the probe function of a platform device and is only freed in the remove
->>> function.
->>>
->>> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
->>
->> Applied.
-> 
->>> diff --git a/drivers/video/gbefb.c b/drivers/video/gbefb.c
->>> index 7e7b7a9..9b79d38 100644
->>> --- a/drivers/video/gbefb.c
->>> +++ b/drivers/video/gbefb.c
->>> @@ -1156,7 +1156,8 @@ static int __devinit gbefb_probe(struct platform_device *p_dev)
->>>               goto out_release_framebuffer;
->>>       }
->>>
->>> -     gbe = (struct sgi_gbe *) ioremap(GBE_BASE, sizeof(struct sgi_gbe));
->>> +     gbe = (struct sgi_gbe *) devm_ioremap(&p_dev->dev, GBE_BASE,
->>> +                                           sizeof(struct sgi_gbe));
-> 
-> drivers/video/gbefb.c:1159:16: error: implicit declaration of function
-> 'devm_ioremap' [-Werror=implicit-function-declaration]
-> drivers/video/gbefb.c:1179:3: error: implicit declaration of function
-> 'devm_ioremap_nocache' [-Werror=implicit-function-declaration]
+FYI, there are new smatch warnings show up in
 
-Thanks for pointing this out. I guess the solution is to replace the
-include asm/io.h by linux/io.h as Axel Lin did for some other driver in
-this patch series.
-
-@Damien:
-Can you please do a patch as I suggested and preferable also recheck the
-other drivers you touched?
-And it probably would have been a good idea to mention that you didn't
-compile-test it. I do some compile tests before pushing my branch but
-that is far from complete due to arch and platform specific drivers.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
+head:   9814e970d7947dcc5ab7b37a53514c0098bfacc9
+commit: 38f38657444d15e1a8574eae80ed3de9f501737a xattr: extract simple_xattr code from tmpfs
 
 
-Best regards,
+fs/xattr.c:882 __simple_xattr_set() error: potential NULL dereference 'new_xattr'.
 
-Florian Tobias Schandinat
+vim +882 fs/xattr.c
+   872				} else {
+   873					list_del(&xattr->list);
+   874				}
+   875				goto out;
+   876			}
+   877		}
+   878		if (flags & XATTR_REPLACE) {
+   879			xattr = new_xattr;
+   880			err = -ENODATA;
+   881		} else {
+ > 882			list_add(&new_xattr->list, &xattrs->head);
+   883			xattr = NULL;
+   884		}
+   885	out:
+   886		spin_unlock(&xattrs->lock);
+   887		if (xattr) {
+   888			kfree(xattr->name);
+   889			kfree(xattr);
+   890		}
+   891		return err;
+   892	
 
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/7187731/
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
-
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
