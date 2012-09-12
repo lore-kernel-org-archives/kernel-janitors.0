@@ -1,58 +1,60 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 15:23:52 +0000
-Subject: [PATCH 9/14] drivers/media/radio/radio-cadet.c: fix error return code
-Message-Id: <1346945041-26676-5-git-send-email-peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 17:03:09 +0000
+Subject: [PATCH 2/15] drivers/scsi/bfa: removes unnecessary semicolon
+Message-Id: <1347469402-27557-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jing Huang <huangj@brocade.com>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Krishna C Gudipati <kgudipat@brocade.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+removes unnecessary semicolon
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/media/radio/radio-cadet.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/bfa/bfa_fcs_lport.c |    2 +-
+ drivers/scsi/bfa/bfa_fcs_rport.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/radio/radio-cadet.c b/drivers/media/radio/radio-cadet.c
-index 697a421..643d80a 100644
---- a/drivers/media/radio/radio-cadet.c
-+++ b/drivers/media/radio/radio-cadet.c
-@@ -645,7 +645,8 @@ static int __init cadet_init(void)
- 	set_bit(V4L2_FL_USE_FH_PRIO, &dev->vdev.flags);
- 	video_set_drvdata(&dev->vdev, dev);
+diff --git a/drivers/scsi/bfa/bfa_fcs_lport.c b/drivers/scsi/bfa/bfa_fcs_lport.c
+index bcc4966..6a383ba 100644
+--- a/drivers/scsi/bfa/bfa_fcs_lport.c
++++ b/drivers/scsi/bfa/bfa_fcs_lport.c
+@@ -3745,7 +3745,7 @@ bfa_fcs_lport_ns_sm_online(struct bfa_fcs_lport_ns_s *ns,
+ 			bfa_sm_set_state(ns,
+ 				bfa_fcs_lport_ns_sm_sending_gid_ft);
+ 			bfa_fcs_lport_ns_send_gid_ft(ns, NULL);
+-		};
++		}
+ 		break;
  
--	if (video_register_device(&dev->vdev, VFL_TYPE_RADIO, radio_nr) < 0)
-+	res = video_register_device(&dev->vdev, VFL_TYPE_RADIO, radio_nr);
-+	if (res < 0)
- 		goto err_hdl;
- 	v4l2_info(v4l2_dev, "ADS Cadet Radio Card at 0x%x\n", dev->io);
- 	return 0;
+ 	default:
+diff --git a/drivers/scsi/bfa/bfa_fcs_rport.c b/drivers/scsi/bfa/bfa_fcs_rport.c
+index fe0463a..5eeddc6 100644
+--- a/drivers/scsi/bfa/bfa_fcs_rport.c
++++ b/drivers/scsi/bfa/bfa_fcs_rport.c
+@@ -1301,7 +1301,7 @@ bfa_fcs_rport_sm_nsdisc_sent(struct bfa_fcs_rport_s *rport,
+ 			bfa_timer_start(rport->fcs->bfa, &rport->timer,
+ 					bfa_fcs_rport_timeout, rport,
+ 					bfa_fcs_rport_del_timeout);
+-		};
++		}
+ 		break;
+ 
+ 	case RPSM_EVENT_DELETE:
+@@ -2089,7 +2089,7 @@ bfa_fcs_rport_online_action(struct bfa_fcs_rport_s *rport)
+ 		bfa_fcs_itnim_rport_online(rport->itnim);
+ 		if (!BFA_FCS_PID_IS_WKA(rport->pid))
+ 			bfa_fcs_rpf_rport_online(rport);
+-	};
++	}
+ 
+ 	wwn2str(lpwwn_buf, bfa_fcs_lport_get_pwwn(port));
+ 	wwn2str(rpwwn_buf, rport->pwwn);
 
