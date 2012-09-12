@@ -1,41 +1,60 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 06 Sep 2012 23:06:09 +0000
-Subject: Re: [pci:pci:bjorn-cleanup-remove 16/16] drivers/parisc/dino.c:598:3: error: implicit declaration of
-Message-Id: <20120906230609.GA7045@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 17:03:14 +0000
+Subject: [PATCH 7/15] drivers/s390/net: removes unnecessary semicolon
+Message-Id: <1347469402-27557-7-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120819115449.GB20588@localhost>
-In-Reply-To: <20120819115449.GB20588@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ursula Braun <ursula.braun@de.ibm.com>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Frank Blaschka <blaschka@linux.vnet.ibm.com>, linux390@de.ibm.com, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2012 at 10:21:31AM -0700, Bjorn Helgaas wrote:
-> On Wed, Sep 5, 2012 at 8:40 PM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> > Hi Bjorn,
-> >
-> > FYI, kernel build failed on
-> >
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git pci/bjorn-cleanup-remove
-> > head:   f757bd1fe5535350c50058bf999f437cb9106d52
-> > commit: f757bd1fe5535350c50058bf999f437cb9106d52 [16/16] PCI: Remove unused pci_dev_b()
-> > config: parisc-defconfig (attached as .config)
-> >
-> > All related error/warning messages:
-> >
-> > drivers/parisc/dino.c: In function 'dino_fixup_bus':
-> > drivers/parisc/dino.c:598:3: error: implicit declaration of function 'pci_dev_b' [-Werror=implicit-function-declaration]
-> > drivers/parisc/dino.c:598:7: warning: assignment makes pointer from integer without a cast [enabled by default]
-> > cc1: some warnings being treated as errors
-> 
-> Is your branch stale?  I fixed this already.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Yes, sorry! Due to a bug introduced several days ago, all reports are
-delayed until yesterday, making some of them obsoleted..
+removes unnecessary semicolon
 
-> The head of this branch
-> (http://git.kernel.org/?p=linux/kernel/git/helgaas/pci.git;a=shortlog;h=refs/heads/pci/bjorn-cleanup-remove)
-> is c29aabe22ea, not f757bd1fe as you reference above.
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-Thanks,
-Fengguang
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/s390/net/ctcm_fsms.c      |    2 +-
+ drivers/s390/net/qeth_core_main.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/s390/net/ctcm_fsms.c b/drivers/s390/net/ctcm_fsms.c
+index d4ade9e..fb92524 100644
+--- a/drivers/s390/net/ctcm_fsms.c
++++ b/drivers/s390/net/ctcm_fsms.c
+@@ -1523,7 +1523,7 @@ static void ctcmpc_chx_firstio(fsm_instance *fi, int event, void *arg)
+ 				goto done;
+ 	default:
+ 		break;
+-	};
++	}
+ 
+ 	fsm_newstate(fi, (CHANNEL_DIRECTION(ch->flags) = CTCM_READ)
+ 		     ? CTC_STATE_RXINIT : CTC_STATE_TXINIT);
+diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
+index cf6da7f..0bd86b8 100644
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -489,7 +489,7 @@ static struct qeth_reply *qeth_alloc_reply(struct qeth_card *card)
+ 		atomic_set(&reply->refcnt, 1);
+ 		atomic_set(&reply->received, 0);
+ 		reply->card = card;
+-	};
++	}
+ 	return reply;
+ }
+ 
+@@ -2029,7 +2029,7 @@ int qeth_send_control_data(struct qeth_card *card, int len,
+ 			if (time_after(jiffies, timeout))
+ 				goto time_err;
+ 			cpu_relax();
+-		};
++		}
+ 	}
+ 
+ 	if (reply->rc = -EIO)
+
