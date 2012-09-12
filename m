@@ -1,47 +1,43 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 12 Sep 2012 02:28:13 +0000
-Subject: [cgroup:for-next 5/6] fs/xattr.c:882 __simple_xattr_set() error: potential NULL dereference 'new_xat
-Message-Id: <20120912022813.GA17922@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Sep 2012 07:55:17 +0000
+Subject: Re: [cgroup:for-next 5/6] fs/xattr.c:882 __simple_xattr_set() error: potential NULL dereference 'new
+Message-Id: <20120912075517.GZ19396@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120912022813.GA17922@localhost>
+In-Reply-To: <20120912022813.GA17922@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Aristeu,
+On Wed, Sep 12, 2012 at 10:28:13AM +0800, Fengguang Wu wrote:
+> Hi Aristeu,
+> 
+> FYI, there are new smatch warnings show up in
+> 
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
+> head:   9814e970d7947dcc5ab7b37a53514c0098bfacc9
+> commit: 38f38657444d15e1a8574eae80ed3de9f501737a xattr: extract simple_xattr code from tmpfs
+> 
+> 
+> fs/xattr.c:882 __simple_xattr_set() error: potential NULL dereference 'new_xattr'.
+> 
 
-FYI, there are new smatch warnings show up in
+I don't know if this specific code is buggy or not.  It would depend
+on how the function is called.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-head:   9814e970d7947dcc5ab7b37a53514c0098bfacc9
-commit: 38f38657444d15e1a8574eae80ed3de9f501737a xattr: extract simple_xattr code from tmpfs
+But potentially I should disable this Smatch rule.  It tends to have
+a lot of false positives.  The thing is that GCC complains if you
+don't initialize "new_xattr", but if you initialize it to NULL then
+Smatch complains.
 
+One solution might be to use the unitialized_var() macro.
 
-fs/xattr.c:882 __simple_xattr_set() error: potential NULL dereference 'new_xattr'.
+-       struct simple_xattr *new_xattr = NULL;
++       struct simple_xattr *uninitialized_var(new_xattr);
 
-vim +882 fs/xattr.c
-   872				} else {
-   873					list_del(&xattr->list);
-   874				}
-   875				goto out;
-   876			}
-   877		}
-   878		if (flags & XATTR_REPLACE) {
-   879			xattr = new_xattr;
-   880			err = -ENODATA;
-   881		} else {
- > 882			list_add(&new_xattr->list, &xattrs->head);
-   883			xattr = NULL;
-   884		}
-   885	out:
-   886		spin_unlock(&xattrs->lock);
-   887		if (xattr) {
-   888			kfree(xattr->name);
-   889			kfree(xattr);
-   890		}
-   891		return err;
-   892	
+That would make both GCC and Smatch happy.
 
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+regards,
+dan carpenter
+
