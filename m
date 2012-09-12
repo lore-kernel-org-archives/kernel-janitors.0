@@ -1,36 +1,92 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 23 Sep 2012 16:15:43 +0000
-Subject: Re: Did I create this patch correctly (for checkpatch fixes)?
-Message-Id: <20120923161543.GI4587@mwanda>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 15:06:44 +0000
+Subject: [PATCH 5/9] drivers/staging/gdm72xx/gdm_sdio.c: Remove useless kfree
+Message-Id: <1347462407-13499-6-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAFfwLZjWcBf+r_TTrsNTTdmhAHFPSkvmQ3F7nHOr+SV3Mj=_Lw@mail.gmail.com>
-In-Reply-To: <CAFfwLZjWcBf+r_TTrsNTTdmhAHFPSkvmQ3F7nHOr+SV3Mj=_Lw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Sun, Sep 23, 2012 at 09:13:05PM +0530, Harsh Kumar wrote:
-> Hi,
-> 
-> I have created a patch for the first time. It is a small change (only
-> 3 line change). I ran checkpatch.pl on my patch file and there were no
-> problems. But can somebody please tell me:
-> 
-> 1.) Are the fixes for checkpatch.pl issues correct?
-> 2.) Is the patch file correctly made?
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-I'm not sure what the problem was you were fixing.  Only the third
-line is correct.
+Remove useless kfree() and clean up code related to the removal.
 
-The patch should be included in the email.  It needs a proper
-subject, a patch description and a Signed-off-by line.
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Email the patch to yourself.  Save the raw email including headers
-and everything.  `cat raw_email.txt | git am`.  `git log -p`.  Look
-through the patch and verify that the patch description and
-everything looks good.
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
 
-regards,
-dan carpenter
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/staging/gdm72xx/gdm_sdio.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/gdm72xx/gdm_sdio.c b/drivers/staging/gdm72xx/gdm_sdio.c
+index f824290..a0621d9 100644
+--- a/drivers/staging/gdm72xx/gdm_sdio.c
++++ b/drivers/staging/gdm72xx/gdm_sdio.c
+@@ -94,17 +94,14 @@ static struct sdio_rx *alloc_rx_struct(struct rx_cxt *rx)
+ 	struct sdio_rx *r = NULL;
+ 
+ 	r = kmalloc(sizeof(*r), GFP_ATOMIC);
+-	if (r = NULL)
+-		goto out;
++	if (!r)
++		return NULL;
+ 
+ 	memset(r, 0, sizeof(*r));
+ 
+ 	r->rx_cxt = rx;
+ 
+ 	return r;
+-out:
+-	kfree(r);
+-	return NULL;
+ }
+ 
+ static void free_rx_struct(struct sdio_rx *r)
 
