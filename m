@@ -1,7 +1,7 @@
 From: Borislav Petkov <bp@amd64.org>
-Date: Thu, 06 Sep 2012 16:16:49 +0000
+Date: Wed, 12 Sep 2012 11:00:22 +0000
 Subject: Re: [patch] x86, microcode, AMD: use after free in free_cache()
-Message-Id: <20120906161649.GA2684@aftab.osrc.amd.com>
+Message-Id: <20120912110022.GA6470@aftab.osrc.amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120905123042.GB6128@elgon.mountain>
 In-Reply-To: <20120905123042.GB6128@elgon.mountain>
@@ -10,23 +10,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 06, 2012 at 07:04:01AM -0700, Dan Carpenter wrote:
-> You wouldn't see it unless something called kmalloc() on another CPU
-> and reused the freed memory. Or if you had CONFIG_DEBUG_SLAB enabled
-> then I believe that will poison freed memory immediately.
+On Wed, Sep 05, 2012 at 03:30:42PM +0300, Dan Carpenter wrote:
+> list_for_each_entry_reverse() dereferences the iterator, but we already
+> freed it.  I don't see a reason that this has to be done in reverse
+> order so I've changed it to use list_for_each_entry_safe().
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This is only needed on linux-next.  Sorry, it turns out that I don't
+> have any AMD systems right now, so I have not tested this.
 
-Oh, I see.
+Ok, just ran it and it looks good.
 
-Also, I could probably see it if I do
+Acked-by: Borislav Petkov <borislav.petkov@amd.com>
 
-	p = NULL;
-
-to the iterator AFAICT.
-
-> (Btw, I haven't tested this code either before or after my patch
-> because I don't have any AMD systems).
-
-I'll run it when I get back from my vacation next week.
+@hpa, this one should go ontop of tip/x86/microcode.
 
 Thanks.
 
