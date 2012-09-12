@@ -1,53 +1,85 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 21 Sep 2012 12:44:37 +0000
-Subject: [linux-next] drivers/mfd/88pm860x-core.c:982:11: error: too few arguments to function 'mfd_add_devic
-Message-Id: <20120921124437.GA18287@localhost>
+Date: Wed, 12 Sep 2012 07:34:12 +0000
+Subject: [drm:drm-opt-pwr 84/84] drivers/gpu/drm/nouveau/nouveau_drm.c:628:6: sparse: symbol 'nouveau_drm_ioc
+Message-Id: <20120912073412.GC26877@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="WIyZ46R2i8wDzkSu"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Hein,
 
-FYI, kernel build failed possibly since
+--WIyZ46R2i8wDzkSu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-commit a830d28b48bf92944e57058e87d17cee5a7cd2a1
-Author:     Jett.Zhou <jtzhou@marvell.com>
-AuthorDate: Fri Jul 27 16:27:16 2012 +0800
-Commit:     Anton Vorontsov <anton.vorontsov@linaro.org>
-CommitDate: Thu Sep 20 15:32:55 2012 -0700
+Hi Dave,
 
-    power_supply: Enable battery-charger for 88pm860x
+FYI, there are new sparse warnings show up in
 
+tree:   git://people.freedesktop.org/~airlied/linux.git drm-opt-pwr
+head:   75c2c97fd7c783f4f06423a41671f61840e65fa5
+commit: 75c2c97fd7c783f4f06423a41671f61840e65fa5 [84/84] nouveau: add runtime PM support (v0.5)
 
-drivers/mfd/88pm860x-core.c:982:11: error: too few arguments to function 'mfd_add_devices'
+All sparse warnings:
 
-vim +982 drivers/mfd/88pm860x-core.c
-   966	
-   967		power_devs[2].platform_data = &preg_init_data;
-   968		power_devs[2].pdata_size = sizeof(struct regulator_init_data);
-   969		ret = mfd_add_devices(chip->dev, 0, &power_devs[2], 1,
-   970				      NULL, chip->irq_base, NULL);
-   971		if (ret < 0)
-   972			dev_err(chip->dev, "Failed to add preg subdev\n");
-   973	
-   974		if (pdata->chg_desc) {
-   975			pdata->chg_desc->charger_regulators    976				&chg_desc_regulator_data[0];
-   977			pdata->chg_desc->num_charger_regulators	   978				ARRAY_SIZE(chg_desc_regulator_data),
-   979			power_devs[3].platform_data = pdata->chg_desc;
-   980			power_devs[3].pdata_size = sizeof(*pdata->chg_desc);
-   981			ret = mfd_add_devices(chip->dev, 0, &power_devs[3], 1,
- > 982					      NULL, chip->irq_base);
-   983			if (ret < 0)
-   984				dev_err(chip->dev, "Failed to add chg-manager subdev\n");
-   985		}
-   986	}
-   987	
-   988	static void __devinit device_onkey_init(struct pm860x_chip *chip,
-   989						struct pm860x_platform_data *pdata)
-   990	{
+  drivers/gpu/drm/nouveau/nouveau_drm.c:406:1: sparse: symbol 'nouveau_do_suspend' was not declared. Should it be static?
+  drivers/gpu/drm/nouveau/nouveau_drm.c:468:1: sparse: symbol 'nouveau_do_resume' was not declared. Should it be static?
++ drivers/gpu/drm/nouveau/nouveau_drm.c:628:6: sparse: symbol 'nouveau_drm_ioctl' was not declared. Should it be static?
+
+vim +628 drivers/gpu/drm/nouveau/nouveau_drm.c
+
+ > 628	long nouveau_drm_ioctl(struct file *filp,
+   629			       unsigned int cmd, unsigned long arg)
+   630	{
+   631		struct drm_file *file_priv = filp->private_data;
+   632		struct drm_device *dev;
+   633		long ret;
+   634		dev = file_priv->minor->dev;
+   635		ret = pm_runtime_get(dev->dev);
+   636		if (ret < 0)
+   637			return ret;
+   638	
+
+Please consider folding the attached diff :-)
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
 Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+
+--WIyZ46R2i8wDzkSu
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-75c2c97.diff"
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index a7258d9..1d68173 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -402,7 +402,7 @@ nouveau_drm_remove(struct pci_dev *pdev)
+ 	nouveau_object_debug();
+ }
+ 
+-int
++static int
+ nouveau_do_suspend(struct drm_device *dev)
+ {
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+@@ -464,7 +464,7 @@ int nouveau_pmops_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-int
++static int
+ nouveau_do_resume(struct drm_device *dev)
+ {
+ 	struct nouveau_drm *drm = nouveau_drm(dev);
+@@ -625,7 +625,7 @@ nouveau_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_INFO, nouveau_gem_ioctl_info, DRM_UNLOCKED|DRM_AUTH),
+ };
+ 
+-long nouveau_drm_ioctl(struct file *filp,
++static long nouveau_drm_ioctl(struct file *filp,
+ 		       unsigned int cmd, unsigned long arg)
+ {
+ 	struct drm_file *file_priv = filp->private_data;
+
+--WIyZ46R2i8wDzkSu--
