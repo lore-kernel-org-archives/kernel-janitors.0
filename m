@@ -1,89 +1,50 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Date: Sun, 23 Sep 2012 19:52:00 +0000
-Subject: Re: [PATCH 01/10] drivers/video/mb862xx/mb862xxfbdrv.c: fix error return code
-Message-Id: <505F6860.7000908@gmx.de>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 12 Sep 2012 15:06:16 +0000
+Subject: [PATCH] module: report -EFAULT on bytes remaining
+Message-Id: <20120912150616.GA27343@www.outflux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: paul.gortmaker@windriver.com, hsweeten@visionengravers.com, agust@denx.de, davidb@codeaurora.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Fengguang Wu <fengguang.wu@intel.com>, kernel-janitors@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied all 10 patches of this series.
+Caught by smatch:
+kernel/module.c:2450 copy_module_from_user() warn: maybe return -EFAULT instead of the bytes remaining?  
+
+Clean up the copy_from_user() call to not report a positive value.
+With this patch, init_module() will report errors from copy_from_user
+(before it would always only report -EFAULT when err != 0).
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+This change is on top of the finit_module patch series.
+---
+ kernel/module.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/kernel/module.c b/kernel/module.c
+index 0ad03c4..05b8dde 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2441,8 +2441,11 @@ int copy_module_from_user(const void __user *umod, unsigned long len,
+ 		return -ENOMEM;
+ 
+ 	err = copy_from_user(info->hdr, umod, info->len);
+-	if (err)
++	if (err) {
++		if (err > 0)
++			err = -EFAULT;
+ 		goto free_hdr;
++	}
+ 
+ 	err = check_info(info);
+ 	if (err)
+-- 
+1.7.0.4
 
 
-Thanks,
-
-Florian Tobias Schandinat
-
-
-On 09/18/2012 12:07 PM, Peter Senna Tschudin wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> // </smpl>
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
->  drivers/video/mb862xx/mb862xxfbdrv.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/video/mb862xx/mb862xxfbdrv.c b/drivers/video/mb862xx/mb862xxfbdrv.c
-> index 57d940b..d68e332 100644
-> --- a/drivers/video/mb862xx/mb862xxfbdrv.c
-> +++ b/drivers/video/mb862xx/mb862xxfbdrv.c
-> @@ -1052,12 +1052,14 @@ static int __devinit mb862xx_pci_probe(struct pci_dev *pdev,
->  		break;
->  	default:
->  		/* should never occur */
-> +		ret = -EIO;
->  		goto rel_reg;
->  	}
->  
->  	par->fb_base = ioremap(par->fb_base_phys, par->mapped_vram);
->  	if (par->fb_base = NULL) {
->  		dev_err(dev, "Cannot map framebuffer\n");
-> +		ret = -EIO;
->  		goto rel_reg;
->  	}
->  
-> @@ -1073,11 +1075,13 @@ static int __devinit mb862xx_pci_probe(struct pci_dev *pdev,
->  	dev_dbg(dev, "mmio phys 0x%llx 0x%lx\n",
->  		(unsigned long long)par->mmio_base_phys, (ulong)par->mmio_len);
->  
-> -	if (mb862xx_pci_gdc_init(par))
-> +	ret = mb862xx_pci_gdc_init(par);
-> +	if (ret)
->  		goto io_unmap;
->  
-> -	if (request_irq(par->irq, mb862xx_intr, IRQF_SHARED,
-> -			DRV_NAME, (void *)par)) {
-> +	ret = request_irq(par->irq, mb862xx_intr, IRQF_SHARED,
-> +			  DRV_NAME, (void *)par);
-> +	if (ret) {
->  		dev_err(dev, "Cannot request irq\n");
->  		goto io_unmap;
->  	}
-
+-- 
+Kees Cook
+Chrome OS Security
