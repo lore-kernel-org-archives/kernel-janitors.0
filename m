@@ -1,40 +1,104 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 21 Sep 2012 02:07:07 +0000
-Subject: [signal:master 89/93] arch/sh/kernel/signal_32.c:249:2: error: implicit declaration of function 'sys
-Message-Id: <20120921020707.GB21076@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 15:06:43 +0000
+Subject: [PATCH 6/9] drivers/staging/rtl8192u/r8192U_core.c: Remove useless kfree
+Message-Id: <1347462407-13499-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Hi Al,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+Remove useless kfree() and clean up code related to the removal.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git master
-head:   d38625a1fb0a7adcc79f97c37d3afde2981aa02a
-commit: 9d5523cd164dd6ace6a8154a1c9d4f1c01fefdab [89/93] sh: sigaltstack conversion
-config: sh-allnoconfig
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-All related error/warning messages:
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
 
-arch/sh/kernel/signal_32.c: In function 'sys_rt_sigreturn':
-arch/sh/kernel/signal_32.c:249:2: error: implicit declaration of function 'sys_sigaltstack' [-Werror=implicit-function-declaration]
-cc1: all warnings being treated as errors
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
 
-vim +249 arch/sh/kernel/signal_32.c
-   243	
-   244		set_current_blocked(&set);
-   245	
-   246		if (restore_sigcontext(regs, &frame->uc.uc_mcontext, &r0))
-   247			goto badframe;
-   248	
- > 249		if (sys_sigaltstack(&frame->uc.uc_stack, NULL) = -EFAULT)
-   250			goto badframe;
-   251	
-   252		return r0;
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/staging/rtl8192u/r8192U_core.c |   23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 5c132ac..5a2fab9 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -2232,24 +2232,15 @@ short rtl8192_usb_initendpoints(struct net_device *dev)
+ 	memset(priv->rx_urb, 0, sizeof(struct urb*) * MAX_RX_URB);
+ 	priv->pp_rxskb = kcalloc(MAX_RX_URB, sizeof(struct sk_buff *),
+ 				 GFP_KERNEL);
+-	if (priv->pp_rxskb = NULL)
+-		goto destroy;
+-
+-	goto _middle;
+-
+-
+-destroy:
+-	kfree(priv->pp_rxskb);
+-	kfree(priv->rx_urb);
+-
+-	priv->pp_rxskb = NULL;
+-	priv->rx_urb = NULL;
+-
+-	DMESGE("Endpoint Alloc Failure");
+-	return -ENOMEM;
++	if (!priv->pp_rxskb) {
++		kfree(priv->rx_urb);
+ 
++		priv->pp_rxskb = NULL;
++		priv->rx_urb = NULL;
+ 
+-_middle:
++		DMESGE("Endpoint Alloc Failure");
++		return -ENOMEM;
++	}
+ 
+ 	printk("End of initendpoints\n");
+ 	return 0;
+
