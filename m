@@ -1,38 +1,66 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Date: Fri, 21 Sep 2012 00:02:49 +0000
-Subject: Re: [battery:master 23/24] drivers/mfd/88pm860x-core.c:803:39: warning: assignment from incompatible
-Message-Id: <20120921000249.GA14399@lizard>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Date: Wed, 12 Sep 2012 06:46:09 +0000
+Subject: [PATCH Resend] leds-lm3530: Fix smatch warnings
+Message-Id: <1347431649-3776-1-git-send-email-sachin.kamat@linaro.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120920225658.GA12235@localhost>
-In-Reply-To: <20120920225658.GA12235@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 21, 2012 at 07:29:42AM +0800, Fengguang Wu wrote:
-[...]
-> Yes. Because I'm building every commit,
+Fixes the following smatch warnings:
+drivers/leds/leds-lm3530.c:361 lm3530_mode_set() info:
+why not propagate 'mode' from lm3530_get_mode_from_str() instead of -22?
+drivers/leds/leds-lm3530.c:432 lm3530_probe() info:
+why not propagate 'err' from lm3530_init_registers() instead of -19?
+drivers/leds/leds-lm3530.c:438 lm3530_probe() info:
+why not propagate 'err' from led_classdev_register() instead of -19?
 
-Oh, I see.
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Shreshtha Kumar SAHU <shreshthakumar.sahu@stericsson.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/leds/leds-lm3530.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-> > I think you're building with HEAD = a830d28b48bf9294, but why?
-> > (And 23/24 makes me think that you're indeed missing the latest
-> > commit.)
-> 
-> This report is for [23/24] a830d28b. The head ([24/24] f1ade35253f50)
-> fixes the warning. Oh well, some warnings may not hurt bisectability
-> while others do lead to runtime errors, so I can hardly avoid false
-> reports on such fixed-in-HEAD warnings..
-> 
-> But if your tree never rebases, I can definitely avoid sending reports
-> for such intermediate errors/warnings.
+diff --git a/drivers/leds/leds-lm3530.c b/drivers/leds/leds-lm3530.c
+index 1e7ed2a..b26306f 100644
+--- a/drivers/leds/leds-lm3530.c
++++ b/drivers/leds/leds-lm3530.c
+@@ -150,7 +150,7 @@ static int lm3530_get_mode_from_str(const char *str)
+ 		if (sysfs_streq(str, mode_map[i].mode))
+ 			return mode_map[i].mode_val;
+ 
+-	return -1;
++	return -EINVAL;
+ }
+ 
+ static void lm3530_als_configure(struct lm3530_platform_data *pdata,
+@@ -358,7 +358,7 @@ static ssize_t lm3530_mode_set(struct device *dev, struct device_attribute
+ 	mode = lm3530_get_mode_from_str(buf);
+ 	if (mode < 0) {
+ 		dev_err(dev, "Invalid mode\n");
+-		return -EINVAL;
++		return mode;
+ 	}
+ 
+ 	drvdata->mode = mode;
+@@ -429,13 +429,13 @@ static int __devinit lm3530_probe(struct i2c_client *client,
+ 		if (err < 0) {
+ 			dev_err(&client->dev,
+ 				"Register Init failed: %d\n", err);
+-			return -ENODEV;
++			return err;
+ 		}
+ 	}
+ 	err = led_classdev_register(&client->dev, &drvdata->led_dev);
+ 	if (err < 0) {
+ 		dev_err(&client->dev, "Register led class failed: %d\n", err);
+-		return -ENODEV;
++		return err;
+ 	}
+ 
+ 	err = device_create_file(drvdata->led_dev.dev, &dev_attr_mode);
+-- 
+1.7.4.1
 
-It's fine -- these reports are useful even if I don't rebase, now I
-just know that interim warnings are also reported.
-
-And sometimes I do rebase, if there's some major bisectabilty problem
-(which I surely don't want to appear in upstream).
-
-Thanks,
-Anton.
