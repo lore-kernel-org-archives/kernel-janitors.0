@@ -1,75 +1,36 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Date: Fri, 07 Sep 2012 10:46:20 +0000
-Subject: Re: [PATCH] USB: XHCI: xhci-ring: Remove unused dma address calculation in inc_enq and inc_deq funct
-Message-Id: <5049D07C.8010403@mvista.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 17:03:16 +0000
+Subject: [PATCH 9/15] arch/arm/mach-s3c24xx/mach-h1940.c: removes unnecessary semicolon
+Message-Id: <1347469402-27557-9-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1336922942.3945.12.camel@cst-girish-laptop> <1346946453.5012.1.camel@cst-girish-laptop>
-In-Reply-To: <1346946453.5012.1.camel@cst-girish-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Girish Verma <girish@circuitsutra.com>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, sarah.a.sharp@linux.intel.com, gregkh@linuxfoundation.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hello.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On 06-09-2012 19:47, Girish Verma wrote:
+removes unnecessary semicolon
 
-> Resending patch with latest kernel code:
+Found by Coccinelle: http://coccinelle.lip6.fr/
 
-    That comment should have been put after the --- tear line.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> In xhci-ring.c, function inc_enq and inc_deq calculate the dma address
-> of trb but never used.
+---
+ arch/arm/mach-s3c24xx/mach-h1940.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-> Signed-off-by: Girish Verma <girish@circuitsutra.com>
-> ---
->   drivers/usb/host/xhci-ring.c |    4 ----
->   1 files changed, 0 insertions(+), 4 deletions(-)
-
-> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-> index 643c2f3..5c5c47b 100644
-> --- a/drivers/usb/host/xhci-ring.c
-> +++ b/drivers/usb/host/xhci-ring.c
-> @@ -145,7 +145,6 @@ static void next_trb(struct xhci_hcd *xhci,
->    */
->   static void inc_deq(struct xhci_hcd *xhci, struct xhci_ring *ring)
->   {
-> -	unsigned long long addr;
->
->   	ring->deq_updates++;
->
-> @@ -176,7 +175,6 @@ static void inc_deq(struct xhci_hcd *xhci, struct
-> xhci_ring *ring)
->   		}
->   	} while (last_trb(xhci, ring, ring->deq_seg, ring->dequeue));
->
-> -	addr = (unsigned long long) xhci_trb_virt_to_dma(ring->deq_seg,
-> ring->dequeue);
->   }
->
->   /*
-> @@ -201,7 +199,6 @@ static void inc_enq(struct xhci_hcd *xhci, struct
-> xhci_ring *ring,
->   {
->   	u32 chain;
->   	union xhci_trb *next;
-> -	unsigned long long addr;
->
->   	chain = le32_to_cpu(ring->enqueue->generic.field[3]) & TRB_CHAIN;
->   	/* If this is not event ring, there is one less usable TRB */
-> @@ -253,7 +250,6 @@ static void inc_enq(struct xhci_hcd *xhci, struct
-> xhci_ring *ring,
->   		ring->enqueue = ring->enq_seg->trbs;
->   		next = ring->enqueue;
->   	}
-> -	addr = (unsigned long long) xhci_trb_virt_to_dma(ring->enq_seg,
-> ring->enqueue);
-
-    The patch is line wrapped. Should be easy to fix by hand when applying 
-though...
-
-WBR, Sergei
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index bb8d008..02ef7d5 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -460,7 +460,7 @@ static void h1940_set_mmc_power(unsigned char power_mode, unsigned short vdd)
+ 		break;
+ 	default:
+ 		break;
+-	};
++	}
+ }
+ 
+ static struct s3c24xx_mci_pdata h1940_mmc_cfg __initdata = {
 
