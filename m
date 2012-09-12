@@ -1,103 +1,50 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Date: Sun, 23 Sep 2012 17:39:21 +0000
-Subject: Fwd: [PATCH 5/5] drivers/media/platform/omap3isp/isp.c: fix error return code
-Message-Id: <505F4949.2090509@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------090503090104080708050501"
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 12 Sep 2012 02:16:47 +0000
+Subject: [integrity:next-ima-new-check-module-syscall 32/34] kernel/module.c:2450 copy_module_from_user() war
+Message-Id: <20120912021647.GA17485@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346775269-12191-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346775269-12191-1-git-send-email-peter.senna@gmail.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-
-This is a multi-part message in MIME format.
---------------090503090104080708050501
-Content-Type: text/plain; charset=ISO-8859-1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Laurent,
+Hi Kees,
 
-Could you please review this patch?
+FYI, there are new smatch warnings show up in
 
-Peter,
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-ima-new-check-module-syscall
+head:   3167cf7685efd4855ed9e52e8b2470e8d2dcbf9c
+commit: e0eb8f8fe012a54af6d00e0d1573cf1c824023d4 [32/34] module: add syscall to load module from fd
 
-Please, always c/c the driver maintainer/author on patches you submit.
+All smatch warnings:
 
-You can check it with scripts/get_maintainer.pl.
+  arch/x86/include/asm/stacktrace.h:112 caller_frame_pointer() error: potentially derefencing uninitialized 'frame'.
+  arch/x86/include/asm/jump_label.h:25 arch_static_branch() info: ignoring unreachable code.
++ kernel/module.c:2450 copy_module_from_user() warn: maybe return -EFAULT instead of the bytes remaining?
 
-Regards,
-Mauro
-
--------- Mensagem original --------
-Assunto: [PATCH 5/5] drivers/media/platform/omap3isp/isp.c: fix error return code
-Data: Tue,  4 Sep 2012 18:14:25 +0200
-De: Peter Senna Tschudin <peter.senna@gmail.com>
-Para: Mauro Carvalho Chehab <mchehab@infradead.org>
-CC: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+vim +2450 kernel/module.c
+  2440			goto free_hdr;
+  2441	
+  2442		err = check_info(info);
+  2443		if (err)
+  2444			goto free_hdr;
+  2445	
+  2446		return err;
+  2447	
+  2448	free_hdr:
+  2449		vfree(info->hdr);
+> 2450		return err;
+  2451	}
+  2452	
+  2453	/* Sets info->hdr and info->len. */
+  2454	int copy_module_from_fd(int fd, struct load_info *info)
+  2455	{
+  2456		struct file *file;
+  2457		int err;
+  2458		struct kstat stat;
+  2459		unsigned long size;
+  2460		off_t pos;
 
 ---
- drivers/media/platform/omap3isp/isp.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
-index e0096e0..91fcaef 100644
---- a/drivers/media/platform/omap3isp/isp.c
-+++ b/drivers/media/platform/omap3isp/isp.c
-@@ -2102,8 +2102,10 @@ static int __devinit isp_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto error;
- 
--	if (__omap3isp_get(isp, false) == NULL)
-+	if (__omap3isp_get(isp, false) == NULL) {
-+		ret = -EBUSY; /* Not sure if EBUSY is best for here */
- 		goto error;
-+	}
- 
- 	ret = isp_reset(isp);
- 	if (ret < 0)
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-media" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
---------------090503090104080708050501
-Content-Type: text/plain; charset=UTF-8;
- name="=?ISO-8859-1?Q?Se=E7=E3o_da_mensagem_anexada?="
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename*0*=ISO-8859-1''%53%65%E7%E3%6F%20%64%61%20%6D%65%6E%73%61%67%65;
- filename*1*=%6D%20%61%6E%65%78%61%64%61
-
-
---------------090503090104080708050501--
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
