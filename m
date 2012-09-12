@@ -1,56 +1,96 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 21 Sep 2012 07:21:42 +0000
-Subject: [acpi:release 13/17] drivers/usb/core/usb-acpi.c:55:18: error: storage size of 'pld' isn't known
-Message-Id: <20120921072142.GB1253@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 12:56:01 +0000
+Subject: [PATCH v2 4/8] drivers/media/dvb-frontends/s921.c: Removes useless kfree()
+Message-Id: <1347454564-5178-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Feng Tang <feng.tang@intel.com>
-Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, Len Brown <len.brown@intel.com>, Bob Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Feng,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+Remove useless kfree() and clean up code related to the removal.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git release
-head:   abd4c92003ce21c37ca0e6d9d62b93eb22ec118b
-commit: 8ede06aba5dffa78a27a18c47a9059eb38072ada [13/17] ACPI: Use ACPICA native way to decode the PLD buffer
-config: x86_64-allmodconfig
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-[error]
-drivers/usb/core/usb-acpi.c:55:18: error: storage size of 'pld' isn't known
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
 
-[warning]
-drivers/usb/core/usb-acpi.c:55:18: warning: unused variable 'pld' [-Wunused-variable]
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
 
-vim +55 drivers/usb/core/usb-acpi.c
-    39			goto out;
-    40		}
-    41	
-    42		if (upc->package.elements[0].integer.value)
-    43			udev->removable = USB_DEVICE_REMOVABLE;
-    44		else
-    45			udev->removable = USB_DEVICE_FIXED;
-    46	
-    47	out:
-    48		kfree(upc);
-    49		return ret;
-    50	}
-    51	
-    52	static int usb_acpi_check_pld(struct usb_device *udev, acpi_handle handle)
-    53	{
-    54		acpi_status status;
-  > 55		struct acpi_pld pld;
-    56	
-    57		status = acpi_get_physical_device_location(handle, &pld);
-    58	
-    59		if (ACPI_FAILURE(status))
-    60			return -ENODEV;
-    61	
-    62		if (pld.user_visible)
-    63			udev->removable = USB_DEVICE_REMOVABLE;
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ drivers/media/dvb-frontends/s921.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/dvb-frontends/s921.c b/drivers/media/dvb-frontends/s921.c
+index cd2288c..a271ac3 100644
+--- a/drivers/media/dvb-frontends/s921.c
++++ b/drivers/media/dvb-frontends/s921.c
+@@ -487,9 +487,9 @@ struct dvb_frontend *s921_attach(const struct s921_config *config,
+ 		kzalloc(sizeof(struct s921_state), GFP_KERNEL);
+ 
+ 	dprintk("\n");
+-	if (state = NULL) {
++	if (!state) {
+ 		rc("Unable to kzalloc\n");
+-		goto rcor;
++		return NULL;
+ 	}
+ 
+ 	/* setup the state */
+@@ -502,11 +502,6 @@ struct dvb_frontend *s921_attach(const struct s921_config *config,
+ 	state->frontend.demodulator_priv = state;
+ 
+ 	return &state->frontend;
+-
+-rcor:
+-	kfree(state);
+-
+-	return NULL;
+ }
+ EXPORT_SYMBOL(s921_attach);
+ 
+
