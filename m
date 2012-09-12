@@ -1,31 +1,81 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Sep 2012 08:11:13 +0000
-Subject: Re: [patch 1/2] Staging: silicom: add some range checks to proc functions
-Message-Id: <20120914081113.GD13767@mwanda>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 15:06:46 +0000
+Subject: [PATCH 8/9] sound/soc/soc-core.c: Remove useless kfree
+Message-Id: <1347462407-13499-8-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120914065600.GF11886@elgon.mountain>
-In-Reply-To: <20120914065600.GF11886@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lrg@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2012 at 10:08:30AM +0300, Dan Carpenter wrote:
-> On Fri, Sep 14, 2012 at 09:56:00AM +0300, Dan Carpenter wrote:
-> > If you tried to cat more than 255 characters (the last character is for
-> > the terminator) to these proc files then it would corrupt kernel memory.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Actually sorry for this, I meant to check first before sending.  Is
-> it possible to do a zero size write to a proc file?  In sysfs it
-> isn't but I'm not sure about proc.
-> 
-> I may need to redo this.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-I'm just busy having a conversation with myself.  This patch is
-correct.  Please apply it after all.
+Remove useless kfree() and clean up code related to the removal.
 
-regards,
-dan carpenter
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
+
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ sound/soc/soc-core.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 2a4c7bb..6b29c73 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -4052,8 +4052,6 @@ int snd_soc_register_codec(struct device *dev,
+ 	return 0;
+ 
+ fail:
+-	kfree(codec->reg_def_copy);
+-	codec->reg_def_copy = NULL;
+ 	kfree(codec->name);
+ 	kfree(codec);
+ 	return ret;
 
