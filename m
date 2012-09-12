@@ -1,50 +1,89 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Sep 2012 11:05:56 +0000
-Subject: [patch] [SCSI] cleanup some calls to strncmp()
-Message-Id: <20120914110556.GB1152@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 15:06:45 +0000
+Subject: [PATCH 7/9] drivers/char/mmtimer.c: Remove useless kfree
+Message-Id: <1347462407-13499-7-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
 
-The main motivation for this patch is that for the first strncmp()
-we do 'strncmp(src, "-", 20)' but "src" is a 15 character buffer not 20.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Also since we know that "-" is only two characters, the compare isn't
-going to go further than 2 characters into src before deciding that it
-doesn't match.
+Remove useless kfree() and clean up code related to the removal.
 
-The same applies to the other strncmp()s.  In those cases "str" is
-actually 10 characters so the limiter is correct but it is still not
-needed when the length for "adapter" and "firmware" is known and less
-than 10.
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
 
-diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
-index 093d4f6..bd576ce 100644
---- a/drivers/scsi/scsi_sysfs.c
-+++ b/drivers/scsi/scsi_sysfs.c
-@@ -84,7 +84,7 @@ static int check_set(unsigned int *val, char *src)
- {
- 	char *last;
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/char/mmtimer.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/char/mmtimer.c b/drivers/char/mmtimer.c
+index 33dc229..3d6c067 100644
+--- a/drivers/char/mmtimer.c
++++ b/drivers/char/mmtimer.c
+@@ -826,7 +826,7 @@ static int __init mmtimer_init(void)
  
--	if (strncmp(src, "-", 20) = 0) {
-+	if (strcmp(src, "-") = 0) {
- 		*val = SCAN_WILD_CARD;
- 	} else {
- 		/*
-@@ -249,9 +249,9 @@ static DEVICE_ATTR(active_mode, S_IRUGO | S_IWUSR, show_shost_active_mode, NULL)
+ 	/* Allocate list of node ptrs to mmtimer_t's */
+ 	timers = kzalloc(sizeof(struct mmtimer_node)*maxn, GFP_KERNEL);
+-	if (timers = NULL) {
++	if (!timers) {
+ 		printk(KERN_ERR "%s: failed to allocate memory for device\n",
+ 				MMTIMER_NAME);
+ 		goto out3;
+@@ -848,7 +848,6 @@ static int __init mmtimer_init(void)
+ 	return 0;
  
- static int check_reset_type(char *str)
- {
--	if (strncmp(str, "adapter", 10) = 0)
-+	if (strcmp(str, "adapter") = 0)
- 		return SCSI_ADAPTER_RESET;
--	else if (strncmp(str, "firmware", 10) = 0)
-+	else if (strcmp(str, "firmware") = 0)
- 		return SCSI_FIRMWARE_RESET;
- 	else
- 		return 0;
+ out3:
+-	kfree(timers);
+ 	misc_deregister(&mmtimer_miscdev);
+ out2:
+ 	free_irq(SGI_MMTIMER_VECTOR, NULL);
+
