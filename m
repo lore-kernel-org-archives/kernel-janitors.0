@@ -1,55 +1,105 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 28 Sep 2012 13:07:15 +0000
-Subject: [tip:master 27/35] kernel/sched/fair.c:791: warning: 'task_h_load' declared 'static' but never defin
-Message-Id: <20120928130715.GB5158@localhost>
+Date: Wed, 12 Sep 2012 22:14:01 +0000
+Subject: [xen:linux-next 4/27] arch/x86/kernel/x86_init.c:29:13: sparse: symbol 'x86_init_pgd_start_noop' was
+Message-Id: <20120912221401.GA13568@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="C7zPtVaVf+AK4Oqc"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Peter,
 
-FYI, there are new compile warnings show up in
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-head:   2ef756a2e79149dc84c88f7ccc42ec38cbb7722e
-commit: 4ae834f767c59b42cdf2a5077a18388525ba78b2 [27/35] sched/numa: Implement NUMA home-node selection code
-config: avr32-atngw100_defconfig
+Hi Attilio,
 
-All warnings:
+FYI, there are new sparse warnings show up in
 
-kernel/sched/fair.c:791: warning: 'task_h_load' declared 'static' but never defined
-kernel/sched/fair.c:909: warning: 'account_offnode_enqueue' defined but not used
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git linux-next
+head:   3153e9a8aa96bd1f11988c7c70d9372f00b615a1
+commit: 73090f8993a40a2f67fed1ab866a928c68cd3765 [4/27] x86: Remove base argument from x86_init.paging.pagetable_setup_start
 
-vim +791 kernel/sched/fair.c
+All sparse warnings:
 
-305e6835 kernel/sched_fair.c (Venkatesh Pallipadi 2010-10-04  775) 	se->exec_start = rq_of(cfs_rq)->clock_task;
-bf0f6f24 kernel/sched_fair.c (Ingo Molnar         2007-07-09  776) }
-bf0f6f24 kernel/sched_fair.c (Ingo Molnar         2007-07-09  777) 
-bf0f6f24 kernel/sched_fair.c (Ingo Molnar         2007-07-09  778) /**************************************************
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  779)  * Scheduling class numa methods.
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  780)  *
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  781)  * The purpose of the NUMA bits are to maintain compute (task) and data
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  782)  * (memory) locality. We try and achieve this by making tasks stick to
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  783)  * a particular node (their home node) but if fairness mandates they run
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  784)  * elsewhere for long enough, we let the memory follow them.
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  785)  *
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  786)  * Tasks start out with their home-node unset (-1) this effectively means
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  787)  * they act !NUMA until we've established the task is busy enough to bother
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  788)  * with placement.
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  789)  */
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  790) 
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16 @791) static unsigned long task_h_load(struct task_struct *p);
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  792) 
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  793) #ifdef CONFIG_SCHED_NUMA
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  794) static void account_offnode_enqueue(struct rq *rq, struct task_struct *p)
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  795) {
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  796) 	p->numa_contrib = task_h_load(p);
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  797) 	rq->offnode_weight += p->numa_contrib;
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  798) 	rq->offnode_running++;
-4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  799) }
++ arch/x86/kernel/x86_init.c:29:13: sparse: symbol 'x86_init_pgd_start_noop' was not declared. Should it be static?
++ arch/x86/kernel/x86_init.c:30:13: sparse: symbol 'x86_init_pgd_done_noop' was not declared. Should it be static?
+  arch/x86/kernel/x86_init.c:31:12: sparse: symbol 'iommu_init_noop' was not declared. Should it be static?
+  arch/x86/kernel/x86_init.c:32:6: sparse: symbol 'iommu_shutdown_noop' was not declared. Should it be static?
+
+vim +29 arch/x86/kernel/x86_init.c
+    19	#include <asm/time.h>
+    20	#include <asm/irq.h>
+    21	#include <asm/io_apic.h>
+    22	#include <asm/pat.h>
+    23	#include <asm/tsc.h>
+    24	#include <asm/iommu.h>
+    25	#include <asm/mach_traps.h>
+    26	
+    27	void __cpuinit x86_init_noop(void) { }
+    28	void __init x86_init_uint_noop(unsigned int unused) { }
+  > 29	void __init x86_init_pgd_start_noop(void) { }
+    30	void __init x86_init_pgd_done_noop(pgd_t *unused) { }
+    31	int __init iommu_init_noop(void) { return 0; }
+    32	void iommu_shutdown_noop(void) { }
+    33	
+    34	/*
+    35	 * The platform setup functions are preset with the default functions
+    36	 * for standard PC hardware.
+    37	 */
+    38	struct x86_init_ops x86_init __initdata = {
+    39	
+
+Please consider folding the attached diff :-)
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-73090f8.diff"
+
+diff --git a/arch/x86/kernel/x86_init.c b/arch/x86/kernel/x86_init.c
+index 3b88493..6375747 100644
+--- a/arch/x86/kernel/x86_init.c
++++ b/arch/x86/kernel/x86_init.c
+@@ -26,10 +26,10 @@
+ 
+ void __cpuinit x86_init_noop(void) { }
+ void __init x86_init_uint_noop(unsigned int unused) { }
+-void __init x86_init_pgd_start_noop(void) { }
+-void __init x86_init_pgd_done_noop(pgd_t *unused) { }
+-int __init iommu_init_noop(void) { return 0; }
+-void iommu_shutdown_noop(void) { }
++static void __init x86_init_pgd_start_noop(void) { }
++static void __init x86_init_pgd_done_noop(pgd_t *unused) { }
++static int __init iommu_init_noop(void) { return 0; }
++static void iommu_shutdown_noop(void) { }
+ 
+ /*
+  * The platform setup functions are preset with the default functions
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index c4aa1b2..79082e1 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -553,7 +553,7 @@ early_param("highmem", parse_highmem);
+  * artificially via the highmem=x boot parameter then create
+  * it:
+  */
+-void __init lowmem_pfn_init(void)
++static void __init lowmem_pfn_init(void)
+ {
+ 	/* max_low_pfn is 0, we already have early_res support */
+ 	max_low_pfn = max_pfn;
+@@ -589,7 +589,7 @@ void __init lowmem_pfn_init(void)
+  * We have more RAM than fits into lowmem - we try to put it into
+  * highmem, also taking the highmem=x boot parameter into account:
+  */
+-void __init highmem_pfn_init(void)
++static void __init highmem_pfn_init(void)
+ {
+ 	max_low_pfn = MAXMEM_PFN;
+ 
+
+--C7zPtVaVf+AK4Oqc--
