@@ -1,44 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Sep 2012 15:10:15 +0000
-Subject: Re: [digsig:working 47/64] security/integrity/digsig.c:74:1: warning: 'shash_digest' uses dynamic st
-Message-Id: <20120913151015.GO19396@mwanda>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 12 Sep 2012 03:11:31 +0000
+Subject: pcf857x_probe() error: we previously assumed 'pdata' could be null (see line 277)
+Message-Id: <20120912031131.GA22076@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120913144807.GA2562@localhost>
-In-Reply-To: <20120913144807.GA2562@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 13, 2012 at 10:48:07PM +0800, Fengguang Wu wrote:
-> Hi Dmitry,
-> 
-> I'm not sure if the warned 'dynamic stack allocation' is relevant, but
-> as an FYI:
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/kasatkin/linux-digsig.git working
-> head:   ca88a6aa648a167b6f8e5666518249635510b0b0
-> commit: c6a28f9ee92fe96c5a7c4e5989eb7ae06b545469 [47/64] integrity: added digest calculation function
-> config: s390-allyesconfig
-> 
-> All error/warnings:
-> 
-> security/integrity/digsig.c: In function 'shash_digest':
-> security/integrity/digsig.c:74:1: warning: 'shash_digest' uses dynamic stack allocation [enabled by default]
-> 
-> vim +74 security/integrity/digsig.c
->     64			char ctx[crypto_shash_descsize(tfm)];
-                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-Where it wouldn't be relavent is if the size of the can be made to
-overflow the 8k kernel's stack.  We've seen places where this could
-be controlled by the user before.
+FYI, there are new smatch warnings on
 
-Also it's not ok inside a for loop.  On some arches the dynamic
-allocations aren't freed at the end of the loop, only at the end
-of the function.  So inside a for loop the stack keeps getting
-bigger and bigger until it overflows the 8k stack.  (Doesn't happen
-on x86).
+commit 6e20a0a429bd4dc07d6de16d9c247270e04e4aa0 gpio: pcf857x: enable gpio_to_irq() support
 
-regards,
-dan carpenter
+drivers/gpio/gpio-pcf857x.c:288 pcf857x_probe() error: we previously assumed 'pdata' could be null (see line 277)
+drivers/gpio/gpio-pcf857x.c:364 pcf857x_probe() warn: variable dereferenced before check 'pdata' (see line 292)
+drivers/gpio/gpio-pcf857x.c:421 pcf857x_remove() error: we previously assumed 'pdata' could be null (see line 410)
 
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
