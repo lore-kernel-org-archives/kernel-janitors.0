@@ -1,32 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Sep 2012 08:06:42 +0000
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 12:45:50 +0000
 Subject: Re: [PATCH] drivers/media: Removes useless kfree()
-Message-Id: <20120912080642.GA19396@mwanda>
+Message-Id: <CA+MoWDptdWtAoMvrQ==YN-VA0z9DQPhh_gLkUwJKof-FNHA+zw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1347386432-12954-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347386432-12954-1-git-send-email-peter.senna@gmail.com>
+	<20120912080642.GA19396@mwanda>
+In-Reply-To: <20120912080642.GA19396@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2012 at 08:00:32PM +0200, Peter Senna Tschudin wrote:
-> diff --git a/drivers/media/dvb-frontends/lg2160.c b/drivers/media/dvb-frontends/lg2160.c
-> index cc11260..748da5d 100644
-> --- a/drivers/media/dvb-frontends/lg2160.c
-> +++ b/drivers/media/dvb-frontends/lg2160.c
-> @@ -1451,7 +1451,6 @@ struct dvb_frontend *lg2160_attach(const struct lg2160_config *config,
->  	return &state->frontend;
->  fail:
->  	lg_warn("unable to detect LG216x hardware\n");
-> -	kfree(state);
->  	return NULL;
->  }
+I'll split this patch in one patch for file and resend.
 
-I wish you had fixed this the same as the others and removed the
-goto.  Also the printk is redundant and wrong.  Remove it too.
+On Wed, Sep 12, 2012 at 10:06 AM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
+> On Tue, Sep 11, 2012 at 08:00:32PM +0200, Peter Senna Tschudin wrote:
+>> diff --git a/drivers/media/dvb-frontends/lg2160.c b/drivers/media/dvb-frontends/lg2160.c
+>> index cc11260..748da5d 100644
+>> --- a/drivers/media/dvb-frontends/lg2160.c
+>> +++ b/drivers/media/dvb-frontends/lg2160.c
+>> @@ -1451,7 +1451,6 @@ struct dvb_frontend *lg2160_attach(const struct lg2160_config *config,
+>>       return &state->frontend;
+>>  fail:
+>>       lg_warn("unable to detect LG216x hardware\n");
+>> -     kfree(state);
+>>       return NULL;
+>>  }
+>
+> I wish you had fixed this the same as the others and removed the
+> goto.  Also the printk is redundant and wrong.  Remove it too.
+>
+> regards,
+> dan carpenter
+>
 
-regards,
-dan carpenter
 
+
+-- 
+Peter
