@@ -1,60 +1,94 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 15:23:55 +0000
-Subject: [PATCH 6/14] drivers/media/pci/dm1105/dm1105.c: fix error return code
-Message-Id: <1346945041-26676-8-git-send-email-peter.senna@gmail.com>
+Date: Wed, 12 Sep 2012 12:55:59 +0000
+Subject: [PATCH v2 6/8] drivers/media/dvb-frontends/tda665x.c: Removes useless kfree()
+Message-Id: <1347454564-5178-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Remove useless kfree() and clean up code related to the removal.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+@r exists@
+position p1,p2;
+expression x;
+@@
 
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
 // </smpl>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/media/pci/dm1105/dm1105.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/dvb-frontends/tda665x.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/pci/dm1105/dm1105.c b/drivers/media/pci/dm1105/dm1105.c
-index a609b3a..f147031 100644
---- a/drivers/media/pci/dm1105/dm1105.c
-+++ b/drivers/media/pci/dm1105/dm1105.c
-@@ -1128,8 +1128,10 @@ static int __devinit dm1105_probe(struct pci_dev *pdev,
- 	INIT_WORK(&dev->work, dm1105_dmx_buffer);
- 	sprintf(dev->wqn, "%s/%d", dvb_adapter->name, dvb_adapter->num);
- 	dev->wq = create_singlethread_workqueue(dev->wqn);
--	if (!dev->wq)
-+	if (!dev->wq) {
-+		ret = -ENOMEM;
- 		goto err_dvb_net;
-+	}
+diff --git a/drivers/media/dvb-frontends/tda665x.c b/drivers/media/dvb-frontends/tda665x.c
+index 2c1c759..63cc123 100644
+--- a/drivers/media/dvb-frontends/tda665x.c
++++ b/drivers/media/dvb-frontends/tda665x.c
+@@ -228,8 +228,8 @@ struct dvb_frontend *tda665x_attach(struct dvb_frontend *fe,
+ 	struct dvb_tuner_info *info;
  
- 	ret = request_irq(pdev->irq, dm1105_irq, IRQF_SHARED,
- 						DRIVER_NAME, dev);
+ 	state = kzalloc(sizeof(struct tda665x_state), GFP_KERNEL);
+-	if (state = NULL)
+-		goto exit;
++	if (!state)
++		return NULL;
+ 
+ 	state->config		= config;
+ 	state->i2c		= i2c;
+@@ -246,10 +246,6 @@ struct dvb_frontend *tda665x_attach(struct dvb_frontend *fe,
+ 	printk(KERN_DEBUG "%s: Attaching TDA665x (%s) tuner\n", __func__, info->name);
+ 
+ 	return fe;
+-
+-exit:
+-	kfree(state);
+-	return NULL;
+ }
+ EXPORT_SYMBOL(tda665x_attach);
+ 
 
