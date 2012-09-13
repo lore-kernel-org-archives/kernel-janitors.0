@@ -1,27 +1,51 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 27 Sep 2012 05:43:57 +0000
-Subject: Re: [PATCH 1/4] drivers/crypto/ux500/cryp/cryp_core.c: fix error return code
-Message-Id: <20120927054356.GB22311@gondor.apana.org.au>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 13 Sep 2012 14:48:07 +0000
+Subject: [digsig:working 47/64] security/integrity/digsig.c:74:1: warning: 'shash_digest' uses dynamic stack
+Message-Id: <20120913144807.GA2562@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: davem@davemloft.net, linus.walleij@linaro.org, andreas.westin@stericsson.com, rjw@sisk.pl, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 17, 2012 at 07:28:25PM +0200, Peter Senna Tschudin wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
+Hi Dmitry,
 
-All four patches applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I'm not sure if the warned 'dynamic stack allocation' is relevant, but
+as an FYI:
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/kasatkin/linux-digsig.git working
+head:   ca88a6aa648a167b6f8e5666518249635510b0b0
+commit: c6a28f9ee92fe96c5a7c4e5989eb7ae06b545469 [47/64] integrity: added digest calculation function
+config: s390-allyesconfig
+
+All error/warnings:
+
+security/integrity/digsig.c: In function 'shash_digest':
+security/integrity/digsig.c:74:1: warning: 'shash_digest' uses dynamic stack allocation [enabled by default]
+
+vim +74 security/integrity/digsig.c
+    64			char ctx[crypto_shash_descsize(tfm)];
+    65		} desc;
+    66	
+    67		desc.shash.tfm = tfm;
+    68		desc.shash.flags = 0;
+    69	
+    70		rc = crypto_shash_digest(&desc.shash, data, len, digest);
+    71		if (!rc)
+    72			rc = crypto_shash_digestsize(tfm);
+    73		return rc;
+  > 74	}
+    75	
+    76	/**
+    77	 * integrity_calc_digest() - digest calculation
+    78	 * @algo:	digest algo id (enum digest_algo)
+    79	 * @data:	data
+    80	 * @len:	length of the data
+    81	 * @digest:	digest
+    82	 * @return:	digest length on success, -EINVAL otherwise
+    83	 *
+    84	 * Calculates digest of the data.
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
