@@ -1,61 +1,72 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 13 Sep 2012 07:49:40 +0000
-Subject: [sound-unstable:master 118/143] sound/pci/hda/patch_cirrus.c:1414:10: sparse: Initializer entry defi
-Message-Id: <20120913074940.GA25767@localhost>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 13 Sep 2012 08:01:34 +0000
+Subject: Re: [sound-unstable:master 118/143] sound/pci/hda/patch_cirrus.c:1414:10: sparse: Initializer entry
+Message-Id: <s5ha9wue4gx.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120913074940.GA25767@localhost>
+In-Reply-To: <20120913074940.GA25767@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
+To: Fengguang Wu <fengguang.wu@intel.com>
 Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Hi Takashi,
+At Thu, 13 Sep 2012 15:49:40 +0800,
+Fengguang Wu wrote:
+> 
+> Hi Takashi,
+> 
+> FYI, there are new sparse warnings show up in
+> 
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-unstable.git master
+> head:   82cb521360dfd32f4f03ceaa74ef6b83ae983593
+> commit: ef596a57b4d7d8b258beb570ed309ef85bf24dd1 [118/143] ALSA: hda - Add support for MacBook Pro 10,1
+> 
+> All sparse warnings:
+> 
+> + sound/pci/hda/patch_cirrus.c:1414:10: sparse: Initializer entry defined twice
+>   sound/pci/hda/patch_cirrus.c:1418:10:   also defined here
+> 
+> The root cause is, CS420X_MBP101 = CS420X_GPIO_23:
 
-FYI, there are new sparse warnings show up in
+I fixed it quickly now with the patch below.  Thanks!
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-unstable.git master
-head:   82cb521360dfd32f4f03ceaa74ef6b83ae983593
-commit: ef596a57b4d7d8b258beb570ed309ef85bf24dd1 [118/143] ALSA: hda - Add support for MacBook Pro 10,1
 
-All sparse warnings:
-
-+ sound/pci/hda/patch_cirrus.c:1414:10: sparse: Initializer entry defined twice
-  sound/pci/hda/patch_cirrus.c:1418:10:   also defined here
-
-The root cause is, CS420X_MBP101 = CS420X_GPIO_23:
-
-        @@ -85,6 +85,8 @@ enum {
-=>              CS420X_GPIO_23,
-                CS420X_IMAC27_122 = CS420X_GPIO_23,
-                CS420X_APPLE = CS420X_GPIO_13,
-=>      +       CS420X_MBP101,
-        +       CS420X_MBP101_COEF,
-                CS420X_AUTO,
-         };
-         
-vim +1414 sound/pci/hda/patch_cirrus.c
-  1404		[CS420X_IMAC27] = {
-  1405			.type = HDA_FIXUP_PINS,
-  1406			.v.pins = imac27_pincfgs,
-  1407			.chained = true,
-  1408			.chain_id = CS420X_GPIO_13,
-  1409		},
-  1410		[CS420X_GPIO_13] = {
-  1411			.type = HDA_FIXUP_FUNC,
-  1412			.v.func = cs420x_fixup_gpio_13,
-  1413		},
-> 1414		[CS420X_GPIO_23] = {
-  1415			.type = HDA_FIXUP_FUNC,
-  1416			.v.func = cs420x_fixup_gpio_23,
-  1417		},
-  1418		[CS420X_MBP101] = {
-  1419			.type = HDA_FIXUP_PINS,
-  1420			.v.pins = mbp101_pincfgs,
-  1421			.chained = true,
-  1422			.chain_id = CS420X_MBP101_COEF,
-  1423		},
-  1424		[CS420X_MBP101_COEF] = {
+Takashi
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+Subject: [PATCH] ALSA: hda - Fix disordered enum definitions in patch_cirrus.c
+
+Due to the definitions of CS420X_IMAC27_122 and CS420X_APPLE as
+aliases, the rest enums are set to duplicated values unexpectedly.
+Move the alias definitions at the end so that the enum values are
+defined in the proper order.
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ sound/pci/hda/patch_cirrus.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/hda/patch_cirrus.c b/sound/pci/hda/patch_cirrus.c
+index 82253f1..fcfc9f0 100644
+--- a/sound/pci/hda/patch_cirrus.c
++++ b/sound/pci/hda/patch_cirrus.c
+@@ -83,11 +83,12 @@ enum {
+ 	CS420X_IMAC27,
+ 	CS420X_GPIO_13,
+ 	CS420X_GPIO_23,
+-	CS420X_IMAC27_122 = CS420X_GPIO_23,
+-	CS420X_APPLE = CS420X_GPIO_13,
+ 	CS420X_MBP101,
+ 	CS420X_MBP101_COEF,
+ 	CS420X_AUTO,
++	/* aliases */
++	CS420X_IMAC27_122 = CS420X_GPIO_23,
++	CS420X_APPLE = CS420X_GPIO_13,
+ };
+ 
+ /* CS421x boards */
+-- 
+1.7.11.5
+
