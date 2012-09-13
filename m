@@ -1,30 +1,61 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Date: Thu, 27 Sep 2012 10:49:44 +0000
-Subject: Re: [patch] brcmfmac: use kcalloc() to prevent integer overflow
-Message-Id: <50642F48.4060102@broadcom.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 13 Sep 2012 07:49:40 +0000
+Subject: [sound-unstable:master 118/143] sound/pci/hda/patch_cirrus.c:1414:10: sparse: Initializer entry defi
+Message-Id: <20120913074940.GA25767@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120926072148.GA3956@elgon.mountain>
-In-Reply-To: <20120926072148.GA3956@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Brett Rudley <brudley@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Hante Meuleman <meuleman@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On 09/26/2012 09:21 AM, Dan Carpenter wrote:
-> The multiplication here looks like it could overflow.  I've changed it
-> to use kcalloc() to prevent that.
->
-Acked-by: Arend van Spriel <arend@broadcom.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Only needed in linux-next.  This was added in e58060723c "brcmfmac:
-> introduce scheduled scan support".
+Hi Takashi,
 
-Better be safe than sorry. Thanks.
+FYI, there are new sparse warnings show up in
 
-Gr. AvS
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-unstable.git master
+head:   82cb521360dfd32f4f03ceaa74ef6b83ae983593
+commit: ef596a57b4d7d8b258beb570ed309ef85bf24dd1 [118/143] ALSA: hda - Add support for MacBook Pro 10,1
 
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+All sparse warnings:
 
++ sound/pci/hda/patch_cirrus.c:1414:10: sparse: Initializer entry defined twice
+  sound/pci/hda/patch_cirrus.c:1418:10:   also defined here
 
+The root cause is, CS420X_MBP101 = CS420X_GPIO_23:
+
+        @@ -85,6 +85,8 @@ enum {
+=>              CS420X_GPIO_23,
+                CS420X_IMAC27_122 = CS420X_GPIO_23,
+                CS420X_APPLE = CS420X_GPIO_13,
+=>      +       CS420X_MBP101,
+        +       CS420X_MBP101_COEF,
+                CS420X_AUTO,
+         };
+         
+vim +1414 sound/pci/hda/patch_cirrus.c
+  1404		[CS420X_IMAC27] = {
+  1405			.type = HDA_FIXUP_PINS,
+  1406			.v.pins = imac27_pincfgs,
+  1407			.chained = true,
+  1408			.chain_id = CS420X_GPIO_13,
+  1409		},
+  1410		[CS420X_GPIO_13] = {
+  1411			.type = HDA_FIXUP_FUNC,
+  1412			.v.func = cs420x_fixup_gpio_13,
+  1413		},
+> 1414		[CS420X_GPIO_23] = {
+  1415			.type = HDA_FIXUP_FUNC,
+  1416			.v.func = cs420x_fixup_gpio_23,
+  1417		},
+  1418		[CS420X_MBP101] = {
+  1419			.type = HDA_FIXUP_PINS,
+  1420			.v.pins = mbp101_pincfgs,
+  1421			.chained = true,
+  1422			.chain_id = CS420X_MBP101_COEF,
+  1423		},
+  1424		[CS420X_MBP101_COEF] = {
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
