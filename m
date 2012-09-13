@@ -1,46 +1,35 @@
-From: kgene@kernel.org
-Date: Fri, 14 Sep 2012 04:03:58 +0000
-Subject: RE: [PATCH 9/15] arch/arm/mach-s3c24xx/mach-h1940.c: removes unnecessary semicolon
-Message-Id: <01a301cd922d$f72da600$e588f200$@org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 13 Sep 2012 23:49:02 +0000
+Subject: ehci-dbg.c:656 fill_periodic_buffer() warn: variable dereferenced before check 'p.qh' (see line 599)
+Message-Id: <20120913234902.GB6340@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347469402-27557-9-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347469402-27557-9-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Peter Senna Tschudin wrote:
-> 
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> removes unnecessary semicolon
-> 
-> Found by Coccinelle: http://coccinelle.lip6.fr/
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> ---
->  arch/arm/mach-s3c24xx/mach-h1940.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-
-> s3c24xx/mach-h1940.c
-> index bb8d008..02ef7d5 100644
-> --- a/arch/arm/mach-s3c24xx/mach-h1940.c
-> +++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-> @@ -460,7 +460,7 @@ static void h1940_set_mmc_power(unsigned char
-> power_mode, unsigned short vdd)
->  		break;
->  	default:
->  		break;
-> -	};
-> +	}
->  }
-> 
->  static struct s3c24xx_mci_pdata h1940_mmc_cfg __initdata = {
+Hi Richard,
 
-Applied, thanks.
+FYI, there are new smatch warnings show up in
 
-K-Gene <kgene@kernel.org>
+commit 3807e26d69b9ad3864fe03224ebebc9610d5802e
+Author:     Alek Du <alek.du@intel.com>
+AuthorDate: Tue Jul 14 07:23:29 2009 +0800
 
+drivers/usb/chipidea/../host/ehci-dbg.c:656 fill_periodic_buffer() warn: variable dereferenced before check 'p.qh' (see line 599)
+
+vim +656 drivers/usb/chipidea/../host/ehci-dbg.c
+   596 
+   597                         switch (hc32_to_cpu(ehci, tag)) {
+   598                         case Q_TYPE_QH:
+   599                                 hw = p.qh->hw;
+...
+ > 656					if (p.qh) {
+   657						tag = Q_NEXT_TYPE(ehci, hw->hw_next);
+   658						p = p.qh->qh_next;
+   659					}
+   660					break;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
