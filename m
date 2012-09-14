@@ -1,358 +1,38 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 30 Sep 2012 07:35:28 +0000
-Subject: Re: [PATCH 0/3] introduce macros for i2c_msg initialization
-Message-Id: <alpine.DEB.2.02.1209300934560.1901@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Sep 2012 06:53:23 +0000
+Subject: [patch 1/2] HID: sensors: use GFP_ATOMIC under spinlock
+Message-Id: <20120914065323.GD11886@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1348990388-7413-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1348990388-7413-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: srinivas pandruvada <srinivas.pandruvada@intel.com>
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Oops, I didn't mean to send this to kernel janitors yet.  Comments are 
-nevertheless welcome...
+We're holding a spinlock here so we can't call kmalloc() with
+GFP_KERNEL.
 
-julia
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Sun, 30 Sep 2012, Julia Lawall wrote:
-
-> This patch introduces some macros for describing how an i2c_msg is being
-> initialized.  There are three macros: I2C_MSG_READ, for a read message,
-> I2C_MSG_WRITE, for a write message, and I2C_MSG_OP, for some other kind of
-> message, which is expected to be very rarely used.
->
-> i2c_msg initializations are updated using the following semantic patch:
->
-> // <smpl>
-> @r@
-> field list[n] ds;
-> type T;
-> identifier i;
-> @@
->
-> struct i2c_msg {
->  ds
->  T i;
->  ...
-> };
->
-> @@
-> initializer list[r.n] is;
-> expression a;
-> identifier nm;
-> identifier r.i;
-> @@
->
-> struct i2c_msg nm = {
->  is,
-> - a
-> +  .i = a
->  ,...
-> };
->
-> @@
-> initializer list[r.n] is;
-> expression a;
-> identifier nm;
-> identifier r.i;
-> @@
->
-> struct i2c_msg nm[...] = { ..., {
->  is,
-> - a
-> +  .i = a
->  ,...}, ...};
->
-> @@
-> initializer list[r.n] is;
-> expression a;
-> identifier nm;
-> identifier r.i;
-> @@
->
-> struct i2c_msg nm[] = { ..., {
->  is,
-> - a
-> +  .i = a
->  ,...}, ...};
->
-> // --------------------------------------------------------------------
-> // ensure everyone has all fields, pointer case first
->
-> @rt@
-> type T;
-> identifier i;
-> @@
->
-> struct i2c_msg {
->  ...
->  T *i;
->  ...
-> };
->
-> @t1@
-> expression e;
-> identifier nm,rt.i;
-> position p;
-> @@
->
-> struct i2c_msg nm = {@p
->  .i = e,
-> };
->
-> @@
-> identifier nm,rt.i;
-> position p!= t1.p;
-> @@
->
-> struct i2c_msg nm = {@p
-> + .i = NULL,
->  ...
-> };
->
-> @t2@
-> expression e;
-> identifier nm,rt.i;
-> position p;
-> @@
->
-> struct i2c_msg nm[] = { ..., {@p
->  .i = e,
-> }, ...};
->
-> @@
-> identifier nm,rt.i;
-> position p!= t2.p;
-> @@
->
-> struct i2c_msg nm[] = { ..., {@p
-> + .i = NULL,
->  ...
-> }, ...};
->
-> @t3@
-> expression e;
-> identifier nm,rt.i;
-> position p;
-> @@
->
-> struct i2c_msg nm[...] = { ..., {@p
->  .i = e,
-> }, ...};
->
-> @@
-> identifier nm,rt.i;
-> position p!= t3.p;
-> @@
->
-> struct i2c_msg nm[...] = { ..., {@p
-> + .i = NULL,
->  ...
-> }, ...};
->
-> // ---------------------------------
->
-> @f1@
-> expression e;
-> identifier nm,r.i;
-> position p;
-> @@
->
-> struct i2c_msg nm = {@p
->  .i = e,
-> };
->
-> @@
-> identifier nm,r.i;
-> position p!= f1.p;
-> @@
->
-> struct i2c_msg nm = {@p
-> + .i = 0,
->  ...
-> };
->
-> @f2@
-> expression e;
-> identifier nm,r.i;
-> position p;
-> @@
->
-> struct i2c_msg nm[] = { ..., {@p
->  .i = e,
-> }, ...};
->
-> @@
-> identifier nm,r.i;
-> position p!= f2.p;
-> @@
->
-> struct i2c_msg nm[] = { ..., {@p
-> + .i = 0,
->  ...
-> }, ...};
->
-> @f3@
-> expression e;
-> identifier nm,r.i;
-> position p;
-> @@
->
-> struct i2c_msg nm[...] = { ..., {@p
->  .i = e,
-> }, ...};
->
-> @@
-> identifier nm,r.i;
-> position p!= f3.p;
-> @@
->
-> struct i2c_msg nm[...] = { ..., {@p
-> + .i = 0,
->  ...
-> }, ...};
->
-> // --------------------------------------------------------------------
->
-> @@
-> expression a,b,c;
-> identifier x;
-> @@
->
-> struct i2c_msg x > - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-> + I2C_MSG_READ(a,b,c)
-> ;
->
-> @@
-> expression a,b,c;
-> identifier x;
-> @@
->
-> struct i2c_msg x > - {.addr = a, .buf = b, .len = c, .flags = 0}
-> + I2C_MSG_WRITE(a,b,c)
-> ;
->
-> // has to come before the next rule, which matcher fewer fields
-> @@
-> expression a,b,c,d;
-> identifier x;
-> @@
->
-> struct i2c_msg x > - {.addr = a, .buf = b, .len = c, .flags = d}
-> + I2C_MSG_OP(a,b,c,d)
-> ;
->
-> // --------------------------------------------------------------------
->
-> @@
-> expression a,b,c;
-> identifier x;
-> @@
->
-> struct i2c_msg x[] = {...,
-> - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-> + I2C_MSG_READ(a,b,c)
-> ,...};
->
-> @@
-> expression a,b,c;
-> identifier x;
-> @@
->
-> struct i2c_msg x[] = {...,
-> - {.addr = a, .buf = b, .len = c, .flags = 0}
-> + I2C_MSG_WRITE(a,b,c)
-> ,...};
->
-> @@
-> expression a,b,c,d;
-> identifier x;
-> @@
->
-> struct i2c_msg x[] =  {...,
-> - {.addr = a, .buf = b, .len = c, .flags = d}
-> + I2C_MSG_OP(a,b,c,d)
-> ,...};
->
-> // --------------------------------------------------------------------
->
-> @@
-> expression a,b,c;
-> identifier x;
-> @@
->
-> struct i2c_msg x[...] =  {...,
-> - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-> + I2C_MSG_READ(a,b,c)
-> ,...};
->
-> @@
-> expression a,b,c;
-> identifier x;
-> @@
->
-> struct i2c_msg x[...] =  {...,
-> - {.addr = a, .buf = b, .len = c, .flags = 0}
-> + I2C_MSG_WRITE(a,b,c)
-> ,...};
->
-> @@
-> expression a,b,c,d;
-> identifier x;
-> @@
->
-> struct i2c_msg x[...] = {...,
-> - {.addr = a, .buf = b, .len = c, .flags = d}
-> + I2C_MSG_OP(a,b,c,d)
-> ,...};
->
-> // --------------------------------------------------------------------
-> // got everything?
->
-> @check1@
-> identifier nm;
-> position p;
-> @@
->
-> struct i2c_msg nm@p = {...};
->
-> @script:python@
-> p << check1.p;
-> @@
->
-> cocci.print_main("",p)
->
-> @check2@
-> identifier nm;
-> position p;
-> @@
->
-> struct i2c_msg nm@p [] = {...,{...},...};
->
-> @script:python@
-> p << check2.p;
-> @@
->
-> cocci.print_main("",p)
->
-> @check3@
-> identifier nm;
-> position p;
-> @@
->
-> struct i2c_msg nm@p [...] = {...,{...},...};
->
-> @script:python@
-> p << check3.p;
-> @@
->
-> cocci.print_main("",p)
-> // </smpl>
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
+index 4ac759c..0c93b10 100644
+--- a/drivers/hid/hid-sensor-hub.c
++++ b/drivers/hid/hid-sensor-hub.c
+@@ -173,7 +173,7 @@ int sensor_hub_register_callback(struct hid_sensor_hub_device *hsdev,
+ 			spin_unlock(&pdata->dyn_callback_lock);
+ 			return -EINVAL;
+ 		}
+-	callback = kzalloc(sizeof(*callback), GFP_KERNEL);
++	callback = kzalloc(sizeof(*callback), GFP_ATOMIC);
+ 	if (!callback) {
+ 		spin_unlock(&pdata->dyn_callback_lock);
+ 		return -ENOMEM;
+@@ -462,7 +462,7 @@ static int sensor_hub_raw_event(struct hid_device *hdev,
+ 		if (pdata->pending.status && pdata->pending.attr_usage_id =
+ 				report->field[i]->usage->hid) {
+ 			hid_dbg(hdev, "data was pending ...\n");
+-			pdata->pending.raw_data = kmalloc(sz, GFP_KERNEL);
++			pdata->pending.raw_data = kmalloc(sz, GFP_ATOMIC);
+ 			if (pdata->pending.raw_data) {
+ 				memcpy(pdata->pending.raw_data, ptr, sz);
+ 				pdata->pending.raw_size  = sz;
