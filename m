@@ -1,72 +1,117 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Fri, 07 Sep 2012 15:24:45 +0000
-Subject: [PATCH 7/10] drivers/media/tuners/tda18271-common.c: removes unnecessary semicolon
-Message-Id: <1347031488-26598-7-git-send-email-peter.senna@gmail.com>
+Date: Fri, 14 Sep 2012 16:46:52 +0000
+Subject: [PATCH] drivers/media/platform/davinci/vpbe.c: Remove unused label and rename remaining labels
+Message-Id: <1347641212-26357-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-removes unnecessary semicolon
-
-Found by Coccinelle: http://coccinelle.lip6.fr/
+Remove unused label and rename remaining labels
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/media/tuners/tda18271-common.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Depends on patch [v2,7/8] drivers/media/platform/davinci/vpbe.c: Removes
+useless kfree() - http://patchwork.linuxtv.org/patch/14307/
 
-diff -u -p a/drivers/media/tuners/tda18271-common.c b/drivers/media/tuners/tda18271-common.c
---- a/drivers/media/tuners/tda18271-common.c
-+++ b/drivers/media/tuners/tda18271-common.c
-@@ -275,7 +275,7 @@ int tda18271_init_regs(struct dvb_fronte
- 	case TDA18271HDC2:
- 		regs[R_ID]   = 0x84;
- 		break;
--	};
-+	}
+ drivers/media/platform/davinci/vpbe.c |   25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 1125a87..4d8e399 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -626,11 +626,11 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 		vpbe_dev->dac_clk = clk_get(vpbe_dev->pdev, "vpss_dac");
+ 		if (IS_ERR(vpbe_dev->dac_clk)) {
+ 			ret =  PTR_ERR(vpbe_dev->dac_clk);
+-			goto vpbe_unlock;
++			goto fail_mutex_unlock;
+ 		}
+ 		if (clk_enable(vpbe_dev->dac_clk)) {
+ 			ret =  -ENODEV;
+-			goto vpbe_unlock;
++			goto fail_mutex_unlock;
+ 		}
+ 	}
  
- 	regs[R_TM]   = 0x08;
- 	regs[R_PL]   = 0x80;
-@@ -300,7 +300,7 @@ int tda18271_init_regs(struct dvb_fronte
- 	case TDA18271HDC2:
- 		regs[R_EB1]  = 0xfc;
- 		break;
--	};
-+	}
+@@ -642,7 +642,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(dev->driver,
+ 			"Unable to register v4l2 device.\n");
+-		goto vpbe_fail_clock;
++		goto fail_clk_put;
+ 	}
+ 	v4l2_info(&vpbe_dev->v4l2_dev, "vpbe v4l2 device registered\n");
  
- 	regs[R_EB2]  = 0x01;
- 	regs[R_EB3]  = 0x84;
-@@ -320,7 +320,7 @@ int tda18271_init_regs(struct dvb_fronte
- 	case TDA18271HDC2:
- 		regs[R_EB12] = 0x33;
- 		break;
--	};
-+	}
+@@ -658,7 +658,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 		v4l2_err(&vpbe_dev->v4l2_dev,
+ 			"vpbe unable to init venc sub device\n");
+ 		ret = -ENODEV;
+-		goto vpbe_fail_v4l2_device;
++		goto fail_dev_unregister;
+ 	}
+ 	/* initialize osd device */
+ 	osd_device = vpbe_dev->osd_device;
+@@ -669,7 +669,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 			v4l2_err(&vpbe_dev->v4l2_dev,
+ 				 "unable to initialize the OSD device");
+ 			err = -ENOMEM;
+-			goto vpbe_fail_v4l2_device;
++			goto fail_dev_unregister;
+ 		}
+ 	}
  
- 	regs[R_EB13] = 0xc1;
- 	regs[R_EB14] = 0x00;
-@@ -335,7 +335,7 @@ int tda18271_init_regs(struct dvb_fronte
- 	case TDA18271HDC2:
- 		regs[R_EB18] = 0x8c;
- 		break;
--	};
-+	}
+@@ -685,7 +685,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 		v4l2_err(&vpbe_dev->v4l2_dev,
+ 			"unable to allocate memory for encoders sub devices");
+ 		ret = -ENOMEM;
+-		goto vpbe_fail_v4l2_device;
++		goto fail_dev_unregister;
+ 	}
  
- 	regs[R_EB19] = 0x00;
- 	regs[R_EB20] = 0x20;
-@@ -347,7 +347,7 @@ int tda18271_init_regs(struct dvb_fronte
- 	case TDA18271HDC2:
- 		regs[R_EB21] = 0xb3;
- 		break;
--	};
-+	}
+ 	i2c_adap = i2c_get_adapter(vpbe_dev->cfg->i2c_adapter_id);
+@@ -711,7 +711,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 					 " failed to register",
+ 					 enc_info->module_name);
+ 				ret = -ENODEV;
+-				goto vpbe_fail_sd_register;
++				goto fail_kfree_encoders;
+ 			}
+ 		} else
+ 			v4l2_warn(&vpbe_dev->v4l2_dev, "non-i2c encoders"
+@@ -730,7 +730,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 					 "amplifier %s failed to register",
+ 					 amp_info->module_name);
+ 				ret = -ENODEV;
+-				goto vpbe_fail_amp_register;
++				goto fail_kfree_encoders;
+ 			}
+ 			v4l2_info(&vpbe_dev->v4l2_dev,
+ 					  "v4l2 sub device %s registered\n",
+@@ -770,15 +770,14 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	/* TBD handling of bootargs for default output and mode */
+ 	return 0;
  
- 	regs[R_EB22] = 0x48;
- 	regs[R_EB23] = 0xb0;
+-vpbe_fail_amp_register:
+-vpbe_fail_sd_register:
++fail_kfree_encoders:
+ 	kfree(vpbe_dev->encoders);
+-vpbe_fail_v4l2_device:
++fail_dev_unregister:
+ 	v4l2_device_unregister(&vpbe_dev->v4l2_dev);
+-vpbe_fail_clock:
++fail_clk_put:
+ 	if (strcmp(vpbe_dev->cfg->module_name, "dm644x-vpbe-display") != 0)
+ 		clk_put(vpbe_dev->dac_clk);
+-vpbe_unlock:
++fail_mutex_unlock:
+ 	mutex_unlock(&vpbe_dev->lock);
+ 	return ret;
+ }
 
