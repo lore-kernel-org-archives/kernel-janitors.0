@@ -1,32 +1,94 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Date: Fri, 14 Sep 2012 16:00:44 +0000
-Subject: Re: [iwlwifi:master 67/70] drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:732:42: sparse:
-Message-Id: <505354AC.7040108@broadcom.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 14 Sep 2012 08:15:18 +0000
+Subject: [PATCH v2 5/9] drivers/staging/gdm72xx/gdm_sdio.c: Remove useless kfree
+Message-Id: <1347610518-3099-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120914144351.GA23614@localhost>
-In-Reply-To: <20120914144351.GA23614@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Hante Meuleman <meuleman@broadcom.com>, kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: wharms@bfs.de, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On 09/14/2012 04:43 PM, Fengguang Wu wrote:
-> Hi Hante,
->
-> FYI, there are new sparse warnings show up in
->
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi.git master
-> head:   99f314c04ff5f4cfd969f5fbe82d6d0c0a7d8336
-> commit: e756af5b30b008f6ffcfebf8ad0b477f6f225b62 [67/70] brcmfmac: add e-scan support.
->
-> All sparse warnings:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Thanks, Fengguang
+Remove useless kfree() and clean up code related to the removal.
 
-I was doing 'make C=2' today and noticed these warnings as well. Already 
-patching it.
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Regards,
-Arend
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
+
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/staging/gdm72xx/gdm_sdio.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/gdm72xx/gdm_sdio.c b/drivers/staging/gdm72xx/gdm_sdio.c
+index f824290..f13dcbf 100644
+--- a/drivers/staging/gdm72xx/gdm_sdio.c
++++ b/drivers/staging/gdm72xx/gdm_sdio.c
+@@ -93,18 +93,13 @@ static struct sdio_rx *alloc_rx_struct(struct rx_cxt *rx)
+ {
+ 	struct sdio_rx *r = NULL;
+ 
+-	r = kmalloc(sizeof(*r), GFP_ATOMIC);
+-	if (r = NULL)
+-		goto out;
+-
+-	memset(r, 0, sizeof(*r));
++	r = kzalloc(sizeof(*r), GFP_ATOMIC);
++	if (!r)
++		return NULL;
+ 
+ 	r->rx_cxt = rx;
+ 
+ 	return r;
+-out:
+-	kfree(r);
+-	return NULL;
+ }
+ 
+ static void free_rx_struct(struct sdio_rx *r)
 
