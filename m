@@ -1,49 +1,50 @@
-From: Ben Widawsky <ben@bwidawsk.net>
-Date: Tue, 18 Sep 2012 23:49:59 +0000
-Subject: Re: [drm-intel:drm-intel-nightly 40/142] drivers/gpu/drm/i915/i915_sysfs.c:228:49: error: 'rc6_attr_
-Message-Id: <20120918164959.0845aaea@bwidawsk.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Sep 2012 06:53:46 +0000
+Subject: [patch 2/2] HID: sensors: remove some unneeded checks
+Message-Id: <20120914065346.GE11886@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120918234054.GA7140@localhost>
-In-Reply-To: <20120918234054.GA7140@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: srinivas pandruvada <srinivas.pandruvada@intel.com>
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 19 Sep 2012 07:40:54 +0800
-Fengguang Wu <fengguang.wu@intel.com> wrote:
+"report_id" is unsigned so it's never less than zero.  These checks can
+be removed without any problem.
 
-> Hi Ben,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://people.freedesktop.org/~danvet/drm-intel.git drm-intel-nightly
-> head:   f0db8c3e57486ae7fdbc52bc157f997394d7d11d
-> commit: 8c3f929b6147e142efc58d5d03dc6fa703b14a5d [40/142] drm/i915: Enable some sysfs stuff without CONFIG_PM
-> config: i386-randconfig-b034 (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> drivers/gpu/drm/i915/i915_sysfs.c: In function 'i915_teardown_sysfs':
-> drivers/gpu/drm/i915/i915_sysfs.c:228:49: error: 'rc6_attr_group' undeclared (first use in this function)
-> drivers/gpu/drm/i915/i915_sysfs.c:228:49: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> vim +228 drivers/gpu/drm/i915/i915_sysfs.c
->    223	}
->    224	
->    225	void i915_teardown_sysfs(struct drm_device *dev)
->    226	{
->    227		device_remove_bin_file(&dev->primary->kdev,  &dpf_attrs);
->  > 228		sysfs_unmerge_group(&dev->primary->kdev.kobj, &rc6_attr_group);
->    229	}
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Centre
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Darn. I'll send a patch to the list tonight. (It's weird because I
-thought I tested this).
-
--- 
-Ben Widawsky, Intel Open Source Technology Center
+diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
+index 0c93b10..22ec3c6 100644
+--- a/drivers/hid/hid-sensor-hub.c
++++ b/drivers/hid/hid-sensor-hub.c
+@@ -214,9 +214,6 @@ int sensor_hub_set_feature(struct hid_sensor_hub_device *hsdev, u32 report_id,
+ 	struct sensor_hub_data *data =  hid_get_drvdata(hsdev->hdev);
+ 	int ret = 0;
+ 
+-	if (report_id < 0)
+-		return -EINVAL;
+-
+ 	mutex_lock(&data->mutex);
+ 	report = sensor_hub_report(report_id, hsdev->hdev, HID_FEATURE_REPORT);
+ 	if (!report || (field_index >=  report->maxfield)) {
+@@ -241,9 +238,6 @@ int sensor_hub_get_feature(struct hid_sensor_hub_device *hsdev, u32 report_id,
+ 	struct sensor_hub_data *data =  hid_get_drvdata(hsdev->hdev);
+ 	int ret = 0;
+ 
+-	if (report_id < 0)
+-		return -EINVAL;
+-
+ 	mutex_lock(&data->mutex);
+ 	report = sensor_hub_report(report_id, hsdev->hdev, HID_FEATURE_REPORT);
+ 	if (!report || (field_index >=  report->maxfield)) {
+@@ -271,9 +265,6 @@ int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
+ 	struct hid_report *report;
+ 	int ret_val = 0;
+ 
+-	if (report_id < 0)
+-		return -EINVAL;
+-
+ 	mutex_lock(&data->mutex);
+ 	memset(&data->pending, 0, sizeof(data->pending));
+ 	init_completion(&data->pending.ready);
