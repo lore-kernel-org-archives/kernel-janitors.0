@@ -1,49 +1,57 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 12 Sep 2012 19:28:55 +0000
-Subject: [PATCH] arch/arm/mach-s3c24xx/mach-h1940.c: delete double assignment
-Message-Id: <1347478135-744-1-git-send-email-Julia.Lawall@lip6.fr>
+From: kgene@kernel.org
+Date: Fri, 14 Sep 2012 04:03:12 +0000
+Subject: RE: [PATCH] arch/arm/mach-s3c24xx/mach-h1940.c: delete double assignment
+Message-Id: <01a201cd922d$dc49a550$94dceff0$@org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347478135-744-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1347478135-744-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Julia Lawall wrote:
+> 
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Delete successive assignments to the same location.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression i;
+> @@
+> 
+> *i = ...;
+>  i = ...;
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+> Not compiled, and this may change the behavior of the code.  Without this
+> change, check_gpio2 could possibly be used uninitialized later.
+> 
+>  arch/arm/mach-s3c24xx/mach-h1940.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-
+> s3c24xx/mach-h1940.c
+> index bb8d008..477778c 100644
+> --- a/arch/arm/mach-s3c24xx/mach-h1940.c
+> +++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+> @@ -380,7 +380,7 @@ int h1940_led_blink_set(unsigned gpio, int state,
+>  	default:
+>  		blink_gpio = S3C2410_GPA(3);
+>  		check_gpio1 = S3C2410_GPA(1);
+> -		check_gpio1 = S3C2410_GPA(7);
+> +		check_gpio2 = S3C2410_GPA(7);
+>  		break;
+>  	}
+> 
+Applied, thanks.
 
-Delete successive assignments to the same location.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression i;
-@@
-
-*i = ...;
- i = ...;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not compiled, and this may change the behavior of the code.  Without this
-change, check_gpio2 could possibly be used uninitialized later.
-
- arch/arm/mach-s3c24xx/mach-h1940.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index bb8d008..477778c 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -380,7 +380,7 @@ int h1940_led_blink_set(unsigned gpio, int state,
- 	default:
- 		blink_gpio = S3C2410_GPA(3);
- 		check_gpio1 = S3C2410_GPA(1);
--		check_gpio1 = S3C2410_GPA(7);
-+		check_gpio2 = S3C2410_GPA(7);
- 		break;
- 	}
- 
+K-Gene <kgene@kernel.org>
 
