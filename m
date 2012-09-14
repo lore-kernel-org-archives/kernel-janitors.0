@@ -1,80 +1,97 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Tue, 18 Sep 2012 20:52:38 +0000
-Subject: Re: [patch 2/2] HID: sensors: remove some unneeded checks
-Message-Id: <5058DF16.20002@kernel.org>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 14 Sep 2012 15:13:50 +0000
+Subject: [PATCH v3 5/9] drivers/staging/gdm72xx/gdm_sdio.c: Remove useless kfree
+Message-Id: <1347635630-19880-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120914065346.GE11886@elgon.mountain> <alpine.LNX.2.00.1209171259240.31149@pobox.suse.cz> <4FA419E87744DF4DAECD5BCE1214B7A919D527E5@ORSMSX108.amr.corp.intel.com>
-In-Reply-To: <4FA419E87744DF4DAECD5BCE1214B7A919D527E5@ORSMSX108.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
-Cc: Jiri Kosina <jkosina@suse.cz>, Dan Carpenter <dan.carpenter@oracle.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: wharms@bfs.de, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-I've add these both to the togreg branch of
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+Remove useless kfree() and clean up code related to the removal.
 
-Will send onwards in a few days.
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> Tested this and it works.
-> 
-> -----Original Message-----
-> From: Jiri Kosina [mailto:jkosina@suse.cz] 
-> Sent: Monday, September 17, 2012 4:00 AM
-> To: Dan Carpenter
-> Cc: Pandruvada, Srinivas; linux-input@vger.kernel.org; kernel-janitors@vger.kernel.org; Jonathan Cameron
-> Subject: Re: [patch 2/2] HID: sensors: remove some unneeded checks
-> 
-> On Fri, 14 Sep 2012, Dan Carpenter wrote:
-> 
->> "report_id" is unsigned so it's never less than zero.  These checks 
->> can be removed without any problem.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-> 
-> Adding Jonathan to CC as well. Thanks.
-> 
->>
->> diff --git a/drivers/hid/hid-sensor-hub.c 
->> b/drivers/hid/hid-sensor-hub.c index 0c93b10..22ec3c6 100644
->> --- a/drivers/hid/hid-sensor-hub.c
->> +++ b/drivers/hid/hid-sensor-hub.c
->> @@ -214,9 +214,6 @@ int sensor_hub_set_feature(struct hid_sensor_hub_device *hsdev, u32 report_id,
->>  	struct sensor_hub_data *data =  hid_get_drvdata(hsdev->hdev);
->>  	int ret = 0;
->>  
->> -	if (report_id < 0)
->> -		return -EINVAL;
->> -
->>  	mutex_lock(&data->mutex);
->>  	report = sensor_hub_report(report_id, hsdev->hdev, HID_FEATURE_REPORT);
->>  	if (!report || (field_index >=  report->maxfield)) { @@ -241,9 
->> +238,6 @@ int sensor_hub_get_feature(struct hid_sensor_hub_device *hsdev, u32 report_id,
->>  	struct sensor_hub_data *data =  hid_get_drvdata(hsdev->hdev);
->>  	int ret = 0;
->>  
->> -	if (report_id < 0)
->> -		return -EINVAL;
->> -
->>  	mutex_lock(&data->mutex);
->>  	report = sensor_hub_report(report_id, hsdev->hdev, HID_FEATURE_REPORT);
->>  	if (!report || (field_index >=  report->maxfield)) { @@ -271,9 
->> +265,6 @@ int sensor_hub_input_attr_get_raw_value(struct hid_sensor_hub_device *hsdev,
->>  	struct hid_report *report;
->>  	int ret_val = 0;
->>  
->> -	if (report_id < 0)
->> -		return -EINVAL;
->> -
->>  	mutex_lock(&data->mutex);
->>  	memset(&data->pending, 0, sizeof(data->pending));
->>  	init_completion(&data->pending.ready);
->>
-> 
-> --
-> Jiri Kosina
-> SUSE Labs
-> 
+// <smpl>
+@r exists@
+position p1,p2;
+expression x;
+@@
+
+if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+
+@unchanged exists@
+position r.p1,r.p2;
+expression e <= r.x,x,e1;
+iterator I;
+statement S;
+@@
+
+if (x@p1 = NULL) { ... when != I(x,...) S
+                        when != e = e1
+                        when != e += e1
+                        when != e -= e1
+                        when != ++e
+                        when != --e
+                        when != e++
+                        when != e--
+                        when != &e
+   kfree@p2(x); ... return ...; }
+
+@ok depends on unchanged exists@
+position any r.p1;
+position r.p2;
+expression x;
+@@
+
+... when != true x@p1 = NULL
+kfree@p2(x);
+
+@depends on !ok && unchanged@
+position r.p2;
+expression x;
+@@
+
+*kfree@p2(x);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/staging/gdm72xx/gdm_sdio.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/gdm72xx/gdm_sdio.c b/drivers/staging/gdm72xx/gdm_sdio.c
+index f824290..2e1a964 100644
+--- a/drivers/staging/gdm72xx/gdm_sdio.c
++++ b/drivers/staging/gdm72xx/gdm_sdio.c
+@@ -91,20 +91,15 @@ static void free_tx_struct(struct sdio_tx *t)
+ 
+ static struct sdio_rx *alloc_rx_struct(struct rx_cxt *rx)
+ {
+-	struct sdio_rx *r = NULL;
+-
+-	r = kmalloc(sizeof(*r), GFP_ATOMIC);
+-	if (r = NULL)
+-		goto out;
++	struct sdio_rx *r;
+ 
+-	memset(r, 0, sizeof(*r));
++	r = kzalloc(sizeof(*r), GFP_ATOMIC);
++	if (!r)
++		return NULL;
+ 
+ 	r->rx_cxt = rx;
+ 
+ 	return r;
+-out:
+-	kfree(r);
+-	return NULL;
+ }
+ 
+ static void free_rx_struct(struct sdio_rx *r)
+
