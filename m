@@ -1,81 +1,49 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Tue, 04 Sep 2012 09:54:13 +0000
-Subject: Re: [PATCH 4/4] drivers/mtd/nand/mpc5121_nfc.c: some devm_ cleanups
-Message-Id: <1346752453.12610.39.camel@sauron.fi.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-3Ye0yocplzrUbaRQorON"
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 14 Sep 2012 23:52:54 +0000
+Subject: [cifs:for-next 50/66] fs/cifs/file.c:2576:10: warning: 'page' may be used uninitialized in this func
+Message-Id: <20120914235254.GA32569@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346517191-8794-1-git-send-email-Julia.Lawall@lip6.fr>
- <1346517191-8794-4-git-send-email-Julia.Lawall@lip6.fr>
- <1346748171.12610.22.camel@sauron.fi.intel.com>
- <5045C19A.7000705@metafoo.de> <alpine.DEB.2.02.1209041142130.2759@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1209041142130.2759@hadrien>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
-
-
---=-3Ye0yocplzrUbaRQorON
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 2012-09-04 at 11:44 +0200, Julia Lawall wrote:
-> > I've been bitten by the same issue recently, also cause by one of these
-> > cocci devm patches. devm_clk_get is only available if the generic
-> > clk_get/clk_put implementation is used. Not all architectures do this a=
-nd
-> > some implement their own clk_get/clk_put, etc functions. Since devm_clk=
-_get
-> > is merely a wrapper around clk_get/clk_put there is no reason why it sh=
-ould
-> > depend CLKDEV_LOOKUP. I've prepared a patch which makes them genericall=
-y
-> > available if the clk_get/clk_put are implemented (i.e. if HAVE_CLK is s=
-et),
-> > but it is on a different machine right now, will try to submit it later=
- today.
->=20
-> Sorry about this.  I wasn't aware that devm_clk_get wasn't supported by
-> all architectures, and I have no way of compiling code for these
-> architectures...  But I wonder why it is not, since devm-ness doesn't see=
-m
-> to have anything to do with architecture-specific details?  It would be
-> really nice to have it for all architectures, because the clock functions
-> are just as (or at least almost as) common as kzalloc, ioremap, etc.
-
-It looks like Lars is going to fix this.
-
-I am personally fine if you send patches without build-testing them.
-Your patches are generally of good quality and you send many of them, so
-build-testing each would be too much for you. And at least for MTD, I
-can build-test myself.
-
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-3Ye0yocplzrUbaRQorON
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Hi Jeff,
 
-iQIcBAABAgAGBQJQRc/FAAoJECmIfjd9wqK0S2UP/18PHE4X8JsTDbjI2C+6EnRl
-isPmlGzlXQo8XKauDw23/5bCVfXgYS7mGKEPDzdw5uShuxWa9VrxUNAFLGA2AlFS
-4Xt5wZhcKKlhUfQ+t7KxKql+EeB0jkjBK94g1mRWTM7q9e9XwGrDQ6XAxB0DX7pW
-ScHM+pBcxIvZ5OSKmJYB9GT34W0XyY8IrEGWY2FT8teCG6bTtnBFHMxNCjovoYIo
-G/vqs5YPVRqSrFs4yJWMhnvPQs8lZkxXfhljzgzZAGjR/XP3Una+Ss6uVsjt97FL
-LGe/Cuqy9Th6G9CSg492/7zlX1n4CfVq5yYAG4ozfJicM1nbIACjYehdD/NksNEl
-pyMpmGq1ML4/BOCxZtTqoZqfvCBPWpoxSbdDSFgiTIETWLpcGK9DqpvFj83oqpZ9
-F6dG8Vt4beBaWCRHrg0XGH7ED6eVwOikDMkbN8vKpbPFsR8lBAI5/OqW7FLngoVU
-91J2BqxC09+P3JFsYFNPC9EwkGO37XxOHxjgICdXK9hkCD1k8tVSBPzqt245U9iq
-GjV/rmt6+TbjAlpO+ly5MNzLknHV8r+dnJ8Ac1WO5VTZL+AVlR9BJn6lnVxW16pq
-aqXlPiJAorYaVIsGs+0Ory//7bhevqRz3hahEfv7UdxBAkMj51Yr5+pJSj1kwAui
-ybJ/mIG9Gtehvl0hHKLX
-=3bM8
------END PGP SIGNATURE-----
+FYI, there are new compile warnings show up in
 
---=-3Ye0yocplzrUbaRQorON--
+tree:   git://git.samba.org/sfrench/cifs-2.6.git for-next
+head:   c246704dfe86f2c1875b59a8d60ca69c1f48acb4
+commit: d8b9dff6bde7ef0dd13a52e0cdfa998a3545c07f [50/66] cifs: turn the pages list in cifs_readdata into an array
 
+All error/warnings:
+
+fs/cifs/file.c: In function 'cifs_uncached_readv_complete':
+fs/cifs/file.c:2576:10: warning: 'page' may be used uninitialized in this function [-Wuninitialized]
+
+vim +2576 fs/cifs/file.c
+  2566	{
+  2567		struct cifs_readdata *rdata = container_of(work,
+  2568							struct cifs_readdata, work);
+  2569		unsigned int i;
+  2570	
+  2571		/* if the result is non-zero then the pages weren't kmapped */
+  2572		if (rdata->result = 0) {
+  2573			struct page *page;
+  2574	
+  2575			for (i = 0; i < rdata->nr_pages; i++)
+> 2576				kunmap(page);
+  2577		}
+  2578	
+  2579		complete(&rdata->done);
+  2580		kref_put(&rdata->refcount, cifs_uncached_readdata_release);
+  2581	}
+  2582	
+  2583	static int
+  2584	cifs_uncached_read_marshal_iov(struct cifs_readdata *rdata,
+  2585					unsigned int remaining)
+  2586	{
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
