@@ -1,31 +1,50 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 19 Sep 2012 00:46:05 +0000
-Subject: [nouveau:master 1/80] nouveau_connector.c:535 nouveau_connector_set_property() warn: variable derefe
-Message-Id: <20120919004605.GA10838@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Sep 2012 11:05:56 +0000
+Subject: [patch] [SCSI] cleanup some calls to strncmp()
+Message-Id: <20120914110556.GB1152@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Ben,
+The main motivation for this patch is that for the first strncmp()
+we do 'strncmp(src, "-", 20)' but "src" is a 15 character buffer not 20.
 
-FYI, a pretty old smatch warning:
+Also since we know that "-" is only two characters, the compare isn't
+going to go further than 2 characters into src before deciding that it
+doesn't match.
 
-drivers/gpu/drm/nouveau/nouveau_connector.c:535 nouveau_connector_set_property() warn: variable dereferenced before check 'nv_encoder' (see line 413)
+The same applies to the other strncmp()s.  In those cases "str" is
+actually 10 characters so the limiter is correct but it is still not
+needed when the length for "adapter" and "firmware" is known and less
+than 10.
 
-vim +535 drivers/gpu/drm/nouveau/nouveau_connector.c
-   412         struct nouveau_encoder *nv_encoder = nv_connector->detected_encoder;
-   413         struct drm_encoder *encoder = to_drm_encoder(nv_encoder);
-...
-   534	
- > 535		if (nv_encoder && nv_encoder->dcb->type = OUTPUT_TV)
-   536			return get_slave_funcs(encoder)->set_property(
-   537				encoder, connector, property, value);
-   538	
-   539		return -EINVAL;
-   540	}
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index 093d4f6..bd576ce 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -84,7 +84,7 @@ static int check_set(unsigned int *val, char *src)
+ {
+ 	char *last;
+ 
+-	if (strncmp(src, "-", 20) = 0) {
++	if (strcmp(src, "-") = 0) {
+ 		*val = SCAN_WILD_CARD;
+ 	} else {
+ 		/*
+@@ -249,9 +249,9 @@ static DEVICE_ATTR(active_mode, S_IRUGO | S_IWUSR, show_shost_active_mode, NULL)
+ 
+ static int check_reset_type(char *str)
+ {
+-	if (strncmp(str, "adapter", 10) = 0)
++	if (strcmp(str, "adapter") = 0)
+ 		return SCSI_ADAPTER_RESET;
+-	else if (strncmp(str, "firmware", 10) = 0)
++	else if (strcmp(str, "firmware") = 0)
+ 		return SCSI_FIRMWARE_RESET;
+ 	else
+ 		return 0;
