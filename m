@@ -1,51 +1,41 @@
-From: Kent Overstreet <koverstreet@google.com>
-Date: Mon, 17 Sep 2012 22:49:49 +0000
-Subject: Re: [block:for-next 7/35] fs/bio.c:363 bio_alloc_bioset() error: we previously assumed 'bs' could be
-Message-Id: <20120917224949.GE14492@google.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 14 Sep 2012 16:50:01 +0000
+Subject: [scsi:misc 49/55] drivers/scsi/mvumi.c:1880:3: error: implicit declaration of function 'virt_to_bus'
+Message-Id: <20120914165001.GB22939@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120909121511.GA19841@localhost>
-In-Reply-To: <20120909121511.GA19841@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Shun Fu <fushun@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, James Bottomley <JBottomley@Parallels.com>, linux-scsi@vger.kernel.org
 
-On Sun, Sep 09, 2012 at 02:22:26PM +0200, Jens Axboe wrote:
-> On 2012-09-09 14:15, Fengguang Wu wrote:
-> > Hi Kent,
-> > 
-> > FYI, there are new smatch warnings show up in
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-> > head:   5611a9dbd54b993fe24f322a0c310a6605824c0f
-> > commit: 3f86a82aeb03e6100f7ab39f4702e033a5e38166 [7/35] block: Consolidate bio_alloc_bioset(), bio_kmalloc()
-> 
-> The logic in there does look both confusing and broken.
-> 
-> For !bs, we should not enter the bvec_alloc_bs() part. We already have
-> the vec, plus bvec_alloc_bs() would crap out for !bs. That would exclude
-> us from hitting err_free as well.
+Hi Shun,
 
-Yeah, it is confusing, I wasn't entirely happy with that code but I
-wasn't able to come up with anything I really liked.
+FYI, kernel build failed on
 
-The reason I wrote it the way I did is that before, bio_kmalloc() would
-always set bio->bi_io_vec = bio->bi_inline_vecs, even when nr_iovecs was
-0, while bio_alloc_bioset() would set it to NULL.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git misc
+head:   e1daec5547bdb8a53b023852d578409005c69ea7
+commit: 8b3fa849abc2b62920d7e4fc4f8e6ce3d0783623 [49/55] [SCSI] mvumi: Add support for Marvell SAS/SATA RAID-on-Chip(ROC) 88RC9580
+config: powerpc-allmodconfig
 
-And this is what bio_has_data() checks, which is actually used in a
-decent number of places.
+All related error/warning messages:
 
-So I wanted to unify the behaviour as much as possible, and not have
-duplicated code that could get out of sync again.
+drivers/scsi/mvumi.c: In function 'mvumi_send_command':
+drivers/scsi/mvumi.c:1880:3: error: implicit declaration of function 'virt_to_bus' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
 
-Jens, what do you want to do? If you'd prefer I could always split out
-the two cases (bs and !bs) entirely and just note the bi_io_vec thing
-with a comment, though I do lean toward smaller code.
+vim +1880 drivers/scsi/mvumi.c
+  1875		frame_len = sizeof(*ib_frame) - 4 +
+  1876					ib_frame->sg_counts * sizeof(struct mvumi_sgl);
+  1877		if (mhba->hba_capability & HS_CAPABILITY_SUPPORT_DYN_SRC) {
+  1878			struct mvumi_dyn_list_entry *dle;
+  1879			dle = ib_entry;
+> 1880			dle->src_low_addr = virt_to_bus(ib_frame) & 0xFFFFFFFF;
+  1881			dle->src_high_addr   1882				((virt_to_bus(ib_frame) >> 16) >> 16) & 0xFFFFFFFF;
+  1883			dle->if_length = (frame_len >> 2) & 0xFFF;
+  1884		} else {
+  1885			memcpy(ib_entry, ib_frame, frame_len);
 
-Also wondering whether it'd be feasible/worthwhile to just drop
-bio_kmalloc() entirely and always use a bio_set.
-
-> Style issue on nr_iovecs check, too.
-
-How so? Not aware of any formal style rule it breaks...
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
