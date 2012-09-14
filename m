@@ -1,68 +1,60 @@
-From: Lan Tianyu <tianyu.lan@intel.com>
-Date: Wed, 12 Sep 2012 14:41:32 +0000
-Subject: Re: [balbi-usb:merge-result-for-greg 66/99] drivers/usb/core/hub.c:2654 usb_get_hub_port_power_state
-Message-Id: <50509F1C.2030208@intel.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 14 Sep 2012 23:57:28 +0000
+Subject: [scsi:for-next 92/128] drivers/scsi/qla2xxx/qla_isr.c:1684:56: warning: 'rval' may be used uninitial
+Message-Id: <20120914235728.GA32759@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120912082622.GB27847@localhost>
-In-Reply-To: <20120912082622.GB27847@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Saurav Kashyap <saurav.kashyap@qlogic.com>
+Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, James Bottomley <JBottomley@Parallels.com>, Chad Dupuis <chad.dupuis@qlogic.com>, linux-scsi@vger.kernel.org
 
-On 2012/9/12 21:11, Alan Stern wrote:
-> On Wed, 12 Sep 2012, Fengguang Wu wrote:
->
->> Hi Felipe,
->>
->> FYI, there are new smatch warnings show up in
->>
->> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git merge-result-for-greg
->> head:   23953bde3e4d6aa8780dc054f6ad9882ac63f4f4
->> commit: e918fa161f510136fce45a524e934fe20e62c8b1 [66/99] Merge tag 'gadget-for-v3.7' into merge-result-for-greg
->>
->> drivers/usb/core/hub.c:2654 usb_get_hub_port_power_state() error: doing dma on the stack ((null))
->> drivers/usb/core/hub.c:4733 store_port_power_control() info: why not propagate 'ret' from set_port_feature() instead of -5?
->> drivers/usb/core/hub.c:4744 store_port_power_control() info: why not propagate 'ret' from clear_port_feature() instead of -5?
->>
->> vim +2654 drivers/usb/core/hub.c
->>    2644		return ret;
->>    2645	}
->>    2646	
->>    2647	static int usb_get_hub_port_power_state(struct usb_device *hdev, int port1)
->>    2648	{
->>    2649		struct usb_hub *hub = hdev_to_hub(hdev);
->>    2650		struct usb_port_status data;
->>    2651		u16 portstatus;
->>    2652		int ret;
->>    2653	
->>> 2654		ret = get_port_status(hub->hdev, port1, &data);
->>    2655		if (ret < 4) {
->>    2656			dev_err(hub->intfdev,
->>    2657				"%s failed (err = %d)\n", __func__, ret);
->>    2658			if (ret >= 0)
->>    2659				ret = -EIO;
->>    2660			return ret;
->>    2661		} else
->>    2662			portstatus = le16_to_cpu(data.wPortStatus);
->>    2663		return port_is_power_on(hub, portstatus);
->>    2664	}
->
-> This is a real problem.  It looks like it really is necessary to call
-> hub_port_status() here, not get_port_status().  Would you like to fix
-> this?
->
-Yeah. I'd like to fix it.
-> The reason for changing the return codes from clear_port_feature() and
-> set_port_feature() is simple.  The values they return are meant for
-> internal use within the kernel, whereas the return code from
-> store_port_power_control() will be passed back to userspace.
->
-> Alan Stern
->
+Hi Saurav,
 
+FYI, there are new compile warnings show up in
 
--- 
-Best Regards
-Tianyu Lan
-linux kernel enabling team
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+head:   71cfff4af0525891941199b142b759d00b293959
+commit: 387fddaa3564503c9f82d091d2ebe390f3af62a1 [92/128] [SCSI] qla2xxx: Implementation of bidirectional.
+config: x86_64-allmodconfig
+
+All error/warnings:
+
+drivers/scsi/qla2xxx/qla_isr.c: In function 'qla2x00_status_entry':
+drivers/scsi/qla2xxx/qla_isr.c:1684:56: warning: 'rval' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/scsi/qla2xxx/qla_isr.c:1558:11: note: 'rval' was declared here
+
+It could be uninitialized due to the test in line 1598.
+
+vim +1684 drivers/scsi/qla2xxx/qla_isr.c
+  1596         switch (comp_status) {
+  1597         case CS_COMPLETE:
+> 1598                 if (scsi_status = 0) {
+  1599                         bsg_job->reply->reply_payload_rcv_len   1600
+  bsg_job->reply_payload.payload_len;
+  1601                         rval = EXT_STATUS_OK;
+  1602                 }
+  1603                 goto done;
+  1604 
+...
+  1674			ql_dbg(ql_dbg_user, vha, 0x70bb,
+  1675			    "Command completed with completion status=0x%x "
+  1676			    "thread_id=%d\n", comp_status, thread_id);
+  1677			rval = EXT_STATUS_ERR;
+  1678			break;
+  1679		}
+  1680			bsg_job->reply->reply_payload_rcv_len = 0;
+  1681	
+  1682	done:
+  1683		/* Return the vendor specific reply to API */
+> 1684		bsg_job->reply->reply_data.vendor_reply.vendor_rsp[0] = rval;
+  1685		bsg_job->reply_len = sizeof(struct fc_bsg_reply);
+  1686		/* Always return DID_OK, bsg will send the vendor specific response
+  1687		 * in this case only */
+  1688		sp->done(vha, sp, (DID_OK << 6));
+  1689	
+  1690	}
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
