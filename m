@@ -1,48 +1,70 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 29 Sep 2012 01:12:10 +0000
-Subject: [wireless-next:for-davem 123/299] net/ipv4/ip_gre.c:222:29: sparse: restricted __be16 degrades to in
-Message-Id: <20120929011210.GA10053@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Sep 2012 08:11:35 +0000
+Subject: [patch 2/2] Staging: silicom: use kstrtoint_from_user()
+Message-Id: <20120914081135.GA11315@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: stephen hemminger <shemminger@vyatta.com>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi stephen,
+The main problem with the hand rolled code was that there weren't any
+range checks so you could corrupt memory by writing too much data to
+the proc file.
 
-FYI, there are new sparse warnings show up in
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next.git for-davem
-head:   c487606f835a93a725bac1aefd536be98f22474d
-commit: d208328765a0ab425e36b5b828285f3337a85451 [123/299] gre: fix handling of key 0
-
-+ net/ipv4/ip_gre.c:222:29: sparse: restricted __be16 degrades to integer
-  net/ipv4/ip_gre.c:227:34: sparse: restricted __be16 degrades to integer
-+ net/ipv4/ip_gre.c:562:33: sparse: incorrect type in argument 4 (different base types)
-  net/ipv4/ip_gre.c:562:33:    expected unsigned int [unsigned] [usertype] flags
-  net/ipv4/ip_gre.c:562:33:    got restricted __be16 [assigned] [usertype] flags
-  net/ipv4/ip_gre.c:669:62: sparse: incorrect type in argument 4 (different base types)
-  net/ipv4/ip_gre.c:669:62:    expected unsigned int [unsigned] [usertype] flags
-  net/ipv4/ip_gre.c:669:62:    got restricted __be16 [assigned] [usertype] flags
-
-vim +222 net/ipv4/ip_gre.c
-
-d2083287 (stephen hemminger 2012-09-24  217) /* Does key in tunnel parameters match packet */
-d2083287 (stephen hemminger 2012-09-24  218) static bool ipgre_key_match(const struct ip_tunnel_parm *p,
-d2083287 (stephen hemminger 2012-09-24  219) 			    __u32 flags, __be32 key)
-d2083287 (stephen hemminger 2012-09-24  220) {
-d2083287 (stephen hemminger 2012-09-24  221) 	if (p->i_flags & GRE_KEY) {
-d2083287 (stephen hemminger 2012-09-24 @222) 		if (flags & GRE_KEY)
-d2083287 (stephen hemminger 2012-09-24  223) 			return key = p->i_key;
-d2083287 (stephen hemminger 2012-09-24  224) 		else
-d2083287 (stephen hemminger 2012-09-24  225) 			return false;	/* key expected, none present */
-d2083287 (stephen hemminger 2012-09-24  226) 	} else
-d2083287 (stephen hemminger 2012-09-24  227) 		return !(flags & GRE_KEY);
-d2083287 (stephen hemminger 2012-09-24  228) }
-d2083287 (stephen hemminger 2012-09-24  229) 
-^1da177e (Linus Torvalds    2005-04-16  230) /* Given src, dst and key, find appropriate for input tunnel. */
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+diff --git a/drivers/staging/silicom/bp_mod.c b/drivers/staging/silicom/bp_mod.c
+index 1b3f5e7..f138d29 100644
+--- a/drivers/staging/silicom/bp_mod.c
++++ b/drivers/staging/silicom/bp_mod.c
+@@ -8071,20 +8071,13 @@ int
+ set_bypass_wd_pfs(struct file *file, const char *buffer,
+ 		  unsigned long count, void *data)
+ {
+-
+-	char kbuf[256];
+ 	bpctl_dev_t *pbp_device_block = (bpctl_dev_t *) data;
++	int timeout;
++	int ret;
+ 
+-	unsigned int timeout = 0;
+-	char *timeout_ptr = kbuf;
+-
+-	if (copy_from_user(&kbuf, buffer, count)) {
+-		return -1;
+-	}
+-
+-	timeout_ptr = kbuf;
+-	timeout = atoi(&timeout_ptr);
+-
++	ret = kstrtoint_from_user(buffer, count, 10, &timeout);
++	if (ret)
++		return ret;
+ 	set_bypass_wd_fn(pbp_device_block, timeout);
+ 
+ 	return count;
+@@ -8712,18 +8705,13 @@ int
+ set_wd_autoreset_pfs(struct file *file, const char *buffer,
+ 		     unsigned long count, void *data)
+ {
+-	char kbuf[256];
+ 	bpctl_dev_t *pbp_device_block = (bpctl_dev_t *) data;
+-	u32 timeout = 0;
+-	char *timeout_ptr = kbuf;
+-
+-	if (copy_from_user(&kbuf, buffer, count)) {
+-		return -1;
+-	}
+-
+-	timeout_ptr = kbuf;
+-	timeout = atoi(&timeout_ptr);
++	int timeout;
++	int ret;
+ 
++	ret = kstrtoint_from_user(buffer, count, 10, &timeout);
++	if (ret)
++		return ret;
+ 	set_wd_autoreset_fn(pbp_device_block, timeout);
+ 
+ 	return count;
