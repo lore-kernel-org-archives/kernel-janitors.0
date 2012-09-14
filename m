@@ -1,96 +1,111 @@
 From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 06 Sep 2012 15:19:07 +0000
+Date: Fri, 14 Sep 2012 09:06:25 +0000
 Subject: Re: [patch] ALSA: compress_core: integer overflow in snd_compr_allocate_buffer()
-Message-Id: <s5h627rxjpw.wl%tiwai@suse.de>
+Message-Id: <s5hligdc6su.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120905123217.GD6128@elgon.mountain>
  <s5hwr08ziyx.wl%tiwai@suse.de> <20120906145912.GK19410@mwanda>
-In-Reply-To: <20120906145912.GK19410@mwanda>
+ <s5h627rxjpw.wl%tiwai@suse.de>
+In-Reply-To: <s5h627rxjpw.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Vinod Koul <vinod.koul@linux.intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Jesper Juhl <jj@chaosbits.net>, Namarta Kohli <namartax.kohli@intel.com>
 
-At Thu, 6 Sep 2012 07:59:13 -0700,
-Dan Carpenter wrote:
+At Thu, 06 Sep 2012 17:19:07 +0200,
+Takashi Iwai wrote:
 > 
-> On Wed, Sep 05, 2012 at 03:40:06PM +0200, Takashi Iwai wrote:
-> > At Wed, 5 Sep 2012 15:32:18 +0300,
-> > Dan Carpenter wrote:
-> > > 
-> > > These are 32 bit values that come from the user, we need to check for
-> > > integer overflows or we could end up allocating a smaller buffer than
-> > > expected.
+> At Thu, 6 Sep 2012 07:59:13 -0700,
+> Dan Carpenter wrote:
 > > 
-> > The buffer size here is supposed to be fairly small that kmalloc can
-> > handle.  So, the overflow check is good, but in practice it'd return
-> > -ENOMEM.
+> > On Wed, Sep 05, 2012 at 03:40:06PM +0200, Takashi Iwai wrote:
+> > > At Wed, 5 Sep 2012 15:32:18 +0300,
+> > > Dan Carpenter wrote:
+> > > > 
+> > > > These are 32 bit values that come from the user, we need to check for
+> > > > integer overflows or we could end up allocating a smaller buffer than
+> > > > expected.
+> > > 
+> > > The buffer size here is supposed to be fairly small that kmalloc can
+> > > handle.  So, the overflow check is good, but in practice it'd return
+> > > -ENOMEM.
+> > 
+> > My concern was the security implications from an integer wrap.  If
+> > we chose ->fragment_size = 256 and ->fragments = 0x80000001 then the
+> > size of the final buffer would only be 256 bytes.  The allocation
+> > would succeed and it might lead to memory corruption later on.  I
+> > haven't followed it through to verify but adding a sanity check is a
+> > good idea.  It should probably be pushed to -stable as well.
 > 
-> My concern was the security implications from an integer wrap.  If
-> we chose ->fragment_size = 256 and ->fragments = 0x80000001 then the
-> size of the final buffer would only be 256 bytes.  The allocation
-> would succeed and it might lead to memory corruption later on.  I
-> haven't followed it through to verify but adding a sanity check is a
-> good idea.  It should probably be pushed to -stable as well.
-
-Yeah, a fix is really needed.  But, note that this API hasn't been
-used by any driver yet in the released upstream kernels, so the impact
-to the real world is pretty close to null.  Thus I don't know whether
-it's worth for stable kernel, too.
-
-(The real driver implementation appears first in 3.7 kernel, BTW.)
-
-> > Of course, it's fine to put the sanity check, but such
-> > checks could be better peformed in snd_compr_set_params() before
-> > calling the allocation, I think.
+> Yeah, a fix is really needed.  But, note that this API hasn't been
+> used by any driver yet in the released upstream kernels, so the impact
+> to the real world is pretty close to null.  Thus I don't know whether
+> it's worth for stable kernel, too.
 > 
-> To me it looks sort of weird to do the checking there.  Also if we
-> add more callers we would have to add the checking to all the
-> callers as well.  I can do that if you still prefer.
+> (The real driver implementation appears first in 3.7 kernel, BTW.)
+> 
+> > > Of course, it's fine to put the sanity check, but such
+> > > checks could be better peformed in snd_compr_set_params() before
+> > > calling the allocation, I think.
+> > 
+> > To me it looks sort of weird to do the checking there.  Also if we
+> > add more callers we would have to add the checking to all the
+> > callers as well.  I can do that if you still prefer.
+> 
+> Well, there are two issues here: the integer overflow of buffer size
+> and the invalid parameters.  I agree that checking the integer
+> overflow can be there as well in a safer side.  OTOH, the check of
+> invalid parameters should be added definitely.  There might be more
+> other places do behave more badly by such parameters even if the
+> values don't exceed the integer max.
+> 
+> So, we actually should have two distinct fixes.
 
-Well, there are two issues here: the integer overflow of buffer size
-and the invalid parameters.  I agree that checking the integer
-overflow can be there as well in a safer side.  OTOH, the check of
-invalid parameters should be added definitely.  There might be more
-other places do behave more badly by such parameters even if the
-values don't exceed the integer max.
+I took Dan's patch now for next branch.  But it's still better to
+filter weird parameters in the caller side, too.
 
-So, we actually should have two distinct fixes.
+Vinod, care to write such a patch and submit?
 
 
 thanks,
 
 Takashi
 
-
 > 
-> regards,
-> dan carpenter
+> 
+> thanks,
+> 
+> Takashi
+> 
 > 
 > > 
-> > 
-> > thanks,
-> > 
-> > Takashi
+> > regards,
+> > dan carpenter
 > > 
 > > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > > > 
-> > > diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-> > > index ec2118d..5a733e7 100644
-> > > --- a/sound/core/compress_offload.c
-> > > +++ b/sound/core/compress_offload.c
-> > > @@ -409,6 +409,10 @@ static int snd_compr_allocate_buffer(struct snd_compr_stream *stream,
-> > >  	unsigned int buffer_size;
-> > >  	void *buffer;
-> > >  
-> > > +	if (params->buffer.fragment_size = 0 ||
-> > > +	    params->buffer.fragments > SIZE_MAX / params->buffer.fragment_size)
-> > > +		return -EINVAL;
-> > > +
-> > >  	buffer_size = params->buffer.fragment_size * params->buffer.fragments;
-> > >  	if (stream->ops->copy) {
-> > >  		buffer = NULL;
+> > > thanks,
 > > > 
-> 
+> > > Takashi
+> > > 
+> > > > 
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > > 
+> > > > diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+> > > > index ec2118d..5a733e7 100644
+> > > > --- a/sound/core/compress_offload.c
+> > > > +++ b/sound/core/compress_offload.c
+> > > > @@ -409,6 +409,10 @@ static int snd_compr_allocate_buffer(struct snd_compr_stream *stream,
+> > > >  	unsigned int buffer_size;
+> > > >  	void *buffer;
+> > > >  
+> > > > +	if (params->buffer.fragment_size = 0 ||
+> > > > +	    params->buffer.fragments > SIZE_MAX / params->buffer.fragment_size)
+> > > > +		return -EINVAL;
+> > > > +
+> > > >  	buffer_size = params->buffer.fragment_size * params->buffer.fragments;
+> > > >  	if (stream->ops->copy) {
+> > > >  		buffer = NULL;
+> > > > 
+> > 
