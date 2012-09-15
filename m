@@ -1,34 +1,34 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 19 Sep 2012 07:14:42 +0000
-Subject: Re: usb-serial.c:1415 code aligned with following code on line 1416
-Message-Id: <20120919071442.GB16905@kroah.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 15 Sep 2012 14:35:47 +0000
+Subject: [iio:wip] drivers/staging/iio/iio_input.c:189 iio_input_probe() error: don't call input_free_device(
+Message-Id: <20120915143547.GB7303@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120919005700.GB10838@localhost>
-In-Reply-To: <20120919005700.GB10838@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 19, 2012 at 08:57:00AM +0800, Fengguang Wu wrote:
-> Hi Greg,
-> 
-> FYI, coccinelle warns about
-> 
-> drivers/usb/serial/usb-serial.c:1415:3-51: code aligned with following code on line 1416
-> 
-> vim +1415 drivers/usb/serial/usb-serial.c
-> 
->   1412		/* we only set the reset_resume field if the serial_driver has one */
->   1413		for (sd = serial_drivers; *sd; ++sd) {
->   1414			if ((*sd)->reset_resume)
-> > 1415				udriver->reset_resume = usb_serial_reset_resume;
-> > 1416				break;
->   1417		}
+Hi Jonathan,
 
-Ah, nice catch, that's been there for a while now (since 3.5-rc1), I'll
-go fix it up.
+There is a smatch warning in tree
 
-thanks,
+git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git wip
 
-greg k-h
++ drivers/staging/iio/iio_input.c:189 iio_input_probe() error: don't call input_free_device() after input_unregister_device()
+
+vim +189 drivers/staging/iio/iio_input.c
+
+   186	error_unregister_input:
+   187		input_unregister_device(st->idev);
+   188	error_free_idev:
+ > 189		input_free_device(st->idev);
+   190	error_channels_release_all:
+   191		iio_channel_release_all_cb(st->buff);
+   192	error_free_state:
+   193		kfree(st);
+   194		return ret;
+   195	}
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
