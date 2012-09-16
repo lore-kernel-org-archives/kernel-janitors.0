@@ -1,38 +1,42 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 16:09:13 +0000
-Subject: [PATCH 5/10] drivers/media/dvb-frontends/itd1000.c: removes unnecessary semicolon
-Message-Id: <1346947757-10481-6-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 16 Sep 2012 02:41:13 +0000
+Subject: [josef-btrfs:master 62/66] fs/btrfs/backref.c:1637:2: error: implicit declaration of function 'vfree
+Message-Id: <20120916024113.GA8335@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Josef Bacik <jbacik@fusionio.com>
+Cc: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Josef,
 
-removes unnecessary semicolon
+FYI, kernel build failed on
 
-Found by Coccinelle: http://coccinelle.lip6.fr/
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git master
+head:   df147c57b7b79624c977ffc4c763018a5426e6d8
+commit: b17d706f8458bd6a0f42d5de2f3b7dca26ea8029 [62/66] Btrfs: use vfree instead of kfree
+config: s390-allmodconfig
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+All related error/warning messages:
+
+fs/btrfs/backref.c: In function 'init_data_container':
+fs/btrfs/backref.c:1586:2: error: implicit declaration of function 'vmalloc' [-Werror=implicit-function-declaration]
+fs/btrfs/backref.c:1586:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+fs/btrfs/backref.c: In function 'free_ipath':
+fs/btrfs/backref.c:1637:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+
+vim +1637 fs/btrfs/backref.c
+  1632	
+  1633	void free_ipath(struct inode_fs_paths *ipath)
+  1634	{
+  1635		if (!ipath)
+  1636			return;
+> 1637		vfree(ipath->fspath);
+  1638		kfree(ipath);
+  1639	}
 
 ---
- drivers/media/dvb-frontends/itd1000.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/media/dvb-frontends/itd1000.c b/drivers/media/dvb-frontends/itd1000.c
---- a/drivers/media/dvb-frontends/itd1000.c
-+++ b/drivers/media/dvb-frontends/itd1000.c
-@@ -231,7 +231,7 @@ static void itd1000_set_lo(struct itd100
- 	state->frequency = ((plln * 1000) + (pllf * 1000)/1048576) * 2*FREF;
- 	itd_dbg("frequency: %dkHz (wanted) %dkHz (set), PLLF = %d, PLLN = %d\n", freq_khz, state->frequency, pllf, plln);
- 
--	itd1000_write_reg(state, PLLNH, 0x80); /* PLLNH */;
-+	itd1000_write_reg(state, PLLNH, 0x80); /* PLLNH */
- 	itd1000_write_reg(state, PLLNL, plln & 0xff);
- 	itd1000_write_reg(state, PLLFH, (itd1000_read_reg(state, PLLFH) & 0xf0) | ((pllf >> 16) & 0x0f));
- 	itd1000_write_reg(state, PLLFM, (pllf >> 8) & 0xff);
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
