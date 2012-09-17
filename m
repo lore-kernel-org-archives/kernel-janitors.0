@@ -1,47 +1,58 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 19 Sep 2012 23:26:36 +0000
-Subject: [cr:crtools-3.6-rc5 8/34] ipc/compat.c:399:13: error: 'compat_do_msg_fill' undeclared
-Message-Id: <20120919232636.GA5607@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 17 Sep 2012 17:28:28 +0000
+Subject: [PATCH 4/4] drivers/crypto/tegra-aes.c: fix error return code
+Message-Id: <1347902908-19006-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Stanislav,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gorcunov/linux-cr.git crtools-3.6-rc5
-head:   0f5ec8960cb3fa3f7d5bf30be7cccd30bfad507a
-commit: b3d0fbd8ecdbe74dfee640ec3a06706ad1278a90 [8/34] IPC: message queue receive cleanup
-config: tile-tilegx_defconfig
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All related error/warning messages:
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-ipc/compat.c: In function 'compat_sys_msgrcv':
-ipc/compat.c:399:13: error: 'compat_do_msg_fill' undeclared (first use in this function)
-ipc/compat.c:399:13: note: each undeclared identifier is reported only once for each function it appears in
-ipc/compat.c:399:5: warning: passing argument 3 of 'do_msgrcv' makes integer from pointer without a cast [enabled by default]
-include/linux/msg.h:108:13: note: expected 'size_t' but argument is of type 'char *'
-ipc/compat.c:399:5: warning: passing argument 6 of 'do_msgrcv' makes pointer from integer without a cast [enabled by default]
-include/linux/msg.h:108:13: note: expected 'long int (*)(void *, struct msg_msg *, size_t)' but argument is of type 'int'
-ipc/compat.c:399:5: error: too many arguments to function 'do_msgrcv'
-include/linux/msg.h:108:13: note: declared here
-
-vim +399 ipc/compat.c
-   394			       compat_ssize_t msgsz, long msgtyp, int msgflg)
-   395	{
-   396		long err, mtype;
-   397	
-   398		err =  do_msgrcv(msqid, &mtype, msgp->mtext, (ssize_t)msgsz, msgtyp,
- > 399				 msgflg, compat_do_msg_fill);
-   400		if (err < 0)
-   401			goto out;
-   402	
-   403		if (put_user(mtype, &msgp->mtype))
-   404			err = -EFAULT;
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/crypto/tegra-aes.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
+index 631149e5..37185e6 100644
+--- a/drivers/crypto/tegra-aes.c
++++ b/drivers/crypto/tegra-aes.c
+@@ -969,6 +969,7 @@ static int tegra_aes_probe(struct platform_device *pdev)
+ 	aes_wq = alloc_workqueue("tegra_aes_wq", WQ_HIGHPRI | WQ_UNBOUND, 1);
+ 	if (!aes_wq) {
+ 		dev_err(dev, "alloc_workqueue failed\n");
++		err = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-- 
+1.7.11.4
+
