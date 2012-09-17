@@ -1,15 +1,15 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 24 Sep 2012 09:11:03 +0000
-Subject: [PATCH V2 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
-Message-Id: <1348477863-6728-1-git-send-email-peter.senna@gmail.com>
+Date: Mon, 17 Sep 2012 17:28:27 +0000
+Subject: [PATCH 3/4] drivers/crypto/amcc/crypto4xx_core.c: fix error return code
+Message-Id: <1347902908-19006-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.1209232313500.31250@axis700.grange>
-In-Reply-To: <Pine.LNX.4.64.1209232313500.31250@axis700.grange>
+References: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@infradead.org
-Cc: g.liakhovetski@gmx.de, laurent.pinchart@ideasonboard.com, fabio.estevam@freescale.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: herbert@gondor.apana.org.au
+Cc: davem@davemloft.net, Julia.Lawall@lip6.fr, vzapolskiy@gmail.com, axel.lin@gmail.com, peter.senna@gmail.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
@@ -34,32 +34,23 @@ ret@p1 = 0
       when forall
  return ret;
 }
-
 // </smpl>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/media/platform/soc_camera/mx2_camera.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/crypto/amcc/crypto4xx_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
-index 256187f..01d7c11 100644
---- a/drivers/media/platform/soc_camera/mx2_camera.c
-+++ b/drivers/media/platform/soc_camera/mx2_camera.c
-@@ -1800,12 +1800,14 @@ static int __devinit mx2_camera_probe(struct platform_device *pdev)
- 
- 		if (!res_emma || !irq_emma) {
- 			dev_err(&pdev->dev, "no EMMA resources\n");
-+			err = -ENODEV;
- 			goto exit_free_irq;
- 		}
- 
- 		pcdev->res_emma = res_emma;
- 		pcdev->irq_emma = irq_emma;
--		if (mx27_camera_emma_init(pcdev))
-+		err = mx27_camera_emma_init(pcdev);
-+		if (err)
- 			goto exit_free_irq;
+diff --git a/drivers/crypto/amcc/crypto4xx_core.c b/drivers/crypto/amcc/crypto4xx_core.c
+index 802e851..f88e3d8 100644
+--- a/drivers/crypto/amcc/crypto4xx_core.c
++++ b/drivers/crypto/amcc/crypto4xx_core.c
+@@ -1226,6 +1226,7 @@ static int __init crypto4xx_probe(struct platform_device *ofdev)
+ 	core_dev->dev->ce_base = of_iomap(ofdev->dev.of_node, 0);
+ 	if (!core_dev->dev->ce_base) {
+ 		dev_err(dev, "failed to of_iomap\n");
++		rc = -ENOMEM;
+ 		goto err_iomap;
  	}
  
 -- 
