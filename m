@@ -1,42 +1,58 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 12 Sep 2012 12:45:50 +0000
-Subject: Re: [PATCH] drivers/media: Removes useless kfree()
-Message-Id: <CA+MoWDptdWtAoMvrQ==YN-VA0z9DQPhh_gLkUwJKof-FNHA+zw@mail.gmail.com>
+Date: Mon, 17 Sep 2012 08:15:28 +0000
+Subject: [PATCH 4/4] drivers/mmc/host/mxs-mmc.c: fix error return code
+Message-Id: <1347869728-2696-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347386432-12954-1-git-send-email-peter.senna@gmail.com>
-	<20120912080642.GA19396@mwanda>
-In-Reply-To: <20120912080642.GA19396@mwanda>
+References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: cjb@laptop.org
+Cc: shawn.guo@linaro.org, marex@denx.de, broonie@opensource.wolfsonmicro.com, vinod.koul@linux.intel.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-I'll split this patch in one patch for file and resend.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Wed, Sep 12, 2012 at 10:06 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> On Tue, Sep 11, 2012 at 08:00:32PM +0200, Peter Senna Tschudin wrote:
->> diff --git a/drivers/media/dvb-frontends/lg2160.c b/drivers/media/dvb-frontends/lg2160.c
->> index cc11260..748da5d 100644
->> --- a/drivers/media/dvb-frontends/lg2160.c
->> +++ b/drivers/media/dvb-frontends/lg2160.c
->> @@ -1451,7 +1451,6 @@ struct dvb_frontend *lg2160_attach(const struct lg2160_config *config,
->>       return &state->frontend;
->>  fail:
->>       lg_warn("unable to detect LG216x hardware\n");
->> -     kfree(state);
->>       return NULL;
->>  }
->
-> I wish you had fixed this the same as the others and removed the
-> goto.  Also the printk is redundant and wrong.  Remove it too.
->
-> regards,
-> dan carpenter
->
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/mmc/host/mxs-mmc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+index 80d1e6d..afd8fdd 100644
+--- a/drivers/mmc/host/mxs-mmc.c
++++ b/drivers/mmc/host/mxs-mmc.c
+@@ -674,6 +674,7 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+ 	if (!ssp->dmach) {
+ 		dev_err(mmc_dev(host->mmc),
+ 			"%s: failed to request dma\n", __func__);
++		ret = -ENODEV;
+ 		goto out_clk_put;
+ 	}
+ 
 -- 
-Peter
+1.7.11.4
+
