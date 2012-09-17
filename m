@@ -1,82 +1,62 @@
-From: NeilBrown <neilb@suse.de>
-Date: Mon, 24 Sep 2012 23:34:53 +0000
-Subject: Re: [md:for-next 29/29] ERROR: "__tracepoint_block_unplug" [drivers/md/raid456.ko] undefined!
-Message-Id: <20120925093453.0fbb2acc@notabene.brown>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/OuI9twlQaqg4b858H9070/L"
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 17 Sep 2012 12:20:17 +0000
+Subject: [PATCH v2 1/4] drivers/mmc/host/dw_mmc.c: fix error return code
+Message-Id: <1347884417-26754-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120924081513.GA12612@localhost>
-In-Reply-To: <20120924081513.GA12612@localhost>
-To: kernel-janitors@vger.kernel.org
+References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cjb@laptop.org
+Cc: will.newton@imgtec.com, tgih.jun@samsung.com, jh80.chung@samsung.com, kyungmin.park@samsung.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
---Sig_/OuI9twlQaqg4b858H9070/L
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Mon, 24 Sep 2012 16:15:13 +0800 Fengguang Wu <fengguang.wu@intel.com>
-wrote:
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-> Hi NeilBrown,
->=20
-> FYI, kernel build failed on
->=20
-> tree:   git://neil.brown.name/md for-next/14817e9
-> head:   14817e9a6dab027db44783d28429d14f601547a2
-> commit: 14817e9a6dab027db44783d28429d14f601547a2 [29/29] md/raid5: add bl=
-ktrace calls
-> config: sparc64-defconfig
->=20
-> ERROR: "__tracepoint_block_unplug" [drivers/md/raid456.ko] undefined!
->=20
-> The root cause is, the block trace points are only available when
-> block/blk-core.c is compiled in.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Hi,
- thanks for this.
-blk-core must be compiled in, else raid456 wouldn't get compiled
-CONFIG_MD_RAID456 eventually depends on CONFIG_BLOCK.
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-The problem is simply that tracepoint_block_unplug hasn't been exported.
-This fixes it:
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/mmc/host/dw_mmc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 4b4dbdf..ef55ae0 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -40,6 +40,7 @@
- EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_remap);
- EXPORT_TRACEPOINT_SYMBOL_GPL(block_rq_remap);
- EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_complete);
-+EXPORT_TRACEPOINT_SYMBOL_GPL(block_unplug);
-=20
- DEFINE_IDA(blk_queue_ida);
-=20
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 36f98c0..43a2663 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -2039,8 +2039,10 @@ int dw_mci_probe(struct dw_mci *host)
+ 	tasklet_init(&host->tasklet, dw_mci_tasklet_func, (unsigned long)host);
+ 	host->card_workqueue = alloc_workqueue("dw-mci-card",
+ 			WQ_MEM_RECLAIM | WQ_NON_REENTRANT, 1);
+-	if (!host->card_workqueue)
++	if (!host->card_workqueue) {
++		ret = -ENOMEM;
+ 		goto err_dmaunmap;
++	}
+ 	INIT_WORK(&host->card_work, dw_mci_work_routine_card);
+ 	ret = request_irq(host->irq, dw_mci_interrupt, host->irq_flags, "dw-mci", host);
+ 	if (ret)
+-- 
+1.7.11.4
 
-I'll see if Jens will take it.
-
-Thanks,
-NeilBrown
-
---Sig_/OuI9twlQaqg4b858H9070/L
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.18 (GNU/Linux)
-
-iQIVAwUBUGDuHTnsnt1WYoG5AQLHUw//T8CcCeXYbJf3arOoYEUih/egzGVBLFfW
-/dt3Exd8VTtoc27B49bZcfClqm5Z2F0NqFTQx0GOmMuZl7buO606PAjjP7ak0FJ1
-InRnvYnxLHPQTTjcjCZB1Yc1j5ZaTlHgf9F472dhBAYNCaGNfdqtsWMHgABuJxIv
-QPr8LVZ2AFQMuY0JIeO+qoYrPifR79999/YehG0082uA0PVZhKtipnOXiSRKVAo1
-N2H3XTGFajJrBJG/XujcO86kX81xUWCH25UCbrLQAMBMm50/Mh+dqZqjq8fnP5Jn
-wQcYotHoUCX2T2zB3U2T5rSw45JTHgtClFJRbdWzqceGcLFtFj2U+3OBmqu+UAgI
-cC9ww+O2MWqLDH6Xs9lk/1PF3nW8p5yOxLViHYrSjysNUDrVtYAEwhVxXMkFM1z9
-8Os7JzJyD3bAwMUwNGxNPKgtMGmwGHUJWp0CyE+jWn9CqK7zVOuaLgSZOlQZpUhv
-AtConHaN1h7aDGWD2cKv/MUFgNC6ghVbavMBjC8m8luOhxp88CkZUx1X5t19wKBz
-GUqwjVUw30l0eSCOZIg9Y+HymoPGuoJ5efxI0Gjl4Y9deozspvrhAySj2FB451JU
-1bOFeey2vl5WkG13L648viHvj74HIBY7Oc3ohVxIto6PmpUhRZh7fKKtcL2NLYcl
-k0XAYj/6drQ=
-=TxOn
------END PGP SIGNATURE-----
-
---Sig_/OuI9twlQaqg4b858H9070/L--
