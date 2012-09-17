@@ -1,60 +1,34 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 14 Sep 2012 23:57:28 +0000
-Subject: [scsi:for-next 92/128] drivers/scsi/qla2xxx/qla_isr.c:1684:56: warning: 'rval' may be used uninitial
-Message-Id: <20120914235728.GA32759@localhost>
+From: James Bottomley <jbottomley@parallels.com>
+Date: Mon, 17 Sep 2012 12:35:08 +0000
+Subject: Re: [scsi:for-next 92/128] drivers/scsi/qla2xxx/qla_isr.c:1684:56: warning: 'rval' may be used unini
+Message-Id: <1347885307.2397.21.camel@dabdike.int.hansenpartnership.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120914235728.GA32759@localhost>
+In-Reply-To: <20120914235728.GA32759@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Saurav Kashyap <saurav.kashyap@qlogic.com>
-Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, James Bottomley <JBottomley@Parallels.com>, Chad Dupuis <chad.dupuis@qlogic.com>, linux-scsi@vger.kernel.org
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Saurav Kashyap <saurav.kashyap@qlogic.com>, Yuanhan Liu <yuanhan.liu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Chad Dupuis <chad.dupuis@qlogic.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
 
-Hi Saurav,
-
-FYI, there are new compile warnings show up in
-
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-head:   71cfff4af0525891941199b142b759d00b293959
-commit: 387fddaa3564503c9f82d091d2ebe390f3af62a1 [92/128] [SCSI] qla2xxx: Implementation of bidirectional.
-config: x86_64-allmodconfig
-
-All error/warnings:
-
-drivers/scsi/qla2xxx/qla_isr.c: In function 'qla2x00_status_entry':
-drivers/scsi/qla2xxx/qla_isr.c:1684:56: warning: 'rval' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/scsi/qla2xxx/qla_isr.c:1558:11: note: 'rval' was declared here
-
-It could be uninitialized due to the test in line 1598.
-
-vim +1684 drivers/scsi/qla2xxx/qla_isr.c
-  1596         switch (comp_status) {
-  1597         case CS_COMPLETE:
-> 1598                 if (scsi_status = 0) {
-  1599                         bsg_job->reply->reply_payload_rcv_len   1600
-  bsg_job->reply_payload.payload_len;
-  1601                         rval = EXT_STATUS_OK;
-  1602                 }
-  1603                 goto done;
-  1604 
-...
-  1674			ql_dbg(ql_dbg_user, vha, 0x70bb,
-  1675			    "Command completed with completion status=0x%x "
-  1676			    "thread_id=%d\n", comp_status, thread_id);
-  1677			rval = EXT_STATUS_ERR;
-  1678			break;
-  1679		}
-  1680			bsg_job->reply->reply_payload_rcv_len = 0;
-  1681	
-  1682	done:
-  1683		/* Return the vendor specific reply to API */
-> 1684		bsg_job->reply->reply_data.vendor_reply.vendor_rsp[0] = rval;
-  1685		bsg_job->reply_len = sizeof(struct fc_bsg_reply);
-  1686		/* Always return DID_OK, bsg will send the vendor specific response
-  1687		 * in this case only */
-  1688		sp->done(vha, sp, (DID_OK << 6));
-  1689	
-  1690	}
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+T24gU2F0LCAyMDEyLTA5LTE1IGF0IDA3OjU3ICswODAwLCBGZW5nZ3VhbmcgV3Ugd3JvdGU6DQo+
+IEhpIFNhdXJhdiwNCj4gDQo+IEZZSSwgdGhlcmUgYXJlIG5ldyBjb21waWxlIHdhcm5pbmdzIHNo
+b3cgdXAgaW4NCj4gDQo+IHRyZWU6ICAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51
+eC9rZXJuZWwvZ2l0L2plamIvc2NzaS5naXQgZm9yLW5leHQNCj4gaGVhZDogICA3MWNmZmY0YWYw
+NTI1ODkxOTQxMTk5YjE0MmI3NTlkMDBiMjkzOTU5DQo+IGNvbW1pdDogMzg3ZmRkYWEzNTY0NTAz
+YzlmODJkMDkxZDJlYmUzOTBmM2FmNjJhMSBbOTIvMTI4XSBbU0NTSV0gcWxhMnh4eDogSW1wbGVt
+ZW50YXRpb24gb2YgYmlkaXJlY3Rpb25hbC4NCj4gY29uZmlnOiB4ODZfNjQtYWxsbW9kY29uZmln
+DQo+IA0KPiBBbGwgZXJyb3Ivd2FybmluZ3M6DQo+IA0KPiBkcml2ZXJzL3Njc2kvcWxhMnh4eC9x
+bGFfaXNyLmM6IEluIGZ1bmN0aW9uICdxbGEyeDAwX3N0YXR1c19lbnRyeSc6DQo+IGRyaXZlcnMv
+c2NzaS9xbGEyeHh4L3FsYV9pc3IuYzoxNjg0OjU2OiB3YXJuaW5nOiAncnZhbCcgbWF5IGJlIHVz
+ZWQgdW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uIFstV21heWJlLXVuaW5pdGlhbGl6ZWRd
+DQo+IGRyaXZlcnMvc2NzaS9xbGEyeHh4L3FsYV9pc3IuYzoxNTU4OjExOiBub3RlOiAncnZhbCcg
+d2FzIGRlY2xhcmVkIGhlcmUNCg0KSG1tLCB0aGF0J3MgYWN0dWFsbHkgZml4ZWQgYnkgYSBsYXRl
+ciBwYXRjaCBpbiB0aGUgc2VyaWVzOg0KDQpjb21taXQgMmQ3YTdkYzliZjQ3NzJiNmVkNzExY2Fk
+ZWVlMGJjZTliYWNlMmE5NA0KQXV0aG9yOiBTYXVyYXYgS2FzaHlhcCA8c2F1cmF2Lmthc2h5YXBA
+cWxvZ2ljLmNvbT4NCkRhdGU6ICAgV2VkIEF1ZyAyMiAxNDoyMToxMiAyMDEyIC0wNDAwDQoNCiAg
+ICBbU0NTSV0gcWxhMnh4eDogRml4IHJ2YWwgbWF5IGJlIHVzZWQgdW5pbml0aWFsaXplZCBpbiB0
+aGlzIGZ1bmN0aW9uDQp3YXJuaW5nLg0KDQpOb3RlIHRvIHFsb2dpYzogcGxlYXNlIGRvbid0IGRv
+IHRoaXMgaW4gZnV0dXJlLiAgSSdsbCBjb21iaW5lIHRoZXNlIHR3bw0KcGF0Y2hlcyBzbyB3ZSBn
+ZXQgYSBzaW5nbGUgc2VyaWVzIHdpdGggbm8gaW50cm9kdWNlZCBhbmQgbGF0ZXIgZml4ZWQNCndh
+cm5pbmdzLg0KDQpKYW1lcw0KDQo
