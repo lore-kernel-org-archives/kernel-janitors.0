@@ -1,94 +1,40 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 12 Sep 2012 12:55:57 +0000
-Subject: [PATCH v2 8/8] drivers/media/tuners/mt2063.c: Removes useless kfree()
-Message-Id: <1347454564-5178-1-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 17 Sep 2012 23:55:37 +0000
+Subject: [target:for-next 5/17] drivers/target/target_core_transport.c:582:22: error: 'struct
+Message-Id: <20120917235537.GA9080@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Roland,
 
-Remove useless kfree() and clean up code related to the removal.
+FYI, kernel build failed on
 
-The semantic patch that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next
+head:   0b79bb0e7b960c6a4347d7c7a3afeea67e28e51e
+commit: 3537078956521a5dd79a413da4342fbcd3e30e9d [5/17] target: Simplify fabric sense data length handling
+config: x86_64-allmodconfig
 
-// <smpl>
-@r exists@
-position p1,p2;
-expression x;
-@@
+All related error/warning messages:
 
-if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+drivers/target/target_core_transport.c: In function 'transport_get_sense_buffer':
+drivers/target/target_core_transport.c:582:22: error: 'struct target_core_fabric_ops' has no member named 'set_fabric_sense_len'
 
-@unchanged exists@
-position r.p1,r.p2;
-expression e <= r.x,x,e1;
-iterator I;
-statement S;
-@@
-
-if (x@p1 = NULL) { ... when != I(x,...) S
-                        when != e = e1
-                        when != e += e1
-                        when != e -= e1
-                        when != ++e
-                        when != --e
-                        when != e++
-                        when != e--
-                        when != &e
-   kfree@p2(x); ... return ...; }
-
-@ok depends on unchanged exists@
-position any r.p1;
-position r.p2;
-expression x;
-@@
-
-... when != true x@p1 = NULL
-kfree@p2(x);
-
-@depends on !ok && unchanged@
-position r.p2;
-expression x;
-@@
-
-*kfree@p2(x);
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+vim +582 drivers/target/target_core_transport.c
+   577			return NULL;
+   578	
+   579		if (cmd->se_cmd_flags & SCF_SENT_CHECK_CONDITION)
+   580			return NULL;
+   581	
+ > 582		offset = cmd->se_tfo->set_fabric_sense_len(cmd, TRANSPORT_SENSE_BUFFER);
+   583	
+   584		/* Automatically padded */
+   585		cmd->scsi_sense_length = TRANSPORT_SENSE_BUFFER + offset;
+   586	
+   587		pr_debug("HBA_[%u]_PLUG[%s]: Requesting sense for SAM STATUS: 0x%02x\n",
 
 ---
- drivers/media/tuners/mt2063.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/tuners/mt2063.c b/drivers/media/tuners/mt2063.c
-index 0ed9091..620c4fa 100644
---- a/drivers/media/tuners/mt2063.c
-+++ b/drivers/media/tuners/mt2063.c
-@@ -2249,8 +2249,8 @@ struct dvb_frontend *mt2063_attach(struct dvb_frontend *fe,
- 	dprintk(2, "\n");
- 
- 	state = kzalloc(sizeof(struct mt2063_state), GFP_KERNEL);
--	if (state = NULL)
--		goto error;
-+	if (!state)
-+		return NULL;
- 
- 	state->config = config;
- 	state->i2c = i2c;
-@@ -2261,10 +2261,6 @@ struct dvb_frontend *mt2063_attach(struct dvb_frontend *fe,
- 
- 	printk(KERN_INFO "%s: Attaching MT2063\n", __func__);
- 	return fe;
--
--error:
--	kfree(state);
--	return NULL;
- }
- EXPORT_SYMBOL_GPL(mt2063_attach);
- 
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
