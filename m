@@ -1,34 +1,57 @@
-From: James Bottomley <jbottomley@parallels.com>
-Date: Mon, 17 Sep 2012 12:35:08 +0000
+From: Saurav Kashyap <saurav.kashyap@qlogic.com>
+Date: Mon, 17 Sep 2012 16:13:15 +0000
 Subject: Re: [scsi:for-next 92/128] drivers/scsi/qla2xxx/qla_isr.c:1684:56: warning: 'rval' may be used unini
-Message-Id: <1347885307.2397.21.camel@dabdike.int.hansenpartnership.com>
+Message-Id: <CC7D49BC.E02F%saurav.kashyap@qlogic.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120914235728.GA32759@localhost>
-In-Reply-To: <20120914235728.GA32759@localhost>
+References: <1347885307.2397.21.camel@dabdike.int.hansenpartnership.com>
+In-Reply-To: <1347885307.2397.21.camel@dabdike.int.hansenpartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Saurav Kashyap <saurav.kashyap@qlogic.com>, Yuanhan Liu <yuanhan.liu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Chad Dupuis <chad.dupuis@qlogic.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+To: James Bottomley <jbottomley@parallels.com>, Fengguang Wu <fengguang.wu@intel.com>
+Cc: Yuanhan Liu <yuanhan.liu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Chad Dupuis <chad.dupuis@qlogic.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
 
-T24gU2F0LCAyMDEyLTA5LTE1IGF0IDA3OjU3ICswODAwLCBGZW5nZ3VhbmcgV3Ugd3JvdGU6DQo+
-IEhpIFNhdXJhdiwNCj4gDQo+IEZZSSwgdGhlcmUgYXJlIG5ldyBjb21waWxlIHdhcm5pbmdzIHNo
-b3cgdXAgaW4NCj4gDQo+IHRyZWU6ICAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51
-eC9rZXJuZWwvZ2l0L2plamIvc2NzaS5naXQgZm9yLW5leHQNCj4gaGVhZDogICA3MWNmZmY0YWYw
-NTI1ODkxOTQxMTk5YjE0MmI3NTlkMDBiMjkzOTU5DQo+IGNvbW1pdDogMzg3ZmRkYWEzNTY0NTAz
-YzlmODJkMDkxZDJlYmUzOTBmM2FmNjJhMSBbOTIvMTI4XSBbU0NTSV0gcWxhMnh4eDogSW1wbGVt
-ZW50YXRpb24gb2YgYmlkaXJlY3Rpb25hbC4NCj4gY29uZmlnOiB4ODZfNjQtYWxsbW9kY29uZmln
-DQo+IA0KPiBBbGwgZXJyb3Ivd2FybmluZ3M6DQo+IA0KPiBkcml2ZXJzL3Njc2kvcWxhMnh4eC9x
-bGFfaXNyLmM6IEluIGZ1bmN0aW9uICdxbGEyeDAwX3N0YXR1c19lbnRyeSc6DQo+IGRyaXZlcnMv
-c2NzaS9xbGEyeHh4L3FsYV9pc3IuYzoxNjg0OjU2OiB3YXJuaW5nOiAncnZhbCcgbWF5IGJlIHVz
-ZWQgdW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uIFstV21heWJlLXVuaW5pdGlhbGl6ZWRd
-DQo+IGRyaXZlcnMvc2NzaS9xbGEyeHh4L3FsYV9pc3IuYzoxNTU4OjExOiBub3RlOiAncnZhbCcg
-d2FzIGRlY2xhcmVkIGhlcmUNCg0KSG1tLCB0aGF0J3MgYWN0dWFsbHkgZml4ZWQgYnkgYSBsYXRl
-ciBwYXRjaCBpbiB0aGUgc2VyaWVzOg0KDQpjb21taXQgMmQ3YTdkYzliZjQ3NzJiNmVkNzExY2Fk
-ZWVlMGJjZTliYWNlMmE5NA0KQXV0aG9yOiBTYXVyYXYgS2FzaHlhcCA8c2F1cmF2Lmthc2h5YXBA
-cWxvZ2ljLmNvbT4NCkRhdGU6ICAgV2VkIEF1ZyAyMiAxNDoyMToxMiAyMDEyIC0wNDAwDQoNCiAg
-ICBbU0NTSV0gcWxhMnh4eDogRml4IHJ2YWwgbWF5IGJlIHVzZWQgdW5pbml0aWFsaXplZCBpbiB0
-aGlzIGZ1bmN0aW9uDQp3YXJuaW5nLg0KDQpOb3RlIHRvIHFsb2dpYzogcGxlYXNlIGRvbid0IGRv
-IHRoaXMgaW4gZnV0dXJlLiAgSSdsbCBjb21iaW5lIHRoZXNlIHR3bw0KcGF0Y2hlcyBzbyB3ZSBn
-ZXQgYSBzaW5nbGUgc2VyaWVzIHdpdGggbm8gaW50cm9kdWNlZCBhbmQgbGF0ZXIgZml4ZWQNCndh
-cm5pbmdzLg0KDQpKYW1lcw0KDQo
+
+
+
+>On Sat, 2012-09-15 at 07:57 +0800, Fengguang Wu wrote:
+>> Hi Saurav,
+>>
+>> FYI, there are new compile warnings show up in
+>>
+>> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git
+>>for-next
+>> head:   71cfff4af0525891941199b142b759d00b293959
+>> commit: 387fddaa3564503c9f82d091d2ebe390f3af62a1 [92/128] [SCSI]
+>>qla2xxx: Implementation of bidirectional.
+>> config: x86_64-allmodconfig
+>>
+>> All error/warnings:
+>>
+>> drivers/scsi/qla2xxx/qla_isr.c: In function 'qla2x00_status_entry':
+>> drivers/scsi/qla2xxx/qla_isr.c:1684:56: warning: 'rval' may be used
+>>uninitialized in this function [-Wmaybe-uninitialized]
+>> drivers/scsi/qla2xxx/qla_isr.c:1558:11: note: 'rval' was declared here
+>
+>Hmm, that's actually fixed by a later patch in the series:
+>
+>commit 2d7a7dc9bf4772b6ed711cadeee0bce9bace2a94
+>Author: Saurav Kashyap <saurav.kashyap@qlogic.com>
+>Date:   Wed Aug 22 14:21:12 2012 -0400
+>
+>    [SCSI] qla2xxx: Fix rval may be used uninitialized in this function
+>warning.
+>
+>Note to qlogic: please don't do this in future.  I'll combine these two
+>patches so we get a single series with no introduced and later fixed
+>warnings.
+
+Hi James,
+We will take care of this in future.
+
+Thanks,
+~Saurav
+
+
+This message and any attached documents contain information from QLogic Corporation or its wholly-owned subsidiaries that may be confidential. If you are not the intended recipient, you may not read, copy, distribute, or use this information. If you have received this transmission in error, please notify the sender immediately by reply e-mail and then delete this message.
+
