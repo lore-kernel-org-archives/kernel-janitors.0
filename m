@@ -1,40 +1,74 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 29 Sep 2012 00:20:39 +0000
-Subject: arch/powerpc/mm/hugetlbpage.c:317:4: error: passing argument 7 of 'parse_args' from incompatible poi
-Message-Id: <20120929002039.GA6508@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 17 Sep 2012 08:15:26 +0000
+Subject: [PATCH 2/4] drivers/mmc/host/omap.c: fix error return code
+Message-Id: <1347869728-2696-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jarkko.lavinen@nokia.com
+Cc: cjb@laptop.org, linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Andy,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-commit: 84925a91b2fb2b0ee48736fac94e08ece70f4169  UBUNTU: SAUCE: add option to hand off all kernel parameters to init
-config: powerpc-corenet64_smp_defconfig
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All error/warnings:
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-arch/powerpc/mm/hugetlbpage.c: In function 'reserve_hugetlb_gpages':
-arch/powerpc/mm/hugetlbpage.c:317:4: error: passing argument 7 of 'parse_args' from incompatible pointer type [-Werror]
-include/linux/moduleparam.h:317:12: note: expected 'int (*)(char *, char *, const char *, int)' but argument is of type 'int (*)(char *, char *, const char *)'
-cc1: all warnings being treated as errors
-
-vim +317 arch/powerpc/mm/hugetlbpage.c
-
-41151e77 (Becky Bruce 2011-06-28  311) 	static __initdata char cmdline[COMMAND_LINE_SIZE];
-41151e77 (Becky Bruce 2011-06-28  312) 	phys_addr_t size, base;
-41151e77 (Becky Bruce 2011-06-28  313) 	int i;
-41151e77 (Becky Bruce 2011-06-28  314) 
-41151e77 (Becky Bruce 2011-06-28  315) 	strlcpy(cmdline, boot_command_line, COMMAND_LINE_SIZE);
-026cee00 (Pawel Moll  2012-03-26  316) 	parse_args("hugetlb gpages", cmdline, NULL, 0, 0, 0,
-026cee00 (Pawel Moll  2012-03-26 @317) 			&do_gpage_early_setup);
-41151e77 (Becky Bruce 2011-06-28  318) 
-41151e77 (Becky Bruce 2011-06-28  319) 	/*
-41151e77 (Becky Bruce 2011-06-28  320) 	 * Walk gpage list in reverse, allocating larger page sizes first.
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/mmc/host/omap.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
+index 48ad361..d468f51 100644
+--- a/drivers/mmc/host/omap.c
++++ b/drivers/mmc/host/omap.c
+@@ -1369,8 +1369,10 @@ static int __devinit mmc_omap_probe(struct platform_device *pdev)
+ 	host->irq = irq;
+ 	host->phys_base = host->mem_res->start;
+ 	host->virt_base = ioremap(res->start, resource_size(res));
+-	if (!host->virt_base)
++	if (!host->virt_base) {
++		ret = -ENOMEM;
+ 		goto err_ioremap;
++	}
+ 
+ 	host->iclk = clk_get(&pdev->dev, "ick");
+ 	if (IS_ERR(host->iclk)) {
+@@ -1438,8 +1440,10 @@ static int __devinit mmc_omap_probe(struct platform_device *pdev)
+ 	host->reg_shift = (cpu_is_omap7xx() ? 1 : 2);
+ 
+ 	host->mmc_omap_wq = alloc_workqueue("mmc_omap", 0, 0);
+-	if (!host->mmc_omap_wq)
++	if (!host->mmc_omap_wq) {
++		err = -ENOMEM;
+ 		goto err_plat_cleanup;
++	}
+ 
+ 	for (i = 0; i < pdata->nr_slots; i++) {
+ 		ret = mmc_omap_new_slot(host, i);
+-- 
+1.7.11.4
+
