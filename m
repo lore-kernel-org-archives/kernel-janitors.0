@@ -1,41 +1,56 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 28 Sep 2012 02:49:48 +0000
-Subject: [tip:x86/acpi 1/6] include/linux/acpi.h:433:5: warning: "CONFIG_X86" is not defined
-Message-Id: <20120928024948.GA9946@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 17 Sep 2012 17:28:25 +0000
+Subject: [PATCH 1/4] drivers/crypto/ux500/cryp/cryp_core.c: fix error return code
+Message-Id: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928024603.GG9155@localhost>
-In-Reply-To: <20120928024603.GG9155@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: herbert@gondor.apana.org.au
+Cc: davem@davemloft.net, linus.walleij@linaro.org, andreas.westin@stericsson.com, rjw@sisk.pl, peter.senna@gmail.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Thomas,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, there are new compile warnings show up in
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/acpi
-head:   4901b402c957d4ebaff123ffc34fafe3cef99542
-commit: 9e0a90cdff5b89599d73695b4d9971d1075c0b14 [1/6] X86 ACPI: Introduce x86 arch specific arch_reserve_mem_area() for e820 handling
-config: alpha-defconfig
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All warnings:
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-In file included from init/main.c:25:0:
-include/linux/acpi.h:433:5: warning: "CONFIG_X86" is not defined [-Wundef]
-include/linux/acpi.h:436:42: error: unknown type name 'acpi_physical_address'
-
-vim +433 include/linux/acpi.h
-
-9e0a90cd (Thomas Renninger  2012-09-26 @433) #if CONFIG_X86
-9e0a90cd (Thomas Renninger  2012-09-26  434) void arch_reserve_mem_area(acpi_physical_address addr, size_t size);
-9e0a90cd (Thomas Renninger  2012-09-26  435) #else
-9e0a90cd (Thomas Renninger  2012-09-26  436) static inline void arch_reserve_mem_area(acpi_physical_address addr,
-9e0a90cd (Thomas Renninger  2012-09-26  437) 					  size_t size)
-9e0a90cd (Thomas Renninger  2012-09-26  438) {
-9e0a90cd (Thomas Renninger  2012-09-26  439) }
-9e0a90cd (Thomas Renninger  2012-09-26  440) #endif /* CONFIG_X86 */
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/crypto/ux500/cryp/cryp_core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
+index 1c307e1..715c0fe 100644
+--- a/drivers/crypto/ux500/cryp/cryp_core.c
++++ b/drivers/crypto/ux500/cryp/cryp_core.c
+@@ -1486,6 +1486,7 @@ static int ux500_cryp_probe(struct platform_device *pdev)
+ 	if (!res_irq) {
+ 		dev_err(dev, "[%s]: IORESOURCE_IRQ unavailable",
+ 			__func__);
++		ret = -ENODEV;
+ 		goto out_power;
+ 	}
+ 
+-- 
+1.7.11.4
+
