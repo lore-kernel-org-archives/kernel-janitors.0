@@ -1,56 +1,61 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Date: Sun, 02 Sep 2012 15:19:56 +0000
-Subject: Re: [PATCH 3/5] drivers/video/jz4740_fb.c: use devm_ functions
-Message-Id: <5043791C.4050202@metafoo.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 17 Sep 2012 08:12:00 +0000
+Subject: [PATCH 1/2] drivers/s390/char/monreader.c: fix error return code
+Message-Id: <1347869521-2470-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344008414-2894-1-git-send-email-damien.cassou@lifl.fr> <1344008414-2894-3-git-send-email-damien.cassou@lifl.fr> <5036955F.6000806@gmx.de>
-In-Reply-To: <5036955F.6000806@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: Damien Cassou <damien.cassou@lifl.fr>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: schwidefsky@de.ibm.com
+Cc: heiko.carstens@de.ibm.com, linux390@de.ibm.com, peter.senna@gmail.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/23/2012 10:41 PM, Florian Tobias Schandinat wrote:
-> On 08/03/2012 03:40 PM, Damien Cassou wrote:
->> From: Damien Cassou <damien.cassou@lifl.fr>
->>
->> The various devm_ functions allocate memory that is released when a driver
->> detaches. This patch uses these functions for data that is allocated in the
->> probe function of a platform device and is only freed in the remove function.
->>
->> Signed-off-by: Damien Cassou <damien.cassou@lifl.fr>
-> 
-> Applied.
-> 
-> 
-> Thanks,
-> 
-> Florian Tobias Schandinat
-> 
->>
->> ---
->>  drivers/video/jz4740_fb.c |   22 ++++++----------------
->>  1 file changed, 6 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/video/jz4740_fb.c b/drivers/video/jz4740_fb.c
->> index de36693..7669770 100644
->> --- a/drivers/video/jz4740_fb.c
->> +++ b/drivers/video/jz4740_fb.c
->> @@ -659,25 +659,25 @@ static int __devinit jzfb_probe(struct platform_device *pdev)
->>  	jzfb->pdata = pdata;
->>  	jzfb->mem = mem;
->>
->> -	jzfb->ldclk = clk_get(&pdev->dev, "lcd");
->> +	jzfb->ldclk = devm_clk_get(&pdev->dev, "lcd");
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-I guess I'm a bit late, but we do not have devm_clk_get on jz4740 (yet), so
-this patch breaks linking for this driver in next. I'll to to have this added
-for the next release, but if I do not succeed we'll have to revert part of this
-patch.
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-Also the driver does not include #include <linux/io.h>, since it is required
-for devm_ioremap compilation is also broken. This one is easy to fix though,
-will send a follow-up patch.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-- Lars
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/s390/char/monreader.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/s390/char/monreader.c b/drivers/s390/char/monreader.c
+index 5b8b859..f4ff515 100644
+--- a/drivers/s390/char/monreader.c
++++ b/drivers/s390/char/monreader.c
+@@ -571,8 +571,11 @@ static int __init mon_init(void)
+ 	if (rc)
+ 		goto out_iucv;
+ 	monreader_device = kzalloc(sizeof(struct device), GFP_KERNEL);
+-	if (!monreader_device)
++	if (!monreader_device) {
++		rc = -ENOMEM;
+ 		goto out_driver;
++	}
++
+ 	dev_set_name(monreader_device, "monreader-dev");
+ 	monreader_device->bus = &iucv_bus;
+ 	monreader_device->parent = iucv_root;
+-- 
+1.7.11.4
+
