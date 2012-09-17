@@ -1,35 +1,58 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 21 Sep 2012 06:17:28 +0000
-Subject: Re: [PATCH] Fix misspellings of "whether" in comments.
-Message-Id: <alpine.LNX.2.00.1209210815141.22959@pobox.suse.cz>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 17 Sep 2012 08:15:27 +0000
+Subject: [PATCH 3/4] drivers/mmc/host/omap_hsmmc.c: fix error return code
+Message-Id: <1347869728-2696-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1348105682-25196-3-git-send-email-adam.buchbinder@gmail.com>
-In-Reply-To: <1348105682-25196-3-git-send-email-adam.buchbinder@gmail.com>
+References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: svenkatr@ti.com
+Cc: cjb@laptop.org, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Thu, 20 Sep 2012, Dan Carpenter wrote:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> To be honest, I have no idea what's going on in the trivial tree
-> these days or what the rules are there.
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-Frankly, there are no strict rules. The patch has to qualify as described 
-in Documentation/SubmittingPatches, but that's basically it.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> But my instinct says that this would be better broken up into per 
-> subsystem patches and sent through the normal trees.  Patches that touch 
-> a ton of files like this are hard to merge all at once. Someone is going 
-> to be changing some files and you'll get conflicts.
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-I am taking cross-subtree patches into trivial.git if they are not causing 
-super-huge conflics in linux-next, and I handle the conflict resolution 
-myself when pushing to Linus.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/mmc/host/omap_hsmmc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-But I don't mind if it goes through subsystem maintainers instead if both 
-parties prefer it that way.
-
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index e59ac62..c8a2b36 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -1893,6 +1893,7 @@ static int __devinit omap_hsmmc_probe(struct platform_device *pdev)
+ 		if (pdata->init(&pdev->dev) != 0) {
+ 			dev_dbg(mmc_dev(host->mmc),
+ 				"Unable to configure MMC IRQs\n");
++			ret = -ENXIO;
+ 			goto err_irq_cd_init;
+ 		}
+ 	}
 -- 
-Jiri Kosina
-SUSE Labs
+1.7.11.4
+
