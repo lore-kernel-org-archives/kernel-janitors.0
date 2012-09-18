@@ -1,56 +1,109 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 29 Sep 2012 11:34:39 +0000
-Subject: [calxeda:ubuntu-quantal 94/299] drivers/gpu/drm/i915/i915_sysfs.c:105:16: error: 'GEN7_L3LOG_SIZE'
-Message-Id: <20120929113439.GA8674@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 16:36:11 +0000
+Subject: [PATCH] arch/arm/mach-omap2: Remove unecessary semicolon
+Message-Id: <1347986174-30287-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Tim,
+Found by http://coccinelle.lip6.fr/
 
-FYI, kernel build failed on
-
-tree:   git://sources.calxeda.com/kernel/linux.git ubuntu-quantal
-head:   c07f1571f9b6e609109d50bd6ba2b2547e873614
-commit: f22af270b676180993593f98bd23a51b9fc910d0 [94/299] drm/i915: l3 parity sysfs interface
-config: x86_64-allmodconfig
-
-These errors are then fixed by some later commit and only hurts bisectability.
-If you don't care about bisectability of your tree, please let me know. Thanks!
-
-All error/warnings:
-
-drivers/gpu/drm/i915/i915_sysfs.c: In function 'l3_access_valid':
-drivers/gpu/drm/i915/i915_sysfs.c:105:16: error: 'GEN7_L3LOG_SIZE' undeclared (first use in this function)
-drivers/gpu/drm/i915/i915_sysfs.c:105:16: note: each undeclared identifier is reported only once for each function it appears in
-drivers/gpu/drm/i915/i915_sysfs.c: In function 'i915_l3_read':
-drivers/gpu/drm/i915/i915_sysfs.c:134:37: error: 'GEN7_L3LOG_SIZE' undeclared (first use in this function)
-drivers/gpu/drm/i915/i915_sysfs.c:135:30: error: 'GEN7_L3LOG_BASE' undeclared (first use in this function)
-drivers/gpu/drm/i915/i915_sysfs.c: In function 'i915_l3_write':
-drivers/gpu/drm/i915/i915_sysfs.c:164:19: error: 'struct <anonymous>' has no member named 'l3_remap_info'
-drivers/gpu/drm/i915/i915_sysfs.c:165:18: error: 'GEN7_L3LOG_SIZE' undeclared (first use in this function)
-drivers/gpu/drm/i915/i915_sysfs.c:184:15: error: 'struct <anonymous>' has no member named 'l3_remap_info'
-drivers/gpu/drm/i915/i915_sysfs.c:186:21: error: 'struct <anonymous>' has no member named 'l3_remap_info'
-drivers/gpu/drm/i915/i915_sysfs.c:190:2: error: implicit declaration of function 'i915_gem_l3_remap' [-Werror=implicit-function-declaration]
-drivers/gpu/drm/i915/i915_sysfs.c: At top level:
-drivers/gpu/drm/i915/i915_sysfs.c:199:10: error: 'GEN7_L3LOG_SIZE' undeclared here (not in a function)
-cc1: some warnings being treated as errors
-
-vim +105 drivers/gpu/drm/i915/i915_sysfs.c
-
-f22af270 (Ben Widawsky 2012-05-25   99) 	if (!IS_IVYBRIDGE(dev))
-f22af270 (Ben Widawsky 2012-05-25  100) 		return -EPERM;
-f22af270 (Ben Widawsky 2012-05-25  101) 
-f22af270 (Ben Widawsky 2012-05-25  102) 	if (offset % 4 != 0)
-f22af270 (Ben Widawsky 2012-05-25  103) 		return -EINVAL;
-f22af270 (Ben Widawsky 2012-05-25  104) 
-f22af270 (Ben Widawsky 2012-05-25 @105) 	if (offset >= GEN7_L3LOG_SIZE)
-f22af270 (Ben Widawsky 2012-05-25  106) 		return -ENXIO;
-f22af270 (Ben Widawsky 2012-05-25  107) 
-f22af270 (Ben Widawsky 2012-05-25  108) 	return 0;
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ arch/arm/mach-omap2/board-flash.c          | 2 +-
+ arch/arm/mach-omap2/clkt_clksel.c          | 2 +-
+ arch/arm/mach-omap2/mux.c                  | 2 +-
+ arch/arm/mach-omap2/omap_hwmod_3xxx_data.c | 6 +++---
+ arch/arm/mach-omap2/pm-debug.c             | 2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/board-flash.c b/arch/arm/mach-omap2/board-flash.c
+index 53c39d2..d4c5bd5 100644
+--- a/arch/arm/mach-omap2/board-flash.c
++++ b/arch/arm/mach-omap2/board-flash.c
+@@ -218,7 +218,7 @@ void __init board_flash_init(struct flash_partitions partition_info[],
+ 			if (onenandcs > GPMC_CS_NUM)
+ 				onenandcs = cs;
+ 			break;
+-		};
++		}
+ 		cs++;
+ 	}
+ 
+diff --git a/arch/arm/mach-omap2/clkt_clksel.c b/arch/arm/mach-omap2/clkt_clksel.c
+index 04d551b..fdb79c5 100644
+--- a/arch/arm/mach-omap2/clkt_clksel.c
++++ b/arch/arm/mach-omap2/clkt_clksel.c
+@@ -365,7 +365,7 @@ void omap2_init_clksel_parent(struct clk *clk)
+ 						 ((clk->parent) ?
+ 						  clk->parent->name : "NULL"));
+ 					clk_reparent(clk, clks->parent);
+-				};
++				}
+ 				found = 1;
+ 			}
+ 		}
+diff --git a/arch/arm/mach-omap2/mux.c b/arch/arm/mach-omap2/mux.c
+index 9fe6829..701e17c 100644
+--- a/arch/arm/mach-omap2/mux.c
++++ b/arch/arm/mach-omap2/mux.c
+@@ -486,7 +486,7 @@ void omap_hwmod_mux(struct omap_hwmod_mux_info *hmux, u8 state)
+ 		default:
+ 			/* Nothing to be done */
+ 			break;
+-		};
++		}
+ 
+ 		if (val >= 0) {
+ 			omap_mux_write(pad->partition, val,
+diff --git a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
+index ce7e606..5b91454 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
+@@ -3459,7 +3459,7 @@ int __init omap3xxx_hwmod_init(void)
+ 	} else {
+ 		WARN(1, "OMAP3 hwmod family init: unknown chip type\n");
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	r = omap_hwmod_register_links(h);
+ 	if (r < 0)
+@@ -3476,7 +3476,7 @@ int __init omap3xxx_hwmod_init(void)
+ 		   rev = OMAP3430_REV_ES3_0 || rev = OMAP3430_REV_ES3_1 ||
+ 		   rev = OMAP3430_REV_ES3_1_2) {
+ 		h = omap3430es2plus_hwmod_ocp_ifs;
+-	};
++	}
+ 
+ 	if (h) {
+ 		r = omap_hwmod_register_links(h);
+@@ -3491,7 +3491,7 @@ int __init omap3xxx_hwmod_init(void)
+ 	} else if (rev = OMAP3430_REV_ES3_0 || rev = OMAP3430_REV_ES3_1 ||
+ 		   rev = OMAP3430_REV_ES3_1_2) {
+ 		h = omap3430_es3plus_hwmod_ocp_ifs;
+-	};
++	}
+ 
+ 	if (h)
+ 		r = omap_hwmod_register_links(h);
+diff --git a/arch/arm/mach-omap2/pm-debug.c b/arch/arm/mach-omap2/pm-debug.c
+index 814bcd9..b5acc75 100644
+--- a/arch/arm/mach-omap2/pm-debug.c
++++ b/arch/arm/mach-omap2/pm-debug.c
+@@ -169,7 +169,7 @@ static int pm_dbg_open(struct inode *inode, struct file *file)
+ 	default:
+ 		return single_open(file, pm_dbg_show_timers,
+ 			&inode->i_private);
+-	};
++	}
+ }
+ 
+ static const struct file_operations debug_fops = {
+-- 
+1.7.11.4
+
