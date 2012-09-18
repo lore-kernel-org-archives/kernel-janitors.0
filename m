@@ -1,31 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Sep 2012 06:46:14 +0000
-Subject: [patch] serial: clear entire struct in uart_get_info()
-Message-Id: <20120907064613.GA12028@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 16:59:59 +0000
+Subject: [PATCH v2] arch/arm/mach-davinci/board-dm646x-evm.c: Remove unecessary semicolon
+Message-Id: <1347987599-30802-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-There is a typo here, sizeof(retinfo) should be sizeof(*retinfo) to
-clear the struct.
+Found by http://coccinelle.lip6.fr/
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-Only needed in linux-next.
+ arch/arm/mach-davinci/board-dm646x-evm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 137b25c..19993d8 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -640,7 +640,7 @@ static void uart_get_info(struct tty_port *port,
- {
- 	struct uart_port *uport = state->uart_port;
+diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
+index 958679a..1ccaace 100644
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -193,7 +193,7 @@ static int evm_led_setup(struct i2c_client *client, int gpio,
+ 	while (ngpio--) {
+ 		leds->gpio = gpio++;
+ 		leds++;
+-	};
++	}
  
--	memset(retinfo, 0, sizeof(retinfo));
-+	memset(retinfo, 0, sizeof(*retinfo));
- 
- 	retinfo->type	    = uport->type;
- 	retinfo->line	    = uport->line;
+ 	evm_led_dev = platform_device_alloc("leds-gpio", 0);
+ 	platform_device_add_data(evm_led_dev, &evm_led_data,
+-- 
+1.7.11.4
+
