@@ -1,49 +1,61 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 14 Sep 2012 23:47:11 +0000
-Subject: [cifs:for-next 61/66] fs/cifs/file.c:708:1: sparse: function 'cifs_find_fid_lock_conflict' with exte
-Message-Id: <20120914234711.GB31637@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 12:07:58 +0000
+Subject: [PATCH 08/10] drivers/video/cyber2000fb.c: fix error return code
+Message-Id: <1347970080-25175-8-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Pavel,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, there are new sparse warnings show up in
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-tree:   git://git.samba.org/sfrench/cifs-2.6.git for-next
-head:   c246704dfe86f2c1875b59a8d60ca69c1f48acb4
-commit: 2485496555e7b3f0280e2958934e10fb2672fcf5 [61/66] CIFS: Check for mandatory brlocks on read/write
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All sparse warnings:
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-+ fs/cifs/file.c:708:1: sparse: function 'cifs_find_fid_lock_conflict' with external linkage has definition
-+ fs/cifs/file.c:708:1: sparse: symbol 'cifs_find_fid_lock_conflict' was not declared. Should it be static?
-
-vim +708 fs/cifs/file.c
-   698	cifs_del_lock_waiters(struct cifsLockInfo *lock)
-   699	{
-   700		struct cifsLockInfo *li, *tmp;
-   701		list_for_each_entry_safe(li, tmp, &lock->blist, blist) {
-   702			list_del_init(&li->blist);
-   703			wake_up(&li->block_q);
-   704		}
-   705	}
-   706	
-   707	extern bool
- > 708	cifs_find_fid_lock_conflict(struct cifs_fid_locks *fdlocks, __u64 offset,
-   709				    __u64 length, __u8 type, struct cifsFileInfo *cfile,
-   710				    struct cifsLockInfo **conf_lock, bool rw_check)
-   711	{
-   712		struct cifsLockInfo *li;
-   713		struct cifsFileInfo *cur_cfile = fdlocks->cfile;
-   714		struct TCP_Server_Info *server = tlink_tcon(cfile->tlink)->ses->server;
-   715	
-   716		list_for_each_entry(li, &fdlocks->locks, llist) {
-   717			if (offset + length <= li->offset ||
-   718			    offset >= li->offset + li->length)
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/video/cyber2000fb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/cyber2000fb.c b/drivers/video/cyber2000fb.c
+index c1527f5..e40125c 100644
+--- a/drivers/video/cyber2000fb.c
++++ b/drivers/video/cyber2000fb.c
+@@ -1804,8 +1804,10 @@ cyberpro_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 
+ 	cfb->irq = dev->irq;
+ 	cfb->region = pci_ioremap_bar(dev, 0);
+-	if (!cfb->region)
++	if (!cfb->region) {
++		err = -ENOMEM;
+ 		goto failed_ioremap;
++	}
+ 
+ 	cfb->regs = cfb->region + MMIO_OFFSET;
+ 	cfb->fb.device = &dev->dev;
+-- 
+1.7.11.4
+
