@@ -1,104 +1,84 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 12 Sep 2012 15:06:43 +0000
-Subject: [PATCH 6/9] drivers/staging/rtl8192u/r8192U_core.c: Remove useless kfree
-Message-Id: <1347462407-13499-5-git-send-email-peter.senna@gmail.com>
+From: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Date: Tue, 18 Sep 2012 10:52:19 +0000
+Subject: [Re: [PATCH 2/2] drivers/s390/net/ctcm_main.c: fix error return code]
+Message-Id: <1347965539.29091.3.camel@br9gv9yg.de.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: blaschka@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+
+thanks, Peter, your patch will be added to our next patch series
+submission.
+
+Ursula Braun
+
+
+
+
+
+
+
+
+
+
+
+________________________________________________________________________
+
+
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Remove useless kfree() and clean up code related to the removal.
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-The semantic patch that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r exists@
-position p1,p2;
-expression x;
-@@
-
-if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
-
-@unchanged exists@
-position r.p1,r.p2;
-expression e <= r.x,x,e1;
-iterator I;
-statement S;
-@@
-
-if (x@p1 = NULL) { ... when != I(x,...) S
-                        when != e = e1
-                        when != e += e1
-                        when != e -= e1
-                        when != ++e
-                        when != --e
-                        when != e++
-                        when != e--
-                        when != &e
-   kfree@p2(x); ... return ...; }
-
-@ok depends on unchanged exists@
-position any r.p1;
-position r.p2;
-expression x;
-@@
-
-... when != true x@p1 = NULL
-kfree@p2(x);
-
-@depends on !ok && unchanged@
-position r.p2;
-expression x;
-@@
-
-*kfree@p2(x);
+(
+if@p1 (\(ret < 0\|ret != 0\))
+{ ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+   when != &ret
+*if(...)
+{
+ ... when != ret = e2
+     when forall
+return ret;
+}
 // </smpl>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
 ---
- drivers/staging/rtl8192u/r8192U_core.c |   23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+drivers/s390/net/ctcm_main.c | 2 +-
+1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 5c132ac..5a2fab9 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -2232,24 +2232,15 @@ short rtl8192_usb_initendpoints(struct net_device *dev)
- 	memset(priv->rx_urb, 0, sizeof(struct urb*) * MAX_RX_URB);
- 	priv->pp_rxskb = kcalloc(MAX_RX_URB, sizeof(struct sk_buff *),
- 				 GFP_KERNEL);
--	if (priv->pp_rxskb = NULL)
--		goto destroy;
+diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
+index 5227e57..98ea9cc 100644
+--- a/drivers/s390/net/ctcm_main.c
++++ b/drivers/s390/net/ctcm_main.c
+@@ -1454,7 +1454,7 @@ static int add_channel(struct ccw_device *cdev,
+enum ctcm_channel_types type,
+
+ch_fsm_len, GFP_KERNEL);
+                 }
+                 if (ch->fsm = NULL)
 -
--	goto _middle;
--
--
--destroy:
--	kfree(priv->pp_rxskb);
--	kfree(priv->rx_urb);
--
--	priv->pp_rxskb = NULL;
--	priv->rx_urb = NULL;
--
--	DMESGE("Endpoint Alloc Failure");
--	return -ENOMEM;
-+	if (!priv->pp_rxskb) {
-+		kfree(priv->rx_urb);
- 
-+		priv->pp_rxskb = NULL;
-+		priv->rx_urb = NULL;
- 
--_middle:
-+		DMESGE("Endpoint Alloc Failure");
-+		return -ENOMEM;
-+	}
- 
- 	printk("End of initendpoints\n");
- 	return 0;
+ goto free_return;
++
+ goto nomem_return;
+
+                 fsm_newstate(ch->fsm, CTC_STATE_IDLE);
+
+-- 
+1.7.11.4
+
+
+
 
