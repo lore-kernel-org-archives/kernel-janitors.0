@@ -1,54 +1,34 @@
-From: Daniel Cotey <puff65537@bansheeslibrary.com>
-Date: Wed, 12 Sep 2012 18:31:14 +0000
-Subject: Re: [patch] Staging: silicom: remove S_IWOTH from proc declaration
-Message-Id: <20120913023411.GA1529@elbert.example.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 17:10:43 +0000
+Subject: [PATCH 1/3] net/ieee802154/6lowpan.c: Remove unecessary semicolon
+Message-Id: <1347988245-31413-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120912075733.GA26524@elgon.mountain>
-In-Reply-To: <20120912075733.GA26524@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: alex.bluesman.smirnov@gmail.com
+Cc: dbaryshkov@gmail.com, davem@davemloft.net, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Wed, Sep 12, 2012 at 10:57:33AM +0300, Dan Carpenter wrote:
-> We don't need these to be world writable or group writable.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is linux-next stuff.  The code in bp_proc.c is ifdefed out, and I
-> wasn't able to compile it.
-> 
-> diff --git a/drivers/staging/silicom/bp_proc.c b/drivers/staging/silicom/bp_proc.c
-> index 4fe862d..6ad4b27 100644
-> --- a/drivers/staging/silicom/bp_proc.c
-> +++ b/drivers/staging/silicom/bp_proc.c
-> @@ -106,8 +106,7 @@ bypass_proc_create_entry_sd(struct pfs_unit *pfs_unit_curr,
->  	pfs_unit_curr->proc_entry = create_proc_entry(pfs_unit_curr->proc_name,
->  						      S_IFREG | S_IRUSR |
->  						      S_IWUSR | S_IRGRP |
-> -						      S_IWGRP | S_IROTH |
-> -						      S_IWOTH, parent_pfs);
-> +						      S_IROTH, parent_pfs);
->  	if (pfs_unit_curr->proc_entry = 0) {
->  
->  		return -1;
-> diff --git a/drivers/staging/silicom/bp_mod.c b/drivers/staging/silicom/bp_mod.c
-> index 0d96196..6e999c7 100644
-> --- a/drivers/staging/silicom/bp_mod.c
-> +++ b/drivers/staging/silicom/bp_mod.c
-> @@ -7724,8 +7724,7 @@ bypass_proc_create_entry_sd(struct pfs_unit_sd *pfs_unit_curr,
->  	pfs_unit_curr->proc_entry = create_proc_entry(pfs_unit_curr->proc_name,
->  						      S_IFREG | S_IRUSR |
->  						      S_IWUSR | S_IRGRP |
-> -						      S_IWGRP | S_IROTH |
-> -						      S_IWOTH, parent_pfs);
-> +						      S_IROTH, parent_pfs);
->  	if (pfs_unit_curr->proc_entry = 0) {
->  
->  		return -1;
+Found by http://coccinelle.lip6.fr/
 
-I need to check my test setup tonight, but I do think apps need group write.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ net/ieee802154/6lowpan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-  Daniel Cotey
+diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+index d529111..6d42c17 100644
+--- a/net/ieee802154/6lowpan.c
++++ b/net/ieee802154/6lowpan.c
+@@ -1256,7 +1256,7 @@ static int lowpan_device_event(struct notifier_block *unused,
+ 		}
+ 
+ 		unregister_netdevice_many(&del_list);
+-	};
++	}
+ 
+ out:
+ 	return NOTIFY_DONE;
+-- 
+1.7.11.4
 
