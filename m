@@ -1,29 +1,62 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 13 Sep 2012 11:02:23 +0000
-Subject: [glommer-memcg:kmemcg-slab 63/63] (.init.text+0x2a48): undefined reference to `memcg_init_kmem_cache
-Message-Id: <20120913110223.GA31687@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 12:07:57 +0000
+Subject: [PATCH 07/10] drivers/video/bw2.c: fix error return code
+Message-Id: <1347970080-25175-7-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: FlorianSchandinat@gmx.de
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Glauber,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git kmemcg-slab
-head:   a1fe65d2214cd61722cf29f35822c94b1d2d7c09
-commit: a1fe65d2214cd61722cf29f35822c94b1d2d7c09 [63/63] temporary fix to get the benchmark in place.
-config: m32r-m32104ut_defconfig
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All related error/warning messages:
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-mm/built-in.o: In function `kmem_cache_init_late':
-(.init.text+0x2a48): undefined reference to `memcg_init_kmem_cache'
---
-mm/slab.c:815:13: warning: '__slab_error' defined but not used [-Wunused-function]
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+ drivers/video/bw2.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/bw2.c b/drivers/video/bw2.c
+index 7ba74cd..6bea9a9 100644
+--- a/drivers/video/bw2.c
++++ b/drivers/video/bw2.c
+@@ -319,8 +319,10 @@ static int __devinit bw2_probe(struct platform_device *op)
+ 
+ 	info->screen_base = of_ioremap(&op->resource[0], 0,
+ 				       info->fix.smem_len, "bw2 ram");
+-	if (!info->screen_base)
++	if (!info->screen_base) {
++		err = -ENOMEM;
+ 		goto out_unmap_regs;
++	}
+ 
+ 	bw2_blank(FB_BLANK_UNBLANK, info);
+ 
+-- 
+1.7.11.4
+
