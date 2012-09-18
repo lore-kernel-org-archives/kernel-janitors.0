@@ -1,60 +1,24 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 17 Sep 2012 17:31:17 +0000
-Subject: [PATCH] drivers/virtio/virtio_pci.c: fix error return code
-Message-Id: <1347903077-19906-1-git-send-email-peter.senna@gmail.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Date: Tue, 18 Sep 2012 01:01:14 +0000
+Subject: Re: [PATCH] drivers/virtio/virtio_pci.c: fix error return code
+Message-Id: <878vc8qho5.fsf@rustcorp.com.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347903077-19906-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347903077-19906-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rusty@rustcorp.com.au
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Peter Senna Tschudin <peter.senna@gmail.com> writes:
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+> From: Peter Senna Tschudin <peter.senna@gmail.com>
+>
+> Convert a nonnegative error return code to a negative one, as returned
+> elsewhere in the function.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Thanks!
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
- drivers/virtio/virtio_pci.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/virtio/virtio_pci.c b/drivers/virtio/virtio_pci.c
-index 42b2076..c33aea3 100644
---- a/drivers/virtio/virtio_pci.c
-+++ b/drivers/virtio/virtio_pci.c
-@@ -719,8 +719,10 @@ static int __devinit virtio_pci_probe(struct pci_dev *pci_dev,
- 		goto out_enable_device;
- 
- 	vp_dev->ioaddr = pci_iomap(pci_dev, 0, 0);
--	if (vp_dev->ioaddr = NULL)
-+	if (vp_dev->ioaddr = NULL) {
-+		err = -ENOMEM;
- 		goto out_req_regions;
-+	}
- 
- 	pci_set_drvdata(pci_dev, vp_dev);
- 	pci_set_master(pci_dev);
--- 
-1.7.11.4
-
+Applied,
+Rusty.
