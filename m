@@ -1,33 +1,21 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 16:36:08 +0000
-Subject: [PATCH] arch/arm/mach-at91/gpio.c: Remove unecessary semicolon
-Message-Id: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Date: Tue, 18 Sep 2012 18:58:58 +0000
+Subject: Re: [PATCH] arch/arm/mach-at91/gpio.c: Remove unecessary semicolon
+Message-Id: <20120918185858.GB17667@game.jcrosoft.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Found by http://coccinelle.lip6.fr/
+On 18:36 Tue 18 Sep     , Peter Senna Tschudin wrote:
+> Found by http://coccinelle.lip6.fr/
+> 
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> ---
+this will have to wait the pinctrl patch series
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
- arch/arm/mach-at91/gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-at91/gpio.c b/arch/arm/mach-at91/gpio.c
-index be42cf0..ea31e96 100644
---- a/arch/arm/mach-at91/gpio.c
-+++ b/arch/arm/mach-at91/gpio.c
-@@ -658,7 +658,7 @@ static int at91_gpio_show(struct seq_file *s, void *unused)
- 	seq_printf(s, "Pin\t");
- 	for (bank = 0; bank < gpio_banks; bank++) {
- 		seq_printf(s, "PIO%c\t\t", 'A' + bank);
--	};
-+	}
- 	seq_printf(s, "\n\n");
- 
- 	/* print pin status */
--- 
-1.7.11.4
-
+Best Regards,
+J.
