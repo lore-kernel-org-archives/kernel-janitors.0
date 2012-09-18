@@ -1,31 +1,35 @@
-From: Christoph Lameter <cl@linux.com>
-Date: Fri, 28 Sep 2012 17:25:39 +0000
-Subject: Re: [glommer-memcg:slab-common/kmalloc 19/30] mm/slab_common.c:206:6: warning: format '%ld' expects
-Message-Id: <0000013a0de98901-6a46f645-edb7-4312-b4b8-e8fa5a4bd6f8-000000@email.amazonses.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 16:36:12 +0000
+Subject: [PATCH] arch/arm/plat-mxc/ulpi.c: Remove unecessary semicolon
+Message-Id: <1347986174-30287-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928101501.GA29691@localhost>
-In-Reply-To: <20120928101501.GA29691@localhost>
+References: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 28 Sep 2012, Fengguang Wu wrote:
+Found by http://coccinelle.lip6.fr/
 
-> mm/slab_common.c: In function 'create_boot_cache':
-> mm/slab_common.c:206:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' [-Wformat]
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ arch/arm/plat-mxc/ulpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The following fix will be applied to the next release of the patchset:
+diff --git a/arch/arm/plat-mxc/ulpi.c b/arch/arm/plat-mxc/ulpi.c
+index d296342..a799afb 100644
+--- a/arch/arm/plat-mxc/ulpi.c
++++ b/arch/arm/plat-mxc/ulpi.c
+@@ -51,7 +51,7 @@ static int ulpi_poll(void __iomem *view, u32 bit)
+ 			return 0;
+ 
+ 		cpu_relax();
+-	};
++	}
+ 
+ 	printk(KERN_WARNING "timeout polling for ULPI device\n");
+ 
+-- 
+1.7.11.4
 
-Index: linux/mm/slab_common.c
-=================================--- linux.orig/mm/slab_common.c	2012-09-28 12:25:00.614139749 -0500
-+++ linux/mm/slab_common.c	2012-09-28 12:24:53.153984094 -0500
-@@ -203,7 +203,7 @@ void __init create_boot_cache(struct kme
- 	err = __kmem_cache_create(s, flags);
-
- 	if (err)
--		panic("Creation of kmalloc slab %s size=%ld failed. Reason %d\n",
-+		panic("Creation of kmalloc slab %s size=%td failed. Reason %d\n",
- 					name, size, err);
-
- 	list_add(&s->list, &slab_caches);
