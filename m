@@ -1,42 +1,41 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Fri, 14 Sep 2012 00:29:06 +0000
-Subject: Re: ehci-dbg.c:656 fill_periodic_buffer() warn: variable dereferenced before check 'p.qh' (see line
-Message-Id: <Pine.LNX.4.44L0.1209132027090.5121-100000@netrider.rowland.org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 18 Sep 2012 04:32:23 +0000
+Subject: [yinghai:master 195/233] drivers/pci/xen-pcifront.c:397:2: error: 'res' undeclared
+Message-Id: <20120918043223.GA25133@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120913234902.GB6340@localhost>
-In-Reply-To: <20120913234902.GB6340@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 14 Sep 2012, Fengguang Wu wrote:
+Hi Yinghai,
 
-> Hi Richard,
-> 
-> FYI, there are new smatch warnings show up in
-> 
-> commit 3807e26d69b9ad3864fe03224ebebc9610d5802e
-> Author:     Alek Du <alek.du@intel.com>
-> AuthorDate: Tue Jul 14 07:23:29 2009 +0800
-> 
-> drivers/usb/chipidea/../host/ehci-dbg.c:656 fill_periodic_buffer() warn: variable dereferenced before check 'p.qh' (see line 599)
-> 
-> vim +656 drivers/usb/chipidea/../host/ehci-dbg.c
->    596 
->    597                         switch (hc32_to_cpu(ehci, tag)) {
->    598                         case Q_TYPE_QH:
->    599                                 hw = p.qh->hw;
-> ...
->  > 656					if (p.qh) {
->    657						tag = Q_NEXT_TYPE(ehci, hw->hw_next);
->    658						p = p.qh->qh_next;
->    659					}
->    660					break;
+FYI, kernel build failed on
 
-smatch is right; the test on line 656 isn't needed.  I'll take it out.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/yinghai/linux-yinghai.git master
+head:   f4e430c2d5fae2ece93207e3e8d06b14d66fcbe4
+commit: b722843995da475accfde984ce41109938ab56e6 [195/233] PCI: Use for_each_res with xen pci
+config: x86_64-allmodconfig
 
-Thank you.
+All related error/warning messages:
 
-Alan Stern
+drivers/pci/xen-pcifront.c: In function 'pcifront_claim_resource':
+drivers/pci/xen-pcifront.c:397:2: error: 'res' undeclared (first use in this function)
+drivers/pci/xen-pcifront.c:397:2: note: each undeclared identifier is reported only once for each function it appears in
 
+vim +397 drivers/pci/xen-pcifront.c
+   392	{
+   393		struct pcifront_device *pdev = data;
+   394		int i;
+   395		struct resource *r;
+   396	
+ > 397		for_each_pci_resource(dev, res, i, PCI_ALL_RES) {
+   398			if (!r->parent && r->start && r->flags) {
+   399				dev_info(&pdev->xdev->dev, "claiming resource %s/%d\n",
+   400					pci_name(dev), i);
+   401				if (pci_claim_resource(dev, i)) {
+   402					dev_err(&pdev->xdev->dev, "Could not claim resource %s/%d! "
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
