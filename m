@@ -1,40 +1,33 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Tue, 11 Sep 2012 16:11:24 +0000
-Subject: Re: [PATCH] mfd: fix the warning of __devinitdata
-Message-Id: <20120911161124.GV3647@sortiz-mobl>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 16:36:08 +0000
+Subject: [PATCH] arch/arm/mach-at91/gpio.c: Remove unecessary semicolon
+Message-Id: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347372595-11370-1-git-send-email-haojian.zhuang@gmail.com>
-In-Reply-To: <1347372595-11370-1-git-send-email-haojian.zhuang@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Haojian,
+Found by http://coccinelle.lip6.fr/
 
-On Tue, Sep 11, 2012 at 10:09:55PM +0800, Haojian Zhuang wrote:
-> WARNING: drivers/built-in.o(.data+0x1e3c8): Section mismatch in
-> reference from the variable bk_devs to the variable
-> .devinit.data:bk0_resources
-> The variable bk_devs references
-> the variable __devinitdata bk0_resources
-> If the reference is valid then annotate the
-> variable with __init* or __refdata (see linux/init.h) or name the
-> variable:
-> *driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one,
-> *_console
-> 
-> So add __devinitdata on bk_devs, led_devs & reg_devs.
-> 
-> Signed-off-by: Haojian Zhuang <haojian.zhuang@gmail.com>
-> ---
->  drivers/mfd/88pm860x-core.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-Thanks for the quick fix, applied now.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ arch/arm/mach-at91/gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Samuel.
-
+diff --git a/arch/arm/mach-at91/gpio.c b/arch/arm/mach-at91/gpio.c
+index be42cf0..ea31e96 100644
+--- a/arch/arm/mach-at91/gpio.c
++++ b/arch/arm/mach-at91/gpio.c
+@@ -658,7 +658,7 @@ static int at91_gpio_show(struct seq_file *s, void *unused)
+ 	seq_printf(s, "Pin\t");
+ 	for (bank = 0; bank < gpio_banks; bank++) {
+ 		seq_printf(s, "PIO%c\t\t", 'A' + bank);
+-	};
++	}
+ 	seq_printf(s, "\n\n");
+ 
+ 	/* print pin status */
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+1.7.11.4
+
