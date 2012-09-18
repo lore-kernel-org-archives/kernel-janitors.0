@@ -1,13 +1,15 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 15:23:54 +0000
-Subject: [PATCH 7/14] drivers/media/pci/ngene/ngene-core.c: fix error return code
-Message-Id: <1346945041-26676-7-git-send-email-peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 12:07:53 +0000
+Subject: [PATCH 03/10] drivers/video/cg3.c: fix error return code
+Message-Id: <1347970080-25175-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: FlorianSchandinat@gmx.de
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
 From: Peter Senna Tschudin <peter.senna@gmail.com>
 
@@ -32,27 +34,27 @@ ret@p1 = 0
       when forall
  return ret;
 }
-
 // </smpl>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
 ---
- drivers/media/pci/ngene/ngene-core.c |    3 ++-
+ drivers/video/cg3.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
-index c8e0d5b..6bb44f1 100644
---- a/drivers/media/pci/ngene/ngene-core.c
-+++ b/drivers/media/pci/ngene/ngene-core.c
-@@ -1691,7 +1691,8 @@ int __devinit ngene_probe(struct pci_dev *pci_dev,
- 	dev->i2c_current_bus = -1;
+diff --git a/drivers/video/cg3.c b/drivers/video/cg3.c
+index f927a7b..c5e7612 100644
+--- a/drivers/video/cg3.c
++++ b/drivers/video/cg3.c
+@@ -398,7 +398,8 @@ static int __devinit cg3_probe(struct platform_device *op)
+ 			goto out_unmap_screen;
+ 	}
  
- 	/* Register DVB adapters and devices for both channels */
--	if (init_channels(dev) < 0)
-+	stat = init_channels(dev);
-+	if (stat < 0)
- 		goto fail2;
+-	if (fb_alloc_cmap(&info->cmap, 256, 0))
++	err = fb_alloc_cmap(&info->cmap, 256, 0);
++	if (err)
+ 		goto out_unmap_screen;
  
- 	return 0;
+ 	fb_set_cmap(&info->cmap, info);
+-- 
+1.7.11.4
 
