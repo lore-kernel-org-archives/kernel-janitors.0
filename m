@@ -1,35 +1,30 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 16:36:12 +0000
-Subject: [PATCH] arch/arm/plat-mxc/ulpi.c: Remove unecessary semicolon
-Message-Id: <1347986174-30287-5-git-send-email-peter.senna@gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
+Date: Tue, 18 Sep 2012 18:27:17 +0000
+Subject: Re: [PATCH] arch/arm/plat-mxc/ulpi.c: Remove unecessary semicolon
+Message-Id: <20120918182717.GC5525@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
+ <1347986174-30287-5-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347986174-30287-5-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-Found by http://coccinelle.lip6.fr/
+Hello,
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
- arch/arm/plat-mxc/ulpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+$Subject ~=3D s/unecessary/unnecessary/
 
-diff --git a/arch/arm/plat-mxc/ulpi.c b/arch/arm/plat-mxc/ulpi.c
-index d296342..a799afb 100644
---- a/arch/arm/plat-mxc/ulpi.c
-+++ b/arch/arm/plat-mxc/ulpi.c
-@@ -51,7 +51,7 @@ static int ulpi_poll(void __iomem *view, u32 bit)
- 			return 0;
- 
- 		cpu_relax();
--	};
-+	}
- 
- 	printk(KERN_WARNING "timeout polling for ULPI device\n");
- 
--- 
-1.7.11.4
+other than that the patch looks correct.
 
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
