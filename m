@@ -1,42 +1,36 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 21 Sep 2012 19:33:53 +0000
-Subject: Re: [next:akpm 202/376] arch/sh/kernel/ioport.c:14:15: error: conflicting type qualifiers for 'sh_io
-Message-Id: <20120921123353.b1682e00.akpm@linux-foundation.org>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Sep 2012 17:10:44 +0000
+Subject: [PATCH 2/3] net/openvswitch/vport.c: Remove unecessary semicolon
+Message-Id: <1347988245-31413-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120921105635.GA13728@localhost>
-In-Reply-To: <20120921105635.GA13728@localhost>
+References: <1347988245-31413-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347988245-31413-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jesse@nicira.com
+Cc: davem@davemloft.net, dev@openvswitch.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Fri, 21 Sep 2012 07:51:53 -0700
-Andi Kleen <ak@linux.intel.com> wrote:
+Found by http://coccinelle.lip6.fr/
 
-> On Fri, Sep 21, 2012 at 06:56:35PM +0800, Fengguang Wu wrote:
-> > Hi Andi,
-> > 
-> > FYI, kernel build failed on
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
-> > head:   69921c36f9e0e4e7952fa2583bf2d33713835eaf
-> > commit: 11f7c1c694b94586a232a50eebdd623255d60d72 [202/376] sections: fix section conflicts in arch/sh
-> > config: sh-titan_defconfig
-> 
-> Does this patch work?
-> 
-> diff --git a/arch/sh/include/asm/io.h b/arch/sh/include/asm/io.h
-> index 0cf60a6..73a23f4 100644
-> --- a/arch/sh/include/asm/io.h
-> +++ b/arch/sh/include/asm/io.h
-> @@ -134,7 +134,7 @@ __BUILD_MEMORY_STRING(__raw_, q, u64)
->   * load/store instructions. sh_io_port_base is the virtual address to
->   * which all ports are being mapped.
->   */
-> -extern const unsigned long sh_io_port_base;
-> +extern unsigned long sh_io_port_base;
->  
->  static inline void __set_io_port_base(unsigned long pbase)
->  {
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ net/openvswitch/vport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-yup.
+diff --git a/net/openvswitch/vport.c b/net/openvswitch/vport.c
+index 9055dd6..03779e8 100644
+--- a/net/openvswitch/vport.c
++++ b/net/openvswitch/vport.c
+@@ -398,7 +398,7 @@ void ovs_vport_record_error(struct vport *vport, enum vport_err_type err_type)
+ 	case VPORT_E_TX_ERROR:
+ 		vport->err_stats.tx_errors++;
+ 		break;
+-	};
++	}
+ 
+ 	spin_unlock(&vport->stats_lock);
+ }
+-- 
+1.7.11.4
+
