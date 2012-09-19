@@ -1,24 +1,20 @@
-From: Marek Vasut <marex@denx.de>
-Date: Mon, 17 Sep 2012 10:09:28 +0000
+From: Shawn Guo <shawn.guo@linaro.org>
+Date: Wed, 19 Sep 2012 02:25:53 +0000
 Subject: Re: [PATCH 4/4] drivers/mmc/host/mxs-mmc.c: fix error return code
-Message-Id: <201209171209.28173.marex@denx.de>
+Message-Id: <20120919022550.GA6145@S2100-06.ap.freescale.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com> <1347869728-2696-4-git-send-email-peter.senna@gmail.com>
+References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
+ <1347869728-2696-4-git-send-email-peter.senna@gmail.com>
 In-Reply-To: <1347869728-2696-4-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: cjb@laptop.org, shawn.guo@linaro.org, broonie@opensource.wolfsonmicro.com, vinod.koul@linux.intel.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: cjb@laptop.org, marex@denx.de, broonie@opensource.wolfsonmicro.com, vinod.koul@linux.intel.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dear Peter Senna Tschudin,
-
+On Mon, Sep 17, 2012 at 10:15:28AM +0200, Peter Senna Tschudin wrote:
 > From: Peter Senna Tschudin <peter.senna@gmail.com>
-
-The patch description is a bit crap, but otherwise
-
-Acked-by: Marek Vasut <marex@denx.de>
-
+> 
 > Convert a nonnegative error return code to a negative one, as returned
 > elsewhere in the function.
 > 
@@ -29,7 +25,7 @@ Acked-by: Marek Vasut <marex@denx.de>
 > (
 > if@p1 (\(ret < 0\|ret != 0\))
 >  { ... return ret; }
-> 
+> |
 > ret@p1 = 0
 > )
 > ... when != ret = e1
@@ -43,6 +39,9 @@ Acked-by: Marek Vasut <marex@denx.de>
 > // </smpl>
 > 
 > Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
+
 > ---
 >  drivers/mmc/host/mxs-mmc.c | 1 +
 >  1 file changed, 1 insertion(+)
@@ -58,6 +57,8 @@ Acked-by: Marek Vasut <marex@denx.de>
 > +		ret = -ENODEV;
 >  		goto out_clk_put;
 >  	}
+>  
+> -- 
+> 1.7.11.4
+> 
 
-Best regards,
-Marek Vasut
