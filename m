@@ -1,44 +1,47 @@
-From: "S, Venkatraman" <svenkatr@ti.com>
-Date: Mon, 17 Sep 2012 18:23:17 +0000
-Subject: Re: [PATCH 3/4] drivers/mmc/host/omap_hsmmc.c: fix error return code
-Message-Id: <CANfBPZ8O7Vd5aPZqwDNfwEzgOt0-usPxHg4W1y_v0yS+gTz+pQ@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 19 Sep 2012 23:30:46 +0000
+Subject: [arm-soc:for-next 71/73] drivers/bus/omap_l3_noc.c:31:17: fatal error: soc.h: No such file or direct
+Message-Id: <20120919233046.GB5607@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com> <1347869728-2696-3-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347869728-2696-3-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: cjb@laptop.org, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 17, 2012 at 1:45 PM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> // </smpl>
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Arnd,
 
-Looks good.
-Acked-by: Venkatraman S <svenkatr@ti.com>
+FYI, kernel build failed on
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git for-next
+head:   8ebc8820187f3c499a55a0faab82292c3db6df54
+commit: cf3e885b8b87587b304e905201a50aee09de187e [71/73] Merge branch 'testing/__iomem' into for-next
+config: arm-omap2plus_defconfig
+
+drivers/bus/omap_l3_noc.c:31:17: fatal error: soc.h: No such file or directory
+
+vim +31 drivers/bus/omap_l3_noc.c
+    21	 * USA
+    22	 */
+    23	#include <linux/module.h>
+    24	#include <linux/init.h>
+    25	#include <linux/io.h>
+    26	#include <linux/platform_device.h>
+    27	#include <linux/interrupt.h>
+    28	#include <linux/kernel.h>
+    29	#include <linux/slab.h>
+    30	
+  > 31	#include "soc.h"
+    32	#include "omap_l3_noc.h"
+    33	
+    34	/*
+    35	 * Interrupt Handler for L3 error detection.
+    36	 *	1) Identify the L3 clockdomain partition to which the error belongs to.
+    37	 *	2) Identify the slave where the error information is logged
+    38	 *	3) Print the logged information.
+    39	 *	4) Add dump stack to provide kernel trace.
+    40	 *
+    41	 * Two Types of errors :
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
