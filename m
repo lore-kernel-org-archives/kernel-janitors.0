@@ -1,52 +1,31 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 29 Sep 2012 01:22:22 +0000
-Subject: init/main.c:302: warning: 'pass_all_bootoptions' defined but not used
-Message-Id: <20120929012222.GA10871@localhost>
+Date: Wed, 19 Sep 2012 00:46:05 +0000
+Subject: [nouveau:master 1/80] nouveau_connector.c:535 nouveau_connector_set_property() warn: variable derefe
+Message-Id: <20120919004605.GA10838@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Mathieu,
+Hi Ben,
 
-FYI, there are new compile warnings show up in
+FYI, a pretty old smatch warning:
 
-84925a9 UBUNTU: SAUCE: add option to hand off all kernel parameters to init
-config: avr32-atngw100_defconfig
+drivers/gpu/drm/nouveau/nouveau_connector.c:535 nouveau_connector_set_property() warn: variable dereferenced before check 'nv_encoder' (see line 413)
 
-All warnings:
-
-init/main.c:302: warning: 'pass_all_bootoptions' defined but not used
-
-vim +302 init/main.c
-
-^1da177e (Linus Torvalds 2005-04-16  286) 			if (i = MAX_INIT_ARGS) {
-^1da177e (Linus Torvalds 2005-04-16  287) 				panic_later = "Too many boot init vars at `%s'";
-^1da177e (Linus Torvalds 2005-04-16  288) 				panic_param = param;
-^1da177e (Linus Torvalds 2005-04-16  289) 			}
-^1da177e (Linus Torvalds 2005-04-16  290) 		}
-^1da177e (Linus Torvalds 2005-04-16  291) 		argv_init[i] = param;
-^1da177e (Linus Torvalds 2005-04-16  292) 	}
-^1da177e (Linus Torvalds 2005-04-16  293) 	return 0;
-^1da177e (Linus Torvalds 2005-04-16  294) }
-84925a91 (Andy Whitcroft 2010-06-17  295) static int __init pass_unknown_bootoptions(char *param, char *val, const char *unused, int known)
-84925a91 (Andy Whitcroft 2010-06-17  296) {
-84925a91 (Andy Whitcroft 2010-06-17  297) 	if (known)
-84925a91 (Andy Whitcroft 2010-06-17  298) 		return 0;
-84925a91 (Andy Whitcroft 2010-06-17  299) 	return pass_bootoption(param, val, unused, 0);
-84925a91 (Andy Whitcroft 2010-06-17  300) }
-84925a91 (Andy Whitcroft 2010-06-17  301) static int __init pass_all_bootoptions(char *param, char *val, const char *unused, int known)
-84925a91 (Andy Whitcroft 2010-06-17 @302) {
-84925a91 (Andy Whitcroft 2010-06-17  303) 	return pass_bootoption(param, val, unused, 1);
-84925a91 (Andy Whitcroft 2010-06-17  304) }
-^1da177e (Linus Torvalds 2005-04-16  305) 
-^1da177e (Linus Torvalds 2005-04-16  306) static int __init init_setup(char *str)
-^1da177e (Linus Torvalds 2005-04-16  307) {
-^1da177e (Linus Torvalds 2005-04-16  308) 	unsigned int i;
-^1da177e (Linus Torvalds 2005-04-16  309) 
-^1da177e (Linus Torvalds 2005-04-16  310) 	execute_command = str;
+vim +535 drivers/gpu/drm/nouveau/nouveau_connector.c
+   412         struct nouveau_encoder *nv_encoder = nv_connector->detected_encoder;
+   413         struct drm_encoder *encoder = to_drm_encoder(nv_encoder);
+...
+   534	
+ > 535		if (nv_encoder && nv_encoder->dcb->type = OUTPUT_TV)
+   536			return get_slave_funcs(encoder)->set_property(
+   537				encoder, connector, property, value);
+   538	
+   539		return -EINVAL;
+   540	}
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
