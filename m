@@ -1,57 +1,56 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 30 Sep 2012 20:56:39 +0000
-Subject: [PATCH V2] ath/ath9k/ar9003_eeprom.c: Remove semicolon after if
-Message-Id: <1349038599-22026-1-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 19 Sep 2012 12:20:55 +0000
+Subject: [cr:crtools-3.6-rc5 6/32] arch/tile/kernel/compat.c:116:2: error: implicit declaration of function '
+Message-Id: <20120919122055.GA15519@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349032870-4780-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1349032870-4780-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mcgrof@qca.qualcomm.com
-Cc: jouni@qca.qualcomm.com, vthiagar@qca.qualcomm.com, senthilb@qca.qualcomm.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-The semantic patch that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Hi Stanislav,
 
-// <smpl>
-@r1@
-position p;
-@@
-if (...);@p
+FYI, kernel build failed on
 
-@script:python@
-p0 << r1.p;
-@@
-// Emacs org-mode output
-cocci.print_main("", p0)
-cocci.print_secs("", p0)
-// </smpl>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gorcunov/linux-cr.git crtools-3.6-rc5
+head:   36cd0264fd0ce1a3491a59e61c80a990a3107859
+commit: 625fbb93c8cf6dc3b431abb698ad26f7de51b0e3 [6/32] IPC: message queue receive cleanup
+config: tile-tilegx_defconfig
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+All related error/warning messages:
+
+arch/tile/kernel/compat.c: In function 'tile_compat_sys_msgsnd':
+arch/tile/kernel/compat.c:116:2: error: implicit declaration of function 'do_msgsnd' [-Werror=implicit-function-declaration]
+arch/tile/kernel/compat.c: In function 'tile_compat_sys_msgrcv':
+arch/tile/kernel/compat.c:123:2: error: implicit declaration of function 'do_msgrcv' [-Werror=implicit-function-declaration]
+arch/tile/kernel/compat.c:123:55: error: 'compat_do_msg_fill' undeclared (first use in this function)
+arch/tile/kernel/compat.c:123:55: note: each undeclared identifier is reported only once for each function it appears in
+arch/tile/kernel/compat.c:124:1: warning: control reaches end of non-void function [-Wreturn-type]
+cc1: some warnings being treated as errors
+
+--
+ipc/compat.c: In function 'compat_sys_msgrcv':
+ipc/compat.c:398:2: warning: passing argument 3 of 'do_msgrcv' makes integer from pointer without a cast [enabled by default]
+include/linux/msg.h:108:13: note: expected 'size_t' but argument is of type 'char *'
+ipc/compat.c:398:2: warning: passing argument 6 of 'do_msgrcv' makes pointer from integer without a cast [enabled by default]
+include/linux/msg.h:108:13: note: expected 'long int (*)(void *, struct msg_msg *, size_t)' but argument is of type 'int'
+--
+ipc/msg.c: In function 'msgctl_down':
+ipc/msg.c:429:30: warning: the omitted middle operand in ?: will always be 'true', suggest explicit middle operand [-Wparentheses]
+
+vim +116 arch/tile/kernel/compat.c
+   111	{
+   112		compat_long_t mtype;
+   113	
+   114		if (get_user(mtype, &msgp->mtype))
+   115			return -EFAULT;
+ > 116		return do_msgsnd(msqid, mtype, msgp->mtext, msgsz, msgflg);
+   117	}
+   118	
+   119	long tile_compat_sys_msgrcv(int msqid,
+   120				    struct compat_msgbuf __user *msgp,
+   121				    size_t msgsz, long msgtyp, int msgflg)
+
 ---
-NOTE: This patch changes the semantics.
-
-Changes from V1:
-Commit message
-Added a note about semantics change
-
- drivers/net/wireless/ath/ath9k/ar9003_eeprom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-index 5bbe505..189aeb2 100644
---- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-+++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
-@@ -2989,7 +2989,7 @@ static u32 ath9k_hw_ar9300_get_eeprom(struct ath_hw *ah,
- 	case EEP_PAPRD:
- 		if (AR_SREV_9462(ah))
- 			return false;
--		if (!ah->config.enable_paprd);
-+		if (!ah->config.enable_paprd)
- 			return false;
- 		return !!(pBase->featureEnable & BIT(5));
- 	case EEP_CHAIN_MASK_REDUCE:
--- 
-1.7.11.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
