@@ -1,14 +1,14 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 19 Sep 2012 12:30:20 +0000
-Subject: [cr:crtools-3.6-rc5 4/32] ipc/msg.c:429:25: warning: the omitted middle operand in ?: will always be
-Message-Id: <20120919123020.GC15519@localhost>
+Date: Wed, 19 Sep 2012 12:30:43 +0000
+Subject: [cr:crtools-3.6-rc5 6/32] ipc/compat.c:349:542: warning: 'msgp' is used uninitialized in this functi
+Message-Id: <20120919123043.GE15519@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="rS8CxjVDS/+yyDmU"
+Content-Type: multipart/mixed; boundary="C1iGAkRnbeBonpVg"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 
---rS8CxjVDS/+yyDmU
+--C1iGAkRnbeBonpVg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -18,42 +18,45 @@ FYI, there are new compile warnings show up in
 
 tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gorcunov/linux-cr.git crtools-3.6-rc5
 head:   36cd0264fd0ce1a3491a59e61c80a990a3107859
-commit: b59d7734b8ae0d3c50e67f15422b1a6f4bfa207e [4/32] ipc: add new MSG_SET command for sys_msgctl() call
+commit: 625fbb93c8cf6dc3b431abb698ad26f7de51b0e3 [6/32] IPC: message queue receive cleanup
 config: x86_64-randconfig-s351 (attached as .config)
 
 All error/warnings:
 
+ipc/compat.c: In function 'compat_do_msg_fill':
+ipc/compat.c:349:542: warning: 'msgp' is used uninitialized in this function [-Wuninitialized]
+--
 ipc/msg.c: In function 'msgctl_down':
 ipc/msg.c:429:25: warning: the omitted middle operand in ?: will always be 'true', suggest explicit middle operand [-Wparentheses]
 
-vim +429 ipc/msg.c
-   419		struct msqid64_ds uninitialized_var(msqid64);
-   420		struct msg_queue *msq;
-   421		int err;
-   422	
-   423		if (cmd == IPC_SET || cmd == MSG_SET) {
-   424			if (copy_msqid_from_user(&msqid64, buf, version))
-   425				return -EFAULT;
-   426		}
-   427	
-   428		ipcp = ipcctl_pre_down(ns, &msg_ids(ns), msqid,
- > 429				       (cmd != MSG_SET) ? : IPC_SET,
-   430				       &msqid64.msg_perm, msqid64.msg_qbytes);
-   431		if (IS_ERR(ipcp))
-   432			return PTR_ERR(ipcp);
-   433	
-   434		msq = container_of(ipcp, struct msg_queue, q_perm);
-   435	
-   436		err = security_msg_queue_msgctl(msq, cmd);
-   437		if (err)
-   438			goto out_unlock;
-   439	
+vim +349 ipc/compat.c
+   339			return -EFAULT;
+   340	
+   341		return do_msgsnd(first, type, up->mtext, second, third);
+   342	}
+   343	
+   344	long compat_do_msg_fill(void __user *dest, struct msg_msg *msg, size_t bufsz)
+   345	{
+   346		struct compat_msgbuf __user *msgp;
+   347		size_t msgsz;
+   348	
+ > 349		if (put_user(msg->m_type, &msgp->mtype))
+   350			return -EFAULT;
+   351	
+   352		msgsz = (bufsz > msg->m_ts) ? msg->m_ts : bufsz;
+   353		if (store_msg(msgp->mtext, msg, msgsz))
+   354			return -EFAULT;
+   355		return msgsz;
+   356	}
+   357	
+   358	long compat_sys_msgrcv(int first, int second, int msgtyp, int third,
+   359				   int version, void __user *uptr)
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
 Fengguang Wu, Yuanhan Liu                              Intel Corporation
 
---rS8CxjVDS/+yyDmU
+--C1iGAkRnbeBonpVg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=".config"
 
@@ -2026,4 +2029,4 @@ CONFIG_AVERAGE=y
 # CONFIG_CORDIC is not set
 # CONFIG_DDR is not set
 
---rS8CxjVDS/+yyDmU--
+--C1iGAkRnbeBonpVg--
