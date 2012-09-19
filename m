@@ -1,19 +1,40 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Wed, 05 Sep 2012 12:37:23 +0000
-Subject: Re: [patch] ASoC: wm0010: unlock on error path
-Message-Id: <20120905123720.GA10580@opensource.wolfsonmicro.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 19 Sep 2012 00:06:57 +0000
+Subject: [bluetooth:master 22/22] drivers/bluetooth/btusb.c:97:2: error: expected '}' before '{' token
+Message-Id: <20120919000657.GA9208@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120905122946.GA6128@elgon.mountain>
-In-Reply-To: <20120905122946.GA6128@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@ti.com>
+To: Jaroslav Resler <resler@cs.cas.cz>
+Cc: kernel-janitors@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "Cho, Yu-Chen" <acho@suse.com>, linux-bluetooth@vger.kernel.org
 
-On Wed, Sep 05, 2012 at 03:29:46PM +0300, Dan Carpenter wrote:
-> We're holding the wm0010->lock mutex when we goto err_core.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hi Jaroslav,
 
-Applied, thanks.
+FYI, kernel build failed on
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
+head:   493969cf4728668412ecd428a60b39914d9831e3
+commit: 493969cf4728668412ecd428a60b39914d9831e3 [22/22] Bluetooth: Add support for BCM20702A0 [04ca, 2003]
+config: x86_64-allmodconfig
+
+All related error/warning messages:
+
+drivers/bluetooth/btusb.c:97:2: error: expected '}' before '{' token
+
+vim +97 drivers/bluetooth/btusb.c
+    92		/* Canyon CN-BTU1 with HID interfaces */
+    93		{ USB_DEVICE(0x0c10, 0x0000) },
+    94	
+    95		/* Broadcom BCM20702A0 */
+    96		{ USB_DEVICE(0x04ca, 0x2003) }
+  > 97		{ USB_DEVICE(0x0489, 0xe042) },
+    98		{ USB_DEVICE(0x0a5c, 0x21e3) },
+    99		{ USB_DEVICE(0x0a5c, 0x21e6) },
+   100		{ USB_DEVICE(0x0a5c, 0x21e8) },
+   101		{ USB_DEVICE(0x0a5c, 0x21f3) },
+   102		{ USB_DEVICE(0x413c, 0x8197) },
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
