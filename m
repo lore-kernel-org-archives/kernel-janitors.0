@@ -1,63 +1,71 @@
 From: Bruno =?UTF-8?B?UHLDqW1vbnQ=?= <bonbons@linux-vserver.org>
-Date: Mon, 17 Sep 2012 20:54:37 +0000
+Date: Wed, 19 Sep 2012 19:35:35 +0000
 Subject: Re: [patch] HID: picoLCD: off by one in dump_buff_as_hex()
-Message-Id: <20120917225437.6f2847ee@neptune.home>
+Message-Id: <20120919213535.34712fb5@neptune.home>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120914110414.GA1152@elgon.mountain>
-In-Reply-To: <20120914110414.GA1152@elgon.mountain>
+	<20120917225437.6f2847ee@neptune.home>
+In-Reply-To: <20120917225437.6f2847ee@neptune.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Dan,
 
-On Fri, 14 September 2012 Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We're placing the NUL terminator one character beyond the end of the
-> buffer here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This change obviously don't make the code worse, but I'm not positive
-> it's the right fix.  I'm not sure the lines before are doing the right
-> thing either, if we had two chars of remaining space then wouldn't it be
-> better to put the new line and NUL in the unused space?
+What's your opinion on below alternative patch?
+In addition to yours it makes would-overflow visible.
 
-The output buffer full should not happen as the 256 bytes buffer can hold
-more than the max expected report size of 64 bytes.
-
-An option would be to convert to hex_dump_to_buffer(), but as this happens
-partially under IRQ context - even though for debugging purposes - the
-switch may be a bit too expensive, especially as one still has to append
-linefeed after it.
+It does not check for output buffer having non-zero size but
+as callers are local with #defined buffer size I don't think that would
+be needed.
 
 
-I think I will extend your fix slightly in order to cover "too much input"
-in a way visible to /sys/kernel/hid/*/events reader (for the case that
-reports would grow in size).
-
-Though no need to check for minimal output buffer size as callers are local
-and feed in #defined sized buffer.
 
 
-More on Wednesday evening, too late today and no time tomorrow.
 
-Bruno
+Author: Bruno Prémont <bonbons@linux-vserver.org>
+Date:   Wed Sep 19 21:18:10 2012 +0200
+Subject: HID: picoLCD: bounds check in dump_buff_as_hex()
 
-> If you decide to do it differently, then please feel to sent a patch for
-> that and give me a Reported-by cookie.
-> 
-> diff --git a/drivers/hid/hid-picolcd_debugfs.c b/drivers/hid/hid-picolcd_debugfs.c
-> index eec85b5..ff271ff0 100644
-> --- a/drivers/hid/hid-picolcd_debugfs.c
-> +++ b/drivers/hid/hid-picolcd_debugfs.c
-> @@ -390,7 +390,7 @@ static void dump_buff_as_hex(char *dst, size_t dst_sz, const u8 *data,
->  		dst[j--] = '\0';
->  		dst[j] = '\n';
->  	} else
-> -		dst[j] = '\0';
-> +		dst[dst_sz - 1] = '\0';
->  }
->  
->  void picolcd_debug_out_report(struct picolcd_data *data,
+Make sure we keep enough space for terminating NUL character after last
+newline. If we have too much data, replace last byte with '.'s to
+make overflow visible.
+
+Using hex_dump_to_buffer() is not interesting as it adds more overhead
+and does not append the trailing linefeed.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Bruno Prémont <bonbons@linux-vserver.org>
+---
+ drivers/hid/hid-picolcd_debugfs.c |   14 ++++++++------
+ 1 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/hid/hid-picolcd_debugfs.c b/drivers/hid/hid-picolcd_debugfs.c
+index 868853a..c5c2fd9 100644
+--- a/drivers/hid/hid-picolcd_debugfs.c
++++ b/drivers/hid/hid-picolcd_debugfs.c
+@@ -381,16 +381,16 @@ static void dump_buff_as_hex(char *dst, size_t dst_sz, const u8 *data,
+ 		const size_t data_len)
+ {
+ 	int i, j;
+-	for (i = j = 0; i < data_len && j + 3 < dst_sz; i++) {
++	for (i = j = 0; i < data_len && j + 4 < dst_sz; i++) {
+ 		dst[j++] = hex_asc[(data[i] >> 4) & 0x0f];
+ 		dst[j++] = hex_asc[data[i] & 0x0f];
+ 		dst[j++] = ' ';
+ 	}
+-	if (j < dst_sz) {
+-		dst[j--] = '\0';
+-		dst[j] = '\n';
+-	} else
+-		dst[j] = '\0';
++	dst[j]   = '\0';
++	if (j > 0)
++		dst[j-1] = '\n';
++	if (i < data_len && j > 2)
++		dst[j-2] = dst[j-3] = '.';
+ }
+ 
+ void picolcd_debug_out_report(struct picolcd_data *data,
