@@ -1,50 +1,56 @@
-From: Yuanhan Liu <yuanhan.liu@intel.com>
-Date: Sat, 15 Sep 2012 13:37:05 +0000
-Subject: [nouveau:master 45/83] drivers/gpu/drm/nouveau/core/subdev/bios/base.c:66:12: warning: unused
-Message-Id: <20120915133705.GD3578@yliu-dev.sh.intel.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 19 Sep 2012 02:46:01 +0000
+Subject: [aa:autonuma25-MoF 54/56] arch/powerpc/include/asm/pgtable.h:37:23: error: '_PAGE_NUMA_PTE' undeclar
+Message-Id: <20120919024601.GB20639@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Ben,
+Hi Vaidyanathan,
 
-FYI, there are new compile warnings show up in
+FYI, kernel build failed on
 
-tree:   git://git.freedesktop.org/git/nouveau/linux-2.6 master
-head:   0a5cdb723f451765f2ae825884ec8cf47b0cc57b
-commit: 08e4708a92bb418b09685c60895bbbd23bfb22d5 [45/83] drm/nouveau: port remainder of drm code, and rip out compat layer
-config: powerpc-allmodconfig
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git autonuma25-MoF
+head:   0df1f89ac6f293309eea549508a6376e4ebb7e94
+commit: 59eec6d0b70cc32a616c75c2d427b10b8990889d [54/56] autonuma: powerpc port
+config: powerpc-chroma_defconfig
 
-All error/warnings:
+All related error/warning messages:
 
-drivers/gpu/drm/nouveau/core/subdev/bios/base.c: In function 'nouveau_bios_shadow_of':
-drivers/gpu/drm/nouveau/core/subdev/bios/base.c:66:12: warning: unused variable 'i' [-Wunused-variable]
+In file included from include/linux/mm.h:44:0,
+                 from arch/powerpc/include/asm/mman.h:35,
+                 from include/linux/mman.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:22:
+arch/powerpc/include/asm/pgtable.h: In function 'pte_present':
+arch/powerpc/include/asm/pgtable.h:37:23: error: '_PAGE_NUMA_PTE' undeclared (first use in this function)
+arch/powerpc/include/asm/pgtable.h:37:23: note: each undeclared identifier is reported only once for each function it appears in
+arch/powerpc/include/asm/pgtable.h: In function 'pte_mknonnuma':
+arch/powerpc/include/asm/pgtable.h:52:25: error: '_PAGE_NUMA_PTE' undeclared (first use in this function)
+arch/powerpc/include/asm/pgtable.h: In function 'pte_mknuma':
+arch/powerpc/include/asm/pgtable.h:60:24: error: '_PAGE_NUMA_PTE' undeclared (first use in this function)
+In file included from arch/powerpc/include/asm/pgtable.h:250:0,
+                 from include/linux/mm.h:44,
+                 from arch/powerpc/include/asm/mman.h:35,
+                 from include/linux/mman.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:22:
+include/asm-generic/pgtable.h: At top level:
+include/asm-generic/pgtable.h:539:19: error: redefinition of 'pmd_numa'
+arch/powerpc/include/asm/pgtable.h:65:19: note: previous definition of 'pmd_numa' was here
 
-git checkout 08e4708a92bb418b09685c60895bbbd23bfb22d5
-vim +66 drivers/gpu/drm/nouveau/core/subdev/bios/base.c
-    56		return 0;
-    57	}
-    58	
-    59	#if defined(__powerpc__)
-    60	static void
-    61	nouveau_bios_shadow_of(struct nouveau_bios *bios)
-    62	{
-    63		struct pci_dev *pdev = nv_device(bios)->pdev;
-    64		struct device_node *dn;
-    65		const u32 *data;
-  > 66		int size, i;
-    67	
-    68		dn = pci_device_to_OF_node(pdev);
-    69		if (!dn) {
-    70			nv_info(bios, "Unable to get the OF node\n");
-    71			return;
-    72		}
-    73	
-    74		data = of_get_property(dn, "NVDA,BMP", &size);
-    75		if (data) {
-    76			bios->size = size;
+vim +37 arch/powerpc/include/asm/pgtable.h
+    32	static inline int pte_dirty(pte_t pte)		{ return pte_val(pte) & _PAGE_DIRTY; }
+    33	static inline int pte_young(pte_t pte)		{ return pte_val(pte) & _PAGE_ACCESSED; }
+    34	static inline int pte_file(pte_t pte)		{ return pte_val(pte) & _PAGE_FILE; }
+    35	static inline int pte_special(pte_t pte)	{ return pte_val(pte) & _PAGE_SPECIAL; }
+    36	static inline int pte_present(pte_t pte)	{ return pte_val(pte) &
+  > 37								(_PAGE_PRESENT|_PAGE_NUMA_PTE); }
+    38	static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) = 0; }
+    39	static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
+    40	
+    41	#ifdef CONFIG_AUTONUMA
+    42	static inline int pte_numa(pte_t pte)
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
