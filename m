@@ -1,2304 +1,2029 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 12 Sep 2012 11:01:00 +0000
-Subject: [md] bitmap_daemon_work() error: we previously assumed 'bitmap->storage.filemap' could be null
-Message-Id: <20120912110100.GA6170@localhost>
+Date: Wed, 19 Sep 2012 12:28:24 +0000
+Subject: [cr:crtools-3.6-rc5 3/32] ipc/shm.c:751:25: warning: the omitted middle operand in ?: will always be
+Message-Id: <20120919122824.GB15519@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="h31gzZEtNLTqOjlF"
+Content-Type: multipart/mixed; boundary="1yeeQ81UyVL57Vl7"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 
---h31gzZEtNLTqOjlF
+--1yeeQ81UyVL57Vl7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi Neil,
-
-Here is a smatch warning that I cannot easily tell whether
-it's a true problem:
-
-  drivers/md/bitmap.c:1216 bitmap_daemon_work() error: we previously assumed 'bitmap->storage.filemap' could be null (see line 1149)
-
-Thanks,
-Fengguang
-
---h31gzZEtNLTqOjlF
-Content-Type: text/x-csrc; charset=us-ascii
-Content-Disposition: attachment; filename="bitmap.c"
-
-/*
- * bitmap.c two-level bitmap (C) Peter T. Breuer (ptb@ot.uc3m.es) 2003
- *
- * bitmap_create  - sets up the bitmap structure
- * bitmap_destroy - destroys the bitmap structure
- *
- * additions, Copyright (C) 2003-2004, Paul Clements, SteelEye Technology, Inc.:
- * - added disk storage for bitmap
- * - changes to allow various bitmap chunk sizes
- */
-
-/*
- * Still to do:
- *
- * flush after percent set rather than just time based. (maybe both).
- */
-
-#include <linux/blkdev.h>
-#include <linux/module.h>
-#include <linux/errno.h>
-#include <linux/slab.h>
-#include <linux/init.h>
-#include <linux/timer.h>
-#include <linux/sched.h>
-#include <linux/list.h>
-#include <linux/file.h>
-#include <linux/mount.h>
-#include <linux/buffer_head.h>
-#include <linux/seq_file.h>
-#include "md.h"
-#include "bitmap.h"
-
-static inline char *bmname(struct bitmap *bitmap)
-{
-	return bitmap->mddev ? mdname(bitmap->mddev) : "mdX";
-}
-
-/*
- * check a page and, if necessary, allocate it (or hijack it if the alloc fails)
- *
- * 1) check to see if this page is allocated, if it's not then try to alloc
- * 2) if the alloc fails, set the page's hijacked flag so we'll use the
- *    page pointer directly as a counter
- *
- * if we find our page, we increment the page's refcount so that it stays
- * allocated while we're using it
- */
-static int bitmap_checkpage(struct bitmap_counts *bitmap,
-			    unsigned long page, int create)
-__releases(bitmap->lock)
-__acquires(bitmap->lock)
-{
-	unsigned char *mappage;
-
-	if (page >= bitmap->pages) {
-		/* This can happen if bitmap_start_sync goes beyond
-		 * End-of-device while looking for a whole page.
-		 * It is harmless.
-		 */
-		return -EINVAL;
-	}
-
-	if (bitmap->bp[page].hijacked) /* it's hijacked, don't try to alloc */
-		return 0;
-
-	if (bitmap->bp[page].map) /* page is already allocated, just return */
-		return 0;
-
-	if (!create)
-		return -ENOENT;
-
-	/* this page has not been allocated yet */
-
-	spin_unlock_irq(&bitmap->lock);
-	mappage = kzalloc(PAGE_SIZE, GFP_NOIO);
-	spin_lock_irq(&bitmap->lock);
-
-	if (mappage == NULL) {
-		pr_debug("md/bitmap: map page allocation failed, hijacking\n");
-		/* failed - set the hijacked flag so that we can use the
-		 * pointer as a counter */
-		if (!bitmap->bp[page].map)
-			bitmap->bp[page].hijacked = 1;
-	} else if (bitmap->bp[page].map ||
-		   bitmap->bp[page].hijacked) {
-		/* somebody beat us to getting the page */
-		kfree(mappage);
-		return 0;
-	} else {
-
-		/* no page was in place and we have one, so install it */
-
-		bitmap->bp[page].map = mappage;
-		bitmap->missing_pages--;
-	}
-	return 0;
-}
-
-/* if page is completely empty, put it back on the free list, or dealloc it */
-/* if page was hijacked, unmark the flag so it might get alloced next time */
-/* Note: lock should be held when calling this */
-static void bitmap_checkfree(struct bitmap_counts *bitmap, unsigned long page)
-{
-	char *ptr;
-
-	if (bitmap->bp[page].count) /* page is still busy */
-		return;
-
-	/* page is no longer in use, it can be released */
-
-	if (bitmap->bp[page].hijacked) { /* page was hijacked, undo this now */
-		bitmap->bp[page].hijacked = 0;
-		bitmap->bp[page].map = NULL;
-	} else {
-		/* normal case, free the page */
-		ptr = bitmap->bp[page].map;
-		bitmap->bp[page].map = NULL;
-		bitmap->missing_pages++;
-		kfree(ptr);
-	}
-}
-
-/*
- * bitmap file handling - read and write the bitmap file and its superblock
- */
-
-/*
- * basic page I/O operations
- */
-
-/* IO operations when bitmap is stored near all superblocks */
-static int read_sb_page(struct mddev *mddev, loff_t offset,
-			struct page *page,
-			unsigned long index, int size)
-{
-	/* choose a good rdev and read the page from there */
-
-	struct md_rdev *rdev;
-	sector_t target;
-
-	rdev_for_each(rdev, mddev) {
-		if (! test_bit(In_sync, &rdev->flags)
-		    || test_bit(Faulty, &rdev->flags))
-			continue;
-
-		target = offset + index * (PAGE_SIZE/512);
-
-		if (sync_page_io(rdev, target,
-				 roundup(size, bdev_logical_block_size(rdev->bdev)),
-				 page, READ, true)) {
-			page->index = index;
-			return 0;
-		}
-	}
-	return -EIO;
-}
-
-static struct md_rdev *next_active_rdev(struct md_rdev *rdev, struct mddev *mddev)
-{
-	/* Iterate the disks of an mddev, using rcu to protect access to the
-	 * linked list, and raising the refcount of devices we return to ensure
-	 * they don't disappear while in use.
-	 * As devices are only added or removed when raid_disk is < 0 and
-	 * nr_pending is 0 and In_sync is clear, the entries we return will
-	 * still be in the same position on the list when we re-enter
-	 * list_for_each_entry_continue_rcu.
-	 */
-	rcu_read_lock();
-	if (rdev == NULL)
-		/* start at the beginning */
-		rdev = list_entry_rcu(&mddev->disks, struct md_rdev, same_set);
-	else {
-		/* release the previous rdev and start from there. */
-		rdev_dec_pending(rdev, mddev);
-	}
-	list_for_each_entry_continue_rcu(rdev, &mddev->disks, same_set) {
-		if (rdev->raid_disk >= 0 &&
-		    !test_bit(Faulty, &rdev->flags)) {
-			/* this is a usable devices */
-			atomic_inc(&rdev->nr_pending);
-			rcu_read_unlock();
-			return rdev;
-		}
-	}
-	rcu_read_unlock();
-	return NULL;
-}
-
-static int write_sb_page(struct bitmap *bitmap, struct page *page, int wait)
-{
-	struct md_rdev *rdev = NULL;
-	struct block_device *bdev;
-	struct mddev *mddev = bitmap->mddev;
-	struct bitmap_storage *store = &bitmap->storage;
-
-	while ((rdev = next_active_rdev(rdev, mddev)) != NULL) {
-		int size = PAGE_SIZE;
-		loff_t offset = mddev->bitmap_info.offset;
-
-		bdev = (rdev->meta_bdev) ? rdev->meta_bdev : rdev->bdev;
-
-		if (page->index == store->file_pages-1) {
-			int last_page_size = store->bytes & (PAGE_SIZE-1);
-			if (last_page_size == 0)
-				last_page_size = PAGE_SIZE;
-			size = roundup(last_page_size,
-				       bdev_logical_block_size(bdev));
-		}
-		/* Just make sure we aren't corrupting data or
-		 * metadata
-		 */
-		if (mddev->external) {
-			/* Bitmap could be anywhere. */
-			if (rdev->sb_start + offset + (page->index
-						       * (PAGE_SIZE/512))
-			    > rdev->data_offset
-			    &&
-			    rdev->sb_start + offset
-			    < (rdev->data_offset + mddev->dev_sectors
-			     + (PAGE_SIZE/512)))
-				goto bad_alignment;
-		} else if (offset < 0) {
-			/* DATA  BITMAP METADATA  */
-			if (offset
-			    + (long)(page->index * (PAGE_SIZE/512))
-			    + size/512 > 0)
-				/* bitmap runs in to metadata */
-				goto bad_alignment;
-			if (rdev->data_offset + mddev->dev_sectors
-			    > rdev->sb_start + offset)
-				/* data runs in to bitmap */
-				goto bad_alignment;
-		} else if (rdev->sb_start < rdev->data_offset) {
-			/* METADATA BITMAP DATA */
-			if (rdev->sb_start
-			    + offset
-			    + page->index*(PAGE_SIZE/512) + size/512
-			    > rdev->data_offset)
-				/* bitmap runs in to data */
-				goto bad_alignment;
-		} else {
-			/* DATA METADATA BITMAP - no problems */
-		}
-		md_super_write(mddev, rdev,
-			       rdev->sb_start + offset
-			       + page->index * (PAGE_SIZE/512),
-			       size,
-			       page);
-	}
-
-	if (wait)
-		md_super_wait(mddev);
-	return 0;
-
- bad_alignment:
-	return -EINVAL;
-}
-
-static void bitmap_file_kick(struct bitmap *bitmap);
-/*
- * write out a page to a file
- */
-static void write_page(struct bitmap *bitmap, struct page *page, int wait)
-{
-	struct buffer_head *bh;
-
-	if (bitmap->storage.file == NULL) {
-		switch (write_sb_page(bitmap, page, wait)) {
-		case -EINVAL:
-			set_bit(BITMAP_WRITE_ERROR, &bitmap->flags);
-		}
-	} else {
-
-		bh = page_buffers(page);
-
-		while (bh && bh->b_blocknr) {
-			atomic_inc(&bitmap->pending_writes);
-			set_buffer_locked(bh);
-			set_buffer_mapped(bh);
-			submit_bh(WRITE | REQ_SYNC, bh);
-			bh = bh->b_this_page;
-		}
-
-		if (wait)
-			wait_event(bitmap->write_wait,
-				   atomic_read(&bitmap->pending_writes)==0);
-	}
-	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
-		bitmap_file_kick(bitmap);
-}
-
-static void end_bitmap_write(struct buffer_head *bh, int uptodate)
-{
-	struct bitmap *bitmap = bh->b_private;
-
-	if (!uptodate)
-		set_bit(BITMAP_WRITE_ERROR, &bitmap->flags);
-	if (atomic_dec_and_test(&bitmap->pending_writes))
-		wake_up(&bitmap->write_wait);
-}
-
-/* copied from buffer.c */
-static void
-__clear_page_buffers(struct page *page)
-{
-	ClearPagePrivate(page);
-	set_page_private(page, 0);
-	page_cache_release(page);
-}
-static void free_buffers(struct page *page)
-{
-	struct buffer_head *bh;
-
-	if (!PagePrivate(page))
-		return;
-
-	bh = page_buffers(page);
-	while (bh) {
-		struct buffer_head *next = bh->b_this_page;
-		free_buffer_head(bh);
-		bh = next;
-	}
-	__clear_page_buffers(page);
-	put_page(page);
-}
-
-/* read a page from a file.
- * We both read the page, and attach buffers to the page to record the
- * address of each block (using bmap).  These addresses will be used
- * to write the block later, completely bypassing the filesystem.
- * This usage is similar to how swap files are handled, and allows us
- * to write to a file with no concerns of memory allocation failing.
- */
-static int read_page(struct file *file, unsigned long index,
-		     struct bitmap *bitmap,
-		     unsigned long count,
-		     struct page *page)
-{
-	int ret = 0;
-	struct inode *inode = file->f_path.dentry->d_inode;
-	struct buffer_head *bh;
-	sector_t block;
-
-	pr_debug("read bitmap file (%dB @ %llu)\n", (int)PAGE_SIZE,
-		 (unsigned long long)index << PAGE_SHIFT);
-
-	bh = alloc_page_buffers(page, 1<<inode->i_blkbits, 0);
-	if (!bh) {
-		ret = -ENOMEM;
-		goto out;
-	}
-	attach_page_buffers(page, bh);
-	block = index << (PAGE_SHIFT - inode->i_blkbits);
-	while (bh) {
-		if (count == 0)
-			bh->b_blocknr = 0;
-		else {
-			bh->b_blocknr = bmap(inode, block);
-			if (bh->b_blocknr == 0) {
-				/* Cannot use this file! */
-				ret = -EINVAL;
-				goto out;
-			}
-			bh->b_bdev = inode->i_sb->s_bdev;
-			if (count < (1<<inode->i_blkbits))
-				count = 0;
-			else
-				count -= (1<<inode->i_blkbits);
-
-			bh->b_end_io = end_bitmap_write;
-			bh->b_private = bitmap;
-			atomic_inc(&bitmap->pending_writes);
-			set_buffer_locked(bh);
-			set_buffer_mapped(bh);
-			submit_bh(READ, bh);
-		}
-		block++;
-		bh = bh->b_this_page;
-	}
-	page->index = index;
-
-	wait_event(bitmap->write_wait,
-		   atomic_read(&bitmap->pending_writes)==0);
-	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
-		ret = -EIO;
-out:
-	if (ret)
-		printk(KERN_ALERT "md: bitmap read error: (%dB @ %llu): %d\n",
-			(int)PAGE_SIZE,
-			(unsigned long long)index << PAGE_SHIFT,
-			ret);
-	return ret;
-}
-
-/*
- * bitmap file superblock operations
- */
-
-/* update the event counter and sync the superblock to disk */
-void bitmap_update_sb(struct bitmap *bitmap)
-{
-	bitmap_super_t *sb;
-
-	if (!bitmap || !bitmap->mddev) /* no bitmap for this array */
-		return;
-	if (bitmap->mddev->bitmap_info.external)
-		return;
-	if (!bitmap->storage.sb_page) /* no superblock */
-		return;
-	sb = kmap_atomic(bitmap->storage.sb_page);
-	sb->events = cpu_to_le64(bitmap->mddev->events);
-	if (bitmap->mddev->events < bitmap->events_cleared)
-		/* rocking back to read-only */
-		bitmap->events_cleared = bitmap->mddev->events;
-	sb->events_cleared = cpu_to_le64(bitmap->events_cleared);
-	sb->state = cpu_to_le32(bitmap->flags);
-	/* Just in case these have been changed via sysfs: */
-	sb->daemon_sleep = cpu_to_le32(bitmap->mddev->bitmap_info.daemon_sleep/HZ);
-	sb->write_behind = cpu_to_le32(bitmap->mddev->bitmap_info.max_write_behind);
-	/* This might have been changed by a reshape */
-	sb->sync_size = cpu_to_le64(bitmap->mddev->resync_max_sectors);
-	sb->chunksize = cpu_to_le32(bitmap->mddev->bitmap_info.chunksize);
-	sb->sectors_reserved = cpu_to_le32(bitmap->mddev->
-					   bitmap_info.space);
-	kunmap_atomic(sb);
-	write_page(bitmap, bitmap->storage.sb_page, 1);
-}
-
-/* print out the bitmap file superblock */
-void bitmap_print_sb(struct bitmap *bitmap)
-{
-	bitmap_super_t *sb;
-
-	if (!bitmap || !bitmap->storage.sb_page)
-		return;
-	sb = kmap_atomic(bitmap->storage.sb_page);
-	printk(KERN_DEBUG "%s: bitmap file superblock:\n", bmname(bitmap));
-	printk(KERN_DEBUG "         magic: %08x\n", le32_to_cpu(sb->magic));
-	printk(KERN_DEBUG "       version: %d\n", le32_to_cpu(sb->version));
-	printk(KERN_DEBUG "          uuid: %08x.%08x.%08x.%08x\n",
-					*(__u32 *)(sb->uuid+0),
-					*(__u32 *)(sb->uuid+4),
-					*(__u32 *)(sb->uuid+8),
-					*(__u32 *)(sb->uuid+12));
-	printk(KERN_DEBUG "        events: %llu\n",
-			(unsigned long long) le64_to_cpu(sb->events));
-	printk(KERN_DEBUG "events cleared: %llu\n",
-			(unsigned long long) le64_to_cpu(sb->events_cleared));
-	printk(KERN_DEBUG "         state: %08x\n", le32_to_cpu(sb->state));
-	printk(KERN_DEBUG "     chunksize: %d B\n", le32_to_cpu(sb->chunksize));
-	printk(KERN_DEBUG "  daemon sleep: %ds\n", le32_to_cpu(sb->daemon_sleep));
-	printk(KERN_DEBUG "     sync size: %llu KB\n",
-			(unsigned long long)le64_to_cpu(sb->sync_size)/2);
-	printk(KERN_DEBUG "max write behind: %d\n", le32_to_cpu(sb->write_behind));
-	kunmap_atomic(sb);
-}
-
-/*
- * bitmap_new_disk_sb
- * @bitmap
- *
- * This function is somewhat the reverse of bitmap_read_sb.  bitmap_read_sb
- * reads and verifies the on-disk bitmap superblock and populates bitmap_info.
- * This function verifies 'bitmap_info' and populates the on-disk bitmap
- * structure, which is to be written to disk.
- *
- * Returns: 0 on success, -Exxx on error
- */
-static int bitmap_new_disk_sb(struct bitmap *bitmap)
-{
-	bitmap_super_t *sb;
-	unsigned long chunksize, daemon_sleep, write_behind;
-	int err = -EINVAL;
-
-	bitmap->storage.sb_page = alloc_page(GFP_KERNEL);
-	if (IS_ERR(bitmap->storage.sb_page)) {
-		err = PTR_ERR(bitmap->storage.sb_page);
-		bitmap->storage.sb_page = NULL;
-		return err;
-	}
-	bitmap->storage.sb_page->index = 0;
-
-	sb = kmap_atomic(bitmap->storage.sb_page);
-
-	sb->magic = cpu_to_le32(BITMAP_MAGIC);
-	sb->version = cpu_to_le32(BITMAP_MAJOR_HI);
-
-	chunksize = bitmap->mddev->bitmap_info.chunksize;
-	BUG_ON(!chunksize);
-	if (!is_power_of_2(chunksize)) {
-		kunmap_atomic(sb);
-		printk(KERN_ERR "bitmap chunksize not a power of 2\n");
-		return -EINVAL;
-	}
-	sb->chunksize = cpu_to_le32(chunksize);
-
-	daemon_sleep = bitmap->mddev->bitmap_info.daemon_sleep;
-	if (!daemon_sleep ||
-	    (daemon_sleep < 1) || (daemon_sleep > MAX_SCHEDULE_TIMEOUT)) {
-		printk(KERN_INFO "Choosing daemon_sleep default (5 sec)\n");
-		daemon_sleep = 5 * HZ;
-	}
-	sb->daemon_sleep = cpu_to_le32(daemon_sleep);
-	bitmap->mddev->bitmap_info.daemon_sleep = daemon_sleep;
-
-	/*
-	 * FIXME: write_behind for RAID1.  If not specified, what
-	 * is a good choice?  We choose COUNTER_MAX / 2 arbitrarily.
-	 */
-	write_behind = bitmap->mddev->bitmap_info.max_write_behind;
-	if (write_behind > COUNTER_MAX)
-		write_behind = COUNTER_MAX / 2;
-	sb->write_behind = cpu_to_le32(write_behind);
-	bitmap->mddev->bitmap_info.max_write_behind = write_behind;
-
-	/* keep the array size field of the bitmap superblock up to date */
-	sb->sync_size = cpu_to_le64(bitmap->mddev->resync_max_sectors);
-
-	memcpy(sb->uuid, bitmap->mddev->uuid, 16);
-
-	set_bit(BITMAP_STALE, &bitmap->flags);
-	sb->state = cpu_to_le32(bitmap->flags);
-	bitmap->events_cleared = bitmap->mddev->events;
-	sb->events_cleared = cpu_to_le64(bitmap->mddev->events);
-
-	kunmap_atomic(sb);
-
-	return 0;
-}
-
-/* read the superblock from the bitmap file and initialize some bitmap fields */
-static int bitmap_read_sb(struct bitmap *bitmap)
-{
-	char *reason = NULL;
-	bitmap_super_t *sb;
-	unsigned long chunksize, daemon_sleep, write_behind;
-	unsigned long long events;
-	unsigned long sectors_reserved = 0;
-	int err = -EINVAL;
-	struct page *sb_page;
-
-	if (!bitmap->storage.file && !bitmap->mddev->bitmap_info.offset) {
-		chunksize = 128 * 1024 * 1024;
-		daemon_sleep = 5 * HZ;
-		write_behind = 0;
-		set_bit(BITMAP_STALE, &bitmap->flags);
-		err = 0;
-		goto out_no_sb;
-	}
-	/* page 0 is the superblock, read it... */
-	sb_page = alloc_page(GFP_KERNEL);
-	if (!sb_page)
-		return -ENOMEM;
-	bitmap->storage.sb_page = sb_page;
-
-	if (bitmap->storage.file) {
-		loff_t isize = i_size_read(bitmap->storage.file->f_mapping->host);
-		int bytes = isize > PAGE_SIZE ? PAGE_SIZE : isize;
-
-		err = read_page(bitmap->storage.file, 0,
-				bitmap, bytes, sb_page);
-	} else {
-		err = read_sb_page(bitmap->mddev,
-				   bitmap->mddev->bitmap_info.offset,
-				   sb_page,
-				   0, sizeof(bitmap_super_t));
-	}
-	if (err)
-		return err;
-
-	sb = kmap_atomic(sb_page);
-
-	chunksize = le32_to_cpu(sb->chunksize);
-	daemon_sleep = le32_to_cpu(sb->daemon_sleep) * HZ;
-	write_behind = le32_to_cpu(sb->write_behind);
-	sectors_reserved = le32_to_cpu(sb->sectors_reserved);
-
-	/* verify that the bitmap-specific fields are valid */
-	if (sb->magic != cpu_to_le32(BITMAP_MAGIC))
-		reason = "bad magic";
-	else if (le32_to_cpu(sb->version) < BITMAP_MAJOR_LO ||
-		 le32_to_cpu(sb->version) > BITMAP_MAJOR_HI)
-		reason = "unrecognized superblock version";
-	else if (chunksize < 512)
-		reason = "bitmap chunksize too small";
-	else if (!is_power_of_2(chunksize))
-		reason = "bitmap chunksize not a power of 2";
-	else if (daemon_sleep < 1 || daemon_sleep > MAX_SCHEDULE_TIMEOUT)
-		reason = "daemon sleep period out of range";
-	else if (write_behind > COUNTER_MAX)
-		reason = "write-behind limit out of range (0 - 16383)";
-	if (reason) {
-		printk(KERN_INFO "%s: invalid bitmap file superblock: %s\n",
-			bmname(bitmap), reason);
-		goto out;
-	}
-
-	/* keep the array size field of the bitmap superblock up to date */
-	sb->sync_size = cpu_to_le64(bitmap->mddev->resync_max_sectors);
-
-	if (bitmap->mddev->persistent) {
-		/*
-		 * We have a persistent array superblock, so compare the
-		 * bitmap's UUID and event counter to the mddev's
-		 */
-		if (memcmp(sb->uuid, bitmap->mddev->uuid, 16)) {
-			printk(KERN_INFO
-			       "%s: bitmap superblock UUID mismatch\n",
-			       bmname(bitmap));
-			goto out;
-		}
-		events = le64_to_cpu(sb->events);
-		if (events < bitmap->mddev->events) {
-			printk(KERN_INFO
-			       "%s: bitmap file is out of date (%llu < %llu) "
-			       "-- forcing full recovery\n",
-			       bmname(bitmap), events,
-			       (unsigned long long) bitmap->mddev->events);
-			set_bit(BITMAP_STALE, &bitmap->flags);
-		}
-	}
-
-	/* assign fields using values from superblock */
-	bitmap->flags |= le32_to_cpu(sb->state);
-	if (le32_to_cpu(sb->version) == BITMAP_MAJOR_HOSTENDIAN)
-		set_bit(BITMAP_HOSTENDIAN, &bitmap->flags);
-	bitmap->events_cleared = le64_to_cpu(sb->events_cleared);
-	err = 0;
-out:
-	kunmap_atomic(sb);
-out_no_sb:
-	if (test_bit(BITMAP_STALE, &bitmap->flags))
-		bitmap->events_cleared = bitmap->mddev->events;
-	bitmap->mddev->bitmap_info.chunksize = chunksize;
-	bitmap->mddev->bitmap_info.daemon_sleep = daemon_sleep;
-	bitmap->mddev->bitmap_info.max_write_behind = write_behind;
-	if (bitmap->mddev->bitmap_info.space == 0 ||
-	    bitmap->mddev->bitmap_info.space > sectors_reserved)
-		bitmap->mddev->bitmap_info.space = sectors_reserved;
-	if (err)
-		bitmap_print_sb(bitmap);
-	return err;
-}
-
-/*
- * general bitmap file operations
- */
-
-/*
- * on-disk bitmap:
- *
- * Use one bit per "chunk" (block set). We do the disk I/O on the bitmap
- * file a page at a time. There's a superblock at the start of the file.
- */
-/* calculate the index of the page that contains this bit */
-static inline unsigned long file_page_index(struct bitmap_storage *store,
-					    unsigned long chunk)
-{
-	if (store->sb_page)
-		chunk += sizeof(bitmap_super_t) << 3;
-	return chunk >> PAGE_BIT_SHIFT;
-}
-
-/* calculate the (bit) offset of this bit within a page */
-static inline unsigned long file_page_offset(struct bitmap_storage *store,
-					     unsigned long chunk)
-{
-	if (store->sb_page)
-		chunk += sizeof(bitmap_super_t) << 3;
-	return chunk & (PAGE_BITS - 1);
-}
-
-/*
- * return a pointer to the page in the filemap that contains the given bit
- *
- * this lookup is complicated by the fact that the bitmap sb might be exactly
- * 1 page (e.g., x86) or less than 1 page -- so the bitmap might start on page
- * 0 or page 1
- */
-static inline struct page *filemap_get_page(struct bitmap_storage *store,
-					    unsigned long chunk)
-{
-	if (file_page_index(store, chunk) >= store->file_pages)
-		return NULL;
-	return store->filemap[file_page_index(store, chunk)
-			      - file_page_index(store, 0)];
-}
-
-static int bitmap_storage_alloc(struct bitmap_storage *store,
-				unsigned long chunks, int with_super)
-{
-	int pnum;
-	unsigned long num_pages;
-	unsigned long bytes;
-
-	bytes = DIV_ROUND_UP(chunks, 8);
-	if (with_super)
-		bytes += sizeof(bitmap_super_t);
-
-	num_pages = DIV_ROUND_UP(bytes, PAGE_SIZE);
-
-	store->filemap = kmalloc(sizeof(struct page *)
-				 * num_pages, GFP_KERNEL);
-	if (!store->filemap)
-		return -ENOMEM;
-
-	if (with_super && !store->sb_page) {
-		store->sb_page = alloc_page(GFP_KERNEL|__GFP_ZERO);
-		if (store->sb_page == NULL)
-			return -ENOMEM;
-		store->sb_page->index = 0;
-	}
-	pnum = 0;
-	if (store->sb_page) {
-		store->filemap[0] = store->sb_page;
-		pnum = 1;
-	}
-	for ( ; pnum < num_pages; pnum++) {
-		store->filemap[pnum] = alloc_page(GFP_KERNEL|__GFP_ZERO);
-		if (!store->filemap[pnum]) {
-			store->file_pages = pnum;
-			return -ENOMEM;
-		}
-		store->filemap[pnum]->index = pnum;
-	}
-	store->file_pages = pnum;
-
-	/* We need 4 bits per page, rounded up to a multiple
-	 * of sizeof(unsigned long) */
-	store->filemap_attr = kzalloc(
-		roundup(DIV_ROUND_UP(num_pages*4, 8), sizeof(unsigned long)),
-		GFP_KERNEL);
-	if (!store->filemap_attr)
-		return -ENOMEM;
-
-	store->bytes = bytes;
-
-	return 0;
-}
-
-static void bitmap_file_unmap(struct bitmap_storage *store)
-{
-	struct page **map, *sb_page;
-	int pages;
-	struct file *file;
-
-	file = store->file;
-	map = store->filemap;
-	pages = store->file_pages;
-	sb_page = store->sb_page;
-
-	while (pages--)
-		if (map[pages] != sb_page) /* 0 is sb_page, release it below */
-			free_buffers(map[pages]);
-	kfree(map);
-	kfree(store->filemap_attr);
-
-	if (sb_page)
-		free_buffers(sb_page);
-
-	if (file) {
-		struct inode *inode = file->f_path.dentry->d_inode;
-		invalidate_mapping_pages(inode->i_mapping, 0, -1);
-		fput(file);
-	}
-}
-
-/*
- * bitmap_file_kick - if an error occurs while manipulating the bitmap file
- * then it is no longer reliable, so we stop using it and we mark the file
- * as failed in the superblock
- */
-static void bitmap_file_kick(struct bitmap *bitmap)
-{
-	char *path, *ptr = NULL;
-
-	if (!test_and_set_bit(BITMAP_STALE, &bitmap->flags)) {
-		bitmap_update_sb(bitmap);
-
-		if (bitmap->storage.file) {
-			path = kmalloc(PAGE_SIZE, GFP_KERNEL);
-			if (path)
-				ptr = d_path(&bitmap->storage.file->f_path,
-					     path, PAGE_SIZE);
-
-			printk(KERN_ALERT
-			      "%s: kicking failed bitmap file %s from array!\n",
-			      bmname(bitmap), IS_ERR(ptr) ? "" : ptr);
-
-			kfree(path);
-		} else
-			printk(KERN_ALERT
-			       "%s: disabling internal bitmap due to errors\n",
-			       bmname(bitmap));
-	}
-}
-
-enum bitmap_page_attr {
-	BITMAP_PAGE_DIRTY = 0,     /* there are set bits that need to be synced */
-	BITMAP_PAGE_PENDING = 1,   /* there are bits that are being cleaned.
-				    * i.e. counter is 1 or 2. */
-	BITMAP_PAGE_NEEDWRITE = 2, /* there are cleared bits that need to be synced */
-};
-
-static inline void set_page_attr(struct bitmap *bitmap, int pnum,
-				 enum bitmap_page_attr attr)
-{
-	set_bit((pnum<<2) + attr, bitmap->storage.filemap_attr);
-}
-
-static inline void clear_page_attr(struct bitmap *bitmap, int pnum,
-				   enum bitmap_page_attr attr)
-{
-	clear_bit((pnum<<2) + attr, bitmap->storage.filemap_attr);
-}
-
-static inline int test_page_attr(struct bitmap *bitmap, int pnum,
-				 enum bitmap_page_attr attr)
-{
-	return test_bit((pnum<<2) + attr, bitmap->storage.filemap_attr);
-}
-
-static inline int test_and_clear_page_attr(struct bitmap *bitmap, int pnum,
-					   enum bitmap_page_attr attr)
-{
-	return test_and_clear_bit((pnum<<2) + attr,
-				  bitmap->storage.filemap_attr);
-}
-/*
- * bitmap_file_set_bit -- called before performing a write to the md device
- * to set (and eventually sync) a particular bit in the bitmap file
- *
- * we set the bit immediately, then we record the page number so that
- * when an unplug occurs, we can flush the dirty pages out to disk
- */
-static void bitmap_file_set_bit(struct bitmap *bitmap, sector_t block)
-{
-	unsigned long bit;
-	struct page *page;
-	void *kaddr;
-	unsigned long chunk = block >> bitmap->counts.chunkshift;
-
-	page = filemap_get_page(&bitmap->storage, chunk);
-	if (!page)
-		return;
-	bit = file_page_offset(&bitmap->storage, chunk);
-
-	/* set the bit */
-	kaddr = kmap_atomic(page);
-	if (test_bit(BITMAP_HOSTENDIAN, &bitmap->flags))
-		set_bit(bit, kaddr);
-	else
-		test_and_set_bit_le(bit, kaddr);
-	kunmap_atomic(kaddr);
-	pr_debug("set file bit %lu page %lu\n", bit, page->index);
-	/* record page number so it gets flushed to disk when unplug occurs */
-	set_page_attr(bitmap, page->index, BITMAP_PAGE_DIRTY);
-}
-
-static void bitmap_file_clear_bit(struct bitmap *bitmap, sector_t block)
-{
-	unsigned long bit;
-	struct page *page;
-	void *paddr;
-	unsigned long chunk = block >> bitmap->counts.chunkshift;
-
-	page = filemap_get_page(&bitmap->storage, chunk);
-	if (!page)
-		return;
-	bit = file_page_offset(&bitmap->storage, chunk);
-	paddr = kmap_atomic(page);
-	if (test_bit(BITMAP_HOSTENDIAN, &bitmap->flags))
-		clear_bit(bit, paddr);
-	else
-		test_and_clear_bit_le(bit, paddr);
-	kunmap_atomic(paddr);
-	if (!test_page_attr(bitmap, page->index, BITMAP_PAGE_NEEDWRITE)) {
-		set_page_attr(bitmap, page->index, BITMAP_PAGE_PENDING);
-		bitmap->allclean = 0;
-	}
-}
-
-/* this gets called when the md device is ready to unplug its underlying
- * (slave) device queues -- before we let any writes go down, we need to
- * sync the dirty pages of the bitmap file to disk */
-void bitmap_unplug(struct bitmap *bitmap)
-{
-	unsigned long i;
-	int dirty, need_write;
-	int wait = 0;
-
-	if (!bitmap || !bitmap->storage.filemap ||
-	    test_bit(BITMAP_STALE, &bitmap->flags))
-		return;
-
-	/* look at each page to see if there are any set bits that need to be
-	 * flushed out to disk */
-	for (i = 0; i < bitmap->storage.file_pages; i++) {
-		if (!bitmap->storage.filemap)
-			return;
-		dirty = test_and_clear_page_attr(bitmap, i, BITMAP_PAGE_DIRTY);
-		need_write = test_and_clear_page_attr(bitmap, i,
-						      BITMAP_PAGE_NEEDWRITE);
-		if (dirty || need_write) {
-			clear_page_attr(bitmap, i, BITMAP_PAGE_PENDING);
-			write_page(bitmap, bitmap->storage.filemap[i], 0);
-		}
-		if (dirty)
-			wait = 1;
-	}
-	if (wait) { /* if any writes were performed, we need to wait on them */
-		if (bitmap->storage.file)
-			wait_event(bitmap->write_wait,
-				   atomic_read(&bitmap->pending_writes)==0);
-		else
-			md_super_wait(bitmap->mddev);
-	}
-	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
-		bitmap_file_kick(bitmap);
-}
-EXPORT_SYMBOL(bitmap_unplug);
-
-static void bitmap_set_memory_bits(struct bitmap *bitmap, sector_t offset, int needed);
-/* * bitmap_init_from_disk -- called at bitmap_create time to initialize
- * the in-memory bitmap from the on-disk bitmap -- also, sets up the
- * memory mapping of the bitmap file
- * Special cases:
- *   if there's no bitmap file, or if the bitmap file had been
- *   previously kicked from the array, we mark all the bits as
- *   1's in order to cause a full resync.
- *
- * We ignore all bits for sectors that end earlier than 'start'.
- * This is used when reading an out-of-date bitmap...
- */
-static int bitmap_init_from_disk(struct bitmap *bitmap, sector_t start)
-{
-	unsigned long i, chunks, index, oldindex, bit;
-	struct page *page = NULL;
-	unsigned long bit_cnt = 0;
-	struct file *file;
-	unsigned long offset;
-	int outofdate;
-	int ret = -ENOSPC;
-	void *paddr;
-	struct bitmap_storage *store = &bitmap->storage;
-
-	chunks = bitmap->counts.chunks;
-	file = store->file;
-
-	if (!file && !bitmap->mddev->bitmap_info.offset) {
-		/* No permanent bitmap - fill with '1s'. */
-		store->filemap = NULL;
-		store->file_pages = 0;
-		for (i = 0; i < chunks ; i++) {
-			/* if the disk bit is set, set the memory bit */
-			int needed = ((sector_t)(i+1) << (bitmap->counts.chunkshift)
-				      >= start);
-			bitmap_set_memory_bits(bitmap,
-					       (sector_t)i << bitmap->counts.chunkshift,
-					       needed);
-		}
-		return 0;
-	}
-
-	outofdate = test_bit(BITMAP_STALE, &bitmap->flags);
-	if (outofdate)
-		printk(KERN_INFO "%s: bitmap file is out of date, doing full "
-			"recovery\n", bmname(bitmap));
-
-	if (file && i_size_read(file->f_mapping->host) < store->bytes) {
-		printk(KERN_INFO "%s: bitmap file too short %lu < %lu\n",
-		       bmname(bitmap),
-		       (unsigned long) i_size_read(file->f_mapping->host),
-		       store->bytes);
-		goto err;
-	}
-
-	oldindex = ~0L;
-	offset = 0;
-	if (!bitmap->mddev->bitmap_info.external)
-		offset = sizeof(bitmap_super_t);
-
-	for (i = 0; i < chunks; i++) {
-		int b;
-		index = file_page_index(&bitmap->storage, i);
-		bit = file_page_offset(&bitmap->storage, i);
-		if (index != oldindex) { /* this is a new page, read it in */
-			int count;
-			/* unmap the old page, we're done with it */
-			if (index == store->file_pages-1)
-				count = store->bytes - index * PAGE_SIZE;
-			else
-				count = PAGE_SIZE;
-			page = store->filemap[index];
-			if (file)
-				ret = read_page(file, index, bitmap,
-						count, page);
-			else
-				ret = read_sb_page(
-					bitmap->mddev,
-					bitmap->mddev->bitmap_info.offset,
-					page,
-					index, count);
-
-			if (ret)
-				goto err;
-
-			oldindex = index;
-
-			if (outofdate) {
-				/*
-				 * if bitmap is out of date, dirty the
-				 * whole page and write it out
-				 */
-				paddr = kmap_atomic(page);
-				memset(paddr + offset, 0xff,
-				       PAGE_SIZE - offset);
-				kunmap_atomic(paddr);
-				write_page(bitmap, page, 1);
-
-				ret = -EIO;
-				if (test_bit(BITMAP_WRITE_ERROR,
-					     &bitmap->flags))
-					goto err;
-			}
-		}
-		paddr = kmap_atomic(page);
-		if (test_bit(BITMAP_HOSTENDIAN, &bitmap->flags))
-			b = test_bit(bit, paddr);
-		else
-			b = test_bit_le(bit, paddr);
-		kunmap_atomic(paddr);
-		if (b) {
-			/* if the disk bit is set, set the memory bit */
-			int needed = ((sector_t)(i+1) << bitmap->counts.chunkshift
-				      >= start);
-			bitmap_set_memory_bits(bitmap,
-					       (sector_t)i << bitmap->counts.chunkshift,
-					       needed);
-			bit_cnt++;
-		}
-		offset = 0;
-	}
-
-	printk(KERN_INFO "%s: bitmap initialized from disk: "
-	       "read %lu pages, set %lu of %lu bits\n",
-	       bmname(bitmap), store->file_pages,
-	       bit_cnt, chunks);
-
-	return 0;
-
- err:
-	printk(KERN_INFO "%s: bitmap initialisation failed: %d\n",
-	       bmname(bitmap), ret);
-	return ret;
-}
-
-void bitmap_write_all(struct bitmap *bitmap)
-{
-	/* We don't actually write all bitmap blocks here,
-	 * just flag them as needing to be written
-	 */
-	int i;
-
-	if (!bitmap || !bitmap->storage.filemap)
-		return;
-	if (bitmap->storage.file)
-		/* Only one copy, so nothing needed */
-		return;
-
-	for (i = 0; i < bitmap->storage.file_pages; i++)
-		set_page_attr(bitmap, i,
-			      BITMAP_PAGE_NEEDWRITE);
-	bitmap->allclean = 0;
-}
-
-static void bitmap_count_page(struct bitmap_counts *bitmap,
-			      sector_t offset, int inc)
-{
-	sector_t chunk = offset >> bitmap->chunkshift;
-	unsigned long page = chunk >> PAGE_COUNTER_SHIFT;
-	bitmap->bp[page].count += inc;
-	bitmap_checkfree(bitmap, page);
-}
-
-static void bitmap_set_pending(struct bitmap_counts *bitmap, sector_t offset)
-{
-	sector_t chunk = offset >> bitmap->chunkshift;
-	unsigned long page = chunk >> PAGE_COUNTER_SHIFT;
-	struct bitmap_page *bp = &bitmap->bp[page];
-
-	if (!bp->pending)
-		bp->pending = 1;
-}
-
-static bitmap_counter_t *bitmap_get_counter(struct bitmap_counts *bitmap,
-					    sector_t offset, sector_t *blocks,
-					    int create);
-
-/*
- * bitmap daemon -- periodically wakes up to clean bits and flush pages
- *			out to disk
- */
-
-void bitmap_daemon_work(struct mddev *mddev)
-{
-	struct bitmap *bitmap;
-	unsigned long j;
-	unsigned long nextpage;
-	sector_t blocks;
-	struct bitmap_counts *counts;
-
-	/* Use a mutex to guard daemon_work against
-	 * bitmap_destroy.
-	 */
-	mutex_lock(&mddev->bitmap_info.mutex);
-	bitmap = mddev->bitmap;
-	if (bitmap == NULL) {
-		mutex_unlock(&mddev->bitmap_info.mutex);
-		return;
-	}
-	if (time_before(jiffies, bitmap->daemon_lastrun
-			+ mddev->bitmap_info.daemon_sleep))
-		goto done;
-
-	bitmap->daemon_lastrun = jiffies;
-	if (bitmap->allclean) {
-		mddev->thread->timeout = MAX_SCHEDULE_TIMEOUT;
-		goto done;
-	}
-	bitmap->allclean = 1;
-
-	/* Any file-page which is PENDING now needs to be written.
-	 * So set NEEDWRITE now, then after we make any last-minute changes
-	 * we will write it.
-	 */
-	for (j = 0; j < bitmap->storage.file_pages; j++)
-		if (test_and_clear_page_attr(bitmap, j,
-					     BITMAP_PAGE_PENDING))
-			set_page_attr(bitmap, j,
-				      BITMAP_PAGE_NEEDWRITE);
-
-	if (bitmap->need_sync &&
-	    mddev->bitmap_info.external == 0) {
-		/* Arrange for superblock update as well as
-		 * other changes */
-		bitmap_super_t *sb;
-		bitmap->need_sync = 0;
-		if (bitmap->storage.filemap) {
-			sb = kmap_atomic(bitmap->storage.sb_page);
-			sb->events_cleared =
-				cpu_to_le64(bitmap->events_cleared);
-			kunmap_atomic(sb);
-			set_page_attr(bitmap, 0,
-				      BITMAP_PAGE_NEEDWRITE);
-		}
-	}
-	/* Now look at the bitmap counters and if any are '2' or '1',
-	 * decrement and handle accordingly.
-	 */
-	counts = &bitmap->counts;
-	spin_lock_irq(&counts->lock);
-	nextpage = 0;
-	for (j = 0; j < counts->chunks; j++) {
-		bitmap_counter_t *bmc;
-		sector_t  block = (sector_t)j << counts->chunkshift;
-
-		if (j == nextpage) {
-			nextpage += PAGE_COUNTER_RATIO;
-			if (!counts->bp[j >> PAGE_COUNTER_SHIFT].pending) {
-				j |= PAGE_COUNTER_MASK;
-				continue;
-			}
-			counts->bp[j >> PAGE_COUNTER_SHIFT].pending = 0;
-		}
-		bmc = bitmap_get_counter(counts,
-					 block,
-					 &blocks, 0);
-
-		if (!bmc) {
-			j |= PAGE_COUNTER_MASK;
-			continue;
-		}
-		if (*bmc == 1 && !bitmap->need_sync) {
-			/* We can clear the bit */
-			*bmc = 0;
-			bitmap_count_page(counts, block, -1);
-			bitmap_file_clear_bit(bitmap, block);
-		} else if (*bmc && *bmc <= 2) {
-			*bmc = 1;
-			bitmap_set_pending(counts, block);
-			bitmap->allclean = 0;
-		}
-	}
-	spin_unlock_irq(&counts->lock);
-
-	/* Now start writeout on any page in NEEDWRITE that isn't DIRTY.
-	 * DIRTY pages need to be written by bitmap_unplug so it can wait
-	 * for them.
-	 * If we find any DIRTY page we stop there and let bitmap_unplug
-	 * handle all the rest.  This is important in the case where
-	 * the first blocking holds the superblock and it has been updated.
-	 * We mustn't write any other blocks before the superblock.
-	 */
-	for (j = 0;
-	     j < bitmap->storage.file_pages
-		     && !test_bit(BITMAP_STALE, &bitmap->flags);
-	     j++) {
-
-		if (test_page_attr(bitmap, j,
-				   BITMAP_PAGE_DIRTY))
-			/* bitmap_unplug will handle the rest */
-			break;
-		if (test_and_clear_page_attr(bitmap, j,
-					     BITMAP_PAGE_NEEDWRITE)) {
-			write_page(bitmap, bitmap->storage.filemap[j], 0);
-		}
-	}
-
- done:
-	if (bitmap->allclean == 0)
-		mddev->thread->timeout =
-			mddev->bitmap_info.daemon_sleep;
-	mutex_unlock(&mddev->bitmap_info.mutex);
-}
-
-static bitmap_counter_t *bitmap_get_counter(struct bitmap_counts *bitmap,
-					    sector_t offset, sector_t *blocks,
-					    int create)
-__releases(bitmap->lock)
-__acquires(bitmap->lock)
-{
-	/* If 'create', we might release the lock and reclaim it.
-	 * The lock must have been taken with interrupts enabled.
-	 * If !create, we don't release the lock.
-	 */
-	sector_t chunk = offset >> bitmap->chunkshift;
-	unsigned long page = chunk >> PAGE_COUNTER_SHIFT;
-	unsigned long pageoff = (chunk & PAGE_COUNTER_MASK) << COUNTER_BYTE_SHIFT;
-	sector_t csize;
-	int err;
-
-	err = bitmap_checkpage(bitmap, page, create);
-
-	if (bitmap->bp[page].hijacked ||
-	    bitmap->bp[page].map == NULL)
-		csize = ((sector_t)1) << (bitmap->chunkshift +
-					  PAGE_COUNTER_SHIFT - 1);
-	else
-		csize = ((sector_t)1) << bitmap->chunkshift;
-	*blocks = csize - (offset & (csize - 1));
-
-	if (err < 0)
-		return NULL;
-
-	/* now locked ... */
-
-	if (bitmap->bp[page].hijacked) { /* hijacked pointer */
-		/* should we use the first or second counter field
-		 * of the hijacked pointer? */
-		int hi = (pageoff > PAGE_COUNTER_MASK);
-		return  &((bitmap_counter_t *)
-			  &bitmap->bp[page].map)[hi];
-	} else /* page is allocated */
-		return (bitmap_counter_t *)
-			&(bitmap->bp[page].map[pageoff]);
-}
-
-int bitmap_startwrite(struct bitmap *bitmap, sector_t offset, unsigned long sectors, int behind)
-{
-	if (!bitmap)
-		return 0;
-
-	if (behind) {
-		int bw;
-		atomic_inc(&bitmap->behind_writes);
-		bw = atomic_read(&bitmap->behind_writes);
-		if (bw > bitmap->behind_writes_used)
-			bitmap->behind_writes_used = bw;
-
-		pr_debug("inc write-behind count %d/%lu\n",
-			 bw, bitmap->mddev->bitmap_info.max_write_behind);
-	}
-
-	while (sectors) {
-		sector_t blocks;
-		bitmap_counter_t *bmc;
-
-		spin_lock_irq(&bitmap->counts.lock);
-		bmc = bitmap_get_counter(&bitmap->counts, offset, &blocks, 1);
-		if (!bmc) {
-			spin_unlock_irq(&bitmap->counts.lock);
-			return 0;
-		}
-
-		if (unlikely(COUNTER(*bmc) == COUNTER_MAX)) {
-			DEFINE_WAIT(__wait);
-			/* note that it is safe to do the prepare_to_wait
-			 * after the test as long as we do it before dropping
-			 * the spinlock.
-			 */
-			prepare_to_wait(&bitmap->overflow_wait, &__wait,
-					TASK_UNINTERRUPTIBLE);
-			spin_unlock_irq(&bitmap->counts.lock);
-			schedule();
-			finish_wait(&bitmap->overflow_wait, &__wait);
-			continue;
-		}
-
-		switch (*bmc) {
-		case 0:
-			bitmap_file_set_bit(bitmap, offset);
-			bitmap_count_page(&bitmap->counts, offset, 1);
-			/* fall through */
-		case 1:
-			*bmc = 2;
-		}
-
-		(*bmc)++;
-
-		spin_unlock_irq(&bitmap->counts.lock);
-
-		offset += blocks;
-		if (sectors > blocks)
-			sectors -= blocks;
-		else
-			sectors = 0;
-	}
-	return 0;
-}
-EXPORT_SYMBOL(bitmap_startwrite);
-
-void bitmap_endwrite(struct bitmap *bitmap, sector_t offset, unsigned long sectors,
-		     int success, int behind)
-{
-	if (!bitmap)
-		return;
-	if (behind) {
-		if (atomic_dec_and_test(&bitmap->behind_writes))
-			wake_up(&bitmap->behind_wait);
-		pr_debug("dec write-behind count %d/%lu\n",
-			 atomic_read(&bitmap->behind_writes),
-			 bitmap->mddev->bitmap_info.max_write_behind);
-	}
-
-	while (sectors) {
-		sector_t blocks;
-		unsigned long flags;
-		bitmap_counter_t *bmc;
-
-		spin_lock_irqsave(&bitmap->counts.lock, flags);
-		bmc = bitmap_get_counter(&bitmap->counts, offset, &blocks, 0);
-		if (!bmc) {
-			spin_unlock_irqrestore(&bitmap->counts.lock, flags);
-			return;
-		}
-
-		if (success && !bitmap->mddev->degraded &&
-		    bitmap->events_cleared < bitmap->mddev->events) {
-			bitmap->events_cleared = bitmap->mddev->events;
-			bitmap->need_sync = 1;
-			sysfs_notify_dirent_safe(bitmap->sysfs_can_clear);
-		}
-
-		if (!success && !NEEDED(*bmc))
-			*bmc |= NEEDED_MASK;
-
-		if (COUNTER(*bmc) == COUNTER_MAX)
-			wake_up(&bitmap->overflow_wait);
-
-		(*bmc)--;
-		if (*bmc <= 2) {
-			bitmap_set_pending(&bitmap->counts, offset);
-			bitmap->allclean = 0;
-		}
-		spin_unlock_irqrestore(&bitmap->counts.lock, flags);
-		offset += blocks;
-		if (sectors > blocks)
-			sectors -= blocks;
-		else
-			sectors = 0;
-	}
-}
-EXPORT_SYMBOL(bitmap_endwrite);
-
-static int __bitmap_start_sync(struct bitmap *bitmap, sector_t offset, sector_t *blocks,
-			       int degraded)
-{
-	bitmap_counter_t *bmc;
-	int rv;
-	if (bitmap == NULL) {/* FIXME or bitmap set as 'failed' */
-		*blocks = 1024;
-		return 1; /* always resync if no bitmap */
-	}
-	spin_lock_irq(&bitmap->counts.lock);
-	bmc = bitmap_get_counter(&bitmap->counts, offset, blocks, 0);
-	rv = 0;
-	if (bmc) {
-		/* locked */
-		if (RESYNC(*bmc))
-			rv = 1;
-		else if (NEEDED(*bmc)) {
-			rv = 1;
-			if (!degraded) { /* don't set/clear bits if degraded */
-				*bmc |= RESYNC_MASK;
-				*bmc &= ~NEEDED_MASK;
-			}
-		}
-	}
-	spin_unlock_irq(&bitmap->counts.lock);
-	return rv;
-}
-
-int bitmap_start_sync(struct bitmap *bitmap, sector_t offset, sector_t *blocks,
-		      int degraded)
-{
-	/* bitmap_start_sync must always report on multiples of whole
-	 * pages, otherwise resync (which is very PAGE_SIZE based) will
-	 * get confused.
-	 * So call __bitmap_start_sync repeatedly (if needed) until
-	 * At least PAGE_SIZE>>9 blocks are covered.
-	 * Return the 'or' of the result.
-	 */
-	int rv = 0;
-	sector_t blocks1;
-
-	*blocks = 0;
-	while (*blocks < (PAGE_SIZE>>9)) {
-		rv |= __bitmap_start_sync(bitmap, offset,
-					  &blocks1, degraded);
-		offset += blocks1;
-		*blocks += blocks1;
-	}
-	return rv;
-}
-EXPORT_SYMBOL(bitmap_start_sync);
-
-void bitmap_end_sync(struct bitmap *bitmap, sector_t offset, sector_t *blocks, int aborted)
-{
-	bitmap_counter_t *bmc;
-	unsigned long flags;
-
-	if (bitmap == NULL) {
-		*blocks = 1024;
-		return;
-	}
-	spin_lock_irqsave(&bitmap->counts.lock, flags);
-	bmc = bitmap_get_counter(&bitmap->counts, offset, blocks, 0);
-	if (bmc == NULL)
-		goto unlock;
-	/* locked */
-	if (RESYNC(*bmc)) {
-		*bmc &= ~RESYNC_MASK;
-
-		if (!NEEDED(*bmc) && aborted)
-			*bmc |= NEEDED_MASK;
-		else {
-			if (*bmc <= 2) {
-				bitmap_set_pending(&bitmap->counts, offset);
-				bitmap->allclean = 0;
-			}
-		}
-	}
- unlock:
-	spin_unlock_irqrestore(&bitmap->counts.lock, flags);
-}
-EXPORT_SYMBOL(bitmap_end_sync);
-
-void bitmap_close_sync(struct bitmap *bitmap)
-{
-	/* Sync has finished, and any bitmap chunks that weren't synced
-	 * properly have been aborted.  It remains to us to clear the
-	 * RESYNC bit wherever it is still on
-	 */
-	sector_t sector = 0;
-	sector_t blocks;
-	if (!bitmap)
-		return;
-	while (sector < bitmap->mddev->resync_max_sectors) {
-		bitmap_end_sync(bitmap, sector, &blocks, 0);
-		sector += blocks;
-	}
-}
-EXPORT_SYMBOL(bitmap_close_sync);
-
-void bitmap_cond_end_sync(struct bitmap *bitmap, sector_t sector)
-{
-	sector_t s = 0;
-	sector_t blocks;
-
-	if (!bitmap)
-		return;
-	if (sector == 0) {
-		bitmap->last_end_sync = jiffies;
-		return;
-	}
-	if (time_before(jiffies, (bitmap->last_end_sync
-				  + bitmap->mddev->bitmap_info.daemon_sleep)))
-		return;
-	wait_event(bitmap->mddev->recovery_wait,
-		   atomic_read(&bitmap->mddev->recovery_active) == 0);
-
-	bitmap->mddev->curr_resync_completed = sector;
-	set_bit(MD_CHANGE_CLEAN, &bitmap->mddev->flags);
-	sector &= ~((1ULL << bitmap->counts.chunkshift) - 1);
-	s = 0;
-	while (s < sector && s < bitmap->mddev->resync_max_sectors) {
-		bitmap_end_sync(bitmap, s, &blocks, 0);
-		s += blocks;
-	}
-	bitmap->last_end_sync = jiffies;
-	sysfs_notify(&bitmap->mddev->kobj, NULL, "sync_completed");
-}
-EXPORT_SYMBOL(bitmap_cond_end_sync);
-
-static void bitmap_set_memory_bits(struct bitmap *bitmap, sector_t offset, int needed)
-{
-	/* For each chunk covered by any of these sectors, set the
-	 * counter to 2 and possibly set resync_needed.  They should all
-	 * be 0 at this point
-	 */
-
-	sector_t secs;
-	bitmap_counter_t *bmc;
-	spin_lock_irq(&bitmap->counts.lock);
-	bmc = bitmap_get_counter(&bitmap->counts, offset, &secs, 1);
-	if (!bmc) {
-		spin_unlock_irq(&bitmap->counts.lock);
-		return;
-	}
-	if (!*bmc) {
-		*bmc = 2 | (needed ? NEEDED_MASK : 0);
-		bitmap_count_page(&bitmap->counts, offset, 1);
-		bitmap_set_pending(&bitmap->counts, offset);
-		bitmap->allclean = 0;
-	}
-	spin_unlock_irq(&bitmap->counts.lock);
-}
-
-/* dirty the memory and file bits for bitmap chunks "s" to "e" */
-void bitmap_dirty_bits(struct bitmap *bitmap, unsigned long s, unsigned long e)
-{
-	unsigned long chunk;
-
-	for (chunk = s; chunk <= e; chunk++) {
-		sector_t sec = (sector_t)chunk << bitmap->counts.chunkshift;
-		bitmap_set_memory_bits(bitmap, sec, 1);
-		bitmap_file_set_bit(bitmap, sec);
-		if (sec < bitmap->mddev->recovery_cp)
-			/* We are asserting that the array is dirty,
-			 * so move the recovery_cp address back so
-			 * that it is obvious that it is dirty
-			 */
-			bitmap->mddev->recovery_cp = sec;
-	}
-}
-
-/*
- * flush out any pending updates
- */
-void bitmap_flush(struct mddev *mddev)
-{
-	struct bitmap *bitmap = mddev->bitmap;
-	long sleep;
-
-	if (!bitmap) /* there was no bitmap */
-		return;
-
-	/* run the daemon_work three time to ensure everything is flushed
-	 * that can be
-	 */
-	sleep = mddev->bitmap_info.daemon_sleep * 2;
-	bitmap->daemon_lastrun -= sleep;
-	bitmap_daemon_work(mddev);
-	bitmap->daemon_lastrun -= sleep;
-	bitmap_daemon_work(mddev);
-	bitmap->daemon_lastrun -= sleep;
-	bitmap_daemon_work(mddev);
-	bitmap_update_sb(bitmap);
-}
-
-/*
- * free memory that was allocated
- */
-static void bitmap_free(struct bitmap *bitmap)
-{
-	unsigned long k, pages;
-	struct bitmap_page *bp;
-
-	if (!bitmap) /* there was no bitmap */
-		return;
-
-	/* Shouldn't be needed - but just in case.... */
-	wait_event(bitmap->write_wait,
-		   atomic_read(&bitmap->pending_writes) == 0);
-
-	/* release the bitmap file  */
-	bitmap_file_unmap(&bitmap->storage);
-
-	bp = bitmap->counts.bp;
-	pages = bitmap->counts.pages;
-
-	/* free all allocated memory */
-
-	if (bp) /* deallocate the page memory */
-		for (k = 0; k < pages; k++)
-			if (bp[k].map && !bp[k].hijacked)
-				kfree(bp[k].map);
-	kfree(bp);
-	kfree(bitmap);
-}
-
-void bitmap_destroy(struct mddev *mddev)
-{
-	struct bitmap *bitmap = mddev->bitmap;
-
-	if (!bitmap) /* there was no bitmap */
-		return;
-
-	mutex_lock(&mddev->bitmap_info.mutex);
-	mddev->bitmap = NULL; /* disconnect from the md device */
-	mutex_unlock(&mddev->bitmap_info.mutex);
-	if (mddev->thread)
-		mddev->thread->timeout = MAX_SCHEDULE_TIMEOUT;
-
-	if (bitmap->sysfs_can_clear)
-		sysfs_put(bitmap->sysfs_can_clear);
-
-	bitmap_free(bitmap);
-}
-
-/*
- * initialize the bitmap structure
- * if this returns an error, bitmap_destroy must be called to do clean up
- */
-int bitmap_create(struct mddev *mddev)
-{
-	struct bitmap *bitmap;
-	sector_t blocks = mddev->resync_max_sectors;
-	struct file *file = mddev->bitmap_info.file;
-	int err;
-	struct sysfs_dirent *bm = NULL;
-
-	BUILD_BUG_ON(sizeof(bitmap_super_t) != 256);
-
-	BUG_ON(file && mddev->bitmap_info.offset);
-
-	bitmap = kzalloc(sizeof(*bitmap), GFP_KERNEL);
-	if (!bitmap)
-		return -ENOMEM;
-
-	spin_lock_init(&bitmap->counts.lock);
-	atomic_set(&bitmap->pending_writes, 0);
-	init_waitqueue_head(&bitmap->write_wait);
-	init_waitqueue_head(&bitmap->overflow_wait);
-	init_waitqueue_head(&bitmap->behind_wait);
-
-	bitmap->mddev = mddev;
-
-	if (mddev->kobj.sd)
-		bm = sysfs_get_dirent(mddev->kobj.sd, NULL, "bitmap");
-	if (bm) {
-		bitmap->sysfs_can_clear = sysfs_get_dirent(bm, NULL, "can_clear");
-		sysfs_put(bm);
-	} else
-		bitmap->sysfs_can_clear = NULL;
-
-	bitmap->storage.file = file;
-	if (file) {
-		get_file(file);
-		/* As future accesses to this file will use bmap,
-		 * and bypass the page cache, we must sync the file
-		 * first.
-		 */
-		vfs_fsync(file, 1);
-	}
-	/* read superblock from bitmap file (this sets mddev->bitmap_info.chunksize) */
-	if (!mddev->bitmap_info.external) {
-		/*
-		 * If 'MD_ARRAY_FIRST_USE' is set, then device-mapper is
-		 * instructing us to create a new on-disk bitmap instance.
-		 */
-		if (test_and_clear_bit(MD_ARRAY_FIRST_USE, &mddev->flags))
-			err = bitmap_new_disk_sb(bitmap);
-		else
-			err = bitmap_read_sb(bitmap);
-	} else {
-		err = 0;
-		if (mddev->bitmap_info.chunksize == 0 ||
-		    mddev->bitmap_info.daemon_sleep == 0)
-			/* chunksize and time_base need to be
-			 * set first. */
-			err = -EINVAL;
-	}
-	if (err)
-		goto error;
-
-	bitmap->daemon_lastrun = jiffies;
-	err = bitmap_resize(bitmap, blocks, mddev->bitmap_info.chunksize, 1);
-	if (err)
-		goto error;
-
-	printk(KERN_INFO "created bitmap (%lu pages) for device %s\n",
-	       bitmap->counts.pages, bmname(bitmap));
-
-	mddev->bitmap = bitmap;
-	return test_bit(BITMAP_WRITE_ERROR, &bitmap->flags) ? -EIO : 0;
-
- error:
-	bitmap_free(bitmap);
-	return err;
-}
-
-int bitmap_load(struct mddev *mddev)
-{
-	int err = 0;
-	sector_t start = 0;
-	sector_t sector = 0;
-	struct bitmap *bitmap = mddev->bitmap;
-
-	if (!bitmap)
-		goto out;
-
-	/* Clear out old bitmap info first:  Either there is none, or we
-	 * are resuming after someone else has possibly changed things,
-	 * so we should forget old cached info.
-	 * All chunks should be clean, but some might need_sync.
-	 */
-	while (sector < mddev->resync_max_sectors) {
-		sector_t blocks;
-		bitmap_start_sync(bitmap, sector, &blocks, 0);
-		sector += blocks;
-	}
-	bitmap_close_sync(bitmap);
-
-	if (mddev->degraded == 0
-	    || bitmap->events_cleared == mddev->events)
-		/* no need to keep dirty bits to optimise a
-		 * re-add of a missing device */
-		start = mddev->recovery_cp;
-
-	mutex_lock(&mddev->bitmap_info.mutex);
-	err = bitmap_init_from_disk(bitmap, start);
-	mutex_unlock(&mddev->bitmap_info.mutex);
-
-	if (err)
-		goto out;
-	clear_bit(BITMAP_STALE, &bitmap->flags);
-
-	/* Kick recovery in case any bits were set */
-	set_bit(MD_RECOVERY_NEEDED, &bitmap->mddev->recovery);
-
-	mddev->thread->timeout = mddev->bitmap_info.daemon_sleep;
-	md_wakeup_thread(mddev->thread);
-
-	bitmap_update_sb(bitmap);
-
-	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
-		err = -EIO;
-out:
-	return err;
-}
-EXPORT_SYMBOL_GPL(bitmap_load);
-
-void bitmap_status(struct seq_file *seq, struct bitmap *bitmap)
-{
-	unsigned long chunk_kb;
-	struct bitmap_counts *counts;
-
-	if (!bitmap)
-		return;
-
-	counts = &bitmap->counts;
-
-	chunk_kb = bitmap->mddev->bitmap_info.chunksize >> 10;
-	seq_printf(seq, "bitmap: %lu/%lu pages [%luKB], "
-		   "%lu%s chunk",
-		   counts->pages - counts->missing_pages,
-		   counts->pages,
-		   (counts->pages - counts->missing_pages)
-		   << (PAGE_SHIFT - 10),
-		   chunk_kb ? chunk_kb : bitmap->mddev->bitmap_info.chunksize,
-		   chunk_kb ? "KB" : "B");
-	if (bitmap->storage.file) {
-		seq_printf(seq, ", file: ");
-		seq_path(seq, &bitmap->storage.file->f_path, " \t\n");
-	}
-
-	seq_printf(seq, "\n");
-}
-
-int bitmap_resize(struct bitmap *bitmap, sector_t blocks,
-		  int chunksize, int init)
-{
-	/* If chunk_size is 0, choose an appropriate chunk size.
-	 * Then possibly allocate new storage space.
-	 * Then quiesce, copy bits, replace bitmap, and re-start
-	 *
-	 * This function is called both to set up the initial bitmap
-	 * and to resize the bitmap while the array is active.
-	 * If this happens as a result of the array being resized,
-	 * chunksize will be zero, and we need to choose a suitable
-	 * chunksize, otherwise we use what we are given.
-	 */
-	struct bitmap_storage store;
-	struct bitmap_counts old_counts;
-	unsigned long chunks;
-	sector_t block;
-	sector_t old_blocks, new_blocks;
-	int chunkshift;
-	int ret = 0;
-	long pages;
-	struct bitmap_page *new_bp;
-
-	if (chunksize == 0) {
-		/* If there is enough space, leave the chunk size unchanged,
-		 * else increase by factor of two until there is enough space.
-		 */
-		long bytes;
-		long space = bitmap->mddev->bitmap_info.space;
-
-		if (space == 0) {
-			/* We don't know how much space there is, so limit
-			 * to current size - in sectors.
-			 */
-			bytes = DIV_ROUND_UP(bitmap->counts.chunks, 8);
-			if (!bitmap->mddev->bitmap_info.external)
-				bytes += sizeof(bitmap_super_t);
-			space = DIV_ROUND_UP(bytes, 512);
-			bitmap->mddev->bitmap_info.space = space;
-		}
-		chunkshift = bitmap->counts.chunkshift;
-		chunkshift--;
-		do {
-			/* 'chunkshift' is shift from block size to chunk size */
-			chunkshift++;
-			chunks = DIV_ROUND_UP_SECTOR_T(blocks, 1 << chunkshift);
-			bytes = DIV_ROUND_UP(chunks, 8);
-			if (!bitmap->mddev->bitmap_info.external)
-				bytes += sizeof(bitmap_super_t);
-		} while (bytes > (space << 9));
-	} else
-		chunkshift = ffz(~chunksize) - BITMAP_BLOCK_SHIFT;
-
-	chunks = DIV_ROUND_UP_SECTOR_T(blocks, 1 << chunkshift);
-	memset(&store, 0, sizeof(store));
-	if (bitmap->mddev->bitmap_info.offset || bitmap->mddev->bitmap_info.file)
-		ret = bitmap_storage_alloc(&store, chunks,
-					   !bitmap->mddev->bitmap_info.external);
-	if (ret)
-		goto err;
-
-	pages = DIV_ROUND_UP(chunks, PAGE_COUNTER_RATIO);
-
-	new_bp = kzalloc(pages * sizeof(*new_bp), GFP_KERNEL);
-	ret = -ENOMEM;
-	if (!new_bp) {
-		bitmap_file_unmap(&store);
-		goto err;
-	}
-
-	if (!init)
-		bitmap->mddev->pers->quiesce(bitmap->mddev, 1);
-
-	store.file = bitmap->storage.file;
-	bitmap->storage.file = NULL;
-
-	if (store.sb_page && bitmap->storage.sb_page)
-		memcpy(page_address(store.sb_page),
-		       page_address(bitmap->storage.sb_page),
-		       sizeof(bitmap_super_t));
-	bitmap_file_unmap(&bitmap->storage);
-	bitmap->storage = store;
-
-	old_counts = bitmap->counts;
-	bitmap->counts.bp = new_bp;
-	bitmap->counts.pages = pages;
-	bitmap->counts.missing_pages = pages;
-	bitmap->counts.chunkshift = chunkshift;
-	bitmap->counts.chunks = chunks;
-	bitmap->mddev->bitmap_info.chunksize = 1 << (chunkshift +
-						     BITMAP_BLOCK_SHIFT);
-
-	blocks = min(old_counts.chunks << old_counts.chunkshift,
-		     chunks << chunkshift);
-
-	spin_lock_irq(&bitmap->counts.lock);
-	for (block = 0; block < blocks; ) {
-		bitmap_counter_t *bmc_old, *bmc_new;
-		int set;
-
-		bmc_old = bitmap_get_counter(&old_counts, block,
-					     &old_blocks, 0);
-		set = bmc_old && NEEDED(*bmc_old);
-
-		if (set) {
-			bmc_new = bitmap_get_counter(&bitmap->counts, block,
-						     &new_blocks, 1);
-			if (*bmc_new == 0) {
-				/* need to set on-disk bits too. */
-				sector_t end = block + new_blocks;
-				sector_t start = block >> chunkshift;
-				start <<= chunkshift;
-				while (start < end) {
-					bitmap_file_set_bit(bitmap, block);
-					start += 1 << chunkshift;
-				}
-				*bmc_new = 2;
-				bitmap_count_page(&bitmap->counts,
-						  block, 1);
-				bitmap_set_pending(&bitmap->counts,
-						   block);
-			}
-			*bmc_new |= NEEDED_MASK;
-			if (new_blocks < old_blocks)
-				old_blocks = new_blocks;
-		}
-		block += old_blocks;
-	}
-
-	if (!init) {
-		int i;
-		while (block < (chunks << chunkshift)) {
-			bitmap_counter_t *bmc;
-			bmc = bitmap_get_counter(&bitmap->counts, block,
-						 &new_blocks, 1);
-			if (bmc) {
-				/* new space.  It needs to be resynced, so
-				 * we set NEEDED_MASK.
-				 */
-				if (*bmc == 0) {
-					*bmc = NEEDED_MASK | 2;
-					bitmap_count_page(&bitmap->counts,
-							  block, 1);
-					bitmap_set_pending(&bitmap->counts,
-							   block);
-				}
-			}
-			block += new_blocks;
-		}
-		for (i = 0; i < bitmap->storage.file_pages; i++)
-			set_page_attr(bitmap, i, BITMAP_PAGE_DIRTY);
-	}
-	spin_unlock_irq(&bitmap->counts.lock);
-
-	if (!init) {
-		bitmap_unplug(bitmap);
-		bitmap->mddev->pers->quiesce(bitmap->mddev, 0);
-	}
-	ret = 0;
-err:
-	return ret;
-}
-EXPORT_SYMBOL_GPL(bitmap_resize);
-
-static ssize_t
-location_show(struct mddev *mddev, char *page)
-{
-	ssize_t len;
-	if (mddev->bitmap_info.file)
-		len = sprintf(page, "file");
-	else if (mddev->bitmap_info.offset)
-		len = sprintf(page, "%+lld", (long long)mddev->bitmap_info.offset);
-	else
-		len = sprintf(page, "none");
-	len += sprintf(page+len, "\n");
-	return len;
-}
-
-static ssize_t
-location_store(struct mddev *mddev, const char *buf, size_t len)
-{
-
-	if (mddev->pers) {
-		if (!mddev->pers->quiesce)
-			return -EBUSY;
-		if (mddev->recovery || mddev->sync_thread)
-			return -EBUSY;
-	}
-
-	if (mddev->bitmap || mddev->bitmap_info.file ||
-	    mddev->bitmap_info.offset) {
-		/* bitmap already configured.  Only option is to clear it */
-		if (strncmp(buf, "none", 4) != 0)
-			return -EBUSY;
-		if (mddev->pers) {
-			mddev->pers->quiesce(mddev, 1);
-			bitmap_destroy(mddev);
-			mddev->pers->quiesce(mddev, 0);
-		}
-		mddev->bitmap_info.offset = 0;
-		if (mddev->bitmap_info.file) {
-			struct file *f = mddev->bitmap_info.file;
-			mddev->bitmap_info.file = NULL;
-			restore_bitmap_write_access(f);
-			fput(f);
-		}
-	} else {
-		/* No bitmap, OK to set a location */
-		long long offset;
-		if (strncmp(buf, "none", 4) == 0)
-			/* nothing to be done */;
-		else if (strncmp(buf, "file:", 5) == 0) {
-			/* Not supported yet */
-			return -EINVAL;
-		} else {
-			int rv;
-			if (buf[0] == '+')
-				rv = strict_strtoll(buf+1, 10, &offset);
-			else
-				rv = strict_strtoll(buf, 10, &offset);
-			if (rv)
-				return rv;
-			if (offset == 0)
-				return -EINVAL;
-			if (mddev->bitmap_info.external == 0 &&
-			    mddev->major_version == 0 &&
-			    offset != mddev->bitmap_info.default_offset)
-				return -EINVAL;
-			mddev->bitmap_info.offset = offset;
-			if (mddev->pers) {
-				mddev->pers->quiesce(mddev, 1);
-				rv = bitmap_create(mddev);
-				if (!rv)
-					rv = bitmap_load(mddev);
-				if (rv) {
-					bitmap_destroy(mddev);
-					mddev->bitmap_info.offset = 0;
-				}
-				mddev->pers->quiesce(mddev, 0);
-				if (rv)
-					return rv;
-			}
-		}
-	}
-	if (!mddev->external) {
-		/* Ensure new bitmap info is stored in
-		 * metadata promptly.
-		 */
-		set_bit(MD_CHANGE_DEVS, &mddev->flags);
-		md_wakeup_thread(mddev->thread);
-	}
-	return len;
-}
-
-static struct md_sysfs_entry bitmap_location =
-__ATTR(location, S_IRUGO|S_IWUSR, location_show, location_store);
-
-/* 'bitmap/space' is the space available at 'location' for the
- * bitmap.  This allows the kernel to know when it is safe to
- * resize the bitmap to match a resized array.
- */
-static ssize_t
-space_show(struct mddev *mddev, char *page)
-{
-	return sprintf(page, "%lu\n", mddev->bitmap_info.space);
-}
-
-static ssize_t
-space_store(struct mddev *mddev, const char *buf, size_t len)
-{
-	unsigned long sectors;
-	int rv;
-
-	rv = kstrtoul(buf, 10, &sectors);
-	if (rv)
-		return rv;
-
-	if (sectors == 0)
-		return -EINVAL;
-
-	if (mddev->bitmap &&
-	    sectors < (mddev->bitmap->storage.bytes + 511) >> 9)
-		return -EFBIG; /* Bitmap is too big for this small space */
-
-	/* could make sure it isn't too big, but that isn't really
-	 * needed - user-space should be careful.
-	 */
-	mddev->bitmap_info.space = sectors;
-	return len;
-}
-
-static struct md_sysfs_entry bitmap_space =
-__ATTR(space, S_IRUGO|S_IWUSR, space_show, space_store);
-
-static ssize_t
-timeout_show(struct mddev *mddev, char *page)
-{
-	ssize_t len;
-	unsigned long secs = mddev->bitmap_info.daemon_sleep / HZ;
-	unsigned long jifs = mddev->bitmap_info.daemon_sleep % HZ;
-
-	len = sprintf(page, "%lu", secs);
-	if (jifs)
-		len += sprintf(page+len, ".%03u", jiffies_to_msecs(jifs));
-	len += sprintf(page+len, "\n");
-	return len;
-}
-
-static ssize_t
-timeout_store(struct mddev *mddev, const char *buf, size_t len)
-{
-	/* timeout can be set at any time */
-	unsigned long timeout;
-	int rv = strict_strtoul_scaled(buf, &timeout, 4);
-	if (rv)
-		return rv;
-
-	/* just to make sure we don't overflow... */
-	if (timeout >= LONG_MAX / HZ)
-		return -EINVAL;
-
-	timeout = timeout * HZ / 10000;
-
-	if (timeout >= MAX_SCHEDULE_TIMEOUT)
-		timeout = MAX_SCHEDULE_TIMEOUT-1;
-	if (timeout < 1)
-		timeout = 1;
-	mddev->bitmap_info.daemon_sleep = timeout;
-	if (mddev->thread) {
-		/* if thread->timeout is MAX_SCHEDULE_TIMEOUT, then
-		 * the bitmap is all clean and we don't need to
-		 * adjust the timeout right now
-		 */
-		if (mddev->thread->timeout < MAX_SCHEDULE_TIMEOUT) {
-			mddev->thread->timeout = timeout;
-			md_wakeup_thread(mddev->thread);
-		}
-	}
-	return len;
-}
-
-static struct md_sysfs_entry bitmap_timeout =
-__ATTR(time_base, S_IRUGO|S_IWUSR, timeout_show, timeout_store);
-
-static ssize_t
-backlog_show(struct mddev *mddev, char *page)
-{
-	return sprintf(page, "%lu\n", mddev->bitmap_info.max_write_behind);
-}
-
-static ssize_t
-backlog_store(struct mddev *mddev, const char *buf, size_t len)
-{
-	unsigned long backlog;
-	int rv = strict_strtoul(buf, 10, &backlog);
-	if (rv)
-		return rv;
-	if (backlog > COUNTER_MAX)
-		return -EINVAL;
-	mddev->bitmap_info.max_write_behind = backlog;
-	return len;
-}
-
-static struct md_sysfs_entry bitmap_backlog =
-__ATTR(backlog, S_IRUGO|S_IWUSR, backlog_show, backlog_store);
-
-static ssize_t
-chunksize_show(struct mddev *mddev, char *page)
-{
-	return sprintf(page, "%lu\n", mddev->bitmap_info.chunksize);
-}
-
-static ssize_t
-chunksize_store(struct mddev *mddev, const char *buf, size_t len)
-{
-	/* Can only be changed when no bitmap is active */
-	int rv;
-	unsigned long csize;
-	if (mddev->bitmap)
-		return -EBUSY;
-	rv = strict_strtoul(buf, 10, &csize);
-	if (rv)
-		return rv;
-	if (csize < 512 ||
-	    !is_power_of_2(csize))
-		return -EINVAL;
-	mddev->bitmap_info.chunksize = csize;
-	return len;
-}
-
-static struct md_sysfs_entry bitmap_chunksize =
-__ATTR(chunksize, S_IRUGO|S_IWUSR, chunksize_show, chunksize_store);
-
-static ssize_t metadata_show(struct mddev *mddev, char *page)
-{
-	return sprintf(page, "%s\n", (mddev->bitmap_info.external
-				      ? "external" : "internal"));
-}
-
-static ssize_t metadata_store(struct mddev *mddev, const char *buf, size_t len)
-{
-	if (mddev->bitmap ||
-	    mddev->bitmap_info.file ||
-	    mddev->bitmap_info.offset)
-		return -EBUSY;
-	if (strncmp(buf, "external", 8) == 0)
-		mddev->bitmap_info.external = 1;
-	else if (strncmp(buf, "internal", 8) == 0)
-		mddev->bitmap_info.external = 0;
-	else
-		return -EINVAL;
-	return len;
-}
-
-static struct md_sysfs_entry bitmap_metadata =
-__ATTR(metadata, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
-
-static ssize_t can_clear_show(struct mddev *mddev, char *page)
-{
-	int len;
-	if (mddev->bitmap)
-		len = sprintf(page, "%s\n", (mddev->bitmap->need_sync ?
-					     "false" : "true"));
-	else
-		len = sprintf(page, "\n");
-	return len;
-}
-
-static ssize_t can_clear_store(struct mddev *mddev, const char *buf, size_t len)
-{
-	if (mddev->bitmap == NULL)
-		return -ENOENT;
-	if (strncmp(buf, "false", 5) == 0)
-		mddev->bitmap->need_sync = 1;
-	else if (strncmp(buf, "true", 4) == 0) {
-		if (mddev->degraded)
-			return -EBUSY;
-		mddev->bitmap->need_sync = 0;
-	} else
-		return -EINVAL;
-	return len;
-}
-
-static struct md_sysfs_entry bitmap_can_clear =
-__ATTR(can_clear, S_IRUGO|S_IWUSR, can_clear_show, can_clear_store);
-
-static ssize_t
-behind_writes_used_show(struct mddev *mddev, char *page)
-{
-	if (mddev->bitmap == NULL)
-		return sprintf(page, "0\n");
-	return sprintf(page, "%lu\n",
-		       mddev->bitmap->behind_writes_used);
-}
-
-static ssize_t
-behind_writes_used_reset(struct mddev *mddev, const char *buf, size_t len)
-{
-	if (mddev->bitmap)
-		mddev->bitmap->behind_writes_used = 0;
-	return len;
-}
-
-static struct md_sysfs_entry max_backlog_used =
-__ATTR(max_backlog_used, S_IRUGO | S_IWUSR,
-       behind_writes_used_show, behind_writes_used_reset);
-
-static struct attribute *md_bitmap_attrs[] = {
-	&bitmap_location.attr,
-	&bitmap_space.attr,
-	&bitmap_timeout.attr,
-	&bitmap_backlog.attr,
-	&bitmap_chunksize.attr,
-	&bitmap_metadata.attr,
-	&bitmap_can_clear.attr,
-	&max_backlog_used.attr,
-	NULL
-};
-struct attribute_group md_bitmap_group = {
-	.name = "bitmap",
-	.attrs = md_bitmap_attrs,
-};
-
-
---h31gzZEtNLTqOjlF--
+Hi Stanislav,
+
+FYI, there are new compile warnings show up in
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gorcunov/linux-cr.git crtools-3.6-rc5
+head:   36cd0264fd0ce1a3491a59e61c80a990a3107859
+commit: c7335f83a6e766dff59067ddf2b5d4842c51dd9f [3/32] ipc: add new SHM_SET command for sys_shmctl() call
+config: x86_64-randconfig-s351 (attached as .config)
+
+All error/warnings:
+
+ipc/shm.c: In function 'shmctl_down':
+ipc/shm.c:751:25: warning: the omitted middle operand in ?: will always be 'true', suggest explicit middle operand [-Wparentheses]
+
+vim +751 ipc/shm.c
+   741		struct shmid64_ds shmid64;
+   742		struct shmid_kernel *shp;
+   743		int err;
+   744	
+   745		if (cmd == IPC_SET || cmd == SHM_SET) {
+   746			if (copy_shmid_from_user(&shmid64, buf, version))
+   747				return -EFAULT;
+   748		}
+   749	
+   750		ipcp = ipcctl_pre_down(ns, &shm_ids(ns), shmid,
+ > 751				       (cmd != SHM_SET) ? : IPC_SET,
+   752				       &shmid64.shm_perm, 0);
+   753		if (IS_ERR(ipcp))
+   754			return PTR_ERR(ipcp);
+   755	
+   756		shp = container_of(ipcp, struct shmid_kernel, shm_perm);
+   757	
+   758		err = security_shm_shmctl(shp, cmd);
+   759		if (err)
+   760			goto out_unlock;
+   761		switch (cmd) {
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
+
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=".config"
+
+#
+# Automatically generated file; DO NOT EDIT.
+# Linux/x86_64 3.6.0-rc5 Kernel Configuration
+#
+CONFIG_64BIT=y
+# CONFIG_X86_32 is not set
+CONFIG_X86_64=y
+CONFIG_X86=y
+CONFIG_INSTRUCTION_DECODER=y
+CONFIG_OUTPUT_FORMAT="elf64-x86-64"
+CONFIG_ARCH_DEFCONFIG="arch/x86/configs/x86_64_defconfig"
+CONFIG_LOCKDEP_SUPPORT=y
+CONFIG_STACKTRACE_SUPPORT=y
+CONFIG_HAVE_LATENCYTOP_SUPPORT=y
+CONFIG_MMU=y
+CONFIG_NEED_DMA_MAP_STATE=y
+CONFIG_NEED_SG_DMA_LENGTH=y
+# CONFIG_GENERIC_ISA_DMA is not set
+CONFIG_GENERIC_BUG=y
+CONFIG_GENERIC_BUG_RELATIVE_POINTERS=y
+CONFIG_GENERIC_HWEIGHT=y
+CONFIG_GENERIC_GPIO=y
+# CONFIG_ARCH_MAY_HAVE_PC_FDC is not set
+# CONFIG_RWSEM_GENERIC_SPINLOCK is not set
+CONFIG_RWSEM_XCHGADD_ALGORITHM=y
+CONFIG_GENERIC_CALIBRATE_DELAY=y
+CONFIG_ARCH_HAS_CPU_RELAX=y
+CONFIG_ARCH_HAS_DEFAULT_IDLE=y
+CONFIG_ARCH_HAS_CACHE_LINE_SIZE=y
+CONFIG_ARCH_HAS_CPU_AUTOPROBE=y
+CONFIG_HAVE_SETUP_PER_CPU_AREA=y
+CONFIG_NEED_PER_CPU_EMBED_FIRST_CHUNK=y
+CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK=y
+CONFIG_ARCH_HIBERNATION_POSSIBLE=y
+CONFIG_ARCH_SUSPEND_POSSIBLE=y
+CONFIG_ZONE_DMA32=y
+CONFIG_AUDIT_ARCH=y
+CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING=y
+CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=y
+CONFIG_X86_64_SMP=y
+CONFIG_X86_HT=y
+CONFIG_ARCH_HWEIGHT_CFLAGS="-fcall-saved-rdi -fcall-saved-rsi -fcall-saved-rdx -fcall-saved-rcx -fcall-saved-r8 -fcall-saved-r9 -fcall-saved-r10 -fcall-saved-r11"
+CONFIG_ARCH_SUPPORTS_UPROBES=y
+CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
+CONFIG_HAVE_IRQ_WORK=y
+CONFIG_IRQ_WORK=y
+CONFIG_BUILDTIME_EXTABLE_SORT=y
+
+#
+# General setup
+#
+# CONFIG_EXPERIMENTAL is not set
+CONFIG_INIT_ENV_ARG_LIMIT=32
+CONFIG_CROSS_COMPILE=""
+CONFIG_LOCALVERSION=""
+CONFIG_LOCALVERSION_AUTO=y
+CONFIG_HAVE_KERNEL_GZIP=y
+CONFIG_HAVE_KERNEL_BZIP2=y
+CONFIG_HAVE_KERNEL_LZMA=y
+CONFIG_HAVE_KERNEL_XZ=y
+CONFIG_HAVE_KERNEL_LZO=y
+CONFIG_KERNEL_GZIP=y
+# CONFIG_KERNEL_BZIP2 is not set
+# CONFIG_KERNEL_LZMA is not set
+# CONFIG_KERNEL_XZ is not set
+# CONFIG_KERNEL_LZO is not set
+CONFIG_DEFAULT_HOSTNAME="(none)"
+CONFIG_SYSVIPC=y
+CONFIG_BSD_PROCESS_ACCT=y
+# CONFIG_BSD_PROCESS_ACCT_V3 is not set
+# CONFIG_FHANDLE is not set
+CONFIG_TASKSTATS=y
+# CONFIG_TASK_DELAY_ACCT is not set
+# CONFIG_TASK_XACCT is not set
+CONFIG_AUDIT=y
+# CONFIG_AUDITSYSCALL is not set
+# CONFIG_AUDIT_LOGINUID_IMMUTABLE is not set
+CONFIG_HAVE_GENERIC_HARDIRQS=y
+
+#
+# IRQ subsystem
+#
+CONFIG_GENERIC_HARDIRQS=y
+CONFIG_GENERIC_IRQ_PROBE=y
+CONFIG_GENERIC_IRQ_SHOW=y
+CONFIG_GENERIC_PENDING_IRQ=y
+CONFIG_IRQ_DOMAIN=y
+# CONFIG_IRQ_DOMAIN_DEBUG is not set
+CONFIG_IRQ_FORCED_THREADING=y
+CONFIG_SPARSE_IRQ=y
+CONFIG_CLOCKSOURCE_WATCHDOG=y
+CONFIG_ARCH_CLOCKSOURCE_DATA=y
+CONFIG_GENERIC_TIME_VSYSCALL=y
+CONFIG_GENERIC_CLOCKEVENTS=y
+CONFIG_GENERIC_CLOCKEVENTS_BUILD=y
+CONFIG_GENERIC_CLOCKEVENTS_BROADCAST=y
+CONFIG_GENERIC_CLOCKEVENTS_MIN_ADJUST=y
+CONFIG_GENERIC_CMOS_UPDATE=y
+
+#
+# Timers subsystem
+#
+CONFIG_TICK_ONESHOT=y
+CONFIG_NO_HZ=y
+CONFIG_HIGH_RES_TIMERS=y
+
+#
+# RCU Subsystem
+#
+CONFIG_TREE_PREEMPT_RCU=y
+CONFIG_PREEMPT_RCU=y
+CONFIG_RCU_FANOUT=64
+CONFIG_RCU_FANOUT_LEAF=16
+# CONFIG_RCU_FANOUT_EXACT is not set
+CONFIG_RCU_FAST_NO_HZ=y
+CONFIG_TREE_RCU_TRACE=y
+# CONFIG_RCU_BOOST is not set
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+CONFIG_LOG_BUF_SHIFT=17
+CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
+CONFIG_CGROUPS=y
+# CONFIG_CGROUP_DEBUG is not set
+# CONFIG_CGROUP_FREEZER is not set
+# CONFIG_CGROUP_DEVICE is not set
+CONFIG_CPUSETS=y
+# CONFIG_PROC_PID_CPUSET is not set
+# CONFIG_CGROUP_CPUACCT is not set
+CONFIG_RESOURCE_COUNTERS=y
+# CONFIG_MEMCG is not set
+# CONFIG_CGROUP_PERF is not set
+CONFIG_CGROUP_SCHED=y
+CONFIG_FAIR_GROUP_SCHED=y
+CONFIG_CHECKPOINT_RESTORE=y
+# CONFIG_NAMESPACES is not set
+CONFIG_SCHED_AUTOGROUP=y
+# CONFIG_RELAY is not set
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_INITRAMFS_SOURCE=""
+CONFIG_RD_GZIP=y
+# CONFIG_RD_BZIP2 is not set
+# CONFIG_RD_LZMA is not set
+# CONFIG_RD_XZ is not set
+# CONFIG_RD_LZO is not set
+# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+CONFIG_ANON_INODES=y
+CONFIG_EXPERT=y
+# CONFIG_UID16 is not set
+CONFIG_KALLSYMS=y
+CONFIG_KALLSYMS_ALL=y
+CONFIG_HOTPLUG=y
+CONFIG_PRINTK=y
+CONFIG_BUG=y
+CONFIG_ELF_CORE=y
+CONFIG_PCSPKR_PLATFORM=y
+CONFIG_HAVE_PCSPKR_PLATFORM=y
+CONFIG_BASE_FULL=y
+CONFIG_FUTEX=y
+# CONFIG_EPOLL is not set
+CONFIG_SIGNALFD=y
+CONFIG_TIMERFD=y
+CONFIG_EVENTFD=y
+CONFIG_SHMEM=y
+# CONFIG_AIO is not set
+# CONFIG_EMBEDDED is not set
+CONFIG_HAVE_PERF_EVENTS=y
+CONFIG_PERF_USE_VMALLOC=y
+
+#
+# Kernel Performance Events And Counters
+#
+CONFIG_PERF_EVENTS=y
+CONFIG_DEBUG_PERF_USE_VMALLOC=y
+CONFIG_VM_EVENT_COUNTERS=y
+CONFIG_PCI_QUIRKS=y
+CONFIG_COMPAT_BRK=y
+# CONFIG_SLAB is not set
+CONFIG_SLUB=y
+# CONFIG_SLOB is not set
+# CONFIG_PROFILING is not set
+CONFIG_HAVE_OPROFILE=y
+CONFIG_OPROFILE_NMI_TIMER=y
+# CONFIG_KPROBES is not set
+# CONFIG_JUMP_LABEL is not set
+CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
+CONFIG_HAVE_IOREMAP_PROT=y
+CONFIG_HAVE_KPROBES=y
+CONFIG_HAVE_KRETPROBES=y
+CONFIG_HAVE_OPTPROBES=y
+CONFIG_HAVE_ARCH_TRACEHOOK=y
+CONFIG_HAVE_DMA_ATTRS=y
+CONFIG_USE_GENERIC_SMP_HELPERS=y
+CONFIG_GENERIC_SMP_IDLE_THREAD=y
+CONFIG_HAVE_REGS_AND_STACK_ACCESS_API=y
+CONFIG_HAVE_DMA_API_DEBUG=y
+CONFIG_HAVE_HW_BREAKPOINT=y
+CONFIG_HAVE_MIXED_BREAKPOINTS_REGS=y
+CONFIG_HAVE_USER_RETURN_NOTIFIER=y
+CONFIG_HAVE_PERF_EVENTS_NMI=y
+CONFIG_HAVE_ARCH_JUMP_LABEL=y
+CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
+CONFIG_HAVE_ALIGNED_STRUCT_PAGE=y
+CONFIG_HAVE_CMPXCHG_LOCAL=y
+CONFIG_HAVE_CMPXCHG_DOUBLE=y
+CONFIG_ARCH_WANT_COMPAT_IPC_PARSE_VERSION=y
+CONFIG_ARCH_WANT_OLD_COMPAT_IPC=y
+CONFIG_HAVE_ARCH_SECCOMP_FILTER=y
+CONFIG_SECCOMP_FILTER=y
+
+#
+# GCOV-based kernel profiling
+#
+# CONFIG_GCOV_KERNEL is not set
+# CONFIG_HAVE_GENERIC_DMA_COHERENT is not set
+CONFIG_RT_MUTEXES=y
+CONFIG_BASE_SMALL=0
+CONFIG_MODULES=y
+CONFIG_MODULE_FORCE_LOAD=y
+CONFIG_MODULE_UNLOAD=y
+# CONFIG_MODVERSIONS is not set
+CONFIG_MODULE_SRCVERSION_ALL=y
+CONFIG_STOP_MACHINE=y
+# CONFIG_BLOCK is not set
+# CONFIG_INLINE_SPIN_TRYLOCK is not set
+# CONFIG_INLINE_SPIN_TRYLOCK_BH is not set
+# CONFIG_INLINE_SPIN_LOCK is not set
+# CONFIG_INLINE_SPIN_LOCK_BH is not set
+# CONFIG_INLINE_SPIN_LOCK_IRQ is not set
+# CONFIG_INLINE_SPIN_LOCK_IRQSAVE is not set
+CONFIG_UNINLINE_SPIN_UNLOCK=y
+# CONFIG_INLINE_SPIN_UNLOCK_BH is not set
+# CONFIG_INLINE_SPIN_UNLOCK_IRQ is not set
+# CONFIG_INLINE_SPIN_UNLOCK_IRQRESTORE is not set
+# CONFIG_INLINE_READ_TRYLOCK is not set
+# CONFIG_INLINE_READ_LOCK is not set
+# CONFIG_INLINE_READ_LOCK_BH is not set
+# CONFIG_INLINE_READ_LOCK_IRQ is not set
+# CONFIG_INLINE_READ_LOCK_IRQSAVE is not set
+# CONFIG_INLINE_READ_UNLOCK is not set
+# CONFIG_INLINE_READ_UNLOCK_BH is not set
+# CONFIG_INLINE_READ_UNLOCK_IRQ is not set
+# CONFIG_INLINE_READ_UNLOCK_IRQRESTORE is not set
+# CONFIG_INLINE_WRITE_TRYLOCK is not set
+# CONFIG_INLINE_WRITE_LOCK is not set
+# CONFIG_INLINE_WRITE_LOCK_BH is not set
+# CONFIG_INLINE_WRITE_LOCK_IRQ is not set
+# CONFIG_INLINE_WRITE_LOCK_IRQSAVE is not set
+# CONFIG_INLINE_WRITE_UNLOCK is not set
+# CONFIG_INLINE_WRITE_UNLOCK_BH is not set
+# CONFIG_INLINE_WRITE_UNLOCK_IRQ is not set
+# CONFIG_INLINE_WRITE_UNLOCK_IRQRESTORE is not set
+# CONFIG_MUTEX_SPIN_ON_OWNER is not set
+# CONFIG_FREEZER is not set
+
+#
+# Processor type and features
+#
+CONFIG_ZONE_DMA=y
+CONFIG_SMP=y
+# CONFIG_X86_MPPARSE is not set
+CONFIG_X86_EXTENDED_PLATFORM=y
+# CONFIG_X86_VSMP is not set
+CONFIG_X86_SUPPORTS_MEMORY_FAILURE=y
+# CONFIG_SCHED_OMIT_FRAME_POINTER is not set
+CONFIG_PARAVIRT_GUEST=y
+# CONFIG_PARAVIRT_TIME_ACCOUNTING is not set
+# CONFIG_XEN is not set
+# CONFIG_XEN_PRIVILEGED_GUEST is not set
+# CONFIG_KVM_CLOCK is not set
+CONFIG_KVM_GUEST=y
+CONFIG_PARAVIRT=y
+# CONFIG_PARAVIRT_DEBUG is not set
+CONFIG_NO_BOOTMEM=y
+CONFIG_MEMTEST=y
+# CONFIG_MK8 is not set
+# CONFIG_MPSC is not set
+# CONFIG_MCORE2 is not set
+# CONFIG_MATOM is not set
+CONFIG_GENERIC_CPU=y
+CONFIG_X86_INTERNODE_CACHE_SHIFT=6
+CONFIG_X86_CMPXCHG=y
+CONFIG_X86_L1_CACHE_SHIFT=6
+CONFIG_X86_XADD=y
+CONFIG_X86_WP_WORKS_OK=y
+CONFIG_X86_TSC=y
+CONFIG_X86_CMPXCHG64=y
+CONFIG_X86_CMOV=y
+CONFIG_X86_MINIMUM_CPU_FAMILY=64
+CONFIG_X86_DEBUGCTLMSR=y
+# CONFIG_PROCESSOR_SELECT is not set
+CONFIG_CPU_SUP_INTEL=y
+CONFIG_CPU_SUP_AMD=y
+CONFIG_CPU_SUP_CENTAUR=y
+CONFIG_HPET_TIMER=y
+CONFIG_HPET_EMULATE_RTC=y
+# CONFIG_DMI is not set
+# CONFIG_GART_IOMMU is not set
+CONFIG_SWIOTLB=y
+CONFIG_IOMMU_HELPER=y
+CONFIG_NR_CPUS=8
+# CONFIG_SCHED_SMT is not set
+# CONFIG_SCHED_MC is not set
+# CONFIG_IRQ_TIME_ACCOUNTING is not set
+# CONFIG_PREEMPT_NONE is not set
+# CONFIG_PREEMPT_VOLUNTARY is not set
+CONFIG_PREEMPT=y
+CONFIG_PREEMPT_COUNT=y
+CONFIG_X86_LOCAL_APIC=y
+CONFIG_X86_IO_APIC=y
+CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
+CONFIG_X86_MCE=y
+CONFIG_X86_MCE_INTEL=y
+CONFIG_X86_MCE_AMD=y
+CONFIG_X86_MCE_THRESHOLD=y
+# CONFIG_X86_MCE_INJECT is not set
+CONFIG_X86_THERMAL_VECTOR=y
+# CONFIG_I8K is not set
+# CONFIG_MICROCODE is not set
+CONFIG_X86_MSR=m
+CONFIG_X86_CPUID=m
+CONFIG_ARCH_PHYS_ADDR_T_64BIT=y
+CONFIG_ARCH_DMA_ADDR_T_64BIT=y
+CONFIG_DIRECT_GBPAGES=y
+CONFIG_NUMA=y
+CONFIG_AMD_NUMA=y
+# CONFIG_X86_64_ACPI_NUMA is not set
+# CONFIG_NUMA_EMU is not set
+CONFIG_NODES_SHIFT=6
+CONFIG_ARCH_SPARSEMEM_ENABLE=y
+CONFIG_ARCH_SPARSEMEM_DEFAULT=y
+CONFIG_ARCH_SELECT_MEMORY_MODEL=y
+CONFIG_ARCH_PROC_KCORE_TEXT=y
+CONFIG_ILLEGAL_POINTER_VALUE=0xdead000000000000
+CONFIG_SELECT_MEMORY_MODEL=y
+CONFIG_SPARSEMEM_MANUAL=y
+CONFIG_SPARSEMEM=y
+CONFIG_NEED_MULTIPLE_NODES=y
+CONFIG_HAVE_MEMORY_PRESENT=y
+CONFIG_SPARSEMEM_EXTREME=y
+CONFIG_SPARSEMEM_VMEMMAP_ENABLE=y
+CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER=y
+CONFIG_SPARSEMEM_VMEMMAP=y
+CONFIG_HAVE_MEMBLOCK=y
+CONFIG_HAVE_MEMBLOCK_NODE_MAP=y
+CONFIG_ARCH_DISCARD_MEMBLOCK=y
+# CONFIG_MEMORY_HOTPLUG is not set
+CONFIG_PAGEFLAGS_EXTENDED=y
+CONFIG_SPLIT_PTLOCK_CPUS=999999
+CONFIG_COMPACTION=y
+CONFIG_MIGRATION=y
+CONFIG_PHYS_ADDR_T_64BIT=y
+CONFIG_ZONE_DMA_FLAG=1
+CONFIG_VIRT_TO_BUS=y
+CONFIG_KSM=y
+CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
+CONFIG_ARCH_SUPPORTS_MEMORY_FAILURE=y
+# CONFIG_MEMORY_FAILURE is not set
+CONFIG_TRANSPARENT_HUGEPAGE=y
+CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=y
+# CONFIG_TRANSPARENT_HUGEPAGE_MADVISE is not set
+# CONFIG_CROSS_MEMORY_ATTACH is not set
+CONFIG_CLEANCACHE=y
+CONFIG_X86_CHECK_BIOS_CORRUPTION=y
+CONFIG_X86_BOOTPARAM_MEMORY_CORRUPTION_CHECK=y
+CONFIG_X86_RESERVE_LOW=64
+CONFIG_MTRR=y
+CONFIG_MTRR_SANITIZER=y
+CONFIG_MTRR_SANITIZER_ENABLE_DEFAULT=0
+CONFIG_MTRR_SANITIZER_SPARE_REG_NR_DEFAULT=1
+CONFIG_X86_PAT=y
+CONFIG_ARCH_USES_PG_UNCACHED=y
+# CONFIG_ARCH_RANDOM is not set
+CONFIG_EFI=y
+CONFIG_EFI_STUB=y
+CONFIG_SECCOMP=y
+# CONFIG_CC_STACKPROTECTOR is not set
+# CONFIG_HZ_100 is not set
+CONFIG_HZ_250=y
+# CONFIG_HZ_300 is not set
+# CONFIG_HZ_1000 is not set
+CONFIG_HZ=250
+CONFIG_SCHED_HRTICK=y
+# CONFIG_KEXEC is not set
+# CONFIG_CRASH_DUMP is not set
+CONFIG_PHYSICAL_START=0x1000000
+CONFIG_RELOCATABLE=y
+CONFIG_PHYSICAL_ALIGN=0x1000000
+# CONFIG_HOTPLUG_CPU is not set
+# CONFIG_COMPAT_VDSO is not set
+# CONFIG_CMDLINE_BOOL is not set
+CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG=y
+CONFIG_USE_PERCPU_NUMA_NODE_ID=y
+
+#
+# Power management and ACPI options
+#
+# CONFIG_SUSPEND is not set
+# CONFIG_PM_RUNTIME is not set
+CONFIG_ACPI=y
+CONFIG_ACPI_PROCFS=y
+CONFIG_ACPI_PROCFS_POWER=y
+CONFIG_ACPI_EC_DEBUGFS=m
+# CONFIG_ACPI_PROC_EVENT is not set
+# CONFIG_ACPI_AC is not set
+# CONFIG_ACPI_BATTERY is not set
+CONFIG_ACPI_BUTTON=m
+CONFIG_ACPI_VIDEO=m
+# CONFIG_ACPI_FAN is not set
+CONFIG_ACPI_PROCESSOR=m
+CONFIG_ACPI_THERMAL=m
+# CONFIG_ACPI_NUMA is not set
+# CONFIG_ACPI_CUSTOM_DSDT is not set
+CONFIG_ACPI_BLACKLIST_YEAR=0
+# CONFIG_ACPI_DEBUG is not set
+CONFIG_X86_PM_TIMER=y
+CONFIG_ACPI_SBS=m
+CONFIG_ACPI_HED=y
+# CONFIG_ACPI_CUSTOM_METHOD is not set
+# CONFIG_ACPI_BGRT is not set
+CONFIG_ACPI_APEI=y
+CONFIG_ACPI_APEI_GHES=y
+CONFIG_ACPI_APEI_EINJ=m
+# CONFIG_ACPI_APEI_ERST_DEBUG is not set
+CONFIG_SFI=y
+
+#
+# CPU Frequency scaling
+#
+# CONFIG_CPU_FREQ is not set
+CONFIG_CPU_IDLE=y
+CONFIG_CPU_IDLE_GOV_LADDER=y
+CONFIG_CPU_IDLE_GOV_MENU=y
+# CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED is not set
+CONFIG_INTEL_IDLE=y
+
+#
+# Memory power savings
+#
+
+#
+# Bus options (PCI etc.)
+#
+CONFIG_PCI=y
+CONFIG_PCI_DIRECT=y
+# CONFIG_PCI_MMCONFIG is not set
+CONFIG_PCI_DOMAINS=y
+# CONFIG_PCIEPORTBUS is not set
+CONFIG_ARCH_SUPPORTS_MSI=y
+CONFIG_PCI_MSI=y
+# CONFIG_PCI_DEBUG is not set
+# CONFIG_PCI_REALLOC_ENABLE_AUTO is not set
+# CONFIG_PCI_STUB is not set
+CONFIG_HT_IRQ=y
+CONFIG_PCI_ATS=y
+# CONFIG_PCI_IOV is not set
+CONFIG_PCI_PRI=y
+CONFIG_PCI_PASID=y
+# CONFIG_PCI_IOAPIC is not set
+CONFIG_PCI_LABEL=y
+# CONFIG_ISA_DMA_API is not set
+CONFIG_AMD_NB=y
+# CONFIG_PCCARD is not set
+# CONFIG_RAPIDIO is not set
+
+#
+# Executable file formats / Emulations
+#
+CONFIG_BINFMT_ELF=y
+CONFIG_COMPAT_BINFMT_ELF=y
+CONFIG_ARCH_BINFMT_ELF_RANDOMIZE_PIE=y
+CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS=y
+# CONFIG_HAVE_AOUT is not set
+CONFIG_BINFMT_MISC=m
+CONFIG_IA32_EMULATION=y
+CONFIG_IA32_AOUT=m
+CONFIG_COMPAT=y
+CONFIG_COMPAT_FOR_U64_ALIGNMENT=y
+CONFIG_SYSVIPC_COMPAT=y
+CONFIG_KEYS_COMPAT=y
+CONFIG_HAVE_TEXT_POKE_SMP=y
+CONFIG_X86_DEV_DMA_OPS=y
+CONFIG_NET=y
+
+#
+# Networking options
+#
+CONFIG_PACKET=m
+CONFIG_UNIX=y
+# CONFIG_UNIX_DIAG is not set
+# CONFIG_NET_KEY is not set
+# CONFIG_INET is not set
+CONFIG_NETWORK_SECMARK=y
+# CONFIG_NETFILTER is not set
+CONFIG_ATM=m
+# CONFIG_ATM_LANE is not set
+# CONFIG_BRIDGE is not set
+# CONFIG_VLAN_8021Q is not set
+CONFIG_DECNET=m
+CONFIG_LLC=m
+CONFIG_LLC2=m
+CONFIG_IPX=m
+# CONFIG_IPX_INTERN is not set
+# CONFIG_ATALK is not set
+# CONFIG_PHONET is not set
+CONFIG_NET_SCHED=y
+
+#
+# Queueing/Scheduling
+#
+CONFIG_NET_SCH_CBQ=m
+CONFIG_NET_SCH_HTB=m
+# CONFIG_NET_SCH_HFSC is not set
+# CONFIG_NET_SCH_ATM is not set
+CONFIG_NET_SCH_PRIO=m
+CONFIG_NET_SCH_MULTIQ=m
+# CONFIG_NET_SCH_RED is not set
+CONFIG_NET_SCH_SFB=m
+# CONFIG_NET_SCH_SFQ is not set
+# CONFIG_NET_SCH_TEQL is not set
+# CONFIG_NET_SCH_TBF is not set
+CONFIG_NET_SCH_GRED=m
+CONFIG_NET_SCH_DSMARK=m
+# CONFIG_NET_SCH_NETEM is not set
+# CONFIG_NET_SCH_DRR is not set
+CONFIG_NET_SCH_MQPRIO=m
+CONFIG_NET_SCH_CHOKE=m
+CONFIG_NET_SCH_QFQ=m
+# CONFIG_NET_SCH_CODEL is not set
+CONFIG_NET_SCH_FQ_CODEL=m
+# CONFIG_NET_SCH_INGRESS is not set
+# CONFIG_NET_SCH_PLUG is not set
+
+#
+# Classification
+#
+CONFIG_NET_CLS=y
+# CONFIG_NET_CLS_BASIC is not set
+# CONFIG_NET_CLS_TCINDEX is not set
+# CONFIG_NET_CLS_FW is not set
+CONFIG_NET_CLS_U32=m
+# CONFIG_CLS_U32_PERF is not set
+# CONFIG_CLS_U32_MARK is not set
+# CONFIG_NET_CLS_RSVP is not set
+# CONFIG_NET_CLS_RSVP6 is not set
+# CONFIG_NET_CLS_FLOW is not set
+# CONFIG_NET_CLS_CGROUP is not set
+CONFIG_NET_EMATCH=y
+CONFIG_NET_EMATCH_STACK=32
+CONFIG_NET_EMATCH_CMP=m
+CONFIG_NET_EMATCH_NBYTE=m
+# CONFIG_NET_EMATCH_U32 is not set
+# CONFIG_NET_EMATCH_META is not set
+CONFIG_NET_EMATCH_TEXT=m
+CONFIG_NET_CLS_ACT=y
+CONFIG_NET_ACT_POLICE=m
+CONFIG_NET_ACT_GACT=m
+# CONFIG_GACT_PROB is not set
+CONFIG_NET_ACT_MIRRED=m
+CONFIG_NET_ACT_NAT=m
+CONFIG_NET_ACT_PEDIT=m
+# CONFIG_NET_ACT_SIMP is not set
+# CONFIG_NET_ACT_SKBEDIT is not set
+# CONFIG_NET_CLS_IND is not set
+CONFIG_NET_SCH_FIFO=y
+CONFIG_DCB=y
+# CONFIG_DNS_RESOLVER is not set
+CONFIG_BATMAN_ADV=m
+# CONFIG_BATMAN_ADV_DEBUG is not set
+CONFIG_OPENVSWITCH=m
+CONFIG_NETPRIO_CGROUP=m
+# CONFIG_BPF_JIT is not set
+
+#
+# Network testing
+#
+# CONFIG_NET_PKTGEN is not set
+CONFIG_HAMRADIO=y
+
+#
+# Packet Radio protocols
+#
+CONFIG_AX25=m
+CONFIG_AX25_DAMA_SLAVE=y
+# CONFIG_NETROM is not set
+# CONFIG_ROSE is not set
+
+#
+# AX.25 network device drivers
+#
+CONFIG_MKISS=m
+CONFIG_6PACK=m
+CONFIG_BPQETHER=m
+CONFIG_BAYCOM_SER_FDX=m
+# CONFIG_BAYCOM_SER_HDX is not set
+# CONFIG_BAYCOM_PAR is not set
+# CONFIG_YAM is not set
+# CONFIG_CAN is not set
+CONFIG_IRDA=m
+
+#
+# IrDA protocols
+#
+# CONFIG_IRLAN is not set
+# CONFIG_IRCOMM is not set
+# CONFIG_IRDA_ULTRA is not set
+
+#
+# IrDA options
+#
+# CONFIG_IRDA_CACHE_LAST_LSAP is not set
+# CONFIG_IRDA_FAST_RR is not set
+CONFIG_IRDA_DEBUG=y
+
+#
+# Infrared-port device drivers
+#
+
+#
+# SIR device drivers
+#
+# CONFIG_IRTTY_SIR is not set
+
+#
+# Dongle support
+#
+
+#
+# FIR device drivers
+#
+CONFIG_BT=m
+CONFIG_BT_RFCOMM=m
+# CONFIG_BT_RFCOMM_TTY is not set
+# CONFIG_BT_BNEP is not set
+# CONFIG_BT_HIDP is not set
+
+#
+# Bluetooth device drivers
+#
+# CONFIG_BT_HCIUART is not set
+CONFIG_BT_HCIVHCI=m
+CONFIG_BT_MRVL=m
+# CONFIG_BT_WILINK is not set
+# CONFIG_WIRELESS is not set
+# CONFIG_WIMAX is not set
+CONFIG_RFKILL=m
+CONFIG_RFKILL_LEDS=y
+# CONFIG_RFKILL_INPUT is not set
+# CONFIG_NET_9P is not set
+CONFIG_CAIF=m
+# CONFIG_CAIF_DEBUG is not set
+# CONFIG_CAIF_NETDEV is not set
+# CONFIG_CAIF_USB is not set
+CONFIG_HAVE_BPF_JIT=y
+
+#
+# Device Drivers
+#
+
+#
+# Generic Driver Options
+#
+CONFIG_UEVENT_HELPER_PATH=""
+# CONFIG_DEVTMPFS is not set
+CONFIG_STANDALONE=y
+# CONFIG_PREVENT_FIRMWARE_BUILD is not set
+CONFIG_FW_LOADER=m
+CONFIG_FIRMWARE_IN_KERNEL=y
+CONFIG_EXTRA_FIRMWARE=""
+CONFIG_DEBUG_DRIVER=y
+# CONFIG_DEBUG_DEVRES is not set
+# CONFIG_SYS_HYPERVISOR is not set
+# CONFIG_GENERIC_CPU_DEVICES is not set
+# CONFIG_CONNECTOR is not set
+# CONFIG_MTD is not set
+CONFIG_PARPORT=m
+# CONFIG_PARPORT_PC is not set
+# CONFIG_PARPORT_GSC is not set
+CONFIG_PARPORT_AX88796=m
+# CONFIG_PARPORT_1284 is not set
+CONFIG_PARPORT_NOT_PC=y
+CONFIG_PNP=y
+# CONFIG_PNP_DEBUG_MESSAGES is not set
+
+#
+# Protocols
+#
+CONFIG_PNPACPI=y
+
+#
+# Misc devices
+#
+# CONFIG_SENSORS_LIS3LV02D is not set
+# CONFIG_PHANTOM is not set
+# CONFIG_INTEL_MID_PTI is not set
+# CONFIG_SGI_IOC4 is not set
+# CONFIG_ENCLOSURE_SERVICES is not set
+# CONFIG_HP_ILO is not set
+CONFIG_VMWARE_BALLOON=m
+CONFIG_PCH_PHUB=m
+
+#
+# EEPROM support
+#
+CONFIG_EEPROM_93CX6=m
+CONFIG_CB710_CORE=m
+# CONFIG_CB710_DEBUG is not set
+CONFIG_CB710_DEBUG_ASSUMPTIONS=y
+
+#
+# Texas Instruments shared transport line discipline
+#
+CONFIG_TI_ST=m
+
+#
+# Altera FPGA firmware download module
+#
+CONFIG_HAVE_IDE=y
+
+#
+# SCSI device support
+#
+CONFIG_SCSI_MOD=y
+# CONFIG_SCSI_DMA is not set
+# CONFIG_SCSI_NETLINK is not set
+CONFIG_FUSION=y
+CONFIG_FUSION_MAX_SGE=128
+CONFIG_FUSION_LOGGING=y
+
+#
+# IEEE 1394 (FireWire) support
+#
+CONFIG_FIREWIRE=m
+# CONFIG_FIREWIRE_OHCI is not set
+CONFIG_FIREWIRE_NOSY=m
+CONFIG_I2O=m
+CONFIG_I2O_LCT_NOTIFY_ON_CHANGES=y
+CONFIG_I2O_EXT_ADAPTEC=y
+CONFIG_I2O_EXT_ADAPTEC_DMA64=y
+CONFIG_I2O_CONFIG=m
+# CONFIG_I2O_CONFIG_OLD_IOCTL is not set
+# CONFIG_I2O_BUS is not set
+CONFIG_I2O_PROC=m
+CONFIG_MACINTOSH_DRIVERS=y
+# CONFIG_NETDEVICES is not set
+# CONFIG_ISDN is not set
+
+#
+# Input device support
+#
+CONFIG_INPUT=y
+CONFIG_INPUT_FF_MEMLESS=m
+CONFIG_INPUT_POLLDEV=m
+CONFIG_INPUT_SPARSEKMAP=m
+# CONFIG_INPUT_MATRIXKMAP is not set
+
+#
+# Userland interfaces
+#
+CONFIG_INPUT_MOUSEDEV=m
+CONFIG_INPUT_MOUSEDEV_PSAUX=y
+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
+CONFIG_INPUT_JOYDEV=m
+# CONFIG_INPUT_EVDEV is not set
+CONFIG_INPUT_EVBUG=m
+
+#
+# Input Device Drivers
+#
+CONFIG_INPUT_KEYBOARD=y
+CONFIG_KEYBOARD_ATKBD=y
+# CONFIG_KEYBOARD_LKKBD is not set
+# CONFIG_KEYBOARD_GPIO is not set
+# CONFIG_KEYBOARD_GPIO_POLLED is not set
+# CONFIG_KEYBOARD_MATRIX is not set
+# CONFIG_KEYBOARD_NEWTON is not set
+# CONFIG_KEYBOARD_OPENCORES is not set
+# CONFIG_KEYBOARD_STOWAWAY is not set
+# CONFIG_KEYBOARD_SUNKBD is not set
+# CONFIG_KEYBOARD_OMAP4 is not set
+# CONFIG_KEYBOARD_XTKBD is not set
+# CONFIG_INPUT_MOUSE is not set
+CONFIG_INPUT_JOYSTICK=y
+# CONFIG_JOYSTICK_ANALOG is not set
+CONFIG_JOYSTICK_A3D=m
+# CONFIG_JOYSTICK_ADI is not set
+CONFIG_JOYSTICK_COBRA=m
+CONFIG_JOYSTICK_GF2K=m
+CONFIG_JOYSTICK_GRIP=m
+# CONFIG_JOYSTICK_GRIP_MP is not set
+CONFIG_JOYSTICK_GUILLEMOT=m
+CONFIG_JOYSTICK_INTERACT=m
+CONFIG_JOYSTICK_SIDEWINDER=m
+# CONFIG_JOYSTICK_TMDC is not set
+# CONFIG_JOYSTICK_IFORCE is not set
+# CONFIG_JOYSTICK_WARRIOR is not set
+# CONFIG_JOYSTICK_MAGELLAN is not set
+CONFIG_JOYSTICK_SPACEORB=m
+# CONFIG_JOYSTICK_SPACEBALL is not set
+CONFIG_JOYSTICK_STINGER=m
+CONFIG_JOYSTICK_TWIDJOY=m
+CONFIG_JOYSTICK_ZHENHUA=m
+CONFIG_JOYSTICK_DB9=m
+# CONFIG_JOYSTICK_GAMECON is not set
+# CONFIG_JOYSTICK_TURBOGRAFX is not set
+CONFIG_JOYSTICK_JOYDUMP=m
+# CONFIG_JOYSTICK_XPAD is not set
+# CONFIG_JOYSTICK_WALKERA0701 is not set
+# CONFIG_INPUT_TABLET is not set
+# CONFIG_INPUT_TOUCHSCREEN is not set
+# CONFIG_INPUT_MISC is not set
+
+#
+# Hardware I/O ports
+#
+CONFIG_SERIO=y
+CONFIG_SERIO_I8042=y
+CONFIG_SERIO_SERPORT=m
+# CONFIG_SERIO_CT82C710 is not set
+CONFIG_SERIO_PARKBD=m
+# CONFIG_SERIO_PCIPS2 is not set
+CONFIG_SERIO_LIBPS2=y
+# CONFIG_SERIO_RAW is not set
+CONFIG_SERIO_ALTERA_PS2=m
+CONFIG_SERIO_PS2MULT=m
+CONFIG_GAMEPORT=m
+# CONFIG_GAMEPORT_NS558 is not set
+CONFIG_GAMEPORT_L4=m
+# CONFIG_GAMEPORT_EMU10K1 is not set
+CONFIG_GAMEPORT_FM801=m
+
+#
+# Character devices
+#
+# CONFIG_VT is not set
+CONFIG_UNIX98_PTYS=y
+# CONFIG_DEVPTS_MULTIPLE_INSTANCES is not set
+# CONFIG_LEGACY_PTYS is not set
+CONFIG_SERIAL_NONSTANDARD=y
+CONFIG_ROCKETPORT=m
+CONFIG_CYCLADES=m
+# CONFIG_MOXA_INTELLIO is not set
+# CONFIG_MOXA_SMARTIO is not set
+# CONFIG_SYNCLINKMP is not set
+CONFIG_SYNCLINK_GT=m
+CONFIG_ISI=m
+# CONFIG_N_HDLC is not set
+# CONFIG_TRACE_ROUTER is not set
+CONFIG_TRACE_SINK=m
+# CONFIG_DEVKMEM is not set
+# CONFIG_STALDRV is not set
+
+#
+# Serial drivers
+#
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_FIX_EARLYCON_MEM=y
+# CONFIG_SERIAL_8250_PCI is not set
+# CONFIG_SERIAL_8250_PNP is not set
+CONFIG_SERIAL_8250_NR_UARTS=4
+CONFIG_SERIAL_8250_RUNTIME_UARTS=4
+CONFIG_SERIAL_8250_EXTENDED=y
+# CONFIG_SERIAL_8250_MANY_PORTS is not set
+# CONFIG_SERIAL_8250_SHARE_IRQ is not set
+CONFIG_SERIAL_8250_DETECT_IRQ=y
+CONFIG_SERIAL_8250_RSA=y
+
+#
+# Non-8250 serial port support
+#
+CONFIG_SERIAL_MFD_HSU=m
+CONFIG_SERIAL_CORE=y
+CONFIG_SERIAL_CORE_CONSOLE=y
+CONFIG_SERIAL_JSM=m
+CONFIG_SERIAL_TIMBERDALE=m
+# CONFIG_SERIAL_ALTERA_JTAGUART is not set
+# CONFIG_SERIAL_ALTERA_UART is not set
+# CONFIG_SERIAL_PCH_UART is not set
+# CONFIG_SERIAL_XILINX_PS_UART is not set
+CONFIG_TTY_PRINTK=y
+# CONFIG_PRINTER is not set
+# CONFIG_PPDEV is not set
+CONFIG_IPMI_HANDLER=m
+CONFIG_IPMI_PANIC_EVENT=y
+# CONFIG_IPMI_PANIC_STRING is not set
+# CONFIG_IPMI_DEVICE_INTERFACE is not set
+CONFIG_IPMI_SI=m
+# CONFIG_IPMI_WATCHDOG is not set
+CONFIG_IPMI_POWEROFF=m
+# CONFIG_HW_RANDOM is not set
+CONFIG_NVRAM=m
+CONFIG_R3964=m
+CONFIG_APPLICOM=m
+# CONFIG_MWAVE is not set
+CONFIG_HPET=y
+# CONFIG_HPET_MMAP is not set
+# CONFIG_HANGCHECK_TIMER is not set
+CONFIG_TCG_TPM=m
+CONFIG_TCG_TIS=m
+# CONFIG_TCG_NSC is not set
+# CONFIG_TCG_ATMEL is not set
+CONFIG_TCG_INFINEON=m
+CONFIG_DEVPORT=y
+# CONFIG_I2C is not set
+# CONFIG_SPI is not set
+CONFIG_HSI=m
+CONFIG_HSI_BOARDINFO=y
+
+#
+# HSI clients
+#
+CONFIG_HSI_CHAR=m
+
+#
+# PPS support
+#
+
+#
+# PPS generators support
+#
+
+#
+# PTP clock support
+#
+
+#
+# Enable Device Drivers -> PPS to see the PTP clock options.
+#
+CONFIG_ARCH_WANT_OPTIONAL_GPIOLIB=y
+CONFIG_GPIOLIB=y
+CONFIG_DEBUG_GPIO=y
+
+#
+# Memory mapped GPIO drivers:
+#
+# CONFIG_GPIO_GENERIC_PLATFORM is not set
+# CONFIG_GPIO_IT8761E is not set
+# CONFIG_GPIO_SCH is not set
+# CONFIG_GPIO_ICH is not set
+# CONFIG_GPIO_VX855 is not set
+
+#
+# I2C GPIO expanders:
+#
+
+#
+# PCI GPIO expanders:
+#
+# CONFIG_GPIO_BT8XX is not set
+CONFIG_GPIO_AMD8111=m
+CONFIG_GPIO_LANGWELL=y
+# CONFIG_GPIO_PCH is not set
+# CONFIG_GPIO_ML_IOH is not set
+CONFIG_GPIO_RDC321X=m
+
+#
+# SPI GPIO expanders:
+#
+
+#
+# AC97 GPIO expanders:
+#
+
+#
+# MODULbus GPIO expanders:
+#
+CONFIG_W1=m
+
+#
+# 1-wire Bus Masters
+#
+# CONFIG_W1_MASTER_MATROX is not set
+# CONFIG_W1_MASTER_DS1WM is not set
+CONFIG_W1_MASTER_GPIO=m
+
+#
+# 1-wire Slaves
+#
+CONFIG_W1_SLAVE_THERM=m
+CONFIG_W1_SLAVE_SMEM=m
+CONFIG_W1_SLAVE_DS2408=m
+# CONFIG_W1_SLAVE_DS2423 is not set
+CONFIG_W1_SLAVE_DS2431=m
+# CONFIG_W1_SLAVE_DS2433 is not set
+CONFIG_W1_SLAVE_DS2760=m
+CONFIG_W1_SLAVE_DS2780=m
+# CONFIG_W1_SLAVE_DS2781 is not set
+# CONFIG_W1_SLAVE_DS28E04 is not set
+# CONFIG_W1_SLAVE_BQ27000 is not set
+CONFIG_POWER_SUPPLY=y
+# CONFIG_POWER_SUPPLY_DEBUG is not set
+# CONFIG_PDA_POWER is not set
+CONFIG_TEST_POWER=m
+# CONFIG_BATTERY_DS2760 is not set
+# CONFIG_BATTERY_DS2780 is not set
+# CONFIG_BATTERY_DS2781 is not set
+CONFIG_BATTERY_BQ27x00=m
+CONFIG_BATTERY_BQ27X00_PLATFORM=y
+CONFIG_CHARGER_MAX8903=m
+# CONFIG_CHARGER_GPIO is not set
+CONFIG_POWER_AVS=y
+CONFIG_HWMON=m
+CONFIG_HWMON_VID=m
+CONFIG_HWMON_DEBUG_CHIP=y
+
+#
+# Native drivers
+#
+# CONFIG_SENSORS_K10TEMP is not set
+# CONFIG_SENSORS_FAM15H_POWER is not set
+# CONFIG_SENSORS_F71805F is not set
+# CONFIG_SENSORS_F71882FG is not set
+CONFIG_SENSORS_GPIO_FAN=m
+CONFIG_SENSORS_IBMAEM=m
+CONFIG_SENSORS_IBMPEX=m
+# CONFIG_SENSORS_IT87 is not set
+# CONFIG_SENSORS_PC87360 is not set
+# CONFIG_SENSORS_PC87427 is not set
+# CONFIG_SENSORS_SHT15 is not set
+# CONFIG_SENSORS_SIS5595 is not set
+# CONFIG_SENSORS_SMSC47M1 is not set
+# CONFIG_SENSORS_SCH56XX_COMMON is not set
+# CONFIG_SENSORS_SCH5627 is not set
+# CONFIG_SENSORS_SCH5636 is not set
+# CONFIG_SENSORS_VIA_CPUTEMP is not set
+CONFIG_SENSORS_VIA686A=m
+# CONFIG_SENSORS_VT1211 is not set
+CONFIG_SENSORS_VT8231=m
+# CONFIG_SENSORS_W83627HF is not set
+# CONFIG_SENSORS_W83627EHF is not set
+CONFIG_SENSORS_APPLESMC=m
+
+#
+# ACPI drivers
+#
+# CONFIG_SENSORS_ACPI_POWER is not set
+CONFIG_THERMAL=m
+CONFIG_THERMAL_HWMON=y
+CONFIG_WATCHDOG=y
+CONFIG_WATCHDOG_CORE=y
+CONFIG_WATCHDOG_NOWAYOUT=y
+
+#
+# Watchdog Device Drivers
+#
+CONFIG_SOFT_WATCHDOG=m
+# CONFIG_ACQUIRE_WDT is not set
+CONFIG_ADVANTECH_WDT=m
+CONFIG_ALIM1535_WDT=m
+# CONFIG_ALIM7101_WDT is not set
+# CONFIG_SP5100_TCO is not set
+CONFIG_SC520_WDT=m
+CONFIG_SBC_FITPC2_WATCHDOG=m
+# CONFIG_EUROTECH_WDT is not set
+# CONFIG_IB700_WDT is not set
+# CONFIG_IBMASR is not set
+# CONFIG_WAFER_WDT is not set
+# CONFIG_I6300ESB_WDT is not set
+# CONFIG_IE6XX_WDT is not set
+# CONFIG_ITCO_WDT is not set
+# CONFIG_IT8712F_WDT is not set
+CONFIG_HP_WATCHDOG=m
+CONFIG_HPWDT_NMI_DECODING=y
+# CONFIG_SC1200_WDT is not set
+# CONFIG_PC87413_WDT is not set
+# CONFIG_NV_TCO is not set
+CONFIG_60XX_WDT=m
+CONFIG_SBC8360_WDT=m
+# CONFIG_CPU5_WDT is not set
+CONFIG_SMSC_SCH311X_WDT=m
+CONFIG_SMSC37B787_WDT=m
+# CONFIG_VIA_WDT is not set
+# CONFIG_W83627HF_WDT is not set
+CONFIG_W83697HF_WDT=m
+# CONFIG_W83697UG_WDT is not set
+CONFIG_W83877F_WDT=m
+CONFIG_W83977F_WDT=m
+# CONFIG_MACHZ_WDT is not set
+CONFIG_SBC_EPX_C3_WATCHDOG=m
+
+#
+# PCI-based Watchdog Cards
+#
+CONFIG_PCIPCWATCHDOG=m
+CONFIG_WDTPCI=m
+CONFIG_SSB_POSSIBLE=y
+
+#
+# Sonics Silicon Backplane
+#
+CONFIG_SSB=m
+CONFIG_SSB_PCIHOST_POSSIBLE=y
+# CONFIG_SSB_PCIHOST is not set
+CONFIG_SSB_SILENT=y
+CONFIG_BCMA_POSSIBLE=y
+
+#
+# Broadcom specific AMBA
+#
+CONFIG_BCMA=m
+CONFIG_BCMA_HOST_PCI_POSSIBLE=y
+CONFIG_BCMA_HOST_PCI=y
+# CONFIG_BCMA_DRIVER_GMAC_CMN is not set
+# CONFIG_BCMA_DEBUG is not set
+
+#
+# Multifunction device drivers
+#
+CONFIG_MFD_CORE=m
+# CONFIG_MFD_SM501 is not set
+# CONFIG_HTC_PASIC3 is not set
+# CONFIG_MFD_TMIO is not set
+# CONFIG_ABX500_CORE is not set
+# CONFIG_MFD_CS5535 is not set
+# CONFIG_MFD_TIMBERDALE is not set
+# CONFIG_LPC_SCH is not set
+# CONFIG_LPC_ICH is not set
+CONFIG_MFD_RDC321X=m
+# CONFIG_MFD_JANZ_CMODIO is not set
+CONFIG_MFD_VX855=m
+# CONFIG_REGULATOR is not set
+CONFIG_MEDIA_SUPPORT=m
+
+#
+# Multimedia core support
+#
+# CONFIG_MEDIA_CAMERA_SUPPORT is not set
+# CONFIG_MEDIA_ANALOG_TV_SUPPORT is not set
+# CONFIG_MEDIA_DIGITAL_TV_SUPPORT is not set
+# CONFIG_MEDIA_RADIO_SUPPORT is not set
+# CONFIG_MEDIA_RC_SUPPORT is not set
+
+#
+# Media drivers
+#
+
+#
+# Graphics support
+#
+# CONFIG_AGP is not set
+# CONFIG_VGA_ARB is not set
+# CONFIG_VGA_SWITCHEROO is not set
+# CONFIG_DRM is not set
+CONFIG_STUB_POULSBO=m
+# CONFIG_VGASTATE is not set
+CONFIG_VIDEO_OUTPUT_CONTROL=m
+# CONFIG_FB is not set
+CONFIG_EXYNOS_VIDEO=y
+CONFIG_BACKLIGHT_LCD_SUPPORT=y
+CONFIG_LCD_CLASS_DEVICE=m
+# CONFIG_LCD_PLATFORM is not set
+CONFIG_BACKLIGHT_CLASS_DEVICE=m
+CONFIG_BACKLIGHT_GENERIC=m
+# CONFIG_BACKLIGHT_PROGEAR is not set
+CONFIG_BACKLIGHT_APPLE=m
+CONFIG_BACKLIGHT_SAHARA=m
+# CONFIG_SOUND is not set
+
+#
+# HID support
+#
+CONFIG_HID=m
+CONFIG_HIDRAW=y
+CONFIG_UHID=m
+CONFIG_HID_GENERIC=m
+
+#
+# Special HID drivers
+#
+CONFIG_USB_ARCH_HAS_OHCI=y
+CONFIG_USB_ARCH_HAS_EHCI=y
+CONFIG_USB_ARCH_HAS_XHCI=y
+CONFIG_USB_SUPPORT=y
+CONFIG_USB_COMMON=m
+CONFIG_USB_ARCH_HAS_HCD=y
+# CONFIG_USB is not set
+CONFIG_USB_OTG_WHITELIST=y
+# CONFIG_USB_OTG_BLACKLIST_HUB is not set
+# CONFIG_USB_CHIPIDEA is not set
+
+#
+# NOTE: USB_STORAGE depends on SCSI but BLK_DEV_SD may
+#
+
+#
+# USB Physical Layer drivers
+#
+CONFIG_USB_GADGET=m
+CONFIG_USB_GADGET_DEBUG=y
+CONFIG_USB_GADGET_DEBUG_FILES=y
+# CONFIG_USB_GADGET_DEBUG_FS is not set
+CONFIG_USB_GADGET_VBUS_DRAW=2
+CONFIG_USB_GADGET_STORAGE_NUM_BUFFERS=2
+
+#
+# USB Peripheral Controller
+#
+CONFIG_USB_R8A66597=m
+# CONFIG_USB_MV_UDC is not set
+# CONFIG_USB_M66592 is not set
+# CONFIG_USB_AMD5536UDC is not set
+# CONFIG_USB_NET2272 is not set
+# CONFIG_USB_NET2280 is not set
+CONFIG_USB_GOKU=m
+# CONFIG_USB_EG20T is not set
+CONFIG_USB_GADGET_DUALSPEED=y
+CONFIG_USB_ZERO=m
+CONFIG_USB_ETH=m
+CONFIG_USB_ETH_RNDIS=y
+# CONFIG_USB_ETH_EEM is not set
+CONFIG_USB_G_NCM=m
+# CONFIG_USB_G_SERIAL is not set
+# CONFIG_USB_G_PRINTER is not set
+CONFIG_USB_CDC_COMPOSITE=m
+CONFIG_USB_G_HID=m
+CONFIG_USB_G_DBGP=m
+CONFIG_USB_G_DBGP_PRINTK=y
+# CONFIG_USB_G_DBGP_SERIAL is not set
+
+#
+# OTG and related infrastructure
+#
+# CONFIG_USB_GPIO_VBUS is not set
+# CONFIG_NOP_USB_XCEIV is not set
+# CONFIG_MMC is not set
+CONFIG_MEMSTICK=m
+CONFIG_MEMSTICK_DEBUG=y
+
+#
+# MemoryStick drivers
+#
+CONFIG_MEMSTICK_UNSAFE_RESUME=y
+
+#
+# MemoryStick Host Controller Drivers
+#
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=m
+
+#
+# LED drivers
+#
+# CONFIG_LEDS_GPIO is not set
+# CONFIG_LEDS_LT3593 is not set
+CONFIG_LEDS_OT200=m
+CONFIG_LEDS_TRIGGERS=y
+
+#
+# LED Triggers
+#
+CONFIG_LEDS_TRIGGER_TIMER=m
+CONFIG_LEDS_TRIGGER_ONESHOT=m
+CONFIG_LEDS_TRIGGER_HEARTBEAT=m
+# CONFIG_LEDS_TRIGGER_BACKLIGHT is not set
+# CONFIG_LEDS_TRIGGER_GPIO is not set
+# CONFIG_LEDS_TRIGGER_DEFAULT_ON is not set
+
+#
+# iptables trigger is under Netfilter config (LED target)
+#
+CONFIG_LEDS_TRIGGER_TRANSIENT=m
+# CONFIG_ACCESSIBILITY is not set
+# CONFIG_INFINIBAND is not set
+CONFIG_EDAC=y
+
+#
+# Reporting subsystems
+#
+CONFIG_EDAC_LEGACY_SYSFS=y
+# CONFIG_EDAC_DEBUG is not set
+# CONFIG_EDAC_DECODE_MCE is not set
+# CONFIG_EDAC_MM_EDAC is not set
+CONFIG_RTC_LIB=y
+CONFIG_RTC_CLASS=y
+# CONFIG_RTC_HCTOSYS is not set
+CONFIG_RTC_DEBUG=y
+
+#
+# RTC interfaces
+#
+# CONFIG_RTC_INTF_PROC is not set
+# CONFIG_RTC_INTF_DEV is not set
+# CONFIG_RTC_DRV_TEST is not set
+
+#
+# SPI RTC drivers
+#
+
+#
+# Platform RTC drivers
+#
+CONFIG_RTC_DRV_CMOS=m
+# CONFIG_RTC_DRV_DS1286 is not set
+# CONFIG_RTC_DRV_DS1511 is not set
+CONFIG_RTC_DRV_DS1553=m
+CONFIG_RTC_DRV_DS1742=m
+CONFIG_RTC_DRV_STK17TA8=m
+CONFIG_RTC_DRV_M48T86=m
+# CONFIG_RTC_DRV_M48T35 is not set
+CONFIG_RTC_DRV_M48T59=m
+CONFIG_RTC_DRV_MSM6242=m
+CONFIG_RTC_DRV_BQ4802=m
+CONFIG_RTC_DRV_RP5C01=m
+# CONFIG_RTC_DRV_V3020 is not set
+
+#
+# on-CPU RTC drivers
+#
+CONFIG_DMADEVICES=y
+# CONFIG_DMADEVICES_DEBUG is not set
+
+#
+# DMA Devices
+#
+# CONFIG_INTEL_MID_DMAC is not set
+# CONFIG_INTEL_IOATDMA is not set
+CONFIG_TIMB_DMA=m
+CONFIG_PCH_DMA=m
+CONFIG_DMA_ENGINE=y
+
+#
+# DMA Clients
+#
+CONFIG_NET_DMA=y
+# CONFIG_ASYNC_TX_DMA is not set
+# CONFIG_DMATEST is not set
+# CONFIG_AUXDISPLAY is not set
+CONFIG_UIO=m
+# CONFIG_UIO_CIF is not set
+CONFIG_UIO_PDRV=m
+# CONFIG_UIO_PDRV_GENIRQ is not set
+# CONFIG_UIO_AEC is not set
+# CONFIG_UIO_SERCOS3 is not set
+CONFIG_UIO_PCI_GENERIC=m
+# CONFIG_UIO_NETX is not set
+# CONFIG_VFIO is not set
+
+#
+# Virtio drivers
+#
+# CONFIG_VIRTIO_BALLOON is not set
+
+#
+# Microsoft Hyper-V guest support
+#
+# CONFIG_HYPERV is not set
+CONFIG_STAGING=y
+# CONFIG_SLICOSS is not set
+CONFIG_ECHO=m
+# CONFIG_COMEDI is not set
+CONFIG_PANEL=m
+CONFIG_PANEL_PARPORT=0
+CONFIG_PANEL_PROFILE=5
+CONFIG_PANEL_CHANGE_MESSAGE=y
+CONFIG_PANEL_BOOT_MESSAGE=""
+CONFIG_DX_SEP=m
+
+#
+# IIO staging drivers
+#
+CONFIG_IIO_ST_HWMON=m
+# CONFIG_IIO_SW_RING is not set
+
+#
+# Accelerometers
+#
+
+#
+# Analog to digital converters
+#
+# CONFIG_AD7606 is not set
+
+#
+# Analog digital bi-direction converters
+#
+# CONFIG_ADT7316 is not set
+
+#
+# Capacitance to digital converters
+#
+
+#
+# Direct Digital Synthesis
+#
+
+#
+# Digital gyroscope sensors
+#
+
+#
+# Network Analyzer, Impedance Converters
+#
+
+#
+# Inertial measurement units
+#
+
+#
+# Light sensors
+#
+
+#
+# Magnetometer sensors
+#
+
+#
+# Active energy metering IC
+#
+
+#
+# Resolver to digital converters
+#
+
+#
+# Triggers - standalone
+#
+CONFIG_IIO_PERIODIC_RTC_TRIGGER=m
+# CONFIG_IIO_GPIO_TRIGGER is not set
+CONFIG_IIO_DUMMY_EVGEN=m
+CONFIG_IIO_SIMPLE_DUMMY=m
+CONFIG_IIO_SIMPLE_DUMMY_EVENTS=y
+# CONFIG_IIO_SIMPLE_DUMMY_BUFFER is not set
+# CONFIG_ZSMALLOC is not set
+CONFIG_CRYSTALHD=m
+# CONFIG_ACPI_QUICKSTART is not set
+CONFIG_FT1000=m
+
+#
+# Speakup console speech
+#
+CONFIG_STAGING_MEDIA=y
+
+#
+# Android
+#
+# CONFIG_ANDROID is not set
+# CONFIG_PHONE is not set
+# CONFIG_IPACK_BUS is not set
+# CONFIG_WIMAX_GDM72XX is not set
+CONFIG_X86_PLATFORM_DEVICES=y
+CONFIG_ACERHDF=m
+CONFIG_ASUS_LAPTOP=m
+CONFIG_FUJITSU_LAPTOP=m
+# CONFIG_FUJITSU_LAPTOP_DEBUG is not set
+CONFIG_FUJITSU_TABLET=m
+CONFIG_AMILO_RFKILL=m
+# CONFIG_HP_ACCEL is not set
+CONFIG_MSI_LAPTOP=m
+CONFIG_PANASONIC_LAPTOP=m
+# CONFIG_COMPAL_LAPTOP is not set
+CONFIG_SONY_LAPTOP=m
+CONFIG_SONYPI_COMPAT=y
+# CONFIG_IDEAPAD_LAPTOP is not set
+CONFIG_THINKPAD_ACPI=m
+CONFIG_THINKPAD_ACPI_DEBUGFACILITIES=y
+CONFIG_THINKPAD_ACPI_DEBUG=y
+# CONFIG_THINKPAD_ACPI_UNSAFE_LEDS is not set
+# CONFIG_THINKPAD_ACPI_VIDEO is not set
+CONFIG_THINKPAD_ACPI_HOTKEY_POLL=y
+CONFIG_SENSORS_HDAPS=m
+CONFIG_INTEL_MENLOW=m
+# CONFIG_ACPI_WMI is not set
+CONFIG_TOPSTAR_LAPTOP=m
+CONFIG_TOSHIBA_BT_RFKILL=m
+# CONFIG_ACPI_CMPC is not set
+CONFIG_INTEL_IPS=m
+# CONFIG_IBM_RTL is not set
+# CONFIG_XO15_EBOOK is not set
+CONFIG_SAMSUNG_LAPTOP=m
+# CONFIG_INTEL_OAKTRAIL is not set
+CONFIG_SAMSUNG_Q10=m
+# CONFIG_APPLE_GMUX is not set
+
+#
+# Hardware Spinlock drivers
+#
+CONFIG_CLKEVT_I8253=y
+CONFIG_I8253_LOCK=y
+CONFIG_CLKBLD_I8253=y
+CONFIG_IOMMU_API=y
+CONFIG_IOMMU_SUPPORT=y
+CONFIG_AMD_IOMMU=y
+CONFIG_AMD_IOMMU_STATS=y
+CONFIG_DMAR_TABLE=y
+CONFIG_INTEL_IOMMU=y
+CONFIG_INTEL_IOMMU_DEFAULT_ON=y
+CONFIG_INTEL_IOMMU_FLOPPY_WA=y
+
+#
+# Remoteproc drivers (EXPERIMENTAL)
+#
+
+#
+# Rpmsg drivers (EXPERIMENTAL)
+#
+CONFIG_VIRT_DRIVERS=y
+CONFIG_PM_DEVFREQ=y
+
+#
+# DEVFREQ Governors
+#
+# CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND is not set
+# CONFIG_DEVFREQ_GOV_PERFORMANCE is not set
+CONFIG_DEVFREQ_GOV_POWERSAVE=y
+CONFIG_DEVFREQ_GOV_USERSPACE=y
+
+#
+# DEVFREQ Drivers
+#
+# CONFIG_EXTCON is not set
+# CONFIG_MEMORY is not set
+CONFIG_IIO=m
+CONFIG_IIO_BUFFER=y
+CONFIG_IIO_KFIFO_BUF=m
+CONFIG_IIO_TRIGGER=y
+CONFIG_IIO_CONSUMERS_PER_TRIGGER=2
+
+#
+# Analog to digital converters
+#
+
+#
+# Amplifiers
+#
+
+#
+# Light sensors
+#
+
+#
+# Frequency Synthesizers DDS/PLL
+#
+
+#
+# Clock Generator/Distribution
+#
+
+#
+# Phase-Locked Loop (PLL) frequency synthesizers
+#
+
+#
+# Digital to analog converters
+#
+# CONFIG_VME_BUS is not set
+# CONFIG_PWM is not set
+
+#
+# Firmware Drivers
+#
+CONFIG_EDD=m
+CONFIG_EDD_OFF=y
+# CONFIG_FIRMWARE_MEMMAP is not set
+# CONFIG_EFI_VARS is not set
+CONFIG_DELL_RBU=m
+CONFIG_DCDBAS=m
+CONFIG_ISCSI_IBFT_FIND=y
+# CONFIG_GOOGLE_FIRMWARE is not set
+
+#
+# File systems
+#
+CONFIG_DCACHE_WORD_ACCESS=y
+# CONFIG_FS_POSIX_ACL is not set
+# CONFIG_FILE_LOCKING is not set
+CONFIG_FSNOTIFY=y
+CONFIG_DNOTIFY=y
+CONFIG_INOTIFY_USER=y
+CONFIG_FANOTIFY=y
+CONFIG_QUOTA=y
+# CONFIG_QUOTA_NETLINK_INTERFACE is not set
+# CONFIG_PRINT_QUOTA_WARNING is not set
+# CONFIG_QUOTA_DEBUG is not set
+CONFIG_QUOTA_TREE=m
+# CONFIG_QFMT_V1 is not set
+CONFIG_QFMT_V2=m
+CONFIG_QUOTACTL=y
+CONFIG_QUOTACTL_COMPAT=y
+CONFIG_AUTOFS4_FS=m
+# CONFIG_FUSE_FS is not set
+
+#
+# Caches
+#
+CONFIG_FSCACHE=m
+CONFIG_FSCACHE_STATS=y
+CONFIG_FSCACHE_HISTOGRAM=y
+# CONFIG_FSCACHE_DEBUG is not set
+CONFIG_FSCACHE_OBJECT_LIST=y
+
+#
+# Pseudo filesystems
+#
+CONFIG_PROC_FS=y
+CONFIG_PROC_KCORE=y
+# CONFIG_PROC_SYSCTL is not set
+CONFIG_PROC_PAGE_MONITOR=y
+# CONFIG_SYSFS is not set
+CONFIG_TMPFS=y
+# CONFIG_TMPFS_POSIX_ACL is not set
+# CONFIG_TMPFS_XATTR is not set
+CONFIG_HUGETLBFS=y
+CONFIG_HUGETLB_PAGE=y
+# CONFIG_CONFIGFS_FS is not set
+CONFIG_MISC_FILESYSTEMS=y
+CONFIG_PSTORE=y
+# CONFIG_PSTORE_CONSOLE is not set
+# CONFIG_PSTORE_RAM is not set
+# CONFIG_NETWORK_FILESYSTEMS is not set
+CONFIG_NLS=y
+CONFIG_NLS_DEFAULT="iso8859-1"
+CONFIG_NLS_CODEPAGE_437=m
+CONFIG_NLS_CODEPAGE_737=m
+# CONFIG_NLS_CODEPAGE_775 is not set
+# CONFIG_NLS_CODEPAGE_850 is not set
+CONFIG_NLS_CODEPAGE_852=m
+# CONFIG_NLS_CODEPAGE_855 is not set
+CONFIG_NLS_CODEPAGE_857=m
+# CONFIG_NLS_CODEPAGE_860 is not set
+CONFIG_NLS_CODEPAGE_861=m
+# CONFIG_NLS_CODEPAGE_862 is not set
+CONFIG_NLS_CODEPAGE_863=m
+CONFIG_NLS_CODEPAGE_864=m
+CONFIG_NLS_CODEPAGE_865=m
+# CONFIG_NLS_CODEPAGE_866 is not set
+CONFIG_NLS_CODEPAGE_869=m
+# CONFIG_NLS_CODEPAGE_936 is not set
+CONFIG_NLS_CODEPAGE_950=m
+# CONFIG_NLS_CODEPAGE_932 is not set
+CONFIG_NLS_CODEPAGE_949=m
+# CONFIG_NLS_CODEPAGE_874 is not set
+# CONFIG_NLS_ISO8859_8 is not set
+# CONFIG_NLS_CODEPAGE_1250 is not set
+# CONFIG_NLS_CODEPAGE_1251 is not set
+# CONFIG_NLS_ASCII is not set
+CONFIG_NLS_ISO8859_1=m
+# CONFIG_NLS_ISO8859_2 is not set
+# CONFIG_NLS_ISO8859_3 is not set
+# CONFIG_NLS_ISO8859_4 is not set
+# CONFIG_NLS_ISO8859_5 is not set
+CONFIG_NLS_ISO8859_6=m
+CONFIG_NLS_ISO8859_7=m
+CONFIG_NLS_ISO8859_9=m
+# CONFIG_NLS_ISO8859_13 is not set
+CONFIG_NLS_ISO8859_14=m
+CONFIG_NLS_ISO8859_15=m
+CONFIG_NLS_KOI8_R=m
+# CONFIG_NLS_KOI8_U is not set
+CONFIG_NLS_MAC_ROMAN=m
+CONFIG_NLS_MAC_CELTIC=m
+# CONFIG_NLS_MAC_CENTEURO is not set
+# CONFIG_NLS_MAC_CROATIAN is not set
+CONFIG_NLS_MAC_CYRILLIC=m
+# CONFIG_NLS_MAC_GAELIC is not set
+CONFIG_NLS_MAC_GREEK=m
+# CONFIG_NLS_MAC_ICELAND is not set
+CONFIG_NLS_MAC_INUIT=m
+# CONFIG_NLS_MAC_ROMANIAN is not set
+# CONFIG_NLS_MAC_TURKISH is not set
+# CONFIG_NLS_UTF8 is not set
+
+#
+# Kernel hacking
+#
+CONFIG_TRACE_IRQFLAGS_SUPPORT=y
+CONFIG_PRINTK_TIME=y
+CONFIG_DEFAULT_MESSAGE_LOGLEVEL=4
+CONFIG_ENABLE_WARN_DEPRECATED=y
+CONFIG_ENABLE_MUST_CHECK=y
+CONFIG_FRAME_WARN=2048
+# CONFIG_MAGIC_SYSRQ is not set
+CONFIG_STRIP_ASM_SYMS=y
+CONFIG_READABLE_ASM=y
+CONFIG_UNUSED_SYMBOLS=y
+CONFIG_DEBUG_FS=y
+# CONFIG_HEADERS_CHECK is not set
+# CONFIG_DEBUG_SECTION_MISMATCH is not set
+CONFIG_DEBUG_KERNEL=y
+# CONFIG_DEBUG_SHIRQ is not set
+CONFIG_LOCKUP_DETECTOR=y
+CONFIG_HARDLOCKUP_DETECTOR=y
+CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
+CONFIG_BOOTPARAM_HARDLOCKUP_PANIC_VALUE=1
+# CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
+CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE=0
+CONFIG_PANIC_ON_OOPS=y
+CONFIG_PANIC_ON_OOPS_VALUE=1
+# CONFIG_DETECT_HUNG_TASK is not set
+CONFIG_SCHED_DEBUG=y
+CONFIG_SCHEDSTATS=y
+# CONFIG_TIMER_STATS is not set
+CONFIG_DEBUG_OBJECTS=y
+CONFIG_DEBUG_OBJECTS_SELFTEST=y
+CONFIG_DEBUG_OBJECTS_FREE=y
+CONFIG_DEBUG_OBJECTS_TIMERS=y
+CONFIG_DEBUG_OBJECTS_WORK=y
+# CONFIG_DEBUG_OBJECTS_RCU_HEAD is not set
+# CONFIG_DEBUG_OBJECTS_PERCPU_COUNTER is not set
+CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT=1
+CONFIG_DEBUG_PREEMPT=y
+# CONFIG_DEBUG_RT_MUTEXES is not set
+# CONFIG_RT_MUTEX_TESTER is not set
+CONFIG_DEBUG_SPINLOCK=y
+CONFIG_DEBUG_MUTEXES=y
+CONFIG_DEBUG_LOCK_ALLOC=y
+# CONFIG_PROVE_LOCKING is not set
+CONFIG_SPARSE_RCU_POINTER=y
+CONFIG_LOCKDEP=y
+# CONFIG_LOCK_STAT is not set
+# CONFIG_DEBUG_LOCKDEP is not set
+CONFIG_DEBUG_ATOMIC_SLEEP=y
+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
+CONFIG_STACKTRACE=y
+CONFIG_DEBUG_STACK_USAGE=y
+# CONFIG_DEBUG_KOBJECT is not set
+# CONFIG_DEBUG_BUGVERBOSE is not set
+# CONFIG_DEBUG_INFO is not set
+# CONFIG_DEBUG_VM is not set
+CONFIG_DEBUG_VIRTUAL=y
+CONFIG_DEBUG_WRITECOUNT=y
+CONFIG_DEBUG_MEMORY_INIT=y
+CONFIG_DEBUG_LIST=y
+# CONFIG_TEST_LIST_SORT is not set
+# CONFIG_DEBUG_SG is not set
+# CONFIG_DEBUG_NOTIFIERS is not set
+CONFIG_DEBUG_CREDENTIALS=y
+CONFIG_ARCH_WANT_FRAME_POINTERS=y
+CONFIG_FRAME_POINTER=y
+# CONFIG_BOOT_PRINTK_DELAY is not set
+CONFIG_RCU_TORTURE_TEST=m
+CONFIG_RCU_CPU_STALL_TIMEOUT=60
+CONFIG_RCU_CPU_STALL_VERBOSE=y
+CONFIG_RCU_CPU_STALL_INFO=y
+CONFIG_RCU_TRACE=y
+# CONFIG_BACKTRACE_SELF_TEST is not set
+# CONFIG_DEBUG_FORCE_WEAK_PER_CPU is not set
+CONFIG_DEBUG_PER_CPU_MAPS=y
+# CONFIG_NOTIFIER_ERROR_INJECTION is not set
+# CONFIG_FAULT_INJECTION is not set
+CONFIG_LATENCYTOP=y
+CONFIG_DEBUG_PAGEALLOC=y
+CONFIG_WANT_PAGE_DEBUG_FLAGS=y
+CONFIG_PAGE_GUARD=y
+CONFIG_USER_STACKTRACE_SUPPORT=y
+CONFIG_HAVE_FUNCTION_TRACER=y
+CONFIG_HAVE_FUNCTION_GRAPH_TRACER=y
+CONFIG_HAVE_FUNCTION_GRAPH_FP_TEST=y
+CONFIG_HAVE_FUNCTION_TRACE_MCOUNT_TEST=y
+CONFIG_HAVE_DYNAMIC_FTRACE=y
+CONFIG_HAVE_FTRACE_MCOUNT_RECORD=y
+CONFIG_HAVE_SYSCALL_TRACEPOINTS=y
+CONFIG_HAVE_C_RECORDMCOUNT=y
+CONFIG_TRACING_SUPPORT=y
+# CONFIG_FTRACE is not set
+CONFIG_PROVIDE_OHCI1394_DMA_INIT=y
+# CONFIG_DYNAMIC_DEBUG is not set
+CONFIG_DMA_API_DEBUG=y
+CONFIG_ATOMIC64_SELFTEST=y
+# CONFIG_SAMPLES is not set
+CONFIG_HAVE_ARCH_KGDB=y
+CONFIG_HAVE_ARCH_KMEMCHECK=y
+# CONFIG_KMEMCHECK is not set
+# CONFIG_TEST_KSTRTOX is not set
+CONFIG_STRICT_DEVMEM=y
+CONFIG_X86_VERBOSE_BOOTUP=y
+CONFIG_EARLY_PRINTK=y
+CONFIG_EARLY_PRINTK_DBGP=y
+# CONFIG_DEBUG_STACKOVERFLOW is not set
+# CONFIG_X86_PTDUMP is not set
+# CONFIG_DEBUG_RODATA is not set
+# CONFIG_DEBUG_SET_MODULE_RONX is not set
+CONFIG_DEBUG_NX_TEST=m
+CONFIG_DEBUG_TLBFLUSH=y
+CONFIG_IOMMU_STRESS=y
+CONFIG_HAVE_MMIOTRACE_SUPPORT=y
+CONFIG_IO_DELAY_TYPE_0X80=0
+CONFIG_IO_DELAY_TYPE_0XED=1
+CONFIG_IO_DELAY_TYPE_UDELAY=2
+CONFIG_IO_DELAY_TYPE_NONE=3
+# CONFIG_IO_DELAY_0X80 is not set
+# CONFIG_IO_DELAY_0XED is not set
+# CONFIG_IO_DELAY_UDELAY is not set
+CONFIG_IO_DELAY_NONE=y
+CONFIG_DEFAULT_IO_DELAY_TYPE=3
+# CONFIG_DEBUG_BOOT_PARAMS is not set
+CONFIG_CPA_DEBUG=y
+# CONFIG_OPTIMIZE_INLINING is not set
+# CONFIG_DEBUG_STRICT_USER_COPY_CHECKS is not set
+# CONFIG_DEBUG_NMI_SELFTEST is not set
+
+#
+# Security options
+#
+CONFIG_KEYS=y
+# CONFIG_TRUSTED_KEYS is not set
+# CONFIG_ENCRYPTED_KEYS is not set
+CONFIG_KEYS_DEBUG_PROC_KEYS=y
+# CONFIG_SECURITY_DMESG_RESTRICT is not set
+CONFIG_SECURITYFS=y
+CONFIG_DEFAULT_SECURITY_DAC=y
+CONFIG_DEFAULT_SECURITY=""
+CONFIG_CRYPTO=m
+
+#
+# Crypto core or helper
+#
+CONFIG_CRYPTO_ALGAPI=m
+CONFIG_CRYPTO_ALGAPI2=m
+CONFIG_CRYPTO_AEAD=m
+CONFIG_CRYPTO_AEAD2=m
+CONFIG_CRYPTO_BLKCIPHER=m
+CONFIG_CRYPTO_BLKCIPHER2=m
+CONFIG_CRYPTO_HASH=m
+CONFIG_CRYPTO_HASH2=m
+CONFIG_CRYPTO_RNG=m
+CONFIG_CRYPTO_RNG2=m
+CONFIG_CRYPTO_PCOMP=m
+CONFIG_CRYPTO_PCOMP2=m
+CONFIG_CRYPTO_MANAGER=m
+CONFIG_CRYPTO_MANAGER2=m
+CONFIG_CRYPTO_USER=m
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=y
+CONFIG_CRYPTO_GF128MUL=m
+CONFIG_CRYPTO_NULL=m
+CONFIG_CRYPTO_WORKQUEUE=m
+CONFIG_CRYPTO_CRYPTD=m
+CONFIG_CRYPTO_AUTHENC=m
+CONFIG_CRYPTO_TEST=m
+CONFIG_CRYPTO_ABLK_HELPER_X86=m
+CONFIG_CRYPTO_GLUE_HELPER_X86=m
+
+#
+# Authenticated Encryption with Associated Data
+#
+CONFIG_CRYPTO_CCM=m
+CONFIG_CRYPTO_GCM=m
+CONFIG_CRYPTO_SEQIV=m
+
+#
+# Block modes
+#
+CONFIG_CRYPTO_CBC=m
+CONFIG_CRYPTO_CTR=m
+CONFIG_CRYPTO_CTS=m
+CONFIG_CRYPTO_ECB=m
+CONFIG_CRYPTO_LRW=m
+CONFIG_CRYPTO_PCBC=m
+CONFIG_CRYPTO_XTS=m
+
+#
+# Hash modes
+#
+CONFIG_CRYPTO_HMAC=m
+
+#
+# Digest
+#
+# CONFIG_CRYPTO_CRC32C is not set
+CONFIG_CRYPTO_CRC32C_INTEL=m
+CONFIG_CRYPTO_GHASH=m
+# CONFIG_CRYPTO_MD4 is not set
+# CONFIG_CRYPTO_MD5 is not set
+# CONFIG_CRYPTO_MICHAEL_MIC is not set
+# CONFIG_CRYPTO_RMD128 is not set
+CONFIG_CRYPTO_RMD160=m
+# CONFIG_CRYPTO_RMD256 is not set
+# CONFIG_CRYPTO_RMD320 is not set
+CONFIG_CRYPTO_SHA1=m
+CONFIG_CRYPTO_SHA1_SSSE3=m
+# CONFIG_CRYPTO_SHA256 is not set
+# CONFIG_CRYPTO_SHA512 is not set
+CONFIG_CRYPTO_TGR192=m
+# CONFIG_CRYPTO_WP512 is not set
+# CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL is not set
+
+#
+# Ciphers
+#
+CONFIG_CRYPTO_AES=m
+# CONFIG_CRYPTO_AES_X86_64 is not set
+# CONFIG_CRYPTO_AES_NI_INTEL is not set
+CONFIG_CRYPTO_ANUBIS=m
+# CONFIG_CRYPTO_ARC4 is not set
+# CONFIG_CRYPTO_BLOWFISH is not set
+CONFIG_CRYPTO_BLOWFISH_COMMON=m
+CONFIG_CRYPTO_BLOWFISH_X86_64=m
+# CONFIG_CRYPTO_CAMELLIA is not set
+CONFIG_CRYPTO_CAMELLIA_X86_64=m
+# CONFIG_CRYPTO_CAST5 is not set
+CONFIG_CRYPTO_CAST6=m
+CONFIG_CRYPTO_DES=m
+CONFIG_CRYPTO_FCRYPT=m
+# CONFIG_CRYPTO_KHAZAD is not set
+# CONFIG_CRYPTO_SEED is not set
+# CONFIG_CRYPTO_SERPENT is not set
+# CONFIG_CRYPTO_SERPENT_SSE2_X86_64 is not set
+# CONFIG_CRYPTO_SERPENT_AVX_X86_64 is not set
+# CONFIG_CRYPTO_TEA is not set
+CONFIG_CRYPTO_TWOFISH=m
+CONFIG_CRYPTO_TWOFISH_COMMON=m
+CONFIG_CRYPTO_TWOFISH_X86_64=m
+CONFIG_CRYPTO_TWOFISH_X86_64_3WAY=m
+CONFIG_CRYPTO_TWOFISH_AVX_X86_64=m
+
+#
+# Compression
+#
+# CONFIG_CRYPTO_DEFLATE is not set
+CONFIG_CRYPTO_ZLIB=m
+CONFIG_CRYPTO_LZO=m
+
+#
+# Random Number Generation
+#
+# CONFIG_CRYPTO_ANSI_CPRNG is not set
+CONFIG_CRYPTO_USER_API=m
+CONFIG_CRYPTO_USER_API_HASH=m
+CONFIG_CRYPTO_USER_API_SKCIPHER=m
+# CONFIG_CRYPTO_HW is not set
+CONFIG_HAVE_KVM=y
+# CONFIG_VIRTUALIZATION is not set
+# CONFIG_BINARY_PRINTF is not set
+
+#
+# Library routines
+#
+CONFIG_BITREVERSE=m
+CONFIG_GENERIC_STRNCPY_FROM_USER=y
+CONFIG_GENERIC_STRNLEN_USER=y
+CONFIG_GENERIC_FIND_FIRST_BIT=y
+CONFIG_GENERIC_PCI_IOMAP=y
+CONFIG_GENERIC_IOMAP=y
+CONFIG_GENERIC_IO=y
+CONFIG_CRC_CCITT=m
+CONFIG_CRC16=m
+# CONFIG_CRC_T10DIF is not set
+CONFIG_CRC_ITU_T=m
+CONFIG_CRC32=m
+# CONFIG_CRC32_SELFTEST is not set
+# CONFIG_CRC32_SLICEBY8 is not set
+# CONFIG_CRC32_SLICEBY4 is not set
+# CONFIG_CRC32_SARWATE is not set
+CONFIG_CRC32_BIT=y
+# CONFIG_CRC7 is not set
+# CONFIG_LIBCRC32C is not set
+# CONFIG_CRC8 is not set
+CONFIG_ZLIB_INFLATE=y
+CONFIG_ZLIB_DEFLATE=m
+CONFIG_LZO_COMPRESS=m
+CONFIG_LZO_DECOMPRESS=m
+# CONFIG_XZ_DEC is not set
+# CONFIG_XZ_DEC_BCJ is not set
+CONFIG_DECOMPRESS_GZIP=y
+CONFIG_GENERIC_ALLOCATOR=y
+CONFIG_TEXTSEARCH=y
+CONFIG_TEXTSEARCH_KMP=m
+CONFIG_TEXTSEARCH_BM=m
+CONFIG_TEXTSEARCH_FSM=m
+CONFIG_HAS_IOMEM=y
+CONFIG_HAS_IOPORT=y
+CONFIG_HAS_DMA=y
+CONFIG_CPUMASK_OFFSTACK=y
+CONFIG_NLATTR=y
+CONFIG_ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE=y
+CONFIG_AVERAGE=y
+# CONFIG_CORDIC is not set
+# CONFIG_DDR is not set
+
+--1yeeQ81UyVL57Vl7--
