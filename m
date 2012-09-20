@@ -1,88 +1,42 @@
-From: Harsh Kumar <harsh1kumar@gmail.com>
-Date: Wed, 26 Sep 2012 04:53:56 +0000
-Subject: Re: [Patch1/2] Staging: winbond: checkpatch cleanup for wb35tx_s.h
-Message-Id: <50628A55.4040009@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 20 Sep 2012 21:24:47 +0000
+Subject: [rcu:rcu/next 5/78] kernel/rcutree.c:1131:41: error: 'flags' undeclared
+Message-Id: <20120920212447.GB5446@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50628557.3040607@gmail.com>
-In-Reply-To: <50628557.3040607@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Please ignore this mail. I will resend the patches.
-Really sorry.
+Hi Paul,
 
-On Wednesday 26 September 2012 10:02 AM, Harsh Kumar wrote:
+FYI, kernel build failed on
 
-> checkpatch cleanup for drivers/staging/winbond/wb35tx_s.h
-> Changed c99 comments to c89 comments
-> 
-> diff -uprN a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
-> --- a/drivers/staging/winbond/wb35tx_s.h
-> +++ b/drivers/staging/winbond/wb35tx_s.h
-> @@ -3,36 +3,32 @@
->  
->  #include "mds_s.h"
->  
-> -//==================
-> -// IS89C35 Tx related definition
-> -//==================
-> -#define TX_INTERFACE			0	// Interface 1
-> -#define TX_PIPE					3	// endpoint 4
-> -#define TX_INTERRUPT			1	// endpoint 2
-> -#define MAX_INTERRUPT_LENGTH	64	// It must be 64 for EP2 hardware
-> +/* IS89C35 Tx related definition */
-> +#define TX_INTERFACE			0	/* Interface 1 */
-> +#define TX_PIPE					3	/* Endpoint 4 */
-> +#define TX_INTERRUPT			1	/* Endpoint 2 */
-> +#define MAX_INTERRUPT_LENGTH	64	/* It must be 64 for EP2 hardware */
->  
->  
->  
-> -//==================
-> -// Internal variable for module
-> -//==================
-> +/* Internal variable for module */
->  
->  
->  struct wb35_tx {
-> -	// For Tx buffer
-> +	/* For Tx buffer */
->  	u8	TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
->  
-> -	// For Interrupt pipe
-> +	/* For Interrupt pipe */
->  	u8	EP2_buf[MAX_INTERRUPT_LENGTH];
->  
-> -	atomic_t	TxResultCount;// For thread control of EP2 931130.4.m
-> -	atomic_t	TxFireCounter;// For thread control of EP4 931130.4.n
-> +	atomic_t	TxResultCount; /* For thread control of EP2 931130.4.m */
-> +	atomic_t	TxFireCounter; /* For thread control of EP4 931130.4.n */
->  	u32			ByteTransfer;
->  
-> -	u32	    TxSendIndex;// The next index of Mds array to be sent
-> -	u32	    EP2vm_state; // for EP2vm state
-> -	u32	    EP4vm_state; // for EP4vm state
-> -	u32	    tx_halt; // Stopping VM
-> +	u32	    TxSendIndex; /* The next index of Mds array to be sent */
-> +	u32	    EP2vm_state; /* for EP2vm state */
-> +	u32	    EP4vm_state; /* for EP4vm state */
-> +	u32	    tx_halt; /* Stopping VM */
->  
->  	struct urb *				Tx4Urb;
->  	struct urb *				Tx2Urb;
-> @@ -40,8 +36,8 @@ struct wb35_tx {
->  	int		EP2VM_status;
->  	int		EP4VM_status;
->  
-> -	u32	TxFillCount; // 20060928
-> -	u32	TxTimer; // 20060928 Add if sending packet is greater than 13
-> +	u32	TxFillCount; /* 20060928 */
-> +	u32	TxTimer; /* 20060928 Add if sending packet is greater than 13 */
->  };
->  
->  #endif
-> 
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git rcu/next
+head:   d58ab773ab8bc98c81c7d49c04bc88b6e7968385
+commit: 552116942862340a4a0577cbac194ddc6185e4cb [5/78] rcu: Move RCU grace-period cleanup into kthread
+config: x86_64-allmodconfig
 
+All related error/warning messages:
 
+kernel/rcutree.c: In function 'rcu_gp_kthread':
+kernel/rcutree.c:1131:41: error: 'flags' undeclared (first use in this function)
+kernel/rcutree.c:1131:41: note: each undeclared identifier is reported only once for each function it appears in
+kernel/rcutree.c:1131:74: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+kernel/rcutree.c:1176:74: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+
+vim +1131 kernel/rcutree.c
+  1125				if (!ACCESS_ONCE(rnp->qsmask) &&
+  1126				    !rcu_preempt_blocked_readers_cgp(rnp))
+  1127					break;
+  1128				flush_signals(current);
+  1129			}
+  1130	
+> 1131			raw_spin_lock_irqsave(&rnp->lock, flags);
+  1132			gp_duration = jiffies - rsp->gp_start;
+  1133			if (gp_duration > rsp->gp_max)
+  1134				rsp->gp_max = gp_duration;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
