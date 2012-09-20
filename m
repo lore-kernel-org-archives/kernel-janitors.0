@@ -1,7 +1,7 @@
-From: Saurav Kashyap <saurav.kashyap@qlogic.com>
-Date: Thu, 20 Sep 2012 05:24:55 +0000
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 20 Sep 2012 05:29:10 +0000
 Subject: Re: drivers/scsi/qla2xxx/qla_os.c:3722 code aligned with following code on line 3723
-Message-Id: <CC80A5D7.E249%saurav.kashyap@qlogic.com>
+Message-Id: <20120920052910.GA28374@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120919031034.GA22081@localhost>
 In-Reply-To: <20120919031034.GA22081@localhost>
@@ -10,61 +10,78 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-+Chad, Giri
+On Thu, Sep 20, 2012 at 12:24:55AM -0500, Saurav Kashyap wrote:
+> +Chad, Giri
+> 
+> Hi Fengguang,
+> 
+> It not very clear on what the warning is reported for, can you provide
+> more information regarding this?
 
-Hi Fengguang,
+This warning will be triggered for such code:
 
-It not very clear on what the warning is reported for, can you provide
-more information regarding this?
+        if (xxx)
+                yyy;
+                zzz;
+
+Where one would expect the reasonable format to be either
+
+        if (xxx) {
+                yyy;
+                zzz;
+        }
+
+or
+
+        if (xxx)
+                yyy;
+        zzz;
 
 Thanks,
-~Saurav
+Fengguang
 
-
-
->Hi Saurav,
->
->FYI, there are new coccinelle warnings show up in
->
->commit aaf4d3e2c647b5d1b24082b766c173e6c7edf79b
->Author:     Saurav Kashyap <saurav.kashyap@qlogic.com>
->Commit:     James Bottomley <JBottomley@Parallels.com>
->CommitDate: Thu May 10 08:18:04 2012 +0100
->
->    [SCSI] qla2xxx: Properly check for current state after the
->fabric-login request.
->
->
->+ drivers/scsi/qla2xxx/qla_os.c:3722:7-21: code aligned with following
->code on line 3723
->
->vim +3722 drivers/scsi/qla2xxx/qla_os.c
->  3712                                 } else {
->  3713                                         status = qla2x00_fabric_login(vha,
->  3714                                             fcport, &next_loopid);
->  3715                                         if (status =  QLA_SUCCESS) {
->  3716                                                 int status2;
->  3717                                                 uint8_t opts;
->  3718
->  3719                                                 opts = 0;
->  3720                                                 if (fcport->flags &
->  3721                                                     FCF_FCP2_DEVICE)
->> 3722                                                         opts |= BIT_1;
->  3723                                                         status2 >  3724                                                             qla2x00_get_port_database(
->  3725                                                                 vha, fcport,
->  3726                                                                 opts);
->  3727                                                 if (status2 != QLA_SUCCESS)
->  3728                                                         status = 1;
->  3729                                         }
->  3730                                 }
->  3731                         } else
->  3732                                 status = qla2x00_local_device_login(vha,
->
->---
->0-DAY kernel build testing backend         Open Source Technology Centre
->Fengguang Wu, Yuanhan Liu                              Intel Corporation
->
-
-
-This message and any attached documents contain information from QLogic Corporation or its wholly-owned subsidiaries that may be confidential. If you are not the intended recipient, you may not read, copy, distribute, or use this information. If you have received this transmission in error, please notify the sender immediately by reply e-mail and then delete this message.
-
+> >Hi Saurav,
+> >
+> >FYI, there are new coccinelle warnings show up in
+> >
+> >commit aaf4d3e2c647b5d1b24082b766c173e6c7edf79b
+> >Author:     Saurav Kashyap <saurav.kashyap@qlogic.com>
+> >Commit:     James Bottomley <JBottomley@Parallels.com>
+> >CommitDate: Thu May 10 08:18:04 2012 +0100
+> >
+> >    [SCSI] qla2xxx: Properly check for current state after the
+> >fabric-login request.
+> >
+> >
+> >+ drivers/scsi/qla2xxx/qla_os.c:3722:7-21: code aligned with following
+> >code on line 3723
+> >
+> >vim +3722 drivers/scsi/qla2xxx/qla_os.c
+> >  3712                                 } else {
+> >  3713                                         status = qla2x00_fabric_login(vha,
+> >  3714                                             fcport, &next_loopid);
+> >  3715                                         if (status =  QLA_SUCCESS) {
+> >  3716                                                 int status2;
+> >  3717                                                 uint8_t opts;
+> >  3718
+> >  3719                                                 opts = 0;
+> >  3720                                                 if (fcport->flags &
+> >  3721                                                     FCF_FCP2_DEVICE)
+> >> 3722                                                         opts |= BIT_1;
+> >  3723                                                         status2 > >  3724                                                             qla2x00_get_port_database(
+> >  3725                                                                 vha, fcport,
+> >  3726                                                                 opts);
+> >  3727                                                 if (status2 != QLA_SUCCESS)
+> >  3728                                                         status = 1;
+> >  3729                                         }
+> >  3730                                 }
+> >  3731                         } else
+> >  3732                                 status = qla2x00_local_device_login(vha,
+> >
+> >---
+> >0-DAY kernel build testing backend         Open Source Technology Centre
+> >Fengguang Wu, Yuanhan Liu                              Intel Corporation
+> >
+> 
+> 
+> This message and any attached documents contain information from QLogic Corporation or its wholly-owned subsidiaries that may be confidential. If you are not the intended recipient, you may not read, copy, distribute, or use this information. If you have received this transmission in error, please notify the sender immediately by reply e-mail and then delete this message.
