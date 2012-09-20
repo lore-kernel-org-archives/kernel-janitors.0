@@ -1,37 +1,54 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 12 Sep 2012 17:03:21 +0000
-Subject: [PATCH 14/15] fs/jffs2/wbuf.c: removes unnecessary semicolon
-Message-Id: <1347469402-27557-14-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 20 Sep 2012 08:58:56 +0000
+Subject: bfa_ioc.c:3407 code aligned with following code on line 3409
+Message-Id: <20120920085856.GA6724@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+To: Krishna Gudipati <kgudipat@brocade.com>
+Cc: kernel-janitors@vger.kernel.org, James Bottomley <JBottomley@Parallels.com>, linux-scsi@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Krishna,
 
-removes unnecessary semicolon
+According to these (old) coccinelle warnings, bfa_cb_sfp_state_query() has very
+weird indents and "if" blocks:
 
-Found by Coccinelle: http://coccinelle.lip6.fr/
+  drivers/scsi/bfa/bfa_ioc.c:3407:3-18: code aligned with following code on line 3409
+  drivers/scsi/bfa/bfa_ioc.c:3415:4-19: code aligned with following code on line 3417
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+        3400 static void
+        3401 bfa_cb_sfp_state_query(struct bfa_sfp_s *sfp)
+        3402 {
+        3403         bfa_trc(sfp, sfp->portspeed);
+        3404         if (sfp->media) {
+        3405                 bfa_sfp_media_get(sfp);
+        3406                 if (sfp->state_query_cbfn)
+>       3407                         sfp->state_query_cbfn(sfp->state_query_cbarg,
+        3408                                         sfp->status);
+        3409                         sfp->media = NULL;
+        3410                 }
+        3411 
+        3412                 if (sfp->portspeed) {
+        3413                         sfp->status = bfa_sfp_speed_valid(sfp, sfp->portspeed);
+        3414                         if (sfp->state_query_cbfn)
+        3415                                 sfp->state_query_cbfn(sfp->state_query_cbarg,
+        3416                                                 sfp->status);
+>       3417                                 sfp->portspeed = BFA_PORT_SPEED_UNKNOWN;
+        3418                 }
+        3419 
+        3420                 sfp->state_query_lock = 0;
+        3421                 sfp->state_query_cbfn = NULL;
+        3422 }
 
----
- fs/jffs2/wbuf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The code was introduced by
 
-diff --git a/fs/jffs2/wbuf.c b/fs/jffs2/wbuf.c
-index a6597d6..bea0487 100644
---- a/fs/jffs2/wbuf.c
-+++ b/fs/jffs2/wbuf.c
-@@ -1275,7 +1275,7 @@ int jffs2_dataflash_setup(struct jffs2_sb_info *c) {
- 	if ((c->flash_size % c->sector_size) != 0) {
- 		c->flash_size = (c->flash_size / c->sector_size) * c->sector_size;
- 		pr_warn("flash size adjusted to %dKiB\n", c->flash_size);
--	};
-+	}
- 
- 	c->wbuf_ofs = 0xFFFFFFFF;
- 	c->wbuf = kmalloc(c->wbuf_pagesize, GFP_KERNEL);
+commit 51e569aa1f0c10bd71af05e76e4ba0e42c51e4ab
+Author:     Krishna Gudipati <kgudipat@brocade.com>
+Commit:     James Bottomley <JBottomley@Parallels.com>
+CommitDate: Wed Jun 29 17:22:26 2011 -0500
 
+    [SCSI] bfa: Added support to obtain SFP info.
+
+Thanks,
+Fengguang
