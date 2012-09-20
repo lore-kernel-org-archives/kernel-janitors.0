@@ -1,74 +1,117 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 17 Sep 2012 08:15:26 +0000
-Subject: [PATCH 2/4] drivers/mmc/host/omap.c: fix error return code
-Message-Id: <1347869728-2696-2-git-send-email-peter.senna@gmail.com>
+From: Adam Buchbinder <adam.buchbinder@gmail.com>
+Date: Thu, 20 Sep 2012 01:47:58 +0000
+Subject: [PATCH] various: Fix spelling of "registered" in comments.
+Message-Id: <1348105682-25196-1-git-send-email-adam.buchbinder@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347869728-2696-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jarkko.lavinen@nokia.com
-Cc: cjb@laptop.org, linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Some comments misspell "registered"; this fixes them. No code changes.
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Adam Buchbinder <adam.buchbinder@gmail.com>
 ---
- drivers/mmc/host/omap.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/cris/include/arch-v10/arch/irq.h |    2 +-
+ arch/cris/include/arch-v32/arch/irq.h |    2 +-
+ include/linux/netdevice.h             |    2 +-
+ include/linux/nfc.h                   |    2 +-
+ include/net/irda/irlmp.h              |    2 +-
+ net/netfilter/nf_log.c                |    2 +-
+ sound/core/seq/seq_device.c           |    2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
-index 48ad361..d468f51 100644
---- a/drivers/mmc/host/omap.c
-+++ b/drivers/mmc/host/omap.c
-@@ -1369,8 +1369,10 @@ static int __devinit mmc_omap_probe(struct platform_device *pdev)
- 	host->irq = irq;
- 	host->phys_base = host->mem_res->start;
- 	host->virt_base = ioremap(res->start, resource_size(res));
--	if (!host->virt_base)
-+	if (!host->virt_base) {
-+		ret = -ENOMEM;
- 		goto err_ioremap;
-+	}
+diff --git a/arch/cris/include/arch-v10/arch/irq.h b/arch/cris/include/arch-v10/arch/irq.h
+index 7d34594..ca2675a 100644
+--- a/arch/cris/include/arch-v10/arch/irq.h
++++ b/arch/cris/include/arch-v10/arch/irq.h
+@@ -142,7 +142,7 @@ __asm__ ( \
+  * it here, we would not get the multiple_irq at all.
+  *
+  * The non-blocking here is based on the knowledge that the timer interrupt is 
+- * registred as a fast interrupt (IRQF_DISABLED) so that we _know_ there will not
++ * registered as a fast interrupt (IRQF_DISABLED) so that we _know_ there will not
+  * be an sti() before the timer irq handler is run to acknowledge the interrupt.
+  */
  
- 	host->iclk = clk_get(&pdev->dev, "ick");
- 	if (IS_ERR(host->iclk)) {
-@@ -1438,8 +1440,10 @@ static int __devinit mmc_omap_probe(struct platform_device *pdev)
- 	host->reg_shift = (cpu_is_omap7xx() ? 1 : 2);
+diff --git a/arch/cris/include/arch-v32/arch/irq.h b/arch/cris/include/arch-v32/arch/irq.h
+index b31e998..fe3cdd2 100644
+--- a/arch/cris/include/arch-v32/arch/irq.h
++++ b/arch/cris/include/arch-v32/arch/irq.h
+@@ -103,7 +103,7 @@ __asm__ (				\
+  * if we had BLOCK'edit here, we would not get the multiple_irq at all.
+  *
+  * The non-blocking here is based on the knowledge that the timer interrupt is
+- * registred as a fast interrupt (IRQF_DISABLED) so that we _know_ there will not
++ * registered as a fast interrupt (IRQF_DISABLED) so that we _know_ there will not
+  * be an sti() before the timer irq handler is run to acknowledge the interrupt.
+  */
+ #define BUILD_TIMER_IRQ(nr, mask) 	\
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 59dc05f3..38c8df7 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -399,7 +399,7 @@ typedef enum gro_result gro_result_t;
+  *
+  * If the rx_handler consider the skb should be ignored, it should return
+  * RX_HANDLER_EXACT. The skb will only be delivered to protocol handlers that
+- * are registred on exact device (ptype->dev = skb->dev).
++ * are registered on exact device (ptype->dev = skb->dev).
+  *
+  * If the rx_handler didn't changed skb->dev, but want the skb to be normally
+  * delivered, it should return RX_HANDLER_PASS.
+diff --git a/include/linux/nfc.h b/include/linux/nfc.h
+index 6189f27..91c5f4e 100644
+--- a/include/linux/nfc.h
++++ b/include/linux/nfc.h
+@@ -51,7 +51,7 @@
+  *	%NFC_ATTR_DEVICE_INDEX)
+  * @NFC_EVENT_TARGETS_FOUND: event emitted when a new target is found
+  *	(it sends %NFC_ATTR_DEVICE_INDEX)
+- * @NFC_EVENT_DEVICE_ADDED: event emitted when a new device is registred
++ * @NFC_EVENT_DEVICE_ADDED: event emitted when a new device is registered
+  *	(it sends %NFC_ATTR_DEVICE_NAME, %NFC_ATTR_DEVICE_INDEX and
+  *	%NFC_ATTR_PROTOCOLS)
+  * @NFC_EVENT_DEVICE_REMOVED: event emitted when a device is removed
+diff --git a/include/net/irda/irlmp.h b/include/net/irda/irlmp.h
+index fff11b7..591f786 100644
+--- a/include/net/irda/irlmp.h
++++ b/include/net/irda/irlmp.h
+@@ -134,7 +134,7 @@ typedef struct {
+ } CACHE_ENTRY;
  
- 	host->mmc_omap_wq = alloc_workqueue("mmc_omap", 0, 0);
--	if (!host->mmc_omap_wq)
-+	if (!host->mmc_omap_wq) {
-+		err = -ENOMEM;
- 		goto err_plat_cleanup;
-+	}
+ /*
+- *  Information about each registred IrLAP layer
++ *  Information about each registered IrLAP layer
+  */
+ struct lap_cb {
+ 	irda_queue_t queue; /* Must be first */
+diff --git a/net/netfilter/nf_log.c b/net/netfilter/nf_log.c
+index 703fb26..9e31269 100644
+--- a/net/netfilter/nf_log.c
++++ b/net/netfilter/nf_log.c
+@@ -32,7 +32,7 @@ static struct nf_logger *__find_logger(int pf, const char *str_logger)
+ 	return NULL;
+ }
  
- 	for (i = 0; i < pdata->nr_slots; i++) {
- 		ret = mmc_omap_new_slot(host, i);
+-/* return EEXIST if the same logger is registred, 0 on success. */
++/* return EEXIST if the same logger is registered, 0 on success. */
+ int nf_log_register(u_int8_t pf, struct nf_logger *logger)
+ {
+ 	const struct nf_logger *llog;
+diff --git a/sound/core/seq/seq_device.c b/sound/core/seq/seq_device.c
+index 5cf8d65..adac415 100644
+--- a/sound/core/seq/seq_device.c
++++ b/sound/core/seq/seq_device.c
+@@ -66,7 +66,7 @@ struct ops_list {
+ 	/* operators */
+ 	struct snd_seq_dev_ops ops;
+ 
+-	/* registred devices */
++	/* registered devices */
+ 	struct list_head dev_list;	/* list of devices */
+ 	int num_devices;	/* number of associated devices */
+ 	int num_init_devices;	/* number of initialized devices */
 -- 
-1.7.11.4
+1.7.7.3
 
