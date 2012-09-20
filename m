@@ -1,83 +1,51 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Wed, 05 Sep 2012 19:36:52 +0000
-Subject: Re: [PATCH 3/5] drivers/media/platform/s5p-tv/mixer_video.c: fix error return code
-Message-Id: <CALF0-+W6i548ehTDaqkXj7ehFfYBPOBwwPBZQ03eMoo+3K3HXQ@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 20 Sep 2012 00:16:08 +0000
+Subject: [kvm:queue 41/42] arch/s390/kvm/interrupt.c:428:12: warning: ignoring return value of 'vcpu_load', d
+Message-Id: <20120920001608.GB9337@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346775269-12191-3-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346775269-12191-3-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org
 
-Hi Peter,
+Hi Michael,
 
-On Tue, Sep 4, 2012 at 1:14 PM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
->
-> // </smpl>
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> ---
->  drivers/media/platform/s5p-tv/mixer_video.c |    5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/platform/s5p-tv/mixer_video.c b/drivers/media/platform/s5p-tv/mixer_video.c
-> index a9c6be3..f139fed 100644
-> --- a/drivers/media/platform/s5p-tv/mixer_video.c
-> +++ b/drivers/media/platform/s5p-tv/mixer_video.c
-> @@ -83,6 +83,7 @@ int __devinit mxr_acquire_video(struct mxr_device *mdev,
->         mdev->alloc_ctx = vb2_dma_contig_init_ctx(mdev->dev);
->         if (IS_ERR_OR_NULL(mdev->alloc_ctx)) {
->                 mxr_err(mdev, "could not acquire vb2 allocator\n");
-> +               ret = -ENODEV;
->                 goto fail_v4l2_dev;
->         }
->
-> @@ -764,8 +765,10 @@ static int mxr_video_open(struct file *file)
->         }
->
->         /* leaving if layer is already initialized */
-> -       if (!v4l2_fh_is_singular_file(file))
-> +       if (!v4l2_fh_is_singular_file(file)) {
-> +               ret = -EBUSY; /* Not sure if EBUSY is the best for here */
->                 goto unlock;
-> +       }
->
->         /* FIXME: should power be enabled on open? */
->         ret = mxr_power_get(mdev);
->
+FYI, there are new compile warnings show up in
 
-Well, same to say here. I think if you look at this functions you'll realize
-it's so much easy to just initialize ret to something, instead of the obviously
-wrong ret = 0.
+tree:   git://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
+head:   879238fecc051d95037ae76332916209a7770709
+commit: 9fc77441e5e1bf80b794cc546d2243ee9f4afb75 [41/42] KVM: make processes waiting on vcpu mutex killable
+config: s390-defconfig
 
-IMO, initializing ret to zero it's a free ticket to bugs. :-)
+All error/warnings:
 
-Hope it helps,
-Ezequiel.
+arch/s390/kvm/interrupt.c: In function 'kvm_s390_handle_wait':
+arch/s390/kvm/interrupt.c:428:12: warning: ignoring return value of 'vcpu_load', declared with attribute warn_unused_result [-Wunused-result]
+
+vim +428 arch/s390/kvm/interrupt.c
+   418		add_wait_queue(&vcpu->arch.local_int.wq, &wait);
+   419		while (list_empty(&vcpu->arch.local_int.list) &&
+   420			list_empty(&vcpu->arch.local_int.float_int->list) &&
+   421			(!vcpu->arch.local_int.timer_due) &&
+   422			!signal_pending(current)) {
+   423			set_current_state(TASK_INTERRUPTIBLE);
+   424			spin_unlock_bh(&vcpu->arch.local_int.lock);
+   425			spin_unlock(&vcpu->arch.local_int.float_int->lock);
+   426			vcpu_put(vcpu);
+   427			schedule();
+ > 428			vcpu_load(vcpu);
+   429			spin_lock(&vcpu->arch.local_int.float_int->lock);
+   430			spin_lock_bh(&vcpu->arch.local_int.lock);
+   431		}
+   432		__unset_cpu_idle(vcpu);
+   433		__set_current_state(TASK_RUNNING);
+   434		remove_wait_queue(&vcpu->arch.local_int.wq, &wait);
+   435		spin_unlock_bh(&vcpu->arch.local_int.lock);
+   436		spin_unlock(&vcpu->arch.local_int.float_int->lock);
+   437		hrtimer_try_to_cancel(&vcpu->arch.ckc_timer);
+   438		return 0;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
