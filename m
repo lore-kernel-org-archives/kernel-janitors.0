@@ -1,29 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 20 Sep 2012 08:53:41 +0000
-Subject: Re: [PATCH] include/linux: Fix spelling of "usage" in comment.
-Message-Id: <20120920085341.GY4587@mwanda>
+From: "Vick, Matthew" <matthew.vick@intel.com>
+Date: Fri, 21 Sep 2012 23:38:12 +0000
+Subject: RE: [can:master 110/171] drivers/net/ethernet/intel/igb/igb.h:347:25: error: field 'hwtstamp_config'
+Message-Id: <06DFBC1E25D8024DB214DC7F41A3CD34488EFFFC@ORSMSX101.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1348105682-25196-2-git-send-email-adam.buchbinder@gmail.com>
-In-Reply-To: <1348105682-25196-2-git-send-email-adam.buchbinder@gmail.com>
+References: <20120921121642.GA17278@localhost>
+In-Reply-To: <20120921121642.GA17278@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "Wu, Fengguang" <fengguang.wu@intel.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
 
-The subject on this should be:
-[PATCH] kexec: Fix spelling of "usage" in comment.
+> -----Original Message-----
+> From: Wu, Fengguang
+> Sent: Friday, September 21, 2012 5:17 AM
+> To: Vick, Matthew
+> Cc: kernel-janitors@vger.kernel.org; Kirsher, Jeffrey T; linux-
+> can@vger.kernel.org
+> Subject: [can:master 110/171]
+> drivers/net/ethernet/intel/igb/igb.h:347:25: error: field
+> 'hwtstamp_config' has incomplete type
+> 
+> Hi Matthew,
+> 
+> FYI, kernel build failed on
+> 
+> tree:   git://gitorious.org/linux-can/linux-can-next master
+> head:   a1161bc7bdf4eedccb1b91e7479f303cf95af533
+> commit: 3c89f6d0d4aa92ff252c17f8f6b5c8983ae2b77e [110/171] igb: Tidy up
+> wrapping for CONFIG_IGB_PTP.
+> config: x86_64-allyesdebian (attached as .config)
+> 
+> All related error/warning messages:
+> 
+> In file included from
+> drivers/net/ethernet/intel/igb/igb_ethtool.c:41:0:
+> drivers/net/ethernet/intel/igb/igb.h:347:25: error: field
+> 'hwtstamp_config' has incomplete type
+> --
+> In file included from drivers/net/ethernet/intel/igb/e1000_mac.c:36:0:
+> drivers/net/ethernet/intel/igb/igb.h:347:25: error: field
+> 'hwtstamp_config' has incomplete type
+> 
+> vim +347 drivers/net/ethernet/intel/igb/igb.h
+>    341		u8  tx_timeout_factor;
+>    342		struct timer_list blink_timer;
+>    343		unsigned long led_status;
+>    344
+>    345		/* OS defined structs */
+>    346		struct pci_dev *pdev;
+>  > 347		struct hwtstamp_config hwtstamp_config;
+>    348
+>    349		spinlock_t stats64_lock;
+>    350		struct rtnl_link_stats64 stats64;
+> 
+> ---
+> 0-DAY kernel build testing backend         Open Source Technology
+> Centre
+> Fengguang Wu, Yuanhan Liu                              Intel
+> Corporation
 
-You should CC the kexec people as well, in case they want to pick
-this up instead of going through the trivial tree.  The way to find
-that is:
+Fengguang,
 
-./scripts/get_maintainer.pl -f include/linux/kexec.h
+I'm not certain I understand how this issue came back to me. The patch in question doesn't touch that code, nor should it be changing anything that would cause a build error here. The offending line is also removed in the next patch (a79f4f88261d7fd492121daf85beafff663f1f01). I'm also unable to reproduce the error.
 
-Eric Biederman <ebiederm@xmission.com> (maintainer:KEXEC)
-kexec@lists.infradead.org (open list:KEXEC)
+What would you like me to do with this?
 
-No need to CC lkml.
-
-regards,
-dan carpenter
-
+Cheers,
+Matthew
