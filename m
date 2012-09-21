@@ -1,265 +1,53 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 29 Sep 2012 10:09:02 +0000
-Subject: Re: [PATCH v2] drivers/staging/iio: Remove unnecessary semicolon
-Message-Id: <5066C8BE.6010302@kernel.org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 21 Sep 2012 08:22:32 +0000
+Subject: [userns:userns-always-map-user-v58 86/150] fs/ncpfs/inode.c:335 ncp_show_options() warn: if();
+Message-Id: <20120921082232.GA5132@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1348826227-32567-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1348826227-32567-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: trivial@kernel.org, gregkh@linuxfoundation.org, lars@metafoo.de, michael.hennerich@analog.com, w.sang@pengutronix.de, marex@denx.de, sfr@canb.auug.org.au, pmeerw@pmeerw.net, shubhrajyoti@ti.com, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 09/28/2012 10:57 AM, Peter Senna Tschudin wrote:
-> A simplified version of the semantic patch that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r1@
-> statement S;
-> position p,p1;
-> @@
-> S@p1;@p
-> 
-> @script:python r2@
-> p << r1.p;
-> p1 << r1.p1;
-> @@
-> if p[0].line != p1[0].line_end:
->         cocci.include_match(False)
-> @@
-> position r1.p;
-> @@
-> -;@p
-> // </smpl>
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Eric,
 
-Merged to togreg branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+FYI, there are new smatch warnings show up in
 
-Will hit next cycle now.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-always-map-user-v58
+head:   cf7198a6b74906aa363a8507d6f9cbdf56e42dc1
+commit: 84ec77ea8a96e568f20bec4465c1fbde2c066cf8 [86/150] userns: Convert ncpfs to use kuid and kgid where appropriate
 
-> ---
-> Changes from v1:
-> Include semantic patch in the commit message.
-> 
-> The full version of the semantic patch can be found at:
-> http://comments.gmane.org/gmane.comp.version-control.coccinelle/2724
-> 
->  drivers/staging/iio/accel/adis16201_core.c |  4 ++--
->  drivers/staging/iio/accel/adis16204_core.c |  2 +-
->  drivers/staging/iio/accel/adis16209_core.c |  4 ++--
->  drivers/staging/iio/accel/kxsd9.c          |  2 +-
->  drivers/staging/iio/adc/mxs-lradc.c        |  2 +-
->  drivers/staging/iio/cdc/ad7150.c           | 12 ++++++------
->  drivers/staging/iio/cdc/ad7152.c           |  2 +-
->  drivers/staging/iio/cdc/ad7746.c           |  2 +-
->  drivers/staging/iio/gyro/adis16260_core.c  |  4 ++--
->  drivers/staging/iio/magnetometer/hmc5843.c |  2 +-
->  10 files changed, 18 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/accel/adis16201_core.c b/drivers/staging/iio/accel/adis16201_core.c
-> index 8e37d6e..5d2ae5d 100644
-> --- a/drivers/staging/iio/accel/adis16201_core.c
-> +++ b/drivers/staging/iio/accel/adis16201_core.c
-> @@ -345,7 +345,7 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
->  			break;
->  		default:
->  			return -EINVAL;
-> -		};
-> +		}
->  		mutex_lock(&indio_dev->mlock);
->  		addr = adis16201_addresses[chan->address][1];
->  		ret = adis16201_spi_read_reg_16(indio_dev, addr, &val16);
-> @@ -382,7 +382,7 @@ static int adis16201_write_raw(struct iio_dev *indio_dev,
->  			break;
->  		default:
->  			return -EINVAL;
-> -		};
-> +		}
->  		val16 = val & ((1 << bits) - 1);
->  		addr = adis16201_addresses[chan->address][1];
->  		return adis16201_spi_write_reg_16(indio_dev, addr, val16);
-> diff --git a/drivers/staging/iio/accel/adis16204_core.c b/drivers/staging/iio/accel/adis16204_core.c
-> index 05bdb7c..c6bf641 100644
-> --- a/drivers/staging/iio/accel/adis16204_core.c
-> +++ b/drivers/staging/iio/accel/adis16204_core.c
-> @@ -389,7 +389,7 @@ static int adis16204_write_raw(struct iio_dev *indio_dev,
->  			break;
->  		default:
->  			return -EINVAL;
-> -		};
-> +		}
->  		val16 = val & ((1 << bits) - 1);
->  		addr = adis16204_addresses[chan->address][1];
->  		return adis16204_spi_write_reg_16(indio_dev, addr, val16);
-> diff --git a/drivers/staging/iio/accel/adis16209_core.c b/drivers/staging/iio/accel/adis16209_core.c
-> index b7333bf..4f70efd 100644
-> --- a/drivers/staging/iio/accel/adis16209_core.c
-> +++ b/drivers/staging/iio/accel/adis16209_core.c
-> @@ -295,7 +295,7 @@ static int adis16209_write_raw(struct iio_dev *indio_dev,
->  			break;
->  		default:
->  			return -EINVAL;
-> -		};
-> +		}
->  		val16 = val & ((1 << bits) - 1);
->  		addr = adis16209_addresses[chan->address][1];
->  		return adis16209_spi_write_reg_16(indio_dev, addr, val16);
-> @@ -373,7 +373,7 @@ static int adis16209_read_raw(struct iio_dev *indio_dev,
->  			break;
->  		default:
->  			return -EINVAL;
-> -		};
-> +		}
->  		mutex_lock(&indio_dev->mlock);
->  		addr = adis16209_addresses[chan->address][1];
->  		ret = adis16209_spi_read_reg_16(indio_dev, addr, &val16);
-> diff --git a/drivers/staging/iio/accel/kxsd9.c b/drivers/staging/iio/accel/kxsd9.c
-> index fdd5fbd..e8e6e3f 100644
-> --- a/drivers/staging/iio/accel/kxsd9.c
-> +++ b/drivers/staging/iio/accel/kxsd9.c
-> @@ -171,7 +171,7 @@ static int kxsd9_read_raw(struct iio_dev *indio_dev,
->  		*val2 = kxsd9_micro_scales[ret & KXSD9_FS_MASK];
->  		ret = IIO_VAL_INT_PLUS_MICRO;
->  		break;
-> -	};
-> +	}
->  
->  error_ret:
->  	return ret;
-> diff --git a/drivers/staging/iio/adc/mxs-lradc.c b/drivers/staging/iio/adc/mxs-lradc.c
-> index ca7c1fa..df5bba2 100644
-> --- a/drivers/staging/iio/adc/mxs-lradc.c
-> +++ b/drivers/staging/iio/adc/mxs-lradc.c
-> @@ -351,7 +351,7 @@ static int mxs_lradc_buffer_preenable(struct iio_dev *iio)
->  		writel(chan_value, lradc->base + LRADC_CH(ofs));
->  		enable |= 1 << ofs;
->  		ofs++;
-> -	};
-> +	}
->  
->  	writel(LRADC_DELAY_TRIGGER_LRADCS_MASK | LRADC_DELAY_KICK,
->  		lradc->base + LRADC_DELAY(0) + STMP_OFFSET_REG_CLR);
-> diff --git a/drivers/staging/iio/cdc/ad7150.c b/drivers/staging/iio/cdc/ad7150.c
-> index 6a40414..c72a6c0 100644
-> --- a/drivers/staging/iio/cdc/ad7150.c
-> +++ b/drivers/staging/iio/cdc/ad7150.c
-> @@ -156,7 +156,7 @@ static int ad7150_read_event_config(struct iio_dev *indio_dev, u64 event_code)
->  			return !adaptive && (threshtype = 0x1);
->  		else
->  			return !adaptive && (threshtype = 0x0);
-> -	};
-> +	}
->  	return -EINVAL;
->  }
->  
-> @@ -194,7 +194,7 @@ static int ad7150_write_event_params(struct iio_dev *indio_dev, u64 event_code)
->  		break;
->  	default:
->  		return -EINVAL;
-> -	};
-> +	}
->  	ret = i2c_smbus_write_byte_data(chip->client,
->  					ad7150_addresses[chan][4],
->  					sens);
-> @@ -257,7 +257,7 @@ static int ad7150_write_event_config(struct iio_dev *indio_dev,
->  	default:
->  		ret = -EINVAL;
->  		goto error_ret;
-> -	};
-> +	}
->  
->  	cfg |= (!adaptive << 7) | (thresh_type << 5);
->  
-> @@ -327,7 +327,7 @@ static int ad7150_write_event_value(struct iio_dev *indio_dev,
->  	default:
->  		ret = -EINVAL;
->  		goto error_ret;
-> -	};
-> +	}
->  
->  	/* write back if active */
->  	ret = ad7150_write_event_params(indio_dev, event_code);
-> @@ -360,7 +360,7 @@ static ssize_t ad7150_show_timeout(struct device *dev,
->  		break;
->  	default:
->  		return -EINVAL;
-> -	};
-> +	}
->  
->  	return sprintf(buf, "%d\n", value);
->  }
-> @@ -394,7 +394,7 @@ static ssize_t ad7150_store_timeout(struct device *dev,
->  	default:
->  		ret = -EINVAL;
->  		goto error_ret;
-> -	};
-> +	}
->  
->  	ret = ad7150_write_event_params(indio_dev, this_attr->address);
->  error_ret:
-> diff --git a/drivers/staging/iio/cdc/ad7152.c b/drivers/staging/iio/cdc/ad7152.c
-> index 98c3015..288b33e 100644
-> --- a/drivers/staging/iio/cdc/ad7152.c
-> +++ b/drivers/staging/iio/cdc/ad7152.c
-> @@ -405,7 +405,7 @@ static int ad7152_read_raw(struct iio_dev *indio_dev,
->  		break;
->  	default:
->  		ret = -EINVAL;
-> -	};
-> +	}
->  out:
->  	mutex_unlock(&indio_dev->mlock);
->  	return ret;
-> diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
-> index 754e11e..e6c11d9 100644
-> --- a/drivers/staging/iio/cdc/ad7746.c
-> +++ b/drivers/staging/iio/cdc/ad7746.c
-> @@ -677,7 +677,7 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
->  		break;
->  	default:
->  		ret = -EINVAL;
-> -	};
-> +	}
->  out:
->  	mutex_unlock(&indio_dev->mlock);
->  	return ret;
-> diff --git a/drivers/staging/iio/gyro/adis16260_core.c b/drivers/staging/iio/gyro/adis16260_core.c
-> index 9571c03..ff16430 100644
-> --- a/drivers/staging/iio/gyro/adis16260_core.c
-> +++ b/drivers/staging/iio/gyro/adis16260_core.c
-> @@ -528,7 +528,7 @@ static int adis16260_read_raw(struct iio_dev *indio_dev,
->  			break;
->  		default:
->  			return -EINVAL;
-> -		};
-> +		}
->  		mutex_lock(&indio_dev->mlock);
->  		addr = adis16260_addresses[chan->address][1];
->  		ret = adis16260_spi_read_reg_16(indio_dev, addr, &val16);
-> @@ -548,7 +548,7 @@ static int adis16260_read_raw(struct iio_dev *indio_dev,
->  			break;
->  		default:
->  			return -EINVAL;
-> -		};
-> +		}
->  		mutex_lock(&indio_dev->mlock);
->  		addr = adis16260_addresses[chan->address][2];
->  		ret = adis16260_spi_read_reg_16(indio_dev, addr, &val16);
-> diff --git a/drivers/staging/iio/magnetometer/hmc5843.c b/drivers/staging/iio/magnetometer/hmc5843.c
-> index 10e0954..f7edf69 100644
-> --- a/drivers/staging/iio/magnetometer/hmc5843.c
-> +++ b/drivers/staging/iio/magnetometer/hmc5843.c
-> @@ -555,7 +555,7 @@ static int hmc5843_read_raw(struct iio_dev *indio_dev,
->  		*val = 0;
->  		*val2 = data->variant->regval_to_nanoscale[data->range];
->  		return IIO_VAL_INT_PLUS_NANO;
-> -	};
-> +	}
->  	return -EINVAL;
->  }
->  
-> 
+All smatch warnings:
+
++ fs/ncpfs/inode.c:335 ncp_show_options() warn: if();
+  fs/ncpfs/inode.c:654 ncp_fill_super() Error invalid range 4096 to -1
+
+vim +335 fs/ncpfs/inode.c
+   319			flush_work_sync(&server->tx.tq);
+   320		else
+   321			flush_work_sync(&server->timeout_tq);
+   322	}
+   323	
+   324	static int  ncp_show_options(struct seq_file *seq, struct dentry *root)
+   325	{
+   326		struct ncp_server *server = NCP_SBP(root->d_sb);
+   327		unsigned int tmp;
+   328	
+   329		if (!uid_eq(server->m.uid, GLOBAL_ROOT_UID))
+   330			seq_printf(seq, ",uid=%u",
+   331				   from_kuid_munged(&init_user_ns, server->m.uid));
+   332		if (!gid_eq(server->m.gid, GLOBAL_ROOT_GID))
+   333			seq_printf(seq, ",gid=%u",
+   334				   from_kgid_munged(&init_user_ns, server->m.gid));
+ > 335		if (!uid_eq(server->m.mounted_uid, GLOBAL_ROOT_UID));
+   336			seq_printf(seq, ",owner=%u",
+   337				   from_kuid_munged(&init_user_ns, server->m.mounted_uid));
+   338		tmp = server->m.file_mode & S_IALLUGO;
+   339		if (tmp != NCP_DEFAULT_FILE_MODE)
+   340			seq_printf(seq, ",mode=0%o", tmp);
+   341		tmp = server->m.dir_mode & S_IALLUGO;
+   342		if (tmp != NCP_DEFAULT_DIR_MODE)
+   343			seq_printf(seq, ",dirmode=0%o", tmp);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
