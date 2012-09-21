@@ -1,30 +1,39 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Fri, 07 Sep 2012 13:04:22 +0000
-Subject: Re: [signal:master 52/57] kernel/signal.c:3119:2: error: implicit declaration of function 'current_u
-Message-Id: <20120907130421.GD13973@ZenIV.linux.org.uk>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 21 Sep 2012 04:23:00 +0000
+Subject: [arm-soc:next/soc 45/53] arch/arm/mach-omap2/omap_hwmod_33xx_data.c:20:49: fatal error:
+Message-Id: <20120921042300.GB26280@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120907070813.GB18082@localhost>
-In-Reply-To: <20120907070813.GB18082@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 07, 2012 at 03:08:14PM +0800, Fengguang Wu wrote:
-> Hi Al,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git master
-> head:   4cc1d72e670ab00f78d9fc529837f7693094bcaf
-> commit: 88e560de8dfee50107ef11e4225fe575c5881830 [52/57] blackfin: sigaltstack conversion
-> config: blackfin-BF533-EZKIT_defconfig (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> kernel/signal.c: In function 'sys_sigaltstack':
-> kernel/signal.c:3119:2: error: implicit declaration of function 'current_user_stack_pointer' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
+Hi Kevin,
 
-Bleh...  s/current_user_stack_pointers/current_user_stack_pointer/ in that
-commit...  Thanks for catching that braino
+FYI, kernel build failed on
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git next/soc
+head:   3aec092eed5d8d2b19a62b0aeed3acea9471099a
+commit: aa817b2e68af8753bb95777255e22164610342c7 [45/53] ARM: OMAP: AM33xx hwmod: fixup SPI after platform_data move
+config: arm-omap2plus_defconfig
+
+All related error/warning messages:
+
+arch/arm/mach-omap2/omap_hwmod_33xx_data.c:20:49: fatal error: linux/platform_data/spi-omap2-mcspi.h: No such file or directory
+compilation terminated.
+
+vim +20 arch/arm/mach-omap2/omap_hwmod_33xx_data.c
+    14	 * GNU General Public License for more details.
+    15	 */
+    16	
+    17	#include <plat/omap_hwmod.h>
+    18	#include <plat/cpu.h>
+    19	#include <linux/platform_data/gpio-omap.h>
+  > 20	#include <linux/platform_data/spi-omap2-mcspi.h>
+    21	#include <plat/dma.h>
+    22	#include <plat/mmc.h>
+    23	#include <plat/i2c.h>
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
