@@ -1,57 +1,56 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 12:07:56 +0000
-Subject: [PATCH 06/10] drivers/video/imxfb.c: fix error return code
-Message-Id: <1347970080-25175-6-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 21 Sep 2012 07:21:42 +0000
+Subject: [acpi:release 13/17] drivers/usb/core/usb-acpi.c:55:18: error: storage size of 'pld' isn't known
+Message-Id: <20120921072142.GB1253@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Feng Tang <feng.tang@intel.com>
+Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, Len Brown <len.brown@intel.com>, Bob Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Feng,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+FYI, kernel build failed on
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git release
+head:   abd4c92003ce21c37ca0e6d9d62b93eb22ec118b
+commit: 8ede06aba5dffa78a27a18c47a9059eb38072ada [13/17] ACPI: Use ACPICA native way to decode the PLD buffer
+config: x86_64-allmodconfig
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+[error]
+drivers/usb/core/usb-acpi.c:55:18: error: storage size of 'pld' isn't known
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+[warning]
+drivers/usb/core/usb-acpi.c:55:18: warning: unused variable 'pld' [-Wunused-variable]
+
+vim +55 drivers/usb/core/usb-acpi.c
+    39			goto out;
+    40		}
+    41	
+    42		if (upc->package.elements[0].integer.value)
+    43			udev->removable = USB_DEVICE_REMOVABLE;
+    44		else
+    45			udev->removable = USB_DEVICE_FIXED;
+    46	
+    47	out:
+    48		kfree(upc);
+    49		return ret;
+    50	}
+    51	
+    52	static int usb_acpi_check_pld(struct usb_device *udev, acpi_handle handle)
+    53	{
+    54		acpi_status status;
+  > 55		struct acpi_pld pld;
+    56	
+    57		status = acpi_get_physical_device_location(handle, &pld);
+    58	
+    59		if (ACPI_FAILURE(status))
+    60			return -ENODEV;
+    61	
+    62		if (pld.user_visible)
+    63			udev->removable = USB_DEVICE_REMOVABLE;
+
 ---
- drivers/video/imxfb.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/video/imxfb.c b/drivers/video/imxfb.c
-index caad368..469b07c 100644
---- a/drivers/video/imxfb.c
-+++ b/drivers/video/imxfb.c
-@@ -803,6 +803,7 @@ static int __init imxfb_probe(struct platform_device *pdev)
- 	fbi->regs = ioremap(res->start, resource_size(res));
- 	if (fbi->regs = NULL) {
- 		dev_err(&pdev->dev, "Cannot map frame buffer registers\n");
-+		ret = -ENOMEM;
- 		goto failed_ioremap;
- 	}
- 
--- 
-1.7.11.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
