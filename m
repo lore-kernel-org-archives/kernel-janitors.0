@@ -1,35 +1,45 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Wed, 26 Sep 2012 10:46:50 +0000
-Subject: Re: [PATCH] mm/slab: Fix kmem_cache_alloc_node_trace() declaration
-Message-Id: <CALF0-+WYRrC544p-JBYXZzacbGW5FpNM0p17Nrp+-49KTFhuDQ@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 21 Sep 2012 10:56:35 +0000
+Subject: [next:akpm 202/376] arch/sh/kernel/ioport.c:14:15: error: conflicting type qualifiers for 'sh_io_por
+Message-Id: <20120921105635.GA13728@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1348571229-844-1-git-send-email-elezegarcia@gmail.com>
-	<1348571229-844-2-git-send-email-elezegarcia@gmail.com>
-	<alpine.DEB.2.00.1209252115000.28360@chino.kir.corp.google.com>
-	<CALF0-+UZj-cunn-+AW0N6_oi1j9VFH8btKV1pvhjtVFiVsE1yQ@mail.gmail.com>
-	<CAOJsxLHBENuus5+isE8ucKUAqVHwaYHuGxOqgGmtPC-2TYri3A@mail.gmail.com>
-In-Reply-To: <CAOJsxLHBENuus5+isE8ucKUAqVHwaYHuGxOqgGmtPC-2TYri3A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>, kernel-janitors@vger.kernel.org, linux-mm@kvack.org, fengguang.wu@intel.com
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 26, 2012 at 7:42 AM, Pekka Enberg <penberg@kernel.org> wrote:
-> On Wed, Sep 26, 2012 at 1:09 PM, Ezequiel Garcia <elezegarcia@gmail.com> wrote:
->> Yes. I just asked Pekka to revert this patch altogether.
->> The original patch was meant to match SLAB and SLUB, and this
->> fix should maintain that. But instead I fix it the wrong way.
->>
->> I'll send another one.
->
-> Okay, I'm now confused and somewhat unhappy. What commits do you want
-> me to nuke exactly?
+Hi Andi,
 
-From your slab/tracing topic branch:
+FYI, kernel build failed on
 
-1e5965bf1f018cc30a4659fa3f1a40146e4276f6
-mm/slab: Fix kmem_cache_alloc_node_trace() declaration
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
+head:   69921c36f9e0e4e7952fa2583bf2d33713835eaf
+commit: 11f7c1c694b94586a232a50eebdd623255d60d72 [202/376] sections: fix section conflicts in arch/sh
+config: sh-titan_defconfig
 
-Thanks,
-Ezequiel.
+All related error/warning messages:
+
+arch/sh/kernel/ioport.c:14:15: error: conflicting type qualifiers for 'sh_io_port_base'
+In file included from include/linux/io.h:22:0,
+                 from arch/sh/kernel/ioport.c:12:
+arch/sh/include/asm/io.h:137:28: note: previous declaration of 'sh_io_port_base' was here
+arch/sh/kernel/ioport.c:15:1: error: conflicting type qualifiers for 'sh_io_port_base'
+In file included from include/linux/io.h:22:0,
+                 from arch/sh/kernel/ioport.c:12:
+arch/sh/include/asm/io.h:137:28: note: previous declaration of 'sh_io_port_base' was here
+
+vim +14 arch/sh/kernel/ioport.c
+     8	 * License.  See the file "COPYING" in the main directory of this archive
+     9	 * for more details.
+    10	 */
+    11	#include <linux/module.h>
+    12	#include <linux/io.h>
+    13	
+  > 14	unsigned long sh_io_port_base __read_mostly = -1;
+    15	EXPORT_SYMBOL(sh_io_port_base);
+    16	
+    17	void __iomem *__ioport_map(unsigned long addr, unsigned int size)
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
