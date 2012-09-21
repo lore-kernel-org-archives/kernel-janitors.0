@@ -1,70 +1,89 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Wed, 05 Sep 2012 19:46:20 +0000
-Subject: Re: [PATCH 4/5] drivers/media/platform/vino.c: fix error return code
-Message-Id: <CALF0-+UiJy-mcB7U003dCqmQp2ziiTKrTehh3E-2C6FU2bfvkQ@mail.gmail.com>
+From: Fengguang Wu <wfg@linux.intel.com>
+Date: Fri, 21 Sep 2012 23:48:33 +0000
+Subject: Re: [ux500:preview-for-next 26/62] kernel/irq/irqdomain.c:331:2: error: implicit declaration of func
+Message-Id: <20120921234833.GA5959@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346775269-12191-2-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346775269-12191-2-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Hi Peter,
+Hi Lee,
 
-On Tue, Sep 4, 2012 at 1:14 PM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
->
-> // </smpl>
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> ---
->  drivers/media/platform/vino.c |    1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/media/platform/vino.c b/drivers/media/platform/vino.c
-> index cc9110c..6654a28 100644
-> --- a/drivers/media/platform/vino.c
-> +++ b/drivers/media/platform/vino.c
-> @@ -2061,6 +2061,7 @@ static int vino_capture_next(struct vino_channel_settings *vcs, int start)
->         }
->         if (incoming = 0) {
->                 dprintk("vino_capture_next(): no buffers available\n");
-> +               err = -ENOMEM;
->                 goto out;
->         }
->
-
-Mmm, this one doesn't look good.
-
-I think the intention was to return zero, without error.
-They driver tt's just double-checking for incoming data, if there's no incoming
-data, then he simply exits.
+I'm simply testing every branches that can be found. Are there some
+branches in your tree not suitable for testing? If so, I can add them
+to the opt-out list.
 
 Thanks,
-Ezequiel.
+Fengguang
+
+
+On Fri, Sep 21, 2012 at 05:13:51PM +0200, Lee Jones wrote:
+> Hmm... just of out interest, why are you using that branch?
+>=20
+> Kind regards,
+> Lee
+>=20
+> On 21 September 2012 03:59, Yuanhan Liu <yuanhan.liu@intel.com> wrote:
+>=20
+> > Hi Lee,
+> >
+> > FYI, kernel build failed on
+> >
+> > tree:   git://git.linaro.org/people/ljones/linux-3.0-ux500.gitpreview-f=
+or-next
+> > head:   3cc064be4244a038bbbd303ce18b78e06b5fd508
+> > commit: 04939876856788a50902e273c260d922001d32fe [26/62] Revert "of/irq:
+> > Create stub for of_irq_find_parent when !CONFIG_OF"
+> > config: x86_64-allyesdebian (attached as .config)
+> >
+> > All related error/warning messages:
+> >
+> > kernel/irq/irqdomain.c: In function 'irq_find_host':
+> > kernel/irq/irqdomain.c:331:2: error: implicit declaration of function
+> > 'of_irq_find_parent' [-Werror=3Dimplicit-function-declaration]
+> > kernel/irq/irqdomain.c:331:14: warning: assignment makes pointer from
+> > integer without a cast [enabled by default]
+> > cc1: some warnings being treated as errors
+> >
+> > vim +331 kernel/irq/irqdomain.c
+> >    325  {
+> >    326          struct irq_domain *h, *found =3D NULL;
+> >    327          struct device_node *parent_node;
+> >    328          int rc;
+> >    329
+> >    330          /* Take heed if an 'interrupt-parent' was specified. */
+> >  > 331          parent_node =3D of_irq_find_parent(node);
+> >    332          if (parent_node)
+> >    333                  node =3D parent_node;
+> >    334
+> >
+> > -------
+> > I do see that the following commit: 446f1bfe(Revert "irqdomain:.*") wou=
+ld
+> > fix
+> > this build error. But this commit break the bisectabilty. And I guess t=
+his
+> > issue
+> > can be fixed by reverse the revert order: 446f1bfe(Revert "of/irq:.*") =
+and
+> > then
+> > 04939876(Revert "irqdomain:.*").
+> >
+> > ---
+> > 0-DAY kernel build testing backend         Open Source Technology Centre
+> > Fengguang Wu, Yuanhan Liu                              Intel Corporation
+> >
+>=20
+>=20
+>=20
+> --=20
+> Lee Jones
+> Linaro ST-Ericsson Landing Team Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
