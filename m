@@ -1,86 +1,40 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 12:07:59 +0000
-Subject: [PATCH 09/10] drivers/video/ps3fb.c: fix error return code
-Message-Id: <1347970080-25175-9-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 21 Sep 2012 02:07:07 +0000
+Subject: [signal:master 89/93] arch/sh/kernel/signal_32.c:249:2: error: implicit declaration of function 'sys
+Message-Id: <20120921020707.GB21076@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: geoff@infradead.org
-Cc: cbe-oss-dev@lists.ozlabs.org, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, Peter Senna Tschudin <peter.senna@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Al,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+FYI, kernel build failed on
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git master
+head:   d38625a1fb0a7adcc79f97c37d3afde2981aa02a
+commit: 9d5523cd164dd6ace6a8154a1c9d4f1c01fefdab [89/93] sh: sigaltstack conversion
+config: sh-allnoconfig
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+All related error/warning messages:
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+arch/sh/kernel/signal_32.c: In function 'sys_rt_sigreturn':
+arch/sh/kernel/signal_32.c:249:2: error: implicit declaration of function 'sys_sigaltstack' [-Werror=implicit-function-declaration]
+cc1: all warnings being treated as errors
+
+vim +249 arch/sh/kernel/signal_32.c
+   243	
+   244		set_current_blocked(&set);
+   245	
+   246		if (restore_sigcontext(regs, &frame->uc.uc_mcontext, &r0))
+   247			goto badframe;
+   248	
+ > 249		if (sys_sigaltstack(&frame->uc.uc_stack, NULL) = -EFAULT)
+   250			goto badframe;
+   251	
+   252		return r0;
+
 ---
- drivers/video/ps3fb.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/video/ps3fb.c b/drivers/video/ps3fb.c
-index 4e292f2..0b340d6 100644
---- a/drivers/video/ps3fb.c
-+++ b/drivers/video/ps3fb.c
-@@ -1034,6 +1034,7 @@ static int __devinit ps3fb_probe(struct ps3_system_bus_device *dev)
- 	if (status) {
- 		dev_err(&dev->core, "%s: lv1_gpu_memory_allocate failed: %d\n",
- 			__func__, status);
-+		retval = -ENOMEM;
- 		goto err_close_device;
- 	}
- 	dev_dbg(&dev->core, "ddr:lpar:0x%llx\n", ddr_lpar);
-@@ -1046,6 +1047,7 @@ static int __devinit ps3fb_probe(struct ps3_system_bus_device *dev)
- 		dev_err(&dev->core,
- 			"%s: lv1_gpu_context_allocate failed: %d\n", __func__,
- 			status);
-+		retval = -ENOMEM;
- 		goto err_gpu_memory_free;
- 	}
- 
-@@ -1053,6 +1055,7 @@ static int __devinit ps3fb_probe(struct ps3_system_bus_device *dev)
- 	dinfo = (void __force *)ioremap(lpar_driver_info, 128 * 1024);
- 	if (!dinfo) {
- 		dev_err(&dev->core, "%s: ioremap failed\n", __func__);
-+		retval = -ENOMEM;
- 		goto err_gpu_context_free;
- 	}
- 
-@@ -1121,8 +1124,10 @@ static int __devinit ps3fb_probe(struct ps3_system_bus_device *dev)
- 	}
- 
- 	info = framebuffer_alloc(sizeof(struct ps3fb_par), &dev->core);
--	if (!info)
-+	if (!info) {
-+		retval = -ENOMEM;
- 		goto err_context_fb_close;
-+	}
- 
- 	par = info->par;
- 	par->mode_id = ~ps3fb_mode;	/* != ps3fb_mode, to trigger change */
--- 
-1.7.11.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
