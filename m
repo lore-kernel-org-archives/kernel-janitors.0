@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Sep 2012 08:51:22 +0000
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 21 Sep 2012 08:53:51 +0000
 Subject: Re: [userns:userns-always-map-user-v58 86/150] fs/ncpfs/inode.c:335 ncp_show_options() warn: if();
-Message-Id: <20120921085122.GC13767@mwanda>
+Message-Id: <20120921085351.GA6240@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120921082232.GA5132@localhost>
 In-Reply-To: <20120921082232.GA5132@localhost>
@@ -40,13 +40,21 @@ On Fri, Sep 21, 2012 at 11:44:58AM +0300, Dan Carpenter wrote:
 > Yes, yes.  This shouldn't be there in the latest Smatch.  (I thought
 > you were on that thread).  Let me know if it's still an issue.
 
-So I haven't totally puplicized this but Smatch has a --spammy
-option.  If you want something disabled, I could easily move it
-under the --spammy option so it doesn't show up by default.
+The fix you suggested last time seem to be this, which I pulled and
+installed promptly:
 
-Just add and if (!option_spammy) return in front of the print
-statement.  I'm happy to merge all those patches.
+commit 72174b5c4bf53b830d71ae04d042722cdab3e1a2
+Author:     Dan Carpenter <dan.carpenter@oracle.com>
+AuthorDate: Mon Sep 10 00:39:22 2012 +0300
+Commit:     Dan Carpenter <dan.carpenter@oracle.com>
+CommitDate: Mon Sep 10 00:39:22 2012 +0300
 
-regards,
-dan carpenter
+    check_kernel: fix ERR_PTR() false positives
 
+    This was off and it was causing false positives like:
+    net/mac80211/key.c:368 ieee80211_key_alloc() error: -4096 too low for ERR_PTR
+
+Anyway I refreshed the smatch tree just now :)
+
+Thanks,
+Fengguang
