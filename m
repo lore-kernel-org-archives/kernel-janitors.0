@@ -1,63 +1,39 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 27 Sep 2012 01:08:30 +0000
-Subject: [staging:staging-next 245/267] drivers/staging/comedi/drivers/s626.c:2492 s626_attach_pci() warn:
-Message-Id: <20120927010830.GB7205@localhost>
+Date: Fri, 21 Sep 2012 02:06:58 +0000
+Subject: [signal:master 81/93] arch/m32r/kernel/signal.c:106:2: error: implicit declaration of function 'sys_
+Message-Id: <20120921020658.GA21076@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Hartley,
+Hi Al,
 
-FYI, there are smatch warnings show up in
+FYI, kernel build failed on
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
-head:   3cd73bc1cf59b2c9232d9889ba2b148e262054b6
-commit: 91e674e83c530d5902e482ede1af0115989c4fe6 [245/267] staging: comedi: s626: use attach_pci callback
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git master
+head:   d38625a1fb0a7adcc79f97c37d3afde2981aa02a
+commit: dc40dcb629a5a335d78997445d7bb3e5512af6ed [81/93] m32r: convert sigaltstack()
+config: m32r-m32104ut_defconfig
 
-  drivers/staging/comedi/drivers/s626.c:1430 s626_ai_cmd() Error invalid range 4096 to -1
-  drivers/staging/comedi/drivers/s626.c:1450 s626_ai_cmd() Error invalid range 4096 to -1
-  drivers/staging/comedi/drivers/s626.c:1651 s626_ai_cmdtest() Error invalid range 4096 to -1
-  drivers/staging/comedi/drivers/s626.c:1658 s626_ai_cmdtest() Error invalid range 4096 to -1
-  drivers/staging/comedi/drivers/s626.c:2463 s626_attach_pci() info: why not propagate 'result' from comedi_pci_enable() instead of -19?
-+ drivers/staging/comedi/drivers/s626.c:2492 s626_attach_pci() warn: '(dev->private)->base_addr' was not released on error
-  drivers/staging/comedi/drivers/s626.c:2504 s626_attach_pci() warn: '(dev->private)->base_addr' was not released on error
-  drivers/staging/comedi/drivers/s626.c:2517 s626_attach_pci() warn: '(dev->private)->base_addr' was not released on error
+All related error/warning messages:
 
-The errors are actually first introduced by
+arch/m32r/kernel/signal.c: In function 'sys_rt_sigreturn':
+arch/m32r/kernel/signal.c:106:2: error: implicit declaration of function 'sys_sigaltstack' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
 
-commit 020c44f3ad91b334f907a66eedba68f46dd39d25
-Author:     H Hartley Sweeten <hartleys@visionengravers.com>
-Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CommitDate: Fri Jun 22 20:05:01 2012 -0700
-
-    staging: comedi: s626: remove forward declarations 1
-
-vim +2492 drivers/staging/comedi/drivers/s626.c
-  2476			/* disable master interrupt */
-  2477			writel(0, devpriv->base_addr + P_IER);
-  2478	
-  2479			/* soft reset */
-  2480			writel(MC1_SOFT_RESET, devpriv->base_addr + P_MC1);
-  2481	
-  2482			/* DMA FIXME DMA// */
-  2483	
-  2484			/* adc buffer allocation */
-  2485			devpriv->allocatedBuf = 0;
-  2486	
-  2487			devpriv->ANABuf.LogicalBase   2488			    pci_alloc_consistent(devpriv->pdev, DMABUF_SIZE, &appdma);
-  2489	
-  2490			if (devpriv->ANABuf.LogicalBase = NULL) {
-  2491				printk(KERN_ERR "s626_attach: DMA Memory mapping error\n");
-> 2492				return -ENOMEM;
-  2493			}
-  2494	
-  2495			devpriv->ANABuf.PhysicalBase = appdma;
-  2496	
-  2497			devpriv->allocatedBuf++;
-  2498	
-  2499			devpriv->RPSBuf.LogicalBase   2500			    pci_alloc_consistent(devpriv->pdev, DMABUF_SIZE, &appdma);
+vim +106 arch/m32r/kernel/signal.c
+   100	
+   101		set_current_blocked(&set);
+   102	
+   103		if (restore_sigcontext(regs, &frame->uc.uc_mcontext, &result))
+   104			goto badframe;
+   105	
+ > 106		if (sys_sigaltstack(&frame->uc.uc_stack, NULL) = -EFAULT)
+   107			goto badframe;
+   108	
+   109		return result;
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
