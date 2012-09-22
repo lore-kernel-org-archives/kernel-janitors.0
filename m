@@ -1,36 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Sep 2012 11:11:53 +0000
-Subject: [patch] [media] rc-core: fix return codes in ir_lirc_ioctl()
-Message-Id: <20120911111153.GB22259@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 22 Sep 2012 00:48:04 +0000
+Subject: [modsign:modsign-post-KS 25/26] make[2]: *** No rule to make target `signing_key.x509', needed by `k
+Message-Id: <20120922004804.GK5959@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Sean Young <sean@mess.org>, David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-These should be -ENOSYS because not -EINVAL.
+Hi David,
 
-Reported-by: Sean Young <sean@mess.org>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+FYI, kernel build failed on
 
-diff --git a/drivers/media/rc/ir-lirc-codec.c b/drivers/media/rc/ir-lirc-codec.c
-index 6ad4a07..c0dc1b9 100644
---- a/drivers/media/rc/ir-lirc-codec.c
-+++ b/drivers/media/rc/ir-lirc-codec.c
-@@ -203,13 +203,13 @@ static long ir_lirc_ioctl(struct file *filep, unsigned int cmd,
- 	/* TX settings */
- 	case LIRC_SET_TRANSMITTER_MASK:
- 		if (!dev->s_tx_mask)
--			return -EINVAL;
-+			return -ENOSYS;
- 
- 		return dev->s_tx_mask(dev, val);
- 
- 	case LIRC_SET_SEND_CARRIER:
- 		if (!dev->s_tx_carrier)
--			return -EINVAL;
-+			return -ENOSYS;
- 
- 		return dev->s_tx_carrier(dev, val);
- 
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git modsign-post-KS
+head:   c563cc3b00d61b65762c9040689f4ddf416b0557
+commit: 19ff7238a74b4c9403cd3819986202547c1af391 [25/26] MODSIGN: Provide module signing public keys to the kernel
+config: x86_64-allyesconfig
+
+All related error/warning messages:
+
+make[2]: *** No rule to make target `signing_key.x509', needed by `kernel/modsign_pubkey.o'.
+make[2]: Target `__build' not remade because of errors.
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
