@@ -1,40 +1,71 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 27 Sep 2012 17:53:18 +0000
-Subject: [nouveau:master 86/96] drivers/gpu/drm/nouveau/core/subdev/therm/fan.c:134:29: sparse: constant
-Message-Id: <20120927175318.GE5517@localhost>
+Date: Sat, 22 Sep 2012 00:41:11 +0000
+Subject: [time:fortglx/3.7/time 11/13] include/linux/timekeeper_internal.h:101:1: sparse: missing identifier
+Message-Id: <20120922004111.GH5959@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120927061057.GB26998@localhost>
-In-Reply-To: <20120927061057.GB26998@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Martin,
+Hi John,
 
 FYI, there are new sparse warnings show up in
 
-tree:   git://git.freedesktop.org/git/nouveau/linux-2.6 master
-head:   301e77f5b7968ff10eac8f3938c30963d8fc0ac3
-commit: 7303dcd8a45f9616c3d1e6f46f5f14639a6696f1 [86/96] drm/nouveau/fan: rewrite the fan tachometer driver to get more precision, faster
+tree:   git://git.linaro.org/people/jstultz/linux.git fortglx/3.7/time
+head:   f9bb3ff13c4701ee6242ec4b4ef0cbc71d5ff299
+commit: 672364f56055976aae7e68b59cf578173a3dbddc [11/13] time: Introduce new GENERIC_TIME_VSYSCALL
 
-+ drivers/gpu/drm/nouveau/core/subdev/therm/fan.c:134:29: sparse: constant 60000000000 is so big it is long long
-? drivers/gpu/drm/nouveau/core/subdev/therm/nv40.c:163:2: sparse: no newline at end of file
-? drivers/gpu/drm/nouveau/core/subdev/therm/nv40.c:79:1: sparse: symbol 'nv40_fan_pwm_get' was not declared. Should it be static?
-? drivers/gpu/drm/nouveau/core/subdev/therm/nv40.c:105:1: sparse: symbol 'nv40_fan_pwm_set' was not declared. Should it be static?
-? drivers/gpu/drm/nouveau/core/subdev/therm/nv50.c:54:1: sparse: symbol 'nv50_fan_pwm_get' was not declared. Should it be static?
-? drivers/gpu/drm/nouveau/core/subdev/therm/nv50.c:70:1: sparse: symbol 'nv50_fan_pwm_set' was not declared. Should it be static?
-? drivers/gpu/drm/nouveau/core/subdev/therm/nv50.c:83:1: sparse: symbol 'nv50_temp_get' was not declared. Should it be static?
+All sparse warnings:
 
-vim +134 drivers/gpu/drm/nouveau/core/subdev/therm/fan.c
++ include/linux/timekeeper_internal.h:101:1: sparse: missing identifier in declaration
++ include/linux/timekeeper_internal.h:101:1: sparse: Expected ; at the end of type declaration
++ include/linux/timekeeper_internal.h:101:1: sparse: got {
+  kernel/time.c:167:17: sparse: undefined identifier 'update_vsyscall_tz'
+  In file included from kernel/time.c:33:0:
+  include/linux/timekeeper_internal.h:101:1: error: expected identifier or '(' before '{' token
+  In file included from kernel/time.c:33:0:
+  include/linux/timekeeper_internal.h:100:20: warning: 'update_vsyscall' declared 'static' but never defined [-Wunused-function]
+--
++ include/linux/timekeeper_internal.h:101:1: sparse: missing identifier in declaration
++ include/linux/timekeeper_internal.h:101:1: sparse: Expected ; at the end of type declaration
++ include/linux/timekeeper_internal.h:101:1: sparse: got {
+  arch/x86/include/asm/stat.h:26:1: sparse: Expected ; at the end of type declaration
+  arch/x86/include/asm/stat.h:26:1: sparse: got }
++ include/linux/timekeeper_internal.h:100:35: sparse: marked inline, but without a definition
+  In file included from kernel/time/timekeeping.c:11:0:
+  include/linux/timekeeper_internal.h:101:1: error: expected identifier or '(' before '{' token
+  In file included from kernel/time/timekeeping.c:11:0:
+  include/linux/timekeeper_internal.h:100:20: warning: 'update_vsyscall' used but never defined [enabled by default]
+? kernel/time.c:167:17: sparse: undefined identifier 'update_vsyscall_tz'
+? arch/x86/include/asm/stat.h:26:1: sparse: Expected ; at the end of type declaration
+? arch/x86/include/asm/stat.h:26:1: sparse: got }
 
-7303dcd8 (Martin Peres 2012-09-02  133) 	if (cycles = 5) {
-7303dcd8 (Martin Peres 2012-09-02 @134) 		tach = (u64)60000000000;
-7303dcd8 (Martin Peres 2012-09-02  135) 		do_div(tach, (end - start));
-7303dcd8 (Martin Peres 2012-09-02  136) 		return tach;
-7303dcd8 (Martin Peres 2012-09-02  137) 	} else
-7303dcd8 (Martin Peres 2012-09-02  138) 		return 0;
-c4f52f28 (Martin Peres 2012-09-02  139) }
+vim +101 include/linux/timekeeper_internal.h
+    85	
+    86	extern void update_vsyscall_old(struct timespec *ts, struct timespec *wtm,
+    87					struct clocksource *c, u32 mult);
+    88	extern void update_vsyscall_tz(void);
+    89	
+    90	static inline void update_vsyscall(struct timekeeper *tk)
+    91	{
+    92		struct timespec xt;
+    93	
+    94		xt = tk_xtime(tk);
+    95		update_vsyscall_old(&xt, &tk->wall_to_monotonic, tk->clock, tk->mult);
+    96	}
+    97	
+    98	#else
+    99	
+   100	static inline void update_vsyscall(struct timekeeper *tk);
+ > 101	{
+   102	}
+   103	static inline void update_vsyscall_tz(void)
+   104	{
+   105	}
+   106	#endif
+   107	
+   108	#endif /* _LINUX_TIMEKEEPER_INTERNAL_H */
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
