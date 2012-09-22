@@ -1,70 +1,58 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 12:07:55 +0000
-Subject: [PATCH 05/10] drivers/video/atmel_lcdfb.c: fix error return code
-Message-Id: <1347970080-25175-5-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 22 Sep 2012 00:47:39 +0000
+Subject: [modsign:modsign-post-KS 23/26] kernel/module_signing.c:57:2: error: implicit declaration of functio
+Message-Id: <20120922004739.GJ5959@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: nicolas.ferre@atmel.com
-Cc: FlorianSchandinat@gmx.de, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi David,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+FYI, kernel build failed on
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git modsign-post-KS
+head:   c563cc3b00d61b65762c9040689f4ddf416b0557
+commit: 2d5ea48ef9e8bf8beac19ca2641bd9a93b6aa035 [23/26] MODSIGN: Provide Kconfig options
+config: cris-allyesconfig
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+[error]
+kernel/module_signing.c:57:2: error: implicit declaration of function 'IS_ERR' [-Werror=implicit-function-declaration]
+kernel/module_signing.c:58:3: error: implicit declaration of function 'PTR_ERR' [-Werror=implicit-function-declaration]
+kernel/module_signing.c:58:3: error: implicit declaration of function 'ERR_PTR' [-Werror=implicit-function-declaration]
+kernel/module_signing.c:58:3: error: implicit declaration of function 'ERR_CAST' [-Werror=implicit-function-declaration]
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+[warning]
+kernel/module_signing.c:58:3: warning: return makes pointer from integer without a cast [enabled by default]
+
+vim +57 kernel/module_signing.c
+    41	static struct public_key_signature *mod_make_digest(enum pkey_hash_algo hash,
+    42							    const void *mod,
+    43							    unsigned long modlen)
+    44	{
+    45		struct public_key_signature *pks;
+    46		struct crypto_shash *tfm;
+    47		struct shash_desc *desc;
+    48		size_t digest_size, desc_size;
+    49		int ret;
+    50	
+    51		pr_devel("=>%s()\n", __func__);
+    52		
+    53		/* Allocate the hashing algorithm we're going to need and find out how
+    54		 * big the hash operational data will be.
+    55		 */
+    56		tfm = crypto_alloc_shash(pkey_hash_algo[hash], 0, 0);
+  > 57		if (IS_ERR(tfm))
+    58			return (PTR_ERR(tfm) = -ENOENT) ? ERR_PTR(-ENOPKG) : ERR_CAST(tfm);
+    59	
+    60		desc_size = crypto_shash_descsize(tfm) + sizeof(*desc);
+    61		digest_size = crypto_shash_digestsize(tfm);
+    62	
+    63		/* We allocate the hash operational data storage on the end of our
+    64		 * context data and the digest output buffer on the end of that.
+    65		 */
+
 ---
- drivers/video/atmel_lcdfb.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/video/atmel_lcdfb.c b/drivers/video/atmel_lcdfb.c
-index 1505539..94cac9f 100644
---- a/drivers/video/atmel_lcdfb.c
-+++ b/drivers/video/atmel_lcdfb.c
-@@ -931,8 +931,10 @@ static int __init atmel_lcdfb_probe(struct platform_device *pdev)
- 		}
- 
- 		info->screen_base = ioremap(info->fix.smem_start, info->fix.smem_len);
--		if (!info->screen_base)
-+		if (!info->screen_base) {
-+			ret = -ENOMEM;
- 			goto release_intmem;
-+		}
- 
- 		/*
- 		 * Don't clear the framebuffer -- someone may have set
-@@ -960,6 +962,7 @@ static int __init atmel_lcdfb_probe(struct platform_device *pdev)
- 	sinfo->mmio = ioremap(info->fix.mmio_start, info->fix.mmio_len);
- 	if (!sinfo->mmio) {
- 		dev_err(dev, "cannot map LCDC registers\n");
-+		ret = -ENOMEM;
- 		goto release_mem;
- 	}
- 
--- 
-1.7.11.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
