@@ -1,59 +1,36 @@
-From: Harsh Kumar <harsh1kumar@gmail.com>
-Date: Sun, 23 Sep 2012 15:55:05 +0000
-Subject: Did I create this patch correctly (for checkpatch fixes)?
-Message-Id: <CAFfwLZjWcBf+r_TTrsNTTdmhAHFPSkvmQ3F7nHOr+SV3Mj=_Lw@mail.gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="20cf302079f43ee32a04ca605454"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 23 Sep 2012 16:15:43 +0000
+Subject: Re: Did I create this patch correctly (for checkpatch fixes)?
+Message-Id: <20120923161543.GI4587@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <CAFfwLZjWcBf+r_TTrsNTTdmhAHFPSkvmQ3F7nHOr+SV3Mj=_Lw@mail.gmail.com>
+In-Reply-To: <CAFfwLZjWcBf+r_TTrsNTTdmhAHFPSkvmQ3F7nHOr+SV3Mj=_Lw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---20cf302079f43ee32a04ca605454
-Content-Type: text/plain; charset=ISO-8859-1
+On Sun, Sep 23, 2012 at 09:13:05PM +0530, Harsh Kumar wrote:
+> Hi,
+> 
+> I have created a patch for the first time. It is a small change (only
+> 3 line change). I ran checkpatch.pl on my patch file and there were no
+> problems. But can somebody please tell me:
+> 
+> 1.) Are the fixes for checkpatch.pl issues correct?
+> 2.) Is the patch file correctly made?
 
-Hi,
+I'm not sure what the problem was you were fixing.  Only the third
+line is correct.
 
-I have created a patch for the first time. It is a small change (only
-3 line change). I ran checkpatch.pl on my patch file and there were no
-problems. But can somebody please tell me:
+The patch should be included in the email.  It needs a proper
+subject, a patch description and a Signed-off-by line.
 
-1.) Are the fixes for checkpatch.pl issues correct?
-2.) Is the patch file correctly made?
+Email the patch to yourself.  Save the raw email including headers
+and everything.  `cat raw_email.txt | git am`.  `git log -p`.  Look
+through the patch and verify that the patch description and
+everything looks good.
 
-Thanks
-Harsh Kumar
+regards,
+dan carpenter
 
---20cf302079f43ee32a04ca605454
-Content-Type: application/octet-stream; 
-	name="checkpatchfix_driverstaging.patch"
-Content-Disposition: attachment; 
-	filename="checkpatchfix_driverstaging.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_h7gbfwj60
-
-RHJpdmVyczogU3RhZ2luZzogY2hlY2twYXRjaCBmaXhlcyBmb3Igd2luYm9uZC9zbWVfYXBpLmgK
-U2lnbmVkLW9mZi1ieTogSGFyc2ggS3VtYXIgPGhhcnNoMWt1bWFyQGdtYWlsLmNvbT4KZGlmZiAt
-dU5yIGxpbnV4LTMuNi1yYzYub3JpZy9kcml2ZXJzL3N0YWdpbmcvd2luYm9uZC9zbWVfYXBpLmgg
-bGludXgtMy42LXJjNi5uZXcvZHJpdmVycy9zdGFnaW5nL3dpbmJvbmQvc21lX2FwaS5oCi0tLSBs
-aW51eC0zLjYtcmM2Lm9yaWcvZHJpdmVycy9zdGFnaW5nL3dpbmJvbmQvc21lX2FwaS5oCTIwMTIt
-MDktMTcgMDM6Mjg6NTEuMDAwMDAwMDAwICswNTMwCisrKyBsaW51eC0zLjYtcmM2Lm5ldy9kcml2
-ZXJzL3N0YWdpbmcvd2luYm9uZC9zbWVfYXBpLmgJMjAxMi0wOS0yMyAxNDoyNTowMi42ODg3NjMw
-MDIgKzA1MzAKQEAgLTEyLDcgKzEyLDcgQEAKICNpbmNsdWRlICJsb2NhbHBhcmEuaCIKIAogLyoq
-KioqKioqKioqKioqKioqKiBDT05TVEFOVCBBTkQgTUFDUk8gU0VDVElPTiAqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKiovCi0jZGVmaW5lIF9JTkxJTkUJCQkJX19pbmxpbmUKKyNkZWZpbmUg
-X0lOTElORQkJCQlpbmxpbmUKIAogI2RlZmluZSBNRURJQV9TVEFURV9ESVNDT05ORUNURUQJMAog
-I2RlZmluZSBNRURJQV9TVEFURV9DT05ORUNURUQJCTEKQEAgLTMxLDcgKzMxLDcgQEAKIAogLyog
-T0lEXzgwMl8xMV9TU0lEICovCiBzOCBzbWVfZ2V0X3NzaWQodm9pZCAqcGNvcmVfZGF0YSwgdTgg
-KnBzc2lkLCB1OCAqcHNzaWRfbGVuKTsKLXM4IHNtZV9nZXRfZGVzaXJlZF9zc2lkKHZvaWQgKnBj
-b3JlX2RhdGEsIHU4ICpwc3NpZCwgdTggKnBzc2lkX2xlbik7LyogTm90IHVzZSAqLworczggc21l
-X2dldF9kZXNpcmVkX3NzaWQodm9pZCAqcGNvcmVfZGF0YSwgdTggKnBzc2lkLCB1OCAqcHNzaWRf
-bGVuKTsvKk5vdCB1c2UqLwogczggc21lX3NldF9kZXNpcmVkX3NzaWQodm9pZCAqcGNvcmVfZGF0
-YSwgdTggKnBzc2lkLCB1OCBzc2lkX2xlbik7CiAKIC8qIE9JRF84MDJfMTFfSU5GUkFTVFJVQ1RV
-UkVfTU9ERSAqLwpAQCAtMTM4LDcgKzEzOCw3IEBACiBzOCBzbWVfZ2V0X3R4cmF0ZV9wb2xpY3ko
-dm9pZCAqcGNvcmVfZGF0YSwgdTggKnBvbGljeSk7CiBzOCBzbWVfZ2V0X2N3bWluX3ZhbHVlKHZv
-aWQgKnBjb3JlX2RhdGEsIHU4ICpjd21pbik7CiBzOCBzbWVfZ2V0X2N3bWF4X3ZhbHVlKHZvaWQg
-KnBjb3JlX2RhdGEsIHUxNiAqY3dtYXgpOwotczggc21lX2dldF9tc19yYWRpb19tb2RlKHZvaWQg
-KnBjb3JlX2RhdGEsIHU4ICogcE1zUmFkaW9PZmYpOworczggc21lX2dldF9tc19yYWRpb19tb2Rl
-KHZvaWQgKnBjb3JlX2RhdGEsIHU4ICpwTXNSYWRpb09mZik7CiBzOCBzbWVfc2V0X21zX3JhZGlv
-X21vZGUodm9pZCAqcGNvcmVfZGF0YSwgdTggYm9Nc1JhZGlvT2ZmKTsKIAogdm9pZCBzbWVfZ2V0
-X3R4X3Bvd2VyX2xldmVsKHZvaWQgKnBjb3JlX2RhdGEsIHUzMiAqVHhQb3dlcik7Cg==
---20cf302079f43ee32a04ca605454--
