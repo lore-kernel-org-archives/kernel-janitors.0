@@ -1,98 +1,91 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 15:23:56 +0000
-Subject: [PATCH 5/14] drivers/media/pci/cx25821/cx25821-video-upstream.c: fix error return code
-Message-Id: <1346945041-26676-9-git-send-email-peter.senna@gmail.com>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Date: Sun, 23 Sep 2012 19:23:07 +0000
+Subject: Re: [PATCH] video: hpfb: Fix error handling
+Message-Id: <505F619B.80505@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1345487545-9590-1-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1345487545-9590-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Emil Goode <emilgoode@gmail.com>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+On 08/20/2012 06:32 PM, Emil Goode wrote:
+> This patch solves problems with the error handling by
+> introducing labels for proper error paths and it also
+> frees resources that where missed.
+> 
+> Signed-off-by: Emil Goode <emilgoode@gmail.com>
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Applied.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+Thanks,
 
-// </smpl>
+Florian Tobias Schandinat
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
- drivers/media/pci/cx25821/cx25821-video-upstream.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/pci/cx25821/cx25821-video-upstream.c b/drivers/media/pci/cx25821/cx25821-video-upstream.c
-index 52c13e0..b41e57b 100644
---- a/drivers/media/pci/cx25821/cx25821-video-upstream.c
-+++ b/drivers/media/pci/cx25821/cx25821-video-upstream.c
-@@ -753,7 +753,6 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
- {
- 	struct sram_channel *sram_ch;
- 	u32 tmp;
--	int retval = 0;
- 	int err = 0;
- 	int data_frame_size = 0;
- 	int risc_buffer_size = 0;
-@@ -796,15 +795,19 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
- 		dev->_filename = kmemdup(dev->input_filename, str_length + 1,
- 					 GFP_KERNEL);
- 
--		if (!dev->_filename)
-+		if (!dev->_filename) {
-+			err = -ENOENT;
- 			goto error;
-+		}
- 	} else {
- 		str_length = strlen(dev->_defaultname);
- 		dev->_filename = kmemdup(dev->_defaultname, str_length + 1,
- 					 GFP_KERNEL);
- 
--		if (!dev->_filename)
-+		if (!dev->_filename) {
-+			err = -ENOENT;
- 			goto error;
-+		}
- 	}
- 
- 	/* Default if filename is empty string */
-@@ -828,7 +831,7 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
- 	dev->_line_size = (dev->_pixel_format = PIXEL_FRMT_422) ?
- 		(WIDTH_D1 * 2) : (WIDTH_D1 * 3) / 2;
- 
--	retval = cx25821_sram_channel_setup_upstream(dev, sram_ch,
-+	err = cx25821_sram_channel_setup_upstream(dev, sram_ch,
- 			dev->_line_size, 0);
- 
- 	/* setup fifo + format */
-@@ -838,8 +841,8 @@ int cx25821_vidupstream_init_ch1(struct cx25821_dev *dev, int channel_select,
- 	dev->upstream_databuf_size = data_frame_size * 2;
- 
- 	/* Allocating buffers and prepare RISC program */
--	retval = cx25821_upstream_buffer_prepare(dev, sram_ch, dev->_line_size);
--	if (retval < 0) {
-+	err = cx25821_upstream_buffer_prepare(dev, sram_ch, dev->_line_size);
-+	if (err < 0) {
- 		pr_err("%s: Failed to set up Video upstream buffers!\n",
- 		       dev->name);
- 		goto error;
+> ---
+>  drivers/video/hpfb.c |   28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/video/hpfb.c b/drivers/video/hpfb.c
+> index ebf8495..7324865 100644
+> --- a/drivers/video/hpfb.c
+> +++ b/drivers/video/hpfb.c
+> @@ -210,6 +210,7 @@ static int __devinit hpfb_init_one(unsigned long phys_base,
+>  				   unsigned long virt_base)
+>  {
+>  	unsigned long fboff, fb_width, fb_height, fb_start;
+> +	int ret;
+>  
+>  	fb_regs = virt_base;
+>  	fboff = (in_8(fb_regs + HPFB_FBOMSB) << 8) | in_8(fb_regs + HPFB_FBOLSB);
+> @@ -290,19 +291,29 @@ static int __devinit hpfb_init_one(unsigned long phys_base,
+>  	fb_info.var   = hpfb_defined;
+>  	fb_info.screen_base = (char *)fb_start;
+>  
+> -	fb_alloc_cmap(&fb_info.cmap, 1 << hpfb_defined.bits_per_pixel, 0);
+> +	ret = fb_alloc_cmap(&fb_info.cmap, 1 << hpfb_defined.bits_per_pixel, 0);
+> +	if (ret < 0)
+> +		goto unmap_screen_base;
+>  
+> -	if (register_framebuffer(&fb_info) < 0) {
+> -		fb_dealloc_cmap(&fb_info.cmap);
+> -		iounmap(fb_info.screen_base);
+> -		fb_info.screen_base = NULL;
+> -		return 1;
+> -	}
+> +	ret = register_framebuffer(&fb_info);
+> +	if (ret < 0)
+> +		goto dealloc_cmap;
+>  
+>  	printk(KERN_INFO "fb%d: %s frame buffer device\n",
+>  	       fb_info.node, fb_info.fix.id);
+>  
+>  	return 0;
+> +
+> +dealloc_cmap:
+> +	fb_dealloc_cmap(&fb_info.cmap);
+> +
+> +unmap_screen_base:
+> +	if (fb_info.screen_base) {
+> +		iounmap(fb_info.screen_base);
+> +		fb_info.screen_base = NULL;
+> +	}
+> +
+> +	return ret;
+>  }
+>  
+>  /* 
+> @@ -345,6 +356,9 @@ static void __devexit hpfb_remove_one(struct dio_dev *d)
+>  	if (d->scode >= DIOII_SCBASE)
+>  		iounmap((void *)fb_regs);
+>  	release_mem_region(d->resource.start, resource_size(&d->resource));
+> +	fb_dealloc_cmap(&fb_info.cmap);
+> +	if (fb_info.screen_base)
+> +		iounmap(fb_info.screen_base);
+>  }
+>  
+>  static struct dio_device_id hpfb_dio_tbl[] = {
 
