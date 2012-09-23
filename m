@@ -1,101 +1,107 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Date: Sun, 23 Sep 2012 19:34:57 +0000
-Subject: Fwd: [PATCH 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
-Message-Id: <505F6461.8090401@redhat.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------020800040104010701040105"
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Date: Sun, 23 Sep 2012 21:15:27 +0000
+Subject: Re: Fwd: [PATCH 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
+Message-Id: <Pine.LNX.4.64.1209232313500.31250@axis700.grange>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1346945041-26676-12-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346945041-26676-12-git-send-email-peter.senna@gmail.com>
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
-
-This is a multi-part message in MIME format.
---------------020800040104010701040105
-Content-Type: text/plain; charset=ISO-8859-1
+ <505F6461.8090401@redhat.com>
+In-Reply-To: <505F6461.8090401@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Please review,
+Hi Peter
 
-Regards,
-Mauro.
+Thanks for the patch, but I think it can be improved:
 
+On Sun, 23 Sep 2012, Mauro Carvalho Chehab wrote:
 
--------- Mensagem original --------
-Assunto: [PATCH 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
-Data: Thu,  6 Sep 2012 17:23:59 +0200
-De: Peter Senna Tschudin <peter.senna@gmail.com>
-Para: Mauro Carvalho Chehab <mchehab@infradead.org>
-CC: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+> Please review,
+> 
+> Regards,
+> Mauro.
+> 
+> 
+> -------- Mensagem original --------
+> Assunto: [PATCH 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
+> Data: Thu,  6 Sep 2012 17:23:59 +0200
+> De: Peter Senna Tschudin <peter.senna@gmail.com>
+> Para: Mauro Carvalho Chehab <mchehab@infradead.org>
+> CC: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+> 
+> From: Peter Senna Tschudin <peter.senna@gmail.com>
+> 
+> Convert a nonnegative error return code to a negative one, as returned
+> elsewhere in the function.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+> 
+> // </smpl>
+> 
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> 
+> ---
+>  drivers/media/platform/soc_camera/mx2_camera.c |    5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
+> index 256187f..f8884a7 100644
+> --- a/drivers/media/platform/soc_camera/mx2_camera.c
+> +++ b/drivers/media/platform/soc_camera/mx2_camera.c
+> @@ -1800,13 +1800,16 @@ static int __devinit mx2_camera_probe(struct platform_device *pdev)
+>  
+>  		if (!res_emma || !irq_emma) {
+>  			dev_err(&pdev->dev, "no EMMA resources\n");
+> +			err = -ENODEV;
+>  			goto exit_free_irq;
+>  		}
+>  
+>  		pcdev->res_emma = res_emma;
+>  		pcdev->irq_emma = irq_emma;
+> -		if (mx27_camera_emma_init(pcdev))
+> +		if (mx27_camera_emma_init(pcdev)) {
+> +			err = -ENODEV;
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+I think, propagating the error, returned by mx27_camera_emma_init() to the 
+caller would be better, than using -ENODEV.
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Thanks
+Guennadi
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+>  			goto exit_free_irq;
+> +		}
+>  	}
+>  
+>  	pcdev->soc_host.drv_name	= MX2_CAM_DRV_NAME,
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
 
 ---
- drivers/media/platform/soc_camera/mx2_camera.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
-index 256187f..f8884a7 100644
---- a/drivers/media/platform/soc_camera/mx2_camera.c
-+++ b/drivers/media/platform/soc_camera/mx2_camera.c
-@@ -1800,13 +1800,16 @@ static int __devinit mx2_camera_probe(struct platform_device *pdev)
- 
- 		if (!res_emma || !irq_emma) {
- 			dev_err(&pdev->dev, "no EMMA resources\n");
-+			err = -ENODEV;
- 			goto exit_free_irq;
- 		}
- 
- 		pcdev->res_emma = res_emma;
- 		pcdev->irq_emma = irq_emma;
--		if (mx27_camera_emma_init(pcdev))
-+		if (mx27_camera_emma_init(pcdev)) {
-+			err = -ENODEV;
- 			goto exit_free_irq;
-+		}
- 	}
- 
- 	pcdev->soc_host.drv_name	= MX2_CAM_DRV_NAME,
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-media" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
---------------020800040104010701040105
-Content-Type: text/plain; charset=UTF-8;
- name="=?ISO-8859-1?Q?Se=E7=E3o_da_mensagem_anexada?="
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename*0*=ISO-8859-1''%53%65%E7%E3%6F%20%64%61%20%6D%65%6E%73%61%67%65;
- filename*1*=%6D%20%61%6E%65%78%61%64%61
-
-
---------------020800040104010701040105--
+Guennadi Liakhovetski, Ph.D.
+Freelance Open-Source Software Developer
+http://www.open-technology.de/
