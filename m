@@ -1,32 +1,33 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Sat, 08 Sep 2012 14:59:45 +0000
-Subject: Re: [signal:master 15/63] (.text+0x315d2): undefined reference to `compat_sys_execve'
-Message-Id: <20120908145945.GJ13973@ZenIV.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 23 Sep 2012 16:33:00 +0000
+Subject: [patch] mwifiex: potential corruption in mwifiex_update_uap_custom_ie()
+Message-Id: <20120923163300.GB21396@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120908123447.GC24182@localhost>
-In-Reply-To: <20120908123447.GC24182@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Bing Zhao <bzhao@marvell.com>, Avinash Patil <patila@marvell.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Sep 08, 2012 at 08:34:47PM +0800, Fengguang Wu wrote:
-> Hi Al,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git master
-> head:   aad206fddcb7642e6777b1b992645299b7557ded
-> commit: 97977a049b19339b1906e1862ed65ad469c01168 [15/63] s390: fold execve_tail() into start_thread(), convert to generic sys_execve()
-> config: s390-allmodconfig (attached as .config)
-> 
-> All related error/warning messages:
-> 
-> arch/s390/built-in.o: In function `sys32_execve_wrapper':
-> (.text+0x315d2): undefined reference to `compat_sys_execve'
+ap_custom_ie is a struct mwifiex_ie_list which is quite different and
+also larger than struct mwifiex_ie.  It's a difference between 4196
+bytes and 262.
 
-Heh...  bisect hazard caused by bug earlier in the series - compat_sys_execve()
-in fs/exec.c was put under the wrong ifdef (__ARCH_WANT_KERNEL_EXECVE instead
-of s/KERNEL/SYS/), but since we usually add both at the same commit, it
-only shows up here, with __ARCH_WANT_KERNEL_EXECVE defined for s390 only
-by the next commit.  Trivially fixed, of course
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker fix and I don't have the hardware to test it.
+Please review it carefully.
+
+diff --git a/drivers/net/wireless/mwifiex/ie.c b/drivers/net/wireless/mwifiex/ie.c
+index 1d8dd00..fa3a80f 100644
+--- a/drivers/net/wireless/mwifiex/ie.c
++++ b/drivers/net/wireless/mwifiex/ie.c
+@@ -160,7 +160,7 @@ mwifiex_update_uap_custom_ie(struct mwifiex_private *priv,
+ 	u16 len;
+ 	int ret;
+ 
+-	ap_custom_ie = kzalloc(sizeof(struct mwifiex_ie), GFP_KERNEL);
++	ap_custom_ie = kzalloc(sizeof(*ap_custom_ie), GFP_KERNEL);
+ 	if (!ap_custom_ie)
+ 		return -ENOMEM;
+ 
