@@ -1,72 +1,59 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Wed, 26 Sep 2012 20:00:54 +0000
-Subject: Re: [next:akpm 342/412] fs/hfsplus/ioctl.c:249:2: error: implicit declaration of function 'hfsplus_a
-Message-Id: <20120926130054.19313463.akpm@linux-foundation.org>
+From: Harsh Kumar <harsh1kumar@gmail.com>
+Date: Sun, 23 Sep 2012 15:55:05 +0000
+Subject: Did I create this patch correctly (for checkpatch fixes)?
+Message-Id: <CAFfwLZjWcBf+r_TTrsNTTdmhAHFPSkvmQ3F7nHOr+SV3Mj=_Lw@mail.gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="20cf302079f43ee32a04ca605454"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120926160738.GC14447@localhost>
-In-Reply-To: <20120926160738.GC14447@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 26 Sep 2012 21:57:39 +0400
-Vyacheslav Dubeyko <slava@dubeyko.com> wrote:
+--20cf302079f43ee32a04ca605454
+Content-Type: text/plain; charset=ISO-8859-1
 
-> On Sep 26, 2012, at 8:07 PM, Fengguang Wu wrote:
-> 
-> > Hi Vyacheslav,
-> > 
-> > FYI, kernel build failed on
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
-> > head:   dad0019944369f58c193c1991c39ffda7ff584d2
-> > commit: 910b5a60f4229643fb0e21d26d6ba61de24e5df8 [342/412] hfsplus: rework functionality of getting, setting and deleting of extended attributes
-> > config: x86_64-randconfig-s007 (attached as .config)
-> > 
-> > All error/warnings:
-> > 
-> > fs/hfsplus/ioctl.c: In function 'hfsplus_setxattr':
-> > fs/hfsplus/ioctl.c:249:2: error: implicit declaration of function 'hfsplus_attr_exists' [-Werror=implicit-function-declaration]
-> > fs/hfsplus/ioctl.c:255:3: error: implicit declaration of function 'hfsplus_delete_attr' [-Werror=implicit-function-declaration]
-> > fs/hfsplus/ioctl.c:258:3: error: implicit declaration of function 'hfsplus_create_attr' [-Werror=implicit-function-declaration]
-> > fs/hfsplus/ioctl.c: In function 'hfsplus_getxattr':
-> > fs/hfsplus/ioctl.c:378:2: error: implicit declaration of function 'hfsplus_alloc_attr_entry' [-Werror=implicit-function-declaration]
-> > fs/hfsplus/ioctl.c:378:8: warning: assignment makes pointer from integer without a cast [enabled by default]
-> > fs/hfsplus/ioctl.c:390:2: error: implicit declaration of function 'hfsplus_find_attr' [-Werror=implicit-function-declaration]
-> > fs/hfsplus/ioctl.c:439:2: error: implicit declaration of function 'hfsplus_destroy_attr_entry' [-Werror=implicit-function-declaration]
-> > cc1: some warnings being treated as errors
-> > 
-> > vim +249 fs/hfsplus/ioctl.c
-> >   243	
-> >   244		if (!HFSPLUS_SB(inode->i_sb)->attr_tree) {
-> >   245			err = -EOPNOTSUPP;
-> >   246			goto end_setxattr;
-> >   247		}
-> >   248	
-> >> 249		if (hfsplus_attr_exists(inode, name)) {
-> >   250			if (flags & XATTR_CREATE) {
-> >   251				printk(KERN_ERR "hfs: xattr exists yet\n");
-> >   252				err = -EOPNOTSUPP;
-> > 
-> 
-> Hi Fengguang,
-> 
-> Sorry, I can't reproduce your issue.
-> 
-> I clone linux-next repository then "git checkout remotes/origin/akpm". I can compile kernel successfully with your .config files without any errors or warnings. I use gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3.
-> 
+Hi,
 
-(top-posting repaired - please don't do that!)
+I have created a patch for the first time. It is a small change (only
+3 line change). I ran checkpatch.pl on my patch file and there were no
+problems. But can somebody please tell me:
 
-This is because you're testing the whole tree, whereas Fengguang test
-the tree after each individual patch.
+1.) Are the fixes for checkpatch.pl issues correct?
+2.) Is the patch file correctly made?
 
-This build error is introduced in
-hfsplus-rework-functionality-of-getting-setting-and-deleting-of-extended-attributes
-and then gets fixed up in the next patch,
-hfsplus-add-support-of-manipulation-by-attributes-file.  This is
-undesirable because it introduces a bisection hole - if someone is
-doing a `git bisect' search and they land on this commit, their kernel
-won't compile.
+Thanks
+Harsh Kumar
 
+--20cf302079f43ee32a04ca605454
+Content-Type: application/octet-stream; 
+	name="checkpatchfix_driverstaging.patch"
+Content-Disposition: attachment; 
+	filename="checkpatchfix_driverstaging.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_h7gbfwj60
+
+RHJpdmVyczogU3RhZ2luZzogY2hlY2twYXRjaCBmaXhlcyBmb3Igd2luYm9uZC9zbWVfYXBpLmgK
+U2lnbmVkLW9mZi1ieTogSGFyc2ggS3VtYXIgPGhhcnNoMWt1bWFyQGdtYWlsLmNvbT4KZGlmZiAt
+dU5yIGxpbnV4LTMuNi1yYzYub3JpZy9kcml2ZXJzL3N0YWdpbmcvd2luYm9uZC9zbWVfYXBpLmgg
+bGludXgtMy42LXJjNi5uZXcvZHJpdmVycy9zdGFnaW5nL3dpbmJvbmQvc21lX2FwaS5oCi0tLSBs
+aW51eC0zLjYtcmM2Lm9yaWcvZHJpdmVycy9zdGFnaW5nL3dpbmJvbmQvc21lX2FwaS5oCTIwMTIt
+MDktMTcgMDM6Mjg6NTEuMDAwMDAwMDAwICswNTMwCisrKyBsaW51eC0zLjYtcmM2Lm5ldy9kcml2
+ZXJzL3N0YWdpbmcvd2luYm9uZC9zbWVfYXBpLmgJMjAxMi0wOS0yMyAxNDoyNTowMi42ODg3NjMw
+MDIgKzA1MzAKQEAgLTEyLDcgKzEyLDcgQEAKICNpbmNsdWRlICJsb2NhbHBhcmEuaCIKIAogLyoq
+KioqKioqKioqKioqKioqKiBDT05TVEFOVCBBTkQgTUFDUk8gU0VDVElPTiAqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKiovCi0jZGVmaW5lIF9JTkxJTkUJCQkJX19pbmxpbmUKKyNkZWZpbmUg
+X0lOTElORQkJCQlpbmxpbmUKIAogI2RlZmluZSBNRURJQV9TVEFURV9ESVNDT05ORUNURUQJMAog
+I2RlZmluZSBNRURJQV9TVEFURV9DT05ORUNURUQJCTEKQEAgLTMxLDcgKzMxLDcgQEAKIAogLyog
+T0lEXzgwMl8xMV9TU0lEICovCiBzOCBzbWVfZ2V0X3NzaWQodm9pZCAqcGNvcmVfZGF0YSwgdTgg
+KnBzc2lkLCB1OCAqcHNzaWRfbGVuKTsKLXM4IHNtZV9nZXRfZGVzaXJlZF9zc2lkKHZvaWQgKnBj
+b3JlX2RhdGEsIHU4ICpwc3NpZCwgdTggKnBzc2lkX2xlbik7LyogTm90IHVzZSAqLworczggc21l
+X2dldF9kZXNpcmVkX3NzaWQodm9pZCAqcGNvcmVfZGF0YSwgdTggKnBzc2lkLCB1OCAqcHNzaWRf
+bGVuKTsvKk5vdCB1c2UqLwogczggc21lX3NldF9kZXNpcmVkX3NzaWQodm9pZCAqcGNvcmVfZGF0
+YSwgdTggKnBzc2lkLCB1OCBzc2lkX2xlbik7CiAKIC8qIE9JRF84MDJfMTFfSU5GUkFTVFJVQ1RV
+UkVfTU9ERSAqLwpAQCAtMTM4LDcgKzEzOCw3IEBACiBzOCBzbWVfZ2V0X3R4cmF0ZV9wb2xpY3ko
+dm9pZCAqcGNvcmVfZGF0YSwgdTggKnBvbGljeSk7CiBzOCBzbWVfZ2V0X2N3bWluX3ZhbHVlKHZv
+aWQgKnBjb3JlX2RhdGEsIHU4ICpjd21pbik7CiBzOCBzbWVfZ2V0X2N3bWF4X3ZhbHVlKHZvaWQg
+KnBjb3JlX2RhdGEsIHUxNiAqY3dtYXgpOwotczggc21lX2dldF9tc19yYWRpb19tb2RlKHZvaWQg
+KnBjb3JlX2RhdGEsIHU4ICogcE1zUmFkaW9PZmYpOworczggc21lX2dldF9tc19yYWRpb19tb2Rl
+KHZvaWQgKnBjb3JlX2RhdGEsIHU4ICpwTXNSYWRpb09mZik7CiBzOCBzbWVfc2V0X21zX3JhZGlv
+X21vZGUodm9pZCAqcGNvcmVfZGF0YSwgdTggYm9Nc1JhZGlvT2ZmKTsKIAogdm9pZCBzbWVfZ2V0
+X3R4X3Bvd2VyX2xldmVsKHZvaWQgKnBjb3JlX2RhdGEsIHUzMiAqVHhQb3dlcik7Cg==
+--20cf302079f43ee32a04ca605454--
