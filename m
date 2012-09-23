@@ -1,95 +1,101 @@
-From: "Vick, Matthew" <matthew.vick@intel.com>
-Date: Tue, 25 Sep 2012 17:06:17 +0000
-Subject: RE: [can:master 110/171] drivers/net/ethernet/intel/igb/igb.h:347:25: error: field 'hwtstamp_config'
-Message-Id: <06DFBC1E25D8024DB214DC7F41A3CD34488F2D9F@ORSMSX101.amr.corp.intel.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date: Sun, 23 Sep 2012 19:34:57 +0000
+Subject: Fwd: [PATCH 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
+Message-Id: <505F6461.8090401@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------020800040104010701040105"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120921121642.GA17278@localhost>
- <06DFBC1E25D8024DB214DC7F41A3CD34488EFFFC@ORSMSX101.amr.corp.intel.com>
- <20120925122218.GB4545@localhost>
-In-Reply-To: <20120925122218.GB4545@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Wu, Fengguang" <fengguang.wu@intel.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
+References: <1346945041-26676-12-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346945041-26676-12-git-send-email-peter.senna@gmail.com>
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBXdSwgRmVuZ2d1YW5nDQo+IFNl
-bnQ6IFR1ZXNkYXksIFNlcHRlbWJlciAyNSwgMjAxMiA1OjIyIEFNDQo+IFRvOiBWaWNrLCBNYXR0
-aGV3DQo+IENjOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBLaXJzaGVyLCBKZWZm
-cmV5IFQ7IGxpbnV4LQ0KPiBjYW5Admdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbY2Fu
-Om1hc3RlciAxMTAvMTcxXQ0KPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiLmg6
-MzQ3OjI1OiBlcnJvcjogZmllbGQNCj4gJ2h3dHN0YW1wX2NvbmZpZycgaGFzIGluY29tcGxldGUg
-dHlwZQ0KPiANCj4gT24gU2F0LCBTZXAgMjIsIDIwMTIgYXQgMDc6Mzg6MTJBTSArMDgwMCwgVmlj
-aywgTWF0dGhldyB3cm90ZToNCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4g
-PiBGcm9tOiBXdSwgRmVuZ2d1YW5nDQo+ID4gPiBTZW50OiBGcmlkYXksIFNlcHRlbWJlciAyMSwg
-MjAxMiA1OjE3IEFNDQo+ID4gPiBUbzogVmljaywgTWF0dGhldw0KPiA+ID4gQ2M6IGtlcm5lbC1q
-YW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IEtpcnNoZXIsIEplZmZyZXkgVDsgbGludXgtDQo+ID4g
-PiBjYW5Admdlci5rZXJuZWwub3JnDQo+ID4gPiBTdWJqZWN0OiBbY2FuOm1hc3RlciAxMTAvMTcx
-XQ0KPiA+ID4gZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYi5oOjM0NzoyNTogZXJy
-b3I6IGZpZWxkDQo+ID4gPiAnaHd0c3RhbXBfY29uZmlnJyBoYXMgaW5jb21wbGV0ZSB0eXBlDQo+
-ID4gPg0KPiA+ID4gSGkgTWF0dGhldywNCj4gPiA+DQo+ID4gPiBGWUksIGtlcm5lbCBidWlsZCBm
-YWlsZWQgb24NCj4gPiA+DQo+ID4gPiB0cmVlOiAgIGdpdDovL2dpdG9yaW91cy5vcmcvbGludXgt
-Y2FuL2xpbnV4LWNhbi1uZXh0IG1hc3Rlcg0KPiA+ID4gaGVhZDogICBhMTE2MWJjN2JkZjRlZWRj
-Y2IxYjkxZTc0NzlmMzAzY2Y5NWFmNTMzDQo+ID4gPiBjb21taXQ6IDNjODlmNmQwZDRhYTkyZmYy
-NTJjMTdmOGY2YjVjODk4M2FlMmI3N2UgWzExMC8xNzFdIGlnYjoNCj4gVGlkeQ0KPiA+ID4gdXAg
-d3JhcHBpbmcgZm9yIENPTkZJR19JR0JfUFRQLg0KPiA+ID4gY29uZmlnOiB4ODZfNjQtYWxseWVz
-ZGViaWFuIChhdHRhY2hlZCBhcyAuY29uZmlnKQ0KPiA+ID4NCj4gPiA+IEFsbCByZWxhdGVkIGVy
-cm9yL3dhcm5pbmcgbWVzc2FnZXM6DQo+ID4gPg0KPiA+ID4gSW4gZmlsZSBpbmNsdWRlZCBmcm9t
-DQo+ID4gPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pZ2IvaWdiX2V0aHRvb2wuYzo0MTow
-Og0KPiA+ID4gZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYi5oOjM0NzoyNTogZXJy
-b3I6IGZpZWxkDQo+ID4gPiAnaHd0c3RhbXBfY29uZmlnJyBoYXMgaW5jb21wbGV0ZSB0eXBlDQo+
-ID4gPiAtLQ0KPiA+ID4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tDQo+IGRyaXZlcnMvbmV0L2V0aGVy
-bmV0L2ludGVsL2lnYi9lMTAwMF9tYWMuYzozNjowOg0KPiA+ID4gZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvaW50ZWwvaWdiL2lnYi5oOjM0NzoyNTogZXJyb3I6IGZpZWxkDQo+ID4gPiAnaHd0c3RhbXBf
-Y29uZmlnJyBoYXMgaW5jb21wbGV0ZSB0eXBlDQo+ID4gPg0KPiA+ID4gdmltICszNDcgZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYi5oDQo+ID4gPiAgICAzNDEJCXU4ICB0eF90aW1l
-b3V0X2ZhY3RvcjsNCj4gPiA+ICAgIDM0MgkJc3RydWN0IHRpbWVyX2xpc3QgYmxpbmtfdGltZXI7
-DQo+ID4gPiAgICAzNDMJCXVuc2lnbmVkIGxvbmcgbGVkX3N0YXR1czsNCj4gPiA+ICAgIDM0NA0K
-PiA+ID4gICAgMzQ1CQkvKiBPUyBkZWZpbmVkIHN0cnVjdHMgKi8NCj4gPiA+ICAgIDM0NgkJc3Ry
-dWN0IHBjaV9kZXYgKnBkZXY7DQo+ID4gPiAgPiAzNDcJCXN0cnVjdCBod3RzdGFtcF9jb25maWcg
-aHd0c3RhbXBfY29uZmlnOw0KPiA+ID4gICAgMzQ4DQo+ID4gPiAgICAzNDkJCXNwaW5sb2NrX3Qg
-c3RhdHM2NF9sb2NrOw0KPiA+ID4gICAgMzUwCQlzdHJ1Y3QgcnRubF9saW5rX3N0YXRzNjQgc3Rh
-dHM2NDsNCj4gPiA+DQo+ID4gPiAtLS0NCj4gPiA+IDAtREFZIGtlcm5lbCBidWlsZCB0ZXN0aW5n
-IGJhY2tlbmQgICAgICAgICBPcGVuIFNvdXJjZSBUZWNobm9sb2d5DQo+ID4gPiBDZW50cmUNCj4g
-PiA+IEZlbmdndWFuZyBXdSwgWXVhbmhhbiBMaXUgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBJbnRlbA0KPiA+ID4gQ29ycG9yYXRpb24NCj4gPg0KPiA+IEZlbmdndWFuZywNCj4gPg0KPiA+
-IEknbSBub3QgY2VydGFpbiBJIHVuZGVyc3RhbmQgaG93IHRoaXMgaXNzdWUgY2FtZSBiYWNrIHRv
-IG1lLiBUaGUNCj4gcGF0Y2gNCj4gPiBpbiBxdWVzdGlvbiBkb2Vzbid0IHRvdWNoIHRoYXQgY29k
-ZSwgbm9yIHNob3VsZCBpdCBiZSBjaGFuZ2luZw0KPiA+IGFueXRoaW5nIHRoYXQgd291bGQgY2F1
-c2UgYSBidWlsZCBlcnJvciBoZXJlLiBUaGUgb2ZmZW5kaW5nIGxpbmUgaXMNCj4gPiBhbHNvIHJl
-bW92ZWQgaW4gdGhlIG5leHQgcGF0Y2gNCj4gPiAoYTc5ZjRmODgyNjFkN2ZkNDkyMTIxZGFmODVi
-ZWFmZmY2NjNmMWYwMSkuIEknbSBhbHNvIHVuYWJsZSB0bw0KPiA+IHJlcHJvZHVjZSB0aGUgZXJy
-b3IuDQo+IA0KPiBIaSBNYXR0aGV3LCB0aGlzIGlzIGludGVyZXN0aW5nLCBidXQgSSBkbyByZXBy
-b2R1Y2VkIHRoZSBpc3N1ZSBieQ0KPiBidWlsZGluZyAzYzg5ZjZkMGQ0YWE5MmZmMjUyYzE3Zjhm
-NmI1Yzg5ODNhZTJiNzdlIGZyb20gc2NyYXRjaCB3aXRoIHRoZQ0KPiBvcmlnaW5hbGx5IGF0dGFj
-aGVkIGNvbmZpZyBmaWxlOg0KPiANCj4gICBDQyAgICAgIGRyaXZlcnMvbmV0L2V0aGVybmV0L3Fs
-b2dpYy9xbGEzeHh4Lm8NCj4gICBDQyAgICAgIGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2l4
-Z2JldmYvbWJ4Lm8NCj4gICBDQyAgICAgIGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2l4Z2Jl
-L2l4Z2JlX21haW4ubw0KPiAgIENDICAgICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvcWxvZ2ljL25l
-dHhlbi9uZXR4ZW5fbmljX2h3Lm8NCj4gICBDQyAgICAgIGRyaXZlcnMvbmV0L2V0aGVybmV0L2lu
-dGVsL2l4Z2JldmYvZXRodG9vbC5vDQo+ICAgQ0MgICAgICBkcml2ZXJzL25ldC9ldGhlcm5ldC9p
-bnRlbC9pZ2IvZTEwMDBfaTIxMC5vDQo+ICAgQ0MgICAgICBkcml2ZXJzL25ldC9ldGhlcm5ldC9p
-bnRlbC9peGdiZXZmL2l4Z2JldmZfbWFpbi5vDQo+ICAgQ0MgICAgICBkcml2ZXJzL25ldC9ldGhl
-cm5ldC9pbnRlbC9peGdiZS9peGdiZV9jb21tb24ubw0KPiAgIENDICAgICAgZHJpdmVycy9uZXQv
-ZXRoZXJuZXQvcmVhbHRlay9yODE2OS5vDQo+ICAgQ0MgICAgICBkcml2ZXJzL25ldC9ldGhlcm5l
-dC9xbG9naWMvbmV0eGVuL25ldHhlbl9uaWNfbWFpbi5vDQo+IEluIGZpbGUgaW5jbHVkZWQgZnJv
-bQ0KPiAvYy93ZmcvbGludXgvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYl9ldGh0
-b29sLmM6NDE6MDoNCj4gL2Mvd2ZnL2xpbnV4L2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2ln
-Yi9pZ2IuaDozNDc6MjU6IGVycm9yOiBmaWVsZA0KPiDigJhod3RzdGFtcF9jb25maWfigJkgaGFz
-IGluY29tcGxldGUgdHlwZQ0KPiAgIENDICAgICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvcWxvZ2lj
-L25ldHhlbi9uZXR4ZW5fbmljX2luaXQubw0KPiBJbiBmaWxlIGluY2x1ZGVkIGZyb20NCj4gL2Mv
-d2ZnL2xpbnV4L2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2lnYi9lMTAwMF9tYWMuYzozNjow
-Og0KPiAvYy93ZmcvbGludXgvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2lnYi5oOjM0
-NzoyNTogZXJyb3I6IGZpZWxkDQo+IOKAmGh3dHN0YW1wX2NvbmZpZ+KAmSBoYXMgaW5jb21wbGV0
-ZSB0eXBlDQo+IG1ha2VbNl06ICoqKiBbZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaWdiL2Ux
-MDAwX21hYy5vXSBFcnJvciAxDQo+IG1ha2VbNl06ICoqKiBXYWl0aW5nIGZvciB1bmZpbmlzaGVk
-IGpvYnMuLi4uDQo+ICAgQ0MgICAgICBkcml2ZXJzL25ldC9ldGhlcm5ldC9xbG9naWMvbmV0eGVu
-L25ldHhlbl9uaWNfZXRodG9vbC5vDQo+IG1ha2VbNl06ICoqKiBbZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvaW50ZWwvaWdiL2lnYl9ldGh0b29sLm9dIEVycm9yIDENCj4gDQo+IFRoYW5rcywNCj4gRmVu
-Z2d1YW5nDQoNCkFoLCBJIHNlZSB0aGUgaXNzdWUgbm93LiBTb21lIGNvbWJpbmF0aW9uIG9mIENP
-TkZJR19JR0JfUFRQIG5vdCBiZWluZyBzdXBwb3J0ZWQgYWxvbmdzaWRlIG90aGVyIGtlcm5lbCBj
-b25maWd1cmF0aW9uIHN0cmFuZ2VuZXNzIEkgaGF2ZW4ndCBmdWxseSBkaXZlZCBpbnRvIHNlZW1z
-IHRvIGJlIHRoZSBjdWxwcml0Lg0KDQpXaGF0IHdvdWxkIHlvdSBsaWtlIG1lIHRvIGRvIHdpdGgg
-dGhpcyBpbmZvcm1hdGlvbiwgdGhvdWdoPyBUaGUgb2ZmZW5kaW5nIGNvZGUgaXMgcmVtb3ZlZCBp
-biB0aGUgbmV4dCBwYXRjaCwgc28gSSdtIHVuYWJsZSB0byBjbGVhbiBpdCB1cHN0cmVhbSBhdCB0
-aGlzIHBvaW50Lg0KDQpDaGVlcnMsDQpNYXR0aGV3DQo
+This is a multi-part message in MIME format.
+--------------020800040104010701040105
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+Please review,
+
+Regards,
+Mauro.
+
+
+-------- Mensagem original --------
+Assunto: [PATCH 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
+Data: Thu,  6 Sep 2012 17:23:59 +0200
+De: Peter Senna Tschudin <peter.senna@gmail.com>
+Para: Mauro Carvalho Chehab <mchehab@infradead.org>
+CC: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/media/platform/soc_camera/mx2_camera.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
+index 256187f..f8884a7 100644
+--- a/drivers/media/platform/soc_camera/mx2_camera.c
++++ b/drivers/media/platform/soc_camera/mx2_camera.c
+@@ -1800,13 +1800,16 @@ static int __devinit mx2_camera_probe(struct platform_device *pdev)
+ 
+ 		if (!res_emma || !irq_emma) {
+ 			dev_err(&pdev->dev, "no EMMA resources\n");
++			err = -ENODEV;
+ 			goto exit_free_irq;
+ 		}
+ 
+ 		pcdev->res_emma = res_emma;
+ 		pcdev->irq_emma = irq_emma;
+-		if (mx27_camera_emma_init(pcdev))
++		if (mx27_camera_emma_init(pcdev)) {
++			err = -ENODEV;
+ 			goto exit_free_irq;
++		}
+ 	}
+ 
+ 	pcdev->soc_host.drv_name	= MX2_CAM_DRV_NAME,
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-media" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+--------------020800040104010701040105
+Content-Type: text/plain; charset=UTF-8;
+ name="=?ISO-8859-1?Q?Se=E7=E3o_da_mensagem_anexada?="
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename*0*=ISO-8859-1''%53%65%E7%E3%6F%20%64%61%20%6D%65%6E%73%61%67%65;
+ filename*1*=%6D%20%61%6E%65%78%61%64%61
+
+
+--------------020800040104010701040105--
