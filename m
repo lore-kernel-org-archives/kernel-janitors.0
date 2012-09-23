@@ -1,42 +1,32 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 27 Sep 2012 06:20:20 +0000
-Subject: [vfs:for-next 60/72] include/linux/file.h:53:9: error: implicit declaration of function 'fget_raw_li
-Message-Id: <20120927062020.GA27992@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 23 Sep 2012 16:33:55 +0000
+Subject: [patch] vmwgfx: corruption in vmw_event_fence_action_create()
+Message-Id: <20120923163355.GC21396@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Dave Airlie <airlied@redhat.com>, Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hi Al,
+We don't allocate enough data for this struct.  As soon as we start
+modifying event->event on the next lines, then we're going beyond the
+end of the memory we allocated.
 
-FYI, kernel build failed on
-
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-next
-head:   49de614c74fadc7c47132ac87c0f7b05ca4084b7
-commit: a5b470ba06aa3f96999ede5feba178df6bdb134a [60/72] new helpers: fdget()/fdput()
-config: x86_64-allmodconfig
-
-All error/warnings:
-
-In file included from net/ceph/pagevec.c:6:0:
-include/linux/file.h: In function 'fdget_raw':
-include/linux/file.h:53:9: error: implicit declaration of function 'fget_raw_light' [-Werror=implicit-function-declaration]
-include/linux/file.h:53:19: warning: initialization makes pointer from integer without a cast [enabled by default]
-include/linux/file.h: At top level:
-include/linux/file.h:58:21: error: conflicting types for 'fget_raw_light'
-include/linux/file.h:53:19: note: previous implicit declaration of 'fget_raw_light' was here
-cc1: some warnings being treated as errors
-
-vim +53 include/linux/file.h
-
-a5b470ba (Al Viro 2012-08-27  50) static inline struct fd fdget_raw(unsigned int fd)
-a5b470ba (Al Viro 2012-08-27  51) {
-a5b470ba (Al Viro 2012-08-27  52) 	int b;
-a5b470ba (Al Viro 2012-08-27 @53) 	struct file *f = fget_raw_light(fd, &b);
-a5b470ba (Al Viro 2012-08-27  54) 	return (struct fd){f,b};
-a5b470ba (Al Viro 2012-08-27  55) }
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Static checker work.  Not tested.
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+index f2fb8f1..7e07433 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+@@ -1018,7 +1018,7 @@ int vmw_event_fence_action_create(struct drm_file *file_priv,
+ 	}
+ 
+ 
+-	event = kzalloc(sizeof(event->event), GFP_KERNEL);
++	event = kzalloc(sizeof(*event), GFP_KERNEL);
+ 	if (unlikely(event = NULL)) {
+ 		DRM_ERROR("Failed to allocate an event.\n");
+ 		ret = -ENOMEM;
