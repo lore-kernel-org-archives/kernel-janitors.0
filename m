@@ -1,23 +1,94 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 02 Sep 2012 02:46:13 +0000
-Subject: Re: [patch] fddi: 64 bit bug in smt_add_para()
-Message-Id: <20120901.224613.2151709083178612132.davem@davemloft.net>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date: Sun, 23 Sep 2012 19:34:20 +0000
+Subject: Fwd: [PATCH 1/14] drivers/media/platform/soc_camera/soc_camera.c: fix error return code
+Message-Id: <505F643C.3020203@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------020802080008090705050307"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120901195740.GG20741@mwanda>
-In-Reply-To: <20120901195740.GG20741@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+References: <1346945041-26676-13-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346945041-26676-13-git-send-email-peter.senna@gmail.com>
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+
+This is a multi-part message in MIME format.
+--------------020802080008090705050307
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 1 Sep 2012 12:57:40 -0700
+Please review.
+Please review.
 
-> The intent was to set 4 bytes of data so that's why the sp_len is set
-> to 4 on the next line.  The cast to u_long pointer clears 8 bytes
-> on 64 bit arches.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Regards,
+Mauro.
 
-Obvious enough, applied, thanks Dan.
+-------- Mensagem original --------
+Assunto: [PATCH 1/14] drivers/media/platform/soc_camera/soc_camera.c: fix error return code
+Data: Thu,  6 Sep 2012 17:24:00 +0200
+De: Peter Senna Tschudin <peter.senna@gmail.com>
+Para: Mauro Carvalho Chehab <mchehab@infradead.org>
+CC: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/media/platform/soc_camera/soc_camera.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
+index 10b57f8..a4beb6c 100644
+--- a/drivers/media/platform/soc_camera/soc_camera.c
++++ b/drivers/media/platform/soc_camera/soc_camera.c
+@@ -1184,7 +1184,8 @@ static int soc_camera_probe(struct soc_camera_device *icd)
+ 	sd->grp_id = soc_camera_grp_id(icd);
+ 	v4l2_set_subdev_hostdata(sd, icd);
+ 
+-	if (v4l2_ctrl_add_handler(&icd->ctrl_handler, sd->ctrl_handler))
++	ret = v4l2_ctrl_add_handler(&icd->ctrl_handler, sd->ctrl_handler);
++	if (ret)
+ 		goto ectrl;
+ 
+ 	/* At this point client .probe() should have run already */
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-media" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+--------------020802080008090705050307
+Content-Type: text/plain; charset=UTF-8;
+ name="=?ISO-8859-1?Q?Se=E7=E3o_da_mensagem_anexada?="
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename*0*=ISO-8859-1''%53%65%E7%E3%6F%20%64%61%20%6D%65%6E%73%61%67%65;
+ filename*1*=%6D%20%61%6E%65%78%61%64%61
+
+
+--------------020802080008090705050307--
