@@ -1,43 +1,67 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 28 Sep 2012 01:24:17 +0000
-Subject: [bluetooth:master 231/247] net/bluetooth/amp.c:150:55: sparse: bad constant expression
-Message-Id: <20120928012417.GH5522@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 24 Sep 2012 09:11:03 +0000
+Subject: [PATCH V2 2/14] drivers/media/platform/soc_camera/mx2_camera.c: fix error return code
+Message-Id: <1348477863-6728-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.1209232313500.31250@axis700.grange>
+In-Reply-To: <Pine.LNX.4.64.1209232313500.31250@axis700.grange>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Kasatkin <dmitry.kasatkin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Andrei Emeltchenko <andrei.emeltchenko@intel.com>, linux-bluetooth@vger.kernel.org
+To: mchehab@infradead.org
+Cc: g.liakhovetski@gmx.de, laurent.pinchart@ideasonboard.com, fabio.estevam@freescale.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Dmitry,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, there are new sparse warnings show up in
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
-head:   29d8a5909bba10accb82eb805c884a2943d7710f
-commit: ba221bbabadd5fc2c80677b52178138fd694cc26 [231/247] Bluetooth: Add function to derive AMP key using hmac
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-+ net/bluetooth/amp.c:150:55: sparse: bad constant expression
-  net/bluetooth/amp.c:130:12: warning: 'hmac_sha256' defined but not used [-Wunused-function]
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-vim +150 net/bluetooth/amp.c
+// </smpl>
 
-ba221bba (Dmitry Kasatkin 2012-09-27  144) 	ret = crypto_shash_setkey(tfm, key, ksize);
-ba221bba (Dmitry Kasatkin 2012-09-27  145) 	if (ret) {
-ba221bba (Dmitry Kasatkin 2012-09-27  146) 		BT_DBG("crypto_ahash_setkey failed: err %d", ret);
-ba221bba (Dmitry Kasatkin 2012-09-27  147) 	} else {
-ba221bba (Dmitry Kasatkin 2012-09-27  148) 		struct {
-ba221bba (Dmitry Kasatkin 2012-09-27  149) 			struct shash_desc shash;
-ba221bba (Dmitry Kasatkin 2012-09-27 @150) 			char ctx[crypto_shash_descsize(tfm)];
-ba221bba (Dmitry Kasatkin 2012-09-27  151) 		} desc;
-ba221bba (Dmitry Kasatkin 2012-09-27  152) 
-ba221bba (Dmitry Kasatkin 2012-09-27  153) 		desc.shash.tfm = tfm;
-ba221bba (Dmitry Kasatkin 2012-09-27  154) 		desc.shash.flags = CRYPTO_TFM_REQ_MAY_SLEEP;
-ba221bba (Dmitry Kasatkin 2012-09-27  155) 
-ba221bba (Dmitry Kasatkin 2012-09-27  156) 		ret = crypto_shash_digest(&desc.shash, plaintext, psize,
-ba221bba (Dmitry Kasatkin 2012-09-27  157) 					  output);
-ba221bba (Dmitry Kasatkin 2012-09-27  158) 	}
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/media/platform/soc_camera/mx2_camera.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
+index 256187f..01d7c11 100644
+--- a/drivers/media/platform/soc_camera/mx2_camera.c
++++ b/drivers/media/platform/soc_camera/mx2_camera.c
+@@ -1800,12 +1800,14 @@ static int __devinit mx2_camera_probe(struct platform_device *pdev)
+ 
+ 		if (!res_emma || !irq_emma) {
+ 			dev_err(&pdev->dev, "no EMMA resources\n");
++			err = -ENODEV;
+ 			goto exit_free_irq;
+ 		}
+ 
+ 		pcdev->res_emma = res_emma;
+ 		pcdev->irq_emma = irq_emma;
+-		if (mx27_camera_emma_init(pcdev))
++		err = mx27_camera_emma_init(pcdev);
++		if (err)
+ 			goto exit_free_irq;
+ 	}
+ 
+-- 
+1.7.11.4
+
