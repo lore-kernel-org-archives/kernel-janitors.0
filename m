@@ -1,40 +1,72 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Sep 2012 07:01:03 +0000
-Subject: [patch] ACPI: free memory on an error path
-Message-Id: <20120925070103.GA23009@elgon.mountain>
+From: Jaeden Amero <jaeden.amero@ni.com>
+Date: Mon, 24 Sep 2012 15:39:45 +0000
+Subject: [PATCH] compat_ioctl: Avoid using undefined RS-485 IOCTLs
+Message-Id: <1348501185-23657-2-git-send-email-jaeden.amero@ni.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120922005021.GM5959@localhost>
+ <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
+In-Reply-To: <1348501185-23657-1-git-send-email-jaeden.amero@ni.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <lenb@kernel.org>, Lan Tianyu <tianyu.lan@intel.com>
-Cc: linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: fengguang.wu@intel.com
+Cc: linux-next@vger.kernel.org, sfr@canb.auug.org.au, gregkh@linuxfoundation.org, alan@linux.intel.com, kernel-janitors@vger.kernel.org, linux-serial@vger.kernel.org, Jaeden Amero <jaeden.amero@ni.com>
 
-We should free "physical_node" if before returning the error code.
+Wrap the use of TIOCSRS485 and TIOCGRS485 in #ifdef so that we avoid
+adding undefined IOCTLs to the ioctl pointer list as compatible
+ioctls.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This change was motivated by a build error on a MIPS build.
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+tty-next
+head:   ac57e7f38ea6fe7358cd0b7a2f2d21aef5ab70cd
+commit: 84c3b84860440a9e3a3666c14112f41311b8f623 [10/16] compat_ioctl:
+  Add RS-485 IOCTLs to the list
+config: mips-fuloong2e_defconfig
+
+All related error/warning messages:
+
+fs/compat_ioctl.c:869:1: error: 'TIOCSRS485' undeclared here (not in a
+  function)
+fs/compat_ioctl.c:870:1: error: 'TIOCGRS485' undeclared here (not in a
+  function)
+
+vim +869 fs/compat_ioctl.c
+863 COMPATIBLE_IOCTL(TIOCSPGRP)
+864 COMPATIBLE_IOCTL(TIOCGPGRP)
+865 COMPATIBLE_IOCTL(TIOCGPTN)
+866 COMPATIBLE_IOCTL(TIOCSPTLCK)
+867 COMPATIBLE_IOCTL(TIOCSERGETLSR)
+868 COMPATIBLE_IOCTL(TIOCSIG)
+> 869 COMPATIBLE_IOCTL(TIOCSRS485)
+870 COMPATIBLE_IOCTL(TIOCGRS485)
+871 #ifdef TCGETS2
+872 COMPATIBLE_IOCTL(TCGETS2)
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Jaeden Amero <jaeden.amero@ni.com>
 ---
-Only needed in linux-next.  Introduced in 1033f9041d5 "ACPI: Allow ACPI
-binding with USB-3.0 hub".
+ fs/compat_ioctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/acpi/glue.c b/drivers/acpi/glue.c
-index d1a2d74..cfeecac 100644
---- a/drivers/acpi/glue.c
-+++ b/drivers/acpi/glue.c
-@@ -159,7 +159,7 @@ static int acpi_bind_one(struct device *dev, acpi_handle handle)
- 	if (physical_node->node_id >= ACPI_MAX_PHYSICAL_NODE) {
- 		retval = -ENOSPC;
- 		mutex_unlock(&acpi_dev->physical_node_lock);
--		goto err;
-+		goto free_node;
- 	}
- 
- 	set_bit(physical_node->node_id, acpi_dev->physical_node_id_bitmap);
-@@ -185,6 +185,8 @@ static int acpi_bind_one(struct device *dev, acpi_handle handle)
- 
- 	return 0;
- 
-+free_node:
-+	kfree(physical_node);
-  err:
- 	put_device(dev);
- 	return retval;
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 85dfebfe6820856dc3154dfd178acb6fca63bbe9..59f8db4a39a78338b2c7a148122a04e11e026caf 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -866,8 +866,12 @@ COMPATIBLE_IOCTL(TIOCGPTN)
+ COMPATIBLE_IOCTL(TIOCSPTLCK)
+ COMPATIBLE_IOCTL(TIOCSERGETLSR)
+ COMPATIBLE_IOCTL(TIOCSIG)
++#ifdef TIOCSRS485
+ COMPATIBLE_IOCTL(TIOCSRS485)
++#endif
++#ifdef TIOCGRS485
+ COMPATIBLE_IOCTL(TIOCGRS485)
++#endif
+ #ifdef TCGETS2
+ COMPATIBLE_IOCTL(TCGETS2)
+ COMPATIBLE_IOCTL(TCSETS2)
+-- 
+1.7.12
+
