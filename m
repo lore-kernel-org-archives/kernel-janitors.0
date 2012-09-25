@@ -1,36 +1,35 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 14 Sep 2012 10:00:33 +0000
-Subject: Re: [patch] ALSA: compress_core: integer overflow in snd_compr_allocate_buffer()
-Message-Id: <s5hmx0s2abi.wl%tiwai@suse.de>
+From: Yinghai Lu <yinghai@kernel.org>
+Date: Tue, 25 Sep 2012 19:27:19 +0000
+Subject: Re: drivers/pci/search.c:85:2: warning: suggest parentheses around assignment used as truth value
+Message-Id: <CAE9FiQUnvwn+MjXaqiKANOQpeOOHg+X8DV0dFBks_JN1PmYdYw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120905123217.GD6128@elgon.mountain>
- <s5hwr08ziyx.wl%tiwai@suse.de> <20120906145912.GK19410@mwanda>
- <s5h627rxjpw.wl%tiwai@suse.de> <s5hligdc6su.wl%tiwai@suse.de>
- <1347614682.1943.35.camel@vkoul-udesk3>
- <1347614934.1943.38.camel@vkoul-udesk3>
- <s5hr4q50wgv.wl%tiwai@suse.de>
- <1347616148.1943.51.camel@vkoul-udesk3>
-In-Reply-To: <1347616148.1943.51.camel@vkoul-udesk3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Jesper Juhl <jj@chaosbits.net>, Namarta Kohli <namartax.kohli@intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: kernel-janitors@vger.kernel.org
 
-At Fri, 14 Sep 2012 15:19:08 +0530,
-Vinod Koul wrote:
-> 
-> On Fri, 2012-09-14 at 11:45 +0200, Takashi Iwai wrote:
-> > > Btw I saw that you took Dan's fix for flags:
-> > > ALSA: compress_core: fix open flags test in snd_compr_open()
-> > > 
-> > > Did you apply anything for this?
-> > 
-> > You mean anything else?  So far only two patches from Dan.
-> I meant else :) Your for-next updated 20hours ago doesn't shows only one
-> patch. Can you please push.
+On Tue, Sep 25, 2012 at 2:04 AM, Yuanhan Liu <yuanhan.liu@intel.com> wrote:
+> Hi Yinghai,
+>
+> FYI, there are new compile warnings show up in
+>
+> commit: 73ebfa72e382802b163a354fcb4d8dfea8ab58f3
+> title: PCI: kill pci_find_next_bus
+> date: 2012-09-25 01:21:07 -0700
+> config: x86_64-allyesdebian (attached as .config)
+>
+>
+> All error/warnings:
+>
+> drivers/edac/i7core_edac.c: In function 'i7core_pci_lastbus':
+> drivers/edac/i7core_edac.c:1299:2: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
 
-I see.  Pushed out, so it'll shortly appear.
+for checkpatch.pl ?
 
+the code is like:
 
-Takashi
+#define for_each_pci_host_bridge(d) while ((d pci_get_next_host_bridge(d)) != NULL)
+
+so checkpatch.pl need to be fixed.
+
+-Yinghai
