@@ -1,88 +1,47 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Tue, 18 Sep 2012 01:23:50 +0000
-Subject: Re: [PATCH] drivers/target/target_core_configfs.c: fix error return code
-Message-Id: <1347931430.10711.149.camel@haakon2.linux-iscsi.org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 25 Sep 2012 08:27:16 +0000
+Subject: mm/slab.c:3865:7: error: conflicting types for 'kmem_cache_alloc_node_trace'
+Message-Id: <20120925082716.GA26111@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347905133-28492-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347905133-28492-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 2012-09-17 at 20:05 +0200, Peter Senna Tschudin wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
+Hi Ezequiel,
 
-<SNIP>
+FYI, kernel build failed on
 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
+4052147c0afa1cf05780ed846f37e87cdde9f628 mm, slab: Match SLAB and SLUB kmem_cache_alloc_xxx_trace() prototype
+x86_64-allyesdebian
 
-This bug-fix patch with a slightly more verbose commit log has been
-applied to target-pending/for-next, along with a CC' to stable so it
-get's picked up for v3.6.1 + friends.
+All error/warnings:
 
-Thanks Peter!
+mm/slab.c:3865:7: error: conflicting types for 'kmem_cache_alloc_node_trace'
+In file included from include/linux/slab.h:213:0,
+                 from mm/slab.c:89:
+include/linux/slab_def.h:162:14: note: previous declaration of 'kmem_cache_alloc_node_trace' was here
+mm/slab.c: In function 'kmem_cache_alloc_node_trace':
+mm/slab.c:3872:50: error: '_RET_IP' undeclared (first use in this function)
+mm/slab.c:3872:50: note: each undeclared identifier is reported only once for each function it appears in
+mm/slab.c: At top level:
+mm/slab.c:3879:44: error: conflicting types for 'kmem_cache_alloc_node_trace'
+In file included from include/linux/slab.h:213:0,
+                 from mm/slab.c:89:
+include/linux/slab_def.h:162:14: note: previous declaration of 'kmem_cache_alloc_node_trace' was here
 
---nab
+vim +3865 mm/slab.c
+  3859	
+  3860		return ret;
+  3861	}
+  3862	EXPORT_SYMBOL(kmem_cache_alloc_node);
+  3863	
+  3864	#ifdef CONFIG_TRACING
+> 3865	void *kmem_cache_alloc_node_trace(struct kmem_cache *cachep,
+  3866					  gfp_t flags,
+  3867					  int nodeid,
+  3868					  size_t size)
 
->  drivers/target/target_core_configfs.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-> index a1b4171..015f5be 100644
-> --- a/drivers/target/target_core_configfs.c
-> +++ b/drivers/target/target_core_configfs.c
-> @@ -3124,6 +3124,7 @@ static int __init target_core_init_configfs(void)
->  				GFP_KERNEL);
->  	if (!target_cg->default_groups) {
->  		pr_err("Unable to allocate target_cg->default_groups\n");
-> +		ret = -ENOMEM;
->  		goto out_global;
->  	}
->  
-> @@ -3139,6 +3140,7 @@ static int __init target_core_init_configfs(void)
->  				GFP_KERNEL);
->  	if (!hba_cg->default_groups) {
->  		pr_err("Unable to allocate hba_cg->default_groups\n");
-> +		ret = -ENOMEM;
->  		goto out_global;
->  	}
->  	config_group_init_type_name(&alua_group,
-> @@ -3154,6 +3156,7 @@ static int __init target_core_init_configfs(void)
->  			GFP_KERNEL);
->  	if (!alua_cg->default_groups) {
->  		pr_err("Unable to allocate alua_cg->default_groups\n");
-> +		ret = -ENOMEM;
->  		goto out_global;
->  	}
->  
-> @@ -3165,14 +3168,17 @@ static int __init target_core_init_configfs(void)
->  	 * Add core/alua/lu_gps/default_lu_gp
->  	 */
->  	lu_gp = core_alua_allocate_lu_gp("default_lu_gp", 1);
-> -	if (IS_ERR(lu_gp))
-> +	if (IS_ERR(lu_gp)) {
-> +		ret = -ENOMEM;
->  		goto out_global;
-> +	}
->  
->  	lu_gp_cg = &alua_lu_gps_group;
->  	lu_gp_cg->default_groups = kzalloc(sizeof(struct config_group) * 2,
->  			GFP_KERNEL);
->  	if (!lu_gp_cg->default_groups) {
->  		pr_err("Unable to allocate lu_gp_cg->default_groups\n");
-> +		ret = -ENOMEM;
->  		goto out_global;
->  	}
->  
-
-
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
