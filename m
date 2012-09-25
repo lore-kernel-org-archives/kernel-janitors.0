@@ -1,72 +1,41 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 13 Sep 2012 08:01:34 +0000
-Subject: Re: [sound-unstable:master 118/143] sound/pci/hda/patch_cirrus.c:1414:10: sparse: Initializer entry
-Message-Id: <s5ha9wue4gx.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Sep 2012 07:02:51 +0000
+Subject: [patch 2/3] remoteproc: snprintf() can return more than was printed
+Message-Id: <20120925070251.GC23009@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120913074940.GA25767@localhost>
-In-Reply-To: <20120913074940.GA25767@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 13 Sep 2012 15:49:40 +0800,
-Fengguang Wu wrote:
-> 
-> Hi Takashi,
-> 
-> FYI, there are new sparse warnings show up in
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-unstable.git master
-> head:   82cb521360dfd32f4f03ceaa74ef6b83ae983593
-> commit: ef596a57b4d7d8b258beb570ed309ef85bf24dd1 [118/143] ALSA: hda - Add support for MacBook Pro 10,1
-> 
-> All sparse warnings:
-> 
-> + sound/pci/hda/patch_cirrus.c:1414:10: sparse: Initializer entry defined twice
->   sound/pci/hda/patch_cirrus.c:1418:10:   also defined here
-> 
-> The root cause is, CS420X_MBP101 = CS420X_GPIO_23:
+snprintf() returns the number of characters which would have been
+printed if there were enough space.  For example, on the first print if
+we fill up the 28 character string then it would return a number more
+than 30.  Use scnprintf() instead because that returns the actual number
+of characters printed.
 
-I fixed it quickly now with the patch below.  Thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
----
-Subject: [PATCH] ALSA: hda - Fix disordered enum definitions in patch_cirrus.c
-
-Due to the definitions of CS420X_IMAC27_122 and CS420X_APPLE as
-aliases, the rest enums are set to duplicated values unexpectedly.
-Move the alias definitions at the end so that the enum values are
-defined in the proper order.
-
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- sound/pci/hda/patch_cirrus.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/pci/hda/patch_cirrus.c b/sound/pci/hda/patch_cirrus.c
-index 82253f1..fcfc9f0 100644
---- a/sound/pci/hda/patch_cirrus.c
-+++ b/sound/pci/hda/patch_cirrus.c
-@@ -83,11 +83,12 @@ enum {
- 	CS420X_IMAC27,
- 	CS420X_GPIO_13,
- 	CS420X_GPIO_23,
--	CS420X_IMAC27_122 = CS420X_GPIO_23,
--	CS420X_APPLE = CS420X_GPIO_13,
- 	CS420X_MBP101,
- 	CS420X_MBP101_COEF,
- 	CS420X_AUTO,
-+	/* aliases */
-+	CS420X_IMAC27_122 = CS420X_GPIO_23,
-+	CS420X_APPLE = CS420X_GPIO_13,
- };
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index 10a3825..ea90a56 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -82,7 +82,7 @@ static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
  
- /* CS421x boards */
--- 
-1.7.11.5
-
+ 	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
+ 
+-	i = snprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
++	i = scnprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
+ 							rproc->state);
+ 
+ 	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
+@@ -103,7 +103,7 @@ static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
+ 	char buf[100];
+ 	int i;
+ 
+-	i = snprintf(buf, sizeof(buf), "%.98s\n", rproc->name);
++	i = scnprintf(buf, sizeof(buf), "%.98s\n", rproc->name);
+ 
+ 	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
+ }
