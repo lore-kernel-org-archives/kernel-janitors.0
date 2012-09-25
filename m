@@ -1,34 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 27 Sep 2012 20:49:08 +0000
-Subject: [patch] cifs: proper fix for integer overflow in parse_dacl()
-Message-Id: <20120927204908.GA13222@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 25 Sep 2012 00:52:14 +0000
+Subject: fs/btrfs/disk-io.c:34:28: fatal error: asm/cpufeature.h: No such file or directory
+Message-Id: <20120925005214.GA5678@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>
-Cc: linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org, samba-technical@lists.samba.org
+To: Josef Bacik <jbacik@fusionio.com>
+Cc: kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org
 
-I tried to fix this before by adding the ULONG_MAX check, but num_aces
-is an unsigned int so it should have been UINT_MAX.  Sorry for that.
-These days we can just call kmalloc_array() which has the overflow check
-built in.
+Hi Josef,
 
-Reported-by: pipacs
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+FYI, kernel build failed on
 
-diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
-index 2ee5c54..bc9fcfb 100644
---- a/fs/cifs/cifsacl.c
-+++ b/fs/cifs/cifsacl.c
-@@ -910,9 +910,7 @@ static void parse_dacl(struct cifs_acl *pdacl, char *end_of_acl,
- 		umode_t group_mask = S_IRWXG;
- 		umode_t other_mask = S_IRWXU | S_IRWXG | S_IRWXO;
- 
--		if (num_aces > ULONG_MAX / sizeof(struct cifs_ace *))
--			return;
--		ppace = kmalloc(num_aces * sizeof(struct cifs_ace *),
-+		ppace = kmalloc_array(num_aces, sizeof(struct cifs_ace *),
- 				GFP_KERNEL);
- 		if (!ppace) {
- 			cERROR(1, "DACL memory allocation error");
+Commit: d5b04fb3bbb6fce0a834e43f51b6a5251867fcb7 Btrfs: do not async metadata csums if we have hardware crc32c
+Date: Mon Sep 24 14:40:24 2012 -0400
+config: m68k-allmodconfig
+
+All related error/warning messages:
+
+fs/btrfs/disk-io.c:34:28: fatal error: asm/cpufeature.h: No such file or directory
+compilation terminated.
+
+vim +34 fs/btrfs/disk-io.c
+    28	#include <linux/freezer.h>
+    29	#include <linux/crc32c.h>
+    30	#include <linux/slab.h>
+    31	#include <linux/migrate.h>
+    32	#include <linux/ratelimit.h>
+    33	#include <asm/unaligned.h>
+  > 34	#include <asm/cpufeature.h>
+    35	#include "compat.h"
+    36	#include "ctree.h"
+    37	#include "disk-io.h"
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
