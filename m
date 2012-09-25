@@ -1,38 +1,75 @@
-From: Christoph Lameter <cl@linux.com>
-Date: Fri, 28 Sep 2012 17:35:24 +0000
-Subject: Re: [glommer-memcg:slab-common/kmalloc 27/30] fs/proc/stat.c:191:3: warning: large integer implicitl
-Message-Id: <0000013a0df2766a-023df2f5-91b1-4695-871c-ca01a521c1bc-000000@email.amazonses.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Sep 2012 07:01:56 +0000
+Subject: [patch 1/3] remoteproc: memory leak in rproc_handle_carveout()
+Message-Id: <20120925070156.GB23009@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928111724.GC31784@localhost>
-In-Reply-To: <20120928111724.GC31784@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 28 Sep 2012, Fengguang Wu wrote:
+We only need to allocate mapping if there is an rproc domain.
 
-> fs/proc/stat.c: In function 'stat_open':
-> fs/proc/stat.c:191:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Handle with appropriate caution.
 
-I guess we need this patch:
-
-Subject: stat: Use size_t for sizes instead of unsigned
-
-On some platforms (such as IA64) the large page size may results in
-slab allocations to be allowed of numbers that do not fit in 32 bit.
-
-Signed-off-by: Christoph Lameter <cl@linux.com>
-
-Index: linux/fs/proc/stat.c
-=================================--- linux.orig/fs/proc/stat.c	2012-09-18 12:21:56.301459334 -0500
-+++ linux/fs/proc/stat.c	2012-09-28 12:33:29.428759019 -0500
-@@ -178,7 +178,7 @@ static int show_stat(struct seq_file *p,
-
- static int stat_open(struct inode *inode, struct file *file)
- {
--	unsigned size = 1024 + 128 * num_possible_cpus();
-+	size_t size = 1024 + 128 * num_possible_cpus();
- 	char *buf;
- 	struct seq_file *m;
- 	int res;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index b6c6229..f163704 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -573,17 +573,10 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	dev_dbg(dev, "carveout rsc: da %x, pa %x, len %x, flags %x\n",
+ 			rsc->da, rsc->pa, rsc->len, rsc->flags);
+ 
+-	mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
+-	if (!mapping) {
+-		dev_err(dev, "kzalloc mapping failed\n");
+-		return -ENOMEM;
+-	}
+-
+ 	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
+ 	if (!carveout) {
+ 		dev_err(dev, "kzalloc carveout failed\n");
+-		ret = -ENOMEM;
+-		goto free_mapping;
++		return -ENOMEM;
+ 	}
+ 
+ 	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
+@@ -613,11 +606,18 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	 * physical address in this case.
+ 	 */
+ 	if (rproc->domain) {
++		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
++		if (!mapping) {
++			dev_err(dev, "kzalloc mapping failed\n");
++			ret = -ENOMEM;
++			goto dma_free;
++		}
++
+ 		ret = iommu_map(rproc->domain, rsc->da, dma, rsc->len,
+ 								rsc->flags);
+ 		if (ret) {
+ 			dev_err(dev, "iommu_map failed: %d\n", ret);
+-			goto dma_free;
++			goto free_mapping;
+ 		}
+ 
+ 		/*
+@@ -662,12 +662,12 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 
+ 	return 0;
+ 
++free_mapping:
++	kfree(mapping);
+ dma_free:
+ 	dma_free_coherent(dev->parent, rsc->len, va, dma);
+ free_carv:
+ 	kfree(carveout);
+-free_mapping:
+-	kfree(mapping);
+ 	return ret;
+ }
+ 
