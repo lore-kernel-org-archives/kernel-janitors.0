@@ -1,51 +1,40 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 19 Sep 2012 15:52:58 +0000
-Subject: [arm-soc:next/drivers 26/30] drivers/i2c/busses/i2c-tegra.c:622:2: warning: initialization discards
-Message-Id: <20120919155258.GA31506@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Sep 2012 07:01:03 +0000
+Subject: [patch] ACPI: free memory on an error path
+Message-Id: <20120925070103.GA23009@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Len Brown <lenb@kernel.org>, Lan Tianyu <tianyu.lan@intel.com>
+Cc: linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Laxman,
+We should free "physical_node" if before returning the error code.
 
-FYI, there are new compile warnings show up in
-
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git next/drivers
-head:   25696b4b3541d5f7641b61e6abfda765426834b8
-commit: 6ad068ed63100f1bb2f65340e2de9b8727526ef8 [26/30] i2c: tegra: I2_M_NOSTART functionality not supported in Tegra20
-config: arm-tegra_defconfig
-
-All error/warnings:
-
-drivers/i2c/busses/i2c-tegra.c:622:2: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
-drivers/i2c/busses/i2c-tegra.c:623:2: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
-drivers/i2c/busses/i2c-tegra.c:624:2: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
-
-vim +622 drivers/i2c/busses/i2c-tegra.c
-   612		.has_continue_xfer_support = false,
-   613	};
-   614	
-   615	static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-   616		.has_continue_xfer_support = true,
-   617	};
-   618	
-   619	#if defined(CONFIG_OF)
-   620	/* Match table for of_platform binding */
-   621	static const struct of_device_id tegra_i2c_of_match[] __devinitconst = {
- > 622		{ .compatible = "nvidia,tegra30-i2c", .data = &tegra30_i2c_hw, },
-   623		{ .compatible = "nvidia,tegra20-i2c", .data = &tegra20_i2c_hw, },
-   624		{ .compatible = "nvidia,tegra20-i2c-dvc", .data = &tegra20_i2c_hw, },
-   625		{},
-   626	};
-   627	MODULE_DEVICE_TABLE(of, tegra_i2c_of_match);
-   628	#endif
-   629	
-   630	static int __devinit tegra_i2c_probe(struct platform_device *pdev)
-   631	{
-   632		struct tegra_i2c_dev *i2c_dev;
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Only needed in linux-next.  Introduced in 1033f9041d5 "ACPI: Allow ACPI
+binding with USB-3.0 hub".
+
+diff --git a/drivers/acpi/glue.c b/drivers/acpi/glue.c
+index d1a2d74..cfeecac 100644
+--- a/drivers/acpi/glue.c
++++ b/drivers/acpi/glue.c
+@@ -159,7 +159,7 @@ static int acpi_bind_one(struct device *dev, acpi_handle handle)
+ 	if (physical_node->node_id >= ACPI_MAX_PHYSICAL_NODE) {
+ 		retval = -ENOSPC;
+ 		mutex_unlock(&acpi_dev->physical_node_lock);
+-		goto err;
++		goto free_node;
+ 	}
+ 
+ 	set_bit(physical_node->node_id, acpi_dev->physical_node_id_bitmap);
+@@ -185,6 +185,8 @@ static int acpi_bind_one(struct device *dev, acpi_handle handle)
+ 
+ 	return 0;
+ 
++free_node:
++	kfree(physical_node);
+  err:
+ 	put_device(dev);
+ 	return retval;
