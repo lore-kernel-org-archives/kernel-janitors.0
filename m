@@ -1,38 +1,40 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Date: Tue, 25 Sep 2012 11:03:12 +0000
-Subject: Re: arch/x86/kernel/traps.c:276 do_general_protection() warn: add some parenthesis here?
-Message-Id: <CAFTL4hypoTR4hDKnfhzJ_pB02t4cWnioZHxLMU1Cg6779Usw=Q@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 25 Sep 2012 09:14:26 +0000
+Subject: arch/alpha/kernel/pci.c:311:25: error: 'bridge' undeclared
+Message-Id: <20120925091426.GB27512@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120925081342.GA21642@localhost>
-In-Reply-To: <20120925081342.GA21642@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-2012/9/25 Dan Carpenter <dan.carpenter@oracle.com>:
-> On Tue, Sep 25, 2012 at 04:13:42PM +0800, Fengguang Wu wrote:
->> Hi Frederic,
->>
->> FYI, there are new smatch warnings show up in
->>
->> 37bee0638b95bc25ed67ec240eb56e25aef2f3ee  x86: Unspaghettize do_general_protection()
->>
->> All smatch warnings:
->>
->> + arch/x86/kernel/traps.c:276 do_general_protection() warn: add some parenthesis here?
->>   arch/x86/kernel/traps.c:604 math_state_restore() info: ignoring unreachable code.
->>
->> vim +276 arch/x86/kernel/traps.c
->>
->>    272
->>    273                        tsk->thread.error_code = error_code;
->>    274                        tsk->thread.trap_nr = X86_TRAP_GP;
->>    275                        if (!notify_die(DIE_GPF, "general protection fault", regs, error_code,
->>  > 276                                       X86_TRAP_GP, SIGSEGV) = NOTIFY_STOP)
->
-> Precedence error.  Should != NOTIFY_STOP.  Same for the other email.
+Hi Yinghai,
 
-Doh! I'm fixing this. I should stop writing patches in the middle of the night.
+FYI, kernel build failed on
 
-Thanks for your report!
+commit: e77e2cb0193c67de446ad32579348b9c846f5034 PCI, alpha: kill pci_root_buses
+config: alpha-defconfig
+
+
+All error/warnings:
+
+arch/alpha/kernel/pci.c: In function 'pcibios_claim_console_setup':
+arch/alpha/kernel/pci.c:310:2: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+arch/alpha/kernel/pci.c:311:25: error: 'bridge' undeclared (first use in this function)
+arch/alpha/kernel/pci.c:311:25: note: each undeclared identifier is reported only once for each function it appears in
+
+vim +311 arch/alpha/kernel/pci.c
+   305	static void __init
+   306	pcibios_claim_console_setup(void)
+   307	{
+   308		struct pci_host_bridge *host_bridge = NULL;
+   309	
+   310		for_each_pci_host_bridge(host_bridge)
+ > 311			pcibios_claim_one_bus(bridge->bus);
+   312	}
+   313	
+   314	void __init
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
