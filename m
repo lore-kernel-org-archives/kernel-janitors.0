@@ -1,31 +1,53 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Thu, 13 Sep 2012 13:46:03 +0000
-Subject: Re: [PATCH 4/9] drivers/hwmon/asus_atk0110.c: Remove useless kfree
-Message-Id: <20120913134603.GB1400@roeck-us.net>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Tue, 25 Sep 2012 11:07:09 +0000
+Subject: [PATCH] mm/slab: Fix kmem_cache_alloc_node_trace() declaration
+Message-Id: <1348571229-844-2-git-send-email-elezegarcia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347462407-13499-4-git-send-email-peter.senna@gmail.com>
- <20120912161925.GA22539@roeck-us.net>
- <20120913090506.5f2d6834@endymion.delvare>
-In-Reply-To: <20120913090506.5f2d6834@endymion.delvare>
+References: <1348571229-844-1-git-send-email-elezegarcia@gmail.com>
+In-Reply-To: <1348571229-844-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>, Luca Tettamanti <kronos.it@gmail.com>, kernel-janitors@vger.kernel.org, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, linux-mm@kvack.org
+Cc: fengguang.wu@intel.com, Ezequiel Garcia <elezegarcia@gmail.com>, Pekka Enberg <penberg@kernel.org>
 
-On Thu, Sep 13, 2012 at 09:05:06AM +0200, Jean Delvare wrote:
-> On Wed, 12 Sep 2012 09:19:25 -0700, Guenter Roeck wrote:
-> > On Wed, Sep 12, 2012 at 05:06:42PM +0200, Peter Senna Tschudin wrote:
-> > > From: Peter Senna Tschudin <peter.senna@gmail.com>
-> > > 
-> > > Remove useless kfree() and clean up code related to the removal.
-> > 
-> > Queued for -next.
-> 
-> Patch looks good, but I don't see any "code clean-up". Either it was
-> intended but forgotten, or the patch description claims too much.
-> 
-Thought that referred to the kfree. You are right, that isn't really a cleanup.
-I'll drop that comment.
+The bug was introduced in commit 4052147c0afa
+"mm, slab: Match SLAB and SLUB kmem_cache_alloc_xxx_trace() prototype".
 
-Guenter
+Cc: Pekka Enberg <penberg@kernel.org>
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
+---
+ mm/slab.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/mm/slab.c b/mm/slab.c
+index ca3849f..3409ead 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3862,10 +3862,10 @@ void *kmem_cache_alloc_node(struct kmem_cache *cachep, gfp_t flags, int nodeid)
+ EXPORT_SYMBOL(kmem_cache_alloc_node);
+ 
+ #ifdef CONFIG_TRACING
+-void *kmem_cache_alloc_node_trace(struct kmem_cache *cachep,
++void *kmem_cache_alloc_node_trace(size_t size,
++				  struct kmem_cache *cachep,
+ 				  gfp_t flags,
+-				  int nodeid,
+-				  size_t size)
++				  int nodeid)
+ {
+ 	void *ret;
+ 
+@@ -3887,7 +3887,7 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
+ 	cachep = kmem_find_general_cachep(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+-	return kmem_cache_alloc_node_trace(cachep, flags, node, size);
++	return kmem_cache_alloc_node_trace(size, cachep, flags, node);
+ }
+ 
+ #if defined(CONFIG_DEBUG_SLAB) || defined(CONFIG_TRACING)
+-- 
+1.7.8.6
+
