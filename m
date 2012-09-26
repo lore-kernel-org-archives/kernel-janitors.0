@@ -1,102 +1,55 @@
-From: Chris Ball <cjb@laptop.org>
-Date: Wed, 19 Sep 2012 05:09:54 +0000
-Subject: Re: [PATCH 7/13] drivers/mmc/host/mmci.c: use clk_prepare_enable and clk_disable_unprepare
-Message-Id: <m3lig6k38d.fsf@pullcord.laptop.org>
+From: Harsh Kumar <harsh1kumar@gmail.com>
+Date: Wed, 26 Sep 2012 18:15:39 +0000
+Subject: [Patch 2/5] Staging: winbond: Typo corrections in comments
+Message-Id: <5063437B.70808@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1345996865-32082-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1345996865-32082-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1345996865-32082-8-git-send-email-Julia.Lawall@lip6.fr> (Julia
-	Lawall's message of "Sun, 26 Aug 2012 18:00:59 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Russell King <linux@arm.linux.org.uk>
+To: kernel-janitors@vger.kernel.org
 
-Hi Julia,
+Few typo corrections in comments
 
-On Sun, Aug 26 2012, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Clk_prepare_enable and clk_disable_unprepare combine clk_prepare and
-> clk_enable, and clk_disable and clk_unprepare.  They make the code more
-> concise, and ensure that clk_unprepare is called when clk_enable fails.
->
-> A simplified version of the semantic patch that introduces calls to these
-> functions is as follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression e;
-> @@
->
-> - clk_prepare(e);
-> - clk_enable(e);
-> + clk_prepare_enable(e);
->
-> @@
-> expression e;
-> @@
->
-> - clk_disable(e);
-> - clk_unprepare(e);
-> + clk_disable_unprepare(e);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  drivers/mmc/host/mmci.c |   13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> index 50ff19a..edc3e9b 100644
-> --- a/drivers/mmc/host/mmci.c
-> +++ b/drivers/mmc/host/mmci.c
-> @@ -1309,14 +1309,10 @@ static int __devinit mmci_probe(struct amba_device *dev,
->  		goto host_free;
->  	}
->  
-> -	ret = clk_prepare(host->clk);
-> +	ret = clk_prepare_enable(host->clk);
->  	if (ret)
->  		goto clk_free;
->  
-> -	ret = clk_enable(host->clk);
-> -	if (ret)
-> -		goto clk_unprep;
-> -
->  	host->plat = plat;
->  	host->variant = variant;
->  	host->mclk = clk_get_rate(host->clk);
-> @@ -1515,9 +1511,7 @@ static int __devinit mmci_probe(struct amba_device *dev,
->   err_gpio_cd:
->  	iounmap(host->base);
->   clk_disable:
-> -	clk_disable(host->clk);
-> - clk_unprep:
-> -	clk_unprepare(host->clk);
-> +	clk_disable_unprepare(host->clk);
->   clk_free:
->  	clk_put(host->clk);
->   host_free:
-> @@ -1564,8 +1558,7 @@ static int __devexit mmci_remove(struct amba_device *dev)
->  			gpio_free(host->gpio_cd);
->  
->  		iounmap(host->base);
-> -		clk_disable(host->clk);
-> -		clk_unprepare(host->clk);
-> +		clk_disable_unprepare(host->clk);
->  		clk_put(host->clk);
->  
->  		if (host->vcc)
+Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
 
-Thanks, pushed to mmc-next for 3.7.
+---
+ drivers/staging/winbond/wb35tx.c |   10 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-(I merged v1 instead of v2 because I don't see any whitespace problems
-with it, and I liked the verbosity in the original commit message.)
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+diff -uprN a/drivers/staging/winbond/wb35tx.c b/drivers/staging/winbond/wb35tx.c
+--- a/drivers/staging/winbond/wb35tx.c
++++ b/drivers/staging/winbond/wb35tx.c
+@@ -41,7 +41,7 @@ static void Wb35Tx_complete(struct urb *
+ 	pWb35Tx->TxSendIndex++;
+ 	pWb35Tx->TxSendIndex %= MAX_USB_TX_BUFFER_NUMBER;
+ 
+-	if (pHwData->SurpriseRemove) /* Let WbWlanHalt to handle surprise remove */
++	if (pHwData->SurpriseRemove) /* Let WbWlanHalt handle surprise remove */
+ 		goto error;
+ 
+ 	if (pWb35Tx->tx_halt)
+@@ -151,13 +151,13 @@ void Wb35Tx_stop(struct hw_data * pHwDat
+ 
+ 	/* Try to cancel the Trp of EP2 */
+ 	if (pWb35Tx->EP2vm_state = VM_RUNNING)
+-		/* Only use unlink, let Wb35Tx_destroy to free them */
++		/* Only use unlink, let Wb35Tx_destroy free them */
+ 		usb_unlink_urb( pWb35Tx->Tx2Urb );
+ 	pr_debug("EP2 Tx stop\n");
+ 
+ 	/* Try to cancel the Irp of EP4 */
+ 	if (pWb35Tx->EP4vm_state = VM_RUNNING)
+-		/* Only use unlink, let Wb35Tx_destroy to free them */
++		/* Only use unlink, let Wb35Tx_destroy free them */
+ 		usb_unlink_urb( pWb35Tx->Tx4Urb );
+ 	pr_debug("EP4 Tx stop\n");
+ }
+@@ -216,7 +216,7 @@ static void Wb35Tx_EP2VM_complete(struct
+ 	pWb35Tx->EP2VM_status = pUrb->status;
+ 
+ 	/* For Linux 2.4. Interrupt will always trigger */
+-	if (pHwData->SurpriseRemove) /* Let WbWlanHalt to handle surprise remove */
++	if (pHwData->SurpriseRemove) /* Let WbWlanHalt handle surprise remove */
+ 		goto error;
+ 
+ 	if (pWb35Tx->tx_halt)
