@@ -1,41 +1,40 @@
-From: John Stultz <john.stultz@linaro.org>
-Date: Sat, 22 Sep 2012 00:47:38 +0000
-Subject: Re: [time:fortglx/3.7/time 11/13] include/linux/timekeeper_internal.h:101:1: sparse: missing identif
-Message-Id: <505D0AAA.3070907@linaro.org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 26 Sep 2012 16:08:08 +0000
+Subject: [samsung:v4l-next 51/121] drivers/media/usb/tlg2300/pd-alsa.c:309:3: error: implicit declaration of
+Message-Id: <20120926160807.GD14447@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120922004111.GH5959@localhost>
-In-Reply-To: <20120922004111.GH5959@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 09/21/2012 05:41 PM, Fengguang Wu wrote:
-> Hi John,
->
-> FYI, there are new sparse warnings show up in
->
-> tree:   git://git.linaro.org/people/jstultz/linux.git fortglx/3.7/time
-> head:   f9bb3ff13c4701ee6242ec4b4ef0cbc71d5ff299
-> commit: 672364f56055976aae7e68b59cf578173a3dbddc [11/13] time: Introduce new GENERIC_TIME_VSYSCALL
->
-> All sparse warnings:
->
-[snip]
->      98	#else
->      99	
->     100	static inline void update_vsyscall(struct timekeeper *tk);
->   > 101	{
->     102	}
->     103	static inline void update_vsyscall_tz(void)
->     104	{
->     105	}
->     106	#endif
->     107	
->     108	#endif /* _LINUX_TIMEKEEPER_INTERNAL_H */
->
-I just caught this myself and have re-pushed out a fix to that tree.
+Hi Alan,
 
-Thanks again for the automated testing!
--john
+FYI, kernel build failed on
 
+tree:   git://git.infradead.org/users/kmpark/linux-samsung v4l-next
+head:   01882ac3debd75dcf39c45b9cfc9eb12c4b50ba0
+commit: da35de640a0e9c805aba70439f524234890b96c5 [51/121] [media] tlg2300: fix missing check for audio creation
+config: x86_64-allmodconfig
+
+All error/warnings:
+
+drivers/media/usb/tlg2300/pd-alsa.c: In function 'poseidon_audio_init':
+drivers/media/usb/tlg2300/pd-alsa.c:309:3: error: implicit declaration of function 'snd_free_card' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+
+vim +309 drivers/media/usb/tlg2300/pd-alsa.c
+   303		ret = snd_card_create(-1, "Telegent", THIS_MODULE, 0, &card);
+   304		if (ret != 0)
+   305			return ret;
+   306	
+   307		ret = snd_pcm_new(card, "poseidon audio", 0, 0, 1, &pcm);
+   308		if (ret < 0) {
+ > 309			snd_free_card(card);
+   310			return ret;
+   311		}
+   312		snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &pcm_capture_ops);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
