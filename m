@@ -1,40 +1,41 @@
-From: Richard Zhao <richard.zhao@freescale.com>
-Date: Fri, 14 Sep 2012 06:58:20 +0000
-Subject: Re: [patch] USB: chipidea: fix & vs | bug
-Message-Id: <20120914065819.GA7167@b20223-02.ap.freescale.net>
+From: Harsh Kumar <harsh1kumar@gmail.com>
+Date: Wed, 26 Sep 2012 18:17:42 +0000
+Subject: [Patch 4/5] Staging: winbond: checkpatch cleanup
+Message-Id: <506343F6.4040905@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120914065056.GA11886@elgon.mountain>
-In-Reply-To: <20120914065056.GA11886@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 14, 2012 at 09:50:56AM +0300, Dan Carpenter wrote:
-> There is a '&' vs '|' typo in the original code so the condition is
-> never true and we don't queue the work.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> 
-> diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-> index 2f45bba..5294f81 100644
-> --- a/drivers/usb/chipidea/udc.c
-> +++ b/drivers/usb/chipidea/udc.c
-> @@ -1680,7 +1680,7 @@ static irqreturn_t udc_irq(struct ci13xxx *ci)
->  	intr = hw_read(ci, OP_OTGSC, ~0);
->  	hw_write(ci, OP_OTGSC, ~0, intr);
->  
-> -	if (intr & (OTGSC_AVVIE & OTGSC_AVVIS))
-> +	if (intr & (OTGSC_AVVIE | OTGSC_AVVIS))
-It's not what I meant. Should be
-if ((intr & OTGSC_AVVIE) && (intr & OTGSC_AVVIS))
-I'm still testing it.
+checkpatch cleanup: Corrected wrong placement of a brace and line exceeding 80 characters
 
-Thanks
-Richard
->  		queue_work(ci->wq, &ci->vbus_work);
->  
->  	spin_unlock(&ci->lock);
-> 
+Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
 
+---
+ drivers/staging/winbond/wb35tx.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff -uprN a/drivers/staging/winbond/wb35tx.c b/drivers/staging/winbond/wb35tx.c
+--- a/drivers/staging/winbond/wb35tx.c
++++ b/drivers/staging/winbond/wb35tx.c
+@@ -135,8 +135,7 @@ unsigned char Wb35Tx_initial(struct hw_d
+ 		return false;
+ 
+ 	pWb35Tx->Tx2Urb = usb_alloc_urb(0, GFP_ATOMIC);
+-	if (!pWb35Tx->Tx2Urb)
+-	{
++	if (!pWb35Tx->Tx2Urb) {
+ 		usb_free_urb(pWb35Tx->Tx4Urb);
+ 		return false;
+ 	}
+@@ -263,7 +262,8 @@ static void Wb35Tx_EP2VM(struct wbsoft_p
+ 
+ 	/* Issuing URB */
+ 	usb_fill_int_urb(pUrb, pHwData->udev, usb_rcvintpipe(pHwData->udev, 2),
+-			  pltmp, MAX_INTERRUPT_LENGTH, Wb35Tx_EP2VM_complete, adapter, 32);
++			 pltmp, MAX_INTERRUPT_LENGTH, Wb35Tx_EP2VM_complete,
++			 adapter, 32);
+ 
+ 	pWb35Tx->EP2vm_state = VM_RUNNING;
+ 	retv = usb_submit_urb(pUrb, GFP_ATOMIC);
