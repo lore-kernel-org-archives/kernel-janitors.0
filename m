@@ -1,58 +1,430 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 28 Sep 2012 01:22:14 +0000
-Subject: [bluetooth:master 239/247] net/bluetooth/hci_event.c:886:3: warning: format '%ld' expects argument o
-Message-Id: <20120928012214.GF5522@localhost>
+Date: Wed, 26 Sep 2012 01:37:17 +0000
+Subject: [nouveau:master 5/82] drivers/gpu/drm/nouveau/nouveau_drv.h:652:2: error: redeclaration of enumerato
+Message-Id: <20120926013717.GC8522@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Gustavo,
+Hi Ben,
 
-FYI, there are new compile warnings show up in
+FYI, kernel build failed on
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
-head:   29d8a5909bba10accb82eb805c884a2943d7710f
-commit: 392f44d3e7894f6fe314b85b4a1611b7b1d98226 [239/247] Bluetooth: Fix two warnings in BT_DBG
-config: powerpc-wii_defconfig
+tree:   git://git.freedesktop.org/git/nouveau/linux-2.6 master
+head:   f2aa204da8af348697ac0e6d4c2a9a56c3ccf52b
+commit: 452d258c97822c6ec610a3460c11a4687a958962 [5/82] drm/nouveau: implement module init functions in nouveau_drm.c
+config: x86_64-allmodconfig
 
-All warnings:
+All error/warnings:
 
-net/bluetooth/hci_event.c: In function 'hci_cc_read_local_amp_assoc':
-net/bluetooth/hci_event.c:886:3: warning: format '%ld' expects argument of type 'long int', but argument 2 has type 'size_t' [-Wformat]
-net/bluetooth/hci_event.c:886:3: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' [-Wformat]
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:552:8: error: redefinition of 'struct nouveau_engine'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:6:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/engine.h:10:8: note: originally defined here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:652:2: error: redeclaration of enumerator 'NV_04'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:57:3: note: previous definition of 'NV_04' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:653:2: error: redeclaration of enumerator 'NV_10'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:58:3: note: previous definition of 'NV_10' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:654:2: error: redeclaration of enumerator 'NV_20'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:59:3: note: previous definition of 'NV_20' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:655:2: error: redeclaration of enumerator 'NV_30'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:60:3: note: previous definition of 'NV_30' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:656:2: error: redeclaration of enumerator 'NV_40'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:61:3: note: previous definition of 'NV_40' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:657:2: error: redeclaration of enumerator 'NV_50'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:62:3: note: previous definition of 'NV_50' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:658:2: error: redeclaration of enumerator 'NV_C0'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:63:3: note: previous definition of 'NV_C0' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:659:2: error: redeclaration of enumerator 'NV_D0'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:64:3: note: previous definition of 'NV_D0' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:660:2: error: redeclaration of enumerator 'NV_E0'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/device.h:65:3: note: previous definition of 'NV_E0' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1431:19: error: conflicting types for 'nv_rd32'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:78:1: note: previous definition of 'nv_rd32' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1437:20: error: conflicting types for 'nv_wr32'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:103:1: note: previous definition of 'nv_wr32' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1443:19: error: conflicting types for 'nv_mask'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:111:1: note: previous definition of 'nv_mask' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1450:18: error: conflicting types for 'nv_rd08'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:60:1: note: previous definition of 'nv_rd08' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1456:20: error: conflicting types for 'nv_wr08'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:87:1: note: previous definition of 'nv_wr08' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1483:12: error: conflicting types for 'nv_ro32'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/object.h:142:1: note: previous definition of 'nv_ro32' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1484:13: error: conflicting types for 'nv_wo32'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/object.h:164:1: note: previous definition of 'nv_wo32' was here
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1490:0: warning: "NV_PRINTK" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/nouveau_drm.h:31:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1494:0: warning: "NV_DEBUG" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/nouveau_drm.h:42:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1516:0: warning: "NV_ERROR" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/nouveau_drm.h:36:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1517:0: warning: "NV_INFO" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/nouveau_drm.h:40:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1520:0: warning: "NV_WARN" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/nouveau_drm.h:38:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/core/ramht.c:27:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1589:1: error: conflicting types for 'nv_engine'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:6:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/core/ramht.c:27:
+drivers/gpu/drm/nouveau/core/include/core/engine.h:20:1: note: previous definition of 'nv_engine' was here
 --
-net/bluetooth/a2mp.c: In function 'a2mp_getampassoc_rsp':
-net/bluetooth/a2mp.c:386:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'unsigned int' [-Wformat]
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:552:8: error: redefinition of 'struct nouveau_engine'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:6:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/engine.h:10:8: note: originally defined here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:652:2: error: redeclaration of enumerator 'NV_04'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:57:3: note: previous definition of 'NV_04' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:653:2: error: redeclaration of enumerator 'NV_10'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:58:3: note: previous definition of 'NV_10' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:654:2: error: redeclaration of enumerator 'NV_20'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:59:3: note: previous definition of 'NV_20' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:655:2: error: redeclaration of enumerator 'NV_30'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:60:3: note: previous definition of 'NV_30' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:656:2: error: redeclaration of enumerator 'NV_40'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:61:3: note: previous definition of 'NV_40' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:657:2: error: redeclaration of enumerator 'NV_50'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:62:3: note: previous definition of 'NV_50' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:658:2: error: redeclaration of enumerator 'NV_C0'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:63:3: note: previous definition of 'NV_C0' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:659:2: error: redeclaration of enumerator 'NV_D0'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:64:3: note: previous definition of 'NV_D0' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:660:2: error: redeclaration of enumerator 'NV_E0'
+In file included from drivers/gpu/drm/nouveau/core/include/core/parent.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/device.h:65:3: note: previous definition of 'NV_E0' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1431:19: error: conflicting types for 'nv_rd32'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:78:1: note: previous definition of 'nv_rd32' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1437:20: error: conflicting types for 'nv_wr32'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:103:1: note: previous definition of 'nv_wr32' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1443:19: error: conflicting types for 'nv_mask'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:111:1: note: previous definition of 'nv_mask' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1450:18: error: conflicting types for 'nv_rd08'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:60:1: note: previous definition of 'nv_rd08' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1456:20: error: conflicting types for 'nv_wr08'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:5:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/subdev.h:87:1: note: previous definition of 'nv_wr08' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1483:12: error: conflicting types for 'nv_ro32'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/object.h:142:1: note: previous definition of 'nv_ro32' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1484:13: error: conflicting types for 'nv_wo32'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:4:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/object.h:164:1: note: previous definition of 'nv_wo32' was here
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1490:0: warning: "NV_PRINTK" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/nouveau_drm.h:31:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1494:0: warning: "NV_DEBUG" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/nouveau_drm.h:42:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1516:0: warning: "NV_ERROR" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/nouveau_drm.h:36:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1517:0: warning: "NV_INFO" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/nouveau_drm.h:40:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1520:0: warning: "NV_WARN" redefined [enabled by default]
+In file included from drivers/gpu/drm/nouveau/nouveau_drv.h:62:0,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/nouveau_drm.h:38:0: note: this is the location of the previous definition
+In file included from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:0:
+drivers/gpu/drm/nouveau/nouveau_drv.h:1589:1: error: conflicting types for 'nv_engine'
+In file included from drivers/gpu/drm/nouveau/core/include/core/device.h:6:0,
+                 from drivers/gpu/drm/nouveau/core/include/core/parent.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/namedb.h:4,
+                 from drivers/gpu/drm/nouveau/core/include/core/client.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drm.h:4,
+                 from drivers/gpu/drm/nouveau/nouveau_drv.h:62,
+                 from drivers/gpu/drm/nouveau/core/subdev/fb/nv04.c:3:
+drivers/gpu/drm/nouveau/core/include/core/engine.h:20:1: note: previous definition of 'nv_engine' was here
+..
 
-vim +886 net/bluetooth/hci_event.c
-
-903e4541 (Andrei Emeltchenko 2012-09-27  870) static void hci_cc_read_local_amp_assoc(struct hci_dev *hdev,
-903e4541 (Andrei Emeltchenko 2012-09-27  871) 					struct sk_buff *skb)
-903e4541 (Andrei Emeltchenko 2012-09-27  872) {
-903e4541 (Andrei Emeltchenko 2012-09-27  873) 	struct hci_rp_read_local_amp_assoc *rp = (void *) skb->data;
-903e4541 (Andrei Emeltchenko 2012-09-27  874) 	struct amp_assoc *assoc = &hdev->loc_assoc;
-903e4541 (Andrei Emeltchenko 2012-09-27  875) 	size_t rem_len, frag_len;
-903e4541 (Andrei Emeltchenko 2012-09-27  876) 
-903e4541 (Andrei Emeltchenko 2012-09-27  877) 	BT_DBG("%s status 0x%2.2x", hdev->name, rp->status);
-903e4541 (Andrei Emeltchenko 2012-09-27  878) 
-903e4541 (Andrei Emeltchenko 2012-09-27  879) 	if (rp->status)
-903e4541 (Andrei Emeltchenko 2012-09-27  880) 		goto a2mp_rsp;
-903e4541 (Andrei Emeltchenko 2012-09-27  881) 
-903e4541 (Andrei Emeltchenko 2012-09-27  882) 	frag_len = skb->len - sizeof(*rp);
-903e4541 (Andrei Emeltchenko 2012-09-27  883) 	rem_len = __le16_to_cpu(rp->rem_len);
-903e4541 (Andrei Emeltchenko 2012-09-27  884) 
-903e4541 (Andrei Emeltchenko 2012-09-27  885) 	if (rem_len > frag_len) {
-392f44d3 (Gustavo Padovan    2012-09-27 @886) 		BT_DBG("frag_len %ld rem_len %ld", frag_len, rem_len);
-903e4541 (Andrei Emeltchenko 2012-09-27  887) 
-903e4541 (Andrei Emeltchenko 2012-09-27  888) 		memcpy(assoc->data + assoc->offset, rp->frag, frag_len);
-903e4541 (Andrei Emeltchenko 2012-09-27  889) 		assoc->offset += frag_len;
-903e4541 (Andrei Emeltchenko 2012-09-27  890) 
-903e4541 (Andrei Emeltchenko 2012-09-27  891) 		/* Read other fragments */
-903e4541 (Andrei Emeltchenko 2012-09-27  892) 		amp_read_loc_assoc_frag(hdev, rp->phy_handle);
-903e4541 (Andrei Emeltchenko 2012-09-27  893) 
-903e4541 (Andrei Emeltchenko 2012-09-27  894) 		return;
+vim +652 drivers/gpu/drm/nouveau/nouveau_drv.h
+   646		struct nv04_crtc_reg crtc_reg[2];
+   647		uint32_t pllsel;
+   648		uint32_t sel_clk;
+   649	};
+   650	
+   651	enum nouveau_card_type {
+ > 652		NV_04      = 0x04,
+   653		NV_10      = 0x10,
+   654		NV_20      = 0x20,
+   655		NV_30      = 0x30,
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
