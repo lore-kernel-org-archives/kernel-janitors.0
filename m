@@ -1,74 +1,79 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Sun, 09 Sep 2012 21:56:44 +0000
-Subject: Re: [PATCH 14/14] drivers/media/usb/gspca/cpia1.c: fix error return code
-Message-Id: <504D109C.8000803@redhat.com>
+From: Harsh Kumar <harsh1kumar@gmail.com>
+Date: Wed, 26 Sep 2012 04:44:23 +0000
+Subject: [Patch1/2] Staging: winbond: checkpatch cleanup for wb35tx_s.h
+Message-Id: <50628557.3040607@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346945041-26676-14-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346945041-26676-14-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi,
+checkpatch cleanup for drivers/staging/winbond/wb35tx_s.h
+Changed c99 comments to c89 comments
 
-Applied to my gspca tree and included in my pull-req for 3.7 which I just send out.
+diff -uprN a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
+--- a/drivers/staging/winbond/wb35tx_s.h
++++ b/drivers/staging/winbond/wb35tx_s.h
+@@ -3,36 +3,32 @@
+ 
+ #include "mds_s.h"
+ 
+-//==================
+-// IS89C35 Tx related definition
+-//==================
+-#define TX_INTERFACE			0	// Interface 1
+-#define TX_PIPE					3	// endpoint 4
+-#define TX_INTERRUPT			1	// endpoint 2
+-#define MAX_INTERRUPT_LENGTH	64	// It must be 64 for EP2 hardware
++/* IS89C35 Tx related definition */
++#define TX_INTERFACE			0	/* Interface 1 */
++#define TX_PIPE					3	/* Endpoint 4 */
++#define TX_INTERRUPT			1	/* Endpoint 2 */
++#define MAX_INTERRUPT_LENGTH	64	/* It must be 64 for EP2 hardware */
+ 
+ 
+ 
+-//==================
+-// Internal variable for module
+-//==================
++/* Internal variable for module */
+ 
+ 
+ struct wb35_tx {
+-	// For Tx buffer
++	/* For Tx buffer */
+ 	u8	TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
+ 
+-	// For Interrupt pipe
++	/* For Interrupt pipe */
+ 	u8	EP2_buf[MAX_INTERRUPT_LENGTH];
+ 
+-	atomic_t	TxResultCount;// For thread control of EP2 931130.4.m
+-	atomic_t	TxFireCounter;// For thread control of EP4 931130.4.n
++	atomic_t	TxResultCount; /* For thread control of EP2 931130.4.m */
++	atomic_t	TxFireCounter; /* For thread control of EP4 931130.4.n */
+ 	u32			ByteTransfer;
+ 
+-	u32	    TxSendIndex;// The next index of Mds array to be sent
+-	u32	    EP2vm_state; // for EP2vm state
+-	u32	    EP4vm_state; // for EP4vm state
+-	u32	    tx_halt; // Stopping VM
++	u32	    TxSendIndex; /* The next index of Mds array to be sent */
++	u32	    EP2vm_state; /* for EP2vm state */
++	u32	    EP4vm_state; /* for EP4vm state */
++	u32	    tx_halt; /* Stopping VM */
+ 
+ 	struct urb *				Tx4Urb;
+ 	struct urb *				Tx2Urb;
+@@ -40,8 +36,8 @@ struct wb35_tx {
+ 	int		EP2VM_status;
+ 	int		EP4VM_status;
+ 
+-	u32	TxFillCount; // 20060928
+-	u32	TxTimer; // 20060928 Add if sending packet is greater than 13
++	u32	TxFillCount; /* 20060928 */
++	u32	TxTimer; /* 20060928 Add if sending packet is greater than 13 */
+ };
+ 
+ #endif
 
-Thanks,
-
-Hans
-
-
-On 09/06/2012 05:24 PM, Peter Senna Tschudin wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->   { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->      when != &ret
-> *if(...)
-> {
->    ... when != ret = e2
->        when forall
->   return ret;
-> }
->
-> // </smpl>
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> ---
->   drivers/media/usb/gspca/cpia1.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/usb/gspca/cpia1.c b/drivers/media/usb/gspca/cpia1.c
-> index 2499a88..b3ba47d 100644
-> --- a/drivers/media/usb/gspca/cpia1.c
-> +++ b/drivers/media/usb/gspca/cpia1.c
-> @@ -751,7 +751,7 @@ static int goto_high_power(struct gspca_dev *gspca_dev)
->   	if (signal_pending(current))
->   		return -EINTR;
->
-> -	do_command(gspca_dev, CPIA_COMMAND_GetCameraStatus, 0, 0, 0, 0);
-> +	ret = do_command(gspca_dev, CPIA_COMMAND_GetCameraStatus, 0, 0, 0, 0);
->   	if (ret)
->   		return ret;
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
