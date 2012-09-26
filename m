@@ -1,61 +1,21 @@
-From: Harsh Kumar <harsh1kumar@gmail.com>
-Date: Wed, 26 Sep 2012 05:45:15 +0000
-Subject: [Patch 2/2] Staging: winbond: Removed undesired spaces, lines and tabs
-Message-Id: <5062939B.1030906@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Sep 2012 06:37:12 +0000
+Subject: Re: [Patch 2/2] Staging: winbond: Removed undesired spaces, lines and tabs
+Message-Id: <20120926063712.GA4587@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5062939B.1030906@gmail.com>
+In-Reply-To: <5062939B.1030906@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-checkpatch cleanup: Removed some undesired spaces, lines and tabs to comply with coding style.
+On Wed, Sep 26, 2012 at 11:03:15AM +0530, Harsh Kumar wrote:
+> checkpatch cleanup: Removed some undesired spaces, lines and tabs to comply with coding style.
+> 
 
-Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
+Looks good.  Thanks for doing these.
 
-diff -uprN a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
---- a/drivers/staging/winbond/wb35tx_s.h
-+++ b/drivers/staging/winbond/wb35tx_s.h
-@@ -4,16 +4,12 @@
- #include "mds_s.h"
- 
- /* IS89C35 Tx related definition */
--#define TX_INTERFACE			0	/* Interface 1 */
--#define TX_PIPE					3	/* Endpoint 4 */
--#define TX_INTERRUPT			1	/* Endpoint 2 */
-+#define TX_INTERFACE		0	/* Interface 1 */
-+#define TX_PIPE			3	/* Endpoint 4 */
-+#define TX_INTERRUPT		1	/* Endpoint 2 */
- #define MAX_INTERRUPT_LENGTH	64	/* It must be 64 for EP2 hardware */
- 
--
--
- /* Internal variable for module */
--
--
- struct wb35_tx {
- 	/* For Tx buffer */
- 	u8	TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
-@@ -23,15 +19,15 @@ struct wb35_tx {
- 
- 	atomic_t	TxResultCount; /* For thread control of EP2 931130.4.m */
- 	atomic_t	TxFireCounter; /* For thread control of EP4 931130.4.n */
--	u32			ByteTransfer;
-+	u32		ByteTransfer;
- 
--	u32	    TxSendIndex; /* The next index of Mds array to be sent */
--	u32	    EP2vm_state; /* for EP2vm state */
--	u32	    EP4vm_state; /* for EP4vm state */
--	u32	    tx_halt; /* Stopping VM */
-+	u32	TxSendIndex; /* The next index of Mds array to be sent */
-+	u32	EP2vm_state; /* for EP2vm state */
-+	u32	EP4vm_state; /* for EP4vm state */
-+	u32	tx_halt; /* Stopping VM */
- 
--	struct urb *				Tx4Urb;
--	struct urb *				Tx2Urb;
-+	struct urb	*Tx4Urb;
-+	struct urb	*Tx2Urb;
- 
- 	int		EP2VM_status;
- 	int		EP4VM_status;
+regards,
+dan carpenter
 
