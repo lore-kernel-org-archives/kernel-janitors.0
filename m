@@ -1,54 +1,46 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 26 Sep 2012 01:38:39 +0000
-Subject: [nfs:devel 17/39] fs/nfs/pnfs.c:1043:20: warning: unused variable 'nfsi'
-Message-Id: <20120926013839.GD8522@localhost>
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Date: Wed, 26 Sep 2012 14:47:18 +0000
+Subject: Re: [nfs:devel 17/39] fs/nfs/pnfs.c:1043:20: warning: unused variable 'nfsi'
+Message-Id: <4FA345DA4F4AE44899BD2B03EEEC2FA908FEC301@SACEXCMBX04-PRD.hq.netapp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120926013839.GD8522@localhost>
+In-Reply-To: <20120926013839.GD8522@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, linux-nfs@vger.kernel.org
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Yuanhan Liu <yuanhan.liu@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
 
-Hi Trond,
-
-FYI, there are new compile warnings show up in
-
-tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git devel
-head:   f743c735b817547b590d36a6e275235c7beb8600
-commit: a9c310af706112f44c15cf5172e81ba3ee755cab [17/39] NFSv4.1: Add helpers for setting/reading the I/O fail bit
-
-All warnings:
-
-fs/nfs/pnfs.c: In function 'pnfs_update_layout':
-fs/nfs/pnfs.c:1043:20: warning: unused variable 'nfsi' [-Wunused-variable]
-
-vim +1043 fs/nfs/pnfs.c
-  1027	 * The appropriate layout segment is referenced and returned to the caller.
-  1028	 */
-  1029	struct pnfs_layout_segment *
-  1030	pnfs_update_layout(struct inode *ino,
-  1031			   struct nfs_open_context *ctx,
-  1032			   loff_t pos,
-  1033			   u64 count,
-  1034			   enum pnfs_iomode iomode,
-  1035			   gfp_t gfp_flags)
-  1036	{
-  1037		struct pnfs_layout_range arg = {
-  1038			.iomode = iomode,
-  1039			.offset = pos,
-  1040			.length = count,
-  1041		};
-  1042		unsigned pg_offset;
-> 1043		struct nfs_inode *nfsi = NFS_I(ino);
-  1044		struct nfs_server *server = NFS_SERVER(ino);
-  1045		struct nfs_client *clp = server->nfs_client;
-  1046		struct pnfs_layout_hdr *lo;
-  1047		struct pnfs_layout_segment *lseg = NULL;
-  1048		bool first = false;
-  1049	
-  1050		if (!pnfs_enabled_sb(NFS_SERVER(ino)))
-  1051			return NULL;
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+T24gV2VkLCAyMDEyLTA5LTI2IGF0IDA5OjM4ICswODAwLCBGZW5nZ3VhbmcgV3Ugd3JvdGU6DQo+
+IEhpIFRyb25kLA0KPiANCj4gRllJLCB0aGVyZSBhcmUgbmV3IGNvbXBpbGUgd2FybmluZ3Mgc2hv
+dyB1cCBpbg0KPiANCj4gdHJlZTogICBnaXQ6Ly9naXQubGludXgtbmZzLm9yZy9wcm9qZWN0cy90
+cm9uZG15L2xpbnV4LW5mcy5naXQgZGV2ZWwNCj4gaGVhZDogICBmNzQzYzczNWI4MTc1NDdiNTkw
+ZDM2YTZlMjc1MjM1YzdiZWI4NjAwDQo+IGNvbW1pdDogYTljMzEwYWY3MDYxMTJmNDRjMTVjZjUx
+NzJlODFiYTNlZTc1NWNhYiBbMTcvMzldIE5GU3Y0LjE6IEFkZCBoZWxwZXJzIGZvciBzZXR0aW5n
+L3JlYWRpbmcgdGhlIEkvTyBmYWlsIGJpdA0KPiANCj4gQWxsIHdhcm5pbmdzOg0KPiANCj4gZnMv
+bmZzL3BuZnMuYzogSW4gZnVuY3Rpb24gJ3BuZnNfdXBkYXRlX2xheW91dCc6DQo+IGZzL25mcy9w
+bmZzLmM6MTA0MzoyMDogd2FybmluZzogdW51c2VkIHZhcmlhYmxlICduZnNpJyBbLVd1bnVzZWQt
+dmFyaWFibGVdDQo+IA0KPiB2aW0gKzEwNDMgZnMvbmZzL3BuZnMuYw0KPiAgIDEwMjcJICogVGhl
+IGFwcHJvcHJpYXRlIGxheW91dCBzZWdtZW50IGlzIHJlZmVyZW5jZWQgYW5kIHJldHVybmVkIHRv
+IHRoZSBjYWxsZXIuDQo+ICAgMTAyOAkgKi8NCj4gICAxMDI5CXN0cnVjdCBwbmZzX2xheW91dF9z
+ZWdtZW50ICoNCj4gICAxMDMwCXBuZnNfdXBkYXRlX2xheW91dChzdHJ1Y3QgaW5vZGUgKmlubywN
+Cj4gICAxMDMxCQkJICAgc3RydWN0IG5mc19vcGVuX2NvbnRleHQgKmN0eCwNCj4gICAxMDMyCQkJ
+ICAgbG9mZl90IHBvcywNCj4gICAxMDMzCQkJICAgdTY0IGNvdW50LA0KPiAgIDEwMzQJCQkgICBl
+bnVtIHBuZnNfaW9tb2RlIGlvbW9kZSwNCj4gICAxMDM1CQkJICAgZ2ZwX3QgZ2ZwX2ZsYWdzKQ0K
+PiAgIDEwMzYJew0KPiAgIDEwMzcJCXN0cnVjdCBwbmZzX2xheW91dF9yYW5nZSBhcmcgPSB7DQo+
+ICAgMTAzOAkJCS5pb21vZGUgPSBpb21vZGUsDQo+ICAgMTAzOQkJCS5vZmZzZXQgPSBwb3MsDQo+
+ICAgMTA0MAkJCS5sZW5ndGggPSBjb3VudCwNCj4gICAxMDQxCQl9Ow0KPiAgIDEwNDIJCXVuc2ln
+bmVkIHBnX29mZnNldDsNCj4gPiAxMDQzCQlzdHJ1Y3QgbmZzX2lub2RlICpuZnNpID0gTkZTX0ko
+aW5vKTsNCj4gICAxMDQ0CQlzdHJ1Y3QgbmZzX3NlcnZlciAqc2VydmVyID0gTkZTX1NFUlZFUihp
+bm8pOw0KPiAgIDEwNDUJCXN0cnVjdCBuZnNfY2xpZW50ICpjbHAgPSBzZXJ2ZXItPm5mc19jbGll
+bnQ7DQo+ICAgMTA0NgkJc3RydWN0IHBuZnNfbGF5b3V0X2hkciAqbG87DQo+ICAgMTA0NwkJc3Ry
+dWN0IHBuZnNfbGF5b3V0X3NlZ21lbnQgKmxzZWcgPSBOVUxMOw0KPiAgIDEwNDgJCWJvb2wgZmly
+c3QgPSBmYWxzZTsNCj4gICAxMDQ5CQ0KPiAgIDEwNTAJCWlmICghcG5mc19lbmFibGVkX3NiKE5G
+U19TRVJWRVIoaW5vKSkpDQo+ICAgMTA1MQkJCXJldHVybiBOVUxMOw0KDQpIaSBGZW5nZ3Vhbmcs
+DQoNClllcywgSSBjYW4gc2VlIGhvdyB0aGUgYWJvdmUgd2lsbCBoYXBwZW4gaWYgeW91IGRpc2Fi
+bGUgZHByaW50aygpLg0KDQpGcm9tIHdoYXQgSSBjYW4gc2VlLCB0aGUgZHByaW50aygpIGluIHF1
+ZXN0aW9uIGlzIGJ1Z2d5IGFzIGhlbGwgYW55d2F5Og0KaXQgZGVyZWZlcmVuY2VzIG5mc2ktPmxh
+eW91dCB1c2luZyB3aXRob3V0IGFueSBwcm90ZWN0aW9uLiBJJ2xsIHJlbW92ZQ0KaXQgaW4gYSBz
+ZXBhcmF0ZSBwYXRjaC4NCg0KVGhhbmtzIQ0KICAgVHJvbmQNCg0KLS0gDQpUcm9uZCBNeWtsZWJ1
+c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFpbnRhaW5lcg0KDQpOZXRBcHANClRyb25kLk15a2xlYnVz
+dEBuZXRhcHAuY29tDQp3d3cubmV0YXBwLmNvbQ0K
