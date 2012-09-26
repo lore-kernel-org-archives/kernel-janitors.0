@@ -1,51 +1,64 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 12 Sep 2012 16:21:02 +0000
-Subject: [PATCH v2] module: report -EFAULT on bytes remaining
-Message-Id: <20120912162102.GA16676@www.outflux.net>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Wed, 26 Sep 2012 12:21:33 +0000
+Subject: [PATCH v2] mm/slab: Fix kmem_cache_alloc_node_trace() declaration
+Message-Id: <1348662093-3116-1-git-send-email-elezegarcia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Dan Carpenter <dan.carpenter@oracle.com>, Fengguang Wu <fengguang.wu@intel.com>, kernel-janitors@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org, fengguang.wu@intel.com, Ezequiel Garcia <elezegarcia@gmail.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>
 
-Caught by smatch:
-kernel/module.c:2450 copy_module_from_user() warn: maybe return -EFAULT instead of the bytes remaining?
+This bug was introduced in commit
+"mm, slab: Match SLAB and SLUB kmem_cache_alloc_xxx_trace() prototype".
 
-Fix the check of copy_from_user() to report -EFAULT as was done before.
-
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
 Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
 ---
-Should be applied on top of the finit_module syscall patches.
+ Changes from v1:
+  * Fix kmem_cache_alloc_node_trace to effectively match SLUB's
 
-v2:
- - copy_from_user never returns negative, thanks to Dan Carpenter.
----
- kernel/module.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+ include/linux/slab_def.h |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 0ad03c4..461e7d4 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2440,9 +2440,10 @@ int copy_module_from_user(const void __user *umod, unsigned long len,
- 	if (!info->hdr)
- 		return -ENOMEM;
+diff --git a/include/linux/slab_def.h b/include/linux/slab_def.h
+index e98caeb..cc290f0 100644
+--- a/include/linux/slab_def.h
++++ b/include/linux/slab_def.h
+@@ -159,16 +159,16 @@ extern void *__kmalloc_node(size_t size, gfp_t flags, int node);
+ extern void *kmem_cache_alloc_node(struct kmem_cache *, gfp_t flags, int node);
  
--	err = copy_from_user(info->hdr, umod, info->len);
--	if (err)
-+	if (copy_from_user(info->hdr, umod, info->len) != 0) {
-+		err = -EFAULT;
- 		goto free_hdr;
-+	}
+ #ifdef CONFIG_TRACING
+-extern void *kmem_cache_alloc_node_trace(size_t size,
+-					 struct kmem_cache *cachep,
++extern void *kmem_cache_alloc_node_trace(struct kmem_cache *cachep,
+ 					 gfp_t flags,
+-					 int nodeid);
++					 int nodeid,
++					 size_t size);
+ #else
+ static __always_inline void *
+-kmem_cache_alloc_node_trace(size_t size,
+-			    struct kmem_cache *cachep,
++kmem_cache_alloc_node_trace(struct kmem_cache *cachep,
+ 			    gfp_t flags,
+-			    int nodeid)
++			    int nodeid,
++			    size_t size)
+ {
+ 	return kmem_cache_alloc_node(cachep, flags, nodeid);
+ }
+@@ -200,7 +200,7 @@ found:
+ #endif
+ 			cachep = malloc_sizes[i].cs_cachep;
  
- 	err = check_info(info);
- 	if (err)
+-		return kmem_cache_alloc_node_trace(size, cachep, flags, node);
++		return kmem_cache_alloc_node_trace(cachep, flags, node, size);
+ 	}
+ 	return __kmalloc_node(size, flags, node);
+ }
 -- 
-1.7.0.4
+1.7.8.6
 
-
--- 
-Kees Cook
-Chrome OS Security
