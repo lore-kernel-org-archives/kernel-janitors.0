@@ -1,54 +1,38 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 06 Sep 2012 16:09:10 +0000
-Subject: [PATCH 2/10] drivers/scsi/sym53c8xx_2/sym_fw.c: removes unnecessary semicolon
-Message-Id: <1346947757-10481-3-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 26 Sep 2012 17:02:17 +0000
+Subject: [aarch64:soc-armv8-model 10/41] drivers/irqchip/gic.c:399:2: error: 'handle_arch_irq' undeclared
+Message-Id: <20120926170217.GD25467@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1346947757-10481-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Marc,
 
-removes unnecessary semicolon
+FYI, kernel build failed on
 
-Found by Coccinelle: http://coccinelle.lip6.fr/
+commit: dd584bb4775f75768183329c3ca52252bb0b6d12 [10/41] irqchip: Add ARM Generic Interrupt Controller support
+config: arm-imx_v6_v7_defconfig
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+All error/warnings:
+
+drivers/irqchip/gic.c: In function 'gic_init':
+drivers/irqchip/gic.c:399:2: error: 'handle_arch_irq' undeclared (first use in this function)
+drivers/irqchip/gic.c:399:2: note: each undeclared identifier is reported only once for each function it appears in
+
+vim +399 drivers/irqchip/gic.c
+   393			return;
+   394	
+   395		gic_dist_init(gic);
+   396		gic_cpu_init(gic);
+   397	
+   398		/* Update the architecture handler */
+ > 399		handle_arch_irq = gic_handle_irq;
+   400	}
+   401	
+   402	#ifdef CONFIG_SMP
 
 ---
- drivers/scsi/sym53c8xx_2/sym_fw.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff -u -p a/drivers/scsi/sym53c8xx_2/sym_fw.c b/drivers/scsi/sym53c8xx_2/sym_fw.c
---- a/drivers/scsi/sym53c8xx_2/sym_fw.c
-+++ b/drivers/scsi/sym53c8xx_2/sym_fw.c
-@@ -386,7 +386,7 @@ void sym_fw_bind_script(struct sym_hcb *
- 				sym_name(np), (int) (cur-start));
- 			++cur;
- 			continue;
--		};
-+		}
- 
- 		/*
- 		 *  We use the bogus value 0xf00ff00f ;-)
-@@ -494,7 +494,7 @@ void sym_fw_bind_script(struct sym_hcb *
- 		default:
- 			relocs = 0;
- 			break;
--		};
-+		}
- 
- 		/*
- 		 *  Scriptify:) the opcode.
-@@ -550,5 +550,5 @@ void sym_fw_bind_script(struct sym_hcb *
- 
- 			*cur++ = cpu_to_scr(new);
- 		}
--	};
-+	}
- }
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
