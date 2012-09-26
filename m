@@ -1,41 +1,52 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 29 Sep 2012 06:55:44 +0000
-Subject: Re: [glommer-memcg:slab-common/kmalloc 28/30] include/linux/slab_def.h:135:27: warning: array subscr
-Message-Id: <20120929065544.GA26880@localhost>
+Date: Wed, 26 Sep 2012 17:01:04 +0000
+Subject: drivers/media/rc/iguanair.c:276 iguanair_receiver() error: doing dma on the stack ((null))
+Message-Id: <20120926170104.GC25467@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928102032.GA29995@localhost>
-In-Reply-To: <20120928102032.GA29995@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 28, 2012 at 06:17:20PM +0000, Christoph Lameter wrote:
-> On Fri, 28 Sep 2012, Fengguang Wu wrote:
-> 
-> > commit: 55a6b9f968a877c728ed6e438fa68741a7711d89 [28/30] CK1 [12/13] Common names for the array of kmalloc caches
-> 
-> Is this issue really caused by the specified commit? I do not see how the
-> patch can cause such a problem.
+Hi Sean,
 
-It should be a wrong bisection. Sorry. I checked manually and find
-that the previous commit stopped early at this error:
+FYI, there are new smatch warnings show up in
 
-In file included from /c/kernel-tests/src/next/include/linux/slab.h:309:0,
-                 from /c/kernel-tests/src/next/include/linux/proc_fs.h:4,
-                 from /c/kernel-tests/src/next/fs/proc/stat.c:6:
-/c/kernel-tests/src/next/include/linux/slab_def.h: In function 'kmalloc':
-/c/kernel-tests/src/next/include/linux/slab_def.h:132:13: error: 'kmalloc_dma_caches' undeclared (first use in this function)
-/c/kernel-tests/src/next/include/linux/slab_def.h:132:13: note: each undeclared identifier is reported only once for each function it appears in
-/c/kernel-tests/src/next/include/linux/slab_def.h:135:13: error: 'kmalloc_caches' undeclared (first use in this function)
+tree:   git://git.infradead.org/users/kmpark/linux-samsung commit-list
+commit: 26ff63137c45886169ed102bddd6e90d6c27f00d [media] Add support for the IguanaWorks USB IR Transceiver
 
-Thus the warning was "hide" until the current commit:
+  drivers/media/rc/iguanair.c:211 iguanair_get_features() error: doing dma on the stack ((null))
+  drivers/media/rc/iguanair.c:230 iguanair_get_features() error: doing dma on the stack ((null))
+  drivers/media/rc/iguanair.c:249 iguanair_get_features() error: doing dma on the stack ((null))
++ drivers/media/rc/iguanair.c:276 iguanair_receiver() error: doing dma on the stack ((null))
 
-In file included from /c/kernel-tests/src/next/include/linux/slab.h:314:0,
-                 from /c/kernel-tests/src/next/include/linux/proc_fs.h:4,
-                 from /c/kernel-tests/src/next/fs/proc/stat.c:6:
-/c/kernel-tests/src/next/fs/proc/stat.c: In function 'stat_open':
-/c/kernel-tests/src/next/include/linux/slab_def.h:135:27: warning: array subscript is above array bounds [-Warray-bounds]
+vim +276 drivers/media/rc/iguanair.c
+   260	
+   261		if (len > 5 && ir->version[0] >= 4)
+   262			ir->cycle_overhead = response.data[1];
+   263	
+   264	out:
+   265		return rc;
+   266	}
+   267	
+   268	static int iguanair_receiver(struct iguanair *ir, bool enable)
+   269	{
+   270		struct packet packet = { 0, DIR_OUT, enable ?
+   271					CMD_RECEIVER_ON : CMD_RECEIVER_OFF };
+   272		int rc;
+   273	
+   274		INIT_COMPLETION(ir->completion);
+   275	
+ > 276		rc = iguanair_send(ir, &packet, sizeof(packet), NULL, NULL);
+   277		if (rc)
+   278			return rc;
+   279	
+   280		wait_for_completion_timeout(&ir->completion, TIMEOUT);
+   281	
+   282		return 0;
+   283	}
+   284	
 
-Thanks,
-Fengguang
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
