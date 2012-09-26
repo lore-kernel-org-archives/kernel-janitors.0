@@ -1,51 +1,61 @@
-From: Glauber Costa <glommer@parallels.com>
-Date: Thu, 13 Sep 2012 09:50:05 +0000
-Subject: Re: [PATCH] idr: Rename MAX_LEVEL to MAX_ID_LEVEL
-Message-Id: <5051AC4D.4050003@parallels.com>
+From: Harsh Kumar <harsh1kumar@gmail.com>
+Date: Wed, 26 Sep 2012 05:45:15 +0000
+Subject: [Patch 2/2] Staging: winbond: Removed undesired spaces, lines and tabs
+Message-Id: <5062939B.1030906@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120910131426.GA12431@localhost> <504E1182.7080300@bfs.de> <20120911094823.GA29568@localhost> <20120912160302.ae257eb4.akpm@linux-foundation.org> <20120912233801.GA14638@localhost>
-In-Reply-To: <20120912233801.GA14638@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, walter harms <wharms@bfs.de>, kernel-janitors@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>
+To: kernel-janitors@vger.kernel.org
 
-On 09/13/2012 03:38 AM, Fengguang Wu wrote:
-> On Wed, Sep 12, 2012 at 04:03:02PM -0700, Andrew Morton wrote:
->> On Tue, 11 Sep 2012 17:48:23 +0800
->> Fengguang Wu <fengguang.wu@intel.com> wrote:
->>
->>> idr: Rename MAX_LEVEL to MAX_IDR_LEVEL
->>>
->>> To avoid name conflicts:
->>>
->>> drivers/video/riva/fbdev.c:281:9: sparse: preprocessor token MAX_LEVEL redefined
->>>
->>> While at it, also make the other names more consistent and
->>> add parentheses.
->>
->> That was a rather modest effort :(
->>
->>  drivers/i2c/i2c-core.c        |    2 +-
->>  drivers/infiniband/core/cm.c  |    2 +-
->>  drivers/pps/pps.c             |    2 +-
->>  drivers/thermal/thermal_sys.c |    2 +-
->>  fs/super.c                    |    2 +-
->>  5 files changed, 5 insertions(+), 5 deletions(-)
-> 
->> From: Andrew Morton <akpm@linux-foundation.org>
->> Subject: idr-rename-max_level-to-max_idr_level-fix-fix-2
->>
->> ho hum
->>
->>  lib/idr.c |   14 +++++++-------
-> 
-> Embarrassing.. Sorry for not build testing it at all!
-> 
-> Regards,
-> Fengguang
-> 
-You can build test it automatically using Fengguang's 0-day test system.
+checkpatch cleanup: Removed some undesired spaces, lines and tabs to comply with coding style.
 
-/me runs
+Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
+
+diff -uprN a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
+--- a/drivers/staging/winbond/wb35tx_s.h
++++ b/drivers/staging/winbond/wb35tx_s.h
+@@ -4,16 +4,12 @@
+ #include "mds_s.h"
+ 
+ /* IS89C35 Tx related definition */
+-#define TX_INTERFACE			0	/* Interface 1 */
+-#define TX_PIPE					3	/* Endpoint 4 */
+-#define TX_INTERRUPT			1	/* Endpoint 2 */
++#define TX_INTERFACE		0	/* Interface 1 */
++#define TX_PIPE			3	/* Endpoint 4 */
++#define TX_INTERRUPT		1	/* Endpoint 2 */
+ #define MAX_INTERRUPT_LENGTH	64	/* It must be 64 for EP2 hardware */
+ 
+-
+-
+ /* Internal variable for module */
+-
+-
+ struct wb35_tx {
+ 	/* For Tx buffer */
+ 	u8	TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
+@@ -23,15 +19,15 @@ struct wb35_tx {
+ 
+ 	atomic_t	TxResultCount; /* For thread control of EP2 931130.4.m */
+ 	atomic_t	TxFireCounter; /* For thread control of EP4 931130.4.n */
+-	u32			ByteTransfer;
++	u32		ByteTransfer;
+ 
+-	u32	    TxSendIndex; /* The next index of Mds array to be sent */
+-	u32	    EP2vm_state; /* for EP2vm state */
+-	u32	    EP4vm_state; /* for EP4vm state */
+-	u32	    tx_halt; /* Stopping VM */
++	u32	TxSendIndex; /* The next index of Mds array to be sent */
++	u32	EP2vm_state; /* for EP2vm state */
++	u32	EP4vm_state; /* for EP4vm state */
++	u32	tx_halt; /* Stopping VM */
+ 
+-	struct urb *				Tx4Urb;
+-	struct urb *				Tx2Urb;
++	struct urb	*Tx4Urb;
++	struct urb	*Tx2Urb;
+ 
+ 	int		EP2VM_status;
+ 	int		EP4VM_status;
+
