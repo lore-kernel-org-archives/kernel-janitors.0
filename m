@@ -1,75 +1,45 @@
-From: Ben Skeggs <skeggsb@gmail.com>
-Date: Thu, 27 Sep 2012 21:18:17 +0000
-Subject: Re: ERROR: "__divdf3" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-Message-Id: <20120927211817.GA22623@turiel.bne.redhat.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 26 Sep 2012 02:21:07 +0000
+Subject: [yinghai:for-pci-kill-pci-root-buses 67/69] arch/powerpc/kernel/pci_64.c:215:20: error: unused varia
+Message-Id: <20120926022107.GA12055@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120927115903.GA17017@localhost>
-In-Reply-To: <20120927115903.GA17017@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 27, 2012 at 03:12:42PM +0200, Martin Peres wrote:
-> On 27/09/2012 13:59, Fengguang Wu wrote:
-> > Hi Martin,
-> >
-> > FYI, kernel build failed on
-> >
-> > 6310a32252e4160ce5492ad9b98c9f2778fec43b drm/nouveau/therm: calculate the pwm divisor on nv50+
-> > powerpc-allmodconfig
-> >
-> > All error/warnings:
-> >
-> > ERROR: "__divdf3" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-> > ERROR: ".__floatsidf" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-> > ERROR: "__fixdfsi" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-> > ERROR: ".__divdf3" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-> > ERROR: "__floatsidf" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-> > ERROR: ".__fixdfsi" [drivers/gpu/drm/nouveau/nouveau.ko] undefined!
-> >
-> > ---
-> > 0-DAY kernel build testing backend         Open Source Technology Centre
-> > Fengguang Wu, Yuanhan Liu                              Intel Corporation
-> Hi,
-> 
-> Thank you for reporting this issue (and for having such a nice tool). I 
-> wonder how I could miss that!
-> 
-> Here is a patch for this that should fix the issue. It may be squashed 
-> into the offending commit or added as is to the tree.
-Squashed into the relevant commit.  Thanks!
+Hi Yinghai,
 
-> 
-> Cheers,
-> Martin
-> 
+FYI, kernel build failed on
 
-> From 9f574fc3872b35aaa4684fa492b9a47fc8f4653f Mon Sep 17 00:00:00 2001
-> From: Martin Peres <martin.peres@labri.fr>
-> Date: Thu, 27 Sep 2012 14:34:48 +0200
-> Subject: [PATCH] drm/nouveau/therm: fix an unintentional use of floating
->  point
-> 
-> Signed-off-by: Martin Peres <martin.peres@labri.fr>
-> ---
->  drivers/gpu/drm/nouveau/core/subdev/therm/nv50.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/core/subdev/therm/nv50.c b/drivers/gpu/drm/nouveau/core/subdev/therm/nv50.c
-> index 6f97de2..9360ddd 100644
-> --- a/drivers/gpu/drm/nouveau/core/subdev/therm/nv50.c
-> +++ b/drivers/gpu/drm/nouveau/core/subdev/therm/nv50.c
-> @@ -92,7 +92,7 @@ nv50_fan_pwm_clock(struct nouveau_therm *therm)
->  		if (nv_rd32(therm, 0xc040) & 0x800000) {
->  			/* Use the HOST clock (100 MHz)
->  			* Where does this constant(2.4) comes from? */
-> -			pwm_clock = (100000000 >> pwm_div) / 2.4;
-> +			pwm_clock = (100000000 >> pwm_div) * 10 / 24;
->  		} else {
->  			/* Where does this constant(20) comes from? */
->  			pwm_clock = (crystal * 1000) >> pwm_div;
-> -- 
-> 1.7.11.5
-> 
+tree:    for-pci-kill-pci-root-buses
+head:   5e4af90ab778188866399b772ac0c0002c1aa95a
+commit: d77b2c8faf39dd5d0fc1e2fea1a367299ee1282b [67/69] PCI, powerpc: kill pci_root_buses in resources reservations
+config: powerpc-chroma_defconfig
 
+All error/warnings:
+
+arch/powerpc/kernel/pci_64.c: In function 'sys_pciconfig_iobase':
+arch/powerpc/kernel/pci_64.c:215:20: error: unused variable 'ln' [-Werror=unused-variable]
+cc1: all warnings being treated as errors
+--
+arch/powerpc/kernel/pci-common.c: In function 'pcibios_resource_survey':
+arch/powerpc/kernel/pci-common.c:1407:4: error: passing argument 1 of 'pcibios_reserve_legacy_regions' from incompatible pointer type [-Werror]
+arch/powerpc/kernel/pci-common.c:1334:20: note: expected 'struct pci_bus *' but argument is of type 'struct pci_host_bridge *'
+cc1: all warnings being treated as errors
+
+vim +215 arch/powerpc/kernel/pci_64.c
+   209	#define IOBASE_ISA_MEM		4
+   210	
+   211	long sys_pciconfig_iobase(long which, unsigned long in_bus,
+   212				  unsigned long in_devfn)
+   213	{
+   214		struct pci_controller* hose;
+ > 215		struct list_head *ln;
+   216		struct pci_bus *bus;
+   217		struct device_node *hose_node;
+   218		struct pci_host_bridge *host_bridge = NULL;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
