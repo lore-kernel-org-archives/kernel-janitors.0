@@ -1,37 +1,35 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Sat, 08 Sep 2012 20:59:32 +0000
-Subject: Re: [pci:next 76/77] WARNING: vmlinux.o(.text+0x17fdfe): Section mismatch in reference from the func
-Message-Id: <CAErSpo4xE=nfPFUAVGF5mDfY7tDpzbztFXb=aCmgC2OgMCkRQQ@mail.gmail.com>
+From: Harsh Kumar <harsh1kumar@gmail.com>
+Date: Wed, 26 Sep 2012 18:18:15 +0000
+Subject: [Patch 5/5] Staging: winbond: usb_free_urb(NULL) is safe
+Message-Id: <50634417.6000109@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120908122717.GA24182@localhost>
-In-Reply-To: <20120908122717.GA24182@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Matthew Garrett <mjg@redhat.com>, kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Thanks, I dropped pci/mjg-pci-roms-from-efi from my "next" branch for now.
+usb_free_urb(NULL) is safe. So, the check was removed.
 
-On Sat, Sep 8, 2012 at 6:27 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> Hi Matthew,
->
-> FYI, there are new compile warnings show up in
->
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
-> head:   97ac9d1f363964dec7fbb20cf3c2e88336b4d801
-> commit: 86153d6c3a2ad02b89e10346b116e9ab2a81f1a7 [76/77] x86: Use PCI setup data
-> config: i386-randconfig-m021 (attached as .config)
->
-> All error/warnings:
->
->
-> WARNING: vmlinux.o(.text+0x17fdfe): Section mismatch in reference from the function pcibios_add_device() to the variable .init.data:boot_params
-> The function pcibios_add_device() references
-> the variable __initdata boot_params.
-> This is often because pcibios_add_device lacks a __initdata
-> annotation or the annotation of boot_params is wrong.
->
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Centre
-> Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
+Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
+
+---
+ drivers/staging/winbond/wb35tx.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff -uprN a/drivers/staging/winbond/wb35tx.c b/drivers/staging/winbond/wb35tx.c
+--- a/drivers/staging/winbond/wb35tx.c
++++ b/drivers/staging/winbond/wb35tx.c
+@@ -170,11 +170,8 @@ void Wb35Tx_destroy(struct hw_data *pHwD
+ 	} while ((pWb35Tx->EP2vm_state != VM_STOP) && (pWb35Tx->EP4vm_state != VM_STOP));
+ 	msleep(10); /* Delay for waiting function enter 940623.1.b */
+ 
+-	if (pWb35Tx->Tx4Urb)
+-		usb_free_urb(pWb35Tx->Tx4Urb);
+-
+-	if (pWb35Tx->Tx2Urb)
+-		usb_free_urb(pWb35Tx->Tx2Urb);
++	usb_free_urb(pWb35Tx->Tx4Urb);
++	usb_free_urb(pWb35Tx->Tx2Urb);
+ 
+ 	pr_debug("Wb35Tx_destroy OK\n");
+ }
