@@ -1,7 +1,7 @@
 From: Vyacheslav Dubeyko <slava@dubeyko.com>
-Date: Wed, 26 Sep 2012 17:04:46 +0000
+Date: Wed, 26 Sep 2012 17:56:52 +0000
 Subject: Re: [next:akpm 341/412] fs/hfsplus/attributes.c:64:5: error: too many arguments to function 'hfsplus
-Message-Id: <6FFE7CE7-A272-4DA3-AC50-3F49E87AE873@dubeyko.com>
+Message-Id: <01FDAC5F-32DD-4B75-9B39-8B914DF94E5D@dubeyko.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20120926160710.GB14447@localhost>
 In-Reply-To: <20120926160710.GB14447@localhost>
@@ -12,10 +12,18 @@ To: kernel-janitors@vger.kernel.org
 
 Hi Fengguang,
 
-I need some time to check the issues.
+Sorry, I can't reproduce your issue.
 
-Thanks,
+I clone linux-next repository then "git checkout remotes/origin/akpm". I can compile kernel successfully with your .config files without any errors or warnings.
+
+I use gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3.
+
+What compiler do you use?
+Maybe do you have inconsistent repository state?
+
+With the best regards,
 Vyacheslav Dubeyko.
+
 
 On Sep 26, 2012, at 8:07 PM, Fengguang Wu wrote:
 
