@@ -1,80 +1,21 @@
-From: Harsh Kumar <harsh1kumar@gmail.com>
-Date: Wed, 26 Sep 2012 05:44:47 +0000
-Subject: [Patch 1/2] Staging: winbond: Changed c99 comments to c89 comments
-Message-Id: <5062937F.3000506@gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Date: Wed, 26 Sep 2012 11:36:35 +0000
+Subject: Re: [Patch 1/2] Staging: winbond: Changed c99 comments to c89 comments
+Message-Id: <20120926113634.GA6382@elf.ucw.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5062937F.3000506@gmail.com>
+In-Reply-To: <5062937F.3000506@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-checkpatch cleanup: Changed c99 comments to c89 comments
+On Wed 2012-09-26 11:02:47, Harsh Kumar wrote:
+> checkpatch cleanup: Changed c99 comments to c89 comments
+> 
+> Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
 
-Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
-
-diff -uprN a/drivers/staging/winbond/wb35tx_s.h b/drivers/staging/winbond/wb35tx_s.h
---- a/drivers/staging/winbond/wb35tx_s.h
-+++ b/drivers/staging/winbond/wb35tx_s.h
-@@ -3,36 +3,32 @@
- 
- #include "mds_s.h"
- 
--//==================
--// IS89C35 Tx related definition
--//==================
--#define TX_INTERFACE			0	// Interface 1
--#define TX_PIPE					3	// endpoint 4
--#define TX_INTERRUPT			1	// endpoint 2
--#define MAX_INTERRUPT_LENGTH	64	// It must be 64 for EP2 hardware
-+/* IS89C35 Tx related definition */
-+#define TX_INTERFACE			0	/* Interface 1 */
-+#define TX_PIPE					3	/* Endpoint 4 */
-+#define TX_INTERRUPT			1	/* Endpoint 2 */
-+#define MAX_INTERRUPT_LENGTH	64	/* It must be 64 for EP2 hardware */
- 
- 
- 
--//==================
--// Internal variable for module
--//==================
-+/* Internal variable for module */
- 
- 
- struct wb35_tx {
--	// For Tx buffer
-+	/* For Tx buffer */
- 	u8	TxBuffer[ MAX_USB_TX_BUFFER_NUMBER ][ MAX_USB_TX_BUFFER ];
- 
--	// For Interrupt pipe
-+	/* For Interrupt pipe */
- 	u8	EP2_buf[MAX_INTERRUPT_LENGTH];
- 
--	atomic_t	TxResultCount;// For thread control of EP2 931130.4.m
--	atomic_t	TxFireCounter;// For thread control of EP4 931130.4.n
-+	atomic_t	TxResultCount; /* For thread control of EP2 931130.4.m */
-+	atomic_t	TxFireCounter; /* For thread control of EP4 931130.4.n */
- 	u32			ByteTransfer;
- 
--	u32	    TxSendIndex;// The next index of Mds array to be sent
--	u32	    EP2vm_state; // for EP2vm state
--	u32	    EP4vm_state; // for EP4vm state
--	u32	    tx_halt; // Stopping VM
-+	u32	    TxSendIndex; /* The next index of Mds array to be sent */
-+	u32	    EP2vm_state; /* for EP2vm state */
-+	u32	    EP4vm_state; /* for EP4vm state */
-+	u32	    tx_halt; /* Stopping VM */
- 
- 	struct urb *				Tx4Urb;
- 	struct urb *				Tx2Urb;
-@@ -40,8 +36,8 @@ struct wb35_tx {
- 	int		EP2VM_status;
- 	int		EP4VM_status;
- 
--	u32	TxFillCount; // 20060928
--	u32	TxTimer; // 20060928 Add if sending packet is greater than 13
-+	u32	TxFillCount; /* 20060928 */
-+	u32	TxTimer; /* 20060928 Add if sending packet is greater than 13 */
- };
- 
- #endif
-
+ACK.
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
