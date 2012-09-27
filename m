@@ -1,59 +1,48 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 17 Sep 2012 08:12:01 +0000
-Subject: [PATCH 2/2] drivers/s390/net/ctcm_main.c: fix error return code
-Message-Id: <1347869521-2470-2-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Sep 2012 17:48:47 +0000
+Subject: [glommer-memcg:slab-common/slabinfo 20/21] mm/slab.c:4352:6: error: conflicting types for 'slabinfo_
+Message-Id: <20120927174847.GB5517@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347869521-2470-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347869521-2470-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ursula.braun@de.ibm.com
-Cc: blaschka@linux.vnet.ibm.com, linux390@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Glauber,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+FYI, kernel build failed on
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git slab-common/slabinfo
+head:   0521160acc51bc8385807752e69dd38d976aef22
+commit: 0521160acc51bc8385807752e69dd38d976aef22 [20/21] sl[au]b: process slabinfo_show in common code
+config: blackfin-BF533-EZKIT_defconfig
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+All error/warnings:
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+In file included from mm/slab.c:90:0:
+mm/slab.h:63:53: warning: 'struct seq_file' declared inside parameter list [enabled by default]
+mm/slab.h:63:53: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+mm/slab.h:65:10: warning: 'struct file' declared inside parameter list [enabled by default]
+mm/slab.c:4352:6: error: conflicting types for 'slabinfo_show_stats'
+In file included from mm/slab.c:90:0:
+mm/slab.h:63:6: note: previous declaration of 'slabinfo_show_stats' was here
+mm/slab.c:4393:9: error: conflicting types for 'slabinfo_write'
+In file included from mm/slab.c:90:0:
+mm/slab.h:64:9: note: previous declaration of 'slabinfo_write' was here
+
+vim +4352 mm/slab.c
+
+0521160a (Glauber Costa  2012-09-26  4346) 	sinfo->shared_avail = shared_avail;
+0521160a (Glauber Costa  2012-09-26  4347) 	sinfo->limit = cachep->limit;
+0521160a (Glauber Costa  2012-09-26  4348) 	sinfo->batchcount = cachep->batchcount;
+0521160a (Glauber Costa  2012-09-26  4349) 	sinfo->shared = cachep->shared;
+0521160a (Glauber Costa  2012-09-26  4350) }
+0521160a (Glauber Costa  2012-09-26  4351) 
+0521160a (Glauber Costa  2012-09-26 @4352) void slabinfo_show_stats(struct seq_file *m, struct kmem_cache *cachep)
+0521160a (Glauber Costa  2012-09-26  4353) {
+^1da177e (Linus Torvalds 2005-04-16  4354) #if STATS
+b28a02de (Pekka Enberg   2006-01-08  4355) 	{			/* list3 stats */
+
 ---
- drivers/s390/net/ctcm_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
-index 5227e57..98ea9cc 100644
---- a/drivers/s390/net/ctcm_main.c
-+++ b/drivers/s390/net/ctcm_main.c
-@@ -1454,7 +1454,7 @@ static int add_channel(struct ccw_device *cdev, enum ctcm_channel_types type,
- 				ch_fsm_len, GFP_KERNEL);
- 	}
- 	if (ch->fsm = NULL)
--				goto free_return;
-+				goto nomem_return;
- 
- 	fsm_newstate(ch->fsm, CTC_STATE_IDLE);
- 
--- 
-1.7.11.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
