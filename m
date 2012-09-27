@@ -1,73 +1,42 @@
-From: "Bhanu Prakash Gollapudi" <bprakash@broadcom.com>
-Date: Fri, 07 Sep 2012 18:23:59 +0000
-Subject: Re: [PATCH 2/5] drivers/scsi/bnx2fc/bnx2fc_io.c: Remove potential NULL dereference
-Message-Id: <504A3BBF.5030604@broadcom.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Date: Thu, 27 Sep 2012 15:29:45 +0000
+Subject: [PATCH] s390/kvm: Fix vcpu_load handling in interrupt code
+Message-Id: <1348759785-15394-1-git-send-email-borntraeger@de.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1344959388-19719-1-git-send-email-Julia.Lawall@lip6.fr>
- <1344959388-19719-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1344959388-19719-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <50646CE7.8020006@redhat.com>
+In-Reply-To: <50646CE7.8020006@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Avi Kivity <avi@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Fengguang Wu <fengguang.wu@intel.com>, Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, kvm@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>
 
-On 8/14/2012 8:49 AM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> If the NULL test is necessary, the initialization involving a dereference of
-> the tested value should be moved after the NULL test.
->
-> The sematic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> type T;
-> expression E;
-> identifier i,fld;
-> statement S;
-> @@
->
-> - T i = E->fld;
-> + T i;
->    ... when != E
->        when != i
->    if (E = NULL) S
-> + i = E->fld;
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->   drivers/scsi/bnx2fc/bnx2fc_io.c |    3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
-> index 73f231c..1dd82db 100644
-> --- a/drivers/scsi/bnx2fc/bnx2fc_io.c
-> +++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
-> @@ -686,7 +686,7 @@ static int bnx2fc_initiate_tmf(struct scsi_cmnd *sc_cmd, u8 tm_flags)
->   {
->   	struct fc_lport *lport;
->   	struct fc_rport *rport = starget_to_rport(scsi_target(sc_cmd->device));
-> -	struct fc_rport_libfc_priv *rp = rport->dd_data;
-> +	struct fc_rport_libfc_priv *rp;
->   	struct fcoe_port *port;
->   	struct bnx2fc_interface *interface;
->   	struct bnx2fc_rport *tgt;
-> @@ -712,6 +712,7 @@ static int bnx2fc_initiate_tmf(struct scsi_cmnd *sc_cmd, u8 tm_flags)
->   		rc = FAILED;
->   		goto tmf_err;
->   	}
-> +	rp = rport->dd_data;
->
->   	rc = fc_block_scsi_eh(sc_cmd);
->   	if (rc)
->
->
-Thanks Julia.
+Recent changes (KVM: make processes waiting on vcpu mutex killable)
+now requires to check the return value of vcpu_load. This triggered
+a warning in s390 specific kvm code. Turns out that we can actually
+remove the put/load, since schedule will do the right thing via
+the preempt notifiers.
 
-Acked-by: Bhanu Prakash Gollapudi <bprakash@broadcom.com>
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+---
+ arch/s390/kvm/interrupt.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index 7556231..ff1e2f8 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -423,9 +423,7 @@ no_timer:
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		spin_unlock_bh(&vcpu->arch.local_int.lock);
+ 		spin_unlock(&vcpu->arch.local_int.float_int->lock);
+-		vcpu_put(vcpu);
+ 		schedule();
+-		vcpu_load(vcpu);
+ 		spin_lock(&vcpu->arch.local_int.float_int->lock);
+ 		spin_lock_bh(&vcpu->arch.local_int.lock);
+ 	}
+-- 
+1.7.0.1
 
