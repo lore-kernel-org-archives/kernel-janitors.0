@@ -1,94 +1,47 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Date: Sun, 23 Sep 2012 20:29:22 +0000
-Subject: Re: [PATCH] drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c: Replace kmemdup for kstrdup
-Message-Id: <20120923172922.29f26f5d@infradead.org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Sep 2012 00:54:32 +0000
+Subject: drivers/staging/comedi/drivers/ni_pcimio.c:1694 pcimio_attach_pci() warn: 'dev->irq' was not release
+Message-Id: <20120927005432.GA7205@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347281154-29515-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347281154-29515-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Em Mon, 10 Sep 2012 14:45:54 +0200
-Peter Senna Tschudin <peter.senna@gmail.com> escreveu:
+Hi Bill, Ian,
 
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> Replace kmemdup for kstrdup and cleaning up the code.
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+FYI, this smatch warning probably exists from day 0 of the driver
+code:
 
-Maintainers/interested parties not copied. Also:
++ drivers/staging/comedi/drivers/ni_pcimio.c:1694 pcimio_attach_pci() warn: 'dev->irq' was not released on error
 
-Hunk #1 succeeded at 708 (offset 1 line).
-Hunk #2 FAILED at 742.
-1 out of 2 hunks FAILED -- saving rejects to file drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c.rej
- tmp/cx25821-video-upstream-ch2.c |   27 +++++++++------------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
+vim +1694 drivers/staging/comedi/drivers/ni_pcimio.c
+  1678		dev->irq = mite_irq(devpriv->mite);
+  1679	
+  1680		if (dev->irq = 0) {
+  1681			pr_warn("unknown irq (bad)\n");
+  1682		} else {
+  1683			pr_debug("( irq = %u )\n", dev->irq);
+  1684			ret = request_irq(dev->irq, ni_E_interrupt, NI_E_IRQ_FLAGS,
+  1685					  DRV_NAME, dev);
+  1686			if (ret < 0) {
+  1687				pr_warn("irq not available\n");
+  1688				dev->irq = 0;
+  1689			}
+  1690		}
+  1691	
+  1692		ret = ni_E_init(dev);
+  1693		if (ret < 0)
+> 1694			return ret;
+  1695	
+  1696		dev->subdevices[NI_AI_SUBDEV].buf_change = &pcimio_ai_change;
+  1697		dev->subdevices[NI_AO_SUBDEV].buf_change = &pcimio_ao_change;
+  1698		dev->subdevices[NI_GPCT_SUBDEV(0)].buf_change = &pcimio_gpct0_change;
+  1699		dev->subdevices[NI_GPCT_SUBDEV(1)].buf_change = &pcimio_gpct1_change;
+  1700		dev->subdevices[NI_DIO_SUBDEV].buf_change = &pcimio_dio_change;
+  1701	
+  1702		return ret;
 
-> 
-> ---
-> It depends on the patch http://patchwork.linuxtv.org/patch/14231/
-> 
->  tmp/cx25821-video-upstream-ch2.c |   27 +++++++++------------------
->  1 file changed, 9 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c b/drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c
-> index 273df94..b663dac 100644
-> --- a/drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c
-> +++ b/tmp/cx25821-video-upstream-ch2.c
-> @@ -707,7 +707,6 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *dev, int channel_select,
->  	int err = 0;
->  	int data_frame_size = 0;
->  	int risc_buffer_size = 0;
-> -	int str_length = 0;
->  
->  	if (dev->_is_running_ch2) {
->  		pr_info("Video Channel is still running so return!\n");
-> @@ -743,24 +742,16 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *dev, int channel_select,
->  	risc_buffer_size = dev->_isNTSC_ch2 ?
->  		NTSC_RISC_BUF_SIZE : PAL_RISC_BUF_SIZE;
->  
-> -	if (dev->input_filename_ch2) {
-> -		str_length = strlen(dev->input_filename_ch2);
-> -		dev->_filename_ch2 = kmemdup(dev->input_filename_ch2,
-> -					     str_length + 1, GFP_KERNEL);
-> -
-> -		if (!dev->_filename_ch2) {
-> -			err = -ENOENT;
-> -			goto error;
-> -		}
-> -	} else {
-> -		str_length = strlen(dev->_defaultname_ch2);
-> -		dev->_filename_ch2 = kmemdup(dev->_defaultname_ch2,
-> -					     str_length + 1, GFP_KERNEL);
-> +	if (dev->input_filename_ch2)
-> +		dev->_filename_ch2 = kstrdup(dev->input_filename_ch2,
-> +								GFP_KERNEL);
-> +	else
-> +		dev->_filename_ch2 = kstrdup(dev->_defaultname_ch2,
-> +								GFP_KERNEL);
->  
-> -		if (!dev->_filename_ch2) {
-> -			err = -ENOENT;
-> -			goto error;
-> -		}
-> +	if (!dev->_filename_ch2) {
-> +		err = -ENOENT;
-> +		goto error;
->  	}
->  
->  	/* Default if filename is empty string */
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
-
-Cheers,
-Mauro
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
