@@ -1,37 +1,44 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 12 Sep 2012 17:03:17 +0000
-Subject: [PATCH 10/15] drivers/usb/host/xhci-ring.c: removes unnecessary semicolon
-Message-Id: <1347469402-27557-10-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Sep 2012 01:12:11 +0000
+Subject: [next:akpm 22/413] kernel/audit.c:668:2: error: implicit declaration of function 'audit_get_sessioni
+Message-Id: <20120927011211.GD7205@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Kees,
 
-removes unnecessary semicolon
+FYI, kernel build failed on
 
-Found by Coccinelle: http://coccinelle.lip6.fr/
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
+head:   dad0019944369f58c193c1991c39ffda7ff584d2
+commit: e269b4131288512ebfe2adfe69042983cb2e69e5 [22/413] audit.h: replace defines with C stubs
+config: s390-defconfig
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+All error/warnings:
+
+kernel/audit.c: In function 'audit_receive_msg':
+kernel/audit.c:668:2: error: implicit declaration of function 'audit_get_sessionid' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+--
+drivers/tty/tty_audit.c: In function 'tty_audit_buf_push_current':
+drivers/tty/tty_audit.c:119:2: error: implicit declaration of function 'audit_get_sessionid' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+
+vim +668 kernel/audit.c
+   662			err = PTR_ERR(kauditd_task);
+   663			kauditd_task = NULL;
+   664			return err;
+   665		}
+   666	
+   667		loginuid = audit_get_loginuid(current);
+ > 668		sessionid = audit_get_sessionid(current);
+   669		security_task_getsecid(current, &sid);
+   670		seq  = nlh->nlmsg_seq;
+   671		data = nlmsg_data(nlh);
 
 ---
- drivers/usb/host/xhci-ring.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 643c2f3..ecd6946 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -2580,7 +2580,7 @@ static int prepare_ring(struct xhci_hcd *xhci, struct xhci_ring *ep_ring,
- 			xhci_err(xhci, "Ring expansion failed\n");
- 			return -ENOMEM;
- 		}
--	};
-+	}
- 
- 	if (enqueue_is_link_trb(ep_ring)) {
- 		struct xhci_ring *ring = ep_ring;
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
