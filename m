@@ -1,70 +1,231 @@
-From: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-Date: Mon, 17 Sep 2012 07:58:24 +0000
-Subject: Re: [patch v2] gcov: add a kfree() on error to new_node()
-Message-Id: <5056D820.1060302@linux.vnet.ibm.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 27 Sep 2012 12:16:15 +0000
+Subject: [PATCH] drivers/staging/iio: Remove unnecessary semicolon
+Message-Id: <1348748175-11803-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120914065203.GB11886@elgon.mountain>
-In-Reply-To: <20120914065203.GB11886@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: kernel-janitors@vger.kernel.org
 
-On 14.09.2012 08:52, Dan Carpenter wrote:
-> We should free "node->loaded_info" on this error path.  We'd never care
-> in real life but it makes the static checkers happy.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: some style changes.
->
+Found by http://coccinelle.lip6.fr/
 
-Signed-off-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-Reviewed-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-
-Thanks for sending this patch.
-
-Andrew, since there is no tree for gcov patches, could you queue this 
-for upstream inclusion?
-
-
-Regards,
-   Peter Oberparleiter
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-We should free "node->loaded_info" on this error path.  We'd never care
-in real life but it makes the static checkers happy.
+ drivers/staging/iio/accel/adis16201_core.c |  4 ++--
+ drivers/staging/iio/accel/adis16204_core.c |  2 +-
+ drivers/staging/iio/accel/adis16209_core.c |  4 ++--
+ drivers/staging/iio/accel/kxsd9.c          |  2 +-
+ drivers/staging/iio/adc/mxs-lradc.c        |  2 +-
+ drivers/staging/iio/cdc/ad7150.c           | 12 ++++++------
+ drivers/staging/iio/cdc/ad7152.c           |  2 +-
+ drivers/staging/iio/cdc/ad7746.c           |  2 +-
+ drivers/staging/iio/gyro/adis16260_core.c  |  4 ++--
+ drivers/staging/iio/magnetometer/hmc5843.c |  2 +-
+ 10 files changed, 18 insertions(+), 18 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-Reviewed-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
----
-v2: some style changes.
-
-diff --git a/kernel/gcov/fs.c b/kernel/gcov/fs.c
-index 9bd0934..7ba47f7 100644
---- a/kernel/gcov/fs.c
-+++ b/kernel/gcov/fs.c
-@@ -451,8 +451,7 @@ static struct gcov_node *new_node(struct gcov_node 
-*parent,
-  		node->dentry = debugfs_create_dir(node->name, parent->dentry);
-  	if (!node->dentry) {
-  		pr_warning("could not create file\n");
--		kfree(node);
--		return NULL;
-+		goto err_info;
-  	}
-  	if (info)
-  		add_links(node, parent->dentry);
-@@ -461,6 +460,8 @@ static struct gcov_node *new_node(struct gcov_node 
-*parent,
-
-  	return node;
-
-+err_info:
-+	kfree(node->loaded_info);
-  err_nomem:
-  	kfree(node);
-  	pr_warning("out of memory\n");
+diff --git a/drivers/staging/iio/accel/adis16201_core.c b/drivers/staging/iio/accel/adis16201_core.c
+index 8e37d6e..5d2ae5d 100644
+--- a/drivers/staging/iio/accel/adis16201_core.c
++++ b/drivers/staging/iio/accel/adis16201_core.c
+@@ -345,7 +345,7 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
+ 			break;
+ 		default:
+ 			return -EINVAL;
+-		};
++		}
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16201_addresses[chan->address][1];
+ 		ret = adis16201_spi_read_reg_16(indio_dev, addr, &val16);
+@@ -382,7 +382,7 @@ static int adis16201_write_raw(struct iio_dev *indio_dev,
+ 			break;
+ 		default:
+ 			return -EINVAL;
+-		};
++		}
+ 		val16 = val & ((1 << bits) - 1);
+ 		addr = adis16201_addresses[chan->address][1];
+ 		return adis16201_spi_write_reg_16(indio_dev, addr, val16);
+diff --git a/drivers/staging/iio/accel/adis16204_core.c b/drivers/staging/iio/accel/adis16204_core.c
+index 05bdb7c..c6bf641 100644
+--- a/drivers/staging/iio/accel/adis16204_core.c
++++ b/drivers/staging/iio/accel/adis16204_core.c
+@@ -389,7 +389,7 @@ static int adis16204_write_raw(struct iio_dev *indio_dev,
+ 			break;
+ 		default:
+ 			return -EINVAL;
+-		};
++		}
+ 		val16 = val & ((1 << bits) - 1);
+ 		addr = adis16204_addresses[chan->address][1];
+ 		return adis16204_spi_write_reg_16(indio_dev, addr, val16);
+diff --git a/drivers/staging/iio/accel/adis16209_core.c b/drivers/staging/iio/accel/adis16209_core.c
+index b7333bf..4f70efd 100644
+--- a/drivers/staging/iio/accel/adis16209_core.c
++++ b/drivers/staging/iio/accel/adis16209_core.c
+@@ -295,7 +295,7 @@ static int adis16209_write_raw(struct iio_dev *indio_dev,
+ 			break;
+ 		default:
+ 			return -EINVAL;
+-		};
++		}
+ 		val16 = val & ((1 << bits) - 1);
+ 		addr = adis16209_addresses[chan->address][1];
+ 		return adis16209_spi_write_reg_16(indio_dev, addr, val16);
+@@ -373,7 +373,7 @@ static int adis16209_read_raw(struct iio_dev *indio_dev,
+ 			break;
+ 		default:
+ 			return -EINVAL;
+-		};
++		}
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16209_addresses[chan->address][1];
+ 		ret = adis16209_spi_read_reg_16(indio_dev, addr, &val16);
+diff --git a/drivers/staging/iio/accel/kxsd9.c b/drivers/staging/iio/accel/kxsd9.c
+index fdd5fbd..e8e6e3f 100644
+--- a/drivers/staging/iio/accel/kxsd9.c
++++ b/drivers/staging/iio/accel/kxsd9.c
+@@ -171,7 +171,7 @@ static int kxsd9_read_raw(struct iio_dev *indio_dev,
+ 		*val2 = kxsd9_micro_scales[ret & KXSD9_FS_MASK];
+ 		ret = IIO_VAL_INT_PLUS_MICRO;
+ 		break;
+-	};
++	}
+ 
+ error_ret:
+ 	return ret;
+diff --git a/drivers/staging/iio/adc/mxs-lradc.c b/drivers/staging/iio/adc/mxs-lradc.c
+index ca7c1fa..df5bba2 100644
+--- a/drivers/staging/iio/adc/mxs-lradc.c
++++ b/drivers/staging/iio/adc/mxs-lradc.c
+@@ -351,7 +351,7 @@ static int mxs_lradc_buffer_preenable(struct iio_dev *iio)
+ 		writel(chan_value, lradc->base + LRADC_CH(ofs));
+ 		enable |= 1 << ofs;
+ 		ofs++;
+-	};
++	}
+ 
+ 	writel(LRADC_DELAY_TRIGGER_LRADCS_MASK | LRADC_DELAY_KICK,
+ 		lradc->base + LRADC_DELAY(0) + STMP_OFFSET_REG_CLR);
+diff --git a/drivers/staging/iio/cdc/ad7150.c b/drivers/staging/iio/cdc/ad7150.c
+index 6a40414..c72a6c0 100644
+--- a/drivers/staging/iio/cdc/ad7150.c
++++ b/drivers/staging/iio/cdc/ad7150.c
+@@ -156,7 +156,7 @@ static int ad7150_read_event_config(struct iio_dev *indio_dev, u64 event_code)
+ 			return !adaptive && (threshtype = 0x1);
+ 		else
+ 			return !adaptive && (threshtype = 0x0);
+-	};
++	}
+ 	return -EINVAL;
+ }
+ 
+@@ -194,7 +194,7 @@ static int ad7150_write_event_params(struct iio_dev *indio_dev, u64 event_code)
+ 		break;
+ 	default:
+ 		return -EINVAL;
+-	};
++	}
+ 	ret = i2c_smbus_write_byte_data(chip->client,
+ 					ad7150_addresses[chan][4],
+ 					sens);
+@@ -257,7 +257,7 @@ static int ad7150_write_event_config(struct iio_dev *indio_dev,
+ 	default:
+ 		ret = -EINVAL;
+ 		goto error_ret;
+-	};
++	}
+ 
+ 	cfg |= (!adaptive << 7) | (thresh_type << 5);
+ 
+@@ -327,7 +327,7 @@ static int ad7150_write_event_value(struct iio_dev *indio_dev,
+ 	default:
+ 		ret = -EINVAL;
+ 		goto error_ret;
+-	};
++	}
+ 
+ 	/* write back if active */
+ 	ret = ad7150_write_event_params(indio_dev, event_code);
+@@ -360,7 +360,7 @@ static ssize_t ad7150_show_timeout(struct device *dev,
+ 		break;
+ 	default:
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	return sprintf(buf, "%d\n", value);
+ }
+@@ -394,7 +394,7 @@ static ssize_t ad7150_store_timeout(struct device *dev,
+ 	default:
+ 		ret = -EINVAL;
+ 		goto error_ret;
+-	};
++	}
+ 
+ 	ret = ad7150_write_event_params(indio_dev, this_attr->address);
+ error_ret:
+diff --git a/drivers/staging/iio/cdc/ad7152.c b/drivers/staging/iio/cdc/ad7152.c
+index 98c3015..288b33e 100644
+--- a/drivers/staging/iio/cdc/ad7152.c
++++ b/drivers/staging/iio/cdc/ad7152.c
+@@ -405,7 +405,7 @@ static int ad7152_read_raw(struct iio_dev *indio_dev,
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
+-	};
++	}
+ out:
+ 	mutex_unlock(&indio_dev->mlock);
+ 	return ret;
+diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
+index 754e11e..e6c11d9 100644
+--- a/drivers/staging/iio/cdc/ad7746.c
++++ b/drivers/staging/iio/cdc/ad7746.c
+@@ -677,7 +677,7 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
+-	};
++	}
+ out:
+ 	mutex_unlock(&indio_dev->mlock);
+ 	return ret;
+diff --git a/drivers/staging/iio/gyro/adis16260_core.c b/drivers/staging/iio/gyro/adis16260_core.c
+index 9571c03..ff16430 100644
+--- a/drivers/staging/iio/gyro/adis16260_core.c
++++ b/drivers/staging/iio/gyro/adis16260_core.c
+@@ -528,7 +528,7 @@ static int adis16260_read_raw(struct iio_dev *indio_dev,
+ 			break;
+ 		default:
+ 			return -EINVAL;
+-		};
++		}
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16260_addresses[chan->address][1];
+ 		ret = adis16260_spi_read_reg_16(indio_dev, addr, &val16);
+@@ -548,7 +548,7 @@ static int adis16260_read_raw(struct iio_dev *indio_dev,
+ 			break;
+ 		default:
+ 			return -EINVAL;
+-		};
++		}
+ 		mutex_lock(&indio_dev->mlock);
+ 		addr = adis16260_addresses[chan->address][2];
+ 		ret = adis16260_spi_read_reg_16(indio_dev, addr, &val16);
+diff --git a/drivers/staging/iio/magnetometer/hmc5843.c b/drivers/staging/iio/magnetometer/hmc5843.c
+index 10e0954..f7edf69 100644
+--- a/drivers/staging/iio/magnetometer/hmc5843.c
++++ b/drivers/staging/iio/magnetometer/hmc5843.c
+@@ -555,7 +555,7 @@ static int hmc5843_read_raw(struct iio_dev *indio_dev,
+ 		*val = 0;
+ 		*val2 = data->variant->regval_to_nanoscale[data->range];
+ 		return IIO_VAL_INT_PLUS_NANO;
+-	};
++	}
+ 	return -EINVAL;
+ }
+ 
+-- 
+1.7.11.4
 
