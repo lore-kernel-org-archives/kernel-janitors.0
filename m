@@ -1,84 +1,62 @@
-From: Ursula Braun <ubraun@linux.vnet.ibm.com>
-Date: Tue, 18 Sep 2012 10:52:19 +0000
-Subject: [Re: [PATCH 2/2] drivers/s390/net/ctcm_main.c: fix error return code]
-Message-Id: <1347965539.29091.3.camel@br9gv9yg.de.ibm.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Sep 2012 17:52:50 +0000
+Subject: [nouveau:master 83/96] drivers/gpu/drm/nouveau/core/subdev/bios/extdev.c:52:1: sparse: symbol
+Message-Id: <20120927175250.GD5517@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="3lcZGd9BuhuYXNfi"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: blaschka@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
 
-thanks, Peter, your patch will be added to our next patch series
-submission.
+--3lcZGd9BuhuYXNfi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Ursula Braun
+Hi Martin,
 
+FYI, there are new sparse warnings show up in
 
+tree:   git://git.freedesktop.org/git/nouveau/linux-2.6 master
+head:   301e77f5b7968ff10eac8f3938c30963d8fc0ac3
+commit: aab823cdcf4f3f377ee7a49456ea62451c7cecee [83/96] drm/nouveau/therm: use the EXTDEV table to detect i2c monitoring devices
 
++ drivers/gpu/drm/nouveau/core/subdev/bios/extdev.c:52:1: sparse: symbol 'nvbios_extdev_entry' was not declared. Should it be static?
 
+vim +52 drivers/gpu/drm/nouveau/core/subdev/bios/extdev.c
 
+aab823cd (Martin Peres 2012-08-18  51) u16
+aab823cd (Martin Peres 2012-08-18 @52) nvbios_extdev_entry(struct nouveau_bios *bios, int idx, u8 *ver, u8 *len)
+aab823cd (Martin Peres 2012-08-18  53) {
+aab823cd (Martin Peres 2012-08-18  54) 	u8 hdr, cnt;
+aab823cd (Martin Peres 2012-08-18  55) 	u16 extdev = extdev_table(bios, ver, &hdr, len, &cnt);
+aab823cd (Martin Peres 2012-08-18  56) 	if (extdev && idx < cnt)
+aab823cd (Martin Peres 2012-08-18  57) 		return extdev + idx * *len;
+aab823cd (Martin Peres 2012-08-18  58) 	return 0x0000;
+aab823cd (Martin Peres 2012-08-18  59) }
+aab823cd (Martin Peres 2012-08-18  60) 
 
+Please consider folding the attached diff :-)
 
-
-
-
-
-________________________________________________________________________
-
-
-
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
-{ ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-   when != &ret
-*if(...)
-{
- ... when != ret = e2
-     when forall
-return ret;
-}
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-drivers/s390/net/ctcm_main.c | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
 
-diff --git a/drivers/s390/net/ctcm_main.c b/drivers/s390/net/ctcm_main.c
-index 5227e57..98ea9cc 100644
---- a/drivers/s390/net/ctcm_main.c
-+++ b/drivers/s390/net/ctcm_main.c
-@@ -1454,7 +1454,7 @@ static int add_channel(struct ccw_device *cdev,
-enum ctcm_channel_types type,
+--3lcZGd9BuhuYXNfi
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-aab823c.diff"
 
-ch_fsm_len, GFP_KERNEL);
-                 }
-                 if (ch->fsm = NULL)
--
- goto free_return;
-+
- goto nomem_return;
+diff --git a/drivers/gpu/drm/nouveau/core/subdev/bios/extdev.c b/drivers/gpu/drm/nouveau/core/subdev/bios/extdev.c
+index 5afb568..b2a676e 100644
+--- a/drivers/gpu/drm/nouveau/core/subdev/bios/extdev.c
++++ b/drivers/gpu/drm/nouveau/core/subdev/bios/extdev.c
+@@ -48,7 +48,7 @@ extdev_table(struct nouveau_bios *bios, u8 *ver, u8 *hdr, u8 *len, u8 *cnt)
+ 	return extdev + *hdr;
+ }
+ 
+-u16
++static u16
+ nvbios_extdev_entry(struct nouveau_bios *bios, int idx, u8 *ver, u8 *len)
+ {
+ 	u8 hdr, cnt;
 
-                 fsm_newstate(ch->fsm, CTC_STATE_IDLE);
-
--- 
-1.7.11.4
-
-
-
-
+--3lcZGd9BuhuYXNfi--
