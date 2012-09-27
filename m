@@ -1,39 +1,51 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 26 Sep 2012 16:59:47 +0000
-Subject: [next:akpm 22/413] net/key/af_key.c:1476:9: error: implicit declaration of function 'audit_get_sessi
-Message-Id: <20120926165947.GA25467@localhost>
+Date: Thu, 27 Sep 2012 17:48:31 +0000
+Subject: [glommer-memcg:slab-common/slabinfo 17/21] mm/slab.c:4415:9: error: conflicting types for 'slabinfo_
+Message-Id: <20120927174831.GA5517@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Kees,
+Hi Glauber,
 
 FYI, kernel build failed on
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
-head:   dad0019944369f58c193c1991c39ffda7ff584d2
-commit: e269b4131288512ebfe2adfe69042983cb2e69e5 [22/413] audit.h: replace defines with C stubs
-config: sh-titan_defconfig
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git slab-common/slabinfo
+head:   0521160acc51bc8385807752e69dd38d976aef22
+commit: 514d13cfa0bed7c434b594d4f989df63c8ca6ba6 [17/21] move slabinfo processing to slab_common.c
+config: blackfin-BF533-EZKIT_defconfig
 
 All error/warnings:
 
-net/key/af_key.c: In function 'pfkey_add':
-net/key/af_key.c:1476:9: error: implicit declaration of function 'audit_get_sessionid' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
+In file included from mm/slab.c:90:0:
+mm/slab.h:50:35: warning: 'struct seq_file' declared inside parameter list [enabled by default]
+mm/slab.h:50:35: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+mm/slab.h:52:26: warning: 'struct seq_file' declared inside parameter list [enabled by default]
+mm/slab.h:55:10: warning: 'struct file' declared inside parameter list [enabled by default]
+mm/slab.c:4287:6: error: conflicting types for 'print_slabinfo_header'
+In file included from mm/slab.c:90:0:
+mm/slab.h:50:6: note: previous declaration of 'print_slabinfo_header' was here
+mm/slab.c:4310:5: error: conflicting types for 'slabinfo_show'
+In file included from mm/slab.c:90:0:
+mm/slab.h:52:5: note: previous declaration of 'slabinfo_show' was here
+mm/slab.c:4415:9: error: conflicting types for 'slabinfo_write'
+In file included from mm/slab.c:90:0:
+mm/slab.h:54:9: note: previous declaration of 'slabinfo_write' was here
 
-vim +1476 net/key/af_key.c
-  1470			err = xfrm_state_add(x);
-  1471		else
-  1472			err = xfrm_state_update(x);
-  1473	
-  1474		xfrm_audit_state_add(x, err ? 0 : 1,
-  1475				     audit_get_loginuid(current),
-> 1476				     audit_get_sessionid(current), 0);
-  1477	
-  1478		if (err < 0) {
-  1479			x->km.state = XFRM_STATE_DEAD;
+vim +4415 mm/slab.c
+
+^1da177e (Linus Torvalds 2005-04-16  4409)  * slabinfo_write - Tuning for the slab allocator
+^1da177e (Linus Torvalds 2005-04-16  4410)  * @file: unused
+^1da177e (Linus Torvalds 2005-04-16  4411)  * @buffer: user buffer
+^1da177e (Linus Torvalds 2005-04-16  4412)  * @count: data length
+^1da177e (Linus Torvalds 2005-04-16  4413)  * @ppos: unused
+^1da177e (Linus Torvalds 2005-04-16  4414)  */
+514d13cf (Glauber Costa  2012-09-26 @4415) ssize_t slabinfo_write(struct file *file, const char __user *buffer,
+b28a02de (Pekka Enberg   2006-01-08  4416) 		       size_t count, loff_t *ppos)
+^1da177e (Linus Torvalds 2005-04-16  4417) {
+b28a02de (Pekka Enberg   2006-01-08  4418) 	char kbuf[MAX_SLABINFO_WRITE + 1], *tmp;
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
