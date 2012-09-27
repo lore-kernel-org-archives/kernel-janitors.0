@@ -1,94 +1,42 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 12 Sep 2012 12:56:02 +0000
-Subject: [PATCH v2 3/8] drivers/media/dvb-frontends/s5h1432.c: Removes useless kfree()
-Message-Id: <1347454564-5178-6-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Sep 2012 06:20:20 +0000
+Subject: [vfs:for-next 60/72] include/linux/file.h:53:9: error: implicit declaration of function 'fget_raw_li
+Message-Id: <20120927062020.GA27992@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Al,
 
-Remove useless kfree() and clean up code related to the removal.
+FYI, kernel build failed on
 
-The semantic patch that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-next
+head:   49de614c74fadc7c47132ac87c0f7b05ca4084b7
+commit: a5b470ba06aa3f96999ede5feba178df6bdb134a [60/72] new helpers: fdget()/fdput()
+config: x86_64-allmodconfig
 
-// <smpl>
-@r exists@
-position p1,p2;
-expression x;
-@@
+All error/warnings:
 
-if (x@p1 = NULL) { ... kfree@p2(x); ... return ...; }
+In file included from net/ceph/pagevec.c:6:0:
+include/linux/file.h: In function 'fdget_raw':
+include/linux/file.h:53:9: error: implicit declaration of function 'fget_raw_light' [-Werror=implicit-function-declaration]
+include/linux/file.h:53:19: warning: initialization makes pointer from integer without a cast [enabled by default]
+include/linux/file.h: At top level:
+include/linux/file.h:58:21: error: conflicting types for 'fget_raw_light'
+include/linux/file.h:53:19: note: previous implicit declaration of 'fget_raw_light' was here
+cc1: some warnings being treated as errors
 
-@unchanged exists@
-position r.p1,r.p2;
-expression e <= r.x,x,e1;
-iterator I;
-statement S;
-@@
+vim +53 include/linux/file.h
 
-if (x@p1 = NULL) { ... when != I(x,...) S
-                        when != e = e1
-                        when != e += e1
-                        when != e -= e1
-                        when != ++e
-                        when != --e
-                        when != e++
-                        when != e--
-                        when != &e
-   kfree@p2(x); ... return ...; }
-
-@ok depends on unchanged exists@
-position any r.p1;
-position r.p2;
-expression x;
-@@
-
-... when != true x@p1 = NULL
-kfree@p2(x);
-
-@depends on !ok && unchanged@
-position r.p2;
-expression x;
-@@
-
-*kfree@p2(x);
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+a5b470ba (Al Viro 2012-08-27  50) static inline struct fd fdget_raw(unsigned int fd)
+a5b470ba (Al Viro 2012-08-27  51) {
+a5b470ba (Al Viro 2012-08-27  52) 	int b;
+a5b470ba (Al Viro 2012-08-27 @53) 	struct file *f = fget_raw_light(fd, &b);
+a5b470ba (Al Viro 2012-08-27  54) 	return (struct fd){f,b};
+a5b470ba (Al Viro 2012-08-27  55) }
 
 ---
- drivers/media/dvb-frontends/s5h1432.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/s5h1432.c b/drivers/media/dvb-frontends/s5h1432.c
-index 8352ce1..6ec16a2 100644
---- a/drivers/media/dvb-frontends/s5h1432.c
-+++ b/drivers/media/dvb-frontends/s5h1432.c
-@@ -351,8 +351,8 @@ struct dvb_frontend *s5h1432_attach(const struct s5h1432_config *config,
- 	printk(KERN_INFO " Enter s5h1432_attach(). attach success!\n");
- 	/* allocate memory for the internal state */
- 	state = kmalloc(sizeof(struct s5h1432_state), GFP_KERNEL);
--	if (state = NULL)
--		goto error;
-+	if (!state)
-+		return NULL;
- 
- 	/* setup the state */
- 	state->config = config;
-@@ -367,10 +367,6 @@ struct dvb_frontend *s5h1432_attach(const struct s5h1432_config *config,
- 	state->frontend.demodulator_priv = state;
- 
- 	return &state->frontend;
--
--error:
--	kfree(state);
--	return NULL;
- }
- EXPORT_SYMBOL(s5h1432_attach);
- 
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
