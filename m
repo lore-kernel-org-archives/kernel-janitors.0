@@ -1,117 +1,39 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Fri, 14 Sep 2012 16:46:52 +0000
-Subject: [PATCH] drivers/media/platform/davinci/vpbe.c: Remove unused label and rename remaining labels
-Message-Id: <1347641212-26357-1-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Sep 2012 09:18:40 +0000
+Subject: [next:akpm 17/397] include/linux/audit.h:536:1: error: expected ';' before '}' token
+Message-Id: <20120927091840.GA9923@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Kees,
 
-Remove unused label and rename remaining labels
+FYI, kernel build failed on
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
+head:   5ca573b894e5efd072a90c1364dbf5774e867911
+commit: 57fb5bbce51d7949861259b0348c23d63da94710 [17/397] audit.h: replace defines with C stubs
+config: x86_64-allmodconfig
+
+All error/warnings:
+
+In file included from include/net/xfrm.h:14:0,
+                 from net/dccp/minisocks.c:20:
+include/linux/audit.h: In function 'audit_get_loginuid':
+include/linux/audit.h:536:1: error: expected ';' before '}' token
+
+vim +536 include/linux/audit.h
+
+57fb5bbc (Kees Cook       2012-09-26  533) static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+57fb5bbc (Kees Cook       2012-09-26  534) {
+57fb5bbc (Kees Cook       2012-09-26  535) 	return tsk->loginuid
+57fb5bbc (Kees Cook       2012-09-26 @536) }
+57fb5bbc (Kees Cook       2012-09-26  537) 
+57fb5bbc (Kees Cook       2012-09-26  538) static inline int audit_get_sessionid(struct task_struct *tsk)
+57fb5bbc (Kees Cook       2012-09-26  539) {
 
 ---
-Depends on patch [v2,7/8] drivers/media/platform/davinci/vpbe.c: Removes
-useless kfree() - http://patchwork.linuxtv.org/patch/14307/
-
- drivers/media/platform/davinci/vpbe.c |   25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 1125a87..4d8e399 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -626,11 +626,11 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 		vpbe_dev->dac_clk = clk_get(vpbe_dev->pdev, "vpss_dac");
- 		if (IS_ERR(vpbe_dev->dac_clk)) {
- 			ret =  PTR_ERR(vpbe_dev->dac_clk);
--			goto vpbe_unlock;
-+			goto fail_mutex_unlock;
- 		}
- 		if (clk_enable(vpbe_dev->dac_clk)) {
- 			ret =  -ENODEV;
--			goto vpbe_unlock;
-+			goto fail_mutex_unlock;
- 		}
- 	}
- 
-@@ -642,7 +642,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	if (ret) {
- 		v4l2_err(dev->driver,
- 			"Unable to register v4l2 device.\n");
--		goto vpbe_fail_clock;
-+		goto fail_clk_put;
- 	}
- 	v4l2_info(&vpbe_dev->v4l2_dev, "vpbe v4l2 device registered\n");
- 
-@@ -658,7 +658,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 		v4l2_err(&vpbe_dev->v4l2_dev,
- 			"vpbe unable to init venc sub device\n");
- 		ret = -ENODEV;
--		goto vpbe_fail_v4l2_device;
-+		goto fail_dev_unregister;
- 	}
- 	/* initialize osd device */
- 	osd_device = vpbe_dev->osd_device;
-@@ -669,7 +669,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 			v4l2_err(&vpbe_dev->v4l2_dev,
- 				 "unable to initialize the OSD device");
- 			err = -ENOMEM;
--			goto vpbe_fail_v4l2_device;
-+			goto fail_dev_unregister;
- 		}
- 	}
- 
-@@ -685,7 +685,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 		v4l2_err(&vpbe_dev->v4l2_dev,
- 			"unable to allocate memory for encoders sub devices");
- 		ret = -ENOMEM;
--		goto vpbe_fail_v4l2_device;
-+		goto fail_dev_unregister;
- 	}
- 
- 	i2c_adap = i2c_get_adapter(vpbe_dev->cfg->i2c_adapter_id);
-@@ -711,7 +711,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 					 " failed to register",
- 					 enc_info->module_name);
- 				ret = -ENODEV;
--				goto vpbe_fail_sd_register;
-+				goto fail_kfree_encoders;
- 			}
- 		} else
- 			v4l2_warn(&vpbe_dev->v4l2_dev, "non-i2c encoders"
-@@ -730,7 +730,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 					 "amplifier %s failed to register",
- 					 amp_info->module_name);
- 				ret = -ENODEV;
--				goto vpbe_fail_amp_register;
-+				goto fail_kfree_encoders;
- 			}
- 			v4l2_info(&vpbe_dev->v4l2_dev,
- 					  "v4l2 sub device %s registered\n",
-@@ -770,15 +770,14 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	/* TBD handling of bootargs for default output and mode */
- 	return 0;
- 
--vpbe_fail_amp_register:
--vpbe_fail_sd_register:
-+fail_kfree_encoders:
- 	kfree(vpbe_dev->encoders);
--vpbe_fail_v4l2_device:
-+fail_dev_unregister:
- 	v4l2_device_unregister(&vpbe_dev->v4l2_dev);
--vpbe_fail_clock:
-+fail_clk_put:
- 	if (strcmp(vpbe_dev->cfg->module_name, "dm644x-vpbe-display") != 0)
- 		clk_put(vpbe_dev->dac_clk);
--vpbe_unlock:
-+fail_mutex_unlock:
- 	mutex_unlock(&vpbe_dev->lock);
- 	return ret;
- }
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
