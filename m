@@ -1,58 +1,64 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 17 Sep 2012 17:28:27 +0000
-Subject: [PATCH 3/4] drivers/crypto/amcc/crypto4xx_core.c: fix error return code
-Message-Id: <1347902908-19006-3-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Sep 2012 01:08:30 +0000
+Subject: [staging:staging-next 245/267] drivers/staging/comedi/drivers/s626.c:2492 s626_attach_pci() warn:
+Message-Id: <20120927010830.GB7205@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347902908-19006-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: herbert@gondor.apana.org.au
-Cc: davem@davemloft.net, Julia.Lawall@lip6.fr, vzapolskiy@gmail.com, axel.lin@gmail.com, peter.senna@gmail.com, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Hartley,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+FYI, there are smatch warnings show up in
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+head:   3cd73bc1cf59b2c9232d9889ba2b148e262054b6
+commit: 91e674e83c530d5902e482ede1af0115989c4fe6 [245/267] staging: comedi: s626: use attach_pci callback
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+  drivers/staging/comedi/drivers/s626.c:1430 s626_ai_cmd() Error invalid range 4096 to -1
+  drivers/staging/comedi/drivers/s626.c:1450 s626_ai_cmd() Error invalid range 4096 to -1
+  drivers/staging/comedi/drivers/s626.c:1651 s626_ai_cmdtest() Error invalid range 4096 to -1
+  drivers/staging/comedi/drivers/s626.c:1658 s626_ai_cmdtest() Error invalid range 4096 to -1
+  drivers/staging/comedi/drivers/s626.c:2463 s626_attach_pci() info: why not propagate 'result' from comedi_pci_enable() instead of -19?
++ drivers/staging/comedi/drivers/s626.c:2492 s626_attach_pci() warn: '(dev->private)->base_addr' was not released on error
+  drivers/staging/comedi/drivers/s626.c:2504 s626_attach_pci() warn: '(dev->private)->base_addr' was not released on error
+  drivers/staging/comedi/drivers/s626.c:2517 s626_attach_pci() warn: '(dev->private)->base_addr' was not released on error
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+The errors are actually first introduced by
+
+commit 020c44f3ad91b334f907a66eedba68f46dd39d25
+Author:     H Hartley Sweeten <hartleys@visionengravers.com>
+Commit:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CommitDate: Fri Jun 22 20:05:01 2012 -0700
+
+    staging: comedi: s626: remove forward declarations 1
+
+vim +2492 drivers/staging/comedi/drivers/s626.c
+  2476			/* disable master interrupt */
+  2477			writel(0, devpriv->base_addr + P_IER);
+  2478	
+  2479			/* soft reset */
+  2480			writel(MC1_SOFT_RESET, devpriv->base_addr + P_MC1);
+  2481	
+  2482			/* DMA FIXME DMA// */
+  2483	
+  2484			/* adc buffer allocation */
+  2485			devpriv->allocatedBuf = 0;
+  2486	
+  2487			devpriv->ANABuf.LogicalBase   2488			    pci_alloc_consistent(devpriv->pdev, DMABUF_SIZE, &appdma);
+  2489	
+  2490			if (devpriv->ANABuf.LogicalBase = NULL) {
+  2491				printk(KERN_ERR "s626_attach: DMA Memory mapping error\n");
+> 2492				return -ENOMEM;
+  2493			}
+  2494	
+  2495			devpriv->ANABuf.PhysicalBase = appdma;
+  2496	
+  2497			devpriv->allocatedBuf++;
+  2498	
+  2499			devpriv->RPSBuf.LogicalBase   2500			    pci_alloc_consistent(devpriv->pdev, DMABUF_SIZE, &appdma);
+
 ---
- drivers/crypto/amcc/crypto4xx_core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/crypto/amcc/crypto4xx_core.c b/drivers/crypto/amcc/crypto4xx_core.c
-index 802e851..f88e3d8 100644
---- a/drivers/crypto/amcc/crypto4xx_core.c
-+++ b/drivers/crypto/amcc/crypto4xx_core.c
-@@ -1226,6 +1226,7 @@ static int __init crypto4xx_probe(struct platform_device *ofdev)
- 	core_dev->dev->ce_base = of_iomap(ofdev->dev.of_node, 0);
- 	if (!core_dev->dev->ce_base) {
- 		dev_err(dev, "failed to of_iomap\n");
-+		rc = -ENOMEM;
- 		goto err_iomap;
- 	}
- 
--- 
-1.7.11.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
