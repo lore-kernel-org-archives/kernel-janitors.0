@@ -1,42 +1,56 @@
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Date: Thu, 27 Sep 2012 17:21:06 +0000
-Subject: Re: [cryptodev:master 38/41] arch/x86/crypto/crc32c-pcl-intel-asm.S:92: Error: bad register name `%r
-Message-Id: <1348766466.17632.0.camel@schen9-DESK>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Sep 2012 01:11:22 +0000
+Subject: [staging:staging-next 253/267] drivers/staging/comedi/drivers/s626.c:2516 s626_attach_pci() warn:
+Message-Id: <20120927011122.GC7205@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120927074622.GA726@localhost>
-In-Reply-To: <20120927074622.GA726@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 2012-09-27 at 15:52 +0800, Fengguang Wu wrote:
-> On Thu, Sep 27, 2012 at 12:49:44AM -0700, Herbert Xu wrote:
-> > On Thu, Sep 27, 2012 at 03:46:22PM +0800, Fengguang Wu wrote:
-> > > Hi Tim,
-> > > 
-> > > FYI, kernel build failed on
-> > > 
-> > > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-> > > head:   11c8484924441def7941bdc62ddb03643bc8f989
-> > > commit: c4d68f14dfbbf075906a0dcf355e0392347efda9 [38/41] crypto: crc32c- Optimize CRC32C calculation with PCLMULQDQ instruction
-> > > config: i386-allmodconfig
-> > 
-> > Hi Fengguang:
-> > 
-> > Was this a 32-bit build or a 64-bit build?
-> > 
-> > I'll revert the patches for now.
-> 
-> It's a 32-bit build:
-> 
->         make ARCH=i386 allmodconfig
-> 
-> Thanks,
-> Fengguang
+Hi H,
 
-Thanks for catching the error.  I'll have to fix up the 32bit case and
-resend the patches.
+FYI, there are new smatch warnings show up in
 
-Tim
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+head:   3cd73bc1cf59b2c9232d9889ba2b148e262054b6
+commit: 8c7e4277c1197d31c0b34dbaf23e6edddb5978f7 [253/267] staging: comedi: s626: cleanup request_irq in s626_attach_pci()
 
+  drivers/staging/comedi/drivers/s626.c:1428 s626_ai_cmd() Error invalid range 4096 to -1
+  drivers/staging/comedi/drivers/s626.c:1448 s626_ai_cmd() Error invalid range 4096 to -1
+  drivers/staging/comedi/drivers/s626.c:1649 s626_ai_cmdtest() Error invalid range 4096 to -1
+  drivers/staging/comedi/drivers/s626.c:1656 s626_ai_cmdtest() Error invalid range 4096 to -1
+  drivers/staging/comedi/drivers/s626.c:2504 s626_attach_pci() warn: '(dev->private)->base_addr' was not released on error
+  drivers/staging/comedi/drivers/s626.c:2516 s626_attach_pci() warn: '(dev->private)->base_addr' was not released on error
++ drivers/staging/comedi/drivers/s626.c:2516 s626_attach_pci() warn: 'pcidev->irq' was not released on error
+
+vim +2516 drivers/staging/comedi/drivers/s626.c
+  2500		/* DMA FIXME DMA// */
+  2501	
+  2502		ret = s626_allocate_dma_buffers(dev);
+  2503		if (ret)
+  2504			return ret;
+  2505	
+  2506		if (pcidev->irq) {
+  2507			ret = request_irq(pcidev->irq, s626_irq_handler, IRQF_SHARED,
+  2508					  dev->board_name, dev);
+  2509	
+  2510			if (ret = 0)
+  2511				dev->irq = pcidev->irq;
+  2512		}
+  2513	
+  2514		ret = comedi_alloc_subdevices(dev, 6);
+  2515		if (ret)
+> 2516			return ret;
+  2517	
+  2518		s = dev->subdevices + 0;
+  2519		/* analog input subdevice */
+  2520		dev->read_subdev = s;
+  2521		/* we support single-ended (ground) and differential */
+  2522		s->type = COMEDI_SUBD_AI;
+  2523		s->subdev_flags = SDF_READABLE | SDF_DIFF | SDF_CMD_READ;
+  2524		s->n_chan = S626_ADC_CHANNELS;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
