@@ -1,13 +1,14 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 27 Sep 2012 11:43:18 +0000
+Date: Thu, 27 Sep 2012 14:31:24 +0000
 Subject: [PATCH v2] sound: Remove unnecessary semicolon
-Message-Id: <1348746198-26375-1-git-send-email-peter.senna@gmail.com>
+Message-Id: <1348756284-14476-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1348746198-26375-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1348746198-26375-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: trivial@vger.kernel.org
-Cc: perex@perex.cz, tiwai@suse.de, rusty@rustcorp.com.au, peter.senna@gmail.com, paul.gortmaker@windriver.com, eblennerhassett@audioscience.com, superquad.vortex2@gmail.com, den@openvz.org, kozerkov@parallels.com, axel.lin@gmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
 Remove unnecessary semicolon
 
@@ -398,4 +399,5 @@ index a6b0deb..ae35f53 100644
  }
 -- 
 1.7.11.4
+
 
