@@ -1,28 +1,35 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Date: Sat, 08 Sep 2012 21:34:58 +0000
-Subject: Re: [PATCH 3/10] drivers/bluetooth/hci_ldisc.c: removes unnecessary semicolon
-Message-Id: <20120908213458.GL5788@joana>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 02:46:03 +0000
+Subject: [tip:x86/acpi 1/6] include/linux/acpi.h:434:28: error: unknown type name 'acpi_physical_address'
+Message-Id: <20120928024603.GG9155@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347031488-26598-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347031488-26598-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Peter,
+Hi Thomas,
 
-* Peter Senna Tschudin <peter.senna@gmail.com> [2012-09-07 17:24:39 +0200]:
+FYI, kernel build failed on
 
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
-> 
-> removes unnecessary semicolon
-> 
-> Found by Coccinelle: http://coccinelle.lip6.fr/
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/acpi
+head:   4901b402c957d4ebaff123ffc34fafe3cef99542
+commit: 9e0a90cdff5b89599d73695b4d9971d1075c0b14 [1/6] X86 ACPI: Introduce x86 arch specific arch_reserve_mem_area() for e820 handling
+config: i386-allnoconfig
 
-Patch has been applied to the bluetooth-next tree. Thanks.
+All error/warnings:
 
-	Gustavo
+In file included from init/main.c:25:0:
+include/linux/acpi.h:434:28: error: unknown type name 'acpi_physical_address'
+
+vim +434 include/linux/acpi.h
+
+9e0a90cd (Thomas Renninger 2012-09-26  433) #if CONFIG_X86
+9e0a90cd (Thomas Renninger 2012-09-26 @434) void arch_reserve_mem_area(acpi_physical_address addr, size_t size);
+9e0a90cd (Thomas Renninger 2012-09-26  435) #else
+9e0a90cd (Thomas Renninger 2012-09-26  436) static inline void arch_reserve_mem_area(acpi_physical_address addr,
+9e0a90cd (Thomas Renninger 2012-09-26  437) 					  size_t size)
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
