@@ -1,62 +1,71 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 27 Sep 2012 17:52:35 +0000
-Subject: [nouveau:master 82/96] drivers/gpu/drm/nouveau/core/subdev/bios/therm.c:59:1: sparse: symbol
-Message-Id: <20120927175235.GC5517@localhost>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ikeVEW9yuYc//A+q"
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 28 Sep 2012 15:35:06 +0000
+Subject: [PATCH] remoteproc: Fix use of format specifyer
+Message-Id: <1348846506-9670-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: ohad@wizery.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
+The dma_addr_t type can be eigher u32 or u64 depending on
+the configuration. We should use a format specifyer for the
+larges type and explicitly cast to it.
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sparse warnings:
+drivers/remoteproc/remoteproc_core.c:234:2: warning:
+	format ‘%x’ expects argument of type ‘unsigned int’,
+	but argument 6 has type ‘dma_addr_t’ [-Wformat]
 
-Hi Martin,
+drivers/remoteproc/remoteproc_core.c:596:2: warning:
+	format ‘%x’ expects argument of type ‘unsigned int’,
+	but argument 5 has type ‘dma_addr_t’ [-Wformat]
 
-FYI, there are new sparse warnings show up in
+drivers/remoteproc/remoteproc_core.c:634:3:
+	warning: format ‘%x’ expects argument of type ‘unsigned int’,
+	but argument 5 has type ‘dma_addr_t’ [-Wformat]
 
-tree:   git://git.freedesktop.org/git/nouveau/linux-2.6 master
-head:   301e77f5b7968ff10eac8f3938c30963d8fc0ac3
-commit: 1efe51f9b6c36f21c18b83219e70ab7bb822d3ff [82/96] drm/nouveau/therm: rework thermal table parsing
-
-+ drivers/gpu/drm/nouveau/core/subdev/bios/therm.c:59:1: sparse: symbol 'nvbios_therm_entry' was not declared. Should it be static?
-
-vim +59 drivers/gpu/drm/nouveau/core/subdev/bios/therm.c
-
-1efe51f9 (Martin Peres 2012-08-16  58) u16
-1efe51f9 (Martin Peres 2012-08-16 @59) nvbios_therm_entry(struct nouveau_bios *bios, int idx, u8 *ver, u8 *len)
-1efe51f9 (Martin Peres 2012-08-16  60) {
-1efe51f9 (Martin Peres 2012-08-16  61) 	u8 hdr, cnt;
-1efe51f9 (Martin Peres 2012-08-16  62) 	u16 therm = therm_table(bios, ver, &hdr, len, &cnt);
-1efe51f9 (Martin Peres 2012-08-16  63) 	if (therm && idx < cnt)
-1efe51f9 (Martin Peres 2012-08-16  64) 		return therm + idx * *len;
-1efe51f9 (Martin Peres 2012-08-16  65) 	return 0x0000;
-1efe51f9 (Martin Peres 2012-08-16  66) }
-1efe51f9 (Martin Peres 2012-08-16  67) 
-
-Please consider folding the attached diff :-)
-
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/remoteproc/remoteproc_core.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---ikeVEW9yuYc//A+q
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="make-it-static-1efe51f.diff"
-
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bios/therm.c b/drivers/gpu/drm/nouveau/core/subdev/bios/therm.c
-index 862a08a..338ba50 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bios/therm.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bios/therm.c
-@@ -55,7 +55,7 @@ therm_table(struct nouveau_bios *bios, u8 *ver, u8 *hdr, u8 *len, u8 *cnt)
- 	return therm + nv_ro08(bios, therm + 1);
- }
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index b6c6229..e05f153 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -231,8 +231,8 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+ 	/* Store largest notifyid */
+ 	rproc->max_notifyid = max(rproc->max_notifyid, notifyid);
  
--u16
-+static u16
- nvbios_therm_entry(struct nouveau_bios *bios, int idx, u8 *ver, u8 *len)
- {
- 	u8 hdr, cnt;
+-	dev_dbg(dev, "vring%d: va %p dma %x size %x idr %d\n", i, va,
+-					dma, size, notifyid);
++	dev_dbg(dev, "vring%d: va %p dma %llx size %x idr %d\n", i, va,
++				(unsigned long long)dma, size, notifyid);
+ 
+ 	rvring->va = va;
+ 	rvring->dma = dma;
+@@ -593,7 +593,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 		goto free_carv;
+ 	}
+ 
+-	dev_dbg(dev, "carveout va %p, dma %x, len 0x%x\n", va, dma, rsc->len);
++	dev_dbg(dev, "carveout va %p, dma %llx, len 0x%x\n", va,
++					(unsigned long long)dma, rsc->len);
+ 
+ 	/*
+ 	 * Ok, this is non-standard.
+@@ -631,7 +632,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 		mapping->len = rsc->len;
+ 		list_add_tail(&mapping->node, &rproc->mappings);
+ 
+-		dev_dbg(dev, "carveout mapped 0x%x to 0x%x\n", rsc->da, dma);
++		dev_dbg(dev, "carveout mapped 0x%x to 0x%llx\n",
++					rsc->da, (unsigned long long)dma);
+ 	}
+ 
+ 	/*
+-- 
+1.7.10.4
 
---ikeVEW9yuYc//A+q--
