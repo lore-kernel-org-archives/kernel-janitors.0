@@ -1,49 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Sep 2012 17:25:54 +0000
-Subject: Re: [PATCH v2 7/8] drivers/media/platform/davinci/vpbe.c: Removes useless kfree()
-Message-Id: <20120912172554.GH19396@mwanda>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 10:15:01 +0000
+Subject: [glommer-memcg:slab-common/kmalloc 19/30] mm/slab_common.c:206:6: warning: format '%ld' expects argu
+Message-Id: <20120928101501.GA29691@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347454564-5178-2-git-send-email-peter.senna@gmail.com>
- <CAH0vN5+ZoexHtmgyZ+s9tiW3LYx+6PMT8aLyYt-T5mnaGXvYbQ@mail.gmail.com>
- <CA+MoWDquDi6+kY9z3rj79dJK6j5tSWO9oWHCkvt6J-XBB=HNvA@mail.gmail.com>
-In-Reply-To: <CA+MoWDquDi6+kY9z3rj79dJK6j5tSWO9oWHCkvt6J-XBB=HNvA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Marcos Souza <marcos.souza.org@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 12, 2012 at 05:50:54PM +0200, Peter Senna Tschudin wrote:
-> Marcos,
-> 
-> > Now that you removed this kfree, you could remove this label too. Very
-> > nice your cleanup :)
-> Thanks!
-> 
-> >
-> >>  vpbe_fail_sd_register:
-> >>         kfree(vpbe_dev->encoders);
-> >>  vpbe_fail_v4l2_device:
-> 
-> The problem removing the label is that it will require some more work
-> naming the labels. See:
-> if (!vpbe_dev->amp) {
-> ...
-> 	goto vpbe_fail_amp_register;
-> 
-> If I just remove the label vpbe_fail_amp_register, the label names
-> will not make sense any more as the next label is
-> vpbe_fail_sd_register. So I will need to change the name to something
-> different or rename all labels to out1, out2, out3 or err1, err2,
-> err3, or ....
-> 
-> Any suggestions?
+Hi Christoph,
 
-Labal names should not be numbers because this is not GW-BASIC.  The
-label should reflect what happens on the next line.  Labeling the
-place after the goto location where you started from is always
-nonsense.
+FYI, there are new compile warnings show up in
 
-regards,
-dan carpenter
+e32adae5 CK1 [02/13] create common functions for boot slab creation
 
+All warnings:
+
+mm/slab_common.c: In function 'create_boot_cache':
+mm/slab_common.c:206:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' [-Wformat]
+
+vim +206 mm/slab_common.c
+
+97d06609 (Christoph Lameter 2012-07-06  190) 	return slab_state >= UP;
+97d06609 (Christoph Lameter 2012-07-06  191) }
+e32adae5 (Christoph Lameter 2012-09-26  192) 
+e32adae5 (Christoph Lameter 2012-09-26  193) /* Create a cache during boot when no slab services are available yet */
+e32adae5 (Christoph Lameter 2012-09-26  194) void __init create_boot_cache(struct kmem_cache *s, const char *name, size_t size,
+e32adae5 (Christoph Lameter 2012-09-26  195) 		unsigned long flags)
+e32adae5 (Christoph Lameter 2012-09-26  196) {
+e32adae5 (Christoph Lameter 2012-09-26  197) 	int err;
+e32adae5 (Christoph Lameter 2012-09-26  198) 
+e32adae5 (Christoph Lameter 2012-09-26  199) 	s->name = name;
+e32adae5 (Christoph Lameter 2012-09-26  200) 	s->size = s->object_size = size;
+e32adae5 (Christoph Lameter 2012-09-26  201) 	s->align = ARCH_KMALLOC_MINALIGN;
+e32adae5 (Christoph Lameter 2012-09-26  202) 	err = __kmem_cache_create(s, flags);
+e32adae5 (Christoph Lameter 2012-09-26  203) 
+e32adae5 (Christoph Lameter 2012-09-26  204) 	if (err)
+e32adae5 (Christoph Lameter 2012-09-26  205) 		panic("Creation of kmalloc slab %s size=%ld failed. Reason %d\n",
+e32adae5 (Christoph Lameter 2012-09-26 @206) 					name, size, err);
+e32adae5 (Christoph Lameter 2012-09-26  207) 
+e32adae5 (Christoph Lameter 2012-09-26  208) 	list_add(&s->list, &slab_caches);
+e32adae5 (Christoph Lameter 2012-09-26  209) 	s->refcount = -1;	/* Exempt from merging for now */
+e32adae5 (Christoph Lameter 2012-09-26  210) }
+e32adae5 (Christoph Lameter 2012-09-26  211) 
+e32adae5 (Christoph Lameter 2012-09-26  212) struct kmem_cache *__init create_kmalloc_cache(const char *name, size_t size,
+e32adae5 (Christoph Lameter 2012-09-26  213) 				unsigned long flags)
+e32adae5 (Christoph Lameter 2012-09-26  214) {
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
