@@ -1,39 +1,47 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 17 Sep 2012 23:55:37 +0000
-Subject: [target:for-next 5/17] drivers/target/target_core_transport.c:582:22: error: 'struct
-Message-Id: <20120917235537.GA9080@localhost>
+Date: Fri, 28 Sep 2012 01:17:06 +0000
+Subject: [bluetooth:master 230/240] net/bluetooth/a2mp.c:358:2: warning: format '%u' expects argument of type
+Message-Id: <20120928011706.GC5522@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrei Emeltchenko <andrei.emeltchenko@intel.com>
+Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-bluetooth@vger.kernel.org
 
-Hi Roland,
+Hi Andrei,
 
-FYI, kernel build failed on
+FYI, there are new compile warnings show up in
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next
-head:   0b79bb0e7b960c6a4347d7c7a3afeea67e28e51e
-commit: 3537078956521a5dd79a413da4342fbcd3e30e9d [5/17] target: Simplify fabric sense data length handling
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
+head:   392f44d3e7894f6fe314b85b4a1611b7b1d98226
+commit: 9a5e94dbb4aa306742a47cbbcb0a44d4fc77a9e4 [230/240] Bluetooth: A2MP: Process A2MP Get AMP Assoc Rsp
 config: x86_64-allmodconfig
 
-All related error/warning messages:
+All warnings:
 
-drivers/target/target_core_transport.c: In function 'transport_get_sense_buffer':
-drivers/target/target_core_transport.c:582:22: error: 'struct target_core_fabric_ops' has no member named 'set_fabric_sense_len'
+net/bluetooth/a2mp.c: In function 'a2mp_getampassoc_rsp':
+net/bluetooth/a2mp.c:358:2: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'long unsigned int' [-Wformat]
 
-vim +582 drivers/target/target_core_transport.c
-   577			return NULL;
-   578	
-   579		if (cmd->se_cmd_flags & SCF_SENT_CHECK_CONDITION)
-   580			return NULL;
-   581	
- > 582		offset = cmd->se_tfo->set_fabric_sense_len(cmd, TRANSPORT_SENSE_BUFFER);
-   583	
-   584		/* Automatically padded */
-   585		cmd->scsi_sense_length = TRANSPORT_SENSE_BUFFER + offset;
-   586	
-   587		pr_debug("HBA_[%u]_PLUG[%s]: Requesting sense for SAM STATUS: 0x%02x\n",
+vim +358 net/bluetooth/a2mp.c
+
+9a5e94db (Andrei Emeltchenko 2012-09-27  346) static int a2mp_getampassoc_rsp(struct amp_mgr *mgr, struct sk_buff *skb,
+9a5e94db (Andrei Emeltchenko 2012-09-27  347) 				struct a2mp_cmd *hdr)
+9a5e94db (Andrei Emeltchenko 2012-09-27  348) {
+9a5e94db (Andrei Emeltchenko 2012-09-27  349) 	struct a2mp_amp_assoc_rsp *rsp = (void *) skb->data;
+9a5e94db (Andrei Emeltchenko 2012-09-27  350) 	u16 len = le16_to_cpu(hdr->len);
+9a5e94db (Andrei Emeltchenko 2012-09-27  351) 	struct hci_dev *hdev;
+9a5e94db (Andrei Emeltchenko 2012-09-27  352) 	struct amp_ctrl *ctrl;
+9a5e94db (Andrei Emeltchenko 2012-09-27  353) 	struct hci_conn *hcon;
+9a5e94db (Andrei Emeltchenko 2012-09-27  354) 
+9a5e94db (Andrei Emeltchenko 2012-09-27  355) 	if (len < sizeof(*rsp))
+9a5e94db (Andrei Emeltchenko 2012-09-27  356) 		return -EINVAL;
+9a5e94db (Andrei Emeltchenko 2012-09-27  357) 
+9a5e94db (Andrei Emeltchenko 2012-09-27 @358) 	BT_DBG("id %d status 0x%2.2x assoc len %u", rsp->id, rsp->status,
+9a5e94db (Andrei Emeltchenko 2012-09-27  359) 	       len - sizeof(*rsp));
+9a5e94db (Andrei Emeltchenko 2012-09-27  360) 
+9a5e94db (Andrei Emeltchenko 2012-09-27  361) 	if (rsp->status)
+9a5e94db (Andrei Emeltchenko 2012-09-27  362) 		return -EINVAL;
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
