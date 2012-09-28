@@ -1,54 +1,52 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Tue, 18 Sep 2012 16:04:07 +0000
-Subject: [PATCH] staging: wlan-ng: Fix dereference before NULL check
-Message-Id: <1347984247-9226-1-git-send-email-emilgoode@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 01:23:23 +0000
+Subject: [bluetooth:master 222/247] net/bluetooth/a2mp.c:205 a2mp_getinfo_req() error: we previously assumed
+Message-Id: <20120928012323.GG5522@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, dan.carpenter@oracle.com, krzysztof.wilczynski@linux.com, devendra.aaru@gmail.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Smatch is warning about a dereference before we check for NULL.
-This patch moves the dereference to after the NULL check.
+Hi Andrei,
 
-Smatch warning:
-drivers/staging/wlan-ng/cfg80211.c:345 prism2_scan() warn:
-	variable dereferenced before check 'request' (see line 332)
+FYI, there are new smatch warnings show up in
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
+head:   29d8a5909bba10accb82eb805c884a2943d7710f
+commit: 8e2a0d92c56ec6955526a8b60838c9b00f70540d [222/247] Bluetooth: AMP: Use HCI cmd to Read AMP Info
+
+  net/bluetooth/a2mp.c:61 a2mp_send() Error invalid range 4096 to -1
++ net/bluetooth/a2mp.c:205 a2mp_getinfo_req() error: we previously assumed 'hdev' could be null (see line 195)
+
+vim +205 net/bluetooth/a2mp.c
+
+47f2d97d (Andrei Emeltchenko 2012-05-29  189) 	if (le16_to_cpu(hdr->len) < sizeof(*req))
+47f2d97d (Andrei Emeltchenko 2012-05-29  190) 		return -EINVAL;
+47f2d97d (Andrei Emeltchenko 2012-05-29  191) 
+47f2d97d (Andrei Emeltchenko 2012-05-29  192) 	BT_DBG("id %d", req->id);
+47f2d97d (Andrei Emeltchenko 2012-05-29  193) 
+47f2d97d (Andrei Emeltchenko 2012-05-29  194) 	hdev = hci_dev_get(req->id);
+8e2a0d92 (Andrei Emeltchenko 2012-09-27 @195) 	if (!hdev) {
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  196) 		struct a2mp_info_rsp rsp;
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  197) 
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  198) 		rsp.id = req->id;
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  199) 		rsp.status = A2MP_STATUS_INVALID_CTRL_ID;
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  200) 
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  201) 		a2mp_send(mgr, A2MP_GETINFO_RSP, hdr->ident, sizeof(rsp),
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  202) 			  &rsp);
+47f2d97d (Andrei Emeltchenko 2012-05-29  203) 	}
+47f2d97d (Andrei Emeltchenko 2012-05-29  204) 
+8e2a0d92 (Andrei Emeltchenko 2012-09-27 @205) 	if (hdev->dev_type != HCI_BREDR) {
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  206) 		mgr->state = READ_LOC_AMP_INFO;
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  207) 		hci_send_cmd(hdev, HCI_OP_READ_LOCAL_AMP_INFO, 0, NULL);
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  208) 	}
+47f2d97d (Andrei Emeltchenko 2012-05-29  209) 
+8e2a0d92 (Andrei Emeltchenko 2012-09-27  210) 	hci_dev_put(hdev);
+47f2d97d (Andrei Emeltchenko 2012-05-29  211) 
+47f2d97d (Andrei Emeltchenko 2012-05-29  212) 	skb_pull(skb, sizeof(*req));
+47f2d97d (Andrei Emeltchenko 2012-05-29  213) 	return 0;
+
 ---
-Introduced by my commit 01f8a27e
-
- drivers/staging/wlan-ng/cfg80211.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
-index 0970127..57a2b05 100644
---- a/drivers/staging/wlan-ng/cfg80211.c
-+++ b/drivers/staging/wlan-ng/cfg80211.c
-@@ -329,9 +329,9 @@ int prism2_get_station(struct wiphy *wiphy, struct net_device *dev,
- 
- int prism2_scan(struct wiphy *wiphy, struct cfg80211_scan_request *request)
- {
--	struct net_device *dev = request->wdev->netdev;
-+	struct net_device *dev;
- 	struct prism2_wiphy_private *priv = wiphy_priv(wiphy);
--	wlandevice_t *wlandev = dev->ml_priv;
-+	wlandevice_t *wlandev;
- 	struct p80211msg_dot11req_scan msg1;
- 	struct p80211msg_dot11req_scan_results msg2;
- 	struct cfg80211_bss *bss;
-@@ -345,6 +345,9 @@ int prism2_scan(struct wiphy *wiphy, struct cfg80211_scan_request *request)
- 	if (!request)
- 		return -EINVAL;
- 
-+	dev = request->wdev->netdev;
-+	wlandev = dev->ml_priv;
-+
- 	if (priv->scan_request && priv->scan_request != request)
- 		return -EBUSY;
- 
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
