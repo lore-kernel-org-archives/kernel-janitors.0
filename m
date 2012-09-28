@@ -1,51 +1,38 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 28 Sep 2012 11:17:24 +0000
-Subject: [glommer-memcg:slab-common/kmalloc 27/30] fs/proc/stat.c:191:3: warning: large integer implicitly tr
-Message-Id: <20120928111724.GC31784@localhost>
+From: Christoph Lameter <cl@linux.com>
+Date: Fri, 28 Sep 2012 17:35:24 +0000
+Subject: Re: [glommer-memcg:slab-common/kmalloc 27/30] fs/proc/stat.c:191:3: warning: large integer implicitl
+Message-Id: <0000013a0df2766a-023df2f5-91b1-4695-871c-ca01a521c1bc-000000@email.amazonses.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120928111724.GC31784@localhost>
+In-Reply-To: <20120928111724.GC31784@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Christoph,
+On Fri, 28 Sep 2012, Fengguang Wu wrote:
 
-FYI, there are new compile warnings show up in
+> fs/proc/stat.c: In function 'stat_open':
+> fs/proc/stat.c:191:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git slab-common/kmalloc
-head:   f957c1ead131972db578b945e25982f4607da6ba
-commit: 1265e4cd1545c612bd0397d3d83fff5301a4beb4 [27/30] CK1 [11/13] Common constants for kmalloc boundaries
-config: ia64-defconfig
+I guess we need this patch:
 
-All warnings:
+Subject: stat: Use size_t for sizes instead of unsigned
 
-fs/proc/stat.c: In function 'stat_open':
-fs/proc/stat.c:191:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+On some platforms (such as IA64) the large page size may results in
+slab allocations to be allowed of numbers that do not fit in 32 bit.
 
-vim +191 fs/proc/stat.c
+Signed-off-by: Christoph Lameter <cl@linux.com>
 
-df8106db (Alexey Dobriyan 2008-10-05  179) static int stat_open(struct inode *inode, struct file *file)
-df8106db (Alexey Dobriyan 2008-10-05  180) {
-59a32e2c (Eric Dumazet    2012-03-23  181) 	unsigned size = 1024 + 128 * num_possible_cpus();
-df8106db (Alexey Dobriyan 2008-10-05  182) 	char *buf;
-df8106db (Alexey Dobriyan 2008-10-05  183) 	struct seq_file *m;
-df8106db (Alexey Dobriyan 2008-10-05  184) 	int res;
-df8106db (Alexey Dobriyan 2008-10-05  185) 
-59a32e2c (Eric Dumazet    2012-03-23  186) 	/* minimum size to display an interrupt count : 2 bytes */
-59a32e2c (Eric Dumazet    2012-03-23  187) 	size += 2 * nr_irqs;
-59a32e2c (Eric Dumazet    2012-03-23  188) 
-a4dbf0ec (Yuanhan Liu     2011-05-26  189) 	/* don't ask for more than the kmalloc() max size */
-a4dbf0ec (Yuanhan Liu     2011-05-26  190) 	if (size > KMALLOC_MAX_SIZE)
-a4dbf0ec (Yuanhan Liu     2011-05-26 @191) 		size = KMALLOC_MAX_SIZE;
-df8106db (Alexey Dobriyan 2008-10-05  192) 	buf = kmalloc(size, GFP_KERNEL);
-df8106db (Alexey Dobriyan 2008-10-05  193) 	if (!buf)
-df8106db (Alexey Dobriyan 2008-10-05  194) 		return -ENOMEM;
-df8106db (Alexey Dobriyan 2008-10-05  195) 
-df8106db (Alexey Dobriyan 2008-10-05  196) 	res = single_open(file, show_stat, NULL);
-df8106db (Alexey Dobriyan 2008-10-05  197) 	if (!res) {
-df8106db (Alexey Dobriyan 2008-10-05  198) 		m = file->private_data;
-df8106db (Alexey Dobriyan 2008-10-05  199) 		m->buf = buf;
+Index: linux/fs/proc/stat.c
+=================================--- linux.orig/fs/proc/stat.c	2012-09-18 12:21:56.301459334 -0500
++++ linux/fs/proc/stat.c	2012-09-28 12:33:29.428759019 -0500
+@@ -178,7 +178,7 @@ static int show_stat(struct seq_file *p,
 
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ static int stat_open(struct inode *inode, struct file *file)
+ {
+-	unsigned size = 1024 + 128 * num_possible_cpus();
++	size_t size = 1024 + 128 * num_possible_cpus();
+ 	char *buf;
+ 	struct seq_file *m;
+ 	int res;
