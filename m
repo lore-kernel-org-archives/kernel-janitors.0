@@ -1,157 +1,46 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Date: Wed, 12 Sep 2012 05:52:53 +0000
-Subject: Re: [leds:for-next 18/18] drivers/leds/leds-lm3530.c:432 lm3530_probe() info: why not propagate 'err
-Message-Id: <CAK9yfHztzq60NnukruphPU9BSkidspJzVkYj0xTHaY6PLxKJpQ@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 02:46:51 +0000
+Subject: [tip:x86/acpi 2/6] arch/x86/kernel/setup.c:944:2: error: implicit declaration of function 'acpi_init
+Message-Id: <20120928024651.GH9155@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120912042018.GA22810@localhost>
-In-Reply-To: <20120912042018.GA22810@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 12 September 2012 11:16, Bryan Wu <bryan.wu@canonical.com> wrote:
-> On Wed, Sep 12, 2012 at 1:18 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
->> On 12 September 2012 10:25, Fengguang Wu <fengguang.wu@intel.com> wrote:
->>> On Wed, Sep 12, 2012 at 10:17:55AM +0530, Sachin Kamat wrote:
->>>> Hi Fengguang,
->>>>
->>>> On 12 September 2012 10:02, Fengguang Wu <fengguang.wu@intel.com> wrote:
->>>> > Hi Sachin,
->>>> >
->>>> > On Wed, Sep 12, 2012 at 09:59:38AM +0530, Sachin Kamat wrote:
->>>> >> Hi Fengguang,
->>>> >>
->>>> >> Thanks for bringing this to my notice. I compile tested this patch
->>>> >> using the latest (11 Sep 2012) linux-next tree.
->>>> >> Unfortunately I cannot not understand the meaning of these smatch warnings.
->>>> >> Could you please simplify them for me?
->>>> >
->>>> > I think the warnings can be quieted by
->>>> >
->>>> > -                         return -ENODEV;
->>>> > +                         return err;
->>>> >
->>>>
->>>> The original code was something like this:
->>>>
->>>>                 err = -ENODEV;
->>>>                 return err;
->>>>
->>>> which i simplified to (as a result of using devm_*)
->>>>                 return -ENODEV;
->>>>
->>>> Hence technically i don't think I changed anything. Do you want me to
->>>> revert this change back?
->>>
->>> I think the intention of the warning is that the err value from
->>> lm3530_init_registers() can be directly returned, like this:
->>>
->>>                   err = lm3530_init_registers(drvdata);
->>>                   if (err < 0) {
->>>                           dev_err(&client->dev,
->>>                                   "Register Init failed: %d\n", err);
->>> -                         return -ENODEV;
->>> +                         return err;
->>>                   }
->>>
->>> That will remove the assumption that lm3530_init_registers() always
->>> returns -ENODEV on error.
->>
->> Oh OK. Now I got it :)
->> Thanks for the clarification.
->> Since this was a prevalent issue with this driver (and maybe with
->> other driver too?), I will send a patch to fix this up.
->>
->
-> Thanks and please post a new patch, I can replace the old one to it in
-> my for-next branch.
+Hi Thomas,
 
-I will post an add on patch (on top of the previous one) to fix the
-smatch warnings.
-Since they fix an issue already present in that driver (not introduced
-by my change), I prefer not to mix the 2 changes.
+FYI, kernel build failed on
 
->
->>>
->>> Thanks,
->>> Fengguang
->
-> And thanks Fengguang.
->
-> -Bryan
->
->>>
->>>> >> On 12 September 2012 09:50, Fengguang Wu <fengguang.wu@intel.com> wrote:
->>>> >> > Hi Sachin,
->>>> >> >
->>>> >> > FYI, there are new smatch warnings show up in
->>>> >> >
->>>> >> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for-next
->>>> >> > head:   2829515a5fb5ceccb4021d819c3d7d0ecaab86eb
->>>> >> > commit: 2829515a5fb5ceccb4021d819c3d7d0ecaab86eb [18/18] leds-lm3530: Use devm_regulator_get function
->>>> >> >
->>>> >> > All smatch warnings:
->>>> >> >
->>>> >> >   drivers/leds/leds-lm3530.c:361 lm3530_mode_set() info: why not propagate 'mode' from lm3530_get_mode_from_str() instead of -22?
->>>> >> > + drivers/leds/leds-lm3530.c:432 lm3530_probe() info: why not propagate 'err' from lm3530_init_registers() instead of -19?
->>>> >> > + drivers/leds/leds-lm3530.c:438 lm3530_probe() info: why not propagate 'err' from led_classdev_register() instead of -19?
->>>> >> >
->>>> >> > vim +432 drivers/leds/leds-lm3530.c
->>>> >> >    422                  err = PTR_ERR(drvdata->regulator);
->>>> >> >    423                  drvdata->regulator = NULL;
->>>> >> >    424                  return err;
->>>> >> >    425          }
->>>> >> >    426
->>>> >> >    427          if (drvdata->pdata->brt_val) {
->>>> >> >    428                  err = lm3530_init_registers(drvdata);
->>>> >> >    429                  if (err < 0) {
->>>> >> >    430                          dev_err(&client->dev,
->>>> >> >    431                                  "Register Init failed: %d\n", err);
->>>> >> >  > 432                          return -ENODEV;
->>>> >> >    433                  }
->>>> >> >    434          }
->>>> >> >    435          err = led_classdev_register(&client->dev, &drvdata->led_dev);
->>>> >> >    436          if (err < 0) {
->>>> >> >    437                  dev_err(&client->dev, "Register led class failed: %d\n", err);
->>>> >> >    438                  return -ENODEV;
->>>> >> >    439          }
->>>> >> >    440
->>>> >> >    441          err = device_create_file(drvdata->led_dev.dev, &dev_attr_mode);
->>>> >> >    442          if (err < 0) {
->>>> >> >
->>>> >> > ---
->>>> >> > 0-DAY kernel build testing backend         Open Source Technology Centre
->>>> >> > Fengguang Wu <wfg@linux.intel.com>                     Intel Corporation
->>>> >>
->>>> >>
->>>> >>
->>>> >> --
->>>> >> With warm regards,
->>>> >> Sachin
->>>>
->>>>
->>>>
->>>> --
->>>> With warm regards,
->>>> Sachin
->>
->>
->>
->> --
->> With warm regards,
->> Sachin
->
->
->
-> --
-> Bryan Wu <bryan.wu@canonical.com>
-> Kernel Developer    +86.186-168-78255 Mobile
-> Canonical Ltd.      www.canonical.com
-> Ubuntu - Linux for human beings | www.ubuntu.com
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/acpi
+head:   4901b402c957d4ebaff123ffc34fafe3cef99542
+commit: 9b17afd44dadf5065c46bc8e4df55b938d92c529 [2/6] ACPI: Store valid ACPI tables passed via early initrd in reserved memblock areas
+config: i386-allnoconfig
 
+All error/warnings:
 
+In file included from init/main.c:25:0:
+include/linux/acpi.h:442:28: error: unknown type name 'acpi_physical_address'
+--
+In file included from arch/x86/kernel/setup.c:29:0:
+include/linux/acpi.h:442:28: error: unknown type name 'acpi_physical_address'
+arch/x86/kernel/setup.c: In function 'setup_arch':
+arch/x86/kernel/setup.c:944:2: error: implicit declaration of function 'acpi_initrd_override' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
 
--- 
-With warm regards,
-Sachin
+vim +944 arch/x86/kernel/setup.c
+
+e7b37895  (Yinghai Lu       2008-06-25  938) #endif
+162a7e75  (Mike Travis      2011-05-24  939) 	/* Allocate bigger log buffer */
+162a7e75  (Mike Travis      2011-05-24  940) 	setup_log_buf(1);
+e7b37895  (Yinghai Lu       2008-06-25  941) 
+2ec65f8b  (Yinghai Lu       2008-06-23  942) 	reserve_initrd();
+2ec65f8b  (Yinghai Lu       2008-06-23  943) 
+9b17afd4  (Thomas Renninger 2012-09-26 @944) 	acpi_initrd_override((void *)initrd_start, initrd_end - initrd_start);
+9b17afd4  (Thomas Renninger 2012-09-26  945) 
+44280733  (Yinghai Lu       2009-11-22  946) 	reserve_crashkernel();
+44280733  (Yinghai Lu       2009-11-22  947) 
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
