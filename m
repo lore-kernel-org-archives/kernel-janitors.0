@@ -1,70 +1,41 @@
-From: Liu Bo <bo.li.liu@oracle.com>
-Date: Tue, 18 Sep 2012 14:30:49 +0000
-Subject: Re: [josef-btrfs:master 66/68] fs/btrfs/inode.c:2185:6: warning: passing argument 2 of 'btrfs_drop_e
-Message-Id: <50588599.40900@oracle.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 10:08:33 +0000
+Subject: [next:akpm 140/423] fs/block_dev.c:135:2: error: implicit declaration of function 'prio_tree_empty'
+Message-Id: <20120928100833.GB29414@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120918140502.GA16816@localhost>
-In-Reply-To: <20120918140502.GA16816@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, Josef Bacik <jbacik@fusionio.com>, linux-btrfs@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 09/18/2012 10:05 PM, Fengguang Wu wrote:
-> Hi Liu,
-> 
-> FYI, there are new compile warnings show up in
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git master
-> head:   6a47d2266699f2d7903d26f178ed135dd9a109cf
-> commit: 434728b4678badfad6e8a35df26034a081014254 [66/68] Btrfs: snapshot-aware defrag
-> config: x86_64-randconfig-s345 (attached as .config)
-> 
+Hi Michel,
 
-Thanks for the report :)
+FYI, kernel build failed on
 
-thanks,
-liubo
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
+head:   b97e42d4aec6640aeb2a0347d9d40d12db17ded9
+commit: f7d8d6b34e1d98650967ef035824beabec51019d [140/423] mm: replace vma prio_tree with an interval tree
+config: x86_64-allmodconfig
 
-> All error/warnings:
-> 
-> fs/btrfs/inode.c: In function 'relink_extent_backref':
-> fs/btrfs/inode.c:2185:6: warning: passing argument 2 of 'btrfs_drop_extents' from incompatible pointer type [enabled by default]
-> In file included from fs/btrfs/inode.c:43:0:
-> fs/btrfs/ctree.h:3340:5: note: expected 'struct btrfs_root *' but argument is of type 'struct inode *'
-> fs/btrfs/inode.c:2185:6: warning: passing argument 3 of 'btrfs_drop_extents' makes pointer from integer without a cast [enabled by default]
-> In file included from fs/btrfs/inode.c:43:0:
-> fs/btrfs/ctree.h:3340:5: note: expected 'struct inode *' but argument is of type 'u64'
-> fs/btrfs/inode.c:2185:6: warning: passing argument 5 of 'btrfs_drop_extents' makes integer from pointer without a cast [enabled by default]
-> In file included from fs/btrfs/inode.c:43:0:
-> fs/btrfs/ctree.h:3340:5: note: expected 'u64' but argument is of type 'u64 *'
-> 
-> vim +2185 fs/btrfs/inode.c
->   2175		start = backref->file_pos;
->   2176		if (backref->extent_offset < old->extent_offset + old->offset)
->   2177			start += old->extent_offset + old->offset -
->   2178				 backref->extent_offset;
->   2179	
->   2180		len = min(backref->extent_offset + backref->num_bytes,
->   2181			  old->extent_offset + old->offset + old->len);
->   2182		len -= max(backref->extent_offset, old->extent_offset + old->offset);
->   2183	
->   2184		ret = btrfs_drop_extents(trans, inode, start,
->> 2185					 start + len, &hint_byte, 1);
->   2186		if (ret)
->   2187			goto out_free_path;
->   2188	again:
->   2189		key.objectid = btrfs_ino(inode);
->   2190		key.type = BTRFS_EXTENT_DATA_KEY;
->   2191		key.offset = start;
->   2192	
->   2193		if (merge) {
->   2194			struct btrfs_file_extent_item *fi;
->   2195			u64 extent_len;
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Centre
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
-> 
+All error/warnings:
 
+fs/block_dev.c: In function 'set_blocksize':
+fs/block_dev.c:135:2: error: implicit declaration of function 'prio_tree_empty' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+
+vim +135 fs/block_dev.c
+
+b87570f5 (Mikulas Patocka 2012-09-26  129) 	/* Prevent starting I/O or mapping the device */
+62ac665f (Mikulas Patocka 2012-09-26  130) 	percpu_down_write(&bdev->bd_block_size_semaphore);
+b87570f5 (Mikulas Patocka 2012-09-26  131) 
+b87570f5 (Mikulas Patocka 2012-09-26  132) 	/* Check that the block device is not memory mapped */
+b87570f5 (Mikulas Patocka 2012-09-26  133) 	mapping = bdev->bd_inode->i_mapping;
+b87570f5 (Mikulas Patocka 2012-09-26  134) 	mutex_lock(&mapping->i_mmap_mutex);
+b87570f5 (Mikulas Patocka 2012-09-26 @135) 	if (!prio_tree_empty(&mapping->i_mmap) ||
+b87570f5 (Mikulas Patocka 2012-09-26  136) 	    !list_empty(&mapping->i_mmap_nonlinear)) {
+b87570f5 (Mikulas Patocka 2012-09-26  137) 		mutex_unlock(&mapping->i_mmap_mutex);
+62ac665f (Mikulas Patocka 2012-09-26  138) 		percpu_up_write(&bdev->bd_block_size_semaphore);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
