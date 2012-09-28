@@ -1,63 +1,51 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 29 Sep 2012 01:32:59 +0000
-Subject: [wireless-testing:master 229/238] drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:2724:21: spa
-Message-Id: <20120929013259.GA11675@localhost>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="1yeeQ81UyVL57Vl7"
+Date: Fri, 28 Sep 2012 11:17:24 +0000
+Subject: [glommer-memcg:slab-common/kmalloc 27/30] fs/proc/stat.c:191:3: warning: large integer implicitly tr
+Message-Id: <20120928111724.GC31784@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120929012055.GF29576@yliu-dev.sh.intel.com>
-In-Reply-To: <20120929012055.GF29576@yliu-dev.sh.intel.com>
-To: Hante Meuleman <meuleman@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Arend van Spriel <arend@broadcom.com>, linux-wireless@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+Hi Christoph,
 
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+FYI, there are new compile warnings show up in
 
-Hi Hante,
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git slab-common/kmalloc
+head:   f957c1ead131972db578b945e25982f4607da6ba
+commit: 1265e4cd1545c612bd0397d3d83fff5301a4beb4 [27/30] CK1 [11/13] Common constants for kmalloc boundaries
+config: ia64-defconfig
 
-FYI, there are new sparse warnings show up in
+All warnings:
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git master
-head:   96df9f3dca2428ac1e0b46d378b6f68ff64db67b
-commit: 1a87334239757b69eb9885979c32bbf871b3ec88 [229/238] brcmfmac: add hostap supoort.
+fs/proc/stat.c: In function 'stat_open':
+fs/proc/stat.c:191:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]
 
-+ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:2724:21: sparse: symbol 'brcmf_find_wpaie' was not declared. Should it be static?
-+ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:4022:28: sparse: Using plain integer as NULL pointer
-+ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:4013:1: sparse: symbol 'brcmf_set_management_ie' was not declared. Should it be static?
+vim +191 fs/proc/stat.c
 
-Please consider folding the attached diff :-)
+df8106db (Alexey Dobriyan 2008-10-05  179) static int stat_open(struct inode *inode, struct file *file)
+df8106db (Alexey Dobriyan 2008-10-05  180) {
+59a32e2c (Eric Dumazet    2012-03-23  181) 	unsigned size = 1024 + 128 * num_possible_cpus();
+df8106db (Alexey Dobriyan 2008-10-05  182) 	char *buf;
+df8106db (Alexey Dobriyan 2008-10-05  183) 	struct seq_file *m;
+df8106db (Alexey Dobriyan 2008-10-05  184) 	int res;
+df8106db (Alexey Dobriyan 2008-10-05  185) 
+59a32e2c (Eric Dumazet    2012-03-23  186) 	/* minimum size to display an interrupt count : 2 bytes */
+59a32e2c (Eric Dumazet    2012-03-23  187) 	size += 2 * nr_irqs;
+59a32e2c (Eric Dumazet    2012-03-23  188) 
+a4dbf0ec (Yuanhan Liu     2011-05-26  189) 	/* don't ask for more than the kmalloc() max size */
+a4dbf0ec (Yuanhan Liu     2011-05-26  190) 	if (size > KMALLOC_MAX_SIZE)
+a4dbf0ec (Yuanhan Liu     2011-05-26 @191) 		size = KMALLOC_MAX_SIZE;
+df8106db (Alexey Dobriyan 2008-10-05  192) 	buf = kmalloc(size, GFP_KERNEL);
+df8106db (Alexey Dobriyan 2008-10-05  193) 	if (!buf)
+df8106db (Alexey Dobriyan 2008-10-05  194) 		return -ENOMEM;
+df8106db (Alexey Dobriyan 2008-10-05  195) 
+df8106db (Alexey Dobriyan 2008-10-05  196) 	res = single_open(file, show_stat, NULL);
+df8106db (Alexey Dobriyan 2008-10-05  197) 	if (!res) {
+df8106db (Alexey Dobriyan 2008-10-05  198) 		m = file->private_data;
+df8106db (Alexey Dobriyan 2008-10-05  199) 		m->buf = buf;
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
 Fengguang Wu, Yuanhan Liu                              Intel Corporation
-
---1yeeQ81UyVL57Vl7
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="make-it-static-1a87334.diff"
-
-diff --git a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-index 0ecd0df..b42ccb1 100644
---- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-@@ -2721,7 +2721,7 @@ brcmf_tlv_has_ie(u8 *ie, u8 **tlvs, u32 *tlvs_len,
- 	return false;
- }
- 
--struct brcmf_vs_tlv *
-+static struct brcmf_vs_tlv *
- brcmf_find_wpaie(u8 *parse, u32 len)
- {
- 	struct brcmf_tlv *ie;
-@@ -4009,7 +4009,7 @@ brcmf_vndr_ie(u8 *iebuf, s32 pktflag, u8 *ie_ptr, u32 ie_len, s8 *add_del_cmd)
- 	return ie_len + VNDR_IE_HDR_SIZE;
- }
- 
--s32
-+static s32
- brcmf_set_management_ie(struct brcmf_cfg80211_priv *cfg_priv,
- 			struct net_device *ndev, s32 bssidx, s32 pktflag,
- 			u8 *vndr_ie_buf, u32 vndr_ie_len)
-
---1yeeQ81UyVL57Vl7--
