@@ -1,96 +1,41 @@
-From: Ursula Braun <ubraun@linux.vnet.ibm.com>
-Date: Thu, 13 Sep 2012 08:19:54 +0000
-Subject: Re: [PATCH 7/15] drivers/s390/net: removes unnecessary semicolon
-Message-Id: <1347524394.9036.3.camel@br9gv9yg.de.ibm.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 09:55:26 +0000
+Subject: [tip:master 30/35] mm/memory.c:72:2: warning: #warning Unfortunate NUMA config, growing page-frame f
+Message-Id: <20120928095526.GA28747@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <OF869CD991.BF07C10D-ONC1257A78.002BEE03-C1257A78.002BF89E@de.ibm.com>
-In-Reply-To: <OF869CD991.BF07C10D-ONC1257A78.002BEE03-C1257A78.002BF89E@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, blaschka@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Thanks, Peter. I will schedule these changes for our next posting.
+Hi Peter,
 
-Ursula Braun
-> Peter Senna Tschudin <peter.senna@gmail.com> wrote on 12/09/2012 19:03:14:
-> 
-> > From:
-> > 
-> > Peter Senna Tschudin <peter.senna@gmail.com>
-> > 
-> > To:
-> > 
-> > Ursula Braun1/Germany/IBM@IBMDE
-> > 
-> > Cc:
-> > 
-> > trivial@kernel.org, kernel-janitors@vger.kernel.org, Frank Blaschka 
-> > <blaschka@linux.vnet.ibm.com>, BOEBLINGEN LINUX390/Germany/
-> > IBM@IBMDE, mschwid2@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com,
-> > linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-> > 
-> > Date:
-> > 
-> > 12/09/2012 19:03
-> > 
-> > Subject:
-> > 
-> > [PATCH 7/15] drivers/s390/net: removes unnecessary semicolon
-> > 
-> > From: Peter Senna Tschudin <peter.senna@gmail.com>
-> > 
-> > removes unnecessary semicolon
-> > 
-> > Found by Coccinelle: http://coccinelle.lip6.fr/
-> > 
-> > Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> > 
-> > ---
-> >  drivers/s390/net/ctcm_fsms.c      |    2 +-
-> >  drivers/s390/net/qeth_core_main.c |    4 ++--
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/s390/net/ctcm_fsms.c b/drivers/s390/net/ctcm_fsms.c
-> > index d4ade9e..fb92524 100644
-> > --- a/drivers/s390/net/ctcm_fsms.c
-> > +++ b/drivers/s390/net/ctcm_fsms.c
-> > @@ -1523,7 +1523,7 @@ static void ctcmpc_chx_firstio(fsm_instance 
-> > *fi, int event, void *arg)
-> >              goto done;
-> >     default:
-> >        break;
-> > -   };
-> > +   }
-> > 
-> >     fsm_newstate(fi, (CHANNEL_DIRECTION(ch->flags) = CTCM_READ)
-> >             ? CTC_STATE_RXINIT : CTC_STATE_TXINIT);
-> > diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/
-> > qeth_core_main.c
-> > index cf6da7f..0bd86b8 100644
-> > --- a/drivers/s390/net/qeth_core_main.c
-> > +++ b/drivers/s390/net/qeth_core_main.c
-> > @@ -489,7 +489,7 @@ static struct qeth_reply *qeth_alloc_reply
-> > (struct qeth_card *card)
-> >        atomic_set(&reply->refcnt, 1);
-> >        atomic_set(&reply->received, 0);
-> >        reply->card = card;
-> > -   };
-> > +   }
-> >     return reply;
-> >  }
-> > 
-> > @@ -2029,7 +2029,7 @@ int qeth_send_control_data(struct qeth_card 
-> > *card, int len,
-> >           if (time_after(jiffies, timeout))
-> >              goto time_err;
-> >           cpu_relax();
-> > -      };
-> > +      }
-> >     }
-> > 
-> >     if (reply->rc = -EIO)
-> > 
+FYI, there are new compile warnings show up in
 
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+head:   2ef756a2e79149dc84c88f7ccc42ec38cbb7722e
+commit: 835e3cf29f4eeba6c5c8bcc188b2138029157938 [30/35] mm: Fold page::nid_last into page::flags when possible
+config: i386-allmodconfig
 
+All warnings:
+
+mm/memory.c:72:2: warning: #warning Unfortunate NUMA config, growing page-frame for last_nid. [-Wcpp]
+
+vim +72 mm/memory.c
+
+42b77728 (Jan Beulich     2008-07-23  69) #include "internal.h"
+42b77728 (Jan Beulich     2008-07-23  70) 
+835e3cf2 (Peter Zijlstra  2012-08-13  71) #ifdef LAST_NID_NOT_IN_PAGE_FLAGS
+835e3cf2 (Peter Zijlstra  2012-08-13 @72) #warning Unfortunate NUMA config, growing page-frame for last_nid.
+835e3cf2 (Peter Zijlstra  2012-08-13  73) #endif
+835e3cf2 (Peter Zijlstra  2012-08-13  74) 
+d41dee36 (Andy Whitcroft  2005-06-23  75) #ifndef CONFIG_NEED_MULTIPLE_NODES
+^1da177e (Linus Torvalds  2005-04-16  76) /* use the per-pgdat data instead for discontigmem - mbligh */
+^1da177e (Linus Torvalds  2005-04-16  77) unsigned long max_mapnr;
+^1da177e (Linus Torvalds  2005-04-16  78) struct page *mem_map;
+^1da177e (Linus Torvalds  2005-04-16  79) 
+^1da177e (Linus Torvalds  2005-04-16  80) EXPORT_SYMBOL(max_mapnr);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
