@@ -1,63 +1,40 @@
-From: Daniel Mack <zonque@gmail.com>
-Date: Fri, 21 Sep 2012 21:20:41 +0000
-Subject: Re: [broonie-misc:spi-next 28/43] drivers/spi/spi-gpio.c:389:79: error: parameter name omitted
-Message-Id: <505CDA29.5080202@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 02:37:51 +0000
+Subject: [tip:x86/efi 7/11] arch/ia64/kernel/efi.c:629:1: error: redefinition of 'efi_enter_virtual_mode'
+Message-Id: <20120928023751.GC9155@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120920212248.GA5446@localhost>
-In-Reply-To: <20120920212248.GA5446@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 20.09.2012 23:22, Fengguang Wu wrote:
-> Hi Daniel,
->=20
-> FYI, kernel build failed on
->=20
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git sp=
-i-next
-> head:   337c422cf74b1ae46969395847795de953e66958
-> commit: 38ab18caa0ad9c844ba60f9618c5de6d6954da3e [28/43] spi: spi-gpio: A=
-dd DT bindings
-> config: x86_64-allmodconfig
->=20
-> All related error/warning messages:
->=20
-> drivers/spi/spi-gpio.c: In function 'spi_gpio_setup':
-> drivers/spi/spi-gpio.c:255:8: warning: cast from pointer to integer of di=
-fferent size [-Wpointer-to-int-cast]
-> drivers/spi/spi-gpio.c: In function 'spi_probe_dt':
-> drivers/spi/spi-gpio.c:389:79: error: parameter name omitted
-> drivers/spi/spi-gpio.c: In function 'spi_gpio_probe':
-> drivers/spi/spi-gpio.c:404:2: error: implicit declaration of function 'sp=
-i_gpio_probe_dt' [-Werror=3Dimplicit-function-declaration]
-> cc1: some warnings being treated as errors
->=20
-> vim +389 drivers/spi/spi-gpio.c
->    383=09
->    384	error_free:
->    385		devm_kfree(&pdev->dev, pdata);
->    386		return ret;
->    387	}
->    388	#else
->  > 389	static inline int spi_probe_dt(struct platform_device *)
->    390	{
->    391		return 0;
->    392	}
+Hi Josh,
 
-Yes, I'm sorry about that. Mark already kindly fixed this one for me
-some weeks ago:
+FYI, kernel build failed on
 
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/efi
+head:   ba49efa14f97ca6fe57390539e70a359aea779cd
+commit: f383a1e37bc3fc93d19ed23dfdb1adfc5a7d1010 [7/11] efi: Add a stub for efi_enter_virtual_mode on non-x86
+config: ia64-alldefconfig
 
-https://git.kernel.org/?p=3Dlinux/kernel/git/broonie/misc.git;a=3Dcommit;h=
-=AC2cb30b479
+All error/warnings:
 
+arch/ia64/kernel/efi.c:629:1: error: redefinition of 'efi_enter_virtual_mode'
+include/linux/efi.h:501:13: note: previous definition of 'efi_enter_virtual_mode' was here
 
-Daniel
+vim +629 arch/ia64/kernel/efi.c
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+^1da177e (Linus Torvalds 2005-04-16  623) 
+^1da177e (Linus Torvalds 2005-04-16  624) 	efi_map_pal_code();
+^1da177e (Linus Torvalds 2005-04-16  625) 	efi_enter_virtual_mode();
+^1da177e (Linus Torvalds 2005-04-16  626) }
+^1da177e (Linus Torvalds 2005-04-16  627) 
+^1da177e (Linus Torvalds 2005-04-16  628) void
+^1da177e (Linus Torvalds 2005-04-16 @629) efi_enter_virtual_mode (void)
+^1da177e (Linus Torvalds 2005-04-16  630) {
+^1da177e (Linus Torvalds 2005-04-16  631) 	void *efi_map_start, *efi_map_end, *p;
+^1da177e (Linus Torvalds 2005-04-16  632) 	efi_memory_desc_t *md;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
