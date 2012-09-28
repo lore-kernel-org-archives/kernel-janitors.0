@@ -1,73 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Sep 2012 11:11:24 +0000
-Subject: [patch v3] [media] rc: divide by zero bugs in s_tx_carrier()
-Message-Id: <20120911111124.GA22259@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 02:45:25 +0000
+Subject: [tip:x86/efi 10/11] include/linux/efi.h:504: warning: 'efi_late_init' defined but not used
+Message-Id: <20120928024525.GF9155@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20120909222629.GA28355@pequod.mess.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Maxim Levitsky <maximlevitsky@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-"carrier" comes from a get_user() in ir_lirc_ioctl().  We need to test
-that it's not zero before using it as a divisor.  It might have been
-nice to test for this ir_lirc_ioctl() but the mceusb driver uses zero to
-disable carrier modulation.
+Hi Josh,
 
-The bug in redrat3 is a little more subtle.  The ->carrier is passed to
-mod_freq_to_val() which uses it as a divisor.
+FYI, there are new compile warnings show up in
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/efi
+head:   ba49efa14f97ca6fe57390539e70a359aea779cd
+commit: ba49efa14f97ca6fe57390539e70a359aea779cd [10/11] efi: Fix the ACPI BGRT driver for images located in EFI boot services memory
+config: avr32-atngw100_defconfig
+
+All warnings:
+
+include/linux/efi.h:503: warning: 'efi_enter_virtual_mode' defined but not used
+include/linux/efi.h:504: warning: 'efi_late_init' defined but not used
+include/linux/efi.h:505: warning: 'efi_free_boot_services' defined but not used
+
+vim +504 include/linux/efi.h
+
+f383a1e3 (Josh Triplett  2012-09-08  498) #ifdef CONFIG_X86
+^1da177e (Linus Torvalds 2005-04-16  499) extern void efi_enter_virtual_mode (void);	/* switch EFI to virtual mode, if possible */
+ba49efa1 (Josh Triplett  2012-09-08  500) extern void efi_late_init(void);
+668b132e (Josh Triplett  2012-09-08  501) extern void efi_free_boot_services(void);
+f383a1e3 (Josh Triplett  2012-09-08  502) #else
+f383a1e3 (Josh Triplett  2012-09-08  503) static void efi_enter_virtual_mode(void) {}
+ba49efa1 (Josh Triplett  2012-09-08 @504) static void efi_late_init(void) {}
+668b132e (Josh Triplett  2012-09-08  505) static void efi_free_boot_services(void) {}
+
+It's missing 'inline' in the above three lines.
+
 ---
-v2: tried to add the check to ir_lirc_ioctl() but that doesn't work.
-v3: the same as v1 except that I've added a fix for redrat3 as well.
-
-diff --git a/drivers/media/rc/ene_ir.c b/drivers/media/rc/ene_ir.c
-index 647dd95..d05ac15 100644
---- a/drivers/media/rc/ene_ir.c
-+++ b/drivers/media/rc/ene_ir.c
-@@ -881,10 +881,13 @@ static int ene_set_tx_mask(struct rc_dev *rdev, u32 tx_mask)
- static int ene_set_tx_carrier(struct rc_dev *rdev, u32 carrier)
- {
- 	struct ene_device *dev = rdev->priv;
--	u32 period = 2000000 / carrier;
-+	u32 period;
- 
- 	dbg("TX: attempt to set tx carrier to %d kHz", carrier);
-+	if (carrier = 0)
-+		return -EINVAL;
- 
-+	period = 2000000 / carrier;
- 	if (period && (period > ENE_CIRMOD_PRD_MAX ||
- 			period < ENE_CIRMOD_PRD_MIN)) {
- 
-diff --git a/drivers/media/rc/nuvoton-cir.c b/drivers/media/rc/nuvoton-cir.c
-index 699eef3..2ea913a 100644
---- a/drivers/media/rc/nuvoton-cir.c
-+++ b/drivers/media/rc/nuvoton-cir.c
-@@ -517,6 +517,9 @@ static int nvt_set_tx_carrier(struct rc_dev *dev, u32 carrier)
- 	struct nvt_dev *nvt = dev->priv;
- 	u16 val;
- 
-+	if (carrier = 0)
-+		return -EINVAL;
-+
- 	nvt_cir_reg_write(nvt, 1, CIR_CP);
- 	val = 3000000 / (carrier) - 1;
- 	nvt_cir_reg_write(nvt, val & 0xff, CIR_CC);
-diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-index 2878b0e..bf8bc74 100644
---- a/drivers/media/rc/redrat3.c
-+++ b/drivers/media/rc/redrat3.c
-@@ -890,6 +890,9 @@ static int redrat3_set_tx_carrier(struct rc_dev *rcdev, u32 carrier)
- 	struct device *dev = rr3->dev;
- 
- 	rr3_dbg(dev, "Setting modulation frequency to %u", carrier);
-+	if (carrier = 0)
-+		return -EINVAL;
-+
- 	rr3->carrier = carrier;
- 
- 	return carrier;
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
