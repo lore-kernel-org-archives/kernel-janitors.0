@@ -1,74 +1,55 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 12:07:54 +0000
-Subject: [PATCH 04/10] drivers/video/sunxvr500.c: fix error return code
-Message-Id: <1347970080-25175-4-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 13:07:15 +0000
+Subject: [tip:master 27/35] kernel/sched/fair.c:791: warning: 'task_h_load' declared 'static' but never defin
+Message-Id: <20120928130715.GB5158@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: FlorianSchandinat@gmx.de
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Peter,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+FYI, there are new compile warnings show up in
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+head:   2ef756a2e79149dc84c88f7ccc42ec38cbb7722e
+commit: 4ae834f767c59b42cdf2a5077a18388525ba78b2 [27/35] sched/numa: Implement NUMA home-node selection code
+config: avr32-atngw100_defconfig
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+All warnings:
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+kernel/sched/fair.c:791: warning: 'task_h_load' declared 'static' but never defined
+kernel/sched/fair.c:909: warning: 'account_offnode_enqueue' defined but not used
+
+vim +791 kernel/sched/fair.c
+
+305e6835 kernel/sched_fair.c (Venkatesh Pallipadi 2010-10-04  775) 	se->exec_start = rq_of(cfs_rq)->clock_task;
+bf0f6f24 kernel/sched_fair.c (Ingo Molnar         2007-07-09  776) }
+bf0f6f24 kernel/sched_fair.c (Ingo Molnar         2007-07-09  777) 
+bf0f6f24 kernel/sched_fair.c (Ingo Molnar         2007-07-09  778) /**************************************************
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  779)  * Scheduling class numa methods.
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  780)  *
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  781)  * The purpose of the NUMA bits are to maintain compute (task) and data
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  782)  * (memory) locality. We try and achieve this by making tasks stick to
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  783)  * a particular node (their home node) but if fairness mandates they run
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  784)  * elsewhere for long enough, we let the memory follow them.
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  785)  *
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  786)  * Tasks start out with their home-node unset (-1) this effectively means
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  787)  * they act !NUMA until we've established the task is busy enough to bother
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  788)  * with placement.
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  789)  */
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  790) 
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16 @791) static unsigned long task_h_load(struct task_struct *p);
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  792) 
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  793) #ifdef CONFIG_SCHED_NUMA
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  794) static void account_offnode_enqueue(struct rq *rq, struct task_struct *p)
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  795) {
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  796) 	p->numa_contrib = task_h_load(p);
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  797) 	rq->offnode_weight += p->numa_contrib;
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  798) 	rq->offnode_running++;
+4ae834f7 kernel/sched/fair.c (Peter Zijlstra      2012-07-16  799) }
+
 ---
- drivers/video/sunxvr500.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/video/sunxvr500.c b/drivers/video/sunxvr500.c
-index eb931b8..6c71b1b 100644
---- a/drivers/video/sunxvr500.c
-+++ b/drivers/video/sunxvr500.c
-@@ -298,8 +298,10 @@ static int __devinit e3d_pci_register(struct pci_dev *pdev,
- 		goto err_release_fb;
- 	}
- 	ep->ramdac = ioremap(ep->regs_base_phys + 0x8000, 0x1000);
--	if (!ep->ramdac)
-+	if (!ep->ramdac) {
-+		err = -ENOMEM;
- 		goto err_release_pci1;
-+	}
- 
- 	ep->fb8_0_off = readl(ep->ramdac + RAMDAC_VID_8FB_0);
- 	ep->fb8_0_off -= ep->fb_base_reg;
-@@ -343,8 +345,10 @@ static int __devinit e3d_pci_register(struct pci_dev *pdev,
- 	ep->fb_size = info->fix.line_length * ep->height;
- 
- 	ep->fb_base = ioremap(ep->fb_base_phys, ep->fb_size);
--	if (!ep->fb_base)
-+	if (!ep->fb_base) {
-+		err = -ENOMEM;
- 		goto err_release_pci0;
-+	}
- 
- 	err = e3d_set_fbinfo(ep);
- 	if (err)
--- 
-1.7.11.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
