@@ -1,50 +1,43 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Fri, 28 Sep 2012 21:15:05 +0000
-Subject: Re: [Patch 4/5] Staging: winbond: checkpatch cleanup
-Message-Id: <20120928211505.GB30718@elf.ucw.cz>
+From: Glauber Costa <glommer@parallels.com>
+Date: Fri, 28 Sep 2012 08:16:39 +0000
+Subject: Re: [glommer-memcg:slab-common/slabinfo 18/21] mm/slab_common.c:196:6: sparse: symbol 'print_slabinf
+Message-Id: <50655CE7.8060600@parallels.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <506343F6.4040905@gmail.com>
-In-Reply-To: <506343F6.4040905@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed 2012-09-26 23:35:42, Harsh Kumar wrote:
-> checkpatch cleanup: Corrected wrong placement of a brace and line exceeding 80 characters
+On 09/28/2012 05:19 AM, Fengguang Wu wrote:
+> Hi Glauber,
 > 
-> Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
 
-ACK.
+Fenghuang,
 
-> ---
->  drivers/staging/winbond/wb35tx.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+
+> FYI, there are new sparse warnings show up in
 > 
-> diff -uprN a/drivers/staging/winbond/wb35tx.c b/drivers/staging/winbond/wb35tx.c
-> --- a/drivers/staging/winbond/wb35tx.c
-> +++ b/drivers/staging/winbond/wb35tx.c
-> @@ -135,8 +135,7 @@ unsigned char Wb35Tx_initial(struct hw_d
->  		return false;
->  
->  	pWb35Tx->Tx2Urb = usb_alloc_urb(0, GFP_ATOMIC);
-> -	if (!pWb35Tx->Tx2Urb)
-> -	{
-> +	if (!pWb35Tx->Tx2Urb) {
->  		usb_free_urb(pWb35Tx->Tx4Urb);
->  		return false;
->  	}
-> @@ -263,7 +262,8 @@ static void Wb35Tx_EP2VM(struct wbsoft_p
->  
->  	/* Issuing URB */
->  	usb_fill_int_urb(pUrb, pHwData->udev, usb_rcvintpipe(pHwData->udev, 2),
-> -			  pltmp, MAX_INTERRUPT_LENGTH, Wb35Tx_EP2VM_complete, adapter, 32);
-> +			 pltmp, MAX_INTERRUPT_LENGTH, Wb35Tx_EP2VM_complete,
-> +			 adapter, 32);
->  
->  	pWb35Tx->EP2vm_state = VM_RUNNING;
->  	retv = usb_submit_urb(pUrb, GFP_ATOMIC);
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git slab-common/slabinfo
+> head:   0521160acc51bc8385807752e69dd38d976aef22
+> commit: 162166afaaa413f42fc655f3a87140b9a08c0a6e [18/21] move print_slabinfo_header to slab_common.c
+> 
+> + mm/slab_common.c:196:6: sparse: symbol 'print_slabinfo_header' was not declared. Should it be static?
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+I fixed that.
+
+> --
+> + mm/slub.c:1713:6: sparse: symbol 'init_kmem_cache_cpus' was not declared. Should it be static?
+> + mm/slub.c:1938:5: sparse: symbol 'put_cpu_partial' was not declared. Should it be static?
+> + mm/slub.c:1068:40: sparse: context imbalance in 'free_debug_processing' - different lock contexts for basic block
+> + mm/slub.c:1856:28: sparse: context imbalance in 'deactivate_slab' - unexpected unlock
+> + mm/slub.c:1885:44: sparse: context imbalance in 'unfreeze_partials' - unexpected unlock
+> + mm/slub.c:2539:31: sparse: context imbalance in '__slab_free' - unexpected unlock
+> 
+
+My patch does not touch those functions at all. (I checked in git blame,
+and they are in the tree for a while now).
+
+If you want to send a patch fixing this upstream, you can add my Acked-by
+
+(I could do that too, but you deserve the credit!)
+
