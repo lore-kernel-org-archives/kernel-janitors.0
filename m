@@ -1,142 +1,58 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 07 Sep 2012 15:26:59 +0000
-Subject: Re: [PATCH] ../linux-next/drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c: fix error return c
-Message-Id: <504A1243.8060409@bfs.de>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 10:20:32 +0000
+Subject: [glommer-memcg:slab-common/kmalloc 28/30] include/linux/slab_def.h:135:27: warning: array subscript
+Message-Id: <20120928102032.GA29995@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347025088-11616-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347025088-11616-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+Hi Christoph,
 
+FYI, there are new compile warnings show up in
 
-Am 07.09.2012 15:38, schrieb Peter Senna Tschudin:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
->=20
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
->=20
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret !=3D 0\))
->  { ... return ret; }
-> |
-> ret@p1 =3D 0
-> )
-> ... when !=3D ret =3D e1
->     when !=3D &ret
-> *if(...)
-> {
->   ... when !=3D ret =3D e2
->       when forall
->  return ret;
-> }
->=20
-> // </smpl>
->=20
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
->=20
-> ---
->  drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c |   15 +++++++++-=
------
->  1 file changed, 9 insertions(+), 6 deletions(-)
->=20
-> diff --git a/../linux-next/drivers/media/pci/cx25821/cx25821-video-upstre=
-am-ch2.c b/drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c
-> index c8c94fb..273df94 100644
-> --- a/../linux-next/drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c
-> +++ b/drivers/media/pci/cx25821/cx25821-video-upstream-ch2.c
-> @@ -704,7 +704,6 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *=
-dev, int channel_select,
->  {
->  	struct sram_channel *sram_ch;
->  	u32 tmp;
-> -	int retval =3D 0;
->  	int err =3D 0;
->  	int data_frame_size =3D 0;
->  	int risc_buffer_size =3D 0;
-> @@ -749,15 +748,19 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev=
- *dev, int channel_select,
->  		dev->_filename_ch2 =3D kmemdup(dev->input_filename_ch2,
->  					     str_length + 1, GFP_KERNEL);
-> =20
-> -		if (!dev->_filename_ch2)
-> +		if (!dev->_filename_ch2) {
-> +			err =3D -ENOENT;
->  			goto error;
-> +		}
->  	} else {
->  		str_length =3D strlen(dev->_defaultname_ch2);
->  		dev->_filename_ch2 =3D kmemdup(dev->_defaultname_ch2,
->  					     str_length + 1, GFP_KERNEL);
-> =20
-> -		if (!dev->_filename_ch2)
-> +		if (!dev->_filename_ch2) {
-> +			err =3D -ENOENT;
->  			goto error;
-> +		}
->  	}
-> =20
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git slab-common/kmalloc
+head:   f957c1ead131972db578b945e25982f4607da6ba
+commit: 55a6b9f968a877c728ed6e438fa68741a7711d89 [28/30] CK1 [12/13] Common names for the array of kmalloc caches
+config: blackfin-BF533-EZKIT_defconfig
 
-This should be done properly:
+All warnings:
 
-if (dev->input_filename_ch2)
-	str=DEv->input_filename_ch2;
-else
-	str=DEv->_defaultname_ch2;
+In file included from include/linux/slab.h:314:0,
+                 from include/linux/proc_fs.h:4,
+                 from fs/proc/stat.c:6:
+fs/proc/stat.c: In function 'stat_open':
+include/linux/slab_def.h:135:27: warning: array subscript is above array bounds [-Warray-bounds]
 
-dev->_filename_ch2=3Dkstrdup(str,GFP_KERNEL);
-if (!dev->_filename_ch2) {
-			err =3D -ENOENT;
-			goto error;
-		}
+vim +135 include/linux/slab_def.h
 
-hope that helps
-re,
- wh
+36555751 (Eduard - Gabriel Munteanu 2008-08-10  119) 	struct kmem_cache *cachep;
+36555751 (Eduard - Gabriel Munteanu 2008-08-10  120) 	void *ret;
+36555751 (Eduard - Gabriel Munteanu 2008-08-10  121) 
+2e892f43 (Christoph Lameter         2006-12-13  122) 	if (__builtin_constant_p(size)) {
+9e396407 (Christoph Lameter         2012-09-26  123) 		int i;
+6cb8f913 (Christoph Lameter         2007-07-17  124) 
+6cb8f913 (Christoph Lameter         2007-07-17  125) 		if (!size)
+6cb8f913 (Christoph Lameter         2007-07-17  126) 			return ZERO_SIZE_PTR;
+6cb8f913 (Christoph Lameter         2007-07-17  127) 
+9e396407 (Christoph Lameter         2012-09-26  128) 		i = kmalloc_index(size);
+9e396407 (Christoph Lameter         2012-09-26  129) 
+4b51d669 (Christoph Lameter         2007-02-10  130) #ifdef CONFIG_ZONE_DMA
+4b51d669 (Christoph Lameter         2007-02-10  131) 		if (flags & GFP_DMA)
+24e75516 (Christoph Lameter         2012-09-26  132) 			cachep = kmalloc_dma_caches[i];
+36555751 (Eduard - Gabriel Munteanu 2008-08-10  133) 		else
+4b51d669 (Christoph Lameter         2007-02-10  134) #endif
+24e75516 (Christoph Lameter         2012-09-26 @135) 			cachep = kmalloc_caches[i];
+36555751 (Eduard - Gabriel Munteanu 2008-08-10  136) 
+85beb586 (Steven Rostedt            2010-11-24  137) 		ret = kmem_cache_alloc_trace(size, cachep, flags);
+36555751 (Eduard - Gabriel Munteanu 2008-08-10  138) 
+36555751 (Eduard - Gabriel Munteanu 2008-08-10  139) 		return ret;
+2e892f43 (Christoph Lameter         2006-12-13  140) 	}
+2e892f43 (Christoph Lameter         2006-12-13  141) 	return __kmalloc(size, flags);
+2e892f43 (Christoph Lameter         2006-12-13  142) }
+2e892f43 (Christoph Lameter         2006-12-13  143) 
 
-
-
->  	/* Default if filename is empty string */
-> @@ -773,7 +776,7 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *=
-dev, int channel_select,
->  		}
->  	}
-> =20
-> -	retval =3D cx25821_sram_channel_setup_upstream(dev, sram_ch,
-> +	err =3D cx25821_sram_channel_setup_upstream(dev, sram_ch,
->  						dev->_line_size_ch2, 0);
-> =20
->  	/* setup fifo + format */
-> @@ -783,9 +786,9 @@ int cx25821_vidupstream_init_ch2(struct cx25821_dev *=
-dev, int channel_select,
->  	dev->upstream_databuf_size_ch2 =3D data_frame_size * 2;
-> =20
->  	/* Allocating buffers and prepare RISC program */
-> -	retval =3D cx25821_upstream_buffer_prepare_ch2(dev, sram_ch,
-> +	err =3D cx25821_upstream_buffer_prepare_ch2(dev, sram_ch,
->  						dev->_line_size_ch2);
-> -	if (retval < 0) {
-> +	if (err < 0) {
->  		pr_err("%s: Failed to set up Video upstream buffers!\n",
->  		       dev->name);
->  		goto error;
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors=
-" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
->=20
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
