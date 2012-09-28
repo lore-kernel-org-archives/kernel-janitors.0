@@ -1,109 +1,67 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 16:36:11 +0000
-Subject: [PATCH] arch/arm/mach-omap2: Remove unecessary semicolon
-Message-Id: <1347986174-30287-4-git-send-email-peter.senna@gmail.com>
+From: Marcos Souza <marcos.souza.org@gmail.com>
+Date: Fri, 28 Sep 2012 16:48:43 +0000
+Subject: Error when doing build of media modules: WARNING: "snd_tea575x_init" [drivers/media/radio/radio-shar
+Message-Id: <CAH0vN5+eo70t-R_jy7YGrjU8Fpx=yJQNrNgt=hGnCQL0wyp8xQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-Found by http://coccinelle.lip6.fr/
+Just giving a proper subject
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
- arch/arm/mach-omap2/board-flash.c          | 2 +-
- arch/arm/mach-omap2/clkt_clksel.c          | 2 +-
- arch/arm/mach-omap2/mux.c                  | 2 +-
- arch/arm/mach-omap2/omap_hwmod_3xxx_data.c | 6 +++---
- arch/arm/mach-omap2/pm-debug.c             | 2 +-
- 5 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/board-flash.c b/arch/arm/mach-omap2/board-flash.c
-index 53c39d2..d4c5bd5 100644
---- a/arch/arm/mach-omap2/board-flash.c
-+++ b/arch/arm/mach-omap2/board-flash.c
-@@ -218,7 +218,7 @@ void __init board_flash_init(struct flash_partitions partition_info[],
- 			if (onenandcs > GPMC_CS_NUM)
- 				onenandcs = cs;
- 			break;
--		};
-+		}
- 		cs++;
- 	}
- 
-diff --git a/arch/arm/mach-omap2/clkt_clksel.c b/arch/arm/mach-omap2/clkt_clksel.c
-index 04d551b..fdb79c5 100644
---- a/arch/arm/mach-omap2/clkt_clksel.c
-+++ b/arch/arm/mach-omap2/clkt_clksel.c
-@@ -365,7 +365,7 @@ void omap2_init_clksel_parent(struct clk *clk)
- 						 ((clk->parent) ?
- 						  clk->parent->name : "NULL"));
- 					clk_reparent(clk, clks->parent);
--				};
-+				}
- 				found = 1;
- 			}
- 		}
-diff --git a/arch/arm/mach-omap2/mux.c b/arch/arm/mach-omap2/mux.c
-index 9fe6829..701e17c 100644
---- a/arch/arm/mach-omap2/mux.c
-+++ b/arch/arm/mach-omap2/mux.c
-@@ -486,7 +486,7 @@ void omap_hwmod_mux(struct omap_hwmod_mux_info *hmux, u8 state)
- 		default:
- 			/* Nothing to be done */
- 			break;
--		};
-+		}
- 
- 		if (val >= 0) {
- 			omap_mux_write(pad->partition, val,
-diff --git a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-index ce7e606..5b91454 100644
---- a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-@@ -3459,7 +3459,7 @@ int __init omap3xxx_hwmod_init(void)
- 	} else {
- 		WARN(1, "OMAP3 hwmod family init: unknown chip type\n");
- 		return -EINVAL;
--	};
-+	}
- 
- 	r = omap_hwmod_register_links(h);
- 	if (r < 0)
-@@ -3476,7 +3476,7 @@ int __init omap3xxx_hwmod_init(void)
- 		   rev = OMAP3430_REV_ES3_0 || rev = OMAP3430_REV_ES3_1 ||
- 		   rev = OMAP3430_REV_ES3_1_2) {
- 		h = omap3430es2plus_hwmod_ocp_ifs;
--	};
-+	}
- 
- 	if (h) {
- 		r = omap_hwmod_register_links(h);
-@@ -3491,7 +3491,7 @@ int __init omap3xxx_hwmod_init(void)
- 	} else if (rev = OMAP3430_REV_ES3_0 || rev = OMAP3430_REV_ES3_1 ||
- 		   rev = OMAP3430_REV_ES3_1_2) {
- 		h = omap3430_es3plus_hwmod_ocp_ifs;
--	};
-+	}
- 
- 	if (h)
- 		r = omap_hwmod_register_links(h);
-diff --git a/arch/arm/mach-omap2/pm-debug.c b/arch/arm/mach-omap2/pm-debug.c
-index 814bcd9..b5acc75 100644
---- a/arch/arm/mach-omap2/pm-debug.c
-+++ b/arch/arm/mach-omap2/pm-debug.c
-@@ -169,7 +169,7 @@ static int pm_dbg_open(struct inode *inode, struct file *file)
- 	default:
- 		return single_open(file, pm_dbg_show_timers,
- 			&inode->i_private);
--	};
-+	}
- }
- 
- static const struct file_operations debug_fops = {
--- 
-1.7.11.4
+---------- Forwarded message ----------
+From: Marcos Souza <marcos.souza.org@gmail.com>
+Date: 2012/9/28
+Subject: Build
+To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
+
+Hi media guys,
+
+After try to build the media drivers with some radios enabled, I got this e=
+rror:
+
+marcos@tux:/mnt/dados/gitroot/linux$ make M=3Ddrivers/media
+  Building modules, stage 2.
+  MODPOST 21 modules
+WARNING: "snd_tea575x_init" [drivers/media/radio/radio-shark.ko] undefined!
+WARNING: "snd_tea575x_exit" [drivers/media/radio/radio-shark.ko] undefined!
+WARNING: "snd_tea575x_init" [drivers/media/radio/radio-maxiradio.ko] undefi=
+ned!
+WARNING: "snd_tea575x_exit" [drivers/media/radio/radio-maxiradio.ko] undefi=
+ned!
+
+I saw that there is a EXPORT_SYMBOL of these functions in the file
+sound/i2c/other/tea575x-tuner.c
+
+But, I don't know how to find this...
+
+Can someone show me how can I fix this?
+
+Thanks since now!
+
+--
+Att,
+
+Marcos Paulo de Souza
+Acad=EAmico de Ciencia da Computa=E7=E3o - FURB - SC
+Github: https://github.com/marcosps/
+"Uma vida sem desafios =E9 uma vida sem raz=E3o"
+"A life without challenges, is a non reason life"
+
+
+--=20
+Att,
+
+Marcos Paulo de Souza
+Acad=EAmico de Ciencia da Computa=E7=E3o - FURB - SC
+Github: https://github.com/marcosps/
+"Uma vida sem desafios =E9 uma vida sem raz=E3o"
+"A life without challenges, is a non reason life"
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
