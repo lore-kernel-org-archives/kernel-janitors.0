@@ -1,70 +1,45 @@
-From: Avi Kivity <avi@redhat.com>
-Date: Wed, 12 Sep 2012 07:37:56 +0000
-Subject: Re: [kvm:next 1/1] arch/x86/kvm/emulate.c:232 writeback_registers() error: buffer overflow 'ctxt->_r
-Message-Id: <50503BD4.7090604@redhat.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Sep 2012 06:07:19 +0000
+Subject: [ext4:dev 47/50] fs/ext4/indirect.c:1799 ext4_ind_punch_hole() warn: inconsistent returns mutex:&ino
+Message-Id: <20120928060719.GA15218@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120911143136.GA5736@localhost> <5050247E.3070905@redhat.com> <20120912060710.GA24997@localhost>
-In-Reply-To: <20120912060710.GA24997@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Amos Kong <akong@redhat.com>, kernel-janitors@vger.kernel.org, kvm@vger.kernel.org
+To: Zheng Liu <wenqing.lz@taobao.com>
+Cc: kernel-janitors@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org
 
-On 09/12/2012 09:07 AM, Fengguang Wu wrote:
-> On Wed, Sep 12, 2012 at 01:58:22PM +0800, Amos Kong wrote:
->> On 11/09/12 22:31, Fengguang Wu wrote:
->> >Hi Avi,
->> >
->> >In the kvm/next branch, sparse warns about
->> >
->> >arch/x86/kvm/emulate.c:232 writeback_registers() error: buffer overflow 'ctxt->_regs' 9 <= 15
->> >
->> >This is because the array definition is ctxt._regs[NR_VCPU_REGS] where
->> >NR_VCPU_REGS=9 for i386 and 17 for x86_64.
->> >
->> >It could be fixed by changing the hard coded 16 to (NR_VCPU_REGS-1).
->> 
->> Hi Fengguang,
->> 
->> You replaced 16 to NR_VCPU_REGS in your patch, not (NR_VCPU_REGS-1).
->> I guess it's a mistake in your commitlog, right?
-> 
-> 16 = (NR_VCPU_REGS-1). So I mean, if replacing 16 with (NR_VCPU_REGS-1),
-> there will be no behavior change for the x86_64 case. However I
-> *suspect* the right value is (NR_VCPU_REGS), as I said in the below
-> sentence.
-> 
->> >And I wonder whether you actually want NR_VCPU_REGS here?
-> 
-> For your convenience, here is the relevant code for NR_VCPU_REGS:
-> 
->         enum kvm_reg {
->                 VCPU_REGS_RAX = 0,
->                 VCPU_REGS_RCX = 1,
->                 VCPU_REGS_RDX = 2,
->                 VCPU_REGS_RBX = 3,
->                 VCPU_REGS_RSP = 4,
->                 VCPU_REGS_RBP = 5,
->                 VCPU_REGS_RSI = 6,
->                 VCPU_REGS_RDI = 7,
->         #ifdef CONFIG_X86_64
->                 VCPU_REGS_R8 = 8,
->                 VCPU_REGS_R9 = 9,
->                 VCPU_REGS_R10 = 10,
->                 VCPU_REGS_R11 = 11,
->                 VCPU_REGS_R12 = 12,
->                 VCPU_REGS_R13 = 13,
->                 VCPU_REGS_R14 = 14,
->                 VCPU_REGS_R15 = 15,
->         #endif 
->                 VCPU_REGS_RIP,
-> =>             NR_VCPU_REGS
->         };
+Hi Zheng,
 
-The right value is NR-1, since the loop excludes RIP.
+FYI, there are new smatch warnings show up in
 
-Note the warning does not point to an actual error, since the high bits
-of regs_dirty will be clear on i386.
--- 
-error compiling committee.c: too many arguments to function
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+head:   b2f1a8e5612e2488a3995ec06b422b44651d088b
+commit: 3e1b02687146ddefa8e53c2a5e13d3bd87b16b09 [47/50] ext4: add support for hole punching non-extent-mapped files
+
++ fs/ext4/indirect.c:1799 ext4_ind_punch_hole() warn: inconsistent returns mutex:&inode->i_mutex: locked (1710) unlocked (1799)
+
+vim +1799 fs/ext4/indirect.c
+
+3e1b0268 (Zheng Liu      2012-09-28  1783) 	down_write(&EXT4_I(inode)->i_data_sem);
+3e1b0268 (Zheng Liu      2012-09-28  1784) 	ext4_discard_preallocations(inode);
+3e1b0268 (Zheng Liu      2012-09-28  1785) 
+3e1b0268 (Zheng Liu      2012-09-28  1786) 	err = ext4_free_hole_blocks(handle, inode, offsets1, n1, offsets2, n2);
+3e1b0268 (Zheng Liu      2012-09-28  1787) 
+3e1b0268 (Zheng Liu      2012-09-28  1788) 	if (IS_SYNC(inode))
+3e1b0268 (Zheng Liu      2012-09-28  1789) 		ext4_handle_sync(handle);
+3e1b0268 (Zheng Liu      2012-09-28  1790) 
+3e1b0268 (Zheng Liu      2012-09-28  1791) 	up_write(&EXT4_I(inode)->i_data_sem);
+3e1b0268 (Zheng Liu      2012-09-28  1792) 
+3e1b0268 (Zheng Liu      2012-09-28  1793) out:
+3e1b0268 (Zheng Liu      2012-09-28  1794) 	inode->i_mtime = inode->i_ctime = ext4_current_time(inode);
+3e1b0268 (Zheng Liu      2012-09-28  1795) 	ext4_mark_inode_dirty(handle, inode);
+3e1b0268 (Zheng Liu      2012-09-28  1796) 	ext4_journal_stop(handle);
+3e1b0268 (Zheng Liu      2012-09-28  1797) error:
+3e1b0268 (Zheng Liu      2012-09-28  1798) 	mutex_unlock(&inode->i_mutex);
+3e1b0268 (Zheng Liu      2012-09-28 @1799) 	return err;
+3e1b0268 (Zheng Liu      2012-09-28  1800) }
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
