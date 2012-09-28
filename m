@@ -1,52 +1,31 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 28 Sep 2012 10:15:01 +0000
-Subject: [glommer-memcg:slab-common/kmalloc 19/30] mm/slab_common.c:206:6: warning: format '%ld' expects argu
-Message-Id: <20120928101501.GA29691@localhost>
+From: Christoph Lameter <cl@linux.com>
+Date: Fri, 28 Sep 2012 17:25:39 +0000
+Subject: Re: [glommer-memcg:slab-common/kmalloc 19/30] mm/slab_common.c:206:6: warning: format '%ld' expects
+Message-Id: <0000013a0de98901-6a46f645-edb7-4312-b4b8-e8fa5a4bd6f8-000000@email.amazonses.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20120928101501.GA29691@localhost>
+In-Reply-To: <20120928101501.GA29691@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Christoph,
+On Fri, 28 Sep 2012, Fengguang Wu wrote:
 
-FYI, there are new compile warnings show up in
+> mm/slab_common.c: In function 'create_boot_cache':
+> mm/slab_common.c:206:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' [-Wformat]
 
-e32adae5 CK1 [02/13] create common functions for boot slab creation
+The following fix will be applied to the next release of the patchset:
 
-All warnings:
+Index: linux/mm/slab_common.c
+=================================--- linux.orig/mm/slab_common.c	2012-09-28 12:25:00.614139749 -0500
++++ linux/mm/slab_common.c	2012-09-28 12:24:53.153984094 -0500
+@@ -203,7 +203,7 @@ void __init create_boot_cache(struct kme
+ 	err = __kmem_cache_create(s, flags);
 
-mm/slab_common.c: In function 'create_boot_cache':
-mm/slab_common.c:206:6: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' [-Wformat]
+ 	if (err)
+-		panic("Creation of kmalloc slab %s size=%ld failed. Reason %d\n",
++		panic("Creation of kmalloc slab %s size=%td failed. Reason %d\n",
+ 					name, size, err);
 
-vim +206 mm/slab_common.c
-
-97d06609 (Christoph Lameter 2012-07-06  190) 	return slab_state >= UP;
-97d06609 (Christoph Lameter 2012-07-06  191) }
-e32adae5 (Christoph Lameter 2012-09-26  192) 
-e32adae5 (Christoph Lameter 2012-09-26  193) /* Create a cache during boot when no slab services are available yet */
-e32adae5 (Christoph Lameter 2012-09-26  194) void __init create_boot_cache(struct kmem_cache *s, const char *name, size_t size,
-e32adae5 (Christoph Lameter 2012-09-26  195) 		unsigned long flags)
-e32adae5 (Christoph Lameter 2012-09-26  196) {
-e32adae5 (Christoph Lameter 2012-09-26  197) 	int err;
-e32adae5 (Christoph Lameter 2012-09-26  198) 
-e32adae5 (Christoph Lameter 2012-09-26  199) 	s->name = name;
-e32adae5 (Christoph Lameter 2012-09-26  200) 	s->size = s->object_size = size;
-e32adae5 (Christoph Lameter 2012-09-26  201) 	s->align = ARCH_KMALLOC_MINALIGN;
-e32adae5 (Christoph Lameter 2012-09-26  202) 	err = __kmem_cache_create(s, flags);
-e32adae5 (Christoph Lameter 2012-09-26  203) 
-e32adae5 (Christoph Lameter 2012-09-26  204) 	if (err)
-e32adae5 (Christoph Lameter 2012-09-26  205) 		panic("Creation of kmalloc slab %s size=%ld failed. Reason %d\n",
-e32adae5 (Christoph Lameter 2012-09-26 @206) 					name, size, err);
-e32adae5 (Christoph Lameter 2012-09-26  207) 
-e32adae5 (Christoph Lameter 2012-09-26  208) 	list_add(&s->list, &slab_caches);
-e32adae5 (Christoph Lameter 2012-09-26  209) 	s->refcount = -1;	/* Exempt from merging for now */
-e32adae5 (Christoph Lameter 2012-09-26  210) }
-e32adae5 (Christoph Lameter 2012-09-26  211) 
-e32adae5 (Christoph Lameter 2012-09-26  212) struct kmem_cache *__init create_kmalloc_cache(const char *name, size_t size,
-e32adae5 (Christoph Lameter 2012-09-26  213) 				unsigned long flags)
-e32adae5 (Christoph Lameter 2012-09-26  214) {
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ 	list_add(&s->list, &slab_caches);
