@@ -1,37 +1,48 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 12 Sep 2012 17:03:20 +0000
-Subject: [PATCH 13/15] drivers/usb/misc/rio500.c: removes unnecessary semicolon
-Message-Id: <1347469402-27557-13-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 29 Sep 2012 01:12:10 +0000
+Subject: [wireless-next:for-davem 123/299] net/ipv4/ip_gre.c:222:29: sparse: restricted __be16 degrades to in
+Message-Id: <20120929011210.GA10053@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cesar Miquel <miquel@df.uba.ar>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rio500-users@lists.sourceforge.net, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: stephen hemminger <shemminger@vyatta.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi stephen,
 
-removes unnecessary semicolon
+FYI, there are new sparse warnings show up in
 
-Found by Coccinelle: http://coccinelle.lip6.fr/
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next.git for-davem
+head:   c487606f835a93a725bac1aefd536be98f22474d
+commit: d208328765a0ab425e36b5b828285f3337a85451 [123/299] gre: fix handling of key 0
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
++ net/ipv4/ip_gre.c:222:29: sparse: restricted __be16 degrades to integer
+  net/ipv4/ip_gre.c:227:34: sparse: restricted __be16 degrades to integer
++ net/ipv4/ip_gre.c:562:33: sparse: incorrect type in argument 4 (different base types)
+  net/ipv4/ip_gre.c:562:33:    expected unsigned int [unsigned] [usertype] flags
+  net/ipv4/ip_gre.c:562:33:    got restricted __be16 [assigned] [usertype] flags
+  net/ipv4/ip_gre.c:669:62: sparse: incorrect type in argument 4 (different base types)
+  net/ipv4/ip_gre.c:669:62:    expected unsigned int [unsigned] [usertype] flags
+  net/ipv4/ip_gre.c:669:62:    got restricted __be16 [assigned] [usertype] flags
+
+vim +222 net/ipv4/ip_gre.c
+
+d2083287 (stephen hemminger 2012-09-24  217) /* Does key in tunnel parameters match packet */
+d2083287 (stephen hemminger 2012-09-24  218) static bool ipgre_key_match(const struct ip_tunnel_parm *p,
+d2083287 (stephen hemminger 2012-09-24  219) 			    __u32 flags, __be32 key)
+d2083287 (stephen hemminger 2012-09-24  220) {
+d2083287 (stephen hemminger 2012-09-24  221) 	if (p->i_flags & GRE_KEY) {
+d2083287 (stephen hemminger 2012-09-24 @222) 		if (flags & GRE_KEY)
+d2083287 (stephen hemminger 2012-09-24  223) 			return key = p->i_key;
+d2083287 (stephen hemminger 2012-09-24  224) 		else
+d2083287 (stephen hemminger 2012-09-24  225) 			return false;	/* key expected, none present */
+d2083287 (stephen hemminger 2012-09-24  226) 	} else
+d2083287 (stephen hemminger 2012-09-24  227) 		return !(flags & GRE_KEY);
+d2083287 (stephen hemminger 2012-09-24  228) }
+d2083287 (stephen hemminger 2012-09-24  229) 
+^1da177e (Linus Torvalds    2005-04-16  230) /* Given src, dst and key, find appropriate for input tunnel. */
 
 ---
- drivers/usb/misc/rio500.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/misc/rio500.c b/drivers/usb/misc/rio500.c
-index 1084124..b9b356a 100644
---- a/drivers/usb/misc/rio500.c
-+++ b/drivers/usb/misc/rio500.c
-@@ -338,7 +338,7 @@ write_rio(struct file *file, const char __user *buffer,
- 				thistime -= partial;
- 			} else
- 				break;
--		};
-+		}
- 		if (result) {
- 			dev_err(&rio->rio_dev->dev, "Write Whoops - %x\n",
- 				result);
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
