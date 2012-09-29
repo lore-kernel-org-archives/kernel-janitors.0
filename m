@@ -1,33 +1,33 @@
-From: Sean Young <sean@mess.org>
-Date: Thu, 27 Sep 2012 08:58:20 +0000
-Subject: Re: drivers/media/rc/iguanair.c:276 iguanair_receiver() error: doing dma on the stack ((null))
-Message-Id: <20120927085820.GA26543@pequod.mess.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 29 Sep 2012 07:13:46 +0000
+Subject: [patch] power: battery: pointer math issue in gab_probe()
+Message-Id: <20120929071346.GE10993@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120926170104.GC25467@localhost>
-In-Reply-To: <20120926170104.GC25467@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Anton Vorontsov <cbou@mail.ru>, anish kumar <anish198519851985@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Fenguang,
+psy->properties is an enum (32 bit type) so adding sizeof() puts us
+four times further along than we intended.  It should be cast to a char
+pointer before doing the math.
 
-On Thu, Sep 27, 2012 at 01:01:04AM +0800, Fengguang Wu wrote:
-> Hi Sean,
-> 
-> FYI, there are new smatch warnings show up in
-> 
-> tree:   git://git.infradead.org/users/kmpark/linux-samsung commit-list
-> commit: 26ff63137c45886169ed102bddd6e90d6c27f00d [media] Add support for the IguanaWorks USB IR Transceiver
-> 
->   drivers/media/rc/iguanair.c:211 iguanair_get_features() error: doing dma on the stack ((null))
->   drivers/media/rc/iguanair.c:230 iguanair_get_features() error: doing dma on the stack ((null))
->   drivers/media/rc/iguanair.c:249 iguanair_get_features() error: doing dma on the stack ((null))
-> + drivers/media/rc/iguanair.c:276 iguanair_receiver() error: doing dma on the stack ((null))
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Casting to void * would also work on GCC, at least.
 
-Ah, that is wrong indeed. Thanks for letting me know! 
-
-I'm working on patch for this for v3.7.
-
-
-Sean
+diff --git a/drivers/power/generic-adc-battery.c b/drivers/power/generic-adc-battery.c
+index 9bdf444..776f118 100644
+--- a/drivers/power/generic-adc-battery.c
++++ b/drivers/power/generic-adc-battery.c
+@@ -279,7 +279,8 @@ static int __devinit gab_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	memcpy(psy->properties, gab_props, sizeof(gab_props));
+-	properties = psy->properties + sizeof(gab_props);
++	properties = (enum power_supply_property *)
++				((char *)psy->properties + sizeof(gab_props));
+ 
+ 	/*
+ 	 * getting channel from iio and copying the battery properties
