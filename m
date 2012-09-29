@@ -1,62 +1,30 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 18 Sep 2012 12:07:57 +0000
-Subject: [PATCH 07/10] drivers/video/bw2.c: fix error return code
-Message-Id: <1347970080-25175-7-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 29 Sep 2012 11:35:27 +0000
+Subject: [calxeda:ubuntu-quantal 99/299] make[4]: *** No rule to make target `ubuntu/include/linux/aufs_type.
+Message-Id: <20120929113527.GB8674@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1347970080-25175-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: FlorianSchandinat@gmx.de
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Andy,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+FYI, kernel build failed on
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://sources.calxeda.com/kernel/linux.git ubuntu-quantal
+head:   c07f1571f9b6e609109d50bd6ba2b2547e873614
+commit: 41f493c5f0028c3268a9c92916305e0cf48048c9 [99/299] UBUNTU: ubuntu: AUFS -- include the aufs_types.h file in linux-libc-headers
+config: x86_64-allmodconfig
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+These errors are then fixed by some later commit and only hurts bisectability.
+If you don't care about bisectability of your tree, please let me know. Thanks!
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+All error/warnings:
+
+make[4]: *** No rule to make target `ubuntu/include/linux/aufs_type.h', needed by `usr/include/linux/.install'.
+make[4]: Target `__headersinst' not remade because of errors.
+
 ---
- drivers/video/bw2.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/video/bw2.c b/drivers/video/bw2.c
-index 7ba74cd..6bea9a9 100644
---- a/drivers/video/bw2.c
-+++ b/drivers/video/bw2.c
-@@ -319,8 +319,10 @@ static int __devinit bw2_probe(struct platform_device *op)
- 
- 	info->screen_base = of_ioremap(&op->resource[0], 0,
- 				       info->fix.smem_len, "bw2 ram");
--	if (!info->screen_base)
-+	if (!info->screen_base) {
-+		err = -ENOMEM;
- 		goto out_unmap_regs;
-+	}
- 
- 	bw2_blank(FB_BLANK_UNBLANK, info);
- 
--- 
-1.7.11.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
