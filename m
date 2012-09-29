@@ -1,42 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Sep 2012 07:33:07 +0000
-Subject: [PATCH 1/3] include/linux/i2c.h: introduce macros for i2c_msg initialization
-Message-Id: <1348990388-7413-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 29 Sep 2012 01:36:44 +0000
+Subject: [kees:module-fd-syscall 1/4] #warning syscall finit_module not implemented
+Message-Id: <20120929013644.GB11675@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Kees,
 
-This patch introduces some macros for describing how an i2c_msg is being
-initialized.  There are three macros: I2C_MSG_READ, for a read message,
-I2C_MSG_WRITE, for a write message, and I2C_MSG_OP, for some other kind of
-message, which is expected to be very rarely used.
+FYI, there are new compile warnings show up in
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git module-fd-syscall
+head:   fddb953b5898441d3a26d8912ac9d06489f4c1dc
+commit: 1c0ef4c3ea38a42c9e326b1eb520bd8e58b48797 [1/4] module: add syscall to load module from fd
+config: cris-allyesconfig
+
+All warnings:
+
+<stdin>:1178:2: warning: #warning syscall rt_tgsigqueueinfo not implemented [-Wcpp]
+<stdin>:1181:2: warning: #warning syscall perf_event_open not implemented [-Wcpp]
+<stdin>:1184:2: warning: #warning syscall recvmmsg not implemented [-Wcpp]
+<stdin>:1187:2: warning: #warning syscall fanotify_init not implemented [-Wcpp]
+<stdin>:1190:2: warning: #warning syscall fanotify_mark not implemented [-Wcpp]
+<stdin>:1193:2: warning: #warning syscall prlimit64 not implemented [-Wcpp]
+<stdin>:1196:2: warning: #warning syscall name_to_handle_at not implemented [-Wcpp]
+<stdin>:1199:2: warning: #warning syscall open_by_handle_at not implemented [-Wcpp]
+<stdin>:1202:2: warning: #warning syscall clock_adjtime not implemented [-Wcpp]
+<stdin>:1205:2: warning: #warning syscall syncfs not implemented [-Wcpp]
+<stdin>:1208:2: warning: #warning syscall sendmmsg not implemented [-Wcpp]
+<stdin>:1214:2: warning: #warning syscall process_vm_readv not implemented [-Wcpp]
+<stdin>:1217:2: warning: #warning syscall process_vm_writev not implemented [-Wcpp]
+<stdin>:1220:2: warning: #warning syscall kcmp not implemented [-Wcpp]
+<stdin>:1223:2: warning: #warning syscall finit_module not implemented [-Wcpp]
 
 ---
- include/linux/i2c.h |    7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 5970266..0990071 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -556,6 +556,13 @@ struct i2c_msg {
- 	__u8 *buf;		/* pointer to msg data			*/
- };
- 
-+#define I2C_MSG_OP(_addr, _buf, _len, _flags) \
-+	{ .addr = _addr, .buf = _buf, .len = _len, .flags = _flags }
-+
-+#define I2C_MSG_WRITE(addr, buf, len) I2C_MSG_OP(addr, buf, len, 0)
-+#define I2C_MSG_READ(addr, buf, len)  I2C_MSG_OP(addr, buf, len, I2C_M_RD)
-+
-+
- /* To determine what functionality is present */
- 
- #define I2C_FUNC_I2C			0x00000001
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
