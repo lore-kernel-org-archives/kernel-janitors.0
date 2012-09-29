@@ -1,56 +1,63 @@
-From: Yuanhan Liu <yuanhan.liu@intel.com>
-Date: Sat, 29 Sep 2012 01:20:55 +0000
-Subject: [wireless-testing:master 229/238] drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:4185:2: warn
-Message-Id: <20120929012055.GF29576@yliu-dev.sh.intel.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 29 Sep 2012 01:32:59 +0000
+Subject: [wireless-testing:master 229/238] drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:2724:21: spa
+Message-Id: <20120929013259.GA11675@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="1yeeQ81UyVL57Vl7"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20120929012055.GF29576@yliu-dev.sh.intel.com>
+In-Reply-To: <20120929012055.GF29576@yliu-dev.sh.intel.com>
 To: Hante Meuleman <meuleman@broadcom.com>
-Cc: wfg@linux.intel.com, Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Arend van Spriel <arend@broadcom.com>, linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Arend van Spriel <arend@broadcom.com>, linux-wireless@vger.kernel.org
+
+
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 Hi Hante,
 
-FYI, there are new compile warnings show up in
+FYI, there are new sparse warnings show up in
 
 tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git master
 head:   96df9f3dca2428ac1e0b46d378b6f68ff64db67b
 commit: 1a87334239757b69eb9885979c32bbf871b3ec88 [229/238] brcmfmac: add hostap supoort.
-config: powerpc-allmodconfig
 
-All warnings:
++ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:2724:21: sparse: symbol 'brcmf_find_wpaie' was not declared. Should it be static?
++ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:4022:28: sparse: Using plain integer as NULL pointer
++ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:4013:1: sparse: symbol 'brcmf_set_management_ie' was not declared. Should it be static?
 
-drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c: In function 'brcmf_cfg80211_start_ap':
-drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c:4185:2: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat]
-
-vim +4185 drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-
-1a873342 (Hante Meuleman 2012-09-27  4169) 			struct cfg80211_ap_settings *settings)
-1a873342 (Hante Meuleman 2012-09-27  4170) {
-1a873342 (Hante Meuleman 2012-09-27  4171) 	s32 ie_offset;
-1a873342 (Hante Meuleman 2012-09-27  4172) 	struct brcmf_tlv *ssid_ie;
-1a873342 (Hante Meuleman 2012-09-27  4173) 	struct brcmf_ssid_le ssid_le;
-1a873342 (Hante Meuleman 2012-09-27  4174) 	s32 ioctl_value;
-1a873342 (Hante Meuleman 2012-09-27  4175) 	s32 err = -EPERM;
-1a873342 (Hante Meuleman 2012-09-27  4176) 	struct brcmf_tlv *rsn_ie;
-1a873342 (Hante Meuleman 2012-09-27  4177) 	struct brcmf_vs_tlv *wpa_ie;
-1a873342 (Hante Meuleman 2012-09-27  4178) 	struct brcmf_join_params join_params;
-1a873342 (Hante Meuleman 2012-09-27  4179) 	struct brcmf_cfg80211_priv *cfg_priv = wiphy_to_cfg(wiphy);
-1a873342 (Hante Meuleman 2012-09-27  4180) 	s32 bssidx = 0;
-1a873342 (Hante Meuleman 2012-09-27  4181) 
-1a873342 (Hante Meuleman 2012-09-27  4182) 	WL_TRACE("channel_type=%d, beacon_interval=%d, dtim_period=%d,\n",
-1a873342 (Hante Meuleman 2012-09-27  4183) 		 settings->channel_type, settings->beacon_interval,
-1a873342 (Hante Meuleman 2012-09-27  4184) 		 settings->dtim_period);
-1a873342 (Hante Meuleman 2012-09-27 @4185) 	WL_TRACE("ssid=%s(%d), auth_type=%d, inactivity_timeout=%d\n",
-1a873342 (Hante Meuleman 2012-09-27  4186) 		 settings->ssid, settings->ssid_len, settings->auth_type,
-1a873342 (Hante Meuleman 2012-09-27  4187) 		 settings->inactivity_timeout);
-1a873342 (Hante Meuleman 2012-09-27  4188) 
-1a873342 (Hante Meuleman 2012-09-27  4189) 	if (!test_bit(WL_STATUS_AP_CREATING, &cfg_priv->status)) {
-1a873342 (Hante Meuleman 2012-09-27  4190) 		WL_ERR("Not in AP creation mode\n");
-1a873342 (Hante Meuleman 2012-09-27  4191) 		return -EPERM;
-1a873342 (Hante Meuleman 2012-09-27  4192) 	}
-1a873342 (Hante Meuleman 2012-09-27  4193) 
+Please consider folding the attached diff :-)
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
 Fengguang Wu, Yuanhan Liu                              Intel Corporation
+
+--1yeeQ81UyVL57Vl7
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="make-it-static-1a87334.diff"
+
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+index 0ecd0df..b42ccb1 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+@@ -2721,7 +2721,7 @@ brcmf_tlv_has_ie(u8 *ie, u8 **tlvs, u32 *tlvs_len,
+ 	return false;
+ }
+ 
+-struct brcmf_vs_tlv *
++static struct brcmf_vs_tlv *
+ brcmf_find_wpaie(u8 *parse, u32 len)
+ {
+ 	struct brcmf_tlv *ie;
+@@ -4009,7 +4009,7 @@ brcmf_vndr_ie(u8 *iebuf, s32 pktflag, u8 *ie_ptr, u32 ie_len, s8 *add_del_cmd)
+ 	return ie_len + VNDR_IE_HDR_SIZE;
+ }
+ 
+-s32
++static s32
+ brcmf_set_management_ie(struct brcmf_cfg80211_priv *cfg_priv,
+ 			struct net_device *ndev, s32 bssidx, s32 pktflag,
+ 			u8 *vndr_ie_buf, u32 vndr_ie_len)
+
+--1yeeQ81UyVL57Vl7--
