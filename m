@@ -1,34 +1,30 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Sun, 09 Sep 2012 02:31:45 +0000
-Subject: Re: [signal:master 62/63] arch/m68k/kernel/entry.S:115: Error: operands mismatch -- statement `movem
-Message-Id: <20120909023145.GL13973@ZenIV.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 29 Sep 2012 07:11:04 +0000
+Subject: [patch 1/2] memstick: use after free in msb_disk_release()
+Message-Id: <20120929071104.GB10993@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120908135733.GA25549@localhost>
-In-Reply-To: <20120908135733.GA25549@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Maxim Levitsky <maximlevitsky@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
 
-On Sun, Sep 09, 2012 at 12:28:17AM +0800, Fengguang Wu wrote:
-> > On which toolchain?  It had been a valid instruction on all m68k, starting with
-> > 68000.  Is that as(1) insisting on %sp@+ form instead of (%sp)+?  But we have
-> > both kinds used in arch/m68k, so if some toolchain version barfs on that, it's
-> > probably rather unhappy elsewhere...
+The original code dereferenced "msb" after freeing it.
 
-Hrrrm....  Looks like it's an effect of weird addressing modes being
-somewhat trimmed down on coldfire...  So these lines should become
-something like
-        moveml  4(%sp), %d1-%d2 
-        moveq   #PT_SIZEOF,%d3
-        moveml  %d1-%d3,(%sp)   | we are not returning anyway...
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-With that it still works on aranym and AFAICS those forms should be acceptable
-on anything, including all coldfire variants...  As far as I can see, all
-places using increment/decrement forms of movem (essentially, bulk push/pop
-on arbitrary set of registers) are in the code that never gets touched on
-coldfire and non-MMU builds; the only potential exception is non-assembler
-variant of SAVE_ALL_INT (#define SAVE_ALL_INT .... in asm/entry.h), but that
-macro is never actually used anywhere in C code.
-
-OK, folded and pushed.  Should be on git.kernel.org shortly...
+diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+index c815fe5..a8e8915 100644
+--- a/drivers/memstick/core/ms_block.c
++++ b/drivers/memstick/core/ms_block.c
+@@ -1983,9 +1983,9 @@ static int msb_disk_release(struct gendisk *disk)
+ 			msb->usage_count--;
+ 
+ 		if (!msb->usage_count) {
+-			kfree(msb);
+ 			disk->private_data = NULL;
+ 			idr_remove(&msb_disk_idr, msb->disk_id);
++			kfree(msb);
+ 			put_disk(disk);
+ 		}
+ 	}
