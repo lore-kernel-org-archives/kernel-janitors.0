@@ -1,36 +1,345 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 05 Sep 2012 22:39:12 +0000
-Subject: Re: [alsa-devel] [asoc:for-3.7 95/95] sound/soc/codecs/wm0010.c:850:7-27: ERROR: Threaded IRQ with n
-Message-Id: <20120905223912.GA9599@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Sep 2012 07:33:05 +0000
+Subject: [PATCH 0/3] introduce macros for i2c_msg initialization
+Message-Id: <1348990388-7413-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120830151652.GB11964@localhost>
- <20120905054024.GA16276@sirena.org.uk>
- <20120905055609.GA7463@localhost>
- <20120905120546.GB16276@sirena.org.uk>
- <alpine.DEB.2.02.1209051533070.2122@hadrien>
- <20120905134827.GA8694@localhost>
- <alpine.DEB.2.02.1209051552190.2122@hadrien>
- <20120905140651.GA8947@localhost>
- <alpine.DEB.2.02.1209052200280.1912@hadrien>
- <20120905222048.GB10580@opensource.wolfsonmicro.com>
-In-Reply-To: <20120905222048.GB10580@opensource.wolfsonmicro.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Julia Lawall <julia.lawall@lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 06, 2012 at 06:20:50AM +0800, Mark Brown wrote:
-> On Wed, Sep 05, 2012 at 10:01:12PM +0200, Julia Lawall wrote:
-> 
-> > I'm not sure what could be done better...
-> 
-> The patch itself was fine but it was buried as an attachment to a mail
-> that didn't have anything like a [PATCH] tag or anything so it was very
-> hidden when it turned up in e-mail.
+This patch introduces some macros for describing how an i2c_msg is being
+initialized.  There are three macros: I2C_MSG_READ, for a read message,
+I2C_MSG_WRITE, for a write message, and I2C_MSG_OP, for some other kind of
+message, which is expected to be very rarely used.
 
-Yes, this is a problem. I'll avoid such hidden coccinelle patches in future.
+i2c_msg initializations are updated using the following semantic patch:
 
-Thanks for the reminding!
+// <smpl>
+@r@
+field list[n] ds;
+type T;
+identifier i;
+@@
 
-Fengguang
+struct i2c_msg {
+  ds
+  T i;
+  ...
+};
+
+@@
+initializer list[r.n] is;
+expression a;
+identifier nm;
+identifier r.i;
+@@
+
+struct i2c_msg nm = {
+  is,
+- a
++  .i = a
+  ,...
+};
+
+@@
+initializer list[r.n] is;
+expression a;
+identifier nm;
+identifier r.i;
+@@
+
+struct i2c_msg nm[...] = { ..., {
+  is,
+- a
++  .i = a
+  ,...}, ...};
+
+@@
+initializer list[r.n] is;
+expression a;
+identifier nm;
+identifier r.i;
+@@
+
+struct i2c_msg nm[] = { ..., {
+  is,
+- a
++  .i = a
+  ,...}, ...};
+
+// --------------------------------------------------------------------
+// ensure everyone has all fields, pointer case first
+
+@rt@
+type T;
+identifier i;
+@@
+
+struct i2c_msg {
+  ...
+  T *i;
+  ...
+};
+
+@t1@
+expression e;
+identifier nm,rt.i;
+position p;
+@@
+
+struct i2c_msg nm = {@p
+  .i = e,
+};
+
+@@
+identifier nm,rt.i;
+position p!= t1.p;
+@@
+
+struct i2c_msg nm = {@p
++ .i = NULL,
+  ...
+};
+
+@t2@
+expression e;
+identifier nm,rt.i;
+position p;
+@@
+
+struct i2c_msg nm[] = { ..., {@p
+  .i = e,
+}, ...};
+
+@@
+identifier nm,rt.i;
+position p!= t2.p;
+@@
+
+struct i2c_msg nm[] = { ..., {@p
++ .i = NULL,
+  ...
+}, ...};
+
+@t3@
+expression e;
+identifier nm,rt.i;
+position p;
+@@
+
+struct i2c_msg nm[...] = { ..., {@p
+  .i = e,
+}, ...};
+
+@@
+identifier nm,rt.i;
+position p!= t3.p;
+@@
+
+struct i2c_msg nm[...] = { ..., {@p
++ .i = NULL,
+  ...
+}, ...};
+
+// ---------------------------------
+
+@f1@
+expression e;
+identifier nm,r.i;
+position p;
+@@
+
+struct i2c_msg nm = {@p
+  .i = e,
+};
+
+@@
+identifier nm,r.i;
+position p!= f1.p;
+@@
+
+struct i2c_msg nm = {@p
++ .i = 0,
+  ...
+};
+
+@f2@
+expression e;
+identifier nm,r.i;
+position p;
+@@
+
+struct i2c_msg nm[] = { ..., {@p
+  .i = e,
+}, ...};
+
+@@
+identifier nm,r.i;
+position p!= f2.p;
+@@
+
+struct i2c_msg nm[] = { ..., {@p
++ .i = 0,
+  ...
+}, ...};
+
+@f3@
+expression e;
+identifier nm,r.i;
+position p;
+@@
+
+struct i2c_msg nm[...] = { ..., {@p
+  .i = e,
+}, ...};
+
+@@
+identifier nm,r.i;
+position p!= f3.p;
+@@
+
+struct i2c_msg nm[...] = { ..., {@p
++ .i = 0,
+  ...
+}, ...};
+
+// --------------------------------------------------------------------
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ;
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ;
+
+// has to come before the next rule, which matcher fewer fields
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x = 
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ;
+
+// --------------------------------------------------------------------
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x[] = {...,
+- {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ,...};
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x[] = {..., 
+- {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ,...};
+
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x[] =  {...,
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ,...};
+
+// --------------------------------------------------------------------
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x[...] =  {...,
+- {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ,...};
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x[...] =  {...,
+- {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ,...};
+
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x[...] = {...,
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ,...};
+
+// --------------------------------------------------------------------
+// got everything?
+
+@check1@
+identifier nm;
+position p;
+@@
+
+struct i2c_msg nm@p = {...};
+
+@script:python@
+p << check1.p;
+@@
+
+cocci.print_main("",p)
+
+@check2@
+identifier nm;
+position p;
+@@
+
+struct i2c_msg nm@p [] = {...,{...},...};
+
+@script:python@
+p << check2.p;
+@@
+
+cocci.print_main("",p)
+
+@check3@
+identifier nm;
+position p;
+@@
+
+struct i2c_msg nm@p [...] = {...,{...},...};
+
+@script:python@
+p << check3.p;
+@@
+
+cocci.print_main("",p)
+// </smpl>
+
+
