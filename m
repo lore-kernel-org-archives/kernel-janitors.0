@@ -1,56 +1,54 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 28 Sep 2012 01:16:24 +0000
-Subject: [bluetooth:master 224/240] net/bluetooth/hci_event.c:886:3: warning: format '%d' expects argument of
-Message-Id: <20120928011624.GB5522@localhost>
+Date: Sun, 30 Sep 2012 09:15:52 +0000
+Subject: [yinghai:for-pci-next 104/106] drivers/acpi/pci_root.c:615:24: warning: unused variable 'root'
+Message-Id: <20120930091552.GA9912@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrei Emeltchenko <andrei.emeltchenko@intel.com>
-Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-bluetooth@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Andrei,
+Hi Yinghai,
 
 FYI, there are new compile warnings show up in
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
-head:   392f44d3e7894f6fe314b85b4a1611b7b1d98226
-commit: 903e45411099ae8292f5ce637ad0c72f6fef61db [224/240] Bluetooth: AMP: Use HCI cmd to Read Loc AMP Assoc
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/yinghai/linux-yinghai.git for-pci-next
+head:   a25307aeaa18db187698191c0e91d8094d487af7
+commit: fe369a44aaa8abb3d439a03c5a69c303ea7d727b [104/106] PCI, ACPI: Move pci_bus_add_devices into acpi_pci_root_add
 config: x86_64-allmodconfig
 
 All warnings:
 
-net/bluetooth/hci_event.c: In function 'hci_cc_read_local_amp_assoc':
-net/bluetooth/hci_event.c:886:3: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat]
-net/bluetooth/hci_event.c:886:3: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat]
+drivers/acpi/pci_root.c: In function 'acpi_pci_root_start':
+drivers/acpi/pci_root.c:615:24: warning: unused variable 'root' [-Wunused-variable]
 
-vim +886 net/bluetooth/hci_event.c
+vim +615 drivers/acpi/pci_root.c
 
-903e4541 (Andrei Emeltchenko 2012-09-27  870) static void hci_cc_read_local_amp_assoc(struct hci_dev *hdev,
-903e4541 (Andrei Emeltchenko 2012-09-27  871) 					struct sk_buff *skb)
-903e4541 (Andrei Emeltchenko 2012-09-27  872) {
-903e4541 (Andrei Emeltchenko 2012-09-27  873) 	struct hci_rp_read_local_amp_assoc *rp = (void *) skb->data;
-903e4541 (Andrei Emeltchenko 2012-09-27  874) 	struct amp_assoc *assoc = &hdev->loc_assoc;
-903e4541 (Andrei Emeltchenko 2012-09-27  875) 	size_t rem_len, frag_len;
-903e4541 (Andrei Emeltchenko 2012-09-27  876) 
-903e4541 (Andrei Emeltchenko 2012-09-27  877) 	BT_DBG("%s status 0x%2.2x", hdev->name, rp->status);
-903e4541 (Andrei Emeltchenko 2012-09-27  878) 
-903e4541 (Andrei Emeltchenko 2012-09-27  879) 	if (rp->status)
-903e4541 (Andrei Emeltchenko 2012-09-27  880) 		goto a2mp_rsp;
-903e4541 (Andrei Emeltchenko 2012-09-27  881) 
-903e4541 (Andrei Emeltchenko 2012-09-27  882) 	frag_len = skb->len - sizeof(*rp);
-903e4541 (Andrei Emeltchenko 2012-09-27  883) 	rem_len = __le16_to_cpu(rp->rem_len);
-903e4541 (Andrei Emeltchenko 2012-09-27  884) 
-903e4541 (Andrei Emeltchenko 2012-09-27  885) 	if (rem_len > frag_len) {
-903e4541 (Andrei Emeltchenko 2012-09-27 @886) 		BT_DBG("frag_len %d rem_len %d", frag_len, rem_len);
-903e4541 (Andrei Emeltchenko 2012-09-27  887) 
-903e4541 (Andrei Emeltchenko 2012-09-27  888) 		memcpy(assoc->data + assoc->offset, rp->frag, frag_len);
-903e4541 (Andrei Emeltchenko 2012-09-27  889) 		assoc->offset += frag_len;
-903e4541 (Andrei Emeltchenko 2012-09-27  890) 
-903e4541 (Andrei Emeltchenko 2012-09-27  891) 		/* Read other fragments */
-903e4541 (Andrei Emeltchenko 2012-09-27  892) 		amp_read_loc_assoc_frag(hdev, rp->phy_handle);
-903e4541 (Andrei Emeltchenko 2012-09-27  893) 
-903e4541 (Andrei Emeltchenko 2012-09-27  894) 		return;
+2d532571 (Yinghai Lu     2012-09-30  599) 
+fe369a44 (Yinghai Lu     2012-09-30  600) 	pci_bus_add_devices(root->bus);
+fe369a44 (Yinghai Lu     2012-09-30  601) 
+f5eebbe1 (Bjorn Helgaas  2009-06-18  602) 	return 0;
+^1da177e (Linus Torvalds 2005-04-16  603) 
+6507e6eb (Taku Izumi     2012-09-18  604) out_del_root:
+6507e6eb (Taku Izumi     2012-09-18  605) 	mutex_lock(&acpi_pci_root_lock);
+6507e6eb (Taku Izumi     2012-09-18  606) 	list_del(&root->node);
+6507e6eb (Taku Izumi     2012-09-18  607) 	mutex_unlock(&acpi_pci_root_lock);
+f5eebbe1 (Bjorn Helgaas  2009-06-18  608) end:
+f5eebbe1 (Bjorn Helgaas  2009-06-18  609) 	kfree(root);
+d550d98d (Patrick Mochel 2006-06-27  610) 	return result;
+^1da177e (Linus Torvalds 2005-04-16  611) }
+^1da177e (Linus Torvalds 2005-04-16  612) 
+4be44fcd (Len Brown      2005-08-05  613) static int acpi_pci_root_start(struct acpi_device *device)
+c431ada4 (Rajesh Shah    2005-04-28  614) {
+caf420c6 (Bjorn Helgaas  2009-06-18 @615) 	struct acpi_pci_root *root = acpi_driver_data(device);
+c8e9afb1 (Jiang Liu      2012-09-18  616) 
+caf420c6 (Bjorn Helgaas  2009-06-18  617) 	return 0;
+c431ada4 (Rajesh Shah    2005-04-28  618) }
+^1da177e (Linus Torvalds 2005-04-16  619) 
+4be44fcd (Len Brown      2005-08-05  620) static int acpi_pci_root_remove(struct acpi_device *device, int type)
+^1da177e (Linus Torvalds 2005-04-16  621) {
+caf420c6 (Bjorn Helgaas  2009-06-18  622) 	struct acpi_pci_root *root = acpi_driver_data(device);
+c8e9afb1 (Jiang Liu      2012-09-18  623) 
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Centre
