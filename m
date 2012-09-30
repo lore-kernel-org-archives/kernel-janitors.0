@@ -1,53 +1,81 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 11 Sep 2012 12:28:01 +0000
-Subject: Re: [patch] ALSA: compress_core: fix open flags test in snd_compr_open()
-Message-Id: <s5h8vcgrbfy.wl%tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Sep 2012 07:33:08 +0000
+Subject: [PATCH 3/3] drivers/media/tuners/fc0011.c: introduce macros for i2c_msg initialization
+Message-Id: <1348990388-7413-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120911111243.GC22259@elgon.mountain>
-In-Reply-To: <20120911111243.GC22259@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vinod Koul <vinod.koul@linux.intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Jesper Juhl <jj@chaosbits.net>, Namarta Kohli <namartax.kohli@intel.com>
+To: kernel-janitors@vger.kernel.org
 
-At Tue, 11 Sep 2012 14:12:43 +0300,
-Dan Carpenter wrote:
-> 
-> O_RDONLY is zero so the original test (f->f_flags & O_RDONLY) is always
-> false and it will never do compress capture.  The test for O_WRONLY is
-> also slightly off.  The original test would consider "->flags > (O_WRONLY | O_RDWR)" as write only instead of rejecting it as invalid.
-> 
-> I've also removed the pr_err() because that could flood dmesg.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied now.  Thanks.
+Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
 
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-Takashi
+// <smpl>
+@@
+expression a,b,c;
+identifier x;
+@@
 
-> 
-> diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-> index ec2118d..eb60cb8 100644
-> --- a/sound/core/compress_offload.c
-> +++ b/sound/core/compress_offload.c
-> @@ -80,14 +80,12 @@ static int snd_compr_open(struct inode *inode, struct file *f)
->  	int maj = imajor(inode);
->  	int ret;
->  
-> -	if (f->f_flags & O_WRONLY)
-> +	if ((f->f_flags & O_ACCMODE) = O_WRONLY)
->  		dirn = SND_COMPRESS_PLAYBACK;
-> -	else if (f->f_flags & O_RDONLY)
-> +	else if ((f->f_flags & O_ACCMODE) = O_RDONLY)
->  		dirn = SND_COMPRESS_CAPTURE;
-> -	else {
-> -		pr_err("invalid direction\n");
-> +	else
->  		return -EINVAL;
-> -	}
->  
->  	if (maj = snd_major)
->  		compr = snd_lookup_minor_data(iminor(inode),
-> 
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ;
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ;
+
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x = 
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/tuners/fc0011.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/tuners/fc0011.c b/drivers/media/tuners/fc0011.c
+index e488254..b0036d6 100644
+--- a/drivers/media/tuners/fc0011.c
++++ b/drivers/media/tuners/fc0011.c
+@@ -80,8 +80,7 @@ struct fc0011_priv {
+ static int fc0011_writereg(struct fc0011_priv *priv, u8 reg, u8 val)
+ {
+ 	u8 buf[2] = { reg, val };
+-	struct i2c_msg msg = { .addr = priv->addr,
+-		.flags = 0, .buf = buf, .len = 2 };
++	struct i2c_msg msg = I2C_MSG_WRITE(priv->addr, buf, 2);
+ 
+ 	if (i2c_transfer(priv->i2c, &msg, 1) != 1) {
+ 		dev_err(&priv->i2c->dev,
+@@ -97,10 +96,8 @@ static int fc0011_readreg(struct fc0011_priv *priv, u8 reg, u8 *val)
+ {
+ 	u8 dummy;
+ 	struct i2c_msg msg[2] = {
+-		{ .addr = priv->addr,
+-		  .flags = 0, .buf = &reg, .len = 1 },
+-		{ .addr = priv->addr,
+-		  .flags = I2C_M_RD, .buf = val ? : &dummy, .len = 1 },
++		I2C_MSG_WRITE(priv->addr, &reg, 1),
++		I2C_MSG_READ(priv->addr, val ? : &dummy, 1),
+ 	};
+ 
+ 	if (i2c_transfer(priv->i2c, msg, 2) != 2) {
+
