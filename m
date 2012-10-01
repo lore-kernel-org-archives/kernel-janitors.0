@@ -1,97 +1,54 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Oct 2012 15:38:37 +0000
-Subject: [PATCH 6/13] drivers/media/tuners/tda18271-common.c: use macros for i2c_msg initialization
-Message-Id: <1349624323-15584-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Date: Mon, 01 Oct 2012 13:22:25 +0000
+Subject: Re: [tip:sched/numa 20/35] mm/mempolicy.c:2426 mpol_parse_str() error: buffer overflow 'policy_modes
+Message-Id: <1349097745.7780.13.camel@twins>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Krufky <mkrufky@linuxtv.org>
-Cc: kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Fri, 2012-09-28 at 19:14 +0800, Fengguang Wu wrote:
+> + mm/mempolicy.c:2426 mpol_parse_str() error: buffer overflow 'policy_modes' 5 <= 5
 
-Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression a,b,c;
-identifier x;
-@@
-
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-+ I2C_MSG_READ(a,b,c)
- ;
-
-@@
-expression a,b,c;
-identifier x;
-@@
-
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
-+ I2C_MSG_WRITE(a,b,c)
- ;
-
-@@
-expression a,b,c,d;
-identifier x;
-@@
-
-struct i2c_msg x = 
-- {.addr = a, .buf = b, .len = c, .flags = d}
-+ I2C_MSG_OP(a,b,c,d)
- ;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
+Subject: mm, mpol: Fix buffer overflow in mpol_parse_str()
+From: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Date: Mon Oct 01 15:12:16 CEST 2012
 
- drivers/media/tuners/tda18271-common.c |   15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+Wu reported a smatch error:
 
-diff --git a/drivers/media/tuners/tda18271-common.c b/drivers/media/tuners/tda18271-common.c
-index 221171e..d05ed53 100644
---- a/drivers/media/tuners/tda18271-common.c
-+++ b/drivers/media/tuners/tda18271-common.c
-@@ -125,10 +125,8 @@ int tda18271_read_regs(struct dvb_frontend *fe)
- 	unsigned char buf = 0x00;
- 	int ret;
- 	struct i2c_msg msg[] = {
--		{ .addr = priv->i2c_props.addr, .flags = 0,
--		  .buf = &buf, .len = 1 },
--		{ .addr = priv->i2c_props.addr, .flags = I2C_M_RD,
--		  .buf = regs, .len = 16 }
-+		I2C_MSG_WRITE(priv->i2c_props.addr, &buf, sizeof(buf)),
-+		I2C_MSG_READ(priv->i2c_props.addr, regs, 16)
- 	};
++ mm/mempolicy.c:2426 mpol_parse_str() error: buffer overflow 'policy_modes' 5 <= 5
+
+Fix it by growing the array to the right size, but avoid it being a
+valid string for mpol_parse_str() because its not an effective policy.
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+---
+ mm/mempolicy.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2514,7 +2514,8 @@ static const char * const policy_modes[]
+ 	[MPOL_PREFERRED]  = "prefer",
+ 	[MPOL_BIND]       = "bind",
+ 	[MPOL_INTERLEAVE] = "interleave",
+-	[MPOL_LOCAL]      = "local"
++	[MPOL_LOCAL]      = "local",
++	[MPOL_NOOP]	  = "noop",	/* should not actually be used */
+ };
  
- 	tda18271_i2c_gate_ctrl(fe, 1);
-@@ -155,10 +153,8 @@ int tda18271_read_extended(struct dvb_frontend *fe)
- 	unsigned char buf = 0x00;
- 	int ret, i;
- 	struct i2c_msg msg[] = {
--		{ .addr = priv->i2c_props.addr, .flags = 0,
--		  .buf = &buf, .len = 1 },
--		{ .addr = priv->i2c_props.addr, .flags = I2C_M_RD,
--		  .buf = regdump, .len = TDA18271_NUM_REGS }
-+		I2C_MSG_WRITE(priv->i2c_props.addr, &buf, sizeof(buf)),
-+		I2C_MSG_READ(priv->i2c_props.addr, regdump, sizeof(regdump))
- 	};
  
- 	tda18271_i2c_gate_ctrl(fe, 1);
-@@ -192,8 +188,7 @@ int tda18271_write_regs(struct dvb_frontend *fe, int idx, int len)
- 	struct tda18271_priv *priv = fe->tuner_priv;
- 	unsigned char *regs = priv->tda18271_regs;
- 	unsigned char buf[TDA18271_NUM_REGS + 1];
--	struct i2c_msg msg = { .addr = priv->i2c_props.addr, .flags = 0,
--			       .buf = buf };
-+	struct i2c_msg msg = I2C_MSG_WRITE(priv->i2c_props.addr, buf, 0);
- 	int i, ret = 1, max;
+@@ -2565,7 +2566,7 @@ int mpol_parse_str(char *str, struct mem
+ 			break;
+ 		}
+ 	}
+-	if (mode >= MPOL_MAX)
++	if (mode >= MPOL_MAX || mode = MPOL_NOOP)
+ 		goto out;
  
- 	BUG_ON((len = 0) || (idx + len > sizeof(buf)));
+ 	switch (mode) {
+
