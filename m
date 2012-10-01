@@ -1,22 +1,26 @@
-From: Christoph Lameter <cl@linux.com>
-Date: Tue, 02 Oct 2012 18:07:39 +0000
-Subject: Re: [glommer-memcg:slab-common/kmalloc 28/30] include/linux/slab_def.h:135:27: warning: array subscr
-Message-Id: <0000013a22a969d2-1a93ebdc-9182-46fc-b4d0-b4d286f08d06-000000@email.amazonses.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 01 Oct 2012 11:40:30 +0000
+Subject: [arm-perf:delay 3/3] ERROR: "read_current_timer" [fs/ext4/ext4.ko] undefined!
+Message-Id: <20121001114030.GB16393@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928102032.GA29995@localhost>
-In-Reply-To: <20120928102032.GA29995@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 2 Oct 2012, Glauber Costa wrote:
+Hi Jonathan,
 
-> I plan to upload a version with your new patches shortly. Sorry, I am
-> trying to get a new version of my memcg-slab series with your feedback
-> incorporated as soon as I can, so I was a bit slow with review yesterday
-> in general.
+FYI, kernel build failed on
 
-Well looks things are moving already much faster then in the past. So do
-not worry about small delays like that.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git delay
+head:   d9ed51a6b84c5724fd047a4715449356fffca83f
+commit: d9ed51a6b84c5724fd047a4715449356fffca83f [3/3] ARM: delay: add registration mechanism for delay timer sources
+config: arm-s3c2410_defconfig
 
+All error/warnings:
+
+ERROR: "read_current_timer" [fs/ext4/ext4.ko] undefined!
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
