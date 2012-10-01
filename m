@@ -1,94 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Oct 2012 15:38:42 +0000
-Subject: [PATCH 11/13] drivers/media/tuners/tda18218.c: use macros for i2c_msg initialization
-Message-Id: <1349624323-15584-13-git-send-email-Julia.Lawall@lip6.fr>
+From: "Mrs. Maria Bristow" <no-reply@mx2.4shared.com>
+Date: Mon, 01 Oct 2012 11:57:39 +0000
+Subject: RE: Please am dying of breast cancer !!!
+Message-Id: <201210011201.q91C1D7f010240@srv1.iexpress.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>
-Cc: kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello,
 
-Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
+Am dying of breast cancer and I need your assistance to help me carry out m=
+y dream charity work with my funds =E2=82=AC2.8M Euros with a Security firm=
+, if you are interested please reach me for more details on this email: mar=
+ia.bristow@1email.eu
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression a,b,c;
-identifier x;
-@@
-
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-+ I2C_MSG_READ(a,b,c)
- ;
-
-@@
-expression a,b,c;
-identifier x;
-@@
-
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
-+ I2C_MSG_WRITE(a,b,c)
- ;
-
-@@
-expression a,b,c,d;
-identifier x;
-@@
-
-struct i2c_msg x = 
-- {.addr = a, .buf = b, .len = c, .flags = d}
-+ I2C_MSG_OP(a,b,c,d)
- ;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/tuners/tda18218.c |   19 +++----------------
- 1 file changed, 3 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/media/tuners/tda18218.c b/drivers/media/tuners/tda18218.c
-index 1819853..c0c2fef 100644
---- a/drivers/media/tuners/tda18218.c
-+++ b/drivers/media/tuners/tda18218.c
-@@ -26,11 +26,7 @@ static int tda18218_wr_regs(struct tda18218_priv *priv, u8 reg, u8 *val, u8 len)
- 	int ret = 0, len2, remaining;
- 	u8 buf[1 + len];
- 	struct i2c_msg msg[1] = {
--		{
--			.addr = priv->cfg->i2c_address,
--			.flags = 0,
--			.buf = buf,
--		}
-+		I2C_MSG_WRITE(priv->cfg->i2c_address, buf, 0)
- 	};
- 
- 	for (remaining = len; remaining > 0;
-@@ -65,17 +61,8 @@ static int tda18218_rd_regs(struct tda18218_priv *priv, u8 reg, u8 *val, u8 len)
- 	int ret;
- 	u8 buf[reg+len]; /* we must start read always from reg 0x00 */
- 	struct i2c_msg msg[2] = {
--		{
--			.addr = priv->cfg->i2c_address,
--			.flags = 0,
--			.len = 1,
--			.buf = "\x00",
--		}, {
--			.addr = priv->cfg->i2c_address,
--			.flags = I2C_M_RD,
--			.len = sizeof(buf),
--			.buf = buf,
--		}
-+		I2C_MSG_WRITE(priv->cfg->i2c_address, "\x00", 1),
-+		I2C_MSG_READ(priv->cfg->i2c_address, buf, sizeof(buf))
- 	};
- 
- 	ret = i2c_transfer(priv->i2c, msg, 2);
-
+Yours Sincerely,
+Mrs. Maria Bristow
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
