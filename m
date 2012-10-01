@@ -1,17 +1,18 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Mon, 01 Oct 2012 03:02:39 +0000
+From: Dmitry Monakhov <dmonakhov@openvz.org>
+Date: Mon, 01 Oct 2012 03:16:35 +0000
 Subject: Re: [ext4:dev 47/50] fs/ext4/extents.c:4949 ext4_ext_punch_hole() warn: inconsistent returns mutex:&
-Message-Id: <20121001030239.GA23264@thunk.org>
+Message-Id: <87mx06vq3w.fsf@openvz.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=-=-="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121001025047.GB12711@localhost>
 In-Reply-To: <20121001025047.GB12711@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Dmitry Monakhov <dmonakhov@openvz.org>, kernel-janitors@vger.kernel.org, linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org
 
-On Mon, Oct 01, 2012 at 10:50:47AM +0800, Fengguang Wu wrote:
+--=-=-=
+
+On Mon, 1 Oct 2012 10:50:47 +0800, Fengguang Wu <fengguang.wu@intel.com> wrote:
 > Hi Dmitry,
 > 
 > FYI, there are new smatch warnings show up in
@@ -22,10 +23,70 @@ On Mon, Oct 01, 2012 at 10:50:47AM +0800, Fengguang Wu wrote:
 > 
 >   arch/x86/include/asm/jump_label.h:25 arch_static_branch() info: ignoring unreachable code.
 > + fs/ext4/extents.c:4949 ext4_ext_punch_hole() warn: inconsistent returns mutex:&inode->i_mutex: locked (4813,4815) unlocked (4806,4949)
+Yes, that is correct, my bad. Sorry, patch attached
+BTW  What tool(compile option) you use to catch this issue?
 
-Hi Fengguang,
+> 
+> vim +4949 fs/ext4/extents.c
+> 
+> c6a59106 (Dmitry Monakhov   2012-09-29  4808) 
+> c6a59106 (Dmitry Monakhov   2012-09-29  4809) 	mutex_lock(&inode->i_mutex);
+> c6a59106 (Dmitry Monakhov   2012-09-29  4810) 	/* Need recheck file flags under mutex */
+> c6a59106 (Dmitry Monakhov   2012-09-29  4811) 	/* It's not possible punch hole on append only file */
+> c6a59106 (Dmitry Monakhov   2012-09-29  4812) 	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
+> c6a59106 (Dmitry Monakhov   2012-09-29  4813) 		return -EPERM;
+                                                               ^^^^^^^^^^^^^^^^
+> c6a59106 (Dmitry Monakhov   2012-09-29  4814) 	if (IS_SWAPFILE(inode))
+> c6a59106 (Dmitry Monakhov   2012-09-29  4815) 		return -ETXTBSY;
+                                                               ^^^^^^^^^^^^^^^^^^
+> c6a59106 (Dmitry Monakhov   2012-09-29  4816) 
+> 2be4751b (Allison Henderson 2011-09-03  4817) 	/* No need to punch hole beyond i_size */
+> 2be4751b (Allison Henderson 2011-09-03  4818) 	if (offset >= inode->i_size)
+> c6a59106 (Dmitry Monakhov   2012-09-29  4819) 		goto out_mutex;
+> 2be4751b (Allison Henderson 2011-09-03  4820) 
 
-	Thanks for pointing this out!  I've fixed the obvious bug in
-the commit once the smatch warning was pointed out.
+--=-=-=
+Content-Type: text/x-patch
+Content-Disposition: inline;
+ filename=0001-ext4-ext4_ext_punch_hole-put-i_mutex-on-error.patch
 
-					- Ted
+From 6cf5cfc5db6c792c76c68bdbc765b733b5ad5488 Mon Sep 17 00:00:00 2001
+From: Dmitry Monakhov <dmonakhov@openvz.org>
+Date: Mon, 1 Oct 2012 07:09:49 +0400
+Subject: [PATCH] ext4: ext4_ext_punch_hole put i_mutex on error
+
+Fix mistypo introduced in 'ext4: punch_hole should wait for DIO writers' patch.
+
+Signed-off-by: Dmitry Monakhov <dmonakhov@openvz.org>
+---
+ fs/ext4/extents.c |   12 ++++++++----
+ 1 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index f02ffce..0a720d4 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4811,10 +4811,14 @@ int ext4_ext_punch_hole(struct file *file, loff_t offset, loff_t length)
+ 	mutex_lock(&inode->i_mutex);
+ 	/* Need recheck file flags under mutex */
+ 	/* It's not possible punch hole on append only file */
+-	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
+-		return -EPERM;
+-	if (IS_SWAPFILE(inode))
+-		return -ETXTBSY;
++	if (IS_APPEND(inode) || IS_IMMUTABLE(inode)) {
++		err = -EPERM;
++		goto out_mutex;
++	}
++	if (IS_SWAPFILE(inode)) {
++		err = -ETXTBSY;
++		goto out_mutex;
++	}
+ 
+ 	/* No need to punch hole beyond i_size */
+ 	if (offset >= inode->i_size)
+-- 
+1.7.7.6
+
+
+--=-=-=--
