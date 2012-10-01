@@ -1,96 +1,48 @@
-From: Ashwini Singh <asingh.engi@gmail.com>
-Date: Tue, 30 Oct 2012 12:00:21 +0000
-Subject: [PATCH] Linus's tree: wireless: Spelling corrections
-Message-Id: <1351597701-18216-1-git-send-email-asingh.engi@gmail.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Mon, 01 Oct 2012 22:18:00 +0000
+Subject: Re: [PATCH] HID: picoLCD: Remove use of deprecated function
+Message-Id: <alpine.LNX.2.00.1210020017200.23544@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <508fbe62.a689440a.0273.2f2b@mx.google.com>
-In-Reply-To: <508fbe62.a689440a.0273.2f2b@mx.google.com>
+References: <1346942780-8091-1-git-send-email-emilgoode@gmail.com> <20120906221252.1402ba50@neptune.home> <20120906201538.GK29092@google.com>
+In-Reply-To: <20120906201538.GK29092@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: johannes@sipsolutions.net
-Cc: linville@tuxdriver.com, davem@davemloft.net, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ashwini Singh <asingh.engi@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Tejun Heo <tj@kernel.org>
+Cc: =?ISO-8859-15?Q?Bruno_Pr=E9mont?= <bonbons@linux-vserver.org>, Emil Goode <emilgoode@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Few spelling corrections in wireless directory.
+On Thu, 6 Sep 2012, Tejun Heo wrote:
 
-Signed-off-by: Ashwini Singh <asingh.engi@gmail.com>
----
- net/wireless/radiotap.c    |    2 +-
- net/wireless/reg.c         |    6 +++---
- net/wireless/wext-compat.c |    2 +-
- net/wireless/wext-core.c   |    2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+> > > Sparse is giving a warning:
+> > > drivers/hid/hid-picolcd_fb.c:611:2: warning:
+> > > 	‘flush_delayed_work_sync’ is deprecated
+> > > 	(declared at include/linux/workqueue.h:454)
+> > > 	[-Wdeprecated-declarations]
+> > > 
+> > > Signed-off-by: Emil Goode <emilgoode@gmail.com>
+> > 
+> > Acked-by: Bruno Prémont <bonbons@linux-vserver.org>
+> > 
+> > This matches a patch by Tejun a few weeks ago which was partially
+> > skipped in -next due to merge conflict with code split in picoLCD.
+> > 
+> > See http://comments.gmane.org/gmane.linux.kernel.next/23740
+> > 
+> > For the sake of proper bisectability, this should go in after
+> > Tejun's workqueue changes (if needed at all depending on how merge
+> > happens during pull by Linus).
+> 
+> Yeah, we either can ask Linus to fix it up during merge or send a
+> separate patch afterwards.  In this case, I don't think it matters too
+> much either way.  I tend to send out pull request fairly early in the
+> merge window, I'll try to remember to poke Linus about the merge
+> conflict.
 
-diff --git a/net/wireless/radiotap.c b/net/wireless/radiotap.c
-index 7d604c0..eaf4282 100644
---- a/net/wireless/radiotap.c
-+++ b/net/wireless/radiotap.c
-@@ -190,7 +190,7 @@ static void find_ns(struct ieee80211_radiotap_iterator *iterator,
-  * present fields.  @this_arg can be changed by the caller (eg,
-  * incremented to move inside a compound argument like
-  * IEEE80211_RADIOTAP_CHANNEL).  The args pointed to are in
-- * little-endian format whatever the endianess of your CPU.
-+ * little-endian format whatever the endianness of your CPU.
-  *
-  * Alignment Gotcha:
-  * You must take care when dereferencing iterator.this_arg
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 3b8cbbc..b98ff98 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -718,7 +718,7 @@ static int freq_reg_info_regd(struct wiphy *wiphy,
- 
- 	/*
- 	 * Follow the driver's regulatory domain, if present, unless a country
--	 * IE has been processed or a user wants to help complaince further
-+	 * IE has been processed or a user wants to help compliance further
- 	 */
- 	if (!custom_regd &&
- 	    last_request->initiator != NL80211_REGDOM_SET_BY_COUNTRY_IE &&
-@@ -2133,7 +2133,7 @@ bool reg_supported_dfs_region(u8 dfs_region)
- 	case NL80211_DFS_JP:
- 		return true;
- 	default:
--		REG_DBG_PRINT("Ignoring uknown DFS master region: %d\n",
-+		REG_DBG_PRINT("Ignoring unknown DFS master region: %d\n",
- 			      dfs_region);
- 		return false;
- 	}
-@@ -2155,7 +2155,7 @@ static void print_dfs_region(u8 dfs_region)
- 		pr_info(" DFS Master region JP");
- 		break;
- 	default:
--		pr_info(" DFS Master region Uknown");
-+		pr_info(" DFS Master region Unknown");
- 		break;
- 	}
- }
-diff --git a/net/wireless/wext-compat.c b/net/wireless/wext-compat.c
-index 494379e..7642f60 100644
---- a/net/wireless/wext-compat.c
-+++ b/net/wireless/wext-compat.c
-@@ -1144,7 +1144,7 @@ static int cfg80211_wext_siwpower(struct net_device *dev,
- 		switch (wrq->flags & IW_POWER_MODE) {
- 		case IW_POWER_ON:       /* If not specified */
- 		case IW_POWER_MODE:     /* If set all mask */
--		case IW_POWER_ALL_R:    /* If explicitely state all */
-+		case IW_POWER_ALL_R:    /* If explicitly state all */
- 			ps = true;
- 			break;
- 		default:                /* Otherwise we ignore */
-diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
-index c8717c1..c9514ce 100644
---- a/net/wireless/wext-core.c
-+++ b/net/wireless/wext-core.c
-@@ -849,7 +849,7 @@ out:
-  *
-  * Note : our current commit strategy is currently pretty dumb,
-  * but we will be able to improve on that...
-- * The goal is to try to agreagate as many changes as possible
-+ * The goal is to try to aggregate as many changes as possible
-  * before doing the commit. Drivers that will define a commit handler
-  * are usually those that need a reset after changing parameters, so
-  * we want to minimise the number of reset.
+Linus has just pulled from me, so if you could take care of this merge 
+conflict, that'd be awesome.
+
+Thanks,
+
 -- 
-1.7.0.1
-
+Jiri Kosina
+SUSE Labs
