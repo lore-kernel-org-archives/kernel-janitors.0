@@ -1,36 +1,44 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 15 Oct 2012 13:00:34 +0000
-Subject: Re: [drm:drm-next 186/301] ERROR: "radeon_legacy_get_backlight_level" [drivers/gpu/drm/radeon/radeon
-Message-Id: <20121015130034.GA22443@localhost>
+From: Christoph Lameter <cl@linux.com>
+Date: Mon, 01 Oct 2012 17:55:45 +0000
+Subject: Re: [glommer-memcg:slab-common/kmalloc 28/30] include/linux/slab_def.h:135:27: warning: array subscr
+Message-Id: <0000013a1d7825d1-94d3321e-038e-40e6-8690-8f699fab4a29-000000@email.amazonses.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121004094041.GB3444@localhost>
-In-Reply-To: <20121004094041.GB3444@localhost>
+References: <20120928102032.GA29995@localhost>
+In-Reply-To: <20120928102032.GA29995@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 15, 2012 at 12:55:47PM +0000, Deucher, Alexander wrote:
-> > -----Original Message-----
-> > From: Fengguang Wu [mailto:fengguang.wu@intel.com]
-> > Sent: Monday, October 15, 2012 7:41 AM
-> > To: Deucher, Alexander
-> > Cc: kernel-janitors@vger.kernel.org; Peter H=C3=BCwe
-> > Subject: Re: [drm:drm-next 186/301] ERROR:
-> > "radeon_legacy_get_backlight_level" [drivers/gpu/drm/radeon/radeon.ko]
-> > undefined!
-> >=20
-> > ping
->=20
-> The fix is in my patch queue, but I was out of town last week.  I'll send=
- the pull request to Dave this week.
+On Sat, 29 Sep 2012, Fengguang Wu wrote:
 
-OK, thank you!
+> On Fri, Sep 28, 2012 at 06:17:20PM +0000, Christoph Lameter wrote:
+> > On Fri, 28 Sep 2012, Fengguang Wu wrote:
+> >
+> > > commit: 55a6b9f968a877c728ed6e438fa68741a7711d89 [28/30] CK1 [12/13] Common names for the array of kmalloc caches
+> >
+> > Is this issue really caused by the specified commit? I do not see how the
+> > patch can cause such a problem.
+>
+> It should be a wrong bisection. Sorry. I checked manually and find
+> that the previous commit stopped early at this error:
+>
+> In file included from /c/kernel-tests/src/next/include/linux/slab.h:309:0,
+>                  from /c/kernel-tests/src/next/include/linux/proc_fs.h:4,
+>                  from /c/kernel-tests/src/next/fs/proc/stat.c:6:
+> /c/kernel-tests/src/next/include/linux/slab_def.h: In function 'kmalloc':
+> /c/kernel-tests/src/next/include/linux/slab_def.h:132:13: error: 'kmalloc_dma_caches' undeclared (first use in this function)
+> /c/kernel-tests/src/next/include/linux/slab_def.h:132:13: note: each undeclared identifier is reported only once for each function it appears in
+> /c/kernel-tests/src/next/include/linux/slab_def.h:135:13: error: 'kmalloc_caches' undeclared (first use in this function)
+>
+> Thus the warning was "hide" until the current commit:
+>
+> In file included from /c/kernel-tests/src/next/include/linux/slab.h:314:0,
+>                  from /c/kernel-tests/src/next/include/linux/proc_fs.h:4,
+>                  from /c/kernel-tests/src/next/fs/proc/stat.c:6:
+> /c/kernel-tests/src/next/fs/proc/stat.c: In function 'stat_open':
+> /c/kernel-tests/src/next/include/linux/slab_def.h:135:27: warning: array subscript is above array bounds [-Warray-bounds]
 
-Thanks,
-Fengguang
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Ok there were some fixes in that area in V2. Could we try again and see if
+the new version fixes it?
+
