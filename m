@@ -1,53 +1,38 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 28 Oct 2012 16:12:01 +0000
-Subject: [PATCH 2/2] drivers/net/phy/mdio-bitbang.c: Call mdiobus_unregister before mdiobus_free
-Message-Id: <1351440721-9121-2-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Oct 2012 08:26:04 +0000
+Subject: [patch] staging: rtl8192u: fix a macro expansion bug
+Message-Id: <20121002082604.GC12398@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351440721-9121-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1351440721-9121-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net
-Cc: srinivas.kandagatla@st.com, peter.senna@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Based on commit b27393aecf66199f5ddad37c302d3e0cfadbe6c0
+Clang detected this macro expansion bug:
+drivers/staging/rtl8192u/r8192U_core.c:2384:76: warning: operator '?:'
+	has lower precedence than '+'; '+' will be evaluated first
+	[-Wparentheses]
 
-Calling mdiobus_free without calling mdiobus_unregister causes
-BUG_ON(). This patch fixes the issue.
+The line from the .c file looks like this:
+	u1bAIFS = qos_parameters->aifs[i] * ((mode&(IEEE_G|IEEE_N_24G)) ?9:20) + aSifsTime;
 
-The semantic patch that found this issue(http://coccinelle.lip6.fr/):
-// <smpl>
-@@
-expression E;
-@@
-  ... when != mdiobus_unregister(E);
+We need to put parenthesis around the entire macro to fix the bug.
 
-+ mdiobus_unregister(E);
-  mdiobus_free(E);
-// </smpl>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-This problem is somewhat mystifying. If the patch is correct, there were
-probably many OOPSese caused by not calling mdiobus_unregister...
-Reporting anyway...
-
- drivers/net/phy/mdio-bitbang.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/phy/mdio-bitbang.c b/drivers/net/phy/mdio-bitbang.c
-index daec9b0..6428fcb 100644
---- a/drivers/net/phy/mdio-bitbang.c
-+++ b/drivers/net/phy/mdio-bitbang.c
-@@ -234,6 +234,7 @@ void free_mdio_bitbang(struct mii_bus *bus)
- 	struct mdiobb_ctrl *ctrl = bus->priv;
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211.h b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+index 13f45c3..502bfdb 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211.h
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+@@ -235,7 +235,10 @@ enum	_ReasonCode{
  
- 	module_put(ctrl->ops->owner);
-+	mdiobus_unregister(bus);
- 	mdiobus_free(bus);
- }
- EXPORT_SYMBOL(free_mdio_bitbang);
--- 
-1.7.11.7
-
+ 
+ 
+-#define aSifsTime	 ((priv->ieee80211->current_network.mode = IEEE_A)||(priv->ieee80211->current_network.mode = IEEE_N_24G)||(priv->ieee80211->current_network.mode = IEEE_N_5G))? 16 : 10
++#define aSifsTime ((priv->ieee80211->current_network.mode = IEEE_A || \
++		    priv->ieee80211->current_network.mode = IEEE_N_24G || \
++		    priv->ieee80211->current_network.mode = IEEE_N_5G) ? \
++		   16 : 10)
+ 
+ #define MGMT_QUEUE_NUM 5
+ 
