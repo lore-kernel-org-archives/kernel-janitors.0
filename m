@@ -1,76 +1,67 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 21 Oct 2012 10:52:05 +0000
-Subject: [PATCH 3/5] arch/powerpc/kernel/rtas_flash.c: eliminate possible double free
-Message-Id: <1350816727-1381-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Oct 2012 08:32:34 +0000
+Subject: [patch] orinoco_usb: clean up some signedness issues
+Message-Id: <20121002083234.GL12398@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Sarah Sharp <sarah.a.sharp@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-wireless@vger.kernel.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+In ezusb_read_ltv() we had a comparison "(bufsize < 0)" which was never
+true because bufsize was unsigned.  I looked at the implications of
+that.  If we passed a negative number to ezusb_access_ltv() then it
+would be used as the size parameter of the memcpy() because that
+function uses min_t(int, exp_len, ans_size).
 
-The function initialize_flash_pde_data is only called four times.  All four
-calls are in the function rtas_flash_init, and on the failure of any of the
-calls, remove_flash_pde is called on the third argument of each of the
-calls.  There is thus no need for initialize_flash_pde_data to call
-remove_flash_pde on the same argument.  remove_flash_pde kfrees the data
-field of its argument, and does not clear that field, so this amounts ot a
-possible double free.
+But fortunately when I looked at the callers, bufsize is not controlled
+by the user and it's never negative.  So these signedness mistakes have
+no impact.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+I removed the always false check from ezusb_read_ltv() and I changed the
+types in ezusb_access_ltv() and made the variables unsigned.
 
-// <smpl>
-@r@
-identifier f,free,a;
-parameter list[n] ps;
-type T;
-expression e;
-@@
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-f(ps,T a,...) {
-  ... when any
-      when != a = e
-  if(...) { ... free(a); ... return ...; }
-  ... when any
-}
-
-@@
-identifier r.f,r.free;
-expression x,a;
-expression list[r.n] xs;
-@@
-
-* x = f(xs,a,...);
-  if (...) { ... free(a); ... return ...; }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not tested.
-
- arch/powerpc/kernel/rtas_flash.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/powerpc/kernel/rtas_flash.c b/arch/powerpc/kernel/rtas_flash.c
-index 20b0120..8329190 100644
---- a/arch/powerpc/kernel/rtas_flash.c
-+++ b/arch/powerpc/kernel/rtas_flash.c
-@@ -650,10 +650,8 @@ static int initialize_flash_pde_data(const char *rtas_call_name,
- 	int token;
+diff --git a/drivers/net/wireless/orinoco/orinoco_usb.c b/drivers/net/wireless/orinoco/orinoco_usb.c
+index 7f53cea2..01624dc 100644
+--- a/drivers/net/wireless/orinoco/orinoco_usb.c
++++ b/drivers/net/wireless/orinoco/orinoco_usb.c
+@@ -865,7 +865,7 @@ static int ezusb_firmware_download(struct ezusb_priv *upriv,
+ static int ezusb_access_ltv(struct ezusb_priv *upriv,
+ 			    struct request_context *ctx,
+ 			    u16 length, const void *data, u16 frame_type,
+-			    void *ans_buff, int ans_size, u16 *ans_length)
++			    void *ans_buff, unsigned ans_size, u16 *ans_length)
+ {
+ 	int req_size;
+ 	int retval = 0;
+@@ -933,7 +933,7 @@ static int ezusb_access_ltv(struct ezusb_priv *upriv,
+ 	}
+ 	if (ctx->in_rid) {
+ 		struct ezusb_packet *ans = ctx->buf;
+-		int exp_len;
++		unsigned exp_len;
  
- 	dp->data = kzalloc(buf_size, GFP_KERNEL);
--	if (dp->data = NULL) {
--		remove_flash_pde(dp);
-+	if (dp->data = NULL)
- 		return -ENOMEM;
--	}
+ 		if (ans->hermes_len != 0)
+ 			exp_len = le16_to_cpu(ans->hermes_len) * 2 + 12;
+@@ -949,8 +949,7 @@ static int ezusb_access_ltv(struct ezusb_priv *upriv,
+ 		}
  
- 	/*
- 	 * This code assumes that the status int is the first member of the
-
+ 		if (ans_buff)
+-			memcpy(ans_buff, ans->data,
+-			       min_t(int, exp_len, ans_size));
++			memcpy(ans_buff, ans->data, min(exp_len, ans_size));
+ 		if (ans_length)
+ 			*ans_length = le16_to_cpu(ans->hermes_len);
+ 	}
+@@ -995,7 +994,7 @@ static int ezusb_read_ltv(struct hermes *hw, int bap, u16 rid,
+ 	struct ezusb_priv *upriv = hw->priv;
+ 	struct request_context *ctx;
+ 
+-	if ((bufsize < 0) || (bufsize % 2))
++	if (bufsize % 2)
+ 		return -EINVAL;
+ 
+ 	ctx = ezusb_alloc_ctx(upriv, rid, rid);
