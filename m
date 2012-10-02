@@ -1,31 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 20 Oct 2012 03:46:39 +0000
-Subject: Re: [patch] gpio-timberdale: fix a potential wrapping issue
-Message-Id: <20121020034639.GU5685@mwanda>
+Date: Tue, 02 Oct 2012 08:27:39 +0000
+Subject: [patch 1/2] target: remove duplicate initialization
+Message-Id: <20121002082739.GF12398@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121011065635.GD31607@elgon.mountain>
- <CACRpkdZ0EfjMi8i9_bFYwscQVPCPGUFiJwv_FCTMfLbWwsUKZw@mail.gmail.com>
-In-Reply-To: <CACRpkdZ0EfjMi8i9_bFYwscQVPCPGUFiJwv_FCTMfLbWwsUKZw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 12, 2012 at 11:01:08PM +0200, Linus Walleij wrote:
-> On Thu, Oct 11, 2012 at 8:56 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > ->last_ier is an unsigned long but the high bits can't be used int the
-> > original code because the shift wraps.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Applied, thanks!
-> Should we send this to stable? (I assume so ...)
+We set bAlternateSetting to zero twice.  I kept the second one
+(.bAlternateSetting = USB_G_ALT_INT_BBB) because that's more
+descriptive.
 
-This was a static checker fix.  I guess the answer would depend on
-if there are over 30 IRQs.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/usb/gadget/tcm_usb_gadget.c b/drivers/usb/gadget/tcm_usb_gadget.c
+index 0a83801..1ad4a69 100644
+--- a/drivers/usb/gadget/tcm_usb_gadget.c
++++ b/drivers/usb/gadget/tcm_usb_gadget.c
+@@ -1956,7 +1956,6 @@ static void usbg_deregister_configfs(void)
+ static struct usb_interface_descriptor bot_intf_desc = {
+ 	.bLength =              sizeof(bot_intf_desc),
+ 	.bDescriptorType =      USB_DT_INTERFACE,
+-	.bAlternateSetting =	0,
+ 	.bNumEndpoints =        2,
+ 	.bAlternateSetting =	USB_G_ALT_INT_BBB,
+ 	.bInterfaceClass =      USB_CLASS_MASS_STORAGE,
