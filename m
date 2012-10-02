@@ -1,7 +1,7 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 02 Oct 2012 13:46:33 +0000
+From: Joe Perches <joe@perches.com>
+Date: Tue, 02 Oct 2012 13:54:13 +0000
 Subject: Re: [driver-core:driver-core-next 4/11] include/linux/device.h:925:12: error: 'dev_vprintk_emit' def
-Message-Id: <20121002134633.GA616@kroah.com>
+Message-Id: <1349186053.7740.36.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121002104127.GA31577@localhost>
 In-Reply-To: <20121002104127.GA31577@localhost>
@@ -10,9 +10,11 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 02, 2012 at 06:41:27PM +0800, Fengguang Wu wrote:
+On Tue, 2012-10-02 at 18:41 +0800, Fengguang Wu wrote:
 > Hi Joe,
-> 
+
+Hi Fengguang.
+
 > FYI, kernel build failed on
 > 
 > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git driver-core-next
@@ -25,8 +27,13 @@ On Tue, Oct 02, 2012 at 06:41:27PM +0800, Fengguang Wu wrote:
 > include/linux/device.h:925:12: error: 'dev_vprintk_emit' defined but not used [-Werror=unused-function]
 > cc1: all warnings being treated as errors
 
-I can't duplicate this here, what is your .config?
+My fault, sorry.  It was fixed in a later commit.
 
-And treating warnings as errors?  Good luck :)
+commit 0a18b05043acc01d1d6a4bac459e62c79628881c
+Author: Joe Perches <joe@perches.com>
+Date:   Tue Sep 25 18:19:57 2012 -0700
 
-greg k-h
+    device.h: Add missing inline to #ifndef CONFIG_PRINTK dev_vprintk_emit
+
+
+
