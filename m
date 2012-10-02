@@ -1,98 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Oct 2012 15:38:39 +0000
-Subject: [PATCH 8/13] drivers/media/tuners/fc2580.c: use macros for i2c_msg initialization
-Message-Id: <1349624323-15584-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 02 Oct 2012 05:13:51 +0000
+Subject: [nfs:nfs-for-next 54/83] fs/nfs/super.c:2638:16: sparse: symbol 'nfs_callback_tcpport' was not decla
+Message-Id: <20121002051351.GB18119@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>
-Cc: kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stanislav Kinsbursky <skinsbursky@parallels.com>
+Cc: kernel-janitors@vger.kernel.org, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Stanislav,
 
-Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
+FYI, there are new sparse warnings show up in
 
-A length expressed as an explicit constant is also re-expressed as the size
-of the buffer in each case.
+tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git nfs-for-next
+head:   2afdfa5a846246de50e1881f71ba5c0aac0b415f
+commit: bbe0a3aa4e227c8aae02a484ce1c0b655cd19055 [54/83] NFS: make nfs_callback_tcpport per network context
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+? fs/nfs/super.c:2638:16: sparse: symbol 'nfs_callback_tcpport' was not declared. Should it be static?
 
-// <smpl>
-@@
-expression a,b,c;
-identifier x;
-@@
+Shall we also remove the two related lines below?
 
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-+ I2C_MSG_READ(a,b,c)
- ;
+vim +2638 fs/nfs/super.c
 
-@@
-expression a,b,c;
-identifier x;
-@@
-
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
-+ I2C_MSG_WRITE(a,b,c)
- ;
-
-@@
-expression a,b,c,d;
-identifier x;
-@@
-
-struct i2c_msg x = 
-- {.addr = a, .buf = b, .len = c, .flags = d}
-+ I2C_MSG_OP(a,b,c,d)
- ;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+fac1e8e4 (Bryan Schumaker   2012-07-30  2633) /*
+fac1e8e4 (Bryan Schumaker   2012-07-30  2634)  * NFS v4 module parameters need to stay in the
+fac1e8e4 (Bryan Schumaker   2012-07-30  2635)  * NFS client for backwards compatibility
+fac1e8e4 (Bryan Schumaker   2012-07-30  2636)  */
+fac1e8e4 (Bryan Schumaker   2012-07-30  2637) unsigned int nfs_callback_set_tcpport;
+fac1e8e4 (Bryan Schumaker   2012-07-30 @2638) unsigned short nfs_callback_tcpport;
+fac1e8e4 (Bryan Schumaker   2012-07-30  2639) /* Default cache timeout is 10 minutes */
+fac1e8e4 (Bryan Schumaker   2012-07-30  2640) unsigned int nfs_idmap_cache_timeout = 600;
+fac1e8e4 (Bryan Schumaker   2012-07-30  2641) /* Turn off NFSv4 uid/gid mapping when using AUTH_SYS */
+fac1e8e4 (Bryan Schumaker   2012-07-30  2642) bool nfs4_disable_idmapping = true;
+fac1e8e4 (Bryan Schumaker   2012-07-30  2643) unsigned short max_session_slots = NFS4_DEF_SLOT_TABLE_SIZE;
+fac1e8e4 (Bryan Schumaker   2012-07-30  2644) unsigned short send_implementation_id = 1;
+fac1e8e4 (Bryan Schumaker   2012-07-30  2645) 
+89d77c8f (Bryan Schumaker   2012-07-30  2646) EXPORT_SYMBOL_GPL(nfs_callback_set_tcpport);
+89d77c8f (Bryan Schumaker   2012-07-30 @2647) EXPORT_SYMBOL_GPL(nfs_callback_tcpport);
+89d77c8f (Bryan Schumaker   2012-07-30  2648) EXPORT_SYMBOL_GPL(nfs_idmap_cache_timeout);
+89d77c8f (Bryan Schumaker   2012-07-30  2649) EXPORT_SYMBOL_GPL(nfs4_disable_idmapping);
+89d77c8f (Bryan Schumaker   2012-07-30  2650) EXPORT_SYMBOL_GPL(max_session_slots);
+89d77c8f (Bryan Schumaker   2012-07-30  2651) EXPORT_SYMBOL_GPL(send_implementation_id);
+89d77c8f (Bryan Schumaker   2012-07-30  2652) 
+fac1e8e4 (Bryan Schumaker   2012-07-30  2653) #define NFS_CALLBACK_MAXPORTNR (65535U)
+fac1e8e4 (Bryan Schumaker   2012-07-30  2654) 
 
 ---
- drivers/media/tuners/fc2580.c |   20 +++-----------------
- 1 file changed, 3 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/media/tuners/fc2580.c b/drivers/media/tuners/fc2580.c
-index aff39ae..d0c0ff1 100644
---- a/drivers/media/tuners/fc2580.c
-+++ b/drivers/media/tuners/fc2580.c
-@@ -45,12 +45,7 @@ static int fc2580_wr_regs(struct fc2580_priv *priv, u8 reg, u8 *val, int len)
- 	int ret;
- 	u8 buf[1 + len];
- 	struct i2c_msg msg[1] = {
--		{
--			.addr = priv->cfg->i2c_addr,
--			.flags = 0,
--			.len = sizeof(buf),
--			.buf = buf,
--		}
-+		I2C_MSG_WRITE(priv->cfg->i2c_addr, buf, sizeof(buf))
- 	};
- 
- 	buf[0] = reg;
-@@ -73,17 +68,8 @@ static int fc2580_rd_regs(struct fc2580_priv *priv, u8 reg, u8 *val, int len)
- 	int ret;
- 	u8 buf[len];
- 	struct i2c_msg msg[2] = {
--		{
--			.addr = priv->cfg->i2c_addr,
--			.flags = 0,
--			.len = 1,
--			.buf = &reg,
--		}, {
--			.addr = priv->cfg->i2c_addr,
--			.flags = I2C_M_RD,
--			.len = sizeof(buf),
--			.buf = buf,
--		}
-+		I2C_MSG_WRITE(priv->cfg->i2c_addr, &reg, sizeof(reg)),
-+		I2C_MSG_READ(priv->cfg->i2c_addr, buf, sizeof(buf))
- 	};
- 
- 	ret = i2c_transfer(priv->i2c, msg, 2);
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
