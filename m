@@ -1,13 +1,26 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 02 Oct 2012 07:39:52 +0000
-Subject: [acpi:next 4/5] drivers/acpi/scan.c:328 acpi_device_remove_files() info: redundant null check on dev
-Message-Id: <20121002073952.GA24180@localhost>
+From: "Ortiz, Lance E" <lance.oritz@hp.com>
+Date: Tue, 02 Oct 2012 18:53:05 +0000
+Subject: RE: [acpi:next 4/5] drivers/acpi/scan.c:328 acpi_device_remove_files() info: redundant null check on
+Message-Id: <A961433CDFF2F640A2866803152E61F950D26B71@G4W3226.americas.hpqcorp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121002073952.GA24180@localhost>
+In-Reply-To: <20121002073952.GA24180@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lance Ortiz <lance.ortiz@hp.com>
-Cc: kernel-janitors@vger.kernel.org, Len Brown <len.brown@intel.com>, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Len Brown <len.brown@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+
+Thanks for letting me know. I send out an updated patch removing the redundant check.  But I am wondering if we should leave it in for safety's sake.  Is having a info message like this from smatch a problem?
+
+Lance
+
+-----Original Message-----
+From: Fengguang Wu [mailto:fengguang.wu@intel.com] 
+Sent: Tuesday, October 02, 2012 1:40 AM
+To: Ortiz, Lance E
+Cc: kernel-janitors@vger.kernel.org; Len Brown; linux-acpi@vger.kernel.org; linux-pm@vger.kernel.org
+Subject: [acpi:next 4/5] drivers/acpi/scan.c:328 acpi_device_remove_files() info: redundant null check on dev->pnp.str_obj calling kfree()
 
 Hi Lance,
 
