@@ -1,36 +1,44 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Oct 2012 07:12:29 +0000
-Subject: [patch] ds2782_battery: signedness bug in ds278x_read_reg16()
-Message-Id: <20121024071229.GB2536@elgon.mountain>
+Date: Tue, 02 Oct 2012 08:28:18 +0000
+Subject: [patch] WUSB: remove an unnused variable
+Message-Id: <20121002082818.GG12398@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anton Vorontsov <cbou@mail.ru>
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We need to check for negative values before doing the swab16() for the
-error handling to work.
+The "wusb_cap_descr_default" is never used.  GCC doesn't complain about
+it because we have that line ".bLength = sizeof(wusb_cap_descr_default)"
+inside the definition itself.  Clang complains though.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+It could be instead that the intent was to actually use this variable.
+In that case, could someone send a patch and give me a Reported-by
+token?
 
-diff --git a/drivers/power/ds2782_battery.c b/drivers/power/ds2782_battery.c
-index 6bb6e2f..2fa9b6b 100644
---- a/drivers/power/ds2782_battery.c
-+++ b/drivers/power/ds2782_battery.c
-@@ -80,13 +80,13 @@ static inline int ds278x_read_reg16(struct ds278x_info *info, int reg_msb,
- {
- 	int ret;
+diff --git a/drivers/usb/wusbcore/devconnect.c b/drivers/usb/wusbcore/devconnect.c
+index 231009a..1d36531 100644
+--- a/drivers/usb/wusbcore/devconnect.c
++++ b/drivers/usb/wusbcore/devconnect.c
+@@ -847,19 +847,6 @@ static void wusb_dev_bos_rm(struct wusb_dev *wusb_dev)
+ 	wusb_dev->wusb_cap_descr = NULL;
+ };
  
--	ret = swab16(i2c_smbus_read_word_data(info->client, reg_msb));
-+	ret = i2c_smbus_read_word_data(info->client, reg_msb);
- 	if (ret < 0) {
- 		dev_err(&info->client->dev, "register read failed\n");
- 		return ret;
- 	}
- 
--	*val = ret;
-+	*val = swab16(ret);
- 	return 0;
- }
- 
+-static struct usb_wireless_cap_descriptor wusb_cap_descr_default = {
+-	.bLength = sizeof(wusb_cap_descr_default),
+-	.bDescriptorType = USB_DT_DEVICE_CAPABILITY,
+-	.bDevCapabilityType = USB_CAP_TYPE_WIRELESS_USB,
+-
+-	.bmAttributes = USB_WIRELESS_BEACON_NONE,
+-	.wPHYRates = cpu_to_le16(USB_WIRELESS_PHY_53),
+-	.bmTFITXPowerInfo = 0,
+-	.bmFFITXPowerInfo = 0,
+-	.bmBandGroup = cpu_to_le16(0x0001),	/* WUSB1.0[7.4.1] bottom */
+-	.bReserved = 0
+-};
+-
+ /*
+  * USB stack's device addition Notifier Callback
+  *
