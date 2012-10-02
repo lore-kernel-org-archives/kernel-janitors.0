@@ -1,58 +1,50 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 12 Oct 2012 16:55:22 +0000
-Subject: [glommer-memcg:kmemcg-slab 30/33] mm/slab_common.c:250:6: error: conflicting types for 'print_slabin
-Message-Id: <20121012165522.GA20312@localhost>
+Date: Tue, 02 Oct 2012 02:16:54 +0000
+Subject: [nfs:testing 56/83] fs/nfs/netns.h:27:15: error: 'NFS4_MAX_MINOR_VERSION' undeclared here (not in a
+Message-Id: <20121002021654.GA6691@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Stanislav Kinsbursky <skinsbursky@parallels.com>
+Cc: kernel-janitors@vger.kernel.org, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org
 
-Hi Glauber,
+Hi Stanislav,
 
 FYI, kernel build failed on
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git kmemcg-slab
-head:   f7dc2a43ce771e73443c82eb25d95f72f8161b45
-commit: 0f901d86f02ebf93cd584f9f09b4b6f4add9caa8 [30/33] Aggregate memcg cache values in slabinfo
-config: cris-allyesconfig # make ARCH=cris 
+tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git testing
+head:   2afdfa5a846246de50e1881f71ba5c0aac0b415f
+commit: b3d19c51723be69fddb64723bebb5a30fb57a483 [56/83] NFS: callback per-net usage counting introduced
+config: x86_64-allyesconfig
 
 All error/warnings:
 
-In file included from kernel/fork.c:14:0:
-include/linux/slab.h:224:45: warning: 'struct seq_file' declared inside parameter list [enabled by default]
-include/linux/slab.h:224:45: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-include/linux/slab.h:225:35: warning: 'struct seq_file' declared inside parameter list [enabled by default]
---
-In file included from mm/slab_common.c:6:0:
-include/linux/slab.h:224:45: warning: 'struct seq_file' declared inside parameter list [enabled by default]
-include/linux/slab.h:224:45: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-include/linux/slab.h:225:35: warning: 'struct seq_file' declared inside parameter list [enabled by default]
-mm/slab_common.c:250:6: error: conflicting types for 'print_slabinfo_header'
-include/linux/slab.h:225:6: note: previous declaration of 'print_slabinfo_header' was here
-mm/slab_common.c:320:5: error: conflicting types for 'cache_show'
-include/linux/slab.h:224:5: note: previous declaration of 'cache_show' was here
---
-In file included from mm/bootmem.c:13:0:
-include/linux/slab.h:224:45: warning: 'struct seq_file' declared inside parameter list [enabled by default]
-include/linux/slab.h:224:45: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-include/linux/slab.h:225:35: warning: 'struct seq_file' declared inside parameter list [enabled by default]
-mm/bootmem.c: In function 'mark_bootmem':
-mm/bootmem.c:361:1: warning: control reaches end of non-void function [-Wreturn-type]
+In file included from fs/nfs/dns_resolve.c:51:0:
+fs/nfs/netns.h:27:15: error: 'NFS4_MAX_MINOR_VERSION' undeclared here (not in a function)
 
-vim +250 mm/slab_common.c
+vim +27 fs/nfs/netns.h
 
-97d06609 Christoph Lameter 2012-07-06  244  int slab_is_available(void)
-97d06609 Christoph Lameter 2012-07-06  245  {
-97d06609 Christoph Lameter 2012-07-06  246  	return slab_state >= UP;
-97d06609 Christoph Lameter 2012-07-06  247  }
-4d93335e Glauber Costa     2012-09-26  248  
-4d93335e Glauber Costa     2012-09-26  249  #ifdef CONFIG_SLABINFO
-0f901d86 Glauber Costa     2012-10-01 @250  void print_slabinfo_header(struct seq_file *m)
-5c939166 Glauber Costa     2012-09-26  251  {
-5c939166 Glauber Costa     2012-09-26  252  	/*
-5c939166 Glauber Costa     2012-09-26  253  	 * Output format version, so at least we can change it
+cb9c1c4a (Stanislav Kinsbursky 2012-03-11  15) 
+1b340d01 (Stanislav Kinsbursky 2011-11-25  16) struct nfs_net {
+1b340d01 (Stanislav Kinsbursky 2011-11-25  17) 	struct cache_detail *nfs_dns_resolve;
+9e2e74db (Stanislav Kinsbursky 2012-01-10  18) 	struct rpc_pipe *bl_device_pipe;
+cb9c1c4a (Stanislav Kinsbursky 2012-03-11  19) 	struct bl_dev_msg bl_mount_reply;
+5ffaf855 (Stanislav Kinsbursky 2012-03-11  20) 	wait_queue_head_t bl_wq;
+6b13168b (Stanislav Kinsbursky 2012-01-23  21) 	struct list_head nfs_client_list;
+c25d32b2 (Stanislav Kinsbursky 2012-01-23  22) 	struct list_head nfs_volume_list;
+89d77c8f (Bryan Schumaker      2012-07-30  23) #if IS_ENABLED(CONFIG_NFS_V4)
+28cd1b3f (Stanislav Kinsbursky 2012-01-23  24) 	struct idr cb_ident_idr; /* Protected by nfs_client_lock */
+bbe0a3aa (Stanislav Kinsbursky 2012-08-20  25) 	unsigned short nfs_callback_tcpport;
+29dcc16a (Stanislav Kinsbursky 2012-08-20  26) 	unsigned short nfs_callback_tcpport6;
+b3d19c51 (Stanislav Kinsbursky 2012-08-20 @27) 	int cb_users[NFS4_MAX_MINOR_VERSION + 1];
+28cd1b3f (Stanislav Kinsbursky 2012-01-23  28) #endif
+dc030858 (Stanislav Kinsbursky 2012-01-23  29) 	spinlock_t nfs_client_lock;
+f092075d (Chuck Lever          2012-05-21  30) 	struct timespec boot_time;
+1b340d01 (Stanislav Kinsbursky 2011-11-25  31) };
+1b340d01 (Stanislav Kinsbursky 2011-11-25  32) 
+1b340d01 (Stanislav Kinsbursky 2011-11-25  33) extern int nfs_net_id;
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
+0-DAY kernel build testing backend         Open Source Technology Centre
 Fengguang Wu, Yuanhan Liu                              Intel Corporation
