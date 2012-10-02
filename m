@@ -1,55 +1,27 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Tue, 23 Oct 2012 19:57:23 +0000
-Subject: [PATCH 20/23] dvb-core: Replace memcpy with struct assignment
-Message-Id: <1351022246-8201-20-git-send-email-elezegarcia@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Oct 2012 08:26:46 +0000
+Subject: [patch] drm/ast: drop duplicate initialization
+Message-Id: <20121002082646.GD12398@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
-In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
+To: David Airlie <airlied@linux.ie>
+Cc: Jani Nikula <jani.nikula@intel.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
 
-This kind of memcpy() is error-prone. Its replacement with a struct
-assignment is prefered because it's type-safe and much easier to read.
+We set ".disable" to "ast_crtc_disable" twice.
 
-Found by coccinelle. Hand patched and reviewed.
-Tested by compilation only.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier struct_name;
-struct struct_name to;
-struct struct_name from;
-expression E;
-@@
--memcpy(&(to), &(from), E);
-+to = from;
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
----
- drivers/media/dvb-core/dvb_frontend.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index 7e92793..c770464 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -2256,7 +2256,7 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
- 				printk("%s switch command: 0x%04lx\n", __func__, swcmd);
- 			do_gettimeofday(&nexttime);
- 			if (dvb_frontend_debug)
--				memcpy(&tv[0], &nexttime, sizeof(struct timeval));
-+				tv[0] = nexttime;
- 			/* before sending a command, initialize by sending
- 			 * a 32ms 18V to the switch
- 			 */
--- 
-1.7.4.4
-
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index f3b2a7c..e87f1ff 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -582,7 +582,6 @@ static const struct drm_crtc_helper_funcs ast_crtc_helper_funcs = {
+ 	.mode_set_base = ast_crtc_mode_set_base,
+ 	.disable = ast_crtc_disable,
+ 	.load_lut = ast_crtc_load_lut,
+-	.disable = ast_crtc_disable,
+ 	.prepare = ast_crtc_prepare,
+ 	.commit = ast_crtc_commit,
+ 
