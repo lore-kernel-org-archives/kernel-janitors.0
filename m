@@ -1,36 +1,27 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Date: Thu, 04 Oct 2012 14:46:21 +0000
-Subject: Re: [drm-intel:drm-intel-fixes 15/18] drivers/gpu/drm/i915/intel_ringbuffer.c:1405:24: error:
-Message-Id: <20121004094621.51eadeea@jbarnes-t420>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Oct 2012 08:28:45 +0000
+Subject: [patch] ore: signedness bug in _sp2d_min_pg()
+Message-Id: <20121002082845.GH12398@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121003141538.GB9009@localhost>
-	<20121003151217.GI5329@phenom.ffwll.local>
-In-Reply-To: <20121003151217.GI5329@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Fengguang Wu <fengguang.wu@intel.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 3 Oct 2012 17:12:18 +0200
-Daniel Vetter <daniel@ffwll.ch> wrote:
+This for loop doesn't work correctly when "p" is unsigned.
 
-> On Wed, Oct 03, 2012 at 10:15:38PM +0800, Fengguang Wu wrote:
-> > Hi Jesse,
-> > 
-> > FYI, kernel build failed on
-> > 
-> > tree:   git://people.freedesktop.org/~danvet/drm-intel.git drm-intel-fixes
-> > head:   2cb47a9c6d49f2961dcf57f69ff968e65d48e876
-> > commit: 307daa1b856699f1d4acc3972374017c3e99d331 [15/18] drm/i915: TLB invalidation with MI_FLUSH_DW requires a post-sync op
-> > config: x86_64-allyesconfig
-> 
-> Thanks for the report, should be fixed now - somehow I've failed to notice
-> that my .config has gone awry.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-No, this is because this patch depends on the earlier patch to add the
-GEM_SCRATCH_INDEX to i915_drv.h, which wasn't included in this series.
-Did you pull it in from the earlier series?  Or fix it up some other
-way that caused the breakage you saw?
-
-Jesse
+diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
+index 5f376d1..b963f38 100644
+--- a/fs/exofs/ore_raid.c
++++ b/fs/exofs/ore_raid.c
+@@ -203,7 +203,7 @@ static unsigned _sp2d_min_pg(struct __stripe_pages_2d *sp2d)
+ 
+ static unsigned _sp2d_max_pg(struct __stripe_pages_2d *sp2d)
+ {
+-	unsigned p;
++	int p;
+ 
+ 	for (p = sp2d->pages_in_unit - 1; p >= 0; --p) {
+ 		struct __1_page_stripe *_1ps = &sp2d->_1p_stripes[p];
