@@ -1,15 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 07 Oct 2012 18:37:56 +0000
-Subject: Re: [PATCH 1/20 V2] drivers/net/ethernet/dec/tulip/dmfe.c: fix error return code
-Message-Id: <20121007.143756.438924664957098975.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Oct 2012 11:46:49 +0000
+Subject: [patch] dm thin: check kmalloc in dm_deferred_set_create()
+Message-Id: <20121002114649.GA1413@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: grundler@parisc-linux.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>
+Cc: dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+We can simply return NULL here.  The callers already handle that.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index da0d5d1..fa7d21e 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -394,6 +394,8 @@ static struct dm_deferred_set *dm_deferred_set_create(void)
+ 	struct dm_deferred_set *ds;
+ 
+ 	ds = kmalloc(sizeof(*ds), GFP_KERNEL);
++	if (!ds)
++		return NULL;
+ 
+ 	spin_lock_init(&ds->lock);
+ 	ds->current_entry = 0;
