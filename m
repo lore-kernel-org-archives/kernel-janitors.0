@@ -1,105 +1,41 @@
-From: Andy Walls <awalls@md.metrocast.net>
-Date: Wed, 24 Oct 2012 23:10:45 +0000
-Subject: Re: [PATCH 01/23] uvc: Replace memcpy with struct assignment
-Message-Id: <e8dd9233-589d-4e57-8a58-593789c8eae1@email.android.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 02 Oct 2012 11:57:04 +0000
+Subject: [PATCH RFC] MAINTAINERS: Add section for subsystem shortname
+Message-Id: <1349179024-5319-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com> <2776796.95QghSKdPW@avalon>
-In-Reply-To: <2776796.95QghSKdPW@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ezequiel Garcia <elezegarcia@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: joe@perches.com
+Cc: gregkh@linuxfoundation.org, davem@davemloft.net, arnd@arndb.de, elezegarcia@gmail.com, dan.carpenter@oracle.com, Julia.Lawall@lip6.fr, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+The shortname for a subsystem, that is primarly used when sending patches over E-mail, is not stored anywhere in the source code. Actually one need to dig git log or mailing list archives. There is no standard, and the Maintainer choose how to short name his/her subsystem. MAINTAINERS file is the right place for storing this information.
 
->Hi Ezequiel,
->
->Thanks for the patch.
->
->On Tuesday 23 October 2012 16:57:04 Ezequiel Garcia wrote:
->> This kind of memcpy() is error-prone. Its replacement with a struct
->> assignment is prefered because it's type-safe and much easier to
->read.
->> 
->> Found by coccinelle. Hand patched and reviewed.
->> Tested by compilation only.
->
->This looks good, but there's one more memcpy that can be replaced by a
->direct 
->structure assignment in uvc_ctrl_add_info() 
->(drivers/media/usb/uvc/uvc_ctrl.c). You might want to check why it
->hasn't been 
->caught by the semantic patch.
->
->> A simplified version of the semantic match that finds this problem is
->as
->> follows: (http://coccinelle.lip6.fr/)
->> 
->> // <smpl>
->> @@
->> identifier struct_name;
->> struct struct_name to;
->> struct struct_name from;
->> expression E;
->> @@
->> -memcpy(&(to), &(from), E);
->> +to = from;
->> // </smpl>
->> 
->> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
->> Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
->> ---
->>  drivers/media/usb/uvc/uvc_v4l2.c |    6 +++---
->>  1 files changed, 3 insertions(+), 3 deletions(-)
->> 
->> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c
->> b/drivers/media/usb/uvc/uvc_v4l2.c index f00db30..4fc8737 100644
->> --- a/drivers/media/usb/uvc/uvc_v4l2.c
->> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
->> @@ -314,7 +314,7 @@ static int uvc_v4l2_set_format(struct
->uvc_streaming
->> *stream, goto done;
->>  	}
->> 
->> -	memcpy(&stream->ctrl, &probe, sizeof probe);
->> +	stream->ctrl = probe;
->>  	stream->cur_format = format;
->>  	stream->cur_frame = frame;
->> 
->> @@ -386,7 +386,7 @@ static int uvc_v4l2_set_streamparm(struct
->uvc_streaming
->> *stream, return -EBUSY;
->>  	}
->> 
->> -	memcpy(&probe, &stream->ctrl, sizeof probe);
->> +	probe = stream->ctrl;
->>  	probe.dwFrameInterval >>  		uvc_try_frame_interval(stream->cur_frame, interval);
->> 
->> @@ -397,7 +397,7 @@ static int uvc_v4l2_set_streamparm(struct
->uvc_streaming
->> *stream, return ret;
->>  	}
->> 
->> -	memcpy(&stream->ctrl, &probe, sizeof probe);
->> +	stream->ctrl = probe;
->>  	mutex_unlock(&stream->mutex);
->> 
->>  	/* Return the actual frame period. */
->
->-- 
->Regards,
->
->Laurent Pinchart
->
->--
->To unsubscribe from this list: send the line "unsubscribe linux-media"
->in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
+U is the second letter of Subsystem.
 
-Maybe because there is no '&' operator on the second argument. 
+This will also enable automatic tools like scripts/get_maintainer.pl to provide the correct short name for each filename in the Kernel source tree.
 
-Regards,
-Andy
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3386238..a1be2a1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -104,6 +104,11 @@ Descriptions of section entries:
+ 	      matches patches or files that contain one or more of the words
+ 	      printk, pr_info or pr_err
+ 	   One regex pattern per line.  Multiple K: lines acceptable.
++	U: Subsystem short name. Used in the subject of patch sent by email to
++	   identify that subsystem. Short means up to 20 chars. Examples:
++	   U:	media
++	   U:	media/em28xx
++	   U:	SCSI
+ 
+ Note: For the hard of thinking, this list is meant to remain in alphabetical
+ order. If you could add yourselves to it in alphabetical order that would be
+-- 
+1.7.11.4
+
