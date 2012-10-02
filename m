@@ -1,46 +1,52 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Tue, 09 Oct 2012 12:06:17 +0000
-Subject: Re: [PATCH 9/13] drivers/media/tuners/fc0011.c: use macros for i2c_msg initialization
-Message-Id: <20121009140617.6b2a159a@endymion.delvare>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 02 Oct 2012 07:39:52 +0000
+Subject: [acpi:next 4/5] drivers/acpi/scan.c:328 acpi_device_remove_files() info: redundant null check on dev
+Message-Id: <20121002073952.GA24180@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1349624323-15584-11-git-send-email-Julia.Lawall@lip6.fr>
-	<5071B147.3010708@bfs.de>
-	<alpine.DEB.2.02.1210071845030.2745@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1210071845030.2745@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: walter harms <wharms@bfs.de>, Michael Buesch <m@bues.ch>, kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lance Ortiz <lance.ortiz@hp.com>
+Cc: kernel-janitors@vger.kernel.org, Len Brown <len.brown@intel.com>, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org
 
-On Sun, 7 Oct 2012 18:50:31 +0200 (CEST), Julia Lawall wrote:
-> On Sun, 7 Oct 2012, walter harms wrote:
-> > Am 07.10.2012 17:38, schrieb Julia Lawall:
-> >> @@ -97,10 +96,8 @@ static int fc0011_readreg(struct fc0011_priv *priv, u8 reg, u8 *val)
-> >>  {
-> >>  	u8 dummy;
-> >>  	struct i2c_msg msg[2] = {
-> >> -		{ .addr = priv->addr,
-> >> -		  .flags = 0, .buf = &reg, .len = 1 },
-> >> -		{ .addr = priv->addr,
-> >> -		  .flags = I2C_M_RD, .buf = val ? : &dummy, .len = 1 },
-> >> +		I2C_MSG_WRITE(priv->addr, &reg, sizeof(reg)),
-> >> +		I2C_MSG_READ(priv->addr, val ? : &dummy, sizeof(dummy)),
-> >>  	};
-> >>
-> >
-> > This dummy looks strange, can it be that this is used uninitialised ?
-> 
-> I'm not sure to understand the question.  The read, when it happens in 
-> i2c_transfer will initialize dummy.  On the other hand, I don't know what 
-> i2c_transfer does when the buffer is NULL and the size is 1.  It does not 
-> look very elegant at least.
+Hi Lance,
 
-i2c_transfer() itself won't care, it just passes the request down to the
-underlying i2c bus driver. Most driver implementations will assume
-proper buffer addresses as soon as size > 0, so passing NULL instead
-would crash them. In short, don't do that.
+FYI, there are new smatch warnings show up in
 
--- 
-Jean Delvare
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git next
+head:   10eaea0474b0078bb84ff9009329b83d3e30337f
+commit: 2bc8195d56163f54d3036304efa8d71ab1091bf1 [4/5] ACPI: Add new sysfs interface to export device description
+
++ drivers/acpi/scan.c:328 acpi_device_remove_files() info: redundant null check on dev->pnp.str_obj calling kfree()
+
+vim +328 drivers/acpi/scan.c
+
+e49bd2dd (Zhang Rui      2006-12-08  312) 		result = device_create_file(&dev->dev, &dev_attr_eject);
+0c526d96 (Alex Chiang    2009-05-14  313) end:
+e49bd2dd (Zhang Rui      2006-12-08  314) 	return result;
+^1da177e (Linus Torvalds 2005-04-16  315) }
+^1da177e (Linus Torvalds 2005-04-16  316) 
+f883d9db (Patrick Mochel 2006-12-07  317) static void acpi_device_remove_files(struct acpi_device *dev)
+^1da177e (Linus Torvalds 2005-04-16  318) {
+f883d9db (Patrick Mochel 2006-12-07  319) 	acpi_status status;
+f883d9db (Patrick Mochel 2006-12-07  320) 	acpi_handle temp;
+^1da177e (Linus Torvalds 2005-04-16  321) 
+f883d9db (Patrick Mochel 2006-12-07  322) 	/*
+2bc8195d (Lance Ortiz    2012-09-07  323) 	 * If device has _STR, remove 'description' file
+2bc8195d (Lance Ortiz    2012-09-07  324) 	 */
+2bc8195d (Lance Ortiz    2012-09-07  325) 	status = acpi_get_handle(dev->handle, "_STR", &temp);
+2bc8195d (Lance Ortiz    2012-09-07  326) 	if (ACPI_SUCCESS(status)) {
+2bc8195d (Lance Ortiz    2012-09-07  327) 		if (dev->pnp.str_obj != NULL)
+2bc8195d (Lance Ortiz    2012-09-07 @328) 			kfree(dev->pnp.str_obj);
+2bc8195d (Lance Ortiz    2012-09-07  329) 		device_remove_file(&dev->dev, &dev_attr_description);
+2bc8195d (Lance Ortiz    2012-09-07  330) 	}
+2bc8195d (Lance Ortiz    2012-09-07  331) 	/*
+2bc8195d (Lance Ortiz    2012-09-07  332) 	 * If device has _EJ0, remove 'eject' file.
+f883d9db (Patrick Mochel 2006-12-07  333) 	 */
+f883d9db (Patrick Mochel 2006-12-07  334) 	status = acpi_get_handle(dev->handle, "_EJ0", &temp);
+f883d9db (Patrick Mochel 2006-12-07  335) 	if (ACPI_SUCCESS(status))
+f883d9db (Patrick Mochel 2006-12-07  336) 		device_remove_file(&dev->dev, &dev_attr_eject);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
