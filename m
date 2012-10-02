@@ -1,41 +1,56 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 16 Oct 2012 17:21:00 +0000
-Subject: [signal:arch-m32r 1/2] arch/m32r/kernel/process.c:205:35: error: 'ret_from_kernel_thread' undeclared
-Message-Id: <20121016172100.GA11813@localhost>
+From: Alexander Graf <agraf@suse.de>
+Date: Tue, 02 Oct 2012 11:04:03 +0000
+Subject: Re: [PATCH 3/6] arch/powerpc/kvm/e500_tlb.c: fix error return code
+Message-Id: <BF4777C1-E76A-4AEB-A87D-FC2CBB465F98@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1344160356-387-1-git-send-email-Julia.Lawall@lip6.fr> <1344160356-387-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344160356-387-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-Hi Al,
 
-FYI, kernel build failed on
+On 05.08.2012, at 11:52, Julia Lawall wrote:
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git arch-m32r
-head:   ad256c8748f5a072a58c8e2f5cc8220ed01a2701
-commit: 1e510c2fc8dd36525e49d6081aca3bbc33cd8f9c [1/2] m32r: switch to generic kernel_thread()/kernel_execve()
-config: m32r-m32104ut_defconfig # make ARCH=m32r m32104ut_defconfig
+> From: Julia Lawall <julia@diku.dk>
+> 
+> Convert a 0 error return code to a negative one, as returned elsewhere in the
+> function.
+> 
+> A new label is also added to avoid freeing things that are known to not yet
+> be allocated.
+> 
+> A simplified version of the semantic match that finds the first problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> identifier ret;
+> expression e,e1,e2,e3,e4,x;
+> @@
+> 
+> (
+> if (\(ret != 0\|ret < 0\) || ...) { ... return ...; }
+> |
+> ret = 0
+> )
+> ... when != ret = e1
+> *x = \(kmalloc\|kzalloc\|kcalloc\|devm_kzalloc\|ioremap\|ioremap_nocache\|devm_ioremap\|devm_ioremap_nocache\)(...);
+> ... when != x = e2
+>    when != ret = e3
+> *if (x = NULL || ...)
+> {
+>  ... when != ret = e4
+> *  return ret;
+> }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-All error/warnings:
+Thanks, applied to kvm-ppc-next.
 
-arch/m32r/kernel/process.c: In function 'copy_thread':
-arch/m32r/kernel/process.c:205:35: error: 'ret_from_kernel_thread' undeclared (first use in this function)
-arch/m32r/kernel/process.c:205:35: note: each undeclared identifier is reported only once for each function it appears in
 
-vim +205 arch/m32r/kernel/process.c
+Alex
 
-^1da177e Linus Torvalds 2005-04-16  199  
-1e510c2f Al Viro        2012-10-15  200  	if (unlikely(!regs)) {
-1e510c2f Al Viro        2012-10-15  201  		memset(childregs, 0, sizeof(struct pt_regs));
-1e510c2f Al Viro        2012-10-15  202  		childregs->psw = M32R_PSW_BIE;
-1e510c2f Al Viro        2012-10-15  203  		childregs->r1 = spu;	/* fn */
-1e510c2f Al Viro        2012-10-15  204  		childregs->r0 = arg;
-1e510c2f Al Viro        2012-10-15 @205  		tsk->thread.lr = (unsigned long)ret_from_kernel_thread;
-1e510c2f Al Viro        2012-10-15  206  	} else {
-1e510c2f Al Viro        2012-10-15  207  		/* Copy registers */
-1e510c2f Al Viro        2012-10-15  208  		*childregs = *regs;
-
----
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
