@@ -1,70 +1,38 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Tue, 23 Oct 2012 19:57:05 +0000
-Subject: [PATCH 02/23] cx231xx: Replace memcpy with struct assignment
-Message-Id: <1351022246-8201-2-git-send-email-elezegarcia@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 03 Oct 2012 01:17:07 +0000
+Subject: [block:aio-dio 1/2] usr/include/linux/blk_types.h:11: included file 'linux/llist.h' is not exported
+Message-Id: <20121003011707.GC8750@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
-In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-This kind of memcpy() is error-prone. Its replacement with a struct
-assignment is prefered because it's type-safe and much easier to read.
+Hi Jens,
 
-Found by coccinelle. Hand patched and reviewed.
-Tested by compilation only.
+FYI, kernel build failed on
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.dk/linux-block.git aio-dio
+head:   9b74568cadb674d3e8e5693e7ce1eb8096949068
+commit: 344423f13a969bc193a13e955839ff91c58c72a3 [1/2] aio/dio: go faster stripes
+config: powerpc-allmodconfig
 
-// <smpl>
-@@
-identifier struct_name;
-struct struct_name to;
-struct struct_name from;
-expression E;
-@@
--memcpy(&(to), &(from), E);
-+to = from;
-// </smpl>
+All error/warnings:
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
+usr/include/linux/blk_types.h:11: included file 'linux/llist.h' is not exported
+usr/include/linux/kexec.h:49: userspace cannot reference function or variable defined in the kernel
+usr/include/linux/soundcard.h:1054: userspace cannot reference function or variable defined in the kernel
+
+Due to this chunk:
+
+--- a/include/linux/aio.h
++++ b/include/linux/aio.h
+@@ -6,6 +6,7 @@
+ #include <linux/aio_abi.h>
+ #include <linux/uio.h>
+ #include <linux/rcupdate.h>
++#include <linux/llist.h>
+
 ---
- drivers/media/usb/cx231xx/cx231xx-cards.c |    2 +-
- drivers/media/usb/cx231xx/cx231xx-video.c |    3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
-index b84ebc5..352d676 100644
---- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -705,7 +705,7 @@ void cx231xx_sleep_s5h1432(struct cx231xx *dev)
- 
- static inline void cx231xx_set_model(struct cx231xx *dev)
- {
--	memcpy(&dev->board, &cx231xx_boards[dev->model], sizeof(dev->board));
-+	dev->board = cx231xx_boards[dev->model];
- }
- 
- /* Since cx231xx_pre_card_setup() requires a proper dev->model,
-diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
-index fedf785..c5109ba 100644
---- a/drivers/media/usb/cx231xx/cx231xx-video.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-video.c
-@@ -2627,8 +2627,7 @@ int cx231xx_register_analog_devices(struct cx231xx *dev)
- 		     dev->name, video_device_node_name(dev->vdev));
- 
- 	/* Initialize VBI template */
--	memcpy(&cx231xx_vbi_template, &cx231xx_video_template,
--	       sizeof(cx231xx_vbi_template));
-+	cx231xx_vbi_template = cx231xx_video_template;
- 	strcpy(cx231xx_vbi_template.name, "cx231xx-vbi");
- 
- 	/* Allocate and fill vbi video_device struct */
--- 
-1.7.4.4
-
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
