@@ -1,82 +1,36 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 21 Oct 2012 12:18:54 +0000
-Subject: Re: [PATCH 1/5] sound/isa/opti9xx/miro.c: eliminate possible double free
-Message-Id: <s5h4nloj9w1.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Oct 2012 06:05:15 +0000
+Subject: [patch 1/3] brcmfmac: cleanup casts in brcmf_c_mkiovar_bsscfg()
+Message-Id: <20121003060515.GA3802@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1350816727-1381-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1350816727-1381-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Brett Rudley <brudley@broadcom.com>
+Cc: Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Alwin Beukers <alwin@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
 
-At Sun, 21 Oct 2012 12:52:03 +0200,
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> snd_miro_probe is a static function that is only called twice in the file
-> that defines it.  At each call site, its argument is freed using
-> snd_card_free.  Thus, there is no need for snd_miro_probe to call
-> snd_card_free on its argument on any of its error exit paths.
-> 
-> Because snd_card_free both reads the fields of its argument and kfrees its
-> argments, the results of the second snd_card_free should be unpredictable.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> identifier f,free,a;
-> parameter list[n] ps;
-> type T;
-> expression e;
-> @@
-> 
-> f(ps,T a,...) {
->   ... when any
->       when != a = e
->   if(...) { ... free(a); ... return ...; }
->   ... when any
-> }
-> 
-> @@
-> identifier r.f,r.free;
-> expression x,a;
-> expression list[r.n] xs;
-> @@
-> 
-> * x = f(xs,a,...);
->   if (...) { ... free(a); ... return ...; }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Remove some pointless casts from the return value of strlen().  The
+"buflen" variable is already an unsigned int so it's never less than
+zero and doesn't need to be casted to u32.
 
-Thanks, applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> ---
-> Not tested.
-> 
->  sound/isa/opti9xx/miro.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/sound/isa/opti9xx/miro.c b/sound/isa/opti9xx/miro.c
-> index 3d1afb6..4a7ff4e 100644
-> --- a/sound/isa/opti9xx/miro.c
-> +++ b/sound/isa/opti9xx/miro.c
-> @@ -1286,7 +1286,6 @@ static int __devinit snd_miro_probe(struct snd_card *card)
->  
->  	error = snd_card_miro_aci_detect(card, miro);
->  	if (error < 0) {
-> -		snd_card_free(card);
->  		snd_printk(KERN_ERR "unable to detect aci chip\n");
->  		return -ENODEV;
->  	}
-> 
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/dhd_common.c b/drivers/net/wireless/brcm80211/brcmfmac/dhd_common.c
+index 15c5db5..ae0978c 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/dhd_common.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/dhd_common.c
+@@ -102,11 +102,11 @@ brcmf_c_mkiovar_bsscfg(char *name, char *data, uint datalen,
+ 	if (bssidx = 0)
+ 		return brcmf_c_mkiovar(name, data, datalen, buf, buflen);
+ 
+-	prefixlen = (u32) strlen(prefix); /* lengh of bsscfg prefix */
+-	namelen = (u32) strlen(name) + 1; /* lengh of iovar  name + null */
++	prefixlen = strlen(prefix); /* lengh of bsscfg prefix */
++	namelen = strlen(name) + 1; /* lengh of iovar name + null */
+ 	iolen = prefixlen + namelen + sizeof(bssidx_le) + datalen;
+ 
+-	if (buflen < 0 || iolen > (u32)buflen) {
++	if (buflen < iolen) {
+ 		brcmf_dbg(ERROR, "buffer is too short\n");
+ 		return 0;
+ 	}
