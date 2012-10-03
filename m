@@ -1,41 +1,55 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Tue, 09 Oct 2012 23:45:41 +0000
-Subject: Re: [signal:proposed-merge 1/1] fs/exec.c:1712:1: error: expected identifier or '(' before '>>' toke
-Message-Id: <20121009234541.GY2616@ZenIV.linux.org.uk>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 03 Oct 2012 16:18:05 +0000
+Subject: [PATCH 16/20] drivers/net/ethernet/renesas/sh_eth.c: fix error return code
+Message-Id: <1349281090-10013-15-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121009233733.GE9331@localhost>
-In-Reply-To: <20121009233733.GE9331@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davem@davemloft.net
+Cc: kernel-janitors@vger.kernel.org, yoshihiro.shimoda.uh@renesas.com, nobuhiro.iwamatsu.yj@renesas.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 10, 2012 at 07:37:33AM +0800, Fengguang Wu wrote:
-> Hi Al,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git proposed-merge
-> head:   e7f8028d6cf2f35e3c64f12211e359549b59081f
-> commit: e7f8028d6cf2f35e3c64f12211e359549b59081f [1/1] Merge branch 'for-linus' into proposed-merge
-> config: x86_64-allyesconfig
-> 
-> All error/warnings:
-> 
-> fs/exec.c:1712:1: error: expected identifier or '(' before '>>' token
-> 
-> vim +1712 fs/exec.c
-> 
-> 282124d1 Al Viro 2012-09-30  1706  	 * We were successful.  We won't be returning to our caller, but
-> 282124d1 Al Viro 2012-09-30  1707  	 * instead to user space by manipulating the kernel stack.
-> 282124d1 Al Viro 2012-09-30  1708  	 */
-> 282124d1 Al Viro 2012-09-30  1709  	ret_from_kernel_execve(p);
-> 282124d1 Al Viro 2012-09-30  1710  }
-> 282124d1 Al Viro 2012-09-30  1711  #endif
-> e7f8028d Al Viro 2012-10-09 @1712  >>>>>>> for-linus
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-gyah...  TBH, the only purpose of that thing is to show how merge conflicts
-should be resolved.  Probably should've just described it verbally (i.e.
-"for everything except arch/um/kernel/exec.c apply both changes, for
-arch/um/kernel/exec.c pick the version from my tree as-is; it contains all
-commits cherry-picked into uml tree").  Fixed, anyway.  My apologies...
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/net/ethernet/renesas/sh_eth.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index bad8f2e..c8bfea0 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2438,6 +2438,7 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+ 		rtsu = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 		if (!rtsu) {
+ 			dev_err(&pdev->dev, "Not found TSU resource\n");
++			ret = -ENODEV;
+ 			goto out_release;
+ 		}
+ 		mdp->tsu_addr = ioremap(rtsu->start,
+
