@@ -1,70 +1,59 @@
-From: NeilBrown <neilb@suse.de>
-Date: Wed, 03 Oct 2012 01:51:05 +0000
-Subject: Re: [patch] md/raid10: use correct limit variable
-Message-Id: <20121003115105.304923a6@notabene.brown>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/HJ8oW3i40R+7Lgm_X/aEpP="
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 03 Oct 2012 16:17:53 +0000
+Subject: [PATCH 4/20] drivers/net/can/sja1000/peak_pcmcia.c: fix error return code
+Message-Id: <1349281090-10013-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121002080422.GA12398@elgon.mountain>
-In-Reply-To: <20121002080422.GA12398@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: wg@grandegger.com
+Cc: kernel-janitors@vger.kernel.org, mkl@pengutronix.de, linux@dominikbrodowski.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/HJ8oW3i40R+7Lgm_X/aEpP=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Tue, 2 Oct 2012 11:04:22 +0300 Dan Carpenter <dan.carpenter@oracle.com>
-wrote:
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-> Clang complains that we are assigning a variable to itself.  This should
-> be using bad_sectors like the similar earlier check does.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index 56149ce..4448624 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -3219,7 +3219,7 @@ static sector_t sync_request(struct mddev *mddev, s=
-ector_t sector_nr,
->  				else {
->  					bad_sectors -=3D (sector - first_bad);
->  					if (max_sync > bad_sectors)
-> -						max_sync =3D max_sync;
-> +						max_sync =3D bad_sectors;
->  					continue;
->  				}
->  			}
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-We sure do have some careless programmers around here :-(
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-That bug has been there since 3.1-rc1.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Thanks for finding it!
+---
+ drivers/net/can/sja1000/peak_pcmcia.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-NeilBrown
+diff --git a/drivers/net/can/sja1000/peak_pcmcia.c b/drivers/net/can/sja1000/peak_pcmcia.c
+index ec6bd9d..272a85f 100644
+--- a/drivers/net/can/sja1000/peak_pcmcia.c
++++ b/drivers/net/can/sja1000/peak_pcmcia.c
+@@ -686,8 +686,10 @@ static int __devinit pcan_probe(struct pcmcia_device *pdev)
+ 
+ 	/* detect available channels */
+ 	pcan_add_channels(card);
+-	if (!card->chan_count)
++	if (!card->chan_count) {
++		err = -ENOMEM;
+ 		goto probe_err_4;
++	}
+ 
+ 	/* init the timer which controls the leds */
+ 	init_timer(&card->led_timer);
 
---Sig_/HJ8oW3i40R+7Lgm_X/aEpP=
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.18 (GNU/Linux)
-
-iQIVAwUBUGuaCTnsnt1WYoG5AQLX2xAAwLKoCitB5jLx6y7wm3DtprlJBDYliIHt
-JkfjLqZSgZkZ4eLO2sUcbjY5F2402svutI4IWzES9miA7s76eW04mtjBp1BLybBS
-nFFCY0XF4cWme3EQMX3nBoO8f3CeCyIxAV+qbYnrtEzcCBLoApIMRnKFiAJywD/8
-w/z0Pe7+ByaPg9DVN7NO/cOfFIVauzhYEE/7V3uP+PWAtmgJ6eWTTVEkAehxgsJG
-ri1+VJkK20hqSstTozaG/9AqUrPflENprkvT3aSxrnWOJAbWMJKYxR0kTExwxLqd
-wE13lbTtNP9fJKkc/uSh7gmEotLz1vv5LeU4QGPN0f/CJ3SbNDVV5AfABQyz+GfU
-Leiu8TSPa9AEF0VxDgTm7zBr8YEjtY7FMTf1bPhbP3Q/E4/7/OSrOnG/la0Q9SKH
-3DG5cbX5eY1/6JCANd+0Qsi4JhD1kNbrZEh6umlllPow/+Dan0v0nLUE5svAdWE5
-//S4XD2pElR85cAm+jWLS5GFZbFUwYS/0nlvylQ0QFkt2JH7y7wua9Rl+YXayL0k
-mJEpK50jE4t+pUGdAbLkrjDP+7WOGe8tmgLcx2kae/JpfzVkajaVj08n/opyN2Oj
-+aLrbRrklarwibgK8UYATQIudjW3modsrI0RBod84LtoKHrNmvu4/RzNT0QVXU7L
-mVwdffPl4oo=
-=oxzC
------END PGP SIGNATURE-----
-
---Sig_/HJ8oW3i40R+7Lgm_X/aEpP=--
