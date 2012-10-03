@@ -1,27 +1,62 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Mon, 01 Oct 2012 22:47:27 +0000
-Subject: Re: [PATCH 1/3] include/linux/i2c.h: introduce macros for i2c_msg initialization
-Message-Id: <201210020047.27541.PeterHuewe@gmx.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 03 Oct 2012 16:17:54 +0000
+Subject: [PATCH 3/20] drivers/net/can/sja1000/peak_pci.c: fix error return code
+Message-Id: <1349281090-10013-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1348990388-7413-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1348990388-7413-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: wg@grandegger.com
+Cc: kernel-janitors@vger.kernel.org, mkl@pengutronix.de, davem@davemloft.net, jj@chaosbits.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am Dienstag, 2. Oktober 2012, 00:24:49 schrieb Ryan Mallon:
-> On 30/09/12 17:33, Julia Lawall wrote:
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > This patch introduces some macros for describing how an i2c_msg is being
-> > initialized.  There are three macros: I2C_MSG_READ, for a read message,
-> > I2C_MSG_WRITE, for a write message, and I2C_MSG_OP, for some other kind
-> > of message, which is expected to be very rarely used.
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Cool.
-Especially as there is no i2c flag for write this makes code more readable.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Reviewed-by: Peter Huewe <peterhuewe@gmx.de>
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/net/can/sja1000/peak_pci.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/can/sja1000/peak_pci.c b/drivers/net/can/sja1000/peak_pci.c
+index f0a1296..f5b82ae 100644
+--- a/drivers/net/can/sja1000/peak_pci.c
++++ b/drivers/net/can/sja1000/peak_pci.c
+@@ -583,12 +583,14 @@ static int __devinit peak_pci_probe(struct pci_dev *pdev,
+ 	cfg_base = pci_iomap(pdev, 0, PEAK_PCI_CFG_SIZE);
+ 	if (!cfg_base) {
+ 		dev_err(&pdev->dev, "failed to map PCI resource #0\n");
++		err = -ENOMEM;
+ 		goto failure_release_regions;
+ 	}
+ 
+ 	reg_base = pci_iomap(pdev, 1, PEAK_PCI_CHAN_SIZE * channels);
+ 	if (!reg_base) {
+ 		dev_err(&pdev->dev, "failed to map PCI resource #1\n");
++		err = -ENOMEM;
+ 		goto failure_unmap_cfg_base;
+ 	}
+ 
 
