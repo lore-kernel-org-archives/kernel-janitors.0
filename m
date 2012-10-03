@@ -1,56 +1,62 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 02 Oct 2012 14:12:00 +0000
-Subject: arch/x86/include/asm/mc146818rtc.h:44:2: error: implicit declaration of function 'this_cpu_read'
-Message-Id: <20121002141200.GA14146@localhost>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 03 Oct 2012 14:15:10 +0000
+Subject: Re: arch/x86/include/asm/mc146818rtc.h:44:2: error: implicit declaration of function 'this_cpu_read'
+Message-Id: <201210031415.11146.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121002141200.GA14146@localhost>
+In-Reply-To: <20121002141200.GA14146@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Arnd,
+On Tuesday 02 October 2012, Fengguang Wu wrote:
+> Hi Arnd,
+> 
+> FYI, kernel build failed on
+> 
+> commit: 72e2c3166db31bbb25654be3985ea662fa141d8e  warnings in include/linux/mc146818rtc.h
+> config: i386-allmodconfig
 
-FYI, kernel build failed on
+Thanks for the report. I've looked at the situation again and come up with a better
+fix now to replace my original patch:
 
-commit: 72e2c3166db31bbb25654be3985ea662fa141d8e  warnings in include/linux/mc146818rtc.h
-config: i386-allmodconfig
+commit 6f2bcb731779d5709558fa044a4ac67a384102e1
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Wed Oct 3 13:13:27 2012 +0000
 
-All error/warnings:
+    ARM: footbridge: remove RTC_IRQ definition
+    
+    Since commit bd8abc9a32c "ARM: mc146818rtc: remove unnecessary include of
+    mach/irqs.h", building footbridge_defconfig results in this warning:
+    
+    In file included from include/linux/mc146818rtc.h:16:0,
+                     from arch/arm/mach-footbridge/isa-rtc.c:21:
+    arch/arm/include/asm/mc146818rtc.h:10:0: warning: "RTC_IRQ" redefined [enabled by default]
+    arch/arm/mach-footbridge/include/mach/irqs.h:93:0: note: this is the location of the previous definition
+    
+    The above commit was intentionally made to catch errors like this,
+    where code relies on the RTC_IRQ definition. The only driver using
+    it is the legacy PC-style drivers/char/rtc.c driver.
+    However, the ARM architecture has been using the RTC_LIB framework
+    since at least 2006, and that doesn't use it.
+    
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+    Cc: Rob Herring <rob.herring@calxeda.com>
+    Cc: Alessandro Zummo <a.zummo@towertech.it>
+    Cc: rtc-linux@googlegroups.com
+    Cc: Russell King <linux@arm.linux.org.uk>
 
-arch/x86/include/asm/mc146818rtc.h:44:17: sparse: undefined identifier 'this_cpu_read'
-arch/x86/include/asm/mc146818rtc.h:44:17: sparse: not a function <noident>
-In file included from include/linux/mc146818rtc.h:15:0,
-                 from arch/x86/kernel/rtc.c:5:
-arch/x86/include/asm/mc146818rtc.h: In function 'lock_cmos':
-arch/x86/include/asm/mc146818rtc.h:44:2: error: implicit declaration of function 'this_cpu_read' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
---
-In file included from include/linux/mc146818rtc.h:15:0,
-                 from drivers/char/mwave/smapi.c:50:
-arch/x86/include/asm/mc146818rtc.h: In function 'lock_cmos':
-arch/x86/include/asm/mc146818rtc.h:44:2: error: implicit declaration of function 'this_cpu_read' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-
-sparse static analyze warnings:
-
-? arch/x86/include/asm/mc146818rtc.h:44:17: sparse: undefined identifier 'this_cpu_read'
-? arch/x86/include/asm/mc146818rtc.h:44:17: sparse: not a function <noident>
-
-vim +44 arch/x86/include/asm/mc146818rtc.h
-
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  41) static inline void lock_cmos(unsigned char reg)
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  42) {
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  43) 	unsigned long new;
-933a4415 include/asm-x86/mc146818rtc.h (Joe Perches     2008-03-23 @44) 	new = ((smp_processor_id() + 1) << 8) | reg;
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  45) 	for (;;) {
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  46) 		if (cmos_lock) {
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  47) 			cpu_relax();
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  48) 			continue;
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  49) 		}
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  50) 		if (__cmpxchg(&cmos_lock, 0, new, sizeof(cmos_lock)) = 0)
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  51) 			return;
-6ce60b07 include/asm-x86/mc146818rtc.h (Thomas Gleixner 2008-01-30  52) 	}
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+diff --git a/arch/arm/mach-footbridge/include/mach/irqs.h b/arch/arm/mach-footbridge/include/mach/irqs.h
+index 400551e..61c714c 100644
+--- a/arch/arm/mach-footbridge/include/mach/irqs.h
++++ b/arch/arm/mach-footbridge/include/mach/irqs.h
+@@ -89,8 +89,6 @@
+ #define IRQ_NETWINDER_VGA	_ISA_IRQ(11)
+ #define IRQ_NETWINDER_SOUND	_ISA_IRQ(12)
+ 
+-#undef RTC_IRQ
+-#define RTC_IRQ		IRQ_ISA_RTC_ALARM
+ #define I8042_KBD_IRQ	IRQ_ISA_KEYBOARD
+ #define I8042_AUX_IRQ	(machine_is_netwinder() ? IRQ_NETWINDER_PS2MOUSE : IRQ_ISA_PS2MOUSE)
+ #define IRQ_FLOPPYDISK	IRQ_ISA_FLOPPY
