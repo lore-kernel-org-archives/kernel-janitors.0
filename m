@@ -1,89 +1,72 @@
-From: Yuanhan Liu <yuanhan.liu@intel.com>
-Date: Mon, 15 Oct 2012 09:17:06 +0000
-Subject: Re: [mips:upstream 10/22] arch/mips/kernel/proc.c:75:3: warning: too many arguments for format
-Message-Id: <20121015091706.GE2136@yliu-dev.sh.intel.com>
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Date: Wed, 03 Oct 2012 10:49:08 +0000
+Subject: Re: [kees:module-fd-syscall 1/4] #warning syscall finit_module not implemented
+Message-Id: <20121003104908.GL1390@axis.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121015015300.GE31881@yliu-dev.sh.intel.com>
-In-Reply-To: <20121015015300.GE31881@yliu-dev.sh.intel.com>
+References: <20120929013644.GB11675@localhost>
+In-Reply-To: <20120929013644.GB11675@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 15, 2012 at 10:56:48AM +0200, Ralf Baechle wrote:
-> FWIW, I received two emails of identical content on this matter, one from
-> Yuanhan Liu <yuanhan.liu@intel.com>, one from Fengguang Wu <fengguang.wu@-
-> intel.com>.
+On Sat, Sep 29, 2012 at 07:53:01PM +0200, Kees Cook wrote:
+> Hi,
 
-Hi Ralf,
+Hi,
 
-Yes, it's a mistake. Sorry about that. Will try not do that again.
-
-Thanks,
-Yuanhan Liu
+> Yeah, I think this is expected now, since
+> 0e75898fe2499ece0ac3f1475982a828b3283b0d, which fixed checksyscalls
+> (it got broken in 29dc54c673ea2531d589400badb4ada5f5f60dae).
 > 
->   Ralf
+> This email should really be directed at the cris maintainer (CCed).
+
+Thanks, I'll push some patches to wire this up so we can avoid the error.
+
+/Jesper
+
+> Thanks!
 > 
-> On Mon, Oct 15, 2012 at 09:53:00AM +0800, Yuanhan Liu wrote:
-> > Date:   Mon, 15 Oct 2012 09:53:00 +0800
-> > From: Yuanhan Liu <yuanhan.liu@intel.com>
-> > To: "Steven J. Hill" <sjhill@mips.com>
-> > Cc: wfg@linux.intel.com, Yuanhan Liu <yuanhan.liu@intel.com>,
-> >  kernel-janitors@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
-> > Subject: [mips:upstream 10/22] arch/mips/kernel/proc.c:75:3: warning: too
-> >  many arguments for format
-> > Content-Type: text/plain; charset=us-ascii
-> > 
-> > Hi Steven,
-> > 
+> -Kees
+> 
+> On Fri, Sep 28, 2012 at 6:36 PM, Fengguang Wu <fengguang.wu@intel.com> wrote:
+> > Hi Kees,
+> >
 > > FYI, there are new compile warnings show up in
-> > 
-> > tree:   git://git.linux-mips.org/pub/scm/ralf/upstream-linus.git upstream
-> > head:   35bafbee4b4732a2820bbd0ef141c8192ff29731
-> > commit: ee80f7c73dc1b1f0ba9f82079c9bd1c0d1aedef8 [10/22] MIPS: Add detection of DSP ASE Revision 2.
-> > config: mips-allyesconfig # make ARCH=mips 
-> > 
+> >
+> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git module-fd-syscall
+> > head:   fddb953b5898441d3a26d8912ac9d06489f4c1dc
+> > commit: 1c0ef4c3ea38a42c9e326b1eb520bd8e58b48797 [1/4] module: add syscall to load module from fd
+> > config: cris-allyesconfig
+> >
 > > All warnings:
-> > 
-> > arch/mips/kernel/proc.c: In function 'show_cpuinfo':
-> > arch/mips/kernel/proc.c:75:3: warning: too many arguments for format [-Wformat-extra-args]
-> > 
-> > ----
-> > I guess it's worthy to report it anyway, though this warning has
-> > been fixed by Ralf with a later commit: 981ef0de
-> > ----
-> > 
-> > vim +75 arch/mips/kernel/proc.c
-> > 
-> > 654f57bf David Daney    2008-09-23  59  	if (cpu_has_watch) {
-> > 654f57bf David Daney    2008-09-23  60  		seq_printf(m, "count: %d, address/irw mask: [",
-> > 03751e79 Steven J. Hill 2012-05-10  61  		      cpu_data[n].watch_reg_count);
-> > 654f57bf David Daney    2008-09-23  62  		for (i = 0; i < cpu_data[n].watch_reg_count; i++)
-> > 654f57bf David Daney    2008-09-23  63  			seq_printf(m, "%s0x%04x", i ? ", " : "" ,
-> > 03751e79 Steven J. Hill 2012-05-10  64  				cpu_data[n].watch_reg_masks[i]);
-> > 654f57bf David Daney    2008-09-23  65  		seq_printf(m, "]\n");
-> > 654f57bf David Daney    2008-09-23  66  	}
-> > e027802e Ralf Baechle   2005-08-16  67  	seq_printf(m, "ASEs implemented\t:%s%s%s%s%s%s\n",
-> > 4194318c Ralf Baechle   2005-05-05  68  		      cpu_has_mips16 ? " mips16" : "",
-> > 4194318c Ralf Baechle   2005-05-05  69  		      cpu_has_mdmx ? " mdmx" : "",
-> > 4194318c Ralf Baechle   2005-05-05  70  		      cpu_has_mips3d ? " mips3d" : "",
-> > e027802e Ralf Baechle   2005-08-16  71  		      cpu_has_smartmips ? " smartmips" : "",
-> > e027802e Ralf Baechle   2005-08-16  72  		      cpu_has_dsp ? " dsp" : "",
-> > ee80f7c7 Steven J. Hill 2012-08-03  73  		      cpu_has_dsp2 ? " dsp2" : "",
-> > e027802e Ralf Baechle   2005-08-16  74  		      cpu_has_mipsmt ? " mt" : ""
-> > e027802e Ralf Baechle   2005-08-16 @75  		);
-> > f6771dbb Ralf Baechle   2007-11-08  76  	seq_printf(m, "shadow register sets\t: %d\n",
-> > 03751e79 Steven J. Hill 2012-05-10  77  		      cpu_data[n].srsets);
-> > e77c32fe David Daney    2010-12-21  78  	seq_printf(m, "kscratch registers\t: %d\n",
-> > 03751e79 Steven J. Hill 2012-05-10  79  		      hweight8(cpu_data[n].kscratch_mask));
-> > 0ab7aefc Ralf Baechle   2007-03-02  80  	seq_printf(m, "core\t\t\t: %d\n", cpu_data[n].core);
-> > ^1da177e Linus Torvalds 2005-04-16  81  
-> > ^1da177e Linus Torvalds 2005-04-16  82  	sprintf(fmt, "VCE%%c exceptions\t\t: %s\n",
-> > 03751e79 Steven J. Hill 2012-05-10  83  		      cpu_has_vce ? "%u" : "not available");
-> > 
-> > 
+> >
+> > <stdin>:1178:2: warning: #warning syscall rt_tgsigqueueinfo not implemented [-Wcpp]
+> > <stdin>:1181:2: warning: #warning syscall perf_event_open not implemented [-Wcpp]
+> > <stdin>:1184:2: warning: #warning syscall recvmmsg not implemented [-Wcpp]
+> > <stdin>:1187:2: warning: #warning syscall fanotify_init not implemented [-Wcpp]
+> > <stdin>:1190:2: warning: #warning syscall fanotify_mark not implemented [-Wcpp]
+> > <stdin>:1193:2: warning: #warning syscall prlimit64 not implemented [-Wcpp]
+> > <stdin>:1196:2: warning: #warning syscall name_to_handle_at not implemented [-Wcpp]
+> > <stdin>:1199:2: warning: #warning syscall open_by_handle_at not implemented [-Wcpp]
+> > <stdin>:1202:2: warning: #warning syscall clock_adjtime not implemented [-Wcpp]
+> > <stdin>:1205:2: warning: #warning syscall syncfs not implemented [-Wcpp]
+> > <stdin>:1208:2: warning: #warning syscall sendmmsg not implemented [-Wcpp]
+> > <stdin>:1214:2: warning: #warning syscall process_vm_readv not implemented [-Wcpp]
+> > <stdin>:1217:2: warning: #warning syscall process_vm_writev not implemented [-Wcpp]
+> > <stdin>:1220:2: warning: #warning syscall kcmp not implemented [-Wcpp]
+> > <stdin>:1223:2: warning: #warning syscall finit_module not implemented [-Wcpp]
+> >
 > > ---
-> > 0-DAY kernel build testing backend         Open Source Technology Center
+> > 0-DAY kernel build testing backend         Open Source Technology Centre
 > > Fengguang Wu, Yuanhan Liu                              Intel Corporation
 > 
->   Ralf
+> 
+> 
+> -- 
+> Kees Cook
+> Chrome OS Security
+
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
