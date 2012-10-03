@@ -1,50 +1,72 @@
-From: Karsten Keil <kkeil@linux-pingi.de>
-Date: Fri, 12 Oct 2012 07:49:52 +0000
-Subject: Re: [patch] isdn: fix a wrapping bug in isdn_ppp_ioctl()
-Message-Id: <5077CBA0.3040707@linux-pingi.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 03 Oct 2012 12:40:44 +0000
+Subject: [PATCH 2/2] drivers/video/exynos/exynos_mipi_dsi.c: fix error return code
+Message-Id: <1349268044-32616-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121010093816.GA3669@elgon.mountain>  <1349864358.2386.27.camel@joe-AO722> <m21uh67csy.fsf@igel.home>  <1349874007.2386.42.camel@joe-AO722> <m2sj9m5sz5.fsf@igel.home>  <1349880119.2386.46.camel@joe-AO722>  <AE90C24D6B3A694183C094C60CF0A2F6026B7033@saturn3.aculab.com>  <1349882347.2386.47.camel@joe-AO722>  <AE90C24D6B3A694183C094C60CF0A2F6026B7034@saturn3.aculab.com> <1349884342.2035.1.camel@joe-AO722>
-In-Reply-To: <1349884342.2035.1.camel@joe-AO722>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: David Laight <David.Laight@ACULAB.COM>, Andreas Schwab <schwab@linux-m68k.org>, Dan Carpenter <dan.carpenter@oracle.com>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Masanari Iida <standby24x7@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Donghwa Lee <dh09.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-Am 10.10.2012 17:52, schrieb Joe Perches:
-> On Wed, 2012-10-10 at 16:44 +0100, David Laight wrote:
->>> On Wed, 2012-10-10 at 15:59 +0100, David Laight wrote:
->>>> Seems to me the code is expecting 256 bits of data, not any multiple of int,
->>>> long or anything else.
->>>
->>> include/linux/isdn_ppp.h:#define PPPIOCGCOMPRESSORS _IOR('t',134,unsigned long [8])
->>
->> That doesn't mean the whole thing makes any sense on 64bit systems.
->> A whole load of historic code used 'long' to ensure 32bit.
->> Some of that might have crept into Linux sources.
-> 
-> Very true, but it's exported via copy_to_user.
-> 
->> Since I suspect there are a maximum of 256 bits on both 32 and 64bit
->> systems, I wouldn't like to guess exactly how any particular 64bit
->> application chooses to check the bitmap.
->>
->> The ioctl constant may be wrong on 64 bit systems.
-> 
-> shrug.  Not much to do about it now.
-> isdn isn't very active.
-> 
-> Karsten?  What do you think?
-> 
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-I use ipppd as testbench to test remote connections via different PPP
-clients running on a 64 bit system without problems so far - but I did
-not use any compressions for some years, so maybe this code was never
-tested on 64 bit and at least not on mixed 32/64 bit systems.
-If I will find some time, I will check if the compression works.
-I did not wrote this part, so I cannot say how the code should work
-correctly out of the box, I  need to analyze this first by myself.
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-Karsten
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/video/exynos/exynos_mipi_dsi.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
+index c4f25de..07d70a3 100644
+--- a/drivers/video/exynos/exynos_mipi_dsi.c
++++ b/drivers/video/exynos/exynos_mipi_dsi.c
+@@ -375,6 +375,7 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
+ 	dsim->clock = clk_get(&pdev->dev, "dsim0");
+ 	if (IS_ERR(dsim->clock)) {
+ 		dev_err(&pdev->dev, "failed to get dsim clock source\n");
++		ret = -ENODEV;
+ 		goto err_clock_get;
+ 	}
+ 
+@@ -383,6 +384,7 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "failed to get io memory region\n");
++		ret = -ENODEV;
+ 		goto err_platform_get;
+ 	}
+ 
+@@ -407,6 +409,7 @@ static int exynos_mipi_dsi_probe(struct platform_device *pdev)
+ 	dsim_ddi = exynos_mipi_dsi_bind_lcd_ddi(dsim, dsim_pd->lcd_panel_name);
+ 	if (!dsim_ddi) {
+ 		dev_err(&pdev->dev, "mipi_dsim_ddi object not found.\n");
++		ret = -EINVAL;
+ 		goto err_bind;
+ 	}
+ 
 
