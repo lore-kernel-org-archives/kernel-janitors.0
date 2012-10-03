@@ -1,78 +1,110 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 02 Oct 2012 08:54:09 +0000
-Subject: Re: net/ipv4/ipconfig.c:1590:2: error: implicit declaration of function 'ic_nameservers_predef'
-Message-Id: <20121002085409.GB25630@localhost>
+Date: Wed, 03 Oct 2012 01:15:35 +0000
+Subject: drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2803:26: sparse: invalid assignment: |=
+Message-Id: <20121003011535.GB8750@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121002032744.GA11811@localhost>
- <CAKoUArkDK8sQ=DRgrPhEnnWPsdMkgNtZE6S2o5rx6tXhfB3SsA@mail.gmail.com>
-In-Reply-To: <CAKoUArkDK8sQ=DRgrPhEnnWPsdMkgNtZE6S2o5rx6tXhfB3SsA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rami Rosen <roszenrami@gmail.com>
-Cc: Christoph Fritz <chf.fritz@googlemail.com>, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, andriy.shevchenko@linux.intel.com
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 02, 2012 at 08:24:05AM +0200, Rami Rosen wrote:
-> Hi,
-> commit 842b08bbee448b2069aaebb7f18b40942ad2a1bd
-> fixes it.
-> 
-> git show 842b08bbee448b2069aaebb7f18b40942ad2a1bd
-> 
-> commit 842b08bbee448b2069aaebb7f18b40942ad2a1bd
-> 
-> Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Date:   Mon Sep 24 22:09:58 2012 +0000
-> 
->     ipconfig: fix trivial build error
-> 
->     The commit 5e953778a2aab04929a5e7b69f53dc26e39b079e ("ipconfig: add nameserv
->     IPs to kernel-parameter ip=") introduces ic_nameservers_predef() that define
->     only for BOOTP. However it is used by ip_auto_config_setup() as well. This
->     patch moves it outside of #ifdef BOOTP.
+Hi Yuval,
 
-Sorry, I get this bug while doing bisectibility tests on the linux-can
-tree.  Obviously I should not count the net tree's commits as part of
-the linux-can tree. Fixed.
+FYI, there are new sparse warnings show up in
 
-Thanks,
-Fengguang
+commit: 96bed4b954fd5ef69e32f3c1d2c7c6bdda181316  bnx2x,cnic: use FW 7.8.2
 
-> On Tue, Oct 2, 2012 at 5:27 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> > Hi Christoph,
-> >
-> > FYI, kernel build failed on
-> >
-> > commit: 5e953778a2aab04929a5e7b69f53dc26e39b079e ipconfig: add nameserver IPs to kernel-parameter ip> > config: i386-randconfig-b106 (attached as .config)
-> >
-> > All error/warnings:
-> >
-> > net/ipv4/ipconfig.c: In function 'ip_auto_config_setup':
-> > net/ipv4/ipconfig.c:1590:2: error: implicit declaration of function 'ic_nameservers_predef' [-Werror=implicit-function-declaration]
-> > cc1: some warnings being treated as errors
-> >
-> > vim +1590 net/ipv4/ipconfig.c
-> >
-> > 92ffb85d (Amos Waterland  2008-01-05  1578)      */
-> > ^1da177e (Linus Torvalds  2005-04-16  1579)     if (ic_proto_name(addrs))
-> > ^1da177e (Linus Torvalds  2005-04-16  1580)             return 1;
-> > ^1da177e (Linus Torvalds  2005-04-16  1581)
-> > 92ffb85d (Amos Waterland  2008-01-05  1582)     /* If no static IP is given, turn off autoconfig and bail.  */
-> > 92ffb85d (Amos Waterland  2008-01-05  1583)     if (*addrs = 0 ||
-> > 92ffb85d (Amos Waterland  2008-01-05  1584)         strcmp(addrs, "off") = 0 ||
-> > 92ffb85d (Amos Waterland  2008-01-05  1585)         strcmp(addrs, "none") = 0) {
-> > 92ffb85d (Amos Waterland  2008-01-05  1586)             ic_enable = 0;
-> > 92ffb85d (Amos Waterland  2008-01-05  1587)             return 1;
-> > 92ffb85d (Amos Waterland  2008-01-05  1588)     }
-> > 92ffb85d (Amos Waterland  2008-01-05  1589)
-> > 5e953778 (Christoph Fritz 2012-09-21 @1590)     ic_nameservers_predef();
-> > 5e953778 (Christoph Fritz 2012-09-21  1591)
-> > 92ffb85d (Amos Waterland  2008-01-05  1592)     /* Parse string for static IP assignment.  */
-> > ^1da177e (Linus Torvalds  2005-04-16  1593)     ip = addrs;
-> > ^1da177e (Linus Torvalds  2005-04-16  1594)     while (ip && *ip) {
-> > ^1da177e (Linus Torvalds  2005-04-16  1595)             if ((cp = strchr(ip, ':')))
-> > ^1da177e (Linus Torvalds  2005-04-16  1596)                     *cp++ = '\0';
-> >
-> > ---
-> > 0-DAY kernel build testing backend         Open Source Technology Centre
-> > Fengguang Wu, Yuanhan Liu                              Intel Corporation
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3072:48: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3072:48:    expected unsigned short [usertype] *fw_hi
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3072:48:    got restricted __le16 *<noident>
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3073:48: sparse: incorrect type in argument 2 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3073:48:    expected unsigned short [usertype] *fw_mid
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3073:48:    got restricted __le16 *<noident>
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3074:48: sparse: incorrect type in argument 3 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3074:48:    expected unsigned short [usertype] *fw_lo
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3074:48:    got restricted __le16 *<noident>
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3076:48: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3076:48:    expected unsigned short [usertype] *fw_hi
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3076:48:    got restricted __le16 *<noident>
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3077:48: sparse: incorrect type in argument 2 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3077:48:    expected unsigned short [usertype] *fw_mid
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3077:48:    got restricted __le16 *<noident>
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3078:48: sparse: incorrect type in argument 3 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3078:48:    expected unsigned short [usertype] *fw_lo
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3078:48:    got restricted __le16 *<noident>
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2869:26: sparse: incorrect type in assignment (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2869:26:    expected restricted __le16 [usertype] global_data
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2869:26:    got int
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:40: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:40: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:40:    expected unsigned short [unsigned] [usertype] val
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:40:    got restricted __sum16 [usertype] check
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:40: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:40: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:38: sparse: incorrect type in assignment (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:38:    expected restricted __le16 [usertype] tcp_pseudo_csum
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2888:38:    got int
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2646:50: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2646:50:    expected restricted __wsum [usertype] csum
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2646:50:    got unsigned short [unsigned] [usertype] csum
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2646:25: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2650:50: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2650:50:    expected restricted __wsum [usertype] csum
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2650:50:    got unsigned short [unsigned] [assigned] [usertype] csum
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2650:25: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2898:38: sparse: incorrect type in assignment (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2898:38:    expected restricted __le16 [usertype] tcp_pseudo_csum
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2898:38:    got unsigned short
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:29: sparse: cast from restricted __be32
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:29: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:29:    expected unsigned int [unsigned] [usertype] val
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:29:    got restricted __be32 [usertype] seq
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:29: sparse: cast from restricted __be32
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:29: sparse: cast from restricted __be32
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:29: sparse: cast from restricted __be32
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:29: sparse: cast from restricted __be32
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:27: sparse: incorrect type in assignment (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:27:    expected restricted __le32 [usertype] tcp_send_seq
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2787:27:    got unsigned int
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:30: sparse: cast from restricted __be16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:30: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:30:    expected unsigned short [unsigned] [usertype] val
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:30:    got restricted __be16 [usertype] id
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:30: sparse: cast from restricted __be16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:30: sparse: cast from restricted __be16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:28: sparse: incorrect type in assignment (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:28:    expected restricted __le16 [usertype] ip_id
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2791:28:    got int
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2793:25: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2793:25: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2793:25:    expected unsigned short [unsigned] [usertype] val
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2793:25:    got fouled restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2793:25: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2793:25: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2792:38: sparse: incorrect type in assignment (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2792:38:    expected restricted __le16 [usertype] tcp_pseudo_csum
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2792:38:    got int
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2799:25: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2799:25: sparse: incorrect type in argument 1 (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2799:25:    expected unsigned short [unsigned] [usertype] val
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2799:25:    got fouled restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2799:25: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2799:25: sparse: cast from restricted __sum16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2798:38: sparse: incorrect type in assignment (different base types)
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2798:38:    expected restricted __le16 [usertype] tcp_pseudo_csum
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2798:38:    got int
++ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2803:26: sparse: invalid assignment: |  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2803:26:    left side has type restricted __le16
+  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:2803:26:    right side has type int
+
+vim +2803 drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+
+f2e0899f drivers/net/bnx2x/bnx2x_cmn.c (Dmitry Kravkov 2010-10-06  2802) 
+f2e0899f drivers/net/bnx2x/bnx2x_cmn.c (Dmitry Kravkov 2010-10-06 @2803) 	pbd->global_data |= ETH_TX_PARSE_BD_E1X_PSEUDO_CS_WITHOUT_LEN;
+f2e0899f drivers/net/bnx2x/bnx2x_cmn.c (Dmitry Kravkov 2010-10-06  2804) }
+
+The code at line 2803 was first introduced by commit:
+f2e0899 bnx2x: Add 57712 support
+
+---
+0-DAY kernel build testing backend         Open Source Technology Centre
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
