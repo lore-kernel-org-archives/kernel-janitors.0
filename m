@@ -1,54 +1,67 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 12 Oct 2012 16:51:45 +0000
-Subject: [xen:stable/for-linus-3.7 35/35] drivers/xen/xenbus/xenbus_xs.c:628:13: warning: function declaratio
-Message-Id: <20121012165145.GA19889@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 03 Oct 2012 16:18:09 +0000
+Subject: [PATCH 20/20] drivers/net/ethernet/marvell/sky2.c: fix error return code
+Message-Id: <1349281090-10013-19-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mlindner@marvell.com
+Cc: kernel-janitors@vger.kernel.org, shemminger@vyatta.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Konrad,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, there are new compile warnings show up in
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git stable/for-linus-3.7
-head:   cb6b6df111e46b9d0f79eb971575fd50555f43f4
-commit: cb6b6df111e46b9d0f79eb971575fd50555f43f4 [35/35] xen/pv-on-hvm kexec: add quirk for Xen 3.4 and shutdown watches.
-config: x86_64-allyesconfig # make ARCH=x86_64 allyesconfig
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All warnings:
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-drivers/xen/xenbus/xenbus_xs.c:628:13: warning: function declaration isn't a prototype [-Wstrict-prototypes]
-
-vim +628 drivers/xen/xenbus/xenbus_xs.c
-
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  612  	struct xenbus_watch *i, *cmp;
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  613  
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  614  	cmp = (void *)simple_strtoul(token, NULL, 16);
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  615  
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  616  	list_for_each_entry(i, &watches, list)
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  617  		if (i = cmp)
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  618  			return i;
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  619  
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  620  	return NULL;
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  621  }
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  622  /*
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  623   * Certain older XenBus toolstack cannot handle reading values that are
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  624   * not populated. Some Xen 3.4 installation are incapable of doing this
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  625   * so if we are running on anything older than 4 do not attempt to read
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  626   * control/platform-feature-xs_reset_watches.
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  627   */
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10 @628  static bool xen_strict_xenbus_quirk()
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  629  {
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  630  	uint32_t eax, ebx, ecx, edx, base;
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  631  
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  632  	base = xen_cpuid_base();
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  633  	cpuid(base + 1, &eax, &ebx, &ecx, &edx);
-4bac07c9 Jeremy Fitzhardinge   2007-07-17  634  
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  635  	if ((eax >> 16) < 4)
-cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  636  		return true;
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/net/ethernet/marvell/sky2.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
+index 2b0748d..78946fe 100644
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -4924,6 +4924,7 @@ static int __devinit sky2_probe(struct pci_dev *pdev,
+ 
+ 	if (~reg = 0) {
+ 		dev_err(&pdev->dev, "PCI configuration read error\n");
++		err = -EIO;
+ 		goto err_out;
+ 	}
+ 
+@@ -4993,8 +4994,10 @@ static int __devinit sky2_probe(struct pci_dev *pdev,
+ 	hw->st_size = hw->ports * roundup_pow_of_two(3*RX_MAX_PENDING + TX_MAX_PENDING);
+ 	hw->st_le = pci_alloc_consistent(pdev, hw->st_size * sizeof(struct sky2_status_le),
+ 					 &hw->st_dma);
+-	if (!hw->st_le)
++	if (!hw->st_le) {
++		err = -ENOMEM;
+ 		goto err_out_reset;
++	}
+ 
+ 	dev_info(&pdev->dev, "Yukon-2 %s chip revision %d\n",
+ 		 sky2_name(hw->chip_id, buf1, sizeof(buf1)), hw->chip_rev);
+
