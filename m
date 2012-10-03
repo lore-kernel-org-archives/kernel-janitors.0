@@ -1,35 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Oct 2012 07:11:47 +0000
-Subject: [patch] compat_ioctl: cleanup a type in do_i2c_rdwr_ioctl()
-Message-Id: <20121024071146.GA2536@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 03 Oct 2012 16:18:06 +0000
+Subject: [PATCH 15/20] drivers/net/ethernet/natsemi/xtsonic.c: fix error return code
+Message-Id: <1349281090-10013-16-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem@davemloft.net
+Cc: kernel-janitors@vger.kernel.org, mcuos.com@gmail.com, axel.lin@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We check that:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-        if (nmsgs > I2C_RDRW_IOCTL_MAX_MSGS)
-                return -EINVAL;
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
 
-Since "nmsgs" is signed, it means the check can underflow.  It's
-harmless, but messy.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index f505402..f4222a4 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -680,7 +680,8 @@ static int do_i2c_rdwr_ioctl(unsigned int fd, unsigned int cmd,
- 	struct i2c_msg			__user *tmsgs;
- 	struct i2c_msg32		__user *umsgs;
- 	compat_caddr_t			datap;
--	int				nmsgs, i;
-+	unsigned int			nmsgs;
-+	int				i;
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/net/ethernet/natsemi/xtsonic.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/natsemi/xtsonic.c b/drivers/net/ethernet/natsemi/xtsonic.c
+index e01c0a0..7dfe883 100644
+--- a/drivers/net/ethernet/natsemi/xtsonic.c
++++ b/drivers/net/ethernet/natsemi/xtsonic.c
+@@ -205,6 +205,7 @@ static int __init sonic_probe1(struct net_device *dev)
+ 	if (lp->descriptors = NULL) {
+ 		printk(KERN_ERR "%s: couldn't alloc DMA memory for "
+ 				" descriptors.\n", dev_name(lp->device));
++		err = -ENOMEM;
+ 		goto out;
+ 	}
  
- 	if (get_user(nmsgs, &udata->nmsgs))
- 		return -EFAULT;
+
