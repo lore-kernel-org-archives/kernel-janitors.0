@@ -1,16 +1,59 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 07 Oct 2012 18:38:43 +0000
-Subject: Re: [PATCH 8/20 V2] drivers/net/irda/pxaficp_ir.c: fix error return code
-Message-Id: <20121007.143843.2009078173181229995.davem@davemloft.net>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 03 Oct 2012 16:18:00 +0000
+Subject: [PATCH 7/20] drivers/net/irda/mcs7780.c: fix error return code
+Message-Id: <1349281090-10013-10-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349472786-10921-1-git-send-email-peter.senna@gmail.com>
-	<1349472786-10921-4-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1349472786-10921-4-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: samuel@sortiz.org, irda-users@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: samuel@sortiz.org
+Cc: kernel-janitors@vger.kernel.org, irda-users@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Applied.
+Convert a nonnegative error return code to a negative one, as returned
+elsewhere in the function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/net/irda/mcs7780.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/irda/mcs7780.c b/drivers/net/irda/mcs7780.c
+index 1a00b59..f07c340 100644
+--- a/drivers/net/irda/mcs7780.c
++++ b/drivers/net/irda/mcs7780.c
+@@ -920,8 +920,10 @@ static int mcs_probe(struct usb_interface *intf,
+ 
+ 	ndev->netdev_ops = &mcs_netdev_ops;
+ 
+-	if (!intf->cur_altsetting)
++	if (!intf->cur_altsetting) {
++		ret = -ENOMEM;
+ 		goto error2;
++	}
+ 
+ 	ret = mcs_find_endpoints(mcs, intf->cur_altsetting->endpoint,
+ 				 intf->cur_altsetting->desc.bNumEndpoints);
+
