@@ -1,67 +1,36 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 03 Oct 2012 16:18:09 +0000
-Subject: [PATCH 20/20] drivers/net/ethernet/marvell/sky2.c: fix error return code
-Message-Id: <1349281090-10013-19-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Oct 2012 11:17:58 +0000
+Subject: re: X.509: Add an ASN.1 decoder
+Message-Id: <20121003111758.GA3954@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mlindner@marvell.com
-Cc: kernel-janitors@vger.kernel.org, shemminger@vyatta.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hello David Howells,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+The patch 788380fa26a6: "X.509: Add an ASN.1 decoder" from Sep 24, 
+2012, leads to the following warning:
+lib/asn1_decoder.c:320 asn1_ber_decoder()
+	 warn: unsigned 'len' is never less than zero.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+lib/asn1_decoder.c
+   315          skip_data:
+   316                  if (!(flags & FLAG_CONS)) {
+   317                          if (flags & FLAG_INDEFINITE_LENGTH) {
+   318                                  len = asn1_find_indefinite_length(
+   319                                          data + dp, datalen - dp, &errmsg, &dp);
+   320                                  if (len < 0)
+                                            ^^^^^^^
+asn1_find_indefinite_length() returns -1 on error but "len" is unsigned.
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+   321                                          goto error;
+   322                          }
+   323                          pr_debug("- LEAF: %zu\n", len);
+   324                          dp += len;
+   325                  }
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
- drivers/net/ethernet/marvell/sky2.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
-index 2b0748d..78946fe 100644
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -4924,6 +4924,7 @@ static int __devinit sky2_probe(struct pci_dev *pdev,
- 
- 	if (~reg = 0) {
- 		dev_err(&pdev->dev, "PCI configuration read error\n");
-+		err = -EIO;
- 		goto err_out;
- 	}
- 
-@@ -4993,8 +4994,10 @@ static int __devinit sky2_probe(struct pci_dev *pdev,
- 	hw->st_size = hw->ports * roundup_pow_of_two(3*RX_MAX_PENDING + TX_MAX_PENDING);
- 	hw->st_le = pci_alloc_consistent(pdev, hw->st_size * sizeof(struct sky2_status_le),
- 					 &hw->st_dma);
--	if (!hw->st_le)
-+	if (!hw->st_le) {
-+		err = -ENOMEM;
- 		goto err_out_reset;
-+	}
- 
- 	dev_info(&pdev->dev, "Yukon-2 %s chip revision %d\n",
- 		 sky2_name(hw->chip_id, buf1, sizeof(buf1)), hw->chip_rev);
+regards,
+dan carpenter
 
