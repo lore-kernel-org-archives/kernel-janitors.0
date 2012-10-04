@@ -1,94 +1,52 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 01 Oct 2012 03:22:14 +0000
-Subject: Re: [ext4:dev 47/50] fs/ext4/extents.c:4949 ext4_ext_punch_hole() warn: inconsistent returns mutex:&
-Message-Id: <20121001032214.GA14999@localhost>
+Date: Thu, 04 Oct 2012 07:06:23 +0000
+Subject: [linus:master 98/99] drivers/base/firmware_class.c:72:28: sparse: incorrect type in argument 2 (diff
+Message-Id: <20121004070623.GA31473@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121001025047.GB12711@localhost>
- <87mx06vq3w.fsf@openvz.org>
-In-Reply-To: <87mx06vq3w.fsf@openvz.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Monakhov <dmonakhov@openvz.org>
-Cc: kernel-janitors@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 01, 2012 at 07:16:35AM +0400, Dmitry Monakhov wrote:
-> On Mon, 1 Oct 2012 10:50:47 +0800, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> > Hi Dmitry,
-> > 
-> > FYI, there are new smatch warnings show up in
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-> > head:   07043757c1a4018a04aded14deb1f28269a4b2ad
-> > commit: c6a59106b4106d13dc824a388c5572ddd65a0779 [47/50] ext4: punch_hole should wait for DIO writers
-> > 
-> >   arch/x86/include/asm/jump_label.h:25 arch_static_branch() info: ignoring unreachable code.
-> > + fs/ext4/extents.c:4949 ext4_ext_punch_hole() warn: inconsistent returns mutex:&inode->i_mutex: locked (4813,4815) unlocked (4806,4949)
-> Yes, that is correct, my bad. Sorry, patch attached
-> BTW  What tool(compile option) you use to catch this issue?
+Hi Linus,
 
-Dmitry, I'm running smatch, a very powerful tool, written and maintained by Dan Carpenter.
+FYI, there are new sparse warnings show up in
 
-http://smatch.sourceforge.net/
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   3a494318b14b1bc0f59d2d6ce84c505c74d82d2a
+commit: abb139e75c2cdbb955e840d6331cb5863e409d0e [98/99] firmware: teach the kernel to load firmware files directly from the filesystem
 
-Thanks,
-Fengguang
++ drivers/base/firmware_class.c:72:28: sparse: incorrect type in argument 2 (different address spaces)
+  drivers/base/firmware_class.c:72:28:    expected char [noderef] <asn:1>*<noident>
+  drivers/base/firmware_class.c:72:28:    got char *[assigned] buf
 
-> > 
-> > vim +4949 fs/ext4/extents.c
-> > 
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4808) 
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4809) 	mutex_lock(&inode->i_mutex);
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4810) 	/* Need recheck file flags under mutex */
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4811) 	/* It's not possible punch hole on append only file */
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4812) 	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4813) 		return -EPERM;
->                                                                ^^^^^^^^^^^^^^^^
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4814) 	if (IS_SWAPFILE(inode))
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4815) 		return -ETXTBSY;
->                                                                ^^^^^^^^^^^^^^^^^^
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4816) 
-> > 2be4751b (Allison Henderson 2011-09-03  4817) 	/* No need to punch hole beyond i_size */
-> > 2be4751b (Allison Henderson 2011-09-03  4818) 	if (offset >= inode->i_size)
-> > c6a59106 (Dmitry Monakhov   2012-09-29  4819) 		goto out_mutex;
-> > 2be4751b (Allison Henderson 2011-09-03  4820) 
+Shall we use kernel_read() in place of vfs_read()?
 
-> >From 6cf5cfc5db6c792c76c68bdbc765b733b5ad5488 Mon Sep 17 00:00:00 2001
-> From: Dmitry Monakhov <dmonakhov@openvz.org>
-> Date: Mon, 1 Oct 2012 07:09:49 +0400
-> Subject: [PATCH] ext4: ext4_ext_punch_hole put i_mutex on error
-> 
-> Fix mistypo introduced in 'ext4: punch_hole should wait for DIO writers' patch.
-> 
-> Signed-off-by: Dmitry Monakhov <dmonakhov@openvz.org>
-> ---
->  fs/ext4/extents.c |   12 ++++++++----
->  1 files changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index f02ffce..0a720d4 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4811,10 +4811,14 @@ int ext4_ext_punch_hole(struct file *file, loff_t offset, loff_t length)
->  	mutex_lock(&inode->i_mutex);
->  	/* Need recheck file flags under mutex */
->  	/* It's not possible punch hole on append only file */
-> -	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
-> -		return -EPERM;
-> -	if (IS_SWAPFILE(inode))
-> -		return -ETXTBSY;
-> +	if (IS_APPEND(inode) || IS_IMMUTABLE(inode)) {
-> +		err = -EPERM;
-> +		goto out_mutex;
-> +	}
-> +	if (IS_SWAPFILE(inode)) {
-> +		err = -ETXTBSY;
-> +		goto out_mutex;
-> +	}
->  
->  	/* No need to punch hole beyond i_size */
->  	if (offset >= inode->i_size)
-> -- 
-> 1.7.7.6
-> 
+vim +72 drivers/base/firmware_class.c
 
+abb139e7 (Linus Torvalds 2012-10-03  59) static bool fw_read_file_contents(struct file *file, struct firmware *fw)
+abb139e7 (Linus Torvalds 2012-10-03  60) {
+abb139e7 (Linus Torvalds 2012-10-03  61) 	loff_t pos;
+abb139e7 (Linus Torvalds 2012-10-03  62) 	long size;
+abb139e7 (Linus Torvalds 2012-10-03  63) 	char *buf;
+abb139e7 (Linus Torvalds 2012-10-03  64) 
+abb139e7 (Linus Torvalds 2012-10-03  65) 	size = fw_file_size(file);
+abb139e7 (Linus Torvalds 2012-10-03  66) 	if (size < 0)
+abb139e7 (Linus Torvalds 2012-10-03  67) 		return false;
+abb139e7 (Linus Torvalds 2012-10-03  68) 	buf = vmalloc(size);
+abb139e7 (Linus Torvalds 2012-10-03  69) 	if (!buf)
+abb139e7 (Linus Torvalds 2012-10-03  70) 		return false;
+abb139e7 (Linus Torvalds 2012-10-03  71) 	pos = 0;
+abb139e7 (Linus Torvalds 2012-10-03 @72) 	if (vfs_read(file, buf, size, &pos) != size) {
+abb139e7 (Linus Torvalds 2012-10-03  73) 		vfree(buf);
+abb139e7 (Linus Torvalds 2012-10-03  74) 		return false;
+abb139e7 (Linus Torvalds 2012-10-03  75) 	}
+abb139e7 (Linus Torvalds 2012-10-03  76) 	fw->data = buf;
+abb139e7 (Linus Torvalds 2012-10-03  77) 	fw->size = size;
+abb139e7 (Linus Torvalds 2012-10-03  78) 	return true;
+abb139e7 (Linus Torvalds 2012-10-03  79) }
+abb139e7 (Linus Torvalds 2012-10-03  80) 
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
