@@ -1,62 +1,70 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 03 Oct 2012 16:17:54 +0000
-Subject: [PATCH 3/20] drivers/net/can/sja1000/peak_pci.c: fix error return code
-Message-Id: <1349281090-10013-4-git-send-email-peter.senna@gmail.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Thu, 04 Oct 2012 09:31:11 +0000
+Subject: Re: [PATCH 3/20] drivers/net/can/sja1000/peak_pci.c: fix error return code
+Message-Id: <506D575F.4040402@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------enig5BEFDC20CFC64095788A0E8A"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: wg@grandegger.com
-Cc: kernel-janitors@vger.kernel.org, mkl@pengutronix.de, davem@davemloft.net, jj@chaosbits.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1349281090-10013-4-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349281090-10013-4-git-send-email-peter.senna@gmail.com>
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: wg@grandegger.com, kernel-janitors@vger.kernel.org, davem@davemloft.net, jj@chaosbits.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig5BEFDC20CFC64095788A0E8A
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+On 10/03/2012 06:17 PM, Peter Senna Tschudin wrote:
+> From: Peter Senna Tschudin <peter.senna@gmail.com>
+>=20
+> Convert a nonnegative error return code to a negative one, as returned
+> elsewhere in the function.
+>=20
+> A simplified version of the semantic match that finds this problem is a=
+s
+> follows: (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret !=3D 0\))
+>  { ... return ret; }
+> |
+> ret@p1 =3D 0
+> )
+> ... when !=3D ret =3D e1
+>     when !=3D &ret
+> *if(...)
+> {
+>   ... when !=3D ret =3D e2
+>       when forall
+>  return ret;
+> }
+> // </smpl>
+>=20
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Applied to can.
+Tnx, Marc
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+--------------enig5BEFDC20CFC64095788A0E8A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
----
- drivers/net/can/sja1000/peak_pci.c |    2 ++
- 1 file changed, 2 insertions(+)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
 
-diff --git a/drivers/net/can/sja1000/peak_pci.c b/drivers/net/can/sja1000/peak_pci.c
-index f0a1296..f5b82ae 100644
---- a/drivers/net/can/sja1000/peak_pci.c
-+++ b/drivers/net/can/sja1000/peak_pci.c
-@@ -583,12 +583,14 @@ static int __devinit peak_pci_probe(struct pci_dev *pdev,
- 	cfg_base = pci_iomap(pdev, 0, PEAK_PCI_CFG_SIZE);
- 	if (!cfg_base) {
- 		dev_err(&pdev->dev, "failed to map PCI resource #0\n");
-+		err = -ENOMEM;
- 		goto failure_release_regions;
- 	}
- 
- 	reg_base = pci_iomap(pdev, 1, PEAK_PCI_CHAN_SIZE * channels);
- 	if (!reg_base) {
- 		dev_err(&pdev->dev, "failed to map PCI resource #1\n");
-+		err = -ENOMEM;
- 		goto failure_unmap_cfg_base;
- 	}
- 
+iEYEARECAAYFAlBtV18ACgkQjTAFq1RaXHPUhACfZftbepPARo5phiUlDFxBOlhZ
+KCYAn3uW8Qr0gOg2wGr2nDG+Nf2mkV4/
+=9Fva
+-----END PGP SIGNATURE-----
 
+--------------enig5BEFDC20CFC64095788A0E8A--
