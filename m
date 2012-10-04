@@ -1,52 +1,58 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 04 Oct 2012 17:32:12 +0000
+From: Stephen Hemminger <shemminger@vyatta.com>
+Date: Thu, 04 Oct 2012 17:40:45 +0000
 Subject: Re: [PATCH 19/20] drivers/net/ethernet/marvell/skge.c: fix error return code
-Message-Id: <CA+MoWDp=_F9opJbVkv9sDsmoykm7MTUZwRVumKCB0ZqDwD6NoQ@mail.gmail.com>
+Message-Id: <20121004104045.4fa02775@nehalam.linuxnetplumber.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1349281090-10013-20-git-send-email-peter.senna@gmail.com>
 	<20121003092508.6a7da662@nehalam.linuxnetplumber.net>
 	<CA+MoWDp4W5BCA1t_HgEtLhMs1btVTOkbtBytOVtAzJriEZ-16A@mail.gmail.com>
 	<20121004074442.180d8f01@nehalam.linuxnetplumber.net>
-In-Reply-To: <20121004074442.180d8f01@nehalam.linuxnetplumber.net>
+	<CA+MoWDp=_F9opJbVkv9sDsmoykm7MTUZwRVumKCB0ZqDwD6NoQ@mail.gmail.com>
+In-Reply-To: <CA+MoWDp=_F9opJbVkv9sDsmoykm7MTUZwRVumKCB0ZqDwD6NoQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Hemminger <shemminger@vyatta.com>
+To: Peter Senna Tschudin <peter.senna@gmail.com>
 Cc: mlindner@marvell.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
->> Stephen, I do not want to include function names on the commit
->> message. What do you think about this updated message, is it
->> acceptable?
->>
->
-> No still to generic, it needs to be written by a human examining
-> the file and understanding what the cause and effect of the bug
-> is.
+On Thu, 4 Oct 2012 19:32:12 +0200
+Peter Senna Tschudin <peter.senna@gmail.com> wrote:
 
-Stephen I've understood what you want. But it is not clear to me why
-you want. Let me show what Coccinelle produces as output:
+> >> Stephen, I do not want to include function names on the commit
+> >> message. What do you think about this updated message, is it
+> >> acceptable?
+> >>
+> >
+> > No still to generic, it needs to be written by a human examining
+> > the file and understanding what the cause and effect of the bug
+> > is.
+> 
+> Stephen I've understood what you want. But it is not clear to me why
+> you want. Let me show what Coccinelle produces as output:
+> 
+> [peter@ace linux-next]$ spatch ../../cocci/ret4.cocci -dir .
+> ...
+> * TODO [[view:./drivers/net/ethernet/sun/sungem.c::face=ovl-face1::linb(94::colb=1::cole=3][./drivers/net/ethernet/sun/sungem.c::2894]]
+> [[view:./drivers/net/ethernet/sun/sungem.c::face=ovl-face2::linb)66::colb=1::cole=3][./drivers/net/ethernet/sun/sungem.c::2966]]
+> [[view:./drivers/net/ethernet/sun/sungem.c::face=ovl-face2::linb015::colb=1::cole=7][./drivers/net/ethernet/sun/sungem.c::3015]]
+> ...
+> 
+> There is "no" automatic code transformation. The semantic patch I'm
+> using only points out where to investigate to change, or not, the
+> code. The output is in Emcas org-mode format. So I can tell you that
+> the patches are not being robot generated. I'm making the patches, one
+> by one, with great help of Coccinelle, but I'm making the code changes
+> by hand.
+> 
+> I can't understand the advantages of describing each patch as you are
+> asking. "For me" the generic commit message together with the patch
+> makes sense.  Can you please help me on that?
 
-[peter@ace linux-next]$ spatch ../../cocci/ret4.cocci -dir .
-...
-* TODO [[view:./drivers/net/ethernet/sun/sungem.c::face=ovl-face1::linb(94::colb=1::cole=3][./drivers/net/ethernet/sun/sungem.c::2894]]
-[[view:./drivers/net/ethernet/sun/sungem.c::face=ovl-face2::linb)66::colb=1::cole=3][./drivers/net/ethernet/sun/sungem.c::2966]]
-[[view:./drivers/net/ethernet/sun/sungem.c::face=ovl-face2::linb015::colb=1::cole=7][./drivers/net/ethernet/sun/sungem.c::3015]]
-...
+The purpose of the commit message is not only so other developers understand
+the patch. It is also so that the consumers (distro's and maintainers)
+understand the scope of the impact.  It maybe that your effort uncovers
+a really bad security hole that requires a CVE and a re-release of a 
+major enterprise product like RHEL, or it could just be a minor corner
+case that can never realistically happen. Unless you give a more complete
+description, someone else will have to do it for each case.
 
-There is "no" automatic code transformation. The semantic patch I'm
-using only points out where to investigate to change, or not, the
-code. The output is in Emcas org-mode format. So I can tell you that
-the patches are not being robot generated. I'm making the patches, one
-by one, with great help of Coccinelle, but I'm making the code changes
-by hand.
-
-I can't understand the advantages of describing each patch as you are
-asking. "For me" the generic commit message together with the patch
-makes sense.  Can you please help me on that?
-
->
-
-
-
--- 
-Peter
