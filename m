@@ -1,16 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 07 Oct 2012 18:38:39 +0000
-Subject: Re: [PATCH 7/20 V2] drivers/net/irda/mcs7780.c: fix error return code
-Message-Id: <20121007.143839.1044745535383031103.davem@davemloft.net>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 04 Oct 2012 04:51:26 +0000
+Subject: [drm:drm-next 139/301] ERROR: "backlight_force_update" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+Message-Id: <20121004045126.GB18309@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349472786-10921-1-git-send-email-peter.senna@gmail.com>
-	<1349472786-10921-3-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1349472786-10921-3-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: samuel@sortiz.org, irda-users@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Hi Luca,
 
-Applied.
+FYI, kernel build failed on
+
+tree:   git://people.freedesktop.org/~airlied/linux.git drm-next
+head:   268d28371cd326be4dfcd7eba5917bf4b9d30c8f
+commit: fda4b25c55a59ba12378e4b9e4553f6ea57d802d [139/301] drm/radeon: implement handler for ACPI event
+config: ia64-defconfig
+
+All error/warnings:
+
+ERROR: "atombios_set_panel_brightness" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+ERROR: "backlight_force_update" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
