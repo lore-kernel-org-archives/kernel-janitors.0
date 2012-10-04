@@ -1,59 +1,70 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 03 Oct 2012 16:17:53 +0000
-Subject: [PATCH 4/20] drivers/net/can/sja1000/peak_pcmcia.c: fix error return code
-Message-Id: <1349281090-10013-3-git-send-email-peter.senna@gmail.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Thu, 04 Oct 2012 09:30:30 +0000
+Subject: Re: [PATCH 4/20] drivers/net/can/sja1000/peak_pcmcia.c: fix error return code
+Message-Id: <506D5736.7040402@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------enig7B4637FB16C5DFEA20C6B149"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: wg@grandegger.com
-Cc: kernel-janitors@vger.kernel.org, mkl@pengutronix.de, linux@dominikbrodowski.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1349281090-10013-3-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349281090-10013-3-git-send-email-peter.senna@gmail.com>
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: wg@grandegger.com, kernel-janitors@vger.kernel.org, linux@dominikbrodowski.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig7B4637FB16C5DFEA20C6B149
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+On 10/03/2012 06:17 PM, Peter Senna Tschudin wrote:
+> From: Peter Senna Tschudin <peter.senna@gmail.com>
+>=20
+> Convert a nonnegative error return code to a negative one, as returned
+> elsewhere in the function.
+>=20
+> A simplified version of the semantic match that finds this problem is a=
+s
+> follows: (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret !=3D 0\))
+>  { ... return ret; }
+> |
+> ret@p1 =3D 0
+> )
+> ... when !=3D ret =3D e1
+>     when !=3D &ret
+> *if(...)
+> {
+>   ... when !=3D ret =3D e2
+>       when forall
+>  return ret;
+> }
+> // </smpl>
+>=20
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Applied to can.
+tnx, Marc
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+--------------enig7B4637FB16C5DFEA20C6B149
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
----
- drivers/net/can/sja1000/peak_pcmcia.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
 
-diff --git a/drivers/net/can/sja1000/peak_pcmcia.c b/drivers/net/can/sja1000/peak_pcmcia.c
-index ec6bd9d..272a85f 100644
---- a/drivers/net/can/sja1000/peak_pcmcia.c
-+++ b/drivers/net/can/sja1000/peak_pcmcia.c
-@@ -686,8 +686,10 @@ static int __devinit pcan_probe(struct pcmcia_device *pdev)
- 
- 	/* detect available channels */
- 	pcan_add_channels(card);
--	if (!card->chan_count)
-+	if (!card->chan_count) {
-+		err = -ENOMEM;
- 		goto probe_err_4;
-+	}
- 
- 	/* init the timer which controls the leds */
- 	init_timer(&card->led_timer);
+iEYEARECAAYFAlBtVzsACgkQjTAFq1RaXHNpJQCfWJ+um+x/TY9S8z6q2C6BJxfk
+0D0AnRZe4rev5vLW10iV5qO4WQc+Iwlw
+=KBwg
+-----END PGP SIGNATURE-----
 
+--------------enig7B4637FB16C5DFEA20C6B149--
