@@ -1,49 +1,39 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 04 Oct 2012 18:13:49 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 04 Oct 2012 18:23:35 +0000
 Subject: Re: [PATCH 19/20] drivers/net/ethernet/marvell/skge.c: fix error return code
-Message-Id: <CA+MoWDoOKF1NHmDbaGwpRCpHLpnHfjHngR2HrV-tWLj+8pFV7g@mail.gmail.com>
+Message-Id: <20121004.142335.1467206545795435493.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349281090-10013-20-git-send-email-peter.senna@gmail.com>
-	<20121003092508.6a7da662@nehalam.linuxnetplumber.net>
-	<CA+MoWDp4W5BCA1t_HgEtLhMs1btVTOkbtBytOVtAzJriEZ-16A@mail.gmail.com>
+References: <CA+MoWDp4W5BCA1t_HgEtLhMs1btVTOkbtBytOVtAzJriEZ-16A@mail.gmail.com>
 	<20121004074442.180d8f01@nehalam.linuxnetplumber.net>
 	<CA+MoWDp=_F9opJbVkv9sDsmoykm7MTUZwRVumKCB0ZqDwD6NoQ@mail.gmail.com>
-	<20121004104045.4fa02775@nehalam.linuxnetplumber.net>
-In-Reply-To: <20121004104045.4fa02775@nehalam.linuxnetplumber.net>
+In-Reply-To: <CA+MoWDp=_F9opJbVkv9sDsmoykm7MTUZwRVumKCB0ZqDwD6NoQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Hemminger <shemminger@vyatta.com>
-Cc: mlindner@marvell.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: peter.senna@gmail.com
+Cc: shemminger@vyatta.com, mlindner@marvell.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Stephen,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Thu, 4 Oct 2012 19:32:12 +0200
 
-Thanks for the patience.
+> I can't understand the advantages of describing each patch as you are
+> asking. "For me" the generic commit message together with the patch
+> makes sense.  Can you please help me on that?
 
-> The purpose of the commit message is not only so other developers understand
-> the patch. It is also so that the consumers (distro's and maintainers)
-> understand the scope of the impact.  It maybe that your effort uncovers
+Stop being so dense.
 
-I was not considering the scope of the impact. I'm fixing bugs found
-by Coccinelle meaning that my bug hunting is based on static program
-analysis. My evaluation of what to do is simpler: Can my change make
-the code better? If I believe that yes, I make the patch.
+We want to know the implications of the bug being fixed.
 
-> a really bad security hole that requires a CVE and a re-release of a
-> major enterprise product like RHEL, or it could just be a minor corner
-> case that can never realistically happen. Unless you give a more complete
-> description, someone else will have to do it for each case.
+Does it potentially cause an OOPS?  Bad reference counting and thus
+potential leaks or early frees?
 
-This is a mix between what I do not want and what I can't do. I can't
-give that complete description for consumers and distro maintainers
-for drivers that I do not know completely. I do not know how critical
-those bugs are in real life. I was expecting that the maintainer, who
-knows the drivers details, would do that sort of things when needed.
+You have to analyze the implications and ramifications of the bug
+being fixed.  We need that information.
 
-Isn't enough fixing bugs and describing it correctly in a technical perspective?
+Your commit messages are in fact robotic, they don't describe the
+salient details of what kinds of problems the bug being fixed might
+cause.
 
-Thanks,
+It's just "bad error code, this is the script that fixed it, kthx,
+bye" which is pretty much useless for anaylsis.
 
-Peter
--- 
-Peter
