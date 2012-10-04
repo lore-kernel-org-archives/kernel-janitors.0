@@ -1,34 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 11 Oct 2012 06:57:59 +0000
-Subject: [patch] [SCSI] bfa: unlock on error in bfad_iocmd_cfg_trunk()
-Message-Id: <20121011065758.GF31607@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 04 Oct 2012 04:51:50 +0000
+Subject: [drm:drm-next 148/301] ERROR: "radeon_legacy_set_backlight_level" [drivers/gpu/drm/radeon/radeon.ko]
+Message-Id: <20121004045150.GC18309@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krishna C Gudipati <kgudipat@brocade.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We added a new return but forgot to drop the lock first.
+Hi Alex,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+FYI, kernel build failed on
+
+tree:   git://people.freedesktop.org/~airlied/linux.git drm-next
+head:   268d28371cd326be4dfcd7eba5917bf4b9d30c8f
+commit: 37e9b6a62fb775276f8edb5bd2b9f13a3102b9dd [148/301] drm/radeon: rework the backlight control to be an asic callback
+config: ia64-defconfig
+
+All error/warnings:
+
+ERROR: "atombios_set_backlight_level" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+ERROR: "radeon_legacy_set_backlight_level" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+ERROR: "backlight_force_update" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+
 ---
-Bug introduced in e353546e "[SCSI] bfa: Add diagnostic port (D-Port)
-support".
-
-diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c
-index 555e7db..91465b2 100644
---- a/drivers/scsi/bfa/bfad_bsg.c
-+++ b/drivers/scsi/bfa/bfad_bsg.c
-@@ -2238,8 +2238,10 @@ bfad_iocmd_cfg_trunk(struct bfad_s *bfad, void *cmd, unsigned int v_cmd)
- 
- 	spin_lock_irqsave(&bfad->bfad_lock, flags);
- 
--	if (bfa_fcport_is_dport(&bfad->bfa))
-+	if (bfa_fcport_is_dport(&bfad->bfa)) {
-+		spin_unlock_irqrestore(&bfad->bfad_lock, flags);
- 		return BFA_STATUS_DPORT_ERR;
-+	}
- 
- 	if ((fcport->cfg.topology = BFA_PORT_TOPOLOGY_LOOP) ||
- 		(fcport->topology = BFA_PORT_TOPOLOGY_LOOP))
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
