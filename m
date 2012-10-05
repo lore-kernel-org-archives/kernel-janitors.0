@@ -1,68 +1,73 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 16 Oct 2012 03:20:23 +0000
-Subject: drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:31:6: error: redefinition of 'brcmf_debugfs_init'
-Message-Id: <20121016032023.GC16754@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 20:41:06 +0000
+Subject: [PATCH 4/20 V2] drivers/net/can/sja1000/peak_pcmcia.c: fix error return code
+Message-Id: <1349469667-6137-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121016031708.GA16754@localhost>
-In-Reply-To: <20121016031708.GA16754@localhost>
+References: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: wg@grandegger.com
+Cc: mkl@pengutronix.de, linux@dominikbrodowski.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Arend,
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+The function pcan_probe() return 0 for success and negative value
+for most of its internal tests failures. There is one exception
+that is error case going to probe_err_4:. Fore this error case, the
+function abort its success execution path but returns non negative
+value, making it difficult for a caller function to notice the error.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux master
-head:   29bb4cc5e0547a7589556f8629e39016c5d203c0
-commit: 80969836a7ddde326d3f289d234e9e2d9ed27272 brcmfmac: expose sdio internal counters in debugfs
-date:   4 months ago
-config: cris-allyesconfig # make ARCH=cris allyesconfig
+This patch fixes the error case that do not return negative value.
 
+This was found by Coccinelle, but the code change was made by hand.
+This patch is not robot generated.
 
-All error/warnings:
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
 
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:31:6: error: redefinition of 'brcmf_debugfs_init'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.h:123:20: note: previous definition of 'brcmf_debugfs_init' was here
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:38:6: error: redefinition of 'brcmf_debugfs_exit'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.h:126:20: note: previous definition of 'brcmf_debugfs_exit' was here
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:47:5: error: redefinition of 'brcmf_debugfs_attach'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.h:129:19: note: previous definition of 'brcmf_debugfs_attach' was here
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_attach':
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:52:6: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:53:21: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: At top level:
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:56:6: error: redefinition of 'brcmf_debugfs_detach'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.h:133:20: note: previous definition of 'brcmf_debugfs_detach' was here
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_detach':
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:58:26: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:59:32: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_get_devdir':
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:64:13: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_create_sdio_count':
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:121:30: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_get_devdir':
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:65:1: warning: control reaches end of non-void function [-Wreturn-type]
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_attach':
-drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:54:1: warning: control reaches end of non-void function [-Wreturn-type]
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-vim +31 drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c
-
-d319a7cf Arend van Spriel 2012-06-09  25  #include "dhd.h"
-d319a7cf Arend van Spriel 2012-06-09  26  #include "dhd_bus.h"
-80969836 Arend van Spriel 2012-06-09  27  #include "dhd_dbg.h"
-d319a7cf Arend van Spriel 2012-06-09  28  
-d319a7cf Arend van Spriel 2012-06-09  29  static struct dentry *root_folder;
-d319a7cf Arend van Spriel 2012-06-09  30  
-d319a7cf Arend van Spriel 2012-06-09 @31  void brcmf_debugfs_init(void)
-d319a7cf Arend van Spriel 2012-06-09  32  {
-d319a7cf Arend van Spriel 2012-06-09  33  	root_folder = debugfs_create_dir(KBUILD_MODNAME, NULL);
-d319a7cf Arend van Spriel 2012-06-09  34  	if (IS_ERR(root_folder))
-
-The code at line 31 was first introduced by commit:
-d319a7c brcmfmac: add debugfs helper functions
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Change from V1:
+        Updated commit message. See:
+        http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/can/sja1000/peak_pcmcia.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/sja1000/peak_pcmcia.c b/drivers/net/can/sja1000/peak_pcmcia.c
+index ec6bd9d..272a85f 100644
+--- a/drivers/net/can/sja1000/peak_pcmcia.c
++++ b/drivers/net/can/sja1000/peak_pcmcia.c
+@@ -686,8 +686,10 @@ static int __devinit pcan_probe(struct pcmcia_device *pdev)
+ 
+ 	/* detect available channels */
+ 	pcan_add_channels(card);
+-	if (!card->chan_count)
++	if (!card->chan_count) {
++		err = -ENOMEM;
+ 		goto probe_err_4;
++	}
+ 
+ 	/* init the timer which controls the leds */
+ 	init_timer(&card->led_timer);
+
