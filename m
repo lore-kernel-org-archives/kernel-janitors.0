@@ -1,28 +1,66 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 05 Oct 2012 01:09:59 +0000
-Subject: Re: [samsung:devfreq-for-next 4/4] drivers/devfreq/devfreq.c:639:16: error: invalid storage class fo
-Message-Id: <20121005010959.GA7437@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 22:40:52 +0000
+Subject: [PATCH 16/20 V2] drivers/net/ethernet/renesas/sh_eth.c: fix error return code
+Message-Id: <1349476856-16075-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121005010649.GA6635@localhost>
-In-Reply-To: <20121005010649.GA6635@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davem@davemloft.net
+Cc: yoshihiro.shimoda.uh@renesas.com, nobuhiro.iwamatsu.yj@renesas.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Fri, Oct 05, 2012 at 09:06:49AM +0800, Fengguang Wu wrote:
-> Hi MyungJoo,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.infradead.org/users/kmpark/linux-samsung devfreq-for-next
-> head:   6f2fe082f51cf10ea622e21bff4f5d313decee36
-> commit: 6f2fe082f51cf10ea622e21bff4f5d313decee36 [4/4] PM / devfreq: add global PM QoS support
-> config: x86_64-allyesconfig
-> 
-> Note: the HEAD commit builds fine. It only hurts bisectibility.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-That "Note" is obviously wrong. Sorry, it should be a bug in the build system.
+The function sh_eth_drv_probe() return 0 for success and negative value
+for most of its internal tests failures. There is one exception
+that is error case going to out_release:. For this error case, the
+function abort its success execution path, but returns non negative
+value, making it difficult for a caller function to notice the error.
 
-Thanks,
-Fengguang
+This patch fixes the error case that do not return negative value.
+
+This was found by Coccinelle, but the code change was made by hand.
+This patch is not robot generated.
+
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Change from V1:
+        Updated commit message. See:
+        http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/ethernet/renesas/sh_eth.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index bad8f2e..c8bfea0 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2438,6 +2438,7 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+ 		rtsu = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 		if (!rtsu) {
+ 			dev_err(&pdev->dev, "Not found TSU resource\n");
++			ret = -ENODEV;
+ 			goto out_release;
+ 		}
+ 		mdp->tsu_addr = ioremap(rtsu->start,
+
