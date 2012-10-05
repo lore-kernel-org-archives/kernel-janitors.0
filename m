@@ -1,40 +1,71 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 04 Oct 2012 13:27:51 +0000
-Subject: Re: [drm:drm-next 139/301] ERROR: "backlight_force_update" [drivers/gpu/drm/radeon/radeon.ko] undefi
-Message-Id: <CADnq5_Nnk+7pKfO9e+6HKaOb7cQn0REKVtVU8+1NoTcHYS0sCg@mail.gmail.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 22:40:54 +0000
+Subject: [PATCH 18/20 V2] drivers/net/ethernet/sun/sungem.c: fix error return code
+Message-Id: <1349476856-16075-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121004045126.GB18309@localhost>
-In-Reply-To: <20121004045126.GB18309@localhost>
+References: <1349476856-16075-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349476856-16075-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davem@davemloft.net
+Cc: jdmason@kudzu.us, gerard.lledo@gmail.com, dhowells@redhat.com, joe@perches.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Thu, Oct 4, 2012 at 8:34 AM, Luca Tettamanti <kronos.it@gmail.com> wrote:
-> On Thu, Oct 4, 2012 at 6:51 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
->> Hi Luca,
->>
->> FYI, kernel build failed on
->>
->> tree:   git://people.freedesktop.org/~airlied/linux.git drm-next
->> head:   268d28371cd326be4dfcd7eba5917bf4b9d30c8f
->> commit: fda4b25c55a59ba12378e4b9e4553f6ea57d802d [139/301] drm/radeon: implement handler for ACPI event
->> config: ia64-defconfig
->>
->> All error/warnings:
->>
->> ERROR: "atombios_set_panel_brightness" [drivers/gpu/drm/radeon/radeon.ko] undefined!
->> ERROR: "backlight_force_update" [drivers/gpu/drm/radeon/radeon.ko] undefined!
->
-> I'm not sure how to deal with this. The cause for both is that
-> BACKLIGHT_CLASS_DEVICE is not enabled: backlight_force_update is
-> easily fixed, atombios_set_panel_brightness however is removed in
-> following patches.
-> Should I send a patch against drm-next for backlight_force_update (and
-> leave bisecting broken without BACKLIGHT_CLASS_DEVICE) or is it
-> possible to amend this commit before it's merged by Linus?
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-It's already been merged.  I sent a fix out this morning:
-http://lists.freedesktop.org/archives/dri-devel/2012-October/028546.html
+The function gem_init_one() return 0 for success and negative value
+for most of its internal tests failures. There is one exception
+that is error case going to err_out_free_consistent:. For this error
+case, the function abort its success execution path, but returns non
+negative value, making it difficult for a caller function to notice
+the error.
 
-Alex
+This patch fixes the error case that do not return negative value.
+
+This was found by Coccinelle, but the code change was made by hand.
+This patch is not robot generated.
+
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Change from V1:
+        Updated commit message. See:
+        http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/ethernet/sun/sungem.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/sun/sungem.c b/drivers/net/ethernet/sun/sungem.c
+index 9ae12d0..6c8695e 100644
+--- a/drivers/net/ethernet/sun/sungem.c
++++ b/drivers/net/ethernet/sun/sungem.c
+@@ -2963,7 +2963,8 @@ static int __devinit gem_init_one(struct pci_dev *pdev,
+ 		goto err_out_iounmap;
+ 	}
+ 
+-	if (gem_get_device_address(gp))
++	err = gem_get_device_address(gp);
++	if (err)
+ 		goto err_out_free_consistent;
+ 
+ 	dev->netdev_ops = &gem_netdev_ops;
+
