@@ -1,38 +1,71 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Mon, 15 Oct 2012 03:20:04 +0000
-Subject: Re: [signal:arch-sh 1/2] (.data+0x1bc): undefined reference to `sys_sh_pipe'
-Message-Id: <20121015032004.GE2616@ZenIV.linux.org.uk>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 22:10:50 +0000
+Subject: [PATCH 12/20 V2] drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c: fix error return code
+Message-Id: <1349475053-11464-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121015023705.GA15472@localhost>
-In-Reply-To: <20121015023705.GA15472@localhost>
+References: <1349475053-11464-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349475053-11464-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: jitendra.kalsaria@qlogic.com
+Cc: sony.chacko@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Mon, Oct 15, 2012 at 10:37:05AM +0800, Fengguang Wu wrote:
-> Hi Al,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git arch-sh
-> head:   c366433956b536324357513f03f1fe6264d8ff98
-> commit: 4d2fef5f3f0f7cf0ea1a19f63dc8f6637ce41b5c [1/2] sh: switch to generic kernel_thread()/kernel_execve()
-> config: sh-allnoconfig # make ARCH=sh allnoconfig
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> arch/sh/kernel/built-in.o: In function `sys_call_table':
-> (.data+0x1bc): undefined reference to `sys_sh_pipe'
-> arch/sh/kernel/built-in.o: In function `sys_call_table':
-> (.data+0x3e4): undefined reference to `sys_pread_wrapper'
-> arch/sh/kernel/built-in.o: In function `sys_call_table':
-> (.data+0x3e8): undefined reference to `sys_pwrite_wrapper'
-> arch/sh/kernel/built-in.o: In function `sys_call_table':
-> (.data+0x554): undefined reference to `sys_fadvise64_64_wrapper'
+The function qlcnic_probe() return 0 for success and negative value
+for most of its internal tests failures. There is one exception
+that is error case going to err_out_free_netdev:. For this error case,
+the function abort its success execution path, but returns non negative
+value, making it difficult for a caller function to notice the error.
 
-Grr...  That
-obj-$(CONFIG_SUPERSH32)          += sys_sh32.o
-should've been
-obj-$(CONFIG_SUPERH32)          += sys_sh32.o
+This patch fixes the error case that do not return negative value.
 
-Fixed and pushed.
+This was found by Coccinelle, but the code change was made by hand.
+This patch is not robot generated.
+
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+Change from V1:
+        Updated commit message. See:
+        http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+index 473ce13..24ad17e 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+@@ -1601,7 +1601,8 @@ qlcnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	adapter->netdev  = netdev;
+ 	adapter->pdev    = pdev;
+ 
+-	if (qlcnic_alloc_adapter_resources(adapter))
++	err = qlcnic_alloc_adapter_resources(adapter);
++	if (err)
+ 		goto err_out_free_netdev;
+ 
+ 	adapter->dev_rst_time = jiffies;
 
