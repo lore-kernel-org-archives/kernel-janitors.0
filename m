@@ -1,76 +1,79 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Fri, 05 Oct 2012 20:41:05 +0000
-Subject: [PATCH 3/20 V2] drivers/net/can/sja1000/peak_pci.c: fix error return code
-Message-Id: <1349469667-6137-3-git-send-email-peter.senna@gmail.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Fri, 05 Oct 2012 21:06:17 +0000
+Subject: Re: [PATCH 3/20 V2] drivers/net/can/sja1000/peak_pci.c: fix error return code
+Message-Id: <506F4BC9.50506@pengutronix.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------enig6AC7AE5B36A4A9E45097CEA7"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: wg@grandegger.com
-Cc: mkl@pengutronix.de, davem@davemloft.net, jj@chaosbits.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+References: <1349469667-6137-1-git-send-email-peter.senna@gmail.com> <1349469667-6137-3-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349469667-6137-3-git-send-email-peter.senna@gmail.com>
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: wg@grandegger.com, davem@davemloft.net, jj@chaosbits.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig6AC7AE5B36A4A9E45097CEA7
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-The function peak_pci_probe() return 0 for success and negative value
-for most of its internal tests failures. There are two exceptions
-that are error cases going to failure_*:. Fore this two cases the
-function abort its success execution path, but returns non negative
-value, making it dificult for a caller function to notice the error.
+On 10/05/2012 10:41 PM, Peter Senna Tschudin wrote:
+> From: Peter Senna Tschudin <peter.senna@gmail.com>
+>=20
+> The function peak_pci_probe() return 0 for success and negative value
+> for most of its internal tests failures. There are two exceptions
+> that are error cases going to failure_*:. Fore this two cases the
+> function abort its success execution path, but returns non negative
+> value, making it dificult for a caller function to notice the error.
+>=20
+> This patch fixes the error cases that do not return negative values.
+>=20
+> This was found by Coccinelle, but the code change was made by hand.
+> This patch is not robot generated.
+>=20
+> A simplified version of the semantic match that finds this problem is
+> as follows: (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret !=3D 0\))
+>  { ... return ret; }
+> |
+> ret@p1 =3D 0
+> )
+> ... when !=3D ret =3D e1
+>     when !=3D &ret
+> *if(...)
+> {
+>   ... when !=3D ret =3D e2
+>       when forall
+>  return ret;
+> }
+> // </smpl>
+>=20
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-This patch fixes the error cases that do not return negative values.
+Too late, v1 of this patch is already in net/master
 
-This was found by Coccinelle, but the code change was made by hand.
-This patch is not robot generated.
+regards, Marc
 
-A simplified version of the semantic match that finds this problem is
-as follows: (http://coccinelle.lip6.fr/)
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+--------------enig6AC7AE5B36A4A9E45097CEA7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
----
-Change from V1:
-	Updated commit message. See: 
-	http://www.kernelhub.org/?p=2&msg9319
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
 
- drivers/net/can/sja1000/peak_pci.c |    2 ++
- 1 file changed, 2 insertions(+)
+iEYEARECAAYFAlBvS80ACgkQjTAFq1RaXHPSeQCfeuKpV+0N0X8+nPBE+9cfldRI
+vMwAnjrzgLOHZqtxArZ71zGn1cfbFbbh
+=fKWB
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/net/can/sja1000/peak_pci.c b/drivers/net/can/sja1000/peak_pci.c
-index f0a1296..f5b82ae 100644
---- a/drivers/net/can/sja1000/peak_pci.c
-+++ b/drivers/net/can/sja1000/peak_pci.c
-@@ -583,12 +583,14 @@ static int __devinit peak_pci_probe(struct pci_dev *pdev,
- 	cfg_base = pci_iomap(pdev, 0, PEAK_PCI_CFG_SIZE);
- 	if (!cfg_base) {
- 		dev_err(&pdev->dev, "failed to map PCI resource #0\n");
-+		err = -ENOMEM;
- 		goto failure_release_regions;
- 	}
- 
- 	reg_base = pci_iomap(pdev, 1, PEAK_PCI_CHAN_SIZE * channels);
- 	if (!reg_base) {
- 		dev_err(&pdev->dev, "failed to map PCI resource #1\n");
-+		err = -ENOMEM;
- 		goto failure_unmap_cfg_base;
- 	}
- 
-
+--------------enig6AC7AE5B36A4A9E45097CEA7--
