@@ -1,62 +1,91 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 12 Oct 2012 18:29:49 +0000
-Subject: Re: [next:akpm 18/86] kernel/sys.c:1287:10: warning: comparison of distinct pointer types lacks a ca
-Message-Id: <20121012182949.GA24374@localhost>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 20:41:03 +0000
+Subject: [PATCH 1/20 V2] drivers/net/ethernet/dec/tulip/dmfe.c: fix error return code
+Message-Id: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121012165655.GB20312@localhost>
-In-Reply-To: <20121012165655.GB20312@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: grundler@parisc-linux.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Fri, Oct 12, 2012 at 10:46:34AM -0700, Kees Cook wrote:
-> On Fri, Oct 12, 2012 at 9:56 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> > FYI, there are new compile warnings show up in
-> >
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
-> > head:   04b956faad392f46c9a234962a9990196b8e48fc
-> > commit: b8763455880e371a81b07599bc66ae94f96dc6d6 [18/86] kernel/sys.c: fix stack memory content leak via UNAME26
-> > config: mn10300-asb2364_defconfig # make ARCH=mn10300 asb2364_defconfig
-> >
-> > All warnings:
-> >
-> > kernel/sys.c: In function 'override_release':
-> > kernel/sys.c:1287:10: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-> 
-> Hrm, I don't see this on my builds. Is this check specific to mn10300
-> in some way?
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Maybe it's more than mn10300.
+The function dmfe_init_one() return 0 for success and negative value
+for most of its internal tests failures. There are three exceptions
+that are error cases going to err_out_*:. Fore this three cases the
+function abort its success execution path, but returns non negative 
+value, making it dificult for a caller function to notice the error.
 
-(gdb) whatis sizeof(long)
-type = int
+This patch fixes the error cases that do not return negative values.
 
-And size_t (__kernel_size_t) is defined to "unsigned int".
+This was found by Coccinelle, but the code change was made by hand.
+This patch is not robot generated.
 
-> > vim +1287 kernel/sys.c
-> >
-> > be27425d Andi Kleen     2011-08-19  1271
-> > be27425d Andi Kleen     2011-08-19  1272        if (current->personality & UNAME26) {
-> > b8763455 Kees Cook      2012-10-12  1273                const char *rest = UTS_RELEASE;
-> > b8763455 Kees Cook      2012-10-12  1274                char buf[65] = { 0 };
-> > be27425d Andi Kleen     2011-08-19  1275                int ndots = 0;
-> > be27425d Andi Kleen     2011-08-19  1276                unsigned v;
-> > b8763455 Kees Cook      2012-10-12  1277                size_t copy;
-> > be27425d Andi Kleen     2011-08-19  1278
-> > be27425d Andi Kleen     2011-08-19  1279                while (*rest) {
-> > be27425d Andi Kleen     2011-08-19  1280                        if (*rest = '.' && ++ndots >= 3)
-> > be27425d Andi Kleen     2011-08-19  1281                                break;
-> > be27425d Andi Kleen     2011-08-19  1282                        if (!isdigit(*rest) && *rest != '.')
-> > be27425d Andi Kleen     2011-08-19  1283                                break;
-> > be27425d Andi Kleen     2011-08-19  1284                        rest++;
-> > be27425d Andi Kleen     2011-08-19  1285                }
-> > be27425d Andi Kleen     2011-08-19  1286                v = ((LINUX_VERSION_CODE >> 8) & 0xff) + 40;
-> > b8763455 Kees Cook      2012-10-12 @1287                copy = min(sizeof(buf), max_t(size_t, 1, len));
-> 
-> Should I change this to min_t(size_t, sizeof(buf), max_t(size_t, 1, len)) ?
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
 
-clamp_t() looks easier. :-)
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-Thanks,
-Fengguang
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+Changes from V1:
+	Updated commit message. See:
+	http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/ethernet/dec/tulip/dmfe.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/dec/tulip/dmfe.c b/drivers/net/ethernet/dec/tulip/dmfe.c
+index 4d6fe60..d23755e 100644
+--- a/drivers/net/ethernet/dec/tulip/dmfe.c
++++ b/drivers/net/ethernet/dec/tulip/dmfe.c
+@@ -446,13 +446,17 @@ static int __devinit dmfe_init_one (struct pci_dev *pdev,
+ 	/* Allocate Tx/Rx descriptor memory */
+ 	db->desc_pool_ptr = pci_alloc_consistent(pdev, sizeof(struct tx_desc) *
+ 			DESC_ALL_CNT + 0x20, &db->desc_pool_dma_ptr);
+-	if (!db->desc_pool_ptr)
++	if (!db->desc_pool_ptr) {
++		err = -ENOMEM;
+ 		goto err_out_res;
++	}
+ 
+ 	db->buf_pool_ptr = pci_alloc_consistent(pdev, TX_BUF_ALLOC *
+ 			TX_DESC_CNT + 4, &db->buf_pool_dma_ptr);
+-	if (!db->buf_pool_ptr)
++	if (!db->buf_pool_ptr) {
++		err = -ENOMEM;
+ 		goto err_out_free_desc;
++	}
+ 
+ 	db->first_tx_desc = (struct tx_desc *) db->desc_pool_ptr;
+ 	db->first_tx_desc_dma = db->desc_pool_dma_ptr;
+@@ -462,8 +466,10 @@ static int __devinit dmfe_init_one (struct pci_dev *pdev,
+ 	db->chip_id = ent->driver_data;
+ 	/* IO type range. */
+ 	db->ioaddr = pci_iomap(pdev, 0, 0);
+-	if (!db->ioaddr)
++	if (!db->ioaddr) {
++		err = -ENOMEM;
+ 		goto err_out_free_buf;
++	}
+ 
+ 	db->chip_revision = pdev->revision;
+ 	db->wol_mode = 0;
+
