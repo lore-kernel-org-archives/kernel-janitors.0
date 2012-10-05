@@ -1,54 +1,44 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 12 Oct 2012 16:42:37 +0000
-Subject: drivers/pinctrl/pinctrl-at91.c:841:12: warning: assignment discards 'const' qualifier from pointer t
-Message-Id: <20121012164237.GE19120@localhost>
+From: Antti Palosaari <crope@iki.fi>
+Date: Fri, 05 Oct 2012 21:56:00 +0000
+Subject: [PATCH] cxd2820r: silence compiler warning
+Message-Id: <1349474160-1976-1-git-send-email-crope@iki.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: Fengguang Wu <fengguang.wu@intel.com>, Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, Antti Palosaari <crope@iki.fi>
 
-Hi Jean-Christophe,
+drivers/media/dvb-frontends/cxd2820r_core.c: In function 'cxd2820r_attach':
+drivers/media/dvb-frontends/cxd2820r_core.c:691:10: warning: unused variable 'gpio' [-Wunused-variable]
 
-FYI, there are new compile warnings show up in
-
-commit: 7f46dcb289fd5970296718ce20046792dfbc00a8  ARM: at91: add pinctrl support
-config: arm-at91_dt_defconfig # make ARCH=arm at91_dt_defconfig
-
-All warnings:
-
-drivers/pinctrl/pinctrl-at91.c: In function 'at91_pinctrl_probe_dt':
-drivers/pinctrl/pinctrl-at91.c:841:12: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
-drivers/pinctrl/pinctrl-at91.c: In function 'at91_gpio_probe':
-drivers/pinctrl/pinctrl-at91.c:1382:17: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
-
-vim +841 drivers/pinctrl/pinctrl-at91.c
-
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  825  	{ /* sentinel */ }
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  826  };
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  827  
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  828  static int __devinit at91_pinctrl_probe_dt(struct platform_device *pdev,
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  829  					   struct at91_pinctrl *info)
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  830  {
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  831  	int ret = 0;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  832  	int i, j;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  833  	uint32_t *tmp;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  834  	struct device_node *np = pdev->dev.of_node;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  835  	struct device_node *child;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  836  
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  837  	if (!np)
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  838  		return -ENODEV;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  839  
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  840  	info->dev = &pdev->dev;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12 @841  	info->ops 7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  842  		of_match_device(at91_pinctrl_of_match, &pdev->dev)->data;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  843  	at91_pinctrl_child_count(info, np);
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  844  
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  845  	if (info->nbanks < 1) {
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  846  		dev_err(&pdev->dev, "you need to specify atleast one gpio-controller\n");
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  847  		return -EINVAL;
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  848  	}
-7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  849  
-
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Antti Palosaari <crope@iki.fi>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/media/dvb-frontends/cxd2820r_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb-frontends/cxd2820r_core.c b/drivers/media/dvb-frontends/cxd2820r_core.c
+index 4264864..9b658c1 100644
+--- a/drivers/media/dvb-frontends/cxd2820r_core.c
++++ b/drivers/media/dvb-frontends/cxd2820r_core.c
+@@ -688,7 +688,7 @@ struct dvb_frontend *cxd2820r_attach(const struct cxd2820r_config *cfg,
+ {
+ 	struct cxd2820r_priv *priv;
+ 	int ret;
+-	u8 tmp, gpio[GPIO_COUNT];
++	u8 tmp;
+ 
+ 	priv = kzalloc(sizeof(struct cxd2820r_priv), GFP_KERNEL);
+ 	if (!priv) {
+@@ -735,6 +735,7 @@ struct dvb_frontend *cxd2820r_attach(const struct cxd2820r_config *cfg,
+ 		 * Use static GPIO configuration if GPIOLIB is undefined.
+ 		 * This is fallback condition.
+ 		 */
++		u8 gpio[GPIO_COUNT];
+ 		gpio[0] = (*gpio_chip_base >> 0) & 0x07;
+ 		gpio[1] = (*gpio_chip_base >> 3) & 0x07;
+ 		gpio[2] = 0;
+-- 
+1.7.11.4
+
