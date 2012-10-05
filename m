@@ -1,75 +1,69 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Wed, 24 Oct 2012 00:50:27 +0000
-Subject: Re: [PATCH 04/23] sn9c102: Replace memcpy with struct assignment
-Message-Id: <CALF0-+XQHAC=eGigmA6QOO27PPG39Q1yGFiebtJ5sJyqbF55vw@mail.gmail.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 22:10:53 +0000
+Subject: [PATCH 15/20 V2] drivers/net/ethernet/natsemi/xtsonic.c: fix error return code
+Message-Id: <1349475053-11464-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
-	<1351022246-8201-4-git-send-email-elezegarcia@gmail.com>
-In-Reply-To: <1351022246-8201-4-git-send-email-elezegarcia@gmail.com>
+References: <1349475053-11464-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349475053-11464-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>, Andy Walls <awalls@md.metrocast.net>
+To: davem@davemloft.net
+Cc: mcuos.com@gmail.com, axel.lin@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Tue, Oct 23, 2012 at 4:57 PM, Ezequiel Garcia <elezegarcia@gmail.com> wrote:
-> This kind of memcpy() is error-prone. Its replacement with a struct
-> assignment is prefered because it's type-safe and much easier to read.
->
-> Found by coccinelle. Hand patched and reviewed.
-> Tested by compilation only.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> identifier struct_name;
-> struct struct_name to;
-> struct struct_name from;
-> expression E;
-> @@
-> -memcpy(&(to), &(from), E);
-> +to = from;
-> // </smpl>
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
-> ---
->  drivers/media/usb/sn9c102/sn9c102_core.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/usb/sn9c102/sn9c102_core.c b/drivers/media/usb/sn9c102/sn9c102_core.c
-> index 5bfc8e2..4cae6f8 100644
-> --- a/drivers/media/usb/sn9c102/sn9c102_core.c
-> +++ b/drivers/media/usb/sn9c102/sn9c102_core.c
-> @@ -2824,7 +2824,7 @@ sn9c102_vidioc_querybuf(struct sn9c102_device* cam, void __user * arg)
->             b.index >= cam->nbuffers || cam->io != IO_MMAP)
->                 return -EINVAL;
->
-> -       memcpy(&b, &cam->frame[b.index].buf, sizeof(b));
-> +       b = cam->frame[b.index].buf;
->
->         if (cam->frame[b.index].vma_use_count)
->                 b.flags |= V4L2_BUF_FLAG_MAPPED;
-> @@ -2927,7 +2927,7 @@ sn9c102_vidioc_dqbuf(struct sn9c102_device* cam, struct file* filp,
->
->         f->state = F_UNUSED;
->
-> -       memcpy(&b, &f->buf, sizeof(b));
-> +       b = f->buf;
->         if (f->vma_use_count)
->                 b.flags |= V4L2_BUF_FLAG_MAPPED;
->
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Andy: you got me thinking on performance.
-Most patches are initialization or setup code.
+The function sonic_probe1() return 0 for success and negative value
+for most of its internal tests failures. There is one exception
+that is error case going to out:. For this error case, the
+function abort its success execution path, but returns non negative
+value, making it difficult for a caller function to notice the error.
 
-Here we patch a xxx_vidioc_dqbuf() function.
-Is this a speed sensitive path?
+This patch fixes the error case that do not return negative value.
 
-I still think this change can't hurt performance,
-but I may be wrong!
+This was found by Coccinelle, but the code change was made by hand.
+This patch is not robot generated.
 
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
 
-    Ezequiel
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+Change from V1:
+        Updated commit message. See:
+        http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/ethernet/natsemi/xtsonic.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/natsemi/xtsonic.c b/drivers/net/ethernet/natsemi/xtsonic.c
+index e01c0a0..7dfe883 100644
+--- a/drivers/net/ethernet/natsemi/xtsonic.c
++++ b/drivers/net/ethernet/natsemi/xtsonic.c
+@@ -205,6 +205,7 @@ static int __init sonic_probe1(struct net_device *dev)
+ 	if (lp->descriptors = NULL) {
+ 		printk(KERN_ERR "%s: couldn't alloc DMA memory for "
+ 				" descriptors.\n", dev_name(lp->device));
++		err = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+
