@@ -1,40 +1,71 @@
-From: Sam Leffler <sleffler@chromium.org>
-Date: Thu, 18 Oct 2012 00:07:07 +0000
-Subject: Re: [mac80211-next:wip 19/37] include/uapi/linux/nl80211.h:3101:1: error: expected identifier before
-Message-Id: <CA+yqC4a6qYpEUho15JGkb82=+XPWvEOXc+biXBiTnFy8PqUfkg@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 05 Oct 2012 01:06:49 +0000
+Subject: [samsung:devfreq-for-next 4/4] drivers/devfreq/devfreq.c:639:16: error: invalid storage class for fu
+Message-Id: <20121005010649.GA6635@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <507ebd61.LoCS32J+GZFlvQsJ%fengguang.wu@intel.com>
-In-Reply-To: <507ebd61.LoCS32J+GZFlvQsJ%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 17, 2012 at 4:53 PM, Bing Zhao <bzhao@marvell.com> wrote:
-> Hi Fengguang,
->
->> > This commit is the first patch (1/5) of "add scan flags support" series.
->> > It adds a placeholder for nl80211_scan_flags. 3/5 and 4/5 add actual flags to it.
->>
->> But that placeholder is not a valid C construct and breaks kernel build ..
->>
->> > So, you have to get the whole patchset to compile.
->>
->> When preparing/organizing patches, every step of the patchset should
->> be able to build and boot fine. That will make it friendly to bisect.
->
-> That's a good point. Thanks!
+Hi MyungJoo,
 
-Hmm, the original patch series was build-tested for this reason;
-sounds like there's a difference in compiler switches.  But regardless
-I defer to Bing.
+FYI, kernel build failed on
 
->
->
-> Hi Johannes,
->
-> Do you want me to respin this series or you will do it?
->
-> Thanks,
-> Bing
->
+tree:   git://git.infradead.org/users/kmpark/linux-samsung devfreq-for-next
+head:   6f2fe082f51cf10ea622e21bff4f5d313decee36
+commit: 6f2fe082f51cf10ea622e21bff4f5d313decee36 [4/4] PM / devfreq: add global PM QoS support
+config: x86_64-allyesconfig
+
+Note: the HEAD commit builds fine. It only hurts bisectibility.
+
+All error/warnings:
+
+drivers/devfreq/devfreq.c: In function 'devfreq_qos_sanity_check':
+drivers/devfreq/devfreq.c:448:7: warning: suggest parentheses around '&&' within '||' [-Wparentheses]
+drivers/devfreq/devfreq.c:494:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+drivers/devfreq/devfreq.c:639:16: error: invalid storage class for function 'show_governor'
+drivers/devfreq/devfreq.c:645:16: error: invalid storage class for function 'show_freq'
+drivers/devfreq/devfreq.c:651:16: error: invalid storage class for function 'show_polling_interval'
+drivers/devfreq/devfreq.c:657:16: error: invalid storage class for function 'store_polling_interval'
+drivers/devfreq/devfreq.c:691:16: error: invalid storage class for function 'show_central_polling'
+drivers/devfreq/devfreq.c:698:16: error: invalid storage class for function 'show_qos_min_freq'
+drivers/devfreq/devfreq.c:705:16: error: invalid storage class for function 'store_min_freq'
+drivers/devfreq/devfreq.c:733:16: error: invalid storage class for function 'show_min_freq'
+drivers/devfreq/devfreq.c:739:16: error: invalid storage class for function 'store_max_freq'
+drivers/devfreq/devfreq.c:767:16: error: invalid storage class for function 'show_max_freq'
+drivers/devfreq/devfreq.c:773:16: error: invalid storage class for function 'show_trans_table'
+drivers/devfreq/devfreq.c:815:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:815:2: error: (near initialization for 'devfreq_attrs[0].show')
+drivers/devfreq/devfreq.c:816:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:816:2: error: (near initialization for 'devfreq_attrs[1].show')
+drivers/devfreq/devfreq.c:817:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:817:2: error: (near initialization for 'devfreq_attrs[2].show')
+drivers/devfreq/devfreq.c:818:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:818:2: error: (near initialization for 'devfreq_attrs[3].show')
+drivers/devfreq/devfreq.c:818:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:818:2: error: (near initialization for 'devfreq_attrs[3].store')
+drivers/devfreq/devfreq.c:820:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:820:2: error: (near initialization for 'devfreq_attrs[4].show')
+drivers/devfreq/devfreq.c:820:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:820:2: error: (near initialization for 'devfreq_attrs[4].store')
+drivers/devfreq/devfreq.c:821:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:821:2: error: (near initialization for 'devfreq_attrs[5].show')
+drivers/devfreq/devfreq.c:821:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:821:2: error: (near initialization for 'devfreq_attrs[5].store')
+drivers/devfreq/devfreq.c:822:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:822:2: error: (near initialization for 'devfreq_attrs[6].show')
+drivers/devfreq/devfreq.c:823:2: error: initializer element is not constant
+drivers/devfreq/devfreq.c:823:2: error: (near initialization for 'devfreq_attrs[7].show')
+drivers/devfreq/devfreq.c:831:19: error: invalid storage class for function 'devfreq_start_polling'
+drivers/devfreq/devfreq.c:842:1: error: initializer element is not constant
+drivers/devfreq/devfreq.c:844:19: error: invalid storage class for function 'devfreq_init'
+drivers/devfreq/devfreq.c:854:1: error: initializer element is not constant
+drivers/devfreq/devfreq.c:856:20: error: invalid storage class for function 'devfreq_exit'
+drivers/devfreq/devfreq.c:860:1: error: initializer element is not constant
+drivers/devfreq/devfreq.c:875:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+drivers/devfreq/devfreq.c:936:1: error: expected declaration or statement at end of input
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
