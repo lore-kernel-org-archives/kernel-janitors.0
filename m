@@ -1,63 +1,76 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 04 Oct 2012 03:43:44 +0000
-Subject: Re: [userns:userns-always-map-user-v64 13/68] net/bluetooth/af_bluetooth.c:598:7: warning: format '%
-Message-Id: <87lifmyk9b.fsf@xmission.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 20:41:05 +0000
+Subject: [PATCH 3/20 V2] drivers/net/can/sja1000/peak_pci.c: fix error return code
+Message-Id: <1349469667-6137-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121004030820.GA18140@localhost>
-In-Reply-To: <20121004030820.GA18140@localhost>
+References: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: wg@grandegger.com
+Cc: mkl@pengutronix.de, davem@davemloft.net, jj@chaosbits.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Fengguang Wu <fengguang.wu@intel.com> writes:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> Hi Eric,
->
-> FYI, there are new compile warnings show up in
->
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-always-map-user-v64
-> head:   8af30da8de970429970913ed15991f98c6e16e43
-> commit: 60c4a95efc7d7d3c05d44e816c2767c3fbe90773 [13/68] userns: Now that everything has been converted remove the unnecessary infrastructure
-> config: i386-randconfig-b111 (attached as .config)
->
-> All warnings:
->
-> net/bluetooth/af_bluetooth.c: In function 'bt_seq_show':
-> net/bluetooth/af_bluetooth.c:598:7: warning: format '%u' expects argument of type 'unsigned int', but argument 7 has type 'kuid_t' [-Wformat]
+The function peak_pci_probe() return 0 for success and negative value
+for most of its internal tests failures. There are two exceptions
+that are error cases going to failure_*:. Fore this two cases the
+function abort its success execution path, but returns non negative
+value, making it dificult for a caller function to notice the error.
 
-Thanks.  This is due to an overlooked merge conflict between the
-bluetooth tree and the user namespace tree.
+This patch fixes the error cases that do not return negative values.
 
-Thanks for catching this.  This style of failure is a compile error
-everywhere else and I forgot to look for extra warnings.
+This was found by Coccinelle, but the code change was made by hand.
+This patch is not robot generated.
 
-Eric
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
 
-> vim +598 net/bluetooth/af_bluetooth.c
->
-> 256a06c8 (Masatake YAMATO    2012-07-26  582) 		seq_putc(seq, '\n');
-> 256a06c8 (Masatake YAMATO    2012-07-26  583) 	} else {
-> 09d5d4aa (Andrei Emeltchenko 2012-08-07  584) 		struct sock *sk = sk_entry(v);
-> 09d5d4aa (Andrei Emeltchenko 2012-08-07  585) 		struct bt_sock *bt = bt_sk(sk);
-> 256a06c8 (Masatake YAMATO    2012-07-26  586) 		baswap(&src_baswapped, &bt->src);
-> 256a06c8 (Masatake YAMATO    2012-07-26  587) 		baswap(&dst_baswapped, &bt->dst);
-> 256a06c8 (Masatake YAMATO    2012-07-26  588) 
-> 256a06c8 (Masatake YAMATO    2012-07-26  589) 		seq_printf(seq, "%pK %-6d %-6u %-6u %-6u %-6lu %pM %pM %-6lu",
-> 256a06c8 (Masatake YAMATO    2012-07-26  590) 			   sk,
-> 256a06c8 (Masatake YAMATO    2012-07-26  591) 			   atomic_read(&sk->sk_refcnt),
-> 256a06c8 (Masatake YAMATO    2012-07-26  592) 			   sk_rmem_alloc_get(sk),
-> 256a06c8 (Masatake YAMATO    2012-07-26  593) 			   sk_wmem_alloc_get(sk),
-> 256a06c8 (Masatake YAMATO    2012-07-26  594) 			   sock_i_uid(sk),
-> 256a06c8 (Masatake YAMATO    2012-07-26  595) 			   sock_i_ino(sk),
-> 256a06c8 (Masatake YAMATO    2012-07-26  596) 			   &src_baswapped,
-> 256a06c8 (Masatake YAMATO    2012-07-26  597) 			   &dst_baswapped,
-> 256a06c8 (Masatake YAMATO    2012-07-26 @598) 			   bt->parent? sock_i_ino(bt->parent): 0LU);
-> 256a06c8 (Masatake YAMATO    2012-07-26  599) 
->
-> The code at line 598 was first introduced by commit:
-> 256a06c Bluetooth: /proc/net/ entries for bluetooth protocols
->
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Center
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+Change from V1:
+	Updated commit message. See: 
+	http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/can/sja1000/peak_pci.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/can/sja1000/peak_pci.c b/drivers/net/can/sja1000/peak_pci.c
+index f0a1296..f5b82ae 100644
+--- a/drivers/net/can/sja1000/peak_pci.c
++++ b/drivers/net/can/sja1000/peak_pci.c
+@@ -583,12 +583,14 @@ static int __devinit peak_pci_probe(struct pci_dev *pdev,
+ 	cfg_base = pci_iomap(pdev, 0, PEAK_PCI_CFG_SIZE);
+ 	if (!cfg_base) {
+ 		dev_err(&pdev->dev, "failed to map PCI resource #0\n");
++		err = -ENOMEM;
+ 		goto failure_release_regions;
+ 	}
+ 
+ 	reg_base = pci_iomap(pdev, 1, PEAK_PCI_CHAN_SIZE * channels);
+ 	if (!reg_base) {
+ 		dev_err(&pdev->dev, "failed to map PCI resource #1\n");
++		err = -ENOMEM;
+ 		goto failure_unmap_cfg_base;
+ 	}
+ 
+
