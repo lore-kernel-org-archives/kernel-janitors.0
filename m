@@ -1,69 +1,68 @@
-From: Andy Walls <awalls@md.metrocast.net>
-Date: Tue, 23 Oct 2012 22:17:28 +0000
-Subject: Re: [PATCH 18/23] cx18: Replace memcpy with struct assignment
-Message-Id: <1351030649.2459.22.camel@palomino.walls.org>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 22:40:53 +0000
+Subject: [PATCH 17/20 V2] drivers/net/ethernet/sun/niu.c: fix error return code
+Message-Id: <1349476856-16075-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
-	 <1351022246-8201-18-git-send-email-elezegarcia@gmail.com>
-In-Reply-To: <1351022246-8201-18-git-send-email-elezegarcia@gmail.com>
+References: <1349476856-16075-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349476856-16075-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ezequiel Garcia <elezegarcia@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: davem@davemloft.net
+Cc: mcarlson@broadcom.com, eric.dumazet@gmail.com, mchan@broadcom.com, shuah.khan@hp.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Tue, 2012-10-23 at 16:57 -0300, Ezequiel Garcia wrote:
-> This kind of memcpy() is error-prone. Its replacement with a struct
-> assignment is prefered because it's type-safe and much easier to read.
-> 
-> Found by coccinelle. Hand patched and reviewed.
-> Tested by compilation only.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier struct_name;
-> struct struct_name to;
-> struct struct_name from;
-> expression E;
-> @@
-> -memcpy(&(to), &(from), E);
-> +to = from;
-> // </smpl>
-> 
-> Cc: Andy Walls <awalls@md.metrocast.net>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Signed-off-by: Andy Walls <awalls@md.metrocast.net>
+The function niu_pci_init_one() return 0 for success and negative value
+for most of its internal tests failures. There is one exception
+that is error case going to err_out_free_res:. For this error case, the
+function abort its success execution path, but returns non negative
+value, making it difficult for a caller function to notice the error.
 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
-> ---
->  drivers/media/pci/cx18/cx18-i2c.c |    6 ++----
->  1 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/pci/cx18/cx18-i2c.c b/drivers/media/pci/cx18/cx18-i2c.c
-> index 51609d5..930d40f 100644
-> --- a/drivers/media/pci/cx18/cx18-i2c.c
-> +++ b/drivers/media/pci/cx18/cx18-i2c.c
-> @@ -240,15 +240,13 @@ int init_cx18_i2c(struct cx18 *cx)
->  
->  	for (i = 0; i < 2; i++) {
->  		/* Setup algorithm for adapter */
-> -		memcpy(&cx->i2c_algo[i], &cx18_i2c_algo_template,
-> -			sizeof(struct i2c_algo_bit_data));
-> +		cx->i2c_algo[i] = cx18_i2c_algo_template;
->  		cx->i2c_algo_cb_data[i].cx = cx;
->  		cx->i2c_algo_cb_data[i].bus_index = i;
->  		cx->i2c_algo[i].data = &cx->i2c_algo_cb_data[i];
->  
->  		/* Setup adapter */
-> -		memcpy(&cx->i2c_adap[i], &cx18_i2c_adap_template,
-> -			sizeof(struct i2c_adapter));
-> +		cx->i2c_adap[i] = cx18_i2c_adap_template;
->  		cx->i2c_adap[i].algo_data = &cx->i2c_algo[i];
->  		sprintf(cx->i2c_adap[i].name + strlen(cx->i2c_adap[i].name),
->  				" #%d-%d", cx->instance, i);
+This patch fixes the error case that do not return negative value.
 
+This was found by Coccinelle, but the code change was made by hand.
+This patch is not robot generated.
+
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Change from V1:
+        Updated commit message. See:
+        http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/ethernet/sun/niu.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+index 8419bf3..275b430 100644
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -9788,6 +9788,7 @@ static int __devinit niu_pci_init_one(struct pci_dev *pdev,
+ 
+ 	if (!pci_is_pcie(pdev)) {
+ 		dev_err(&pdev->dev, "Cannot find PCI Express capability, aborting\n");
++		err = -ENODEV;
+ 		goto err_out_free_res;
+ 	}
+ 
 
