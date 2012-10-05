@@ -1,31 +1,70 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Date: Thu, 11 Oct 2012 21:08:38 +0000
-Subject: Re: [remoteproc:for-next 6/9] remoteproc_virtio.c:(.text+0x238e7e): undefined reference to `vring_tr
-Message-Id: <CAK=WgbYCu3HtdU3sjWfDf0aEXKyOhm4e7PE6YD-JcXWJAtDPow@mail.gmail.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Fri, 05 Oct 2012 21:33:04 +0000
+Subject: [PATCH 7/20 V2] drivers/net/irda/mcs7780.c: fix error return code
+Message-Id: <1349472786-10921-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121001024544.GA12711@localhost> <CAK=WgbakTOS71tvpQDLoANm25Ms_sbz1OcEqBuvO2+ZKwMBsmA@mail.gmail.com>
- <CAK=WgbYK2rFw7iFV1fGUb1saXrsH+yh=2Etmuj5+6ob6cCKntw@mail.gmail.com>
- <81C3A93C17462B4BBD7E272753C1057923BD9B59E3@EXDCVYMBSTM005.EQ1STM.local>
- <CAK=WgbaNHBVeF_A0jyNpRvnsO_BbkJGxKzyroC6pO1x+OELe0w@mail.gmail.com>
- <20121009132847.GC4587@mwanda> <CAK=WgbadhpEaP=ObM8rT=+xnEmh3xzb_ORThDfutH+jDOCf2mQ@mail.gmail.com>
- <20121009142644.GD4587@mwanda> <CAK=WgbbV9K-SFbwukDwTAnOBTtwaBUH422Da+CmdvXCN86-aMw@mail.gmail.com>
- <81C3A93C17462B4BBD7E272753C1057923BDA378AB@EXDCVYMBSTM005.EQ1STM.local>
-In-Reply-To: <81C3A93C17462B4BBD7E272753C1057923BDA378AB@EXDCVYMBSTM005.EQ1STM.local>
+References: <1349472786-10921-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349472786-10921-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Fengguang Wu <fengguang.wu@intel.com>, "Linus Walleij (linus.walleij@linaro.org)" <linus.walleij@linaro.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Sjur_Br=E6ndeland?= <sjurbren@gmail.com>
+To: samuel@sortiz.org
+Cc: irda-users@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Thu, Oct 11, 2012 at 8:49 PM, Sjur BRENDELAND
-<sjur.brandeland@stericsson.com> wrote:
-> This driver is intended for NovaThor SoC and for a configuration with
-> LLI as the shared memory interface between the host and modem.
-> When using LLI as the shared memory interface the modem could be used
-> with any platform/architecture with little endian byte sex and a LLI
-> interface. So I guess this driver belongs in the former group you
-> mention, and should probably not be dependent on ARM only.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
 
-Ok, thanks for the information.
+The function mcs_probe() return 0 for success and negative value
+for most of its internal tests failures. There is one exception
+that is error case going to error2:. For this error case, the
+function abort its success execution path, but returns non negative
+value, making it difficult for a caller function to notice the error.
 
-Ohad.
+This patch fixes the error case that do not return negative value.
+
+A simplified version of the semantic match that finds this problem is
+as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+Change from V1:
+        Updated commit message. See:
+        http://www.kernelhub.org/?p=2&msg9319
+
+ drivers/net/irda/mcs7780.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/irda/mcs7780.c b/drivers/net/irda/mcs7780.c
+index 1a00b59..f07c340 100644
+--- a/drivers/net/irda/mcs7780.c
++++ b/drivers/net/irda/mcs7780.c
+@@ -920,8 +920,10 @@ static int mcs_probe(struct usb_interface *intf,
+ 
+ 	ndev->netdev_ops = &mcs_netdev_ops;
+ 
+-	if (!intf->cur_altsetting)
++	if (!intf->cur_altsetting) {
++		ret = -ENOMEM;
+ 		goto error2;
++	}
+ 
+ 	ret = mcs_find_endpoints(mcs, intf->cur_altsetting->endpoint,
+ 				 intf->cur_altsetting->desc.bNumEndpoints);
+
