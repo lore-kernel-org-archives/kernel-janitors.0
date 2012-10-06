@@ -1,52 +1,82 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Thu, 18 Oct 2012 15:51:28 +0000
-Subject: Re: [PATCH V2] drivers/media/v4l2-core/videobuf2-core.c: fix error return code
-Message-Id: <50802580.7090809@samsung.com>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Date: Sat, 06 Oct 2012 11:17:42 +0000
+Subject: Re: [PATCH 4/14] drivers/media/v4l2-core/videobuf2-core.c: fix error return code
+Message-Id: <20121006081742.48d5e5e8@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5075AB4F.3030709@samsung.com>
- <1350571624-4666-1-git-send-email-peter.senna@gmail.com>
- <CALF0-+WPZ7b83Mg=b1KirHt39QE4fuO4MDGhNpQNxMY09O87HA@mail.gmail.com>
-In-Reply-To: <CALF0-+WPZ7b83Mg=b1KirHt39QE4fuO4MDGhNpQNxMY09O87HA@mail.gmail.com>
+References: <1346945041-26676-10-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1346945041-26676-10-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ezequiel Garcia <elezegarcia@gmail.com>
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>, pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Julia.Lawall@lip6.fr, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/18/2012 05:28 PM, Ezequiel Garcia wrote:
-> On Thu, Oct 18, 2012 at 11:47 AM, Peter Senna Tschudin
-> <peter.senna@gmail.com> wrote:
->> This patch fixes a NULL pointer dereference bug at __vb2_init_fileio().
->> The NULL pointer deference happens at videobuf2-core.c:
->>
->> static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_t count,
->>                 loff_t *ppos, int nonblock, int read)
->> {
->> ...
->>         if (!q->fileio) {
->>                 ret = __vb2_init_fileio(q, read);
->>                 dprintk(3, "file io: vb2_init_fileio result: %d\n", ret);
->>                 if (ret)
->>                         return ret;
->>         }
->>         fileio = q->fileio; // NULL pointer deference here
->> ...
->> }
->>
->> It was tested with vivi driver and qv4l2 for selecting read() as capture method.
->> The OOPS happened when I've artificially forced the error by commenting the line:
->>         if (fileio->bufs[i].vaddr = NULL)
->>
+Em Thu,  6 Sep 2012 17:23:57 +0200
+Peter Senna Tschudin <peter.senna@gmail.com> escreveu:
+
+> From: Peter Senna Tschudin <peter.senna@gmail.com>
 > 
-> ... but if you manually changed the original source, how
-> can this be a real BUG?
+> Convert a nonnegative error return code to a negative one, as returned
+> elsewhere in the function.
 > 
-> Or am I missing something here ?
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+> 
+> // </smpl>
+> 
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> 
+> ---
+>  drivers/media/v4l2-core/videobuf2-core.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+> index 4da3df6..f6bc240 100644
+> --- a/drivers/media/v4l2-core/videobuf2-core.c
+> +++ b/drivers/media/v4l2-core/videobuf2-core.c
+> @@ -1876,8 +1876,10 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
+>  	 */
+>  	for (i = 0; i < q->num_buffers; i++) {
+>  		fileio->bufs[i].vaddr = vb2_plane_vaddr(q->bufs[i], 0);
+> -		if (fileio->bufs[i].vaddr = NULL)
+> +		if (fileio->bufs[i].vaddr = NULL) {
+> +			ret = -EFAULT;
+>  			goto err_reqbufs;
+> +		}
 
-He just commented out this line to trigger the bug, i.e. to simulate
-a situation where fileio->bufs[i].vaddr is NULL. Which is now not
-handled properly.
+Had you test this patch? I suspect it breaks the driver, as there are failures under
+streaming handling that are acceptable, as it may indicate that userspace was not
+able to handle all queued frames in time. On such cases, what the Kernel does is to
+just discard the frame. Userspace is able to detect it, by looking inside the timestamp
+added on each frame.
 
---
-Thanks,
-Sylwester
+>  		fileio->bufs[i].size = vb2_plane_size(q->bufs[i], 0);
+>  	}
+>  
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+
+Cheers,
+Mauro
