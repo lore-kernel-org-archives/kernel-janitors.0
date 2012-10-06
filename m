@@ -1,52 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 11 Oct 2012 06:55:25 +0000
-Subject: [patch] Staging: vt6655-6: shift wrap in hostap_set_encryption()
-Message-Id: <20121011065525.GB31607@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 06 Oct 2012 16:54:30 +0000
+Subject: [asoc:topic/cs4271 37/37] include/sound/cs4271.h:22:31: sparse: dubious one-bit signed bitfield
+Message-Id: <20121006165430.GA19636@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-abySeq is an unsigned char so shifting more than 31 bits will lead to a
-shift wrapping bug.
+Hi Daniel,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+FYI, there are new sparse warnings show up in
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git topic/cs4271
+head:   d24f7344f8f3e6853d128d43b13424b6734d8211
+commit: d24f7344f8f3e6853d128d43b13424b6734d8211 [37/37] ASoC: cs4271: add support for AMUTEB=BMUTEC feature
+
++ include/sound/cs4271.h:22:31: sparse: dubious one-bit signed bitfield
+
 ---
-This is a static checker fix.  I don't have a way to test the
-implications...  Sorry.
-
-diff --git a/drivers/staging/vt6656/hostap.c b/drivers/staging/vt6656/hostap.c
-index 0a73d40..26a7d0e 100644
---- a/drivers/staging/vt6656/hostap.c
-+++ b/drivers/staging/vt6656/hostap.c
-@@ -542,9 +542,9 @@ static int hostap_set_encryption(PSDevice pDevice,
- 
- 	if (param->u.crypt.seq) {
- 	    memcpy(&abySeq, param->u.crypt.seq, 8);
--		for (ii = 0 ; ii < 8 ; ii++) {
--	         KeyRSC |= (abySeq[ii] << (ii * 8));
--		}
-+		for (ii = 0 ; ii < 8 ; ii++)
-+			KeyRSC |= (unsigned long)abySeq[ii] << (ii * 8);
-+
- 		dwKeyIndex |= 1 << 29;
- 		pMgmt->sNodeDBTable[iNodeIndex].KeyRSC = KeyRSC;
- 	}
-diff --git a/drivers/staging/vt6655/hostap.c b/drivers/staging/vt6655/hostap.c
-index 67b1b88..5f13890 100644
---- a/drivers/staging/vt6655/hostap.c
-+++ b/drivers/staging/vt6655/hostap.c
-@@ -596,9 +596,9 @@ static int hostap_set_encryption(PSDevice pDevice,
- 
- 	if (param->u.crypt.seq) {
- 	    memcpy(&abySeq, param->u.crypt.seq, 8);
--		for (ii = 0 ; ii < 8 ; ii++) {
--	         KeyRSC |= (abySeq[ii] << (ii * 8));
--		}
-+		for (ii = 0 ; ii < 8 ; ii++)
-+			KeyRSC |= (unsigned long)abySeq[ii] << (ii * 8);
-+
- 		dwKeyIndex |= 1 << 29;
- 		pMgmt->sNodeDBTable[iNodeIndex].KeyRSC = KeyRSC;
- 	}
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
