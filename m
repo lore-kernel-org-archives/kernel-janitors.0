@@ -1,37 +1,37 @@
-From: Kees Cook <keescook@chromium.org>
-Date: Sat, 20 Oct 2012 04:49:13 +0000
-Subject: Re: [kees:module-fd-syscall 1/4] kernel/module.c:2434:3: warning: passing argument 2 of 'mod_verify_
-Message-Id: <CAGXu5j+p1GVZZaPdCVEm5jCux79nJm8_9YmuvXvSY4jh6-tQHg@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 06 Oct 2012 02:55:13 +0000
+Subject: arch/arm/mach-at91/setup.c:96:2: error: #endif without #if
+Message-Id: <20121006025513.GA17498@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50821e1d.dEE58tsKTnbtsR5X%fengguang.wu@intel.com>
-In-Reply-To: <50821e1d.dEE58tsKTnbtsR5X%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 19, 2012 at 8:44 PM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> Hi Kees,
->
-> FYI, there are new compile warnings show up in
->
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git module-fd-syscall
-> head:   3c560638ca92faf6d258a90f2eb49a8d1095840f
-> commit: e5596ccd94451baa6cbf4029de06724f5ae32185 [1/4] module: add syscall to load module from fd
-> config: x86_64-allmodconfig # make ARCH=x86_64 allmodconfig
->
-> All warnings:
->
-> kernel/module.c: In function 'module_sig_check':
-> kernel/module.c:2434:3: warning: passing argument 2 of 'mod_verify_sig' makes pointer from integer without a cast [enabled by default]
-> In file included from kernel/module.c:63:0:
-> kernel/module-internal.h:14:12: note: expected 'long unsigned int *' but argument is of type 'long unsigned int'
+Hi Arnd,
 
-You're fast! :) Thanks; fixed. I got distracted and didn't finish
-testing this afternoon.
+FYI, kernel build failed on
 
--Kees
+commit: 9afdc3db4684b300aca16bffff4a7f108feb3043  Merge branch 'late/fixes' into for-next
+config: arm-at91_dt_defconfig
 
--- 
-Kees Cook
-Chrome OS Security
+All error/warnings:
+
+arch/arm/mach-at91/setup.c:96:2: error: #endif without #if
+
+vim +96 arch/arm/mach-at91/setup.c
+
+ac09281a (Arnd Bergmann                    2012-04-30  90) static struct map_desc at91_io_desc __initdata __maybe_unused = {
+dca4ba41 (Arnd Bergmann                    2012-09-14  91) 	.virtual	= (unsigned long)AT91_VA_BASE_SYS,
+21d08b9d (Jean-Christophe PLAGNIOL-VILLARD 2011-04-23  92) 	.pfn		= __phys_to_pfn(AT91_BASE_SYS),
+21d08b9d (Jean-Christophe PLAGNIOL-VILLARD 2011-04-23  93) 	.length		= SZ_16K,
+21d08b9d (Jean-Christophe PLAGNIOL-VILLARD 2011-04-23  94) 	.type		= MT_DEVICE,
+21d08b9d (Jean-Christophe PLAGNIOL-VILLARD 2011-04-23  95) };
+2e8e5ad6 (Arnd Bergmann                    2012-04-30 @96) #endif
+21d08b9d (Jean-Christophe PLAGNIOL-VILLARD 2011-04-23  97) 
+8c3583b6 (Jean-Christophe PLAGNIOL-VILLARD 2011-04-23  98) static void __init soc_detect(u32 dbgu_base)
+21d08b9d (Jean-Christophe PLAGNIOL-VILLARD 2011-04-23  99) {
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
