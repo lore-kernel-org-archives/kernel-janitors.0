@@ -1,112 +1,77 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 07 Oct 2012 16:54:41 +0000
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+Date: Sun, 07 Oct 2012 18:05:01 +0000
 Subject: Re: [PATCH 9/13] drivers/media/tuners/fc0011.c: use macros for i2c_msg initialization
-Message-Id: <5071B3D1.6080004@bfs.de>
+Message-Id: <20121007200501.757a1ce6@milhouse>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Sig_/.xXbt9B3o._hAnK.C27euRq"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr> <1349624323-15584-11-git-send-email-Julia.Lawall@lip6.fr> <5071B147.3010708@bfs.de> <alpine.DEB.2.02.1210071845030.2745@localhost6.localdomain6>
+References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1349624323-15584-11-git-send-email-Julia.Lawall@lip6.fr>
+	<5071B147.3010708@bfs.de>
+	<alpine.DEB.2.02.1210071845030.2745@localhost6.localdomain6>
 In-Reply-To: <alpine.DEB.2.02.1210071845030.2745@localhost6.localdomain6>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Michael Buesch <m@bues.ch>, kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: walter harms <wharms@bfs.de>, kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Sig_/.xXbt9B3o._hAnK.C27euRq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, 7 Oct 2012 18:50:31 +0200 (CEST)
+Julia Lawall <julia.lawall@lip6.fr> wrote:
 
-Am 07.10.2012 18:50, schrieb Julia Lawall:
-> On Sun, 7 Oct 2012, walter harms wrote:
-> 
->>
->>
->> Am 07.10.2012 17:38, schrieb Julia Lawall:
->>> From: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
->>>
->>> A length expressed as an explicit constant is also re-expressed as
->>> the size
->>> of the buffer in each case.
->>>
->>> A simplified version of the semantic patch that makes this change is as
->>> follows: (http://coccinelle.lip6.fr/)
->>>
->>> // <smpl>
->>> @@
->>> expression a,b,c;
->>> identifier x;
->>> @@
->>>
->>> struct i2c_msg x >>> - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
->>> + I2C_MSG_READ(a,b,c)
->>>  ;
->>>
->>> @@
->>> expression a,b,c;
->>> identifier x;
->>> @@
->>>
->>> struct i2c_msg x >>> - {.addr = a, .buf = b, .len = c, .flags = 0}
->>> + I2C_MSG_WRITE(a,b,c)
->>>  ;
->>>
->>> @@
->>> expression a,b,c,d;
->>> identifier x;
->>> @@
->>>
->>> struct i2c_msg x >>> - {.addr = a, .buf = b, .len = c, .flags = d}
->>> + I2C_MSG_OP(a,b,c,d)
->>>  ;
->>> // </smpl>
->>>
->>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> ---
->>>  drivers/media/tuners/fc0011.c |    9 +++------
->>>  1 file changed, 3 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/media/tuners/fc0011.c
->>> b/drivers/media/tuners/fc0011.c
->>> index e488254..5dbba98 100644
->>> --- a/drivers/media/tuners/fc0011.c
->>> +++ b/drivers/media/tuners/fc0011.c
->>> @@ -80,8 +80,7 @@ struct fc0011_priv {
->>>  static int fc0011_writereg(struct fc0011_priv *priv, u8 reg, u8 val)
->>>  {
->>>      u8 buf[2] = { reg, val };
->>> -    struct i2c_msg msg = { .addr = priv->addr,
->>> -        .flags = 0, .buf = buf, .len = 2 };
->>> +    struct i2c_msg msg = I2C_MSG_WRITE(priv->addr, buf, sizeof(buf));
->>>
->>>      if (i2c_transfer(priv->i2c, &msg, 1) != 1) {
->>>          dev_err(&priv->i2c->dev,
->>> @@ -97,10 +96,8 @@ static int fc0011_readreg(struct fc0011_priv
->>> *priv, u8 reg, u8 *val)
->>>  {
->>>      u8 dummy;
->>>      struct i2c_msg msg[2] = {
->>> -        { .addr = priv->addr,
->>> -          .flags = 0, .buf = &reg, .len = 1 },
->>> -        { .addr = priv->addr,
->>> -          .flags = I2C_M_RD, .buf = val ? : &dummy, .len = 1 },
->>> +        I2C_MSG_WRITE(priv->addr, &reg, sizeof(reg)),
->>> +        I2C_MSG_READ(priv->addr, val ? : &dummy, sizeof(dummy)),
->>>      };
->>>
->>
->> This dummy looks strange, can it be that this is used uninitialised ?
-> 
-> I'm not sure to understand the question.  The read, when it happens in
-> i2c_transfer will initialize dummy.  On the other hand, I don't know
-> what i2c_transfer does when the buffer is NULL and the size is 1.  It
-> does not look very elegant at least.
-> 
+> >> @@ -97,10 +96,8 @@ static int fc0011_readreg(struct fc0011_priv *priv,=
+ u8 reg, u8 *val)
+> >>  {
+> >>  	u8 dummy;
+> >>  	struct i2c_msg msg[2] =3D {
+> >> -		{ .addr =3D priv->addr,
+> >> -		  .flags =3D 0, .buf =3D &reg, .len =3D 1 },
+> >> -		{ .addr =3D priv->addr,
+> >> -		  .flags =3D I2C_M_RD, .buf =3D val ? : &dummy, .len =3D 1 },
+> >> +		I2C_MSG_WRITE(priv->addr, &reg, sizeof(reg)),
+> >> +		I2C_MSG_READ(priv->addr, val ? : &dummy, sizeof(dummy)),
+> >>  	};
+> >>
+> >
+> > This dummy looks strange, can it be that this is used uninitialised ?
+>=20
+> I'm not sure to understand the question.  The read, when it happens in=20
+> i2c_transfer will initialize dummy.  On the other hand, I don't know what=
+=20
+> i2c_transfer does when the buffer is NULL and the size is 1.  It does not=
+=20
+> look very elegant at least.
 
-mea culpa, i mixed read and write
+Well its use case is if you only care about the side effects and not the ac=
+tual data
+returned by the read operation.
 
-re,
- wh
+--=20
+Greetings, Michael.
 
-> julia
-> 
-> 
+PGP encryption is encouraged / 908D8B0E
+
+--Sig_/.xXbt9B3o._hAnK.C27euRq
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQccRNAAoJEPUyvh2QjYsOe2IQAK6EJr6davwpTYnkRZxsZqDz
+Wx2YUMI3aCWcrq0AL1bOD22gdM3+lrTXJ/q+XxaxqGaqES9OV8iZpmiWBGRWlQgi
+mARnJ8KwG19yHFHKyw4cz64tP0PF4PhfdpdC8SL+fWwrFqlaI23XirLKg/gML3Iw
+ptdsTobacaNsaHm8GM4yq6EZRQIOhiHgalhIx7okhkcauvSNKKRBSVDBkU7/99u3
+ykEZb6GbHW0T7gkXd9cU969D/O5zeLMDu/G33TmXP7PASnwlfbQcSWa6vdSvMfsi
+YrCUuxBlH3XrqdzrECOQX25zGCDYRkTtyBylcwGR+QHkLXX+iD31Q6XmwnzgWwI5
+ONosmnpVA/qCGOuUhEej/dIyZXVvLpMhaj4KaZ0OGAR3dQWuoVfD4CzDZkHlFFHj
+DgNTroLOSwTGIg/XJkMSgwL/ZxRX7+2WFugrpKPC+DjZGD0a+xS0ShIUYZlsw/fN
+rLMy84cSEdrurcCELVp7oR5F2sCWqo5nTyPkwjA6ENLCwtT9xB7LMPrHJgQHqrpp
+Hz97qiz5Vw3P7Xta6u/OZtjS3dCSbWjeAvm/3GE/Vt+tL0nH8wJpk/nksi2cgkJX
+EI+cOkMvU4P+pIalk6kixI1wsj1zKcLniBY/w1x57B4E9eXAAgFykLgNwaoAyNAE
+rDywYLI/SJ2ejPJnSZmk
+=j5OD
+-----END PGP SIGNATURE-----
+
+--Sig_/.xXbt9B3o._hAnK.C27euRq--
