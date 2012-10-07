@@ -1,43 +1,54 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 22 Oct 2012 09:18:26 +0000
-Subject: Re: [PATCH 0/11] introduce macros for i2c_msg initialization
-Message-Id: <alpine.DEB.2.02.1210221059100.2026@hadrien>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 07 Oct 2012 00:20:16 +0000
+Subject: kernel/sys.c:1868:2: warning: passing argument 2 of 'access_ok' makes pointer from integer without a
+Message-Id: <20121007002016.GA5678@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr> <20121009173237.7c1a49e9@endymion.delvare>
-In-Reply-To: <20121009173237.7c1a49e9-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, Mauro Carvalho Chehab <mchehab-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, shubhrajyoti-l0cyMroinI0@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-I have been looking at this again, with the macros
+Hi Cyrill,
 
-#define I2C_MSG_OP(_addr, _buf, _len, _flags) \
-        { .addr = _addr, .buf = _buf, .len = _len, .flags = _flags }
+FYI, there are new compile warnings show up in
 
-#define I2C_MSG_WRITE(addr, buf, len) \
-        I2C_MSG_OP(addr, buf, len, 0)
-#define I2C_MSG_READ(addr, buf, len) \
-        I2C_MSG_OP(addr, buf, len, I2C_M_RD)
-#define I2C_MSG_WRITE_OP(addr, buf, len, op) \
-        I2C_MSG_OP(addr, buf, len, 0 | op)
-#define I2C_MSG_READ_OP(addr, buf, len, op) \
-        I2C_MSG_OP(addr, buf, len, I2C_M_RD | op)
+commit: 20e61e149ba9a4fe4c4867a76e399879d802e669  prctl: use access_ok() instead of TASK_SIZE in prctl_set_mm()
+config: m68k-allmodconfig
 
-and the tuners files as a random first example.  This time I haven't made
-any adjustments for arrays of size 1.
+All warnings:
 
-The following file is a bit unfortunate, because a single structure is
-mostly used for writing, but sometimes used for reading, in the function
-tda827xa_set_params.  That is, there are explicit assignments to
-msg.flags.
+kernel/sys.c: In function 'prctl_set_mm':
+kernel/sys.c:1868:2: warning: passing argument 2 of 'access_ok' makes pointer from integer without a cast [enabled by default]
+arch/m68k/include/asm/uaccess_mm.h:17:19: note: expected 'const void *' but argument is of type 'long unsigned int'
 
-drivers/media/tuners/tda827x.c
+vim +1868 kernel/sys.c
 
-Currently, this is done in 8 files across the entire kernel.  Would it be
-a problem to use a READ or WRITE macro to initialize such a structure,
-give that the type is going to change?  Maybe the I2C_MSG_OP macro could
-be used, with an explicit flag argument?
+028ee4be (Cyrill Gorcunov 2012-01-12  1852) 			unsigned long arg4, unsigned long arg5)
+028ee4be (Cyrill Gorcunov 2012-01-12  1853) {
+028ee4be (Cyrill Gorcunov 2012-01-12  1854) 	unsigned long rlim = rlimit(RLIMIT_DATA);
+028ee4be (Cyrill Gorcunov 2012-01-12  1855) 	struct mm_struct *mm = current->mm;
+fe8c7f5c (Cyrill Gorcunov 2012-05-31  1856) 	struct vm_area_struct *vma;
+fe8c7f5c (Cyrill Gorcunov 2012-05-31  1857) 	int error;
+028ee4be (Cyrill Gorcunov 2012-01-12  1858) 
+fe8c7f5c (Cyrill Gorcunov 2012-05-31  1859) 	if (arg5 || (arg4 && opt != PR_SET_MM_AUXV))
+028ee4be (Cyrill Gorcunov 2012-01-12  1860) 		return -EINVAL;
+028ee4be (Cyrill Gorcunov 2012-01-12  1861) 
+79f0713d (Cyrill Gorcunov 2012-03-15  1862) 	if (!capable(CAP_SYS_RESOURCE))
+028ee4be (Cyrill Gorcunov 2012-01-12  1863) 		return -EPERM;
+028ee4be (Cyrill Gorcunov 2012-01-12  1864) 
+b32dfe37 (Cyrill Gorcunov 2012-05-31  1865) 	if (opt = PR_SET_MM_EXE_FILE)
+b32dfe37 (Cyrill Gorcunov 2012-05-31  1866) 		return prctl_set_mm_exe_file(mm, (unsigned int)addr);
+b32dfe37 (Cyrill Gorcunov 2012-05-31  1867) 
+20e61e14 (Cyrill Gorcunov 2012-09-26 @1868) 	if (!access_ok(VERIFY_READ, addr, sizeof(addr)) || addr < mmap_min_addr)
+028ee4be (Cyrill Gorcunov 2012-01-12  1869) 		return -EINVAL;
+028ee4be (Cyrill Gorcunov 2012-01-12  1870) 
+fe8c7f5c (Cyrill Gorcunov 2012-05-31  1871) 	error = -EINVAL;
+fe8c7f5c (Cyrill Gorcunov 2012-05-31  1872) 
+028ee4be (Cyrill Gorcunov 2012-01-12  1873) 	down_read(&mm->mmap_sem);
+028ee4be (Cyrill Gorcunov 2012-01-12  1874) 	vma = find_vma(mm, addr);
+028ee4be (Cyrill Gorcunov 2012-01-12  1875) 
+028ee4be (Cyrill Gorcunov 2012-01-12  1876) 	switch (opt) {
 
-julia
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
