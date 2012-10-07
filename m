@@ -1,53 +1,88 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Date: Thu, 04 Oct 2012 21:10:09 +0000
-Subject: Re: [patch 2/3] brcmfmac: fix end of loop check (signedness bug)
-Message-Id: <506DFB31.8080208@broadcom.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Oct 2012 15:38:34 +0000
+Subject: [PATCH 3/13] drivers/media/tuners/qt1010.c: use macros for i2c_msg initialization
+Message-Id: <1349624323-15584-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121003060631.GB3802@elgon.mountain>
- <506DB82B.9010106@broadcom.com> <20121004184212.GO13767@mwanda>
-In-Reply-To: <20121004184212.GO13767@mwanda>
+References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Brett Rudley <brudley@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Hante Meuleman <meuleman@broadcom.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/04/2012 08:42 PM, Dan Carpenter wrote:
-> On Thu, Oct 04, 2012 at 06:24:11PM +0200, Arend van Spriel wrote:
->> On 10/03/2012 08:06 AM, Dan Carpenter wrote:
->>> The problem here is that we loop until "remained_buf_len" is less than
->>> zero, but since it is unsigned, it never is.
->>>
->>> "remained_buf_len" has to be large enough to hold the value from
->>> "mgmt_ie_buf_len".  That variable is type u32, but it only holds small
->>> values so I have changed to both variables to int.
->>>
->>> Also I removed the bogus initialization from "mgmt_ie_buf_len" so that
->>> GCC can detect if it is used unitialized.  I moved the declaration of
->>> "remained_buf_len" closer to where it is used so it's easier to read.
->>>
->>
->> Hi Dan,
->>
->> Good catch. I applied the patch internally on our HEAD and had it
->> reviewed. We did not take moving the declaration as we prefer to
->> have all variables at the top of the function. It makes it easier to
->> find what is declared in a function and whether exceeding the local
->> variable limit mentioned in Chapter 6. Functions of the CodingStyle
->> (we are exceeding it already ;-) ).
->>
->> Are you ok with us submitting it? It would be sent out for 3.8 or do
->> you prefer to have it fixed in 3.7?
->
-> Uh, I don't know how hard it is to trigger this bug.  If it's
-> impossible to trigger then we could wait until 3.8 otherwise I
-> would tend to merge it into 3.7 given that we haven't hit -rc1 yet.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Hi Dan,
+Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
 
-I don't know either, but to safe myself the trouble I will post it to 
-John for 3.7. Thanks.
+A length expressed as an explicit constant is also re-expressed as the size
+of the buffer, when this is possible.
 
-Gr. AvS
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ;
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ;
+
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x = 
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/tuners/qt1010.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/tuners/qt1010.c b/drivers/media/tuners/qt1010.c
+index bc419f8..37ff254 100644
+--- a/drivers/media/tuners/qt1010.c
++++ b/drivers/media/tuners/qt1010.c
+@@ -25,10 +25,8 @@
+ static int qt1010_readreg(struct qt1010_priv *priv, u8 reg, u8 *val)
+ {
+ 	struct i2c_msg msg[2] = {
+-		{ .addr = priv->cfg->i2c_address,
+-		  .flags = 0, .buf = &reg, .len = 1 },
+-		{ .addr = priv->cfg->i2c_address,
+-		  .flags = I2C_M_RD, .buf = val, .len = 1 },
++		I2C_MSG_WRITE(priv->cfg->i2c_address, &reg, sizeof(reg)),
++		I2C_MSG_READ(priv->cfg->i2c_address, val, 1),
+ 	};
+ 
+ 	if (i2c_transfer(priv->i2c, msg, 2) != 2) {
+@@ -43,8 +41,8 @@ static int qt1010_readreg(struct qt1010_priv *priv, u8 reg, u8 *val)
+ static int qt1010_writereg(struct qt1010_priv *priv, u8 reg, u8 val)
+ {
+ 	u8 buf[2] = { reg, val };
+-	struct i2c_msg msg = { .addr = priv->cfg->i2c_address,
+-			       .flags = 0, .buf = buf, .len = 2 };
++	struct i2c_msg msg = I2C_MSG_WRITE(priv->cfg->i2c_address, buf,
++					   sizeof(buf));
+ 
+ 	if (i2c_transfer(priv->i2c, &msg, 1) != 1) {
+ 		dev_warn(&priv->i2c->dev, "%s: i2c wr failed reg=%02x\n",
 
