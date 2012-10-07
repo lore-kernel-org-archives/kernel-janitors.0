@@ -1,79 +1,17 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Fri, 05 Oct 2012 21:06:17 +0000
+From: David Miller <davem@davemloft.net>
+Date: Sun, 07 Oct 2012 18:38:20 +0000
 Subject: Re: [PATCH 3/20 V2] drivers/net/can/sja1000/peak_pci.c: fix error return code
-Message-Id: <506F4BC9.50506@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------enig6AC7AE5B36A4A9E45097CEA7"
+Message-Id: <20121007.143820.2272805241068122507.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349469667-6137-1-git-send-email-peter.senna@gmail.com> <1349469667-6137-3-git-send-email-peter.senna@gmail.com>
+References: <1349469667-6137-1-git-send-email-peter.senna@gmail.com>
+	<1349469667-6137-3-git-send-email-peter.senna@gmail.com>
 In-Reply-To: <1349469667-6137-3-git-send-email-peter.senna@gmail.com>
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: wg@grandegger.com, davem@davemloft.net, jj@chaosbits.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig6AC7AE5B36A4A9E45097CEA7
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-On 10/05/2012 10:41 PM, Peter Senna Tschudin wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
->=20
-> The function peak_pci_probe() return 0 for success and negative value
-> for most of its internal tests failures. There are two exceptions
-> that are error cases going to failure_*:. Fore this two cases the
-> function abort its success execution path, but returns non negative
-> value, making it dificult for a caller function to notice the error.
->=20
-> This patch fixes the error cases that do not return negative values.
->=20
-> This was found by Coccinelle, but the code change was made by hand.
-> This patch is not robot generated.
->=20
-> A simplified version of the semantic match that finds this problem is
-> as follows: (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret !=3D 0\))
->  { ... return ret; }
-> |
-> ret@p1 =3D 0
-> )
-> ... when !=3D ret =3D e1
->     when !=3D &ret
-> *if(...)
-> {
->   ... when !=3D ret =3D e2
->       when forall
->  return ret;
-> }
-> // </smpl>
->=20
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
-Too late, v1 of this patch is already in net/master
-
-regards, Marc
-
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: peter.senna@gmail.com
+Cc: wg@grandegger.com, mkl@pengutronix.de, jj@chaosbits.net, linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
---------------enig6AC7AE5B36A4A9E45097CEA7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+This patch was already in the tree.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
-
-iEYEARECAAYFAlBvS80ACgkQjTAFq1RaXHPSeQCfeuKpV+0N0X8+nPBE+9cfldRI
-vMwAnjrzgLOHZqtxArZ71zGn1cfbFbbh
-=fKWB
------END PGP SIGNATURE-----
-
---------------enig6AC7AE5B36A4A9E45097CEA7--
