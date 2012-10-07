@@ -1,39 +1,98 @@
-From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Date: Tue, 02 Oct 2012 10:39:43 +0000
-Subject: Re: [patch] x86/cache_info: use ARRAY_SIZE() in amd_l3_attrs()
-Message-Id: <506AC19F.3000900@linux.vnet.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Oct 2012 15:38:32 +0000
+Subject: [PATCH 13/13] drivers/media/tuners/e4000.c: use macros for i2c_msg initialization
+Message-Id: <1349624323-15584-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121002083409.GM12398@elgon.mountain>
-In-Reply-To: <20121002083409.GM12398@elgon.mountain>
+References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Shai Fultheim <shai@scalemp.com>, Greg Kroah-Hartman <gregkh@suse.de>, Andreas Herrmann <andreas.herrmann3@amd.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/02/2012 02:04 PM, Dan Carpenter wrote:
-> Using ARRAY_SIZE() is more readable.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Reviewed-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
 
-Regards,
-Srivatsa S. Bhat
+In the second i2c_msg structure, a length expressed as an explicit constant
+is also re-expressed as the size of the buffer, reg.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ;
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ;
+
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x = 
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/tuners/e4000.c |   20 +++-----------------
+ 1 file changed, 3 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/media/tuners/e4000.c b/drivers/media/tuners/e4000.c
+index 1b33ed3..8f182fc 100644
+--- a/drivers/media/tuners/e4000.c
++++ b/drivers/media/tuners/e4000.c
+@@ -26,12 +26,7 @@ static int e4000_wr_regs(struct e4000_priv *priv, u8 reg, u8 *val, int len)
+ 	int ret;
+ 	u8 buf[1 + len];
+ 	struct i2c_msg msg[1] = {
+-		{
+-			.addr = priv->cfg->i2c_addr,
+-			.flags = 0,
+-			.len = sizeof(buf),
+-			.buf = buf,
+-		}
++		I2C_MSG_WRITE(priv->cfg->i2c_addr, buf, sizeof(buf))
+ 	};
  
-> diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
-> index 9a7c90d..93c5451 100644
-> --- a/arch/x86/kernel/cpu/intel_cacheinfo.c
-> +++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
-> @@ -991,7 +991,7 @@ static struct attribute ** __cpuinit amd_l3_attrs(void)
->  	if (attrs)
->  		return attrs;
-> 
-> -	n = sizeof (default_attrs) / sizeof (struct attribute *);
-> +	n = ARRAY_SIZE(default_attrs);
-> 
->  	if (amd_nb_has_feature(AMD_NB_L3_INDEX_DISABLE))
->  		n += 2;
-> 
+ 	buf[0] = reg;
+@@ -54,17 +49,8 @@ static int e4000_rd_regs(struct e4000_priv *priv, u8 reg, u8 *val, int len)
+ 	int ret;
+ 	u8 buf[len];
+ 	struct i2c_msg msg[2] = {
+-		{
+-			.addr = priv->cfg->i2c_addr,
+-			.flags = 0,
+-			.len = 1,
+-			.buf = &reg,
+-		}, {
+-			.addr = priv->cfg->i2c_addr,
+-			.flags = I2C_M_RD,
+-			.len = sizeof(buf),
+-			.buf = buf,
+-		}
++		I2C_MSG_WRITE(priv->cfg->i2c_addr, &reg, sizeof(reg)),
++		I2C_MSG_READ(priv->cfg->i2c_addr, buf, sizeof(buf))
+ 	};
+ 
+ 	ret = i2c_transfer(priv->i2c, msg, 2);
 
