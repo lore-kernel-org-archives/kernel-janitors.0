@@ -1,75 +1,455 @@
-From: Felipe Balbi <balbi@ti.com>
-Date: Mon, 15 Oct 2012 19:18:13 +0000
-Subject: Re: [balbi-usb:merge-result-for-greg 59/99] webcam.c:(.text+0x14afec): undefined reference to `confi
-Message-Id: <20121015191813.GA373@arwen.pp.htv.fi>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="bp/iNruPH9dso1Pn"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Oct 2012 15:38:30 +0000
+Subject: [PATCH 0/11] introduce macros for i2c_msg initialization
+Message-Id: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121012163902.GA19120@localhost>
- <507BC000.10004@linutronix.de>
- <20121015162914.GB32049@kroah.com>
-In-Reply-To: <20121015162914.GB32049-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Fengguang Wu <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <mchehab-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, shubhrajyoti-l0cyMroinI0@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch set introduces some macros for describing how an i2c_msg is
+being initialized.  There are three macros: I2C_MSG_READ, for a read
+message, I2C_MSG_WRITE, for a write message, and I2C_MSG_OP, for some other
+kind of message, which is expected to be very rarely used.
 
-Hi,
+Some i2c_msg initializations have been updated accordingly using the
+following semantic patch:
 
-On Mon, Oct 15, 2012 at 09:29:14AM -0700, Greg KH wrote:
-> On Mon, Oct 15, 2012 at 09:49:20AM +0200, Sebastian Andrzej Siewior wrote:
-> > On 10/12/2012 06:39 PM, Fengguang Wu wrote:
-> > >Hi Sebastian,
-> >=20
-> > Hi Fengguang,
-> >=20
-> > >FYI, kernel build failed on
-> > >
-> > >tree:   git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git me=
-rge-result-for-greg
-> > >head:   23953bde3e4d6aa8780dc054f6ad9882ac63f4f4
-> > >commit: 721e2e91945bc2520d57d795dfe1b502ecec567c [59/99] usb: gadget: =
-libcomposite: move composite.c into libcomposite
-> > >config: i386-randconfig-b199 (attached as .config)
-> > >
-> > >All error/warnings:
-> > >
-> > >drivers/built-in.o: In function `uvc_function_set_alt':
-> >=20
-> > Yes. I accidentally broke this and this still fails in 3.7-rc1. Greg
-> > has a patch for this in his tree ("usb: gadget: Make webcam gadget
-> > select USB_LIBCOMPOSITE") which fixes this.
->=20
-> Yes, now queued up in my tree.
+// <smpl>
+@r@
+field list[n] ds;
+type T;
+identifier i;
+@@
 
-thanks Greg ;-)
+struct i2c_msg {
+  ds
+  T i;
+  ...
+};
 
---=20
-balbi
+@@
+initializer list[r.n] is;
+expression a;
+identifier nm;
+identifier r.i;
+@@
 
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+struct i2c_msg nm = {
+  is,
+- a
++  .i = a
+  ,...
+};
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+@@
+initializer list[r.n] is;
+expression a;
+identifier nm;
+identifier r.i;
+@@
 
-iQIcBAEBAgAGBQJQfGF1AAoJEIaOsuA1yqREx4MQAJAOAUdyJeU2A4MupQWNbDll
-uycD2PidBFWilMK8odkgQLd5O9H2Fx62XxoA8VjKfU1/HjD3fo5SE6HOv4mp0Av7
-Imb1rxOUcH1WE48p/RSD8d4x8eGlCAlE743nYthYFHaOiENDJnsjARlVrk5yj+h2
-EmHZ6RT5VSfIkAlLumd3llcN00JyXcVyDRINy4WTSmZv3WJgBRTKLO8YwEl2Kzav
-2mi6YZhzx57WQXJ9KsY5DM+8jiMBPWIXfrR2j+3AJNifK/j8HZZFG/BEN3s1SeME
-TZJYsXUtNA/gFeXQZBXg3wcYpK7sJOtSqLJ5t6laQp9p8vylinJH1sZeIVgDByS1
-bYaBjzFpHZSvg/3uH4wYOyzXEaqX9+rcFvzMa6SgGcitrOlWP1mAzgP7129HSntq
-x+pF07K228o92YXQHlym3iLsV8drAUy83dnFzxxYKNykIBndx6h2GWz/FMX9kS80
-BZVO7Jz2+J444/0OpDa4OU8xC+/lx629GrdS7GrjJeaHRdrUyNoQaJCZ0Dljs4g+
-3dRHo9lYvm9VqqG0PZB/UJ1aI9J5/owFm92+9lCLcPmyit7ZryOSIy5kQm4oXU6L
-DypR4EO/oNncLkeSY2ppVQ70C3KoSkyhSogGC0BeT2yelforP6wRvjBtEGT3G0zQ
-4hn6Hf2QGgohMAvoCFz8
-=sUyi
------END PGP SIGNATURE-----
+struct i2c_msg nm[...] = { ..., {
+  is,
+- a
++  .i = a
+  ,...}, ...};
 
---bp/iNruPH9dso1Pn--
+@@
+initializer list[r.n] is;
+expression a;
+identifier nm;
+identifier r.i;
+@@
+
+struct i2c_msg nm[] = { ..., {
+  is,
+- a
++  .i = a
+  ,...}, ...};
+
+// --------------------------------------------------------------------
+// ensure everyone has all fields, pointer case first
+
+@rt@
+type T;
+identifier i;
+@@
+
+struct i2c_msg {
+  ...
+  T *i;
+  ...
+};
+
+@t1@
+expression e;
+identifier nm,rt.i;
+position p;
+@@
+
+struct i2c_msg nm = {@p
+  .i = e,
+};
+
+@@
+identifier nm,rt.i;
+position p!= t1.p;
+@@
+
+struct i2c_msg nm = {@p
++ .i = NULL,
+  ...
+};
+
+@t2@
+expression e;
+identifier nm,rt.i;
+position p;
+@@
+
+struct i2c_msg nm[] = { ..., {@p
+  .i = e,
+}, ...};
+
+@@
+identifier nm,rt.i;
+position p!= t2.p;
+@@
+
+struct i2c_msg nm[] = { ..., {@p
++ .i = NULL,
+  ...
+}, ...};
+
+@t3@
+expression e;
+identifier nm,rt.i;
+position p;
+@@
+
+struct i2c_msg nm[...] = { ..., {@p
+  .i = e,
+}, ...};
+
+@@
+identifier nm,rt.i;
+position p!= t3.p;
+@@
+
+struct i2c_msg nm[...] = { ..., {@p
++ .i = NULL,
+  ...
+}, ...};
+
+// ---------------------------------
+
+@f1@
+expression e;
+identifier nm,r.i;
+position p;
+@@
+
+struct i2c_msg nm = {@p
+  .i = e,
+};
+
+@@
+identifier nm,r.i;
+position p!= f1.p;
+@@
+
+struct i2c_msg nm = {@p
++ .i = 0,
+  ...
+};
+
+@f2@
+expression e;
+identifier nm,r.i;
+position p;
+@@
+
+struct i2c_msg nm[] = { ..., {@p
+  .i = e,
+}, ...};
+
+@@
+identifier nm,r.i;
+position p!= f2.p;
+@@
+
+struct i2c_msg nm[] = { ..., {@p
++ .i = 0,
+  ...
+}, ...};
+
+@f3@
+expression e;
+identifier nm,r.i;
+position p;
+@@
+
+struct i2c_msg nm[...] = { ..., {@p
+  .i = e,
+}, ...};
+
+@@
+identifier nm,r.i;
+position p!= f3.p;
+@@
+
+struct i2c_msg nm[...] = { ..., {@p
++ .i = 0,
+  ...
+}, ...};
+
+// --------------------------------------------------------------------
+
+@@
+constant c;
+identifier x;
+type T,T1;
+T[] b;
+@@
+
+struct i2c_msg x   { .buf = \((T1)b\|(T1)(&b)\|(T1)(&b[0])\), .len (
+0
+|
+  sizeof (...)
+|
+- c
++ sizeof(b)
+)
+  };
+
+@@
+constant c;
+identifier x;
+type T,T1;
+T[] b;
+@@
+
+struct i2c_msg x[...] =  {...,
+  { .buf = \((T1)b\|(T1)(&b)\|(T1)(&b[0])\), .len (
+0
+|
+  sizeof (...)
+|
+- c
++ sizeof(b)
+)
+  } ,...};
+
+@@
+constant c;
+identifier x;
+type T,T1;
+T[] b;
+@@
+
+struct i2c_msg x[] =  {...,
+  { .buf = \((T1)b\|(T1)(&b)\|(T1)(&b[0])\), .len (
+0
+|
+  sizeof (...)
+|
+- c
++ sizeof(b)
+)
+  } ,...};
+
+@@
+constant c;
+identifier x;
+type T1;
+expression b;
+@@
+
+struct i2c_msg x   { .buf = (T1)(&b), .len (
+0
+|
+  sizeof (...)
+|
+- c
++ sizeof(b)
+)
+  };
+
+@@
+constant c;
+identifier x;
+type T1;
+expression b;
+@@
+
+struct i2c_msg x[...] =  {...,
+  { .buf = (T1)(&b), .len (
+0
+|
+  sizeof (...)
+|
+- c
++ sizeof(b)
+)
+  } ,...};
+
+@@
+constant c;
+identifier x;
+type T1;
+expression b;
+@@
+
+struct i2c_msg x[] =  {...,
+  { .buf = (T1)(&b), .len (
+0
+|
+  sizeof (...)
+|
+- c
++ sizeof(b)
+)
+  } ,...};
+
+// --------------------------------------------------------------------
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ;
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ;
+
+// has to come before the next rule, which matcher fewer fields
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x = 
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ;
+
+// --------------------------------------------------------------------
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x[] = {...,
+- {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ,...};
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x[] = {..., 
+- {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ,...};
+
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x[] =  {...,
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ,...};
+
+// --------------------------------------------------------------------
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x[...] =  {...,
+- {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ,...};
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x[...] =  {...,
+- {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ,...};
+
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x[...] = {...,
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ,...};
+
+// --------------------------------------------------------------------
+// got everything?
+
+@check1@
+identifier nm;
+position p;
+@@
+
+struct i2c_msg nm@p = {...};
+
+@script:python@
+p << check1.p;
+@@
+
+cocci.print_main("",p)
+
+@check2@
+identifier nm;
+position p;
+@@
+
+struct i2c_msg nm@p [] = {...,{...},...};
+
+@script:python@
+p << check2.p;
+@@
+
+cocci.print_main("",p)
+
+@check3@
+identifier nm;
+position p;
+@@
+
+struct i2c_msg nm@p [...] = {...,{...},...};
+
+@script:python@
+p << check3.p;
+@@
+
+cocci.print_main("",p)
+// </smpl>
+
+
