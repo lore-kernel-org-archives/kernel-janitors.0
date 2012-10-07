@@ -1,88 +1,80 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Oct 2012 15:38:34 +0000
-Subject: [PATCH 3/13] drivers/media/tuners/qt1010.c: use macros for i2c_msg initialization
-Message-Id: <1349624323-15584-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Ryan Mallon <rmallon@gmail.com>
+Date: Sun, 07 Oct 2012 21:55:41 +0000
+Subject: Re: [PATCH 3/13] drivers/media/tuners/qt1010.c: use macros for i2c_msg initialization
+Message-Id: <5071FA5D.30003@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr> <1349624323-15584-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1349624323-15584-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>
-Cc: kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Antti Palosaari <crope@iki.fi>, kernel-janitors@vger.kernel.org, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On 08/10/12 02:38, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
+> 
+> A length expressed as an explicit constant is also re-expressed as the size
+> of the buffer, when this is possible.
+> 
+> A simplified version of the semantic patch that makes this change is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression a,b,c;
+> identifier x;
+> @@
+> 
+> struct i2c_msg x > - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
+> + I2C_MSG_READ(a,b,c)
+>  ;
+> 
+> @@
+> expression a,b,c;
+> identifier x;
+> @@
+> 
+> struct i2c_msg x > - {.addr = a, .buf = b, .len = c, .flags = 0}
+> + I2C_MSG_WRITE(a,b,c)
+>  ;
+> 
+> @@
+> expression a,b,c,d;
+> identifier x;
+> @@
+> 
+> struct i2c_msg x = 
+> - {.addr = a, .buf = b, .len = c, .flags = d}
+> + I2C_MSG_OP(a,b,c,d)
+>  ;
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  drivers/media/tuners/qt1010.c |   10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/tuners/qt1010.c b/drivers/media/tuners/qt1010.c
+> index bc419f8..37ff254 100644
+> --- a/drivers/media/tuners/qt1010.c
+> +++ b/drivers/media/tuners/qt1010.c
+> @@ -25,10 +25,8 @@
+>  static int qt1010_readreg(struct qt1010_priv *priv, u8 reg, u8 *val)
+>  {
+>  	struct i2c_msg msg[2] = {
+> -		{ .addr = priv->cfg->i2c_address,
+> -		  .flags = 0, .buf = &reg, .len = 1 },
+> -		{ .addr = priv->cfg->i2c_address,
+> -		  .flags = I2C_M_RD, .buf = val, .len = 1 },
+> +		I2C_MSG_WRITE(priv->cfg->i2c_address, &reg, sizeof(reg)),
+> +		I2C_MSG_READ(priv->cfg->i2c_address, val, 1),
 
-Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
+This is a bit inconsistent. For single length values we should either
+consistently use sizeof(val) or 1. This has both.
 
-A length expressed as an explicit constant is also re-expressed as the size
-of the buffer, when this is possible.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression a,b,c;
-identifier x;
-@@
-
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-+ I2C_MSG_READ(a,b,c)
- ;
-
-@@
-expression a,b,c;
-identifier x;
-@@
-
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
-+ I2C_MSG_WRITE(a,b,c)
- ;
-
-@@
-expression a,b,c,d;
-identifier x;
-@@
-
-struct i2c_msg x = 
-- {.addr = a, .buf = b, .len = c, .flags = d}
-+ I2C_MSG_OP(a,b,c,d)
- ;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/tuners/qt1010.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/tuners/qt1010.c b/drivers/media/tuners/qt1010.c
-index bc419f8..37ff254 100644
---- a/drivers/media/tuners/qt1010.c
-+++ b/drivers/media/tuners/qt1010.c
-@@ -25,10 +25,8 @@
- static int qt1010_readreg(struct qt1010_priv *priv, u8 reg, u8 *val)
- {
- 	struct i2c_msg msg[2] = {
--		{ .addr = priv->cfg->i2c_address,
--		  .flags = 0, .buf = &reg, .len = 1 },
--		{ .addr = priv->cfg->i2c_address,
--		  .flags = I2C_M_RD, .buf = val, .len = 1 },
-+		I2C_MSG_WRITE(priv->cfg->i2c_address, &reg, sizeof(reg)),
-+		I2C_MSG_READ(priv->cfg->i2c_address, val, 1),
- 	};
- 
- 	if (i2c_transfer(priv->i2c, msg, 2) != 2) {
-@@ -43,8 +41,8 @@ static int qt1010_readreg(struct qt1010_priv *priv, u8 reg, u8 *val)
- static int qt1010_writereg(struct qt1010_priv *priv, u8 reg, u8 val)
- {
- 	u8 buf[2] = { reg, val };
--	struct i2c_msg msg = { .addr = priv->cfg->i2c_address,
--			       .flags = 0, .buf = buf, .len = 2 };
-+	struct i2c_msg msg = I2C_MSG_WRITE(priv->cfg->i2c_address, buf,
-+					   sizeof(buf));
- 
- 	if (i2c_transfer(priv->i2c, &msg, 1) != 1) {
- 		dev_warn(&priv->i2c->dev, "%s: i2c wr failed reg=%02x\n",
+~Ryan
 
