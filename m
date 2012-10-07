@@ -1,22 +1,99 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 08 Oct 2012 21:58:18 +0000
-Subject: Re: [PATCH] vxlan: fix more sparse warnings
-Message-Id: <20121008.175818.1355369081628541750.davem@davemloft.net>
+From: "devendra.aaru" <devendra.aaru@gmail.com>
+Date: Sun, 07 Oct 2012 12:56:21 +0000
+Subject: Re: [staging:staging-next 115/274] drivers/staging/ced1401/usb1401.c:1065 Handle1401Esc() error: dou
+Message-Id: <CAHdPZaPfEFkPmH_46uFQMMU4aiN1RmxFftMk02M58S4Z_CWxMw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121007123635.GB24374@localhost>
-	<20121008145530.54a56962@nehalam.linuxnetplumber.net>
-In-Reply-To: <20121008145530.54a56962@nehalam.linuxnetplumber.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: shemminger@vyatta.com
-Cc: fengguang.wu@intel.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Stephen Hemminger <shemminger@vyatta.com>
-Date: Mon, 8 Oct 2012 14:55:30 -0700
+Hi, Fengguang,
 
-> Fix a couple harmless sparse warnings reported by Fengguang Wu.
-> 
-> Signed-off-by: Stephen Hemminger <shemminger@vyatta.com>
+On Sun, Oct 7, 2012 at 7:07 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
+> Hi Alois,
+>
+> FYI, there are new smatch warnings show up in
+>
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+> head:   e1878957b4676a17cf398f7f5723b365e9a2ca48
+> commit: 2eae6bdc12f4e49b7f94f032b82d664dcf3881bc [115/274] Staging: add ced1401 USB driver
+>
+>
+> + drivers/staging/ced1401/ced_ioc.c:898 GetTransfer() warn: 'tx' puts 3104 bytes on stack
 
-Applied, thanks Stephen.
+I have a following patch to send to Greg, when the merge window closes:
+
+
+From 7d9b8485ab837bf9e0f960d090f90c6518f7e2db Mon Sep 17 00:00:00 2001
+From: Devendra Naga <devendra.aaru@gmail.com>
+Date: Sat, 6 Oct 2012 02:57:42 -0400
+Subject: [PATCH 1/4] staging: ced1401: fix a frame size warning
+
+gcc/sparse complain about the following:
+
+drivers/staging/ced1401/ced_ioc.c:931:1: warning: the frame size of
+4144 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+
+fix it by using a pointer of the TGET_TX_BLOCK struct
+
+Signed-off-by: Devendra Naga <devendra.aaru@gmail.com>
+---
+ drivers/staging/ced1401/ced_ioc.c |   28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/staging/ced1401/ced_ioc.c
+b/drivers/staging/ced1401/ced_ioc.c
+index c9492ed..a136ca3 100644
+--- a/drivers/staging/ced1401/ced_ioc.c
++++ b/drivers/staging/ced1401/ced_ioc.c
+@@ -913,17 +913,23 @@ int GetTransfer(DEVICE_EXTENSION * pdx,
+TGET_TX_BLOCK __user * pTX)
+                iReturn = U14ERR_BADAREA;
+        else {
+                // Return the best information we have - we don't have
+physical addresses
+-               TGET_TX_BLOCK tx;
+-               memset(&tx, 0, sizeof(tx));     // clean out local
+work structure
+-               tx.size = pdx->rTransDef[dwIdent].dwLength;
+-               tx.linear = (long long)((long)pdx->rTransDef[dwIdent].lpvBuff);
+-               tx.avail = GET_TX_MAXENTRIES;   // how many blocks we
+could return
+-               tx.used = 1;    // number we actually return
+-               tx.entries[0].physical -                   (long long)(tx.linear + pdx->StagedOffset);
+-               tx.entries[0].size = tx.size;
+-
+-               if (copy_to_user(pTX, &tx, sizeof(tx)))
++               TGET_TX_BLOCK *tx;
++
++               tx = kzalloc(sizeof(*tx), GFP_KERNEL);
++               if (!tx) {
++                       mutex_unlock(&pdx->io_mutex);
++                       return -ENOMEM;
+
++               }
++
++               tx->size = pdx->rTransDef[dwIdent].dwLength;
++               tx->linear = (long long)((long)pdx->rTransDef[dwIdent].lpvBuff);
++               tx->avail = GET_TX_MAXENTRIES;  // how many blocks we
+could return
++               tx->used = 1;   // number we actually return
++               tx->entries[0].physical +                   (long long)(tx->linear + pdx->StagedOffset);
++               tx->entries[0].size = tx->size;
++
++               if (copy_to_user(pTX, tx, sizeof(*tx)))
+                        iReturn = -EFAULT;
+        }
+        mutex_unlock(&pdx->io_mutex);
+
+> 0-DAY kernel build testing backend         Open Source Technology Center
+> Fengguang Wu, Yuanhan Liu                              Intel Corporation
+>
+> _______________________________________________
+> devel mailing list
+> devel@linuxdriverproject.org
+> http://driverdev.linuxdriverproject.org/mailman/listinfo/devel
+>
+
+Thanks,
