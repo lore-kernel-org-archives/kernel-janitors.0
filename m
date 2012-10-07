@@ -1,51 +1,40 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 07 Oct 2012 18:16:20 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sun, 07 Oct 2012 18:56:19 +0000
 Subject: Re: [PATCH 13/13] drivers/media/tuners/e4000.c: use macros for i2c_msg initialization
-Message-Id: <1349633780.15802.8.camel@joe-AO722>
+Message-Id: <alpine.DEB.2.02.1210072053550.2745@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1349624323-15584-3-git-send-email-Julia.Lawall@lip6.fr>
-	 <5071AEF3.6080108@bfs.de>
-	 <alpine.DEB.2.02.1210071839040.2745@localhost6.localdomain6>
-	 <5071B834.1010200@bfs.de>
-	 <alpine.DEB.2.02.1210071917040.2745@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1210071917040.2745@localhost6.localdomain6>
+References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>  <1349624323-15584-3-git-send-email-Julia.Lawall@lip6.fr>  <5071AEF3.6080108@bfs.de>  <alpine.DEB.2.02.1210071839040.2745@localhost6.localdomain6>  <5071B834.1010200@bfs.de>
+ <alpine.DEB.2.02.1210071917040.2745@localhost6.localdomain6> <1349633780.15802.8.camel@joe-AO722>
+In-Reply-To: <1349633780.15802.8.camel@joe-AO722>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: walter harms <wharms@bfs.de>, Antti Palosaari <crope@iki.fi>, kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, walter harms <wharms@bfs.de>, Antti Palosaari <crope@iki.fi>, kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2012-10-07 at 19:18 +0200, Julia Lawall wrote:
-> On Sun, 7 Oct 2012, walter harms wrote:
-> > Am 07.10.2012 18:44, schrieb Julia Lawall:
-> >> On Sun, 7 Oct 2012, walter harms wrote:
-> >>> Am 07.10.2012 17:38, schrieb Julia Lawall:
-> >>>> Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
-> >>>> struct i2c_msg x > >>>> - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-> >>>> + I2C_MSG_READ(a,b,c)
-[]
-> >>>> struct i2c_msg x > >>>> - {.addr = a, .buf = b, .len = c, .flags = 0}
-> >>>> + I2C_MSG_WRITE(a,b,c)
-[]
-> > do you really thing that a macro is appropriate here ? I feel uneasy about it
-> > but i can not offer an other solution.
+>> Some people thought that it would be nice to have the macros rather than
+>> the inlined field initializations, especially since there is no flag for
+>> write.  A separate question is whether an array of one element is useful,
+>> or whether one should systematically use & on a simple variable of the
+>> structure type.  I'm open to suggestions about either point.
+>
+> I think the macro naming is not great.
+>
+> Maybe add DEFINE_/DECLARE_/_INIT or something other than an action
+> name type to the macro names.
 
-I think the macros are fine.
+DEFINE and DECLARE usually have a declared variable as an argument, which 
+is not the case here.
 
-> Some people thought that it would be nice to have the macros rather than 
-> the inlined field initializations, especially since there is no flag for 
-> write.  A separate question is whether an array of one element is useful, 
-> or whether one should systematically use & on a simple variable of the 
-> structure type.  I'm open to suggestions about either point.
+These macros are like the macros PCI_DEVICE and PCI_DEVICE_CLASS.
 
-I think the macro naming is not great.
+Are READ and WRITE the action names?  They are really the important 
+information in this case.
 
-Maybe add DEFINE_/DECLARE_/_INIT or something other than an action
-name type to the macro names.
+> I think the consistency is better if all the references are done
+> as arrays, even for single entry arrays.
 
-I think the consistency is better if all the references are done
-as arrays, even for single entry arrays.
+Is it worth creating arrays where &msg is used?  Or would it be better to 
+leave that aspect as it is?
 
-It's all quibbling in any case.
-
+julia
