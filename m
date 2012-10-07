@@ -1,72 +1,101 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Date: Thu, 18 Oct 2012 19:25:25 +0000
-Subject: Re: [shaggy:loop_v3 6/22] mm/iov-iter.c:137:8: sparse: symbol 'ii_bvec_copy_to_user_atomic' was not
-Message-Id: <508057A5.7010501@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Oct 2012 15:38:33 +0000
+Subject: [PATCH 2/13] drivers/media/tuners/mxl5007t.c: use macros for i2c_msg initialization
+Message-Id: <1349624323-15584-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121018022637.GD21995@yliu-dev.sh.intel.com>
-In-Reply-To: <20121018022637.GD21995@yliu-dev.sh.intel.com>
+References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Michael Krufky <mkrufky@linuxtv.org>
+Cc: kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/17/2012 09:26 PM, Yuanhan Liu wrote:
-> Hi Zach,
-> 
-> FYI, there are new sparse warnings show up in
-> 
-> tree:   git://github.com/kleikamp/linux-shaggy loop_v3
-> head:   d6e600319940e6015af553f1515cee9d53a3ced9
-> commit: fa7902e69af5b98aee20c6788549a1423eabfd41 [6/22] iov_iter: add bvec support
-> 
->   mm/iov-iter.c:40:8: sparse: symbol 'ii_iovec_copy_to_user_atomic' was not declared. Should it be static?
->   mm/iov-iter.c:69:8: sparse: symbol 'ii_iovec_copy_to_user' was not declared. Should it be static?
-> + mm/iov-iter.c:137:8: sparse: symbol 'ii_bvec_copy_to_user_atomic' was not declared. Should it be static?
-> + mm/iov-iter.c:142:8: sparse: symbol 'ii_bvec_copy_to_user' was not declared. Should it be static?
-> + mm/iov-iter.c:147:8: sparse: symbol 'ii_bvec_copy_from_user_atomic' was not declared. Should it be static?
-> + mm/iov-iter.c:152:8: sparse: symbol 'ii_bvec_copy_from_user' was not declared. Should it be static?
-> + mm/iov-iter.c:162:6: sparse: symbol 'ii_bvec_advance' was not declared. Should it be static?
-> + mm/iov-iter.c:189:5: sparse: symbol 'ii_bvec_fault_in_readable' was not declared. Should it be static?
-> + mm/iov-iter.c:194:8: sparse: symbol 'ii_bvec_single_seg_count' was not declared. Should it be static?
->   mm/iov-iter.c:244:8: sparse: symbol 'ii_iovec_copy_from_user_atomic' was not declared. Should it be static?
->   mm/iov-iter.c:274:8: sparse: symbol 'ii_iovec_copy_from_user' was not declared. Should it be static?
->   mm/iov-iter.c:295:6: sparse: symbol 'ii_iovec_advance' was not declared. Should it be static?
->   mm/iov-iter.c:340:5: sparse: symbol 'ii_iovec_fault_in_readable' was not declared. Should it be static?
->   mm/iov-iter.c:351:8: sparse: symbol 'ii_iovec_single_seg_count' was not declared. Should it be static?
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-They can all be static. Fixed in next submission.
+Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
 
-Shaggy
+In each case, a length expressed as an explicit constant is also
+re-expressed as the size of the buffer, when this is possible.
 
-> vim +137 mm/iov-iter.c
-> 
-> fa7902e6 Zach Brown 2012-10-15  121  			       copy);
-> fa7902e6 Zach Brown 2012-10-15  122  		kunmap_atomic(bvec_map);
-> fa7902e6 Zach Brown 2012-10-15  123  		remaining -= copy;
-> fa7902e6 Zach Brown 2012-10-15  124  		bvec_offset += copy;
-> fa7902e6 Zach Brown 2012-10-15  125  		page_offset += copy;
-> fa7902e6 Zach Brown 2012-10-15  126  		if (bvec_offset = bvec->bv_len) {
-> fa7902e6 Zach Brown 2012-10-15  127  			bvec_offset = 0;
-> fa7902e6 Zach Brown 2012-10-15  128  			bvec++;
-> fa7902e6 Zach Brown 2012-10-15  129  		}
-> fa7902e6 Zach Brown 2012-10-15  130  	}
-> fa7902e6 Zach Brown 2012-10-15  131  
-> fa7902e6 Zach Brown 2012-10-15  132  	kunmap_atomic(page_map);
-> fa7902e6 Zach Brown 2012-10-15  133  
-> fa7902e6 Zach Brown 2012-10-15  134  	return bytes;
-> fa7902e6 Zach Brown 2012-10-15  135  }
-> fa7902e6 Zach Brown 2012-10-15  136  
-> fa7902e6 Zach Brown 2012-10-15 @137  size_t ii_bvec_copy_to_user_atomic(struct page *page, struct iov_iter *i,
-> fa7902e6 Zach Brown 2012-10-15  138  				   unsigned long offset, size_t bytes)
-> fa7902e6 Zach Brown 2012-10-15  139  {
-> fa7902e6 Zach Brown 2012-10-15  140  	return bvec_copy_tofrom_page(i, page, offset, bytes, 0);
-> fa7902e6 Zach Brown 2012-10-15  141  }
-> fa7902e6 Zach Brown 2012-10-15  142  size_t ii_bvec_copy_to_user(struct page *page, struct iov_iter *i,
-> fa7902e6 Zach Brown 2012-10-15  143  				   unsigned long offset, size_t bytes)
-> fa7902e6 Zach Brown 2012-10-15  144  {
-> fa7902e6 Zach Brown 2012-10-15  145  	return bvec_copy_tofrom_page(i, page, offset, bytes, 0);
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Center
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
-> 
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
++ I2C_MSG_READ(a,b,c)
+ ;
+
+@@
+expression a,b,c;
+identifier x;
+@@
+
+struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
++ I2C_MSG_WRITE(a,b,c)
+ ;
+
+@@
+expression a,b,c,d;
+identifier x;
+@@
+
+struct i2c_msg x = 
+- {.addr = a, .buf = b, .len = c, .flags = d}
++ I2C_MSG_OP(a,b,c,d)
+ ;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/tuners/mxl5007t.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/media/tuners/mxl5007t.c b/drivers/media/tuners/mxl5007t.c
+index 69e453e..c0c28be 100644
+--- a/drivers/media/tuners/mxl5007t.c
++++ b/drivers/media/tuners/mxl5007t.c
+@@ -464,8 +464,8 @@ reg_pair_t *mxl5007t_calc_rf_tune_regs(struct mxl5007t_state *state,
+ static int mxl5007t_write_reg(struct mxl5007t_state *state, u8 reg, u8 val)
+ {
+ 	u8 buf[] = { reg, val };
+-	struct i2c_msg msg = { .addr = state->i2c_props.addr, .flags = 0,
+-			       .buf = buf, .len = 2 };
++	struct i2c_msg msg = I2C_MSG_WRITE(state->i2c_props.addr, buf,
++					   sizeof(buf));
+ 	int ret;
+ 
+ 	ret = i2c_transfer(state->i2c_props.adap, &msg, 1);
+@@ -494,10 +494,8 @@ static int mxl5007t_read_reg(struct mxl5007t_state *state, u8 reg, u8 *val)
+ {
+ 	u8 buf[2] = { 0xfb, reg };
+ 	struct i2c_msg msg[] = {
+-		{ .addr = state->i2c_props.addr, .flags = 0,
+-		  .buf = buf, .len = 2 },
+-		{ .addr = state->i2c_props.addr, .flags = I2C_M_RD,
+-		  .buf = val, .len = 1 },
++		I2C_MSG_WRITE(state->i2c_props.addr, buf, sizeof(buf)),
++		I2C_MSG_READ(state->i2c_props.addr, val, 1),
+ 	};
+ 	int ret;
+ 
+@@ -512,10 +510,8 @@ static int mxl5007t_read_reg(struct mxl5007t_state *state, u8 reg, u8 *val)
+ static int mxl5007t_soft_reset(struct mxl5007t_state *state)
+ {
+ 	u8 d = 0xff;
+-	struct i2c_msg msg = {
+-		.addr = state->i2c_props.addr, .flags = 0,
+-		.buf = &d, .len = 1
+-	};
++	struct i2c_msg msg = I2C_MSG_WRITE(state->i2c_props.addr, &d,
++					   sizeof(d));
+ 	int ret = i2c_transfer(state->i2c_props.adap, &msg, 1);
+ 
+ 	if (ret != 1) {
+
