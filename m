@@ -1,51 +1,39 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Thu, 25 Oct 2012 14:58:17 +0000
-Subject: Re: [patch] staging: r8712u: cleanup pointer type in r8712_setassocsta_cmd()
-Message-Id: <50895389.3040809@lwfinger.net>
+From: Stephen Hemminger <shemminger@vyatta.com>
+Date: Mon, 08 Oct 2012 21:55:30 +0000
+Subject: [PATCH] vxlan: fix more sparse warnings
+Message-Id: <20121008145530.54a56962@nehalam.linuxnetplumber.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121025123006.GB20595@elgon.mountain>
-In-Reply-To: <20121025123006.GB20595@elgon.mountain>
+References: <20121007123635.GB24374@localhost>
+In-Reply-To: <20121007123635.GB24374@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Fengguang Wu <fengguang.wu@intel.com>, David Miller <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On 10/25/2012 07:30 AM, Dan Carpenter wrote:
-> This seems like a cut and paste bug.  Smatch complains that we don't
-> allocate enough memory for a set_stakey_rsp struct.  In fact this is
-> used as a set_assocsta_rsp struct throughout and that also matches the
-> name of the function.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fix a couple harmless sparse warnings reported by Fengguang Wu.
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Stephen Hemminger <shemminger@vyatta.com>
 
-Thanks,
+---
+Later patches will fix the other warnings as a side effect of more substantial
+changes.
 
-Larry
-
->
-> diff --git a/drivers/staging/rtl8712/rtl871x_cmd.c b/drivers/staging/rtl8712/rtl871x_cmd.c
-> index 659683e..31f31dbf 100644
-> --- a/drivers/staging/rtl8712/rtl871x_cmd.c
-> +++ b/drivers/staging/rtl8712/rtl871x_cmd.c
-> @@ -814,7 +814,7 @@ u8 r8712_setassocsta_cmd(struct _adapter *padapter, u8 *mac_addr)
->   	struct cmd_priv			*pcmdpriv = &padapter->cmdpriv;
->   	struct cmd_obj			*ph2c;
->   	struct set_assocsta_parm	*psetassocsta_para;
-> -	struct set_stakey_rsp		*psetassocsta_rsp = NULL;
-> +	struct set_assocsta_rsp		*psetassocsta_rsp = NULL;
->
->   	ph2c = (struct cmd_obj *)_malloc(sizeof(struct cmd_obj));
->   	if (ph2c = NULL)
-> @@ -825,7 +825,7 @@ u8 r8712_setassocsta_cmd(struct _adapter *padapter, u8 *mac_addr)
->   		kfree((u8 *) ph2c);
->   		return _FAIL;
->   	}
-> -	psetassocsta_rsp = (struct set_stakey_rsp *)_malloc(
-> +	psetassocsta_rsp = (struct set_assocsta_rsp *)_malloc(
->   			    sizeof(struct set_assocsta_rsp));
->   	if (psetassocsta_rsp = NULL) {
->   		kfree((u8 *)ph2c);
->
-
+--- a/drivers/net/vxlan.c	2012-10-08 13:41:36.920210233 -0700
++++ b/drivers/net/vxlan.c	2012-10-08 13:44:05.630729809 -0700
+@@ -1084,13 +1084,13 @@ static int vxlan_fill_info(struct sk_buf
+ 	if (nla_put_u32(skb, IFLA_VXLAN_ID, vxlan->vni))
+ 		goto nla_put_failure;
+ 
+-	if (vxlan->gaddr && nla_put_u32(skb, IFLA_VXLAN_GROUP, vxlan->gaddr))
++	if (vxlan->gaddr && nla_put_be32(skb, IFLA_VXLAN_GROUP, vxlan->gaddr))
+ 		goto nla_put_failure;
+ 
+ 	if (vxlan->link && nla_put_u32(skb, IFLA_VXLAN_LINK, vxlan->link))
+ 		goto nla_put_failure;
+ 
+-	if (vxlan->saddr && nla_put_u32(skb, IFLA_VXLAN_LOCAL, vxlan->saddr))
++	if (vxlan->saddr && nla_put_be32(skb, IFLA_VXLAN_LOCAL, vxlan->saddr))
+ 		goto nla_put_failure;
+ 
+ 	if (nla_put_u8(skb, IFLA_VXLAN_TTL, vxlan->ttl) ||
