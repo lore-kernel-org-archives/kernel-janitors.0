@@ -1,56 +1,49 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 15 Oct 2012 11:17:33 +0000
-Subject: Re: [glommer-memcg:kmemcg-slab 26/33] drivers/firmware/memmap.c:240:19: error: conflicting types for
-Message-Id: <20121015111733.GA12946@localhost>
+Date: Mon, 08 Oct 2012 07:14:52 +0000
+Subject: [jdelvare-staging:i2c-for-linus 9/15] drivers/i2c/busses/i2c-i801.c:1014:21: error: dereferencing po
+Message-Id: <20121008071452.GA29214@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121015024230.GA16122@localhost>
-In-Reply-To: <20121015024230.GA16122@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 15, 2012 at 12:39:39PM +0400, Glauber Costa wrote:
-> On 10/15/2012 06:42 AM, Fengguang Wu wrote:
-> > Hi Glauber,
-> > 
-> > FYI, kernel build failed on
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git kmemcg-slab
-> > head:   f7dc2a43ce771e73443c82eb25d95f72f8161b45
-> > commit: d17ddfd35a7329643b2fb442ade58e2974a2a05c [26/33] sl[au]b: Allocate objects from memcg cache
-> > config: ia64-allmodconfig # make ARCH=ia64 allmodconfig
-> > branch date: 3 hours ago
-> > commit date: 4 hours ago
-> > 
-> 
-> totally unrelated to my tree.
+Hi Jean,
 
-It's not your fault, but perhaps not totally unrelated ;-)
+FYI, kernel build failed on
 
-Your commit seems like the direct cause for:
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging.git i2c-for-linus
+head:   c415b303a704e5c5f766fc0404093910c36cc4ab
+commit: 3ad7ea18ae8c7ddda46b7276e0bda73e707ea9c1 [9/15] i2c-i801: Support SMBus multiplexing on Asus Z8 series
+config: parisc-allyesconfig
 
-        drivers/firmware/memmap.c:240:19: error: conflicting types for 'memmap_init'
-        arch/ia64/include/asm/pgtable.h:565:17: note: previous declaration of 'memmap_init' was here
+It's also failing in Linus' master and linux-next.
 
-It adds
+All error/warnings:
 
-+#include <linux/memcontrol.h>
-+#include <linux/mm.h>
+drivers/i2c/busses/i2c-i801.c: In function 'match_gpio_chip_by_label':
+drivers/i2c/busses/i2c-i801.c:1014:21: error: dereferencing pointer to incomplete type
+drivers/i2c/busses/i2c-i801.c: In function 'i801_add_mux':
+drivers/i2c/busses/i2c-i801.c:1031:2: error: implicit declaration of function 'gpiochip_find' [-Werror=implicit-function-declaration]
+drivers/i2c/busses/i2c-i801.c:1031:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/i2c/busses/i2c-i801.c:1050:27: error: dereferencing pointer to incomplete type
+drivers/i2c/busses/i2c-i801.c: In function 'match_gpio_chip_by_label':
+drivers/i2c/busses/i2c-i801.c:1015:1: warning: control reaches end of non-void function [-Wreturn-type]
+cc1: some warnings being treated as errors
 
-to slub_def.h, this makes firmware/memmap.c eventually include
-arch/ia64/include/asm/pgtable.h to create the type conflict.
+vim +1014 drivers/i2c/busses/i2c-i801.c
 
-The suggested fix, however, is to rename firmware/memmap.c's local
-memmap_init() to a more specific name.
+3ad7ea18 Jean Delvare 2012-10-05  1008  	{ }
+3ad7ea18 Jean Delvare 2012-10-05  1009  };
+3ad7ea18 Jean Delvare 2012-10-05  1010  
+3ad7ea18 Jean Delvare 2012-10-05  1011  static int __devinit match_gpio_chip_by_label(struct gpio_chip *chip,
+3ad7ea18 Jean Delvare 2012-10-05  1012  					      void *data)
+3ad7ea18 Jean Delvare 2012-10-05  1013  {
+3ad7ea18 Jean Delvare 2012-10-05 @1014  	return !strcmp(chip->label, data);
+3ad7ea18 Jean Delvare 2012-10-05  1015  }
+3ad7ea18 Jean Delvare 2012-10-05  1016  
+3ad7ea18 Jean Delvare 2012-10-05  1017  /* Setup multiplexing if needed */
 
-Thanks,
-Fengguang
-
-> Bad commit is :
-> 
-> commit 69ac9cd629ca96e59f34eb4ccd12d00b2c8276a7
-> Author: Bernhard Walle <bwalle@suse.de>
-> Date:   Fri Jun 27 13:12:54 2008 +0200
-> 
->     sysfs: add /sys/firmware/memmap
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
