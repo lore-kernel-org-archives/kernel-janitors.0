@@ -1,50 +1,90 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 02 Oct 2012 02:16:54 +0000
-Subject: [nfs:testing 56/83] fs/nfs/netns.h:27:15: error: 'NFS4_MAX_MINOR_VERSION' undeclared here (not in a
-Message-Id: <20121002021654.GA6691@localhost>
+From: "Hao, Xudong" <xudong.hao@intel.com>
+Date: Mon, 08 Oct 2012 12:46:50 +0000
+Subject: RE: [calxeda:ubuntu-quantal 79/299] arch/x86/kvm/vmx.c:7331:5: error: 'enable_ept_ad_bits' undeclare
+Message-Id: <403610A45A2B5242BD291EDAE8B37D300FECC56F@SHSMSX102.ccr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislav Kinsbursky <skinsbursky@parallels.com>
-Cc: kernel-janitors@vger.kernel.org, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Stanislav,
+Hi, Tim
 
-FYI, kernel build failed on
+Maybe you did not pull the commit before "Use EPT Access bit in response to memory notifiers " from linus tree to your tree.
+The whole EPT A/D bit enabling on KVM include 5 patches, it's better to pull all of them if you want this feature.
 
-tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git testing
-head:   2afdfa5a846246de50e1881f71ba5c0aac0b415f
-commit: b3d19c51723be69fddb64723bebb5a30fb57a483 [56/83] NFS: callback per-net usage counting introduced
-config: x86_64-allyesconfig
+commit 00763e41138267a307531397f9745835aecb8c7b
+    KVM: x86: change PT_FIRST_AVAIL_BITS_SHIFT to avoid conflict with EPT Dirty bit
 
-All error/warnings:
+commit 3f6d8c8a478dd1ab2a4944b0d65474df06ecd882
+    KVM: VMX: Use EPT Access bit in response to memory notifiers
 
-In file included from fs/nfs/dns_resolve.c:51:0:
-fs/nfs/netns.h:27:15: error: 'NFS4_MAX_MINOR_VERSION' undeclared here (not in a function)
+commit b38f99347871d7fc49e6367395dce0d757f6ab8d
+    KVM: VMX: Enable EPT A/D bits if supported by turning on relevant bit in EPTP
 
-vim +27 fs/nfs/netns.h
+commit 83c3a3312235220476d3c207f67bd17be6e17ff9
+    KVM: VMX: Add parameter to control A/D bits support, default is on
 
-cb9c1c4a (Stanislav Kinsbursky 2012-03-11  15) 
-1b340d01 (Stanislav Kinsbursky 2011-11-25  16) struct nfs_net {
-1b340d01 (Stanislav Kinsbursky 2011-11-25  17) 	struct cache_detail *nfs_dns_resolve;
-9e2e74db (Stanislav Kinsbursky 2012-01-10  18) 	struct rpc_pipe *bl_device_pipe;
-cb9c1c4a (Stanislav Kinsbursky 2012-03-11  19) 	struct bl_dev_msg bl_mount_reply;
-5ffaf855 (Stanislav Kinsbursky 2012-03-11  20) 	wait_queue_head_t bl_wq;
-6b13168b (Stanislav Kinsbursky 2012-01-23  21) 	struct list_head nfs_client_list;
-c25d32b2 (Stanislav Kinsbursky 2012-01-23  22) 	struct list_head nfs_volume_list;
-89d77c8f (Bryan Schumaker      2012-07-30  23) #if IS_ENABLED(CONFIG_NFS_V4)
-28cd1b3f (Stanislav Kinsbursky 2012-01-23  24) 	struct idr cb_ident_idr; /* Protected by nfs_client_lock */
-bbe0a3aa (Stanislav Kinsbursky 2012-08-20  25) 	unsigned short nfs_callback_tcpport;
-29dcc16a (Stanislav Kinsbursky 2012-08-20  26) 	unsigned short nfs_callback_tcpport6;
-b3d19c51 (Stanislav Kinsbursky 2012-08-20 @27) 	int cb_users[NFS4_MAX_MINOR_VERSION + 1];
-28cd1b3f (Stanislav Kinsbursky 2012-01-23  28) #endif
-dc030858 (Stanislav Kinsbursky 2012-01-23  29) 	spinlock_t nfs_client_lock;
-f092075d (Chuck Lever          2012-05-21  30) 	struct timespec boot_time;
-1b340d01 (Stanislav Kinsbursky 2011-11-25  31) };
-1b340d01 (Stanislav Kinsbursky 2011-11-25  32) 
-1b340d01 (Stanislav Kinsbursky 2011-11-25  33) extern int nfs_net_id;
+commit aaf07bc291c828189ae5221b370905a89bbb859d
+    KVM: VMX: Add EPT A/D bits definitions
 
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Thanks,
+-Xudong
+
+
+> -----Original Message-----
+> From: Wu, Fengguang
+> Sent: Saturday, September 29, 2012 9:13 PM
+> To: Tim Gardner
+> Cc: Hao, Xudong; kernel-janitors@vger.kernel.org; Shan, Haitao
+> Subject: [calxeda:ubuntu-quantal 79/299] arch/x86/kvm/vmx.c:7331:5: error:
+> 'enable_ept_ad_bits' undeclared
+> 
+> Hi Tim,
+> 
+> FYI, kernel build failed on
+> 
+> tree:   git://sources.calxeda.com/kernel/linux.git ubuntu-quantal
+> head:   c07f1571f9b6e609109d50bd6ba2b2547e873614
+> commit: daac8caf6005a28d709a2a6fa03a48587a35801b [79/299] KVM: VMX:
+> Use EPT Access bit in response to memory notifiers
+> config: x86_64-allmodconfig
+> 
+> All error/warnings:
+> 
+> arch/x86/kvm/vmx.c: In function 'vmx_init':
+> arch/x86/kvm/vmx.c:7331:5: error: 'enable_ept_ad_bits' undeclared (first use
+> in this function)
+> arch/x86/kvm/vmx.c:7331:5: note: each undeclared identifier is reported only
+> once for each function it appears in
+> arch/x86/kvm/vmx.c:7331:27: error: 'VMX_EPT_ACCESS_BIT' undeclared (first
+> use in this function)
+> arch/x86/kvm/vmx.c:7332:27: error: 'VMX_EPT_DIRTY_BIT' undeclared (first
+> use in this function)
+> 
+> vim +7331 arch/x86/kvm/vmx.c
+> 
+> 5897297b arch/x86/kvm/vmx.c (Avi Kivity     2009-02-24  7325)
+> 	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_CS, false);
+> 5897297b arch/x86/kvm/vmx.c (Avi Kivity     2009-02-24  7326)
+> 	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_ESP, false);
+> 5897297b arch/x86/kvm/vmx.c (Avi Kivity     2009-02-24  7327)
+> 	vmx_disable_intercept_for_msr(MSR_IA32_SYSENTER_EIP, false);
+> fdef3ad1 drivers/kvm/vmx.c  (He, Qing       2007-04-30  7328)
+> 089d034e arch/x86/kvm/vmx.c (Avi Kivity     2009-03-23  7329) 	if
+> (enable_ept) {
+> daac8caf arch/x86/kvm/vmx.c (Xudong Hao     2012-05-22  7330)
+> 	kvm_mmu_set_mask_ptes(0ull,
+> daac8caf arch/x86/kvm/vmx.c (Xudong Hao     2012-05-22 @7331)
+> 	(enable_ept_ad_bits) ? VMX_EPT_ACCESS_BIT : 0ull,
+> daac8caf arch/x86/kvm/vmx.c (Xudong Hao     2012-05-22  7332)
+> 	(enable_ept_ad_bits) ? VMX_EPT_DIRTY_BIT : 0ull,
+> daac8caf arch/x86/kvm/vmx.c (Xudong Hao     2012-05-22  7333)
+> 	0ull, VMX_EPT_EXECUTABLE_MASK);
+> ce88decf arch/x86/kvm/vmx.c (Xiao Guangrong 2011-07-12  7334)
+> 	ept_set_mmio_spte_mask();
+> 
+> ---
+> 0-DAY kernel build testing backend         Open Source Technology Centre
+> Fengguang Wu, Yuanhan Liu                              Intel
+> Corporation
