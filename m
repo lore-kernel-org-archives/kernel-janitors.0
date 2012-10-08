@@ -1,37 +1,31 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 14 Oct 2012 02:24:57 +0000
-Subject: [pci:bug/kbz46481 2/2] (.text+0x17196): undefined reference to `bh_check_bridge'
-Message-Id: <20121014022457.GA6795@localhost>
+From: Tony Lindgren <tony@atomide.com>
+Date: Mon, 08 Oct 2012 21:19:50 +0000
+Subject: Re: [PATCH] arch/arm/mach-omap2: Remove unecessary semicolon
+Message-Id: <20121008211949.GL13011@atomide.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347986174-30287-1-git-send-email-peter.senna@gmail.com>
+ <1347986174-30287-4-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347986174-30287-4-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Bjorn,
+* Peter Senna Tschudin <peter.senna@gmail.com> [120918 09:37]:
+> Found by http://coccinelle.lip6.fr/
+> 
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> ---
+>  arch/arm/mach-omap2/board-flash.c          | 2 +-
+>  arch/arm/mach-omap2/clkt_clksel.c          | 2 +-
+>  arch/arm/mach-omap2/mux.c                  | 2 +-
+>  arch/arm/mach-omap2/omap_hwmod_3xxx_data.c | 6 +++---
+>  arch/arm/mach-omap2/pm-debug.c             | 2 +-
+>  5 files changed, 7 insertions(+), 7 deletions(-)
 
-FYI, kernel build failed on
+Thanks applying into omap fixes branch.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git bug/kbz46481
-head:   54a2804aaa64648d842486ec49237583b198b41c
-commit: 54a2804aaa64648d842486ec49237583b198b41c [2/2] debug
-config: x86_64-allmodconfig # make ARCH=x86_64 
-branch date: 3 days ago
-commit date: 3 days ago
+Regards,
 
-All error/warnings:
+Tony 
 
-drivers/built-in.o: In function `pci_create_slot':
-(.text+0x17196): undefined reference to `bh_check_bridge'
-drivers/built-in.o: In function `pci_create_slot':
-(.text+0x1730d): undefined reference to `bh_check_bridge'
-drivers/built-in.o: In function `pci_create_slot':
-(.text+0x173f3): undefined reference to `bh_check_bridge'
-drivers/built-in.o: In function `pci_create_slot':
-(.text+0x1749d): undefined reference to `bh_check_bridge'
-drivers/built-in.o: In function `pci_create_slot':
-(.text+0x1752e): undefined reference to `bh_check_bridge'
-
----
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
