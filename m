@@ -1,77 +1,46 @@
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-Date: Sun, 07 Oct 2012 18:05:01 +0000
+From: Jean Delvare <khali@linux-fr.org>
+Date: Tue, 09 Oct 2012 12:06:17 +0000
 Subject: Re: [PATCH 9/13] drivers/media/tuners/fc0011.c: use macros for i2c_msg initialization
-Message-Id: <20121007200501.757a1ce6@milhouse>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Sig_/.xXbt9B3o._hAnK.C27euRq"
+Message-Id: <20121009140617.6b2a159a@endymion.delvare>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
 	<1349624323-15584-11-git-send-email-Julia.Lawall@lip6.fr>
 	<5071B147.3010708@bfs.de>
 	<alpine.DEB.2.02.1210071845030.2745@localhost6.localdomain6>
 In-Reply-To: <alpine.DEB.2.02.1210071845030.2745@localhost6.localdomain6>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: walter harms <wharms@bfs.de>, kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: walter harms <wharms@bfs.de>, Michael Buesch <m@bues.ch>, kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Sig_/.xXbt9B3o._hAnK.C27euRq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, 7 Oct 2012 18:50:31 +0200 (CEST)
-Julia Lawall <julia.lawall@lip6.fr> wrote:
-
-> >> @@ -97,10 +96,8 @@ static int fc0011_readreg(struct fc0011_priv *priv,=
- u8 reg, u8 *val)
+On Sun, 7 Oct 2012 18:50:31 +0200 (CEST), Julia Lawall wrote:
+> On Sun, 7 Oct 2012, walter harms wrote:
+> > Am 07.10.2012 17:38, schrieb Julia Lawall:
+> >> @@ -97,10 +96,8 @@ static int fc0011_readreg(struct fc0011_priv *priv, u8 reg, u8 *val)
 > >>  {
 > >>  	u8 dummy;
-> >>  	struct i2c_msg msg[2] =3D {
-> >> -		{ .addr =3D priv->addr,
-> >> -		  .flags =3D 0, .buf =3D &reg, .len =3D 1 },
-> >> -		{ .addr =3D priv->addr,
-> >> -		  .flags =3D I2C_M_RD, .buf =3D val ? : &dummy, .len =3D 1 },
+> >>  	struct i2c_msg msg[2] = {
+> >> -		{ .addr = priv->addr,
+> >> -		  .flags = 0, .buf = &reg, .len = 1 },
+> >> -		{ .addr = priv->addr,
+> >> -		  .flags = I2C_M_RD, .buf = val ? : &dummy, .len = 1 },
 > >> +		I2C_MSG_WRITE(priv->addr, &reg, sizeof(reg)),
 > >> +		I2C_MSG_READ(priv->addr, val ? : &dummy, sizeof(dummy)),
 > >>  	};
 > >>
 > >
 > > This dummy looks strange, can it be that this is used uninitialised ?
->=20
-> I'm not sure to understand the question.  The read, when it happens in=20
-> i2c_transfer will initialize dummy.  On the other hand, I don't know what=
-=20
-> i2c_transfer does when the buffer is NULL and the size is 1.  It does not=
-=20
+> 
+> I'm not sure to understand the question.  The read, when it happens in 
+> i2c_transfer will initialize dummy.  On the other hand, I don't know what 
+> i2c_transfer does when the buffer is NULL and the size is 1.  It does not 
 > look very elegant at least.
 
-Well its use case is if you only care about the side effects and not the ac=
-tual data
-returned by the read operation.
+i2c_transfer() itself won't care, it just passes the request down to the
+underlying i2c bus driver. Most driver implementations will assume
+proper buffer addresses as soon as size > 0, so passing NULL instead
+would crash them. In short, don't do that.
 
---=20
-Greetings, Michael.
-
-PGP encryption is encouraged / 908D8B0E
-
---Sig_/.xXbt9B3o._hAnK.C27euRq
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQccRNAAoJEPUyvh2QjYsOe2IQAK6EJr6davwpTYnkRZxsZqDz
-Wx2YUMI3aCWcrq0AL1bOD22gdM3+lrTXJ/q+XxaxqGaqES9OV8iZpmiWBGRWlQgi
-mARnJ8KwG19yHFHKyw4cz64tP0PF4PhfdpdC8SL+fWwrFqlaI23XirLKg/gML3Iw
-ptdsTobacaNsaHm8GM4yq6EZRQIOhiHgalhIx7okhkcauvSNKKRBSVDBkU7/99u3
-ykEZb6GbHW0T7gkXd9cU969D/O5zeLMDu/G33TmXP7PASnwlfbQcSWa6vdSvMfsi
-YrCUuxBlH3XrqdzrECOQX25zGCDYRkTtyBylcwGR+QHkLXX+iD31Q6XmwnzgWwI5
-ONosmnpVA/qCGOuUhEej/dIyZXVvLpMhaj4KaZ0OGAR3dQWuoVfD4CzDZkHlFFHj
-DgNTroLOSwTGIg/XJkMSgwL/ZxRX7+2WFugrpKPC+DjZGD0a+xS0ShIUYZlsw/fN
-rLMy84cSEdrurcCELVp7oR5F2sCWqo5nTyPkwjA6ENLCwtT9xB7LMPrHJgQHqrpp
-Hz97qiz5Vw3P7Xta6u/OZtjS3dCSbWjeAvm/3GE/Vt+tL0nH8wJpk/nksi2cgkJX
-EI+cOkMvU4P+pIalk6kixI1wsj1zKcLniBY/w1x57B4E9eXAAgFykLgNwaoAyNAE
-rDywYLI/SJ2ejPJnSZmk
-=j5OD
------END PGP SIGNATURE-----
-
---Sig_/.xXbt9B3o._hAnK.C27euRq--
+-- 
+Jean Delvare
