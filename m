@@ -1,53 +1,45 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 02 Oct 2012 05:12:41 +0000
-Subject: Re: How to automatically get subsystem name for a file?
-Message-Id: <alpine.DEB.2.02.1210020707160.1929@localhost6.localdomain6>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 09 Oct 2012 15:20:27 +0000
+Subject: [rcu:dev.2012.10.08a 17/21] arch/um/drivers/mconsole_kern.c:708:2: error: implicit declaration of fu
+Message-Id: <20121009152027.GC11390@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CA+MoWDrjiGQtBdr_n5TEwDJDv4pDyitKqHmruCy7-ur0GwKp0w@mail.gmail.com>
-In-Reply-To: <CA+MoWDrjiGQtBdr_n5TEwDJDv4pDyitKqHmruCy7-ur0GwKp0w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 1 Oct 2012, Ezequiel Garcia wrote:
+Hi Frederic,
 
-> On Mon, Oct 1, 2012 at 5:51 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> On Mon, Oct 01, 2012 at 04:49:13PM -0300, Ezequiel Garcia wrote:
->>> On Mon, Oct 1, 2012 at 3:49 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>>> On Mon, Oct 01, 2012 at 06:57:44PM +0200, Peter Senna Tschudin wrote:
->>>>> I'm trying to figure it out how to automatically get the correct
->>>>> subsystem string for putting on the first line of the commit message /
->>>>> subject of the patch message. For example:
->>>>>
->>>>> Subject: [PATCH 001/142] arch/x86: Replace memcpy with struct assignment
->>>>>                                        ^^^^^^^^^^
->>>>> arch/x86 is only the first two levels of directories from Kernel
->>>>> source. This may not be smart enough...
->>>>>
->>>>
->>>> You have to do it manually.  Here are the relevant lines from my
->>>> patch script.
->>>>
->>>
->>> Manually? Sure there must be some way of auto do it.
->>
->> There really isn't an automatic way.  For example [media] and [SCSI]
->> are non-standard.
+FYI, kernel build failed on
 
-This information could be integrated into get_maintainers somehow.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2012.10.08a
+head:   39083e8d47ddbc78412249d01c1ed63d7fd14c50
+commit: 13ec2e2650c8f82380178ad0b1b29a5d5c3ea557 [17/21] rcu: Remove rcu_switch()
+config: um-defconfig
 
->> I look at it as a good thing that people have to do it manually.  It
->> hopefully makes them slow down a bit.
->>
->
-> Agreed.
-> Slow down, less maintainers head.
+All error/warnings:
 
-It's a nuisance if one makes a lot of patches at once (by a lot I mean 5 
-or more).  Especially if one realizes midstream that something is wrong 
-and has to start over.  Of course, one could leave this manual step to the 
-very end, when one is sure that everything is OK, but I would rather be 
-studying the absolutely final version rather than the not quite final one.
+arch/um/drivers/mconsole_kern.c: In function 'stack_proc':
+arch/um/drivers/mconsole_kern.c:708:2: error: implicit declaration of function 'rcu_switch' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
 
-julia
+vim +708 arch/um/drivers/mconsole_kern.c
+
+4111b025 Jeff Dike           2006-01-06  702  
+6f517d3f Jeff Dike           2006-01-06  703  static void stack_proc(void *arg)
+6f517d3f Jeff Dike           2006-01-06  704  {
+6f517d3f Jeff Dike           2006-01-06  705  	struct task_struct *from = current, *to = arg;
+6f517d3f Jeff Dike           2006-01-06  706  
+6f517d3f Jeff Dike           2006-01-06  707  	to->thread.saved_task = from;
+04e7e951 Frederic Weisbecker 2012-07-16 @708  	rcu_switch(from, to);
+6f517d3f Jeff Dike           2006-01-06  709  	switch_to(from, to, from);
+6f517d3f Jeff Dike           2006-01-06  710  }
+6f517d3f Jeff Dike           2006-01-06  711  
+
+The code at line 708 was first introduced by commit:
+04e7e95 rcu: Switch task's syscall hooks on context switch
+
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
