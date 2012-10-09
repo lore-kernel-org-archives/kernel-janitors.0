@@ -1,41 +1,44 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 14 Oct 2012 02:47:02 +0000
-Subject: drivers/tty/serial/8250/8250_hp300.c:174:2: error: 'uart' undeclared
-Message-Id: <20121014024702.GA9487@localhost>
+Date: Tue, 09 Oct 2012 23:22:52 +0000
+Subject: [drm-intel:drm-intel-nightly 30/30] drivers/gpu/drm/i915/intel_pm.c:3445:2: error:
+Message-Id: <20121009232252.GB8107@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Alan,
+
+Hi Daniel,
 
 FYI, kernel build failed on
 
-commit: 2655a2c76f80d91da34faa8f4e114d1793435ed3  8250: use the 8250 register interface not the legacy one
-config: m68k-allyesconfig # make ARCH=m68k allyesconfig
-commit date: 3 months ago
-
-And is still failing in upstream.
+tree:   git://people.freedesktop.org/~danvet/drm-intel.git drm-intel-nightly
+head:   90adfd05fd3bd8c970bde7de4db0e4b5b9642725
+commit: 90adfd05fd3bd8c970bde7de4db0e4b5b9642725 [30/30] Merge remote-tracking branch 'origin/drm-intel-fixes' into drm-intel-nightly
+config: x86_64-allmodconfig
 
 All error/warnings:
 
-drivers/tty/serial/8250/8250_hp300.c: In function 'hpdca_init_one':
-drivers/tty/serial/8250/8250_hp300.c:174:2: error: 'uart' undeclared (first use in this function)
-drivers/tty/serial/8250/8250_hp300.c:174:2: note: each undeclared identifier is reported only once for each function it appears in
+drivers/gpu/drm/i915/intel_pm.c: In function 'gen6_init_clock_gating':
+drivers/gpu/drm/i915/intel_pm.c:3445:2: error: '_3D_CHICKEN3_SF_DISABLE_FASTCLIP_CULL' undeclared (first use in this function)
+drivers/gpu/drm/i915/intel_pm.c:3445:2: note: each undeclared identifier is reported only once for each function it appears in
 
-vim +174 drivers/tty/serial/8250/8250_hp300.c
+vim +3445 drivers/gpu/drm/i915/intel_pm.c
 
-^1da177e drivers/serial/8250_hp300.c          Linus Torvalds 2005-04-16  168  #ifdef CONFIG_SERIAL_8250_CONSOLE
-^1da177e drivers/serial/8250_hp300.c          Linus Torvalds 2005-04-16  169  	if (hp300_uart_scode = d->scode) {
-^1da177e drivers/serial/8250_hp300.c          Linus Torvalds 2005-04-16  170  		/* Already got it. */
-^1da177e drivers/serial/8250_hp300.c          Linus Torvalds 2005-04-16  171  		return 0;
-^1da177e drivers/serial/8250_hp300.c          Linus Torvalds 2005-04-16  172  	}
-^1da177e drivers/serial/8250_hp300.c          Linus Torvalds 2005-04-16  173  #endif
-2655a2c7 drivers/tty/serial/8250/8250_hp300.c Alan Cox       2012-07-12 @174  	memset(&uart, 0, sizeof(uart));
-^1da177e drivers/serial/8250_hp300.c          Linus Torvalds 2005-04-16  175  
-^1da177e drivers/serial/8250_hp300.c          Linus Torvalds 2005-04-16  176  	/* Memory mapped I/O */
-2b49abac drivers/serial/8250_hp300.c          Russell King   2005-04-26  177  	port.iotype = UPIO_MEM;
+6f1d69b0 Eugeni Dodonov  2012-04-18  3439  	I915_WRITE(GEN6_UCGCTL2,
+0f846f81 Jesse Barnes    2012-06-14  3440  		   GEN7_VDSUNIT_CLOCK_GATE_DISABLE |
+6f1d69b0 Eugeni Dodonov  2012-04-18  3441  		   GEN6_RCPBUNIT_CLOCK_GATE_DISABLE |
+6f1d69b0 Eugeni Dodonov  2012-04-18  3442  		   GEN6_RCCUNIT_CLOCK_GATE_DISABLE);
+6f1d69b0 Eugeni Dodonov  2012-04-18  3443  
+6f1d69b0 Eugeni Dodonov  2012-04-18  3444  	/* Bspec says we need to always set all mask bits. */
+c8f1e7e2 Kenneth Graunke 2012-10-07 @3445  	I915_WRITE(_3D_CHICKEN3, (0xFFFF << 16) |
+c8f1e7e2 Kenneth Graunke 2012-10-07  3446  		   _3D_CHICKEN3_SF_DISABLE_FASTCLIP_CULL);
+6f1d69b0 Eugeni Dodonov  2012-04-18  3447  
+6f1d69b0 Eugeni Dodonov  2012-04-18  3448  	/*
+
+The code at line 3445 was first introduced by commit:
+c8f1e7e drm/i915: Set guardband clipping workaround bit in the right register.
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
