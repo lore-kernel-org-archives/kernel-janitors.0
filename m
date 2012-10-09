@@ -1,101 +1,59 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Oct 2012 15:38:33 +0000
-Subject: [PATCH 2/13] drivers/media/tuners/mxl5007t.c: use macros for i2c_msg initialization
-Message-Id: <1349624323-15584-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Jean Delvare <khali@linux-fr.org>
+Date: Tue, 09 Oct 2012 12:30:35 +0000
+Subject: Re: [PATCH 2/13] drivers/media/tuners/mxl5007t.c: use macros for i2c_msg initialization
+Message-Id: <20121009143035.557951bb@endymion.delvare>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1349624323-15584-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1349624323-15584-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Michael Krufky <mkrufky@linuxtv.org>
-Cc: kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Michael Krufky <mkrufky@linuxtv.org>, kernel-janitors@vger.kernel.org, rmallon@gmail.com, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Julia,
 
-Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
+On Sun,  7 Oct 2012 17:38:33 +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Introduce use of I2c_MSG_READ/WRITE/OP, for readability.
 
-In each case, a length expressed as an explicit constant is also
-re-expressed as the size of the buffer, when this is possible.
+Next time you send this patch set, please Cc me on every post so that I
+don't have to hunt for them on lkml.org.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+> In each case, a length expressed as an explicit constant is also
+> re-expressed as the size of the buffer, when this is possible.
 
-// <smpl>
-@@
-expression a,b,c;
-identifier x;
-@@
+This is conceptually wrong, please don't do that. It is perfectly valid
+to use a buffer which is larger than the message being written or read.
+When exchanging multiple messages, it is actually quite common to
+declare only 2 buffers and reuse them:
 
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = I2C_M_RD}
-+ I2C_MSG_READ(a,b,c)
- ;
+	char reg;
+	char val[2];
 
-@@
-expression a,b,c;
-identifier x;
-@@
+	struct i2c_msg msg[2] = {
+		{ .addr = addr, .flags = 0, .buf = &reg, .len = 1 },
+		{ .addr = addr, .flags = I2C_M_RD, .buf = val, .len = 1 },
+	};
 
-struct i2c_msg x - {.addr = a, .buf = b, .len = c, .flags = 0}
-+ I2C_MSG_WRITE(a,b,c)
- ;
+	reg = 0x04;
+	i2c_transfer(i2c_adap, msg, 2);
+	/* Do stuff with val */
 
-@@
-expression a,b,c,d;
-identifier x;
-@@
+	reg = 0x06;
+	msg[1].len = 2;
+	i2c_transfer(i2c_adap, msg, 2);
+	/* Do stuff with val */
 
-struct i2c_msg x = 
-- {.addr = a, .buf = b, .len = c, .flags = d}
-+ I2C_MSG_OP(a,b,c,d)
- ;
-// </smpl>
+Your conversion would read 2 bytes from register 0x04 instead of 1 in
+the example above.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+I am not opposed to the idea of i2c_msg initialization helper macros,
+but please don't mix that with actual code changes which could have bad
+side effects.
 
----
- drivers/media/tuners/mxl5007t.c |   16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/media/tuners/mxl5007t.c b/drivers/media/tuners/mxl5007t.c
-index 69e453e..c0c28be 100644
---- a/drivers/media/tuners/mxl5007t.c
-+++ b/drivers/media/tuners/mxl5007t.c
-@@ -464,8 +464,8 @@ reg_pair_t *mxl5007t_calc_rf_tune_regs(struct mxl5007t_state *state,
- static int mxl5007t_write_reg(struct mxl5007t_state *state, u8 reg, u8 val)
- {
- 	u8 buf[] = { reg, val };
--	struct i2c_msg msg = { .addr = state->i2c_props.addr, .flags = 0,
--			       .buf = buf, .len = 2 };
-+	struct i2c_msg msg = I2C_MSG_WRITE(state->i2c_props.addr, buf,
-+					   sizeof(buf));
- 	int ret;
- 
- 	ret = i2c_transfer(state->i2c_props.adap, &msg, 1);
-@@ -494,10 +494,8 @@ static int mxl5007t_read_reg(struct mxl5007t_state *state, u8 reg, u8 *val)
- {
- 	u8 buf[2] = { 0xfb, reg };
- 	struct i2c_msg msg[] = {
--		{ .addr = state->i2c_props.addr, .flags = 0,
--		  .buf = buf, .len = 2 },
--		{ .addr = state->i2c_props.addr, .flags = I2C_M_RD,
--		  .buf = val, .len = 1 },
-+		I2C_MSG_WRITE(state->i2c_props.addr, buf, sizeof(buf)),
-+		I2C_MSG_READ(state->i2c_props.addr, val, 1),
- 	};
- 	int ret;
- 
-@@ -512,10 +510,8 @@ static int mxl5007t_read_reg(struct mxl5007t_state *state, u8 reg, u8 *val)
- static int mxl5007t_soft_reset(struct mxl5007t_state *state)
- {
- 	u8 d = 0xff;
--	struct i2c_msg msg = {
--		.addr = state->i2c_props.addr, .flags = 0,
--		.buf = &d, .len = 1
--	};
-+	struct i2c_msg msg = I2C_MSG_WRITE(state->i2c_props.addr, &d,
-+					   sizeof(d));
- 	int ret = i2c_transfer(state->i2c_props.adap, &msg, 1);
- 
- 	if (ret != 1) {
-
+Thanks,
+-- 
+Jean Delvare
