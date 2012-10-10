@@ -1,61 +1,64 @@
-From: Antti Palosaari <crope@iki.fi>
-Date: Fri, 05 Oct 2012 16:06:16 +0000
-Subject: Re: [samsung:v4l_for_mauro 14/73] drivers/media/dvb-frontends/cxd2820r_core.c:691:10: warning: unuse
-Message-Id: <506F0578.2000907@iki.fi>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 10 Oct 2012 16:38:17 +0000
+Subject: [PATCH V3] ath/ath9k/ar9003_eeprom.c: Remove semicolon after if
+Message-Id: <1349887097-24980-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121005010806.GB6635@localhost>
-In-Reply-To: <20121005010806.GB6635@localhost>
+References: <1349038599-22026-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1349038599-22026-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mcgrof@qca.qualcomm.com
+Cc: jouni@qca.qualcomm.com, vthiagar@qca.qualcomm.com, senthilb@qca.qualcomm.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hello,
-Thank you for the report. If you wish to fix it then reply soon. 
-Otherwise, lets say after 6 hours from that, I will do it myself and add 
-you as a reporter!
+This patch remove a semicolon after if(...) that is preventing the
+error check to work correctly. Removing this semicolon will change the
+code behavior, but this is intended.
 
-regards
-Antti
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-On 10/05/2012 04:08 AM, Fengguang Wu wrote:
-> Hi Antti,
->
-> FYI, there are new compile warnings show up in
->
-> tree:   git://git.infradead.org/users/kmpark/linux-samsung v4l_for_mauro
-> head:   7f06319c3a6e99fcdf9774556384c62661a31940
-> commit: a36a66d7aaa6468a91941ffcfb6d324f28825910 [14/73] [media] cxd2820r: use static GPIO config when GPIOLIB is undefined
-> config: i386-randconfig-b124 (attached as .config)
->
-> All warnings:
->
-> drivers/media/dvb-frontends/cxd2820r_core.c: In function 'cxd2820r_attach':
-> drivers/media/dvb-frontends/cxd2820r_core.c:691:10: warning: unused variable 'gpio' [-Wunused-variable]
->
-> vim +691 drivers/media/dvb-frontends/cxd2820r_core.c
->
-> 14c03862 drivers/media/dvb/frontends/cxd2820r_core.c (Manu Abraham    2011-11-24  685) struct dvb_frontend *cxd2820r_attach(const struct cxd2820r_config *cfg,
-> 1e8f31f3 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-07-19  686) 		struct i2c_adapter *i2c, int *gpio_chip_base
-> 1e8f31f3 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-07-19  687) )
-> 14c03862 drivers/media/dvb/frontends/cxd2820r_core.c (Manu Abraham    2011-11-24  688) {
-> 1e8f31f3 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-07-19  689) 	struct cxd2820r_priv *priv;
-> 14c03862 drivers/media/dvb/frontends/cxd2820r_core.c (Manu Abraham    2011-11-24  690) 	int ret;
-> a36a66d7 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-08-16 @691) 	u8 tmp, gpio[GPIO_COUNT];
-> 14c03862 drivers/media/dvb/frontends/cxd2820r_core.c (Manu Abraham    2011-11-24  692)
-> a36a66d7 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-08-16  693) 	priv = kzalloc(sizeof(struct cxd2820r_priv), GFP_KERNEL);
-> 1e8f31f3 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-07-19  694) 	if (!priv) {
-> 1e8f31f3 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-07-19  695) 		ret = -ENOMEM;
-> 1e8f31f3 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-07-19  696) 		dev_err(&i2c->dev, "%s: kzalloc() failed\n",
-> 1e8f31f3 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-07-19  697) 				KBUILD_MODNAME);
-> 14c03862 drivers/media/dvb/frontends/cxd2820r_core.c (Manu Abraham    2011-11-24  698) 		goto error;
-> 1e8f31f3 drivers/media/dvb-frontends/cxd2820r_core.c (Antti Palosaari 2012-07-19  699) 	}
->
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Center
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
->
+// <smpl>
+@r1@
+position p;
+@@
+if (...);@p
 
+@script:python@
+p0 << r1.p;
+@@
+// Emacs org-mode output
+cocci.print_main("", p0)
+cocci.print_secs("", p0)
+// </smpl>
 
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+NOTE: This patch changes the semantics.
+
+Changes from V1:
+Commit message
+Added a note about semantics change
+
+Changes from V2:
+Commit message
+
+ drivers/net/wireless/ath/ath9k/ar9003_eeprom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
+index 5bbe505..189aeb2 100644
+--- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
++++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
+@@ -2989,7 +2989,7 @@ static u32 ath9k_hw_ar9300_get_eeprom(struct ath_hw *ah,
+ 	case EEP_PAPRD:
+ 		if (AR_SREV_9462(ah))
+ 			return false;
+-		if (!ah->config.enable_paprd);
++		if (!ah->config.enable_paprd)
+ 			return false;
+ 		return !!(pBase->featureEnable & BIT(5));
+ 	case EEP_CHAIN_MASK_REDUCE:
 -- 
-http://palosaari.fi/
+1.7.11.4
+
