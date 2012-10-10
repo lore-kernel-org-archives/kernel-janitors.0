@@ -1,52 +1,32 @@
-From: Mike Galbraith <efault@gmx.de>
-Date: Tue, 02 Oct 2012 03:48:09 +0000
-Subject: Re: warning: (SCHED_AUTOGROUP) selects CGROUP_SCHED which has unmet direct dependencies (CGROUPS &&
-Message-Id: <1349149689.7086.33.camel@marge.simpson.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Oct 2012 07:18:35 +0000
+Subject: [patch] x86/oprofile: fix wrapping bug in op_x86_get_ctrl()
+Message-Id: <20121010071835.GA26201@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121002025502.GA9385@localhost>
-In-Reply-To: <20121002025502.GA9385@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 2012-10-02 at 10:55 +0800, Fengguang Wu wrote: 
-> Hi Mike,
-> 
-> FYI, there are new compile warnings show up in
-> 
-> commit: 5091faa449ee0b7d73bc296a93bca9540fc51d0a  sched: Add 'autogroup' scheduling feature: automated per session task groups
-> config: x86_64-randconfig-h011 (attached as .config)
+The "event" variable is a u16 so the shift will always wrap to zero
+making the line a no-op.
 
-Yeah, SCHED_AUTOGROUP should have also depended upon EXPERIMENTAL.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This was introduced in 2009 in 3370d35856 "x86/oprofile: replace macros
+to calculate control register".  I am doing static analysis and I'm not
+very familiar with this code.  Please review my changes carefully.
 
-CGROUP_SCHED lost the EXPERIMENTAL dependency in 3.3.  I don't think
-this would qualify for a -stable backport, so there's not much I can do
-about it now.
-
-> 
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -728,6 +728,19 @@ config NET_NS
->  
->  endif # NAMESPACES
->  
-> +config SCHED_AUTOGROUP
-> +       bool "Automatic process group scheduling"
-> +       select EVENTFD
-> +       select CGROUPS
-> +       select CGROUP_SCHED
-> +       select FAIR_GROUP_SCHED
-> +       help
-> +         This option optimizes the scheduler for common desktop workloads by
-> +         automatically creating and populating task groups.  This separation
-> +         of workloads isolates aggressive CPU burners (like build jobs) from
-> +         desktop applications.  Task group autogeneration is currently based
-> +         upon task session.
-> +
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Centre
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
-
-
+diff --git a/arch/x86/oprofile/nmi_int.c b/arch/x86/oprofile/nmi_int.c
+index 26b8a85..48768df 100644
+--- a/arch/x86/oprofile/nmi_int.c
++++ b/arch/x86/oprofile/nmi_int.c
+@@ -55,7 +55,7 @@ u64 op_x86_get_ctrl(struct op_x86_model_spec const *model,
+ 	val |= counter_config->extra;
+ 	event &= model->event_mask ? model->event_mask : 0xFF;
+ 	val |= event & 0xFF;
+-	val |= (event & 0x0F00) << 24;
++	val |= (u64)(event & 0x0F00) << 24;
+ 
+ 	return val;
+ }
