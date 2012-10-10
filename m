@@ -1,32 +1,46 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 10 Oct 2012 11:15:16 +0000
+From: Andreas Schwab <schwab@linux-m68k.org>
+Date: Wed, 10 Oct 2012 12:05:01 +0000
 Subject: Re: [patch] isdn: fix a wrapping bug in isdn_ppp_ioctl()
-Message-Id: <1349867716.2386.35.camel@joe-AO722>
+Message-Id: <m21uh67csy.fsf@igel.home>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121010093816.GA3669@elgon.mountain>
-	 <1349864358.2386.27.camel@joe-AO722>
-	 <AE90C24D6B3A694183C094C60CF0A2F6026B702D@saturn3.aculab.com>
-In-Reply-To: <AE90C24D6B3A694183C094C60CF0A2F6026B702D@saturn3.aculab.com>
+	<1349864358.2386.27.camel@joe-AO722>
+In-Reply-To: <1349864358.2386.27.camel@joe-AO722> (Joe Perches's message of
+	"Wed, 10 Oct 2012 03:19:18 -0700")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Laight <David.Laight@ACULAB.COM>
+To: Joe Perches <joe@perches.com>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Masanari Iida <standby24x7@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2012-10-10 at 11:42 +0100, David Laight wrote:
-> > -		unsigned long protos[8] = {0,};
-> > +		DECLARE_BITMAP(protos, BITS_PER_LONG * 8) = { 0, };
-> ...
-> > -		if ((r = set_arg(argp, protos, 8 * sizeof(long))))
-> > +		if ((r = set_arg(argp, protos, sizeof(protos))))
-> 
-> That change makes a big assumption about the implementation
-> of DECLARE_BITMAP().
-> Unless it is guaranteed to be implemented as 'unsigned long[]'
-> then you've changed what the code might do.
+Joe Perches <joe@perches.com> writes:
 
-Possible, but it's hard to imagine it changing.
+> @@ -589,16 +589,15 @@ isdn_ppp_ioctl(int min, struct file *file, unsigned int cmd, unsigned long arg)
+>  		break;
+>  	case PPPIOCGCOMPRESSORS:
+>  	{
+> -		unsigned long protos[8] = {0,};
+> +		DECLARE_BITMAP(protos, BITS_PER_LONG * 8) = { 0, };
+>  		struct isdn_ppp_compressor *ipc = ipc_head;
+> +
+>  		while (ipc) {
+> -			j = ipc->num / (sizeof(long) * 8);
+> -			i = ipc->num % (sizeof(long) * 8);
+> -			if (j < 8)
+> -				protos[j] |= (0x1 << i);
+> +			if (ipc->num < BITS_PER_LONG * 8)
+> +				set_bit(ipc->num, protos);
+>  			ipc = ipc->next;
+>  		}
+> -		if ((r = set_arg(argp, protos, 8 * sizeof(long))))
+> +		if ((r = set_arg(argp, protos, sizeof(protos))))
 
-The = { 0, } should probably be bitmap_zero
+This changes the bit endianess.  Since protos is exported to user space
+it is an ABI change.
 
+Andreas.
 
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 58CA 54C7 6D53 942B 1756  01D3 44D5 214B 8276 4ED5
+"And now for something completely different."
