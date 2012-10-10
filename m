@@ -1,30 +1,32 @@
-From: Andreas Schwab <schwab@linux-m68k.org>
-Date: Wed, 10 Oct 2012 13:58:38 +0000
+From: Joe Perches <joe@perches.com>
+Date: Wed, 10 Oct 2012 14:41:59 +0000
 Subject: Re: [patch] isdn: fix a wrapping bug in isdn_ppp_ioctl()
-Message-Id: <m2sj9m5sz5.fsf@igel.home>
+Message-Id: <1349880119.2386.46.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121010093816.GA3669@elgon.mountain>
-	<1349864358.2386.27.camel@joe-AO722> <m21uh67csy.fsf@igel.home>
-	<1349874007.2386.42.camel@joe-AO722>
-In-Reply-To: <1349874007.2386.42.camel@joe-AO722> (Joe Perches's message of
-	"Wed, 10 Oct 2012 06:00:07 -0700")
+	 <1349864358.2386.27.camel@joe-AO722> <m21uh67csy.fsf@igel.home>
+	 <1349874007.2386.42.camel@joe-AO722> <m2sj9m5sz5.fsf@igel.home>
+In-Reply-To: <m2sj9m5sz5.fsf@igel.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
+To: Andreas Schwab <schwab@linux-m68k.org>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Masanari Iida <standby24x7@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Sorry, I was misremembering the history of the bit ops.  There has
-historically been issues with varying bit order, but noadays set_bit is
-always defined consistently with C shifts.
+On Wed, 2012-10-10 at 15:58 +0200, Andreas Schwab wrote:
+> Sorry, I was misremembering the history of the bit ops.  There has
+> historically been issues with varying bit order, but noadays set_bit is
+> always defined consistently with C shifts.
 
-But another issue, set_bit is an atomic operation which may be
-significantly more expensive than the equivalent C operation.  Better
-use __set_bit when atomicity is not needed.
+No worries.  Anyway, the change was suggested to aid
+reader comprehension.  If it doesn't (and it seems not)
+then it's not worth it.
 
-Andreas.
+Anyway, there is still the open question of an overrun/info
+leak.
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 58CA 54C7 6D53 942B 1756  01D3 44D5 214B 8276 4ED5
-"And now for something completely different."
+> > -           if ((r = set_arg(argp, protos, 8 * sizeof(long))))
+
+set_arg's 2nd arg is bytes not bits.
+
+
