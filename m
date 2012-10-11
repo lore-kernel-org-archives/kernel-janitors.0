@@ -1,81 +1,42 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Date: Tue, 09 Oct 2012 23:32:38 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Thu, 11 Oct 2012 06:45:43 +0000
 Subject: Re: [PATCH 13/13] drivers/media/tuners/e4000.c: use macros for i2c_msg initialization
-Message-Id: <20121009203238.63d2275f@infradead.org>
+Message-Id: <alpine.DEB.2.02.1210110836030.2010@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1349624323-15584-3-git-send-email-Julia.Lawall@lip6.fr>
-	<5071AEF3.6080108@bfs.de>
-	<alpine.DEB.2.02.1210071839040.2745@localhost6.localdomain6>
-	<5071B834.1010200@bfs.de>
-	<alpine.DEB.2.02.1210071917040.2745@localhost6.localdomain6>
-	<1349633780.15802.8.camel@joe-AO722>
-	<alpine.DEB.2.02.1210072053550.2745@localhost6.localdomain6>
-	<1349645970.15802.12.camel@joe-AO722>
-	<alpine.DEB.2.02.1210072342460.2745@localhost6.localdomain6>
-	<1349646718.15802.16.camel@joe-AO722>
-	<20121007225639.364a41b4@infradead.org>
-	<50723661.6040107@gmail.com>
-	<alpine.DEB.2.02.1210081028340.1989@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1210081028340.1989@hadrien>
+References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr> <1349624323-15584-3-git-send-email-Julia.Lawall@lip6.fr> <5071AEF3.6080108@bfs.de> <alpine.DEB.2.02.1210071839040.2745@localhost6.localdomain6> <5071B834.1010200@bfs.de>
+ <alpine.DEB.2.02.1210071917040.2745@localhost6.localdomain6> <1349633780.15802.8.camel@joe-AO722> <alpine.DEB.2.02.1210072053550.2745@localhost6.localdomain6> <1349645970.15802.12.camel@joe-AO722> <alpine.DEB.2.02.1210072342460.2745@localhost6.localdomain6>
+ <1349646718.15802.16.camel@joe-AO722> <20121007225639.364a41b4@infradead.org> <50723661.6040107@gmail.com> <alpine.DEB.2.02.1210081028340.1989@hadrien> <20121009203238.63d2275f@infradead.org>
+In-Reply-To: <20121009203238.63d2275f-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Ryan Mallon <rmallon@gmail.com>, Joe Perches <joe@perches.com>, walter harms <wharms@bfs.de>, Antti Palosaari <crope@iki.fi>, kernel-janitors@vger.kernel.org, shubhrajyoti@ti.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, walter harms <wharms-fPG8STNUNVg@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, shubhrajyoti-l0cyMroinI0@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Em Mon, 8 Oct 2012 10:31:33 +0200 (CEST)
-Julia Lawall <julia.lawall@lip6.fr> escreveu:
+I found 6 cases where there are more than 2 messages in the array.  I
+didn't check how many cases where there are two messages but there is
+something other than one read and one write.
 
-> I found only 15 uses of I2C_MSG_OP, out of 653 uses of one of the three
-> macros.  Since I2C_MSG_OP has the complete set of flags, I think it should
-> be OK?
-> 
-> One of the uses, in drivers/media/i2c/adv7604.c, is as follows:
-> 
->        struct i2c_msg msg[2] = { { client->addr, 0, 1, msgbuf0 },
->                                  { client->addr, 0 | I2C_M_RD, len, msgbuf1 }
-> 
-> I'm not sure what was intended, but I guess the second structure is
-> supposed to only do a read?
+Perhaps a reasonable option would be to use
 
-Yes, this is just typical I2C register read I2C messsage. The first line
-specifies what register should be read (the content of msgbuf0), with is
-a one char value, and the second line stores the registers contents at
-msgbuf1.
+I2C_MSG_READ
+I2C_MSG_WRITE
+I2C_MSG_READ_OP
+I2C_MSG_WRITE_OP
 
-This is exactly what I said before: this is a typical situation:
+The last two are for the few cases where more flags are specified.  As
+compared to the original proposal of I2C_MSG_OP, these keep the READ or
+WRITE idea in the macro name.  The additional argument to the OP macros
+would be or'd with the read or write (nothing to do in this case) flags as
+appropriate.
 
-Just one macro could be used for that, with 4 parameters:
+Mauro proposed INIT_I2C_READ_SUBADDR for the very common case where a
+message array has one read and one write.  I think that putting one
+I2C_MSG_READ and one I2C_MSG_WRITE in this case is readable enough, and
+avoids the need to do something special for the cases that don't match the
+expectations of INIT_I2C_READ_SUBADDR.
 
-	I2C_MSG_READ_SUBADDR(addr, sub_addr, len, buf);
+I propose not to do anything for the moment either for sizes or for
+message or buffer arrays that contain only one element.
 
-Almost all of those I2C messages will fall on 3 cases only:
-	- a read msg (3 parameters, 1 msg);
-	- a write message (3 parameters, 1 msg);
-	- a write subaddr followed by a read (4 parameters, 2 msgs).
-
-You'll find very few exceptions to it, where additional I2C flags are
-needed, or several different transactions were grouped together, due
-to the I2C locking or in order to use I2C repeat-start mode[1].
-
-In a matter of fact, as the maintainer, I prefer to fully see the entire
-I2C message for those exceptions, as those other usages require more care
-while reviewing/merging.
-
-
-[1] very, very few media i2c bus drivers implement any other flags except
-for I2C_M_RD. That's why it is so rare to see them there.
-
-> 
-> julia
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
-
-Cheers,
-Mauro
+julia
