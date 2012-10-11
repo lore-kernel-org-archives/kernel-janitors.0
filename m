@@ -1,43 +1,23 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 10 Oct 2012 15:52:22 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 11 Oct 2012 02:46:14 +0000
 Subject: Re: [patch] isdn: fix a wrapping bug in isdn_ppp_ioctl()
-Message-Id: <1349884342.2035.1.camel@joe-AO722>
+Message-Id: <20121010.224614.1474455483126634181.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121010093816.GA3669@elgon.mountain>
-	 <1349864358.2386.27.camel@joe-AO722> <m21uh67csy.fsf@igel.home>
-	 <1349874007.2386.42.camel@joe-AO722> <m2sj9m5sz5.fsf@igel.home>
-	 <1349880119.2386.46.camel@joe-AO722>
-	 <AE90C24D6B3A694183C094C60CF0A2F6026B7033@saturn3.aculab.com>
-	 <1349882347.2386.47.camel@joe-AO722>
-	 <AE90C24D6B3A694183C094C60CF0A2F6026B7034@saturn3.aculab.com>
-In-Reply-To: <AE90C24D6B3A694183C094C60CF0A2F6026B7034@saturn3.aculab.com>
+In-Reply-To: <20121010093816.GA3669@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Laight <David.Laight@ACULAB.COM>
-Cc: Andreas Schwab <schwab@linux-m68k.org>, Dan Carpenter <dan.carpenter@oracle.com>, Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, Masanari Iida <standby24x7@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: isdn@linux-pingi.de, standby24x7@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2012-10-10 at 16:44 +0100, David Laight wrote:
-> > On Wed, 2012-10-10 at 15:59 +0100, David Laight wrote:
-> > > Seems to me the code is expecting 256 bits of data, not any multiple of int,
-> > > long or anything else.
-> > 
-> > include/linux/isdn_ppp.h:#define PPPIOCGCOMPRESSORS _IOR('t',134,unsigned long [8])
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Oct 2012 12:42:18 +0300
+
+> "protos" is an array of unsigned longs and "i" is the number of bits in
+> an unsigned long so we need to use 1UL as well to prevent the shift
+> from wrapping around.
 > 
-> That doesn't mean the whole thing makes any sense on 64bit systems.
-> A whole load of historic code used 'long' to ensure 32bit.
-> Some of that might have crept into Linux sources.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Very true, but it's exported via copy_to_user.
-
-> Since I suspect there are a maximum of 256 bits on both 32 and 64bit
-> systems, I wouldn't like to guess exactly how any particular 64bit
-> application chooses to check the bitmap.
-> 
-> The ioctl constant may be wrong on 64 bit systems.
-
-shrug.  Not much to do about it now.
-isdn isn't very active.
-
-Karsten?  What do you think?
-
+I'll apply this, thanks.
