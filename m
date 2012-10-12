@@ -1,110 +1,75 @@
-From: Xishi Qiu <qiuxishi@gmail.com>
-Date: Mon, 15 Oct 2012 06:44:13 +0000
-Subject: Re: WARNING: vmlinux.o(.meminit.text+0x1228): Section mismatch in reference from the function .free_
-Message-Id: <507BB0BD.2040002@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 12 Oct 2012 16:40:20 +0000
+Subject: [signal:for-next 79/81] init/main.c:794:2: error: implicit declaration of function 'current_pt_regs'
+Message-Id: <20121012164020.GC19120@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121014104243.GB10836@localhost>
-In-Reply-To: <20121014104243.GB10836@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi，Fengguang and Yuanhan，thank you for your test, I find the reason
-which causes that warnings.
+Hi Al,
 
-set_page_block_order() is called by free_area_init_core() and sparse_init(),
-But free_area_init_core() is defined as __paginginit, sparse_init() and
-set_page_block_order() are defined as __init.
+FYI, kernel build failed on
 
-#ifdef CONFIG_SPARSEMEM
-#define __paginginit __meminit
-#else
-#define __paginginit __init
-#endif
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git for-next
+head:   4fa20776ca79059c34f4660c8bdb0d7c1603e872
+commit: f45a47e7f1d9668458ecd1e88b285c6348c5aa3e [79/81] x86, um: convert to saner kernel_execve() semantics
+config: um-defconfig # make ARCH=um defconfig
 
-So if we config sparse memory and memory hotplug, when hot add a new
-pgdat, free_area_init_core() will call set_page_block_order(), but
-set_page_block_order() already has been released.
+All error/warnings:
 
-Here is the new patch, just use __paginginit instead of __init.
+init/main.c: In function 'run_init_process':
+init/main.c:794:2: error: implicit declaration of function 'current_pt_regs' [-Werror=implicit-function-declaration]
+init/main.c:794:2: warning: passing argument 4 of 'do_execve' makes pointer from integer without a cast [enabled by default]
+In file included from include/linux/pid_namespace.h:4:0,
+                 from include/linux/perf_event.h:604,
+                 from include/linux/ftrace_event.h:8,
+                 from include/trace/syscall.h:6,
+                 from include/linux/syscalls.h:78,
+                 from init/main.c:16:
+include/linux/sched.h:2323:12: note: expected 'struct pt_regs *' but argument is of type 'int'
+cc1: some warnings being treated as errors
+--
+kernel/kmod.c: In function '____call_usermodehelper':
+kernel/kmod.c:221:2: error: implicit declaration of function 'current_pt_regs' [-Werror=implicit-function-declaration]
+kernel/kmod.c:221:2: warning: passing argument 4 of 'do_execve' makes pointer from integer without a cast [enabled by default]
+In file included from kernel/kmod.c:22:0:
+include/linux/sched.h:2323:12: note: expected 'struct pt_regs *' but argument is of type 'int'
+cc1: some warnings being treated as errors
 
-Thanks
-Xishi Qiu
+vim +794 init/main.c
 
-Signed-off-by: Xishi Qiu <qiuxishi@huawei.com>
+b99b87f7 Peter Oberparleiter       2009-06-17  778  	do_ctors();
+d5767c53 Linus Torvalds            2011-09-28  779  	usermodehelper_enable();
+b0f84374 wangyanqing               2011-09-29  780  	do_initcalls();
+^1da177e Linus Torvalds            2005-04-16  781  }
+^1da177e Linus Torvalds            2005-04-16  782  
+7babe8db Eduard - Gabriel Munteanu 2008-07-25  783  static void __init do_pre_smp_initcalls(void)
+c2147a50 Eduard - Gabriel Munteanu 2008-07-25  784  {
+196a15b4 H Hartley Sweeten         2009-12-14  785  	initcall_t *fn;
+c2147a50 Eduard - Gabriel Munteanu 2008-07-25  786  
+026cee00 Pawel Moll                2012-03-26  787  	for (fn = __initcall_start; fn < __initcall0_start; fn++)
+196a15b4 H Hartley Sweeten         2009-12-14  788  		do_one_initcall(*fn);
+c2147a50 Eduard - Gabriel Munteanu 2008-07-25  789  }
+c2147a50 Eduard - Gabriel Munteanu 2008-07-25  790  
+7c2b93d4 Al Viro                   2012-10-10  791  static int run_init_process(const char *init_filename)
+^1da177e Linus Torvalds            2005-04-16  792  {
+^1da177e Linus Torvalds            2005-04-16  793  	argv_init[0] = init_filename;
+7c2b93d4 Al Viro                   2012-10-10 @794  	return kernel_execve(init_filename, argv_init, envp_init);
+^1da177e Linus Torvalds            2005-04-16  795  }
+^1da177e Linus Torvalds            2005-04-16  796  
+d6b21238 Al Viro                   2012-10-10  797  static void __init kernel_init_freeable(void);
+d6b21238 Al Viro                   2012-10-10  798  
+d6b21238 Al Viro                   2012-10-10  799  static int __ref kernel_init(void *unused)
+ee5bfa64 Vivek Goyal               2007-02-13  800  {
+d6b21238 Al Viro                   2012-10-10  801  	kernel_init_freeable();
+22a9d645 Arjan van de Ven          2009-01-07  802  	/* need to finish all async __init code before freeing the memory */
+
+The code at line 794 was first introduced by commit:
+7c2b93d infrastructure for saner ret_from_kernel_thread semantics
+
+
 ---
- mm/internal.h   |    2 ++
- mm/page_alloc.c |    4 ++--
- mm/sparse.c     |    3 +++
- 3 files changed, 7 insertions(+), 2 deletions(-)
-
-diff -puN mm/internal.h~mm-setup-pageblock_order-before-its-used-by-sparsemem mm/internal.h
---- a/mm/internal.h~mm-setup-pageblock_order-before-its-used-by-sparsemem
-+++ a/mm/internal.h
-@@ -349,3 +349,5 @@ extern u32 hwpoison_filter_enable;
- extern unsigned long vm_mmap_pgoff(struct file *, unsigned long,
-         unsigned long, unsigned long,
-         unsigned long, unsigned long);
-+
-+extern void set_pageblock_order(void);
-diff -puN mm/page_alloc.c~mm-setup-pageblock_order-before-its-used-by-sparsemem mm/page_alloc.c
---- a/mm/page_alloc.c~mm-setup-pageblock_order-before-its-used-by-sparsemem
-+++ a/mm/page_alloc.c
-@@ -4303,7 +4303,7 @@ static inline void setup_usemap(struct p
- #ifdef CONFIG_HUGETLB_PAGE_SIZE_VARIABLE
-
- /* Initialise the number of pages represented by NR_PAGEBLOCK_BITS */
--static inline void __init set_pageblock_order(void)
-+void __paginginit set_pageblock_order(void)
- {
- 	unsigned int order;
-
-@@ -4331,7 +4331,7 @@ static inline void __init set_pageblock_
-  * include/linux/pageblock-flags.h for the values of pageblock_order based on
-  * the kernel config
-  */
--static inline void set_pageblock_order(void)
-+void __paginginit set_pageblock_order(void)
- {
- }
-
-diff -puN mm/sparse.c~mm-setup-pageblock_order-before-its-used-by-sparsemem mm/sparse.c
---- a/mm/sparse.c~mm-setup-pageblock_order-before-its-used-by-sparsemem
-+++ a/mm/sparse.c
-@@ -495,6 +495,9 @@ void __init sparse_init(void)
- 	struct page **map_map;
- #endif
-
-+	/* Setup pageblock_order for HUGETLB_PAGE_SIZE_VARIABLE */
-+	set_pageblock_order();
-+
- 	/*
- 	 * map is using big page (aka 2M in x86 64 bit)
- 	 * usemap is less one page (aka 24 bytes)
-
-
-On 2012/10/14 18:42, Fengguang Wu wrote:
-
-> Hi Xishi,
->
-> FYI, there are new compile warnings show up in
->
-> commit: ca57df79d4f64e1a4886606af4289d40636189c5  mm: setup pageblock_order before it's used by sparsemem
-> config: powerpc-allyesconfig # make ARCH=powerpc allyesconfig
->
-> All warnings:
->
-> WARNING: vmlinux.o(.meminit.text+0x1228): Section mismatch in reference from the function .free_area_init_core.isra.34() to the function .init.text:.set_pageblock_order()
-> The function __meminit .free_area_init_core.isra.34() references
-> a function __init .set_pageblock_order().
-> If .set_pageblock_order is only used by .free_area_init_core.isra.34 then
-> annotate .set_pageblock_order with a matching annotation.
->
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Center
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
->
->
-
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
