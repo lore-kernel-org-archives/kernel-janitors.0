@@ -1,93 +1,54 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Tue, 23 Oct 2012 19:57:24 +0000
-Subject: [PATCH 21/23] dvb-frontends: Replace memcpy with struct assignment
-Message-Id: <1351022246-8201-21-git-send-email-elezegarcia@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 12 Oct 2012 16:51:45 +0000
+Subject: [xen:stable/for-linus-3.7 35/35] drivers/xen/xenbus/xenbus_xs.c:628:13: warning: function declaratio
+Message-Id: <20121012165145.GA19889@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
-In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-This kind of memcpy() is error-prone. Its replacement with a struct
-assignment is prefered because it's type-safe and much easier to read.
+Hi Konrad,
 
-Found by coccinelle. Hand patched and reviewed.
-Tested by compilation only.
+FYI, there are new compile warnings show up in
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git stable/for-linus-3.7
+head:   cb6b6df111e46b9d0f79eb971575fd50555f43f4
+commit: cb6b6df111e46b9d0f79eb971575fd50555f43f4 [35/35] xen/pv-on-hvm kexec: add quirk for Xen 3.4 and shutdown watches.
+config: x86_64-allyesconfig # make ARCH=x86_64 allyesconfig
 
-// <smpl>
-@@
-identifier struct_name;
-struct struct_name to;
-struct struct_name from;
-expression E;
-@@
--memcpy(&(to), &(from), E);
-+to = from;
-// </smpl>
+All warnings:
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
+drivers/xen/xenbus/xenbus_xs.c:628:13: warning: function declaration isn't a prototype [-Wstrict-prototypes]
+
+vim +628 drivers/xen/xenbus/xenbus_xs.c
+
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  612  	struct xenbus_watch *i, *cmp;
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  613  
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  614  	cmp = (void *)simple_strtoul(token, NULL, 16);
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  615  
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  616  	list_for_each_entry(i, &watches, list)
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  617  		if (i = cmp)
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  618  			return i;
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  619  
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  620  	return NULL;
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  621  }
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  622  /*
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  623   * Certain older XenBus toolstack cannot handle reading values that are
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  624   * not populated. Some Xen 3.4 installation are incapable of doing this
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  625   * so if we are running on anything older than 4 do not attempt to read
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  626   * control/platform-feature-xs_reset_watches.
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  627   */
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10 @628  static bool xen_strict_xenbus_quirk()
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  629  {
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  630  	uint32_t eax, ebx, ecx, edx, base;
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  631  
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  632  	base = xen_cpuid_base();
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  633  	cpuid(base + 1, &eax, &ebx, &ecx, &edx);
+4bac07c9 Jeremy Fitzhardinge   2007-07-17  634  
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  635  	if ((eax >> 16) < 4)
+cb6b6df1 Konrad Rzeszutek Wilk 2012-10-10  636  		return true;
+
 ---
- drivers/media/dvb-frontends/cx24116.c   |    2 +-
- drivers/media/dvb-frontends/drxd_hard.c |    5 ++---
- drivers/media/dvb-frontends/stv0299.c   |    2 +-
- 3 files changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/cx24116.c b/drivers/media/dvb-frontends/cx24116.c
-index b488791..2916d7c 100644
---- a/drivers/media/dvb-frontends/cx24116.c
-+++ b/drivers/media/dvb-frontends/cx24116.c
-@@ -819,7 +819,7 @@ static int cx24116_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
- static void cx24116_clone_params(struct dvb_frontend *fe)
- {
- 	struct cx24116_state *state = fe->demodulator_priv;
--	memcpy(&state->dcur, &state->dnxt, sizeof(state->dcur));
-+	state->dcur = state->dnxt;
- }
- 
- /* Wait for LNB */
-diff --git a/drivers/media/dvb-frontends/drxd_hard.c b/drivers/media/dvb-frontends/drxd_hard.c
-index 6d98537..dca1752 100644
---- a/drivers/media/dvb-frontends/drxd_hard.c
-+++ b/drivers/media/dvb-frontends/drxd_hard.c
-@@ -2963,7 +2963,7 @@ struct dvb_frontend *drxd_attach(const struct drxd_config *config,
- 		return NULL;
- 	memset(state, 0, sizeof(*state));
- 
--	memcpy(&state->ops, &drxd_ops, sizeof(struct dvb_frontend_ops));
-+	state->ops = drxd_ops;
- 	state->dev = dev;
- 	state->config = *config;
- 	state->i2c = i2c;
-@@ -2974,8 +2974,7 @@ struct dvb_frontend *drxd_attach(const struct drxd_config *config,
- 	if (Read16(state, 0, 0, 0) < 0)
- 		goto error;
- 
--	memcpy(&state->frontend.ops, &drxd_ops,
--	       sizeof(struct dvb_frontend_ops));
-+	state->frontend.ops = drxd_ops;
- 	state->frontend.demodulator_priv = state;
- 	ConfigureMPEGOutput(state, 0);
- 	return &state->frontend;
-diff --git a/drivers/media/dvb-frontends/stv0299.c b/drivers/media/dvb-frontends/stv0299.c
-index 92a6075..b57ecf4 100644
---- a/drivers/media/dvb-frontends/stv0299.c
-+++ b/drivers/media/dvb-frontends/stv0299.c
-@@ -420,7 +420,7 @@ static int stv0299_send_legacy_dish_cmd (struct dvb_frontend* fe, unsigned long
- 
- 	do_gettimeofday (&nexttime);
- 	if (debug_legacy_dish_switch)
--		memcpy (&tv[0], &nexttime, sizeof (struct timeval));
-+		tv[0] = nexttime;
- 	stv0299_writeregI (state, 0x0c, reg0x0c | 0x50); /* set LNB to 18V */
- 
- 	dvb_frontend_sleep_until(&nexttime, 32000);
--- 
-1.7.4.4
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
