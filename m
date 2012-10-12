@@ -1,27 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 Oct 2012 08:26:46 +0000
-Subject: [patch] drm/ast: drop duplicate initialization
-Message-Id: <20121002082646.GD12398@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 12 Oct 2012 16:42:37 +0000
+Subject: drivers/pinctrl/pinctrl-at91.c:841:12: warning: assignment discards 'const' qualifier from pointer t
+Message-Id: <20121012164237.GE19120@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Jani Nikula <jani.nikula@intel.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
+To: kernel-janitors@vger.kernel.org
 
-We set ".disable" to "ast_crtc_disable" twice.
+Hi Jean-Christophe,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+FYI, there are new compile warnings show up in
 
-diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
-index f3b2a7c..e87f1ff 100644
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -582,7 +582,6 @@ static const struct drm_crtc_helper_funcs ast_crtc_helper_funcs = {
- 	.mode_set_base = ast_crtc_mode_set_base,
- 	.disable = ast_crtc_disable,
- 	.load_lut = ast_crtc_load_lut,
--	.disable = ast_crtc_disable,
- 	.prepare = ast_crtc_prepare,
- 	.commit = ast_crtc_commit,
- 
+commit: 7f46dcb289fd5970296718ce20046792dfbc00a8  ARM: at91: add pinctrl support
+config: arm-at91_dt_defconfig # make ARCH=arm at91_dt_defconfig
+
+All warnings:
+
+drivers/pinctrl/pinctrl-at91.c: In function 'at91_pinctrl_probe_dt':
+drivers/pinctrl/pinctrl-at91.c:841:12: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+drivers/pinctrl/pinctrl-at91.c: In function 'at91_gpio_probe':
+drivers/pinctrl/pinctrl-at91.c:1382:17: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
+
+vim +841 drivers/pinctrl/pinctrl-at91.c
+
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  825  	{ /* sentinel */ }
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  826  };
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  827  
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  828  static int __devinit at91_pinctrl_probe_dt(struct platform_device *pdev,
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  829  					   struct at91_pinctrl *info)
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  830  {
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  831  	int ret = 0;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  832  	int i, j;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  833  	uint32_t *tmp;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  834  	struct device_node *np = pdev->dev.of_node;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  835  	struct device_node *child;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  836  
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  837  	if (!np)
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  838  		return -ENODEV;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  839  
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  840  	info->dev = &pdev->dev;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12 @841  	info->ops 7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  842  		of_match_device(at91_pinctrl_of_match, &pdev->dev)->data;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  843  	at91_pinctrl_child_count(info, np);
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  844  
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  845  	if (info->nbanks < 1) {
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  846  		dev_err(&pdev->dev, "you need to specify atleast one gpio-controller\n");
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  847  		return -EINVAL;
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  848  	}
+7f46dcb2 Jean-Christophe PLAGNIOL-VILLARD 2012-07-12  849  
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
