@@ -1,237 +1,58 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 03 Oct 2012 13:39:34 +0000
-Subject: [uapi:uapi-split 16/74] arch/avr32/include/asm/param.h:6:1: warning: "HZ" redefined
-Message-Id: <20121003133934.GA7653@localhost>
+Date: Fri, 12 Oct 2012 16:55:22 +0000
+Subject: [glommer-memcg:kmemcg-slab 30/33] mm/slab_common.c:250:6: error: conflicting types for 'print_slabin
+Message-Id: <20121012165522.GA20312@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi David,
+Hi Glauber,
 
-FYI, there are new compile warnings show up in
+FYI, kernel build failed on
 
-tree:   git://git.infradead.org/users/dhowells/linux-headers.git uapi-split
-head:   fe8d5078f66f6cdf1f327912ed7240b0379fde0e
-commit: d128c2f473adfc11793b0c5740c81b714234db84 [16/74] UAPI: (Scripted) Disintegrate arch/avr32/include/asm
-config: avr32-atngw100_defconfig
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git kmemcg-slab
+head:   f7dc2a43ce771e73443c82eb25d95f72f8161b45
+commit: 0f901d86f02ebf93cd584f9f09b4b6f4add9caa8 [30/33] Aggregate memcg cache values in slabinfo
+config: cris-allyesconfig # make ARCH=cris 
 
-All warnings:
+All error/warnings:
 
-In file included from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/mm.h:8,
-                 from arch/avr32/kernel/asm-offsets.c:7:
-arch/avr32/include/asm/param.h:6:1: warning: "HZ" redefined
-In file included from arch/avr32/include/asm/param.h:4,
-                 from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/mm.h:8,
-                 from arch/avr32/kernel/asm-offsets.c:7:
-arch/avr32/include/uapi/asm/param.h:6:1: warning: this is the location of the previous definition
+In file included from kernel/fork.c:14:0:
+include/linux/slab.h:224:45: warning: 'struct seq_file' declared inside parameter list [enabled by default]
+include/linux/slab.h:224:45: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+include/linux/slab.h:225:35: warning: 'struct seq_file' declared inside parameter list [enabled by default]
 --
-In file included from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/slab.h:12,
-                 from fs/namei.c:20:
-arch/avr32/include/asm/param.h:6:1: warning: "HZ" redefined
-In file included from arch/avr32/include/asm/param.h:4,
-                 from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/slab.h:12,
-                 from fs/namei.c:20:
-arch/avr32/include/uapi/asm/param.h:6:1: warning: this is the location of the previous definition
-fs/namei.c: In function 'link_path_walk':
-fs/namei.c:1546: warning: 'cookie' may be used uninitialized in this function
-fs/namei.c:1546: note: 'cookie' was declared here
-fs/namei.c: In function 'path_lookupat':
-fs/namei.c:1936: warning: 'cookie' may be used uninitialized in this function
-fs/namei.c: In function 'path_openat':
-fs/namei.c:2905: warning: 'cookie' may be used uninitialized in this function
+In file included from mm/slab_common.c:6:0:
+include/linux/slab.h:224:45: warning: 'struct seq_file' declared inside parameter list [enabled by default]
+include/linux/slab.h:224:45: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+include/linux/slab.h:225:35: warning: 'struct seq_file' declared inside parameter list [enabled by default]
+mm/slab_common.c:250:6: error: conflicting types for 'print_slabinfo_header'
+include/linux/slab.h:225:6: note: previous declaration of 'print_slabinfo_header' was here
+mm/slab_common.c:320:5: error: conflicting types for 'cache_show'
+include/linux/slab.h:224:5: note: previous declaration of 'cache_show' was here
 --
-In file included from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/kmod.h:22,
-                 from include/linux/module.h:13,
-                 from drivers/mmc/card/block.c:21:
-arch/avr32/include/asm/param.h:6:1: warning: "HZ" redefined
-In file included from arch/avr32/include/asm/param.h:4,
-                 from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/kmod.h:22,
-                 from include/linux/module.h:13,
-                 from drivers/mmc/card/block.c:21:
-arch/avr32/include/uapi/asm/param.h:6:1: warning: this is the location of the previous definition
-drivers/mmc/card/block.c: In function 'mmc_blk_issue_rq':
-drivers/mmc/card/block.c:819: warning: 'arg' may be used uninitialized in this function
-drivers/mmc/card/block.c:819: note: 'arg' was declared here
-drivers/mmc/card/block.c:819: warning: 'nr' may be used uninitialized in this function
-drivers/mmc/card/block.c:819: note: 'nr' was declared here
-drivers/mmc/card/block.c:819: warning: 'from' may be used uninitialized in this function
-drivers/mmc/card/block.c:819: note: 'from' was declared here
---
-In file included from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/kmod.h:22,
-                 from include/linux/module.h:13,
-                 from net/unix/af_unix.c:83:
-arch/avr32/include/asm/param.h:6:1: warning: "HZ" redefined
-In file included from arch/avr32/include/asm/param.h:4,
-                 from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/kmod.h:22,
-                 from include/linux/module.h:13,
-                 from net/unix/af_unix.c:83:
-arch/avr32/include/uapi/asm/param.h:6:1: warning: this is the location of the previous definition
-net/unix/af_unix.c: In function 'unix_bind':
-net/unix/af_unix.c:898: warning: 'path.mnt' may be used uninitialized in this function
-net/unix/af_unix.c:898: warning: 'path.dentry' may be used uninitialized in this function
---
-In file included from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/slab.h:12,
-                 from include/linux/textsearch.h:8,
-                 from include/linux/skbuff.h:28,
-                 from net/ipv4/netfilter/ip_tables.c:14:
-arch/avr32/include/asm/param.h:6:1: warning: "HZ" redefined
-In file included from arch/avr32/include/asm/param.h:4,
-                 from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/slab.h:12,
-                 from include/linux/textsearch.h:8,
-                 from include/linux/skbuff.h:28,
-                 from net/ipv4/netfilter/ip_tables.c:14:
-arch/avr32/include/uapi/asm/param.h:6:1: warning: this is the location of the previous definition
-net/ipv4/netfilter/ip_tables.c: In function 'ipt_get_target_c':
-net/ipv4/netfilter/ip_tables.c:182: warning: passing argument 1 of 'ipt_get_target' discards qualifiers from pointer target type
---
-In file included from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/slab.h:12,
-                 from include/linux/textsearch.h:8,
-                 from include/linux/skbuff.h:28,
-                 from net/ipv6/netfilter/ip6_tables.c:14:
-arch/avr32/include/asm/param.h:6:1: warning: "HZ" redefined
-In file included from arch/avr32/include/asm/param.h:4,
-                 from include/linux/param.h:4,
-                 from include/linux/timex.h:172,
-                 from include/linux/jiffies.h:8,
-                 from include/linux/ktime.h:25,
-                 from include/linux/timer.h:5,
-                 from include/linux/workqueue.h:8,
-                 from include/linux/srcu.h:32,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:730,
-                 from include/linux/gfp.h:4,
-                 from include/linux/slab.h:12,
-                 from include/linux/textsearch.h:8,
-                 from include/linux/skbuff.h:28,
-                 from net/ipv6/netfilter/ip6_tables.c:14:
-arch/avr32/include/uapi/asm/param.h:6:1: warning: this is the location of the previous definition
-net/ipv6/netfilter/ip6_tables.c: In function 'ip6t_get_target_c':
-net/ipv6/netfilter/ip6_tables.c:207: warning: passing argument 1 of 'ip6t_get_target' discards qualifiers from pointer target type
+In file included from mm/bootmem.c:13:0:
+include/linux/slab.h:224:45: warning: 'struct seq_file' declared inside parameter list [enabled by default]
+include/linux/slab.h:224:45: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+include/linux/slab.h:225:35: warning: 'struct seq_file' declared inside parameter list [enabled by default]
+mm/bootmem.c: In function 'mark_bootmem':
+mm/bootmem.c:361:1: warning: control reaches end of non-void function [-Wreturn-type]
+
+vim +250 mm/slab_common.c
+
+97d06609 Christoph Lameter 2012-07-06  244  int slab_is_available(void)
+97d06609 Christoph Lameter 2012-07-06  245  {
+97d06609 Christoph Lameter 2012-07-06  246  	return slab_state >= UP;
+97d06609 Christoph Lameter 2012-07-06  247  }
+4d93335e Glauber Costa     2012-09-26  248  
+4d93335e Glauber Costa     2012-09-26  249  #ifdef CONFIG_SLABINFO
+0f901d86 Glauber Costa     2012-10-01 @250  void print_slabinfo_header(struct seq_file *m)
+5c939166 Glauber Costa     2012-09-26  251  {
+5c939166 Glauber Costa     2012-09-26  252  	/*
+5c939166 Glauber Costa     2012-09-26  253  	 * Output format version, so at least we can change it
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
+0-DAY kernel build testing backend         Open Source Technology Center
 Fengguang Wu, Yuanhan Liu                              Intel Corporation
