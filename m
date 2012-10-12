@@ -1,22 +1,41 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Mon, 15 Oct 2012 03:13:22 +0000
-Subject: Re: [signal:arch-cris 1/2] arch/cris/arch-v10/kernel/process.c:147:2: error: implicit declaration of
-Message-Id: <20121015031322.GD2616@ZenIV.linux.org.uk>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 12 Oct 2012 18:23:03 +0000
+Subject: [memcg:since-3.6 14/227] drivers/media/video/vino.c:3953:35: error: 'VM_RESERVED' undeclared
+Message-Id: <20121012182303.GA24093@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121015022604.GG7203@localhost>
-In-Reply-To: <20121015022604.GG7203@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 15, 2012 at 10:26:04AM +0800, Fengguang Wu wrote:
-> Hi Al,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git arch-cris
-> head:   b390891871081c499675f874eb08485c82959f00
-> commit: 40be7b4e5cfa2eec0a7f44f6edfdcf6802111bb1 [1/2] cris: switch to generic kernel_thread()
-> config: cris-etrax-100lx_v2_defconfig # make ARCH=cris etrax-100lx_v2_defconfig
-Missing include.  Fixed and pushed.
+Hi Konstantin,
+
+FYI, kernel build failed on
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git since-3.6
+head:   281983c5fb7e420ecf6c80074f7d4c2d3f330dd2
+commit: aa011e456e6bd7e4179b03289d7501f8c8444809 [14/227] mm: kill vma flag VM_RESERVED and mm->reserved_vm counter
+config: mips-allmodconfig # make ARCH=mips allmodconfig
+
+All error/warnings:
+
+drivers/media/video/vino.c: In function 'vino_mmap':
+drivers/media/video/vino.c:3953:35: error: 'VM_RESERVED' undeclared (first use in this function)
+drivers/media/video/vino.c:3953:35: note: each undeclared identifier is reported only once for each function it appears in
+
+vim +3953 drivers/media/video/vino.c
+
+d203a7ec Ralf Baechle 2005-09-06  3947  		start += PAGE_SIZE;
+d203a7ec Ralf Baechle 2005-09-06  3948  		size -= PAGE_SIZE;
+d203a7ec Ralf Baechle 2005-09-06  3949  	}
+d203a7ec Ralf Baechle 2005-09-06  3950  
+d203a7ec Ralf Baechle 2005-09-06  3951  	fb->map_count = 1;
+d203a7ec Ralf Baechle 2005-09-06  3952  
+d203a7ec Ralf Baechle 2005-09-06 @3953  	vma->vm_flags |= VM_DONTEXPAND | VM_RESERVED;
+d203a7ec Ralf Baechle 2005-09-06  3954  	vma->vm_flags &= ~VM_IO;
+d203a7ec Ralf Baechle 2005-09-06  3955  	vma->vm_private_data = fb;
+d203a7ec Ralf Baechle 2005-09-06  3956  	vma->vm_file = file;
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
