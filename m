@@ -1,72 +1,163 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 25 Oct 2012 13:53:23 +0000
-Subject: Re: [PATCH] drivers/gpu/drm/radeon/evergreen_cs.c: Remove unnecessary semicolon
-Message-Id: <CADnq5_MTs65Pn_oCZCpxx5J_Lkdu9rnSJtaLFiNgbp_HLN+_4g@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 12 Oct 2012 16:41:56 +0000
+Subject: [next:akpm 86/86] drivers/block/drbd/drbd_int.h:50:10: sparse: preprocessor token __must_hold redefi
+Message-Id: <20121012164156.GD19120@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351089746-5552-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1351089746-5552-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jglisse@redhat.com, alexander.deucher@amd.com, airlied@redhat.com
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 24, 2012 at 10:42 AM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @r1@
-> statement S;
-> position p,p1;
-> @@
-> S@p1;@p
->
-> @script:python r2@
-> p << r1.p;
-> p1 << r1.p1;
-> @@
-> if p[0].line != p1[0].line_end:
->         cocci.include_match(False)
-> @@
-> position r1.p;
-> @@
-> -;@p
-> // </smpl>
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Josh,
 
-Thanks!  I've added this to my patch queue.
+FYI, there are new sparse warnings show up in
 
-Alex
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git akpm
+head:   04b956faad392f46c9a234962a9990196b8e48fc
+commit: 04b956faad392f46c9a234962a9990196b8e48fc [86/86] linux/compiler.h: add __must_hold macro for functions called with a lock held
 
->
-> ---
->
-> The full version of the semantic patch can be found at:
-> http://www.mail-archive.com/cocci@systeme.lip6.fr/msg00014.html
->
->  drivers/gpu/drm/radeon/evergreen_cs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c b/drivers/gpu/drm/radeon/evergreen_cs.c
-> index 573ed1b..5daf0c5 100644
-> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
-> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
-> @@ -264,7 +264,7 @@ static int evergreen_surface_check_2d(struct radeon_cs_parser *p,
->         /* macro tile width & height */
->         palign = (8 * surf->bankw * track->npipes) * surf->mtilea;
->         halign = (8 * surf->bankh * surf->nbanks) / surf->mtilea;
-> -       mtileb = (palign / 8) * (halign / 8) * tileb;;
-> +       mtileb = (palign / 8) * (halign / 8) * tileb;
->         mtile_pr = surf->nbx / palign;
->         mtile_ps = (mtile_pr * surf->nby) / halign;
->         surf->layer_size = mtile_ps * mtileb * slice_pt;
-> --
-> 1.7.11.7
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
++ drivers/block/drbd/drbd_int.h:50:10: sparse: preprocessor token __must_hold redefined
+  include/linux/compiler.h:13:10: this was the original definition
+  drivers/block/drbd/drbd_int.h:977:39: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1283:69: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1284:70: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1285:59: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1286:60: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1287:63: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1288:65: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1289:66: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1469:74: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1470:50: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1471:51: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1472:54: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1473:62: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1558:92: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1631:61: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_bitmap.c:955:75: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_bitmap.c:1008:100: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_bitmap.c:1124:42: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_bitmap.c:1135:43: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_bitmap.c:1146:47: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_bitmap.c:1156:68: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_bitmap.c:1172:54: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_bitmap.c:1190:66: sparse: attribute 'require_context': unknown attribute
+--
++ drivers/block/drbd/drbd_int.h:50:10: sparse: preprocessor token __must_hold redefined
+  include/linux/compiler.h:13:10: this was the original definition
+  drivers/block/drbd/drbd_int.h:977:39: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1283:69: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1284:70: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1285:59: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1286:60: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1287:63: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1288:65: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1289:66: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1469:74: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1470:50: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1471:51: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1472:54: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1473:62: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1558:92: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1631:61: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_nl.c:605:95: sparse: attribute 'require_context': unknown attribute
+--
++ drivers/block/drbd/drbd_int.h:50:10: sparse: preprocessor token __must_hold redefined
+  include/linux/compiler.h:13:10: this was the original definition
+  drivers/block/drbd/drbd_int.h:977:39: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1283:69: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1284:70: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1285:59: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1286:60: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1287:63: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1288:65: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1289:66: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1469:74: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1470:50: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1471:51: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1472:54: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1473:62: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1558:92: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1631:61: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_main.c:4014:60: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_main.c:4022:63: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_main.c:4038:62: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_main.c:4054:52: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_main.c:4071:56: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_main.c:4270:57: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_main.c:4278:59: sparse: attribute 'require_context': unknown attribute
+--
++ drivers/block/drbd/drbd_int.h:50:10: sparse: preprocessor token __must_hold redefined
+  include/linux/compiler.h:13:10: this was the original definition
+  drivers/block/drbd/drbd_int.h:977:39: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1283:69: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1284:70: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1285:59: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1286:60: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1287:63: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1288:65: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1289:66: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1469:74: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1470:50: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1471:51: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1472:54: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1473:62: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1558:92: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1631:61: sparse: attribute 'require_context': unknown attribute
+--
++ drivers/block/drbd/drbd_int.h:50:10: sparse: preprocessor token __must_hold redefined
+  include/linux/compiler.h:13:10: this was the original definition
+  drivers/block/drbd/drbd_int.h:977:39: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1283:69: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1284:70: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1285:59: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1286:60: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1287:63: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1288:65: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1289:66: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1469:74: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1470:50: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1471:51: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1472:54: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1473:62: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1558:92: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_int.h:1631:61: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_receiver.c:319:54: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_receiver.c:1062:81: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_receiver.c:1252:79: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_receiver.c:2171:56: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_receiver.c:2243:56: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_receiver.c:2292:56: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_receiver.c:2362:68: sparse: attribute 'require_context': unknown attribute
+  drivers/block/drbd/drbd_receiver.c:2546:76: sparse: attribute 'require_context': unknown attribute
+
+vim +50 drivers/block/drbd/drbd_int.h
+
+b411b363 Philipp Reisner 2009-09-25  34  #include <linux/slab.h>
+b411b363 Philipp Reisner 2009-09-25  35  #include <linux/crypto.h>
+132cc538 Randy Dunlap    2009-10-07  36  #include <linux/ratelimit.h>
+b411b363 Philipp Reisner 2009-09-25  37  #include <linux/tcp.h>
+b411b363 Philipp Reisner 2009-09-25  38  #include <linux/mutex.h>
+b411b363 Philipp Reisner 2009-09-25  39  #include <linux/major.h>
+b411b363 Philipp Reisner 2009-09-25  40  #include <linux/blkdev.h>
+b411b363 Philipp Reisner 2009-09-25  41  #include <linux/genhd.h>
+b411b363 Philipp Reisner 2009-09-25  42  #include <net/tcp.h>
+b411b363 Philipp Reisner 2009-09-25  43  #include <linux/lru_cache.h>
+70c71606 Paul Gortmaker  2011-05-22  44  #include <linux/prefetch.h>
+b411b363 Philipp Reisner 2009-09-25  45  
+b411b363 Philipp Reisner 2009-09-25  46  #ifdef __CHECKER__
+b411b363 Philipp Reisner 2009-09-25  47  # define __protected_by(x)       __attribute__((require_context(x,1,999,"rdwr")))
+b411b363 Philipp Reisner 2009-09-25  48  # define __protected_read_by(x)  __attribute__((require_context(x,1,999,"read")))
+b411b363 Philipp Reisner 2009-09-25  49  # define __protected_write_by(x) __attribute__((require_context(x,1,999,"write")))
+b411b363 Philipp Reisner 2009-09-25 @50  # define __must_hold(x)       __attribute__((context(x,1,1), require_context(x,1,999,"call")))
+b411b363 Philipp Reisner 2009-09-25  51  #else
+b411b363 Philipp Reisner 2009-09-25  52  # define __protected_by(x)
+b411b363 Philipp Reisner 2009-09-25  53  # define __protected_read_by(x)
+b411b363 Philipp Reisner 2009-09-25  54  # define __protected_write_by(x)
+b411b363 Philipp Reisner 2009-09-25  55  # define __must_hold(x)
+b411b363 Philipp Reisner 2009-09-25  56  #endif
+b411b363 Philipp Reisner 2009-09-25  57  
+b411b363 Philipp Reisner 2009-09-25  58  #define __no_warn(lock, stmt) do { __acquire(lock); stmt; __release(lock); } while (0)
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
