@@ -1,38 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 11 Oct 2012 06:56:35 +0000
-Subject: [patch] gpio-timberdale: fix a potential wrapping issue
-Message-Id: <20121011065635.GD31607@elgon.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 12 Oct 2012 21:01:08 +0000
+Subject: Re: [patch] gpio-timberdale: fix a potential wrapping issue
+Message-Id: <CACRpkdZ0EfjMi8i9_bFYwscQVPCPGUFiJwv_FCTMfLbWwsUKZw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121011065635.GD31607@elgon.mountain>
+In-Reply-To: <20121011065635.GD31607@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-->last_ier is an unsigned long but the high bits can't be used int the
-original code because the shift wraps.
+On Thu, Oct 11, 2012 at 8:56 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ->last_ier is an unsigned long but the high bits can't be used int the
+> original code because the shift wraps.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index 031c6ad..1a3e2b9 100644
---- a/drivers/gpio/gpio-timberdale.c
-+++ b/drivers/gpio/gpio-timberdale.c
-@@ -116,7 +116,7 @@ static void timbgpio_irq_disable(struct irq_data *d)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&tgpio->lock, flags);
--	tgpio->last_ier &= ~(1 << offset);
-+	tgpio->last_ier &= ~(1UL << offset);
- 	iowrite32(tgpio->last_ier, tgpio->membase + TGPIO_IER);
- 	spin_unlock_irqrestore(&tgpio->lock, flags);
- }
-@@ -128,7 +128,7 @@ static void timbgpio_irq_enable(struct irq_data *d)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&tgpio->lock, flags);
--	tgpio->last_ier |= 1 << offset;
-+	tgpio->last_ier |= 1UL << offset;
- 	iowrite32(tgpio->last_ier, tgpio->membase + TGPIO_IER);
- 	spin_unlock_irqrestore(&tgpio->lock, flags);
- }
+Applied, thanks!
+Should we send this to stable? (I assume so ...)
+
+Yours,
+Linus Walleij
