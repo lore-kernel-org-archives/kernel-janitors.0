@@ -1,7 +1,7 @@
-From: James Bottomley <jbottomley@parallels.com>
-Date: Sun, 14 Oct 2012 10:48:37 +0000
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 14 Oct 2012 10:56:37 +0000
 Subject: Re: [parisc:for-next 1/1] include/linux/irq.h:361:24: fatal error: asm/hw_irq.h: No such file or dir
-Message-Id: <1350211716.2515.10.camel@dabdike.int.hansenpartnership.com>
+Message-Id: <20121014105637.GA11975@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121014101032.GA7572@localhost>
 In-Reply-To: <20121014101032.GA7572@localhost>
@@ -10,37 +10,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-T24gU3VuLCAyMDEyLTEwLTE0IGF0IDE4OjQ1ICswODAwLCBGZW5nZ3VhbmcgV3Ugd3JvdGU6DQo+
-IE9uIFN1biwgT2N0IDE0LCAyMDEyIGF0IDEwOjQxOjEwQU0gKzAwMDAsIEphbWVzIEJvdHRvbWxl
-eSB3cm90ZToNCj4gPiBPbiBTdW4sIDIwMTItMTAtMTQgYXQgMTg6MTAgKzA4MDAsIEZlbmdndWFu
-ZyBXdSB3cm90ZToNCj4gPiA+IEhpIEphbWVzLA0KPiA+ID4gDQo+ID4gPiBGWUksIGtlcm5lbCBi
-dWlsZCBmYWlsZWQgb24NCj4gPiA+IA0KPiA+ID4gdHJlZTogICBnaXQ6Ly9naXQua2VybmVsLm9y
-Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvamVqYi9wYXJpc2MtMi42LmdpdCBmb3ItbmV4dA0K
-PiA+ID4gaGVhZDogICAwN2FiYWQwNTc5ZGU0NGY4MjUwZGZlZTVkZGMyNTMwNjJkMDUwZGMwDQo+
-ID4gPiBjb21taXQ6IDA3YWJhZDA1NzlkZTQ0ZjgyNTBkZmVlNWRkYzI1MzA2MmQwNTBkYzAgWzEv
-MV0gW1BBUklTQ10gYXNtOiByZWRvIGdlbmVyaWMgaW5jbHVkZXMNCj4gPiA+IGNvbmZpZzogcGFy
-aXNjLWRlZmNvbmZpZyAjIG1ha2UgQVJDSD1wYXJpc2MgZGVmY29uZmlnDQo+ID4gPiANCj4gPiA+
-IEFsbCBlcnJvci93YXJuaW5nczoNCj4gPiA+IA0KPiA+ID4gSW4gZmlsZSBpbmNsdWRlZCBmcm9t
-IGluY2x1ZGUvYXNtLWdlbmVyaWMvaGFyZGlycS5oOjEyOjAsDQo+ID4gPiAgICAgICAgICAgICAg
-ICAgIGZyb20gYXJjaC9wYXJpc2MvaW5jbHVkZS9hc20vaGFyZGlycS5oOjksDQo+ID4gPiAgICAg
-ICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9oYXJkaXJxLmg6NywNCj4gPiA+ICAgICAg
-ICAgICAgICAgICAgZnJvbSBhcmNoL3BhcmlzYy9rZXJuZWwvYXNtLW9mZnNldHMuYzozNDoNCj4g
-PiA+IGluY2x1ZGUvbGludXgvaXJxLmg6MzYxOjI0OiBmYXRhbCBlcnJvcjogYXNtL2h3X2lycS5o
-OiBObyBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5DQo+ID4gPiBjb21waWxhdGlvbiB0ZXJtaW5hdGVk
-Lg0KPiA+IA0KPiA+IFRoYW5rcyAuLi4gc29tZWhvdyBhIDEgbGV0dGVyIHR5cG8gZ290IGludHJv
-ZHVjZWQgaW50byBLQnVpbGQgYXMgSSBhZGRlZA0KPiA+IGEgY291cGxlIG9mIG5ldyBvbmVzIGZy
-b20gdGhlIG1lcmdlIHdpbmRvdy4gIFRoZSByZWFzb24gdGhlIGJ1aWxkIGRpZG4ndA0KPiA+IGZh
-aWwgZm9yIG1lIGlzIGJlY2F1c2UgZ2VuZXJpYyBnZW5lcmF0ZWQgZmlsZXMgZG9uJ3QgZ2V0IHJl
-bW92ZWQsIHNvIEkNCj4gPiBhbHJlYWR5IGhhZCBhIGh3X2lycS5oIGZyb20gYSBwcmV2aW91cyBy
-dW4uDQo+ID4gDQo+ID4gSSd2ZSBmaXhlZCB1cCB0aGUgY29tbWl0Lg0KPiANCj4gT0ssIHRoYW5r
-cyBmb3IgdGhlIHF1aWNrIGZpeCENCj4gDQo+ID4gSSdtIGltcHJlc3NlZCB5b3UgaGF2ZSBhIHBh
-cmlzYyBidWlsZCBlbnZpcm9ubWVudCwgYnkgdGhlIHdheS4gVGhhbmtzLA0KPiANCj4gSSdtIGRv
-aW5nIGFsbG5vY29uZmlnIGFuZCBkZWZjb25maWcgYnVpbGRzIGZvciBwYXJpc2Mgbm93LiBBcmUg
-dGhlcmUNCj4gbW9yZSBjb25maWdzIHRoYXQgeW91IHdvdWxkIHJlY29tbWVuZD8gUGVyaGFwczoN
-Cj4gDQo+ICAgICAgICAgNzEyX2RlZmNvbmZpZw0KPiAgICAgICAgIGE1MDBfZGVmY29uZmlnDQo+
-ICAgICAgICAgYjE4MF9kZWZjb25maWcNCj4gICAgICAgICBjMzAwMF9kZWZjb25maWcNCg0KQzMw
-MDAgYW5kIEIxODAgYXJlIHdoYXQgSSB0ZW5kIHRvIGRvIC4uLiBwbHVzIGEgUEE4OTAwIGJ1aWxk
-LCB3aGljaA0KaXNuJ3QgaW4gdGhlIGRlZmNvbmZpZ3MuICA3MTIgc2hvdWxkIHdvcmssIGJ1dCBu
-by1vbmUgc2VlbXMgdG8gaGF2ZSB0aGUNCmhhcmR3YXJlIHRvIHZlcmlmeSB0aGVzZSBkYXlzIChp
-dCdzIGFsc28gYSBmdWxseSBpbmNvaGVyZW50IGFyY2gsIHNvIGl0DQphY3RpdmF0ZXMgImludGVy
-ZXN0aW5nIiBidWlsZCBvcHRpb25zKS4NCg0KSmFtZXMNCg0K
+On Sun, Oct 14, 2012 at 10:48:37AM +0000, James Bottomley wrote:
+> On Sun, 2012-10-14 at 18:45 +0800, Fengguang Wu wrote:
+> > On Sun, Oct 14, 2012 at 10:41:10AM +0000, James Bottomley wrote:
+> > > On Sun, 2012-10-14 at 18:10 +0800, Fengguang Wu wrote:
+> > > > Hi James,
+> > > > 
+> > > > FYI, kernel build failed on
+> > > > 
+> > > > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jejb/parisc-2.6.git for-next
+> > > > head:   07abad0579de44f8250dfee5ddc253062d050dc0
+> > > > commit: 07abad0579de44f8250dfee5ddc253062d050dc0 [1/1] [PARISC] asm: redo generic includes
+> > > > config: parisc-defconfig # make ARCH=parisc defconfig
+> > > > 
+> > > > All error/warnings:
+> > > > 
+> > > > In file included from include/asm-generic/hardirq.h:12:0,
+> > > >                  from arch/parisc/include/asm/hardirq.h:9,
+> > > >                  from include/linux/hardirq.h:7,
+> > > >                  from arch/parisc/kernel/asm-offsets.c:34:
+> > > > include/linux/irq.h:361:24: fatal error: asm/hw_irq.h: No such file or directory
+> > > > compilation terminated.
+> > > 
+> > > Thanks ... somehow a 1 letter typo got introduced into KBuild as I added
+> > > a couple of new ones from the merge window.  The reason the build didn't
+> > > fail for me is because generic generated files don't get removed, so I
+> > > already had a hw_irq.h from a previous run.
+> > > 
+> > > I've fixed up the commit.
+> > 
+> > OK, thanks for the quick fix!
+> > 
+> > > I'm impressed you have a parisc build environment, by the way. Thanks,
+> > 
+> > I'm doing allnoconfig and defconfig builds for parisc now. Are there
+> > more configs that you would recommend? Perhaps:
+> > 
+> >         712_defconfig
+> >         a500_defconfig
+> >         b180_defconfig
+> >         c3000_defconfig
+> 
+> C3000 and B180 are what I tend to do ... plus a PA8900 build, which
+> isn't in the defconfigs.  712 should work, but no-one seems to have the
+> hardware to verify these days (it's also a fully incoherent arch, so it
+> activates "interesting" build options).
+
+OK, I just adds c3000_defconfig/b180_defconfig to the build matrix. If
+you push the PA8900 config to upstream, I'll pick it up too :-)
+
+Thanks,
+Fengguang
