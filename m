@@ -1,7 +1,7 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 14 Oct 2012 07:44:48 +0000
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Mon, 15 Oct 2012 00:59:45 +0000
 Subject: Re: sound/pci/hda/hda_codec.c:1435:46: error: 'AC_VERB_GET_CON' undeclared
-Message-Id: <s5h391hijkf.wl%tiwai@suse.de>
+Message-Id: <20121015005944.GC24935@opensource.wolfsonmicro.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121012170109.GD20312@localhost> <s5h7gquixlv.wl%tiwai@suse.de>
  <20121014023953.GA8713@localhost>
@@ -10,39 +10,12 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-At Sun, 14 Oct 2012 10:39:53 +0800,
-Fengguang Wu wrote:
-> 
-> On Sat, Oct 13, 2012 at 10:29:16AM +0200, Takashi Iwai wrote:
-> > At Sat, 13 Oct 2012 01:01:09 +0800,
-> > Fengguang Wu wrote:
-> > > 
-> > > Hi Takashi,
-> > > 
-> > > FYI, kernel build failed on
-> > > 
-> > > commit: 645cf3b5656e47fa9a46e2fbc8d212ab572ab05b  Merge branch 'topic/3.8'
-> > > config: x86_64-allyesdebian (attached as .config)
-> > > 
-> > > 
-> > > All error/warnings:
-> > > 
-> > > sound/pci/hda/hda_codec.c: In function 'update_pcm_stream_id':
-> > > sound/pci/hda/hda_codec.c:1435:46: error: 'AC_VERB_GET_CON' undeclared (first use in this function)
-> > > sound/pci/hda/hda_codec.c:1435:46: note: each undeclared identifier is reported only once for each function it appears in
-> > 
-> > Thanks, this must be already fixed.  It was a temporary merge error.
-> > (One shouldn't work during updating the system....)
-> 
+On Sun, Oct 14, 2012 at 10:39:53AM +0800, Fengguang Wu wrote:
+
 > OK. Takashi, Mark, the build system can now avoid testing selected
 > trees during the merge window. Shall I add your trees to the list?
 
-I think it's fine as is now, as the merge window will be closed sooner
-or later :)  It was simply my fault and you noticed too quickly.
-
-
-thanks,
-
-Takashi
+For me I'd really want to be able to keep the for-next branch covered,
+it's better to have the false positives than to loose that coverage.
