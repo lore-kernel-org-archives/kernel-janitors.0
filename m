@@ -1,55 +1,44 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Tue, 23 Oct 2012 19:57:15 +0000
-Subject: [PATCH 12/23] tuners/xc4000: Replace memcpy with struct assignment
-Message-Id: <1351022246-8201-12-git-send-email-elezegarcia@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 15 Oct 2012 13:41:13 +0000
+Subject: [arm-perf:hugetlb/devel 8/10] arch/arm/include/asm/pgtable-2level.h:333:10: error: 'HPAGE_MASK' unde
+Message-Id: <20121015134113.GA25295@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
-In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-This kind of memcpy() is error-prone. Its replacement with a struct
-assignment is prefered because it's type-safe and much easier to read.
+Hi Steve,
 
-Found by coccinelle. Hand patched and reviewed.
-Tested by compilation only.
+FYI, kernel build failed on
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git hugetlb/devel
+head:   d5ada8ef8b4415b39c6e89711cd8d41ea275ce82
+commit: 7356b0ca2bae49b15a314cc746b39869760960ab [8/10] ARM: mm: Transparent huge page support for non-LPAE systems.
+config: arm-at91_dt_defconfig # make ARCH=arm at91_dt_defconfig
 
-// <smpl>
-@@
-identifier struct_name;
-struct struct_name to;
-struct struct_name from;
-expression E;
-@@
--memcpy(&(to), &(from), E);
-+to = from;
-// </smpl>
+All error/warnings:
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
+In file included from arch/arm/include/asm/pgtable.h:33:0,
+                 from include/linux/mm.h:44,
+                 from arch/arm/kernel/asm-offsets.c:14:
+arch/arm/include/asm/pgtable-2level.h: In function 'pmd_page':
+arch/arm/include/asm/pgtable-2level.h:333:10: error: 'HPAGE_MASK' undeclared (first use in this function)
+arch/arm/include/asm/pgtable-2level.h:333:10: note: each undeclared identifier is reported only once for each function it appears in
+
+vim +333 arch/arm/include/asm/pgtable-2level.h
+
+7356b0ca Steve Capper 2012-07-19  327  {
+7356b0ca Steve Capper 2012-07-19  328  	/*
+7356b0ca Steve Capper 2012-07-19  329  	 * for a section, we need to mask off more of the pmd
+7356b0ca Steve Capper 2012-07-19  330  	 * before looking up the page as it is a section descriptor.
+7356b0ca Steve Capper 2012-07-19  331  	 */
+7356b0ca Steve Capper 2012-07-19  332  	if (_PMD_HUGE(pmd))
+7356b0ca Steve Capper 2012-07-19 @333  		return phys_to_page(pmd_val(pmd) & HPAGE_MASK);
+7356b0ca Steve Capper 2012-07-19  334  
+7356b0ca Steve Capper 2012-07-19  335  	return phys_to_page(pmd_val(pmd) & PHYS_MASK);
+7356b0ca Steve Capper 2012-07-19  336  }
+
 ---
- drivers/media/tuners/xc4000.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/media/tuners/xc4000.c b/drivers/media/tuners/xc4000.c
-index 4937712..d178dee 100644
---- a/drivers/media/tuners/xc4000.c
-+++ b/drivers/media/tuners/xc4000.c
-@@ -1066,7 +1066,7 @@ check_device:
- 		goto fail;
- 	}
- 
--	memcpy(&priv->cur_fw, &new_fw, sizeof(priv->cur_fw));
-+	priv->cur_fw = new_fw;
- 
- 	/*
- 	 * By setting BASE in cur_fw.type only after successfully loading all
--- 
-1.7.4.4
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
