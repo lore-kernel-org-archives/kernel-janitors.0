@@ -1,8 +1,10 @@
-From: Yuanhan Liu <yuanhan.liu@intel.com>
-Date: Mon, 15 Oct 2012 01:53:00 +0000
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 15 Oct 2012 02:20:26 +0000
 Subject: [mips:upstream 10/22] arch/mips/kernel/proc.c:75:3: warning: too many arguments for format
-Message-Id: <20121015015300.GE31881@yliu-dev.sh.intel.com>
+Message-Id: <20121015022026.GD7203@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121015015300.GE31881@yliu-dev.sh.intel.com>
+In-Reply-To: <20121015015300.GE31881@yliu-dev.sh.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -22,21 +24,8 @@ All warnings:
 arch/mips/kernel/proc.c: In function 'show_cpuinfo':
 arch/mips/kernel/proc.c:75:3: warning: too many arguments for format [-Wformat-extra-args]
 
-----
-I guess it's worthy to report it anyway, though this warning has
-been fixed by Ralf with a later commit: 981ef0de
-----
-
 vim +75 arch/mips/kernel/proc.c
 
-654f57bf David Daney    2008-09-23  59  	if (cpu_has_watch) {
-654f57bf David Daney    2008-09-23  60  		seq_printf(m, "count: %d, address/irw mask: [",
-03751e79 Steven J. Hill 2012-05-10  61  		      cpu_data[n].watch_reg_count);
-654f57bf David Daney    2008-09-23  62  		for (i = 0; i < cpu_data[n].watch_reg_count; i++)
-654f57bf David Daney    2008-09-23  63  			seq_printf(m, "%s0x%04x", i ? ", " : "" ,
-03751e79 Steven J. Hill 2012-05-10  64  				cpu_data[n].watch_reg_masks[i]);
-654f57bf David Daney    2008-09-23  65  		seq_printf(m, "]\n");
-654f57bf David Daney    2008-09-23  66  	}
 e027802e Ralf Baechle   2005-08-16  67  	seq_printf(m, "ASEs implemented\t:%s%s%s%s%s%s\n",
 4194318c Ralf Baechle   2005-05-05  68  		      cpu_has_mips16 ? " mips16" : "",
 4194318c Ralf Baechle   2005-05-05  69  		      cpu_has_mdmx ? " mdmx" : "",
@@ -46,14 +35,9 @@ e027802e Ralf Baechle   2005-08-16  72  		      cpu_has_dsp ? " dsp" : "",
 ee80f7c7 Steven J. Hill 2012-08-03  73  		      cpu_has_dsp2 ? " dsp2" : "",
 e027802e Ralf Baechle   2005-08-16  74  		      cpu_has_mipsmt ? " mt" : ""
 e027802e Ralf Baechle   2005-08-16 @75  		);
-f6771dbb Ralf Baechle   2007-11-08  76  	seq_printf(m, "shadow register sets\t: %d\n",
-03751e79 Steven J. Hill 2012-05-10  77  		      cpu_data[n].srsets);
-e77c32fe David Daney    2010-12-21  78  	seq_printf(m, "kscratch registers\t: %d\n",
-03751e79 Steven J. Hill 2012-05-10  79  		      hweight8(cpu_data[n].kscratch_mask));
-0ab7aefc Ralf Baechle   2007-03-02  80  	seq_printf(m, "core\t\t\t: %d\n", cpu_data[n].core);
-^1da177e Linus Torvalds 2005-04-16  81  
-^1da177e Linus Torvalds 2005-04-16  82  	sprintf(fmt, "VCE%%c exceptions\t\t: %s\n",
-03751e79 Steven J. Hill 2012-05-10  83  		      cpu_has_vce ? "%u" : "not available");
+
+The code at line 75 was first introduced by commit:
+e027802 Display presence of SmartMIPS, DSP and MT ASEs in /proc/cpuinfo.
 
 
 ---
