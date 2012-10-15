@@ -1,69 +1,62 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 20 Oct 2012 11:02:36 +0000
-Subject: [pinctrl:nomadik-multiplatform 16/16] include/linux/mfd/dbx500-prcmu.h:459:19: error: redefinition o
-Message-Id: <20121020110236.GA5714@localhost>
+From: Yuanhan Liu <yuanhan.liu@intel.com>
+Date: Mon, 15 Oct 2012 07:21:05 +0000
+Subject: [asoc:topic/wm2200] sound/soc/codecs/wm2200.c:1033:4: warning: format '%d' expects argument of type
+Message-Id: <20121015072105.GC2136@yliu-dev.sh.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Yuanhan Liu <yuanhan.liu@intel.com>, kernel-janitors@vger.kernel.org, wfg@linux.intel.com, alsa-devel@alsa-project.org
 
-Hi Linus,
+Hi Mark,
 
-FYI, kernel build failed on
+FYI, there are new compile warnings show up in
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git nomadik-multiplatform
-head:   2e88a0fdda1be5962b7e548ab487686daa5d9754
-commit: 2e88a0fdda1be5962b7e548ab487686daa5d9754 [16/16] ARM: ux500: convert to multiplatorm
-config: arm-at91_dt_defconfig # make ARCH=arm 
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git topic/wm2200
+head:   9874482985fb26f90c3b2d8f1a82bd796d141304
+commit: 6e87badd3f38e1a095d6e1b13828246c3e8486b5 ASoC: wm2200: Provide initial coefficient loading
+config: x86_64-allmodconfig # make ARCH=x86_64 allmodconfig
 
-All error/warnings:
+All warnings:
 
-In file included from drivers/pinctrl/pinctrl-nomadik.c:33:0:
-include/linux/mfd/dbx500-prcmu.h:459:19: error: redefinition of 'prcmu_abb_read'
-include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of 'prcmu_abb_read' was here
-include/linux/mfd/dbx500-prcmu.h:464:19: error: redefinition of 'prcmu_abb_write'
-include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of 'prcmu_abb_write' was here
-include/linux/mfd/dbx500-prcmu.h:475:19: error: redefinition of 'prcmu_config_clkout'
-include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of 'prcmu_config_clkout' was here
-include/linux/mfd/dbx500-prcmu.h:537:19: error: redefinition of 'prcmu_ac_wake_req'
-include/linux/mfd/db8500-prcmu.h:683:19: note: previous definition of 'prcmu_ac_wake_req' was here
-include/linux/mfd/dbx500-prcmu.h:542:20: error: redefinition of 'prcmu_ac_sleep_req'
-include/linux/mfd/db8500-prcmu.h:688:20: note: previous definition of 'prcmu_ac_sleep_req' was here
-drivers/pinctrl/pinctrl-nomadik.c:36:23: fatal error: mach/irqs.h: No such file or directory
-compilation terminated.
+sound/soc/codecs/wm2200.c: In function 'wm2200_dsp_load':
+sound/soc/codecs/wm2200.c:1033:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat]
+sound/soc/codecs/wm2200.c:1145:5: warning: format '%d' expects argument of type 'int', but argument 5 has type 'long unsigned int' [-Wformat]
+sound/soc/codecs/wm2200.c: In function 'wm2200_setup_algs':
+sound/soc/codecs/wm2200.c:1187:2: warning: format '%d' expects argument of type 'int', but argument 7 has type 'size_t' [-Wformat]
+sound/soc/codecs/wm2200.c:1207:5: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'long unsigned int' [-Wformat]
+sound/soc/codecs/wm2200.c: In function 'wm2200_load_coeff':
+sound/soc/codecs/wm2200.c:1270:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat]
+sound/soc/codecs/wm2200.c:1334:5: warning: format '%d' expects argument of type 'int', but argument 5 has type 'long unsigned int' [-Wformat]
 
-vim +459 include/linux/mfd/dbx500-prcmu.h
+vim +1033 sound/soc/codecs/wm2200.c
 
-fea799e3 Mattias Nilsson 2011-08-12  443  
-fea799e3 Mattias Nilsson 2011-08-12  444  static inline int prcmu_set_power_state(u8 state, bool keep_ulp_clk,
-fea799e3 Mattias Nilsson 2011-08-12  445  	bool keep_ap_pll)
-fea799e3 Mattias Nilsson 2011-08-12  446  {
-fea799e3 Mattias Nilsson 2011-08-12  447  	return 0;
-fea799e3 Mattias Nilsson 2011-08-12  448  }
-fea799e3 Mattias Nilsson 2011-08-12  449  
-fea799e3 Mattias Nilsson 2011-08-12  450  static inline int prcmu_set_epod(u16 epod_id, u8 epod_state)
-fea799e3 Mattias Nilsson 2011-08-12  451  {
-fea799e3 Mattias Nilsson 2011-08-12  452  	return 0;
-fea799e3 Mattias Nilsson 2011-08-12  453  }
-fea799e3 Mattias Nilsson 2011-08-12  454  
-fea799e3 Mattias Nilsson 2011-08-12  455  static inline void prcmu_enable_wakeups(u32 wakeups) {}
-fea799e3 Mattias Nilsson 2011-08-12  456  
-fea799e3 Mattias Nilsson 2011-08-12  457  static inline void prcmu_disable_wakeups(void) {}
-fea799e3 Mattias Nilsson 2011-08-12  458  
-fea799e3 Mattias Nilsson 2011-08-12 @459  static inline int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size)
-fea799e3 Mattias Nilsson 2011-08-12  460  {
-fea799e3 Mattias Nilsson 2011-08-12  461  	return -ENOSYS;
-fea799e3 Mattias Nilsson 2011-08-12  462  }
-fea799e3 Mattias Nilsson 2011-08-12  463  
-fea799e3 Mattias Nilsson 2011-08-12  464  static inline int prcmu_abb_write(u8 slave, u8 reg, u8 *value, u8 size)
-fea799e3 Mattias Nilsson 2011-08-12  465  {
-fea799e3 Mattias Nilsson 2011-08-12  466  	return -ENOSYS;
-fea799e3 Mattias Nilsson 2011-08-12  467  }
-
-The code at line 459 was first introduced by commit:
-fea799e mfd: Create a common interface for dbx500 PRCMU drivers
-
+e10f8711 Mark Brown 2012-10-04  1017  		break;
+e10f8711 Mark Brown 2012-10-04  1018  	default:
+e10f8711 Mark Brown 2012-10-04  1019  		dev_err(codec->dev, "BASE %x\n", base);
+e10f8711 Mark Brown 2012-10-04  1020  		BUG_ON(1);
+e10f8711 Mark Brown 2012-10-04  1021  		return -EINVAL;
+e10f8711 Mark Brown 2012-10-04  1022  	}
+e10f8711 Mark Brown 2012-10-04  1023  
+e10f8711 Mark Brown 2012-10-04  1024  	ret = request_firmware(&firmware, file, codec->dev);
+e10f8711 Mark Brown 2012-10-04  1025  	if (ret != 0) {
+e10f8711 Mark Brown 2012-10-04  1026  		dev_err(codec->dev, "Failed to request '%s'\n", file);
+e10f8711 Mark Brown 2012-10-04  1027  		return ret;
+e10f8711 Mark Brown 2012-10-04  1028  	}
+e10f8711 Mark Brown 2012-10-04  1029  
+e10f8711 Mark Brown 2012-10-04  1030  	pos = sizeof(*header) + sizeof(*adsp1_sizes) + sizeof(*footer);
+e10f8711 Mark Brown 2012-10-04  1031  	if (pos >= firmware->size) {
+e10f8711 Mark Brown 2012-10-04  1032  		dev_err(codec->dev, "%s: file too short, %d bytes\n",
+e10f8711 Mark Brown 2012-10-04 @1033  			file, firmware->size);
+e10f8711 Mark Brown 2012-10-04  1034  		return -EINVAL;
+e10f8711 Mark Brown 2012-10-04  1035  	}
+e10f8711 Mark Brown 2012-10-04  1036  
+e10f8711 Mark Brown 2012-10-04  1037  	header = (void*)&firmware->data[0];
+e10f8711 Mark Brown 2012-10-04  1038  
+e10f8711 Mark Brown 2012-10-04  1039  	if (memcmp(&header->magic[0], "WMFW", 4) != 0) {
+e10f8711 Mark Brown 2012-10-04  1040  		dev_err(codec->dev, "%s: invalid magic\n", file);
+e10f8711 Mark Brown 2012-10-04  1041  		return -EINVAL;
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
