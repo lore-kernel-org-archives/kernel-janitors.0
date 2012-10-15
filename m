@@ -1,75 +1,59 @@
-From: Dave Kleikamp <dave.kleikamp@oracle.com>
-Date: Thu, 18 Oct 2012 19:28:31 +0000
-Subject: Re: [shaggy:loop_v3 20/22] fs/nfs/direct.c:142:5: error: too many arguments to function 'nfs_file_di
-Message-Id: <5080585F.8040204@oracle.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 15 Oct 2012 13:11:49 +0000
+Subject: [arm-perf:cacheflush 3/4] arch/arm/kernel/entry-common.S:105: Error: non-constant expression in ".if
+Message-Id: <20121015131149.GA23400@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121018025953.GH21995@yliu-dev.sh.intel.com>
-In-Reply-To: <20121018025953.GH21995@yliu-dev.sh.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 10/17/2012 09:59 PM, Yuanhan Liu wrote:
-> Hi Dave,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://github.com/kleikamp/linux-shaggy loop_v3
-> head:   b8ee8b4bb91520b2c4a1f567977a737e9e71c449
-> commit: 92d2ac3e5a2136d9dfdad4cd10c948c49db6502b [20/22] nfs: add support for read_iter, write_iter
-> config: i386-randconfig-m015 (attached as .config)
-> 
-> All error/warnings:
-> 
-> fs/nfs/direct.c: In function 'nfs_direct_IO':
-> fs/nfs/direct.c:142:5: warning: passing argument 2 of 'nfs_file_direct_read' from incompatible pointer type [enabled by default]
-> In file included from fs/nfs/direct.c:51:0:
-> include/linux/nfs_fs.h:448:16: note: expected 'struct iov_iter *' but argument is of type 'const struct iovec *'
-> fs/nfs/direct.c:142:5: error: too many arguments to function 'nfs_file_direct_read'
-> In file included from fs/nfs/direct.c:51:0:
-> include/linux/nfs_fs.h:448:16: note: declared here
-> fs/nfs/direct.c:144:5: warning: passing argument 2 of 'nfs_file_direct_write' from incompatible pointer type [enabled by default]
-> In file included from fs/nfs/direct.c:51:0:
-> include/linux/nfs_fs.h:450:16: note: expected 'struct iov_iter *' but argument is of type 'const struct iovec *'
-> fs/nfs/direct.c:144:5: error: too many arguments to function 'nfs_file_direct_write'
+Hi Will,
 
-My bad on this one. I didn't build with CONFIG_NFS_SWAP set.
+FYI, kernel build failed on
 
-Thanks,
-Shaggy
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git cacheflush
+head:   e0c396a5e4a3abbe8ac6bc19670f39f8e7b7b399
+commit: 9e0ec2d6f8bc8b274b5471d194a03b7dd10e8832 [3/4] ARM: cacheflush: add new iovec-based cache flushing system call
+config: arm-at91_dt_defconfig # make ARCH=arm at91_dt_defconfig
 
-> In file included from fs/nfs/direct.c:51:0:
-> include/linux/nfs_fs.h:450:16: note: declared here
-> fs/nfs/direct.c: In function 'nfs_direct_read_schedule':
-> fs/nfs/direct.c:454:4: error: invalid use of undefined type 'struct bio_vec'
-> fs/nfs/direct.c:454:31: error: dereferencing pointer to incomplete type
-> fs/nfs/direct.c:456:8: error: invalid use of undefined type 'struct bio_vec'
-> fs/nfs/direct.c:456:12: error: dereferencing pointer to incomplete type
-> fs/nfs/direct.c:457:8: error: invalid use of undefined type 'struct bio_vec'
-> fs/nfs/direct.c:457:12: error: dereferencing pointer to incomplete type
-> fs/nfs/direct.c: In function 'nfs_direct_write_schedule':
-> fs/nfs/direct.c:886:4: error: invalid use of undefined type 'struct bio_vec'
-> fs/nfs/direct.c:886:31: error: dereferencing pointer to incomplete type
-> fs/nfs/direct.c:888:4: error: invalid use of undefined type 'struct bio_vec'
-> fs/nfs/direct.c:888:45: error: dereferencing pointer to incomplete type
-> fs/nfs/direct.c:889:8: error: invalid use of undefined type 'struct bio_vec'
-> fs/nfs/direct.c:889:12: error: dereferencing pointer to incomplete type
-> 
-> vim +142 fs/nfs/direct.c
-> 
-> 0f072177 Dave Kleikamp 2012-10-15  136  
-> a564b8f0 Mel Gorman    2012-07-31  137  	VM_BUG_ON(iocb->ki_left != PAGE_SIZE);
-> a564b8f0 Mel Gorman    2012-07-31  138  	VM_BUG_ON(iocb->ki_nbytes != PAGE_SIZE);
-> a564b8f0 Mel Gorman    2012-07-31  139  
-> a564b8f0 Mel Gorman    2012-07-31  140  	if (rw = READ || rw = KERNEL_READ)
-> 0f072177 Dave Kleikamp 2012-10-15  141  		return nfs_file_direct_read(iocb, iov, iter->nr_segs, pos,
-> a564b8f0 Mel Gorman    2012-07-31 @142  				rw = READ ? true : false);
-> 0f072177 Dave Kleikamp 2012-10-15  143  	return nfs_file_direct_write(iocb, iov, iter->nr_segs, pos,
-> a564b8f0 Mel Gorman    2012-07-31  144  				rw = WRITE ? true : false);
-> a564b8f0 Mel Gorman    2012-07-31  145  #endif /* CONFIG_NFS_SWAP */
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Center
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
-> 
+All error/warnings:
+
+arch/arm/kernel/entry-common.S: Assembler messages:
+arch/arm/kernel/entry-common.S:105: Error: non-constant expression in ".if" statement
+
+vim +105 arch/arm/kernel/entry-common.S
+
+9fff2fa0 Al Viro         2012-10-10   89  	cmp	r5, #0
+9fff2fa0 Al Viro         2012-10-10   90  	movne	r0, r4
+9fff2fa0 Al Viro         2012-10-10   91  	movne	lr, pc
+9fff2fa0 Al Viro         2012-10-10   92  	movne	pc, r5
+^1da177e Linus Torvalds  2005-04-16   93  	get_thread_info tsk
+^1da177e Linus Torvalds  2005-04-16   94  	b	ret_slow_syscall
+93ed3970 Catalin Marinas 2008-08-28   95  ENDPROC(ret_from_fork)
+^1da177e Linus Torvalds  2005-04-16   96  
+fa1b4f91 Al Viro         2006-01-19   97  	.equ NR_syscalls,0
+fa1b4f91 Al Viro         2006-01-19   98  #define CALL(x) .equ NR_syscalls,NR_syscalls+1
+^1da177e Linus Torvalds  2005-04-16   99  #include "calls.S"
+1f66e06f Wade Farnsworth 2012-09-07  100  
+1f66e06f Wade Farnsworth 2012-09-07  101  /*
+1f66e06f Wade Farnsworth 2012-09-07  102   * Ensure that the system call table is equal to __NR_syscalls,
+1f66e06f Wade Farnsworth 2012-09-07  103   * which is the value the rest of the system sees
+1f66e06f Wade Farnsworth 2012-09-07  104   */
+1f66e06f Wade Farnsworth 2012-09-07 @105  .ifne NR_syscalls - __NR_syscalls
+1f66e06f Wade Farnsworth 2012-09-07  106  .error "__NR_syscalls is not equal to the size of the syscall table"
+1f66e06f Wade Farnsworth 2012-09-07  107  .endif
+1f66e06f Wade Farnsworth 2012-09-07  108  
+fa1b4f91 Al Viro         2006-01-19  109  #undef CALL
+fa1b4f91 Al Viro         2006-01-19  110  #define CALL(x) .long x
+^1da177e Linus Torvalds  2005-04-16  111  
+606576ce Steven Rostedt  2008-10-06  112  #ifdef CONFIG_FUNCTION_TRACER
+686ff228 Rabin Vincent   2010-08-03  113  /*
+
+The code at line 105 was first introduced by commit:
+1f66e06 ARM: 7524/1: support syscall tracing
+
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
