@@ -1,120 +1,35 @@
-From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Date: Thu, 04 Oct 2012 13:13:26 +0000
-Subject: RE: [drm:drm-next 186/301] ERROR: "radeon_legacy_get_backlight_level" [drivers/gpu/drm/radeon/radeon
-Message-Id: <A3397C8B8B789E45844E7EC5DEAD89D02C4370AD@sausexdag03.amd.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="_002_A3397C8B8B789E45844E7EC5DEAD89D02C4370ADsausexdag03amdc_"
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 15 Oct 2012 11:40:32 +0000
+Subject: Re: [drm:drm-next 186/301] ERROR: "radeon_legacy_get_backlight_level" [drivers/gpu/drm/radeon/radeon
+Message-Id: <20121015114032.GA15555@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121004094041.GB3444@localhost>
 In-Reply-To: <20121004094041.GB3444@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---_002_A3397C8B8B789E45844E7EC5DEAD89D02C4370ADsausexdag03amdc_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ping
 
-> -----Original Message-----
-> From: Fengguang Wu [mailto:fengguang.wu@intel.com]
-> Sent: Thursday, October 04, 2012 5:41 AM
-> To: Deucher, Alexander
-> Cc: kernel-janitors@vger.kernel.org
-> Subject: [drm:drm-next 186/301] ERROR:
-> "radeon_legacy_get_backlight_level" [drivers/gpu/drm/radeon/radeon.ko]
-> undefined!
->=20
+On Thu, Oct 04, 2012 at 05:40:41PM +0800, Fengguang Wu wrote:
 > Hi Alex,
->=20
+> 
 > FYI, kernel build failed on
->=20
+> 
 > tree:   git://people.freedesktop.org/~airlied/linux.git drm-next
 > head:   268d28371cd326be4dfcd7eba5917bf4b9d30c8f
-> commit: 6d92f81dcf2d40b8ebb947bba5435642b830f649 [186/301]
-> drm/radeon: add get_backlight_level callback
+> commit: 6d92f81dcf2d40b8ebb947bba5435642b830f649 [186/301] drm/radeon: add get_backlight_level callback
 > config: ia64-defconfig
->=20
+> 
 > All error/warnings:
->=20
-> ERROR: "radeon_legacy_get_backlight_level"
-> [drivers/gpu/drm/radeon/radeon.ko] undefined!
-> ERROR: "atombios_set_backlight_level"
-> [drivers/gpu/drm/radeon/radeon.ko] undefined!
-> ERROR: "atombios_get_backlight_level"
-> [drivers/gpu/drm/radeon/radeon.ko] undefined!
-> ERROR: "radeon_legacy_set_backlight_level"
-> [drivers/gpu/drm/radeon/radeon.ko] undefined!
-> ERROR: "backlight_force_update" [drivers/gpu/drm/radeon/radeon.ko]
-> undefined!
-
-Should be fixed with the attached patch.
-
-Alex
-
-
---_002_A3397C8B8B789E45844E7EC5DEAD89D02C4370ADsausexdag03amdc_
-Content-Type: application/octet-stream;
-	name="0001-drm-radeon-fix-compilation-with-backlight-disabled.patch"
-Content-Description: 0001-drm-radeon-fix-compilation-with-backlight-disabled.patch
-Content-Disposition: attachment;
-	filename="0001-drm-radeon-fix-compilation-with-backlight-disabled.patch";
-	size=3167; creation-date="Thu, 04 Oct 2012 13:12:30 GMT";
-	modification-date="Thu, 04 Oct 2012 13:11:44 GMT"
-Content-Transfer-Encoding: base64
-
-RnJvbSBiZmU3Y2RkYzg1ZDhiZjNhZjM4Y2ZhZWJiYzQyZjA5ZDFhY2VlMjY4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5kZXVjaGVyQGFtZC5j
-b20+CkRhdGU6IFRodSwgNCBPY3QgMjAxMiAwOToxMDoxMCAtMDQwMApTdWJqZWN0OiBbUEFUQ0hd
-IGRybS9yYWRlb246IGZpeCBjb21waWxhdGlvbiB3aXRoIGJhY2tsaWdodCBkaXNhYmxlZAoKU2ln
-bmVkLW9mZi1ieTogQWxleCBEZXVjaGVyIDxhbGV4YW5kZXIuZGV1Y2hlckBhbWQuY29tPgotLS0K
-IGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2FjcGkuYyAgICAgICAgICAgIHwgICAgMiAr
-CiBkcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9sZWdhY3lfZW5jb2RlcnMuYyB8ICAgNDIg
-KysrKysrKysrKystLS0tLS0tLS0tLQogMiBmaWxlcyBjaGFuZ2VkLCAyMyBpbnNlcnRpb25zKCsp
-LCAyMSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3Jh
-ZGVvbl9hY3BpLmMgYi9kcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9hY3BpLmMKaW5kZXgg
-ZmFmMWVkNS4uNmE0ZDc1YSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRl
-b25fYWNwaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2FjcGkuYwpAQCAt
-MzcyLDYgKzM3Miw3IEBAIGludCByYWRlb25fYXRpZl9oYW5kbGVyKHN0cnVjdCByYWRlb25fZGV2
-aWNlICpyZGV2LAogCiAJCQlyYWRlb25fc2V0X2JhY2tsaWdodF9sZXZlbChyZGV2LCBlbmMsIHJl
-cS5iYWNrbGlnaHRfbGV2ZWwpOwogCisjaWYgZGVmaW5lZChDT05GSUdfQkFDS0xJR0hUX0NMQVNT
-X0RFVklDRSkgfHwgZGVmaW5lZChDT05GSUdfQkFDS0xJR0hUX0NMQVNTX0RFVklDRV9NT0RVTEUp
-CiAJCQlpZiAocmRldi0+aXNfYXRvbV9iaW9zKSB7CiAJCQkJc3RydWN0IHJhZGVvbl9lbmNvZGVy
-X2F0b21fZGlnICpkaWcgPSBlbmMtPmVuY19wcml2OwogCQkJCWJhY2tsaWdodF9mb3JjZV91cGRh
-dGUoZGlnLT5ibF9kZXYsCkBAIC0zODEsNiArMzgyLDcgQEAgaW50IHJhZGVvbl9hdGlmX2hhbmRs
-ZXIoc3RydWN0IHJhZGVvbl9kZXZpY2UgKnJkZXYsCiAJCQkJYmFja2xpZ2h0X2ZvcmNlX3VwZGF0
-ZShkaWctPmJsX2RldiwKIAkJCQkJCSAgICAgICBCQUNLTElHSFRfVVBEQVRFX0hPVEtFWSk7CiAJ
-CQl9CisjZW5kaWYKIAkJfQogCX0KIAkvKiBUT0RPOiBjaGVjayBvdGhlciBldmVudHMgKi8KZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2xlZ2FjeV9lbmNvZGVycy5j
-IGIvZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25fbGVnYWN5X2VuY29kZXJzLmMKaW5kZXgg
-OGFkOWM1Zi4uYzU2OTBkZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRl
-b25fbGVnYWN5X2VuY29kZXJzLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3JhZGVvbi9yYWRlb25f
-bGVnYWN5X2VuY29kZXJzLmMKQEAgLTI2OSwyNyArMjY5LDYgQEAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBkcm1fZW5jb2Rlcl9oZWxwZXJfZnVuY3MgcmFkZW9uX2xlZ2FjeV9sdmRzX2hlbHBlcl9mdW5j
-cyA9IHsKIAkuZGlzYWJsZSA9IHJhZGVvbl9sZWdhY3lfZW5jb2Rlcl9kaXNhYmxlLAogfTsKIAot
-I2lmIGRlZmluZWQoQ09ORklHX0JBQ0tMSUdIVF9DTEFTU19ERVZJQ0UpIHx8IGRlZmluZWQoQ09O
-RklHX0JBQ0tMSUdIVF9DTEFTU19ERVZJQ0VfTU9EVUxFKQotCi1zdGF0aWMgdWludDhfdCByYWRl
-b25fbGVnYWN5X2x2ZHNfbGV2ZWwoc3RydWN0IGJhY2tsaWdodF9kZXZpY2UgKmJkKQotewotCXN0
-cnVjdCByYWRlb25fYmFja2xpZ2h0X3ByaXZkYXRhICpwZGF0YSA9IGJsX2dldF9kYXRhKGJkKTsK
-LQl1aW50OF90IGxldmVsOwotCi0JLyogQ29udmVydCBicmlnaHRuZXNzIHRvIGhhcmR3YXJlIGxl
-dmVsICovCi0JaWYgKGJkLT5wcm9wcy5icmlnaHRuZXNzIDwgMCkKLQkJbGV2ZWwgPSAwOwotCWVs
-c2UgaWYgKGJkLT5wcm9wcy5icmlnaHRuZXNzID4gUkFERU9OX01BWF9CTF9MRVZFTCkKLQkJbGV2
-ZWwgPSBSQURFT05fTUFYX0JMX0xFVkVMOwotCWVsc2UKLQkJbGV2ZWwgPSBiZC0+cHJvcHMuYnJp
-Z2h0bmVzczsKLQotCWlmIChwZGF0YS0+bmVnYXRpdmUpCi0JCWxldmVsID0gUkFERU9OX01BWF9C
-TF9MRVZFTCAtIGxldmVsOwotCi0JcmV0dXJuIGxldmVsOwotfQotCiB1OAogcmFkZW9uX2xlZ2Fj
-eV9nZXRfYmFja2xpZ2h0X2xldmVsKHN0cnVjdCByYWRlb25fZW5jb2RlciAqcmFkZW9uX2VuY29k
-ZXIpCiB7CkBAIC0zMzEsNiArMzEwLDI3IEBAIHJhZGVvbl9sZWdhY3lfc2V0X2JhY2tsaWdodF9s
-ZXZlbChzdHJ1Y3QgcmFkZW9uX2VuY29kZXIgKnJhZGVvbl9lbmNvZGVyLCB1OCBsZXZlCiAJcmFk
-ZW9uX2xlZ2FjeV9sdmRzX3VwZGF0ZSgmcmFkZW9uX2VuY29kZXItPmJhc2UsIGRwbXNfbW9kZSk7
-CiB9CiAKKyNpZiBkZWZpbmVkKENPTkZJR19CQUNLTElHSFRfQ0xBU1NfREVWSUNFKSB8fCBkZWZp
-bmVkKENPTkZJR19CQUNLTElHSFRfQ0xBU1NfREVWSUNFX01PRFVMRSkKKworc3RhdGljIHVpbnQ4
-X3QgcmFkZW9uX2xlZ2FjeV9sdmRzX2xldmVsKHN0cnVjdCBiYWNrbGlnaHRfZGV2aWNlICpiZCkK
-K3sKKwlzdHJ1Y3QgcmFkZW9uX2JhY2tsaWdodF9wcml2ZGF0YSAqcGRhdGEgPSBibF9nZXRfZGF0
-YShiZCk7CisJdWludDhfdCBsZXZlbDsKKworCS8qIENvbnZlcnQgYnJpZ2h0bmVzcyB0byBoYXJk
-d2FyZSBsZXZlbCAqLworCWlmIChiZC0+cHJvcHMuYnJpZ2h0bmVzcyA8IDApCisJCWxldmVsID0g
-MDsKKwllbHNlIGlmIChiZC0+cHJvcHMuYnJpZ2h0bmVzcyA+IFJBREVPTl9NQVhfQkxfTEVWRUwp
-CisJCWxldmVsID0gUkFERU9OX01BWF9CTF9MRVZFTDsKKwllbHNlCisJCWxldmVsID0gYmQtPnBy
-b3BzLmJyaWdodG5lc3M7CisKKwlpZiAocGRhdGEtPm5lZ2F0aXZlKQorCQlsZXZlbCA9IFJBREVP
-Tl9NQVhfQkxfTEVWRUwgLSBsZXZlbDsKKworCXJldHVybiBsZXZlbDsKK30KKwogc3RhdGljIGlu
-dCByYWRlb25fbGVnYWN5X2JhY2tsaWdodF91cGRhdGVfc3RhdHVzKHN0cnVjdCBiYWNrbGlnaHRf
-ZGV2aWNlICpiZCkKIHsKIAlzdHJ1Y3QgcmFkZW9uX2JhY2tsaWdodF9wcml2ZGF0YSAqcGRhdGEg
-PSBibF9nZXRfZGF0YShiZCk7Ci0tIAoxLjcuNy41Cgo=
-
---_002_A3397C8B8B789E45844E7EC5DEAD89D02C4370ADsausexdag03amdc_--
+> 
+> ERROR: "radeon_legacy_get_backlight_level" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> ERROR: "atombios_set_backlight_level" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> ERROR: "atombios_get_backlight_level" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> ERROR: "radeon_legacy_set_backlight_level" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> ERROR: "backlight_force_update" [drivers/gpu/drm/radeon/radeon.ko] undefined!
+> 
+> ---
+> 0-DAY kernel build testing backend         Open Source Technology Center
+> Fengguang Wu, Yuanhan Liu                              Intel Corporation
