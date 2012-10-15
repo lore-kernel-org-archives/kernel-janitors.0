@@ -1,8 +1,10 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 14 Oct 2012 02:34:20 +0000
+Date: Mon, 15 Oct 2012 04:26:28 +0000
 Subject: [uapi:disintegrate-main 3/4] fs/binfmt_elf_fdpic.c:123:12: error: conflicting types for 'elf_fdpic_f
-Message-Id: <20121014023420.GE6795@localhost>
+Message-Id: <20121015042628.GA22616@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121014023420.GE6795@localhost>
+In-Reply-To: <20121014023420.GE6795@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,6 +18,8 @@ tree:   git://git.infradead.org/users/dhowells/linux-headers.git disintegrate-ma
 head:   5921e6f8809b1616932ca4afd40fe449faa8fd88
 commit: 607ca46e97a1b6594b29647d98a32d545c24bdff [3/4] UAPI: (Scripted) Disintegrate include/linux
 config: blackfin-BF533-EZKIT_defconfig # make ARCH=blackfin BF533-EZKIT_defconfig
+
+It also occurs in upstream 3.7-rc1 and linux-next.
 
 All error/warnings:
 
@@ -175,6 +179,10 @@ vim +123 fs/binfmt_elf_fdpic.c
 ^1da177e Linus Torvalds 2005-04-16  129  
 ^1da177e Linus Torvalds 2005-04-16  130  	if (params->hdr.e_phentsize != sizeof(struct elf_phdr))
 ^1da177e Linus Torvalds 2005-04-16  131  		return -ENOMEM;
+
+The code at line 123 was first introduced by commit:
+8a2ab7f [PATCH] FDPIC: Adjust the ELF-FDPIC driver to conform more to the CodingStyle
+
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
