@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 15 Oct 2012 08:00:42 +0000
-Subject: [jdelvare-staging:i2c-for-linus 9/15] drivers/tty/serial/max310x.c:277:19: error: field 'gpio' has i
-Message-Id: <20121015080042.GC31880@localhost>
+Date: Tue, 16 Oct 2012 03:18:58 +0000
+Subject: [jdelvare-staging:i2c-for-linus 9/15] drivers/input/keyboard/adp5588-keys.c:52:19: error: field 'gc'
+Message-Id: <20121016031858.GB16754@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121008071452.GA29214@localhost>
 In-Reply-To: <20121008071452.GA29214@localhost>
@@ -19,59 +19,76 @@ head:   c415b303a704e5c5f766fc0404093910c36cc4ab
 commit: 3ad7ea18ae8c7ddda46b7276e0bda73e707ea9c1 [9/15] i2c-i801: Support SMBus multiplexing on Asus Z8 series
 config: parisc-allyesconfig # make ARCH=parisc allyesconfig
 
-
 All error/warnings:
 
-drivers/tty/serial/max310x.c:277:19: error: field 'gpio' has incomplete type
-drivers/tty/serial/max310x.c: In function 'max310x_gpio_get':
-drivers/tty/serial/max310x.c:941:27: warning: initialization from incompatible pointer type [enabled by default]
-drivers/tty/serial/max310x.c:941:27: warning: (near initialization for 's') [enabled by default]
-drivers/tty/serial/max310x.c: In function 'max310x_gpio_set':
-drivers/tty/serial/max310x.c:952:27: warning: initialization from incompatible pointer type [enabled by default]
-drivers/tty/serial/max310x.c:952:27: warning: (near initialization for 's') [enabled by default]
-drivers/tty/serial/max310x.c: In function 'max310x_gpio_direction_input':
-drivers/tty/serial/max310x.c:962:27: warning: initialization from incompatible pointer type [enabled by default]
-drivers/tty/serial/max310x.c:962:27: warning: (near initialization for 's') [enabled by default]
-drivers/tty/serial/max310x.c: In function 'max310x_gpio_direction_output':
-drivers/tty/serial/max310x.c:976:27: warning: initialization from incompatible pointer type [enabled by default]
-drivers/tty/serial/max310x.c:976:27: warning: (near initialization for 's') [enabled by default]
-drivers/tty/serial/max310x.c: In function 'max310x_probe':
-drivers/tty/serial/max310x.c:1181:3: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
-drivers/tty/serial/max310x.c: In function 'max310x_remove':
-drivers/tty/serial/max310x.c:1223:3: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
+drivers/input/keyboard/adp5588-keys.c:52:19: error: field 'gc' has incomplete type
+drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_get_value':
+drivers/input/keyboard/adp5588-keys.c:77:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/keyboard/adp5588-keys.c:77:30: warning: (near initialization for 'kpad') [enabled by default]
+drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_set_value':
+drivers/input/keyboard/adp5588-keys.c:87:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/keyboard/adp5588-keys.c:87:30: warning: (near initialization for 'kpad') [enabled by default]
+drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_direction_input':
+drivers/input/keyboard/adp5588-keys.c:106:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/keyboard/adp5588-keys.c:106:30: warning: (near initialization for 'kpad') [enabled by default]
+drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_direction_output':
+drivers/input/keyboard/adp5588-keys.c:124:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/keyboard/adp5588-keys.c:124:30: warning: (near initialization for 'kpad') [enabled by default]
+drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_add':
+drivers/input/keyboard/adp5588-keys.c:204:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
+drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_remove':
+drivers/input/keyboard/adp5588-keys.c:245:2: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+--
+drivers/input/keyboard/adp5589-keys.c:243:19: error: field 'gc' has incomplete type
+drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_get_value':
+drivers/input/keyboard/adp5589-keys.c:391:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/keyboard/adp5589-keys.c:391:30: warning: (near initialization for 'kpad') [enabled by default]
+drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_set_value':
+drivers/input/keyboard/adp5589-keys.c:403:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/keyboard/adp5589-keys.c:403:30: warning: (near initialization for 'kpad') [enabled by default]
+drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_direction_input':
+drivers/input/keyboard/adp5589-keys.c:422:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/keyboard/adp5589-keys.c:422:30: warning: (near initialization for 'kpad') [enabled by default]
+drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_direction_output':
+drivers/input/keyboard/adp5589-keys.c:442:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/keyboard/adp5589-keys.c:442:30: warning: (near initialization for 'kpad') [enabled by default]
+drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_add':
+drivers/input/keyboard/adp5589-keys.c:529:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
+drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_remove':
+drivers/input/keyboard/adp5589-keys.c:571:2: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
 cc1: some warnings being treated as errors
 
-vim +277 drivers/tty/serial/max310x.c
+vim +52 drivers/input/keyboard/adp5588-keys.c
 
-f6544418 Alexander Shiyan 2012-08-06  261  
-f6544418 Alexander Shiyan 2012-08-06  262  /* Supported chip types */
-f6544418 Alexander Shiyan 2012-08-06  263  enum {
-f6544418 Alexander Shiyan 2012-08-06  264  	MAX310X_TYPE_MAX3107	= 3107,
-f6544418 Alexander Shiyan 2012-08-06  265  	MAX310X_TYPE_MAX3108	= 3108,
-f6544418 Alexander Shiyan 2012-08-06  266  };
-f6544418 Alexander Shiyan 2012-08-06  267  
-f6544418 Alexander Shiyan 2012-08-06  268  struct max310x_port {
-f6544418 Alexander Shiyan 2012-08-06  269  	struct uart_driver	uart;
-f6544418 Alexander Shiyan 2012-08-06  270  	struct uart_port	port;
-f6544418 Alexander Shiyan 2012-08-06  271  
-f6544418 Alexander Shiyan 2012-08-06  272  	const char		*name;
-f6544418 Alexander Shiyan 2012-08-06  273  	int			uartclk;
-f6544418 Alexander Shiyan 2012-08-06  274  
-f6544418 Alexander Shiyan 2012-08-06  275  	unsigned int		nr_gpio;
-f6544418 Alexander Shiyan 2012-08-06  276  #ifdef CONFIG_GPIOLIB
-f6544418 Alexander Shiyan 2012-08-06 @277  	struct gpio_chip	gpio;
-f6544418 Alexander Shiyan 2012-08-06  278  #endif
-f6544418 Alexander Shiyan 2012-08-06  279  
-f6544418 Alexander Shiyan 2012-08-06  280  	struct regmap		*regmap;
-f6544418 Alexander Shiyan 2012-08-06  281  	struct regmap_config	regcfg;
-f6544418 Alexander Shiyan 2012-08-06  282  
-f6544418 Alexander Shiyan 2012-08-06  283  	struct workqueue_struct	*wq;
-f6544418 Alexander Shiyan 2012-08-06  284  	struct work_struct	tx_work;
-f6544418 Alexander Shiyan 2012-08-06  285  
+88751dd6 Michael Hennerich 2009-09-17  36   * since the Event Counter Register updated 25ms after the interrupt
+88751dd6 Michael Hennerich 2009-09-17  37   * asserted.
+88751dd6 Michael Hennerich 2009-09-17  38   */
+88751dd6 Michael Hennerich 2009-09-17  39  #define WA_DELAYED_READOUT_REVID(rev)		((rev) < 4)
+88751dd6 Michael Hennerich 2009-09-17  40  
+88751dd6 Michael Hennerich 2009-09-17  41  struct adp5588_kpad {
+88751dd6 Michael Hennerich 2009-09-17  42  	struct i2c_client *client;
+88751dd6 Michael Hennerich 2009-09-17  43  	struct input_dev *input;
+88751dd6 Michael Hennerich 2009-09-17  44  	struct delayed_work work;
+88751dd6 Michael Hennerich 2009-09-17  45  	unsigned long delay;
+88751dd6 Michael Hennerich 2009-09-17  46  	unsigned short keycode[ADP5588_KEYMAPSIZE];
+69a4af60 Xiaolong CHEN     2010-06-24  47  	const struct adp5588_gpi_map *gpimap;
+69a4af60 Xiaolong CHEN     2010-06-24  48  	unsigned short gpimapsize;
+ba9f507a Xiaolong Chen     2010-07-26  49  #ifdef CONFIG_GPIOLIB
+95716c0d Michael Hennerich 2010-11-02  50  	unsigned char gpiomap[ADP5588_MAXGPIO];
+ba9f507a Xiaolong Chen     2010-07-26  51  	bool export_gpio;
+ba9f507a Xiaolong Chen     2010-07-26 @52  	struct gpio_chip gc;
+ba9f507a Xiaolong Chen     2010-07-26  53  	struct mutex gpio_lock;	/* Protect cached dir, dat_out */
+ba9f507a Xiaolong Chen     2010-07-26  54  	u8 dat_out[3];
+ba9f507a Xiaolong Chen     2010-07-26  55  	u8 dir[3];
+ba9f507a Xiaolong Chen     2010-07-26  56  #endif
+88751dd6 Michael Hennerich 2009-09-17  57  };
+88751dd6 Michael Hennerich 2009-09-17  58  
+88751dd6 Michael Hennerich 2009-09-17  59  static int adp5588_read(struct i2c_client *client, u8 reg)
+88751dd6 Michael Hennerich 2009-09-17  60  {
 
-The code at line 277 was first introduced by commit:
-f654441 serial: New serial driver MAX310X
-
+The code at line 52 was first introduced by commit:
+ba9f507 Input: adp5588-keys - export unused GPIO pins
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
