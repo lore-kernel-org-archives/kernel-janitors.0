@@ -1,31 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 04 Oct 2012 18:43:01 +0000
-Subject: Re: [patch 3/3] brcmfmac: Using zero instead of NULL
-Message-Id: <20121004184301.GP13767@mwanda>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 16 Oct 2012 03:17:08 +0000
+Subject: drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:50:6: error: 'struct brcmf_pub' has no member name
+Message-Id: <20121016031708.GA16754@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121003060713.GC3802@elgon.mountain>
- <506DB904.9000002@broadcom.com>
-In-Reply-To: <506DB904.9000002@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arend van Spriel <arend@broadcom.com>
-Cc: Brett Rudley <brudley@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Kan Yan <kanyan@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Hante Meuleman <meuleman@broadcom.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 04, 2012 at 06:27:48PM +0200, Arend van Spriel wrote:
-> On 10/03/2012 08:07 AM, Dan Carpenter wrote:
-> >Sparse complains that we use zero instead of NULL here.  In fact, the
-> >initialization is wrong and should be removed.  Doing these kinds of
-> >bogus initializations means that GCC can't detect unitialized variables
-> >and leads to bugs.
-> 
-> We already had it fixed internally, but your change is more
-> sensible. I had it reviewed internally and plan to send it to John
-> for 3.8 (ie. wireless-next after merge window). Let me know if that
-> is ok with you.
+Hi Arend,
 
-Sounds good.
+FYI, kernel build failed on
 
-regards,
-dan carpenter
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux master
+head:   29bb4cc5e0547a7589556f8629e39016c5d203c0
+commit: d319a7cfd9d80a2e2359e978ba88991531312ee6 brcmfmac: add debugfs helper functions
+config: cris-allyesconfig # make ARCH=cris allyesconfig
+date:   4 months ago
 
+All error/warnings:
+
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_attach':
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:50:6: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:51:21: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_detach':
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:56:26: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:57:32: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_get_devdir':
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:62:13: error: 'struct brcmf_pub' has no member named 'dbgfs_dir'
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:63:1: warning: control reaches end of non-void function [-Wreturn-type]
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c: In function 'brcmf_debugfs_attach':
+drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c:52:1: warning: control reaches end of non-void function [-Wreturn-type]
+
+vim +50 drivers/net/wireless/brcm80211/brcmfmac/dhd_dbg.c
+
+d319a7cf Arend van Spriel 2012-06-09  44  
+d319a7cf Arend van Spriel 2012-06-09  45  int brcmf_debugfs_attach(struct brcmf_pub *drvr)
+d319a7cf Arend van Spriel 2012-06-09  46  {
+d319a7cf Arend van Spriel 2012-06-09  47  	if (!root_folder)
+d319a7cf Arend van Spriel 2012-06-09  48  		return -ENODEV;
+d319a7cf Arend van Spriel 2012-06-09  49  
+d319a7cf Arend van Spriel 2012-06-09 @50  	drvr->dbgfs_dir = debugfs_create_dir(dev_name(drvr->dev), root_folder);
+d319a7cf Arend van Spriel 2012-06-09  51  	return PTR_RET(drvr->dbgfs_dir);
+d319a7cf Arend van Spriel 2012-06-09  52  }
+d319a7cf Arend van Spriel 2012-06-09  53  
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
