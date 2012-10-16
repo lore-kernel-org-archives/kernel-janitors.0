@@ -1,14 +1,15 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 16 Oct 2012 03:18:58 +0000
-Subject: [jdelvare-staging:i2c-for-linus 9/15] drivers/input/keyboard/adp5588-keys.c:52:19: error: field 'gc'
-Message-Id: <20121016031858.GB16754@localhost>
+Date: Tue, 16 Oct 2012 05:58:29 +0000
+Subject: [jdelvare-staging:i2c-for-linus 9/15] drivers/leds/leds-tca6507.c:179:20: error: field 'gpio' has in
+Message-Id: <20121016055829.GA31864@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121008071452.GA29214@localhost>
 In-Reply-To: <20121008071452.GA29214@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: kernel-janitors@vger.kernel.org, Parisc List <linux-parisc@vger.kernel.org>
 
 Hi Jean,
 
@@ -21,74 +22,66 @@ config: parisc-allyesconfig # make ARCH=parisc allyesconfig
 
 All error/warnings:
 
-drivers/input/keyboard/adp5588-keys.c:52:19: error: field 'gc' has incomplete type
-drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_get_value':
-drivers/input/keyboard/adp5588-keys.c:77:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/keyboard/adp5588-keys.c:77:30: warning: (near initialization for 'kpad') [enabled by default]
-drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_set_value':
-drivers/input/keyboard/adp5588-keys.c:87:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/keyboard/adp5588-keys.c:87:30: warning: (near initialization for 'kpad') [enabled by default]
-drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_direction_input':
-drivers/input/keyboard/adp5588-keys.c:106:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/keyboard/adp5588-keys.c:106:30: warning: (near initialization for 'kpad') [enabled by default]
-drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_direction_output':
-drivers/input/keyboard/adp5588-keys.c:124:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/keyboard/adp5588-keys.c:124:30: warning: (near initialization for 'kpad') [enabled by default]
-drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_add':
-drivers/input/keyboard/adp5588-keys.c:204:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
-drivers/input/keyboard/adp5588-keys.c: In function 'adp5588_gpio_remove':
-drivers/input/keyboard/adp5588-keys.c:245:2: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
+drivers/leds/leds-tca6507.c:179:20: error: field 'gpio' has incomplete type
+drivers/leds/leds-tca6507.c: In function 'tca6507_gpio_set_value':
+drivers/leds/leds-tca6507.c:591:29: warning: initialization from incompatible pointer type [enabled by default]
+drivers/leds/leds-tca6507.c:591:29: warning: (near initialization for 'tca') [enabled by default]
+drivers/leds/leds-tca6507.c: In function 'tca6507_probe_gpios':
+drivers/leds/leds-tca6507.c:640:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
+drivers/leds/leds-tca6507.c: In function 'tca6507_remove_gpio':
+drivers/leds/leds-tca6507.c:653:3: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
 cc1: some warnings being treated as errors
 --
-drivers/input/keyboard/adp5589-keys.c:243:19: error: field 'gc' has incomplete type
-drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_get_value':
-drivers/input/keyboard/adp5589-keys.c:391:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/keyboard/adp5589-keys.c:391:30: warning: (near initialization for 'kpad') [enabled by default]
-drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_set_value':
-drivers/input/keyboard/adp5589-keys.c:403:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/keyboard/adp5589-keys.c:403:30: warning: (near initialization for 'kpad') [enabled by default]
-drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_direction_input':
-drivers/input/keyboard/adp5589-keys.c:422:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/keyboard/adp5589-keys.c:422:30: warning: (near initialization for 'kpad') [enabled by default]
-drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_direction_output':
-drivers/input/keyboard/adp5589-keys.c:442:30: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/keyboard/adp5589-keys.c:442:30: warning: (near initialization for 'kpad') [enabled by default]
-drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_add':
-drivers/input/keyboard/adp5589-keys.c:529:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
-drivers/input/keyboard/adp5589-keys.c: In function 'adp5589_gpio_remove':
-drivers/input/keyboard/adp5589-keys.c:571:2: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
+drivers/input/touchscreen/ad7879.c:115:19: error: field 'gc' has incomplete type
+drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_direction_input':
+drivers/input/touchscreen/ad7879.c:385:22: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/touchscreen/ad7879.c:385:22: warning: (near initialization for 'ts') [enabled by default]
+drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_direction_output':
+drivers/input/touchscreen/ad7879.c:399:22: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/touchscreen/ad7879.c:399:22: warning: (near initialization for 'ts') [enabled by default]
+drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_get_value':
+drivers/input/touchscreen/ad7879.c:418:22: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/touchscreen/ad7879.c:418:22: warning: (near initialization for 'ts') [enabled by default]
+drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_set_value':
+drivers/input/touchscreen/ad7879.c:431:22: warning: initialization from incompatible pointer type [enabled by default]
+drivers/input/touchscreen/ad7879.c:431:22: warning: (near initialization for 'ts') [enabled by default]
+drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_add':
+drivers/input/touchscreen/ad7879.c:462:3: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
+drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_remove':
+drivers/input/touchscreen/ad7879.c:477:3: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
 cc1: some warnings being treated as errors
 
-vim +52 drivers/input/keyboard/adp5588-keys.c
+vim +179 drivers/leds/leds-tca6507.c
 
-88751dd6 Michael Hennerich 2009-09-17  36   * since the Event Counter Register updated 25ms after the interrupt
-88751dd6 Michael Hennerich 2009-09-17  37   * asserted.
-88751dd6 Michael Hennerich 2009-09-17  38   */
-88751dd6 Michael Hennerich 2009-09-17  39  #define WA_DELAYED_READOUT_REVID(rev)		((rev) < 4)
-88751dd6 Michael Hennerich 2009-09-17  40  
-88751dd6 Michael Hennerich 2009-09-17  41  struct adp5588_kpad {
-88751dd6 Michael Hennerich 2009-09-17  42  	struct i2c_client *client;
-88751dd6 Michael Hennerich 2009-09-17  43  	struct input_dev *input;
-88751dd6 Michael Hennerich 2009-09-17  44  	struct delayed_work work;
-88751dd6 Michael Hennerich 2009-09-17  45  	unsigned long delay;
-88751dd6 Michael Hennerich 2009-09-17  46  	unsigned short keycode[ADP5588_KEYMAPSIZE];
-69a4af60 Xiaolong CHEN     2010-06-24  47  	const struct adp5588_gpi_map *gpimap;
-69a4af60 Xiaolong CHEN     2010-06-24  48  	unsigned short gpimapsize;
-ba9f507a Xiaolong Chen     2010-07-26  49  #ifdef CONFIG_GPIOLIB
-95716c0d Michael Hennerich 2010-11-02  50  	unsigned char gpiomap[ADP5588_MAXGPIO];
-ba9f507a Xiaolong Chen     2010-07-26  51  	bool export_gpio;
-ba9f507a Xiaolong Chen     2010-07-26 @52  	struct gpio_chip gc;
-ba9f507a Xiaolong Chen     2010-07-26  53  	struct mutex gpio_lock;	/* Protect cached dir, dat_out */
-ba9f507a Xiaolong Chen     2010-07-26  54  	u8 dat_out[3];
-ba9f507a Xiaolong Chen     2010-07-26  55  	u8 dir[3];
-ba9f507a Xiaolong Chen     2010-07-26  56  #endif
-88751dd6 Michael Hennerich 2009-09-17  57  };
-88751dd6 Michael Hennerich 2009-09-17  58  
-88751dd6 Michael Hennerich 2009-09-17  59  static int adp5588_read(struct i2c_client *client, u8 reg)
-88751dd6 Michael Hennerich 2009-09-17  60  {
+a6d511e5 NeilBrown 2012-01-10  163  		int time_use, level_use;
+a6d511e5 NeilBrown 2012-01-10  164  	} bank[3];
+a6d511e5 NeilBrown 2012-01-10  165  	struct i2c_client	*client;
+a6d511e5 NeilBrown 2012-01-10  166  	struct work_struct	work;
+a6d511e5 NeilBrown 2012-01-10  167  	spinlock_t		lock;
+a6d511e5 NeilBrown 2012-01-10  168  
+a6d511e5 NeilBrown 2012-01-10  169  	struct tca6507_led {
+a6d511e5 NeilBrown 2012-01-10  170  		struct tca6507_chip	*chip;
+a6d511e5 NeilBrown 2012-01-10  171  		struct led_classdev	led_cdev;
+a6d511e5 NeilBrown 2012-01-10  172  		int			num;
+a6d511e5 NeilBrown 2012-01-10  173  		int			ontime, offtime;
+a6d511e5 NeilBrown 2012-01-10  174  		int			on_dflt, off_dflt;
+a6d511e5 NeilBrown 2012-01-10  175  		int			bank;	/* Bank used, or -1 */
+a6d511e5 NeilBrown 2012-01-10  176  		int			blink;	/* Set if hardware-blinking */
+a6d511e5 NeilBrown 2012-01-10  177  	} leds[NUM_LEDS];
+a6d511e5 NeilBrown 2012-01-10  178  #ifdef CONFIG_GPIOLIB
+a6d511e5 NeilBrown 2012-01-10 @179  	struct gpio_chip		gpio;
+a6d511e5 NeilBrown 2012-01-10  180  	const char			*gpio_name[NUM_LEDS];
+a6d511e5 NeilBrown 2012-01-10  181  	int				gpio_map[NUM_LEDS];
+a6d511e5 NeilBrown 2012-01-10  182  #endif
+a6d511e5 NeilBrown 2012-01-10  183  };
+a6d511e5 NeilBrown 2012-01-10  184  
+a6d511e5 NeilBrown 2012-01-10  185  static const struct i2c_device_id tca6507_id[] = {
+a6d511e5 NeilBrown 2012-01-10  186  	{ "tca6507" },
+a6d511e5 NeilBrown 2012-01-10  187  	{ }
 
-The code at line 52 was first introduced by commit:
-ba9f507 Input: adp5588-keys - export unused GPIO pins
+The code at line 179 was first introduced by commit:
+a6d511e leds: add driver for TCA6507 LED controller
+
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
