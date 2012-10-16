@@ -1,62 +1,42 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 03 Oct 2012 08:00:55 +0000
-Subject: Re: [patch] target/iscsi: precedence bug in iscsit_set_dataout_sequence_values()
-Message-Id: <506BF0B7.9030807@bfs.de>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 16 Oct 2012 00:59:51 +0000
+Subject: [drm-intel:drm-intel-next-queued 42/44] drivers/gpu/drm/i915/intel_pm.c:2506:2: error: 'ret' undecla
+Message-Id: <20121016005951.GA6855@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121002082248.GB12398@elgon.mountain> <1349209800.28145.66.camel@haakon2.linux-iscsi.org>
-In-Reply-To: <1349209800.28145.66.camel@haakon2.linux-iscsi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Andy Grover <agrover@redhat.com>, Christoph Hellwig <hch@lst.de>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Widawsky <ben@bwidawsk.net>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
+Hi Ben,
 
+FYI, kernel build failed on
 
-Am 02.10.2012 22:30, schrieb Nicholas A. Bellinger:
-> On Tue, 2012-10-02 at 11:22 +0300, Dan Carpenter wrote:
->> Clang warns about this bug:
->> drivers/target/iscsi/iscsi_target_erl0.c:52:45: warning: operator '?:'
->> 	has lower precedence than '+'; '+' will be evaluated first
->> 	[-Wparentheses]
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> Please review this very carefully because I haven't tested it.  It could
->> be that the check should be:
->> (data_done + data_length > FirstBurstLength) ? FirstBurstLength : data_length);
->> Instead of what I have which is:
->> data_done + (data_length > FirstBurstLength ? FirstBurstLength : data_length);
->>
->> diff --git a/drivers/target/iscsi/iscsi_target_erl0.c b/drivers/target/iscsi/iscsi_target_erl0.c
->> index 1a02016..2067efd 100644
->> --- a/drivers/target/iscsi/iscsi_target_erl0.c
->> +++ b/drivers/target/iscsi/iscsi_target_erl0.c
->> @@ -48,9 +48,9 @@ void iscsit_set_dataout_sequence_values(
->>  	if (cmd->unsolicited_data) {
->>  		cmd->seq_start_offset = cmd->write_data_done;
->>  		cmd->seq_end_offset = (cmd->write_data_done +
->> -			(cmd->se_cmd.data_length >
->> -			 conn->sess->sess_ops->FirstBurstLength) ?
->> -			conn->sess->sess_ops->FirstBurstLength : cmd->se_cmd.data_length);
->> +			((cmd->se_cmd.data_length >
->> +			  conn->sess->sess_ops->FirstBurstLength) ?
->> +			 conn->sess->sess_ops->FirstBurstLength : cmd->se_cmd.data_length));
->>  		return;
->>  	}
->>  
->> --
-> 
-> This is indeed the original intention and your patch is correct, so
-> applied to for-next.
-> 
-> Thank you!
-> 
-> --nab
-> 
+tree:   git://people.freedesktop.org/~danvet/drm-intel.git drm-intel-next-queued
+head:   861b675336a1f686f480d92990251e99a3ec0956
+commit: 686279dbcbc69f71ce86efdccaa8cad762cba2ea [42/44] drm/i915: Extract PCU communication
+config: x86_64-allyesconfig # make ARCH=x86_64 allyesconfig
 
-please consider rewriting this into an if ... else ... statement.
-See my comments and Dan's reply on this.
+All error/warnings:
 
-re,
- wh
+drivers/gpu/drm/i915/intel_pm.c: In function 'gen6_enable_rps':
+drivers/gpu/drm/i915/intel_pm.c:2506:2: error: 'ret' undeclared (first use in this function)
+drivers/gpu/drm/i915/intel_pm.c:2506:2: note: each undeclared identifier is reported only once for each function it appears in
+
+vim +2506 drivers/gpu/drm/i915/intel_pm.c
+
+89ba829e Jesse Barnes   2012-05-22  2500  		   GEN6_RP_MEDIA_HW_NORMAL_MODE |
+2b4e57bd Eugeni Dodonov 2012-04-18  2501  		   GEN6_RP_MEDIA_IS_GFX |
+2b4e57bd Eugeni Dodonov 2012-04-18  2502  		   GEN6_RP_ENABLE |
+2b4e57bd Eugeni Dodonov 2012-04-18  2503  		   GEN6_RP_UP_BUSY_AVG |
+5a7dc92a Eugeni Dodonov 2012-07-02  2504  		   (IS_HASWELL(dev) ? GEN7_RP_DOWN_IDLE_AVG : GEN6_RP_DOWN_IDLE_CONT));
+2b4e57bd Eugeni Dodonov 2012-04-18  2505  
+686279db Ben Widawsky   2012-09-26 @2506  	ret = sandybridge_pcode_write(dev_priv, GEN6_PCODE_WRITE_MIN_FREQ_TABLE, 0);
+686279db Ben Widawsky   2012-09-26  2507  	if (!ret) {
+686279db Ben Widawsky   2012-09-26  2508  		pcu_mbox = 0;
+686279db Ben Widawsky   2012-09-26  2509  		ret = sandybridge_pcode_read(dev_priv, GEN6_READ_OC_PARAMS, &pcu_mbox);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
