@@ -1,19 +1,27 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 04 Oct 2012 16:22:44 +0000
-Subject: Re: [linus:master 98/99] drivers/base/firmware_class.c:72:28: sparse: incorrect type in argument 2 (
-Message-Id: <CA+55aFx29ccQwswePK_kexh7--KApreL++ztXZZd9S7=1TaVRA@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 16 Oct 2012 03:30:38 +0000
+Subject: [stericsson:very-early-printk 1/1] (.text+0x8282): undefined reference to `printascii'
+Message-Id: <20121016033038.GA18883@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121004070623.GA31473@localhost>
-In-Reply-To: <20121004070623.GA31473@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 4, 2012 at 12:06 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
->
-> Shall we use kernel_read() in place of vfs_read()?
+Hi Linus,
 
-Indeed. Good catch. Thanks,
+FYI, kernel build failed on
 
-             Linus
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git very-early-printk
+head:   fe365f8d14989c7679a97a88a6aac7fd48ed744d
+commit: fe365f8d14989c7679a97a88a6aac7fd48ed744d [1/1] very early printk
+config: x86_64-allmodconfig # make ARCH=x86_64 allmodconfig
+
+All error/warnings:
+
+kernel/built-in.o: In function `vprintk_emit':
+(.text+0x8282): undefined reference to `printascii'
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
