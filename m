@@ -1,90 +1,78 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 17 Oct 2012 16:55:08 +0000
-Subject: Re: drivers/gpu/drm/radeon/radeon_gart.c:580:5: sparse: symbol 'radeon_vm_evict' was not declared. S
-Message-Id: <20121017165508.GA13934@localhost>
+From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
+Date: Wed, 17 Oct 2012 16:56:19 +0000
+Subject: RE: drivers/gpu/drm/radeon/radeon_gart.c:580:5: sparse: symbol 'radeon_vm_evict' was not declared. S
+Message-Id: <A3397C8B8B789E45844E7EC5DEAD89D02DA97F0C@sausexdag04.amd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121017064444.GA17885@localhost>
 In-Reply-To: <20121017064444.GA17885@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Alex,
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGZW5nZ3VhbmcgV3UgW21haWx0
+bzpmZW5nZ3Vhbmcud3VAaW50ZWwuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIE9jdG9iZXIgMTcs
+IDIwMTIgMTI6NTUgUE0NCj4gVG86IERldWNoZXIsIEFsZXhhbmRlcg0KPiBDYzogQ2hyaXN0aWFu
+IEvDtm5pZzsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgQ2hlcmthc292LCBEbWl0
+cmlpDQo+IFN1YmplY3Q6IFJlOiBkcml2ZXJzL2dwdS9kcm0vcmFkZW9uL3JhZGVvbl9nYXJ0LmM6
+NTgwOjU6IHNwYXJzZTogc3ltYm9sDQo+ICdyYWRlb25fdm1fZXZpY3QnIHdhcyBub3QgZGVjbGFy
+ZWQuIFNob3VsZCBpdCBiZSBzdGF0aWM/DQo+IA0KPiBBbGV4LA0KPiANCj4gT24gV2VkLCBPY3Qg
+MTcsIDIwMTIgYXQgMDQ6NDE6NTJQTSArMDAwMCwgRGV1Y2hlciwgQWxleGFuZGVyIHdyb3RlOg0K
+PiA+IEZlbmdndWFuZywNCj4gPg0KPiA+ICAgRG8geW91IHdhbnQgdG8gc2VuZCBhIGZvcm1hbCBw
+YXRjaCwgb3Igc2hvdWxkIEkganVzdCBmaXggaW4gbXkgbmV4dCByYWRlb24gLQ0KPiBmaXhlcyBw
+dWxsIHJlcXVlc3Q/DQo+IA0KPiBTaW5jZSBpdCdzIGEgdHJpdmlhbCBmaXgsIHdvdWxkIHlvdSBq
+dXN0IGZpeCBpdCBpbiB5b3VyIHRyZWU/DQoNCldpbGwgZG8uICBUaGFua3MhDQoNCkFsZXgNCg0K
+PiANCj4gVGhhbmtzLA0KPiBGZW5nZ3VhbmcNCj4gDQo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KPiA+ID4gRnJvbTogQ2hyaXN0aWFuIEvDtm5pZyBbbWFpbHRvOmRlYXRoc2ltcGxl
+QHZvZGFmb25lLmRlXQ0KPiA+ID4gU2VudDogV2VkbmVzZGF5LCBPY3RvYmVyIDE3LCAyMDEyIDU6
+MjYgQU0NCj4gPiA+IFRvOiBGZW5nZ3VhbmcgV3UNCj4gPiA+IENjOiBrZXJuZWwtamFuaXRvcnNA
+dmdlci5rZXJuZWwub3JnOyBEZXVjaGVyLCBBbGV4YW5kZXI7IENoZXJrYXNvdiwNCj4gRG1pdHJp
+aQ0KPiA+ID4gU3ViamVjdDogUmU6IGRyaXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2dhcnQu
+Yzo1ODA6NTogc3BhcnNlOg0KPiBzeW1ib2wNCj4gPiA+ICdyYWRlb25fdm1fZXZpY3QnIHdhcyBu
+b3QgZGVjbGFyZWQuIFNob3VsZCBpdCBiZSBzdGF0aWM/DQo+ID4gPg0KPiA+ID4gSGkgRmVuZ2d1
+YW5nLA0KPiA+ID4NCj4gPiA+IHllcyB0aGF0J3MgY29ycmVjdCB0aGUgZnVuY3Rpb24gc2hvdWxk
+IGJlIHN0YXRpYy4NCj4gPiA+DQo+ID4gPiBDaGVlcnMsDQo+ID4gPiBDaHJpc3RpYW4uDQo+ID4g
+Pg0KPiA+ID4gT24gMTcuMTAuMjAxMiAwODo0NCwgRmVuZ2d1YW5nIFd1IHdyb3RlOg0KPiA+ID4g
+PiBIaSBDaHJpc3RpYW4sDQo+ID4gPiA+DQo+ID4gPiA+IEZZSSwgdGhlcmUgYXJlIG5ldyBzcGFy
+c2Ugd2FybmluZ3Mgc2hvdyB1cCBpbg0KPiA+ID4gPg0KPiA+ID4gPiB0cmVlOiAgIGdpdDovL2dp
+dC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eA0KPiBt
+YXN0ZXINCj4gPiA+ID4gaGVhZDogICA4ZDJiNmIzYWUyODBkY2Y2ZjZjN2E5NTYyMzY3MGE1N2Nk
+ZjU2MmVkDQo+ID4gPiA+IGNvbW1pdDogOTBhNTFhMzI5MjU4ZTNjODY4ZjZmNGMxZmIyNjRjYTAx
+YzU5MGM1NyBkcm0vcmFkZW9uOg0KPiBhbGxvY2F0ZQ0KPiA+ID4gcGFnZSB0YWJsZXMgb24gZGVt
+YW5kIHY0DQo+ID4gPiA+IGRhdGU6ICAgMiBkYXlzIGFnbw0KPiA+ID4gPg0KPiA+ID4gPiArIGRy
+aXZlcnMvZ3B1L2RybS9yYWRlb24vcmFkZW9uX2dhcnQuYzo1ODA6NTogc3BhcnNlOiBzeW1ib2wN
+Cj4gPiA+ICdyYWRlb25fdm1fZXZpY3QnIHdhcyBub3QgZGVjbGFyZWQuIFNob3VsZCBpdCBiZSBz
+dGF0aWM/DQo+ID4gPiA+DQo+ID4gPiA+IHZpbSArNTgwIGRyaXZlcnMvZ3B1L2RybS9yYWRlb24v
+cmFkZW9uX2dhcnQuYw0KPiA+ID4gPg0KPiA+ID4gPiAwOWRiODY0NCBBbGV4IERldWNoZXIgICAg
+MjAxMi0wNy0xNyAgNTY5ICAvKioNCj4gPiA+ID4gOTBhNTFhMzIgQ2hyaXN0aWFuIEvDtm5pZyAy
+MDEyLTEwLTA5ICA1NzAgICAqIHJhZGVvbl92bV9ldmljdCAtIGV2aWN0DQo+IHBhZ2UNCj4gPiA+
+IHRhYmxlIHRvIG1ha2Ugcm9vbSBmb3IgbmV3IG9uZQ0KPiA+ID4gPiA5MGE1MWEzMiBDaHJpc3Rp
+YW4gS8O2bmlnIDIwMTItMTAtMDkgIDU3MSAgICoNCj4gPiA+ID4gOTBhNTFhMzIgQ2hyaXN0aWFu
+IEvDtm5pZyAyMDEyLTEwLTA5ICA1NzIgICAqIEByZGV2OiByYWRlb25fZGV2aWNlDQo+IHBvaW50
+ZXINCj4gPiA+ID4gOTBhNTFhMzIgQ2hyaXN0aWFuIEvDtm5pZyAyMDEyLTEwLTA5ICA1NzMgICAq
+IEB2bTogVk0gd2Ugd2FudCB0bw0KPiBhbGxvY2F0ZQ0KPiA+ID4gc29tZXRoaW5nIGZvcg0KPiA+
+ID4gPiA5MGE1MWEzMiBDaHJpc3RpYW4gS8O2bmlnIDIwMTItMTAtMDkgIDU3NCAgICoNCj4gPiA+
+ID4gOTBhNTFhMzIgQ2hyaXN0aWFuIEvDtm5pZyAyMDEyLTEwLTA5ICA1NzUgICAqIEV2aWN0IGEg
+Vk0gZnJvbSB0aGUgbHJ1LA0KPiBtYWtpbmcNCj4gPiA+IHN1cmUgdGhhdCBpdCBpc24ndCBAdm0u
+IChjYXltYW4rKS4NCj4gPiA+ID4gOTBhNTFhMzIgQ2hyaXN0aWFuIEvDtm5pZyAyMDEyLTEwLTA5
+ICA1NzYgICAqIFJldHVybnMgMCBmb3Igc3VjY2VzcywgLQ0KPiA+ID4gRU5PTUVNIGZvciBmYWls
+dXJlLg0KPiA+ID4gPiA5MGE1MWEzMiBDaHJpc3RpYW4gS8O2bmlnIDIwMTItMTAtMDkgIDU3NyAg
+ICoNCj4gPiA+ID4gOTBhNTFhMzIgQ2hyaXN0aWFuIEvDtm5pZyAyMDEyLTEwLTA5ICA1NzggICAq
+IEdsb2JhbCBhbmQgbG9jYWwgbXV0ZXggbXVzdA0KPiBiZQ0KPiA+ID4gbG9ja2VkIQ0KPiA+ID4g
+PiA5MGE1MWEzMiBDaHJpc3RpYW4gS8O2bmlnIDIwMTItMTAtMDkgIDU3OSAgICovDQo+ID4gPiA+
+IDkwYTUxYTMyIENocmlzdGlhbiBLw7ZuaWcgMjAxMi0xMC0wOSBANTgwICBpbnQgcmFkZW9uX3Zt
+X2V2aWN0KHN0cnVjdA0KPiA+ID4gcmFkZW9uX2RldmljZSAqcmRldiwgc3RydWN0IHJhZGVvbl92
+bSAqdm0pDQo+ID4gPiA+IDkwYTUxYTMyIENocmlzdGlhbiBLw7ZuaWcgMjAxMi0xMC0wOSAgNTgx
+ICB7DQo+ID4gPiA+IDkwYTUxYTMyIENocmlzdGlhbiBLw7ZuaWcgMjAxMi0xMC0wOSAgNTgyICAJ
+c3RydWN0IHJhZGVvbl92bSAqdm1fZXZpY3Q7DQo+ID4gPiA+IDkwYTUxYTMyIENocmlzdGlhbiBL
+w7ZuaWcgMjAxMi0xMC0wOSAgNTgzDQo+ID4gPiA+IDkwYTUxYTMyIENocmlzdGlhbiBLw7ZuaWcg
+MjAxMi0xMC0wOSAgNTg0ICAJaWYgKGxpc3RfZW1wdHkoJnJkZXYtDQo+ID4gPiA+dm1fbWFuYWdl
+ci5scnVfdm0pKQ0KPiA+ID4gPiA5MGE1MWEzMiBDaHJpc3RpYW4gS8O2bmlnIDIwMTItMTAtMDkg
+IDU4NSAgCQlyZXR1cm4gLUVOT01FTTsNCj4gPiA+ID4gOTBhNTFhMzIgQ2hyaXN0aWFuIEvDtm5p
+ZyAyMDEyLTEwLTA5ICA1ODYNCj4gPiA+ID4gOTBhNTFhMzIgQ2hyaXN0aWFuIEvDtm5pZyAyMDEy
+LTEwLTA5ICA1ODcgIAl2bV9ldmljdCA9DQo+ID4gPiBsaXN0X2ZpcnN0X2VudHJ5KCZyZGV2LT52
+bV9tYW5hZ2VyLmxydV92bSwNCj4gPiA+ID4gOTBhNTFhMzIgQ2hyaXN0aWFuIEvDtm5pZyAyMDEy
+LTEwLTA5ICA1ODgNCj4gPiA+IHN0cnVjdCByYWRlb25fdm0sIGxpc3QpOw0KPiA+ID4gPg0KPiA+
+ID4gPiBTaGFsbCB3ZSBhcHBseSB0aGUgYXR0YWNoZWQgZGlmZj8NCj4gPiA+ID4NCj4gPiA+ID4g
+VGhhbmtzLA0KPiA+ID4gPiBGZW5nZ3VhbmcNCj4gPiA+DQo+ID4NCg0K
 
-On Wed, Oct 17, 2012 at 04:41:52PM +0000, Deucher, Alexander wrote:
-> Fengguang,
-> 
->   Do you want to send a formal patch, or should I just fix in my next radeon -fixes pull request?
-
-Since it's a trivial fix, would you just fix it in your tree?
-
-Thanks,
-Fengguang
-
-> > -----Original Message-----
-> > From: Christian König [mailto:deathsimple@vodafone.de]
-> > Sent: Wednesday, October 17, 2012 5:26 AM
-> > To: Fengguang Wu
-> > Cc: kernel-janitors@vger.kernel.org; Deucher, Alexander; Cherkasov, Dmitrii
-> > Subject: Re: drivers/gpu/drm/radeon/radeon_gart.c:580:5: sparse: symbol
-> > 'radeon_vm_evict' was not declared. Should it be static?
-> > 
-> > Hi Fengguang,
-> > 
-> > yes that's correct the function should be static.
-> > 
-> > Cheers,
-> > Christian.
-> > 
-> > On 17.10.2012 08:44, Fengguang Wu wrote:
-> > > Hi Christian,
-> > >
-> > > FYI, there are new sparse warnings show up in
-> > >
-> > > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux master
-> > > head:   8d2b6b3ae280dcf6f6c7a95623670a57cdf562ed
-> > > commit: 90a51a329258e3c868f6f4c1fb264ca01c590c57 drm/radeon: allocate
-> > page tables on demand v4
-> > > date:   2 days ago
-> > >
-> > > + drivers/gpu/drm/radeon/radeon_gart.c:580:5: sparse: symbol
-> > 'radeon_vm_evict' was not declared. Should it be static?
-> > >
-> > > vim +580 drivers/gpu/drm/radeon/radeon_gart.c
-> > >
-> > > 09db8644 Alex Deucher    2012-07-17  569  /**
-> > > 90a51a32 Christian König 2012-10-09  570   * radeon_vm_evict - evict page
-> > table to make room for new one
-> > > 90a51a32 Christian König 2012-10-09  571   *
-> > > 90a51a32 Christian König 2012-10-09  572   * @rdev: radeon_device pointer
-> > > 90a51a32 Christian König 2012-10-09  573   * @vm: VM we want to allocate
-> > something for
-> > > 90a51a32 Christian König 2012-10-09  574   *
-> > > 90a51a32 Christian König 2012-10-09  575   * Evict a VM from the lru, making
-> > sure that it isn't @vm. (cayman+).
-> > > 90a51a32 Christian König 2012-10-09  576   * Returns 0 for success, -
-> > ENOMEM for failure.
-> > > 90a51a32 Christian König 2012-10-09  577   *
-> > > 90a51a32 Christian König 2012-10-09  578   * Global and local mutex must be
-> > locked!
-> > > 90a51a32 Christian König 2012-10-09  579   */
-> > > 90a51a32 Christian König 2012-10-09 @580  int radeon_vm_evict(struct
-> > radeon_device *rdev, struct radeon_vm *vm)
-> > > 90a51a32 Christian König 2012-10-09  581  {
-> > > 90a51a32 Christian König 2012-10-09  582  	struct radeon_vm *vm_evict;
-> > > 90a51a32 Christian König 2012-10-09  583
-> > > 90a51a32 Christian König 2012-10-09  584  	if (list_empty(&rdev-
-> > >vm_manager.lru_vm))
-> > > 90a51a32 Christian König 2012-10-09  585  		return -ENOMEM;
-> > > 90a51a32 Christian König 2012-10-09  586
-> > > 90a51a32 Christian König 2012-10-09  587  	vm_evict > > list_first_entry(&rdev->vm_manager.lru_vm,
-> > > 90a51a32 Christian König 2012-10-09  588
-> > struct radeon_vm, list);
-> > >
-> > > Shall we apply the attached diff?
-> > >
-> > > Thanks,
-> > > Fengguang
-> > 
-> 
