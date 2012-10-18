@@ -1,54 +1,59 @@
 From: Yuanhan Liu <yuanhan.liu@intel.com>
-Date: Fri, 19 Oct 2012 02:34:30 +0000
-Subject: [tip:numa/core 15/20] kernel/sched/fair.c:972:1: warning: no return statement in function returning
-Message-Id: <20121019023430.GA25055@yliu-dev.sh.intel.com>
+Date: Thu, 18 Oct 2012 05:14:49 +0000
+Subject: [uapi:uapi-fixes 7/10] arch/ia64/include/asm/kvm_para.h:24:28: error: redefinition of 'kvm_arch_para
+Message-Id: <20121018051449.GZ21995@yliu-dev.sh.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Peter,
+Hi David,
 
-FYI, there are new compile warnings show up in
+FYI, kernel build failed on
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git numa/core
-head:   e99e955b90d7aaa4418cace9734e8069921ba440
-commit: bb527e7df7bd5f05dca74868f61b7a9a17ee54c1 [15/20] sched/numa: More NUMA_PULL_BIAS fixes
-config: x86_64-allyesconfig # make ARCH=x86_64 allyesconfig
+tree:   git://git.infradead.org/users/dhowells/linux-headers.git uapi-fixes
+head:   bb2bab177408e44079ba6bd37242fa8b26dfc2a7
+commit: 0420c87e648a3b623ad925038a0bcff2ef5a4bc9 [7/10] UAPI: Put a comment into uapi/asm-generic/kvm_para.h and use it from arches
+config: ia64-allmodconfig # make ARCH=ia64 allmodconfig
 
-All warnings:
+All error/warnings:
 
-kernel/sched/fair.c: In function 'account_numa_enqueue':
-kernel/sched/fair.c:972:1: warning: no return statement in function returning non-void [-Wreturn-type]
+In file included from include/uapi/linux/kvm_para.h:26:0,
+                 from include/linux/kvm_para.h:4,
+                 from kernel/watchdog.c:28:
+arch/ia64/include/asm/kvm_para.h:24:28: error: redefinition of 'kvm_arch_para_features'
+include/asm-generic/kvm_para.h:16:28: note: previous definition of 'kvm_arch_para_features' was here
+arch/ia64/include/asm/kvm_para.h:29:20: error: redefinition of 'kvm_check_and_clear_guest_paused'
+include/asm-generic/kvm_para.h:11:20: note: previous definition of 'kvm_check_and_clear_guest_paused' was here
 
-vim +972 kernel/sched/fair.c
+vim +24 arch/ia64/include/asm/kvm_para.h
 
-4ae834f7 Peter Zijlstra 2012-07-16  956  
-96249815 Peter Zijlstra 2012-10-09  957  		if (!time_before(jiffies, curr->mm->numa_next_scan)) {
-4ae834f7 Peter Zijlstra 2012-07-16  958  			/*
-4ae834f7 Peter Zijlstra 2012-07-16  959  			 * We can re-use curr->rcu because we checked curr->mm
-4ae834f7 Peter Zijlstra 2012-07-16  960  			 * != NULL so release_task()->call_rcu() was not called
-4ae834f7 Peter Zijlstra 2012-07-16  961  			 * yet and exit_task_work() is called before
-4ae834f7 Peter Zijlstra 2012-07-16  962  			 * exit_notify().
-4ae834f7 Peter Zijlstra 2012-07-16  963  			 */
-4ae834f7 Peter Zijlstra 2012-07-16  964  			init_task_work(&curr->rcu, task_numa_work);
-4ae834f7 Peter Zijlstra 2012-07-16  965  			task_work_add(curr, &curr->rcu, true);
-4ae834f7 Peter Zijlstra 2012-07-16  966  		}
-4ae834f7 Peter Zijlstra 2012-07-16  967  	}
-4ae834f7 Peter Zijlstra 2012-07-16  968  }
-4ae834f7 Peter Zijlstra 2012-07-16  969  #else
-bb527e7d Peter Zijlstra 2012-10-11  970  static struct list_head *account_numa_enqueue(struct rq *rq, struct task_struct *p)
-4ae834f7 Peter Zijlstra 2012-07-16  971  {
-4ae834f7 Peter Zijlstra 2012-07-16 @972  }
-4ae834f7 Peter Zijlstra 2012-07-16  973  
-bb527e7d Peter Zijlstra 2012-10-11  974  static void account_numa_dequeue(struct rq *rq, struct task_struct *p)
-4ae834f7 Peter Zijlstra 2012-07-16  975  {
-4ae834f7 Peter Zijlstra 2012-07-16  976  }
-4ae834f7 Peter Zijlstra 2012-07-16  977  
-4ae834f7 Peter Zijlstra 2012-07-16  978  static void task_tick_numa(struct rq *rq, struct task_struct *curr)
-4ae834f7 Peter Zijlstra 2012-07-16  979  {
-4ae834f7 Peter Zijlstra 2012-07-16  980  }
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01   8   * This program is distributed in the hope it will be useful, but WITHOUT
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01   9   * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  10   * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  11   * more details.
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  12   *
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  13   * You should have received a copy of the GNU General Public License along with
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  14   * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  15   * Place - Suite 330, Boston, MA 02111-1307 USA.
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  16   *
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  17   */
+43e40f25 arch/ia64/include/asm/kvm_para.h David Howells 2012-10-09  18  #ifndef __IA64_KVM_PARA_H
+43e40f25 arch/ia64/include/asm/kvm_para.h David Howells 2012-10-09  19  #define __IA64_KVM_PARA_H
+43e40f25 arch/ia64/include/asm/kvm_para.h David Howells 2012-10-09  20  
+43e40f25 arch/ia64/include/asm/kvm_para.h David Howells 2012-10-09  21  #include <uapi/asm/kvm_para.h>
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  22  
+27c23810 arch/ia64/include/asm/kvm_para.h Avi Kivity    2009-08-16  23  
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01 @24  static inline unsigned int kvm_arch_para_features(void)
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  25  {
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  26  	return 0;
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  27  }
+1a9c1ac4 include/asm-ia64/kvm_para.h      Xiantao Zhang 2008-04-01  28  
+3b5d56b9 arch/ia64/include/asm/kvm_para.h Eric B Munson 2012-03-10  29  static inline bool kvm_check_and_clear_guest_paused(void)
+3b5d56b9 arch/ia64/include/asm/kvm_para.h Eric B Munson 2012-03-10  30  {
+3b5d56b9 arch/ia64/include/asm/kvm_para.h Eric B Munson 2012-03-10  31  	return false;
+3b5d56b9 arch/ia64/include/asm/kvm_para.h Eric B Munson 2012-03-10  32  }
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
