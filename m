@@ -1,56 +1,37 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 02 Oct 2012 14:06:50 +0000
-Subject: Re: [driver-core:driver-core-next 4/11] include/linux/device.h:925:12: error: 'dev_vprintk_emit' def
-Message-Id: <20121002140650.GA4560@localhost>
+Date: Thu, 18 Oct 2012 13:01:46 +0000
+Subject: a dedicated list for build error reports?
+Message-Id: <20121018130146.GA11433@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121002104127.GA31577@localhost>
-In-Reply-To: <20121002104127.GA31577@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 02, 2012 at 06:46:33AM -0700, Greg KH wrote:
-> On Tue, Oct 02, 2012 at 06:41:27PM +0800, Fengguang Wu wrote:
-> > Hi Joe,
-> > 
-> > FYI, kernel build failed on
-> > 
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git driver-core-next
-> > head:   e0f21e6d52cc245e7d4f7e02ca4b7b6571660ec2
-> > commit: 05e4e5b87aab74f994acf9dd4bed4a8f1367cd09 [4/11] dev: Add dev_vprintk_emit and dev_printk_emit
-> > config: sh-allnoconfig
-> > 
-> > All error/warnings:
-> > 
-> > include/linux/device.h:925:12: error: 'dev_vprintk_emit' defined but not used [-Werror=unused-function]
-> > cc1: all warnings being treated as errors
+On Thu, Oct 18, 2012 at 03:45:22PM +0300, Dan Carpenter wrote:
+> On Wed, Oct 17, 2012 at 11:10:42AM +0200, Luis G.F wrote:
+> > unsubscribe kernel-janitors
 > 
-> I can't duplicate this here, what is your .config?
+> Uh.  Obviously this isn't the right way to unsubscribe.  You have to
+> send the email to majordomo@vger.kernel.org and not to the list.
+> 
+> But I do think we should maybe find another list for Fengguang's
+> emails?  It's sort of a lot higher traffic than before and sort of a
+> different flavour.
 
-make ARCH=sh allnoconfig
+Agreed.. I'm afraid that my report titles are much more messy than
+the normal emails and there could be a dozen of such reports per day.
 
-Sorry, but it's a bit complicated: driver-core-next HEAD is actually
-fine.  The commit 05e4e5b87aab74f994acf9dd4bed4a8f1367cd09 is broken.
+It may be more clean to send the build error/warning reports to a
+standalone list.
 
-Since I'm not doing bisectibility tests on driver-core, I checked the
-log and find that the error is actually first found when testing the
-HEAD commit of 
+> I still will want to subscribe to the emails, but it would be better
+> to use a different list.  Apparently Dave Miller didn't like the
+> idea of creating a special list for it because he didn't like the
+> emails in the first place.  But now I think everyone likes them a
+> lot.  It might be worth asking again.
 
-        git://git.linaro.org/people/shawnguo/linux-2.6.git for-3.8
-        
-It seems to be based on linux-next, which includes an older version of
-your tree. The build system bisected down the error to the first bad
-commit 05e4e5b87aab74f994acf9dd4bed4a8f1367cd09, and then find that
-it's not really in shawnguo's tree, but part of your tree. So it ends
-up reporting against driver-core rather than shawnguo's tree.
-
-Everything is working fine above, except that your tree HEAD has
-advanced to a new point that the error already get fixed.
-
-> And treating warnings as errors?  Good luck :)
-
-I guess some dir in ARCH sh does that -Werror thing.
+CC Dave Miller for possible new inputs.
 
 Thanks,
 Fengguang
