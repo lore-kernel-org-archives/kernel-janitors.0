@@ -1,93 +1,65 @@
-From: Mikulas Patocka <mpatocka@redhat.com>
-Date: Thu, 04 Oct 2012 00:58:32 +0000
-Subject: [PATCH] percpu-rw-semaphore: lock splice methods
-Message-Id: <Pine.LNX.4.64.1210032046300.7188@file.rdu.redhat.com>
+From: Yuanhan Liu <yuanhan.liu@intel.com>
+Date: Thu, 18 Oct 2012 03:32:47 +0000
+Subject: [uapi:uapi-fixes 7/10] arch/s390/include/asm/kvm_para.h:147:28: error: redefinition of 'kvm_arch_par
+Message-Id: <20121018033247.GO21995@yliu-dev.sh.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120926074236.GB26028@localhost> <5062B5F9.70100@kernel.dk>
-	<Pine.LNX.4.64.1209261107180.5897@file.rdu.redhat.com>
-In-Reply-To: <Pine.LNX.4.64.1209261107180.5897@file.rdu.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>
-Cc: dm-devel@redhat.com, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Jens
+Hi David,
 
-I actually forgot to lock functions generic_file_splice_read and 
-generic_file_splice_write when submitting the commit 
-b87570f5d349661814b262dd5fc40787700f80d6. They must be locked too.
+FYI, kernel build failed on
 
-Please apply this.
+tree:   git://git.infradead.org/users/dhowells/linux-headers.git uapi-fixes
+head:   bb2bab177408e44079ba6bd37242fa8b26dfc2a7
+commit: 0420c87e648a3b623ad925038a0bcff2ef5a4bc9 [7/10] UAPI: Put a comment into uapi/asm-generic/kvm_para.h and use it from arches
+config: s390-allmodconfig # make ARCH=s390 allmodconfig
 
-Mikulas
+All error/warnings:
+
+In file included from drivers/s390/kvm/kvm_virtio.c:26:0:
+arch/s390/include/asm/kvm_para.h:147:28: error: redefinition of 'kvm_arch_para_features'
+In file included from arch/s390/include/generated/uapi/asm/kvm_para.h:1:0,
+                 from arch/s390/include/asm/kvm_para.h:29,
+                 from drivers/s390/kvm/kvm_virtio.c:26:
+include/asm-generic/kvm_para.h:16:28: note: previous definition of 'kvm_arch_para_features' was here
+In file included from drivers/s390/kvm/kvm_virtio.c:26:0:
+arch/s390/include/asm/kvm_para.h:152:20: error: redefinition of 'kvm_check_and_clear_guest_paused'
+In file included from arch/s390/include/generated/uapi/asm/kvm_para.h:1:0,
+                 from arch/s390/include/asm/kvm_para.h:29,
+                 from drivers/s390/kvm/kvm_virtio.c:26:
+include/asm-generic/kvm_para.h:11:20: note: previous definition of 'kvm_check_and_clear_guest_paused' was here
+
+vim +147 arch/s390/include/asm/kvm_para.h
+
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  131  	register long __rc asm("2");
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  132  
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  133  	asm volatile ("diag 2,4,0x500\n"
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  134  		      : "=d" (__rc) : "d" (__nr), "0" (__p1), "d" (__p2),
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  135  			"d" (__p3), "d" (__p4), "d" (__p5), "d" (__p6)
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  136  		      : "memory", "cc");
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  137  	return __rc;
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  138  }
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  139  
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  140  /* kvm on s390 is always paravirtualization enabled */
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25  141  static inline int kvm_para_available(void)
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25  142  {
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  143  	return 1;
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25  144  }
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25  145  
+e976a2b9 include/asm-s390/kvm_para.h      Christian Borntraeger 2008-03-25  146  /* No feature bits are currently assigned for kvm on s390 */
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25 @147  static inline unsigned int kvm_arch_para_features(void)
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25  148  {
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25  149  	return 0;
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25  150  }
+b0c632db include/asm-s390/kvm_para.h      Heiko Carstens        2008-03-25  151  
+3b5d56b9 arch/s390/include/asm/kvm_para.h Eric B Munson         2012-03-10  152  static inline bool kvm_check_and_clear_guest_paused(void)
+3b5d56b9 arch/s390/include/asm/kvm_para.h Eric B Munson         2012-03-10  153  {
+3b5d56b9 arch/s390/include/asm/kvm_para.h Eric B Munson         2012-03-10  154  	return false;
+3b5d56b9 arch/s390/include/asm/kvm_para.h Eric B Munson         2012-03-10  155  }
 
 ---
-
-blockdev: use rwlock for splice
-
-A rwlock that prevents changing block size while IO is being submitted
-needs to be taken around generic_file_splice_read and
-generic_file_splice_write functions. These functions manipulate the page
-cache directly so block size must not change under them.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-
----
- fs/block_dev.c |   37 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 2 deletions(-)
-
-Index: linux-2.6-copy/fs/block_dev.c
-=================================--- linux-2.6-copy.orig/fs/block_dev.c	2012-10-04 02:26:01.000000000 +0200
-+++ linux-2.6-copy/fs/block_dev.c	2012-10-04 02:30:37.000000000 +0200
-@@ -1662,6 +1662,39 @@ static int blkdev_mmap(struct file *file
- 	return ret;
- }
- 
-+static ssize_t blkdev_splice_read(struct file *file, loff_t *ppos,
-+				  struct pipe_inode_info *pipe, size_t len,
-+				  unsigned int flags)
-+{
-+	ssize_t ret;
-+	struct block_device *bdev = I_BDEV(file->f_mapping->host);
-+
-+	percpu_down_read(&bdev->bd_block_size_semaphore);
-+
-+	ret = generic_file_splice_read(file, ppos, pipe, len, flags);
-+
-+	percpu_up_read(&bdev->bd_block_size_semaphore);
-+
-+	return ret;
-+}
-+
-+static ssize_t blkdev_splice_write(struct pipe_inode_info *pipe,
-+				   struct file *file, loff_t *ppos, size_t len,
-+				   unsigned int flags)
-+{
-+	ssize_t ret;
-+	struct block_device *bdev = I_BDEV(file->f_mapping->host);
-+
-+	percpu_down_read(&bdev->bd_block_size_semaphore);
-+
-+	ret = generic_file_splice_write(pipe, file, ppos, len, flags);
-+
-+	percpu_up_read(&bdev->bd_block_size_semaphore);
-+
-+	return ret;
-+}
-+
-+
- /*
-  * Try to release a page associated with block device when the system
-  * is under memory pressure.
-@@ -1700,8 +1733,8 @@ const struct file_operations def_blk_fop
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= compat_blkdev_ioctl,
- #endif
--	.splice_read	= generic_file_splice_read,
--	.splice_write	= generic_file_splice_write,
-+	.splice_read	= blkdev_splice_read,
-+	.splice_write	= blkdev_splice_write,
- };
- 
- int ioctl_by_bdev(struct block_device *bdev, unsigned cmd, unsigned long arg)
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
