@@ -1,7 +1,7 @@
-From: Asias He <asias.hejun@gmail.com>
-Date: Thu, 18 Oct 2012 02:59:36 +0000
-Subject: Re: [shaggy:loop_v3 16/22] drivers/block/loop.c:219:20: warning: cast to pointer from integer of dif
-Message-Id: <CAFO3S43gOoxPiagkC1GNwLJmafKKaeO-KdZhLRhqdJ2GqhNuog@mail.gmail.com>
+From: Yuanhan Liu <yuanhan.liu@intel.com>
+Date: Thu, 18 Oct 2012 03:10:06 +0000
+Subject: [shaggy:loop_v3 16/22] drivers/block/loop.c:217:6: sparse: symbol 'lo_rw_aio_complete' was not decla
+Message-Id: <20121018031006.GK21995@yliu-dev.sh.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121017154411.GA21995@yliu-dev.sh.intel.com>
 In-Reply-To: <20121017154411.GA21995@yliu-dev.sh.intel.com>
@@ -10,295 +10,47 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 18, 2012 at 10:52 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> On Thu, Oct 18, 2012 at 10:40:05AM +0800, Asias He wrote:
->> Hi YuanHan & Fengguang
->>
->> On Thu, Oct 18, 2012 at 10:18 AM, Yuanhan Liu <yuanhan.liu@intel.com> wrote:
->> > On Wed, Oct 17, 2012 at 11:29:35AM -0500, Dave Kleikamp wrote:
->> >> On 10/17/2012 10:44 AM, Yuanhan Liu wrote:
->> >> > Hi Zack,
->> >> >
->> >> > FYI, there are new compile warnings show up in
->> >> >
->> >> > tree:   git://github.com/kleikamp/linux-shaggy loop_v3
->>
->> I am wondering how you choose trees to run the tests against? Is there
->> anyplace that I can find the trees that are being tested/monitored
->> currently?
->
-> Asias, it's almost every active trees that show up in linux-next and
-> linux's merge commits. Currently there are 262 trees being monitored:
+Hi Zach,
 
-Thanks for explaining ;-)
+FYI, there are new sparse warnings show up in
 
-> linus                git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> aa                   git://git.kernel.org/pub/scm/linux/kernel/git/andrea/aa.git
-> acpi                 git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git
-> ak                   git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-misc.git
-> asoc                 git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
-> ath6kl               git://github.com/kvalo/ath6kl
-> audit                git://git.kernel.org/pub/scm/linux/kernel/git/viro/audit.git
-> balbi-usb            git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git
-> batman               git://git.open-mesh.org/linux-merge
-> battery              git://git.infradead.org/battery-2.6.git
-> blackfin             git://git.kernel.org/pub/scm/linux/kernel/git/lliubbo/blackfin.git
-> block                git://git.kernel.dk/linux-block.git
-> bluetooth            git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
-> bryan-nfs            git://git.linux-nfs.org/projects/bjschuma/linux-nfs.git
-> btrfs                git://git.kernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs.git
-> can                  git://gitorious.org/linux-can/linux-can-next
-> ceph                 git://github.com/ceph/ceph-client.git
-> ceph                 git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
-> cgroup               git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git
-> char-misc            git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
-> cifs                 git://git.samba.org/sfrench/cifs-2.6.git
-> calxeda              git://sources.calxeda.com/kernel/linux.git
-> configfs             git://git.kernel.org/pub/scm/linux/kernel/git/jlbec/configfs.git
-> congwang             git://github.com/congwang/linux.git
-> cpufreq              git://git.kernel.org/pub/scm/linux/kernel/git/davej/cpufreq.git
-> cpumask              git://git.kernel.org/pub/scm/linux/kernel/git/rusty/cpumask.git
-> cryptodev            git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git
-> crypto               git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git
-> digsig               git://git.kernel.org/pub/scm/linux/kernel/git/kasatkin/linux-digsig.git
-> dlm                  git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git
-> dma-buf              git://git.linaro.org/people/sumitsemwal/linux-dma-buf.git
-> dmaengine            git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git
-> dm                   git://git.kernel.org/pub/scm/linux/kernel/git/agk/linux-dm.git
-> drdb                 git://git.drbd.org/linux-drbd.git
-> driver-core          git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
-> drm                  git://people.freedesktop.org/~airlied/linux.git
-> drm-intel            git://people.freedesktop.org/~danvet/drm-intel.git
-> ecryptfs             git://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git
-> edac                 git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac.git
-> efi                  git://git.kernel.org/pub/scm/linux/kernel/git/mfleming/linux.git
-> ext3                 git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git
-> ext4                 git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
-> fbdev                git://github.com/schandinat/linux-2.6.git
-> firewire             git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git
-> floppy               git://git.kernel.org/pub/scm/linux/kernel/git/jikos/floppy.git
-> fuse                 git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
-> galak-powerpc        git://git.kernel.org/pub/scm/linux/kernel/git/galak/powerpc.git
-> gfs2                 git://git.kernel.org/pub/scm/linux/kernel/git/steve/gfs2-3.0-nmw.git
-> grant                git://git.secretlab.ca/git/linux-2.6.git
-> gpio                 git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-> hid                  git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git
-> hwmon                git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
-> i2c                  git://git.pengutronix.de/git/wsa/linux.git
-> ia64                 git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux.git
-> ide                  git://git.kernel.org/pub/scm/linux/kernel/git/davem/ide.git
-> infiniband           git://git.kernel.org/pub/scm/linux/kernel/git/roland/infiniband.git
-> input                git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git
-> integrity            git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
-> iommu                git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
-> isci                 git://git.kernel.org/pub/scm/linux/kernel/git/djbw/isci.git
-> iwlwifi              git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi.git
-> jbarnes-drm-intel    git://git.kernel.org/pub/scm/linux/kernel/git/jbarnes/drm-intel.git
-> jbarnes              git://people.freedesktop.org/~jbarnes/linux
-> jbarnes-pci          git://git.kernel.org/pub/scm/linux/kernel/git/jbarnes/pci.git
-> jeremy-xen           git://git.kernel.org/pub/scm/linux/kernel/git/jeremy/xen.git
-> josef-btrfs          git://git.kernel.org/pub/scm/linux/kernel/git/josef/btrfs-next.git
-> kbuild               git://git.kernel.org/pub/scm/linux/kernel/git/mmarek/kbuild.git
-> keithp               git://people.freedesktop.org/~keithp/linux
-> keys                 git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/security-keys.git
-> kgdb                 git://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git
-> konrad-mm            git://git.kernel.org/pub/scm/linux/kernel/git/konrad/mm.git
-> ktest                git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
-> kvm                  git://git.kernel.org/pub/scm/virt/kvm/kvm.git
-> l2-mtd               git://git.infradead.org/users/dedekind/l2-mtd.git
-> leds                 git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git
-> libata               git://git.kernel.org/pub/scm/linux/kernel/git/jgarzik/libata-dev.git
-> logfs                git://github.com/prasad-joshi/logfs_upstream.git
-> mac80211             git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211.git
-> mac80211-next        git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git
-> md                   git://neil.brown.name/md
-> media                git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
-> memcg                git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-> mfd                  git://git.kernel.org/pub/scm/linux/kernel/git/sameo/mfd-2.6.git
-> miklos-vfs           git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git
-> mips                 git://git.linux-mips.org/pub/scm/ralf/upstream-linus.git
-> mlin                 git://git.kernel.org/pub/scm/linux/kernel/git/mlin/linux.git
-> mmc                  git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git
-> mmu                  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/mmu.git
-> modsign              git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git
-> mtd                  git://git.infradead.org/linux-mtd.git
-> netdev               git://git.kernel.org/pub/scm/linux/kernel/git/jkirsher/net.git
-> netdev-next          git://git.kernel.org/pub/scm/linux/kernel/git/jkirsher/net-next.git
-> net                  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git
-> net-next             git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-> next                 git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> nfc                  git://git.kernel.org/pub/scm/linux/kernel/git/sameo/nfc-3.0.git
-> vcgomes-nfc          git://git.infradead.org/users/vcgomes/linux-nfc.git
-> nf-next              git://150.214.188.80/nf-next
-> nf                   git://150.214.188.80/nf
-> nfsd                 git://linux-nfs.org/~bfields/linux.git
-> nfs                  git://git.linux-nfs.org/projects/trondmy/linux-nfs.git
-> nouveau              git://git.freedesktop.org/git/nouveau/linux-2.6
-> ocfs2                git://git.kernel.org/pub/scm/linux/kernel/git/jlbec/ocfs2.git
-> omap-dss2            git://gitorious.org/linux-omap-dss2/linux
-> omap-dt              git://git.kernel.org/pub/scm/linux/kernel/git/bcousson/linux-omap-dt.git
-> openvswitch          git://git.kernel.org/pub/scm/linux/kernel/git/jesse/openvswitch.git
-> oprofile             git://git.kernel.org/pub/scm/linux/kernel/git/rric/oprofile.git
-> paulg                git://git.kernel.org/pub/scm/linux/kernel/git/paulg/linux.git
-> paulus-powerpc       git://git.kernel.org/pub/scm/linux/kernel/git/paulus/powerpc.git
-> pci                  git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git
-> pcmcia               git://git.kernel.org/pub/scm/linux/kernel/git/brodo/pcmcia.git
-> percpu               git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git
-> perf                 git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
-> pinctrl              git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-> platform-drivers-x86 git://cavan.codon.org.uk/platform-drivers-x86
-> pm                   git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
-> powerpc-4xx          git://git.kernel.org/pub/scm/linux/kernel/git/jwboyer/powerpc-4xx.git
-> powerpc              git://git.kernel.org/pub/scm/linux/kernel/git/benh/powerpc.git
-> random               git://git.kernel.org/pub/scm/linux/kernel/git/tytso/random.git
-> ras                  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git
-> rcu                  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
-> regmap               git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git
-> regulator            git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
-> remoteproc           git://git.kernel.org/pub/scm/linux/kernel/git/ohad/remoteproc.git
-> romieu               git://violet.fr.zoreil.com/romieu/linux
-> rusty                git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux.git
-> rw                   git://git.kernel.org/pub/scm/linux/kernel/git/rw/misc.git
-> s390                 git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git
-> samsung              git://git.infradead.org/users/kmpark/linux-samsung
-> kgene-samsung        git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> sched                git://git.kernel.org/pub/scm/linux/kernel/git/peterz/sched.git
-> scsi                 git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git
-> security             git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
-> selinux              git://git.infradead.org/users/eparis/selinux.git
-> sfc                  git://git.kernel.org/pub/scm/linux/kernel/git/bwh/sfc-next
-> sh                   git://github.com/pmundt/linux-sh.git
-> signal               git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git
-> slab                 git://git.kernel.org/pub/scm/linux/kernel/git/penberg/linux.git
-> slave-dma            git://git.infradead.org/users/vkoul/slave-dma.git
-> smack                git://git.gitorious.org/smack-next/kernel.git
-> sound                git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
-> sound-unstable       git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-unstable.git
-> sparc                git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git
-> sparc-next           git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next.git
-> squashfs             git://git.kernel.org/pub/scm/linux/kernel/git/pkl/squashfs-next.git
-> stable               git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-> staging              git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-> sysctl               git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/sysctl.git
-> target               git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git
-> thermal              git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
-> time                 git://git.linaro.org/people/jstultz/linux.git
-> tip                  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
-> tj-misc              git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git
-> trace                git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-> tracing              git://github.com/fweisbec/tracing
-> tty                  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
-> uapi                 git://git.infradead.org/users/dhowells/linux-headers.git
-> ubi2                 git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubi2.git
-> ubifs                git://git.infradead.org/linux-ubifs.git
-> ubi                  git://git.infradead.org/linux-ubi.git
-> uml                  git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git
-> uprobes              git://github.com/srikard/linux.git
-> usb                  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-> userns               git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git
-> v9fs                 git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git
-> vfs                  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
-> vhost                git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git
-> watchdog             git://www.linux-watchdog.org/linux-watchdog.git
-> wireless             git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless.git
-> wireless-next        git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next.git
-> wireless-testing     git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
-> wl12xx               git://git.kernel.org/pub/scm/linux/kernel/git/luca/wl12xx.git
-> wq                   git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git
-> writeback            git://git.kernel.org/pub/scm/linux/kernel/git/wfg/linux.git
-> xen                  git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git
-> xfs                  git://oss.sgi.com/xfs/xfs
-> xhci                 git://git.kernel.org/pub/scm/linux/kernel/git/sarah/xhci.git
-> yinghai              git://git.kernel.org/pub/scm/linux/kernel/git/yinghai/linux-yinghai.git
-> arm-integrator       git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-integrator.git
-> arm-platforms        git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git
-> kvm-arm              git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux-kvm-arm.git
-> arm-soc              git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
-> arm-tegra            git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
-> arm-perf             git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git
-> m68knommu            git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git
-> m68k                 git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git
-> aarch64              git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux-aarch64.git
-> arm                  git://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-arm.git
-> davinci              git://gitorious.org/linux-davinci/linux-davinci.git
-> vfio                 git://github.com/awilliam/linux-vfio.git
-> dma-mapping          git://git.linaro.org/people/mszyprowski/linux-dma-mapping.git
-> glommer-memcg        git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git
-> ks8695               git://git.kernel.org/pub/scm/linux/kernel/git/gerg/ks8695.git
-> cr                   git://git.kernel.org/pub/scm/linux/kernel/git/gorcunov/linux-cr.git
-> renesas              git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git
-> iwlwifi-next         git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-next.git
-> jdelvare-staging     git://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging.git
-> iio                  git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
-> jikos-block          git://git.kernel.org/pub/scm/linux/kernel/git/jikos/linux-block.git
-> kees                 git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
-> hwspinlock           git://git.kernel.org/pub/scm/linux/kernel/git/ohad/hwspinlock.git
-> rpmsg                git://git.kernel.org/pub/scm/linux/kernel/git/ohad/rpmsg.git
-> oleg                 git://git.kernel.org/pub/scm/linux/kernel/git/oleg/misc.git
-> intel-net-next       git://git.kernel.org/pub/scm/linux/kernel/git/ppwaskie/net-next.git
-> intel-net            git://git.kernel.org/pub/scm/linux/kernel/git/ppwaskie/net.git
-> gfs2-fixes           git://git.kernel.org/pub/scm/linux/kernel/git/steve/gfs2-3.0-fixes.git
-> omap                 git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
-> omap-pm              git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap-pm.git
-> pwm                  git://gitorious.org/linux-pwm/linux-pwm.git
-> rpi                  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-rpi.git
-> lpc32xx              git://git.antcom.de/linux-2.6.git
-> ablock84-btrfs       git://github.com/ablock84/linux-btrfs.git
-> kvm-ppc              git://github.com/agraf/linux-2.6.git
-> at91                 git://github.com/at91linux/linux-at91.git
-> dynticks             git://github.com/fweisbec/linux-dynticks.git
-> hzhuang1             git://github.com/hzhuang1/linux.git
-> lunn                 git://github.com/lunn/linux.git
-> broonie-misc         git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git
-> tile                 git://git.kernel.org/pub/scm/linux/kernel/git/cmetcalf/linux-tile.git
-> parisc               git://git.kernel.org/pub/scm/linux/kernel/git/jejb/parisc-2.6.git
-> nomadik              git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-nomadik.git
-> stericsson           git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git
-> omap-pending         git://git.kernel.org/pub/scm/linux/kernel/git/pjw/omap-pending.git
-> rafael-renesas       git://git.kernel.org/pub/scm/linux/kernel/git/rafael/renesas.git
-> ux500                git://git.linaro.org/people/ljones/linux-3.0-ux500.git
-> clk                  git://git.linaro.org/people/mturquette/linux.git
-> vexpress             git://git.linaro.org/people/pawelmoll/linux.git
-> shawnguo             git://git.linaro.org/people/shawnguo/linux-2.6.git
-> open-osd             git://git.open-osd.org/linux-open-osd.git
-> sirfprima2           git://gitorious.org/sirfprima2-kernel/sirfprima2-kernel.git
-> imx                  git://git.pengutronix.de/git/imx/linux-2.6.git
-> c6x                  git://linux-c6x.org/git/projects/linux-c6x-upstreaming.git
-> pinchartl-fbdev      git://linuxtv.org/pinchartl/fbdev.git
-> radeon               git://people.freedesktop.org/~deathsimple/linux.git
-> nvme                 git://git.infradead.org/users/willy/linux-nvme
-> rydberg              git://github.com/rydberg/linux
-> rtg                  git://kernel.ubuntu.com/rtg/net-next
-> ukl                  git://git.pengutronix.de/git/ukl/linux
-> pvhvm                git://xenbits.xen.org/people/sstabellini/linux-pvhvm
-> cris                 git://jni.nu/cris
-> shaggy               git://github.com/kleikamp/linux-shaggy
-> bp                   git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp
-> msm                  git://git.kernel.org/pub/scm/linux/kernel/git/davidb/linux-msm
-> wmt                  git://git.code.sf.net/p/linuxwmt/code
-> ac100                git://gitorious.org/~marvin24/ac100/marvin24s-kernel
-> lp0                  git://github.com/lp0/linux
-> arm-uclinux          git://git.kernel.org/pub/scm/linux/kernel/git/gerg/uclinux.git
-> ipvs-next            git://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs-next.git
-> ipvs                 git://git.kernel.org/pub/scm/linux/kernel/git/horms/ipvs.git
-> jgarzik              git://git.kernel.org/pub/scm/linux/kernel/git/jgarzik/linux.git
-> luto                 git://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git
-> pjt-sched            git://git.kernel.org/pub/scm/linux/kernel/git/pjt/sched.git
-> pstore               git://git.infradead.org/users/cbou/linux-pstore
-> arm-amitdanielk      git://git.linaro.org/people/amitdanielk/linux
-> mips-next            git://dev.phrozen.org/mips-next
-> arm-lp               git://linux-arm.org/linux-2.6-lp
-> mips-daney           git://git.linux-mips.org/pub/scm/daney/upstream-daney
-> mips-sjhill          git://git.linux-mips.org/pub/scm/sjhill/linux-sjhill
-> tpmdd                git://github.com/shpedoikal/linux
-> asm-generic          git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic
-> openrisc-jonas       git://openrisc.net/jonas/linux
-> xtensa               git://github.com/czankel/xtensa-linux
->
-> Thanks,
-> Fengguang
+tree:   git://github.com/kleikamp/linux-shaggy loop_v3
+head:   d6e600319940e6015af553f1515cee9d53a3ced9
+commit: c6aadd9b8fd4039534075531b06c8dc263f27c9d [16/22] loop: use aio to perform io on the underlying file
 
++ drivers/block/loop.c:217:6: sparse: symbol 'lo_rw_aio_complete' was not declared. Should it be static?
+  drivers/block/loop.c:270:38: sparse: incorrect type in argument 2 (different address spaces)
+  drivers/block/loop.c:270:38:    expected char const [noderef] <asn:1>*<noident>
+  drivers/block/loop.c:270:38:    got unsigned char [usertype] *buf
 
+vim +217 drivers/block/loop.c
 
--- 
-Asias He
+73285082 Ken Chen         2007-05-08  201  	set_capacity(lo->lo_disk, x);
+7035b5df Dmitry Monakhov  2011-11-16  202  	return 0;
+^1da177e Linus Torvalds   2005-04-16  203  }
+^1da177e Linus Torvalds   2005-04-16  204  
+^1da177e Linus Torvalds   2005-04-16  205  static inline int
+^1da177e Linus Torvalds   2005-04-16  206  lo_do_transfer(struct loop_device *lo, int cmd,
+^1da177e Linus Torvalds   2005-04-16  207  	       struct page *rpage, unsigned roffs,
+^1da177e Linus Torvalds   2005-04-16  208  	       struct page *lpage, unsigned loffs,
+^1da177e Linus Torvalds   2005-04-16  209  	       int size, sector_t rblock)
+^1da177e Linus Torvalds   2005-04-16  210  {
+^1da177e Linus Torvalds   2005-04-16  211  	if (unlikely(!lo->transfer))
+^1da177e Linus Torvalds   2005-04-16  212  		return 0;
+^1da177e Linus Torvalds   2005-04-16  213  
+^1da177e Linus Torvalds   2005-04-16  214  	return lo->transfer(lo, cmd, rpage, roffs, lpage, loffs, size, rblock);
+^1da177e Linus Torvalds   2005-04-16  215  }
+^1da177e Linus Torvalds   2005-04-16  216  
+c6aadd9b From: Zach Brown 2012-10-15 @217  void lo_rw_aio_complete(u64 data, long res)
+c6aadd9b From: Zach Brown 2012-10-15  218  {
+c6aadd9b From: Zach Brown 2012-10-15  219  	struct bio *bio = (struct bio *)(uintptr_t)data;
+c6aadd9b From: Zach Brown 2012-10-15  220  
+c6aadd9b From: Zach Brown 2012-10-15  221  	if (res > 0)
+c6aadd9b From: Zach Brown 2012-10-15  222  		res = 0;
+c6aadd9b From: Zach Brown 2012-10-15  223  	else if (res < 0)
+c6aadd9b From: Zach Brown 2012-10-15  224  		res = -EIO;
+c6aadd9b From: Zach Brown 2012-10-15  225  
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
