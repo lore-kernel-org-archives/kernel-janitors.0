@@ -1,7 +1,7 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 18 Oct 2012 19:07:55 +0000
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 18 Oct 2012 23:22:27 +0000
 Subject: Re: a dedicated list for build error reports?
-Message-Id: <20121018.150755.2248122089507026505.davem@davemloft.net>
+Message-Id: <20121018232227.GA29599@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121018130146.GA11433@localhost>
 In-Reply-To: <20121018130146.GA11433@localhost>
@@ -10,43 +10,42 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 18 Oct 2012 21:01:46 +0800
+Hi David,
 
-> On Thu, Oct 18, 2012 at 03:45:22PM +0300, Dan Carpenter wrote:
->> On Wed, Oct 17, 2012 at 11:10:42AM +0200, Luis G.F wrote:
->> > unsubscribe kernel-janitors
->> 
->> Uh.  Obviously this isn't the right way to unsubscribe.  You have to
->> send the email to majordomo@vger.kernel.org and not to the list.
->> 
->> But I do think we should maybe find another list for Fengguang's
->> emails?  It's sort of a lot higher traffic than before and sort of a
->> different flavour.
+> I find them super annoying, and these reports are extremely sub-optimal
+> as is.
 > 
-> Agreed.. I'm afraid that my report titles are much more messy than
-> the normal emails and there could be a dozen of such reports per day.
+> The amount of time spent composing these reports could equally be spent
+
+The reports are machine composed which will save human time in the
+long run. On the other hand, it does make the error reports less
+amiable to human beings..
+
+> condensing the error down to a small, self contained, set of text
+> explaining the exact build failure and an initial root-cause estimate.
+> And sending it to the correct maintainer's list.
 > 
-> It may be more clean to send the build error/warning reports to a
-> standalone list.
-> 
->> I still will want to subscribe to the emails, but it would be better
->> to use a different list.  Apparently Dave Miller didn't like the
->> idea of creating a special list for it because he didn't like the
->> emails in the first place.  But now I think everyone likes them a
->> lot.  It might be worth asking again.
-> 
-> CC Dave Miller for possible new inputs.
+> Heck, in the same amount of time, you could even implement the damn
+> fix!
 
-I find them super annoying, and these reports are extremely sub-optimal
-as is.
+That's right at large and we'll head for that direction. At the
+initial stage, first priority has been to catch errors as much and
+early as possible. I don't think there are anything wrong with that
+as a first-step goal, and how things should work as stated by you
+in the long run.
 
-The amount of time spent composing these reports could equally be spent
-condensing the error down to a small, self contained, set of text
-explaining the exact build failure and an initial root-cause estimate.
-And sending it to the correct maintainer's list.
+In the past months I've been focusing on improving the build system
+and generate good error reports out of the box. It's more messy than
+one would expect, and due to my limited skills it kept me busy for
+ever write/rewriting features and fixing loads of bugs in the build
+system.
 
-Heck, in the same amount of time, you could even implement the damn
-fix!
+As the build system goes mature and stable, we'll be able to pay more
+attention to the errors themselves (instead of thinking/verifying how
+to effectively catch errors, auto locate them down to the right commit
+and detect whether they've already been fixed/reported somewhere).
 
-I'm not adding a list for this noise.
+In fact we have started to send ready apply-able fixes these days.
+
+Thanks,
+Fengguang
