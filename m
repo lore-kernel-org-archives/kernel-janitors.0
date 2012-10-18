@@ -1,23 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 03 Oct 2012 02:41:42 +0000
-Subject: Re: [patch] bnx2x: use strlcpy() to copy a string
-Message-Id: <20121002.224142.1359092826405265517.davem@davemloft.net>
+From: Yuanhan Liu <yuanhan.liu@intel.com>
+Date: Thu, 18 Oct 2012 02:51:21 +0000
+Subject: [shaggy:loop_v3 20/22] fs/nfs/nfs4file.c:120:50-51: aio_read: first occurrence line 124, second occu
+Message-Id: <20121018025121.GG21995@yliu-dev.sh.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121002114746.GB1413@elgon.mountain>
-In-Reply-To: <20121002114746.GB1413@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: eilong@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 2 Oct 2012 14:47:46 +0300
+Hi Dave,
 
-> DRV_MODULE_VERSION is smaller than the ->version buffer so the memcpy()
-> copies 1 byte past the end of the string.  It's not super harmful, but
-> it makes the static checkers complain.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+FYI, there are coccinelle warnings in
 
-Applied, thanks Dan.
+tree:   git://github.com/kleikamp/linux-shaggy loop_v3
+head:   b8ee8b4bb91520b2c4a1f567977a737e9e71c449
+commit: 92d2ac3e5a2136d9dfdad4cd10c948c49db6502b [20/22] nfs: add support for read_iter, write_iter
+
++ fs/nfs/nfs4file.c:120:50-51: aio_read: first occurrence line 124, second occurrence line 126
++ fs/nfs/nfs4file.c:120:50-51: aio_write: first occurrence line 125, second occurrence line 127
+
+vim +120 fs/nfs/nfs4file.c
+
+05990d1b Trond Myklebust 2012-09-11  104  		if (!ret && !datasync)
+05990d1b Trond Myklebust 2012-09-11  105  			/* application has asked for meta-data sync */
+05990d1b Trond Myklebust 2012-09-11  106  			ret = pnfs_layoutcommit_inode(inode, true);
+05990d1b Trond Myklebust 2012-09-11  107  		mutex_unlock(&inode->i_mutex);
+dcfc4f25 Trond Myklebust 2012-09-11  108  		/*
+dcfc4f25 Trond Myklebust 2012-09-11  109  		 * If nfs_file_fsync_commit detected a server reboot, then
+dcfc4f25 Trond Myklebust 2012-09-11  110  		 * resend all dirty pages that might have been covered by
+dcfc4f25 Trond Myklebust 2012-09-11  111  		 * the NFS_CONTEXT_RESEND_WRITES flag
+dcfc4f25 Trond Myklebust 2012-09-11  112  		 */
+dcfc4f25 Trond Myklebust 2012-09-11  113  		start = 0;
+dcfc4f25 Trond Myklebust 2012-09-11  114  		end = LLONG_MAX;
+05990d1b Trond Myklebust 2012-09-11  115  	} while (ret = -EAGAIN);
+05990d1b Trond Myklebust 2012-09-11  116  
+ce4ef7c0 Bryan Schumaker 2012-07-16  117  	return ret;
+ce4ef7c0 Bryan Schumaker 2012-07-16  118  }
+ce4ef7c0 Bryan Schumaker 2012-07-16  119  
+ce4ef7c0 Bryan Schumaker 2012-07-16 @120  const struct file_operations nfs4_file_operations = {
+ce4ef7c0 Bryan Schumaker 2012-07-16  121  	.llseek		= nfs_file_llseek,
+ce4ef7c0 Bryan Schumaker 2012-07-16  122  	.read		= do_sync_read,
+ce4ef7c0 Bryan Schumaker 2012-07-16  123  	.write		= do_sync_write,
+ce4ef7c0 Bryan Schumaker 2012-07-16  124  	.aio_read	= nfs_file_read,
+ce4ef7c0 Bryan Schumaker 2012-07-16  125  	.aio_write	= nfs_file_write,
+92d2ac3e Dave Kleikamp   2012-10-15  126  	.aio_read	= nfs_file_read,
+92d2ac3e Dave Kleikamp   2012-10-15  127  	.aio_write	= nfs_file_write,
+92d2ac3e Dave Kleikamp   2012-10-15  128  	.read_iter	= nfs_file_read_iter,
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
