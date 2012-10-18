@@ -1,19 +1,19 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Thu, 18 Oct 2012 15:39:39 +0000
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Thu, 18 Oct 2012 15:51:28 +0000
 Subject: Re: [PATCH V2] drivers/media/v4l2-core/videobuf2-core.c: fix error return code
-Message-Id: <CA+MoWDr3+T_xHjfBAo3SJKE=ZHGr8GArG3xbJE+mULDjmD2hcQ@mail.gmail.com>
+Message-Id: <50802580.7090809@samsung.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5075AB4F.3030709@samsung.com>
-	<1350571624-4666-1-git-send-email-peter.senna@gmail.com>
-	<CALF0-+WPZ7b83Mg=b1KirHt39QE4fuO4MDGhNpQNxMY09O87HA@mail.gmail.com>
+ <1350571624-4666-1-git-send-email-peter.senna@gmail.com>
+ <CALF0-+WPZ7b83Mg=b1KirHt39QE4fuO4MDGhNpQNxMY09O87HA@mail.gmail.com>
 In-Reply-To: <CALF0-+WPZ7b83Mg=b1KirHt39QE4fuO4MDGhNpQNxMY09O87HA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Ezequiel Garcia <elezegarcia@gmail.com>
-Cc: pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>, pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Oct 18, 2012 at 5:28 PM, Ezequiel Garcia <elezegarcia@gmail.com> wrote:
+On 10/18/2012 05:28 PM, Ezequiel Garcia wrote:
 > On Thu, Oct 18, 2012 at 11:47 AM, Peter Senna Tschudin
 > <peter.senna@gmail.com> wrote:
 >> This patch fixes a NULL pointer dereference bug at __vb2_init_fileio().
@@ -37,20 +37,16 @@ On Thu, Oct 18, 2012 at 5:28 PM, Ezequiel Garcia <elezegarcia@gmail.com> wrote:
 >> The OOPS happened when I've artificially forced the error by commenting the line:
 >>         if (fileio->bufs[i].vaddr = NULL)
 >>
->
+> 
 > ... but if you manually changed the original source, how
 > can this be a real BUG?
-
-It is supposed that under some circumstances, (fileio->bufs[i].vaddr
-= NULL) can be true. 'While testing', my change forced the scenario
-in which (fileio->bufs[i].vaddr = NULL) is true...
-
->
+> 
 > Or am I missing something here ?
->
->     Ezequiel
 
+He just commented out this line to trigger the bug, i.e. to simulate
+a situation where fileio->bufs[i].vaddr is NULL. Which is now not
+handled properly.
 
-
--- 
-Peter
+--
+Thanks,
+Sylwester
