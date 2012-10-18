@@ -1,61 +1,64 @@
-From: Michal Hocko <mhocko@suse.cz>
-Date: Fri, 05 Oct 2012 06:58:36 +0000
-Subject: Re: [glommer-memcg:kmemcg-stack 33/221] drivers/vfio/pci/vfio_pci.c:464:28: error: 'VM_RESERVED' und
-Message-Id: <20121005065836.GA27757@dhcp22.suse.cz>
+From: Yuanhan Liu <yuanhan.liu@intel.com>
+Date: Thu, 18 Oct 2012 02:26:37 +0000
+Subject: [shaggy:loop_v3 6/22] mm/iov-iter.c:137:8: sparse: symbol 'ii_bvec_copy_to_user_atomic' was not decl
+Message-Id: <20121018022637.GD21995@yliu-dev.sh.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121005011757.GC6635@localhost>
-In-Reply-To: <20121005011757.GC6635@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I have already posted fixup
-http://www.spinics.net/lists/linux-mm/msg42993.html
+Hi Zach,
 
-On Fri 05-10-12 09:17:57, Wu Fengguang wrote:
-> Hi Konstantin,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/glommer/memcg.git kmemcg-stack
-> head:   5ef649339ef370c1858f5471fd8b38a7a82c3b60
-> commit: aa011e456e6bd7e4179b03289d7501f8c8444809 [33/221] mm: kill vma flag VM_RESERVED and mm->reserved_vm counter
-> config: x86_64-allmodconfig
-> 
-> Note: the HEAD commit builds fine. It only hurts bisectibility.
-> 
-> All error/warnings:
-> 
-> drivers/vfio/pci/vfio_pci.c: In function 'vfio_pci_mmap':
-> drivers/vfio/pci/vfio_pci.c:464:28: error: 'VM_RESERVED' undeclared (first use in this function)
-> drivers/vfio/pci/vfio_pci.c:464:28: note: each undeclared identifier is reported only once for each function it appears in
-> --
-> drivers/media/video/videobuf-dma-sg.c: In function '__videobuf_mmap_mapper':
-> drivers/media/video/videobuf-dma-sg.c:585:35: error: 'VM_RESERVED' undeclared (first use in this function)
-> drivers/media/video/videobuf-dma-sg.c:585:35: note: each undeclared identifier is reported only once for each function it appears in
-> --
-> drivers/media/video/videobuf2-memops.c: In function 'vb2_mmap_pfn_range':
-> drivers/media/video/videobuf2-memops.c:166:36: error: 'VM_RESERVED' undeclared (first use in this function)
-> drivers/media/video/videobuf2-memops.c:166:36: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> vim +464 drivers/vfio/pci/vfio_pci.c
-> 
-> 89e1f7d4 (Alex Williamson 2012-07-31  458) 			return ret;
-> 89e1f7d4 (Alex Williamson 2012-07-31  459) 
-> 89e1f7d4 (Alex Williamson 2012-07-31  460) 		vdev->barmap[index] = pci_iomap(pdev, index, 0);
-> 89e1f7d4 (Alex Williamson 2012-07-31  461) 	}
-> 89e1f7d4 (Alex Williamson 2012-07-31  462) 
-> 89e1f7d4 (Alex Williamson 2012-07-31  463) 	vma->vm_private_data = vdev;
-> 89e1f7d4 (Alex Williamson 2012-07-31 @464) 	vma->vm_flags |= (VM_IO | VM_RESERVED);
-> 89e1f7d4 (Alex Williamson 2012-07-31  465) 	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> 89e1f7d4 (Alex Williamson 2012-07-31  466) 
-> 89e1f7d4 (Alex Williamson 2012-07-31  467) 	phys = (pci_resource_start(pdev, index) >> PAGE_SHIFT) + pgoff;
-> 
-> ---
-> 0-DAY kernel build testing backend         Open Source Technology Center
-> Fengguang Wu, Yuanhan Liu                              Intel Corporation
+FYI, there are new sparse warnings show up in
 
--- 
-Michal Hocko
-SUSE Labs
+tree:   git://github.com/kleikamp/linux-shaggy loop_v3
+head:   d6e600319940e6015af553f1515cee9d53a3ced9
+commit: fa7902e69af5b98aee20c6788549a1423eabfd41 [6/22] iov_iter: add bvec support
+
+  mm/iov-iter.c:40:8: sparse: symbol 'ii_iovec_copy_to_user_atomic' was not declared. Should it be static?
+  mm/iov-iter.c:69:8: sparse: symbol 'ii_iovec_copy_to_user' was not declared. Should it be static?
++ mm/iov-iter.c:137:8: sparse: symbol 'ii_bvec_copy_to_user_atomic' was not declared. Should it be static?
++ mm/iov-iter.c:142:8: sparse: symbol 'ii_bvec_copy_to_user' was not declared. Should it be static?
++ mm/iov-iter.c:147:8: sparse: symbol 'ii_bvec_copy_from_user_atomic' was not declared. Should it be static?
++ mm/iov-iter.c:152:8: sparse: symbol 'ii_bvec_copy_from_user' was not declared. Should it be static?
++ mm/iov-iter.c:162:6: sparse: symbol 'ii_bvec_advance' was not declared. Should it be static?
++ mm/iov-iter.c:189:5: sparse: symbol 'ii_bvec_fault_in_readable' was not declared. Should it be static?
++ mm/iov-iter.c:194:8: sparse: symbol 'ii_bvec_single_seg_count' was not declared. Should it be static?
+  mm/iov-iter.c:244:8: sparse: symbol 'ii_iovec_copy_from_user_atomic' was not declared. Should it be static?
+  mm/iov-iter.c:274:8: sparse: symbol 'ii_iovec_copy_from_user' was not declared. Should it be static?
+  mm/iov-iter.c:295:6: sparse: symbol 'ii_iovec_advance' was not declared. Should it be static?
+  mm/iov-iter.c:340:5: sparse: symbol 'ii_iovec_fault_in_readable' was not declared. Should it be static?
+  mm/iov-iter.c:351:8: sparse: symbol 'ii_iovec_single_seg_count' was not declared. Should it be static?
+
+vim +137 mm/iov-iter.c
+
+fa7902e6 Zach Brown 2012-10-15  121  			       copy);
+fa7902e6 Zach Brown 2012-10-15  122  		kunmap_atomic(bvec_map);
+fa7902e6 Zach Brown 2012-10-15  123  		remaining -= copy;
+fa7902e6 Zach Brown 2012-10-15  124  		bvec_offset += copy;
+fa7902e6 Zach Brown 2012-10-15  125  		page_offset += copy;
+fa7902e6 Zach Brown 2012-10-15  126  		if (bvec_offset = bvec->bv_len) {
+fa7902e6 Zach Brown 2012-10-15  127  			bvec_offset = 0;
+fa7902e6 Zach Brown 2012-10-15  128  			bvec++;
+fa7902e6 Zach Brown 2012-10-15  129  		}
+fa7902e6 Zach Brown 2012-10-15  130  	}
+fa7902e6 Zach Brown 2012-10-15  131  
+fa7902e6 Zach Brown 2012-10-15  132  	kunmap_atomic(page_map);
+fa7902e6 Zach Brown 2012-10-15  133  
+fa7902e6 Zach Brown 2012-10-15  134  	return bytes;
+fa7902e6 Zach Brown 2012-10-15  135  }
+fa7902e6 Zach Brown 2012-10-15  136  
+fa7902e6 Zach Brown 2012-10-15 @137  size_t ii_bvec_copy_to_user_atomic(struct page *page, struct iov_iter *i,
+fa7902e6 Zach Brown 2012-10-15  138  				   unsigned long offset, size_t bytes)
+fa7902e6 Zach Brown 2012-10-15  139  {
+fa7902e6 Zach Brown 2012-10-15  140  	return bvec_copy_tofrom_page(i, page, offset, bytes, 0);
+fa7902e6 Zach Brown 2012-10-15  141  }
+fa7902e6 Zach Brown 2012-10-15  142  size_t ii_bvec_copy_to_user(struct page *page, struct iov_iter *i,
+fa7902e6 Zach Brown 2012-10-15  143  				   unsigned long offset, size_t bytes)
+fa7902e6 Zach Brown 2012-10-15  144  {
+fa7902e6 Zach Brown 2012-10-15  145  	return bvec_copy_tofrom_page(i, page, offset, bytes, 0);
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
