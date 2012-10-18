@@ -1,16 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 07 Oct 2012 18:39:08 +0000
-Subject: Re: [PATCH 15/20 V2] drivers/net/ethernet/natsemi/xtsonic.c: fix error return code
-Message-Id: <20121007.143908.1688001732224378028.davem@davemloft.net>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Thu, 18 Oct 2012 15:28:15 +0000
+Subject: Re: [PATCH V2] drivers/media/v4l2-core/videobuf2-core.c: fix error return code
+Message-Id: <CALF0-+WPZ7b83Mg=b1KirHt39QE4fuO4MDGhNpQNxMY09O87HA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349475053-11464-1-git-send-email-peter.senna@gmail.com>
-	<1349475053-11464-5-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1349475053-11464-5-git-send-email-peter.senna@gmail.com>
+References: <5075AB4F.3030709@samsung.com>
+	<1350571624-4666-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1350571624-4666-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: mcuos.com@gmail.com, axel.lin@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: pawel@osciak.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, mchehab@infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+On Thu, Oct 18, 2012 at 11:47 AM, Peter Senna Tschudin
+<peter.senna@gmail.com> wrote:
+> This patch fixes a NULL pointer dereference bug at __vb2_init_fileio().
+> The NULL pointer deference happens at videobuf2-core.c:
+>
+> static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_t count,
+>                 loff_t *ppos, int nonblock, int read)
+> {
+> ...
+>         if (!q->fileio) {
+>                 ret = __vb2_init_fileio(q, read);
+>                 dprintk(3, "file io: vb2_init_fileio result: %d\n", ret);
+>                 if (ret)
+>                         return ret;
+>         }
+>         fileio = q->fileio; // NULL pointer deference here
+> ...
+> }
+>
+> It was tested with vivi driver and qv4l2 for selecting read() as capture method.
+> The OOPS happened when I've artificially forced the error by commenting the line:
+>         if (fileio->bufs[i].vaddr = NULL)
+>
 
-Applied.
+... but if you manually changed the original source, how
+can this be a real BUG?
+
+Or am I missing something here ?
+
+    Ezequiel
