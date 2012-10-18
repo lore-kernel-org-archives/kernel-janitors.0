@@ -1,53 +1,55 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 02 Oct 2012 17:19:20 +0000
-Subject: drivers/net/ethernet/3com/3c59x.c:1026:2: error: implicit declaration of function 'pci_iomap'
-Message-Id: <20121002171920.GB5431@localhost>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 18 Oct 2012 15:47:38 +0000
+Subject: Re: your mail
+Message-Id: <5080249A.5090000@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi James,
 
-FYI, kernel build failed on
 
-commit: 97a29d59fc222b36bac3ee3a8ae994f65bf7ffdf  [PARISC] fix compile break caused by iomap: make IOPORT/PCI mapping functions conditional
-config: mips-allmodconfig
+Am 18.10.2012 15:17, schrieb Nicolas Palix:
+> Hi,
+> 
+> 
+>> But I do think we should maybe find another list for Fengguang's
+>> emails?  It's sort of a lot higher traffic than before and sort of a
+>> different flavour.
+>>
+>> I still will want to subscribe to the emails, but it would be better
+>> to use a different list.  Apparently Dave Miller didn't like the
+>> idea of creating a special list for it because he didn't like the
+>> emails in the first place.  But now I think everyone likes them a
+>> lot.  It might be worth asking again.
+> 
+> I agreed in the first place but kernel-janitors is also a great place
+> for newcomers.
+> Having those reports accessible could be great for them. Also, it is not
+> that different than the janitorial work done before. The main difference I see
+> is that there is no fixing patches associated to the reports. But the problems
+> addressed are almost the same, and they are found with the same tools.
+> 
+> Does it worth a new list ?
+> 
+> Maybe the set of branches tested need to be further refined to lower
+> the false positives.
+> Finally, we may hope developers will test their patches before releasing them.
+> 
+> Is there any mean for them to apply the tests before pushing ?
+> 
+> If a new list is created, please let us know how to subscribe to it on this one.
+> 
+> Regards.
+> 
 
-All error/warnings:
 
-drivers/net/ethernet/3com/3c59x.c: In function 'vortex_init_one':
-drivers/net/ethernet/3com/3c59x.c:1026:2: error: implicit declaration of function 'pci_iomap' [-Werror=implicit-function-declaration]
-drivers/net/ethernet/3com/3c59x.c:1026:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/3com/3c59x.c:1028:10: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/3com/3c59x.c:1038:3: error: implicit declaration of function 'pci_iounmap' [-Werror=implicit-function-declaration]
-drivers/net/ethernet/3com/3c59x.c: In function 'vortex_probe1':
-drivers/net/ethernet/3com/3c59x.c:1329:18: warning: assignment makes pointer from integer without a cast [enabled by default]
-cc1: some warnings being treated as errors
+I support the idea of a new list. The reports are mostly nothing that what the janitors can
+review. Fengguang is important but cleary targeted to developers in ongoing projects.
+Janitors care more about the state of the current kernel.
 
-vim +1026 drivers/net/ethernet/3com/3c59x.c
+just my two cents,
+ wh
 
-^1da177e drivers/net/3c59x.c (Linus Torvalds   2005-04-16  1014) 
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1015) 	unit = vortex_cards_found;
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1016) 
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1017) 	if (global_use_mmio < 0 && (unit >= MAX_UNITS || use_mmio[unit] < 0)) {
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1018) 		/* Determine the default if the user didn't override us */
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1019) 		vci = &vortex_info_tbl[ent->driver_data];
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1020) 		pci_bar = vci->drv_flags & (IS_CYCLONE | IS_TORNADO) ? 1 : 0;
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1021) 	} else if (unit < MAX_UNITS && use_mmio[unit] >= 0)
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1022) 		pci_bar = use_mmio[unit] ? 1 : 0;
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1023) 	else
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1024) 		pci_bar = global_use_mmio ? 1 : 0;
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1025) 
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07 @1026) 	ioaddr = pci_iomap(pdev, pci_bar, 0);
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1027) 	if (!ioaddr) /* If mapping fails, fall-back to BAR 0... */
-900fd17d drivers/net/3c59x.c (John W. Linville 2005-11-07  1028) 		ioaddr = pci_iomap(pdev, 0, 0);
-8cd47ea1 drivers/net/3c59x.c (Kulikov Vasiliy  2010-07-21  1029) 	if (!ioaddr) {
-8cd47ea1 drivers/net/3c59x.c (Kulikov Vasiliy  2010-07-21  1030) 		pci_disable_device(pdev);
-8cd47ea1 drivers/net/3c59x.c (Kulikov Vasiliy  2010-07-21  1031) 		rc = -ENOMEM;
-8cd47ea1 drivers/net/3c59x.c (Kulikov Vasiliy  2010-07-21  1032) 		goto out;
 
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
