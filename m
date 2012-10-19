@@ -1,57 +1,28 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 03 Oct 2012 16:18:03 +0000
-Subject: [PATCH 18/20] drivers/net/ethernet/sun/sungem.c: fix error return code
-Message-Id: <1349281090-10013-13-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 19 Oct 2012 14:01:37 +0000
+Subject: [arm-platforms:kvm-perf 1/2] hw_breakpoint.c:(.text+0x8746c): undefined reference to `perf_misc_flag
+Message-Id: <20121019140137.GB17742@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net
-Cc: kernel-janitors@vger.kernel.org, jdmason@kudzu.us, gerard.lledo@gmail.com, dhowells@redhat.com, joe@perches.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hi Marc,
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+FYI, kernel build failed on
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git kvm-perf
+head:   bde35887bb04b39f9b3402865c672b04a69730d1
+commit: f2618bbd3af6820e82d9aeae18e443d2c67fb33d [1/2] ARM: perf: add guest vs host discrimination
+config: arm-omap2plus_defconfig # make ARCH=arm omap2plus_defconfig
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+All error/warnings:
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+kernel/built-in.o: In function `perf_prepare_sample':
+hw_breakpoint.c:(.text+0x8746c): undefined reference to `perf_misc_flags'
+hw_breakpoint.c:(.text+0x87574): undefined reference to `perf_instruction_pointer'
 
 ---
- drivers/net/ethernet/sun/sungem.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/sun/sungem.c b/drivers/net/ethernet/sun/sungem.c
-index 9ae12d0..6c8695e 100644
---- a/drivers/net/ethernet/sun/sungem.c
-+++ b/drivers/net/ethernet/sun/sungem.c
-@@ -2963,7 +2963,8 @@ static int __devinit gem_init_one(struct pci_dev *pdev,
- 		goto err_out_iounmap;
- 	}
- 
--	if (gem_get_device_address(gp))
-+	err = gem_get_device_address(gp);
-+	if (err)
- 		goto err_out_free_consistent;
- 
- 	dev->netdev_ops = &gem_netdev_ops;
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
