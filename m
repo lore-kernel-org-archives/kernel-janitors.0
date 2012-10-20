@@ -1,78 +1,71 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Wed, 10 Oct 2012 17:40:30 +0000
-Subject: Re: [PATCH 19/20] drivers/net/ethernet/marvell/skge.c: fix error return code
-Message-Id: <CALF0-+V-SeaaSn++um-JcQx4vV4Bsd4D1c3mki1yNS8kvSGm7w@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 20 Oct 2012 11:02:54 +0000
+Subject: [pinctrl:nomadik-multiplatform 16/16] drivers/pinctrl/pinctrl-nomadik.c:212:2: error: implicit decla
+Message-Id: <20121020110254.GB5714@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CA+MoWDp=_F9opJbVkv9sDsmoykm7MTUZwRVumKCB0ZqDwD6NoQ@mail.gmail.com>
-	<20121004.142335.1467206545795435493.davem@davemloft.net>
-	<CA+MoWDqBF5bdQYBaUmpB99Q=YcHYcUxi8Ffo3x4s0B+pmomb+Q@mail.gmail.com>
-	<20121004.145419.1859367129463136197.davem@davemloft.net>
-	<1349395795.2008.26.camel@joe-AO722>
-	<alpine.DEB.2.02.1210050712590.1958@localhost6.localdomain6>
-	<1349422595.2008.55.camel@joe-AO722>
-	<alpine.DEB.2.02.1210051003120.1958@localhost6.localdomain6>
-	<CA+MoWDp8Y0tJoBbz0nxH3Y7J0ur3TJm-dO9OM5BZVBKcbS9TpA@mail.gmail.com>
-In-Reply-To: <CA+MoWDp8Y0tJoBbz0nxH3Y7J0ur3TJm-dO9OM5BZVBKcbS9TpA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, shemminger@vyatta.com, mlindner@marvell.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Peter,
+Hi Linus,
 
-On Wed, Oct 10, 2012 at 2:08 PM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> Stephen and David,
->
-> I've sent V2 of the patches and they were all accepted. Thank you.
->
-> I've made a template for the commit message, and then copy and paste
-> function names from the code. Something like:
->
-> -- // --
-> The function sky2_probe() return 0 for success and negative value
-> for most of its internal tests failures. There are two exceptions
-> that are error cases going to err_out*:. For this two cases, the
-> function abort its success execution path, but returns non negative
-> value, making it dificult for a caller function to notice the error.
->
-> This patch fixes the error cases that do not return negative values.
->
-> This was found by Coccinelle, but the code change was made by hand.
-> This patch is not robot generated.
-> ...
-> --//--
->
-> How useful it was to have the function names when you were analyzing
-> the patches? It took me a lot of time to modify the template by copy
-> and paste, check if it is correct, then commit. I have some other
-> similar patches to submit and I wonder if having the function names in
-> the commit message helped you.
->
+FYI, kernel build failed on
 
-Having real function names in your commit message won't make it more useful.
-IMHO, the problem is you're still using a template commit message,
-which produces
-a robot-like commit message.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git nomadik-multiplatform
+head:   2e88a0fdda1be5962b7e548ab487686daa5d9754
+commit: 2e88a0fdda1be5962b7e548ab487686daa5d9754 [16/16] ARM: ux500: convert to multiplatorm
+config: arm-imx_v6_v7_defconfig # make ARCH=arm 
 
-Developers don't like that, we prefer to see a text written by some
-guy explaining
-why is this patch needed, and what it's fixing/improving from an
-overall point of view.
-This is not easy and takes much training.
+All error/warnings:
 
-I believe patches should help maintainers, not only add work them,
-so it's important to double-triple-check the patch and
-double-triple-check the commit message.
+In file included from drivers/pinctrl/pinctrl-nomadik.c:33:0:
+include/linux/mfd/dbx500-prcmu.h:459:19: error: redefinition of 'prcmu_abb_read'
+include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of 'prcmu_abb_read' was here
+include/linux/mfd/dbx500-prcmu.h:464:19: error: redefinition of 'prcmu_abb_write'
+include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of 'prcmu_abb_write' was here
+include/linux/mfd/dbx500-prcmu.h:475:19: error: redefinition of 'prcmu_config_clkout'
+include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of 'prcmu_config_clkout' was here
+include/linux/mfd/dbx500-prcmu.h:537:19: error: redefinition of 'prcmu_ac_wake_req'
+include/linux/mfd/db8500-prcmu.h:683:19: note: previous definition of 'prcmu_ac_wake_req' was here
+include/linux/mfd/dbx500-prcmu.h:542:20: error: redefinition of 'prcmu_ac_sleep_req'
+include/linux/mfd/db8500-prcmu.h:688:20: note: previous definition of 'prcmu_ac_sleep_req' was here
+drivers/pinctrl/pinctrl-nomadik.c: In function 'nmk_gpio_disable_lazy_irq':
+drivers/pinctrl/pinctrl-nomadik.c:212:2: error: implicit declaration of function 'NOMADIK_GPIO_TO_IRQ' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
 
-I know this is tedious and it'll slow you a bit. But it's a good
-thing: it means you are working :-)
+vim +212 drivers/pinctrl/pinctrl-nomadik.c
 
-Also, in this particular case, where the coccinelle does not fix
-something obvious,
-then I'd say you should be *extra* careful.
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  196  	__nmk_gpio_set_mode(nmk_chip, offset, gpio_mode);
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  197  
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  198  	if (glitch && nmk_chip->set_ioforce) {
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  199  		nmk_chip->set_ioforce(false);
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  200  
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  201  		writel(rwimsc, nmk_chip->addr + NMK_GPIO_RWIMSC);
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  202  		writel(fwimsc, nmk_chip->addr + NMK_GPIO_FWIMSC);
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  203  	}
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  204  }
+01727e61 arch/arm/plat-nomadik/gpio.c Rabin Vincent 2010-12-13  205  
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  206  static void
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  207  nmk_gpio_disable_lazy_irq(struct nmk_gpio_chip *nmk_chip, unsigned offset)
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  208  {
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  209  	u32 falling = nmk_chip->fimsc & BIT(offset);
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  210  	u32 rising = nmk_chip->rimsc & BIT(offset);
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  211  	int gpio = nmk_chip->chip.base + offset;
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23 @212  	int irq = NOMADIK_GPIO_TO_IRQ(gpio);
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  213  	struct irq_data *d = irq_get_irq_data(irq);
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  214  
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  215  	if (!rising && !falling)
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  216  		return;
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  217  
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  218  	if (!d || !irqd_irq_disabled(d))
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  219  		return;
+6c42ad1c drivers/gpio/gpio-nomadik.c  Rabin Vincent 2011-05-23  220  
 
-Hope this helps.
+The code at line 212 was first introduced by commit:
+6c42ad1 gpio/nomadik: fix spurious interrupts with SKE
 
-    Ezequiel
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
