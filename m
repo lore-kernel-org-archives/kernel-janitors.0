@@ -1,67 +1,77 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 Oct 2012 08:32:34 +0000
-Subject: [patch] orinoco_usb: clean up some signedness issues
-Message-Id: <20121002083234.GL12398@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 20 Oct 2012 11:10:50 +0000
+Subject: [mac80211-next:master 38/38] net/mac80211/tx.c:2753 ieee80211_get_buffered_bc() error: we previously
+Message-Id: <20121020111050.GA6315@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Sarah Sharp <sarah.a.sharp@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-wireless@vger.kernel.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-In ezusb_read_ltv() we had a comparison "(bufsize < 0)" which was never
-true because bufsize was unsigned.  I looked at the implications of
-that.  If we passed a negative number to ezusb_access_ltv() then it
-would be used as the size parameter of the memcpy() because that
-function uses min_t(int, exp_len, ans_size).
+Hi Marco,
 
-But fortunately when I looked at the callers, bufsize is not controlled
-by the user and it's never negative.  So these signedness mistakes have
-no impact.
+FYI, there are new smatch warnings show up in
 
-I removed the always false check from ezusb_read_ltv() and I changed the
-types in ezusb_access_ltv() and made the variables unsigned.
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git master
+head:   4e36459d0471786a90b7c77b35645a1df8f6760f
+commit: 4e36459d0471786a90b7c77b35645a1df8f6760f [38/38] mac80211: make client powersave independent of interface type
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+  net/mac80211/tx.c:1361 invoke_tx_handlers() warn: variable dereferenced before check 'tx->skb' (see line 1359)
++ net/mac80211/tx.c:2753 ieee80211_get_buffered_bc() error: we previously assumed 'chanctx_conf' could be null (see line 2714)
 
-diff --git a/drivers/net/wireless/orinoco/orinoco_usb.c b/drivers/net/wireless/orinoco/orinoco_usb.c
-index 7f53cea2..01624dc 100644
---- a/drivers/net/wireless/orinoco/orinoco_usb.c
-+++ b/drivers/net/wireless/orinoco/orinoco_usb.c
-@@ -865,7 +865,7 @@ static int ezusb_firmware_download(struct ezusb_priv *upriv,
- static int ezusb_access_ltv(struct ezusb_priv *upriv,
- 			    struct request_context *ctx,
- 			    u16 length, const void *data, u16 frame_type,
--			    void *ans_buff, int ans_size, u16 *ans_length)
-+			    void *ans_buff, unsigned ans_size, u16 *ans_length)
- {
- 	int req_size;
- 	int retval = 0;
-@@ -933,7 +933,7 @@ static int ezusb_access_ltv(struct ezusb_priv *upriv,
- 	}
- 	if (ctx->in_rid) {
- 		struct ezusb_packet *ans = ctx->buf;
--		int exp_len;
-+		unsigned exp_len;
- 
- 		if (ans->hermes_len != 0)
- 			exp_len = le16_to_cpu(ans->hermes_len) * 2 + 12;
-@@ -949,8 +949,7 @@ static int ezusb_access_ltv(struct ezusb_priv *upriv,
- 		}
- 
- 		if (ans_buff)
--			memcpy(ans_buff, ans->data,
--			       min_t(int, exp_len, ans_size));
-+			memcpy(ans_buff, ans->data, min(exp_len, ans_size));
- 		if (ans_length)
- 			*ans_length = le16_to_cpu(ans->hermes_len);
- 	}
-@@ -995,7 +994,7 @@ static int ezusb_read_ltv(struct hermes *hw, int bap, u16 rid,
- 	struct ezusb_priv *upriv = hw->priv;
- 	struct request_context *ctx;
- 
--	if ((bufsize < 0) || (bufsize % 2))
-+	if (bufsize % 2)
- 		return -EINVAL;
- 
- 	ctx = ezusb_alloc_ctx(upriv, rid, rid);
+vim +2753 net/mac80211/tx.c
+
+e2ebc74d Johannes Berg 2007-07-27  2708  
+32bfd35d Johannes Berg 2007-12-19  2709  	sdata = vif_to_sdata(vif);
+5dfdaf58 Johannes Berg 2007-12-19  2710  
+5dfdaf58 Johannes Berg 2007-12-19  2711  	rcu_read_lock();
+55de908a Johannes Berg 2012-07-26  2712  	chanctx_conf = rcu_dereference(sdata->vif.chanctx_conf);
+5dfdaf58 Johannes Berg 2007-12-19  2713  
+4e36459d Marco Porsch  2012-10-10 @2714  	if (sdata->vif.type = NL80211_IFTYPE_AP || !chanctx_conf) {
+4e36459d Marco Porsch  2012-10-10  2715  		struct beacon_data *beacon 4e36459d Marco Porsch  2012-10-10  2716  				rcu_dereference(sdata->u.ap.beacon);
+4e36459d Marco Porsch  2012-10-10  2717  
+4e36459d Marco Porsch  2012-10-10  2718  		if (!beacon || !beacon->head)
+4e36459d Marco Porsch  2012-10-10  2719  			goto out;
+4e36459d Marco Porsch  2012-10-10  2720  
+4e36459d Marco Porsch  2012-10-10  2721  		ps = &sdata->u.ap.ps;
+4e36459d Marco Porsch  2012-10-10  2722  	} else {
+747cf5e9 Tomas Winkler 2008-05-27  2723  		goto out;
+4e36459d Marco Porsch  2012-10-10  2724  	}
+5dfdaf58 Johannes Berg 2007-12-19  2725  
+4e36459d Marco Porsch  2012-10-10  2726  	if (ps->dtim_count != 0 || !ps->dtim_bc_mc)
+747cf5e9 Tomas Winkler 2008-05-27  2727  		goto out; /* send buffered bc/mc only after DTIM beacon */
+e039fa4a Johannes Berg 2008-05-15  2728  
+e2ebc74d Johannes Berg 2007-07-27  2729  	while (1) {
+4e36459d Marco Porsch  2012-10-10  2730  		skb = skb_dequeue(&ps->bc_buf);
+e2ebc74d Johannes Berg 2007-07-27  2731  		if (!skb)
+747cf5e9 Tomas Winkler 2008-05-27  2732  			goto out;
+e2ebc74d Johannes Berg 2007-07-27  2733  		local->total_ps_buffered--;
+e2ebc74d Johannes Berg 2007-07-27  2734  
+4e36459d Marco Porsch  2012-10-10  2735  		if (!skb_queue_empty(&ps->bc_buf) && skb->len >= 2) {
+e2ebc74d Johannes Berg 2007-07-27  2736  			struct ieee80211_hdr *hdr e2ebc74d Johannes Berg 2007-07-27  2737  				(struct ieee80211_hdr *) skb->data;
+e2ebc74d Johannes Berg 2007-07-27  2738  			/* more buffered multicast/broadcast frames => set
+e2ebc74d Johannes Berg 2007-07-27  2739  			 * MoreData flag in IEEE 802.11 header to inform PS
+e2ebc74d Johannes Berg 2007-07-27  2740  			 * STAs */
+e2ebc74d Johannes Berg 2007-07-27  2741  			hdr->frame_control |e2ebc74d Johannes Berg 2007-07-27  2742  				cpu_to_le16(IEEE80211_FCTL_MOREDATA);
+e2ebc74d Johannes Berg 2007-07-27  2743  		}
+e2ebc74d Johannes Berg 2007-07-27  2744  
+3b8d81e0 Johannes Berg 2009-06-17  2745  		if (!ieee80211_tx_prepare(sdata, &tx, skb))
+e2ebc74d Johannes Berg 2007-07-27  2746  			break;
+e2ebc74d Johannes Berg 2007-07-27  2747  		dev_kfree_skb_any(skb);
+e2ebc74d Johannes Berg 2007-07-27  2748  	}
+e039fa4a Johannes Berg 2008-05-15  2749  
+e039fa4a Johannes Berg 2008-05-15  2750  	info = IEEE80211_SKB_CB(skb);
+e039fa4a Johannes Berg 2008-05-15  2751  
+5cf121c3 Johannes Berg 2008-02-25  2752  	tx.flags |= IEEE80211_TX_PS_BUFFERED;
+55de908a Johannes Berg 2012-07-26 @2753  	info->band = chanctx_conf->channel->band;
+e2ebc74d Johannes Berg 2007-07-27  2754  
+97b045d6 Johannes Berg 2008-06-20  2755  	if (invoke_tx_handlers(&tx))
+e2ebc74d Johannes Berg 2007-07-27  2756  		skb = NULL;
+
+The code at line 2753 was first introduced by commit:
+55de908 mac80211: use channel contexts
+
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
