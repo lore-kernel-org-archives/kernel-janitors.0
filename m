@@ -1,63 +1,70 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 01 Oct 2012 08:38:24 +0000
-Subject: [cr:crtools-3.6 11/32] include/net/ndisc.h:137:2: error: implicit declaration of function 'hash32_pt
-Message-Id: <20121001083824.GA25109@localhost>
+Date: Sat, 20 Oct 2012 11:02:36 +0000
+Subject: [pinctrl:nomadik-multiplatform 16/16] include/linux/mfd/dbx500-prcmu.h:459:19: error: redefinition o
+Message-Id: <20121020110236.GA5714@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Pavel,
+Hi Linus,
 
 FYI, kernel build failed on
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gorcunov/linux-cr.git crtools-3.6
-head:   5bdf2e431ca733b6e46ebbcf2b6a62fd753fa703
-commit: 412de726dff943b0b9600836ae363201047ec8b3 [11/32] net: Dont use ifindices in hash fns
-config: x86_64-allmodconfig
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git nomadik-multiplatform
+head:   2e88a0fdda1be5962b7e548ab487686daa5d9754
+commit: 2e88a0fdda1be5962b7e548ab487686daa5d9754 [16/16] ARM: ux500: convert to multiplatorm
+config: arm-at91_dt_defconfig # make ARCH=arm 
 
 All error/warnings:
 
-In file included from include/net/ipv6.h:19:0,
-                 from include/linux/sunrpc/clnt.h:26,
-                 from include/linux/nfs_fs.h:57,
-                 from init/do_mounts.c:30:
-include/net/ndisc.h: In function 'ndisc_hashfn':
-include/net/ndisc.h:137:2: error: implicit declaration of function 'hash32_ptr' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
---
-In file included from include/net/ipv6.h:19:0,
-                 from include/linux/sunrpc/clnt.h:26,
-                 from include/linux/nfs_fs.h:57,
-                 from fs/lockd/clntlock.c:13:
-include/net/ndisc.h: In function 'ndisc_hashfn':
-include/net/ndisc.h:137:2: error: implicit declaration of function 'hash32_ptr' [-Werror=implicit-function-declaration]
-In file included from include/linux/sunrpc/svcauth.h:17:0,
-                 from include/linux/sunrpc/svc.h:18,
-                 from fs/lockd/clntlock.c:15:
-include/linux/hash.h: At top level:
-include/linux/hash.h:71:19: error: conflicting types for 'hash32_ptr'
-In file included from include/net/ipv6.h:19:0,
-                 from include/linux/sunrpc/clnt.h:26,
-                 from include/linux/nfs_fs.h:57,
-                 from fs/lockd/clntlock.c:13:
-include/net/ndisc.h:137:21: note: previous implicit declaration of 'hash32_ptr' was here
-cc1: some warnings being treated as errors
+In file included from drivers/pinctrl/pinctrl-nomadik.c:33:0:
+include/linux/mfd/dbx500-prcmu.h:459:19: error: redefinition of 'prcmu_abb_read'
+include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of 'prcmu_abb_read' was here
+include/linux/mfd/dbx500-prcmu.h:464:19: error: redefinition of 'prcmu_abb_write'
+include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of 'prcmu_abb_write' was here
+include/linux/mfd/dbx500-prcmu.h:475:19: error: redefinition of 'prcmu_config_clkout'
+include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of 'prcmu_config_clkout' was here
+include/linux/mfd/dbx500-prcmu.h:537:19: error: redefinition of 'prcmu_ac_wake_req'
+include/linux/mfd/db8500-prcmu.h:683:19: note: previous definition of 'prcmu_ac_wake_req' was here
+include/linux/mfd/dbx500-prcmu.h:542:20: error: redefinition of 'prcmu_ac_sleep_req'
+include/linux/mfd/db8500-prcmu.h:688:20: note: previous definition of 'prcmu_ac_sleep_req' was here
+drivers/pinctrl/pinctrl-nomadik.c:36:23: fatal error: mach/irqs.h: No such file or directory
+compilation terminated.
 
-vim +137 include/net/ndisc.h
+vim +459 include/linux/mfd/dbx500-prcmu.h
 
-30f2a5f3 (David S. Miller 2012-07-11  131) }
-30f2a5f3 (David S. Miller 2012-07-11  132) 
-2c2aba6c (David S. Miller 2011-12-28  133) static inline u32 ndisc_hashfn(const void *pkey, const struct net_device *dev, __u32 *hash_rnd)
-2c2aba6c (David S. Miller 2011-12-28  134) {
-2c2aba6c (David S. Miller 2011-12-28  135) 	const u32 *p32 = pkey;
-2c2aba6c (David S. Miller 2011-12-28  136) 
-412de726 (Pavel Emelyanov 2012-10-01 @137) 	return (((p32[0] ^ hash32_ptr(dev)) * hash_rnd[0]) +
-2c2aba6c (David S. Miller 2011-12-28  138) 		(p32[1] * hash_rnd[1]) +
-2c2aba6c (David S. Miller 2011-12-28  139) 		(p32[2] * hash_rnd[2]) +
-2c2aba6c (David S. Miller 2011-12-28  140) 		(p32[3] * hash_rnd[3]));
+fea799e3 Mattias Nilsson 2011-08-12  443  
+fea799e3 Mattias Nilsson 2011-08-12  444  static inline int prcmu_set_power_state(u8 state, bool keep_ulp_clk,
+fea799e3 Mattias Nilsson 2011-08-12  445  	bool keep_ap_pll)
+fea799e3 Mattias Nilsson 2011-08-12  446  {
+fea799e3 Mattias Nilsson 2011-08-12  447  	return 0;
+fea799e3 Mattias Nilsson 2011-08-12  448  }
+fea799e3 Mattias Nilsson 2011-08-12  449  
+fea799e3 Mattias Nilsson 2011-08-12  450  static inline int prcmu_set_epod(u16 epod_id, u8 epod_state)
+fea799e3 Mattias Nilsson 2011-08-12  451  {
+fea799e3 Mattias Nilsson 2011-08-12  452  	return 0;
+fea799e3 Mattias Nilsson 2011-08-12  453  }
+fea799e3 Mattias Nilsson 2011-08-12  454  
+fea799e3 Mattias Nilsson 2011-08-12  455  static inline void prcmu_enable_wakeups(u32 wakeups) {}
+fea799e3 Mattias Nilsson 2011-08-12  456  
+fea799e3 Mattias Nilsson 2011-08-12  457  static inline void prcmu_disable_wakeups(void) {}
+fea799e3 Mattias Nilsson 2011-08-12  458  
+fea799e3 Mattias Nilsson 2011-08-12 @459  static inline int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size)
+fea799e3 Mattias Nilsson 2011-08-12  460  {
+fea799e3 Mattias Nilsson 2011-08-12  461  	return -ENOSYS;
+fea799e3 Mattias Nilsson 2011-08-12  462  }
+fea799e3 Mattias Nilsson 2011-08-12  463  
+fea799e3 Mattias Nilsson 2011-08-12  464  static inline int prcmu_abb_write(u8 slave, u8 reg, u8 *value, u8 size)
+fea799e3 Mattias Nilsson 2011-08-12  465  {
+fea799e3 Mattias Nilsson 2011-08-12  466  	return -ENOSYS;
+fea799e3 Mattias Nilsson 2011-08-12  467  }
+
+The code at line 459 was first introduced by commit:
+fea799e mfd: Create a common interface for dbx500 PRCMU drivers
+
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Centre
+0-DAY kernel build testing backend         Open Source Technology Center
 Fengguang Wu, Yuanhan Liu                              Intel Corporation
