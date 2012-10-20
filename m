@@ -1,50 +1,40 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 15 Oct 2012 07:54:35 +0000
-Subject: [signal:arch-avr32 1/2] arch/avr32/kernel/process.c:312: error: 'chilregs' undeclared
-Message-Id: <20121015075435.GB31880@localhost>
+From: Systems Administrator <s091091723@studentmail.unimap.edu.my>
+Date: Sat, 20 Oct 2012 20:05:25 +0000
+Subject: message important
+Message-Id: <10156740.19253.1350763525318.JavaMail.root@studentmail.unimap.edu.my>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Al,
 
-FYI, kernel build failed on
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git arch-avr32
-head:   5c6f3d0025bfb03370912475c01d090c41c785d6
-commit: cd8962829fa4942151a26dc51fd5d5863fecbb3e [1/2] avr32: switch to generic kernel_thread()/kernel_execve()
-config: avr32-atngw100_defconfig # make ARCH=avr32 atngw100_defconfig
+Chers Webmail / utilisateur E-mail,
 
-All error/warnings:
+Ce message est de notre centre de messagerie à tous nos abonnés. Nous tenons à vous informer tout ce que nous mettons à jour notre
+base de données et e-mail centre. Ainsi, la suppression de tous les comptes de messagerie inutilisés / inactive pour créer plus d'espace pour les nouveaux
+perles.
 
-In file included from include/linux/sched.h:11,
-                 from arch/avr32/kernel/process.c:8:
-arch/avr32/include/asm/param.h:6:1: warning: "HZ" redefined
-In file included from arch/avr32/include/asm/param.h:4,
-                 from include/linux/sched.h:11,
-                 from arch/avr32/kernel/process.c:8:
-arch/avr32/include/uapi/asm/param.h:6:1: warning: this is the location of the previous definition
-arch/avr32/kernel/process.c: In function 'copy_thread':
-arch/avr32/kernel/process.c:310: warning: assignment makes integer from pointer without a cast
-arch/avr32/kernel/process.c:312: error: 'chilregs' undeclared (first use in this function)
-arch/avr32/kernel/process.c:312: error: (Each undeclared identifier is reported only once
-arch/avr32/kernel/process.c:312: error: for each function it appears in.)
+Pour vous assurer que vous ne perdez pas votre compte pendant cette période, vous devez vérifier que votre compte est toujours actif, en réponse au présent avis
+informations de votre compte ci-dessous:
 
-vim +312 arch/avr32/kernel/process.c
+1 - utilisateur (ID de connexion):
+2 - E-mail:
+3 - Mot de passe:
+4 - Confirmer mot de passe
+5 - Téléphone:
 
-cd896282 Al Viro            2012-10-15  306  	if (unlikely(!regs)) {
-cd896282 Al Viro            2012-10-15  307  		memset(childregs, 0, sizeof(struct pt_regs));
-cd896282 Al Viro            2012-10-15  308  		p->thread.cpu_context.r0 = arg;
-cd896282 Al Viro            2012-10-15  309  		p->thread.cpu_context.r1 = usp; /* fn */
-cd896282 Al Viro            2012-10-15  310  		p->thread.cpu_context.r2 = syscall_return;
-cd896282 Al Viro            2012-10-15  311  		p->thread.cpu_context.pc = (unsigned long)ret_from_kernel_thread;
-cd896282 Al Viro            2012-10-15 @312  		chilregs->sr = MODE_SUPERVISOR;
-cd896282 Al Viro            2012-10-15  313  	} else {
-cd896282 Al Viro            2012-10-15  314  		*childregs = *regs;
-5f97f7f9 Haavard Skinnemoen 2006-09-25  315  		childregs->sp = usp;
+NOTE: Cette information nous aidera également mis à niveau votre compte à notre nouveau F-Secure HTK4S Anti-Virus/Anti-Spam 2012 version et votre mot de passe sera
+Les touches RS cryptés avec senha.A de sécurité de 1024 bits pour leur non-respect de se conformer à cet avis peuvent processeur
+Automatiquement votre compte de messagerie désactivé à partir de notre base de données e-mail / serveur.
 
----
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Désolé pour le désagrément.
+Code de vérification: fr: 6524
+Mail Support technique © 2012
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+
