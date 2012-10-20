@@ -1,1658 +1,2449 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 07 Oct 2012 11:08:04 +0000
-Subject: [staging:staging-next 120/274] drivers/staging/ced1401/ced_ioc.c:1514 FreeCircBlock() warn: inconsis
-Message-Id: <20121007110804.GC9317@localhost>
+From: Yuanhan Liu <yuanhan.liu@intel.com>
+Date: Sat, 20 Oct 2012 02:22:26 +0000
+Subject: [tip:numa/core 4/4] kernel/sched/fair.c:970:12: error: 'struct rq' has no member named 'cfs_tasks'
+Message-Id: <20121020022226.GI9177@yliu-dev.sh.intel.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="St7VIuEGZ6dlpu13"
+Content-Type: multipart/mixed; boundary="6TrnltStXW4iwmi0"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 
---St7VIuEGZ6dlpu13
-Content-Type: text/plain; charset="utf-8"
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 
-Hi Greg,
+Hi Ingo,
 
-FYI, there are new smatch warnings show up in
+FYI, kernel build failed on
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
-head:   e1878957b4676a17cf398f7f5723b365e9a2ca48
-commit: 74f5671442c6e9b2b54137d20fd7789078265897 [120/274] Staging: ced1401: fix copy_from/to_user warning messages
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git numa/core
+head:   aacc9ac4dc832613f12e4022f4a51f5d0d5136a7
+commit: aacc9ac4dc832613f12e4022f4a51f5d0d5136a7 [4/4] sched: Fix !CONFIG_SCHED_NUMA account_numa_enqueue() variant
+config: x86_64-randconfig-x273 (attached as .config)
 
-  drivers/staging/ced1401/ced_ioc.c:844 WaitEvent() warn: buffer overflow 'pdx->rTransDef' 8 <= 8
-  drivers/staging/ced1401/ced_ioc.c:875 WaitEvent() warn: inconsistent returns mutex:&pdx->io_mutex: locked (853) unlocked (841,875)
-  drivers/staging/ced1401/ced_ioc.c:890 TestEvent() warn: buffer overflow 'pdx->rTransDef' 8 <= 8
-  drivers/staging/ced1401/ced_ioc.c:916 GetTransfer() warn: 'tx' puts 3104 bytes on stack
-  drivers/staging/ced1401/ced_ioc.c:926 GetTransfer() warn: check that 'tx.seg' doesn't leak information
-  drivers/staging/ced1401/ced_ioc.c:1078 CheckSelfTest() warn: check that 'gst.code' doesn't leak information
-+ drivers/staging/ced1401/ced_ioc.c:1514 FreeCircBlock() warn: inconsistent returns mutex:&pdx->io_mutex: locked (1511) unlocked (1423,1514)
+All error/warnings:
 
-vim +1514 drivers/staging/ced1401/ced_ioc.c
+kernel/sched/fair.c: In function 'account_numa_enqueue':
+kernel/sched/fair.c:970:12: error: 'struct rq' has no member named 'cfs_tasks'
+kernel/sched/fair.c: At top level:
+kernel/sched/fair.c:968:26: warning: 'account_numa_enqueue' defined but not used [-Wunused-function]
+kernel/sched/fair.c:2276:13: warning: 'unthrottle_offline_cfs_rqs' defined but not used [-Wunused-function]
 
-cd915200 Greg Kroah-Hartman 2012-09-17  1417  	unsigned int nArea, uStart, uSize;
-cd915200 Greg Kroah-Hartman 2012-09-17  1418  	TCIRCBLOCK cb;
-74f56714 Greg Kroah-Hartman 2012-09-17  1419  
-cd915200 Greg Kroah-Hartman 2012-09-17  1420  	dev_dbg(&pdx->interface->dev, "%s", __func__);
-74f56714 Greg Kroah-Hartman 2012-09-17  1421  
-74f56714 Greg Kroah-Hartman 2012-09-17  1422  	if (copy_from_user(&cb, pCB, sizeof(cb)))
-74f56714 Greg Kroah-Hartman 2012-09-17 @1423  		return -EFAULT;
-74f56714 Greg Kroah-Hartman 2012-09-17  1424  
-cd915200 Greg Kroah-Hartman 2012-09-17  1425  	mutex_lock(&pdx->io_mutex);
-cd915200 Greg Kroah-Hartman 2012-09-17  1426  
-cd915200 Greg Kroah-Hartman 2012-09-17  1427  	nArea = cb.nArea;	// Retrieve parameters first
-cd915200 Greg Kroah-Hartman 2012-09-17  1428  	uStart = cb.dwOffset;
-cd915200 Greg Kroah-Hartman 2012-09-17  1429  	uSize = cb.dwSize;
-cd915200 Greg Kroah-Hartman 2012-09-17  1430  	cb.dwOffset = 0;	// then set default result (nothing)
-cd915200 Greg Kroah-Hartman 2012-09-17  1431  	cb.dwSize = 0;
-cd915200 Greg Kroah-Hartman 2012-09-17  1432  
-cd915200 Greg Kroah-Hartman 2012-09-17  1433  	if (nArea < MAX_TRANSAREAS)	// The area number must be OK
-cd915200 Greg Kroah-Hartman 2012-09-17  1434  	{
-cd915200 Greg Kroah-Hartman 2012-09-17  1435  		TRANSAREA *pArea = &pdx->rTransDef[nArea];	// Pointer to relevant info
-cd915200 Greg Kroah-Hartman 2012-09-17  1436  		spin_lock_irq(&pdx->stagedLock);	// Lock others out
-cd915200 Greg Kroah-Hartman 2012-09-17  1437  
-cd915200 Greg Kroah-Hartman 2012-09-17  1438  		if ((pArea->bUsed) && (pArea->bCircular) &&	// Must be circular area
-cd915200 Greg Kroah-Hartman 2012-09-17  1439  		    (pArea->bCircToHost))	// For now at least must be to host
-cd915200 Greg Kroah-Hartman 2012-09-17  1440  		{
-cd915200 Greg Kroah-Hartman 2012-09-17  1441  			bool bWaiting = false;
-cd915200 Greg Kroah-Hartman 2012-09-17  1442  
-cd915200 Greg Kroah-Hartman 2012-09-17  1443  			if ((pArea->aBlocks[0].dwSize >= uSize) &&	// Got anything?
-cd915200 Greg Kroah-Hartman 2012-09-17  1444  			    (pArea->aBlocks[0].dwOffset == uStart))	// Must be legal data
-cd915200 Greg Kroah-Hartman 2012-09-17  1445  			{
-cd915200 Greg Kroah-Hartman 2012-09-17  1446  				pArea->aBlocks[0].dwSize -= uSize;
-cd915200 Greg Kroah-Hartman 2012-09-17  1447  				pArea->aBlocks[0].dwOffset += uSize;
-cd915200 Greg Kroah-Hartman 2012-09-17  1448  				if (pArea->aBlocks[0].dwSize == 0)	// Have we emptied this block?
-cd915200 Greg Kroah-Hartman 2012-09-17  1449  				{
-cd915200 Greg Kroah-Hartman 2012-09-17  1450  					if (pArea->aBlocks[1].dwSize)	// Is there a second block?
-cd915200 Greg Kroah-Hartman 2012-09-17  1451  					{
-cd915200 Greg Kroah-Hartman 2012-09-17  1452  						pArea->aBlocks[0] = pArea->aBlocks[1];	// Copy down block 2 data
-cd915200 Greg Kroah-Hartman 2012-09-17  1453  						pArea->aBlocks[1].dwSize = 0;	// and mark the second block as unused
-cd915200 Greg Kroah-Hartman 2012-09-17  1454  						pArea->aBlocks[1].dwOffset = 0;
-cd915200 Greg Kroah-Hartman 2012-09-17  1455  					} else
-cd915200 Greg Kroah-Hartman 2012-09-17  1456  						pArea->aBlocks[0].dwOffset = 0;
-cd915200 Greg Kroah-Hartman 2012-09-17  1457  				}
-cd915200 Greg Kroah-Hartman 2012-09-17  1458  
-cd915200 Greg Kroah-Hartman 2012-09-17  1459  				dev_dbg(&pdx->interface->dev,
-cd915200 Greg Kroah-Hartman 2012-09-17  1460  					"%s free %d bytes at %d, return %d bytes at %d, wait=%d",
-cd915200 Greg Kroah-Hartman 2012-09-17  1461  					__func__, uSize, uStart,
-cd915200 Greg Kroah-Hartman 2012-09-17  1462  					pArea->aBlocks[0].dwSize,
-cd915200 Greg Kroah-Hartman 2012-09-17  1463  					pArea->aBlocks[0].dwOffset,
-cd915200 Greg Kroah-Hartman 2012-09-17  1464  					pdx->bXFerWaiting);
-cd915200 Greg Kroah-Hartman 2012-09-17  1465  
-cd915200 Greg Kroah-Hartman 2012-09-17  1466  				// Return the next available block of memory as well
-cd915200 Greg Kroah-Hartman 2012-09-17  1467  				if (pArea->aBlocks[0].dwSize > 0)	// Got anything?
-cd915200 Greg Kroah-Hartman 2012-09-17  1468  				{
-cd915200 Greg Kroah-Hartman 2012-09-17  1469  					cb.dwOffset =
-cd915200 Greg Kroah-Hartman 2012-09-17  1470  					    pArea->aBlocks[0].dwOffset;
-cd915200 Greg Kroah-Hartman 2012-09-17  1471  					cb.dwSize = pArea->aBlocks[0].dwSize;
-cd915200 Greg Kroah-Hartman 2012-09-17  1472  				}
-cd915200 Greg Kroah-Hartman 2012-09-17  1473  
-cd915200 Greg Kroah-Hartman 2012-09-17  1474  				bWaiting = pdx->bXFerWaiting;
-cd915200 Greg Kroah-Hartman 2012-09-17  1475  				if (bWaiting && pdx->bStagedUrbPending) {
-cd915200 Greg Kroah-Hartman 2012-09-17  1476  					dev_err(&pdx->interface->dev,
-cd915200 Greg Kroah-Hartman 2012-09-17  1477  						"%s ERROR: waiting xfer and staged Urb pending!",
-cd915200 Greg Kroah-Hartman 2012-09-17  1478  						__func__);
-cd915200 Greg Kroah-Hartman 2012-09-17  1479  					bWaiting = false;
-cd915200 Greg Kroah-Hartman 2012-09-17  1480  				}
-cd915200 Greg Kroah-Hartman 2012-09-17  1481  			} else {
-cd915200 Greg Kroah-Hartman 2012-09-17  1482  				dev_err(&pdx->interface->dev,
-cd915200 Greg Kroah-Hartman 2012-09-17  1483  					"%s ERROR: freeing %d bytes at %d, block 0 is %d bytes at %d",
-cd915200 Greg Kroah-Hartman 2012-09-17  1484  					__func__, uSize, uStart,
-cd915200 Greg Kroah-Hartman 2012-09-17  1485  					pArea->aBlocks[0].dwSize,
-cd915200 Greg Kroah-Hartman 2012-09-17  1486  					pArea->aBlocks[0].dwOffset);
-cd915200 Greg Kroah-Hartman 2012-09-17  1487  				iReturn = U14ERR_NOMEMORY;
-cd915200 Greg Kroah-Hartman 2012-09-17  1488  			}
-cd915200 Greg Kroah-Hartman 2012-09-17  1489  
-cd915200 Greg Kroah-Hartman 2012-09-17  1490  			// If we have one, kick off pending transfer
-cd915200 Greg Kroah-Hartman 2012-09-17  1491  			if (bWaiting)	// Got a block xfer waiting?
-cd915200 Greg Kroah-Hartman 2012-09-17  1492  			{
-cd915200 Greg Kroah-Hartman 2012-09-17  1493  				int RWMStat =
-cd915200 Greg Kroah-Hartman 2012-09-17  1494  				    ReadWriteMem(pdx, !pdx->rDMAInfo.bOutWard,
-cd915200 Greg Kroah-Hartman 2012-09-17  1495  						 pdx->rDMAInfo.wIdent,
-cd915200 Greg Kroah-Hartman 2012-09-17  1496  						 pdx->rDMAInfo.dwOffset,
-cd915200 Greg Kroah-Hartman 2012-09-17  1497  						 pdx->rDMAInfo.dwSize);
-cd915200 Greg Kroah-Hartman 2012-09-17  1498  				if (RWMStat != U14ERR_NOERROR)
-cd915200 Greg Kroah-Hartman 2012-09-17  1499  					dev_err(&pdx->interface->dev,
-cd915200 Greg Kroah-Hartman 2012-09-17  1500  						"%s rw setup failed %d",
-cd915200 Greg Kroah-Hartman 2012-09-17  1501  						__func__, RWMStat);
-cd915200 Greg Kroah-Hartman 2012-09-17  1502  			}
-cd915200 Greg Kroah-Hartman 2012-09-17  1503  		} else
-cd915200 Greg Kroah-Hartman 2012-09-17  1504  			iReturn = U14ERR_NOTSET;
-cd915200 Greg Kroah-Hartman 2012-09-17  1505  
-cd915200 Greg Kroah-Hartman 2012-09-17  1506  		spin_unlock_irq(&pdx->stagedLock);
-cd915200 Greg Kroah-Hartman 2012-09-17  1507  	} else
-cd915200 Greg Kroah-Hartman 2012-09-17  1508  		iReturn = U14ERR_BADAREA;
-cd915200 Greg Kroah-Hartman 2012-09-17  1509  
-74f56714 Greg Kroah-Hartman 2012-09-17  1510  	if (copy_to_user(pCB, &cb, sizeof(cb)))
-74f56714 Greg Kroah-Hartman 2012-09-17 @1511  		return -EFAULT;
-74f56714 Greg Kroah-Hartman 2012-09-17  1512  
-cd915200 Greg Kroah-Hartman 2012-09-17  1513  	mutex_unlock(&pdx->io_mutex);
-cd915200 Greg Kroah-Hartman 2012-09-17 @1514  	return iReturn;
-2eae6bdc Alois Schlögl      2012-09-17  1515  }
+vim +970 kernel/sched/fair.c
+
+4ae834f7 Peter Zijlstra 2012-07-16  964  		}
+4ae834f7 Peter Zijlstra 2012-07-16  965  	}
+4ae834f7 Peter Zijlstra 2012-07-16  966  }
+4ae834f7 Peter Zijlstra 2012-07-16  967  #else
+bb527e7d Peter Zijlstra 2012-10-11  968  static struct list_head *account_numa_enqueue(struct rq *rq, struct task_struct *p)
+4ae834f7 Peter Zijlstra 2012-07-16  969  {
+aacc9ac4 Ingo Molnar    2012-10-20 @970  	return &rq->cfs_tasks;
+4ae834f7 Peter Zijlstra 2012-07-16  971  }
+4ae834f7 Peter Zijlstra 2012-07-16  972  
+bb527e7d Peter Zijlstra 2012-10-11  973  static void account_numa_dequeue(struct rq *rq, struct task_struct *p)
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
 Fengguang Wu, Yuanhan Liu                              Intel Corporation
 
---St7VIuEGZ6dlpu13
-Content-Type: text/x-csrc; charset=us-ascii
-Content-Disposition: attachment; filename="ced_ioc.c"
-
-/* ced_ioc.c
- ioctl part of the 1401 usb device driver for linux.
- Copyright (C) 2010 Cambridge Electronic Design Ltd
- Author Greg P Smith (greg@ced.co.uk)
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
-#include <linux/kernel.h>
-#include <linux/errno.h>
-#include <linux/init.h>
-#include <linux/slab.h>
-#include <linux/module.h>
-#include <linux/kref.h>
-#include <linux/uaccess.h>
-#include <linux/usb.h>
-#include <linux/mutex.h>
-#include <linux/page-flags.h>
-#include <linux/pagemap.h>
-#include <linux/jiffies.h>
-
-#include "usb1401.h"
-
-/****************************************************************************
-** FlushOutBuff
-**
-** Empties the Output buffer and sets int lines. Used from user level only
-****************************************************************************/
-void FlushOutBuff(DEVICE_EXTENSION * pdx)
-{
-	dev_dbg(&pdx->interface->dev, "%s currentState=%d", __func__,
-		pdx->sCurrentState);
-	if (pdx->sCurrentState == U14ERR_TIME)	/* Do nothing if hardware in trouble */
-		return;
-//    CharSend_Cancel(pdx);                   /* Kill off any pending I/O */
-	spin_lock_irq(&pdx->charOutLock);
-	pdx->dwNumOutput = 0;
-	pdx->dwOutBuffGet = 0;
-	pdx->dwOutBuffPut = 0;
-	spin_unlock_irq(&pdx->charOutLock);
-}
-
-/****************************************************************************
-**
-** FlushInBuff
-**
-** Empties the input buffer and sets int lines
-****************************************************************************/
-void FlushInBuff(DEVICE_EXTENSION * pdx)
-{
-	dev_dbg(&pdx->interface->dev, "%s currentState=%d", __func__,
-		pdx->sCurrentState);
-	if (pdx->sCurrentState == U14ERR_TIME)	/* Do nothing if hardware in trouble */
-		return;
-//    CharRead_Cancel(pDevObject);            /* Kill off any pending I/O */
-	spin_lock_irq(&pdx->charInLock);
-	pdx->dwNumInput = 0;
-	pdx->dwInBuffGet = 0;
-	pdx->dwInBuffPut = 0;
-	spin_unlock_irq(&pdx->charInLock);
-}
-
-/****************************************************************************
-** PutChars
-**
-** Utility routine to copy chars into the output buffer and fire them off.
-** called from user mode, holds charOutLock.
-****************************************************************************/
-static int PutChars(DEVICE_EXTENSION * pdx, const char *pCh,
-		    unsigned int uCount)
-{
-	int iReturn;
-	spin_lock_irq(&pdx->charOutLock);	// get the output spin lock
-	if ((OUTBUF_SZ - pdx->dwNumOutput) >= uCount) {
-		unsigned int u;
-		for (u = 0; u < uCount; u++) {
-			pdx->outputBuffer[pdx->dwOutBuffPut++] = pCh[u];
-			if (pdx->dwOutBuffPut >= OUTBUF_SZ)
-				pdx->dwOutBuffPut = 0;
-		}
-		pdx->dwNumOutput += uCount;
-		spin_unlock_irq(&pdx->charOutLock);
-		iReturn = SendChars(pdx);	// ...give a chance to transmit data
-	} else {
-		iReturn = U14ERR_NOOUT;	// no room at the out (ha-ha)
-		spin_unlock_irq(&pdx->charOutLock);
-	}
-	return iReturn;
-}
-
-/*****************************************************************************
-** Add the data in pData (local pointer) of length n to the output buffer, and
-** trigger an output transfer if this is appropriate. User mode.
-** Holds the io_mutex
-*****************************************************************************/
-int SendString(DEVICE_EXTENSION * pdx, const char __user * pData,
-	       unsigned int n)
-{
-	int iReturn = U14ERR_NOERROR;	// assume all will be well
-	char buffer[OUTBUF_SZ + 1];	// space in our address space for characters
-	if (n > OUTBUF_SZ)	// check space in local buffer...
-		return U14ERR_NOOUT;	// ...too many characters
-	if (copy_from_user(buffer, pData, n))
-		return -EFAULT;
-	buffer[n] = 0;		// terminate for debug purposes
-
-	mutex_lock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	if (n > 0)		// do nothing if nowt to do!
-	{
-		dev_dbg(&pdx->interface->dev, "%s n=%d>%s<", __func__, n,
-			buffer);
-		iReturn = PutChars(pdx, buffer, n);
-	}
-
-	Allowi(pdx, false);	// make sure we have input int
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** SendChar
-**
-** Sends a single character to the 1401. User mode, holds io_mutex.
-****************************************************************************/
-int SendChar(DEVICE_EXTENSION * pdx, char c)
-{
-	int iReturn;
-	mutex_lock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	iReturn = PutChars(pdx, &c, 1);
-	dev_dbg(&pdx->interface->dev, "SendChar >%c< (0x%02x)", c, c);
-	Allowi(pdx, false);	// Make sure char reads are running
-	mutex_unlock(&pdx->io_mutex);
-	return iReturn;
-}
-
-/***************************************************************************
-**
-** Get1401State
-**
-**  Retrieves state information from the 1401, adjusts the 1401 state held
-**  in the device extension to indicate the current 1401 type.
-**
-**  *state is updated with information about the 1401 state as returned by the
-**         1401. The low byte is a code for what 1401 is doing:
-**
-**  0       normal 1401 operation
-**  1       sending chars to host
-**  2       sending block data to host
-**  3       reading block data from host
-**  4       sending an escape sequence to the host
-**  0x80    1401 is executing self-test, in which case the upper word
-**          is the last error code seen (or zero for no new error).
-**
-** *error is updated with error information if a self-test error code
-**          is returned in the upper word of state.
-**
-**  both state and error are set to -1 if there are comms problems, and
-**  to zero if there is a simple failure.
-**
-** return error code (U14ERR_NOERROR for OK)
-*/
-int Get1401State(DEVICE_EXTENSION * pdx, __u32 * state, __u32 * error)
-{
-	int nGot;
-	dev_dbg(&pdx->interface->dev, "Get1401State() entry");
-
-	*state = 0xFFFFFFFF;	// Start off with invalid state
-	nGot = usb_control_msg(pdx->udev, usb_rcvctrlpipe(pdx->udev, 0),
-			       GET_STATUS, (D_TO_H | VENDOR | DEVREQ), 0, 0,
-			       pdx->statBuf, sizeof(pdx->statBuf), HZ);
-	if (nGot != sizeof(pdx->statBuf)) {
-		dev_err(&pdx->interface->dev,
-			"Get1401State() FAILED, return code %d", nGot);
-		pdx->sCurrentState = U14ERR_TIME;	// Indicate that things are very wrong indeed
-		*state = 0;	// Force status values to a known state
-		*error = 0;
-	} else {
-		int nDevice;
-		dev_dbg(&pdx->interface->dev,
-			"Get1401State() Success, state: 0x%x, 0x%x",
-			pdx->statBuf[0], pdx->statBuf[1]);
-
-		*state = pdx->statBuf[0];	// Return the state values to the calling code
-		*error = pdx->statBuf[1];
-
-		nDevice = pdx->udev->descriptor.bcdDevice >> 8;	// 1401 type code value
-		switch (nDevice)	// so we can clean up current state
-		{
-		case 0:
-			pdx->sCurrentState = U14ERR_U1401;
-			break;
-
-		default:	// allow lots of device codes for future 1401s
-			if ((nDevice >= 1) && (nDevice <= 23))
-				pdx->sCurrentState = (short)(nDevice + 6);
-			else
-				pdx->sCurrentState = U14ERR_ILL;
-			break;
-		}
-	}
-
-	return pdx->sCurrentState >= 0 ? U14ERR_NOERROR : pdx->sCurrentState;
-}
-
-/****************************************************************************
-** ReadWrite_Cancel
-**
-** Kills off staged read\write request from the USB if one is pending.
-****************************************************************************/
-int ReadWrite_Cancel(DEVICE_EXTENSION * pdx)
-{
-	dev_dbg(&pdx->interface->dev, "ReadWrite_Cancel entry %d",
-		pdx->bStagedUrbPending);
-#ifdef NOT_WRITTEN_YET
-	int ntStatus = STATUS_SUCCESS;
-	bool bResult = false;
-	unsigned int i;
-	// We can fill this in when we know how we will implement the staged transfer stuff
-	spin_lock_irq(&pdx->stagedLock);
-
-	if (pdx->bStagedUrbPending)	// anything to be cancelled? May need more...
-	{
-		dev_info(&pdx->interface - dev,
-			 "ReadWrite_Cancel about to cancel Urb");
-
-		//       KeClearEvent(&pdx->StagingDoneEvent);   // Clear the staging done flag
-		USB_ASSERT(pdx->pStagedIrp != NULL);
-
-		// Release the spinlock first otherwise the completion routine may hang
-		//  on the spinlock while this function hands waiting for the event.
-		spin_unlock_irq(&pdx->stagedLock);
-		bResult = IoCancelIrp(pdx->pStagedIrp);	// Actually do the cancel
-		if (bResult) {
-			LARGE_INTEGER timeout;
-			timeout.QuadPart = -10000000;	// Use a timeout of 1 second
-			dev_info(&pdx->interface - dev,
-				 "ReadWrite_Cancel about to wait till done");
-			ntStatus =
-			    KeWaitForSingleObject(&pdx->StagingDoneEvent,
-						  Executive, KernelMode, FALSE,
-						  &timeout);
-		} else {
-			dev_info(&pdx->interface - dev,
-				 "ReadWrite_Cancel, cancellation failed");
-			ntStatus = U14ERR_FAIL;
-		}
-		USB_KdPrint(DBGLVL_DEFAULT,
-			    ("ReadWrite_Cancel ntStatus = 0x%x decimal %d\n",
-			     ntStatus, ntStatus));
-	} else
-		spin_unlock_irq(&pdx->stagedLock);
-
-	dev_info(&pdx->interface - dev, "ReadWrite_Cancel  done");
-	return ntStatus;
-#else
-	return U14ERR_NOERROR;
-#endif
-
-}
-
-/***************************************************************************
-** InSelfTest - utility to check in self test. Return 1 for ST, 0 for not or
-** a -ve error code if we failed for some reason.
-***************************************************************************/
-static int InSelfTest(DEVICE_EXTENSION * pdx, unsigned int *pState)
-{
-	unsigned int state, error;
-	int iReturn = Get1401State(pdx, &state, &error);	// see if in self-test
-	if (iReturn == U14ERR_NOERROR)	// if all still OK
-		iReturn = (state == (unsigned int)-1) ||	// TX problem or...
-		    ((state & 0xff) == 0x80);	// ...self test
-	*pState = state;	// return actual state
-	return iReturn;
-}
-
-/***************************************************************************
-** Is1401 - ALWAYS CALLED HOLDING THE io_mutex
-**
-** Tests for the current state of the 1401. Sets sCurrentState:
-**
-**  U14ERR_NOIF  1401  i/f card not installed (not done here)
-**  U14ERR_OFF   1401  apparently not switched on
-**  U14ERR_NC    1401  appears to be not connected
-**  U14ERR_ILL   1401  if it is there its not very well at all
-**  U14ERR_TIME  1401  appears OK, but doesn't communicate - very bad
-**  U14ERR_STD   1401  OK and ready for use
-**  U14ERR_PLUS  1401+ OK and ready for use
-**  U14ERR_U1401 Micro1401 OK and ready for use
-**  U14ERR_POWER Power1401 OK and ready for use
-**  U14ERR_U14012 Micro1401 mkII OK and ready for use
-**
-**  Returns TRUE if a 1401 detected and OK, else FALSE
-****************************************************************************/
-bool Is1401(DEVICE_EXTENSION * pdx)
-{
-	int iReturn;
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-
-	ced_draw_down(pdx);	// wait for, then kill outstanding Urbs
-	FlushInBuff(pdx);	// Clear out input buffer & pipe
-	FlushOutBuff(pdx);	// Clear output buffer & pipe
-
-	// The next call returns 0 if OK, but has returned 1 in the past, meaning that
-	// usb_unlock_device() is needed... now it always is
-	iReturn = usb_lock_device_for_reset(pdx->udev, pdx->interface);
-
-	// release the io_mutex because if we don't, we will deadlock due to system
-	// calls back into the driver.
-	mutex_unlock(&pdx->io_mutex);	// locked, so we will not get system calls
-	if (iReturn >= 0)	// if we failed
-	{
-		iReturn = usb_reset_device(pdx->udev);	// try to do the reset
-		usb_unlock_device(pdx->udev);	// undo the lock
-	}
-
-	mutex_lock(&pdx->io_mutex);	// hold stuff off while we wait
-	pdx->dwDMAFlag = MODE_CHAR;	// Clear DMA mode flag regardless!
-	if (iReturn == 0)	// if all is OK still
-	{
-		unsigned int state;
-		iReturn = InSelfTest(pdx, &state);	// see if likely in self test
-		if (iReturn > 0)	// do we need to wait for self-test?
-		{
-			unsigned long ulTimeOut = jiffies + 30 * HZ;	// when to give up
-			while ((iReturn > 0) && time_before(jiffies, ulTimeOut)) {
-				schedule();	// let other stuff run
-				iReturn = InSelfTest(pdx, &state);	// see if done yet
-			}
-		}
-
-		if (iReturn == 0)	// if all is OK...
-			iReturn = state == 0;	// then sucess is that the state is 0
-	} else
-		iReturn = 0;	// we failed
-	pdx->bForceReset = false;	// Clear forced reset flag now
-
-	return iReturn > 0;
-}
-
-/****************************************************************************
-** QuickCheck  - ALWAYS CALLED HOLDING THE io_mutex
-** This is used to test for a 1401. It will try to do a quick check if all is
-**  OK, that is the 1401 was OK the last time it was asked, and there is no DMA
-**  in progress, and if the bTestBuff flag is set, the character buffers must be
-**  empty too. If the quick check shows that the state is still the same, then
-**  all is OK.
-**
-** If any of the above conditions are not met, or if the state or type of the
-**  1401 has changed since the previous test, the full Is1401 test is done, but
-**  only if bCanReset is also TRUE.
-**
-** The return value is TRUE if a useable 1401 is found, FALSE if not
-*/
-bool QuickCheck(DEVICE_EXTENSION * pdx, bool bTestBuff, bool bCanReset)
-{
-	bool bRet = false;	// assume it will fail and we will reset
-	bool bShortTest;
-
-	bShortTest = ((pdx->dwDMAFlag == MODE_CHAR) &&	// no DMA running
-		      (!pdx->bForceReset) &&	// Not had a real reset forced
-		      (pdx->sCurrentState >= U14ERR_STD));	// No 1401 errors stored
-
-	dev_dbg(&pdx->interface->dev,
-		"%s DMAFlag:%d, state:%d, force:%d, testBuff:%d, short:%d",
-		__func__, pdx->dwDMAFlag, pdx->sCurrentState, pdx->bForceReset,
-		bTestBuff, bShortTest);
-
-	if ((bTestBuff) &&	// Buffer check requested, and...
-	    (pdx->dwNumInput || pdx->dwNumOutput))	// ...characters were in the buffer?
-	{
-		bShortTest = false;	// Then do the full test
-		dev_dbg(&pdx->interface->dev,
-			"%s will reset as buffers not empty", __func__);
-	}
-
-	if (bShortTest || !bCanReset)	// Still OK to try the short test?
-	{			// Always test if no reset - we want state update
-		unsigned int state, error;
-		dev_dbg(&pdx->interface->dev, "%s->Get1401State", __func__);
-		if (Get1401State(pdx, &state, &error) == U14ERR_NOERROR)	// Check on the 1401 state
-		{
-			if ((state & 0xFF) == 0)	// If call worked, check the status value
-				bRet = true;	// If that was zero, all is OK, no reset needed
-		}
-	}
-
-	if (!bRet && bCanReset)	// If all not OK, then
-	{
-		dev_info(&pdx->interface->dev, "%s->Is1401 %d %d %d %d",
-			 __func__, bShortTest, pdx->sCurrentState, bTestBuff,
-			 pdx->bForceReset);
-		bRet = Is1401(pdx);	//  do full test
-	}
-
-	return bRet;
-}
-
-/****************************************************************************
-** Reset1401
-**
-** Resets the 1401 and empties the i/o buffers
-*****************************************************************************/
-int Reset1401(DEVICE_EXTENSION * pdx)
-{
-	mutex_lock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	dev_dbg(&pdx->interface->dev, "ABout to call QuickCheck");
-	QuickCheck(pdx, true, true);	// Check 1401, reset if not OK
-	mutex_unlock(&pdx->io_mutex);
-	return U14ERR_NOERROR;
-}
-
-/****************************************************************************
-** GetChar
-**
-** Gets a single character from the 1401
-****************************************************************************/
-int GetChar(DEVICE_EXTENSION * pdx)
-{
-	int iReturn = U14ERR_NOIN;	// assume we will get  nothing
-	mutex_lock(&pdx->io_mutex);	// Protect disconnect from new i/o
-
-	dev_dbg(&pdx->interface->dev, "GetChar");
-
-	Allowi(pdx, false);	// Make sure char reads are running
-	SendChars(pdx);		// and send any buffered chars
-
-	spin_lock_irq(&pdx->charInLock);
-	if (pdx->dwNumInput > 0)	// worth looking
-	{
-		iReturn = pdx->inputBuffer[pdx->dwInBuffGet++];
-		if (pdx->dwInBuffGet >= INBUF_SZ)
-			pdx->dwInBuffGet = 0;
-		pdx->dwNumInput--;
-	} else
-		iReturn = U14ERR_NOIN;	// no input data to read
-	spin_unlock_irq(&pdx->charInLock);
-
-	Allowi(pdx, false);	// Make sure char reads are running
-
-	mutex_unlock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	return iReturn;
-}
-
-/****************************************************************************
-** GetString
-**
-** Gets a string from the 1401. Returns chars up to the next CR or when
-** there are no more to read or nowhere to put them. CR is translated to
-** 0 and counted as a character. If the string does not end in a 0, we will
-** add one, if there is room, but it is not counted as a character.
-**
-** returns the count of characters (including the terminator, or 0 if none
-** or a negative error code.
-****************************************************************************/
-int GetString(DEVICE_EXTENSION * pdx, char __user * pUser, int n)
-{
-	int nAvailable;		// character in the buffer
-	int iReturn = U14ERR_NOIN;
-	if (n <= 0)
-		return -ENOMEM;
-
-	mutex_lock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	Allowi(pdx, false);	// Make sure char reads are running
-	SendChars(pdx);		// and send any buffered chars
-
-	spin_lock_irq(&pdx->charInLock);
-	nAvailable = pdx->dwNumInput;	// characters available now
-	if (nAvailable > n)	// read max of space in pUser...
-		nAvailable = n;	// ...or input characters
-
-	if (nAvailable > 0)	// worth looking?
-	{
-		char buffer[INBUF_SZ + 1];	// space for a linear copy of data
-		int nGot = 0;
-		int nCopyToUser;	// number to copy to user
-		char cData;
-		do {
-			cData = pdx->inputBuffer[pdx->dwInBuffGet++];
-			if (cData == CR_CHAR)	// replace CR with zero
-				cData = (char)0;
-
-			if (pdx->dwInBuffGet >= INBUF_SZ)
-				pdx->dwInBuffGet = 0;	// wrap buffer pointer
-
-			buffer[nGot++] = cData;	// save the output
-		}
-		while ((nGot < nAvailable) && cData);
-
-		nCopyToUser = nGot;	// what to copy...
-		if (cData)	// do we need null
-		{
-			buffer[nGot] = (char)0;	// make it tidy
-			if (nGot < n)	// if space in user buffer...
-				++nCopyToUser;	// ...copy the 0 as well.
-		}
-
-		pdx->dwNumInput -= nGot;
-		spin_unlock_irq(&pdx->charInLock);
-
-		dev_dbg(&pdx->interface->dev,
-			"GetString read %d characters >%s<", nGot, buffer);
-		if (copy_to_user(pUser, buffer, nCopyToUser))
-			iReturn = -EFAULT;
-		else
-			iReturn = nGot;		// report characters read
-	} else
-		spin_unlock_irq(&pdx->charInLock);
-
-	Allowi(pdx, false);	// Make sure char reads are running
-	mutex_unlock(&pdx->io_mutex);	// Protect disconnect from new i/o
-
-	return iReturn;
-}
-
-/*******************************************************************************
-** Get count of characters in the inout buffer.
-*******************************************************************************/
-int Stat1401(DEVICE_EXTENSION * pdx)
-{
-	int iReturn;
-	mutex_lock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	Allowi(pdx, false);	// make sure we allow pending chars
-	SendChars(pdx);		// in both directions
-	iReturn = pdx->dwNumInput;	// no lock as single read
-	mutex_unlock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	return iReturn;
-}
-
-/****************************************************************************
-** LineCount
-**
-** Returns the number of newline chars in the buffer. There is no need for
-** any fancy interlocks as we only read the interrupt routine data, and the
-** system is arranged so nothing can be destroyed.
-****************************************************************************/
-int LineCount(DEVICE_EXTENSION * pdx)
-{
-	int iReturn = 0;	// will be count of line ends
-
-	mutex_lock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	Allowi(pdx, false);	// Make sure char reads are running
-	SendChars(pdx);		// and send any buffered chars
-	spin_lock_irq(&pdx->charInLock);	// Get protection
-
-	if (pdx->dwNumInput > 0)	// worth looking?
-	{
-		unsigned int dwIndex = pdx->dwInBuffGet;	// start at first available
-		unsigned int dwEnd = pdx->dwInBuffPut;	// Position for search end
-		do {
-			if (pdx->inputBuffer[dwIndex++] == CR_CHAR)
-				++iReturn;	// inc count if CR
-
-			if (dwIndex >= INBUF_SZ)	// see if we fall off buff
-				dwIndex = 0;
-		}
-		while (dwIndex != dwEnd);	// go to last avaliable
-	}
-
-	spin_unlock_irq(&pdx->charInLock);
-	dev_dbg(&pdx->interface->dev, "LineCount returned %d", iReturn);
-	mutex_unlock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	return iReturn;
-}
-
-/****************************************************************************
-** GetOutBufSpace
-**
-** Gets the space in the output buffer. Called from user code.
-*****************************************************************************/
-int GetOutBufSpace(DEVICE_EXTENSION * pdx)
-{
-	int iReturn;
-	mutex_lock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	SendChars(pdx);		// send any buffered chars
-	iReturn = (int)(OUTBUF_SZ - pdx->dwNumOutput);	// no lock needed for single read
-	dev_dbg(&pdx->interface->dev, "OutBufSpace %d", iReturn);
-	mutex_unlock(&pdx->io_mutex);	// Protect disconnect from new i/o
-	return iReturn;
-}
-
-/****************************************************************************
-**
-** ClearArea
-**
-** Clears up a transfer area. This is always called in the context of a user
-** request, never from a call-back.
-****************************************************************************/
-int ClearArea(DEVICE_EXTENSION * pdx, int nArea)
-{
-	int iReturn = U14ERR_NOERROR;
-
-	if ((nArea < 0) || (nArea >= MAX_TRANSAREAS)) {
-		iReturn = U14ERR_BADAREA;
-		dev_err(&pdx->interface->dev, "%s Attempt to clear area %d",
-			__func__, nArea);
-	} else {
-		TRANSAREA *pTA = &pdx->rTransDef[nArea];	// to save typing
-		if (!pTA->bUsed)	// if not used...
-			iReturn = U14ERR_NOTSET;	// ...nothing to be done
-		else {
-			// We must save the memory we return as we shouldn't mess with memory while
-			// holding a spin lock.
-			struct page **pPages = 0;	// save page address list
-			int nPages = 0;	// and number of pages
-			int np;
-
-			dev_dbg(&pdx->interface->dev, "%s area %d", __func__,
-				nArea);
-			spin_lock_irq(&pdx->stagedLock);
-			if ((pdx->StagedId == nArea)
-			    && (pdx->dwDMAFlag > MODE_CHAR)) {
-				iReturn = U14ERR_UNLOCKFAIL;	// cannot delete as in use
-				dev_err(&pdx->interface->dev,
-					"%s call on area %d while active",
-					__func__, nArea);
-			} else {
-				pPages = pTA->pPages;	// save page address list
-				nPages = pTA->nPages;	// and page count
-				if (pTA->dwEventSz)	// if events flagging in use
-					wake_up_interruptible(&pTA->wqEvent);	// release anything that was waiting
-
-				if (pdx->bXFerWaiting
-				    && (pdx->rDMAInfo.wIdent == nArea))
-					pdx->bXFerWaiting = false;	// Cannot have pending xfer if area cleared
-
-				// Clean out the TRANSAREA except for the wait queue, which is at the end
-				// This sets bUsed to false and dwEventSz to 0 to say area not used and no events.
-				memset(pTA, 0,
-				       sizeof(TRANSAREA) -
-				       sizeof(wait_queue_head_t));
-			}
-			spin_unlock_irq(&pdx->stagedLock);
-
-			if (pPages)	// if we decided to release the memory
-			{
-				// Now we must undo the pinning down of the pages. We will assume the worst and mark
-				// all the pages as dirty. Don't be tempted to move this up above as you must not be
-				// holding a spin lock to do this stuff as it is not atomic.
-				dev_dbg(&pdx->interface->dev, "%s nPages=%d",
-					__func__, nPages);
-
-				for (np = 0; np < nPages; ++np) {
-					if (pPages[np]) {
-						SetPageDirty(pPages[np]);
-						page_cache_release(pPages[np]);
-					}
-				}
-
-				kfree(pPages);
-				dev_dbg(&pdx->interface->dev,
-					"%s kfree(pPages) done", __func__);
-			}
-		}
-	}
-
-	return iReturn;
-}
-
-/****************************************************************************
-** SetArea
-**
-** Sets up a transfer area - the functional part. Called by both
-** SetTransfer and SetCircular.
-****************************************************************************/
-static int SetArea(DEVICE_EXTENSION * pdx, int nArea, char __user * puBuf,
-		   unsigned int dwLength, bool bCircular, bool bCircToHost)
-{
-	// Start by working out the page aligned start of the area and the size
-	// of the area in pages, allowing for the start not being aligned and the
-	// end needing to be rounded up to a page boundary.
-	unsigned long ulStart = ((unsigned long)puBuf) & PAGE_MASK;
-	unsigned int ulOffset = ((unsigned long)puBuf) & (PAGE_SIZE - 1);
-	int len = (dwLength + ulOffset + PAGE_SIZE - 1) >> PAGE_SHIFT;
-
-	TRANSAREA *pTA = &pdx->rTransDef[nArea];	// to save typing
-	struct page **pPages = 0;	// space for page tables
-	int nPages = 0;		// and number of pages
-
-	int iReturn = ClearArea(pdx, nArea);	// see if OK to use this area
-	if ((iReturn != U14ERR_NOTSET) &&	// if not area unused and...
-	    (iReturn != U14ERR_NOERROR))	// ...not all OK, then...
-		return iReturn;	// ...we cannot use this area
-
-	if (!access_ok(VERIFY_WRITE, puBuf, dwLength))	// if we cannot access the memory...
-		return -EFAULT;	// ...then we are done
-
-	// Now allocate space to hold the page pointer and virtual address pointer tables
-	pPages =
-	    (struct page **)kmalloc(len * sizeof(struct page *), GFP_KERNEL);
-	if (!pPages) {
-		iReturn = U14ERR_NOMEMORY;
-		goto error;
-	}
-	dev_dbg(&pdx->interface->dev, "%s %p, length=%06x, circular %d",
-		__func__, puBuf, dwLength, bCircular);
-
-	// To pin down user pages we must first acquire the mapping semaphore.
-	down_read(&current->mm->mmap_sem);	// get memory map semaphore
-	nPages =
-	    get_user_pages(current, current->mm, ulStart, len, 1, 0, pPages, 0);
-	up_read(&current->mm->mmap_sem);	// release the semaphore
-	dev_dbg(&pdx->interface->dev, "%s nPages = %d", __func__, nPages);
-
-	if (nPages > 0)		// if we succeeded
-	{
-		// If you are tempted to use page_address (form LDD3), forget it. You MUST use
-		// kmap() or kmap_atomic() to get a virtual address. page_address will give you
-		// (null) or at least it does in this context with an x86 machine.
-		spin_lock_irq(&pdx->stagedLock);
-		pTA->lpvBuff = puBuf;	// keep start of region (user address)
-		pTA->dwBaseOffset = ulOffset;	// save offset in first page to start of xfer
-		pTA->dwLength = dwLength;	// Size if the region in bytes
-		pTA->pPages = pPages;	// list of pages that are used by buffer
-		pTA->nPages = nPages;	// number of pages
-
-		pTA->bCircular = bCircular;
-		pTA->bCircToHost = bCircToHost;
-
-		pTA->aBlocks[0].dwOffset = 0;
-		pTA->aBlocks[0].dwSize = 0;
-		pTA->aBlocks[1].dwOffset = 0;
-		pTA->aBlocks[1].dwSize = 0;
-		pTA->bUsed = true;	// This is now a used block
-
-		spin_unlock_irq(&pdx->stagedLock);
-		iReturn = U14ERR_NOERROR;	// say all was well
-	} else {
-		iReturn = U14ERR_LOCKFAIL;
-		goto error;
-	}
-
-	return iReturn;
-
-error:
-	kfree(pPages);
-	return iReturn;
-}
-
-/****************************************************************************
-** SetTransfer
-**
-** Sets up a transfer area record. If the area is already set, we attempt to
-** unset it. Unsetting will fail if the area is booked, and a transfer to that
-** area is in progress. Otherwise, we will release the area and re-assign it.
-****************************************************************************/
-int SetTransfer(DEVICE_EXTENSION * pdx, TRANSFERDESC __user * pTD)
-{
-	int iReturn;
-	TRANSFERDESC td;
-
-	if (copy_from_user(&td, pTD, sizeof(td)))
-		return -EFAULT;
-
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s area:%d, size:%08x", __func__,
-		td.wAreaNum, td.dwLength);
-	// The strange cast is done so that we don't get warnings in 32-bit linux about the size of the
-	// pointer. The pointer is always passed as a 64-bit object so that we don't have problems using
-	// a 32-bit program on a 64-bit system. unsigned long is 64-bits on a 64-bit system.
-	iReturn =
-	    SetArea(pdx, td.wAreaNum,
-		    (char __user *)((unsigned long)td.lpvBuff), td.dwLength,
-		    false, false);
-	mutex_unlock(&pdx->io_mutex);
-	return iReturn;
-}
-
-/****************************************************************************
-** UnSetTransfer
-** Erases a transfer area record
-****************************************************************************/
-int UnsetTransfer(DEVICE_EXTENSION * pdx, int nArea)
-{
-	int iReturn;
-	mutex_lock(&pdx->io_mutex);
-	iReturn = ClearArea(pdx, nArea);
-	mutex_unlock(&pdx->io_mutex);
-	return iReturn;
-}
-
-/****************************************************************************
-** SetEvent
-** Creates an event that we can test for based on a transfer to/from an area.
-** The area must be setup for a transfer. We attempt to simulate the Windows
-** driver behavior for events (as we don't actually use them), which is to
-** pretend that whatever the user asked for was achieved, so we return 1 if
-** try to create one, and 0 if they ask to remove (assuming all else was OK).
-****************************************************************************/
-int SetEvent(DEVICE_EXTENSION * pdx, TRANSFEREVENT __user * pTE)
-{
-	int iReturn = U14ERR_NOERROR;
-	TRANSFEREVENT te;
-
-	// get a local copy of the data
-	if (copy_from_user(&te, pTE, sizeof(te)))
-		return -EFAULT;
-
-	if (te.wAreaNum >= MAX_TRANSAREAS)	// the area must exist
-		return U14ERR_BADAREA;
-	else {
-		TRANSAREA *pTA = &pdx->rTransDef[te.wAreaNum];
-		mutex_lock(&pdx->io_mutex);	// make sure we have no competitor
-		spin_lock_irq(&pdx->stagedLock);
-		if (pTA->bUsed)	// area must be in use
-		{
-			pTA->dwEventSt = te.dwStart;	// set area regions
-			pTA->dwEventSz = te.dwLength;	// set size (0 cancels it)
-			pTA->bEventToHost = te.wFlags & 1;	// set the direction
-			pTA->iWakeUp = 0;	// zero the wake up count
-		} else
-			iReturn = U14ERR_NOTSET;
-		spin_unlock_irq(&pdx->stagedLock);
-		mutex_unlock(&pdx->io_mutex);
-	}
-	return iReturn ==
-	    U14ERR_NOERROR ? (te.iSetEvent ? 1 : U14ERR_NOERROR) : iReturn;
-}
-
-/****************************************************************************
-** WaitEvent
-** Sleep the process with a timeout waiting for an event. Returns the number
-** of times that a block met the event condition since we last cleared it or
-** 0 if timed out, or -ve error (bad area or not set, or signal).
-****************************************************************************/
-int WaitEvent(DEVICE_EXTENSION * pdx, int nArea, int msTimeOut)
-{
-	int iReturn;
-	if ((unsigned)nArea > MAX_TRANSAREAS)
-		return U14ERR_BADAREA;
-	else {
-		int iWait;
-		TRANSAREA *pTA = &pdx->rTransDef[nArea];
-		msTimeOut = (msTimeOut * HZ + 999) / 1000;	// convert timeout to jiffies
-
-		// We cannot wait holding the mutex, but we check the flags while holding
-		// it. This may well be pointless as another thread could get in between
-		// releasing it and the wait call. However, this would have to clear the
-		// iWakeUp flag. However, the !pTA-bUsed may help us in this case.
-		mutex_lock(&pdx->io_mutex);	// make sure we have no competitor
-		if (!pTA->bUsed || !pTA->dwEventSz)	// check something to wait for...
-			return U14ERR_NOTSET;	// ...else we do nothing
-		mutex_unlock(&pdx->io_mutex);
-
-		if (msTimeOut)
-			iWait =
-			    wait_event_interruptible_timeout(pTA->wqEvent,
-							     pTA->iWakeUp
-							     || !pTA->bUsed,
-							     msTimeOut);
-		else
-			iWait =
-			    wait_event_interruptible(pTA->wqEvent, pTA->iWakeUp
-						     || !pTA->bUsed);
-		if (iWait)
-			iReturn = -ERESTARTSYS;	// oops - we have had a SIGNAL
-		else
-			iReturn = pTA->iWakeUp;	// else the wakeup count
-
-		spin_lock_irq(&pdx->stagedLock);
-		pTA->iWakeUp = 0;	// clear the flag
-		spin_unlock_irq(&pdx->stagedLock);
-	}
-	return iReturn;
-}
-
-/****************************************************************************
-** TestEvent
-** Test the event to see if a WaitEvent would return immediately. Returns the
-** number of times a block completed since the last call, or 0 if none or a
-** negative error.
-****************************************************************************/
-int TestEvent(DEVICE_EXTENSION * pdx, int nArea)
-{
-	int iReturn;
-	if ((unsigned)nArea > MAX_TRANSAREAS)
-		iReturn = U14ERR_BADAREA;
-	else {
-		TRANSAREA *pTA = &pdx->rTransDef[nArea];
-		mutex_lock(&pdx->io_mutex);	// make sure we have no competitor
-		spin_lock_irq(&pdx->stagedLock);
-		iReturn = pTA->iWakeUp;	// get wakeup count since last call
-		pTA->iWakeUp = 0;	// clear the count
-		spin_unlock_irq(&pdx->stagedLock);
-		mutex_unlock(&pdx->io_mutex);
-	}
-	return iReturn;
-}
-
-/****************************************************************************
-** GetTransferInfo
-** Puts the current state of the 1401 in a TGET_TX_BLOCK.
-*****************************************************************************/
-int GetTransfer(DEVICE_EXTENSION * pdx, TGET_TX_BLOCK __user * pTX)
-{
-	int iReturn = U14ERR_NOERROR;
-	unsigned int dwIdent;
-
-	mutex_lock(&pdx->io_mutex);
-	dwIdent = pdx->StagedId;	// area ident for last xfer
-	if (dwIdent >= MAX_TRANSAREAS)
-		iReturn = U14ERR_BADAREA;
-	else {
-		// Return the best information we have - we don't have physical addresses
-		TGET_TX_BLOCK tx;
-		memset(&tx, 0, sizeof(tx));	// clean out local work structure
-		tx.size = pdx->rTransDef[dwIdent].dwLength;
-		tx.linear = (long long)((long)pdx->rTransDef[dwIdent].lpvBuff);
-		tx.avail = GET_TX_MAXENTRIES;	// how many blocks we could return
-		tx.used = 1;	// number we actually return
-		tx.entries[0].physical =
-		    (long long)(tx.linear + pdx->StagedOffset);
-		tx.entries[0].size = tx.size;
-
-		if (copy_to_user(pTX, &tx, sizeof(tx)))
-			iReturn = -EFAULT;
-	}
-	mutex_unlock(&pdx->io_mutex);
-	return iReturn;
-}
-
-/****************************************************************************
-** KillIO1401
-**
-** Empties the host i/o buffers
-****************************************************************************/
-int KillIO1401(DEVICE_EXTENSION * pdx)
-{
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-	mutex_lock(&pdx->io_mutex);
-	FlushOutBuff(pdx);
-	FlushInBuff(pdx);
-	mutex_unlock(&pdx->io_mutex);
-	return U14ERR_NOERROR;
-}
-
-/****************************************************************************
-** BlkTransState
-** Returns a 0 or a 1 for whether DMA is happening. No point holding a mutex
-** for this as it only does one read.
-*****************************************************************************/
-int BlkTransState(DEVICE_EXTENSION * pdx)
-{
-	int iReturn = pdx->dwDMAFlag != MODE_CHAR;
-	dev_dbg(&pdx->interface->dev, "%s = %d", __func__, iReturn);
-	return iReturn;
-}
-
-/****************************************************************************
-** StateOf1401
-**
-** Puts the current state of the 1401 in the Irp return buffer.
-*****************************************************************************/
-int StateOf1401(DEVICE_EXTENSION * pdx)
-{
-	int iReturn;
-	mutex_lock(&pdx->io_mutex);
-
-	QuickCheck(pdx, false, false);	// get state up to date, no reset
-	iReturn = pdx->sCurrentState;
-
-	mutex_unlock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s = %d", __func__, iReturn);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** StartSelfTest
-**
-** Initiates a self-test cycle. The assumption is that we have no interrupts
-** active, so we should make sure that this is the case.
-*****************************************************************************/
-int StartSelfTest(DEVICE_EXTENSION * pdx)
-{
-	int nGot;
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-
-	ced_draw_down(pdx);	// wait for, then kill outstanding Urbs
-	FlushInBuff(pdx);	// Clear out input buffer & pipe
-	FlushOutBuff(pdx);	// Clear output buffer & pipe
-//    ReadWrite_Cancel(pDeviceObject);        /* so things stay tidy */
-	pdx->dwDMAFlag = MODE_CHAR;	/* Clear DMA mode flags here */
-
-	nGot = usb_control_msg(pdx->udev, usb_rcvctrlpipe(pdx->udev, 0), DB_SELFTEST, (H_TO_D | VENDOR | DEVREQ), 0, 0, 0, 0, HZ);	// allow 1 second timeout
-	pdx->ulSelfTestTime = jiffies + HZ * 30;	// 30 seconds into the future
-
-	mutex_unlock(&pdx->io_mutex);
-	if (nGot < 0)
-		dev_err(&pdx->interface->dev, "%s err=%d", __func__, nGot);
-	return nGot < 0 ? U14ERR_FAIL : U14ERR_NOERROR;
-}
-
-/****************************************************************************
-** CheckSelfTest
-**
-** Check progress of a self-test cycle
-****************************************************************************/
-int CheckSelfTest(DEVICE_EXTENSION * pdx, TGET_SELFTEST __user * pGST)
-{
-	unsigned int state, error;
-	int iReturn;
-	TGET_SELFTEST gst;	// local work space
-	memset(&gst, 0, sizeof(gst));	// clear out the space (sets code 0)
-
-	mutex_lock(&pdx->io_mutex);
-
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-	iReturn = Get1401State(pdx, &state, &error);
-	if (iReturn == U14ERR_NOERROR)	// Only accept zero if it happens twice
-		iReturn = Get1401State(pdx, &state, &error);
-
-	if (iReturn != U14ERR_NOERROR)	// Self-test can cause comms errors
-	{			// so we assume still testing
-		dev_err(&pdx->interface->dev,
-			"%s Get1401State=%d, assuming still testing", __func__,
-			iReturn);
-		state = 0x80;	// Force still-testing, no error
-		error = 0;
-		iReturn = U14ERR_NOERROR;
-	}
-
-	if ((state == -1) && (error == -1))	// If Get1401State had problems
-	{
-		dev_err(&pdx->interface->dev,
-			"%s Get1401State failed, assuming still testing",
-			__func__);
-		state = 0x80;	// Force still-testing, no error
-		error = 0;
-	}
-
-	if ((state & 0xFF) == 0x80)	// If we are still in self-test
-	{
-		if (state & 0x00FF0000)	// Have we got an error?
-		{
-			gst.code = (state & 0x00FF0000) >> 16;	// read the error code
-			gst.x = error & 0x0000FFFF;	// Error data X
-			gst.y = (error & 0xFFFF0000) >> 16;	// and data Y
-			dev_dbg(&pdx->interface->dev, "Self-test error code %d",
-				gst.code);
-		} else		// No error, check for timeout
-		{
-			unsigned long ulNow = jiffies;	// get current time
-			if (time_after(ulNow, pdx->ulSelfTestTime)) {
-				gst.code = -2;	// Flag the timeout
-				dev_dbg(&pdx->interface->dev,
-					"Self-test timed-out");
-			} else
-				dev_dbg(&pdx->interface->dev,
-					"Self-test on-going");
-		}
-	} else {
-		gst.code = -1;	// Flag the test is done
-		dev_dbg(&pdx->interface->dev, "Self-test done");
-	}
-
-	if (gst.code < 0)	// If we have a problem or finished
-	{			// If using the 2890 we should reset properly
-		if ((pdx->nPipes == 4) && (pdx->s1401Type <= TYPEPOWER))
-			Is1401(pdx);	// Get 1401 reset and OK
-		else
-			QuickCheck(pdx, true, true);	// Otherwise check without reset unless problems
-	}
-	mutex_unlock(&pdx->io_mutex);
-
-	if (copy_to_user(pGST, &gst, sizeof(gst)))
-		return -EFAULT;
-
-	return iReturn;
-}
-
-/****************************************************************************
-** TypeOf1401
-**
-** Returns code for standard, plus, micro1401, power1401 or none
-****************************************************************************/
-int TypeOf1401(DEVICE_EXTENSION * pdx)
-{
-	int iReturn = TYPEUNKNOWN;
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-
-	switch (pdx->s1401Type) {
-	case TYPE1401:
-		iReturn = U14ERR_STD;
-		break;		// Handle these types directly
-	case TYPEPLUS:
-		iReturn = U14ERR_PLUS;
-		break;
-	case TYPEU1401:
-		iReturn = U14ERR_U1401;
-		break;
-	default:
-		if ((pdx->s1401Type >= TYPEPOWER) && (pdx->s1401Type <= 25))
-			iReturn = pdx->s1401Type + 4;	// We can calculate types
-		else		//  for up-coming 1401 designs
-			iReturn = TYPEUNKNOWN;	// Don't know or not there
-	}
-	dev_dbg(&pdx->interface->dev, "%s %d", __func__, iReturn);
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** TransferFlags
-**
-** Returns flags on block transfer abilities
-****************************************************************************/
-int TransferFlags(DEVICE_EXTENSION * pdx)
-{
-	int iReturn = U14TF_MULTIA | U14TF_DIAG |	// we always have multiple DMA area
-	    U14TF_NOTIFY | U14TF_CIRCTH;	// diagnostics, notify and circular
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-	mutex_lock(&pdx->io_mutex);
-	if (pdx->bIsUSB2)	// Set flag for USB2 if appropriate
-		iReturn |= U14TF_USB2;
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/***************************************************************************
-** DbgCmd1401
-** Issues a debug\diagnostic command to the 1401 along with a 32-bit datum
-** This is a utility command used for dbg operations.
-*/
-static int DbgCmd1401(DEVICE_EXTENSION * pdx, unsigned char cmd,
-		      unsigned int data)
-{
-	int iReturn;
-	dev_dbg(&pdx->interface->dev, "%s entry", __func__);
-	iReturn = usb_control_msg(pdx->udev, usb_sndctrlpipe(pdx->udev, 0), cmd, (H_TO_D | VENDOR | DEVREQ), (unsigned short)data, (unsigned short)(data >> 16), 0, 0, HZ);	// allow 1 second timeout
-	if (iReturn < 0)
-		dev_err(&pdx->interface->dev, "%s fail code=%d", __func__,
-			iReturn);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** DbgPeek
-**
-** Execute the diagnostic peek operation. Uses address, width and repeats.
-****************************************************************************/
-int DbgPeek(DEVICE_EXTENSION * pdx, TDBGBLOCK __user * pDB)
-{
-	int iReturn;
-	TDBGBLOCK db;
-
-	if (copy_from_user(&db, pDB, sizeof(db)))
-		return -EFAULT;
-
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s @ %08x", __func__, db.iAddr);
-
-	iReturn = DbgCmd1401(pdx, DB_SETADD, db.iAddr);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_WIDTH, db.iWidth);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_REPEATS, db.iRepeats);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_PEEK, 0);
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** DbgPoke
-**
-** Execute the diagnostic poke operation. Parameters are in the CSBLOCK struct
-** in order address, size, repeats and value to poke.
-****************************************************************************/
-int DbgPoke(DEVICE_EXTENSION * pdx, TDBGBLOCK __user * pDB)
-{
-	int iReturn;
-	TDBGBLOCK db;
-
-	if (copy_from_user(&db, pDB, sizeof(db)))
-		return -EFAULT;
-
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s @ %08x", __func__, db.iAddr);
-
-	iReturn = DbgCmd1401(pdx, DB_SETADD, db.iAddr);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_WIDTH, db.iWidth);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_REPEATS, db.iRepeats);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_POKE, db.iData);
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** DbgRampData
-**
-** Execute the diagnostic ramp data operation. Parameters are in the CSBLOCK struct
-** in order address, default, enable mask, size and repeats.
-****************************************************************************/
-int DbgRampData(DEVICE_EXTENSION * pdx, TDBGBLOCK __user * pDB)
-{
-	int iReturn;
-	TDBGBLOCK db;
-
-	if (copy_from_user(&db, pDB, sizeof(db)))
-		return -EFAULT;
-
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s @ %08x", __func__, db.iAddr);
-
-	iReturn = DbgCmd1401(pdx, DB_SETADD, db.iAddr);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_SETDEF, db.iDefault);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_SETMASK, db.iMask);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_WIDTH, db.iWidth);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_REPEATS, db.iRepeats);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_RAMPD, 0);
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** DbgRampAddr
-**
-** Execute the diagnostic ramp address operation
-****************************************************************************/
-int DbgRampAddr(DEVICE_EXTENSION * pdx, TDBGBLOCK __user * pDB)
-{
-	int iReturn;
-	TDBGBLOCK db;
-
-	if (copy_from_user(&db, pDB, sizeof(db)))
-		return -EFAULT;
-
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-
-	iReturn = DbgCmd1401(pdx, DB_SETDEF, db.iDefault);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_SETMASK, db.iMask);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_WIDTH, db.iWidth);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_REPEATS, db.iRepeats);
-	if (iReturn == U14ERR_NOERROR)
-		iReturn = DbgCmd1401(pdx, DB_RAMPA, 0);
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** DbgGetData
-**
-** Retrieve the data resulting from the last debug Peek operation
-****************************************************************************/
-int DbgGetData(DEVICE_EXTENSION * pdx, TDBGBLOCK __user * pDB)
-{
-	int iReturn;
-	TDBGBLOCK db;
-	memset(&db, 0, sizeof(db));	// fill returned block with 0s
-
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-
-	// Read back the last peeked value from the 1401.
-	iReturn = usb_control_msg(pdx->udev, usb_rcvctrlpipe(pdx->udev, 0),
-				  DB_DATA, (D_TO_H | VENDOR | DEVREQ), 0, 0,
-				  &db.iData, sizeof(db.iData), HZ);
-	if (iReturn == sizeof(db.iData)) {
-		if (copy_to_user(pDB, &db, sizeof(db)))
-			iReturn = -EFAULT;
-		else
-			iReturn = U14ERR_NOERROR;
-	} else
-		dev_err(&pdx->interface->dev, "%s failed, code %d", __func__,
-			iReturn);
-
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** DbgStopLoop
-**
-** Stop any never-ending debug loop, we just call Get1401State for USB
-**
-****************************************************************************/
-int DbgStopLoop(DEVICE_EXTENSION * pdx)
-{
-	int iReturn;
-	unsigned int uState, uErr;
-
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-	iReturn = Get1401State(pdx, &uState, &uErr);
-	mutex_unlock(&pdx->io_mutex);
-
-	return iReturn;
-}
-
-/****************************************************************************
-** SetCircular
-**
-** Sets up a transfer area record for circular transfers. If the area is
-** already set, we attempt to unset it. Unsetting will fail if the area is
-** booked and a transfer to that area is in progress. Otherwise, we will
-** release the area and re-assign it.
-****************************************************************************/
-int SetCircular(DEVICE_EXTENSION * pdx, TRANSFERDESC __user * pTD)
-{
-	int iReturn;
-	bool bToHost;
-	TRANSFERDESC td;
-
-	if (copy_from_user(&td, pTD, sizeof(td)))
-		return -EFAULT;
-
-	mutex_lock(&pdx->io_mutex);
-	dev_dbg(&pdx->interface->dev, "%s area:%d, size:%08x", __func__,
-		td.wAreaNum, td.dwLength);
-	bToHost = td.eSize != 0;	// this is used as the tohost flag
-
-	// The strange cast is done so that we don't get warnings in 32-bit linux about the size of the
-	// pointer. The pointer is always passed as a 64-bit object so that we don't have problems using
-	// a 32-bit program on a 64-bit system. unsigned long is 64-bits on a 64-bit system.
-	iReturn =
-	    SetArea(pdx, td.wAreaNum,
-		    (char __user *)((unsigned long)td.lpvBuff), td.dwLength,
-		    true, bToHost);
-	mutex_unlock(&pdx->io_mutex);
-	return iReturn;
-}
-
-/****************************************************************************
-** GetCircBlock
-**
-** Return the next available block of circularly-transferred data.
-****************************************************************************/
-int GetCircBlock(DEVICE_EXTENSION * pdx, TCIRCBLOCK __user * pCB)
-{
-	int iReturn = U14ERR_NOERROR;
-	unsigned int nArea;
-	TCIRCBLOCK cb;
-
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-
-	if (copy_from_user(&cb, pCB, sizeof(cb)))
-		return -EFAULT;
-
-	mutex_lock(&pdx->io_mutex);
-
-	nArea = cb.nArea;	// Retrieve parameters first
-	cb.dwOffset = 0;	// set default result (nothing)
-	cb.dwSize = 0;
-
-	if (nArea < MAX_TRANSAREAS)	// The area number must be OK
-	{
-		TRANSAREA *pArea = &pdx->rTransDef[nArea];	// Pointer to relevant info
-		spin_lock_irq(&pdx->stagedLock);	// Lock others out
-
-		if ((pArea->bUsed) && (pArea->bCircular) &&	// Must be circular area
-		    (pArea->bCircToHost))	// For now at least must be to host
-		{
-			if (pArea->aBlocks[0].dwSize > 0)	// Got anything?
-			{
-				cb.dwOffset = pArea->aBlocks[0].dwOffset;
-				cb.dwSize = pArea->aBlocks[0].dwSize;
-				dev_dbg(&pdx->interface->dev,
-					"%s return block 0: %d bytes at %d",
-					__func__, cb.dwSize, cb.dwOffset);
-			}
-		} else
-			iReturn = U14ERR_NOTSET;
-
-		spin_unlock_irq(&pdx->stagedLock);
-	} else
-		iReturn = U14ERR_BADAREA;
-
-	if (copy_to_user(pCB, &cb, sizeof(cb)))
-		iReturn = -EFAULT;
-
-	mutex_unlock(&pdx->io_mutex);
-	return iReturn;
-}
-
-/****************************************************************************
-** FreeCircBlock
-**
-** Frees a block of circularly-transferred data and returns the next one.
-****************************************************************************/
-int FreeCircBlock(DEVICE_EXTENSION * pdx, TCIRCBLOCK __user * pCB)
-{
-	int iReturn = U14ERR_NOERROR;
-	unsigned int nArea, uStart, uSize;
-	TCIRCBLOCK cb;
-
-	dev_dbg(&pdx->interface->dev, "%s", __func__);
-
-	if (copy_from_user(&cb, pCB, sizeof(cb)))
-		return -EFAULT;
-
-	mutex_lock(&pdx->io_mutex);
-
-	nArea = cb.nArea;	// Retrieve parameters first
-	uStart = cb.dwOffset;
-	uSize = cb.dwSize;
-	cb.dwOffset = 0;	// then set default result (nothing)
-	cb.dwSize = 0;
-
-	if (nArea < MAX_TRANSAREAS)	// The area number must be OK
-	{
-		TRANSAREA *pArea = &pdx->rTransDef[nArea];	// Pointer to relevant info
-		spin_lock_irq(&pdx->stagedLock);	// Lock others out
-
-		if ((pArea->bUsed) && (pArea->bCircular) &&	// Must be circular area
-		    (pArea->bCircToHost))	// For now at least must be to host
-		{
-			bool bWaiting = false;
-
-			if ((pArea->aBlocks[0].dwSize >= uSize) &&	// Got anything?
-			    (pArea->aBlocks[0].dwOffset == uStart))	// Must be legal data
-			{
-				pArea->aBlocks[0].dwSize -= uSize;
-				pArea->aBlocks[0].dwOffset += uSize;
-				if (pArea->aBlocks[0].dwSize == 0)	// Have we emptied this block?
-				{
-					if (pArea->aBlocks[1].dwSize)	// Is there a second block?
-					{
-						pArea->aBlocks[0] = pArea->aBlocks[1];	// Copy down block 2 data
-						pArea->aBlocks[1].dwSize = 0;	// and mark the second block as unused
-						pArea->aBlocks[1].dwOffset = 0;
-					} else
-						pArea->aBlocks[0].dwOffset = 0;
-				}
-
-				dev_dbg(&pdx->interface->dev,
-					"%s free %d bytes at %d, return %d bytes at %d, wait=%d",
-					__func__, uSize, uStart,
-					pArea->aBlocks[0].dwSize,
-					pArea->aBlocks[0].dwOffset,
-					pdx->bXFerWaiting);
-
-				// Return the next available block of memory as well
-				if (pArea->aBlocks[0].dwSize > 0)	// Got anything?
-				{
-					cb.dwOffset =
-					    pArea->aBlocks[0].dwOffset;
-					cb.dwSize = pArea->aBlocks[0].dwSize;
-				}
-
-				bWaiting = pdx->bXFerWaiting;
-				if (bWaiting && pdx->bStagedUrbPending) {
-					dev_err(&pdx->interface->dev,
-						"%s ERROR: waiting xfer and staged Urb pending!",
-						__func__);
-					bWaiting = false;
-				}
-			} else {
-				dev_err(&pdx->interface->dev,
-					"%s ERROR: freeing %d bytes at %d, block 0 is %d bytes at %d",
-					__func__, uSize, uStart,
-					pArea->aBlocks[0].dwSize,
-					pArea->aBlocks[0].dwOffset);
-				iReturn = U14ERR_NOMEMORY;
-			}
-
-			// If we have one, kick off pending transfer
-			if (bWaiting)	// Got a block xfer waiting?
-			{
-				int RWMStat =
-				    ReadWriteMem(pdx, !pdx->rDMAInfo.bOutWard,
-						 pdx->rDMAInfo.wIdent,
-						 pdx->rDMAInfo.dwOffset,
-						 pdx->rDMAInfo.dwSize);
-				if (RWMStat != U14ERR_NOERROR)
-					dev_err(&pdx->interface->dev,
-						"%s rw setup failed %d",
-						__func__, RWMStat);
-			}
-		} else
-			iReturn = U14ERR_NOTSET;
-
-		spin_unlock_irq(&pdx->stagedLock);
-	} else
-		iReturn = U14ERR_BADAREA;
-
-	if (copy_to_user(pCB, &cb, sizeof(cb)))
-		return -EFAULT;
-
-	mutex_unlock(&pdx->io_mutex);
-	return iReturn;
-}
-
---St7VIuEGZ6dlpu13--
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=".config"
+
+#
+# Automatically generated file; DO NOT EDIT.
+# Linux/x86_64 3.7.0-rc1 Kernel Configuration
+#
+CONFIG_64BIT=y
+CONFIG_X86_64=y
+CONFIG_X86=y
+CONFIG_INSTRUCTION_DECODER=y
+CONFIG_OUTPUT_FORMAT="elf64-x86-64"
+CONFIG_ARCH_DEFCONFIG="arch/x86/configs/x86_64_defconfig"
+CONFIG_LOCKDEP_SUPPORT=y
+CONFIG_STACKTRACE_SUPPORT=y
+CONFIG_HAVE_LATENCYTOP_SUPPORT=y
+CONFIG_MMU=y
+CONFIG_NEED_DMA_MAP_STATE=y
+CONFIG_NEED_SG_DMA_LENGTH=y
+CONFIG_GENERIC_ISA_DMA=y
+CONFIG_GENERIC_BUG=y
+CONFIG_GENERIC_BUG_RELATIVE_POINTERS=y
+CONFIG_GENERIC_HWEIGHT=y
+CONFIG_ARCH_MAY_HAVE_PC_FDC=y
+CONFIG_RWSEM_XCHGADD_ALGORITHM=y
+CONFIG_GENERIC_CALIBRATE_DELAY=y
+CONFIG_ARCH_HAS_CPU_RELAX=y
+CONFIG_ARCH_HAS_DEFAULT_IDLE=y
+CONFIG_ARCH_HAS_CACHE_LINE_SIZE=y
+CONFIG_ARCH_HAS_CPU_AUTOPROBE=y
+CONFIG_HAVE_SETUP_PER_CPU_AREA=y
+CONFIG_NEED_PER_CPU_EMBED_FIRST_CHUNK=y
+CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK=y
+CONFIG_ARCH_HIBERNATION_POSSIBLE=y
+CONFIG_ARCH_SUSPEND_POSSIBLE=y
+CONFIG_ZONE_DMA32=y
+CONFIG_AUDIT_ARCH=y
+CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING=y
+CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=y
+CONFIG_ARCH_HWEIGHT_CFLAGS="-fcall-saved-rdi -fcall-saved-rsi -fcall-saved-rdx -fcall-saved-rcx -fcall-saved-r8 -fcall-saved-r9 -fcall-saved-r10 -fcall-saved-r11"
+CONFIG_ARCH_SUPPORTS_UPROBES=y
+CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
+CONFIG_HAVE_IRQ_WORK=y
+CONFIG_IRQ_WORK=y
+CONFIG_BUILDTIME_EXTABLE_SORT=y
+
+#
+# General setup
+#
+CONFIG_EXPERIMENTAL=y
+CONFIG_BROKEN_ON_SMP=y
+CONFIG_INIT_ENV_ARG_LIMIT=32
+CONFIG_CROSS_COMPILE=""
+CONFIG_LOCALVERSION=""
+# CONFIG_LOCALVERSION_AUTO is not set
+CONFIG_HAVE_KERNEL_GZIP=y
+CONFIG_HAVE_KERNEL_BZIP2=y
+CONFIG_HAVE_KERNEL_LZMA=y
+CONFIG_HAVE_KERNEL_XZ=y
+CONFIG_HAVE_KERNEL_LZO=y
+# CONFIG_KERNEL_GZIP is not set
+# CONFIG_KERNEL_BZIP2 is not set
+# CONFIG_KERNEL_LZMA is not set
+# CONFIG_KERNEL_XZ is not set
+CONFIG_KERNEL_LZO=y
+CONFIG_DEFAULT_HOSTNAME="(none)"
+CONFIG_SWAP=y
+CONFIG_SYSVIPC=y
+CONFIG_SYSVIPC_SYSCTL=y
+# CONFIG_POSIX_MQUEUE is not set
+CONFIG_FHANDLE=y
+CONFIG_AUDIT=y
+# CONFIG_AUDITSYSCALL is not set
+CONFIG_AUDIT_LOGINUID_IMMUTABLE=y
+CONFIG_HAVE_GENERIC_HARDIRQS=y
+
+#
+# IRQ subsystem
+#
+CONFIG_GENERIC_HARDIRQS=y
+CONFIG_GENERIC_IRQ_PROBE=y
+CONFIG_GENERIC_IRQ_SHOW=y
+CONFIG_IRQ_DOMAIN=y
+CONFIG_IRQ_DOMAIN_DEBUG=y
+CONFIG_IRQ_FORCED_THREADING=y
+CONFIG_SPARSE_IRQ=y
+CONFIG_CLOCKSOURCE_WATCHDOG=y
+CONFIG_ARCH_CLOCKSOURCE_DATA=y
+CONFIG_GENERIC_TIME_VSYSCALL=y
+CONFIG_GENERIC_CLOCKEVENTS=y
+CONFIG_GENERIC_CLOCKEVENTS_BUILD=y
+CONFIG_GENERIC_CLOCKEVENTS_BROADCAST=y
+CONFIG_GENERIC_CLOCKEVENTS_MIN_ADJUST=y
+CONFIG_GENERIC_CMOS_UPDATE=y
+
+#
+# Timers subsystem
+#
+# CONFIG_NO_HZ is not set
+# CONFIG_HIGH_RES_TIMERS is not set
+
+#
+# CPU/Task time and stats accounting
+#
+CONFIG_TICK_CPU_ACCOUNTING=y
+# CONFIG_IRQ_TIME_ACCOUNTING is not set
+CONFIG_BSD_PROCESS_ACCT=y
+# CONFIG_BSD_PROCESS_ACCT_V3 is not set
+# CONFIG_TASKSTATS is not set
+
+#
+# RCU Subsystem
+#
+CONFIG_TINY_RCU=y
+# CONFIG_PREEMPT_RCU is not set
+# CONFIG_TREE_RCU_TRACE is not set
+# CONFIG_IKCONFIG is not set
+CONFIG_LOG_BUF_SHIFT=17
+CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
+CONFIG_CGROUPS=y
+CONFIG_CGROUP_DEBUG=y
+# CONFIG_CGROUP_FREEZER is not set
+# CONFIG_CGROUP_DEVICE is not set
+CONFIG_CPUSETS=y
+CONFIG_PROC_PID_CPUSET=y
+# CONFIG_CGROUP_CPUACCT is not set
+CONFIG_RESOURCE_COUNTERS=y
+# CONFIG_MEMCG is not set
+# CONFIG_CGROUP_PERF is not set
+CONFIG_CGROUP_SCHED=y
+CONFIG_FAIR_GROUP_SCHED=y
+CONFIG_CFS_BANDWIDTH=y
+CONFIG_RT_GROUP_SCHED=y
+CONFIG_BLK_CGROUP=y
+CONFIG_DEBUG_BLK_CGROUP=y
+# CONFIG_CHECKPOINT_RESTORE is not set
+CONFIG_NAMESPACES=y
+CONFIG_UTS_NS=y
+# CONFIG_IPC_NS is not set
+CONFIG_PID_NS=y
+CONFIG_NET_NS=y
+CONFIG_SCHED_AUTOGROUP=y
+# CONFIG_SYSFS_DEPRECATED is not set
+# CONFIG_RELAY is not set
+# CONFIG_BLK_DEV_INITRD is not set
+# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+CONFIG_SYSCTL=y
+CONFIG_ANON_INODES=y
+# CONFIG_EXPERT is not set
+# CONFIG_SYSCTL_SYSCALL is not set
+CONFIG_SYSCTL_EXCEPTION_TRACE=y
+CONFIG_KALLSYMS=y
+CONFIG_HOTPLUG=y
+CONFIG_PRINTK=y
+CONFIG_BUG=y
+CONFIG_ELF_CORE=y
+CONFIG_PCSPKR_PLATFORM=y
+CONFIG_HAVE_PCSPKR_PLATFORM=y
+CONFIG_BASE_FULL=y
+CONFIG_FUTEX=y
+CONFIG_EPOLL=y
+CONFIG_SIGNALFD=y
+CONFIG_TIMERFD=y
+CONFIG_EVENTFD=y
+CONFIG_SHMEM=y
+CONFIG_AIO=y
+# CONFIG_EMBEDDED is not set
+CONFIG_HAVE_PERF_EVENTS=y
+
+#
+# Kernel Performance Events And Counters
+#
+CONFIG_PERF_EVENTS=y
+CONFIG_VM_EVENT_COUNTERS=y
+CONFIG_SLUB_DEBUG=y
+# CONFIG_COMPAT_BRK is not set
+# CONFIG_SLAB is not set
+CONFIG_SLUB=y
+CONFIG_PROFILING=y
+# CONFIG_OPROFILE is not set
+CONFIG_HAVE_OPROFILE=y
+CONFIG_OPROFILE_NMI_TIMER=y
+# CONFIG_JUMP_LABEL is not set
+CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
+CONFIG_HAVE_IOREMAP_PROT=y
+CONFIG_HAVE_KPROBES=y
+CONFIG_HAVE_KRETPROBES=y
+CONFIG_HAVE_OPTPROBES=y
+CONFIG_HAVE_ARCH_TRACEHOOK=y
+CONFIG_HAVE_DMA_ATTRS=y
+CONFIG_GENERIC_SMP_IDLE_THREAD=y
+CONFIG_HAVE_REGS_AND_STACK_ACCESS_API=y
+CONFIG_HAVE_DMA_API_DEBUG=y
+CONFIG_HAVE_HW_BREAKPOINT=y
+CONFIG_HAVE_MIXED_BREAKPOINTS_REGS=y
+CONFIG_HAVE_USER_RETURN_NOTIFIER=y
+CONFIG_HAVE_PERF_EVENTS_NMI=y
+CONFIG_HAVE_PERF_REGS=y
+CONFIG_HAVE_PERF_USER_STACK_DUMP=y
+CONFIG_HAVE_ARCH_JUMP_LABEL=y
+CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
+CONFIG_HAVE_ALIGNED_STRUCT_PAGE=y
+CONFIG_HAVE_CMPXCHG_LOCAL=y
+CONFIG_HAVE_CMPXCHG_DOUBLE=y
+CONFIG_GENERIC_KERNEL_THREAD=y
+CONFIG_GENERIC_KERNEL_EXECVE=y
+CONFIG_HAVE_ARCH_SECCOMP_FILTER=y
+CONFIG_HAVE_RCU_USER_QS=y
+CONFIG_HAVE_IRQ_TIME_ACCOUNTING=y
+CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y
+CONFIG_MODULES_USE_ELF_RELA=y
+
+#
+# GCOV-based kernel profiling
+#
+# CONFIG_GCOV_KERNEL is not set
+# CONFIG_HAVE_GENERIC_DMA_COHERENT is not set
+CONFIG_SLABINFO=y
+CONFIG_RT_MUTEXES=y
+CONFIG_BASE_SMALL=0
+# CONFIG_MODULES is not set
+CONFIG_BLOCK=y
+CONFIG_BLK_DEV_BSG=y
+CONFIG_BLK_DEV_BSGLIB=y
+CONFIG_BLK_DEV_INTEGRITY=y
+CONFIG_BLK_DEV_THROTTLING=y
+
+#
+# Partition Types
+#
+CONFIG_PARTITION_ADVANCED=y
+CONFIG_ACORN_PARTITION=y
+CONFIG_ACORN_PARTITION_CUMANA=y
+# CONFIG_ACORN_PARTITION_EESOX is not set
+CONFIG_ACORN_PARTITION_ICS=y
+# CONFIG_ACORN_PARTITION_ADFS is not set
+CONFIG_ACORN_PARTITION_POWERTEC=y
+CONFIG_ACORN_PARTITION_RISCIX=y
+CONFIG_OSF_PARTITION=y
+# CONFIG_AMIGA_PARTITION is not set
+CONFIG_ATARI_PARTITION=y
+# CONFIG_MAC_PARTITION is not set
+CONFIG_MSDOS_PARTITION=y
+CONFIG_BSD_DISKLABEL=y
+CONFIG_MINIX_SUBPARTITION=y
+# CONFIG_SOLARIS_X86_PARTITION is not set
+CONFIG_UNIXWARE_DISKLABEL=y
+# CONFIG_LDM_PARTITION is not set
+# CONFIG_SGI_PARTITION is not set
+# CONFIG_ULTRIX_PARTITION is not set
+CONFIG_SUN_PARTITION=y
+CONFIG_KARMA_PARTITION=y
+# CONFIG_EFI_PARTITION is not set
+CONFIG_SYSV68_PARTITION=y
+
+#
+# IO Schedulers
+#
+CONFIG_IOSCHED_NOOP=y
+CONFIG_IOSCHED_DEADLINE=y
+# CONFIG_IOSCHED_CFQ is not set
+CONFIG_DEFAULT_DEADLINE=y
+# CONFIG_DEFAULT_NOOP is not set
+CONFIG_DEFAULT_IOSCHED="deadline"
+CONFIG_INLINE_SPIN_UNLOCK_IRQ=y
+CONFIG_INLINE_READ_UNLOCK=y
+CONFIG_INLINE_READ_UNLOCK_IRQ=y
+CONFIG_INLINE_WRITE_UNLOCK=y
+CONFIG_INLINE_WRITE_UNLOCK_IRQ=y
+CONFIG_FREEZER=y
+
+#
+# Processor type and features
+#
+CONFIG_ZONE_DMA=y
+# CONFIG_SMP is not set
+CONFIG_X86_MPPARSE=y
+# CONFIG_X86_EXTENDED_PLATFORM is not set
+CONFIG_SCHED_OMIT_FRAME_POINTER=y
+# CONFIG_PARAVIRT_GUEST is not set
+CONFIG_NO_BOOTMEM=y
+# CONFIG_MEMTEST is not set
+# CONFIG_MK8 is not set
+# CONFIG_MPSC is not set
+# CONFIG_MCORE2 is not set
+# CONFIG_MATOM is not set
+CONFIG_GENERIC_CPU=y
+CONFIG_X86_INTERNODE_CACHE_SHIFT=6
+CONFIG_X86_CMPXCHG=y
+CONFIG_X86_L1_CACHE_SHIFT=6
+CONFIG_X86_XADD=y
+CONFIG_X86_WP_WORKS_OK=y
+CONFIG_X86_TSC=y
+CONFIG_X86_CMPXCHG64=y
+CONFIG_X86_CMOV=y
+CONFIG_X86_MINIMUM_CPU_FAMILY=64
+CONFIG_X86_DEBUGCTLMSR=y
+CONFIG_CPU_SUP_INTEL=y
+CONFIG_CPU_SUP_AMD=y
+CONFIG_CPU_SUP_CENTAUR=y
+CONFIG_HPET_TIMER=y
+CONFIG_HPET_EMULATE_RTC=y
+CONFIG_DMI=y
+CONFIG_SWIOTLB=y
+CONFIG_IOMMU_HELPER=y
+CONFIG_NR_CPUS=1
+# CONFIG_PREEMPT_NONE is not set
+CONFIG_PREEMPT_VOLUNTARY=y
+# CONFIG_PREEMPT is not set
+CONFIG_X86_LOCAL_APIC=y
+CONFIG_X86_IO_APIC=y
+CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
+# CONFIG_X86_MCE is not set
+CONFIG_I8K=y
+# CONFIG_MICROCODE is not set
+# CONFIG_X86_MSR is not set
+# CONFIG_X86_CPUID is not set
+CONFIG_ARCH_PHYS_ADDR_T_64BIT=y
+CONFIG_ARCH_DMA_ADDR_T_64BIT=y
+CONFIG_DIRECT_GBPAGES=y
+CONFIG_ARCH_SPARSEMEM_ENABLE=y
+CONFIG_ARCH_SPARSEMEM_DEFAULT=y
+CONFIG_ARCH_SELECT_MEMORY_MODEL=y
+CONFIG_ARCH_MEMORY_PROBE=y
+CONFIG_ARCH_PROC_KCORE_TEXT=y
+CONFIG_ILLEGAL_POINTER_VALUE=0xdead000000000000
+CONFIG_SELECT_MEMORY_MODEL=y
+CONFIG_SPARSEMEM_MANUAL=y
+CONFIG_SPARSEMEM=y
+CONFIG_HAVE_MEMORY_PRESENT=y
+CONFIG_SPARSEMEM_EXTREME=y
+CONFIG_SPARSEMEM_VMEMMAP_ENABLE=y
+CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER=y
+CONFIG_SPARSEMEM_VMEMMAP=y
+CONFIG_HAVE_MEMBLOCK=y
+CONFIG_HAVE_MEMBLOCK_NODE_MAP=y
+CONFIG_ARCH_DISCARD_MEMBLOCK=y
+CONFIG_MEMORY_ISOLATION=y
+CONFIG_MEMORY_HOTPLUG=y
+CONFIG_MEMORY_HOTPLUG_SPARSE=y
+# CONFIG_MEMORY_HOTREMOVE is not set
+CONFIG_PAGEFLAGS_EXTENDED=y
+CONFIG_SPLIT_PTLOCK_CPUS=4
+CONFIG_COMPACTION=y
+CONFIG_MIGRATION=y
+CONFIG_PHYS_ADDR_T_64BIT=y
+CONFIG_ZONE_DMA_FLAG=1
+CONFIG_BOUNCE=y
+CONFIG_VIRT_TO_BUS=y
+# CONFIG_KSM is not set
+CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
+CONFIG_TRANSPARENT_HUGEPAGE=y
+# CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS is not set
+CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y
+CONFIG_CROSS_MEMORY_ATTACH=y
+CONFIG_NEED_PER_CPU_KM=y
+# CONFIG_CLEANCACHE is not set
+# CONFIG_FRONTSWAP is not set
+CONFIG_X86_CHECK_BIOS_CORRUPTION=y
+CONFIG_X86_BOOTPARAM_MEMORY_CORRUPTION_CHECK=y
+CONFIG_X86_RESERVE_LOW=64
+CONFIG_MTRR=y
+CONFIG_MTRR_SANITIZER=y
+CONFIG_MTRR_SANITIZER_ENABLE_DEFAULT=0
+CONFIG_MTRR_SANITIZER_SPARE_REG_NR_DEFAULT=1
+CONFIG_X86_PAT=y
+CONFIG_ARCH_USES_PG_UNCACHED=y
+CONFIG_ARCH_RANDOM=y
+CONFIG_X86_SMAP=y
+# CONFIG_SECCOMP is not set
+# CONFIG_CC_STACKPROTECTOR is not set
+# CONFIG_HZ_100 is not set
+# CONFIG_HZ_250 is not set
+CONFIG_HZ_300=y
+# CONFIG_HZ_1000 is not set
+CONFIG_HZ=300
+# CONFIG_SCHED_HRTICK is not set
+CONFIG_KEXEC=y
+# CONFIG_CRASH_DUMP is not set
+CONFIG_KEXEC_JUMP=y
+CONFIG_PHYSICAL_START=0x1000000
+CONFIG_RELOCATABLE=y
+CONFIG_PHYSICAL_ALIGN=0x1000000
+# CONFIG_CMDLINE_BOOL is not set
+CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG=y
+CONFIG_ARCH_ENABLE_MEMORY_HOTREMOVE=y
+
+#
+# Power management and ACPI options
+#
+CONFIG_ARCH_HIBERNATION_HEADER=y
+CONFIG_SUSPEND=y
+CONFIG_SUSPEND_FREEZER=y
+CONFIG_HIBERNATE_CALLBACKS=y
+CONFIG_HIBERNATION=y
+CONFIG_PM_STD_PARTITION=""
+CONFIG_PM_SLEEP=y
+# CONFIG_PM_AUTOSLEEP is not set
+# CONFIG_PM_WAKELOCKS is not set
+# CONFIG_PM_RUNTIME is not set
+CONFIG_PM=y
+CONFIG_PM_DEBUG=y
+CONFIG_PM_ADVANCED_DEBUG=y
+# CONFIG_PM_TEST_SUSPEND is not set
+CONFIG_PM_SLEEP_DEBUG=y
+CONFIG_PM_TRACE=y
+CONFIG_PM_TRACE_RTC=y
+# CONFIG_SFI is not set
+
+#
+# CPU Frequency scaling
+#
+CONFIG_CPU_FREQ=y
+CONFIG_CPU_FREQ_TABLE=y
+CONFIG_CPU_FREQ_STAT=y
+# CONFIG_CPU_FREQ_STAT_DETAILS is not set
+# CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is not set
+# CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE is not set
+# CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND is not set
+CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=y
+CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+# CONFIG_CPU_FREQ_GOV_POWERSAVE is not set
+CONFIG_CPU_FREQ_GOV_USERSPACE=y
+# CONFIG_CPU_FREQ_GOV_ONDEMAND is not set
+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+
+#
+# x86 CPU frequency scaling drivers
+#
+# CONFIG_X86_P4_CLOCKMOD is not set
+
+#
+# shared options
+#
+# CONFIG_X86_SPEEDSTEP_LIB is not set
+CONFIG_CPU_IDLE=y
+CONFIG_CPU_IDLE_GOV_LADDER=y
+# CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED is not set
+CONFIG_INTEL_IDLE=y
+
+#
+# Memory power savings
+#
+CONFIG_I7300_IDLE_IOAT_CHANNEL=y
+CONFIG_I7300_IDLE=y
+
+#
+# Bus options (PCI etc.)
+#
+# CONFIG_PCI is not set
+CONFIG_PCI_LABEL=y
+CONFIG_ISA_DMA_API=y
+# CONFIG_PCCARD is not set
+
+#
+# Executable file formats / Emulations
+#
+CONFIG_BINFMT_ELF=y
+CONFIG_ARCH_BINFMT_ELF_RANDOMIZE_PIE=y
+CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS=y
+# CONFIG_HAVE_AOUT is not set
+CONFIG_BINFMT_MISC=y
+CONFIG_COREDUMP=y
+# CONFIG_IA32_EMULATION is not set
+CONFIG_HAVE_TEXT_POKE_SMP=y
+CONFIG_X86_DEV_DMA_OPS=y
+CONFIG_NET=y
+
+#
+# Networking options
+#
+CONFIG_PACKET=y
+# CONFIG_PACKET_DIAG is not set
+# CONFIG_UNIX is not set
+# CONFIG_NET_KEY is not set
+# CONFIG_INET is not set
+CONFIG_NETWORK_SECMARK=y
+CONFIG_NETWORK_PHY_TIMESTAMPING=y
+CONFIG_NETFILTER=y
+CONFIG_NETFILTER_DEBUG=y
+# CONFIG_NETFILTER_ADVANCED is not set
+CONFIG_NETFILTER_XTABLES=y
+CONFIG_BRIDGE_NF_EBTABLES=y
+# CONFIG_BRIDGE_EBT_BROUTE is not set
+# CONFIG_BRIDGE_EBT_T_FILTER is not set
+# CONFIG_BRIDGE_EBT_T_NAT is not set
+# CONFIG_BRIDGE_EBT_802_3 is not set
+# CONFIG_BRIDGE_EBT_AMONG is not set
+# CONFIG_BRIDGE_EBT_ARP is not set
+CONFIG_BRIDGE_EBT_IP=y
+CONFIG_BRIDGE_EBT_LIMIT=y
+# CONFIG_BRIDGE_EBT_MARK is not set
+# CONFIG_BRIDGE_EBT_PKTTYPE is not set
+# CONFIG_BRIDGE_EBT_STP is not set
+# CONFIG_BRIDGE_EBT_VLAN is not set
+# CONFIG_BRIDGE_EBT_DNAT is not set
+# CONFIG_BRIDGE_EBT_MARK_T is not set
+# CONFIG_BRIDGE_EBT_REDIRECT is not set
+# CONFIG_BRIDGE_EBT_SNAT is not set
+# CONFIG_BRIDGE_EBT_LOG is not set
+# CONFIG_BRIDGE_EBT_ULOG is not set
+# CONFIG_BRIDGE_EBT_NFLOG is not set
+CONFIG_ATM=y
+CONFIG_ATM_LANE=y
+CONFIG_STP=y
+CONFIG_BRIDGE=y
+CONFIG_NET_DSA=y
+# CONFIG_NET_DSA_TAG_DSA is not set
+# CONFIG_NET_DSA_TAG_EDSA is not set
+CONFIG_NET_DSA_TAG_TRAILER=y
+# CONFIG_VLAN_8021Q is not set
+CONFIG_DECNET=y
+# CONFIG_DECNET_ROUTER is not set
+CONFIG_LLC=y
+CONFIG_LLC2=y
+CONFIG_IPX=y
+# CONFIG_IPX_INTERN is not set
+CONFIG_ATALK=y
+# CONFIG_DEV_APPLETALK is not set
+CONFIG_X25=y
+CONFIG_LAPB=y
+CONFIG_WAN_ROUTER=y
+# CONFIG_PHONET is not set
+# CONFIG_IEEE802154 is not set
+CONFIG_NET_SCHED=y
+
+#
+# Queueing/Scheduling
+#
+# CONFIG_NET_SCH_CBQ is not set
+CONFIG_NET_SCH_HTB=y
+CONFIG_NET_SCH_HFSC=y
+# CONFIG_NET_SCH_ATM is not set
+# CONFIG_NET_SCH_PRIO is not set
+CONFIG_NET_SCH_MULTIQ=y
+CONFIG_NET_SCH_RED=y
+# CONFIG_NET_SCH_SFB is not set
+# CONFIG_NET_SCH_SFQ is not set
+CONFIG_NET_SCH_TEQL=y
+CONFIG_NET_SCH_TBF=y
+# CONFIG_NET_SCH_GRED is not set
+# CONFIG_NET_SCH_DSMARK is not set
+# CONFIG_NET_SCH_NETEM is not set
+CONFIG_NET_SCH_DRR=y
+CONFIG_NET_SCH_MQPRIO=y
+# CONFIG_NET_SCH_CHOKE is not set
+# CONFIG_NET_SCH_QFQ is not set
+CONFIG_NET_SCH_CODEL=y
+CONFIG_NET_SCH_FQ_CODEL=y
+# CONFIG_NET_SCH_PLUG is not set
+
+#
+# Classification
+#
+CONFIG_NET_CLS=y
+CONFIG_NET_CLS_BASIC=y
+# CONFIG_NET_CLS_TCINDEX is not set
+CONFIG_NET_CLS_FW=y
+# CONFIG_NET_CLS_U32 is not set
+CONFIG_NET_CLS_RSVP=y
+# CONFIG_NET_CLS_RSVP6 is not set
+# CONFIG_NET_CLS_FLOW is not set
+CONFIG_NET_CLS_CGROUP=y
+# CONFIG_NET_EMATCH is not set
+# CONFIG_NET_CLS_ACT is not set
+# CONFIG_NET_CLS_IND is not set
+CONFIG_NET_SCH_FIFO=y
+CONFIG_DCB=y
+# CONFIG_DNS_RESOLVER is not set
+CONFIG_BATMAN_ADV=y
+# CONFIG_BATMAN_ADV_DEBUG is not set
+CONFIG_OPENVSWITCH=y
+# CONFIG_NETPRIO_CGROUP is not set
+CONFIG_BQL=y
+
+#
+# Network testing
+#
+CONFIG_NET_PKTGEN=y
+CONFIG_HAMRADIO=y
+
+#
+# Packet Radio protocols
+#
+# CONFIG_AX25 is not set
+CONFIG_CAN=y
+CONFIG_CAN_RAW=y
+# CONFIG_CAN_BCM is not set
+# CONFIG_CAN_GW is not set
+
+#
+# CAN Device Drivers
+#
+CONFIG_CAN_VCAN=y
+# CONFIG_CAN_SLCAN is not set
+# CONFIG_CAN_DEV is not set
+CONFIG_CAN_DEBUG_DEVICES=y
+CONFIG_IRDA=y
+
+#
+# IrDA protocols
+#
+# CONFIG_IRLAN is not set
+CONFIG_IRNET=y
+# CONFIG_IRCOMM is not set
+CONFIG_IRDA_ULTRA=y
+
+#
+# IrDA options
+#
+# CONFIG_IRDA_CACHE_LAST_LSAP is not set
+CONFIG_IRDA_FAST_RR=y
+# CONFIG_IRDA_DEBUG is not set
+
+#
+# Infrared-port device drivers
+#
+
+#
+# SIR device drivers
+#
+CONFIG_IRTTY_SIR=y
+
+#
+# Dongle support
+#
+# CONFIG_DONGLE is not set
+
+#
+# FIR device drivers
+#
+# CONFIG_NSC_FIR is not set
+CONFIG_WINBOND_FIR=y
+CONFIG_SMC_IRCC_FIR=y
+CONFIG_ALI_FIR=y
+# CONFIG_VIA_FIR is not set
+CONFIG_BT=y
+CONFIG_BT_RFCOMM=y
+# CONFIG_BT_RFCOMM_TTY is not set
+# CONFIG_BT_BNEP is not set
+CONFIG_BT_HIDP=y
+
+#
+# Bluetooth device drivers
+#
+CONFIG_BT_HCIUART=y
+# CONFIG_BT_HCIUART_H4 is not set
+# CONFIG_BT_HCIUART_BCSP is not set
+CONFIG_BT_HCIUART_ATH3K=y
+CONFIG_BT_HCIUART_LL=y
+# CONFIG_BT_HCIUART_3WIRE is not set
+CONFIG_BT_HCIVHCI=y
+# CONFIG_BT_MRVL is not set
+CONFIG_WIRELESS=y
+CONFIG_CFG80211=y
+CONFIG_NL80211_TESTMODE=y
+# CONFIG_CFG80211_DEVELOPER_WARNINGS is not set
+# CONFIG_CFG80211_REG_DEBUG is not set
+CONFIG_CFG80211_DEFAULT_PS=y
+CONFIG_CFG80211_DEBUGFS=y
+# CONFIG_CFG80211_INTERNAL_REGDB is not set
+# CONFIG_CFG80211_WEXT is not set
+CONFIG_LIB80211=y
+CONFIG_LIB80211_DEBUG=y
+# CONFIG_MAC80211 is not set
+# CONFIG_WIMAX is not set
+CONFIG_RFKILL=y
+CONFIG_RFKILL_INPUT=y
+CONFIG_NET_9P=y
+CONFIG_NET_9P_DEBUG=y
+# CONFIG_CAIF is not set
+CONFIG_NFC=y
+CONFIG_NFC_NCI=y
+CONFIG_NFC_HCI=y
+# CONFIG_NFC_SHDLC is not set
+# CONFIG_NFC_LLCP is not set
+
+#
+# Near Field Communication (NFC) devices
+#
+CONFIG_HAVE_BPF_JIT=y
+
+#
+# Device Drivers
+#
+
+#
+# Generic Driver Options
+#
+CONFIG_UEVENT_HELPER_PATH=""
+# CONFIG_DEVTMPFS is not set
+# CONFIG_STANDALONE is not set
+# CONFIG_PREVENT_FIRMWARE_BUILD is not set
+CONFIG_FW_LOADER=y
+# CONFIG_FIRMWARE_IN_KERNEL is not set
+CONFIG_EXTRA_FIRMWARE=""
+# CONFIG_SYS_HYPERVISOR is not set
+# CONFIG_GENERIC_CPU_DEVICES is not set
+CONFIG_REGMAP=y
+CONFIG_REGMAP_I2C=y
+CONFIG_REGMAP_IRQ=y
+CONFIG_DMA_SHARED_BUFFER=y
+
+#
+# Bus devices
+#
+# CONFIG_OMAP_OCP2SCP is not set
+CONFIG_CONNECTOR=y
+# CONFIG_PROC_EVENTS is not set
+CONFIG_MTD=y
+# CONFIG_MTD_REDBOOT_PARTS is not set
+# CONFIG_MTD_CMDLINE_PARTS is not set
+# CONFIG_MTD_AR7_PARTS is not set
+
+#
+# User Modules And Translation Layers
+#
+CONFIG_MTD_CHAR=y
+CONFIG_HAVE_MTD_OTP=y
+CONFIG_MTD_BLKDEVS=y
+# CONFIG_MTD_BLOCK is not set
+# CONFIG_MTD_BLOCK_RO is not set
+CONFIG_FTL=y
+# CONFIG_NFTL is not set
+# CONFIG_INFTL is not set
+# CONFIG_RFD_FTL is not set
+CONFIG_SSFDC=y
+CONFIG_SM_FTL=y
+# CONFIG_MTD_OOPS is not set
+# CONFIG_MTD_SWAP is not set
+
+#
+# RAM/ROM/Flash chip drivers
+#
+# CONFIG_MTD_CFI is not set
+CONFIG_MTD_JEDECPROBE=y
+CONFIG_MTD_GEN_PROBE=y
+CONFIG_MTD_CFI_ADV_OPTIONS=y
+# CONFIG_MTD_CFI_NOSWAP is not set
+CONFIG_MTD_CFI_BE_BYTE_SWAP=y
+# CONFIG_MTD_CFI_LE_BYTE_SWAP is not set
+# CONFIG_MTD_CFI_GEOMETRY is not set
+CONFIG_MTD_MAP_BANK_WIDTH_1=y
+CONFIG_MTD_MAP_BANK_WIDTH_2=y
+CONFIG_MTD_MAP_BANK_WIDTH_4=y
+# CONFIG_MTD_MAP_BANK_WIDTH_8 is not set
+# CONFIG_MTD_MAP_BANK_WIDTH_16 is not set
+# CONFIG_MTD_MAP_BANK_WIDTH_32 is not set
+CONFIG_MTD_CFI_I1=y
+CONFIG_MTD_CFI_I2=y
+# CONFIG_MTD_CFI_I4 is not set
+# CONFIG_MTD_CFI_I8 is not set
+# CONFIG_MTD_OTP is not set
+# CONFIG_MTD_CFI_INTELEXT is not set
+CONFIG_MTD_CFI_AMDSTD=y
+# CONFIG_MTD_CFI_STAA is not set
+CONFIG_MTD_CFI_UTIL=y
+CONFIG_MTD_RAM=y
+CONFIG_MTD_ROM=y
+CONFIG_MTD_ABSENT=y
+
+#
+# Mapping drivers for chip access
+#
+# CONFIG_MTD_COMPLEX_MAPPINGS is not set
+# CONFIG_MTD_PHYSMAP is not set
+CONFIG_MTD_TS5500=y
+# CONFIG_MTD_AMD76XROM is not set
+# CONFIG_MTD_ICHXROM is not set
+# CONFIG_MTD_NETtel is not set
+CONFIG_MTD_L440GX=y
+CONFIG_MTD_PLATRAM=y
+
+#
+# Self-contained MTD device drivers
+#
+CONFIG_MTD_SLRAM=y
+CONFIG_MTD_PHRAM=y
+# CONFIG_MTD_MTDRAM is not set
+CONFIG_MTD_BLOCK2MTD=y
+
+#
+# Disk-On-Chip Device Drivers
+#
+CONFIG_MTD_DOC2000=y
+CONFIG_MTD_DOC2001=y
+CONFIG_MTD_DOC2001PLUS=y
+# CONFIG_MTD_DOCG3 is not set
+CONFIG_MTD_DOCPROBE=y
+CONFIG_MTD_DOCECC=y
+CONFIG_MTD_DOCPROBE_ADVANCED=y
+CONFIG_MTD_DOCPROBE_ADDRESS=0x0
+# CONFIG_MTD_DOCPROBE_HIGH is not set
+# CONFIG_MTD_DOCPROBE_55AA is not set
+CONFIG_MTD_NAND_ECC=y
+# CONFIG_MTD_NAND_ECC_SMC is not set
+CONFIG_MTD_NAND=y
+# CONFIG_MTD_NAND_ECC_BCH is not set
+# CONFIG_MTD_SM_COMMON is not set
+# CONFIG_MTD_NAND_MUSEUM_IDS is not set
+CONFIG_MTD_NAND_IDS=y
+# CONFIG_MTD_NAND_DISKONCHIP is not set
+# CONFIG_MTD_NAND_DOCG4 is not set
+# CONFIG_MTD_NAND_NANDSIM is not set
+CONFIG_MTD_NAND_PLATFORM=y
+CONFIG_MTD_ONENAND=y
+# CONFIG_MTD_ONENAND_VERIFY_WRITE is not set
+CONFIG_MTD_ONENAND_GENERIC=y
+CONFIG_MTD_ONENAND_OTP=y
+# CONFIG_MTD_ONENAND_2X_PROGRAM is not set
+CONFIG_MTD_ONENAND_SIM=y
+
+#
+# LPDDR flash memory drivers
+#
+CONFIG_MTD_LPDDR=y
+CONFIG_MTD_QINFO_PROBE=y
+# CONFIG_MTD_UBI is not set
+# CONFIG_PARPORT is not set
+# CONFIG_BLK_DEV is not set
+
+#
+# Misc devices
+#
+# CONFIG_SENSORS_LIS3LV02D is not set
+# CONFIG_AD525X_DPOT is not set
+CONFIG_ICS932S401=y
+CONFIG_ENCLOSURE_SERVICES=y
+CONFIG_APDS9802ALS=y
+CONFIG_ISL29003=y
+CONFIG_ISL29020=y
+CONFIG_SENSORS_TSL2550=y
+# CONFIG_SENSORS_BH1780 is not set
+# CONFIG_SENSORS_BH1770 is not set
+# CONFIG_SENSORS_APDS990X is not set
+CONFIG_HMC6352=y
+# CONFIG_DS1682 is not set
+# CONFIG_VMWARE_BALLOON is not set
+# CONFIG_BMP085_I2C is not set
+CONFIG_USB_SWITCH_FSA9480=y
+CONFIG_C2PORT=y
+CONFIG_C2PORT_DURAMAR_2150=y
+
+#
+# EEPROM support
+#
+CONFIG_EEPROM_AT24=y
+CONFIG_EEPROM_LEGACY=y
+CONFIG_EEPROM_MAX6875=y
+# CONFIG_EEPROM_93CX6 is not set
+
+#
+# Texas Instruments shared transport line discipline
+#
+# CONFIG_SENSORS_LIS3_I2C is not set
+
+#
+# Altera FPGA firmware download module
+#
+CONFIG_ALTERA_STAPL=y
+CONFIG_HAVE_IDE=y
+# CONFIG_IDE is not set
+
+#
+# SCSI device support
+#
+CONFIG_SCSI_MOD=y
+CONFIG_RAID_ATTRS=y
+CONFIG_SCSI=y
+CONFIG_SCSI_DMA=y
+CONFIG_SCSI_TGT=y
+CONFIG_SCSI_NETLINK=y
+# CONFIG_SCSI_PROC_FS is not set
+
+#
+# SCSI support type (disk, tape, CD-ROM)
+#
+# CONFIG_BLK_DEV_SD is not set
+CONFIG_CHR_DEV_ST=y
+# CONFIG_CHR_DEV_OSST is not set
+CONFIG_BLK_DEV_SR=y
+# CONFIG_BLK_DEV_SR_VENDOR is not set
+CONFIG_CHR_DEV_SG=y
+# CONFIG_CHR_DEV_SCH is not set
+# CONFIG_SCSI_ENCLOSURE is not set
+CONFIG_SCSI_MULTI_LUN=y
+# CONFIG_SCSI_CONSTANTS is not set
+CONFIG_SCSI_LOGGING=y
+CONFIG_SCSI_SCAN_ASYNC=y
+
+#
+# SCSI Transports
+#
+# CONFIG_SCSI_SPI_ATTRS is not set
+CONFIG_SCSI_FC_ATTRS=y
+# CONFIG_SCSI_FC_TGT_ATTRS is not set
+CONFIG_SCSI_ISCSI_ATTRS=y
+CONFIG_SCSI_SAS_ATTRS=y
+CONFIG_SCSI_SAS_LIBSAS=y
+CONFIG_SCSI_SAS_ATA=y
+# CONFIG_SCSI_SAS_HOST_SMP is not set
+CONFIG_SCSI_SRP_ATTRS=y
+# CONFIG_SCSI_SRP_TGT_ATTRS is not set
+CONFIG_SCSI_LOWLEVEL=y
+CONFIG_ISCSI_BOOT_SYSFS=y
+CONFIG_LIBFC=y
+CONFIG_LIBFCOE=y
+# CONFIG_SCSI_DEBUG is not set
+# CONFIG_SCSI_DH is not set
+# CONFIG_SCSI_OSD_INITIATOR is not set
+CONFIG_ATA=y
+# CONFIG_ATA_NONSTANDARD is not set
+CONFIG_ATA_VERBOSE_ERROR=y
+CONFIG_SATA_PMP=y
+
+#
+# Controllers with non-SFF native interface
+#
+CONFIG_SATA_AHCI_PLATFORM=y
+CONFIG_ATA_SFF=y
+
+#
+# SFF controllers with custom DMA interface
+#
+CONFIG_ATA_BMDMA=y
+
+#
+# SATA SFF controllers with BMDMA
+#
+# CONFIG_SATA_HIGHBANK is not set
+# CONFIG_SATA_MV is not set
+
+#
+# PATA SFF controllers with BMDMA
+#
+# CONFIG_PATA_ARASAN_CF is not set
+
+#
+# PIO-only SFF controllers
+#
+
+#
+# Generic fallback / legacy drivers
+#
+# CONFIG_MD is not set
+# CONFIG_TARGET_CORE is not set
+CONFIG_MACINTOSH_DRIVERS=y
+# CONFIG_MAC_EMUMOUSEBTN is not set
+CONFIG_NETDEVICES=y
+CONFIG_NET_CORE=y
+CONFIG_DUMMY=y
+# CONFIG_EQUALIZER is not set
+CONFIG_MII=y
+# CONFIG_NET_TEAM is not set
+# CONFIG_MACVLAN is not set
+# CONFIG_NETCONSOLE is not set
+# CONFIG_NETPOLL is not set
+# CONFIG_NET_POLL_CONTROLLER is not set
+CONFIG_TUN=y
+CONFIG_VETH=y
+# CONFIG_ATM_DRIVERS is not set
+
+#
+# CAIF transport drivers
+#
+
+#
+# Distributed Switch Architecture drivers
+#
+# CONFIG_NET_DSA_MV88E6XXX is not set
+CONFIG_NET_DSA_MV88E6060=y
+# CONFIG_NET_DSA_MV88E6XXX_NEED_PPU is not set
+# CONFIG_NET_DSA_MV88E6131 is not set
+# CONFIG_NET_DSA_MV88E6123_61_65 is not set
+CONFIG_ETHERNET=y
+# CONFIG_NET_VENDOR_BROADCOM is not set
+CONFIG_NET_CALXEDA_XGMAC=y
+CONFIG_DNET=y
+# CONFIG_NET_VENDOR_INTEL is not set
+# CONFIG_NET_VENDOR_MICREL is not set
+CONFIG_NET_VENDOR_NATSEMI=y
+CONFIG_NET_VENDOR_8390=y
+CONFIG_ETHOC=y
+# CONFIG_NET_VENDOR_SEEQ is not set
+CONFIG_NET_VENDOR_STMICRO=y
+CONFIG_STMMAC_ETH=y
+CONFIG_STMMAC_PLATFORM=y
+CONFIG_STMMAC_DEBUG_FS=y
+# CONFIG_STMMAC_DA is not set
+# CONFIG_STMMAC_RING is not set
+CONFIG_STMMAC_CHAINED=y
+CONFIG_NET_VENDOR_WIZNET=y
+CONFIG_WIZNET_W5100=y
+# CONFIG_WIZNET_W5300 is not set
+# CONFIG_WIZNET_BUS_DIRECT is not set
+CONFIG_WIZNET_BUS_INDIRECT=y
+# CONFIG_WIZNET_BUS_ANY is not set
+CONFIG_PHYLIB=y
+
+#
+# MII PHY device drivers
+#
+# CONFIG_AMD_PHY is not set
+CONFIG_MARVELL_PHY=y
+# CONFIG_DAVICOM_PHY is not set
+# CONFIG_QSEMI_PHY is not set
+# CONFIG_LXT_PHY is not set
+CONFIG_CICADA_PHY=y
+# CONFIG_VITESSE_PHY is not set
+CONFIG_SMSC_PHY=y
+# CONFIG_BROADCOM_PHY is not set
+CONFIG_BCM87XX_PHY=y
+# CONFIG_ICPLUS_PHY is not set
+CONFIG_REALTEK_PHY=y
+# CONFIG_NATIONAL_PHY is not set
+# CONFIG_STE10XP is not set
+CONFIG_LSI_ET1011C_PHY=y
+# CONFIG_MICREL_PHY is not set
+# CONFIG_FIXED_PHY is not set
+# CONFIG_MDIO_BITBANG is not set
+CONFIG_PPP=y
+# CONFIG_PPP_BSDCOMP is not set
+CONFIG_PPP_DEFLATE=y
+CONFIG_PPP_FILTER=y
+# CONFIG_PPP_MPPE is not set
+CONFIG_PPP_MULTILINK=y
+# CONFIG_PPPOATM is not set
+CONFIG_PPPOE=y
+# CONFIG_PPP_ASYNC is not set
+CONFIG_PPP_SYNC_TTY=y
+# CONFIG_SLIP is not set
+CONFIG_SLHC=y
+CONFIG_WLAN=y
+# CONFIG_ATH_COMMON is not set
+CONFIG_BRCMUTIL=y
+CONFIG_BRCMFMAC=y
+# CONFIG_BRCMISCAN is not set
+CONFIG_BRCMDBG=y
+# CONFIG_HOSTAP is not set
+# CONFIG_LIBERTAS is not set
+# CONFIG_WL_TI is not set
+# CONFIG_MWIFIEX is not set
+
+#
+# Enable WiMAX (Networking options) to see the WiMAX drivers
+#
+# CONFIG_WAN is not set
+# CONFIG_ISDN is not set
+
+#
+# Input device support
+#
+CONFIG_INPUT=y
+CONFIG_INPUT_FF_MEMLESS=y
+CONFIG_INPUT_POLLDEV=y
+CONFIG_INPUT_SPARSEKMAP=y
+CONFIG_INPUT_MATRIXKMAP=y
+
+#
+# Userland interfaces
+#
+CONFIG_INPUT_MOUSEDEV=y
+# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
+# CONFIG_INPUT_JOYDEV is not set
+CONFIG_INPUT_EVDEV=y
+CONFIG_INPUT_EVBUG=y
+
+#
+# Input Device Drivers
+#
+CONFIG_INPUT_KEYBOARD=y
+CONFIG_KEYBOARD_ADP5588=y
+# CONFIG_KEYBOARD_ADP5589 is not set
+CONFIG_KEYBOARD_ATKBD=y
+CONFIG_KEYBOARD_QT1070=y
+# CONFIG_KEYBOARD_QT2160 is not set
+# CONFIG_KEYBOARD_LKKBD is not set
+# CONFIG_KEYBOARD_TCA6416 is not set
+CONFIG_KEYBOARD_TCA8418=y
+CONFIG_KEYBOARD_LM8323=y
+CONFIG_KEYBOARD_LM8333=y
+# CONFIG_KEYBOARD_MAX7359 is not set
+# CONFIG_KEYBOARD_MCS is not set
+# CONFIG_KEYBOARD_MPR121 is not set
+CONFIG_KEYBOARD_NEWTON=y
+CONFIG_KEYBOARD_OPENCORES=y
+CONFIG_KEYBOARD_STOWAWAY=y
+# CONFIG_KEYBOARD_SUNKBD is not set
+CONFIG_KEYBOARD_STMPE=y
+CONFIG_KEYBOARD_OMAP4=y
+# CONFIG_KEYBOARD_TC3589X is not set
+# CONFIG_KEYBOARD_TWL4030 is not set
+CONFIG_KEYBOARD_XTKBD=y
+CONFIG_INPUT_MOUSE=y
+CONFIG_MOUSE_PS2=y
+CONFIG_MOUSE_PS2_ALPS=y
+CONFIG_MOUSE_PS2_LOGIPS2PP=y
+CONFIG_MOUSE_PS2_SYNAPTICS=y
+CONFIG_MOUSE_PS2_LIFEBOOK=y
+CONFIG_MOUSE_PS2_TRACKPOINT=y
+CONFIG_MOUSE_PS2_ELANTECH=y
+CONFIG_MOUSE_PS2_SENTELIC=y
+# CONFIG_MOUSE_PS2_TOUCHKIT is not set
+# CONFIG_MOUSE_SERIAL is not set
+# CONFIG_MOUSE_VSXXXAA is not set
+CONFIG_MOUSE_SYNAPTICS_I2C=y
+CONFIG_INPUT_JOYSTICK=y
+# CONFIG_JOYSTICK_ANALOG is not set
+CONFIG_JOYSTICK_A3D=y
+CONFIG_JOYSTICK_ADI=y
+CONFIG_JOYSTICK_COBRA=y
+# CONFIG_JOYSTICK_GF2K is not set
+CONFIG_JOYSTICK_GRIP=y
+# CONFIG_JOYSTICK_GRIP_MP is not set
+CONFIG_JOYSTICK_GUILLEMOT=y
+# CONFIG_JOYSTICK_INTERACT is not set
+CONFIG_JOYSTICK_SIDEWINDER=y
+# CONFIG_JOYSTICK_TMDC is not set
+# CONFIG_JOYSTICK_IFORCE is not set
+# CONFIG_JOYSTICK_WARRIOR is not set
+CONFIG_JOYSTICK_MAGELLAN=y
+CONFIG_JOYSTICK_SPACEORB=y
+CONFIG_JOYSTICK_SPACEBALL=y
+# CONFIG_JOYSTICK_STINGER is not set
+CONFIG_JOYSTICK_TWIDJOY=y
+CONFIG_JOYSTICK_ZHENHUA=y
+# CONFIG_JOYSTICK_AS5011 is not set
+CONFIG_JOYSTICK_JOYDUMP=y
+CONFIG_INPUT_TABLET=y
+CONFIG_INPUT_TOUCHSCREEN=y
+# CONFIG_TOUCHSCREEN_88PM860X is not set
+# CONFIG_TOUCHSCREEN_AD7879 is not set
+CONFIG_TOUCHSCREEN_ATMEL_MXT=y
+CONFIG_TOUCHSCREEN_BU21013=y
+CONFIG_TOUCHSCREEN_CYTTSP_CORE=y
+# CONFIG_TOUCHSCREEN_CYTTSP_I2C is not set
+# CONFIG_TOUCHSCREEN_DA9034 is not set
+CONFIG_TOUCHSCREEN_DA9052=y
+# CONFIG_TOUCHSCREEN_DYNAPRO is not set
+CONFIG_TOUCHSCREEN_HAMPSHIRE=y
+CONFIG_TOUCHSCREEN_EETI=y
+# CONFIG_TOUCHSCREEN_EGALAX is not set
+CONFIG_TOUCHSCREEN_FUJITSU=y
+CONFIG_TOUCHSCREEN_ILI210X=y
+CONFIG_TOUCHSCREEN_GUNZE=y
+# CONFIG_TOUCHSCREEN_ELO is not set
+# CONFIG_TOUCHSCREEN_WACOM_W8001 is not set
+# CONFIG_TOUCHSCREEN_WACOM_I2C is not set
+# CONFIG_TOUCHSCREEN_MAX11801 is not set
+CONFIG_TOUCHSCREEN_MCS5000=y
+# CONFIG_TOUCHSCREEN_MMS114 is not set
+CONFIG_TOUCHSCREEN_MTOUCH=y
+# CONFIG_TOUCHSCREEN_INEXIO is not set
+# CONFIG_TOUCHSCREEN_MK712 is not set
+CONFIG_TOUCHSCREEN_PENMOUNT=y
+CONFIG_TOUCHSCREEN_EDT_FT5X06=y
+CONFIG_TOUCHSCREEN_TOUCHRIGHT=y
+# CONFIG_TOUCHSCREEN_TOUCHWIN is not set
+CONFIG_TOUCHSCREEN_PIXCIR=y
+# CONFIG_TOUCHSCREEN_WM831X is not set
+CONFIG_TOUCHSCREEN_MC13783=y
+CONFIG_TOUCHSCREEN_TOUCHIT213=y
+CONFIG_TOUCHSCREEN_TSC_SERIO=y
+CONFIG_TOUCHSCREEN_TSC2007=y
+CONFIG_TOUCHSCREEN_ST1232=y
+# CONFIG_TOUCHSCREEN_STMPE is not set
+# CONFIG_TOUCHSCREEN_TPS6507X is not set
+CONFIG_INPUT_MISC=y
+CONFIG_INPUT_88PM860X_ONKEY=y
+CONFIG_INPUT_AD714X=y
+# CONFIG_INPUT_AD714X_I2C is not set
+# CONFIG_INPUT_BMA150 is not set
+CONFIG_INPUT_PCSPKR=y
+CONFIG_INPUT_MC13783_PWRBUTTON=y
+# CONFIG_INPUT_MMA8450 is not set
+CONFIG_INPUT_MPU3050=y
+# CONFIG_INPUT_APANEL is not set
+CONFIG_INPUT_KXTJ9=y
+CONFIG_INPUT_KXTJ9_POLLED_MODE=y
+CONFIG_INPUT_TWL4030_PWRBUTTON=y
+# CONFIG_INPUT_TWL4030_VIBRA is not set
+CONFIG_INPUT_UINPUT=y
+CONFIG_INPUT_PCF50633_PMU=y
+CONFIG_INPUT_PCF8574=y
+CONFIG_INPUT_DA9052_ONKEY=y
+CONFIG_INPUT_WM831X_ON=y
+# CONFIG_INPUT_ADXL34X is not set
+CONFIG_INPUT_CMA3000=y
+# CONFIG_INPUT_CMA3000_I2C is not set
+
+#
+# Hardware I/O ports
+#
+CONFIG_SERIO=y
+CONFIG_SERIO_I8042=y
+CONFIG_SERIO_SERPORT=y
+CONFIG_SERIO_CT82C710=y
+CONFIG_SERIO_LIBPS2=y
+CONFIG_SERIO_RAW=y
+CONFIG_SERIO_ALTERA_PS2=y
+CONFIG_SERIO_PS2MULT=y
+CONFIG_GAMEPORT=y
+CONFIG_GAMEPORT_NS558=y
+# CONFIG_GAMEPORT_L4 is not set
+
+#
+# Character devices
+#
+CONFIG_VT=y
+CONFIG_CONSOLE_TRANSLATIONS=y
+CONFIG_VT_CONSOLE=y
+CONFIG_VT_CONSOLE_SLEEP=y
+CONFIG_HW_CONSOLE=y
+# CONFIG_VT_HW_CONSOLE_BINDING is not set
+CONFIG_UNIX98_PTYS=y
+CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+CONFIG_LEGACY_PTYS=y
+CONFIG_LEGACY_PTY_COUNT=256
+# CONFIG_SERIAL_NONSTANDARD is not set
+# CONFIG_N_GSM is not set
+CONFIG_TRACE_ROUTER=y
+CONFIG_TRACE_SINK=y
+# CONFIG_DEVKMEM is not set
+
+#
+# Serial drivers
+#
+CONFIG_SERIAL_8250=y
+# CONFIG_SERIAL_8250_CONSOLE is not set
+CONFIG_FIX_EARLYCON_MEM=y
+CONFIG_SERIAL_8250_NR_UARTS=4
+CONFIG_SERIAL_8250_RUNTIME_UARTS=4
+CONFIG_SERIAL_8250_EXTENDED=y
+CONFIG_SERIAL_8250_MANY_PORTS=y
+CONFIG_SERIAL_8250_SHARE_IRQ=y
+CONFIG_SERIAL_8250_DETECT_IRQ=y
+CONFIG_SERIAL_8250_RSA=y
+
+#
+# Non-8250 serial port support
+#
+CONFIG_SERIAL_CORE=y
+CONFIG_SERIAL_CORE_CONSOLE=y
+# CONFIG_SERIAL_SCCNXP is not set
+CONFIG_SERIAL_TIMBERDALE=y
+# CONFIG_SERIAL_ALTERA_JTAGUART is not set
+CONFIG_SERIAL_ALTERA_UART=y
+CONFIG_SERIAL_ALTERA_UART_MAXPORTS=4
+CONFIG_SERIAL_ALTERA_UART_BAUDRATE=115200
+CONFIG_SERIAL_ALTERA_UART_CONSOLE=y
+# CONFIG_SERIAL_XILINX_PS_UART is not set
+CONFIG_IPMI_HANDLER=y
+CONFIG_IPMI_PANIC_EVENT=y
+CONFIG_IPMI_PANIC_STRING=y
+# CONFIG_IPMI_DEVICE_INTERFACE is not set
+CONFIG_IPMI_SI=y
+# CONFIG_IPMI_WATCHDOG is not set
+CONFIG_IPMI_POWEROFF=y
+# CONFIG_HW_RANDOM is not set
+# CONFIG_NVRAM is not set
+CONFIG_R3964=y
+CONFIG_MWAVE=y
+# CONFIG_RAW_DRIVER is not set
+# CONFIG_HANGCHECK_TIMER is not set
+# CONFIG_TCG_TPM is not set
+# CONFIG_TELCLOCK is not set
+CONFIG_I2C=y
+CONFIG_I2C_BOARDINFO=y
+# CONFIG_I2C_COMPAT is not set
+# CONFIG_I2C_CHARDEV is not set
+CONFIG_I2C_MUX=y
+
+#
+# Multiplexer I2C Chip support
+#
+CONFIG_I2C_MUX_PCA9541=y
+CONFIG_I2C_MUX_PCA954x=y
+CONFIG_I2C_HELPER_AUTO=y
+CONFIG_I2C_SMBUS=y
+CONFIG_I2C_ALGOBIT=y
+
+#
+# I2C Hardware Bus support
+#
+
+#
+# I2C system bus drivers (mostly embedded / system-on-chip)
+#
+CONFIG_I2C_OCORES=y
+# CONFIG_I2C_PCA_PLATFORM is not set
+# CONFIG_I2C_PXA_PCI is not set
+CONFIG_I2C_SIMTEC=y
+CONFIG_I2C_XILINX=y
+
+#
+# External I2C/SMBus adapter drivers
+#
+CONFIG_I2C_PARPORT_LIGHT=y
+CONFIG_I2C_TAOS_EVM=y
+
+#
+# Other I2C/SMBus bus drivers
+#
+# CONFIG_I2C_DEBUG_CORE is not set
+CONFIG_I2C_DEBUG_ALGO=y
+CONFIG_I2C_DEBUG_BUS=y
+# CONFIG_SPI is not set
+CONFIG_HSI=y
+CONFIG_HSI_BOARDINFO=y
+
+#
+# HSI clients
+#
+# CONFIG_HSI_CHAR is not set
+
+#
+# PPS support
+#
+# CONFIG_PPS is not set
+
+#
+# PPS generators support
+#
+
+#
+# PTP clock support
+#
+
+#
+# Enable Device Drivers -> PPS to see the PTP clock options.
+#
+CONFIG_ARCH_WANT_OPTIONAL_GPIOLIB=y
+# CONFIG_GPIOLIB is not set
+# CONFIG_W1 is not set
+CONFIG_POWER_SUPPLY=y
+# CONFIG_POWER_SUPPLY_DEBUG is not set
+# CONFIG_PDA_POWER is not set
+# CONFIG_GENERIC_ADC_BATTERY is not set
+CONFIG_WM831X_BACKUP=y
+# CONFIG_WM831X_POWER is not set
+# CONFIG_WM8350_POWER is not set
+# CONFIG_TEST_POWER is not set
+# CONFIG_BATTERY_88PM860X is not set
+# CONFIG_BATTERY_DS2780 is not set
+# CONFIG_BATTERY_DS2781 is not set
+# CONFIG_BATTERY_DS2782 is not set
+CONFIG_BATTERY_SBS=y
+CONFIG_BATTERY_BQ27x00=y
+CONFIG_BATTERY_BQ27X00_I2C=y
+CONFIG_BATTERY_BQ27X00_PLATFORM=y
+CONFIG_BATTERY_DA9030=y
+# CONFIG_BATTERY_DA9052 is not set
+CONFIG_BATTERY_MAX17040=y
+# CONFIG_BATTERY_MAX17042 is not set
+# CONFIG_CHARGER_PCF50633 is not set
+# CONFIG_CHARGER_MAX8903 is not set
+# CONFIG_CHARGER_TWL4030 is not set
+# CONFIG_CHARGER_LP8727 is not set
+CONFIG_CHARGER_SMB347=y
+CONFIG_POWER_AVS=y
+CONFIG_HWMON=y
+CONFIG_HWMON_VID=y
+CONFIG_HWMON_DEBUG_CHIP=y
+
+#
+# Native drivers
+#
+# CONFIG_SENSORS_ABITUGURU is not set
+CONFIG_SENSORS_ABITUGURU3=y
+CONFIG_SENSORS_AD7414=y
+# CONFIG_SENSORS_AD7418 is not set
+CONFIG_SENSORS_ADM1021=y
+CONFIG_SENSORS_ADM1025=y
+# CONFIG_SENSORS_ADM1026 is not set
+# CONFIG_SENSORS_ADM1029 is not set
+# CONFIG_SENSORS_ADM1031 is not set
+CONFIG_SENSORS_ADM9240=y
+# CONFIG_SENSORS_ADT7410 is not set
+CONFIG_SENSORS_ADT7411=y
+# CONFIG_SENSORS_ADT7462 is not set
+# CONFIG_SENSORS_ADT7470 is not set
+# CONFIG_SENSORS_ADT7475 is not set
+CONFIG_SENSORS_ASC7621=y
+CONFIG_SENSORS_ASB100=y
+CONFIG_SENSORS_ATXP1=y
+CONFIG_SENSORS_DS620=y
+# CONFIG_SENSORS_DS1621 is not set
+CONFIG_SENSORS_DA9052_ADC=y
+# CONFIG_SENSORS_F71805F is not set
+# CONFIG_SENSORS_F71882FG is not set
+CONFIG_SENSORS_F75375S=y
+# CONFIG_SENSORS_FSCHMD is not set
+CONFIG_SENSORS_G760A=y
+# CONFIG_SENSORS_GL518SM is not set
+CONFIG_SENSORS_GL520SM=y
+CONFIG_SENSORS_HIH6130=y
+# CONFIG_SENSORS_IBMAEM is not set
+CONFIG_SENSORS_IBMPEX=y
+CONFIG_SENSORS_IT87=y
+CONFIG_SENSORS_JC42=y
+# CONFIG_SENSORS_LINEAGE is not set
+# CONFIG_SENSORS_LM63 is not set
+CONFIG_SENSORS_LM73=y
+# CONFIG_SENSORS_LM75 is not set
+CONFIG_SENSORS_LM77=y
+CONFIG_SENSORS_LM78=y
+# CONFIG_SENSORS_LM80 is not set
+CONFIG_SENSORS_LM83=y
+CONFIG_SENSORS_LM85=y
+CONFIG_SENSORS_LM87=y
+# CONFIG_SENSORS_LM90 is not set
+# CONFIG_SENSORS_LM92 is not set
+CONFIG_SENSORS_LM93=y
+# CONFIG_SENSORS_LTC4151 is not set
+CONFIG_SENSORS_LTC4215=y
+CONFIG_SENSORS_LTC4245=y
+CONFIG_SENSORS_LTC4261=y
+CONFIG_SENSORS_LM95241=y
+CONFIG_SENSORS_LM95245=y
+CONFIG_SENSORS_MAX16065=y
+CONFIG_SENSORS_MAX1619=y
+# CONFIG_SENSORS_MAX1668 is not set
+# CONFIG_SENSORS_MAX197 is not set
+# CONFIG_SENSORS_MAX6639 is not set
+CONFIG_SENSORS_MAX6642=y
+# CONFIG_SENSORS_MAX6650 is not set
+# CONFIG_SENSORS_MCP3021 is not set
+# CONFIG_SENSORS_NTC_THERMISTOR is not set
+# CONFIG_SENSORS_PC87360 is not set
+# CONFIG_SENSORS_PC87427 is not set
+CONFIG_SENSORS_PCF8591=y
+# CONFIG_PMBUS is not set
+# CONFIG_SENSORS_SHT21 is not set
+CONFIG_SENSORS_SMM665=y
+CONFIG_SENSORS_DME1737=y
+CONFIG_SENSORS_EMC1403=y
+CONFIG_SENSORS_EMC2103=y
+CONFIG_SENSORS_EMC6W201=y
+# CONFIG_SENSORS_SMSC47M1 is not set
+CONFIG_SENSORS_SMSC47M192=y
+CONFIG_SENSORS_SMSC47B397=y
+# CONFIG_SENSORS_SCH56XX_COMMON is not set
+# CONFIG_SENSORS_ADS1015 is not set
+# CONFIG_SENSORS_ADS7828 is not set
+CONFIG_SENSORS_AMC6821=y
+# CONFIG_SENSORS_INA2XX is not set
+CONFIG_SENSORS_THMC50=y
+CONFIG_SENSORS_TMP102=y
+CONFIG_SENSORS_TMP401=y
+CONFIG_SENSORS_TMP421=y
+CONFIG_SENSORS_TWL4030_MADC=y
+CONFIG_SENSORS_VIA_CPUTEMP=y
+CONFIG_SENSORS_VT1211=y
+CONFIG_SENSORS_W83781D=y
+CONFIG_SENSORS_W83791D=y
+CONFIG_SENSORS_W83792D=y
+CONFIG_SENSORS_W83793=y
+# CONFIG_SENSORS_W83795 is not set
+CONFIG_SENSORS_W83L785TS=y
+# CONFIG_SENSORS_W83L786NG is not set
+CONFIG_SENSORS_W83627HF=y
+# CONFIG_SENSORS_W83627EHF is not set
+# CONFIG_SENSORS_WM831X is not set
+# CONFIG_SENSORS_WM8350 is not set
+# CONFIG_SENSORS_APPLESMC is not set
+CONFIG_SENSORS_MC13783_ADC=y
+CONFIG_THERMAL=y
+CONFIG_THERMAL_HWMON=y
+# CONFIG_CPU_THERMAL is not set
+# CONFIG_WATCHDOG is not set
+CONFIG_SSB_POSSIBLE=y
+
+#
+# Sonics Silicon Backplane
+#
+CONFIG_SSB=y
+# CONFIG_SSB_DEBUG is not set
+CONFIG_BCMA_POSSIBLE=y
+
+#
+# Broadcom specific AMBA
+#
+CONFIG_BCMA=y
+CONFIG_BCMA_DRIVER_GMAC_CMN=y
+# CONFIG_BCMA_DEBUG is not set
+
+#
+# Multifunction device drivers
+#
+CONFIG_MFD_CORE=y
+CONFIG_MFD_88PM860X=y
+# CONFIG_MFD_88PM800 is not set
+CONFIG_MFD_88PM805=y
+# CONFIG_MFD_SM501 is not set
+CONFIG_HTC_PASIC3=y
+# CONFIG_MFD_LM3533 is not set
+# CONFIG_TPS6105X is not set
+# CONFIG_TPS6507X is not set
+# CONFIG_MFD_TPS65217 is not set
+CONFIG_TWL4030_CORE=y
+CONFIG_TWL4030_MADC=y
+# CONFIG_MFD_TWL4030_AUDIO is not set
+# CONFIG_TWL6040_CORE is not set
+CONFIG_MFD_STMPE=y
+
+#
+# STMPE Interface Drivers
+#
+CONFIG_STMPE_I2C=y
+CONFIG_MFD_TC3589X=y
+# CONFIG_MFD_TMIO is not set
+# CONFIG_MFD_SMSC is not set
+CONFIG_PMIC_DA903X=y
+CONFIG_PMIC_DA9052=y
+CONFIG_MFD_DA9052_I2C=y
+# CONFIG_MFD_DA9055 is not set
+# CONFIG_PMIC_ADP5520 is not set
+# CONFIG_MFD_LP8788 is not set
+CONFIG_MFD_MAX77686=y
+# CONFIG_MFD_MAX77693 is not set
+# CONFIG_MFD_MAX8907 is not set
+# CONFIG_MFD_MAX8925 is not set
+CONFIG_MFD_MAX8997=y
+CONFIG_MFD_MAX8998=y
+# CONFIG_MFD_SEC_CORE is not set
+CONFIG_MFD_ARIZONA=y
+CONFIG_MFD_ARIZONA_I2C=y
+# CONFIG_MFD_WM5102 is not set
+# CONFIG_MFD_WM5110 is not set
+CONFIG_MFD_WM8400=y
+CONFIG_MFD_WM831X=y
+CONFIG_MFD_WM831X_I2C=y
+CONFIG_MFD_WM8350=y
+CONFIG_MFD_WM8350_I2C=y
+# CONFIG_MFD_WM8994 is not set
+CONFIG_MFD_PCF50633=y
+CONFIG_PCF50633_ADC=y
+CONFIG_PCF50633_GPIO=y
+CONFIG_MFD_MC13783=y
+CONFIG_MFD_MC13XXX=y
+CONFIG_MFD_MC13XXX_I2C=y
+CONFIG_ABX500_CORE=y
+# CONFIG_AB3100_CORE is not set
+# CONFIG_MFD_WL1273_CORE is not set
+# CONFIG_MFD_TPS65090 is not set
+# CONFIG_MFD_RC5T583 is not set
+CONFIG_MFD_PALMAS=y
+# CONFIG_REGULATOR is not set
+# CONFIG_MEDIA_SUPPORT is not set
+
+#
+# Graphics support
+#
+CONFIG_DRM=y
+# CONFIG_VGASTATE is not set
+CONFIG_VIDEO_OUTPUT_CONTROL=y
+# CONFIG_FB is not set
+CONFIG_EXYNOS_VIDEO=y
+CONFIG_BACKLIGHT_LCD_SUPPORT=y
+# CONFIG_LCD_CLASS_DEVICE is not set
+CONFIG_BACKLIGHT_CLASS_DEVICE=y
+CONFIG_BACKLIGHT_GENERIC=y
+CONFIG_BACKLIGHT_PWM=y
+CONFIG_BACKLIGHT_DA903X=y
+# CONFIG_BACKLIGHT_DA9052 is not set
+CONFIG_BACKLIGHT_SAHARA=y
+CONFIG_BACKLIGHT_WM831X=y
+CONFIG_BACKLIGHT_ADP8860=y
+# CONFIG_BACKLIGHT_ADP8870 is not set
+# CONFIG_BACKLIGHT_88PM860X is not set
+# CONFIG_BACKLIGHT_PCF50633 is not set
+# CONFIG_BACKLIGHT_LM3630 is not set
+# CONFIG_BACKLIGHT_LM3639 is not set
+CONFIG_BACKLIGHT_LP855X=y
+# CONFIG_BACKLIGHT_PANDORA is not set
+
+#
+# Console display driver support
+#
+CONFIG_VGA_CONSOLE=y
+# CONFIG_VGACON_SOFT_SCROLLBACK is not set
+CONFIG_DUMMY_CONSOLE=y
+CONFIG_SOUND=y
+CONFIG_SOUND_OSS_CORE=y
+# CONFIG_SOUND_OSS_CORE_PRECLAIM is not set
+# CONFIG_SND is not set
+CONFIG_SOUND_PRIME=y
+CONFIG_SOUND_OSS=y
+CONFIG_SOUND_TRACEINIT=y
+CONFIG_SOUND_DMAP=y
+# CONFIG_SOUND_VMIDI is not set
+CONFIG_SOUND_TRIX=y
+# CONFIG_TRIX_HAVE_BOOT is not set
+CONFIG_SOUND_MSS=y
+CONFIG_SOUND_MPU401=y
+CONFIG_SOUND_PAS=y
+CONFIG_PAS_JOYSTICK=y
+# CONFIG_SOUND_PSS is not set
+CONFIG_SOUND_SB=y
+CONFIG_SOUND_YM3812=y
+# CONFIG_SOUND_UART6850 is not set
+CONFIG_SOUND_AEDSP16=y
+CONFIG_SC6600=y
+CONFIG_SC6600_JOY=y
+CONFIG_SC6600_CDROM=4
+CONFIG_SC6600_CDROMBASE=0
+CONFIG_SOUND_KAHLUA=y
+
+#
+# HID support
+#
+CONFIG_HID=y
+# CONFIG_HID_BATTERY_STRENGTH is not set
+CONFIG_HIDRAW=y
+CONFIG_UHID=y
+CONFIG_HID_GENERIC=y
+
+#
+# Special HID drivers
+#
+CONFIG_HID_APPLE=y
+# CONFIG_HID_ELECOM is not set
+CONFIG_HID_MAGICMOUSE=y
+# CONFIG_HID_PS3REMOTE is not set
+CONFIG_HID_TIVO=y
+# CONFIG_HID_WACOM is not set
+CONFIG_HID_WIIMOTE=y
+# CONFIG_HID_WIIMOTE_EXT is not set
+# CONFIG_USB_ARCH_HAS_OHCI is not set
+# CONFIG_USB_ARCH_HAS_EHCI is not set
+# CONFIG_USB_ARCH_HAS_XHCI is not set
+CONFIG_USB_SUPPORT=y
+# CONFIG_USB_ARCH_HAS_HCD is not set
+# CONFIG_USB_HCD_BCMA is not set
+# CONFIG_USB_HCD_SSB is not set
+
+#
+# NOTE: USB_STORAGE depends on SCSI but BLK_DEV_SD may
+#
+# CONFIG_USB_EZUSB_FX2 is not set
+# CONFIG_OMAP_USB2 is not set
+# CONFIG_USB_GADGET is not set
+
+#
+# OTG and related infrastructure
+#
+# CONFIG_MMC is not set
+# CONFIG_MEMSTICK is not set
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=y
+
+#
+# LED drivers
+#
+# CONFIG_LEDS_88PM860X is not set
+# CONFIG_LEDS_LM3530 is not set
+# CONFIG_LEDS_LM3642 is not set
+CONFIG_LEDS_PCA9532=y
+# CONFIG_LEDS_LP3944 is not set
+# CONFIG_LEDS_LP5521 is not set
+# CONFIG_LEDS_LP5523 is not set
+CONFIG_LEDS_CLEVO_MAIL=y
+# CONFIG_LEDS_PCA955X is not set
+# CONFIG_LEDS_PCA9633 is not set
+CONFIG_LEDS_WM831X_STATUS=y
+CONFIG_LEDS_WM8350=y
+CONFIG_LEDS_DA903X=y
+# CONFIG_LEDS_DA9052 is not set
+CONFIG_LEDS_BD2802=y
+CONFIG_LEDS_MC13783=y
+# CONFIG_LEDS_TCA6507 is not set
+# CONFIG_LEDS_MAX8997 is not set
+# CONFIG_LEDS_LM355x is not set
+# CONFIG_LEDS_OT200 is not set
+# CONFIG_LEDS_BLINKM is not set
+# CONFIG_LEDS_TRIGGERS is not set
+
+#
+# LED Triggers
+#
+# CONFIG_ACCESSIBILITY is not set
+CONFIG_EDAC=y
+
+#
+# Reporting subsystems
+#
+# CONFIG_EDAC_LEGACY_SYSFS is not set
+# CONFIG_EDAC_DEBUG is not set
+# CONFIG_EDAC_MM_EDAC is not set
+CONFIG_RTC_LIB=y
+CONFIG_RTC_CLASS=y
+CONFIG_RTC_HCTOSYS=y
+CONFIG_RTC_HCTOSYS_DEVICE="rtc0"
+# CONFIG_RTC_DEBUG is not set
+
+#
+# RTC interfaces
+#
+CONFIG_RTC_INTF_SYSFS=y
+# CONFIG_RTC_INTF_PROC is not set
+CONFIG_RTC_INTF_DEV=y
+CONFIG_RTC_INTF_DEV_UIE_EMUL=y
+# CONFIG_RTC_DRV_TEST is not set
+
+#
+# I2C RTC drivers
+#
+CONFIG_RTC_DRV_88PM860X=y
+CONFIG_RTC_DRV_DS1307=y
+CONFIG_RTC_DRV_DS1374=y
+# CONFIG_RTC_DRV_DS1672 is not set
+# CONFIG_RTC_DRV_DS3232 is not set
+CONFIG_RTC_DRV_MAX6900=y
+# CONFIG_RTC_DRV_MAX8998 is not set
+CONFIG_RTC_DRV_RS5C372=y
+# CONFIG_RTC_DRV_ISL1208 is not set
+# CONFIG_RTC_DRV_ISL12022 is not set
+CONFIG_RTC_DRV_X1205=y
+CONFIG_RTC_DRV_PCF8563=y
+# CONFIG_RTC_DRV_PCF8583 is not set
+# CONFIG_RTC_DRV_M41T80 is not set
+# CONFIG_RTC_DRV_BQ32K is not set
+# CONFIG_RTC_DRV_TWL4030 is not set
+CONFIG_RTC_DRV_S35390A=y
+CONFIG_RTC_DRV_FM3130=y
+CONFIG_RTC_DRV_RX8581=y
+# CONFIG_RTC_DRV_RX8025 is not set
+# CONFIG_RTC_DRV_EM3027 is not set
+CONFIG_RTC_DRV_RV3029C2=y
+
+#
+# SPI RTC drivers
+#
+
+#
+# Platform RTC drivers
+#
+CONFIG_RTC_DRV_CMOS=y
+# CONFIG_RTC_DRV_DS1286 is not set
+# CONFIG_RTC_DRV_DS1511 is not set
+# CONFIG_RTC_DRV_DS1553 is not set
+# CONFIG_RTC_DRV_DS1742 is not set
+CONFIG_RTC_DRV_DA9052=y
+CONFIG_RTC_DRV_STK17TA8=y
+# CONFIG_RTC_DRV_M48T86 is not set
+CONFIG_RTC_DRV_M48T35=y
+CONFIG_RTC_DRV_M48T59=y
+CONFIG_RTC_DRV_MSM6242=y
+# CONFIG_RTC_DRV_BQ4802 is not set
+CONFIG_RTC_DRV_RP5C01=y
+# CONFIG_RTC_DRV_V3020 is not set
+# CONFIG_RTC_DRV_DS2404 is not set
+# CONFIG_RTC_DRV_WM831X is not set
+CONFIG_RTC_DRV_WM8350=y
+CONFIG_RTC_DRV_PCF50633=y
+
+#
+# on-CPU RTC drivers
+#
+CONFIG_RTC_DRV_MC13XXX=y
+CONFIG_DMADEVICES=y
+CONFIG_DMADEVICES_DEBUG=y
+# CONFIG_DMADEVICES_VDEBUG is not set
+
+#
+# DMA Devices
+#
+CONFIG_TIMB_DMA=y
+CONFIG_DMA_ENGINE=y
+
+#
+# DMA Clients
+#
+CONFIG_NET_DMA=y
+# CONFIG_ASYNC_TX_DMA is not set
+# CONFIG_DMATEST is not set
+# CONFIG_AUXDISPLAY is not set
+# CONFIG_UIO is not set
+
+#
+# Virtio drivers
+#
+# CONFIG_VIRTIO_MMIO is not set
+
+#
+# Microsoft Hyper-V guest support
+#
+CONFIG_STAGING=y
+CONFIG_ECHO=y
+
+#
+# IIO staging drivers
+#
+# CONFIG_IIO_ST_HWMON is not set
+CONFIG_IIO_SW_RING=y
+
+#
+# Accelerometers
+#
+
+#
+# Analog to digital converters
+#
+CONFIG_AD7291=y
+# CONFIG_AD799X is not set
+# CONFIG_ADT7410 is not set
+CONFIG_MAX1363=y
+CONFIG_MAX1363_RING_BUFFER=y
+
+#
+# Analog digital bi-direction converters
+#
+
+#
+# Capacitance to digital converters
+#
+# CONFIG_AD7150 is not set
+CONFIG_AD7152=y
+CONFIG_AD7746=y
+
+#
+# Direct Digital Synthesis
+#
+
+#
+# Digital gyroscope sensors
+#
+
+#
+# Network Analyzer, Impedance Converters
+#
+# CONFIG_AD5933 is not set
+
+#
+# Inertial measurement units
+#
+
+#
+# Light sensors
+#
+# CONFIG_SENSORS_ISL29018 is not set
+# CONFIG_SENSORS_ISL29028 is not set
+CONFIG_SENSORS_TSL2563=y
+CONFIG_TSL2583=y
+CONFIG_TSL2x7x=y
+
+#
+# Magnetometer sensors
+#
+# CONFIG_SENSORS_HMC5843 is not set
+
+#
+# Active energy metering IC
+#
+# CONFIG_ADE7854 is not set
+
+#
+# Resolver to digital converters
+#
+
+#
+# Triggers - standalone
+#
+# CONFIG_IIO_PERIODIC_RTC_TRIGGER is not set
+CONFIG_IIO_SYSFS_TRIGGER=y
+CONFIG_IIO_DUMMY_EVGEN=y
+CONFIG_IIO_SIMPLE_DUMMY=y
+CONFIG_IIO_SIMPLE_DUMMY_EVENTS=y
+# CONFIG_IIO_SIMPLE_DUMMY_BUFFER is not set
+CONFIG_ZRAM=y
+CONFIG_ZRAM_DEBUG=y
+CONFIG_ZSMALLOC=y
+CONFIG_FT1000=y
+
+#
+# Speakup console speech
+#
+# CONFIG_SPEAKUP is not set
+CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_RMI4=y
+CONFIG_STAGING_MEDIA=y
+
+#
+# Android
+#
+# CONFIG_ANDROID is not set
+# CONFIG_PHONE is not set
+CONFIG_IPACK_BUS=y
+# CONFIG_SERIAL_IPOCTAL is not set
+CONFIG_WIMAX_GDM72XX=y
+# CONFIG_WIMAX_GDM72XX_QOS is not set
+# CONFIG_WIMAX_GDM72XX_K_MODE is not set
+# CONFIG_WIMAX_GDM72XX_WIMAX2 is not set
+# CONFIG_DGRP is not set
+CONFIG_X86_PLATFORM_DEVICES=y
+CONFIG_AMILO_RFKILL=y
+# CONFIG_SENSORS_HDAPS is not set
+# CONFIG_SAMSUNG_LAPTOP is not set
+CONFIG_SAMSUNG_Q10=y
+
+#
+# Hardware Spinlock drivers
+#
+CONFIG_CLKEVT_I8253=y
+CONFIG_I8253_LOCK=y
+CONFIG_CLKBLD_I8253=y
+# CONFIG_IOMMU_SUPPORT is not set
+
+#
+# Remoteproc drivers (EXPERIMENTAL)
+#
+# CONFIG_STE_MODEM_RPROC is not set
+
+#
+# Rpmsg drivers (EXPERIMENTAL)
+#
+CONFIG_VIRT_DRIVERS=y
+# CONFIG_PM_DEVFREQ is not set
+CONFIG_EXTCON=y
+
+#
+# Extcon Device Drivers
+#
+# CONFIG_EXTCON_ADC_JACK is not set
+# CONFIG_EXTCON_MAX8997 is not set
+# CONFIG_EXTCON_ARIZONA is not set
+CONFIG_MEMORY=y
+CONFIG_IIO=y
+CONFIG_IIO_BUFFER=y
+CONFIG_IIO_KFIFO_BUF=y
+CONFIG_IIO_TRIGGERED_BUFFER=y
+CONFIG_IIO_TRIGGER=y
+CONFIG_IIO_CONSUMERS_PER_TRIGGER=2
+
+#
+# Accelerometers
+#
+
+#
+# Analog to digital converters
+#
+
+#
+# Amplifiers
+#
+
+#
+# Light sensors
+#
+CONFIG_ADJD_S311=y
+CONFIG_VCNL4000=y
+
+#
+# Frequency Synthesizers DDS/PLL
+#
+
+#
+# Clock Generator/Distribution
+#
+
+#
+# Phase-Locked Loop (PLL) frequency synthesizers
+#
+
+#
+# Digital to analog converters
+#
+CONFIG_AD5064=y
+CONFIG_AD5380=y
+# CONFIG_AD5446 is not set
+# CONFIG_MAX517 is not set
+# CONFIG_MCP4725 is not set
+
+#
+# Hid Sensor IIO Common
+#
+
+#
+# Digital gyroscope sensors
+#
+
+#
+# Light sensors
+#
+
+#
+# Magnetometer sensors
+#
+CONFIG_PWM=y
+# CONFIG_PWM_TWL6030 is not set
+
+#
+# Firmware Drivers
+#
+# CONFIG_EDD is not set
+CONFIG_FIRMWARE_MEMMAP=y
+CONFIG_DELL_RBU=y
+# CONFIG_DCDBAS is not set
+# CONFIG_DMIID is not set
+# CONFIG_DMI_SYSFS is not set
+# CONFIG_ISCSI_IBFT_FIND is not set
+# CONFIG_GOOGLE_FIRMWARE is not set
+
+#
+# File systems
+#
+CONFIG_DCACHE_WORD_ACCESS=y
+CONFIG_EXT2_FS=y
+CONFIG_EXT2_FS_XATTR=y
+CONFIG_EXT2_FS_POSIX_ACL=y
+# CONFIG_EXT2_FS_SECURITY is not set
+# CONFIG_EXT2_FS_XIP is not set
+# CONFIG_EXT3_FS is not set
+# CONFIG_EXT4_FS is not set
+CONFIG_FS_MBCACHE=y
+# CONFIG_REISERFS_FS is not set
+# CONFIG_JFS_FS is not set
+# CONFIG_XFS_FS is not set
+CONFIG_GFS2_FS=y
+CONFIG_BTRFS_FS=y
+CONFIG_BTRFS_FS_POSIX_ACL=y
+# CONFIG_BTRFS_FS_CHECK_INTEGRITY is not set
+CONFIG_NILFS2_FS=y
+CONFIG_FS_POSIX_ACL=y
+CONFIG_EXPORTFS=y
+CONFIG_FILE_LOCKING=y
+CONFIG_FSNOTIFY=y
+CONFIG_DNOTIFY=y
+# CONFIG_INOTIFY_USER is not set
+CONFIG_FANOTIFY=y
+CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
+CONFIG_QUOTA=y
+CONFIG_QUOTA_NETLINK_INTERFACE=y
+CONFIG_PRINT_QUOTA_WARNING=y
+CONFIG_QUOTA_DEBUG=y
+CONFIG_QUOTA_TREE=y
+# CONFIG_QFMT_V1 is not set
+CONFIG_QFMT_V2=y
+CONFIG_QUOTACTL=y
+# CONFIG_AUTOFS4_FS is not set
+CONFIG_FUSE_FS=y
+# CONFIG_CUSE is not set
+
+#
+# Caches
+#
+CONFIG_FSCACHE=y
+CONFIG_FSCACHE_STATS=y
+# CONFIG_FSCACHE_HISTOGRAM is not set
+# CONFIG_FSCACHE_DEBUG is not set
+# CONFIG_FSCACHE_OBJECT_LIST is not set
+# CONFIG_CACHEFILES is not set
+
+#
+# CD-ROM/DVD Filesystems
+#
+# CONFIG_ISO9660_FS is not set
+CONFIG_UDF_FS=y
+CONFIG_UDF_NLS=y
+
+#
+# DOS/FAT/NT Filesystems
+#
+CONFIG_FAT_FS=y
+# CONFIG_MSDOS_FS is not set
+CONFIG_VFAT_FS=y
+CONFIG_FAT_DEFAULT_CODEPAGE=437
+CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
+# CONFIG_NTFS_FS is not set
+
+#
+# Pseudo filesystems
+#
+CONFIG_PROC_FS=y
+CONFIG_PROC_KCORE=y
+CONFIG_PROC_SYSCTL=y
+CONFIG_PROC_PAGE_MONITOR=y
+CONFIG_SYSFS=y
+CONFIG_TMPFS=y
+# CONFIG_TMPFS_POSIX_ACL is not set
+# CONFIG_TMPFS_XATTR is not set
+# CONFIG_HUGETLBFS is not set
+# CONFIG_HUGETLB_PAGE is not set
+# CONFIG_CONFIGFS_FS is not set
+# CONFIG_MISC_FILESYSTEMS is not set
+CONFIG_NETWORK_FILESYSTEMS=y
+CONFIG_NCP_FS=y
+# CONFIG_NCPFS_PACKET_SIGNING is not set
+# CONFIG_NCPFS_IOCTL_LOCKING is not set
+CONFIG_NCPFS_STRONG=y
+CONFIG_NCPFS_NFS_NS=y
+# CONFIG_NCPFS_OS2_NS is not set
+CONFIG_NCPFS_SMALLDOS=y
+# CONFIG_NCPFS_NLS is not set
+CONFIG_NCPFS_EXTRAS=y
+CONFIG_NLS=y
+CONFIG_NLS_DEFAULT="iso8859-1"
+# CONFIG_NLS_CODEPAGE_437 is not set
+CONFIG_NLS_CODEPAGE_737=y
+CONFIG_NLS_CODEPAGE_775=y
+# CONFIG_NLS_CODEPAGE_850 is not set
+CONFIG_NLS_CODEPAGE_852=y
+CONFIG_NLS_CODEPAGE_855=y
+# CONFIG_NLS_CODEPAGE_857 is not set
+CONFIG_NLS_CODEPAGE_860=y
+# CONFIG_NLS_CODEPAGE_861 is not set
+# CONFIG_NLS_CODEPAGE_862 is not set
+# CONFIG_NLS_CODEPAGE_863 is not set
+# CONFIG_NLS_CODEPAGE_864 is not set
+CONFIG_NLS_CODEPAGE_865=y
+CONFIG_NLS_CODEPAGE_866=y
+CONFIG_NLS_CODEPAGE_869=y
+# CONFIG_NLS_CODEPAGE_936 is not set
+CONFIG_NLS_CODEPAGE_950=y
+CONFIG_NLS_CODEPAGE_932=y
+# CONFIG_NLS_CODEPAGE_949 is not set
+CONFIG_NLS_CODEPAGE_874=y
+# CONFIG_NLS_ISO8859_8 is not set
+# CONFIG_NLS_CODEPAGE_1250 is not set
+CONFIG_NLS_CODEPAGE_1251=y
+# CONFIG_NLS_ASCII is not set
+# CONFIG_NLS_ISO8859_1 is not set
+CONFIG_NLS_ISO8859_2=y
+# CONFIG_NLS_ISO8859_3 is not set
+CONFIG_NLS_ISO8859_4=y
+# CONFIG_NLS_ISO8859_5 is not set
+CONFIG_NLS_ISO8859_6=y
+# CONFIG_NLS_ISO8859_7 is not set
+# CONFIG_NLS_ISO8859_9 is not set
+CONFIG_NLS_ISO8859_13=y
+# CONFIG_NLS_ISO8859_14 is not set
+# CONFIG_NLS_ISO8859_15 is not set
+# CONFIG_NLS_KOI8_R is not set
+CONFIG_NLS_KOI8_U=y
+# CONFIG_NLS_MAC_ROMAN is not set
+CONFIG_NLS_MAC_CELTIC=y
+# CONFIG_NLS_MAC_CENTEURO is not set
+CONFIG_NLS_MAC_CROATIAN=y
+CONFIG_NLS_MAC_CYRILLIC=y
+# CONFIG_NLS_MAC_GAELIC is not set
+# CONFIG_NLS_MAC_GREEK is not set
+# CONFIG_NLS_MAC_ICELAND is not set
+# CONFIG_NLS_MAC_INUIT is not set
+CONFIG_NLS_MAC_ROMANIAN=y
+# CONFIG_NLS_MAC_TURKISH is not set
+CONFIG_NLS_UTF8=y
+
+#
+# Kernel hacking
+#
+CONFIG_TRACE_IRQFLAGS_SUPPORT=y
+# CONFIG_PRINTK_TIME is not set
+CONFIG_DEFAULT_MESSAGE_LOGLEVEL=4
+# CONFIG_ENABLE_WARN_DEPRECATED is not set
+# CONFIG_ENABLE_MUST_CHECK is not set
+CONFIG_FRAME_WARN=2048
+CONFIG_MAGIC_SYSRQ=y
+CONFIG_STRIP_ASM_SYMS=y
+CONFIG_UNUSED_SYMBOLS=y
+CONFIG_DEBUG_FS=y
+# CONFIG_HEADERS_CHECK is not set
+# CONFIG_DEBUG_SECTION_MISMATCH is not set
+# CONFIG_DEBUG_KERNEL is not set
+# CONFIG_PANIC_ON_OOPS is not set
+CONFIG_PANIC_ON_OOPS_VALUE=0
+CONFIG_SLUB_DEBUG_ON=y
+CONFIG_SLUB_STATS=y
+CONFIG_HAVE_DEBUG_KMEMLEAK=y
+CONFIG_SPARSE_RCU_POINTER=y
+CONFIG_DEBUG_BUGVERBOSE=y
+CONFIG_DEBUG_MEMORY_INIT=y
+CONFIG_ARCH_WANT_FRAME_POINTERS=y
+# CONFIG_FRAME_POINTER is not set
+# CONFIG_LKDTM is not set
+CONFIG_USER_STACKTRACE_SUPPORT=y
+CONFIG_HAVE_FUNCTION_TRACER=y
+CONFIG_HAVE_FUNCTION_GRAPH_TRACER=y
+CONFIG_HAVE_FUNCTION_GRAPH_FP_TEST=y
+CONFIG_HAVE_FUNCTION_TRACE_MCOUNT_TEST=y
+CONFIG_HAVE_DYNAMIC_FTRACE=y
+CONFIG_HAVE_FTRACE_MCOUNT_RECORD=y
+CONFIG_HAVE_SYSCALL_TRACEPOINTS=y
+CONFIG_HAVE_FENTRY=y
+CONFIG_HAVE_C_RECORDMCOUNT=y
+CONFIG_TRACING_SUPPORT=y
+# CONFIG_FTRACE is not set
+# CONFIG_DYNAMIC_DEBUG is not set
+CONFIG_DMA_API_DEBUG=y
+# CONFIG_ATOMIC64_SELFTEST is not set
+# CONFIG_SAMPLES is not set
+CONFIG_HAVE_ARCH_KGDB=y
+CONFIG_HAVE_ARCH_KMEMCHECK=y
+CONFIG_TEST_KSTRTOX=y
+CONFIG_STRICT_DEVMEM=y
+CONFIG_X86_VERBOSE_BOOTUP=y
+CONFIG_EARLY_PRINTK=y
+CONFIG_IOMMU_STRESS=y
+CONFIG_HAVE_MMIOTRACE_SUPPORT=y
+CONFIG_IO_DELAY_TYPE_0X80=0
+CONFIG_IO_DELAY_TYPE_0XED=1
+CONFIG_IO_DELAY_TYPE_UDELAY=2
+CONFIG_IO_DELAY_TYPE_NONE=3
+# CONFIG_IO_DELAY_0X80 is not set
+CONFIG_IO_DELAY_0XED=y
+# CONFIG_IO_DELAY_UDELAY is not set
+# CONFIG_IO_DELAY_NONE is not set
+CONFIG_DEFAULT_IO_DELAY_TYPE=1
+CONFIG_OPTIMIZE_INLINING=y
+
+#
+# Security options
+#
+CONFIG_KEYS=y
+CONFIG_ENCRYPTED_KEYS=y
+CONFIG_KEYS_DEBUG_PROC_KEYS=y
+CONFIG_SECURITY_DMESG_RESTRICT=y
+CONFIG_SECURITY=y
+CONFIG_SECURITYFS=y
+CONFIG_SECURITY_NETWORK=y
+CONFIG_SECURITY_PATH=y
+# CONFIG_SECURITY_TOMOYO is not set
+CONFIG_SECURITY_APPARMOR=y
+CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
+# CONFIG_SECURITY_YAMA is not set
+CONFIG_INTEGRITY=y
+# CONFIG_INTEGRITY_SIGNATURE is not set
+# CONFIG_IMA is not set
+CONFIG_EVM=y
+CONFIG_DEFAULT_SECURITY_APPARMOR=y
+# CONFIG_DEFAULT_SECURITY_DAC is not set
+CONFIG_DEFAULT_SECURITY="apparmor"
+CONFIG_CRYPTO=y
+
+#
+# Crypto core or helper
+#
+CONFIG_CRYPTO_ALGAPI=y
+CONFIG_CRYPTO_ALGAPI2=y
+CONFIG_CRYPTO_AEAD=y
+CONFIG_CRYPTO_AEAD2=y
+CONFIG_CRYPTO_BLKCIPHER=y
+CONFIG_CRYPTO_BLKCIPHER2=y
+CONFIG_CRYPTO_HASH=y
+CONFIG_CRYPTO_HASH2=y
+CONFIG_CRYPTO_RNG=y
+CONFIG_CRYPTO_RNG2=y
+CONFIG_CRYPTO_PCOMP=y
+CONFIG_CRYPTO_PCOMP2=y
+CONFIG_CRYPTO_MANAGER=y
+CONFIG_CRYPTO_MANAGER2=y
+CONFIG_CRYPTO_USER=y
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=y
+CONFIG_CRYPTO_GF128MUL=y
+# CONFIG_CRYPTO_NULL is not set
+CONFIG_CRYPTO_WORKQUEUE=y
+CONFIG_CRYPTO_CRYPTD=y
+CONFIG_CRYPTO_AUTHENC=y
+CONFIG_CRYPTO_ABLK_HELPER_X86=y
+CONFIG_CRYPTO_GLUE_HELPER_X86=y
+
+#
+# Authenticated Encryption with Associated Data
+#
+CONFIG_CRYPTO_CCM=y
+# CONFIG_CRYPTO_GCM is not set
+CONFIG_CRYPTO_SEQIV=y
+
+#
+# Block modes
+#
+CONFIG_CRYPTO_CBC=y
+CONFIG_CRYPTO_CTR=y
+CONFIG_CRYPTO_CTS=y
+CONFIG_CRYPTO_ECB=y
+CONFIG_CRYPTO_LRW=y
+# CONFIG_CRYPTO_PCBC is not set
+CONFIG_CRYPTO_XTS=y
+
+#
+# Hash modes
+#
+CONFIG_CRYPTO_HMAC=y
+CONFIG_CRYPTO_XCBC=y
+CONFIG_CRYPTO_VMAC=y
+
+#
+# Digest
+#
+CONFIG_CRYPTO_CRC32C=y
+CONFIG_CRYPTO_CRC32C_INTEL=y
+# CONFIG_CRYPTO_GHASH is not set
+CONFIG_CRYPTO_MD4=y
+CONFIG_CRYPTO_MD5=y
+CONFIG_CRYPTO_MICHAEL_MIC=y
+# CONFIG_CRYPTO_RMD128 is not set
+CONFIG_CRYPTO_RMD160=y
+# CONFIG_CRYPTO_RMD256 is not set
+CONFIG_CRYPTO_RMD320=y
+CONFIG_CRYPTO_SHA1=y
+CONFIG_CRYPTO_SHA1_SSSE3=y
+CONFIG_CRYPTO_SHA256=y
+CONFIG_CRYPTO_SHA512=y
+CONFIG_CRYPTO_TGR192=y
+CONFIG_CRYPTO_WP512=y
+# CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL is not set
+
+#
+# Ciphers
+#
+CONFIG_CRYPTO_AES=y
+# CONFIG_CRYPTO_AES_X86_64 is not set
+# CONFIG_CRYPTO_AES_NI_INTEL is not set
+CONFIG_CRYPTO_ANUBIS=y
+CONFIG_CRYPTO_ARC4=y
+# CONFIG_CRYPTO_BLOWFISH is not set
+# CONFIG_CRYPTO_BLOWFISH_X86_64 is not set
+CONFIG_CRYPTO_CAMELLIA=y
+# CONFIG_CRYPTO_CAMELLIA_X86_64 is not set
+# CONFIG_CRYPTO_CAST5 is not set
+# CONFIG_CRYPTO_CAST5_AVX_X86_64 is not set
+CONFIG_CRYPTO_CAST6=y
+# CONFIG_CRYPTO_CAST6_AVX_X86_64 is not set
+CONFIG_CRYPTO_DES=y
+CONFIG_CRYPTO_FCRYPT=y
+# CONFIG_CRYPTO_KHAZAD is not set
+# CONFIG_CRYPTO_SALSA20 is not set
+CONFIG_CRYPTO_SALSA20_X86_64=y
+CONFIG_CRYPTO_SEED=y
+CONFIG_CRYPTO_SERPENT=y
+CONFIG_CRYPTO_SERPENT_SSE2_X86_64=y
+# CONFIG_CRYPTO_SERPENT_AVX_X86_64 is not set
+# CONFIG_CRYPTO_TEA is not set
+CONFIG_CRYPTO_TWOFISH=y
+CONFIG_CRYPTO_TWOFISH_COMMON=y
+CONFIG_CRYPTO_TWOFISH_X86_64=y
+CONFIG_CRYPTO_TWOFISH_X86_64_3WAY=y
+CONFIG_CRYPTO_TWOFISH_AVX_X86_64=y
+
+#
+# Compression
+#
+# CONFIG_CRYPTO_DEFLATE is not set
+CONFIG_CRYPTO_ZLIB=y
+CONFIG_CRYPTO_LZO=y
+
+#
+# Random Number Generation
+#
+CONFIG_CRYPTO_ANSI_CPRNG=y
+CONFIG_CRYPTO_USER_API=y
+CONFIG_CRYPTO_USER_API_HASH=y
+CONFIG_CRYPTO_USER_API_SKCIPHER=y
+# CONFIG_CRYPTO_HW is not set
+# CONFIG_ASYMMETRIC_KEY_TYPE is not set
+CONFIG_HAVE_KVM=y
+CONFIG_VIRTUALIZATION=y
+CONFIG_VHOST_NET=y
+# CONFIG_BINARY_PRINTF is not set
+
+#
+# Library routines
+#
+CONFIG_BITREVERSE=y
+CONFIG_GENERIC_STRNCPY_FROM_USER=y
+CONFIG_GENERIC_STRNLEN_USER=y
+CONFIG_GENERIC_FIND_FIRST_BIT=y
+CONFIG_GENERIC_PCI_IOMAP=y
+CONFIG_GENERIC_IOMAP=y
+CONFIG_GENERIC_IO=y
+CONFIG_CRC_CCITT=y
+CONFIG_CRC16=y
+# CONFIG_CRC_T10DIF is not set
+CONFIG_CRC_ITU_T=y
+CONFIG_CRC32=y
+CONFIG_CRC32_SELFTEST=y
+# CONFIG_CRC32_SLICEBY8 is not set
+# CONFIG_CRC32_SLICEBY4 is not set
+# CONFIG_CRC32_SARWATE is not set
+CONFIG_CRC32_BIT=y
+# CONFIG_CRC7 is not set
+CONFIG_LIBCRC32C=y
+# CONFIG_CRC8 is not set
+CONFIG_ZLIB_INFLATE=y
+CONFIG_ZLIB_DEFLATE=y
+CONFIG_LZO_COMPRESS=y
+CONFIG_LZO_DECOMPRESS=y
+# CONFIG_XZ_DEC is not set
+# CONFIG_XZ_DEC_BCJ is not set
+CONFIG_HAS_IOMEM=y
+CONFIG_HAS_IOPORT=y
+CONFIG_HAS_DMA=y
+CONFIG_DQL=y
+CONFIG_NLATTR=y
+CONFIG_ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE=y
+# CONFIG_AVERAGE is not set
+CONFIG_CORDIC=y
+CONFIG_DDR=y
+
+--6TrnltStXW4iwmi0--
