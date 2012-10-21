@@ -1,19 +1,18 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 16 Oct 2012 05:58:29 +0000
-Subject: [jdelvare-staging:i2c-for-linus 9/15] drivers/leds/leds-tca6507.c:179:20: error: field 'gpio' has in
-Message-Id: <20121016055829.GA31864@localhost>
+Date: Sun, 21 Oct 2012 01:30:18 +0000
+Subject: [jdelvare-staging:i2c-for-linus 9/15] drivers/leds/leds-pca9532.c:46:19: error: field 'gpio' has inc
+Message-Id: <20121021013018.GA692@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121008071452.GA29214@localhost>
 In-Reply-To: <20121008071452.GA29214@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <khali@linux-fr.org>
-Cc: kernel-janitors@vger.kernel.org, Parisc List <linux-parisc@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
 Hi Jean,
 
-FYI, kernel build failed on
+FYI, kernel build failed on (and also in upstream)
 
 tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging.git i2c-for-linus
 head:   c415b303a704e5c5f766fc0404093910c36cc4ab
@@ -22,65 +21,52 @@ config: parisc-allyesconfig # make ARCH=parisc allyesconfig
 
 All error/warnings:
 
-drivers/leds/leds-tca6507.c:179:20: error: field 'gpio' has incomplete type
-drivers/leds/leds-tca6507.c: In function 'tca6507_gpio_set_value':
-drivers/leds/leds-tca6507.c:591:29: warning: initialization from incompatible pointer type [enabled by default]
-drivers/leds/leds-tca6507.c:591:29: warning: (near initialization for 'tca') [enabled by default]
-drivers/leds/leds-tca6507.c: In function 'tca6507_probe_gpios':
-drivers/leds/leds-tca6507.c:640:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
-drivers/leds/leds-tca6507.c: In function 'tca6507_remove_gpio':
-drivers/leds/leds-tca6507.c:653:3: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
---
-drivers/input/touchscreen/ad7879.c:115:19: error: field 'gc' has incomplete type
-drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_direction_input':
-drivers/input/touchscreen/ad7879.c:385:22: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/touchscreen/ad7879.c:385:22: warning: (near initialization for 'ts') [enabled by default]
-drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_direction_output':
-drivers/input/touchscreen/ad7879.c:399:22: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/touchscreen/ad7879.c:399:22: warning: (near initialization for 'ts') [enabled by default]
-drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_get_value':
-drivers/input/touchscreen/ad7879.c:418:22: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/touchscreen/ad7879.c:418:22: warning: (near initialization for 'ts') [enabled by default]
-drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_set_value':
-drivers/input/touchscreen/ad7879.c:431:22: warning: initialization from incompatible pointer type [enabled by default]
-drivers/input/touchscreen/ad7879.c:431:22: warning: (near initialization for 'ts') [enabled by default]
-drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_add':
-drivers/input/touchscreen/ad7879.c:462:3: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
-drivers/input/touchscreen/ad7879.c: In function 'ad7879_gpio_remove':
-drivers/input/touchscreen/ad7879.c:477:3: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
+drivers/leds/leds-pca9532.c:46:19: error: field 'gpio' has incomplete type
+drivers/leds/leds-pca9532.c: In function 'pca9532_gpio_request_pin':
+drivers/leds/leds-pca9532.c:248:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/leds/leds-pca9532.c:248:30: warning: (near initialization for 'data') [enabled by default]
+drivers/leds/leds-pca9532.c: In function 'pca9532_gpio_set_value':
+drivers/leds/leds-pca9532.c:259:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/leds/leds-pca9532.c:259:30: warning: (near initialization for 'data') [enabled by default]
+drivers/leds/leds-pca9532.c: In function 'pca9532_gpio_get_value':
+drivers/leds/leds-pca9532.c:272:30: warning: initialization from incompatible pointer type [enabled by default]
+drivers/leds/leds-pca9532.c:272:30: warning: (near initialization for 'data') [enabled by default]
+drivers/leds/leds-pca9532.c: In function 'pca9532_destroy_devices':
+drivers/leds/leds-pca9532.c:324:3: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
+drivers/leds/leds-pca9532.c: In function 'pca9532_configure':
+drivers/leds/leds-pca9532.c:427:3: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
 cc1: some warnings being treated as errors
 
-vim +179 drivers/leds/leds-tca6507.c
+vim +46 drivers/leds/leds-pca9532.c
 
-a6d511e5 NeilBrown 2012-01-10  163  		int time_use, level_use;
-a6d511e5 NeilBrown 2012-01-10  164  	} bank[3];
-a6d511e5 NeilBrown 2012-01-10  165  	struct i2c_client	*client;
-a6d511e5 NeilBrown 2012-01-10  166  	struct work_struct	work;
-a6d511e5 NeilBrown 2012-01-10  167  	spinlock_t		lock;
-a6d511e5 NeilBrown 2012-01-10  168  
-a6d511e5 NeilBrown 2012-01-10  169  	struct tca6507_led {
-a6d511e5 NeilBrown 2012-01-10  170  		struct tca6507_chip	*chip;
-a6d511e5 NeilBrown 2012-01-10  171  		struct led_classdev	led_cdev;
-a6d511e5 NeilBrown 2012-01-10  172  		int			num;
-a6d511e5 NeilBrown 2012-01-10  173  		int			ontime, offtime;
-a6d511e5 NeilBrown 2012-01-10  174  		int			on_dflt, off_dflt;
-a6d511e5 NeilBrown 2012-01-10  175  		int			bank;	/* Bank used, or -1 */
-a6d511e5 NeilBrown 2012-01-10  176  		int			blink;	/* Set if hardware-blinking */
-a6d511e5 NeilBrown 2012-01-10  177  	} leds[NUM_LEDS];
-a6d511e5 NeilBrown 2012-01-10  178  #ifdef CONFIG_GPIOLIB
-a6d511e5 NeilBrown 2012-01-10 @179  	struct gpio_chip		gpio;
-a6d511e5 NeilBrown 2012-01-10  180  	const char			*gpio_name[NUM_LEDS];
-a6d511e5 NeilBrown 2012-01-10  181  	int				gpio_map[NUM_LEDS];
-a6d511e5 NeilBrown 2012-01-10  182  #endif
-a6d511e5 NeilBrown 2012-01-10  183  };
-a6d511e5 NeilBrown 2012-01-10  184  
-a6d511e5 NeilBrown 2012-01-10  185  static const struct i2c_device_id tca6507_id[] = {
-a6d511e5 NeilBrown 2012-01-10  186  	{ "tca6507" },
-a6d511e5 NeilBrown 2012-01-10  187  	{ }
+3dbf622c Jan Weitzel      2011-05-24  30  #define LED_REG(m, led)		(PCA9532_REG_OFFSET(m) + 0x5 + (led >> 2))
+3dbf622c Jan Weitzel      2011-05-24  31  #define LED_NUM(led)		(led & 0x3)
+e14fa824 Riku Voipio      2008-05-31  32  
+e14fa824 Riku Voipio      2008-05-31  33  #define ldev_to_led(c)       container_of(c, struct pca9532_led, ldev)
+e14fa824 Riku Voipio      2008-05-31  34  
+3dbf622c Jan Weitzel      2011-05-24  35  struct pca9532_chip_info {
+3dbf622c Jan Weitzel      2011-05-24  36  	u8	num_leds;
+3dbf622c Jan Weitzel      2011-05-24  37  };
+3dbf622c Jan Weitzel      2011-05-24  38  
+e14fa824 Riku Voipio      2008-05-31  39  struct pca9532_data {
+e14fa824 Riku Voipio      2008-05-31  40  	struct i2c_client *client;
+e14fa824 Riku Voipio      2008-05-31  41  	struct pca9532_led leds[16];
+e14fa824 Riku Voipio      2008-05-31  42  	struct mutex update_lock;
+85c5204a Richard Purdie   2009-09-07  43  	struct input_dev *idev;
+07172d2b Antonio Ospite   2009-06-19  44  	struct work_struct work;
+3c1ab50d Joachim Eastwood 2011-05-24  45  #ifdef CONFIG_LEDS_PCA9532_GPIO
+3c1ab50d Joachim Eastwood 2011-05-24 @46  	struct gpio_chip gpio;
+3c1ab50d Joachim Eastwood 2011-05-24  47  #endif
+3dbf622c Jan Weitzel      2011-05-24  48  	const struct pca9532_chip_info *chip_info;
+e14fa824 Riku Voipio      2008-05-31  49  	u8 pwm[2];
+e14fa824 Riku Voipio      2008-05-31  50  	u8 psc[2];
+e14fa824 Riku Voipio      2008-05-31  51  };
+e14fa824 Riku Voipio      2008-05-31  52  
+e14fa824 Riku Voipio      2008-05-31  53  static int pca9532_probe(struct i2c_client *client,
+e14fa824 Riku Voipio      2008-05-31  54  	const struct i2c_device_id *id);
 
-The code at line 179 was first introduced by commit:
-a6d511e leds: add driver for TCA6507 LED controller
+The code at line 46 was first introduced by commit:
+3c1ab50 drivers/leds/leds-pca9532.c: add gpio capability
 
 
 ---
