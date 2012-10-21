@@ -1,32 +1,76 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 01 Oct 2012 21:15:31 +0000
-Subject: Re: [patch] net/key/af_key.c: add range checks on ->sadb_x_policy_len
-Message-Id: <20121001.171531.1225138780751285845.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 21 Oct 2012 10:52:05 +0000
+Subject: [PATCH 3/5] arch/powerpc/kernel/rtas_flash.c: eliminate possible double free
+Message-Id: <1350816727-1381-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120928082119.GA32008@elgon.mountain>
-In-Reply-To: <20120928082119.GA32008@elgon.mountain>
+References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ebiederm@xmission.com, eric.dumazet@gmail.com, shemminger@vyatta.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>, kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Sep 2012 11:21:19 +0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> Because sizeof() is size_t then if "len" is negative, it counts as a
-> large positive value.
-> 
-> The call tree looks like:
-> pfkey_sendmsg()
-> -> pfkey_process()
->    -> pfkey_spdadd()
->       -> parse_ipsecrequests()
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is a static checker fix.  I'm not very familiar with this code.
-> I think if we were to hit this then we would try to parse invalid data
-> and it would return -EINVAL or similar error code pretty quickly.
+The function initialize_flash_pde_data is only called four times.  All four
+calls are in the function rtas_flash_init, and on the failure of any of the
+calls, remove_flash_pde is called on the third argument of each of the
+calls.  There is thus no need for initialize_flash_pde_data to call
+remove_flash_pde on the same argument.  remove_flash_pde kfrees the data
+field of its argument, and does not clear that field, so this amounts ot a
+possible double free.
 
-Applied and queued up for -stable, thanks Dan.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier f,free,a;
+parameter list[n] ps;
+type T;
+expression e;
+@@
+
+f(ps,T a,...) {
+  ... when any
+      when != a = e
+  if(...) { ... free(a); ... return ...; }
+  ... when any
+}
+
+@@
+identifier r.f,r.free;
+expression x,a;
+expression list[r.n] xs;
+@@
+
+* x = f(xs,a,...);
+  if (...) { ... free(a); ... return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ arch/powerpc/kernel/rtas_flash.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/kernel/rtas_flash.c b/arch/powerpc/kernel/rtas_flash.c
+index 20b0120..8329190 100644
+--- a/arch/powerpc/kernel/rtas_flash.c
++++ b/arch/powerpc/kernel/rtas_flash.c
+@@ -650,10 +650,8 @@ static int initialize_flash_pde_data(const char *rtas_call_name,
+ 	int token;
+ 
+ 	dp->data = kzalloc(buf_size, GFP_KERNEL);
+-	if (dp->data = NULL) {
+-		remove_flash_pde(dp);
++	if (dp->data = NULL)
+ 		return -ENOMEM;
+-	}
+ 
+ 	/*
+ 	 * This code assumes that the status int is the first member of the
+
