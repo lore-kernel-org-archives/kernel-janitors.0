@@ -1,57 +1,72 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 22 Oct 2012 09:17:38 +0000
-Subject: Re: [sound-unstable:topic/hda-spdif-fix 99/124] ERROR: "snd_dmaengine_pcm_open" [sound/soc/omap/snd-
-Message-Id: <20121022091738.GA8902@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 21 Oct 2012 10:52:03 +0000
+Subject: [PATCH 1/5] sound/isa/opti9xx/miro.c: eliminate possible double free
+Message-Id: <1350816727-1381-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5083733a.T3zEi6cLE4psrO1W%fengguang.wu@intel.com>
- <50850D7D.8050402@ti.com>
-In-Reply-To: <50850D7D.8050402@ti.com>
+References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: =?utf-8?B?UMOpdGVy?= Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2012 at 11:10:21AM +0200, P=C3=A9ter Ujfalusi wrote:
-> Hi,
->=20
-> On 10/21/2012 05:59 AM, Fengguang Wu wrote:
-> > Hi Peter,
-> >=20
-> > FYI, kernel build failed on
-> >=20
-> > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-unsta=
-ble.git topic/hda-spdif-fix
-> > head:   afc51e492b36bd61b46f4d70dd646678d96f5f97
-> > commit: e7736cdea223f3a5b867c359fb35cf08250dd771 [99/124] dmaengine: Ad=
-d flags parameter to dmaengine_prep_dma_cyclic()
-> > config: arm-omap2plus_defconfig # make ARCH=3Darm omap2plus_defconfig
-> >=20
-> > All error/warnings:
-> >=20
-> > ERROR: "snd_hwparams_to_dma_slave_config" [sound/soc/omap/snd-soc-omap.=
-ko] undefined!
-> > ERROR: "snd_dmaengine_pcm_pointer" [sound/soc/omap/snd-soc-omap.ko] und=
-efined!
-> > ERROR: "snd_dmaengine_pcm_open" [sound/soc/omap/snd-soc-omap.ko] undefi=
-ned!
-> > ERROR: "snd_dmaengine_pcm_close" [sound/soc/omap/snd-soc-omap.ko] undef=
-ined!
-> > ERROR: "snd_dmaengine_pcm_get_chan" [sound/soc/omap/snd-soc-omap.ko] un=
-defined!
-> > ERROR: "snd_dmaengine_pcm_trigger" [sound/soc/omap/snd-soc-omap.ko] und=
-efined!
->=20
-> This has been fixed by the following commit (already in mainline):
-> 961a7ae ASoC: dmaengine: Correct Makefile when sound is built as module
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Sorry about that! I've fixed the script to test that case and avoid
-reporting fixed errors in upstream.
+snd_miro_probe is a static function that is only called twice in the file
+that defines it.  At each call site, its argument is freed using
+snd_card_free.  Thus, there is no need for snd_miro_probe to call
+snd_card_free on its argument on any of its error exit paths.
 
-Thanks,
-Fengguang
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Because snd_card_free both reads the fields of its argument and kfrees its
+argments, the results of the second snd_card_free should be unpredictable.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier f,free,a;
+parameter list[n] ps;
+type T;
+expression e;
+@@
+
+f(ps,T a,...) {
+  ... when any
+      when != a = e
+  if(...) { ... free(a); ... return ...; }
+  ... when any
+}
+
+@@
+identifier r.f,r.free;
+expression x,a;
+expression list[r.n] xs;
+@@
+
+* x = f(xs,a,...);
+  if (...) { ... free(a); ... return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ sound/isa/opti9xx/miro.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/isa/opti9xx/miro.c b/sound/isa/opti9xx/miro.c
+index 3d1afb6..4a7ff4e 100644
+--- a/sound/isa/opti9xx/miro.c
++++ b/sound/isa/opti9xx/miro.c
+@@ -1286,7 +1286,6 @@ static int __devinit snd_miro_probe(struct snd_card *card)
+ 
+ 	error = snd_card_miro_aci_detect(card, miro);
+ 	if (error < 0) {
+-		snd_card_free(card);
+ 		snd_printk(KERN_ERR "unable to detect aci chip\n");
+ 		return -ENODEV;
+ 	}
+
