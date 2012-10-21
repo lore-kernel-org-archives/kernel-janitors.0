@@ -1,33 +1,31 @@
-From: Will Deacon <will.deacon@arm.com>
-Date: Mon, 15 Oct 2012 14:50:40 +0000
-Subject: Re: [arm-perf:cacheflush 3/4] arch/arm/kernel/entry-common.S:105: Error: non-constant expression in
-Message-Id: <20121015145040.GG10560@mudshark.cambridge.arm.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 21 Oct 2012 03:59:54 +0000
+Subject: [sound-unstable:topic/hda-spdif-fix 99/124] ERROR: "snd_dmaengine_pcm_open" [sound/soc/omap/snd-soc-
+Message-Id: <5083733a.T3zEi6cLE4psrO1W%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121015131149.GA23400@localhost>
-In-Reply-To: <20121015131149.GA23400@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 15, 2012 at 02:11:49PM +0100, Fengguang Wu wrote:
-> Hi Will,
+Hi Peter,
 
-Hello,
+FYI, kernel build failed on
 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git cacheflush
-> head:   e0c396a5e4a3abbe8ac6bc19670f39f8e7b7b399
-> commit: 9e0ec2d6f8bc8b274b5471d194a03b7dd10e8832 [3/4] ARM: cacheflush: add new iovec-based cache flushing system call
-> config: arm-at91_dt_defconfig # make ARCH=arm at91_dt_defconfig
-> 
-> All error/warnings:
-> 
-> arch/arm/kernel/entry-common.S: Assembler messages:
-> arch/arm/kernel/entry-common.S:105: Error: non-constant expression in ".if" statement
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-unstable.git topic/hda-spdif-fix
+head:   afc51e492b36bd61b46f4d70dd646678d96f5f97
+commit: e7736cdea223f3a5b867c359fb35cf08250dd771 [99/124] dmaengine: Add flags parameter to dmaengine_prep_dma_cyclic()
+config: arm-omap2plus_defconfig # make ARCH=arm omap2plus_defconfig
 
-Thanks, this is due to a mismerge with the uapi stuff. I'll rebuild the
-branch and push a new version.
+All error/warnings:
 
-Will
+ERROR: "snd_hwparams_to_dma_slave_config" [sound/soc/omap/snd-soc-omap.ko] undefined!
+ERROR: "snd_dmaengine_pcm_pointer" [sound/soc/omap/snd-soc-omap.ko] undefined!
+ERROR: "snd_dmaengine_pcm_open" [sound/soc/omap/snd-soc-omap.ko] undefined!
+ERROR: "snd_dmaengine_pcm_close" [sound/soc/omap/snd-soc-omap.ko] undefined!
+ERROR: "snd_dmaengine_pcm_get_chan" [sound/soc/omap/snd-soc-omap.ko] undefined!
+ERROR: "snd_dmaengine_pcm_trigger" [sound/soc/omap/snd-soc-omap.ko] undefined!
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
