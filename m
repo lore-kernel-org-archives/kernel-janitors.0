@@ -1,56 +1,81 @@
-From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Tue, 23 Oct 2012 19:57:22 +0000
-Subject: [PATCH 19/23] bttv: Replace memcpy with struct assignment
-Message-Id: <1351022246-8201-19-git-send-email-elezegarcia@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 21 Oct 2012 10:52:07 +0000
+Subject: [PATCH 5/5] drivers/iio/industrialio-event.c: eliminate possible double free
+Message-Id: <1350816727-1381-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
-In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
+References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This kind of memcpy() is error-prone. Its replacement with a struct
-assignment is prefered because it's type-safe and much easier to read.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Found by coccinelle. Hand patched and reviewed.
-Tested by compilation only.
+The function __iio_add_event_config_attrs is only called once, by the
+function iio_device_register_eventset.  If the call fails,
+iio_device_register_eventset calls __iio_remove_event_config_attrs.  There
+is thus no need for __iio_add_event_config_attrs to also call
+__iio_remove_event_config_attrs on failure.
 
 A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
+@r@
+identifier f,free,a;
+parameter list[n] ps;
+type T;
+expression e;
 @@
-identifier struct_name;
-struct struct_name to;
-struct struct_name from;
-expression E;
+
+f(ps,T a,...) {
+  ... when any
+      when != a = e
+  if(...) { ... free(a); ... return ...; }
+  ... when any
+}
+
 @@
--memcpy(&(to), &(from), E);
-+to = from;
+identifier r.f,r.free;
+expression x,a;
+expression list[r.n] xs;
+@@
+
+* x = f(xs,a,...);
+  if (...) { ... free(a); ... return ...; }
 // </smpl>
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
----
- drivers/media/pci/bt8xx/bttv-i2c.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/drivers/media/pci/bt8xx/bttv-i2c.c b/drivers/media/pci/bt8xx/bttv-i2c.c
-index 580c8e6..7398afa 100644
---- a/drivers/media/pci/bt8xx/bttv-i2c.c
-+++ b/drivers/media/pci/bt8xx/bttv-i2c.c
-@@ -366,8 +366,7 @@ int __devinit init_bttv_i2c(struct bttv *btv)
+---
+__iio_remove_event_config_attrs kfrees the elements of a list, but doesn't
+actually remove them from the list.  Perhaps for safety this should be
+cleaned up as well.  Not tested.
+
+ drivers/iio/industrialio-event.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industrialio-event.c
+index fa6543b..78570c7 100644
+--- a/drivers/iio/industrialio-event.c
++++ b/drivers/iio/industrialio-event.c
+@@ -350,15 +350,10 @@ static inline int __iio_add_event_config_attrs(struct iio_dev *indio_dev)
+ 		ret = iio_device_add_event_sysfs(indio_dev,
+ 						 &indio_dev->channels[j]);
+ 		if (ret < 0)
+-			goto error_clear_attrs;
++			return ret;
+ 		attrcount += ret;
+ 	}
+ 	return attrcount;
+-
+-error_clear_attrs:
+-	__iio_remove_event_config_attrs(indio_dev);
+-
+-	return ret;
+ }
  
- 		strlcpy(btv->c.i2c_adap.name, "bttv",
- 			sizeof(btv->c.i2c_adap.name));
--		memcpy(&btv->i2c_algo, &bttv_i2c_algo_bit_template,
--		       sizeof(bttv_i2c_algo_bit_template));
-+		btv->i2c_algo = bttv_i2c_algo_bit_template;
- 		btv->i2c_algo.udelay = i2c_udelay;
- 		btv->i2c_algo.data = btv;
- 		btv->c.i2c_adap.algo_data = &btv->i2c_algo;
--- 
-1.7.4.4
+ static bool iio_check_for_dynamic_events(struct iio_dev *indio_dev)
 
