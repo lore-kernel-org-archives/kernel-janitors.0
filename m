@@ -1,36 +1,44 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 09 Oct 2012 12:51:33 +0000
-Subject: Re: [PATCH 3/13] drivers/media/tuners/qt1010.c: use macros for i2c_msg initialization
-Message-Id: <alpine.DEB.2.02.1210091450270.1971@hadrien>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Sun, 21 Oct 2012 13:45:17 +0000
+Subject: Re: [tip:numa/core 10/10] mm/memory.c:3543 do_prot_none() error: double unlock 'spin_lock:ptl'
+Message-Id: <20121021134517.GB23820@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr> <1349624323-15584-5-git-send-email-Julia.Lawall@lip6.fr> <5071FA5D.30003@gmail.com> <alpine.DEB.2.02.1210080704440.1972@localhost6.localdomain6> <50726110.5020901@gmail.com>
- <alpine.DEB.2.02.1210080722470.1972@localhost6.localdomain6> <20121009141220.412c15c8@endymion.delvare>
-In-Reply-To: <20121009141220.412c15c8@endymion.delvare>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Ryan Mallon <rmallon@gmail.com>, Antti Palosaari <crope@iki.fi>, kernel-janitors@vger.kernel.org, shubhrajyoti@ti.com, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 9 Oct 2012, Jean Delvare wrote:
 
-> Hi Julia,
->
-> On Mon, 8 Oct 2012 07:24:11 +0200 (CEST), Julia Lawall wrote:
-> > > Sorry, I mean either:
-> > >
-> > > 	I2C_MSG_WRITE(priv->cfg->i2c_address, &reg, sizeof(reg)),
-> > > 	I2C_MSG_READ(priv->cfg->i2c_address, val, sizeof(*val)),
-> >
-> > Of course.  Sorry for not having seen that.  I can do that.
->
-> Eek, no, you can't, not in the general case at least. sizeof(*val) will
-> return the size of the _first_ element of the destination buffer, which
-> has nothing to do with the length of that buffer (which in turn might
-> be rightfully longer than the read length for this specific message.)
+* Fengguang Wu <fengguang.wu@intel.com> wrote:
 
-I was actually only going to do it when the size was 1 and the type was
-u8 *.  But your other email suggests that converting to sizeof is just not
-a good idea at all.  So I will drop that part of the rule.
+> Hi Ingo,
+> 
+> FYI, there are new smatch warnings show up in
+> 
+> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git numa/core
+> head:   eb4f84b1aaad78ca07e274b81410ec9d60abe434
+> commit: eb4f84b1aaad78ca07e274b81410ec9d60abe434 [10/10] numa, mm: Fix 4K migration races
+> 
+>   mm/memory.c:805 vm_normal_page() info: ignoring unreachable code.
+>   mm/memory.c:805 vm_normal_page() info: ignoring unreachable code.
+>   mm/memory.c:984 copy_pte_range() warn: inconsistent returns spin_lock:dst_ptl: locked (940) unlocked (979,984)
+>   mm/memory.c:984 copy_pte_range() warn: inconsistent returns spin_lock:__ptl: locked (979,984) unlocked (940)
+>   mm/memory.c:1532 follow_page() info: ignoring unreachable code.
+>   mm/memory.c:1651 follow_page() warn: inconsistent returns spin_lock:ptl: locked (1628,1650,1651) unlocked (1632,1637)
+>   mm/memory.c:1651 follow_page() warn: inconsistent returns spin_lock:__ptl: locked (1632,1637) unlocked (1628,1650,1651)
+>   mm/memory.c:2688 do_wp_page() error: double unlock 'spin_lock:ptl'
+>   mm/memory.c:2733 do_wp_page() error: double unlock 'spin_lock:ptl'
+>   mm/memory.c:2761 do_wp_page() error: double lock 'spin_lock:__ptl'
+>   mm/memory.c:2823 do_wp_page() error: double unlock 'spin_lock:ptl'
+>   mm/memory.c:2853 do_wp_page() warn: inconsistent returns spin_lock:__ptl: locked (2838) unlocked (2692,2725,2849,2853)
+> + mm/memory.c:3543 do_prot_none() error: double unlock 'spin_lock:ptl'
+> + mm/memory.c:3557 do_prot_none() error: double lock 'spin_lock:__ptl'
+>   mm/memory.c:3632 handle_pte_fault() warn: inconsistent returns spin_lock:ptl: locked (3613) unlocked (3591,3594,3598,3600,3605,3632)
 
-julia
+Hm, looks like smatch got confused by the 'locked' variable?
+
+Or can you see real problems in the code?
+
+Thanks,
+
+	Ingo
