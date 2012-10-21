@@ -1,8 +1,10 @@
 From: KumarAmitMehta <gmate.amit@gmail.com>
-Date: Sun, 21 Oct 2012 18:24:36 +0000
+Date: Sun, 21 Oct 2012 18:34:11 +0000
 Subject: [PATCH] bna: Replace deprecated compilation flag, EXTRA_CFLAGS with ccflags
-Message-Id: <1350843876-11278-1-git-send-email-gmate.amit@gmail.com>
+Message-Id: <1350844451-11405-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1350843876-11278-1-git-send-email-gmate.amit@gmail.com>
+In-Reply-To: <1350843876-11278-1-git-send-email-gmate.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
