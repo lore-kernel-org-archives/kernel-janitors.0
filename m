@@ -1,51 +1,55 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 02 Oct 2012 05:13:51 +0000
-Subject: [nfs:nfs-for-next 54/83] fs/nfs/super.c:2638:16: sparse: symbol 'nfs_callback_tcpport' was not decla
-Message-Id: <20121002051351.GB18119@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 21 Oct 2012 10:52:02 +0000
+Subject: [PATCH 0/5] eliminate possible double free
+Message-Id: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislav Kinsbursky <skinsbursky@parallels.com>
-Cc: kernel-janitors@vger.kernel.org, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Hi Stanislav,
+These patches fix cases where a called function frees some data and the
+calling context frees the same data.
 
-FYI, there are new sparse warnings show up in
+The complete semantic match is as follows: (http://coccinelle.lip6.fr/)
 
-tree:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git nfs-for-next
-head:   2afdfa5a846246de50e1881f71ba5c0aac0b415f
-commit: bbe0a3aa4e227c8aae02a484ce1c0b655cd19055 [54/83] NFS: make nfs_callback_tcpport per network context
+// <smpl>
+@r exists@
+parameter list[n] ps;
+type T;
+identifier a;
+expression e;
+expression ret != 0;
+identifier f,free;
+position p1;
+@@
 
-? fs/nfs/super.c:2638:16: sparse: symbol 'nfs_callback_tcpport' was not declared. Should it be static?
+f(ps,T a,...) {
+  ... when any
+      when != a = e
+  if(...) { ... free@p1(a); ... return ret; }
+  ... when any
+}
 
-Shall we also remove the two related lines below?
+@s exists@
+identifier r.f,r.free;
+expression x,a;
+position p2,p3;
+expression list[r.n] xs;
+@@
 
-vim +2638 fs/nfs/super.c
+x = f@p2(xs,a,...);
+if (...) { ... free@p3(a); ... return ...; }
 
-fac1e8e4 (Bryan Schumaker   2012-07-30  2633) /*
-fac1e8e4 (Bryan Schumaker   2012-07-30  2634)  * NFS v4 module parameters need to stay in the
-fac1e8e4 (Bryan Schumaker   2012-07-30  2635)  * NFS client for backwards compatibility
-fac1e8e4 (Bryan Schumaker   2012-07-30  2636)  */
-fac1e8e4 (Bryan Schumaker   2012-07-30  2637) unsigned int nfs_callback_set_tcpport;
-fac1e8e4 (Bryan Schumaker   2012-07-30 @2638) unsigned short nfs_callback_tcpport;
-fac1e8e4 (Bryan Schumaker   2012-07-30  2639) /* Default cache timeout is 10 minutes */
-fac1e8e4 (Bryan Schumaker   2012-07-30  2640) unsigned int nfs_idmap_cache_timeout = 600;
-fac1e8e4 (Bryan Schumaker   2012-07-30  2641) /* Turn off NFSv4 uid/gid mapping when using AUTH_SYS */
-fac1e8e4 (Bryan Schumaker   2012-07-30  2642) bool nfs4_disable_idmapping = true;
-fac1e8e4 (Bryan Schumaker   2012-07-30  2643) unsigned short max_session_slots = NFS4_DEF_SLOT_TABLE_SIZE;
-fac1e8e4 (Bryan Schumaker   2012-07-30  2644) unsigned short send_implementation_id = 1;
-fac1e8e4 (Bryan Schumaker   2012-07-30  2645) 
-89d77c8f (Bryan Schumaker   2012-07-30  2646) EXPORT_SYMBOL_GPL(nfs_callback_set_tcpport);
-89d77c8f (Bryan Schumaker   2012-07-30 @2647) EXPORT_SYMBOL_GPL(nfs_callback_tcpport);
-89d77c8f (Bryan Schumaker   2012-07-30  2648) EXPORT_SYMBOL_GPL(nfs_idmap_cache_timeout);
-89d77c8f (Bryan Schumaker   2012-07-30  2649) EXPORT_SYMBOL_GPL(nfs4_disable_idmapping);
-89d77c8f (Bryan Schumaker   2012-07-30  2650) EXPORT_SYMBOL_GPL(max_session_slots);
-89d77c8f (Bryan Schumaker   2012-07-30  2651) EXPORT_SYMBOL_GPL(send_implementation_id);
-89d77c8f (Bryan Schumaker   2012-07-30  2652) 
-fac1e8e4 (Bryan Schumaker   2012-07-30  2653) #define NFS_CALLBACK_MAXPORTNR (65535U)
-fac1e8e4 (Bryan Schumaker   2012-07-30  2654) 
+@script:python@
+p1 << r.p1;
+p2 << s.p2;
+p3 << s.p3;
+@@
 
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+cocci.print_secs("",p3)
+// </smpl>
+
