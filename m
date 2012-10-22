@@ -1,52 +1,24 @@
-From: Anna Leuschner <anna.m.leuschner@gmail.com>
-Date: Mon, 22 Oct 2012 19:53:36 +0000
-Subject: [PATCH v2] vfs: fix: don't increase bio_slab_max if krealloc() fails
-Message-Id: <1350935616-24797-1-git-send-email-anna.m.leuschner@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Date: Mon, 22 Oct 2012 19:59:22 +0000
+Subject: Re: [PATCH v2] vfs: fix: don't increase bio_slab_max if krealloc() fails
+Message-Id: <5085A59A.8060206@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1350935616-24797-1-git-send-email-anna.m.leuschner@gmail.com>
+In-Reply-To: <1350935616-24797-1-git-send-email-anna.m.leuschner@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, Anna Leuschner <anna.m.leuschner@gmail.com>
+To: Anna Leuschner <anna.m.leuschner@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Without the patch, bio_slab_max, representing bio_slabs capacity, is increased before krealloc() of bio_slabs. If krealloc() fails, bio_slab_max is too high. Fix that by only updating bio_slab_max if krealloc() is successful.
+On 2012-10-22 21:53, Anna Leuschner wrote:
+> Without the patch, bio_slab_max, representing bio_slabs capacity, is
+> increased before krealloc() of bio_slabs. If krealloc() fails,
+> bio_slab_max is too high. Fix that by only updating bio_slab_max if
+> krealloc() is successful.
 
-Signed-off-by: Anna Leuschner <anna.m.leuschner@gmail.com>
----
-v2 changes:
-	- describe what is fixed
+That's a lot better, thanks!
 
- fs/bio.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/bio.c b/fs/bio.c
-index 9298c65..b96fc6c 100644
---- a/fs/bio.c
-+++ b/fs/bio.c
-@@ -75,6 +75,7 @@ static struct kmem_cache *bio_find_or_create_slab(unsigned int extra_size)
- 	unsigned int sz = sizeof(struct bio) + extra_size;
- 	struct kmem_cache *slab = NULL;
- 	struct bio_slab *bslab, *new_bio_slabs;
-+	unsigned int new_bio_slab_max;
- 	unsigned int i, entry = -1;
- 
- 	mutex_lock(&bio_slab_lock);
-@@ -97,12 +98,13 @@ static struct kmem_cache *bio_find_or_create_slab(unsigned int extra_size)
- 		goto out_unlock;
- 
- 	if (bio_slab_nr = bio_slab_max && entry = -1) {
--		bio_slab_max <<= 1;
-+		new_bio_slab_max = bio_slab_max << 1;
- 		new_bio_slabs = krealloc(bio_slabs,
--					 bio_slab_max * sizeof(struct bio_slab),
-+					 new_bio_slab_max * sizeof(struct bio_slab),
- 					 GFP_KERNEL);
- 		if (!new_bio_slabs)
- 			goto out_unlock;
-+		bio_slab_max = new_bio_slab_max;
- 		bio_slabs = new_bio_slabs;
- 	}
- 	if (entry = -1)
 -- 
-1.7.10.4
+Jens Axboe
 
