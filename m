@@ -1,41 +1,43 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 13 Oct 2012 00:04:32 +0000
-Subject: [dynticks:nohz/printk 5/5] kernel/printk.c:1999:2: error: implicit declaration of function 'arch_irq
-Message-Id: <20121013000432.GB27431@localhost>
+From: Samuel Iglesias Gonsalvez <siglesias@igalia.com>
+Date: Mon, 22 Oct 2012 07:36:48 +0000
+Subject: [PATCH] Staging: ipack/carriers: fix missing include linux/slab.h
+Message-Id: <1350891408-6755-1-git-send-email-siglesias@igalia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121020110833.GF5714@localhost>
+In-Reply-To: <20121020110833.GF5714@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Fengguang Wu <fengguang.wu@intel.com>
+Cc: devel@driverdev.osuosl.org, Jens Taprogge <jens.taprogge@taprogge.org>, industrypack-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Iglesias Gonsalvez <siglesias@igalia.com>
 
-Hi Frederic,
+Kernel build failed for parisc architecture:
 
-FYI, kernel build failed on
+drivers/staging/ipack/carriers/tpci200.c: In function 'tpci200_free_irq':
+drivers/staging/ipack/carriers/tpci200.c:190:2: error: implicit declaration of
+function 'kfree' [-Werror=implicit-function-declaration]
+drivers/staging/ipack/carriers/tpci200.c: In function 'tpci200_request_irq':
+drivers/staging/ipack/carriers/tpci200.c:217:2: error: implicit declaration of
+function 'kzalloc' [-Werror=implicit-function-declaration]
 
-tree:   git://github.com/fweisbec/linux-dynticks.git nohz/printk
-head:   f72ce6fbecebcf9faeaa740754ac71474758c1f6
-commit: f72ce6fbecebcf9faeaa740754ac71474758c1f6 [5/5] printk: Wake up klogd with irq_work on nohz CPU
-config: sparc64-defconfig # make ARCH=sparc64 defconfig
-
-All error/warnings:
-
-kernel/printk.c: In function 'wake_up_klogd_nohz':
-kernel/printk.c:1999:2: error: implicit declaration of function 'arch_irq_work_use_tick' [-Werror=implicit-function-declaration]
-cc1: some warnings being treated as errors
-
-vim +1999 kernel/printk.c
-
-f72ce6fb Frederic Weisbecker 2012-10-12  1993  {
-f72ce6fb Frederic Weisbecker 2012-10-12  1994  	/*
-f72ce6fb Frederic Weisbecker 2012-10-12  1995  	 * If irq work is not itself implemented using the tick
-f72ce6fb Frederic Weisbecker 2012-10-12  1996  	 * it's a safe and fast way to wake up the reader.
-f72ce6fb Frederic Weisbecker 2012-10-12  1997  	 */
-f72ce6fb Frederic Weisbecker 2012-10-12  1998  #ifdef CONFIG_IRQ_WORK
-f72ce6fb Frederic Weisbecker 2012-10-12 @1999  	if (!arch_irq_work_use_tick()) {
-f72ce6fb Frederic Weisbecker 2012-10-12  2000  		static struct irq_work klogd_irq_work = {
-f72ce6fb Frederic Weisbecker 2012-10-12  2001  			.func = wake_klogd_irq_work
-f72ce6fb Frederic Weisbecker 2012-10-12  2002  		};
-
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Samuel Iglesias Gonsalvez <siglesias@igalia.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/staging/ipack/carriers/tpci200.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/ipack/carriers/tpci200.c b/drivers/staging/ipack/carriers/tpci200.c
+index 829fd1a..24e8e6d 100644
+--- a/drivers/staging/ipack/carriers/tpci200.c
++++ b/drivers/staging/ipack/carriers/tpci200.c
+@@ -12,6 +12,7 @@
+  */
+ 
+ #include <linux/module.h>
++#include <linux/slab.h>
+ #include "tpci200.h"
+ 
+ static const u16 tpci200_status_timeout[] = {
+-- 
+1.7.10.4
+
