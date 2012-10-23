@@ -1,39 +1,87 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 07 Oct 2012 06:32:08 +0000
-Subject: [acpi:next] include/acpi/acpixf.h:55:23: fatal error: acbuffer.h": No such file or directory
-Message-Id: <20121007063208.GA24005@localhost>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Tue, 23 Oct 2012 19:57:09 +0000
+Subject: [PATCH 06/23] pvrusb2: Replace memcpy with struct assignment
+Message-Id: <1351022246-8201-6-git-send-email-elezegarcia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
+In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Mike Isely <isely@pobox.com>, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Len,
+This kind of memcpy() is error-prone. Its replacement with a struct
+assignment is prefered because it's type-safe and much easier to read.
 
-FYI, kernel build failed on
+Found by coccinelle. Hand patched and reviewed.
+Tested by compilation only.
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git next
-head:   558dc6f9ee2a6c686c80b9cdf3426858d2b8dbd1
-commit: 558dc6f9ee2a6c686c80b9cdf3426858d2b8dbd1 [0/0] Merge branch 'upstream' into next
-config: i386-alldefconfig
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-All error/warnings:
+// <smpl>
+@@
+identifier struct_name;
+struct struct_name to;
+struct struct_name from;
+expression E;
+@@
+-memcpy(&(to), &(from), E);
++to = from;
+// </smpl>
 
-In file included from include/acpi/acpi.h:64:0,
-                 from include/linux/acpi.h:39,
-                 from arch/x86/pci/irq.c:17:
-include/acpi/acpixf.h:55:23: fatal error: acbuffer.h": No such file or directory
-compilation terminated.
-
-vim +55 include/acpi/acpixf.h
-
-50df4d8b (Bob Moore           2008-12-31 03:01:23 +0800  51) 
-a1ce3928 (David Howells       2012-10-02 18:01:25 +0100  52) #include <acpi/acconfig.h>
-a1ce3928 (David Howells       2012-10-02 18:01:25 +0100  53) #include <acpi/actypes.h>
-a1ce3928 (David Howells       2012-10-02 18:01:25 +0100  54) #include <acpi/actbl.h>
-558dc6f9 (Len Brown           2012-10-06 23:06:11 -0400 @55) #include <acbuffer.h">
-^1da177e (Linus Torvalds      2005-04-16 15:20:36 -0700  56) 
-
+Cc: Mike Isely <isely@pobox.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/media/usb/pvrusb2/pvrusb2-encoder.c  |    3 +--
+ drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c |    4 ++--
+ drivers/media/usb/pvrusb2/pvrusb2-v4l2.c     |    2 +-
+ 3 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-encoder.c b/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
+index e046fda..f7702ae 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
+@@ -422,8 +422,7 @@ int pvr2_encoder_adjust(struct pvr2_hdw *hdw)
+ 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
+ 			   "Error from cx2341x module code=%d",ret);
+ 	} else {
+-		memcpy(&hdw->enc_cur_state,&hdw->enc_ctl_state,
+-		       sizeof(struct cx2341x_mpeg_params));
++		hdw->enc_cur_state = hdw->enc_ctl_state;
+ 		hdw->enc_cur_valid = !0;
+ 	}
+ 	return ret;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+index 885ce11..9691156 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+@@ -649,8 +649,8 @@ void pvr2_i2c_core_init(struct pvr2_hdw *hdw)
+ 	}
+ 
+ 	// Configure the adapter and set up everything else related to it.
+-	memcpy(&hdw->i2c_adap,&pvr2_i2c_adap_template,sizeof(hdw->i2c_adap));
+-	memcpy(&hdw->i2c_algo,&pvr2_i2c_algo_template,sizeof(hdw->i2c_algo));
++	hdw->i2c_adap = pvr2_i2c_adap_template;
++	hdw->i2c_algo = pvr2_i2c_algo_template;
+ 	strlcpy(hdw->i2c_adap.name,hdw->name,sizeof(hdw->i2c_adap.name));
+ 	hdw->i2c_adap.dev.parent = &hdw->usb_dev->dev;
+ 	hdw->i2c_adap.algo = &hdw->i2c_algo;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
+index db249ca..5b622ec 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
+@@ -1339,7 +1339,7 @@ static void pvr2_v4l2_dev_init(struct pvr2_v4l2_dev *dip,
+ 		return;
+ 	}
+ 
+-	memcpy(&dip->devbase,&vdev_template,sizeof(vdev_template));
++	dip->devbase = vdev_template;
+ 	dip->devbase.release = pvr2_video_device_release;
+ 	dip->devbase.ioctl_ops = &pvr2_ioctl_ops;
+ 	{
+-- 
+1.7.4.4
+
