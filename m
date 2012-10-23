@@ -1,32 +1,70 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Oct 2012 14:44:43 +0000
-Subject: [patch] drm: fix a test for AST2200 in ast_init_dram_reg()
-Message-Id: <20121003144443.GB18056@elgon.mountain>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Tue, 23 Oct 2012 19:57:05 +0000
+Subject: [PATCH 02/23] cx231xx: Replace memcpy with struct assignment
+Message-Id: <1351022246-8201-2-git-send-email-elezegarcia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
+In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Dave Airlie <airlied@redhat.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
 
-There is a typo here so the test for AST2200 doesn't work.  Clang found
-this:
-drivers/gpu/drm/ast/ast_post.c:282:42: warning: comparison of constant
-	2200 with expression of type 'enum ast_chip' is always false
-	[-Wtautological-constant-out-of-range-compare]
+This kind of memcpy() is error-prone. Its replacement with a struct
+assignment is prefered because it's type-safe and much easier to read.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Found by coccinelle. Hand patched and reviewed.
+Tested by compilation only.
 
-diff --git a/drivers/gpu/drm/ast/ast_post.c b/drivers/gpu/drm/ast/ast_post.c
-index 6edbee6..56b3eab3 100644
---- a/drivers/gpu/drm/ast/ast_post.c
-+++ b/drivers/gpu/drm/ast/ast_post.c
-@@ -279,7 +279,7 @@ static void ast_init_dram_reg(struct drm_device *dev)
- 				;
- 			} while (ast_read32(ast, 0x10100) != 0xa8);
- 		} else {/* AST2100/1100 */
--			if (ast->chip = AST2100 || ast->chip = 2200)
-+			if (ast->chip = AST2100 || ast->chip = AST2200)
- 				dram_reg_info = ast2100_dram_table_data;
- 			else
- 				dram_reg_info = ast1100_dram_table_data;
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier struct_name;
+struct struct_name to;
+struct struct_name from;
+expression E;
+@@
+-memcpy(&(to), &(from), E);
++to = from;
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
+---
+ drivers/media/usb/cx231xx/cx231xx-cards.c |    2 +-
+ drivers/media/usb/cx231xx/cx231xx-video.c |    3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
+index b84ebc5..352d676 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-cards.c
++++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
+@@ -705,7 +705,7 @@ void cx231xx_sleep_s5h1432(struct cx231xx *dev)
+ 
+ static inline void cx231xx_set_model(struct cx231xx *dev)
+ {
+-	memcpy(&dev->board, &cx231xx_boards[dev->model], sizeof(dev->board));
++	dev->board = cx231xx_boards[dev->model];
+ }
+ 
+ /* Since cx231xx_pre_card_setup() requires a proper dev->model,
+diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
+index fedf785..c5109ba 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-video.c
++++ b/drivers/media/usb/cx231xx/cx231xx-video.c
+@@ -2627,8 +2627,7 @@ int cx231xx_register_analog_devices(struct cx231xx *dev)
+ 		     dev->name, video_device_node_name(dev->vdev));
+ 
+ 	/* Initialize VBI template */
+-	memcpy(&cx231xx_vbi_template, &cx231xx_video_template,
+-	       sizeof(cx231xx_vbi_template));
++	cx231xx_vbi_template = cx231xx_video_template;
+ 	strcpy(cx231xx_vbi_template.name, "cx231xx-vbi");
+ 
+ 	/* Allocate and fill vbi video_device struct */
+-- 
+1.7.4.4
+
