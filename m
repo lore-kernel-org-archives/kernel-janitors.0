@@ -1,7 +1,7 @@
 From: Ezequiel Garcia <elezegarcia@gmail.com>
-Date: Tue, 23 Oct 2012 19:57:09 +0000
-Subject: [PATCH 06/23] pvrusb2: Replace memcpy with struct assignment
-Message-Id: <1351022246-8201-6-git-send-email-elezegarcia@gmail.com>
+Date: Tue, 23 Oct 2012 19:57:19 +0000
+Subject: [PATCH 16/23] cx88: Replace memcpy with struct assignment
+Message-Id: <1351022246-8201-16-git-send-email-elezegarcia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
@@ -9,7 +9,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Mike Isely <isely@pobox.com>, Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
 
 This kind of memcpy() is error-prone. Its replacement with a struct
 assignment is prefered because it's type-safe and much easier to read.
@@ -31,57 +31,55 @@ expression E;
 +to = from;
 // </smpl>
 
-Cc: Mike Isely <isely@pobox.com>
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-encoder.c  |    3 +--
- drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c |    4 ++--
- drivers/media/usb/pvrusb2/pvrusb2-v4l2.c     |    2 +-
- 3 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/media/pci/cx88/cx88-cards.c      |    2 +-
+ drivers/media/pci/cx88/cx88-i2c.c        |    3 +--
+ drivers/media/pci/cx88/cx88-vp3054-i2c.c |    3 +--
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-encoder.c b/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
-index e046fda..f7702ae 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
-@@ -422,8 +422,7 @@ int pvr2_encoder_adjust(struct pvr2_hdw *hdw)
- 		pvr2_trace(PVR2_TRACE_ERROR_LEGS,
- 			   "Error from cx2341x module code=%d",ret);
- 	} else {
--		memcpy(&hdw->enc_cur_state,&hdw->enc_ctl_state,
--		       sizeof(struct cx2341x_mpeg_params));
-+		hdw->enc_cur_state = hdw->enc_ctl_state;
- 		hdw->enc_cur_valid = !0;
- 	}
- 	return ret;
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-index 885ce11..9691156 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-@@ -649,8 +649,8 @@ void pvr2_i2c_core_init(struct pvr2_hdw *hdw)
+diff --git a/drivers/media/pci/cx88/cx88-cards.c b/drivers/media/pci/cx88/cx88-cards.c
+index 0c25524..e2e0b8f 100644
+--- a/drivers/media/pci/cx88/cx88-cards.c
++++ b/drivers/media/pci/cx88/cx88-cards.c
+@@ -3743,7 +3743,7 @@ struct cx88_core *cx88_core_create(struct pci_dev *pci, int nr)
+ 		cx88_card_list(core, pci);
  	}
  
- 	// Configure the adapter and set up everything else related to it.
--	memcpy(&hdw->i2c_adap,&pvr2_i2c_adap_template,sizeof(hdw->i2c_adap));
--	memcpy(&hdw->i2c_algo,&pvr2_i2c_algo_template,sizeof(hdw->i2c_algo));
-+	hdw->i2c_adap = pvr2_i2c_adap_template;
-+	hdw->i2c_algo = pvr2_i2c_algo_template;
- 	strlcpy(hdw->i2c_adap.name,hdw->name,sizeof(hdw->i2c_adap.name));
- 	hdw->i2c_adap.dev.parent = &hdw->usb_dev->dev;
- 	hdw->i2c_adap.algo = &hdw->i2c_algo;
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
-index db249ca..5b622ec 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
-@@ -1339,7 +1339,7 @@ static void pvr2_v4l2_dev_init(struct pvr2_v4l2_dev *dip,
- 		return;
- 	}
+-	memcpy(&core->board, &cx88_boards[core->boardnr], sizeof(core->board));
++	core->board = cx88_boards[core->boardnr];
  
--	memcpy(&dip->devbase,&vdev_template,sizeof(vdev_template));
-+	dip->devbase = vdev_template;
- 	dip->devbase.release = pvr2_video_device_release;
- 	dip->devbase.ioctl_ops = &pvr2_ioctl_ops;
- 	{
+ 	if (!core->board.num_frontends && (core->board.mpeg & CX88_MPEG_DVB))
+ 		core->board.num_frontends = 1;
+diff --git a/drivers/media/pci/cx88/cx88-i2c.c b/drivers/media/pci/cx88/cx88-i2c.c
+index de0f1af..cf2d696 100644
+--- a/drivers/media/pci/cx88/cx88-i2c.c
++++ b/drivers/media/pci/cx88/cx88-i2c.c
+@@ -139,8 +139,7 @@ int cx88_i2c_init(struct cx88_core *core, struct pci_dev *pci)
+ 	if (i2c_udelay<5)
+ 		i2c_udelay=5;
+ 
+-	memcpy(&core->i2c_algo, &cx8800_i2c_algo_template,
+-	       sizeof(core->i2c_algo));
++	core->i2c_algo = cx8800_i2c_algo_template;
+ 
+ 
+ 	core->i2c_adap.dev.parent = &pci->dev;
+diff --git a/drivers/media/pci/cx88/cx88-vp3054-i2c.c b/drivers/media/pci/cx88/cx88-vp3054-i2c.c
+index d77f8ec..deede6e 100644
+--- a/drivers/media/pci/cx88/cx88-vp3054-i2c.c
++++ b/drivers/media/pci/cx88/cx88-vp3054-i2c.c
+@@ -118,8 +118,7 @@ int vp3054_i2c_probe(struct cx8802_dev *dev)
+ 		return -ENOMEM;
+ 	dev->vp3054 = vp3054_i2c;
+ 
+-	memcpy(&vp3054_i2c->algo, &vp3054_i2c_algo_template,
+-	       sizeof(vp3054_i2c->algo));
++	vp3054_i2c->algo = vp3054_i2c_algo_template;
+ 
+ 	vp3054_i2c->adap.dev.parent = &dev->pci->dev;
+ 	strlcpy(vp3054_i2c->adap.name, core->name,
 -- 
 1.7.4.4
 
