@@ -1,71 +1,64 @@
-From: Jonathan Austin <jonathan.austin@arm.com>
-Date: Mon, 01 Oct 2012 16:20:11 +0000
-Subject: Re: [arm-perf:delay 3/3] ERROR: "read_current_timer" [fs/ext4/ext4.ko] undefined!
-Message-Id: <5069C2BB.4000207@arm.com>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Tue, 23 Oct 2012 19:57:07 +0000
+Subject: [PATCH 04/23] sn9c102: Replace memcpy with struct assignment
+Message-Id: <1351022246-8201-4-git-send-email-elezegarcia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121001114030.GB16393@localhost>
-In-Reply-To: <20121001114030.GB16393@localhost>
+References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
+In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Fengguang,
+This kind of memcpy() is error-prone. Its replacement with a struct
+assignment is prefered because it's type-safe and much easier to read.
 
-Thanks for the report,
+Found by coccinelle. Hand patched and reviewed.
+Tested by compilation only.
 
-On 01/10/12 12:40, Fengguang Wu wrote:
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> Hi Jonathan,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git delay
-> head:   d9ed51a6b84c5724fd047a4715449356fffca83f
-> commit: d9ed51a6b84c5724fd047a4715449356fffca83f [3/3] ARM: delay: add registration mechanism for delay timer sources
-> config: arm-s3c2410_defconfig
-> 
-> All error/warnings:
-> 
-> ERROR: "read_current_timer" [fs/ext4/ext4.ko] undefined!
+// <smpl>
+@@
+identifier struct_name;
+struct struct_name to;
+struct struct_name from;
+expression E;
+@@
+-memcpy(&(to), &(from), E);
++to = from;
+// </smpl>
 
-I've fixed this and sent a patch (included below) to Will for his delay branch,
-
-Jonny
-
--------8<---------
-
-From: Jonathan Austin <jonathan.austin@arm.com>
-Date: Mon, 1 Oct 2012 16:48:59 +0100
-Subject: [PATCH] ARM: delay: export read_current_timer to fix get_cycles
-
-On ARM, get_cycles() is implemented in terms of read_current_timer(), but
-the latter is not exported to modules, resulting in failure to link:
-
-  ERROR: "read_current_timer" [fs/ext4/ext4.ko] undefined!
-
-This patch exports the symbol as required.
-
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Jonathan Austin <jonathan.austin@arm.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
 ---
- arch/arm/kernel/armksyms.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ drivers/media/usb/sn9c102/sn9c102_core.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/kernel/armksyms.c b/arch/arm/kernel/armksyms.c
-index 60d3b73..6a37f8d 100644
---- a/arch/arm/kernel/armksyms.c
-+++ b/arch/arm/kernel/armksyms.c
-@@ -50,6 +50,7 @@ extern void fpundefinstr(void);
+diff --git a/drivers/media/usb/sn9c102/sn9c102_core.c b/drivers/media/usb/sn9c102/sn9c102_core.c
+index 5bfc8e2..4cae6f8 100644
+--- a/drivers/media/usb/sn9c102/sn9c102_core.c
++++ b/drivers/media/usb/sn9c102/sn9c102_core.c
+@@ -2824,7 +2824,7 @@ sn9c102_vidioc_querybuf(struct sn9c102_device* cam, void __user * arg)
+ 	    b.index >= cam->nbuffers || cam->io != IO_MMAP)
+ 		return -EINVAL;
  
-        /* platform dependent support */
- EXPORT_SYMBOL(arm_delay_ops);
-+EXPORT_SYMBOL(read_current_timer);
+-	memcpy(&b, &cam->frame[b.index].buf, sizeof(b));
++	b = cam->frame[b.index].buf;
  
-        /* networking */
- EXPORT_SYMBOL(csum_partial);
+ 	if (cam->frame[b.index].vma_use_count)
+ 		b.flags |= V4L2_BUF_FLAG_MAPPED;
+@@ -2927,7 +2927,7 @@ sn9c102_vidioc_dqbuf(struct sn9c102_device* cam, struct file* filp,
+ 
+ 	f->state = F_UNUSED;
+ 
+-	memcpy(&b, &f->buf, sizeof(b));
++	b = f->buf;
+ 	if (f->vma_use_count)
+ 		b.flags |= V4L2_BUF_FLAG_MAPPED;
+ 
 -- 
-1.7.1
-
-
+1.7.4.4
 
