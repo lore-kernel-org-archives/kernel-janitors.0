@@ -1,59 +1,56 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 03 Oct 2012 16:18:00 +0000
-Subject: [PATCH 7/20] drivers/net/irda/mcs7780.c: fix error return code
-Message-Id: <1349281090-10013-10-git-send-email-peter.senna@gmail.com>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Tue, 23 Oct 2012 19:57:25 +0000
+Subject: [PATCH 22/23] radio-wl1273: Replace memcpy with struct assignment
+Message-Id: <1351022246-8201-22-git-send-email-elezegarcia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
+In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: samuel@sortiz.org
-Cc: kernel-janitors@vger.kernel.org, irda-users@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+This kind of memcpy() is error-prone. Its replacement with a struct
+assignment is prefered because it's type-safe and much easier to read.
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Found by coccinelle. Hand patched and reviewed.
+Tested by compilation only.
 
 A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+@@
+identifier struct_name;
+struct struct_name to;
+struct struct_name from;
+expression E;
+@@
+-memcpy(&(to), &(from), E);
++to = from;
 // </smpl>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
+Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
 ---
- drivers/net/irda/mcs7780.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/radio/radio-wl1273.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/irda/mcs7780.c b/drivers/net/irda/mcs7780.c
-index 1a00b59..f07c340 100644
---- a/drivers/net/irda/mcs7780.c
-+++ b/drivers/net/irda/mcs7780.c
-@@ -920,8 +920,10 @@ static int mcs_probe(struct usb_interface *intf,
+diff --git a/drivers/media/radio/radio-wl1273.c b/drivers/media/radio/radio-wl1273.c
+index 9b0c9fa..6e55e93 100644
+--- a/drivers/media/radio/radio-wl1273.c
++++ b/drivers/media/radio/radio-wl1273.c
+@@ -2084,8 +2084,7 @@ static int __devinit wl1273_fm_radio_probe(struct platform_device *pdev)
+ 	}
  
- 	ndev->netdev_ops = &mcs_netdev_ops;
+ 	/* V4L2 configuration */
+-	memcpy(&radio->videodev, &wl1273_viddev_template,
+-	       sizeof(wl1273_viddev_template));
++	radio->videodev = wl1273_viddev_template;
  
--	if (!intf->cur_altsetting)
-+	if (!intf->cur_altsetting) {
-+		ret = -ENOMEM;
- 		goto error2;
-+	}
+ 	radio->videodev.v4l2_dev = &radio->v4l2dev;
  
- 	ret = mcs_find_endpoints(mcs, intf->cur_altsetting->endpoint,
- 				 intf->cur_altsetting->desc.bNumEndpoints);
+-- 
+1.7.4.4
 
