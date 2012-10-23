@@ -1,58 +1,56 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 03 Oct 2012 16:17:57 +0000
-Subject: [PATCH 10/20] drivers/net/irda/sh_irda.c: fix error return code
-Message-Id: <1349281090-10013-7-git-send-email-peter.senna@gmail.com>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Tue, 23 Oct 2012 19:57:08 +0000
+Subject: [PATCH 05/23] pwc: Replace memcpy with struct assignment
+Message-Id: <1351022246-8201-5-git-send-email-elezegarcia@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
+In-Reply-To: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: samuel@sortiz.org
-Cc: kernel-janitors@vger.kernel.org, irda-users@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Ezequiel Garcia <elezegarcia@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Peter Senna Tschudin <peter.senna@gmail.com>
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+This kind of memcpy() is error-prone. Its replacement with a struct
+assignment is prefered because it's type-safe and much easier to read.
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Found by coccinelle. Hand patched and reviewed.
+Tested by compilation only.
 
 A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+@@
+identifier struct_name;
+struct struct_name to;
+struct struct_name from;
+expression E;
+@@
+-memcpy(&(to), &(from), E);
++to = from;
 // </smpl>
 
+Cc: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
+Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
 ---
- drivers/net/irda/sh_irda.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/pwc/pwc-if.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/net/irda/sh_irda.c b/drivers/net/irda/sh_irda.c
-index eb315b8..4b746d9 100644
---- a/drivers/net/irda/sh_irda.c
-+++ b/drivers/net/irda/sh_irda.c
-@@ -808,8 +808,8 @@ static int __devinit sh_irda_probe(struct platform_device *pdev)
- 		goto err_mem_4;
+diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+index 42e36ba..cc5c7d8 100644
+--- a/drivers/media/usb/pwc/pwc-if.c
++++ b/drivers/media/usb/pwc/pwc-if.c
+@@ -1003,7 +1003,7 @@ static int usb_pwc_probe(struct usb_interface *intf, const struct usb_device_id
+ 	vb2_queue_init(&pdev->vb_queue);
  
- 	platform_set_drvdata(pdev, ndev);
--
--	if (request_irq(irq, sh_irda_irq, IRQF_DISABLED, "sh_irda", self)) {
-+	err = request_irq(irq, sh_irda_irq, IRQF_DISABLED, "sh_irda", self);
-+	if (err) {
- 		dev_warn(&pdev->dev, "Unable to attach sh_irda interrupt\n");
- 		goto err_mem_4;
- 	}
+ 	/* Init video_device structure */
+-	memcpy(&pdev->vdev, &pwc_template, sizeof(pwc_template));
++	pdev->vdev = pwc_template;
+ 	strcpy(pdev->vdev.name, name);
+ 	pdev->vdev.queue = &pdev->vb_queue;
+ 	pdev->vdev.queue->lock = &pdev->vb_queue_lock;
+-- 
+1.7.4.4
 
