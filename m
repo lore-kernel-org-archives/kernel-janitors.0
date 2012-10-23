@@ -1,16 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 07 Oct 2012 18:39:02 +0000
-Subject: Re: [PATCH 13/20 V2] drivers/net/ethernet/amd/amd8111e.c: fix error return code
-Message-Id: <20121007.143902.1055427466637241360.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 23 Oct 2012 17:28:10 +0000
+Subject: re: aoe: print warning regarding a common reason for dropped transmits
+Message-Id: <20121023172810.GA12454@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349475053-11464-1-git-send-email-peter.senna@gmail.com>
-	<1349475053-11464-3-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1349475053-11464-3-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: joe@perches.com, dhowells@redhat.com, rick.jones2@hp.com, netdev@pradeepdalvi.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Hello Ed L. Cashin,
 
-Applied.
+The patch 6fde53abc51d: "aoe: print warning regarding a common reason 
+for dropped transmits" from Oct 23, 2012, leads to the following 
+warning:
+drivers/block/aoe/aoenet.c:62 tx()
+	 error: 'skb' was already used up by dev_queue_xmit()
+
+61)              if (dev_queue_xmit(skb) = NET_XMIT_DROP && net_ratelimit())
+62)                      pr_warn("aoe: packet could not be sent on %s.  %s\n",
+63)                              skb->dev ? skb->dev->name : "netif",
+64)                              "consider increasing tx_queue_len");
+
+It's a use after free bug.
+
+regards,
+dan carpenter
+
