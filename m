@@ -1,63 +1,36 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 03 Oct 2012 16:18:08 +0000
-Subject: [PATCH 13/20] drivers/net/ethernet/amd/amd8111e.c: fix error return code
-Message-Id: <1349281090-10013-18-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Oct 2012 07:12:29 +0000
+Subject: [patch] ds2782_battery: signedness bug in ds278x_read_reg16()
+Message-Id: <20121024071229.GB2536@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net
-Cc: kernel-janitors@vger.kernel.org, joe@perches.com, dhowells@redhat.com, rick.jones2@hp.com, netdev@pradeepdalvi.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Anton Vorontsov <cbou@mail.ru>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+We need to check for negative values before doing the swab16() for the
+error handling to work.
 
-Convert a nonnegative error return code to a negative one, as returned
-elsewhere in the function.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
- drivers/net/ethernet/amd/amd8111e.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/amd/amd8111e.c b/drivers/net/ethernet/amd/amd8111e.c
-index 64d0d9c..3491d43 100644
---- a/drivers/net/ethernet/amd/amd8111e.c
-+++ b/drivers/net/ethernet/amd/amd8111e.c
-@@ -1845,6 +1845,7 @@ static int __devinit amd8111e_probe_one(struct pci_dev *pdev,
- 	if((pm_cap = pci_find_capability(pdev, PCI_CAP_ID_PM))=0){
- 		printk(KERN_ERR "amd8111e: No Power Management capability, "
- 		       "exiting.\n");
-+		err = -ENODEV;
- 		goto err_free_reg;
+diff --git a/drivers/power/ds2782_battery.c b/drivers/power/ds2782_battery.c
+index 6bb6e2f..2fa9b6b 100644
+--- a/drivers/power/ds2782_battery.c
++++ b/drivers/power/ds2782_battery.c
+@@ -80,13 +80,13 @@ static inline int ds278x_read_reg16(struct ds278x_info *info, int reg_msb,
+ {
+ 	int ret;
+ 
+-	ret = swab16(i2c_smbus_read_word_data(info->client, reg_msb));
++	ret = i2c_smbus_read_word_data(info->client, reg_msb);
+ 	if (ret < 0) {
+ 		dev_err(&info->client->dev, "register read failed\n");
+ 		return ret;
  	}
  
-@@ -1852,6 +1853,7 @@ static int __devinit amd8111e_probe_one(struct pci_dev *pdev,
- 	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) < 0) {
- 		printk(KERN_ERR "amd8111e: DMA not supported,"
- 			"exiting.\n");
-+		err = -ENODEV;
- 		goto err_free_reg;
- 	}
+-	*val = ret;
++	*val = swab16(ret);
+ 	return 0;
+ }
  
-
