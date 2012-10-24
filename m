@@ -1,21 +1,23 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 21 Oct 2012 01:48:49 +0000
-Subject: Re: [jdelvare-staging:i2c-for-linus 9/15] drivers/input/keyboard/adp5588-keys.c:52:19: error: field
-Message-Id: <20121021014849.GA2846@localhost>
+Date: Wed, 24 Oct 2012 09:11:02 +0000
+Subject: Re: [jdelvare-staging:i2c-for-linus 9/15] drivers/leds/leds-tca6507.c:179:20: error: field 'gpio' ha
+Message-Id: <20121024091102.GA2241@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121008071452.GA29214@localhost>
-In-Reply-To: <20121008071452.GA29214@localhost>
+References: <20121016055829.GA31864@localhost>
+ <20121024110706.69282b16@endymion.delvare>
+In-Reply-To: <20121024110706.69282b16@endymion.delvare>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: kernel-janitors@vger.kernel.org, Parisc List <linux-parisc@vger.kernel.org>
 
-On Tue, Oct 16, 2012 at 09:19:41AM +0200, Jean Delvare wrote:
+Hi Jean,
+
+On Wed, Oct 24, 2012 at 11:07:06AM +0200, Jean Delvare wrote:
 > Hi Fengguang,
 > 
-> On Tue, 16 Oct 2012 11:18:58 +0800, Fengguang Wu wrote:
-> > Hi Jean,
-> > 
+> On Tue, 16 Oct 2012 13:58:29 +0800, Fengguang Wu wrote:
 > > FYI, kernel build failed on
 > > 
 > > tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jdelvare/staging.git i2c-for-linus
@@ -23,13 +25,10 @@ On Tue, Oct 16, 2012 at 09:19:41AM +0200, Jean Delvare wrote:
 > > commit: 3ad7ea18ae8c7ddda46b7276e0bda73e707ea9c1 [9/15] i2c-i801: Support SMBus multiplexing on Asus Z8 series
 > > config: parisc-allyesconfig # make ARCH=parisc allyesconfig
 > 
-> I sent you a patch yesterday which should fix the issue:
-> http://khali.linux-fr.org/devel/linux-3/jdelvare-i2c/i2c-i801-02-fix-gpiolib-dependency.patch
-> It's in linux-next already. Can you please test it and confirm it does
-> fix the issue?
+> Can you please confirm that this problem is fixed in linux-next now? If
+> it is OK I'll send the fix to Linus quickly.
 
-Hi Jean, I just sent you another report. I found that it can still be
-reproduced in upstream 3.7-rc2 and linux-next 20121019.
+Sure. I just confirmed that linux-next 20121024 builds fine now!
 
 Thanks,
 Fengguang
