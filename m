@@ -1,49 +1,43 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Fri, 12 Oct 2012 17:36:25 +0000
-Subject: Re: [signal:for-next 79/81] init/main.c:794:2: error: implicit declaration of function 'current_pt_r
-Message-Id: <20121012173625.GI2616@ZenIV.linux.org.uk>
+From: Ed Cashin <ecashin@coraid.com>
+Date: Wed, 24 Oct 2012 18:26:13 +0000
+Subject: [PATCH] aoe: avoid using skb member after dev_queue_xmit
+Message-Id: <d1523cdc8a606d65418dc242e958ff1c@coraid.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121012164020.GC19120@localhost>
-In-Reply-To: <20121012164020.GC19120@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: ecashin@coraid.com, dan.carpenter@oracle.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 13, 2012 at 12:40:20AM +0800, Fengguang Wu wrote:
-> Hi Al,
-> 
-> FYI, kernel build failed on
-> 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/viro/signal.git for-next
-> head:   4fa20776ca79059c34f4660c8bdb0d7c1603e872
-> commit: f45a47e7f1d9668458ecd1e88b285c6348c5aa3e [79/81] x86, um: convert to saner kernel_execve() semantics
-> config: um-defconfig # make ARCH=um defconfig
-> 
-> All error/warnings:
-> 
-> init/main.c: In function 'run_init_process':
-> init/main.c:794:2: error: implicit declaration of function 'current_pt_regs' [-Werror=implicit-function-declaration]
-> init/main.c:794:2: warning: passing argument 4 of 'do_execve' makes pointer from integer without a cast [enabled by default]
-> In file included from include/linux/pid_namespace.h:4:0,
->                  from include/linux/perf_event.h:604,
->                  from include/linux/ftrace_event.h:8,
->                  from include/trace/syscall.h:6,
->                  from include/linux/syscalls.h:78,
->                  from init/main.c:16:
-> include/linux/sched.h:2323:12: note: expected 'struct pt_regs *' but argument is of type 'int'
-> cc1: some warnings being treated as errors
-> --
-> kernel/kmod.c: In function '____call_usermodehelper':
-> kernel/kmod.c:221:2: error: implicit declaration of function 'current_pt_regs' [-Werror=implicit-function-declaration]
-> kernel/kmod.c:221:2: warning: passing argument 4 of 'do_execve' makes pointer from integer without a cast [enabled by default]
-> In file included from kernel/kmod.c:22:0:
-> include/linux/sched.h:2323:12: note: expected 'struct pt_regs *' but argument is of type 'int'
-> cc1: some warnings being treated as errors
+After calling dev_queue_xmit it is no longer safe to access the
+members of the skb.
 
-Hmm... missing include, pulled indirectly by _very_ torturous ways on the
-builds I've done.  I think the sanest way to handle that is explicit
-include of ptrace.h in init/main.c, kernel/kmod.c and kernel/kthread.c.
-The funny part is, full linux-next will build just fine, thanks to
-changes in the current mainline.  Still, that's a bisection hazard we don't
-need...  Fixed and pushed.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Ed Cashin <ecashin@coraid.com>
+---
+ drivers/block/aoe/aoenet.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/block/aoe/aoenet.c b/drivers/block/aoe/aoenet.c
+index ae56828..2e47404 100644
+--- a/drivers/block/aoe/aoenet.c
++++ b/drivers/block/aoe/aoenet.c
+@@ -55,12 +55,14 @@ static int
+ tx(void) __must_hold(&txlock)
+ {
+ 	struct sk_buff *skb;
++	struct net_device *ifp;
+ 
+ 	while ((skb = skb_dequeue(&skbtxq))) {
+ 		spin_unlock_irq(&txlock);
++		ifp = skb->dev;
+ 		if (dev_queue_xmit(skb) = NET_XMIT_DROP && net_ratelimit())
+ 			pr_warn("aoe: packet could not be sent on %s.  %s\n",
+-				skb->dev ? skb->dev->name : "netif",
++				ifp ? ifp->name : "netif",
+ 				"consider increasing tx_queue_len");
+ 		spin_lock_irq(&txlock);
+ 	}
+-- 
+1.7.1
+
