@@ -1,91 +1,59 @@
-From: Grant Grundler <grantgrundler@gmail.com>
-Date: Wed, 03 Oct 2012 20:16:45 +0000
-Subject: Re: [PATCH 1/20] drivers/net/ethernet/dec/tulip/dmfe.c: fix error return code
-Message-Id: <CAP6odjgz_pspe-P-cp08XhV-7=Ubvsg6=wQXMODRJZWgK15ksw@mail.gmail.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 24 Oct 2012 14:42:26 +0000
+Subject: [PATCH] drivers/gpu/drm/radeon/evergreen_cs.c: Remove unnecessary semicolon
+Message-Id: <1351089746-5552-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349281090-10013-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1349281090-10013-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Grant Grundler <grundler@parisc-linux.org>, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: airlied@linux.ie
+Cc: airlied@redhat.com, alexander.deucher@amd.com, maraeo@gmail.com, jglisse@redhat.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Wed, Oct 3, 2012 at 9:17 AM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> From: Peter Senna Tschudin <peter.senna@gmail.com>
->
-> Convert a nonnegative error return code to a negative one, as returned
-> elsewhere in the function.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> // </smpl>
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Thanks! Looks good to me.
+// <smpl>
+@r1@
+statement S;
+position p,p1;
+@@
+S@p1;@p
 
-Acked-by: Grant Grundler <grundler@parisc-linux.org>
+@script:python r2@
+p << r1.p;
+p1 << r1.p1;
+@@
+if p[0].line != p1[0].line_end:
+        cocci.include_match(False)
+@@
+position r1.p;
+@@
+-;@p
+// </smpl>
 
-cheers,
-grant
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
->
-> ---
->  drivers/net/ethernet/dec/tulip/dmfe.c |   12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/ethernet/dec/tulip/dmfe.c b/drivers/net/ethernet/dec/tulip/dmfe.c
-> index 4d6fe60..d23755e 100644
-> --- a/drivers/net/ethernet/dec/tulip/dmfe.c
-> +++ b/drivers/net/ethernet/dec/tulip/dmfe.c
-> @@ -446,13 +446,17 @@ static int __devinit dmfe_init_one (struct pci_dev *pdev,
->         /* Allocate Tx/Rx descriptor memory */
->         db->desc_pool_ptr = pci_alloc_consistent(pdev, sizeof(struct tx_desc) *
->                         DESC_ALL_CNT + 0x20, &db->desc_pool_dma_ptr);
-> -       if (!db->desc_pool_ptr)
-> +       if (!db->desc_pool_ptr) {
-> +               err = -ENOMEM;
->                 goto err_out_res;
-> +       }
->
->         db->buf_pool_ptr = pci_alloc_consistent(pdev, TX_BUF_ALLOC *
->                         TX_DESC_CNT + 4, &db->buf_pool_dma_ptr);
-> -       if (!db->buf_pool_ptr)
-> +       if (!db->buf_pool_ptr) {
-> +               err = -ENOMEM;
->                 goto err_out_free_desc;
-> +       }
->
->         db->first_tx_desc = (struct tx_desc *) db->desc_pool_ptr;
->         db->first_tx_desc_dma = db->desc_pool_dma_ptr;
-> @@ -462,8 +466,10 @@ static int __devinit dmfe_init_one (struct pci_dev *pdev,
->         db->chip_id = ent->driver_data;
->         /* IO type range. */
->         db->ioaddr = pci_iomap(pdev, 0, 0);
-> -       if (!db->ioaddr)
-> +       if (!db->ioaddr) {
-> +               err = -ENOMEM;
->                 goto err_out_free_buf;
-> +       }
->
->         db->chip_revision = pdev->revision;
->         db->wol_mode = 0;
->
+---
+
+The full version of the semantic patch can be found at:
+http://www.mail-archive.com/cocci@systeme.lip6.fr/msg00014.html
+
+ drivers/gpu/drm/radeon/evergreen_cs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c b/drivers/gpu/drm/radeon/evergreen_cs.c
+index 573ed1b..5daf0c5 100644
+--- a/drivers/gpu/drm/radeon/evergreen_cs.c
++++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+@@ -264,7 +264,7 @@ static int evergreen_surface_check_2d(struct radeon_cs_parser *p,
+ 	/* macro tile width & height */
+ 	palign = (8 * surf->bankw * track->npipes) * surf->mtilea;
+ 	halign = (8 * surf->bankh * surf->nbanks) / surf->mtilea;
+-	mtileb = (palign / 8) * (halign / 8) * tileb;;
++	mtileb = (palign / 8) * (halign / 8) * tileb;
+ 	mtile_pr = surf->nbx / palign;
+ 	mtile_ps = (mtile_pr * surf->nby) / halign;
+ 	surf->layer_size = mtile_ps * mtileb * slice_pt;
+-- 
+1.7.11.7
+
