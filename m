@@ -1,31 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 26 Oct 2012 06:59:43 +0000
-Subject: [patch] gpiolib: unlock on error in gpio_export()
-Message-Id: <20121026065942.GB9284@elgon.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 26 Oct 2012 07:35:46 +0000
+Subject: Re: [patch] gpiolib: unlock on error in gpio_export()
+Message-Id: <CACRpkdZPDZ_b=md7CXAc+tEkbdX1inw7eyQ4pZ2UdrW=S78vDQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121026065942.GB9284@elgon.mountain>
+In-Reply-To: <20121026065942.GB9284@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely@secretlab.ca>, Ryan Mallon <rmallon@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Ryan Mallon <rmallon@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We need to unlock here before returning.
+On Fri, Oct 26, 2012 at 8:59 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Only needed in linux-next.
+> We need to unlock here before returning.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Only needed in linux-next.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d5f9742..14251c3 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -728,7 +728,8 @@ int gpio_export(unsigned gpio, bool direction_may_change)
- 				__func__, gpio,
- 				test_bit(FLAG_REQUESTED, &desc->flags),
- 				test_bit(FLAG_EXPORT, &desc->flags));
--		return -EPERM;
-+		status = -EPERM;
-+		goto fail_unlock;
- 	}
- 
- 	if (!desc->chip->direction_input || !desc->chip->direction_output)
+Thanks Dan, applied to my devel branch.
+
+Yours,
+Linus Walleij
