@@ -1,24 +1,21 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 03 Oct 2012 01:33:58 +0000
-Subject: ERROR: "ipoib_set_mode" [drivers/infiniband/ulp/ipoib/ib_ipoib.ko] undefined!
-Message-Id: <20121003013358.GB10351@localhost>
+From: Sekhar Nori <nsekhar@ti.com>
+Date: Fri, 26 Oct 2012 09:44:59 +0000
+Subject: Re: [PATCH v2] arch/arm/mach-davinci/board-dm646x-evm.c: Remove unecessary semicolon
+Message-Id: <508A58CB.8010509@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1347987599-30802-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1347987599-30802-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Or Gerlitz,
+On 9/18/2012 10:29 PM, Peter Senna Tschudin wrote:
+> Found by http://coccinelle.lip6.fr/
+> 
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-FYI, kernel build failed on
+Queuing this for v3.8
 
-commit: 862096a8bbf8f992f6d0a1a8786ffd3fc7437e48  IB/ipoib: Add more rtnl_link_ops callbacks
-config: ia64-defconfig
-
-All error/warnings:
-
-ERROR: "ipoib_set_mode" [drivers/infiniband/ulp/ipoib/ib_ipoib.ko] undefined!
-
----
-0-DAY kernel build testing backend         Open Source Technology Centre
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Thanks,
+Sekhar
