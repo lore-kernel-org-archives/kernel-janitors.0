@@ -1,39 +1,51 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Date: Tue, 02 Oct 2012 10:09:56 +0000
-Subject: Re: [patch] iommu/amd: use after free in get_irq_table()
-Message-Id: <20121002100956.GQ4009@amd.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sun, 28 Oct 2012 16:12:00 +0000
+Subject: [PATCH 1/2] drivers/net/ethernet/nxp/lpc_eth.c: Call mdiobus_unregister before mdiobus_free
+Message-Id: <1351440721-9121-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121002083439.GN12398@elgon.mountain>
-In-Reply-To: <20121002083439.GN12398-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: davem@davemloft.net
+Cc: stigge@antcom.de, edumazet@google.com, djduanjiong@gmail.com, aletes.xgr@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Tue, Oct 02, 2012 at 11:34:40AM +0300, Dan Carpenter wrote:
-> We should return NULL on error instead of the freed pointer.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-> index e78b8a4..a636d68 100644
-> --- a/drivers/iommu/amd_iommu.c
-> +++ b/drivers/iommu/amd_iommu.c
-> @@ -3867,6 +3867,7 @@ static struct irq_remap_table *get_irq_table(u16 devid, bool ioapic)
->  	table->table = kmem_cache_alloc(amd_iommu_irq_cache, GFP_ATOMIC);
->  	if (!table->table) {
->  		kfree(table);
-> +		table = NULL;
->  		goto out;
->  	}
+Based on commit b27393aecf66199f5ddad37c302d3e0cfadbe6c0
 
-Good catch. Thanks, applied.
+Calling mdiobus_free without calling mdiobus_unregister causes
+BUG_ON(). This patch fixes the issue.
 
+The semantic patch that found this issue(http://coccinelle.lip6.fr/):
+// <smpl>
+@@
+expression E;
+@@
+  ... when != mdiobus_unregister(E);
+
++ mdiobus_unregister(E);
+  mdiobus_free(E);
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+This problem is somewhat mystifying. If the patch is correct, there were
+probably many OOPSese caused by not calling mdiobus_unregister...
+Reporting anyway...
+
+ drivers/net/ethernet/nxp/lpc_eth.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
+index 53743f7..af8b414 100644
+--- a/drivers/net/ethernet/nxp/lpc_eth.c
++++ b/drivers/net/ethernet/nxp/lpc_eth.c
+@@ -1524,6 +1524,7 @@ static int lpc_eth_drv_remove(struct platform_device *pdev)
+ 				  pldat->dma_buff_base_p);
+ 	free_irq(ndev->irq, ndev);
+ 	iounmap(pldat->net_base);
++	mdiobus_unregister(pldat->mii_bus);
+ 	mdiobus_free(pldat->mii_bus);
+ 	clk_disable(pldat->clk);
+ 	clk_put(pldat->clk);
 -- 
-AMD Operating System Research Center
-
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+1.7.11.7
 
