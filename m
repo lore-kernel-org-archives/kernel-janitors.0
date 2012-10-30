@@ -1,31 +1,50 @@
-From: Yinghai Lu <yinghai@kernel.org>
-Date: Wed, 10 Oct 2012 15:59:40 +0000
-Subject: Re: [yinghai:for-x86-mm 18/19] arch/x86/mm/init.c:346:3: error: implicit declaration of function 'in
-Message-Id: <CAE9FiQWZnynnHZLgP4LMf7MKbdrEwhH-Zpx8APydh4TqK1hT=Q@mail.gmail.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 30 Oct 2012 15:09:41 +0000
+Subject: [PATCH] drivers/media/pci/saa7134/saa7134-dvb.c: Test if videobuf_dvb_get_frontend return NULL
+Message-Id: <1351609781-16148-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mchehab@infradead.org
+Cc: crope@iki.fi, remi.schwartz@gmail.com, kyle@kyle.strickland.name, pinusdtv@hotmail.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Wed, Oct 10, 2012 at 6:51 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> Hi Yinghai,
->
-> FYI, kernel build failed on
->
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/yinghai/linux-yinghai.git for-x86-mm
-> head:   ad37a81fa9ed5367bae4edb91c2b9ac6de9e7317
-> commit: 0163563e8d24832eeea2101ebcac7da299f43a02 [18/19] x86, mm: setup page table from top-down
-> config: x86_64-allyesdebian (attached as .config)
->
-> All error/warnings:
->
-> arch/x86/mm/init.c: In function 'init_mem_mapping':
-> arch/x86/mm/init.c:346:3: error: implicit declaration of function 'init_all_memory_mapping' [-Werror=implicit-function-declaration]
-> arch/x86/mm/init.c: At top level:
-> arch/x86/mm/init.c:292:123: warning: 'init_range_memory_mapping' defined but not used [-Wunused-function]
-> cc1: some warnings being treated as errors
+Based on commit: e66131cee501ee720b7b58a4b87073b8fbaaaba6
 
-Thanks, I fixed that typo.
+Not testing videobuf_dvb_get_frontend output may cause OOPS if it return
+NULL. This patch fixes this issue.
 
-Yinghai
+The semantic patch that found this issue is(http://coccinelle.lip6.fr/):
+// <smpl>
+@@
+identifier i,a,b;
+statement S, S2;
+@@
+i = videobuf_dvb_get_frontend(...);
+... when != if (!i) S
+* if (i->a.b)
+S2
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/media/pci/saa7134/saa7134-dvb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/media/pci/saa7134/saa7134-dvb.c b/drivers/media/pci/saa7134/saa7134-dvb.c
+index b209de4..27915e5 100644
+--- a/drivers/media/pci/saa7134/saa7134-dvb.c
++++ b/drivers/media/pci/saa7134/saa7134-dvb.c
+@@ -607,6 +607,9 @@ static int configure_tda827x_fe(struct saa7134_dev *dev,
+ 	/* Get the first frontend */
+ 	fe0 = videobuf_dvb_get_frontend(&dev->frontends, 1);
+ 
++	if (!fe0)
++		return -EINVAL;
++
+ 	fe0->dvb.frontend = dvb_attach(tda10046_attach, cdec_conf, &dev->i2c_adap);
+ 	if (fe0->dvb.frontend) {
+ 		if (cdec_conf->i2c_gate)
+-- 
+1.7.11.7
+
