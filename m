@@ -1,21 +1,34 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Sat, 17 Nov 2012 12:26:10 +0000
-Subject: Re: [PATCH 2/3] iommu/tegra-smmu.c: fix dentry reference leak in smmu_debugfs_stats_show().
-Message-Id: <20121117122610.GA11220@8bytes.org>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Fri, 02 Nov 2012 07:28:53 +0000
+Subject: [PATCH] staging: iio: adc: ad7280a.c: fixed macro coding style
+Message-Id: <1351841333-30581-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1352666971-13551-1-git-send-email-tipecaml@gmail.com>
- <1352666971-13551-3-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1352666971-13551-3-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyril Roelandt <tipecaml@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, joerg.roedel@amd.com, hdoyu@nvidia.com, swarren@nvidia.com
+To: jic23@cam.ac.uk
+Cc: gregkh@linuxfoundation.org, lars@metafoo.de, michael.hennerich@analog.com, thomas@m3y3r.de, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Nov 11, 2012 at 09:49:30PM +0100, Cyril Roelandt wrote:
-> Call to d_find_alias() needs a corresponding dput().
-> 
-> Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+remove unnecessary semicolon from the macro definition
 
-Applied to iommu/fixes, thanks.
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/iio/adc/ad7280a.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
+index cfc39a7..e7cb3b2 100644
+--- a/drivers/staging/iio/adc/ad7280a.c
++++ b/drivers/staging/iio/adc/ad7280a.c
+@@ -117,7 +117,7 @@
+  */
+ #define POLYNOM		0x2F
+ #define POLYNOM_ORDER	8
+-#define HIGHBIT		1 << (POLYNOM_ORDER - 1);
++#define HIGHBIT		(1 << (POLYNOM_ORDER - 1))
+ 
+ struct ad7280_state {
+ 	struct spi_device		*spi;
+-- 
+1.7.9.5
 
