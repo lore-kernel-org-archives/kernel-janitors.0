@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 18 Nov 2012 21:47:38 +0000
-Subject: build regressions 2012-11-18
-Message-Id: <50a9577a.PzFVMJ0psaEMApbL%fengguang.wu@intel.com>
+Date: Fri, 02 Nov 2012 18:34:17 +0000
+Subject: build regressions 2012-11-02
+Message-Id: <20121102183417.GA25891@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,68 +9,74 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/ptp/ptp_pch.c:152:2: error: implicit declaration of function 'ioread32' [-Werror=implicit-function-declaration]
-drivers/ptp/ptp_pch.c:153:2: error: implicit declaration of function 'iowrite32' [-Werror=implicit-function-declaration]
-drivers/ptp/ptp_pch.c:567:3: error: implicit declaration of function 'iounmap' [-Werror=implicit-function-declaration]
-drivers/ptp/ptp_pch.c:617:2: error: implicit declaration of function 'ioremap' [-Werror=implicit-function-declaration]
+usbmisc_imx6q.c:(.text+0xa30): multiple definition of `ehci_init_driver'
+drivers/usb/host/built-in.o:ehci-hcd.c:(.text+0x330): first defined here
+usbmisc_imx6q.c:(.text+0x4478): multiple definition of `ehci_suspend'
+usbmisc_imx6q.c:(.text+0x4568): multiple definition of `ehci_resume'
+usbmisc_imx6q.c:(.text+0x86b0): multiple definition of `ehci_setup'
+(.text+0x2872): multiple definition of `ehci_init_driver'
+drivers/usb/host/built-in.o:(.text+0x4422): first defined here
+(.text+0x3ac5): multiple definition of `ehci_suspend'
+(.text+0x7243): multiple definition of `ehci_resume'
+(.text+0x7359): multiple definition of `ehci_setup'
+ERROR: "dbgp_external_startup" undefined!
+ERROR: "dbgp_reset_prep" undefined!
+kernel/trace/trace.c:491:2: error: 'ARCH_TRACE_CLOCKS' undeclared here (not in a function)
+ERROR: "ptp_clock_unregister" [drivers/net/ethernet/sfc/sfc.ko] undefined!
+ERROR: "ptp_clock_event" [drivers/net/ethernet/sfc/sfc.ko] undefined!
+ERROR: "ptp_clock_register" [drivers/net/ethernet/sfc/sfc.ko] undefined!
+ERROR: "ptp_clock_index" [drivers/net/ethernet/sfc/sfc.ko] undefined!
+arch/mips/mm/tlbex.c:229:2: error: '_PAGE_SPLITTING_SHIFT' undeclared (first use in this function)
+arch/mips/mm/tlbex.c:230:6: error: 'kernel_uses_smartmips_rixi' undeclared (first use in this function)
+net/core/sock.c:1080:7: error: 'SO_GET_FILTER' undeclared (first use in this function)
+drivers/usb/host/ehci.h:662:3: error: implicit declaration of function 'readl_be' [-Werror=implicit-function-declaration]
+drivers/usb/host/ehci.h:663:3: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+drivers/usb/host/ehci.h:674:3: error: implicit declaration of function 'writel_be' [-Werror=implicit-function-declaration]
+drivers/usb/host/ehci.h:675:3: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+ERROR: "nfs4_set_task_privileged" undefined!
+net/core/filter.c:793:4: error: 'BPF_S_ANC_VLAN_TAG' undeclared (first use in this function)
+net/core/filter.c:793:3: error: array index in initializer not of integer type
+net/core/filter.c:793:3: error: (near initialization for 'decodes')
+net/core/filter.c:794:4: error: 'BPF_S_ANC_VLAN_TAG_PRESENT' undeclared (first use in this function)
+nfs4state.c:(.text+0x1733a5): undefined reference to `nfs4_set_task_privileged'
 
 [warnings]
-drivers/ptp/ptp_pch.c:587:7: warning: assignment makes pointer from integer without a cast [enabled by default]
-include/linux/leds.h:158:18: warning: 'struct led_trigger' declared inside parameter list [enabled by default]
-include/linux/leds.h:158:18: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-drivers/net/wireless/orinoco/orinoco_nortel.c:161:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/orinoco/orinoco_tmd.c:111:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/orinoco/orinoco_pci.c:133:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/orinoco/orinoco_plx.c:200:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/mwifiex/pcie.c:1739:17: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/ipw2x00/ipw2100.c:6234:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/hippi/rrunner.c:152:15: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/fealnx.c:528:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/3com/typhoon.c:2206:25: warning: initialization makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/3com/typhoon.c:2335:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/3com/3c59x.c:996:10: warning: passing argument 2 of 'vortex_probe1' makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/rdc/r6040.c:1132:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/silan/sc92031.c:1425:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/sun/cassini.c:5073:11: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/mwl8k.c:5769:13: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/adm8211.c:1831:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/can/sja1000/plx_pci.c:411:14: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/can/sja1000/peak_pci.c:583:11: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/can/sja1000/kvaser_pci.c:318:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/can/sja1000/ems_pci.c:265:18: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/ath/ath5k/pci.c:239:6: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/ath/ath9k/pci.c:232:6: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/via/via-rhine.c:950:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/ti/tlan.c:2838:11: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-drivers/net/ethernet/smsc/epic100.c:368:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/sis/sis900.c:480:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/realtek/8139too.c:815:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/packetengines/yellowfin.c:412:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c:90:8: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c:2661:18: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/myricom/myri10ge/myri10ge.c:3977:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/intel/e100.c:2885:11: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/icplus/ipg.c:2256:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/dlink/dl2k.c:150:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/dlink/sundance.c:516:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/emulex/benet/be_main.c:3360:7: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/broadcom/bnx2.c:8120:14: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/dec/tulip/xircom_cb.c:258:18: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/dec/tulip/dmfe.c:464:13: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/dec/tulip/winbond-840.c:392:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/dec/tulip/tulip_core.c:1445:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/dec/tulip/uli526x.c:363:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/cisco/enic/enic_main.c:2360:22: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/atheros/atlx/atl1.c:2992:22: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/ethernet/atheros/atl1e/atl1e_main.c:2293:22: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/net/wireless/rtl818x/rtl8180/dev.c:967:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+warning: (BLK_DEV_RBD && CEPH_FS) selects CEPH_LIB which has unmet direct dependencies (NET && INET && EXPERIMENTAL)
+kernel/trace/trace_output.c:632:28: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+kernel/trace/trace_output.c:632:3: warning: right shift count >= width of type [enabled by default]
+kernel/trace/trace_output.c:632:3: warning: passing argument 1 of '__div64_32' from incompatible pointer type [enabled by default]
+arch/x86/xen/enlighten.c:1560:16: warning: unused variable 'ebx' [-Wunused-variable]
+arch/x86/xen/enlighten.c:1560:11: warning: unused variable 'eax' [-Wunused-variable]
 
 [sparse]
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c:1551:19: sparse: incorrect type in return expression (different base types)
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c:1567:60: sparse: cast from restricted __le32
+drivers/cpuidle/driver.c:81:1: sparse: symbol '__pcpu_scope_cpuidle_drivers' was not declared. Should it be static?
+drivers/cpuidle/driver.c:81:1: sparse: symbol 'cpuidle_drivers' was not declared. Should it be static?
+kernel/trace/trace_syscalls.c:81:1: sparse: symbol 'print_syscall_enter' was not declared. Should it be static?
+kernel/trace/trace_syscalls.c:134:1: sparse: symbol 'print_syscall_exit' was not declared. Should it be static?
+kernel/trace/trace_syscalls.c:340:5: sparse: symbol 'reg_event_syscall_enter' was not declared. Should it be static?
+kernel/trace/trace_syscalls.c:359:6: sparse: symbol 'unreg_event_syscall_enter' was not declared. Should it be static?
+kernel/trace/trace_syscalls.c:374:5: sparse: symbol 'reg_event_syscall_exit' was not declared. Should it be static?
+kernel/trace/trace_syscalls.c:393:6: sparse: symbol 'unreg_event_syscall_exit' was not declared. Should it be static?
+drivers/acpi/device_pm.c:407:5: sparse: symbol 'acpi_dev_runtime_suspend' was not declared. Should it be static?
+drivers/acpi/device_pm.c:438:5: sparse: symbol 'acpi_dev_runtime_resume' was not declared. Should it be static?
+drivers/acpi/device_pm.c:459:5: sparse: symbol 'acpi_subsys_runtime_suspend' was not declared. Should it be static?
+drivers/acpi/device_pm.c:473:5: sparse: symbol 'acpi_subsys_runtime_resume' was not declared. Should it be static?
+drivers/acpi/device_pm.c:491:5: sparse: symbol 'acpi_dev_suspend_late' was not declared. Should it be static?
+drivers/acpi/device_pm.c:523:5: sparse: symbol 'acpi_dev_resume_early' was not declared. Should it be static?
+drivers/acpi/device_pm.c:541:5: sparse: symbol 'acpi_subsys_prepare' was not declared. Should it be static?
+drivers/acpi/device_pm.c:559:5: sparse: symbol 'acpi_subsys_suspend_late' was not declared. Should it be static?
+drivers/acpi/device_pm.c:574:5: sparse: symbol 'acpi_subsys_resume_early' was not declared. Should it be static?
+drivers/acpi/device_pm.c:613:5: sparse: symbol 'acpi_dev_pm_attach' was not declared. Should it be static?
+drivers/acpi/device_pm.c:639:6: sparse: symbol 'acpi_dev_pm_detach' was not declared. Should it be static?
+kernel/trace/trace.c:492:9: sparse: undefined identifier 'ARCH_TRACE_CLOCKS'
 
 [smatch]
-drivers/power/lp8788-charger.c:304 lp8788_get_battery_temperature() info: why not propagate 'ret' from iio_read_channel_processed() instead of -22?
+drivers/staging/comedi/drivers/addi-data/addi_common.c:180 addi_attach_pci() error: we previously assumed 'this_board->pc_EepromChip' could be null (see line 129)
+drivers/staging/comedi/drivers/jr3_pci.c:793 jr3_pci_auto_attach() info: why not propagate 'result' from comedi_pci_enable() instead of -5?
+drivers/misc/mei/amthif.c:254 mei_amthif_read() warn: inconsistent returns mutex:&dev->device_lock: locked (167,174,181,254) unlocked (193)
+drivers/ptp/ptp_chardev.c:36 ptp_ioctl() warn: 'sysoff' puts 832 bytes on stack
+drivers/target/target_core_spc.c:943 spc_emulate_modesense() warn: possible memory leak of 'buf'
+drivers/target/target_core_spc.c:985 spc_emulate_modeselect() warn: 'tbuf' puts 512 bytes on stack
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
