@@ -1,49 +1,60 @@
-From: Alex Elder <elder@inktank.com>
-Date: Tue, 20 Nov 2012 16:21:46 +0000
-Subject: Re: [PATCH 3/3] ceph: fix dentry reference leak in ceph_encode_fh().
-Message-Id: <50ABAE1A.2020203@inktank.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Fri, 02 Nov 2012 11:06:37 +0000
+Subject: Re: [patch] iio:dac:ad5449: unlock on error path
+Message-Id: <5093A93D.70302@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1352666971-13551-1-git-send-email-tipecaml@gmail.com> <1352666971-13551-4-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1352666971-13551-4-git-send-email-tipecaml@gmail.com>
+References: <20121024071307.GC2536@elgon.mountain> <5087A55C.6010202@metafoo.de>
+In-Reply-To: <5087A55C.6010202@metafoo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyril Roelandt <tipecaml@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, sage@inktank.com, ceph-devel@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jonathan Cameron <jic23@cam.ac.uk>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/11/2012 02:49 PM, Cyril Roelandt wrote:
-> dput() was not called in the error path.
+On 10/24/2012 09:22 AM, Lars-Peter Clausen wrote:
+> On 10/24/2012 09:13 AM, Dan Carpenter wrote:
+>> There is an unlock missing on this error path.
+>>
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
-
-This looks good, thanks a lot.  I'll apply it.
-
-Reviewed-by: Alex Elder <elder@inktank.com>
-
-> ---
->  fs/ceph/export.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Thanks,
 > 
-> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> index 9349bb3..ca3ab3f 100644
-> --- a/fs/ceph/export.c
-> +++ b/fs/ceph/export.c
-> @@ -56,13 +56,15 @@ static int ceph_encode_fh(struct inode *inode, u32 *rawfh, int *max_len,
->  	struct ceph_nfs_confh *cfh = (void *)rawfh;
->  	int connected_handle_length = sizeof(*cfh)/4;
->  	int handle_length = sizeof(*fh)/4;
-> -	struct dentry *dentry = d_find_alias(inode);
-> +	struct dentry *dentry;
->  	struct dentry *parent;
->  
->  	/* don't re-export snaps */
->  	if (ceph_snap(inode) != CEPH_NOSNAP)
->  		return -EINVAL;
->  
-> +	dentry = d_find_alias(inode);
-> +
->  	/* if we found an alias, generate a connectable fh */
->  	if (*max_len >= connected_handle_length && dentry) {
->  		dout("encode_fh %p connectable\n", dentry);
-> 
+> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Thanks applied to togreg branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
 
+> 
+>> ---
+>> Only needed in linux-next.
+>>
+>> diff --git a/drivers/iio/dac/ad5449.c b/drivers/iio/dac/ad5449.c
+>> index 5b43030..0ee6f8e 100644
+>> --- a/drivers/iio/dac/ad5449.c
+>> +++ b/drivers/iio/dac/ad5449.c
+>> @@ -124,12 +124,13 @@ static int ad5449_read(struct iio_dev *indio_dev, unsigned int addr,
+>>  
+>>  	ret = spi_sync(st->spi, &msg);
+>>  	if (ret < 0)
+>> -		return ret;
+>> +		goto out_unlock;
+>>  
+>>  	*val = be16_to_cpu(st->data[1]);
+>> -	mutex_unlock(&indio_dev->mlock);
+>>  
+>> -	return 0;
+>> +out_unlock:
+>> +	mutex_unlock(&indio_dev->mlock);
+>> +	return ret;
+>>  }
+>>  
+>>  static int ad5449_read_raw(struct iio_dev *indio_dev,
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
