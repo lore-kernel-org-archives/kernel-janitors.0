@@ -1,52 +1,91 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Wed, 07 Nov 2012 12:08:09 +0000
-Subject: [PATCH] staging: comedi: drivers: jr3_pci.c: fix for coding style issue
-Message-Id: <1352290089-14477-1-git-send-email-gmate.amit@gmail.com>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Fri, 02 Nov 2012 09:39:11 +0000
+Subject: Re: [PATCH 5/5] drivers/iio/industrialio-event.c: eliminate possible double free
+Message-Id: <509394BF.9020006@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr> <1350816727-1381-6-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1350816727-1381-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: abbotti@mev.co.uk
-Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, ravishankar.km@greenturtles.in, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jonathan Cameron <jic23@cam.ac.uk>, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-fixed few error and warning messages as reported by checkpatch.pl
+On 10/21/2012 11:52 AM, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> The function __iio_add_event_config_attrs is only called once, by the
+> function iio_device_register_eventset.  If the call fails,
+> iio_device_register_eventset calls __iio_remove_event_config_attrs.  There
+> is thus no need for __iio_add_event_config_attrs to also call
+> __iio_remove_event_config_attrs on failure.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r@
+> identifier f,free,a;
+> parameter list[n] ps;
+> type T;
+> expression e;
+> @@
+> 
+> f(ps,T a,...) {
+>   ... when any
+>       when != a = e
+>   if(...) { ... free(a); ... return ...; }
+>   ... when any
+> }
+> 
+> @@
+> identifier r.f,r.free;
+> expression x,a;
+> expression list[r.n] xs;
+> @@
+> 
+> * x = f(xs,a,...);
+>   if (...) { ... free(a); ... return ...; }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
----
- drivers/staging/comedi/drivers/jr3_pci.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Thanks - merged to fixes-togreg branch of iio.git
 
-diff --git a/drivers/staging/comedi/drivers/jr3_pci.c b/drivers/staging/comedi/drivers/jr3_pci.c
-index 364541d..20fdb7b 100644
---- a/drivers/staging/comedi/drivers/jr3_pci.c
-+++ b/drivers/staging/comedi/drivers/jr3_pci.c
-@@ -360,7 +360,7 @@ static int read_idm_word(const u8 *data, size_t size, int *pos,
- 	return result;
- }
- 
--static int jr3_download_firmware(struct comedi_device *dev, const u8 * data,
-+static int jr3_download_firmware(struct comedi_device *dev, const u8 *data,
- 				 size_t size)
- {
- 	/*
-@@ -470,14 +470,13 @@ static struct poll_delay_t jr3_pci_poll_subdevice(struct comedi_subdevice *s)
- 		struct jr3_channel __iomem *channel = p->channel;
- 		int errors = get_u16(&channel->errors);
- 
--		if (errors != p->errors) {
-+		if (errors != p->errors)
- 			p->errors = errors;
--		}
--		if (errors & (watch_dog | watch_dog2 | sensor_change)) {
-+
-+		if (errors & (watch_dog | watch_dog2 | sensor_change))
- 			/*  Sensor communication lost, force poll mode */
- 			p->state = state_jr3_poll;
- 
--		}
- 		switch (p->state) {
- 		case state_jr3_poll: {
- 				u16 model_no = get_u16(&channel->model_no);
--- 
-1.7.9.5
-
+Jonathan
+> 
+> ---
+> __iio_remove_event_config_attrs kfrees the elements of a list, but doesn't
+> actually remove them from the list.  Perhaps for safety this should be
+> cleaned up as well.  Not tested.
+> 
+>  drivers/iio/industrialio-event.c |    7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industrialio-event.c
+> index fa6543b..78570c7 100644
+> --- a/drivers/iio/industrialio-event.c
+> +++ b/drivers/iio/industrialio-event.c
+> @@ -350,15 +350,10 @@ static inline int __iio_add_event_config_attrs(struct iio_dev *indio_dev)
+>  		ret = iio_device_add_event_sysfs(indio_dev,
+>  						 &indio_dev->channels[j]);
+>  		if (ret < 0)
+> -			goto error_clear_attrs;
+> +			return ret;
+>  		attrcount += ret;
+>  	}
+>  	return attrcount;
+> -
+> -error_clear_attrs:
+> -	__iio_remove_event_config_attrs(indio_dev);
+> -
+> -	return ret;
+>  }
+>  
+>  static bool iio_check_for_dynamic_events(struct iio_dev *indio_dev)
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
