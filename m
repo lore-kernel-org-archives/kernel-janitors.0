@@ -1,31 +1,49 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 26 Nov 2012 17:07:43 +0000
-Subject: build regressions 2012-11-26
-Message-Id: <50b3a1df.mOU5z7tdv5V8fZiZ%fengguang.wu@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Nov 2012 20:30:22 +0000
+Subject: [PATCH 5/8] drivers/scsi/qla2xxx/qla_nx.c: drop if around WARN_ON
+Message-Id: <1351974625-10282-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Vasquez <andrew.vasquez@qlogic.com>
+Cc: kernel-janitors@vger.kernel.org, linux-driver@qlogic.com, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[errors]
-of_iommu.c:(.text+0x114dbc): undefined reference to `__aeabi_uldivmod'
-arch/arm/mach-omap2/timer.c:195:3: error: implicit declaration of function 'prom_add_property' [-Werror=implicit-function-declaration]
-drivers/net/ethernet/ti/cpts.c:30:24: fatal error: plat/clock.h: No such file or directory
-net/mac80211/mlme.c:1868:3: error: 'ifmgd' undeclared (first use in this function)
-drivers/mfd/da9052-i2c.c:63:5: error: redefinition of 'da9052_i2c_fix'
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[warnings]
-drivers/media/platform/soc_camera/mx3_camera.c:1134:2: warning: initialization from incompatible pointer type [enabled by default]
-drivers/media/platform/soc_camera/mx3_camera.c:1134:2: warning: (near initialization for 'mx3_soc_camera_host_ops.set_crop') [enabled by default]
-warning: (NET_DSA_TAG_DSA && NET_DSA_TAG_EDSA && NET_DSA_TAG_TRAILER) selects NET_DSA which has unmet direct dependencies (NET && EXPERIMENTAL && NETDEVICES && !S390)
+Just use WARN_ON rather than an if containing only WARN_ON(1).
 
-[sparse]
-drivers/gpu/drm/qxl/qxl_debugfs.c:109:42: sparse: Using plain integer as NULL pointer
+A simplified version of the semantic patch that makes this transformation
+is as follows: (http://coccinelle.lip6.fr/)
 
-[smatch]
-net/wireless/nl80211.c:3728 nl80211_set_bss() info: why not propagate 'params.p2p_ctwindow' from nla_get_s8() instead of -22?
+// <smpl>
+@@
+expression e;
+@@
+- if (e) WARN_ON(1);
++ WARN_ON(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/scsi/qla2xxx/qla_nx.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_nx.c b/drivers/scsi/qla2xxx/qla_nx.c
+index f5e297c..4c62a5d 100644
+--- a/drivers/scsi/qla2xxx/qla_nx.c
++++ b/drivers/scsi/qla2xxx/qla_nx.c
+@@ -388,8 +388,7 @@ qla82xx_pci_set_crbwindow(struct qla_hw_data *ha, u64 off)
+ 
+ 	if ((off >= QLA82XX_CRB_PCIX_HOST) && (off < QLA82XX_CRB_PCIX_HOST2)) {
+ 		/* We are in first CRB window */
+-		if (ha->curr_window != 0)
+-			WARN_ON(1);
++		WARN_ON(ha->curr_window != 0);
+ 		return off;
+ 	}
+ 
+
