@@ -1,64 +1,14 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 03 Nov 2012 10:58:27 +0000
-Subject: [PATCH 6/16] drivers/infiniband/hw/cxgb4/cm.c: use WARN
-Message-Id: <1351940317-14812-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Steve Wise <swise@opengridcomputing.com>
+Date: Sat, 03 Nov 2012 12:40:49 +0000
+Subject: Re: [PATCH 6/16] drivers/infiniband/hw/cxgb4/cm.c: use WARN
+Message-Id: <509510D1.10200@opengridcomputing.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr> <1351940317-14812-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351940317-14812-7-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Wise <swise@chelsio.com>
-Cc: kernel-janitors@vger.kernel.org, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Use WARN rather than printk followed by WARN_ON(1), for conciseness.
-
-A simplified version of the semantic patch that makes this transformation
-is as follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression list es;
-@@
-
--printk(
-+WARN(1,
-  es);
--WARN_ON(1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/infiniband/hw/cxgb4/cm.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
-index 6cfd4d8..ed048b9 100644
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -151,9 +151,8 @@ static void stop_ep_timer(struct c4iw_ep *ep)
- {
- 	PDBG("%s ep %p\n", __func__, ep);
- 	if (!timer_pending(&ep->timer)) {
--		printk(KERN_ERR "%s timer stopped when its not running! "
-+		WARN(1, KERN_ERR "%s timer stopped when its not running! "
- 		       "ep %p state %u\n", __func__, ep, ep->com.state);
--		WARN_ON(1);
- 		return;
- 	}
- 	del_timer_sync(&ep->timer);
-@@ -2551,9 +2550,8 @@ static void process_timeout(struct c4iw_ep *ep)
- 		__state_set(&ep->com, ABORTING);
- 		break;
- 	default:
--		printk(KERN_ERR "%s unexpected state ep %p tid %u state %u\n",
-+		WARN(1, KERN_ERR "%s unexpected state ep %p tid %u state %u\n",
- 			__func__, ep, ep->hwtid, ep->com.state);
--		WARN_ON(1);
- 		abort = 0;
- 	}
- 	mutex_unlock(&ep->com.mutex);
-
+Acked-by: Steve Wise <swise@opengridcomputing.com>
