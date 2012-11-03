@@ -1,35 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 12 Nov 2012 11:08:14 +0000
-Subject: [patch] fbmem: return -EFAULT on copy_to_user() failure
-Message-Id: <20121112110814.GB1678@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Nov 2012 20:30:21 +0000
+Subject: [PATCH 4/8] fs/ext3/inode.c: drop if around WARN_ON
+Message-Id: <1351974625-10282-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
 
-copy_to_user() returns the number of bytes remaining to be copied.
-put_user() returns -EFAULT on error.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This function ORs a bunch of stuff together and returns jumbled non-zero
-values on error.  It should return -EFAULT.
+Just use WARN_ON rather than an if containing only WARN_ON(1).
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A simplified version of the semantic patch that makes this transformation
+is as follows: (http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/video/fbmem.c b/drivers/video/fbmem.c
-index 3ff0105..3d2a4d0 100644
---- a/drivers/video/fbmem.c
-+++ b/drivers/video/fbmem.c
-@@ -1302,8 +1302,9 @@ static int do_fscreeninfo_to_user(struct fb_fix_screeninfo *fix,
- 	err |= put_user(fix->accel, &fix32->accel);
- 	err |= copy_to_user(fix32->reserved, fix->reserved,
- 			    sizeof(fix->reserved));
--
--	return err;
-+	if (err)
-+		return -EFAULT;
-+	return 0;
- }
- 
- static int fb_get_fscreeninfo(struct fb_info *info, unsigned int cmd,
+// <smpl>
+@@
+expression e;
+@@
+- if (e) WARN_ON(1);
++ WARN_ON(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ fs/ext3/inode.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/ext3/inode.c b/fs/ext3/inode.c
+index 7e87e37..b176d42 100644
+--- a/fs/ext3/inode.c
++++ b/fs/ext3/inode.c
+@@ -1071,8 +1071,7 @@ struct buffer_head *ext3_getblk(handle_t *handle, struct inode *inode,
+ 	 * mapped. 0 in case of a HOLE.
+ 	 */
+ 	if (err > 0) {
+-		if (err > 1)
+-			WARN_ON(1);
++		WARN_ON(err > 1);
+ 		err = 0;
+ 	}
+ 	*errp = err;
+
