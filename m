@@ -1,32 +1,69 @@
-From: Luciano Coelho <coelho@ti.com>
-Date: Fri, 16 Nov 2012 18:18:14 +0000
-Subject: Re: [PATCH 2/5] drivers/net/wireless/ti/wlcore/main.c: eliminate possible double power off
-Message-Id: <1353089894.10872.77.camel@cumari.coelho.fi>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Nov 2012 10:58:25 +0000
+Subject: [PATCH 4/16] drivers/usb/wusbcore: use WARN
+Message-Id: <1351940317-14812-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1350816727-1381-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1350816727-1381-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2012-10-21 at 12:52 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> The function wl12xx_set_power_on is only called twice, once in
-> wl12xx_chip_wakeup and once in wl12xx_get_hw_info.  On the failure of the
-> call in wl12xx_chip_wakeup, the containing function just returns, but on
-> the failure of the call in wl12xx_get_hw_info, the containing function
-> calls wl1271_power_off.  This does not seem necessary, because if
-> wl12xx_set_power_on has set the power on and then fails, it has already
-> turned the power off.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[...]
+Use WARN rather than printk followed by WARN_ON(1), for conciseness.
 
-Applied and pushed, thanks!
+A simplified version of the semantic patch that makes this transformation
+is as follows: (http://coccinelle.lip6.fr/)
 
---
-Luca.
+// <smpl>
+@@
+expression list es;
+@@
+
+-printk(
++WARN(1,
+  es);
+-WARN_ON(1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/usb/wusbcore/wa-xfer.c |    3 +--
+ drivers/usb/wusbcore/wusbhc.c  |    3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/wusbcore/wa-xfer.c b/drivers/usb/wusbcore/wa-xfer.c
+index 57c01ab..1b80601 100644
+--- a/drivers/usb/wusbcore/wa-xfer.c
++++ b/drivers/usb/wusbcore/wa-xfer.c
+@@ -1124,9 +1124,8 @@ int wa_urb_dequeue(struct wahc *wa, struct urb *urb)
+ 		switch (seg->status) {
+ 		case WA_SEG_NOTREADY:
+ 		case WA_SEG_READY:
+-			printk(KERN_ERR "xfer %p#%u: dequeue bad state %u\n",
++			WARN(1, KERN_ERR "xfer %p#%u: dequeue bad state %u\n",
+ 			       xfer, cnt, seg->status);
+-			WARN_ON(1);
+ 			break;
+ 		case WA_SEG_DELAYED:
+ 			seg->status = WA_SEG_ABORTED;
+diff --git a/drivers/usb/wusbcore/wusbhc.c b/drivers/usb/wusbcore/wusbhc.c
+index 0faca16..bb5e649 100644
+--- a/drivers/usb/wusbcore/wusbhc.c
++++ b/drivers/usb/wusbcore/wusbhc.c
+@@ -435,9 +435,8 @@ static void __exit wusbcore_exit(void)
+ 		char buf[256];
+ 		bitmap_scnprintf(buf, sizeof(buf), wusb_cluster_id_table,
+ 				 CLUSTER_IDS);
+-		printk(KERN_ERR "BUG: WUSB Cluster IDs not released "
++		WARN(1, KERN_ERR "BUG: WUSB Cluster IDs not released "
+ 		       "on exit: %s\n", buf);
+-		WARN_ON(1);
+ 	}
+ 	usb_unregister_notify(&wusb_usb_notifier);
+ 	destroy_workqueue(wusbd);
 
