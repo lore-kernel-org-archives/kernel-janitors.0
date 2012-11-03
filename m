@@ -1,62 +1,58 @@
-From: Rafael Aquini <aquini@redhat.com>
-Date: Tue, 13 Nov 2012 14:28:22 +0000
-Subject: Re: [patch] virtio_balloon: unlock on error in fill_balloon()
-Message-Id: <20121113142821.GB1636@optiplex.redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Nov 2012 10:58:31 +0000
+Subject: [PATCH 10/16] drivers/net/ethernet/ibm/emac/mal.c: use WARN
+Message-Id: <1351940317-14812-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121113074303.GA13198@elgon.mountain>
-In-Reply-To: <20121113074303.GA13198@elgon.mountain>
+References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org, "Michael S. Tsirkin" <mst@redhat.com>
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2012 at 10:43:03AM +0300, Dan Carpenter wrote:
-> We recently added locking in fill_balloon() but there was one error path
-> which was missed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Only needed in linux-next.
-> 
-> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> index f70151b..1c50e98 100644
-> --- a/drivers/virtio/virtio_balloon.c
-> +++ b/drivers/virtio/virtio_balloon.c
-> @@ -153,9 +153,10 @@ static void fill_balloon(struct virtio_balloon *vb, size_t num)
->  
->  	/* Didn't get any?  Oh well. */
->  	if (vb->num_pfns = 0)
-> -		return;
-> +		goto unlock;
->  
->  	tell_host(vb, vb->inflate_vq);
-> +unlock:
->  	mutex_unlock(&vb->balloon_lock);
->  }
->
-Thanks for the catch Dan. 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Andrew has already picked a slightly different (and simpler) fix for this one,
-though.
+Use WARN rather than printk followed by WARN_ON(1), for conciseness.
 
----8<---
-a/drivers/virtio/virtio_balloon.c~virtio_balloon-introduce-migration-primitives-to-balloon-pages-fix-fix
-+++ a/drivers/virtio/virtio_balloon.c
-@@ -151,13 +151,9 @@ static void fill_balloon(struct virtio_b
-                totalram_pages--;
-       	}
+A simplified version of the semantic patch that makes this transformation
+is as follows: (http://coccinelle.lip6.fr/)
 
--	/* Didn't get any?  Oh well. */
--	if (vb->num_pfns = 0) {
--               mutex_unlock(&vb->balloon_lock);
--               return;
+// <smpl>
+@@
+expression list es;
+@@
+
+-printk(
++WARN(1,
+  es);
+-WARN_ON(1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/ibm/emac/mal.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet/ibm/emac/mal.c
+index 479e43e..84c6b6c 100644
+--- a/drivers/net/ethernet/ibm/emac/mal.c
++++ b/drivers/net/ethernet/ibm/emac/mal.c
+@@ -738,13 +738,11 @@ static int __devexit mal_remove(struct platform_device *ofdev)
+ 	/* Synchronize with scheduled polling */
+ 	napi_disable(&mal->napi);
+ 
+-	if (!list_empty(&mal->list)) {
++	if (!list_empty(&mal->list))
+ 		/* This is *very* bad */
+-		printk(KERN_EMERG
++		WARN(1, KERN_EMERG
+ 		       "mal%d: commac list is not empty on remove!\n",
+ 		       mal->index);
+-		WARN_ON(1);
 -	}
--
--	tell_host(vb, vb->inflate_vq);
-+	/* Did we get any? */
-+	if (vb->num_pfns != 0)
-+               tell_host(vb, vb->inflate_vq);
-        mutex_unlock(&vb->balloon_lock);
- }
----8<---
+ 
+ 	dev_set_drvdata(&ofdev->dev, NULL);
+ 
+
