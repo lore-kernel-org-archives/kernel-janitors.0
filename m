@@ -1,42 +1,52 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Mon, 19 Nov 2012 21:36:09 +0000
-Subject: [PATCH] mx2_camera: use GFP_ATOMIC under spin lock.
-Message-Id: <1353360969-18515-1-git-send-email-tipecaml@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Nov 2012 10:58:35 +0000
+Subject: [PATCH 14/16] drivers/ssb/main.c: use WARN
+Message-Id: <1351940317-14812-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: linux-media@vger.kernel.org, mchehab@infradead.org, g.liakhovetski@gmx.de, kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>
+To: Michael Buesch <m@bues.ch>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Found using the following semantic patch:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-<spml>
+Use WARN rather than printk followed by WARN_ON(1), for conciseness.
+
+A simplified version of the semantic patch that makes this transformation
+is as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
 @@
+expression list es;
 @@
-spin_lock_irqsave(...);
-... when != spin_unlock_irqrestore(...);
-* GFP_KERNEL
-</spml>
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+-printk(
++WARN(1,
+  es);
+-WARN_ON(1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/platform/soc_camera/mx2_camera.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ssb/main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
-index e575ae8..516b3a3 100644
---- a/drivers/media/platform/soc_camera/mx2_camera.c
-+++ b/drivers/media/platform/soc_camera/mx2_camera.c
-@@ -909,7 +909,7 @@ static int mx2_start_streaming(struct vb2_queue *q, unsigned int count)
- 		pcdev->discard_size = icd->user_height * bytesperline;
- 		pcdev->discard_buffer = dma_alloc_coherent(ici->v4l2_dev.dev,
- 				pcdev->discard_size, &pcdev->discard_buffer_dma,
--				GFP_KERNEL);
-+				GFP_ATOMIC);
- 		if (!pcdev->discard_buffer)
- 			return -ENOMEM;
- 
--- 
-1.7.10.4
+diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
+index df0f145..519688d 100644
+--- a/drivers/ssb/main.c
++++ b/drivers/ssb/main.c
+@@ -1118,8 +1118,7 @@ static u32 ssb_tmslow_reject_bitmask(struct ssb_device *dev)
+ 	case SSB_IDLOW_SSBREV_27:     /* same here */
+ 		return SSB_TMSLOW_REJECT;	/* this is a guess */
+ 	default:
+-		printk(KERN_INFO "ssb: Backplane Revision 0x%.8X\n", rev);
+-		WARN_ON(1);
++		WARN(1, KERN_INFO "ssb: Backplane Revision 0x%.8X\n", rev);
+ 	}
+ 	return (SSB_TMSLOW_REJECT | SSB_TMSLOW_REJECT_23);
+ }
 
