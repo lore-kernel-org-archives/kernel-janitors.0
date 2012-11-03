@@ -1,42 +1,35 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Wed, 14 Nov 2012 11:57:35 +0000
-Subject: Re: [PATCH] staging: dgrp: dgrp_tty.c: return an -EFAULT if put_user fails
-Message-Id: <20121114115735.19883baf@pyramind.ukuu.org.uk>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 03 Nov 2012 01:36:52 +0000
+Subject: Re: [PATCH 1/2] drivers/net/ethernet/nxp/lpc_eth.c: Call mdiobus_unregister before mdiobus_free
+Message-Id: <20121102.213652.471891990686700974.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1352874741-18526-1-git-send-email-gmate.amit@gmail.com>
-In-Reply-To: <1352874741-18526-1-git-send-email-gmate.amit@gmail.com>
+References: <1351440721-9121-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1351440721-9121-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Amit Mehta <gmate.amit@gmail.com>
-Cc: gregkh@linuxfoundation.org, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: peter.senna@gmail.com
+Cc: stigge@antcom.de, edumazet@google.com, djduanjiong@gmail.com, aletes.xgr@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 14 Nov 2012 12:02:21 +0530
-Kumar Amit Mehta <gmate.amit@gmail.com> wrote:
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sun, 28 Oct 2012 17:12:00 +0100
 
-> This fix adds checks for inspecting the return value of put_user() and return
-> -EFAULT on error.
+> Based on commit b27393aecf66199f5ddad37c302d3e0cfadbe6c0
 > 
-> Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
-> ---
->  drivers/staging/dgrp/dgrp_tty.c |    9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> Calling mdiobus_free without calling mdiobus_unregister causes
+> BUG_ON(). This patch fixes the issue.
 > 
-> diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgrp_tty.c
-> index e125b03..b294197 100644
-> --- a/drivers/staging/dgrp/dgrp_tty.c
-> +++ b/drivers/staging/dgrp/dgrp_tty.c
-> @@ -2265,7 +2265,8 @@ static int get_modem_info(struct ch_struct *ch, unsigned int *value)
->  		| ((mlast & DM_RI)  ? TIOCM_RNG : 0)
->  		| ((mlast & DM_DSR) ? TIOCM_DSR : 0)
->  		| ((mlast & DM_CTS) ? TIOCM_CTS : 0);
-> -	put_user(mlast, (unsigned int __user *) value);
-> +	if (put_user(mlast, (unsigned int __user *) value))
-> +		return -EFAULT;
+> The semantic patch that found this issue(http://coccinelle.lip6.fr/):
+> // <smpl>
+> @@
+> expression E;
+> @@
+>   ... when != mdiobus_unregister(E);
+> 
+> + mdiobus_unregister(E);
+>   mdiobus_free(E);
+> // </smpl>
+> 
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-
-	return put_user(mlast, ....)
-
-is shorter and neater and does the same thing.
-
-Alan
+Applied.
