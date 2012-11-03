@@ -1,32 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 05 Nov 2012 06:38:23 +0000
-Subject: Re: [patch] iio:dac:ad5449: unlock on error path
-Message-Id: <20121105063823.GA11515@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Nov 2012 10:58:32 +0000
+Subject: [PATCH 11/16] drivers/misc/kgdbts.c: use WARN
+Message-Id: <1351940317-14812-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121024071307.GC2536@elgon.mountain>
- <5087A55C.6010202@metafoo.de>
- <5093A93D.70302@kernel.org>
- <5093FA4A.2010006@bfs.de>
-In-Reply-To: <5093FA4A.2010006@bfs.de>
+References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@cam.ac.uk>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jason Wessel <jason.wessel@windriver.com>, kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2012 at 05:52:26PM +0100, walter harms wrote:
-> if i understand the code correct you can simply the flow
-> by turning the check on its head.
-> 
-> ret = spi_sync(st->spi, &msg);
-> if (ret>=0)
->     *val = be16_to_cpu(st->data[1]);
-> mutex_unlock(&indio_dev->mlock);
-> return ret;
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-It's better to always treat errors as the special case and success
-as the normal case.  It makes the code more readable if every check
-is consistent.
+Use WARN rather than printk followed by WARN_ON(1), for conciseness.
 
-regards,
-dan carpenter
+A simplified version of the semantic patch that makes this transformation
+is as follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression list es;
+@@
+
+-printk(
++WARN(1,
+  es);
+-WARN_ON(1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/misc/kgdbts.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
+index 3aa9a96..8b367db 100644
+--- a/drivers/misc/kgdbts.c
++++ b/drivers/misc/kgdbts.c
+@@ -114,9 +114,8 @@
+ 		touch_nmi_watchdog();	\
+ 	} while (0)
+ #define eprintk(a...) do { \
+-		printk(KERN_ERR a); \
+-		WARN_ON(1); \
+-	} while (0)
++		WARN(1, KERN_ERR a); \
++		} while (0)
+ #define MAX_CONFIG_LEN		40
+ 
+ static struct kgdb_io kgdbts_io_ops;
+
