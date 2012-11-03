@@ -1,52 +1,52 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 18 Nov 2012 09:28:46 +0000
-Subject: Re: [patch] sound: oss/sb_audio: cap value in sb201_audio_set_speed()
-Message-Id: <s5htxsn8dkh.wl%tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Nov 2012 10:58:23 +0000
+Subject: [PATCH 2/16] fs/hfsplus/bnode.c: use WARN
+Message-Id: <1351940317-14812-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121117150857.GC19951@elgon.mountain>
-In-Reply-To: <20121117150857.GC19951@elgon.mountain>
+References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-At Sat, 17 Nov 2012 18:08:57 +0300,
-Dan Carpenter wrote:
-> 
-> We set "s" before we have capped "speed" so it could be the wrong value.
-> This could lead to a divide by zero bug.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I fixed a similar bug in this file in Aug.  I'm not sure how I missed
-> this one.  I don't see any others I missed.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks, applied.
+Use WARN rather than printk followed by WARN_ON(1), for conciseness.
 
+A simplified version of the semantic patch that makes this transformation
+is as follows: (http://coccinelle.lip6.fr/)
 
-Takashi
+// <smpl>
+@@
+expression list es;
+@@
 
-> 
-> diff --git a/sound/oss/sb_audio.c b/sound/oss/sb_audio.c
-> index b2b3c01..048439a 100644
-> --- a/sound/oss/sb_audio.c
-> +++ b/sound/oss/sb_audio.c
-> @@ -442,7 +442,7 @@ static int sb201_audio_set_speed(int dev, int speed)
->  {
->  	sb_devc *devc = audio_devs[dev]->devc;
->  	int tmp;
-> -	int s = speed * devc->channels;
-> +	int s;
->  
->  	if (speed > 0)
->  	{
-> @@ -452,6 +452,7 @@ static int sb201_audio_set_speed(int dev, int speed)
->  			speed = 44100;
->  		if (devc->opened & OPEN_READ && speed > 15000)
->  			speed = 15000;
-> +		s = speed * devc->channels;
->  		devc->tconst = (256 - ((1000000 + s / 2) / s)) & 0xff;
->  		tmp = 256 - devc->tconst;
->  		speed = ((1000000 + tmp / 2) / tmp) / devc->channels;
-> 
+-printk(
++WARN(1,
+  es);
+-WARN_ON(1);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ fs/hfsplus/bnode.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+index 5c125ce..7a92c2c 100644
+--- a/fs/hfsplus/bnode.c
++++ b/fs/hfsplus/bnode.c
+@@ -588,8 +588,7 @@ struct hfs_bnode *hfs_bnode_create(struct hfs_btree *tree, u32 num)
+ 	node = hfs_bnode_findhash(tree, num);
+ 	spin_unlock(&tree->hash_lock);
+ 	if (node) {
+-		printk(KERN_CRIT "new node %u already hashed?\n", num);
+-		WARN_ON(1);
++		WARN(1, KERN_CRIT "new node %u already hashed?\n", num);
+ 		return node;
+ 	}
+ 	node = __hfs_bnode_create(tree, num);
+
