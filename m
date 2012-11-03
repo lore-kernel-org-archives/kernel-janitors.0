@@ -1,73 +1,74 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 14 Nov 2012 16:07:45 +0000
-Subject: build regressions 2012-11-14
-Message-Id: <50a3c1d1.o5WHLE41L9JgKFh8%fengguang.wu@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 03 Nov 2012 10:58:37 +0000
+Subject: [PATCH 16/16] drivers/infiniband/hw/nes: use WARN
+Message-Id: <1351940317-14812-17-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Faisal Latif <faisal.latif@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[errors]
-include/linux/page-flags-layout.h:5:30: fatal error: generated/bounds.h: No such file or directory
-drivers/block/drbd/drbd_receiver.c:4057:10: error: 'mdev' undeclared (first use in this function)
-drivers/media/v4l2-core/videobuf2-dma-contig.c:194:2: error: implicit declaration of function 'dma_mmap_coherent' [-Werror=implicit-function-declaration]
-drivers/media/v4l2-core/videobuf2-dma-contig.c:382:2: error: implicit declaration of function 'dma_get_sgtable' [-Werror=implicit-function-declaration]
-kernel/bounds.c:21:2: error: 'CONFIG_NR_CPUS' undeclared (first use in this function)
-ERROR: ".dma_common_get_sgtable" undefined!
-net/netfilter/ipvs/ip_vs_core.c:945:21: error: 'IP6T_FH_F_FRAG' undeclared (first use in this function)
-ERROR: "sms_ir_exit" undefined!
-ERROR: "sms_ir_event" undefined!
-ERROR: "sms_ir_init" undefined!
-net/mac80211/rc80211_minstrel_ht.c:422:42: error: expected ';' before ')' token
-net/mac80211/rc80211_minstrel_ht.c:422:42: error: expected statement before ')' token
-videobuf2-dma-contig.c:(.text+0x2f231e): undefined reference to `dma_common_get_sgtable'
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[warnings]
-mm/memory.c:74:2: warning: #warning Unfortunate NUMA config, growing page-frame for last_cpu. [-Wcpp]
-fs/btrfs/file-item.c:171:2: warning: 'len' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/firmware/efivars.c:838:2: warning: initialization from incompatible pointer type [enabled by default]
-drivers/firmware/efivars.c:838:2: warning: (near initialization for 'efi_pstore_info.erase') [enabled by default]
-drivers/firmware/efivars.c:841:2: warning: (near initialization for 'efi_pstore_info.write') [enabled by default]
-drivers/regulator/gpio-regulator.c:187:3: warning: passing argument 1 of 'dev_err' from incompatible pointer type [enabled by default]
+Use WARN rather than printk followed by WARN_ON(1), for conciseness.
 
-[sparse]
-mm/memory.c:74:2: sparse: Unfortunate NUMA config, growing page-frame for last_cpu.
-drivers/scsi/be2iscsi/be_main.c:156:1: sparse: symbol 'dev_attr_beiscsi_drvr_ver' was not declared. Should it be static?
-drivers/scsi/be2iscsi/be_main.c:4349:5: sparse: symbol 'beiscsi_iotask_v2' was not declared. Should it be static?
-arch/x86/kernel/cpu/intel_cacheinfo.c:167:33: sparse: symbol 'num_cache_leaves' was not declared. Should it be static?
-drivers/staging/fwserial/fwserial.h:356:19: sparse: symbol 'fwtty_driver' was not declared. Should it be static?
+A simplified version of the semantic patch that makes this transformation
+is as follows: (http://coccinelle.lip6.fr/)
 
-[smatch]
-drivers/staging/comedi/drivers/addi-data/addi_common.c:166 addi_auto_attach() error: we previously assumed 'this_board->pc_EepromChip' could be null (see line 121)
-drivers/staging/fwserial/fwserial.c:1306 get_serial_info() warn: check that 'tmp.port' doesn't leak information
-drivers/staging/vt6656/rxtx.c:1536 s_bPacketToWirelessUsb() warn: variable dereferenced before check 'pTransmitKey' (see line 1536)
-drivers/staging/vt6656/iwctl.c:660 iwctl_giwaplist() warn: possible memory leak of 'qual'
-drivers/staging/vt6656/iwctl.c:660 iwctl_giwaplist() warn: possible memory leak of 'sock'
+// <smpl>
+@@
+expression list es;
+@@
 
-[coccinelle]
-arch/x86/kernel/cpuid.c:152:8-14: WARNING: PTR_RET can be used
-block/ioctl.c:66:10-16: WARNING: PTR_RET can be used
-drivers/media/rc/imon.c:1058:1-7: preceding lock on line 1044
-drivers/media/radio/si470x/radio-si470x-i2c.c:444:10-30: ERROR: Threaded IRQ with no primary handler requested without IRQF_ONESHOT
-drivers/net/ethernet/amd/ni65.c:1243:8-14: WARNING: PTR_RET can be used
-drivers/net/ethernet/i825xx/3c507.c:925:8-14: WARNING: PTR_RET can be used
-drivers/staging/media/lirc/lirc_bt829.c:161:21-22: WARNING comparing pointer to 0
-drivers/staging/media/go7007/go7007-usb.c:591:6-63: duplicated argument to && or ||
-drivers/staging/media/go7007/go7007-i2c.c:140:1-7: preceding lock on line 76
-drivers/staging/media/solo6x10/v4l2.c:418:1-3: WARNING: PTR_RET can be used
-drivers/hid/uhid.c:146:17-24: WARNING opportunity for memdup_user
-drivers/staging/csr/drv.c:1748:14-23: WARNING: casting value returned by k[cmz]alloc to (udi_log_t *) is useless.
-drivers/staging/csr/netdev.c:2525:21-42: WARNING: casting value returned by k[cmz]alloc to (rx_buffered_packets_t *) is useless.
-drivers/staging/csr/sdio_mmc.c:907:16-31: WARNING: casting value returned by k[cmz]alloc to (CsrSdioFunction *) is useless.
-drivers/staging/csr/unifi_pdu_processing.c:3199:26-47: WARNING: casting value returned by k[cmz]alloc to (tx_buffered_packets_t *) is useless.
+-printk(
++WARN(1,
+  es);
+-WARN_ON(1);
+// </smpl>
 
-[cppcheck]
-arch/powerpc/platforms/cell/spufs/file.c:1138: error: unsupported page size
-arch/powerpc/include/asm/hw_irq.h:138: style: Statements following return, break, continue, goto or throw will never be executed.
-include/asm-generic/cmpxchg-local.h:24: warning: Redundant code: Found a statement that begins with numeric constant
-include/asm-generic/cmpxchg-local.h:24: error: Uninitialized variable: __dummy
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/infiniband/hw/nes/nes_cm.c  |    6 ++----
+ drivers/infiniband/hw/nes/nes_mgt.c |    6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/infiniband/hw/nes/nes_cm.c b/drivers/infiniband/hw/nes/nes_cm.c
+index cfaacaf..8a15a1d 100644
+--- a/drivers/infiniband/hw/nes/nes_cm.c
++++ b/drivers/infiniband/hw/nes/nes_cm.c
+@@ -629,11 +629,9 @@ static void build_rdma0_msg(struct nes_cm_node *cm_node, struct nes_qp **nesqp_a
+ 
+ 	case SEND_RDMA_READ_ZERO:
+ 	default:
+-		if (cm_node->send_rdma0_op != SEND_RDMA_READ_ZERO) {
+-			printk(KERN_ERR "%s[%u]: Unsupported RDMA0 len operation=%u\n",
++		if (cm_node->send_rdma0_op != SEND_RDMA_READ_ZERO)
++			WARN(1, KERN_ERR "%s[%u]: Unsupported RDMA0 len operation=%u\n",
+ 				 __func__, __LINE__, cm_node->send_rdma0_op);
+-			WARN_ON(1);
+-		}
+ 		nes_debug(NES_DBG_CM, "Sending first rdma operation.\n");
+ 		wqe->wqe_words[NES_IWARP_SQ_WQE_MISC_IDX]  			cpu_to_le32(NES_IWARP_SQ_OP_RDMAR);
+diff --git a/drivers/infiniband/hw/nes/nes_mgt.c b/drivers/infiniband/hw/nes/nes_mgt.c
+index 3ba7be3..53bb88c 100644
+--- a/drivers/infiniband/hw/nes/nes_mgt.c
++++ b/drivers/infiniband/hw/nes/nes_mgt.c
+@@ -649,11 +649,9 @@ static void nes_chg_qh_handler(struct nes_device *nesdev, struct nes_cqp_request
+ 	nesqp = qh_chg->nesqp;
+ 
+ 	/* Should we handle the bad completion */
+-	if (cqp_request->major_code) {
+-		printk(KERN_ERR PFX "Invalid cqp_request major_code=0x%x\n",
++	if (cqp_request->major_code)
++		WARN(1, KERN_ERR PFX "Invalid cqp_request major_code=0x%x\n",
+ 		       cqp_request->major_code);
+-		WARN_ON(1);
+-	}
+ 
+ 	switch (nesqp->pau_state) {
+ 	case PAU_DEL_QH:
+
