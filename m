@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 15 Nov 2012 17:09:43 +0000
-Subject: build regressions 2012-11-15
-Message-Id: <50a521d7.j3iFgdYyLL65TrdJ%fengguang.wu@intel.com>
+Date: Sun, 04 Nov 2012 00:46:25 +0000
+Subject: build regressions 2012-11-03
+Message-Id: <20121104004625.GA7304@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,47 +9,59 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-include/linux/acpi.h:463:68: error: 'ENODEV' undeclared (first use in this function)
-drivers/net/wireless/rtlwifi/rtl8723ae/trx.c:324:21: error: 'RX_FLAG_MACTIME_MPDU' undeclared (first use in this function)
-arch/mips/math-emu/dsemul.c:104:10: error: 'MM_BRK_MEMU' undeclared (first use in this function)
-arch/mips/kernel/traps.c:822:7: error: 'MM_BRK_MEMU' undeclared (first use in this function)
-mm/huge_memory.c:716:2: error: implicit declaration of function 'pfn_pmd' [-Werror=implicit-function-declaration]
-mm/huge_memory.c:716:8: error: incompatible types when assigning to type 'pmd_t' from type 'int'
-(.init.text+0x1f28): undefined reference to `except_vec3_r4000'
-{standard input}:118: Error: opcode not supported on this processor: loongson2e (mips3) `ldx $2,$2($3)'
-lib/pSeries-reconfig-notifier-error-inject.c:4:34: fatal error: asm/pSeries_reconfig.h: No such file or directory
-ERROR: ".of_reconfig_notifier_register" undefined!
-ERROR: ".of_reconfig_notifier_unregister" undefined!
-mm/huge_memory.c:1015:25: error: 'pte_t' has no member named 'lru'
+drivers/usb/chipidea/../host/ehci.h:665:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+drivers/usb/chipidea/../host/ehci.h:677:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+kernel/trace/trace.h:392: error: 'struct task_struct' has no member named 'trace_recursion'
+drivers/power/power_seq/power_seq.c:369:26: error: 'power_seq_of_parse_regulator' undeclared here (not in a function)
+make[3]: *** No rule to make target `drivers/rtc/rtc-tps6586x.o', needed by `drivers/rtc/built-in.o'.
+drivers/power/power_seq/power_seq.c:370:20: error: 'power_seq_of_parse_pwm' undeclared here (not in a function)
+drivers/power/power_seq/power_seq.c:371:21: error: 'power_seq_of_parse_gpio' undeclared here (not in a function)
+drivers/usb/chipidea/../host/ehci.h:662:3: error: implicit declaration of function 'readl_be' [-Werror=implicit-function-declaration]
+drivers/usb/chipidea/../host/ehci.h:674:3: error: implicit declaration of function 'writel_be' [-Werror=implicit-function-declaration]
+arch/powerpc/include/asm/io-defs.h:6:1: error: conflicting types for 'readl'
+arch/powerpc/include/asm/io-defs.h:8:1: error: conflicting types for 'readl_be'
+arch/powerpc/include/asm/io-defs.h:11:1: error: static declaration of 'writel' follows non-static declaration
+arch/powerpc/include/asm/io-defs.h:13:1: error: static declaration of 'writel_be' follows non-static declaration
+drivers/of/of_pci.c:69:3: error: implicit declaration of function 'of_translate_address' [-Werror=implicit-function-declaration]
+drivers/input/misc/sx8634.c:580:2: error: implicit declaration of function 'of_get_next_child' [-Werror=implicit-function-declaration]
+drivers/input/misc/sx8634.c:635:22: error: 'NO_IRQ' undeclared (first use in this function)
 
 [warnings]
-drivers/regulator/tps6586x-regulator.c:361:8: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-mm/huge_memory.c:1018:20: warning: assignment from incompatible pointer type [enabled by default]
-drivers/acpi/acpica/psloop.c:139:4: warning: format '%X' expects argument of type 'unsigned int', but argument 5 has type 'long unsigned int' [-Wformat]
-fs/btrfs/volumes.c:1505:1: warning: label 'error_close' defined but not used [-Wunused-label]
-arch/x86/kernel/smpboot.c:1348:15: warning: unused variable 'timeout' [-Wunused-variable]
-drivers/regulator/tps6586x-regulator.c:392:2: warning: 'id' may be used uninitialized in this function [-Wuninitialized]
-drivers/gpu/drm/i915/i915_drv.h:1545:2: warning: '______f' is static but declared in inline function 'i915_gem_chipset_flush' which is not static [enabled by default]
-drivers/regulator/tps6586x-regulator.c:392:2: warning: 'id' is used uninitialized in this function [-Wuninitialized]
+arch/arm/mach-s3c24xx/mach-rx1950.c:487:2: warning: 'pwm_request' is deprecated (declared at include/linux/pwm.h:14) [-Wdeprecated-declarations]
+arch/arm/mach-s3c24xx/mach-rx1950.c:504:2: warning: 'pwm_free' is deprecated (declared at include/linux/pwm.h:19) [-Wdeprecated-declarations]
+arch/powerpc/include/asm/io-defs.h:11:1: warning: conflicting types for 'writel' [enabled by default]
+arch/powerpc/include/asm/io-defs.h:13:1: warning: conflicting types for 'writel_be' [enabled by default]
+drivers/pci/of.c:12:0: warning: "DEBUG" redefined [enabled by default]
+WARNING: vmlinux.o(.text+0x10aa130): Section mismatch in reference from the function .dlpar_add_slot() to the function .devinit.text:.init_phb_dynamic()
+drivers/of/of_pci.c:82:4: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'resource_size_t' [-Wformat]
+WARNING: drivers/spi/built-in.o(.devinit.text+0x1cc4): Section mismatch in reference from the function rspi_probe() to the function .devexit.text:spidev_remove()
+drivers/memstick/core/ms_block.c:679:1: warning: control reaches end of non-void function [-Wreturn-type]
+drivers/input/misc/sx8634.c:178:6: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat]
+drivers/input/misc/sx8634.c:580:16: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/pwm/core.c:320:1: warning: 'pwm_request' is deprecated (declared at drivers/pwm/core.c:295) [-Wdeprecated-declarations]
+drivers/pwm/core.c:364:1: warning: 'pwm_free' is deprecated (declared at drivers/pwm/core.c:360) [-Wdeprecated-declarations]
+drivers/video/backlight/pwm_bl.c:220:3: warning: 'pwm_request' is deprecated (declared at include/linux/pwm.h:14) [-Wdeprecated-declarations]
+WARNING: vmlinux.o(.text+0x12c232): Section mismatch in reference from the function pci_scan_child_bus() to the function .devinit.text:pcibios_fixup_bus()
 
 [sparse]
-drivers/scsi/be2iscsi/be_main.c:155:1: sparse: symbol 'dev_attr_beiscsi_adapter_family' was not declared. Should it be static?
-kernel/rcutree_plugin.h:2389:36: sparse: context imbalance in 'rcu_nocb_wait_gp' - different lock contexts for basic block
-drivers/base/firmware_class.c:249:9: sparse: context imbalance in '__fw_free_buf' - unexpected unlock
-drivers/base/firmware_class.c:267:9: sparse: context imbalance in 'fw_free_buf' - wrong count at exit
-net/ipv6/ip6_tunnel.c:1571:33: sparse: incorrect type in assignment (different base types)
-net/ipv4/ipip.c:867:34: sparse: incorrect type in assignment (different base types)
-net/ipv6/sit.c:1232:52: sparse: incorrect type in argument 3 (different base types)
-net/ipv6/sit.c:1243:34: sparse: incorrect type in assignment (different base types)
-drivers/firmware/efivars.c:912:5: sparse: symbol 'efivarfs_fill_super' was not declared. Should it be static?
-mm/huge_memory.c:1007:11: sparse: symbol 'get_pmd_huge_pte' was not declared. Should it be static?
-mm/huge_memory.c:1442:27: sparse: context imbalance in 'change_huge_pmd' - unexpected unlock
-drivers/net/wireless/rtlwifi/rtl8723ae/trx.c:324:28: sparse: undefined identifier 'RX_FLAG_MACTIME_MPDU'
-drivers/regulator/da9055-regulator.c:541:16: sparse: undefined identifier 'IRQ_HANDLED'
+kernel/trace/trace.c:1145:14: sparse: expression using sizeof bool
+block/partitions/nvtegra.c:88:6: sparse: symbol 'hidden_parts_str' was not declared. Should it be static?
+block/partitions/tegrapart.c:34:6: sparse: symbol 'partition_list' was not declared. Should it be static?
+block/partitions/tegrapart.c:36:10: sparse: symbol 'strtohex' was not declared. Should it be static?
+block/partitions/tegrapart.c:167:5: sparse: symbol 'tegra_msdos_parse' was not declared. Should it be static?
+block/partitions/tegrapart.c:238:5: sparse: symbol 'parse_tegrapart' was not declared. Should it be static?
+block/partitions/tegrapart.c:324:5: sparse: symbol 'tegrapart_partition' was not declared. Should it be static?
+drivers/power/power_seq/power_seq.c:254:5: sparse: symbol 'power_seq_add_sequence' was not declared. Should it be static?
+drivers/power/power_seq/power_seq.c:369:33: sparse: undefined identifier 'power_seq_of_parse_regulator'
+drivers/power/power_seq/power_seq.c:370:27: sparse: undefined identifier 'power_seq_of_parse_pwm'
+drivers/power/power_seq/power_seq.c:371:28: sparse: undefined identifier 'power_seq_of_parse_gpio'
+drivers/input/misc/sx8634.c:580:25: sparse: undefined identifier 'of_get_next_child'
+drivers/input/misc/sx8634.c:635:36: sparse: undefined identifier 'NO_IRQ'
 
-[smatch]
-drivers/net/wireless/rtlwifi/rtl8723ae/phy.c:1189 _phy_sw_chnl_step_by_step() error: potential NULL dereference 'currentcmd'.
-drivers/net/wireless/rtlwifi/rtl8723ae/phy.c:1152 _phy_sw_chnl_step_by_step() warn: function puts 794 bytes on stack
+[coccinelle]
+drivers/gpu/drm/i915/intel_ringbuffer.c:1478:3-25: duplicated argument to & or |
+drivers/staging/media/lirc/lirc_igorplugusb.c:472:9-14: ERROR: driver is NULL but dereferenced.
+drivers/staging/media/lirc/lirc_igorplugusb.c:461:7-13: ERROR: ir is NULL but dereferenced.
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
