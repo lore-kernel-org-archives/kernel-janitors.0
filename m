@@ -1,98 +1,35 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Mon, 05 Nov 2012 05:11:32 +0000
-Subject: [PATCH] drivers: ethernet: qlogic: qlge_dbg.c: Fixed a coding style issue
-Message-Id: <1352092292-4413-1-git-send-email-gmate.amit@gmail.com>
+From: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
+Date: Mon, 05 Nov 2012 18:45:08 +0000
+Subject: RE: [PATCH] drivers: ethernet: qlogic: qlge_dbg.c: Fixed a coding style issue
+Message-Id: <5E4F49720D0BAD499EE1F01232234BA87744DA340F@AVEXMB1.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1352092292-4413-1-git-send-email-gmate.amit@gmail.com>
+In-Reply-To: <1352092292-4413-1-git-send-email-gmate.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jitendra.kalsaria@qlogic.com
-Cc: ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kumar Amit Mehta <gmate.amit@gmail.com>
+Cc: Ron Mercer <ron.mercer@qlogic.com>, Dept-Eng Linux Driver <Linux-Driver@qlogic.com>, netdev <netdev@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-checkpatch.pl throws error message for the current code. This patch fixes
-this coding style issue.
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
----
- drivers/net/ethernet/qlogic/qlge/qlge_dbg.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qlge/qlge_dbg.c b/drivers/net/ethernet/qlogic/qlge/qlge_dbg.c
-index 58185b6..10093f0 100644
---- a/drivers/net/ethernet/qlogic/qlge/qlge_dbg.c
-+++ b/drivers/net/ethernet/qlogic/qlge/qlge_dbg.c
-@@ -86,7 +86,7 @@ exit:
- }
- 
- /* Read out the SERDES registers */
--static int ql_read_serdes_reg(struct ql_adapter *qdev, u32 reg, u32 * data)
-+static int ql_read_serdes_reg(struct ql_adapter *qdev, u32 reg, u32 *data)
- {
- 	int status;
- 
-@@ -364,7 +364,7 @@ exit:
- /* Read the 400 xgmac control/statistics registers
-  * skipping unused locations.
-  */
--static int ql_get_xgmac_regs(struct ql_adapter *qdev, u32 * buf,
-+static int ql_get_xgmac_regs(struct ql_adapter *qdev, u32 *buf,
- 					unsigned int other_function)
- {
- 	int status = 0;
-@@ -405,7 +405,7 @@ static int ql_get_xgmac_regs(struct ql_adapter *qdev, u32 * buf,
- 	return status;
- }
- 
--static int ql_get_ets_regs(struct ql_adapter *qdev, u32 * buf)
-+static int ql_get_ets_regs(struct ql_adapter *qdev, u32 *buf)
- {
- 	int status = 0;
- 	int i;
-@@ -423,7 +423,7 @@ static int ql_get_ets_regs(struct ql_adapter *qdev, u32 * buf)
- 	return status;
- }
- 
--static void ql_get_intr_states(struct ql_adapter *qdev, u32 * buf)
-+static void ql_get_intr_states(struct ql_adapter *qdev, u32 *buf)
- {
- 	int i;
- 
-@@ -434,7 +434,7 @@ static void ql_get_intr_states(struct ql_adapter *qdev, u32 * buf)
- 	}
- }
- 
--static int ql_get_cam_entries(struct ql_adapter *qdev, u32 * buf)
-+static int ql_get_cam_entries(struct ql_adapter *qdev, u32 *buf)
- {
- 	int i, status;
- 	u32 value[3];
-@@ -471,7 +471,7 @@ err:
- 	return status;
- }
- 
--static int ql_get_routing_entries(struct ql_adapter *qdev, u32 * buf)
-+static int ql_get_routing_entries(struct ql_adapter *qdev, u32 *buf)
- {
- 	int status;
- 	u32 value, i;
-@@ -496,7 +496,7 @@ err:
- }
- 
- /* Read the MPI Processor shadow registers */
--static int ql_get_mpi_shadow_regs(struct ql_adapter *qdev, u32 * buf)
-+static int ql_get_mpi_shadow_regs(struct ql_adapter *qdev, u32 *buf)
- {
- 	u32 i;
- 	int status;
-@@ -515,7 +515,7 @@ end:
- }
- 
- /* Read the MPI Processor core registers */
--static int ql_get_mpi_regs(struct ql_adapter *qdev, u32 * buf,
-+static int ql_get_mpi_regs(struct ql_adapter *qdev, u32 *buf,
- 				u32 offset, u32 count)
- {
- 	int i, status = 0;
--- 
-1.7.9.5
+>From: Kumar Amit Mehta [mailto:gmate.amit@gmail.com] 
+>Sent: Sunday, November 04, 2012 9:12 PM
+>To: Jitendra Kalsaria
+>Cc: Ron Mercer; Dept-Eng Linux Driver; netdev; linux-kernel; kernel-janitors@vger.kernel.org
+>Subject: [PATCH] drivers: ethernet: qlogic: qlge_dbg.c: Fixed a coding style issue
+>
+>checkpatch.pl throws error message for the current code. This patch fixes
+>this coding style issue.
+>
+>Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+>---
+> drivers/net/ethernet/qlogic/qlge/qlge_dbg.c |   16 ++++++++--------
+> 1 file changed, 8 insertions(+), 8 deletions(-)
+
+Never seen these before with checkpatch.pl when we submitted changes.
+
+Anyway thanks for your effort on fixing it.
+
+Acked-by: Jitendra Kalsaria <Jitendra.kalsaria@qlogic.com>
 
