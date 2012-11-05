@@ -1,32 +1,98 @@
-From: David Sterba <dave@jikos.cz>
-Date: Mon, 05 Nov 2012 15:39:02 +0000
-Subject: Re: [PATCH 1/8] fs/btrfs: drop if around WARN_ON
-Message-Id: <20121105153902.GK3102@twin.jikos.cz>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Mon, 05 Nov 2012 05:11:32 +0000
+Subject: [PATCH] drivers: ethernet: qlogic: qlge_dbg.c: Fixed a coding style issue
+Message-Id: <1352092292-4413-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
- <1351974625-10282-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351974625-10282-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Chris Mason <chris.mason@fusionio.com>, kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jitendra.kalsaria@qlogic.com
+Cc: ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Nov 03, 2012 at 09:30:18PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Just use WARN_ON rather than an if containing only WARN_ON(1).
-> 
-> A simplified version of the semantic patch that makes this transformation
-> is as follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e;
-> @@
-> - if (e) WARN_ON(1);
-> + WARN_ON(e);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Reviewed-by: David Sterba <dsterba@suse.cz>
+checkpatch.pl throws error message for the current code. This patch fixes
+this coding style issue.
+
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/net/ethernet/qlogic/qlge/qlge_dbg.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qlge/qlge_dbg.c b/drivers/net/ethernet/qlogic/qlge/qlge_dbg.c
+index 58185b6..10093f0 100644
+--- a/drivers/net/ethernet/qlogic/qlge/qlge_dbg.c
++++ b/drivers/net/ethernet/qlogic/qlge/qlge_dbg.c
+@@ -86,7 +86,7 @@ exit:
+ }
+ 
+ /* Read out the SERDES registers */
+-static int ql_read_serdes_reg(struct ql_adapter *qdev, u32 reg, u32 * data)
++static int ql_read_serdes_reg(struct ql_adapter *qdev, u32 reg, u32 *data)
+ {
+ 	int status;
+ 
+@@ -364,7 +364,7 @@ exit:
+ /* Read the 400 xgmac control/statistics registers
+  * skipping unused locations.
+  */
+-static int ql_get_xgmac_regs(struct ql_adapter *qdev, u32 * buf,
++static int ql_get_xgmac_regs(struct ql_adapter *qdev, u32 *buf,
+ 					unsigned int other_function)
+ {
+ 	int status = 0;
+@@ -405,7 +405,7 @@ static int ql_get_xgmac_regs(struct ql_adapter *qdev, u32 * buf,
+ 	return status;
+ }
+ 
+-static int ql_get_ets_regs(struct ql_adapter *qdev, u32 * buf)
++static int ql_get_ets_regs(struct ql_adapter *qdev, u32 *buf)
+ {
+ 	int status = 0;
+ 	int i;
+@@ -423,7 +423,7 @@ static int ql_get_ets_regs(struct ql_adapter *qdev, u32 * buf)
+ 	return status;
+ }
+ 
+-static void ql_get_intr_states(struct ql_adapter *qdev, u32 * buf)
++static void ql_get_intr_states(struct ql_adapter *qdev, u32 *buf)
+ {
+ 	int i;
+ 
+@@ -434,7 +434,7 @@ static void ql_get_intr_states(struct ql_adapter *qdev, u32 * buf)
+ 	}
+ }
+ 
+-static int ql_get_cam_entries(struct ql_adapter *qdev, u32 * buf)
++static int ql_get_cam_entries(struct ql_adapter *qdev, u32 *buf)
+ {
+ 	int i, status;
+ 	u32 value[3];
+@@ -471,7 +471,7 @@ err:
+ 	return status;
+ }
+ 
+-static int ql_get_routing_entries(struct ql_adapter *qdev, u32 * buf)
++static int ql_get_routing_entries(struct ql_adapter *qdev, u32 *buf)
+ {
+ 	int status;
+ 	u32 value, i;
+@@ -496,7 +496,7 @@ err:
+ }
+ 
+ /* Read the MPI Processor shadow registers */
+-static int ql_get_mpi_shadow_regs(struct ql_adapter *qdev, u32 * buf)
++static int ql_get_mpi_shadow_regs(struct ql_adapter *qdev, u32 *buf)
+ {
+ 	u32 i;
+ 	int status;
+@@ -515,7 +515,7 @@ end:
+ }
+ 
+ /* Read the MPI Processor core registers */
+-static int ql_get_mpi_regs(struct ql_adapter *qdev, u32 * buf,
++static int ql_get_mpi_regs(struct ql_adapter *qdev, u32 *buf,
+ 				u32 offset, u32 count)
+ {
+ 	int i, status = 0;
+-- 
+1.7.9.5
+
