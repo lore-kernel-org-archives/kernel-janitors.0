@@ -1,33 +1,51 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 05 Nov 2012 06:42:17 +0000
-Subject: [patch] xen/privcmd: fix condition in privcmd_close()
-Message-Id: <20121105064217.GA26179@elgon.mountain>
+Date: Mon, 05 Nov 2012 11:21:45 +0000
+Subject: re: ipc: cleanup do_msgrcv() aroung MSG_COPY feature
+Message-Id: <20121105112145.GA11530@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Mukesh Rathor <mukesh.rathor@oracle.com>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org
+To: kernel-janitors@vger.kernel.org
 
-The parenthesis are in the wrong place so the original code is
-equivalent to:
+Hello Stanislav Kinsbursky,
 
-	if (!xen_feature(XENFEAT_writable_descriptor_tables)) { ...
+This is a semi-automatic email about new static checker warnings.
 
-Which obviously was not intended.
+The patch 6645154dd758: "ipc: cleanup do_msgrcv() aroung MSG_COPY 
+feature" from Nov 3, 2012, leads to the following Smatch complaint:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+ipc/msg.c:878 do_msgrcv()
+	 error: we previously assumed 'msg' could be null (see line 865)
 
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index b9d0898..6011f3b 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -495,7 +495,7 @@ static void privcmd_close(struct vm_area_struct *vma)
- 	struct page **pages = vma->vm_private_data;
- 	int numpgs = (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
- 
--	if (!xen_feature(XENFEAT_auto_translated_physmap || !numpgs || !pages))
-+	if (!xen_feature(XENFEAT_auto_translated_physmap) || !numpgs || !pages)
- 		return;
- 
- 	xen_unmap_domain_mfn_range(vma, numpgs, pages);
+ipc/msg.c
+   861                                  } else if (msgflg & MSG_COPY) {
+   862                                          msg = fill_copy(copy_number,
+   863                                                          msg_counter,
+   864                                                          walk_msg, copy);
+   865						if (msg)
+                                                   ^^^^
+New check.  fill_copy() either returns an error pointer, a valid pointer
+or NULL.
+
+   866							break;
+   867					} else
+   868						break;
+   869					msg_counter++;
+   870				}
+   871				tmp = tmp->next;
+   872			}
+   873			if (!IS_ERR(msg)) {
+   874				/*
+   875				 * Found a suitable message.
+   876				 * Unlink it from the queue.
+   877				 */
+   878				if ((bufsz < msg->m_ts) && !(msgflg & MSG_NOERROR)) {
+                                             ^^^^^
+Old dereference.
+
+   879					msg = ERR_PTR(-E2BIG);
+   880					goto out_unlock;
+
+regards,
+dan carpenter
