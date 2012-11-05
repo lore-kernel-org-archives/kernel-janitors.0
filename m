@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 12 Nov 2012 17:31:34 +0000
-Subject: build regressions 2012-11-12
-Message-Id: <50a13276.41vvBKlgGmNu7kB9%fengguang.wu@intel.com>
+Date: Mon, 05 Nov 2012 16:58:14 +0000
+Subject: build regressions 2012-11-05
+Message-Id: <20121105165814.GB21790@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,27 +9,58 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-sound/pci/ice1712/ice1724.c:2366:5: error: 'struct snd_ice1712' has no member named 'pm_suspend_enabled'
-arch/mips/fw/arc/misc.c:25:2: error: implicit declaration of function 'local_irq_disable' [-Werror=implicit-function-declaration]
+drivers/video/omap2/dss/dispc.c:1996:6: error: expected identifier or '(' before numeric constant
+zcache-main.c:(.text+0x7f9c8): undefined reference to `zcache_debugfs_init'
+arch/x86/kernel/cpu/perf_event.c:1625:3: error: implicit declaration of function 'intel_pmu_lbr_init_context' [-Werror=implicit-function-declaration]
+drivers/video/omap2/omapfb/omapfb-main.c:34:23: fatal error: plat/vram.h: No such file or directory
+drivers/video/omap2/omapfb/omapfb-ioctl.c:34:23: fatal error: plat/vram.h: No such file or directory
+drivers/video/omap2/vram.c:36:23: fatal error: plat/vram.h: No such file or directory
+(.text+0x1959d): undefined reference to `acpi_target_system_state'
 
 [warnings]
-drivers/net/ethernet/8390/lib8390.c:669:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-make[4]: Warning: File `include/config/auto.conf' has modification time 2.8e+04 s in the future
-make[2]: Warning: File `.config' has modification time 2.8e+04 s in the future
-make[2]: Warning: File `Makefile' has modification time 2.8e+04 s in the future
-make[2]: Warning: File `init/.version.o.cmd' has modification time 2.8e+04 s in the future
-make[2]: Warning: File `arch/x86/tools/.relocs.cmd' has modification time 2.8e+04 s in the future
-make[2]: Warning: File `net/wireless/built-in.o' has modification time 2.9e+04 s in the future
-make[3]: Warning: File `scripts/basic/.fixdep.cmd' has modification time 2.8e+04 s in the future
-make[3]: Warning: File `arch/x86/include/generated/asm/clkdev.h' has modification time 2.8e+04 s in the future
-make[3]: Warning: File `scripts/.sortextable.cmd' has modification time 2.8e+04 s in the future
-make[3]: Warning: File `arch/x86/include/asm/msr-index.h' has modification time 2.8e+04 s in the future
-make[4]: Warning: File `include/uapi/linux/perf_event.h' has modification time 2.8e+04 s in the future
-make[5]: Warning: File `include/linux/raid/Kbuild' has modification time 2.8e+04 s in the future
-make[3]: Warning: File `arch/x86/kernel/Makefile' has modification time 2.8e+04 s in the future
-fs/btrfs/tree-log.c:1495:20: warning: 'dst_di' may be used uninitialized in this function [-Wmaybe-uninitialized]
-make[3]: Warning: File `drivers/media/common/built-in.o' has modification time 2.9e+04 s in the future
-make[2]: Warning: File `drivers/amba/built-in.o' has modification time 2.9e+04 s in the future
+drivers/gpu/drm/i915/i915_gem_gtt.c:38:6: warning: 'addr' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/staging/ramster/ramster/ramster.c:101:2: warning: passing argument 4 of 'debugfs_create_size_t' from incompatible pointer type [enabled by default]
+WARNING: drivers/staging/ramster/zcache.o(.text+0x2f94): Section mismatch in reference from the function zcache_init() to the function .init.text:zbud_init()
+mm/slub.c:1934:1: warning: 'unfreeze_partials' uses dynamic stack allocation [enabled by default]
+mm/slub.c:1870:1: warning: 'deactivate_slab' uses dynamic stack allocation [enabled by default]
+mm/slub.c:2569:1: warning: '__slab_free' uses dynamic stack allocation [enabled by default]
+mm/slub.c:1577:1: warning: 'get_partial_node.isra.37' uses dynamic stack allocation [enabled by default]
+mm/slub.c:2305:1: warning: '__slab_alloc.constprop.45' uses dynamic stack allocation [enabled by default]
+drivers/staging/ramster/zcache-main.c:357:2: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'ssize_t' [-Wformat]
+ipc/msg.c:778:5: warning: 'copy_number' may be used uninitialized in this function [-Wmaybe-uninitialized]
+ipc/msg.c:968:12: warning: 'copy' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/cifs/dir.c:408:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+
+[sparse]
+drivers/gpu/drm/i915/i915_gem_gtt.c:366:36: sparse: dereference of noderef expression
+drivers/scsi/hptiop.c:252:44: sparse: incorrect type in assignment (different base types)
+drivers/scsi/hptiop.c:461:64: sparse: incorrect type in initializer (different address spaces)
+drivers/scsi/hptiop.c:949:34: sparse: incompatible types for operation (++)
+fs/fat/nfs.c:105:1: sparse: symbol 'fat_encode_fh_nostale' was not declared. Should it be static?
+fs/fat/nfs.c:159:15: sparse: symbol 'fat_fh_to_dentry_nostale' was not declared. Should it be static?
+fs/fat/nfs.c:206:15: sparse: symbol 'fat_fh_to_parent_nostale' was not declared. Should it be static?
+fs/cifs/dir.c:408:17: sparse: mixing declarations and code
+drivers/video/omap2/vram.c:36:11: sparse: unable to open 'plat/vram.h'
+drivers/video/omap2/dss/dispc.c:1997:13: sparse: missing identifier in declaration
+drivers/video/omap2/displays/panel-acx565akm.c:204:23: sparse: cast to restricted __be32
+drivers/video/omap2/omapfb/omapfb-main.c:34:11: sparse: unable to open 'plat/vram.h'
+drivers/video/omap2/omapfb/omapfb-ioctl.c:34:11: sparse: unable to open 'plat/vram.h'
+drivers/video/omap2/dss/dispc.c:2002:13: sparse: Expected ; at the end of type declaration
+drivers/video/omap2/dss/dispc.c:2002:13: sparse: got 7
+drivers/video/omap2/dss/manager-sysfs.c:70:17: sparse: undefined identifier '__func__'
+
+[smatch]
+mm/cleancache.c:163 get_poolid_from_fake() error: buffer overflow 'fs_poolid_map' 32 <= 999
+mm/cleancache.c:311 __cleancache_invalidate_fs() error: buffer overflow 'fs_poolid_map' 32 <= 999
+ipc/msg.c:878 do_msgrcv() error: we previously assumed 'msg' could be null (see line 865)
+include/linux/bitops.h:164 fls_long() info: ignoring unreachable code.
+
+[coccinelle]
+drivers/staging/ramster/tmem.c:647:1-7: preceding lock on line 613
+drivers/video/backlight/lm3639_bl.c:406:1-3: ERROR: test of a variable/field address
+
+[cppcheck]
+drivers/staging/ramster/ramster/ramster.c:49: error: "ramster needs sysfs to define cluster nodes to use"
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
