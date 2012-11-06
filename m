@@ -1,35 +1,22 @@
-From: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
-Date: Mon, 05 Nov 2012 18:45:08 +0000
-Subject: RE: [PATCH] drivers: ethernet: qlogic: qlge_dbg.c: Fixed a coding style issue
-Message-Id: <5E4F49720D0BAD499EE1F01232234BA87744DA340F@AVEXMB1.qlogic.org>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 06 Nov 2012 23:33:15 +0000
+Subject: Re: [PATCH] drivers: ethernet: qlogic: qlge_dbg.c: Fixed a coding style issue
+Message-Id: <20121106.183315.1405011057301397607.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1352092292-4413-1-git-send-email-gmate.amit@gmail.com>
 In-Reply-To: <1352092292-4413-1-git-send-email-gmate.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Amit Mehta <gmate.amit@gmail.com>
-Cc: Ron Mercer <ron.mercer@qlogic.com>, Dept-Eng Linux Driver <Linux-Driver@qlogic.com>, netdev <netdev@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: gmate.amit@gmail.com
+Cc: jitendra.kalsaria@qlogic.com, ron.mercer@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Sun,  4 Nov 2012 21:11:32 -0800
 
+> checkpatch.pl throws error message for the current code. This patch fixes
+> this coding style issue.
+> 
+> Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
 
->From: Kumar Amit Mehta [mailto:gmate.amit@gmail.com] 
->Sent: Sunday, November 04, 2012 9:12 PM
->To: Jitendra Kalsaria
->Cc: Ron Mercer; Dept-Eng Linux Driver; netdev; linux-kernel; kernel-janitors@vger.kernel.org
->Subject: [PATCH] drivers: ethernet: qlogic: qlge_dbg.c: Fixed a coding style issue
->
->checkpatch.pl throws error message for the current code. This patch fixes
->this coding style issue.
->
->Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
->---
-> drivers/net/ethernet/qlogic/qlge/qlge_dbg.c |   16 ++++++++--------
-> 1 file changed, 8 insertions(+), 8 deletions(-)
-
-Never seen these before with checkpatch.pl when we submitted changes.
-
-Anyway thanks for your effort on fixing it.
-
-Acked-by: Jitendra Kalsaria <Jitendra.kalsaria@qlogic.com>
-
+Applied.
