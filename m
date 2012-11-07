@@ -1,44 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 16 Nov 2012 06:26:31 +0000
-Subject: [patch] paride: enable extra verbose debugging
-Message-Id: <20121116062631.GA11771@elgon.mountain>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Wed, 07 Nov 2012 12:08:09 +0000
+Subject: [PATCH] staging: comedi: drivers: jr3_pci.c: fix for coding style issue
+Message-Id: <1352290089-14477-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tim Waugh <tim@cyberelk.net>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: abbotti@mev.co.uk
+Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, ravishankar.km@greenturtles.in, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This debug settings here are:
+fixed few error and warning messages as reported by checkpatch.pl
 
-	0 - Off
-	1 - Some
-	2 - Lots
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/comedi/drivers/jr3_pci.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-The module_param() was incorrectly set to bool and later the variable
-was updated to be bool to match.  Really they should both be int.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/block/paride/pg.c b/drivers/block/paride/pg.c
-index 4a27b1d..ab99ac9 100644
---- a/drivers/block/paride/pg.c
-+++ b/drivers/block/paride/pg.c
-@@ -137,7 +137,7 @@
+diff --git a/drivers/staging/comedi/drivers/jr3_pci.c b/drivers/staging/comedi/drivers/jr3_pci.c
+index 364541d..20fdb7b 100644
+--- a/drivers/staging/comedi/drivers/jr3_pci.c
++++ b/drivers/staging/comedi/drivers/jr3_pci.c
+@@ -360,7 +360,7 @@ static int read_idm_word(const u8 *data, size_t size, int *pos,
+ 	return result;
+ }
  
- */
+-static int jr3_download_firmware(struct comedi_device *dev, const u8 * data,
++static int jr3_download_firmware(struct comedi_device *dev, const u8 *data,
+ 				 size_t size)
+ {
+ 	/*
+@@ -470,14 +470,13 @@ static struct poll_delay_t jr3_pci_poll_subdevice(struct comedi_subdevice *s)
+ 		struct jr3_channel __iomem *channel = p->channel;
+ 		int errors = get_u16(&channel->errors);
  
--static bool verbose = 0;
-+static int verbose;
- static int major = PG_MAJOR;
- static char *name = PG_NAME;
- static int disable = 0;
-@@ -168,7 +168,7 @@ enum {D_PRT, D_PRO, D_UNI, D_MOD, D_SLV, D_DLY};
+-		if (errors != p->errors) {
++		if (errors != p->errors)
+ 			p->errors = errors;
+-		}
+-		if (errors & (watch_dog | watch_dog2 | sensor_change)) {
++
++		if (errors & (watch_dog | watch_dog2 | sensor_change))
+ 			/*  Sensor communication lost, force poll mode */
+ 			p->state = state_jr3_poll;
  
- #include <asm/uaccess.h>
- 
--module_param(verbose, bool, 0644);
-+module_param(verbose, int, 0644);
- module_param(major, int, 0);
- module_param(name, charp, 0);
- module_param_array(drive0, int, NULL, 0);
+-		}
+ 		switch (p->state) {
+ 		case state_jr3_poll: {
+ 				u16 model_no = get_u16(&channel->model_no);
+-- 
+1.7.9.5
+
