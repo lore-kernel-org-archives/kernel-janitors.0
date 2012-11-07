@@ -1,62 +1,52 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Fri, 16 Nov 2012 22:17:01 +0000
-Subject: [PATCH] staging/media/solo6x10/v4l2-enc.c: fix error-handling.
-Message-Id: <1353104221-30176-1-git-send-email-tipecaml@gmail.com>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Wed, 07 Nov 2012 06:52:55 +0000
+Subject: [PATCH] staging: tidspbridge: dynload: reloc.c: checkpatch.pl cleanup
+Message-Id: <1352271175-9106-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-media@vger.kernel.org, gregkh@linuxfoundation.org, mchehab@infradead.org, bcollins@bluecherry.net, Cyril Roelandt <tipecaml@gmail.com>
+To: omar.ramirez@ti.com
+Cc: gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The return values of copy_to_user() and copy_from_user() cannot be negative.
+fix for few error messages as reported by checkpatch.pl
 
-Found using the following semantich patch:
-
-<spml>
-@exists@
-identifier ret;
-statement S;
-expression E;
-@@
-(
-* ret = copy_to_user(...);
-|
-* ret = copy_from_user(...);
-)
-... when != ret = E
-    when != if (ret) { <+... ret = E; ...+> }
-* if (ret < 0)
-  S
-</spml>
-
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
 ---
- drivers/staging/media/solo6x10/v4l2-enc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/staging/tidspbridge/dynload/reloc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/media/solo6x10/v4l2-enc.c b/drivers/staging/media/solo6x10/v4l2-enc.c
-index f8f0da9..4977e86 100644
---- a/drivers/staging/media/solo6x10/v4l2-enc.c
-+++ b/drivers/staging/media/solo6x10/v4l2-enc.c
-@@ -1619,6 +1619,8 @@ static int solo_s_ext_ctrls(struct file *file, void *priv,
- 				solo_enc->osd_text[OSD_TEXT_MAX] = '\0';
- 				if (!err)
- 					err = solo_osd_print(solo_enc);
-+				else
-+					err = -EFAULT;
- 			}
- 			break;
- 		default:
-@@ -1654,6 +1656,8 @@ static int solo_g_ext_ctrls(struct file *file, void *priv,
- 				err = copy_to_user(ctrl->string,
- 						   solo_enc->osd_text,
- 						   OSD_TEXT_MAX);
-+				if (err)
-+					err = -EFAULT;
- 			}
- 			break;
- 		default:
+diff --git a/drivers/staging/tidspbridge/dynload/reloc.c b/drivers/staging/tidspbridge/dynload/reloc.c
+index 7b28c07..463abdb 100644
+--- a/drivers/staging/tidspbridge/dynload/reloc.c
++++ b/drivers/staging/tidspbridge/dynload/reloc.c
+@@ -45,7 +45,7 @@ static const char bsssymbol[] = { ".bss" };
+  * Effect:
+  *	Extracts the specified field and returns it.
+  ************************************************************************* */
+-rvalue dload_unpack(struct dload_state *dlthis, tgt_au_t * data, int fieldsz,
++rvalue dload_unpack(struct dload_state *dlthis, tgt_au_t *data, int fieldsz,
+ 		    int offset, unsigned sgn)
+ {
+ 	register rvalue objval;
+@@ -98,7 +98,7 @@ rvalue dload_unpack(struct dload_state *dlthis, tgt_au_t * data, int fieldsz,
+  ************************************************************************* */
+ static const unsigned char ovf_limit[] = { 1, 2, 2 };
+ 
+-int dload_repack(struct dload_state *dlthis, rvalue val, tgt_au_t * data,
++int dload_repack(struct dload_state *dlthis, rvalue val, tgt_au_t *data,
+ 		 int fieldsz, int offset, unsigned sgn)
+ {
+ 	register urvalue objval, mask;
+@@ -161,7 +161,7 @@ static const u8 c60_scale[SCALE_MASK + 1] = {
+  * Effect:
+  *	Performs the specified relocation operation
+  ************************************************************************* */
+-void dload_relocate(struct dload_state *dlthis, tgt_au_t * data,
++void dload_relocate(struct dload_state *dlthis, tgt_au_t *data,
+ 		    struct reloc_record_t *rp, bool *tramps_generated,
+ 		    bool second_pass)
+ {
 -- 
-1.7.10.4
+1.7.9.5
 
