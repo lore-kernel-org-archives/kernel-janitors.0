@@ -1,79 +1,57 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Date: Fri, 16 Nov 2012 11:17:04 +0000
-Subject: Re: [PATCH 4/5] ath6kl/wmi.c: eliminate possible double free
-Message-Id: <50A620B0.6020007@qca.qualcomm.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 09 Nov 2012 01:28:07 +0000
+Subject: build regressions 2012-11-08
+Message-Id: <20121109012807.GC6332@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr> <1350816727-1381-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1350816727-1381-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Julia,
+[errors]
+drivers/staging/silicom/bp_mod.c:5437:13: error: 'dev_base' undeclared (first use in this function)
+drivers/staging/silicom/bp_mod.c:5437:37: error: 'struct net_device' has no member named 'next'
+drivers/staging/silicom/bp_mod.c:7202:6: error: void value not ignored as it ought to be
+drivers/staging/silicom/bypasslib/bypass.c:145:2: error: implicit declaration of function 'pci_find_class' [-Werror=implicit-function-declaration]
+sdhci-pltfm.c:(.text+0x80): multiple definition of `sdhci_runtime_pm_get'
+drivers/mmc/host/sdhci.o:sdhci.c:(.text+0x7550): first defined here
+sdhci-pltfm.c:(.text+0xa0): multiple definition of `sdhci_runtime_pm_put'
+fs/btrfs/ioctl.c:3872:7: error: case label does not reduce to an integer constant
+drivers/mfd/rtsx_pcr.c:985:2: error: implicit declaration of function 'kcalloc' [-Werror=implicit-function-declaration]
+drivers/mfd/rtsx_pcr.c:993:3: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+drivers/mfd/rtsx_pcr.c:1021:2: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
 
-On 10/21/2012 01:52 PM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> This makes two changes.  In ath6kl_wmi_cmd_send, a call to dev_kfree_skb on
-> the skb argument is added to the initial sanity check to more completely
-> establish the invariant that ath6kl_wmi_cmd_send owns its skb argument.
-> Then, in ath6kl_wmi_sync_point, on failure of the call to
-> ath6kl_wmi_cmd_send, the clearing of the local skb variable is moved up, so
-> that the error-handling code at the end of the function does not free it
-> again.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> identifier f,free,a;
-> parameter list[n] ps;
-> type T;
-> expression e;
-> @@
-> 
-> f(ps,T a,...) {
->   ... when any
->       when != a = e
->   if(...) { ... free(a); ... return ...; }
->   ... when any
-> }
-> 
-> @@
-> identifier r.f,r.free;
-> expression x,a;
-> expression list[r.n] xs;
-> @@
-> 
-> * x = f(xs,a,...);
->   if (...) { ... free(a); ... return ...; }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[warnings]
+include/linux/version.h:1:0: warning: "UTS_RELEASE" redefined [enabled by default]
+include/generated/utsrelease.h:1:0: warning: "UTS_RELEASE" redefined [enabled by default]
+drivers/staging/silicom/bypasslib/bypass.c:145:15: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/staging/silicom/bypasslib/bypass.c:483:1: warning: data definition has no type or storage class [enabled by default]
+drivers/staging/silicom/bypasslib/bypass.c:483:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_NOVERS' [-Wimplicit-int]
+drivers/staging/silicom/bypasslib/bypass.c:483:1: warning: parameter names (without types) in function declaration [enabled by default]
+drivers/block/mtip32xx/mtip32xx.c:2472:2: warning: right shift count >= width of type [enabled by default]
+drivers/mfd/rtsx_pcr.c:985:13: warning: assignment makes pointer from integer without a cast [enabled by default]
 
-I think this patch which is commited to ath6kl.git has fixed this.
+[sparse]
+include/linux/version.h:1:9: sparse: preprocessor token UTS_RELEASE redefined
+include/generated/utsrelease.h:1:9: sparse: preprocessor token UTS_RELEASE redefined
+fs/btrfs/dev-replace.c:486:17: sparse: incompatible types in comparison expression (different address spaces)
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:7053:6: sparse: symbol 'bnx2x_init_searcher' was not declared. Should it be static?
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:7083:5: sparse: symbol 'bnx2x_reset_nic_mode' was not declared. Should it be static?
+drivers/staging/silicom/bp_mod.c:5437:20: sparse: undefined identifier 'dev_base'
+drivers/staging/silicom/bp_mod.c:5437:44: sparse: no member 'next' in struct net_device
+drivers/staging/silicom/bypasslib/bypass.c:145:24: sparse: undefined identifier 'pci_find_class'
 
-commit 0616dc1f2bef563d7916c0dcedbb1bff7d9bd80b
-Author: Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>
-Date:   Tue Aug 14 10:10:33 2012 +0530
+[smatch]
+fs/btrfs/dev-replace.c:827 btrfs_dev_replace_lock() warn: inconsistent returns mutex:&dev_replace->lock: locked (814) unlocked (823)
+fs/btrfs/extent-tree.c:2358 run_clustered_refs() warn: inconsistent returns mutex:&locked_ref->mutex: locked (2351,2358) unlocked (2305)
+fs/btrfs/ctree.c:2575 btrfs_search_slot() debug: remove_pools: nr_children over 4000 (4110). (trans unknown)
+fs/btrfs/ctree.c:2575 btrfs_search_slot() error: buffer overflow 'p->nodes' 8 <= 9
+fs/btrfs/ctree.c:2583 btrfs_search_slot() error: buffer overflow 'p->slots' 8 <= 9
+drivers/mmc/host/rtsx_pci_sdmmc.c:502 sd_search_final_phase() warn: 'path' puts 512 bytes on stack
 
-    ath6kl: Fix potential skb double free in ath6kl_wmi_sync_point()
+[coccinelle]
+drivers/net/usb/smsc95xx.c:1134:39-50: ERROR: reference preceded by free on line 1136
 
-    skb given to ath6kl_control_tx() is owned by ath6kl_control_tx().
-    Calling function should not free the skb for error cases.
-    This is found during code review.
-
-    kvalo: fix a checkpatch warning in ath6kl_wmi_cmd_send()
-
-    Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>
-    Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
-
-https://github.com/kvalo/ath6kl/commit/0616dc1f2bef563d7916c0dcedbb1bff7d9bd80b
-
-If you have the time, I would appreciate if you could take a look and
-confirm.
-
-Kalle
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
