@@ -1,72 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 03 Nov 2012 10:58:22 +0000
-Subject: [PATCH 1/16] drivers/gpu/drm/drm_cache.c: use WARN_ONCE
-Message-Id: <1351940317-14812-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 10 Nov 2012 17:29:58 +0000
+Subject: build regressions 2012-11-10
+Message-Id: <509e8f16.d5nYEQodgkFHrYx8%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+net/ipv6/exthdrs_core.c:188: error: (Each undeclared identifier is reported only once
+net/ipv6/exthdrs_core.c:188: error: for each function it appears in.)
+net/ipv6/exthdrs_core.c:188:27: error: 'OVS_IP6T_FH_F_SKIP_RH' undeclared (first use in this function)
 
-Use WARN_ONCE rather than printk followed by WARN_ON_ONCE(1), for conciseness.
+[warnings]
+WARNING: security/built-in.o(.text+0xb43ac): Section mismatch in reference from the function integrity_init_keyring() to the variable .init.data:chosen_lsm
+net/sunrpc/svc.c:1045:8: warning: unused variable 'buf' [-Wunused-variable]
+WARNING: security/built-in.o(.text+0x2b71c): Section mismatch in reference from the function integrity_inode_free() to the variable .init.data:chosen_lsm
 
-A simplified version of the semantic patch that makes this transformation
-is as follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression list es;
-@@
-
--printk(
-+WARN_ONCE(1,
-  es);
--WARN_ON_ONCE(1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[sparse]
+fs/fuse/file.c:1176:43: sparse: cast removes address space of expression
+fs/fuse/file.c:1176:43: sparse: incorrect type in initializer (different address spaces)
+fs/nfsd/nfs4state.c:948:6: sparse: symbol 'init_session' was not declared. Should it be static?
+net/ipv6/exthdrs_core.c:188:48: sparse: undefined identifier 'OVS_IP6T_FH_F_SKIP_RH'
 
 ---
- drivers/gpu/drm/drm_cache.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_cache.c b/drivers/gpu/drm/drm_cache.c
-index a575cb2..8df9a7b 100644
---- a/drivers/gpu/drm/drm_cache.c
-+++ b/drivers/gpu/drm/drm_cache.c
-@@ -94,8 +94,7 @@ drm_clflush_pages(struct page *pages[], unsigned long num_pages)
- 		kunmap_atomic(page_virtual);
- 	}
- #else
--	printk(KERN_ERR "Architecture has no drm_cache.c support\n");
--	WARN_ON_ONCE(1);
-+	WARN_ONCE(1, KERN_ERR "Architecture has no drm_cache.c support\n");
- #endif
- }
- EXPORT_SYMBOL(drm_clflush_pages);
-@@ -119,8 +118,7 @@ drm_clflush_sg(struct sg_table *st)
- 	if (on_each_cpu(drm_clflush_ipi_handler, NULL, 1) != 0)
- 		printk(KERN_ERR "Timed out waiting for cache flush.\n");
- #else
--	printk(KERN_ERR "Architecture has no drm_cache.c support\n");
--	WARN_ON_ONCE(1);
-+	WARN_ONCE(1, KERN_ERR "Architecture has no drm_cache.c support\n");
- #endif
- }
- EXPORT_SYMBOL(drm_clflush_sg);
-@@ -142,8 +140,7 @@ drm_clflush_virt_range(char *addr, unsigned long length)
- 	if (on_each_cpu(drm_clflush_ipi_handler, NULL, 1) != 0)
- 		printk(KERN_ERR "Timed out waiting for cache flush.\n");
- #else
--	printk(KERN_ERR "Architecture has no drm_cache.c support\n");
--	WARN_ON_ONCE(1);
-+	WARN_ONCE(1, KERN_ERR "Architecture has no drm_cache.c support\n");
- #endif
- }
- EXPORT_SYMBOL(drm_clflush_virt_range);
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
