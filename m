@@ -1,136 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 03 Nov 2012 20:02:09 +0000
-Subject: [PATCH] scripts/coccinelle/misc/warn.cocci: use WARN
-Message-Id: <1351972929-7448-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Sun, 11 Nov 2012 20:49:31 +0000
+Subject: [PATCH 3/3] ceph: fix dentry reference leak in ceph_encode_fh().
+Message-Id: <1352666971-13551-4-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1352666971-13551-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1352666971-13551-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, sage@inktank.com, ceph-devel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+dput() was not called in the error path.
 
-Use WARN(1,...) rather than printk followed by WARN(1).
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
- scripts/coccinelle/misc/warn.cocci |  109 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 109 insertions(+)
+ fs/ceph/export.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/misc/warn.cocci b/scripts/coccinelle/misc/warn.cocci
-new file mode 100644
-index 0000000..fda8c35
---- /dev/null
-+++ b/scripts/coccinelle/misc/warn.cocci
-@@ -0,0 +1,109 @@
-+/// Use WARN(1,...) rather than printk followed by WARN_ON(1)
-+///
-+// Confidence: High
-+// Copyright: (C) 2012 Julia Lawall, INRIA/LIP6.  GPLv2.
-+// Copyright: (C) 2012 Gilles Muller, INRIA/LiP6.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Comments:
-+// Options: -no_includes -include_headers
+diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+index 9349bb3..ca3ab3f 100644
+--- a/fs/ceph/export.c
++++ b/fs/ceph/export.c
+@@ -56,13 +56,15 @@ static int ceph_encode_fh(struct inode *inode, u32 *rawfh, int *max_len,
+ 	struct ceph_nfs_confh *cfh = (void *)rawfh;
+ 	int connected_handle_length = sizeof(*cfh)/4;
+ 	int handle_length = sizeof(*fh)/4;
+-	struct dentry *dentry = d_find_alias(inode);
++	struct dentry *dentry;
+ 	struct dentry *parent;
+ 
+ 	/* don't re-export snaps */
+ 	if (ceph_snap(inode) != CEPH_NOSNAP)
+ 		return -EINVAL;
+ 
++	dentry = d_find_alias(inode);
 +
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+@bad1@
-+position p;
-+@@
-+
-+printk(...);
-+printk@p(...);
-+WARN_ON(1);
-+
-+@r1 depends on context || report || org@
-+position p != bad1.p;
-+@@
-+
-+ printk@p(...);
-+*WARN_ON(1);
-+
-+@script:python depends on org@
-+p << r1.p;
-+@@
-+
-+cocci.print_main("printk + WARN_ON can be just WARN",p)
-+
-+@script:python depends on report@
-+p << r1.p;
-+@@
-+
-+msg = "SUGGESTION: printk + WARN_ON can be just WARN"
-+coccilib.report.print_report(p[0],msg)
-+
-+@ok1 depends on patch@
-+expression list es;
-+position p != bad1.p;
-+@@
-+
-+-printk@p(
-++WARN(1,
-+  es);
-+-WARN_ON(1);
-+
-+@depends on patch@
-+expression list ok1.es;
-+@@
-+
-+if (...)
-+- {
-+  WARN(1,es);
-+- }
-+
-+// --------------------------------------------------------------------
-+
-+@bad2@
-+position p;
-+@@
-+
-+printk(...);
-+printk@p(...);
-+WARN_ON_ONCE(1);
-+
-+@r2 depends on context || report || org@
-+position p != bad1.p;
-+@@
-+
-+ printk@p(...);
-+*WARN_ON_ONCE(1);
-+
-+@script:python depends on org@
-+p << r2.p;
-+@@
-+
-+cocci.print_main("printk + WARN_ON_ONCE can be just WARN_ONCE",p)
-+
-+@script:python depends on report@
-+p << r2.p;
-+@@
-+
-+msg = "SUGGESTION: printk + WARN_ON_ONCE can be just WARN_ONCE"
-+coccilib.report.print_report(p[0],msg)
-+
-+@ok2 depends on patch@
-+expression list es;
-+position p != bad2.p;
-+@@
-+
-+-printk@p(
-++WARN_ONCE(1,
-+  es);
-+-WARN_ON_ONCE(1);
-+
-+@depends on patch@
-+expression list ok2.es;
-+@@
-+
-+if (...)
-+- {
-+  WARN_ONCE(1,es);
-+- }
+ 	/* if we found an alias, generate a connectable fh */
+ 	if (*max_len >= connected_handle_length && dentry) {
+ 		dout("encode_fh %p connectable\n", dentry);
+-- 
+1.7.10.4
 
