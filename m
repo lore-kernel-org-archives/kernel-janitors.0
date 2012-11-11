@@ -1,84 +1,35 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 22 Nov 2012 12:38:20 +0000
-Subject: Re: [PATCH] UVC: use GFP_ATOMIC under spin lock.
-Message-Id: <1906481.9XLFQBE7QO@avalon>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="nextPart4560873.UUymmdTJiz"
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Sun, 11 Nov 2012 20:49:30 +0000
+Subject: [PATCH 2/3] iommu/tegra-smmu.c: fix dentry reference leak in smmu_debugfs_stats_show().
+Message-Id: <1352666971-13551-3-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1353360842-18384-1-git-send-email-tipecaml@gmail.com> <50ADDDD5.1080709@bfs.de> <20121122122223.GC18022@arwen.pp.htv.fi>
-In-Reply-To: <20121122122223.GC18022@arwen.pp.htv.fi>
-To: balbi@ti.com
-Cc: walter harms <wharms@bfs.de>, Cyril Roelandt <tipecaml@gmail.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org
-
-
---nextPart4560873.UUymmdTJiz
-Content-Transfer-Encoding: 7Bit
+References: <1352666971-13551-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1352666971-13551-1-git-send-email-tipecaml@gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, joerg.roedel@amd.com, hdoyu@nvidia.com, swarren@nvidia.com
 
-On Thursday 22 November 2012 14:22:23 Felipe Balbi wrote:
-> On Thu, Nov 22, 2012 at 09:09:57AM +0100, walter harms wrote:
-> > Am 19.11.2012 22:34, schrieb Cyril Roelandt:
-> > > Found using the following semantic patch:
-> > > <spml>
-> > > @@
-> > > @@
-> > > spin_lock_irqsave(...);
-> > > ... when != spin_unlock_irqrestore(...);
-> > > * GFP_KERNEL
-> > > </spml>
-> > > 
-> > > Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
-> > > ---
-> > > 
-> > >  drivers/usb/gadget/uvc_video.c |    2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/usb/gadget/uvc_video.c
-> > > b/drivers/usb/gadget/uvc_video.c index b0e53a8..79b4132 100644
-> > > --- a/drivers/usb/gadget/uvc_video.c
-> > > +++ b/drivers/usb/gadget/uvc_video.c
-> > > @@ -309,7 +309,7 @@ uvc_video_pump(struct uvc_video *video)
-> > > 
-> > >  		video->encode(req, video, buf);
-> > >  		
-> > >  		/* Queue the USB request */
-> > > 
-> > > -		if ((ret = usb_ep_queue(video->ep, req, GFP_KERNEL)) < 0) {
-> > > +		if ((ret = usb_ep_queue(video->ep, req, GFP_ATOMIC)) < 0) {
-> > > 
-> > >  			printk(KERN_INFO "Failed to queue request (%d)\n", ret);
-> > >  			usb_ep_set_halt(video->ep);
-> > >  			spin_unlock_irqrestore(&video->queue.irqlock, flags);
-> > 
-> > IMHO, this should be two lines, aka:
-> > 
-> > ret = usb_ep_queue(video->ep, req, GFP_KERNEL);
-> > if (ret<0)
-> 
-> correct, please resend with the fix.
+Call to d_find_alias() needs a corresponding dput().
 
-I agree as well.
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/iommu/tegra-smmu.c |    1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 4167863..4252d74 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -1052,6 +1052,7 @@ static int smmu_debugfs_stats_show(struct seq_file *s, void *v)
+ 			stats[i], val, offs);
+ 	}
+ 	seq_printf(s, "\n");
++	dput(dent);
+ 
+ 	return 0;
+ }
 -- 
-Regards,
-
-Laurent Pinchart
-
---nextPart4560873.UUymmdTJiz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQEcBAABAgAGBQJQrhzCAAoJEIkPb2GL7hl1NX8IAJIE8YqFtr7qIZepw63hbv4a
-GE3Y1eC61aYxXyVCukv73SImYVCa1TUPk69cP3pHctkeh72Wylzofgov1yN8blZH
-VniHH/owMCbzUmmrUSDqhOGpA9jZAM70iFMA84feht5E09Gm4w4BQgMnNVVIvSPf
-2IXFayGFFL6Kv5mPwUh1mRTgFoWY/RgCap0BICYxQrpT1cKryLfLxLXU+753iTKf
-r1CpXy0u9IQOkLMZVT5r48kuXIdw/Dn/PBGEN/na/NSnSCfSX/5wWFVpJxYSqiQI
-81gI4eHXHfANTlu1w1Tqx9Ch4nGDqeKXwqnjhhqiBToEuFlDqMgguQw2EWtVnMM=
-=GeEF
------END PGP SIGNATURE-----
-
---nextPart4560873.UUymmdTJiz--
+1.7.10.4
 
