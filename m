@@ -1,74 +1,49 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 03 Nov 2012 10:58:37 +0000
-Subject: [PATCH 16/16] drivers/infiniband/hw/nes: use WARN
-Message-Id: <1351940317-14812-17-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 11 Nov 2012 20:58:41 +0000
+Subject: build regressions 2012-11-11
+Message-Id: <50a01181.9WwOQ0PQ/WfNPJGZ%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Faisal Latif <faisal.latif@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+kernel/signal.c:1164:9: error: implicit declaration of function 'task_pt_regs' [-Werror=implicit-function-declaration]
+fs/coredump.c:477:3: error: implicit declaration of function 'task_pt_regs' [-Werror=implicit-function-declaration]
+kernel/signal.c:2144:2: error: implicit declaration of function 'ptrace_signal_deliver' [-Werror=implicit-function-declaration]
+kernel/signal.c:2362:4: error: too few arguments to function 'do_coredump'
+drivers/net/can/usb/peak_usb/pcan_usb_core.h:134:6: error: conflicting types for 'dump_mem'
+drivers/net/can/usb/peak_usb/pcan_usb_core.c:56:6: error: conflicting types for 'dump_mem'
 
-Use WARN rather than printk followed by WARN_ON(1), for conciseness.
+[warnings]
+kernel/signal.c:1164:25: warning: initialization makes pointer from integer without a cast [enabled by default]
+fs/coredump.c:477:3: warning: initialization makes pointer from integer without a cast [enabled by default]
+fs/coredump.c:477:3: warning: (near initialization for 'cprm.regs') [enabled by default]
+kernel/user_namespace.c:157:6: warning: 'first' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-A simplified version of the semantic patch that makes this transformation
-is as follows: (http://coccinelle.lip6.fr/)
+[sparse]
+fs/nfsd/nfs4callback.c:645:17: sparse: symbol 'get_backchannel_cred' was not declared. Should it be static?
+fs/jbd2/commit.c:351:18: sparse: incorrect type in assignment (different base types)
+fs/jbd2/journal.c:117:16: sparse: incorrect type in return expression (different base types)
+fs/jbd2/journal.c:125:18: sparse: restricted __be32 degrades to integer
+fs/jbd2/journal.c:120:5: sparse: symbol 'jbd2_superblock_csum_verify' was not declared. Should it be static?
+fs/jbd2/journal.c:128:6: sparse: symbol 'jbd2_superblock_csum_set' was not declared. Should it be static?
+fs/jbd2/recovery.c:193:20: sparse: cast to restricted __be32
+fs/jbd2/recovery.c:411:20: sparse: cast from restricted __be16
+fs/jbd2/recovery.c:413:28: sparse: restricted __be32 degrades to integer
 
-// <smpl>
-@@
-expression list es;
-@@
+[smatch]
+security/apparmor/apparmorfs.c:216 __next_namespace() info: loop could be replaced with if statement.
+security/apparmor/apparmorfs.c:214 __next_namespace() info: ignoring unreachable code.
+security/apparmor/apparmorfs.c:224 __next_namespace() warn: inconsistent returns read_lock:&ns->lock: locked (207,216,224) unlocked (219)
+security/apparmor/apparmorfs.c:224 __next_namespace() warn: inconsistent returns read_lock:&next->lock: locked (207) unlocked (216,219,224)
+security/apparmor/apparmorfs.c:269 __next_profile() info: loop could be replaced with if statement.
+security/apparmor/apparmorfs.c:267 __next_profile() info: ignoring unreachable code.
 
--printk(
-+WARN(1,
-  es);
--WARN_ON(1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[coccinelle]
+security/apparmor/policy_unpack.c:590:8-34: duplicated argument to && or ||
 
 ---
- drivers/infiniband/hw/nes/nes_cm.c  |    6 ++----
- drivers/infiniband/hw/nes/nes_mgt.c |    6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/infiniband/hw/nes/nes_cm.c b/drivers/infiniband/hw/nes/nes_cm.c
-index cfaacaf..8a15a1d 100644
---- a/drivers/infiniband/hw/nes/nes_cm.c
-+++ b/drivers/infiniband/hw/nes/nes_cm.c
-@@ -629,11 +629,9 @@ static void build_rdma0_msg(struct nes_cm_node *cm_node, struct nes_qp **nesqp_a
- 
- 	case SEND_RDMA_READ_ZERO:
- 	default:
--		if (cm_node->send_rdma0_op != SEND_RDMA_READ_ZERO) {
--			printk(KERN_ERR "%s[%u]: Unsupported RDMA0 len operation=%u\n",
-+		if (cm_node->send_rdma0_op != SEND_RDMA_READ_ZERO)
-+			WARN(1, KERN_ERR "%s[%u]: Unsupported RDMA0 len operation=%u\n",
- 				 __func__, __LINE__, cm_node->send_rdma0_op);
--			WARN_ON(1);
--		}
- 		nes_debug(NES_DBG_CM, "Sending first rdma operation.\n");
- 		wqe->wqe_words[NES_IWARP_SQ_WQE_MISC_IDX]  			cpu_to_le32(NES_IWARP_SQ_OP_RDMAR);
-diff --git a/drivers/infiniband/hw/nes/nes_mgt.c b/drivers/infiniband/hw/nes/nes_mgt.c
-index 3ba7be3..53bb88c 100644
---- a/drivers/infiniband/hw/nes/nes_mgt.c
-+++ b/drivers/infiniband/hw/nes/nes_mgt.c
-@@ -649,11 +649,9 @@ static void nes_chg_qh_handler(struct nes_device *nesdev, struct nes_cqp_request
- 	nesqp = qh_chg->nesqp;
- 
- 	/* Should we handle the bad completion */
--	if (cqp_request->major_code) {
--		printk(KERN_ERR PFX "Invalid cqp_request major_code=0x%x\n",
-+	if (cqp_request->major_code)
-+		WARN(1, KERN_ERR PFX "Invalid cqp_request major_code=0x%x\n",
- 		       cqp_request->major_code);
--		WARN_ON(1);
--	}
- 
- 	switch (nesqp->pau_state) {
- 	case PAU_DEL_QH:
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
