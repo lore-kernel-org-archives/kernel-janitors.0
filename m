@@ -1,38 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 Oct 2012 08:29:51 +0000
-Subject: [patch] ocfs2/dlm: small signedness bug in dlm_request_all_locks()
-Message-Id: <20121002082951.GJ12398@elgon.mountain>
+Date: Mon, 12 Nov 2012 11:07:24 +0000
+Subject: [patch] vmwgfx: return an -EFAULT if copy_to_user() fails
+Message-Id: <20121112110724.GA1678@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>, Thomas Meyer <thomas@m3y3r.de>
 
-"ret" is used to store the return value of o2net_send_message(), and not
-an enum dlm_status.  Because of the type difference, if an error
-happened then the check for (ret < 0) didn't work and the error wasn't
-logged.
+copy_to_user() returns the number of bytes remaining to be copied, but
+we want to return a negative error code here.  I fixed a couple of these
+last year, but I missed this one.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I think there were only three copy_to/from_user() functions in this
+file and they're all fixed now.
 
-diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
-index 15d81ad..393515b 100644
---- a/fs/ocfs2/dlm/dlmrecovery.c
-+++ b/fs/ocfs2/dlm/dlmrecovery.c
-@@ -789,7 +789,7 @@ static int dlm_request_all_locks(struct dlm_ctxt *dlm, u8 request_from,
- 				 u8 dead_node)
- {
- 	struct dlm_lock_request lr;
--	enum dlm_status ret;
-+	int ret;
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_ioctl.c b/drivers/gpu/drm/vmwgfx/vmwgfx_ioctl.c
+index b07ca2e..7290811 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_ioctl.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ioctl.c
+@@ -110,6 +110,8 @@ int vmw_get_cap_3d_ioctl(struct drm_device *dev, void *data,
+ 	memcpy_fromio(bounce, &fifo_mem[SVGA_FIFO_3D_CAPS], size);
  
- 	mlog(0, "\n");
+ 	ret = copy_to_user(buffer, bounce, size);
++	if (ret)
++		ret = -EFAULT;
+ 	vfree(bounce);
  
-@@ -802,7 +802,6 @@ static int dlm_request_all_locks(struct dlm_ctxt *dlm, u8 request_from,
- 	lr.dead_node = dead_node;
- 
- 	// send message
--	ret = DLM_NOLOCKMGR;
- 	ret = o2net_send_message(DLM_LOCK_REQUEST_MSG, dlm->key,
- 				 &lr, sizeof(lr), request_from, NULL);
- 
+ 	if (unlikely(ret != 0))
