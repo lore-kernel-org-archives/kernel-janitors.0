@@ -1,49 +1,36 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Fri, 02 Nov 2012 09:19:45 +0000
-Subject: [PATCH] staging: wlan-ng: hfa384x_usb.c: fixed a coding style issue
-Message-Id: <1351847985-974-1-git-send-email-gmate.amit@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 12 Nov 2012 17:31:34 +0000
+Subject: build regressions 2012-11-12
+Message-Id: <50a13276.41vvBKlgGmNu7kB9%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: devendra.aaru@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-checkpatch.pl throws error message for the current code. This patch fixes
-coding style issue.
+[errors]
+sound/pci/ice1712/ice1724.c:2366:5: error: 'struct snd_ice1712' has no member named 'pm_suspend_enabled'
+arch/mips/fw/arc/misc.c:25:2: error: implicit declaration of function 'local_irq_disable' [-Werror=implicit-function-declaration]
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+[warnings]
+drivers/net/ethernet/8390/lib8390.c:669:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+make[4]: Warning: File `include/config/auto.conf' has modification time 2.8e+04 s in the future
+make[2]: Warning: File `.config' has modification time 2.8e+04 s in the future
+make[2]: Warning: File `Makefile' has modification time 2.8e+04 s in the future
+make[2]: Warning: File `init/.version.o.cmd' has modification time 2.8e+04 s in the future
+make[2]: Warning: File `arch/x86/tools/.relocs.cmd' has modification time 2.8e+04 s in the future
+make[2]: Warning: File `net/wireless/built-in.o' has modification time 2.9e+04 s in the future
+make[3]: Warning: File `scripts/basic/.fixdep.cmd' has modification time 2.8e+04 s in the future
+make[3]: Warning: File `arch/x86/include/generated/asm/clkdev.h' has modification time 2.8e+04 s in the future
+make[3]: Warning: File `scripts/.sortextable.cmd' has modification time 2.8e+04 s in the future
+make[3]: Warning: File `arch/x86/include/asm/msr-index.h' has modification time 2.8e+04 s in the future
+make[4]: Warning: File `include/uapi/linux/perf_event.h' has modification time 2.8e+04 s in the future
+make[5]: Warning: File `include/linux/raid/Kbuild' has modification time 2.8e+04 s in the future
+make[3]: Warning: File `arch/x86/kernel/Makefile' has modification time 2.8e+04 s in the future
+fs/btrfs/tree-log.c:1495:20: warning: 'dst_di' may be used uninitialized in this function [-Wmaybe-uninitialized]
+make[3]: Warning: File `drivers/media/common/built-in.o' has modification time 2.9e+04 s in the future
+make[2]: Warning: File `drivers/amba/built-in.o' has modification time 2.9e+04 s in the future
+
 ---
- drivers/staging/wlan-ng/hfa384x_usb.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/wlan-ng/hfa384x_usb.c b/drivers/staging/wlan-ng/hfa384x_usb.c
-index f180c3d..c1a8cb6 100644
---- a/drivers/staging/wlan-ng/hfa384x_usb.c
-+++ b/drivers/staging/wlan-ng/hfa384x_usb.c
-@@ -171,11 +171,11 @@ static void hfa384x_ctlxout_callback(struct urb *urb);
- static void hfa384x_usbin_callback(struct urb *urb);
- 
- static void
--hfa384x_usbin_txcompl(wlandevice_t *wlandev, hfa384x_usbin_t * usbin);
-+hfa384x_usbin_txcompl(wlandevice_t *wlandev, hfa384x_usbin_t *usbin);
- 
- static void hfa384x_usbin_rx(wlandevice_t *wlandev, struct sk_buff *skb);
- 
--static void hfa384x_usbin_info(wlandevice_t *wlandev, hfa384x_usbin_t * usbin);
-+static void hfa384x_usbin_info(wlandevice_t *wlandev, hfa384x_usbin_t *usbin);
- 
- static void
- hfa384x_usbout_tx(wlandevice_t *wlandev, hfa384x_usbout_t *usbout);
-@@ -285,7 +285,7 @@ static inline const char *ctlxstr(CTLX_STATE s)
- 	return ctlx_str[s];
- };
- 
--static inline hfa384x_usbctlx_t *get_active_ctlx(hfa384x_t * hw)
-+static inline hfa384x_usbctlx_t *get_active_ctlx(hfa384x_t *hw)
- {
- 	return list_entry(hw->ctlxq.active.next, hfa384x_usbctlx_t, list);
- }
--- 
-1.7.9.5
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
