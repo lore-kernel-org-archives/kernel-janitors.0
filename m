@@ -1,7 +1,7 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 13 Nov 2012 07:53:01 +0000
+From: Joe Perches <joe@perches.com>
+Date: Tue, 13 Nov 2012 08:03:10 +0000
 Subject: Re: [patch] ALSA: es1968: precedence bug in snd_es1968_tea575x_get_pins()
-Message-Id: <s5hhaouvt0i.wl%tiwai@suse.de>
+Message-Id: <1352793790.24230.18.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121113074454.GB13198@elgon.mountain>
 In-Reply-To: <20121113074454.GB13198@elgon.mountain>
@@ -9,30 +9,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Mauro Carvalho Chehab <mchehab@redhat.com>, Ondrej Zary <linux@rainbow-software.org>, Hans de Goede <hdegoede@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Mauro Carvalho Chehab <mchehab@redhat.com>, Ondrej Zary <linux@rainbow-software.org>, Hans de Goede <hdegoede@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Tue, 13 Nov 2012 10:44:54 +0300,
-Dan Carpenter wrote:
-> 
+On Tue, 2012-11-13 at 10:44 +0300, Dan Carpenter wrote:
 > I don't think this works as intended.  '|' higher precedence than ?: so
 > the bitwize OR "0 | (val & STR_MOST)" is a no-op.
 > 
 > I have re-written it to be more clear.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks, applied now.
-
-
-Takashi
-
-> ---
-> I don't have a way to test this.
-> 
+[]
 > diff --git a/sound/pci/es1968.c b/sound/pci/es1968.c
-> index 50169bc..7266020 100644
-> --- a/sound/pci/es1968.c
-> +++ b/sound/pci/es1968.c
+[]
 > @@ -2581,9 +2581,14 @@ static u8 snd_es1968_tea575x_get_pins(struct snd_tea575x *tea)
 >  	struct es1968 *chip = tea->private_data;
 >  	unsigned long io = chip->io_port + GPIO_DATA;
@@ -48,7 +34,12 @@ Takashi
 > +	if (val & STR_MOST)
 > +		ret |= TEA575X_MOST;
 > +	return ret;
->  }
->  
->  static void snd_es1968_tea575x_set_direction(struct snd_tea575x *tea, bool output)
-> 
+
+Cute.  smatch I presume?  Tools are useful.
+
+Moving the close parentheses is a pretty common style too
+
+	return  (val & STR_DATA ? TEA575X_DATA : 0) |
+		(val & STR_MOST ? TEA575X_MOST : 0);
+
+
