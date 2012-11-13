@@ -1,14 +1,42 @@
-From: Steve Wise <swise@opengridcomputing.com>
-Date: Sat, 03 Nov 2012 12:40:49 +0000
-Subject: Re: [PATCH 6/16] drivers/infiniband/hw/cxgb4/cm.c: use WARN
-Message-Id: <509510D1.10200@opengridcomputing.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 13 Nov 2012 07:44:54 +0000
+Subject: [patch] ALSA: es1968: precedence bug in snd_es1968_tea575x_get_pins()
+Message-Id: <20121113074454.GB13198@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr> <1351940317-14812-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-7-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, Ondrej Zary <linux@rainbow-software.org>, Mauro Carvalho Chehab <mchehab@redhat.com>, Takashi Iwai <tiwai@suse.de>, Rusty Russell <rusty@rustcorp.com.au>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-Acked-by: Steve Wise <swise@opengridcomputing.com>
+I don't think this works as intended.  '|' higher precedence than ?: so
+the bitwize OR "0 | (val & STR_MOST)" is a no-op.
+
+I have re-written it to be more clear.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't have a way to test this.
+
+diff --git a/sound/pci/es1968.c b/sound/pci/es1968.c
+index 50169bc..7266020 100644
+--- a/sound/pci/es1968.c
++++ b/sound/pci/es1968.c
+@@ -2581,9 +2581,14 @@ static u8 snd_es1968_tea575x_get_pins(struct snd_tea575x *tea)
+ 	struct es1968 *chip = tea->private_data;
+ 	unsigned long io = chip->io_port + GPIO_DATA;
+ 	u16 val = inw(io);
+-
+-	return  (val & STR_DATA) ? TEA575X_DATA : 0 |
+-		(val & STR_MOST) ? TEA575X_MOST : 0;
++	u8 ret;
++
++	ret = 0;
++	if (val & STR_DATA)
++		ret |= TEA575X_DATA;
++	if (val & STR_MOST)
++		ret |= TEA575X_MOST;
++	return ret;
+ }
+ 
+ static void snd_es1968_tea575x_set_direction(struct snd_tea575x *tea, bool output)
