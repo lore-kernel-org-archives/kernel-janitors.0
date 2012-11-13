@@ -1,61 +1,125 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 03 Nov 2012 12:11:36 +0000
-Subject: Re: [PATCH 11/16] drivers/misc/kgdbts.c: use WARN
-Message-Id: <509509F8.2010407@bfs.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 13 Nov 2012 10:50:41 +0000
+Subject: [PATCH v2] scripts/coccinelle/misc/semicolon.cocci: Add unneeded semicolon test
+Message-Id: <1352803841-25915-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr> <1351940317-14812-12-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-12-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jason Wessel <jason.wessel@windriver.com>, kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
+This semantic patch looks for semicolons that can be removed without
+changing the semantics of the code. The confidence is moderate
+because there are some false positives on cases like:
 
+b/drivers/mmc/host/cb710-mmc.c:589
+                break;
+        case MMC_POWER_UP:
+        default:
+-               /* ignore */;
+        }
 
-Am 03.11.2012 11:58, schrieb Julia Lawall:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Use WARN rather than printk followed by WARN_ON(1), for conciseness.
-> 
-> A simplified version of the semantic patch that makes this transformation
-> is as follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression list es;
-> @@
-> 
-> -printk(
-> +WARN(1,
->   es);
-> -WARN_ON(1);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/misc/kgdbts.c |    5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
-> index 3aa9a96..8b367db 100644
-> --- a/drivers/misc/kgdbts.c
-> +++ b/drivers/misc/kgdbts.c
-> @@ -114,9 +114,8 @@
->  		touch_nmi_watchdog();	\
->  	} while (0)
->  #define eprintk(a...) do { \
-> -		printk(KERN_ERR a); \
-> -		WARN_ON(1); \
-> -	} while (0)
-> +		WARN(1, KERN_ERR a); \
-> +		} while (0)
->  #define MAX_CONFIG_LEN		40
->  
+There are 37 patches accepted reported by this semantic patch and
+more than 300 fixes to be applied.
 
-A macro calling a macro ?
-Is it possible to replace eprintk() ?
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
 
-re,
- wh
+Changes from V1: Updated subject
+
+ scripts/coccinelle/misc/semicolon.cocci | 83 +++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 scripts/coccinelle/misc/semicolon.cocci
+
+diff --git a/scripts/coccinelle/misc/semicolon.cocci b/scripts/coccinelle/misc/semicolon.cocci
+new file mode 100644
+index 0000000..a47eba2
+--- /dev/null
++++ b/scripts/coccinelle/misc/semicolon.cocci
+@@ -0,0 +1,83 @@
++///
++/// Removes unneeded semicolon.
++///
++// Confidence: Moderate
++// Copyright: (C) 2012 Peter Senna Tschudin, INRIA/LIP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments: Some false positives on empty default cases in switch statements.
++// Options: --no-includes --include-headers
++
++virtual patch
++virtual report
++virtual context
++virtual org
++
++@r_default@
++position p;
++@@
++switch (...)
++{
++default: ...;@p
++}
++
++@r_case@
++position p;
++@@
++(
++switch (...)
++{
++case ...:;@p
++}
++|
++switch (...)
++{
++case ...:...
++case ...:;@p
++}
++|
++switch (...)
++{
++case ...:...
++case ...:
++case ...:;@p
++}
++)
++
++@r1@
++statement S;
++position p1;
++position p != {r_default.p, r_case.p};
++identifier label;
++@@
++(
++label:;
++|
++S@p1;@p
++)
++
++@script:python@
++p << r1.p;
++p1 << r1.p1;
++@@
++if p[0].line != p1[0].line_end:
++	cocci.include_match(False)
++
++@depends on patch@
++position r1.p;
++@@
++-;@p
++
++@script:python depends on report@
++p << r1.p;
++@@
++coccilib.report.print_report(p[0],"Unneeded semicolon")
++
++@depends on context@
++position r1.p;
++@@
++*;@p
++
++@script:python depends on org@
++p << r1.p;
++@@
++cocci.print_main("Unneeded semicolon",p)
+-- 
+1.7.11.7
+
