@@ -1,21 +1,56 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 28 Nov 2012 12:45:30 +0000
-Subject: Re: [patch] mac80211: silence NULL dereference warning
-Message-Id: <1354106730.9345.14.camel@jlt4.sipsolutions.net>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Wed, 14 Nov 2012 11:49:37 +0000
+Subject: [PATCH v2] staging: dgrp: dgrp_tty.c: return an -EFAULT if put_user fails
+Message-Id: <1352893057-27226-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121127173119.GC1059@elgon.mountain>
-In-Reply-To: <20121127173119.GC1059@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: alan@lxorguk.ukuu.org.uk
+Cc: gregkh@linuxfoundation.org, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2012-11-27 at 20:31 +0300, Dan Carpenter wrote:
-> Smatch complains that we could dereference skb later in the function.
-> It's probably unlikely, but we may as well return here and avoid it.
+Inspect the return value of put_user() and return -EFAULT on error.
 
-Good catch, applied.
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/dgrp/dgrp_tty.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-johannes
+diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgrp_tty.c
+index e125b03..cebd3a1 100644
+--- a/drivers/staging/dgrp/dgrp_tty.c
++++ b/drivers/staging/dgrp/dgrp_tty.c
+@@ -2265,9 +2265,7 @@ static int get_modem_info(struct ch_struct *ch, unsigned int *value)
+ 		| ((mlast & DM_RI)  ? TIOCM_RNG : 0)
+ 		| ((mlast & DM_DSR) ? TIOCM_DSR : 0)
+ 		| ((mlast & DM_CTS) ? TIOCM_CTS : 0);
+-	put_user(mlast, (unsigned int __user *) value);
+-
+-	return 0;
++	return put_user(mlast, (unsigned int __user *) value);
+ }
+ 
+ /*
+@@ -2620,7 +2618,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 			       sizeof(long));
+ 		if (rc = 0)
+ 			return -EFAULT;
+-		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
++		if (put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg))
++			return -EFAULT;
+ 		return 0;
+ 
+ 	case TIOCSSOFTCAR:
+@@ -2854,7 +2853,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 		rc = access_ok(VERIFY_WRITE, (void __user *) arg, sizeof(int));
+ 		if (rc = 0)
+ 			return -EFAULT;
+-		put_user(ch->ch_custom_speed, (unsigned int __user *) arg);
++		if (put_user(ch->ch_custom_speed, (unsigned int __user *) arg))
++			return -EFAULT;
+ 		break;
+ 
+ 	case DIGI_SETCUSTOMBAUD:
+-- 
+1.7.9.5
 
