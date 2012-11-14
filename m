@@ -1,44 +1,56 @@
-From: Douglas Bagnall <douglas@paradise.net.nz>
-Date: Tue, 27 Nov 2012 19:51:48 +0000
-Subject: Re: [patch 1/2] [media] rc: unlock on error in show_protocols()
-Message-Id: <50B519D4.7050904@paradise.net.nz>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Wed, 14 Nov 2012 06:44:21 +0000
+Subject: [PATCH] staging: dgrp: dgrp_tty.c: return an -EFAULT if put_user fails
+Message-Id: <1352874741-18526-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121127173509.GE1059@elgon.mountain>
-In-Reply-To: <20121127173509.GE1059@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, =?UTF-8?B?RGF2aWQgSMOkcmRl?= =?UTF-8?B?bWFu?= <david@hardeman.nu>, Jarod Wilson <jarod@redhat.com>, Ezequiel Garcia <elezegarcia@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 28/11/12 06:35, Dan Carpenter wrote:
-> We recently introduced a new return -ENODEV in this function but we need
-> to unlock before returning.
+This fix adds checks for inspecting the return value of put_user() and return
+-EFAULT on error.
 
-There is an identical patch here (scroll down):
-https://patchwork.kernel.org/patch/1284081/
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/dgrp/dgrp_tty.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-I'm not sure what happened to it.
-
-Douglas
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
-> index 601d1ac1..d593bc6 100644
-> --- a/drivers/media/rc/rc-main.c
-> +++ b/drivers/media/rc/rc-main.c
-> @@ -789,8 +789,10 @@ static ssize_t show_protocols(struct device *device,
->  	} else if (dev->raw) {
->  		enabled = dev->raw->enabled_protocols;
->  		allowed = ir_raw_get_allowed_protocols();
-> -	} else
-> +	} else {
-> +		mutex_unlock(&dev->lock);
->  		return -ENODEV;
-> +	}
->  
->  	IR_dprintk(1, "allowed - 0x%llx, enabled - 0x%llx\n",
->  		   (long long)allowed,
-> 
+diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgrp_tty.c
+index e125b03..b294197 100644
+--- a/drivers/staging/dgrp/dgrp_tty.c
++++ b/drivers/staging/dgrp/dgrp_tty.c
+@@ -2265,7 +2265,8 @@ static int get_modem_info(struct ch_struct *ch, unsigned int *value)
+ 		| ((mlast & DM_RI)  ? TIOCM_RNG : 0)
+ 		| ((mlast & DM_DSR) ? TIOCM_DSR : 0)
+ 		| ((mlast & DM_CTS) ? TIOCM_CTS : 0);
+-	put_user(mlast, (unsigned int __user *) value);
++	if (put_user(mlast, (unsigned int __user *) value))
++		return -EFAULT;
+ 
+ 	return 0;
+ }
+@@ -2620,7 +2621,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 			       sizeof(long));
+ 		if (rc = 0)
+ 			return -EFAULT;
+-		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
++		if (put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg))
++			return -EFAULT;
+ 		return 0;
+ 
+ 	case TIOCSSOFTCAR:
+@@ -2854,7 +2856,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 		rc = access_ok(VERIFY_WRITE, (void __user *) arg, sizeof(int));
+ 		if (rc = 0)
+ 			return -EFAULT;
+-		put_user(ch->ch_custom_speed, (unsigned int __user *) arg);
++		if (put_user(ch->ch_custom_speed, (unsigned int __user *) arg))
++			return -EFAULT;
+ 		break;
+ 
+ 	case DIGI_SETCUSTOMBAUD:
+-- 
+1.7.9.5
 
