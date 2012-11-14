@@ -1,21 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 06 Nov 2012 23:33:22 +0000
-Subject: Re: [PATCH] drivers: ethernet: qlogic: netxen_nic_ethtool.c: Fixed a coding style issue
-Message-Id: <20121106.183322.1223064885182660442.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Nov 2012 08:23:54 +0000
+Subject: [patch] ALSA: fm801: precedence bug in snd_fm801_tea575x_get_pins()
+Message-Id: <20121114082354.GB31792@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1352094368-5037-1-git-send-email-gmate.amit@gmail.com>
-In-Reply-To: <1352094368-5037-1-git-send-email-gmate.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gmate.amit@gmail.com
-Cc: sony.chacko@qlogic.com, rajesh.borundia@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, Mauro Carvalho Chehab <mchehab@redhat.com>, Takashi Iwai <tiwai@suse.de>, Rusty Russell <rusty@rustcorp.com.au>, kernel-janitors@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Hans Verkuil <hans.verkuil@cisco.com>
 
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Sun,  4 Nov 2012 21:46:08 -0800
+There is a precedence bug because | has higher precedence than ?:.  This
+code was cut and pasted and I fixed a similar bug a few days ago.
 
-> Fixed some coding style issues.
-> 
-> Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/sound/pci/fm801.c b/sound/pci/fm801.c
+index cc2e91d..c5806f8 100644
+--- a/sound/pci/fm801.c
++++ b/sound/pci/fm801.c
+@@ -767,9 +767,14 @@ static u8 snd_fm801_tea575x_get_pins(struct snd_tea575x *tea)
+ 	struct fm801 *chip = tea->private_data;
+ 	unsigned short reg = inw(FM801_REG(chip, GPIO_CTRL));
+ 	struct snd_fm801_tea575x_gpio gpio = *get_tea575x_gpio(chip);
+-
+-	return  (reg & FM801_GPIO_GP(gpio.data)) ? TEA575X_DATA : 0 |
+-		(reg & FM801_GPIO_GP(gpio.most)) ? TEA575X_MOST : 0;
++	u8 ret;
++
++	ret = 0;
++	if (reg & FM801_GPIO_GP(gpio.data))
++		ret |= TEA575X_DATA;
++	if (reg & FM801_GPIO_GP(gpio.most))
++		ret |= TEA575X_MOST;
++	return ret;
+ }
+ 
+ static void snd_fm801_tea575x_set_direction(struct snd_tea575x *tea, bool output)
