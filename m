@@ -1,49 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 03 Nov 2012 20:30:19 +0000
-Subject: [PATCH 2/8] drivers/scsi/bfa/bfa_svc.c: drop if around WARN_ON
-Message-Id: <1351974625-10282-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Thu, 15 Nov 2012 17:34:13 +0000
+Subject: [PATCH] staging: rtl8192e: rtl8192e: rtl_core.c: Audit the return value of register_netdev()
+Message-Id: <1353000133-13462-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Krishna C Gudipati <kgudipat@brocade.com>
-Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: seanm@seanm.ca, s.l-h@gmx.de, tim.gardner@canonical.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Inspect the return value of register_netdev() in the driver probe routine and
+return -ENODEV in case of error.
 
-Just use WARN_ON rather than an if containing only WARN_ON(1).
-
-A simplified version of the semantic patch that makes this transformation
-is as follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e;
-@@
-- if (e) WARN_ON(1);
-+ WARN_ON(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
 ---
- drivers/scsi/bfa/bfa_svc.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/rtl8192e/rtl8192e/rtl_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/bfa/bfa_svc.c b/drivers/scsi/bfa/bfa_svc.c
-index 299c1c8..765b8d0 100644
---- a/drivers/scsi/bfa/bfa_svc.c
-+++ b/drivers/scsi/bfa/bfa_svc.c
-@@ -626,8 +626,7 @@ bfa_fcxp_init_reqrsp(struct bfa_fcxp_s *fcxp,
- 		/*
- 		 * alloc required sgpgs
- 		 */
--		if (n_sgles > BFI_SGE_INLINE)
--			WARN_ON(1);
-+		WARN_ON(n_sgles > BFI_SGE_INLINE);
- 	}
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+index 81134d3..f68df24 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+@@ -2955,7 +2955,8 @@ static int __devinit rtl8192_pci_probe(struct pci_dev *pdev,
+ 	netif_carrier_off(dev);
+ 	netif_stop_queue(dev);
  
- }
+-	register_netdev(dev);
++	if (register_netdev(dev))
++		goto err_free_irq;
+ 	RT_TRACE(COMP_INIT, "dev name: %s\n", dev->name);
+ 
+ 	rtl8192_proc_init_one(dev);
+-- 
+1.7.9.5
 
