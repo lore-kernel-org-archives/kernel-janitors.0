@@ -1,56 +1,23 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Thu, 15 Nov 2012 12:27:32 +0000
-Subject: [PATCH v3] staging: dgrp: dgrp_tty.c: return an -EFAULT if put_user() fails
-Message-Id: <1352981732-7864-1-git-send-email-gmate.amit@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Thu, 15 Nov 2012 23:25:58 +0000
+Subject: Re: [PATCH v3] staging: dgrp: dgrp_tty.c: return an -EFAULT if put_user() fails
+Message-Id: <20121115232558.GA31883@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1352981732-7864-1-git-send-email-gmate.amit@gmail.com>
+In-Reply-To: <1352981732-7864-1-git-send-email-gmate.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: alan@lxorguk.ukuu.org.uk, dan.carpenter@oracle.com, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kumar Amit Mehta <gmate.amit@gmail.com>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, alan@lxorguk.ukuu.org.uk, dan.carpenter@oracle.com
 
-Inspect the return value of put_user() and return -EFAULT on error.
+On Thu, Nov 15, 2012 at 05:45:32PM +0530, Kumar Amit Mehta wrote:
+> Inspect the return value of put_user() and return -EFAULT on error.
+> 
+> Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
----
- drivers/staging/dgrp/dgrp_tty.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+This no longer applies to my tree, care to refresh and try again?
 
-diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgrp_tty.c
-index e125b03..bc14479 100644
---- a/drivers/staging/dgrp/dgrp_tty.c
-+++ b/drivers/staging/dgrp/dgrp_tty.c
-@@ -2265,9 +2265,7 @@ static int get_modem_info(struct ch_struct *ch, unsigned int *value)
- 		| ((mlast & DM_RI)  ? TIOCM_RNG : 0)
- 		| ((mlast & DM_DSR) ? TIOCM_DSR : 0)
- 		| ((mlast & DM_CTS) ? TIOCM_CTS : 0);
--	put_user(mlast, (unsigned int __user *) value);
--
--	return 0;
-+	return put_user(mlast, (unsigned int __user *) value);
- }
- 
- /*
-@@ -2620,8 +2618,7 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
- 			       sizeof(long));
- 		if (rc = 0)
- 			return -EFAULT;
--		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
--		return 0;
-+		return put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
- 
- 	case TIOCSSOFTCAR:
- 		get_user(arg, (unsigned long __user *) arg);
-@@ -2854,7 +2851,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
- 		rc = access_ok(VERIFY_WRITE, (void __user *) arg, sizeof(int));
- 		if (rc = 0)
- 			return -EFAULT;
--		put_user(ch->ch_custom_speed, (unsigned int __user *) arg);
-+		if (put_user(ch->ch_custom_speed, (unsigned int __user *) arg))
-+			return -EFAULT;
- 		break;
- 
- 	case DIGI_SETCUSTOMBAUD:
--- 
-1.7.9.5
+thanks,
 
+greg k-h
