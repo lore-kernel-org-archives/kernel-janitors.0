@@ -1,50 +1,56 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 14 Nov 2012 08:35:28 +0000
-Subject: Re: [patch] ALSA: fm801: precedence bug in snd_fm801_tea575x_get_pins()
-Message-Id: <s5hsj8coa3z.wl%tiwai@suse.de>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Thu, 15 Nov 2012 12:27:32 +0000
+Subject: [PATCH v3] staging: dgrp: dgrp_tty.c: return an -EFAULT if put_user() fails
+Message-Id: <1352981732-7864-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121114082354.GB31792@elgon.mountain>
-In-Reply-To: <20121114082354.GB31792@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Mauro Carvalho Chehab <mchehab@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, kernel-janitors@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Hans Verkuil <hans.verkuil@cisco.com>
+To: gregkh@linuxfoundation.org
+Cc: alan@lxorguk.ukuu.org.uk, dan.carpenter@oracle.com, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Wed, 14 Nov 2012 11:23:54 +0300,
-Dan Carpenter wrote:
-> 
-> There is a precedence bug because | has higher precedence than ?:.  This
-> code was cut and pasted and I fixed a similar bug a few days ago.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Inspect the return value of put_user() and return -EFAULT on error.
 
-Thanks, applied.
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/dgrp/dgrp_tty.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgrp_tty.c
+index e125b03..bc14479 100644
+--- a/drivers/staging/dgrp/dgrp_tty.c
++++ b/drivers/staging/dgrp/dgrp_tty.c
+@@ -2265,9 +2265,7 @@ static int get_modem_info(struct ch_struct *ch, unsigned int *value)
+ 		| ((mlast & DM_RI)  ? TIOCM_RNG : 0)
+ 		| ((mlast & DM_DSR) ? TIOCM_DSR : 0)
+ 		| ((mlast & DM_CTS) ? TIOCM_CTS : 0);
+-	put_user(mlast, (unsigned int __user *) value);
+-
+-	return 0;
++	return put_user(mlast, (unsigned int __user *) value);
+ }
+ 
+ /*
+@@ -2620,8 +2618,7 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 			       sizeof(long));
+ 		if (rc = 0)
+ 			return -EFAULT;
+-		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
+-		return 0;
++		return put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
+ 
+ 	case TIOCSSOFTCAR:
+ 		get_user(arg, (unsigned long __user *) arg);
+@@ -2854,7 +2851,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 		rc = access_ok(VERIFY_WRITE, (void __user *) arg, sizeof(int));
+ 		if (rc = 0)
+ 			return -EFAULT;
+-		put_user(ch->ch_custom_speed, (unsigned int __user *) arg);
++		if (put_user(ch->ch_custom_speed, (unsigned int __user *) arg))
++			return -EFAULT;
+ 		break;
+ 
+ 	case DIGI_SETCUSTOMBAUD:
+-- 
+1.7.9.5
 
-Takashi
-
-> 
-> diff --git a/sound/pci/fm801.c b/sound/pci/fm801.c
-> index cc2e91d..c5806f8 100644
-> --- a/sound/pci/fm801.c
-> +++ b/sound/pci/fm801.c
-> @@ -767,9 +767,14 @@ static u8 snd_fm801_tea575x_get_pins(struct snd_tea575x *tea)
->  	struct fm801 *chip = tea->private_data;
->  	unsigned short reg = inw(FM801_REG(chip, GPIO_CTRL));
->  	struct snd_fm801_tea575x_gpio gpio = *get_tea575x_gpio(chip);
-> -
-> -	return  (reg & FM801_GPIO_GP(gpio.data)) ? TEA575X_DATA : 0 |
-> -		(reg & FM801_GPIO_GP(gpio.most)) ? TEA575X_MOST : 0;
-> +	u8 ret;
-> +
-> +	ret = 0;
-> +	if (reg & FM801_GPIO_GP(gpio.data))
-> +		ret |= TEA575X_DATA;
-> +	if (reg & FM801_GPIO_GP(gpio.most))
-> +		ret |= TEA575X_MOST;
-> +	return ret;
->  }
->  
->  static void snd_fm801_tea575x_set_direction(struct snd_tea575x *tea, bool output)
-> 
