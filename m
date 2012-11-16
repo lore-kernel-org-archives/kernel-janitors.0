@@ -1,58 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 03 Nov 2012 10:58:28 +0000
-Subject: [PATCH 7/16] drivers/scsi/gdth.c: use WARN
-Message-Id: <1351940317-14812-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Nov 2012 06:26:31 +0000
+Subject: [patch] paride: enable extra verbose debugging
+Message-Id: <20121116062631.GA11771@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Achim Leubner <achim_leubner@adaptec.com>
-Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tim Waugh <tim@cyberelk.net>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This debug settings here are:
 
-Use WARN rather than printk followed by WARN_ON(1), for conciseness.
+	0 - Off
+	1 - Some
+	2 - Lots
 
-If (count) is also merged into WARN, for further conciseness.
+The module_param() was incorrectly set to bool and later the variable
+was updated to be bool to match.  Really they should both be int.
 
-A simplified version of the semantic patch that makes part of this
-transformation is as follows: (http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-expression list es;
-@@
-
--printk(
-+WARN(1,
-  es);
--WARN_ON(1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/scsi/gdth.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
-index 5d72274..0dbcb27 100644
---- a/drivers/scsi/gdth.c
-+++ b/drivers/scsi/gdth.c
-@@ -2318,11 +2318,10 @@ static void gdth_copy_internal_data(gdth_ha_str *ha, Scsi_Cmnd *scp,
-                 break;
-             buffer += cpnow;
-         }
--    } else if (count) {
--        printk("GDT-HA %d: SCSI command with no buffers but data transfer expected!\n",
--               ha->hanum);
--        WARN_ON(1);
-     }
-+	else
-+		WARN(count, "GDT-HA %d: SCSI command with no buffers but data transfer expected!\n",
-+			     ha->hanum);
- }
+diff --git a/drivers/block/paride/pg.c b/drivers/block/paride/pg.c
+index 4a27b1d..ab99ac9 100644
+--- a/drivers/block/paride/pg.c
++++ b/drivers/block/paride/pg.c
+@@ -137,7 +137,7 @@
  
- static int gdth_internal_cache_cmd(gdth_ha_str *ha, Scsi_Cmnd *scp)
+ */
+ 
+-static bool verbose = 0;
++static int verbose;
+ static int major = PG_MAJOR;
+ static char *name = PG_NAME;
+ static int disable = 0;
+@@ -168,7 +168,7 @@ enum {D_PRT, D_PRO, D_UNI, D_MOD, D_SLV, D_DLY};
+ 
+ #include <asm/uaccess.h>
+ 
+-module_param(verbose, bool, 0644);
++module_param(verbose, int, 0644);
+ module_param(major, int, 0);
+ module_param(name, charp, 0);
+ module_param_array(drive0, int, NULL, 0);
