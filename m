@@ -1,20 +1,32 @@
-From: "Tan Wong" <shimosan@jops1.daishodai.ac.jp>
-Date: Mon, 26 Nov 2012 07:01:48 +0000
-Subject: 
-Message-Id: <20121126070148.00002CE6.0067@jops1.daishodai.ac.jp>
+From: Luciano Coelho <coelho@ti.com>
+Date: Fri, 16 Nov 2012 18:18:14 +0000
+Subject: Re: [PATCH 2/5] drivers/net/wireless/ti/wlcore/main.c: eliminate possible double power off
+Message-Id: <1353089894.10872.77.camel@cumari.coelho.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr>
+	 <1350816727-1381-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1350816727-1381-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: abyrea9@gmail.com
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Sun, 2012-10-21 at 12:52 +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> The function wl12xx_set_power_on is only called twice, once in
+> wl12xx_chip_wakeup and once in wl12xx_get_hw_info.  On the failure of the
+> call in wl12xx_chip_wakeup, the containing function just returns, but on
+> the failure of the call in wl12xx_get_hw_info, the containing function
+> calls wl1271_power_off.  This does not seem necessary, because if
+> wl12xx_set_power_on has set the power on and then fails, it has already
+> turned the power off.
 
-I have a very confidential business proposition involving transfer of $24,500,000.00 that will be of great benefit for both of us. reply me via (tan.wong4040@yahoo.com.hk) for more details 
+[...]
 
-as regards this transaction.
+Applied and pushed, thanks!
 
-Regards,
-
-Mr.Tan Wong.
-
+--
+Luca.
 
