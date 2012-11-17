@@ -1,37 +1,29 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Fri, 02 Nov 2012 09:30:46 +0000
-Subject: Re: [PATCH] staging: iio: adc: ad7280a.c: fixed macro coding style
-Message-Id: <509392C6.6050201@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 17 Nov 2012 15:11:26 +0000
+Subject: [patch] UBIFS: use kmalloc_array() in recomp_data_node()
+Message-Id: <20121117151126.GA16900@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351841333-30581-1-git-send-email-gmate.amit@gmail.com>
-In-Reply-To: <1351841333-30581-1-git-send-email-gmate.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Amit Mehta <gmate.amit@gmail.com>
-Cc: jic23@cam.ac.uk, gregkh@linuxfoundation.org, lars@metafoo.de, michael.hennerich@analog.com, thomas@m3y3r.de, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@intel.com>
 
-On 11/02/2012 07:28 AM, Kumar Amit Mehta wrote:
-> remove unnecessary semicolon from the macro definition
-> 
-> Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
-Thanks, added to togreg branch of iio.git
+Using kmalloc_array() is a cleanup and it includes a check for integer
+overflows.
 
-> ---
->  drivers/staging/iio/adc/ad7280a.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
-> index cfc39a7..e7cb3b2 100644
-> --- a/drivers/staging/iio/adc/ad7280a.c
-> +++ b/drivers/staging/iio/adc/ad7280a.c
-> @@ -117,7 +117,7 @@
->   */
->  #define POLYNOM		0x2F
->  #define POLYNOM_ORDER	8
-> -#define HIGHBIT		1 << (POLYNOM_ORDER - 1);
-> +#define HIGHBIT		(1 << (POLYNOM_ORDER - 1))
->  
->  struct ad7280_state {
->  	struct spi_device		*spi;
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/ubifs/journal.c b/fs/ubifs/journal.c
+index afaad07..23c2a20 100644
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -1104,7 +1104,7 @@ static int recomp_data_node(struct ubifs_data_node *dn, int *new_len)
+ 	int err, len, compr_type, out_len;
+ 
+ 	out_len = le32_to_cpu(dn->size);
+-	buf = kmalloc(out_len * WORST_COMPR_FACTOR, GFP_NOFS);
++	buf = kmalloc_array(out_len, WORST_COMPR_FACTOR, GFP_NOFS);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
