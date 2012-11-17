@@ -1,21 +1,29 @@
-From: Yuhong Bao <yuhongbao_386@hotmail.com>
-Date: Sun, 11 Nov 2012 23:36:36 +0000
-Subject: RE: [PATCH] USB: XHCI: xhci-ring: Remove unused dma address calculation in inc_enq and inc_deq funct
-Message-Id: <SNT002-W1374257CE2BDB85F6026D7DC36E0@phx.gbl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 17 Nov 2012 15:06:11 +0000
+Subject: [patch] USB: usbtest: prevent a divide by zero bug
+Message-Id: <20121117150610.GA19951@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1336922942.3945.12.camel@cst-girish-laptop>
- <1346946453.5012.1.camel@cst-girish-laptop>,<20120906182856.GC4618@xanatos>
-In-Reply-To: <20120906182856.GC4618@xanatos>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sarah Sharp <sarah.a.sharp@linux.intel.com>, Girish Verma <girish@circuitsutra.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: kernel-janitors@vger.kernel.org
 
-> It looks like your mail client attempted to line wrap it. You might
-> want to use mutt, thunderbird, or maybe even the plain text gmail
-> interface to resend this.
-If anyone is using Outlook, see this:
-https://lkml.org/lkml/2011/1/25/587
+If param->length is zero, then this could lead to a divide by zero bug
+later in the function when we do: size %= max;
 
-Yuhong Bao 		 	   		  
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/usb/misc/usbtest.c b/drivers/usb/misc/usbtest.c
+index f10bd97..7667b12 100644
+--- a/drivers/usb/misc/usbtest.c
++++ b/drivers/usb/misc/usbtest.c
+@@ -423,6 +423,9 @@ alloc_sglist(int nents, int max, int vary)
+ 	unsigned		i;
+ 	unsigned		size = max;
+ 
++	if (max = 0)
++		return NULL;
++
+ 	sg = kmalloc_array(nents, sizeof *sg, GFP_KERNEL);
+ 	if (!sg)
+ 		return NULL;
