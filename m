@@ -1,53 +1,53 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Thu, 22 Nov 2012 00:30:51 +0000
-Subject: Re: [PATCH] acpi_system_write_wakeup_device(): fix error check for unsigned variable.
-Message-Id: <50AD723B.60605@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 17 Nov 2012 15:16:11 +0000
+Subject: [patch] x86, UV: integer wrap bug in uv_hub_ipi_value()
+Message-Id: <20121117151611.GB16900@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1353117263-6957-1-git-send-email-tipecaml@gmail.com> <1732852.VDXGV3Ao2T@vostro.rjw.lan> <50AD6C4A.4030809@gmail.com> <1645783.2WuR77RKxS@vostro.rjw.lan>
-In-Reply-To: <1645783.2WuR77RKxS@vostro.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lenb@kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Jack Steiner <steiner@sgi.com>, Dimitri Sivanich <sivanich@sgi.com>
+Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Russ Anderson <rja@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/22/2012 01:23 AM, Rafael J. Wysocki wrote:
-> On Thursday, November 22, 2012 01:05:30 AM Cyril Roelandt wrote:
->> On 11/21/2012 01:44 AM, Rafael J. Wysocki wrote:
->>> On Saturday, November 17, 2012 02:54:23 AM Cyril Roelandt wrote:
->>>> The LEN variable is unsigned, therefore checking whether it is less than 0 is
->>>> useless.
->>>>
->>>> Signed-off-by: Cyril Roelandt<tipecaml@gmail.com>
->>>> ---
->>>>    drivers/acpi/proc.c |    2 --
->>>>    1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/drivers/acpi/proc.c b/drivers/acpi/proc.c
->>>> index 27adb09..37871a7 100644
->>>> --- a/drivers/acpi/proc.c
->>>> +++ b/drivers/acpi/proc.c
->>>> @@ -366,8 +366,6 @@ acpi_system_write_wakeup_device(struct file *file,
->>>>
->>>>    	if (len>   4)
->>>>    		len = 4;
->>>> -	if (len<   0)
->>>> -		return -EFAULT;
->>>
->>> I would prefer to check if count<   0 instead.
->>>
->>
->>
->> count has type size_t, so it is also an unsigned variable. I think that
->> acpi_system_write_wakeup_device really cannot be called with a "count"
->> parameter that is less than 0.
->
-> OK
->
-> So I suppose we can just drop len entirely and replace it with count, right?
-> [And drop the<  0 check too.]
->
+This is a static checker fix.  The problem is that we store the bits
+from "uv_apicid_hibits" into "apicid" (the high 16 bits) but then we
+shift it 16 bit to the left.  "apicid" is an int so it wraps and we lose
+them.
 
-Indeed, I'll resend.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is for an SGI product, and I can't test it.
 
-Cyril Roelandt.
+diff --git a/arch/x86/include/asm/uv/uv_hub.h b/arch/x86/include/asm/uv/uv_hub.h
+index 21f7385..f3a0f91 100644
+--- a/arch/x86/include/asm/uv/uv_hub.h
++++ b/arch/x86/include/asm/uv/uv_hub.h
+@@ -573,7 +573,7 @@ static inline void uv_set_cpu_scir_bits(int cpu, unsigned char value)
+ }
+ 
+ extern unsigned int uv_apicid_hibits;
+-static unsigned long uv_hub_ipi_value(int apicid, int vector, int mode)
++static unsigned long uv_hub_ipi_value(ulong apicid, ulong vector, ulong mode)
+ {
+ 	apicid |= uv_apicid_hibits;
+ 	return (1UL << UVH_IPI_INT_SEND_SHFT) |
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index 8cfade9..6d93b2f 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -194,13 +194,13 @@ static int __cpuinit uv_wakeup_secondary(int phys_apicid, unsigned long start_ri
+ 	pnode = uv_apicid_to_pnode(phys_apicid);
+ 	phys_apicid |= uv_apicid_hibits;
+ 	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
+-	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
++	    ((unsigned long)phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
+ 	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
+ 	    APIC_DM_INIT;
+ 	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
+ 
+ 	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
+-	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
++	    ((unsigned long)phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
+ 	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
+ 	    APIC_DM_STARTUP;
+ 	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
