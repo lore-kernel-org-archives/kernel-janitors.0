@@ -1,67 +1,35 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Fri, 30 Nov 2012 13:13:02 +0000
-Subject: Re: [patch] iio:imu: adis16480: show_firmware() buffer too small
-Message-Id: <50B8B0DE.4050908@kernel.org>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Sat, 17 Nov 2012 01:54:23 +0000
+Subject: [PATCH] acpi_system_write_wakeup_device(): fix error check for unsigned variable.
+Message-Id: <1353117263-6957-1-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121127073142.GC8239@elgon.mountain> <50B50944.2040801@metafoo.de>
-In-Reply-To: <50B50944.2040801@metafoo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jonathan Cameron <jic23@cam.ac.uk>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-acpi@vger.kernel.org, rjw@sisk.pl, lenb@kernel.org, kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>
 
-On 11/27/2012 06:41 PM, Lars-Peter Clausen wrote:
-> On 11/27/2012 08:31 AM, Dan Carpenter wrote:
->> Smatch complains that snprintf() returns the number of characters,
->> not counting the NUL terminator, which *would* have been printed if
->> there were enough space.  In other words the return value could be more
->> than sizeof(buf).
->>
->> In this case, we are printing something like "ff.ff\n" which is at most
->> 6 characters and a NUL so that's not an issue.  I changed snprintf() to
->> scnprintf() to silence the warning.
->>
->> But since the buffer doesn't include space for the NUL terminator, we
->> need to make it bigger or the "\n" will be truncated off.
->>
-> 
-> 
-> Thanks,
-> 
-> Acked-By: Lars-Peter Clausen <lars@metafoo.de>
-> 
-Added to togreg branch of
+The LEN variable is unsigned, therefore checking whether it is less than 0 is
+useless.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/acpi/proc.c |    2 --
+ 1 file changed, 2 deletions(-)
 
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
->> index a080b35..150d7fa 100644
->> --- a/drivers/iio/imu/adis16480.c
->> +++ b/drivers/iio/imu/adis16480.c
->> @@ -125,7 +125,7 @@ static ssize_t adis16480_show_firmware_revision(struct file *file,
->>  		char __user *userbuf, size_t count, loff_t *ppos)
->>  {
->>  	struct adis16480 *adis16480 = file->private_data;
->> -	char buf[6];
->> +	char buf[7];
->>  	size_t len;
->>  	u16 rev;
->>  	int ret;
->> @@ -134,7 +134,7 @@ static ssize_t adis16480_show_firmware_revision(struct file *file,
->>  	if (ret < 0)
->>  		return ret;
->>  
->> -	len = snprintf(buf, sizeof(buf), "%x.%x\n", rev >> 8, rev & 0xff);
->> +	len = scnprintf(buf, sizeof(buf), "%x.%x\n", rev >> 8, rev & 0xff);
->>  
->>  	return simple_read_from_buffer(userbuf, count, ppos, buf, len);
->>  }
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/acpi/proc.c b/drivers/acpi/proc.c
+index 27adb09..37871a7 100644
+--- a/drivers/acpi/proc.c
++++ b/drivers/acpi/proc.c
+@@ -366,8 +366,6 @@ acpi_system_write_wakeup_device(struct file *file,
+ 
+ 	if (len > 4)
+ 		len = 4;
+-	if (len < 0)
+-		return -EFAULT;
+ 
+ 	if (copy_from_user(strbuf, buffer, len))
+ 		return -EFAULT;
+-- 
+1.7.10.4
+
