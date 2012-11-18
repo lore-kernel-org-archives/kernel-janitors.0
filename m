@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 09 Nov 2012 17:23:53 +0000
-Subject: build regressions 2012-11-09
-Message-Id: <509d3c29.8PS3Hp3whtRHxw9y%fengguang.wu@intel.com>
+Date: Sun, 18 Nov 2012 21:47:38 +0000
+Subject: build regressions 2012-11-18
+Message-Id: <50a9577a.PzFVMJ0psaEMApbL%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,95 +9,68 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-mm/rmap.c:59:23: error: linux/rtm.h: No such file or directory
-mm/rmap.c:110: error: implicit declaration of function '_xtest'
-mm/mmap.c:34:23: error: linux/rtm.h: No such file or directory
-mm/mmap.c:2155: error: implicit declaration of function 'disable_txn'
-mm/mmap.c:2159: error: implicit declaration of function 'reenable_txn'
-mm/mprotect.c:26:23: error: linux/rtm.h: No such file or directory
-mm/mprotect.c:265: error: implicit declaration of function 'disable_txn'
-mm/mprotect.c:333: error: implicit declaration of function 'reenable_txn'
-arch/x86/mm/hugetlbpage.c:299:20: error: 'mm' undeclared (first use in this function)
-include/linux/shm.h:57:20: error: redefinition of 'do_shmat'
-include/linux/shm.h:63:19: error: redefinition of 'is_file_shm_hugepages'
-include/linux/shm.h:67:20: error: redefinition of 'exit_shm'
-mm/mmap.c:1878:6: error: 'mm' undeclared (first use in this function)
-mm/mmap.c:1158:15: error: 'MAP_HUGE_SHIFT' undeclared (first use in this function)
-mm/mmap.c:1158:33: error: 'MAP_HUGE_MASK' undeclared (first use in this function)
-arch/sh/mm/mmap.c:50:16: error: unused variable 'start_addr' [-Werror=unused-variable]
-arch/sparc/kernel/sys_sparc_32.c:41:26: error: unused variable 'vmm' [-Werror=unused-variable]
-arch/sparc/kernel/sys_sparc_64.c:103:16: error: unused variable 'start_addr' [-Werror=unused-variable]
-arch/sparc/kernel/sys_sparc_64.c:205:20: error: 'do_colour_align' undeclared (first use in this function)
-arch/sparc/kernel/sys_sparc_64.c:205:51: error: 'shm_align_mask' undeclared (first use in this function)
-arch/sparc/mm/hugetlbpage.c:63:25: error: unused variable 'vma' [-Werror=unused-variable]
-arch/tile/mm/hugetlbpage.c:256:20: error: 'mm' undeclared (first use in this function)
-mm/mmap.c:34:23: fatal error: linux/rtm.h: No such file or directory
-mm/mprotect.c:26:23: fatal error: linux/rtm.h: No such file or directory
-kernel/sysctl.c:282:13: error: 'max_lbr_stack' undeclared here (not in a function)
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_arch/x86/crypto/aes-x86_64.ko := ' > arch/x86/crypto/.aes-x86_64.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_arch/x86/crypto/cast6-avx-x86_64.ko := ' > arch/x86/crypto/.cast6-avx-x86_64.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_arch/x86/crypto/ghash-clmulni-intel.ko := ' > arch/x86/crypto/.ghash-clmulni-intel.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_arch/x86/crypto/serpent-avx-x86_64.ko := ' > arch/x86/crypto/.serpent-avx-x86_64.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_arch/x86/crypto/blowfish-x86_64.ko := ' > arch/x86/crypto/.blowfish-x86_64.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_arch/x86/crypto/serpent-sse2-x86_64.ko := ' > arch/x86/crypto/.serpent-sse2-x86_64.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_arch/x86/crypto/sha1-ssse3.ko := ' > arch/x86/crypto/.sha1-ssse3.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_arch/x86/crypto/twofish-x86_64.ko := ' > arch/x86/crypto/.twofish-x86_64.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_crypto/cast5_generic.ko := ' > crypto/.cast5_generic.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_crypto/cast6_generic.ko := ' > crypto/.cast6_generic.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_crypto/hmac.ko := ' > crypto/.hmac.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_crypto/md5.ko := ' > crypto/.md5.ko.cmd'
-/bin/bash: -c: line 0: `set -e;  ; echo 'cmd_crypto/sha1_generic.ko := ' > crypto/.sha1_generic.ko.cmd'
+drivers/ptp/ptp_pch.c:152:2: error: implicit declaration of function 'ioread32' [-Werror=implicit-function-declaration]
+drivers/ptp/ptp_pch.c:153:2: error: implicit declaration of function 'iowrite32' [-Werror=implicit-function-declaration]
+drivers/ptp/ptp_pch.c:567:3: error: implicit declaration of function 'iounmap' [-Werror=implicit-function-declaration]
+drivers/ptp/ptp_pch.c:617:2: error: implicit declaration of function 'ioremap' [-Werror=implicit-function-declaration]
 
 [warnings]
-drivers/virtio/virtio_balloon.c:142:4: warning: format '%zu' expects argument of type 'size_t', but argument 3 has type 'long unsigned int' [-Wformat]
-mm/page_alloc.c:5825:15: warning: unused variable 'zone' [-Wunused-variable]
-drivers/md/dm-integrity.c:238:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-fs/binfmt_elf.c:574:18: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-drivers/of/fdt.c:490:10: warning: assignment discards 'const' qualifier from pointer target type [enabled by default]
-drivers/md/dm-integrity.c:407:1: warning: 'dm_int_verify_io' uses dynamic stack allocation [enabled by default]
-drivers/md/dm-integrity.c:391:1: warning: 'dm_int_calc_hmac' uses dynamic stack allocation [enabled by default]
-WARNING: security/integrity/built-in.o(.text+0x824c): Section mismatch in reference from the function integrity_init_keyring() to the variable .init.data:ima_use_tcb
-arch/x86/kernel/cpu/perf_event_intel_lbr.c:349:3: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 5 has type 'long unsigned int' [-Wformat]
-kernel/cgroup_freezer.c:479:2: warning: initialization from incompatible pointer type [enabled by default]
-kernel/cgroup_freezer.c:479:2: warning: (near initialization for 'freezer_subsys.post_create') [enabled by default]
-drivers/scsi/tmscsim.h:389:0: warning: "INTERRUPT" redefined [enabled by default]
-drivers/video/sis/sis_accel.h:53:0: warning: "BR" redefined [enabled by default]
-drivers/tty/synclinkmp.c:359:0: warning: "SAR" redefined [enabled by default]
-drivers/net/ethernet/smsc/smc91c92_cs.c:218:0: warning: "INTERRUPT" redefined [enabled by default]
-drivers/net/fddi/skfp/h/cmtdef.h:112:0: warning: "PS" redefined [enabled by default]
-arch/xtensa/include/asm/regs.h:59:0: warning: "PS" redefined [enabled by default]
-drivers/net/fddi/skfp/smt.c:1415:14: warning: array subscript is above array bounds [-Warray-bounds]
-drivers/net/fddi/skfp/cfm.c:507:13: warning: array subscript is above array bounds [-Warray-bounds]
-include/linux/sh_dma.h:74:0: warning: "SAR" redefined [enabled by default]
-drivers/net/hippi/rrunner.h:482:0: warning: "INTERRUPT" redefined [enabled by default]
+drivers/ptp/ptp_pch.c:587:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+include/linux/leds.h:158:18: warning: 'struct led_trigger' declared inside parameter list [enabled by default]
+include/linux/leds.h:158:18: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+drivers/net/wireless/orinoco/orinoco_nortel.c:161:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/orinoco/orinoco_tmd.c:111:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/orinoco/orinoco_pci.c:133:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/orinoco/orinoco_plx.c:200:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/mwifiex/pcie.c:1739:17: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/ipw2x00/ipw2100.c:6234:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/hippi/rrunner.c:152:15: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/fealnx.c:528:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/3com/typhoon.c:2206:25: warning: initialization makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/3com/typhoon.c:2335:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/3com/3c59x.c:996:10: warning: passing argument 2 of 'vortex_probe1' makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/rdc/r6040.c:1132:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/silan/sc92031.c:1425:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/sun/cassini.c:5073:11: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/mwl8k.c:5769:13: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/adm8211.c:1831:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/can/sja1000/plx_pci.c:411:14: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/can/sja1000/peak_pci.c:583:11: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/can/sja1000/kvaser_pci.c:318:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/can/sja1000/ems_pci.c:265:18: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/ath/ath5k/pci.c:239:6: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/ath/ath9k/pci.c:232:6: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/via/via-rhine.c:950:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/ti/tlan.c:2838:11: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/net/ethernet/smsc/epic100.c:368:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/sis/sis900.c:480:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/realtek/8139too.c:815:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/packetengines/yellowfin.c:412:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c:90:8: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c:2661:18: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/myricom/myri10ge/myri10ge.c:3977:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/intel/e100.c:2885:11: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/icplus/ipg.c:2256:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/dlink/dl2k.c:150:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/dlink/sundance.c:516:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/emulex/benet/be_main.c:3360:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/broadcom/bnx2.c:8120:14: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/dec/tulip/xircom_cb.c:258:18: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/dec/tulip/dmfe.c:464:13: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/dec/tulip/winbond-840.c:392:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/dec/tulip/tulip_core.c:1445:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/dec/tulip/uli526x.c:363:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/cisco/enic/enic_main.c:2360:22: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/atheros/atlx/atl1.c:2992:22: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/ethernet/atheros/atl1e/atl1e_main.c:2293:22: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/rtl818x/rtl8180/dev.c:967:12: warning: assignment makes pointer from integer without a cast [enabled by default]
 
 [sparse]
-drivers/block/drbd/drbd_interval.h:12:22: sparse: dubious one-bit signed bitfield
-drivers/block/drbd/drbd_proc.c:246:30: sparse: incompatible types in comparison expression (different address spaces)
-drivers/block/drbd/drbd_worker.c:1627:38: sparse: incompatible types in comparison expression (different address spaces)
-drivers/block/drbd/drbd_receiver.c:4408:14: sparse: incompatible types in comparison expression (different address spaces)
-drivers/block/drbd/drbd_int.h:2066:14: sparse: incompatible types in comparison expression (different address spaces)
-drivers/block/drbd/drbd_req.c:349:22: sparse: incompatible types in comparison expression (different address spaces)
-drivers/block/drbd/drbd_main.c:854:14: sparse: incompatible types in comparison expression (different address spaces)
-drivers/block/drbd/drbd_nl.c:263:14: sparse: incompatible types in comparison expression (different address spaces)
-drivers/block/drbd/drbd_state.c:494:14: sparse: incompatible types in comparison expression (different address spaces)
-drivers/block/drbd/drbd_actlog.c:138:14: sparse: incompatible types in comparison expression (different address spaces)
-drivers/virtio/virtio_balloon.c:374:5: sparse: symbol 'virtballoon_migratepage' was not declared. Should it be static?
-net/bluetooth/hci_core.c:683:19: sparse: incorrect type in assignment (different base types)
-drivers/md/dm-integrity.c:360:22: sparse: bad constant expression
-drivers/md/dm-integrity.c:435:60: sparse: cannot size expression
-arch/x86/mm/hugetlbpage.c:299:27: sparse: undefined identifier 'mm'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c:1551:19: sparse: incorrect type in return expression (different base types)
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c:1567:60: sparse: cast from restricted __le32
 
 [smatch]
-drivers/block/drbd/drbd_state.c:536 is_valid_state() error: we previously assumed 'nc' could be null (see line 495)
-drivers/input/tablet/wacom_sys.c:1102 wacom_wireless_work() error: potential NULL dereference 'wacom_wac2->input'.
-drivers/input/tablet/wacom_sys.c:1105 wacom_wireless_work() error: potential NULL dereference 'wacom_wac1->input'.
-drivers/virtio/virtio_balloon.c:159 fill_balloon() warn: inconsistent returns mutex:&vb->balloon_lock: locked (156) unlocked (159)
-sound/soc/codecs/wm0010.c:477 wm0010_firmware_load() warn: possible memory leak of 'out'
-
-[coccinelle]
-drivers/block/drbd/drbd_state.c:216:1-7: preceding lock on line 158
-drivers/md/dm-integrity.c:730:5-11: inconsistent IS_ERR and PTR_ERR, PTR_ERR on line 732
+drivers/power/lp8788-charger.c:304 lp8788_get_battery_temperature() info: why not propagate 'ret' from iio_read_channel_processed() instead of -22?
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
