@@ -1,21 +1,40 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Thu, 22 Nov 2012 19:58:33 +0000
-Subject: [PATCH 0/2] staging/dgrp/dgrp_tty.c: audit function return values
-Message-Id: <1353613595-8505-1-git-send-email-gmate.amit@gmail.com>
+From: Anton Vorontsov <cbouatmailru@gmail.com>
+Date: Sun, 18 Nov 2012 22:47:32 +0000
+Subject: Re: [patch] ds2782_battery: signedness bug in ds278x_read_reg16()
+Message-Id: <20121118224732.GA29066@lizard.sbx05977.paloaca.wayport.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121024071229.GB2536@elgon.mountain>
+In-Reply-To: <20121024071229.GB2536@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: dan.carpenter@oracle.com, alan@lxorguk.ukuu.org.uk, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch series fixes two issues in dgrp driver:
-i) Removes the TIOCSSOFTCAR ioctl handler from dgrp driver so as to allow the
-core tty layer to take care of this ioctl instead.
+On Wed, Oct 24, 2012 at 10:12:29AM +0300, Dan Carpenter wrote:
+> We need to check for negative values before doing the swab16() for the
+> error handling to work.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-ii) Audits the return value of get_user() and put_user() and return -EFAULT in
-case of error.
+Applied, thanks!
 
--- 
-1.7.9.5
-
+> diff --git a/drivers/power/ds2782_battery.c b/drivers/power/ds2782_battery.c
+> index 6bb6e2f..2fa9b6b 100644
+> --- a/drivers/power/ds2782_battery.c
+> +++ b/drivers/power/ds2782_battery.c
+> @@ -80,13 +80,13 @@ static inline int ds278x_read_reg16(struct ds278x_info *info, int reg_msb,
+>  {
+>  	int ret;
+>  
+> -	ret = swab16(i2c_smbus_read_word_data(info->client, reg_msb));
+> +	ret = i2c_smbus_read_word_data(info->client, reg_msb);
+>  	if (ret < 0) {
+>  		dev_err(&info->client->dev, "register read failed\n");
+>  		return ret;
+>  	}
+>  
+> -	*val = ret;
+> +	*val = swab16(ret);
+>  	return 0;
+>  }
