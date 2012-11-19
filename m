@@ -1,86 +1,41 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Thu, 22 Nov 2012 19:58:35 +0000
-Subject: [PATCH 2/2] staging: dgrp: dgrp_tty.c: Audit the return values of get/put_user()
-Message-Id: <1353613595-8505-3-git-send-email-gmate.amit@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 19 Nov 2012 18:29:01 +0000
+Subject: build regressions 2012-11-19
+Message-Id: <50aa7a6d./znjgG5chtDAFOUB%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1353613595-8505-1-git-send-email-gmate.amit@gmail.com>
-In-Reply-To: <1353613595-8505-1-git-send-email-gmate.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: dan.carpenter@oracle.com, alan@lxorguk.ukuu.org.uk, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-fix for missing audits for return values of get_user() and put_user().
-Inspecting the return values of get/put_user() would make the access_ok()
-redundant, hence removing calls to access_ok() in such scenarios.
+[errors]
+olpc-xo1-sci.c:(.text+0x1c2f6): undefined reference to `input_event'
+olpc-xo1-sci.c:(.text.unlikely+0xb69): undefined reference to `input_unregister_device'
+olpc-xo1-sci.c:(.text.unlikely+0xb73): undefined reference to `input_free_device'
+olpc-xo1-sci.c:(.devinit.text+0x18e): undefined reference to `input_allocate_device'
+olpc-xo1-sci.c:(.devinit.text+0x1de): undefined reference to `input_register_device'
+mm/mempolicy.c:2298:12: error: 'HPAGE_SHIFT' undeclared (first use in this function)
+arch/m68k/include/asm/delay.h:67:24: error: 'loops_per_jiffy' undeclared (first use in this function)
+drivers/mmc/host/rtsx_pci_sdmmc.c:448:2: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+drivers/mmc/host/rtsx_pci_sdmmc.c:472:2: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/marvell/mvmdio.c:57:3: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/marvell/mvmdio.c:89:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/marvell/mvmdio.c:191:3: error: implicit declaration of function 'iounmap' [-Werror=implicit-function-declaration]
+(.text+0x230350): undefined reference to `backlight_force_update'
+(.text+0x1961c4): undefined reference to `radeon_legacy_set_backlight_level'
+drivers/built-in.o:(.data+0x22cb8): undefined reference to `radeon_legacy_get_backlight_level'
+kernel/sched/rt.c:948:26: error: 'struct rt_rq' has no member named 'tg'
+kernel/sched/fair.c:705:26: error: 'struct cfs_rq' has no member named 'tg'
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+[warnings]
+fs/pstore/ram.c:179:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+fs/pstore/ram.c:179:2: warning: right shift count >= width of type [enabled by default]
+fs/pstore/ram.c:179:2: warning: passing argument 1 of '__div64_32' from incompatible pointer type [enabled by default]
+drivers/mmc/host/rtsx_pci_sdmmc.c:448:6: warning: assignment makes pointer from integer without a cast [enabled by default]
+
+[smatch]
+drivers/mfd/tps65910.c:254 tps65910_irq_init() error: potentially derefencing uninitialized 'tps6591x_irqs_chip'.
+
 ---
- drivers/staging/dgrp/dgrp_tty.c |   22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgrp_tty.c
-index b46f56f..f4fdadc 100644
---- a/drivers/staging/dgrp/dgrp_tty.c
-+++ b/drivers/staging/dgrp/dgrp_tty.c
-@@ -2265,9 +2265,7 @@ static int get_modem_info(struct ch_struct *ch, unsigned int *value)
- 		| ((mlast & DM_RI)  ? TIOCM_RNG : 0)
- 		| ((mlast & DM_DSR) ? TIOCM_DSR : 0)
- 		| ((mlast & DM_CTS) ? TIOCM_CTS : 0);
--	put_user(mlast, (unsigned int __user *) value);
--
--	return 0;
-+	return put_user(mlast, (unsigned int __user *) value);
- }
- 
- /*
-@@ -2285,7 +2283,8 @@ static int set_modem_info(struct ch_struct *ch, unsigned int command,
- 	if (error = 0)
- 		return -EFAULT;
- 
--	get_user(arg, (unsigned int __user *) value);
-+	if (get_user(arg, (unsigned int __user *) value))
-+		return -EFAULT;
- 	mval |= ((arg & TIOCM_RTS) ? DM_RTS : 0)
- 		| ((arg & TIOCM_DTR) ? DM_DTR : 0);
- 
-@@ -2616,12 +2615,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
- 		return 0;
- 
- 	case TIOCGSOFTCAR:
--		rc = access_ok(VERIFY_WRITE, (void __user *) arg,
--			       sizeof(long));
--		if (rc = 0)
--			return -EFAULT;
--		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
--		return 0;
-+		return put_user(C_CLOCAL(tty) ? 1 : 0,
-+				(unsigned long __user *) arg);
- 
- 	case TIOCMGET:
- 		rc = access_ok(VERIFY_WRITE, (void __user *) arg,
-@@ -2844,17 +2839,16 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
- 		break;
- 
- 	case DIGI_GETCUSTOMBAUD:
--		rc = access_ok(VERIFY_WRITE, (void __user *) arg, sizeof(int));
--		if (rc = 0)
-+		if (put_user(ch->ch_custom_speed, (unsigned int __user *) arg))
- 			return -EFAULT;
--		put_user(ch->ch_custom_speed, (unsigned int __user *) arg);
- 		break;
- 
- 	case DIGI_SETCUSTOMBAUD:
- 	{
- 		int new_rate;
- 
--		get_user(new_rate, (unsigned int __user *) arg);
-+		if (get_user(new_rate, (unsigned int __user *) arg))
-+			return -EFAULT;
- 		dgrp_set_custom_speed(ch, new_rate);
- 
- 		break;
--- 
-1.7.9.5
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
