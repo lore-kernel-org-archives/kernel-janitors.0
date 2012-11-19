@@ -1,34 +1,84 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 Nov 2012 16:41:54 +0000
-Subject: Re: [patch] UBIFS: use kmalloc_array() in recomp_data_node()
-Message-Id: <20121122164154.GN6186@mwanda>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Mon, 19 Nov 2012 11:07:31 +0000
+Subject: [PATCH] staging: dgrp: dgrp_tty.c: Audit the return values of get/put_user()
+Message-Id: <1353322531-10092-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121117151126.GA16900@elgon.mountain>
- <1353580297.2701.29.camel@sauron.fi.intel.com>
- <20121122111411.GJ6186@mwanda>
- <1353583450.2701.44.camel@sauron.fi.intel.com>
- <20121122123300.GM6186@mwanda>
- <1353595689.2701.62.camel@sauron.fi.intel.com>
-In-Reply-To: <1353595689.2701.62.camel@sauron.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@intel.com>
+To: gregkh@linuxfoundation.org
+Cc: alan@lxorguk.ukuu.org.uk, dan.carpenter@oracle.com, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 22, 2012 at 04:48:09PM +0200, Artem Bityutskiy wrote:
-> On Thu, 2012-11-22 at 15:33 +0300, Dan Carpenter wrote:
-> > It's actually dn->size that we care about here.  That's not checked
-> > in ubifs_check_node().  :(  It may be checked somewhere else, I'm
-> > still looking.
-> 
-> Wow, despite us trying to be very careful about validating what we read
-> from flash, it seems we indeed never validate 'size'... Let me invent a
-> fix for this, which should also be sent to -stable.
-> 
+-- fix for missing audits for return values of get_user() and put_user().
+-- Remove the TIOCSSOFTCAR ioctl handling from dgrp driver.
 
-Thanks.  Could you give me the Reported-by tag?
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/dgrp/dgrp_tty.c |   25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgrp_tty.c
+index e125b03..0354169 100644
+--- a/drivers/staging/dgrp/dgrp_tty.c
++++ b/drivers/staging/dgrp/dgrp_tty.c
+@@ -2265,9 +2265,7 @@ static int get_modem_info(struct ch_struct *ch, unsigned int *value)
+ 		| ((mlast & DM_RI)  ? TIOCM_RNG : 0)
+ 		| ((mlast & DM_DSR) ? TIOCM_DSR : 0)
+ 		| ((mlast & DM_CTS) ? TIOCM_CTS : 0);
+-	put_user(mlast, (unsigned int __user *) value);
+-
+-	return 0;
++	return put_user(mlast, (unsigned int __user *) value);
+ }
+ 
+ /*
+@@ -2285,7 +2283,8 @@ static int set_modem_info(struct ch_struct *ch, unsigned int command,
+ 	if (error = 0)
+ 		return -EFAULT;
+ 
+-	get_user(arg, (unsigned int __user *) value);
++	if (get_user(arg, (unsigned int __user *) value))
++		return -EFAULT;
+ 	mval |= ((arg & TIOCM_RTS) ? DM_RTS : 0)
+ 		| ((arg & TIOCM_DTR) ? DM_DTR : 0);
+ 
+@@ -2620,15 +2619,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 			       sizeof(long));
+ 		if (rc = 0)
+ 			return -EFAULT;
+-		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
+-		return 0;
+-
+-	case TIOCSSOFTCAR:
+-		get_user(arg, (unsigned long __user *) arg);
+-		tty->termios.c_cflag -			((tty->termios.c_cflag & ~CLOCAL) |
+-			 (arg ? CLOCAL : 0));
+-		return 0;
++		return put_user(C_CLOCAL(tty) ? 1 : 0,
++				(unsigned long __user *) arg);
+ 
+ 	case TIOCMGET:
+ 		rc = access_ok(VERIFY_WRITE, (void __user *) arg,
+@@ -2854,14 +2846,17 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
+ 		rc = access_ok(VERIFY_WRITE, (void __user *) arg, sizeof(int));
+ 		if (rc = 0)
+ 			return -EFAULT;
+-		put_user(ch->ch_custom_speed, (unsigned int __user *) arg);
++		if (put_user(ch->ch_custom_speed, (unsigned int __user *) arg))
++			return -EFAULT;
++
+ 		break;
+ 
+ 	case DIGI_SETCUSTOMBAUD:
+ 	{
+ 		int new_rate;
+ 
+-		get_user(new_rate, (unsigned int __user *) arg);
++		if (get_user(new_rate, (unsigned int __user *) arg))
++			return -EFAULT;
+ 		dgrp_set_custom_speed(ch, new_rate);
+ 
+ 		break;
+-- 
+1.7.9.5
 
