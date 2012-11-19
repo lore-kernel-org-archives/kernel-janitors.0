@@ -1,84 +1,25 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Mon, 19 Nov 2012 11:07:31 +0000
-Subject: [PATCH] staging: dgrp: dgrp_tty.c: Audit the return values of get/put_user()
-Message-Id: <1353322531-10092-1-git-send-email-gmate.amit@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 Nov 2012 11:15:54 +0000
+Subject: Re: [PATCH] staging: dgrp: dgrp_tty.c: Audit the return values of get/put_user()
+Message-Id: <20121119111553.GC6186@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1353322531-10092-1-git-send-email-gmate.amit@gmail.com>
+In-Reply-To: <1353322531-10092-1-git-send-email-gmate.amit@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: alan@lxorguk.ukuu.org.uk, dan.carpenter@oracle.com, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Kumar Amit Mehta <gmate.amit@gmail.com>
+Cc: gregkh@linuxfoundation.org, alan@lxorguk.ukuu.org.uk, wfp5p@virginia.edu, geert@linux-m68k.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
--- fix for missing audits for return values of get_user() and put_user().
--- Remove the TIOCSSOFTCAR ioctl handling from dgrp driver.
+On Mon, Nov 19, 2012 at 04:25:31PM +0530, Kumar Amit Mehta wrote:
+> -- fix for missing audits for return values of get_user() and put_user().
+> -- Remove the TIOCSSOFTCAR ioctl handling from dgrp driver.
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
----
- drivers/staging/dgrp/dgrp_tty.c |   25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+These should be done in separate commits.
 
-diff --git a/drivers/staging/dgrp/dgrp_tty.c b/drivers/staging/dgrp/dgrp_tty.c
-index e125b03..0354169 100644
---- a/drivers/staging/dgrp/dgrp_tty.c
-+++ b/drivers/staging/dgrp/dgrp_tty.c
-@@ -2265,9 +2265,7 @@ static int get_modem_info(struct ch_struct *ch, unsigned int *value)
- 		| ((mlast & DM_RI)  ? TIOCM_RNG : 0)
- 		| ((mlast & DM_DSR) ? TIOCM_DSR : 0)
- 		| ((mlast & DM_CTS) ? TIOCM_CTS : 0);
--	put_user(mlast, (unsigned int __user *) value);
--
--	return 0;
-+	return put_user(mlast, (unsigned int __user *) value);
- }
- 
- /*
-@@ -2285,7 +2283,8 @@ static int set_modem_info(struct ch_struct *ch, unsigned int command,
- 	if (error = 0)
- 		return -EFAULT;
- 
--	get_user(arg, (unsigned int __user *) value);
-+	if (get_user(arg, (unsigned int __user *) value))
-+		return -EFAULT;
- 	mval |= ((arg & TIOCM_RTS) ? DM_RTS : 0)
- 		| ((arg & TIOCM_DTR) ? DM_DTR : 0);
- 
-@@ -2620,15 +2619,8 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
- 			       sizeof(long));
- 		if (rc = 0)
- 			return -EFAULT;
--		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long __user *) arg);
--		return 0;
--
--	case TIOCSSOFTCAR:
--		get_user(arg, (unsigned long __user *) arg);
--		tty->termios.c_cflag -			((tty->termios.c_cflag & ~CLOCAL) |
--			 (arg ? CLOCAL : 0));
--		return 0;
-+		return put_user(C_CLOCAL(tty) ? 1 : 0,
-+				(unsigned long __user *) arg);
- 
- 	case TIOCMGET:
- 		rc = access_ok(VERIFY_WRITE, (void __user *) arg,
-@@ -2854,14 +2846,17 @@ static int dgrp_tty_ioctl(struct tty_struct *tty, unsigned int cmd,
- 		rc = access_ok(VERIFY_WRITE, (void __user *) arg, sizeof(int));
- 		if (rc = 0)
- 			return -EFAULT;
--		put_user(ch->ch_custom_speed, (unsigned int __user *) arg);
-+		if (put_user(ch->ch_custom_speed, (unsigned int __user *) arg))
-+			return -EFAULT;
-+
- 		break;
- 
- 	case DIGI_SETCUSTOMBAUD:
- 	{
- 		int new_rate;
- 
--		get_user(new_rate, (unsigned int __user *) arg);
-+		if (get_user(new_rate, (unsigned int __user *) arg))
-+			return -EFAULT;
- 		dgrp_set_custom_speed(ch, new_rate);
- 
- 		break;
--- 
-1.7.9.5
+Are the calls to access_ok() still needed if we check get_user() and
+put_user()?
+
+regards,
+dan carpenter
 
