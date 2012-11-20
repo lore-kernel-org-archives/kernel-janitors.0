@@ -1,69 +1,42 @@
-From: Russ Anderson <rja@sgi.com>
-Date: Tue, 20 Nov 2012 00:48:34 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 20 Nov 2012 04:28:56 +0000
 Subject: Re: [patch] x86, UV: integer wrap bug in uv_hub_ipi_value()
-Message-Id: <20121120004834.GE5060@sgi.com>
+Message-Id: <20121120042855.GE6186@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121117151611.GB16900@elgon.mountain>
-In-Reply-To: <20121117151611.GB16900@elgon.mountain>
+ <20121120004834.GE5060@sgi.com>
+In-Reply-To: <20121120004834.GE5060@sgi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Russ Anderson <rja@sgi.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Jack Steiner <steiner@sgi.com>, Dimitri Sivanich <sivanich@sgi.com>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, rja@americas.sgi.com
 
-On Sat, Nov 17, 2012 at 06:16:11PM +0300, Dan Carpenter wrote:
-> This is a static checker fix.  The problem is that we store the bits
-> from "uv_apicid_hibits" into "apicid" (the high 16 bits) but then we
-> shift it 16 bit to the left.  "apicid" is an int so it wraps and we lose
-> them.
-
-Is this the complete patch?  phys_apicid is an int, but gets
-cast as unsigned long.  Doesn't phys_apicid also have to be
-changed to unsigned long?  And why ulong instead of uint (on x86_64)?
-
-I agree with changing signed to unsigned where appropriate, but
-this looks like a partial fix.  Am I missing something?
-
-Thanks.
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is for an SGI product, and I can't test it.
+On Mon, Nov 19, 2012 at 06:48:34PM -0600, Russ Anderson wrote:
+> On Sat, Nov 17, 2012 at 06:16:11PM +0300, Dan Carpenter wrote:
+> > This is a static checker fix.  The problem is that we store the bits
+> > from "uv_apicid_hibits" into "apicid" (the high 16 bits) but then we
+> > shift it 16 bit to the left.  "apicid" is an int so it wraps and we lose
+> > them.
 > 
-> diff --git a/arch/x86/include/asm/uv/uv_hub.h b/arch/x86/include/asm/uv/uv_hub.h
-> index 21f7385..f3a0f91 100644
-> --- a/arch/x86/include/asm/uv/uv_hub.h
-> +++ b/arch/x86/include/asm/uv/uv_hub.h
-> @@ -573,7 +573,7 @@ static inline void uv_set_cpu_scir_bits(int cpu, unsigned char value)
->  }
->  
->  extern unsigned int uv_apicid_hibits;
-> -static unsigned long uv_hub_ipi_value(int apicid, int vector, int mode)
-> +static unsigned long uv_hub_ipi_value(ulong apicid, ulong vector, ulong mode)
->  {
->  	apicid |= uv_apicid_hibits;
->  	return (1UL << UVH_IPI_INT_SEND_SHFT) |
-> diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-> index 8cfade9..6d93b2f 100644
-> --- a/arch/x86/kernel/apic/x2apic_uv_x.c
-> +++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-> @@ -194,13 +194,13 @@ static int __cpuinit uv_wakeup_secondary(int phys_apicid, unsigned long start_ri
->  	pnode = uv_apicid_to_pnode(phys_apicid);
->  	phys_apicid |= uv_apicid_hibits;
->  	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
-> -	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
-> +	    ((unsigned long)phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
->  	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
->  	    APIC_DM_INIT;
->  	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
->  
->  	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
-> -	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
-> +	    ((unsigned long)phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
->  	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
->  	    APIC_DM_STARTUP;
->  	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
+> Is this the complete patch?  phys_apicid is an int, but gets
+> cast as unsigned long.  Doesn't phys_apicid also have to be
+> changed to unsigned long?  And why ulong instead of uint (on x86_64)?
 
--- 
-Russ Anderson, OS RAS/Partitioning Project Lead  
-SGI - Silicon Graphics Inc          rja@sgi.com
+Uint is 32bit across all arches in linux and unix, according to
+wikipedia.  The wakeup_secondary_cpu() function pointer takes an int
+so I couldn't change the parameter.
+
+> 
+> I agree with changing signed to unsigned where appropriate, but
+> this looks like a partial fix.  Am I missing something?
+> 
+
+I do feel a little embarrassed that I didn't use "unsigned long"
+consistently.  I just used ulong to make the line a bit shorter, but
+I could redo it with "unsigned long" if you want.
+
+regards,
+dan carpenter
+
+
