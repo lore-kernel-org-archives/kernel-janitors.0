@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 19 Nov 2012 13:39:13 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, 21 Nov 2012 22:11:39 +0000
 Subject: Re: [PATCH] staging: dgrp: dgrp_tty.c: Audit the return values of get/put_user()
-Message-Id: <20121119133913.GA11248@mwanda>
+Message-Id: <20121121221139.GA7682@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1353322531-10092-1-git-send-email-gmate.amit@gmail.com>
  <20121119111553.GC6186@mwanda>
@@ -11,7 +11,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Kumar amit mehta <gmate.amit@gmail.com>
-Cc: gregkh@linuxfoundation.org, alan@lxorguk.ukuu.org.uk, wfp5p@virginia.edu, geert@linux-m68k.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, alan@lxorguk.ukuu.org.uk
 
 On Mon, Nov 19, 2012 at 06:38:29PM +0530, Kumar amit mehta wrote:
 > On Mon, Nov 19, 2012 at 02:15:54PM +0300, Dan Carpenter wrote:
@@ -29,9 +29,9 @@ On Mon, Nov 19, 2012 at 06:38:29PM +0530, Kumar amit mehta wrote:
 > driver, I realized that I should be sending two patches as patch series. Please
 > correct me if I'm wrong.
 
-Patch series are better, yes.  But in this case it's not a big deal
-and should apply fine so don't bother resending.
+Yes, please resend, as I can't apply this one, and the other patch you
+sent me as they conflict.  So please resend them both in proper format.
 
-regards,
-dan carpenter
+thanks,
 
+greg k-h
