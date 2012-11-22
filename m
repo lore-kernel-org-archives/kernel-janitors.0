@@ -1,37 +1,50 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Wed, 21 Nov 2012 22:11:39 +0000
-Subject: Re: [PATCH] staging: dgrp: dgrp_tty.c: Audit the return values of get/put_user()
-Message-Id: <20121121221139.GA7682@kroah.com>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Thu, 22 Nov 2012 00:34:55 +0000
+Subject: [PATCH v2] acpi_system_write_wakeup_device(): fix error check for unsigned variable.
+Message-Id: <1353544495-25277-1-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1353322531-10092-1-git-send-email-gmate.amit@gmail.com>
- <20121119111553.GC6186@mwanda>
- <20121119130829.GB3275@gmail.com>
-In-Reply-To: <20121119130829.GB3275@gmail.com>
+References: <1645783.2WuR77RKxS@vostro.rjw.lan>
+In-Reply-To: <1645783.2WuR77RKxS@vostro.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar amit mehta <gmate.amit@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, geert@linux-m68k.org, alan@lxorguk.ukuu.org.uk
+To: linux-kernel@vger.kernel.org
+Cc: linux-acpi@vger.kernel.org, rjw@sisk.pl, lenb@kernel.org, kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>
 
-On Mon, Nov 19, 2012 at 06:38:29PM +0530, Kumar amit mehta wrote:
-> On Mon, Nov 19, 2012 at 02:15:54PM +0300, Dan Carpenter wrote:
-> > On Mon, Nov 19, 2012 at 04:25:31PM +0530, Kumar Amit Mehta wrote:
-> > > -- fix for missing audits for return values of get_user() and put_user().
-> > > -- Remove the TIOCSSOFTCAR ioctl handling from dgrp driver.
-> > 
-> > These should be done in separate commits.
-> > 
-> > Are the calls to access_ok() still needed if we check get_user() and
-> > put_user()?
-> >
-> You are right, access_ok() would become redundant if we check get/put_user().
-> Also, After sending one patch for removing TIOCSSOFTCAR ioctl handler from dgrp
-> driver, I realized that I should be sending two patches as patch series. Please
-> correct me if I'm wrong.
+The LEN variable is unsigned, therefore checking whether it is less than 0 is
+useless. Also drop the LEN variable, since the COUNT parameter can be used
+instead.
 
-Yes, please resend, as I can't apply this one, and the other patch you
-sent me as they conflict.  So please resend them both in proper format.
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/acpi/proc.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-thanks,
+diff --git a/drivers/acpi/proc.c b/drivers/acpi/proc.c
+index 27adb09..ef98796 100644
+--- a/drivers/acpi/proc.c
++++ b/drivers/acpi/proc.c
+@@ -362,16 +362,13 @@ acpi_system_write_wakeup_device(struct file *file,
+ 	struct list_head *node, *next;
+ 	char strbuf[5];
+ 	char str[5] = "";
+-	unsigned int len = count;
+ 
+-	if (len > 4)
+-		len = 4;
+-	if (len < 0)
+-		return -EFAULT;
++	if (count > 4)
++		count = 4;
+ 
+-	if (copy_from_user(strbuf, buffer, len))
++	if (copy_from_user(strbuf, buffer, count))
+ 		return -EFAULT;
+-	strbuf[len] = '\0';
++	strbuf[count] = '\0';
+ 	sscanf(strbuf, "%s", str);
+ 
+ 	mutex_lock(&acpi_device_lock);
+-- 
+1.7.10.4
 
-greg k-h
