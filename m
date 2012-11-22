@@ -1,9 +1,9 @@
 From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Thu, 22 Nov 2012 11:24:10 +0000
+Date: Thu, 22 Nov 2012 11:26:43 +0000
 Subject: Re: [patch] UBIFS: use kmalloc_array() in recomp_data_node()
-Message-Id: <1353583450.2701.44.camel@sauron.fi.intel.com>
+Message-Id: <1353583603.2701.45.camel@sauron.fi.intel.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-COHpPXJiTj/Jvi8CKYGj"
+Content-Type: multipart/mixed; boundary="=-NbfXp+APIYqk7a3zkI2s"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121117151126.GA16900@elgon.mountain>
  <1353580297.2701.29.camel@sauron.fi.intel.com>
@@ -13,7 +13,7 @@ To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, Adrian Hunter <adrian.hunter@intel.com>
 
 
---=-COHpPXJiTj/Jvi8CKYGj
+--=-NbfXp+APIYqk7a3zkI2s
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -38,24 +38,15 @@ On Thu, 2012-11-22 at 14:14 +0300, Dan Carpenter wrote:
 > good name.  kmalloc_safe() isn't right either.  But anyway, the
 > intent is that eventually someone will right a coccinelle script
 > which replaces all these allocations with kmalloc_array().
->=20
-> When I look at this code more, I still don't see a place where
-> dn->size is capped.  So I think we *need* the integer overflow
-> check as an integer overflow fix and not just as a cleanup.
 
-It is validated in fs/ubifs/io.c in 'ubifs_check_node()'.
-
-'dn' stands for 'direntry node'. We read it from the media and validate
-it immediately after we've read it, including 'dn->len'.
-
-The entire code is written with the following assumption that whatever
-is read from the flash media is validated.
+Did you consider kcalloc() ? Just like malloc() / calloc() libc
+functions?
 
 --=20
 Best Regards,
 Artem Bityutskiy
 
---=-COHpPXJiTj/Jvi8CKYGj
+--=-NbfXp+APIYqk7a3zkI2s
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -63,20 +54,20 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAABAgAGBQJQrgtbAAoJECmIfjd9wqK0FlwP/2/lyutEr5UObfNZJVXzT2eG
-JSVNeKxnT8hnZPnGjIyGufyvk+yL0FEp/hgPXdjxHpL+SX983sRc0JzXxk9dSPOf
-5lVKMAgN+Hk0EXfpopXGn45kJB+3oKUyB+7quI46dYSiSxRdhmUt2dXv7Atxxszl
-cvTqGBdc0UXHdgoe8QSQps8YNum13d7J1hht0roHl/MyCorCDBDMo3L0YjzA7fB2
-/rEPS5ULVHVAjN+ClWM+z8X1wINB2cGCM98x0egdty6rDmbB/8w28tG7UzGy+oxm
-+uTdZT+QiFFTZtalEaHaarE3TGHxnda22dIrvfZUurOq8YuAb1VT99out76Otg2L
-3dInoqvgg9isUwwy1mDSsDHFlcpfZcEoyPW/hhNnnwBpR7SHsmyNAZGgdX2WAggP
-oGrur+VFuMN0XSjP7QkWgRO1wKFs6hx1mgdvhmqVYvSauLU4YOVqifNgPMYuG5r4
-5it+LpEgcdav/9N1Whb+H604SWkeIU5Lm6xHA4CcBBtCOES/zVswGPNDbjAxy2u/
-LyFxJjjfqZtxyGplDttQoK9hQAh49gaDatF0fjk4VTwYB+ByA7de2tmMI9VBQmYe
-fLQzv2X3itzDDMbnWYPcOb5TRv9RjPu95K3bUccV8fDqtgcPJbZXMqLvKde+aRc0
-IG3J/vMLBfkisUqQnSrA
-=PiDu
+iQIcBAABAgAGBQJQrgvzAAoJECmIfjd9wqK0xtQQALE1ajjLjBzAxH+77s4QtdmK
+SQ6IB8b81EP3g1DOcQWNCVVRwVt9V0V+vjMbhy8iCGJNRC8Z8lLIDESiVrRWs1kx
+E6OC1yFwJtxr3DO80oW4SyF25M5A7JEHLR85IiNa7dwlFGuUsDg8SGhac+5gLZ7B
+dbbifqIEAyZUXt/n7BlmmkSzWFXiNGEeAuoxthZG1vodOEGoNQiGeflDNbDvAMAm
+JmT70FsI1uLoAoNWhCQWW2h+pvhXlG9ECDYSuMTsln8NE8ryVg71+IpsBkx+JZkb
+86mQl0rpVP1C9EpfB1Dz6bWOKRdfN+DMceUv2sAFe7IBVdqKPItGwlNxJNJeghY4
+0QoBXzlvdSsO/Zifa0iBr0r6e7Yxp4gTNvRJmlueNpZr1/+VTPWG/bzECBVnjp0T
+QDXXbwGm/Woi74IsDxiOQ1GxM4nBW1TGiytFK/L1pQzV6HmDDl18PArQiLbTzqSr
+XkpGVr2RqtQ37lIKTqFlCKbUnUXQ2uW+1vFkpI2jGdRE7Q4KERAgqKE2zaaegeir
+Fqse0FPEPYGp1l8cH+zW5bYTlFGdyoK4L9gF/y8dW6qwvcgdrtiKkpzPdRPVSU2I
+Jt2TKLrEvUO2A/s8DbhGgCncYRMj6OjZne0egzyjoE57Id4y7cMDUZelNFUuLVBC
+v5afhaMfz+mZxpiegOgR
+=nIaL
 -----END PGP SIGNATURE-----
 
---=-COHpPXJiTj/Jvi8CKYGj--
+--=-NbfXp+APIYqk7a3zkI2s--
 
