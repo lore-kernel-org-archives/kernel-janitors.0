@@ -1,69 +1,16 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 03 Nov 2012 10:58:25 +0000
-Subject: [PATCH 4/16] drivers/usb/wusbcore: use WARN
-Message-Id: <1351940317-14812-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 25 Nov 2012 23:13:49 +0000
+Subject: build regressions 2012-11-25
+Message-Id: <50b2a62d.AVZdv+HjKaVJsnvX%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Use WARN rather than printk followed by WARN_ON(1), for conciseness.
-
-A simplified version of the semantic patch that makes this transformation
-is as follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression list es;
-@@
-
--printk(
-+WARN(1,
-  es);
--WARN_ON(1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+drivers/usb/chipidea/debug.c:92:2: error: implicit declaration of function 'copy_from_user' [-Werror=implicit-function-declaration]
 
 ---
- drivers/usb/wusbcore/wa-xfer.c |    3 +--
- drivers/usb/wusbcore/wusbhc.c  |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/usb/wusbcore/wa-xfer.c b/drivers/usb/wusbcore/wa-xfer.c
-index 57c01ab..1b80601 100644
---- a/drivers/usb/wusbcore/wa-xfer.c
-+++ b/drivers/usb/wusbcore/wa-xfer.c
-@@ -1124,9 +1124,8 @@ int wa_urb_dequeue(struct wahc *wa, struct urb *urb)
- 		switch (seg->status) {
- 		case WA_SEG_NOTREADY:
- 		case WA_SEG_READY:
--			printk(KERN_ERR "xfer %p#%u: dequeue bad state %u\n",
-+			WARN(1, KERN_ERR "xfer %p#%u: dequeue bad state %u\n",
- 			       xfer, cnt, seg->status);
--			WARN_ON(1);
- 			break;
- 		case WA_SEG_DELAYED:
- 			seg->status = WA_SEG_ABORTED;
-diff --git a/drivers/usb/wusbcore/wusbhc.c b/drivers/usb/wusbcore/wusbhc.c
-index 0faca16..bb5e649 100644
---- a/drivers/usb/wusbcore/wusbhc.c
-+++ b/drivers/usb/wusbcore/wusbhc.c
-@@ -435,9 +435,8 @@ static void __exit wusbcore_exit(void)
- 		char buf[256];
- 		bitmap_scnprintf(buf, sizeof(buf), wusb_cluster_id_table,
- 				 CLUSTER_IDS);
--		printk(KERN_ERR "BUG: WUSB Cluster IDs not released "
-+		WARN(1, KERN_ERR "BUG: WUSB Cluster IDs not released "
- 		       "on exit: %s\n", buf);
--		WARN_ON(1);
- 	}
- 	usb_unregister_notify(&wusb_usb_notifier);
- 	destroy_workqueue(wusbd);
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
