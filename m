@@ -1,35 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 03 Nov 2012 01:36:52 +0000
-Subject: Re: [PATCH 1/2] drivers/net/ethernet/nxp/lpc_eth.c: Call mdiobus_unregister before mdiobus_free
-Message-Id: <20121102.213652.471891990686700974.davem@davemloft.net>
+From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Date: Mon, 26 Nov 2012 10:57:25 +0000
+Subject: Re: build regressions 2012-10-23
+Message-Id: <1353927446.14340.125.camel@thorin>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351440721-9121-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1351440721-9121-1-git-send-email-peter.senna@gmail.com>
+References: <20121023170322.GA31879@localhost>
+In-Reply-To: <20121023170322.GA31879@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: stigge@antcom.de, edumazet@google.com, djduanjiong@gmail.com, aletes.xgr@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 28 Oct 2012 17:12:00 +0100
+Hi!
 
-> Based on commit b27393aecf66199f5ddad37c302d3e0cfadbe6c0
+On Mit, 2012-10-24 at 01:03 +0800, Fengguang Wu wrote:
+[...]
+> This is the first daily summary from the 0day build test system.
+> Ideas on better format/contents are warmly welcome!
 > 
-> Calling mdiobus_free without calling mdiobus_unregister causes
-> BUG_ON(). This patch fixes the issue.
-> 
-> The semantic patch that found this issue(http://coccinelle.lip6.fr/):
-> // <smpl>
-> @@
-> expression E;
-> @@
->   ... when != mdiobus_unregister(E);
-> 
-> + mdiobus_unregister(E);
->   mdiobus_free(E);
-> // </smpl>
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> [errors]
+> drivers/usb/host/ohci-sm501.c:241:2: error: implicit declaration of function 'ohci_finish_controller_resume' [-Werror=implicit-function-declaration]
+> arch/x86/xen/smp.c:329:7: error: 'struct vcpu_guest_context' has no member named 'u'
+[...]
 
-Applied.
+Perhaps I miss something but how does one reproduce that?
+
+Which "version" - in terms of "git-URL" - did you use?
+Which kernel-.config:
+- allymodconfig, allyesconfig or something else)?
+- The $ARCH can probably inferred with the filenames ....
+Which parameters on which tool/program?
+
+Do you have a page on the web which explains all of this (or at least
+the more static parts).
+
+	Bernd
+-- 
+Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
+                     LUGA : http://www.luga.at
+
