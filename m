@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 10 Nov 2012 17:29:58 +0000
-Subject: build regressions 2012-11-10
-Message-Id: <509e8f16.d5nYEQodgkFHrYx8%fengguang.wu@intel.com>
+Date: Mon, 26 Nov 2012 17:07:43 +0000
+Subject: build regressions 2012-11-26
+Message-Id: <50b3a1df.mOU5z7tdv5V8fZiZ%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,20 +9,22 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-net/ipv6/exthdrs_core.c:188: error: (Each undeclared identifier is reported only once
-net/ipv6/exthdrs_core.c:188: error: for each function it appears in.)
-net/ipv6/exthdrs_core.c:188:27: error: 'OVS_IP6T_FH_F_SKIP_RH' undeclared (first use in this function)
+of_iommu.c:(.text+0x114dbc): undefined reference to `__aeabi_uldivmod'
+arch/arm/mach-omap2/timer.c:195:3: error: implicit declaration of function 'prom_add_property' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/ti/cpts.c:30:24: fatal error: plat/clock.h: No such file or directory
+net/mac80211/mlme.c:1868:3: error: 'ifmgd' undeclared (first use in this function)
+drivers/mfd/da9052-i2c.c:63:5: error: redefinition of 'da9052_i2c_fix'
 
 [warnings]
-WARNING: security/built-in.o(.text+0xb43ac): Section mismatch in reference from the function integrity_init_keyring() to the variable .init.data:chosen_lsm
-net/sunrpc/svc.c:1045:8: warning: unused variable 'buf' [-Wunused-variable]
-WARNING: security/built-in.o(.text+0x2b71c): Section mismatch in reference from the function integrity_inode_free() to the variable .init.data:chosen_lsm
+drivers/media/platform/soc_camera/mx3_camera.c:1134:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/media/platform/soc_camera/mx3_camera.c:1134:2: warning: (near initialization for 'mx3_soc_camera_host_ops.set_crop') [enabled by default]
+warning: (NET_DSA_TAG_DSA && NET_DSA_TAG_EDSA && NET_DSA_TAG_TRAILER) selects NET_DSA which has unmet direct dependencies (NET && EXPERIMENTAL && NETDEVICES && !S390)
 
 [sparse]
-fs/fuse/file.c:1176:43: sparse: cast removes address space of expression
-fs/fuse/file.c:1176:43: sparse: incorrect type in initializer (different address spaces)
-fs/nfsd/nfs4state.c:948:6: sparse: symbol 'init_session' was not declared. Should it be static?
-net/ipv6/exthdrs_core.c:188:48: sparse: undefined identifier 'OVS_IP6T_FH_F_SKIP_RH'
+drivers/gpu/drm/qxl/qxl_debugfs.c:109:42: sparse: Using plain integer as NULL pointer
+
+[smatch]
+net/wireless/nl80211.c:3728 nl80211_set_bss() info: why not propagate 'params.p2p_ctwindow' from nla_get_s8() instead of -22?
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
