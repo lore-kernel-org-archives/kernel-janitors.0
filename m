@@ -1,27 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 03 Nov 2012 19:43:34 +0000
-Subject: Re: [PATCH 10/16] drivers/net/ethernet/ibm/emac/mal.c: use WARN
-Message-Id: <20121103.154334.44159507206649735.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Nov 2012 17:33:30 +0000
+Subject: [patch] [SCSI] csiostor: remove unneeded memset()
+Message-Id: <20121127173330.GD1059@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1351940317-14812-11-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-11-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: Naresh Kumar Inna <naresh@chelsio.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat,  3 Nov 2012 11:58:31 +0100
+No need to memset() this when we just copy over it on the next line.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Use WARN rather than printk followed by WARN_ON(1), for conciseness.
-> 
-> A simplified version of the semantic patch that makes this transformation
-> is as follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/scsi/csiostor/csio_lnode.c b/drivers/scsi/csiostor/csio_lnode.c
+index 551959e..8b54976 100644
+--- a/drivers/scsi/csiostor/csio_lnode.c
++++ b/drivers/scsi/csiostor/csio_lnode.c
+@@ -245,7 +245,6 @@ csio_append_attrib(uint8_t **ptr, uint16_t type, uint8_t *val, uint16_t len)
+ 	len += 4;		/* includes attribute type and length */
+ 	len = (len + 3) & ~3;	/* should be multiple of 4 bytes */
+ 	ae->len = htons(len);
+-	memset(ae->value, 0, len - 4);
+ 	memcpy(ae->value, val, len);
+ 	*ptr += len;
+ }
