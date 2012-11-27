@@ -1,35 +1,30 @@
-From: David Sterba <dave@jikos.cz>
-Date: Mon, 05 Nov 2012 15:38:35 +0000
-Subject: Re: [PATCH 13/16] fs/btrfs: use WARN
-Message-Id: <20121105153835.GJ3102@twin.jikos.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Nov 2012 17:29:35 +0000
+Subject: [patch] atm: forever loop loading ambassador firmware
+Message-Id: <20121127172935.GB1059@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
- <1351940317-14812-14-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-14-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Chris Mason <chris.mason@fusionio.com>, kernel-janitors@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chas Williams <chas@cmf.nrl.navy.mil>, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Nov 03, 2012 at 11:58:34AM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Use WARN rather than printk followed by WARN_ON(1), for conciseness.
-> 
-> A simplified version of the semantic patch that makes this transformation
-> is as follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression list es;
-> @@
-> 
-> -printk(
-> +WARN(1,
->   es);
-> -WARN_ON(1);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Reviewed-by: David Sterba <dsterba@suse.cz>
+There was a forever loop introduced here when we converted this to
+request_firmware() back in 2008.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Spotted in code reading.  Untested.
+
+diff --git a/drivers/atm/ambassador.c b/drivers/atm/ambassador.c
+index 89b30f3..ff7bb8a 100644
+--- a/drivers/atm/ambassador.c
++++ b/drivers/atm/ambassador.c
+@@ -1961,6 +1961,7 @@ static int __devinit ucode_init (loader_block * lb, amb_dev * dev) {
+     res = loader_verify(lb, dev, rec);
+     if (res)
+       break;
++    rec = ihex_next_binrec(rec);
+   }
+   release_firmware(fw);
+   if (!res)
