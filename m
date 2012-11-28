@@ -1,46 +1,30 @@
-From: chas williams - CONTRACTOR <chas@cmf.nrl.navy.mil>
-Date: Wed, 28 Nov 2012 15:40:44 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 28 Nov 2012 16:38:54 +0000
 Subject: Re: [patch] atm: forever loop loading ambassador firmware
-Message-Id: <20121128104044.785f1041@thirdoffive.cmf.nrl.navy.mil>
+Message-Id: <20121128.113854.810409435622014489.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121127172935.GB1059@elgon.mountain>
-In-Reply-To: <20121127172935.GB1059@elgon.mountain>
+	<20121128104044.785f1041@thirdoffive.cmf.nrl.navy.mil>
+In-Reply-To: <20121128104044.785f1041@thirdoffive.cmf.nrl.navy.mil>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: chas@cmf.nrl.navy.mil
+Cc: dan.carpenter@oracle.com, dwmw2@infradead.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 27 Nov 2012 20:29:35 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: chas williams - CONTRACTOR <chas@cmf.nrl.navy.mil>
+Date: Wed, 28 Nov 2012 10:40:44 -0500
 
-> There was a forever loop introduced here when we converted this to
-> request_firmware() back in 2008.
+> On Tue, 27 Nov 2012 20:29:35 +0300
+> Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-This certainly does seem to be the case.
-
-Acked-by: Chas Williams <chas@cmf.nrl.navy.mil>
-
-> ---
-> Spotted in code reading.  Untested.
+>> There was a forever loop introduced here when we converted this to
+>> request_firmware() back in 2008.
+>> 
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> diff --git a/drivers/atm/ambassador.c b/drivers/atm/ambassador.c
-> index 89b30f3..ff7bb8a 100644
-> --- a/drivers/atm/ambassador.c
-> +++ b/drivers/atm/ambassador.c
-> @@ -1961,6 +1961,7 @@ static int __devinit ucode_init (loader_block * lb, amb_dev * dev) {
->      res = loader_verify(lb, dev, rec);
->      if (res)
->        break;
-> +    rec = ihex_next_binrec(rec);
->    }
->    release_firmware(fw);
->    if (!res)
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> This certainly does seem to be the case.
 > 
+> Acked-by: Chas Williams <chas@cmf.nrl.navy.mil>
 
+Applied, thanks everyone.
