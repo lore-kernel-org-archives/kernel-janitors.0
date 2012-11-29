@@ -1,52 +1,27 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 03 Nov 2012 10:58:33 +0000
-Subject: [PATCH 12/16] fs/logfs/gc.c: use WARN
-Message-Id: <1351940317-14812-13-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Nov 2012 14:17:25 +0000
+Subject: [patch] staging: gdm72xx: unlock on error in init_usb()
+Message-Id: <20121129141725.GB12199@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joern Engel <joern@logfs.org>
-Cc: kernel-janitors@vger.kernel.org, Prasad Joshi <prasadjoshi.linux@gmail.com>, logfs@logfs.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+We recently added locking here and there was an error path which is
+missing an unlock.
 
-Use WARN rather than printk followed by WARN_ON(1), for conciseness.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic patch that makes this transformation
-is as follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression list es;
-@@
-
--printk(
-+WARN(1,
-  es);
--WARN_ON(1);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- fs/logfs/gc.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/logfs/gc.c b/fs/logfs/gc.c
-index d4efb06..62dee03 100644
---- a/fs/logfs/gc.c
-+++ b/fs/logfs/gc.c
-@@ -55,9 +55,8 @@ static u8 root_distance(struct super_block *sb, gc_level_t __gc_level)
- 		/* inode file data or indirect blocks */
- 		return super->s_ifile_levels - (gc_level - 6);
- 	default:
--		printk(KERN_ERR"LOGFS: segment of unknown level %x found\n",
-+		WARN(1, KERN_ERR "LOGFS: segment of unknown level %x found\n",
- 				gc_level);
--		WARN_ON(1);
- 		return super->s_ifile_levels + super->s_iblock_levels;
- 	}
- }
+diff --git a/drivers/staging/gdm72xx/gdm_usb.c b/drivers/staging/gdm72xx/gdm_usb.c
+index e434764..e0cb2ff 100644
+--- a/drivers/staging/gdm72xx/gdm_usb.c
++++ b/drivers/staging/gdm72xx/gdm_usb.c
+@@ -205,6 +205,7 @@ static int init_usb(struct usbwm_dev *udev)
+ 	for (i = 0; i < MAX_NR_SDU_BUF; i++) {
+ 		t = alloc_tx_struct(tx);
+ 		if (t = NULL) {
++			spin_unlock_irqrestore(&tx->lock, flags);
+ 			ret = -ENOMEM;
+ 			goto fail;
+ 		}
