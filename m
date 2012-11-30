@@ -1,91 +1,30 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Fri, 02 Nov 2012 09:39:11 +0000
-Subject: Re: [PATCH 5/5] drivers/iio/industrialio-event.c: eliminate possible double free
-Message-Id: <509394BF.9020006@kernel.org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 30 Nov 2012 20:55:08 +0000
+Subject: build regressions 2012-11-30
+Message-Id: <50b91d2c.v5oK+mXy8cCF93MA%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1350816727-1381-1-git-send-email-Julia.Lawall@lip6.fr> <1350816727-1381-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1350816727-1381-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 10/21/2012 11:52 AM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> The function __iio_add_event_config_attrs is only called once, by the
-> function iio_device_register_eventset.  If the call fails,
-> iio_device_register_eventset calls __iio_remove_event_config_attrs.  There
-> is thus no need for __iio_add_event_config_attrs to also call
-> __iio_remove_event_config_attrs on failure.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> identifier f,free,a;
-> parameter list[n] ps;
-> type T;
-> expression e;
-> @@
-> 
-> f(ps,T a,...) {
->   ... when any
->       when != a = e
->   if(...) { ... free(a); ... return ...; }
->   ... when any
-> }
-> 
-> @@
-> identifier r.f,r.free;
-> expression x,a;
-> expression list[r.n] xs;
-> @@
-> 
-> * x = f(xs,a,...);
->   if (...) { ... free(a); ... return ...; }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+drivers/pci/msi.c:345:3: error: 'for' loop initial declarations are only allowed in C99 mode
 
-Thanks - merged to fixes-togreg branch of iio.git
+[warnings]
+sound/pci/hda/patch_realtek.c:1129:4: warning: 'return' with no value, in function returning non-void [-Wreturn-type]
+kernel/sched/fair.c:2604:18: warning: 'sum_nr_running' may be used uninitialized in this function [-Wmaybe-uninitialized]
+kernel/sched/fair.c:2604:18: warning: 'nr_running' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-Jonathan
-> 
-> ---
-> __iio_remove_event_config_attrs kfrees the elements of a list, but doesn't
-> actually remove them from the list.  Perhaps for safety this should be
-> cleaned up as well.  Not tested.
-> 
->  drivers/iio/industrialio-event.c |    7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/industrialio-event.c b/drivers/iio/industrialio-event.c
-> index fa6543b..78570c7 100644
-> --- a/drivers/iio/industrialio-event.c
-> +++ b/drivers/iio/industrialio-event.c
-> @@ -350,15 +350,10 @@ static inline int __iio_add_event_config_attrs(struct iio_dev *indio_dev)
->  		ret = iio_device_add_event_sysfs(indio_dev,
->  						 &indio_dev->channels[j]);
->  		if (ret < 0)
-> -			goto error_clear_attrs;
-> +			return ret;
->  		attrcount += ret;
->  	}
->  	return attrcount;
-> -
-> -error_clear_attrs:
-> -	__iio_remove_event_config_attrs(indio_dev);
-> -
-> -	return ret;
->  }
->  
->  static bool iio_check_for_dynamic_events(struct iio_dev *indio_dev)
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+[sparse]
+include/trace/events/filemap.h:14:1: sparse: incompatible types for operation (<)
+drivers/block/drbd/drbd_int.h:2339:9: sparse: preprocessor token __wait_event_lock_irq redefined
+drivers/block/drbd/drbd_int.h:2358:9: sparse: preprocessor token wait_event_lock_irq redefined
+sound/pci/hda/patch_realtek.c:1129:25: sparse: return with no return value
+
+[coccinelle]
+drivers/virtio/virtio_balloon.c:157:2-8: preceding lock on line 136
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
