@@ -1,39 +1,45 @@
-From: adam radford <aradford@gmail.com>
-Date: Mon, 03 Dec 2012 22:27:07 +0000
-Subject: Re: [PATCH 4/6] scsi: megaraid: remove a useless call to memset().
-Message-Id: <CAHtARFE0y=ug1icuPdUcA0BVqnn6VfknAaVs=V16J-hcbZemGQ@mail.gmail.com>
+From: Willy Tarreau <w@1wt.eu>
+Date: Sat, 01 Dec 2012 08:08:06 +0000
+Subject: Re: [patch] staging: panel: pass correct lengths to keypad_send_key()
+Message-Id: <20121201080806.GB25450@1wt.eu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
-	<1354416022-20189-5-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1354416022-20189-5-git-send-email-tipecaml@gmail.com>
+References: <20121129143835.GC12199@elgon.mountain>
+In-Reply-To: <20121129143835.GC12199@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyril Roelandt <tipecaml@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, megaraidlinux@lsi.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, Dec 1, 2012 at 6:40 PM, Cyril Roelandt <tipecaml@gmail.com> wrote:
-> This call is followed by a call to memcpy() on the same memory area, so it can
-> be safely removed.
->
-> Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+Hi Dan,
+
+On Thu, Nov 29, 2012 at 05:38:35PM +0300, Dan Carpenter wrote:
+> We changed the sizeof() statements in 429ccf058b "staging:panel: Fixed
+> coding conventions." so that they could fit inside the 80 character
+> line limit.  Unfortunately, the new sizeof() statements are a smaller
+> size.  This reverts it.
+> 
+> There isn't a nice way to stay within the 80 character limit without
+> a re-work so I've gone over.
+
+Don't bother too much about the limit anyway, it's more of a guideline,
+and the first time the code was adapted to fit, it became totally unreadable.
+
+And BTW, I think that the only reason for the bug you found precisely is
+the introduction of these repeat_str/release_str local variables that seem
+to be there just to reduce line length...
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/scsi/megaraid/megaraid_sas_fusion.c |    2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> index 74030af..71cc3eb 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> +++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> @@ -1028,8 +1028,6 @@ map_cmd_status(struct megasas_cmd_fusion *cmd, u8 status, u8 ext_status)
->
->                 cmd->scmd->result = (DID_OK << 16) | ext_status;
->                 if (ext_status = SAM_STAT_CHECK_CONDITION) {
-> -                       memset(cmd->scmd->sense_buffer, 0,
-> -                              SCSI_SENSE_BUFFERSIZE);
->                         memcpy(cmd->scmd->sense_buffer, cmd->sense,
->                                SCSI_SENSE_BUFFERSIZE);
->                         cmd->scmd->result |= DRIVER_SENSE << 24;
-> --
+> Untested.  The ->u.kbd.press_str and friends are funny data types.
 
-Acked-by: Adam Radford <aradford@gmail.com>
+I agree, it looks like the initial intent was to have the strings
+fit well within the union, but this is all but obvious.
+
+> I'm
+> not sure how this code, works but the stuff we have is wrong and I've
+> reverted it back to the original.
+
+Acked-by: Willy Tarreau <w@1wt.eu>
+
+Willy
+
