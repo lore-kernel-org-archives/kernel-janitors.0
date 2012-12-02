@@ -1,45 +1,46 @@
-From: Laurent Navet <laurent.navet@gmail.com>
-Date: Thu, 13 Dec 2012 20:45:39 +0000
-Subject: Re: [PATCH] drivers: nouveau: Bool tests don't need comparison
-Message-Id: <20121213204538.GA7031@gmail.com>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Sun, 02 Dec 2012 02:40:19 +0000
+Subject: [PATCH 3/6] scsi: bnx2fc: remove useless calls to memset().
+Message-Id: <1354416022-20189-4-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355320451-23292-1-git-send-email-laurent.navet@gmail.com>
- <20121213081657.GV6568@mwanda>
-In-Reply-To: <20121213081657.GV6568@mwanda>
+References: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: bskeggs@redhat.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, airlied@linux.ie, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, bprakash@broadcom.com, JBottomley@parallels.com, linux-scsi@vger.kernel.org
 
-Bool initializations should use true and false.  Bool tests don't need
-comparisons.  Based on contributions from Joe Perches, Rusty Russell
-and Bruce W Allan.
-The semantic patch that makes this output is available
-in scripts/coccinelle/misc/boolinit.cocci.
+These calls are followed by calls to memcpy() on the same memory area, so they
+can be safely removed.
 
-More information about semantic patching is available at
-http://coccinelle.lip6.fr/
-
-Signed-off-by: Laurent Navet <laurent.navet@gmail.com>
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
- drivers/gpu/drm/nouveau/core/subdev/timer/base.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/bnx2fc/bnx2fc_hwi.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/timer/base.c
-b/drivers/gpu/drm/nouveau/core/subdev/timer/base.c
-index 5d417cc..de6d6b7 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/timer/base.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/timer/base.c
-@@ -72,7 +72,7 @@ nouveau_timer_wait_cb(void *obj, u64 nsec, bool
-(*func)(void *), void *data)
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_hwi.c b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+index ef60afa..9be42b8 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_hwi.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
+@@ -759,8 +759,6 @@ static void bnx2fc_process_unsol_compl(struct bnx2fc_rport *tgt, u16 wqe)
+ 		case FCOE_ERROR_CODE_DATA_SOFN_SEQ_ACTIVE_RESET:
+ 			BNX2FC_TGT_DBG(tgt, "REC TOV popped for xid - 0x%x\n",
+ 				   xid);
+-			memset(&io_req->err_entry, 0,
+-			       sizeof(struct fcoe_err_report_entry));
+ 			memcpy(&io_req->err_entry, err_entry,
+ 			       sizeof(struct fcoe_err_report_entry));
+ 			if (!test_bit(BNX2FC_FLAG_SRR_SENT,
+@@ -847,8 +845,6 @@ ret_err_rqe:
+ 			goto ret_warn_rqe;
+ 		}
  
-        time0 = ptimer->read(ptimer);
-        do {
--               if (func(data) = true)
-+               if (func(data))
-                        return true;
-        } while (ptimer->read(ptimer) - time0 < nsec);
+-		memset(&io_req->err_entry, 0,
+-		       sizeof(struct fcoe_err_report_entry));
+ 		memcpy(&io_req->err_entry, err_entry,
+ 		       sizeof(struct fcoe_err_report_entry));
  
 -- 
 1.7.10.4
+
