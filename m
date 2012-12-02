@@ -1,23 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 03 Dec 2012 01:33:09 +0000
-Subject: Re: [PATCH 1/6] bna: remove useless calls to memset().
-Message-Id: <20121202.203309.1858145449914043352.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 02 Dec 2012 17:29:30 +0000
+Subject: [patch] leds: leds-lp5521: return an error code on error in probe()
+Message-Id: <20121202172930.GA21835@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
-	<1354416022-20189-2-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1354416022-20189-2-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1354418247.7995.49.camel@deadeye.wl.decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tipecaml@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, rmody@brocade.com, netdev@vger.kernel.org
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Sun,  2 Dec 2012 03:40:17 +0100
+If "buf" wasn't equal to LP5521_REG_R_CURR_DEFAULT the probe fails but
+we still return zero.  I've changed it to print an error message and
+return -EINVAL.
 
-> These calls are followed by calls to memcpy() on the same memory area, so they
-> can safely be removed.
-> 
-> Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+Reported-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+index 2bee6b9..cb8a522 100644
+--- a/drivers/leds/leds-lp5521.c
++++ b/drivers/leds/leds-lp5521.c
+@@ -788,10 +788,17 @@ static int lp5521_probe(struct i2c_client *client,
+ 	 * LP5521_REG_ENABLE register will not have any effect - strange!
+ 	 */
+ 	ret = lp5521_read(client, LP5521_REG_R_CURRENT, &buf);
+-	if (ret || buf != LP5521_REG_R_CURR_DEFAULT) {
++	if (ret) {
+ 		dev_err(&client->dev, "error in resetting chip\n");
+ 		goto fail2;
+ 	}
++	if (buf != LP5521_REG_R_CURR_DEFAULT) {
++		dev_err(&client->dev,
++			"unexpected data in register (expected 0x%x got 0x%x)\n",
++			LP5521_REG_R_CURR_DEFAULT, buf);
++		ret = -EINVAL;
++		goto fail2;
++	}
+ 	usleep_range(10000, 20000);
+ 
+ 	ret = lp5521_detect(client);
