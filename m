@@ -1,68 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 02 Dec 2012 17:28:43 +0000
-Subject: [patch v3] x86, UV: integer wrap bug in uv_hub_ipi_value()
-Message-Id: <20121202172842.GA20110@elgon.mountain>
+Date: Sun, 02 Dec 2012 17:35:18 +0000
+Subject: Re: [patch v3] x86, UV: integer wrap bug in uv_hub_ipi_value()
+Message-Id: <20121202173517.GB6568@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <50BB74E7.9060306@bfs.de>
+References: <50BB74E7.9060306@bfs.de>
+ <20121202172842.GA20110@elgon.mountain>
+In-Reply-To: <20121202172842.GA20110@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Russ Anderson <rja@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
 
-This is a static checker fix.  The problem is that we store the bits
-from "uv_apicid_hibits" into "apicid" (the high 16 bits) but then we
-shift it 16 bit to the left.  "apicid" is an int so it wraps and we lose
-them.
+On Sun, Dec 02, 2012 at 08:28:43PM +0300, Dan Carpenter wrote:
+> This is a static checker fix.  The problem is that we store the bits
+> from "uv_apicid_hibits" into "apicid" (the high 16 bits) but then we
+> shift it 16 bit to the left.  "apicid" is an int so it wraps and we lose
+> them.
+> 
+> I have also simplified uv_wakeup_secondary() a little based on a
+> suggestion.
 
-I have also simplified uv_wakeup_secondary() a little based on a
-suggestion.
+This was supposed to say "suggestions from Walter Harms." but I
+pressed "u" in vim instead of "i" because they are next to each
+other so that that got deleted.  @%$@#$%@%$.  I'll resend.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: Style fix.  Don't use ulong.
-v3: Another style fix to uv_wakeup_secondary() based on Walter Harms's
-suggestion.
+regards,
+dan carpenter
 
-I don't have this hardware so I can't test it.  There may also be other
-bugs which this patch does not addressed.  These files are only compiled
-on x86_64 and "unsigned long" is used throughout to mean 64 bits.
-
-diff --git a/arch/x86/include/asm/uv/uv_hub.h b/arch/x86/include/asm/uv/uv_hub.h
-index 21f7385..e7a83d5 100644
---- a/arch/x86/include/asm/uv/uv_hub.h
-+++ b/arch/x86/include/asm/uv/uv_hub.h
-@@ -577,7 +577,7 @@ static unsigned long uv_hub_ipi_value(int apicid, int vector, int mode)
- {
- 	apicid |= uv_apicid_hibits;
- 	return (1UL << UVH_IPI_INT_SEND_SHFT) |
--			((apicid) << UVH_IPI_INT_APIC_ID_SHFT) |
-+			((unsigned long)apicid << UVH_IPI_INT_APIC_ID_SHFT) |
- 			(mode << UVH_IPI_INT_DELIVERY_MODE_SHFT) |
- 			(vector << UVH_IPI_INT_VECTOR_SHFT);
- }
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index 8cfade9..251b36f 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -194,16 +194,10 @@ static int __cpuinit uv_wakeup_secondary(int phys_apicid, unsigned long start_ri
- 	pnode = uv_apicid_to_pnode(phys_apicid);
- 	phys_apicid |= uv_apicid_hibits;
- 	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
--	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
--	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
--	    APIC_DM_INIT;
--	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
--
--	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
--	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
--	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
--	    APIC_DM_STARTUP;
--	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
-+	    ((unsigned long)phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
-+	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12);
-+	uv_write_global_mmr64(pnode, UVH_IPI_INT, val | APIC_DM_INIT);
-+	uv_write_global_mmr64(pnode, UVH_IPI_INT, val | APIC_DM_STARTUP);
- 
- 	atomic_set(&init_deasserted, 1);
- #endif
