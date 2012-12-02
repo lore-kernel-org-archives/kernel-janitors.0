@@ -1,31 +1,60 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Date: Sat, 22 Dec 2012 21:53:13 +0000
-Subject: Re: [PATCH RESEND 6/6] clk: s5p-g2d: Fix incorrect usage of IS_ERR_OR_NULL
-Message-Id: <50D62BC9.9010706@mvista.com>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Sun, 02 Dec 2012 02:40:17 +0000
+Subject: [PATCH 1/6] bna: remove useless calls to memset().
+Message-Id: <1354416022-20189-2-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
- <1355852048-23188-7-git-send-email-linux@prisktech.co.nz>
-In-Reply-To: <1355852048-23188-7-git-send-email-linux@prisktech.co.nz>
+References: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, rmody@brocade.com, netdev@vger.kernel.org
 
-Hello.
+These calls are followed by calls to memcpy() on the same memory area, so they
+can safely be removed.
 
-On 18-12-2012 21:34, Tony Prisk wrote:
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/net/ethernet/brocade/bna/bfa_ioc.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
-> Resend to include mailing lists.
-
-    Such remarks should be placed under --- tear line, not in the changelog.
-
-> Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
-
-> Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
-> CC: Kyungmin Park <kyungmin.park@samsung.com>
-> CC: Tomasz Stanislawski <t.stanislaws@samsung.com>
-> CC: linux-media@vger.kernel.org
-
-WBR, Sergei
-
+diff --git a/drivers/net/ethernet/brocade/bna/bfa_ioc.c b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
+index 959c58e..3227fdd 100644
+--- a/drivers/net/ethernet/brocade/bna/bfa_ioc.c
++++ b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
+@@ -2273,7 +2273,6 @@ bfa_ioc_get_type(struct bfa_ioc *ioc)
+ static void
+ bfa_ioc_get_adapter_serial_num(struct bfa_ioc *ioc, char *serial_num)
+ {
+-	memset(serial_num, 0, BFA_ADAPTER_SERIAL_NUM_LEN);
+ 	memcpy(serial_num,
+ 			(void *)ioc->attr->brcd_serialnum,
+ 			BFA_ADAPTER_SERIAL_NUM_LEN);
+@@ -2282,7 +2281,6 @@ bfa_ioc_get_adapter_serial_num(struct bfa_ioc *ioc, char *serial_num)
+ static void
+ bfa_ioc_get_adapter_fw_ver(struct bfa_ioc *ioc, char *fw_ver)
+ {
+-	memset(fw_ver, 0, BFA_VERSION_LEN);
+ 	memcpy(fw_ver, ioc->attr->fw_version, BFA_VERSION_LEN);
+ }
+ 
+@@ -2304,7 +2302,6 @@ bfa_ioc_get_pci_chip_rev(struct bfa_ioc *ioc, char *chip_rev)
+ static void
+ bfa_ioc_get_adapter_optrom_ver(struct bfa_ioc *ioc, char *optrom_ver)
+ {
+-	memset(optrom_ver, 0, BFA_VERSION_LEN);
+ 	memcpy(optrom_ver, ioc->attr->optrom_version,
+ 		      BFA_VERSION_LEN);
+ }
+@@ -2312,7 +2309,6 @@ bfa_ioc_get_adapter_optrom_ver(struct bfa_ioc *ioc, char *optrom_ver)
+ static void
+ bfa_ioc_get_adapter_manufacturer(struct bfa_ioc *ioc, char *manufacturer)
+ {
+-	memset(manufacturer, 0, BFA_ADAPTER_MFG_NAME_LEN);
+ 	memcpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
+ }
+ 
+-- 
+1.7.10.4
 
