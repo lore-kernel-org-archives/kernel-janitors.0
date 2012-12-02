@@ -1,37 +1,39 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 03 Dec 2012 16:06:57 +0000
-Subject: build regressions 2012-12-03
-Message-Id: <50bcce21.FAecdOBBOFpgm523%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 02 Dec 2012 10:43:13 +0000
+Subject: [patch] [media] mantis: cleanup NULL checking in mantis_ca_exit()
+Message-Id: <20121202104313.GC16078@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-(.text+0x10b24): multiple definition of `walk_page_buffers'
-fs/ext4/built-in.o:(.text+0x72b3): first defined here
-drivers/ata/pata_of_platform.c:93:13: error: 'ata_platform_remove_one' undeclared here (not in a function)
-fs/ext4/xattr.h:422:12: error: two or more data types in declaration specifiers
-mm/memory.c:3499:3: error: implicit declaration of function 'set_pmd_at' [-Werror=implicit-function-declaration]
-mm/mprotect.c:136:4: error: implicit declaration of function 'set_pmd_at' [-Werror=implicit-function-declaration]
+Smatch complainst that the call to mantis_evmgr_exit() dereferences "ca"
+but then we check it for NULL on the next line.  I've moved the NULL
+check forward to avoid that.
 
-[warnings]
-fs/ext4/namei.c:3168:20: warning: 'parent_de' may be used uninitialized in this function [-Wmaybe-uninitialized]
-WARNING: vmlinux.o(.text+0x485208): Section mismatch in reference from the function twlreg_probe() to the variable .devinit.rodata:ids
-
-[sparse]
-fs/ext4/inline.c:1025:6: sparse: symbol 'ext4_get_inline_xattr_pos' was not declared. Should it be static?
-fs/ext4/xattr.c:999:5: sparse: symbol 'ext4_xattr_ibody_set' was not declared. Should it be static?
-
-[smatch]
-drivers/gpu/drm/qxl/qxl_ioctl.c:245 qxl_update_area_ioctl() error: potential NULL dereference 'qobj'.
-mm/memory.c:3537 do_pmd_numa_page() warn: inconsistent returns spin_lock:ptl: locked (3505) unlocked (3537)
-mm/memory.c:3537 do_pmd_numa_page() warn: inconsistent returns spin_lock:__ptl: locked (3537) unlocked (3505)
-mm/mempolicy.c:134 get_task_policy() error: we previously assumed 'pol' could be null (see line 128)
-mm/memory.c:3606 do_pmd_numa_page() error: double lock 'spin_lock:__ptl'
-mm/memory.c:3608 do_pmd_numa_page() error: double unlock 'spin_lock:ptl'
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+There aren't any callers for this function.  It is commented out in
+mantis_dvb_exit().
+
+diff --git a/drivers/media/pci/mantis/mantis_ca.c b/drivers/media/pci/mantis/mantis_ca.c
+index 3d70469..60c6c2f 100644
+--- a/drivers/media/pci/mantis/mantis_ca.c
++++ b/drivers/media/pci/mantis/mantis_ca.c
+@@ -198,11 +198,12 @@ void mantis_ca_exit(struct mantis_pci *mantis)
+ 	struct mantis_ca *ca = mantis->mantis_ca;
+ 
+ 	dprintk(MANTIS_DEBUG, 1, "Mantis CA exit");
++	if (!ca)
++		return;
+ 
+ 	mantis_evmgr_exit(ca);
+ 	dprintk(MANTIS_ERROR, 1, "Unregistering EN50221 device");
+-	if (ca)
+-		dvb_ca_en50221_release(&ca->en50221);
++	dvb_ca_en50221_release(&ca->en50221);
+ 
+ 	kfree(ca);
+ }
