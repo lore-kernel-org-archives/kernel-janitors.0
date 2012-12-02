@@ -1,32 +1,36 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 06 Dec 2012 16:53:33 +0000
-Subject: build regressions 2012-12-06
-Message-Id: <50c0cd8d./OH4IrIGio9zisVC%fengguang.wu@intel.com>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Sun, 02 Dec 2012 02:40:22 +0000
+Subject: [PATCH 6/6] vt6656: remove a useless call to memset().
+Message-Id: <1354416022-20189-7-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, marcos.souza.org@gmail.com, standby24x7@gmail.com, justinmattock@gmail.com, devel@driverdev.osuosl.org
 
-[errors]
-drbd_actlog.c:(.text+0x72a68): undefined reference to `crc32c'
-ERROR: "min_low_pfn" [drivers/block/aoe/aoe.ko] undefined!
-ERROR: "max_low_pfn" [drivers/block/aoe/aoe.ko] undefined!
+This call is followed by a call to memcpy() on the same memory area, so it can
+be safely removed.
 
-[warnings]
-drivers/spi/spi.c:1554:23: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-drivers/vhost/blk.c:686:3: warning: passing argument 3 of 'vhost_dev_ioctl' makes pointer from integer without a cast [enabled by default]
-net/core/neighbour.c:65:12: warning: 'zero' defined but not used [-Wunused-variable]
-net/core/neighbour.c:66:12: warning: 'unres_qlen_max' defined but not used [-Wunused-variable]
-
-[smatch]
-drivers/char/tpm/tpm_stm_st33_i2c.c:748 tpm_st33_i2c_probe() warn: variable dereferenced before check 'platform_data' (see line 659)
-drivers/char/tpm/tpm_stm_st33_i2c.c:848 tpm_st33_i2c_pm_resume() warn: should this be a bitwise op?
-
-[coccinelle]
-drivers/char/tpm/tpm_stm_st33_i2c.c:640:20-23: ERROR: client is NULL but dereferenced.
-drivers/char/tpm/tpm_i2c_stm_st33.c:660:20-23: ERROR: client is NULL but dereferenced.
-
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/staging/vt6656/bssdb.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/staging/vt6656/bssdb.c b/drivers/staging/vt6656/bssdb.c
+index 6a13941..f9098b8 100644
+--- a/drivers/staging/vt6656/bssdb.c
++++ b/drivers/staging/vt6656/bssdb.c
+@@ -240,7 +240,6 @@ pDevice->bSameBSSMaxNum = jj;
+             pSelect->bSelected = TRUE;
+                         if (pDevice->bRoaming = FALSE)  {
+ 	//       Einsn Add @20070907
+-				memset(pbyDesireSSID, 0, WLAN_IEHDR_LEN + WLAN_SSID_MAXLEN + 1);
+ 			memcpy(pbyDesireSSID,pCurrBSS->abySSID,WLAN_IEHDR_LEN + WLAN_SSID_MAXLEN + 1) ;
+                                                 }
+ 
+-- 
+1.7.10.4
+
