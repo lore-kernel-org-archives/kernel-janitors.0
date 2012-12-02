@@ -1,39 +1,49 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 15 Dec 2012 18:47:29 +0000
-Subject: build regressions 2012-12-15
-Message-Id: <50ccc5c1.7H9f0FweB3uGQZNR%fengguang.wu@intel.com>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Sun, 02 Dec 2012 02:40:18 +0000
+Subject: [PATCH 2/6] scsi: bfa: remove useless calls to memset().
+Message-Id: <1354416022-20189-3-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, JBottomley@parallels.com, linux-scsi@vger.kernel.org
 
-[errors]
-initramfs.c:(.init.text+0x228c): undefined reference to `__initramfs_size'
-block/cfq-iosched.c:1257:10: error: implicit declaration of function 'cfqg_flat_parent' [-Werror=implicit-function-declaration]
-block/cfq-iosched.c:1279:2: error: implicit declaration of function 'cfqg_parent' [-Werror=implicit-function-declaration]
+These calls are followed by calls to memcpy() on the same memory area, so they
+can safely be removed.
 
-[warnings]
-arch/x86/include/uapi/asm/ptrace-abi.h:28:0: warning: "R15" redefined [enabled by default]
-arch/x86/include/uapi/asm/ptrace-abi.h:29:0: warning: "R14" redefined [enabled by default]
-arch/x86/include/uapi/asm/ptrace-abi.h:30:0: warning: "R13" redefined [enabled by default]
-arch/x86/include/uapi/asm/ptrace-abi.h:31:0: warning: "R12" redefined [enabled by default]
-arch/x86/include/uapi/asm/ptrace-abi.h:35:0: warning: "R11" redefined [enabled by default]
-arch/x86/include/uapi/asm/ptrace-abi.h:36:0: warning: "R10" redefined [enabled by default]
-arch/x86/include/uapi/asm/ptrace-abi.h:37:0: warning: "R9" redefined [enabled by default]
-block/cfq-iosched.c:1257:30: warning: initialization makes pointer from integer without a cast [enabled by default]
-block/cfq-iosched.c:1292:17: warning: assignment makes pointer from integer without a cast [enabled by default]
-
-[sparse]
-drivers/net/tun.c:399:19: sparse: symbol 'tun_enable_queue' was not declared. Should it be static?
-drivers/gpu/drm/radeon/r600_cs.c:2529:5: sparse: symbol 'r600_dma_cs_next_reloc' was not declared. Should it be static?
-drivers/gpu/drm/radeon/r600_cs.c:2565:5: sparse: symbol 'r600_dma_cs_parse' was not declared. Should it be static?
-drivers/gpu/drm/radeon/evergreen_cs.c:2851:5: sparse: symbol 'evergreen_dma_cs_parse' was not declared. Should it be static?
-drivers/gpu/drm/radeon/evergreen_cs.c:3593:5: sparse: symbol 'evergreen_dma_ib_parse' was not declared. Should it be static?
-
-[smatch]
-fs/btrfs/tree-log.c:3401 log_one_extent() error: double unlock 'irq:'
-
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/scsi/bfa/bfa_ioc.c  |    1 -
+ drivers/scsi/bfa/bfad_bsg.c |    1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
+index 0116c10..dd2a2ef 100644
+--- a/drivers/scsi/bfa/bfa_ioc.c
++++ b/drivers/scsi/bfa/bfa_ioc.c
+@@ -2517,7 +2517,6 @@ bfa_ioc_get_type(struct bfa_ioc_s *ioc)
+ void
+ bfa_ioc_get_adapter_serial_num(struct bfa_ioc_s *ioc, char *serial_num)
+ {
+-	memset((void *)serial_num, 0, BFA_ADAPTER_SERIAL_NUM_LEN);
+ 	memcpy((void *)serial_num,
+ 			(void *)ioc->attr->brcd_serialnum,
+ 			BFA_ADAPTER_SERIAL_NUM_LEN);
+diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c
+index 555e7db..9527fdb 100644
+--- a/drivers/scsi/bfa/bfad_bsg.c
++++ b/drivers/scsi/bfa/bfad_bsg.c
+@@ -3197,7 +3197,6 @@ bfad_fcxp_map_sg(struct bfad_s *bfad, void *payload_kbuf,
+ 		goto out_free_mem;
+ 
+ 	/* copy the linear bsg buffer to buf_info */
+-	memset(buf_info->virt, 0, buf_info->size);
+ 	memcpy(buf_info->virt, payload_kbuf, buf_info->size);
+ 
+ 	/*
+-- 
+1.7.10.4
+
