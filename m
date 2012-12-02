@@ -1,7 +1,7 @@
-From: Willy Tarreau <w@1wt.eu>
-Date: Sat, 01 Dec 2012 08:13:22 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 02 Dec 2012 11:22:13 +0000
 Subject: Re: [patch] staging: panel: pass correct lengths to keypad_send_key()
-Message-Id: <20121201081322.GD25450@1wt.eu>
+Message-Id: <20121202112213.GB6517@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121129143835.GC12199@elgon.mountain>
 In-Reply-To: <20121129143835.GC12199@elgon.mountain>
@@ -11,29 +11,6 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 On Fri, Nov 30, 2012 at 10:19:06AM +0100, walter harms wrote:
-> 
-> 
-> Am 29.11.2012 15:38, schrieb Dan Carpenter:
-> > We changed the sizeof() statements in 429ccf058b "staging:panel: Fixed
-> > coding conventions." so that they could fit inside the 80 character
-> > line limit.  Unfortunately, the new sizeof() statements are a smaller
-> > size.  This reverts it.
-> > 
-> > There isn't a nice way to stay within the 80 character limit without
-> > a re-work so I've gone over.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > Untested.  The ->u.kbd.press_str and friends are funny data types.  I'm
-> > not sure how this code, works but the stuff we have is wrong and I've
-> > reverted it back to the original.
-> > 
-> > diff --git a/drivers/staging/panel/panel.c b/drivers/staging/panel/panel.c
-> > index d9fec5b..dca42ce 100644
-> > --- a/drivers/staging/panel/panel.c
-> > +++ b/drivers/staging/panel/panel.c
-> > @@ -1758,7 +1758,7 @@ static inline int input_state_high(struct logical_input *input)
-> >  				char *press_str = input->u.kbd.press_str;
 > >  				if (press_str[0])
 > >  					keypad_send_key(press_str,
 > > -							sizeof(press_str));
@@ -43,8 +20,22 @@ On Fri, Nov 30, 2012 at 10:19:06AM +0100, walter harms wrote:
 > NTL i would like to question the use of  press_str and friends.
 > Moving the if (press_str[0]) into keypad_send_key() seems
 > more sensible.
+> 
+> just my two cents,
+> 
 
-Good point, I agree with you.
+Greg had already applied my patch by the you sent this email.
 
-Willy
+What you're saying sounds like it should be a good cleanup, but when
+I actually look at it, the callers still have to test repeat_str[0]
+so it's not as useful as one would hope.
+
+Really this stuff is really confusing.  I'm not sure what is
+actually stored in press_str.  Is it a pointer or just chars?  If
+it's a pointer then why are we only checking the first bit instead
+of checking the pointer?  I think it's characters but why is it
+declared as "char press_str[sizeof(void *) + sizeof(int)];"?
+
+regards,
+dan carpenter
 
