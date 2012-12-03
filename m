@@ -1,56 +1,70 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 07 Dec 2012 16:27:58 +0000
-Subject: build regressions 2012-12-07
-Message-Id: <50c2190e.tLATBT+93eYZwm7s%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Dec 2012 07:58:15 +0000
+Subject: [patch v4] x86, UV: integer wrap bug in uv_hub_ipi_value()
+Message-Id: <20121203075815.GA27409@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20121202173517.GB6568@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Russ Anderson <rja@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
 
-[errors]
-dma-default.c:(.text+0xb310): undefined reference to `coherentio'
-dma-default.c:(.text+0xb958): undefined reference to `hw_coherentio'
-ERROR: "backlight_device_unregister" [drivers/platform/x86/ideapad-laptop.ko] undefined!
-ERROR: "backlight_device_register" [drivers/platform/x86/ideapad-laptop.ko] undefined!
+This is a static checker fix.  The problem is that we store the bits
+from "uv_apicid_hibits" into "apicid" (the high 16 bits) but then we
+shift it 16 bit to the left.  "apicid" is an int so it wraps and we lose
+them.
 
-[warnings]
-mm/memory.c:74:3: warning: #warning Large NUMA config, growing page-frame for last_cpu+pid. [-Wcpp]
-net/sunrpc/svcsock.c:1083:4: warning: format '%ld' expects argument of type 'long int', but argument 2 has type 'u32' [-Wformat]
-fs/btrfs/inode.c:1328:23: warning: 'disk_num_bytes' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/btrfs/inode.c:1332:31: warning: 'extent_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/btrfs/tree-log.c:3228:40: warning: 'extent_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/net/wireless/brcm80211/brcmsmac/channel.c:674:15: warning: unused variable 'ret' [-Wunused-variable]
+I have also simplified uv_wakeup_secondary() a little based on a
+suggestion from Walter Harms.
 
-[sparse]
-drivers/spi/spi.c:1554:37: sparse: incompatible types in comparison expression (different signedness)
-arch/x86/kernel/crash.c:49:32: sparse: incompatible types in comparison expression (different address spaces)
-arch/x86/kvm/vmx.c:7444:9: sparse: cannot dereference this type
-fs/btrfs/tree-log.c:3375:20: sparse: context imbalance in 'log_one_extent' - unexpected unlock
-net/tipc/port.c:1047:9: sparse: context imbalance in 'tipc_connect' - unexpected unlock
-net/tipc/port.c:1085:25: sparse: context imbalance in '__tipc_connect' - unexpected unlock
-mm/memory.c:74:3: sparse: Large NUMA config, growing page-frame for last_cpu+pid.
-drivers/gpu/drm/nouveau/core/subdev/therm/fannil.c:34:1: sparse: symbol 'nouveau_fannil_set' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/subdev/therm/fantog.c:85:1: sparse: symbol 'nouveau_fantog_set' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/subdev/therm/nv40.c:84:1: sparse: symbol 'nv40_fan_pwm_ctrl' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/subdev/bus/nv04.c:33:1: sparse: symbol 'nv04_bus_intr' was not declared. Should it be static?
-net/wireless/reg.c:953:35: sparse: incorrect type in argument 1 (different address spaces)
-net/sunrpc/svcsock.c:955:25: sparse: cast from restricted __be32
-
-[smatch]
-fs/btrfs/ctree.c:5566 btrfs_next_leaf_write() warn: variable dereferenced before check 'b' (see line 5599)
-fs/btrfs/tree-log.c:3375 log_one_extent() error: double unlock 'spin_lock:&log->log_extents_lock[index]'
-drivers/gpu/drm/nouveau/core/subdev/therm/fanpwm.c:98 nouveau_fanpwm_create() error: potential null dereference 'priv'.  (kzalloc returns null)
-drivers/gpu/drm/nouveau/core/subdev/therm/fantog.c:102 nouveau_fantog_create() error: potential null dereference 'priv'.  (kzalloc returns null)
-
-[coccinelle]
-fs/btrfs/file.c:1521:1-7: preceding lock on line 1418
-
-[cppcheck]
-lib/asn1_decoder.c:199: style: The scope of the variable 'tmp' can be reduced
-lib/asn1_decoder.c:363: style: Checking if unsigned variable 'csp' is less than zero.
-lib/asn1_decoder.c:421: style: Checking if unsigned variable 'jsp' is less than zero.
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+v2: Style fix.  Don't use ulong.
+v3: Another style fix to uv_wakeup_secondary() based on Walter Harms's
+suggestion.
+v4: Fix typo in commit message.
+
+I don't have this hardware so I can't test it.  There may also be other
+bugs which this patch does not addressed.  These files are only compiled
+on x86_64 and "unsigned long" is used throughout to mean 64 bits.
+
+diff --git a/arch/x86/include/asm/uv/uv_hub.h b/arch/x86/include/asm/uv/uv_hub.h
+index 21f7385..e7a83d5 100644
+--- a/arch/x86/include/asm/uv/uv_hub.h
++++ b/arch/x86/include/asm/uv/uv_hub.h
+@@ -577,7 +577,7 @@ static unsigned long uv_hub_ipi_value(int apicid, int vector, int mode)
+ {
+ 	apicid |= uv_apicid_hibits;
+ 	return (1UL << UVH_IPI_INT_SEND_SHFT) |
+-			((apicid) << UVH_IPI_INT_APIC_ID_SHFT) |
++			((unsigned long)apicid << UVH_IPI_INT_APIC_ID_SHFT) |
+ 			(mode << UVH_IPI_INT_DELIVERY_MODE_SHFT) |
+ 			(vector << UVH_IPI_INT_VECTOR_SHFT);
+ }
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index 8cfade9..251b36f 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -194,16 +194,10 @@ static int __cpuinit uv_wakeup_secondary(int phys_apicid, unsigned long start_ri
+ 	pnode = uv_apicid_to_pnode(phys_apicid);
+ 	phys_apicid |= uv_apicid_hibits;
+ 	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
+-	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
+-	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
+-	    APIC_DM_INIT;
+-	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
+-
+-	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
+-	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
+-	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
+-	    APIC_DM_STARTUP;
+-	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
++	    ((unsigned long)phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
++	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12);
++	uv_write_global_mmr64(pnode, UVH_IPI_INT, val | APIC_DM_INIT);
++	uv_write_global_mmr64(pnode, UVH_IPI_INT, val | APIC_DM_STARTUP);
+ 
+ 	atomic_set(&init_deasserted, 1);
+ #endif
+
