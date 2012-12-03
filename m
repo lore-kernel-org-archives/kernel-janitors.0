@@ -1,49 +1,37 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Sun, 02 Dec 2012 02:40:18 +0000
-Subject: [PATCH 2/6] scsi: bfa: remove useless calls to memset().
-Message-Id: <1354416022-20189-3-git-send-email-tipecaml@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 03 Dec 2012 16:06:57 +0000
+Subject: build regressions 2012-12-03
+Message-Id: <50bcce21.FAecdOBBOFpgm523%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, JBottomley@parallels.com, linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-These calls are followed by calls to memcpy() on the same memory area, so they
-can safely be removed.
+[errors]
+(.text+0x10b24): multiple definition of `walk_page_buffers'
+fs/ext4/built-in.o:(.text+0x72b3): first defined here
+drivers/ata/pata_of_platform.c:93:13: error: 'ata_platform_remove_one' undeclared here (not in a function)
+fs/ext4/xattr.h:422:12: error: two or more data types in declaration specifiers
+mm/memory.c:3499:3: error: implicit declaration of function 'set_pmd_at' [-Werror=implicit-function-declaration]
+mm/mprotect.c:136:4: error: implicit declaration of function 'set_pmd_at' [-Werror=implicit-function-declaration]
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+[warnings]
+fs/ext4/namei.c:3168:20: warning: 'parent_de' may be used uninitialized in this function [-Wmaybe-uninitialized]
+WARNING: vmlinux.o(.text+0x485208): Section mismatch in reference from the function twlreg_probe() to the variable .devinit.rodata:ids
+
+[sparse]
+fs/ext4/inline.c:1025:6: sparse: symbol 'ext4_get_inline_xattr_pos' was not declared. Should it be static?
+fs/ext4/xattr.c:999:5: sparse: symbol 'ext4_xattr_ibody_set' was not declared. Should it be static?
+
+[smatch]
+drivers/gpu/drm/qxl/qxl_ioctl.c:245 qxl_update_area_ioctl() error: potential NULL dereference 'qobj'.
+mm/memory.c:3537 do_pmd_numa_page() warn: inconsistent returns spin_lock:ptl: locked (3505) unlocked (3537)
+mm/memory.c:3537 do_pmd_numa_page() warn: inconsistent returns spin_lock:__ptl: locked (3537) unlocked (3505)
+mm/mempolicy.c:134 get_task_policy() error: we previously assumed 'pol' could be null (see line 128)
+mm/memory.c:3606 do_pmd_numa_page() error: double lock 'spin_lock:__ptl'
+mm/memory.c:3608 do_pmd_numa_page() error: double unlock 'spin_lock:ptl'
+
 ---
- drivers/scsi/bfa/bfa_ioc.c  |    1 -
- drivers/scsi/bfa/bfad_bsg.c |    1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/drivers/scsi/bfa/bfa_ioc.c b/drivers/scsi/bfa/bfa_ioc.c
-index 0116c10..dd2a2ef 100644
---- a/drivers/scsi/bfa/bfa_ioc.c
-+++ b/drivers/scsi/bfa/bfa_ioc.c
-@@ -2517,7 +2517,6 @@ bfa_ioc_get_type(struct bfa_ioc_s *ioc)
- void
- bfa_ioc_get_adapter_serial_num(struct bfa_ioc_s *ioc, char *serial_num)
- {
--	memset((void *)serial_num, 0, BFA_ADAPTER_SERIAL_NUM_LEN);
- 	memcpy((void *)serial_num,
- 			(void *)ioc->attr->brcd_serialnum,
- 			BFA_ADAPTER_SERIAL_NUM_LEN);
-diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c
-index 555e7db..9527fdb 100644
---- a/drivers/scsi/bfa/bfad_bsg.c
-+++ b/drivers/scsi/bfa/bfad_bsg.c
-@@ -3197,7 +3197,6 @@ bfad_fcxp_map_sg(struct bfad_s *bfad, void *payload_kbuf,
- 		goto out_free_mem;
- 
- 	/* copy the linear bsg buffer to buf_info */
--	memset(buf_info->virt, 0, buf_info->size);
- 	memcpy(buf_info->virt, payload_kbuf, buf_info->size);
- 
- 	/*
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
