@@ -1,42 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 02 Dec 2012 17:29:30 +0000
-Subject: [patch] leds: leds-lp5521: return an error code on error in probe()
-Message-Id: <20121202172930.GA21835@elgon.mountain>
+From: Bryan Wu <cooloney@gmail.com>
+Date: Mon, 03 Dec 2012 19:18:52 +0000
+Subject: Re: [patch] leds: leds-lp5521: return an error code on error in probe()
+Message-Id: <CAK5ve-Li0O5b7WL6R+RL6+=4FAV=NSLfMt99rG+k7ruTEPNVEg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1354418247.7995.49.camel@deadeye.wl.decadent.org.uk>
+References: <1354418247.7995.49.camel@deadeye.wl.decadent.org.uk> <20121202172930.GA21835@elgon.mountain>
+In-Reply-To: <20121202172930.GA21835@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bryan Wu <cooloney@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If "buf" wasn't equal to LP5521_REG_R_CURR_DEFAULT the probe fails but
-we still return zero.  I've changed it to print an error message and
-return -EINVAL.
+On Sun, Dec 2, 2012 at 9:29 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> If "buf" wasn't equal to LP5521_REG_R_CURR_DEFAULT the probe fails but
+> we still return zero.  I've changed it to print an error message and
+> return -EINVAL.
+>
 
-Reported-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Looks fine with me, I applied it to my for-next branch.
 
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index 2bee6b9..cb8a522 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -788,10 +788,17 @@ static int lp5521_probe(struct i2c_client *client,
- 	 * LP5521_REG_ENABLE register will not have any effect - strange!
- 	 */
- 	ret = lp5521_read(client, LP5521_REG_R_CURRENT, &buf);
--	if (ret || buf != LP5521_REG_R_CURR_DEFAULT) {
-+	if (ret) {
- 		dev_err(&client->dev, "error in resetting chip\n");
- 		goto fail2;
- 	}
-+	if (buf != LP5521_REG_R_CURR_DEFAULT) {
-+		dev_err(&client->dev,
-+			"unexpected data in register (expected 0x%x got 0x%x)\n",
-+			LP5521_REG_R_CURR_DEFAULT, buf);
-+		ret = -EINVAL;
-+		goto fail2;
-+	}
- 	usleep_range(10000, 20000);
- 
- 	ret = lp5521_detect(client);
+-Bryan
+
+> Reported-by: Ben Hutchings <ben@decadent.org.uk>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
+> index 2bee6b9..cb8a522 100644
+> --- a/drivers/leds/leds-lp5521.c
+> +++ b/drivers/leds/leds-lp5521.c
+> @@ -788,10 +788,17 @@ static int lp5521_probe(struct i2c_client *client,
+>          * LP5521_REG_ENABLE register will not have any effect - strange!
+>          */
+>         ret = lp5521_read(client, LP5521_REG_R_CURRENT, &buf);
+> -       if (ret || buf != LP5521_REG_R_CURR_DEFAULT) {
+> +       if (ret) {
+>                 dev_err(&client->dev, "error in resetting chip\n");
+>                 goto fail2;
+>         }
+> +       if (buf != LP5521_REG_R_CURR_DEFAULT) {
+> +               dev_err(&client->dev,
+> +                       "unexpected data in register (expected 0x%x got 0x%x)\n",
+> +                       LP5521_REG_R_CURR_DEFAULT, buf);
+> +               ret = -EINVAL;
+> +               goto fail2;
+> +       }
+>         usleep_range(10000, 20000);
+>
+>         ret = lp5521_detect(client);
