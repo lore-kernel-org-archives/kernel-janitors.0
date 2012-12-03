@@ -1,50 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Dec 2012 08:44:27 +0000
-Subject: Re: [patch] x86, efi: precedence error in setup_efi_pci()
-Message-Id: <20121210084426.GQ22569@mwanda>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Mon, 03 Dec 2012 16:34:07 +0000
+Subject: Re: [Line6linux-devel] [PATCH] line6: Use kmemdup rather than duplicating its implementation
+Message-Id: <CAJSP0QXcv3CYE=4Ci=vRZQgHU=nDjAYx3kbbCnVgGfcn0seTDg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121207061649.GA18220@elgon.mountain>
- <50C2AE91.9060800@zytor.com>
-In-Reply-To: <50C2AE91.9060800-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>
+References: <1354540825-17735-1-git-send-email-laurent.navet@gmail.com>
+In-Reply-To: <1354540825-17735-1-git-send-email-laurent.navet@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>
-Cc: Matt Fleming <matt.fleming-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matthew Garrett <mjg-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laurent Navet <laurent.navet@gmail.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "line6linux-devel@lists.sourceforge.net" <line6linux-devel@lists.sourceforge.net>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Fri, Dec 07, 2012 at 07:05:53PM -0800, H. Peter Anvin wrote:
-> On 12/06/2012 10:16 PM, Dan Carpenter wrote:
-> >Negate has higher precedence than bitwise AND so the condition is always
-> >false.
-> >
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> >diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-> >index b1942e2..18e329c 100644
-> >--- a/arch/x86/boot/compressed/eboot.c
-> >+++ b/arch/x86/boot/compressed/eboot.c
-> >@@ -302,7 +302,7 @@ static efi_status_t setup_efi_pci(struct boot_params *params)
-> >  		if (status != EFI_SUCCESS)
-> >  			continue;
-> >
-> >-		if (!attributes & EFI_PCI_IO_ATTRIBUTE_EMBEDDED_ROM)
-> >+		if (!(attributes & EFI_PCI_IO_ATTRIBUTE_EMBEDDED_ROM))
-> >  			continue;
-> >
-> >  		if (!pci->romimage || !pci->romsize)
-> >
-> 
-> What is the baseline for this patch?
-> 
+On Mon, Dec 3, 2012 at 2:20 PM, Laurent Navet <laurent.navet@gmail.com> wrote:
+> staging: line6: driver.c
+>  The semantic patch that makes this output is available
+>  in scripts/coccinelle/api/memdup.cocci.
+>
+> Signed-off-by: Laurent Navet <laurent.navet@gmail.com>
+> ---
+>  drivers/staging/line6/driver.c |    5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/staging/line6/driver.c b/drivers/staging/line6/driver.c
+> index f5c19b2..e1d6241 100644
+> --- a/drivers/staging/line6/driver.c
+> +++ b/drivers/staging/line6/driver.c
+> @@ -331,14 +331,13 @@ int line6_version_request_async(struct usb_line6 *line6)
+>         char *buffer;
+>         int retval;
+>
+> -       buffer = kmalloc(sizeof(line6_request_version), GFP_ATOMIC);
+> +       buffer = kmemdup(line6_request_version,
+> +                       sizeof(line6_request_version), GFP_ATOMIC);
+>         if (buffer = NULL) {
+>                 dev_err(line6->ifcdev, "Out of memory");
+>                 return -ENOMEM;
+>         }
+>
+> -       memcpy(buffer, line6_request_version, sizeof(line6_request_version));
+> -
+>         retval = line6_send_raw_message_async(line6, buffer,
+>                                               sizeof(line6_request_version));
+>         kfree(buffer);
+> --
+> 1.7.10.4
 
-Sorry, this is a linux-next bug.  Introduced in:
+Your change is fine but I'm not sure whether we should allocate memory
+in the first place:
 
-commit dd5fc854de5fd37adfcef8a366cd21a55aa01d3d
-Author: Matthew Garrett <mjg@redhat.com>
-Date:   Wed Dec 5 14:33:26 2012 -0700
+line6_send_raw_message_async() returns before the transfer is
+complete.  It submits one or more URBs but I cannot see a guarantee
+that the buffer is no longer needed.  It seems unsafe to kfree(buffer)
+before the request is complete.
 
-    EFI: Stash ROMs if they're not in the PCI BAR
+Since we already have const char line6_request_version[] we should
+pass it directly without a temporary kmemdup() buffer.
 
-regards,
-dan carpenter
-
+Stefan
