@@ -1,22 +1,35 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 09 Dec 2012 19:50:35 +0000
-Subject: build regressions 2012-12-09
-Message-Id: <50c4eb8b.rZ5/bypUice4e3+L%fengguang.wu@intel.com>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Tue, 04 Dec 2012 20:08:36 +0000
+Subject: [PATCH] staging: wlags49_h2: remove unneeded memset() in wireless_get_bssid()
+Message-Id: <1354651717-27888-1-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, pe1dnn@amsat.org, gregkh@linuxfoundation.org, jkosina@suse.cz, yongjun_wei@trendmicro.com.cn, standby24x7@gmail.com, viro@zeniv.linux.org.uk, devel@driverdev.osuosl.org, Cyril Roelandt <tipecaml@gmail.com>
 
-[errors]
-ERROR: "arizona_out_vi_ramp" [sound/soc/codecs/snd-soc-wm5110.ko] undefined!
-ERROR: "arizona_in_vi_ramp" [sound/soc/codecs/snd-soc-wm5110.ko] undefined!
-ERROR: "arizona_out_vd_ramp" [sound/soc/codecs/snd-soc-wm5110.ko] undefined!
-ERROR: "arizona_in_vd_ramp" [sound/soc/codecs/snd-soc-wm5110.ko] undefined!
+A few lines after this call, we memcpy over the same memory area, so the call to
+memset is not necessary.
 
-[sparse]
-net/bridge/br_mdb.c:79:35: sparse: incompatible types in comparison expression (different address spaces)
-
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/staging/wlags49_h2/wl_wext.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/staging/wlags49_h2/wl_wext.c b/drivers/staging/wlags49_h2/wl_wext.c
+index f553366..c731ff2 100644
+--- a/drivers/staging/wlags49_h2/wl_wext.c
++++ b/drivers/staging/wlags49_h2/wl_wext.c
+@@ -796,8 +796,6 @@ static int wireless_get_bssid(struct net_device *dev, struct iw_request_info *in
+ 
+     	wl_act_int_off( lp );
+ 
+-	memset( &ap_addr->sa_data, 0, ETH_ALEN );
+-
+ 	ap_addr->sa_family = ARPHRD_ETHER;
+ 
+ 	/* Assume AP mode here, which means the BSSID is our own MAC address. In
+-- 
+1.7.10.4
+
