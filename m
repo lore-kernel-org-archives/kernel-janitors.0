@@ -1,44 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Dec 2012 08:55:16 +0000
-Subject: Re: [PATCH] staging: rtl8712: avoid a useless call to memset().
-Message-Id: <20121210085516.GO6568@mwanda>
+Date: Wed, 05 Dec 2012 12:44:03 +0000
+Subject: [patch] vfs: clear to the end of the buffer on reads
+Message-Id: <20121205124403.GA31930@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1354670522-27144-1-git-send-email-tipecaml@gmail.com>
- <20121205071156.GL6568@mwanda>
- <50C3DBF6.2080103@gmail.com>
-In-Reply-To: <50C3DBF6.2080103@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyril Roelandt <tipecaml@gmail.com>
-Cc: devel@driverdev.osuosl.org, florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, yongjun_wei@trendmicro.com.cn, marcos.souza.org@gmail.com, Larry.Finger@lwfinger.net
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, Romain Francoise <romain@orebokech.com>, Meelis Roos <mroos@linux.ee>, Tony Luck <tony.luck@intel.com>
 
-On Sun, Dec 09, 2012 at 01:31:50AM +0100, Cyril Roelandt wrote:
-> On 12/05/2012 08:11 AM, Dan Carpenter wrote:
-> >On Wed, Dec 05, 2012 at 02:22:02AM +0100, Cyril Roelandt wrote:
-> >>In r8711_wx_get_wap(), make sure we do not call memcpy() on a memory area that
-> >>has just been zeroed by a call to memset().
-> >>
-> >
-> >I look at it like the original code is fine.  Your version is also
-> >fine but is it worth the churn?  Also the curly braces are not
-> >needed.
-> >
-> 
-> Sorry about the braces.
-> 
-> I just thought the code would be easier to understand this way, but
-> it's probably OK to leave it as it currently is too.
-> 
+READ is zero so this test is always false.  (rw = READ) was intended.
 
-Ah.  I'd buy that.  I like readability fixes.  The indenting is also
-messed up and confusing.  It should be:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	if (check_fwstate(pmlmepriv, _FW_LINKED | WIFI_ADHOC_MASTER_STATE |
-				     WIFI_AP_STATE))
-		memcpy(wrqu->ap_addr.sa_data, pcur_bss->MacAddress, ETH_ALEN);
-	else
-		memset(wrqu->ap_addr.sa_data, 0, ETH_ALEN);
-
-regards,
-dan carpenter
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 70ed4d8..e0a59c6 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2931,7 +2931,7 @@ static void guard_bh_eod(int rw, struct bio *bio, struct buffer_head *bh)
+ 	bio->bi_io_vec[0].bv_len = bytes;
+ 
+ 	/* ..and clear the end of the buffer for reads */
+-	if (rw & READ) {
++	if (rw = READ) {
+ 		void *kaddr = kmap_atomic(bh->b_page);
+ 		memset(kaddr + bh_offset(bh) + bytes, 0, bh->b_size - bytes);
+ 		kunmap_atomic(kaddr);
