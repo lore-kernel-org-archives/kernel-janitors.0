@@ -1,69 +1,39 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Tue, 11 Dec 2012 07:22:19 +0000
-Subject: Re: [PATCH 1/1] media: saa7146: don't use mutex_lock_interruptible() in device_release().
-Message-Id: <201212110822.19555.hverkuil@xs4all.nl>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Wed, 05 Dec 2012 01:22:02 +0000
+Subject: [PATCH] staging: rtl8712: avoid a useless call to memset().
+Message-Id: <1354670522-27144-1-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355195128-10209-1-git-send-email-tipecaml@gmail.com> <1355195128-10209-2-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1355195128-10209-2-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyril Roelandt <tipecaml@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, michael@mihu.de, mchehab@redhat.com, linux-media@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org, yongjun_wei@trendmicro.com.cn, jim.cromie@gmail.com, marcos.souza.org@gmail.com, devel@driverdev.osuosl.org, Cyril Roelandt <tipecaml@gmail.com>
 
-On Tue December 11 2012 04:05:28 Cyril Roelandt wrote:
-> Use uninterruptible mutex_lock in the release() file op to make sure all
-> resources are properly freed when a process is being terminated. Returning
-> -ERESTARTSYS has no effect for a terminating process and this may cause driver
-> resources not to be released.
+In r8711_wx_get_wap(), make sure we do not call memcpy() on a memory area that
+has just been zeroed by a call to memset().
 
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/staging/rtl8712/rtl871x_ioctl_linux.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+index 3a64790..2c73319 100644
+--- a/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
++++ b/drivers/staging/rtl8712/rtl871x_ioctl_linux.c
+@@ -1131,10 +1131,11 @@ static int r8711_wx_get_wap(struct net_device *dev,
+ 	struct ndis_wlan_bssid_ex *pcur_bss = &pmlmepriv->cur_network.network;
+ 
+ 	wrqu->ap_addr.sa_family = ARPHRD_ETHER;
+-	memset(wrqu->ap_addr.sa_data, 0, ETH_ALEN);
+ 	if (check_fwstate(pmlmepriv, _FW_LINKED |
+ 	    WIFI_ADHOC_MASTER_STATE|WIFI_AP_STATE)) {
+ 		memcpy(wrqu->ap_addr.sa_data, pcur_bss->MacAddress, ETH_ALEN);
++	} else {
++		memset(wrqu->ap_addr.sa_data, 0, ETH_ALEN);
+ 	}
+ 	return 0;
+ }
+-- 
+1.7.10.4
 
-	Hans
-
-> This was found using the following semantic patch (http://coccinelle.lip6.fr/):
-> 
-> <spml>
-> @r@
-> identifier fops;
-> identifier release_func;
-> @@
-> static const struct v4l2_file_operations fops = {
-> .release = release_func
-> };
-> 
-> @depends on r@
-> identifier r.release_func;
-> expression E;
-> @@
-> static int release_func(...)
-> {
-> ...
-> - if (mutex_lock_interruptible(E)) return -ERESTARTSYS;
-> + mutex_lock(E);
-> ...
-> }
-> </spml>
-> 
-> Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
-> ---
->  drivers/media/common/saa7146/saa7146_fops.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/common/saa7146/saa7146_fops.c b/drivers/media/common/saa7146/saa7146_fops.c
-> index b3890bd..0afe98d 100644
-> --- a/drivers/media/common/saa7146/saa7146_fops.c
-> +++ b/drivers/media/common/saa7146/saa7146_fops.c
-> @@ -265,8 +265,7 @@ static int fops_release(struct file *file)
->  
->  	DEB_EE("file:%p\n", file);
->  
-> -	if (mutex_lock_interruptible(vdev->lock))
-> -		return -ERESTARTSYS;
-> +	mutex_lock(vdev->lock);
->  
->  	if (vdev->vfl_type = VFL_TYPE_VBI) {
->  		if (dev->ext_vv_data->capabilities & V4L2_CAP_VBI_CAPTURE)
-> 
