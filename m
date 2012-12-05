@@ -1,46 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Dec 2012 10:56:22 +0000
-Subject: [patch v2] [SCSI] mpt3sas: cut and paste bug storing trigger mpi
-Message-Id: <20121207105622.GA9230@elgon.mountain>
+Date: Wed, 05 Dec 2012 17:01:24 +0000
+Subject: [patch v2] vfs: clear to the end of the buffer on reads
+Message-Id: <20121205170124.GA21549@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <953b00ff89996c4a3681b3c8f425462b@sf-mail.de>
-In-Reply-To: <953b00ff89996c4a3681b3c8f425462b@sf-mail.de>
+References: <CA+55aFyCuepCzYq4zsLJyMO0yKzb=jD0-zv9zG6RyFYABOGe5w@mail.gmail.com>
+In-Reply-To: <CA+55aFyCuepCzYq4zsLJyMO0yKzb=jD0-zv9zG6RyFYABOGe5w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <Nagalakshmi.Nandigama@lsi.com>
-Cc: Sreekanth Reddy <Sreekanth.Reddy@lsi.com>, support@lsi.com, "James E.J. Bottomley" <JBottomley@parallels.com>, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Rolf Eike Beer <eike-kernel@sf-tec.de>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, Romain Francoise <romain@orebokech.com>, Meelis Roos <mroos@linux.ee>, Tony Luck <tony.luck@intel.com>
 
-ioc->diag_trigger_mpi is an SL_WH_MPI_TRIGGERS_T struct.
-
-There is a cut and paste error here and SL_WH_EVENT_TRIGGERS_T is used
-instead of SL_WH_MPI_TRIGGERS_T.  Since the SL_WH_EVENT_TRIGGERS_T is
-smaller than SL_WH_MPI_TRIGGERS_T, it means we only clear part of the
-buffer.
-
-I've changed it to use sizeof(ioc->diag_trigger_mpi) which is a bit
-simpler.
+READ is zero so this test is always false.  If ((rw & RW_MASK) = READ)
+was intended.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v2: Style tweak.
+v2: I didn't mask out the other flags in the first version
 
-Only needed in linux-next.
-
-This is a static analysis patch.  Even though I'm pretty sure it's
-correct, I'm not able to test it.
-
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index 8af944d..3e35e64 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -3136,7 +3136,7 @@ _ctl_diag_trigger_mpi_store(struct device *cdev,
- 	spin_lock_irqsave(&ioc->diag_trigger_lock, flags);
- 	sz = min(sizeof(struct SL_WH_MPI_TRIGGERS_T), count);
- 	memset(&ioc->diag_trigger_mpi, 0,
--	    sizeof(struct SL_WH_EVENT_TRIGGERS_T));
-+	    sizeof(ioc->diag_trigger_mpi));
- 	memcpy(&ioc->diag_trigger_mpi, buf, sz);
- 	if (ioc->diag_trigger_mpi.ValidEntries > NUM_VALID_ENTRIES)
- 		ioc->diag_trigger_mpi.ValidEntries = NUM_VALID_ENTRIES;
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 70ed4d8..e0a59c6 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2931,7 +2931,7 @@ static void guard_bh_eod(int rw, struct bio *bio, struct buffer_head *bh)
+ 	bio->bi_io_vec[0].bv_len = bytes;
+ 
+ 	/* ..and clear the end of the buffer for reads */
+-	if (rw & READ) {
++	if ((rw & RW_MASK) = READ) {
+ 		void *kaddr = kmap_atomic(bh->b_page);
+ 		memset(kaddr + bh_offset(bh) + bytes, 0, bh->b_size - bytes);
+ 		kunmap_atomic(kaddr);
 
