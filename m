@@ -1,36 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 05 Dec 2012 08:08:37 +0000
-Subject: [patch] ext4: unneeded variable in ext4_try_add_inline_entry()
-Message-Id: <20121205080836.GA10259@elgon.mountain>
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Thu, 06 Dec 2012 17:23:08 +0000
+Subject: Re: [patch] ext4: unneeded variable in ext4_try_add_inline_entry()
+Message-Id: <20121206172308.GD30273@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20121205080836.GA10259@elgon.mountain>
+In-Reply-To: <20121205080836.GA10259@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, Tao Ma <boyu.mt@taobao.com>
 
-We never actually use "backup_buf" so I have removed it.
+On Wed, Dec 05, 2012 at 11:08:37AM +0300, Dan Carpenter wrote:
+> We never actually use "backup_buf" so I have removed it.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I've merged this into the inline data patches; thanks for reporting it!
 
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 1fe0cc4..26e4218 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1224,7 +1224,7 @@ int ext4_try_add_inline_entry(handle_t *handle, struct dentry *dentry,
- 			      struct inode *inode)
- {
- 	int ret, inline_size;
--	void *inline_start, *backup_buf = NULL;
-+	void *inline_start;
- 	struct ext4_iloc iloc;
- 	struct inode *dir = dentry->d_parent->d_inode;
- 
-@@ -1276,7 +1276,6 @@ int ext4_try_add_inline_entry(handle_t *handle, struct dentry *dentry,
- 	ret = ext4_convert_inline_data_nolock(handle, dir, &iloc);
- 
- out:
--	kfree(backup_buf);
- 	ext4_mark_inode_dirty(handle, dir);
- 	up_write(&EXT4_I(dir)->xattr_sem);
- 	brelse(iloc.bh);
+     	    	      	  	      - Ted
