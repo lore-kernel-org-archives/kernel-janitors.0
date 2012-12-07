@@ -1,23 +1,27 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Dec 2012 18:42:56 +0000
-Subject: Re: [PATCH RESEND 0/6] Remove incorrect usage of IS_ERR_OR_NULL on clk_get
-Message-Id: <20121218184256.GI5032@mwanda>
+Date: Fri, 07 Dec 2012 06:19:43 +0000
+Subject: [patch] aoe: use after free in aoedev_by_aoeaddr()
+Message-Id: <20121207061943.GC18220@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
-In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "Ed L. Cashin" <ecashin@coraid.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Dec 19, 2012 at 06:34:02AM +1300, Tony Prisk wrote:
-> Resend to include mailing lists.
-> 
-> As per the kernel docs, clk_get() cannot return NULL.
-> 
+We should return NULL on failure instead of returning a freed pointer.
 
-It returns NULL if CONFIG_HAVE_CLK is disabled.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/block/aoe/aoedev.c b/drivers/block/aoe/aoedev.c
+index e66ccbf..98f2965 100644
+--- a/drivers/block/aoe/aoedev.c
++++ b/drivers/block/aoe/aoedev.c
+@@ -461,6 +461,7 @@ aoedev_by_aoeaddr(ulong maj, int min, int do_alloc)
+ 	d->targets = kcalloc(NTARGETS, sizeof(*d->targets), GFP_ATOMIC);
+ 	if (!d->targets) {
+ 		kfree(d);
++		d = NULL;
+ 		goto out;
+ 	}
+ 	d->ntargets = NTARGETS;
