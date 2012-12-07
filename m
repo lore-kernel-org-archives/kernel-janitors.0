@@ -1,56 +1,67 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Fri, 14 Dec 2012 18:53:41 +0000
-Subject: Re: [PATCH 6/8] arch/arm/mach-omap2/dpll3xxx.c: drop if around WARN_ON
-Message-Id: <20121214185340.GJ4989@atomide.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 07 Dec 2012 09:29:43 +0000
+Subject: [PATCH] drivers/thermal/spear_thermal.c: use devm_clk_get
+Message-Id: <1354876172-1634-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
- <1351974625-10282-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1351974625-10282-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Julia Lawall <Julia.Lawall@lip6.fr> [121103 13:32]:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Just use WARN_ON rather than an if containing only WARN_ON(1).
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks applying this one into omap-for-v3.8/fixes-for-merge-window.
+devm_clk_get allocates a resource that is released when a driver detaches.
+This patch uses devm_clk_get for data that is allocated in the probe
+function of a platform device and is only released in the remove function.
 
-Regards,
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Tony
+---
+I was not able to compile this code.  At one point, devm_clk_get was not
+supported for all architectures.  If that is still the case, and the code
+doesn't compile, then just ignore the patch.
+
+ drivers/thermal/spear_thermal.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/thermal/spear_thermal.c b/drivers/thermal/spear_thermal.c
+index 6b2d8b2..3c5ee56 100644
+--- a/drivers/thermal/spear_thermal.c
++++ b/drivers/thermal/spear_thermal.c
+@@ -131,7 +131,7 @@ static int spear_thermal_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
  
-> A simplified version of the semantic patch that makes this transformation
-> is as follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e;
-> @@
-> - if (e) WARN_ON(1);
-> + WARN_ON(e);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  arch/arm/mach-omap2/dpll3xxx.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-omap2/dpll3xxx.c b/arch/arm/mach-omap2/dpll3xxx.c
-> index eacf51f..ed855b0 100644
-> --- a/arch/arm/mach-omap2/dpll3xxx.c
-> +++ b/arch/arm/mach-omap2/dpll3xxx.c
-> @@ -478,8 +478,7 @@ int omap3_noncore_dpll_set_rate(struct clk *clk, unsigned long rate)
->  		if (!soc_is_am33xx() && !cpu_is_omap44xx() && !cpu_is_omap3630()) {
->  			freqsel = _omap3_dpll_compute_freqsel(clk,
->  						dd->last_rounded_n);
-> -			if (!freqsel)
-> -				WARN_ON(1);
-> +			WARN_ON(!freqsel);
->  		}
->  
->  		pr_debug("clock: %s: set rate: locking rate to %lu.\n",
-> 
+-	stdev->clk = clk_get(&pdev->dev, NULL);
++	stdev->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(stdev->clk)) {
+ 		dev_err(&pdev->dev, "Can't get clock\n");
+ 		return PTR_ERR(stdev->clk);
+@@ -140,7 +140,7 @@ static int spear_thermal_probe(struct platform_device *pdev)
+ 	ret = clk_enable(stdev->clk);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Can't enable clock\n");
+-		goto put_clk;
++		return ret;
+ 	}
+ 
+ 	stdev->flags = val;
+@@ -163,8 +163,6 @@ static int spear_thermal_probe(struct platform_device *pdev)
+ 
+ disable_clk:
+ 	clk_disable(stdev->clk);
+-put_clk:
+-	clk_put(stdev->clk);
+ 
+ 	return ret;
+ }
+@@ -183,7 +181,6 @@ static int spear_thermal_exit(struct platform_device *pdev)
+ 	writel_relaxed(actual_mask & ~stdev->flags, stdev->thermal_base);
+ 
+ 	clk_disable(stdev->clk);
+-	clk_put(stdev->clk);
+ 
+ 	return 0;
+ }
+
