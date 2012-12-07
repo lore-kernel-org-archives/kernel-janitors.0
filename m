@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 19 Dec 2012 18:27:19 +0000
-Subject: build regressions 2012-12-19
-Message-Id: <50d20707.h0Zotalpnavol9cY%fengguang.wu@intel.com>
+Date: Fri, 07 Dec 2012 16:27:58 +0000
+Subject: build regressions 2012-12-07
+Message-Id: <50c2190e.tLATBT+93eYZwm7s%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,50 +9,47 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-arch/arm/mach-omap2/i2c.c:130:2: error: implicit declaration of function 'omap_pm_set_max_mpu_wakeup_lat' [-Werror=implicit-function-declaration]
-(.text+0x8a507): undefined reference to `drm_vma_offset_lookup'
-ERROR: "drm_vma_offset_man_init" [drivers/gpu/drm/ttm/ttm.ko] undefined!
-ERROR: "drm_vma_offset_destroy" [drivers/gpu/drm/ttm/ttm.ko] undefined!
-ERROR: "drm_vma_offset_lookup_rb" [drivers/gpu/drm/ttm/ttm.ko] undefined!
-ERROR: "drm_vma_offset_setup" [drivers/gpu/drm/ttm/ttm.ko] undefined!
-ERROR: "drm_vma_offset_man_fini" [drivers/gpu/drm/ttm/ttm.ko] undefined!
-include/drm/drm_vma_offset_man.h:55:46: error: 'PAGE_SHIFT' undeclared (first use in this function)
-drivers/gpu/drm/ttm/ttm_bo_util.c:441:5: error: 'struct ttm_buffer_object' has no member named 'vm_node'
-drivers/gpu/drm/ttm/ttm_bo_vm.c:118:8: error: 'struct ttm_buffer_object' has no member named 'vm_node'
-drivers/gpu/drm/gma500/gem.c:41:9: error: 'struct drm_gem_object' has no member named 'map_list'
-drivers/gpu/drm/udl/udl_gem.c:226:13: error: 'struct drm_gem_object' has no member named 'map_list'
-drivers/gpu/drm/drm_vma_offset_man.c:94:2: error: implicit declaration of function 'list_init' [-Werror=implicit-function-declaration]
-ERROR: "drm_vma_offset_lookup" [drivers/gpu/drm/drm.ko] undefined!
+dma-default.c:(.text+0xb310): undefined reference to `coherentio'
+dma-default.c:(.text+0xb958): undefined reference to `hw_coherentio'
+ERROR: "backlight_device_unregister" [drivers/platform/x86/ideapad-laptop.ko] undefined!
+ERROR: "backlight_device_register" [drivers/platform/x86/ideapad-laptop.ko] undefined!
 
 [warnings]
-drivers/block/drbd/drbd_receiver.c:4644:2: warning: 'what' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/net/wireless/rtlwifi/rtl8192de/../wifi.h:1899:27: warning: 'value32' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/dma/ioat/dma_v3.c:1130:17: warning: 'dma_addr' may be used uninitialized in this function [-Wmaybe-uninitialized]
-include/drm/drm_vma_offset_man.h:56:1: warning: control reaches end of non-void function [-Wreturn-type]
-include/drm/drm_vma_offset_man.h:39:14: warning: 'struct address_space' declared inside parameter list [enabled by default]
-include/drm/drm_vma_offset_man.h:39:14: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-drivers/gpu/drm/ttm/ttm_bo.c:1601:10: warning: passing argument 1 of 'drm_vma_unmap_mapping' from incompatible pointer type [enabled by default]
-include/linux/of_irq.h:82:7: warning: 'struct device_node' declared inside parameter list [enabled by default]
-include/linux/of_irq.h:82:7: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-warning: (USB_XUSBPS_DR_OF && XILINX_ZED_USB_OTG) selects USB_ULPI which has unmet direct dependencies (USB_SUPPORT && (USB || USB_GADGET) && ARM)
-WARNING: drivers/rtc/built-in.o(.text+0x2b8): Section mismatch in reference from the (unknown reference) (unknown) to the function .init.text:rtc_hctosys()
+mm/memory.c:74:3: warning: #warning Large NUMA config, growing page-frame for last_cpu+pid. [-Wcpp]
+net/sunrpc/svcsock.c:1083:4: warning: format '%ld' expects argument of type 'long int', but argument 2 has type 'u32' [-Wformat]
+fs/btrfs/inode.c:1328:23: warning: 'disk_num_bytes' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/btrfs/inode.c:1332:31: warning: 'extent_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/btrfs/tree-log.c:3228:40: warning: 'extent_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/wireless/brcm80211/brcmsmac/channel.c:674:15: warning: unused variable 'ret' [-Wunused-variable]
 
 [sparse]
-drivers/gpu/drm/drm_vma_offset_man.c:4:28: sparse: symbol 'drm_vma_offset_lookup_rb_locked' was not declared. Should it be static?
-drivers/gpu/drm/gma500/gem.c:90:20: sparse: cast from unknown type
-drivers/gpu/drm/gma500/gem.c:90:47: sparse: incompatible types for operation (<<)
-drivers/gpu/drm/udl/udl_gem.c:256:20: sparse: cast from unknown type
-drivers/gpu/drm/udl/udl_gem.c:256:53: sparse: incompatible types for operation (<<)
-drivers/gpu/drm/drm_vma_offset_man.c:33:28: sparse: symbol 'drm_vma_offset_lookup_rb' was not declared. Should it be static?
-sound/usb/quirks.c:531:5: sparse: symbol 'snd_usb_mbox2_boot_quirk' was not declared. Should it be static?
-drivers/gpu/drm/ttm/ttm_bo_util.c:441:12: sparse: no member 'vm_node' in struct ttm_buffer_object
-drivers/gpu/drm/ttm/ttm_bo_vm.c:118:15: sparse: no member 'vm_node' in struct ttm_buffer_object
-drivers/gpu/drm/gma500/gem.c:41:16: sparse: no member 'map_list' in struct drm_gem_object
-drivers/gpu/drm/udl/udl_gem.c:226:20: sparse: no member 'map_list' in struct drm_gem_object
-drivers/gpu/drm/drm_vma_offset_man.c:94:9: sparse: undefined identifier 'list_init'
+drivers/spi/spi.c:1554:37: sparse: incompatible types in comparison expression (different signedness)
+arch/x86/kernel/crash.c:49:32: sparse: incompatible types in comparison expression (different address spaces)
+arch/x86/kvm/vmx.c:7444:9: sparse: cannot dereference this type
+fs/btrfs/tree-log.c:3375:20: sparse: context imbalance in 'log_one_extent' - unexpected unlock
+net/tipc/port.c:1047:9: sparse: context imbalance in 'tipc_connect' - unexpected unlock
+net/tipc/port.c:1085:25: sparse: context imbalance in '__tipc_connect' - unexpected unlock
+mm/memory.c:74:3: sparse: Large NUMA config, growing page-frame for last_cpu+pid.
+drivers/gpu/drm/nouveau/core/subdev/therm/fannil.c:34:1: sparse: symbol 'nouveau_fannil_set' was not declared. Should it be static?
+drivers/gpu/drm/nouveau/core/subdev/therm/fantog.c:85:1: sparse: symbol 'nouveau_fantog_set' was not declared. Should it be static?
+drivers/gpu/drm/nouveau/core/subdev/therm/nv40.c:84:1: sparse: symbol 'nv40_fan_pwm_ctrl' was not declared. Should it be static?
+drivers/gpu/drm/nouveau/core/subdev/bus/nv04.c:33:1: sparse: symbol 'nv04_bus_intr' was not declared. Should it be static?
+net/wireless/reg.c:953:35: sparse: incorrect type in argument 1 (different address spaces)
+net/sunrpc/svcsock.c:955:25: sparse: cast from restricted __be32
 
 [smatch]
-drivers/staging/bcm/CmHost.c:1281 DumpCmControlPacket() debug: remove_pools: nr_children over 4000 (8255). (psfCSType->cCPacketClassificationRule.u8EthernetSourceMACAddress s32min-s32max)
+fs/btrfs/ctree.c:5566 btrfs_next_leaf_write() warn: variable dereferenced before check 'b' (see line 5599)
+fs/btrfs/tree-log.c:3375 log_one_extent() error: double unlock 'spin_lock:&log->log_extents_lock[index]'
+drivers/gpu/drm/nouveau/core/subdev/therm/fanpwm.c:98 nouveau_fanpwm_create() error: potential null dereference 'priv'.  (kzalloc returns null)
+drivers/gpu/drm/nouveau/core/subdev/therm/fantog.c:102 nouveau_fantog_create() error: potential null dereference 'priv'.  (kzalloc returns null)
+
+[coccinelle]
+fs/btrfs/file.c:1521:1-7: preceding lock on line 1418
+
+[cppcheck]
+lib/asn1_decoder.c:199: style: The scope of the variable 'tmp' can be reduced
+lib/asn1_decoder.c:363: style: Checking if unsigned variable 'csp' is less than zero.
+lib/asn1_decoder.c:421: style: Checking if unsigned variable 'jsp' is less than zero.
 
 ---
 0-DAY kernel build testing backend         Open Source Technology Center
