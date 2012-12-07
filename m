@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 07 Dec 2012 16:07:24 +0000
+From: Stephen Hemminger <stephen.hemminger@vyatta.com>
+Date: Fri, 07 Dec 2012 17:08:00 +0000
 Subject: Re: [patch v2] bridge: make buffer larger in br_setlink()
-Message-Id: <50C2143C.2010200@bfs.de>
+Message-Id: <81d549e4-cdee-4c0f-88c7-6d2341c7b1f2@tahiti.vyatta.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121207111045.GA9676@elgon.mountain>
 In-Reply-To: <20121207111045.GA9676@elgon.mountain>
@@ -9,33 +9,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephen Hemminger <shemminger@vyatta.com>, "David S. Miller" <davem@davemloft.net>, bridge@lists.linux-foundation.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Thomas Graf <tgraf@suug.ch>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org, bridge@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
 
 
-Am 07.12.2012 12:10, schrieb Dan Carpenter:
+----- Original Message -----
 > We pass IFLA_BRPORT_MAX to nla_parse_nested() so we need
-> IFLA_BRPORT_MAX + 1 elements.  Also Smatch complains that we read past
+> IFLA_BRPORT_MAX + 1 elements.  Also Smatch complains that we read
+> past
 > the end of the array when in br_set_port_flag() when it's called with
 > IFLA_BRPORT_FAST_LEAVE.
 > 
-
-
-
-I have no clue why nla_parse_nested() need IFLA_BRPORT_MAX elements.
-but the majory of loop look like
-for(i=0;i<max;++)
-most programmers will think this way.
-So it seems the place to fix is nla_parse_nested().
-doing not so is asking for trouble (in the long run).
-At least this function needs a big warning label that (max-1)
-is actually needed.
-
-
-just my two cents,
- wh
-
-
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
 > v2: Style tweak.
@@ -46,7 +30,8 @@ just my two cents,
 > index 850b7d1..cfc5cfe 100644
 > --- a/net/bridge/br_netlink.c
 > +++ b/net/bridge/br_netlink.c
-> @@ -239,7 +239,7 @@ int br_setlink(struct net_device *dev, struct nlmsghdr *nlh)
+> @@ -239,7 +239,7 @@ int br_setlink(struct net_device *dev, struct
+> nlmsghdr *nlh)
 >  	struct ifinfomsg *ifm;
 >  	struct nlattr *protinfo;
 >  	struct net_bridge_port *p;
@@ -56,9 +41,6 @@ just my two cents,
 >  
 >  	ifm = nlmsg_data(nlh);
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> 
+
+Acked-by: Stephen Hemminger <shemminger@vyatta.com>
