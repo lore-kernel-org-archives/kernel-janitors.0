@@ -1,45 +1,38 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 19 Dec 2012 02:42:49 +0000
-Subject: Re: build regressions 2012-12-16
-Message-Id: <20121219024249.GB12000@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Dec 2012 06:28:01 +0000
+Subject: [patch] [SCSI] mpt3sas: cut and paste bug storing trigger mpi
+Message-Id: <20121207062801.GD18220@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50ce25f5.HSy7oO1Xg2rjXytA%fengguang.wu@intel.com>
-In-Reply-To: <50ce25f5.HSy7oO1Xg2rjXytA%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Nagalakshmi Nandigama <Nagalakshmi.Nandigama@lsi.com>
+Cc: Sreekanth Reddy <Sreekanth.Reddy@lsi.com>, support@lsi.com, "James E.J. Bottomley" <JBottomley@parallels.com>, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Dec 17, 2012 at 12:54:39AM +0300, Dan Carpenter wrote:
-> On Mon, Dec 17, 2012 at 03:50:13AM +0800, Fengguang Wu wrote:
-> > [smatch]
-> > drivers/staging/bcm/CmHost.c:1274 DumpCmControlPacket() debug: remove_pools: nr_children over 4000 (8255). (psfCSType->cCPacketClassificationRule.u8ProtocolDestPortRange s32min-s32max)
-> > drivers/staging/bcm/CmHost.c:1274 DumpCmControlPacket() Function too hairy.  Giving up.
-> > drivers/staging/comedi/drivers/ni_mio_cs.c:452 mio_cs_attach() info: why not propagate 'ret' from request_irq() instead of (-22)?
-> > drivers/staging/bcm/CmHost.c:1242 DumpCmControlPacket() debug: remove_pools: nr_children over 4000 (5597). (psfCSType 4096-(-1),4096-s64max,4096-s64max,4096-s64max,4096-s64max,4096-s64max,4096-s64max,4096-s64max,4096-(-1),4096-s64max,4096-s64max,4096-s64max,4096-s64max,4096-s64max,4096-(-1),4096-s64max,4096-s64max,4096-s64max,4096-(-1),4096-s64max,4096-(-1),4096-s64max,)
-> > drivers/video/omap2/dss/dsi.c:1386 dsi_pll_calc_clock_div_pck() debug: sval_binop_unsigned: divide by zero
-> > drivers/video/omap2/dss/dsi.c:1486 dsi_pll_calc_ddrfreq() debug: sval_binop_unsigned: divide by zero
-> 
-> I see that you have upgraded to the new version.  :)
+ioc->diag_trigger_mpi is an SL_WH_MPI_TRIGGERS_T struct.
 
-Yes, after some delay. :)
+There is a cut and paste error here and SL_WH_EVENT_TRIGGERS_T is used
+instead of SL_WH_MPI_TRIGGERS_T.  Since the SL_WH_EVENT_TRIGGERS_T is
+smaller than SL_WH_MPI_TRIGGERS_T, it means we only clear part of the
+buffer.
 
-> Some of the error messages were already there before but the format
-> changed slightly.  Sorry about that.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Only needed in linux-next.
 
-No problem.
+This is a static analysis patch.  Even though I'm pretty sure it's
+correct, I'm not able to test it.
 
-> There are a bunch of debug statements here.  Ignore them unless they
-> lead to a false positive.  Warnings and errors will all have "warn:"
-> or "error:" in the message.  I've removed the "debug: could not get
-> condition type" warning.
-
-OK, I'll completely ignore all smatch debug messages from now on.
-
-> These also weren't sent to the kbuild list so I guess you already
-> you looked at them manually.
-
-Yes.
-
-Thanks,
-Fengguang
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index 8af944d..3e35e64 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -3136,7 +3136,7 @@ _ctl_diag_trigger_mpi_store(struct device *cdev,
+ 	spin_lock_irqsave(&ioc->diag_trigger_lock, flags);
+ 	sz = min(sizeof(struct SL_WH_MPI_TRIGGERS_T), count);
+ 	memset(&ioc->diag_trigger_mpi, 0,
+-	    sizeof(struct SL_WH_EVENT_TRIGGERS_T));
++	    sizeof(struct SL_WH_MPI_TRIGGERS_T));
+ 	memcpy(&ioc->diag_trigger_mpi, buf, sz);
+ 	if (ioc->diag_trigger_mpi.ValidEntries > NUM_VALID_ENTRIES)
+ 		ioc->diag_trigger_mpi.ValidEntries = NUM_VALID_ENTRIES;
