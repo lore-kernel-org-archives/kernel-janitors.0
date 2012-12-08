@@ -1,48 +1,60 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Date: Fri, 21 Dec 2012 03:09:45 +0000
-Subject: Re: [PATCH 4/5] net: sfc: fix return value check in efx_ptp_probe_channel().
-Message-Id: <1356059385.7055.11.camel@deadeye.wl.decadent.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 08 Dec 2012 17:01:33 +0000
+Subject: [PATCH 3/3] sound/soc/soc-core.c: drop kfree of devm_kzalloc's data
+Message-Id: <1354989680-25794-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
-	 <1355271894-5284-5-git-send-email-tipecaml@gmail.com>
-	 <20121212.001550.741463250196231082.davem@davemloft.net>
-In-Reply-To: <20121212.001550.741463250196231082.davem@davemloft.net>
+References: <1344081632-4729-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344081632-4729-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>, tipecaml@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-net-drivers@solarflare.com, netdev@vger.kernel.org
+To: Liam Girdwood <lrg@ti.com>, matthias@kaehlcke.net
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Wed, 2012-12-12 at 00:15 -0500, David Miller wrote:
-> From: Cyril Roelandt <tipecaml@gmail.com>
-> Date: Wed, 12 Dec 2012 01:24:53 +0100
-> 
-> > The ptp_clock_register() returns ERR_PTR() and never returns NULL. Replace the
-> > NULL check by a call to IS_ERR().
-> > 
-> > Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
-> 
-> I'll let Ben queue this up.
-> 
-> Probably he'll want to avoid potentially leaving an ERR_PTR
-> in ptp->phc_clock even if, with this fix, that would be
-> harmless.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Sorry for the delay in looking at this.  This change is fine, as the
-entire structure *ptp will be freed on the failure path.
+Using kfree to free data allocated with devm_kzalloc causes double frees.
 
-I'm now on vacation until the new year.  Cyril, please re-send your
-patch with the addition of:
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Acked-by: Ben Hutchings <bhutchings@solarflare.com>
+// <smpl>
+@@
+expression x;
+@@
 
-so it will show up on 'patchwork' again and David can apply it from
-there.
+x = devm_kzalloc(...)
+...
+?-kfree(x);
+// </smpl>
 
-Ben.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-Ben Hutchings, Staff Engineer, Solarflare
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+---
+The kfrees were introduced in b761c0ca.
+I sent this a few months ago, and I still think it should be applied...
+
+ sound/soc/soc-core.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index f81c597..86d7a36 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -4136,7 +4136,6 @@ int snd_soc_of_parse_audio_routing(struct snd_soc_card *card,
+ 			dev_err(card->dev,
+ 				"Property '%s' index %d could not be read: %d\n",
+ 				propname, 2 * i, ret);
+-			kfree(routes);
+ 			return -EINVAL;
+ 		}
+ 		ret = of_property_read_string_index(np, propname,
+@@ -4145,7 +4144,6 @@ int snd_soc_of_parse_audio_routing(struct snd_soc_card *card,
+ 			dev_err(card->dev,
+ 				"Property '%s' index %d could not be read: %d\n",
+ 				propname, (2 * i) + 1, ret);
+-			kfree(routes);
+ 			return -EINVAL;
+ 		}
+ 	}
 
