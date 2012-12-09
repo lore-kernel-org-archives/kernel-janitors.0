@@ -1,30 +1,68 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 25 Dec 2012 19:36:34 +0000
-Subject: build regressions 2012-12-25
-Message-Id: <50da0042.OI/NGvXE3kkBqK0q%fengguang.wu@intel.com>
+From: Tony Prisk <linux@prisktech.co.nz>
+Date: Sun, 09 Dec 2012 23:44:38 +0000
+Subject: Re: [Bulk] [PATCH] drivers/video/wm8505fb.c: use devm_ functions
+Message-Id: <1355096678.6821.3.camel@gitbox>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1355076491-2246-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1355076491-2246-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-[errors]
-kernel/signal.c:2657:12: error: conflicting types for 'do_sigpending'
+On Sun, 2012-12-09 at 19:08 +0100, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> The various devm_ functions allocate memory that is released when a driver
+> detaches.  This patch uses these functions for data that is allocated in
+> the probe function of a platform device and is only freed in the remove
+> function.
+> 
+> The patch makes some other cleanups.  First, the original code used
+> devm_kzalloc, but kfree.  This would lead to a double free.  The problem
+> was found using the following semantic match (http://coccinelle.lip6.fr/):
+> 
+> // <smpl>
+> @@
+> expression x,e;
+> @@
+> x = devm_kzalloc(...)
+> ... when != x = e
+> ?-kfree(x,...);
+> // </smpl>
+> 
+> The error-handing code of devm_request_and_ioremap does not print any
+> warning message, because devm_request_and_ioremap does this.
+> 
+> The call to dma_alloc_coherent is converted to its devm equivalent,
+> dmam_alloc_coherent.  This implicitly introduces a call to
+> dmam_free_coherent, which was completly missing in the original code.
+> 
+> A semicolon is removed at the end of the error-handling code for the call
+> to dma_alloc_coherent.
+> 
+> The block of code calling fb_alloc_cmap is moved below the block of code
+> calling wm8505fb_set_par, so that the error-handing code of the call to
+> wm8505fb_set_par can just return ret.  This way there is only one block of
+> error-handling code that needs to call fb_dealloc_cmap, and so this is
+> moved up to the place where it is needed, eliminating the need for all
+> gotos and labels in the function.  This was suggested by Tony Prisk.
+> 
+> The initializations of fbi and ret at the beginning of the function are not
+> necessary and are removed.  The call platform_set_drvdata(pdev, NULL); at
+> the end of the function is also removed.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+> Only compiled.  Not tested.
 
-[warnings]
-sound/soc/atmel/atmel-pcm.c:105:2: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-kernel/signal.c:2652:2: warning: passing argument 2 of 'sys_rt_sigprocmask' from incompatible pointer type [enabled by default]
-kernel/signal.c:2703:2: warning: passing argument 1 of 'sys_rt_sigpending' from incompatible pointer type [enabled by default]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<U6980>.<U68e8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<U2850>.<U27b8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<U3850>.<U37b8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<Ubbe0>.<Ubb48>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<Ub850>.<Ub7b8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<U 850>.<U 7b8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<U 980>.<U 8e8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<U9be0>.<U9b48>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/f2fs/recovery.c:224:52: warning: 'sum.<U9980>.<U98e8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
----
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Thanks Julia,
+
+I will include this with the other patches we have for fbdev. I have
+tested this on WM8650 and all appears fine.
+
+Regards
+Tony P
+
