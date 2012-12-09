@@ -1,20 +1,25 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Mon, 10 Dec 2012 07:18:31 +0000
-Subject: Re: [PATCH 3/3] sound/soc/soc-core.c: drop kfree of devm_kzalloc's data
-Message-Id: <20121210071829.GL10927@opensource.wolfsonmicro.com>
+From: Michal Marek <mmarek@suse.cz>
+Date: Sun, 09 Dec 2012 15:04:30 +0000
+Subject: Re: [PATCH] scripts/coccinelle/misc/warn.cocci: use WARN
+Message-Id: <20121209150429.GA29236@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1354989680-25794-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1354989680-25794-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1351972929-7448-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351972929-7448-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Liam Girdwood <lrg@ti.com>, matthias@kaehlcke.net, kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-On Sat, Dec 08, 2012 at 07:01:20PM +0100, Julia Lawall wrote:
+On Sat, Nov 03, 2012 at 09:02:09PM +0100, Julia Lawall wrote:
 > From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> Using kfree to free data allocated with devm_kzalloc causes double frees.
+> Use WARN(1,...) rather than printk followed by WARN(1).
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  scripts/coccinelle/misc/warn.cocci |  109 +++++++++++++++++++++++++++++++++++++
 
-Ugh, actually this doesn't merge down very well against -next at all,
-can you regenerate against current code please?
+Applied to kbuild.git#misc, thanks.
+
+Michal
