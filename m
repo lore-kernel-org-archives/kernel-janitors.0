@@ -1,53 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Dec 2012 07:08:44 +0000
-Subject: Re: [patch 2/2] staging: line6: use after free bug requesting version
-Message-Id: <20121206070844.GM22569@mwanda>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 10 Dec 2012 16:43:42 +0000
+Subject: build regressions 2012-12-10
+Message-Id: <50c6113e.GkkAWa8K9KrLHqo1%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121205184452.GB18227@elgon.mountain>
-In-Reply-To: <20121205184452.GB18227@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Dec 06, 2012 at 06:18:02AM +0100, Stefan Hajnoczi wrote:
-> On Wed, Dec 5, 2012 at 7:44 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > diff --git a/drivers/staging/line6/driver.c b/drivers/staging/line6/driver.c
-> > index 8a5d89e..884e0d8 100644
-> > --- a/drivers/staging/line6/driver.c
-> > +++ b/drivers/staging/line6/driver.c
-> > @@ -110,7 +110,7 @@ struct message {
-> >  */
-> >  static void line6_data_received(struct urb *urb);
-> >  static int line6_send_raw_message_async_part(struct message *msg,
-> > -                                            struct urb *urb);
-> > +                                            struct urb *urb, int free);
-> 
-> s/int/bool/
-> 
-> >
-> >  /*
-> >         Start to listen on endpoint.
-> > @@ -219,24 +219,42 @@ static void line6_async_request_sent(struct urb *urb)
-> >                 usb_free_urb(urb);
-> >                 kfree(msg);
-> >         } else
-> > -               line6_send_raw_message_async_part(msg, urb);
-> > +               line6_send_raw_message_async_part(msg, urb, 0);
-> > +}
-> 
-> I'd add a bool free_buffer field to struct message and simply modify
-> line6_async_request_sent() to do:
-> 
-> if (msg->free_buffer)
->          kfree(msg->buffer);
-> 
-> Then you don't need line6_async_request_sent_free_buffer() and
-> line6_send_raw_message_async_part() doesn't need to take a bool free
-> argument since struct message already contains that information.  It
-> would make the code simpler.
+[errors]
+drivers/net/ethernet/smsc/smc91x.c:490:3: error: implicit declaration of function 'readsl' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/smsc/smc91x.c:490:3: error: implicit declaration of function 'readsw' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/smsc/smc91x.c:597:2: error: implicit declaration of function 'writesl' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/smsc/smc91x.c:597:2: error: implicit declaration of function 'writesw' [-Werror=implicit-function-declaration]
+drivers/regulator/anatop-regulator.c:163:7: error: 'struct regulator_desc' has no member named 'linear_min_sel'
+security/integrity/ima/ima_policy.c:200:7: error: 'MODULE_CHECK' undeclared (first use in this function)
 
-Yeah.  That's true.  I'll redo it.
+[warnings]
+WARNING: vmlinux.o(.cpuinit.text+0x3227): Section mismatch in reference from the function load_ucode_intel_ap() to the function .init.text:apply_microcode_early.isra.1.constprop.8()
 
-regards,
-dan carpenter
+[smatch]
+drivers/net/virtio_net.c:1312 virtnet_alloc_queues() error: potential null dereference 'vi->rq'.  (kzalloc returns null)
+
+---
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
