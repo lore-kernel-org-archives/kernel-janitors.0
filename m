@@ -1,36 +1,31 @@
 From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Sun, 02 Dec 2012 02:40:22 +0000
-Subject: [PATCH 6/6] vt6656: remove a useless call to memset().
-Message-Id: <1354416022-20189-7-git-send-email-tipecaml@gmail.com>
+Date: Tue, 11 Dec 2012 03:05:27 +0000
+Subject: [PATCH 0/1] media: saa7146: don't use mutex_lock_interruptible in
+Message-Id: <1355195128-10209-1-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1354416022-20189-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, marcos.souza.org@gmail.com, standby24x7@gmail.com, justinmattock@gmail.com, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, michael@mihu.de, mchehab@redhat.com, linux-media@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>
 
-This call is followed by a call to memcpy() on the same memory area, so it can
-be safely removed.
+This is the same kind of bug as the one fixed by
+ddc43d6dc7df0849fe41b91460fa76145cf87b67 : mutex_lock() must be used in the
+device_release file operation in order for all resources to be freed, since
+returning -RESTARTSYS has no effect here.
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+I stole the commit log from Sylwester Nawrocki, who fixed a few of these issues,
+since I could not formulate it better.
+
 ---
- drivers/staging/vt6656/bssdb.c |    1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/vt6656/bssdb.c b/drivers/staging/vt6656/bssdb.c
-index 6a13941..f9098b8 100644
---- a/drivers/staging/vt6656/bssdb.c
-+++ b/drivers/staging/vt6656/bssdb.c
-@@ -240,7 +240,6 @@ pDevice->bSameBSSMaxNum = jj;
-             pSelect->bSelected = TRUE;
-                         if (pDevice->bRoaming = FALSE)  {
- 	//       Einsn Add @20070907
--				memset(pbyDesireSSID, 0, WLAN_IEHDR_LEN + WLAN_SSID_MAXLEN + 1);
- 			memcpy(pbyDesireSSID,pCurrBSS->abySSID,WLAN_IEHDR_LEN + WLAN_SSID_MAXLEN + 1) ;
-                                                 }
- 
+Cyril Roelandt (1):
+  media: saa7146: don't use mutex_lock_interruptible() in
+    device_release().
+
+ drivers/media/common/saa7146/saa7146_fops.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
 -- 
 1.7.10.4
 
