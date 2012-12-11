@@ -1,64 +1,69 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Tue, 11 Dec 2012 03:05:28 +0000
-Subject: [PATCH 1/1] media: saa7146: don't use mutex_lock_interruptible() in device_release().
-Message-Id: <1355195128-10209-2-git-send-email-tipecaml@gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Date: Tue, 11 Dec 2012 07:22:19 +0000
+Subject: Re: [PATCH 1/1] media: saa7146: don't use mutex_lock_interruptible() in device_release().
+Message-Id: <201212110822.19555.hverkuil@xs4all.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355195128-10209-1-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1355195128-10209-1-git-send-email-tipecaml@gmail.com>
+References: <1355195128-10209-1-git-send-email-tipecaml@gmail.com> <1355195128-10209-2-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1355195128-10209-2-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, michael@mihu.de, mchehab@redhat.com, linux-media@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>
+To: Cyril Roelandt <tipecaml@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, michael@mihu.de, mchehab@redhat.com, linux-media@vger.kernel.org
 
-Use uninterruptible mutex_lock in the release() file op to make sure all
-resources are properly freed when a process is being terminated. Returning
--ERESTARTSYS has no effect for a terminating process and this may cause driver
-resources not to be released.
+On Tue December 11 2012 04:05:28 Cyril Roelandt wrote:
+> Use uninterruptible mutex_lock in the release() file op to make sure all
+> resources are properly freed when a process is being terminated. Returning
+> -ERESTARTSYS has no effect for a terminating process and this may cause driver
+> resources not to be released.
 
-This was found using the following semantic patch (http://coccinelle.lip6.fr/):
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-<spml>
-@r@
-identifier fops;
-identifier release_func;
-@@
-static const struct v4l2_file_operations fops = {
-.release = release_func
-};
+Thanks!
 
-@depends on r@
-identifier r.release_func;
-expression E;
-@@
-static int release_func(...)
-{
-...
-- if (mutex_lock_interruptible(E)) return -ERESTARTSYS;
-+ mutex_lock(E);
-...
-}
-</spml>
+	Hans
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
----
- drivers/media/common/saa7146/saa7146_fops.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/media/common/saa7146/saa7146_fops.c b/drivers/media/common/saa7146/saa7146_fops.c
-index b3890bd..0afe98d 100644
---- a/drivers/media/common/saa7146/saa7146_fops.c
-+++ b/drivers/media/common/saa7146/saa7146_fops.c
-@@ -265,8 +265,7 @@ static int fops_release(struct file *file)
- 
- 	DEB_EE("file:%p\n", file);
- 
--	if (mutex_lock_interruptible(vdev->lock))
--		return -ERESTARTSYS;
-+	mutex_lock(vdev->lock);
- 
- 	if (vdev->vfl_type = VFL_TYPE_VBI) {
- 		if (dev->ext_vv_data->capabilities & V4L2_CAP_VBI_CAPTURE)
--- 
-1.7.10.4
-
+> This was found using the following semantic patch (http://coccinelle.lip6.fr/):
+> 
+> <spml>
+> @r@
+> identifier fops;
+> identifier release_func;
+> @@
+> static const struct v4l2_file_operations fops = {
+> .release = release_func
+> };
+> 
+> @depends on r@
+> identifier r.release_func;
+> expression E;
+> @@
+> static int release_func(...)
+> {
+> ...
+> - if (mutex_lock_interruptible(E)) return -ERESTARTSYS;
+> + mutex_lock(E);
+> ...
+> }
+> </spml>
+> 
+> Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+> ---
+>  drivers/media/common/saa7146/saa7146_fops.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/common/saa7146/saa7146_fops.c b/drivers/media/common/saa7146/saa7146_fops.c
+> index b3890bd..0afe98d 100644
+> --- a/drivers/media/common/saa7146/saa7146_fops.c
+> +++ b/drivers/media/common/saa7146/saa7146_fops.c
+> @@ -265,8 +265,7 @@ static int fops_release(struct file *file)
+>  
+>  	DEB_EE("file:%p\n", file);
+>  
+> -	if (mutex_lock_interruptible(vdev->lock))
+> -		return -ERESTARTSYS;
+> +	mutex_lock(vdev->lock);
+>  
+>  	if (vdev->vfl_type = VFL_TYPE_VBI) {
+>  		if (dev->ext_vv_data->capabilities & V4L2_CAP_VBI_CAPTURE)
+> 
