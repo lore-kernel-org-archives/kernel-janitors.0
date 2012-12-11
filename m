@@ -1,51 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 11 Dec 2012 09:58:54 +0000
-Subject: [PATCH] drivers/pinctrl/pinctrl-at91.c: convert kfree to devm_kfree
-Message-Id: <1355223525-19165-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Date: Tue, 11 Dec 2012 13:00:37 +0000
+Subject: Re: [PATCH] drivers/pinctrl/pinctrl-at91.c: convert kfree to devm_kfree
+Message-Id: <50C72E75.8030706@mvista.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1355223525-19165-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1355223525-19165-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello.
 
-The function at91_dt_node_to_map is ultimately called by the function
-pinctrl_get, which is an exported function.  Since it is possible that this
-function is not called from within a probe function, for safety, the kfree
-is converted to a devm_kfree, to both free the data and remove it from the
-device in a failure situation.
+On 11-12-2012 14:58, Julia Lawall wrote:
 
-A newline is added in the call to devm_kfree to avoid exceeding the 80
-character limit.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> The function at91_dt_node_to_map is ultimately called by the function
+> pinctrl_get, which is an exported function.  Since it is possible that this
+> function is not called from within a probe function, for safety, the kfree
+> is converted to a devm_kfree, to both free the data and remove it from the
+> device in a failure situation.
 
----
- drivers/pinctrl/pinctrl-at91.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> A newline is added in the call to devm_kfree to avoid exceeding the 80
 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index c5e7571..0da8a5f 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -255,7 +255,8 @@ static int at91_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	}
- 
- 	map_num += grp->npins;
--	new_map = devm_kzalloc(pctldev->dev, sizeof(*new_map) * map_num, GFP_KERNEL);
-+	new_map = devm_kzalloc(pctldev->dev, sizeof(*new_map) * map_num,
-+			       GFP_KERNEL);
- 	if (!new_map)
- 		return -ENOMEM;
- 
-@@ -265,7 +266,7 @@ static int at91_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	/* create mux map */
- 	parent = of_get_parent(np);
- 	if (!parent) {
--		kfree(new_map);
-+		devm_kfree(pctldev->dev, new_map);
- 		return -EINVAL;
- 	}
- 	new_map[0].type = PIN_MAP_TYPE_MUX_GROUP;
+    devm_kzalloc() you mean?
+
+> character limit.
+
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+> ---
+>   drivers/pinctrl/pinctrl-at91.c |    5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+> index c5e7571..0da8a5f 100644
+> --- a/drivers/pinctrl/pinctrl-at91.c
+> +++ b/drivers/pinctrl/pinctrl-at91.c
+> @@ -255,7 +255,8 @@ static int at91_dt_node_to_map(struct pinctrl_dev *pctldev,
+>   	}
+>
+>   	map_num += grp->npins;
+> -	new_map = devm_kzalloc(pctldev->dev, sizeof(*new_map) * map_num, GFP_KERNEL);
+> +	new_map = devm_kzalloc(pctldev->dev, sizeof(*new_map) * map_num,
+> +			       GFP_KERNEL);
+
+WBR, Sergei
+
 
