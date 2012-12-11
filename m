@@ -1,21 +1,51 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Thu, 06 Dec 2012 17:23:08 +0000
-Subject: Re: [patch] ext4: unneeded variable in ext4_try_add_inline_entry()
-Message-Id: <20121206172308.GD30273@thunk.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 11 Dec 2012 09:58:54 +0000
+Subject: [PATCH] drivers/pinctrl/pinctrl-at91.c: convert kfree to devm_kfree
+Message-Id: <1355223525-19165-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121205080836.GA10259@elgon.mountain>
-In-Reply-To: <20121205080836.GA10259@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org, Tao Ma <boyu.mt@taobao.com>
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Dec 05, 2012 at 11:08:37AM +0300, Dan Carpenter wrote:
-> We never actually use "backup_buf" so I have removed it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I've merged this into the inline data patches; thanks for reporting it!
+The function at91_dt_node_to_map is ultimately called by the function
+pinctrl_get, which is an exported function.  Since it is possible that this
+function is not called from within a probe function, for safety, the kfree
+is converted to a devm_kfree, to both free the data and remove it from the
+device in a failure situation.
 
-     	    	      	  	      - Ted
+A newline is added in the call to devm_kfree to avoid exceeding the 80
+character limit.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/pinctrl-at91.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index c5e7571..0da8a5f 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -255,7 +255,8 @@ static int at91_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	}
+ 
+ 	map_num += grp->npins;
+-	new_map = devm_kzalloc(pctldev->dev, sizeof(*new_map) * map_num, GFP_KERNEL);
++	new_map = devm_kzalloc(pctldev->dev, sizeof(*new_map) * map_num,
++			       GFP_KERNEL);
+ 	if (!new_map)
+ 		return -ENOMEM;
+ 
+@@ -265,7 +266,7 @@ static int at91_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	/* create mux map */
+ 	parent = of_get_parent(np);
+ 	if (!parent) {
+-		kfree(new_map);
++		devm_kfree(pctldev->dev, new_map);
+ 		return -EINVAL;
+ 	}
+ 	new_map[0].type = PIN_MAP_TYPE_MUX_GROUP;
+
