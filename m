@@ -1,40 +1,37 @@
-From: Tony Prisk <linux@prisktech.co.nz>
-Date: Tue, 18 Dec 2012 17:34:07 +0000
-Subject: [PATCH RESEND 5/6] clk: s5p-fimc: Fix incorrect usage of IS_ERR_OR_NULL
-Message-Id: <1355852048-23188-6-git-send-email-linux@prisktech.co.nz>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Wed, 12 Dec 2012 00:24:52 +0000
+Subject: [PATCH 3/5] c2port: fix return value check in duramar2150_c2port_init().
+Message-Id: <1355271894-5284-4-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
-In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+References: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, paul.gortmaker@windriver.com, gregkh@suse.de
 
-Resend to include mailing lists.
+The c2port_device_register() function returns ERR_PTR() and never returns NULL,
+so the NULL check should be replaced by a call to IS_ERR().
 
-Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
-
-Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
-CC: Kyungmin Park <kyungmin.park@samsung.com>
-CC: Tomasz Stanislawski <t.stanislaws@samsung.com>
-CC: linux-media@vger.kernel.org
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
- drivers/media/platform/s5p-fimc/fimc-mdevice.c |    2 +-
+ drivers/misc/c2port/c2port-duramar2150.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.c b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-index 0531ab7..3ac4da2 100644
---- a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-+++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
-@@ -730,7 +730,7 @@ static int fimc_md_get_clocks(struct fimc_md *fmd)
- 	for (i = 0; i < FIMC_MAX_CAMCLKS; i++) {
- 		snprintf(clk_name, sizeof(clk_name), "sclk_cam%u", i);
- 		clock = clk_get(NULL, clk_name);
--		if (IS_ERR_OR_NULL(clock)) {
-+		if (IS_ERR(clock)) {
- 			v4l2_err(&fmd->v4l2_dev, "Failed to get clock: %s",
- 				  clk_name);
- 			return -ENXIO;
+diff --git a/drivers/misc/c2port/c2port-duramar2150.c b/drivers/misc/c2port/c2port-duramar2150.c
+index 5484301..2742e60 100644
+--- a/drivers/misc/c2port/c2port-duramar2150.c
++++ b/drivers/misc/c2port/c2port-duramar2150.c
+@@ -129,7 +129,7 @@ static int __init duramar2150_c2port_init(void)
+ 
+ 	duramar2150_c2port_dev = c2port_device_register("uc",
+ 					&duramar2150_c2port_ops, NULL);
+-	if (!duramar2150_c2port_dev) {
++	if (IS_ERR(duramar2150_c2port_dev)) {
+ 		ret = -ENODEV;
+ 		goto free_region;
+ 	}
 -- 
-1.7.9.5
+1.7.10.4
 
