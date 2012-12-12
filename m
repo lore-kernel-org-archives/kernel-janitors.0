@@ -1,37 +1,27 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Wed, 12 Dec 2012 00:24:53 +0000
-Subject: [PATCH 4/5] net: sfc: fix return value check in efx_ptp_probe_channel().
-Message-Id: <1355271894-5284-5-git-send-email-tipecaml@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 12 Dec 2012 05:15:50 +0000
+Subject: Re: [PATCH 4/5] net: sfc: fix return value check in efx_ptp_probe_channel().
+Message-Id: <20121212.001550.741463250196231082.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
+	<1355271894-5284-5-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1355271894-5284-5-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, linux-net-drivers@solarflare.com, bhutchings@solarflare.com, netdev@vger.kernel.org
+To: tipecaml@gmail.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-net-drivers@solarflare.com, bhutchings@solarflare.com, netdev@vger.kernel.org
 
-The ptp_clock_register() returns ERR_PTR() and never returns NULL. Replace the
-NULL check by a call to IS_ERR().
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Wed, 12 Dec 2012 01:24:53 +0100
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
----
- drivers/net/ethernet/sfc/ptp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The ptp_clock_register() returns ERR_PTR() and never returns NULL. Replace the
+> NULL check by a call to IS_ERR().
+> 
+> Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 
-diff --git a/drivers/net/ethernet/sfc/ptp.c b/drivers/net/ethernet/sfc/ptp.c
-index 0767043f..9bcc38c 100644
---- a/drivers/net/ethernet/sfc/ptp.c
-+++ b/drivers/net/ethernet/sfc/ptp.c
-@@ -930,7 +930,7 @@ static int efx_ptp_probe_channel(struct efx_channel *channel)
- 
- 	ptp->phc_clock = ptp_clock_register(&ptp->phc_clock_info,
- 					    &efx->pci_dev->dev);
--	if (!ptp->phc_clock)
-+	if (IS_ERR(ptp->phc_clock))
- 		goto fail3;
- 
- 	INIT_WORK(&ptp->pps_work, efx_ptp_pps_worker);
--- 
-1.7.10.4
+I'll let Ben queue this up.
 
+Probably he'll want to avoid potentially leaving an ERR_PTR
+in ptp->phc_clock even if, with this fix, that would be
+harmless.
