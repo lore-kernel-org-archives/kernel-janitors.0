@@ -1,41 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Dec 2012 12:39:19 +0000
-Subject: Re: [patch] OMAPDSS: reading past end of array in dispc_dump_regs()
-Message-Id: <20121217123919.GF5032@mwanda>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Wed, 12 Dec 2012 00:24:54 +0000
+Subject: [PATCH 5/5] spi: fix return value check in hspi_probe().
+Message-Id: <1355271894-5284-6-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121214150133.GB15839@elgon.mountain>
- <50CF0B5C.9080707@ti.com>
-In-Reply-To: <50CF0B5C.9080707@ti.com>
+References: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1355271894-5284-1-git-send-email-tipecaml-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Archit Taneja <archit@ti.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Chandrabhanu Mahapatra <cmahapatra@ti.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cyril Roelandt <tipecaml-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-On Mon, Dec 17, 2012 at 02:09:00PM +0200, Tomi Valkeinen wrote:
-> Why does the static checker think OMAP_DSS_WB is needed in the array?
+According to its documentation, clk_get() returns a "valid IS_ERR() condition
+containing errno", so we should call IS_ERR() rather than a NULL check.
 
-drivers/video/omap2/dss/dispc.c +3284
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/spi/spi-sh-hspi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  3274  #define DISPC_REG(plane, name, i) name(plane, i)
-  3275  #define DUMPREG(plane, name, i) \
-  3276          seq_printf(s, "%s_%d(%s)%*s %08x\n", #name, i, p_names[plane], \
-  3277          (int)(46 - strlen(#name) - strlen(p_names[plane])), " ", \
-  3278          dispc_read_reg(DISPC_REG(plane, name, i)))
-  3279  
-  3280          /* Video pipeline coefficient registers */
-  3281  
-  3282          /* start from OMAP_DSS_VIDEO1 */
-  3283          for (i = 1; i < dss_feat_get_num_ovls(); i++) {
-  3284                  for (j = 0; j < 8; j++)
-  3285                          DUMPREG(i, DISPC_OVL_FIR_COEF_H, j);
-
-The logic here is that we pass i to DISPC_OVL_FIR_COEF_H() which
-passes i to DISPC_FIR_COEF_H_OFFSET().  Anything higher than
-OMAP_DSS_WB will trigger a BUG() in DISPC_FIR_COEF_H_OFFSET().
-
-So it's not rock hard logic at all.
-
-regards,
-dan carpenter
+diff --git a/drivers/spi/spi-sh-hspi.c b/drivers/spi/spi-sh-hspi.c
+index 32f7b55..60cfae5 100644
+--- a/drivers/spi/spi-sh-hspi.c
++++ b/drivers/spi/spi-sh-hspi.c
+@@ -290,7 +290,7 @@ static int hspi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	clk = clk_get(NULL, "shyway_clk");
+-	if (!clk) {
++	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "shyway_clk is required\n");
+ 		ret = -EINVAL;
+ 		goto error0;
+-- 
+1.7.10.4
 
