@@ -1,28 +1,43 @@
 From: Evgeniy Polyakov <zbr@ioremap.net>
-Date: Thu, 13 Dec 2012 18:27:22 +0000
+Date: Thu, 13 Dec 2012 18:28:17 +0000
 Subject: Re: [PATCH 1/2] drivers/w1/masters/mxc_w1.c: use devm_ functions
-Message-Id: <20121213182722.GA30828@ioremap.net>
+Message-Id: <20121213182817.GB30828@ioremap.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1354835724-26945-2-git-send-email-Julia.Lawall@lip6.fr>
- <20121211212555.GA15333@ioremap.net>
- <20121213093938.GX6568@mwanda>
-In-Reply-To: <20121213093938.GX6568@mwanda>
+In-Reply-To: <1354835724-26945-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, GregKH <greg@kroah.com>
 
-On Thu, Dec 13, 2012 at 12:39:38PM +0300, Dan Carpenter (dan.carpenter@oracle.com) wrote:
-> On Wed, Dec 12, 2012 at 01:25:56AM +0400, Evgeniy Polyakov wrote:
-> > I suppose mdev will be automatically freed, but who will release
-> > mdev->clk and other private members of mdev structure?
+On Fri, Dec 07, 2012 at 12:15:24AM +0100, Julia Lawall (Julia.Lawall@lip6.fr) wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> +   mdev->clk = devm_clk_get(&pdev->dev, NULL);
+> The various devm_ functions allocate memory that is released when a driver
+> detaches.  This patch uses these functions for data that is allocated in
+> the probe function of a platform device and is only freed in the remove
+> function.
 > 
-> ->clk is now a devm pointer as well.
+> At the same time, this fixes two faults.  First, mdev, the result of
+> kzalloc, was never freed.  Second, on failure of ioremap, 0 was returned.
+> This has been replaced by -EBUSY, which was the failure value for the call
+> to request_mem_region, with which the call to ioremap has been combined.
+> 
+> The warning message on failure of ioremap is dropped, because
+> devm_request_and_ioremap already gives such messages on failure.
+> 
+> Finally, the initial call to platform_get_resource is moved closer to the
+> call to devm_request_and_ioremap, which takes care of checking whether its
+> result is NULL, implying that a test on the result of this call to
+> platform_get_resource is not needed.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Argh, I see it. Thanks for clarification.
+Looks good. Greg, please pull both patches into your tree.
+Thank you.
+
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
 
 -- 
 	Evgeniy Polyakov
