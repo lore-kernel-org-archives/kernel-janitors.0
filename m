@@ -1,42 +1,51 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 02 Dec 2012 16:12:06 +0000
-Subject: build regressions 2012-12-02
-Message-Id: <50bb7dd6.Egx7uYm1O3/RI2ht%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Dec 2012 15:01:08 +0000
+Subject: [patch] pcmcia: i82092: fix i82092aa_pci_remove()
+Message-Id: <20121214150107.GA15839@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-[errors]
-kernel/sched/sched.h:235:2: error: unknown type name 'atomic64_t'
-kernel/sched/fair.c:1076:2: error: implicit declaration of function 'atomic64_read' [-Werror=implicit-function-declaration]
-kernel/sched/fair.c:1267:3: error: implicit declaration of function 'atomic64_xchg' [-Werror=implicit-function-declaration]
-kernel/sched/fair.c:1274:3: error: implicit declaration of function 'atomic64_add' [-Werror=implicit-function-declaration]
-kernel/sched/fair.c:4211:5: error: 'struct sd_lb_stats' has no member named 'min_util'
-kernel/sched/fair.c:4212:5: error: 'struct sd_lb_stats' has no member named 'leader_util'
-kernel/sched/fair.c:4247:7: error: 'struct sg_lb_stats' has no member named 'group_utils'
-kernel/sched/fair.c:4274:51: error: 'struct sd_lb_stats' has no member named 'group_min'
-kernel/sched/fair.c:4277:6: error: 'struct sd_lb_stats' has no member named 'min_load_per_task'
-dm1105.c:(.devinit.text+0x2357a): undefined reference to `i2c_bit_add_bus'
-kernel/sched/fair.c:2902:27: error: 'struct cfs_rq' has no member named 'tg_runnable_contrib'
-kernel/sched/fair.c:3817:20: error: 'struct sched_entity' has no member named 'avg'
+Smatch complains because the call to
+	pci_set_drvdata(dev, &sockets[i].socket);
+is reading one step beyond the end of the sockets[] array.  It will
+crash when we use it later.
 
-[warnings]
-WARNING: vmlinux.o(.text+0x257de): Section mismatch in reference from the function smp_add_present_cpu() to the function .cpuinit.text:register_cpu()
-net/netfilter/ipvs/ip_vs_pe_sip.c:87:11: warning: 'iph.thoff_reasm' may be used uninitialized in this function [-Wuninitialized]
-WARNING: drivers/built-in.o(.text+0x56d18): Section mismatch in reference from the function twlreg_probe() to the variable .devinit.rodata:ci13xxx_pci_id_table
-kernel/sched/fair.c:3822:1: warning: control reaches end of non-void function [-Wreturn-type]
+The only place which uses pci_get_drvdata() is i82092aa_pci_remove().
+That function should loop through all the sockets and unregister them.
 
-[sparse]
-net/ipv4/inet_hashtables.c:242:21: sparse: restricted __portpair degrades to integer
-net/ipv6/inet6_hashtables.c:92:21: sparse: restricted __portpair degrades to integer
-kernel/sched/fair.c:4322:52: sparse: no member 'group_min' in struct sd_lb_stats
-kernel/sched/fair.c:4339:45: sparse: no member 'min_load_per_task' in struct sd_lb_stats
-kernel/sched/fair.c:4211:12: sparse: no member 'min_util' in struct sd_lb_stats
-kernel/sched/fair.c:4212:12: sparse: no member 'leader_util' in struct sd_lb_stats
-kernel/sched/fair.c:4588:20: sparse: no member 'group_utils' in struct sg_lb_stats
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
+index 3578e1c..519c4d6 100644
+--- a/drivers/pcmcia/i82092.c
++++ b/drivers/pcmcia/i82092.c
+@@ -133,8 +133,6 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
+ 		goto err_out_free_res;
+ 	}
+ 
+-	pci_set_drvdata(dev, &sockets[i].socket);
+-
+ 	for (i = 0; i<socket_count; i++) {
+ 		sockets[i].socket.dev.parent = &dev->dev;
+ 		sockets[i].socket.ops = &i82092aa_operations;
+@@ -164,14 +162,14 @@ err_out_disable:
+ 
+ static void i82092aa_pci_remove(struct pci_dev *dev)
+ {
+-	struct pcmcia_socket *socket = pci_get_drvdata(dev);
++	int i;
+ 
+ 	enter("i82092aa_pci_remove");
+ 	
+ 	free_irq(dev->irq, i82092aa_interrupt);
+ 
+-	if (socket)
+-		pcmcia_unregister_socket(socket);
++	for (i = 0; i < socket_count; i++)
++		pcmcia_unregister_socket(&sockets[i].socket);
+ 
+ 	leave("i82092aa_pci_remove");
+ }
