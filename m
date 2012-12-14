@@ -1,37 +1,56 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Wed, 12 Dec 2012 00:24:52 +0000
-Subject: [PATCH 3/5] c2port: fix return value check in duramar2150_c2port_init().
-Message-Id: <1355271894-5284-4-git-send-email-tipecaml@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Date: Fri, 14 Dec 2012 18:53:41 +0000
+Subject: Re: [PATCH 6/8] arch/arm/mach-omap2/dpll3xxx.c: drop if around WARN_ON
+Message-Id: <20121214185340.GJ4989@atomide.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
+References: <1351974625-10282-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1351974625-10282-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351974625-10282-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>, paul.gortmaker@windriver.com, gregkh@suse.de
+To: linux-arm-kernel@lists.infradead.org
 
-The c2port_device_register() function returns ERR_PTR() and never returns NULL,
-so the NULL check should be replaced by a call to IS_ERR().
+* Julia Lawall <Julia.Lawall@lip6.fr> [121103 13:32]:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Just use WARN_ON rather than an if containing only WARN_ON(1).
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
----
- drivers/misc/c2port/c2port-duramar2150.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks applying this one into omap-for-v3.8/fixes-for-merge-window.
 
-diff --git a/drivers/misc/c2port/c2port-duramar2150.c b/drivers/misc/c2port/c2port-duramar2150.c
-index 5484301..2742e60 100644
---- a/drivers/misc/c2port/c2port-duramar2150.c
-+++ b/drivers/misc/c2port/c2port-duramar2150.c
-@@ -129,7 +129,7 @@ static int __init duramar2150_c2port_init(void)
+Regards,
+
+Tony
  
- 	duramar2150_c2port_dev = c2port_device_register("uc",
- 					&duramar2150_c2port_ops, NULL);
--	if (!duramar2150_c2port_dev) {
-+	if (IS_ERR(duramar2150_c2port_dev)) {
- 		ret = -ENODEV;
- 		goto free_region;
- 	}
--- 
-1.7.10.4
-
+> A simplified version of the semantic patch that makes this transformation
+> is as follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression e;
+> @@
+> - if (e) WARN_ON(1);
+> + WARN_ON(e);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>  arch/arm/mach-omap2/dpll3xxx.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-omap2/dpll3xxx.c b/arch/arm/mach-omap2/dpll3xxx.c
+> index eacf51f..ed855b0 100644
+> --- a/arch/arm/mach-omap2/dpll3xxx.c
+> +++ b/arch/arm/mach-omap2/dpll3xxx.c
+> @@ -478,8 +478,7 @@ int omap3_noncore_dpll_set_rate(struct clk *clk, unsigned long rate)
+>  		if (!soc_is_am33xx() && !cpu_is_omap44xx() && !cpu_is_omap3630()) {
+>  			freqsel = _omap3_dpll_compute_freqsel(clk,
+>  						dd->last_rounded_n);
+> -			if (!freqsel)
+> -				WARN_ON(1);
+> +			WARN_ON(!freqsel);
+>  		}
+>  
+>  		pr_debug("clock: %s: set rate: locking rate to %lu.\n",
+> 
