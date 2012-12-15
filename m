@@ -1,146 +1,39 @@
-From: Tony Prisk <linux@prisktech.co.nz>
-Date: Tue, 18 Dec 2012 17:34:06 +0000
-Subject: [PATCH RESEND 4/6] clk: s5p-tv: Fix incorrect usage of IS_ERR_OR_NULL
-Message-Id: <1355852048-23188-5-git-send-email-linux@prisktech.co.nz>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 15 Dec 2012 18:47:29 +0000
+Subject: build regressions 2012-12-15
+Message-Id: <50ccc5c1.7H9f0FweB3uGQZNR%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
-In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Resend to include mailing lists.
+[errors]
+initramfs.c:(.init.text+0x228c): undefined reference to `__initramfs_size'
+block/cfq-iosched.c:1257:10: error: implicit declaration of function 'cfqg_flat_parent' [-Werror=implicit-function-declaration]
+block/cfq-iosched.c:1279:2: error: implicit declaration of function 'cfqg_parent' [-Werror=implicit-function-declaration]
 
-Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
+[warnings]
+arch/x86/include/uapi/asm/ptrace-abi.h:28:0: warning: "R15" redefined [enabled by default]
+arch/x86/include/uapi/asm/ptrace-abi.h:29:0: warning: "R14" redefined [enabled by default]
+arch/x86/include/uapi/asm/ptrace-abi.h:30:0: warning: "R13" redefined [enabled by default]
+arch/x86/include/uapi/asm/ptrace-abi.h:31:0: warning: "R12" redefined [enabled by default]
+arch/x86/include/uapi/asm/ptrace-abi.h:35:0: warning: "R11" redefined [enabled by default]
+arch/x86/include/uapi/asm/ptrace-abi.h:36:0: warning: "R10" redefined [enabled by default]
+arch/x86/include/uapi/asm/ptrace-abi.h:37:0: warning: "R9" redefined [enabled by default]
+block/cfq-iosched.c:1257:30: warning: initialization makes pointer from integer without a cast [enabled by default]
+block/cfq-iosched.c:1292:17: warning: assignment makes pointer from integer without a cast [enabled by default]
 
-Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
-CC: Kyungmin Park <kyungmin.park@samsung.com>
-CC: Tomasz Stanislawski <t.stanislaws@samsung.com>
-CC: linux-media@vger.kernel.org
+[sparse]
+drivers/net/tun.c:399:19: sparse: symbol 'tun_enable_queue' was not declared. Should it be static?
+drivers/gpu/drm/radeon/r600_cs.c:2529:5: sparse: symbol 'r600_dma_cs_next_reloc' was not declared. Should it be static?
+drivers/gpu/drm/radeon/r600_cs.c:2565:5: sparse: symbol 'r600_dma_cs_parse' was not declared. Should it be static?
+drivers/gpu/drm/radeon/evergreen_cs.c:2851:5: sparse: symbol 'evergreen_dma_cs_parse' was not declared. Should it be static?
+drivers/gpu/drm/radeon/evergreen_cs.c:3593:5: sparse: symbol 'evergreen_dma_ib_parse' was not declared. Should it be static?
+
+[smatch]
+fs/btrfs/tree-log.c:3401 log_one_extent() error: double unlock 'irq:'
+
 ---
- drivers/media/platform/s5p-tv/hdmi_drv.c  |   10 +++++-----
- drivers/media/platform/s5p-tv/mixer_drv.c |   10 +++++-----
- drivers/media/platform/s5p-tv/sdo_drv.c   |   10 +++++-----
- 3 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/media/platform/s5p-tv/hdmi_drv.c b/drivers/media/platform/s5p-tv/hdmi_drv.c
-index 8a9cf43..1c48ca5 100644
---- a/drivers/media/platform/s5p-tv/hdmi_drv.c
-+++ b/drivers/media/platform/s5p-tv/hdmi_drv.c
-@@ -781,27 +781,27 @@ static int hdmi_resources_init(struct hdmi_device *hdev)
- 	/* get clocks, power */
- 
- 	res->hdmi = clk_get(dev, "hdmi");
--	if (IS_ERR_OR_NULL(res->hdmi)) {
-+	if (IS_ERR(res->hdmi)) {
- 		dev_err(dev, "failed to get clock 'hdmi'\n");
- 		goto fail;
- 	}
- 	res->sclk_hdmi = clk_get(dev, "sclk_hdmi");
--	if (IS_ERR_OR_NULL(res->sclk_hdmi)) {
-+	if (IS_ERR(res->sclk_hdmi)) {
- 		dev_err(dev, "failed to get clock 'sclk_hdmi'\n");
- 		goto fail;
- 	}
- 	res->sclk_pixel = clk_get(dev, "sclk_pixel");
--	if (IS_ERR_OR_NULL(res->sclk_pixel)) {
-+	if (IS_ERR(res->sclk_pixel)) {
- 		dev_err(dev, "failed to get clock 'sclk_pixel'\n");
- 		goto fail;
- 	}
- 	res->sclk_hdmiphy = clk_get(dev, "sclk_hdmiphy");
--	if (IS_ERR_OR_NULL(res->sclk_hdmiphy)) {
-+	if (IS_ERR(res->sclk_hdmiphy)) {
- 		dev_err(dev, "failed to get clock 'sclk_hdmiphy'\n");
- 		goto fail;
- 	}
- 	res->hdmiphy = clk_get(dev, "hdmiphy");
--	if (IS_ERR_OR_NULL(res->hdmiphy)) {
-+	if (IS_ERR(res->hdmiphy)) {
- 		dev_err(dev, "failed to get clock 'hdmiphy'\n");
- 		goto fail;
- 	}
-diff --git a/drivers/media/platform/s5p-tv/mixer_drv.c b/drivers/media/platform/s5p-tv/mixer_drv.c
-index ca0f297..c1b2e0e 100644
---- a/drivers/media/platform/s5p-tv/mixer_drv.c
-+++ b/drivers/media/platform/s5p-tv/mixer_drv.c
-@@ -240,27 +240,27 @@ static int mxr_acquire_clocks(struct mxr_device *mdev)
- 	struct device *dev = mdev->dev;
- 
- 	res->mixer = clk_get(dev, "mixer");
--	if (IS_ERR_OR_NULL(res->mixer)) {
-+	if (IS_ERR(res->mixer)) {
- 		mxr_err(mdev, "failed to get clock 'mixer'\n");
- 		goto fail;
- 	}
- 	res->vp = clk_get(dev, "vp");
--	if (IS_ERR_OR_NULL(res->vp)) {
-+	if (IS_ERR(res->vp)) {
- 		mxr_err(mdev, "failed to get clock 'vp'\n");
- 		goto fail;
- 	}
- 	res->sclk_mixer = clk_get(dev, "sclk_mixer");
--	if (IS_ERR_OR_NULL(res->sclk_mixer)) {
-+	if (IS_ERR(res->sclk_mixer)) {
- 		mxr_err(mdev, "failed to get clock 'sclk_mixer'\n");
- 		goto fail;
- 	}
- 	res->sclk_hdmi = clk_get(dev, "sclk_hdmi");
--	if (IS_ERR_OR_NULL(res->sclk_hdmi)) {
-+	if (IS_ERR(res->sclk_hdmi)) {
- 		mxr_err(mdev, "failed to get clock 'sclk_hdmi'\n");
- 		goto fail;
- 	}
- 	res->sclk_dac = clk_get(dev, "sclk_dac");
--	if (IS_ERR_OR_NULL(res->sclk_dac)) {
-+	if (IS_ERR(res->sclk_dac)) {
- 		mxr_err(mdev, "failed to get clock 'sclk_dac'\n");
- 		goto fail;
- 	}
-diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c b/drivers/media/platform/s5p-tv/sdo_drv.c
-index ad68bbe..269d246 100644
---- a/drivers/media/platform/s5p-tv/sdo_drv.c
-+++ b/drivers/media/platform/s5p-tv/sdo_drv.c
-@@ -341,25 +341,25 @@ static int __devinit sdo_probe(struct platform_device *pdev)
- 
- 	/* acquire clocks */
- 	sdev->sclk_dac = clk_get(dev, "sclk_dac");
--	if (IS_ERR_OR_NULL(sdev->sclk_dac)) {
-+	if (IS_ERR(sdev->sclk_dac)) {
- 		dev_err(dev, "failed to get clock 'sclk_dac'\n");
- 		ret = -ENXIO;
- 		goto fail;
- 	}
- 	sdev->dac = clk_get(dev, "dac");
--	if (IS_ERR_OR_NULL(sdev->dac)) {
-+	if (IS_ERR(sdev->dac)) {
- 		dev_err(dev, "failed to get clock 'dac'\n");
- 		ret = -ENXIO;
- 		goto fail_sclk_dac;
- 	}
- 	sdev->dacphy = clk_get(dev, "dacphy");
--	if (IS_ERR_OR_NULL(sdev->dacphy)) {
-+	if (IS_ERR(sdev->dacphy)) {
- 		dev_err(dev, "failed to get clock 'dacphy'\n");
- 		ret = -ENXIO;
- 		goto fail_dac;
- 	}
- 	sclk_vpll = clk_get(dev, "sclk_vpll");
--	if (IS_ERR_OR_NULL(sclk_vpll)) {
-+	if (IS_ERR(sclk_vpll)) {
- 		dev_err(dev, "failed to get clock 'sclk_vpll'\n");
- 		ret = -ENXIO;
- 		goto fail_dacphy;
-@@ -367,7 +367,7 @@ static int __devinit sdo_probe(struct platform_device *pdev)
- 	clk_set_parent(sdev->sclk_dac, sclk_vpll);
- 	clk_put(sclk_vpll);
- 	sdev->fout_vpll = clk_get(dev, "fout_vpll");
--	if (IS_ERR_OR_NULL(sdev->fout_vpll)) {
-+	if (IS_ERR(sdev->fout_vpll)) {
- 		dev_err(dev, "failed to get clock 'fout_vpll'\n");
- 		goto fail_dacphy;
- 	}
--- 
-1.7.9.5
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
