@@ -1,45 +1,23 @@
-From: Tony Prisk <linux@prisktech.co.nz>
-Date: Tue, 18 Dec 2012 17:34:02 +0000
-Subject: [PATCH RESEND 0/6] Remove incorrect usage of IS_ERR_OR_NULL on clk_get
-Message-Id: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Dec 2012 18:42:56 +0000
+Subject: Re: [PATCH RESEND 0/6] Remove incorrect usage of IS_ERR_OR_NULL on clk_get
+Message-Id: <20121218184256.GI5032@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-Resend to include mailing lists.
+On Wed, Dec 19, 2012 at 06:34:02AM +1300, Tony Prisk wrote:
+> Resend to include mailing lists.
+> 
+> As per the kernel docs, clk_get() cannot return NULL.
+> 
 
-As per the kernel docs, clk_get() cannot return NULL.
+It returns NULL if CONFIG_HAVE_CLK is disabled.
 
- * clk_get - lookup and obtain a reference to a clock producer.
- * @dev: device for clock "consumer"
- * @id: clock consumer ID
- *
- * Returns a struct clk corresponding to the clock producer, or
- * valid IS_ERR() condition containing errno.
-
-This patch set replaces instances of IS_ERR_OR_NULL tests againt clk_get()
-results with IS_ERR tests.
-
-Tony Prisk (6):
-  clk: omap: Fix incorrect usage of IS_ERR_OR_NULL
-  clk: exynos: Fix incorrect usage of IS_ERR_OR_NULL
-  clk: exynos: Fix incorrect usage of IS_ERR_OR_NULL
-  clk: s5p-tv: Fix incorrect usage of IS_ERR_OR_NULL
-  clk: s5p-fimc: Fix incorrect usage of IS_ERR_OR_NULL
-  clk: s5p-g2d: Fix incorrect usage of IS_ERR_OR_NULL
-
- arch/arm/plat-omap/dmtimer.c                   |    6 +++---
- drivers/gpu/drm/exynos/exynos_hdmi.c           |   10 +++++-----
- drivers/gpu/drm/exynos/exynos_mixer.c          |   14 +++++++-------
- drivers/media/platform/s5p-fimc/fimc-mdevice.c |    2 +-
- drivers/media/platform/s5p-g2d/g2d.c           |    4 ++--
- drivers/media/platform/s5p-tv/hdmi_drv.c       |   10 +++++-----
- drivers/media/platform/s5p-tv/mixer_drv.c      |   10 +++++-----
- drivers/media/platform/s5p-tv/sdo_drv.c        |   10 +++++-----
- 8 files changed, 33 insertions(+), 33 deletions(-)
-
--- 
-1.7.9.5
+regards,
+dan carpenter
 
