@@ -1,97 +1,30 @@
-From: Tony Prisk <linux@prisktech.co.nz>
-Date: Tue, 18 Dec 2012 17:34:04 +0000
-Subject: [PATCH RESEND 2/6] clk: exynos: Fix incorrect usage of IS_ERR_OR_NULL
-Message-Id: <1355852048-23188-3-git-send-email-linux@prisktech.co.nz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Dec 2012 18:48:17 +0000
+Subject: Re: [PATCH RESEND 2/6] clk: exynos: Fix incorrect usage of IS_ERR_OR_NULL
+Message-Id: <20121218184816.GJ5032@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
-In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+ <1355852048-23188-3-git-send-email-linux@prisktech.co.nz>
+In-Reply-To: <1355852048-23188-3-git-send-email-linux@prisktech.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org
+To: Tony Prisk <linux@prisktech.co.nz>
+Cc: kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org
 
-Resend to include mailing lists.
+On Wed, Dec 19, 2012 at 06:34:04AM +1300, Tony Prisk wrote:
+> Resend to include mailing lists.
 
-Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
+These kind of comments should go under the Signed of by line under
+a "---" line.  They will be removed by git-am instead of being
+preserved in the git log.
 
-In the fail: path of mixer_resources_init() and vp_resources_init()
-the first clk tested cannot be NULL either, so IS_ERR_OR_NULL is
-removed from these as well. Other clocks may still be NULL as they
-haven't been clk_get'd yet.
-
-Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
-CC: Inki Dae <inki.dae@samsung.com>
-CC: Joonyoung Shim <jy0922.shim@samsung.com>
-CC: Seung-Woo Kim <sw0312.kim@samsung.com>
-CC: Kyungmin Park <kyungmin.park@samsung.com>
-CC: dri-devel@lists.freedesktop.org
+Signed-off-by bla bla blah
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Commments...
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index e7fbb82..dbd97c0 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -972,14 +972,14 @@ static int __devinit mixer_resources_init(struct exynos_drm_hdmi_context *ctx,
- 	spin_lock_init(&mixer_res->reg_slock);
- 
- 	mixer_res->mixer = clk_get(dev, "mixer");
--	if (IS_ERR_OR_NULL(mixer_res->mixer)) {
-+	if (IS_ERR(mixer_res->mixer)) {
- 		dev_err(dev, "failed to get clock 'mixer'\n");
- 		ret = -ENODEV;
- 		goto fail;
- 	}
- 
- 	mixer_res->sclk_hdmi = clk_get(dev, "sclk_hdmi");
--	if (IS_ERR_OR_NULL(mixer_res->sclk_hdmi)) {
-+	if (IS_ERR(mixer_res->sclk_hdmi)) {
- 		dev_err(dev, "failed to get clock 'sclk_hdmi'\n");
- 		ret = -ENODEV;
- 		goto fail;
-@@ -1019,7 +1019,7 @@ static int __devinit mixer_resources_init(struct exynos_drm_hdmi_context *ctx,
- fail:
- 	if (!IS_ERR_OR_NULL(mixer_res->sclk_hdmi))
- 		clk_put(mixer_res->sclk_hdmi);
--	if (!IS_ERR_OR_NULL(mixer_res->mixer))
-+	if (!IS_ERR(mixer_res->mixer))
- 		clk_put(mixer_res->mixer);
- 	return ret;
- }
-@@ -1034,19 +1034,19 @@ static int __devinit vp_resources_init(struct exynos_drm_hdmi_context *ctx,
- 	int ret;
- 
- 	mixer_res->vp = clk_get(dev, "vp");
--	if (IS_ERR_OR_NULL(mixer_res->vp)) {
-+	if (IS_ERR(mixer_res->vp)) {
- 		dev_err(dev, "failed to get clock 'vp'\n");
- 		ret = -ENODEV;
- 		goto fail;
- 	}
- 	mixer_res->sclk_mixer = clk_get(dev, "sclk_mixer");
--	if (IS_ERR_OR_NULL(mixer_res->sclk_mixer)) {
-+	if (IS_ERR(mixer_res->sclk_mixer)) {
- 		dev_err(dev, "failed to get clock 'sclk_mixer'\n");
- 		ret = -ENODEV;
- 		goto fail;
- 	}
- 	mixer_res->sclk_dac = clk_get(dev, "sclk_dac");
--	if (IS_ERR_OR_NULL(mixer_res->sclk_dac)) {
-+	if (IS_ERR(mixer_res->sclk_dac)) {
- 		dev_err(dev, "failed to get clock 'sclk_dac'\n");
- 		ret = -ENODEV;
- 		goto fail;
-@@ -1077,7 +1077,7 @@ fail:
- 		clk_put(mixer_res->sclk_dac);
- 	if (!IS_ERR_OR_NULL(mixer_res->sclk_mixer))
- 		clk_put(mixer_res->sclk_mixer);
--	if (!IS_ERR_OR_NULL(mixer_res->vp))
-+	if (!IS_ERR(mixer_res->vp))
- 		clk_put(mixer_res->vp);
- 	return ret;
- }
--- 
-1.7.9.5
+<patch>
+
+regards,
+dan carpenter
 
