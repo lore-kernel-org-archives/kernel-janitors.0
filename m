@@ -1,61 +1,97 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Date: Tue, 18 Dec 2012 13:13:24 +0000
-Subject: Re: [PATCH 13/13] drivers/media/tuners/e4000.c: use macros for i2c_msg initialization
-Message-Id: <20121218131324.GE2612@pengutronix.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="2qXFWqzzG3v1+95a"
+From: Tony Prisk <linux@prisktech.co.nz>
+Date: Tue, 18 Dec 2012 17:34:04 +0000
+Subject: [PATCH RESEND 2/6] clk: exynos: Fix incorrect usage of IS_ERR_OR_NULL
+Message-Id: <1355852048-23188-3-git-send-email-linux@prisktech.co.nz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1349645970.15802.12.camel@joe-AO722>
- <alpine.DEB.2.02.1210072342460.2745@localhost6.localdomain6>
- <1349646718.15802.16.camel@joe-AO722>
- <20121007225639.364a41b4@infradead.org>
- <50723661.6040107@gmail.com>
- <alpine.DEB.2.02.1210081028340.1989@hadrien>
- <20121009203238.63d2275f@infradead.org>
- <alpine.DEB.2.02.1210110836030.2010@hadrien>
- <20121218124640.5b1e7176@endymion.delvare>
- <alpine.DEB.2.02.1212181335360.1993@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1212181335360.1993@hadrien>
-To: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Mauro Carvalho Chehab <mchehab-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, walter harms <wharms-fPG8STNUNVg@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, shubhrajyoti-l0cyMroinI0@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org
 
+Resend to include mailing lists.
 
---2qXFWqzzG3v1+95a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
 
-> > Please note that I resigned from my position of i2c subsystem
-> > maintainer, so I will not handle this. If you think this is important,
-> > you'll have to resubmit and Wolfram will decide what he wants to do
-> > about it.
->=20
-> OK, I had the impression that the conclusion was that the danger was
-> greater than the benefit.  If there is interest in it, since I think it
-> does make the code more readable, I can pick it up again.
+In the fail: path of mixer_resources_init() and vp_resources_init()
+the first clk tested cannot be NULL either, so IS_ERR_OR_NULL is
+removed from these as well. Other clocks may still be NULL as they
+haven't been clk_get'd yet.
 
-TBH, there are other things coming which have higher priority, so from
-my side, currently, there is not much interest right now.
+Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
+CC: Inki Dae <inki.dae@samsung.com>
+CC: Joonyoung Shim <jy0922.shim@samsung.com>
+CC: Seung-Woo Kim <sw0312.kim@samsung.com>
+CC: Kyungmin Park <kyungmin.park@samsung.com>
+CC: dri-devel@lists.freedesktop.org
+---
+ drivers/gpu/drm/exynos/exynos_mixer.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Thanks nonetheless,
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index e7fbb82..dbd97c0 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -972,14 +972,14 @@ static int __devinit mixer_resources_init(struct exynos_drm_hdmi_context *ctx,
+ 	spin_lock_init(&mixer_res->reg_slock);
+ 
+ 	mixer_res->mixer = clk_get(dev, "mixer");
+-	if (IS_ERR_OR_NULL(mixer_res->mixer)) {
++	if (IS_ERR(mixer_res->mixer)) {
+ 		dev_err(dev, "failed to get clock 'mixer'\n");
+ 		ret = -ENODEV;
+ 		goto fail;
+ 	}
+ 
+ 	mixer_res->sclk_hdmi = clk_get(dev, "sclk_hdmi");
+-	if (IS_ERR_OR_NULL(mixer_res->sclk_hdmi)) {
++	if (IS_ERR(mixer_res->sclk_hdmi)) {
+ 		dev_err(dev, "failed to get clock 'sclk_hdmi'\n");
+ 		ret = -ENODEV;
+ 		goto fail;
+@@ -1019,7 +1019,7 @@ static int __devinit mixer_resources_init(struct exynos_drm_hdmi_context *ctx,
+ fail:
+ 	if (!IS_ERR_OR_NULL(mixer_res->sclk_hdmi))
+ 		clk_put(mixer_res->sclk_hdmi);
+-	if (!IS_ERR_OR_NULL(mixer_res->mixer))
++	if (!IS_ERR(mixer_res->mixer))
+ 		clk_put(mixer_res->mixer);
+ 	return ret;
+ }
+@@ -1034,19 +1034,19 @@ static int __devinit vp_resources_init(struct exynos_drm_hdmi_context *ctx,
+ 	int ret;
+ 
+ 	mixer_res->vp = clk_get(dev, "vp");
+-	if (IS_ERR_OR_NULL(mixer_res->vp)) {
++	if (IS_ERR(mixer_res->vp)) {
+ 		dev_err(dev, "failed to get clock 'vp'\n");
+ 		ret = -ENODEV;
+ 		goto fail;
+ 	}
+ 	mixer_res->sclk_mixer = clk_get(dev, "sclk_mixer");
+-	if (IS_ERR_OR_NULL(mixer_res->sclk_mixer)) {
++	if (IS_ERR(mixer_res->sclk_mixer)) {
+ 		dev_err(dev, "failed to get clock 'sclk_mixer'\n");
+ 		ret = -ENODEV;
+ 		goto fail;
+ 	}
+ 	mixer_res->sclk_dac = clk_get(dev, "sclk_dac");
+-	if (IS_ERR_OR_NULL(mixer_res->sclk_dac)) {
++	if (IS_ERR(mixer_res->sclk_dac)) {
+ 		dev_err(dev, "failed to get clock 'sclk_dac'\n");
+ 		ret = -ENODEV;
+ 		goto fail;
+@@ -1077,7 +1077,7 @@ fail:
+ 		clk_put(mixer_res->sclk_dac);
+ 	if (!IS_ERR_OR_NULL(mixer_res->sclk_mixer))
+ 		clk_put(mixer_res->sclk_mixer);
+-	if (!IS_ERR_OR_NULL(mixer_res->vp))
++	if (!IS_ERR(mixer_res->vp))
+ 		clk_put(mixer_res->vp);
+ 	return ret;
+ }
+-- 
+1.7.9.5
 
-   Wolfram
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---2qXFWqzzG3v1+95a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAlDQa/QACgkQD27XaX1/VRvheACgwsK3xYgkw/pySALcMFsbOkQf
-TL8An1ItUMbT2JBMRw3OkXN+pnpb073g
-=H4y4
------END PGP SIGNATURE-----
-
---2qXFWqzzG3v1+95a--
