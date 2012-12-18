@@ -1,65 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 06 Dec 2012 21:11:26 +0000
-Subject: [PATCH] drivers/nfc/nfcwilink.c: use devm_kzalloc
-Message-Id: <1354831840-21623-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Tony Prisk <linux@prisktech.co.nz>
+Date: Tue, 18 Dec 2012 17:34:07 +0000
+Subject: [PATCH RESEND 5/6] clk: s5p-fimc: Fix incorrect usage of IS_ERR_OR_NULL
+Message-Id: <1355852048-23188-6-git-send-email-linux@prisktech.co.nz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
-Cc: kernel-janitors@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, linux-nfc@lists.01.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Resend to include mailing lists.
 
-devm_kzalloc allocates memory that is released when a driver detaches.
-This patch uses devm_kzalloc for data that is allocated in the probe
-function of a platform device and is only freed in the remove function.
+Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
+CC: Kyungmin Park <kyungmin.park@samsung.com>
+CC: Tomasz Stanislawski <t.stanislaws@samsung.com>
+CC: linux-media@vger.kernel.org
 ---
- drivers/nfc/nfcwilink.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/media/platform/s5p-fimc/fimc-mdevice.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/nfcwilink.c b/drivers/nfc/nfcwilink.c
-index 50b1ee4..c7c182d 100644
---- a/drivers/nfc/nfcwilink.c
-+++ b/drivers/nfc/nfcwilink.c
-@@ -526,7 +526,7 @@ static int nfcwilink_probe(struct platform_device *pdev)
- 
- 	nfc_dev_dbg(&pdev->dev, "probe entry");
- 
--	drv = kzalloc(sizeof(struct nfcwilink), GFP_KERNEL);
-+	drv = devm_kzalloc(&pdev->dev, sizeof(struct nfcwilink), GFP_KERNEL);
- 	if (!drv) {
- 		rc = -ENOMEM;
- 		goto exit;
-@@ -547,7 +547,7 @@ static int nfcwilink_probe(struct platform_device *pdev)
- 	if (!drv->ndev) {
- 		nfc_dev_err(&pdev->dev, "nci_allocate_device failed");
- 		rc = -ENOMEM;
--		goto free_exit;
-+		goto exit;
- 	}
- 
- 	nci_set_parent_dev(drv->ndev, &pdev->dev);
-@@ -566,9 +566,6 @@ static int nfcwilink_probe(struct platform_device *pdev)
- free_dev_exit:
- 	nci_free_device(drv->ndev);
- 
--free_exit:
--	kfree(drv);
--
- exit:
- 	return rc;
- }
-@@ -588,8 +585,6 @@ static int nfcwilink_remove(struct platform_device *pdev)
- 	nci_unregister_device(ndev);
- 	nci_free_device(ndev);
- 
--	kfree(drv);
--
- 	dev_set_drvdata(&pdev->dev, NULL);
- 
- 	return 0;
+diff --git a/drivers/media/platform/s5p-fimc/fimc-mdevice.c b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
+index 0531ab7..3ac4da2 100644
+--- a/drivers/media/platform/s5p-fimc/fimc-mdevice.c
++++ b/drivers/media/platform/s5p-fimc/fimc-mdevice.c
+@@ -730,7 +730,7 @@ static int fimc_md_get_clocks(struct fimc_md *fmd)
+ 	for (i = 0; i < FIMC_MAX_CAMCLKS; i++) {
+ 		snprintf(clk_name, sizeof(clk_name), "sclk_cam%u", i);
+ 		clock = clk_get(NULL, clk_name);
+-		if (IS_ERR_OR_NULL(clock)) {
++		if (IS_ERR(clock)) {
+ 			v4l2_err(&fmd->v4l2_dev, "Failed to get clock: %s",
+ 				  clk_name);
+ 			return -ENXIO;
+-- 
+1.7.9.5
 
