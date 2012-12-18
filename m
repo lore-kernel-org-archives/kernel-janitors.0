@@ -1,81 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 02 Dec 2012 22:17:52 +0000
-Subject: Re: [patch] carl9170: remove unneeded NULL check
-Message-Id: <20121202221751.GD6517@mwanda>
+From: Jean Delvare <khali@linux-fr.org>
+Date: Tue, 18 Dec 2012 11:46:40 +0000
+Subject: Re: [PATCH 13/13] drivers/media/tuners/e4000.c: use macros for  i2c_msg initialization
+Message-Id: <20121218124640.5b1e7176@endymion.delvare>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121202104238.GB16078@elgon.mountain>
- <201212021449.21267.chunkeey@googlemail.com>
- <20121202165153.GC6517@mwanda>
- <201212022124.53838.chunkeey@googlemail.com>
-In-Reply-To: <201212022124.53838.chunkeey@googlemail.com>
+References: <1349624323-15584-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1349624323-15584-3-git-send-email-Julia.Lawall@lip6.fr>
+	<5071AEF3.6080108@bfs.de>
+	<alpine.DEB.2.02.1210071839040.2745@localhost6.localdomain6>
+	<5071B834.1010200@bfs.de>
+	<alpine.DEB.2.02.1210071917040.2745@localhost6.localdomain6>
+	<1349633780.15802.8.camel@joe-AO722>
+	<alpine.DEB.2.02.1210072053550.2745@localhost6.localdomain6>
+	<1349645970.15802.12.camel@joe-AO722>
+	<alpine.DEB.2.02.1210072342460.2745@localhost6.localdomain6>
+	<1349646718.15802.16.camel@joe-AO722>
+	<20121007225639.364a41b4@infradead.org>
+	<50723661.6040107@gmail.com>
+	<alpine.DEB.2.02.1210081028340.1989@hadrien>
+	<20121009203238.63d2275f@infradead.org>
+	<alpine.DEB.2.02.1210110836030.2010@hadrien>
+In-Reply-To: <alpine.DEB.2.02.1210110836030.2010@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christian Lamparter <chunkeey@googlemail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: Mauro Carvalho Chehab <mchehab-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Ryan Mallon <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, walter harms <wharms-fPG8STNUNVg@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, shubhrajyoti-l0cyMroinI0@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, Dec 02, 2012 at 09:24:53PM +0100, Christian Lamparter wrote:
-> On Sunday, December 02, 2012 05:51:53 PM Dan Carpenter wrote:
-> > On Sun, Dec 02, 2012 at 02:49:20PM +0100, Christian Lamparter wrote:
-> > > On Sunday 02 December 2012 11:42:38 Dan Carpenter wrote:
-> > > > The "sta" variable is not checked for NULL consistently and it makes the
-> > > > static checkers complain.  I asked Christian Lamparter about this and
-> > > > it turns out the check is not needed.  "In fact, in order to set up a
-> > > > ampdu session, the stack would call the driver's op_ampdu_action
-> > > > callback which always needs a station."
-> > > 
-> > > that would be from the thread:
-> > > <http://www.spinics.net/lists/linux-wireless/msg94526.html>
-> > >  
-> > > > I have removed the check.
-> > > I think this will bug for multicast and injected frames.
-> > >  
-> > > It is not possible for the sta(tion) pointer to be NULL if
-> > > the frame has the IEEE80211_TX_CTL_AMPDU flag set. So the
-> > > sta = NULL check can be avoided when calling 
-> > > carl9170_tx_ampdu_queue. This is because mac80211 tracks
-> > > all aggregation sessions within the station struct.
-> > > Of course, this is something that the checker tool can't
-> > > possibly deduce, but it has a point and we can add a check
-> > > like this [see attached draft patch]:
-> > > 
-> > > What do you think [or more to the point: what does the
-> > > checker say?]
-> > > 
-> > 
-> > So we wouldn't apply my patch, we would apply that one instead?
-> We could, but that's up for debate (no, I don't think we are done
-> just yet).
+Hi Julia,
+
+On Thu, 11 Oct 2012 08:45:43 +0200 (CEST), Julia Lawall wrote:
+> I found 6 cases where there are more than 2 messages in the array.  I
+> didn't check how many cases where there are two messages but there is
+> something other than one read and one write.
 > 
-> > I think that's great.  My static checker doesn't understand bit
-> > flags yet so it would complain but it would be obvious to a human
-> > reader.
-> then we might as well add a comment to carl9170_tx_ampdu_queue
-> and explain the situation [in a way that's obvious to a
-> human reader]. This way we can save the "if"... which is a small
-> win since carl9170_op_tx is sort of a hot-path.
->  
+> Perhaps a reasonable option would be to use
+> 
+> I2C_MSG_READ
+> I2C_MSG_WRITE
+> I2C_MSG_READ_OP
+> I2C_MSG_WRITE_OP
+> 
+> The last two are for the few cases where more flags are specified.  As
+> compared to the original proposal of I2C_MSG_OP, these keep the READ or
+> WRITE idea in the macro name.  The additional argument to the OP macros
+> would be or'd with the read or write (nothing to do in this case) flags as
+> appropriate.
+> 
+> Mauro proposed INIT_I2C_READ_SUBADDR for the very common case where a
+> message array has one read and one write.  I think that putting one
+> I2C_MSG_READ and one I2C_MSG_WRITE in this case is readable enough, and
+> avoids the need to do something special for the cases that don't match the
+> expectations of INIT_I2C_READ_SUBADDR.
+> 
+> I propose not to do anything for the moment either for sizes or for
+> message or buffer arrays that contain only one element.
 
-Putting a comment there is fine.  Without the comment it's easy for
-a human reader to get confused why the check is there.  So long as
-humans can read the code, that's all that matters.
+Please note that I resigned from my position of i2c subsystem
+maintainer, so I will not handle this. If you think this is important,
+you'll have to resubmit and Wolfram will decide what he wants to do
+about it.
 
-> > Could you just resend that patch with a signed-off-by?
-> Once we know what to do... yes :)
-> I have attached another patch. With this patch the checker
-> should be able to read the code without throwing any
-> warnings.
-
-Heh.  You have a lot of faith in checker's ability to read code.  In
-theory you are right, but it turns out that Smatch is ignoring the
-stuff inside the WARN_ON_ONCE().  It's not supposed to do that in
-this case; it should only do that if the WARN_ON_ONCE() is in a
-statement by itself.  I'll take a look at this, but not tonight.
-
-Anyway, do whatever you think is best.  I just misunderstood what
-you said earlier about it not being possible to be NULL.  I
-understand it better now I think.  Thanks.
-
-regards,
-dan carpenter
-
+-- 
+Jean Delvare
