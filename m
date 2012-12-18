@@ -1,114 +1,67 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 08 Dec 2012 16:16:45 +0000
-Subject: [PATCH] drivers/power/88pm860x_battery.c: use devm_request_threaded_irq
-Message-Id: <1354986995-2324-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Tony Prisk <linux@prisktech.co.nz>
+Date: Tue, 18 Dec 2012 17:34:05 +0000
+Subject: [PATCH RESEND 3/6] clk: exynos: Fix incorrect usage of IS_ERR_OR_NULL
+Message-Id: <1355852048-23188-4-git-send-email-linux@prisktech.co.nz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anton Vorontsov <cbou@mail.ru>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Tony Prisk <linux@prisktech.co.nz>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Resend to include mailing lists.
 
-devm_request_threaded_irq requests and irq that is freed when a driver
-detaches.  This patch uses devm_request_threaded_irq for irqs that are
-requested in the probe function of a platform device and are only freed in
-the remove function.
+Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
 
-Additionally, the original code used devm_kzalloc, but kfree.  This would
-lead to a double free.  The problem was found using the following semantic
-match (http://coccinelle.lip6.fr/):
-
-// <smpl>
-@@
-expression x,e;
-@@
-x = devm_kzalloc(...)
-... when != x = e
-?-kfree(x,...);
-// </smpl>
-
-The error handling code in the probe function is also simplified in the
-cases where there is now nothing to do other than return.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
+CC: Inki Dae <inki.dae@samsung.com>
+CC: Joonyoung Shim <jy0922.shim@samsung.com>
+CC: Seung-Woo Kim <sw0312.kim@samsung.com>
+CC: Kyungmin Park <kyungmin.park@samsung.com>
+CC: dri-devel@lists.freedesktop.org
 ---
- drivers/power/88pm860x_battery.c |   24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/power/88pm860x_battery.c b/drivers/power/88pm860x_battery.c
-index 8bc80b0..b808177 100644
---- a/drivers/power/88pm860x_battery.c
-+++ b/drivers/power/88pm860x_battery.c
-@@ -915,15 +915,13 @@ static int pm860x_battery_probe(struct platform_device *pdev)
- 	info->irq_cc = platform_get_irq(pdev, 0);
- 	if (info->irq_cc <= 0) {
- 		dev_err(&pdev->dev, "No IRQ resource!\n");
--		ret = -EINVAL;
--		goto out;
-+		return -EINVAL;
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 2c115f8..557ef2f 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -2167,27 +2167,27 @@ static int __devinit hdmi_resources_init(struct hdmi_context *hdata)
+ 
+ 	/* get clocks, power */
+ 	res->hdmi = clk_get(dev, "hdmi");
+-	if (IS_ERR_OR_NULL(res->hdmi)) {
++	if (IS_ERR(res->hdmi)) {
+ 		DRM_ERROR("failed to get clock 'hdmi'\n");
+ 		goto fail;
  	}
- 
- 	info->irq_batt = platform_get_irq(pdev, 1);
- 	if (info->irq_batt <= 0) {
- 		dev_err(&pdev->dev, "No IRQ resource!\n");
--		ret = -EINVAL;
--		goto out;
-+		return -EINVAL;
+ 	res->sclk_hdmi = clk_get(dev, "sclk_hdmi");
+-	if (IS_ERR_OR_NULL(res->sclk_hdmi)) {
++	if (IS_ERR(res->sclk_hdmi)) {
+ 		DRM_ERROR("failed to get clock 'sclk_hdmi'\n");
+ 		goto fail;
  	}
- 
- 	info->chip = chip;
-@@ -957,10 +955,10 @@ static int pm860x_battery_probe(struct platform_device *pdev)
- 
- 	ret = power_supply_register(&pdev->dev, &info->battery);
- 	if (ret)
--		goto out;
-+		return ret;
- 	info->battery.dev->parent = &pdev->dev;
- 
--	ret = request_threaded_irq(info->irq_cc, NULL,
-+	ret = devm_request_threaded_irq(&pdev->dev, info->irq_cc, NULL,
- 				pm860x_coulomb_handler, IRQF_ONESHOT,
- 				"coulomb", info);
- 	if (ret < 0) {
-@@ -969,23 +967,20 @@ static int pm860x_battery_probe(struct platform_device *pdev)
- 		goto out_reg;
+ 	res->sclk_pixel = clk_get(dev, "sclk_pixel");
+-	if (IS_ERR_OR_NULL(res->sclk_pixel)) {
++	if (IS_ERR(res->sclk_pixel)) {
+ 		DRM_ERROR("failed to get clock 'sclk_pixel'\n");
+ 		goto fail;
  	}
- 
--	ret = request_threaded_irq(info->irq_batt, NULL, pm860x_batt_handler,
--				IRQF_ONESHOT, "battery", info);
-+	ret = devm_request_threaded_irq(&pdev->dev, info->irq_batt, NULL,
-+					pm860x_batt_handler,
-+					IRQF_ONESHOT, "battery", info);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to request IRQ: #%d: %d\n",
- 			info->irq_batt, ret);
--		goto out_coulomb;
-+		goto out_reg;
+ 	res->sclk_hdmiphy = clk_get(dev, "sclk_hdmiphy");
+-	if (IS_ERR_OR_NULL(res->sclk_hdmiphy)) {
++	if (IS_ERR(res->sclk_hdmiphy)) {
+ 		DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
+ 		goto fail;
  	}
- 
- 
- 	return 0;
- 
--out_coulomb:
--	free_irq(info->irq_cc, info);
- out_reg:
- 	power_supply_unregister(&info->battery);
--out:
--	kfree(info);
- 	return ret;
- }
- 
-@@ -994,9 +989,6 @@ static int pm860x_battery_remove(struct platform_device *pdev)
- 	struct pm860x_battery_info *info = platform_get_drvdata(pdev);
- 
- 	power_supply_unregister(&info->battery);
--	free_irq(info->irq_batt, info);
--	free_irq(info->irq_cc, info);
--	kfree(info);
- 	platform_set_drvdata(pdev, NULL);
- 	return 0;
- }
+ 	res->hdmiphy = clk_get(dev, "hdmiphy");
+-	if (IS_ERR_OR_NULL(res->hdmiphy)) {
++	if (IS_ERR(res->hdmiphy)) {
+ 		DRM_ERROR("failed to get clock 'hdmiphy'\n");
+ 		goto fail;
+ 	}
+-- 
+1.7.9.5
 
