@@ -1,30 +1,45 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 02 Dec 2012 17:35:18 +0000
-Subject: Re: [patch v3] x86, UV: integer wrap bug in uv_hub_ipi_value()
-Message-Id: <20121202173517.GB6568@mwanda>
+From: Tony Prisk <linux@prisktech.co.nz>
+Date: Tue, 18 Dec 2012 17:34:02 +0000
+Subject: [PATCH RESEND 0/6] Remove incorrect usage of IS_ERR_OR_NULL on clk_get
+Message-Id: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50BB74E7.9060306@bfs.de>
- <20121202172842.GA20110@elgon.mountain>
-In-Reply-To: <20121202172842.GA20110@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Russ Anderson <rja@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
+To: linux-arm-kernel@lists.infradead.org
 
-On Sun, Dec 02, 2012 at 08:28:43PM +0300, Dan Carpenter wrote:
-> This is a static checker fix.  The problem is that we store the bits
-> from "uv_apicid_hibits" into "apicid" (the high 16 bits) but then we
-> shift it 16 bit to the left.  "apicid" is an int so it wraps and we lose
-> them.
-> 
-> I have also simplified uv_wakeup_secondary() a little based on a
-> suggestion.
+Resend to include mailing lists.
 
-This was supposed to say "suggestions from Walter Harms." but I
-pressed "u" in vim instead of "i" because they are next to each
-other so that that got deleted.  @%$@#$%@%$.  I'll resend.
+As per the kernel docs, clk_get() cannot return NULL.
 
-regards,
-dan carpenter
+ * clk_get - lookup and obtain a reference to a clock producer.
+ * @dev: device for clock "consumer"
+ * @id: clock consumer ID
+ *
+ * Returns a struct clk corresponding to the clock producer, or
+ * valid IS_ERR() condition containing errno.
+
+This patch set replaces instances of IS_ERR_OR_NULL tests againt clk_get()
+results with IS_ERR tests.
+
+Tony Prisk (6):
+  clk: omap: Fix incorrect usage of IS_ERR_OR_NULL
+  clk: exynos: Fix incorrect usage of IS_ERR_OR_NULL
+  clk: exynos: Fix incorrect usage of IS_ERR_OR_NULL
+  clk: s5p-tv: Fix incorrect usage of IS_ERR_OR_NULL
+  clk: s5p-fimc: Fix incorrect usage of IS_ERR_OR_NULL
+  clk: s5p-g2d: Fix incorrect usage of IS_ERR_OR_NULL
+
+ arch/arm/plat-omap/dmtimer.c                   |    6 +++---
+ drivers/gpu/drm/exynos/exynos_hdmi.c           |   10 +++++-----
+ drivers/gpu/drm/exynos/exynos_mixer.c          |   14 +++++++-------
+ drivers/media/platform/s5p-fimc/fimc-mdevice.c |    2 +-
+ drivers/media/platform/s5p-g2d/g2d.c           |    4 ++--
+ drivers/media/platform/s5p-tv/hdmi_drv.c       |   10 +++++-----
+ drivers/media/platform/s5p-tv/mixer_drv.c      |   10 +++++-----
+ drivers/media/platform/s5p-tv/sdo_drv.c        |   10 +++++-----
+ 8 files changed, 33 insertions(+), 33 deletions(-)
+
+-- 
+1.7.9.5
 
