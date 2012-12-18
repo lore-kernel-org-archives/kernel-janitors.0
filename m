@@ -1,62 +1,146 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 04 Dec 2012 17:11:25 +0000
-Subject: build regressions 2012-12-04
-Message-Id: <50be2ebd.PqrjUHKcb+kFXk7c%fengguang.wu@intel.com>
+From: Tony Prisk <linux@prisktech.co.nz>
+Date: Tue, 18 Dec 2012 17:34:06 +0000
+Subject: [PATCH RESEND 4/6] clk: s5p-tv: Fix incorrect usage of IS_ERR_OR_NULL
+Message-Id: <1355852048-23188-5-git-send-email-linux@prisktech.co.nz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+In-Reply-To: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-[errors]
-drivers/leds/leds-tca6507.c:725:1: error: unknown type name 'tca6507_platform_data'
-drivers/leds/leds-tca6507.c:728:2: error: implicit declaration of function 'ERR_PRT' [-Werror=implicit-function-declaration]
-adis16260_core.c:(.text+0x5a85d3): undefined reference to `adis_single_conversion'
-adis16260_core.c:(.devinit.text+0x5c6b8): undefined reference to `adis_init'
-adis16260_core.c:(.devinit.text+0x5c799): undefined reference to `adis_initial_startup'
-adis16260_core.c:(.text+0x5a7a27): undefined reference to `adis_write_reg'
-adis16260_core.c:(.text+0x5a7ae8): undefined reference to `adis_read_reg'
-ERROR: "pch_set_station_address" [drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe.ko] undefined!
-ERROR: "pch_tx_snap_read" [drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe.ko] undefined!
-ERROR: "pch_src_uuid_lo_read" [drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe.ko] undefined!
-ERROR: "pch_ch_event_read" [drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe.ko] undefined!
-ERROR: "pch_ch_event_write" [drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe.ko] undefined!
-ERROR: "pch_src_uuid_hi_read" [drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe.ko] undefined!
-ERROR: "pch_ch_control_write" [drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe.ko] undefined!
-ERROR: "pch_rx_snap_read" [drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe.ko] undefined!
+Resend to include mailing lists.
 
-[warnings]
-drivers/leds/leds-tca6507.c:728:2: warning: return makes pointer from integer without a cast [enabled by default]
-drivers/leds/leds-tca6507.c:750:9: warning: assignment from incompatible pointer type [enabled by default]
-net/wireless/reg.c:352:9: warning: unused variable 'r' [-Wunused-variable]
+Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
 
-[sparse]
-mm/memory.c:3451:5: sparse: symbol 'do_numa_page' was not declared. Should it be static?
-mm/memory.c:3486:5: sparse: symbol 'do_pmd_numa_page' was not declared. Should it be static?
-drivers/ata/ahci_platform.c:52:28: sparse: symbol 'ahci_platform_ops' was not declared. Should it be static?
-drivers/ata/ahci_platform.c:57:28: sparse: symbol 'ahci_platform_retry_srst_ops' was not declared. Should it be static?
-drivers/leds/leds-tca6507.c:746:9: sparse: Trying to use reserved word 'if' as identifier
-drivers/leds/leds-tca6507.c:754:25: sparse: Trying to use reserved word 'return' as identifier
-drivers/leds/leds-tca6507.c:762:9: sparse: Trying to use reserved word 'do' as identifier
-drivers/leds/leds-tca6507.c:766:9: sparse: Trying to use reserved word 'for' as identifier
-drivers/leds/leds-tca6507.c:806:23: sparse: too many errors
-drivers/leds/leds-tca6507.c:725:30: sparse: Expected ; at end of declaration
-drivers/leds/leds-tca6507.c:725:30: sparse: got *
-drivers/leds/leds-tca6507.c:729:1: sparse: Expected ; at the end of type declaration
-drivers/leds/leds-tca6507.c:746:13: sparse: Expected ) in function declarator
-drivers/leds/leds-tca6507.c:751:27: sparse: got (
-drivers/leds/leds-tca6507.c:754:32: sparse: got PTR_ERR
-drivers/leds/leds-tca6507.c:762:9: sparse: Expected ) in nested declarator
-drivers/leds/leds-tca6507.c:786:17: sparse: got goto
-drivers/leds/leds-tca6507.c:792:5: sparse: got :
-
-[smatch]
-sound/usb/midi.c:1088 substream_open() warn: inconsistent returns mutex:&umidi->mutex: locked (1058) unlocked (1048,1088)
-fs/ext4/inode.c:1953 __ext4_journalled_writepage() error: potential NULL dereference 'page_bufs'.
-fs/nfsd/nfs4state.c:4617 nfsd_print_client() error: rpc_ntop() 'buf' too small (48 vs 129)
-fs/nfsd/nfs4state.c:4626 nfsd_print_count() error: rpc_ntop() 'buf' too small (48 vs 129)
-fs/nfsd/fault_inject.c:82 nfsd_inject_set_client() error: rpc_ntop() 'buf' too small (48 vs 129)
-
+Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
+CC: Kyungmin Park <kyungmin.park@samsung.com>
+CC: Tomasz Stanislawski <t.stanislaws@samsung.com>
+CC: linux-media@vger.kernel.org
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/media/platform/s5p-tv/hdmi_drv.c  |   10 +++++-----
+ drivers/media/platform/s5p-tv/mixer_drv.c |   10 +++++-----
+ drivers/media/platform/s5p-tv/sdo_drv.c   |   10 +++++-----
+ 3 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/platform/s5p-tv/hdmi_drv.c b/drivers/media/platform/s5p-tv/hdmi_drv.c
+index 8a9cf43..1c48ca5 100644
+--- a/drivers/media/platform/s5p-tv/hdmi_drv.c
++++ b/drivers/media/platform/s5p-tv/hdmi_drv.c
+@@ -781,27 +781,27 @@ static int hdmi_resources_init(struct hdmi_device *hdev)
+ 	/* get clocks, power */
+ 
+ 	res->hdmi = clk_get(dev, "hdmi");
+-	if (IS_ERR_OR_NULL(res->hdmi)) {
++	if (IS_ERR(res->hdmi)) {
+ 		dev_err(dev, "failed to get clock 'hdmi'\n");
+ 		goto fail;
+ 	}
+ 	res->sclk_hdmi = clk_get(dev, "sclk_hdmi");
+-	if (IS_ERR_OR_NULL(res->sclk_hdmi)) {
++	if (IS_ERR(res->sclk_hdmi)) {
+ 		dev_err(dev, "failed to get clock 'sclk_hdmi'\n");
+ 		goto fail;
+ 	}
+ 	res->sclk_pixel = clk_get(dev, "sclk_pixel");
+-	if (IS_ERR_OR_NULL(res->sclk_pixel)) {
++	if (IS_ERR(res->sclk_pixel)) {
+ 		dev_err(dev, "failed to get clock 'sclk_pixel'\n");
+ 		goto fail;
+ 	}
+ 	res->sclk_hdmiphy = clk_get(dev, "sclk_hdmiphy");
+-	if (IS_ERR_OR_NULL(res->sclk_hdmiphy)) {
++	if (IS_ERR(res->sclk_hdmiphy)) {
+ 		dev_err(dev, "failed to get clock 'sclk_hdmiphy'\n");
+ 		goto fail;
+ 	}
+ 	res->hdmiphy = clk_get(dev, "hdmiphy");
+-	if (IS_ERR_OR_NULL(res->hdmiphy)) {
++	if (IS_ERR(res->hdmiphy)) {
+ 		dev_err(dev, "failed to get clock 'hdmiphy'\n");
+ 		goto fail;
+ 	}
+diff --git a/drivers/media/platform/s5p-tv/mixer_drv.c b/drivers/media/platform/s5p-tv/mixer_drv.c
+index ca0f297..c1b2e0e 100644
+--- a/drivers/media/platform/s5p-tv/mixer_drv.c
++++ b/drivers/media/platform/s5p-tv/mixer_drv.c
+@@ -240,27 +240,27 @@ static int mxr_acquire_clocks(struct mxr_device *mdev)
+ 	struct device *dev = mdev->dev;
+ 
+ 	res->mixer = clk_get(dev, "mixer");
+-	if (IS_ERR_OR_NULL(res->mixer)) {
++	if (IS_ERR(res->mixer)) {
+ 		mxr_err(mdev, "failed to get clock 'mixer'\n");
+ 		goto fail;
+ 	}
+ 	res->vp = clk_get(dev, "vp");
+-	if (IS_ERR_OR_NULL(res->vp)) {
++	if (IS_ERR(res->vp)) {
+ 		mxr_err(mdev, "failed to get clock 'vp'\n");
+ 		goto fail;
+ 	}
+ 	res->sclk_mixer = clk_get(dev, "sclk_mixer");
+-	if (IS_ERR_OR_NULL(res->sclk_mixer)) {
++	if (IS_ERR(res->sclk_mixer)) {
+ 		mxr_err(mdev, "failed to get clock 'sclk_mixer'\n");
+ 		goto fail;
+ 	}
+ 	res->sclk_hdmi = clk_get(dev, "sclk_hdmi");
+-	if (IS_ERR_OR_NULL(res->sclk_hdmi)) {
++	if (IS_ERR(res->sclk_hdmi)) {
+ 		mxr_err(mdev, "failed to get clock 'sclk_hdmi'\n");
+ 		goto fail;
+ 	}
+ 	res->sclk_dac = clk_get(dev, "sclk_dac");
+-	if (IS_ERR_OR_NULL(res->sclk_dac)) {
++	if (IS_ERR(res->sclk_dac)) {
+ 		mxr_err(mdev, "failed to get clock 'sclk_dac'\n");
+ 		goto fail;
+ 	}
+diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c b/drivers/media/platform/s5p-tv/sdo_drv.c
+index ad68bbe..269d246 100644
+--- a/drivers/media/platform/s5p-tv/sdo_drv.c
++++ b/drivers/media/platform/s5p-tv/sdo_drv.c
+@@ -341,25 +341,25 @@ static int __devinit sdo_probe(struct platform_device *pdev)
+ 
+ 	/* acquire clocks */
+ 	sdev->sclk_dac = clk_get(dev, "sclk_dac");
+-	if (IS_ERR_OR_NULL(sdev->sclk_dac)) {
++	if (IS_ERR(sdev->sclk_dac)) {
+ 		dev_err(dev, "failed to get clock 'sclk_dac'\n");
+ 		ret = -ENXIO;
+ 		goto fail;
+ 	}
+ 	sdev->dac = clk_get(dev, "dac");
+-	if (IS_ERR_OR_NULL(sdev->dac)) {
++	if (IS_ERR(sdev->dac)) {
+ 		dev_err(dev, "failed to get clock 'dac'\n");
+ 		ret = -ENXIO;
+ 		goto fail_sclk_dac;
+ 	}
+ 	sdev->dacphy = clk_get(dev, "dacphy");
+-	if (IS_ERR_OR_NULL(sdev->dacphy)) {
++	if (IS_ERR(sdev->dacphy)) {
+ 		dev_err(dev, "failed to get clock 'dacphy'\n");
+ 		ret = -ENXIO;
+ 		goto fail_dac;
+ 	}
+ 	sclk_vpll = clk_get(dev, "sclk_vpll");
+-	if (IS_ERR_OR_NULL(sclk_vpll)) {
++	if (IS_ERR(sclk_vpll)) {
+ 		dev_err(dev, "failed to get clock 'sclk_vpll'\n");
+ 		ret = -ENXIO;
+ 		goto fail_dacphy;
+@@ -367,7 +367,7 @@ static int __devinit sdo_probe(struct platform_device *pdev)
+ 	clk_set_parent(sdev->sclk_dac, sclk_vpll);
+ 	clk_put(sclk_vpll);
+ 	sdev->fout_vpll = clk_get(dev, "fout_vpll");
+-	if (IS_ERR_OR_NULL(sdev->fout_vpll)) {
++	if (IS_ERR(sdev->fout_vpll)) {
+ 		dev_err(dev, "failed to get clock 'fout_vpll'\n");
+ 		goto fail_dacphy;
+ 	}
+-- 
+1.7.9.5
+
