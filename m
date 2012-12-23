@@ -1,34 +1,36 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Tue, 04 Dec 2012 20:41:07 +0000
-Subject: [PATCH] staging: csr: remove unneeded call to memset().
-Message-Id: <1354653667-28927-1-git-send-email-tipecaml@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 23 Dec 2012 16:28:38 +0000
+Subject: build regressions 2012-12-23
+Message-Id: <50d73136.DrSunUTSnwsSlKU0%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, devendra.aaru@gmail.com, marcos.souza.org@gmail.com, andriy.shevchenko@linux.intel.com, devel@driverdev.osuosl.org, Cyril Roelandt <tipecaml@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-In uf_send_pkt_to_encrypt(), the memory area zeroed by this call to memset() is
-overwritten by a call to memcpy() a few instructions later, so it is not needed.
+[errors]
+(.data+0x3ec): undefined reference to `sys_sigaltstack'
+arch/m32r/kernel/signal.c:214:34: error: 'struct sigaction' has no member named 'sa_restorer'
+arch/mips/include/asm/compat.h:302:2: error: unknown type name 'compat_sigset_t'
+include/uapi/asm-generic/unistd.h:399:1: error: 'sys_sigaltstack' undeclared here (not in a function)
+arch/powerpc/kernel/ppc32.h:72:2: error: unknown type name 'compat_stack_t'
+arch/powerpc/kernel/signal_32.c:795:6: error: implicit declaration of function '__compat_save_altstack' [-Werror=implicit-function-declaration]
+arch/powerpc/kernel/signal_32.c:997:2: error: implicit declaration of function 'compat_restore_altstack' [-Werror=implicit-function-declaration]
+arch/powerpc/perf/../kernel/ppc32.h:63:2: error: unknown type name 'compat_stack_t'
+(.text+0x7e78): undefined reference to `.compat_sys_sched_rr_get_interval_wrapper'
+machine_kexec.c:(.rodata+0x2a68): undefined reference to `compat_sys_sigaction'
+arch/sparc/kernel/signal32.c:64:2: error: unknown type name 'compat_stack_t'
+arch/sparc/kernel/signal32.c:296:2: error: implicit declaration of function 'compat_restore_altstack' [-Werror=implicit-function-declaration]
+arch/sparc/kernel/signal32.c:633:2: error: implicit declaration of function '__compat_save_altstack' [-Werror=implicit-function-declaration]
+arch/sparc/kernel/sys_sparc32.c:255:1: error: conflicting types for 'compat_sys_rt_sigaction'
+include/uapi/asm-generic/unistd.h:399:1: error: 'compat_sys_sigaltstack' undeclared here (not in a function)
+arch/tile/kernel/compat_signal.c:47:30: error: field 'uc_stack' has incomplete type
+arch/tile/kernel/compat_signal.c:211:2: error: implicit declaration of function 'compat_restore_altstack'
+arch/tile/kernel/compat_signal.c:288:2: error: implicit declaration of function '__compat_save_altstack'
+include/linux/signal.h:253:8: error: redefinition of 'struct k_sigaction'
+include/linux/signal.h:254:8: error: redefinition of 'struct sigaction'
+include/linux/signal.h:258:2: error: unknown type name '__sigrestore_t'
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
- drivers/staging/csr/unifi_sme.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/staging/csr/unifi_sme.c b/drivers/staging/csr/unifi_sme.c
-index 7c6c413..7669037 100644
---- a/drivers/staging/csr/unifi_sme.c
-+++ b/drivers/staging/csr/unifi_sme.c
-@@ -1196,7 +1196,6 @@ void uf_send_pkt_to_encrypt(struct work_struct *work)
- 
-         if (pktBulkDataLength > 0) {
- 		    pktBulkData = kmalloc(pktBulkDataLength, GFP_KERNEL);
--		    memset(pktBulkData, 0, pktBulkDataLength);
- 	    } else {
- 		    unifi_error(priv, "uf_send_pkt_to_encrypt() : invalid buffer\n");
- 		    return;
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
