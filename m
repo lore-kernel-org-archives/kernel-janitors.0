@@ -1,44 +1,29 @@
-From: Laurent Navet <laurent.navet@gmail.com>
-Date: Mon, 03 Dec 2012 13:20:25 +0000
-Subject: [PATCH] line6: Use kmemdup rather than duplicating its implementation
-Message-Id: <1354540825-17735-1-git-send-email-laurent.navet@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 23 Dec 2012 03:29:32 +0000
+Subject: build regressions 2012-12-22
+Message-Id: <50d67a9c.HLqk7Rova6M3RBe6%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: devel@driverdev.osuosl.org
-Cc: line6linux-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, Laurent Navet <laurent.navet@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-staging: line6: driver.c
- The semantic patch that makes this output is available
- in scripts/coccinelle/api/memdup.cocci.
+[errors]
+fs/f2fs/acl.c:85:21: error: 'struct posix_acl_entry' has no member named 'e_id'
+fs/xfs/xfs_icache.c:1213:6: error: implicit declaration of function 'xfs_get_projid' [-Werror=implicit-function-declaration]
+fs/nfsd/nfs4callback.c:655:13: error: incompatible types when assigning to type 'kuid_t' from type 'u32'
+fs/nfsd/nfs4callback.c:656:13: error: incompatible types when assigning to type 'kgid_t' from type 'u32'
+fs/xfs/xfs_icache.c:1205:21: error: invalid operands to binary != (have 'kuid_t' and 'uid_t')
+fs/xfs/xfs_icache.c:1209:21: error: invalid operands to binary != (have 'kgid_t' and 'gid_t')
+drivers/rtc/rtc-twl.c:601:2: error: request for member 'shutdown' in something not a structure or union
 
-Signed-off-by: Laurent Navet <laurent.navet@gmail.com>
+[sparse]
+drivers/rtc/rtc-twl.c:601:9: sparse: expected structure or union
+fs/nfsd/nfs4callback.c:655:27: sparse: incorrect type in assignment (invalid types)
+fs/xfs/xfs_icache.c:1205:28: sparse: incompatible types for operation (!=)
+fs/f2fs/acl.c:85:42: sparse: no member 'e_id' in struct posix_acl_entry
+fs/xfs/xfs_icache.c:1213:13: sparse: undefined identifier 'xfs_get_projid'
+
 ---
- drivers/staging/line6/driver.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/line6/driver.c b/drivers/staging/line6/driver.c
-index f5c19b2..e1d6241 100644
---- a/drivers/staging/line6/driver.c
-+++ b/drivers/staging/line6/driver.c
-@@ -331,14 +331,13 @@ int line6_version_request_async(struct usb_line6 *line6)
- 	char *buffer;
- 	int retval;
- 
--	buffer = kmalloc(sizeof(line6_request_version), GFP_ATOMIC);
-+	buffer = kmemdup(line6_request_version,
-+			sizeof(line6_request_version), GFP_ATOMIC);
- 	if (buffer = NULL) {
- 		dev_err(line6->ifcdev, "Out of memory");
- 		return -ENOMEM;
- 	}
- 
--	memcpy(buffer, line6_request_version, sizeof(line6_request_version));
--
- 	retval = line6_send_raw_message_async(line6, buffer,
- 					      sizeof(line6_request_version));
- 	kfree(buffer);
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
