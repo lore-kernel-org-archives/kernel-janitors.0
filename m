@@ -1,39 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 02 Dec 2012 10:43:13 +0000
-Subject: [patch] [media] mantis: cleanup NULL checking in mantis_ca_exit()
-Message-Id: <20121202104313.GC16078@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 24 Dec 2012 17:22:14 +0000
+Subject: build regressions 2012-12-24
+Message-Id: <50d88f46.65V9smZajkuo4bg+%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch complainst that the call to mantis_evmgr_exit() dereferences "ca"
-but then we check it for NULL on the next line.  I've moved the NULL
-check forward to avoid that.
+[errors]
+coretemp.c:(.text+0x12cc56e): undefined reference to `__divdi3'
+drivers/gpio/gpiolib.c:785:43: error: 'gpio_attr_group' undeclared (first use in this function)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[warnings]
+fs/f2fs/node.c:735:8: warning: 'nofs' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/media/usb/tm6000/tm6000-video.c:1926:1: warning: return from incompatible pointer type [enabled by default]
+fs/f2fs/gc.c:453:21: warning: 'bidx' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/gc.c:581:14: warning: 'nofs' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:223:27: warning: 'sum.nid' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<U3980>.<U38e8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<Uc850>.<Uc7b8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<U be0>.<U b48>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<U68e8>.<U6850>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<U1980>.<U18e8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<Uc8e8>.<Uc850>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<U5980>.<U58e8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<Uf980>.<Uf8e8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+[sparse]
+drivers/gpio/gpiolib.c:785:50: sparse: undefined identifier 'gpio_attr_group'
+
+[smatch]
+drivers/media/usb/tm6000/tm6000-video.c:569 tm6000_alloc_urb_buffers() warn: buffer overflow 'dev->urb_dma' 4 <= 7
+drivers/media/usb/tm6000/tm6000-video.c:720 tm6000_prepare_isoc() error: we previously assumed 'dev->urb_buffer' could be null (see line 698)
+
 ---
-There aren't any callers for this function.  It is commented out in
-mantis_dvb_exit().
-
-diff --git a/drivers/media/pci/mantis/mantis_ca.c b/drivers/media/pci/mantis/mantis_ca.c
-index 3d70469..60c6c2f 100644
---- a/drivers/media/pci/mantis/mantis_ca.c
-+++ b/drivers/media/pci/mantis/mantis_ca.c
-@@ -198,11 +198,12 @@ void mantis_ca_exit(struct mantis_pci *mantis)
- 	struct mantis_ca *ca = mantis->mantis_ca;
- 
- 	dprintk(MANTIS_DEBUG, 1, "Mantis CA exit");
-+	if (!ca)
-+		return;
- 
- 	mantis_evmgr_exit(ca);
- 	dprintk(MANTIS_ERROR, 1, "Unregistering EN50221 device");
--	if (ca)
--		dvb_ca_en50221_release(&ca->en50221);
-+	dvb_ca_en50221_release(&ca->en50221);
- 
- 	kfree(ca);
- }
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
