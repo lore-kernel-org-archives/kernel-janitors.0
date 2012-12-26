@@ -1,31 +1,41 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Tue, 11 Dec 2012 03:05:27 +0000
-Subject: [PATCH 0/1] media: saa7146: don't use mutex_lock_interruptible in
-Message-Id: <1355195128-10209-1-git-send-email-tipecaml@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 26 Dec 2012 16:01:48 +0000
+Subject: build regressions 2012-12-26
+Message-Id: <50db1f6c.VlgdZSskahDHMGF1%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, michael@mihu.de, mchehab@redhat.com, linux-media@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-This is the same kind of bug as the one fixed by
-ddc43d6dc7df0849fe41b91460fa76145cf87b67 : mutex_lock() must be used in the
-device_release file operation in order for all resources to be freed, since
-returning -RESTARTSYS has no effect here.
+[errors]
+kernel/sched/core.c:2010:3: error: invalid use of undefined type 'struct task_group'
+(.text+0x22004): undefined reference to `sys32_exit'
+(.text+0x222f0): undefined reference to `sys32_exit_group'
+arch/sparc/kernel/sys_sparc32.c:255:1: error: conflicting types for 'C_SYSC_rt_sigaction'
+arch/sparc/kernel/sys_sparc32.c:269:9: error: dereferencing pointer to incomplete type
+drivers/platform/x86/asus-wmi.c:1421:12: error: invalid storage class for function 'parse_arg'
+drivers/platform/x86/asus-wmi.c:1430:16: error: invalid storage class for function 'store_sys_wmi'
+drivers/platform/x86/asus-wmi.c:1449:16: error: invalid storage class for function 'show_sys_wmi'
+drivers/platform/x86/asus-wmi.c:1484:1: error: invalid storage class for function 'show_touchpad'
+drivers/platform/x86/asus-wmi.c:1484:1: error: invalid storage class for function 'store_touchpad'
+drivers/platform/x86/asus-wmi.c:1484:1: error: initializer element is not constant
+drivers/platform/x86/asus-wmi.c:1485:1: error: invalid storage class for function 'show_camera'
+drivers/platform/x86/asus-wmi.c:1485:1: error: invalid storage class for function 'store_camera'
+drivers/platform/x86/asus-wmi.c:1486:1: error: invalid storage class for function 'show_cardr'
+drivers/platform/x86/asus-wmi.c:1486:1: error: invalid storage class for function 'store_cardr'
+kernel/signal.c:3370:1: error: conflicting types for 'compat_sys_rt_sigaction'
+kernel/signal.c:3385:9: error: dereferencing pointer to incomplete type
+kernel/sched/fair.c:727:28: error: 'struct sched_entity' has no member named 'cfs_rq'
+kernel/sched/core.c:2010:25: error: 'struct task_group' has no member named 'cfs_rq'
 
-I stole the commit log from Sylwester Nawrocki, who fixed a few of these issues,
-since I could not formulate it better.
+[warnings]
+drivers/platform/x86/msi-laptop.c:478:27: warning: 'quirk_load_scm_ro_model' defined but not used [-Wunused-variable]
+drivers/platform/x86/asus-wmi.c:1421:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+include/linux/compat.h:625:6: warning: 'struct compat_sigaction' declared inside parameter list [enabled by default]
+include/linux/compat.h:625:6: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+kernel/signal.c:3370:1: warning: 'struct compat_sigaction' declared inside parameter list [enabled by default]
 
 ---
-
-Cyril Roelandt (1):
-  media: saa7146: don't use mutex_lock_interruptible() in
-    device_release().
-
- drivers/media/common/saa7146/saa7146_fops.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
