@@ -1,46 +1,93 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Dec 2012 08:59:15 +0000
-Subject: Re: [patch] aoe: use after free in aoedev_by_aoeaddr()
-Message-Id: <20121210085915.GP6568@mwanda>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date: Thu, 27 Dec 2012 23:49:37 +0000
+Subject: Re: [PATCH 01/23] uvc: Replace memcpy with struct assignment
+Message-Id: <20121227214937.6276e2a3@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121207061943.GC18220@elgon.mountain>
- <A578B7C2-D1FA-4F14-999F-E4CAA4816BB3@coraid.com>
-In-Reply-To: <A578B7C2-D1FA-4F14-999F-E4CAA4816BB3@coraid.com>
+References: <1351022246-8201-1-git-send-email-elezegarcia@gmail.com>
+	<CALF0-+VQKxu7_-=aJeW-FxmM4fdVX1nBE7AA5-0d9SRgRqqM1g@mail.gmail.com>
+In-Reply-To: <CALF0-+VQKxu7_-=aJeW-FxmM4fdVX1nBE7AA5-0d9SRgRqqM1g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ed Cashin <ecashin@coraid.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Ezequiel Garcia <elezegarcia@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Fri, Dec 07, 2012 at 07:20:10AM -0600, Ed Cashin wrote:
-> On Dec 7, 2012, at 1:19 AM, Dan Carpenter wrote:
-> 
-> > We should return NULL on failure instead of returning a freed pointer.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/block/aoe/aoedev.c b/drivers/block/aoe/aoedev.c
-> > index e66ccbf..98f2965 100644
-> > --- a/drivers/block/aoe/aoedev.c
-> > +++ b/drivers/block/aoe/aoedev.c
-> > @@ -461,6 +461,7 @@ aoedev_by_aoeaddr(ulong maj, int min, int do_alloc)
-> > 	d->targets = kcalloc(NTARGETS, sizeof(*d->targets), GFP_ATOMIC);
-> > 	if (!d->targets) {
-> > 		kfree(d);
-> > +		d = NULL;
-> > 		goto out;
-> > 	}
-> > 	d->ntargets = NTARGETS;
-> 
-> 
-> That looks good, thanks.
-> 
-> If smatch found that, then I have to figure out what I'm doing wrong, because
-> I ran sparse and smatch on the latest patch series until they were clean.  :/
+Em Thu, 27 Dec 2012 18:12:46 -0300
+Ezequiel Garcia <elezegarcia@gmail.com> escreveu:
 
-It's one of the checks which is only enabled with the --spammy
-option.
+> Mauro,
+> 
+> On Tue, Oct 23, 2012 at 4:57 PM, Ezequiel Garcia <elezegarcia@gmail.com> wrote:
+> > This kind of memcpy() is error-prone. Its replacement with a struct
+> > assignment is prefered because it's type-safe and much easier to read.
+> >
+> > Found by coccinelle. Hand patched and reviewed.
+> > Tested by compilation only.
+> >
+> > A simplified version of the semantic match that finds this problem is as
+> > follows: (http://coccinelle.lip6.fr/)
+> >
+> > // <smpl>
+> > @@
+> > identifier struct_name;
+> > struct struct_name to;
+> > struct struct_name from;
+> > expression E;
+> > @@
+> > -memcpy(&(to), &(from), E);
+> > +to = from;
+> > // </smpl>
+> >
+> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> > Signed-off-by: Ezequiel Garcia <elezegarcia@gmail.com>
+> > ---
+> >  drivers/media/usb/uvc/uvc_v4l2.c |    6 +++---
+> >  1 files changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> > index f00db30..4fc8737 100644
+> > --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> > @@ -314,7 +314,7 @@ static int uvc_v4l2_set_format(struct uvc_streaming *stream,
+> >                 goto done;
+> >         }
+> >
+> > -       memcpy(&stream->ctrl, &probe, sizeof probe);
+> > +       stream->ctrl = probe;
+> >         stream->cur_format = format;
+> >         stream->cur_frame = frame;
+> >
+> > @@ -386,7 +386,7 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
+> >                 return -EBUSY;
+> >         }
+> >
+> > -       memcpy(&probe, &stream->ctrl, sizeof probe);
+> > +       probe = stream->ctrl;
+> >         probe.dwFrameInterval > >                 uvc_try_frame_interval(stream->cur_frame, interval);
+> >
+> > @@ -397,7 +397,7 @@ static int uvc_v4l2_set_streamparm(struct uvc_streaming *stream,
+> >                 return ret;
+> >         }
+> >
+> > -       memcpy(&stream->ctrl, &probe, sizeof probe);
+> > +       stream->ctrl = probe;
+> >         mutex_unlock(&stream->mutex);
+> >
+> >         /* Return the actual frame period. */
+> > --
+> > 1.7.4.4
+> >
+> 
+> It seems you've marked this one as "Changes requested" [1].
+> However, Laurent didn't request any change,
+> but just pointed out we missed one memcpy replacement candidate.
+> 
+> I believe it's safe to apply the patch (together with the other 20 patches)
+> and we can fix the missing spot in another patch.
 
-regards,
-dan carpenter
+The other patches got applied already. Well just do whatever Laurent asked you
+and re-submit this one ;)
 
+Regards,
+Mauro
