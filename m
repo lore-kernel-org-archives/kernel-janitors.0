@@ -1,70 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 03 Dec 2012 07:58:15 +0000
-Subject: [patch v4] x86, UV: integer wrap bug in uv_hub_ipi_value()
-Message-Id: <20121203075815.GA27409@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 28 Dec 2012 07:34:19 +0000
+Subject: build regressions 2012-12-27
+Message-Id: <50dd4b7b.moUhlUS+44PUMzkb%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20121202173517.GB6568@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Russ Anderson <rja@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
+To: kernel-janitors@vger.kernel.org
 
-This is a static checker fix.  The problem is that we store the bits
-from "uv_apicid_hibits" into "apicid" (the high 16 bits) but then we
-shift it 16 bit to the left.  "apicid" is an int so it wraps and we lose
-them.
+[warnings]
+drivers/platform/x86/asus-wmi.c:2006:1: warning: 'alias' attribute ignored [-Wattributes]
+drivers/platform/x86/acer-wmi.c:1221:14: warning: 'devices' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/f2fs/recovery.c:224:52: warning: 'sum.<U 980>.<U 8e8>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-I have also simplified uv_wakeup_secondary() a little based on a
-suggestion from Walter Harms.
+[sparse]
+drivers/platform/x86/msi-laptop.c:502:78: sparse: dubious: !x | y
+drivers/platform/x86/chromeos_laptop.c:34:12: sparse: symbol 'i2c_adapter_names' was not declared. Should it be static?
+drivers/platform/x86/asus-wmi.c:1421:1: sparse: mixing declarations and code
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[smatch]
+drivers/platform/x86/asus-laptop.c:1558 asus_acpi_notify() warn: was || intended here instead of &&?
+
 ---
-v2: Style fix.  Don't use ulong.
-v3: Another style fix to uv_wakeup_secondary() based on Walter Harms's
-suggestion.
-v4: Fix typo in commit message.
-
-I don't have this hardware so I can't test it.  There may also be other
-bugs which this patch does not addressed.  These files are only compiled
-on x86_64 and "unsigned long" is used throughout to mean 64 bits.
-
-diff --git a/arch/x86/include/asm/uv/uv_hub.h b/arch/x86/include/asm/uv/uv_hub.h
-index 21f7385..e7a83d5 100644
---- a/arch/x86/include/asm/uv/uv_hub.h
-+++ b/arch/x86/include/asm/uv/uv_hub.h
-@@ -577,7 +577,7 @@ static unsigned long uv_hub_ipi_value(int apicid, int vector, int mode)
- {
- 	apicid |= uv_apicid_hibits;
- 	return (1UL << UVH_IPI_INT_SEND_SHFT) |
--			((apicid) << UVH_IPI_INT_APIC_ID_SHFT) |
-+			((unsigned long)apicid << UVH_IPI_INT_APIC_ID_SHFT) |
- 			(mode << UVH_IPI_INT_DELIVERY_MODE_SHFT) |
- 			(vector << UVH_IPI_INT_VECTOR_SHFT);
- }
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index 8cfade9..251b36f 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -194,16 +194,10 @@ static int __cpuinit uv_wakeup_secondary(int phys_apicid, unsigned long start_ri
- 	pnode = uv_apicid_to_pnode(phys_apicid);
- 	phys_apicid |= uv_apicid_hibits;
- 	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
--	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
--	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
--	    APIC_DM_INIT;
--	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
--
--	val = (1UL << UVH_IPI_INT_SEND_SHFT) |
--	    (phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
--	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12) |
--	    APIC_DM_STARTUP;
--	uv_write_global_mmr64(pnode, UVH_IPI_INT, val);
-+	    ((unsigned long)phys_apicid << UVH_IPI_INT_APIC_ID_SHFT) |
-+	    ((start_rip << UVH_IPI_INT_VECTOR_SHFT) >> 12);
-+	uv_write_global_mmr64(pnode, UVH_IPI_INT, val | APIC_DM_INIT);
-+	uv_write_global_mmr64(pnode, UVH_IPI_INT, val | APIC_DM_STARTUP);
- 
- 	atomic_set(&init_deasserted, 1);
- #endif
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
