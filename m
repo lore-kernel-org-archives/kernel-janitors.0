@@ -1,67 +1,81 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 07 Dec 2012 09:29:43 +0000
-Subject: [PATCH] drivers/thermal/spear_thermal.c: use devm_clk_get
-Message-Id: <1354876172-1634-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 29 Dec 2012 15:27:17 +0000
+Subject: [PATCH] Staging: wlan-ng: Add missing argument
+Message-Id: <1356794837-14631-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: gregkh@linuxfoundation.org, dan.carpenter@oracle.com, krzysztof.wilczynski@linux.com, devendra.aaru@gmail.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The commit c8442118 introduced a struct wireless_dev pointer
+as a second argument of the function pointers set_tx_power
+and get_tx_power. This patch adds the missing arguments for
+the wlan-ng driver.
 
-devm_clk_get allocates a resource that is released when a driver detaches.
-This patch uses devm_clk_get for data that is allocated in the probe
-function of a platform device and is only released in the remove function.
+Sparse warnings:
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+drivers/staging/wlan-ng/cfg80211.c:735:25: warning:
+	incorrect type in initializer (incompatible argument 2
+	(different base types))
+	drivers/staging/wlan-ng/cfg80211.c:735:25:
+	expected int ( *set_tx_power )( ... )
+	drivers/staging/wlan-ng/cfg80211.c:735:25:
+	got int ( extern [toplevel] *<noident> )( ... )
 
+drivers/staging/wlan-ng/cfg80211.c:736:25: warning:
+	incorrect type in initializer (incompatible argument 2
+	(different base types))
+	drivers/staging/wlan-ng/cfg80211.c:736:25:
+	expected int ( *get_tx_power )( ... )
+	drivers/staging/wlan-ng/cfg80211.c:736:25:
+	got int ( extern [toplevel] *<noident> )( ... )
+
+drivers/staging/wlan-ng/cfg80211.c:735:2: warning:
+	initialization from incompatible pointer type [enabled by default]
+
+drivers/staging/wlan-ng/cfg80211.c:735:2: warning:
+	(near initialization for ‘prism2_usb_cfg_ops.set_tx_power’)
+	[enabled by default]
+
+drivers/staging/wlan-ng/cfg80211.c:736:2: warning:
+	initialization from incompatible pointer type [enabled by default]
+
+drivers/staging/wlan-ng/cfg80211.c:736:2: warning:
+	(near initialization for ‘prism2_usb_cfg_ops.get_tx_power’)
+	[enabled by default]
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-I was not able to compile this code.  At one point, devm_clk_get was not
-supported for all architectures.  If that is still the case, and the code
-doesn't compile, then just ignore the patch.
+ drivers/staging/wlan-ng/cfg80211.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
- drivers/thermal/spear_thermal.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/thermal/spear_thermal.c b/drivers/thermal/spear_thermal.c
-index 6b2d8b2..3c5ee56 100644
---- a/drivers/thermal/spear_thermal.c
-+++ b/drivers/thermal/spear_thermal.c
-@@ -131,7 +131,7 @@ static int spear_thermal_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	stdev->clk = clk_get(&pdev->dev, NULL);
-+	stdev->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(stdev->clk)) {
- 		dev_err(&pdev->dev, "Can't get clock\n");
- 		return PTR_ERR(stdev->clk);
-@@ -140,7 +140,7 @@ static int spear_thermal_probe(struct platform_device *pdev)
- 	ret = clk_enable(stdev->clk);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Can't enable clock\n");
--		goto put_clk;
-+		return ret;
- 	}
- 
- 	stdev->flags = val;
-@@ -163,8 +163,6 @@ static int spear_thermal_probe(struct platform_device *pdev)
- 
- disable_clk:
- 	clk_disable(stdev->clk);
--put_clk:
--	clk_put(stdev->clk);
- 
- 	return ret;
+diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
+index 18c06a5..1d31eab 100644
+--- a/drivers/staging/wlan-ng/cfg80211.c
++++ b/drivers/staging/wlan-ng/cfg80211.c
+@@ -638,8 +638,8 @@ int prism2_leave_ibss(struct wiphy *wiphy, struct net_device *dev)
  }
-@@ -183,7 +181,6 @@ static int spear_thermal_exit(struct platform_device *pdev)
- 	writel_relaxed(actual_mask & ~stdev->flags, stdev->thermal_base);
  
- 	clk_disable(stdev->clk);
--	clk_put(stdev->clk);
  
- 	return 0;
+-int prism2_set_tx_power(struct wiphy *wiphy, enum nl80211_tx_power_setting type,
+-			int mbm)
++int prism2_set_tx_power(struct wiphy *wiphy, struct wireless_dev *wdev,
++			enum nl80211_tx_power_setting type, int mbm)
+ {
+ 	struct prism2_wiphy_private *priv = wiphy_priv(wiphy);
+ 	wlandevice_t *wlandev = priv->wlandev;
+@@ -665,7 +665,8 @@ exit:
+ 	return err;
  }
+ 
+-int prism2_get_tx_power(struct wiphy *wiphy, int *dbm)
++int prism2_get_tx_power(struct wiphy *wiphy, struct wireless_dev *wdev,
++			int *dbm)
+ {
+ 	struct prism2_wiphy_private *priv = wiphy_priv(wiphy);
+ 	wlandevice_t *wlandev = priv->wlandev;
+-- 
+1.7.10.4
 
