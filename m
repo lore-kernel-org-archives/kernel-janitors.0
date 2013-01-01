@@ -1,37 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 09 Jan 2013 07:10:59 +0000
-Subject: [patch 1/2] staging: sb105x: move dereference under IS_ERR() check
-Message-Id: <20130109071059.GB2454@elgon.mountain>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Date: Tue, 01 Jan 2013 18:33:42 +0000
+Subject: Re: [PATCH RESEND 6/6] clk: s5p-g2d: Fix incorrect usage of IS_ERR_OR_NULL
+Message-Id: <50E32C06.5020104@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+ <1355852048-23188-7-git-send-email-linux@prisktech.co.nz>
+ <50D62BC9.9010706@mvista.com>
+In-Reply-To: <50D62BC9.9010706@mvista.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Avoid dereverencing the ERR_PTR() by shifting the dereference down a
-couple lines.
+On 12/22/2012 10:53 PM, Sergei Shtylyov wrote:
+> Hello.
+>
+> On 18-12-2012 21:34, Tony Prisk wrote:
+>
+>> Resend to include mailing lists.
+>
+> Such remarks should be placed under --- tear line, not in the changelog.
+>
+>> Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
+>
+>> Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
+>> CC: Kyungmin Park <kyungmin.park@samsung.com>
+>> CC: Tomasz Stanislawski <t.stanislaws@samsung.com>
+>> CC: linux-media@vger.kernel.org
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Only needed in linux-next.
-
-diff --git a/drivers/staging/sb105x/sb_pci_mp.c b/drivers/staging/sb105x/sb_pci_mp.c
-index 131afd0c..c34ebff 100644
---- a/drivers/staging/sb105x/sb_pci_mp.c
-+++ b/drivers/staging/sb105x/sb_pci_mp.c
-@@ -1563,13 +1563,13 @@ static int mp_open(struct tty_struct *tty, struct file *filp)
- 
- 	state = uart_get(drv, line);
- 
--	mtpt  = (struct mp_port *)state->port;
--
- 	if (IS_ERR(state)) {
- 		retval = PTR_ERR(state);
- 		goto fail;
- 	}
- 
-+	mtpt  = (struct mp_port *)state->port;
-+
- 	tty->driver_data = state;
- 	tty->low_latency = (state->port->flags & UPF_LOW_LATENCY) ? 1 : 0;
- 	tty->alt_speed = 0;
+I've applied first version of this patch to my tree for 3.9, thanks.
