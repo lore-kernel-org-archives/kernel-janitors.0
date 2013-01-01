@@ -1,51 +1,32 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 09 Jan 2013 12:32:14 +0000
-Subject: [PATCH 3/3] pci/saa7134: use IS_ENABLED() macro
-Message-Id: <1357734734-2856-3-git-send-email-peter.senna@gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Date: Tue, 01 Jan 2013 19:41:07 +0000
+Subject: Re: [PATCH RESEND 4/6] clk: s5p-tv: Fix incorrect usage of IS_ERR_OR_NULL
+Message-Id: <50E33BD3.9020400@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1357734734-2856-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1357734734-2856-1-git-send-email-peter.senna@gmail.com>
+References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
+ <1355852048-23188-5-git-send-email-linux@prisktech.co.nz>
+In-Reply-To: <1355852048-23188-5-git-send-email-linux@prisktech.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@redhat.com
-Cc: remi.schwartz@gmail.com, sean@mess.org, kyle@kyle.strickland.name, simon.farnsworth@onelan.co.uk, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
 
-replace:
- #if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
-with:
- #if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
+On 12/18/2012 06:34 PM, Tony Prisk wrote:
+> Resend to include mailing lists.
 
-This change was made for: CONFIG_VIDEO_SAA7134_DVB
+In the future please put such comments after the --- tear line below.
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
- drivers/media/pci/saa7134/saa7134.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
+>
+> Signed-off-by: Tony Prisk<linux@prisktech.co.nz>
+> CC: Kyungmin Park<kyungmin.park@samsung.com>
+> CC: Tomasz Stanislawski<t.stanislaws@samsung.com>
+> CC: linux-media@vger.kernel.org
+> ---
+>   drivers/media/platform/s5p-tv/hdmi_drv.c  |   10 +++++-----
+>   drivers/media/platform/s5p-tv/mixer_drv.c |   10 +++++-----
+>   drivers/media/platform/s5p-tv/sdo_drv.c   |   10 +++++-----
+>   3 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/media/pci/saa7134/saa7134.h b/drivers/media/pci/saa7134/saa7134.h
-index 0a3feaa..ace44fd 100644
---- a/drivers/media/pci/saa7134/saa7134.h
-+++ b/drivers/media/pci/saa7134/saa7134.h
-@@ -42,7 +42,7 @@
- #include <media/videobuf-dma-sg.h>
- #include <sound/core.h>
- #include <sound/pcm.h>
--#if defined(CONFIG_VIDEO_SAA7134_DVB) || defined(CONFIG_VIDEO_SAA7134_DVB_MODULE)
-+#if IS_ENABLED(CONFIG_VIDEO_SAA7134_DVB)
- #include <media/videobuf-dvb.h>
- #endif
- 
-@@ -644,7 +644,7 @@ struct saa7134_dev {
- 	struct work_struct         empress_workqueue;
- 	int                        empress_started;
- 
--#if defined(CONFIG_VIDEO_SAA7134_DVB) || defined(CONFIG_VIDEO_SAA7134_DVB_MODULE)
-+#if IS_ENABLED(CONFIG_VIDEO_SAA7134_DVB)
- 	/* SAA7134_MPEG_DVB only */
- 	struct videobuf_dvb_frontends frontends;
- 	int (*original_demod_sleep)(struct dvb_frontend *fe);
--- 
-1.7.11.7
-
+Applied, after resolving conflict with other patch that addressed
+those issues in sdo_drv.c file. Thanks.
