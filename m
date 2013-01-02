@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 15 Jan 2013 17:11:39 +0000
-Subject: build regressions 2013-01-15
-Message-Id: <50f58dcb.w05/tXXoZ2jllPe4%fengguang.wu@intel.com>
+Date: Wed, 02 Jan 2013 23:12:49 +0000
+Subject: build regressions 2013-01-02
+Message-Id: <50e4bef1.24wCWOGSxYOZ34YW%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,24 +9,20 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/mmc/core/slot-gpio.c:123:2: error: implicit declaration of function 'devm_gpio_request_one' [-Werror=implicit-function-declaration]
-drivers/mmc/core/slot-gpio.c:216:2: error: implicit declaration of function 'devm_gpio_free' [-Werror=implicit-function-declaration]
-initramfs.c:(.init.text+0x32ab): undefined reference to `__initramfs_size'
-initramfs.c:(.init.text+0x228c): undefined reference to `__initramfs_size'
-security/keys/Kconfig:5:error: recursive dependency detected!
+(.text+0x2684bf): multiple definition of `pci_get_domain_bus_and_slot'
+drivers/pci/built-in.o:(.text+0x8012): first defined here
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:3290:1: error: static declaration of 'qlcnic_restore_indev_addr' follows non-static declaration
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:512:15: error: 'PCI_IOV_RESOURCES' undeclared (first use in this function)
 
 [warnings]
-sound/pci/hda/patch_sigmatel.c:2219:24: warning: unused variable 'spec' [-Wunused-variable]
-
-[sparse]
-drivers/ata/libata-core.c:102:10: sparse: symbol 'host_print_id' was not declared. Should it be static?
-drivers/nfc/pn533.c:488:24: sparse: symbol 'pn533_std_frame_ops' was not declared. Should it be static?
-sound/pci/hda/patch_sigmatel.c:2260:26: sparse: obsolete array initializer, use C99 syntax
-drivers/mmc/host/sdhci.c:2475:6: sparse: symbol 'sdhci_disable_irq_wakeups' was not declared. Should it be static?
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:515:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:515:3: warning: right shift count >= width of type [enabled by default]
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:515:3: warning: passing argument 1 of '__div64_32' from incompatible pointer type [enabled by default]
 
 [smatch]
-drivers/ata/libata-core.c:2332 ata_dev_configure() warn: 'sata_setting' puts 512 bytes on stack
+drivers/media/dvb-core/dvb_ca_en50221.c:1251 dvb_ca_en50221_io_do_ioctl() warn: inconsistent returns mutex:&ca->ioctl_mutex: locked (1231) unlocked (1198,1251)
+fs/gfs2/trans.c:176 databuf_lo_add() error: we previously assumed 'tr' could be null (see line 168)
 
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
