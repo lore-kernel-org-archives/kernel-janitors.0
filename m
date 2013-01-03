@@ -1,30 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 03 Jan 2013 13:45:54 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Date: Thu, 03 Jan 2013 13:52:56 +0000
 Subject: Re: [PATCH RESEND 6/6] clk: s5p-g2d: Fix incorrect usage of IS_ERR_OR_NULL
-Message-Id: <20130103134554.GJ7247@mwanda>
+Message-Id: <20130103135256.GO2631@n2100.arm.linux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
- <1355852048-23188-7-git-send-email-linux@prisktech.co.nz>
+References: <1355852048-23188-7-git-send-email-linux@prisktech.co.nz>
  <50D62BC9.9010706@mvista.com> <50E32C06.5020104@gmail.com>
  <CA+_b7DK2zbBzbCh15ikEAeGP5h-V9gQ_YcX15O-RNvWxCk8Zfg@mail.gmail.com>
  <1357104713.30504.8.camel@gitbox> <20130103090520.GC7247@mwanda>
- <20130103100000.GJ2631@n2100.arm.linux.org.uk>
- <20130103111040.GD7247@mwanda>
- <20130103112102.GM2631@n2100.arm.linux.org.uk>
-In-Reply-To: <20130103112102.GM2631@n2100.arm.linux.org.uk>
+ <20130103100000.GJ2631@n2100.arm.linux.org.uk> <20130103111040.GD7247@mwanda>
+ <20130103112102.GM2631@n2100.arm.linux.org.uk> <20130103134554.GJ7247@mwanda>
+In-Reply-To: <20130103134554.GJ7247@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Jan 03, 2013 at 11:21:02AM +0000, Russell King - ARM Linux wrote:
-> Maybe you don't realise, but IS_ERR(NULL) is false.  Therefore, this falls
-> into category (2).
+On Thu, Jan 03, 2013 at 04:45:54PM +0300, Dan Carpenter wrote:
+> On Thu, Jan 03, 2013 at 11:21:02AM +0000, Russell King - ARM Linux wrote:
+> > Maybe you don't realise, but IS_ERR(NULL) is false.  Therefore, this falls
+> > into category (2).
+> 
+> No, obviously, I know the difference between IS_ERR() and
+> IS_ERR_OR_NULL().  That's how we started this thread.
 
-No, obviously, I know the difference between IS_ERR() and
-IS_ERR_OR_NULL().  That's how we started this thread.
-
-*shrug*.
-
-regards,
-dan carpenter
+Well, if you know that, then how is the documentation anything _but_
+clear?
