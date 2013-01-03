@@ -1,64 +1,51 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:16 +0000
-Subject: [PATCH V2 09/24] usb/gspca/ov519.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-10-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Jan 2013 16:04:55 +0000
+Subject: Re: [PATCH 5/5] spi: fix return value check in hspi_probe().
+Message-Id: <20130103160455.GO7247@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+References: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
+	<1355271894-5284-6-git-send-email-tipecaml@gmail.com>
+	<87txrsqf7f.wl%kuninori.morimoto.gx@renesas.com>
+	<20121219151154.937EC3E0AD7@localhost>
+	<20121219163914.GN5032@mwanda>
+	<20121222095620.83E243E07FA@localhost>
+In-Reply-To: <20121222095620.83E243E07FA@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hdegoede@redhat.com
-Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cyril Roelandt <tipecaml-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-replace:
- #if defined(CONFIG_INPUT) || \
-     defined(CONFIG_INPUT_MODULE)
-with:
- #if IS_ENABLED(CONFIG_INPUT)
+On Sat, Dec 22, 2012 at 09:56:20AM +0000, Grant Likely wrote:
+> On Wed, 19 Dec 2012 19:39:14 +0300, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > On Wed, Dec 19, 2012 at 03:11:54PM +0000, Grant Likely wrote:
+> > > On Tue, 11 Dec 2012 16:36:27 -0800 (PST), Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> wrote:
+> > > > 
+> > > > Hi
+> > > > 
+> > > > > According to its documentation, clk_get() returns a "valid IS_ERR() condition
+> > > > > containing errno", so we should call IS_ERR() rather than a NULL check.
+> > > > > 
+> > > > > Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+> > > > 
+> > > > Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > 
+> > > Applied, thanks.
+> > 
+> > In another thread, we were just talking about who clk_get() can
+> > return a NULL if !CONFIG_HAVE_CLK.  That might change to match the
+> > documentation later...  Not sure.
+> 
+> So what is the solution here? Will the dummy clk_get() be changed, or is
+> there more work needed on the drivers?
+> 
 
-This change was made for: CONFIG_INPUT
+This driver can't function without a clk.  It should select that at
+build time instead of testing for it at probe.  Just checking for
+IS_ERR() will NOT cause a NULL dereference so the patch is ok in
+that respect.  I'm not sure if this can be build without
+CONFIG_HAVE_CLK.
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-Changes from V1:
-   Updated subject
-
- drivers/media/usb/gspca/ov519.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/gspca/ov519.c b/drivers/media/usb/gspca/ov519.c
-index 9aa09f8..9ad19a7 100644
---- a/drivers/media/usb/gspca/ov519.c
-+++ b/drivers/media/usb/gspca/ov519.c
-@@ -4238,7 +4238,7 @@ static void sd_stop0(struct gspca_dev *gspca_dev)
- 	if (sd->bridge = BRIDGE_W9968CF)
- 		w9968cf_stop0(sd);
- 
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	/* If the last button state is pressed, release it now! */
- 	if (sd->snapshot_pressed) {
- 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, 0);
-@@ -4255,7 +4255,7 @@ static void ov51x_handle_button(struct gspca_dev *gspca_dev, u8 state)
- 	struct sd *sd = (struct sd *) gspca_dev;
- 
- 	if (sd->snapshot_pressed != state) {
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, state);
- 		input_sync(gspca_dev->input_dev);
- #endif
-@@ -4924,7 +4924,7 @@ static const struct sd_desc sd_desc = {
- 	.dq_callback = sd_reset_snapshot,
- 	.get_jcomp = sd_get_jcomp,
- 	.set_jcomp = sd_set_jcomp,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.other_input = 1,
- #endif
- };
--- 
-1.7.11.7
+regards,
+dan carpenter
 
