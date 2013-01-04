@@ -1,31 +1,44 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Date: Tue, 22 Jan 2013 14:20:00 +0000
-Subject: Re: [PATCH 04/24] use IS_ENABLED() macro
-Message-Id: <20130122072000.15efd64c@lwn.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 04 Jan 2013 18:56:02 +0000
+Subject: [patch] [media] dvb: unlock on error in dvb_ca_en50221_io_do_ioctl()
+Message-Id: <20130104185602.GB2038@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
-	<1358613206-4274-4-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358613206-4274-4-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <50e3bfe0.IJT/Tw4ZVUbERlpE%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Nikolaus Schulz <schulz@macnetix.de>, Michael Krufky <mkrufky@linuxtv.org>, linux-media@vger.kernel.org, kbuild@01.org, kernel-janitors@vger.kernel.org
 
-On Sat, 19 Jan 2013 14:33:07 -0200
-Peter Senna Tschudin <peter.senna@gmail.com> wrote:
+We recently pushed the locking down into this function, but there was
+an error path where the unlock was missed.
 
-> replace:
->  #if defined(CONFIG_VIDEOBUF2_VMALLOC) || \
->      defined(CONFIG_VIDEOBUF2_VMALLOC_MODULE)
-> with:
->  #if IS_ENABLED(CONFIG_VIDEOBUF2_VMALLOC)
-> 
-> This change was made for: CONFIG_VIDEOBUF2_VMALLOC,
-> CONFIG_VIDEOBUF2_DMA_CONTIG, CONFIG_VIDEOBUF2_DMA_SG
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Only needed in linux-next.
 
-That's something I'd meant to do to this driver for a while, thanks.
-
-Acked-by: Jonathan Corbet <corbet@lwn.net>
-
-jon
+diff --git a/drivers/media/dvb-core/dvb_ca_en50221.c b/drivers/media/dvb-core/dvb_ca_en50221.c
+index 190e5e0..0aac309 100644
+--- a/drivers/media/dvb-core/dvb_ca_en50221.c
++++ b/drivers/media/dvb-core/dvb_ca_en50221.c
+@@ -1227,8 +1227,10 @@ static int dvb_ca_en50221_io_do_ioctl(struct file *file,
+ 	case CA_GET_SLOT_INFO: {
+ 		struct ca_slot_info *info = parg;
+ 
+-		if ((info->num > ca->slot_count) || (info->num < 0))
+-			return -EINVAL;
++		if ((info->num > ca->slot_count) || (info->num < 0)) {
++			err = -EINVAL;
++			goto out_unlock;
++		}
+ 
+ 		info->type = CA_CI_LINK;
+ 		info->flags = 0;
+@@ -1247,6 +1249,7 @@ static int dvb_ca_en50221_io_do_ioctl(struct file *file,
+ 		break;
+ 	}
+ 
++out_unlock:
+ 	mutex_unlock(&ca->ioctl_mutex);
+ 	return err;
+ }
