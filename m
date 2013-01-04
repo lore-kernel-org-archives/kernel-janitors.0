@@ -1,57 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 Jan 2013 12:13:24 +0000
-Subject: [PATCH 12/15] fs/hostfs/hostfs_kern.c: adjust duplicate test
-Message-Id: <1358773378-4700-13-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 04 Jan 2013 20:10:08 +0000
+Subject: build regressions 2013-01-04
+Message-Id: <50e73720.UuOU5HrM/EZoE37b%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Dike <jdike@addtoit.com>
-Cc: kernel-janitors@vger.kernel.org, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+(.rodata+0x19c8): undefined reference to `sys_fork'
+(.text+0x131202): undefined reference to `i2c_smbus_read_byte_data'
+(.text+0x131233): undefined reference to `i2c_smbus_write_byte_data'
 
-Delete successive tests to the same location.  This looks like simple code
-duplication.
+[warnings]
+arch/microblaze/pci/pci-common.c:1182:1: warning: label 'clear_resource' defined but not used [-Wunused-label]
+arch/microblaze/pci/pci-common.c:1436:2: warning: passing argument 3 of 'pci_add_resource_offset' makes integer from pointer without a cast [enabled by default]
+/tmp/ccx7EWlc.s:1244: Warning: ignoring changed section attributes for .discard
+drivers/mfd/stw481x.c:32:5: warning: unused variable 'regandval' [-Wunused-variable]
+drivers/mfd/stw481x.c:132:11: warning: unused variable 'pid' [-Wunused-variable]
+drivers/mfd/stw481x.c:132:6: warning: unused variable 'vid' [-Wunused-variable]
+sound/oss/pas2_card.c:338:5: warning: too many arguments for format [-Wformat-extra-args]
+drivers/net/wan/farsync.c:2399:2: warning: array subscript is above array bounds [-Warray-bounds]
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@s exists@
-local idexpression y;
-expression x,e;
-@@
-
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
-    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[smatch]
+drivers/media/usb/dvb-usb/dw2102.c:1285 m88rs2000_frontend_attach() error: doing dma on the stack (obuf)
+drivers/media/usb/dvb-usb/dw2102.c:1285 m88rs2000_frontend_attach() error: doing dma on the stack (ibuf)
 
 ---
- fs/hostfs/hostfs_kern.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index 457addc..909fc21 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -727,8 +727,6 @@ static int hostfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
- 	__putname(name);
- 	if (err)
- 		goto out_put;
--	if (err)
--		goto out_put;
- 
- 	d_instantiate(dentry, inode);
- 	return 0;
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
