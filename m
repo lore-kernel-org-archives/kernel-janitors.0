@@ -1,124 +1,77 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 Jan 2013 12:03:22 +0000
-Subject: [PATCH 0/14] adjust duplicate test
-Message-Id: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Zhang Rui <rui.zhang@intel.com>
+Date: Fri, 04 Jan 2013 07:27:31 +0000
+Subject: Re: [PATCH] drivers/thermal/spear_thermal.c: use devm_clk_get
+Message-Id: <1357284451.2152.1.camel@rzhang1-mobl4>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1354876172-1634-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1354876172-1634-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These patches fix cases where a value is tested that was previously
-tested.  Often the problem is that the tested value has not been updated
-properly.  Sometimes the test is simply duplicated.  These problems were
-found using the following semantic match (http://coccinelle.lip6.fr/):
+On Fri, 2012-12-07 at 11:29 +0100, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> devm_clk_get allocates a resource that is released when a driver detaches.
+> This patch uses devm_clk_get for data that is allocated in the probe
+> function of a platform device and is only released in the remove function.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+applied to thermal-next.
 
-// <smpl>
-@r exists@
-expression e1,e2;
-identifier f,g;
-position p1,p2;
-@@
+thanks,
+rui
 
-if@p1 ( \(e1->f = NULL\|IS_ERR(e1->f)\) ) { ... when forall
-   return ...; }
-... when != \(e1->f = e2\|e1->f += e2\|e1->f -= e2\|e1->f |= e2\|e1->f &= e2\|e1->f++\|e1->f--\|g(...,e1,...)\)
-if@p2 ( \(e1->f = NULL\|IS_ERR(e1->f)\) ) { ... when forall
-   return ...; }
+> ---
+> I was not able to compile this code.  At one point, devm_clk_get was not
+> supported for all architectures.  If that is still the case, and the code
+> doesn't compile, then just ignore the patch.
+> 
+>  drivers/thermal/spear_thermal.c |    7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/thermal/spear_thermal.c b/drivers/thermal/spear_thermal.c
+> index 6b2d8b2..3c5ee56 100644
+> --- a/drivers/thermal/spear_thermal.c
+> +++ b/drivers/thermal/spear_thermal.c
+> @@ -131,7 +131,7 @@ static int spear_thermal_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	stdev->clk = clk_get(&pdev->dev, NULL);
+> +	stdev->clk = devm_clk_get(&pdev->dev, NULL);
+>  	if (IS_ERR(stdev->clk)) {
+>  		dev_err(&pdev->dev, "Can't get clock\n");
+>  		return PTR_ERR(stdev->clk);
+> @@ -140,7 +140,7 @@ static int spear_thermal_probe(struct platform_device *pdev)
+>  	ret = clk_enable(stdev->clk);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Can't enable clock\n");
+> -		goto put_clk;
+> +		return ret;
+>  	}
+>  
+>  	stdev->flags = val;
+> @@ -163,8 +163,6 @@ static int spear_thermal_probe(struct platform_device *pdev)
+>  
+>  disable_clk:
+>  	clk_disable(stdev->clk);
+> -put_clk:
+> -	clk_put(stdev->clk);
+>  
+>  	return ret;
+>  }
+> @@ -183,7 +181,6 @@ static int spear_thermal_exit(struct platform_device *pdev)
+>  	writel_relaxed(actual_mask & ~stdev->flags, stdev->thermal_base);
+>  
+>  	clk_disable(stdev->clk);
+> -	clk_put(stdev->clk);
+>  
+>  	return 0;
+>  }
+> 
 
-@rsame exists@
-expression e;
-position r.p1,r.p2;
-statement S1,S2;
-@@
-
-if@p1 ( e ) S1
-... when any
-if@p2 ( e ) S2
-
-@rok depends on rsame exists@
-expression e1,e2;
-identifier f;
-position r.p1,r.p2;
-statement S1,S2;
-@@
-
-if@p1 ( \(e1->f = NULL\|IS_ERR(e1->f)\) ) S1
-... when any
- \(e1->f = e2\|e1->f += e2\|e1->f -= e2\|e1->f |= e2\|e1->f &= e2\|e1->f++\|e1->f--\|g(...,e1,...)\)
-... when any
-if@p2 ( ... ) S2
-
-@rother depends on rsame exists@
-position r.p1,r.p2;
-statement S;
-@@
-
-... when != if@p1 (...) S
-if@p2 ( ... ) { ... return ...; }
-
-@script:python depends on rsame && !rok && !rother@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (p1[0].line != p2[0].line):
-  cocci.print_main("",p1)
-  cocci.print_secs("",p2)
-
-@s exists@
-local idexpression y;
-expression e;
-position p1,p2;
-@@
-
-
-if@p1 ( \(y = NULL\|IS_ERR(y)\|y != 0\) ) { ... when forall
-   return ...; }
-... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\|XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
-if@p2 ( \(y = NULL\|IS_ERR(y)\|y != 0\) ) { ... when forall
-   return ...; }
-
-@ssame exists@
-expression e;
-position s.p1,s.p2;
-statement S1,S2;
-@@
-
-if@p1 ( e ) S1
-... when any
-if@p2 ( e ) S2
-
-@sok depends on ssame exists@
-local idexpression y;
-expression e;
-position s.p1,s.p2;
-statement S1,S2;
-@@
-
-if@p1 ( \(y = NULL\|IS_ERR(y)\|y != 0\) ) S1
-... when any
- \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\|XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
-... when any
-if@p2 ( ... ) S2
-
-@sother depends on ssame exists@
-position s.p1,s.p2;
-statement S;
-@@
-
-... when != if@p1 (...) S
-if@p2 ( ... ) { ... return ...; }
-
-@script:python depends on ssame && !sok && !sother@
-p1 << s.p1;
-p2 << s.p2;
-@@
-
-if (p1[0].line != p2[0].line):
-  cocci.print_main("",p1)
-  cocci.print_secs("",p2)
-
-// </smpl>
 
