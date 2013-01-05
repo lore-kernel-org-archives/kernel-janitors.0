@@ -1,31 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Jan 2013 18:54:55 +0000
-Subject: [patch] compat: return -EFAULT on error in waitid()
-Message-Id: <20130104185451.GA2038@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 05 Jan 2013 17:17:48 +0000
+Subject: build regressions 2013-01-05
+Message-Id: <50e8603c.nzW54v65NC/UMbL/%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Jan Kiszka <jan.kiszka@siemens.com>, Chris Metcalf <cmetcalf@tilera.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The copy_to_user() call returns the number of bytes remaining but we
-want to return -EFAULT on error.
+[errors]
+fs/iov-iter.c:110:3: error: dereferencing pointer to incomplete type
+fs/iov-iter.c:128:8: error: increment of pointer to unknown structure
+fs/iov-iter.c:128:4: error: arithmetic on pointer to an incomplete type
+drivers/acpi/processor_driver.c:351:2: error: 'else' without a previous 'if'
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[warnings]
+fs/iov-iter.c:112:10: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+fs/iov-iter.c:112:10: warning: type defaults to 'int' in declaration of '_min2'
+
+[sparse]
+net/ipv6/netfilter/ip6t_NPT.c:70:29: sparse: incorrect type in argument 2 (different base types)
+drivers/acpi/processor_driver.c:377:9: sparse: Trying to use reserved word 'if' as identifier
+drivers/acpi/processor_driver.c:380:9: sparse: Trying to use reserved word 'return' as identifier
+drivers/acpi/processor_driver.c:351:14: sparse: Expected ; at end of statement
+drivers/acpi/processor_driver.c:351:14: sparse: got if
+drivers/acpi/processor_driver.c:354:14: sparse: got {
+drivers/acpi/processor_driver.c:377:13: sparse: Expected ) in function declarator
+drivers/acpi/processor_driver.c:377:13: sparse: got (
+drivers/acpi/processor_driver.c:380:16: sparse: Expected ; at end of declaration
+drivers/acpi/processor_driver.c:381:1: sparse: Expected ; at the end of type declaration
+drivers/acpi/processor_driver.c:675:17: sparse: got acpi_exception
+drivers/acpi/processor_driver.c:351:9: sparse: undefined identifier 'else'
+drivers/acpi/processor_driver.c:376:39: sparse: undefined identifier 'pr'
+
 ---
-Only needed in linux-next.
-
-diff --git a/kernel/compat.c b/kernel/compat.c
-index de6f324..19971d8 100644
---- a/kernel/compat.c
-+++ b/kernel/compat.c
-@@ -593,7 +593,7 @@ COMPAT_SYSCALL_DEFINE5(waitid,
- 		else
- 			ret = put_compat_rusage(&ru, uru);
- 		if (ret)
--			return ret;
-+			return -EFAULT;
- 	}
- 
- 	BUG_ON(info.si_code & __SI_MASK);
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
