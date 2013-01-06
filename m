@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 06 Jan 2013 08:41:36 +0000
-Subject: Re: [PATCH] drivers/power/88pm860x_battery.c: use devm_request_threaded_irq
-Message-Id: <alpine.DEB.2.02.1301060941110.2070@localhost6.localdomain6>
+Date: Sun, 06 Jan 2013 08:43:10 +0000
+Subject: [PATCH] drivers/power/88pm860x_battery.c: eliminate possible references to released resources
+Message-Id: <alpine.DEB.2.02.1301060941400.2070@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1354986995-2324-1-git-send-email-Julia.Lawall@lip6.fr> <20130106050953.GH6919@lizard.sbx05280.losalca.wayport.net>
 In-Reply-To: <20130106050953.GH6919@lizard.sbx05280.losalca.wayport.net>
@@ -11,51 +11,84 @@ Content-Transfer-Encoding: 7bit
 To: Anton Vorontsov <anton@enomsg.org>
 Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+devm_kzalloc should not be followed by kfree, as this results in a double
+free.  The problem was found using the following semantic match
+(http://coccinelle.lip6.fr/):
 
-On Sat, 5 Jan 2013, Anton Vorontsov wrote:
+// <smpl>
+@@
+expression x,e;
+@@
+x = devm_kzalloc(...)
+... when != x = e
+?-kfree(x,...);
+// </smpl>
 
-> On Sat, Dec 08, 2012 at 06:16:35PM +0100, Julia Lawall wrote:
->> From: Julia Lawall <Julia.Lawall@lip6.fr>
->>
->> devm_request_threaded_irq requests and irq that is freed when a driver
->> detaches.  This patch uses devm_request_threaded_irq for irqs that are
->> requested in the probe function of a platform device and are only freed in
->> the remove function.
->>
->> Additionally, the original code used devm_kzalloc, but kfree.  This would
->> lead to a double free.  The problem was found using the following semantic
->> match (http://coccinelle.lip6.fr/):
->>
->> // <smpl>
->> @@
->> expression x,e;
->> @@
->> x = devm_kzalloc(...)
->> ... when != x = e
->> ?-kfree(x,...);
->> // </smpl>
->>
->> The error handling code in the probe function is also simplified in the
->> cases where there is now nothing to do other than return.
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>
->> ---
-> [....]
->> @@ -994,9 +989,6 @@ static int pm860x_battery_remove(struct platform_device *pdev)
->>  	struct pm860x_battery_info *info = platform_get_drvdata(pdev);
->>
->>  	power_supply_unregister(&info->battery);
->> -	free_irq(info->irq_batt, info);
->> -	free_irq(info->irq_cc, info);
->> -	kfree(info);
->
-> It is not safe to access battery ('struct power_supply') object after
-> _unregister() (and irq handlers will surely do). Instead of removing
-> free_irq(), the right fix would be to place the two calls before
-> _unregister().
+Furthermore, in the remove function, the calls to free_irq are moved up to
+prevent a possible reference in the interrupt handler to resources freed by
+power_supply_unregister.
 
-Thanks for the feedback.  I will send a new patch.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-julia
+---
+V2, moving up the calls to free_irq, instead of removing them and using
+devm_request_threaded_irq.
+
+  drivers/power/88pm860x_battery.c |   13 ++++---------
+  1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/power/88pm860x_battery.c b/drivers/power/88pm860x_battery.c
+index 8bc80b0..d338c1c 100644
+--- a/drivers/power/88pm860x_battery.c
++++ b/drivers/power/88pm860x_battery.c
+@@ -915,15 +915,13 @@ static int pm860x_battery_probe(struct platform_device *pdev)
+  	info->irq_cc = platform_get_irq(pdev, 0);
+  	if (info->irq_cc <= 0) {
+  		dev_err(&pdev->dev, "No IRQ resource!\n");
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
+  	}
+
+  	info->irq_batt = platform_get_irq(pdev, 1);
+  	if (info->irq_batt <= 0) {
+  		dev_err(&pdev->dev, "No IRQ resource!\n");
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
+  	}
+
+  	info->chip = chip;
+@@ -957,7 +955,7 @@ static int pm860x_battery_probe(struct platform_device *pdev)
+
+  	ret = power_supply_register(&pdev->dev, &info->battery);
+  	if (ret)
+-		goto out;
++		return ret;
+  	info->battery.dev->parent = &pdev->dev;
+
+  	ret = request_threaded_irq(info->irq_cc, NULL,
+@@ -984,8 +982,6 @@ out_coulomb:
+  	free_irq(info->irq_cc, info);
+  out_reg:
+  	power_supply_unregister(&info->battery);
+-out:
+-	kfree(info);
+  	return ret;
+  }
+
+@@ -993,10 +989,9 @@ static int pm860x_battery_remove(struct platform_device *pdev)
+  {
+  	struct pm860x_battery_info *info = platform_get_drvdata(pdev);
+
+-	power_supply_unregister(&info->battery);
+  	free_irq(info->irq_batt, info);
+  	free_irq(info->irq_cc, info);
+-	kfree(info);
++	power_supply_unregister(&info->battery);
+  	platform_set_drvdata(pdev, NULL);
+  	return 0;
+  }
+
