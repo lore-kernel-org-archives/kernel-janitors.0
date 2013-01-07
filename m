@@ -1,159 +1,71 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Date: Mon, 07 Jan 2013 11:33:55 +0000
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Date: Mon, 07 Jan 2013 20:08:46 +0000
 Subject: Re: [PATCH 1/2] drivers/media/platform/soc_camera/pxa_camera.c: reposition free_irq to avoid access
-Message-Id: <Pine.LNX.4.64.1301071229070.23972@axis700.grange>
+Message-Id: <874nisbvsh.fsf@free.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1357552816-6046-1-git-send-email-Julia.Lawall@lip6.fr>
- <1357552816-6046-2-git-send-email-Julia.Lawall@lip6.fr>
- <Pine.LNX.4.64.1301071111420.23972@axis700.grange> <alpine.DEB.2.02.1301071214150.1908@hadrien>
-In-Reply-To: <alpine.DEB.2.02.1301071214150.1908@hadrien>
+	<1357552816-6046-2-git-send-email-Julia.Lawall@lip6.fr>
+	<Pine.LNX.4.64.1301071111420.23972@axis700.grange>
+In-Reply-To: <Pine.LNX.4.64.1301071111420.23972@axis700.grange> (Guennadi
+	Liakhovetski's message of "Mon, 7 Jan 2013 12:09:36 +0100 (CET)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, linux-kernel@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, linux-kernel@vger.kernel.org
 
-On Mon, 7 Jan 2013, Julia Lawall wrote:
+Guennadi Liakhovetski <g.liakhovetski@gmx.de> writes:
 
-> On Mon, 7 Jan 2013, Guennadi Liakhovetski wrote:
-> 
-> > (adding Robert to CC)
-> >
-> > Hi Julia
-> >
-> > Thanks for the patch.
-> >
-> > On Mon, 7 Jan 2013, Julia Lawall wrote:
-> >
-> > > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> > >
-> > > The data referenced by an interrupt handler should not be freed before the
-> > > interrupt is ended.  The handler is pxa_camera_irq.  This handler may call
-> > > pxa_dma_start_channels, which references the channels that are freed on the
-> > > lines before the call to free_irq.
-> >
-> > I don't think any data is freed by pxa_free_dma(), it only disables DMA on
-> > a certain channel.
-> 
-> OK, I seem to have been thrown off by the clearing fo the name field, but
-> that doesn't seem to be very important.
+> (adding Robert to CC)
+> I don't think any data is freed by pxa_free_dma(), it only disables DMA on 
+> a certain channel. Theoretically there could be a different problem: 
+> pxa_free_dma() deactivates DMA, whereas pxa_dma_start_channels() activates 
+> it. But I think we're also protected against that: by the time 
+> pxa_camera_remove() is called, and operation on the interface has been 
+> stopped, client devices have been detached, pxa_camera_remove_device() has 
+> been called, which has also stopped the interface clock. And with clock 
+> stopped no interrupts can be generated. And the case of interrupt having 
+> been generated before clk_disabled() and only delivered to the driver so 
+> much later, that we're already unloading the module, seems really 
+> impossible to me. Robert, you agree?
 
-Exactly.
+Agreed that pxa_free_dma() doesn't free anything, that one is easy :)
 
-> > Theoretically there could be a different problem:
-> > pxa_free_dma() deactivates DMA, whereas pxa_dma_start_channels() activates
-> > it. But I think we're also protected against that: by the time
-> > pxa_camera_remove() is called, and operation on the interface has been
-> > stopped, client devices have been detached, pxa_camera_remove_device() has
-> > been called, which has also stopped the interface clock. And with clock
-> > stopped no interrupts can be generated. And the case of interrupt having
-> > been generated before clk_disabled() and only delivered to the driver so
-> > much later, that we're already unloading the module, seems really
-> > impossible to me. Robert, you agree?
-> 
-> OK, thanks for the explanation.
-> 
-> > OTOH, it would be nice to convert also this driver to managed allocations,
-> > which also would include devm_request(_threaded)_irq(), but that would
-> > mean, that free_irq() would be called even later than now, also after
-> > pxa_free_dma().
-> 
-> OK, if it is safe to call free_irq much later, then I can propose a patch
-> for that.
+And agreed too for the second part, with a slighly different explanation :
+ - pxa_camera_remove_device() has been called as you said
+ - inside this function, check comment
+   "/* disable capture, disable interrupts */"
+   => this ensures no interrupt can be generated anymore
 
-I think it should be safe. In any case we cannot rely on the fact, that 
-free_irq() in the current code happens "soon" after pxa_free_dma(), so, 
-putting it even later will either emphasise our certainty, that we're safe 
-there, or help up catch the bug, since statistically the window will 
-become larger;-) Of course, all of clk_get(), request_mem_region() + 
-ioremap(), kzalloc(), request_irq() would have to be replaced.
+So after pxa_camera_remove_device() has been called, no interrupts can be
+generated.
 
-Thanks
-Guennadi
+Yet as you said, it leaves the "almost impossible" scenario :
+ - a user begins a capture
+ - the user closes the capture device and unloads pxa-camera.ko:
+     soc_camera_close()
+       pxa_camera_remove_device()
+         the IRQ line is asserted but doesn't trigger yet the interrupt handler
+         (yes I know, improbable)
+         meanwhile, IRQs are disabled, DMA channels are stopped
+     switch_to(rmmod)
+       => yes I know, impossible, the interrupt handler must be run before, but
+       let's continue for love of discussion ...
+     rmmod pxa-camera
+       pxa_camera_remove()
+         pxa_free_dma() * 3
+         ----> here the IRQ handler kicks in !!!
+               => pxa_camera_irq()
+                    pxa_dma_start_channels()
+         ----> it hurts !
 
-> > Speaking about managed allocations, those can be dangerous too: if you
-> > request an IRQ before, say, remapping memory, or if you only use managed
-> > IRQ requesting and ioremap() memory in your driver manually, that would be
-> > wrong. But from a quick grep looks like most (all?) drivers get ir right -
-> > first ioremap(), then request IRQ, but to be certain maybe coccinelle
-> > could run a test for that too;-)
-> 
-> Sure.  Thanks for the suggestion!
-> 
-> julia
-> 
-> > Thanks
-> > Guennadi
-> >
-> > > The semantic match that finds this problem is as follows:
-> > > (http://coccinelle.lip6.fr/)
-> > >
-> > > // <smpl>
-> > > @fn exists@
-> > > expression list es;
-> > > expression a,b;
-> > > identifier f;
-> > > @@
-> > >
-> > > if (...) {
-> > >   ... when any
-> > >   free_irq(a,b);
-> > >   ... when any
-> > >   f(es);
-> > >   ... when any
-> > >   return ...;
-> > > }
-> > >
-> > > @@
-> > > expression list fn.es;
-> > > expression fn.a,fn.b;
-> > > identifier fn.f;
-> > > @@
-> > >
-> > > *f(es);
-> > > ... when any
-> > > *free_irq(a,b);
-> > > // </smpl>
-> > >
-> > > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > >
-> > > ---
-> > > Not compiled.  I have not observed the problem in practice; the code just
-> > > looks suspicious.
-> > >
-> > >  drivers/media/platform/soc_camera/pxa_camera.c |    2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/media/platform/soc_camera/pxa_camera.c b/drivers/media/platform/soc_camera/pxa_camera.c
-> > > index f91f7bf..2a19aba 100644
-> > > --- a/drivers/media/platform/soc_camera/pxa_camera.c
-> > > +++ b/drivers/media/platform/soc_camera/pxa_camera.c
-> > > @@ -1810,10 +1810,10 @@ static int pxa_camera_remove(struct platform_device *pdev)
-> > >
-> > >  	clk_put(pcdev->clk);
-> > >
-> > > +	free_irq(pcdev->irq, pcdev);
-> > >  	pxa_free_dma(pcdev->dma_chans[0]);
-> > >  	pxa_free_dma(pcdev->dma_chans[1]);
-> > >  	pxa_free_dma(pcdev->dma_chans[2]);
-> > > -	free_irq(pcdev->irq, pcdev);
-> > >
-> > >  	soc_camera_host_unregister(soc_host);
-> > >
-> > >
-> >
-> > ---
-> > Guennadi Liakhovetski, Ph.D.
-> > Freelance Open-Source Software Developer
-> > http://www.open-technology.de/
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >
-> 
+My call is that this is impossible because the switch_to() should run the IRQ
+handler before pxa_camera_remove() is called.
 
----
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
+So all this to say that I think we're safe, unless a heavy ion or a cosmic ray
+strikes the PXA :)
+
+Cheers.
+
+--
+Robert
