@@ -1,57 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 Jan 2013 12:14:57 +0000
-Subject: [PATCH 14/15] drivers/infiniband/hw/mlx4/sysfs.c: adjust duplicate test
-Message-Id: <1358773378-4700-15-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 08 Jan 2013 18:18:54 +0000
+Subject: build regressions 2013-01-08
+Message-Id: <50ec630e.xKKYfuGlUHq52h9T%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <roland@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+drivers/gpu/drm/drm_mm.c:629:3: error: implicit declaration of function '__drm_mm_hole_node_end' [-Werror=implicit-function-declaration]
 
-Delete successive tests to the same location.  The code tested the result
-of a previous allocation, that itself was already tested.  It is changed to
-test the result of the most recent allocation.
+[warnings]
+drivers/scsi/mpt3sas/mpt3sas_scsih.c:5488:2: warning: 'query_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/scsi/mpt3sas/mpt3sas_scsih.c:5488:2: warning: 'termination_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/gpu/drm/i915/intel_display.c:5122:1: warning: control reaches end of non-void function [-Wreturn-type]
+drivers/net/wireless/ath/ath9k/mci.c:478:22: warning: unused variable 'buf' [-Wunused-variable]
+arch/x86/kvm/paging_tmpl.h:154:57: warning: unused variable 'shift' [-Wunused-variable]
+kernel/sched/fair.c:2121:13: warning: unused variable 'rq' [-Wunused-variable]
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+[sparse]
+net/sunrpc/xprt.c:1142:22: sparse: incorrect type in assignment (different address spaces)
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:101:5: sparse: symbol 'bnx2x_send_msg2pf' was not declared. Should it be static?
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:144:5: sparse: symbol 'bnx2x_get_vf_id' was not declared. Should it be static?
+drivers/staging/ft1000/ft1000-usb/ft1000_hw.c:857:5: sparse: symbol 'ft1000_reset' was not declared. Should it be static?
 
-// <smpl>
-@s exists@
-local idexpression y;
-expression x,e;
-@@
-
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
-    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[smatch]
+drivers/md/raid1.c:2861 run() warn: variable dereferenced before check 'mddev->queue' (see line 2823)
+drivers/md/raid10.c:3583 run() error: we previously assumed 'mddev->queue' could be null (see line 3572)
+drivers/md/raid10.c:3626 run() warn: variable dereferenced before check 'mddev->queue' (see line 3583)
 
 ---
- drivers/infiniband/hw/mlx4/sysfs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/sysfs.c b/drivers/infiniband/hw/mlx4/sysfs.c
-index 5b2a01d..97516eb 100644
---- a/drivers/infiniband/hw/mlx4/sysfs.c
-+++ b/drivers/infiniband/hw/mlx4/sysfs.c
-@@ -732,7 +732,7 @@ int mlx4_ib_device_register_sysfs(struct mlx4_ib_dev *dev)
- 	dev->ports_parent  		kobject_create_and_add("ports",
- 				       kobject_get(dev->iov_parent));
--	if (!dev->iov_parent) {
-+	if (!dev->ports_parent) {
- 		ret = -ENOMEM;
- 		goto err_ports;
- 	}
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
