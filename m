@@ -1,52 +1,31 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Date: Thu, 10 Jan 2013 19:05:20 +0000
-Subject: RE: Q: generic module{init,exit} boilerplate
-Message-Id: <ADE657CA350FB648AAC2C43247A983F00207A6CBA827@AUSP01VMBX24.collaborationhost.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 08 Jan 2013 13:42:14 +0000
+Subject: [patch] bnx2x: NULL dereference on error in debug code
+Message-Id: <20130108134213.GA23742@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <ADE657CA350FB648AAC2C43247A983F00207A6CBA7AB@AUSP01VMBX24.collaborationhost.net>
-In-Reply-To: <ADE657CA350FB648AAC2C43247A983F00207A6CBA7AB@AUSP01VMBX24.collaborationhost.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eilon Greenstein <eilong@broadcom.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thursday, January 10, 2013 11:58 AM, Julia Lawall wrote:
-> On Thu, 10 Jan 2013, Dan Carpenter wrote:
->
->> On Thu, Jan 10, 2013 at 11:12:43AM -0600, H Hartley Sweeten wrote:
->>> Hello all,
->>>
->>> There are a number of drivers/modules in the kernel that have
->>> a "do nothing" module init/exit of the form:
->>>
->>
->> Do you have a real life example?  Why would people do that?
->
-> I find 39 occurrences, although the first one I looked at had a big #if 0
-> in the module_init function.  Here are some examples:
->
-> drivers/media/common/saa7146/saa7146_fops.c
-> drivers/media/platform/soc_camera/soc_mediabus.c
-> drivers/tty/serial/suncore.c
->
-> There are also a bunch of comedi drivers.  Around half of the examples are
-> sound drivers, eg:
->
-> sound/synth/emux/emux.c
-> sound/synth/util_mem.c
-> sound/isa/sb/sb16_csp.c
+"vfop" is NULL here.  I've changed the debugging to not use it.
 
-Most of them appear to be in modules that provide exported functions for
-other drivers/modules. These modules do nothing by themselves so I guess
-they have the do nothing module_{init,exit} just because it's required since
-they can be modules.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Only needed in linux-next.
 
-That brings up the question...
-
-Do these types of helper modules actually require the module_{init,exit}?
-Would the module load properly without it? They don't _do_ anything other
-than EXPORT a number of symbols for other modules.
-
-Regards,
-Hartley
-
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
+index 71fcef0..3eef972 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
+@@ -463,8 +463,7 @@ static int bnx2x_vfop_qdtor_cmd(struct bnx2x *bp,
+ 		return bnx2x_vfop_transition(bp, vf, bnx2x_vfop_qdtor,
+ 					     cmd->block);
+ 	}
+-	DP(BNX2X_MSG_IOV, "VF[%d] failed to add a vfop. rc %d\n",
+-	   vf->abs_vfid, vfop->rc);
++	DP(BNX2X_MSG_IOV, "VF[%d] failed to add a vfop.\n", vf->abs_vfid);
+ 	return -ENOMEM;
+ }
+ 
