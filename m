@@ -1,62 +1,60 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Sun, 20 Jan 2013 16:03:53 +0000
-Subject: Re: [PATCH V2 05/24] radio/si470x/radio-si470x.h: use IS_ENABLED() macro
-Message-Id: <201301201703.53668.hverkuil@xs4all.nl>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Jan 2013 07:12:14 +0000
+Subject: [patch 2/2] staging: sb105x: clean up interface type test
+Message-Id: <20130109071214.GC2454@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com> <1358638891-4775-6-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-6-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun January 20 2013 00:41:12 Peter Senna Tschudin wrote:
-> replace:
->  #if defined(CONFIG_USB_SI470X) || \
->      defined(CONFIG_USB_SI470X_MODULE)
-> with:
->  #if IS_ENABLED(CONFIG_USB_SI470X)
-> 
-> This change was made for: CONFIG_USB_SI470X,
-> CONFIG_I2C_SI470X
-> 
-> Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+IIR_RS232 is zero so "if (IIR_RS232 = (b_ret & IIR_RS232))" is always
+true so RS232 was always chosen by default.  The test should be
+"if (0 = (b_ret & 0x30)) { ".  The other tests should also be in that
+format.
 
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+My patch doesn't change how the code works.  I've left the RS232 as the
+default and cleaned up the other checks.
 
-Regards,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	Hans
-
-> ---
-> Changes from V1:
->    Updated subject
-> 
->  drivers/media/radio/si470x/radio-si470x.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/radio/si470x/radio-si470x.h b/drivers/media/radio/si470x/radio-si470x.h
-> index 2f089b4..467e955 100644
-> --- a/drivers/media/radio/si470x/radio-si470x.h
-> +++ b/drivers/media/radio/si470x/radio-si470x.h
-> @@ -163,7 +163,7 @@ struct si470x_device {
->  	struct completion completion;
->  	bool status_rssi_auto_update;	/* Does RSSI get updated automatic? */
->  
-> -#if defined(CONFIG_USB_SI470X) || defined(CONFIG_USB_SI470X_MODULE)
-> +#if IS_ENABLED(CONFIG_USB_SI470X)
->  	/* reference to USB and video device */
->  	struct usb_device *usbdev;
->  	struct usb_interface *intf;
-> @@ -179,7 +179,7 @@ struct si470x_device {
->  	unsigned char hardware_version;
->  #endif
->  
-> -#if defined(CONFIG_I2C_SI470X) || defined(CONFIG_I2C_SI470X_MODULE)
-> +#if IS_ENABLED(CONFIG_I2C_SI470X)
->  	struct i2c_client *client;
->  #endif
->  };
-> 
+diff --git a/drivers/staging/sb105x/sb_mp_register.h b/drivers/staging/sb105x/sb_mp_register.h
+index 5480ae1..a2087f5 100644
+--- a/drivers/staging/sb105x/sb_mp_register.h
++++ b/drivers/staging/sb105x/sb_mp_register.h
+@@ -45,7 +45,7 @@
+ #define IIR_RS232		0x00		/* RS232 type */
+ #define IIR_RS422		0x10		/* RS422 type */
+ #define IIR_RS485		0x20		/* RS485 type */
+-#define IIR_UNKNOWN		0x30		/* unknown type */
++#define IIR_TYPE_MASK		0x30
+ 
+ /* Interrrupt Mask Register */
+ #define MP_OPTR_IMR0		0x0C 	/* port0 ~ port8 */
+diff --git a/drivers/staging/sb105x/sb_pci_mp.c b/drivers/staging/sb105x/sb_pci_mp.c
+index 131afd0c..3da44df 100644
+--- a/drivers/staging/sb105x/sb_pci_mp.c
++++ b/drivers/staging/sb105x/sb_pci_mp.c
+@@ -2851,18 +2851,12 @@ static void __init multi_init_ports(void)
+ 				printk("IIR_RET = %x\n",b_ret);
+ 			}
+ 
+-			if(IIR_RS232 = (b_ret & IIR_RS232))
+-			{
+-				mtpt->interface = RS232;
+-			}
+-			if(IIR_RS422 = (b_ret & IIR_RS422))
+-			{
++			/* default to RS232 */
++			mtpt->interface = RS232;
++			if (IIR_RS422 = (b_ret & IIR_TYPE_MASK))
+ 				mtpt->interface = RS422PTP;
+-			}
+-			if(IIR_RS485 = (b_ret & IIR_RS485))
+-			{
++			if (IIR_RS485 = (b_ret & IIR_TYPE_MASK))
+ 				mtpt->interface = RS485NE;
+-			}
+ 		}
+ 	}
+ }
