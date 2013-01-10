@@ -1,77 +1,37 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 17 Jan 2013 19:03:15 +0000
-Subject: Re: [patch] b43: N-PHY: fix gain in b43_nphy_get_gain_ctl_workaround_ent()
-Message-Id: <50F84AF3.5070901@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Jan 2013 19:32:07 +0000
+Subject: re: VMCI: guest side driver implementation.
+Message-Id: <20130110193207.GA17997@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130113200309.GB5907@elgon.mountain> <20130114200417.GC12018@tuxdriver.com>
-In-Reply-To: <20130114200417.GC12018@tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Stefano Brivio <stefano.brivio@polimi.it>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Hello George Zhang,
 
+The patch 1f166439917b: "VMCI: guest side driver implementation." 
+from Jan 8, 2013, leads to the following warning:
+drivers/misc/vmw_vmci/vmci_guest.c:89 vmci_get_vm_context_id()
+	 warn: always true condition '(result >= 0) => (0-u32max >= 0)'
 
-Am 14.01.2013 21:04, schrieb John W. Linville:
-> On Sun, Jan 13, 2013 at 11:03:09PM +0300, Dan Carpenter wrote:
->> There were no break statements in this switch statement so everything
->> used the default settings.
+drivers/misc/vmw_vmci/vmci_guest.c
+    78  u32 vmci_get_vm_context_id(void)
+    79  {
+    80          if (vm_context_id = VMCI_INVALID_ID) {
+    81                  u32 result;
+    82                  struct vmci_datagram get_cid_msg;
+    83                  get_cid_msg.dst     84                      vmci_make_handle(VMCI_HYPERVISOR_CONTEXT_ID,
+    85                                       VMCI_GET_CONTEXT_ID);
+    86                  get_cid_msg.src = VMCI_ANON_SRC_HANDLE;
+    87                  get_cid_msg.payload_size = 0;
+    88                  result = vmci_send_datagram(&get_cid_msg);
+    89                  if (result >= 0)
+                            ^^^^^^^^^^^
+Always true because result is an unsigned int.
 
-great :)
+    90                          vm_context_id = result;
 
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
->> Static checker stuff.  Untested.
->>
->> diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
->> index 97d4e27..6a1c838 100644
->> --- a/drivers/net/wireless/b43/tables_nphy.c
->> +++ b/drivers/net/wireless/b43/tables_nphy.c
->> @@ -3259,20 +3259,28 @@ struct nphy_gain_ctl_workaround_entry *b43_nphy_get_gain_ctl_workaround_ent(
->>  		switch (tr_iso) {
->>  		case 0:
->>  			e->cliplo_gain = 0x0062;
->> +			break;
->>  		case 1:
->>  			e->cliplo_gain = 0x0064;
->> +			break;
->>  		case 2:
->>  			e->cliplo_gain = 0x006a;
->> +			break;
->>  		case 3:
->>  			e->cliplo_gain = 0x106a;
->> +			break;
->>  		case 4:
->>  			e->cliplo_gain = 0x106c;
->> +			break;
->>  		case 5:
->>  			e->cliplo_gain = 0x1074;
->> +			break;
->>  		case 6:
->>  			e->cliplo_gain = 0x107c;
->> +			break;
->>  		case 7:
->>  			e->cliplo_gain = 0x207c;
->> +			break;
->>  		default:
->>  			e->cliplo_gain = 0x106a;
->>  		}
-> 
-> Wow...nice find!
-> 
-> This seems like it could be significant.  Any comments from the
-> b43 folks?  Should this go to 3.8?
-> 
+regards,
+dan carpenter
 
-perhaps an array would be more simple here ?
-
-
-if (tr_iso > 7 )
- e->cliplo_gain = 0x106a;
-{
- int data[]={0x0062,0x0064,0x006a,0x106a,0x106c,0x1074,0x107c,0x207c};
-  e->cliplo_gain = data[tr_iso];
-
-}
