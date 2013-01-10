@@ -1,36 +1,24 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Date: Thu, 10 Jan 2013 17:12:43 +0000
-Subject: Q: generic module{init,exit} boilerplate
-Message-Id: <ADE657CA350FB648AAC2C43247A983F00207A6CBA7AB@AUSP01VMBX24.collaborationhost.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Jan 2013 18:41:23 +0000
+Subject: Re: Q: generic module{init,exit} boilerplate
+Message-Id: <20130110184123.GV7247@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ADE657CA350FB648AAC2C43247A983F00207A6CBA7AB@AUSP01VMBX24.collaborationhost.net>
+In-Reply-To: <ADE657CA350FB648AAC2C43247A983F00207A6CBA7AB@AUSP01VMBX24.collaborationhost.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello all,
+On Thu, Jan 10, 2013 at 11:12:43AM -0600, H Hartley Sweeten wrote:
+> Hello all,
+> 
+> There are a number of drivers/modules in the kernel that have
+> a "do nothing" module init/exit of the form:
+> 
 
-There are a number of drivers/modules in the kernel that have
-a "do nothing" module init/exit of the form:
+Do you have a real life example?  Why would people do that?
 
-static int __init foo_init(void)
-{
-	return 0;
-}
-module_init(foo_init);
-
-static void __exit foo_exit(void)
-{
-}
-module_exit(foo_exit);
-
-Is it worth creating a generic helper macro to handle this boilerplate?
-Something along the lines of the module_driver() macro. Each use would
-replace about 10 lines-of-code with a single line.
-
-If so what would be a good name for the macro and what header would
-be the appropriate place for it to reside?
-
-Thanks for any replies!
-Hartley
+regards,
+dan carpenter
 
