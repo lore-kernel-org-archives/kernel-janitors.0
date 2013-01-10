@@ -1,22 +1,29 @@
-From: "David Laight" <David.Laight@ACULAB.COM>
-Date: Fri, 18 Jan 2013 13:53:43 +0000
-Subject: RE: [patch v2] b43: N-PHY: fix gain in b43_nphy_get_gain_ctl_workaround_ent()
-Message-Id: <AE90C24D6B3A694183C094C60CF0A2F6026B7118@saturn3.aculab.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Jan 2013 09:06:20 +0000
+Subject: [patch] [SCSI] bfa: fix strncpy() limiter in bfad_start_ops()
+Message-Id: <20130110090620.GE23063@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50F84AF3.5070901@bfs.de> <20130118133658.GA31186@elgon.mountain>
-In-Reply-To: <20130118133658.GA31186@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Stefano Brivio <stefano.brivio@polimi.it>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anil Gurumurthy <agurumur@brocade.com>
+Cc: Vijaya Mohan Guvva <vmohan@brocade.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> +		int gain_data[] = {0x0062, 0x0064, 0x006a, 0x106a, 0x106c,
-> +				   0x1074, 0x107c, 0x207c};
+The closing parenthesis is in the wrong place so it takes the sizeof a
+pointer instead of the sizeof the buffer minus one.
 
-static const int ...
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	David
-
-
-
+diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
+index e6bf126..a5f7690 100644
+--- a/drivers/scsi/bfa/bfad.c
++++ b/drivers/scsi/bfa/bfad.c
+@@ -1034,7 +1034,7 @@ bfad_start_ops(struct bfad_s *bfad) {
+ 			sizeof(driver_info.host_os_patch) - 1);
+ 
+ 	strncpy(driver_info.os_device_name, bfad->pci_name,
+-		sizeof(driver_info.os_device_name - 1));
++		sizeof(driver_info.os_device_name) - 1);
+ 
+ 	/* FCS driver info init */
+ 	spin_lock_irqsave(&bfad->bfad_lock, flags);
