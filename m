@@ -1,29 +1,31 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 21 Jan 2013 12:59:57 +0000
-Subject: Re: [PATCH 3/15] drivers/staging/omap-thermal/omap-bandgap.c: adjust duplicate test
-Message-Id: <alpine.DEB.2.02.1301211359270.1930@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Jan 2013 08:58:07 +0000
+Subject: [patch] bnx2x: move debugging code before the return
+Message-Id: <20130110085807.GB23063@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358773378-4700-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358773378-4700-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eilon Greenstein <eilong@broadcom.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> >  	tsr = bg_ptr->conf->sensors[id].registers;
-> >  	time = omap_bandgap_readl(bg_ptr, tsr->bgap_counter);
-> > -	if (ret)
-> > -		return ret;
-> >  	time = (time & tsr->counter_mask) >> __ffs(tsr->counter_mask);
-> >  	time = time * 1000 / bg_ptr->clk_rate;
-> >
->
-> since * and / have the same priority
->   (time*1000)/bg_ptr->clk_rate
-> may be better
->
-> just to serve my paranoia
+I move the return down a line after the debugging printk.
 
-OK, I can do that, but maybe not in the same patch?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-julia
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+index 292634f..d7029c8 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+@@ -2768,10 +2768,10 @@ static int bnx2x_set_rss_flags(struct bnx2x *bp, struct ethtool_rxnfc *info)
+ 		} else if ((info->flow_type = UDP_V6_FLOW) &&
+ 			   (bp->rss_conf_obj.udp_rss_v6 != udp_rss_requested)) {
+ 			bp->rss_conf_obj.udp_rss_v6 = udp_rss_requested;
+-			return bnx2x_config_rss_pf(bp, &bp->rss_conf_obj, 0);
+ 			DP(BNX2X_MSG_ETHTOOL,
+ 			   "rss re-configured, UDP 4-tupple %s\n",
+ 			   udp_rss_requested ? "enabled" : "disabled");
++			return bnx2x_config_rss_pf(bp, &bp->rss_conf_obj, 0);
+ 		} else {
+ 			return 0;
+ 		}
