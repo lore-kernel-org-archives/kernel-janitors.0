@@ -1,61 +1,32 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 16:33:19 +0000
-Subject: [PATCH 17/24] use IS_ENABLED() macro
-Message-Id: <1358613206-4274-16-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Jan 2013 09:00:57 +0000
+Subject: [patch] [media] staging: go7007: print the audio input type
+Message-Id: <20130110090057.GD23063@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hdegoede@redhat.com
-Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: YAMANE Toshiaki <yamanetoshi@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-replace:
- #if defined(CONFIG_INPUT) || \
-     defined(CONFIG_INPUT_MODULE)
-with:
- #if IS_ENABLED(CONFIG_INPUT)
+Smatch complains that the "Audio input:" printk isn't reachable.  Hiding
+the "return 0;" behind another statement is a style violation.
 
-This change was made for: CONFIG_INPUT
+It looks like audio_input is normally configured so I've enabled the
+print statement.
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
- drivers/media/usb/gspca/spca561.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/usb/gspca/spca561.c b/drivers/media/usb/gspca/spca561.c
-index cfe71dd..d1db3d8 100644
---- a/drivers/media/usb/gspca/spca561.c
-+++ b/drivers/media/usb/gspca/spca561.c
-@@ -741,7 +741,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
- 			return;
- 		}
- 
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 		if (data[0] & 0x20) {
- 			input_report_key(gspca_dev->input_dev, KEY_CAMERA, 1);
- 			input_sync(gspca_dev->input_dev);
-@@ -866,7 +866,7 @@ static const struct sd_desc sd_desc_12a = {
- 	.start = sd_start_12a,
- 	.stopN = sd_stopN,
- 	.pkt_scan = sd_pkt_scan,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.other_input = 1,
- #endif
- };
-@@ -879,7 +879,7 @@ static const struct sd_desc sd_desc_72a = {
- 	.stopN = sd_stopN,
- 	.pkt_scan = sd_pkt_scan,
- 	.dq_callback = do_autogain,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.other_input = 1,
- #endif
- };
--- 
-1.7.11.7
-
+diff --git a/drivers/staging/media/go7007/s2250-board.c b/drivers/staging/media/go7007/s2250-board.c
+index d60e065..37400bf 100644
+--- a/drivers/staging/media/go7007/s2250-board.c
++++ b/drivers/staging/media/go7007/s2250-board.c
+@@ -534,7 +534,7 @@ static int s2250_log_status(struct v4l2_subdev *sd)
+ 	v4l2_info(sd, "Brightness: %d\n", state->brightness);
+ 	v4l2_info(sd, "Contrast: %d\n", state->contrast);
+ 	v4l2_info(sd, "Saturation: %d\n", state->saturation);
+-	v4l2_info(sd, "Hue: %d\n", state->hue);	return 0;
++	v4l2_info(sd, "Hue: %d\n", state->hue);
+ 	v4l2_info(sd, "Audio input: %s\n", state->audio_input = 0 ? "Line In" :
+ 					state->audio_input = 1 ? "Mic" :
+ 					state->audio_input = 2 ? "Mic Boost" :
