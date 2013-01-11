@@ -1,69 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Jan 2013 06:42:59 +0000
-Subject: [patch 2/2] video/kyro: some potential divide by zero bugs
-Message-Id: <20130125064259.GD4882@elgon.mountain>
+Date: Fri, 11 Jan 2013 06:48:41 +0000
+Subject: [patch] [media] cx231xx: add a missing break statement
+Message-Id: <20130111064841.GB13207@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, Hans de Goede <hdegoede@redhat.com>, Sakari Ailus <sakari.ailus@iki.fi>, Jesper Juhl <jj@chaosbits.net>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-These values come from the user in kyrofb_ioctl().  There are a couple
-potential divide by zero problems and I have added tests for them.
-There were a couple tests to prevent divide by zero bugs already in the
-code that I moved next to the assignments.
+My static checker complains about the fall through here.  From the
+context it looks like we should add a break statement.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Untested.
 
-diff --git a/drivers/video/kyro/STG4000OverlayDevice.c b/drivers/video/kyro/STG4000OverlayDevice.c
-index 84b6ea8..d03a1e4 100644
---- a/drivers/video/kyro/STG4000OverlayDevice.c
-+++ b/drivers/video/kyro/STG4000OverlayDevice.c
-@@ -365,15 +365,18 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
- 	ulSrcBottom = srcDest.ulSrcY2;
- 
- 	ulSrc = ulSrcBottom - ulSrcTop;
--	ulDest = srcDest.lDstY2 - srcDest.lDstY1;	/* on-screen overlay */
--
- 	if (ulSrc <= 1)
- 		return -EINVAL;
-+	ulDest = srcDest.lDstY2 - srcDest.lDstY1;	/* on-screen overlay */
-+	if (ulDest = -1)
-+		return -EINVAL;
- 
- 	/* First work out the position we are to display as offset from the
- 	 * source of the buffer
- 	 */
- 	ulFxScale = (ulDest << 11) / ulSrc;	/* fixed point scale factor */
-+	if (ulFxScale = 0)
-+		return -EINVAL;
- 	ulFxOffset = (srcDest.lDstY2 - srcDest.ulDstY2) << 11;
- 
- 	ulSrcBottom = ulSrcBottom - (ulFxOffset / ulFxScale);
-@@ -430,6 +433,8 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
- 	 */
- 	ulSrc = srcDest.ulSrcX2 - srcDest.ulSrcX1;
- 	ulDest = srcDest.lDstX2 - srcDest.lDstX1;
-+	if (ulDest = 0)
-+		return -EINVAL;
- 
- 	if (srcDest.ulDstX1 > 2) {
- 		ulLeft = srcDest.ulDstX1 + 2;
-@@ -438,14 +443,14 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
- 		ulLeft = srcDest.ulDstX1;
- 		ulRight = srcDest.ulDstX2 + 1;
- 	}
-+	if (ulRight - ulLeft + 2 = 0)
-+		return -EINVAL;
-+
- 
- 	/* first work out the position we are to display as offset from the source of the buffer */
- 	bResult = 1;
- 
- 	do {
--		if (ulDest = 0)
--			return -EINVAL;
--
- 		/* source pixels per dest pixel <<11 */
- 		ulFxScale = ((ulSrc - 1) << 11) / (ulDest);
- 
+diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
+index 93dfc18..06376d9 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-video.c
++++ b/drivers/media/usb/cx231xx/cx231xx-video.c
+@@ -1751,6 +1751,7 @@ static int vidioc_s_register(struct file *file, void *priv,
+ 							0x02,
+ 							(u16)reg->reg, 1,
+ 							value, 1, 2);
++					break;
+ 			case 0x322:
+ 					ret  						cx231xx_write_i2c_master(dev,
