@@ -1,28 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Jan 2013 06:52:44 +0000
-Subject: [patch] dac960: return success instead of -ENOTTY
-Message-Id: <20130111065244.GD13207@elgon.mountain>
+From: Jens Axboe <axboe@kernel.dk>
+Date: Fri, 11 Jan 2013 10:27:56 +0000
+Subject: Re: [patch] dac960: return success instead of -ENOTTY
+Message-Id: <50EFE92C.4080209@kernel.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130111065244.GD13207@elgon.mountain>
+In-Reply-To: <20130111065244.GD13207@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jens Axboe <axboe@kernel.dk>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Danny Kukawka <danny.kukawka@bisect.de>, Jesper Juhl <jj@chaosbits.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is a missing break statement here.  This used to return directly
-but we re-worked it in 2008 to add locking as part of the BKL push down.
+On 2013-01-11 07:52, Dan Carpenter wrote:
+> There is a missing break statement here.  This used to return directly
+> but we re-worked it in 2008 to add locking as part of the BKL push down.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thanks Dan, applied. Must have a big user base...
 
-diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
-index 9a13e88..0d3ffc5 100644
---- a/drivers/block/DAC960.c
-+++ b/drivers/block/DAC960.c
-@@ -7054,6 +7054,7 @@ static long DAC960_gam_ioctl(struct file *file, unsigned int Request,
- 	else
- 		ErrorCode =  0;
-       }
-+      break;
-       default:
- 	ErrorCode = -ENOTTY;
-     }
+-- 
+Jens Axboe
+
