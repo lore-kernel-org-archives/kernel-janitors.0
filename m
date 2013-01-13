@@ -1,26 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 18 Jan 2013 19:35:22 +0000
-Subject: Re: [patch] enic: change sprintf() to snprintf()
-Message-Id: <20130118.143522.943294381617599481.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 13 Jan 2013 20:03:09 +0000
+Subject: [patch] b43: N-PHY: fix gain in b43_nphy_get_gain_ctl_workaround_ent()
+Message-Id: <20130113200309.GB5907@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130118074618.GC31793@elgon.mountain>
-In-Reply-To: <20130118074618.GC31793@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: benve@cisco.com, roprabhu@cisco.com, neepatel@cisco.com, nistrive@cisco.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Stefano Brivio <stefano.brivio@polimi.it>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 18 Jan 2013 10:46:18 +0300
+There were no break statements in this switch statement so everything
+used the default settings.
 
-> These are copying data into 16 char arrays.  They all specify that the
-> first string can't be more than 11 characters but once you add on the
-> "-rx-" and the NUL character there isn't space for the %d.
-> 
-> The first string is probably never going to be 11 characters, but if it
-> is then let's truncate the string instead of corrupting memory.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Untested.
 
-Applied to net-next, thanks.
+diff --git a/drivers/net/wireless/b43/tables_nphy.c b/drivers/net/wireless/b43/tables_nphy.c
+index 97d4e27..6a1c838 100644
+--- a/drivers/net/wireless/b43/tables_nphy.c
++++ b/drivers/net/wireless/b43/tables_nphy.c
+@@ -3259,20 +3259,28 @@ struct nphy_gain_ctl_workaround_entry *b43_nphy_get_gain_ctl_workaround_ent(
+ 		switch (tr_iso) {
+ 		case 0:
+ 			e->cliplo_gain = 0x0062;
++			break;
+ 		case 1:
+ 			e->cliplo_gain = 0x0064;
++			break;
+ 		case 2:
+ 			e->cliplo_gain = 0x006a;
++			break;
+ 		case 3:
+ 			e->cliplo_gain = 0x106a;
++			break;
+ 		case 4:
+ 			e->cliplo_gain = 0x106c;
++			break;
+ 		case 5:
+ 			e->cliplo_gain = 0x1074;
++			break;
+ 		case 6:
+ 			e->cliplo_gain = 0x107c;
++			break;
+ 		case 7:
+ 			e->cliplo_gain = 0x207c;
++			break;
+ 		default:
+ 			e->cliplo_gain = 0x106a;
+ 		}
