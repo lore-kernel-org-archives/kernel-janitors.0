@@ -1,49 +1,30 @@
-From: Jeff Liu <jeff.liu@oracle.com>
-Date: Thu, 10 Jan 2013 09:21:09 +0000
-Subject: Re: [patch] Btrfs: fix access_ok() check in btrfs_ioctl_send()
-Message-Id: <50EE8805.6000601@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 13 Jan 2013 20:05:05 +0000
+Subject: [patch] Staging: comedi: add a missing break statement
+Message-Id: <20130113200504.GD5907@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130110085725.GA23063@elgon.mountain>
-In-Reply-To: <20130110085725.GA23063@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Mason <chris.mason@fusionio.com>, Alexander Block <ablock84@googlemail.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 01/10/2013 04:57 PM, Dan Carpenter wrote:
-> The closing parenthesis is in the wrong place.  We want to check
-> "sizeof(*arg->clone_sources) * arg->clone_sources_count" instead of
-> "sizeof(*arg->clone_sources * arg->clone_sources_count)".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is also vulnerable to integer overflows.  It's only done under
-> root, but these days we are trying to restrict what root can do without
-> configuring Secure Boot in UEFI.
-> 
-> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> index 5445454..4be3832 100644
-> --- a/fs/btrfs/send.c
-> +++ b/fs/btrfs/send.c
-> @@ -4553,8 +4553,8 @@ long btrfs_ioctl_send(struct file *mnt_file, void __user *arg_)
->  	}
->  
->  	if (!access_ok(VERIFY_READ, arg->clone_sources,
-> -			sizeof(*arg->clone_sources *
-> -			arg->clone_sources_count))) {
-> +			sizeof(*arg->clone_sources) *
-> +			arg->clone_sources_count)) {
->  		ret = -EFAULT;
->  		goto out;
->  	}
-Reviewed-by: Jie Liu <jeff.liu@oracle.com>
+This is a static checker fix.  From the context it looks like there
+should be a break here.
 
-Thanks,
--Jeff
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Please review this carefully.  I think it's probably correct, but I'd
+appreciate an Ack from someone who knows comedi better.
 
+diff --git a/drivers/staging/comedi/drivers/ni_tiocmd.c b/drivers/staging/comedi/drivers/ni_tiocmd.c
+index 0c991b9..13747f3 100644
+--- a/drivers/staging/comedi/drivers/ni_tiocmd.c
++++ b/drivers/staging/comedi/drivers/ni_tiocmd.c
+@@ -159,6 +159,7 @@ static int ni_tio_input_cmd(struct ni_gpct *counter, struct comedi_async *async)
+ 		async->inttrig = NULL;
+ 		mite_dma_arm(counter->mite_chan);
+ 		retval = ni_tio_arm(counter, 1, cmd->start_arg);
++		break;
+ 	case TRIG_OTHER:
+ 		async->inttrig = NULL;
+ 		mite_dma_arm(counter->mite_chan);
