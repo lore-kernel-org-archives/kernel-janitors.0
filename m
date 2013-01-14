@@ -1,70 +1,34 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 16:33:22 +0000
-Subject: [PATCH 20/24] use IS_ENABLED() macro
-Message-Id: <1358613206-4274-19-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 14 Jan 2013 02:43:00 +0000
+Subject: build regressions 2013-01-13
+Message-Id: <50f370b4.L2QNZajCjFfAXCCX%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hdegoede@redhat.com
-Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-replace:
- #if defined(CONFIG_INPUT) || \
-     defined(CONFIG_INPUT_MODULE)
-with:
- #if IS_ENABLED(CONFIG_INPUT)
+[warnings]
+arch/x86/kernel/cpu/intel_cacheinfo.c:519:27: warning: 'cache_disable_0' defined but not used [-Wunused-variable]
+arch/x86/kernel/cpu/intel_cacheinfo.c:521:27: warning: 'cache_disable_1' defined but not used [-Wunused-variable]
+arch/x86/kernel/cpu/intel_cacheinfo.c:618:29: warning: 'this_leaf.size' may be used uninitialized in this function [-Wmaybe-uninitialized]
+arch/x86/kernel/cpu/intel_cacheinfo.c:619:30: warning: 'this_leaf.eax.split.num_threads_sharing' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/char/rtc.c:192:22: warning: 'rtc_freq' defined but not used [-Wunused-variable]
+arch/x86/kernel/cpu/intel_cacheinfo.c:560:27: warning: 'subcaches' defined but not used [-Wunused-variable]
+warning: (BRIDGE_NF_EBTABLES) selects NETFILTER_XTABLES which has unmet direct dependencies (NET && INET && NETFILTER)
+drivers/regulator/tps62360-regulator.c:376:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/base/regmap/regmap-debugfs.c:147:9: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+net/ipv4/route.c:120:12: warning: 'ip_rt_gc_timeout' defined but not used [-Wunused-variable]
+net/ipv4/route.c:121:12: warning: 'ip_rt_gc_interval' defined but not used [-Wunused-variable]
+net/ipv4/route.c:122:12: warning: 'ip_rt_gc_min_interval' defined but not used [-Wunused-variable]
+net/ipv4/route.c:128:12: warning: 'ip_rt_gc_elasticity' defined but not used [-Wunused-variable]
+drivers/mfd/twl6030-irq.c:398:24: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/regulator/tps62360-regulator.c:364:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+fs/fuse/cuse.c:286:24: warning: 'val' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/fuse/cuse.c:282:10: warning: 'key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/mfd/wm8994-core.c:568:7: warning: 'patch_regs' may be used uninitialized in this function [-Wmaybe-uninitialized]
+warning: (DLM) selects IP_SCTP which has unmet direct dependencies (NET && INET && EXPERIMENTAL && (IPV6 || IPV6=n))
 
-This change was made for: CONFIG_INPUT
-
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/media/usb/gspca/xirlink_cit.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/usb/gspca/xirlink_cit.c b/drivers/media/usb/gspca/xirlink_cit.c
-index d4b23c9..7eaf64e 100644
---- a/drivers/media/usb/gspca/xirlink_cit.c
-+++ b/drivers/media/usb/gspca/xirlink_cit.c
-@@ -2759,7 +2759,7 @@ static void sd_stop0(struct gspca_dev *gspca_dev)
- 		break;
- 	}
- 
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	/* If the last button state is pressed, release it now! */
- 	if (sd->button_state) {
- 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, 0);
-@@ -2914,7 +2914,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
- 	gspca_frame_add(gspca_dev, INTER_PACKET, data, len);
- }
- 
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- static void cit_check_button(struct gspca_dev *gspca_dev)
- {
- 	int new_button_state;
-@@ -3062,7 +3062,7 @@ static const struct sd_desc sd_desc = {
- 	.stopN = sd_stopN,
- 	.stop0 = sd_stop0,
- 	.pkt_scan = sd_pkt_scan,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.dq_callback = cit_check_button,
- 	.other_input = 1,
- #endif
-@@ -3079,7 +3079,7 @@ static const struct sd_desc sd_desc_isoc_nego = {
- 	.stopN = sd_stopN,
- 	.stop0 = sd_stop0,
- 	.pkt_scan = sd_pkt_scan,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.dq_callback = cit_check_button,
- 	.other_input = 1,
- #endif
--- 
-1.7.11.7
-
+0-DAY kernel build testing backend         Open Source Technology Center
+Fengguang Wu, Yuanhan Liu                              Intel Corporation
