@@ -1,83 +1,32 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:10 +0000
-Subject: [PATCH V2 03/24] pci/ttpci/av7110.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-4-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 15 Jan 2013 17:11:39 +0000
+Subject: build regressions 2013-01-15
+Message-Id: <50f58dcb.w05/tXXoZ2jllPe4%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@redhat.com
-Cc: schulz@macnetix.de, dhowells@redhat.com, peter.senna@gmail.com, mkrufky@linuxtv.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-replace:
- #if defined(CONFIG_INPUT_EVDEV) || \
-     defined(CONFIG_INPUT_EVDEV_MODULE)
-with:
- #if IS_ENABLED(CONFIG_INPUT_EVDEV)
+[errors]
+drivers/mmc/core/slot-gpio.c:123:2: error: implicit declaration of function 'devm_gpio_request_one' [-Werror=implicit-function-declaration]
+drivers/mmc/core/slot-gpio.c:216:2: error: implicit declaration of function 'devm_gpio_free' [-Werror=implicit-function-declaration]
+initramfs.c:(.init.text+0x32ab): undefined reference to `__initramfs_size'
+initramfs.c:(.init.text+0x228c): undefined reference to `__initramfs_size'
+security/keys/Kconfig:5:error: recursive dependency detected!
 
-This change was made for: CONFIG_INPUT_EVDEV,
-CONFIG_DVB_SP8870
+[warnings]
+sound/pci/hda/patch_sigmatel.c:2219:24: warning: unused variable 'spec' [-Wunused-variable]
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+[sparse]
+drivers/ata/libata-core.c:102:10: sparse: symbol 'host_print_id' was not declared. Should it be static?
+drivers/nfc/pn533.c:488:24: sparse: symbol 'pn533_std_frame_ops' was not declared. Should it be static?
+sound/pci/hda/patch_sigmatel.c:2260:26: sparse: obsolete array initializer, use C99 syntax
+drivers/mmc/host/sdhci.c:2475:6: sparse: symbol 'sdhci_disable_irq_wakeups' was not declared. Should it be static?
+
+[smatch]
+drivers/ata/libata-core.c:2332 ata_dev_configure() warn: 'sata_setting' puts 512 bytes on stack
+
 ---
-Changes from V1:
-   Updated subject
-
- drivers/media/pci/ttpci/av7110.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/pci/ttpci/av7110.c b/drivers/media/pci/ttpci/av7110.c
-index 2f54e2b..fc9e7e5 100644
---- a/drivers/media/pci/ttpci/av7110.c
-+++ b/drivers/media/pci/ttpci/av7110.c
-@@ -235,7 +235,7 @@ static void recover_arm(struct av7110 *av7110)
- 
- 	restart_feeds(av7110);
- 
--#if defined(CONFIG_INPUT_EVDEV) || defined(CONFIG_INPUT_EVDEV_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT_EVDEV)
- 	av7110_check_ir_config(av7110, true);
- #endif
- }
-@@ -268,7 +268,7 @@ static int arm_thread(void *data)
- 		if (!av7110->arm_ready)
- 			continue;
- 
--#if defined(CONFIG_INPUT_EVDEV) || defined(CONFIG_INPUT_EVDEV_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT_EVDEV)
- 		av7110_check_ir_config(av7110, false);
- #endif
- 
-@@ -1730,7 +1730,7 @@ static int alps_tdlb7_tuner_set_params(struct dvb_frontend *fe)
- 
- static int alps_tdlb7_request_firmware(struct dvb_frontend* fe, const struct firmware **fw, char* name)
- {
--#if defined(CONFIG_DVB_SP8870) || defined(CONFIG_DVB_SP8870_MODULE)
-+#if IS_ENABLED(CONFIG_DVB_SP8870)
- 	struct av7110* av7110 = fe->dvb->priv;
- 
- 	return request_firmware(fw, name, &av7110->dev->pci->dev);
-@@ -2725,7 +2725,7 @@ static int __devinit av7110_attach(struct saa7146_dev* dev,
- 
- 	mutex_init(&av7110->ioctl_mutex);
- 
--#if defined(CONFIG_INPUT_EVDEV) || defined(CONFIG_INPUT_EVDEV_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT_EVDEV)
- 	av7110_ir_init(av7110);
- #endif
- 	printk(KERN_INFO "dvb-ttpci: found av7110-%d.\n", av7110_num);
-@@ -2768,7 +2768,7 @@ static int __devexit av7110_detach(struct saa7146_dev* saa)
- 	struct av7110 *av7110 = saa->ext_priv;
- 	dprintk(4, "%p\n", av7110);
- 
--#if defined(CONFIG_INPUT_EVDEV) || defined(CONFIG_INPUT_EVDEV_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT_EVDEV)
- 	av7110_ir_exit(av7110);
- #endif
- 	if (budgetpatch || av7110->full_ts) {
--- 
-1.7.11.7
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
