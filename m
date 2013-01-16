@@ -1,395 +1,167 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 22 Jan 2013 10:29:59 +0000
-Subject: [PATCH] crypto: use ERR_CAST
-Message-Id: <1358854166-3952-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 16 Jan 2013 17:10:28 +0000
+Subject: build regressions 2013-01-16
+Message-Id: <50f6df04.DUVgeJedc7iUUo1s%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358854166-3952-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358854166-3952-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+arch/arm/mach-vexpress/reset.c:116:3: error: 'pm_restart' undeclared (first use in this function)
+drivers/gpio/gpio-lynxpoint.c:298:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'lp_gpio_probe'
+drivers/gpio/gpio-lynxpoint.c:380:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'lp_gpio_remove'
+drivers/gpio/gpio-lynxpoint.c:392:20: error: 'lp_gpio_probe' undeclared here (not in a function)
+drivers/gpio/gpio-lynxpoint.c:393:2: error: implicit declaration of function '__devexit_p' [-Werror=implicit-function-declaration]
+drivers/gpio/gpio-lynxpoint.c:393:32: error: 'lp_gpio_remove' undeclared here (not in a function)
+perf_event_intel_uncore.c:(.text+0xf4b9): undefined reference to `snbep_uncore_cbox'
+perf_event_intel_uncore.c:(.text+0xf4de): undefined reference to `snbep_uncore_pcu'
+perf_event_intel_uncore.c:(.text+0xfc7c): undefined reference to `nhmex_uncore_mbox_extra_regs'
+perf_event_intel_uncore.c:(.text+0xff5d): undefined reference to `uncore_nhmex'
+perf_event_intel_uncore.c:(.text+0x10112): undefined reference to `constraint_empty'
+perf_event_intel_uncore.c:(.text+0x10597): undefined reference to `uncore_cpu_mask'
+perf_event_intel_uncore.c:(.text+0x10664): undefined reference to `constraint_fixed'
+perf_event_intel_uncore.c:(.init.text+0x4efb): undefined reference to `uncore_pmu_event_init'
+perf_event_intel_uncore.c:(.init.text+0x4f02): undefined reference to `uncore_pmu_event_add'
+perf_event_intel_uncore.c:(.init.text+0x4f09): undefined reference to `uncore_pmu_event_del'
+perf_event_intel_uncore.c:(.init.text+0x4f10): undefined reference to `uncore_pmu_event_start'
+perf_event_intel_uncore.c:(.init.text+0x4f17): undefined reference to `uncore_pmu_event_stop'
+security/smack/smackfs.c:2130:29: error: 'SMACK_MAGIC' undeclared (first use in this function)
+(.text+0x2d3a7): undefined reference to `bad_sock_fops'
+algif_skcipher.c:(.text+0x29c38): undefined reference to `sock_wake_async'
+af_alg.c:(.init.text+0xbb7): undefined reference to `sock_register'
+af_alg.c:(.exit.text+0x6cd): undefined reference to `sock_unregister'
+drbd_receiver.c:(.text+0x3e7986): undefined reference to `sock_recvmsg'
+drbd_receiver.c:(.text+0x3e7a17): undefined reference to `sock_release'
+drbd_receiver.c:(.text+0x3f0ab9): undefined reference to `sock_create_kern'
+drbd_receiver.c:(.text+0x3f12d2): undefined reference to `kernel_accept'
+(.text+0x403e6a): undefined reference to `kernel_sendmsg'
+(.text+0x407b16): undefined reference to `kernel_sock_shutdown'
+main.c:(.ref.text+0x249): undefined reference to `prepare_namespace'
+(.init.text+0x8f3): undefined reference to `ROOT_DEV'
+(.init.text+0xb58): undefined reference to `root_mountflags'
+drivers/gpio/gpio-lynxpoint.c:62:19: error: field 'chip' has incomplete type
+drivers/gpio/gpio-lynxpoint.c:92:2: error: implicit declaration of function 'inl' [-Werror=implicit-function-declaration]
+drivers/gpio/gpio-lynxpoint.c:101:2: error: implicit declaration of function 'outl' [-Werror=implicit-function-declaration]
+drivers/gpio/gpio-lynxpoint.c:335:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:336:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:337:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:338:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:339:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:340:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:341:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:342:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:343:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:344:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:345:4: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:350:5: error: dereferencing pointer to incomplete type
+drivers/gpio/gpio-lynxpoint.c:363:2: error: implicit declaration of function 'gpiochip_add' [-Werror=implicit-function-declaration]
+drivers/gpio/gpio-lynxpoint.c:384:2: error: implicit declaration of function 'gpiochip_remove' [-Werror=implicit-function-declaration]
+drivers/tty/serial/8250/8250_dw.c:151:1: error: unknown type name 'acpi_status'
+drivers/tty/serial/8250/8250_dw.c:161:13: error: dereferencing pointer to incomplete type
+drivers/tty/serial/8250/8250_dw.c:162:7: error: 'ACPI_RESOURCE_TYPE_FIXED_DMA' undeclared (first use in this function)
+drivers/tty/serial/8250/8250_dw.c:163:19: error: dereferencing pointer to incomplete type
+drivers/tty/serial/8250/8250_dw.c:169:12: error: 'AE_NO_MEMORY' undeclared (first use in this function)
+drivers/tty/serial/8250/8250_dw.c:176:32: error: dereferencing pointer to incomplete type
+drivers/tty/serial/8250/8250_dw.c:178:32: error: dereferencing pointer to incomplete type
+drivers/tty/serial/8250/8250_dw.c:187:32: error: dereferencing pointer to incomplete type
+drivers/tty/serial/8250/8250_dw.c:189:32: error: dereferencing pointer to incomplete type
+drivers/tty/serial/8250/8250_dw.c:196:9: error: 'AE_OK' undeclared (first use in this function)
+drivers/tty/serial/8250/8250_dw.c:202:2: error: unknown type name 'acpi_status'
+drivers/tty/serial/8250/8250_dw.c:214:2: error: implicit declaration of function 'acpi_walk_resources' [-Werror=implicit-function-declaration]
+drivers/tty/serial/8250/8250_dw.c:214:52: error: 'METHOD_NAME__CRS' undeclared (first use in this function)
+drivers/tty/serial/8250/8250_dw.c:216:2: error: implicit declaration of function 'ACPI_FAILURE' [-Werror=implicit-function-declaration]
+drivers/tty/serial/8250/8250_dw.c:217:3: error: implicit declaration of function 'acpi_format_exception' [-Werror=implicit-function-declaration]
+arch/mn10300/kernel/mn10300-serial.c:527:19: error: 'port' redeclared as different kind of symbol
+arch/mn10300/kernel/mn10300-serial.c:527:31: error: 'struct tty_port' has no member named 'uart'
+arch/mn10300/kernel/mn10300-serial.c:533:2: error: 'struct tty_port' has no member named 'name'
+arch/mn10300/kernel/mn10300-serial.c:537:10: error: 'struct tty_port' has no member named 'rx_inp'
+arch/mn10300/kernel/mn10300-serial.c:537:10: error: 'struct tty_port' has no member named 'rx_outp'
+arch/mn10300/kernel/mn10300-serial.c:555:11: error: 'struct tty_port' has no member named 'rx_buffer'
+arch/mn10300/kernel/mn10300-serial.c:571:14: error: 'struct tty_port' has no member named 'rx_brk'
+net/mac80211/util.c:1666:27: error: 'reconfig_due_to_wowlan' undeclared (first use in this function)
+drivers/staging/sb105x/sb_pci_mp.c:901:19: error: 'struct tty_struct' has no member named 'low_latency'
+drivers/acpi/acpi_csrt.c:130:10: error: 'const struct acpi_csrt_group' has no member named 'info_length'
+drivers/tty/serial/8250/8250_pci.c:1286:23: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'pci_quatech_exit'
+drivers/tty/serial/8250/8250_pci.c:1786:3: error: implicit declaration of function '__devexit_p' [-Werror=implicit-function-declaration]
+drivers/tty/serial/8250/8250_pci.c:1786:24: error: 'pci_quatech_exit' undeclared here (not in a function)
 
-Replace PTR_ERR followed by ERR_PTR by ERR_CAST, to be more concise.
+[warnings]
+drivers/acpi/csrt.c:42:5: warning: left shift count >= width of type [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:73:23: warning: initialization from incompatible pointer type [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:73:23: warning: (near initialization for 'lg') [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:86:23: warning: initialization from incompatible pointer type [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:86:23: warning: (near initialization for 'lg') [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:150:23: warning: initialization from incompatible pointer type [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:150:23: warning: (near initialization for 'lg') [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:166:23: warning: initialization from incompatible pointer type [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:166:23: warning: (near initialization for 'lg') [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:180:23: warning: initialization from incompatible pointer type [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:180:23: warning: (near initialization for 'lg') [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:195:23: warning: initialization from incompatible pointer type [enabled by default]
+drivers/gpio/gpio-lynxpoint.c:195:23: warning: (near initialization for 'lg') [enabled by default]
+drivers/tty/serial/8250/8250_dw.c:151:34: warning: 'struct acpi_resource' declared inside parameter list [enabled by default]
+drivers/tty/serial/8250/8250_dw.c:151:34: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+drivers/tty/serial/8250/8250_dw.c:217:3: warning: format '%s' expects argument of type 'char *', but argument 4 has type 'int' [-Wformat]
+drivers/tty/serial/ip22zilog.c:464:4: warning: passing argument 1 of 'tty_flip_buffer_push' from incompatible pointer type [enabled by default]
+warning: (VERSATILE_FPGA_IRQ && REGMAP && GPIO_LYNXPOINT && GPIO_PCF857X && GPIO_LANGWELL && MFD_CORE && MFD_TPS65910 && TWL4030_CORE && MFD_LP8788 && MFD_MAX77686 && MFD_MAX8997 && MFD_WM831X_I2C && MFD_WM831X_SPI && AB8500_CORE && EXTCON_MAX77693) selects IRQ_DOMAIN which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS)
+sound/pci/hda/patch_ca0132.c:2933:15: warning: 'nid' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/staging/sb105x/sb_pci_mp.c:2118:4: warning: passing argument 1 of 'tty_insert_flip_char' from incompatible pointer type [enabled by default]
+drivers/staging/sb105x/sb_pci_mp.c:2129:2: warning: passing argument 1 of 'tty_flip_buffer_push' from incompatible pointer type [enabled by default]
+drivers/w1/slaves/w1_therm.c:245:15: warning: 'crc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/w1/slaves/w1_therm.c:247:2: warning: 'verdict' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/tty/serial/8250/8250_dma.c:55:2: warning: passing argument 1 of 'tty_insert_flip_string' from incompatible pointer type [enabled by default]
+drivers/tty/serial/8250/8250_dma.c:58:2: warning: passing argument 1 of 'tty_flip_buffer_push' from incompatible pointer type [enabled by default]
+WARNING: vmlinux.o(.data+0x5baa0): Section mismatch in reference from the variable early_arc_platform_driver to the function .init.text:arc_serial_probe_earlyprintk()
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+[sparse]
+sound/pci/hda/patch_ca0132.c:387:19: sparse: symbol 'ca0132_voicefx' was not declared. Should it be static?
+sound/pci/hda/patch_ca0132.c:394:26: sparse: symbol 'ca0132_voicefx_presets' was not declared. Should it be static?
+drivers/gpio/gpio-lynxpoint.c:307:9: sparse: Trying to use reserved word 'if' as identifier
+drivers/gpio/gpio-lynxpoint.c:309:17: sparse: Trying to use reserved word 'return' as identifier
+drivers/gpio/gpio-lynxpoint.c:332:9: sparse: Trying to use reserved word 'do' as identifier
+drivers/gpio/gpio-lynxpoint.c:334:17: sparse: cannot dereference this type
+drivers/gpio/gpio-lynxpoint.c:336:9: sparse: too many errors
+drivers/tty/serial/8250/8250_pci.c:1286:23: sparse: void declaration
+drivers/tty/serial/8250/8250_pci.c:1297:9: sparse: Trying to use reserved word 'if' as identifier
+drivers/tty/serial/8250/8250_pci.c:1299:9: sparse: Trying to use reserved word 'else' as identifier
+drivers/tty/serial/8250/8250_pci.c:1308:9: sparse: Trying to use reserved word 'return' as identifier
+drivers/tty/serial/8250/8250_pci.c:1353:17: sparse: Trying to use reserved word 'struct' as identifier
+drivers/tty/serial/8250/8250_pci.c:1441:24: sparse: too many errors
+drivers/tty/serial/8250/8250_dma.c:55:32: sparse: incorrect type in argument 1 (different base types)
+net/xfrm/xfrm_state.c:177:16: sparse: incorrect type in assignment (different address spaces)
+net/xfrm/xfrm_state.c:1866:21: sparse: incompatible types in comparison expression (different address spaces)
+drivers/acpi/acpi_csrt.c:130:24: sparse: no member 'info_length' in struct acpi_csrt_group
+drivers/gpio/gpio-lynxpoint.c:298:22: sparse: Expected ; at end of declaration
+drivers/gpio/gpio-lynxpoint.c:298:22: sparse: got lp_gpio_probe
+drivers/gpio/gpio-lynxpoint.c:307:13: sparse: Expected ) in function declarator
+drivers/gpio/gpio-lynxpoint.c:307:13: sparse: got !
+drivers/gpio/gpio-lynxpoint.c:310:9: sparse: Expected ; at the end of type declaration
+drivers/gpio/gpio-lynxpoint.c:332:9: sparse: got (
+drivers/gpio/gpio-lynxpoint.c:380:22: sparse: got lp_gpio_remove
+drivers/gpio/gpio-lynxpoint.c:386:17: sparse: got dev_warn
+drivers/gpio/gpio-lynxpoint.c:303:31: sparse: undefined identifier 'pdev'
+drivers/gpio/gpio-lynxpoint.c:315:9: sparse: symbol 'io_rc' redeclared with different type (originally declared at drivers/gpio/gpio-lynxpoint.c:302) - different base types
+drivers/gpio/gpio-lynxpoint.c:316:9: sparse: symbol 'irq_rc' redeclared with different type (originally declared at drivers/gpio/gpio-lynxpoint.c:302) - different base types
+drivers/gpio/gpio-lynxpoint.c:334:9: sparse: symbol 'gc' redeclared with different type (originally declared at drivers/gpio/gpio-lynxpoint.c:301) - different base types
+drivers/tty/serial/8250/8250_pci.c:1286:23: sparse: Expected ; at end of declaration
+drivers/tty/serial/8250/8250_pci.c:1286:23: sparse: got pci_quatech_exit
+drivers/tty/serial/8250/8250_pci.c:1297:18: sparse: Expected ) in function declarator
+drivers/tty/serial/8250/8250_pci.c:1297:18: sparse: got ->
+drivers/tty/serial/8250/8250_pci.c:1300:17: sparse: got offset
+drivers/tty/serial/8250/8250_pci.c:1308:16: sparse: got setup_port
+drivers/tty/serial/8250/8250_pci.c:1309:1: sparse: Expected ; at the end of type declaration
+drivers/tty/serial/8250/8250_pci.c:1324:16: sparse: got ret
+drivers/tty/serial/8250/8250_pci.c:1347:16: sparse: got pci_default_setup
+drivers/tty/serial/8250/8250_pci.c:1353:17: sparse: Expected ) in nested declarator
+drivers/tty/serial/8250/8250_pci.c:1353:17: sparse: got uart_8250_port
+drivers/tty/serial/8250/8250_pci.c:1393:16: sparse: got skip_tx_en_setup
+drivers/staging/sb105x/sb_pci_mp.c:901:33: sparse: no member 'low_latency' in struct tty_struct
 
-// <smpl>
-@@
-expression err,x;
-@@
--       err = PTR_ERR(x);
-        if (IS_ERR(x))
--                return ERR_PTR(err);
-+                return ERR_CAST(x);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[smatch]
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c:832 __bnx2x_get_preset_regs() error: potential NULL dereference 'wreg_addr_p'.
 
 ---
- crypto/aead.c       |    6 ++----
- crypto/algapi.c     |    4 +---
- crypto/authenc.c    |    3 +--
- crypto/authencesn.c |    3 +--
- crypto/blkcipher.c  |    6 ++----
- crypto/ccm.c        |   23 +++++++----------------
- crypto/chainiv.c    |    3 +--
- crypto/ctr.c        |    3 +--
- crypto/cts.c        |    3 +--
- crypto/gcm.c        |   29 +++++++++--------------------
- crypto/seqiv.c      |    3 +--
- 11 files changed, 27 insertions(+), 59 deletions(-)
-
-diff --git a/crypto/aead.c b/crypto/aead.c
-index 0b8121e..4d04e12 100644
---- a/crypto/aead.c
-+++ b/crypto/aead.c
-@@ -282,18 +282,16 @@ struct crypto_instance *aead_geniv_alloc(struct crypto_template *tmpl,
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ (CRYPTO_ALG_TYPE_AEAD | CRYPTO_ALG_GENIV)) &
- 	    algt->mask)
- 		return ERR_PTR(-EINVAL);
- 
- 	name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(name);
- 	if (IS_ERR(name))
--		return ERR_PTR(err);
-+		return ERR_CAST(name);
- 
- 	inst = kzalloc(sizeof(*inst) + sizeof(*spawn), GFP_KERNEL);
- 	if (!inst)
-diff --git a/crypto/algapi.c b/crypto/algapi.c
-index c3b9bfe..08c57c8 100644
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -749,12 +749,10 @@ struct crypto_alg *crypto_attr_alg2(struct rtattr *rta,
- 				    u32 type, u32 mask)
- {
- 	const char *name;
--	int err;
- 
- 	name = crypto_attr_alg_name(rta);
--	err = PTR_ERR(name);
- 	if (IS_ERR(name))
--		return ERR_PTR(err);
-+		return ERR_CAST(name);
- 
- 	return crypto_find_alg(name, frontend, type, mask);
- }
-diff --git a/crypto/authenc.c b/crypto/authenc.c
-index d0583a4..ffce19d 100644
---- a/crypto/authenc.c
-+++ b/crypto/authenc.c
-@@ -592,9 +592,8 @@ static struct crypto_instance *crypto_authenc_alloc(struct rtattr **tb)
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ CRYPTO_ALG_TYPE_AEAD) & algt->mask)
- 		return ERR_PTR(-EINVAL);
-diff --git a/crypto/authencesn.c b/crypto/authencesn.c
-index 136b68b..ab53762 100644
---- a/crypto/authencesn.c
-+++ b/crypto/authencesn.c
-@@ -715,9 +715,8 @@ static struct crypto_instance *crypto_authenc_esn_alloc(struct rtattr **tb)
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ CRYPTO_ALG_TYPE_AEAD) & algt->mask)
- 		return ERR_PTR(-EINVAL);
-diff --git a/crypto/blkcipher.c b/crypto/blkcipher.c
-index a8d85a1..e9e7244 100644
---- a/crypto/blkcipher.c
-+++ b/crypto/blkcipher.c
-@@ -588,18 +588,16 @@ struct crypto_instance *skcipher_geniv_alloc(struct crypto_template *tmpl,
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ (CRYPTO_ALG_TYPE_GIVCIPHER | CRYPTO_ALG_GENIV)) &
- 	    algt->mask)
- 		return ERR_PTR(-EINVAL);
- 
- 	name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(name);
- 	if (IS_ERR(name))
--		return ERR_PTR(err);
-+		return ERR_CAST(name);
- 
- 	inst = kzalloc(sizeof(*inst) + sizeof(*spawn), GFP_KERNEL);
- 	if (!inst)
-diff --git a/crypto/ccm.c b/crypto/ccm.c
-index 32fe1bb..499c917 100644
---- a/crypto/ccm.c
-+++ b/crypto/ccm.c
-@@ -484,18 +484,16 @@ static struct crypto_instance *crypto_ccm_alloc_common(struct rtattr **tb,
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ CRYPTO_ALG_TYPE_AEAD) & algt->mask)
- 		return ERR_PTR(-EINVAL);
- 
- 	cipher = crypto_alg_mod_lookup(cipher_name,  CRYPTO_ALG_TYPE_CIPHER,
- 				       CRYPTO_ALG_TYPE_MASK);
--	err = PTR_ERR(cipher);
- 	if (IS_ERR(cipher))
--		return ERR_PTR(err);
-+		return ERR_CAST(cipher);
- 
- 	err = -EINVAL;
- 	if (cipher->cra_blocksize != 16)
-@@ -573,15 +571,13 @@ out_put_cipher:
- 
- static struct crypto_instance *crypto_ccm_alloc(struct rtattr **tb)
- {
--	int err;
- 	const char *cipher_name;
- 	char ctr_name[CRYPTO_MAX_ALG_NAME];
- 	char full_name[CRYPTO_MAX_ALG_NAME];
- 
- 	cipher_name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(cipher_name);
- 	if (IS_ERR(cipher_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(cipher_name);
- 
- 	if (snprintf(ctr_name, CRYPTO_MAX_ALG_NAME, "ctr(%s)",
- 		     cipher_name) >= CRYPTO_MAX_ALG_NAME)
-@@ -612,20 +608,17 @@ static struct crypto_template crypto_ccm_tmpl = {
- 
- static struct crypto_instance *crypto_ccm_base_alloc(struct rtattr **tb)
- {
--	int err;
- 	const char *ctr_name;
- 	const char *cipher_name;
- 	char full_name[CRYPTO_MAX_ALG_NAME];
- 
- 	ctr_name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(ctr_name);
- 	if (IS_ERR(ctr_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(ctr_name);
- 
- 	cipher_name = crypto_attr_alg_name(tb[2]);
--	err = PTR_ERR(cipher_name);
- 	if (IS_ERR(cipher_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(cipher_name);
- 
- 	if (snprintf(full_name, CRYPTO_MAX_ALG_NAME, "ccm_base(%s,%s)",
- 		     ctr_name, cipher_name) >= CRYPTO_MAX_ALG_NAME)
-@@ -760,17 +753,15 @@ static struct crypto_instance *crypto_rfc4309_alloc(struct rtattr **tb)
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ CRYPTO_ALG_TYPE_AEAD) & algt->mask)
- 		return ERR_PTR(-EINVAL);
- 
- 	ccm_name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(ccm_name);
- 	if (IS_ERR(ccm_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(ccm_name);
- 
- 	inst = kzalloc(sizeof(*inst) + sizeof(*spawn), GFP_KERNEL);
- 	if (!inst)
-diff --git a/crypto/chainiv.c b/crypto/chainiv.c
-index ba200b0..834d8dd 100644
---- a/crypto/chainiv.c
-+++ b/crypto/chainiv.c
-@@ -291,9 +291,8 @@ static struct crypto_instance *chainiv_alloc(struct rtattr **tb)
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	err = crypto_get_default_rng();
- 	if (err)
-diff --git a/crypto/ctr.c b/crypto/ctr.c
-index 4ca7222..095dcb6 100644
---- a/crypto/ctr.c
-+++ b/crypto/ctr.c
-@@ -334,9 +334,8 @@ static struct crypto_instance *crypto_rfc3686_alloc(struct rtattr **tb)
- 
- 	alg = crypto_attr_alg(tb[1], CRYPTO_ALG_TYPE_BLKCIPHER,
- 				  CRYPTO_ALG_TYPE_MASK);
--	err = PTR_ERR(alg);
- 	if (IS_ERR(alg))
--		return ERR_PTR(err);
-+		return ERR_CAST(alg);
- 
- 	/* We only support 16-byte blocks. */
- 	err = -EINVAL;
-diff --git a/crypto/cts.c b/crypto/cts.c
-index ccf9c5d..042223f 100644
---- a/crypto/cts.c
-+++ b/crypto/cts.c
-@@ -282,9 +282,8 @@ static struct crypto_instance *crypto_cts_alloc(struct rtattr **tb)
- 
- 	alg = crypto_attr_alg(tb[1], CRYPTO_ALG_TYPE_BLKCIPHER,
- 				  CRYPTO_ALG_TYPE_MASK);
--	err = PTR_ERR(alg);
- 	if (IS_ERR(alg))
--		return ERR_PTR(err);
-+		return ERR_CAST(alg);
- 
- 	inst = ERR_PTR(-EINVAL);
- 	if (!is_power_of_2(alg->cra_blocksize))
-diff --git a/crypto/gcm.c b/crypto/gcm.c
-index 1a25263..137ad1e 100644
---- a/crypto/gcm.c
-+++ b/crypto/gcm.c
-@@ -701,9 +701,8 @@ static struct crypto_instance *crypto_gcm_alloc_common(struct rtattr **tb,
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ CRYPTO_ALG_TYPE_AEAD) & algt->mask)
- 		return ERR_PTR(-EINVAL);
-@@ -711,9 +710,8 @@ static struct crypto_instance *crypto_gcm_alloc_common(struct rtattr **tb,
- 	ghash_alg = crypto_find_alg(ghash_name, &crypto_ahash_type,
- 				    CRYPTO_ALG_TYPE_HASH,
- 				    CRYPTO_ALG_TYPE_AHASH_MASK);
--	err = PTR_ERR(ghash_alg);
- 	if (IS_ERR(ghash_alg))
--		return ERR_PTR(err);
-+		return ERR_CAST(ghash_alg);
- 
- 	err = -ENOMEM;
- 	inst = kzalloc(sizeof(*inst) + sizeof(*ctx), GFP_KERNEL);
-@@ -787,15 +785,13 @@ out_put_ghash:
- 
- static struct crypto_instance *crypto_gcm_alloc(struct rtattr **tb)
- {
--	int err;
- 	const char *cipher_name;
- 	char ctr_name[CRYPTO_MAX_ALG_NAME];
- 	char full_name[CRYPTO_MAX_ALG_NAME];
- 
- 	cipher_name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(cipher_name);
- 	if (IS_ERR(cipher_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(cipher_name);
- 
- 	if (snprintf(ctr_name, CRYPTO_MAX_ALG_NAME, "ctr(%s)", cipher_name) > 	    CRYPTO_MAX_ALG_NAME)
-@@ -826,20 +822,17 @@ static struct crypto_template crypto_gcm_tmpl = {
- 
- static struct crypto_instance *crypto_gcm_base_alloc(struct rtattr **tb)
- {
--	int err;
- 	const char *ctr_name;
- 	const char *ghash_name;
- 	char full_name[CRYPTO_MAX_ALG_NAME];
- 
- 	ctr_name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(ctr_name);
- 	if (IS_ERR(ctr_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(ctr_name);
- 
- 	ghash_name = crypto_attr_alg_name(tb[2]);
--	err = PTR_ERR(ghash_name);
- 	if (IS_ERR(ghash_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(ghash_name);
- 
- 	if (snprintf(full_name, CRYPTO_MAX_ALG_NAME, "gcm_base(%s,%s)",
- 		     ctr_name, ghash_name) >= CRYPTO_MAX_ALG_NAME)
-@@ -971,17 +964,15 @@ static struct crypto_instance *crypto_rfc4106_alloc(struct rtattr **tb)
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ CRYPTO_ALG_TYPE_AEAD) & algt->mask)
- 		return ERR_PTR(-EINVAL);
- 
- 	ccm_name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(ccm_name);
- 	if (IS_ERR(ccm_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(ccm_name);
- 
- 	inst = kzalloc(sizeof(*inst) + sizeof(*spawn), GFP_KERNEL);
- 	if (!inst)
-@@ -1222,17 +1213,15 @@ static struct crypto_instance *crypto_rfc4543_alloc(struct rtattr **tb)
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	if ((algt->type ^ CRYPTO_ALG_TYPE_AEAD) & algt->mask)
- 		return ERR_PTR(-EINVAL);
- 
- 	ccm_name = crypto_attr_alg_name(tb[1]);
--	err = PTR_ERR(ccm_name);
- 	if (IS_ERR(ccm_name))
--		return ERR_PTR(err);
-+		return ERR_CAST(ccm_name);
- 
- 	inst = kzalloc(sizeof(*inst) + sizeof(*spawn), GFP_KERNEL);
- 	if (!inst)
-diff --git a/crypto/seqiv.c b/crypto/seqiv.c
-index 4c44912..f2cba4e 100644
---- a/crypto/seqiv.c
-+++ b/crypto/seqiv.c
-@@ -305,9 +305,8 @@ static struct crypto_instance *seqiv_alloc(struct rtattr **tb)
- 	int err;
- 
- 	algt = crypto_get_attr_type(tb);
--	err = PTR_ERR(algt);
- 	if (IS_ERR(algt))
--		return ERR_PTR(err);
-+		return ERR_CAST(algt);
- 
- 	err = crypto_get_default_rng();
- 	if (err)
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
