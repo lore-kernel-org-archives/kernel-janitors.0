@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 25 Jan 2013 16:16:52 +0000
-Subject: build regressions 2013-01-25
-Message-Id: <5102aff4.BK7FE7egitsDnCeL%fengguang.wu@intel.com>
+Date: Thu, 17 Jan 2013 16:09:26 +0000
+Subject: build regressions 2013-01-17
+Message-Id: <50f82236.RaJBf+/ZyZD1qehQ%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,49 +9,94 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/video/Kconfig:57:error: recursive dependency detected!
-drivers/video/Kconfig:57:error: recursive dependency detected!
-drivers/gpu/drm/tilcdc/tilcdc_drv.c:509:5: error: "CONFIG_PM_SLEEP" is not defined [-Werror=undef]
+arch/arm/include/asm/tlbflush.h:331:6: error: 'TLB_V7_UIS_BP' undeclared (first use in this function)
+arch/arm/mm/tlb-v7.S:95: Error: invalid operands (*ABS* and *UND* sections) for `|'
+board-paz00.c:(.init.text+0xd4): undefined reference to `debug_ll_io_init'
+include/uapi/drm/i915_drm.h:311:1: error: expected identifier or '(' before '<<' token
+drivers/gpu/drm/i915/i915_dma.c:916:23: error: 'param' undeclared (first use in this function)
+drivers/gpu/drm/i915/i915_dma.c:992:1: error: expected expression before '<<' token
+drivers/gpu/drm/i915/i915_dma.c:1845:1: error: subscripted value is neither array nor pointer nor vector
+drivers/gpu/drm/i915/i915_dma.c:1859:1: error: invalid application of 'sizeof' to incomplete type 'struct drm_i915_gem_pin'
+drivers/gpu/drm/i915/i915_dma.c:1859:1: error: array type has incomplete element type
+drivers/gpu/drm/i915/i915_gem.c:3492:8: error: dereferencing pointer to incomplete type
+include/linux/sched.h:435:2: error: unknown type name 'cputime_t'
+drivers/usb/phy/mv_usb2_phy.c:141:2: error: implicit declaration of function 'readl_relaxed' [-Werror=implicit-function-declaration]
+drivers/extcon/extcon-arizona.c:323:3: error: implicit declaration of function 'arizona_start_mic' [-Werror=implicit-function-declaration]
+drivers/extcon/extcon-arizona.c:349:3: error: implicit declaration of function 'arizona_stop_mic' [-Werror=implicit-function-declaration]
+drivers/extcon/extcon-arizona.c:394:2: error: expected identifier or '(' before '}' token
+drivers/extcon/extcon-arizona.c:396:6: error: expected '=', ',', ';', 'asm' or '__attribute__' before '->' token
+drivers/extcon/extcon-arizona.c:397:1: error: expected identifier or '(' before '}' token
+drivers/extcon/extcon-arizona.c:399:13: error: static declaration of 'arizona_start_mic' follows non-static declaration
+drivers/extcon/extcon-arizona.c:437:13: error: static declaration of 'arizona_stop_mic' follows non-static declaration
+drivers/usb/phy/mv_usb2_phy.c:151:2: error: implicit declaration of function 'writel_relaxed' [-Werror=implicit-function-declaration]
+drivers/usb/phy/mv_usb2_phy.c:354:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'usb_phy_parse_dt'
+drivers/usb/phy/mv_usb2_phy.c:402:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'usb_phy_probe'
+drivers/usb/phy/mv_usb2_phy.c:480:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'usb_phy_remove'
+drivers/usb/phy/mv_usb2_phy.c:495:11: error: 'usb_phy_probe' undeclared here (not in a function)
+drivers/usb/phy/mv_usb2_phy.c:496:12: error: 'usb_phy_remove' undeclared here (not in a function)
+drivers/net/wireless/ti/wl12xx/main.c:1801:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'wl12xx_remove'
+drivers/net/wireless/ti/wl12xx/main.c:1824:13: error: 'wl12xx_remove' undeclared here (not in a function)
+include/uapi/drm/i915_drm.h:311:1: error: expected identifier or '(' before '<<' token
+drivers/gpu/drm/i915/i915_dma.c:916:23: error: 'param' undeclared (first use in this function)
+drivers/gpu/drm/i915/i915_dma.c:992:1: error: expected expression before '<<' token
+drivers/gpu/drm/i915/i915_dma.c:1845:240: error: subscripted value is neither array nor pointer nor vector
+drivers/gpu/drm/i915/i915_dma.c:1859:204: error: invalid application of 'sizeof' to incomplete type 'struct drm_i915_gem_pin'
+drivers/gpu/drm/i915/i915_dma.c:1859:246: error: array type has incomplete element type
+drivers/gpu/drm/i915/i915_gem.c:3492:115: error: dereferencing pointer to incomplete type
+drivers/gpu/drm/i915/i915_ioc32.c:139:23: error: 'request' undeclared (first use in this function)
+drivers/gpu/drm/i915/i915_ioc32.c:151:166: error: subscripted value is neither array nor pointer nor vector
+mv_udc_core.c:(.text+0x44b4da): undefined reference to `mv_usb2_get_phy'
+mv_udc_core.c:(.text+0x44b1ff): undefined reference to `mv_usb2_unregister_notifier'
+mv_udc_core.c:(.text+0x44bdaf): undefined reference to `mv_usb2_register_notifier'
 
 [warnings]
-drivers/tty/goldfish.c:83:3: warning: passing argument 1 of 'tty_prepare_flip_string' from incompatible pointer type [enabled by default]
-drivers/tty/goldfish.c:89:3: warning: passing argument 1 of 'tty_schedule_flip' from incompatible pointer type [enabled by default]
-mm/memory.c:73:2: warning: #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_nid. [-Wcpp]
-WARNING: drivers/input/built-in.o(.init.text+0x2c11): Section mismatch in reference from the function rmi_bus_init() to the function .exit.text:rmi_unregister_f01_handler()
-fs/f2fs/recovery.c:225:52: warning: 'sum.<U 428>.<U 390>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
-warning: (DRM_RADEON_KMS && DRM_I915 && DRM_TILCDC && STUB_POULSBO && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
-include/linux/usb/phy.h:194:2: warning: return makes integer from pointer without a cast [enabled by default]
-drivers/acpi/power.c:81:3: warning: initialization from incompatible pointer type [enabled by default]
-drivers/acpi/power.c:81:3: warning: (near initialization for 'acpi_power_driver.ops.remove') [enabled by default]
-security/selinux/selinuxfs.c:1487:16: warning: unused variable 'inode' [-Wunused-variable]
-warning: (PMAC_BACKLIGHT && DRM_NOUVEAU) selects FB_BACKLIGHT which has unmet direct dependencies (HAS_IOMEM && FB)
-kernel/sched/debug.c:225:2: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'long int' [-Wformat]
-kernel/sched/debug.c:225:2: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'long int' [-Wformat]
-arch/x86/kernel/kvm.c:508:2: warning: initialization from incompatible pointer type [enabled by default]
-arch/x86/kernel/kvm.c:508:2: warning: (near initialization for 'x86_hyper_kvm.x2apic_available') [enabled by default]
-drivers/platform/x86/fujitsu-tablet.c:458:3: warning: initialization from incompatible pointer type [enabled by default]
-drivers/platform/x86/fujitsu-tablet.c:458:3: warning: (near initialization for 'acpi_fujitsu_driver.ops.remove') [enabled by default]
-drivers/platform/x86/ideapad-laptop.c:914:2: warning: initialization from incompatible pointer type [enabled by default]
-drivers/platform/x86/ideapad-laptop.c:914:2: warning: (near initialization for 'ideapad_acpi_driver.ops.remove') [enabled by default]
-drivers/usb/misc/usb3503.c:215:13: warning: 'mode' may be used uninitialized in this function [-Wuninitialized]
-warning: (USB_MUSB_HDRC && OMAP_USB3) selects OMAP_CONTROL_USB which has unmet direct dependencies (USB_SUPPORT && ARCH_OMAP2PLUS)
-warning: (USB_MUSB_HDRC && OMAP_USB3) selects OMAP_CONTROL_USB which has unmet direct dependencies (USB_SUPPORT && ARCH_OMAP2PLUS)
-warning: (USB_MUSB_HDRC && OMAP_USB3) selects OMAP_CONTROL_USB which has unmet direct dependencies (USB_SUPPORT && ARCH_OMAP2PLUS)
-arch/x86/kernel/cpu/perf_event.c:1508:7: warning: assignment from incompatible pointer type [enabled by default]
-arch/x86/kernel/cpu/perf_event.c:1510:31: warning: assignment from incompatible pointer type [enabled by default]
-fs/ext4/super.c:4039:1: warning: label 'failed_mount8' defined but not used [-Wunused-label]
+drivers/gpu/drm/qxl/qxl_cmd.c:86:3: warning: label 'retry' defined but not used [-Wunused-label]
+include/uapi/drm/i915_drm.h:320:3: warning: data definition has no type or storage class [enabled by default]
+include/uapi/drm/i915_drm.h:320:3: warning: type defaults to 'int' in declaration of 'drm_i915_getparam_t' [-Wimplicit-int]
+drivers/gpu/drm/i915/i915_dma.c:917:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+fs/f2fs/recovery.c:225:52: warning: 'sum.<U 2f8>.<U 260>.ofs_in_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/usb/gadget/f_uac2.c:263:20: warning: unused variable 'agdev' [-Wunused-variable]
+drivers/gpu/drm/qxl/qxl_debugfs.c:411:7: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat]
+warning: (CAN_PEAK_PCIEC && SFC && IGB && DRM && FB_DDC && FB_BFIN_7393 && FB_VIA && SND_AOA_ONYX && SND_AOA_TAS && SND_SOC_BFIN_EVAL_ADAU1701 && FB_OLPC_DCON) selects I2C which has unmet direct dependencies (!S390)
+drivers/vfio/pci/vfio_pci.c:413:2: warning: passing argument 2 of 'vfio_pci_rw' discards 'const' qualifier from pointer target type [enabled by default]
+drivers/extcon/extcon-arizona.c:399:13: warning: conflicting types for 'arizona_start_mic' [enabled by default]
+drivers/extcon/extcon-arizona.c:437:13: warning: conflicting types for 'arizona_stop_mic' [enabled by default]
+drivers/md/dm-integrity.c:868:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/md/dm-integrity.c:868:2: warning: (near initialization for 'dm_int_target.map') [enabled by default]
+include/uapi/drm/i915_drm.h:320:3: warning: data definition has no type or storage class [enabled by default]
+include/uapi/drm/i915_drm.h:320:3: warning: type defaults to 'int' in declaration of 'drm_i915_getparam_t' [-Wimplicit-int]
+drivers/gpu/drm/i915/i915_dma.c:917:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+drivers/gpu/drm/i915/i915_ioc32.c:153:1: warning: control reaches end of non-void function [-Wreturn-type]
 
 [sparse]
-drivers/input/serio/arc_ps2.c:211:27: sparse: incorrect type in argument 1 (different address spaces)
-drivers/misc/atmel-ssc.c:163:23: sparse: incorrect type in argument 1 (different address spaces)
-drivers/tty/serial/sccnxp.c:880:20: sparse: incorrect type in argument 1 (different address spaces)
-drivers/usb/host/ehci-platform.c:109:23: sparse: incorrect type in argument 1 (different address spaces)
-sound/soc/codecs/jz4740.c:365:20: sparse: incorrect type in argument 1 (different address spaces)
-drivers/tty/goldfish.c:83:49: sparse: incorrect type in argument 1 (different base types)
-drivers/tty/goldfish.c:157:45: sparse: Using plain integer as NULL pointer
-mm/memory.c:73:2: sparse: Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_nid.
-arch/x86/kernel/kvm.c:508:35: sparse: incorrect type in initializer (different signedness)
-arch/x86/kernel/apic/io_apic.c:3247:5: sparse: symbol 'setup_msi_irqs' was not declared. Should it be static?
+include/uapi/drm/i915_drm.h:311:1: sparse: missing identifier in declaration
+drivers/gpu/drm/i915/i915_dma.c:925:14: sparse: incompatible types for 'case' statement
+drivers/net/ethernet/intel/igb/igb_main.c:7574:19: sparse: symbol 'igb_get_i2c_client' was not declared. Should it be static?
+include/uapi/drm/i915_drm.h:311:1: sparse: Expected ; at the end of type declaration
+include/uapi/drm/i915_drm.h:311:1: sparse: got <<
+drivers/gpu/drm/i915/i915_dma.c:992:1: sparse: Expected ; at end of statement
+drivers/gpu/drm/i915/i915_dma.c:992:1: sparse: got <<
+drivers/gpu/drm/i915/i915_dma.c:916:9: sparse: undefined identifier 'drm_i915_getparam_t'
+drivers/gpu/drm/i915/i915_dma.c:924:17: sparse: undefined identifier 'param'
+drivers/gpu/drm/i915/i915_gem.c:3492:15: sparse: using member 'handle' in incomplete struct drm_i915_gem_pin
+drivers/gpu/drm/i915/i915_gem.c:3512:52: sparse: using member 'alignment' in incomplete struct drm_i915_gem_pin
+drivers/gpu/drm/i915/i915_gem.c:3524:13: sparse: using member 'offset' in incomplete struct drm_i915_gem_pin
+drivers/usb/phy/mv_usb2_phy.c:354:22: sparse: Expected ; at end of declaration
+drivers/usb/phy/mv_usb2_phy.c:354:22: sparse: got usb_phy_parse_dt
+drivers/usb/phy/mv_usb2_phy.c:364:13: sparse: Expected ) in function declarator
+drivers/usb/phy/mv_usb2_phy.c:364:13: sparse: got !
+drivers/usb/phy/mv_usb2_phy.c:370:24: sparse: got clks_num
+drivers/usb/phy/mv_usb2_phy.c:371:9: sparse: Expected ; at the end of type declaration
+drivers/usb/phy/mv_usb2_phy.c:389:27: sparse: got (
+drivers/usb/phy/mv_usb2_phy.c:392:32: sparse: got PTR_ERR
+drivers/usb/phy/mv_usb2_phy.c:447:24: sparse: got ret
+
+[smatch]
+drivers/tty/serial/sccnxp.c:894 sccnxp_probe() error: we previously assumed 'pdata' could be null (see line 887)
+drivers/vfio/pci/vfio_pci_rdwr.c:169 vfio_pci_bar_rw() warn: always true condition '(done >= 0) => (0-u32max >= 0)'
+drivers/vfio/pci/vfio_pci_rdwr.c:191 vfio_pci_legacy_mem_rw() warn: consider using resource_size() here
+drivers/vfio/pci/vfio_pci_rdwr.c:206 vfio_pci_legacy_mem_rw() warn: always true condition '(done >= 0) => (0-u32max >= 0)'
+drivers/vfio/pci/vfio_pci_rdwr.c:254 vfio_pci_legacy_io_rw() warn: always true condition '(done >= 0) => (0-u32max >= 0)'
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
