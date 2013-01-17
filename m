@@ -1,7 +1,7 @@
-From: Stefan Hajnoczi <stefanha@gmail.com>
-Date: Sun, 13 Jan 2013 19:36:29 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 17 Jan 2013 21:52:02 +0000
 Subject: Re: [patch 2/2] staging: line6: use after free bug requesting version
-Message-Id: <CAJSP0QXkBrCPViBRiWQp3wiLbNuuNZOx5j4Gz4eG8Xw7x9zjiQ@mail.gmail.com>
+Message-Id: <20130117215202.GA6832@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20121205184452.GB18227@elgon.mountain>
 In-Reply-To: <20121205184452.GB18227@elgon.mountain>
@@ -10,18 +10,67 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 13, 2013 at 7:15 PM, Markus Grabner <grabner@icg.tugraz.at> wrote:
-> Considering the suggestions made so far, I came up with the following
-> solution: the function "line6_send_raw_message_async" now has an additional
-> argument "bool copy", which indicates whether the supplied buffer should be
-> copied into a dynamically allocated block of memory. The copy flag is also
-> stored in the "message" struct such that the temporary memory can be freed
+On Sun, Jan 13, 2013 at 07:15:22PM +0100, Markus Grabner wrote:
+> On Thursday 06 December 2012 06:18:02 Stefan Hajnoczi wrote:
+> > On Wed, Dec 5, 2012 at 7:44 PM, Dan Carpenter <dan.carpenter@oracle.com> 
+> wrote:
+> > > diff --git a/drivers/staging/line6/driver.c
+> > > b/drivers/staging/line6/driver.c index 8a5d89e..884e0d8 100644
+> > > --- a/drivers/staging/line6/driver.c
+> > > +++ b/drivers/staging/line6/driver.c
+> > > @@ -110,7 +110,7 @@ struct message {
+> > > 
+> > >  */
+> > >  static void line6_data_received(struct urb *urb);
+> > >  static int line6_send_raw_message_async_part(struct message *msg,
+> > > 
+> > > -                                            struct urb *urb);
+> > > +                                            struct urb *urb, int free);
+> > 
+> > s/int/bool/
+> > 
+> > >  /*
+> > >  
+> > >         Start to listen on endpoint.
+> > > 
+> > > @@ -219,24 +219,42 @@ static void line6_async_request_sent(struct urb
+> > > *urb)
+> > > 
+> > >                 usb_free_urb(urb);
+> > >                 kfree(msg);
+> > >         
+> > >         } else
+> > > 
+> > > -               line6_send_raw_message_async_part(msg, urb);
+> > > +               line6_send_raw_message_async_part(msg, urb, 0);
+> > > +}
+> > 
+> > I'd add a bool free_buffer field to struct message and simply modify
+> > line6_async_request_sent() to do:
+> > 
+> > if (msg->free_buffer)
+> >          kfree(msg->buffer);
+> > 
+> > Then you don't need line6_async_request_sent_free_buffer() and
+> > line6_send_raw_message_async_part() doesn't need to take a bool free
+> > argument since struct message already contains that information.  It
+> > would make the code simpler.
+> Considering the suggestions made so far, I came up with the following 
+> solution: the function "line6_send_raw_message_async" now has an additional 
+> argument "bool copy", which indicates whether the supplied buffer should be 
+> copied into a dynamically allocated block of memory. The copy flag is also 
+> stored in the "message" struct such that the temporary memory can be freed 
 > when appropriate without intervention of the caller.
->
-> The patch is against linux-next since this bug should be fixed regardless of
+> 
+> The patch is against linux-next since this bug should be fixed regardless of 
 > the status of moving the Line6 driver out of the staging area.
->
+> 
 > Reported-by: Stefan Hajnoczi <stefanha@gmail.com>
 > Signed-off-by: Markus Grabner <grabner@icg.tugraz.at>
 
-Reviewed-by: Stefan Hajnoczi <stefanha@gmail.com>
+Can you resend this in a format I can apply it in (proper Subject, not
+line-wrapped, etc.)
+
+thanks,
+
+greg k-h
