@@ -1,76 +1,33 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 17 Jan 2013 21:52:02 +0000
-Subject: Re: [patch 2/2] staging: line6: use after free bug requesting version
-Message-Id: <20130117215202.GA6832@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Jan 2013 07:44:05 +0000
+Subject: [patch] isdn/gigaset: off by one check leading to oops
+Message-Id: <20130117074405.GA26270@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20121205184452.GB18227@elgon.mountain>
-In-Reply-To: <20121205184452.GB18227@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Hansjoerg Lipp <hjlipp@web.de>
+Cc: Tilman Schmidt <tilman@imap.cc>, Karsten Keil <isdn@linux-pingi.de>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Jan 13, 2013 at 07:15:22PM +0100, Markus Grabner wrote:
-> On Thursday 06 December 2012 06:18:02 Stefan Hajnoczi wrote:
-> > On Wed, Dec 5, 2012 at 7:44 PM, Dan Carpenter <dan.carpenter@oracle.com> 
-> wrote:
-> > > diff --git a/drivers/staging/line6/driver.c
-> > > b/drivers/staging/line6/driver.c index 8a5d89e..884e0d8 100644
-> > > --- a/drivers/staging/line6/driver.c
-> > > +++ b/drivers/staging/line6/driver.c
-> > > @@ -110,7 +110,7 @@ struct message {
-> > > 
-> > >  */
-> > >  static void line6_data_received(struct urb *urb);
-> > >  static int line6_send_raw_message_async_part(struct message *msg,
-> > > 
-> > > -                                            struct urb *urb);
-> > > +                                            struct urb *urb, int free);
-> > 
-> > s/int/bool/
-> > 
-> > >  /*
-> > >  
-> > >         Start to listen on endpoint.
-> > > 
-> > > @@ -219,24 +219,42 @@ static void line6_async_request_sent(struct urb
-> > > *urb)
-> > > 
-> > >                 usb_free_urb(urb);
-> > >                 kfree(msg);
-> > >         
-> > >         } else
-> > > 
-> > > -               line6_send_raw_message_async_part(msg, urb);
-> > > +               line6_send_raw_message_async_part(msg, urb, 0);
-> > > +}
-> > 
-> > I'd add a bool free_buffer field to struct message and simply modify
-> > line6_async_request_sent() to do:
-> > 
-> > if (msg->free_buffer)
-> >          kfree(msg->buffer);
-> > 
-> > Then you don't need line6_async_request_sent_free_buffer() and
-> > line6_send_raw_message_async_part() doesn't need to take a bool free
-> > argument since struct message already contains that information.  It
-> > would make the code simpler.
-> Considering the suggestions made so far, I came up with the following 
-> solution: the function "line6_send_raw_message_async" now has an additional 
-> argument "bool copy", which indicates whether the supplied buffer should be 
-> copied into a dynamically allocated block of memory. The copy flag is also 
-> stored in the "message" struct such that the temporary memory can be freed 
-> when appropriate without intervention of the caller.
-> 
-> The patch is against linux-next since this bug should be fixed regardless of 
-> the status of moving the Line6 driver out of the staging area.
-> 
-> Reported-by: Stefan Hajnoczi <stefanha@gmail.com>
-> Signed-off-by: Markus Grabner <grabner@icg.tugraz.at>
+If l = 12 then later we subtract 12 leaving zero.  We do a zero size
+allocation, so "dbgline" points to the ZERO_SIZE_PTR.  It leads to an
+oops when we set the NUL terminator:
+	dbgline[3 * l - 1] = '\0';
 
-Can you resend this in a format I can apply it in (proper Subject, not
-line-wrapped, etc.)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis stuff.
 
-thanks,
-
-greg k-h
+diff --git a/drivers/isdn/gigaset/capi.c b/drivers/isdn/gigaset/capi.c
+index 68452b7..0d34325 100644
+--- a/drivers/isdn/gigaset/capi.c
++++ b/drivers/isdn/gigaset/capi.c
+@@ -239,7 +239,7 @@ static inline void dump_rawmsg(enum debuglevel level, const char *tag,
+ 		return;
+ 
+ 	l = CAPIMSG_LEN(data);
+-	if (l < 12) {
++	if (l <= 12) {
+ 		gig_dbg(level, "%s: ??? LEN=%04d", tag, l);
+ 		return;
+ 	}
