@@ -1,33 +1,85 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Jan 2013 07:44:05 +0000
-Subject: [patch] isdn/gigaset: off by one check leading to oops
-Message-Id: <20130117074405.GA26270@elgon.mountain>
+From: Tilman Schmidt <tilman@imap.cc>
+Date: Fri, 18 Jan 2013 12:18:00 +0000
+Subject: Re: [patch] isdn/gigaset: off by one check leading to oops
+Message-Id: <50F93D78.5010903@imap.cc>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------enigDB9A78BFB621DCE29CBB6A66"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Hansjoerg Lipp <hjlipp@web.de>
-Cc: Tilman Schmidt <tilman@imap.cc>, Karsten Keil <isdn@linux-pingi.de>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20130117074405.GA26270@elgon.mountain>
+In-Reply-To: <20130117074405.GA26270@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Hansjoerg Lipp <hjlipp@web.de>, Karsten Keil <isdn@linux-pingi.de>, gigaset307x-common@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If l = 12 then later we subtract 12 leaving zero.  We do a zero size
-allocation, so "dbgline" points to the ZERO_SIZE_PTR.  It leads to an
-oops when we set the NUL terminator:
-	dbgline[3 * l - 1] = '\0';
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enigDB9A78BFB621DCE29CBB6A66
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Static analysis stuff.
+Hi Dan,
 
-diff --git a/drivers/isdn/gigaset/capi.c b/drivers/isdn/gigaset/capi.c
-index 68452b7..0d34325 100644
---- a/drivers/isdn/gigaset/capi.c
-+++ b/drivers/isdn/gigaset/capi.c
-@@ -239,7 +239,7 @@ static inline void dump_rawmsg(enum debuglevel level, const char *tag,
- 		return;
- 
- 	l = CAPIMSG_LEN(data);
--	if (l < 12) {
-+	if (l <= 12) {
- 		gig_dbg(level, "%s: ??? LEN=%04d", tag, l);
- 		return;
- 	}
+Am 17.01.2013 08:44, schrieb Dan Carpenter:
+> If l =3D=3D 12 then later we subtract 12 leaving zero.  We do a zero si=
+ze
+> allocation, so "dbgline" points to the ZERO_SIZE_PTR.  It leads to an
+> oops when we set the NUL terminator:
+> 	dbgline[3 * l - 1] =3D '\0';
+
+thanks for finding that bug, but NAK to your fix.
+
+> @@ -239,7 +239,7 @@ static inline void dump_rawmsg(enum debuglevel leve=
+l, const char *tag,
+>  		return;
+> =20
+>  	l =3D CAPIMSG_LEN(data);
+> -	if (l < 12) {
+> +	if (l <=3D 12) {
+>  		gig_dbg(level, "%s: ??? LEN=3D%04d", tag, l);
+>  		return;
+>  	}
+
+CAPI messages of exactly 12 bytes are legal, and should be decoded
+with the regular gig_dbg() call immediately after that hunk. It's
+just the hex dump part that should be skipped in that case.
+So I'd prefer to have it fixed this way instead:
+
+@@ -248,6 +248,8 @@ static inline void dump_rawmsg(enum debuglevel
+level, const char *tag,
+                CAPIMSG_APPID(data), CAPIMSG_MSGID(data), l,
+                CAPIMSG_CONTROL(data));
+        l -=3D 12;
++       if (l <=3D 0)
++               return;
+        dbgline =3D kmalloc(3 * l, GFP_ATOMIC);
+        if (!dbgline)
+                return;
+
+I'll prepare a patch of my own, citing you as reporter, if that's
+ok with you.
+
+Thanks,
+Tilman
+
+--=20
+Tilman Schmidt                    E-Mail: tilman@imap.cc
+Bonn, Germany
+Diese Nachricht besteht zu 100% aus wiederverwerteten Bits.
+Unge=F6ffnet mindestens haltbar bis: (siehe R=FCckseite)
+
+
+
+
+--------------enigDB9A78BFB621DCE29CBB6A66
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.12 (MingW32)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAlD5PYEACgkQMdB4Whm86/kRvgCffgwtkuEePvzJvik4bxqzm5jI
+83cAnibSdlasE2o/1y6AHazQDHD4+yt1
+=KNVA
+-----END PGP SIGNATURE-----
+
+--------------enigDB9A78BFB621DCE29CBB6A66--
