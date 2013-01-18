@@ -1,64 +1,28 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sun, 20 Jan 2013 00:12:36 +0000
-Subject: Re: [PATCH 2/2] drivers/crypto/bfin_crc.c: reposition free_irq to avoid access to invalid data
-Message-Id: <20130120001236.GA26742@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Jan 2013 07:41:38 +0000
+Subject: [patch] USB: c67x00-ll-hpi.c: signedness bug in ll_recv_msg()
+Message-Id: <20130118074138.GA31793@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1357552816-6046-1-git-send-email-Julia.Lawall@lip6.fr>
- <1357552816-6046-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1357552816-6046-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 07, 2013 at 11:00:16AM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> The data referenced by an interrupt handler should not be freed before the
-> interrupt is ended.  The handler is bfin_crypto_crc_handler.  It may refer
-> to crc->regs, which is released by the iounmap.
-> 
-> Furthermore, the second argument to all calls to free_irq is incorrect.  It
-> should be the same as the last argument of request_irq, which is crc,
-> rather than crc->dev.
-> 
-> The semantic match that finds the first problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @fn exists@
-> expression list es;
-> expression a,b;
-> identifier f;
-> @@
-> 
-> if (...) {
->   ... when any
->   free_irq(a,b);
->   ... when any
->   f(es);
->   ... when any
->   return ...;
-> }
-> 
-> @@
-> expression list fn.es;
-> expression fn.a,fn.b;
-> identifier fn.f;
-> @@
-> 
-> *f(es);
-> ... when any
-> *free_irq(a,b);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+The callers expect this function to return zero on success or -EIO if it
+times out.  The type should be int instead of unsigned short.
 
-Patch applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+diff --git a/drivers/usb/c67x00/c67x00-ll-hpi.c b/drivers/usb/c67x00/c67x00-ll-hpi.c
+index a9636f4..3a1ca4d 100644
+--- a/drivers/usb/c67x00/c67x00-ll-hpi.c
++++ b/drivers/usb/c67x00/c67x00-ll-hpi.c
+@@ -237,7 +237,7 @@ void c67x00_ll_hpi_disable_sofeop(struct c67x00_sie *sie)
+ /* -------------------------------------------------------------------------- */
+ /* Transactions */
+ 
+-static inline u16 ll_recv_msg(struct c67x00_device *dev)
++static inline int ll_recv_msg(struct c67x00_device *dev)
+ {
+ 	u16 res;
+ 
