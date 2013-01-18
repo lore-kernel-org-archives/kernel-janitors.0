@@ -1,36 +1,44 @@
-From: Arnaldo Carvalho de Melo <acme@infradead.org>
-Date: Wed, 23 Jan 2013 21:56:13 +0000
-Subject: Re: [PATCH 11/15] tools/lib/traceevent/event-parse.c: adjust duplicate test
-Message-Id: <20130123215613.GC6687@ghostprotocols.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Jan 2013 13:05:12 +0000
+Subject: [patch] target: change sprintf to snprintf
+Message-Id: <20130118130512.GA1634@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
- <1358773378-4700-12-git-send-email-Julia.Lawall@lip6.fr>
- <1358952137.21576.117.camel@gandalf.local.home>
-In-Reply-To: <1358952137.21576.117.camel@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sasha Levin <sasha.levin@oracle.com>, Julia Lawall <Julia.Lawall@lip6.fr>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Em Wed, Jan 23, 2013 at 09:42:17AM -0500, Steven Rostedt escreveu:
-> On Mon, 2013-01-21 at 14:02 +0100, Julia Lawall wrote:
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > Delete successive tests to the same location.  Field was already tested.
-> > Alloc_arg can fail, so test that value instead.
-> > 
-> > A simplified version of the semantic match that finds this problem is as
-> > follows: (http://coccinelle.lip6.fr/)
+"buf" is 128 characters and "vpd->device_identifier" is 256.  It makes
+the static checkers complain.
 
-This one was fixed already by the patch below, that is in my perf/core
-branch:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Probably we should just raise VPD_TMP_BUF_SIZE to 300.
 
-commit 9b9af6013045d58e95ecce62a1cfb34b150b7a8d
-Author: Sasha Levin <sasha.levin@oracle.com>
-Date:   Fri Dec 21 15:00:58 2012 -0500
-
-    tools lib traceevent: test correct variable after allocation
-    
-    we've tested the wrong variable for allocation failure, fix it to
-    test the right one.
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index bd587b7..96b64d5 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -907,15 +907,18 @@ int transport_dump_vpd_ident(
+ 
+ 	switch (vpd->device_identifier_code_set) {
+ 	case 0x01: /* Binary */
+-		sprintf(buf, "T10 VPD Binary Device Identifier: %s\n",
++		snprintf(buf, sizeof(buf),
++			"T10 VPD Binary Device Identifier: %s\n",
+ 			&vpd->device_identifier[0]);
+ 		break;
+ 	case 0x02: /* ASCII */
+-		sprintf(buf, "T10 VPD ASCII Device Identifier: %s\n",
++		snprintf(buf, sizeof(buf),
++			"T10 VPD ASCII Device Identifier: %s\n",
+ 			&vpd->device_identifier[0]);
+ 		break;
+ 	case 0x03: /* UTF-8 */
+-		sprintf(buf, "T10 VPD UTF-8 Device Identifier: %s\n",
++		snprintf(buf, sizeof(buf),
++			"T10 VPD UTF-8 Device Identifier: %s\n",
+ 			&vpd->device_identifier[0]);
+ 		break;
+ 	default:
