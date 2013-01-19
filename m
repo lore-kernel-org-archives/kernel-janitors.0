@@ -1,38 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Jan 2013 07:03:43 +0000
-Subject: [patch] [media] tm6000: check an allocation for failure
-Message-Id: <20130130070343.GA12396@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:21 +0000
+Subject: [PATCH 19/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-18-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lcostantino@gmail.com
+Cc: hdegoede@redhat.com, mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-This allocation had no error checking.  It didn't need to be under
-the mutex so I moved it out form there. That makes the error handling
-easier and is a potential speed up.
+replace:
+ #if defined(CONFIG_INPUT) || \
+     defined(CONFIG_INPUT_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_INPUT)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This change was made for: CONFIG_INPUT
 
-diff --git a/drivers/media/usb/tm6000/tm6000-core.c b/drivers/media/usb/tm6000/tm6000-core.c
-index 22cc011..7c32353 100644
---- a/drivers/media/usb/tm6000/tm6000-core.c
-+++ b/drivers/media/usb/tm6000/tm6000-core.c
-@@ -40,10 +40,13 @@ int tm6000_read_write_usb(struct tm6000_core *dev, u8 req_type, u8 req,
- 	u8	     *data = NULL;
- 	int delay = 5000;
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/media/usb/gspca/t613.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/usb/gspca/t613.c b/drivers/media/usb/gspca/t613.c
+index b92d4ef..e2cc4e5 100644
+--- a/drivers/media/usb/gspca/t613.c
++++ b/drivers/media/usb/gspca/t613.c
+@@ -823,7 +823,7 @@ static void sd_stopN(struct gspca_dev *gspca_dev)
+ 		msleep(20);
+ 		reg_w(gspca_dev, 0x0309);
+ 	}
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	/* If the last button state is pressed, release it now! */
+ 	if (sd->button_pressed) {
+ 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, 0);
+@@ -841,7 +841,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
+ 	int pkt_type;
  
--	mutex_lock(&dev->usb_lock);
--
--	if (len)
-+	if (len) {
- 		data = kzalloc(len, GFP_KERNEL);
-+		if (!data)
-+			return -ENOMEM;
-+	}
-+
-+	mutex_lock(&dev->usb_lock);
- 
- 	if (req_type & USB_DIR_IN)
- 		pipe = usb_rcvctrlpipe(dev->udev, 0);
+ 	if (data[0] = 0x5a) {
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 		if (len > 20) {
+ 			u8 state = (data[20] & 0x80) ? 1 : 0;
+ 			if (sd->button_pressed != state) {
+@@ -1019,7 +1019,7 @@ static const struct sd_desc sd_desc = {
+ 	.start = sd_start,
+ 	.stopN = sd_stopN,
+ 	.pkt_scan = sd_pkt_scan,
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.other_input = 1,
+ #endif
+ };
+-- 
+1.7.11.7
+
