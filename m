@@ -1,30 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Jan 2013 06:41:43 +0000
-Subject: [patch] staging: cxt1e1: buffer overflow in do_del_chan()
-Message-Id: <20130124064143.GC5611@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:28 +0000
+Subject: [PATCH V2 21/24] usb/gspca/zc3xx.c: use IS_ENABLED() macro
+Message-Id: <1358638891-4775-22-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: hdegoede@redhat.com
+Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-If we don't restrict "cp.channum" to 3 digits then the sprintf() will
-overflow.  I've added a check and changed the sprintf() to snprintf().
+replace:
+ #if defined(CONFIG_INPUT) || \
+     defined(CONFIG_INPUT_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_INPUT)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This change was made for: CONFIG_INPUT
 
-diff --git a/drivers/staging/cxt1e1/linux.c b/drivers/staging/cxt1e1/linux.c
-index 0ff2865..a829b62 100644
---- a/drivers/staging/cxt1e1/linux.c
-+++ b/drivers/staging/cxt1e1/linux.c
-@@ -773,7 +773,9 @@ do_del_chan (struct net_device * musycc_dev, void *data)
-     if (copy_from_user (&cp, data,
-                         sizeof (struct sbecom_chan_param)))
-         return -EFAULT;
--    sprintf (buf, CHANNAME "%d", cp.channum);
-+    if (cp.channum > 999)
-+        return -EINVAL;
-+    snprintf (buf, sizeof(buf), CHANNAME "%d", cp.channum);
-     if (!(dev = dev_get_by_name (&init_net, buf)))
-         return -ENOENT;
-     dev_put (dev);
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Changes from V1:
+   Updated subject
+
+ drivers/media/usb/gspca/zc3xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/usb/gspca/zc3xx.c b/drivers/media/usb/gspca/zc3xx.c
+index 77c5775..a8dc421 100644
+--- a/drivers/media/usb/gspca/zc3xx.c
++++ b/drivers/media/usb/gspca/zc3xx.c
+@@ -6902,7 +6902,7 @@ static int sd_get_jcomp(struct gspca_dev *gspca_dev,
+ 	return 0;
+ }
+ 
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
+ 			u8 *data,		/* interrupt packet data */
+ 			int len)		/* interrput packet length */
+@@ -6929,7 +6929,7 @@ static const struct sd_desc sd_desc = {
+ 	.pkt_scan = sd_pkt_scan,
+ 	.get_jcomp = sd_get_jcomp,
+ 	.set_jcomp = sd_set_jcomp,
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.int_pkt_scan = sd_int_pkt_scan,
+ #endif
+ };
+-- 
+1.7.11.7
+
