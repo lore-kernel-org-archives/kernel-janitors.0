@@ -1,15 +1,15 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 16:33:21 +0000
-Subject: [PATCH 19/24] use IS_ENABLED() macro
-Message-Id: <1358613206-4274-18-git-send-email-peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:19 +0000
+Subject: [PATCH 17/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-16-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: lcostantino@gmail.com
-Cc: hdegoede@redhat.com, mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: hdegoede@redhat.com
+Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
 replace:
  #if defined(CONFIG_INPUT) || \
@@ -22,35 +22,35 @@ This change was made for: CONFIG_INPUT
 Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/media/usb/gspca/t613.c | 6 +++---
+ drivers/media/usb/gspca/spca561.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/t613.c b/drivers/media/usb/gspca/t613.c
-index b92d4ef..e2cc4e5 100644
---- a/drivers/media/usb/gspca/t613.c
-+++ b/drivers/media/usb/gspca/t613.c
-@@ -823,7 +823,7 @@ static void sd_stopN(struct gspca_dev *gspca_dev)
- 		msleep(20);
- 		reg_w(gspca_dev, 0x0309);
- 	}
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	/* If the last button state is pressed, release it now! */
- 	if (sd->button_pressed) {
- 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, 0);
-@@ -841,7 +841,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
- 	int pkt_type;
+diff --git a/drivers/media/usb/gspca/spca561.c b/drivers/media/usb/gspca/spca561.c
+index cfe71dd..d1db3d8 100644
+--- a/drivers/media/usb/gspca/spca561.c
++++ b/drivers/media/usb/gspca/spca561.c
+@@ -741,7 +741,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
+ 			return;
+ 		}
  
- 	if (data[0] = 0x5a) {
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- 		if (len > 20) {
- 			u8 state = (data[20] & 0x80) ? 1 : 0;
- 			if (sd->button_pressed != state) {
-@@ -1019,7 +1019,7 @@ static const struct sd_desc sd_desc = {
- 	.start = sd_start,
+ 		if (data[0] & 0x20) {
+ 			input_report_key(gspca_dev->input_dev, KEY_CAMERA, 1);
+ 			input_sync(gspca_dev->input_dev);
+@@ -866,7 +866,7 @@ static const struct sd_desc sd_desc_12a = {
+ 	.start = sd_start_12a,
  	.stopN = sd_stopN,
  	.pkt_scan = sd_pkt_scan,
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.other_input = 1,
+ #endif
+ };
+@@ -879,7 +879,7 @@ static const struct sd_desc sd_desc_72a = {
+ 	.stopN = sd_stopN,
+ 	.pkt_scan = sd_pkt_scan,
+ 	.dq_callback = do_autogain,
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
  	.other_input = 1,
