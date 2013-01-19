@@ -1,29 +1,64 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Jan 2013 06:48:41 +0000
-Subject: [patch] [media] cx231xx: add a missing break statement
-Message-Id: <20130111064841.GB13207@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:16 +0000
+Subject: [PATCH V2 09/24] usb/gspca/ov519.c: use IS_ENABLED() macro
+Message-Id: <1358638891-4775-10-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, Hans de Goede <hdegoede@redhat.com>, Sakari Ailus <sakari.ailus@iki.fi>, Jesper Juhl <jj@chaosbits.net>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hdegoede@redhat.com
+Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-My static checker complains about the fall through here.  From the
-context it looks like we should add a break statement.
+replace:
+ #if defined(CONFIG_INPUT) || \
+     defined(CONFIG_INPUT_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_INPUT)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This change was made for: CONFIG_INPUT
+
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-Untested.
+Changes from V1:
+   Updated subject
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
-index 93dfc18..06376d9 100644
---- a/drivers/media/usb/cx231xx/cx231xx-video.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-video.c
-@@ -1751,6 +1751,7 @@ static int vidioc_s_register(struct file *file, void *priv,
- 							0x02,
- 							(u16)reg->reg, 1,
- 							value, 1, 2);
-+					break;
- 			case 0x322:
- 					ret  						cx231xx_write_i2c_master(dev,
+ drivers/media/usb/gspca/ov519.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/usb/gspca/ov519.c b/drivers/media/usb/gspca/ov519.c
+index 9aa09f8..9ad19a7 100644
+--- a/drivers/media/usb/gspca/ov519.c
++++ b/drivers/media/usb/gspca/ov519.c
+@@ -4238,7 +4238,7 @@ static void sd_stop0(struct gspca_dev *gspca_dev)
+ 	if (sd->bridge = BRIDGE_W9968CF)
+ 		w9968cf_stop0(sd);
+ 
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	/* If the last button state is pressed, release it now! */
+ 	if (sd->snapshot_pressed) {
+ 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, 0);
+@@ -4255,7 +4255,7 @@ static void ov51x_handle_button(struct gspca_dev *gspca_dev, u8 state)
+ 	struct sd *sd = (struct sd *) gspca_dev;
+ 
+ 	if (sd->snapshot_pressed != state) {
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, state);
+ 		input_sync(gspca_dev->input_dev);
+ #endif
+@@ -4924,7 +4924,7 @@ static const struct sd_desc sd_desc = {
+ 	.dq_callback = sd_reset_snapshot,
+ 	.get_jcomp = sd_get_jcomp,
+ 	.set_jcomp = sd_set_jcomp,
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.other_input = 1,
+ #endif
+ };
+-- 
+1.7.11.7
+
