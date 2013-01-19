@@ -1,34 +1,80 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 14 Jan 2013 02:43:00 +0000
-Subject: build regressions 2013-01-13
-Message-Id: <50f370b4.L2QNZajCjFfAXCCX%fengguang.wu@intel.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:06 +0000
+Subject: [PATCH 03/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mchehab@redhat.com
+Cc: schulz@macnetix.de, dhowells@redhat.com, peter.senna@gmail.com, mkrufky@linuxtv.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[warnings]
-arch/x86/kernel/cpu/intel_cacheinfo.c:519:27: warning: 'cache_disable_0' defined but not used [-Wunused-variable]
-arch/x86/kernel/cpu/intel_cacheinfo.c:521:27: warning: 'cache_disable_1' defined but not used [-Wunused-variable]
-arch/x86/kernel/cpu/intel_cacheinfo.c:618:29: warning: 'this_leaf.size' may be used uninitialized in this function [-Wmaybe-uninitialized]
-arch/x86/kernel/cpu/intel_cacheinfo.c:619:30: warning: 'this_leaf.eax.split.num_threads_sharing' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/char/rtc.c:192:22: warning: 'rtc_freq' defined but not used [-Wunused-variable]
-arch/x86/kernel/cpu/intel_cacheinfo.c:560:27: warning: 'subcaches' defined but not used [-Wunused-variable]
-warning: (BRIDGE_NF_EBTABLES) selects NETFILTER_XTABLES which has unmet direct dependencies (NET && INET && NETFILTER)
-drivers/regulator/tps62360-regulator.c:376:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-drivers/base/regmap/regmap-debugfs.c:147:9: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-net/ipv4/route.c:120:12: warning: 'ip_rt_gc_timeout' defined but not used [-Wunused-variable]
-net/ipv4/route.c:121:12: warning: 'ip_rt_gc_interval' defined but not used [-Wunused-variable]
-net/ipv4/route.c:122:12: warning: 'ip_rt_gc_min_interval' defined but not used [-Wunused-variable]
-net/ipv4/route.c:128:12: warning: 'ip_rt_gc_elasticity' defined but not used [-Wunused-variable]
-drivers/mfd/twl6030-irq.c:398:24: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-drivers/regulator/tps62360-regulator.c:364:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-fs/fuse/cuse.c:286:24: warning: 'val' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/fuse/cuse.c:282:10: warning: 'key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/mfd/wm8994-core.c:568:7: warning: 'patch_regs' may be used uninitialized in this function [-Wmaybe-uninitialized]
-warning: (DLM) selects IP_SCTP which has unmet direct dependencies (NET && INET && EXPERIMENTAL && (IPV6 || IPV6=n))
+replace:
+ #if defined(CONFIG_INPUT_EVDEV) || \
+     defined(CONFIG_INPUT_EVDEV_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_INPUT_EVDEV)
 
+This change was made for: CONFIG_INPUT_EVDEV,
+CONFIG_DVB_SP8870
+
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+ drivers/media/pci/ttpci/av7110.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/pci/ttpci/av7110.c b/drivers/media/pci/ttpci/av7110.c
+index 2f54e2b..fc9e7e5 100644
+--- a/drivers/media/pci/ttpci/av7110.c
++++ b/drivers/media/pci/ttpci/av7110.c
+@@ -235,7 +235,7 @@ static void recover_arm(struct av7110 *av7110)
+ 
+ 	restart_feeds(av7110);
+ 
+-#if defined(CONFIG_INPUT_EVDEV) || defined(CONFIG_INPUT_EVDEV_MODULE)
++#if IS_ENABLED(CONFIG_INPUT_EVDEV)
+ 	av7110_check_ir_config(av7110, true);
+ #endif
+ }
+@@ -268,7 +268,7 @@ static int arm_thread(void *data)
+ 		if (!av7110->arm_ready)
+ 			continue;
+ 
+-#if defined(CONFIG_INPUT_EVDEV) || defined(CONFIG_INPUT_EVDEV_MODULE)
++#if IS_ENABLED(CONFIG_INPUT_EVDEV)
+ 		av7110_check_ir_config(av7110, false);
+ #endif
+ 
+@@ -1730,7 +1730,7 @@ static int alps_tdlb7_tuner_set_params(struct dvb_frontend *fe)
+ 
+ static int alps_tdlb7_request_firmware(struct dvb_frontend* fe, const struct firmware **fw, char* name)
+ {
+-#if defined(CONFIG_DVB_SP8870) || defined(CONFIG_DVB_SP8870_MODULE)
++#if IS_ENABLED(CONFIG_DVB_SP8870)
+ 	struct av7110* av7110 = fe->dvb->priv;
+ 
+ 	return request_firmware(fw, name, &av7110->dev->pci->dev);
+@@ -2725,7 +2725,7 @@ static int __devinit av7110_attach(struct saa7146_dev* dev,
+ 
+ 	mutex_init(&av7110->ioctl_mutex);
+ 
+-#if defined(CONFIG_INPUT_EVDEV) || defined(CONFIG_INPUT_EVDEV_MODULE)
++#if IS_ENABLED(CONFIG_INPUT_EVDEV)
+ 	av7110_ir_init(av7110);
+ #endif
+ 	printk(KERN_INFO "dvb-ttpci: found av7110-%d.\n", av7110_num);
+@@ -2768,7 +2768,7 @@ static int __devexit av7110_detach(struct saa7146_dev* saa)
+ 	struct av7110 *av7110 = saa->ext_priv;
+ 	dprintk(4, "%p\n", av7110);
+ 
+-#if defined(CONFIG_INPUT_EVDEV) || defined(CONFIG_INPUT_EVDEV_MODULE)
++#if IS_ENABLED(CONFIG_INPUT_EVDEV)
+ 	av7110_ir_exit(av7110);
+ #endif
+ 	if (budgetpatch || av7110->full_ts) {
+-- 
+1.7.11.7
+
