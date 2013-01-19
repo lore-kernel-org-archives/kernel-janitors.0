@@ -1,30 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 13 Jan 2013 19:31:33 +0000
-Subject: [media] tuners/xc5000: fix MODE_AIR in xc5000_set_params()
-Message-Id: <20130113193133.GA5907@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:19 +0000
+Subject: [PATCH V2 12/24] usb/gspca/pac7311.c: use IS_ENABLED() macro
+Message-Id: <1358638891-4775-13-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Michael Krufky <mkrufky@kernellabs.com>, Devin Heitmueller <dheitmueller@kernellabs.com>, Tim Gardner <tim.gardner@canonical.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hdegoede@redhat.com
+Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-There is a missing break so we use XC_RF_MODE_CABLE instead of
-XC_RF_MODE_AIR.
+replace:
+ #if defined(CONFIG_INPUT) || \
+     defined(CONFIG_INPUT_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_INPUT)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This change was made for: CONFIG_INPUT
+
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-Static checker stuff.  Untested.
+Changes from V1:
+   Updated subject
 
-diff --git a/drivers/media/tuners/xc5000.c b/drivers/media/tuners/xc5000.c
-index dc93cf3..d6be1b6 100644
---- a/drivers/media/tuners/xc5000.c
-+++ b/drivers/media/tuners/xc5000.c
-@@ -785,6 +785,7 @@ static int xc5000_set_params(struct dvb_frontend *fe)
- 			return -EINVAL;
- 		}
- 		priv->rf_mode = XC_RF_MODE_AIR;
-+		break;
- 	case SYS_DVBC_ANNEX_A:
- 	case SYS_DVBC_ANNEX_C:
- 		dprintk(1, "%s() QAM modulation\n", __func__);
+ drivers/media/usb/gspca/pac7311.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/usb/gspca/pac7311.c b/drivers/media/usb/gspca/pac7311.c
+index ba3558d..a12dfbf 100644
+--- a/drivers/media/usb/gspca/pac7311.c
++++ b/drivers/media/usb/gspca/pac7311.c
+@@ -621,7 +621,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
+ 	gspca_frame_add(gspca_dev, INTER_PACKET, data, len);
+ }
+ 
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
+ 			u8 *data,		/* interrupt packet data */
+ 			int len)		/* interrupt packet length */
+@@ -661,7 +661,7 @@ static const struct sd_desc sd_desc = {
+ 	.stopN = sd_stopN,
+ 	.pkt_scan = sd_pkt_scan,
+ 	.dq_callback = do_autogain,
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.int_pkt_scan = sd_int_pkt_scan,
+ #endif
+ };
+-- 
+1.7.11.7
+
