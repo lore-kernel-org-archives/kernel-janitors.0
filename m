@@ -1,61 +1,73 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 16:33:24 +0000
-Subject: [PATCH 22/24] use IS_ENABLED() macro
-Message-Id: <1358613206-4274-21-git-send-email-peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:08 +0000
+Subject: [PATCH V2 01/24] pci/cx88/cx88.h: use IS_ENABLED() macro
+Message-Id: <1358638891-4775-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: mchehab@redhat.com
-Cc: jarod@redhat.com, tralph@mythtv.org, peter.senna@gmail.com, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: hans.verkuil@cisco.com, jrnieder@gmail.com, peter.senna@gmail.com, emilgoode@gmail.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 replace:
- #if defined(CONFIG_I2C) || \
-     defined(CONFIG_I2C_MODULE)
+ #if defined(CONFIG_VIDEO_CX88_DVB) || \
+     defined(CONFIG_VIDEO_CX88_DVB_MODULE)
 with:
- #if IS_ENABLED(CONFIG_I2C)
+ #if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
 
-This change was made for: CONFIG_I2C
+This change was made for: CONFIG_VIDEO_CX88_DVB,
+CONFIG_VIDEO_CX88_BLACKBIRD, CONFIG_VIDEO_CX88_VP3054
 
 Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/media/usb/hdpvr/hdpvr-core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes from V1:
+   Updated subject
 
-diff --git a/drivers/media/usb/hdpvr/hdpvr-core.c b/drivers/media/usb/hdpvr/hdpvr-core.c
-index 84dc26f..5c61935 100644
---- a/drivers/media/usb/hdpvr/hdpvr-core.c
-+++ b/drivers/media/usb/hdpvr/hdpvr-core.c
-@@ -391,7 +391,7 @@ static int hdpvr_probe(struct usb_interface *interface,
- 		goto error;
- 	}
+ drivers/media/pci/cx88/cx88.h | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/pci/cx88/cx88.h b/drivers/media/pci/cx88/cx88.h
+index ba0dba4..feff53c 100644
+--- a/drivers/media/pci/cx88/cx88.h
++++ b/drivers/media/pci/cx88/cx88.h
+@@ -363,7 +363,7 @@ struct cx88_core {
+ 	unsigned int               tuner_formats;
  
--#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
-+#if IS_ENABLED(CONFIG_I2C)
- 	retval = hdpvr_register_i2c_adapter(dev);
- 	if (retval < 0) {
- 		v4l2_err(&dev->v4l2_dev, "i2c adapter register failed\n");
-@@ -419,7 +419,7 @@ static int hdpvr_probe(struct usb_interface *interface,
- 	return 0;
+ 	/* config info -- dvb */
+-#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
++#if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
+ 	int 			   (*prev_set_voltage)(struct dvb_frontend *fe, fe_sec_voltage_t voltage);
+ #endif
+ 	void			   (*gate_ctrl)(struct cx88_core  *core, int open);
+@@ -562,8 +562,7 @@ struct cx8802_dev {
  
- reg_fail:
--#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
-+#if IS_ENABLED(CONFIG_I2C)
- 	i2c_del_adapter(&dev->i2c_adapter);
+ 	/* for blackbird only */
+ 	struct list_head           devlist;
+-#if defined(CONFIG_VIDEO_CX88_BLACKBIRD) || \
+-    defined(CONFIG_VIDEO_CX88_BLACKBIRD_MODULE)
++#if IS_ENABLED(CONFIG_VIDEO_CX88_BLACKBIRD)
+ 	struct video_device        *mpeg_dev;
+ 	u32                        mailbox;
+ 	int                        width;
+@@ -574,13 +573,12 @@ struct cx8802_dev {
+ 	struct cx2341x_handler     cxhdl;
  #endif
- error:
-@@ -451,7 +451,7 @@ static void hdpvr_disconnect(struct usb_interface *interface)
- 	mutex_lock(&dev->io_mutex);
- 	hdpvr_cancel_queue(dev);
- 	mutex_unlock(&dev->io_mutex);
--#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
-+#if IS_ENABLED(CONFIG_I2C)
- 	i2c_del_adapter(&dev->i2c_adapter);
+ 
+-#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
++#if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
+ 	/* for dvb only */
+ 	struct videobuf_dvb_frontends frontends;
  #endif
- 	video_unregister_device(dev->video_dev);
+ 
+-#if defined(CONFIG_VIDEO_CX88_VP3054) || \
+-    defined(CONFIG_VIDEO_CX88_VP3054_MODULE)
++#if IS_ENABLED(CONFIG_VIDEO_CX88_VP3054)
+ 	/* For VP3045 secondary I2C bus support */
+ 	struct vp3054_i2c_state	   *vp3054;
+ #endif
 -- 
 1.7.11.7
 
