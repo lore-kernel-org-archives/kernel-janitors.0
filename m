@@ -1,58 +1,61 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 Jan 2013 12:13:01 +0000
-Subject: [PATCH 8/15] arch/powerpc/platforms/85xx/p1022_ds.c: adjust duplicate test
-Message-Id: <1358773378-4700-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:24 +0000
+Subject: [PATCH 22/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-21-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Gala <galak@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
+To: mchehab@redhat.com
+Cc: jarod@redhat.com, tralph@mythtv.org, peter.senna@gmail.com, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+replace:
+ #if defined(CONFIG_I2C) || \
+     defined(CONFIG_I2C_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_I2C)
 
-Delete successive tests to the same location.  The code tested the result
-of a previous call, that itself was already tested.  It is changed to test
-the result of the most recent call.
+This change was made for: CONFIG_I2C
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@s exists@
-local idexpression y;
-expression x,e;
-@@
-
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
-    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- arch/powerpc/platforms/85xx/p1022_ds.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/hdpvr/hdpvr-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/platforms/85xx/p1022_ds.c b/arch/powerpc/platforms/85xx/p1022_ds.c
-index e346edf..af5853c 100644
---- a/arch/powerpc/platforms/85xx/p1022_ds.c
-+++ b/arch/powerpc/platforms/85xx/p1022_ds.c
-@@ -302,7 +302,7 @@ static void p1022ds_set_monitor_port(enum fsl_diu_monitor_port port)
- 		goto exit;
+diff --git a/drivers/media/usb/hdpvr/hdpvr-core.c b/drivers/media/usb/hdpvr/hdpvr-core.c
+index 84dc26f..5c61935 100644
+--- a/drivers/media/usb/hdpvr/hdpvr-core.c
++++ b/drivers/media/usb/hdpvr/hdpvr-core.c
+@@ -391,7 +391,7 @@ static int hdpvr_probe(struct usb_interface *interface,
+ 		goto error;
  	}
- 	cs1_addr = lbc_br_to_phys(ecm, num_laws, br1);
--	if (!cs0_addr) {
-+	if (!cs1_addr) {
- 		pr_err("p1022ds: could not determine physical address for CS1"
- 		       " (BR1=%08x)\n", br1);
- 		goto exit;
+ 
+-#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
++#if IS_ENABLED(CONFIG_I2C)
+ 	retval = hdpvr_register_i2c_adapter(dev);
+ 	if (retval < 0) {
+ 		v4l2_err(&dev->v4l2_dev, "i2c adapter register failed\n");
+@@ -419,7 +419,7 @@ static int hdpvr_probe(struct usb_interface *interface,
+ 	return 0;
+ 
+ reg_fail:
+-#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
++#if IS_ENABLED(CONFIG_I2C)
+ 	i2c_del_adapter(&dev->i2c_adapter);
+ #endif
+ error:
+@@ -451,7 +451,7 @@ static void hdpvr_disconnect(struct usb_interface *interface)
+ 	mutex_lock(&dev->io_mutex);
+ 	hdpvr_cancel_queue(dev);
+ 	mutex_unlock(&dev->io_mutex);
+-#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
++#if IS_ENABLED(CONFIG_I2C)
+ 	i2c_del_adapter(&dev->i2c_adapter);
+ #endif
+ 	video_unregister_device(dev->video_dev);
+-- 
+1.7.11.7
 
