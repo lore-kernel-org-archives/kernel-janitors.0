@@ -1,10 +1,10 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 16:33:11 +0000
-Subject: [PATCH 08/24] use IS_ENABLED() macro
-Message-Id: <1358613206-4274-8-git-send-email-peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:15 +0000
+Subject: [PATCH V2 08/24] usb/gspca/konica.c: use IS_ENABLED() macro
+Message-Id: <1358638891-4775-9-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -22,6 +22,9 @@ This change was made for: CONFIG_INPUT
 Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
+Changes from V1:
+   Updated subject
+
  drivers/media/usb/gspca/konica.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
