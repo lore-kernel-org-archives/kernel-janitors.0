@@ -1,7 +1,7 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:28 +0000
-Subject: [PATCH V2 21/24] usb/gspca/zc3xx.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-22-git-send-email-peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:14 +0000
+Subject: [PATCH V2 07/24] usb/gspca: use IS_ENABLED() macro
+Message-Id: <1358638891-4775-8-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
@@ -25,31 +25,90 @@ Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 Changes from V1:
    Updated subject
 
- drivers/media/usb/gspca/zc3xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/gspca/gspca.c | 10 +++++-----
+ drivers/media/usb/gspca/gspca.h |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/zc3xx.c b/drivers/media/usb/gspca/zc3xx.c
-index 77c5775..a8dc421 100644
---- a/drivers/media/usb/gspca/zc3xx.c
-+++ b/drivers/media/usb/gspca/zc3xx.c
-@@ -6902,7 +6902,7 @@ static int sd_get_jcomp(struct gspca_dev *gspca_dev,
- 	return 0;
- }
+diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
+index e0a431b..3564bdb 100644
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -44,7 +44,7 @@
+ 
+ #include "gspca.h"
  
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
- 			u8 *data,		/* interrupt packet data */
- 			int len)		/* interrput packet length */
-@@ -6929,7 +6929,7 @@ static const struct sd_desc sd_desc = {
- 	.pkt_scan = sd_pkt_scan,
- 	.get_jcomp = sd_get_jcomp,
- 	.set_jcomp = sd_set_jcomp,
+ #include <linux/input.h>
+ #include <linux/usb/input.h>
+ #endif
+@@ -118,7 +118,7 @@ static const struct vm_operations_struct gspca_vm_ops = {
+ /*
+  * Input and interrupt endpoint handling functions
+  */
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- 	.int_pkt_scan = sd_int_pkt_scan,
+ static void int_irq(struct urb *urb)
+ {
+ 	struct gspca_dev *gspca_dev = (struct gspca_dev *) urb->context;
+@@ -2303,7 +2303,7 @@ int gspca_dev_probe2(struct usb_interface *intf,
+ 
+ 	return 0;
+ out:
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	if (gspca_dev->input_dev)
+ 		input_unregister_device(gspca_dev->input_dev);
  #endif
- };
+@@ -2348,7 +2348,7 @@ EXPORT_SYMBOL(gspca_dev_probe);
+ void gspca_disconnect(struct usb_interface *intf)
+ {
+ 	struct gspca_dev *gspca_dev = usb_get_intfdata(intf);
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	struct input_dev *input_dev;
+ #endif
+ 
+@@ -2360,7 +2360,7 @@ void gspca_disconnect(struct usb_interface *intf)
+ 	gspca_dev->present = 0;
+ 	destroy_urbs(gspca_dev);
+ 
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	gspca_input_destroy_urb(gspca_dev);
+ 	input_dev = gspca_dev->input_dev;
+ 	if (input_dev) {
+diff --git a/drivers/media/usb/gspca/gspca.h b/drivers/media/usb/gspca/gspca.h
+index 352317d..5559932 100644
+--- a/drivers/media/usb/gspca/gspca.h
++++ b/drivers/media/usb/gspca/gspca.h
+@@ -138,7 +138,7 @@ struct sd_desc {
+ 	cam_reg_op get_register;
+ #endif
+ 	cam_ident_op get_chip_ident;
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	cam_int_pkt_op int_pkt_scan;
+ 	/* other_input makes the gspca core create gspca_dev->input even when
+ 	   int_pkt_scan is NULL, for cams with non interrupt driven buttons */
+@@ -167,7 +167,7 @@ struct gspca_dev {
+ 	struct usb_device *dev;
+ 	struct file *capt_file;		/* file doing video capture */
+ 					/* protected by queue_lock */
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	struct input_dev *input_dev;
+ 	char phys[64];			/* physical device path */
+ #endif
+@@ -190,7 +190,7 @@ struct gspca_dev {
+ #define USB_BUF_SZ 64
+ 	__u8 *usb_buf;				/* buffer for USB exchanges */
+ 	struct urb *urb[MAX_NURBS];
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	struct urb *int_urb;
+ #endif
+ 
 -- 
 1.7.11.7
 
