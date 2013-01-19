@@ -1,52 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 24 Jan 2013 19:15:32 +0000
-Subject: re: clk: basic clock hardware types
-Message-Id: <20130124191532.GA8596@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:16 +0000
+Subject: [PATCH 13/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-13-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: hdegoede@redhat.com
+Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hello Mike Turquette,
+replace:
+ #if defined(CONFIG_INPUT) || \
+     defined(CONFIG_INPUT_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_INPUT)
 
-The patch 9d9f78ed9af0: "clk: basic clock hardware types" from Mar 
-15, 2012, leads to the following warning:
-drivers/clk/clk-mux.c:54 clk_mux_get_parent()
-	 warn: signedness bug returning '(-22)'
+This change was made for: CONFIG_INPUT
 
-drivers/clk/clk-mux.c
-    32  static u8 clk_mux_get_parent(struct clk_hw *hw)
-    33  {
-    34          struct clk_mux *mux = to_clk_mux(hw);
-    35          u32 val;
-    36  
-    37          /*
-    38           * FIXME need a mux-specific flag to determine if val is bitwise or numeric
-    39           * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
-    40           * to 0x7 (index starts at one)
-    41           * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
-    42           * val = 0x4 really means "bit 2, index starts at bit 0"
-    43           */
-    44          val = readl(mux->reg) >> mux->shift;
-    45          val &= (1 << mux->width) - 1;
-    46  
-    47          if (val && (mux->flags & CLK_MUX_INDEX_BIT))
-    48                  val = ffs(val) - 1;
-    49  
-    50          if (val && (mux->flags & CLK_MUX_INDEX_ONE))
-    51                  val--;
-    52  
-    53          if (val >= __clk_get_num_parents(hw->clk))
-    54                  return -EINVAL;
-                        ^^^^^^^^^^^^^^^
-The return type is u8 so -EINVAL gets truncated to 234.  None of the
-caller check for error so it could result in memory corruption.
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/media/usb/gspca/se401.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-    55  
-    56          return val;
-    57  }
-
-regards,
-dan carpenter
+diff --git a/drivers/media/usb/gspca/se401.c b/drivers/media/usb/gspca/se401.c
+index a33cb78..5f729b8 100644
+--- a/drivers/media/usb/gspca/se401.c
++++ b/drivers/media/usb/gspca/se401.c
+@@ -594,7 +594,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev, u8 *data, int len)
+ 		sd_pkt_scan_janggu(gspca_dev, data, len);
+ }
+ 
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ static int sd_int_pkt_scan(struct gspca_dev *gspca_dev, u8 *data, int len)
+ {
+ 	struct sd *sd = (struct sd *)gspca_dev;
+@@ -688,7 +688,7 @@ static const struct sd_desc sd_desc = {
+ 	.stopN = sd_stopN,
+ 	.dq_callback = sd_dq_callback,
+ 	.pkt_scan = sd_pkt_scan,
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.int_pkt_scan = sd_int_pkt_scan,
+ #endif
+ };
+-- 
+1.7.11.7
 
