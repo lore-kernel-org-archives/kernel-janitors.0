@@ -1,7 +1,7 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 16:33:09 +0000
-Subject: [PATCH 06/24] use IS_ENABLED() macro
-Message-Id: <1358613206-4274-6-git-send-email-peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:10 +0000
+Subject: [PATCH 07/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-7-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
@@ -22,40 +22,90 @@ This change was made for: CONFIG_INPUT
 Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/media/usb/gspca/cpia1.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/usb/gspca/gspca.c | 10 +++++-----
+ drivers/media/usb/gspca/gspca.h |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/cpia1.c b/drivers/media/usb/gspca/cpia1.c
-index b3ba47d..1dcdd9f 100644
---- a/drivers/media/usb/gspca/cpia1.c
-+++ b/drivers/media/usb/gspca/cpia1.c
-@@ -541,7 +541,7 @@ static int do_command(struct gspca_dev *gspca_dev, u16 command,
- 		/* test button press */
- 		a = ((gspca_dev->usb_buf[1] & 0x02) = 0);
- 		if (a != sd->params.qx3.button) {
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 			input_report_key(gspca_dev->input_dev, KEY_CAMERA, a);
- 			input_sync(gspca_dev->input_dev);
- #endif
-@@ -1640,7 +1640,7 @@ static void sd_stopN(struct gspca_dev *gspca_dev)
- 	/* Update the camera status */
- 	do_command(gspca_dev, CPIA_COMMAND_GetCameraStatus, 0, 0, 0, 0);
+diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
+index e0a431b..3564bdb 100644
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -44,7 +44,7 @@
+ 
+ #include "gspca.h"
  
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- 	/* If the last button state is pressed, release it now! */
- 	if (sd->params.qx3.button) {
- 		/* The camera latch will hold the pressed state until we reset
-@@ -1869,7 +1869,7 @@ static const struct sd_desc sd_desc = {
- 	.stopN = sd_stopN,
- 	.dq_callback = sd_dq_callback,
- 	.pkt_scan = sd_pkt_scan,
+ #include <linux/input.h>
+ #include <linux/usb/input.h>
+ #endif
+@@ -118,7 +118,7 @@ static const struct vm_operations_struct gspca_vm_ops = {
+ /*
+  * Input and interrupt endpoint handling functions
+  */
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- 	.other_input = 1,
+ static void int_irq(struct urb *urb)
+ {
+ 	struct gspca_dev *gspca_dev = (struct gspca_dev *) urb->context;
+@@ -2303,7 +2303,7 @@ int gspca_dev_probe2(struct usb_interface *intf,
+ 
+ 	return 0;
+ out:
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	if (gspca_dev->input_dev)
+ 		input_unregister_device(gspca_dev->input_dev);
  #endif
- };
+@@ -2348,7 +2348,7 @@ EXPORT_SYMBOL(gspca_dev_probe);
+ void gspca_disconnect(struct usb_interface *intf)
+ {
+ 	struct gspca_dev *gspca_dev = usb_get_intfdata(intf);
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	struct input_dev *input_dev;
+ #endif
+ 
+@@ -2360,7 +2360,7 @@ void gspca_disconnect(struct usb_interface *intf)
+ 	gspca_dev->present = 0;
+ 	destroy_urbs(gspca_dev);
+ 
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	gspca_input_destroy_urb(gspca_dev);
+ 	input_dev = gspca_dev->input_dev;
+ 	if (input_dev) {
+diff --git a/drivers/media/usb/gspca/gspca.h b/drivers/media/usb/gspca/gspca.h
+index 352317d..5559932 100644
+--- a/drivers/media/usb/gspca/gspca.h
++++ b/drivers/media/usb/gspca/gspca.h
+@@ -138,7 +138,7 @@ struct sd_desc {
+ 	cam_reg_op get_register;
+ #endif
+ 	cam_ident_op get_chip_ident;
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	cam_int_pkt_op int_pkt_scan;
+ 	/* other_input makes the gspca core create gspca_dev->input even when
+ 	   int_pkt_scan is NULL, for cams with non interrupt driven buttons */
+@@ -167,7 +167,7 @@ struct gspca_dev {
+ 	struct usb_device *dev;
+ 	struct file *capt_file;		/* file doing video capture */
+ 					/* protected by queue_lock */
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	struct input_dev *input_dev;
+ 	char phys[64];			/* physical device path */
+ #endif
+@@ -190,7 +190,7 @@ struct gspca_dev {
+ #define USB_BUF_SZ 64
+ 	__u8 *usb_buf;				/* buffer for USB exchanges */
+ 	struct urb *urb[MAX_NURBS];
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	struct urb *int_urb;
+ #endif
+ 
 -- 
 1.7.11.7
 
