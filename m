@@ -1,57 +1,55 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 Jan 2013 12:13:56 +0000
-Subject: [PATCH 9/14] drivers/ipack/devices/ipoctal.c: adjust duplicate test
-Message-Id: <1358773378-4700-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:18 +0000
+Subject: [PATCH V2 11/24] gspca/pac7302.c: use IS_ENABLED() macro
+Message-Id: <1358638891-4775-12-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Iglesias Gonsalvez <siglesias@igalia.com>
-Cc: kernel-janitors@vger.kernel.org, Jens Taprogge <jens.taprogge@taprogge.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, industrypack-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: hdegoede@redhat.com
+Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+replace:
+ #if defined(CONFIG_INPUT) || \
+     defined(CONFIG_INPUT_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_INPUT)
 
-Delete successive tests to the same location.  The code tested the result
-of a previous allocation, that itself was already tested.  It is changed to
-test the result of the most recent allocation.
+This change was made for: CONFIG_INPUT
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@s exists@
-local idexpression y;
-expression x,e;
-@@
-
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
-    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/ipack/devices/ipoctal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes from V1:
+   Updated subject
 
-diff --git a/drivers/ipack/devices/ipoctal.c b/drivers/ipack/devices/ipoctal.c
-index 8fb2e34..f3a83b1 100644
---- a/drivers/ipack/devices/ipoctal.c
-+++ b/drivers/ipack/devices/ipoctal.c
-@@ -282,7 +282,7 @@ static int ipoctal_inst_slot(struct ipoctal *ipoctal, unsigned int bus_nr,
- 	ipoctal->mem8_space  		devm_ioremap_nocache(&ipoctal->dev->dev,
- 				     region->start, 0x8000);
--	if (!addr) {
-+	if (!ipoctal->mem8_space) {
- 		dev_err(&ipoctal->dev->dev,
- 			"Unable to map slot [%d:%d] MEM8 space!\n",
- 			bus_nr, slot);
+ drivers/media/usb/gspca/pac7302.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/usb/gspca/pac7302.c b/drivers/media/usb/gspca/pac7302.c
+index 4f5869a..add6f72 100644
+--- a/drivers/media/usb/gspca/pac7302.c
++++ b/drivers/media/usb/gspca/pac7302.c
+@@ -890,7 +890,7 @@ static int sd_chip_ident(struct gspca_dev *gspca_dev,
+ }
+ #endif
+ 
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
+ 			u8 *data,		/* interrupt packet data */
+ 			int len)		/* interrput packet length */
+@@ -936,7 +936,7 @@ static const struct sd_desc sd_desc = {
+ 	.set_register = sd_dbg_s_register,
+ 	.get_chip_ident = sd_chip_ident,
+ #endif
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.int_pkt_scan = sd_int_pkt_scan,
+ #endif
+ };
+-- 
+1.7.11.7
 
