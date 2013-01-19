@@ -1,55 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 03 Jan 2013 09:34:55 +0000
-Subject: [PATCH 1/2] drivers/i2c/busses/i2c-sh7760.c: use clk API instead of direct dereferences
-Message-Id: <1357209260-15412-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:15 +0000
+Subject: [PATCH 12/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-12-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Ben Dooks (embedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: hdegoede@redhat.com
+Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+replace:
+ #if defined(CONFIG_INPUT) || \
+     defined(CONFIG_INPUT_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_INPUT)
 
-A struct clk value is intended to be an abstract pointer, so it should be
-manipulated using the various API functions.
+This change was made for: CONFIG_INPUT
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e,e1;
-identifier i;
-@@
-
-*e = clk_get(...)
- ... when != e = e1
-     when any
-*e->i
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-I am not able to compile this code.  Furthermore, the documentation on
-clk_get_rate says that the result is only valid if the clock has been
-enabled, and I don't know if that is the case here.
+ drivers/media/usb/gspca/pac7311.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/i2c/busses/i2c-sh7760.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-sh7760.c b/drivers/i2c/busses/i2c-sh7760.c
-index 3a2253e..972eafe 100644
---- a/drivers/i2c/busses/i2c-sh7760.c
-+++ b/drivers/i2c/busses/i2c-sh7760.c
-@@ -401,7 +401,7 @@ static int calc_CCR(unsigned long scl_hz)
- 	if (IS_ERR(mclk)) {
- 		return PTR_ERR(mclk);
- 	} else {
--		mck = mclk->rate;
-+		mck = clk_get_rate(mclk);
- 		clk_put(mclk);
- 	}
+diff --git a/drivers/media/usb/gspca/pac7311.c b/drivers/media/usb/gspca/pac7311.c
+index ba3558d..a12dfbf 100644
+--- a/drivers/media/usb/gspca/pac7311.c
++++ b/drivers/media/usb/gspca/pac7311.c
+@@ -621,7 +621,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
+ 	gspca_frame_add(gspca_dev, INTER_PACKET, data, len);
+ }
  
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
+ 			u8 *data,		/* interrupt packet data */
+ 			int len)		/* interrupt packet length */
+@@ -661,7 +661,7 @@ static const struct sd_desc sd_desc = {
+ 	.stopN = sd_stopN,
+ 	.pkt_scan = sd_pkt_scan,
+ 	.dq_callback = do_autogain,
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.int_pkt_scan = sd_int_pkt_scan,
+ #endif
+ };
+-- 
+1.7.11.7
 
