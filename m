@@ -1,30 +1,79 @@
-From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Date: Wed, 23 Jan 2013 11:36:55 +0000
-Subject: Re: [patch] drm/nouveau/disp: sizeof() wrong pointer
-Message-Id: <1358941017.28763.6.camel@thorin>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:07 +0000
+Subject: [PATCH V2 00/24] [media] use IS_ENABLED() macro
+Message-Id: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130122072022.GB8966@elgon.mountain>
-	<1358847745.17068.7.camel@mattotaupa> <20130123083837.GZ4584@mwanda>
-In-Reply-To: <20130123083837.GZ4584@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Paul Menzel <paulepanter@users.sourceforge.net>, dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>
+To: mchehab@redhat.com
+Cc: peter.senna@gmail.com, n.pajkovsky@gmail.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mit, 2013-01-23 at 11:38 +0300, Dan Carpenter wrote:
-> On Tue, Jan 22, 2013 at 10:42:25AM +0100, Paul Menzel wrote:
-> > 
-> > Did you find this by manual inspection or did you use some tool?
-> 
-> I found this because it caused a problem in a parser I was working
-> on but Sparse warns about "warning: expression using sizeof(void)".
+This patch series introduce the use of IS_ENABLED() macro.
+For example replace:
+ #if defined(CONFIG_VIDEO_CX88_DVB) || \
+     defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
 
-gcc's -Wpointer-arith option also reports this.
-Never tried it on the kernel though .....
+Changes from V1:
+   Updated subject
+   Fixed commit message of patch 15/24
+   Fixed commit message of patch 24/24
 
-	Bernd
+Peter Senna Tschudin (24):
+  pci/cx88/cx88.h: use IS_ENABLED() macro
+  pci/saa7134/saa7134.h: use IS_ENABLED() macro
+  pci/ttpci/av7110.c: use IS_ENABLED() macro
+  platform/marvell-ccic/mcam-core.h: use IS_ENABLED() macro
+  radio/si470x/radio-si470x.h: use IS_ENABLED() macro
+  usb/gspca/cpia1.c: use IS_ENABLED() macro
+  usb/gspca: use IS_ENABLED() macro
+  usb/gspca/konica.c: use IS_ENABLED() macro
+  usb/gspca/ov519.c: use IS_ENABLED() macro
+  usb/gspca/pac207.c: use IS_ENABLED() macro
+  gspca/pac7302.c: use IS_ENABLED() macro
+  usb/gspca/pac7311.c: use IS_ENABLED() macro
+  usb/gspca/se401.c: use IS_ENABLED() macro
+  usb/gspca/sn9c20x.c: use IS_ENABLED() macro
+  usb/gspca/sonixb.c: use IS_ENABLED() macro
+  usb/gspca/sonixj.c: use IS_ENABLED() macro
+  usb/gspca/spca561.c: use IS_ENABLED() macro
+  usb/gspca/stv06xx/stv06xx.c: use IS_ENABLED() macro
+  usb/gspca/t613.c: use IS_ENABLED() macro
+  usb/gspca/xirlink_cit.c: use IS_ENABLED() macro
+  usb/gspca/zc3xx.c: use IS_ENABLED() macro
+  usb/hdpvr/hdpvr-core.c: use IS_ENABLED() macro
+  usb/hdpvr/hdpvr-i2c.c: use IS_ENABLED() macro
+  v4l2-core/v4l2-common.c: use IS_ENABLED() macro
+
+ drivers/media/pci/cx88/cx88.h                   | 10 ++++------
+ drivers/media/pci/saa7134/saa7134.h             |  4 ++--
+ drivers/media/pci/ttpci/av7110.c                | 10 +++++-----
+ drivers/media/platform/marvell-ccic/mcam-core.h |  6 +++---
+ drivers/media/radio/si470x/radio-si470x.h       |  4 ++--
+ drivers/media/usb/gspca/cpia1.c                 |  6 +++---
+ drivers/media/usb/gspca/gspca.c                 | 10 +++++-----
+ drivers/media/usb/gspca/gspca.h                 |  6 +++---
+ drivers/media/usb/gspca/konica.c                |  6 +++---
+ drivers/media/usb/gspca/ov519.c                 |  6 +++---
+ drivers/media/usb/gspca/pac207.c                |  4 ++--
+ drivers/media/usb/gspca/pac7302.c               |  4 ++--
+ drivers/media/usb/gspca/pac7311.c               |  4 ++--
+ drivers/media/usb/gspca/se401.c                 |  4 ++--
+ drivers/media/usb/gspca/sn9c20x.c               |  4 ++--
+ drivers/media/usb/gspca/sonixb.c                |  6 +++---
+ drivers/media/usb/gspca/sonixj.c                |  4 ++--
+ drivers/media/usb/gspca/spca561.c               |  6 +++---
+ drivers/media/usb/gspca/stv06xx/stv06xx.c       |  4 ++--
+ drivers/media/usb/gspca/t613.c                  |  6 +++---
+ drivers/media/usb/gspca/xirlink_cit.c           |  8 ++++----
+ drivers/media/usb/gspca/zc3xx.c                 |  4 ++--
+ drivers/media/usb/hdpvr/hdpvr-core.c            |  6 +++---
+ drivers/media/usb/hdpvr/hdpvr-i2c.c             |  2 +-
+ drivers/media/v4l2-core/v4l2-common.c           |  4 ++--
+ 25 files changed, 68 insertions(+), 70 deletions(-)
+
 -- 
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-                     LUGA : http://www.luga.at
+1.7.11.7
 
