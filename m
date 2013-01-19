@@ -1,51 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 14 Dec 2012 15:01:08 +0000
-Subject: [patch] pcmcia: i82092: fix i82092aa_pci_remove()
-Message-Id: <20121214150107.GA15839@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:04 +0000
+Subject: [PATCH 01/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mchehab@redhat.com
+Cc: hans.verkuil@cisco.com, jrnieder@gmail.com, peter.senna@gmail.com, emilgoode@gmail.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Smatch complains because the call to
-	pci_set_drvdata(dev, &sockets[i].socket);
-is reading one step beyond the end of the sockets[] array.  It will
-crash when we use it later.
+replace:
+ #if defined(CONFIG_VIDEO_CX88_DVB) || \
+     defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
 
-The only place which uses pci_get_drvdata() is i82092aa_pci_remove().
-That function should loop through all the sockets and unregister them.
+This change was made for: CONFIG_VIDEO_CX88_DVB,
+CONFIG_VIDEO_CX88_BLACKBIRD, CONFIG_VIDEO_CX88_VP3054
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/media/pci/cx88/cx88.h | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
-index 3578e1c..519c4d6 100644
---- a/drivers/pcmcia/i82092.c
-+++ b/drivers/pcmcia/i82092.c
-@@ -133,8 +133,6 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
- 		goto err_out_free_res;
- 	}
+diff --git a/drivers/media/pci/cx88/cx88.h b/drivers/media/pci/cx88/cx88.h
+index ba0dba4..feff53c 100644
+--- a/drivers/media/pci/cx88/cx88.h
++++ b/drivers/media/pci/cx88/cx88.h
+@@ -363,7 +363,7 @@ struct cx88_core {
+ 	unsigned int               tuner_formats;
  
--	pci_set_drvdata(dev, &sockets[i].socket);
--
- 	for (i = 0; i<socket_count; i++) {
- 		sockets[i].socket.dev.parent = &dev->dev;
- 		sockets[i].socket.ops = &i82092aa_operations;
-@@ -164,14 +162,14 @@ err_out_disable:
+ 	/* config info -- dvb */
+-#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
++#if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
+ 	int 			   (*prev_set_voltage)(struct dvb_frontend *fe, fe_sec_voltage_t voltage);
+ #endif
+ 	void			   (*gate_ctrl)(struct cx88_core  *core, int open);
+@@ -562,8 +562,7 @@ struct cx8802_dev {
  
- static void i82092aa_pci_remove(struct pci_dev *dev)
- {
--	struct pcmcia_socket *socket = pci_get_drvdata(dev);
-+	int i;
+ 	/* for blackbird only */
+ 	struct list_head           devlist;
+-#if defined(CONFIG_VIDEO_CX88_BLACKBIRD) || \
+-    defined(CONFIG_VIDEO_CX88_BLACKBIRD_MODULE)
++#if IS_ENABLED(CONFIG_VIDEO_CX88_BLACKBIRD)
+ 	struct video_device        *mpeg_dev;
+ 	u32                        mailbox;
+ 	int                        width;
+@@ -574,13 +573,12 @@ struct cx8802_dev {
+ 	struct cx2341x_handler     cxhdl;
+ #endif
  
- 	enter("i82092aa_pci_remove");
- 	
- 	free_irq(dev->irq, i82092aa_interrupt);
+-#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
++#if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
+ 	/* for dvb only */
+ 	struct videobuf_dvb_frontends frontends;
+ #endif
  
--	if (socket)
--		pcmcia_unregister_socket(socket);
-+	for (i = 0; i < socket_count; i++)
-+		pcmcia_unregister_socket(&sockets[i].socket);
- 
- 	leave("i82092aa_pci_remove");
- }
+-#if defined(CONFIG_VIDEO_CX88_VP3054) || \
+-    defined(CONFIG_VIDEO_CX88_VP3054_MODULE)
++#if IS_ENABLED(CONFIG_VIDEO_CX88_VP3054)
+ 	/* For VP3045 secondary I2C bus support */
+ 	struct vp3054_i2c_state	   *vp3054;
+ #endif
+-- 
+1.7.11.7
+
