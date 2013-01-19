@@ -1,51 +1,56 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 03 Jan 2013 16:04:55 +0000
-Subject: Re: [PATCH 5/5] spi: fix return value check in hspi_probe().
-Message-Id: <20130103160455.GO7247@mwanda>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:26 +0000
+Subject: [PATCH 24/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-23-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355271894-5284-1-git-send-email-tipecaml@gmail.com>
-	<1355271894-5284-6-git-send-email-tipecaml@gmail.com>
-	<87txrsqf7f.wl%kuninori.morimoto.gx@renesas.com>
-	<20121219151154.937EC3E0AD7@localhost>
-	<20121219163914.GN5032@mwanda>
-	<20121222095620.83E243E07FA@localhost>
-In-Reply-To: <20121222095620.83E243E07FA@localhost>
+References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cyril Roelandt <tipecaml-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kuninori Morimoto <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: mchehab@redhat.com
+Cc: hans.verkuil@cisco.com, sakari.ailus@iki.fi, dhowells@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Sat, Dec 22, 2012 at 09:56:20AM +0000, Grant Likely wrote:
-> On Wed, 19 Dec 2012 19:39:14 +0300, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > On Wed, Dec 19, 2012 at 03:11:54PM +0000, Grant Likely wrote:
-> > > On Tue, 11 Dec 2012 16:36:27 -0800 (PST), Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> wrote:
-> > > > 
-> > > > Hi
-> > > > 
-> > > > > According to its documentation, clk_get() returns a "valid IS_ERR() condition
-> > > > > containing errno", so we should call IS_ERR() rather than a NULL check.
-> > > > > 
-> > > > > Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
-> > > > 
-> > > > Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > > 
-> > > Applied, thanks.
-> > 
-> > In another thread, we were just talking about who clk_get() can
-> > return a NULL if !CONFIG_HAVE_CLK.  That might change to match the
-> > documentation later...  Not sure.
-> 
-> So what is the solution here? Will the dummy clk_get() be changed, or is
-> there more work needed on the drivers?
-> 
+replace:
+ #if defined(CONFIG_MEDIA_TUNER_TEA5761) || \
+     defined(CONFIG_MEDIA_TUNER_TEA5761_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_MEDIA_TUNER_TEA5761)
 
-This driver can't function without a clk.  It should select that at
-build time instead of testing for it at probe.  Just checking for
-IS_ERR() will NOT cause a NULL dereference so the patch is ok in
-that respect.  I'm not sure if this can be build without
-CONFIG_HAVE_CLK.
+This change was made for: CONFIG_MEDIA_TUNER_TEA5761
 
-regards,
-dan carpenter
+Also replaced:
+
+with:
+
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/media/v4l2-core/v4l2-common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+index 614316f..aa044f4 100644
+--- a/drivers/media/v4l2-core/v4l2-common.c
++++ b/drivers/media/v4l2-core/v4l2-common.c
+@@ -238,7 +238,7 @@ int v4l2_chip_match_host(const struct v4l2_dbg_match *match)
+ }
+ EXPORT_SYMBOL(v4l2_chip_match_host);
+ 
+-#if defined(CONFIG_I2C) || (defined(CONFIG_I2C_MODULE) && defined(MODULE))
++#if IS_ENABLED(CONFIG_I2C)
+ int v4l2_chip_match_i2c_client(struct i2c_client *c, const struct v4l2_dbg_match *match)
+ {
+ 	int len;
+@@ -384,7 +384,7 @@ EXPORT_SYMBOL_GPL(v4l2_i2c_subdev_addr);
+ const unsigned short *v4l2_i2c_tuner_addrs(enum v4l2_i2c_tuner_type type)
+ {
+ 	static const unsigned short radio_addrs[] = {
+-#if defined(CONFIG_MEDIA_TUNER_TEA5761) || defined(CONFIG_MEDIA_TUNER_TEA5761_MODULE)
++#if IS_ENABLED(CONFIG_MEDIA_TUNER_TEA5761)
+ 		0x10,
+ #endif
+ 		0x60,
+-- 
+1.7.11.7
 
