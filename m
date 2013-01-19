@@ -1,7 +1,7 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 16:33:16 +0000
-Subject: [PATCH 13/24] use IS_ENABLED() macro
-Message-Id: <1358613206-4274-13-git-send-email-peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:12 +0000
+Subject: [PATCH 09/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-9-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
@@ -22,29 +22,38 @@ This change was made for: CONFIG_INPUT
 Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/media/usb/gspca/se401.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/gspca/ov519.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/se401.c b/drivers/media/usb/gspca/se401.c
-index a33cb78..5f729b8 100644
---- a/drivers/media/usb/gspca/se401.c
-+++ b/drivers/media/usb/gspca/se401.c
-@@ -594,7 +594,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev, u8 *data, int len)
- 		sd_pkt_scan_janggu(gspca_dev, data, len);
- }
+diff --git a/drivers/media/usb/gspca/ov519.c b/drivers/media/usb/gspca/ov519.c
+index 9aa09f8..9ad19a7 100644
+--- a/drivers/media/usb/gspca/ov519.c
++++ b/drivers/media/usb/gspca/ov519.c
+@@ -4238,7 +4238,7 @@ static void sd_stop0(struct gspca_dev *gspca_dev)
+ 	if (sd->bridge = BRIDGE_W9968CF)
+ 		w9968cf_stop0(sd);
  
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- static int sd_int_pkt_scan(struct gspca_dev *gspca_dev, u8 *data, int len)
- {
- 	struct sd *sd = (struct sd *)gspca_dev;
-@@ -688,7 +688,7 @@ static const struct sd_desc sd_desc = {
- 	.stopN = sd_stopN,
- 	.dq_callback = sd_dq_callback,
- 	.pkt_scan = sd_pkt_scan,
+ 	/* If the last button state is pressed, release it now! */
+ 	if (sd->snapshot_pressed) {
+ 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, 0);
+@@ -4255,7 +4255,7 @@ static void ov51x_handle_button(struct gspca_dev *gspca_dev, u8 state)
+ 	struct sd *sd = (struct sd *) gspca_dev;
+ 
+ 	if (sd->snapshot_pressed != state) {
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- 	.int_pkt_scan = sd_int_pkt_scan,
+ 		input_report_key(gspca_dev->input_dev, KEY_CAMERA, state);
+ 		input_sync(gspca_dev->input_dev);
+ #endif
+@@ -4924,7 +4924,7 @@ static const struct sd_desc sd_desc = {
+ 	.dq_callback = sd_reset_snapshot,
+ 	.get_jcomp = sd_get_jcomp,
+ 	.set_jcomp = sd_set_jcomp,
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 	.other_input = 1,
  #endif
  };
 -- 
