@@ -1,34 +1,64 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 14 Jan 2013 16:19:02 +0000
-Subject: build regressions 2013-01-14
-Message-Id: <50f42ff6.WeKPM4vXzsgZIheJ%fengguang.wu@intel.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 23:41:29 +0000
+Subject: [PATCH V2 22/24] usb/hdpvr/hdpvr-core.c: use IS_ENABLED() macro
+Message-Id: <1358638891-4775-23-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mchehab@redhat.com
+Cc: jarod@redhat.com, tralph@mythtv.org, peter.senna@gmail.com, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-initramfs.c:(.init.text+0x22c1): undefined reference to `__initramfs_size'
-initramfs.c:(.init.text+0x228c): undefined reference to `__initramfs_size'
-initramfs.c:(.init.text+0x228c): undefined reference to `__initramfs_size'
+replace:
+ #if defined(CONFIG_I2C) || \
+     defined(CONFIG_I2C_MODULE)
+with:
+ #if IS_ENABLED(CONFIG_I2C)
 
-[warnings]
-arch/x86/mm/init_64.c:965:9: warning: 'next' may be used uninitialized in this function [-Wmaybe-uninitialized]
-security/integrity/digsig.c:114:2: warning: passing argument 2 of 'mpi_read_from_buffer' from incompatible pointer type [enabled by default]
-mm/memory_hotplug.c:1089:29: warning: the address of 'contig_page_data' will always evaluate as 'true' [-Waddress]
+This change was made for: CONFIG_I2C
 
-[sparse]
-include/net/ipv6.h:555:26: sparse: cast to restricted __be32
-include/net/ipv6.h:555:63: sparse: restricted __be32 degrades to integer
-include/net/ipv6.h:555:24: sparse: incorrect type in assignment (different base types)
-net/ipv6/ip6_output.c:406:56: sparse: restricted __be16 degrades to integer
-mm/fremap.c:209:45: sparse: implicit cast to nocast type
-
-[smatch]
-mm/mlock.c:447 __mm_populate() error: potential NULL dereference 'vma'.
-drivers/rtc/rtc-rx4581.c:134 rx4581_get_datetime() warn: unsigned 'err' is never less than zero.
-
+Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+Changes from V1:
+   Updated subject
+
+ drivers/media/usb/hdpvr/hdpvr-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/usb/hdpvr/hdpvr-core.c b/drivers/media/usb/hdpvr/hdpvr-core.c
+index 84dc26f..5c61935 100644
+--- a/drivers/media/usb/hdpvr/hdpvr-core.c
++++ b/drivers/media/usb/hdpvr/hdpvr-core.c
+@@ -391,7 +391,7 @@ static int hdpvr_probe(struct usb_interface *interface,
+ 		goto error;
+ 	}
+ 
+-#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
++#if IS_ENABLED(CONFIG_I2C)
+ 	retval = hdpvr_register_i2c_adapter(dev);
+ 	if (retval < 0) {
+ 		v4l2_err(&dev->v4l2_dev, "i2c adapter register failed\n");
+@@ -419,7 +419,7 @@ static int hdpvr_probe(struct usb_interface *interface,
+ 	return 0;
+ 
+ reg_fail:
+-#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
++#if IS_ENABLED(CONFIG_I2C)
+ 	i2c_del_adapter(&dev->i2c_adapter);
+ #endif
+ error:
+@@ -451,7 +451,7 @@ static void hdpvr_disconnect(struct usb_interface *interface)
+ 	mutex_lock(&dev->io_mutex);
+ 	hdpvr_cancel_queue(dev);
+ 	mutex_unlock(&dev->io_mutex);
+-#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
++#if IS_ENABLED(CONFIG_I2C)
+ 	i2c_del_adapter(&dev->i2c_adapter);
+ #endif
+ 	video_unregister_device(dev->video_dev);
+-- 
+1.7.11.7
+
