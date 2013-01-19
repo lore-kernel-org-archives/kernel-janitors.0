@@ -1,10 +1,10 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:17 +0000
-Subject: [PATCH V2 10/24] usb/gspca/pac207.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-11-git-send-email-peter.senna@gmail.com>
+Date: Sat, 19 Jan 2013 16:33:11 +0000
+Subject: [PATCH 08/24] use IS_ENABLED() macro
+Message-Id: <1358613206-4274-8-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -22,32 +22,38 @@ This change was made for: CONFIG_INPUT
 Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-Changes from V1:
-   Updated subject
+ drivers/media/usb/gspca/konica.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/media/usb/gspca/pac207.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/usb/gspca/pac207.c b/drivers/media/usb/gspca/pac207.c
-index 1f253df..3b75097 100644
---- a/drivers/media/usb/gspca/pac207.c
-+++ b/drivers/media/usb/gspca/pac207.c
-@@ -413,7 +413,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
- 	gspca_frame_add(gspca_dev, INTER_PACKET, data, len);
- }
+diff --git a/drivers/media/usb/gspca/konica.c b/drivers/media/usb/gspca/konica.c
+index bbf91e0..61e25db 100644
+--- a/drivers/media/usb/gspca/konica.c
++++ b/drivers/media/usb/gspca/konica.c
+@@ -246,7 +246,7 @@ static void sd_stopN(struct gspca_dev *gspca_dev)
+ 	struct sd *sd = (struct sd *) gspca_dev;
  
+ 	konica_stream_off(gspca_dev);
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
- 			u8 *data,		/* interrupt packet data */
- 			int len)		/* interrput packet length */
-@@ -442,7 +442,7 @@ static const struct sd_desc sd_desc = {
+ 	/* Don't keep the button in the pressed state "forever" if it was
+ 	   pressed when streaming is stopped */
+ 	if (sd->snapshot_pressed) {
+@@ -345,7 +345,7 @@ static void sd_isoc_irq(struct urb *urb)
+ 			gspca_frame_add(gspca_dev, LAST_PACKET, NULL, 0);
+ 			gspca_frame_add(gspca_dev, FIRST_PACKET, NULL, 0);
+ 		} else {
+-#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
++#if IS_ENABLED(CONFIG_INPUT)
+ 			u8 button_state = st & 0x40 ? 1 : 0;
+ 			if (sd->snapshot_pressed != button_state) {
+ 				input_report_key(gspca_dev->input_dev,
+@@ -452,7 +452,7 @@ static const struct sd_desc sd_desc = {
+ 	.init_controls = sd_init_controls,
+ 	.start = sd_start,
  	.stopN = sd_stopN,
- 	.dq_callback = pac207_do_auto_gain,
- 	.pkt_scan = sd_pkt_scan,
 -#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
 +#if IS_ENABLED(CONFIG_INPUT)
- 	.int_pkt_scan = sd_int_pkt_scan,
+ 	.other_input = 1,
  #endif
  };
 -- 
