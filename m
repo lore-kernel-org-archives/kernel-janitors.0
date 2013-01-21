@@ -1,49 +1,60 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Mon, 28 Jan 2013 14:22:49 +0000
-Subject: Re: [media] staging: go7007: fix test for V4L2_STD_SECAM
-Message-Id: <201301281522.49633.hverkuil@xs4all.nl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:13:55 +0000
+Subject: [PATCH 10/15] drivers/scsi/csiostor/csio_lnode.c: adjust duplicate test
+Message-Id: <1358773378-4700-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130128141942.GC24528@elgon.mountain>
-In-Reply-To: <20130128141942.GC24528@elgon.mountain>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, YAMANE Toshiaki <yamanetoshi@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-media@vger.kernel.org, Ross Cohen <rcohen@snurgle.org>, kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon January 28 2013 15:19:42 Dan Carpenter wrote:
-> The current test doesn't make a lot of sense.  It's likely to be true,
-> which is what we would want in most cases.  From looking at how this is
-> handled in other drivers,  I think "&" was intended instead of "*".
-> It's an easy mistake to make because they are next to each other on the
-> keyboard.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-For the record, it should indeed be '&'. Nice catch.
+Delete successive tests to the same location.  The current value of ln has
+been tested already, and is clearly not NULL, given the enclosing if
+condition.  Furthermore, the result of csio_lnode_alloc is currently
+ignored.
 
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Regards,
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
 
-	Hans
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
 
-> 
-> diff --git a/drivers/staging/media/go7007/wis-saa7113.c b/drivers/staging/media/go7007/wis-saa7113.c
-> index 8810c1e..891cde7 100644
-> --- a/drivers/staging/media/go7007/wis-saa7113.c
-> +++ b/drivers/staging/media/go7007/wis-saa7113.c
-> @@ -141,7 +141,7 @@ static int wis_saa7113_command(struct i2c_client *client,
->  		} else if (dec->norm & V4L2_STD_PAL) {
->  			write_reg(client, 0x0e, 0x01);
->  			write_reg(client, 0x10, 0x48);
-> -		} else if (dec->norm * V4L2_STD_SECAM) {
-> +		} else if (dec->norm & V4L2_STD_SECAM) {
->  			write_reg(client, 0x0e, 0x50);
->  			write_reg(client, 0x10, 0x48);
->  		}
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.  I don't know if this is the right fix.
+
+ drivers/scsi/csiostor/csio_lnode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/csiostor/csio_lnode.c b/drivers/scsi/csiostor/csio_lnode.c
+index ffe9be0..d956f97 100644
+--- a/drivers/scsi/csiostor/csio_lnode.c
++++ b/drivers/scsi/csiostor/csio_lnode.c
+@@ -873,7 +873,7 @@ csio_handle_link_up(struct csio_hw *hw, uint8_t portid, uint32_t fcfi,
+ 		if (ln->vnp_flowid != CSIO_INVALID_IDX) {
+ 			/* New VN-Port */
+ 			spin_unlock_irq(&hw->lock);
+-			csio_lnode_alloc(hw);
++			ln = csio_lnode_alloc(hw);
+ 			spin_lock_irq(&hw->lock);
+ 			if (!ln) {
+ 				csio_err(hw,
