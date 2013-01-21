@@ -1,48 +1,58 @@
-From: Jon Mason <jon.mason@intel.com>
-Date: Mon, 28 Jan 2013 02:51:56 +0000
-Subject: Re: [patch] NTB: fix pointer math issues
-Message-Id: <20130128025156.GE4687@jonmason-lab>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:16:16 +0000
+Subject: [PATCH 3/15] drivers/staging/omap-thermal/omap-bandgap.c: adjust duplicate test
+Message-Id: <1358773378-4700-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130123192605.GA11121@elgon.mountain>
-In-Reply-To: <20130123192605.GA11121@elgon.mountain>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2013 at 10:26:05PM +0300, Dan Carpenter wrote:
-> ->remote_rx_info and ->rx_info are struct ntb_rx_info pointers.  If we
-> add sizeof(struct ntb_rx_info) then it goes too far.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Good catch, I'll add it to me pending patch queue.
+Delete successive tests to the same location.  There was a previous test on
+ret and it has not been updated since then.
 
-Thanks,
-Jon
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> 
-> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
-> index e0bdfd7..676ee16 100644
-> --- a/drivers/ntb/ntb_transport.c
-> +++ b/drivers/ntb/ntb_transport.c
-> @@ -486,7 +486,7 @@ static void ntb_transport_setup_qp_mw(struct ntb_transport *nt,
->  			     (qp_num / NTB_NUM_MW * rx_size);
->  	rx_size -= sizeof(struct ntb_rx_info);
->  
-> -	qp->rx_buff = qp->remote_rx_info + sizeof(struct ntb_rx_info);
-> +	qp->rx_buff = qp->remote_rx_info + 1;
->  	qp->rx_max_frame = min(transport_mtu, rx_size);
->  	qp->rx_max_entry = rx_size / qp->rx_max_frame;
->  	qp->rx_index = 0;
-> @@ -780,7 +780,7 @@ static void ntb_transport_init_queue(struct ntb_transport *nt,
->  		      (qp_num / NTB_NUM_MW * tx_size);
->  	tx_size -= sizeof(struct ntb_rx_info);
->  
-> -	qp->tx_mw = qp->rx_info + sizeof(struct ntb_rx_info);
-> +	qp->tx_mw = qp->rx_info + 1;
->  	qp->tx_max_frame = min(transport_mtu, tx_size);
->  	qp->tx_max_entry = tx_size / qp->tx_max_frame;
->  	qp->tx_index = 0;
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Perhaps it was intended to test somthing, but I am not sure what.
+
+ drivers/staging/omap-thermal/omap-bandgap.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/staging/omap-thermal/omap-bandgap.c b/drivers/staging/omap-thermal/omap-bandgap.c
+index 8346e34..89f7180 100644
+--- a/drivers/staging/omap-thermal/omap-bandgap.c
++++ b/drivers/staging/omap-thermal/omap-bandgap.c
+@@ -568,8 +568,6 @@ int omap_bandgap_read_update_interval(struct omap_bandgap *bg_ptr, int id,
+ 
+ 	tsr = bg_ptr->conf->sensors[id].registers;
+ 	time = omap_bandgap_readl(bg_ptr, tsr->bgap_counter);
+-	if (ret)
+-		return ret;
+ 	time = (time & tsr->counter_mask) >> __ffs(tsr->counter_mask);
+ 	time = time * 1000 / bg_ptr->clk_rate;
+ 
