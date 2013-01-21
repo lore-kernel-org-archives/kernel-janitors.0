@@ -1,55 +1,68 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:20 +0000
-Subject: [PATCH V2 13/24] usb/gspca/se401.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-14-git-send-email-peter.senna@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:16:42 +0000
+Subject: [PATCH 1/15] drivers/sh/intc/of_intc.c: adjust duplicate test
+Message-Id: <1358773378-4700-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hdegoede@redhat.com
-Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: kernel-janitors@vger.kernel.org, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
 
-replace:
- #if defined(CONFIG_INPUT) || \
-     defined(CONFIG_INPUT_MODULE)
-with:
- #if IS_ENABLED(CONFIG_INPUT)
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This change was made for: CONFIG_INPUT
+Delete successive tests to the same location.  In this case intc_node has
+already been tested for being NULL, and calling of_find_node_by_name will
+not make it NULL.  On the other hand, of_find_node_by_name can return NULL
+on failure.
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Changes from V1:
-   Updated subject
-
- drivers/media/usb/gspca/se401.c | 4 ++--
+ drivers/sh/intc/of_intc.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/se401.c b/drivers/media/usb/gspca/se401.c
-index a33cb78..5f729b8 100644
---- a/drivers/media/usb/gspca/se401.c
-+++ b/drivers/media/usb/gspca/se401.c
-@@ -594,7 +594,7 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev, u8 *data, int len)
- 		sd_pkt_scan_janggu(gspca_dev, data, len);
- }
+diff --git a/drivers/sh/intc/of_intc.c b/drivers/sh/intc/of_intc.c
+index 1d5f47e..8dfded3 100644
+--- a/drivers/sh/intc/of_intc.c
++++ b/drivers/sh/intc/of_intc.c
+@@ -330,7 +330,7 @@ static int __init of_sh_intc_get_prio(struct device_node *np,
  
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- static int sd_int_pkt_scan(struct gspca_dev *gspca_dev, u8 *data, int len)
- {
- 	struct sd *sd = (struct sd *)gspca_dev;
-@@ -688,7 +688,7 @@ static const struct sd_desc sd_desc = {
- 	.stopN = sd_stopN,
- 	.dq_callback = sd_dq_callback,
- 	.pkt_scan = sd_pkt_scan,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.int_pkt_scan = sd_int_pkt_scan,
- #endif
- };
--- 
-1.7.11.7
+ 		reg_node = of_find_node_by_name(intc_node, node_name);
+ 
+-		if (!intc_node) {
++		if (!reg_node) {
+ 			pr_err("INTC prio register not found\n");
+ 			ret = -EINVAL;
+ 			goto error;
+@@ -386,7 +386,7 @@ static int __init of_sh_intc_get_sense(struct device_node *np,
+ 
+ 		reg_node = of_find_node_by_name(intc_node, node_name);
+ 
+-		if (!intc_node) {
++		if (!reg_node) {
+ 			pr_err("INTC senses register not found\n");
+ 			ret = -EINVAL;
+ 			goto error;
 
