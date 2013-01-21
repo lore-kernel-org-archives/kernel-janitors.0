@@ -1,27 +1,65 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Thu, 03 Jan 2013 13:52:56 +0000
-Subject: Re: [PATCH RESEND 6/6] clk: s5p-g2d: Fix incorrect usage of IS_ERR_OR_NULL
-Message-Id: <20130103135256.GO2631@n2100.arm.linux.org.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:16:15 +0000
+Subject: [PATCH 2/15] drivers/usb/chipidea/core.c: adjust duplicate test
+Message-Id: <1358773378-4700-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355852048-23188-7-git-send-email-linux@prisktech.co.nz>
- <50D62BC9.9010706@mvista.com> <50E32C06.5020104@gmail.com>
- <CA+_b7DK2zbBzbCh15ikEAeGP5h-V9gQ_YcX15O-RNvWxCk8Zfg@mail.gmail.com>
- <1357104713.30504.8.camel@gitbox> <20130103090520.GC7247@mwanda>
- <20130103100000.GJ2631@n2100.arm.linux.org.uk> <20130103111040.GD7247@mwanda>
- <20130103112102.GM2631@n2100.arm.linux.org.uk> <20130103134554.GJ7247@mwanda>
-In-Reply-To: <20130103134554.GJ7247@mwanda>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2013 at 04:45:54PM +0300, Dan Carpenter wrote:
-> On Thu, Jan 03, 2013 at 11:21:02AM +0000, Russell King - ARM Linux wrote:
-> > Maybe you don't realise, but IS_ERR(NULL) is false.  Therefore, this falls
-> > into category (2).
-> 
-> No, obviously, I know the difference between IS_ERR() and
-> IS_ERR_OR_NULL().  That's how we started this thread.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Well, if you know that, then how is the documentation anything _but_
-clear?
+Delete successive tests to the same location.  In this case res has already
+been tested for being NULL, and calling devm_request_and_ioremap will not
+make it NULL.  On the other hand, devm_request_and_ioremap can return NULL
+on failure.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+This code could be improved in other ways.  The previous NULL test on res
+is not needed, and the dev_err in the error-handling code for the call to
+devm_request_and_ioremap is redundant with respect to the logging already
+done by devm_request_and_ioremap.  But these should probably be done
+separately.
+
+ drivers/usb/chipidea/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+index aebf695..57cae1f 100644
+--- a/drivers/usb/chipidea/core.c
++++ b/drivers/usb/chipidea/core.c
+@@ -411,7 +411,7 @@ static int ci_hdrc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	base = devm_request_and_ioremap(dev, res);
+-	if (!res) {
++	if (!base) {
+ 		dev_err(dev, "can't request and ioremap resource\n");
+ 		return -ENOMEM;
+ 	}
+
