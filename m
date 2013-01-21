@@ -1,46 +1,57 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 21 Jan 2013 16:16:12 +0000
-Subject: build regressions 2013-01-21
-Message-Id: <50fd69cc.5TowIJ3UsC/ai+y1%fengguang.wu@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:14:57 +0000
+Subject: [PATCH 14/15] drivers/infiniband/hw/mlx4/sysfs.c: adjust duplicate test
+Message-Id: <1358773378-4700-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Roland Dreier <roland@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[errors]
-kernel/module_signing.c:161:36: error: 'system_trusted_keyring' undeclared (first use in this function)
-drivers/gpio/gpioblock-of.c:22:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'gpioblock_of_probe'
-drivers/gpio/gpioblock-of.c:78:49: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__devinitdata'
-drivers/gpio/gpioblock-of.c:89:21: error: 'gpioblock_of_match' undeclared here (not in a function)
-drivers/gpio/gpioblock-of.c:92:11: error: 'gpioblock_of_probe' undeclared here (not in a function)
-include/linux/virtio_ring.h:27:3: error: implicit declaration of function 'ia64_mf' [-Werror=implicit-function-declaration]
-include/linux/virtio_ring.h:35:3: error: expected string literal before 'stringify_in_c'
-include/linux/virtio_ring.h:36:2: error: 'else' without a previous 'if'
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[warnings]
-mm/page_alloc.c:4464: warning: 'sanitize_zone_movable_limit' defined but not used
-WARNING: drivers/gpio/built-in.o(.data+0x40): Section mismatch in reference from the variable gpioblock_of_driver to the function .init.text:gpioblock_of_probe()
-WARNING: drivers/gpio/built-in.o(.data+0x68): Section mismatch in reference from the variable gpioblock_of_driver to the variable .init.data:gpioblock_of_match
-kernel/time/timer_list.c:133:39: warning: array subscript is below array bounds [-Warray-bounds]
-WARNING: drivers/built-in.o(.text+0x5658a0): Section mismatch in reference from the function release_firmware_map_entry() to the function .meminit.text:firmware_map_find_entry_in_list()
-WARNING: vmlinux.o(.text+0x774768): Section mismatch in reference from the function release_firmware_map_entry() to the function .meminit.text:vmemmap_populate_print_last()
-kernel/sched/stats.c:31:3: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-drivers/vhost/vringh.c:488:3: warning: format '%zu' expects argument of type 'size_t', but argument 2 has type 'unsigned int' [-Wformat]
-WARNING: vmlinux.o(.text+0x1d6b78): Section mismatch in reference from the function release_firmware_map_entry() to the function .meminit.text:pgdat_page_cgroup_init()
-mm/page_alloc.c:5117:3: warning: array subscript is above array bounds [-Warray-bounds]
+Delete successive tests to the same location.  The code tested the result
+of a previous allocation, that itself was already tested.  It is changed to
+test the result of the most recent allocation.
 
-[sparse]
-include/net/addrconf.h:327:36: sparse: restricted __be32 degrades to integer
-drivers/gpio/gpio-palmas.c:46:15: sparse: undefined identifier 'palmas_read'
-drivers/gpio/gpio-palmas.c:62:23: sparse: undefined identifier 'palmas_write'
-drivers/gpio/gpio-palmas.c:83:15: sparse: undefined identifier 'palmas_update_bits'
-drivers/gpio/gpio-palmas.c:108:16: sparse: undefined identifier 'palmas_irq_get_virq'
-kernel/sched/stats.c:31:17: sparse: mixing declarations and code
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-[smatch]
-kernel/module.c:3266 load_module() error: double lock 'mutex:&module_mutex'
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/infiniband/hw/mlx4/sysfs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/sysfs.c b/drivers/infiniband/hw/mlx4/sysfs.c
+index 5b2a01d..97516eb 100644
+--- a/drivers/infiniband/hw/mlx4/sysfs.c
++++ b/drivers/infiniband/hw/mlx4/sysfs.c
+@@ -732,7 +732,7 @@ int mlx4_ib_device_register_sysfs(struct mlx4_ib_dev *dev)
+ 	dev->ports_parent  		kobject_create_and_add("ports",
+ 				       kobject_get(dev->iov_parent));
+-	if (!dev->iov_parent) {
++	if (!dev->ports_parent) {
+ 		ret = -ENOMEM;
+ 		goto err_ports;
+ 	}
+
