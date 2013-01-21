@@ -1,70 +1,58 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:22 +0000
-Subject: [PATCH V2 15/24] usb/gspca/sonixb.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-16-git-send-email-peter.senna@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:13:01 +0000
+Subject: [PATCH 8/15] arch/powerpc/platforms/85xx/p1022_ds.c: adjust duplicate test
+Message-Id: <1358773378-4700-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hdegoede@redhat.com
-Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: Kumar Gala <galak@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
 
-replace:
- #if defined(CONFIG_INPUT) || \
-     defined(CONFIG_INPUT_MODULE)
-with:
- #if IS_ENABLED(CONFIG_INPUT)
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This change was made for: CONFIG_INPUT
+Delete successive tests to the same location.  The code tested the result
+of a previous call, that itself was already tested.  It is changed to test
+the result of the most recent call.
 
-Also replaced:
- #if !defined CONFIG_USB_SN9C102 && !defined CONFIG_USB_SN9C102_MODULE
-with:
- #if !IS_ENABLED(CONFIG_USB_SN9C102)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Changes from V1:
-   Updated subject
-   Fixed commit message
+ arch/powerpc/platforms/85xx/p1022_ds.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/media/usb/gspca/sonixb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/gspca/sonixb.c b/drivers/media/usb/gspca/sonixb.c
-index 1220340..104ae25 100644
---- a/drivers/media/usb/gspca/sonixb.c
-+++ b/drivers/media/usb/gspca/sonixb.c
-@@ -1400,7 +1400,7 @@ static int sd_querymenu(struct gspca_dev *gspca_dev,
- 	return -EINVAL;
- }
- 
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
- 			u8 *data,		/* interrupt packet data */
- 			int len)		/* interrupt packet length */
-@@ -1430,7 +1430,7 @@ static const struct sd_desc sd_desc = {
- 	.pkt_scan = sd_pkt_scan,
- 	.querymenu = sd_querymenu,
- 	.dq_callback = do_autogain,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.int_pkt_scan = sd_int_pkt_scan,
- #endif
- };
-@@ -1448,7 +1448,7 @@ static const struct usb_device_id device_table[] = {
- 	{USB_DEVICE(0x0c45, 0x600d), SB(PAS106, 101)},
- 	{USB_DEVICE(0x0c45, 0x6011), SB(OV6650, 101)},
- 	{USB_DEVICE(0x0c45, 0x6019), SB(OV7630, 101)},
--#if !defined CONFIG_USB_SN9C102 && !defined CONFIG_USB_SN9C102_MODULE
-+#if !IS_ENABLED(CONFIG_USB_SN9C102)
- 	{USB_DEVICE(0x0c45, 0x6024), SB(TAS5130CXX, 102)},
- 	{USB_DEVICE(0x0c45, 0x6025), SB(TAS5130CXX, 102)},
- #endif
--- 
-1.7.11.7
+diff --git a/arch/powerpc/platforms/85xx/p1022_ds.c b/arch/powerpc/platforms/85xx/p1022_ds.c
+index e346edf..af5853c 100644
+--- a/arch/powerpc/platforms/85xx/p1022_ds.c
++++ b/arch/powerpc/platforms/85xx/p1022_ds.c
+@@ -302,7 +302,7 @@ static void p1022ds_set_monitor_port(enum fsl_diu_monitor_port port)
+ 		goto exit;
+ 	}
+ 	cs1_addr = lbc_br_to_phys(ecm, num_laws, br1);
+-	if (!cs0_addr) {
++	if (!cs1_addr) {
+ 		pr_err("p1022ds: could not determine physical address for CS1"
+ 		       " (BR1=%08x)\n", br1);
+ 		goto exit;
 
