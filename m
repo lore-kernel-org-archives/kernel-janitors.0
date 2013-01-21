@@ -1,20 +1,57 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 21 Jan 2013 03:37:15 +0000
-Subject: build regressions 2013-01-20
-Message-Id: <50fcb7eb.2zJqzM4uzqV1Mwp6%fengguang.wu@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:13:24 +0000
+Subject: [PATCH 12/15] fs/hostfs/hostfs_kern.c: adjust duplicate test
+Message-Id: <1358773378-4700-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jeff Dike <jdike@addtoit.com>
+Cc: kernel-janitors@vger.kernel.org, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net, user-mode-linux-user@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-[warnings]
-arch/x86/crypto/crc32-pclmul_asm.S:87:2: warning: #warning Using 32bit code support [-Wcpp]
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[smatch]
-drivers/gpu/drm/nouveau/nv50_display.c:419 evo_wait() warn: inconsistent returns mutex:&dmac->lock: locked (419) unlocked (413)
-drivers/gpu/drm/i915/intel_display.c:6776 intel_get_load_detect_pipe() warn: inconsistent returns mutex:&crtc->mutex: locked (6712,6776) unlocked (6731,6763,6771)
+Delete successive tests to the same location.  This looks like simple code
+duplication.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ fs/hostfs/hostfs_kern.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index 457addc..909fc21 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -727,8 +727,6 @@ static int hostfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	__putname(name);
+ 	if (err)
+ 		goto out_put;
+-	if (err)
+-		goto out_put;
+ 
+ 	d_instantiate(dentry, inode);
+ 	return 0;
+
