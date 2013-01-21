@@ -1,135 +1,57 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 23 Jan 2013 21:40:15 +0000
-Subject: [PATCH] scripts/coccinelle/misc/memcpy-assign.cocci: Replace memcpy with struct assignment
-Message-Id: <1358977215-2720-1-git-send-email-peter.senna@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:13:56 +0000
+Subject: [PATCH 9/14] drivers/ipack/devices/ipoctal.c: adjust duplicate test
+Message-Id: <1358773378-4700-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Samuel Iglesias Gonsalvez <siglesias@igalia.com>
+Cc: kernel-janitors@vger.kernel.org, Jens Taprogge <jens.taprogge@taprogge.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, industrypack-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-There are kinds of memcpy() that are error-prone. Its replacement with
-a struct assignment is prefered because it's type-safe and much easier
-to read. This semantic patch looks for memcpy() that can be replaced by
-struct assignment.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Inspired by patches sent by Ezequiel Garcia <elezegarcia@gmail.com>
+Delete successive tests to the same location.  The code tested the result
+of a previous allocation, that itself was already tested.  It is changed to
+test the result of the most recent allocation.
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- scripts/coccinelle/misc/memcpy-assign.cocci | 103 ++++++++++++++++++++++++++++
- 1 file changed, 103 insertions(+)
- create mode 100644 scripts/coccinelle/misc/memcpy-assign.cocci
+ drivers/ipack/devices/ipoctal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/misc/memcpy-assign.cocci b/scripts/coccinelle/misc/memcpy-assign.cocci
-new file mode 100644
-index 0000000..5c1fd75
---- /dev/null
-+++ b/scripts/coccinelle/misc/memcpy-assign.cocci
-@@ -0,0 +1,103 @@
-+//
-+// Replace memcpy with struct assignment.
-+//
-+// Confidence: Moderate
-+// Copyright: (C) 2012 Peter Senna Tschudin, INRIA/LIP6.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Comments:
-+// Options: --no-includes --include-headers
-+
-+virtual patch
-+virtual report
-+virtual context
-+virtual org
-+
-+@r1 depends on !patch@
-+identifier struct_name;
-+struct struct_name to;
-+struct struct_name from;
-+struct struct_name *top;
-+struct struct_name *fromp;
-+position p;
-+@@
-+memcpy@p(\(&(to)\|top\), \(&(from)\|fromp\), \(sizeof(to)\|sizeof(from)\|sizeof(struct struct_name)\|sizeof(*top)\|sizeof(*fromp)\))
-+
-+@script:python depends on report@
-+p << r1.p;
-+@@
-+coccilib.report.print_report(p[0],"Replace memcpy with struct assignment")
-+
-+@depends on context@
-+position r1.p;
-+@@
-+*memcpy@p(...);
-+
-+@script:python depends on org@
-+p << r1.p;
-+@@
-+cocci.print_main("Replace memcpy with struct assignment",p)
-+
-+@depends on patch@
-+identifier struct_name;
-+struct struct_name to;
-+struct struct_name from;
-+@@
-+(
-+-memcpy(&(to), &(from), sizeof(to));
-++to = from;
-+|
-+-memcpy(&(to), &(from), sizeof(from));
-++to = from;
-+|
-+-memcpy(&(to), &(from), sizeof(struct struct_name));
-++to = from;
-+)
-+
-+@depends on patch@
-+identifier struct_name;
-+struct struct_name to;
-+struct struct_name *from;
-+@@
-+(
-+-memcpy(&(to), from, sizeof(to));
-++to = *from;
-+|
-+-memcpy(&(to), from, sizeof(*from));
-++to = *from;
-+|
-+-memcpy(&(to), from, sizeof(struct struct_name));
-++to = *from;
-+)
-+
-+@depends on patch@
-+identifier struct_name;
-+struct struct_name *to;
-+struct struct_name from;
-+@@
-+(
-+-memcpy(to, &(from), sizeof(*to));
-++ *to = from;
-+|
-+-memcpy(to, &(from), sizeof(from));
-++ *to = from;
-+|
-+-memcpy(to, &(from), sizeof(struct struct_name));
-++ *to = from;
-+)
-+
-+@depends on patch@
-+identifier struct_name;
-+struct struct_name *to;
-+struct struct_name *from;
-+@@
-+(
-+-memcpy(to, from, sizeof(*to));
-++ *to = *from;
-+|
-+-memcpy(to, from, sizeof(*from));
-++ *to = *from;
-+|
-+-memcpy(to, from, sizeof(struct struct_name));
-++ *to = *from;
-+)
-+
--- 
-1.7.11.7
+diff --git a/drivers/ipack/devices/ipoctal.c b/drivers/ipack/devices/ipoctal.c
+index 8fb2e34..f3a83b1 100644
+--- a/drivers/ipack/devices/ipoctal.c
++++ b/drivers/ipack/devices/ipoctal.c
+@@ -282,7 +282,7 @@ static int ipoctal_inst_slot(struct ipoctal *ipoctal, unsigned int bus_nr,
+ 	ipoctal->mem8_space  		devm_ioremap_nocache(&ipoctal->dev->dev,
+ 				     region->start, 0x8000);
+-	if (!addr) {
++	if (!ipoctal->mem8_space) {
+ 		dev_err(&ipoctal->dev->dev,
+ 			"Unable to map slot [%d:%d] MEM8 space!\n",
+ 			bus_nr, slot);
 
