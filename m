@@ -1,43 +1,58 @@
-From: Stanislaw Gruszka <sgruszka@redhat.com>
-Date: Mon, 21 Jan 2013 12:07:20 +0000
-Subject: Re: [PATCH 6/15] drivers/net/wireless/iwlegacy/4965-mac.c: adjust duplicate test
-Message-Id: <20130121120719.GB5424@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:15:32 +0000
+Subject: [PATCH 6/15] drivers/net/wireless/iwlegacy/4965-mac.c: adjust duplicate test
+Message-Id: <1358773378-4700-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
- <1358773378-4700-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358773378-4700-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Stanislaw Gruszka <sgruszka@redhat.com>
 Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2013 at 02:02:50PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Delete successive tests to the same location.  This looks like simple code
-> duplication.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @s exists@
-> local idexpression y;
-> expression x,e;
-> @@
-> 
-> *if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
->  { ... when forall
->    return ...; }
-> ... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
->     when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
-> *if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
->  { ... when forall
->    return ...; }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-ACK
+Delete successive tests to the same location.  This looks like simple code
+duplication.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/wireless/iwlegacy/4965-mac.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/net/wireless/iwlegacy/4965-mac.c b/drivers/net/wireless/iwlegacy/4965-mac.c
+index 10fc249..0195190 100644
+--- a/drivers/net/wireless/iwlegacy/4965-mac.c
++++ b/drivers/net/wireless/iwlegacy/4965-mac.c
+@@ -6572,9 +6572,6 @@ il4965_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (err)
+ 		goto out_free_eeprom;
+ 
+-	if (err)
+-		goto out_free_eeprom;
+-
+ 	/* extract MAC Address */
+ 	il4965_eeprom_get_mac(il, il->addresses[0].addr);
+ 	D_INFO("MAC address: %pM\n", il->addresses[0].addr);
 
