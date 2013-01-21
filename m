@@ -1,22 +1,57 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Fri, 11 Jan 2013 10:27:56 +0000
-Subject: Re: [patch] dac960: return success instead of -ENOTTY
-Message-Id: <50EFE92C.4080209@kernel.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:03:23 +0000
+Subject: [PATCH 11/15] tools/lib/traceevent/event-parse.c: adjust duplicate test
+Message-Id: <1358773378-4700-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130111065244.GD13207@elgon.mountain>
-In-Reply-To: <20130111065244.GD13207@elgon.mountain>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Danny Kukawka <danny.kukawka@bisect.de>, Jesper Juhl <jj@chaosbits.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On 2013-01-11 07:52, Dan Carpenter wrote:
-> There is a missing break statement here.  This used to return directly
-> but we re-worked it in 2008 to add locking as part of the BKL push down.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks Dan, applied. Must have a big user base...
+Delete successive tests to the same location.  Field was already tested.
+Alloc_arg can fail, so test that value instead.
 
--- 
-Jens Axboe
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ tools/lib/traceevent/event-parse.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 5a824e3..7538a1f 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -2481,7 +2481,7 @@ process_dynamic_array(struct event_format *event, struct print_arg *arg, char **
+ 
+ 	free_token(token);
+ 	arg = alloc_arg();
+-	if (!field) {
++	if (!arg) {
+ 		do_warning("%s: not enough memory!", __func__);
+ 		*tok = NULL;
+ 		return EVENT_ERROR;
 
