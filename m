@@ -1,60 +1,50 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Date: Mon, 21 Jan 2013 01:32:00 +0000
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 21 Jan 2013 01:56:14 +0000
 Subject: Re: [patch] module: potential deadlock in error path
-Message-Id: <87ip6rwcvz.fsf@rustcorp.com.au>
+Message-Id: <CA+55aFzEkSOWL13cX2xaYttPF5=Qpvya9Yapk-RC8KQ5=QJk+w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130118074309.GB31793@elgon.mountain>
-In-Reply-To: <20130118074309.GB31793@elgon.mountain>
+References: <20130118074309.GB31793@elgon.mountain> <87ip6rwcvz.fsf@rustcorp.com.au>
+In-Reply-To: <87ip6rwcvz.fsf@rustcorp.com.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Alexander Graf <agraf@suse.de>, Prarit Bhargava <prarit@redhat.com>, Sasha Levin <sasha.levin@oracle.com>
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
-> We take the lock twice if we hit this goto.
+On Sun, Jan 20, 2013 at 5:20 PM, Rusty Russell <rusty@rustcorp.com.au> wrote:
+> Dan Carpenter <dan.carpenter@oracle.com> writes:
+>> We take the lock twice if we hit this goto.
+>>
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 >
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Damn, just pushed that to Linus: should have read mail first.
+>
+> I've added this, thanks.
 
-Damn, just pushed that to Linus: should have read mail first.
+I'm not pulling this. It seems stupid.
 
-I've added this, thanks.
+Why isn't the fix just this (whitespace-damaged, cut-and-pasted)
+one-liner instead? I may be blind, but as far as I cal tell, there's
+exactly one single place we do that "giti ddebug_cleanup", and it
+wants to unlock the mutex, so we should just move the unlock down one
+line instead.
 
-The following changes since commit a7f2a366f62319dfebf8d4dfe8b211f631c78457:
+Hmm? Is there some hidden magic going on that I can't see?
 
-  ima: fallback to MODULE_SIG_ENFORCE for existing kernel module syscall (2012-12-24 09:35:48 -0500)
+                  Linus
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux.git tags/fixes-for-linus
-
-for you to fetch changes up to 8f82d479da05bd7df8cca3a5fbc0273f73b601c0:
-
-  module: potential deadlock in error path (2013-01-21 11:29:33 +1030)
-
-----------------------------------------------------------------
-Various minor fixes, but a slightly more complex one to fix the per-cpu overload
-problem introduced recently by kvm id changes.
-
-(Now with an error path fix from Dan, thanks)
-
-----------------------------------------------------------------
-Alexander Graf (1):
-      virtio-blk: Don't free ida when disk is in use
-
-Dan Carpenter (1):
-      module: potential deadlock in error path
-
-Rusty Russell (2):
-      module: add new state MODULE_STATE_UNFORMED.
-      module: put modules in list much earlier.
-
-Sasha Levin (1):
-      module: prevent warning when finit_module a 0 sized file
-
- drivers/block/virtio_blk.c  |    7 +-
- include/linux/module.h      |   10 +--
- kernel/debug/kdb/kdb_main.c |    2 +
- kernel/module.c             |  156 ++++++++++++++++++++++++++++++-------------
- lib/bug.c                   |    1 +
- 5 files changed, 124 insertions(+), 52 deletions(-)
+---
+diff --git a/kernel/module.c b/kernel/module.c
+index d25e359279ae..eab08274ec9b 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3274,8 +3274,8 @@ again:
+        /* module_bug_cleanup needs module_mutex protection */
+        mutex_lock(&module_mutex);
+        module_bug_cleanup(mod);
+-       mutex_unlock(&module_mutex);
+  ddebug_cleanup:
++       mutex_unlock(&module_mutex);
+        dynamic_debug_remove(info->debug);
+        synchronize_sched();
+        kfree(mod->args);
