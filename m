@@ -1,48 +1,62 @@
-From: Julian Anastasov <ja@ssi.bg>
-Date: Fri, 25 Jan 2013 20:56:11 +0000
-Subject: Re: [patch] ipvs: freeing uninitialized pointer on error
-Message-Id: <alpine.LFD.2.00.1301252244200.1872@ja.ssi.bg>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:14:20 +0000
+Subject: [PATCH 13/15] drivers/usb/musb/omap2430.c: adjust duplicate test
+Message-Id: <1358773378-4700-14-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130125154456.GB5908@elgon.mountain>
-In-Reply-To: <20130125154456.GB5908@elgon.mountain>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-	Hello,
+Delete successive tests to the same location.  Data is the just previously
+allocated and tested value.  Test the result of the allocation made here
+instead.
 
-On Fri, 25 Jan 2013, Dan Carpenter wrote:
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> If state != IP_VS_STATE_BACKUP then tinfo->buf is uninitialized.  If
-> kthread_run() fails then it means we free random memory resulting in an
-> oops.
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
 
-	Good catch. Simon, please apply!
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
 
-	Problem is in 3.5+ caused by commit f73181c828
-(ipvs: add support for sync threads)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+The previous code could be further simplified by removing the
+initializations of ret to -ENOMEM, as is absent in this case.  But that is
+probably for another patch.
 
-Acked-by: Julian Anastasov <ja@ssi.bg>
+ drivers/usb/musb/omap2430.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
-> index effa10c..44fd10c 100644
-> --- a/net/netfilter/ipvs/ip_vs_sync.c
-> +++ b/net/netfilter/ipvs/ip_vs_sync.c
-> @@ -1795,6 +1795,8 @@ int start_sync_thread(struct net *net, int state, char *mcast_ifn, __u8 syncid)
->  					     GFP_KERNEL);
->  			if (!tinfo->buf)
->  				goto outtinfo;
-> +		} else {
-> +			tinfo->buf = NULL;
->  		}
->  		tinfo->id = id;
+diff --git a/drivers/usb/musb/omap2430.c b/drivers/usb/musb/omap2430.c
+index da00af4..533c4fd 100644
+--- a/drivers/usb/musb/omap2430.c
++++ b/drivers/usb/musb/omap2430.c
+@@ -545,7 +545,7 @@ static int omap2430_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		config = devm_kzalloc(&pdev->dev, sizeof(*config), GFP_KERNEL);
+-		if (!data) {
++		if (!config) {
+ 			dev_err(&pdev->dev,
+ 				"failed to allocate musb hdrc config\n");
+ 			goto err2;
 
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
