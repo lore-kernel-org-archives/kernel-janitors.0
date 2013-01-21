@@ -1,23 +1,22 @@
-From: Naresh Kumar Inna <naresh@chelsio.com>
-Date: Wed, 23 Jan 2013 04:11:44 +0000
-Subject: Re: [PATCH 10/15] drivers/scsi/csiostor/csio_lnode.c: adjust duplicate test
-Message-Id: <50FF6030.5040306@chelsio.com>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
+Date: Mon, 21 Jan 2013 12:07:20 +0000
+Subject: Re: [PATCH 6/15] drivers/net/wireless/iwlegacy/4965-mac.c: adjust duplicate test
+Message-Id: <20130121120719.GB5424@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr> <1358773378-4700-11-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358773378-4700-11-git-send-email-Julia.Lawall@lip6.fr>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1358773378-4700-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 1/21/2013 6:32 PM, Julia Lawall wrote:
+On Mon, Jan 21, 2013 at 02:02:50PM +0100, Julia Lawall wrote:
 > From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> Delete successive tests to the same location.  The current value of ln has
-> been tested already, and is clearly not NULL, given the enclosing if
-> condition.  Furthermore, the result of csio_lnode_alloc is currently
-> ignored.
+> Delete successive tests to the same location.  This looks like simple code
+> duplication.
 > 
 > A simplified version of the semantic match that finds this problem is as
 > follows: (http://coccinelle.lip6.fr/)
@@ -39,31 +38,6 @@ On 1/21/2013 6:32 PM, Julia Lawall wrote:
 > // </smpl>
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> Not tested.  I don't know if this is the right fix.
-> 
->  drivers/scsi/csiostor/csio_lnode.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/csiostor/csio_lnode.c b/drivers/scsi/csiostor/csio_lnode.c
-> index ffe9be0..d956f97 100644
-> --- a/drivers/scsi/csiostor/csio_lnode.c
-> +++ b/drivers/scsi/csiostor/csio_lnode.c
-> @@ -873,7 +873,7 @@ csio_handle_link_up(struct csio_hw *hw, uint8_t portid, uint32_t fcfi,
->  		if (ln->vnp_flowid != CSIO_INVALID_IDX) {
->  			/* New VN-Port */
->  			spin_unlock_irq(&hw->lock);
-> -			csio_lnode_alloc(hw);
-> +			ln = csio_lnode_alloc(hw);
->  			spin_lock_irq(&hw->lock);
->  			if (!ln) {
->  				csio_err(hw,
-> --
 
-Acked-by: Naresh Kumar Inna <naresh@chelsio.com>
-
-Thanks,
-Naresh.
-
+ACK
 
