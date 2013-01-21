@@ -1,20 +1,21 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 Jan 2013 12:15:32 +0000
-Subject: [PATCH 6/15] drivers/net/wireless/iwlegacy/4965-mac.c: adjust duplicate test
-Message-Id: <1358773378-4700-7-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:12:45 +0000
+Subject: [PATCH 5/15] drivers/scsi/bnx2fc/bnx2fc_io.c: adjust duplicate test
+Message-Id: <1358773378-4700-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bhanu Prakash Gollapudi <bprakash@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Delete successive tests to the same location.  This looks like simple code
-duplication.
+Delete successive tests to the same location.  The code tested the result
+of a previous allocation, that itself was already tested.  It is changed to
+test the result of the most recent allocation.
 
 A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
@@ -38,21 +39,20 @@ expression x,e;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/net/wireless/iwlegacy/4965-mac.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/scsi/bnx2fc/bnx2fc_io.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/iwlegacy/4965-mac.c b/drivers/net/wireless/iwlegacy/4965-mac.c
-index 10fc249..0195190 100644
---- a/drivers/net/wireless/iwlegacy/4965-mac.c
-+++ b/drivers/net/wireless/iwlegacy/4965-mac.c
-@@ -6572,9 +6572,6 @@ il4965_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (err)
- 		goto out_free_eeprom;
- 
--	if (err)
--		goto out_free_eeprom;
--
- 	/* extract MAC Address */
- 	il4965_eeprom_get_mac(il, il->addresses[0].addr);
- 	D_INFO("MAC address: %pM\n", il->addresses[0].addr);
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
+index 8d4626c..8bea53d 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+@@ -654,7 +654,7 @@ int bnx2fc_init_mp_req(struct bnx2fc_cmd *io_req)
+ 	mp_req->mp_resp_bd = dma_alloc_coherent(&hba->pcidev->dev, sz,
+ 						 &mp_req->mp_resp_bd_dma,
+ 						 GFP_ATOMIC);
+-	if (!mp_req->mp_req_bd) {
++	if (!mp_req->mp_resp_bd) {
+ 		printk(KERN_ERR PFX "unable to alloc MP resp bd\n");
+ 		bnx2fc_free_mp_resc(io_req);
+ 		return FAILED;
 
