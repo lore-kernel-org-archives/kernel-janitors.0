@@ -1,78 +1,58 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 20 Jan 2013 23:04:44 +0000
-Subject: Re: [PATCH] staging: line6: fix use-after-free bug
-Message-Id: <20130120230444.GA9394@kroah.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 21 Jan 2013 12:13:01 +0000
+Subject: [PATCH 7/15] drivers/crypto/atmel-aes.c: adjust duplicate test
+Message-Id: <1358773378-4700-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358545934-13982-1-git-send-email-grabner@icg.tugraz.at>
-In-Reply-To: <1358545934-13982-1-git-send-email-grabner@icg.tugraz.at>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Jan 20, 2013 at 11:51:36PM +0100, Markus Grabner wrote:
-> Am Sonntag, 20. Januar 2013, 09:11:50 schrieb Greg Kroah-Hartman:
-> > On Sat, Jan 19, 2013 at 10:55:29PM +0100, Markus Grabner wrote:
-> > > Am Freitag, 18. Januar 2013, 16:57:31 schrieb Greg Kroah-Hartman:
-> > > > On Fri, Jan 18, 2013 at 10:52:14PM +0100, Markus Grabner wrote:
-> > > > > The function "line6_send_raw_message_async" now has an additional
-> > > > > argument
-> > > > > "bool copy", which indicates whether the supplied buffer should be
-> > > > > copied
-> > > > > into a dynamically allocated block of memory. The copy flag is also
-> > > > > stored in the "message" struct such that the temporary memory can be
-> > > > > freed when appropriate without intervention of the caller.
-> > > > 
-> > > > Why do this?  Why not either always copy it, or always not?
-> > > 
-> > > Some messages are sent to the device which have no parameters, they are
-> > > declared at global scope as constant byte arrays and therefore must be
-> > > copied into a dynamically allocated block of memory in order to be sent
-> > > over the USB interface. On the other hand, there are messages which do
-> > > have parameters and which are composed in dynamically allocated memory
-> > > and can therefore directly be sent without copying.
-> > 
-> > Then if you always copy the memory, and "own" it after the call, you
-> > should be fine, right?
-> > 
-> > > > What is this fixing?
-> > > 
-> > > Two users reported to me independently that the driver doesn't work for
-> > > them. I couldn't reproduce the problem since it seems to be triggered by
-> > > subtle timing issues in the system, but after some further
-> > > investigations, the kfree() of the message buffer immediately after
-> > > submitting the message for asynchronous transmission was clearly
-> > > identified as the reason for the driver not working. The patch puts the
-> > > kfree() at the right place and (hopefully) prevents incorrect use of the
-> > > new buffer copy feature. The patch is tested by me and the users who
-> > > initially reported the bug, and they confirmed that the issue is fixed
-> > > for them.
-> > > 
-> > > If anybody has a better idea how to fix this, please go ahead! The patch
-> > > might also become obsolete in the future due to refactoring. But
-> > > currently there is a bug which prevents some people from using the driver
-> > > at all, and this should be fixed soon IMO.
-> > 
-> > I agree, it should be fixed, but having the code always do the copy and
-> > manage the memory, and not have the crazy "flag" option, should solve
-> > the bug for everyone.
-> Removing the flag saves three lines of code, keeping the flag saves a tiny 
-> amount of time and memory, so it's not really worth a lengthy discussion, and 
-> I actually don't care much. I will focus on the user space library I'm 
-> currently working on since it will make much of the MIDI-related Line6 kernel 
-> driver code obsolete.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Removing the flag makes the api easier to understand :)
+Delete successive tests to the same location.  The code tested the result
+of a previous allocation, that itself was already tested.  It is changed to
+test the result of the most recent allocation.
 
-And given that this is a USB device, speed usually isn't an issue here.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> On the other hand, would it be possible in usb_submit_urb to detect whether 
-> the data pointer provided to it is suitable for DMA, and if not, transparently 
-> make a copy and free it if no longer used (or, by the same argument as above, 
-> just always make a copy)?
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
 
-Yes, it has been able to do that for a very long time, I don't have
-access to the kernel tree at the moment, but look in usb.h it should
-tell you how to do it there.
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
 
-greg k-h
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/crypto/atmel-aes.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/atmel-aes.c b/drivers/crypto/atmel-aes.c
+index c9d9d5c..6f22ba5 100644
+--- a/drivers/crypto/atmel-aes.c
++++ b/drivers/crypto/atmel-aes.c
+@@ -332,7 +332,7 @@ static int atmel_aes_crypt_cpu_start(struct atmel_aes_dev *dd)
+ 		return -EINVAL;
+ 
+ 	dd->nb_out_sg = atmel_aes_sg_length(dd->req, dd->out_sg);
+-	if (!dd->nb_in_sg)
++	if (!dd->nb_out_sg)
+ 		return -EINVAL;
+ 
+ 	dd->bufcnt = sg_copy_to_buffer(dd->in_sg, dd->nb_in_sg,
+
