@@ -1,43 +1,61 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Date: Thu, 24 Jan 2013 20:45:09 +0000
-Subject: Re: [PATCH 01/24] use IS_ENABLED() macro
-Message-Id: <20130124184509.3a2c954f@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Jan 2013 07:20:22 +0000
+Subject: [patch] drm/nouveau/disp: sizeof() wrong pointer
+Message-Id: <20130122072022.GB8966@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
-	<50FD38D1.5020104@redhat.com>
-	<CA+MoWDrbaPiByV+H5xC2WyhV3XSVugjHkGg03-8H_0EeLE=1wA@mail.gmail.com>
-	<50FE6148.1010200@redhat.com>
-In-Reply-To: <50FE6148.1010200@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>, Hans Verkuil <hans.verkuil@cisco.com>, Jonathan Nieder <jrnieder@gmail.com>, emilgoode@gmail.com, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
 
-Em Tue, 22 Jan 2013 10:52:08 +0100
-Hans de Goede <hdegoede@redhat.com> escreveu:
+"data" is a void pointer and "args" is "data" after we have casted it to
+a struct.  We care about the sizeof the struct here.  Btw, sizeof(*data)
+is 1.
 
-> Hi,
-> 
-> On 01/21/2013 01:51 PM, Peter Senna Tschudin wrote:
-> > On Mon, Jan 21, 2013 at 10:47 AM, Hans de Goede <hdegoede@redhat.com> wrote:
-> >> Hi,
-> >>
-> >> Thanks for the patches I'll pick up 5 - 21 and add them to
-> >> my tree for Mauro.
-> > I have sent V2 of this patches with another subject and with fixed
-> > commit message for two patches.
-> 
-> Oh, those did not show up in my mailbox though, so I guess you
-> did not send V2 to the linux-media list? Can you please re-send
-> them to the linux-media list, then I'll pick up the gspca patches
-> among them.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hans,
-
-Peter sent the version 2 of them on Jan, 19. Did you get them?
-
-Anyway, I'll tag patches 5-21 for you as under_review status.
-
-Regards,
-Mauro
+diff --git a/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c b/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
+index ca1a7d7..eb9c489 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
++++ b/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
+@@ -335,7 +335,7 @@ nv50_disp_sync_ctor(struct nouveau_object *parent,
+ 	struct nv50_disp_dmac *dmac;
+ 	int ret;
+ 
+-	if (size < sizeof(*data) || args->head > 1)
++	if (size < sizeof(*args) || args->head > 1)
+ 		return -EINVAL;
+ 
+ 	ret = nv50_disp_dmac_create_(parent, engine, oclass, args->pushbuf,
+@@ -374,7 +374,7 @@ nv50_disp_ovly_ctor(struct nouveau_object *parent,
+ 	struct nv50_disp_dmac *dmac;
+ 	int ret;
+ 
+-	if (size < sizeof(*data) || args->head > 1)
++	if (size < sizeof(*args) || args->head > 1)
+ 		return -EINVAL;
+ 
+ 	ret = nv50_disp_dmac_create_(parent, engine, oclass, args->pushbuf,
+diff --git a/drivers/gpu/drm/nouveau/core/engine/disp/nvd0.c b/drivers/gpu/drm/nouveau/core/engine/disp/nvd0.c
+index 9e38ebf..f28725a 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/disp/nvd0.c
++++ b/drivers/gpu/drm/nouveau/core/engine/disp/nvd0.c
+@@ -230,7 +230,7 @@ nvd0_disp_sync_ctor(struct nouveau_object *parent,
+ 	struct nv50_disp_dmac *dmac;
+ 	int ret;
+ 
+-	if (size < sizeof(*data) || args->head >= priv->head.nr)
++	if (size < sizeof(*args) || args->head >= priv->head.nr)
+ 		return -EINVAL;
+ 
+ 	ret = nv50_disp_dmac_create_(parent, engine, oclass, args->pushbuf,
+@@ -270,7 +270,7 @@ nvd0_disp_ovly_ctor(struct nouveau_object *parent,
+ 	struct nv50_disp_dmac *dmac;
+ 	int ret;
+ 
+-	if (size < sizeof(*data) || args->head >= priv->head.nr)
++	if (size < sizeof(*args) || args->head >= priv->head.nr)
+ 		return -EINVAL;
+ 
+ 	ret = nv50_disp_dmac_create_(parent, engine, oclass, args->pushbuf,
