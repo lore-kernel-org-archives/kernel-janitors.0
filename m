@@ -1,31 +1,47 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Date: Tue, 01 Jan 2013 18:33:42 +0000
-Subject: Re: [PATCH RESEND 6/6] clk: s5p-g2d: Fix incorrect usage of IS_ERR_OR_NULL
-Message-Id: <50E32C06.5020104@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Jan 2013 07:19:14 +0000
+Subject: [patch] ntb: off by one sanity checks
+Message-Id: <20130122071914.GA8966@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1355852048-23188-1-git-send-email-linux@prisktech.co.nz>
- <1355852048-23188-7-git-send-email-linux@prisktech.co.nz>
- <50D62BC9.9010706@mvista.com>
-In-Reply-To: <50D62BC9.9010706@mvista.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Jon Mason <jon.mason@intel.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, kbuild@01.org
 
-On 12/22/2012 10:53 PM, Sergei Shtylyov wrote:
-> Hello.
->
-> On 18-12-2012 21:34, Tony Prisk wrote:
->
->> Resend to include mailing lists.
->
-> Such remarks should be placed under --- tear line, not in the changelog.
->
->> Replace IS_ERR_OR_NULL with IS_ERR on clk_get results.
->
->> Signed-off-by: Tony Prisk <linux@prisktech.co.nz>
->> CC: Kyungmin Park <kyungmin.park@samsung.com>
->> CC: Tomasz Stanislawski <t.stanislaws@samsung.com>
->> CC: linux-media@vger.kernel.org
+These tests are off by one.  If "mw" is equal to NTB_NUM_MW then we
+would go beyond the end of the ndev->mw[] array.
 
-I've applied first version of this patch to my tree for 3.9, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/ntb/ntb_hw.c b/drivers/ntb/ntb_hw.c
+index 4c71b17..5bf54f3 100644
+--- a/drivers/ntb/ntb_hw.c
++++ b/drivers/ntb/ntb_hw.c
+@@ -359,7 +359,7 @@ int ntb_read_remote_spad(struct ntb_device *ndev, unsigned int idx, u32 *val)
+  */
+ void *ntb_get_mw_vbase(struct ntb_device *ndev, unsigned int mw)
+ {
+-	if (mw > NTB_NUM_MW)
++	if (mw >= NTB_NUM_MW)
+ 		return NULL;
+ 
+ 	return ndev->mw[mw].vbase;
+@@ -376,7 +376,7 @@ void *ntb_get_mw_vbase(struct ntb_device *ndev, unsigned int mw)
+  */
+ resource_size_t ntb_get_mw_size(struct ntb_device *ndev, unsigned int mw)
+ {
+-	if (mw > NTB_NUM_MW)
++	if (mw >= NTB_NUM_MW)
+ 		return 0;
+ 
+ 	return ndev->mw[mw].bar_sz;
+@@ -394,7 +394,7 @@ resource_size_t ntb_get_mw_size(struct ntb_device *ndev, unsigned int mw)
+  */
+ void ntb_set_mw_addr(struct ntb_device *ndev, unsigned int mw, u64 addr)
+ {
+-	if (mw > NTB_NUM_MW)
++	if (mw >= NTB_NUM_MW)
+ 		return;
+ 
+ 	dev_dbg(&ndev->pdev->dev, "Writing addr %Lx to BAR %d\n", addr,
