@@ -1,23 +1,32 @@
-From: Jonathan Nieder <jrnieder@gmail.com>
-Date: Mon, 21 Jan 2013 22:24:25 +0000
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Tue, 22 Jan 2013 09:52:08 +0000
 Subject: Re: [PATCH 01/24] use IS_ENABLED() macro
-Message-Id: <20130121222425.GB3586@elie.Belkin>
+Message-Id: <50FE6148.1010200@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com>
- <50FD38D1.5020104@redhat.com>
-In-Reply-To: <50FD38D1.5020104@redhat.com>
+References: <1358613206-4274-1-git-send-email-peter.senna@gmail.com> <50FD38D1.5020104@redhat.com> <CA+MoWDrbaPiByV+H5xC2WyhV3XSVugjHkGg03-8H_0EeLE=1wA@mail.gmail.com>
+In-Reply-To: <CA+MoWDrbaPiByV+H5xC2WyhV3XSVugjHkGg03-8H_0EeLE=1wA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>, mchehab@redhat.com, hans.verkuil@cisco.com, emilgoode@gmail.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Hans Verkuil <hans.verkuil@cisco.com>, Jonathan Nieder <jrnieder@gmail.com>, emilgoode@gmail.com, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Hans de Goede wrote:
+Hi,
 
-> Thanks for the patches I'll pick up 5 - 21 and add them to
-> my tree for Mauro.
+On 01/21/2013 01:51 PM, Peter Senna Tschudin wrote:
+> On Mon, Jan 21, 2013 at 10:47 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+>> Hi,
+>>
+>> Thanks for the patches I'll pick up 5 - 21 and add them to
+>> my tree for Mauro.
+> I have sent V2 of this patches with another subject and with fixed
+> commit message for two patches.
 
-Ack on patch 1, BTW.
+Oh, those did not show up in my mailbox though, so I guess you
+did not send V2 to the linux-media list? Can you please re-send
+them to the linux-media list, then I'll pick up the gspca patches
+among them.
 
-Thanks,
-Jonathan
+Regards,
+
+Hans
