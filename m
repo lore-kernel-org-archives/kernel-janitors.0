@@ -1,60 +1,69 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 21 Jan 2013 12:13:55 +0000
-Subject: [PATCH 10/15] drivers/scsi/csiostor/csio_lnode.c: adjust duplicate test
-Message-Id: <1358773378-4700-11-git-send-email-Julia.Lawall@lip6.fr>
+From: Naresh Kumar Inna <naresh@chelsio.com>
+Date: Wed, 23 Jan 2013 04:11:44 +0000
+Subject: Re: [PATCH 10/15] drivers/scsi/csiostor/csio_lnode.c: adjust duplicate test
+Message-Id: <50FF6030.5040306@chelsio.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr> <1358773378-4700-11-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358773378-4700-11-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On 1/21/2013 6:32 PM, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Delete successive tests to the same location.  The current value of ln has
+> been tested already, and is clearly not NULL, given the enclosing if
+> condition.  Furthermore, the result of csio_lnode_alloc is currently
+> ignored.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @s exists@
+> local idexpression y;
+> expression x,e;
+> @@
+> 
+> *if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+>  { ... when forall
+>    return ...; }
+> ... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+>     when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+> *if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+>  { ... when forall
+>    return ...; }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+> Not tested.  I don't know if this is the right fix.
+> 
+>  drivers/scsi/csiostor/csio_lnode.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/csiostor/csio_lnode.c b/drivers/scsi/csiostor/csio_lnode.c
+> index ffe9be0..d956f97 100644
+> --- a/drivers/scsi/csiostor/csio_lnode.c
+> +++ b/drivers/scsi/csiostor/csio_lnode.c
+> @@ -873,7 +873,7 @@ csio_handle_link_up(struct csio_hw *hw, uint8_t portid, uint32_t fcfi,
+>  		if (ln->vnp_flowid != CSIO_INVALID_IDX) {
+>  			/* New VN-Port */
+>  			spin_unlock_irq(&hw->lock);
+> -			csio_lnode_alloc(hw);
+> +			ln = csio_lnode_alloc(hw);
+>  			spin_lock_irq(&hw->lock);
+>  			if (!ln) {
+>  				csio_err(hw,
+> --
 
-Delete successive tests to the same location.  The current value of ln has
-been tested already, and is clearly not NULL, given the enclosing if
-condition.  Furthermore, the result of csio_lnode_alloc is currently
-ignored.
+Acked-by: Naresh Kumar Inna <naresh@chelsio.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Thanks,
+Naresh.
 
-// <smpl>
-@s exists@
-local idexpression y;
-expression x,e;
-@@
 
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
-    when != \(XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not tested.  I don't know if this is the right fix.
-
- drivers/scsi/csiostor/csio_lnode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/csiostor/csio_lnode.c b/drivers/scsi/csiostor/csio_lnode.c
-index ffe9be0..d956f97 100644
---- a/drivers/scsi/csiostor/csio_lnode.c
-+++ b/drivers/scsi/csiostor/csio_lnode.c
-@@ -873,7 +873,7 @@ csio_handle_link_up(struct csio_hw *hw, uint8_t portid, uint32_t fcfi,
- 		if (ln->vnp_flowid != CSIO_INVALID_IDX) {
- 			/* New VN-Port */
- 			spin_unlock_irq(&hw->lock);
--			csio_lnode_alloc(hw);
-+			ln = csio_lnode_alloc(hw);
- 			spin_lock_irq(&hw->lock);
- 			if (!ln) {
- 				csio_err(hw,
