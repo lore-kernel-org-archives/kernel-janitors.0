@@ -1,55 +1,66 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:25 +0000
-Subject: [PATCH V2 18/24] usb/gspca/stv06xx/stv06xx.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-19-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Jan 2013 08:27:56 +0000
+Subject: [patch v2] drm/nouveau/disp: sizeof() wrong pointer
+Message-Id: <20130123082756.GA22945@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+References: <1358847745.17068.7.camel@mattotaupa>
+In-Reply-To: <1358847745.17068.7.camel@mattotaupa>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hdegoede@redhat.com
-Cc: mchehab@redhat.com, hans.verkuil@cisco.com, peter.senna@gmail.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org, Paul Menzel <paulepanter@users.sourceforge.net>
 
-replace:
- #if defined(CONFIG_INPUT) || \
-     defined(CONFIG_INPUT_MODULE)
-with:
- #if IS_ENABLED(CONFIG_INPUT)
+"data" is a void pointer and "args" is "data" after we have casted it to
+a struct.  We care about the size of the struct here.  Btw,
+sizeof(*data) is 1.
 
-This change was made for: CONFIG_INPUT
-
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Changes from V1:
-   Updated subject
+v2: tweaked the commit message
 
- drivers/media/usb/gspca/stv06xx/stv06xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/usb/gspca/stv06xx/stv06xx.c b/drivers/media/usb/gspca/stv06xx/stv06xx.c
-index 999ec77..657160b 100644
---- a/drivers/media/usb/gspca/stv06xx/stv06xx.c
-+++ b/drivers/media/usb/gspca/stv06xx/stv06xx.c
-@@ -492,7 +492,7 @@ frame_data:
- 	}
- }
+diff --git a/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c b/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
+index ca1a7d7..eb9c489 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
++++ b/drivers/gpu/drm/nouveau/core/engine/disp/nv50.c
+@@ -335,7 +335,7 @@ nv50_disp_sync_ctor(struct nouveau_object *parent,
+ 	struct nv50_disp_dmac *dmac;
+ 	int ret;
  
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- static int sd_int_pkt_scan(struct gspca_dev *gspca_dev,
- 			u8 *data,		/* interrupt packet data */
- 			int len)		/* interrupt packet length */
-@@ -529,7 +529,7 @@ static const struct sd_desc sd_desc = {
- 	.pkt_scan = stv06xx_pkt_scan,
- 	.isoc_init = stv06xx_isoc_init,
- 	.isoc_nego = stv06xx_isoc_nego,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.int_pkt_scan = sd_int_pkt_scan,
- #endif
- };
--- 
-1.7.11.7
+-	if (size < sizeof(*data) || args->head > 1)
++	if (size < sizeof(*args) || args->head > 1)
+ 		return -EINVAL;
+ 
+ 	ret = nv50_disp_dmac_create_(parent, engine, oclass, args->pushbuf,
+@@ -374,7 +374,7 @@ nv50_disp_ovly_ctor(struct nouveau_object *parent,
+ 	struct nv50_disp_dmac *dmac;
+ 	int ret;
+ 
+-	if (size < sizeof(*data) || args->head > 1)
++	if (size < sizeof(*args) || args->head > 1)
+ 		return -EINVAL;
+ 
+ 	ret = nv50_disp_dmac_create_(parent, engine, oclass, args->pushbuf,
+diff --git a/drivers/gpu/drm/nouveau/core/engine/disp/nvd0.c b/drivers/gpu/drm/nouveau/core/engine/disp/nvd0.c
+index 9e38ebf..f28725a 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/disp/nvd0.c
++++ b/drivers/gpu/drm/nouveau/core/engine/disp/nvd0.c
+@@ -230,7 +230,7 @@ nvd0_disp_sync_ctor(struct nouveau_object *parent,
+ 	struct nv50_disp_dmac *dmac;
+ 	int ret;
+ 
+-	if (size < sizeof(*data) || args->head >= priv->head.nr)
++	if (size < sizeof(*args) || args->head >= priv->head.nr)
+ 		return -EINVAL;
+ 
+ 	ret = nv50_disp_dmac_create_(parent, engine, oclass, args->pushbuf,
+@@ -270,7 +270,7 @@ nvd0_disp_ovly_ctor(struct nouveau_object *parent,
+ 	struct nv50_disp_dmac *dmac;
+ 	int ret;
+ 
+-	if (size < sizeof(*data) || args->head >= priv->head.nr)
++	if (size < sizeof(*args) || args->head >= priv->head.nr)
+ 		return -EINVAL;
+ 
+ 	ret = nv50_disp_dmac_create_(parent, engine, oclass, args->pushbuf,
 
