@@ -1,40 +1,135 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Tue, 15 Jan 2013 10:54:02 +0000
-Subject: Re: [patch] hwmon/max6697: fix memset size in max6697_init_chip()
-Message-Id: <20130115105402.GA21765@roeck-us.net>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 23 Jan 2013 21:40:15 +0000
+Subject: [PATCH] scripts/coccinelle/misc/memcpy-assign.cocci: Replace memcpy with struct assignment
+Message-Id: <1358977215-2720-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130115065308.GA899@elgon.mountain>
-In-Reply-To: <20130115065308.GA899-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+To: cocci@systeme.lip6.fr
 
-On Tue, Jan 15, 2013 at 09:53:08AM +0300, Dan Carpenter wrote:
-> sizeof(p) was intended instead of sizeof(data).  data is a pointer and
-> p is a 7 character struct.  It probably doesn't make a difference most
-> of the time, but it could result in using uninitialized data.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Hi Dan,
+There are kinds of memcpy() that are error-prone. Its replacement with
+a struct assignment is prefered because it's type-safe and much easier
+to read. This semantic patch looks for memcpy() that can be replaced by
+struct assignment.
 
-Thanks a lot!
+Inspired by patches sent by Ezequiel Garcia <elezegarcia@gmail.com>
 
-Guenter
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ scripts/coccinelle/misc/memcpy-assign.cocci | 103 ++++++++++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+ create mode 100644 scripts/coccinelle/misc/memcpy-assign.cocci
 
-> diff --git a/drivers/hwmon/max6697.c b/drivers/hwmon/max6697.c
-> index a1c8c0a..d229cc7 100644
-> --- a/drivers/hwmon/max6697.c
-> +++ b/drivers/hwmon/max6697.c
-> @@ -474,7 +474,7 @@ static int max6697_init_chip(struct i2c_client *client)
->  		return 0;
->  
->  	if (!pdata || client->dev.of_node) {
-> -		memset(&p, 0, sizeof(data));
-> +		memset(&p, 0, sizeof(p));
->  		max6697_get_config_of(client->dev.of_node, &p);
->  		pdata = &p;
->  	}
-> 
+diff --git a/scripts/coccinelle/misc/memcpy-assign.cocci b/scripts/coccinelle/misc/memcpy-assign.cocci
+new file mode 100644
+index 0000000..5c1fd75
+--- /dev/null
++++ b/scripts/coccinelle/misc/memcpy-assign.cocci
+@@ -0,0 +1,103 @@
++//
++// Replace memcpy with struct assignment.
++//
++// Confidence: Moderate
++// Copyright: (C) 2012 Peter Senna Tschudin, INRIA/LIP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: --no-includes --include-headers
++
++virtual patch
++virtual report
++virtual context
++virtual org
++
++@r1 depends on !patch@
++identifier struct_name;
++struct struct_name to;
++struct struct_name from;
++struct struct_name *top;
++struct struct_name *fromp;
++position p;
++@@
++memcpy@p(\(&(to)\|top\), \(&(from)\|fromp\), \(sizeof(to)\|sizeof(from)\|sizeof(struct struct_name)\|sizeof(*top)\|sizeof(*fromp)\))
++
++@script:python depends on report@
++p << r1.p;
++@@
++coccilib.report.print_report(p[0],"Replace memcpy with struct assignment")
++
++@depends on context@
++position r1.p;
++@@
++*memcpy@p(...);
++
++@script:python depends on org@
++p << r1.p;
++@@
++cocci.print_main("Replace memcpy with struct assignment",p)
++
++@depends on patch@
++identifier struct_name;
++struct struct_name to;
++struct struct_name from;
++@@
++(
++-memcpy(&(to), &(from), sizeof(to));
+++to = from;
++|
++-memcpy(&(to), &(from), sizeof(from));
+++to = from;
++|
++-memcpy(&(to), &(from), sizeof(struct struct_name));
+++to = from;
++)
++
++@depends on patch@
++identifier struct_name;
++struct struct_name to;
++struct struct_name *from;
++@@
++(
++-memcpy(&(to), from, sizeof(to));
+++to = *from;
++|
++-memcpy(&(to), from, sizeof(*from));
+++to = *from;
++|
++-memcpy(&(to), from, sizeof(struct struct_name));
+++to = *from;
++)
++
++@depends on patch@
++identifier struct_name;
++struct struct_name *to;
++struct struct_name from;
++@@
++(
++-memcpy(to, &(from), sizeof(*to));
+++ *to = from;
++|
++-memcpy(to, &(from), sizeof(from));
+++ *to = from;
++|
++-memcpy(to, &(from), sizeof(struct struct_name));
+++ *to = from;
++)
++
++@depends on patch@
++identifier struct_name;
++struct struct_name *to;
++struct struct_name *from;
++@@
++(
++-memcpy(to, from, sizeof(*to));
+++ *to = *from;
++|
++-memcpy(to, from, sizeof(*from));
+++ *to = *from;
++|
++-memcpy(to, from, sizeof(struct struct_name));
+++ *to = *from;
++)
++
+-- 
+1.7.11.7
+
