@@ -1,64 +1,30 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:13 +0000
-Subject: [PATCH V2 06/24] usb/gspca/cpia1.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-7-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Jan 2013 06:41:43 +0000
+Subject: [patch] staging: cxt1e1: buffer overflow in do_del_chan()
+Message-Id: <20130124064143.GC5611@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hdegoede@redhat.com
-Cc: mchehab@redhat.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-replace:
- #if defined(CONFIG_INPUT) || \
-     defined(CONFIG_INPUT_MODULE)
-with:
- #if IS_ENABLED(CONFIG_INPUT)
+If we don't restrict "cp.channum" to 3 digits then the sprintf() will
+overflow.  I've added a check and changed the sprintf() to snprintf().
 
-This change was made for: CONFIG_INPUT
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-Changes from V1:
-   Updated subject
-
- drivers/media/usb/gspca/cpia1.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/gspca/cpia1.c b/drivers/media/usb/gspca/cpia1.c
-index b3ba47d..1dcdd9f 100644
---- a/drivers/media/usb/gspca/cpia1.c
-+++ b/drivers/media/usb/gspca/cpia1.c
-@@ -541,7 +541,7 @@ static int do_command(struct gspca_dev *gspca_dev, u16 command,
- 		/* test button press */
- 		a = ((gspca_dev->usb_buf[1] & 0x02) = 0);
- 		if (a != sd->params.qx3.button) {
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 			input_report_key(gspca_dev->input_dev, KEY_CAMERA, a);
- 			input_sync(gspca_dev->input_dev);
- #endif
-@@ -1640,7 +1640,7 @@ static void sd_stopN(struct gspca_dev *gspca_dev)
- 	/* Update the camera status */
- 	do_command(gspca_dev, CPIA_COMMAND_GetCameraStatus, 0, 0, 0, 0);
- 
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	/* If the last button state is pressed, release it now! */
- 	if (sd->params.qx3.button) {
- 		/* The camera latch will hold the pressed state until we reset
-@@ -1869,7 +1869,7 @@ static const struct sd_desc sd_desc = {
- 	.stopN = sd_stopN,
- 	.dq_callback = sd_dq_callback,
- 	.pkt_scan = sd_pkt_scan,
--#if defined(CONFIG_INPUT) || defined(CONFIG_INPUT_MODULE)
-+#if IS_ENABLED(CONFIG_INPUT)
- 	.other_input = 1,
- #endif
- };
--- 
-1.7.11.7
-
+diff --git a/drivers/staging/cxt1e1/linux.c b/drivers/staging/cxt1e1/linux.c
+index 0ff2865..a829b62 100644
+--- a/drivers/staging/cxt1e1/linux.c
++++ b/drivers/staging/cxt1e1/linux.c
+@@ -773,7 +773,9 @@ do_del_chan (struct net_device * musycc_dev, void *data)
+     if (copy_from_user (&cp, data,
+                         sizeof (struct sbecom_chan_param)))
+         return -EFAULT;
+-    sprintf (buf, CHANNAME "%d", cp.channum);
++    if (cp.channum > 999)
++        return -EINVAL;
++    snprintf (buf, sizeof(buf), CHANNAME "%d", cp.channum);
+     if (!(dev = dev_get_by_name (&init_net, buf)))
+         return -ENOENT;
+     dev_put (dev);
