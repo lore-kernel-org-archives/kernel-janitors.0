@@ -1,73 +1,35 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:08 +0000
-Subject: [PATCH V2 01/24] pci/cx88/cx88.h: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-2-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Jan 2013 08:51:22 +0000
+Subject: [patch] PM: intel_powerclamp: off by one in start_power_clamp()
+Message-Id: <20130124085122.GA3547@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
+References: <5100ee96.xoiaCavCYxXgoSIK%fengguang.wu@intel.com>
+In-Reply-To: <5100ee96.xoiaCavCYxXgoSIK%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@redhat.com
-Cc: hans.verkuil@cisco.com, jrnieder@gmail.com, peter.senna@gmail.com, emilgoode@gmail.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-pm@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, Arjan van de Ven <arjan@linux.intel.com>, kernel-janitors@vger.kernel.org
 
-replace:
- #if defined(CONFIG_VIDEO_CX88_DVB) || \
-     defined(CONFIG_VIDEO_CX88_DVB_MODULE)
-with:
- #if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
+This value has already been clamped correctly to 0 through 49 in
+powerclamp_set_cur_state() so this patch doesn't actually change
+anything.  But we should fix it anyway for consistency.
 
-This change was made for: CONFIG_VIDEO_CX88_DVB,
-CONFIG_VIDEO_CX88_BLACKBIRD, CONFIG_VIDEO_CX88_VP3054
+set_target_ratio is used as an offset into an array with
+MAX_TARGET_RATIO (50) elements.
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-Changes from V1:
-   Updated subject
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
- drivers/media/pci/cx88/cx88.h | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/pci/cx88/cx88.h b/drivers/media/pci/cx88/cx88.h
-index ba0dba4..feff53c 100644
---- a/drivers/media/pci/cx88/cx88.h
-+++ b/drivers/media/pci/cx88/cx88.h
-@@ -363,7 +363,7 @@ struct cx88_core {
- 	unsigned int               tuner_formats;
+diff --git a/drivers/thermal/intel_powerclamp.c b/drivers/thermal/intel_powerclamp.c
+index a85ff38..ab3ed90 100644
+--- a/drivers/thermal/intel_powerclamp.c
++++ b/drivers/thermal/intel_powerclamp.c
+@@ -504,7 +504,7 @@ static int start_power_clamp(void)
+ 		return -EINVAL;
+ 	}
  
- 	/* config info -- dvb */
--#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
-+#if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
- 	int 			   (*prev_set_voltage)(struct dvb_frontend *fe, fe_sec_voltage_t voltage);
- #endif
- 	void			   (*gate_ctrl)(struct cx88_core  *core, int open);
-@@ -562,8 +562,7 @@ struct cx8802_dev {
+-	set_target_ratio = clamp(set_target_ratio, 0U, MAX_TARGET_RATIO);
++	set_target_ratio = clamp(set_target_ratio, 0U, MAX_TARGET_RATIO - 1);
+ 	/* prevent cpu hotplug */
+ 	get_online_cpus();
  
- 	/* for blackbird only */
- 	struct list_head           devlist;
--#if defined(CONFIG_VIDEO_CX88_BLACKBIRD) || \
--    defined(CONFIG_VIDEO_CX88_BLACKBIRD_MODULE)
-+#if IS_ENABLED(CONFIG_VIDEO_CX88_BLACKBIRD)
- 	struct video_device        *mpeg_dev;
- 	u32                        mailbox;
- 	int                        width;
-@@ -574,13 +573,12 @@ struct cx8802_dev {
- 	struct cx2341x_handler     cxhdl;
- #endif
- 
--#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
-+#if IS_ENABLED(CONFIG_VIDEO_CX88_DVB)
- 	/* for dvb only */
- 	struct videobuf_dvb_frontends frontends;
- #endif
- 
--#if defined(CONFIG_VIDEO_CX88_VP3054) || \
--    defined(CONFIG_VIDEO_CX88_VP3054_MODULE)
-+#if IS_ENABLED(CONFIG_VIDEO_CX88_VP3054)
- 	/* For VP3045 secondary I2C bus support */
- 	struct vp3054_i2c_state	   *vp3054;
- #endif
--- 
-1.7.11.7
-
