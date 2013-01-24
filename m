@@ -1,63 +1,34 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Tue, 29 Jan 2013 18:56:16 +0000
-Subject: Re: [patch] iscsi-target: make some temporary buffers larger
-Message-Id: <1359485776.23290.1394.camel@haakon2.linux-iscsi.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Jan 2013 06:40:00 +0000
+Subject: [patch] cfg80211: off by one in ieee80211_bss()
+Message-Id: <20130124064000.GB5611@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130124070637.GE5611@elgon.mountain>
-In-Reply-To: <20130124070637.GE5611@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+We do a:
 
-On Thu, 2013-01-24 at 10:06 +0300, Dan Carpenter wrote:
-> My static checker complains because we use sprintf() to print some
-> unsigned ints into 10 byte buffers.  In theory unsigned ints can take 10
-> characters and we need another for the terminator.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+	sprintf(buf, " Last beacon: %ums ago",
+		elapsed_jiffies_msecs(bss->ts));
 
-Applied to target-pending/for-next, and apologies for the delay.
+elapsed_jiffies_msecs() can return a 10 digit number so "buf" needs to
+be 31 characters long.
 
-Thank you,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---nab
-
-> diff --git a/drivers/target/iscsi/iscsi_target_parameters.c b/drivers/target/iscsi/iscsi_target_parameters.c
-> index d891642..ca2be40 100644
-> --- a/drivers/target/iscsi/iscsi_target_parameters.c
-> +++ b/drivers/target/iscsi/iscsi_target_parameters.c
-> @@ -1095,11 +1095,11 @@ static int iscsi_check_acceptor_state(struct iscsi_param *param, char *value,
->  				SET_PSTATE_REPLY_OPTIONAL(param);
->  		}
->  	} else if (IS_TYPE_NUMBER(param)) {
-> -		char *tmpptr, buf[10];
-> +		char *tmpptr, buf[11];
->  		u32 acceptor_value = simple_strtoul(param->value, &tmpptr, 0);
->  		u32 proposer_value = simple_strtoul(value, &tmpptr, 0);
->  
-> -		memset(buf, 0, 10);
-> +		memset(buf, 0, sizeof(buf));
->  
->  		if (!strcmp(param->name, MAXCONNECTIONS) ||
->  		    !strcmp(param->name, MAXBURSTLENGTH) ||
-> @@ -1503,8 +1503,8 @@ static int iscsi_enforce_integrity_rules(
->  			FirstBurstLength = simple_strtoul(param->value,
->  					&tmpptr, 0);
->  			if (FirstBurstLength > MaxBurstLength) {
-> -				char tmpbuf[10];
-> -				memset(tmpbuf, 0, 10);
-> +				char tmpbuf[11];
-> +				memset(tmpbuf, 0, sizeof(tmpbuf));
->  				sprintf(tmpbuf, "%u", MaxBurstLength);
->  				if (iscsi_update_param_value(param, tmpbuf))
->  					return -1;
-> --
-> To unsubscribe from this list: send the line "unsubscribe target-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+diff --git a/net/wireless/scan.c b/net/wireless/scan.c
+index 01592d7..45f1618 100644
+--- a/net/wireless/scan.c
++++ b/net/wireless/scan.c
+@@ -1358,7 +1358,7 @@ ieee80211_bss(struct wiphy *wiphy, struct iw_request_info *info,
+ 						  &iwe, IW_EV_UINT_LEN);
+ 	}
+ 
+-	buf = kmalloc(30, GFP_ATOMIC);
++	buf = kmalloc(31, GFP_ATOMIC);
+ 	if (buf) {
+ 		memset(&iwe, 0, sizeof(iwe));
+ 		iwe.cmd = IWEVCUSTOM;
