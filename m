@@ -1,31 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 20 Jan 2013 17:27:22 +0000
-Subject: [patch v2] usb: gadget: precedence bug in show_requests()
-Message-Id: <20130120172722.GA11248@elgon.mountain>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Date: Thu, 24 Jan 2013 10:51:03 +0000
+Subject: Re: [patch v2] usb: gadget: precedence bug in show_requests()
+Message-Id: <87fw1qonvs.fsf@ashishki-desk.ger.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130120172722.GA11248@elgon.mountain>
+In-Reply-To: <20130120172722.GA11248@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The intent here was to have parenthesis around the (ci->hw_ep_max / 2)
-so that it counts like "0 1 2 0 1 2".  In the current code, the mod
-operation happens first so it counts like "0 0 1 1 2 2".
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: fixed the changelog.  mod and divide have the same precedence
+> The intent here was to have parenthesis around the (ci->hw_ep_max / 2)
+> so that it counts like "0 1 2 0 1 2".  In the current code, the mod
+> operation happens first so it counts like "0 0 1 1 2 2".
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/usb/chipidea/debug.c b/drivers/usb/chipidea/debug.c
-index 3bc244d..3cd223c 100644
---- a/drivers/usb/chipidea/debug.c
-+++ b/drivers/usb/chipidea/debug.c
-@@ -709,7 +709,7 @@ static ssize_t show_requests(struct device *dev, struct device_attribute *attr,
- 
- 			n += scnprintf(buf + n, PAGE_SIZE - n,
- 					"EP=%02i: TD=%08X %s\n",
--					i % ci->hw_ep_max/2, (u32)req->dma,
-+					i % (ci->hw_ep_max / 2), (u32)req->dma,
- 					((i < ci->hw_ep_max/2) ? "RX" : "TX"));
- 
- 			for (j = 0; j < qSize; j++)
+Thanks, I added this one on top of my debug cleanup patchset [1].
+
+[1] http://marc.info/?l=linux-usb&m5902438408860&w=2
+
+Regards,
+--
+Alex
