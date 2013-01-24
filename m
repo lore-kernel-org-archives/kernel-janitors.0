@@ -1,24 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 28 Jan 2013 01:38:51 +0000
-Subject: Re: [patch] qlcnic: silence false positive overflow warning
-Message-Id: <20130127.203851.2157088853751625559.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Jan 2013 07:05:24 +0000
+Subject: [patch] backlight: s6e63m0: report ->gamma_table_count correctly
+Message-Id: <20130124070524.GD5611@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130125064141.GB4882@elgon.mountain>
-In-Reply-To: <20130125064141.GB4882@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jitendra.kalsaria@qlogic.com, sony.chacko@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Jan 2013 09:41:42 +0300
+gamma_table has 3 arrays which each hold MAX_GAMMA_LEVEL pointers to
+int.
 
-> We actually store the MAC address as well as the board_name here.  The
-> longest board_name is 75 characters so there is more than enough room
-> to hold the 17 character MAC and the ": " divider.  But making this
-> buffer larger silences a static checker warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The current code sets ->gamma_table_count to 6 on 64bit arches and to 3
+on 32 bit arches.  It should be 3 on everything.
 
-This patch doesn't apply cleanly to any of my trees.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is from reading the code.  We use ->gamma_table_count in sysfs file
+but other than that I'm not sure what it's for.  I am not very familiar
+with this code.
+
+diff --git a/drivers/video/backlight/s6e63m0.c b/drivers/video/backlight/s6e63m0.c
+index 2126b96..9c2677f 100644
+--- a/drivers/video/backlight/s6e63m0.c
++++ b/drivers/video/backlight/s6e63m0.c
+@@ -766,7 +766,7 @@ static int s6e63m0_probe(struct spi_device *spi)
+ 	 * know that.
+ 	 */
+ 	lcd->gamma_table_count -	    sizeof(gamma_table) / (MAX_GAMMA_LEVEL * sizeof(int));
++	    sizeof(gamma_table) / (MAX_GAMMA_LEVEL * sizeof(int *));
+ 
+ 	ret = device_create_file(&(spi->dev), &dev_attr_gamma_mode);
+ 	if (ret < 0)
