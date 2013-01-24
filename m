@@ -1,33 +1,33 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Date: Mon, 21 Jan 2013 12:04:15 +0000
-Subject: Re: [patch] f2fs: use _safe() version of list_for_each
-Message-Id: <CAKYAXd9MONk+mwHSXnoUTVVHqFytFPpfth1uvpcKx9q=g2yPWw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Jan 2013 06:38:34 +0000
+Subject: [patch] ip6mr: limit IPv6 MRT_TABLE identifiers
+Message-Id: <20130124063834.GA5611@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130120150258.GB32551@elgon.mountain>
-	<20130121083245.GA11592@core.coreip.homeip.net>
-	<1358760001.8234.150.camel@kjgkr>
-	<CAKYAXd-H0KHMavYRk3PEshXNtN_ke5rH_qa-8XTT6RWZXYmFcw@mail.gmail.com>
-	<20130121112424.GV16282@mwanda>
-In-Reply-To: <20130121112424.GV16282@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: jaegeuk.kim@samsung.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2013/1/21, Dan Carpenter <dan.carpenter@oracle.com>:
-> I sometimes write little user space programs to help me check my
-> work.  I've attached one.
->
-> gcc test.c
-> ./a.out
->
-> regards,
-> dan carpenter
->
-Hi Dan.
-Thanks for testcase. I understand fully.
-list_for_each still use pos after removing pos in loop. So, we need to
-use _safe function to get pos->next safely.
+We did this for IPv4 in b49d3c1e1c "net: ipmr: limit MRT_TABLE
+identifiers" but we need to do it for IPv6 as well.  On IPv6 the name
+is "pim6reg" instead of "pimreg" so there is one less digit allowed.
 
-Thanks.
+The strcpy() is in ip6mr_reg_vif().
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
+index acc3249..351ce98 100644
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -1766,6 +1766,9 @@ int ip6_mroute_setsockopt(struct sock *sk, int optname, char __user *optval, uns
+ 			return -EINVAL;
+ 		if (get_user(v, (u32 __user *)optval))
+ 			return -EFAULT;
++		/* "pim6reg%u" should not exceed 16 bytes (IFNAMSIZ) */
++		if (v != RT_TABLE_DEFAULT && v >= 100000000)
++			return -EINVAL;
+ 		if (sk = mrt->mroute6_sk)
+ 			return -EBUSY;
+ 
