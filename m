@@ -1,49 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Jan 2013 06:43:43 +0000
-Subject: [patch] ASoC: dwc: fix support for more than two channels
-Message-Id: <20130125064343.GE4882@elgon.mountain>
+From: Rajeev kumar <rajeev-dlh.kumar@st.com>
+Date: Fri, 25 Jan 2013 08:45:46 +0000
+Subject: Re: [patch] ASoC: dwc: fix support for more than two channels
+Message-Id: <5102436A.4030205@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130125064343.GE4882@elgon.mountain>
+In-Reply-To: <20130125064343.GE4882@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-To: Liam Girdwood <lgirdwood@gmail.com>, Rajeev Kumar <rajeev-dlh.kumar@st.com>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 
-There were missing break statements so everything used
-TWO_CHANNEL_SUPPORT.
+On 1/25/2013 12:13 PM, Dan Carpenter wrote:
+> here were missing break statements so everything used
+> TWO_CHANNEL_SUPPORT.
+>
+> Also I added a return statement to silence a GCC warning:
+>
+> 	sound/soc/dwc/designware_i2s.c: In function ‘dw_i2s_hw_params’:
+> 	sound/soc/dwc/designware_i2s.c:236:32: warning: ‘ch_reg’ may be
+> 		used uninitialized in this function
+> 		[-Wmaybe-uninitialized]
+>
+> Signed-off-by: Dan Carpenter<dan.carpenter@oracle.com>
+> ---
+> Static analysis.  Untested.
 
-Also I added a return statement to silence a GCC warning:
-
-	sound/soc/dwc/designware_i2s.c: In function ‘dw_i2s_hw_params’:
-	sound/soc/dwc/designware_i2s.c:236:32: warning: ‘ch_reg’ may be
-		used uninitialized in this function
-		[-Wmaybe-uninitialized]
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Static analysis.  Untested.
-
-diff --git a/sound/soc/dwc/designware_i2s.c b/sound/soc/dwc/designware_i2s.c
-index 1aa5130..deb30d5 100644
---- a/sound/soc/dwc/designware_i2s.c
-+++ b/sound/soc/dwc/designware_i2s.c
-@@ -210,15 +210,19 @@ static int dw_i2s_hw_params(struct snd_pcm_substream *substream,
- 	switch (config->chan_nr) {
- 	case EIGHT_CHANNEL_SUPPORT:
- 		ch_reg = 3;
-+		break;
- 	case SIX_CHANNEL_SUPPORT:
- 		ch_reg = 2;
-+		break;
- 	case FOUR_CHANNEL_SUPPORT:
- 		ch_reg = 1;
-+		break;
- 	case TWO_CHANNEL_SUPPORT:
- 		ch_reg = 0;
- 		break;
- 	default:
- 		dev_err(dev->dev, "channel not supported\n");
-+		return -EINVAL;
- 	}
- 
- 	i2s_disable_channels(dev, substream->stream);
+Acked By: Rajeev Kumar <rajeev-dlh.kumar@st.com>
