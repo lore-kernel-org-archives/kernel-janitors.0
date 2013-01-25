@@ -1,46 +1,40 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 19 Jan 2013 23:41:30 +0000
-Subject: [PATCH V2 23/24] usb/hdpvr/hdpvr-i2c.c: use IS_ENABLED() macro
-Message-Id: <1358638891-4775-24-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Jan 2013 06:42:05 +0000
+Subject: [patch 1/2] video/kyro: delete some dead code
+Message-Id: <20130125064205.GC4882@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1358638891-4775-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mchehab@redhat.com
-Cc: peter.senna@gmail.com, david@hardeman.nu, elezegarcia@gmail.com, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-replace:
- #if defined(CONFIG_I2C) || \
-     defined(CONFIG_I2C_MODULE)
-with:
- #if IS_ENABLED(CONFIG_I2C)
+_OLDCODE is never defined.  Delete it.
 
-This change was made for: CONFIG_I2C
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reported-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-Changes from V1:
-   Updated subject
-
- drivers/media/usb/hdpvr/hdpvr-i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/hdpvr/hdpvr-i2c.c b/drivers/media/usb/hdpvr/hdpvr-i2c.c
-index 6c5054f..a38f58c 100644
---- a/drivers/media/usb/hdpvr/hdpvr-i2c.c
-+++ b/drivers/media/usb/hdpvr/hdpvr-i2c.c
-@@ -13,7 +13,7 @@
-  *
-  */
+diff --git a/drivers/video/kyro/STG4000OverlayDevice.c b/drivers/video/kyro/STG4000OverlayDevice.c
+index 0aeeaa1..84b6ea8 100644
+--- a/drivers/video/kyro/STG4000OverlayDevice.c
++++ b/drivers/video/kyro/STG4000OverlayDevice.c
+@@ -430,10 +430,7 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
+ 	 */
+ 	ulSrc = srcDest.ulSrcX2 - srcDest.ulSrcX1;
+ 	ulDest = srcDest.lDstX2 - srcDest.lDstX1;
+-#ifdef _OLDCODE
+-	ulLeft = srcDest.ulDstX1;
+-	ulRight = srcDest.ulDstX2;
+-#else
++
+ 	if (srcDest.ulDstX1 > 2) {
+ 		ulLeft = srcDest.ulDstX1 + 2;
+ 		ulRight = srcDest.ulDstX2 + 1;
+@@ -441,7 +438,7 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
+ 		ulLeft = srcDest.ulDstX1;
+ 		ulRight = srcDest.ulDstX2 + 1;
+ 	}
+-#endif
++
+ 	/* first work out the position we are to display as offset from the source of the buffer */
+ 	bResult = 1;
  
--#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
-+#if IS_ENABLED(CONFIG_I2C)
- 
- #include <linux/i2c.h>
- #include <linux/slab.h>
--- 
-1.7.11.7
-
