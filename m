@@ -1,45 +1,30 @@
-From: Laurent Navet <laurent.navet@gmail.com>
-Date: Tue, 22 Jan 2013 13:07:38 +0000
-Subject: Re: build regressions 2013-01-12
-Message-Id: <CAH7P7Nj4v58Ga4jSM0YKTA9Q7Emdj4Ugha8dCWc6JNX2XRctnQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Jan 2013 15:44:57 +0000
+Subject: [patch] ipvs: freeing uninitialized pointer on error
+Message-Id: <20130125154456.GB5908@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <50f1d727.cUHAu8+k9jxkI22j%fengguang.wu@intel.com>
-In-Reply-To: <50f1d727.cUHAu8+k9jxkI22j%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wensong Zhang <wensong@linux-vs.org>
+Cc: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-Hi Fengguang,
+If state != IP_VS_STATE_BACKUP then tinfo->buf is uninitialized.  If
+kthread_run() fails then it means we free random memory resulting in an
+oops.
 
-> This summary of error messages mainly serves to avoid duplicate
-> reports/fixing. For example, when someone hit a build error, he may
-> find this email via google and get to know that it has already been
-> caught and reported by the 0day kernel build test system.
->
->> How do we know which kernel tree is build, where is the .config ?
->
-> Most of the error messages are bisected and directly email reported to
-> the bad commit's author/committers with the tree/branch/commit/config
-> information, for example:
->
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> akpm
-> head:   799385ad830581545b29a54419806af1a9fabb3b
-> commit: 8a374951fb822d160bfe80b27555e5a6e14c1916 [42/325] sched:
-> /proc/sched_stat fails on very very large machines
-> config: make ARCH=x86_64 allmodconfig
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thank's for the explanation!
-
-> Another small set of possibly false positive error messages that need
-> manual checks are reported to kbuild@01.org, which are taken care of
-> by community volunteers:
->
->         https://lists.01.org/mailman/listinfo/kbuild
->
-> That's where you may really help us. :)
-
-Subscribed, let's see what happens,
-
-Regards,
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index effa10c..44fd10c 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -1795,6 +1795,8 @@ int start_sync_thread(struct net *net, int state, char *mcast_ifn, __u8 syncid)
+ 					     GFP_KERNEL);
+ 			if (!tinfo->buf)
+ 				goto outtinfo;
++		} else {
++			tinfo->buf = NULL;
+ 		}
+ 		tinfo->id = id;
+ 
