@@ -1,34 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Jan 2013 06:41:42 +0000
-Subject: [patch] qlcnic: silence false positive overflow warning
-Message-Id: <20130125064141.GB4882@elgon.mountain>
+From: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
+Date: Fri, 25 Jan 2013 20:48:02 +0000
+Subject: RE: [patch] qlcnic: silence false positive overflow warning
+Message-Id: <BECD8E8A1B550B48A1BF97C13991F60E05050A@avmb2.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130125064141.GB4882@elgon.mountain>
+In-Reply-To: <20130125064141.GB4882@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
-Cc: Sony Chacko <sony.chacko@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Sony Chacko <sony.chacko@qlogic.com>, Dept-Eng Linux Driver <Linux-Driver@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We actually store the MAC address as well as the board_name here.  The
-longest board_name is 75 characters so there is more than enough room
-to hold the 17 character MAC and the ": " divider.  But making this
-buffer larger silences a static checker warning.
+>From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
+>Sent: Thursday, January 24, 2013 10:42 PM
+>To: Jitendra Kalsaria
+>Cc: Sony Chacko; Dept-Eng Linux Driver; netdev; kernel-janitors@vger.kernel.org
+>Subject: [patch] qlcnic: silence false positive overflow warning
+>
+>We actually store the MAC address as well as the board_name here.  The
+>longest board_name is 75 characters so there is more than enough room
+>to hold the 17 character MAC and the ": " divider.  But making this
+>buffer larger silences a static checker warning.
+>
+>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>---
+>I'm not sure if this is worth sending.  Feel free to drop this if you
+>want.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I'm not sure if this is worth sending.  Feel free to drop this if you
-want.
+Acked-By: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-index 7f63b5f..09870d4 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-@@ -1724,7 +1724,7 @@ qlcnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	struct qlcnic_adapter *adapter = NULL;
- 	struct qlcnic_hardware_context *ahw;
- 	int err, pci_using_dac = -1;
--	char board_name[QLCNIC_MAX_BOARD_NAME_LEN];
-+	char board_name[QLCNIC_MAX_BOARD_NAME_LEN + 19]; /* MAC + ": " + name */
- 
- 	err = pci_enable_device(pdev);
- 	if (err)
+
