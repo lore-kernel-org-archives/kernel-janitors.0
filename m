@@ -1,28 +1,69 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 02 Jan 2013 23:12:49 +0000
-Subject: build regressions 2013-01-02
-Message-Id: <50e4bef1.24wCWOGSxYOZ34YW%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Jan 2013 06:42:59 +0000
+Subject: [patch 2/2] video/kyro: some potential divide by zero bugs
+Message-Id: <20130125064259.GD4882@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-[errors]
-(.text+0x2684bf): multiple definition of `pci_get_domain_bus_and_slot'
-drivers/pci/built-in.o:(.text+0x8012): first defined here
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:3290:1: error: static declaration of 'qlcnic_restore_indev_addr' follows non-static declaration
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:512:15: error: 'PCI_IOV_RESOURCES' undeclared (first use in this function)
+These values come from the user in kyrofb_ioctl().  There are a couple
+potential divide by zero problems and I have added tests for them.
+There were a couple tests to prevent divide by zero bugs already in the
+code that I moved next to the assignments.
 
-[warnings]
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:515:3: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:515:3: warning: right shift count >= width of type [enabled by default]
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c:515:3: warning: passing argument 1 of '__div64_32' from incompatible pointer type [enabled by default]
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[smatch]
-drivers/media/dvb-core/dvb_ca_en50221.c:1251 dvb_ca_en50221_io_do_ioctl() warn: inconsistent returns mutex:&ca->ioctl_mutex: locked (1231) unlocked (1198,1251)
-fs/gfs2/trans.c:176 databuf_lo_add() error: we previously assumed 'tr' could be null (see line 168)
-
----
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+diff --git a/drivers/video/kyro/STG4000OverlayDevice.c b/drivers/video/kyro/STG4000OverlayDevice.c
+index 84b6ea8..d03a1e4 100644
+--- a/drivers/video/kyro/STG4000OverlayDevice.c
++++ b/drivers/video/kyro/STG4000OverlayDevice.c
+@@ -365,15 +365,18 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
+ 	ulSrcBottom = srcDest.ulSrcY2;
+ 
+ 	ulSrc = ulSrcBottom - ulSrcTop;
+-	ulDest = srcDest.lDstY2 - srcDest.lDstY1;	/* on-screen overlay */
+-
+ 	if (ulSrc <= 1)
+ 		return -EINVAL;
++	ulDest = srcDest.lDstY2 - srcDest.lDstY1;	/* on-screen overlay */
++	if (ulDest = -1)
++		return -EINVAL;
+ 
+ 	/* First work out the position we are to display as offset from the
+ 	 * source of the buffer
+ 	 */
+ 	ulFxScale = (ulDest << 11) / ulSrc;	/* fixed point scale factor */
++	if (ulFxScale = 0)
++		return -EINVAL;
+ 	ulFxOffset = (srcDest.lDstY2 - srcDest.ulDstY2) << 11;
+ 
+ 	ulSrcBottom = ulSrcBottom - (ulFxOffset / ulFxScale);
+@@ -430,6 +433,8 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
+ 	 */
+ 	ulSrc = srcDest.ulSrcX2 - srcDest.ulSrcX1;
+ 	ulDest = srcDest.lDstX2 - srcDest.lDstX1;
++	if (ulDest = 0)
++		return -EINVAL;
+ 
+ 	if (srcDest.ulDstX1 > 2) {
+ 		ulLeft = srcDest.ulDstX1 + 2;
+@@ -438,14 +443,14 @@ int SetOverlayViewPort(volatile STG4000REG __iomem *pSTGReg,
+ 		ulLeft = srcDest.ulDstX1;
+ 		ulRight = srcDest.ulDstX2 + 1;
+ 	}
++	if (ulRight - ulLeft + 2 = 0)
++		return -EINVAL;
++
+ 
+ 	/* first work out the position we are to display as offset from the source of the buffer */
+ 	bResult = 1;
+ 
+ 	do {
+-		if (ulDest = 0)
+-			return -EINVAL;
+-
+ 		/* source pixels per dest pixel <<11 */
+ 		ulFxScale = ((ulSrc - 1) << 11) / (ulDest);
+ 
