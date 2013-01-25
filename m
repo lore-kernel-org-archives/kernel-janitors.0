@@ -1,78 +1,219 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Wed, 09 Jan 2013 13:27:29 +0000
-Subject: Re: [patch 2/2] staging: sb105x: clean up interface type test
-Message-Id: <1357738049.5190.51.camel@gandalf.local.home>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Jan 2013 06:40:56 +0000
+Subject: [patch] irda: buffer overflow in irnet_ctrl_read()
+Message-Id: <20130125064056.GA4882@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130109071214.GC2454@elgon.mountain>
-In-Reply-To: <20130109071214.GC2454@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Samuel Ortiz <samuel@sortiz.org>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2013-01-09 at 10:12 +0300, Dan Carpenter wrote:
-> IIR_RS232 is zero so "if (IIR_RS232 = (b_ret & IIR_RS232))" is always
-> true so RS232 was always chosen by default.  The test should be
-> "if (0 = (b_ret & 0x30)) { ".  The other tests should also be in that
-> format.
+The comments here say that the /* Max event is 61 char */ but in 2003 we
+changed the event format and now the max event size is 75.  The longest
+event is:
 
-Wow, this code really does need major luving ;-)
+	"Discovered %08x (%s) behind %08x {hints %02X-%02X}\n",
+         12345678901    23  456789012    34567890    1    2 3
+	            +8    +21        +8          +2   +2     +1
+         = 75 characters.
 
-> 
-> My patch doesn't change how the code works.  I've left the RS232 as the
-> default and cleaned up the other checks.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/sb105x/sb_mp_register.h b/drivers/staging/sb105x/sb_mp_register.h
-> index 5480ae1..a2087f5 100644
-> --- a/drivers/staging/sb105x/sb_mp_register.h
-> +++ b/drivers/staging/sb105x/sb_mp_register.h
-> @@ -45,7 +45,7 @@
->  #define IIR_RS232		0x00		/* RS232 type */
->  #define IIR_RS422		0x10		/* RS422 type */
->  #define IIR_RS485		0x20		/* RS485 type */
-> -#define IIR_UNKNOWN		0x30		/* unknown type */
-> +#define IIR_TYPE_MASK		0x30
->  
->  /* Interrrupt Mask Register */
->  #define MP_OPTR_IMR0		0x0C 	/* port0 ~ port8 */
-> diff --git a/drivers/staging/sb105x/sb_pci_mp.c b/drivers/staging/sb105x/sb_pci_mp.c
-> index 131afd0c..3da44df 100644
-> --- a/drivers/staging/sb105x/sb_pci_mp.c
-> +++ b/drivers/staging/sb105x/sb_pci_mp.c
-> @@ -2851,18 +2851,12 @@ static void __init multi_init_ports(void)
->  				printk("IIR_RET = %x\n",b_ret);
->  			}
->  
-> -			if(IIR_RS232 = (b_ret & IIR_RS232))
-> -			{
-> -				mtpt->interface = RS232;
-> -			}
-> -			if(IIR_RS422 = (b_ret & IIR_RS422))
-> -			{
-> +			/* default to RS232 */
-> +			mtpt->interface = RS232;
-> +			if (IIR_RS422 = (b_ret & IIR_TYPE_MASK))
->  				mtpt->interface = RS422PTP;
-> -			}
-> -			if(IIR_RS485 = (b_ret & IIR_RS485))
-> -			{
-> +			if (IIR_RS485 = (b_ret & IIR_TYPE_MASK))
->  				mtpt->interface = RS485NE;
-> -			}
+There was a check to return -EOVERFLOW if the user gave us a "count"
+value that was less than 64.  Raising it to 75 might break backwards
+compatability.  Instead I removed the check and now it returns a
+truncated string if "count" is too low.
 
-Hmm, I don't know the specs of this driver. But this does change the
-code on what interface is set. The old code would have 0x30 set
-interface to RS485NE, where this code would keep it at RS232.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Maybe I can dig up some specs someplace.
-
--- Steve
-
-
->  		}
->  	}
->  }
-
-
+diff --git a/net/irda/irnet/irnet_ppp.c b/net/irda/irnet/irnet_ppp.c
+index 2bb2beb..3c83a1e 100644
+--- a/net/irda/irnet/irnet_ppp.c
++++ b/net/irda/irnet/irnet_ppp.c
+@@ -214,8 +214,7 @@ irnet_get_discovery_log(irnet_socket *	ap)
+  * After reading :    discoveries = NULL ; disco_index = Y ; disco_number = -1
+  */
+ static inline int
+-irnet_read_discovery_log(irnet_socket *	ap,
+-			 char *		event)
++irnet_read_discovery_log(irnet_socket *ap, char *event, int buf_size)
+ {
+   int		done_event = 0;
+ 
+@@ -237,12 +236,13 @@ irnet_read_discovery_log(irnet_socket *	ap,
+   if(ap->disco_index < ap->disco_number)
+     {
+       /* Write an event */
+-      sprintf(event, "Found %08x (%s) behind %08x {hints %02X-%02X}\n",
+-	      ap->discoveries[ap->disco_index].daddr,
+-	      ap->discoveries[ap->disco_index].info,
+-	      ap->discoveries[ap->disco_index].saddr,
+-	      ap->discoveries[ap->disco_index].hints[0],
+-	      ap->discoveries[ap->disco_index].hints[1]);
++      snprintf(event, buf_size,
++	       "Found %08x (%s) behind %08x {hints %02X-%02X}\n",
++	       ap->discoveries[ap->disco_index].daddr,
++	       ap->discoveries[ap->disco_index].info,
++	       ap->discoveries[ap->disco_index].saddr,
++	       ap->discoveries[ap->disco_index].hints[0],
++	       ap->discoveries[ap->disco_index].hints[1]);
+       DEBUG(CTRL_INFO, "Writing discovery %d : %s\n",
+ 	    ap->disco_index, ap->discoveries[ap->disco_index].info);
+ 
+@@ -282,27 +282,24 @@ irnet_ctrl_read(irnet_socket *	ap,
+ 		size_t		count)
+ {
+   DECLARE_WAITQUEUE(wait, current);
+-  char		event[64];	/* Max event is 61 char */
++  char		event[75];
+   ssize_t	ret = 0;
+ 
+   DENTER(CTRL_TRACE, "(ap=0x%p, count=%Zd)\n", ap, count);
+ 
+-  /* Check if we can write an event out in one go */
+-  DABORT(count < sizeof(event), -EOVERFLOW, CTRL_ERROR, "Buffer to small.\n");
+-
+ #ifdef INITIAL_DISCOVERY
+   /* Check if we have read the log */
+-  if(irnet_read_discovery_log(ap, event))
++  if (irnet_read_discovery_log(ap, event, sizeof(event)))
+     {
+-      /* We have an event !!! Copy it to the user */
+-      if(copy_to_user(buf, event, strlen(event)))
++      count = min(strlen(event), count);
++      if (copy_to_user(buf, event, count))
+ 	{
+ 	  DERROR(CTRL_ERROR, "Invalid user space pointer.\n");
+ 	  return -EFAULT;
+ 	}
+ 
+       DEXIT(CTRL_TRACE, "\n");
+-      return strlen(event);
++      return count;
+     }
+ #endif /* INITIAL_DISCOVERY */
+ 
+@@ -339,79 +336,81 @@ irnet_ctrl_read(irnet_socket *	ap,
+   switch(irnet_events.log[ap->event_index].event)
+     {
+     case IRNET_DISCOVER:
+-      sprintf(event, "Discovered %08x (%s) behind %08x {hints %02X-%02X}\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name,
+-	      irnet_events.log[ap->event_index].saddr,
+-	      irnet_events.log[ap->event_index].hints.byte[0],
+-	      irnet_events.log[ap->event_index].hints.byte[1]);
++      snprintf(event, sizeof(event),
++	       "Discovered %08x (%s) behind %08x {hints %02X-%02X}\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name,
++	       irnet_events.log[ap->event_index].saddr,
++	       irnet_events.log[ap->event_index].hints.byte[0],
++	       irnet_events.log[ap->event_index].hints.byte[1]);
+       break;
+     case IRNET_EXPIRE:
+-      sprintf(event, "Expired %08x (%s) behind %08x {hints %02X-%02X}\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name,
+-	      irnet_events.log[ap->event_index].saddr,
+-	      irnet_events.log[ap->event_index].hints.byte[0],
+-	      irnet_events.log[ap->event_index].hints.byte[1]);
++      snprintf(event, sizeof(event),
++	       "Expired %08x (%s) behind %08x {hints %02X-%02X}\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name,
++	       irnet_events.log[ap->event_index].saddr,
++	       irnet_events.log[ap->event_index].hints.byte[0],
++	       irnet_events.log[ap->event_index].hints.byte[1]);
+       break;
+     case IRNET_CONNECT_TO:
+-      sprintf(event, "Connected to %08x (%s) on ppp%d\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name,
+-	      irnet_events.log[ap->event_index].unit);
++      snprintf(event, sizeof(event), "Connected to %08x (%s) on ppp%d\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name,
++	       irnet_events.log[ap->event_index].unit);
+       break;
+     case IRNET_CONNECT_FROM:
+-      sprintf(event, "Connection from %08x (%s) on ppp%d\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name,
+-	      irnet_events.log[ap->event_index].unit);
++      snprintf(event, sizeof(event), "Connection from %08x (%s) on ppp%d\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name,
++	       irnet_events.log[ap->event_index].unit);
+       break;
+     case IRNET_REQUEST_FROM:
+-      sprintf(event, "Request from %08x (%s) behind %08x\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name,
+-	      irnet_events.log[ap->event_index].saddr);
++      snprintf(event, sizeof(event), "Request from %08x (%s) behind %08x\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name,
++	       irnet_events.log[ap->event_index].saddr);
+       break;
+     case IRNET_NOANSWER_FROM:
+-      sprintf(event, "No-answer from %08x (%s) on ppp%d\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name,
+-	      irnet_events.log[ap->event_index].unit);
++      snprintf(event, sizeof(event), "No-answer from %08x (%s) on ppp%d\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name,
++	       irnet_events.log[ap->event_index].unit);
+       break;
+     case IRNET_BLOCKED_LINK:
+-      sprintf(event, "Blocked link with %08x (%s) on ppp%d\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name,
+-	      irnet_events.log[ap->event_index].unit);
++      snprintf(event, sizeof(event), "Blocked link with %08x (%s) on ppp%d\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name,
++	       irnet_events.log[ap->event_index].unit);
+       break;
+     case IRNET_DISCONNECT_FROM:
+-      sprintf(event, "Disconnection from %08x (%s) on ppp%d\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name,
+-	      irnet_events.log[ap->event_index].unit);
++      snprintf(event, sizeof(event), "Disconnection from %08x (%s) on ppp%d\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name,
++	       irnet_events.log[ap->event_index].unit);
+       break;
+     case IRNET_DISCONNECT_TO:
+-      sprintf(event, "Disconnected to %08x (%s)\n",
+-	      irnet_events.log[ap->event_index].daddr,
+-	      irnet_events.log[ap->event_index].name);
++      snprintf(event, sizeof(event), "Disconnected to %08x (%s)\n",
++	       irnet_events.log[ap->event_index].daddr,
++	       irnet_events.log[ap->event_index].name);
+       break;
+     default:
+-      sprintf(event, "Bug\n");
++      snprintf(event, sizeof(event), "Bug\n");
+     }
+   /* Increment our event index */
+   ap->event_index = (ap->event_index + 1) % IRNET_MAX_EVENTS;
+ 
+   DEBUG(CTRL_INFO, "Event is :%s", event);
+ 
+-  /* Copy it to the user */
+-  if(copy_to_user(buf, event, strlen(event)))
++  count = min(strlen(event), count);
++  if (copy_to_user(buf, event, count))
+     {
+       DERROR(CTRL_ERROR, "Invalid user space pointer.\n");
+       return -EFAULT;
+     }
+ 
+   DEXIT(CTRL_TRACE, "\n");
+-  return strlen(event);
++  return count;
+ }
+ 
+ /*------------------------------------------------------------------*/
