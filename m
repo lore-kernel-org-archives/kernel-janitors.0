@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 23 Jan 2013 16:11:14 +0000
-Subject: build regressions 2013-01-23
-Message-Id: <51000ba2.c6/CcThWOE3zVaGP%fengguang.wu@intel.com>
+Date: Sat, 26 Jan 2013 17:23:45 +0000
+Subject: build regressions 2013-01-26
+Message-Id: <51041121.TdQtSNaAhI5xYDz2%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,92 +9,80 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/acpi/power.c:437:3: error: implicit declaration of function 'sysfs_remove_link_from_group' [-Werror=implicit-function-declaration]
-drivers/acpi/power.c:461:3: error: implicit declaration of function 'sysfs_add_link_to_group' [-Werror=implicit-function-declaration]
-include/linux/dmaengine.h:996:1: error: expected ';' before '}' token
-lib/devres.c:116:3: error: implicit declaration of function 'ERR_PTR'
-lib/devres.c:163:2: error: implicit declaration of function 'IS_ERR'
-(.text+0x15012f): undefined reference to `led_classdev_register'
-(.text+0x1501ae): undefined reference to `led_classdev_unregister'
-ERROR: "guest_enter" undefined!
-ERROR: "guest_exit" undefined!
-drivers/media/pci/cx23885/cx23885-input.c:309:20: error: 'RC_TYPE_ALL' undeclared (first use in this function)
-net/netfilter/nf_conntrack_standalone.c:566:2: error: 'nf_ct_netfilter_header' undeclared (first use in this function)
-net/netfilter/nf_conntrack_standalone.c:567:41: error: 'nf_ct_netfilter_table' undeclared (first use in this function)
+imx-pcm.c:(.text+0x464): multiple definition of `imx_pcm_free'
+sound/soc/fsl/snd-soc-imx-pcm-fiq.o:imx-pcm-fiq.c:(.text+0x1a4): first defined here
+imx-pcm.c:(.text+0x360): multiple definition of `snd_imx_pcm_mmap'
+sound/soc/fsl/snd-soc-imx-pcm-fiq.o:imx-pcm-fiq.c:(.text+0xa0): first defined here
+imx-pcm.c:(.text+0x3e0): multiple definition of `imx_pcm_new'
+sound/soc/fsl/snd-soc-imx-pcm-fiq.o:imx-pcm-fiq.c:(.text+0x120): first defined here
+fs/readdir.c:82:12: error: invalid storage class for function 'fillonedir'
+arch/arm/mach-omap2/board-rx51-peripherals.c:45:50: fatal error: ../drivers/staging/iio/light/tsl2563.h: No such file or directory
+fs/namespace.c:634:13: error: invalid storage class for function '__touch_mnt_namespace'
+fs/namespace.c:646:13: error: invalid storage class for function 'dentry_reset_mounted'
+fs/namespace.c:666:13: error: invalid storage class for function 'detach_mnt'
 
 [warnings]
-arch/ia64/hp/common/aml_nfw.c:209:3: warning: initialization from incompatible pointer type [enabled by default]
-arch/ia64/hp/common/aml_nfw.c:209:3: warning: (near initialization for 'acpi_aml_nfw_driver.ops.remove') [enabled by default]
-lib/devres.c:116:3: warning: return makes pointer from integer without a cast
-lib/devres.c:135:12: warning: assignment makes pointer from integer without a cast
-drivers/leds/leds-lp5521.c:318:4: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat]
-drivers/leds/leds-lp5523.c:361:4: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat]
-drivers/vhost/vringh.c:205:3: warning: passing argument 2 of 'check_range' from incompatible pointer type [enabled by default]
-net/core/netpoll.c:1049:6: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/namespace.c:1495: warning: unused variable 'sb'
+fs/namespace.c:2886: warning: unused variable 'mntns_operations'
+fs/namespace.c:1055: warning: unused variable 'mounts_op'
+drivers/platform/goldfish/goldfish_pipe.c:351:6: warning: 'status' may be used uninitialized in this function [-Wmaybe-uninitialized]
+warning: (DRM_RADEON && DRM_I915 && STUB_POULSBO && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
+warning: (DRM_RADEON && DRM_I915 && STUB_POULSBO && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
+warning: (DRM_RADEON && DRM_I915 && STUB_POULSBO && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
+drivers/spi/spi-gpio.c:378:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+drivers/spi/spi-gpio.c:385:3: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+drivers/spi/spi-pxa2xx.c:384:7: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/spi/spi-pxa2xx.c:384:40: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/spi/spi-pxa2xx.c:1579:34: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/spi/spi-pxa2xx.c:1579:34: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/spi/spi-pxa2xx.c:1579:34: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/spi/spi-pxa2xx.c:1579:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+fs/namespace.c:1323:2: warning: #warning FIXME mnt_ns_loop should be called when propogating mounts.... [-Wcpp]
+fs/namespace.c:1324:2: warning: #warning FIXME mnt_ns_loop should be called when unsharing mount namespaces... [-Wcpp]
+arch/x86/mm/numa.c:222:3: warning: passing argument 1 of '__phys_addr_nodebug' makes integer from pointer without a cast [enabled by default]
+arch/x86/kernel/kvm.c:302:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'phys_addr_t' [-Wformat]
 
 [sparse]
-drivers/tty/tty_enum.c:24:1: sparse: symbol 'tty_bus_lock' was not declared. Should it be static?
-drivers/tty/tty_enum.c:351:12: sparse: symbol 'tty_bus_init' was not declared. Should it be static?
-lib/devres.c:116:31: sparse: incorrect type in return expression (different address spaces)
-lib/devres.c:135:26: sparse: incorrect type in assignment (different address spaces)
-lib/devres.c:163:20: sparse: incorrect type in argument 1 (different address spaces)
-net/can/gw.c:370:13: sparse: restricted __wsum degrades to integer
-net/can/gw.c:402:24: sparse: incorrect type in assignment (different base types)
-drivers/media/dvb-frontends/m88dc2800.c:1627:18: sparse: constant 4294967296 is so big it is long long
-drivers/media/dvb-frontends/m88dc2800.c:1306:4: sparse: symbol 'M88DC2000GetLock' was not declared. Should it be static?
-drivers/media/pci/cx23885/cx23885-f300.c:233:1: sparse: no newline at end of file
-drivers/media/pci/cx88/cx88.h:144:40: sparse: duplicate const
-drivers/media/dvb-frontends/m88dc2800.c:2123:23: sparse: no newline at end of file
-drivers/input/rmi4/rmi_bus.c:19:10: sparse: unable to open 'rmi_bus.h'
-drivers/input/rmi4/rmi_driver.c:31:10: sparse: unable to open 'rmi_bus.h'
-drivers/input/rmi4/rmi_f01.c:160:40: sparse: using member 'data' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f01.c:190:42: sparse: using member 'dev' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f01.c:258:18: sparse: undefined identifier 'rmi_write_block'
-drivers/input/rmi4/rmi_f01.c:282:16: sparse: using member 'debugfs_root' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f01.c:286:17: sparse: undefined identifier 'RMI_RW_ATTR'
-drivers/input/rmi4/rmi_f01.c:317:35: sparse: undefined identifier 'to_rmi_function'
-drivers/input/rmi4/rmi_f01.c:614:28: sparse: using member 'fd' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f01.c:766:8: sparse: undefined identifier 'RMI_RO_ATTR'
-drivers/input/rmi4/rmi_f01.c:877:40: sparse: using member 'rmi_dev' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f01.c:878:71: sparse: using member 'dev' in incomplete struct rmi_device
-drivers/input/rmi4/rmi_f01.c:880:50: sparse: undefined identifier 'to_rmi_platform_data'
-drivers/input/rmi4/rmi_f01.c:885:17: sparse: undefined identifier 'rmi_read_block'
-drivers/input/rmi4/rmi_f11.c:829:35: sparse: undefined identifier 'to_rmi_function'
-drivers/input/rmi4/rmi_f11.c:847:25: sparse: undefined identifier 'rmi_write_block'
-drivers/input/rmi4/rmi_f11.c:860:8: sparse: undefined identifier 'RMI_WO_ATTR'
-drivers/input/rmi4/rmi_f11.c:878:16: sparse: using member 'debugfs_root' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f11.c:884:29: sparse: using member 'dev' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f11.c:890:44: sparse: undefined identifier 'RMI_RW_ATTR'
-drivers/input/rmi4/rmi_f11.c:977:34: sparse: using member 'data' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f11.c:1267:40: sparse: using member 'rmi_dev' in incomplete struct rmi_function
-drivers/input/rmi4/rmi_f11.c:1272:17: sparse: undefined identifier 'rmi_read_block'
-drivers/input/rmi4/rmi_f11.c:1610:22: sparse: undefined identifier 'rmi_read'
-drivers/input/rmi4/rmi_i2c.c:61:21: sparse: using member 'debugfs_root' in incomplete struct rmi_device
-drivers/input/rmi4/rmi_i2c.c:64:66: sparse: undefined identifier 'RMI_RW_ATTR'
-drivers/input/rmi4/rmi_i2c.c:67:34: sparse: using member 'dev' in incomplete struct rmi_device
-drivers/input/rmi4/rmi_i2c.c:118:37: sparse: using member 'dev' in incomplete struct rmi_phys_device
-drivers/input/rmi4/rmi_i2c.c:119:41: sparse: using member 'data' in incomplete struct rmi_phys_device
-drivers/input/rmi4/rmi_i2c.c:126:13: sparse: using member 'info' in incomplete struct rmi_phys_device
-drivers/input/rmi4/rmi_i2c.c:315:17: sparse: using member 'write_block' in incomplete struct rmi_phys_device
-drivers/input/rmi4/rmi_i2c.c:316:17: sparse: using member 'read_block' in incomplete struct rmi_phys_device
-drivers/input/rmi4/rmi_i2c.c:330:18: sparse: undefined identifier 'rmi_register_phys_device'
-drivers/input/rmi4/rmi_i2c.c:338:40: sparse: using member 'rmi_dev' in incomplete struct rmi_phys_device
-drivers/input/rmi4/rmi_i2c.c:360:9: sparse: undefined identifier 'rmi_unregister_phys_device'
-drivers/media/pci/cx23885/cx23885-input.c:309:34: sparse: undefined identifier 'RC_TYPE_ALL'
+arch/x86/kernel/apic/io_apic.c:2985:14: sparse: symbol '__create_irqs' was not declared. Should it be static?
+arch/x86/kernel/apic/io_apic.c:3201:5: sparse: symbol 'setup_msix_irqs' was not declared. Should it be static?
+drivers/ata/libahci.c:1743:6: sparse: symbol 'ahci_port_intr' was not declared. Should it be static?
+drivers/ata/libahci.c:1776:6: sparse: symbol 'ahci_hw_port_interrupt' was not declared. Should it be static?
+drivers/ata/ahci.c:1064:5: sparse: symbol 'ahci_init_interrupts' was not declared. Should it be static?
+drivers/platform/x86/fujitsu-tablet.c:458:27: sparse: incorrect type in initializer (different argument counts)
+drivers/platform/x86/ideapad-laptop.c:914:23: sparse: incorrect type in initializer (different argument counts)
+drivers/i2c/busses/i2c-ocores.c:369:23: sparse: incorrect type in argument 1 (different address spaces)
+drivers/i2c/busses/i2c-ocores.c:370:35: sparse: incorrect type in argument 1 (different address spaces)
+drivers/platform/goldfish/goldfish_pipe.c:292:35: sparse: cast removes address space of expression
+fs/ext4/indirect.c:1542:52: sparse: incorrect type in argument 2 (different base types)
+fs/ext4/indirect.c:1544:33: sparse: incorrect type in argument 4 (different base types)
+drivers/gpu/drm/nouveau/nouveau_drm.c:678:6: sparse: symbol 'nouveau_drm_ioctl' was not declared. Should it be static?
+fs/namespace.c:1323:2: sparse: FIXME mnt_ns_loop should be called when propogating mounts....
+fs/namespace.c:1324:2: sparse: FIXME mnt_ns_loop should be called when unsharing mount namespaces...
+drivers/usb/dwc3/dwc3-omap.c:135:33: sparse: symbol '_omap' was not declared. Should it be static?
+security/integrity/digsig_asymmetric.c:41:32: sparse: cast to restricted __be32
+security/integrity/digsig_asymmetric.c:41:32: sparse: cast to restricted __be32
+security/integrity/digsig_asymmetric.c:41:32: sparse: cast to restricted __be32
+security/integrity/digsig_asymmetric.c:41:32: sparse: cast to restricted __be32
+security/integrity/digsig_asymmetric.c:41:32: sparse: cast to restricted __be32
+security/integrity/digsig_asymmetric.c:41:32: sparse: cast to restricted __be32
+security/integrity/digsig_asymmetric.c:90:23: sparse: cast to restricted __be16
+security/integrity/digsig_asymmetric.c:90:23: sparse: cast to restricted __be16
+security/integrity/digsig_asymmetric.c:90:23: sparse: cast to restricted __be16
+security/integrity/digsig_asymmetric.c:90:23: sparse: cast to restricted __be16
 
 [smatch]
-sound/pci/hda/patch_analog.c:4987 patch_ad1882() error: potentially derefencing uninitialized 'spec'.
-drivers/media/dvb-frontends/mb86a20s.c:706 mb86a20s_attach() error: potential null dereference 'state'.  (kzalloc returns null)
-drivers/media/dvb-frontends/mb86a20s.c:706 mb86a20s_attach() error: we previously assumed 'state' could be null (see line 705)
-drivers/media/dvb-frontends/m88ds3103.c:240 m88ds3103_load_firmware() error: potentially derefencing uninitialized 'fw'.
-drivers/media/usb/dvb-usb/dw2102.c:951 bstusb_set_voltage() error: doing dma on the stack (obuf)
-drivers/media/usb/dvb-usb/dw2102.c:951 bstusb_set_voltage() error: doing dma on the stack (ibuf)
-drivers/media/usb/dvb-usb/dw2102.c:966 bstusb_restart() error: doing dma on the stack (obuf)
-drivers/media/usb/dvb-usb/dw2102.c:966 bstusb_restart() error: doing dma on the stack (ibuf)
-drivers/media/usb/dvb-usb/dw2102.c:1408 US6830_frontend_attach() error: doing dma on the stack (obuf)
-drivers/media/usb/dvb-usb/dw2102.c:1408 US6830_frontend_attach() error: doing dma on the stack (ibuf)
-drivers/media/usb/dvb-usb/dw2102.c:1449 US6832_frontend_attach() error: doing dma on the stack (obuf)
-drivers/media/usb/dvb-usb/dw2102.c:1449 US6832_frontend_attach() error: doing dma on the stack (ibuf)
+drivers/staging/comedi/drivers/addi_apci_3501.c:164 apci3501_auto_attach() error: we previously assumed 'this_board->pc_EepromChip' could be null (see line 117)
+fs/libfs.c:189 dcache_readdir() error: we previously assumed 'next->d_inode' could be null (see line 173)
+fs/union.c:250 union_copyup_dir_one() error: 'dentry' dereferencing possible ERR_PTR()
+fs/configfs/dir.c:1655 configfs_dir_lseek() warn: inconsistent returns mutex:&file_inode(file)->i_mutex: locked (1655) unlocked (1629)
+fs/super.c:507 sget() warn: inconsistent returns spin_lock:&sb_lock: locked (479,482) unlocked (489,498,507)
+fs/namei.c:2464 path_lookupat() warn: variable dereferenced before check 'nd' (see line 2434)
+fs/namei.c:3393 lookup_open() error: we previously assumed 'dentry' could be null (see line 3362)
+drivers/media/pci/cx23885/cx23885-dvb.c:1362 dvb_register() error: potential NULL dereference 'i2c_bus'.
+drivers/media/dvb-frontends/ds3000.c:1009 ds3000_read_snr() error: buffer overflow 'dvbs_snr_tab' 31 <= 31
+drivers/base/regmap/regmap-debugfs.c:140 regmap_debugfs_get_dump_start() error: potential NULL dereference 'c'.
+drivers/base/regmap/regmap-debugfs.c:140 regmap_debugfs_get_dump_start() error: we previously assumed 'c' could be null (see line 120)
+drivers/staging/zram/zram_drv.c:361 zram_bvec_write() error: double free of 'uncmem'
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
