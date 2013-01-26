@@ -1,54 +1,41 @@
-From: Patrice Chotard <patrice.chotard@sfr.fr>
-Date: Sun, 06 Jan 2013 21:12:51 +0000
-Subject: Re: [PATCH] [media] ngene: Use newly created function
-Message-Id: <50E9E8D3.6080504@sfr.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 26 Jan 2013 07:48:42 +0000
+Subject: [patch] eCryptfs: remove unneeded checks in virt_to_scatterlist()
+Message-Id: <20130126074842.GA14365@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1357505952-14439-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1357505952-14439-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: patricechotard@free.fr, martin.blumenstingl@googlemail.com, gregkh@linuxfoundation.org, crope@iki.fi, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Hi Emil,
+This is always called with a valid "sg" pointer.  My static checker
+complains because the call to sg_init_table() dereferences "sg" before
+we reach the checks.
 
-You are right, there was a missing piece of code.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-During merge, part of the orignal patch was missing. I have signaled it
-to Mauro who have fixed it in media_tree.
-
-Regards.
-
-Le 06/01/2013 21:59, Emil Goode a écrit :
-> The function demod_attach_drxd was split into two by commit 36a495a3.
-> This resulted in a new function tuner_attach_dtt7520x that is not used.
-> We should register tuner_attach_dtt7520x as a callback in the ngene_info
-> struct in the same way as done with the other part of the split function.
-> 
-> Sparse warning:
-> 
-> drivers/media/pci/ngene/ngene-cards.c:333:12: warning:
->         ‘tuner_attach_dtt7520x’ defined but not used [-Wunused-function]
-> 
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
-> This patch is a guess at what was intended. I'm not familiar with this code
-> and I don't have the hardware to test it.
-> 
->  drivers/media/pci/ngene/ngene-cards.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/pci/ngene/ngene-cards.c b/drivers/media/pci/ngene/ngene-cards.c
-> index c99f779..60605c8 100644
-> --- a/drivers/media/pci/ngene/ngene-cards.c
-> +++ b/drivers/media/pci/ngene/ngene-cards.c
-> @@ -732,6 +732,7 @@ static struct ngene_info ngene_info_terratec = {
->  	.name           = "Terratec Integra/Cinergy2400i Dual DVB-T",
->  	.io_type        = {NGENE_IO_TSIN, NGENE_IO_TSIN},
->  	.demod_attach   = {demod_attach_drxd, demod_attach_drxd},
-> +	.tuner_attach   = {tuner_attach_dtt7520x, tuner_attach_dtt7520x},
->  	.fe_config      = {&fe_terratec_dvbt_0, &fe_terratec_dvbt_1},
->  	.i2c_access     = 1,
->  };
-> 
+diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+index a7b0c2d..d5c25db 100644
+--- a/fs/ecryptfs/crypto.c
++++ b/fs/ecryptfs/crypto.c
+@@ -301,17 +301,14 @@ int virt_to_scatterlist(const void *addr, int size, struct scatterlist *sg,
+ 	while (size > 0 && i < sg_size) {
+ 		pg = virt_to_page(addr);
+ 		offset = offset_in_page(addr);
+-		if (sg)
+-			sg_set_page(&sg[i], pg, 0, offset);
++		sg_set_page(&sg[i], pg, 0, offset);
+ 		remainder_of_page = PAGE_CACHE_SIZE - offset;
+ 		if (size >= remainder_of_page) {
+-			if (sg)
+-				sg[i].length = remainder_of_page;
++			sg[i].length = remainder_of_page;
+ 			addr += remainder_of_page;
+ 			size -= remainder_of_page;
+ 		} else {
+-			if (sg)
+-				sg[i].length = size;
++			sg[i].length = size;
+ 			addr += size;
+ 			size = 0;
+ 		}
