@@ -1,28 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 26 Jan 2013 07:49:24 +0000
-Subject: [patch] edac: test correct variable in ->store function
-Message-Id: <20130126074924.GB14365@elgon.mountain>
+From: Borislav Petkov <bp@alien8.de>
+Date: Sat, 26 Jan 2013 10:05:05 +0000
+Subject: Re: [patch] edac: test correct variable in ->store function
+Message-Id: <20130126100505.GA16044@pd.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130126074924.GB14365@elgon.mountain>
+In-Reply-To: <20130126074924.GB14365@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Doug Thompson <dougthompson@xmission.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Doug Thompson <dougthompson@xmission.com>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We're testing for ->show but calling ->store().
+On Sat, Jan 26, 2013 at 10:49:24AM +0300, Dan Carpenter wrote:
+> We're testing for ->show but calling ->store().
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Good catch, applied.
 
-diff --git a/drivers/edac/edac_pci_sysfs.c b/drivers/edac/edac_pci_sysfs.c
-index 7684426..e8658e4 100644
---- a/drivers/edac/edac_pci_sysfs.c
-+++ b/drivers/edac/edac_pci_sysfs.c
-@@ -256,7 +256,7 @@ static ssize_t edac_pci_dev_store(struct kobject *kobj,
- 	struct edac_pci_dev_attribute *edac_pci_dev;
- 	edac_pci_dev = (struct edac_pci_dev_attribute *)attr;
- 
--	if (edac_pci_dev->show)
-+	if (edac_pci_dev->store)
- 		return edac_pci_dev->store(edac_pci_dev->value, buffer, count);
- 	return -EIO;
- }
+Thanks.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Sent from a fat crate under my desk. Formatting is fine.
+--
