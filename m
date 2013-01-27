@@ -1,80 +1,39 @@
-From: Tyler Hicks <tyhicks@canonical.com>
-Date: Tue, 29 Jan 2013 01:23:28 +0000
-Subject: Re: [patch] eCryptfs: remove unneeded checks in virt_to_scatterlist()
-Message-Id: <20130129012328.GA2111@boyd>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="5mCyUwZo2JvN/JJP"
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sun, 27 Jan 2013 16:40:02 +0000
+Subject: [PATCH 3/3] ALSA: intel8x0: Check return value before assigning
+Message-Id: <1359304802-28240-3-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130126074842.GA14365@elgon.mountain>
-In-Reply-To: <20130126074842.GA14365@elgon.mountain>
-To: kernel-janitors@vger.kernel.org
+References: <1359304802-28240-1-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1359304802-28240-1-git-send-email-emilgoode@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: mtosatti@redhat.com, gleb@redhat.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, avi@redhat.com, mst@redhat.com, perex@perex.cz, tiwai@suse.de, crimsun@ubuntu.com, wfp5p@virginia.edu, peter.senna@gmail.com
+Cc: x86@kernel.org, kvm@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
+The first patch in this series changes the return type of function
+kvm_para_available to bool. In the function snd_intel8x0_inside_vm
+we now need to check it's return value before assigning a value to
+the result variable.
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ sound/pci/intel8x0.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2013-01-26 10:48:42, Dan Carpenter wrote:
-> This is always called with a valid "sg" pointer.  My static checker
-> complains because the call to sg_init_table() dereferences "sg" before
-> we reach the checks.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/sound/pci/intel8x0.c b/sound/pci/intel8x0.c
+index 3b9be75..fa9337e 100644
+--- a/sound/pci/intel8x0.c
++++ b/sound/pci/intel8x0.c
+@@ -2982,7 +2982,7 @@ static int snd_intel8x0_inside_vm(struct pci_dev *pci)
+ 	}
+ 
+ 	/* detect KVM and Parallels virtual environments */
+-	result = kvm_para_available();
++	result = kvm_para_available() ? 1 : 0;
+ #ifdef X86_FEATURE_HYPERVISOR
+ 	result = result || boot_cpu_has(X86_FEATURE_HYPERVISOR);
+ #endif
+-- 
+1.7.10.4
 
-Thanks, Dan! I've tested and pushed this patch to the eCryptfs next
-branch.
-
-Tyler
-
->=20
-> diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-> index a7b0c2d..d5c25db 100644
-> --- a/fs/ecryptfs/crypto.c
-> +++ b/fs/ecryptfs/crypto.c
-> @@ -301,17 +301,14 @@ int virt_to_scatterlist(const void *addr, int size,=
- struct scatterlist *sg,
->  	while (size > 0 && i < sg_size) {
->  		pg =3D virt_to_page(addr);
->  		offset =3D offset_in_page(addr);
-> -		if (sg)
-> -			sg_set_page(&sg[i], pg, 0, offset);
-> +		sg_set_page(&sg[i], pg, 0, offset);
->  		remainder_of_page =3D PAGE_CACHE_SIZE - offset;
->  		if (size >=3D remainder_of_page) {
-> -			if (sg)
-> -				sg[i].length =3D remainder_of_page;
-> +			sg[i].length =3D remainder_of_page;
->  			addr +=3D remainder_of_page;
->  			size -=3D remainder_of_page;
->  		} else {
-> -			if (sg)
-> -				sg[i].length =3D size;
-> +			sg[i].length =3D size;
->  			addr +=3D size;
->  			size =3D 0;
->  		}
-
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCgAGBQJRBySPAAoJENaSAD2qAscK9IYP/Av0XGpj8HHJkhDlf3bbidmS
-Tbag1cnnlvUKcPneDvk3iam454O3Pu/3HPBZeib07W5SOmCjiN3k3wF1FrXAFx+b
-Y9xcLrI6XSntlt7pqjijZMRLQDVA9g3QIYykhs8BOgoNnlm14jeXOySmlk3EkwGD
-ipquoHFG/gsPtoeC6csGeSOC7RtVpKO9hzLjN6arJHnB7qL08Y+DYszugEKC7vVv
-dwODo63gfNucyWI554FfX54qVBquREkTiR/ORWpQ6UZPtBFjcOrjs4m2+3CNI7dr
-EnlUExH1hgdavvyjRUe5pn40SAcuXWqiGxGFs/o9+RU3abqQbrioHlSq9mJpES9A
-jGQUXd+633as4AEsmrs7pLE/g4u6jokVEi1Z1IzK6B5jZUvgEOdsDXx4e87S11IB
-PfNvo3YfznYJ+W1LVkSIMfrKd273vm6Fx+wXVk4tBSN/1QVIfsU95U0Mzm5Gfnk7
-Q+6f4WUcRbicTFErzzPkTA61eA0qCJniEtTvwhPbJy+XBmI9ACogQh+iArehV1P0
-tBjxP592YxVMjtrdcsMGxaKIQO3nDKLb0Oz6HEUj4rCv8Xi+xOwwKDWTB9IU3/ol
-1CwshUNQsgaPcBIc7mINAhzflMqYaGOwPra+Yc0+0rgtzFsQUtMAQeiI+ZaN5Qg1
-lMjKKKl5Kqg8uiWPnCOc
-=4pZ9
------END PGP SIGNATURE-----
-
---5mCyUwZo2JvN/JJP--
