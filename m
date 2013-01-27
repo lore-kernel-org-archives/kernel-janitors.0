@@ -1,43 +1,72 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 28 Jan 2013 08:47:46 +0000
-Subject: Re: [PATCH 3/3] ALSA: intel8x0: Check return value before assigning
-Message-Id: <s5h622hbsnh.wl%tiwai@suse.de>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sun, 27 Jan 2013 16:40:00 +0000
+Subject: [PATCH 1/3] x86: KVM: Fix warnings by returning bool
+Message-Id: <1359304802-28240-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1359304802-28240-1-git-send-email-emilgoode@gmail.com>
-	<1359304802-28240-3-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1359304802-28240-3-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: mtosatti@redhat.com, gleb@redhat.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, avi@redhat.com, mst@redhat.com, perex@perex.cz, crimsun@ubuntu.com, wfp5p@virginia.edu, peter.senna@gmail.com, x86@kernel.org, kvm@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: mtosatti@redhat.com, gleb@redhat.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, avi@redhat.com, mst@redhat.com, perex@perex.cz, tiwai@suse.de, crimsun@ubuntu.com, wfp5p@virginia.edu, peter.senna@gmail.com
+Cc: x86@kernel.org, kvm@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-At Sun, 27 Jan 2013 17:40:02 +0100,
-Emil Goode wrote:
-> 
-> The first patch in this series changes the return type of function
-> kvm_para_available to bool. In the function snd_intel8x0_inside_vm
-> we now need to check it's return value before assigning a value to
-> the result variable.
-> 
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
->  sound/pci/intel8x0.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/pci/intel8x0.c b/sound/pci/intel8x0.c
-> index 3b9be75..fa9337e 100644
-> --- a/sound/pci/intel8x0.c
-> +++ b/sound/pci/intel8x0.c
-> @@ -2982,7 +2982,7 @@ static int snd_intel8x0_inside_vm(struct pci_dev *pci)
->  	}
->  
->  	/* detect KVM and Parallels virtual environments */
-> -	result = kvm_para_available();
-> +	result = kvm_para_available() ? 1 : 0;
+The function pointer x2apic_available in struct hypervisor_x86 is
+supposed to point to functions that return bool. This patch changes
+the return type of the kvm_para_available function to bool.
 
-This is superfluous.  The conversion from bool to int works implicitly
-like that.
+Sparse warnings:
 
+arch/x86/kernel/kvm.c:508:35: warning:
+	incorrect type in initializer (different signedness)
+	arch/x86/kernel/kvm.c:508:35:
+	expected bool ( *x2apic_available )( ... )
+	arch/x86/kernel/kvm.c:508:35:
+	got int ( static inline [toplevel] *<noident> )( ... )
 
-Takashi
+arch/x86/kernel/kvm.c:508:2: warning:
+	initialization from incompatible pointer type [enabled by default]
+
+arch/x86/kernel/kvm.c:508:2: warning:
+	(near initialization for ‘x86_hyper_kvm.x2apic_available’)
+	[enabled by default]
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ arch/x86/include/asm/kvm_para.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_para.h b/arch/x86/include/asm/kvm_para.h
+index 0be7039..695399f 100644
+--- a/arch/x86/include/asm/kvm_para.h
++++ b/arch/x86/include/asm/kvm_para.h
+@@ -85,13 +85,13 @@ static inline long kvm_hypercall4(unsigned int nr, unsigned long p1,
+ 	return ret;
+ }
+ 
+-static inline int kvm_para_available(void)
++static inline bool kvm_para_available(void)
+ {
+ 	unsigned int eax, ebx, ecx, edx;
+ 	char signature[13];
+ 
+ 	if (boot_cpu_data.cpuid_level < 0)
+-		return 0;	/* So we don't blow up on old processors */
++		return false;	/* So we don't blow up on old processors */
+ 
+ 	if (cpu_has_hypervisor) {
+ 		cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
+@@ -101,10 +101,10 @@ static inline int kvm_para_available(void)
+ 		signature[12] = 0;
+ 
+ 		if (strcmp(signature, "KVMKVMKVM") = 0)
+-			return 1;
++			return true;
+ 	}
+ 
+-	return 0;
++	return false;
+ }
+ 
+ static inline unsigned int kvm_arch_para_features(void)
+-- 
+1.7.10.4
+
