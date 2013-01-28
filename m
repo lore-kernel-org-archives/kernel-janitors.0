@@ -1,32 +1,24 @@
-From: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
-Date: Fri, 25 Jan 2013 20:48:02 +0000
-Subject: RE: [patch] qlcnic: silence false positive overflow warning
-Message-Id: <BECD8E8A1B550B48A1BF97C13991F60E05050A@avmb2.qlogic.org>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 28 Jan 2013 01:38:51 +0000
+Subject: Re: [patch] qlcnic: silence false positive overflow warning
+Message-Id: <20130127.203851.2157088853751625559.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130125064141.GB4882@elgon.mountain>
 In-Reply-To: <20130125064141.GB4882@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sony Chacko <sony.chacko@qlogic.com>, Dept-Eng Linux Driver <Linux-Driver@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: dan.carpenter@oracle.com
+Cc: jitendra.kalsaria@qlogic.com, sony.chacko@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
->Sent: Thursday, January 24, 2013 10:42 PM
->To: Jitendra Kalsaria
->Cc: Sony Chacko; Dept-Eng Linux Driver; netdev; kernel-janitors@vger.kernel.org
->Subject: [patch] qlcnic: silence false positive overflow warning
->
->We actually store the MAC address as well as the board_name here.  The
->longest board_name is 75 characters so there is more than enough room
->to hold the 17 character MAC and the ": " divider.  But making this
->buffer larger silences a static checker warning.
->
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->---
->I'm not sure if this is worth sending.  Feel free to drop this if you
->want.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 25 Jan 2013 09:41:42 +0300
 
-Acked-By: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
+> We actually store the MAC address as well as the board_name here.  The
+> longest board_name is 75 characters so there is more than enough room
+> to hold the 17 character MAC and the ": " divider.  But making this
+> buffer larger silences a static checker warning.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
+This patch doesn't apply cleanly to any of my trees.
