@@ -1,23 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 21 Jan 2013 08:58:36 +0000
-Subject: Re: [patch] module: potential deadlock in error path
-Message-Id: <20130121085836.GU16282@mwanda>
+Date: Wed, 30 Jan 2013 07:07:31 +0000
+Subject: [patch] [SCSI] qla4xxx: don't free NULL dma pool
+Message-Id: <20130130070731.GC12396@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130118074309.GB31793@elgon.mountain>
- <87ip6rwcvz.fsf@rustcorp.com.au>
- <CA+55aFzEkSOWL13cX2xaYttPF5=Qpvya9Yapk-RC8KQ5=QJk+w@mail.gmail.com>
- <87vcarur8n.fsf@rustcorp.com.au>
- <CA+55aFyhfuLJqsEiAJ3jyf_OikgZroFkfBW1i-LYwCr0YOVX1w@mail.gmail.com>
-In-Reply-To: <CA+55aFyhfuLJqsEiAJ3jyf_OikgZroFkfBW1i-LYwCr0YOVX1w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Alexander Graf <agraf@suse.de>, Prarit Bhargava <prarit@redhat.com>, Sasha Levin <sasha.levin@oracle.com>
+To: Ravi Anand <ravi.anand@qlogic.com>
+Cc: Vikas Chaudhary <vikas.chaudhary@qlogic.com>, iscsi-driver@qlogic.com, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Rusty, you have this right?  I like Linus's version.  Could you give
-me a Reported-by tag?
+The error path calls dma_pool_free() on this path but "chap_table" is
+NULL and "chap_dma" is uninitialized.  It's cleaner to just return
+directly.
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/scsi/qla4xxx/ql4_mbx.c b/drivers/scsi/qla4xxx/ql4_mbx.c
+index 1c57c22..887e409 100644
+--- a/drivers/scsi/qla4xxx/ql4_mbx.c
++++ b/drivers/scsi/qla4xxx/ql4_mbx.c
+@@ -1404,10 +1404,8 @@ int qla4xxx_get_chap(struct scsi_qla_host *ha, char *username, char *password,
+ 	dma_addr_t chap_dma;
+ 
+ 	chap_table = dma_pool_alloc(ha->chap_dma_pool, GFP_KERNEL, &chap_dma);
+-	if (chap_table = NULL) {
+-		ret = -ENOMEM;
+-		goto exit_get_chap;
+-	}
++	if (chap_table = NULL)
++		return -ENOMEM;
+ 
+ 	chap_size = sizeof(struct ql4_chap_table);
+ 	memset(chap_table, 0, chap_size);
