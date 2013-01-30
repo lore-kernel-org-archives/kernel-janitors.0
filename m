@@ -1,84 +1,38 @@
 From: Benny Halevy <bhalevy@tonian.com>
-Date: Wed, 30 Jan 2013 09:51:32 +0000
+Date: Wed, 30 Jan 2013 10:05:38 +0000
 Subject: Re: [patch] [SCSI] libosd: check for kzalloc() failure
-Message-Id: <CAEMWVhuS5Dg8XAQjxrb_VO-T0S7jS5knOmEWvvJ18xY8hp08hg@mail.gmail.com>
+Message-Id: <CAEMWVhvzANfj7iM6CjeFUh_RSWmoOtVjRKYfQm8cATOTPshn6w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130130070602.GB12396@elgon.mountain> <5108D6AF.5040205@bfs.de>
- <20130130082741.GT16282@mwanda> <5108E08E.70302@bfs.de>
-In-Reply-To: <5108E08E.70302@bfs.de>
+References: <20130130070602.GB12396@elgon.mountain>
+In-Reply-To: <20130130070602.GB12396@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Boaz Harrosh <bharrosh@panasas.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Boaz Harrosh <bharrosh@panasas.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 30, 2013 at 10:57 AM, walter harms <wharms@bfs.de> wrote:
+On Wed, Jan 30, 2013 at 9:06 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> There wasn't any error handling for this kzalloc().
 >
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 >
-> Am 30.01.2013 09:27, schrieb Dan Carpenter:
->> On Wed, Jan 30, 2013 at 09:15:43AM +0100, walter harms wrote:
->>>
->>>
->>> Am 30.01.2013 08:06, schrieb Dan Carpenter:
->>>> There wasn't any error handling for this kzalloc().
->>>>
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>
->>>> diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
->>>> index c06b8e5..d8293f2 100644
->>>> --- a/drivers/scsi/osd/osd_initiator.c
->>>> +++ b/drivers/scsi/osd/osd_initiator.c
->>>> @@ -144,6 +144,10 @@ static int _osd_get_print_system_info(struct osd_dev *od,
->>>>     odi->osdname_len = get_attrs[a].len;
->>>>     /* Avoid NULL for memcmp optimization 0-length is good enough */
->>>>     odi->osdname = kzalloc(odi->osdname_len + 1, GFP_KERNEL);
->>>> +   if (!odi->osdname) {
->>>> +           ret = -ENOMEM;
->>>> +           goto out;
->>>> +   }
->>>>     if (odi->osdname_len)
->>>>             memcpy(odi->osdname, get_attrs[a].val_ptr, odi->osdname_len);
->>>>     OSD_INFO("OSD_NAME               [%s]\n", odi->osdname);
->>>> --
->>>
->>> this looks like strdup() ?
->>>
->>
->> Maybe?  It's a funny thing going on with the NUL terminator and I
->> don't understand what the comment is about.
->>
->> It appears that normally "get_attrs[a].val_ptr" is a NUL terminated
->> string but "get_attrs[a].len" does not count the terminator.
->>
->> Odd.
->>
-> i have no clue what the programmer was thinking. if i read this correct
-> osdname is u8 *osdname; so a simple strdup() or strndup() would be ok
-> the comment seems to indicate that get_attrs[a].val_ptr could be NULL
-> but where is the check ?
-> Perhaps they are not using ascii here ? then a memdup(get_attrs[a].len)
-> would be better.
+> diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
+> index c06b8e5..d8293f2 100644
+> --- a/drivers/scsi/osd/osd_initiator.c
+> +++ b/drivers/scsi/osd/osd_initiator.c
+> @@ -144,6 +144,10 @@ static int _osd_get_print_system_info(struct osd_dev *od,
+>         odi->osdname_len = get_attrs[a].len;
+>         /* Avoid NULL for memcmp optimization 0-length is good enough */
+>         odi->osdname = kzalloc(odi->osdname_len + 1, GFP_KERNEL);
+> +       if (!odi->osdname) {
+> +               ret = -ENOMEM;
+> +               goto out;
+> +       }
 
-There are subtle differences between kstrdup or kmemdup and this implementation.
-
-kmemdup is problematic as get_attrs[a].val_ptr does not contain the
-NUL terminator
-
-In the following case:
-if get_attrs[a].len = 0
-then get_attrs[a].val_ptr = NULL
-
-The end result should be
-odi->osdname_len = 0
-odi->osdname = kzalloc(1, GFP_KERNEL);
-
-while with kstrdup, odi->osdname will end up being NULL
-as it's input arg "s" is NULL.
+good catch!
 
 Benny
 
->
-> re,
->  wh
->
->
+>         if (odi->osdname_len)
+>                 memcpy(odi->osdname, get_attrs[a].val_ptr, odi->osdname_len);
+>         OSD_INFO("OSD_NAME               [%s]\n", odi->osdname);
