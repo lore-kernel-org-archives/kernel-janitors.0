@@ -1,7 +1,7 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 30 Jan 2013 08:29:23 +0000
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Date: Wed, 30 Jan 2013 11:14:20 +0000
 Subject: Re: coccinelle and bitmask arithmetic
-Message-Id: <1359534563.32305.6.camel@joe-AO722>
+Message-Id: <20130130111420.GG23505@n2100.arm.linux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130127194039.GA18787@elgon.mountain>
  <1359317078.14406.12.camel@joe-AO722> <20130127201947.GO16282@mwanda>
@@ -15,30 +15,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-On Wed, 2013-01-30 at 09:21 +0100, walter harms wrote:
-> Am 29.01.2013 19:03, schrieb Joe Perches:
-> > On Tue, 2013-01-29 at 18:49 +0100, Julia Lawall wrote:
-> >> How about the following (from today's linux-next).  They appear to be
-> >> trying to do the same calculation, once with + and once with |.
-> > 
-> > (cc'ing the original developer and Russell King)
-> > 
-> > Likely the it8152_pci_platform_notify uses should use +
-> > 
-> >> arch/arm/common/it8152.c
-> >>
-> >> int dma_set_coherent_mask(struct device *dev, u64 mask)
-> >> {
-> >>         if (mask >= PHYS_OFFSET + SZ_64M - 1)
-> >>                 return 0;
-> >>
-> >>         return -EIO;
-> >> }
-> >>
-> 
+On Wed, Jan 30, 2013 at 09:21:28AM +0100, walter harms wrote:
 > Great hit Joe :)
+> 
+> Sometimes i am really surprised what code can be found
+> in the kernal and it is still working.
+> Having no clue of the code i suspect somebody tries to
+> check is mask outside the range it should read
+> PHYS_OFFSET |( SZ_64M - 1)
+> maybe someone should tell them that
+> 1+1 while 1|1=1
+> It does not seem to matter here (or ... ?)
 
-Julia and the others in the coccinelle group are the ones
-with the whizzy program.
+This PCI host is only used on one platform (ARMCORE).
 
+For this, PHYS_OFFSET will be a value with only the top few bits of a
+32-bit word set (such as 0xc0000000) - it's certainly not going to have
+any bits set below bit 26 on the platform this driver gets used on.
+"SZ_64M - 1" is the size of the window that RAM appears.
 
+So, _either_ logical OR or addition works.
+
+If we _did_ end up with a PHYS_OFFSET with bits less than bit 26 set
+here, we'd have bigger problems - because the base of RAM in PCI space
+will not correspond with PHYS_OFFSET and all the DMA mapping stuff breaks.
