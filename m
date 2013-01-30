@@ -1,51 +1,30 @@
-From: George Zhang <georgezhang@vmware.com>
-Date: Thu, 10 Jan 2013 19:34:50 +0000
-Subject: Re: VMCI: guest side driver implementation.
-Message-Id: <1251473922.6920686.1357846490410.JavaMail.root@vmware.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Jan 2013 07:06:02 +0000
+Subject: [patch] [SCSI] libosd: check for kzalloc() failure
+Message-Id: <20130130070602.GB12396@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130110193207.GA17997@elgon.mountain>
-In-Reply-To: <20130110193207.GA17997@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: Benny Halevy <bhalevy@tonian.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan,
-Thanks for this quick catch. We will fix it,
-George
+There wasn't any error handling for this kzalloc().
 
------ Original Message -----
-> From: "Dan Carpenter" <dan.carpenter@oracle.com>
-> To: georgezhang@vmware.com
-> Cc: kernel-janitors@vger.kernel.org, kbuild@01.org
-> Sent: Thursday, January 10, 2013 11:32:07 AM
-> Subject: re: VMCI: guest side driver implementation.
-> 
-> Hello George Zhang,
-> 
-> The patch 1f166439917b: "VMCI: guest side driver implementation."
-> from Jan 8, 2013, leads to the following warning:
-> drivers/misc/vmw_vmci/vmci_guest.c:89 vmci_get_vm_context_id()
-> 	 warn: always true condition '(result >= 0) => (0-u32max >= 0)'
-> 
-> drivers/misc/vmw_vmci/vmci_guest.c
->     78  u32 vmci_get_vm_context_id(void)
->     79  {
->     80          if (vm_context_id = VMCI_INVALID_ID) {
->     81                  u32 result;
->     82                  struct vmci_datagram get_cid_msg;
->     83                  get_cid_msg.dst >     84
->                          vmci_make_handle(VMCI_HYPERVISOR_CONTEXT_ID,
->     85                                       VMCI_GET_CONTEXT_ID);
->     86                  get_cid_msg.src = VMCI_ANON_SRC_HANDLE;
->     87                  get_cid_msg.payload_size = 0;
->     88                  result = vmci_send_datagram(&get_cid_msg);
->     89                  if (result >= 0)
->                             ^^^^^^^^^^^
-> Always true because result is an unsigned int.
-> 
->     90                          vm_context_id = result;
-> 
-> regards,
-> dan carpenter
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
+index c06b8e5..d8293f2 100644
+--- a/drivers/scsi/osd/osd_initiator.c
++++ b/drivers/scsi/osd/osd_initiator.c
+@@ -144,6 +144,10 @@ static int _osd_get_print_system_info(struct osd_dev *od,
+ 	odi->osdname_len = get_attrs[a].len;
+ 	/* Avoid NULL for memcmp optimization 0-length is good enough */
+ 	odi->osdname = kzalloc(odi->osdname_len + 1, GFP_KERNEL);
++	if (!odi->osdname) {
++		ret = -ENOMEM;
++		goto out;
++	}
+ 	if (odi->osdname_len)
+ 		memcpy(odi->osdname, get_attrs[a].val_ptr, odi->osdname_len);
+ 	OSD_INFO("OSD_NAME               [%s]\n", odi->osdname);
