@@ -1,35 +1,43 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 08 Jan 2013 18:18:54 +0000
-Subject: build regressions 2013-01-08
-Message-Id: <50ec630e.xKKYfuGlUHq52h9T%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 Jan 2013 08:16:46 +0000
+Subject: [patch] NFC: llcp: integer underflow in nfc_llcp_set_remote_gb()
+Message-Id: <20130131081645.GA14812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
+Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "David S. Miller" <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>, Thierry Escande <thierry.escande@linux.intel.com>, Szymon Janc <szymon.janc@tieto.com>, linux-wireless@vger.kernel.org, linux-nfc@ml01.01.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-drivers/gpu/drm/drm_mm.c:629:3: error: implicit declaration of function '__drm_mm_hole_node_end' [-Werror=implicit-function-declaration]
+If gb_len is less than 3 it would cause an integer underflow and
+possibly memory corruption in nfc_llcp_parse_gb_tlv().
 
-[warnings]
-drivers/scsi/mpt3sas/mpt3sas_scsih.c:5488:2: warning: 'query_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/scsi/mpt3sas/mpt3sas_scsih.c:5488:2: warning: 'termination_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/gpu/drm/i915/intel_display.c:5122:1: warning: control reaches end of non-void function [-Wreturn-type]
-drivers/net/wireless/ath/ath9k/mci.c:478:22: warning: unused variable 'buf' [-Wunused-variable]
-arch/x86/kvm/paging_tmpl.h:154:57: warning: unused variable 'shift' [-Wunused-variable]
-kernel/sched/fair.c:2121:13: warning: unused variable 'rq' [-Wunused-variable]
+I removed the old test for gb_len = 0.  I also removed the test for
+->remote_gb = NULL.  It's not possible for ->remote_gb to be NULL and
+we have already dereferenced ->remote_gb_len so it's too late to test.
 
-[sparse]
-net/sunrpc/xprt.c:1142:22: sparse: incorrect type in assignment (different address spaces)
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:101:5: sparse: symbol 'bnx2x_send_msg2pf' was not declared. Should it be static?
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c:144:5: sparse: symbol 'bnx2x_get_vf_id' was not declared. Should it be static?
-drivers/staging/ft1000/ft1000-usb/ft1000_hw.c:857:5: sparse: symbol 'ft1000_reset' was not declared. Should it be static?
+The old test return -ENODEV but my test returns -EINVAL.
 
-[smatch]
-drivers/md/raid1.c:2861 run() warn: variable dereferenced before check 'mddev->queue' (see line 2823)
-drivers/md/raid10.c:3583 run() error: we previously assumed 'mddev->queue' could be null (see line 3572)
-drivers/md/raid10.c:3626 run() warn: variable dereferenced before check 'mddev->queue' (see line 3583)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+diff --git a/net/nfc/llcp/llcp.c b/net/nfc/llcp/llcp.c
+index 85bc75c..746f5a2 100644
+--- a/net/nfc/llcp/llcp.c
++++ b/net/nfc/llcp/llcp.c
+@@ -549,14 +549,13 @@ int nfc_llcp_set_remote_gb(struct nfc_dev *dev, u8 *gb, u8 gb_len)
+ 		pr_err("No LLCP device\n");
+ 		return -ENODEV;
+ 	}
++	if (gb_len < 3)
++		return -EINVAL;
+ 
+ 	memset(local->remote_gb, 0, NFC_MAX_GT_LEN);
+ 	memcpy(local->remote_gb, gb, gb_len);
+ 	local->remote_gb_len = gb_len;
+ 
+-	if (local->remote_gb = NULL || local->remote_gb_len = 0)
+-		return -ENODEV;
+-
+ 	if (memcmp(local->remote_gb, llcp_magic, 3)) {
+ 		pr_err("MAC does not support LLCP\n");
+ 		return -EINVAL;
