@@ -1,24 +1,36 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 06 Jan 2013 17:21:34 +0000
-Subject: build regressions 2013-01-06
-Message-Id: <50e9b29e.LhOkmqzH+/7MwiWt%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 Jan 2013 08:14:10 +0000
+Subject: [patch v2] qlcnic: silence false positive overflow warning
+Message-Id: <20130131081410.GA14542@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130127.203851.2157088853751625559.davem@davemloft.net>
+In-Reply-To: <20130127.203851.2157088853751625559.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
+Cc: Sony Chacko <sony.chacko@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[warnings]
-include/linux/platform_data/i2c-s3c2410.h:37:26: warning: 'struct platform_device' declared inside parameter list [enabled by default]
-include/linux/platform_data/i2c-s3c2410.h:37:26: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+We actually store the MAC address as well as the board_name here.  The
+longest board_name is 75 characters so there is more than enough room
+to hold the 17 character MAC and the ": " divider.  But making this
+buffer larger silences a static checker warning.
 
-[sparse]
-kernel/rcutree.c:2222:13: sparse: context imbalance in '__call_rcu_core' - different lock contexts for basic block
-kernel/rcutree.c:1208:9: sparse: context imbalance in 'rcu_start_future_gp' - different lock contexts for basic block
-
-[smatch]
-kernel/rcutree.c:2255 __call_rcu_core() error: double lock 'spin_lock:&rnp_root->lock'
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-By: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
 ---
-0-DAY kernel build testing backend         Open Source Technology Center
-Fengguang Wu, Yuanhan Liu                              Intel Corporation
+v2: Rebased on current net-next.
+
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+index f3deef0..6a59a11 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+@@ -1813,7 +1813,7 @@ qlcnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct qlcnic_hardware_context *ahw;
+ 	int err, pci_using_dac = -1;
+ 	u32 capab2;
+-	char board_name[QLCNIC_MAX_BOARD_NAME_LEN];
++	char board_name[QLCNIC_MAX_BOARD_NAME_LEN + 19]; /* MAC + ": " + name */
+ 
+ 	err = pci_enable_device(pdev);
+ 	if (err)
