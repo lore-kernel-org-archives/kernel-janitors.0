@@ -1,92 +1,33 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Fri, 22 Feb 2013 18:07:03 +0000
-Subject: [PATCH 1/2] staging: comedi: drivers: usbdux.c: fix DMA buffers on stack
-Message-Id: <1361556423-32538-1-git-send-email-gmate.amit@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Feb 2013 12:53:34 +0000
+Subject: [patch] USB: wusbcore/wa-xfer: error handling fixes in setup_segs()
+Message-Id: <20130201125333.GA10024@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: abbotti@mev.co.uk
-Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-fix for instances of DMA buffer on stack(being passed to usb_control_msg) for
-the USB-DUX-D Board driver.
+1) It didn't free xfer->seg[0] so there was a leak.
+2) xfer->seg[cnt] can be NULL.
+3) Use usb_free_urb() for ->dto_urb instead of kfree().
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
----
- drivers/staging/comedi/drivers/usbdux.c |   31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
-index 1a0062a..6aac1f6 100644
---- a/drivers/staging/comedi/drivers/usbdux.c
-+++ b/drivers/staging/comedi/drivers/usbdux.c
-@@ -730,10 +730,14 @@ static void usbduxsub_ao_IsocIrq(struct urb *urb)
- static int usbduxsub_start(struct usbduxsub *usbduxsub)
- {
- 	int errcode = 0;
--	uint8_t local_transfer_buffer[16];
-+	uint8_t *local_transfer_buffer;
-+
-+	local_transfer_buffer = kmalloc(1, GFP_KERNEL);
-+	if (!local_transfer_buffer)
-+		return -ENOMEM;
- 
- 	/* 7f92 to zero */
--	local_transfer_buffer[0] = 0;
-+	*local_transfer_buffer = 0;
- 	errcode = usb_control_msg(usbduxsub->usbdev,
- 				  /* create a pipe for a control transfer */
- 				  usb_sndctrlpipe(usbduxsub->usbdev, 0),
-@@ -751,22 +755,25 @@ static int usbduxsub_start(struct usbduxsub *usbduxsub)
- 				  1,
- 				  /* Timeout */
- 				  BULK_TIMEOUT);
--	if (errcode < 0) {
-+	if (errcode < 0)
- 		dev_err(&usbduxsub->interface->dev,
- 			"comedi_: control msg failed (start)\n");
--		return errcode;
--	}
--	return 0;
-+
-+	kfree(local_transfer_buffer);
-+	return errcode;
- }
- 
- static int usbduxsub_stop(struct usbduxsub *usbduxsub)
- {
- 	int errcode = 0;
-+	uint8_t *local_transfer_buffer;
- 
--	uint8_t local_transfer_buffer[16];
-+	local_transfer_buffer = kmalloc(1, GFP_KERNEL);
-+	if (!local_transfer_buffer)
-+		return -ENOMEM;
- 
- 	/* 7f92 to one */
--	local_transfer_buffer[0] = 1;
-+	*local_transfer_buffer = 1;
- 	errcode = usb_control_msg(usbduxsub->usbdev,
- 				  usb_sndctrlpipe(usbduxsub->usbdev, 0),
- 				  /* bRequest, "Firmware" */
-@@ -781,12 +788,12 @@ static int usbduxsub_stop(struct usbduxsub *usbduxsub)
- 				  1,
- 				  /* Timeout */
- 				  BULK_TIMEOUT);
--	if (errcode < 0) {
-+	if (errcode < 0)
- 		dev_err(&usbduxsub->interface->dev,
- 			"comedi_: control msg failed (stop)\n");
--		return errcode;
--	}
--	return 0;
-+
-+	kfree(local_transfer_buffer);
-+	return errcode;
- }
- 
- static int usbduxsub_upload(struct usbduxsub *usbduxsub,
--- 
-1.7.9.5
-
+diff --git a/drivers/usb/wusbcore/wa-xfer.c b/drivers/usb/wusbcore/wa-xfer.c
+index 57c01ab..6ef94bc 100644
+--- a/drivers/usb/wusbcore/wa-xfer.c
++++ b/drivers/usb/wusbcore/wa-xfer.c
+@@ -695,9 +695,9 @@ error_dto_alloc:
+ 	cnt--;
+ error_seg_kzalloc:
+ 	/* use the fact that cnt is left at were it failed */
+-	for (; cnt > 0; cnt--) {
+-		if (xfer->is_inbound = 0)
+-			kfree(xfer->seg[cnt]->dto_urb);
++	for (; cnt >= 0; cnt--) {
++		if (xfer->seg[cnt] && xfer->is_inbound = 0)
++			usb_free_urb(xfer->seg[cnt]->dto_urb);
+ 		kfree(xfer->seg[cnt]);
+ 	}
+ error_segs_kzalloc:
