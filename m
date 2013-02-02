@@ -1,50 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 04 Feb 2013 11:22:36 +0000
-Subject: [patch] IB/mlx4: fix bug unwinding on error in mlx4_ib_init_sriov()
-Message-Id: <20130204112236.GA8878@elgon.mountain>
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Sat, 02 Feb 2013 01:07:37 +0000
+Subject: Re: [PATCH 9/16] fs/ext4/indirect.c: use WARN
+Message-Id: <20130202010737.GA9892@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1351940317-14812-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1351940317-14812-10-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1351940317-14812-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jack Morgenstein <jackm-LDSdmyG8hGV8YrgS2mwiifqBs+8SCbDb@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Amir Vadai <amirv-VPRAkNaXOzVS1MOuV/RT9w@public.gmane.org>, Oren Duer <oren-VPRAkNaXOzVS1MOuV/RT9w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We have to decrement "i" before calling mlx4_ib_free_demux_ctx() or we
-free something that wasn't allocated.  That's fine for free_pv_object()
-but it would lead to a NULL dereference calling
-mlx4_ib_free_demux_ctx().  The null dereference is because ->tun is NULL
-when we check:
+On Sat, Nov 03, 2012 at 11:58:30AM +0100, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Use WARN rather than printk followed by WARN_ON(1), for conciseness.
+> 
+> A simplified version of the semantic patch that makes this transformation
+> is as follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression list es;
+> @@
+> 
+> -printk(
+> +WARN(1,
+>   es);
+> -WARN_ON(1);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-	if (!ctx->tun[i])
+Thanks, applied.
 
-Also we didn't free ->sriov.demux[0] so it was a small leak.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Static checker stuff.  I have not tested this.
-
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index 0a903c1..934792c 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -1999,16 +1999,17 @@ int mlx4_ib_init_sriov(struct mlx4_ib_dev *dev)
- 			goto demux_err;
- 		err = mlx4_ib_alloc_demux_ctx(dev, &dev->sriov.demux[i], i + 1);
- 		if (err)
--			goto demux_err;
-+			goto free_pv;
- 	}
- 	mlx4_ib_master_tunnels(dev, 1);
- 	return 0;
- 
-+free_pv:
-+	free_pv_object(dev, mlx4_master_func_num(dev->dev), i + 1);
- demux_err:
--	while (i > 0) {
-+	while (--i >= 0) {
- 		free_pv_object(dev, mlx4_master_func_num(dev->dev), i + 1);
- 		mlx4_ib_free_demux_ctx(&dev->sriov.demux[i]);
--		--i;
- 	}
- 	mlx4_ib_device_unregister_sysfs(dev);
- 
+					- Ted
