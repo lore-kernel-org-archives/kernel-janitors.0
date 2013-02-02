@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 15 Feb 2013 17:15:18 +0000
-Subject: build regressions 2013-02-15
-Message-Id: <511e6d26.EJZ1ZGSy8pPz83fN%fengguang.wu@intel.com>
+Date: Sat, 02 Feb 2013 16:15:35 +0000
+Subject: build regressions 2013-02-02
+Message-Id: <510d3ba7.aJlu3EvEOlR9PaPF%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,408 +9,111 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/gpu/drm/drm_fb_cma_helper.c:392:23: error: 'dev' undeclared (first use in this function)
-/c/kernel-tests/src/linux/include/linux/list_lru.h:75:1: error: expected identifier or '(' before '{' token
-fs/xfs/xfs_super.c:1458:2: error: void value not ignored as it ought to be
-drivers/gpu/drm/i915/i915_dma.c:1661:36: error: 'struct shrinker' has no member named 'shrink'
-drivers/gpu/drm/i915/i915_dma.c:1698:36: error: 'struct shrinker' has no member named 'shrink'
-fs/ubifs/super.c:52:2: error: unknown field 'shrink' specified in initializer
-drivers/staging/ramster/zcache-main.c:1125:2: error: unknown field 'shrink' specified in initializer
-drivers/staging/android/lowmemorykiller.c:163:2: error: unknown field 'shrink' specified in initializer
-drivers/gpu/drm/i915/i915_gem.c:4200:32: error: 'struct shrinker' has no member named 'shrink'
-drivers/staging/zcache/zcache-main.c:1549:2: error: unknown field 'shrink' specified in initializer
-arch/ia64/kernel/topology.c:278:16: error: conflicting types for 'cache_show'
-kernel/sched/fair.c:4411:6: error: 'sched_policy' undeclared (first use in this function)
-kernel/sched/fair.c:4443:6: error: 'sched_policy' undeclared (first use in this function)
-/c/kernel-tests/src/blackfin/include/linux/list_lru.h:75:1: error: expected identifier or '(' before '{' token
-mm/huge_memory.c:233:2: error: unknown field 'shrink' specified in initializer
-/c/kernel-tests/src/x86/include/linux/list_lru.h:75:1: error: expected identifier or '(' before '{' token
+drivers/acpi/osl.c:629:29: error: 'max_low_pfn_mapped' undeclared (first use in this function)
 
 [warnings]
-arch/arm/kernel/entry-armv.S:404:2: warning: #warning "NPTL on non MMU needs fixing" [-Wcpp]
-arch/arm/kernel/entry-armv.S:867:2: warning: #warning "NPTL on non MMU needs fixing" [-Wcpp]
-arch/arm/kernel/entry-armv.S:940:2: warning: #warning "NPTL on non MMU needs fixing" [-Wcpp]
-/c/kernel-tests/src/linux/include/linux/memcontrol.h:396:1: warning: no return statement in function returning non-void [-Wreturn-type]
-fs/xfs/xfs_super.c:1459:1: warning: control reaches end of non-void function [-Wreturn-type]
-fs/ubifs/super.c:52:2: warning: initialization from incompatible pointer type [enabled by default]
-fs/ubifs/super.c:52:2: warning: (near initialization for 'ubifs_shrinker_info.count_objects') [enabled by default]
-drivers/staging/ramster/zcache-main.c:1125:2: warning: initialization from incompatible pointer type [enabled by default]
-drivers/staging/ramster/zcache-main.c:1125:2: warning: (near initialization for 'zcache_shrinker.count_objects') [enabled by default]
-drivers/staging/android/lowmemorykiller.c:163:2: warning: initialization from incompatible pointer type [enabled by default]
-drivers/staging/android/lowmemorykiller.c:163:2: warning: (near initialization for 'lowmem_shrinker.count_objects') [enabled by default]
-drivers/staging/zcache/zcache-main.c:1549:2: warning: initialization from incompatible pointer type [enabled by default]
-drivers/staging/zcache/zcache-main.c:1549:2: warning: (near initialization for 'zcache_shrinker.count_objects') [enabled by default]
-WARNING: arch/powerpc/kernel/built-in.o(.text+0x244fa): Section mismatch in reference from the function .smp_release_cpus() to the variable .init.data:boot_paca.32613
-WARNING: vmlinux.o(.text+0x95f8): Section mismatch in reference from the function .start_secondary_prolog() to the function .cpuinit.text:.start_secondary()
-WARNING: vmlinux.o(.text+0x960c): Section mismatch in reference from the function .start_secondary_resume() to the function .cpuinit.text:.start_secondary()
-/c/kernel-tests/src/blackfin/include/linux/memcontrol.h:396:1: warning: no return statement in function returning non-void [-Wreturn-type]
-mm/huge_memory.c:233:2: warning: initialization from incompatible pointer type [enabled by default]
-mm/huge_memory.c:233:2: warning: (near initialization for 'huge_zero_page_shrinker.count_objects') [enabled by default]
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:3787): No description found for parameter 'wiphy'
-Warning(include/net/cfg80211.h:3787): Excess function parameter 'dev' description in 'cfg80211_radar_event'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-Warning(include/net/cfg80211.h:699): Enum value 'CFG80211_STA_AP_MLME_CLIENT' not described in enum 'cfg80211_station_type'
-drivers/xen/xen-acpi-cpuhotplug.c:425:3: warning: initialization from incompatible pointer type [enabled by default]
-drivers/xen/xen-acpi-cpuhotplug.c:425:3: warning: (near initialization for 'xen_acpi_processor_driver.ops.remove') [enabled by default]
-drivers/xen/xen-acpi-memhotplug.c:417:3: warning: initialization from incompatible pointer type [enabled by default]
-drivers/xen/xen-acpi-memhotplug.c:417:3: warning: (near initialization for 'xen_acpi_memory_device_driver.ops.remove') [enabled by default]
-drivers/block/xen-blkback/blkback.c:902:3: warning: 'preq.dev' may be used uninitialized in this function [-Wuninitialized]
-drivers/net/wireless/iwlegacy/4965-mac.c:1847:33: warning: 'phys_addr' may be used uninitialized in this function [-Wmaybe-uninitialized]
-/c/kernel-tests/src/x86/include/linux/memcontrol.h:396:1: warning: no return statement in function returning non-void [-Wreturn-type]
-
-[sparse]
-drivers/i2c/busses/i2c-ismt.c:185:14: sparse: duplicate const
-drivers/i2c/busses/i2c-ismt.c:238:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:241:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:244:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:247:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:250:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:253:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:267:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:270:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:273:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:276:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:279:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:282:9: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:302:32: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:304:27: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:307:32: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:309:27: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:619:32: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:625:35: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:650:45: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:653:44: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:656:30: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:659:32: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:661:28: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:667:32: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:676:36: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:682:36: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:688:36: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:694:36: sparse: incorrect type in argument 2 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:702:32: sparse: incorrect type in argument 1 (different address spaces)
-drivers/i2c/busses/i2c-ismt.c:866:20: sparse: incorrect type in assignment (different address spaces)
-drivers/remoteproc/remoteproc_elf_loader.c:315:23: sparse: symbol 'rproc_elf_get_rsctab_addr' was not declared. Should it be static?
-drivers/remoteproc/remoteproc_virtio.c:230:6: sparse: symbol 'rproc_virtio_get' was not declared. Should it be static?
-drivers/remoteproc/remoteproc_virtio.c:242:6: sparse: symbol 'rproc_virtio_set' was not declared. Should it be static?
-drivers/net/ethernet/intel/igb/e1000_82575.c:230:5: sparse: symbol 'igb_init_nvm_params_82575' was not declared. Should it be static?
+drivers/mtd/chips/cfi_cmdset_0002.c:2280: warning: 'cfi_ppb_lock' defined but not used
+drivers/mtd/chips/cfi_cmdset_0002.c:2286: warning: 'cfi_ppb_unlock' defined but not used
+drivers/mtd/chips/cfi_cmdset_0002.c:2383: warning: 'cfi_ppb_is_locked' defined but not used
+drivers/leds/leds-lp5521.c:318: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+drivers/leds/leds-lp5523.c:361: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+drivers/iio/adc/max1363.c:1487: warning: 'max1363_register_buffered_funcs_and_init' defined but not used
+drivers/iio/adc/max1363.c:1522: warning: 'max1363_buffer_cleanup' defined but not used
+net/wireless/nl80211.c:4016: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4019: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4022: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4024: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4027: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4034: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4034: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4040: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4047: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4051: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4055: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4060: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4063: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4066: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4070: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4076: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4083: warning: comparison is always false due to limited range of data type
+net/wireless/nl80211.c:4086: warning: comparison is always false due to limited range of data type
+include/linux/iio/consumer.h:58:48: warning: 'struct device' declared inside parameter list [enabled by default]
+include/linux/iio/consumer.h:58:48: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+include/linux/iio/consumer.h:80:11: warning: 'struct device' declared inside parameter list [enabled by default]
+drivers/scsi/aic7xxx_old.c:7901:5: warning: case value '257' not in enumerated type 'ahc_chip' [-Wswitch]
+drivers/scsi/aic7xxx_old.c:7898:5: warning: case value '513' not in enumerated type 'ahc_chip' [-Wswitch]
+drivers/scsi/aic7xxx_old.c:8517:5: warning: case value '257' not in enumerated type 'ahc_chip' [-Wswitch]
+drivers/scsi/aic7xxx_old.c:8510:5: warning: case value '513' not in enumerated type 'ahc_chip' [-Wswitch]
+drivers/scsi/advansys.c:71:2: warning: #warning this driver is still not properly converted to the DMA API [-Wcpp]
+drivers/regulator/tps62360-regulator.c:384:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+arch/ia64/kernel/err_inject.c:75:1: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:89:2: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:90:2: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:94:6: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:94:6: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:94:6: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:120:2: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:121:2: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:126:1: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:134:2: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:149:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:158:1: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:170:4: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:170:4: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:170:4: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:186:4: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:186:4: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:186:4: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:191:4: warning: format '%lx' expects argument of type 'long unsigned int *', but argument 3 has type 'u64 *' [-Wformat]
+arch/ia64/kernel/err_inject.c:191:4: warning: format '%lx' expects argument of type 'long unsigned int *', but argument 4 has type 'u64 *' [-Wformat]
+arch/ia64/kernel/err_inject.c:191:4: warning: format '%lx' expects argument of type 'long unsigned int *', but argument 5 has type 'u64 *' [-Wformat]
+arch/ia64/kernel/err_inject.c:198:1: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 's64' [-Wformat]
+arch/ia64/kernel/err_inject.c:199:1: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+arch/ia64/kernel/err_inject.c:200:1: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'u64' [-Wformat]
+drivers/net/ethernet/amd/nmclan_cs.c:625:3: warning: 'pcmcia_request_exclusive_irq' is deprecated (declared at include/pcmcia/ds.h:201) [-Wdeprecated-declarations]
+kernel/sched/core.c:3103:10: warning: unsupported argument to '__builtin_return_address' [enabled by default]
+kernel/sched/core.c:3105:11: warning: unsupported argument to '__builtin_return_address' [enabled by default]
+arch/ia64/kernel/cpufreq/acpi-cpufreq.c:53:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 's64' [-Wformat]
+arch/ia64/kernel/cpufreq/acpi-cpufreq.c:75:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 's64' [-Wformat]
+drivers/staging/bcm/CmHost.c:1414:39: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/staging/bcm/CmHost.c:1453:37: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/staging/bcm/CmHost.c:1467:35: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+arch/ia64/sn/kernel/bte.c:117:22: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+arch/ia64/sn/kernel/bte.c:125:22: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/isdn/hardware/mISDN/hfcpci.c:2298:2: warning: ignoring return value of 'driver_for_each_device', declared with attribute warn_unused_result [-Wunused-result]
+drivers/isdn/hardware/mISDN/w6692.c:1180:2: warning: unsupported argument to '__builtin_return_address' [enabled by default]
+drivers/isdn/hardware/mISDN/mISDNipac.c:759:2: warning: unsupported argument to '__builtin_return_address' [enabled by default]
+drivers/staging/cxt1e1/functions.c:275:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/message/i2o/i2o_config.c:880:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/message/i2o/i2o_config.c:935:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+arch/ia64/sn/kernel/sn2/sn2_smp.c:319:1: warning: the frame size of 2176 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+drivers/net/wireless/ti/wlcore/spi.c:307:1: warning: the frame size of 2192 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+drivers/mtd/chips/cfi_cmdset_0020.c:654:1: warning: the frame size of 2192 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+drivers/scsi/mvsas/mv_sas.c:1157:34: warning: comparison between 'enum sas_device_type' and 'enum sas_dev_type' [-Wenum-compare]
+drivers/scsi/mvsas/mv_sas.c:1160:39: warning: comparison between 'enum sas_device_type' and 'enum sas_dev_type' [-Wenum-compare]
+drivers/staging/rtl8192u/r8192U_dm.c:1454:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+drivers/input/joystick/analog.c:175:2: warning: #warning Precise timer not defined for this architecture. [-Wcpp]
+WARNING: arch/ia64/hp/common/built-in.o(.data+0xb0): Section mismatch in reference from the variable acpi_sba_ioc_driver to the function .init.text:acpi_sba_ioc_add()
+drivers/mfd/tps65217.c:169:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+<stdin>:1181:2: warning: #warning syscall perf_event_open not implemented [-Wcpp]
+<stdin>:1220:2: warning: #warning syscall kcmp not implemented [-Wcpp]
+<stdin>:1181:2: warning: #warning syscall perf_event_open not implemented [-Wcpp]
+<stdin>:1220:2: warning: #warning syscall kcmp not implemented [-Wcpp]
+drivers/spi/spi-gpio.c:235:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/media/pci/ivtv/ivtv-driver.c:307:2: warning: 'flush_work_sync' is deprecated (declared at include/linux/workqueue.h:448) [-Wdeprecated-declarations]
+include/linux/of_platform.h:107:13: warning: 'struct of_device_id' declared inside parameter list [enabled by default]
+include/linux/of_platform.h:107:13: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+include/linux/of_platform.h:107:13: warning: 'struct device_node' declared inside parameter list [enabled by default]
+drivers/mtd/chips/cfi_cmdset_0002.c:504:22: warning: unused variable 'np' [-Wunused-variable]
+drivers/md/persistent-data/dm-array.c:342:13: warning: 'ab' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/gpio/gpiolib-acpi.c:129:28: warning: ignoring return value of 'devm_request_threaded_irq', declared with attribute warn_unused_result [-Wunused-result]
 
 [smatch]
-drivers/extcon/extcon-max8997.c:708 max8997_muic_probe() error: we previously assumed 'pdata->muic_pdata' could be null (see line 695)
+drivers/net/wireless/iwlwifi/mvm/rs.c:2532 rs_get_rate() error: we previously assumed 'lq_sta' could be null (see line 2523)
+drivers/net/wireless/iwlwifi/mvm/rs.c:2788 rs_fill_link_cmd() error: buffer overflow 'lq_cmd->rs_table' 16 <= 16
+drivers/net/wireless/iwlwifi/pcie/trans.c:860 iwl_trans_pcie_grab_nic_access() warn: inconsistent returns spin_lock:&pcie_trans->reg_lock: locked (860) unlocked (851)
+drivers/net/wireless/iwlwifi/pcie/trans.c:860 iwl_trans_pcie_grab_nic_access() warn: inconsistent returns irqsave:*flags: locked (860) unlocked (851)
+drivers/leds/leds-pwm.c:83 led_pwm_create_of() error: potentially dereferencing uninitialized 'child'.
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
