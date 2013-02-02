@@ -1,32 +1,39 @@
-From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
-Date: Fri, 15 Feb 2013 16:34:24 +0000
-Subject: Re: Clang Analyzer was Re: [PATCH 3/7 v2] staging/ozwpan: Fix NULL vs zero in ozeltbuf.c (sparse war
-Message-Id: <201302151734.24623.PeterHuewe@gmx.de>
+From: Ezequiel Garcia <elezegarcia@gmail.com>
+Date: Sat, 02 Feb 2013 19:30:37 +0000
+Subject: Question about printking
+Message-Id: <CALF0-+V-8m1TwnM0MUbNCncnECF_r_FVcyu_Duu0tqcsPoFR5A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130215084517.GB6802@mwanda> <201302151657.14726.PeterHuewe@gmx.de> <20130215161102.GK6853@mwanda>
-In-Reply-To: <20130215161102.GK6853@mwanda>
+References: <CALF0-+XX27u4rmpe8RHiy5DsbHvoYP9DWQts+rTRfEvPQG4s8Q@mail.gmail.com>
+In-Reply-To: <CALF0-+XX27u4rmpe8RHiy5DsbHvoYP9DWQts+rTRfEvPQG4s8Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Rupesh Gujare <rupesh.gujare@atmel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Kernel Janitors <kernel-janitors@vger.kernel.org>
+To: kernelnewbies@lists.kernelnewbies.org
 
-Am Freitag, 15. Februar 2013, 17:11:02 schrieb Dan Carpenter:
-> Are you using this version of clang?:
-> 
-> http://git.linuxfoundation.org/llvmlinux.git/
-> 
-> regards,
-> dan carpenter
+Hello,
 
-Hi,
+I have a quick question.
+I (think I) remember Greg KH reviewing some driver patch on staging
+mailing list,
+suggesting not to do this sort of printking upon an allocation request failure:
 
-nope - plain vanilla llvm/clang, but I use some of the kernel patches from 
-there:
-http://git.linuxfoundation.org/?p=llvmlinux.git;a=tree;f=arch/x86_64/patches;hb=master
+ptr = kmalloc(sizeof(foo));
+if (!ptr) {
+        pr_err("Cannot allocate memory for foo\n");
+        return -ENOMEM;
+}
 
-The main reason for not using llvmlinux is that it builds a lot more than I 
-need (e.g. buildbot/qemu) but maybe I should give it a try some time.
+His argue against it was that kmalloc already takes care of reporting/printking
+a good deal of interesting information when this happens.
 
+Is my memory right?
 
-Peter
+Can someone expand a bit on this whole idea? (of abuse of printing,
+or futility of printing).
+
+I'm asking after seeing *a lot* of drivers doing exactly this.
+
+Thanks,
+
+--
+    Ezequiel
