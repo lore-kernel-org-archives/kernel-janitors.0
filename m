@@ -1,50 +1,37 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 23 Feb 2013 18:13:19 +0000
-Subject: Re: [PATCH 2/2] staging: comedi: drivers: usbduxfast.c: fix for DMA buffers on stack
-Message-Id: <512906BF.5030308@bfs.de>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 04 Feb 2013 13:21:21 +0000
+Subject: Re: [PATCH 7/15] drivers/crypto/atmel-aes.c: adjust duplicate test
+Message-Id: <20130204132121.GA21627@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1361556450-32572-1-git-send-email-gmate.amit@gmail.com> <5127BFDB.4010608@bfs.de> <20130222190644.GA16011@kroah.com> <5128E76F.1000607@bfs.de> <20130223173442.GL9138@mwanda>
-In-Reply-To: <20130223173442.GL9138@mwanda>
+References: <1358773378-4700-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1358773378-4700-8-git-send-email-Julia.Lawall@lip6.fr>
+ <20130121.131912.602907116084738120.davem@davemloft.net>
+In-Reply-To: <20130121.131912.602907116084738120.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Kumar Amit Mehta <gmate.amit@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: Julia.Lawall@lip6.fr, kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-
-Am 23.02.2013 18:34, schrieb Dan Carpenter:
-> On Sat, Feb 23, 2013 at 04:59:43PM +0100, walter harms wrote:
->>>> or is it possible to pass one byte
->>>> in a register ? (aka char/int) without allocating ?
->>>
->>> Nope, the USB host controllers must be able to DMA to this memory
->>> location, so you have to allocate it dynamically, sorry.
->>>
->>> thanks,
->>
->> thx for clarification.
->>
->> @Kumar Amit Mehta:
->> Would you mind to add this as comment ? Allocating one byte does not
->> look clever so maybe will come up with the idea of changing that.
->>
+On Mon, Jan 21, 2013 at 01:19:12PM -0500, David Miller wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> Date: Mon, 21 Jan 2013 14:02:51 +0100
 > 
-> That can't happen.  The reason is already recorded in the git
-> history.  Greg and Ian know that DMA to stack memory doesn't work.
-> Most maintainers know about that.  If someone changed it back then
-> Fengguang would send an automatic email about it as soon as it was
-> committed to a public git tree.
+> > From: Julia Lawall <Julia.Lawall@lip6.fr>
+> > 
+> > Delete successive tests to the same location.  The code tested the result
+> > of a previous allocation, that itself was already tested.  It is changed to
+> > test the result of the most recent allocation.
+> > 
+> > A simplified version of the semantic match that finds this problem is as
+> > follows: (http://coccinelle.lip6.fr/)
+>  ...
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
+> Acked-by: David S. Miller <davem@davemloft.net>
 
-I am not sure about that we talk about the same thing, i am thinking
-about the "casual "reader" discovering a one-byte-malloc.
-He will not check the githistory, he will thing "WTF there are doing here ?"
-
-I will not make things more complicated, IMHO an malloc of one byte
-is a strange thing and strange things should be commented in code.
-If the maintainer says "no" i will survive.
-
-re,
- wh
-
+Patch applied.  Thanks!
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
