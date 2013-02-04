@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 03 Feb 2013 17:14:39 +0000
-Subject: build regressions 2013-02-03
-Message-Id: <510e9aff.NOmRb/uqHdP/GK0e%fengguang.wu@intel.com>
+Date: Mon, 04 Feb 2013 18:46:17 +0000
+Subject: build regressions 2013-02-04
+Message-Id: <511001f9.2RMdolGP45xLHSGA%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,134 +9,152 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-arch/arm/include/asm/cputype.h:130:36: error: 'ARM_CPU_XSCALE_ARCH_MASK' undeclared (first use in this function)
-arch/arm/include/asm/smp_scu.h:14:37: error: 'ARM_CPU_PART_CORTEX_A9' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:211:21: error: 'ARM_CPU_IMP_ARM' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:213:8: error: 'ARM_CPU_PART_ARM1136' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:214:8: error: 'ARM_CPU_PART_ARM1156' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:215:8: error: 'ARM_CPU_PART_ARM1176' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:218:8: error: 'ARM_CPU_PART_ARM11MPCORE' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:221:8: error: 'ARM_CPU_PART_CORTEX_A8' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:224:8: error: 'ARM_CPU_PART_CORTEX_A9' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:227:8: error: 'ARM_CPU_PART_CORTEX_A5' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:230:8: error: 'ARM_CPU_PART_CORTEX_A15' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:233:8: error: 'ARM_CPU_PART_CORTEX_A7' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:238:28: error: 'ARM_CPU_IMP_INTEL' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:240:8: error: 'ARM_CPU_XSCALE_ARCH_V1' undeclared (first use in this function)
-arch/arm/kernel/perf_event_cpu.c:243:8: error: 'ARM_CPU_XSCALE_ARCH_V2' undeclared (first use in this function)
-drivers/i2c/busses/i2c-s3c2410.c:1048:3: error: label 'err_clk' used but not defined
-/c/kernel-tests/src/tip/include/linux/kvm_host.h:333:34: error: 'KVM_USER_MEM_SLOTS' undeclared here (not in a function)
-drivers/base/regmap/regmap.c:1616:3: error: 'TASK_NORMAL' undeclared (first use in this function)
-drivers/base/regmap/regmap.c:1648:2: error: 'TASK_UNINTERRUPTIBLE' undeclared (first use in this function)
-drivers/base/regmap/regmap.c:1648:2: error: implicit declaration of function 'schedule' [-Werror=implicit-function-declaration]
-fs/bio.c:1444:32: error: 'error' undeclared (first use in this function)
-include/linux/bio.h:260:2: error: implicit declaration of function 'bio_endio_batch' [-Werror=implicit-function-declaration]
-include/linux/bio.h:260:2: error: implicit declaration of function 'bio_endio_batch' [-Werror=implicit-function-declaration]
-include/linux/bio.h:260:2: error: implicit declaration of function 'bio_endio_batch' [-Werror=implicit-function-declaration]
-include/linux/bio.h:260:2: error: implicit declaration of function 'bio_endio_batch' [-Werror=implicit-function-declaration]
-make[2]: *** No rule to make target `arch/x86/include/asm/io_32.h', needed by `Documentation/DocBook/deviceiobook.xml'.
-make[2]: *** No rule to make target `arch/x86/include/asm/atomic_32.h', needed by `Documentation/DocBook/kernel-api.xml'.
-make[2]: *** No rule to make target `block/blk-barrier.c', needed by `Documentation/DocBook/kernel-api.xml'.
-make[2]: *** No rule to make target `block/blktrace.c', needed by `Documentation/DocBook/kernel-api.xml'.
-make[2]: *** No rule to make target `drivers/serial/serial_core.c', needed by `Documentation/DocBook/kernel-api.xml'.
-make[2]: *** No rule to make target `drivers/serial/8250.c', needed by `Documentation/DocBook/kernel-api.xml'.
-make[2]: *** No rule to make target `drivers/net/wan/syncppp.c', needed by `Documentation/DocBook/networking.xml'.
-fs/bio.c:330:19: error: 'UIO_MAXIOV' undeclared (first use in this function)
-fs/bio.c:686:18: error: 'UIO_MAXIOV' undeclared (first use in this function)
-net/ipv6/ip6_flowlabel.c:261:2: error: 'ipv6_sk_fl_lock' undeclared (first use in this function)
-arch/x86/mm/init_64.c:1021:3: error: implicit declaration of function 'get_page_bootmem' [-Werror=implicit-function-declaration]
-arch/x86/mm/init_64.c:1021:48: error: 'MIX_SECTION_INFO' undeclared (first use in this function)
-arch/x86/mm/init_64.c:1042:7: error: 'SECTION_INFO' undeclared (first use in this function)
-arch/x86/mm/init_64.c:1323:2: error: implicit declaration of function 'remove_pagetable' [-Werror=implicit-function-declaration]
+arch/frv/kernel/setup.c:187:47: error: expected '=', ',', ';', 'asm' or '__attribute__' before '*' token
+arch/frv/kernel/setup.c:386:2: error: 'clock_cmodes' undeclared (first use in this function)
+arch/frv/kernel/setup.c:571:6: error: 'clock_cmodes' undeclared (first use in this function)
+drivers/mfd/intel_msic.c:428:2: error: implicit declaration of function 'devm_ioremap_resource' [-Werror=implicit-function-declaration]
+drivers/mfd/sec-core.c:178:3: error: implicit declaration of function 'sec_pmic_i2c_parse_dt_pdata' [-Werror=implicit-function-declaration]
+ERROR: "regmap_async_complete_cb" [drivers/base/regmap/regmap-spi.ko] undefined!
+drivers/staging/dgrp/dgrp_mon_ops.c:304:3: error: implicit declaration of function 'copy_to_user' [-Werror=implicit-function-declaration]
+drivers/staging/dgrp/dgrp_tty.c:1284:4: error: implicit declaration of function 'copy_from_user' [-Werror=implicit-function-declaration]
+drivers/staging/dgrp/dgrp_tty.c:2267:2: error: implicit declaration of function 'put_user' [-Werror=implicit-function-declaration]
+drivers/staging/dgrp/dgrp_tty.c:2283:2: error: implicit declaration of function 'access_ok' [-Werror=implicit-function-declaration]
+drivers/staging/dgrp/dgrp_tty.c:2283:20: error: 'VERIFY_READ' undeclared (first use in this function)
+drivers/staging/dgrp/dgrp_tty.c:2287:2: error: implicit declaration of function 'get_user' [-Werror=implicit-function-declaration]
+drivers/staging/dgrp/dgrp_tty.c:2474:2: error: implicit declaration of function 'copy_to_user' [-Werror=implicit-function-declaration]
+drivers/staging/dgrp/dgrp_tty.c:2618:18: error: 'VERIFY_WRITE' undeclared (first use in this function)
+drivers/staging/dgrp/dgrp_specproc.c:469:2: error: implicit declaration of function 'copy_from_user' [-Werror=implicit-function-declaration]
+arch/mips/kernel/signal.c:262:16: error: conflicting types for 'sys_rt_sigsuspend'
+drivers/vhost/tcm_vhost.c:595:17: error: 'struct vhost_virtqueue' has no member named 'num'
+arch/sparc/kernel/sys_sparc32.c:255:1: error: conflicting types for 'C_SYSC_rt_sigaction'
+arch/sparc/kernel/sys_sparc32.c:269:9: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:269:9: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:269:9: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:271:39: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:273:10: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:273:10: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:273:10: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:274:10: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:274:10: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:274:10: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:284:9: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:284:9: error: dereferencing pointer to incomplete type
+arch/sparc/kernel/sys_sparc32.c:284:9: error: dereferencing pointer to incomplete type
+arch/x86/kernel/cpu/common.c:1227:2: error: implicit declaration of function 'load_ucode_ap' [-Werror=implicit-function-declaration]
+make[2]: *** No rule to make target `kernel/sched.c', needed by `Documentation/DocBook/kernel-api.xml'.
+make[2]: *** No rule to make target `drivers/base/sys.c', needed by `Documentation/DocBook/kernel-api.xml'.
+make[2]: *** No rule to make target `include/linux/gen_stats.h', needed by `Documentation/DocBook/networking.xml'.
+drivers/target/iscsi/iscsi_target.c:782:12: error: conflicting types for 'iscsit_handle_scsi_cmd'
+drivers/target/iscsi/iscsi_target.c:1407:12: error: conflicting types for 'iscsit_handle_nop_out'
+drivers/target/iscsi/iscsi_target.c:2094:12: error: conflicting types for 'iscsit_handle_logout_cmd'
+arch/x86/mm/init_64.c:913:3: error: implicit declaration of function 'map_low_page' [-Werror=implicit-function-declaration]
+arch/x86/mm/init_64.c:916:3: error: implicit declaration of function 'unmap_low_page' [-Werror=implicit-function-declaration]
+drivers/block/drbd/drbd_receiver.c:4057:10: error: 'mdev' undeclared (first use in this function)
+microcode_intel.c:(.text+0x27cba): undefined reference to `microcode_sanity_check'
+microcode_intel.c:(.text+0x27cd4): undefined reference to `get_matching_microcode'
+(.text+0x27fe7): undefined reference to `get_matching_microcode'
+ERROR: "get_matching_microcode" [arch/x86/kernel/microcode.ko] undefined!
+ERROR: "microcode_sanity_check" [arch/x86/kernel/microcode.ko] undefined!
+/c/kernel-tests/src/x86/include/linux/signal.h:261:2: error: unknown type name '__sigrestore_t'
+/c/kernel-tests/src/blackfin/include/linux/signal.h:261:2: error: unknown type name '__sigrestore_t'
 
 [warnings]
-arch/arm/include/asm/smp_scu.h:15:1: warning: control reaches end of non-void function [-Wreturn-type]
-drivers/infiniband/hw/mlx4/cm.c:365:2: warning: 'idr_pre_get' is deprecated (declared at include/linux/idr.h:144) [-Wdeprecated-declarations]
-fs/nfsd/nfs4state.c:240:2: warning: 'idr_get_new_above' is deprecated (declared at include/linux/idr.h:159) [-Wdeprecated-declarations]
-fs/nfsd/nfs4state.c:282:2: warning: 'idr_pre_get' is deprecated (declared at include/linux/idr.h:144) [-Wdeprecated-declarations]
-drivers/staging/zcache/zcache-main.c:1702:3: warning: 'idr_pre_get' is deprecated (declared at include/linux/idr.h:144) [-Wdeprecated-declarations]
-drivers/staging/zcache/zcache-main.c:1708:3: warning: 'idr_get_new' is deprecated (declared at include/linux/idr.h:174) [-Wdeprecated-declarations]
-warning: (LOCKDEP && FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && KMEMCHECK) selects FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CRIS || M68K || FRV || UML || AVR32 || SUPERH || BLACKFIN || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS)
-warning: (LOCKDEP && FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && KMEMCHECK) selects FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CRIS || M68K || FRV || UML || AVR32 || SUPERH || BLACKFIN || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS)
-warning: (LOCKDEP && FAULT_INJECTION_STACKTRACE_FILTER && LATENCYTOP && KMEMCHECK) selects FRAME_POINTER which has unmet direct dependencies (DEBUG_KERNEL && (CRIS || M68K || FRV || UML || AVR32 || SUPERH || BLACKFIN || MN10300 || METAG) || ARCH_WANT_FRAME_POINTERS)
-Warning(/kernel/signal.c:2691): No description found for parameter 'uset'
-Warning(/kernel/signal.c:2691): Excess function parameter 'set' description in 'sys_rt_sigpending'
-include/linux/bio.h:553:6: warning: conflicting types for 'bio_endio_batch' [enabled by default]
-include/linux/bio.h:553:6: warning: conflicting types for 'bio_endio_batch' [enabled by default]
-include/linux/bio.h:553:6: warning: conflicting types for 'bio_endio_batch' [enabled by default]
-include/linux/bio.h:553:6: warning: conflicting types for 'bio_endio_batch' [enabled by default]
-net/sunrpc/auth_gss/svcauth_gss.c:457:31: warning: 'id' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/mfd/intel_msic.c:428:17: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/mfd/sec-core.c:178:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/gpu/drm/nouveau/core/subdev/therm/ic.c:116:1: warning: the frame size of 1028 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/target/iscsi/iscsi_target_login.c:1073:2: warning: #warning FIXME: iscsi_login_init_conn failure OOPs............ [-Wcpp]
+drivers/target/iscsi/iscsi_target_login.c:1022:22: warning: unused variable 'sock_in6' [-Wunused-variable]
+drivers/target/iscsi/iscsi_target_login.c:1021:21: warning: unused variable 'sock_in' [-Wunused-variable]
+drivers/target/iscsi/iscsi_target_login.c:1019:14: warning: unused variable 'iov' [-Wunused-variable]
+drivers/target/iscsi/iscsi_target_login.c:1015:6: warning: unused variable 'err' [-Wunused-variable]
+drivers/target/iscsi/iscsi_target_login.c:1014:14: warning: unused variable 'iscsi_opcode' [-Wunused-variable]
+drivers/target/iscsi/iscsi_target_util.c:1420:2: warning: #warning FIXME: conn->sock access in iscsit_collect_login_stats [-Wcpp]
+drivers/target/iscsi/iscsi_target_login.c:641:2: warning: #warning FIXME: iscsit_start_nopin_timer disabled [-Wcpp]
+drivers/target/iscsi/iscsi_target_login.c:640:24: warning: unused variable 'sess' [-Wunused-variable]
+arch/x86/mm/init_64.c:913:14: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+arch/x86/mm/init_64.c:970:14: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+arch/x86/mm/init_64.c:996:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
 
 [sparse]
-drivers/media/dvb-frontends/mb86a20s.c:1006:24: sparse: symbol 'cnr_qpsk_table' was not declared. Should it be static?
-drivers/mmc/host/android-goldfish.c:226:25: sparse: incorrect type in argument 2 (different address spaces)
-drivers/mmc/host/android-goldfish.c:409:17: sparse: incorrect type in argument 1 (different address spaces)
-drivers/mmc/host/android-goldfish.c:484:25: sparse: incorrect type in assignment (different address spaces)
-drivers/mmc/host/android-goldfish.c:487:32: sparse: Using plain integer as NULL pointer
-drivers/mmc/host/android-goldfish.c:535:9: sparse: incorrect type in argument 3 (different address spaces)
-drivers/mmc/host/android-goldfish.c:555:9: sparse: incorrect type in argument 3 (different address spaces)
-drivers/dma/dw_dmac.c:1494:20: sparse: incorrect type in argument 1 (different address spaces)
-drivers/dma/dw_dmac.c:1495:32: sparse: incorrect type in argument 1 (different address spaces)
-drivers/mfd/intel_msic.c:429:24: sparse: incorrect type in argument 1 (different address spaces)
-drivers/mfd/intel_msic.c:430:36: sparse: incorrect type in argument 1 (different address spaces)
-lib/idr.c:42:8: sparse: symbol 'idr_preload_head' was not declared. Should it be static?
-lib/idr.c:43:8: sparse: symbol 'idr_preload_cnt' was not declared. Should it be static?
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-lib/idr.c:90:25: sparse: cast removes address space of expression
-drivers/misc/sgi-xp/xpnet.c:141:15: sparse: symbol 'xpnet' was not declared. Should it be static?
-arch/x86/include/asm/insn.h:65:23: sparse: Expected } at end of struct-union-enum-specifier
-arch/x86/include/asm/insn.h:65:23: sparse: got 1
-arch/x86/include/asm/insn.h:69:1: sparse: Expected ; at the end of type declaration
-arch/x86/include/asm/insn.h:99:65: sparse: Expected ) in function declarator
-arch/x86/ia32/syscall_ia32.c:18:22: sparse: symbol 'ia32_sys_call_table' was not declared. Should it be static?
-arch/x86/ia32/syscall_ia32.c:23:10: sparse: Initializer entry defined twice
-arch/x86/kernel/signal.c:846:17: sparse: symbol 'sys32_x32_rt_sigreturn' was not declared. Should it be static?
-arch/x86/kernel/syscall_64.c:26:22: sparse: symbol 'sys_call_table' was not declared. Should it be static?
-arch/x86/kernel/syscall_64.c:31:10: sparse: Initializer entry defined twice
-arch/x86/kernel/process.c:42:8: sparse: symbol 'is_idle' was not declared. Should it be static?
-arch/x86/mm/init_64.c:899:15: sparse: symbol 'memory_block_size_bytes' was not declared. Should it be static?
-kernel/compat.c:357:17: sparse: symbol 'compat_sys_sigpending' was not declared. Should it be static?
-kernel/compat.c:384:17: sparse: symbol 'compat_sys_sigprocmask' was not declared. Should it be static?
-kernel/compat.c:446:17: sparse: symbol 'compat_sys_old_getrlimit' was not declared. Should it be static?
-mm/memory_hotplug.c:48:1: sparse: symbol 'mem_hotplug_mutex' was not declared. Should it be static?
-fs/compat.c:57:5: sparse: symbol 'compat_log' was not declared. Should it be static?
-fs/compat.c:1165:1: sparse: symbol 'compat_sys_preadv64' was not declared. Should it be static?
-fs/compat.c:1231:1: sparse: symbol 'compat_sys_pwritev64' was not declared. Should it be static?
-kernel/trace/trace_functions_graph.c:185:15: sparse: symbol 'ftrace_return_to_handler' was not declared. Should it be static?
-arch/x86/power/cpu.c:35:22: sparse: symbol 'saved_context' was not declared. Should it be static?
-arch/x86/power/hibernate_64.c:30:15: sparse: symbol 'restore_jump_address' was not declared. Should it be static?
-arch/x86/power/hibernate_64.c:36:15: sparse: symbol 'restore_cr3' was not declared. Should it be static?
-arch/x86/power/hibernate_64.c:38:7: sparse: symbol 'temp_level4_pgt' was not declared. Should it be static?
-arch/x86/power/hibernate_64.c:40:6: sparse: symbol 'relocated_restore_code' was not declared. Should it be static?
-arch/x86/power/hibernate_64.c:105:5: sparse: symbol 'swsusp_arch_resume' was not declared. Should it be static?
-arch/x86/power/hibernate_64.c:127:5: sparse: symbol 'pfn_is_nosave' was not declared. Should it be static?
-arch/x86/kernel/apic/apic.c:2149:6: sparse: symbol 'default_init_apic_ldr' was not declared. Should it be static?
-drivers/gpu/drm/mga/mga_ioc32.c:192:20: sparse: symbol 'mga_compat_ioctls' was not declared. Should it be static?
-drivers/gpu/drm/mga/mga_ioc32.c:207:6: sparse: symbol 'mga_compat_ioctl' was not declared. Should it be static?
+drivers/xen/xen-pciback/pci_stub.c:547:21: sparse: incorrect type in assignment (different base types)
+drivers/xen/xen-pciback/pci_stub.c:586:37: sparse: incorrect type in assignment (different base types)
+drivers/xen/xen-pciback/pci_stub.c:599:16: sparse: cast to restricted pci_ers_result_t
+drivers/xen/xen-pciback/pci_stub.c:644:40: sparse: incorrect type in argument 2 (different base types)
+drivers/xen/xen-pciback/pci_stub.c:702:40: sparse: incorrect type in argument 2 (different base types)
+drivers/xen/xen-pciback/pci_stub.c:815:31: sparse: incorrect type in argument 2 (different base types)
+drivers/xen/xen-pciback/conf_space_capability.c:124:22: sparse: cast to restricted pci_power_t
+drivers/xen/xen-pciback/conf_space_capability.c:125:22: sparse: cast to restricted pci_power_t
+drivers/mfd/abx500-core.c:159:38: sparse: Using plain integer as NULL pointer
+drivers/edac/amd64_edac.c:37:3: sparse: symbol 'scrubrates' was not declared. Should it be static?
+fs/quota/compat.c:43:17: sparse: symbol 'sys32_quotactl' was not declared. Should it be static?
+drivers/block/xen-blkback/common.h:141:39: sparse: Expected } at end of struct-union-enum-specifier
+drivers/block/xen-blkback/common.h:141:39: sparse: got 1
+drivers/block/xen-blkback/common.h:142:1: sparse: Expected ; at the end of type declaration
+drivers/block/xen-blkback/blkback.c:788:52: sparse: Expected member name
+drivers/block/xen-blkback/blkback.c:788:52: sparse: Expected ) in expression
+drivers/block/xen-blkback/blkback.c:788:52: sparse: got 1
+drivers/block/xen-blkback/xenbus.c:157:17: sparse: Expected member name
+drivers/block/xen-blkback/xenbus.c:157:17: sparse: Expected ) in expression
+drivers/block/xen-blkback/xenbus.c:157:17: sparse: got 1
+arch/x86/pci/numachip.c:111:12: sparse: symbol 'pci_numachip_init' was not declared. Should it be static?
+drivers/base/memory.c:106:22: sparse: symbol 'memory_block_size_bytes' was not declared. Should it be static?
+drivers/gpu/drm/r128/r128_ioc32.c:196:6: sparse: symbol 'r128_compat_ioctl' was not declared. Should it be static?
+arch/x86/lib/insn.c:53:58: sparse: Expected ) in function declarator
+arch/x86/lib/insn.c:53:58: sparse: got 1
+arch/x86/lib/insn.c:56:13: sparse: Expected ; at end of declaration
+arch/x86/lib/insn.c:63:17: sparse: got insn
+arch/x86/lib/insn.c:64:1: sparse: Expected ; at the end of type declaration
+arch/x86/lib/insn.c:88:37: sparse: got (
+arch/x86/lib/insn.c:128:21: sparse: Expected ) in nested declarator
+drivers/xen/events.c:1188:13: sparse: symbol 'xen_debug_interrupt' was not declared. Should it be static?
+drivers/xen/events.c:1785:6: sparse: symbol 'xen_callback_vector' was not declared. Should it be static?
+arch/x86/kernel/apic/apic_flat_64.c:46:6: sparse: symbol 'flat_init_apic_ldr' was not declared. Should it be static?
+arch/x86/kernel/apic/x2apic_uv_x.c:55:5: sparse: symbol 'uv_min_hub_revision_id' was not declared. Should it be static?
+arch/x86/kernel/apic/x2apic_cluster.c:13:8: sparse: symbol 'x86_cpu_to_logical_apicid' was not declared. Should it be static?
+arch/x86/kernel/apic/x2apic_cluster.c:15:8: sparse: symbol 'ipi_mask' was not declared. Should it be static?
+arch/x86/crypto/camellia_glue.c:65:11: sparse: symbol 'camellia_sp10011110' was not declared. Should it be static?
+arch/x86/crypto/camellia_glue.c:154:11: sparse: symbol 'camellia_sp22000222' was not declared. Should it be static?
+arch/x86/crypto/camellia_glue.c:243:11: sparse: symbol 'camellia_sp03303033' was not declared. Should it be static?
+arch/x86/crypto/camellia_glue.c:332:11: sparse: symbol 'camellia_sp00444404' was not declared. Should it be static?
+arch/x86/crypto/camellia_glue.c:421:11: sparse: symbol 'camellia_sp02220222' was not declared. Should it be static?
+arch/x86/crypto/camellia_glue.c:510:11: sparse: symbol 'camellia_sp30333033' was not declared. Should it be static?
+arch/x86/crypto/camellia_glue.c:599:11: sparse: symbol 'camellia_sp44044404' was not declared. Should it be static?
+arch/x86/crypto/camellia_glue.c:688:11: sparse: symbol 'camellia_sp11101110' was not declared. Should it be static?
+arch/x86/ia32/nosyscall.c:4:6: sparse: symbol 'compat_ni_syscall' was not declared. Should it be static?
+arch/x86/ia32/audit.c:3:10: sparse: symbol 'ia32_dir_class' was not declared. Should it be static?
+arch/x86/ia32/audit.c:8:10: sparse: symbol 'ia32_chattr_class' was not declared. Should it be static?
+arch/x86/ia32/audit.c:13:10: sparse: symbol 'ia32_write_class' was not declared. Should it be static?
+arch/x86/ia32/audit.c:18:10: sparse: symbol 'ia32_read_class' was not declared. Should it be static?
+arch/x86/ia32/audit.c:23:10: sparse: symbol 'ia32_signal_class' was not declared. Should it be static?
+arch/x86/ia32/audit.c:28:5: sparse: symbol 'ia32_classify_syscall' was not declared. Should it be static?
+arch/x86/kernel/amd_gart_64.c:88:15: sparse: symbol 'agp_memory_reserved' was not declared. Should it be static?
+arch/x86/kernel/amd_gart_64.c:89:17: sparse: symbol 'agp_gatt_table' was not declared. Should it be static?
+arch/x86/kernel/kprobes.c:335:26: sparse: no member 'kaddr' in struct insn
+arch/x86/kernel/kprobes-opt.c:224:37: sparse: no member 'next_byte' in struct insn
+arch/x86/kernel/kprobes-opt.c:267:21: sparse: no member 'kaddr' in struct insn
+arch/x86/vdso/vclock_gettime.c:236:13: sparse: symbol '__vdso_clock_gettime' was not declared. Should it be static?
+arch/x86/vdso/vclock_gettime.c:260:13: sparse: symbol '__vdso_gettimeofday' was not declared. Should it be static?
+arch/x86/vdso/vclock_gettime.c:288:16: sparse: symbol '__vdso_time' was not declared. Should it be static?
+arch/x86/vdso/vgetcpu.c:16:1: sparse: symbol '__vdso_getcpu' was not declared. Should it be static?
+arch/x86/xen/irq.c:20:6: sparse: symbol 'xen_force_evtchn_callback' was not declared. Should it be static?
+arch/x86/xen/time.c:34:8: sparse: symbol 'xen_runstate' was not declared. Should it be static?
+arch/x86/xen/smp.c:42:8: sparse: symbol 'xen_resched_irq' was not declared. Should it be static?
+arch/x86/xen/smp.c:534:6: sparse: symbol 'xen_send_IPI_mask' was not declared. Should it be static?
+arch/x86/xen/smp.c:543:6: sparse: symbol 'xen_send_IPI_all' was not declared. Should it be static?
+arch/x86/xen/smp.c:551:6: sparse: symbol 'xen_send_IPI_self' was not declared. Should it be static?
+arch/x86/xen/smp.c:559:6: sparse: symbol 'xen_send_IPI_mask_allbutself' was not declared. Should it be static?
+arch/x86/xen/smp.c:576:6: sparse: symbol 'xen_send_IPI_allbutself' was not declared. Should it be static?
+kernel/context_tracking.c:21:8: sparse: symbol 'context_tracking' was not declared. Should it be static?
+arch/x86/platform/uv/tlb_uv.c:120:8: sparse: symbol 'ptcstats' was not declared. Should it be static?
+arch/x86/platform/uv/tlb_uv.c:1219:6: sparse: symbol 'uv_bau_message_interrupt' was not declared. Should it be static?
+drivers/misc/sgi-xp/xp_main.c:68:25: sparse: symbol 'xpc_registrations' was not declared. Should it be static?
+drivers/iommu/intel_irq_remapping.c:49:5: sparse: symbol 'get_irte' was not declared. Should it be static?
 
 [smatch]
-drivers/media/dvb-core/dvb_frontend.c:338 dvb_frontend_swzigzag_autotune() warn: 'tmp' puts 576 bytes on stack
-drivers/media/dvb-core/dvb_frontend.c:435 dvb_frontend_swzigzag() warn: 'tmp' puts 576 bytes on stack
-drivers/media/dvb-frontends/dib7000m.c:964 dib7000m_autosearch_start() warn: 'schan' puts 576 bytes on stack
-drivers/media/dvb-frontends/dib7000p.c:1103 dib7000p_autosearch_start() warn: 'schan' puts 576 bytes on stack
-drivers/media/dvb-frontends/dib3000mc.c:555 dib3000mc_autosearch_start() warn: 'schan' puts 576 bytes on stack
-drivers/media/dvb-frontends/mb86a20s.c:595 mb86a20s_layer_bitrate() error: buffer overflow 'state->estimated_rate' 3 <= 3
-drivers/scsi/fnic/fnic_scsi.c:769 fnic_fcpio_icmnd_cmpl_handler() warn: was && intended here instead of ||?
-drivers/scsi/fnic/fnic_debugfs.c:135 fnic_trace_debugfs_open() warn: possible memory leak of 'fnic_dbg_prt'
-mm/slab_common.c:415 create_kmalloc_caches() warn: we never enter this loop
-drivers/gpio/gpiolib-acpi.c:125 acpi_gpiochip_request_interrupts() warn: unsigned 'irq' is never less than zero.
-drivers/atm/nicstar.c:1031 push_rxbufs() warn: unsigned 'id1' is never less than zero.
-drivers/atm/nicstar.c:1039 push_rxbufs() warn: unsigned 'id2' is never less than zero.
+arch/x86/kernel/microcode_intel_early.c:110 load_microcode() warn: 'mc_saved_tmp' puts 512 bytes on stack
+arch/x86/kernel/microcode_intel_early.c:320 get_matching_model_microcode() warn: 'mc_saved_tmp' puts 512 bytes on stack
+arch/x86/kernel/microcode_intel_early.c:499 save_mc_for_early() warn: 'mc_saved_tmp' puts 512 bytes on stack
+arch/x86/kernel/microcode_intel_early.c:704 save_microcode_in_initrd() warn: 'mc_saved' puts 512 bytes on stack
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
