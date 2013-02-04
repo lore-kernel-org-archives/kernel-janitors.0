@@ -1,31 +1,39 @@
-From: Anton Vorontsov <anton@enomsg.org>
-Date: Sat, 16 Feb 2013 21:27:57 +0000
-Subject: Re: [patch] generic-adc-battery: forever loop in gab_remove()
-Message-Id: <20130216212757.GB1741@lizard.sbx05280.losalca.wayport.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 04 Feb 2013 13:21:41 +0000
+Subject: Re: [PATCH] crypto: use ERR_CAST
+Message-Id: <20130204132141.GB21627@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130214072643.GA4690@elgon.mountain>
-In-Reply-To: <20130214072643.GA4690@elgon.mountain>
+References: <1358854166-3952-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1358854166-3952-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1358854166-3952-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2013 at 10:26:43AM +0300, Dan Carpenter wrote:
-> There is a forever loop calling iio_channel_release() because the
-> "chan < " part of the "chan < ARRAY_SIZE()" is missing.  This is in both
-> the error handling on probe and also in the remove function.
+On Tue, Jan 22, 2013 at 12:29:26PM +0100, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> The other thing is that it's possible for some of the elements of the
-> adc_bat->channel[chan] array to be an ERR_PTR().  I've changed them to
-> be NULL instead.  We're still not allowed to pass NULLs to
-> iio_channel_release() so I've added a check.
+> Replace PTR_ERR followed by ERR_PTR by ERR_CAST, to be more concise.
 > 
-> Finally, I removed an unused "chan = ARRAY_SIZE(gab_chan_name);"
-> statement as a small cleanup.
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> // <smpl>
+> @@
+> expression err,x;
+> @@
+> -       err = PTR_ERR(x);
+>         if (IS_ERR(x))
+> -                return ERR_PTR(err);
+> +                return ERR_CAST(x);
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied, thanks a lot!
-
-Anton
+Patch applied.  Thanks!
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
