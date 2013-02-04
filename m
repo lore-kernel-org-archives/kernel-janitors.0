@@ -1,78 +1,50 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Date: Tue, 05 Feb 2013 22:10:01 +0000
-Subject: Re: [media] dvb-usb: reading before start of array
-Message-Id: <20130205201001.60fe547e@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 04 Feb 2013 11:22:36 +0000
+Subject: [patch] IB/mlx4: fix bug unwinding on error in mlx4_ib_init_sriov()
+Message-Id: <20130204112236.GA8878@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130109073632.GD2454@elgon.mountain>
-In-Reply-To: <20130109073632.GD2454@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Michael Hunold <michael@mihu.de>, Jonathan Nieder <jrnieder@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jack Morgenstein <jackm-LDSdmyG8hGV8YrgS2mwiifqBs+8SCbDb@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Amir Vadai <amirv-VPRAkNaXOzVS1MOuV/RT9w@public.gmane.org>, Oren Duer <oren-VPRAkNaXOzVS1MOuV/RT9w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Em Wed, 9 Jan 2013 10:36:32 +0300
-Dan Carpenter <dan.carpenter@oracle.com> escreveu:
+We have to decrement "i" before calling mlx4_ib_free_demux_ctx() or we
+free something that wasn't allocated.  That's fine for free_pv_object()
+but it would lead to a NULL dereference calling
+mlx4_ib_free_demux_ctx().  The null dereference is because ->tun is NULL
+when we check:
 
-> This is a static checker fix.  In the ttusb_process_muxpack() we do:
-> 
-> 	cc = (muxpack[len - 4] << 8) | muxpack[len - 3];
-> 
-> That means if we pass a number less than 4 then we will either trigger a
-> checksum error message or read before the start of the array.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I can't test this.
-> 
-> This patch doesn't introduce any bugs, but I'm not positive this is the
-> right thing to do.  Perhaps it's better to print an error message?
+	if (!ctx->tun[i])
 
-I don't have any ttusb device either, but i suspect that printing an
-error message inside ttusb_process_muxpack() would be better.
+Also we didn't free ->sriov.demux[0] so it was a small leak.
 
-From what I understood, this code gets the URB data and groups it
-into one TS packet (188 bytes, typically). Then, it calls 
-ttusb_process_muxpack() in order to handle it.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  I have not tested this.
 
-So, the normal condition would be to always receive 188 bytes here
-(usual TS packet size), except if there's something wrong with the
-URB transfer.
-
-It seems, however, that there are other issues at the logic at
-ttusb_process_muxpack().
-
-For example, from this code snippet:
-
-        for (i = 0; i < len; i += 2)
-                csum ^= le16_to_cpup((__le16 *) (muxpack + i));
-
-an odd value for len also seems to cause troubles at this logic.
-
-so, IMHO, the better would be to print a warning if the value is
-odd or smaller than 4, and discard it.
-
-> 
-> diff --git a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-> index 5b682cc..99a2fd1 100644
-> --- a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-> +++ b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-> @@ -709,7 +709,7 @@ static void ttusb_process_frame(struct ttusb *ttusb, u8 * data, int len)
->  			 * if length is valid and we reached the end:
->  			 * goto next muxpack
->  			 */
-> -				if ((ttusb->muxpack_ptr >= 2) &&
-> +				if ((ttusb->muxpack_ptr >= 4) &&
->  				    (ttusb->muxpack_ptr =
->  				     ttusb->muxpack_len)) {
->  					ttusb_process_muxpack(ttusb,
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
--- 
-
-Cheers,
-Mauro
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index 0a903c1..934792c 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1999,16 +1999,17 @@ int mlx4_ib_init_sriov(struct mlx4_ib_dev *dev)
+ 			goto demux_err;
+ 		err = mlx4_ib_alloc_demux_ctx(dev, &dev->sriov.demux[i], i + 1);
+ 		if (err)
+-			goto demux_err;
++			goto free_pv;
+ 	}
+ 	mlx4_ib_master_tunnels(dev, 1);
+ 	return 0;
+ 
++free_pv:
++	free_pv_object(dev, mlx4_master_func_num(dev->dev), i + 1);
+ demux_err:
+-	while (i > 0) {
++	while (--i >= 0) {
+ 		free_pv_object(dev, mlx4_master_func_num(dev->dev), i + 1);
+ 		mlx4_ib_free_demux_ctx(&dev->sriov.demux[i]);
+-		--i;
+ 	}
+ 	mlx4_ib_device_unregister_sysfs(dev);
+ 
