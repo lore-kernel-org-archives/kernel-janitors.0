@@ -1,399 +1,46 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 05 Feb 2013 16:15:20 +0000
-Subject: build regressions 2013-02-05
-Message-Id: <51113018.mMlbqnZU1JltxNIQ%fengguang.wu@intel.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Date: Mon, 04 Feb 2013 01:44:36 +0000
+Subject: Re: [patch] PM: intel_powerclamp: off by one in start_power_clamp()
+Message-Id: <1359942276.2250.32.camel@rzhang1-mobl4>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130124085122.GA3547@elgon.mountain>
+In-Reply-To: <20130124085122.GA3547@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-pm@vger.kernel.org, Jacob Pan <jacob.jun.pan@linux.intel.com>, Arjan van de Ven <arjan@linux.intel.com>, kernel-janitors@vger.kernel.org
 
-[errors]
-ERROR: "inet_csk_get_port" [net/wireless/cfg80211.ko] undefined!
-drivers/net/can/sja1000/sja1000_of_platform.c:126:13: error: 'NO_IRQ' undeclared (first use in this function)
-ERROR: "backlight_force_update" [drivers/gpu/drm/radeon/radeon.ko] undefined!
-ERROR: "radeon_legacy_set_backlight_level" [drivers/gpu/drm/radeon/radeon.ko] undefined!
-ERROR: "radeon_legacy_get_backlight_level" [drivers/gpu/drm/radeon/radeon.ko] undefined!
-/c/kernel-tests/src/x86/include/linux/kvm_host.h:333:34: error: 'KVM_USER_MEM_SLOTS' undeclared here (not in a function)
-drivers/block/rsxx/core.c:322:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'rsxx_pci_probe'
-drivers/block/rsxx/core.c:513:23: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'rsxx_pci_remove'
-drivers/block/rsxx/core.c:610:12: error: 'rsxx_pci_probe' undeclared here (not in a function)
-drivers/block/rsxx/core.c:611:2: error: implicit declaration of function '__devexit_p' [-Werror=implicit-function-declaration]
-drivers/block/rsxx/core.c:611:25: error: 'rsxx_pci_remove' undeclared here (not in a function)
-make[2]: *** No rule to make target `kernel/kfifo.c', needed by `Documentation/DocBook/kernel-api.xml'.
-fs/f2fs/file.c:650:2: error: implicit declaration of function 'compat_ptr' [-Werror=implicit-function-declaration]
+On Thu, 2013-01-24 at 11:51 +0300, Dan Carpenter wrote:
+> This value has already been clamped correctly to 0 through 49 in
+> powerclamp_set_cur_state() so this patch doesn't actually change
+> anything.  But we should fix it anyway for consistency.
+> 
+> set_target_ratio is used as an offset into an array with
+> MAX_TARGET_RATIO (50) elements.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[warnings]
-include/linux/hashtable.h:22:1: warning: this is the location of the previous definition
-include/linux/hashtable.h:22:1: warning: this is the location of the previous definition
-fs/f2fs/super.c:391: warning: format '%u' expects type 'unsigned int', but argument 4 has type 'long unsigned int'
-net/netfilter/nfnetlink.c:66: warning: 'nfnl_get_lock' defined but not used
-drivers/gpu/drm/qxl/qxl_cmd.c:180:5: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint64_t' [-Wformat]
-drivers/block/rsxx/core.c:51:19: warning: 'rsxx_disk_ida' defined but not used [-Wunused-variable]
-drivers/block/rsxx/core.c:52:19: warning: 'rsxx_ida_lock' defined but not used [-Wunused-variable]
-drivers/firewire/core-device.c:1029:24: warning: 'minor' may be used uninitialized in this function [-Wuninitialized]
-kernel/workqueue.c:463:2: warning: 'idr_pre_get' is deprecated (declared at include/linux/idr.h:144) [-Wdeprecated-declarations]
-kernel/workqueue.c:464:2: warning: 'idr_get_new' is deprecated (declared at include/linux/idr.h:174) [-Wdeprecated-declarations]
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_RX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:721): Enum value 'STATION_INFO_TX_BYTES64' not described in enum 'station_info_flags'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-Warning(/include/net/cfg80211.h:2361): No description found for parameter 'tcp'
-fs/f2fs/super.c:391:4: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'long unsigned int' [-Wformat]
-drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c:204:18: warning: unused variable 'pdev' [-Wunused-variable]
-drivers/net/wimax/i2400m/rx.c:1349:17: warning: unused variable 'dev' [-Wunused-variable]
-drivers/video/backlight/max8925_bl.c:177:3: warning: statement with no effect [-Wunused-value]
-drivers/media/tuners/tda18212.c:301:2: warning: 'val' may be used uninitialized in this function [-Wmaybe-uninitialized]
+applied to thermal-next.
 
-[sparse]
-drivers/iommu/irq_remapping.c:146:6: sparse: symbol 'eoi_ioapic_pin_remapped' was not declared. Should it be static?
-arch/x86/kernel/microcode_intel_early.c:31:15: sparse: symbol 'mc_saved_in_initrd' was not declared. Should it be static?
-arch/x86/kernel/microcode_intel_early.c:35:3: sparse: symbol 'mc_saved_data' was not declared. Should it be static?
-include/trace/events/xen.h:327:1: sparse: expression using sizeof bool
-include/trace/events/xen.h:345:1: sparse: expression using sizeof bool
-include/trace/events/xen.h:424:1: sparse: expression using sizeof bool
-mm/memory_hotplug.c:1755:15: sparse: memset with byte count of 156360
-drivers/staging/vt6656/card.c:798:26: sparse: constant 0xffffffff00000000U is so big it is unsigned long
-drivers/firewire/core-cdev.c:490:33: sparse: incorrect type in initializer (different base types)
-fs/f2fs/file.c:650:39: sparse: cast from unknown type
-drivers/gpu/drm/qxl/qxl_release.c:103:5: sparse: symbol 'qxl_release_bo_alloc' was not declared. Should it be static?
-fs/nfsd/nfscache.c:43:17: sparse: symbol 'nfsd_reply_cache_shrinker' was not declared. Should it be static?
-arch/x86/kernel/head64.c:52:12: sparse: symbol 'early_make_pgtable' was not declared. Should it be static?
-arch/x86/kernel/microcode_intel.c:130:5: sparse: symbol 'apply_microcode' was not declared. Should it be static?
-fs/f2fs/file.c:650:54: sparse: undefined identifier 'compat_ptr'
-drivers/block/rsxx/core.c:322:22: sparse: Expected ; at end of declaration
-drivers/block/rsxx/core.c:322:22: sparse: got rsxx_pci_probe
-drivers/block/rsxx/core.c:329:9: sparse: Expected ) in function declarator
-drivers/block/rsxx/core.c:329:9: sparse: got &
-drivers/block/rsxx/core.c:341:30: sparse: got failed_ida_get
-drivers/block/rsxx/core.c:342:17: sparse: Expected ; at the end of type declaration
-drivers/block/rsxx/core.c:350:17: sparse: got goto
-drivers/block/rsxx/core.c:373:13: sparse: got (
-drivers/block/rsxx/core.c:376:22: sparse: got failed_iomap
-drivers/block/rsxx/core.c:396:25: sparse: got dev_warn
+BTW, Jacob, it would be good to get your comments on this as you're the
+author of this driver.
 
-[smatch]
-drivers/base/regmap/regmap-spi.c:90 regmap_spi_async_alloc() error: potential null dereference 'async_spi'.  (kzalloc returns null)
-drivers/gpu/drm/qxl/qxl_ioctl.c:194 qxl_execbuffer_ioctl() error: potential NULL dereference 'reloc_src_bo'.
-drivers/gpu/drm/qxl/qxl_ioctl.c:80 apply_surf_reloc() warn: variable dereferenced before check 'src' (see line 78)
-drivers/mfd/abx500-core.c:159 abx500_dump_all_banks() warn: 'dummy_child' puts 632 bytes on stack
+thanks,
+rui
+> 
+> diff --git a/drivers/thermal/intel_powerclamp.c b/drivers/thermal/intel_powerclamp.c
+> index a85ff38..ab3ed90 100644
+> --- a/drivers/thermal/intel_powerclamp.c
+> +++ b/drivers/thermal/intel_powerclamp.c
+> @@ -504,7 +504,7 @@ static int start_power_clamp(void)
+>  		return -EINVAL;
+>  	}
+>  
+> -	set_target_ratio = clamp(set_target_ratio, 0U, MAX_TARGET_RATIO);
+> +	set_target_ratio = clamp(set_target_ratio, 0U, MAX_TARGET_RATIO - 1);
+>  	/* prevent cpu hotplug */
+>  	get_online_cpus();
+>  
 
-[cppcheck]
-kernel/rcutree.h:73: error: "CONFIG_RCU_FANOUT insufficient for NR_CPUS"
 
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
