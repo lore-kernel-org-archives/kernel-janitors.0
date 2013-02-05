@@ -1,109 +1,78 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 16 Feb 2013 20:48:37 +0000
-Subject: build regressions 2013-02-16
-Message-Id: <511ff0a5.0iy8n0oSfDTTrIaN%fengguang.wu@intel.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date: Tue, 05 Feb 2013 22:10:01 +0000
+Subject: Re: [media] dvb-usb: reading before start of array
+Message-Id: <20130205201001.60fe547e@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130109073632.GD2454@elgon.mountain>
+In-Reply-To: <20130109073632.GD2454@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Michael Hunold <michael@mihu.de>, Jonathan Nieder <jrnieder@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-include/linux/frontswap.h:100:24: error: 'frontswap_key' undeclared (first use in this function)
-include/linux/frontswap.h:109:24: error: 'frontswap_key' undeclared (first use in this function)
-include/linux/cleancache.h:95:24: error: called object '0' is not a function
-include/linux/cleancache.h:102:24: error: called object '0' is not a function
-include/linux/cleancache.h:110:24: error: called object '0' is not a function
-include/linux/cleancache.h:116:24: error: called object '0' is not a function
-drivers/mfd/as3711.c:136:3: error: implicit declaration of function 'of_device_is_available' [-Werror=implicit-function-declaration]
-arch/ia64/kernel/init_task.c:38:11: error: 'RR_TIMESLICE' undeclared here (not in a function)
-arch/ia64/kernel/init_task.c:38:11: error: 'MAX_PRIO' undeclared here (not in a function)
-/c/kernel-tests/src/sparc64/include/linux/list_lru.h:75:1: error: expected identifier or '(' before '{' token
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1457:2: error: 'GPIO_PORTPA1' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1457:2: error: array index in initializer not of integer type
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1457:2: error: 'PORTPA1_DATA' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1458:2: error: 'GPIO_PORTPA0' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1458:2: error: array index in initializer not of integer type
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1458:2: error: 'PORTPA0_DATA' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1461:2: error: 'GPIO_PORTPB22' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1461:2: error: array index in initializer not of integer type
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1461:2: error: 'PORTPB22_DATA' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1462:2: error: 'GPIO_PORTPB21' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1462:2: error: array index in initializer not of integer type
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1462:2: error: 'PORTPB21_DATA' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1463:2: error: 'GPIO_PORTPB20' undeclared here (not in a function)
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1463:2: error: array index in initializer not of integer type
-drivers/pinctrl/sh-pfc/pfc-sh7269.c:1463:2: error: 'PORTPB20_DATA' undeclared here (not in a function)
-include/linux/memcontrol.h:655:2: error: implicit declaration of function 'page_to_nid' [-Werror=implicit-function-declaration]
-include/linux/mm.h:690:19: error: static declaration of 'page_to_nid' follows non-static declaration
-arch/sparc/include/asm/pgtable_32.h:357:40: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:362:42: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:367:1: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:369:10: error: 'swp_entry_t' undeclared (first use in this function)
-arch/sparc/include/asm/pgtable_32.h:369:23: error: expected ';' before '{' token
-arch/sparc/include/asm/pgtable_32.h:357:40: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:362:42: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:367:1: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:369:10: error: 'swp_entry_t' undeclared (first use in this function)
-arch/sparc/include/asm/pgtable_32.h:369:23: error: expected ';' before '{' token
-include/linux/mm.h:308:17: error: 'VMALLOC_START' undeclared (first use in this function)
-include/linux/mm.h:308:41: error: 'VMALLOC_END' undeclared (first use in this function)
-include/linux/mm.h:514:3: error: implicit declaration of function 'pte_mkwrite' [-Werror=implicit-function-declaration]
-arch/sparc/include/asm/pgtable_32.h:251:21: error: conflicting types for 'pte_mkwrite'
-include/linux/mm.h:308:17: error: 'VMALLOC_START' undeclared (first use in this function)
-include/linux/mm.h:308:41: error: 'VMALLOC_END' undeclared (first use in this function)
-include/linux/mm.h:514:3: error: implicit declaration of function 'pte_mkwrite' [-Werror=implicit-function-declaration]
-arch/sparc/include/asm/pgtable_32.h:251:21: error: conflicting types for 'pte_mkwrite'
-include/linux/list_lru.h:74:1: error: 'lru_node_of_index' declared 'static' but never defined [-Werror=unused-function]
-include/linux/memcontrol.h:655:2: error: implicit declaration of function 'page_to_nid' [-Werror=implicit-function-declaration]
-include/linux/mm.h:690:19: error: static declaration of 'page_to_nid' follows non-static declaration
-include/linux/list_lru.h:74:1: error: 'lru_node_of_index' declared 'static' but never defined [-Werror=unused-function]
-include/linux/list_lru.h:74:1: error: 'lru_node_of_index' declared 'static' but never defined [-Werror=unused-function]
-arch/sparc/include/asm/pgtable_32.h:357:40: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:362:42: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:367:1: error: unknown type name 'swp_entry_t'
-arch/sparc/include/asm/pgtable_32.h:369:10: error: 'swp_entry_t' undeclared (first use in this function)
-arch/sparc/include/asm/pgtable_32.h:369:23: error: expected ';' before '{' token
-(.text+0x2aa56): undefined reference to `__frontswap_init'
-(.text+0x2c2a8): undefined reference to `__frontswap_invalidate_area'
-arch/x86/mm/extable.c:61:21: error: 'cpu' undeclared (first use in this function)
-/c/kernel-tests/src/stable/include/linux/list_lru.h:75:1: error: expected identifier or '(' before '{' token
-(.text+0x5ff3): undefined reference to `__cleancache_invalidate_fs'
-super.c:(.text+0x9fa8d): undefined reference to `__cleancache_init_fs'
-super.c:(.text+0xdd576): undefined reference to `__cleancache_init_fs'
+Em Wed, 9 Jan 2013 10:36:32 +0300
+Dan Carpenter <dan.carpenter@oracle.com> escreveu:
 
-[warnings]
-drivers/mmc/core/host.c:327: warning: 'bus_width' is used uninitialized in this function
-drivers/firmware/efi-capsule.c:179:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'unsigned int' [-Wformat]
-drivers/firmware/efi-capsule.c:189:12: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-drivers/firmware/efi-capsule.c:238:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-drivers/firmware/efi-capsule.c:247:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-drivers/video/backlight/as3711_bl.c:356:3: warning: suggest parentheses around comparison in operand of '^' [-Wparentheses]
-drivers/mmc/core/host.c:327:2: warning: 'bus_width' may be used uninitialized in this function [-Wuninitialized]
-net/netfilter/nf_conntrack_sip.c:709:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/nfsd/nfscache.c:266:9: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-net/ipv4/xfrm4_mode_tunnel.c:145:2: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-net/ipv6/xfrm6_mode_tunnel.c:72:2: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-/c/kernel-tests/src/sparc64/include/linux/memcontrol.h:396:1: warning: no return statement in function returning non-void [-Wreturn-type]
-drivers/staging/rtl8187se/r8185b_init.c:870:28: warning: unused variable 'ieee' [-Wunused-variable]
-mm/cleancache.c:139:1: warning: label 'out' defined but not used [-Wunused-label]
-WARNING: drivers/staging/zcache/zcache.o(.text+0x810f): Section mismatch in reference from the function ramster_init() to the variable .init.data:use_frontswap_selfshrink
-/c/kernel-tests/src/stable/include/linux/memcontrol.h:396:1: warning: no return statement in function returning non-void [-Wreturn-type]
-fs/btrfs/volumes.c:1508:1: warning: label 'error_close' defined but not used [-Wunused-label]
-drivers/xen/tmem.c:234:13: warning: 'disable_selfballooning' defined but not used [-Wunused-variable]
-WARNING: drivers/staging/zcache/zcache.o(.text+0x1448): Section mismatch in reference from the (unknown reference) (unknown) to the variable .init.data:use_frontswap_selfshrink
+> This is a static checker fix.  In the ttusb_process_muxpack() we do:
+> 
+> 	cc = (muxpack[len - 4] << 8) | muxpack[len - 3];
+> 
+> That means if we pass a number less than 4 then we will either trigger a
+> checksum error message or read before the start of the array.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I can't test this.
+> 
+> This patch doesn't introduce any bugs, but I'm not positive this is the
+> right thing to do.  Perhaps it's better to print an error message?
 
-[sparse]
-kernel/power/console.c:18:1: sparse: symbol 'vt_switch_mutex' was not declared. Should it be static?
-kernel/power/console.c:26:1: sparse: symbol 'pm_vt_switch_list' was not declared. Should it be static?
-drivers/vfio/pci/vfio_pci_config.c:600:49: sparse: incorrect type in argument 2 (different base types)
+I don't have any ttusb device either, but i suspect that printing an
+error message inside ttusb_process_muxpack() would be better.
 
-[smatch]
-net/mac80211/iface.c:758 ieee80211_do_stop() error: we previously assumed 'sdata->dev' could be null (see line 736)
-mm/cleancache.c:221 get_poolid_from_fake() error: buffer overflow 'fs_poolid_map' 32 <= 999
-mm/cleancache.c:386 __cleancache_invalidate_fs() error: buffer overflow 'fs_poolid_map' 32 <= 999
-mm/cleancache.c:387 __cleancache_invalidate_fs() error: buffer overflow 'fs_poolid_map' 32 <= 999
+From what I understood, this code gets the URB data and groups it
+into one TS packet (188 bytes, typically). Then, it calls 
+ttusb_process_muxpack() in order to handle it.
 
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+So, the normal condition would be to always receive 188 bytes here
+(usual TS packet size), except if there's something wrong with the
+URB transfer.
+
+It seems, however, that there are other issues at the logic at
+ttusb_process_muxpack().
+
+For example, from this code snippet:
+
+        for (i = 0; i < len; i += 2)
+                csum ^= le16_to_cpup((__le16 *) (muxpack + i));
+
+an odd value for len also seems to cause troubles at this logic.
+
+so, IMHO, the better would be to print a warning if the value is
+odd or smaller than 4, and discard it.
+
+> 
+> diff --git a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
+> index 5b682cc..99a2fd1 100644
+> --- a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
+> +++ b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
+> @@ -709,7 +709,7 @@ static void ttusb_process_frame(struct ttusb *ttusb, u8 * data, int len)
+>  			 * if length is valid and we reached the end:
+>  			 * goto next muxpack
+>  			 */
+> -				if ((ttusb->muxpack_ptr >= 2) &&
+> +				if ((ttusb->muxpack_ptr >= 4) &&
+>  				    (ttusb->muxpack_ptr =
+>  				     ttusb->muxpack_len)) {
+>  					ttusb_process_muxpack(ttusb,
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+-- 
+
+Cheers,
+Mauro
