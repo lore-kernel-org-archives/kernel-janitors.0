@@ -1,36 +1,49 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 23 Feb 2013 16:07:58 +0000
-Subject: Re: [PATCH] scripts/coccinelle: find constant additions that could be bit ors
-Message-Id: <alpine.DEB.2.02.1302231706060.2085@localhost6.localdomain6>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Wed, 06 Feb 2013 17:59:12 +0000
+Subject: [PATCH] mfd: lpc_ich: Fix arguments to kmalloc
+Message-Id: <1360173659-22409-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1359821995-27910-1-git-send-email-Julia.Lawall@lip6.fr>
- <20130222104431.GF12402@pobox.suse.cz> <20130223150521.GK9138@mwanda>
-In-Reply-To: <20130223150521.GK9138@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: ptyser@xes-inc.com, sameo@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Sat, 23 Feb 2013, Dan Carpenter wrote:
+This patch changes the order of the arguments to kmalloc,
+the allocation flag should be the second argument.
 
-> On Fri, Feb 22, 2013 at 11:44:31AM +0100, Michal Marek wrote:
-> > On Sat, Feb 02, 2013 at 05:19:55PM +0100, Julia Lawall wrote:
-> > > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> > > 
-> > > Semantic patch (http://coccinelle.lip6.fr/) to check for constants that are
-> > > added but are used elsewhere as bitmasks.
-> > > 
-> > > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > Applied to kbuild.git#misc.
-> > 
-> 
-> I'm not sure we want to do this.  The one patch which was sent with
-> this script wasn't applied.
+Sparse warnings:
 
-I think that the view on it was that if it isn't broken, don't fix it.  
-But if the rules that are being added to the kernel are primarily being 
-used for new code, then it could be reasonable for developers to consider 
-whether they would really rather use | rather than the confusing +.
+drivers/mfd/lpc_ich.c:881:24: warning:
+	incorrect type in argument 1 (different base types)
+	drivers/mfd/lpc_ich.c:881:24:
+	expected unsigned long [unsigned] [usertype] size
+	drivers/mfd/lpc_ich.c:881:24:    got restricted gfp_t
 
-julia
+drivers/mfd/lpc_ich.c:881:36: warning:
+	incorrect type in argument 2 (different base types)
+	drivers/mfd/lpc_ich.c:881:36:
+	expected restricted gfp_t [usertype] flags
+	drivers/mfd/lpc_ich.c:881:36:    got unsigned long
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/mfd/lpc_ich.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
+index a0cfdf9..3af8590 100644
+--- a/drivers/mfd/lpc_ich.c
++++ b/drivers/mfd/lpc_ich.c
+@@ -878,7 +878,7 @@ static int lpc_ich_probe(struct pci_dev *dev,
+ 	int ret;
+ 	bool cell_added = false;
+ 
+-	priv = kmalloc(GFP_KERNEL, sizeof(struct lpc_ich_priv));
++	priv = kmalloc(sizeof(struct lpc_ich_priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-- 
+1.7.10.4
+
