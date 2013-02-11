@@ -1,91 +1,34 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 12 Feb 2013 09:23:01 +0000
-Subject: Re: [patch] ALSA: hda/ca0132 - fix error handling for dsp_chip_to_dsp_addx()
-Message-Id: <s5hehglophm.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Feb 2013 19:03:18 +0000
+Subject: [patch] [SCSI] dc395x: uninitialized variable in device_alloc()
+Message-Id: <20130211190317.GA19768@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130211190524.GC19768@elgon.mountain>
-In-Reply-To: <20130211190524.GC19768@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Ian Minett <ian_minett@creativelabs.com>, kernel-janitors@vger.kernel.org
+To: Oliver Neukum <oliver@neukum.org>
+Cc: Ali Akcaagac <aliakc@web.de>, Jamie Lenehan <lenehan@twibble.org>, "James E.J. Bottomley" <JBottomley@parallels.com>, dc395x@twibble.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Mon, 11 Feb 2013 22:05:24 +0300,
-Dan Carpenter wrote:
-> 
-> The error handling here won't work on 64 bit systems.
-> INVALID_CHIP_ADDRESS is an unsigned long defined like this:
-> 
-> #define INVALID_CHIP_ADDRESS        (~0UL)
-> 
-> But we truncate the high bits away before returning and then we save it
-> in an unsigned 32bit and then we compare it against the unsigned long
-> version.
-> 
-> I've changed everything to unsigned long.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This bug was introduced back in bitkeeper days in 2003.  We use
+"dcb->dev_mode" before it has been initialized.
 
-Thanks for finding this.
-Actually the DSP address field seems 32bit long, so it's simply a
-wrong define for INVALID_CHIP_ADDRESS to use unsigned long.
-I fixed the definition instead in the patch below.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
----
-From: Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH] ALSA: hda/ca0132 - Fix type of INVALID_CHIP_ADDRESS
-
-The chip address is 32bit long but INVALID_CHIP_ADDRESS is defined as
-an unsigned long.  This makes dsp_chip_to_dsp_addx() misbehaving on
-64bit architectures.  Fix the INVALID_CHIP_ADDRESS definition to be
-32bit.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- sound/pci/hda/ca0132_regs.h  | 2 +-
- sound/pci/hda/patch_ca0132.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/pci/hda/ca0132_regs.h b/sound/pci/hda/ca0132_regs.h
-index 831ca9c..07e7609 100644
---- a/sound/pci/hda/ca0132_regs.h
-+++ b/sound/pci/hda/ca0132_regs.h
-@@ -337,7 +337,7 @@
- #define DSPDMAC_ACTIVE_WFR_MASK        0xFFF000
- 
- #define DSP_AUX_MEM_BASE            0xE000
--#define INVALID_CHIP_ADDRESS        (~0UL)
-+#define INVALID_CHIP_ADDRESS        (~0U)
- 
- #define X_SIZE  (XRAM_XRAM_CHANNEL_COUNT   * XRAM_XRAM_CHAN_INCR)
- #define Y_SIZE  (YRAM_YRAM_CHANNEL_COUNT   * YRAM_YRAM_CHAN_INCR)
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index b1e099a..fe07664 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -1598,7 +1598,7 @@ static unsigned int dsp_chip_to_dsp_addx(unsigned int chip_addx,
- 		return Y_OFF(chip_addx);
- 	}
- 
--	return (unsigned int)INVALID_CHIP_ADDRESS;
-+	return INVALID_CHIP_ADDRESS;
- }
- 
- /*
-@@ -4540,7 +4540,7 @@ static int ca0132_init(struct hda_codec *codec)
- 	int i;
- 
- 	spec->dsp_state = DSP_DOWNLOAD_INIT;
--	spec->curr_chip_addx = (unsigned int)INVALID_CHIP_ADDRESS;
-+	spec->curr_chip_addx = INVALID_CHIP_ADDRESS;
- 
- 	snd_hda_power_up(codec);
- 
--- 
-1.8.1.2
-
+diff --git a/drivers/scsi/dc395x.c b/drivers/scsi/dc395x.c
+index 865c64f..fed486bf 100644
+--- a/drivers/scsi/dc395x.c
++++ b/drivers/scsi/dc395x.c
+@@ -3747,13 +3747,13 @@ static struct DeviceCtlBlk *device_alloc(struct AdapterCtlBlk *acb,
+ 	dcb->max_command = 1;
+ 	dcb->target_id = target;
+ 	dcb->target_lun = lun;
++	dcb->dev_mode = eeprom->target[target].cfg0;
+ #ifndef DC395x_NO_DISCONNECT
+ 	dcb->identify_msg  	    IDENTIFY(dcb->dev_mode & NTC_DO_DISCONNECT, lun);
+ #else
+ 	dcb->identify_msg = IDENTIFY(0, lun);
+ #endif
+-	dcb->dev_mode = eeprom->target[target].cfg0;
+ 	dcb->inquiry7 = 0;
+ 	dcb->sync_mode = 0;
+ 	dcb->min_nego_period = clock_period[period_index];
