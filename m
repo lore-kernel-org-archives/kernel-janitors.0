@@ -1,26 +1,44 @@
-From: Grace Efuna <grace0efuna@suomi24.fi>
-Date: Thu, 21 Feb 2013 02:11:57 +0000
-Subject: Hello dear,
-Message-Id: <30074794.435691361412717244.JavaMail.defaultUser@defaultHost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Feb 2013 07:14:32 +0000
+Subject: Smatch 1.58 released
+Message-Id: <20130211071432.GM4937@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, smatch@vger.kernel.org
 
+Smatch is a C static analysis tool, but with a lot of kernel
+specific checks.
 
+The big thing in this release is that the type information has now
+been pushed to the lowest levels.  It broke a bunch of stuff
+including to compiles on older versions of GCC but Emil Tantilov
+fixed that (thanks!).  It should be Ok now.
 
+Other changes are that the cross function tracking has been
+improved (this requires the database).  There is a new check for
+sprintf() overflows.
 
---
-Hello dear,
+The way to use Smatch is:
 
-I am miss  Grace Efuna 24years and single, hope am not offending you by 
-expressing my feelings of having a friendship or relationship with you, can you 
-please write to me back with my email below for more communication and exchange 
-of pictures to know more about each other for a better unions-hip.
+	git clone git://repo.or.cz/smatch.git
+	cd smatch
+	make
+	cd ~/path/to/kernel
 
-Thanks,
+	[ This next step is optional if you want to build the
+	  database.  If you build it several times the database
+  	  becomes more complete. ]
+  	~/path/to/smatch/smatch_scripts/build_kernel_data.sh
 
-Yours Grace.
---
+	~/path/to/smatch/smatch_scripts/test_kernel.sh
 
+It creates warns.txt file with all the warnings.  Or alternatively
+if you just want to check one file then the command is:
+
+	~/progs/smatch/devel/smatch_scripts/kchecker drivers/file.c
+
+regards,
+dan carpenter
