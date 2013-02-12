@@ -1,67 +1,111 @@
-From: Mark Ruijter <mruijter@gmail.com>
-Date: Tue, 12 Feb 2013 08:22:33 +0000
-Subject: Preparing btier for kernel inclusion
-Message-Id: <5119FBC9.7030308@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Feb 2013 09:47:02 +0000
+Subject: Re: Preparing btier for kernel inclusion
+Message-Id: <20130212094702.GN4937@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5119FBC9.7030308@gmail.com>
+In-Reply-To: <5119FBC9.7030308@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+This is staging quality code.  (Not very good).  The staging tree is
+closed for the 3.9 window so it couldn't make it in until 3.10.
 
-Hi all,
+*) Clean up the indenting.
+*) Run checkpatch.pl over this and fix the warnings.
+*) Don't include .c files into other .c files.
+*) Get rid of homemade print macros like TIERERR().  Use dev_err()
+   or pr_err().
+*) Delete all compat code with older kernels like
+	#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0)
+*) Change Yoda code to the if (NULL = odinfo) to normal format
+	if (!odinfo)
+		return -ENOMEM;
+   Or "if (NULL != dev->backdev[0]->blocklist)" should be:
+	if (dev->backdev[0]->blocklist)
+		memcpy( ...
+*) Run Sparse and Smatch over the code.  This should complain about
+   some poor error handling.  For example, printing "no memory"
+   followed by a dereference instead of actual error handling.  Or
+   in the ioctl() it returns with the lock held.
 
-Btier is a kernel based block device that supports automatic policy=20
-based data migration.
-It allows you to assemble a virtual block device from other block=20
-devices of even files.
+*) Make magic numbers a define.
+	/* Allow max 24 devices to be configured */ 
+	devicenames = kmalloc(sizeof(char) * 26, GFP_KERNEL);
 
-For example you can assemble a btier block device that consists of :=20
-/dev/ssd:/dev/LSIsasArray:/mnt/myNetApp/nfs-disk03.img
-Since btier uses the ssd as part of the whole device and not merely as=20
-cache the capacity of the SSD is a part of the total capacity.
-Btier will differentiate between random and sequential IO. And will=20
-therefore redirect random IO to the most suitable device.
-Which in this case would be the SSD.
+	for (count = 0; count <= 25; count++) {
+		devicenames[count] = 97 + count;
+	}
 
-Another trick that btier uses to speed up random IO is to write it=20
-sequentially.
+   Where does the 97 come from?  Also it's hella messy to use
+   24, 25, and 26!  The for loop should be written in the normal
+   way:
 
-Btier performance compared to SSD cache projects (tested with fio,=20
-details on lessfs.com)
-grep iops bcache.txt
-Jobs: 1 (f=3D1): [___w] [87.4% done] [0K/142.3M /s] [0 /35.6K iops] [eta=20
-00m:34s]
-   read : io=12288MB, bw"8324KB/s, iopsW080 , runt=3D 55110msec
-   read : io=11250MB, bw=191989KB/s, iopsG997 , runt=3D 60001msec
-   write: ios94.5MB, bw=126195KB/s, iops1548 , runt=3D 60002msec
-   write: ioy24.2MB, bw=135237KB/s, iops3809 , runt=3D 60001msec
-root@ctrl01:/opt/fio# grep iops eio.txt
-   read : io=12288MB, bw%4782KB/s, iopsc695 , runt=3D 49387msec
-   read : ioI42.9MB, bw=84356KB/s, iops!089 , runt=3D 60001msec
-   write: io=11134MB, bw=190018KB/s, iopsG504 , runt=3D 60001msec
-   write: iow80.8MB, bw=132788KB/s, iops3197 , runt=3D 60001msec
-root@ctrl01:/opt/fio# grep iops btier.txt
-   read : io=12288MB, bwD8333KB/s, iops=112083 , runt=3D 28066msec
-   read : io$39.6MB, bwA635KB/s, iops=10408 , runt=3D 60001msec
-   write: io=12288MB, bwI3041KB/s, iops=123260 , runt=3D 25521msec
-   write: io=9172.2MB, bw=156550KB/s, iops9137 , runt=3D 60001msec
+	#define MAX_BTEIR_DEVS 26
 
-Although performance is always important, btier is _not_ an SSD cache=20
-project.
-Instead it is much more about ILM.
+	for (i = 0; i < MAX_BTEIR_DEVS; i++) {
 
-Before considering to submit btier for inclusion it would be nice if the=20
-code is looked at from a janitors perspective.
-You can find the code at : http://sourceforge.net/projects/tier/files/=20
-and general information at : http://www.lessfs.com
+   Btw, use "i" instead of "count" for the iterator.  Use "count"
+   for counting.
 
-I look forward to hearing from you.
-Thanks in advance for any feedback that you would like to share.
+   Some of the magic numbers are just wrong:
+	res = snprintf(buf, 1023, "%s\n", msg);
+   1023 should have been PAGE_SIZE.  If the size argument to
+   snprintf() is non-zero then snprintf() adds a NUL terminator.
+   No one ever creates a 1023 char buffer.  Also the return value
+   is the number of bytes that would have been printed if there
+   were enough space (not counting the NUL terminator).  Consider
+   using scnprintf().
 
-Mark Ruijter
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+*) Use normal kernel style comments.
+	/* single line comment */
+
+	/*
+	 * Multi line
+	 * comment.
+	 */
+
+*) Some of functions could use more comments.  What does
+   allocated_on_device() return?  I would have assumed from the name
+   that it returns a bool, but actually it returns a u64.
+
+*) It scares me that when list_for_each_safe() is used
+   unnecessarily.  A lot of people assume it has to do with locking
+   but it doesn't.  It's for when you remove a list item.  This is
+   wrong:
+
+	list_for_each_safe(pos, q, &device_list) {
+		count++;
+	}
+
+*) Put a blank line between declarations and code.
+
+*) Use temp variables to make lines shorter:
+
+-	dev->backdev[count]->bitlistsize -		dev->backdev[count]->devmagic->bitlistsize;
+
++	back = dev->backdev[count];
++	back->bitlistsize = back->devmagic->bitlistsize;
+
+*) Never return -1 as a error code.  Return proper error codes at
+   every level.
+
+*) The TIER_DEREGISTER ioctl takes a kernel pointer from user space
+   which is a bug.  It should be doing copy_from_user().
+
+There are a lot of other messy things about this code, but that
+should be enough to get started.
+
+My advice is that people will take you a lot more seriously if you
+clean it up and make a good first impression.  The block layer
+people are crotchety.
+
+Also, when you send patches for review, send it as a patch which can
+be reviewed without leaving the email client.  That way we can put
+comments inline.
+
+regards,
+dan carpenter
+
