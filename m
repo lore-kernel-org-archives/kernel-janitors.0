@@ -1,33 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Feb 2013 22:13:29 +0000
-Subject: Re: [patch 1/2] wlan-ng: clean up prism2sta_inf_chinforesults()
-Message-Id: <20130227221329.GR9189@mwanda>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Tue, 12 Feb 2013 04:01:50 +0000
+Subject: [PATCH 2/5] iommu: remove redundant NULL check before dma_ops_domain_free().
+Message-Id: <1360641713-24895-3-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130227051206.GA22703@longonot.mountain>
-In-Reply-To: <20130227051206.GA22703@longonot.mountain>
+References: <1360641713-24895-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1360641713-24895-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Cyril Roelandt <tipecaml@gmail.com>, joro@8bytes.org, iommu@lists.linux-foundation.org
 
-On Wed, Feb 27, 2013 at 10:42:23PM +0100, walter harms wrote:
-> but i am missing the point why where are two counters.
-> i is simple. it is used to check the bitfield hw->channel_info.results.scanchannels
-> n is increased only the when a bit is set. So it would be more easy to simply
-> count the bits and run the loop about that number.
-> But i can also imagine that the bitfield act as "enable" and the author actualy
-> should read &inf->info.chinforesult.result[i];
-> 
-> perhaps i am missing the point, could someone tell me were i am wrong ?
-> 
+dma_ops_domain_free on a NULL pointer is a no-op, so the NULL check in
+amd_iommu_init_dma_ops() can be removed.
 
-Reading your email again, I can see what you mean.
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/iommu/amd_iommu.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I don't have the hardware though or any more info than you do.  I
-can only assume that the original code works.  My patch doesn't
-change anything or introduce any bugs that weren't there in the
-original.
-
-regards,
-dan carpenter
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index d33eaaf..98f555d 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -3187,8 +3187,7 @@ int __init amd_iommu_init_dma_ops(void)
+ free_domains:
+ 
+ 	for_each_iommu(iommu) {
+-		if (iommu->default_dom)
+-			dma_ops_domain_free(iommu->default_dom);
++		dma_ops_domain_free(iommu->default_dom);
+ 	}
+ 
+ 	return ret;
+-- 
+1.7.10.4
 
