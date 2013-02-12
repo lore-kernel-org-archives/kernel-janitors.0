@@ -1,41 +1,38 @@
 From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Tue, 12 Feb 2013 22:52:30 +0000
-Subject: [PATCH] net: ethernet: ti: remove redundant NULL check.
-Message-Id: <1360709550-821-1-git-send-email-tipecaml@gmail.com>
+Date: Tue, 12 Feb 2013 22:54:41 +0000
+Subject: Re: [PATCH] net: ethernet: ti: remove redundant NULL check.
+Message-Id: <511AC831.80704@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130212.170650.89534546100043269.davem@davemloft.net>
+References: <1360706086-31506-1-git-send-email-tipecaml@gmail.com> <20130212.170650.89534546100043269.davem@davemloft.net>
 In-Reply-To: <20130212.170650.89534546100043269.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, mugunthanvnm@ti.com, zonque@gmail.com, hotforest@gmail.com, Julia.Lawall@lip6.fr, netdev@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>
+To: David Miller <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, mugunthanvnm@ti.com, zonque@gmail.com, hotforest@gmail.com, Julia.Lawall@lip6.fr, netdev@vger.kernel.org
 
-cpdma_chan_destroy() on a NULL pointer is a no-op, so the NULL check in
-cpdma_ctlr_destroy() can safely be removed.
+On 02/12/2013 11:06 PM, David Miller wrote:
+> From: Cyril Roelandt<tipecaml@gmail.com>
+> Date: Tue, 12 Feb 2013 22:54:46 +0100
+>
+>> cpdma_chan_destroy() on a NULL pointer is a no-op, so the NULL check in
+>> cpdma_ctlr_destroy() can safely be removed.
+>>
+>> Signed-off-by: Cyril Roelandt<tipecaml@gmail.com>
+>   ...
+>> @@ -450,8 +450,7 @@ int cpdma_ctlr_destroy(struct cpdma_ctlr *ctlr)
+>>   		cpdma_ctlr_stop(ctlr);
+>>
+>>   	for (i = 0; i<  ARRAY_SIZE(ctlr->channels); i++) {
+>> -		if (ctlr->channels[i])
+>> -			cpdma_chan_destroy(ctlr->channels[i]);
+>> +		cpdma_chan_destroy(ctlr->channels[i]);
+>>   	}
+>
+> SInce this is now a single statement basic block, remove the
+> surrounding braces.
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
----
- drivers/net/ethernet/ti/davinci_cpdma.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Ok, I resent, though I forgot to add "v2".
 
-diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
-index f862918..1c4b0aa 100644
---- a/drivers/net/ethernet/ti/davinci_cpdma.c
-+++ b/drivers/net/ethernet/ti/davinci_cpdma.c
-@@ -449,10 +449,8 @@ int cpdma_ctlr_destroy(struct cpdma_ctlr *ctlr)
- 	if (ctlr->state != CPDMA_STATE_IDLE)
- 		cpdma_ctlr_stop(ctlr);
- 
--	for (i = 0; i < ARRAY_SIZE(ctlr->channels); i++) {
--		if (ctlr->channels[i])
--			cpdma_chan_destroy(ctlr->channels[i]);
--	}
-+	for (i = 0; i < ARRAY_SIZE(ctlr->channels); i++)
-+		cpdma_chan_destroy(ctlr->channels[i]);
- 
- 	cpdma_desc_pool_destroy(ctlr->pool);
- 	spin_unlock_irqrestore(&ctlr->lock, flags);
--- 
-1.7.10.4
-
+Regards,
+Cyril Roelandt.
