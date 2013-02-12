@@ -1,26 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 03 Feb 2013 04:00:43 +0000
-Subject: Re: [patch v2] qlcnic: silence false positive overflow warning
-Message-Id: <20130202.230043.385020841141729192.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Feb 2013 12:23:14 +0000
+Subject: [patch] brcmsmac: fix brcms_c_country_valid()
+Message-Id: <20130212122314.GB19045@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130127.203851.2157088853751625559.davem@davemloft.net>
-	<20130131081410.GA14542@elgon.mountain>
-In-Reply-To: <20130131081410.GA14542@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jitendra.kalsaria@qlogic.com, sony.chacko@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Brett Rudley <brudley@broadcom.com>
+Cc: Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Seth Forshee <seth.forshee@canonical.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 31 Jan 2013 11:14:10 +0300
+ccode is not NUL terminated.  Presumably insisting on a terminator makes
+brcms_c_country_valid() return false when it's not intended.  ccode[2]
+is sprom->leddc_on_time.
 
-> We actually store the MAC address as well as the board_name here.  The
-> longest board_name is 75 characters so there is more than enough room
-> to hold the 17 character MAC and the ": " divider.  But making this
-> buffer larger silences a static checker warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-By: Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker fix.  I don't know what ->leddc_on_time is in
+practice.
 
-Applied, thanks Dan.
+diff --git a/drivers/net/wireless/brcm80211/brcmsmac/channel.c b/drivers/net/wireless/brcm80211/brcmsmac/channel.c
+index cdb62b8..10ee314 100644
+--- a/drivers/net/wireless/brcm80211/brcmsmac/channel.c
++++ b/drivers/net/wireless/brcm80211/brcmsmac/channel.c
+@@ -183,8 +183,7 @@ static bool brcms_c_country_valid(const char *ccode)
+ 	 * chars.
+ 	 */
+ 	if (!((0x80 & ccode[0]) = 0 && ccode[0] >= 0x41 && ccode[0] <= 0x5A &&
+-	      (0x80 & ccode[1]) = 0 && ccode[1] >= 0x41 && ccode[1] <= 0x5A &&
+-	      ccode[2] = '\0'))
++	      (0x80 & ccode[1]) = 0 && ccode[1] >= 0x41 && ccode[1] <= 0x5A))
+ 		return false;
+ 
+ 	/*
