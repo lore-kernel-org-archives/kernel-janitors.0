@@ -1,55 +1,47 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 24 Feb 2013 11:55:34 +0000
-Subject: [PATCH 2/2] drivers/regulator/s5m8767.c: adjust duplicate test
-Message-Id: <1361706934-15434-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Tue, 12 Feb 2013 04:01:51 +0000
+Subject: [PATCH 3/5] staging: dgrp: remove redundant NULL check before unregister_dgrp_device().
+Message-Id: <1360641713-24895-4-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1361706934-15434-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1361706934-15434-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1360641713-24895-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1360641713-24895-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Cyril Roelandt <tipecaml@gmail.com>, gregkh@linuxfoundation.org, wfp5p@virginia.edu, tt.rantala@gmail.com, jslaby@suse.cz, sfr@canb.auug.org.au, devel@driverdev.osuosl.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Delete successive tests to the same location.
+unregister_dgrp_device on a NULL pointer is a no-op, so the NULL checks in
+dgrp_remove_nd() can be removed.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@s exists@
-local idexpression y;
-expression x,e;
-@@
-
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
-*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
- { ... when forall
-   return ...; }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
- drivers/regulator/s5m8767.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/dgrp/dgrp_specproc.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-index 8a83194..8e56198 100644
---- a/drivers/regulator/s5m8767.c
-+++ b/drivers/regulator/s5m8767.c
-@@ -549,7 +549,7 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+diff --git a/drivers/staging/dgrp/dgrp_specproc.c b/drivers/staging/dgrp/dgrp_specproc.c
+index dfdaede..13c7ccf 100644
+--- a/drivers/staging/dgrp/dgrp_specproc.c
++++ b/drivers/staging/dgrp/dgrp_specproc.c
+@@ -777,14 +777,11 @@ static int dgrp_remove_nd(struct nd_struct *nd)
+ 		dgrp_remove_node_class_sysfs_files(nd);
+ 	}
  
- 	rmode = devm_kzalloc(&pdev->dev, sizeof(*rmode) *
- 				pdata->num_regulators, GFP_KERNEL);
--	if (!rdata) {
-+	if (!rmode) {
- 		dev_err(iodev->dev,
- 			"could not allocate memory for regulator mode\n");
- 		return -ENOMEM;
+-	if (nd->nd_mon_de)
+-		unregister_dgrp_device(nd->nd_mon_de);
++	unregister_dgrp_device(nd->nd_mon_de);
+ 
+-	if (nd->nd_ports_de)
+-		unregister_dgrp_device(nd->nd_ports_de);
++	unregister_dgrp_device(nd->nd_ports_de);
+ 
+-	if (nd->nd_dpa_de)
+-		unregister_dgrp_device(nd->nd_dpa_de);
++	unregister_dgrp_device(nd->nd_dpa_de);
+ 
+ 	dgrp_tty_uninit(nd);
+ 
+-- 
+1.7.10.4
 
