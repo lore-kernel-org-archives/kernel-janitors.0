@@ -1,23 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 Feb 2013 20:45:44 +0000
-Subject: Re: [patch] sctp: check len in sctp_getsockopt_assoc_stats()
-Message-Id: <20130227.154544.1758858137863453045.davem@davemloft.net>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Tue, 12 Feb 2013 21:54:46 +0000
+Subject: [PATCH] net: ethernet: ti: remove redundant NULL check.
+Message-Id: <1360706086-31506-1-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130227204144.GA11300@longonot.mountain>
-In-Reply-To: <20130227204144.GA11300@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vyasevich@gmail.com, michele@acksyn.org, sri@us.ibm.com, nhorman@tuxdriver.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, mugunthanvnm@ti.com, zonque@gmail.com, hotforest@gmail.com, Julia.Lawall@lip6.fr, netdev@vger.kernel.org, Cyril Roelandt <tipecaml@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Feb 2013 23:41:44 +0300
+cpdma_chan_destroy() on a NULL pointer is a no-op, so the NULL check in
+cpdma_ctlr_destroy() can safely be removed.
 
-> This check is missing an upper bound.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This should go in 3.8 -stable as well.
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/net/ethernet/ti/davinci_cpdma.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-There is a discussion and patch on netdev already.
+diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
+index f862918..aba787b 100644
+--- a/drivers/net/ethernet/ti/davinci_cpdma.c
++++ b/drivers/net/ethernet/ti/davinci_cpdma.c
+@@ -450,8 +450,7 @@ int cpdma_ctlr_destroy(struct cpdma_ctlr *ctlr)
+ 		cpdma_ctlr_stop(ctlr);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ctlr->channels); i++) {
+-		if (ctlr->channels[i])
+-			cpdma_chan_destroy(ctlr->channels[i]);
++		cpdma_chan_destroy(ctlr->channels[i]);
+ 	}
+ 
+ 	cpdma_desc_pool_destroy(ctlr->pool);
+-- 
+1.7.10.4
+
