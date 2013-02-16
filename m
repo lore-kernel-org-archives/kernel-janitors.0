@@ -1,23 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 Feb 2013 18:12:17 +0000
-Subject: Re: [patch] irda: small read beyond end of array in debug code
-Message-Id: <20130227.131217.1331086829065132895.davem@davemloft.net>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Sat, 16 Feb 2013 17:56:34 +0000
+Subject: [PATCH] ethernet: neterion: vxge: vxge-traffic.c: fix for a potential NULL pointer dereference
+Message-Id: <1361037394-14731-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130227051502.GC22703@longonot.mountain>
-In-Reply-To: <20130227051502.GC22703@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: samuel@sortiz.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jdmason@kudzu.us
+Cc: davem@davemloft.net, joe@perches.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Feb 2013 08:15:02 +0300
+fix for a potential NULL pointer dereference and removal of a redundant
+assignment operation. Found using smatch.
 
-> charset comes from skb->data.  It's a number in the 0-255 range.
-> If we have debugging turned on then this could cause a read beyond
-> the end of the array.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/net/ethernet/neterion/vxge/vxge-traffic.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Applied.
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-traffic.c b/drivers/net/ethernet/neterion/vxge/vxge-traffic.c
+index 99749bd..adb05a8 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-traffic.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-traffic.c
+@@ -611,11 +611,8 @@ __vxge_hw_vpath_alarm_process(struct __vxge_hw_virtualpath *vpath,
+ 	struct vxge_hw_vpath_stats_sw_info *sw_stats;
+ 	struct vxge_hw_vpath_reg __iomem *vp_reg;
+ 
+-	if (vpath = NULL) {
+-		alarm_event = VXGE_HW_SET_LEVEL(VXGE_HW_EVENT_UNKNOWN,
+-			alarm_event);
++	if (vpath = NULL)
+ 		goto out2;
+-	}
+ 
+ 	hldev = vpath->hldev;
+ 	vp_reg = vpath->vp_reg;
+@@ -852,13 +849,12 @@ __vxge_hw_vpath_alarm_process(struct __vxge_hw_virtualpath *vpath,
+ 	}
+ out:
+ 	hldev->stats.sw_dev_err_stats.vpath_alarms++;
++	__vxge_hw_device_handle_error(hldev, vpath->vp_id, alarm_event);
+ out2:
+ 	if ((alarm_event = VXGE_HW_EVENT_ALARM_CLEARED) ||
+ 		(alarm_event = VXGE_HW_EVENT_UNKNOWN))
+ 		return VXGE_HW_OK;
+ 
+-	__vxge_hw_device_handle_error(hldev, vpath->vp_id, alarm_event);
+-
+ 	if (alarm_event = VXGE_HW_EVENT_SERR)
+ 		return VXGE_HW_ERR_CRITICAL;
+ 
+-- 
+1.7.9.5
+
