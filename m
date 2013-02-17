@@ -1,21 +1,34 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 26 Feb 2013 18:41:23 +0000
-Subject: build regressions 2013-02-26
-Message-Id: <512d01d3.hyoJymS+VtZwgz7O%fengguang.wu@intel.com>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Sun, 17 Feb 2013 06:54:58 +0000
+Subject: [PATCH] staging: comedi: drivers: addi-data: hwdrv_apci3200.c: Add a missing semicolon
+Message-Id: <1361084099-12776-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: abbotti@mev.co.uk
+Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-drivers/tty/tty_io.c:3109:3: error: too many arguments to function 'acpi_uart_register_port_peripheral'
-ERROR: "from_kqid" [fs/xfs/xfs.ko] undefined!
-drivers/scsi/scsi_pm.c:173:6: error: 'err' undeclared (first use in this function)
+fix for missing end-of-statement by adding a semicolon
 
-[sparse]
-drivers/scsi/scsi_pm.c:173:13: sparse: undefined identifier 'err'
-
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ .../comedi/drivers/addi-data/hwdrv_apci3200.c      |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c b/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
+index 829af18..c790873 100644
+--- a/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
++++ b/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
+@@ -633,7 +633,7 @@ static int apci3200_do_insn_bits(struct comedi_device *dev,
+ 	s->state = inl(devpriv->i_IobaseAddon) & 0xf;
+ 	if (mask) {
+ 		s->state &= ~mask;
+-		s->state |= (bits & mask)
++		s->state |= (bits & mask);
+ 
+ 		outl(s->state, devpriv->i_IobaseAddon);
+ 	}
+-- 
+1.7.9.5
+
