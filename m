@@ -1,39 +1,34 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 04 Feb 2013 13:21:41 +0000
-Subject: Re: [PATCH] crypto: use ERR_CAST
-Message-Id: <20130204132141.GB21627@gondor.apana.org.au>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Mon, 18 Feb 2013 12:13:44 +0000
+Subject: [PATCH] net: wireless: hostap: hostap_ap.c: Return -ENOMEM instead of -1 for if kmalloc() fails.
+Message-Id: <1361189624-11274-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1358854166-3952-1-git-send-email-Julia.Lawall@lip6.fr>
- <1358854166-3952-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1358854166-3952-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: j@w1.fi
+Cc: linville@tuxdriver.com, wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Jan 22, 2013 at 12:29:26PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Replace PTR_ERR followed by ERR_PTR by ERR_CAST, to be more concise.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression err,x;
-> @@
-> -       err = PTR_ERR(x);
->         if (IS_ERR(x))
-> -                return ERR_PTR(err);
-> +                return ERR_CAST(x);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+When memory allocation using, kmalloc() fails, report appropriate error value.
 
-Patch applied.  Thanks!
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/net/wireless/hostap/hostap_ap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/hostap/hostap_ap.c b/drivers/net/wireless/hostap/hostap_ap.c
+index c6ea995..dd9a18f 100644
+--- a/drivers/net/wireless/hostap/hostap_ap.c
++++ b/drivers/net/wireless/hostap/hostap_ap.c
+@@ -376,7 +376,7 @@ int ap_control_add_mac(struct mac_restrictions *mac_restrictions, u8 *mac)
+ 
+ 	entry = kmalloc(sizeof(struct mac_entry), GFP_KERNEL);
+ 	if (entry = NULL)
+-		return -1;
++		return -ENOMEM;
+ 
+ 	memcpy(entry->addr, mac, ETH_ALEN);
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.7.9.5
+
