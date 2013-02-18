@@ -1,25 +1,49 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Fri, 22 Feb 2013 18:06:30 +0000
-Subject: [PATCH 0/2] [comedi] fix for DMA buffers on stack
-Message-Id: <1361556392-32501-1-git-send-email-gmate.amit@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 18 Feb 2013 16:07:25 +0000
+Subject: build regressions 2013-02-18
+Message-Id: <512251bd.oj1deSuiZVbSwLtK%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: abbotti@mev.co.uk
-Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This patch series fixes couple of instances of DMA buffers on stack(being passed
-to usb_control_msg) for comedi USB drivers. Found using smatch.
+[errors]
+drivers/gpio/gpio-lynxpoint.c:92:2: error: implicit declaration of function 'inl' [-Werror=implicit-function-declaration]
+drivers/gpio/gpio-lynxpoint.c:101:2: error: implicit declaration of function 'outl' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/intel/igb/igb_main.c:6231:2: error: call to '__compiletime_assert_6235' declared with attribute error: BUILD_BUG_ON failed: SKB_WITH_OVERHEAD(IGB_RX_BUFSZ) < (NET_SKB_PAD + NET_IP_ALIGN + IGB_TS_HDR_LEN + ETH_FRAME_LEN + ETH_FCS_LEN)
+i8042.c:(.text+0x6c386): undefined reference to `free_irq'
+i8042.c:(.text+0x6c3b2): undefined reference to `free_irq'
+i8042.c:(.text+0x6c3e8): undefined reference to `synchronize_irq'
+i8042.c:(.text+0x6c3f2): undefined reference to `synchronize_irq'
+i8042.c:(.init.text+0x3724): undefined reference to `request_irq'
+i8042.c:(.init.text+0x3878): undefined reference to `free_irq'
+i8042.c:(.init.text+0x396c): undefined reference to `request_irq'
+i8042.c:(.init.text+0x3998): undefined reference to `free_irq'
+i8042.c:(.init.text+0x3ad6): undefined reference to `request_irq'
+i8042.c:(.init.text+0x3b06): undefined reference to `free_irq'
+xfs_trace.c:(.text+0x1a9846): undefined reference to `from_kqid'
+xfs_trace.c:(.text+0x1a997a): undefined reference to `from_kqid'
 
-Kumar Amit Mehta (2):
-  staging: comedi: drivers: usbdux.c: fix DMA buffers on stack
-  staging: comedi: drivers: usbduxfast.c: fix for DMA buffers on stack
+[warnings]
+warning: (DRM_RADEON && DRM_I915 && DRM_TILCDC && STUB_POULSBO && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
+warning: (DRM_RADEON && DRM_I915 && DRM_TILCDC && STUB_POULSBO && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
+warning: (DRM_RADEON && DRM_I915 && DRM_TILCDC && STUB_POULSBO && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
 
- drivers/staging/comedi/drivers/usbdux.c     |   31 ++++++++++++++++-----------
- drivers/staging/comedi/drivers/usbduxfast.c |   30 +++++++++++++++-----------
- 2 files changed, 37 insertions(+), 24 deletions(-)
+[sparse]
+drivers/gpio/gpio-valleyview2.c:260:45: sparse: dubious: x | !y
+drivers/gpio/gpio-valleyview2.c:261:35: sparse: dubious: x | !y
+drivers/block/rbd.c:1046:24: sparse: symbol 'rbd_osd_req_op_create' was not declared. Should it be static?
+drivers/vfio/pci/vfio_pci_config.c:599:54: sparse: incorrect type in initializer (different base types)
+kernel/stop_machine.c:332:36: sparse: incorrect type in initializer (different address spaces)
+drivers/clk/x86/clk-lpss.c:122:12: sparse: symbol 'clk_register_lpss_mux' was not declared. Should it be static?
+drivers/staging/sb105x/sb_pci_mp.c:901:33: sparse: no member 'low_latency' in struct tty_struct
+kernel/hung_task.c:22:29: sparse: symbol 'sysctl_hung_task_check_count' was not declared. Should it be static?
+kernel/hung_task.c:36:29: sparse: symbol 'sysctl_hung_task_timeout_secs' was not declared. Should it be static?
+kernel/hung_task.c:38:29: sparse: symbol 'sysctl_hung_task_warnings' was not declared. Should it be static?
+kernel/hung_task.c:48:28: sparse: symbol 'sysctl_hung_task_panic' was not declared. Should it be static?
+kernel/hung_task.c:184:5: sparse: symbol 'proc_dohung_task_timeout_secs' was not declared. Should it be static?
 
--- 
-1.7.9.5
-
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
