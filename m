@@ -1,58 +1,97 @@
-From: David =?iso-8859-1?Q?H=E4rdeman?= <david@hardeman.nu>
-Date: Tue, 19 Feb 2013 20:36:01 +0000
-Subject: Re: [patch] [media] mceusb: move check earlier to make smatch happy
-Message-Id: <20130219203601.GB15909@hardeman.nu>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Thu, 21 Feb 2013 17:47:06 +0000
+Subject: [PATCH] staging: comedi: drivers: usbduxsigma.c: fix DMA buffers on stack
+Message-Id: <1361468826-12053-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130212122208.GA19045@elgon.mountain>
-In-Reply-To: <20130212122208.GA19045@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Sean Young <sean@mess.org>, Jarod Wilson <jarod@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: abbotti@mev.co.uk
+Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Feb 12, 2013 at 03:22:08PM +0300, Dan Carpenter wrote:
->Smatch complains that "cmdbuf[cmdcount - length]" might go past the end
->of the array.  It's an easy warning to silence by moving the limit
->check earlier.
->
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This patch fixes an instance of DMA buffer on stack(being passed to
+usb_control_msg)for the USB-DUXsigma Board driver. Found using smatch.
 
-Looks ok. I'll leave the signing off to Jarod though. I've just dabbled
-in the driver but I'm not the maintainer.
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/comedi/drivers/usbduxsigma.c |   37 +++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
 
->diff --git a/drivers/media/rc/mceusb.c b/drivers/media/rc/mceusb.c
->index bdd1ed8..5b5b6e6 100644
->--- a/drivers/media/rc/mceusb.c
->+++ b/drivers/media/rc/mceusb.c
->@@ -828,16 +828,16 @@ static int mceusb_tx_ir(struct rc_dev *dev, unsigned=
- *txbuf, unsigned count)
-> 			 (txbuf[i] -=3D MCE_MAX_PULSE_LENGTH));
-> 	}
->=20
->-	/* Fix packet length in last header */
->-	length =3D cmdcount % MCE_CODE_LENGTH;
->-	cmdbuf[cmdcount - length] -=3D MCE_CODE_LENGTH - length;
->-
-> 	/* Check if we have room for the empty packet at the end */
-> 	if (cmdcount >=3D MCE_CMDBUF_SIZE) {
-> 		ret =3D -EINVAL;
-> 		goto out;
-> 	}
->=20
->+	/* Fix packet length in last header */
->+	length =3D cmdcount % MCE_CODE_LENGTH;
->+	cmdbuf[cmdcount - length] -=3D MCE_CODE_LENGTH - length;
->+
-> 	/* All mce commands end with an empty packet (0x80) */
-> 	cmdbuf[cmdcount++] =3D MCE_IRDATA_TRAILER;
->=20
->
+diff --git a/drivers/staging/comedi/drivers/usbduxsigma.c b/drivers/staging/comedi/drivers/usbduxsigma.c
+index dc6b017..46137e8 100644
+--- a/drivers/staging/comedi/drivers/usbduxsigma.c
++++ b/drivers/staging/comedi/drivers/usbduxsigma.c
+@@ -681,10 +681,14 @@ static void usbduxsub_ao_IsocIrq(struct urb *urb)
+ static int usbduxsub_start(struct usbduxsub *usbduxsub)
+ {
+ 	int errcode = 0;
+-	uint8_t local_transfer_buffer[16];
+-
++	uint8_t *local_transfer_buffer;
++	local_transfer_buffer = kmalloc(16, GFP_KERNEL);
++	if (!local_transfer_buffer) {
++		errcode = -ENOMEM;
++		goto exit;
++	}
+ 	/* 7f92 to zero */
+-	local_transfer_buffer[0] = 0;
++	*local_transfer_buffer = 0;
+ 	errcode = usb_control_msg(usbduxsub->usbdev,
+ 				  /* create a pipe for a control transfer */
+ 				  usb_sndctrlpipe(usbduxsub->usbdev, 0),
+@@ -702,22 +706,28 @@ static int usbduxsub_start(struct usbduxsub *usbduxsub)
+ 				  1,
+ 				  /* Timeout */
+ 				  BULK_TIMEOUT);
+-	if (errcode < 0) {
++	if (errcode < 0)
+ 		dev_err(&usbduxsub->interface->dev,
+ 			"comedi_: control msg failed (start)\n");
+-		return errcode;
+-	}
+-	return 0;
++
++	kfree(local_transfer_buffer);
++exit:
++	return errcode;
+ }
+ 
+ static int usbduxsub_stop(struct usbduxsub *usbduxsub)
+ {
+ 	int errcode = 0;
+ 
+-	uint8_t local_transfer_buffer[16];
++	uint8_t *local_transfer_buffer;
++	local_transfer_buffer = kmalloc(16, GFP_KERNEL);
++	if (!local_transfer_buffer) {
++		errcode = -ENOMEM;
++		goto exit;
++	}
+ 
+ 	/* 7f92 to one */
+-	local_transfer_buffer[0] = 1;
++	*local_transfer_buffer = 1;
+ 	errcode = usb_control_msg(usbduxsub->usbdev,
+ 				  usb_sndctrlpipe(usbduxsub->usbdev, 0),
+ 				  /* bRequest, "Firmware" */
+@@ -732,12 +742,13 @@ static int usbduxsub_stop(struct usbduxsub *usbduxsub)
+ 				  1,
+ 				  /* Timeout */
+ 				  BULK_TIMEOUT);
+-	if (errcode < 0) {
++	if (errcode < 0)
+ 		dev_err(&usbduxsub->interface->dev,
+ 			"comedi_: control msg failed (stop)\n");
+-		return errcode;
+-	}
+-	return 0;
++
++	kfree(local_transfer_buffer);
++exit:
++	return errcode;
+ }
+ 
+ static int usbduxsub_upload(struct usbduxsub *usbduxsub,
+-- 
+1.7.9.5
 
---=20
-David H=E4rdeman
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
