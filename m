@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 22 Feb 2013 06:26:28 +0000
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Fri, 22 Feb 2013 10:02:44 +0000
 Subject: Re: [PATCH v2] staging: comedi: drivers: usbduxsigma.c: fix DMA buffers on stack
-Message-Id: <20130222062628.GH9138@mwanda>
+Message-Id: <51274244.6080507@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1361513228-8897-1-git-send-email-gmate.amit@gmail.com>
 In-Reply-To: <1361513228-8897-1-git-send-email-gmate.amit@gmail.com>
@@ -9,12 +9,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Kumar Amit Mehta <gmate.amit@gmail.com>
-Cc: abbotti@mev.co.uk, devel@driverdev.osuosl.org, fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ian Abbott <ian.abbott@mev.co.uk>, "fmhess@users.sourceforge.net" <fmhess@users.sourceforge.net>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "hsweeten@visionengravers.com" <hsweeten@visionengravers.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Looks good.
+On 2013-02-22 06:07, Kumar Amit Mehta wrote:
+> This patch fixes an instance of DMA buffer on stack(being passed to
+> usb_control_msg)for the USB-DUXsigma Board driver. Found using smatch.
+>
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Looks good here too.
 
-regards,
-dan carpenter
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
+Would you mind doing the same for usbdux.c and usbduxfast.c?
+
+-- 
+-=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
+-=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
