@@ -1,47 +1,28 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Tue, 12 Feb 2013 04:01:51 +0000
-Subject: [PATCH 3/5] staging: dgrp: remove redundant NULL check before unregister_dgrp_device().
-Message-Id: <1360641713-24895-4-git-send-email-tipecaml@gmail.com>
+From: Michal Marek <mmarek@suse.cz>
+Date: Fri, 22 Feb 2013 10:25:04 +0000
+Subject: Re: [PATCH V2] scripts/coccinelle/misc/memcpy-assign.cocci: Replace memcpy with struct assignment
+Message-Id: <20130222102503.GD12402@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1360641713-24895-1-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1360641713-24895-1-git-send-email-tipecaml@gmail.com>
+References: <1358978790-2990-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1358978790-2990-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Cyril Roelandt <tipecaml@gmail.com>, gregkh@linuxfoundation.org, wfp5p@virginia.edu, tt.rantala@gmail.com, jslaby@suse.cz, sfr@canb.auug.org.au, devel@driverdev.osuosl.org
+To: cocci@systeme.lip6.fr
 
+On Wed, Jan 23, 2013 at 08:06:30PM -0200, Peter Senna Tschudin wrote:
+> There are error-prone memcpy() that can be replaced by struct
+> assignment that are type-safe and much easier to read. This semantic
+> patch looks for memcpy() that can be replaced by struct assignment.
+> 
+> Inspired by patches sent by Ezequiel Garcia <elezegarcia@gmail.com>
+> 
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> ---
+> Changes from V1:
+>  Updated commit message
+>  Changed Confidence comment to High on the semantic patch
 
-unregister_dgrp_device on a NULL pointer is a no-op, so the NULL checks in
-dgrp_remove_nd() can be removed.
+Applied to kbuild.git#misc, thanks.
 
-Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
----
- drivers/staging/dgrp/dgrp_specproc.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/staging/dgrp/dgrp_specproc.c b/drivers/staging/dgrp/dgrp_specproc.c
-index dfdaede..13c7ccf 100644
---- a/drivers/staging/dgrp/dgrp_specproc.c
-+++ b/drivers/staging/dgrp/dgrp_specproc.c
-@@ -777,14 +777,11 @@ static int dgrp_remove_nd(struct nd_struct *nd)
- 		dgrp_remove_node_class_sysfs_files(nd);
- 	}
- 
--	if (nd->nd_mon_de)
--		unregister_dgrp_device(nd->nd_mon_de);
-+	unregister_dgrp_device(nd->nd_mon_de);
- 
--	if (nd->nd_ports_de)
--		unregister_dgrp_device(nd->nd_ports_de);
-+	unregister_dgrp_device(nd->nd_ports_de);
- 
--	if (nd->nd_dpa_de)
--		unregister_dgrp_device(nd->nd_dpa_de);
-+	unregister_dgrp_device(nd->nd_dpa_de);
- 
- 	dgrp_tty_uninit(nd);
- 
--- 
-1.7.10.4
-
+Michal
