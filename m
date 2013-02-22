@@ -1,43 +1,84 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 07 Feb 2013 08:53:51 +0000
-Subject: Re: [patch] ALSA: ice1712: fix boundary check in snd_wm8766_write()
-Message-Id: <s5h8v705wtc.wl%tiwai@suse.de>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Fri, 22 Feb 2013 06:07:08 +0000
+Subject: [PATCH v2] staging: comedi: drivers: usbduxsigma.c: fix DMA buffers on stack
+Message-Id: <1361513228-8897-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130207082848.GB18610@elgon.mountain>
-In-Reply-To: <20130207082848.GB18610@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Ondrej Zary <linux@rainbow-software.org>
+To: abbotti@mev.co.uk
+Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, dan.carpenter@oracle.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 7 Feb 2013 11:28:48 +0300,
-Dan Carpenter wrote:
-> 
-> The wm->regs[] array has WM8766_REG_COUNT (16) elements not
-> WM8766_REG_RESET (31).
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is a static checker thing, I can't test it.
+This patch fixes an instance of DMA buffer on stack(being passed to
+usb_control_msg)for the USB-DUXsigma Board driver. Found using smatch.
 
-Thanks, applied it now.
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/comedi/drivers/usbduxsigma.c |   27 ++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/staging/comedi/drivers/usbduxsigma.c b/drivers/staging/comedi/drivers/usbduxsigma.c
+index dc6b017..9e99a4b 100644
+--- a/drivers/staging/comedi/drivers/usbduxsigma.c
++++ b/drivers/staging/comedi/drivers/usbduxsigma.c
+@@ -681,7 +681,11 @@ static void usbduxsub_ao_IsocIrq(struct urb *urb)
+ static int usbduxsub_start(struct usbduxsub *usbduxsub)
+ {
+ 	int errcode = 0;
+-	uint8_t local_transfer_buffer[16];
++	uint8_t *local_transfer_buffer;
++
++	local_transfer_buffer = kmalloc(16, GFP_KERNEL);
++	if (!local_transfer_buffer)
++		return -ENOMEM;
+ 
+ 	/* 7f92 to zero */
+ 	local_transfer_buffer[0] = 0;
+@@ -702,19 +706,22 @@ static int usbduxsub_start(struct usbduxsub *usbduxsub)
+ 				  1,
+ 				  /* Timeout */
+ 				  BULK_TIMEOUT);
+-	if (errcode < 0) {
++	if (errcode < 0)
+ 		dev_err(&usbduxsub->interface->dev,
+ 			"comedi_: control msg failed (start)\n");
+-		return errcode;
+-	}
+-	return 0;
++
++	kfree(local_transfer_buffer);
++	return errcode;
+ }
+ 
+ static int usbduxsub_stop(struct usbduxsub *usbduxsub)
+ {
+ 	int errcode = 0;
++	uint8_t *local_transfer_buffer;
+ 
+-	uint8_t local_transfer_buffer[16];
++	local_transfer_buffer = kmalloc(16, GFP_KERNEL);
++	if (!local_transfer_buffer)
++		return -ENOMEM;
+ 
+ 	/* 7f92 to one */
+ 	local_transfer_buffer[0] = 1;
+@@ -732,12 +739,12 @@ static int usbduxsub_stop(struct usbduxsub *usbduxsub)
+ 				  1,
+ 				  /* Timeout */
+ 				  BULK_TIMEOUT);
+-	if (errcode < 0) {
++	if (errcode < 0)
+ 		dev_err(&usbduxsub->interface->dev,
+ 			"comedi_: control msg failed (stop)\n");
+-		return errcode;
+-	}
+-	return 0;
++
++	kfree(local_transfer_buffer);
++	return errcode;
+ }
+ 
+ static int usbduxsub_upload(struct usbduxsub *usbduxsub,
+-- 
+1.7.9.5
 
-Takashi
-
-> 
-> diff --git a/sound/pci/ice1712/wm8766.c b/sound/pci/ice1712/wm8766.c
-> index 8072ade..e473f8a 100644
-> --- a/sound/pci/ice1712/wm8766.c
-> +++ b/sound/pci/ice1712/wm8766.c
-> @@ -31,7 +31,7 @@
->  
->  static void snd_wm8766_write(struct snd_wm8766 *wm, u16 addr, u16 data)
->  {
-> -	if (addr < WM8766_REG_RESET)
-> +	if (addr < WM8766_REG_COUNT)
->  		wm->regs[addr] = data;
->  	wm->ops.write(wm, addr, data);
->  }
-> 
