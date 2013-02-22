@@ -1,66 +1,102 @@
-From: Antonio Quartulli <ordex@autistici.org>
-Date: Thu, 07 Feb 2013 07:13:05 +0000
-Subject: Re: [PATCH v2] batman-adv: Remove unused variable
-Message-Id: <20130207071305.GG6008@ritirata.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="QWpDgw58+k1mSFBj"
+From: walter harms <wharms@bfs.de>
+Date: Fri, 22 Feb 2013 18:58:35 +0000
+Subject: Re: [PATCH 2/2] staging: comedi: drivers: usbduxfast.c: fix for DMA buffers on stack
+Message-Id: <5127BFDB.4010608@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1360193557-27554-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1360193557-27554-1-git-send-email-emilgoode@gmail.com>
-To: Emil Goode <emilgoode@gmail.com>
-Cc: akpm@linux-foundation.org, lindner_marek@yahoo.de, siwu@hrz.tu-chemnitz.de, davem@davemloft.net, sasha.levin@oracle.com, b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1361556450-32572-1-git-send-email-gmate.amit@gmail.com>
+In-Reply-To: <1361556450-32572-1-git-send-email-gmate.amit@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kumar Amit Mehta <gmate.amit@gmail.com>
+Cc: abbotti@mev.co.uk, fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 
---QWpDgw58+k1mSFBj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 07, 2013 at 12:32:37AM +0100, Emil Goode wrote:
-> The below commit removed one node parameter from iterators.
-> ed242d01bbe22ea0877472db49b2752d866c921c
-> (hlist: drop the node parameter from iterators)
->=20
-> This patch removes a hlist_node struct that is no longer used.
->=20
-> Sparse gives a warning:
->=20
-> net/batman-adv/originator.c:411:21: warning:
-> 	unused variable =E2=80=98node_tmp=E2=80=99 [-Wunused-variable]
->=20
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Am 22.02.2013 19:07, schrieb Kumar Amit Mehta:
+> fix for instances of DMA buffer on stack(being passed to usb_control_msg) for
+> the USB-DUXfast Board driver.
+> 
+> Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+> ---
+>  drivers/staging/comedi/drivers/usbduxfast.c |   30 ++++++++++++++++-----------
+>  1 file changed, 18 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers/usbduxfast.c b/drivers/staging/comedi/drivers/usbduxfast.c
+> index 4bf5dd0..1ba0e3d 100644
+> --- a/drivers/staging/comedi/drivers/usbduxfast.c
+> +++ b/drivers/staging/comedi/drivers/usbduxfast.c
+> @@ -436,10 +436,14 @@ static void usbduxfastsub_ai_Irq(struct urb *urb)
+>  static int usbduxfastsub_start(struct usbduxfastsub_s *udfs)
+>  {
+>  	int ret;
+> -	unsigned char local_transfer_buffer[16];
+> +	unsigned char *local_transfer_buffer;
+> +
+> +	local_transfer_buffer = kmalloc(1, GFP_KERNEL);
+> +	if (!local_transfer_buffer)
+> +		return -ENOMEM;
+>  
+>  	/* 7f92 to zero */
+> -	local_transfer_buffer[0] = 0;
+> +	*local_transfer_buffer = 0;
+>  	/* bRequest, "Firmware" */
+>  	ret = usb_control_msg(udfs->usbdev, usb_sndctrlpipe(udfs->usbdev, 0),
+>  			      USBDUXFASTSUB_FIRMWARE,
+> @@ -450,22 +454,25 @@ static int usbduxfastsub_start(struct usbduxfastsub_s *udfs)
+>  			      local_transfer_buffer,
+>  			      1,      /* Length */
+>  			      EZTIMEOUT);    /* Timeout */
+> -	if (ret < 0) {
+> +	if (ret < 0)
+>  		dev_err(&udfs->interface->dev,
+>  			"control msg failed (start)\n");
+> -		return ret;
+> -	}
+>  
+> -	return 0;
+> +	kfree(local_transfer_buffer);
+> +	return ret;
+>  }
+>  
+>  static int usbduxfastsub_stop(struct usbduxfastsub_s *udfs)
+>  {
+>  	int ret;
+> -	unsigned char local_transfer_buffer[16];
+> +	unsigned char *local_transfer_buffer;
+> +
+> +	local_transfer_buffer = kmalloc(1, GFP_KERNEL);
+> +	if (!local_transfer_buffer)
+> +		return -ENOMEM;
+>  
+>  	/* 7f92 to one */
+> -	local_transfer_buffer[0] = 1;
+> +	*local_transfer_buffer = 1;
+>  	/* bRequest, "Firmware" */
+>  	ret = usb_control_msg(udfs->usbdev, usb_sndctrlpipe(udfs->usbdev, 0),
+>  			      USBDUXFASTSUB_FIRMWARE,
+> @@ -474,13 +481,12 @@ static int usbduxfastsub_stop(struct usbduxfastsub_s *udfs)
+>  			      0x0000,	/* Index */
+>  			      local_transfer_buffer, 1,	/* Length */
+>  			      EZTIMEOUT);	/* Timeout */
+> -	if (ret < 0) {
+> +	if (ret < 0)
+>  		dev_err(&udfs->interface->dev,
+>  			"control msg failed (stop)\n");
+> -		return ret;
+> -	}
+>  
+> -	return 0;
+> +	kfree(local_transfer_buffer);
+> +	return ret;
+>  }
+>  
+>  static int usbduxfastsub_upload(struct usbduxfastsub_s *udfs,
 
-Acked-by: Antonio Quartulli <ordex@autistici.org>
+mmh, it seems a bit overheat to alloc 1 byte.
+Could one of the driver maintainers please comment
+is that realy need ? or is it possible to pass one byte
+in a register ? (aka char/int) without allocating ?
 
-Thanks Emil
-
-Cheers,
-
---=20
-Antonio Quartulli
-
-=2E.each of us alone is worth nothing..
-Ernesto "Che" Guevara
-
---QWpDgw58+k1mSFBj
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBCAAGBQJRE1QBAAoJEADl0hg6qKeOIbQP/0619SbVBdH3FJ7s6Z7LFgI/
-wo3N/zUqxX4oIzR4lSfKRmFks7JoEnXneAK/tEr5YRzGFdeC9y9/ua7VQ3PCL7t8
-ivsB+qJ/be2ZyOn9QLY72e1sR5zn48HZLNdqGNGgoDY+C8H1qCZBNt3DY2sbpRpS
-Ojxp1jhl/PsFvqY2WXq6Vwvv0l85+ZY11fHACKAFrsDnKfJSuFxniQ09ir/Y/kHA
-L9CDGVHOTnkVFQitAs5y0fnIH3wwU8CSMF1DHGuNK0h/WBwuAQoXceO10bqKijcH
-guFY2kfJp0wyFsJmVIw/5CbdMBiYKgSlu7YynI9XbF/vahZUrcblW7qd9zzVABge
-t3SrtU3/oPWsSgMcpsZqHQbiPCg2z1zt7On46ExEpIqh3K7EcmvCyhLXNbQXR5H/
-DBV5/aY8yHEyq+njhenht4wteRHaFOF7n60MEuf2tr8d5A7dQUGVi+/gS4p1Ul91
-Rda4dV+2bcuMVNLPYuuxeY8HLm+ahvbPSdMsvxK+yyZ1z0fpiK+fPljB0gUBoDHp
-MWc2AFQ9WXQmjkhzW1m63C1ZwQ/z4Af8FOfM0k8JAhLc0fKAz7QgMp0RekisZ9NG
-AK2ZAxflxoI+wbZOI7uRvs/rzQqARhxf4AfzY4fNYeQDHsOWwgljazCTXEMblXX4
-UgowgwUjnmI8dHLfQv7D
-=SB6i
------END PGP SIGNATURE-----
-
---QWpDgw58+k1mSFBj--
+re,
+ wh
