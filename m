@@ -1,46 +1,92 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 07 Feb 2013 08:24:49 +0000
-Subject: [patch v2] dvb-usb: check for invalid length in ttusb_process_muxpack()
-Message-Id: <20130207082449.GA18610@elgon.mountain>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Fri, 22 Feb 2013 18:07:03 +0000
+Subject: [PATCH 1/2] staging: comedi: drivers: usbdux.c: fix DMA buffers on stack
+Message-Id: <1361556423-32538-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20130205201001.60fe547e@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: abbotti@mev.co.uk
+Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch is driven by a static checker warning.
+fix for instances of DMA buffer on stack(being passed to usb_control_msg) for
+the USB-DUX-D Board driver.
 
-The ttusb_process_muxpack() function is only called from
-ttusb_process_frame().  Before calling, it verifies that len >= 2.  The
-problem is that len = 2 is not valid and would lead to an array
-underflow.
-
-Odd number values for len are also invalid and would lead to reading
-past the end of the array.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
 ---
-v2: Moved the check from the caller into the function.  Added a check
-for odd values.  Added an error message.  Increment the numinvalid
-counter.
+ drivers/staging/comedi/drivers/usbdux.c |   31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-index 5b682cc..e407185 100644
---- a/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-+++ b/drivers/media/usb/ttusb-budget/dvb-ttusb-budget.c
-@@ -561,6 +561,13 @@ static void ttusb_process_muxpack(struct ttusb *ttusb, const u8 * muxpack,
+diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
+index 1a0062a..6aac1f6 100644
+--- a/drivers/staging/comedi/drivers/usbdux.c
++++ b/drivers/staging/comedi/drivers/usbdux.c
+@@ -730,10 +730,14 @@ static void usbduxsub_ao_IsocIrq(struct urb *urb)
+ static int usbduxsub_start(struct usbduxsub *usbduxsub)
  {
- 	u16 csum = 0, cc;
- 	int i;
+ 	int errcode = 0;
+-	uint8_t local_transfer_buffer[16];
++	uint8_t *local_transfer_buffer;
 +
-+	if (len < 4 || len & 0x1) {
-+		pr_warn("%s: muxpack has invalid len %d\n", __func__, len);
-+		numinvalid++;
-+		return;
-+	}
++	local_transfer_buffer = kmalloc(1, GFP_KERNEL);
++	if (!local_transfer_buffer)
++		return -ENOMEM;
+ 
+ 	/* 7f92 to zero */
+-	local_transfer_buffer[0] = 0;
++	*local_transfer_buffer = 0;
+ 	errcode = usb_control_msg(usbduxsub->usbdev,
+ 				  /* create a pipe for a control transfer */
+ 				  usb_sndctrlpipe(usbduxsub->usbdev, 0),
+@@ -751,22 +755,25 @@ static int usbduxsub_start(struct usbduxsub *usbduxsub)
+ 				  1,
+ 				  /* Timeout */
+ 				  BULK_TIMEOUT);
+-	if (errcode < 0) {
++	if (errcode < 0)
+ 		dev_err(&usbduxsub->interface->dev,
+ 			"comedi_: control msg failed (start)\n");
+-		return errcode;
+-	}
+-	return 0;
 +
- 	for (i = 0; i < len; i += 2)
- 		csum ^= le16_to_cpup((__le16 *) (muxpack + i));
- 	if (csum) {
++	kfree(local_transfer_buffer);
++	return errcode;
+ }
+ 
+ static int usbduxsub_stop(struct usbduxsub *usbduxsub)
+ {
+ 	int errcode = 0;
++	uint8_t *local_transfer_buffer;
+ 
+-	uint8_t local_transfer_buffer[16];
++	local_transfer_buffer = kmalloc(1, GFP_KERNEL);
++	if (!local_transfer_buffer)
++		return -ENOMEM;
+ 
+ 	/* 7f92 to one */
+-	local_transfer_buffer[0] = 1;
++	*local_transfer_buffer = 1;
+ 	errcode = usb_control_msg(usbduxsub->usbdev,
+ 				  usb_sndctrlpipe(usbduxsub->usbdev, 0),
+ 				  /* bRequest, "Firmware" */
+@@ -781,12 +788,12 @@ static int usbduxsub_stop(struct usbduxsub *usbduxsub)
+ 				  1,
+ 				  /* Timeout */
+ 				  BULK_TIMEOUT);
+-	if (errcode < 0) {
++	if (errcode < 0)
+ 		dev_err(&usbduxsub->interface->dev,
+ 			"comedi_: control msg failed (stop)\n");
+-		return errcode;
+-	}
+-	return 0;
++
++	kfree(local_transfer_buffer);
++	return errcode;
+ }
+ 
+ static int usbduxsub_upload(struct usbduxsub *usbduxsub,
+-- 
+1.7.9.5
+
