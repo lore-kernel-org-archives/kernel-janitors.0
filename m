@@ -1,83 +1,23 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 02 Feb 2013 16:19:55 +0000
-Subject: [PATCH] scripts/coccinelle: find constant additions that could be bit ors
-Message-Id: <1359821995-27910-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Michal Marek <mmarek@suse.cz>
+Date: Fri, 22 Feb 2013 10:44:31 +0000
+Subject: Re: [PATCH] scripts/coccinelle: find constant additions that could be bit ors
+Message-Id: <20130222104431.GF12402@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1359821995-27910-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1359821995-27910-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sat, Feb 02, 2013 at 05:19:55PM +0100, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Semantic patch (http://coccinelle.lip6.fr/) to check for constants that are
+> added but are used elsewhere as bitmasks.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Semantic patch (http://coccinelle.lip6.fr/) to check for constants that are
-added but are used elsewhere as bitmasks.
+Applied to kbuild.git#misc.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- scripts/coccinelle/misc/orplus.cocci |   55 +++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/scripts/coccinelle/misc/orplus.cocci b/scripts/coccinelle/misc/orplus.cocci
-new file mode 100644
-index 0000000..4a28cef
---- /dev/null
-+++ b/scripts/coccinelle/misc/orplus.cocci
-@@ -0,0 +1,55 @@
-+/// Check for constants that are added but are used elsewhere as bitmasks
-+/// The results should be checked manually to ensure that the nonzero
-+/// bits in the two constants are actually disjoint.
-+///
-+// Confidence: Moderate
-+// Copyright: (C) 2013 Julia Lawall, INRIA/LIP6.  GPLv2.
-+// Copyright: (C) 2013 Gilles Muller, INRIA/LIP6.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Comments:
-+// Options: -no_includes -include_headers
-+
-+virtual org
-+virtual report
-+virtual context
-+
-+@r@
-+constant c;
-+identifier i;
-+expression e;
-+@@
-+
-+(
-+e | c@i
-+|
-+e & c@i
-+|
-+e |= c@i
-+|
-+e &= c@i
-+)
-+
-+@s@
-+constant r.c,c1;
-+identifier i1;
-+position p;
-+@@
-+
-+(
-+ c1 + c - 1
-+|
-+*c1@i1 +@p c
-+)
-+
-+@script:python depends on org@
-+p << s.p;
-+@@
-+
-+cocci.print_main("sum of probable bitmasks, consider |",p)
-+
-+@script:python depends on report@
-+p << s.p;
-+@@
-+
-+msg = "WARNING: sum of probable bitmasks, consider |"
-+coccilib.report.print_report(p[0],msg)
-
+Michal
