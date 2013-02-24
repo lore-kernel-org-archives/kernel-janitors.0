@@ -1,34 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Feb 2013 12:23:14 +0000
-Subject: [patch] brcmsmac: fix brcms_c_country_valid()
-Message-Id: <20130212122314.GB19045@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 24 Feb 2013 11:55:33 +0000
+Subject: [PATCH 1/2] drivers/gpu/drm/tilcdc/tilcdc_drv.c: adjust duplicate test
+Message-Id: <1361706934-15434-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1361706934-15434-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1361706934-15434-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>
-Cc: Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Seth Forshee <seth.forshee@canonical.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-ccode is not NUL terminated.  Presumably insisting on a terminator makes
-brcms_c_country_valid() return false when it's not intended.  ccode[2]
-is sprom->leddc_on_time.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Delete successive tests to the same location.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-This is a static checker fix.  I don't know what ->leddc_on_time is in
-practice.
+ drivers/gpu/drm/tilcdc/tilcdc_drv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/brcm80211/brcmsmac/channel.c b/drivers/net/wireless/brcm80211/brcmsmac/channel.c
-index cdb62b8..10ee314 100644
---- a/drivers/net/wireless/brcm80211/brcmsmac/channel.c
-+++ b/drivers/net/wireless/brcm80211/brcmsmac/channel.c
-@@ -183,8 +183,7 @@ static bool brcms_c_country_valid(const char *ccode)
- 	 * chars.
- 	 */
- 	if (!((0x80 & ccode[0]) = 0 && ccode[0] >= 0x41 && ccode[0] <= 0x5A &&
--	      (0x80 & ccode[1]) = 0 && ccode[1] >= 0x41 && ccode[1] <= 0x5A &&
--	      ccode[2] = '\0'))
-+	      (0x80 & ccode[1]) = 0 && ccode[1] >= 0x41 && ccode[1] <= 0x5A))
- 		return false;
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+index c5b592d..3ad0a63 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+@@ -192,7 +192,7 @@ static int tilcdc_load(struct drm_device *dev, unsigned long flags)
+ 	}
  
- 	/*
+ 	priv->disp_clk = clk_get(dev->dev, "dpll_disp_ck");
+-	if (IS_ERR(priv->clk)) {
++	if (IS_ERR(priv->disp_clk)) {
+ 		dev_err(dev->dev, "failed to get display clock\n");
+ 		ret = -ENODEV;
+ 		goto fail;
+
