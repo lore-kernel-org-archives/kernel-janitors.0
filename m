@@ -1,62 +1,124 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 26 Feb 2013 10:04:51 +0000
-Subject: [patch] ray_cs: read past the end of the array
-Message-Id: <20130226100451.GA12364@longonot.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 24 Feb 2013 11:55:32 +0000
+Subject: [PATCH 0/2] adjust duplicate test
+Message-Id: <1361706934-15434-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-"translate" should either be set or disabled.  We also use it an
-offset into the framing[] array when we're generating the proc
-file.  Framing looks like this:
+These patches fix cases where a value is tested that was previously
+tested.  Often the problem is that the tested value has not been updated
+properly.  Sometimes the test is simply duplicated.  These problems were
+found using the following semantic match (http://coccinelle.lip6.fr/):
 
-static const char *framing[] = { "Encapsulation", "Translation" }
+// <smpl>
+@r exists@
+expression e1,e2;
+identifier f,g;
+position p1,p2;
+@@
 
-So when we're setting translate we need to restrict the values to
-either 1 or 0 or it can an out of bounds read.
+if@p1 ( \(e1->f = NULL\|IS_ERR(e1->f)\) ) { ... when forall
+   return ...; }
+... when != \(e1->f = e2\|e1->f += e2\|e1->f -= e2\|e1->f |= e2\|e1->f &= e2\|e1->f++\|e1->f--\|g(...,e1,...)\)
+if@p2 ( \(e1->f = NULL\|IS_ERR(e1->f)\) ) { ... when forall
+   return ...; }
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Compile tested only.  This function currently doesn't have
-permission checks but maybe it should.
+@rsame exists@
+expression e;
+position r.p1,r.p2;
+statement S1,S2;
+@@
 
-There are a couple other overflow warnings in this file that look
-valid, but I don't know what was intended.
+if@p1 ( e ) S1
+... when any
+if@p2 ( e ) S2
 
-drivers/net/wireless/ray_cs.c:602 init_startup_params() error: memcpy() 'b4_default_startup_parms' too small (85 vs 93)
-drivers/net/wireless/ray_cs.c:965 translate_frame() warn: buffer overflow '(ptx->var)->org' 3 <= 3
+@rok depends on rsame exists@
+expression e1,e2;
+identifier f;
+position r.p1,r.p2;
+statement S1,S2;
+@@
 
-diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
-index e7cf37f..6ee5055 100644
---- a/drivers/net/wireless/ray_cs.c
-+++ b/drivers/net/wireless/ray_cs.c
-@@ -144,7 +144,7 @@ static int psm;
- static char *essid;
- 
- /* Default to encapsulation unless translation requested */
--static int translate = 1;
-+static bool translate = 1;
- 
- static int country = USA;
- 
-@@ -178,7 +178,7 @@ module_param(hop_dwell, int, 0);
- module_param(beacon_period, int, 0);
- module_param(psm, int, 0);
- module_param(essid, charp, 0);
--module_param(translate, int, 0);
-+module_param(translate, bool, 0);
- module_param(country, int, 0);
- module_param(sniffer, int, 0);
- module_param(bc, int, 0);
-@@ -1353,7 +1353,7 @@ static int ray_get_range(struct net_device *dev, struct iw_request_info *info,
- static int ray_set_framing(struct net_device *dev, struct iw_request_info *info,
- 			   union iwreq_data *wrqu, char *extra)
- {
--	translate = *(extra);	/* Set framing mode */
-+	translate = !!*(extra);	/* Set framing mode */
- 
- 	return 0;
- }
+if@p1 ( \(e1->f = NULL\|IS_ERR(e1->f)\) ) S1
+... when any
+ \(e1->f = e2\|e1->f += e2\|e1->f -= e2\|e1->f |= e2\|e1->f &= e2\|e1->f++\|e1->f--\|g(...,e1,...)\)
+... when any
+if@p2 ( ... ) S2
+
+@rother depends on rsame exists@
+position r.p1,r.p2;
+statement S;
+@@
+
+... when != if@p1 (...) S
+if@p2 ( ... ) { ... return ...; }
+
+@script:python depends on rsame && !rok && !rother@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (p1[0].line != p2[0].line):
+  cocci.print_main("",p1)
+  cocci.print_secs("",p2)
+
+@s exists@
+local idexpression y;
+expression e;
+position p1,p2;
+@@
+
+
+if@p1 ( \(y = NULL\|IS_ERR(y)\|y != 0\) ) { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\|XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+if@p2 ( \(y = NULL\|IS_ERR(y)\|y != 0\) ) { ... when forall
+   return ...; }
+
+@ssame exists@
+expression e;
+position s.p1,s.p2;
+statement S1,S2;
+@@
+
+if@p1 ( e ) S1
+... when any
+if@p2 ( e ) S2
+
+@sok depends on ssame exists@
+local idexpression y;
+expression e;
+position s.p1,s.p2;
+statement S1,S2;
+@@
+
+if@p1 ( \(y = NULL\|IS_ERR(y)\|y != 0\) ) S1
+... when any
+ \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\|XT_GETPAGE(...,y)\|WMI_CMD_BUF(...)\)
+... when any
+if@p2 ( ... ) S2
+
+@sother depends on ssame exists@
+position s.p1,s.p2;
+statement S;
+@@
+
+... when != if@p1 (...) S
+if@p2 ( ... ) { ... return ...; }
+
+@script:python depends on ssame && !sok && !sother@
+p1 << s.p1;
+p2 << s.p2;
+@@
+
+if (p1[0].line != p2[0].line):
+  cocci.print_main("",p1)
+  cocci.print_secs("",p2)
+
+// </smpl>
+
