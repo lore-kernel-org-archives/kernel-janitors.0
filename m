@@ -1,34 +1,55 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Sun, 17 Feb 2013 06:54:58 +0000
-Subject: [PATCH] staging: comedi: drivers: addi-data: hwdrv_apci3200.c: Add a missing semicolon
-Message-Id: <1361084099-12776-1-git-send-email-gmate.amit@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 24 Feb 2013 11:55:34 +0000
+Subject: [PATCH 2/2] drivers/regulator/s5m8767.c: adjust duplicate test
+Message-Id: <1361706934-15434-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1361706934-15434-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1361706934-15434-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: abbotti@mev.co.uk
-Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org
 
-fix for missing end-of-statement by adding a semicolon
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+Delete successive tests to the same location.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@s exists@
+local idexpression y;
+expression x,e;
+@@
+
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+... when != \(y = e\|y += e\|y -= e\|y |= e\|y &= e\|y++\|y--\|&y\)
+*if ( \(x = NULL\|IS_ERR(x)\|y != 0\) )
+ { ... when forall
+   return ...; }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- .../comedi/drivers/addi-data/hwdrv_apci3200.c      |    2 +-
+ drivers/regulator/s5m8767.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c b/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
-index 829af18..c790873 100644
---- a/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
-+++ b/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
-@@ -633,7 +633,7 @@ static int apci3200_do_insn_bits(struct comedi_device *dev,
- 	s->state = inl(devpriv->i_IobaseAddon) & 0xf;
- 	if (mask) {
- 		s->state &= ~mask;
--		s->state |= (bits & mask)
-+		s->state |= (bits & mask);
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index 8a83194..8e56198 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -549,7 +549,7 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
  
- 		outl(s->state, devpriv->i_IobaseAddon);
- 	}
--- 
-1.7.9.5
+ 	rmode = devm_kzalloc(&pdev->dev, sizeof(*rmode) *
+ 				pdata->num_regulators, GFP_KERNEL);
+-	if (!rdata) {
++	if (!rmode) {
+ 		dev_err(iodev->dev,
+ 			"could not allocate memory for regulator mode\n");
+ 		return -ENOMEM;
 
