@@ -1,112 +1,62 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 22 Feb 2013 19:07:24 +0000
-Subject: build regressions 2013-02-22
-Message-Id: <5127c1ec.VlnrN3AX5zsaIyFv%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 26 Feb 2013 10:04:51 +0000
+Subject: [patch] ray_cs: read past the end of the array
+Message-Id: <20130226100451.GA12364@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-kernel/softirq.c:890:0: error: unterminated argument list invoking macro "WARN_ON_ONCE"
-kernel/softirq.c:349:2: error: 'WARN_ON_ONCE' undeclared (first use in this function)
-kernel/softirq.c:349:2: error: expected ';' at end of input
-kernel/softirq.c:349:2: error: expected declaration or statement at end of input
-drivers/gpio/gpio-generic.c:180:19: error: 'bgpio_read8' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:181:20: error: 'bgpio_write8' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:184:19: error: 'bgpio_read16' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:185:20: error: 'bgpio_write16' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:188:19: error: 'bgpio_read32' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:189:20: error: 'bgpio_write32' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:202:23: error: 'bgpio_pin2mask_be' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:202:43: error: 'bgpio_pin2mask' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:242:17: error: 'bgpio_set_with_clear' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:245:17: error: 'bgpio_set' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:251:16: error: 'bgpio_get' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:264:30: error: 'bgpio_dir_out' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:265:29: error: 'bgpio_dir_in' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:268:30: error: 'bgpio_dir_out_inv' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:269:29: error: 'bgpio_dir_in_inv' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:321:21: error: 'bgpio_set_set' undeclared (first use in this function)
-arch/s390/appldata/appldata_os.c:125:3: error: implicit declaration of function 'atomci64_read' [-Werror=implicit-function-declaration]
-drivers/thermal/intel_powerclamp.c:53:28: fatal error: linux/sched/rt.h: No such file or directory
-drivers/gpio/gpio-generic.c:157:1: error: implicit declaration of function 'ioread64' [-Werror=implicit-function-declaration]
-drivers/gpio/gpio-generic.c:157:1: error: implicit declaration of function 'iowrite64' [-Werror=implicit-function-declaration]
-drivers/gpio/gpio-generic.c:193:19: error: 'bgpio_read64' undeclared (first use in this function)
-drivers/gpio/gpio-generic.c:194:20: error: 'bgpio_write64' undeclared (first use in this function)
-drivers/xen/xen-acpi-memhotplug.c:191:2: error: implicit declaration of function 'acpi_bus_add' [-Werror=implicit-function-declaration]
-drivers/xen/xen-acpi-cpuhotplug.c:254:2: error: implicit declaration of function 'acpi_bus_add' [-Werror=implicit-function-declaration]
-ld: cannot open linker script file drivers/acpi/.tmp_pci_root.ver: No such file or directory
-objdump: 'drivers/acpi/.tmp_pci_link.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_pci_link.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_pci_irq.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_pci_irq.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_event.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_event.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_sysfs.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_sysfs.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_processor_perflib.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_processor_perflib.o': No such file or directory
-objdump: 'fs/ext4/.tmp_balloc.o': No such file
-mv: cannot stat `fs/ext4/.tmp_balloc.o': No such file or directory
-objdump: 'fs/ext4/.tmp_inline.o': No such file
-mv: cannot stat `fs/ext4/.tmp_inline.o': No such file or directory
-objdump: 'fs/ext4/.tmp_xattr_user.o': No such file
-mv: cannot stat `fs/ext4/.tmp_xattr_user.o': No such file or directory
-objdump: 'fs/ext4/.tmp_xattr.o': No such file
-mv: cannot stat `fs/ext4/.tmp_xattr.o': No such file or directory
-objdump: 'net/ipv4/.tmp_xfrm4_state.o': No such file
-mv: cannot stat `net/ipv4/.tmp_xfrm4_state.o': No such file or directory
-objdump: 'net/ipv4/.tmp_xfrm4_input.o': No such file
-mv: cannot stat `net/ipv4/.tmp_xfrm4_input.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_ec.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_ec.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_dock.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_dock.o': No such file or directory
-ld: cannot open linker script file drivers/acpi/.tmp_debugfs.ver: No such file or directory
-objdump: 'drivers/acpi/.tmp_cm_sbs.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_cm_sbs.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_video_detect.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_video_detect.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_processor_driver.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_processor_driver.o': No such file or directory
-objdump: 'drivers/acpi/.tmp_processor_throttling.o': No such file
-mv: cannot stat `drivers/acpi/.tmp_processor_throttling.o': No such file or directory
-objdump: 'drivers/acpi/acpica/.tmp_evxfregn.o': No such file
-mv: cannot stat `drivers/acpi/acpica/.tmp_evxfregn.o': No such file or directory
-objdump: 'drivers/acpi/acpica/.tmp_evgpe.o': No such file
-mv: cannot stat `drivers/acpi/acpica/.tmp_evgpe.o': No such file or directory
-mv: cannot stat `drivers/acpi/acpica/.evevent.o.tmp': No such file or directory
-fixdep: error opening depfile: arch/x86/video/.fbdev.o.d: No such file or directory
-fixdep: error opening depfile: drivers/acpi/acpica/.dswscope.o.d: No such file or directory
-fixdep: error opening depfile: arch/x86/oprofile/.init.o.d: No such file or directory
-mv: cannot stat `arch/x86/oprofile/.nmi_int.o.tmp': No such file or directory
-fixdep: error opening depfile: arch/x86/oprofile/.backtrace.o.d: No such file or directory
+"translate" should either be set or disabled.  We also use it an
+offset into the framing[] array when we're generating the proc
+file.  Framing looks like this:
 
-[warnings]
-drivers/thermal/cpu_cooling.c:171:11: warning: 'level' may be used uninitialized in this function [-Wuninitialized]
-drivers/iio/common/st_sensors/st_sensors_core.c:209:15: warning: 'odr_out.hz' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/media/usb/dvb-usb-v2/af9015.c:430:1: warning: 'af9015_eeprom_hash' uses dynamic stack allocation [enabled by default]
-drivers/media/dvb-frontends/stb6100.c:216:1: warning: 'stb6100_write_reg_range.constprop.3' uses dynamic stack allocation [enabled by default]
-drivers/media/dvb-frontends/stv0367.c:791:1: warning: 'stv0367_writeregs.constprop.4' uses dynamic stack allocation [enabled by default]
-drivers/media/tuners/e4000.c:81:1: warning: 'e4000_rd_regs.constprop.0' uses dynamic stack allocation [enabled by default]
-drivers/media/tuners/fc2580.c:98:1: warning: 'fc2580_rd_regs.constprop.0' uses dynamic stack allocation [enabled by default]
-drivers/media/tuners/fc2580.c:66:1: warning: 'fc2580_wr_regs.constprop.1' uses dynamic stack allocation [enabled by default]
-drivers/media/tuners/tda18212.c:90:1: warning: 'tda18212_rd_regs.constprop.0' uses dynamic stack allocation [enabled by default]
-drivers/media/tuners/tda18218.c:92:1: warning: 'tda18218_rd_regs.constprop.0' uses dynamic stack allocation [enabled by default]
-drivers/net/wireless/mwifiex/pcie.c:1157:9: warning: 'desc2' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/net/wireless/mwifiex/pcie.c:1159:9: warning: 'desc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+static const char *framing[] = { "Encapsulation", "Translation" }
 
-[sparse]
-drivers/cpufreq/cpufreq_conservative.c:244:54: sparse: incorrect type in assignment (different base types)
-net/nfc/llcp/commands.c:341:50: sparse: restricted __be16 degrades to integer
-net/nfc/llcp/commands.c:396:50: sparse: restricted __be16 degrades to integer
+So when we're setting translate we need to restrict the values to
+either 1 or 0 or it can an out of bounds read.
 
-[smatch]
-kernel/posix-timers.c:661 __lock_timer() warn: inconsistent returns spin_lock:&timr->it_lock: locked (655) unlocked (647,661)
-kernel/posix-timers.c:661 __lock_timer() warn: inconsistent returns irqsave:*flags: locked (655) unlocked (647,661)
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+Compile tested only.  This function currently doesn't have
+permission checks but maybe it should.
+
+There are a couple other overflow warnings in this file that look
+valid, but I don't know what was intended.
+
+drivers/net/wireless/ray_cs.c:602 init_startup_params() error: memcpy() 'b4_default_startup_parms' too small (85 vs 93)
+drivers/net/wireless/ray_cs.c:965 translate_frame() warn: buffer overflow '(ptx->var)->org' 3 <= 3
+
+diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
+index e7cf37f..6ee5055 100644
+--- a/drivers/net/wireless/ray_cs.c
++++ b/drivers/net/wireless/ray_cs.c
+@@ -144,7 +144,7 @@ static int psm;
+ static char *essid;
+ 
+ /* Default to encapsulation unless translation requested */
+-static int translate = 1;
++static bool translate = 1;
+ 
+ static int country = USA;
+ 
+@@ -178,7 +178,7 @@ module_param(hop_dwell, int, 0);
+ module_param(beacon_period, int, 0);
+ module_param(psm, int, 0);
+ module_param(essid, charp, 0);
+-module_param(translate, int, 0);
++module_param(translate, bool, 0);
+ module_param(country, int, 0);
+ module_param(sniffer, int, 0);
+ module_param(bc, int, 0);
+@@ -1353,7 +1353,7 @@ static int ray_get_range(struct net_device *dev, struct iw_request_info *info,
+ static int ray_set_framing(struct net_device *dev, struct iw_request_info *info,
+ 			   union iwreq_data *wrqu, char *extra)
+ {
+-	translate = *(extra);	/* Set framing mode */
++	translate = !!*(extra);	/* Set framing mode */
+ 
+ 	return 0;
+ }
