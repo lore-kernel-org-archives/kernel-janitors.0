@@ -1,47 +1,75 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Feb 2013 12:35:00 +0000
-Subject: Re: [patch] mmc: check correct variable after kzalloc()
-Message-Id: <20130212123500.GP4937@mwanda>
+Date: Wed, 27 Feb 2013 05:12:06 +0000
+Subject: [patch 1/2] wlan-ng: clean up prism2sta_inf_chinforesults()
+Message-Id: <20130227051206.GA22703@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130212122454.GC19045@elgon.mountain>
- <87pq05ogy9.fsf@octavius.laptop.org>
-In-Reply-To: <87pq05ogy9.fsf@octavius.laptop.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Ball <cjb@laptop.org>
-Cc: Seungwon Jeon <tgih.jun@samsung.com>, Namjae Jeon <linkinjeon@gmail.com>, Konstantin Dorfman <kdorfman@codeaurora.org>, Venkatraman S <svenkatr@ti.com>, linux-mmc@vger.kernel.org, kbuild@01.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 12, 2013 at 07:27:26AM -0500, Chris Ball wrote:
-> Hi Dan,
-> 
-> On Tue, Feb 12 2013, Dan Carpenter wrote:
-> > There is a typo here so we check "mqrq_cur->packed" instead of
-> > "mqrq_prev->packed".
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > diff --git a/drivers/mmc/card/queue.c b/drivers/mmc/card/queue.c
-> > index c0d1315..97a848b 100644
-> > --- a/drivers/mmc/card/queue.c
-> > +++ b/drivers/mmc/card/queue.c
-> > @@ -378,7 +378,7 @@ int mmc_packed_init(struct mmc_queue *mq, struct mmc_card *card)
-> >  	}
-> >  
-> >  	mqrq_prev->packed = kzalloc(sizeof(struct mmc_packed), GFP_KERNEL);
-> > -	if (!mqrq_cur->packed) {
-> > +	if (!mqrq_prev->packed) {
-> >  		pr_warn("%s: unable to allocate packed cmd for mqrq_prev\n",
-> >  			   mmc_card_name(card));
-> >  		kfree(mqrq_cur->packed);
-> >
-> 
-> Thanks, this is already fixed via a rebase edit to to the original patch
-> in mmc-next.  (Fengguang's 0-day bot caught it.)
-> 
+This function is ugly because it hits against the 80 character
+limit.  This patch does several things to clean it up.
 
-Ah, grand.  We try to avoid duplicates but there is a gap in our
-system...
+1) Introduces "result" instead of inf->info.chinforesult.result[n].
+2) Reverses the ".scanchannels & (1 << i)" so everthing can be
+   pulled in one indent level.
+3) Use "chan" instead of "channel".
+4) Tweaks the line breaks to the call to pr_debug().
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/wlan-ng/prism2sta.c b/drivers/staging/wlan-ng/prism2sta.c
+index 8d2277b..dc221f2 100644
+--- a/drivers/staging/wlan-ng/prism2sta.c
++++ b/drivers/staging/wlan-ng/prism2sta.c
+@@ -1160,30 +1160,30 @@ static void prism2sta_inf_chinforesults(wlandevice_t *wlandev,
+ 	    le16_to_cpu(inf->info.chinforesult.scanchannels);
+ 
+ 	for (i = 0, n = 0; i < HFA384x_CHINFORESULT_MAX; i++) {
+-		if (hw->channel_info.results.scanchannels & (1 << i)) {
+-			int channel -			    le16_to_cpu(inf->info.chinforesult.result[n].chid) -
+-			    1;
+-			hfa384x_ChInfoResultSub_t *chinforesult -			    &hw->channel_info.results.result[channel];
+-			chinforesult->chid = channel;
+-			chinforesult->anl -			    le16_to_cpu(inf->info.chinforesult.result[n].anl);
+-			chinforesult->pnl -			    le16_to_cpu(inf->info.chinforesult.result[n].pnl);
+-			chinforesult->active -			    le16_to_cpu(inf->info.chinforesult.result[n].
+-					active);
+-	pr_debug
+-		("chinfo: channel %d, %s level (avg/peak)=%d/%d dB, pcf %d\n",
+-			     channel + 1,
+-			     chinforesult->
+-			     active & HFA384x_CHINFORESULT_BSSACTIVE ? "signal"
+-			     : "noise", chinforesult->anl, chinforesult->pnl,
+-			     chinforesult->
+-			     active & HFA384x_CHINFORESULT_PCFACTIVE ? 1 : 0);
+-			n++;
+-		}
++		hfa384x_ChInfoResultSub_t *result;
++		hfa384x_ChInfoResultSub_t *chinforesult;
++		int chan;
++
++		if (!(hw->channel_info.results.scanchannels & (1 << i)))
++			continue;
++
++		result = &inf->info.chinforesult.result[n];
++		chan = le16_to_cpu(result->chid) - 1;
++
++		chinforesult = &hw->channel_info.results.result[chan];
++		chinforesult->chid = chan;
++		chinforesult->anl = le16_to_cpu(result->anl);
++		chinforesult->pnl = le16_to_cpu(result->pnl);
++		chinforesult->active = le16_to_cpu(result->active);
++
++		pr_debug("chinfo: channel %d, %s level (avg/peak)=%d/%d dB, pcf %d\n",
++			 chan + 1,
++			 (chinforesult->active & HFA384x_CHINFORESULT_BSSACTIVE)
++				? "signal" : "noise",
++			 chinforesult->anl, chinforesult->pnl,
++			 (chinforesult->active & HFA384x_CHINFORESULT_PCFACTIVE)
++				? 1 : 0);
++		n++;
+ 	}
+ 	atomic_set(&hw->channel_info.done, 2);
+ 
