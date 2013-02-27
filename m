@@ -1,35 +1,30 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Fri, 22 Feb 2013 15:36:45 +0000
-Subject: Re: [PATCH v2] staging: comedi: drivers: usbduxsigma.c: fix DMA buffers on stack
-Message-Id: <5127908D.5020301@mev.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Feb 2013 20:41:44 +0000
+Subject: [patch] sctp: check len in sctp_getsockopt_assoc_stats()
+Message-Id: <20130227204144.GA11300@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1361513228-8897-1-git-send-email-gmate.amit@gmail.com> <51274244.6080507@mev.co.uk> <20130222142619.GA11141@gmail.com>
-In-Reply-To: <20130222142619.GA11141@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar amit mehta <gmate.amit@gmail.com>
-Cc: Ian Abbott <ian.abbott@mev.co.uk>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "fmhess@users.sourceforge.net" <fmhess@users.sourceforge.net>, "hsweeten@visionengravers.com" <hsweeten@visionengravers.com>, "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Vlad Yasevich <vyasevich@gmail.com>, Michele Baldessari <michele@acksyn.org>
+Cc: Sridhar Samudrala <sri@us.ibm.com>, Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2013-02-22 14:26, Kumar amit mehta wrote:
-> On Fri, Feb 22, 2013 at 10:02:44AM +0000, Ian Abbott wrote:
->> On 2013-02-22 06:07, Kumar Amit Mehta wrote:
->>> This patch fixes an instance of DMA buffer on stack(being passed to
->>> usb_control_msg)for the USB-DUXsigma Board driver. Found using smatch.
->>>
->>
->> Looks good here too.
->>
->> Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
->>
->> Would you mind doing the same for usbdux.c and usbduxfast.c?
-> Sure.
-> As pointed out by Dan, Do you really want the buffer to be of 16 bytes, as we
-> are using only the first byte and passing the length as '1' in:
-> usbduxsub_start, usbduxsub_stop, usbduxfastsub_start, usbduxfastsub_stop ?
+This check is missing an upper bound.
 
-A buffer size of 1 should be fine.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This should go in 3.8 -stable as well.
 
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
--=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index c99458d..fbd8386 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -5652,6 +5652,8 @@ static int sctp_getsockopt_assoc_stats(struct sock *sk, int len,
+ 	/* User must provide at least the assoc id */
+ 	if (len < sizeof(sctp_assoc_t))
+ 		return -EINVAL;
++	if (len > sizeof(struct sctp_assoc_stats))
++		len = sizeof(struct sctp_assoc_stats);
+ 
+ 	if (copy_from_user(&sas, optval, len))
+ 		return -EFAULT;
