@@ -1,7 +1,7 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Feb 2013 21:56:30 +0000
+Date: Wed, 27 Feb 2013 22:13:29 +0000
 Subject: Re: [patch 1/2] wlan-ng: clean up prism2sta_inf_chinforesults()
-Message-Id: <20130227215630.GR9138@mwanda>
+Message-Id: <20130227221329.GR9189@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130227051206.GA22703@longonot.mountain>
 In-Reply-To: <20130227051206.GA22703@longonot.mountain>
@@ -21,12 +21,12 @@ On Wed, Feb 27, 2013 at 10:42:23PM +0100, walter harms wrote:
 > perhaps i am missing the point, could someone tell me were i am wrong ?
 > 
 
-I don't understand how you're confused.  You've described the code
-perfectly.  One is incremented for every iteration and one is only
-incremented if we find what we're looking for.
+Reading your email again, I can see what you mean.
 
-Anyway, the point of the cleanup was just so I could add a range
-check in patch 2/2 but the original code was too ugly to look at.
+I don't have the hardware though or any more info than you do.  I
+can only assume that the original code works.  My patch doesn't
+change anything or introduce any bugs that weren't there in the
+original.
 
 regards,
 dan carpenter
