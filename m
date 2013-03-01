@@ -1,35 +1,30 @@
-From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
-Date: Fri, 15 Mar 2013 18:18:29 +0000
-Subject: RE: [patch] Staging: dwc2: remove a kfree(NULL)
-Message-Id: <A2CA0424C0A6F04399FB9E1CD98E030458D8F436@US01WEMBX2.internal.synopsys.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Mar 2013 05:27:43 +0000
+Subject: [patch] sctp: use the passed in gfp flags instead GFP_KERNEL
+Message-Id: <20130301052743.GD2669@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130315060330.GA3793@longonot.mountain>
-In-Reply-To: <20130315060330.GA3793@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Vlad Yasevich <vyasevich@gmail.com>
+Cc: Sridhar Samudrala <sri@us.ibm.com>, Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Thursday, March 14, 2013 11:04 PM
-> 
-> dwc2_hcd_release() calls dwc2_hcd_free() which frees ->core_params
-> and sets it to NULL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/dwc2/hcd.c b/drivers/staging/dwc2/hcd.c
-> index cdb142d..e123f1e 100644
-> --- a/drivers/staging/dwc2/hcd.c
-> +++ b/drivers/staging/dwc2/hcd.c
-> @@ -2939,7 +2939,6 @@ void dwc2_hcd_remove(struct device *dev, struct dwc2_hsotg *hsotg)
->  	usb_remove_hcd(hcd);
->  	hsotg->priv = NULL;
->  	dwc2_hcd_release(hsotg);
-> -	kfree(hsotg->core_params);
-> 
->  #ifdef CONFIG_USB_DWC2_TRACK_MISSED_SOFS
->  	kfree(hsotg->last_frame_num_array);
+This patch doesn't change how the code works because in the current
+kernel gfp is always GFP_KERNEL.  But gfp was obviously intended
+instead of GFP_KERNEL.
 
-Acked-by: Paul Zimmerman <paulz@synopsys.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/net/sctp/endpointola.c b/net/sctp/endpointola.c
+index 2b3ef03..12ed45d 100644
+--- a/net/sctp/endpointola.c
++++ b/net/sctp/endpointola.c
+@@ -155,7 +155,7 @@ static struct sctp_endpoint *sctp_endpoint_init(struct sctp_endpoint *ep,
+ 
+ 	/* SCTP-AUTH extensions*/
+ 	INIT_LIST_HEAD(&ep->endpoint_shared_keys);
+-	null_key = sctp_auth_shkey_create(0, GFP_KERNEL);
++	null_key = sctp_auth_shkey_create(0, gfp);
+ 	if (!null_key)
+ 		goto nomem;
+ 
