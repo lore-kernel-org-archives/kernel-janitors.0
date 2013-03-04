@@ -1,58 +1,74 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 04 Mar 2013 12:19:18 +0000
-Subject: [patch] [ALSA] seq_oss_event: missing range checks
-Message-Id: <20130304121918.GA587@longonot.mountain>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 04 Mar 2013 15:41:37 +0000
+Subject: Re: [alsa-devel] [patch] [ALSA] seq_oss_event: missing range checks
+Message-Id: <s5hlia3gojy.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130304121918.GA587@longonot.mountain>
+In-Reply-To: <20130304121918.GA587@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-The "dev" variable could be out of bounds.  Calling
-snd_seq_oss_synth_is_valid() checks that it is is a valid device
-which has been opened.  We check this inside set_note_event() so
-this function can't succeed without a valid "dev".  But we need to
-do the check earlier to prevent invalid dereferences and memory
-corruption.
+At Mon, 4 Mar 2013 15:19:18 +0300,
+Dan Carpenter wrote:
+> 
+> The "dev" variable could be out of bounds.  Calling
+> snd_seq_oss_synth_is_valid() checks that it is is a valid device
+> which has been opened.  We check this inside set_note_event() so
+> this function can't succeed without a valid "dev".  But we need to
+> do the check earlier to prevent invalid dereferences and memory
+> corruption.
+> 
+> One call tree where "dev" could be out of bounds is:
+> -> snd_seq_oss_oob_user()
+>    -> snd_seq_oss_process_event()
+>       -> extended_event()
+>          -> note_on_event()
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-One call tree where "dev" could be out of bounds is:
--> snd_seq_oss_oob_user()
-   -> snd_seq_oss_process_event()
-      -> extended_event()
-         -> note_on_event()
+Thanks, applied.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/sound/core/seq/oss/seq_oss_event.c b/sound/core/seq/oss/seq_oss_event.c
-index 066f5f3..c390886 100644
---- a/sound/core/seq/oss/seq_oss_event.c
-+++ b/sound/core/seq/oss/seq_oss_event.c
-@@ -285,7 +285,12 @@ local_event(struct seq_oss_devinfo *dp, union evrec *q, struct snd_seq_event *ev
- static int
- note_on_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, struct snd_seq_event *ev)
- {
--	struct seq_oss_synthinfo *info = &dp->synths[dev];
-+	struct seq_oss_synthinfo *info;
-+
-+	if (!snd_seq_oss_synth_is_valid(dp, dev))
-+		return -ENXIO;
-+
-+	info = &dp->synths[dev];
- 	switch (info->arg.event_passing) {
- 	case SNDRV_SEQ_OSS_PROCESS_EVENTS:
- 		if (! info->ch || ch < 0 || ch >= info->nr_voices) {
-@@ -340,7 +345,12 @@ note_on_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, st
- static int
- note_off_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, struct snd_seq_event *ev)
- {
--	struct seq_oss_synthinfo *info = &dp->synths[dev];
-+	struct seq_oss_synthinfo *info;
-+
-+	if (!snd_seq_oss_synth_is_valid(dp, dev))
-+		return -ENXIO;
-+
-+	info = &dp->synths[dev];
- 	switch (info->arg.event_passing) {
- 	case SNDRV_SEQ_OSS_PROCESS_EVENTS:
- 		if (! info->ch || ch < 0 || ch >= info->nr_voices) {
+Takashi
+
+> 
+> diff --git a/sound/core/seq/oss/seq_oss_event.c b/sound/core/seq/oss/seq_oss_event.c
+> index 066f5f3..c390886 100644
+> --- a/sound/core/seq/oss/seq_oss_event.c
+> +++ b/sound/core/seq/oss/seq_oss_event.c
+> @@ -285,7 +285,12 @@ local_event(struct seq_oss_devinfo *dp, union evrec *q, struct snd_seq_event *ev
+>  static int
+>  note_on_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, struct snd_seq_event *ev)
+>  {
+> -	struct seq_oss_synthinfo *info = &dp->synths[dev];
+> +	struct seq_oss_synthinfo *info;
+> +
+> +	if (!snd_seq_oss_synth_is_valid(dp, dev))
+> +		return -ENXIO;
+> +
+> +	info = &dp->synths[dev];
+>  	switch (info->arg.event_passing) {
+>  	case SNDRV_SEQ_OSS_PROCESS_EVENTS:
+>  		if (! info->ch || ch < 0 || ch >= info->nr_voices) {
+> @@ -340,7 +345,12 @@ note_on_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, st
+>  static int
+>  note_off_event(struct seq_oss_devinfo *dp, int dev, int ch, int note, int vel, struct snd_seq_event *ev)
+>  {
+> -	struct seq_oss_synthinfo *info = &dp->synths[dev];
+> +	struct seq_oss_synthinfo *info;
+> +
+> +	if (!snd_seq_oss_synth_is_valid(dp, dev))
+> +		return -ENXIO;
+> +
+> +	info = &dp->synths[dev];
+>  	switch (info->arg.event_passing) {
+>  	case SNDRV_SEQ_OSS_PROCESS_EVENTS:
+>  		if (! info->ch || ch < 0 || ch >= info->nr_voices) {
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+> 
