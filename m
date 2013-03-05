@@ -1,45 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 01 Mar 2013 05:21:55 +0000
-Subject: [patch] i2o: check copy_from_user() size parameter
-Message-Id: <20130301052155.GC2669@longonot.mountain>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Tue, 05 Mar 2013 07:53:29 +0000
+Subject: Re: [patch] ath6kl: small cleanup in ath6kl_htc_pipe_rx_complete()
+Message-Id: <874ngqgu4m.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130228044547.GC15239@longonot.mountain>
+In-Reply-To: <20130228044547.GC15239@longonot.mountain> (Dan Carpenter's
+	message of "Thu, 28 Feb 2013 07:45:47 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Kosina <jkosina@suse.cz>, Masanari Iida <standby24x7@gmail.com>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, ath6kl-devel@qca.qualcomm.com
 
-Limit the size of the copy so we don't corrupt memory.  Hopefully
-this can only be called by root, but fixing this makes the static
-checkers happier.
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> It's harmless, but Smatch complains if we use "htc_hdr->eid" before
+> doing the bounds check.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/message/i2o/i2o_config.c b/drivers/message/i2o/i2o_config.c
-index 5451bef..a60c188 100644
---- a/drivers/message/i2o/i2o_config.c
-+++ b/drivers/message/i2o/i2o_config.c
-@@ -687,6 +687,11 @@ static int i2o_cfg_passthru32(struct file *file, unsigned cmnd,
- 		}
- 		size = size >> 16;
- 		size *= 4;
-+		if (size > sizeof(rmsg)) {
-+			rcode = -EINVAL;
-+			goto sg_list_cleanup;
-+		}
-+
- 		/* Copy in the user's I2O command */
- 		if (copy_from_user(rmsg, user_msg, size)) {
- 			rcode = -EFAULT;
-@@ -922,6 +927,11 @@ static int i2o_cfg_passthru(unsigned long arg)
- 		}
- 		size = size >> 16;
- 		size *= 4;
-+		if (size > sizeof(rmsg)) {
-+			rcode = -EFAULT;
-+			goto sg_list_cleanup;
-+		}
-+
- 		/* Copy in the user's I2O command */
- 		if (copy_from_user(rmsg, user_msg, size)) {
- 			rcode = -EFAULT;
+Thanks, applied.
+
+-- 
+Kalle Valo
