@@ -1,118 +1,46 @@
-From: mirsal <mirsal@mirsal.fr>
-Date: Tue, 12 Mar 2013 09:52:04 +0000
-Subject: Re: [PATCH v2 3/3] drivers: android: binder: Remove excessive indentation
-Message-Id: <1363081924.10491.52.camel@mirsal-laptop1.mirsal.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-oExwYLUTViW8X9f8NlH1"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Mar 2013 13:06:26 +0000
+Subject: [patch] HID: hid-logitech-dj: add some range checks
+Message-Id: <20130305130626.GA17801@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1363030315-10229-1-git-send-email-mirsal@mirsal.fr>
-	 <1363044388-11409-1-git-send-email-mirsal@mirsal.fr>
-	 <1363044388-11409-4-git-send-email-mirsal@mirsal.fr>
-	 <1363046657.3724.11.camel@joe-AO722>
-In-Reply-To: <1363046657.3724.11.camel@joe-AO722>
-To: Joe Perches <joe@perches.com>
-Cc: Greg Kroah-Hartman <greg@kroah.com>, Arve =?ISO-8859-1?Q?Hj=F8nnev=E5g?= <arve@android.com>, Brian Swetland <swetland@google.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
-
-
---=-oExwYLUTViW8X9f8NlH1
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2013-03-11 at 17:04 -0700, Joe Perches wrote:
-> On Tue, 2013-03-12 at 00:26 +0100, Mirsal Ennaime wrote:
-> > Remove one level of indentation from the binder proc page release code
-> > by using slightly different control semantics.
-> >=20
-> > This is a cosmetic patch which removes checkpatch "80-columns" warnings
->=20
-> More trivia:
->=20
-> > diff --git a/drivers/staging/android/binder.c b/drivers/staging/android=
-/binder.c
-> []
-> > @@ -3001,17 +3001,20 @@ static void binder_deferred_release(struct bind=
-er_proc *proc)
-> >  		int i;
-> > =20
-> >  		for (i =3D 0; i < proc->buffer_size / PAGE_SIZE; i++) {
-> > -			if (proc->pages[i]) {
-> > -				void *page_addr =3D proc->buffer + i * PAGE_SIZE;
-> > -				binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
-> > -					"binder_release: %d: page %d at %p not freed\n",
-> > -					proc->pid, i,
-> > -					page_addr);
-> > -				unmap_kernel_range((unsigned long)page_addr,
-> > -					PAGE_SIZE);
-> > -				__free_page(proc->pages[i]);
-> > -				page_count++;
-> > -			}
-> > +			void *page_addr;
-> > +
-> > +			if (!proc->pages[i])
-> > +				continue;
-> > +
-> > +			page_addr =3D proc->buffer + i * PAGE_SIZE;
-> > +			binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
-> > +				"binder_release: %d: page %d at %p not freed\n",
-> > +				proc->pid, i,
-> > +				page_addr);
-> > +			unmap_kernel_range((unsigned long)page_addr,
-> > +				PAGE_SIZE);
->=20
-> Please align single function call args to open parenthesis.
-> Please fill to 80 chars where appropriate.
-
-Fixed in v3, thanks!
-
-> I think using %s, __func__ is better than embedded function names.
->=20
-> like:
-> 			binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
-> 				     "%s: %d: page %d at %p not freed\n",
-> 				     __func__, proc->pid, i, page_addr);
-> 			unmap_kernel_range((unsigned long)page_addr, PAGE_SIZE);
-
-Indeed, however binder_release is not the name of the calling function,
-nor is it further up the stack. You are probably right in that __func__
-should be printed rather than binder_release as it is a bit misleading.
-
-I'm adding a separate patch for this.
-
-> Also for the binder folk:
->=20
-> I think it's odd to use pr_info in binder_debug.
-> Why not use KERN_DEBUG or pr_debug/dynamic_debugging?
->=20
-> #define binder_debug(mask, x...) \
-> 	do { \
-> 		if (binder_debug_mask & mask) \
-> 			pr_info(x); \
-> 	} while (0)
-
-
-I'd be happy to change it to use pr_debug if that is correct.
-
-Best regards,
-
---=20
-mirsal=20
-
---=-oExwYLUTViW8X9f8NlH1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+We can't trust dj_report->device_index because it comes from the
+user and hasn't been range checked.  It is used as an offset into
+the djrcv_dev->paired_dj_devices[] array which has 7 elements.
+There is one range check already in logi_dj_recv_add_djhid_device()
+and I have copy and pasted that here.
 
-iQEcBAABCAAGBQJRPvrEAAoJEPePn+hK5bYQPL0H/jfC7G3Lt4bDJrGDI+s2nnKk
-e5+/cZGeBgJDGCryI7OdigBtQ7i0nWF3CGdTqZrVEc8S0/5pe3jUF3G/DqUN+w1j
-sXSS9NSh0ZYEr2gxe63Q1wXAqBrv03nNJlmYrn5V3TlYSWdc2Nyh0bDKxkiee2tI
-b9yh9Fj0hbxtpf13+2R9Xwu1uiFibc7/MztL5NQY1LEzwRYzUAR9iQ/OtS7iz79E
-gAueOrtKriKPojVseHEU7AapjJNLexcjO/7bZlROpP7GWFVP0p2kCWchzLXC/HFB
-qCjin6/0BE2IHVgB/zSD29i7Mj9yLhPDbw70MMLAn+95SY0Y+J1FGbAF+zM7mIc=
-=WIfN
------END PGP SIGNATURE-----
+DJ_DEVICE_INDEX_MIN is 1.
+DJ_DEVICE_INDEX_MAX is 6.
 
---=-oExwYLUTViW8X9f8NlH1--
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker fix and I'm not certain it's correct,
+please look it over carefully.
 
+I do not know this code well, so I don't know why a zero index is
+invalid.
+
+diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+index 9500f2f..c01cd25 100644
+--- a/drivers/hid/hid-logitech-dj.c
++++ b/drivers/hid/hid-logitech-dj.c
+@@ -701,6 +701,13 @@ static int logi_dj_raw_event(struct hid_device *hdev,
+ 	 * anything else with it.
+ 	 */
+ 
++	if ((dj_report->device_index < DJ_DEVICE_INDEX_MIN) ||
++	    (dj_report->device_index > DJ_DEVICE_INDEX_MAX)) {
++		dev_err(&hdev->dev, "%s: invalid device index:%d\n", __func__,
++			dj_report->device_index);
++		return true;
++	}
++
+ 	spin_lock_irqsave(&djrcv_dev->lock, flags);
+ 	if (dj_report->report_id = REPORT_ID_DJ_SHORT) {
+ 		switch (dj_report->report_type) {
