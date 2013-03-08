@@ -1,32 +1,34 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 01 Mar 2013 21:31:36 +0000
-Subject: Re: [patch] applicom: use correct array offset
-Message-Id: <201303012131.37086.arnd@arndb.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Mar 2013 12:01:15 +0000
+Subject: [patch] [SCSI] bfa: Use GFP_ATOMIC under spin_lock
+Message-Id: <20130308120115.GA18712@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130301203146.GC22066@longonot.mountain>
-In-Reply-To: <20130301203146.GC22066@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anil Gurumurthy <agurumur@brocade.com>
+Cc: Vijaya Mohan Guvva <vmohan@brocade.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Friday 01 March 2013, Dan Carpenter wrote:
-> We're iterating through abps[] printing information, but here we
-> use the wrong array index.  IndexCard comes from the user and in
-> this case it was specifically not range checked because we didn't
-> expect to use it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This is always called with spinlocks held so it should use
+GFP_ATOMIC.  The call tree is:
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+-> bfad_drv_start()
+   Takes spin_lock_irqsave(&bfad->bfad_lock, flags);
+   -> bfa_fcs_pbc_vport_init()
+      -> bfa_fcb_pbc_vport_create()
 
-Wow, that is a crappy driver ;-) Dave Woodhouse was apparently the last
-person who understood it and had something to do with it, and that was back
-in the 90s. It looks like the vendor actually has its own (much worse)
-driver for this product line and only supports more recent cards than
-our driver does. I doubt that there is anyone using this.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Should we just kill the driver?
-
-	Arnd
+diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
+index a5f7690..d144a06 100644
+--- a/drivers/scsi/bfa/bfad.c
++++ b/drivers/scsi/bfa/bfad.c
+@@ -491,7 +491,7 @@ bfa_fcb_pbc_vport_create(struct bfad_s *bfad, struct bfi_pbc_vport_s pbc_vport)
+ 	struct bfad_vport_s   *vport;
+ 	int rc;
+ 
+-	vport = kzalloc(sizeof(struct bfad_vport_s), GFP_KERNEL);
++	vport = kzalloc(sizeof(struct bfad_vport_s), GFP_ATOMIC);
+ 	if (!vport) {
+ 		bfa_trc(bfad, 0);
+ 		return;
