@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 25 Mar 2013 16:11:16 +0000
-Subject: build regressions 2013-03-25
-Message-Id: <51507724.7snIKkdZ8CnwgGxa%fengguang.wu@intel.com>
+Date: Fri, 08 Mar 2013 16:18:36 +0000
+Subject: build regressions 2013-03-08
+Message-Id: <513a0f5c.kQ0smJf9xdGOLO+b%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,59 +9,94 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-(.init.text+0x0): multiple definition of `init_module'
-drivers/md/bcache/super.o:super.c:(.init.text+0x0): first defined here
-drivers/gpu/drm/drm_pci.c:485:2: error: implicit declaration of function 'pcie_capability_read_dword' [-Werror=implicit-function-declaration]
-drivers/md/bcache/bset.c:727:3: error: implicit declaration of function 'prefetch' [-Werror=implicit-function-declaration]
-drivers/md/bcache/btree.c:932:3: error: implicit declaration of function 'prefetch' [-Werror=implicit-function-declaration]
-drivers/md/bcache/super.o:(.opd+0x540): first defined here
-drivers/md/bcache/super.o:(.init.text+0x0): first defined here
-ftrace.c:(.toc+0xd90): undefined reference to `epapr_ev_idle_start'
-ftrace.c:(.toc+0xda0): undefined reference to `epapr_ev_idle'
-drivers/staging/dwc2/pci.c:171:21: error: 'IRQ_LEVEL' undeclared (first use in this function)
-arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:16:24: error: array type has incomplete element type
-arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:17:2: error: array index in non-array initializer
-arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:18:3: error: field name not in record or union initializer
-arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:19:3: error: field name not in record or union initializer
-arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:20:3: error: field name not in record or union initializer
-arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:20:12: error: 'IORESOURCE_MEM' undeclared here (not in a function)
-arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:27:11: error: implicit declaration of function 'BUILD_BUG_ON_ZERO' [-Werror=implicit-function-declaration]
-drivers/acpi/acpi_uart.c:181:2: error: implicit declaration of function 'ACPI_NODE_GET' [-Werror=implicit-function-declaration]
-ERROR: "pm_generic_complete" [drivers/i2c/i2c-core.ko] undefined!
-ERROR: "pm_generic_prepare" [drivers/i2c/i2c-core.ko] undefined!
+drivers/hid/hid-logitech-dj.c:437:2: error: implicit declaration of function 'usbhid_submit_report' [-Werror=implicit-function-declaration]
+net/netlabel/netlabel_unlabeled.c:1324:16: error: 'iter_addr6' undeclared (first use in this function)
+drivers/net/ethernet/davicom/wemac.c:900:2: error: implicit declaration of function 'of_get_mac_address' [-Werror=implicit-function-declaration]
+net/nfc/llcp/llcp.c:242:69: error: macro "hlist_for_each_entry_safe" passed 5 arguments, but takes just 4
+net/nfc/llcp/llcp.c:242:2: error: 'hlist_for_each_entry_safe' undeclared (first use in this function)
+net/nfc/llcp/llcp.c:242:71: error: expected ';' before '{' token
+net/nfc/llcp/llcp.c:1284:39: error: macro "hlist_for_each_entry" passed 4 arguments, but takes just 3
+net/nfc/llcp/llcp.c:1283:4: error: 'hlist_for_each_entry' undeclared (first use in this function)
+net/nfc/llcp/llcp.c:1284:41: error: expected ';' before '{' token
+net/nfc/llcp/commands.c:195:51: error: macro "hlist_for_each_entry_safe" passed 5 arguments, but takes just 4
+net/nfc/llcp/commands.c:195:2: error: 'hlist_for_each_entry_safe' undeclared (first use in this function)
+net/nfc/llcp/commands.c:195:53: error: expected ';' before '{' token
+net/nfc/llcp/commands.c:550:55: error: macro "hlist_for_each_entry_safe" passed 5 arguments, but takes just 4
+net/nfc/llcp/commands.c:550:2: error: 'hlist_for_each_entry_safe' undeclared (first use in this function)
+net/nfc/llcp/commands.c:550:57: error: expected ';' before '{' token
+net/nfc/llcp/commands.c:580:57: error: macro "hlist_for_each_entry_safe" passed 5 arguments, but takes just 4
+net/nfc/llcp/commands.c:580:2: error: 'hlist_for_each_entry_safe' undeclared (first use in this function)
+net/nfc/llcp/commands.c:580:59: error: expected ';' before '{' token
+fs/9p/vfs_inode.c:903:2: error: too few arguments to function 'finish_open'
+fs/9p/vfs_inode_dotl.c:360:2: error: too few arguments to function 'finish_open'
+fs/ceph/file.c:272:3: error: too few arguments to function 'finish_open'
+kernel/trace/trace_branch.c:55:9: error: 'struct trace_array' has no member named 'data'
+kernel/trace/trace_branch.c:55:9: error: 'struct trace_array' has no member named 'data'
+kernel/trace/trace_branch.c:55:9: error: 'struct trace_array' has no member named 'data'
+kernel/trace/trace_branch.c:60:13: error: 'struct trace_array' has no member named 'buffer'
+fs/fuse/dir.c:480:2: error: too few arguments to function 'finish_open'
 
 [warnings]
-drivers/md/bcache/bset.c:164:2: warning: format '%li' expects argument of type 'long int', but argument 4 has type 'size_t' [-Wformat]
-drivers/md/bcache/debug.c:86:4: warning: format '%li' expects argument of type 'long int', but argument 4 has type 'size_t' [-Wformat]
-drivers/md/bcache/btree.c:245:8: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' [-Wformat]
-WARNING: vmlinux.o(.text+0x97f8): Section mismatch in reference from the function .start_secondary_prolog() to the function .cpuinit.text:.start_secondary()
-WARNING: vmlinux.o(.text+0x980c): Section mismatch in reference from the function .start_secondary_resume() to the function .cpuinit.text:.start_secondary()
-drivers/md/bcache/sysfs.c:730:1: warning: '__bch_cache_show' uses dynamic stack allocation [enabled by default]
-drivers/s390/kvm/virtio_ccw.c:598:2: warning: initialization from incompatible pointer type [enabled by default]
-drivers/s390/kvm/virtio_ccw.c:598:2: warning: (near initialization for 'virtio_ccw_config_ops.get_features') [enabled by default]
-arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:28:1: warning: control reaches end of non-void function [-Wreturn-type]
-drivers/pinctrl/sh-pfc/core.c:76:1: warning: control reaches end of non-void function [-Wreturn-type]
-drivers/block/aoe/aoecmd.c:931:20: warning: 'bv' is used uninitialized in this function [-Wuninitialized]
-drivers/acpi/acpi_uart.c:181:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+net/netlabel/netlabel_unlabeled.c:1193:6: warning: unused variable 'skip_addr6' [-Wunused-variable]
+net/netlabel/netlabel_unlabeled.c:1277:6: warning: unused variable 'skip_addr6' [-Wunused-variable]
+sound/pci/hda/hda_eld.c:58:14: warning: 'eld_connection_type_names' defined but not used [-Wunused-variable]
+sound/pci/hda/hda_eld.c:96:14: warning: 'cea_audio_coding_type_names' defined but not used [-Wunused-variable]
+kernel/trace/trace_selftest.c:1161:2: warning: passing argument 1 of 'trace_test_buffer' from incompatible pointer type [enabled by default]
+drivers/staging/zcache/zcache-main.c:1836:1: warning: return from incompatible pointer type [enabled by default]
+drivers/staging/zcache/zcache-main.c:1837:1: warning: return from incompatible pointer type [enabled by default]
+drivers/staging/zcache/zcache-main.c:1841:1: warning: return from incompatible pointer type [enabled by default]
+drivers/usb/host/xhci-ring.c:3476:16: warning: 'ep_state' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/9p/vfs_inode.c:903:2: warning: passing argument 3 of 'finish_open' from incompatible pointer type [enabled by default]
+fs/9p/vfs_inode.c:903:2: warning: passing argument 4 of 'finish_open' from incompatible pointer type [enabled by default]
+fs/9p/vfs_inode_dotl.c:360:2: warning: passing argument 3 of 'finish_open' from incompatible pointer type [enabled by default]
+fs/9p/vfs_inode_dotl.c:360:2: warning: passing argument 4 of 'finish_open' from incompatible pointer type [enabled by default]
+fs/ceph/file.c:272:3: warning: passing argument 3 of 'finish_open' from incompatible pointer type [enabled by default]
+fs/ceph/file.c:272:3: warning: passing argument 4 of 'finish_open' from incompatible pointer type [enabled by default]
+fs/fuse/dir.c:480:2: warning: passing argument 3 of 'finish_open' from incompatible pointer type [enabled by default]
+fs/fuse/dir.c:480:2: warning: passing argument 4 of 'finish_open' from incompatible pointer type [enabled by default]
+net/nfc/llcp/commands.c:193:27: warning: unused variable 'n' [-Wunused-variable]
+net/nfc/llcp/commands.c:193:21: warning: unused variable 'pos' [-Wunused-variable]
+net/nfc/llcp/commands.c:192:27: warning: unused variable 'sdp' [-Wunused-variable]
+net/nfc/llcp/commands.c:543:27: warning: unused variable 'n' [-Wunused-variable]
+net/nfc/llcp/commands.c:543:21: warning: unused variable 'pos' [-Wunused-variable]
+net/nfc/llcp/commands.c:542:27: warning: unused variable 'sdp' [-Wunused-variable]
+net/nfc/llcp/commands.c:567:27: warning: unused variable 'n' [-Wunused-variable]
+net/nfc/llcp/commands.c:567:21: warning: unused variable 'pos' [-Wunused-variable]
+net/nfc/llcp/commands.c:566:27: warning: unused variable 'sdreq' [-Wunused-variable]
+net/nfc/llcp/llcp.c:234:27: warning: unused variable 'sdp' [-Wunused-variable]
+net/nfc/llcp/llcp.c:233:27: warning: unused variable 'n' [-Wunused-variable]
+net/nfc/llcp/llcp.c:233:21: warning: unused variable 'pos' [-Wunused-variable]
+net/nfc/llcp/llcp.c:1195:21: warning: unused variable 'pos' [-Wunused-variable]
+drivers/scsi/storvsc_drv.c:840:2: warning: 'process_err_fn' may be used uninitialized in this function [-Wmaybe-uninitialized]
+arch/x86/mm/numa.c:619:1: warning: label 'out' defined but not used [-Wunused-label]
 
 [sparse]
-drivers/staging/media/go7007/go7007-priv.h:93:31: sparse: dubious one-bit signed bitfield
-drivers/staging/media/go7007/go7007-priv.h:94:31: sparse: dubious one-bit signed bitfield
-drivers/staging/media/go7007/go7007-loader.c:32:18: sparse: symbol 'fw_configs' was not declared. Should it be static?
-drivers/md/dm-cache-target.c:670:24: sparse: incorrect type in assignment (different argument counts)
-fs/btrfs/raid56.c:2013:32: sparse: incorrect type in assignment (different argument counts)
-net/nfc/llcp/commands.c:423:14: sparse: incorrect type in assignment (different base types)
-net/nfc/llcp/commands.c:479:14: sparse: incorrect type in assignment (different base types)
+fs/ceph/file.c:272:49: sparse: incorrect type in argument 3 (different base types)
+fs/ceph/file.c:272:60: sparse: incorrect type in argument 4 (different base types)
+fs/ceph/file.c:272:34: sparse: not enough arguments for function finish_open
+net/bluetooth/hci_event.c:2503:38: sparse: incorrect type in argument 2 (different base types)
+net/bluetooth/hci_event.c:2598:36: sparse: incorrect type in argument 2 (different base types)
 
-[cppcheck]
-include/uapi/linux/aio_abi.h:70: error: edit for your odd byteorder.
-include/uapi/linux/aio_abi.h:70: error: edit for your odd byteorder.
-include/uapi/linux/aio_abi.h:70: error: edit for your odd byteorder.
-include/uapi/linux/aio_abi.h:70: error: edit for your odd byteorder.
-include/uapi/linux/raid/md_p.h:159: error: unspecified endianness
-include/uapi/linux/raid/md_p.h:159: error: unspecified endianness
-include/linux/slab.h:250: error: "Unknown slab allocator"
-include/linux/slab.h:250: error: "Unknown slab allocator"
+[smatch]
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00167-ga06363d"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00065-g69fbb7e"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00054-ga61968a"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-02945-ge8e05e8"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00081-g2598bfb"' too small (25 vs 32)
+drivers/net/team/team.c:1771 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00302-g282fbf8"' too small (25 vs 32)
+drivers/net/team/team.c:1771 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00184-g333e971"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00060-g84c3045"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00038-g3abb37d"' too small (25 vs 32)
+lib/lz4/lz4_decompress.c:138 lz4_uncompress() error: potential NULL dereference 'ref'.
+lib/lz4/lz4_decompress.c:263 lz4_uncompress_unknownoutputsize() error: potential NULL dereference 'ref'.
+drivers/net/team/team.c:1771 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-mm1-00315-g391ef7f"' too small (29 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00331-g72d92c5"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00196-g47b3bc9"' too small (25 vs 32)
+drivers/net/team/team.c:1760 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00210-g93f63e8"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00101-g02421e6"' too small (25 vs 32)
+drivers/net/team/team.c:1771 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00179-gdcb5757"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00104-g655968d"' too small (25 vs 32)
+drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00229-g18ad64e"' too small (25 vs 32)
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
