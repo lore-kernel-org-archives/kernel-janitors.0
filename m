@@ -1,38 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 16 Mar 2013 10:25:23 +0000
-Subject: Re: [patch] IB/ipath: add a range check before bumping the stats
-Message-Id: <20130316102523.GH9189@mwanda>
+From: Mirsal Ennaime <mirsal@mirsal.fr>
+Date: Mon, 11 Mar 2013 23:26:28 +0000
+Subject: [PATCH v2 3/3] drivers: android: binder: Remove excessive indentation
+Message-Id: <1363044388-11409-4-git-send-email-mirsal@mirsal.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130312110307.GA22921@longonot.mountain>
- <32E1700B9017364D9B60AED9960492BC0D5C926B@FMSMSX108.amr.corp.intel.com>
-In-Reply-To: <32E1700B9017364D9B60AED9960492BC0D5C926B-AtyAts71sc88Ug9VwtkbtrfspsVTdybXVpNB7YpNyf8@public.gmane.org>
+References: <1363030315-10229-1-git-send-email-mirsal@mirsal.fr>
+ <1363044388-11409-1-git-send-email-mirsal@mirsal.fr>
+In-Reply-To: <1363044388-11409-1-git-send-email-mirsal@mirsal.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Marciniszyn, Mike" <mike.marciniszyn-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: infinipath <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Hefty, Sean" <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Brian Swetland <swetland@google.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Joe Perches <joe@perches.com>, Mirsal Ennaime <mirsal@mirsal.fr>
 
-On Fri, Mar 15, 2013 at 01:43:39PM +0000, Marciniszyn, Mike wrote:
-> Oddly, I don't see an issue with qib, which masks the opcode.
-> 
-> Would:
-> opcode = (be32_to_cpu(ohdr->bth[0]) >> 24) & 0x7f;
-> 
-> also correct the issue without adding the if test.   At this point
-> the hardware has already validated the opcode, so there is no
-> value in the fail handling.
-> 
-> What args are you using with smatch?
-> 
+Remove one level of indentation from the binder proc page release code
+by using slightly different control semantics.
 
-Gar sorry, for the noise.  You can just drop this then.
+This is a cosmetic patch which removes checkpatch "80-columns" warnings
 
-This is some custom stuff that probably has too many false positives
-to push.
+Signed-off-by: Mirsal Ennaime <mirsal@mirsal.fr>
+---
+ drivers/staging/android/binder.c |   25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-Doing an "& 0x7f" would silence the warning but if this is validated
-by the hardware then we don't need it.
-
-regards,
-dan carpenter
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index 4652cd8..db214ce 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -3001,17 +3001,20 @@ static void binder_deferred_release(struct binder_proc *proc)
+ 		int i;
+ 
+ 		for (i = 0; i < proc->buffer_size / PAGE_SIZE; i++) {
+-			if (proc->pages[i]) {
+-				void *page_addr = proc->buffer + i * PAGE_SIZE;
+-				binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
+-					"binder_release: %d: page %d at %p not freed\n",
+-					proc->pid, i,
+-					page_addr);
+-				unmap_kernel_range((unsigned long)page_addr,
+-					PAGE_SIZE);
+-				__free_page(proc->pages[i]);
+-				page_count++;
+-			}
++			void *page_addr;
++
++			if (!proc->pages[i])
++				continue;
++
++			page_addr = proc->buffer + i * PAGE_SIZE;
++			binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
++				"binder_release: %d: page %d at %p not freed\n",
++				proc->pid, i,
++				page_addr);
++			unmap_kernel_range((unsigned long)page_addr,
++				PAGE_SIZE);
++			__free_page(proc->pages[i]);
++			page_count++;
+ 		}
+ 
+ 		kfree(proc->pages);
+-- 
+1.7.10.4
 
