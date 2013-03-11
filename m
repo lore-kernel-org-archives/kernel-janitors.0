@@ -1,38 +1,32 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 25 Mar 2013 04:27:38 +0000
-Subject: build regressions 2013-03-24
-Message-Id: <514fd23a.RHGYr0ziB5EBWWG0%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Mar 2013 11:41:51 +0000
+Subject: [patch] pata_legacy: bogus clock in opti82c46x_set_piomode()
+Message-Id: <20130311114151.GB8235@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: linux-ide@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-arch/arm/mach-tegra/cpu-tegra.c:131:28: error: 'policy' undeclared (first use in this function)
-fs/nfs/nfs4proc.c:111:3: error: expected ':' or '...' before 'return'
-include/linux/mfd/winbond_superio.h:60:20: error: inlining failed in call to always_inline 'winbond_superio_enter': function body not available
-drivers/watchdog/winbond_wdt.c:61:23: error: called from here
-include/linux/mfd/winbond_superio.h:61:20: error: inlining failed in call to always_inline 'winbond_superio_exit': function body not available
-drivers/watchdog/winbond_wdt.c:64:22: error: called from here
-include/linux/mfd/winbond_superio.h:60:20: error: inlining failed in call to always_inline 'winbond_superio_enter': function body not available
-drivers/watchdog/winbond_wdt.c:131:23: error: called from here
-include/linux/mfd/winbond_superio.h:61:20: error: inlining failed in call to always_inline 'winbond_superio_exit': function body not available
-drivers/watchdog/winbond_wdt.c:235:22: error: called from here
-drivers/gpu/drm/i915/i915_drv.c:131:5: error: redefinition of 'i915_disable_power_well'
-drivers/gpu/drm/i915/i915_drv.c:132:60: error: redefinition of '__check_disable_power_well'
-drivers/gpu/drm/i915/i915_drv.c:132:145: error: redefinition of '__param_perm_check_disable_power_well'
-drivers/gpu/drm/i915/i915_drv.c:132:388: error: redefinition of '__param_str_disable_power_well'
-drivers/gpu/drm/i915/i915_drv.c:132:489: error: redefinition of '__param_disable_power_well'
+"sysclk" is used as an index into a 4 element array.  My static
+checker complains because it can be out of bounds.  From the
+context, it looks like there is a right bit shift missing.
 
-[warnings]
-drivers/vhost/tcm_vhost.c:871:1: warning: label 'err_dev' defined but not used [-Wunused-label]
-
-[sparse]
-drivers/cpufreq/cpufreq.c:247:6: sparse: symbol '__cpufreq_notify_transition' was not declared. Should it be static?
-fs/nfs/nfs4proc.c:111:17: sparse: Expected : after default/case
-fs/nfs/nfs4proc.c:111:17: sparse: got return
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+I don't have the hardware to test this.
+
+diff --git a/drivers/ata/pata_legacy.c b/drivers/ata/pata_legacy.c
+index 4fe9d21..be81642 100644
+--- a/drivers/ata/pata_legacy.c
++++ b/drivers/ata/pata_legacy.c
+@@ -542,7 +542,7 @@ static void opti82c46x_set_piomode(struct ata_port *ap, struct ata_device *adev)
+ 	u8 sysclk;
+ 
+ 	/* Get the clock */
+-	sysclk = opti_syscfg(0xAC) & 0xC0;	/* BIOS set */
++	sysclk = (opti_syscfg(0xAC) & 0xC0) >> 6;	/* BIOS set */
+ 
+ 	/* Enter configuration mode */
+ 	ioread16(ap->ioaddr.error_addr);
