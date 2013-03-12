@@ -1,34 +1,120 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Mar 2013 11:40:15 +0000
-Subject: [patch] [SCSI] mpt3sas: move dereference under check
-Message-Id: <20130311114014.GA8235@longonot.mountain>
+From: Mirsal Ennaime <mirsal@mirsal.fr>
+Date: Tue, 12 Mar 2013 10:42:00 +0000
+Subject: [PATCH v3 2/4] drivers: android: binder: Fix code style in binder_deferred_release
+Message-Id: <1363084922-19698-3-git-send-email-mirsal@mirsal.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1363044388-11409-1-git-send-email-mirsal@mirsal.fr>
+ <1363084922-19698-1-git-send-email-mirsal@mirsal.fr>
+In-Reply-To: <1363084922-19698-1-git-send-email-mirsal@mirsal.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <Nagalakshmi.Nandigama@lsi.com>
-Cc: Sreekanth Reddy <Sreekanth.Reddy@lsi.com>, support@lsi.com, "James E.J. Bottomley" <JBottomley@parallels.com>, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <greg@kroah.com>
+Cc: =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Brian Swetland <swetland@google.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Joe Perches <joe@perches.com>, Mirsal Ennaime <mirsal@mirsal.fr>
 
-pci_pool_free() dereferences "ioc->sense_dma_pool" but we check it
-for NULL on the following line.
+ * Use tabs where applicable
+ * Remove a few "80-columns" checkpatch warnings
+ * Separate code paths with empty lines for readability
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mirsal Ennaime <mirsal@mirsal.fr>
+---
+ drivers/staging/android/binder.c |   32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 1836003..06a84ef 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -2479,9 +2479,11 @@ _base_release_memory_pools(struct MPT3SAS_ADAPTER *ioc)
- 	}
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index 9180a5b..ccf3087 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -2927,12 +2927,14 @@ static void binder_deferred_release(struct binder_proc *proc)
+ {
+ 	struct binder_transaction *t;
+ 	struct rb_node *n;
+-	int threads, nodes, incoming_refs, outgoing_refs, buffers, active_transactions, page_count;
++	int threads, nodes, incoming_refs, outgoing_refs, buffers,
++		active_transactions, page_count;
  
- 	if (ioc->sense) {
--		pci_pool_free(ioc->sense_dma_pool, ioc->sense, ioc->sense_dma);
--		if (ioc->sense_dma_pool)
-+		if (ioc->sense_dma_pool) {
-+			pci_pool_free(ioc->sense_dma_pool, ioc->sense,
-+				      ioc->sense_dma);
- 			pci_pool_destroy(ioc->sense_dma_pool);
-+		}
- 		dexitprintk(ioc, pr_info(MPT3SAS_FMT
- 			"sense_pool(0x%p): free\n",
- 			ioc->name, ioc->sense));
+ 	BUG_ON(proc->vma);
+ 	BUG_ON(proc->files);
+ 
+ 	hlist_del(&proc->proc_node);
++
+ 	if (binder_context_mgr_node && binder_context_mgr_node->proc = proc) {
+ 		binder_debug(BINDER_DEBUG_DEAD_BINDER,
+ 			     "binder_release: %d context_mgr_node gone\n",
+@@ -2943,33 +2945,42 @@ static void binder_deferred_release(struct binder_proc *proc)
+ 	threads = 0;
+ 	active_transactions = 0;
+ 	while ((n = rb_first(&proc->threads))) {
+-		struct binder_thread *thread = rb_entry(n, struct binder_thread, rb_node);
++		struct binder_thread *thread;
++
++		thread = rb_entry(n, struct binder_thread, rb_node);
+ 		threads++;
+ 		active_transactions += binder_free_thread(proc, thread);
+ 	}
++
+ 	nodes = 0;
+ 	incoming_refs = 0;
+ 	while ((n = rb_first(&proc->nodes))) {
+-		struct binder_node *node = rb_entry(n, struct binder_node, rb_node);
++		struct binder_node *node;
+ 
++		node = rb_entry(n, struct binder_node, rb_node);
+ 		nodes++;
+ 		rb_erase(&node->rb_node, &proc->nodes);
+ 		incoming_refs = binder_node_release(node, incoming_refs);
+ 	}
++
+ 	outgoing_refs = 0;
+ 	while ((n = rb_first(&proc->refs_by_desc))) {
+-		struct binder_ref *ref = rb_entry(n, struct binder_ref,
+-						  rb_node_desc);
++		struct binder_ref *ref;
++
++		ref = rb_entry(n, struct binder_ref, rb_node_desc);
+ 		outgoing_refs++;
+ 		binder_delete_ref(ref);
+ 	}
++
+ 	binder_release_work(&proc->todo);
+ 	binder_release_work(&proc->delivered_death);
+-	buffers = 0;
+ 
++	buffers = 0;
+ 	while ((n = rb_first(&proc->allocated_buffers))) {
+-		struct binder_buffer *buffer = rb_entry(n, struct binder_buffer,
+-							rb_node);
++		struct binder_buffer *buffer;
++
++		buffer = rb_entry(n, struct binder_buffer, rb_node);
++
+ 		t = buffer->transaction;
+ 		if (t) {
+ 			t->buffer = NULL;
+@@ -2978,6 +2989,7 @@ static void binder_deferred_release(struct binder_proc *proc)
+ 			       proc->pid, t->debug_id);
+ 			/*BUG();*/
+ 		}
++
+ 		binder_free_buf(proc, buffer);
+ 		buffers++;
+ 	}
+@@ -2987,13 +2999,13 @@ static void binder_deferred_release(struct binder_proc *proc)
+ 	page_count = 0;
+ 	if (proc->pages) {
+ 		int i;
++
+ 		for (i = 0; i < proc->buffer_size / PAGE_SIZE; i++) {
+ 			if (proc->pages[i]) {
+ 				void *page_addr = proc->buffer + i * PAGE_SIZE;
+ 				binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
+ 					     "binder_release: %d: page %d at %p not freed\n",
+-					     proc->pid, i,
+-					     page_addr);
++					     proc->pid, i, page_addr);
+ 				unmap_kernel_range((unsigned long)page_addr,
+ 					PAGE_SIZE);
+ 				__free_page(proc->pages[i]);
+-- 
+1.7.10.4
+
