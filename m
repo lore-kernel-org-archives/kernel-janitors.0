@@ -1,91 +1,33 @@
-From: mirsal <mirsal@mirsal.fr>
-Date: Tue, 12 Mar 2013 08:52:36 +0000
-Subject: Re: [PATCH v2 2/3] drivers: android: binder: Fix code style
-Message-Id: <1363078356.10491.38.camel@mirsal-laptop1.mirsal.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-WebXw3PLKt5OEcBbh8Zb"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 12 Mar 2013 11:03:07 +0000
+Subject: [patch] IB/ipath: add a range check before bumping the stats
+Message-Id: <20130312110307.GA22921@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1363030315-10229-1-git-send-email-mirsal@mirsal.fr>
-	 <1363044388-11409-1-git-send-email-mirsal@mirsal.fr>
-	 <1363044388-11409-3-git-send-email-mirsal@mirsal.fr>
-	 <CAMP5XgchLsz=MJsousY+qQU3J_Y4D7U2jC0xqb4yhbNwiMS8+w@mail.gmail.com>
-In-Reply-To: <CAMP5XgchLsz=MJsousY+qQU3J_Y4D7U2jC0xqb4yhbNwiMS8+w@mail.gmail.com>
-To: Arve =?ISO-8859-1?Q?Hj=F8nnev=E5g?= <arve@android.com>
-Cc: Greg Kroah-Hartman <greg@kroah.com>, Brian Swetland <swetland@google.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Joe Perches <joe@perches.com>
-
-
---=-WebXw3PLKt5OEcBbh8Zb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2013-03-11 at 16:57 -0700, Arve Hj=C3=B8nnev=C3=A5g wrote:
-> On Mon, Mar 11, 2013 at 4:26 PM, Mirsal Ennaime <mirsal@mirsal.fr> wrote:
-> >  * Use tabs
-> >  * Remove a few "80-columns" checkpatch warnings
-> >  * Separate code paths with empty lines for readability
-> >
-> > Signed-off-by: Mirsal Ennaime <mirsal@mirsal.fr>
-> > ---
-> >  drivers/staging/android/binder.c |   42 +++++++++++++++++++++++++-----=
---------
-> >  1 file changed, 28 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/staging/android/binder.c b/drivers/staging/android=
-/binder.c
-> > index 43f823d..4652cd8 100644
-> > --- a/drivers/staging/android/binder.c
-> > +++ b/drivers/staging/android/binder.c
-> > @@ -2927,57 +2927,69 @@ static void binder_deferred_release(struct bind=
-er_proc *proc)
-> >  {
-> >         struct binder_transaction *t;
-> >         struct rb_node *n;
-> > -       int threads, nodes, incoming_refs, outgoing_refs, buffers, acti=
-ve_transactions, page_count;
-> > +       int threads, nodes, incoming_refs, outgoing_refs, buffers,
-> > +               active_transactions, page_count;
-> >
-> >         BUG_ON(proc->vma);
-> >         BUG_ON(proc->files);
-> >
-> >         hlist_del(&proc->proc_node);
-> > +
-> >         if (binder_context_mgr_node && binder_context_mgr_node->proc =
-=3D=3D proc) {
-> >                 binder_debug(BINDER_DEBUG_DEAD_BINDER,
-> > -                            "binder_release: %d context_mgr_node gone\=
-n",
-> > -                            proc->pid);
-> > +                       "binder_release: %d context_mgr_node gone\n",
-> > +                       proc->pid);
->=20
-> I don't like this change (and the others like it). If is not uncommon
-> the align arguments on that don't fit the first line with the
-> arguments on the first line, so why change it here?
-
-I actually took the "no tabs for indentation" rule a bit too literally.
-
-Fixed in v3, thank you!
-
---=20
-mirsal=20
-
---=-WebXw3PLKt5OEcBbh8Zb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: Mike Marciniszyn <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+My static checker complains that this could corrupt memory.  It
+seems valid to add a range check here.
 
-iQEcBAABCAAGBQJRPuzVAAoJEPePn+hK5bYQLYUH/0jXJpXpup8IR49vmQBFim+V
-/cQoOJswK7yHFX41hzmg+2cnv2kz2mBAV74dtmc45DOomzVm5ith/6ACUoStyVfP
-qBwRq4voVfFvDrwwkuTvPWh5H2OHuehW5K0i0SMUK2vRf6jcIHjvVfbyQC63tux0
-34gV/5mN0KWhvD1eyVFCkWuxU0JHBhlL4AP+OKj9r4BjxCa243ETUrGy/RUj4SuY
-KlpgDrRUPLjiF3H4uwnIBhE81Vz0VLxbd6vFho92Oqe5eBp0W86poxDhkP18I/EJ
-3QX0ayimhEUJVXEdjpM6fyJrRsnmoouX216JUBTawuVhXzf2jg739OZIzIOrMT4=
-=FBx1
------END PGP SIGNATURE-----
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I can't test this.
 
---=-WebXw3PLKt5OEcBbh8Zb--
-
+diff --git a/drivers/infiniband/hw/ipath/ipath_verbs.c b/drivers/infiniband/hw/ipath/ipath_verbs.c
+index 439c35d..f15dd70 100644
+--- a/drivers/infiniband/hw/ipath/ipath_verbs.c
++++ b/drivers/infiniband/hw/ipath/ipath_verbs.c
+@@ -621,6 +621,10 @@ void ipath_ib_rcv(struct ipath_ibdev *dev, void *rhdr, void *data,
+ 	}
+ 
+ 	opcode = be32_to_cpu(ohdr->bth[0]) >> 24;
++	if (opcode >= ARRAY_SIZE(dev->opstats)) {
++		dev->rcv_errors++;
++		goto bail;
++	}
+ 	dev->opstats[opcode].n_bytes += tlen;
+ 	dev->opstats[opcode].n_packets++;
+ 
