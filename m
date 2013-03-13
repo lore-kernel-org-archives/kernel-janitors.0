@@ -1,122 +1,47 @@
-From: Mirsal Ennaime <mirsal@mirsal.fr>
-Date: Tue, 12 Mar 2013 10:41:59 +0000
-Subject: [PATCH v3 1/4] drivers: android: binder: Move the node release code to a separate function
-Message-Id: <1363084922-19698-2-git-send-email-mirsal@mirsal.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 13 Mar 2013 16:36:12 +0000
+Subject: build regressions 2013-03-13
+Message-Id: <5140aafc.cI8IDCcQGzql6srn%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1363044388-11409-1-git-send-email-mirsal@mirsal.fr>
- <1363084922-19698-1-git-send-email-mirsal@mirsal.fr>
-In-Reply-To: <1363084922-19698-1-git-send-email-mirsal@mirsal.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Brian Swetland <swetland@google.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Joe Perches <joe@perches.com>, Mirsal Ennaime <mirsal@mirsal.fr>
+To: kernel-janitors@vger.kernel.org
 
-The binder_deferred_release() function has many levels of indentation
-which makes it difficult to read. This patch moves the code which deals
-with disposing of a binder node to a separate binder_node_release()
-function, thus removing one level of indentation and allowing the code to
-fit in 80 columns.
+[errors]
+sound/soc/omap/omap-pcm.c:186:3: error: implicit declaration of function 'snd_dmaengine_generic_pcm_open' [-Werror=implicit-function-declaration]
 
-Signed-off-by: Mirsal Ennaime <mirsal@mirsal.fr>
+[warnings]
+arch/arm/mach-omap2/omap_device.c:1163:3: warning: return makes pointer from integer without a cast [enabled by default]
+arch/arm/mach-omap2/omap_device.c:1168:3: warning: return makes pointer from integer without a cast [enabled by default]
+drivers/staging/dwc2/hcd_intr.c:1539:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/staging/dwc2/hcd_intr.c:1541:22: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/staging/dwc2/hcd.c:1893:68: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/staging/dwc2/hcd.c:2299:104: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/staging/dwc2/hcd.c:2301:95: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+drivers/staging/dwc2/hcd_intr.c:59:2: warning: #warning Compiling code to track missed SOFs [-Wcpp]
+Warning(include/linux/mtd/nand.h:528): No description found for parameter 'write_byte'
+drivers/acpi/scan.c:1616:8: warning: 'devid' may be used uninitialized in this function [-Wmaybe-uninitialized]
+sound/soc/codecs/wm2000.c:543:6: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+include/linux/delayacct.h:140:13: warning: 'struct taskstats' declared inside parameter list [enabled by default]
+include/linux/delayacct.h:140:13: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+include/linux/cgroup.h:747:13: warning: 'struct cgroupstats' declared inside parameter list [enabled by default]
+include/linux/cgroup.h:747:13: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+
+[sparse]
+kernel/trace/trace_entries.h:247:1: sparse: symbol 'event_class_ftrace_bputs' was not declared. Should it be static?
+kernel/trace/trace_entries.h:247:1: sparse: symbol '__event_bputs' was not declared. Should it be static?
+
+[smatch]
+sound/soc/codecs/tas5086.c:263 tas5086_hw_params() warn: unsigned 'val' is never less than zero.
+sound/soc/codecs/tas5086.c:277 tas5086_hw_params() warn: unsigned 'val' is never less than zero.
+drivers/leds/leds-lp5562.c:472 lp5562_store_engine_mux() error:  locking inconsistency.  We assume 'mutex:&chip->lock' is both locked and unlocked at the start.
+drivers/leds/leds-lp5562.c:472 lp5562_store_engine_mux() warn: inconsistent returns mutex:&chip->lock: locked (459) unlocked (465,472)
+security/integrity/ima/ima_api.c:100 ima_add_violation() warn: potential pointer math issue ('entry' is a 2208 bit pointer)
+security/integrity/ima/ima_api.c:224 ima_store_measurement() warn: potential pointer math issue ('entry' is a 2208 bit pointer)
+security/integrity/ima/ima_init.c:62 ima_add_boot_aggregate() warn: potential pointer math issue ('entry' is a 2208 bit pointer)
+kernel/trace/trace_events.c:246 __ftrace_event_enable_disable() warn: bit shifter 'FTRACE_EVENT_FL_RECORDED_CMD_BIT' used for logical '&'
+
 ---
- drivers/staging/android/binder.c |   76 +++++++++++++++++++++++---------------
- 1 file changed, 46 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
-index 24456a0..9180a5b 100644
---- a/drivers/staging/android/binder.c
-+++ b/drivers/staging/android/binder.c
-@@ -2878,6 +2878,51 @@ static int binder_release(struct inode *nodp, struct file *filp)
- 	return 0;
- }
- 
-+static int binder_node_release(struct binder_node *node, int refs)
-+{
-+	struct binder_ref *ref;
-+	int death = 0;
-+
-+	list_del_init(&node->work.entry);
-+	binder_release_work(&node->async_todo);
-+
-+	if (hlist_empty(&node->refs)) {
-+		kfree(node);
-+		binder_stats_deleted(BINDER_STAT_NODE);
-+
-+		return refs;
-+	}
-+
-+	node->proc = NULL;
-+	node->local_strong_refs = 0;
-+	node->local_weak_refs = 0;
-+	hlist_add_head(&node->dead_node, &binder_dead_nodes);
-+
-+	hlist_for_each_entry(ref, &node->refs, node_entry) {
-+		refs++;
-+
-+		if (!ref->death)
-+			goto out;
-+
-+		death++;
-+
-+		if (list_empty(&ref->death->work.entry)) {
-+			ref->death->work.type = BINDER_WORK_DEAD_BINDER;
-+			list_add_tail(&ref->death->work.entry,
-+				      &ref->proc->todo);
-+			wake_up_interruptible(&ref->proc->wait);
-+		} else
-+			BUG();
-+	}
-+
-+out:
-+	binder_debug(BINDER_DEBUG_DEAD_BINDER,
-+		     "node %d now dead, refs %d, death %d\n",
-+		     node->debug_id, refs, death);
-+
-+	return refs;
-+}
-+
- static void binder_deferred_release(struct binder_proc *proc)
- {
- 	struct binder_transaction *t;
-@@ -2909,36 +2954,7 @@ static void binder_deferred_release(struct binder_proc *proc)
- 
- 		nodes++;
- 		rb_erase(&node->rb_node, &proc->nodes);
--		list_del_init(&node->work.entry);
--		binder_release_work(&node->async_todo);
--		if (hlist_empty(&node->refs)) {
--			kfree(node);
--			binder_stats_deleted(BINDER_STAT_NODE);
--		} else {
--			struct binder_ref *ref;
--			int death = 0;
--
--			node->proc = NULL;
--			node->local_strong_refs = 0;
--			node->local_weak_refs = 0;
--			hlist_add_head(&node->dead_node, &binder_dead_nodes);
--
--			hlist_for_each_entry(ref, &node->refs, node_entry) {
--				incoming_refs++;
--				if (ref->death) {
--					death++;
--					if (list_empty(&ref->death->work.entry)) {
--						ref->death->work.type = BINDER_WORK_DEAD_BINDER;
--						list_add_tail(&ref->death->work.entry, &ref->proc->todo);
--						wake_up_interruptible(&ref->proc->wait);
--					} else
--						BUG();
--				}
--			}
--			binder_debug(BINDER_DEBUG_DEAD_BINDER,
--				     "node %d now dead, refs %d, death %d\n",
--				      node->debug_id, incoming_refs, death);
--		}
-+		incoming_refs = binder_node_release(node, incoming_refs);
- 	}
- 	outgoing_refs = 0;
- 	while ((n = rb_first(&proc->refs_by_desc))) {
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
