@@ -1,60 +1,34 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 15 Mar 2013 06:46:26 +0000
-Subject: Re: [patch] sound: sequencer: cap array index in seq_chn_common_event()
-Message-Id: <s5hy5dpi2il.wl%tiwai@suse.de>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Fri, 15 Mar 2013 08:14:29 +0000
+Subject: [PATCH] staging: comedi: drivers: ni_atmio.c: Add a missing semicolon
+Message-Id: <1363335269-14903-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130315061422.GB3793@longonot.mountain>
-In-Reply-To: <20130315061422.GB3793@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: abbotti@mev.co.uk
+Cc: fmhess@users.sourceforge.net, gregkh@linuxfoundation.org, hsweeten@visionengravers.com, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-At Fri, 15 Mar 2013 09:14:22 +0300,
-Dan Carpenter wrote:
-> 
-> "chn" here is a number between 0 and 255, but ->chn_info[] only has
-> 16 elements so there is a potential write beyond the end of the
-> array.
-> 
-> If the seq_mode isn't SEQ_2 then we let the individual drivers
-> (either opl3.c or midi_synth.c) handle it.  Those functions all
-> do a bounds check on "chn" so I haven't changed anything here.
-> The opl3.c driver has up to 18 channels and not 16.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+fix a missing end-of-statement by adding a semicolon.
 
-Thanks, applied now.
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/comedi/drivers/ni_atmio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/staging/comedi/drivers/ni_atmio.c b/drivers/staging/comedi/drivers/ni_atmio.c
+index 279f2cd..37372a1 100644
+--- a/drivers/staging/comedi/drivers/ni_atmio.c
++++ b/drivers/staging/comedi/drivers/ni_atmio.c
+@@ -467,7 +467,7 @@ static int ni_atmio_attach(struct comedi_device *dev,
+ 		return -EIO;
+ 
+ 	dev->board_ptr = ni_boards + board;
+-	boardtype = comedi_board(dev)
++	boardtype = comedi_board(dev);
+ 
+ 	printk(" %s", boardtype->name);
+ 	dev->board_name = boardtype->name;
+-- 
+1.7.9.5
 
-Takashi
-
-> ---
-> Static checker stuff.
-> 
-> diff --git a/sound/oss/sequencer.c b/sound/oss/sequencer.c
-> index 30bcfe4..4ff60a6 100644
-> --- a/sound/oss/sequencer.c
-> +++ b/sound/oss/sequencer.c
-> @@ -545,6 +545,9 @@ static void seq_chn_common_event(unsigned char *event_rec)
->  		case MIDI_PGM_CHANGE:
->  			if (seq_mode = SEQ_2)
->  			{
-> +				if (chn > 15)
-> +					break;
-> +
->  				synth_devs[dev]->chn_info[chn].pgm_num = p1;
->  				if ((int) dev >= num_synths)
->  					synth_devs[dev]->set_instr(dev, chn, p1);
-> @@ -596,6 +599,9 @@ static void seq_chn_common_event(unsigned char *event_rec)
->  		case MIDI_PITCH_BEND:
->  			if (seq_mode = SEQ_2)
->  			{
-> +				if (chn > 15)
-> +					break;
-> +
->  				synth_devs[dev]->chn_info[chn].bender_value = w14;
->  
->  				if ((int) dev < num_synths)
-> 
