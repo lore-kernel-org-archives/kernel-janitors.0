@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 20 Mar 2013 16:51:28 +0000
-Subject: build regressions 2013-03-20
-Message-Id: <5149e910.cIdoNF21acURZKz0%fengguang.wu@intel.com>
+Date: Fri, 15 Mar 2013 20:00:14 +0000
+Subject: build regressions 2013-03-15
+Message-Id: <51437dce.WRjJFjq894unThn0%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,42 +9,54 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-security/smack/smackfs.c:2130:29: error: 'SMACK_MAGIC' undeclared (first use in this function)
-drivers/staging/zcache/zcache-main.c:303:2: error: request for member 'flags' in something not a structure or union
-drivers/staging/zcache/zcache-main.c:303:2: error: request for member 'virtual' in something not a structure or union
-make[1]: *** No rule to make target `lib/lz4/lz4hc_compress.o'.
-drivers/remoteproc/remoteproc_internal.h:112:19: error: 'const struct rproc_fw_ops' has no member named 'get_rsctab_addr'
-drivers/remoteproc/remoteproc_internal.h:113:23: error: 'const struct rproc_fw_ops' has no member named 'get_rsctab_addr'
-drivers/remoteproc/remoteproc_internal.h:112:19: error: 'const struct rproc_fw_ops' has no member named 'get_rsctab_addr'
-drivers/remoteproc/remoteproc_internal.h:113:23: error: 'const struct rproc_fw_ops' has no member named 'get_rsctab_addr'
-drivers/remoteproc/remoteproc_elf_loader.c:326:19: error: 'rproc_elf_get_rsctab_addr' undeclared here (not in a function)
-fs/proc/vmcore.c:275:22: error: 'VMCOREINFO_NOTE_NAME' undeclared (first use in this function)
-fs/proc/vmcore.c:396:22: error: 'VMCOREINFO_NOTE_NAME' undeclared (first use in this function)
+kernel/trace/trace.c:2959:34: error: 'struct trace_array' has no member named 'max_buffer'
+drivers/vhost/vringh.c:83:3: error: implicit declaration of function 'vring_iov_consume' [-Werror=implicit-function-declaration]
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/include/asm/mach-generic/dma-coherence.h:66:9: error: 'coherentio' undeclared (first use in this function)
+arch/mips/kernel/unaligned.c:748:14: error: 'union mips_instruction' has no member named 'mm_i_format'
+arch/mips/kernel/unaligned.c:751:15: error: 'union mips_instruction' has no member named 'mm_x_format'
+arch/mips/kernel/unaligned.c:753:14: error: 'union mips_instruction' has no member named 'mm_x_format'
+arch/mips/kernel/unaligned.c:760:15: error: 'union mips_instruction' has no member named 'mm_m_format'
+arch/mips/kernel/unaligned.c:762:14: error: 'union mips_instruction' has no member named 'mm_m_format'
+arch/mips/kernel/unaligned.c:781:14: error: 'union mips_instruction' has no member named 'mm_m_format'
+arch/mips/kernel/unaligned.c:846:14: error: 'union mips_instruction' has no member named 'mm_m_format'
+arch/mips/kernel/unaligned.c:883:14: error: 'union mips_instruction' has no member named 'mm_m_format'
+arch/mips/kernel/unaligned.c:1009:15: error: 'union mips_instruction' has no member named 'mm_m_format'
+arch/mips/kernel/unaligned.c:1011:14: error: 'union mips_instruction' has no member named 'mm_m_format'
+arch/mips/kernel/unaligned.c:1019:15: error: 'union mips_instruction' has no member named 'mm_x_format'
+arch/mips/kernel/unaligned.c:1055:13: error: 'union mips_instruction' has no member named 'mm_i_format'
+arch/mips/kernel/unaligned.c:1059:13: error: 'union mips_instruction' has no member named 'mm_i_format'
+ima_queue.c:(.text+0x10): multiple definition of `ima_read_xattr'
+ima_init.c:(.text+0x10): multiple definition of `ima_read_xattr'
+ima_main.c:(.text+0x470): multiple definition of `ima_read_xattr'
+ima_crypto.c:(.text+0x10): multiple definition of `ima_read_xattr'
+ima_api.c:(.text+0x10): multiple definition of `ima_read_xattr'
 
 [warnings]
-drivers/rtc/rtc-tegra.c:353:33: warning: passing argument 1 of 'devm_rtc_device_register' from incompatible pointer type [enabled by default]
-drivers/rtc/rtc-tegra.c:353:33: warning: passing argument 2 of 'devm_rtc_device_register' from incompatible pointer type [enabled by default]
-drivers/vhost/vhost.c:878:7: warning: 'addr' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/staging/zcache/zcache-main.c:303:2: warning: dereferencing 'void *' pointer [enabled by default]
-crypto/lz4.c:70:2: warning: passing argument 2 of 'lz4_decompress' from incompatible pointer type [enabled by default]
-crypto/lz4hc.c:70:2: warning: passing argument 2 of 'lz4_decompress' from incompatible pointer type [enabled by default]
+drivers/infiniband/hw/cxgb4/mem.c:79:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/vhost/net.c:249:20: warning: unused variable 's' [-Wunused-variable]
+drivers/vhost/net.c:249:11: warning: unused variable 'out' [-Wunused-variable]
+drivers/misc/vmw_vmci/vmci_context.h:131:14: warning: 'src_priv_flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/can/janz-ican3.c:994:2: warning: '*((void *)&msg+4)' may be used uninitialized in this function [-Wmaybe-uninitialized]
+fs/cifs/smb2transport.c:147:11: warning: 'mid' may be used uninitialized in this function [-Wmaybe-uninitialized]
+arch/mips/include/asm/mach-generic/dma-coherence.h:68:1: warning: control reaches end of non-void function [-Wreturn-type]
+drivers/vhost/net.c:331:4: warning: 'len' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
 [sparse]
-drivers/video/hyperv_fb.c:644:17: sparse: incorrect type in assignment (different address spaces)
-drivers/video/hyperv_fb.c:656:27: sparse: incorrect type in assignment (different address spaces)
-drivers/video/hyperv_fb.c:663:17: sparse: incorrect type in argument 1 (different address spaces)
-kernel/posix-cpu-timers.c:934:27: sparse: implicit cast from nocast type
-kernel/posix-cpu-timers.c:952:44: sparse: implicit cast from nocast type
-kernel/posix-cpu-timers.c:953:30: sparse: implicit cast from nocast type
-kernel/posix-cpu-timers.c:1071:38: sparse: implicit cast from nocast type
-kernel/posix-cpu-timers.c:1072:40: sparse: implicit cast from nocast type
-kernel/posix-cpu-timers.c:1306:29: sparse: implicit cast from nocast type
-crypto/lz4.c:70:36: sparse: incorrect type in argument 2 (different type sizes)
-crypto/lz4hc.c:70:36: sparse: incorrect type in argument 2 (different type sizes)
-drivers/media/dvb-frontends/mb86a20s.c:34:4: sparse: symbol 'mb86a20s_subchannel' was not declared. Should it be static?
-lib/lz4/lz4hc_compress.c:317:5: sparse: symbol 'lz4_compresshcctx' was not declared. Should it be static?
-lib/lz4/lz4hc_compress.c:52:15: sparse: memset with byte count of 131072
-lib/lz4/lz4hc_compress.c:53:15: sparse: memset with byte count of 131072
+net/batman-adv/network-coding.c:242:53: sparse: restricted __be32 degrades to integer
+net/batman-adv/network-coding.c:946:33: sparse: incorrect type in assignment (different base types)
+net/batman-adv/network-coding.c:1557:22: sparse: cast to restricted __be16
+net/batman-adv/network-coding.c:1557:22: sparse: cast to restricted __be16
+net/batman-adv/network-coding.c:1557:22: sparse: cast to restricted __be16
+net/batman-adv/network-coding.c:1557:22: sparse: cast to restricted __be16
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
