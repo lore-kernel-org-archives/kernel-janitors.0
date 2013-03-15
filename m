@@ -1,36 +1,48 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 12 Mar 2013 10:56:41 +0000
-Subject: Re: [PATCH v3 0/4] Cosmetic changes to the android binder proc release code
-Message-Id: <20130312105641.GE9138@mwanda>
+Date: Fri, 15 Mar 2013 06:14:22 +0000
+Subject: [patch] sound: sequencer: cap array index in seq_chn_common_event()
+Message-Id: <20130315061422.GB3793@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1363044388-11409-1-git-send-email-mirsal@mirsal.fr>
- <1363084922-19698-1-git-send-email-mirsal@mirsal.fr>
-In-Reply-To: <1363084922-19698-1-git-send-email-mirsal@mirsal.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Mirsal Ennaime <mirsal@mirsal.fr>
-Cc: Greg Kroah-Hartman <greg@kroah.com>, Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>, Brian Swetland <swetland@google.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Tue, Mar 12, 2013 at 11:41:58AM +0100, Mirsal Ennaime wrote:
-> Changes from v2
->=20
->  * kept arguments aligned with parentesis (Following
->    Arve Hj=F8nnev=E5g's review)
->  * added a fourth patch which removes function names from string litterals
->    in favor __func__ (Following Dan Carpenter's review)
+"chn" here is a number between 0 and 255, but ->chn_info[] only has
+16 elements so there is a potential write beyond the end of the
+array.
 
-Actually that was Joe.
+If the seq_mode isn't SEQ_2 then we let the individual drivers
+(either opl3.c or midi_synth.c) handle it.  Those functions all
+do a bounds check on "chn" so I haven't changed anything here.
+The opl3.c driver has up to 18 channels and not 16.
 
-Looks good.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-regards,
-dan carpenter
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/sound/oss/sequencer.c b/sound/oss/sequencer.c
+index 30bcfe4..4ff60a6 100644
+--- a/sound/oss/sequencer.c
++++ b/sound/oss/sequencer.c
+@@ -545,6 +545,9 @@ static void seq_chn_common_event(unsigned char *event_rec)
+ 		case MIDI_PGM_CHANGE:
+ 			if (seq_mode = SEQ_2)
+ 			{
++				if (chn > 15)
++					break;
++
+ 				synth_devs[dev]->chn_info[chn].pgm_num = p1;
+ 				if ((int) dev >= num_synths)
+ 					synth_devs[dev]->set_instr(dev, chn, p1);
+@@ -596,6 +599,9 @@ static void seq_chn_common_event(unsigned char *event_rec)
+ 		case MIDI_PITCH_BEND:
+ 			if (seq_mode = SEQ_2)
+ 			{
++				if (chn > 15)
++					break;
++
+ 				synth_devs[dev]->chn_info[chn].bender_value = w14;
+ 
+ 				if ((int) dev < num_synths)
