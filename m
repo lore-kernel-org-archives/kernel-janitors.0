@@ -1,120 +1,51 @@
-From: Mirsal Ennaime <mirsal@mirsal.fr>
-Date: Tue, 12 Mar 2013 10:42:00 +0000
-Subject: [PATCH v3 2/4] drivers: android: binder: Fix code style in binder_deferred_release
-Message-Id: <1363084922-19698-3-git-send-email-mirsal@mirsal.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 18 Mar 2013 16:03:38 +0000
+Subject: build regressions 2013-03-18
+Message-Id: <51473ada.z+ACN25uOxb9a5WS%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1363044388-11409-1-git-send-email-mirsal@mirsal.fr>
- <1363084922-19698-1-git-send-email-mirsal@mirsal.fr>
-In-Reply-To: <1363084922-19698-1-git-send-email-mirsal@mirsal.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <greg@kroah.com>
-Cc: =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Brian Swetland <swetland@google.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Joe Perches <joe@perches.com>, Mirsal Ennaime <mirsal@mirsal.fr>
+To: kernel-janitors@vger.kernel.org
 
- * Use tabs where applicable
- * Remove a few "80-columns" checkpatch warnings
- * Separate code paths with empty lines for readability
+[errors]
+make[2]: *** No rule to make target `modules.builtin', needed by `kernel/modnamelist.c'.
+init/main.c:252:11: error: 'builtin_modnames' undeclared (first use in this function)
+sound/pci/hda/patch_sigmatel.c:892:48: error: dereferencing pointer to incomplete type
+sound/pci/hda/patch_sigmatel.c:900:2: error: implicit declaration of function 'snd_hda_enable_beep_device' [-Werror=implicit-function-declaration]
+sound/pci/hda/patch_sigmatel.c:3570:15: error: dereferencing pointer to incomplete type
+drivers/hid/usbhid/hid-quirks.c:76:4: error: 'USB_VENDIR_ID_MSI' undeclared here (not in a function)
+sh: scripts/modnamelist.sh: No such file or directory
+drivers/block/drbd/drbd_receiver.c:4057:10: error: 'mdev' undeclared (first use in this function)
 
-Signed-off-by: Mirsal Ennaime <mirsal@mirsal.fr>
+[warnings]
+drivers/mmc/host/mmci.c:1165:20: warning: ignoring return value of 'regulator_enable', declared with attribute warn_unused_result [-Wunused-result]
+drivers/media/i2c/m5mols/m5mols_core.c:595:18: warning: 'type' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/staging/zcache/zbud.c:288:22: warning: 'zbud_pers_evicted_pageframes' defined but not used [-Wunused-variable]
+
+[sparse]
+net/core/netpoll.c:50:1: sparse: symbol 'netpoll_srcu_srcu_array' was not declared. Should it be static?
+drivers/hwmon/adt7310.c:51:16: sparse: cast to restricted __be16
+drivers/hwmon/adt7310.c:51:16: sparse: cast to restricted __be16
+drivers/hwmon/adt7310.c:51:16: sparse: cast to restricted __be16
+drivers/hwmon/adt7310.c:51:16: sparse: cast to restricted __be16
+drivers/staging/dwc2/hcd_intr.c:59:2: sparse: Compiling code to track missed SOFs
+security/tomoyo/tomoyo.c:539:1: sparse: symbol 'tomoyo_ss_srcu_array' was not declared. Should it be static?
+fs/btrfs/free-space-cache.c:3464:34: sparse: non-ANSI function declaration of function 'btrfs_test_free_space_cache'
+sound/pci/hda/patch_sigmatel.c:892:55: sparse: using member 'enabled' in incomplete struct hda_beep
+sound/pci/hda/patch_sigmatel.c:900:16: sparse: undefined identifier 'snd_hda_enable_beep_device'
+sound/pci/hda/patch_sigmatel.c:3570:36: sparse: using member 'linear_tone' in incomplete struct hda_beep
+kernel/trace/trace.c:87:8: sparse: symbol 'trace_cmdline_save' was not declared. Should it be static?
+kernel/trace/trace.c:192:8: sparse: symbol 'global_trace_cpu' was not declared. Should it be static?
+kernel/trace/trace.c:228:8: sparse: symbol 'max_tr_data' was not declared. Should it be static?
+kernel/trace/trace.c:284:8: sparse: symbol 'cpu_access_lock' was not declared. Should it be static?
+kernel/trace/trace.c:1327:8: sparse: symbol 'ftrace_stack' was not declared. Should it be static?
+kernel/trace/trace.c:1328:8: sparse: symbol 'ftrace_stack_reserve' was not declared. Should it be static?
+kernel/trace/trace.c:1451:8: sparse: symbol 'user_stack_count' was not declared. Should it be static?
+
+[smatch]
+drivers/net/vxlan.c:350 vxlan_fdb_append() error: potential NULL dereference 'rd_prev'.
+
 ---
- drivers/staging/android/binder.c |   32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
-index 9180a5b..ccf3087 100644
---- a/drivers/staging/android/binder.c
-+++ b/drivers/staging/android/binder.c
-@@ -2927,12 +2927,14 @@ static void binder_deferred_release(struct binder_proc *proc)
- {
- 	struct binder_transaction *t;
- 	struct rb_node *n;
--	int threads, nodes, incoming_refs, outgoing_refs, buffers, active_transactions, page_count;
-+	int threads, nodes, incoming_refs, outgoing_refs, buffers,
-+		active_transactions, page_count;
- 
- 	BUG_ON(proc->vma);
- 	BUG_ON(proc->files);
- 
- 	hlist_del(&proc->proc_node);
-+
- 	if (binder_context_mgr_node && binder_context_mgr_node->proc = proc) {
- 		binder_debug(BINDER_DEBUG_DEAD_BINDER,
- 			     "binder_release: %d context_mgr_node gone\n",
-@@ -2943,33 +2945,42 @@ static void binder_deferred_release(struct binder_proc *proc)
- 	threads = 0;
- 	active_transactions = 0;
- 	while ((n = rb_first(&proc->threads))) {
--		struct binder_thread *thread = rb_entry(n, struct binder_thread, rb_node);
-+		struct binder_thread *thread;
-+
-+		thread = rb_entry(n, struct binder_thread, rb_node);
- 		threads++;
- 		active_transactions += binder_free_thread(proc, thread);
- 	}
-+
- 	nodes = 0;
- 	incoming_refs = 0;
- 	while ((n = rb_first(&proc->nodes))) {
--		struct binder_node *node = rb_entry(n, struct binder_node, rb_node);
-+		struct binder_node *node;
- 
-+		node = rb_entry(n, struct binder_node, rb_node);
- 		nodes++;
- 		rb_erase(&node->rb_node, &proc->nodes);
- 		incoming_refs = binder_node_release(node, incoming_refs);
- 	}
-+
- 	outgoing_refs = 0;
- 	while ((n = rb_first(&proc->refs_by_desc))) {
--		struct binder_ref *ref = rb_entry(n, struct binder_ref,
--						  rb_node_desc);
-+		struct binder_ref *ref;
-+
-+		ref = rb_entry(n, struct binder_ref, rb_node_desc);
- 		outgoing_refs++;
- 		binder_delete_ref(ref);
- 	}
-+
- 	binder_release_work(&proc->todo);
- 	binder_release_work(&proc->delivered_death);
--	buffers = 0;
- 
-+	buffers = 0;
- 	while ((n = rb_first(&proc->allocated_buffers))) {
--		struct binder_buffer *buffer = rb_entry(n, struct binder_buffer,
--							rb_node);
-+		struct binder_buffer *buffer;
-+
-+		buffer = rb_entry(n, struct binder_buffer, rb_node);
-+
- 		t = buffer->transaction;
- 		if (t) {
- 			t->buffer = NULL;
-@@ -2978,6 +2989,7 @@ static void binder_deferred_release(struct binder_proc *proc)
- 			       proc->pid, t->debug_id);
- 			/*BUG();*/
- 		}
-+
- 		binder_free_buf(proc, buffer);
- 		buffers++;
- 	}
-@@ -2987,13 +2999,13 @@ static void binder_deferred_release(struct binder_proc *proc)
- 	page_count = 0;
- 	if (proc->pages) {
- 		int i;
-+
- 		for (i = 0; i < proc->buffer_size / PAGE_SIZE; i++) {
- 			if (proc->pages[i]) {
- 				void *page_addr = proc->buffer + i * PAGE_SIZE;
- 				binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
- 					     "binder_release: %d: page %d at %p not freed\n",
--					     proc->pid, i,
--					     page_addr);
-+					     proc->pid, i, page_addr);
- 				unmap_kernel_range((unsigned long)page_addr,
- 					PAGE_SIZE);
- 				__free_page(proc->pages[i]);
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
