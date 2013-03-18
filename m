@@ -1,23 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 01 Mar 2013 21:00:05 +0000
-Subject: Re: [patch] sctp: use the passed in gfp flags instead GFP_KERNEL
-Message-Id: <20130301.160005.2165970105360874488.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 18 Mar 2013 10:55:03 +0000
+Subject: [patch] RxRPC: use copy_to_user() instead of memcpy()
+Message-Id: <20130318105503.GA17102@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130301052743.GD2669@longonot.mountain>
-In-Reply-To: <20130301052743.GD2669@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vyasevich@gmail.com, sri@us.ibm.com, nhorman@tuxdriver.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>, David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 1 Mar 2013 08:27:43 +0300
+This is a user pointer.  Changing the memcpy() to copy_to_user()
+fixes a hang on my system.
 
-> This patch doesn't change how the code works because in the current
-> kernel gfp is always GFP_KERNEL.  But gfp was obviously intended
-> instead of GFP_KERNEL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm not very familiar with this code, so please review this
+carefully.
 
-Applied, thanks.
+diff --git a/net/rxrpc/ar-recvmsg.c b/net/rxrpc/ar-recvmsg.c
+index 4b48687..428501f 100644
+--- a/net/rxrpc/ar-recvmsg.c
++++ b/net/rxrpc/ar-recvmsg.c
+@@ -143,10 +143,15 @@ int rxrpc_recvmsg(struct kiocb *iocb, struct socket *sock,
+ 
+ 		/* copy the peer address and timestamp */
+ 		if (!continue_call) {
+-			if (msg->msg_name && msg->msg_namelen > 0)
+-				memcpy(msg->msg_name,
+-				       &call->conn->trans->peer->srx,
+-				       sizeof(call->conn->trans->peer->srx));
++			if (msg->msg_name && msg->msg_namelen > 0) {
++				ret = copy_to_user((void __user *)msg->msg_name,
++					&call->conn->trans->peer->srx,
++					sizeof(call->conn->trans->peer->srx));
++				if (ret) {
++					ret = -EFAULT;
++					goto copy_error;
++				}
++			}
+ 			sock_recv_ts_and_drops(msg, &rx->sk, skb);
+ 		}
+ 
