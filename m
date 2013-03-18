@@ -1,48 +1,39 @@
-From: Vijay Mohan Guvva <vmohan@Brocade.com>
-Date: Mon, 11 Mar 2013 18:21:46 +0000
-Subject: RE: [patch] [SCSI] bfa: Use GFP_ATOMIC under spin_lock
-Message-Id: <51BD2AE8016AE441B63F5661159C990203A17E0D0C@BRM-EXCH-3.corp.brocade.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 18 Mar 2013 20:25:26 +0000
+Subject: [patch v2] IB/ipath: silence a static checker warning
+Message-Id: <20130318202526.GA11268@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130308120115.GA18712@longonot.mountain>
-In-Reply-To: <20130308120115.GA18712@longonot.mountain>
+References: <32E1700B9017364D9B60AED9960492BC0D5C9939@FMSMSX108.amr.corp.intel.com>
+In-Reply-To: <32E1700B9017364D9B60AED9960492BC0D5C9939-AtyAts71sc88Ug9VwtkbtrfspsVTdybXVpNB7YpNyf8@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Anil Gurumurthy <agurumur@Brocade.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mike Marciniszyn <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Friday, March 08, 2013 4:01 AM
-> To: Anil Gurumurthy
-> Cc: Vijay Mohan Guvva; James E.J. Bottomley; linux-scsi@vger.kernel.org;
-> linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [patch] [SCSI] bfa: Use GFP_ATOMIC under spin_lock
-> 
-> This is always called with spinlocks held so it should use GFP_ATOMIC.  The
-> call tree is:
-> 
-> -> bfad_drv_start()
->    Takes spin_lock_irqsave(&bfad->bfad_lock, flags);
->    -> bfa_fcs_pbc_vport_init()
->       -> bfa_fcb_pbc_vport_create()
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c index
-> a5f7690..d144a06 100644
-> --- a/drivers/scsi/bfa/bfad.c
-> +++ b/drivers/scsi/bfa/bfad.c
-> @@ -491,7 +491,7 @@ bfa_fcb_pbc_vport_create(struct bfad_s *bfad,
-> struct bfi_pbc_vport_s pbc_vport)
->  	struct bfad_vport_s   *vport;
->  	int rc;
-> 
-> -	vport = kzalloc(sizeof(struct bfad_vport_s), GFP_KERNEL);
-> +	vport = kzalloc(sizeof(struct bfad_vport_s), GFP_ATOMIC);
->  	if (!vport) {
->  		bfa_trc(bfad, 0);
->  		return;
+I have a static checker which complains that 0x255 is too high for
+the "dev->opstats[opcode]" array.  It turns out that the hardware
+has already validated the opcode at this point so it can't actually
+overflow.
 
-Changes looks good. Thanks for the patch.
-Acked-by: Vijay Mohan Guvva <vmohan@Brocade.com>
+However, silencing the warning is good and this matches how the
+opcode is treated in qib_ib_rcv() as well.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: new changelog.  Just mask the value instead of adding an if
+statement.
+
+diff --git a/drivers/infiniband/hw/ipath/ipath_verbs.c b/drivers/infiniband/hw/ipath/ipath_verbs.c
+index 439c35d..ea93870 100644
+--- a/drivers/infiniband/hw/ipath/ipath_verbs.c
++++ b/drivers/infiniband/hw/ipath/ipath_verbs.c
+@@ -620,7 +620,7 @@ void ipath_ib_rcv(struct ipath_ibdev *dev, void *rhdr, void *data,
+ 		goto bail;
+ 	}
+ 
+-	opcode = be32_to_cpu(ohdr->bth[0]) >> 24;
++	opcode = (be32_to_cpu(ohdr->bth[0]) >> 24) & 0x7f;
+ 	dev->opstats[opcode].n_bytes += tlen;
+ 	dev->opstats[opcode].n_packets++;
+ 
