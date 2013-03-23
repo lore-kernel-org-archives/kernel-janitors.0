@@ -1,45 +1,106 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Wed, 13 Mar 2013 11:09:24 +0000
-Subject: Re: [patch] ALSA: ASoC: tas5086: signedness bug in tas5086_hw_params()
-Message-Id: <20130313110924.GL25610@opensource.wolfsonmicro.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="5LiOUhUlsRX0HDkW"
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Sat, 23 Mar 2013 18:52:55 +0000
+Subject: [PATCH] bnx2x: fix assignment of signed expression to unsigned variable
+Message-Id: <1364064775-19319-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130313053253.GA17674@longonot.mountain>
-In-Reply-To: <20130313053253.GA17674@longonot.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Daniel Mack <zonque@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, kbuild@01.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: eilong@broadcom.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+fix for incorrect assignment of signed expression to unsigned variable.
 
---5LiOUhUlsRX0HDkW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-On Wed, Mar 13, 2013 at 08:32:53AM +0300, Dan Carpenter wrote:
-> "val" has to be signed for the error handling to work.
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c
+index 5682054..b90533a 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c
+@@ -2139,12 +2139,12 @@ static u8 bnx2x_dcbnl_get_cap(struct net_device *netdev, int capid, u8 *cap)
+ 			break;
+ 		default:
+ 			BNX2X_ERR("Non valid capability ID\n");
+-			rval = -EINVAL;
++			rval = EINVAL;
+ 			break;
+ 		}
+ 	} else {
+ 		DP(BNX2X_MSG_DCB, "DCB disabled\n");
+-		rval = -EINVAL;
++		rval = EINVAL;
+ 	}
+ 
+ 	DP(BNX2X_MSG_DCB, "capid %d:%x\n", capid, *cap);
+@@ -2154,7 +2154,7 @@ static u8 bnx2x_dcbnl_get_cap(struct net_device *netdev, int capid, u8 *cap)
+ static int bnx2x_dcbnl_get_numtcs(struct net_device *netdev, int tcid, u8 *num)
+ {
+ 	struct bnx2x *bp = netdev_priv(netdev);
+-	u8 rval = 0;
++	s8 rval = 0;
+ 
+ 	DP(BNX2X_MSG_DCB, "tcid %d\n", tcid);
+ 
+@@ -2188,7 +2188,7 @@ static int bnx2x_dcbnl_set_numtcs(struct net_device *netdev, int tcid, u8 num)
+ 	return -EINVAL;
+ }
+ 
+-static u8  bnx2x_dcbnl_get_pfc_state(struct net_device *netdev)
++static u8 bnx2x_dcbnl_get_pfc_state(struct net_device *netdev)
+ {
+ 	struct bnx2x *bp = netdev_priv(netdev);
+ 	DP(BNX2X_MSG_DCB, "state = %d\n", bp->dcbx_local_feat.pfc.enabled);
+@@ -2282,7 +2282,7 @@ static int bnx2x_set_admin_app_up(struct bnx2x *bp, u8 idtype, u16 idval, u8 up)
+ 	else {
+ 		/* app table is full */
+ 		BNX2X_ERR("Application table is too large\n");
+-		return -EBUSY;
++		return EBUSY;
+ 	}
+ 
+ 	/* up configured, if not 0 make sure feature is enabled */
+@@ -2312,7 +2312,7 @@ static u8 bnx2x_dcbnl_set_app_up(struct net_device *netdev, u8 idtype,
+ 		break;
+ 	default:
+ 		DP(BNX2X_MSG_DCB, "Wrong ID type\n");
+-		return -EINVAL;
++		return EINVAL;
+ 	}
+ 	return bnx2x_set_admin_app_up(bp, idtype, idval, up);
+ }
+@@ -2390,12 +2390,12 @@ static u8 bnx2x_dcbnl_get_featcfg(struct net_device *netdev, int featid,
+ 			break;
+ 		default:
+ 			BNX2X_ERR("Non valid featrue-ID\n");
+-			rval = -EINVAL;
++			rval = EINVAL;
+ 			break;
+ 		}
+ 	} else {
+ 		DP(BNX2X_MSG_DCB, "DCB disabled\n");
+-		rval = -EINVAL;
++		rval = EINVAL;
+ 	}
+ 
+ 	return rval;
+@@ -2431,12 +2431,12 @@ static u8 bnx2x_dcbnl_set_featcfg(struct net_device *netdev, int featid,
+ 			break;
+ 		default:
+ 			BNX2X_ERR("Non valid featrue-ID\n");
+-			rval = -EINVAL;
++			rval = EINVAL;
+ 			break;
+ 		}
+ 	} else {
+ 		DP(BNX2X_MSG_DCB, "dcbnl call not valid\n");
+-		rval = -EINVAL;
++		rval = EINVAL;
+ 	}
+ 
+ 	return rval;
+-- 
+1.7.9.5
 
-Applied, thanks.
-
---5LiOUhUlsRX0HDkW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRQF5WAAoJELSic+t+oim9RaEP/R3Ygor7kfC8wck8RrkuK9Ed
-FzspzUwTxKDsMKHJ5a3a6L6k1/V8ytTll8lq+4fXLFsu7n5aBwC+FaiXzKfvSUWE
-4gK9n9O8t1a+8elFf7iTh6aCjMqOqbcKhricsiafNLDLNq7zc00Ha/7Wh1ljrvLM
-JDKHft+UB9gQPN0IJWjXZJID8tYyTssCCV5818e9ESG0f6epJQbkimAUA2t0MbaE
-6GfW+WSF0Ivqbucz5zcuKxsMQ2NUuEa1c81u4fd8xe/8vMylkQL/Sx4M+3aP72Yt
-BdmNWCjQ3HV6QrgThxco9QDbatMWi4dxK/UdIdr9uwXdBENA1CrBrDeJmPY1b0V1
-3t3idR0HJ4KXuIhD9oT1PguiHeX0oQs/5J9TINsWjieLR1reS76YREUqUur4GRQM
-Ie/VxFizAGdHLecYjGLJJRl2oASUyYcavnFrze3XMzNV2TIruOUF5ak7lJkBW7Lt
-kHp5vcpWQNdrHsltd8Mw1vwXDqzBQy2J6vQnPx/6kV5iyO9awOhyAKJkWDrVOZ/2
-J7pkrLbLWgRvugswm4CyeJ4JxxuIbHkQowEDN1gZW0anocI/cpq/3mX6eyiFbXz4
-Twy8K8PZGZoX+fx2Ox1RJi5oXgWMR/WVrL3CL4Ys/A001RGeGBimfWGK8KEgGWt4
-ZG74jsUu99KrsUBnQfrw
-=6MqM
------END PGP SIGNATURE-----
-
---5LiOUhUlsRX0HDkW--
