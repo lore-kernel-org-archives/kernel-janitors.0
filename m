@@ -1,73 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 01 Mar 2013 20:28:06 +0000
-Subject: [patch] Staging: bcm: potential forever loop verifying firmware
-Message-Id: <20130301202806.GB22066@longonot.mountain>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Mon, 25 Mar 2013 15:48:21 +0000
+Subject: [PATCH] block: remove unused variable
+Message-Id: <1364226501-28745-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: josh.h.morris@us.ibm.com, pjk1939@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-There is an ioctl() to write data to the firmware.  After the data
-is written, it reads the databack from the firmware and compares
-against what the user wanted to write and prints an error message
-if it doesn't match.
+The struct rsxx_dma pointer tmp is not used, we can remove it.
+Introduced by: c95246c3a2ac
+("Adding in EEH support to the IBM FlashSystem 70/80 device driver")
 
-The problem is that verify process has a forever loop if the
-firmware size is not a multiple of 4.  I've fixed it by replacing
-the bcm compare function with memcmp().
+Sparse gives a warning:
+drivers/block/rsxx/dma.c:1050:19: warning:
+	unused variable ‘tmp’ [-Wunused-variable]
 
-I have chopped out some debugging code in the process.
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/block/rsxx/dma.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/staging/bcm/InterfaceDld.c b/drivers/staging/bcm/InterfaceDld.c
-index 64ea6ed..348ad75 100644
---- a/drivers/staging/bcm/InterfaceDld.c
-+++ b/drivers/staging/bcm/InterfaceDld.c
-@@ -205,30 +205,6 @@ static int bcm_download_config_file(struct bcm_mini_adapter *Adapter, struct bcm
- 	return retval;
- }
- 
--static int bcm_compare_buff_contents(unsigned char *readbackbuff, unsigned char *buff, unsigned int len)
--{
--	int retval = STATUS_SUCCESS;
--	struct bcm_mini_adapter *Adapter = GET_BCM_ADAPTER(gblpnetdev);
--	if ((len-sizeof(unsigned int)) < 4) {
--		if (memcmp(readbackbuff , buff, len))
--			retval = -EINVAL;
--	} else {
--		len -= 4;
--
--		while (len) {
--			if (*(unsigned int *)&readbackbuff[len] != *(unsigned int *)&buff[len]) {
--				BCM_DEBUG_PRINT(Adapter, DBG_TYPE_INITEXIT, MP_INIT, DBG_LVL_ALL, "Firmware Download is not proper");
--				BCM_DEBUG_PRINT(Adapter, DBG_TYPE_INITEXIT, MP_INIT, DBG_LVL_ALL, "Val from Binary %x, Val From Read Back %x ", *(unsigned int *)&buff[len], *(unsigned int*)&readbackbuff[len]);
--				BCM_DEBUG_PRINT(Adapter, DBG_TYPE_INITEXIT, MP_INIT, DBG_LVL_ALL, "len =%x!!!", len);
--				retval = -EINVAL;
--				break;
--			}
--			len -= 4;
--		}
--	}
--	return retval;
--}
--
- int bcm_ioctl_fw_download(struct bcm_mini_adapter *Adapter, struct bcm_firmware_info *psFwInfo)
+diff --git a/drivers/block/rsxx/dma.c b/drivers/block/rsxx/dma.c
+index d523e9c..bacbaa0 100644
+--- a/drivers/block/rsxx/dma.c
++++ b/drivers/block/rsxx/dma.c
+@@ -1047,7 +1047,6 @@ void rsxx_eeh_cancel_dmas(struct rsxx_cardinfo *card)
+ int rsxx_eeh_remap_dmas(struct rsxx_cardinfo *card)
  {
- 	int retval = STATUS_SUCCESS;
-@@ -321,9 +297,11 @@ static INT buffRdbkVerify(struct bcm_mini_adapter *Adapter, PUCHAR mappedbuffer,
- 			break;
- 		}
+ 	struct rsxx_dma *dma;
+-	struct rsxx_dma *tmp;
+ 	int i;
  
--		retval = bcm_compare_buff_contents(readbackbuff, mappedbuffer, len);
--		if (STATUS_SUCCESS != retval)
--			break;
-+		if (memcmp(readbackbuff, mappedbuffer, len) != 0) {
-+			pr_err("%s() failed.  The firmware doesn't match what was written",
-+			       __func__);
-+			retval = -EIO;
-+		}
- 
- 		u32StartingAddress += len;
- 		u32FirmwareLength -= len;
+ 	for (i = 0; i < card->n_targets; i++) {
+-- 
+1.7.10.4
+
