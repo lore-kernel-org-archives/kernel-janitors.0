@@ -1,69 +1,38 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Mon, 25 Mar 2013 12:59:43 +0000
-Subject: [PATCH] Btrfs: fix gcc warnings by adding third argument
-Message-Id: <1364216531-16467-1-git-send-email-emilgoode@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 25 Mar 2013 04:27:38 +0000
+Subject: build regressions 2013-03-24
+Message-Id: <514fd23a.RHGYr0ziB5EBWWG0%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: chris.mason@fusionio.com
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-The function pointer bi_end_io expects three arguments of the
-function it points to. This patch adds a struct batch_complete
-pointer as a third argument to the raid_write_end_io,
-raid_rmw_end_io and raid_recover_end_io functions.
+[errors]
+arch/arm/mach-tegra/cpu-tegra.c:131:28: error: 'policy' undeclared (first use in this function)
+fs/nfs/nfs4proc.c:111:3: error: expected ':' or '...' before 'return'
+include/linux/mfd/winbond_superio.h:60:20: error: inlining failed in call to always_inline 'winbond_superio_enter': function body not available
+drivers/watchdog/winbond_wdt.c:61:23: error: called from here
+include/linux/mfd/winbond_superio.h:61:20: error: inlining failed in call to always_inline 'winbond_superio_exit': function body not available
+drivers/watchdog/winbond_wdt.c:64:22: error: called from here
+include/linux/mfd/winbond_superio.h:60:20: error: inlining failed in call to always_inline 'winbond_superio_enter': function body not available
+drivers/watchdog/winbond_wdt.c:131:23: error: called from here
+include/linux/mfd/winbond_superio.h:61:20: error: inlining failed in call to always_inline 'winbond_superio_exit': function body not available
+drivers/watchdog/winbond_wdt.c:235:22: error: called from here
+drivers/gpu/drm/i915/i915_drv.c:131:5: error: redefinition of 'i915_disable_power_well'
+drivers/gpu/drm/i915/i915_drv.c:132:60: error: redefinition of '__check_disable_power_well'
+drivers/gpu/drm/i915/i915_drv.c:132:145: error: redefinition of '__param_perm_check_disable_power_well'
+drivers/gpu/drm/i915/i915_drv.c:132:388: error: redefinition of '__param_str_disable_power_well'
+drivers/gpu/drm/i915/i915_drv.c:132:489: error: redefinition of '__param_disable_power_well'
 
-GCC is warning about this:
-fs/btrfs/raid56.c: In function ‘finish_rmw’:
-fs/btrfs/raid56.c:1258:18: warning:
-	assignment from incompatible pointer type [enabled by default]
-fs/btrfs/raid56.c: In function ‘raid56_rmw_stripe’:
-fs/btrfs/raid56.c:1514:18: warning:
-	assignment from incompatible pointer type [enabled by default]
-fs/btrfs/raid56.c: In function ‘__raid56_parity_recover’:
-fs/btrfs/raid56.c:2013:18: warning:
-	assignment from incompatible pointer type [enabled by default]
+[warnings]
+drivers/vhost/tcm_vhost.c:871:1: warning: label 'err_dev' defined but not used [-Wunused-label]
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+[sparse]
+drivers/cpufreq/cpufreq.c:247:6: sparse: symbol '__cpufreq_notify_transition' was not declared. Should it be static?
+fs/nfs/nfs4proc.c:111:17: sparse: Expected : after default/case
+fs/nfs/nfs4proc.c:111:17: sparse: got return
+
 ---
- fs/btrfs/raid56.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-index 9a79fb7..6df1ac8 100644
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -850,7 +850,8 @@ static void rbio_orig_end_io(struct btrfs_raid_bio *rbio, int err, int uptodate)
-  * end io function used by finish_rmw.  When we finally
-  * get here, we've written a full stripe
-  */
--static void raid_write_end_io(struct bio *bio, int err)
-+static void raid_write_end_io(struct bio *bio, int err,
-+			      struct batch_complete *batch)
- {
- 	struct btrfs_raid_bio *rbio = bio->bi_private;
- 
-@@ -1384,7 +1385,8 @@ static void set_bio_pages_uptodate(struct bio *bio)
-  * This will usually kick off finish_rmw once all the bios are read in, but it
-  * may trigger parity reconstruction if we had any errors along the way
-  */
--static void raid_rmw_end_io(struct bio *bio, int err)
-+static void raid_rmw_end_io(struct bio *bio, int err,
-+			    struct batch_complete *batch)
- {
- 	struct btrfs_raid_bio *rbio = bio->bi_private;
- 
-@@ -1905,7 +1907,8 @@ cleanup_io:
-  * This is called only for stripes we've read from disk to
-  * reconstruct the parity.
-  */
--static void raid_recover_end_io(struct bio *bio, int err)
-+static void raid_recover_end_io(struct bio *bio, int err,
-+				struct batch_complete *batch)
- {
- 	struct btrfs_raid_bio *rbio = bio->bi_private;
- 
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
