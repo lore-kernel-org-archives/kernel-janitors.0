@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 22 Mar 2013 17:09:40 +0000
-Subject: build regressions 2013-03-22
-Message-Id: <514c9054.8r7GS7yTq4qDV2Vr%fengguang.wu@intel.com>
+Date: Mon, 25 Mar 2013 16:11:16 +0000
+Subject: build regressions 2013-03-25
+Message-Id: <51507724.7snIKkdZ8CnwgGxa%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,387 +9,59 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-arch/arm/kernel/process.c:211:4: error: implicit declaration of function 'tick_check_broadcast_expired' [-Werror=implicit-function-declaration]
-ERROR: "rtm_dn_policy" [net/decnet/decnet.ko] undefined!
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:337:2: error: invalid application of 'sizeof' to incomplete type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:338:2: error: invalid use of undefined type 'struct kvm_vcpu'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:339:2: error: invalid use of undefined type 'struct kvm_vcpu'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:341:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:342:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:344:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:345:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:347:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:348:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:349:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:350:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:352:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:354:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:355:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:356:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:357:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:358:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:359:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:360:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-/c/kernel-tests/src/tip/arch/mips/kernel/asm-offsets.c:361:2: error: invalid use of undefined type 'struct kvm_vcpu_arch'
-arch/tile/kernel/ptrace.c:261:3: error: implicit declaration of function 'trace_sys_enter'
-arch/tile/kernel/ptrace.c:272:3: error: implicit declaration of function 'trace_sys_exit'
-drivers/net/virtio_net.c:1242:2: error: implicit declaration of function 'virtio_config_val' [-Werror=implicit-function-declaration]
-drivers/net/virtio_net.c:1516:2: error: implicit declaration of function 'virtio_config_val_len' [-Werror=implicit-function-declaration]
-drivers/block/virtio_blk.c:463:2: error: implicit declaration of function 'virtio_config_val' [-Werror=implicit-function-declaration]
-drivers/char/virtio_console.c:1980:6: error: implicit declaration of function 'virtio_config_val' [-Werror=implicit-function-declaration]
-drivers/scsi/virtio_scsi.c:633:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:633:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:633:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:633:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:633:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:633:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:633:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:634:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:634:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:634:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:634:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:634:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:634:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/scsi/virtio_scsi.c:634:2: error: invalid type argument of unary '*' (have 'u32')
-drivers/cpufreq/cpufreq_conservative.c:96:27: error: request for member 'freq_step' in something not a structure or union
-drivers/cpufreq/cpufreq_ondemand.c:353:44: error: request for member 'io_is_busy' in something not a structure or union
-drivers/cpufreq/cpufreq_ondemand.c:428:44: error: request for member 'io_is_busy' in something not a structure or union
-drivers/cpufreq/cpufreq_governor.c:100:15: error: 'struct dbs_data' has no member named 'governor'
-drivers/cpufreq/cpufreq_conservative.c:85:39: error: request for member 'sampling_down_factor' in something not a structure or union
-drivers/target/iscsi/iscsi_target_configfs.c:1549:30: error: dereferencing pointer to incomplete type
+(.init.text+0x0): multiple definition of `init_module'
+drivers/md/bcache/super.o:super.c:(.init.text+0x0): first defined here
+drivers/gpu/drm/drm_pci.c:485:2: error: implicit declaration of function 'pcie_capability_read_dword' [-Werror=implicit-function-declaration]
+drivers/md/bcache/bset.c:727:3: error: implicit declaration of function 'prefetch' [-Werror=implicit-function-declaration]
+drivers/md/bcache/btree.c:932:3: error: implicit declaration of function 'prefetch' [-Werror=implicit-function-declaration]
+drivers/md/bcache/super.o:(.opd+0x540): first defined here
+drivers/md/bcache/super.o:(.init.text+0x0): first defined here
+ftrace.c:(.toc+0xd90): undefined reference to `epapr_ev_idle_start'
+ftrace.c:(.toc+0xda0): undefined reference to `epapr_ev_idle'
+drivers/staging/dwc2/pci.c:171:21: error: 'IRQ_LEVEL' undeclared (first use in this function)
+arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:16:24: error: array type has incomplete element type
+arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:17:2: error: array index in non-array initializer
+arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:18:3: error: field name not in record or union initializer
+arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:19:3: error: field name not in record or union initializer
+arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:20:3: error: field name not in record or union initializer
+arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:20:12: error: 'IORESOURCE_MEM' undeclared here (not in a function)
+arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:27:11: error: implicit declaration of function 'BUILD_BUG_ON_ZERO' [-Werror=implicit-function-declaration]
+drivers/acpi/acpi_uart.c:181:2: error: implicit declaration of function 'ACPI_NODE_GET' [-Werror=implicit-function-declaration]
+ERROR: "pm_generic_complete" [drivers/i2c/i2c-core.ko] undefined!
+ERROR: "pm_generic_prepare" [drivers/i2c/i2c-core.ko] undefined!
 
 [warnings]
-drivers/scsi/virtio_scsi.c:633: warning: type defaults to 'int' in declaration of '__dummy2'
-drivers/scsi/virtio_scsi.c:634: warning: type defaults to 'int' in declaration of '__dummy2'
-drivers/virtio/virtio_pci.c:771:4: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): No description found for parameter 'p2p_noa_attr'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_ctwindow' description in 'ieee80211_bss_conf'
-Warning(include/net/mac80211.h:369): Excess struct/union/enum/typedef member 'p2p_oppps' description in 'ieee80211_bss_conf'
-drivers/target/iscsi/iscsi_target_login.c:619:2: warning: #warning FIXME: Reenable iscsit_start_nopin_timer [-Wcpp]
-drivers/scsi/virtio_scsi.c:633:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-drivers/scsi/virtio_scsi.c:634:2: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-include/uapi/linux/virtio_pci.h:90:2: warning: #warning "Please support virtio_pci non-legacy mode!" [-Wcpp]
+drivers/md/bcache/bset.c:164:2: warning: format '%li' expects argument of type 'long int', but argument 4 has type 'size_t' [-Wformat]
+drivers/md/bcache/debug.c:86:4: warning: format '%li' expects argument of type 'long int', but argument 4 has type 'size_t' [-Wformat]
+drivers/md/bcache/btree.c:245:8: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' [-Wformat]
+WARNING: vmlinux.o(.text+0x97f8): Section mismatch in reference from the function .start_secondary_prolog() to the function .cpuinit.text:.start_secondary()
+WARNING: vmlinux.o(.text+0x980c): Section mismatch in reference from the function .start_secondary_resume() to the function .cpuinit.text:.start_secondary()
+drivers/md/bcache/sysfs.c:730:1: warning: '__bch_cache_show' uses dynamic stack allocation [enabled by default]
+drivers/s390/kvm/virtio_ccw.c:598:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/s390/kvm/virtio_ccw.c:598:2: warning: (near initialization for 'virtio_ccw_config_ops.get_features') [enabled by default]
+arch/sh/kernel/cpu/sh2a/pinmux-sh7269.c:28:1: warning: control reaches end of non-void function [-Wreturn-type]
+drivers/pinctrl/sh-pfc/core.c:76:1: warning: control reaches end of non-void function [-Wreturn-type]
+drivers/block/aoe/aoecmd.c:931:20: warning: 'bv' is used uninitialized in this function [-Wuninitialized]
+drivers/acpi/acpi_uart.c:181:9: warning: assignment makes pointer from integer without a cast [enabled by default]
 
 [sparse]
-drivers/media/usb/s2255/s2255drv.c:2517:20: sparse: cast to restricted __le16
-drivers/scsi/virtio_scsi.c:633:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:633:9: sparse: incompatible types in comparison expression (different base types)
-drivers/scsi/virtio_scsi.c:633:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:633:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:633:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:633:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:633:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:633:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:633:9: sparse: incompatible types for 'case' statement
-drivers/scsi/virtio_scsi.c:633:9: sparse: incompatible types for 'case' statement
-drivers/scsi/virtio_scsi.c:633:9: sparse: incompatible types for 'case' statement
-drivers/scsi/virtio_scsi.c:633:9: sparse: incompatible types for 'case' statement
-drivers/scsi/virtio_scsi.c:634:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:634:9: sparse: incompatible types in comparison expression (different base types)
-drivers/scsi/virtio_scsi.c:634:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:634:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:634:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:634:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:634:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:634:9: sparse: cannot dereference this type
-drivers/scsi/virtio_scsi.c:634:9: sparse: incompatible types for 'case' statement
-drivers/scsi/virtio_scsi.c:634:9: sparse: incompatible types for 'case' statement
-drivers/scsi/virtio_scsi.c:634:9: sparse: incompatible types for 'case' statement
-drivers/scsi/virtio_scsi.c:634:9: sparse: incompatible types for 'case' statement
-drivers/virtio/virtio_balloon.c:286:9: sparse: restricted __le32 degrades to integer
-drivers/virtio/virtio_balloon.c:286:9: sparse: incorrect type in argument 3 (different base types)
-drivers/virtio/virtio_balloon.c:286:9: sparse: incorrect type in argument 3 (different base types)
-drivers/virtio/virtio_balloon.c:286:9: sparse: incorrect type in argument 3 (different base types)
-drivers/virtio/virtio_balloon.c:286:9: sparse: incorrect type in argument 3 (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_balloon.c:276:9: sparse: incorrect type in assignment (different base types)
-drivers/virtio/virtio_pci.c:108:30: sparse: incorrect type in argument 2 (different address spaces)
-drivers/virtio/virtio_pci.c:109:45: sparse: incorrect type in argument 2 (different address spaces)
-drivers/virtio/virtio_pci.c:115:25: sparse: incorrect type in argument 1 (different address spaces)
-drivers/virtio/virtio_pci.c:115:63: sparse: incorrect type in argument 1 (different address spaces)
-drivers/virtio/virtio_pci.c:463:33: sparse: incorrect type in argument 1 (different address spaces)
-drivers/virtio/virtio_pci.c:525:53: sparse: incorrect type in argument 2 (different address spaces)
-drivers/virtio/virtio_pci.c:563:29: sparse: incorrect type in argument 2 (different address spaces)
-drivers/cpufreq/cpufreq_governor.c:100:29: sparse: no member 'governor' in struct dbs_data
-drivers/cpufreq/cpufreq_ondemand.c:353:65: sparse: expected structure or union
-drivers/cpufreq/cpufreq_conservative.c:85:46: sparse: expected structure or union
+drivers/staging/media/go7007/go7007-priv.h:93:31: sparse: dubious one-bit signed bitfield
+drivers/staging/media/go7007/go7007-priv.h:94:31: sparse: dubious one-bit signed bitfield
+drivers/staging/media/go7007/go7007-loader.c:32:18: sparse: symbol 'fw_configs' was not declared. Should it be static?
+drivers/md/dm-cache-target.c:670:24: sparse: incorrect type in assignment (different argument counts)
+fs/btrfs/raid56.c:2013:32: sparse: incorrect type in assignment (different argument counts)
+net/nfc/llcp/commands.c:423:14: sparse: incorrect type in assignment (different base types)
+net/nfc/llcp/commands.c:479:14: sparse: incorrect type in assignment (different base types)
+
+[cppcheck]
+include/uapi/linux/aio_abi.h:70: error: edit for your odd byteorder.
+include/uapi/linux/aio_abi.h:70: error: edit for your odd byteorder.
+include/uapi/linux/aio_abi.h:70: error: edit for your odd byteorder.
+include/uapi/linux/aio_abi.h:70: error: edit for your odd byteorder.
+include/uapi/linux/raid/md_p.h:159: error: unspecified endianness
+include/uapi/linux/raid/md_p.h:159: error: unspecified endianness
+include/linux/slab.h:250: error: "Unknown slab allocator"
+include/linux/slab.h:250: error: "Unknown slab allocator"
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
