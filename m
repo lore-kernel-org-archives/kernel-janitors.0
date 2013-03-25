@@ -1,44 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Mar 2013 21:44:47 +0000
-Subject: Re: [PATCH 4/4] drivers: android: binder: Fix compiler warning
-Message-Id: <20130311214447.GB9138@mwanda>
+From: Kumar Amit Mehta <gmate.amit@gmail.com>
+Date: Mon, 25 Mar 2013 05:37:48 +0000
+Subject: [PATCH] staging: vme: fix for a potential NULL pointer dereference
+Message-Id: <1364189869-9275-1-git-send-email-gmate.amit@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1363030315-10229-1-git-send-email-mirsal@mirsal.fr>
- <1363030315-10229-5-git-send-email-mirsal@mirsal.fr>
-In-Reply-To: <1363030315-10229-5-git-send-email-mirsal@mirsal.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mirsal Ennaime <mirsal@mirsal.fr>
-Cc: Greg Kroah-Hartman <greg@kroah.com>, devel@driverdev.osuosl.org, Brian Swetland <swetland@google.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>
+To: martyn.welch@ge.com
+Cc: manohar.vanga@gmail.com, gregkh@linuxfoundation.org, yamanetoshi@gmail.com, joe@perches.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Mar 11, 2013 at 08:31:55PM +0100, Mirsal Ennaime wrote:
-> Fix an instance of -Wdeclaration-after-statement
-> 
+Audit the return value of cdev_alloc and hence fixes a potential NULL pointer
+dereferencing.
 
-That's a compiler warning you introduced yourself on the previous
-patch.  Obviously, we're not going to accept the original patch. :P
+Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+---
+ drivers/staging/vme/devices/vme_user.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-> Signed-off-by: Mirsal Ennaime <mirsal@mirsal.fr>
-> ---
->  drivers/staging/android/binder.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
-> index 18a83e2..c833b53 100644
-> --- a/drivers/staging/android/binder.c
-> +++ b/drivers/staging/android/binder.c
-> @@ -3001,11 +3001,12 @@ static void binder_deferred_release(struct binder_proc *proc)
->  	page_count = 0;
->  	if (proc->pages) {
->  		int i;
-> +		void *page_addr;
-
-Put a blank line after the variable declaration section.  Really
-the "int i" should go at the start of the function and the page_addr
-should go inside the for loop.
-
-regards,
-dan carpenter
-
+diff --git a/drivers/staging/vme/devices/vme_user.c b/drivers/staging/vme/devices/vme_user.c
+index d074b1e..da7f759 100644
+--- a/drivers/staging/vme/devices/vme_user.c
++++ b/drivers/staging/vme/devices/vme_user.c
+@@ -710,6 +710,10 @@ static int vme_user_probe(struct vme_dev *vdev)
+ 
+ 	/* Register the driver as a char device */
+ 	vme_user_cdev = cdev_alloc();
++	if (!vme_user_cdev) {
++		err = -ENOMEM;
++		goto err_char;
++	}
+ 	vme_user_cdev->ops = &vme_user_fops;
+ 	vme_user_cdev->owner = THIS_MODULE;
+ 	err = cdev_add(vme_user_cdev, MKDEV(VME_MAJOR, 0), VME_DEVS);
+-- 
+1.7.9.5
 
