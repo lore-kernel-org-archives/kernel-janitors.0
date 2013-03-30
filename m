@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 08 Mar 2013 16:18:36 +0000
-Subject: build regressions 2013-03-08
-Message-Id: <513a0f5c.kQ0smJf9xdGOLO+b%fengguang.wu@intel.com>
+Date: Sat, 30 Mar 2013 19:02:24 +0000
+Subject: build regressions 2013-03-30
+Message-Id: <515736c0.sXbaXhbvjrRdcl0v%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,94 +9,289 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/hid/hid-logitech-dj.c:437:2: error: implicit declaration of function 'usbhid_submit_report' [-Werror=implicit-function-declaration]
-net/netlabel/netlabel_unlabeled.c:1324:16: error: 'iter_addr6' undeclared (first use in this function)
-drivers/net/ethernet/davicom/wemac.c:900:2: error: implicit declaration of function 'of_get_mac_address' [-Werror=implicit-function-declaration]
-net/nfc/llcp/llcp.c:242:69: error: macro "hlist_for_each_entry_safe" passed 5 arguments, but takes just 4
-net/nfc/llcp/llcp.c:242:2: error: 'hlist_for_each_entry_safe' undeclared (first use in this function)
-net/nfc/llcp/llcp.c:242:71: error: expected ';' before '{' token
-net/nfc/llcp/llcp.c:1284:39: error: macro "hlist_for_each_entry" passed 4 arguments, but takes just 3
-net/nfc/llcp/llcp.c:1283:4: error: 'hlist_for_each_entry' undeclared (first use in this function)
-net/nfc/llcp/llcp.c:1284:41: error: expected ';' before '{' token
-net/nfc/llcp/commands.c:195:51: error: macro "hlist_for_each_entry_safe" passed 5 arguments, but takes just 4
-net/nfc/llcp/commands.c:195:2: error: 'hlist_for_each_entry_safe' undeclared (first use in this function)
-net/nfc/llcp/commands.c:195:53: error: expected ';' before '{' token
-net/nfc/llcp/commands.c:550:55: error: macro "hlist_for_each_entry_safe" passed 5 arguments, but takes just 4
-net/nfc/llcp/commands.c:550:2: error: 'hlist_for_each_entry_safe' undeclared (first use in this function)
-net/nfc/llcp/commands.c:550:57: error: expected ';' before '{' token
-net/nfc/llcp/commands.c:580:57: error: macro "hlist_for_each_entry_safe" passed 5 arguments, but takes just 4
-net/nfc/llcp/commands.c:580:2: error: 'hlist_for_each_entry_safe' undeclared (first use in this function)
-net/nfc/llcp/commands.c:580:59: error: expected ';' before '{' token
-fs/9p/vfs_inode.c:903:2: error: too few arguments to function 'finish_open'
-fs/9p/vfs_inode_dotl.c:360:2: error: too few arguments to function 'finish_open'
-fs/ceph/file.c:272:3: error: too few arguments to function 'finish_open'
-kernel/trace/trace_branch.c:55:9: error: 'struct trace_array' has no member named 'data'
-kernel/trace/trace_branch.c:55:9: error: 'struct trace_array' has no member named 'data'
-kernel/trace/trace_branch.c:55:9: error: 'struct trace_array' has no member named 'data'
-kernel/trace/trace_branch.c:60:13: error: 'struct trace_array' has no member named 'buffer'
-fs/fuse/dir.c:480:2: error: too few arguments to function 'finish_open'
+lib/dump_stack.c:(.text.unlikely+0x0): multiple definition of `dump_stack'
+arch/blackfin/kernel/built-in.o:(.text.unlikely+0x10): first defined here
+arch/x86/kernel/dumpstack_32.c:89:23: error: 'KERN_EMERGE' undeclared (first use in this function)
+init.c:(.text+0x232cb7): undefined reference to `relay_close'
+arch/ia64/Kconfig:596: unexpected 'endif' within menu block
+arch/ia64/Kconfig:598: unexpected 'endmenu' within if block
+arch/ia64/Kconfig:657: syntax error
+arch/ia64/Kconfig:587: missing end statement for this entry
+arch/ia64/Kconfig:596: unexpected 'endif' within menu block
+arch/ia64/Kconfig:598: unexpected 'endmenu' within if block
+arch/ia64/Kconfig:657: syntax error
+arch/ia64/Kconfig:587: missing end statement for this entry
+arch/ia64/Kconfig:596: unexpected 'endif' within menu block
+arch/ia64/Kconfig:598: unexpected 'endmenu' within if block
+arch/ia64/Kconfig:657: syntax error
+arch/ia64/Kconfig:587: missing end statement for this entry
+arch/tile/built-in.o:(.text.dump_stack+0x0): first defined here
+drivers/cpufreq/cpufreq_ondemand.c:453:1: error: variable 'sampling_rate_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_ondemand.c:453:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:453:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_ondemand.c:453:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:453:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:454:1: error: variable 'io_is_busy_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_ondemand.c:454:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:454:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_ondemand.c:454:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:454:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:455:1: error: variable 'up_threshold_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_ondemand.c:455:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:455:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_ondemand.c:455:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:455:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:456:1: error: variable 'sampling_down_factor_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_ondemand.c:456:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:456:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_ondemand.c:456:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:456:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:457:1: error: variable 'ignore_nice_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_ondemand.c:457:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:457:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_ondemand.c:457:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:457:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:458:1: error: variable 'powersave_bias_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_ondemand.c:458:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:458:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_ondemand.c:458:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:458:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:459:1: error: variable 'sampling_rate_min_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_ondemand.c:459:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:459:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_ondemand.c:459:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:459:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_ondemand.c:462:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_ondemand.c:463:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_ondemand.c:464:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_ondemand.c:465:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_ondemand.c:466:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_ondemand.c:467:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_ondemand.c:468:2: error: invalid use of undefined type 'struct global_attr'
+make[2]: *** No rule to make target `include/linux/gen_stats.h', needed by `Documentation/DocBook/networking.xml'.
+make[2]: *** No rule to make target `kernel/kfifo.c', needed by `Documentation/DocBook/kernel-api.xml'.
+make[2]: *** No rule to make target `arch/x86/include/asm/atomic_32.h', needed by `Documentation/DocBook/kernel-api.xml'.
+make[2]: *** No rule to make target `kernel/sched.c', needed by `Documentation/DocBook/kernel-api.xml'.
+make[2]: *** No rule to make target `drivers/base/sys.c', needed by `Documentation/DocBook/kernel-api.xml'.
+make[2]: *** No rule to make target `drivers/serial/serial_core.c', needed by `Documentation/DocBook/kernel-api.xml'.
+make[2]: *** No rule to make target `drivers/serial/8250.c', needed by `Documentation/DocBook/kernel-api.xml'.
+docproc: drivers/tty/serial/8250/8250.c: No such file or directory
+drivers/staging/zcache/ramster/ramster.c:970:2: error: implicit declaration of function 'ramster_debugfs_init' [-Werror=implicit-function-declaration]
+drivers/cpufreq/cpufreq_conservative.c:279:1: error: variable 'sampling_rate_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_conservative.c:279:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:279:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_conservative.c:279:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:279:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:280:1: error: variable 'sampling_down_factor_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_conservative.c:280:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:280:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_conservative.c:280:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:280:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:281:1: error: variable 'up_threshold_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_conservative.c:281:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:281:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_conservative.c:281:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:281:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:282:1: error: variable 'down_threshold_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_conservative.c:282:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:282:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_conservative.c:282:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:282:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:283:1: error: variable 'ignore_nice_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_conservative.c:283:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:283:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_conservative.c:283:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:283:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:284:1: error: variable 'freq_step_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_conservative.c:284:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:284:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_conservative.c:284:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:284:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:285:1: error: variable 'sampling_rate_min_gov_sys' has initializer but incomplete type
+drivers/cpufreq/cpufreq_conservative.c:285:1: error: unknown field 'attr' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:285:1: error: extra brace group at end of initializer
+drivers/cpufreq/cpufreq_conservative.c:285:1: error: unknown field 'show' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:285:1: error: unknown field 'store' specified in initializer
+drivers/cpufreq/cpufreq_conservative.c:288:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_conservative.c:289:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_conservative.c:290:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_conservative.c:291:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_conservative.c:292:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_conservative.c:293:2: error: invalid use of undefined type 'struct global_attr'
+drivers/cpufreq/cpufreq_conservative.c:294:2: error: invalid use of undefined type 'struct global_attr'
 
 [warnings]
-net/netlabel/netlabel_unlabeled.c:1193:6: warning: unused variable 'skip_addr6' [-Wunused-variable]
-net/netlabel/netlabel_unlabeled.c:1277:6: warning: unused variable 'skip_addr6' [-Wunused-variable]
-sound/pci/hda/hda_eld.c:58:14: warning: 'eld_connection_type_names' defined but not used [-Wunused-variable]
-sound/pci/hda/hda_eld.c:96:14: warning: 'cea_audio_coding_type_names' defined but not used [-Wunused-variable]
-kernel/trace/trace_selftest.c:1161:2: warning: passing argument 1 of 'trace_test_buffer' from incompatible pointer type [enabled by default]
-drivers/staging/zcache/zcache-main.c:1836:1: warning: return from incompatible pointer type [enabled by default]
-drivers/staging/zcache/zcache-main.c:1837:1: warning: return from incompatible pointer type [enabled by default]
-drivers/staging/zcache/zcache-main.c:1841:1: warning: return from incompatible pointer type [enabled by default]
-drivers/usb/host/xhci-ring.c:3476:16: warning: 'ep_state' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/9p/vfs_inode.c:903:2: warning: passing argument 3 of 'finish_open' from incompatible pointer type [enabled by default]
-fs/9p/vfs_inode.c:903:2: warning: passing argument 4 of 'finish_open' from incompatible pointer type [enabled by default]
-fs/9p/vfs_inode_dotl.c:360:2: warning: passing argument 3 of 'finish_open' from incompatible pointer type [enabled by default]
-fs/9p/vfs_inode_dotl.c:360:2: warning: passing argument 4 of 'finish_open' from incompatible pointer type [enabled by default]
-fs/ceph/file.c:272:3: warning: passing argument 3 of 'finish_open' from incompatible pointer type [enabled by default]
-fs/ceph/file.c:272:3: warning: passing argument 4 of 'finish_open' from incompatible pointer type [enabled by default]
-fs/fuse/dir.c:480:2: warning: passing argument 3 of 'finish_open' from incompatible pointer type [enabled by default]
-fs/fuse/dir.c:480:2: warning: passing argument 4 of 'finish_open' from incompatible pointer type [enabled by default]
-net/nfc/llcp/commands.c:193:27: warning: unused variable 'n' [-Wunused-variable]
-net/nfc/llcp/commands.c:193:21: warning: unused variable 'pos' [-Wunused-variable]
-net/nfc/llcp/commands.c:192:27: warning: unused variable 'sdp' [-Wunused-variable]
-net/nfc/llcp/commands.c:543:27: warning: unused variable 'n' [-Wunused-variable]
-net/nfc/llcp/commands.c:543:21: warning: unused variable 'pos' [-Wunused-variable]
-net/nfc/llcp/commands.c:542:27: warning: unused variable 'sdp' [-Wunused-variable]
-net/nfc/llcp/commands.c:567:27: warning: unused variable 'n' [-Wunused-variable]
-net/nfc/llcp/commands.c:567:21: warning: unused variable 'pos' [-Wunused-variable]
-net/nfc/llcp/commands.c:566:27: warning: unused variable 'sdreq' [-Wunused-variable]
-net/nfc/llcp/llcp.c:234:27: warning: unused variable 'sdp' [-Wunused-variable]
-net/nfc/llcp/llcp.c:233:27: warning: unused variable 'n' [-Wunused-variable]
-net/nfc/llcp/llcp.c:233:21: warning: unused variable 'pos' [-Wunused-variable]
-net/nfc/llcp/llcp.c:1195:21: warning: unused variable 'pos' [-Wunused-variable]
-drivers/scsi/storvsc_drv.c:840:2: warning: 'process_err_fn' may be used uninitialized in this function [-Wmaybe-uninitialized]
-arch/x86/mm/numa.c:619:1: warning: label 'out' defined but not used [-Wunused-label]
+drivers/cpufreq/ia64-acpi-cpufreq.c:52:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 4 has type 's64' [-Wformat]
+drivers/cpufreq/ia64-acpi-cpufreq.c:74:3: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 's64' [-Wformat]
+drivers/cpufreq/cpufreq_ondemand.c:453:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:453:1: warning: (near initialization for 'sampling_rate_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:453:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:453:1: warning: (near initialization for 'sampling_rate_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:453:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:453:1: warning: (near initialization for 'sampling_rate_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:454:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:454:1: warning: (near initialization for 'io_is_busy_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:454:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:454:1: warning: (near initialization for 'io_is_busy_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:454:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:454:1: warning: (near initialization for 'io_is_busy_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:455:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:455:1: warning: (near initialization for 'up_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:455:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:455:1: warning: (near initialization for 'up_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:455:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:455:1: warning: (near initialization for 'up_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:456:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:456:1: warning: (near initialization for 'sampling_down_factor_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:456:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:456:1: warning: (near initialization for 'sampling_down_factor_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:456:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:456:1: warning: (near initialization for 'sampling_down_factor_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:457:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:457:1: warning: (near initialization for 'ignore_nice_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:457:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:457:1: warning: (near initialization for 'ignore_nice_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:457:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:457:1: warning: (near initialization for 'ignore_nice_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:458:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:458:1: warning: (near initialization for 'powersave_bias_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:458:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:458:1: warning: (near initialization for 'powersave_bias_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:458:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:458:1: warning: (near initialization for 'powersave_bias_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:459:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:459:1: warning: (near initialization for 'sampling_rate_min_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:459:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:459:1: warning: (near initialization for 'sampling_rate_min_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:459:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_ondemand.c:459:1: warning: (near initialization for 'sampling_rate_min_gov_sys') [enabled by default]
+Warning(lib/crc32.c:141): No description found for parameter 'tab)[256]'
+Warning(lib/crc32.c:141): No description found for parameter 'polynomial'
+Warning(lib/crc32.c:209): No description found for parameter 'tab)[256]'
+Warning(lib/crc32.c:209): No description found for parameter 'polynomial'
+Warning(lib/crc32.c): no structured comments found
+Warning(include/drm/drm_fb_helper.h:75): No description found for parameter 'initial_config'
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:113:32: warning: 'pf_info.max_remote_ipv6_addrs' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:114:31: warning: 'pf_info.max_local_ipv6_addrs' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:106:26: warning: 'pf_info.max_tx_vlan_keys' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:107:24: warning: 'pf_info.max_rx_ques' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:111:27: warning: 'pf_info.max_rx_buf_rings' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:112:30: warning: 'pf_info.max_rx_status_rings' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:109:34: warning: 'pf_info.max_rx_lro_flow' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:110:21: warning: 'pf_info.max_rx_ip_addr' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:104:35: warning: 'pf_info.max_rx_ucast_mac_filters' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:105:35: warning: 'pf_info.max_rx_mcast_mac_filters' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:103:29: warning: 'pf_info.max_tx_mac_filters' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_pf.c:108:24: warning: 'pf_info.max_tx_ques' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/cpufreq/cpufreq_conservative.c:279:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:279:1: warning: (near initialization for 'sampling_rate_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:279:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:279:1: warning: (near initialization for 'sampling_rate_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:279:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:279:1: warning: (near initialization for 'sampling_rate_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:280:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:280:1: warning: (near initialization for 'sampling_down_factor_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:280:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:280:1: warning: (near initialization for 'sampling_down_factor_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:280:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:280:1: warning: (near initialization for 'sampling_down_factor_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:281:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:281:1: warning: (near initialization for 'up_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:281:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:281:1: warning: (near initialization for 'up_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:281:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:281:1: warning: (near initialization for 'up_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:282:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:282:1: warning: (near initialization for 'down_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:282:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:282:1: warning: (near initialization for 'down_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:282:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:282:1: warning: (near initialization for 'down_threshold_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:283:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:283:1: warning: (near initialization for 'ignore_nice_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:283:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:283:1: warning: (near initialization for 'ignore_nice_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:283:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:283:1: warning: (near initialization for 'ignore_nice_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:284:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:284:1: warning: (near initialization for 'freq_step_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:284:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:284:1: warning: (near initialization for 'freq_step_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:284:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:284:1: warning: (near initialization for 'freq_step_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:285:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:285:1: warning: (near initialization for 'sampling_rate_min_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:285:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:285:1: warning: (near initialization for 'sampling_rate_min_gov_sys') [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:285:1: warning: excess elements in struct initializer [enabled by default]
+drivers/cpufreq/cpufreq_conservative.c:285:1: warning: (near initialization for 'sampling_rate_min_gov_sys') [enabled by default]
 
 [sparse]
-fs/ceph/file.c:272:49: sparse: incorrect type in argument 3 (different base types)
-fs/ceph/file.c:272:60: sparse: incorrect type in argument 4 (different base types)
-fs/ceph/file.c:272:34: sparse: not enough arguments for function finish_open
-net/bluetooth/hci_event.c:2503:38: sparse: incorrect type in argument 2 (different base types)
-net/bluetooth/hci_event.c:2598:36: sparse: incorrect type in argument 2 (different base types)
+drivers/tty/serial/8250/8250_core.c:2790:32: sparse: incorrect type in assignment (different base types)
+drivers/tty/serial/8250/8250_core.c:2792:32: sparse: incorrect type in assignment (different address spaces)
+kernel/workqueue.c:4434:61: sparse: expression using sizeof bool
+net/ieee802154/6lowpan.c:964:23: sparse: context imbalance in 'lowpan_process_data' - different lock contexts for basic block
+drivers/net/ieee802154/at86rf230.c:632:60: sparse: incorrect type in argument 3 (different base types)
+drivers/net/ieee802154/at86rf230.c:633:60: sparse: restricted __le16 degrades to integer
+drivers/net/ieee802154/at86rf230.c:639:56: sparse: incorrect type in argument 3 (different base types)
+drivers/net/ieee802154/at86rf230.c:640:56: sparse: restricted __le16 degrades to integer
+drivers/acpi/acpica_sys.c:33:20: sparse: symbol 'acpi_chronos' was not declared. Should it be static?
+drivers/block/nvme-core.c:933:35: sparse: restricted __le16 degrades to integer
+drivers/block/nvme-core.c:933:66: sparse: incorrect type in initializer (different base types)
+drivers/block/nvme-core.c:1224:21: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1225:21: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1226:21: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1227:22: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1266:26: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1267:26: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1268:27: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1269:27: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1270:27: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1271:27: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1272:27: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-core.c:1273:27: sparse: incorrect type in assignment (different base types)
+drivers/block/nvme-scsi.c:387:51: sparse: typename in expression
+drivers/block/nvme-scsi.c:400:35: sparse: typename in expression
+drivers/block/nvme-scsi.c:424:41: sparse: typename in expression
+drivers/block/nvme-scsi.c:437:41: sparse: typename in expression
+drivers/block/nvme-scsi.c:472:34: sparse: typename in expression
+drivers/block/nvme-scsi.c:2932:26: sparse: typename in expression
+kernel/events/persistent.c:8:1: sparse: symbol '__pcpu_scope_pers_events' was not declared. Should it be static?
+kernel/events/persistent.c:8:1: sparse: symbol 'pers_events' was not declared. Should it be static?
+kernel/events/persistent.c:30:9: sparse: incorrect type in assignment (different address spaces)
+kernel/events/persistent.c:73:17: sparse: incorrect type in assignment (different address spaces)
+drivers/gpu/drm/nouveau/core/subdev/vm/nvc0.c:42:10: sparse: symbol 'nvc0_pte_storage_type_map' was not declared. Should it be static?
+drivers/block/nvme-scsi.c:387:58: sparse: Expected ) in function call
+drivers/block/nvme-scsi.c:387:58: sparse: got sgl
+drivers/block/nvme-scsi.c:400:42: sparse: got hdr
+drivers/block/nvme-scsi.c:2932:33: sparse: got u_hdr
+drivers/block/nvme-scsi.c:387:51: sparse: undefined identifier '__attribute__'
+drivers/cpufreq/cpufreq_ondemand.c:462:1: sparse: unknown field name in initializer
+drivers/cpufreq/cpufreq_ondemand.c:471:35: sparse: using member 'attr' in incomplete struct global_attr
+drivers/cpufreq/cpufreq_conservative.c:286:1: sparse: unknown field name in initializer
+drivers/cpufreq/cpufreq_conservative.c:295:35: sparse: using member 'attr' in incomplete struct global_attr
+drivers/net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c:141:33: sparse: symbol 'stmmac_ptp' was not declared. Should it be static?
 
 [smatch]
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00167-ga06363d"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00065-g69fbb7e"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00054-ga61968a"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-02945-ge8e05e8"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00081-g2598bfb"' too small (25 vs 32)
-drivers/net/team/team.c:1771 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00302-g282fbf8"' too small (25 vs 32)
-drivers/net/team/team.c:1771 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00184-g333e971"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00060-g84c3045"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00038-g3abb37d"' too small (25 vs 32)
-lib/lz4/lz4_decompress.c:138 lz4_uncompress() error: potential NULL dereference 'ref'.
-lib/lz4/lz4_decompress.c:263 lz4_uncompress_unknownoutputsize() error: potential NULL dereference 'ref'.
-drivers/net/team/team.c:1771 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-mm1-00315-g391ef7f"' too small (29 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00331-g72d92c5"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00196-g47b3bc9"' too small (25 vs 32)
-drivers/net/team/team.c:1760 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00210-g93f63e8"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00101-g02421e6"' too small (25 vs 32)
-drivers/net/team/team.c:1771 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00179-gdcb5757"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00104-g655968d"' too small (25 vs 32)
-drivers/net/team/team.c:1758 team_ethtool_get_drvinfo() error: strlcpy() '"3.9.0-rc1-00229-g18ad64e"' too small (25 vs 32)
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c:305 qlcnic_sriov_post_bc_msg() warn: inconsistent returns spin_lock:&adapter->ahw->mbx_lock: locked (227,236) unlocked (305)
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c:305 qlcnic_sriov_post_bc_msg() warn: inconsistent returns spin_lock:&ahw->mbx_lock: locked (305) unlocked (227,236)
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c:563 qlcnic_set_multi() error: potential null dereference 'cur'.  (kzalloc returns null)
+
+[coccinelle]
+fs/gfs2/glock.c:323:3-9: preceding lock on line 307
+fs/gfs2/glock.c:326:1-7: preceding lock on line 307
+fs/inode.c:767:2-11: second lock on line 767
+fs/inode.c:795:2-11: second lock on line 795
+fs/inode.c:776:1-7: preceding lock on line 767
+fs/inode.c:804:1-7: preceding lock on line 795
+fs/inode.c:1336:3-9: preceding lock on line 1323
+fs/inode.c:1380:3-9: preceding lock on line 1367
+mm/huge_memory.c:1145:3-9: preceding lock on line 1136
+arch/x86/kvm/mmu.c:2752:2-12: code aligned with following code on line 2760
+mm/vmscan.c:3131:8-15: ERROR: PTR_ERR applied after initialization to constant on line 3129
+arch/x86/kernel/cpu/mcheck/mce.c:1425:3-24: code aligned with following code on line 1431
+fs/xfs/xfs_qm.c:656:2-20: code aligned with following code on line 657
+kernel/workqueue.c:1451:22-28: ERROR: invalid reference to the index variable of the iterator on line 1414
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
