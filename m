@@ -1,35 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 30 Apr 2013 07:51:46 +0000
-Subject: [patch] ghes_edac: use snprintf to make static checkers happy
-Message-Id: <20130430074637.GG7237@elgon.mountain>
+Date: Mon, 01 Apr 2013 06:21:51 +0000
+Subject: [patch] mtd: denali_dt: harmless case of testing the wrong variable
+Message-Id: <20130401062151.GA5197@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Artem Bityutskiy <artem.bityutskiy-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bill Pemberton <wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 
-The destination buffer "pvt->detail_location" is 240 bytes.
-e->location is 80 bytes. e->other_detail is a pointer to
-pvt->other_detail which is 160 bytes.  Then when we add in the prefix
-"APEI location: " we've gone over 240 bytes.
-
-We can't actually hit the max but we may as well use snprintf() and
-silence the warning.
+There is a warning message that can't be printed because we test the
+wrong variable.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-index bb53467..b94d762 100644
---- a/drivers/edac/ghes_edac.c
-+++ b/drivers/edac/ghes_edac.c
-@@ -403,8 +403,8 @@ void ghes_edac_report_mem_error(struct ghes *ghes, int sev,
+diff --git a/drivers/mtd/nand/denali_dt.c b/drivers/mtd/nand/denali_dt.c
+index 546f8cb..02988b0 100644
+--- a/drivers/mtd/nand/denali_dt.c
++++ b/drivers/mtd/nand/denali_dt.c
+@@ -42,7 +42,7 @@ static void __iomem *request_and_map(struct device *dev,
+ 	}
  
- 	/* Generate the trace event */
- 	grain_bits = fls_long(e->grain);
--	sprintf(pvt->detail_location, "APEI location: %s %s",
--		e->location, e->other_detail);
-+	snprintf(pvt->detail_location, sizeof(pvt->detail_location),
-+		 "APEI location: %s %s", e->location, e->other_detail);
- 	trace_mc_event(type, e->msg, e->label, e->error_count,
- 		       mci->mc_idx, e->top_layer, e->mid_layer, e->low_layer,
- 		       PAGES_TO_MiB(e->page_frame_number) | e->offset_in_page,
+ 	ptr = devm_ioremap_nocache(dev, res->start, resource_size(res));
+-	if (!res)
++	if (!ptr)
+ 		dev_err(dev, "ioremap_nocache of %s failed!", res->name);
+ 
+ 	return ptr;
