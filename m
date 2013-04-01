@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 17 Apr 2013 16:37:39 +0000
-Subject: build regressions 2013-04-17
-Message-Id: <516ecfd3.xNpNLeG9rsL12BNm%fengguang.wu@intel.com>
+Date: Mon, 01 Apr 2013 16:05:23 +0000
+Subject: build regressions 2013-04-01
+Message-Id: <5159b043.iKcd5d5sPGfteRUk%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,113 +9,44 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-fs/efivarfs/super.c:138:2: error: implicit declaration of function 'utf16_strlen' [-Werror=implicit-function-declaration]
-arch/powerpc/kvm/mpic.c:116:41: error: 'struct thread_struct' has no member named 'kvm_vcpu'
-arch/powerpc/kvm/../../../virt/kvm/eventfd.c:390:11: error: 'struct kvm' has no member named 'irq_routing'
-arch/powerpc/kvm/../../../virt/kvm/eventfd.c:390:11: error: 'struct kvm' has no member named 'irq_routing'
-arch/powerpc/kvm/../../../virt/kvm/eventfd.c:490:1: error: redefinition of 'kvm_irqfd'
-arch/powerpc/kvm/../../../virt/kvm/eventfd.c:506:1: error: redefinition of 'kvm_irqfd_release'
-arch/powerpc/kvm/../../../virt/kvm/eventfd.c:536:2: error: 'struct kvm' has no member named 'irq_routing'
-arch/powerpc/kvm/irq.h:10:18: error: 'struct kvm_arch' has no member named 'mpic'
-mm/memory.c:2439:2: error: implicit declaration of function 'io_remap_pfn_range' [-Werror=implicit-function-declaration]
-relocs_64.c:(.text.startup+0x0): multiple definition of `main'
-arch/x86/tools/relocs_32.o:relocs_32.c:(.text.startup+0x0): first defined here
-relocs_common.c:(.text.startup+0x0): multiple definition of `main'
-arch/x86/tools/relocs_32.o:relocs_32.c:(.text.startup+0x0): first defined here
-relocs_common.c:(.text.startup+0x128): undefined reference to `process_32'
-relocs_common.c:(.text.startup+0x174): undefined reference to `process_64'
-collect2: error: ld returned 1 exit status
-drivers/firmware/efi/vars.c:94:2: error: implicit declaration of function 'utf16_strnlen' [-Werror=implicit-function-declaration]
-drivers/firmware/efi/vars.c:117:2: error: implicit declaration of function 'utf16_strsize' [-Werror=implicit-function-declaration]
-drivers/firmware/efi/efivars.c:410:2: error: implicit declaration of function 'utf16_strlen' [-Werror=implicit-function-declaration]
-drivers/firmware/efi/efi-pstore.c:143:2: error: implicit declaration of function 'utf16_strlen' [-Werror=implicit-function-declaration]
-drivers/firmware/efi/efi-pstore.c:150:2: error: implicit declaration of function 'utf16_strncmp' [-Werror=implicit-function-declaration]
-drivers/firmware/google/gsmi.c:303:2: error: implicit declaration of function 'utf16_strnlen' [-Werror=implicit-function-declaration]
-arch/x86/kvm/vmx.c:3950:3: error: 'apic' undeclared (first use in this function)
-/opt/cross/bin/x86_64-linux-ld: cannot find drivers/pci/host/built-in.o: No such file or directory
-drivers/net/ethernet/atheros/atlx/atl1.c:2888:2: error: implicit declaration of function 'atl1_suspend' [-Werror=implicit-function-declaration]
+(.text+0x129b70): undefined reference to `acpi_ut_get_expected_return_types'
+(.text+0x129c2a): undefined reference to `acpi_ut_match_predefined_method'
+(.text+0x55cbc): multiple definition of `device_reset'
+drivers/reset/built-in.o:(.text+0x83): first defined here
+sound/soc/soc-dapm.c:1191:2: error: implicit declaration of function 'dapm_clear_walk' [-Werror=implicit-function-declaration]
+ERROR: "il_pm_ops" [drivers/net/wireless/iwlegacy/iwl3945.ko] undefined!
+arch/powerpc/kernel/lparcfg.c:691:25: error: unused variable 'ent' [-Werror=unused-variable]
+arch/powerpc/kernel/lparcfg.c:44:31: error: 'proc_ppc64_lparcfg' defined but not used [-Werror=unused-variable]
 
 [warnings]
-drivers/media/i2c/mt9p031.c:281:18: warning: ignoring return value of 'regulator_enable', declared with attribute warn_unused_result [-Wunused-result]
-drivers/media/i2c/mt9p031.c:282:18: warning: ignoring return value of 'regulator_enable', declared with attribute warn_unused_result [-Wunused-result]
-drivers/media/i2c/mt9p031.c:283:18: warning: ignoring return value of 'regulator_enable', declared with attribute warn_unused_result [-Wunused-result]
-warning: (DRM_RADEON && DRM_I915 && DRM_GMA500 && DRM_TILCDC && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
-warning: (DRM_RADEON && DRM_I915 && DRM_GMA500 && DRM_TILCDC && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
-warning: (DRM_RADEON && DRM_I915 && DRM_GMA500 && DRM_TILCDC && FB_BACKLIGHT && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
-arch/powerpc/kvm/mpic.c:242:3: warning: format '%d' expects argument of type 'int', but argument 4 has type 'long int' [-Wformat]
-arch/powerpc/kvm/mpic.c:260:3: warning: format '%d' expects argument of type 'int', but argument 4 has type 'long int' [-Wformat]
+drivers/scsi/ips.c:2053:6: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'uint32_t' [-Wformat]
+drivers/scsi/ips.c:2058:6: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'uint32_t' [-Wformat]
+drivers/scsi/ips.c:2061:6: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'char *' [-Wformat]
+drivers/reset/gpio-reset.c:187:28: warning: 'gpio_reset_dt_ids' defined but not used [-Wunused-variable]
+drivers/media/usb/dvb-usb/m920x.c:90:3: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]
+drivers/net/wireless/brcm80211/brcmfmac/sdio_chip.c:265:15: warning: array subscript is above array bounds [-Warray-bounds]
+drivers/net/wireless/brcm80211/brcmfmac/sdio_chip.c:179:3: warning: array subscript is above array bounds [-Warray-bounds]
+drivers/net/wireless/brcm80211/brcmfmac/sdio_chip.c:302:4: warning: array subscript is above array bounds [-Warray-bounds]
+drivers/net/wireless/brcm80211/brcmfmac/sdio_chip.c:307:5: warning: array subscript is above array bounds [-Warray-bounds]
+drivers/platform/x86/intel_mid_thermal.c:220:43: warning: 'curr_temp' may be used uninitialized in this function [-Wmaybe-uninitialized]
+Warning(include/linux/idr.h:113): No description found for parameter 'idr'
+Warning(include/linux/idr.h:113): Excess function parameter 'idp' description in 'idr_find'
+Warning(lib/idr.c:232): Excess function parameter 'id' description in 'sub_alloc'
+Warning(lib/idr.c:232): Excess function parameter 'id' description in 'sub_alloc'
+drivers/acpi/acpica/exoparg2.c:418:4: warning: format '%X' expects argument of type 'unsigned int', but argument 7 has type 'acpi_size' [-Wformat]
 
 [sparse]
-drivers/firmware/efi/efi.c:71:5: sparse: symbol 'generic_ops_register' was not declared. Should it be static?
-drivers/firmware/efi/efi.c:81:6: sparse: symbol 'generic_ops_unregister' was not declared. Should it be static?
-drivers/firmware/efi/vars.c:423:33: sparse: context imbalance in 'efivar_init' - different lock contexts for basic block
-drivers/firmware/efi/vars.c:492:9: sparse: context imbalance in 'efivar_entry_list_del_unlock' - unexpected unlock
-drivers/firmware/efi/vars.c:539:5: sparse: context imbalance in 'efivar_entry_delete' - wrong count at exit
-drivers/firmware/efi/vars.c:623:5: sparse: context imbalance in 'efivar_entry_set_safe' - different lock contexts for basic block
-drivers/firmware/efi/vars.c:794:5: sparse: context imbalance in 'efivar_entry_set_get_size' - different lock contexts for basic block
-drivers/firmware/efi/vars.c:874:6: sparse: context imbalance in 'efivar_entry_iter_begin' - wrong count at exit
-drivers/firmware/efi/vars.c:885:6: sparse: context imbalance in 'efivar_entry_iter_end' - unexpected unlock
-drivers/firmware/efi/efivars.c:228:66: sparse: Using plain integer as NULL pointer
-drivers/firmware/efi/efivars.c:568:6: sparse: symbol 'efivars_sysfs_exit' was not declared. Should it be static?
-fs/nfsd/nfs4state.c:180:6: sparse: symbol 'put_client_renew_locked' was not declared. Should it be static?
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-include/trace/events/kvm.h:143:1: sparse: directive in argument list
-include/trace/events/kvm.h:147:1: sparse: directive in argument list
-include/trace/events/kvm.h:149:1: sparse: directive in argument list
-drivers/gpu/drm/radeon/radeon_uvd.c:417:27: sparse: constant 0xFFFFFFFFF0000000 is so big it is unsigned long
-drivers/gpu/drm/radeon/radeon_uvd.c:428:22: sparse: constant 0xFFFFFFFFF0000000 is so big it is unsigned long
-drivers/gpu/drm/radeon/radeon_uvd.c:428:52: sparse: constant 0xFFFFFFFFF0000000 is so big it is unsigned long
-drivers/firmware/efi/vars.c:94:19: sparse: undefined identifier 'utf16_strnlen'
-drivers/firmware/efi/vars.c:117:22: sparse: undefined identifier 'utf16_strsize'
-drivers/firmware/efi/efivars.c:410:30: sparse: undefined identifier 'utf16_strlen'
-drivers/firmware/efi/efi-pstore.c:143:35: sparse: undefined identifier 'utf16_strlen'
-drivers/firmware/efi/efi-pstore.c:150:13: sparse: undefined identifier 'utf16_strncmp'
-drivers/firmware/google/gsmi.c:303:27: sparse: undefined identifier 'utf16_strnlen'
-fs/efivarfs/super.c:138:15: sparse: undefined identifier 'utf16_strlen'
-drivers/gpu/drm/radeon/radeon_drv.c:166:5: sparse: symbol 'radeon_fastfb' was not declared. Should it be static?
-drivers/net/ethernet/mellanox/mlx4/srq.c:302:17: sparse: symbol 'mlx4_srq_lookup' was not declared. Should it be static?
-arch/x86/kernel/irq.c:235:6: sparse: symbol 'smp_kvm_posted_intr_ipi' was not declared. Should it be static?
+drivers/acpi/acpica/acpredef.h:207:34: sparse: symbol 'acpi_gbl_predefined_methods' was not declared. Should it be static?
+drivers/acpi/acpica/acglobal.h:227:13: sparse: symbol 'acpi_gbl_reference_count_lock' was not declared. Should it be static?
+drivers/reset/core.c:46:5: sparse: symbol 'of_reset_simple_xlate' was not declared. Should it be static?
+drivers/reset/core.c:262:6: sparse: symbol 'devm_reset_control_put' was not declared. Should it be static?
+sound/soc/soc-dapm.c:1191:9: sparse: undefined identifier 'dapm_clear_walk'
 
 [coccinelle]
-sound/pci/hda/hda_codec.c:1758:2-8: preceding lock on line 1770
-sound/pci/hda/hda_codec.c:1758:2-8: preceding lock on line 1770
-sound/pci/hda/hda_generic.c:2290:3-9: code aligned with following code on line 2291
-sound/pci/hda/hda_generic.c:2290:3-9: code aligned with following code on line 2291
+drivers/block/cciss.c:1532:7-14: WARNING opportunity for memdup_user
+drivers/block/aoe/aoecmd.c:957:3-9: preceding lock on line 965
+sound/soc/codecs/max98090.c:2243:7-27: ERROR: Threaded IRQ with no primary handler requested without IRQF_ONESHOT
+sound/soc/codecs/tas5086.c:333:2-3: Unneeded semicolon
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
