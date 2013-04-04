@@ -1,28 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 21 Apr 2013 11:07:53 +0000
-Subject: [patch] staging/ozwpan: info leak in oz_cdev_ioctl()
-Message-Id: <20130421110753.GB6171@elgon.mountain>
+Date: Thu, 04 Apr 2013 06:31:24 +0000
+Subject: [patch] staging: csr: info leak in unifi_cfg_get_info()
+Message-Id: <20130404063124.GB6494@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-If we're not maxed out then oz_get_pd_list() leaves part of the "list"
-struct uninitialized.  We should clear this so that no stack information
-is leaked to userspace.
+"cfg_ap_config" has a number of fields which are not cleared before we
+copy them to the user.  I've added a memset() at the beginning to set
+everything to zero.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/ozwpan/ozcdev.c b/drivers/staging/ozwpan/ozcdev.c
-index ba15aeb..27d0666 100644
---- a/drivers/staging/ozwpan/ozcdev.c
-+++ b/drivers/staging/ozwpan/ozcdev.c
-@@ -253,6 +253,7 @@ static long oz_cdev_ioctl(struct file *filp, unsigned int cmd,
- 	case OZ_IOCTL_GET_PD_LIST: {
- 			struct oz_pd_list list;
- 			oz_trace("OZ_IOCTL_GET_PD_LIST\n");
-+			memset(&list, 0, sizeof(list));
- 			list.count = oz_get_pd_list(list.addr, OZ_MAX_PDS);
- 			if (copy_to_user((void __user *)arg, &list,
- 				sizeof(list)))
+diff --git a/drivers/staging/csr/unifi_sme.c b/drivers/staging/csr/unifi_sme.c
+index 7d19e63..9029503 100644
+--- a/drivers/staging/csr/unifi_sme.c
++++ b/drivers/staging/csr/unifi_sme.c
+@@ -876,6 +876,8 @@ int unifi_cfg_get_info(unifi_priv_t *priv, unsigned char *arg)
+             {
+ #ifdef CSR_SUPPORT_WEXT_AP
+                 uf_cfg_ap_config_t cfg_ap_config;
++
++		memset(&cfg_ap_config, 0, sizeof(cfg_ap_config));
+                 cfg_ap_config.channel = priv->ap_config.channel;
+                 cfg_ap_config.beaconInterval = priv->ap_mac_config.beaconInterval;
+                 cfg_ap_config.wmmEnabled = priv->ap_mac_config.wmmEnabled;
