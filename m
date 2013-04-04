@@ -1,57 +1,112 @@
-From: strnape1@fel.cvut.cz
-Date: Tue, 30 Apr 2013 07:58:13 +0000
-Subject: [PATCH] scripts: Coccinelle script for pci_free_consistent()
-Message-Id: <20130430095813.Horde.CRl49cpQNi5XD58j1NMQVw1@wimap.feld.cvut.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Apr 2013 11:40:30 +0000
+Subject: [patch 1/2 v2] Ocfs2/move_extents: fix error handling in ioctl
+Message-Id: <20130404114030.GA25020@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130428190457.Horde.NTwcWjfi51YkygsVUIuvrA7@wimap.feld.cvut.cz>
-In-Reply-To: <20130428190457.Horde.NTwcWjfi51YkygsVUIuvrA7@wimap.feld.cvut.cz>
+In-Reply-To: <515D45FE.7020605@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-Created coccinelle script for reporting missing pci_free_consistent() calls.
+Smatch complains that if we hit an error (for example if the file is
+immutable) then "range" has uninitialized stack data and we copy it to
+the user.
 
-Signed-off-by: Petr Strnad <strnape1@fel.cvut.cz>
+I've re-written the error handling to avoid this problem and make it a
+little cleaner as well.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-diff --git a/scripts/coccinelle/free/pci_free_consistent.cocci  
-b/scripts/coccinelle/free/pci_free_consistent.cocci
-new file mode 100644
-index 0000000..1196485
---- /dev/null
-+++ b/scripts/coccinelle/free/pci_free_consistent.cocci
-@@ -0,0 +1,32 @@
-+/// Find missing pci_free_consistent for every pci_alloc_consistent.
-+///
-+// Copyright: (C) 2013 Petr Strnad.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Keywords: pci_free_consisten, pci_alloc_consistent
-+// Options: --no-includes --include-headers
-+
-+virtual report
-+
-+@search@
-+expression id,x,y,z;
-+position p1,p2;
-+@@
-+
-+<...
-+id = pci_alloc_consistent@p1(x,y,z)
-+... when != pci_free_consistent(x,y,id,z)
-+    when forall
-+(
-+if (id = NULL) { ... }
-+|
-+*return@p2 ...;
-+)
-+...>
-+
-+@script:python depends on report@
-+p1 << search.p1;
-+p2 << search.p2;
-+@@
-+
-+msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
-line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
-+coccilib.report.print_report(p2[0],msg)
+v2: check for argp earlier
 
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 9f8dcad..8f3d3cb 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -1057,42 +1057,40 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 
+ 	struct inode *inode = file_inode(filp);
+ 	struct ocfs2_move_extents range;
+-	struct ocfs2_move_extents_context *context = NULL;
++	struct ocfs2_move_extents_context *context;
++
++	if (!argp)
++		return -EINVAL;
+ 
+ 	status = mnt_want_write_file(filp);
+ 	if (status)
+ 		return status;
+ 
+ 	if ((!S_ISREG(inode->i_mode)) || !(filp->f_mode & FMODE_WRITE))
+-		goto out;
++		goto out_drop;
+ 
+ 	if (inode->i_flags & (S_IMMUTABLE|S_APPEND)) {
+ 		status = -EPERM;
+-		goto out;
++		goto out_drop;
+ 	}
+ 
+ 	context = kzalloc(sizeof(struct ocfs2_move_extents_context), GFP_NOFS);
+ 	if (!context) {
+ 		status = -ENOMEM;
+ 		mlog_errno(status);
+-		goto out;
++		goto out_drop;
+ 	}
+ 
+ 	context->inode = inode;
+ 	context->file = filp;
+ 
+-	if (argp) {
+-		if (copy_from_user(&range, argp, sizeof(range))) {
+-			status = -EFAULT;
+-			goto out;
+-		}
+-	} else {
+-		status = -EINVAL;
+-		goto out;
++	if (copy_from_user(&range, argp, sizeof(range))) {
++		status = -EFAULT;
++		goto out_free;
+ 	}
+ 
+ 	if (range.me_start > i_size_read(inode))
+-		goto out;
++		goto out_free;
+ 
+ 	if (range.me_start + range.me_len > i_size_read(inode))
+ 			range.me_len = i_size_read(inode) - range.me_start;
+@@ -1124,25 +1122,24 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 
+ 		status = ocfs2_validate_and_adjust_move_goal(inode, &range);
+ 		if (status)
+-			goto out;
++			goto out_copy;
+ 	}
+ 
+ 	status = ocfs2_move_extents(context);
+ 	if (status)
+ 		mlog_errno(status);
+-out:
++out_copy:
+ 	/*
+ 	 * movement/defragmentation may end up being partially completed,
+ 	 * that's the reason why we need to return userspace the finished
+ 	 * length and new_offset even if failure happens somewhere.
+ 	 */
+-	if (argp) {
+-		if (copy_to_user(argp, &range, sizeof(range)))
+-			status = -EFAULT;
+-	}
++	if (copy_to_user(argp, &range, sizeof(range)))
++		status = -EFAULT;
+ 
++out_free:
+ 	kfree(context);
+-
++out_drop:
+ 	mnt_drop_write_file(filp);
+ 
+ 	return status;
