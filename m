@@ -1,114 +1,29 @@
-From: Jeff Liu <jeff.liu@oracle.com>
-Date: Tue, 09 Apr 2013 03:17:40 +0000
-Subject: [PATCH 1/2] ocfs2: fix error handling in ocfs2_ioctl_move_extents()
-Message-Id: <51638854.8020405@oracle.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Date: Tue, 09 Apr 2013 20:09:48 +0000
+Subject: Re: [PATCH 1/2] ocfs2: fix error handling in ocfs2_ioctl_move_extents()
+Message-Id: <20130409130948.a6ea97e8fd48c69a0389390c@linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <51638854.8020405@oracle.com>
+In-Reply-To: <51638854.8020405@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: ocfs2-devel@oss.oracle.com
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+On Tue, 09 Apr 2013 11:17:40 +0800 Jeff Liu <jeff.liu@oracle.com> wrote:
 
-Smatch complains that if we hit an error (for example if the file is
-immutable) then "range" has uninitialized stack data and we copy it to
-the user.
+> From: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Smatch complains that if we hit an error (for example if the file is
+> immutable) then "range" has uninitialized stack data and we copy it to
+> the user.
+> 
+> I've re-written the error handling to avoid this problem and make it a
+> little cleaner as well.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Jie Liu <jeff.liu@oracle.com>
 
-I've re-written the error handling to avoid this problem and make it a
-little cleaner as well.
+I've added your signed-off-by to these patches - it should have been
+included because you were on the patch delivery path.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Jie Liu <jeff.liu@oracle.com>
----
-v2: check for argp earlier
-
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index 9f8dcad..8f3d3cb 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -1057,42 +1057,40 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
- 
- 	struct inode *inode = file_inode(filp);
- 	struct ocfs2_move_extents range;
--	struct ocfs2_move_extents_context *context = NULL;
-+	struct ocfs2_move_extents_context *context;
-+
-+	if (!argp)
-+		return -EINVAL;
- 
- 	status = mnt_want_write_file(filp);
- 	if (status)
- 		return status;
- 
- 	if ((!S_ISREG(inode->i_mode)) || !(filp->f_mode & FMODE_WRITE))
--		goto out;
-+		goto out_drop;
- 
- 	if (inode->i_flags & (S_IMMUTABLE|S_APPEND)) {
- 		status = -EPERM;
--		goto out;
-+		goto out_drop;
- 	}
- 
- 	context = kzalloc(sizeof(struct ocfs2_move_extents_context), GFP_NOFS);
- 	if (!context) {
- 		status = -ENOMEM;
- 		mlog_errno(status);
--		goto out;
-+		goto out_drop;
- 	}
- 
- 	context->inode = inode;
- 	context->file = filp;
- 
--	if (argp) {
--		if (copy_from_user(&range, argp, sizeof(range))) {
--			status = -EFAULT;
--			goto out;
--		}
--	} else {
--		status = -EINVAL;
--		goto out;
-+	if (copy_from_user(&range, argp, sizeof(range))) {
-+		status = -EFAULT;
-+		goto out_free;
- 	}
- 
- 	if (range.me_start > i_size_read(inode))
--		goto out;
-+		goto out_free;
- 
- 	if (range.me_start + range.me_len > i_size_read(inode))
- 			range.me_len = i_size_read(inode) - range.me_start;
-@@ -1124,25 +1122,24 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
- 
- 		status = ocfs2_validate_and_adjust_move_goal(inode, &range);
- 		if (status)
--			goto out;
-+			goto out_copy;
- 	}
- 
- 	status = ocfs2_move_extents(context);
- 	if (status)
- 		mlog_errno(status);
--out:
-+out_copy:
- 	/*
- 	 * movement/defragmentation may end up being partially completed,
- 	 * that's the reason why we need to return userspace the finished
- 	 * length and new_offset even if failure happens somewhere.
- 	 */
--	if (argp) {
--		if (copy_to_user(argp, &range, sizeof(range)))
--			status = -EFAULT;
--	}
-+	if (copy_to_user(argp, &range, sizeof(range)))
-+		status = -EFAULT;
- 
-+out_free:
- 	kfree(context);
--
-+out_drop:
- 	mnt_drop_write_file(filp);
- 
- 	return status;
