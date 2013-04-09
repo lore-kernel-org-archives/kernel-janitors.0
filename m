@@ -1,64 +1,45 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Date: Wed, 17 Apr 2013 16:55:22 +0000
-Subject: Re: [patch] Thermal: cpufreq cooling: endian bug in cpufreq_get_max_state()
-Message-Id: <516ED3FA.4020205@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Apr 2013 05:15:40 +0000
+Subject: [patch] [media] dt3155v4l: unlock on error path
+Message-Id: <20130409051540.GA1516@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130417071828.GD7923@elgon.mountain> <1366213553.2091.70.camel@rzhang1-mobl4>
-In-Reply-To: <1366213553.2091.70.camel@rzhang1-mobl4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, eduardo.valentin@ti.com
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Bill Pemberton <wfp5p@virginia.edu>, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 17-04-2013 11:45, Zhang Rui wrote:
-> On Wed, 2013-04-17 at 10:18 +0300, Dan Carpenter wrote:
->> This code doesn't work on big endian systems because we're storing low
->> values in the high bits of the unsigned long.  It makes it a very high
->> value instead.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> applied to thermal -next.
+We should unlock here and do some cleanup before returning.
 
-Rui,
+We can't actually hit this return path with the current code, so this
+patch is a basically a cleanup and doesn't change how the code works.
 
-Can you please add also my:
-Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
-Tested-by: Eduardo Valentin <eduardo.valentin@ti.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Tested on TI OMAP4430.
-
-
->
-> thanks,
-> rui
->>
->> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
->> index 5f5c780..768b508 100644
->> --- a/drivers/thermal/cpu_cooling.c
->> +++ b/drivers/thermal/cpu_cooling.c
->> @@ -303,12 +303,12 @@ static int cpufreq_get_max_state(struct thermal_cooling_device *cdev,
->>   	struct cpufreq_cooling_device *cpufreq_device = cdev->devdata;
->>   	struct cpumask *mask = &cpufreq_device->allowed_cpus;
->>   	unsigned int cpu;
->> -	unsigned long count = 0;
->> +	unsigned int count = 0;
->>   	int ret;
->>
->>   	cpu = cpumask_any(mask);
->>
->> -	ret = get_property(cpu, 0, (unsigned int *)&count, GET_MAXL);
->> +	ret = get_property(cpu, 0, &count, GET_MAXL);
->>
->>   	if (count > 0)
->>   		*state = count;
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
-
+diff --git a/drivers/staging/media/dt3155v4l/dt3155v4l.c b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+index 073b3b3..3da17bc 100644
+--- a/drivers/staging/media/dt3155v4l/dt3155v4l.c
++++ b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+@@ -398,7 +398,7 @@ dt3155_open(struct file *filp)
+ 		pd->field_count = 0;
+ 		ret = vb2_queue_init(pd->q);
+ 		if (ret < 0)
+-			return ret;
++			goto err_free_q;
+ 		INIT_LIST_HEAD(&pd->dmaq);
+ 		spin_lock_init(&pd->lock);
+ 		/* disable all irqs, clear all irq flags */
+@@ -407,11 +407,11 @@ dt3155_open(struct file *filp)
+ 		ret = request_irq(pd->pdev->irq, dt3155_irq_handler_even,
+ 						IRQF_SHARED, DT3155_NAME, pd);
+ 		if (ret)
+-			goto err_request_irq;
++			goto err_free_q;
+ 	}
+ 	pd->users++;
+ 	return 0; /* success */
+-err_request_irq:
++err_free_q:
+ 	kfree(pd->q);
+ 	pd->q = NULL;
+ err_alloc_queue:
