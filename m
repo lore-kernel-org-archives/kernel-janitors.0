@@ -1,44 +1,66 @@
-From: Robin Holt <holt@sgi.com>
-Date: Mon, 22 Apr 2013 16:41:18 +0000
-Subject: Re: [patch v2] gru: info leak in gru_get_config_info()
-Message-Id: <20130422164118.GO3672@sgi.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Apr 2013 11:40:51 +0000
+Subject: [patch] [media] radio-si476x: check different function pointers
+Message-Id: <20130410114051.GA21419@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130421131902.GT3658@sgi.com>
- <20130421170107.GA16118@elgon.mountain>
- <20130421173334.GA9023@sgi.com>
-In-Reply-To: <20130421173334.GA9023@sgi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dimitri Sivanich <sivanich@sgi.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Robin Holt <holt@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, walter harms <wharms@bfs.de>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>, Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Robin Holt <holt@sgi.com>
-On Sun, Apr 21, 2013 at 12:33:34PM -0500, Dimitri Sivanich wrote:
-> Acked-by: Dimitri Sivanich <sivanich@sgi.com>
-> 
-> On Sun, Apr 21, 2013 at 08:01:07PM +0300, Dan Carpenter wrote:
-> > The "info.fill" array isn't initialized so it can leak uninitialized
-> > stack information to user space.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: style changes
-> > 
-> > diff --git a/drivers/misc/sgi-gru/grufile.c b/drivers/misc/sgi-gru/grufile.c
-> > index 44d273c..0535d1e 100644
-> > --- a/drivers/misc/sgi-gru/grufile.c
-> > +++ b/drivers/misc/sgi-gru/grufile.c
-> > @@ -172,6 +172,7 @@ static long gru_get_config_info(unsigned long arg)
-> >  		nodesperblade = 2;
-> >  	else
-> >  		nodesperblade = 1;
-> > +	memset(&info, 0, sizeof(info));
-> >  	info.cpus = num_online_cpus();
-> >  	info.nodes = num_online_nodes();
-> >  	info.blades = info.nodes / nodesperblade;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+This is a static checker where it complains if we check for one function
+pointer and then call a different function on the next line.
+
+In most cases, the code does the same thing before and after this patch.
+For example, when ->phase_diversity is non-NULL then ->phase_div_status
+is also non-NULL.
+
+The one place where that's not true is when we check ->rds_blckcnt
+instead of ->rsq_status.  In those cases, we would want to call
+->rsq_status but we instead return -ENOENT.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Please review this carefully.  I don't have the hardware to test it.
+
+diff --git a/drivers/media/radio/radio-si476x.c b/drivers/media/radio/radio-si476x.c
+index 9430c6a..817fc0c 100644
+--- a/drivers/media/radio/radio-si476x.c
++++ b/drivers/media/radio/radio-si476x.c
+@@ -854,7 +854,7 @@ static int si476x_radio_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+ 	switch (ctrl->id) {
+ 	case V4L2_CID_SI476X_INTERCHIP_LINK:
+ 		if (si476x_core_has_diversity(radio->core)) {
+-			if (radio->ops->phase_diversity) {
++			if (radio->ops->phase_div_status) {
+ 				retval = radio->ops->phase_div_status(radio->core);
+ 				if (retval < 0)
+ 					break;
+@@ -1285,7 +1285,7 @@ static ssize_t si476x_radio_read_agc_blob(struct file *file,
+ 	struct si476x_agc_status_report report;
+ 
+ 	si476x_core_lock(radio->core);
+-	if (radio->ops->rds_blckcnt)
++	if (radio->ops->agc_status)
+ 		err = radio->ops->agc_status(radio->core, &report);
+ 	else
+ 		err = -ENOENT;
+@@ -1320,7 +1320,7 @@ static ssize_t si476x_radio_read_rsq_blob(struct file *file,
+ 	};
+ 
+ 	si476x_core_lock(radio->core);
+-	if (radio->ops->rds_blckcnt)
++	if (radio->ops->rsq_status)
+ 		err = radio->ops->rsq_status(radio->core, &args, &report);
+ 	else
+ 		err = -ENOENT;
+@@ -1355,7 +1355,7 @@ static ssize_t si476x_radio_read_rsq_primary_blob(struct file *file,
+ 	};
+ 
+ 	si476x_core_lock(radio->core);
+-	if (radio->ops->rds_blckcnt)
++	if (radio->ops->rsq_status)
+ 		err = radio->ops->rsq_status(radio->core, &args, &report);
+ 	else
+ 		err = -ENOENT;
