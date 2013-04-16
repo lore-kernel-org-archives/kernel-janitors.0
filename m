@@ -1,53 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 21 Apr 2013 16:42:56 +0000
-Subject: Re: [patch] [media] media: info leak in media_device_enum_entities()
-Message-Id: <20130421164256.GM6638@mwanda>
+Date: Tue, 16 Apr 2013 07:44:19 +0000
+Subject: [patch] [SCSI] megaraid_sas: release lock on error path
+Message-Id: <20130416074419.GA1571@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130421111003.GD6171@elgon.mountain>
- <5173D2DC.4060200@bfs.de>
-In-Reply-To: <5173D2DC.4060200@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Neela Syam Kolli <megaraidlinux@lsi.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Apr 21, 2013 at 01:51:56PM +0200, walter harms wrote:
-> 
-> 
-> Am 21.04.2013 13:10, schrieb Dan Carpenter:
-> > The last part of the "u_ent.name" buffer isn't cleared so it still has
-> > uninitialized stack memory.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-> > index 99b80b6..1957c0d 100644
-> > --- a/drivers/media/media-device.c
-> > +++ b/drivers/media/media-device.c
-> > @@ -102,9 +102,12 @@ static long media_device_enum_entities(struct media_device *mdev,
-> >  		return -EINVAL;
-> >  
-> >  	u_ent.id = ent->id;
-> > -	u_ent.name[0] = '\0';
-> > -	if (ent->name)
-> > -		strlcpy(u_ent.name, ent->name, sizeof(u_ent.name));
-> > +	if (ent->name) {
-> > +		strncpy(u_ent.name, ent->name, sizeof(u_ent.name));
-> > +		u_ent.name[sizeof(u_ent.name) - 1] = '\0';
-> > +	} else {
-> > +		memset(u_ent.name, 0, sizeof(u_ent.name));
-> > +	}
-> 
-> I would always memset()
-> and then do strncpy() for sizeof(u_ent.name) - 1
-> the rest is always zero.
+We should unlock here before returning.
 
-Both ways are fine.  You'd still have to test for "if (ent->name)",
-of course.  This way is a little faster because I do the test first.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Mauro, if you want I can redo it?
-
-regards,
-dan carpenter
-
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index 9d53540..eb2385f 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -4931,11 +4931,12 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
+ 		printk(KERN_ERR "megaraid_sas: timed out while"
+ 			"waiting for HBA to recover\n");
+ 		error = -ENODEV;
+-		goto out_kfree_ioc;
++		goto out_up;
+ 	}
+ 	spin_unlock_irqrestore(&instance->hba_lock, flags);
+ 
+ 	error = megasas_mgmt_fw_ioctl(instance, user_ioc, ioc);
++      out_up:
+ 	up(&instance->ioctl_sem);
+ 
+       out_kfree_ioc:
