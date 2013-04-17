@@ -1,30 +1,61 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 12 Apr 2013 05:59:32 +0000
-Subject: Re: [patch 1/2 -next] dma-buf: double unlock in debugfs code
-Message-Id: <20130412055931.GI6692@mwanda>
+Date: Wed, 17 Apr 2013 12:03:15 +0000
+Subject: Re: [RFC] [media] dvb-core: check ->msg_len for diseqc_send_master_cmd()
+Message-Id: <20130417120314.GX6692@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130411062339.GA7603@elgon.mountain>
- <CAO_48GHvAUmVmmZyHiEXzN3nWtTjC9iz-hEo-z3GrR2T-LZ-0w@mail.gmail.com>
-In-Reply-To: <CAO_48GHvAUmVmmZyHiEXzN3nWtTjC9iz-hEo-z3GrR2T-LZ-0w@mail.gmail.com>
+References: <20130402075102.GA11233@longonot.mountain>
+In-Reply-To: <20130402075102.GA11233@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kbuild@01.org, Linaro MM SIG <linaro-mm-sig@lists.linaro.org>, kernel-janitors@vger.kernel.org, Dave Airlie <airlied@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>, Steven Toth <stoth@linuxtv.org>
+Cc: Antti Palosaari <crope@iki.fi>, Michael Krufky <mkrufky@linuxtv.org>, Peter Senna Tschudin <peter.senna@gmail.com>, Darron Broad <darron@kewl.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 12, 2013 at 08:43:05AM +0530, Sumit Semwal wrote:
-> Hi Dan,
-> 
-> On Apr 11, 2013 11:54 AM, "Dan Carpenter" <dan.carpenter@oracle.com> wrote:
-> >
-> > We unlock here when we failed to take the lock.
-> Thanks for catching this; I will add it to the for-next queue.
-> 
-> Could I merge this change with the main patch while submitting to mainline?
-> With an attribution to you, of course.
+Any feedback on this?
 
-Yeah.  Just merge it.  Don't stress about attribution.
+I forgot to CC Steven Toth last time because he would know about the
+cx24116 driver.  I've looked at it again and it still looks like
+cx24116_send_diseqc_msg() is copying garbage into the
+state->dsec_cmd.args[] array.
 
 regards,
 dan carpenter
 
+On Tue, Apr 02, 2013 at 10:51:02AM +0300, Dan Carpenter wrote:
+> I'd like to send this patch except that it "breaks"
+> cx24116_send_diseqc_msg().  The cx24116 driver accepts ->msg_len values
+> up to 24 but it looks like it's just copying 16 bytes past the end of
+> the ->msg[] array so it's already broken.
+> 
+> cmd->msg_len is an unsigned char.  The comment next to the struct
+> declaration says that valid values are are 3-6.  Some of the drivers
+> check that this is true, but most don't and it could cause memory
+> corruption.
+> 
+> Some examples of functions which don't check are:
+> ttusbdecfe_dvbs_diseqc_send_master_cmd()
+> cx24123_send_diseqc_msg()
+> ds3000_send_diseqc_msg()
+> etc.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
+> index 57601c0..3d1eee6 100644
+> --- a/drivers/media/dvb-core/dvb_frontend.c
+> +++ b/drivers/media/dvb-core/dvb_frontend.c
+> @@ -2265,7 +2265,13 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
+>  
+>  	case FE_DISEQC_SEND_MASTER_CMD:
+>  		if (fe->ops.diseqc_send_master_cmd) {
+> -			err = fe->ops.diseqc_send_master_cmd(fe, (struct dvb_diseqc_master_cmd*) parg);
+> +			struct dvb_diseqc_master_cmd *cmd = parg;
+> +
+> +			if (cmd->msg_len >= 3 && cmd->msg_len <= 6)
+> +				err = fe->ops.diseqc_send_master_cmd(fe, cmd);
+> +			else
+> +				err = -EINVAL;
+> +
+>  			fepriv->state = FESTATE_DISEQC;
+>  			fepriv->status = 0;
+>  		}
