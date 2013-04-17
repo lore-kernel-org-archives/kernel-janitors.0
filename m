@@ -1,61 +1,73 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 17 Apr 2013 12:03:15 +0000
+From: Antti Palosaari <crope@iki.fi>
+Date: Wed, 17 Apr 2013 19:18:01 +0000
 Subject: Re: [RFC] [media] dvb-core: check ->msg_len for diseqc_send_master_cmd()
-Message-Id: <20130417120314.GX6692@mwanda>
+Message-Id: <516EF569.8070709@iki.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130402075102.GA11233@longonot.mountain>
-In-Reply-To: <20130402075102.GA11233@longonot.mountain>
+References: <20130402075102.GA11233@longonot.mountain> <20130417120314.GX6692@mwanda>
+In-Reply-To: <20130417120314.GX6692@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@redhat.com>, Steven Toth <stoth@linuxtv.org>
-Cc: Antti Palosaari <crope@iki.fi>, Michael Krufky <mkrufky@linuxtv.org>, Peter Senna Tschudin <peter.senna@gmail.com>, Darron Broad <darron@kewl.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Steven Toth <stoth@linuxtv.org>, Michael Krufky <mkrufky@linuxtv.org>, Peter Senna Tschudin <peter.senna@gmail.com>, Darron Broad <darron@kewl.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Any feedback on this?
+On 04/17/2013 03:03 PM, Dan Carpenter wrote:
+> Any feedback on this?
+>
+> I forgot to CC Steven Toth last time because he would know about the
+> cx24116 driver.  I've looked at it again and it still looks like
+> cx24116_send_diseqc_msg() is copying garbage into the
+> state->dsec_cmd.args[] array.
 
-I forgot to CC Steven Toth last time because he would know about the
-cx24116 driver.  I've looked at it again and it still looks like
-cx24116_send_diseqc_msg() is copying garbage into the
-state->dsec_cmd.args[] array.
+It looks fine. I have thought that same few times earlier too. Thank you.
 
-regards,
-dan carpenter
+Reviewed-by: Antti Palosaari <crope@iki.fi>
 
-On Tue, Apr 02, 2013 at 10:51:02AM +0300, Dan Carpenter wrote:
-> I'd like to send this patch except that it "breaks"
-> cx24116_send_diseqc_msg().  The cx24116 driver accepts ->msg_len values
-> up to 24 but it looks like it's just copying 16 bytes past the end of
-> the ->msg[] array so it's already broken.
-> 
-> cmd->msg_len is an unsigned char.  The comment next to the struct
-> declaration says that valid values are are 3-6.  Some of the drivers
-> check that this is true, but most don't and it could cause memory
-> corruption.
-> 
-> Some examples of functions which don't check are:
-> ttusbdecfe_dvbs_diseqc_send_master_cmd()
-> cx24123_send_diseqc_msg()
-> ds3000_send_diseqc_msg()
-> etc.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-> index 57601c0..3d1eee6 100644
-> --- a/drivers/media/dvb-core/dvb_frontend.c
-> +++ b/drivers/media/dvb-core/dvb_frontend.c
-> @@ -2265,7 +2265,13 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
->  
->  	case FE_DISEQC_SEND_MASTER_CMD:
->  		if (fe->ops.diseqc_send_master_cmd) {
-> -			err = fe->ops.diseqc_send_master_cmd(fe, (struct dvb_diseqc_master_cmd*) parg);
-> +			struct dvb_diseqc_master_cmd *cmd = parg;
-> +
-> +			if (cmd->msg_len >= 3 && cmd->msg_len <= 6)
-> +				err = fe->ops.diseqc_send_master_cmd(fe, cmd);
-> +			else
-> +				err = -EINVAL;
-> +
->  			fepriv->state = FESTATE_DISEQC;
->  			fepriv->status = 0;
->  		}
+
+
+>
+> regards,
+> dan carpenter
+>
+> On Tue, Apr 02, 2013 at 10:51:02AM +0300, Dan Carpenter wrote:
+>> I'd like to send this patch except that it "breaks"
+>> cx24116_send_diseqc_msg().  The cx24116 driver accepts ->msg_len values
+>> up to 24 but it looks like it's just copying 16 bytes past the end of
+>> the ->msg[] array so it's already broken.
+>>
+>> cmd->msg_len is an unsigned char.  The comment next to the struct
+>> declaration says that valid values are are 3-6.  Some of the drivers
+>> check that this is true, but most don't and it could cause memory
+>> corruption.
+>>
+>> Some examples of functions which don't check are:
+>> ttusbdecfe_dvbs_diseqc_send_master_cmd()
+>> cx24123_send_diseqc_msg()
+>> ds3000_send_diseqc_msg()
+>> etc.
+>>
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>
+>> diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
+>> index 57601c0..3d1eee6 100644
+>> --- a/drivers/media/dvb-core/dvb_frontend.c
+>> +++ b/drivers/media/dvb-core/dvb_frontend.c
+>> @@ -2265,7 +2265,13 @@ static int dvb_frontend_ioctl_legacy(struct file *file,
+>>
+>>   	case FE_DISEQC_SEND_MASTER_CMD:
+>>   		if (fe->ops.diseqc_send_master_cmd) {
+>> -			err = fe->ops.diseqc_send_master_cmd(fe, (struct dvb_diseqc_master_cmd*) parg);
+>> +			struct dvb_diseqc_master_cmd *cmd = parg;
+>> +
+>> +			if (cmd->msg_len >= 3 && cmd->msg_len <= 6)
+>> +				err = fe->ops.diseqc_send_master_cmd(fe, cmd);
+>> +			else
+>> +				err = -EINVAL;
+>> +
+>>   			fepriv->state = FESTATE_DISEQC;
+>>   			fepriv->status = 0;
+>>   		}
+
+
+-- 
+http://palosaari.fi/
