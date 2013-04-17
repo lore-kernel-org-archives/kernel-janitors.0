@@ -1,47 +1,34 @@
-From: adam radford <aradford@gmail.com>
-Date: Tue, 16 Apr 2013 21:22:08 +0000
-Subject: Re: [patch] [SCSI] megaraid_sas: release lock on error path
-Message-Id: <CAHtARFE9ckz9-2YFwHrTZb8BFNxCSkZL_TmbL8vFvdJ__5kyDQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 17 Apr 2013 07:20:30 +0000
+Subject: [patch] [media] go7007: dubious one-bit signed bitfields
+Message-Id: <20130417072029.GF7923@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130416074419.GA1571@elgon.mountain>
-In-Reply-To: <20130416074419.GA1571@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Neela Syam Kolli <megaraidlinux@lsi.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi <linux-scsi@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 16, 2013 at 12:44 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> We should unlock here before returning.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-> index 9d53540..eb2385f 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas_base.c
-> +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-> @@ -4931,11 +4931,12 @@ static int megasas_mgmt_ioctl_fw(struct file *file, unsigned long arg)
->                 printk(KERN_ERR "megaraid_sas: timed out while"
->                         "waiting for HBA to recover\n");
->                 error = -ENODEV;
-> -               goto out_kfree_ioc;
-> +               goto out_up;
->         }
->         spin_unlock_irqrestore(&instance->hba_lock, flags);
->
->         error = megasas_mgmt_fw_ioctl(instance, user_ioc, ioc);
-> +      out_up:
->         up(&instance->ioctl_sem);
->
->        out_kfree_ioc:
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Because they're signed, "is_video" and "is_audio" can be 0 and -1
+instead of 0 and 1 as intended.  It doesn't cause a bug, but it makes
+Sparse complain:
+drivers/staging/media/go7007/go7007-priv.h:94:31: error: dubious one-bit signed bitfield
+drivers/staging/media/go7007/go7007-priv.h:95:31: error: dubious one-bit signed bitfield
 
-Thanks Dan, this looks good.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Adam Radford <aradford@gmail.com>
-
--Adam
+diff --git a/drivers/staging/media/go7007/go7007-priv.h b/drivers/staging/media/go7007/go7007-priv.h
+index 8bde187..6e16af7 100644
+--- a/drivers/staging/media/go7007/go7007-priv.h
++++ b/drivers/staging/media/go7007/go7007-priv.h
+@@ -91,8 +91,8 @@ struct go7007_board_info {
+ 	int num_i2c_devs;
+ 	struct go_i2c {
+ 		const char *type;
+-		int is_video:1;
+-		int is_audio:1;
++		unsigned int is_video:1;
++		unsigned int is_audio:1;
+ 		int addr;
+ 		u32 flags;
+ 	} i2c_devs[5];
