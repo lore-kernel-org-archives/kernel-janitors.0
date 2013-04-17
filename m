@@ -1,29 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 Apr 2013 06:21:51 +0000
-Subject: [patch] mtd: denali_dt: harmless case of testing the wrong variable
-Message-Id: <20130401062151.GA5197@longonot.mountain>
+Date: Wed, 17 Apr 2013 07:11:46 +0000
+Subject: [patch] [media] dvb-frontends: lg2160: dubious one-bit signed bitfield
+Message-Id: <20130417071146.GB7923@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: Artem Bityutskiy <artem.bityutskiy-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bill Pemberton <wfp5p-4Ng6DfrEGID2fBVCVOL8/A@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Michael Krufky <mkrufky@linuxtv.org>
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is a warning message that can't be printed because we test the
-wrong variable.
+Sparse complains that these are "dubious one-bit signed bitfields" and
+the comment says it was intended to be 1 and 0 instead of -1 and 0.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/mtd/nand/denali_dt.c b/drivers/mtd/nand/denali_dt.c
-index 546f8cb..02988b0 100644
---- a/drivers/mtd/nand/denali_dt.c
-+++ b/drivers/mtd/nand/denali_dt.c
-@@ -42,7 +42,7 @@ static void __iomem *request_and_map(struct device *dev,
- 	}
+diff --git a/drivers/media/dvb-frontends/lg2160.h b/drivers/media/dvb-frontends/lg2160.h
+index a5f0368..194a07a 100644
+--- a/drivers/media/dvb-frontends/lg2160.h
++++ b/drivers/media/dvb-frontends/lg2160.h
+@@ -57,10 +57,10 @@ struct lg2160_config {
+ 	u16 if_khz;
  
- 	ptr = devm_ioremap_nocache(dev, res->start, resource_size(res));
--	if (!res)
-+	if (!ptr)
- 		dev_err(dev, "ioremap_nocache of %s failed!", res->name);
+ 	/* disable i2c repeater - 0:repeater enabled 1:repeater disabled */
+-	int deny_i2c_rptr:1;
++	unsigned int deny_i2c_rptr:1;
  
- 	return ptr;
+ 	/* spectral inversion - 0:disabled 1:enabled */
+-	int spectral_inversion:1;
++	unsigned int spectral_inversion:1;
+ 
+ 	unsigned int output_if;
+ 	enum lg2160_spi_clock spi_clock;
