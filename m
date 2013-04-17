@@ -1,29 +1,36 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Tue, 09 Apr 2013 20:09:48 +0000
-Subject: Re: [PATCH 1/2] ocfs2: fix error handling in ocfs2_ioctl_move_extents()
-Message-Id: <20130409130948.a6ea97e8fd48c69a0389390c@linux-foundation.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 17 Apr 2013 07:18:28 +0000
+Subject: [patch] Thermal: cpufreq cooling: endian bug in cpufreq_get_max_state()
+Message-Id: <20130417071828.GD7923@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <51638854.8020405@oracle.com>
-In-Reply-To: <51638854.8020405@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 09 Apr 2013 11:17:40 +0800 Jeff Liu <jeff.liu@oracle.com> wrote:
+This code doesn't work on big endian systems because we're storing low
+values in the high bits of the unsigned long.  It makes it a very high
+value instead.
 
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Smatch complains that if we hit an error (for example if the file is
-> immutable) then "range" has uninitialized stack data and we copy it to
-> the user.
-> 
-> I've re-written the error handling to avoid this problem and make it a
-> little cleaner as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Jie Liu <jeff.liu@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I've added your signed-off-by to these patches - it should have been
-included because you were on the patch delivery path.
-
+diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+index 5f5c780..768b508 100644
+--- a/drivers/thermal/cpu_cooling.c
++++ b/drivers/thermal/cpu_cooling.c
+@@ -303,12 +303,12 @@ static int cpufreq_get_max_state(struct thermal_cooling_device *cdev,
+ 	struct cpufreq_cooling_device *cpufreq_device = cdev->devdata;
+ 	struct cpumask *mask = &cpufreq_device->allowed_cpus;
+ 	unsigned int cpu;
+-	unsigned long count = 0;
++	unsigned int count = 0;
+ 	int ret;
+ 
+ 	cpu = cpumask_any(mask);
+ 
+-	ret = get_property(cpu, 0, (unsigned int *)&count, GET_MAXL);
++	ret = get_property(cpu, 0, &count, GET_MAXL);
+ 
+ 	if (count > 0)
+ 		*state = count;
