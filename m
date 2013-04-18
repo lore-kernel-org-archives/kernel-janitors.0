@@ -1,30 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 30 Apr 2013 07:57:05 +0000
-Subject: [patch] atmel: printing bogus information
-Message-Id: <20130430075704.GH7237@elgon.mountain>
+Date: Thu, 18 Apr 2013 19:21:17 +0000
+Subject: [patch 2/2] [media] r820t: memory leak in release()
+Message-Id: <20130418192117.GB17798@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Simon Kelley <simon@thekelleys.org.uk>, David Howells <dhowells@redhat.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There was an extra ';' character added to the end of the if statement
-which means that it always prints that the /proc entry wasn't created
-even though it was.
+I've moved the kfree(fe->tuner_priv) one line earlier, otherwise it is
+a no-op.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker fix and I have not tested it.
 
-diff --git a/drivers/net/wireless/atmel.c b/drivers/net/wireless/atmel.c
-index 23a3498..2876b90 100644
---- a/drivers/net/wireless/atmel.c
-+++ b/drivers/net/wireless/atmel.c
-@@ -1624,7 +1624,7 @@ struct net_device *init_atmel_card(unsigned short irq, unsigned long port,
+diff --git a/drivers/media/tuners/r820t.c b/drivers/media/tuners/r820t.c
+index ba033fd..36ddbf1 100644
+--- a/drivers/media/tuners/r820t.c
++++ b/drivers/media/tuners/r820t.c
+@@ -2252,9 +2252,8 @@ static int r820t_release(struct dvb_frontend *fe)
  
- 	netif_carrier_off(dev);
+ 	mutex_unlock(&r820t_list_mutex);
  
--	if (!proc_create_data("driver/atmel", 0, NULL, &atmel_proc_fops, priv));
-+	if (!proc_create_data("driver/atmel", 0, NULL, &atmel_proc_fops, priv))
- 		printk(KERN_WARNING "atmel: unable to create /proc entry.\n");
+-	fe->tuner_priv = NULL;
+-
+ 	kfree(fe->tuner_priv);
++	fe->tuner_priv = NULL;
  
- 	printk(KERN_INFO "%s: Atmel at76c50x. Version %d.%d. MAC %pM\n",
+ 	return 0;
+ }
