@@ -1,31 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 15 Apr 2013 07:44:04 +0000
-Subject: [patch] mwave: info leak in mwave_ioctl()
-Message-Id: <20130415074404.GA20993@elgon.mountain>
+Date: Sun, 21 Apr 2013 11:07:53 +0000
+Subject: [patch] staging/ozwpan: info leak in oz_cdev_ioctl()
+Message-Id: <20130421110753.GB6171@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, akpm@linux-foundation.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch complains that on 64 bit systems, there is a hole in the
-MW_ABILITIES struct between ->component_count and ->component_list[].
-It leaks stack information from the mwave_ioctl() function.
-
-I've added a memset() to initialize the struct to zero.
+If we're not maxed out then oz_get_pd_list() leaves part of the "list"
+struct uninitialized.  We should clear this so that no stack information
+is leaked to userspace.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/char/mwave/tp3780i.c b/drivers/char/mwave/tp3780i.c
-index c689697..04e6d6a 100644
---- a/drivers/char/mwave/tp3780i.c
-+++ b/drivers/char/mwave/tp3780i.c
-@@ -479,6 +479,7 @@ int tp3780I_QueryAbilities(THINKPAD_BD_DATA * pBDData, MW_ABILITIES * pAbilities
- 	PRINTK_2(TRACE_TP3780I,
- 		"tp3780i::tp3780I_QueryAbilities entry pBDData %p\n", pBDData);
- 
-+	memset(pAbilities, 0, sizeof(*pAbilities));
- 	/* fill out standard constant fields */
- 	pAbilities->instr_per_sec = pBDData->rDspSettings.uIps;
- 	pAbilities->data_size = pBDData->rDspSettings.uDStoreSize;
+diff --git a/drivers/staging/ozwpan/ozcdev.c b/drivers/staging/ozwpan/ozcdev.c
+index ba15aeb..27d0666 100644
+--- a/drivers/staging/ozwpan/ozcdev.c
++++ b/drivers/staging/ozwpan/ozcdev.c
+@@ -253,6 +253,7 @@ static long oz_cdev_ioctl(struct file *filp, unsigned int cmd,
+ 	case OZ_IOCTL_GET_PD_LIST: {
+ 			struct oz_pd_list list;
+ 			oz_trace("OZ_IOCTL_GET_PD_LIST\n");
++			memset(&list, 0, sizeof(list));
+ 			list.count = oz_get_pd_list(list.addr, OZ_MAX_PDS);
+ 			if (copy_to_user((void __user *)arg, &list,
+ 				sizeof(list)))
