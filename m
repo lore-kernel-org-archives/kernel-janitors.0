@@ -1,51 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 23 Apr 2013 08:02:14 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 25 Apr 2013 05:49:05 +0000
 Subject: Re: [patch] isdn: mISDN: set ->family in ->getname()
-Message-Id: <20130423080213.GA30376@mwanda>
+Message-Id: <20130425.014905.167442930303199676.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130423062414.GC15893@elgon.mountain>
- <51763AD7.10102@bfs.de>
-In-Reply-To: <51763AD7.10102@bfs.de>
+In-Reply-To: <20130423062414.GC15893@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Karsten Keil <isdn@linux-pingi.de>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 23, 2013 at 09:40:07AM +0200, walter harms wrote:
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 23 Apr 2013 09:24:14 +0300
+
+> The "maddr->family" variable was not set but instead it leaked stack
+> information to userspace.
 > 
-> 
-> Am 23.04.2013 08:24, schrieb Dan Carpenter:
-> > The "maddr->family" variable was not set but instead it leaked stack
-> > information to userspace.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
-> > index 8b07f83..a838864 100644
-> > --- a/drivers/isdn/mISDN/socket.c
-> > +++ b/drivers/isdn/mISDN/socket.c
-> > @@ -578,6 +578,7 @@ data_sock_getname(struct socket *sock, struct sockaddr *addr,
-> >  	lock_sock(sk);
-> >  
-> >  	*addr_len = sizeof(*maddr);
-> > +	maddr->family = AF_ISDN;
-> >  	maddr->dev = _pms(sk)->dev->id;
-> >  	maddr->channel = _pms(sk)->ch.nr;
-> >  	maddr->sapi = _pms(sk)->ch.addr & 0xff;
-> 
-> just nitpicking ...
-> net/nfc/llcp/sock.c has a memset(..0,..) for the struct. Is this
-> an options here also ?
-> (just to make sure everything is 0 in the beginning)
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-In net/nfc/llcp/sock.c the struct has a hole after ->sa_family so
-the memset() isn't optional.
-
-These ->getname() patches were from manually auditing all the
-->getname() functions.  I've tried to follow the local style in my
-patches.  Quite a few of these use __packed structs to avoid holes
-and the need for the memset().
-
-regards,
-dan carpenter
+Applied.
