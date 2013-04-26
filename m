@@ -1,42 +1,39 @@
-From: Jeff Liu <jeff.liu@oracle.com>
-Date: Tue, 09 Apr 2013 03:13:57 +0000
-Subject: Re: [Ocfs2-devel] [patch 1/2 v2] Ocfs2/move_extents: fix error handling in ioctl
-Message-Id: <51638775.1040201@oracle.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 26 Apr 2013 17:49:51 +0000
+Subject: [PATCH] drm/tegra: Include header drm/drm.h
+Message-Id: <1366998591-8508-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130404114030.GA25020@longonot.mountain>
-	<515D6984.9030204@oracle.com>
-	<20130408170409.b16252fc16e9cdc8abfc91eb@linux-foundation.org>
-In-Reply-To: <20130408170409.b16252fc16e9cdc8abfc91eb@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: airlied@linux.ie, swarren@wwwdotorg.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On 04/09/2013 08:04 AM, Andrew Morton wrote:
-> On Thu, 04 Apr 2013 19:52:36 +0800 Jeff Liu <jeff.liu@oracle.com> wrote:
-> 
->> On 04/04/2013 07:40 PM, Dan Carpenter wrote:
->>> Smatch complains that if we hit an error (for example if the file is
->>> immutable) then "range" has uninitialized stack data and we copy it to
->>> the user.
->>>
->>> I've re-written the error handling to avoid this problem and make it a
->>> little cleaner as well.
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> Reviewed-by: Jie Liu <jeff.liu@oracle.com>
-> 
-> I can't find either of Dan's emails anywhere.  Confused.
-> 
-> Resend both, please?
-Looks they were eaten by the mailing list somehow, I'll resent both of
-them on behalf of Dan in a minute.
+Include definitions of used types by including drm/drm.h
 
-Thanks,
--Jeff
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Sparse output:
+/usr/include/drm/tegra_drm.h:21:
+	found __[us]{8,16,32,64} type without
+	#include <linux/types.h>
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ include/uapi/drm/tegra_drm.h |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
+index 6e132a2..73bde4e 100644
+--- a/include/uapi/drm/tegra_drm.h
++++ b/include/uapi/drm/tegra_drm.h
+@@ -17,6 +17,8 @@
+ #ifndef _UAPI_TEGRA_DRM_H_
+ #define _UAPI_TEGRA_DRM_H_
+ 
++#include <drm/drm.h>
++
+ struct drm_tegra_gem_create {
+ 	__u64 size;
+ 	__u32 flags;
+-- 
+1.7.10.4
 
