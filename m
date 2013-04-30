@@ -1,31 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 30 Apr 2013 07:43:44 +0000
-Subject: [patch] efi: remove "kfree(NULL)"
-Message-Id: <20130430074344.GE7237@elgon.mountain>
+From: Matt Fleming <matt@console-pimps.org>
+Date: Tue, 30 Apr 2013 11:34:01 +0000
+Subject: Re: [patch] efi: remove "kfree(NULL)"
+Message-Id: <517FAC29.9030307@console-pimps.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130430074344.GE7237@elgon.mountain>
+In-Reply-To: <20130430074344.GE7237-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matt Fleming <matt.fleming-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 Cc: linux-efi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-No need to free a NULL pointer.
+On 30/04/13 08:43, Dan Carpenter wrote:
+> No need to free a NULL pointer.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied, thanks.
 
-diff --git a/drivers/firmware/efi/efivars.c b/drivers/firmware/efi/efivars.c
-index 66928a3..7067b56 100644
---- a/drivers/firmware/efi/efivars.c
-+++ b/drivers/firmware/efi/efivars.c
-@@ -420,10 +420,8 @@ efivar_create_sysfs_entry(struct efivar_entry *new_var)
- 
- 	short_name = kzalloc(short_name_size, GFP_KERNEL);
- 
--	if (!short_name) {
--		kfree(short_name);
-+	if (!short_name)
- 		return 1;
--	}
- 
- 	/* Convert Unicode to normal chars (assume top bits are 0),
- 	   ala UTF-8 */
+-- 
+Matt Fleming, Intel Open Source Technology Center
