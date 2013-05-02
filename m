@@ -1,56 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 20 May 2013 18:06:35 +0000
-Subject: Re: [patch] gru: fix a sanity test in gru_set_context_option()
-Message-Id: <20130520180635.GQ1360@mwanda>
+From: Joel Becker <jlbec@evilplan.org>
+Date: Thu, 02 May 2013 21:51:53 +0000
+Subject: Re: [patch] configfs: use capped length for ->store_attribute()
+Message-Id: <20130502215152.GB26770@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130519125950.GA17651@elgon.mountain>
- <20130519144442.GA8926@sgi.com>
- <20130519183041.GB30128@mwanda>
- <20130520134621.GA25574@sgi.com>
-In-Reply-To: <20130520134621.GA25574@sgi.com>
+References: <20130430072813.GC7237@elgon.mountain>
+In-Reply-To: <20130430072813.GC7237@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dimitri Sivanich <sivanich@sgi.com>
-Cc: Robin Holt <holt@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, May 20, 2013 at 08:46:21AM -0500, Dimitri Sivanich wrote:
-> On Sun, May 19, 2013 at 09:30:41PM +0300, Dan Carpenter wrote:
-> > On Sun, May 19, 2013 at 09:44:42AM -0500, Dimitri Sivanich wrote:
-> > > 
-> > > Since we're here, maybe we should neaten this up a little?
-> > > 
-> > > Signed-off-by: Dimitri Sivanich <sivanich@sgi.com>
-> > > ---
-> > >  drivers/misc/sgi-gru/grufault.c |    5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > 
-> > > Index: linux/drivers/misc/sgi-gru/grufault.c
-> > > =================================> > > --- linux.orig/drivers/misc/sgi-gru/grufault.c
-> > > +++ linux/drivers/misc/sgi-gru/grufault.c
-> > > @@ -876,8 +876,9 @@ int gru_set_context_option(unsigned long
-> > >  	switch (req.op) {
-> > >  	case sco_blade_chiplet:
-> > >  		/* Select blade/chiplet for GRU context */
-> > > -		if (req.val1 < -1 || req.val1 >= GRU_MAX_BLADES || !gru_base[req.val1] ||
-> > > -		    req.val0 < -1 || req.val0 >= GRU_CHIPLETS_PER_HUB) {
-> > > +		if (req.val0 < -1 || req.val0 >= GRU_CHIPLETS_PER_HUB ||
-> > > +			req.val1 < -1 || req.val1 >= GRU_MAX_BLADES ||
-> > > +			(req.val1 >= 0 && !gru_base[req.val1])) {
-> > >  			ret = -EINVAL;
-> > 
-> > I generally prefer how in the original code all the sub conditions
-> > were aligned nicely but I will Ack your version as well.  Thanks.
-> > 
+On Tue, Apr 30, 2013 at 10:28:14AM +0300, Dan Carpenter wrote:
+> The difference between "count" and "len" is that "len" is capped at
+> 4095.  Changing it like this makes it match how sysfs_write_file() is
+> implemented.
 > 
-> I guess I'd have to agree.  How about this?
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Looks nice.  Starting with zero is obviously better than the
-original.
+Acked-by: Joel Becker <jlbec@evilplan.org>
 
-Acked-by: Dan Carpenter <dan.carpenter@oracle.com>
+Do you want me to push this up, or will you be sending it?
 
-regards,
-dan carpenter
+Joel
 
 
+> ---
+> This is a static analysis patch.  I haven't found any store_attribute()
+> functions where this change makes a difference.
+> 
+> diff --git a/fs/configfs/file.c b/fs/configfs/file.c
+> index 2b6cb23..1d1c41f 100644
+> --- a/fs/configfs/file.c
+> +++ b/fs/configfs/file.c
+> @@ -203,7 +203,7 @@ configfs_write_file(struct file *file, const char __user *buf, size_t count, lof
+>  	mutex_lock(&buffer->mutex);
+>  	len = fill_write_buffer(buffer, buf, count);
+>  	if (len > 0)
+> -		len = flush_write_buffer(file->f_path.dentry, buffer, count);
+> +		len = flush_write_buffer(file->f_path.dentry, buffer, len);
+>  	if (len > 0)
+>  		*ppos += len;
+>  	mutex_unlock(&buffer->mutex);
+
+-- 
+
+"In the room the women come and go
+ Talking of Michaelangelo."
+
+			http://www.jlbec.org/
+			jlbec@evilplan.org
