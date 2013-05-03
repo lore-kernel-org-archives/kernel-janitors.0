@@ -1,19 +1,31 @@
-From: Kent Overstreet <koverstreet@google.com>
-Date: Thu, 09 May 2013 20:57:01 +0000
-Subject: Re: [PATCH] bcache: Fix incompatible pointer type warning
-Message-Id: <20130509205701.GC15040@moria.home.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 May 2013 06:44:20 +0000
+Subject: [patch] usbnet: pegasus: endian bug in write_mii_word()
+Message-Id: <20130503064420.GA14069@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1368131966-17512-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1368131966-17512-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: neilb@suse.de, linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Petko Manolov <petkan-nPnTwAqkgEqakBO8gow8eQ@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Thu, May 09, 2013 at 10:39:26PM +0200, Emil Goode wrote:
-> The function pointer release in struct block_device_operations
-> should point to functions declared as void.
+We're only passing the two high bits of an integer.  It works for little
+endian but not for big endian.
 
-Looks like .release just changed to returning void in the merge window -
-thanks, applied
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/usb/pegasus.c b/drivers/net/usb/pegasus.c
+index 0969905..03e8a15 100644
+--- a/drivers/net/usb/pegasus.c
++++ b/drivers/net/usb/pegasus.c
+@@ -256,8 +256,9 @@ static int mdio_read(struct net_device *dev, int phy_id, int loc)
+ static void mdio_write(struct net_device *dev, int phy_id, int loc, int val)
+ {
+ 	pegasus_t *pegasus = netdev_priv(dev);
++	u16 data = val;
+ 
+-	write_mii_word(pegasus, phy_id, loc, (__u16 *)&val);
++	write_mii_word(pegasus, phy_id, loc, &data);
+ }
+ 
+ static int read_eprom_word(pegasus_t *pegasus, __u8 index, __u16 *retdata)
