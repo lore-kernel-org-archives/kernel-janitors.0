@@ -1,22 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 03 May 2013 20:12:16 +0000
-Subject: Re: [patch] usbnet: pegasus: endian bug in write_mii_word()
-Message-Id: <20130503.161216.182244575049778035.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 May 2013 19:31:17 +0000
+Subject: [patch 2/2 v2] tipc: potential divide by zero in tipc_link_recv_fragment()
+Message-Id: <20130506193117.GA11399@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130503064420.GA14069@elgon.mountain>
-In-Reply-To: <20130503064420.GA14069@elgon.mountain>
+References: <5187F8BD.1080900@cogentembedded.com>
+In-Reply-To: <5187F8BD.1080900@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: petkan@nucleusys.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jon Maloy <jon.maloy@ericsson.com>
+Cc: Allan Stephens <allan.stephens@windriver.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 3 May 2013 09:44:20 +0300
+The worry here is that fragm_sz could be zero since it comes from
+skb->data.
 
-> We're only passing the two high bits of an integer.  It works for little
-> endian but not for big endian.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: fix a whitespace issue
 
-s/bits/bytes/, applied, and queued up for stable, thanks
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index 3a6064b3..de94493 100644
+--- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -2524,14 +2524,16 @@ int tipc_link_recv_fragment(struct sk_buff **pending, struct sk_buff **fb,
+ 		struct tipc_msg *imsg = (struct tipc_msg *)msg_data(fragm);
+ 		u32 msg_sz = msg_size(imsg);
+ 		u32 fragm_sz = msg_data_sz(fragm);
+-		u32 exp_fragm_cnt = msg_sz/fragm_sz + !!(msg_sz % fragm_sz);
++		u32 exp_fragm_cnt;
+ 		u32 max =  TIPC_MAX_USER_MSG_SIZE + NAMED_H_SIZE;
++
+ 		if (msg_type(imsg) = TIPC_MCAST_MSG)
+ 			max = TIPC_MAX_USER_MSG_SIZE + MCAST_H_SIZE;
+-		if (msg_size(imsg) > max) {
++		if (fragm_sz = 0 || msg_size(imsg) > max) {
+ 			kfree_skb(fbuf);
+ 			return 0;
+ 		}
++		exp_fragm_cnt = msg_sz / fragm_sz + !!(msg_sz % fragm_sz);
+ 		pbuf = tipc_buf_acquire(msg_size(imsg));
+ 		if (pbuf != NULL) {
+ 			pbuf->next = *pending;
+
