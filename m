@@ -1,23 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 06 May 2013 20:17:26 +0000
-Subject: Re: [patch 1/2] tipc: add a bounds check in link_recv_changeover_msg()
-Message-Id: <20130506.161726.1012915897561757486.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 May 2013 18:29:12 +0000
+Subject: [patch 2/2] tipc: potential divide by zero in tipc_link_recv_fragment()
+Message-Id: <20130506182912.GB21347@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130506182840.GA21347@elgon.mountain>
-In-Reply-To: <20130506182840.GA21347@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: jon.maloy@ericsson.com, allan.stephens@windriver.com, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: Jon Maloy <jon.maloy@ericsson.com>
+Cc: Allan Stephens <allan.stephens@windriver.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 6 May 2013 21:28:41 +0300
+The worry here is that fragm_sz could be zero since it comes from
+skb->data.
 
-> The bearer_id here comes from skb->data and it can be a number from 0 to
-> 7.  The problem is that the ->links[] array has only 2 elements so I
-> have added a range check.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index 3a6064b3..de94493 100644
+--- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -2524,14 +2524,16 @@ int tipc_link_recv_fragment(struct sk_buff **pending, struct sk_buff **fb,
+ 		struct tipc_msg *imsg = (struct tipc_msg *)msg_data(fragm);
+ 		u32 msg_sz = msg_size(imsg);
+ 		u32 fragm_sz = msg_data_sz(fragm);
+-		u32 exp_fragm_cnt = msg_sz/fragm_sz + !!(msg_sz % fragm_sz);
++		u32 exp_fragm_cnt;
+ 		u32 max =  TIPC_MAX_USER_MSG_SIZE + NAMED_H_SIZE;
++
+ 		if (msg_type(imsg) = TIPC_MCAST_MSG)
+ 			max = TIPC_MAX_USER_MSG_SIZE + MCAST_H_SIZE;
+-		if (msg_size(imsg) > max) {
++		if (fragm_sz = 0 || msg_size(imsg) > max) {
+ 			kfree_skb(fbuf);
+ 			return 0;
+ 		}
++		exp_fragm_cnt = msg_sz/fragm_sz + !!(msg_sz % fragm_sz);
+ 		pbuf = tipc_buf_acquire(msg_size(imsg));
+ 		if (pbuf != NULL) {
+ 			pbuf->next = *pending;
