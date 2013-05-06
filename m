@@ -1,20 +1,37 @@
-From: Kent Overstreet <koverstreet@google.com>
-Date: Wed, 29 May 2013 00:20:41 +0000
-Subject: Re: [PATCH] md: bcache: io.c: fix a potential NULL pointer dereference
-Message-Id: <20130529002041.GC2291@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 May 2013 18:28:41 +0000
+Subject: [patch 1/2] tipc: add a bounds check in link_recv_changeover_msg()
+Message-Id: <20130506182840.GA21347@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1369726275-5424-1-git-send-email-gmate.amit@gmail.com>
-In-Reply-To: <1369726275-5424-1-git-send-email-gmate.amit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Amit Mehta <gmate.amit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: neilb-l3A5Bk7waGM@public.gmane.org, linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-raid-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Maloy <jon.maloy@ericsson.com>
+Cc: Allan Stephens <allan.stephens@windriver.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
-On Tue, May 28, 2013 at 12:31:15AM -0700, Kumar Amit Mehta wrote:
-> bio_alloc_bioset returns NULL on failure. This fix adds a missing check
-> for potential NULL pointer dereferencing.
+The bearer_id here comes from skb->data and it can be a number from 0 to
+7.  The problem is that the ->links[] array has only 2 elements so I
+have added a range check.
 
-Whoops, that's definitely a bug. Thanks, applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is static analysis work.  I am not very familiar with this
+subsystem and I haven't tested this.
 
-How'd you find it?
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index daa6080..3a6064b3 100644
+--- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -2306,8 +2306,11 @@ static int link_recv_changeover_msg(struct tipc_link **l_ptr,
+ 	struct tipc_msg *tunnel_msg = buf_msg(tunnel_buf);
+ 	u32 msg_typ = msg_type(tunnel_msg);
+ 	u32 msg_count = msg_msgcnt(tunnel_msg);
++	u32 bearer_id = msg_bearer_id(tunnel_msg);
+ 
+-	dest_link = (*l_ptr)->owner->links[msg_bearer_id(tunnel_msg)];
++	if (bearer_id >= MAX_BEARERS)
++		goto exit;
++	dest_link = (*l_ptr)->owner->links[bearer_id];
+ 	if (!dest_link)
+ 		goto exit;
+ 	if (dest_link = *l_ptr) {
