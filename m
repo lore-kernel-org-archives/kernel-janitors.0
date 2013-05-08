@@ -1,7 +1,7 @@
-From: strnape1@fel.cvut.cz
-Date: Wed, 08 May 2013 15:46:59 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Wed, 08 May 2013 15:52:09 +0000
 Subject: Re: [PATCH] scripts: Coccinelle script for pci_free_consistent()
-Message-Id: <20130508174659.Horde.bqzOmmtbPYZ2x64neSWUNA1@wimap.feld.cvut.cz>
+Message-Id: <alpine.DEB.2.02.1305081751320.2025@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130428190457.Horde.NTwcWjfi51YkygsVUIuvrA7@wimap.feld.cvut.cz>
 In-Reply-To: <20130428190457.Horde.NTwcWjfi51YkygsVUIuvrA7@wimap.feld.cvut.cz>
@@ -10,84 +10,95 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Alright, so should I make a patch from it?
-Quoting Julia Lawall <julia.lawall@lip6.fr>:
+On Wed, 8 May 2013, strnape1@fel.cvut.cz wrote:
 
-> Here is a proposal.  Some features:
->
-> * It assumes that the result of pci_alloc_consistent is null tested, and
-> doesn't report any problems before that.
->
-> * It uses exists rather than forall, to find a bug when there is a problem
-> on just one execution path.
->
-> * It gives no warning if the return value is stored elsewhere or is freed
-> under some kinds of if.
->
-> * It recognizes 1 as a success value.
->
-> On linux-next, this gives 10 reports.  At least half of them are false
-> positives, mostly due to interprocedural effects, which this rule does not
-> at all take into account.
->
-> julia
->
-> /// Find missing pci_free_consistent for every pci_alloc_consistent.
-> ///
-> // Confidence: Moderate
-> // Copyright: (C) 2013 Petr Strnad.  GPLv2.
-> // URL: http://coccinelle.lip6.fr/
-> // Keywords: pci_free_consistent, pci_alloc_consistent
-> // Options: --no-includes --include-headers
->
-> virtual report
-> virtual org
->
-> @search@
-> local idexpression id;
-> expression x,y,z,e;
-> position p1,p2;
-> type T;
-> @@
->
-> id = pci_alloc_consistent@p1(x,y,&z)
-> ... when != e = id
-> if (id = NULL || ...) { ... return ...; }
-> ... when != pci_free_consistent(x,y,id,z)
->     when != if (id) { ... pci_free_consistent(x,y,id,z) ... }
->     when != if (y) { ... pci_free_consistent(x,y,id,z) ... }
->     when != e = (T)id
->     when exists
-> (
-> return 0;
-> |
-> return 1;
-> |
-> return id;
-> |
-> return@p2 ...;
-> )
->
-> @script:python depends on report@
-> p1 << search.p1;
-> p2 << search.p2;
-> @@
->
-> msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
-> line %s and return without freeing on line %s" %  
-> (p1[0].line,p2[0].line)
-> coccilib.report.print_report(p2[0],msg)
->
-> @script:python depends on org@
-> p1 << search.p1;
-> p2 << search.p2;
-> @@
->
-> msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
-> line %s and return without freeing on line %s" %  
-> (p1[0].line,p2[0].line)
-> cocci.print_main(msg,p1)
-> cocci.print_secs("",p2)
+> Alright, so should I make a patch from it?
 
+Could you check that it does what you expect?  If everything is OK, then
+you can make a patch.
 
+thanks,
+julia
 
+> Quoting Julia Lawall <julia.lawall@lip6.fr>:
+>
+> > Here is a proposal.  Some features:
+> >
+> > * It assumes that the result of pci_alloc_consistent is null tested, and
+> > doesn't report any problems before that.
+> >
+> > * It uses exists rather than forall, to find a bug when there is a problem
+> > on just one execution path.
+> >
+> > * It gives no warning if the return value is stored elsewhere or is freed
+> > under some kinds of if.
+> >
+> > * It recognizes 1 as a success value.
+> >
+> > On linux-next, this gives 10 reports.  At least half of them are false
+> > positives, mostly due to interprocedural effects, which this rule does not
+> > at all take into account.
+> >
+> > julia
+> >
+> > /// Find missing pci_free_consistent for every pci_alloc_consistent.
+> > ///
+> > // Confidence: Moderate
+> > // Copyright: (C) 2013 Petr Strnad.  GPLv2.
+> > // URL: http://coccinelle.lip6.fr/
+> > // Keywords: pci_free_consistent, pci_alloc_consistent
+> > // Options: --no-includes --include-headers
+> >
+> > virtual report
+> > virtual org
+> >
+> > @search@
+> > local idexpression id;
+> > expression x,y,z,e;
+> > position p1,p2;
+> > type T;
+> > @@
+> >
+> > id = pci_alloc_consistent@p1(x,y,&z)
+> > ... when != e = id
+> > if (id = NULL || ...) { ... return ...; }
+> > ... when != pci_free_consistent(x,y,id,z)
+> >    when != if (id) { ... pci_free_consistent(x,y,id,z) ... }
+> >    when != if (y) { ... pci_free_consistent(x,y,id,z) ... }
+> >    when != e = (T)id
+> >    when exists
+> > (
+> > return 0;
+> > |
+> > return 1;
+> > |
+> > return id;
+> > |
+> > return@p2 ...;
+> > )
+> >
+> > @script:python depends on report@
+> > p1 << search.p1;
+> > p2 << search.p2;
+> > @@
+> >
+> > msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s
+> > and return without freeing on line %s" % (p1[0].line,p2[0].line)
+> > coccilib.report.print_report(p2[0],msg)
+> >
+> > @script:python depends on org@
+> > p1 << search.p1;
+> > p2 << search.p2;
+> > @@
+> >
+> > msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s
+> > and return without freeing on line %s" % (p1[0].line,p2[0].line)
+> > cocci.print_main(msg,p1)
+> > cocci.print_secs("",p2)
+>
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
