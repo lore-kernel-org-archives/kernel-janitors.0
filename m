@@ -1,37 +1,148 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 May 2013 12:26:58 +0000
-Subject: Re: [patch] agp: info leak in agpioc_info_wrap()
-Message-Id: <20130531122658.GT23987@mwanda>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Wed, 08 May 2013 16:08:43 +0000
+Subject: build regressions 2013-05-08
+Message-Id: <518a788b.ca0vLGmIqekvFp0n%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130413091611.GA11215@elgon.mountain>
-In-Reply-To: <20130413091611.GA11215@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Ping?
+[errors]
+ad5064.c:(.text+0x27bea1): undefined reference to `i2c_master_send'
+gpio-mcp23s08.c:(.text+0x51c8): undefined reference to `i2c_smbus_write_word_data'
+gpio-mcp23s08.c:(.text+0x51fe): undefined reference to `i2c_smbus_read_word_data'
+gpio-mcp23s08.c:(.text+0x52e0): undefined reference to `i2c_smbus_write_byte_data'
+gpio-mcp23s08.c:(.text+0x5317): undefined reference to `i2c_smbus_read_byte_data'
+(.text+0x6c995): undefined reference to `regmap_init_i2c'
+pwc-if.c:(.text+0x2d980f): undefined reference to `usb_string'
+pwc-if.c:(.text+0x2d9ea9): undefined reference to `usb_ifnum_to_if'
+pwc-if.c:(.text+0x2d9eb8): undefined reference to `usb_altnum_to_altsetting'
+hdpvr-video.c:(.text+0x2dfae4): undefined reference to `usb_bulk_msg'
+bq27x00_battery.c:(.text+0x1e8add): undefined reference to `i2c_transfer'
+bq27x00_battery.c:(.init.text+0x10fc5): undefined reference to `i2c_register_driver'
+bq27x00_battery.c:(.exit.text+0x1903): undefined reference to `i2c_del_driver'
+(.text+0x162a0a): undefined reference to `ehci_init_driver'
+usbvision-core.c:(.text+0x671740): undefined reference to `usb_submit_urb'
+usbvision-core.c:(.text+0x672aa4): undefined reference to `usb_submit_urb'
+(.text+0x675231): undefined reference to `usb_control_msg'
+(.text+0x675376): undefined reference to `usb_control_msg'
+(.text+0x6757a6): undefined reference to `usb_control_msg'
+(.text+0x67631d): undefined reference to `usb_control_msg'
+(.text+0x676c0b): undefined reference to `usb_control_msg'
+(.text+0x67755d): undefined reference to `usb_set_interface'
+(.text+0x6777a6): undefined reference to `usb_alloc_urb'
+(.text+0x6777dd): undefined reference to `usb_alloc_coherent'
+(.text+0x6778c2): undefined reference to `usb_submit_urb'
+(.text+0x677ab9): undefined reference to `usb_kill_urb'
+(.text+0x677af9): undefined reference to `usb_free_coherent'
+(.text+0x677b12): undefined reference to `usb_free_urb'
+(.text+0x677ba5): undefined reference to `usb_set_interface'
+usbvision-video.c:(.text+0x67afa5): undefined reference to `usb_set_interface'
+usbvision-i2c.c:(.text+0x67b82a): undefined reference to `usb_control_msg'
+usbvision-video.c:(.init.text+0x20131): undefined reference to `usb_register_driver'
+usbvision-video.c:(.text.unlikely+0x8166): undefined reference to `usb_free_urb'
+usbvision-video.c:(.exit.text+0x468e): undefined reference to `usb_deregister'
+usbvision-video.c:(.devinit.text+0x4e8db): undefined reference to `usb_get_dev'
+usbvision-video.c:(.devinit.text+0x4ebcd): undefined reference to `usb_alloc_urb'
+usbvision-video.c:(.devexit.text+0x8317): undefined reference to `usb_put_dev'
+tuner-core.c:(.text+0x70c374): undefined reference to `microtune_attach'
+tuner-core.c:(.text+0x70c4dc): undefined reference to `simple_tuner_attach'
+tuner-core.c:(.text+0x70c55f): undefined reference to `simple_tuner_attach'
+tuner-core.c:(.text+0x70c624): undefined reference to `tda9887_attach'
+tuner-core.c:(.text+0x70c849): undefined reference to `simple_tuner_attach'
+tea575x-tuner.c:(.text+0x3127c): undefined reference to `video_devdata'
+tea575x-tuner.c:(.text+0x312b9): undefined reference to `video_devdata'
+tea575x-tuner.c:(.text+0x312e9): undefined reference to `video_devdata'
+tea575x-tuner.c:(.text+0x31317): undefined reference to `video_devdata'
+tea575x-tuner.c:(.text+0x314ed): undefined reference to `video_devdata'
+(.text+0x319b8): undefined reference to `__video_register_device'
+(.text+0x31aca): undefined reference to `video_unregister_device'
+sound/built-in.o:(.rodata+0x4030): undefined reference to `video_ioctl2'
+(.text+0x314b7): undefined reference to `v4l2_ctrl_handler_free'
+(.text+0x31bf0): undefined reference to `v4l2_ctrl_new_std'
+(.text+0x31c40): undefined reference to `v4l2_ctrl_handler_setup'
+(.text+0x31cb6): undefined reference to `v4l2_ctrl_handler_free'
+(.text+0x31cd6): undefined reference to `v4l2_ctrl_handler_free'
+sound/built-in.o:(.rodata+0x4108): undefined reference to `video_device_release_empty'
+sound/built-in.o:(.rodata+0x400c): undefined reference to `v4l2_ctrl_poll'
+sound/built-in.o:(.rodata+0x4020): undefined reference to `v4l2_fh_open'
+sound/built-in.o:(.rodata+0x4024): undefined reference to `v4l2_fh_release'
+sound/built-in.o:(.rodata+0x41c0): undefined reference to `v4l2_ctrl_log_status'
+sound/built-in.o:(.rodata+0x41f4): undefined reference to `v4l2_ctrl_subscribe_event'
+sound/built-in.o:(.rodata+0x41f8): undefined reference to `v4l2_event_unsubscribe'
+(.text+0x339dc): undefined reference to `v4l2_ctrl_handler_init_class'
+arch/mips/include/asm/dma-mapping.h:5:31: fatal error: asm/dma-coherence.h: No such file or directory
+arch/mips/mm/c-r4k.c:36:31: fatal error: asm/dma-coherence.h: No such file or directory
+arch/parisc/mm/init.c:1093:2: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:2: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+arch/parisc/mm/init.c:1093:1: error: 'irq_cpustat_t' has no member named 'irq_tlb_count'
+(.text+0x48e7): undefined reference to `hash_digest_size'
+(.text+0x52fd): undefined reference to `hash_algo_name'
+(.text+0x5327): undefined reference to `hash_algo_name'
+(.text+0x54c4): undefined reference to `hash_algo_name'
+(.text+0x54e8): undefined reference to `hash_algo_name'
+(.text+0x17b09f): undefined reference to `usb_gadget_unmap_request'
+gadget.c:(.text+0x17c02d): undefined reference to `usb_gadget_unmap_request'
+gadget.c:(.text+0x17c1e3): undefined reference to `usb_gadget_map_request'
+(.text+0x17e028): undefined reference to `usb_add_gadget_udc'
+(.text+0x17e3b1): undefined reference to `usb_del_gadget_udc'
+ep0.c:(.text+0x17e98b): undefined reference to `usb_gadget_map_request'
+ep0.c:(.text+0x17ea5e): undefined reference to `usb_gadget_map_request'
+gadget.c:(.text+0x166520): undefined reference to `usb_gadget_set_state'
+ep0.c:(.text+0x169d90): undefined reference to `usb_gadget_set_state'
+ep0.c:(.text+0x169daa): undefined reference to `usb_gadget_set_state'
+ep0.c:(.text+0x169e52): undefined reference to `usb_gadget_set_state'
+ep0.c:(.text+0x169ef6): undefined reference to `usb_gadget_set_state'
+ad5380.c:(.devinit.text+0xb2de): undefined reference to `devm_regmap_init_i2c'
+gdm_sdio.c:(.text+0xdc869): undefined reference to `sdio_claim_host'
+gdm_sdio.c:(.text+0xdc871): undefined reference to `sdio_release_irq'
+gdm_sdio.c:(.text+0xdc879): undefined reference to `sdio_disable_func'
+gdm_sdio.c:(.text+0xdc881): undefined reference to `sdio_release_host'
+gdm_sdio.c:(.text+0xdca69): undefined reference to `sdio_claim_host'
+gdm_sdio.c:(.text+0xdca71): undefined reference to `sdio_enable_func'
+gdm_sdio.c:(.text+0xdca80): undefined reference to `sdio_claim_irq'
+gdm_sdio.c:(.text+0xdcc29): undefined reference to `sdio_writeb'
+gdm_sdio.c:(.text+0xdcc31): undefined reference to `sdio_release_host'
+gdm_sdio.c:(.text+0xdceb2): undefined reference to `sdio_claim_host'
+gdm_sdio.c:(.text+0xdcee1): undefined reference to `sdio_release_host'
+gdm_sdio.c:(.text+0xdcf0e): undefined reference to `sdio_memcpy_toio'
+gdm_sdio.c:(.text+0xdcf44): undefined reference to `sdio_memcpy_toio'
+gdm_sdio.c:(.text+0xdcf9a): undefined reference to `sdio_readb'
+gdm_sdio.c:(.text+0xdcfe2): undefined reference to `sdio_writeb'
+gdm_sdio.c:(.text+0xdcff5): undefined reference to `sdio_memcpy_fromio'
+gdm_sdio.c:(.text+0xdd080): undefined reference to `sdio_memcpy_fromio'
+gdm_sdio.c:(.text+0xdd18e): undefined reference to `sdio_writeb'
+gdm_sdio.c:(.text+0xdd26b): undefined reference to `sdio_memcpy_fromio'
+sdio_boot.c:(.text+0xddabb): undefined reference to `sdio_memcpy_toio'
+sdio_boot.c:(.text+0xddb1a): undefined reference to `sdio_readb'
+sdio_boot.c:(.text+0xddb30): undefined reference to `sdio_memcpy_fromio'
+sdio_boot.c:(.text+0xddb55): undefined reference to `sdio_writeb'
+sdio_boot.c:(.text+0xddb68): undefined reference to `sdio_writeb'
+gdm_sdio.c:(.init.text+0x934f): undefined reference to `sdio_register_driver'
+gdm_sdio.c:(.exit.text+0xfe8): undefined reference to `sdio_unregister_driver'
+samsung-laptop.c:(.init.text+0x11d16): undefined reference to `acpi_video_unregister'
 
-regards,
-dan carpenter
+[warnings]
+WARNING: drivers/built-in.o(.text+0x3b8a3): Section mismatch in reference from the function acpi_ac_add() to the variable .init.data:ac_dmi_table
 
-On Sat, Apr 13, 2013 at 12:16:11PM +0300, Dan Carpenter wrote:
-> On 64 bit systems the agp_info struct has a hole between ->agp_mode and
-> ->aper_base.  We need to clear it to avoid leaking stack information to
-> userspace.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/char/agp/frontend.c b/drivers/char/agp/frontend.c
-> index 2e04433..3fbce33 100644
-> --- a/drivers/char/agp/frontend.c
-> +++ b/drivers/char/agp/frontend.c
-> @@ -729,6 +729,7 @@ static int agpioc_info_wrap(struct agp_file_private *priv, void __user *arg)
->  
->  	agp_copy_info(agp_bridge, &kerninfo);
->  
-> +	memset(&userinfo, 0, sizeof(userinfo));
->  	userinfo.version.major = kerninfo.version.major;
->  	userinfo.version.minor = kerninfo.version.minor;
->  	userinfo.bridge_id = kerninfo.device->vendor |
+[sparse]
+block/blk-mq-tag.c:476:19: sparse: incorrect type in argument 1 (different address spaces)
+drivers/block/mtip32xx/mtip32xx.c:3473:22: sparse: symbol 'mtip_map_queue' was not declared. Should it be static?
+drivers/gpu/drm/radeon/radeon_prime.c:95:6: sparse: symbol 'radeon_gem_prime_unpin' was not declared. Should it be static?
+drivers/gpu/drm/radeon/radeon_prime.c:113:27: sparse: symbol 'radeon_gem_prime_res_obj' was not declared. Should it be static?
+
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
