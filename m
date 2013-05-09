@@ -1,79 +1,54 @@
-From: strnape1@fel.cvut.cz
-Date: Wed, 08 May 2013 21:03:08 +0000
-Subject: [PATCH] scripts: Coccinelle script for pci_free_consistent()
-Message-Id: <20130508230308.Horde.hkDwg5wWGGBzmzKnqIjUhg1@wimap.feld.cvut.cz>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Thu, 09 May 2013 20:39:26 +0000
+Subject: [PATCH] bcache: Fix incompatible pointer type warning
+Message-Id: <1368131966-17512-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130428190457.Horde.NTwcWjfi51YkygsVUIuvrA7@wimap.feld.cvut.cz>
-In-Reply-To: <20130428190457.Horde.NTwcWjfi51YkygsVUIuvrA7@wimap.feld.cvut.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr, mmarek@suse.cz, julia.lawall@lip6.fr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: koverstreet@google.com, neilb@suse.de
+Cc: linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-Created coccinelle script for reporting missing pci_free_consistent() calls.
+The function pointer release in struct block_device_operations
+should point to functions declared as void.
 
-Signed-off-by: Petr Strnad <strnape1@fel.cvut.cz>
+Sparse warnings:
+
+drivers/md/bcache/super.c:656:27: warning:
+	incorrect type in initializer (different base types)
+	drivers/md/bcache/super.c:656:27:
+	expected void ( *release )( ... )
+	drivers/md/bcache/super.c:656:27:
+	got int ( static [toplevel] *<noident> )( ... )
+
+drivers/md/bcache/super.c:656:2: warning:
+	initialization from incompatible pointer type [enabled by default]
+
+drivers/md/bcache/super.c:656:2: warning:
+	(near initialization for ‘bcache_ops.release’) [enabled by default]
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-diff --git a/scripts/coccinelle/free/pci_free_consistent.cocci  
-b/scripts/coccinelle/free/pci_free_consistent.cocci
-new file mode 100644
-index 0000000..43600cc
---- /dev/null
-+++ b/scripts/coccinelle/free/pci_free_consistent.cocci
-@@ -0,0 +1,52 @@
-+/// Find missing pci_free_consistent for every pci_alloc_consistent.
-+///
-+// Confidence: Moderate
-+// Copyright: (C) 2013 Petr Strnad.  GPLv2.
-+// URL: http://coccinelle.lip6.fr/
-+// Keywords: pci_free_consistent, pci_alloc_consistent
-+// Options: --no-includes --include-headers
-+
-+virtual report
-+virtual org
-+
-+@search@
-+local idexpression id;
-+expression x,y,z,e;
-+position p1,p2;
-+type T;
-+@@
-+
-+id = pci_alloc_consistent@p1(x,y,&z)
-+... when != e = id
-+if (id = NULL || ...) { ... return ...; }
-+... when != pci_free_consistent(x,y,id,z)
-+    when != if (id) { ... pci_free_consistent(x,y,id,z) ... }
-+    when != if (y) { ... pci_free_consistent(x,y,id,z) ... }
-+    when != e = (T)id
-+    when exists
-+(
-+return 0;
-+|
-+return 1;
-+|
-+return id;
-+|
-+return@p2 ...;
-+)
-+
-+@script:python depends on report@
-+p1 << search.p1;
-+p2 << search.p2;
-+@@
-+
-+msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
-line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
-+coccilib.report.print_report(p2[0],msg)
-+
-+@script:python depends on org@
-+p1 << search.p1;
-+p2 << search.p2;
-+@@
-+
-+msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
-line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
-+cocci.print_main(msg,p1)
-+cocci.print_secs("",p2)
+ drivers/md/bcache/super.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 76c7f6c..938bbff 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -637,11 +637,10 @@ static int open_dev(struct block_device *b, fmode_t mode)
+ 	return 0;
+ }
+ 
+-static int release_dev(struct gendisk *b, fmode_t mode)
++static void release_dev(struct gendisk *b, fmode_t mode)
+ {
+ 	struct bcache_device *d = b->private_data;
+ 	closure_put(&d->cl);
+-	return 0;
+ }
+ 
+ static int ioctl_dev(struct block_device *b, fmode_t mode,
+-- 
+1.7.10.4
 
