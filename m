@@ -1,99 +1,49 @@
-From: Chen Gang <gang.chen@asianux.com>
-Date: Wed, 29 May 2013 07:47:09 +0000
-Subject: Re: [PATCH v2] arch: s390: appldata: using strncpy() and strnlen() instead of sprintf()
-Message-Id: <51A5B27D.2050702@asianux.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 May 2013 14:59:50 +0000
+Subject: [patch -resend] NVMe: check for integer overflow in nvme_map_user_pages()
+Message-Id: <20130513145950.GA21239@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <51A48EE9.2040401@asianux.com> <51A32D81.2010105@asianux.com> <51A2CC07.5010100@asianux.com> <CAMuHMdXTW3QOxfAfqQXdbSpP4R83srFf7eMfu5fA-75S_Mujsg@mail.gmail.com> <4310.1369736553@warthog.procyon.org.uk> <5895.1369743429@warthog.procyon.org.uk> <51A559CB.3020804@asianux.com> <20130529063020.GG23932@mwanda> <51A5AE3D.5080106@asianux.com>
-In-Reply-To: <51A5AE3D.5080106@asianux.com>
+In-Reply-To: <100D68C7BA14664A8938383216E40DE027F80EAB@fmsmsx111.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Howells <dhowells@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, jang@linux.vnet.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On 05/29/2013 03:29 PM, Chen Gang wrote:
-> On 05/29/2013 02:30 PM, Dan Carpenter wrote:
->> On Wed, May 29, 2013 at 09:28:43AM +0800, Chen Gang wrote:
->>
->>>> diff --git a/arch/s390/appldata/appldata_base.c b/arch/s390/appldata/appldata_base.c
->>>> index bae0f40..27f200d 100644
->>>> --- a/arch/s390/appldata/appldata_base.c
->>>> +++ b/arch/s390/appldata/appldata_base.c
->>>> @@ -212,10 +212,9 @@ appldata_timer_handler(ctl_table *ctl, int write,
->>>>  		return 0;
->>>>  	}
->>>>  	if (!write) {
->>>> -		len = sprintf(buf, appldata_timer_active ? "1\n" : "0\n");
->>>> -		if (len > *lenp)
->>>> -			len = *lenp;
->>>> -		if (copy_to_user(buffer, buf, len))
->>>> +		if (copy_to_user(buffer,
->>>> +				 appldata_timer_active ? "1\n" : "0\n",
->>>> +				 min(2, *lenp))
->> I don't have a cross compiler set up, but this will generate a
->> warning, I think.  min_t() is needed.
-> 
-> Yes, it even can not pass compiling: need additional ')' for 'if'.
-> 
-> The new fix is below, (for pass compiling, also need fix the incorrect
-> declaration, which I have already sent an individual patch for it).
-> 
+You need to have CAP_SYS_ADMIN to trigger this overflow but it makes the
+static checkers complain so we should fix it.  The worry is that
+"length" comes from copy_from_user() so we need to check that "length +
+offset" can't overflow.
 
-Excuse me, the diff v2 is word wrap, if really need it, please edit it.
+I also changed the min_t() cast to be unsigned instead of signed.  Now
+that we cap "length" to INT_MAX it doesn't make a difference, but it's a
+little easier for reviewers to know that large values aren't cast to
+negative.
 
-If necessary, I will send the related patch for it.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Resending to the linux-nvme@lists.infradead.org email address.
 
-Thanks.
+diff --git a/drivers/block/nvme-core.c b/drivers/block/nvme-core.c
+index 8efdfaa..4376375 100644
+--- a/drivers/block/nvme-core.c
++++ b/drivers/block/nvme-core.c
+@@ -1206,7 +1206,7 @@ struct nvme_iod *nvme_map_user_pages(struct nvme_dev *dev, int write,
+ 
+ 	if (addr & 3)
+ 		return ERR_PTR(-EINVAL);
+-	if (!length)
++	if (!length || length > INT_MAX - PAGE_SIZE)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	offset = offset_in_page(addr);
+@@ -1227,7 +1227,8 @@ struct nvme_iod *nvme_map_user_pages(struct nvme_dev *dev, int write,
+ 	sg_init_table(sg, count);
+ 	for (i = 0; i < count; i++) {
+ 		sg_set_page(&sg[i], pages[i],
+-				min_t(int, length, PAGE_SIZE - offset), offset);
++			    min_t(unsigned, length, PAGE_SIZE - offset),
++			    offset);
+ 		length -= (PAGE_SIZE - offset);
+ 		offset = 0;
+ 	}
 
-> -----------------------------diff v2 begin------------------------------
-> 
-> diff --git a/arch/s390/appldata/appldata_base.c
-> b/arch/s390/appldata/appldata_base.c
-> index bae0f40..b0915b4 100644
-> --- a/arch/s390/appldata/appldata_base.c
-> +++ b/arch/s390/appldata/appldata_base.c
-> @@ -212,10 +212,9 @@ appldata_timer_handler(ctl_table *ctl, int write,
->  		return 0;
->  	}
->  	if (!write) {
-> -		len = sprintf(buf, appldata_timer_active ? "1\n" : "0\n");
-> -		if (len > *lenp)
-> -			len = *lenp;
-> -		if (copy_to_user(buffer, buf, len))
-> +		if (copy_to_user(buffer,
-> +				 appldata_timer_active ? "1\n" : "0\n",
-> +				 min_t(size_t, 2, *lenp)))
->  			return -EFAULT;
->  		goto out;
->  	}
-> diff --git a/arch/s390/include/asm/pgtable.h
-> b/arch/s390/include/asm/pgtable.h
-> index 172209c..ed88890 100644
-> --- a/arch/s390/include/asm/pgtable.h
-> +++ b/arch/s390/include/asm/pgtable.h
-> @@ -1348,7 +1348,7 @@ static inline pmd_t pmd_mkwrite(pmd_t pmd)
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> 
->  #define __HAVE_ARCH_PGTABLE_DEPOSIT
-> -extern void pgtable_trans_huge_deposit(struct mm_struct *mm, , pmd_t *pmdp,
-> +extern void pgtable_trans_huge_deposit(struct mm_struct *mm, pmd_t *pmdp,
->  				       pgtable_t pgtable);
-> 
->  #define __HAVE_ARCH_PGTABLE_WITHDRAW
-> 
-> 
-> -----------------------------diff v2 end--------------------------------
-> 
-> 
-> For cross compiler, I use fedora 16/17, can yum update binutils-*
-> to get many platform cross-compilers (s390, powerpc, arm, xtensa, ...).
-> 
-> 
-> Thanks.
-> 
-
-
--- 
-Chen Gang
-
-Asianux Corporation
