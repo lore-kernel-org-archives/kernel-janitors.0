@@ -1,33 +1,29 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Date: Fri, 31 May 2013 22:39:32 +0000
-Subject: Re: [PATCH] usb: musb: Fix format specifier warning
-Message-Id: <51A926A4.5010800@infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 May 2013 15:00:42 +0000
+Subject: [patch] MAINTAINERS: update NVM EXPRESS DRIVER file list
+Message-Id: <20130513150042.GB21239@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1370031778-25965-1-git-send-email-emilgoode@gmail.com> <CAHp75VciHQKcyj-ANLdg=mg2C71zn=09Eentf22q+otGu=rp3w@mail.gmail.com>
-In-Reply-To: <CAHp75VciHQKcyj-ANLdg=mg2C71zn=09Eentf22q+otGu=rp3w@mail.gmail.com>
+In-Reply-To: <100D68C7BA14664A8938383216E40DE027F80EAB@fmsmsx111.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Emil Goode <emilgoode@gmail.com>, balbi@ti.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, USB <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 05/31/13 15:34, Andy Shevchenko wrote:
-> On Fri, May 31, 2013 at 11:22 PM, Emil Goode <emilgoode@gmail.com> wrote:
->> This patch fixes a format specifier warning. dma_addr_t can be either
->> u32 or u64 so we should cast to the largest type and change the format
->> specifier to %llx.
-> 
-> dma_addr_t is derived from phys_addr_t, thus you may use %pa specifier
-> which is available from v3.8(?).
-> 
-> Something like this:
-> dma_addr_t src_addr;
-> dev_dbg(dev, "DMA addr: %pa\n", src_addr);
+There isn't an nvme.c file any more.  It has been split into multiple
+files.
 
-Isn't that:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-  deb_dbg(dev, "DMA addr: %pa\n", &src_addr);
-
-
--- 
-~Randy
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8f190f5..97ec343 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5747,7 +5747,7 @@ M:	Matthew Wilcox <willy@linux.intel.com>
+ L:	linux-nvme@lists.infradead.org
+ T:	git git://git.infradead.org/users/willy/linux-nvme.git
+ S:	Supported
+-F:	drivers/block/nvme.c
++F:	drivers/block/nvme*
+ F:	include/linux/nvme.h
+ 
+ OMAP SUPPORT
