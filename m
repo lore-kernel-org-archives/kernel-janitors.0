@@ -1,51 +1,46 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 05 May 2013 14:23:43 +0000
-Subject: Re: [patch] staging: ft1000: add a range check in ft1000_ioctl()
-Message-Id: <20130505142256.GC4686@mwanda>
+Date: Tue, 14 May 2013 12:02:44 +0000
+Subject: [patch] ASoC: wm_adsp: memory leak in wm_adsp_create_control()
+Message-Id: <20130514120244.GA27826@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130503071728.GA29653@elgon.mountain>
-In-Reply-To: <20130503071728.GA29653@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
 
-On Fri, May 03, 2013 at 01:11:21PM +0530, devendra.aaru wrote:
-> On Fri, May 3, 2013 at 12:47 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > msglen comes from get_user() so we need to check that it's not too
-> > large.
-> >
-> > The first element of "pioctl_dpram" is a short which holds the size of
-> > the data the user wants.  I have chosen a limit which lets us fill the
-> > rest of the struct.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > msglen is also apparently network endian?  My guess is that we should
-> > just delete this code instead of trying to fix it.
-> >
-> > diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_debug.c b/drivers/staging/ft1000/ft1000-usb/ft1000_debug.c
-> > index 3251d2e..e0056c9 100644
-> > --- a/drivers/staging/ft1000/ft1000-usb/ft1000_debug.c
-> > +++ b/drivers/staging/ft1000/ft1000-usb/ft1000_debug.c
-> > @@ -703,6 +703,8 @@ static long ft1000_ioctl (struct file *file, unsigned int command,
-> >                         break;
-> >                 msglen = htons(msglen);
-> >                  //DEBUG("FT1000:ft1000_ioctl:msg length = %x\n", msglen);
-> > +               if (msglen > sizeof(*pioctl_dpram) - sizeof(short))
-> > +                       msglen = sizeof(*pioctl_dpram) - sizeof(short);
-> 
-> doing this may be wrong too? because its in network endian format.
-> does deleting msglen = htons(msglen)
-> and adding your change makes sense?
+There are two return paths which don't kfree(name).
 
-Yeah.  Probably my patch doesn't make sense by itself.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-It's hard to say what the right thing is here without having a way
-to test it or knowing what userspace does.
-
-I do suspect that the right thing is to just delete this code.
-
-regards,
-dan carpenter
-
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index 1378306..d715c8e 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -836,7 +836,8 @@ static int wm_adsp_create_control(struct snd_soc_codec *codec,
+ 		region_name = "ZM";
+ 		break;
+ 	default:
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_name;
+ 	}
+ 
+ 	snprintf(name, PAGE_SIZE, "DSP%d %s %x",
+@@ -847,7 +848,7 @@ static int wm_adsp_create_control(struct snd_soc_codec *codec,
+ 		if (!strcmp(ctl->name, name)) {
+ 			if (!ctl->enabled)
+ 				ctl->enabled = 1;
+-			return 0;
++			goto found;
+ 		}
+ 	}
+ 
+@@ -887,6 +888,7 @@ static int wm_adsp_create_control(struct snd_soc_codec *codec,
+ 	INIT_WORK(&ctl_work->work, wm_adsp_ctl_work);
+ 	schedule_work(&ctl_work->work);
+ 
++found:
+ 	kfree(name);
+ 
+ 	return 0;
