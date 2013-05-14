@@ -1,24 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 May 2013 06:52:25 +0000
-Subject: Re: [patch] minix: bug widening a binary "not" operation
-Message-Id: <20130530065225.GL23987@mwanda>
+From: Nathan Zimmer <nzimmer@sgi.com>
+Date: Tue, 14 May 2013 18:27:49 +0000
+Subject: [PATCH] rbtree: remove unneeded include
+Message-Id: <1368556069-194880-1-git-send-email-nzimmer@sgi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130516075148.GA7494@elgon.mountain>
- <20130529152826.043e95791122bbd39fc9d005@linux-foundation.org>
-In-Reply-To: <20130529152826.043e95791122bbd39fc9d005@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Nathan Zimmer <nzimmer@sgi.com>
 
-On Wed, May 29, 2013 at 03:28:26PM -0700, Andrew Morton wrote:
+Remove an unnecessary include to kernel.h
 
-> But we should fix it to set a good example, and to quieten
-> whatever-tool-i-suspect-you-were-using(?).
+Signed-off-by: Nathan Zimmer <nzimmer@sgi.com>
+---
+ include/linux/rbtree.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Linus wrote some Sparse patches that check for this but they haven't
-been merged yet.
+diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
+index 0022c1b..d2fdc6d 100644
+--- a/include/linux/rbtree.h
++++ b/include/linux/rbtree.h
+@@ -29,7 +29,6 @@
+ #ifndef	_LINUX_RBTREE_H
+ #define	_LINUX_RBTREE_H
+ 
+-#include <linux/kernel.h>
+ #include <linux/stddef.h>
+ 
+ struct rb_node {
+-- 
+1.8.2.1
 
-regards,
-dan carpenter
