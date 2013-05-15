@@ -1,44 +1,39 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Wed, 29 May 2013 13:37:35 +0000
-Subject: Re: [patch] pktcdvd: silence static checker warning
-Message-Id: <alpine.LNX.2.00.1305291537120.30576@pobox.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 15 May 2013 06:56:24 +0000
+Subject: [patch -resend] xen/privcmd: fix condition in privcmd_close()
+Message-Id: <20130515065624.GA20381@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130516081108.GC7494@elgon.mountain>
-In-Reply-To: <20130516081108.GC7494@elgon.mountain>
+References: <20121105064217.GA26179@elgon.mountain>
+In-Reply-To: <20121105064217.GA26179@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com, kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org
 
-On Thu, 16 May 2013, Dan Carpenter wrote:
+The parenthesis are in the wrong place so the original code is
+equivalent to:
 
-> Static checkers complain about widening the binary "not" operations here
-> because sectors are u64 and "(pd)->settings.size" is unsigned int.
-> It unintentionally clears the high 32 bits of the sector.  This means
-> that the driver won't work for devices with over 2TB of space.  Since
-> this is a DVD drive, we're unlikely to reach that limit, but we may as
-> well silence the warning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-> index 898fa74..09142c4 100644
-> --- a/drivers/block/pktcdvd.c
-> +++ b/drivers/block/pktcdvd.c
-> @@ -83,7 +83,8 @@
->  
->  #define MAX_SPEED 0xffff
->  
-> -#define ZONE(sector, pd) (((sector) + (pd)->offset) & ~((pd)->settings.size - 1))
-> +#define ZONE(sector, pd) (((sector) + (pd)->offset) & \
-> +			~(sector_t)((pd)->settings.size - 1))
->  
->  static DEFINE_MUTEX(pktcdvd_mutex);
->  static struct pktcdvd_device *pkt_devs[MAX_WRITERS];
+	if (!xen_feature(0x1)) { ...
+Or:
+        if (!xen_feature(XENFEAT_writable_descriptor_tables)) { ...
 
-Makes sense. Applied, thanks Dan.
+Which obviously was not intended.
 
--- 
-Jiri Kosina
-SUSE Labs
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I sent this last November but it was never merged.
+
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index ca2b00e..2cfc24d 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -504,7 +504,7 @@ static void privcmd_close(struct vm_area_struct *vma)
+ 	struct page **pages = vma->vm_private_data;
+ 	int numpgs = (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
+ 
+-	if (!xen_feature(XENFEAT_auto_translated_physmap || !numpgs || !pages))
++	if (!xen_feature(XENFEAT_auto_translated_physmap) || !numpgs || !pages)
+ 		return;
+ 
+ 	xen_unmap_domain_mfn_range(vma, numpgs, pages);
