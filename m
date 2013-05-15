@@ -1,130 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 15 May 2013 07:20:02 +0000
-Subject: [patch] ipg: fix an unsigned widening cast of '~' truncation issue
-Message-Id: <20130515072002.GD20381@elgon.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 15 May 2013 21:54:23 +0000
+Subject: Re: [patch] ipg: fix an unsigned widening cast of '~' truncation issue
+Message-Id: <20130515.145423.1386765446739602879.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130515072002.GD20381@elgon.mountain>
+In-Reply-To: <20130515072002.GD20381@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Francois Romieu <romieu@fr.zoreil.com>
-Cc: Sorbica Shieh <sorbica@icplus.com.tw>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: romieu@fr.zoreil.com, sorbica@icplus.com.tw, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The bug here is this code from ipg_nic_hard_start_xmit():
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 15 May 2013 10:20:02 +0300
 
-	txfd->tfc &= cpu_to_le64(~IPG_TFC_TFDDONE);
+> The bug here is this code from ipg_nic_hard_start_xmit():
+> 
+> 	txfd->tfc &= cpu_to_le64(~IPG_TFC_TFDDONE);
+> 
+> IPG_TFC_TFDDONE is 0x0000000080000000 so it's an unsigned int.  The
+> negated value is 0x7fffffff but 0xffffffff7fffffff was intended.
+> 
+> The other values in this file don't need to be changed but I did it for
+> consistency.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-IPG_TFC_TFDDONE is 0x0000000080000000 so it's an unsigned int.  The
-negated value is 0x7fffffff but 0xffffffff7fffffff was intended.
-
-The other values in this file don't need to be changed but I did it for
-consistency.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This is a static analysis patch and I can't test it.
-
-diff --git a/drivers/net/ethernet/icplus/ipg.h b/drivers/net/ethernet/icplus/ipg.h
-index 6ce0273..abb300a 100644
---- a/drivers/net/ethernet/icplus/ipg.h
-+++ b/drivers/net/ethernet/icplus/ipg.h
-@@ -195,57 +195,57 @@ enum ipg_regs {
- /* TFD data structure masks. */
- 
- /* TFDList, TFC */
--#define	IPG_TFC_RSVD_MASK			0x0000FFFF9FFFFFFF
--#define	IPG_TFC_FRAMEID				0x000000000000FFFF
--#define	IPG_TFC_WORDALIGN			0x0000000000030000
--#define	IPG_TFC_WORDALIGNTODWORD		0x0000000000000000
--#define	IPG_TFC_WORDALIGNTOWORD			0x0000000000020000
--#define	IPG_TFC_WORDALIGNDISABLED		0x0000000000030000
--#define	IPG_TFC_TCPCHECKSUMENABLE		0x0000000000040000
--#define	IPG_TFC_UDPCHECKSUMENABLE		0x0000000000080000
--#define	IPG_TFC_IPCHECKSUMENABLE		0x0000000000100000
--#define	IPG_TFC_FCSAPPENDDISABLE		0x0000000000200000
--#define	IPG_TFC_TXINDICATE			0x0000000000400000
--#define	IPG_TFC_TXDMAINDICATE			0x0000000000800000
--#define	IPG_TFC_FRAGCOUNT			0x000000000F000000
--#define	IPG_TFC_VLANTAGINSERT			0x0000000010000000
--#define	IPG_TFC_TFDDONE				0x0000000080000000
--#define	IPG_TFC_VID				0x00000FFF00000000
--#define	IPG_TFC_CFI				0x0000100000000000
--#define	IPG_TFC_USERPRIORITY			0x0000E00000000000
-+#define	IPG_TFC_RSVD_MASK			0x0000FFFF9FFFFFFFULL
-+#define	IPG_TFC_FRAMEID				0x000000000000FFFFULL
-+#define	IPG_TFC_WORDALIGN			0x0000000000030000ULL
-+#define	IPG_TFC_WORDALIGNTODWORD		0x0000000000000000ULL
-+#define	IPG_TFC_WORDALIGNTOWORD			0x0000000000020000ULL
-+#define	IPG_TFC_WORDALIGNDISABLED		0x0000000000030000ULL
-+#define	IPG_TFC_TCPCHECKSUMENABLE		0x0000000000040000ULL
-+#define	IPG_TFC_UDPCHECKSUMENABLE		0x0000000000080000ULL
-+#define	IPG_TFC_IPCHECKSUMENABLE		0x0000000000100000ULL
-+#define	IPG_TFC_FCSAPPENDDISABLE		0x0000000000200000ULL
-+#define	IPG_TFC_TXINDICATE			0x0000000000400000ULL
-+#define	IPG_TFC_TXDMAINDICATE			0x0000000000800000ULL
-+#define	IPG_TFC_FRAGCOUNT			0x000000000F000000ULL
-+#define	IPG_TFC_VLANTAGINSERT			0x0000000010000000ULL
-+#define	IPG_TFC_TFDDONE				0x0000000080000000ULL
-+#define	IPG_TFC_VID				0x00000FFF00000000ULL
-+#define	IPG_TFC_CFI				0x0000100000000000ULL
-+#define	IPG_TFC_USERPRIORITY			0x0000E00000000000ULL
- 
- /* TFDList, FragInfo */
--#define	IPG_TFI_RSVD_MASK			0xFFFF00FFFFFFFFFF
--#define	IPG_TFI_FRAGADDR			0x000000FFFFFFFFFF
--#define	IPG_TFI_FRAGLEN				0xFFFF000000000000LL
-+#define	IPG_TFI_RSVD_MASK			0xFFFF00FFFFFFFFFFULL
-+#define	IPG_TFI_FRAGADDR			0x000000FFFFFFFFFFULL
-+#define	IPG_TFI_FRAGLEN				0xFFFF000000000000ULL
- 
- /* RFD data structure masks. */
- 
- /* RFDList, RFS */
--#define	IPG_RFS_RSVD_MASK			0x0000FFFFFFFFFFFF
--#define	IPG_RFS_RXFRAMELEN			0x000000000000FFFF
--#define	IPG_RFS_RXFIFOOVERRUN			0x0000000000010000
--#define	IPG_RFS_RXRUNTFRAME			0x0000000000020000
--#define	IPG_RFS_RXALIGNMENTERROR		0x0000000000040000
--#define	IPG_RFS_RXFCSERROR			0x0000000000080000
--#define	IPG_RFS_RXOVERSIZEDFRAME		0x0000000000100000
--#define	IPG_RFS_RXLENGTHERROR			0x0000000000200000
--#define	IPG_RFS_VLANDETECTED			0x0000000000400000
--#define	IPG_RFS_TCPDETECTED			0x0000000000800000
--#define	IPG_RFS_TCPERROR			0x0000000001000000
--#define	IPG_RFS_UDPDETECTED			0x0000000002000000
--#define	IPG_RFS_UDPERROR			0x0000000004000000
--#define	IPG_RFS_IPDETECTED			0x0000000008000000
--#define	IPG_RFS_IPERROR				0x0000000010000000
--#define	IPG_RFS_FRAMESTART			0x0000000020000000
--#define	IPG_RFS_FRAMEEND			0x0000000040000000
--#define	IPG_RFS_RFDDONE				0x0000000080000000
--#define	IPG_RFS_TCI				0x0000FFFF00000000
-+#define	IPG_RFS_RSVD_MASK			0x0000FFFFFFFFFFFFULL
-+#define	IPG_RFS_RXFRAMELEN			0x000000000000FFFFULL
-+#define	IPG_RFS_RXFIFOOVERRUN			0x0000000000010000ULL
-+#define	IPG_RFS_RXRUNTFRAME			0x0000000000020000ULL
-+#define	IPG_RFS_RXALIGNMENTERROR		0x0000000000040000ULL
-+#define	IPG_RFS_RXFCSERROR			0x0000000000080000ULL
-+#define	IPG_RFS_RXOVERSIZEDFRAME		0x0000000000100000ULL
-+#define	IPG_RFS_RXLENGTHERROR			0x0000000000200000ULL
-+#define	IPG_RFS_VLANDETECTED			0x0000000000400000ULL
-+#define	IPG_RFS_TCPDETECTED			0x0000000000800000ULL
-+#define	IPG_RFS_TCPERROR			0x0000000001000000ULL
-+#define	IPG_RFS_UDPDETECTED			0x0000000002000000ULL
-+#define	IPG_RFS_UDPERROR			0x0000000004000000ULL
-+#define	IPG_RFS_IPDETECTED			0x0000000008000000ULL
-+#define	IPG_RFS_IPERROR				0x0000000010000000ULL
-+#define	IPG_RFS_FRAMESTART			0x0000000020000000ULL
-+#define	IPG_RFS_FRAMEEND			0x0000000040000000ULL
-+#define	IPG_RFS_RFDDONE				0x0000000080000000ULL
-+#define	IPG_RFS_TCI				0x0000FFFF00000000ULL
- 
- /* RFDList, FragInfo */
--#define	IPG_RFI_RSVD_MASK			0xFFFF00FFFFFFFFFF
--#define	IPG_RFI_FRAGADDR			0x000000FFFFFFFFFF
--#define	IPG_RFI_FRAGLEN				0xFFFF000000000000LL
-+#define	IPG_RFI_RSVD_MASK			0xFFFF00FFFFFFFFFFULL
-+#define	IPG_RFI_FRAGADDR			0x000000FFFFFFFFFFULL
-+#define	IPG_RFI_FRAGLEN				0xFFFF000000000000ULL
- 
- /* I/O Register masks. */
- 
+Applied.
