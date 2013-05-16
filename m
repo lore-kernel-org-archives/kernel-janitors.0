@@ -1,20 +1,64 @@
-From: Matthew Wilcox <willy@linux.intel.com>
-Date: Fri, 17 May 2013 13:41:20 +0000
-Subject: Re: [patch] MAINTAINERS: update NVM EXPRESS DRIVER file list
-Message-Id: <20130517134120.GS6057@linux.intel.com>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Thu, 16 May 2013 16:06:20 +0000
+Subject: [PATCH] staging: lustre: fix return type of lo_release.
+Message-Id: <1368720380-20974-1-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <100D68C7BA14664A8938383216E40DE027F80EAB@fmsmsx111.amr.corp.intel.com>
- <20130513150042.GB21239@elgon.mountain>
-In-Reply-To: <20130513150042.GB21239@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org, andreas.dilger@intel.com, tao.peng@emc.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc: Cyril Roelandt <tipecaml@gmail.com>
 
-On Mon, May 13, 2013 at 06:00:42PM +0300, Dan Carpenter wrote:
-> There isn't an nvme.c file any more.  It has been split into multiple
-> files.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The return type of block_device_operations.release() changed to void in commit
+db2a144b.
 
-Applied
+Found with the following Coccinelle patch:
+<smpl>
+@has_release_func@
+identifier i;
+identifier release_func;
+@@
+struct block_device_operations i = {
+ .release = release_func
+};
+
+@depends on has_release_func@
+identifier has_release_func.release_func;
+@@
+- int
++ void
+release_func(...) {
+...
+- return ...;
+}
+</smpl>
+
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ drivers/staging/lustre/lustre/llite/lloop.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/llite/lloop.c b/drivers/staging/lustre/lustre/llite/lloop.c
+index b72f257..9d4c17e 100644
+--- a/drivers/staging/lustre/lustre/llite/lloop.c
++++ b/drivers/staging/lustre/lustre/llite/lloop.c
+@@ -596,15 +596,13 @@ static int lo_open(struct block_device *bdev, fmode_t mode)
+ 	return 0;
+ }
+ 
+-static int lo_release(struct gendisk *disk, fmode_t mode)
++static void lo_release(struct gendisk *disk, fmode_t mode)
+ {
+ 	struct lloop_device *lo = disk->private_data;
+ 
+ 	mutex_lock(&lo->lo_ctl_mutex);
+ 	--lo->lo_refcnt;
+ 	mutex_unlock(&lo->lo_ctl_mutex);
+-
+-	return 0;
+ }
+ 
+ /* lloop device node's ioctl function. */
+-- 
+1.7.10.4
+
