@@ -1,43 +1,37 @@
-From: Corey Minyard <tcminyard@gmail.com>
-Date: Fri, 31 May 2013 12:58:24 +0000
-Subject: Re: [patch v2] ipmi: info leak in compat_ipmi_ioctl()
-Message-Id: <51A89E70.3010703@acm.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 May 2013 07:53:30 +0000
+Subject: [patch] xfs: bug widening binary "not" operation
+Message-Id: <20130516075330.GB7494@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130531124658.GU23987@mwanda>
-In-Reply-To: <20130531124658.GU23987@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Myers <bpm@sgi.com>
+Cc: Alex Elder <elder@kernel.org>, kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
 
-On 05/31/2013 07:46 AM, Dan Carpenter wrote:
-> On x86_64 there is a 4 byte hole between ->recv_type and ->addr.
+The problem here is:
 
-Got it, in my tree now.  Thanks.
+	ioffset = offset & ~(rounding - 1);
 
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: fixed the changelog a little.  Also added LKML because the
-> openipmi is a moderated list (and the moderator thought my email was
-> spam).
+"offset" and "ioffset" are type xfs_off_t (__s64) and "rounding" is
+unsigned int.  The "offset & ~(rounding - 1)" clears the high 32 bits
+and which is unintentional.
 
-I apologize, the list gets a lot of spam, and I must have made a mistake.
+This is a static checker fix so I'm not sure how much difference this
+makes in real life.
 
--corey
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->
-> diff --git a/drivers/char/ipmi/ipmi_devintf.c b/drivers/char/ipmi/ipmi_devintf.c
-> index 9eb360f..8e306ac 100644
-> --- a/drivers/char/ipmi/ipmi_devintf.c
-> +++ b/drivers/char/ipmi/ipmi_devintf.c
-> @@ -810,6 +810,7 @@ static long compat_ipmi_ioctl(struct file *filep, unsigned int cmd,
->   		struct ipmi_recv   __user *precv64;
->   		struct ipmi_recv   recv64;
->   
-> +		memset(&recv64, 0, sizeof(recv64));
->   		if (get_compat_ipmi_recv(&recv64, compat_ptr(arg)))
->   			return -EFAULT;
->   
-
+diff --git a/fs/xfs/xfs_vnodeops.c b/fs/xfs/xfs_vnodeops.c
+index 1501f4f..9f557c6 100644
+--- a/fs/xfs/xfs_vnodeops.c
++++ b/fs/xfs/xfs_vnodeops.c
+@@ -1453,7 +1453,7 @@ xfs_free_file_space(
+ 	xfs_mount_t		*mp;
+ 	int			nimap;
+ 	uint			resblks;
+-	uint			rounding;
++	xfs_off_t		rounding;
+ 	int			rt;
+ 	xfs_fileoff_t		startoffset_fsb;
+ 	xfs_trans_t		*tp;
