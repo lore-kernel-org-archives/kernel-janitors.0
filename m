@@ -1,29 +1,31 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 30 May 2013 11:45:37 +0000
-Subject: Re: [Patch] Staging: winbond: Macros values enclosed in parenthesis
-Message-Id: <20130530114537.GA18245@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 May 2013 07:51:49 +0000
+Subject: [patch] minix: bug widening a binary "not" operation
+Message-Id: <20130516075148.GA7494@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <51A434EB.9070208@gmail.com>
-In-Reply-To: <51A434EB.9070208@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 28, 2013 at 10:09:07AM +0530, Harsh Kumar wrote:
-> Macros with complex values enclosed in parenthesis
+"chunk_size" is an unsigned int and "pos" is an unsigned long.  The
+"& ~(chunk_size-1)" operation clears the high 32 bits unintentionally.
 
-What does that mean?
+The ALIGN() macro does the correct thing.
 
-> -#define MTO_CNT_ANT(x)			MTO_DATA().Cnt_Ant[(x)]
-> -#define MTO_SQ_ANT(x)			MTO_DATA().SQ_Ant[(x)]
-> -#define MTO_AGING_TIMEOUT()		MTO_DATA().aging_timeout
-> +#define MTO_POWER_CHANGE_ENABLE()	(MTO_DATA().PowerChangeEnable)
-> +#define MTO_CCA_MODE()			(MTO_DATA().CCA_Mode)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-These are not "complex" values at all, this patch isn't needed,
-checkpatch needs to be fixed to not complain about it.
-
-thanks,
-
-greg k-h
+diff --git a/fs/minix/dir.c b/fs/minix/dir.c
+index a9ed6f3..09b0c96 100644
+--- a/fs/minix/dir.c
++++ b/fs/minix/dir.c
+@@ -95,7 +95,7 @@ static int minix_readdir(struct file * filp, void * dirent, filldir_t filldir)
+ 	char *name;
+ 	__u32 inumber;
+ 
+-	pos = (pos + chunk_size-1) & ~(chunk_size-1);
++	pos = ALIGN(pos, chunk_size);
+ 	if (pos >= inode->i_size)
+ 		goto done;
+ 
