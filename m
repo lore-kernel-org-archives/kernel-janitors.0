@@ -1,29 +1,20 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 May 2013 15:00:42 +0000
-Subject: [patch] MAINTAINERS: update NVM EXPRESS DRIVER file list
-Message-Id: <20130513150042.GB21239@elgon.mountain>
+From: Matthew Wilcox <willy@linux.intel.com>
+Date: Fri, 17 May 2013 13:41:20 +0000
+Subject: Re: [patch] MAINTAINERS: update NVM EXPRESS DRIVER file list
+Message-Id: <20130517134120.GS6057@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <100D68C7BA14664A8938383216E40DE027F80EAB@fmsmsx111.amr.corp.intel.com>
+References: <100D68C7BA14664A8938383216E40DE027F80EAB@fmsmsx111.amr.corp.intel.com>
+ <20130513150042.GB21239@elgon.mountain>
+In-Reply-To: <20130513150042.GB21239@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-There isn't an nvme.c file any more.  It has been split into multiple
-files.
+On Mon, May 13, 2013 at 06:00:42PM +0300, Dan Carpenter wrote:
+> There isn't an nvme.c file any more.  It has been split into multiple
+> files.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8f190f5..97ec343 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5747,7 +5747,7 @@ M:	Matthew Wilcox <willy@linux.intel.com>
- L:	linux-nvme@lists.infradead.org
- T:	git git://git.infradead.org/users/willy/linux-nvme.git
- S:	Supported
--F:	drivers/block/nvme.c
-+F:	drivers/block/nvme*
- F:	include/linux/nvme.h
- 
- OMAP SUPPORT
+Applied
