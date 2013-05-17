@@ -1,51 +1,45 @@
-From: "Anand Kumar Santhanam" <AnandKumar.Santhanam@pmcs.com>
-Date: Thu, 09 May 2013 12:51:53 +0000
-Subject: RE: [patch] [SCSI] pm80xx: remove unneeded NULL check
-Message-Id: <E5DEE6F468524847995699AD11E80885018BD7FF@BBY1EXM11.pmc_nt.nt.pmc-sierra.bc.ca>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 17 May 2013 14:09:40 +0000
+Subject: [PATCH] NVMe: Fix incompatible pointer type warnings
+Message-Id: <1368799780-2871-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <518b863d.vBepQb4eXhQYEt/W%fengguang.wu@intel.com> <20130509124813.GA5132@elgon.mountain>
-In-Reply-To: <20130509124813.GA5132@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, xjtuwjp@gmail.com
-Cc: lindar_liu@usish.com, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Commit 6a4d55146334 ("block: prep work for batch completion")
+added a struct batch_complete * as a third argument to bi_end_io.
+This patch adds the missing third argument to the nvme_bio_pair_endio
+function.
 
-Yes. I agree with your comment.
-Acked-by: anandkumar_santhanam@pmcs.com
+Sparse output:
 
-Regards
-Anand
+drivers/block/nvme-core.c: In function ‘nvme_bio_split’:
+drivers/block/nvme-core.c:483:19: warning:
+	assignment from incompatible pointer type [enabled by default]
+drivers/block/nvme-core.c:484:19: warning:
+	assignment from incompatible pointer type [enabled by default]
 
------Original Message-----
-From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
-Sent: Thursday, May 09, 2013 6:18 PM
-To: xjtuwjp@gmail.com; Anand Kumar Santhanam
-Cc: lindar_liu@usish.com; James E.J. Bottomley;
-linux-scsi@vger.kernel.org; kernel-janitors@vger.kernel.org;
-dan.carpenter@oracle.com
-Subject: [patch] [SCSI] pm80xx: remove unneeded NULL check
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/block/nvme-core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Coccinelle complains about the inconsistent NULL checking on "t".  It
-turns out the check isn't needed because we verified that "t" is
-non-NULL at the start of the function.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/pm8001/pm8001_hwi.c
-b/drivers/scsi/pm8001/pm8001_hwi.c
-index 69dd49c..683df42 100644
---- a/drivers/scsi/pm8001/pm8001_hwi.c
-+++ b/drivers/scsi/pm8001/pm8001_hwi.c
-@@ -3740,7 +3740,7 @@ int pm8001_mpi_task_abort_resp(struct
-pm8001_hba_info *pm8001_ha, void *piomb)
- 	pm8001_ccb_task_free(pm8001_ha, t, ccb, tag);
- 	mb();
+diff --git a/drivers/block/nvme-core.c b/drivers/block/nvme-core.c
+index 8efdfaa..9380133 100644
+--- a/drivers/block/nvme-core.c
++++ b/drivers/block/nvme-core.c
+@@ -413,7 +413,8 @@ struct nvme_bio_pair {
+ 	atomic_t cnt;
+ };
  
--	if ((pm8001_dev->id & NCQ_ABORT_ALL_FLAG) && t)	{
-+	if (pm8001_dev->id & NCQ_ABORT_ALL_FLAG) {
- 		pm8001_tag_free(pm8001_ha, tag);
- 		sas_free_task(t);
- 		/* clear the flag */
+-static void nvme_bio_pair_endio(struct bio *bio, int err)
++static void nvme_bio_pair_endio(struct bio *bio, int err,
++						struct batch_complete *batch)
+ {
+ 	struct nvme_bio_pair *bp = bio->bi_private;
+ 
+-- 
+1.7.10.4
+
