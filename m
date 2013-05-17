@@ -1,25 +1,50 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Thu, 16 May 2013 21:09:21 +0000
-Subject: Re: [PATCH] staging: lustre: fix return type of lo_release.
-Message-Id: <51954B01.4070907@gmail.com>
+From: "Peng, Tao" <tao.peng@emc.com>
+Date: Fri, 17 May 2013 00:56:01 +0000
+Subject: RE: [PATCH] staging: lustre: fix return type of lo_release.
+Message-Id: <1882637210201641A747464075FFC64904175907@MX101CL02.corp.emc.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1368720380-20974-1-git-send-email-tipecaml@gmail.com> <20130516190130.GB2778@kroah.com>
-In-Reply-To: <20130516190130.GB2778@kroah.com>
+References: <1368720380-20974-1-git-send-email-tipecaml@gmail.com>
+In-Reply-To: <1368720380-20974-1-git-send-email-tipecaml@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, andreas.dilger@intel.com, tao.peng@emc.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Cyril Roelandt <tipecaml@gmail.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "andreas.dilger@intel.com" <andreas.dilger@intel.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 05/16/2013 09:01 PM, Greg KH wrote:
-> On Thu, May 16, 2013 at 06:06:20PM +0200, Cyril Roelandt wrote:
->> The return type of block_device_operations.release() changed to void in commit
->> db2a144b.
->
-> Interesting, how did you test build this patch, given that the driver
-> doesn't currently build at all?  :)
->
-
-Well, the patch seemed simple enough to be sent anyway :)
-
-Cyril Roelandt.
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ3lyaWwgUm9lbGFuZHQg
+W21haWx0bzp0aXBlY2FtbEBnbWFpbC5jb21dDQo+IFNlbnQ6IEZyaWRheSwgTWF5IDE3LCAyMDEz
+IDEyOjA2IEFNDQo+IFRvOiBrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBncmVna2hA
+bGludXhmb3VuZGF0aW9uLm9yZzsgYW5kcmVhcy5kaWxnZXJAaW50ZWwuY29tOyBQZW5nLCBUYW87
+DQo+IGRldmVsQGRyaXZlcmRldi5vc3Vvc2wub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnDQo+IENjOiBDeXJpbCBSb2VsYW5kdA0KPiBTdWJqZWN0OiBbUEFUQ0hdIHN0YWdpbmc6IGx1
+c3RyZTogZml4IHJldHVybiB0eXBlIG9mIGxvX3JlbGVhc2UuDQo+IA0KPiBUaGUgcmV0dXJuIHR5
+cGUgb2YgYmxvY2tfZGV2aWNlX29wZXJhdGlvbnMucmVsZWFzZSgpIGNoYW5nZWQgdG8gdm9pZCBp
+biBjb21taXQNCj4gZGIyYTE0NGIuDQo+IA0KPiBGb3VuZCB3aXRoIHRoZSBmb2xsb3dpbmcgQ29j
+Y2luZWxsZSBwYXRjaDoNCj4gPHNtcGw+DQo+IEBoYXNfcmVsZWFzZV9mdW5jQA0KPiBpZGVudGlm
+aWVyIGk7DQo+IGlkZW50aWZpZXIgcmVsZWFzZV9mdW5jOw0KPiBAQA0KPiBzdHJ1Y3QgYmxvY2tf
+ZGV2aWNlX29wZXJhdGlvbnMgaSA9IHsNCj4gIC5yZWxlYXNlID0gcmVsZWFzZV9mdW5jDQo+IH07
+DQo+IA0KPiBAZGVwZW5kcyBvbiBoYXNfcmVsZWFzZV9mdW5jQA0KPiBpZGVudGlmaWVyIGhhc19y
+ZWxlYXNlX2Z1bmMucmVsZWFzZV9mdW5jOw0KPiBAQA0KPiAtIGludA0KPiArIHZvaWQNCj4gcmVs
+ZWFzZV9mdW5jKC4uLikgew0KPiAuLi4NCj4gLSByZXR1cm4gLi4uOw0KPiB9DQo+IDwvc21wbD4N
+Cj4gDQpZZWFoLCB0aGFua3MgZm9yIHRoZSBwYXRjaC4gSSBoYXZlIG9uZSBzYW1lIHBhdGNoIGJ1
+dCBhbSBzdGlsbCB3b3JraW5nIG9uIHByb2NmcyBjaGFuZ2Ugc28gZGlkbid0IHNlbmQgaXQgb3V0
+LiBJJ2QgYmUgZ2xhZCB0byB0YWtlIHlvdXJzIGluc3RlYWQuDQoNCkdyZWcsIHdpbGwgeW91IHRh
+a2UgaXQgZGlyZWN0bHkgb3IgZG8geW91IHdhbnQgQW5kcmVhcyBhbmQgbWUgdG8gcXVldWUgaXQg
+Zmlyc3Q/IFRoZSBwYXRjaCBpcyBhYnNvbHV0ZWx5IHJpZ2h0IGJ0dy4NCg0KVGhhbmtzLA0KVGFv
+DQoNCj4gU2lnbmVkLW9mZi1ieTogQ3lyaWwgUm9lbGFuZHQgPHRpcGVjYW1sQGdtYWlsLmNvbT4N
+Cj4gLS0tDQo+ICBkcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2x1c3RyZS9sbGl0ZS9sbG9vcC5jIHwg
+ICAgNCArLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDMgZGVsZXRpb25z
+KC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9sdXN0cmUvbGxp
+dGUvbGxvb3AuYyBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvbHVzdHJlL2xsaXRlL2xsb29wLmMN
+Cj4gaW5kZXggYjcyZjI1Ny4uOWQ0YzE3ZSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5n
+L2x1c3RyZS9sdXN0cmUvbGxpdGUvbGxvb3AuYw0KPiArKysgYi9kcml2ZXJzL3N0YWdpbmcvbHVz
+dHJlL2x1c3RyZS9sbGl0ZS9sbG9vcC5jDQo+IEBAIC01OTYsMTUgKzU5NiwxMyBAQCBzdGF0aWMg
+aW50IGxvX29wZW4oc3RydWN0IGJsb2NrX2RldmljZSAqYmRldiwgZm1vZGVfdCBtb2RlKQ0KPiAg
+CXJldHVybiAwOw0KPiAgfQ0KPiANCj4gLXN0YXRpYyBpbnQgbG9fcmVsZWFzZShzdHJ1Y3QgZ2Vu
+ZGlzayAqZGlzaywgZm1vZGVfdCBtb2RlKQ0KPiArc3RhdGljIHZvaWQgbG9fcmVsZWFzZShzdHJ1
+Y3QgZ2VuZGlzayAqZGlzaywgZm1vZGVfdCBtb2RlKQ0KPiAgew0KPiAgCXN0cnVjdCBsbG9vcF9k
+ZXZpY2UgKmxvID0gZGlzay0+cHJpdmF0ZV9kYXRhOw0KPiANCj4gIAltdXRleF9sb2NrKCZsby0+
+bG9fY3RsX211dGV4KTsNCj4gIAktLWxvLT5sb19yZWZjbnQ7DQo+ICAJbXV0ZXhfdW5sb2NrKCZs
+by0+bG9fY3RsX211dGV4KTsNCj4gLQ0KPiAtCXJldHVybiAwOw0KPiAgfQ0KPiANCj4gIC8qIGxs
+b29wIGRldmljZSBub2RlJ3MgaW9jdGwgZnVuY3Rpb24uICovDQo+IC0tDQo+IDEuNy4xMC40DQo+
+IA0KDQo
