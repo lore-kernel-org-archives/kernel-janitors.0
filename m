@@ -1,94 +1,113 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 03 May 2013 09:47:44 +0000
-Subject: Re: [patch 00/34] idle: Consolidate idle implementations
-Message-Id: <CAMuHMdUuVdPjgu1mX+sxZv894LZNPgp_8NTUqUE4NC7-p=duCA@mail.gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 17 May 2013 16:08:42 +0000
+Subject: build regressions 2013-05-17
+Message-Id: <5196560a.0o9ErO4PTv/CsYky%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130321214930.752934102@linutronix.de>
-In-Reply-To: <20130321214930.752934102@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, Magnus Damm <magnus.damm@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-Hi Thomas,
+[errors]
+drivers/dma/dmatest.c:942: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:174:12: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:263:150: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:264:23: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:265:29: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:273:25: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:343:13: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:364:11: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:365:33: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:402:22: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:407:17: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:418:27: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:685:12: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:762:29: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:767:54: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:770:37: error: 'struct vhost_net_virtqueue' has no member named 'ubufs'
+drivers/vhost/net.c:916:15: error: 'struct vhost_virtqueue' has no member named 'ubuf_kref'
+drivers/vhost/net.c:917:28: error: 'struct vhost_virtqueue' has no member named 'ubuf_kref'
+drivers/vhost/net.c:917:245: error: 'struct vhost_virtqueue' has no member named 'ubuf_wait'
+drivers/vhost/net.c:917:291: error: 'struct vhost_virtqueue' has no member named 'ubuf_kref'
+drivers/vhost/net.c:917:352: error: 'struct vhost_virtqueue' has no member named 'ubuf_wait'
+drivers/vhost/net.c:137:17: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:138:30: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:138:243: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:138:287: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:138:344: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:260:15: error: 'struct vhost_ubuf_info' has no member named 'ubufs'
+drivers/vhost/net.c:261:13: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:262:26: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:267:152: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:268:22: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:269:31: error: dereferencing pointer to incomplete type
+drivers/vhost/net.c:373:9: error: 'struct vhost_ubuf_info' has no member named 'ubufs'
+drivers/vhost/net.c:870:3: error: implicit declaration of function 'vhost_net_ubuf_alloc' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/cadence/macb.c:1566:2: error: implicit declaration of function 'of_get_mac_address' [-Werror=implicit-function-declaration]
+drivers/net/ethernet/cadence/macb.c:1572:2: error: implicit declaration of function 'of_get_phy_mode' [-Werror=implicit-function-declaration]
+drivers/net/wireless/ath/wil6210/main.c:66:14: error: 'struct wireless_dev' has no member named 'sme_state'
+drivers/net/wireless/ath/wil6210/main.c:67:7: error: 'CFG80211_SME_CONNECTED' undeclared (first use in this function)
+drivers/net/wireless/ath/wil6210/main.c:71:7: error: 'CFG80211_SME_CONNECTING' undeclared (first use in this function)
+drivers/net/wireless/ath/wil6210/wmi.c:409:11: error: 'struct wireless_dev' has no member named 'sme_state'
+drivers/net/wireless/ath/wil6210/wmi.c:409:26: error: 'CFG80211_SME_CONNECTING' undeclared (first use in this function)
+(.text+0x2b2253): undefined reference to `zl10353_attach'
+(.text+0x2b22d9): undefined reference to `zl10353_attach'
+(.text+0x2b2338): undefined reference to `zl10353_attach'
+(.text+0x2d86de): undefined reference to `s5h1409_attach'
+(.text+0x2d86fd): undefined reference to `mxl5005s_attach'
+net/wireless/mlme.c:113:2: error: 'reason_code' undeclared (first use in this function)
+net/wireless/mlme.c:115:2: error: 'from_ap' undeclared (first use in this function)
+drivers/dma/iovlock.c:98:21: error: dereferencing pointer to incomplete type
+drivers/dma/iovlock.c:101:11: error: dereferencing pointer to incomplete type
+drivers/dma/iovlock.c:108:19: error: dereferencing pointer to incomplete type
+(.text+0x147cd5): undefined reference to `v4l2_event_pending'
+uvc_driver.c:(.text+0x150370): undefined reference to `v4l2_prio_init'
+uvc_v4l2.c:(.text+0x1518ee): undefined reference to `v4l2_fh_del'
+uvc_v4l2.c:(.text+0x1518f6): undefined reference to `v4l2_fh_exit'
+uvc_v4l2.c:(.text+0x151b60): undefined reference to `video_usercopy'
+uvc_v4l2.c:(.text+0x151b85): undefined reference to `v4l_printk_ioctl'
+uvc_v4l2.c:(.text+0x1526c5): undefined reference to `v4l2_prio_check'
+uvc_v4l2.c:(.text+0x152b78): undefined reference to `v4l2_prio_check'
+uvc_v4l2.c:(.text+0x152c16): undefined reference to `v4l2_prio_check'
+uvc_v4l2.c:(.text+0x152deb): undefined reference to `v4l2_prio_check'
+uvc_v4l2.c:(.text+0x152e60): undefined reference to `v4l2_prio_check'
+uvc_v4l2.c:(.text+0x152f9f): undefined reference to `v4l2_event_subscribe'
+uvc_v4l2.c:(.text+0x15308b): undefined reference to `v4l2_prio_check'
+uvc_v4l2.c:(.text+0x15314c): undefined reference to `v4l2_event_dequeue'
+uvc_v4l2.c:(.text+0x153217): undefined reference to `v4l2_prio_check'
+uvc_v4l2.c:(.text+0x15323b): undefined reference to `v4l2_prio_change'
+uvc_v4l2.c:(.text+0x15326c): undefined reference to `v4l2_prio_check'
+uvc_v4l2.c:(.text+0x1532c7): undefined reference to `v4l2_prio_max'
+uvc_v4l2.c:(.text+0x15333b): undefined reference to `v4l2_prio_check'
+uvc_ctrl.c:(.text+0x156e98): undefined reference to `v4l2_event_queue_fh'
+uvc_ctrl.c:(.text+0x156f28): undefined reference to `v4l2_event_queue_fh'
+drivers/built-in.o:(.rodata+0x1f4f0): undefined reference to `v4l2_ctrl_replace'
+drivers/built-in.o:(.rodata+0x1f4f8): undefined reference to `v4l2_ctrl_merge'
+ngene-cards.c:(.text+0x3bebb9): undefined reference to `drxd_attach'
+(.text+0x3e77f7): undefined reference to `tda10048_attach'
+(.text+0x3e78ef): undefined reference to `tda10048_attach'
 
-On Thu, Mar 21, 2013 at 10:52 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> Each architecture implements its own cpu_idle() code, which is more or
-> less the same on all architectures (plus/minus a few bugs and a few
-> missing extra functionalities, instrumentation ...). That also forces
-> everyone who is interested in idle related features to add new
-> functionality to every architecture. What a waste.
+[warnings]
+arch/arm/kernel/smp.c:436:2: warning: initialization from incompatible pointer type [enabled by default]
+arch/arm/kernel/smp.c:436:2: warning: (near initialization for 'ipi_types[1].handler') [enabled by default]
+drivers/mfd/stw481x.c:156: warning: 'stw481x_set_pctl_reg' defined but not used
+drivers/vhost/net.c:135:48: warning: 'struct vhost_net_ubuf_ref' declared inside parameter list [enabled by default]
+drivers/vhost/net.c:135:48: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+drivers/vhost/net.c:870:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/vhost/net.c:900:3: warning: passing argument 1 of 'vhost_net_ubuf_put_and_wait' from incompatible pointer type [enabled by default]
+drivers/vhost/net.c:917:3: warning: passing argument 1 of 'vhost_net_ubuf_put_and_wait' from incompatible pointer type [enabled by default]
+drivers/net/ethernet/cadence/macb.c:1566:6: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/mfd/stw481x.c:32:5: warning: unused variable 'regandval' [-Wunused-variable]
+warning: (CRC_T10DIF) selects CRYPTO_CRCT10DIF which has unmet direct dependencies (CRYPTO)
+warning: (CRC_T10DIF) selects CRYPTO_CRCT10DIF which has unmet direct dependencies (CRYPTO)
+warning: (CRC_T10DIF) selects CRYPTO_CRCT10DIF which has unmet direct dependencies (CRYPTO)
+warning: (CRC_T10DIF) selects CRYPTO_CRCT10DIF which has unmet direct dependencies (CRYPTO)
+warning: (CRC_T10DIF) selects CRYPTO_CRCT10DIF which has unmet direct dependencies (CRYPTO)
 
-I noticed there are still prototypes for cpu_idle() in include/linux/cpu.h
-and include/linux/smp.h, so I ran a full "git grep -w cpu_idle", which
-suggested a few more places that needs updates:
+[sparse]
+drivers/net/ethernet/cadence/macb.c:1566:15: sparse: undefined identifier 'of_get_mac_address'
+drivers/net/ethernet/cadence/macb.c:1572:15: sparse: undefined identifier 'of_get_phy_mode'
 
-Documentation/s390/Debugging390.txt:0001b304 T cpu_idle
-Documentation/s390/Debugging390.txt:is cpu_idle+0x66 ( quiet the cpu
-is asleep, don't wake it )
-Documentation/scheduler/sched-arch.txt:Your cpu_idle routines need to
-obey the following rules:
-Documentation/scheduler/sched-arch.txt:3. When cpu_idle finds
-(need_resched() = 'true'), it should call
-Documentation/trace/events-power.txt:cpu_idle           "state=%lu cpu_id=%lu"
-Documentation/trace/ftrace.txt:          <idle>-0     [002] .N.1
-21169.031484: rcu_idle_exit <-cpu_idle
-Documentation/trace/ftrace.txt: => cpu_idle
-Documentation/trace/ftrace.txt:  <idle>-0       3.N.1   11us :
-rcu_idle_exit <-cpu_idle
-Documentation/trace/ftrace.txt:  <idle>-0       3.N.1   11us :
-tick_nohz_idle_exit <-cpu_idle
-Documentation/trace/ftrace.txt:  <idle>-0       3.N.1   25us :
-sub_preempt_count <-cpu_idle
-Documentation/trace/ftrace.txt:  <idle>-0       3.N..   25us :
-schedule <-cpu_idle
-Documentation/trace/ftrace.txt:  <idle>-0       2.N.2    3us :
-cpu_idle: stateB94967295 cpu_id=2
-Documentation/virtual/uml/UserModeLinux-HOWTO.txt:       #3
-0x100a5508 in cpu_idle () at process_kern.c:471
-arch/arm/Kconfig:         This option adds a write barrier to the
-cpu_idle loop so that,
-arch/cris/arch-v10/drivers/gpio.c:       * from cpu_idle() in kernel/process.c
-arch/cris/arch-v10/drivers/gpio.c:       * The check in cpu_idle()
-reduces latency from ~15 ms to ~6 ms
-arch/cris/arch-v32/drivers/mach-fs/gpio.c:       * from cpu_idle() in
-kernel/process.c
-arch/cris/arch-v32/drivers/mach-fs/gpio.c:       * The check in
-cpu_idle() reduces latency from ~15 ms to ~6 ms
-arch/mips/kernel/smtc.c:                printk("Dangling IXMT in cpu_idle()\n");
-arch/powerpc/kernel/irq.c: * in cpu_idle() will properly re-enable everything.
-arch/sparc/kernel/leon_pmc.c:/* leon_pmc.c: LEON Power-down cpu_idle() handler
-arch/sparc/kernel/smp_32.c:     printk("CPU[%d]: Returns from
-cpu_idle!\n", smp_processor_id());
-arch/sparc/kernel/smp_64.c:     printk("CPU[%d]: Returns from
-cpu_idle!\n", smp_processor_id());
-arch/tile/include/asm/thread_info.h:/* Enable interrupts racelessly
-and nap forever: helper for cpu_idle(). */
-drivers/acpi/processor_driver.c:         * Set flag to delay
-cpu_idle/throttling initialization
-include/linux/cpu.h:void cpu_idle(void);
-include/linux/smp.h:extern void cpu_idle(void);
-include/trace/events/power.h:DEFINE_EVENT(cpu, cpu_idle,
-init/main.c: * cpu_idle.
-init/main.c:    /* Call into cpu_idle with preempt disabled */
-init/main.c:     * fragile until we cpu_idle() for the first time.
-kernel/trace/power-traces.c:EXPORT_TRACEPOINT_SYMBOL_GPL(cpu_idle);
-tools/perf/builtin-timechart.c:          * Mapping all these
-"power:cpu_idle" strings to the tracepoint
-tools/perf/builtin-timechart.c:         if (strcmp(event_str,
-"power:cpu_idle") = 0) {
-tools/perf/builtin-timechart.c:         "-e", "power:cpu_idle",
-tools/perf/builtin-timechart.c: if (!is_valid_tracepoint("power:cpu_idle") &&
-tools/perf/builtin-top.c:       "cpu_idle",
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
