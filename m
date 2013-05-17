@@ -1,45 +1,34 @@
-From: Dave Chinner <david@fromorbit.com>
-Date: Thu, 16 May 2013 23:03:14 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 17 May 2013 06:31:59 +0000
 Subject: Re: [patch] xfs: bug widening binary "not" operation
-Message-Id: <20130516230314.GH24635@dastard>
+Message-Id: <20130517063159.GO1360@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130516075330.GB7494@elgon.mountain>
-In-Reply-To: <20130516075330.GB7494@elgon.mountain>
+	<20130516230314.GH24635@dastard>
+In-Reply-To: <20130516230314.GH24635@dastard>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Dave Chinner <david@fromorbit.com>
 Cc: Ben Myers <bpm@sgi.com>, Alex Elder <elder@kernel.org>, kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
 
-On Thu, May 16, 2013 at 10:53:30AM +0300, Dan Carpenter wrote:
-> The problem here is:
+On Fri, May 17, 2013 at 09:03:14AM +1000, Dave Chinner wrote:
+> As it is, the static checker missed the:
 > 
-> 	ioffset = offset & ~(rounding - 1);
+> 	rounding = max_t(uint, ....);
 > 
-> "offset" and "ioffset" are type xfs_off_t (__s64) and "rounding" is
-> unsigned int.  The "offset & ~(rounding - 1)" clears the high 32 bits
-> and which is unintentional.
+> The line before the above usage. I posted a patch to fix this this
+> 2 weeks ago here:
 > 
-> This is a static checker fix so I'm not sure how much difference this
-> makes in real life.
+> http://oss.sgi.com/pipermail/xfs/2013-May/025986.html
+> 
 
-It is a real problem, but one that is masked by the way we do range
-flushing right now.
+Ah.  Grand.  There is still a problem with the max_t().  The shift
+operation will wrap before we do the cast.  It should be:
 
-As it is, the static checker missed the:
+-	rounding = max_t(xfs_off_t, 1 << mp->m_sb.sb_blocklog, PAGE_CACHE_SIZE);
++	rounding = max_t(xfs_off_t, 1ULL << mp->m_sb.sb_blocklog, PAGE_CACHE_SIZE);
 
-	rounding = max_t(uint, ....);
+regards,
+dan carpenter
 
-The line before the above usage. I posted a patch to fix this this
-2 weeks ago here:
-
-http://oss.sgi.com/pipermail/xfs/2013-May/025986.html
-
-But thanks for the independent confirmation of the problem, Dan. ;)
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
