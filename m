@@ -1,147 +1,59 @@
-From: Aditya Srivastava <adityasrivastava010@gmail.com>
-Date: Sat, 25 May 2013 11:55:46 +0000
-Subject: [PATCH 1/1] [PATCH v3.10-rc2 1/1] linux: kernel.h: Fixed coding style error
-Message-Id: <1369482932-31305-1-git-send-email-adityasrivastava010@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 18 May 2013 18:34:52 +0000
+Subject: [patch] perf/x86: prevent some shift wrapping bugs in intel uncore
+Message-Id: <20130518183452.GA14587@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Aditya Srivastava <adityasrivastava010@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Fixed coding style errors found in /include/linux/kernel.h
+We're trying to use 64 bit masks but the shifts wrap so we can't use the
+high 32 bits.  I've fixed this by changing several types to unsigned
+long long.
 
-Signed-off-by: Aditya Srivastava <adityasrivastava010@gmail.com>
----
- include/linux/kernel.h |   44 ++++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+This is a static checker fix.  The one change which is clearly needed is
+"mask = 0xff << (idx * 8);" where the author obviously intended to use
+all 64 bits.  The other changes are mostly to silence my static checker.
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index e9ef6d6..31dd69f 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -50,15 +50,15 @@
- #define round_up(x, y) ((((x)-1) | __round_mask(x, y))+1)
- #define round_down(x, y) ((x) & ~__round_mask(x, y))
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/arch/x86/kernel/cpu/perf_event_intel_uncore.h b/arch/x86/kernel/cpu/perf_event_intel_uncore.h
+index f952891..47b3d00c 100644
+--- a/arch/x86/kernel/cpu/perf_event_intel_uncore.h
++++ b/arch/x86/kernel/cpu/perf_event_intel_uncore.h
+@@ -337,10 +337,10 @@
+ 		 NHMEX_M_PMON_CTL_SET_FLAG_SEL_MASK)
  
--#define FIELD_SIZEOF(t, f) (sizeof(((t*)0)->f))
--#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
--#define DIV_ROUND_UP_ULL(ll,d) \
-+#define FIELD_SIZEOF(t, f) (sizeof(((t *)0)->f))
-+#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
-+#define DIV_ROUND_UP_ULL(ll, d) \
- 	({ unsigned long long _tmp = (ll)+(d)-1; do_div(_tmp, d); _tmp; })
+ #define NHMEX_M_PMON_ZDP_CTL_FVC_MASK		(((1 << 11) - 1) | (1 << 23))
+-#define NHMEX_M_PMON_ZDP_CTL_FVC_EVENT_MASK(n)	(0x7 << (11 + 3 * (n)))
++#define NHMEX_M_PMON_ZDP_CTL_FVC_EVENT_MASK(n)	(0x7ULL << (11 + 3 * (n)))
  
- #if BITS_PER_LONG = 32
--# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
-+# define DIV_ROUND_UP_SECTOR_T(ll, d) DIV_ROUND_UP_ULL(ll, d)
- #else
--# define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
-+# define DIV_ROUND_UP_SECTOR_T(ll, d) DIV_ROUND_UP(ll, d)
- #endif
- 
- /* The `const' in roundup() prevents gcc-3.3 from calling __divdi3 */
-@@ -149,7 +149,7 @@ extern int _cond_resched(void);
- #endif
- 
- #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
--  void __might_sleep(const char *file, int line, int preempt_offset);
-+void __might_sleep(const char *file, int line, int preempt_offset);
- /**
-  * might_sleep - annotation for functions that can sleep
-  *
-@@ -163,7 +163,7 @@ extern int _cond_resched(void);
- # define might_sleep() \
- 	do { __might_sleep(__FILE__, __LINE__, 0); might_resched(); } while (0)
- #else
--  static inline void __might_sleep(const char *file, int line,
-+static inline void __might_sleep(const char *file, int line,
- 				   int preempt_offset) { }
- # define might_sleep() do { might_resched(); } while (0)
- #endif
-@@ -342,10 +342,10 @@ static inline int __must_check kstrtos32_from_user(const char __user *s, size_t
- 
- /* Obsolete, do not use.  Use kstrto<foo> instead */
- 
--extern unsigned long simple_strtoul(const char *,char **,unsigned int);
--extern long simple_strtol(const char *,char **,unsigned int);
--extern unsigned long long simple_strtoull(const char *,char **,unsigned int);
--extern long long simple_strtoll(const char *,char **,unsigned int);
-+extern unsigned long simple_strtoul(const char *, char **, unsigned int);
-+extern long simple_strtol(const char *, char **, unsigned int);
-+extern unsigned long long simple_strtoull(const char *, char **, unsigned int);
-+extern long long simple_strtoll(const char *, char **, unsigned int);
- #define strict_strtoul	kstrtoul
- #define strict_strtol	kstrtol
- #define strict_strtoull	kstrtoull
-@@ -355,7 +355,7 @@ extern int num_to_str(char *buf, int size, unsigned long long num);
- 
- /* lib/printf utilities */
- 
--extern __printf(2, 3) int sprintf(char *buf, const char * fmt, ...);
-+extern __printf(2, 3) int sprintf(char *buf, const char *fmt, ...);
- extern __printf(2, 0) int vsprintf(char *buf, const char *, va_list);
- extern __printf(3, 4)
- int snprintf(char *buf, size_t size, const char *fmt, ...);
-@@ -712,8 +712,8 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- 	typeof(max) __max = (max);		\
- 	(void) (&__val = &__min);		\
- 	(void) (&__val = &__max);		\
--	__val = __val < __min ? __min: __val;	\
--	__val > __max ? __max: __val; })
-+	__val = __val < __min ? __min : __val;	\
-+	__val > __max ? __max : __val; })
+ #define WSMEX_M_PMON_ZDP_CTL_FVC_MASK		(((1 << 12) - 1) | (1 << 24))
+-#define WSMEX_M_PMON_ZDP_CTL_FVC_EVENT_MASK(n)	(0x7 << (12 + 3 * (n)))
++#define WSMEX_M_PMON_ZDP_CTL_FVC_EVENT_MASK(n)	(0x7ULL << (12 + 3 * (n)))
  
  /*
-  * ..and if you can't take the strict
-@@ -724,12 +724,12 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- #define min_t(type, x, y) ({			\
- 	type __min1 = (x);			\
- 	type __min2 = (y);			\
--	__min1 < __min2 ? __min1: __min2; })
-+	__min1 < __min2 ? __min1 : __min2; })
+  * use the 9~13 bits to select event If the 7th bit is not set,
+diff --git a/arch/x86/kernel/cpu/perf_event_intel_uncore.c b/arch/x86/kernel/cpu/perf_event_intel_uncore.c
+index 52441a2..c0e356d 100644
+--- a/arch/x86/kernel/cpu/perf_event_intel_uncore.c
++++ b/arch/x86/kernel/cpu/perf_event_intel_uncore.c
+@@ -644,7 +644,7 @@ snbep_pcu_get_constraint(struct intel_uncore_box *box, struct perf_event *event)
+ 	    (!uncore_box_is_fake(box) && reg1->alloc))
+ 		return NULL;
+ again:
+-	mask = 0xff << (idx * 8);
++	mask = 0xffULL << (idx * 8);
+ 	raw_spin_lock_irqsave(&er->lock, flags);
+ 	if (!__BITS_VALUE(atomic_read(&er->ref), idx, 8) ||
+ 	    !((config1 ^ er->config) & mask)) {
+@@ -1923,7 +1923,7 @@ static u64 nhmex_mbox_alter_er(struct perf_event *event, int new_idx, bool modif
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	struct hw_perf_event_extra *reg1 = &hwc->extra_reg;
+-	int idx, orig_idx = __BITS_VALUE(reg1->idx, 0, 8);
++	u64 idx, orig_idx = __BITS_VALUE(reg1->idx, 0, 8);
+ 	u64 config = reg1->config;
  
- #define max_t(type, x, y) ({			\
- 	type __max1 = (x);			\
- 	type __max2 = (y);			\
--	__max1 > __max2 ? __max1: __max2; })
-+	__max1 > __max2 ? __max1 : __max2; })
- 
- /**
-  * clamp_t - return a value clamped to a given range using a given type
-@@ -745,8 +745,8 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- 	type __val = (val);			\
- 	type __min = (min);			\
- 	type __max = (max);			\
--	__val = __val < __min ? __min: __val;	\
--	__val > __max ? __max: __val; })
-+	__val = __val < __min ? __min : __val;	\
-+	__val > __max ? __max : __val; })
- 
- /**
-  * clamp_val - return a value clamped to a given range using val's type
-@@ -763,8 +763,8 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- 	typeof(val) __val = (val);		\
- 	typeof(val) __min = (min);		\
- 	typeof(val) __max = (max);		\
--	__val = __val < __min ? __min: __val;	\
--	__val > __max ? __max: __val; })
-+	__val = __val < __min ? __min : __val;	\
-+	__val > __max ? __max : __val; })
- 
- 
- /*
-@@ -781,8 +781,8 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
-  *
-  */
- #define container_of(ptr, type, member) ({			\
--	const typeof( ((type *)0)->member ) *__mptr = (ptr);	\
--	(type *)( (char *)__mptr - offsetof(type,member) );})
-+	const typeof(((type *)0)->member) * __mptr = (ptr);	\
-+	(type *)((char *)__mptr - offsetof(type, member)); })
- 
- /* Trap pasters of __FUNCTION__ at compile-time */
- #define __FUNCTION__ (__func__)
--- 
-1.7.10.4
-
+ 	/* get the non-shared control bits and shift them */
