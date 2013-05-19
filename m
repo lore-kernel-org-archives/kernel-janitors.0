@@ -1,47 +1,30 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Fri, 17 May 2013 15:37:16 +0000
-Subject: [PATCH Resend] NVMe: Fix incompatible pointer type warnings
-Message-Id: <1368805036-3444-1-git-send-email-emilgoode@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 19 May 2013 18:52:20 +0000
+Subject: [patch] USB: cxacru: potential underflow in cxacru_cm_get_array()
+Message-Id: <20130519185220.GB25275@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Commit 6a4d55146334 ("block: prep work for batch completion")
-added a struct batch_complete * as a third argument to bi_end_io.
-This patch adds the missing third argument to the nvme_bio_pair_endio
-function.
+The value of "offd" comes off the instance->rcv_buf[] and we used it as
+the offset into an array.  The problem is that we check the upper bound
+but not for negative values.
 
-Sparse output:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-drivers/block/nvme-core.c: In function ‘nvme_bio_split’:
-drivers/block/nvme-core.c:483:19: warning:
-	assignment from incompatible pointer type [enabled by default]
-drivers/block/nvme-core.c:484:19: warning:
-	assignment from incompatible pointer type [enabled by default]
-
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
-This patch applies to the -mm tree. 
-
- drivers/block/nvme-core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/nvme-core.c b/drivers/block/nvme-core.c
-index 8efdfaa..9380133 100644
---- a/drivers/block/nvme-core.c
-+++ b/drivers/block/nvme-core.c
-@@ -413,7 +413,8 @@ struct nvme_bio_pair {
- 	atomic_t cnt;
- };
- 
--static void nvme_bio_pair_endio(struct bio *bio, int err)
-+static void nvme_bio_pair_endio(struct bio *bio, int err,
-+						struct batch_complete *batch)
+diff --git a/drivers/usb/atm/cxacru.c b/drivers/usb/atm/cxacru.c
+index b7eb86a..8a7eb77 100644
+--- a/drivers/usb/atm/cxacru.c
++++ b/drivers/usb/atm/cxacru.c
+@@ -686,7 +686,8 @@ static int cxacru_cm_get_array(struct cxacru_data *instance, enum cxacru_cm_requ
  {
- 	struct nvme_bio_pair *bp = bio->bi_private;
+ 	int ret, len;
+ 	__le32 *buf;
+-	int offb, offd;
++	int offb;
++	unsigned int offd;
+ 	const int stride = CMD_PACKET_SIZE / (4 * 2) - 1;
+ 	int buflen =  ((size - 1) / stride + 1 + size * 2) * 4;
  
--- 
-1.7.10.4
-
