@@ -1,61 +1,30 @@
-From: "Wilcox, Matthew R" <matthew.r.wilcox@intel.com>
-Date: Mon, 13 May 2013 13:53:11 +0000
-Subject: RE: [patch] NVMe: check for integer overflow in nvme_map_user_pages()
-Message-Id: <100D68C7BA14664A8938383216E40DE027F80EAB@fmsmsx111.amr.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 19 May 2013 12:59:50 +0000
+Subject: [patch] gru: fix a sanity test in gru_set_context_option()
+Message-Id: <20130519125950.GA17651@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130511163155.GA21427@elgon.mountain>
-In-Reply-To: <20130511163155.GA21427@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Busch, Keith" <keith.busch@intel.com>, "Verma, Vishal L" <vishal.l.verma@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Dimitri Sivanich <sivanich@sgi.com>
+Cc: Robin Holt <holt@sgi.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Why didn't you send this patch to the linux-nvme mailing list or the address listed in MAINTAINERS?  Now Exchange & Outlook have hold of it, and it's mangled.
-
-NVM EXPRESS DRIVER
-M:      Matthew Wilcox <willy@linux.intel.com>
-L:      linux-nvme@lists.infradead.org
-
-________________________________________
-From: Dan Carpenter [dan.carpenter@oracle.com]
-Sent: May 11, 2013 9:31 AM
-To: Wilcox, Matthew R
-Cc: Busch, Keith; Verma, Vishal L; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: [patch] NVMe: check for integer overflow in nvme_map_user_pages()
-
-You need to have CAP_SYS_ADMIN to trigger this overflow but it makes the
-static checkers complain so we should fix it.  The worry is that
-"length" comes from copy_from_user() so we need to check that "length +
-offset" can't overflow.
-
-I also changed the min_t() cast to be unsigned instead of signed.  Now
-that we cap "length" to INT_MAX it doesn't make a difference, but it's a
-little easier for reviewers to know that large values aren't cast to
-negative.
+"req.val1 = -1" is valid but it doesn't make sense to check
+gru_base[-1].  gru_base[] is a global array.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/block/nvme-core.c b/drivers/block/nvme-core.c
-index 8efdfaa..4376375 100644
---- a/drivers/block/nvme-core.c
-+++ b/drivers/block/nvme-core.c
-@@ -1206,7 +1206,7 @@ struct nvme_iod *nvme_map_user_pages(struct nvme_dev *dev, int write,
-
-        if (addr & 3)
-                return ERR_PTR(-EINVAL);
--       if (!length)
-+       if (!length || length > INT_MAX - PAGE_SIZE)
-                return ERR_PTR(-EINVAL);
-
-        offset = offset_in_page(addr);
-@@ -1227,7 +1227,8 @@ struct nvme_iod *nvme_map_user_pages(struct nvme_dev *dev, int write,
-        sg_init_table(sg, count);
-        for (i = 0; i < count; i++) {
-                sg_set_page(&sg[i], pages[i],
--                               min_t(int, length, PAGE_SIZE - offset), offset);
-+                           min_t(unsigned, length, PAGE_SIZE - offset),
-+                           offset);
-                length -= (PAGE_SIZE - offset);
-                offset = 0;
-        }
+diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+index c4acac7..e7c37b2 100644
+--- a/drivers/misc/sgi-gru/grufault.c
++++ b/drivers/misc/sgi-gru/grufault.c
+@@ -876,7 +876,8 @@ int gru_set_context_option(unsigned long arg)
+ 	switch (req.op) {
+ 	case sco_blade_chiplet:
+ 		/* Select blade/chiplet for GRU context */
+-		if (req.val1 < -1 || req.val1 >= GRU_MAX_BLADES || !gru_base[req.val1] ||
++		if (req.val1 < -1 || req.val1 >= GRU_MAX_BLADES ||
++		    (req.val1 != -1 && !gru_base[req.val1]) ||
+ 		    req.val0 < -1 || req.val0 >= GRU_CHIPLETS_PER_HUB) {
+ 			ret = -EINVAL;
+ 		} else {
