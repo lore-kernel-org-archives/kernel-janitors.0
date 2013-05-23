@@ -1,51 +1,29 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sat, 18 May 2013 11:26:04 +0000
-Subject: Re: [patch] ASoC: wm8994: missing break in wm8994_get_fll_config()
-Message-Id: <20130518112604.GT1627@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="/U0GMd1Pus0mbMSS"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 23 May 2013 10:02:13 +0000
+Subject: [patch] f2fs: dereferencing an ERR_PTR
+Message-Id: <20130523100213.GA19107@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130515070943.GB20381@elgon.mountain>
-In-Reply-To: <20130515070943.GB20381@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
+There is an error path where "dir" is an ERR_PTR.
 
---/U0GMd1Pus0mbMSS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Wed, May 15, 2013 at 10:09:43AM +0300, Dan Carpenter wrote:
-> Smatch complains that:
->=20
-> 	sound/soc/codecs/wm8994.c:2087 wm8994_get_fll_config()
-> 		warn: missing break? reassigning 'fll->k'
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied, thanks.
-
---/U0GMd1Pus0mbMSS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRl2VJAAoJELSic+t+oim9Lr8P/jj/MH8+WENu478PwXYxC9Gd
-6ecjGaV7m9sRluO0jXkfiMcB+kzdjQ5GVSsaPg31OhaEwof0eHdYmZX9k2uikF4N
-tokODkrCyIqKKAj3vpRHF4/E6vgyR1KMh66+GQEoLbtoYuGZsLyyDhoQgd4bfA3z
-66tXfyQFL5VRCWWOLWvvJXIjGhWQl6mAOVFvYmbwEdWPob/mWxbSf51W8J5z6DZn
-zYBSbHT3t6ZbfdRrQ6BlzXHtngBne7J79Y27DUutn6p0Msc/YCq4r+4ISOy8A7CQ
-VFOEopjGqpxc03UqKKKL6eXl+lyWob6mU6NnJvCK612IobW7/pApHwwr6zBiT3Cu
-STBhcylcWF7UyxL8a6Stw2tjWIY0CEqUyDZ5/HEsaAgkb4JCtFfxMp+xT6PU8MGR
-lTqrQOveXMAQRdoDHEn982ZgZHIGtD3Pq2If/d2D48ljKTPrK1GSqG+dm9Y5CBxv
-Bu/dbyjwKZTAvh7l9SFzalfakWpgOGcL9CyXsJ/PM+3/yn9T+o5xwCfsJXjaL9Jt
-wqIi7M77v1WUL8qIO1VpNnQXaQyuaJcQ0hmcHzWKOwrIfCk5N2fFDGTXMy6nEw6R
-V71ozRGbKmminq7cAHafYrCUVL2VFLPe1j2IOYHhllc7mS4wuOueEYKvpcooFnNR
-5O04rFiAiZeyYrFZHfFD
-=mipt
------END PGP SIGNATURE-----
-
---/U0GMd1Pus0mbMSS--
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 5148d90..921aede 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -71,7 +71,8 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
+ out:
+ 	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode and its dentry: "
+ 			"ino = %x, name = %s, dir = %lx, err = %d",
+-			ino_of_node(ipage), raw_inode->i_name, dir->i_ino, err);
++			ino_of_node(ipage), raw_inode->i_name,
++			IS_ERR(dir) ? 0 : dir->i_ino, err);
+ 	return err;
+ }
+ 
