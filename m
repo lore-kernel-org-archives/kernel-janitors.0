@@ -1,40 +1,37 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 26 May 2013 18:37:33 +0000
-Subject: build regressions 2013-05-26
-Message-Id: <51a2566d.W5Mefni3AqNCfHl1%fengguang.wu@intel.com>
+From: Chen Gang <gang.chen@asianux.com>
+Date: Mon, 27 May 2013 09:43:32 +0000
+Subject: [PATCH] arch: s390: include: asm: typo issue for the redundency comma, found by cross compiling.
+Message-Id: <51A32AC4.4030509@asianux.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <51A2CC07.5010100@asianux.com> <CAMuHMdXTW3QOxfAfqQXdbSpP4R83srFf7eMfu5fA-75S_Mujsg@mail.gmail.com> <51A32203.1090003@asianux.com>
+In-Reply-To: <51A32203.1090003@asianux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, jang@linux.vnet.ibm.com, linux390@de.ibm.com, linux-s390@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-[errors]
-zcache-main.c:(.text+0xb1c8a): undefined reference to `ramster_pampd_free'
-zcache-main.c:(.text+0xb1cbc): undefined reference to `ramster_count_foreign_pages'
-zcache-main.c:(.text+0xb1f05): undefined reference to `ramster_count_foreign_pages'
-zcache-main.c:(.text+0xb228d): undefined reference to `ramster_cpu_up'
-zcache-main.c:(.text+0xb2339): undefined reference to `ramster_cpu_down'
-(.text+0xb26ce): undefined reference to `ramster_count_foreign_pages'
-(.text+0xb27ef): undefined reference to `ramster_count_foreign_pages'
-(.text+0xb299f): undefined reference to `ramster_do_preload_flnode'
-(.text+0xb2ea3): undefined reference to `ramster_do_preload_flnode'
-(.text+0xb307c): undefined reference to `ramster_do_preload_flnode'
-zcache-main.c:(.text+0xb3629): undefined reference to `ramster_register_pamops'
-zcache-main.c:(.text+0xb3868): undefined reference to `ramster_init'
-drivers/built-in.o:(.rodata+0x15058): undefined reference to `ramster_foreign_eph_pages'
-drivers/built-in.o:(.rodata+0x15078): undefined reference to `ramster_foreign_pers_pages'
-(.text+0x2ea46d): undefined reference to `crc32_le'
 
-[coccinelle]
-drivers/mfd/wm8994-irq.c:244:8-28: ERROR: Threaded IRQ with no primary handler requested without IRQF_ONESHOT
-drivers/mfd/wm8994-irq.c:244:8-28: ERROR: Threaded IRQ with no primary handler requested without IRQF_ONESHOT
-drivers/usb/gadget/f_eem.c:619:9-16: WARNING: ERR_CAST can be used with opts -> net
-drivers/usb/gadget/f_eem.c:619:9-16: WARNING: ERR_CAST can be used with opts -> net
-drivers/usb/gadget/f_subset.c:278:8-14: WARNING: PTR_RET can be used
-drivers/usb/gadget/f_subset.c:278:8-14: WARNING: PTR_RET can be used
-drivers/usb/gadget/f_subset.c:550:2-8: preceding lock on line 543
-drivers/usb/gadget/f_subset.c:550:2-8: preceding lock on line 543
+It is a typo issue, remove the redundancy comma.
 
+
+Signed-off-by: Chen Gang <gang.chen@asianux.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ arch/s390/include/asm/pgtable.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+index 66b52d0..79346dc 100644
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -1351,7 +1351,7 @@ static inline pmd_t pmd_mkwrite(pmd_t pmd)
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 
+ #define __HAVE_ARCH_PGTABLE_DEPOSIT
+-extern void pgtable_trans_huge_deposit(struct mm_struct *mm, , pmd_t *pmdp,
++extern void pgtable_trans_huge_deposit(struct mm_struct *mm, pmd_t *pmdp,
+ 				       pgtable_t pgtable);
+ 
+ #define __HAVE_ARCH_PGTABLE_WITHDRAW
+-- 
+1.7.7.6
