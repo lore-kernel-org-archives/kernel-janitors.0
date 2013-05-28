@@ -1,45 +1,45 @@
-From: Dave Chinner <david@fromorbit.com>
-Date: Fri, 17 May 2013 10:19:08 +0000
-Subject: Re: [patch] xfs: bug widening binary "not" operation
-Message-Id: <20130517101908.GS24635@dastard>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Tue, 28 May 2013 14:59:00 +0000
+Subject: [PATCH] ceph: improve error handling in ceph_mdsmap_decode
+Message-Id: <1369753140-28802-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130516075330.GB7494@elgon.mountain>
-	<20130516230314.GH24635@dastard> <20130517063159.GO1360@mwanda>
-In-Reply-To: <20130517063159.GO1360@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ben Myers <bpm@sgi.com>, Alex Elder <elder@kernel.org>, kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
+To: sage@inktank.com
+Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Fri, May 17, 2013 at 09:31:59AM +0300, Dan Carpenter wrote:
-> On Fri, May 17, 2013 at 09:03:14AM +1000, Dave Chinner wrote:
-> > As it is, the static checker missed the:
-> > 
-> > 	rounding = max_t(uint, ....);
-> > 
-> > The line before the above usage. I posted a patch to fix this this
-> > 2 weeks ago here:
-> > 
-> > http://oss.sgi.com/pipermail/xfs/2013-May/025986.html
-> > 
-> 
-> Ah.  Grand.  There is still a problem with the max_t().  The shift
-> operation will wrap before we do the cast.  It should be:
+This patch makes the following improvements to the error handling
+in the ceph_mdsmap_decode function:
 
-It probably looks that way, but it can't overflow as
-mp->m_sb.sb_blocklog has a maximum value of 16 (i.e. 64k maximum
-filesystem block size).
+- Add a NULL check for return value from kcalloc
+- Make use of the variable err
 
-> 
-> -	rounding = max_t(xfs_off_t, 1 << mp->m_sb.sb_blocklog, PAGE_CACHE_SIZE);
-> +	rounding = max_t(xfs_off_t, 1ULL << mp->m_sb.sb_blocklog, PAGE_CACHE_SIZE);
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ fs/ceph/mdsmap.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-So it is safe the way it is and this is not necessary.
-
-Cheers,
-
-Dave.
+diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+index 9278dec..d4d3897 100644
+--- a/fs/ceph/mdsmap.c
++++ b/fs/ceph/mdsmap.c
+@@ -138,6 +138,8 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+ 				m->m_info[mds].export_targets  					kcalloc(num_export_targets, sizeof(u32),
+ 						GFP_NOFS);
++				if (m->m_info[mds].export_targets = NULL)
++					goto badmem;
+ 				for (j = 0; j < num_export_targets; j++)
+ 					m->m_info[mds].export_targets[j]  					       ceph_decode_32(&pexport_targets);
+@@ -170,7 +172,7 @@ bad:
+ 		       DUMP_PREFIX_OFFSET, 16, 1,
+ 		       start, end - start, true);
+ 	ceph_mdsmap_destroy(m);
+-	return ERR_PTR(-EINVAL);
++	return ERR_PTR(err);
+ }
+ 
+ void ceph_mdsmap_destroy(struct ceph_mdsmap *m)
 -- 
-Dave Chinner
-david@fromorbit.com
+1.7.10.4
+
