@@ -1,33 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 May 2013 08:12:18 +0000
-Subject: [patch] Staging: rtl8192e: fix an endian bug
-Message-Id: <20130529081136.GA12950@debian>
+Date: Wed, 29 May 2013 06:57:36 +0000
+Subject: [patch 2/2] Staging: rtl8192e: printing the wrong array
+Message-Id: <20130529065736.GB25133@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Passing the high bits of "ratr_value" to rtl8192_config_rate() only
-works on little endian systems.  We should be passing a u16 value.
+Smatch complained that there is an array overflow here.  It looks
+like we are supposed to be printing the ->rates_ex[] array which is
+slightly larger than the ->rates[] array.  This is a cut and paste
+error.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-index a9d78e9..50c7bb7 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-@@ -2128,10 +2128,11 @@ void rtl8192_update_ratr_table(struct net_device *dev)
- 	struct rtllib_device *ieee = priv->rtllib;
- 	u8 *pMcsRate = ieee->dot11HTOperationalRateSet;
- 	u32 ratr_value = 0;
-+	u16 rate_config = 0;
- 	u8 rate_index = 0;
- 
--	rtl8192_config_rate(dev, (u16 *)(&ratr_value));
--	ratr_value |= (*(u16 *)(pMcsRate)) << 12;
-+	rtl8192_config_rate(dev, &rate_config);
-+	ratr_value = rate_config | *pMcsRate << 12;
- 	switch (ieee->mode) {
- 	case IEEE_A:
- 		ratr_value &= 0x00000FF0;
+diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
+index 8b8a5c6..e75364e 100644
+--- a/drivers/staging/rtl8192e/rtllib_rx.c
++++ b/drivers/staging/rtl8192e/rtllib_rx.c
+@@ -1822,7 +1822,7 @@ int rtllib_parse_info_param(struct rtllib_device *ieee,
+ 				network->rates_ex[i] = info_element->data[i];
+ 				p += snprintf(p, sizeof(rates_str) -
+ 					      (p - rates_str), "%02X ",
+-					      network->rates[i]);
++					      network->rates_ex[i]);
+ 				if (rtllib_is_ofdm_rate
+ 				    (info_element->data[i])) {
+ 					network->flags |= NETWORK_HAS_OFDM;
