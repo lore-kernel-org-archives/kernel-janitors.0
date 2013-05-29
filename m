@@ -1,70 +1,33 @@
-From: Tomas Winkler <tomas.winkler@intel.com>
-Date: Tue, 07 May 2013 18:12:31 +0000
-Subject: [char-misc 3.10] mei: fix out of array access to me clients array
-Message-Id: <1367950351-23717-1-git-send-email-tomas.winkler@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 May 2013 08:12:18 +0000
+Subject: [patch] Staging: rtl8192e: fix an endian bug
+Message-Id: <20130529081136.GA12950@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The patch 9f81abdac362: "mei: implement mei_cl_connect function"
-from Jan 8, 2013, leads to the following static checker warning:
-"drivers/misc/mei/main.c:522 mei_ioctl_connect_client()
-	 warn: check 'dev->me_clients[]' for negative offsets (-2)"
+Passing the high bits of "ratr_value" to rtl8192_config_rate() only
+works on little endian systems.  We should be passing a u16 value.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/misc/mei/main.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-index 7c44c8d..053139f 100644
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -489,11 +489,16 @@ static int mei_ioctl_connect_client(struct file *file,
+diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+index a9d78e9..50c7bb7 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
++++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+@@ -2128,10 +2128,11 @@ void rtl8192_update_ratr_table(struct net_device *dev)
+ 	struct rtllib_device *ieee = priv->rtllib;
+ 	u8 *pMcsRate = ieee->dot11HTOperationalRateSet;
+ 	u32 ratr_value = 0;
++	u16 rate_config = 0;
+ 	u8 rate_index = 0;
  
- 	/* find ME client we're trying to connect to */
- 	i = mei_me_cl_by_uuid(dev, &data->in_client_uuid);
--	if (i >= 0 && !dev->me_clients[i].props.fixed_address) {
--		cl->me_client_id = dev->me_clients[i].client_id;
--		cl->state = MEI_FILE_CONNECTING;
-+	if (i < 0 || dev->me_clients[i].props.fixed_address) {
-+		dev_dbg(&dev->pdev->dev, "Cannot connect to FW Client UUID = %pUl\n",
-+				&data->in_client_uuid);
-+		rets = -ENODEV;
-+		goto end;
- 	}
- 
-+	cl->me_client_id = dev->me_clients[i].client_id;
-+	cl->state = MEI_FILE_CONNECTING;
-+
- 	dev_dbg(&dev->pdev->dev, "Connect to FW Client ID = %d\n",
- 			cl->me_client_id);
- 	dev_dbg(&dev->pdev->dev, "FW Client - Protocol Version = %d\n",
-@@ -527,11 +532,6 @@ static int mei_ioctl_connect_client(struct file *file,
- 		goto end;
- 	}
- 
--	if (cl->state != MEI_FILE_CONNECTING) {
--		rets = -ENODEV;
--		goto end;
--	}
--
- 
- 	/* prepare the output buffer */
- 	client = &data->out_client_properties;
-@@ -543,7 +543,6 @@ static int mei_ioctl_connect_client(struct file *file,
- 	rets = mei_cl_connect(cl, file);
- 
- end:
--	dev_dbg(&dev->pdev->dev, "free connect cb memory.");
- 	return rets;
- }
- 
--- 
-1.8.1.2
-
+-	rtl8192_config_rate(dev, (u16 *)(&ratr_value));
+-	ratr_value |= (*(u16 *)(pMcsRate)) << 12;
++	rtl8192_config_rate(dev, &rate_config);
++	ratr_value = rate_config | *pMcsRate << 12;
+ 	switch (ieee->mode) {
+ 	case IEEE_A:
+ 		ratr_value &= 0x00000FF0;
