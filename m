@@ -1,34 +1,36 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 01 May 2013 23:20:35 +0000
-Subject: build regressions 2013-05-01
-Message-Id: <5181a343.pWzbEDtxXTPLj8MN%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 May 2013 07:50:46 +0000
+Subject: [patch] [SCSI] fnic: potential dead lock in fnic_is_abts_pending()
+Message-Id: <20130530074926.GA8148@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Hiral Patel <hiralpat@cisco.com>
+Cc: Suma Ramars <sramars@cisco.com>, Brian Uchino <buchino@cisco.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-arch/arm/mm/nommu.c:84:15: error: conflicting types for '__arm_ioremap'
-arch/arm/mm/nommu.c:91:18: error: conflicting types for 'arch_ioremap_caller'
-arch/arm/mm/nommu.c:93:15: error: conflicting types for '__arm_ioremap_caller'
-arch/arm/mach-imx/hotplug.c:53:2: error: implicit declaration of function 'cpu_do_idle' [-Werror=implicit-function-declaration]
-arch/arm/mach-imx/hotplug.c:58:26: error: 'jiffies' undeclared (first use in this function)
-arch/arm/mach-imx/hotplug.c:58:2: error: implicit declaration of function 'msecs_to_jiffies' [-Werror=implicit-function-declaration]
-arch/arm/mach-imx/hotplug.c:61:3: error: implicit declaration of function 'time_after' [-Werror=implicit-function-declaration]
-drivers/clk/versatile/clk-vexpress-spc.c:39:2: error: implicit declaration of function 'vexpress_spc_get_performance' [-Werror=implicit-function-declaration]
-drivers/clk/versatile/clk-vexpress-spc.c:58:2: error: implicit declaration of function 'vexpress_spc_set_performance' [-Werror=implicit-function-declaration]
-drivers/regulator/mc13892-regulator.c:488:17: error: 'regulator_map_voltage_ascend' undeclared here (not in a function)
-awk: line 2: function and never defined
+There is an unlock missing if the = FNIC_IOREQ_ABTS_PENDING is
+false.
 
-[warnings]
-arch/arm/mach-imx/mm-imx3.c:142:22: warning: assignment from incompatible pointer type [enabled by default]
-arch/arm/mach-imx/mm-imx3.c:221:22: warning: assignment from incompatible pointer type [enabled by default]
-arch/arm/mach-imx/common.h:99:29: warning: 'struct pt_regs' declared inside parameter list [enabled by default]
-arch/arm/mach-imx/common.h:99:29: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-arch/arm/mach-imx/common.h:100:29: warning: 'struct pt_regs' declared inside parameter list [enabled by default]
-fs/file_table.c:334:23: warning: unused variable 'task' [-Wunused-variable]
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+Static analysis.  I can't test this.
+
+diff --git a/drivers/scsi/fnic/fnic_scsi.c b/drivers/scsi/fnic/fnic_scsi.c
+index be99e75..a97e6e5 100644
+--- a/drivers/scsi/fnic/fnic_scsi.c
++++ b/drivers/scsi/fnic/fnic_scsi.c
+@@ -2432,11 +2432,9 @@ int fnic_is_abts_pending(struct fnic *fnic, struct scsi_cmnd *lr_sc)
+ 			      "Found IO in %s on lun\n",
+ 			      fnic_ioreq_state_to_str(CMD_STATE(sc)));
+ 
+-		if (CMD_STATE(sc) = FNIC_IOREQ_ABTS_PENDING) {
+-			spin_unlock_irqrestore(io_lock, flags);
++		if (CMD_STATE(sc) = FNIC_IOREQ_ABTS_PENDING)
+ 			ret = 1;
+-			continue;
+-		}
++		spin_unlock_irqrestore(io_lock, flags);
+ 	}
+ 
+ 	return ret;
