@@ -1,64 +1,97 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 21 May 2013 05:29:46 +0000
-Subject: build regressions 2013-05-20
-Message-Id: <519b064a.fgi3vtH5ejg6US/Z%fengguang.wu@intel.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Thu, 30 May 2013 15:00:36 +0000
+Subject: [PATCH] mtd: lantiq-flash: Convert to devm_kzalloc
+Message-Id: <1369926036-2416-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: dwmw2@infradead.org, artem.bityutskiy@linux.intel.com, wfp5p@virginia.edu, gregkh@linuxfoundation.org, thierry.reding@avionic-design.de
+Cc: kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-[errors]
-drivers/block/blockconsole.c:154: error: implicit declaration of function 'cmpxchg64'
-smsusb.c:(.text+0xc0467): undefined reference to `smscore_getbuffer'
-smsusb.c:(.text+0xc04b5): undefined reference to `smsendian_handle_message_header'
-smsusb.c:(.text+0xc04e6): undefined reference to `smscore_onresponse'
-smsusb.c:(.text+0xc057c): undefined reference to `smscore_putbuffer'
-smsusb.c:(.text+0xc06b9): undefined reference to `smscore_unregister_device'
-smsusb.c:(.text+0xc0708): undefined reference to `smsendian_handle_message_header'
-smsusb.c:(.text+0xc07ec): undefined reference to `sms_get_board'
-smsusb.c:(.text+0xc086a): undefined reference to `smscore_register_device'
-smsusb.c:(.text+0xc0882): undefined reference to `smscore_set_board_id'
-smsusb.c:(.text+0xc08bb): undefined reference to `smscore_start_device'
-smsusb.c:(.text+0xc097c): undefined reference to `sms_board_load_modules'
-smsusb.c:(.text+0xc09fa): undefined reference to `smscore_registry_getmode'
-smsusb.c:(.text+0xc0a0c): undefined reference to `sms_get_board'
-smssdio.c:(.text+0xc6bac): undefined reference to `smscore_putbuffer'
-smssdio.c:(.text+0xc6bb4): undefined reference to `smscore_unregister_device'
-smssdio.c:(.text+0xc6c72): undefined reference to `sms_get_board'
-smssdio.c:(.text+0xc6ca3): undefined reference to `smscore_register_device'
-smssdio.c:(.text+0xc6cb4): undefined reference to `smscore_set_board_id'
-smssdio.c:(.text+0xc6d02): undefined reference to `smscore_unregister_device'
-smssdio.c:(.text+0xc6d2d): undefined reference to `smscore_start_device'
-smssdio.c:(.text+0xc6e13): undefined reference to `smscore_onresponse'
-smssdio.c:(.text+0xc6e64): undefined reference to `smscore_getbuffer'
-smssdio.c:(.text+0xc6ed2): undefined reference to `smscore_putbuffer'
-ngene-cards.c:(.text+0xe7d3c): undefined reference to `lgdt330x_attach'
-ngene-cards.c:(.text+0xe7d59): undefined reference to `mt2131_attach'
-smsusb.c:(.text+0xc5678): undefined reference to `smscore_translate_msg'
-smsusb.c:(.text+0xc588e): undefined reference to `smscore_translate_msg'
-smsusb.c:(.text+0xc5616): undefined reference to `smsendian_handle_rx_message'
-smsusb.c:(.text+0xc5caa): undefined reference to `smsendian_handle_tx_message'
-smssdio.c:(.text+0xcc05d): undefined reference to `smsendian_handle_rx_message'
-smssdio.c:(.text+0xcc179): undefined reference to `smsendian_handle_tx_message'
-ngene-cards.c:(.text+0xc56ab): undefined reference to `lnbh24_attach'
-ngene-cards.c:(.text+0xc5727): undefined reference to `tda18271c2dd_attach'
-(.init.text+0x3c98): undefined reference to `modsign_certificate_list_end'
-(.init.text+0x3c9c): undefined reference to `modsign_certificate_list_end'
-(.init.text+0x3ca4): undefined reference to `modsign_certificate_list'
-(.init.text+0x3ca8): undefined reference to `modsign_certificate_list'
-/bin/bash: lz4c: command not found
+The ltq_mtd_probe function is missing some error handling for
+memory allocation failure. This patch fixes that and simplifies
+the code by converting to devm_kzalloc.
 
-[warnings]
-Warning(fs/dcache.c:893): No description found for parameter 'nid'
-Warning(fs/dcache.c:893): Excess function parameter 'nodes_to_walk' description in 'prune_dcache_sb'
-warning: (HWPOISON_INJECT && MEM_SOFT_DIRTY) selects PROC_PAGE_MONITOR which has unmet direct dependencies (PROC_FS && MMU)
-warning: (HWPOISON_INJECT && MEM_SOFT_DIRTY) selects PROC_PAGE_MONITOR which has unmet direct dependencies (PROC_FS && MMU)
-warning: (HWPOISON_INJECT && MEM_SOFT_DIRTY) selects PROC_PAGE_MONITOR which has unmet direct dependencies (PROC_FS && MMU)
-
-[coccinelle]
-lib/crc-t10dif.c:42:1-3: WARNING: PTR_RET can be used
-
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/mtd/maps/lantiq-flash.c |   31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/mtd/maps/lantiq-flash.c b/drivers/mtd/maps/lantiq-flash.c
+index d7ac65d..de0ac1e 100644
+--- a/drivers/mtd/maps/lantiq-flash.c
++++ b/drivers/mtd/maps/lantiq-flash.c
+@@ -123,24 +123,28 @@ ltq_mtd_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	ltq_mtd = kzalloc(sizeof(struct ltq_mtd), GFP_KERNEL);
++	ltq_mtd = devm_kzalloc(&pdev->dev, sizeof(struct ltq_mtd), GFP_KERNEL);
++	if (!ltq_mtd)
++		return -ENOMEM;
++
+ 	platform_set_drvdata(pdev, ltq_mtd);
+ 
+ 	ltq_mtd->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!ltq_mtd->res) {
+ 		dev_err(&pdev->dev, "failed to get memory resource\n");
+-		err = -ENOENT;
+-		goto err_out;
++		return -ENOENT;
+ 	}
+ 
+-	ltq_mtd->map = kzalloc(sizeof(struct map_info), GFP_KERNEL);
++	ltq_mtd->map = devm_kzalloc(&pdev->dev, sizeof(struct map_info),
++				    GFP_KERNEL);
++	if (!ltq_mtd->map)
++		return -ENOMEM;
++
+ 	ltq_mtd->map->phys = ltq_mtd->res->start;
+ 	ltq_mtd->map->size = resource_size(ltq_mtd->res);
+ 	ltq_mtd->map->virt = devm_ioremap_resource(&pdev->dev, ltq_mtd->res);
+-	if (IS_ERR(ltq_mtd->map->virt)) {
+-		err = PTR_ERR(ltq_mtd->map->virt);
+-		goto err_out;
+-	}
++	if (IS_ERR(ltq_mtd->map->virt))
++		return PTR_ERR(ltq_mtd->map->virt);
+ 
+ 	ltq_mtd->map->name = ltq_map_name;
+ 	ltq_mtd->map->bankwidth = 2;
+@@ -155,8 +159,7 @@ ltq_mtd_probe(struct platform_device *pdev)
+ 
+ 	if (!ltq_mtd->mtd) {
+ 		dev_err(&pdev->dev, "probing failed\n");
+-		err = -ENXIO;
+-		goto err_free;
++		return -ENXIO;
+ 	}
+ 
+ 	ltq_mtd->mtd->owner = THIS_MODULE;
+@@ -177,10 +180,7 @@ ltq_mtd_probe(struct platform_device *pdev)
+ 
+ err_destroy:
+ 	map_destroy(ltq_mtd->mtd);
+-err_free:
+-	kfree(ltq_mtd->map);
+-err_out:
+-	kfree(ltq_mtd);
++
+ 	return err;
+ }
+ 
+@@ -194,9 +194,8 @@ ltq_mtd_remove(struct platform_device *pdev)
+ 			mtd_device_unregister(ltq_mtd->mtd);
+ 			map_destroy(ltq_mtd->mtd);
+ 		}
+-		kfree(ltq_mtd->map);
+-		kfree(ltq_mtd);
+ 	}
++
+ 	return 0;
+ }
+ 
+-- 
+1.7.10.4
+
