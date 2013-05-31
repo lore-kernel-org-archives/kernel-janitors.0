@@ -1,31 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 31 May 2013 10:07:19 +0000
-Subject: [patch -next] bnx2x: fix a power state test
-Message-Id: <20130531075840.GA28370@debian>
+From: Harsh Kumar <harsh1kumar@gmail.com>
+Date: Fri, 31 May 2013 15:44:11 +0000
+Subject: [Patch 2/2] Staging: winbond: Memory & urb freed
+Message-Id: <51A8C27B.9090003@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eilon Greenstein <eilong@broadcom.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-PCI_D0 is zero so the original test is never true.
+Memory & urb should be freed before exiting from the function, I think.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Note: This patch is to be applied after applying the earlier patch i.e [patch 1/2]
+
+Signed-off-by: Harsh Kumar <harsh1kumar@gmail.com>
+
 ---
-I don't have the hardware to test this, and I'm not positive on it.
-Buyer beware!
+ drivers/staging/winbond/wb35reg.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-index 263950c..a9a1609 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-@@ -1391,7 +1391,7 @@ static bool bnx2x_is_nvm_accessible(struct bnx2x *bp)
- 		rc = pci_read_config_word(bp->pdev,
- 					  bp->pm_cap + PCI_PM_CTRL, &pm);
+diff -uprN a/drivers/staging/winbond/wb35reg.c b/drivers/staging/winbond/wb35reg.c
+--- a/drivers/staging/winbond/wb35reg.c	2013-05-31 20:03:17.000000000 +0530
++++ b/drivers/staging/winbond/wb35reg.c	2013-05-31 20:21:39.856010583 +0530
+@@ -69,6 +69,9 @@ unsigned char Wb35Reg_BurstWrite(struct
+ 	/* Start EP0VM */
+ 	Wb35Reg_EP0VM_start(pHwData);
  
--	if ((rc && !netif_running(dev)) || (!rc && ((pm & PCI_D0) != PCI_D0)))
-+	if ((rc && !netif_running(dev)) || (!rc && pm != PCI_D0))
- 		return false;
- 
++	kfree(reg_queue);
++	usb_free_urb(urb);
++
  	return true;
+ }
+ 
+@@ -211,6 +214,9 @@ unsigned char Wb35Reg_Write(struct hw_da
+ 	/* Start EP0VM */
+ 	Wb35Reg_EP0VM_start(pHwData);
+ 
++	kfree(reg_queue);
++	usb_free_urb(urb);
++
+ 	return true;
+ }
+ 
+@@ -277,6 +283,9 @@ unsigned char Wb35Reg_WriteWithCallbackV
+ 	/* Start EP0VM */
+ 	Wb35Reg_EP0VM_start(pHwData);
+ 
++	kfree(reg_queue);
++	usb_free_urb(urb);
++
+ 	return true;
+ }
+ 
+@@ -381,6 +390,9 @@ unsigned char Wb35Reg_Read(struct hw_dat
+ 	/* Start EP0VM */
+ 	Wb35Reg_EP0VM_start(pHwData);
+ 
++	kfree(reg_queue);
++	usb_free_urb(urb);
++
+ 	return true;
+ }
+ 
