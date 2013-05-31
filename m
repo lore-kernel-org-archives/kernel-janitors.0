@@ -1,31 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 02 May 2013 22:00:34 +0000
-Subject: Re: [patch] configfs: use capped length for ->store_attribute()
-Message-Id: <20130502220034.GP5123@mwanda>
+Date: Fri, 31 May 2013 12:46:58 +0000
+Subject: [patch v2] ipmi: info leak in compat_ipmi_ioctl()
+Message-Id: <20130531124658.GU23987@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130430072813.GC7237@elgon.mountain>
- <20130502215152.GB26770@localhost>
-In-Reply-To: <20130502215152.GB26770@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Corey Minyard <minyard@acm.org>
+Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, May 02, 2013 at 02:51:53PM -0700, Joel Becker wrote:
-> On Tue, Apr 30, 2013 at 10:28:14AM +0300, Dan Carpenter wrote:
-> > The difference between "count" and "len" is that "len" is capped at
-> > 4095.  Changing it like this makes it match how sysfs_write_file() is
-> > implemented.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Joel Becker <jlbec@evilplan.org>
-> 
-> Do you want me to push this up, or will you be sending it?
+On x86_64 there is a 4 byte hole between ->recv_type and ->addr.
 
-Could you push it?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: fixed the changelog a little.  Also added LKML because the
+openipmi is a moderated list (and the moderator thought my email was
+spam).
 
-regards,
-dan carpenter
-
-
+diff --git a/drivers/char/ipmi/ipmi_devintf.c b/drivers/char/ipmi/ipmi_devintf.c
+index 9eb360f..8e306ac 100644
+--- a/drivers/char/ipmi/ipmi_devintf.c
++++ b/drivers/char/ipmi/ipmi_devintf.c
+@@ -810,6 +810,7 @@ static long compat_ipmi_ioctl(struct file *filep, unsigned int cmd,
+ 		struct ipmi_recv   __user *precv64;
+ 		struct ipmi_recv   recv64;
+ 
++		memset(&recv64, 0, sizeof(recv64));
+ 		if (get_compat_ipmi_recv(&recv64, compat_ptr(arg)))
+ 			return -EFAULT;
+ 
