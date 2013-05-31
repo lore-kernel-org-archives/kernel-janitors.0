@@ -1,44 +1,63 @@
-From: Bryan Wu <cooloney@gmail.com>
-Date: Fri, 31 May 2013 06:38:46 +0000
-Subject: Re: [patch] leds: renesas-tpu: cleanup a small type issue
-Message-Id: <CAK5ve-Ldd9SaZ8if2XA_iKLQ6-DpjSGkDjjaFFNaLYgtVhJ=HQ@mail.gmail.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 31 May 2013 20:22:58 +0000
+Subject: [PATCH] usb: musb: Fix format specifier warning
+Message-Id: <1370031778-25965-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130529070150.GC25133@debian>
-In-Reply-To: <20130529070150.GC25133@debian>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: balbi@ti.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Thu, May 30, 2013 at 10:45 PM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> On Thu, May 30, 2013 at 11:01:34AM -0700, Bryan Wu wrote:
->> On Thu, May 30, 2013 at 5:02 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> > On Thu, May 30, 2013 at 10:59:35AM +0200, walter harms wrote:
->> >>
->> >>
->> >> Am 29.05.2013 23:15, schrieb Dan Carpenter:
->> >> > On Wed, May 29, 2013 at 07:34:39PM +0200, walter harms wrote:
->> >> >
->> >> >> int would be a more "natural" choice.
->> >> >>
->> >> >
->> >> > You should never use signed types for a bit field.  That's just
->> >> > asking for a sign expansion bug.
->> >>
->> >> my idea was more to use unsigned int instead of u16.
->> >> Personally i try to avoid this (artificial) types as much as possible,
->> >
->> > Obviously no one wants to go nuts with the type specifiers like the
->> > e1000e people who never use "int" and only "s32".  But in this case
->> > u16 is more readable and more accurate.
->> >
->>
->> Do you mind to clean up this driver with u16? or I will do it.
->
-> I resent the patch already.  Hopefully, that's ok?
->
+This patch fixes a format specifier warning. dma_addr_t can be either
+u32 or u64 so we should cast to the largest type and change the format
+specifier to %llx.
+The addition of urb->transfer_dma and urb->actual_length is also done a
+few lines below. I have moved this code up and pass the variable buf to
+dev_dbg.
 
-I didn't get it, did you resent it to linux-leds mail list or just LKML?
+Sparse output:
+drivers/usb/musb/musb_host.c:1761:4: warning:
+	format ‘%x’ expects argument of type ‘unsigned int’,
+	but argument 6 has type ‘dma_addr_t’ [-Wformat]
 
--Bryan
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/usb/musb/musb_host.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+index 094cf80..d647ccb 100644
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -1756,11 +1756,11 @@ void musb_host_rx(struct musb *musb, u8 epnum)
+ 			dma_addr_t		buf;
+ 
+ 			rx_count = musb_readw(epio, MUSB_RXCOUNT);
++			buf = urb->transfer_dma + urb->actual_length;
+ 
+-			dev_dbg(musb->controller, "RX%d count %d, buffer 0x%x len %d/%d\n",
++			dev_dbg(musb->controller, "RX%d count %d, buffer 0x%llx len %d/%d\n",
+ 					epnum, rx_count,
+-					urb->transfer_dma
+-						+ urb->actual_length,
++					(unsigned long long)buf,
+ 					qh->offset,
+ 					urb->transfer_buffer_length);
+ 
+@@ -1789,11 +1789,8 @@ void musb_host_rx(struct musb *musb, u8 epnum)
+ 					length = rx_count;
+ 				d->status = d_status;
+ 				buf = urb->transfer_dma + d->offset;
+-			} else {
++			} else
+ 				length = rx_count;
+-				buf = urb->transfer_dma +
+-						urb->actual_length;
+-			}
+ 
+ 			dma->desired_mode = 0;
+ #ifdef USE_MODE1
+-- 
+1.7.10.4
+
