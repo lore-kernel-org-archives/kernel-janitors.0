@@ -1,52 +1,31 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 27 May 2013 07:13:12 +0000
-Subject: Re: [patch] f2fs: dereferencing an ERR_PTR
-Message-Id: <51A30788.4050106@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 May 2013 10:07:19 +0000
+Subject: [patch -next] bnx2x: fix a power state test
+Message-Id: <20130531075840.GA28370@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130523100213.GA19107@elgon.mountain> <51A224AB.8010209@bfs.de>
-	<20130526204116.GE23932@mwanda>
-In-Reply-To: <20130526204116.GE23932@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Eilon Greenstein <eilong@broadcom.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+PCI_D0 is zero so the original test is never true.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I don't have the hardware to test this, and I'm not positive on it.
+Buyer beware!
 
-Am 26.05.2013 22:41, schrieb Dan Carpenter:
-> On Sun, May 26, 2013 at 05:05:15PM +0200, walter harms wrote:
->>
->>
->> Am 23.05.2013 12:02, schrieb Dan Carpenter:
->>> There is an error path where "dir" is an ERR_PTR.
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>> index 5148d90..921aede 100644
->>> --- a/fs/f2fs/recovery.c
->>> +++ b/fs/f2fs/recovery.c
->>> @@ -71,7 +71,8 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
->>>  out:
->>>  	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode and its dentry: "
->>>  			"ino = %x, name = %s, dir = %lx, err = %d",
->>> -			ino_of_node(ipage), raw_inode->i_name, dir->i_ino, err);
->>> +			ino_of_node(ipage), raw_inode->i_name,
->>> +			IS_ERR(dir) ? 0 : dir->i_ino, err);
->>>  	return err;
->>>  }
->>>  
->> I am not an expert on  this matter so a simple question:
->> dir->i_ino=0 is not valid ?
-> 
-> That is a valid question.  The trick is that we also print the err
-> code so error conditions should be pretty obvious.
-> 
-hi dan,
-people never read error messages propperly, i would go for -1
-or at least something obvoius like 57005 (0xdead :).
-
-re,
- wh
-
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+index 263950c..a9a1609 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+@@ -1391,7 +1391,7 @@ static bool bnx2x_is_nvm_accessible(struct bnx2x *bp)
+ 		rc = pci_read_config_word(bp->pdev,
+ 					  bp->pm_cap + PCI_PM_CTRL, &pm);
+ 
+-	if ((rc && !netif_running(dev)) || (!rc && ((pm & PCI_D0) != PCI_D0)))
++	if ((rc && !netif_running(dev)) || (!rc && pm != PCI_D0))
+ 		return false;
+ 
+ 	return true;
