@@ -1,77 +1,69 @@
-From: =?ISO-8859-1?Q?Arve_Hj=F8nnev=E5g?= <arve@android.com>
-Date: Wed, 05 Jun 2013 00:49:06 +0000
-Subject: Re: [patch] staging: alarm-dev: information leak in alarm_compat_ioctl()
-Message-Id: <CAMP5Xgf-y3dqsKSCUWnoy9XoBt+49ob25944AnQWZ53no=35Yg@mail.gmail.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 01 Jun 2013 18:02:27 +0000
+Subject: [PATCH] usb: musb: use the new %pa format specifier for dma_addr_t
+Message-Id: <1370109747-18821-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130603090231.GB16171@debian>
-In-Reply-To: <20130603090231.GB16171@debian>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: balbi@ti.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Tue, Jun 4, 2013 at 5:25 PM, John Stultz <john.stultz@linaro.org> wrote:
-> On 06/04/2013 05:07 PM, Arve Hj=F8nnev=E5g wrote:
->>
->> On Tue, Jun 4, 2013 at 6:13 AM, Dan Carpenter <dan.carpenter@oracle.com>
->> wrote:
->>>
->>> If we pass an invalid clock type then "ts" is never set.  We need to
->>> check for errors earlier, otherwise we end up passing uninitialized
->>> stack data to userspace.
->>>
->>> Reported-by: John Stultz <john.stultz@linaro.org>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> diff --git a/drivers/staging/android/alarm-dev.c
->>> b/drivers/staging/android/alarm-dev.c
->>> index c8600d9..6dc27da 100644
->>> --- a/drivers/staging/android/alarm-dev.c
->>> +++ b/drivers/staging/android/alarm-dev.c
->>> @@ -297,6 +297,8 @@ static long alarm_compat_ioctl(struct file *file,
->>> unsigned int cmd,
->>>          }
->>>
->>>          rv =3D alarm_do_ioctl(file, cmd, &ts);
->>> +       if (rv)
->>> +               return rv;
->>>
->>>          switch (ANDROID_ALARM_BASE_CMD(cmd)) {
->>>          case ANDROID_ALARM_GET_TIME(0): /* NOTE: we modified cmd above
->>> */
->>> @@ -305,7 +307,7 @@ static long alarm_compat_ioctl(struct file *file,
->>> unsigned int cmd,
->>>                  break;
->>>          }
->>>
->>> -       return rv;
->>> +       return 0;
->>>   }
->>>   #endif
->>>
->> Is there a separate fix for alarm_ioctl? It seems to have the same
->> problem.
->
-> Yea, I CC'ed the kernel-team alias yesterday on Dan's original fix for the
-> alarm_ioctl, which Greg has already queued.
->
-> This is just the follow-on fix to catch the same issue (as you also noted)
-> in the compat_ioctl.
->
-> thanks
-> -john
->
+This patch makes use of the new format specifier %pa that was introduced
+by the following commit.
 
-Sorry, I missed that.
+7d7992108d02aa92ad4c77e5d9ce14088c942e75
+("lib/vsprintf.c: add %pa format specifier for phys_addr_t types")
 
-Acked-by: Arve Hj=F8nnev=E5g <arve@android.com>
+The addition of urb->transfer_dma and urb->actual_length is also done a
+few lines below. I have moved this code up and pass the variable buf to
+dev_dbg.
 
-to both.
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+I also added braces to the else statement for consistency.
+(Didn't want to send a separate patch for that)
 
---
-Arve Hj=F8nnev=E5g
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/usb/musb/musb_host.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+index a9695f5..701f668 100644
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -1756,12 +1756,11 @@ void musb_host_rx(struct musb *musb, u8 epnum)
+ 			dma_addr_t		buf;
+ 
+ 			rx_count = musb_readw(epio, MUSB_RXCOUNT);
++			buf = urb->transfer_dma + urb->actual_length;
+ 
+-			dev_dbg(musb->controller, "RX%d count %d, buffer 0x%llx len %d/%d\n",
++			dev_dbg(musb->controller, "RX%d count %d, buffer 0x%pa len %d/%d\n",
+ 					epnum, rx_count,
+-					(unsigned long long) urb->transfer_dma
+-					+ urb->actual_length,
+-					qh->offset,
++					&buf, qh->offset,
+ 					urb->transfer_buffer_length);
+ 
+ 			c = musb->dma_controller;
+@@ -1785,14 +1784,13 @@ void musb_host_rx(struct musb *musb, u8 epnum)
+ 					    rx_count, d->length);
+ 
+ 					length = d->length;
+-				} else
++				} else {
+ 					length = rx_count;
++				}
+ 				d->status = d_status;
+ 				buf = urb->transfer_dma + d->offset;
+ 			} else {
+ 				length = rx_count;
+-				buf = urb->transfer_dma +
+-						urb->actual_length;
+ 			}
+ 
+ 			dma->desired_mode = 0;
+-- 
+1.7.10.4
+
