@@ -1,50 +1,72 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 02 Jun 2013 04:16:13 +0000
-Subject: build regressions 2013-06-01
-Message-Id: <51aac70d.LAdk2FYq7iFoV5l0%fengguang.wu@intel.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 01 Jun 2013 19:18:05 +0000
+Subject: [PATCH v2] usb: musb: use the new %pa format specifier for dma_addr_t
+Message-Id: <1370114285-14238-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: balbi@ti.com, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-[errors]
-olpc_dcon_xo_1.c:(.text+0x28df76): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28dfda): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28dff4): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e011): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e02e): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e04b): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e068): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e085): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e0a2): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e0bf): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e140): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e186): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e1a3): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e1c0): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e1dd): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e391): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e3ab): undefined reference to `cs5535_gpio_isset'
-olpc_dcon_xo_1.c:(.text+0x28e459): undefined reference to `cs5535_gpio_setup_event'
-olpc_dcon_xo_1.c:(.text+0x28e476): undefined reference to `cs5535_gpio_set_irq'
-olpc_dcon_xo_1.c:(.text+0x28e547): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e564): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e581): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e59e): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e5bb): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e5d8): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e5f5): undefined reference to `cs5535_gpio_clear'
-olpc_dcon_xo_1.c:(.text+0x28e612): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e62c): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e649): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e666): undefined reference to `cs5535_gpio_set'
-olpc_dcon_xo_1.c:(.text+0x28e683): undefined reference to `cs5535_gpio_set'
+This patch makes use of the new format specifier %pa that was introduced
+by the following commit.
 
-[coccinelle]
-sound/pci/rme9652/hdspm.c:1110:2-3: Unneeded semicolon
-sound/pci/rme9652/hdspm.c:1110:2-3: Unneeded semicolon
+7d7992108d02aa92ad4c77e5d9ce14088c942e75
+("lib/vsprintf.c: add %pa format specifier for phys_addr_t types")
 
+The addition of urb->transfer_dma and urb->actual_length is also done a
+few lines below. I have moved this code up and pass the variable buf to
+dev_dbg.
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+v2: Remove 0x from string as it will print as 0x0x
+This applies on top of commit 43d5ad743c6f
+("usb: musb: host: fix build warning")
+I also added braces to the else statement for consistency.
+(Didn't want to send a separate patch for that)
+
+ drivers/usb/musb/musb_host.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+index a9695f5..ee7730a 100644
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -1756,12 +1756,11 @@ void musb_host_rx(struct musb *musb, u8 epnum)
+ 			dma_addr_t		buf;
+ 
+ 			rx_count = musb_readw(epio, MUSB_RXCOUNT);
++			buf = urb->transfer_dma + urb->actual_length;
+ 
+-			dev_dbg(musb->controller, "RX%d count %d, buffer 0x%llx len %d/%d\n",
++			dev_dbg(musb->controller, "RX%d count %d, buffer %pa len %d/%d\n",
+ 					epnum, rx_count,
+-					(unsigned long long) urb->transfer_dma
+-					+ urb->actual_length,
+-					qh->offset,
++					&buf, qh->offset,
+ 					urb->transfer_buffer_length);
+ 
+ 			c = musb->dma_controller;
+@@ -1785,14 +1784,13 @@ void musb_host_rx(struct musb *musb, u8 epnum)
+ 					    rx_count, d->length);
+ 
+ 					length = d->length;
+-				} else
++				} else {
+ 					length = rx_count;
++				}
+ 				d->status = d_status;
+ 				buf = urb->transfer_dma + d->offset;
+ 			} else {
+ 				length = rx_count;
+-				buf = urb->transfer_dma +
+-						urb->actual_length;
+ 			}
+ 
+ 			dma->desired_mode = 0;
+-- 
+1.7.10.4
+
