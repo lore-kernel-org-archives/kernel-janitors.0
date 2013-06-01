@@ -1,31 +1,24 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Mon, 10 Jun 2013 12:58:22 +0000
-Subject: Re: [patch] ipvs: info leak in __ip_vs_get_dest_entries()
-Message-Id: <20130610125822.GA4968@localhost>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 01 Jun 2013 00:11:14 +0000
+Subject: Re: [patch -next] bnx2x: fix a power state test
+Message-Id: <20130531.171114.1448993396211120979.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130603090049.GA16171@debian>
- <20130610083849.GD1563@verge.net.au>
-In-Reply-To: <20130610083849.GD1563@verge.net.au>
+References: <20130531075840.GA28370@debian>
+In-Reply-To: <20130531075840.GA28370@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Simon Horman <horms@verge.net.au>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Wensong Zhang <wensong@linux-vs.org>, Julian Anastasov <ja@ssi.bg>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: eilong@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jun 10, 2013 at 05:38:50PM +0900, Simon Horman wrote:
-> On Mon, Jun 03, 2013 at 12:00:49PM +0300, Dan Carpenter wrote:
-> > The entry struct has a 2 byte hole after ->port and another 4 byte
-> > hole after ->stats.outpkts.  You must have CAP_NET_ADMIN in your
-> > namespace to hit this information leak.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 May 2013 13:07:19 +0300
+
+> PCI_D0 is zero so the original test is never true.
 > 
-> Signed-off-by: Simon Horman <horms@verge.net.au>
-> 
-> Pablo, could you take this directly into your tree.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I don't have the hardware to test this, and I'm not positive on it.
+> Buyer beware!
 
-Applied, thanks Simon.
-
-> If possible for v3.10. It also appears to be relevant for stable.
-
-Sure, will do.
+Someone please review/test this patch, thanks.
