@@ -1,38 +1,39 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Tue, 25 Jun 2013 06:16:23 +0000
-Subject: Re: [patch] iscsi-target: missing kfree() on error path
-Message-Id: <1372140983.23664.436.camel@haakon3.risingtidesystems.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 01 Jun 2013 13:15:03 +0000
+Subject: Re: [PATCH] usb: musb: Fix format specifier warning
+Message-Id: <CAHp75Vd3frBwPa=DQiKrkkcPdOooBGUS=tYC6STw+o1gW1zf6Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130624154657.GB31984@elgon.mountain>
-In-Reply-To: <20130624154657.GB31984@elgon.mountain>
+References: <1370031778-25965-1-git-send-email-emilgoode@gmail.com>
+	<CAHp75VciHQKcyj-ANLdg=mg2C71zn=09Eentf22q+otGu=rp3w@mail.gmail.com>
+	<51A926A4.5010800@infradead.org>
+In-Reply-To: <51A926A4.5010800@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, Roland Dreier <roland@purestorage.com>, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Emil Goode <emilgoode@gmail.com>, balbi@ti.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, USB <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, 2013-06-24 at 18:46 +0300, Dan Carpenter wrote:
-> We need to free "payload" before returning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
-> index c1106bb..1e59630 100644
-> --- a/drivers/target/iscsi/iscsi_target.c
-> +++ b/drivers/target/iscsi/iscsi_target.c
-> @@ -3426,6 +3426,7 @@ static int iscsit_build_sendtargets_response(struct iscsi_cmd *cmd)
->  		if (!text_ptr) {
->  			pr_err("Unable to locate '=' string in text_in:"
->  			       " %s\n", text_in);
-> +			kfree(payload);
->  			return -EINVAL;
->  		}
->  		/*
-> --
+On Sat, Jun 1, 2013 at 1:39 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 05/31/13 15:34, Andy Shevchenko wrote:
+>> On Fri, May 31, 2013 at 11:22 PM, Emil Goode <emilgoode@gmail.com> wrote:
+>>> This patch fixes a format specifier warning. dma_addr_t can be either
+>>> u32 or u64 so we should cast to the largest type and change the format
+>>> specifier to %llx.
+>>
+>> dma_addr_t is derived from phys_addr_t, thus you may use %pa specifier
+>> which is available from v3.8(?).
+>>
+>> Something like this:
+>> dma_addr_t src_addr;
+>> dev_dbg(dev, "DMA addr: %pa\n", src_addr);
+>
+> Isn't that:
+>
+>   deb_dbg(dev, "DMA addr: %pa\n", &src_addr);
 
-Applied to for-next.
+It's.
+You are right.
 
-Thanks Dan!
-
---nab
-
+--
+With Best Regards,
+Andy Shevchenko
