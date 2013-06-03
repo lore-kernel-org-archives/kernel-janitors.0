@@ -1,32 +1,28 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 27 Jun 2013 17:30:19 +0000
-Subject: build regressions 2013-06-27
-Message-Id: <51cc76ab.5RxL8vs1T2rzi6Sj%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Jun 2013 09:27:25 +0000
+Subject: [patch] fanotify: info leak in copy_event_to_user()
+Message-Id: <20130603092725.GE16171@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-drivers/gpu/drm/i915/intel_sprite.c:846:7: error: too few arguments to function 'intel_update_plane'
-(.text+0xa1767): undefined reference to `generate_smb3signingkey'
-security/apparmor/lsm.c:750:29: error: 'CONFIG_SECURITY_APPARMOR_UNCONFINED_INIT' undeclared here (not in a function)
-ERROR: "generate_smb3signingkey" [fs/cifs/cifs.ko] undefined!
+The ->reserverd field isn't cleared so we leak one byte of stack
+information to userspace.
 
-[warnings]
-WARNING: kernel/built-in.o(.text+0x8473c): Section mismatch in reference from the function rcu_torture_onoff() to the function .cpuinit.text:cpu_up()
-drivers/gpu/drm/i915/intel_sprite.c:846:7: warning: passing argument 4 of 'intel_update_plane' makes pointer from integer without a cast [enabled by default]
-drivers/media/platform/vsp1/vsp1_drv.c:339:22: warning: unused variable 'vsp1' [-Wunused-variable]
-drivers/media/platform/vsp1/vsp1_drv.c:346:22: warning: unused variable 'vsp1' [-Wunused-variable]
-warning: (ARM_GIC && ARM_VIC && RENESAS_INTC_IRQPIN && RENESAS_IRQC && VERSATILE_FPGA_IRQ && REGMAP && GPIO_LYNXPOINT && GPIO_GRGPIO && GPIO_PCF857X && GPIO_LANGWELL && MFD_CORE && MFD_MAX77686 && MFD_MAX8997 && AB8500_CORE && MFD_LP8788 && MFD_TPS65910 && TWL4030_CORE && MFD_VX855 && MFD_WM831X_I2C && MFD_WM831X_SPI && EXTCON_MAX77693) selects IRQ_DOMAIN which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS)
-warning: (ARM_GIC && ARM_VIC && RENESAS_INTC_IRQPIN && RENESAS_IRQC && VERSATILE_FPGA_IRQ && REGMAP && GPIO_LYNXPOINT && GPIO_GRGPIO && GPIO_PCF857X && GPIO_LANGWELL && MFD_CORE && MFD_MAX77686 && MFD_MAX8997 && AB8500_CORE && MFD_LP8788 && MFD_TPS65910 && TWL4030_CORE && MFD_VX855 && MFD_WM831X_I2C && MFD_WM831X_SPI && EXTCON_MAX77693) selects IRQ_DOMAIN which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS)
-warning: (ARM_GIC && ARM_VIC && RENESAS_INTC_IRQPIN && RENESAS_IRQC && VERSATILE_FPGA_IRQ && REGMAP && GPIO_LYNXPOINT && GPIO_GRGPIO && GPIO_PCF857X && GPIO_LANGWELL && MFD_CORE && MFD_MAX77686 && MFD_MAX8997 && AB8500_CORE && MFD_LP8788 && MFD_TPS65910 && TWL4030_CORE && MFD_VX855 && MFD_WM831X_I2C && MFD_WM831X_SPI && EXTCON_MAX77693) selects IRQ_DOMAIN which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS)
-drivers/sh/clk/cpg.c:41:2: warning: passing argument 1 of 'ioread8' discards 'const' qualifier from pointer target type [enabled by default]
-drivers/sh/clk/cpg.c:46:2: warning: passing argument 1 of 'ioread16' discards 'const' qualifier from pointer target type [enabled by default]
-drivers/sh/clk/cpg.c:51:2: warning: passing argument 1 of 'ioread32' discards 'const' qualifier from pointer target type [enabled by default]
-drivers/mfd/max8998.c:178:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 6c80083..77cc85d 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -122,6 +122,7 @@ static int fill_event_metadata(struct fsnotify_group *group,
+ 	metadata->event_len = FAN_EVENT_METADATA_LEN;
+ 	metadata->metadata_len = FAN_EVENT_METADATA_LEN;
+ 	metadata->vers = FANOTIFY_METADATA_VERSION;
++	metadata->reserved = 0;
+ 	metadata->mask = event->mask & FAN_ALL_OUTGOING_EVENTS;
+ 	metadata->pid = pid_vnr(event->tgid);
+ 	if (unlikely(event->mask & FAN_Q_OVERFLOW))
