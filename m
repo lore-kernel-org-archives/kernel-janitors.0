@@ -1,18 +1,29 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 19 May 2013 16:51:02 +0000
-Subject: build regressions 2013-05-19
-Message-Id: <519902f6.ciIeT5aBc+UUrXeA%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Jun 2013 09:00:49 +0000
+Subject: [patch] ipvs: info leak in __ip_vs_get_dest_entries()
+Message-Id: <20130603090049.GA16171@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wensong Zhang <wensong@linux-vs.org>
+Cc: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-[errors]
-(.text+0x192d1e): undefined reference to `usb_match_id'
-(.text+0x23e116): undefined reference to `usb_clear_halt'
-smsusb.c:(.text.unlikely+0x1636): undefined reference to `usb_init_urb'
+The entry struct has a 2 byte hole after ->port and another 4 byte
+hole after ->stats.outpkts.  You must have CAP_NET_ADMIN in your
+namespace to hit this information leak.
 
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index df05c1c..e336535 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2542,6 +2542,7 @@ __ip_vs_get_dest_entries(struct net *net, const struct ip_vs_get_dests *get,
+ 		struct ip_vs_dest *dest;
+ 		struct ip_vs_dest_entry entry;
+ 
++		memset(&entry, 0, sizeof(entry));
+ 		list_for_each_entry(dest, &svc->destinations, n_list) {
+ 			if (count >= get->num_dests)
+ 				break;
