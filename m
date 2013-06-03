@@ -1,16 +1,28 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 12 Jun 2013 11:37:22 +0000
-Subject: build regressions 2013-06-11
-Message-Id: <51b85d72.ZaC/D/zTkmoel7yv%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Jun 2013 09:25:16 +0000
+Subject: [patch] cpqarray: info leak in ida_locked_ioctl()
+Message-Id: <20130603092516.GC16171@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chirag Kantharia <chirag.kantharia@hp.com>
+Cc: iss_storagedev@hp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[sparse]
-fs/f2fs/super.c:120:6: sparse: symbol 'f2fs_dirty_inode' was not declared. Should it be static?
+The pciinfo struct has a two byte hole after ->dev_fn so stack
+information could be leaked to the user.
 
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/block/cpqarray.c b/drivers/block/cpqarray.c
+index 639d26b..2b94403 100644
+--- a/drivers/block/cpqarray.c
++++ b/drivers/block/cpqarray.c
+@@ -1193,6 +1193,7 @@ out_passthru:
+ 		ida_pci_info_struct pciinfo;
+ 
+ 		if (!arg) return -EINVAL;
++		memset(&pciinfo, 0, sizeof(pciinfo));
+ 		pciinfo.bus = host->pci_dev->bus->number;
+ 		pciinfo.dev_fn = host->pci_dev->devfn;
+ 		pciinfo.board_id = host->board_id;
