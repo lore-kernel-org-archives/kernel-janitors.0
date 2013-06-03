@@ -1,46 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 14 Jun 2013 10:00:20 +0000
-Subject: Re: [PATCH] ASoC: Fix double assignment of .owner in struct snd_soc_card
-Message-Id: <20130614100020.GH1403@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="7/IUJOcl5c0tDlVH"
+From: Emil Goode <emilgoode@gmail.com>
+Date: Mon, 03 Jun 2013 12:21:08 +0000
+Subject: [PATCH] net: ipv6: Fix incompatible pointer type warning
+Message-Id: <1370262068-16658-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1371203336-16972-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1371203336-16972-1-git-send-email-emilgoode@gmail.com>
-To: Emil Goode <emilgoode@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux@arm.linux.org.uk, tiwai@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, lgirdwood@gmail.com, haojian.zhuang@gmail.com, perex@perex.cz, eric.y.miao@gmail.com, linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net
+Cc: lorenzo@google.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
+This fixes the sparse warning below about assignment from
+incompatible pointer type.
 
---7/IUJOcl5c0tDlVH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In the following commit the third argument in function ipv6_chk_addr
+was changed to const and struct nf_ipv6_ops was introduced with
+the third argument of .chk_addr beeing const.
 
-On Fri, Jun 14, 2013 at 11:48:56AM +0200, Emil Goode wrote:
-> In struct snd_soc_card zylonite .owner is assigned THIS_MODULE
-> twice, remove one of them.
+2a7851bffb008ff4882eee673da74718997b4265
+("netfilter: add nf_ipv6_ops hook to fix xt_addrtype with IPv6")
 
-Applied, thanks.
+The below commit introduced the warning as the third argument of
+dummy_ipv6_chk_addr and .ipv6_chk_addr in struct pingv6_ops is
+missing a const.
 
---7/IUJOcl5c0tDlVH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+6d0bfe22611602f36617bc7aa2ffa1bbb2f54c67
+("net: ipv6: Add IPv6 support to the ping socket.")
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Sparse output:
 
-iQIcBAEBAgAGBQJRuumxAAoJELSic+t+oim9q2kP/AnbRKoCuS/4EoZPVoSWxUZE
-Sq4LX2eq/DSR86zhOTMpwqqklNM+Xl+FBrsFTMB7uEkhenY6+zTvKJcKSsdB7Rg2
-vWVEflULvI9vNz+MeVFD+ICkou6v/V20iaemlp5F5seFoxCAUAugwFDCEourNK5b
-8bc3i2CUWZ8fqJ1EAtvliljaT+b/w7zCh8j+Gc1IPQzWptuQPduNV5GGeOCSkWrZ
-JIdcJMW9oBi3dpBaAOm3AtSceV+YYy6XxWTDUds8pU21VDiiXQW2DrijSJue2hxL
-ep10ty884mT7ehNUU0o/lXXs81HvktrHtN1BqcEyvKPg1+YalB3JWqt+02QTK9X5
-Dn8LFA4dsdZ7BVkhZKHu5lI14wVCbRW5m6XyV1HHCLPRvWJICUFOnvO7xq7ChMNS
-3+nMgX3gYehYU1PxsFVquM9d5Or0ixwrlFPWrPMYyc+jKjZtOYX4YSmmysgbr1S1
-B8RD/r2ugqpVHyNJvskBrXUpYxYdkOQ6ek/5bDmJ6kfNk3rxDhP5rvah2tQGKXge
-KlhRQlOOZ1CePS5Vwv8IgVPanM6JtRDOyf4aDb0wn4m2xQ3Fl+t/JfLlLilQBlFN
-asnB6cPw8Kp8DYIkytxkQXdKd5s0uiS7q6fcXjtJe26hT1aKt/n20UtssME92vNC
-D0pZyRATL1RpNoDA4Tat
-=M+me
------END PGP SIGNATURE-----
+net/ipv6/ping.c: In function ‘pingv6_init’:
+net/ipv6/ping.c:87:27: warning:
+	assignment from incompatible pointer type [enabled by default]
 
---7/IUJOcl5c0tDlVH--
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ include/net/ping.h |    2 +-
+ net/ipv6/ping.c    |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/ping.h b/include/net/ping.h
+index 9242fa0..2db4860 100644
+--- a/include/net/ping.h
++++ b/include/net/ping.h
+@@ -38,7 +38,7 @@ struct pingv6_ops {
+ 	void (*ipv6_icmp_error)(struct sock *sk, struct sk_buff *skb, int err,
+ 				__be16 port, u32 info, u8 *payload);
+ 	int (*ipv6_chk_addr)(struct net *net, const struct in6_addr *addr,
+-			     struct net_device *dev, int strict);
++			     const struct net_device *dev, int strict);
+ };
+ 
+ struct ping_table {
+diff --git a/net/ipv6/ping.c b/net/ipv6/ping.c
+index a6462d6..c2e9669 100644
+--- a/net/ipv6/ping.c
++++ b/net/ipv6/ping.c
+@@ -73,7 +73,7 @@ int dummy_icmpv6_err_convert(u8 type, u8 code, int *err)
+ void dummy_ipv6_icmp_error(struct sock *sk, struct sk_buff *skb, int err,
+ 			    __be16 port, u32 info, u8 *payload) {}
+ int dummy_ipv6_chk_addr(struct net *net, const struct in6_addr *addr,
+-			struct net_device *dev, int strict)
++			const struct net_device *dev, int strict)
+ {
+ 	return 0;
+ }
+-- 
+1.7.10.4
+
