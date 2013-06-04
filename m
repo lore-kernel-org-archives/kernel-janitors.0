@@ -1,50 +1,263 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Jun 2013 06:20:32 +0000
-Subject: [patch] clockevents: signedness bug checking sysfs_get_uname()
-Message-Id: <20130621062032.GB10873@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 04 Jun 2013 17:06:38 +0000
+Subject: build regressions 2013-06-04
+Message-Id: <51ae1e9e.dERr0jfmBUn39kMl%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We check "if (ret < 0) " later so it has to be signed.
+[errors]
+scripts/Makefile.modbuiltin:25: drivers/net/ethernet/alx/Makefile: No such file or directory
+make[5]: *** No rule to make target `drivers/net/ethernet/alx/Makefile'.
+scripts/Makefile.build:44: drivers/net/ethernet/alx/Makefile: No such file or directory
+make[5]: *** No rule to make target `drivers/net/ethernet/alx/Makefile'.
+cxusb.c:(.text+0x603823): undefined reference to `dib0070_wbd_offset'
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1424:2: error: 'pending_fw_head' undeclared (first use in this function)
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1424:2: error: 'struct firmware_buf' has no member named 'pending_list'
+drivers/base/firmware_class.c:1425:11: error: 'struct firmware_buf' has no member named 'need_uevent'
+drivers/base/firmware_class.c:1426:5: error: implicit declaration of function 'fw_load_abort' [-Werror=implicit-function-declaration]
+av7110.c:(.text+0x3b1f18): undefined reference to `sp8870_attach'
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[warnings]
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'start_p2p_find'
+Warning(include/net/cfg80211.h:2320): No description found for parameter 'stop_p2p_find'
+net/wireless/nl80211.c:7795:40: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+drivers/base/firmware_class.c:1424:2: warning: left-hand operand of comma expression has no effect [-Wunused-value]
 
-diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
-index 38959c8..30554b9 100644
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -584,7 +584,7 @@ static ssize_t sysfs_unbind_tick_dev(struct device *dev,
- 				     const char *buf, size_t count)
- {
- 	char name[CS_NAME_LEN];
--	size_t ret = sysfs_get_uname(buf, name, count);
-+	ssize_t ret = sysfs_get_uname(buf, name, count);
- 	struct clock_event_device *ce;
- 
- 	if (ret < 0)
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index e713ef7..228ace1 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -897,7 +897,7 @@ static ssize_t sysfs_override_clocksource(struct device *dev,
- 					  struct device_attribute *attr,
- 					  const char *buf, size_t count)
- {
--	size_t ret;
-+	ssize_t ret;
- 
- 	mutex_lock(&clocksource_mutex);
- 
-@@ -925,7 +925,7 @@ static ssize_t sysfs_unbind_clocksource(struct device *dev,
- {
- 	struct clocksource *cs;
- 	char name[CS_NAME_LEN];
--	size_t ret;
-+	ssize_t ret;
- 
- 	ret = sysfs_get_uname(buf, name, count);
- 	if (ret < 0)
+[sparse]
+drivers/staging/android/sync.c:924:6: sparse: symbol 'sync_dump' was not declared. Should it be static?
+drivers/usb/gadget/ncm.c:114:16: sparse: symbol 'the_dev' was not declared. Should it be static?
+drivers/scsi/pm8001/pm8001_hwi.c:4483:5: sparse: symbol 'pm8001_chip_phy_stop_req' was not declared. Should it be static?
+arch/x86/kernel/head64.c:37:10: sparse: symbol 'early_pmd_flags' was not declared. Should it be static?
+drivers/acpi/pci_slot.c:162:6: sparse: symbol 'acpi_pci_slot_enumerate' was not declared. Should it be static?
+drivers/acpi/pci_slot.c:170:6: sparse: symbol 'acpi_pci_slot_remove' was not declared. Should it be static?
+drivers/scsi/scsi_transport_iscsi.c:992:5: sparse: symbol 'iscsi_is_flashnode_conn_dev' was not declared. Should it be static?
+drivers/net/ethernet/mellanox/mlx4/srq.c:302:17: sparse: symbol 'mlx4_srq_lookup' was not declared. Should it be static?
+lib/usercopy.c:5:6: sparse: symbol 'copy_from_user_overflow' was not declared. Should it be static?
+kernel/trace/trace_entries.h:247:1: sparse: symbol 'event_class_ftrace_bputs' was not declared. Should it be static?
+kernel/trace/trace_entries.h:247:1: sparse: symbol '__event_bputs' was not declared. Should it be static?
+drivers/reset/core.c:46:5: sparse: symbol 'of_reset_simple_xlate' was not declared. Should it be static?
+drivers/reset/core.c:262:6: sparse: symbol 'devm_reset_control_put' was not declared. Should it be static?
+
+[coccinelle]
+drivers/net/wireless/cw1200/queue.c:88:1-7: Replace memcpy with struct assignment
+
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
