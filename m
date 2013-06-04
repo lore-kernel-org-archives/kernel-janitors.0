@@ -1,81 +1,47 @@
-From: "AFG GTBANK LOAN" <turnos-escuelas@ifir-conicet.gov.ar>
-Date: Mon, 17 Jun 2013 19:25:22 +0000
-Subject: 
-Message-Id: <9d8c67649bb8d2918e3ba79f2500a4a5.squirrel@ifir-conicet.gov.ar>
+From: "Hiral Patel (hiralpat)" <hiralpat@cisco.com>
+Date: Tue, 04 Jun 2013 23:12:43 +0000
+Subject: Re: [patch] [SCSI] fnic: potential dead lock in fnic_is_abts_pending()
+Message-Id: <DF334AB4E0858445841A5B5201E1C1B1289CC541@xmb-rcd-x08.cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130530074926.GA8148@debian>
+In-Reply-To: <20130530074926.GA8148@debian>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "Suma Ramars (sramars)" <sramars@cisco.com>, "Brian Uchino (buchino)" <buchino@cisco.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
 
+On 5/30/13 12:50 AM, "Dan Carpenter" <dan.carpenter@oracle.com> wrote:
 
+>There is an unlock missing if the = FNIC_IOREQ_ABTS_PENDING is
+>false.
+>
+>Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>---
+>Static analysis.  I can't test this.
+>
+>diff --git a/drivers/scsi/fnic/fnic_scsi.c b/drivers/scsi/fnic/fnic_scsi.c
+>index be99e75..a97e6e5 100644
+>--- a/drivers/scsi/fnic/fnic_scsi.c
+>+++ b/drivers/scsi/fnic/fnic_scsi.c
+>@@ -2432,11 +2432,9 @@ int fnic_is_abts_pending(struct fnic *fnic, struct
+>scsi_cmnd *lr_sc)
+> 			      "Found IO in %s on lun\n",
+> 			      fnic_ioreq_state_to_str(CMD_STATE(sc)));
+> 
+>-		if (CMD_STATE(sc) = FNIC_IOREQ_ABTS_PENDING) {
+>-			spin_unlock_irqrestore(io_lock, flags);
+>+		if (CMD_STATE(sc) = FNIC_IOREQ_ABTS_PENDING)
+> 			ret = 1;
+>-			continue;
+>-		}
+>+		spin_unlock_irqrestore(io_lock, flags);
+> 	}
+> 
+> 	return ret;
 
-Loan Syndicacion
+Tested-by: Hiral Patel <hiralpat@cisco.com>
 
-Am AFG Guaranty Trust Bank, zu strukturieren wir Kreditlinien treffen Sie
-unsere
-Kunden spezifischen gesch=E4ftlichen Anforderungen und einen deutlichen
-Mehrwert f=FCr unsere
-Kunden Unternehmen.
-eine Division der AFG Finance und Private Bank plc.
+Acked-by: Hiral Patel <hiralpat@cisco.com>
 
-Wenn Sie erw=E4gen, eine gro=DFe Akquisition oder ein Gro=DFprojekt sind, k=
-=F6nnen
-Sie
-brauchen eine erhebliche Menge an Kredit. AFG Guaranty Trust Bank setzen
-k=F6nnen
-zusammen das Syndikat, das die gesamte Kredit schn=FCrt f=FCr
-Sie.
-
-
-Als Bank mit internationaler Reichweite, sind wir gekommen, um Darlehen zu
-identifizieren
-Syndizierungen als Teil unseres Kerngesch=E4fts und durch spitzte diese Zei=
-le
-aggressiv sind wir an einem Punkt, wo wir kommen, um als erkannt haben
-Hauptakteur in diesem Bereich.
-
-
-=F6ffnen Sie ein Girokonto heute mit einem Minimum Bankguthaben von 500 =A3=
- und
-Getup zu =A3 10.000 als Darlehen und auch den Hauch einer Chance und gewann
-die Sterne
-Preis von =A3 500.000 in die sparen und gewinnen promo in may.aply jetzt.
-
-
-mit dem Folowing Informationen =FCber Rechtsanwalt steven lee das Konto
-Offizier.
-
-
-FULL NAME;
-
-
-Wohnadresse;
-
-
-E-MAIL-ADRESSE;
-
-Telefonnummer;
-
-N=E4chsten KINS;
-
-MUTTER MAIDEN NAME;
-
-
-Familienstand;
-
-
-B=DCROADRESSE;
-
-ALTERNATIVE Telefonnummer;
-
-TO @ yahoo.com bar.stevenlee
-NOTE; ALLE Darlehen sind f=FCr 10JAHRE RATE VALID
-ANGEBOT ENDET BALD SO JETZT HURRY
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
