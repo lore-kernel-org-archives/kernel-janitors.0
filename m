@@ -1,55 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 20 Jun 2013 11:09:44 +0000
-Subject: Re: [patch] netfilter: prevent harmless integer overflow
-Message-Id: <20130620110944.GS5008@mwanda>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Wed, 05 Jun 2013 17:29:56 +0000
+Subject: [PATCH] OMAPDSS: Remove kfree for memory allocated with devm_kzalloc
+Message-Id: <1370453396-18043-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130618074603.GF12329@elgon.mountain>
-	<20130620102352.GA19813@localhost>
-In-Reply-To: <20130620102352.GA19813@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: coreteam@netfilter.org, netdev@vger.kernel.org, bridge@lists.linux-foundation.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Stephen Hemminger <stephen@networkplumber.org>, netfilter@vger.kernel.org, Bart De Schuymer <bart.de.schuymer@pandora.be>, netfilter-devel@vger.kernel.org, Patrick McHardy <kaber@trash.net>
+To: archit@ti.com, axel.lin@gmail.com
+Cc: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Thu, Jun 20, 2013 at 12:23:52PM +0200, Pablo Neira Ayuso wrote:
-> On Tue, Jun 18, 2013 at 10:46:03AM +0300, Dan Carpenter wrote:
-> > This overflow is harmless because a few lines later we check:
-> > 
-> > 	if (num_counters != t->private->nentries) {
-> > 
-> > But it still upsets the static checkers.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-> > index 3d110c4..141350e 100644
-> > --- a/net/bridge/netfilter/ebtables.c
-> > +++ b/net/bridge/netfilter/ebtables.c
-> > @@ -1278,6 +1278,8 @@ static int do_update_counters(struct net *net, const char *name,
-> >  
-> >  	if (num_counters = 0)
-> >  		return -EINVAL;
-> > +	if (num_counters > INT_MAX / sizeof(*tmp))
-> > +		return -ENOMEM;
-> 
-> This is artificially limiting to INT_MAX / sizeof(struct counters).
-> Before this patch, the limit is UINT_MAX / sizeof(struct counters). I
-> think it's very unlikely to hit such a limit though, but as you
-> mentioned we cover the overflow already.  Adding it to calm down a
-> static checker sound a bit too much for me.
+It's not necessary to free memory allocated with devm_kzalloc
+in a remove function and using kfree leads to a double free.
 
-I think we may be talking about different things?
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/video/omap2/displays/panel-picodlp.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-"num_counters" comes from the user in update_counters() and we can
-definitely overflow.  I just copied the checks from do_replace() so
-that's why it uses INT_MAX instead of UINT_MAX.
-
-Like I said, the overflow is not harmful because later in the
-function we check "(num_counters != t->private->nentries)" and
-return an error before using "tmp".  So I don't feel strongly about
-this patch either way.
-
-regards,
-dan carpenter
+diff --git a/drivers/video/omap2/displays/panel-picodlp.c b/drivers/video/omap2/displays/panel-picodlp.c
+index 62f2db0..859e111 100644
+--- a/drivers/video/omap2/displays/panel-picodlp.c
++++ b/drivers/video/omap2/displays/panel-picodlp.c
+@@ -469,8 +469,6 @@ static void picodlp_panel_remove(struct omap_dss_device *dssdev)
+ 	i2c_unregister_device(picod->picodlp_i2c_client);
+ 	dev_set_drvdata(&dssdev->dev, NULL);
+ 	dev_dbg(&dssdev->dev, "removing picodlp panel\n");
+-
+-	kfree(picod);
+ }
+ 
+ static int picodlp_panel_enable(struct omap_dss_device *dssdev)
+-- 
+1.7.10.4
 
