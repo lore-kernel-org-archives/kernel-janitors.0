@@ -1,80 +1,34 @@
-From: Lorenzo Colitti <lorenzo@google.com>
-Date: Tue, 04 Jun 2013 09:34:42 +0000
+From: David Miller <davem@davemloft.net>
+Date: Wed, 05 Jun 2013 00:14:56 +0000
 Subject: Re: [PATCH] net: ipv6: Fix incompatible pointer type warning
-Message-Id: <CAKD1Yr06MX0KOsiYVLnum0HhGN-g826qsTwnD3svu2p5Cxum5g@mail.gmail.com>
+Message-Id: <20130604.171456.2052649822776872955.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1370262068-16658-1-git-send-email-emilgoode@gmail.com>
 In-Reply-To: <1370262068-16658-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Emil Goode <emilgoode@gmail.com>
-Cc: David Miller <davem@davemloft.net>, kuznet@ms2.inr.ac.ru, jmorris@namei.org, YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>, kaber@trash.net, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: emilgoode@gmail.com
+Cc: kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, lorenzo@google.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Jun 3, 2013 at 9:21 PM, Emil Goode <emilgoode@gmail.com> wrote:
-> This fixes the sparse warning below about assignment from
-> incompatible pointer type.
->
-> In the following commit the third argument in function ipv6_chk_addr
-> was changed to const and struct nf_ipv6_ops was introduced with
-> the third argument of .chk_addr beeing const.
->
-> 2a7851bffb008ff4882eee673da74718997b4265
-> ("netfilter: add nf_ipv6_ops hook to fix xt_addrtype with IPv6")
->
-> The below commit introduced the warning as the third argument of
-> dummy_ipv6_chk_addr and .ipv6_chk_addr in struct pingv6_ops is
-> missing a const.
->
-> 6d0bfe22611602f36617bc7aa2ffa1bbb2f54c67
-> ("net: ipv6: Add IPv6 support to the ping socket.")
->
-> Sparse output:
->
-> net/ipv6/ping.c: In function =91pingv6_init=92:
-> net/ipv6/ping.c:87:27: warning:
->         assignment from incompatible pointer type [enabled by default]
->
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
->  include/net/ping.h |    2 +-
->  net/ipv6/ping.c    |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/include/net/ping.h b/include/net/ping.h
-> index 9242fa0..2db4860 100644
-> --- a/include/net/ping.h
-> +++ b/include/net/ping.h
-> @@ -38,7 +38,7 @@ struct pingv6_ops {
->         void (*ipv6_icmp_error)(struct sock *sk, struct sk_buff *skb, int=
- err,
->                                 __be16 port, u32 info, u8 *payload);
->         int (*ipv6_chk_addr)(struct net *net, const struct in6_addr *addr,
-> -                            struct net_device *dev, int strict);
-> +                            const struct net_device *dev, int strict);
->  };
->
->  struct ping_table {
-> diff --git a/net/ipv6/ping.c b/net/ipv6/ping.c
-> index a6462d6..c2e9669 100644
-> --- a/net/ipv6/ping.c
-> +++ b/net/ipv6/ping.c
-> @@ -73,7 +73,7 @@ int dummy_icmpv6_err_convert(u8 type, u8 code, int *err)
->  void dummy_ipv6_icmp_error(struct sock *sk, struct sk_buff *skb, int err,
->                             __be16 port, u32 info, u8 *payload) {}
->  int dummy_ipv6_chk_addr(struct net *net, const struct in6_addr *addr,
-> -                       struct net_device *dev, int strict)
-> +                       const struct net_device *dev, int strict)
->  {
->         return 0;
->  }
-> --
-> 1.7.10.4
->
-
-Acked-by: Lorenzo Colitti <lorenzo@google.com>
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+RnJvbTogRW1pbCBHb29kZSA8ZW1pbGdvb2RlQGdtYWlsLmNvbT4NCkRhdGU6IE1vbiwgIDMgSnVu
+IDIwMTMgMTQ6MjE6MDggKzAyMDANCg0KPiBUaGlzIGZpeGVzIHRoZSBzcGFyc2Ugd2FybmluZyBi
+ZWxvdyBhYm91dCBhc3NpZ25tZW50IGZyb20NCj4gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZS4N
+Cj4gDQo+IEluIHRoZSBmb2xsb3dpbmcgY29tbWl0IHRoZSB0aGlyZCBhcmd1bWVudCBpbiBmdW5j
+dGlvbiBpcHY2X2Noa19hZGRyDQo+IHdhcyBjaGFuZ2VkIHRvIGNvbnN0IGFuZCBzdHJ1Y3QgbmZf
+aXB2Nl9vcHMgd2FzIGludHJvZHVjZWQgd2l0aA0KPiB0aGUgdGhpcmQgYXJndW1lbnQgb2YgLmNo
+a19hZGRyIGJlZWluZyBjb25zdC4NCj4gDQo+IDJhNzg1MWJmZmIwMDhmZjQ4ODJlZWU2NzNkYTc0
+NzE4OTk3YjQyNjUNCj4gKCJuZXRmaWx0ZXI6IGFkZCBuZl9pcHY2X29wcyBob29rIHRvIGZpeCB4
+dF9hZGRydHlwZSB3aXRoIElQdjYiKQ0KPiANCj4gVGhlIGJlbG93IGNvbW1pdCBpbnRyb2R1Y2Vk
+IHRoZSB3YXJuaW5nIGFzIHRoZSB0aGlyZCBhcmd1bWVudCBvZg0KPiBkdW1teV9pcHY2X2Noa19h
+ZGRyIGFuZCAuaXB2Nl9jaGtfYWRkciBpbiBzdHJ1Y3QgcGluZ3Y2X29wcyBpcw0KPiBtaXNzaW5n
+IGEgY29uc3QuDQo+IA0KPiA2ZDBiZmUyMjYxMTYwMmYzNjYxN2JjN2FhMmZmYTFiYmIyZjU0YzY3
+DQo+ICgibmV0OiBpcHY2OiBBZGQgSVB2NiBzdXBwb3J0IHRvIHRoZSBwaW5nIHNvY2tldC4iKQ0K
+PiANCj4gU3BhcnNlIG91dHB1dDoNCj4gDQo+IG5ldC9pcHY2L3BpbmcuYzogSW4gZnVuY3Rpb24g
+oXBpbmd2Nl9pbml0ojoNCj4gbmV0L2lwdjYvcGluZy5jOjg3OjI3OiB3YXJuaW5nOg0KPiAJYXNz
+aWdubWVudCBmcm9tIGluY29tcGF0aWJsZSBwb2ludGVyIHR5cGUgW2VuYWJsZWQgYnkgZGVmYXVs
+dF0NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEVtaWwgR29vZGUgPGVtaWxnb29kZUBnbWFpbC5jb20+
+DQoNClRoaXMgb25seSBoYXBwZW5zIHdoZW4geW91IGNvbWJpbmUgbmV0IHdpdGggbmV0LW5leHQs
+IHRoZXJlZm9yZSB5b3VyDQpwYXRjaCBpc24ndCBhY3R1YWxseSByZWxldmVudCB0byBhbnkgcmVh
+bCBHSVQgdHJlZS4NCg0KUGxlYXNlIG1ha2UgdGhpcyB2ZXJ5IGNsZWFyIGluIHRoZSBmdXR1cmUu
+DQo
