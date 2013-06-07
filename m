@@ -1,22 +1,28 @@
-From: Alessandro Rubini <rubini@gnudd.com>
-Date: Thu, 20 Jun 2013 14:09:47 +0000
-Subject: Re: [patch] FMC: fix error handling in probe() function
-Message-Id: <20130620140947.GA9773@mail.gnudd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Jun 2013 12:07:38 +0000
+Subject: [patch -mm] mm, vmalloc: unbreak __vunmap()
+Message-Id: <20130607120738.GA13851@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130620081018.GB15095@elgon.mountain> 
-In-Reply-To: <20130620081018.GB15095@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>, Zhang Yanfei <zhangyanfei@cn.fujitsu.com>, David Rientjes <rientjes@google.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> The call to kzalloc() wasn't checked.
-> The dev_info() message dereferenced freed memory on error.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is an extra semi-colon so the function always returns.
 
-Acked-by: Alessandro Rubini <rubini@gnudd.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks!
-
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 91a1047..96b77a9 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1453,7 +1453,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 		return;
+ 
+ 	if (WARN(!PAGE_ALIGNED(addr), "Trying to vfree() bad address (%p)\n",
+-			addr));
++			addr))
+ 		return;
+ 
+ 	area = remove_vm_area(addr);
