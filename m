@@ -1,23 +1,59 @@
-From: Logan Blyth <mrbojangles3@gmail.com>
-Date: Sun, 30 Jun 2013 21:19:19 +0000
-Subject: Tips for a Newcomer
-Message-Id: <51D0A0D7.4070408@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 08 Jun 2013 16:21:42 +0000
+Subject: [PATCH] scripts/coccinelle: check for field address argument to kfree
+Message-Id: <1370708502-21907-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-Hello list,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I am looking for some tips on starting as a kernel janitor, and I was 
-hoping to find out the general work flow that people use. From what I 
-can tell, we search through the kernel-next git repo, then either by 
-grep, ctags, or some other method? We are looking for things in the 
-KernelJanitors/Todo, possibly stuff turned up by sparse? Maybe a 
-different static analyser like from clang?
+The argument to kfree should not be the address of a structure field.
 
- From there we make sure the patch applys cleanly and mail the 
-maintainer, copying the LKML and Kernel-Janitors?
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Are there any recommended tutorials / Articles that google doesn't turn up?
+---
+ scripts/coccinelle/free/kfreeaddr.cocci |   32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/scripts/coccinelle/free/kfreeaddr.cocci b/scripts/coccinelle/free/kfreeaddr.cocci
+new file mode 100644
+index 0000000..662e997
+--- /dev/null
++++ b/scripts/coccinelle/free/kfreeaddr.cocci
+@@ -0,0 +1,32 @@
++/// Free of a structure field
++///
++// Confidence: High
++// Copyright: (C) 2013 Julia Lawall, INRIA/LIP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: -no_includes -include_headers
++
++virtual org
++virtual report
++virtual context
++
++@r depends on context || report || org @
++expression e;
++identifier f;
++position p;
++@@
++
++* kfree@p(&e->f)
++
++@script:python depends on org@
++p << r.p;
++@@
++
++cocci.print_main("kfree",p)
++
++@script:python depends on report@
++p << r.p;
++@@
++
++msg = "ERROR: kfree of structure field"
++coccilib.report.print_report(p[0],msg)
+
