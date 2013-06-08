@@ -1,114 +1,174 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 08 Jun 2013 16:17:11 +0000
-Subject: build regressions 2013-06-08
-Message-Id: <51b35907.RUlbwoavYlo9BBoi%fengguang.wu@intel.com>
+From: Yong Li <airhuman@yahoo.com>
+Date: Sat, 08 Jun 2013 23:05:36 +0000
+Subject: Re: build regressions 2013-06-08
+Message-Id: <573EFA56-C80D-4191-A77B-859FBFA492D6@yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <51b35907.RUlbwoavYlo9BBoi%fengguang.wu@intel.com>
+In-Reply-To: <51b35907.RUlbwoavYlo9BBoi%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-[sparse]
-arch/x86/crypto/sha512_ssse3_glue.c:144:19: sparse: restricted __be64 degrades to integer
-arch/x86/crypto/sha512_ssse3_glue.c:144:17: sparse: incorrect type in assignment (different base types)
-drivers/input/keyboard/cros_ec_keyb.c:200:31: sparse: bad constant expression
-drivers/input/keyboard/cros_ec_keyb.c:212:32: sparse: bad constant expression
-drivers/input/keyboard/cros_ec_keyb.c:213:32: sparse: bad constant expression
-drivers/input/keyboard/cros_ec_keyb.c:226:46: sparse: cannot size expression
-drivers/input/keyboard/cros_ec_keyb.c:228:55: sparse: cannot size expression
-drivers/leds/trigger/ledtrig-cpu.c:38:8: sparse: symbol 'cpu_trig' was not declared. Should it be static?
-drivers/net/usb/r8152.c:501:16: sparse: cast to restricted __le32
-drivers/net/usb/r8152.c:524:16: sparse: cast to restricted __le32
-drivers/net/usb/r8152.c:551:15: sparse: cast to restricted __le32
-drivers/net/usb/r8152.c:553:13: sparse: incorrect type in assignment (different base types)
-drivers/net/usb/r8152.c:573:16: sparse: cast to restricted __le32
-drivers/net/usb/r8152.c:600:15: sparse: cast to restricted __le32
-drivers/net/usb/r8152.c:602:13: sparse: incorrect type in assignment (different base types)
-drivers/net/usb/r8152.c:791:19: sparse: cast to restricted __le32
-drivers/net/usb/r8152.c:923:22: sparse: incorrect type in assignment (different base types)
-drivers/net/usb/r8152.c:924:22: sparse: incorrect type in assignment (different base types)
-drivers/net/usb/r8152.c:956:24: sparse: incorrect type in assignment (different base types)
-kernel/auditfilter.c:426:63: sparse: constant 4294967295 is so big it is long
-drivers/scsi/fnic/fnic_fcs.c:1198:6: sparse: context imbalance in 'fnic_handle_fip_timer' - different lock contexts for basic block
-drivers/scsi/fnic/fnic_fcs.c:1198:6: sparse: context imbalance in 'fnic_handle_fip_timer' - different lock contexts for basic block
-drivers/scsi/osd/osd_initiator.c:533:4: sparse: symbol 'sg_out_pad_buffer' was not declared. Should it be static?
-drivers/scsi/osd/osd_initiator.c:534:4: sparse: symbol 'sg_in_pad_buffer' was not declared. Should it be static?
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: incorrect type in argument 1 (different base types)
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:610:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: incorrect type in argument 1 (different base types)
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:611:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: incorrect type in argument 1 (different base types)
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:627:29: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: incorrect type in argument 1 (different base types)
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:628:26: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:720:50: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:1212:50: sparse: incorrect type in assignment (different base types)
-drivers/scsi/osd/osd_initiator.c:1312:55: sparse: incorrect type in assignment (different base types)
-drivers/scsi/osd/osd_initiator.c:1313:50: sparse: incorrect type in assignment (different base types)
-drivers/scsi/osd/osd_initiator.c:1822:44: sparse: incorrect type in assignment (different base types)
-drivers/scsi/osd/osd_initiator.c:1823:37: sparse: incorrect type in assignment (different base types)
-drivers/scsi/osd/osd_initiator.c:1824:25: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_initiator.c:1824:25: sparse: cast from restricted osd_id
-drivers/scsi/osd/osd_uld.c:160:10: sparse: symbol 'g_test_ioctl' was not declared. Should it be static?
-drivers/scsi/osd/osd_uld.c:161:12: sparse: symbol 'g_do_test' was not declared. Should it be static?
-fs/exofs/inode.c:1088:17: sparse: cast from restricted osd_id
-fs/exofs/inode.c:1091:31: sparse: incorrect type in assignment (different base types)
-fs/exofs/exofs.h:98:36: sparse: incorrect type in return expression (different base types)
-fs/exofs/exofs.h:228:29: sparse: cast from restricted osd_id
-fs/exofs/exofs.h:98:36: sparse: incorrect type in return expression (different base types)
-fs/exofs/inode.c:1271:17: sparse: cast from restricted osd_id
-fs/exofs/inode.c:1271:17: sparse: cast from restricted osd_id
-fs/exofs/exofs.h:98:36: sparse: incorrect type in return expression (different base types)
-fs/exofs/exofs.h:228:29: sparse: cast from restricted osd_id
-fs/exofs/super.c:306:35: sparse: cast to restricted __le32
-fs/exofs/super.c:306:35: sparse: cast from restricted __le64
-fs/exofs/super.c:386:47: sparse: incorrect type in argument 4 (different base types)
-fs/exofs/exofs.h:228:29: sparse: cast from restricted osd_id
-fs/exofs/super.c:398:25: sparse: incorrect type in assignment (different base types)
-fs/exofs/super.c:464:46: sparse: incorrect type in argument 4 (different base types)
-fs/exofs/sys.c:157:41: sparse: incorrect type in initializer (different base types)
-fs/exofs/ore_raid.c:24:13: sparse: symbol '_raid_page_alloc' was not declared. Should it be static?
-fs/exofs/ore_raid.c:29:6: sparse: symbol '_raid_page_free' was not declared. Should it be static?
-fs/nfs/objlayout/objio_osd.c:209:30: sparse: incorrect type in assignment (different base types)
-fs/nfs/objlayout/objio_osd.c:210:23: sparse: incorrect type in assignment (different base types)
-fs/nfs/objlayout/objlayout.c:628:50: sparse: incorrect type in argument 2 (different base types)
-fs/nfs/objlayout/objio_osd.c:209:30: sparse: incorrect type in assignment (different base types)
-fs/nfs/objlayout/objio_osd.c:210:23: sparse: incorrect type in assignment (different base types)
-fs/nfs/objlayout/objlayout.c:628:50: sparse: incorrect type in argument 2 (different base types)
-drivers/scsi/pm8001/pm8001_init.c:379:25: sparse: cast removes address space of expression
-
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+dW5zdWJzY3JpYmUga2VybmVsLWphbml0b3JzCgq3otfUztK1xCBpUGhvbmUKCtTaIDIwMTMtNi05
+o6wwOjE3o6xGZW5nZ3VhbmcgV3UgPGZlbmdndWFuZy53dUBpbnRlbC5jb20+INC0tcCjugoKPiBb
+c3BhcnNlXQo+IGFyY2gveDg2L2NyeXB0by9zaGE1MTJfc3NzZTNfZ2x1ZS5jOjE0NDoxOTogc3Bh
+cnNlOiByZXN0cmljdGVkIF9fYmU2NCBkZWdyYWRlcyB0byBpbnRlZ2VyCj4gYXJjaC94ODYvY3J5
+cHRvL3NoYTUxMl9zc3NlM19nbHVlLmM6MTQ0OjE3OiBzcGFyc2U6IGluY29ycmVjdCB0eXBlIGlu
+IGFzc2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGRyaXZlcnMvaW5wdXQva2V5Ym9h
+cmQvY3Jvc19lY19rZXliLmM6MjAwOjMxOiBzcGFyc2U6IGJhZCBjb25zdGFudCBleHByZXNzaW9u
+Cj4gZHJpdmVycy9pbnB1dC9rZXlib2FyZC9jcm9zX2VjX2tleWIuYzoyMTI6MzI6IHNwYXJzZTog
+YmFkIGNvbnN0YW50IGV4cHJlc3Npb24KPiBkcml2ZXJzL2lucHV0L2tleWJvYXJkL2Nyb3NfZWNf
+a2V5Yi5jOjIxMzozMjogc3BhcnNlOiBiYWQgY29uc3RhbnQgZXhwcmVzc2lvbgo+IGRyaXZlcnMv
+aW5wdXQva2V5Ym9hcmQvY3Jvc19lY19rZXliLmM6MjI2OjQ2OiBzcGFyc2U6IGNhbm5vdCBzaXpl
+IGV4cHJlc3Npb24KPiBkcml2ZXJzL2lucHV0L2tleWJvYXJkL2Nyb3NfZWNfa2V5Yi5jOjIyODo1
+NTogc3BhcnNlOiBjYW5ub3Qgc2l6ZSBleHByZXNzaW9uCj4gZHJpdmVycy9sZWRzL3RyaWdnZXIv
+bGVkdHJpZy1jcHUuYzozODo4OiBzcGFyc2U6IHN5bWJvbCAnY3B1X3RyaWcnIHdhcyBub3QgZGVj
+bGFyZWQuIFNob3VsZCBpdCBiZSBzdGF0aWM/Cj4gZHJpdmVycy9uZXQvdXNiL3I4MTUyLmM6NTAx
+OjE2OiBzcGFyc2U6IGNhc3QgdG8gcmVzdHJpY3RlZCBfX2xlMzIKPiBkcml2ZXJzL25ldC91c2Iv
+cjgxNTIuYzo1MjQ6MTY6IHNwYXJzZTogY2FzdCB0byByZXN0cmljdGVkIF9fbGUzMgo+IGRyaXZl
+cnMvbmV0L3VzYi9yODE1Mi5jOjU1MToxNTogc3BhcnNlOiBjYXN0IHRvIHJlc3RyaWN0ZWQgX19s
+ZTMyCj4gZHJpdmVycy9uZXQvdXNiL3I4MTUyLmM6NTUzOjEzOiBzcGFyc2U6IGluY29ycmVjdCB0
+eXBlIGluIGFzc2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGRyaXZlcnMvbmV0L3Vz
+Yi9yODE1Mi5jOjU3MzoxNjogc3BhcnNlOiBjYXN0IHRvIHJlc3RyaWN0ZWQgX19sZTMyCj4gZHJp
+dmVycy9uZXQvdXNiL3I4MTUyLmM6NjAwOjE1OiBzcGFyc2U6IGNhc3QgdG8gcmVzdHJpY3RlZCBf
+X2xlMzIKPiBkcml2ZXJzL25ldC91c2IvcjgxNTIuYzo2MDI6MTM6IHNwYXJzZTogaW5jb3JyZWN0
+IHR5cGUgaW4gYXNzaWdubWVudCAoZGlmZmVyZW50IGJhc2UgdHlwZXMpCj4gZHJpdmVycy9uZXQv
+dXNiL3I4MTUyLmM6NzkxOjE5OiBzcGFyc2U6IGNhc3QgdG8gcmVzdHJpY3RlZCBfX2xlMzIKPiBk
+cml2ZXJzL25ldC91c2IvcjgxNTIuYzo5MjM6MjI6IHNwYXJzZTogaW5jb3JyZWN0IHR5cGUgaW4g
+YXNzaWdubWVudCAoZGlmZmVyZW50IGJhc2UgdHlwZXMpCj4gZHJpdmVycy9uZXQvdXNiL3I4MTUy
+LmM6OTI0OjIyOiBzcGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFzc2lnbm1lbnQgKGRpZmZlcmVu
+dCBiYXNlIHR5cGVzKQo+IGRyaXZlcnMvbmV0L3VzYi9yODE1Mi5jOjk1NjoyNDogc3BhcnNlOiBp
+bmNvcnJlY3QgdHlwZSBpbiBhc3NpZ25tZW50IChkaWZmZXJlbnQgYmFzZSB0eXBlcykKPiBrZXJu
+ZWwvYXVkaXRmaWx0ZXIuYzo0MjY6NjM6IHNwYXJzZTogY29uc3RhbnQgNDI5NDk2NzI5NSBpcyBz
+byBiaWcgaXQgaXMgbG9uZwo+IGRyaXZlcnMvc2NzaS9mbmljL2ZuaWNfZmNzLmM6MTE5ODo2OiBz
+cGFyc2U6IGNvbnRleHQgaW1iYWxhbmNlIGluICdmbmljX2hhbmRsZV9maXBfdGltZXInIC0gZGlm
+ZmVyZW50IGxvY2sgY29udGV4dHMgZm9yIGJhc2ljIGJsb2NrCj4gZHJpdmVycy9zY3NpL2ZuaWMv
+Zm5pY19mY3MuYzoxMTk4OjY6IHNwYXJzZTogY29udGV4dCBpbWJhbGFuY2UgaW4gJ2ZuaWNfaGFu
+ZGxlX2ZpcF90aW1lcicgLSBkaWZmZXJlbnQgbG9jayBjb250ZXh0cyBmb3IgYmFzaWMgYmxvY2sK
+PiBkcml2ZXJzL3Njc2kvb3NkL29zZF9pbml0aWF0b3IuYzo1MzM6NDogc3BhcnNlOiBzeW1ib2wg
+J3NnX291dF9wYWRfYnVmZmVyJyB3YXMgbm90IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUgc3RhdGlj
+Pwo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjUzNDo0OiBzcGFyc2U6IHN5bWJv
+bCAnc2dfaW5fcGFkX2J1ZmZlcicgd2FzIG5vdCBkZWNsYXJlZC4gU2hvdWxkIGl0IGJlIHN0YXRp
+Yz8KPiBkcml2ZXJzL3Njc2kvb3NkL29zZF9pbml0aWF0b3IuYzo2MTA6Mjk6IHNwYXJzZTogY2Fz
+dCBmcm9tIHJlc3RyaWN0ZWQgb3NkX2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9y
+LmM6NjEwOjI5OiBzcGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFyZ3VtZW50IDEgKGRpZmZlcmVu
+dCBiYXNlIHR5cGVzKQo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjYxMDoyOTog
+c3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJzL3Njc2kvb3NkL29z
+ZF9pbml0aWF0b3IuYzo2MTA6Mjk6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0ZWQgb3NkX2lk
+Cj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjEwOjI5OiBzcGFyc2U6IGNhc3Qg
+ZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5j
+OjYxMDoyOTogc3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJzL3Nj
+c2kvb3NkL29zZF9pbml0aWF0b3IuYzo2MTA6Mjk6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0
+ZWQgb3NkX2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjEwOjI5OiBzcGFy
+c2U6IGNhc3QgZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2lu
+aXRpYXRvci5jOjYxMDoyOTogc3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBk
+cml2ZXJzL3Njc2kvb3NkL29zZF9pbml0aWF0b3IuYzo2MTA6Mjk6IHNwYXJzZTogY2FzdCBmcm9t
+IHJlc3RyaWN0ZWQgb3NkX2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjEx
+OjI2OiBzcGFyc2U6IGNhc3QgZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9v
+c2Qvb3NkX2luaXRpYXRvci5jOjYxMToyNjogc3BhcnNlOiBpbmNvcnJlY3QgdHlwZSBpbiBhcmd1
+bWVudCAxIChkaWZmZXJlbnQgYmFzZSB0eXBlcykKPiBkcml2ZXJzL3Njc2kvb3NkL29zZF9pbml0
+aWF0b3IuYzo2MTE6MjY6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0ZWQgb3NkX2lkCj4gZHJp
+dmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjExOjI2OiBzcGFyc2U6IGNhc3QgZnJvbSBy
+ZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjYxMToy
+Njogc3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJzL3Njc2kvb3Nk
+L29zZF9pbml0aWF0b3IuYzo2MTE6MjY6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0ZWQgb3Nk
+X2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjExOjI2OiBzcGFyc2U6IGNh
+c3QgZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRv
+ci5jOjYxMToyNjogc3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJz
+L3Njc2kvb3NkL29zZF9pbml0aWF0b3IuYzo2MTE6MjY6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3Ry
+aWN0ZWQgb3NkX2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjExOjI2OiBz
+cGFyc2U6IGNhc3QgZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3Nk
+X2luaXRpYXRvci5jOjYyNzoyOTogc3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQK
+PiBkcml2ZXJzL3Njc2kvb3NkL29zZF9pbml0aWF0b3IuYzo2Mjc6Mjk6IHNwYXJzZTogaW5jb3Jy
+ZWN0IHR5cGUgaW4gYXJndW1lbnQgMSAoZGlmZmVyZW50IGJhc2UgdHlwZXMpCj4gZHJpdmVycy9z
+Y3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjI3OjI5OiBzcGFyc2U6IGNhc3QgZnJvbSByZXN0cmlj
+dGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjYyNzoyOTogc3Bh
+cnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJzL3Njc2kvb3NkL29zZF9p
+bml0aWF0b3IuYzo2Mjc6Mjk6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0ZWQgb3NkX2lkCj4g
+ZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjI3OjI5OiBzcGFyc2U6IGNhc3QgZnJv
+bSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjYy
+NzoyOTogc3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJzL3Njc2kv
+b3NkL29zZF9pbml0aWF0b3IuYzo2Mjc6Mjk6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0ZWQg
+b3NkX2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjI3OjI5OiBzcGFyc2U6
+IGNhc3QgZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRp
+YXRvci5jOjYyNzoyOTogc3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2
+ZXJzL3Njc2kvb3NkL29zZF9pbml0aWF0b3IuYzo2Mjg6MjY6IHNwYXJzZTogY2FzdCBmcm9tIHJl
+c3RyaWN0ZWQgb3NkX2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjI4OjI2
+OiBzcGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFyZ3VtZW50IDEgKGRpZmZlcmVudCBiYXNlIHR5
+cGVzKQo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjYyODoyNjogc3BhcnNlOiBj
+YXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJzL3Njc2kvb3NkL29zZF9pbml0aWF0
+b3IuYzo2Mjg6MjY6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0ZWQgb3NkX2lkCj4gZHJpdmVy
+cy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjI4OjI2OiBzcGFyc2U6IGNhc3QgZnJvbSByZXN0
+cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjYyODoyNjog
+c3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJzL3Njc2kvb3NkL29z
+ZF9pbml0aWF0b3IuYzo2Mjg6MjY6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0ZWQgb3NkX2lk
+Cj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NjI4OjI2OiBzcGFyc2U6IGNhc3Qg
+ZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5j
+OjYyODoyNjogc3BhcnNlOiBjYXN0IGZyb20gcmVzdHJpY3RlZCBvc2RfaWQKPiBkcml2ZXJzL3Nj
+c2kvb3NkL29zZF9pbml0aWF0b3IuYzo2Mjg6MjY6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0
+ZWQgb3NkX2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6NzIwOjUwOiBzcGFy
+c2U6IGNhc3QgZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2lu
+aXRpYXRvci5jOjEyMTI6NTA6IHNwYXJzZTogaW5jb3JyZWN0IHR5cGUgaW4gYXNzaWdubWVudCAo
+ZGlmZmVyZW50IGJhc2UgdHlwZXMpCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6
+MTMxMjo1NTogc3BhcnNlOiBpbmNvcnJlY3QgdHlwZSBpbiBhc3NpZ25tZW50IChkaWZmZXJlbnQg
+YmFzZSB0eXBlcykKPiBkcml2ZXJzL3Njc2kvb3NkL29zZF9pbml0aWF0b3IuYzoxMzEzOjUwOiBz
+cGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFzc2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVz
+KQo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjE4MjI6NDQ6IHNwYXJzZTogaW5j
+b3JyZWN0IHR5cGUgaW4gYXNzaWdubWVudCAoZGlmZmVyZW50IGJhc2UgdHlwZXMpCj4gZHJpdmVy
+cy9zY3NpL29zZC9vc2RfaW5pdGlhdG9yLmM6MTgyMzozNzogc3BhcnNlOiBpbmNvcnJlY3QgdHlw
+ZSBpbiBhc3NpZ25tZW50IChkaWZmZXJlbnQgYmFzZSB0eXBlcykKPiBkcml2ZXJzL3Njc2kvb3Nk
+L29zZF9pbml0aWF0b3IuYzoxODI0OjI1OiBzcGFyc2U6IGNhc3QgZnJvbSByZXN0cmljdGVkIG9z
+ZF9pZAo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX2luaXRpYXRvci5jOjE4MjQ6MjU6IHNwYXJzZTog
+Y2FzdCBmcm9tIHJlc3RyaWN0ZWQgb3NkX2lkCj4gZHJpdmVycy9zY3NpL29zZC9vc2RfdWxkLmM6
+MTYwOjEwOiBzcGFyc2U6IHN5bWJvbCAnZ190ZXN0X2lvY3RsJyB3YXMgbm90IGRlY2xhcmVkLiBT
+aG91bGQgaXQgYmUgc3RhdGljPwo+IGRyaXZlcnMvc2NzaS9vc2Qvb3NkX3VsZC5jOjE2MToxMjog
+c3BhcnNlOiBzeW1ib2wgJ2dfZG9fdGVzdCcgd2FzIG5vdCBkZWNsYXJlZC4gU2hvdWxkIGl0IGJl
+IHN0YXRpYz8KPiBmcy9leG9mcy9pbm9kZS5jOjEwODg6MTc6IHNwYXJzZTogY2FzdCBmcm9tIHJl
+c3RyaWN0ZWQgb3NkX2lkCj4gZnMvZXhvZnMvaW5vZGUuYzoxMDkxOjMxOiBzcGFyc2U6IGluY29y
+cmVjdCB0eXBlIGluIGFzc2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGZzL2V4b2Zz
+L2V4b2ZzLmg6OTg6MzY6IHNwYXJzZTogaW5jb3JyZWN0IHR5cGUgaW4gcmV0dXJuIGV4cHJlc3Np
+b24gKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGZzL2V4b2ZzL2V4b2ZzLmg6MjI4OjI5OiBzcGFy
+c2U6IGNhc3QgZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+IGZzL2V4b2ZzL2V4b2ZzLmg6OTg6MzY6
+IHNwYXJzZTogaW5jb3JyZWN0IHR5cGUgaW4gcmV0dXJuIGV4cHJlc3Npb24gKGRpZmZlcmVudCBi
+YXNlIHR5cGVzKQo+IGZzL2V4b2ZzL2lub2RlLmM6MTI3MToxNzogc3BhcnNlOiBjYXN0IGZyb20g
+cmVzdHJpY3RlZCBvc2RfaWQKPiBmcy9leG9mcy9pbm9kZS5jOjEyNzE6MTc6IHNwYXJzZTogY2Fz
+dCBmcm9tIHJlc3RyaWN0ZWQgb3NkX2lkCj4gZnMvZXhvZnMvZXhvZnMuaDo5ODozNjogc3BhcnNl
+OiBpbmNvcnJlY3QgdHlwZSBpbiByZXR1cm4gZXhwcmVzc2lvbiAoZGlmZmVyZW50IGJhc2UgdHlw
+ZXMpCj4gZnMvZXhvZnMvZXhvZnMuaDoyMjg6Mjk6IHNwYXJzZTogY2FzdCBmcm9tIHJlc3RyaWN0
+ZWQgb3NkX2lkCj4gZnMvZXhvZnMvc3VwZXIuYzozMDY6MzU6IHNwYXJzZTogY2FzdCB0byByZXN0
+cmljdGVkIF9fbGUzMgo+IGZzL2V4b2ZzL3N1cGVyLmM6MzA2OjM1OiBzcGFyc2U6IGNhc3QgZnJv
+bSByZXN0cmljdGVkIF9fbGU2NAo+IGZzL2V4b2ZzL3N1cGVyLmM6Mzg2OjQ3OiBzcGFyc2U6IGlu
+Y29ycmVjdCB0eXBlIGluIGFyZ3VtZW50IDQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGZzL2V4
+b2ZzL2V4b2ZzLmg6MjI4OjI5OiBzcGFyc2U6IGNhc3QgZnJvbSByZXN0cmljdGVkIG9zZF9pZAo+
+IGZzL2V4b2ZzL3N1cGVyLmM6Mzk4OjI1OiBzcGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFzc2ln
+bm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGZzL2V4b2ZzL3N1cGVyLmM6NDY0OjQ2OiBz
+cGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFyZ3VtZW50IDQgKGRpZmZlcmVudCBiYXNlIHR5cGVz
+KQo+IGZzL2V4b2ZzL3N5cy5jOjE1Nzo0MTogc3BhcnNlOiBpbmNvcnJlY3QgdHlwZSBpbiBpbml0
+aWFsaXplciAoZGlmZmVyZW50IGJhc2UgdHlwZXMpCj4gZnMvZXhvZnMvb3JlX3JhaWQuYzoyNDox
+Mzogc3BhcnNlOiBzeW1ib2wgJ19yYWlkX3BhZ2VfYWxsb2MnIHdhcyBub3QgZGVjbGFyZWQuIFNo
+b3VsZCBpdCBiZSBzdGF0aWM/Cj4gZnMvZXhvZnMvb3JlX3JhaWQuYzoyOTo2OiBzcGFyc2U6IHN5
+bWJvbCAnX3JhaWRfcGFnZV9mcmVlJyB3YXMgbm90IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUgc3Rh
+dGljPwo+IGZzL25mcy9vYmpsYXlvdXQvb2JqaW9fb3NkLmM6MjA5OjMwOiBzcGFyc2U6IGluY29y
+cmVjdCB0eXBlIGluIGFzc2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGZzL25mcy9v
+YmpsYXlvdXQvb2JqaW9fb3NkLmM6MjEwOjIzOiBzcGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFz
+c2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGZzL25mcy9vYmpsYXlvdXQvb2JqbGF5
+b3V0LmM6NjI4OjUwOiBzcGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFyZ3VtZW50IDIgKGRpZmZl
+cmVudCBiYXNlIHR5cGVzKQo+IGZzL25mcy9vYmpsYXlvdXQvb2JqaW9fb3NkLmM6MjA5OjMwOiBz
+cGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFzc2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVz
+KQo+IGZzL25mcy9vYmpsYXlvdXQvb2JqaW9fb3NkLmM6MjEwOjIzOiBzcGFyc2U6IGluY29ycmVj
+dCB0eXBlIGluIGFzc2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGZzL25mcy9vYmps
+YXlvdXQvb2JqbGF5b3V0LmM6NjI4OjUwOiBzcGFyc2U6IGluY29ycmVjdCB0eXBlIGluIGFyZ3Vt
+ZW50IDIgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQo+IGRyaXZlcnMvc2NzaS9wbTgwMDEvcG04MDAx
+X2luaXQuYzozNzk6MjU6IHNwYXJzZTogY2FzdCByZW1vdmVzIGFkZHJlc3Mgc3BhY2Ugb2YgZXhw
+cmVzc2lvbgo+IAo+IC0tLQo+IDAtREFZIGtlcm5lbCBidWlsZCB0ZXN0aW5nIGJhY2tlbmQgICAg
+ICAgICAgICAgIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyCj4gaHR0cDovL2xpc3RzLjAx
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2tidWlsZCAgICAgICAgICAgICAgICAgSW50ZWwgQ29ycG9y
+YXRpb24KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
+ICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdl
+IHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBo
+dHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKLS0KVG8gdW5zdWJzY3Jp
+YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5p
+dG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5v
+cmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
+bW8taW5mby5odG1s
