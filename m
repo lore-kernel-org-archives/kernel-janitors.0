@@ -1,48 +1,130 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 24 Jun 2013 23:27:31 +0000
-Subject: Re: [patch] tehuti: using uninitialized data in bdx_ioctl_priv()
-Message-Id: <20130624.162731.1160289203652795505.davem@davemloft.net>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sun, 09 Jun 2013 09:08:22 +0000
+Subject: [PATCH] mtd: orion_nand: Improve error handling in orion_nand_probe
+Message-Id: <1370768902-20239-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130624160503.GC31984@elgon.mountain>
-	<20130624.130145.1513695698751905735.davem@davemloft.net>
-	<1372105452.1896.45.camel@bwh-desktop.uk.level5networks.com>
-In-Reply-To: <1372105452.1896.45.camel@bwh-desktop.uk.level5networks.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: bhutchings@solarflare.com
-Cc: dan.carpenter@oracle.com, andy@greyhouse.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dwmw2@infradead.org, artem.bityutskiy@linux.intel.com, andrew@lunn.ch, wfp5p@virginia.edu, jg1.han@samsung.com
+Cc: kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <bhutchings@solarflare.com>
-Date: Mon, 24 Jun 2013 21:24:12 +0100
+This patch fixes some issues in the error handling and simplifies
+the code by converting to devm* functions.
 
-> On Mon, 2013-06-24 at 13:01 -0700, David Miller wrote:
->> From: Dan Carpenter <dan.carpenter@oracle.com>
->> Date: Mon, 24 Jun 2013 19:05:03 +0300
->> 
->> > If we "cmd = SIOCDEVPRIVATE" then we use data[] without initializing
->> > it.  The most common case is that we would return -EOPNOTSUPP.  The
->> > other case is that we'd end up reading and writing to randomish places.
->> > This requires CAP_SYS_RAWIO so it's not very bad.
->> > 
->> > The fix is to not allow SIOCDEVPRIVATE because it doesn't work.  I
->> > returned -EOPNOTSUPP instead of -ENOTTY because that's what is used in
->> > the rest of the file.
->> > 
->> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> 
->> I think the intention is to only allow SIOCDEVPRIVATE, rather than
->> accept any and all values other than it which are inside of the
->> private ioctl range.
->> 
->> The 'cmd' validation is one step, and it determines the interpretation
->> of data[0].
-> 
-> But data is only initialised on the error path.  So this whole function
-> is useless.  It might as well be removed entirely.
-> 
-> (Also, drivers generally should not assign SIOCDEVPRIVATE+{0,1,2}, as
-> those numbers used to be conventionally used for MII operations.)
+If the kzalloc call fails it is unnecessary to use the label no_res
+and pass a NULL pointer to kfree. If the devm_kzalloc call fails on
+line 110 we forgett to call iounmap for the previous ioremap call.
 
-Agreed, this function should be removed, and if someone has to have this
-functionality they can implement ETHTOOL_GREGS.
+The following changes are introduced:
+- Convert to devm_kzalloc and remove calls to kfree.
+- Convert to devm_ioremap_resource that adds a missing call to
+  *request_mem_region and remove calls to iounmap.
+- The devm_ioremap_resource function checks the passed resource so
+  we can remove the NULL check after the platform_get_resource call.
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+The patch is only build tested
+
+ drivers/mtd/nand/orion_nand.c |   39 +++++++++++----------------------------
+ 1 file changed, 11 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/mtd/nand/orion_nand.c b/drivers/mtd/nand/orion_nand.c
+index 8fbd002..cc22f2f 100644
+--- a/drivers/mtd/nand/orion_nand.c
++++ b/drivers/mtd/nand/orion_nand.c
+@@ -85,34 +85,25 @@ static int __init orion_nand_probe(struct platform_device *pdev)
+ 	int ret = 0;
+ 	u32 val = 0;
+ 
+-	nc = kzalloc(sizeof(struct nand_chip) + sizeof(struct mtd_info), GFP_KERNEL);
++	nc = devm_kzalloc(&pdev->dev, sizeof(struct nand_chip) +
++			  sizeof(struct mtd_info), GFP_KERNEL);
+ 	if (!nc) {
+ 		printk(KERN_ERR "orion_nand: failed to allocate device structure.\n");
+-		ret = -ENOMEM;
+-		goto no_res;
++		return -ENOMEM;
+ 	}
+ 	mtd = (struct mtd_info *)(nc + 1);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		ret = -ENODEV;
+-		goto no_res;
+-	}
+-
+-	io_base = ioremap(res->start, resource_size(res));
+-	if (!io_base) {
+-		printk(KERN_ERR "orion_nand: ioremap failed\n");
+-		ret = -EIO;
+-		goto no_res;
+-	}
++	io_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(io_base))
++		return PTR_ERR(io_base);
+ 
+ 	if (pdev->dev.of_node) {
+ 		board = devm_kzalloc(&pdev->dev, sizeof(struct orion_nand_data),
+-					GFP_KERNEL);
++				     GFP_KERNEL);
+ 		if (!board) {
+ 			printk(KERN_ERR "orion_nand: failed to allocate board structure.\n");
+-			ret = -ENOMEM;
+-			goto no_res;
++			return -ENOMEM;
+ 		}
+ 		if (!of_property_read_u32(pdev->dev.of_node, "cle", &val))
+ 			board->cle = (u8)val;
+@@ -167,7 +158,7 @@ static int __init orion_nand_probe(struct platform_device *pdev)
+ 
+ 	if (nand_scan(mtd, 1)) {
+ 		ret = -ENXIO;
+-		goto no_dev;
++		goto disable_clk;
+ 	}
+ 
+ 	mtd->name = "orion_nand";
+@@ -176,20 +167,17 @@ static int __init orion_nand_probe(struct platform_device *pdev)
+ 			board->parts, board->nr_parts);
+ 	if (ret) {
+ 		nand_release(mtd);
+-		goto no_dev;
++		goto disable_clk;
+ 	}
+ 
+ 	return 0;
+ 
+-no_dev:
++disable_clk:
+ 	if (!IS_ERR(clk)) {
+ 		clk_disable_unprepare(clk);
+ 		clk_put(clk);
+ 	}
+ 	platform_set_drvdata(pdev, NULL);
+-	iounmap(io_base);
+-no_res:
+-	kfree(nc);
+ 
+ 	return ret;
+ }
+@@ -197,15 +185,10 @@ no_res:
+ static int orion_nand_remove(struct platform_device *pdev)
+ {
+ 	struct mtd_info *mtd = platform_get_drvdata(pdev);
+-	struct nand_chip *nc = mtd->priv;
+ 	struct clk *clk;
+ 
+ 	nand_release(mtd);
+ 
+-	iounmap(nc->IO_ADDR_W);
+-
+-	kfree(nc);
+-
+ 	clk = clk_get(&pdev->dev, NULL);
+ 	if (!IS_ERR(clk)) {
+ 		clk_disable_unprepare(clk);
+-- 
+1.7.10.4
+
