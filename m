@@ -1,23 +1,29 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Fri, 14 Jun 2013 13:34:01 +0000
-Subject: Re: [PATCH] scripts/coccinelle: check for field address argument to kfree
-Message-Id: <20130614133401.GB5402@sepie.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 09 Jun 2013 13:14:25 +0000
+Subject: [patch] ALSA: usx2y: remove some old dead code
+Message-Id: <20130609131425.GB1442@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1370708502-21907-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1370708502-21907-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>
 
-On Sat, Jun 08, 2013 at 06:21:42PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> The argument to kfree should not be the address of a structure field.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+USB_QUEUE_BULK isn't defined any more.
 
-Applied to kbuild.git#misc.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Michal
+diff --git a/sound/usb/usx2y/usbusx2yaudio.c b/sound/usb/usx2y/usbusx2yaudio.c
+index b376532..4967fe9 100644
+--- a/sound/usb/usx2y/usbusx2yaudio.c
++++ b/sound/usb/usx2y/usbusx2yaudio.c
+@@ -695,9 +695,6 @@ static int usX2Y_rate_set(struct usX2Ydev *usX2Y, int rate)
+ 			((char*)(usbdata + i))[1] = ra[i].c2;
+ 			usb_fill_bulk_urb(us->urb[i], usX2Y->dev, usb_sndbulkpipe(usX2Y->dev, 4),
+ 					  usbdata + i, 2, i_usX2Y_04Int, usX2Y);
+-#ifdef OLD_USB
+-			us->urb[i]->transfer_flags = USB_QUEUE_BULK;
+-#endif
+ 		}
+ 		us->submitted =	0;
+ 		us->len =	NOOF_SETRATE_URBS;
