@@ -1,60 +1,136 @@
 From: Emil Goode <emilgoode@gmail.com>
-Date: Sun, 09 Jun 2013 22:45:44 +0000
-Subject: Re: [PATCH] mtd: orion_nand: Improve error handling in orion_nand_probe
-Message-Id: <20130609224544.GB3963@debian>
+Date: Sun, 09 Jun 2013 23:59:21 +0000
+Subject: [PATCH v2] mtd: orion_nand: Improve error handling in orion_nand_probe
+Message-Id: <1370822442-25217-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1370768902-20239-1-git-send-email-emilgoode@gmail.com>
- <CAHp75VftwuS4ZTFP5D90PhyzrAMoHVxDiSCg0jrMGp+r0eRfzA@mail.gmail.com>
- <20130609191732.GK28112@mwanda>
- <CAHp75VcOMUVtfgXOQ+cyVpJN-XS7=yO1H8+8Nnw+LCgYWp7RPw@mail.gmail.com>
- <20130609205747.GX23987@mwanda>
- <CAHp75VeDtfq3APDQsy2SP=wLrRPUJdVaBbfu4NcrWrC70wCebg@mail.gmail.com>
-In-Reply-To: <CAHp75VeDtfq3APDQsy2SP=wLrRPUJdVaBbfu4NcrWrC70wCebg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: andrew@lunn.ch, artem.bityutskiy@linux.intel.com, Jingoo Han <jg1.han@samsung.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bill Pemberton <wfp5p@virginia.edu>, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, Dan Carpenter <dan.carpenter@oracle.com>
+To: dwmw2@infradead.org, artem.bityutskiy@linux.intel.com, andrew@lunn.ch, wfp5p@virginia.edu, jg1.han@samsung.com
+Cc: kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello,
+This patch fixes some issues in the error handling and simplifies
+the code by converting to devm* functions.
 
-Sorry for not responding earlier, I was away from my computer.
-Thanks for the review, I will send a second version that applies
-on top of Andy's patch and fix that typo in the change log.
+If the kzalloc call fails it is unnecessary to use the label no_res
+and pass a NULL pointer to kfree. If the devm_kzalloc call fails on
+line 110 we forget to call iounmap for the previous ioremap call.
 
-Best regards,
+The following changes are introduced:
+- Convert to devm_kzalloc and remove calls to kfree.
+- Convert to devm_ioremap_resource that adds a missing call to
+  *request_mem_region and remove calls to iounmap.
+- The devm_ioremap_resource function checks the passed resource so
+  we can remove the NULL check after the platform_get_resource call.
 
-Emil
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+This patch is only build tested
+v2: Fix change log typo and remove error messages for kzalloc calls
 
-On Mon, Jun 10, 2013 at 12:15:22AM +0300, Andy Shevchenko wrote:
-> On Sun, Jun 9, 2013 at 11:57 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > On Sun, Jun 09, 2013 at 10:27:03PM +0300, Andy Shevchenko wrote:
-> >> On Sun, Jun 9, 2013 at 10:17 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >> > On Sun, Jun 09, 2013 at 08:15:20PM +0300, Andy Shevchenko wrote:
-> 
-> >> >> What about another patch (that I guess should go first)  that converts
-> >> >> printk to dev_* or pr_*?
-> >>
-> >> > Huh, what?  Those are two totally unrelated things.  Emil's patch is
-> >> > a bug fix.
-> >>
-> >> To be precise his patch is bugfix and cleanup at once.
-> >> My proposal is to add a clean up patch.
-> >
-> > The printk idea isn't a bad one, it's just totally unrelated to what
-> > the patch is doing.
-> 
-> I don't agree with word 'totally'. It touches probe function and
-> shuffles code there.
-> 
-> >  You can't just randomly tell people to do a
-> > bunch of work for no reason.  "Good bugfix, but before we apply it
-> > you have to mow my lawn."
-> 
-> In this particular case I didn't think it's a big deal to fix 3 printfs.
-> Anyway, see patch in the next message.
-> 
-> 
-> --
-> With Best Regards,
-> Andy Shevchenko
+ drivers/mtd/nand/orion_nand.c |   49 +++++++++++++----------------------------
+ 1 file changed, 15 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/mtd/nand/orion_nand.c b/drivers/mtd/nand/orion_nand.c
+index 8fbd002..76b9fba 100644
+--- a/drivers/mtd/nand/orion_nand.c
++++ b/drivers/mtd/nand/orion_nand.c
+@@ -85,35 +85,24 @@ static int __init orion_nand_probe(struct platform_device *pdev)
+ 	int ret = 0;
+ 	u32 val = 0;
+ 
+-	nc = kzalloc(sizeof(struct nand_chip) + sizeof(struct mtd_info), GFP_KERNEL);
+-	if (!nc) {
+-		printk(KERN_ERR "orion_nand: failed to allocate device structure.\n");
+-		ret = -ENOMEM;
+-		goto no_res;
+-	}
++	nc = devm_kzalloc(&pdev->dev, sizeof(struct nand_chip) +
++			  sizeof(struct mtd_info), GFP_KERNEL);
++	if (!nc)
++		return -ENOMEM;
++
+ 	mtd = (struct mtd_info *)(nc + 1);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		ret = -ENODEV;
+-		goto no_res;
+-	}
+-
+-	io_base = ioremap(res->start, resource_size(res));
+-	if (!io_base) {
+-		printk(KERN_ERR "orion_nand: ioremap failed\n");
+-		ret = -EIO;
+-		goto no_res;
+-	}
++	io_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(io_base))
++		return PTR_ERR(io_base);
+ 
+ 	if (pdev->dev.of_node) {
+ 		board = devm_kzalloc(&pdev->dev, sizeof(struct orion_nand_data),
+-					GFP_KERNEL);
+-		if (!board) {
+-			printk(KERN_ERR "orion_nand: failed to allocate board structure.\n");
+-			ret = -ENOMEM;
+-			goto no_res;
+-		}
++				     GFP_KERNEL);
++		if (!board)
++			return -ENOMEM;
++
+ 		if (!of_property_read_u32(pdev->dev.of_node, "cle", &val))
+ 			board->cle = (u8)val;
+ 		else
+@@ -167,7 +156,7 @@ static int __init orion_nand_probe(struct platform_device *pdev)
+ 
+ 	if (nand_scan(mtd, 1)) {
+ 		ret = -ENXIO;
+-		goto no_dev;
++		goto disable_clk;
+ 	}
+ 
+ 	mtd->name = "orion_nand";
+@@ -176,20 +165,17 @@ static int __init orion_nand_probe(struct platform_device *pdev)
+ 			board->parts, board->nr_parts);
+ 	if (ret) {
+ 		nand_release(mtd);
+-		goto no_dev;
++		goto disable_clk;
+ 	}
+ 
+ 	return 0;
+ 
+-no_dev:
++disable_clk:
+ 	if (!IS_ERR(clk)) {
+ 		clk_disable_unprepare(clk);
+ 		clk_put(clk);
+ 	}
+ 	platform_set_drvdata(pdev, NULL);
+-	iounmap(io_base);
+-no_res:
+-	kfree(nc);
+ 
+ 	return ret;
+ }
+@@ -197,15 +183,10 @@ no_res:
+ static int orion_nand_remove(struct platform_device *pdev)
+ {
+ 	struct mtd_info *mtd = platform_get_drvdata(pdev);
+-	struct nand_chip *nc = mtd->priv;
+ 	struct clk *clk;
+ 
+ 	nand_release(mtd);
+ 
+-	iounmap(nc->IO_ADDR_W);
+-
+-	kfree(nc);
+-
+ 	clk = clk_get(&pdev->dev, NULL);
+ 	if (!IS_ERR(clk)) {
+ 		clk_disable_unprepare(clk);
+-- 
+1.7.10.4
+
