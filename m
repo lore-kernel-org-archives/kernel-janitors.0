@@ -1,32 +1,35 @@
-From: Alessandro Rubini <rubini@gnudd.com>
-Date: Wed, 19 Jun 2013 17:57:47 +0000
-Subject: Re: [patch] FMC: NULL dereference on allocation failure
-Message-Id: <20130619175747.GA23508@mail.gnudd.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Wed, 12 Jun 2013 14:33:15 +0000
+Subject: [PATCH] staging: tidspbridge: Fix potential NULL pointer dereference
+Message-Id: <1371047595-11702-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130619155731.GA4957@mwanda>
-  <20130619144904.GA10484@elgon.mountain>
-  <20130619152528.GA16430@mail.gnudd.com>
-In-Reply-To: <20130619155731.GA4957@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: omar.ramirez@copitl.com, gregkh@linuxfoundation.org, justinmattock@gmail.com, andriy.shevchenko@linux.intel.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-> Apparently these are going through Greg K-H.  I'll resend, with Greg
-> CC'd so he can pick it up from the mailing list.
-> 
-> Could you add an entry to the MAINTAINERS file so that Greg will be
-> CC'd automatically using get_maintainer.pl?
+We free dcd_key on line 897 and then dereference it a few lines below.
+This patch adds a NULL check to make sure we can use dcd_key.
 
-Ok.  Added to my todo list.
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/staging/tidspbridge/rmgr/dbdcd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Is there a dedicated list for FMC development?  That would go in the
-> MAINTAINERS file as well.
+diff --git a/drivers/staging/tidspbridge/rmgr/dbdcd.c b/drivers/staging/tidspbridge/rmgr/dbdcd.c
+index 3d2a26f..21ce3b7 100644
+--- a/drivers/staging/tidspbridge/rmgr/dbdcd.c
++++ b/drivers/staging/tidspbridge/rmgr/dbdcd.c
+@@ -899,7 +899,7 @@ int dcd_register_object(struct dsp_uuid *uuid_obj,
+ 			}
+ 		}
+ 		spin_unlock(&dbdcd_lock);
+-		if (&dcd_key->link = &reg_key_list)
++		if (dcd_key && (&dcd_key->link = &reg_key_list))
+ 			status = -EPERM;
+ 	}
+ 
+-- 
+1.7.10.4
 
-No, there is no list. Or "not yet".  The project was born externally
-(on ohwr.org), mainly within the "white rabbit" research group.  If it
-makes sense, we can have a public list, I'm all for it.
-
-thanks
-/alessandro
