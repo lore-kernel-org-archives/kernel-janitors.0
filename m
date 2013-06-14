@@ -1,41 +1,93 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Mon, 24 Jun 2013 12:38:00 +0000
-Subject: Re: [patch -next] NFC: fix enable/disable confusion
-Message-Id: <20130624123800.GE30838@zurbaran>
+From: Michal Marek <mmarek@suse.cz>
+Date: Fri, 14 Jun 2013 13:25:22 +0000
+Subject: Re: [PATCH] scripts: Coccinelle script for pci_free_consistent()
+Message-Id: <51BB19C2.4030208@suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130617224826.GA1562@elgon.mountain>
-In-Reply-To: <20130617224826.GA1562@elgon.mountain>
+References: <20130508230308.Horde.hkDwg5wWGGBzmzKnqIjUhg1@wimap.feld.cvut.cz>
+In-Reply-To: <20130508230308.Horde.hkDwg5wWGGBzmzKnqIjUhg1@wimap.feld.cvut.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-Hi Dan,
-
-On Tue, Jun 18, 2013 at 01:48:26AM +0300, Dan Carpenter wrote:
-> There is a cut and paste bug so we enable a second time instead of
-> disabling.
+On 8.5.2013 23:03, strnape1@fel.cvut.cz wrote:
+> Created coccinelle script for reporting missing pci_free_consistent() calls.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Petr Strnad <strnape1@fel.cvut.cz>
+
+Julia, Nicolas, any comments about this patch?
+
+Thanks,
+Michal
+
+> ---
+> diff --git a/scripts/coccinelle/free/pci_free_consistent.cocci  
+> b/scripts/coccinelle/free/pci_free_consistent.cocci
+> new file mode 100644
+> index 0000000..43600cc
+> --- /dev/null
+> +++ b/scripts/coccinelle/free/pci_free_consistent.cocci
+> @@ -0,0 +1,52 @@
+> +/// Find missing pci_free_consistent for every pci_alloc_consistent.
+> +///
+> +// Confidence: Moderate
+> +// Copyright: (C) 2013 Petr Strnad.  GPLv2.
+> +// URL: http://coccinelle.lip6.fr/
+> +// Keywords: pci_free_consistent, pci_alloc_consistent
+> +// Options: --no-includes --include-headers
+> +
+> +virtual report
+> +virtual org
+> +
+> +@search@
+> +local idexpression id;
+> +expression x,y,z,e;
+> +position p1,p2;
+> +type T;
+> +@@
+> +
+> +id = pci_alloc_consistent@p1(x,y,&z)
+> +... when != e = id
+> +if (id = NULL || ...) { ... return ...; }
+> +... when != pci_free_consistent(x,y,id,z)
+> +    when != if (id) { ... pci_free_consistent(x,y,id,z) ... }
+> +    when != if (y) { ... pci_free_consistent(x,y,id,z) ... }
+> +    when != e = (T)id
+> +    when exists
+> +(
+> +return 0;
+> +|
+> +return 1;
+> +|
+> +return id;
+> +|
+> +return@p2 ...;
+> +)
+> +
+> +@script:python depends on report@
+> +p1 << search.p1;
+> +p2 << search.p2;
+> +@@
+> +
+> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
+> line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
+> +coccilib.report.print_report(p2[0],msg)
+> +
+> +@script:python depends on org@
+> +p1 << search.p1;
+> +p2 << search.p2;
+> +@@
+> +
+> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
+> line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
+> +cocci.print_main(msg,p1)
+> +cocci.print_secs("",p2)
 > 
-> diff --git a/net/nfc/hci/core.c b/net/nfc/hci/core.c
-> index 7b1c186..3fdefc1 100644
-> --- a/net/nfc/hci/core.c
-> +++ b/net/nfc/hci/core.c
-> @@ -717,7 +717,7 @@ static int hci_disable_se(struct nfc_dev *nfc_dev, u32 se_idx)
->  	struct nfc_hci_dev *hdev = nfc_get_drvdata(nfc_dev);
->  
->  	if (hdev->ops->disable_se)
-> -		return hdev->ops->enable_se(hdev, se_idx);
-> +		return hdev->ops->disable_se(hdev, se_idx);
->  
->  	return 0;
->  }
-Applied to nfc-fixes, thanks.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
 
-Cheers,
-Samuel.
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
