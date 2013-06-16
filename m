@@ -1,28 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 03 Jun 2013 09:27:25 +0000
-Subject: [patch] fanotify: info leak in copy_event_to_user()
-Message-Id: <20130603092725.GE16171@debian>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sun, 16 Jun 2013 11:46:38 +0000
+Subject: [PATCH] USB: EHCI: Remove double assignment of .start in ehci_msp_hc_driver
+Message-Id: <1371383198-11383-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: stern@rowland.harvard.edu, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-The ->reserverd field isn't cleared so we leak one byte of stack
-information to userspace.
+This patch removes a double assignment of .start in struct hc_driver
+ehci_msp_hc_driver and also makes the code look more tidy.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/usb/host/ehci-pmcmsp.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 6c80083..77cc85d 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -122,6 +122,7 @@ static int fill_event_metadata(struct fsnotify_group *group,
- 	metadata->event_len = FAN_EVENT_METADATA_LEN;
- 	metadata->metadata_len = FAN_EVENT_METADATA_LEN;
- 	metadata->vers = FANOTIFY_METADATA_VERSION;
-+	metadata->reserved = 0;
- 	metadata->mask = event->mask & FAN_ALL_OUTGOING_EVENTS;
- 	metadata->pid = pid_vnr(event->tgid);
- 	if (unlikely(event->mask & FAN_Q_OVERFLOW))
+diff --git a/drivers/usb/host/ehci-pmcmsp.c b/drivers/usb/host/ehci-pmcmsp.c
+index 363890e..601e208 100644
+--- a/drivers/usb/host/ehci-pmcmsp.c
++++ b/drivers/usb/host/ehci-pmcmsp.c
+@@ -291,8 +291,7 @@ static const struct hc_driver ehci_msp_hc_driver = {
+ 	/*
+ 	 * basic lifecycle operations
+ 	 */
+-	.reset =		ehci_msp_setup,
+-	.start =		ehci_run,
++	.reset			= ehci_msp_setup,
+ 	.shutdown		= ehci_shutdown,
+ 	.start			= ehci_run,
+ 	.stop			= ehci_stop,
+-- 
+1.7.10.4
+
