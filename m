@@ -1,31 +1,81 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sun, 02 Jun 2013 21:54:43 +0000
-Subject: build regressions 2013-06-02
-Message-Id: <51abbf23.2U8Du+tPjYD0NK/f%fengguang.wu@intel.com>
+From: "AFG GTBANK LOAN" <turnos-escuelas@ifir-conicet.gov.ar>
+Date: Mon, 17 Jun 2013 19:25:22 +0000
+Subject: 
+Message-Id: <9d8c67649bb8d2918e3ba79f2500a4a5.squirrel@ifir-conicet.gov.ar>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-[errors]
-ERROR: "nfs_dns_resolver_init" [fs/nfs/nfs.ko] undefined!
-ERROR: "nfs_dns_resolver_cache_destroy" [fs/nfs/nfs.ko] undefined!
-ERROR: "nfs_dns_resolver_destroy" [fs/nfs/nfs.ko] undefined!
-ERROR: "nfs_dns_resolver_cache_init" [fs/nfs/nfs.ko] undefined!
-inode.c:(.text+0x4c078): undefined reference to `nfs_dns_resolver_cache_destroy'
-inode.c:(.text+0x4c09c): undefined reference to `nfs_dns_resolver_cache_init'
-inode.c:(.init.text+0x12f8): undefined reference to `nfs_dns_resolver_init'
-inode.c:(.init.text+0x1418): undefined reference to `nfs_dns_resolver_destroy'
-inode.c:(.exit.text+0x80): undefined reference to `nfs_dns_resolver_destroy'
-ERROR: "cw1200_get_platform_data" [drivers/net/wireless/cw1200/cw1200_wlan_sdio.ko] undefined!
 
-[warnings]
-warning: (ARCH_OMAP4 && ARCH_TEGRA_2x_SOC) selects ARCH_NEEDS_CPU_IDLE_COUPLED which has unmet direct dependencies (CPU_IDLE)
-warning: (ARCH_OMAP4 && ARCH_TEGRA_2x_SOC) selects ARCH_NEEDS_CPU_IDLE_COUPLED which has unmet direct dependencies (CPU_IDLE)
-warning: (ARCH_OMAP4 && ARCH_TEGRA_2x_SOC) selects ARCH_NEEDS_CPU_IDLE_COUPLED which has unmet direct dependencies (CPU_IDLE)
-drivers/net/wireless/cw1200/wsm.c:1512:2: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+
+Loan Syndicacion
+
+Am AFG Guaranty Trust Bank, zu strukturieren wir Kreditlinien treffen Sie
+unsere
+Kunden spezifischen gesch=E4ftlichen Anforderungen und einen deutlichen
+Mehrwert f=FCr unsere
+Kunden Unternehmen.
+eine Division der AFG Finance und Private Bank plc.
+
+Wenn Sie erw=E4gen, eine gro=DFe Akquisition oder ein Gro=DFprojekt sind, k=
+=F6nnen
+Sie
+brauchen eine erhebliche Menge an Kredit. AFG Guaranty Trust Bank setzen
+k=F6nnen
+zusammen das Syndikat, das die gesamte Kredit schn=FCrt f=FCr
+Sie.
+
+
+Als Bank mit internationaler Reichweite, sind wir gekommen, um Darlehen zu
+identifizieren
+Syndizierungen als Teil unseres Kerngesch=E4fts und durch spitzte diese Zei=
+le
+aggressiv sind wir an einem Punkt, wo wir kommen, um als erkannt haben
+Hauptakteur in diesem Bereich.
+
+
+=F6ffnen Sie ein Girokonto heute mit einem Minimum Bankguthaben von 500 =A3=
+ und
+Getup zu =A3 10.000 als Darlehen und auch den Hauch einer Chance und gewann
+die Sterne
+Preis von =A3 500.000 in die sparen und gewinnen promo in may.aply jetzt.
+
+
+mit dem Folowing Informationen =FCber Rechtsanwalt steven lee das Konto
+Offizier.
+
+
+FULL NAME;
+
+
+Wohnadresse;
+
+
+E-MAIL-ADRESSE;
+
+Telefonnummer;
+
+N=E4chsten KINS;
+
+MUTTER MAIDEN NAME;
+
+
+Familienstand;
+
+
+B=DCROADRESSE;
+
+ALTERNATIVE Telefonnummer;
+
+TO @ yahoo.com bar.stevenlee
+NOTE; ALLE Darlehen sind f=FCr 10JAHRE RATE VALID
+ANGEBOT ENDET BALD SO JETZT HURRY
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
