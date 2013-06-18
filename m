@@ -1,44 +1,31 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Date: Thu, 06 Jun 2013 11:46:11 +0000
-Subject: Re: [patch] brcmfmac: move dereference under check for NULL
-Message-Id: <51B07683.2030408@broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Jun 2013 07:27:38 +0000
+Subject: [patch] RDMA/cxgb3: timeout condition is never true
+Message-Id: <20130618072738.GB12329@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130606105556.GD12953@debian>
-In-Reply-To: <20130606105556.GD12953@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Piotr Haber <phaber@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 06/06/2013 12:55 PM, Dan Carpenter wrote:
-> skb_pull() dereferences the skb parameter.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This is a static checker fix.  "count" is unsigned so it's never -1.
+Since "count" is 16 bits and the addition operation is implicitly
+casted to int then there is no wrapping here.
 
-Hi Dan,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Just missed that. This code fragment was resubmitted just minutes ago. I 
-will rework the patch to incorporate this change.
-
-Regards,
-Arend
-
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/brcm80211/brcmfmac/fwsignal.c
-> index ea37bd4..c35296f 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/fwsignal.c
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/fwsignal.c
-> @@ -861,9 +861,9 @@ static bool brcmf_fws_tim_update(struct brcmf_fws_info *fws,
->   		      BRCMF_FWS_TYPE_PENDING_TRAFFIC_BMP_LEN + 2 +
->   		      4 + fws->drvr->hdrlen;
->   		skb = brcmu_pkt_buf_get_skb(len);
-> -		skb_pull(skb, len);
->   		if (skb = NULL)
->   			return false;
-> +		skb_pull(skb, len);
->   		skcb = brcmf_skbcb(skb);
->   		skcb->mac = entry;
->   		skcb->state = BRCMF_FWS_SKBSTATE_TIM;
->
-
-
+diff --git a/drivers/infiniband/hw/cxgb3/iwch_qp.c b/drivers/infiniband/hw/cxgb3/iwch_qp.c
+index e5649e8..b57c0be 100644
+--- a/drivers/infiniband/hw/cxgb3/iwch_qp.c
++++ b/drivers/infiniband/hw/cxgb3/iwch_qp.c
+@@ -883,7 +883,8 @@ u16 iwch_rqes_posted(struct iwch_qp *qhp)
+ {
+ 	union t3_wr *wqe = qhp->wq.queue;
+ 	u16 count = 0;
+-	while ((count+1) != 0 && fw_riwrh_opcode((struct fw_riwrh *)wqe) = T3_WR_RCV) {
++
++	while (count < USHRT_MAX && fw_riwrh_opcode((struct fw_riwrh *)wqe) = T3_WR_RCV) {
+ 		count++;
+ 		wqe++;
+ 	}
