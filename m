@@ -1,77 +1,36 @@
-From: Zheng Liu <gnehzuil.liu@gmail.com>
-Date: Thu, 20 Jun 2013 15:24:50 +0000
-Subject: Re: [patch] ext4: signedness bug breaks ext4_inode_touch_time_cmp()
-Message-Id: <20130620152450.GB20615@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Jun 2013 07:05:29 +0000
+Subject: [patch] fbmem: return -EFAULT on copy_to_user() failure
+Message-Id: <20130618070529.GA12329@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130620080858.GA15095@elgon.mountain>
- <20130620141310.GB28309@thunk.org>
-In-Reply-To: <20130620141310.GB28309@thunk.org>
+References: <20121112110814.GB1678@elgon.mountain>
+In-Reply-To: <20121112110814.GB1678@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Zheng Liu <wenqing.lz@taobao.com>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jun 20, 2013 at 10:13:10AM -0400, Theodore Ts'o wrote:
-> On Thu, Jun 20, 2013 at 11:08:58AM +0300, Dan Carpenter wrote:
-> > "diff" is unsigned so this doesn't sort the LRU list correctly.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > This was introduced in 6480bad916be "ext4: improve extent cache shrink
-> > mechanism to avoid to burn CPU time"
-> 
-> Thanks for pointing this out!  The following patch is better I think
-> because it uses the time_after() abstraction.  I will be folding the
-> following into Zheng's "ext4: improve extent cache shrink > mechanism
-> to avoid to burn CPU time".
+copy_to_user() returns the number of bytes remaining to be copied.
+put_user() returns -EFAULT on error.
 
-Thanks for fixing it.  The patch looks good to me.
-Reviewed-by: Zheng Liu <wenqing.lz@taobao.com>
+This function ORs a bunch of stuff together and returns jumbled non-zero
+values on error.  It should return -EFAULT.
 
-> 
-> I've desk checked this but we may want to do some explicit testing to
-> make sure we are in fact ejecting the appropriate inode from the list.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I will check it tomorrow.  If there still has a problem, I will try to
-fix it.
-
-                                                - Zheng
-
-> 
->      	     	    	 	      - Ted
-> 
->  fs/ext4/extents_status.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-> index 80dcc59..ee018d5 100644
-> --- a/fs/ext4/extents_status.c
-> +++ b/fs/ext4/extents_status.c
-> @@ -880,17 +880,15 @@ static int ext4_inode_touch_time_cmp(void *priv, struct list_head *a,
->  				     struct list_head *b)
->  {
->  	struct ext4_inode_info *eia, *eib;
-> -	unsigned long diff;
-> -
->  	eia = list_entry(a, struct ext4_inode_info, i_es_lru);
->  	eib = list_entry(b, struct ext4_inode_info, i_es_lru);
->  
-> -	diff = eia->i_touch_when - eib->i_touch_when;
-> -	if (diff < 0)
-> -		return -1;
-> -	if (diff > 0)
-> +	if (eia->i_touch_when = eib->i_touch_when)
-> +		return 0;
-> +	if (time_after(eia->i_touch_when, eib->i_touch_when))
->  		return 1;
-> -	return 0;
-> +	else
-> +		return -1;
->  }
->  
->  static int ext4_es_shrink(struct shrinker *shrink, struct shrink_control *sc)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-ext4" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/video/fbmem.c b/drivers/video/fbmem.c
+index 098bfc6..9217be3 100644
+--- a/drivers/video/fbmem.c
++++ b/drivers/video/fbmem.c
+@@ -1305,7 +1305,9 @@ static int do_fscreeninfo_to_user(struct fb_fix_screeninfo *fix,
+ 	err |= copy_to_user(fix32->reserved, fix->reserved,
+ 			    sizeof(fix->reserved));
+ 
+-	return err;
++	if (err)
++		return -EFAULT;
++	return 0;
+ }
+ 
+ static int fb_get_fscreeninfo(struct fb_info *info, unsigned int cmd,
