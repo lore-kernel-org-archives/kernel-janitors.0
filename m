@@ -1,38 +1,59 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Jun 2013 21:21:04 +0000
-Subject: [patch] [SCSI] megaraid_sas: fix a bug for 64 bit arches
-Message-Id: <20130628212104.GA16035@elgon.mountain>
+Date: Tue, 18 Jun 2013 14:05:22 +0000
+Subject: re: mfd: 88pm800: Enhance sub devices initialization
+Message-Id: <20130618140521.GA9128@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Neela Syam Kolli <megaraidlinux@lsi.com>, "Sumit.Saxena@lsi.com" <Sumit.Saxena@lsi.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 64 bit then -1UL and -1U are not equal, so these conditions don't
-work as intended and it breaks error handling.
+Hello Chao Xie,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This is a semi-automatic email about new static checker warnings.
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fp.c b/drivers/scsi/megaraid/megaraid_sas_fp.c
-index 8056eac..4f401f7 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fp.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
-@@ -585,7 +585,7 @@ u8 get_arm(struct megasas_instance *instance, u32 ld, u8 span, u64 stripe,
- 	case 1:
- 		/* start with logical arm */
- 		arm = get_arm_from_strip(instance, ld, stripe, map);
--		if (arm != -1UL)
-+		if (arm != -1U)
- 			arm *= 2;
- 		break;
- 	}
-@@ -637,7 +637,7 @@ static u8 mr_spanset_get_phy_params(struct megasas_instance *instance, u32 ld,
- 
- 	if (raid->level = 6) {
- 		logArm = get_arm_from_strip(instance, ld, stripRow, map);
--		if (logArm = -1UL)
-+		if (logArm = -1U)
- 			return FALSE;
- 		rowMod = mega_mod64(row, SPAN_ROW_SIZE(map, ld, span));
- 		armQ = SPAN_ROW_SIZE(map, ld, span) - 1 - rowMod;
+The patch 1e9f033e4b6c: "mfd: 88pm800: Enhance sub devices 
+initialization" from Jun 14, 2013, leads to the following Smatch 
+complaint:
+
+drivers/mfd/88pm800.c:504 device_800_init()
+	 error: we previously assumed 'pdata' could be null (see line 480)
+
+drivers/mfd/88pm800.c
+   479		if (val & PM800_ALARM_WAKEUP) {
+   480			if (pdata && pdata->rtc)
+                            ^^^^^
+Old check.
+
+   481				pdata->rtc->rtc_wakeup = 1;
+   482		}
+   483	
+   484		ret = device_gpadc_init(chip, pdata);
+   485		if (ret < 0) {
+   486			dev_err(chip->dev, "[%s]Failed to init gpadc\n", __func__);
+   487			goto out;
+   488		}
+   489	
+   490		chip->regmap_irq_chip = &pm800_irq_chip;
+   491	
+   492		ret = device_irq_init_800(chip);
+   493		if (ret < 0) {
+   494			dev_err(chip->dev, "[%s]Failed to init pm800 irq\n", __func__);
+   495			goto out;
+   496		}
+   497	
+   498		ret = device_onkey_init(chip, pdata);
+   499		if (ret) {
+   500			dev_err(chip->dev, "Failed to add onkey subdev\n");
+   501			goto out_dev;
+   502		}
+   503	
+   504		ret = device_rtc_init(chip, pdata);
+                                            ^^^^^
+New dereference.
+
+   505		if (ret) {
+   506			dev_err(chip->dev, "Failed to add rtc subdev\n");
+
+regards,
+dan carpenter
