@@ -1,36 +1,30 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Wed, 12 Jun 2013 15:33:42 +0000
-Subject: Re: [PATCH] staging: tidspbridge: Fix potential NULL pointer dereference
-Message-Id: <20130612153342.GA13788@debian>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Jun 2013 07:40:24 +0000
+Subject: [patch] x86/PCI: MMCONFIG: shift wrapping in mcfg_ioremap()
+Message-Id: <20130618074024.GE12329@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1371047595-11702-1-git-send-email-emilgoode@gmail.com>
- <20130612150817.GA12624@mwanda>
-In-Reply-To: <20130612150817.GA12624@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: omar.ramirez@copitl.com, gregkh@linuxfoundation.org, justinmattock@gmail.com, andriy.shevchenko@linux.intel.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Thank you Dan! That's right, It's of course not NULL after freed.
-Yes the code looks strange here, I'm not sure what was intended.
+This is a static checker fix.  "size" is a u64 here, but "num_buses" is
+only 32 bits so we would hit shift wrapping bugs trying to use larger
+sizes.
 
-Best regards,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Emil
-
-On Wed, Jun 12, 2013 at 08:08:17AM -0700, Dan Carpenter wrote:
-> 1) This patch doesn't do anything.  "dcd_key" points to freed memory
-> but it's not a NULL pointer.
-> 2) The original pointer doesn't dereference "dcd_key" it just takes
-> the address of one of the elements.  I don't know the context and
-> can't say for sure that it's a wrong thing to do.
-> 
-> The code does look very suspect.  Why is it checking permisions
-> after we already removed the element and freed it?
-> 
-> But it's not a dereferencing freed memory bug.
-> 
-> regards,
-> dan carpenter
-> 
+diff --git a/arch/x86/pci/mmconfig_64.c b/arch/x86/pci/mmconfig_64.c
+index bea5249..430ed2b 100644
+--- a/arch/x86/pci/mmconfig_64.c
++++ b/arch/x86/pci/mmconfig_64.c
+@@ -98,8 +98,7 @@ const struct pci_raw_ops pci_mmcfg = {
+ static void __iomem *mcfg_ioremap(struct pci_mmcfg_region *cfg)
+ {
+ 	void __iomem *addr;
+-	u64 start, size;
+-	int num_buses;
++	u64 start, size, num_buses;
+ 
+ 	start = cfg->address + PCI_MMCFG_BUS_OFFSET(cfg->start_bus);
+ 	num_buses = cfg->end_bus - cfg->start_bus + 1;
