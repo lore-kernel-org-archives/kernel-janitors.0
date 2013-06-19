@@ -1,96 +1,49 @@
-From: Nicolas Palix <nicolas.palix@imag.fr>
-Date: Tue, 25 Jun 2013 13:03:10 +0000
-Subject: Re: [PATCH] scripts: Coccinelle script for pci_free_consistent()
-Message-Id: <CAAxaTiPTtNTpo8DAE628=En=sa0hTzeOJ19DoxE9GwdiQnrUqg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 19 Jun 2013 16:01:01 +0000
+Subject: [patch -next] FMC: NULL dereference on allocation failure
+Message-Id: <20130619160101.GA29108@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130508230308.Horde.hkDwg5wWGGBzmzKnqIjUhg1@wimap.feld.cvut.cz>
-In-Reply-To: <20130508230308.Horde.hkDwg5wWGGBzmzKnqIjUhg1@wimap.feld.cvut.cz>
+In-Reply-To: <20130619155731.GA4957@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alessandro Rubini <rubini@gnudd.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 8, 2013 at 11:03 PM,  <strnape1@fel.cvut.cz> wrote:
-> Created coccinelle script for reporting missing pci_free_consistent() calls.
->
-> Signed-off-by: Petr Strnad <strnape1@fel.cvut.cz>
+If we don't allocate "arr" then the cleanup path will dereference it and
+oops.
 
-Signed-off-by: Nicolas Palix <nicolas.palix@imag.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Alessandro Rubini <rubini@gnudd.com>
 
-> ---
-> diff --git a/scripts/coccinelle/free/pci_free_consistent.cocci
-> b/scripts/coccinelle/free/pci_free_consistent.cocci
-> new file mode 100644
-> index 0000000..43600cc
-> --- /dev/null
-> +++ b/scripts/coccinelle/free/pci_free_consistent.cocci
-> @@ -0,0 +1,52 @@
-> +/// Find missing pci_free_consistent for every pci_alloc_consistent.
-> +///
-> +// Confidence: Moderate
-> +// Copyright: (C) 2013 Petr Strnad.  GPLv2.
-> +// URL: http://coccinelle.lip6.fr/
-> +// Keywords: pci_free_consistent, pci_alloc_consistent
-> +// Options: --no-includes --include-headers
-> +
-> +virtual report
-> +virtual org
-> +
-> +@search@
-> +local idexpression id;
-> +expression x,y,z,e;
-> +position p1,p2;
-> +type T;
-> +@@
-> +
-> +id = pci_alloc_consistent@p1(x,y,&z)
-> +... when != e = id
-> +if (id = NULL || ...) { ... return ...; }
-> +... when != pci_free_consistent(x,y,id,z)
-> +    when != if (id) { ... pci_free_consistent(x,y,id,z) ... }
->
-> +    when != if (y) { ... pci_free_consistent(x,y,id,z) ... }
-> +    when != e = (T)id
-> +    when exists
-> +(
-> +return 0;
-> +|
-> +return 1;
-> +|
-> +return id;
-> +|
-> +return@p2 ...;
-> +)
-> +
-> +@script:python depends on report@
-> +p1 << search.p1;
-> +p2 << search.p2;
-> +@@
-> +
-> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s
-> and return without freeing on line %s" % (p1[0].line,p2[0].line)
-> +coccilib.report.print_report(p2[0],msg)
-> +
-> +@script:python depends on org@
-> +p1 << search.p1;
-> +p2 << search.p2;
-> +@@
-> +
-> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s
-> and return without freeing on line %s" % (p1[0].line,p2[0].line)
-> +cocci.print_main(msg,p1)
-> +cocci.print_secs("",p2)
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/drivers/fmc/fmc-sdb.c b/drivers/fmc/fmc-sdb.c
+index 74fb326..79adc39 100644
+--- a/drivers/fmc/fmc-sdb.c
++++ b/drivers/fmc/fmc-sdb.c
+@@ -46,16 +46,17 @@ static struct sdb_array *__fmc_scan_sdb_tree(struct fmc_device *fmc,
+ 	onew = __sdb_rd(fmc, sdb_addr + 4, convert);
+ 	n = __be16_to_cpu(*(uint16_t *)&onew);
+ 	arr = kzalloc(sizeof(*arr), GFP_KERNEL);
+-	if (arr) {
+-		arr->record = kzalloc(sizeof(arr->record[0]) * n, GFP_KERNEL);
+-		arr->subtree = kzalloc(sizeof(arr->subtree[0]) * n, GFP_KERNEL);
+-	}
+-	if (!arr || !arr->record || !arr->subtree) {
++	if (!arr)
++		return ERR_PTR(-ENOMEM);
++	arr->record = kzalloc(sizeof(arr->record[0]) * n, GFP_KERNEL);
++	arr->subtree = kzalloc(sizeof(arr->subtree[0]) * n, GFP_KERNEL);
++	if (!arr->record || !arr->subtree) {
+ 		kfree(arr->record);
+ 		kfree(arr->subtree);
+ 		kfree(arr);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
++
+ 	arr->len = n;
+ 	arr->level = level;
+ 	arr->fmc = fmc;
 --
-Nicolas Palix
-Tel: +33 4 76 51 46 27
-http://membres-liglab.imag.fr/palix/
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
