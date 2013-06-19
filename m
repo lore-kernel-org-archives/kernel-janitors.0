@@ -1,43 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Jun 2013 14:49:04 +0000
-Subject: [patch] FMC: NULL dereference on allocation failure
-Message-Id: <20130619144904.GA10484@elgon.mountain>
+From: Alessandro Rubini <rubini@gnudd.com>
+Date: Wed, 19 Jun 2013 15:25:28 +0000
+Subject: Re: [patch] FMC: NULL dereference on allocation failure
+Message-Id: <20130619152528.GA16430@mail.gnudd.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130619144904.GA10484@elgon.mountain> 
+In-Reply-To: <20130619144904.GA10484@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Rubini <rubini@gnudd.com>
+To: dan.carpenter@oracle.com
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If we don't allocate "arr" then the cleanup path will dereference it and
-oops.
+> If we don't allocate "arr" then the cleanup path will dereference it and
+> oops.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+You are right, thanks (acked).
 
-diff --git a/drivers/fmc/fmc-sdb.c b/drivers/fmc/fmc-sdb.c
-index 74fb326..79adc39 100644
---- a/drivers/fmc/fmc-sdb.c
-+++ b/drivers/fmc/fmc-sdb.c
-@@ -46,16 +46,17 @@ static struct sdb_array *__fmc_scan_sdb_tree(struct fmc_device *fmc,
- 	onew = __sdb_rd(fmc, sdb_addr + 4, convert);
- 	n = __be16_to_cpu(*(uint16_t *)&onew);
- 	arr = kzalloc(sizeof(*arr), GFP_KERNEL);
--	if (arr) {
--		arr->record = kzalloc(sizeof(arr->record[0]) * n, GFP_KERNEL);
--		arr->subtree = kzalloc(sizeof(arr->subtree[0]) * n, GFP_KERNEL);
--	}
--	if (!arr || !arr->record || !arr->subtree) {
-+	if (!arr)
-+		return ERR_PTR(-ENOMEM);
-+	arr->record = kzalloc(sizeof(arr->record[0]) * n, GFP_KERNEL);
-+	arr->subtree = kzalloc(sizeof(arr->subtree[0]) * n, GFP_KERNEL);
-+	if (!arr->record || !arr->subtree) {
- 		kfree(arr->record);
- 		kfree(arr->subtree);
- 		kfree(arr);
- 		return ERR_PTR(-ENOMEM);
- 	}
-+
- 	arr->len = n;
- 	arr->level = level;
- 	arr->fmc = fmc;
+How is the procedure here? I don't have my own git tree on
+kernel.org for pull requests. Can this go through the janitors?
+
+(if it makes sense, I can try the procedure to have a tree, but last
+time I checked it was strictly denied to anyone).
+
+thanks
+/alessandro
