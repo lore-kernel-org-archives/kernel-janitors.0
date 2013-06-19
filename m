@@ -1,49 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Jun 2013 16:01:01 +0000
-Subject: [patch -next] FMC: NULL dereference on allocation failure
-Message-Id: <20130619160101.GA29108@mwanda>
+From: Joe Perches <joe@perches.com>
+Date: Wed, 19 Jun 2013 16:15:04 +0000
+Subject: Re: [patch -next] FMC: NULL dereference on allocation failure
+Message-Id: <1371658504.2038.25.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20130619155731.GA4957@mwanda>
+References: <20130619160101.GA29108@mwanda>
+In-Reply-To: <20130619160101.GA29108@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alessandro Rubini <rubini@gnudd.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alessandro Rubini <rubini@gnudd.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If we don't allocate "arr" then the cleanup path will dereference it and
-oops.
+On Wed, 2013-06-19 at 19:01 +0300, Dan Carpenter wrote:
+> If we don't allocate "arr" then the cleanup path will dereference it and
+> oops.
+[]
+> diff --git a/drivers/fmc/fmc-sdb.c b/drivers/fmc/fmc-sdb.c
+[]
+> @@ -46,16 +46,17 @@ static struct sdb_array *__fmc_scan_sdb_tree(struct fmc_device *fmc,
+[]
+> -		arr->record = kzalloc(sizeof(arr->record[0]) * n, GFP_KERNEL);
+> -		arr->subtree = kzalloc(sizeof(arr->subtree[0]) * n, GFP_KERNEL);
+[]
+> +	arr->record = kzalloc(sizeof(arr->record[0]) * n, GFP_KERNEL);
+> +	arr->subtree = kzalloc(sizeof(arr->subtree[0]) * n, GFP_KERNEL);
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Alessandro Rubini <rubini@gnudd.com>
+n comes from the hardware no?
+Maybe make these kcalloc too.
 
-diff --git a/drivers/fmc/fmc-sdb.c b/drivers/fmc/fmc-sdb.c
-index 74fb326..79adc39 100644
---- a/drivers/fmc/fmc-sdb.c
-+++ b/drivers/fmc/fmc-sdb.c
-@@ -46,16 +46,17 @@ static struct sdb_array *__fmc_scan_sdb_tree(struct fmc_device *fmc,
- 	onew = __sdb_rd(fmc, sdb_addr + 4, convert);
- 	n = __be16_to_cpu(*(uint16_t *)&onew);
- 	arr = kzalloc(sizeof(*arr), GFP_KERNEL);
--	if (arr) {
--		arr->record = kzalloc(sizeof(arr->record[0]) * n, GFP_KERNEL);
--		arr->subtree = kzalloc(sizeof(arr->subtree[0]) * n, GFP_KERNEL);
--	}
--	if (!arr || !arr->record || !arr->subtree) {
-+	if (!arr)
-+		return ERR_PTR(-ENOMEM);
-+	arr->record = kzalloc(sizeof(arr->record[0]) * n, GFP_KERNEL);
-+	arr->subtree = kzalloc(sizeof(arr->subtree[0]) * n, GFP_KERNEL);
-+	if (!arr->record || !arr->subtree) {
- 		kfree(arr->record);
- 		kfree(arr->subtree);
- 		kfree(arr);
- 		return ERR_PTR(-ENOMEM);
- 	}
-+
- 	arr->len = n;
- 	arr->level = level;
- 	arr->fmc = fmc;
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
