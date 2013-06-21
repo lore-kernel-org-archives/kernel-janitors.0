@@ -1,44 +1,30 @@
-From: "Yuval Mintz" <yuvalmin@broadcom.com>
-Date: Sat, 01 Jun 2013 14:53:46 +0000
-Subject: RE: [patch -next] bnx2x: fix a power state test
-Message-Id: <979A8436335E3744ADCD3A9F2A2B68A52AC61B5F@SJEXCHMB10.corp.ad.broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Jun 2013 12:25:33 +0000
+Subject: [patch] ALSA: vx_core: off by one in vx_read_status()
+Message-Id: <20130621122533.GA24059@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130531075840.GA28370@debian>
-In-Reply-To: <20130531075840.GA28370@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Eilon Greenstein <eilong@broadcom.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
+This code is older than git, and I haven't tested it, but if size =
+SIZE_MAX_STATUS then we would write one space past the end of the
+rmh->Stat[] array.
 
-> PCI_D0 is zero so the original test is never true.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I don't have the hardware to test this, and I'm not positive on it.
-> Buyer beware!
-> 
-> diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-> b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-> index 263950c..a9a1609 100644
-> --- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-> +++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-> @@ -1391,7 +1391,7 @@ static bool bnx2x_is_nvm_accessible(struct bnx2x
-> *bp)
->  		rc = pci_read_config_word(bp->pdev,
->  					  bp->pm_cap + PCI_PM_CTRL, &pm);
-> 
-> -	if ((rc && !netif_running(dev)) || (!rc && ((pm & PCI_D0) != PCI_D0)))
-> +	if ((rc && !netif_running(dev)) || (!rc && pm != PCI_D0))
->  		return false;
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hi Dan,
-
-Thanks for the catch, but I think your fix might be incomplete; It should probably be
-+	if ((rc && !netif_running(dev)) || (!rc && ((pm & PCI_PM_CTRL_STATE_MASK) != PCI_D0)))
-Otherwise the condition will fail if other bits are set in the PM control register.
-
-Thanks,
-Yuval
-
+diff --git a/sound/drivers/vx/vx_core.c b/sound/drivers/vx/vx_core.c
+index c39961c..8359689 100644
+--- a/sound/drivers/vx/vx_core.c
++++ b/sound/drivers/vx/vx_core.c
+@@ -205,7 +205,7 @@ static int vx_read_status(struct vx_core *chip, struct vx_rmh *rmh)
+ 
+ 	if (size < 1)
+ 		return 0;
+-	if (snd_BUG_ON(size > SIZE_MAX_STATUS))
++	if (snd_BUG_ON(size >= SIZE_MAX_STATUS))
+ 		return -EINVAL;
+ 
+ 	for (i = 1; i <= size; i++) {
