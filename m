@@ -1,29 +1,48 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 01 Jun 2013 01:14:35 +0000
-Subject: build regressions 2013-05-31
-Message-Id: <51a94afb.UNslmpP0NRUymqzG%fengguang.wu@intel.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 22 Jun 2013 12:02:52 +0000
+Subject: [PATCH] [media] saa7134: Fix sparse warnings by adding __user annotation
+Message-Id: <1371902572-7925-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mchehab@redhat.com, hans.verkuil@cisco.com, linux@rainbow-software.org, prabhakar.csengg@gmail.com, crope@iki.fi
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-[errors]
-microcode_amd_early.c:(.init.text+0xe1b9): undefined reference to `ucode_cpu_info'
-microcode_amd_early.c:(.init.text+0xe2e1): undefined reference to `__apply_microcode_amd'
-(.init.text+0xe332): undefined reference to `ucode_cpu_info'
-(.init.text+0xe38c): undefined reference to `load_microcode_amd'
-(.cpuinit.text+0x5a94): undefined reference to `__apply_microcode_amd'
-drivers/gpio/gpio-msm-v2.c:373:2: error: implicit declaration of function 'set_irq_flags' [-Werror=implicit-function-declaration]
-drivers/gpio/gpio-msm-v2.c:373:21: error: 'IRQF_VALID' undeclared (first use in this function)
-drivers/gpio/gpio-msm-v2.c:450:18: error: 'TLMM_SCSS_SUMMARY_IRQ' undeclared (first use in this function)
-(.cpuinit.text+0xa666): undefined reference to `apply_microcode_amd'
+Adding a __user annotation fixes the following sparse warnings.
 
-[warnings]
-WARNING: arch/x86/built-in.o(.text+0x21f7f): Section mismatch in reference from the function load_microcode_amd() to the variable .cpuinit.data:amd_bsp_mpb
-WARNING: arch/x86/built-in.o(.cpuinit.text+0x6584): Section mismatch in reference from the function load_ucode_amd_ap() to the function .init.text:apply_ucode_in_initrd()
-WARNING: arch/x86/built-in.o(.cpuinit.text+0x76ec): Section mismatch in reference from the function load_ucode_amd_ap() to the function .init.text:find_ucode_in_initrd()
+drivers/media/pci/saa7134/saa7134-video.c:1578:45: warning:
+        incorrect type in initializer (different address spaces)
+        drivers/media/pci/saa7134/saa7134-video.c:1578:45:
+        expected struct v4l2_clip *clips
+        drivers/media/pci/saa7134/saa7134-video.c:1578:45:
+        got struct v4l2_clip [noderef] <asn:1>*clips
 
+drivers/media/pci/saa7134/saa7134-video.c:1589:26: warning:
+        incorrect type in assignment (different address spaces)
+        drivers/media/pci/saa7134/saa7134-video.c:1589:26:
+        expected struct v4l2_clip [noderef] <asn:1>*clips
+        drivers/media/pci/saa7134/saa7134-video.c:1589:26:
+        got struct v4l2_clip *clips
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/media/pci/saa7134/saa7134-video.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/saa7134/saa7134-video.c b/drivers/media/pci/saa7134/saa7134-video.c
+index e3457ae..e12bbd8 100644
+--- a/drivers/media/pci/saa7134/saa7134-video.c
++++ b/drivers/media/pci/saa7134/saa7134-video.c
+@@ -1575,7 +1575,7 @@ static int saa7134_g_fmt_vid_overlay(struct file *file, void *priv,
+ {
+ 	struct saa7134_fh *fh = priv;
+ 	struct saa7134_dev *dev = fh->dev;
+-	struct v4l2_clip *clips = f->fmt.win.clips;
++	struct v4l2_clip __user *clips = f->fmt.win.clips;
+ 	u32 clipcount = f->fmt.win.clipcount;
+ 	int err = 0;
+ 	int i;
+-- 
+1.7.10.4
+
