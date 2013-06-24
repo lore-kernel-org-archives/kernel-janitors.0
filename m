@@ -1,35 +1,40 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 24 Jun 2013 07:31:31 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 24 Jun 2013 08:44:49 +0000
 Subject: Re: [patch] xen-netback: double free on unload
-Message-Id: <alpine.DEB.2.02.1306240830580.2215@hadrien>
+Message-Id: <20130624.014449.788391647881401988.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130621062008.GA10873@elgon.mountain> <20130624.002607.1816906327683052502.davem@davemloft.net>
-In-Reply-To: <20130624.002607.1816906327683052502.davem@davemloft.net>
+References: <20130621062008.GA10873@elgon.mountain>
+	<20130624.002607.1816906327683052502.davem@davemloft.net>
+	<alpine.DEB.2.02.1306240830580.2215@hadrien>
+In-Reply-To: <alpine.DEB.2.02.1306240830580.2215@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
+To: julia.lawall@lip6.fr
 Cc: dan.carpenter@oracle.com, ian.campbell@citrix.com, xen-devel@lists.xensource.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 24 Jun 2013, David Miller wrote:
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Mon, 24 Jun 2013 08:31:31 +0100 (BST)
 
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Fri, 21 Jun 2013 09:20:08 +0300
->
-> > There is a typo here, "i" vs "j", so we would crash on module_exit().
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Please always explicitly state the tree for which a patch is
-> applicable.
->
-> Here I figured it out by trial an error, trying to apply it
-> to 'net' (where it failed) and then 'net-next' (where it
-> applied cleanly).
->
-> I should never have to play patch monkey games like that, you
-> need to tell me where a patch is targetted.
+> On Mon, 24 Jun 2013, David Miller wrote:
+> 
+>> From: Dan Carpenter <dan.carpenter@oracle.com>
+>> Date: Fri, 21 Jun 2013 09:20:08 +0300
+>>
+>> > There is a typo here, "i" vs "j", so we would crash on module_exit().
+>> >
+>> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>
+>> Please always explicitly state the tree for which a patch is
+>> applicable.
+>>
+>> Here I figured it out by trial an error, trying to apply it
+>> to 'net' (where it failed) and then 'net-next' (where it
+>> applied cleanly).
+>>
+>> I should never have to play patch monkey games like that, you
+>> need to tell me where a patch is targetted.
+> 
+> Shouldn't one always, by default, work on linux-next?
 
-Shouldn't one always, by default, work on linux-next?
-
-julia
+Bug fixes, especially serious ones, should be targetted at 'net'.
