@@ -1,41 +1,52 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 17 Jun 2013 08:50:07 +0000
-Subject: Re: [patch] ALSA: usx2y: remove some old dead code
-Message-Id: <s5hbo75nmtc.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Jun 2013 16:05:03 +0000
+Subject: [patch] tehuti: using uninitialized data in bdx_ioctl_priv()
+Message-Id: <20130624160503.GC31984@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130609131425.GB1442@debian>
-In-Reply-To: <20130609131425.GB1442@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Clemens Ladisch <clemens@ladisch.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Andy Gospodarek <andy@greyhouse.net>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Sun, 9 Jun 2013 16:14:25 +0300,
-Dan Carpenter wrote:
-> 
-> USB_QUEUE_BULK isn't defined any more.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If we "cmd = SIOCDEVPRIVATE" then we use data[] without initializing
+it.  The most common case is that we would return -EOPNOTSUPP.  The
+other case is that we'd end up reading and writing to randomish places.
+This requires CAP_SYS_RAWIO so it's not very bad.
 
-Thanks, applied.
+The fix is to not allow SIOCDEVPRIVATE because it doesn't work.  I
+returned -EOPNOTSUPP instead of -ENOTTY because that's what is used in
+the rest of the file.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This bug is several years old.
 
-Takashi
-
-
-> diff --git a/sound/usb/usx2y/usbusx2yaudio.c b/sound/usb/usx2y/usbusx2yaudio.c
-> index b376532..4967fe9 100644
-> --- a/sound/usb/usx2y/usbusx2yaudio.c
-> +++ b/sound/usb/usx2y/usbusx2yaudio.c
-> @@ -695,9 +695,6 @@ static int usX2Y_rate_set(struct usX2Ydev *usX2Y, int rate)
->  			((char*)(usbdata + i))[1] = ra[i].c2;
->  			usb_fill_bulk_urb(us->urb[i], usX2Y->dev, usb_sndbulkpipe(usX2Y->dev, 4),
->  					  usbdata + i, 2, i_usX2Y_04Int, usX2Y);
-> -#ifdef OLD_USB
-> -			us->urb[i]->transfer_flags = USB_QUEUE_BULK;
-> -#endif
->  		}
->  		us->submitted =	0;
->  		us->len =	NOOF_SETRATE_URBS;
-> 
+diff --git a/drivers/net/ethernet/tehuti/tehuti.c b/drivers/net/ethernet/tehuti/tehuti.c
+index 571452e..5d08f38 100644
+--- a/drivers/net/ethernet/tehuti/tehuti.c
++++ b/drivers/net/ethernet/tehuti/tehuti.c
+@@ -647,14 +647,16 @@ static int bdx_ioctl_priv(struct net_device *ndev, struct ifreq *ifr, int cmd)
+ 	ENTER;
+ 
+ 	DBG("jiffies=%ld cmd=%d\n", jiffies, cmd);
+-	if (cmd != SIOCDEVPRIVATE) {
+-		error = copy_from_user(data, ifr->ifr_data, sizeof(data));
+-		if (error) {
+-			pr_err("can't copy from user\n");
+-			RET(-EFAULT);
+-		}
+-		DBG("%d 0x%x 0x%x\n", data[0], data[1], data[2]);
++
++	if (cmd = SIOCDEVPRIVATE)
++		RET(-EOPNOTSUPP);
++
++	error = copy_from_user(data, ifr->ifr_data, sizeof(data));
++	if (error) {
++		pr_err("can't copy from user\n");
++		RET(-EFAULT);
+ 	}
++	DBG("%d 0x%x 0x%x\n", data[0], data[1], data[2]);
+ 
+ 	if (!capable(CAP_SYS_RAWIO))
+ 		return -EPERM;
