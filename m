@@ -1,28 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 03 Jun 2013 09:26:45 +0000
-Subject: [patch] cciss: info leak in cciss_ioctl32_passthru()
-Message-Id: <20130603092645.GD16171@debian>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 24 Jun 2013 17:01:00 +0000
+Subject: build regressions 2013-06-24
+Message-Id: <51c87b4c.vnb0IP6xBzyz5SSs%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Miller <mike.miller@hp.com>
-Cc: iss_storagedev@hp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The arg64 struct has a hole after ->buf_size which isn't cleared.
-Or if any of the calls to copy_from_user() fail then that would
-cause an information leak as well.
+[errors]
+hw_breakpoint.c:(.text+0x6ad98): undefined reference to `perf_misc_flags'
+hw_breakpoint.c:(.text+0x6afb0): undefined reference to `perf_instruction_pointer'
+drivers/dma/dmatest.c:29:27: error: asm/dma-iommu.h: No such file or directory
+drivers/dma/dmatest.c:843: error: implicit declaration of function 'arm_iommu_detach_device'
+drivers/dma/dmatest.c:844: error: implicit declaration of function 'arm_iommu_release_mapping'
+drivers/dma/dmatest.c:934: error: implicit declaration of function 'arm_iommu_create_mapping'
+drivers/dma/dmatest.c:941: error: dereferencing pointer to incomplete type
+drivers/dma/dmatest.c:943: error: implicit declaration of function 'arm_iommu_attach_device'
+ERROR: "of_usb_get_phy_mode" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:5464:9: error: 'struct bnx2x' has no member named 'old_bulletin'
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:5464:44: error: 'CHANNEL_DOWN' undeclared (first use in this function)
+kernel/sched/core.c:6004:1: error: expected expression before '|' token
+kernel/spinlock.c:112:1: error: implicit declaration of function 'arch_spin_relax' [-Werror=implicit-function-declaration]
+kernel/spinlock.c:113:1: error: implicit declaration of function 'arch_read_relax' [-Werror=implicit-function-declaration]
+kernel/spinlock.c:114:1: error: implicit declaration of function 'arch_write_relax' [-Werror=implicit-function-declaration]
+vport-gre.c:(.text+0x14d4dc): undefined reference to `gre_handle_offloads'
+vport-gre.c:(.text+0x14d521): undefined reference to `gre_build_header'
+vport-gre.c:(.text+0x14d5cf): undefined reference to `gre_cisco_unregister'
+vport-gre.c:(.text+0x14da10): undefined reference to `gre_cisco_register'
+kernel/sysctl.c:292:15: error: 'min_sched_packing_mode' undeclared here (not in a function)
+kernel/sysctl.c:293:15: error: 'max_sched_packing_mode' undeclared here (not in a function)
+kernel/sched/fair.c:1571:6: error: redefinition of 'idle_enter_fair'
+kernel/sched/fair.c:1581:6: error: redefinition of 'idle_exit_fair'
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[warnings]
+fs/cifs/smb2pdu.c:1007: warning: 'SMB2_ioctl' defined but not used
+drivers/dma/dmatest.c:934: warning: initialization makes pointer from integer without a cast
 
-diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
-index 6374dc1..34971aa 100644
---- a/drivers/block/cciss.c
-+++ b/drivers/block/cciss.c
-@@ -1201,6 +1201,7 @@ static int cciss_ioctl32_passthru(struct block_device *bdev, fmode_t mode,
- 	int err;
- 	u32 cp;
- 
-+	memset(&arg64, 0, sizeof(arg64));
- 	err = 0;
- 	err | 	    copy_from_user(&arg64.LUN_info, &arg32->LUN_info,
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
