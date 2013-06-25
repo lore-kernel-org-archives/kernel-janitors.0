@@ -1,7 +1,7 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Fri, 14 Jun 2013 13:25:22 +0000
+From: Nicolas Palix <nicolas.palix@imag.fr>
+Date: Tue, 25 Jun 2013 13:03:10 +0000
 Subject: Re: [PATCH] scripts: Coccinelle script for pci_free_consistent()
-Message-Id: <51BB19C2.4030208@suse.cz>
+Message-Id: <CAAxaTiPTtNTpo8DAE628=En=sa0hTzeOJ19DoxE9GwdiQnrUqg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130508230308.Horde.hkDwg5wWGGBzmzKnqIjUhg1@wimap.feld.cvut.cz>
 In-Reply-To: <20130508230308.Horde.hkDwg5wWGGBzmzKnqIjUhg1@wimap.feld.cvut.cz>
@@ -10,18 +10,15 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-On 8.5.2013 23:03, strnape1@fel.cvut.cz wrote:
+On Wed, May 8, 2013 at 11:03 PM,  <strnape1@fel.cvut.cz> wrote:
 > Created coccinelle script for reporting missing pci_free_consistent() calls.
-> 
+>
 > Signed-off-by: Petr Strnad <strnape1@fel.cvut.cz>
 
-Julia, Nicolas, any comments about this patch?
-
-Thanks,
-Michal
+Signed-off-by: Nicolas Palix <nicolas.palix@imag.fr>
 
 > ---
-> diff --git a/scripts/coccinelle/free/pci_free_consistent.cocci  
+> diff --git a/scripts/coccinelle/free/pci_free_consistent.cocci
 > b/scripts/coccinelle/free/pci_free_consistent.cocci
 > new file mode 100644
 > index 0000000..43600cc
@@ -51,6 +48,7 @@ Michal
 > +if (id = NULL || ...) { ... return ...; }
 > +... when != pci_free_consistent(x,y,id,z)
 > +    when != if (id) { ... pci_free_consistent(x,y,id,z) ... }
+>
 > +    when != if (y) { ... pci_free_consistent(x,y,id,z) ... }
 > +    when != e = (T)id
 > +    when exists
@@ -69,8 +67,8 @@ Michal
 > +p2 << search.p2;
 > +@@
 > +
-> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
-> line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
+> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s
+> and return without freeing on line %s" % (p1[0].line,p2[0].line)
 > +coccilib.report.print_report(p2[0],msg)
 > +
 > +@script:python depends on org@
@@ -78,16 +76,21 @@ Michal
 > +p2 << search.p2;
 > +@@
 > +
-> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on  
-> line %s and return without freeing on line %s" % (p1[0].line,p2[0].line)
+> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s
+> and return without freeing on line %s" % (p1[0].line,p2[0].line)
 > +cocci.print_main(msg,p1)
 > +cocci.print_secs("",p2)
-> 
+>
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors"
+> in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
 
 
+
+--
+Nicolas Palix
+Tel: +33 4 76 51 46 27
+http://membres-liglab.imag.fr/palix/
