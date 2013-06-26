@@ -1,42 +1,90 @@
-From: Zhang Yanfei <zhangyanfei.yes@gmail.com>
-Date: Fri, 07 Jun 2013 15:56:20 +0000
-Subject: Re: [patch -mm] mm, vmalloc: unbreak __vunmap()
-Message-Id: <51B202A4.6090903@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Jun 2013 09:22:30 +0000
+Subject: Re: [PATCH 1/2] Initial support for Allwinner's Security ID fuses
+Message-Id: <CAMuHMdVkyTXDsEyAvD4pHBiXHADbncGUHeeqXBCQMbU7t6TTDQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130607120738.GA13851@debian>
-In-Reply-To: <20130607120738.GA13851@debian>
+References: <1371502778-15849-1-git-send-email-oliver+list@schinagl.nl>
+ <1371502778-15849-2-git-send-email-oliver+list@schinagl.nl>
+ <20130617225847.GA9494@kroah.com> <20130624092942.GG26008@lukather>
+ <20130624160440.GA15201@kroah.com>
+In-Reply-To: <20130624160440.GA15201@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Zhang Yanfei <zhangyanfei@cn.fujitsu.com>, David Rientjes <rientjes@google.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 06/07/2013 08:07 PM, Dan Carpenter wrote:
-> There is an extra semi-colon so the function always returns.
+On Mon, Jun 24, 2013 at 6:04 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Mon, Jun 24, 2013 at 11:29:42AM +0200, Maxime Ripard wrote:
+>> On Mon, Jun 17, 2013 at 03:58:47PM -0700, Greg KH wrote:
+>> > On Mon, Jun 17, 2013 at 10:59:37PM +0200, Oliver Schinagl wrote:
+>> > > +static int __init sunxi_sid_probe(struct platform_device *pdev)
+>> > > +{
+>> > > + u8 entropy[SID_SIZE];
+>> > > + unsigned int i;
+>> > > + struct resource *res;
+>> > > + void __iomem *sid_reg_base;
+>> > > + int ret;
+>> > > +
+>> > > + res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> > > + sid_reg_base = devm_ioremap_resource(&pdev->dev, res);
+>> > > + if (IS_ERR(sid_reg_base))
+>> > > +         return PTR_ERR(sid_reg_base);
+>> > > + platform_set_drvdata(pdev, sid_reg_base);
+>> > > +
+>> > > + ret = device_create_bin_file(&pdev->dev, &sid_bin_attr);
+>> > > + if (ret)
+>> > > +         return ret;
+>> >
+>> > You just raced with userspace, having the file show up after the device
+>> > was announced to users that it was there.  Please use the proper device
+>> > file api to add default attributes to prevent this from happening.
+>>
+>> Sorry if the question looks dumb, but what kind of race can we generate
+>> here?
+>
+> Userspace gets told about the device from the driver core, udev runs and
+> reads all of the attributes, then your probe function comes along and
+> adds a new attribute.  Userspace will then not know about it at all.
+>
+>> The device_create_bin_file is the last call that we make (if we except
+>> the entropy stuff, but it doesn't really matter here), so after we
+>> created the file, we have everything properly initialised so that our
+>> functions can be called, right?
+>>
+>> And another dumb question for you, what is the "proper device file API"
+>> you are referring to ? :)
+>
+> Please read Documentation/driver_model/device.txt and see the section on
+> Attributes for what to do.  If you have specific questions after reading
+> that, please let me know.
 
-Acked-by: Zhang Yanfei <zhangyanfei@cn.fujitsu.com>
+Woops, then we have plenty of existing drivers to fix, e.g. all/most RTC drivers
+exposing an NVRAM file through sysfs:
 
-This is imported by using the macro PAGE_ALIGNED.
+$ git grep -w sysfs_create_bin_file drivers/rtc/
+drivers/rtc/rtc-cmos.c: retval = sysfs_create_bin_file(&dev->kobj, &nvram);
+drivers/rtc/rtc-ds1305.c: status sysfs_create_bin_file(&spi->dev.kobj, &nvram);
+drivers/rtc/rtc-ds1307.c: err sysfs_create_bin_file(&client->dev.kobj, ds1307->nvram);
+drivers/rtc/rtc-ds1511.c: ret = sysfs_create_bin_file(&pdev->dev.kobj,
+&ds1511_nvram_attr);
+drivers/rtc/rtc-ds1553.c: ret = sysfs_create_bin_file(&pdev->dev.kobj,
+&ds1553_nvram_attr);
+drivers/rtc/rtc-ds1742.c: ret = sysfs_create_bin_file(&pdev->dev.kobj,
+&pdata->nvram_attr);
+drivers/rtc/rtc-m48t59.c: ret = sysfs_create_bin_file(&pdev->dev.kobj,
+&m48t59_nvram_attr);
+drivers/rtc/rtc-rp5c01.c: error sysfs_create_bin_file(&dev->dev.kobj, &priv->nvram_attr);
+drivers/rtc/rtc-stk17ta8.c: ret sysfs_create_bin_file(&pdev->dev.kobj, &stk17ta8_nvram_attr);
+drivers/rtc/rtc-tx4939.c: ret = sysfs_create_bin_file(&pdev->dev.kobj,
+&tx4939_rtc_nvram_attr);
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 91a1047..96b77a9 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -1453,7 +1453,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
->  		return;
->  
->  	if (WARN(!PAGE_ALIGNED(addr), "Trying to vfree() bad address (%p)\n",
-> -			addr));
-> +			addr))
->  		return;
->  
->  	area = remove_vm_area(addr);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
