@@ -1,40 +1,73 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Date: Tue, 18 Jun 2013 20:36:54 +0000
-Subject: Re: [patch] x86/PCI: MMCONFIG: shift wrapping in mcfg_ioremap()
-Message-Id: <51C0C4E6.7020204@zytor.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 27 Jun 2013 07:07:00 +0000
+Subject: [patch] vfio/type1: fix a leak on error path
+Message-Id: <20130627070700.GA10544@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130618074024.GE12329@elgon.mountain>
-In-Reply-To: <20130618074024.GE12329@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 06/18/2013 02:40 AM, Dan Carpenter wrote:
-> This is a static checker fix.  "size" is a u64 here, but "num_buses" is
-> only 32 bits so we would hit shift wrapping bugs trying to use larger
-> sizes.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/arch/x86/pci/mmconfig_64.c b/arch/x86/pci/mmconfig_64.c
-> index bea5249..430ed2b 100644
-> --- a/arch/x86/pci/mmconfig_64.c
-> +++ b/arch/x86/pci/mmconfig_64.c
-> @@ -98,8 +98,7 @@ const struct pci_raw_ops pci_mmcfg = {
->  static void __iomem *mcfg_ioremap(struct pci_mmcfg_region *cfg)
->  {
->  	void __iomem *addr;
-> -	u64 start, size;
-> -	int num_buses;
-> +	u64 start, size, num_buses;
->  
->  	start = cfg->address + PCI_MMCFG_BUS_OFFSET(cfg->start_bus);
->  	num_buses = cfg->end_bus - cfg->start_bus + 1;
-> 
+If vfio_unmap_unpin() returns an error then we leak "split".  I've moved
+the allocation later in the function to fix this.
 
-This seems crazy.  PCI is limited to 256 busses per domain, so I suspect
-this is a non-issue.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	-hpa
-
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 98231d1..657f6a8 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -367,7 +367,6 @@ static int vfio_remove_dma_overlap(struct vfio_iommu *iommu, dma_addr_t start,
+ 				   size_t *size, struct vfio_dma *dma)
+ {
+ 	size_t offset, overlap, tmp;
+-	struct vfio_dma *split;
+ 	int ret;
+ 
+ 	if (!*size)
+@@ -435,21 +434,13 @@ static int vfio_remove_dma_overlap(struct vfio_iommu *iommu, dma_addr_t start,
+ 		return 0;
+ 	}
+ 
+-	/* Split existing */
+-	split = kzalloc(sizeof(*split), GFP_KERNEL);
+-	if (!split)
+-		return -ENOMEM;
+-
+ 	offset = start - dma->iova;
+ 
+ 	ret = vfio_unmap_unpin(iommu, dma, start, size);
+ 	if (ret)
+ 		return ret;
+-
+-	if (!*size) {
+-		kfree(split);
++	if (!*size)
+ 		return -EINVAL;
+-	}
+ 
+ 	tmp = dma->size;
+ 
+@@ -458,13 +449,19 @@ static int vfio_remove_dma_overlap(struct vfio_iommu *iommu, dma_addr_t start,
+ 
+ 	/* Insert new for remainder, assuming it didn't all get unmapped */
+ 	if (likely(offset + *size < tmp)) {
++		struct vfio_dma *split;
++
++		/* Split existing */
++		split = kzalloc(sizeof(*split), GFP_KERNEL);
++		if (!split)
++			return -ENOMEM;
++
+ 		split->size = tmp - offset - *size;
+ 		split->iova = dma->iova + offset + *size;
+ 		split->vaddr = dma->vaddr + offset + *size;
+ 		split->prot = dma->prot;
+ 		vfio_insert_dma(iommu, split);
+-	} else
+-		kfree(split);
++	}
+ 
+ 	return 0;
+ }
