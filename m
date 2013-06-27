@@ -1,38 +1,32 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Thu, 06 Jun 2013 13:55:28 +0000
-Subject: [PATCH] uio: uio_pruss: Fix potential NULL pointer dereference
-Message-Id: <1370526928-20619-1-git-send-email-emilgoode@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 27 Jun 2013 17:30:19 +0000
+Subject: build regressions 2013-06-27
+Message-Id: <51cc76ab.5RxL8vs1T2rzi6Sj%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hjk@hansjkoch.de, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-In function pruss_probe we free gdev and try to use
-it on the next line. I have moved the dereference to
-above the kfree of gdev.
+[errors]
+drivers/gpu/drm/i915/intel_sprite.c:846:7: error: too few arguments to function 'intel_update_plane'
+(.text+0xa1767): undefined reference to `generate_smb3signingkey'
+security/apparmor/lsm.c:750:29: error: 'CONFIG_SECURITY_APPARMOR_UNCONFINED_INIT' undeclared here (not in a function)
+ERROR: "generate_smb3signingkey" [fs/cifs/cifs.ko] undefined!
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+[warnings]
+WARNING: kernel/built-in.o(.text+0x8473c): Section mismatch in reference from the function rcu_torture_onoff() to the function .cpuinit.text:cpu_up()
+drivers/gpu/drm/i915/intel_sprite.c:846:7: warning: passing argument 4 of 'intel_update_plane' makes pointer from integer without a cast [enabled by default]
+drivers/media/platform/vsp1/vsp1_drv.c:339:22: warning: unused variable 'vsp1' [-Wunused-variable]
+drivers/media/platform/vsp1/vsp1_drv.c:346:22: warning: unused variable 'vsp1' [-Wunused-variable]
+warning: (ARM_GIC && ARM_VIC && RENESAS_INTC_IRQPIN && RENESAS_IRQC && VERSATILE_FPGA_IRQ && REGMAP && GPIO_LYNXPOINT && GPIO_GRGPIO && GPIO_PCF857X && GPIO_LANGWELL && MFD_CORE && MFD_MAX77686 && MFD_MAX8997 && AB8500_CORE && MFD_LP8788 && MFD_TPS65910 && TWL4030_CORE && MFD_VX855 && MFD_WM831X_I2C && MFD_WM831X_SPI && EXTCON_MAX77693) selects IRQ_DOMAIN which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS)
+warning: (ARM_GIC && ARM_VIC && RENESAS_INTC_IRQPIN && RENESAS_IRQC && VERSATILE_FPGA_IRQ && REGMAP && GPIO_LYNXPOINT && GPIO_GRGPIO && GPIO_PCF857X && GPIO_LANGWELL && MFD_CORE && MFD_MAX77686 && MFD_MAX8997 && AB8500_CORE && MFD_LP8788 && MFD_TPS65910 && TWL4030_CORE && MFD_VX855 && MFD_WM831X_I2C && MFD_WM831X_SPI && EXTCON_MAX77693) selects IRQ_DOMAIN which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS)
+warning: (ARM_GIC && ARM_VIC && RENESAS_INTC_IRQPIN && RENESAS_IRQC && VERSATILE_FPGA_IRQ && REGMAP && GPIO_LYNXPOINT && GPIO_GRGPIO && GPIO_PCF857X && GPIO_LANGWELL && MFD_CORE && MFD_MAX77686 && MFD_MAX8997 && AB8500_CORE && MFD_LP8788 && MFD_TPS65910 && TWL4030_CORE && MFD_VX855 && MFD_WM831X_I2C && MFD_WM831X_SPI && EXTCON_MAX77693) selects IRQ_DOMAIN which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS)
+drivers/sh/clk/cpg.c:41:2: warning: passing argument 1 of 'ioread8' discards 'const' qualifier from pointer target type [enabled by default]
+drivers/sh/clk/cpg.c:46:2: warning: passing argument 1 of 'ioread16' discards 'const' qualifier from pointer target type [enabled by default]
+drivers/sh/clk/cpg.c:51:2: warning: passing argument 1 of 'ioread32' discards 'const' qualifier from pointer target type [enabled by default]
+drivers/mfd/max8998.c:178:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+
 ---
- drivers/uio/uio_pruss.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/uio/uio_pruss.c b/drivers/uio/uio_pruss.c
-index 6e2ab00..21f7a72 100644
---- a/drivers/uio/uio_pruss.c
-+++ b/drivers/uio/uio_pruss.c
-@@ -136,9 +136,9 @@ static int pruss_probe(struct platform_device *dev)
- 	gdev->pruss_clk = clk_get(&dev->dev, "pruss");
- 	if (IS_ERR(gdev->pruss_clk)) {
- 		dev_err(&dev->dev, "Failed to get clock\n");
-+		ret = PTR_ERR(gdev->pruss_clk);
- 		kfree(gdev->info);
- 		kfree(gdev);
--		ret = PTR_ERR(gdev->pruss_clk);
- 		return ret;
- 	} else {
- 		clk_enable(gdev->pruss_clk);
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
