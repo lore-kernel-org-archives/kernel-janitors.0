@@ -1,23 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 20 Jun 2013 08:06:14 +0000
-Subject: Re: [patch -next] FMC: NULL dereference on allocation failure
-Message-Id: <20130620080614.GR5008@mwanda>
+From: Logan Blyth <mrbojangles3@gmail.com>
+Date: Sun, 30 Jun 2013 21:19:19 +0000
+Subject: Tips for a Newcomer
+Message-Id: <51D0A0D7.4070408@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1371658504.2038.25.camel@joe-AO722>
- <20130619160101.GA29108@mwanda>
- <20130619175758.GA23533@mail.gnudd.com>
-In-Reply-To: <20130619175758.GA23533@mail.gnudd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alessandro Rubini <rubini@gnudd.com>
-Cc: joe@perches.com, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 19, 2013 at 07:57:58PM +0200, Alessandro Rubini wrote:
-> I'm not a fan of kcalloc. I think it removes readability.
+Hello list,
 
-Ok.  We'll go with my original patch then.
+I am looking for some tips on starting as a kernel janitor, and I was 
+hoping to find out the general work flow that people use. From what I 
+can tell, we search through the kernel-next git repo, then either by 
+grep, ctags, or some other method? We are looking for things in the 
+KernelJanitors/Todo, possibly stuff turned up by sparse? Maybe a 
+different static analyser like from clang?
 
-regards,
-dan carpenter
+ From there we make sure the patch applys cleanly and mail the 
+maintainer, copying the LKML and Kernel-Janitors?
 
+Are there any recommended tutorials / Articles that google doesn't turn up?
