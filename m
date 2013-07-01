@@ -1,33 +1,47 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 31 Jul 2013 09:10:10 +0000
-Subject: [patch] ecryptfs: remove check for if an array is NULL
-Message-Id: <20130731091010.GA2131@elgon.mountain>
+Date: Mon, 01 Jul 2013 16:35:34 +0000
+Subject: [patch -next] drm/radeon/dpm/btc: off by one in btc_set_mc_special_registers()
+Message-Id: <20130701163534.GA4229@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Jerome Glisse <jglisse@redhat.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-It doesn't make sense to check if an array is NULL.  The compiler just
-removes the check.
+It should be ">=" instead of ">" here.  The table->mc_reg_address[]
+array has SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE (16) elements.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Or perhaps "if (!strlen(crypt_stat->cipher))" was intended?  I'm not
-very familiar with this code.
 
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index d107576..3bd35e2 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -609,10 +609,6 @@ int ecryptfs_init_crypt_ctx(struct ecryptfs_crypt_stat *crypt_stat)
- 	char *full_alg_name;
- 	int rc = -EINVAL;
+diff --git a/drivers/gpu/drm/radeon/btc_dpm.c b/drivers/gpu/drm/radeon/btc_dpm.c
+index bab0185..55491e7 100644
+--- a/drivers/gpu/drm/radeon/btc_dpm.c
++++ b/drivers/gpu/drm/radeon/btc_dpm.c
+@@ -1913,7 +1913,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
+ 			}
+ 			j++;
  
--	if (!crypt_stat->cipher) {
--		ecryptfs_printk(KERN_ERR, "No cipher specified\n");
--		goto out;
--	}
- 	ecryptfs_printk(KERN_DEBUG,
- 			"Initializing cipher [%s]; strlen = [%d]; "
- 			"key_size_bits = [%zd]\n",
+-			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
++			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
+ 				return -EINVAL;
+ 
+ 			tmp = RREG32(MC_PMG_CMD_MRS);
+@@ -1928,7 +1928,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
+ 			}
+ 			j++;
+ 
+-			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
++			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
+ 				return -EINVAL;
+ 			break;
+ 		case MC_SEQ_RESERVE_M >> 2:
+@@ -1942,7 +1942,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
+ 			}
+ 			j++;
+ 
+-			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
++			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
+ 				return -EINVAL;
+ 			break;
+ 		default:
