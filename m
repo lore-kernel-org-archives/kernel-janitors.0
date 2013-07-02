@@ -1,68 +1,31 @@
-From: Sage Weil <sage@inktank.com>
-Date: Wed, 24 Jul 2013 01:09:56 +0000
-Subject: Re: [parch] ceph: cleanup types in striped_read()
-Message-Id: <alpine.DEB.2.00.1307231809520.8332@cobra.newdream.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Jul 2013 06:28:21 +0000
+Subject: [patch -next] fb: fix recent breakage in correct_chipset()
+Message-Id: <20130702062821.GC24410@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130723134801.GA15116@longonot.mountain> <51EEB711.3030506@linaro.org>
-In-Reply-To: <51EEB711.3030506@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Elder <alex.elder@linaro.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-Applied, thanks guys!
+The 6e36308a6f "fb: fix atyfb build warning" isn't right.  It makes all
+the indexes off by one.  This patch reverts it and casts the
+ARRAY_SIZE() to int to silence the build warning.
 
-On Tue, 23 Jul 2013, Alex Elder wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> On 07/23/2013 08:48 AM, Dan Carpenter wrote:
-> > We pass in a u64 value for "len" and then immediately truncate away the
-> > upper 32 bits.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Looks good.
-> 
-> Reviewed-by: Alex Elder <alex.elder@linaro.org>
-> 
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 2ddf061..93e53c8 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -313,9 +313,9 @@ static int striped_read(struct inode *inode,
-> >  {
-> >  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> >  	struct ceph_inode_info *ci = ceph_inode(inode);
-> > -	u64 pos, this_len;
-> > +	u64 pos, this_len, left;
-> >  	int io_align, page_align;
-> > -	int left, pages_left;
-> > +	int pages_left;
-> >  	int read;
-> >  	struct page **page_pos;
-> >  	int ret;
-> > @@ -346,7 +346,7 @@ more:
-> >  		ret = 0;
-> >  	hit_stripe = this_len < left;
-> >  	was_short = ret >= 0 && ret < this_len;
-> > -	dout("striped_read %llu~%u (read %u) got %d%s%s\n", pos, left, read,
-> > +	dout("striped_read %llu~%llu (read %u) got %d%s%s\n", pos, left, read,
-> >  	     ret, hit_stripe ? " HITSTRIPE" : "", was_short ? " SHORT" : "");
-> >  
-> >  	if (ret > 0) {
-> > @@ -378,7 +378,7 @@ more:
-> >  			if (pos + left > inode->i_size)
-> >  				left = inode->i_size - pos;
-> >  
-> > -			dout("zero tail %d\n", left);
-> > +			dout("zero tail %llu\n", left);
-> >  			ceph_zero_page_vector_range(page_align + read, left,
-> >  						    pages);
-> >  			read += left;
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> 
-> 
+diff --git a/drivers/video/aty/atyfb_base.c b/drivers/video/aty/atyfb_base.c
+index a89c15d..9b0f12c 100644
+--- a/drivers/video/aty/atyfb_base.c
++++ b/drivers/video/aty/atyfb_base.c
+@@ -435,8 +435,8 @@ static int correct_chipset(struct atyfb_par *par)
+ 	const char *name;
+ 	int i;
+ 
+-	for (i = ARRAY_SIZE(aty_chips); i > 0; i--)
+-		if (par->pci_id = aty_chips[i - 1].pci_id)
++	for (i = (int)ARRAY_SIZE(aty_chips) - 1; i >= 0; i--)
++		if (par->pci_id = aty_chips[i].pci_id)
+ 			break;
+ 
+ 	if (i < 0)
