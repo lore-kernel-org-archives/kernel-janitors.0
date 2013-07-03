@@ -1,62 +1,34 @@
-From: Ferruh Yigit <fery@cypress.com>
-Date: Wed, 03 Jul 2013 13:12:48 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Jul 2013 13:50:13 +0000
 Subject: Re: [patch 3/3] Input: cyttsp4 - leak on error path in probe()
-Message-Id: <51D42350.10504@cypress.com>
+Message-Id: <20130703135013.GU5714@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130702214455.GC1598@elgon.mountain>
-In-Reply-To: <20130702214455.GC1598@elgon.mountain>
+ <51D42350.10504@cypress.com>
+In-Reply-To: <51D42350.10504@cypress.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Ferruh Yigit <fery@cypress.com>
 Cc: Javier Martinez Canillas <javier@dowhile0.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 07/03/2013 12:44 AM, Dan Carpenter wrote:
-> We leak "cd" if the cd->xfer_buf allocation fails.  It was weird to
-> "goto error_gpio_irq" so I changed the label name.  (Label names should
-> reflect the label location not the goto location otherwise you get an
-> "all roads lead to Rome problem").
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-xfer_buf still may not be freed, I propose following one instead:
+On Wed, Jul 03, 2013 at 04:12:48PM +0300, Ferruh Yigit wrote:
+> On 07/03/2013 12:44 AM, Dan Carpenter wrote:
+> >We leak "cd" if the cd->xfer_buf allocation fails.  It was weird to
+> >"goto error_gpio_irq" so I changed the label name.  (Label names should
+> >reflect the label location not the goto location otherwise you get an
+> >"all roads lead to Rome problem").
+> >
+> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >
+> xfer_buf still may not be freed, I propose following one instead:
+> 
 
-From: Ferruh Yigit <fery@cypress.com>
-Date: Wed, 3 Jul 2013 15:59:54 +0300
-Subject: [PATCH] Input: cyttsp4 - free xfer_buf in error path
+That's a good point.  I missed that leak.  The problem is that my
+patch was already applied so this patch would have to be re-written
+on top of that.  Also this patch is whitespace dammaged and won't
+apply.
 
-Label for xfer_buf error is wrong and causing mem leak for cd.
-Updated label for xfer_buf alloc failure and add kfree for xfer_buf
+regards,
+dan carpenter
 
-Signed-off-by: Ferruh Yigit <fery@cypress.com>
----
-  drivers/input/touchscreen/cyttsp4_core.c |    4 +++-
-  1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/input/touchscreen/cyttsp4_core.c
-b/drivers/input/touchscreen/cyttsp4_core.c
-index 69c9cff..219e32d 100644
---- a/drivers/input/touchscreen/cyttsp4_core.c
-+++ b/drivers/input/touchscreen/cyttsp4_core.c
-@@ -2034,7 +2034,7 @@ struct cyttsp4 *cyttsp4_probe(const struct
-cyttsp4_bus_ops *ops,
-      if (!cd->xfer_buf) {
-          dev_err(dev, "%s: Error, kzalloc\n", __func__);
-          rc = -ENOMEM;
--        goto error_alloc_data;
-+        goto error_alloc_xfer;
-      }
-
-      /* Initialize device info */
-@@ -2127,6 +2127,8 @@ error_request_irq:
-          cd->cpdata->init(cd->cpdata, 0, dev);
-      dev_set_drvdata(dev, NULL);
-  error_gpio_irq:
-+    kfree(cd->xfer_buf);
-+error_alloc_xfer:
-      kfree(cd);
-  error_alloc_data:
-  error_no_pdata:
---
-1.7.9.5
-This message and any attachments may contain Cypress (or its subsidiaries) confidential information. If it has been received in error, please advise the sender and immediately delete this message.
