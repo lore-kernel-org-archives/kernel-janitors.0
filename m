@@ -1,53 +1,27 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 31 Jul 2013 16:31:20 +0000
-Subject: Re: [patch] dlm: some checks can underflow
-Message-Id: <20130731163120.GI5002@mwanda>
+Date: Wed, 03 Jul 2013 09:37:46 +0000
+Subject: [patch -next] net/mlx4: fix small memory leak on error
+Message-Id: <20130703093746.GE1598@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130731090229.GD8210@elgon.mountain>
-In-Reply-To: <20130731090229.GD8210@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Or Gerlitz <ogerlitz@mellanox.com>, Roland Dreier <roland@purestorage.com>, Jack Morgenstein <jackm@dev.mellanox.co.il>, Rony Efraim <ronye@mellanox.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 31, 2013 at 11:11:56AM -0400, David Teigland wrote:
-> On Wed, Jul 31, 2013 at 12:02:29PM +0300, Dan Carpenter wrote:
-> > This is a static checker fix.  We have several places here that check
-> > the upper limit without checking for negative numbers.  One example of
-> > this is in find_rsb().
-> > 
-> > My static checker marks endian data as user controled so.  The
-> > "ms->m_header.h_length" variable is tagged as user data because it
-> > starts as little endian and we convert it at the start of
-> > dlm_receive_buffer().  That means that receive_extralen() returns
-> > user controlled data which could be negative.  The call tree here is:
-> > 
-> > -> dlm_receive_buffer()
-> >    -> dlm_receive_message()
-> >       -> _receive_message()
-> >          -> receive_request()
-> > 
-> >             We get "namelen" from receive_extralen(ms);
-> > 
-> >             -> find_rsb()
-> > 
-> > It's never perfectly clear how invasive to make a fix like this.  Many
-> > of the changes in the patch are not needed but I wanted to make things
-> > consistent.
-> 
-> If it's negative, I don't think it would pass the h_length validation
-> in dlm_process_incoming_buffer(), but I'm not certain...
+"work" needs to be freed before returning on this error path.
 
-Gar, yeah.  We check that:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	if (p->header.h_cmd = DLM_MSG) {
-		if (msglen < sizeof(struct dlm_message))
-			break;
-
-Which means receive_extralen() can't return negative.
-
-We can drop this patch.
-
-regards,
-dan carpenter
-
+diff --git a/drivers/net/ethernet/mellanox/mlx4/cmd.c b/drivers/net/ethernet/mellanox/mlx4/cmd.c
+index 707a7d0..299d018 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx4/cmd.c
+@@ -1572,6 +1572,7 @@ int mlx4_master_immediate_activate_vlan_qos(struct mlx4_priv *priv,
+ 					   vp_admin->default_vlan,
+ 					   &admin_vlan_ix);
+ 		if (err) {
++			kfree(work);
+ 			mlx4_warn((&priv->dev),
+ 				  "No vlan resources slave %d, port %d\n",
+ 				  slave, port);
