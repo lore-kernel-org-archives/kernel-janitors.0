@@ -1,43 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 02 Jul 2013 06:22:55 +0000
-Subject: [patch] drm/radeon/dpm: cleanup a type issue with rv6xx_clocks_per_unit()
-Message-Id: <20130702062255.GB24410@elgon.mountain>
+From: Ferruh Yigit <fery@cypress.com>
+Date: Wed, 03 Jul 2013 17:14:52 +0000
+Subject: [PATCH] Input: cyttsp4 - kfree xfer_buf on error path in probe()
+Message-Id: <1372871693-9871-1-git-send-email-fery@cypress.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <51D42CD3.2000705@cypress.com>
+In-Reply-To: <51D42CD3.2000705@cypress.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, ttdrivers@cypress.com, Javier Martinez Canillas <javier@dowhile0.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, Ferruh Yigit <fery@cypress.com>
 
-The rv6xx_clocks_per_unit() function pretends it can set flags in a u64
-bitfield but really because "1" is an int it doesn't work for more than
-32 bits.  The only caller truncates the high bits away anyway.  I've
-just changed it to be a u32.
+If probe() fails after cd->xfer_buf allocated, it will not freed.
+Added kfree(cd->xfer_buf) with and error label.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Ferruh Yigit <fery@cypress.com>
+---
+ drivers/input/touchscreen/cyttsp4_core.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/rv6xx_dpm.c b/drivers/gpu/drm/radeon/rv6xx_dpm.c
-index 0e8b7d9..a4b80f23 100644
---- a/drivers/gpu/drm/radeon/rv6xx_dpm.c
-+++ b/drivers/gpu/drm/radeon/rv6xx_dpm.c
-@@ -406,9 +406,9 @@ static void rv6xx_enable_engine_feedback_and_reference_sync(struct radeon_device
- 	WREG32_P(SPLL_CNTL_MODE, SPLL_DIV_SYNC, ~SPLL_DIV_SYNC);
- }
+diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
+index a7987e1..edcf799 100644
+--- a/drivers/input/touchscreen/cyttsp4_core.c
++++ b/drivers/input/touchscreen/cyttsp4_core.c
+@@ -2049,7 +2049,7 @@ struct cyttsp4 *cyttsp4_probe(const struct cyttsp4_bus_ops *ops,
+ 	cd->irq = gpio_to_irq(cd->cpdata->irq_gpio);
+ 	if (cd->irq < 0) {
+ 		rc = -EINVAL;
+-		goto error_free_cd;
++		goto error_free_xfer;
+ 	}
  
--static u64 rv6xx_clocks_per_unit(u32 unit)
-+static u32 rv6xx_clocks_per_unit(u32 unit)
- {
--	u64 tmp = 1 << (2 * unit);
-+	u32 tmp = 1 << (2 * unit);
- 
- 	return tmp;
- }
-@@ -416,7 +416,7 @@ static u64 rv6xx_clocks_per_unit(u32 unit)
- static u32 rv6xx_scale_count_given_unit(struct radeon_device *rdev,
- 					u32 unscaled_count, u32 unit)
- {
--	u32 count_per_unit = (u32)rv6xx_clocks_per_unit(unit);
-+	u32 count_per_unit = rv6xx_clocks_per_unit(unit);
- 
- 	return (unscaled_count + count_per_unit - 1) / count_per_unit;
- }
+ 	dev_set_drvdata(dev, cd);
+@@ -2117,6 +2117,8 @@ error_request_irq:
+ 	if (cd->cpdata->init)
+ 		cd->cpdata->init(cd->cpdata, 0, dev);
+ 	dev_set_drvdata(dev, NULL);
++error_free_xfer:
++	kfree(cd->xfer_buf);
+ error_free_cd:
+ 	kfree(cd);
+ error_alloc_data:
+-- 
+1.7.9.5
+
