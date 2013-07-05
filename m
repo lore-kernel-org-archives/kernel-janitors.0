@@ -1,27 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 21 Jul 2013 22:33:54 +0000
-Subject: Re: [patch] virtio: console: fix error handling for debugfs_create_dir()
-Message-Id: <20130721223354.GH5585@mwanda>
+Date: Fri, 05 Jul 2013 06:05:46 +0000
+Subject: [patch -next] bcache: check for allocation failures
+Message-Id: <20130705060307.GB14443@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130719055049.GD9729@elgon.mountain>
-	<201307191228.41794.arnd@arndb.de> <20130720215048.GD5636@mwanda>
-	<201307211136.25989.arnd@arndb.de>
-In-Reply-To: <201307211136.25989.arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Amit Shah <amit.shah@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Kent Overstreet <kmo-PEzghdH756F8UrSeD/g0lQ@public.gmane.org>, Gabriel de Perthuis <g2p.code-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Neil Brown <neilb-l3A5Bk7waGM@public.gmane.org>, linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-raid-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-> I don't see where that oops would happen. In the code I'm looking at,
-> all uses of ->debugfs_dir only ever get passed into other debugfs
-> functions that are stubbed out to empty inline functions.
-> 
-> It's not the most obvious interface design, but this all seems intentional
-> and correct to me.
+There is a missing NULL check after the kzalloc().
 
-Ah.  Ok.  You're right.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 48f0353..4fe6ab2 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -232,6 +232,8 @@ STORE(__cached_dev)
+ 			bch_uuid_write(dc->disk.c);
+ 		}
+ 		env =3D kzalloc(sizeof(struct kobj_uevent_env), GFP_KERNEL);
++		if (!env)
++			return -ENOMEM;
+ 		add_uevent_var(env, "DRIVER=BCache");
+ 		add_uevent_var(env, "CACHED_UUID=3D%pU", dc->sb.uuid),
+ 		add_uevent_var(env, "CACHED_LABEL=3D%s", buf);
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
