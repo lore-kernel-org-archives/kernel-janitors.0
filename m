@@ -1,48 +1,25 @@
-From: Ryan Mallon <rmallon@gmail.com>
-Date: Fri, 05 Jul 2013 07:06:14 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 Jul 2013 07:19:12 +0000
 Subject: Re: [patch] rapidio: use after free in unregister function
-Message-Id: <51D67066.9070105@gmail.com>
+Message-Id: <20130705071912.GY5714@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130705060231.GA14443@elgon.mountain>
-In-Reply-To: <20130705060231.GA14443@elgon.mountain>
+ <51D67066.9070105@gmail.com>
+In-Reply-To: <51D67066.9070105@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Ryan Mallon <rmallon@gmail.com>
 Cc: Matt Porter <mporter@kernel.crashing.org>, Alexandre Bounine <alexandre.bounine@idt.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 05/07/13 16:02, Dan Carpenter wrote:
-> We need to use the _safe version of list_for_each_entry() because we
-> are freeing the iterator.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/rapidio/rio.c b/drivers/rapidio/rio.c
-> index f4f30af..84ac64a 100644
-> --- a/drivers/rapidio/rio.c
-> +++ b/drivers/rapidio/rio.c
-> @@ -1701,7 +1701,7 @@ EXPORT_SYMBOL_GPL(rio_register_scan);
->  int rio_unregister_scan(int mport_id, struct rio_scan *scan_ops)
->  {
->  	struct rio_mport *port;
-> -	struct rio_scan_node *scan;
-> +	struct rio_scan_node *scan, *tmp;
->  
->  	pr_debug("RIO: %s for mport_id=%d\n", __func__, mport_id);
->  
-> @@ -1715,7 +1715,7 @@ int rio_unregister_scan(int mport_id, struct rio_scan *scan_ops)
->  		    (mport_id = RIO_MPORT_ANY && port->nscan = scan_ops))
->  			port->nscan = NULL;
->  
-> -	list_for_each_entry(scan, &rio_scans, node)
-> +	list_for_each_entry_safe(scan, tmp, &rio_scans, node)
->  		if (scan->mport_id = mport_id) {
->  			list_del(&scan->node);
->  			kfree(scan);
+On Fri, Jul 05, 2013 at 05:06:14PM +1000, Ryan Mallon wrote:
+> On 05/07/13 16:02, Dan Carpenter wrote:
+> It looks like an mport_id can only be assigned to one scan entry (see
+> rio_register_scan), so you can use list_for_each_entry and break; after
+> the kfree(scan); instead.
 
-It looks like an mport_id can only be assigned to one scan entry (see
-rio_register_scan), so you can use list_for_each_entry and break; after
-the kfree(scan); instead.
+Yeah.  You're right.  I'll resend.
 
-~Ryan
+regards,
+dan carpenter
 
