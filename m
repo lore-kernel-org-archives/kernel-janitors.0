@@ -1,20 +1,25 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 25 Jul 2013 08:16:47 +0000
-Subject: kernel oopses
-Message-Id: <alpine.DEB.2.02.1307251012490.2054@hadrien>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Fri, 05 Jul 2013 13:36:25 +0000
+Subject: Re: [patch] ath10k: off by one sanity check
+Message-Id: <87txk9f7s6.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130618072846.GC12329@elgon.mountain>
+In-Reply-To: <20130618072846.GC12329@elgon.mountain> (Dan Carpenter's message
+	of "Tue, 18 Jun 2013 10:28:46 +0300")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, ath9k-devel@lists.ath9k.org
 
-Recently, we have made a study of kernel oopses, received by the recently 
-established Red Hat kerneloops repository between September 2012 and April 
-2013, that may be of interest to some readers of this list.  A technical 
-report describing our results is available here:
+Dan Carpenter <dan.carpenter@oracle.com> writes:
 
-http://hal.inria.fr/docs/00/83/85/28/PDF/RT-436.pdf
+> This should be >= ARRAY_SIZE() instead of > ARRAY_SIZE().
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Comments are welcome.
+Thanks for the patch. John already applied this to his wireless-next
+tree.
 
-julia
+-- 
+Kalle Valo
