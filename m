@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 17 Jul 2013 16:12:31 +0000
-Subject: build regressions 2013-07-17
-Message-Id: <51e6c26f.zhIaO+HoPsjQL9tA%fengguang.wu@intel.com>
+Date: Mon, 08 Jul 2013 16:50:05 +0000
+Subject: build regressions 2013-07-08
+Message-Id: <51daedbd.bvNcVTL1KVAvoFeW%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,48 +9,65 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-(.text+0x232793): undefined reference to `snd_dmaengine_pcm_register'
-(.text+0x2327a2): undefined reference to `snd_dmaengine_pcm_unregister'
-sound/built-in.o:(.rodata+0x1b9a60): undefined reference to `snd_dmaengine_pcm_prepare_slave_config'
-sound/soc/tegra/tegra_alc5632.c:86:15: error: variable 'tegra_alc5632_hp_jack_gpio' has initializer but incomplete type
-sound/soc/tegra/tegra_alc5632.c:87:2: error: unknown field 'name' specified in initializer
-sound/soc/tegra/tegra_alc5632.c:88:2: error: unknown field 'report' specified in initializer
-sound/soc/tegra/tegra_alc5632.c:89:2: error: unknown field 'debounce_time' specified in initializer
-sound/soc/tegra/tegra_alc5632.c:117:3: error: invalid use of undefined type 'struct snd_soc_jack_gpio'
-sound/soc/tegra/tegra_alc5632.c:118:3: error: implicit declaration of function 'snd_soc_jack_add_gpios' [-Werror=implicit-function-declaration]
-sound/soc/tegra/tegra_alc5632.c:226:2: error: implicit declaration of function 'snd_soc_jack_free_gpios' [-Werror=implicit-function-declaration]
-ERROR: "devm_request_threaded_irq" [drivers/spi/spi-xilinx.ko] undefined!
-ERROR: "snd_dmaengine_pcm_unregister" undefined!
-ERROR: "snd_dmaengine_pcm_prepare_slave_config" undefined!
-ERROR: "snd_dmaengine_pcm_register" undefined!
-fs/aio.c:196:2: error: implicit declaration of function 'migrate_page_move_mapping' [-Werror=implicit-function-declaration]
-ERROR: "ehci_init_driver" undefined!
-ERROR: "ehci_init_driver" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
+fs/f2fs/dir.c:649:25: error: 'bit_ops' undeclared (first use in this function)
+samsung-laptop.c:(.init.text+0xb165): undefined reference to `acpi_video_unregister'
+samsung-laptop.c:(.init.text+0xb165): undefined reference to `acpi_video_unregister'
+samsung-laptop.c:(.init.text+0xb165): undefined reference to `acpi_video_unregister'
+samsung-laptop.c:(.init.text+0xb165): undefined reference to `acpi_video_unregister'
+arch/xtensa/kernel/time.c:27:31: fatal error: linux/sched_clock.h: No such file or directory
 
 [warnings]
-security/integrity/ima/ima_template_lib.c:166: warning: comparison is always true due to limited range of data type
-drivers/i2c/busses/i2c-xiic.c:340:2: warning: too many arguments for format [-Wformat-extra-args]
-drivers/i2c/busses/i2c-xiic.c:342:2: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'struct i2c_msg *' [-Wformat=]
-drivers/i2c/busses/i2c-xiic.c:342:2: warning: format '%p' expects argument of type 'void *', but argument 7 has type 'unsigned int' [-Wformat=]
-include/linux/compiler.h:102:18: warning: too many arguments for format [-Wformat-extra-args]
-include/linux/compiler.h:102:18: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'struct i2c_msg *' [-Wformat=]
-include/linux/compiler.h:102:18: warning: format '%p' expects argument of type 'void *', but argument 7 has type 'unsigned int' [-Wformat=]
-sound/soc/tegra/tegra_alc5632.c:87:2: warning: excess elements in struct initializer [enabled by default]
-sound/soc/tegra/tegra_alc5632.c:87:2: warning: (near initialization for 'tegra_alc5632_hp_jack_gpio') [enabled by default]
-sound/soc/tegra/tegra_alc5632.c:88:2: warning: excess elements in struct initializer [enabled by default]
-sound/soc/tegra/tegra_alc5632.c:88:2: warning: (near initialization for 'tegra_alc5632_hp_jack_gpio') [enabled by default]
-sound/soc/tegra/tegra_alc5632.c:89:2: warning: excess elements in struct initializer [enabled by default]
-sound/soc/tegra/tegra_alc5632.c:89:2: warning: (near initialization for 'tegra_alc5632_hp_jack_gpio') [enabled by default]
-security/integrity/ima/ima_crypto.c:172:1: warning: 'ima_calc_field_array_hash_tfm' uses dynamic stack allocation [enabled by default]
-include/linux/dynamic_debug.h:64:16: warning: too many arguments for format [-Wformat-extra-args]
-include/linux/dynamic_debug.h:64:16: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'struct i2c_msg *' [-Wformat=]
-include/linux/dynamic_debug.h:64:16: warning: format '%p' expects argument of type 'void *', but argument 7 has type 'unsigned int' [-Wformat=]
+fs/f2fs/dir.c:619:6: warning: unused variable 'slots' [-Wunused-variable]
 
 [sparse]
-security/integrity/ima/ima_api.c:231:47: sparse: Variable length array is used.
-security/integrity/ima/ima_crypto.c:187:12: sparse: symbol 'ima_calc_boot_aggregate_tfm' was not declared. Should it be static?
-security/integrity/ima/ima_crypto.c:142:5: sparse: symbol 'ima_calc_field_array_hash_tfm' was not declared. Should it be static?
-security/integrity/ima/ima_crypto.c:93:59: sparse: incorrect type in argument 3 (different address spaces) @@    expected struct cred const *<noident> @@    got struct cred conststruct cred const *<noident> @@
+drivers/infiniband/hw/mlx5/qp.c:901:9: sparse: context imbalance in 'mlx5_ib_lock_cqs' - different lock contexts for basic block
+drivers/infiniband/hw/mlx5/qp.c:926:9: sparse: context imbalance in 'mlx5_ib_unlock_cqs' - different lock contexts for basic block
+include/linux/spinlock.h:340:9: sparse: context imbalance in 'mlx5_ib_post_send' - different lock contexts for basic block
+drivers/net/ethernet/mellanox/mlx5/core/main.c:215:38: sparse: incorrect type in assignment (different base types) @@    expected restricted __be32 [usertype] uar_page_sz @@    got restricted __be32 [usertype] uar_page_sz @@
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:337:27: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:337:27: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned int [unsigned] [usertype] val @@    got ed int [unsigned] [usertype] val @@
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:337:27: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:337:27: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:337:27: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:337:27: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:337:27: sparse: restricted __be32 degrades to integer
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:341:25: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:341:25: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned int [unsigned] [usertype] val @@    got ed int [unsigned] [usertype] val @@
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:341:25: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:341:25: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:341:25: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:341:25: sparse: cast from restricted __be32
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:341:25: sparse: restricted __be32 degrades to integer
+drivers/net/ethernet/mellanox/mlx5/core/health.c:142:17: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:142:17: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:144:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:144:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:145:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:145:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:146:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:146:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:147:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:147:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:148:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:149:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:149:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:150:9: sparse: dereference of noderef expression
+drivers/net/ethernet/mellanox/mlx5/core/health.c:150:9: sparse: dereference of noderef expression
+fs/locks.c:165:1: sparse: symbol 'file_lock_lglock_lock' was not declared. Should it be static?
+fs/locks.c:166:8: sparse: symbol 'file_lock_list' was not declared. Should it be static?
+fs/f2fs/dir.c:649:61: sparse: undefined identifier 'bit_ops'
+
+[coccinelle]
+drivers/net/ethernet/mellanox/mlx5/core/cmd.c:894:7-14: WARNING opportunity for memdup_user
+drivers/infiniband/hw/mlx5/mr.c:445:2-3: Unneeded semicolon
+drivers/infiniband/hw/mlx5/mr.c:167:2-3: Unneeded semicolon
+drivers/net/ethernet/mellanox/mlx5/core/cmd.c:98:11-19: WARNING opportunity for simple_open, see also structure on line 938
+drivers/net/ethernet/mellanox/mlx5/core/cmd.c:98:11-19: WARNING opportunity for simple_open, see also structure on line 718
+drivers/net/ethernet/mellanox/mlx5/core/cmd.c:98:11-19: WARNING opportunity for simple_open, see also structure on line 1006
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:145:11-19: WARNING opportunity for simple_open, see also structure on line 470
+drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:145:11-19: WARNING opportunity for simple_open, see also structure on line 203
+drivers/infiniband/hw/mlx5/mr.c:52:11-20: WARNING opportunity for simple_open, see also structure on line 289
+drivers/infiniband/hw/mlx5/mr.c:52:11-20: WARNING opportunity for simple_open, see also structure on line 227
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
