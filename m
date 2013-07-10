@@ -1,49 +1,60 @@
-From: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Date: Mon, 22 Jul 2013 19:25:01 +0000
-Subject: Re: [patch] fsnotify: potential use after free
-Message-Id: <51ED870D.8070904@gmx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jul 2013 10:57:14 +0000
+Subject: [patch -next] mlx5_core: return -EFAULT if copy_to_user() fails
+Message-Id: <20130710105714.GC31232@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130722065327.GA14617@longonot.mountain>
-In-Reply-To: <20130722065327.GA14617@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eric Paris <eparis@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Eli Cohen <eli@mellanox.com>
+Cc: linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 22.07.2013 08:53, Dan Carpenter wrote:
-> My static checker complains that if we drop the last reference then it
-> would be a use after free.  I don't know if it's possible, but really
-> the atomic_dec(&group->num_marks); should be done while we are holding a
-> reference to "group".
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-> index 923fe4a..27e357e 100644
-> --- a/fs/notify/mark.c
-> +++ b/fs/notify/mark.c
-> @@ -262,9 +262,9 @@ int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
->   err:
->   	mark->flags &= ~FSNOTIFY_MARK_FLAG_ALIVE;
->   	list_del_init(&mark->g_list);
-> +	atomic_dec(&group->num_marks);
->   	fsnotify_put_group(group);
->   	mark->group = NULL;
-> -	atomic_dec(&group->num_marks);
->
->   	spin_unlock(&mark->lock);
->
->
+This should return an error code instead of the number of bytes
+remaining to be copied.
 
-Hi Dan,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-we assume that the caller already holds a reference to a group. We then
-take another ref for the marks->group. This is the one that we drop in
-case of error, but there is still the one held by the caller. So its 
-still save to access the group and to decrement the number of marks 
-since we always hold a ref to it.
-However, thank you for testing.
-
-Regards,
-Lino
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/debugfs.c b/drivers/net/ethernet/mellanox/mlx5/core/debugfs.c
+index a550a8e..4273c06 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/debugfs.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/debugfs.c
+@@ -148,7 +148,6 @@ static ssize_t average_read(struct file *filp, char __user *buf, size_t count,
+ 	struct mlx5_cmd_stats *stats;
+ 	u64 field = 0;
+ 	int ret;
+-	int err;
+ 	char tbuf[22];
+ 
+ 	if (*pos)
+@@ -161,9 +160,8 @@ static ssize_t average_read(struct file *filp, char __user *buf, size_t count,
+ 	spin_unlock(&stats->lock);
+ 	ret = snprintf(tbuf, sizeof(tbuf), "%llu\n", field);
+ 	if (ret > 0) {
+-		err = copy_to_user(buf, tbuf, ret);
+-		if (err)
+-			return err;
++		if (copy_to_user(buf, tbuf, ret))
++			return -EFAULT;
+ 	}
+ 
+ 	*pos += ret;
+@@ -418,7 +416,6 @@ static ssize_t dbg_read(struct file *filp, char __user *buf, size_t count,
+ 	char tbuf[18];
+ 	u64 field;
+ 	int ret;
+-	int err;
+ 
+ 	if (*pos)
+ 		return 0;
+@@ -445,9 +442,8 @@ static ssize_t dbg_read(struct file *filp, char __user *buf, size_t count,
+ 
+ 	ret = snprintf(tbuf, sizeof(tbuf), "0x%llx\n", field);
+ 	if (ret > 0) {
+-		err = copy_to_user(buf, tbuf, ret);
+-		if (err)
+-			return err;
++		if (copy_to_user(buf, tbuf, ret))
++			return -EFAULT;
+ 	}
+ 
+ 	*pos += ret;
