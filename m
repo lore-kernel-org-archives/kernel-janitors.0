@@ -1,41 +1,105 @@
-From: Eli Cohen <eli@dev.mellanox.co.il>
-Date: Mon, 29 Jul 2013 12:02:28 +0000
-Subject: Re: [patch] IB/mlx5: stack info leak in mlx5_ib_alloc_ucontext()
-Message-Id: <20130729120228.GA20064@mtldesk30>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Jul 2013 10:58:59 +0000
+Subject: [patch -next] mlx5: return -EFAULT instead of -EPERM
+Message-Id: <20130710105859.GD31232@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130725170436.GC7026@elgon.mountain>
- <20130728072336.GB29427@mtldesk30>
- <20130728202323.GA5053@mwanda>
-In-Reply-To: <20130728202323.GA5053@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eli Cohen <eli@mellanox.com>, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Eli Cohen <eli-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, Jul 28, 2013 at 11:24:43PM +0300, Dan Carpenter wrote:
-> 
-> First let me say that I don't know how this code is called, it may
-> be root only, but even in that case I think it's still worth
-> applying my patch.
+For copy_to/from_user() failure, the correct error code is -EFAULT not
+-EPERM.
 
-It can be called by non root users as well.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> These info leak problems are a well known security problem so I
-> didn't put a long explanation.  What you do is you fill the stack
-> with function pointers, then you call the function that leaks.  Then
-> you have a potentially useful pointer which was supposed to be
-> secret.  Something like that anyway.
-> 
-> There are probably lots of other easier ways to defeat address space
-> randomization.  There may be other ways you can use info leaks as
-> well...
-> 
-> Anyway, regardless, static checkers and code auditors look for these
-> leaks so applying the patch makes sense just to silence a warning.
-> 
-
-OK, I am convinced that it's worth applying.
-
-Acked by Eli Cohen <eli@mellanox.com>
+diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
+index e2daa8f..bd41df9 100644
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -171,7 +171,7 @@ static ssize_t size_write(struct file *filp, const char __user *buf,
+ 	int c;
+ 
+ 	if (copy_from_user(lbuf, buf, sizeof(lbuf)))
+-		return -EPERM;
++		return -EFAULT;
+ 
+ 	c = order2idx(dev, ent->order);
+ 	lbuf[sizeof(lbuf) - 1] = 0;
+@@ -208,7 +208,7 @@ static ssize_t size_read(struct file *filp, char __user *buf, size_t count,
+ 		return err;
+ 
+ 	if (copy_to_user(buf, lbuf, err))
+-		return -EPERM;
++		return -EFAULT;
+ 
+ 	*pos += err;
+ 
+@@ -233,7 +233,7 @@ static ssize_t limit_write(struct file *filp, const char __user *buf,
+ 	int c;
+ 
+ 	if (copy_from_user(lbuf, buf, sizeof(lbuf)))
+-		return -EPERM;
++		return -EFAULT;
+ 
+ 	c = order2idx(dev, ent->order);
+ 	lbuf[sizeof(lbuf) - 1] = 0;
+@@ -270,7 +270,7 @@ static ssize_t limit_read(struct file *filp, char __user *buf, size_t count,
+ 		return err;
+ 
+ 	if (copy_to_user(buf, lbuf, err))
+-		return -EPERM;
++		return -EFAULT;
+ 
+ 	*pos += err;
+ 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+index c1c0eef..205753a 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -693,7 +693,7 @@ static ssize_t dbg_write(struct file *filp, const char __user *buf,
+ 		return -ENOMEM;
+ 
+ 	if (copy_from_user(lbuf, buf, sizeof(lbuf)))
+-		return -EPERM;
++		return -EFAULT;
+ 
+ 	lbuf[sizeof(lbuf) - 1] = 0;
+ 
+@@ -889,7 +889,7 @@ static ssize_t data_write(struct file *filp, const char __user *buf,
+ 		return -ENOMEM;
+ 
+ 	if (copy_from_user(ptr, buf, count)) {
+-		err = -EPERM;
++		err = -EFAULT;
+ 		goto out;
+ 	}
+ 	dbg->in_msg = ptr;
+@@ -919,7 +919,7 @@ static ssize_t data_read(struct file *filp, char __user *buf, size_t count,
+ 
+ 	copy = min_t(int, count, dbg->outlen);
+ 	if (copy_to_user(buf, dbg->out_msg, copy))
+-		return -EPERM;
++		return -EFAULT;
+ 
+ 	*pos += copy;
+ 
+@@ -949,7 +949,7 @@ static ssize_t outlen_read(struct file *filp, char __user *buf, size_t count,
+ 		return err;
+ 
+ 	if (copy_to_user(buf, &outlen, err))
+-		return -EPERM;
++		return -EFAULT;
+ 
+ 	*pos += err;
+ 
+@@ -974,7 +974,7 @@ static ssize_t outlen_write(struct file *filp, const char __user *buf,
+ 	dbg->outlen = 0;
+ 
+ 	if (copy_from_user(outlen_str, buf, count))
+-		return -EPERM;
++		return -EFAULT;
+ 
+ 	outlen_str[7] = 0;
+ 
