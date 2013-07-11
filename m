@@ -1,45 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 17 Jul 2013 12:20:25 +0000
-Subject: [patch v2] Squashfs: sanity check information from disk
-Message-Id: <20130717122025.GA14232@mwanda>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 11 Jul 2013 17:34:17 +0000
+Subject: build regressions 2013-07-11
+Message-Id: <51deec99.XWxspeL2Aeg6jAkT%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <CAB3wodeBWvgF9oKb9OVXNABiafhvLticB=x8s=R81RRv9Yd6kA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-We read the size of the name from the disk, but a larger name than
-expected would cause memory corruption.
+[errors]
+drivers/video/uvesafb.c:1563: error: implicit declaration of function 'ioremap_wc'
+ERROR: "i915_error_state_put" undefined!
+ERROR: "i915_error_state_get" undefined!
+ERROR: "i915_error_state_buf_init" undefined!
+ERROR: "i915_error_state_to_str" undefined!
+drivers/usb/serial/usb-serial.c:99:3: error: too many arguments to function 'idr_alloc'
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[warnings]
+drivers/net/wireless/ath/ath10k/core.c:79: warning: comparison is always true due to limited range of data type
+
+[sparse]
+fs/ext4/extents.c:502:24: sparse: incorrect type in assignment (different base types) @@    expected int [signed] i @@    got restricted __le1int [signed] i @@
+
 ---
-v2: style change
-
-diff --git a/fs/squashfs/namei.c b/fs/squashfs/namei.c
-index 7834a51..bc1334c 100644
---- a/fs/squashfs/namei.c
-+++ b/fs/squashfs/namei.c
-@@ -79,7 +79,8 @@ static int get_dir_index_using_name(struct super_block *sb,
- 			int len)
- {
- 	struct squashfs_sb_info *msblk = sb->s_fs_info;
--	int i, size, length = 0, err;
-+	int i, length = 0, err;
-+	unsigned int size;
- 	struct squashfs_dir_index *index;
- 	char *str;
- 
-@@ -103,6 +104,10 @@ static int get_dir_index_using_name(struct super_block *sb,
- 
- 
- 		size = le32_to_cpu(index->size) + 1;
-+		if (size > SQUASHFS_NAME_LEN) {
-+			err = -EINVAL;
-+			break;
-+		}
- 
- 		err = squashfs_read_metadata(sb, index->name, &index_start,
- 					&index_offset, size);
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
