@@ -1,45 +1,29 @@
-From: Ferruh Yigit <fery@cypress.com>
-Date: Wed, 03 Jul 2013 12:33:19 +0000
-Subject: Re: [patch 2/3] Input: cyttsp4 - silence NULL dereference warning
-Message-Id: <51D41A0F.80008@cypress.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 12 Jul 2013 06:33:29 +0000
+Subject: [patch] drm/nvc0-/gr: shift wrapping bug in nvc0_grctx_generate_r406800()
+Message-Id: <20130712063329.GA29320@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130702214107.GB1598@elgon.mountain>
-In-Reply-To: <20130702214107.GB1598@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On 07/03/2013 12:41 AM, Dan Carpenter wrote:
-> If "cd" were NULL then we would dereference it when we print the error
-> message.  Fortunately enough, it can't ever be NULL so we can remove
-> those lines.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
-> index 7aa4a34..851e3ff 100644
-> --- a/drivers/input/touchscreen/cyttsp4_core.c
-> +++ b/drivers/input/touchscreen/cyttsp4_core.c
-> @@ -1450,11 +1450,6 @@ static void cyttsp4_watchdog_work(struct work_struct *work)
->       u8 *mode;
->       int retval;
->
-> -     if (cd = NULL) {
-> -             dev_err(cd->dev, "%s: NULL context pointer\n", __func__);
-> -             return;
-> -     }
-> -
->       mutex_lock(&cd->system_lock);
->       retval = cyttsp4_load_status_regs(cd);
->       if (retval < 0) {
-You are right, cd dereference is wrong in error message.
-And agree on removing block, cd will not be NULL in this context.
+We care about the upper 32 bits here so we have to use 1ULL instead of 1
+to avoid a shift wrapping bug.
 
---
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-ferruh
-
-This message and any attachments may contain Cypress (or its subsidiaries) confidential information. If it has been received in error, please advise the sender and immediately delete this message.
+diff --git a/drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.c b/drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.c
+index 64dca26..fe67415 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.c
++++ b/drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.c
+@@ -1039,7 +1039,7 @@ nvc0_grctx_generate_r406800(struct nvc0_graph_priv *priv)
+ 			} while (!tpcnr[gpc]);
+ 			tpc = priv->tpc_nr[gpc] - tpcnr[gpc]--;
+ 
+-			tpc_set |= 1 << ((gpc * 8) + tpc);
++			tpc_set |= 1ULL << ((gpc * 8) + tpc);
+ 		}
+ 
+ 		nv_wr32(priv, 0x406800 + (i * 0x20), lower_32_bits(tpc_set));
