@@ -1,68 +1,70 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Mon, 10 Jun 2013 10:07:47 +0000
-Subject: Re: [patch] [media] media: info leak in __media_device_enum_links()
-Message-Id: <2131110.fTHJyNQdyt@avalon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 12 Jul 2013 06:39:03 +0000
+Subject: [patch -stable] svcrdma: underflow issue in decode_write_list()
+Message-Id: <20130712063903.GB29320@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130413093215.GB11215@elgon.mountain> <20130531122444.GS23987@mwanda>
-In-Reply-To: <20130531122444.GS23987@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+My static checker marks everything from ntohl() as untrusted and it
+complains we could have an underflow problem doing:
 
-On Friday 31 May 2013 15:24:45 Dan Carpenter wrote:
-> Ping?
+	return (u32 *)&ary->wc_array[nchunks];
 
-Oops, sorry for having missed the patch.
+Also on 32 bit systems the upper bound check could overflow.
 
-> On Sat, Apr 13, 2013 at 12:32:15PM +0300, Dan Carpenter wrote:
-> > These structs have holes and reserved struct members which aren't
-> > cleared.  I've added a memset() so we don't leak stack information.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-I've taken the patch in my tree, Added a "CC: stable@vger.kernel.org" and 
-issued a pull request.
-
-> > diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-> > index 99b80b6..450c0d1 100644
-> > --- a/drivers/media/media-device.c
-> > +++ b/drivers/media/media-device.c
-> > @@ -139,6 +139,8 @@ static long __media_device_enum_links(struct
-> > media_device *mdev,> 
-> >  		for (p = 0; p < entity->num_pads; p++) {
-> >  		
-> >  			struct media_pad_desc pad;
-> > 
-> > +
-> > +			memset(&pad, 0, sizeof(pad));
-> > 
-> >  			media_device_kpad_to_upad(&entity->pads[p], &pad);
-> >  			if (copy_to_user(&links->pads[p], &pad, sizeof(pad)))
-> >  			
-> >  				return -EFAULT;
-> > 
-> > @@ -156,6 +158,7 @@ static long __media_device_enum_links(struct
-> > media_device *mdev,> 
-> >  			if (entity->links[l].source->entity != entity)
-> >  			
-> >  				continue;
-> > 
-> > +			memset(&link, 0, sizeof(link));
-> > 
-> >  			media_device_kpad_to_upad(entity->links[l].source,
-> >  			
-> >  						  &link.source);
-> >  			
-> >  			media_device_kpad_to_upad(entity->links[l].sink,
-
--- 
-Regards,
-
-Laurent Pinchart
-
+diff --git a/net/sunrpc/xprtrdma/svc_rdma_marshal.c b/net/sunrpc/xprtrdma/svc_rdma_marshal.c
+index 8d2eddd..65b1462 100644
+--- a/net/sunrpc/xprtrdma/svc_rdma_marshal.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_marshal.c
+@@ -98,6 +98,7 @@ void svc_rdma_rcl_chunk_counts(struct rpcrdma_read_chunk *ch,
+  */
+ static u32 *decode_write_list(u32 *va, u32 *vaend)
+ {
++	unsigned long start, end;
+ 	int nchunks;
+ 
+ 	struct rpcrdma_write_array *ary @@ -113,9 +114,12 @@ static u32 *decode_write_list(u32 *va, u32 *vaend)
+ 		return NULL;
+ 	}
+ 	nchunks = ntohl(ary->wc_nchunks);
+-	if (((unsigned long)&ary->wc_array[0] +
+-	     (sizeof(struct rpcrdma_write_chunk) * nchunks)) >
+-	    (unsigned long)vaend) {
++
++	start = (unsigned long)&ary->wc_array[0];
++	end = (unsigned long)vaend;
++	if (nchunks < 0 ||
++	    nchunks > (SIZE_MAX - start) / sizeof(struct rpcrdma_write_chunk) ||
++	    (start + (sizeof(struct rpcrdma_write_chunk) * nchunks)) > end) {
+ 		dprintk("svcrdma: ary=%p, wc_nchunks=%d, vaend=%p\n",
+ 			ary, nchunks, vaend);
+ 		return NULL;
+@@ -129,6 +133,7 @@ static u32 *decode_write_list(u32 *va, u32 *vaend)
+ 
+ static u32 *decode_reply_array(u32 *va, u32 *vaend)
+ {
++	unsigned long start, end;
+ 	int nchunks;
+ 	struct rpcrdma_write_array *ary  		(struct rpcrdma_write_array *)va;
+@@ -143,9 +148,12 @@ static u32 *decode_reply_array(u32 *va, u32 *vaend)
+ 		return NULL;
+ 	}
+ 	nchunks = ntohl(ary->wc_nchunks);
+-	if (((unsigned long)&ary->wc_array[0] +
+-	     (sizeof(struct rpcrdma_write_chunk) * nchunks)) >
+-	    (unsigned long)vaend) {
++
++	start = (unsigned long)&ary->wc_array[0];
++	end = (unsigned long)vaend;
++	if (nchunks < 0 ||
++	    nchunks > (SIZE_MAX - start) / sizeof(struct rpcrdma_write_chunk) ||
++	    (start + (sizeof(struct rpcrdma_write_chunk) * nchunks)) > end) {
+ 		dprintk("svcrdma: ary=%p, wc_nchunks=%d, vaend=%p\n",
+ 			ary, nchunks, vaend);
+ 		return NULL;
