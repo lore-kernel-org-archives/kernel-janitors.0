@@ -1,84 +1,61 @@
-From: Andreas Platschek <andi.platschek@gmail.com>
-Date: Fri, 26 Jul 2013 04:46:37 +0000
-Subject: [PATCH] tty: Remove dead code
-Message-Id: <1374813997-24671-1-git-send-email-andi.platschek@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 15 Jul 2013 16:46:52 +0000
+Subject: build regressions 2013-07-15
+Message-Id: <51e4277c.RqiJg0zwrFxp0WRq%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org
-Cc: jslaby@suse.cz, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Platschek <andi.platschek@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
--> The ledptrs[] array is never initialized.
--> There is no place where kbd->ledmode is set to LED_SHOW_MEM therefore the if
-   statement does not make much sense.
--> Since LED_SHOW_MEM is not used, it can be removed from the header file as well.
+[errors]
+arch/arm/include/asm/cmpxchg.h:39:2: error: implicit declaration of function 'prefetchw' [-Werror=implicit-function-declaration]
+drivers/dma/dmatest.c:29:27: fatal error: asm/dma-iommu.h: No such file or directory
+ERROR: "__udivdi3" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
+sound/oss/vwsnd.c:2894:14: error: 'vwsnd_mutex' undeclared (first use in this function)
+sound/oss/vwsnd.c:2925:14: error: 'vwsnd_mutex' undeclared (first use in this function)
+sound/oss/vwsnd.c:3015:14: error: 'vwsnd_mutex' undeclared (first use in this function)
+sound/oss/vwsnd.c:3071:14: error: 'vwsnd_mutex' undeclared (first use in this function)
+sound/oss/vwsnd.c:3226:14: error: 'vwsnd_mutex' undeclared (first use in this function)
+sound/oss/vwsnd.c:834:2: error: implicit declaration of function 'udelay' [-Werror=implicit-function-declaration]
+drivers/video/sgivwfb.c:716:9: error: 'offset' undeclared (first use in this function)
+f_rndis.c:(.text+0x44fc7b): undefined reference to `rndis_deregister'
+f_rndis.c:(.text+0x44fcbe): undefined reference to `rndis_msg_parser'
+f_rndis.c:(.text+0x44fdcd): undefined reference to `rndis_set_param_dev'
+f_rndis.c:(.text+0x44fdee): undefined reference to `rndis_set_param_medium'
+f_rndis.c:(.text+0x44fdf9): undefined reference to `rndis_signal_disconnect'
+f_rndis.c:(.text+0x44fe60): undefined reference to `rndis_set_param_medium'
+f_rndis.c:(.text+0x44fe6b): undefined reference to `rndis_signal_connect'
+f_rndis.c:(.text+0x44fe92): undefined reference to `rndis_add_hdr'
+f_rndis.c:(.text+0x4502e4): undefined reference to `rndis_set_param_medium'
+f_rndis.c:(.text+0x4502f5): undefined reference to `rndis_set_host_mac'
+f_rndis.c:(.text+0x45031c): undefined reference to `rndis_set_param_vendor'
+f_rndis.c:(.text+0x45041e): undefined reference to `rndis_rm_hdr'
+f_rndis.c:(.text+0x45045a): undefined reference to `rndis_register'
+f_rndis.c:(.text+0x4505b5): undefined reference to `rndis_get_next_response'
+f_rndis.c:(.text+0x4505dc): undefined reference to `rndis_free_response'
+f_rndis.c:(.text+0x450660): undefined reference to `rndis_uninit'
+arch/xtensa/kernel/xtensa_ksyms.c:129:1: error: '_mcount' undeclared here (not in a function)
 
-Signed-off-by: Andreas Platschek <andi.platschek@gmail.com>
+[warnings]
+drivers/infiniband/hw/mlx5/qp.c:871:6: warning: 'in' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/infiniband/hw/qib/qib_sdma.c:752:3: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 8 has type 'dma_addr_t' [-Wformat]
+Warning(include/linux/regulator/driver.h:260): No description found for parameter 'linear_ranges'
+Warning(include/linux/regulator/driver.h:260): No description found for parameter 'n_linear_ranges'
+Warning(include/linux/regulator/machine.h:138): No description found for parameter 'ramp_disable'
+
+[sparse]
+drivers/nfc/pn533.c:630:47: sparse: cast from restricted __be16
+drivers/nfc/pn533.c:630:47: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned short [unsigned] [usertype] val @@    got  short [unsigned] [usertype] val @@
+drivers/nfc/pn533.c:630:47: sparse: cast from restricted __be16
+drivers/nfc/pn533.c:630:47: sparse: cast from restricted __be16
+drivers/nfc/pn533.c:557:24: sparse: restricted __be16 degrades to integer
+drivers/nfc/pn533.c:557:53: sparse: restricted __be16 degrades to integer
+drivers/gpu/drm/radeon/ni.c:2462:6: sparse: symbol 'cayman_vm_decode_fault' was not declared. Should it be static?
+
+[coccinelle]
+sound/pci/rme9652/hdspm.c:1110:2-3: Unneeded semicolon
+
 ---
- drivers/tty/vt/keyboard.c |   21 +--------------------
- include/linux/kbd_kern.h  |    3 +--
- 2 files changed, 2 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
-index a9af1b9a..d0e3a44 100644
---- a/drivers/tty/vt/keyboard.c
-+++ b/drivers/tty/vt/keyboard.c
-@@ -132,12 +132,6 @@ static int shift_state = 0;
- static unsigned char ledstate = 0xff;			/* undefined */
- static unsigned char ledioctl;
- 
--static struct ledptr {
--	unsigned int *addr;
--	unsigned int mask;
--	unsigned char valid:1;
--} ledptrs[3];
--
- /*
-  * Notifier list for console keyboard events
-  */
-@@ -994,24 +988,11 @@ void setledstate(struct kbd_struct *kbd, unsigned int led)
- static inline unsigned char getleds(void)
- {
- 	struct kbd_struct *kbd = kbd_table + fg_console;
--	unsigned char leds;
--	int i;
- 
- 	if (kbd->ledmode = LED_SHOW_IOCTL)
- 		return ledioctl;
- 
--	leds = kbd->ledflagstate;
--
--	if (kbd->ledmode = LED_SHOW_MEM) {
--		for (i = 0; i < 3; i++)
--			if (ledptrs[i].valid) {
--				if (*ledptrs[i].addr & ledptrs[i].mask)
--					leds |= (1 << i);
--				else
--					leds &= ~(1 << i);
--			}
--	}
--	return leds;
-+	return kbd->ledflagstate;
- }
- 
- static int kbd_update_leds_helper(struct input_handle *handle, void *data)
-diff --git a/include/linux/kbd_kern.h b/include/linux/kbd_kern.h
-index b7c8cdc..c164c04 100644
---- a/include/linux/kbd_kern.h
-+++ b/include/linux/kbd_kern.h
-@@ -36,10 +36,9 @@ struct kbd_struct {
- #define VC_CTRLRLOCK	KG_CTRLR 	/* ctrlr lock mode */
- 	unsigned char slockstate; 	/* for `sticky' Shift, Ctrl, etc. */
- 
--	unsigned char ledmode:2; 	/* one 2-bit value */
-+	unsigned char ledmode:1;
- #define LED_SHOW_FLAGS 0        /* traditional state */
- #define LED_SHOW_IOCTL 1        /* only change leds upon ioctl */
--#define LED_SHOW_MEM 2          /* `heartbeat': peek into memory */
- 
- 	unsigned char ledflagstate:4;	/* flags, not lights */
- 	unsigned char default_ledflagstate:4;
--- 
-1.7.10.4
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
