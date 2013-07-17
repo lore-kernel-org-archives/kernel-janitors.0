@@ -1,46 +1,34 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Date: Tue, 30 Jul 2013 06:35:02 +0000
-Subject: Re: [patch v2] virtio: console: cleanup an error message
-Message-Id: <87fvuw5zy1.fsf@rustcorp.com.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 17 Jul 2013 15:34:48 +0000
+Subject: [patch v2] spi/xilinx: signedness issue checking platform_get_irq()
+Message-Id: <20130717153448.GA963@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130722204100.GB22020@elgon.mountain>
-In-Reply-To: <20130722204100.GB22020@elgon.mountain>
+References: <20130717150538.GT22506@sirena.org.uk>
+In-Reply-To: <20130717150538.GT22506@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Amit Shah <amit.shah@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-spi@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
-> The PTR_ERR(NULL) here is not useful.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: completely different
+In xilinx_spi_probe() we use xspi->irq to store negative error codes so
+it has to be signed.  We weren't going to use the upper bit any way so
+this is fine.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  The first version introduced an ugly cast.  Sorry for that.
 
-Thanks,
-Rusty.
-
-> diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-> index 1b456fe..4cf46d8 100644
-> --- a/drivers/char/virtio_console.c
-> +++ b/drivers/char/virtio_console.c
-> @@ -2215,10 +2215,8 @@ static int __init init(void)
->  	}
->  
->  	pdrvdata.debugfs_dir = debugfs_create_dir("virtio-ports", NULL);
-> -	if (!pdrvdata.debugfs_dir) {
-> -		pr_warning("Error %ld creating debugfs dir for virtio-ports\n",
-> -			   PTR_ERR(pdrvdata.debugfs_dir));
-> -	}
-> +	if (!pdrvdata.debugfs_dir)
-> +		pr_warning("Error creating debugfs dir for virtio-ports\n");
->  	INIT_LIST_HEAD(&pdrvdata.consoles);
->  	INIT_LIST_HEAD(&pdrvdata.portdevs);
->  
-> _______________________________________________
-> Virtualization mailing list
-> Virtualization@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/virtualization
+diff --git a/drivers/spi/spi-xilinx.c b/drivers/spi/spi-xilinx.c
+index fea815c..0f4a093 100644
+--- a/drivers/spi/spi-xilinx.c
++++ b/drivers/spi/spi-xilinx.c
+@@ -82,7 +82,7 @@ struct xilinx_spi {
+ 	struct completion done;
+ 	void __iomem	*regs;	/* virt. address of the control registers */
+ 
+-	u32		irq;
++	int		irq;
+ 
+ 	u8 *rx_ptr;		/* pointer in the Tx buffer */
+ 	const u8 *tx_ptr;	/* pointer in the Rx buffer */
