@@ -1,29 +1,20 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 17 Jul 2013 12:26:38 +0000
-Subject: [patch] spi/xilinx: signedness issue checking platform_get_irq()
-Message-Id: <20130717122638.GB4851@elgon.mountain>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Date: Wed, 17 Jul 2013 15:03:53 +0000
+Subject: Re: [patch] spi/xilinx: signedness issue checking platform_get_irq()
+Message-Id: <51E6B259.3030303@wwwdotorg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130717122638.GB4851@elgon.mountain>
+In-Reply-To: <20130717122638.GB4851@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-spi@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-spi@vger.kernel.org
 
-"xspi->irq" is unsigned int so it's never less than zero.  I have added
-a cast.
+On 07/17/2013 06:26 AM, Dan Carpenter wrote:
+> "xspi->irq" is unsigned int so it's never less than zero.  I have added
+> a cast.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/spi/spi-xilinx.c b/drivers/spi/spi-xilinx.c
-index fea815c..e5201fb 100644
---- a/drivers/spi/spi-xilinx.c
-+++ b/drivers/spi/spi-xilinx.c
-@@ -442,7 +442,7 @@ static int xilinx_spi_probe(struct platform_device *pdev)
- 	xspi_init_hw(xspi);
- 
- 	xspi->irq = platform_get_irq(pdev, 0);
--	if (xspi->irq < 0) {
-+	if ((int)xspi->irq < 0) {
- 		ret = xspi->irq;
- 		goto put_master;
- 	}
+Um. Doesn't this just hide a warning, not solve the problem? If the
+value can't be negative, so the if condition never fires, then the cast
+won't change that...
