@@ -1,34 +1,47 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 12 Jul 2013 20:15:10 +0000
-Subject: build regressions 2013-07-12
-Message-Id: <51e063ce.wuNnCxPwaMYfqy00%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Jul 2013 05:45:46 +0000
+Subject: [patch 1/2] drm/i915: checking for NULL instead of IS_ERR()
+Message-Id: <20130719054546.GA17391@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-[errors]
-kernel/cgroup.c:1722:24: error: 'tmp_links' undeclared (first use in this function)
-drivers/gpu/drm/i915/intel_display.c:2188:2: error: 'struct drm_i915_gem_object' has no member named 'gtt_offset'
-drivers/gpu/drm/i915/intel_display.c:2197:2: error: 'struct drm_i915_gem_object' has no member named 'gtt_offset'
-drivers/gpu/drm/i915/i915_gem_context.c:125:3: error: implicit declaration of function 'GEN8_CXT_SOL_SIZE' [-Werror=implicit-function-declaration]
-(.text+0x130ca4): undefined reference to `dmabuf_sync_ww_class'
-(.text+0x130cb5): undefined reference to `dmabuf_sync_ww_class'
+i915_gem_vma_create() returns and ERR_PTR() or a valid pointer, it never
+returns NULL.
 
-[warnings]
-fs/reiserfs/stree.c:792:1: warning: the frame size of 1052 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-kernel/cgroup.c:1723:2: warning: label 'rm_base_files' defined but not used [-Wunused-label]
-kernel/time/tick-sched.c:346:6: warning: unused variable 'cpu' [-Wunused-variable]
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[sparse]
-drivers/net/usb/r815x.c:38:16: sparse: cast to restricted __le32
-drivers/net/usb/r815x.c:67:15: sparse: cast to restricted __le32
-drivers/net/usb/r815x.c:69:13: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [addressable] [assigned] [usertype] tmp @@    got sable] [assigned] [usertype] tmp @@
-drivers/spi/spi-xilinx.c:385:24: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const *ptr @@    got void [nodervoid const *ptr @@
-drivers/spi/spi-xilinx.c:386:35: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const *ptr @@    got void [nodervoid const *ptr @@
-kernel/cgroup.c:1721:31: sparse: undefined identifier 'tmp_links'
-
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index 40c2fc6..9a9a77a 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -3113,9 +3113,9 @@ i915_gem_object_bind_to_gtt(struct drm_i915_gem_object *obj,
+ 	i915_gem_object_pin_pages(obj);
+ 
+ 	vma = i915_gem_vma_create(obj, &dev_priv->gtt.base);
+-	if (vma = NULL) {
++	if (IS_ERR(vma)) {
+ 		i915_gem_object_unpin_pages(obj);
+-		return -ENOMEM;
++		return PTR_ERR(vma);
+ 	}
+ 
+ search_free:
+diff --git a/drivers/gpu/drm/i915/i915_gem_stolen.c b/drivers/gpu/drm/i915/i915_gem_stolen.c
+index f526136..27ffb4c 100644
+--- a/drivers/gpu/drm/i915/i915_gem_stolen.c
++++ b/drivers/gpu/drm/i915/i915_gem_stolen.c
+@@ -395,8 +395,8 @@ i915_gem_object_create_stolen_for_preallocated(struct drm_device *dev,
+ 		return obj;
+ 
+ 	vma = i915_gem_vma_create(obj, &dev_priv->gtt.base);
+-	if (!vma) {
+-		ret = -ENOMEM;
++	if (IS_ERR(vma)) {
++		ret = PTR_ERR(vma);
+ 		goto err_out;
+ 	}
+ 
