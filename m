@@ -1,28 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 25 Jul 2013 08:24:38 +0000
-Subject: Re: [patch -mainline] af_key: more info leaks in pfkey messages
-Message-Id: <20130725082438.GZ5585@mwanda>
+Date: Fri, 19 Jul 2013 05:46:27 +0000
+Subject: [patch 2/2] drm/i915: use after free on error path
+Message-Id: <20130719054627.GA9729@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130724103956.GA30345@elgon.mountain>
- <20130725073205.GQ3109@secunet.com>
-In-Reply-To: <20130725073205.GQ3109@secunet.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Mathias Krause <minipli@googlemail.com>, Herbert Xu <herbert@gondor.hengli.com.au>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 25, 2013 at 09:32:06AM +0200, Steffen Klassert wrote:
-> Userspace seems not to care, but the correct setting would be
-> 
-> pol->sadb_x_policy_priority = xp->priority;
-> 
-> So maybe we should send the right priority to userspace, just for
-> the case that anyone is interested in it.
-> 
+i915_gem_vma_destroy() frees its argument so we have to move the
+drm_mm_remove_node() call up a few lines.
 
-Yep.  Of course.  Thanks.  I will redo and resend.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index 9a9a77a..f347ad5 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -3161,9 +3161,9 @@ search_free:
+ 	return 0;
+ 
+ err_out:
++	drm_mm_remove_node(&vma->node);
+ 	i915_gem_vma_destroy(vma);
+ 	i915_gem_object_unpin_pages(obj);
+-	drm_mm_remove_node(&vma->node);
+ 	return ret;
+ }
+ 
