@@ -1,21 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 03 Jul 2013 23:52:47 +0000
-Subject: Re: [patch -next] net/mlx4: fix small memory leak on error
-Message-Id: <20130703.165247.254595318979763597.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 19 Jul 2013 05:51:44 +0000
+Subject: [patch] intel_ips: fix error handling for debugfs_create_dir()
+Message-Id: <20130719055144.GE9729@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130703093746.GE1598@elgon.mountain>
-In-Reply-To: <20130703093746.GE1598@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: ogerlitz@mellanox.com, roland@purestorage.com, jackm@dev.mellanox.co.il, ronye@mellanox.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matthew Garrett <matthew.garrett@nebula.com>
+Cc: platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 3 Jul 2013 12:37:46 +0300
+If debugfs is not enabled then debugfs_create_dir() returns
+ERR_PTR(-ENODEV).  Also my static checker complains that we are trying
+to print the error code, but it's is always just NULL.
 
-> "work" needs to be freed before returning on this error path.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
+index 18dcb58..4416d92 100644
+--- a/drivers/platform/x86/intel_ips.c
++++ b/drivers/platform/x86/intel_ips.c
+@@ -1328,7 +1328,7 @@ static void ips_debugfs_init(struct ips_driver *ips)
+ 	int i;
+ 
+ 	ips->debug_root = debugfs_create_dir("ips", NULL);
+-	if (!ips->debug_root) {
++	if (IS_ERR_OR_NULL(ips->debug_root)) {
+ 		dev_err(&ips->dev->dev,
+ 			"failed to create debugfs entries: %ld\n",
+ 			PTR_ERR(ips->debug_root));
+@@ -1343,7 +1343,7 @@ static void ips_debugfs_init(struct ips_driver *ips)
+ 		ent = debugfs_create_file(node->name, S_IFREG | S_IRUGO,
+ 					  ips->debug_root, node,
+ 					  &ips_debugfs_ops);
+-		if (!ent) {
++		if (IS_ERR_OR_NULL(ent)) {
+ 			dev_err(&ips->dev->dev,
+ 				"failed to create debug file: %ld\n",
+ 				PTR_ERR(ent));
