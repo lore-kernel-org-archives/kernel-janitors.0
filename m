@@ -1,7 +1,7 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Sun, 21 Jul 2013 09:36:25 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Sun, 21 Jul 2013 15:49:20 +0000
 Subject: Re: [patch] virtio: console: fix error handling for debugfs_create_dir()
-Message-Id: <201307211136.25989.arnd@arndb.de>
+Message-Id: <20130721154920.GI16598@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130719055049.GD9729@elgon.mountain>
 In-Reply-To: <20130719055049.GD9729@elgon.mountain>
@@ -10,31 +10,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Saturday 20 July 2013, Dan Carpenter wrote:
-> On Fri, Jul 19, 2013 at 12:28:41PM +0200, Arnd Bergmann wrote:
-> > On Friday 19 July 2013, Dan Carpenter wrote:
-> > > debugfs_create_dir() returns ERR_PTR(-ENODEV) if debugfs is disabled.
-> > > Also my static checker doesn't like it when we print the error code, but
-> > > it's always just NULL.
+On Sun, Jul 21, 2013 at 11:36:25AM +0200, Arnd Bergmann wrote:
+> On Saturday 20 July 2013, Dan Carpenter wrote:
+> > On Fri, Jul 19, 2013 at 12:28:41PM +0200, Arnd Bergmann wrote:
+> > > On Friday 19 July 2013, Dan Carpenter wrote:
+> > > > debugfs_create_dir() returns ERR_PTR(-ENODEV) if debugfs is disabled.
+> > > > Also my static checker doesn't like it when we print the error code, but
+> > > > it's always just NULL.
+> > > > 
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > This looks wrong.  debugfs_create_dir intentionally returns non-NULL so
+> > > failing to create the directory does not trigger an error condition if
+> > > debugfs is disabled.
+> > > 
 > > 
-> > This looks wrong.  debugfs_create_dir intentionally returns non-NULL so
-> > failing to create the directory does not trigger an error condition if
-> > debugfs is disabled.
+> > Yeah.  You're right.  But the original code is still wrong and will
+> > oops if debugfs is disabled.  We should set the pointer to NULL if
+> > we get a ERR_PTR().
 > > 
+> > I will send a v2 patch.
 > 
-> Yeah.  You're right.  But the original code is still wrong and will
-> oops if debugfs is disabled.  We should set the pointer to NULL if
-> we get a ERR_PTR().
+> I don't see where that oops would happen. In the code I'm looking at,
+> all uses of ->debugfs_dir only ever get passed into other debugfs
+> functions that are stubbed out to empty inline functions.
 > 
-> I will send a v2 patch.
+> It's not the most obvious interface design, but this all seems intentional
+> and correct to me.
 
-I don't see where that oops would happen. In the code I'm looking at,
-all uses of ->debugfs_dir only ever get passed into other debugfs
-functions that are stubbed out to empty inline functions.
+It was the best interface design I could create, making it very easy for
+drivers to use and not really worry at all if debugfs was failing or
+not, or if it was even present in the system or not.  That was the
+design goal I had for it when I wrote it.
 
-It's not the most obvious interface design, but this all seems intentional
-and correct to me.
+thanks,
 
-	Arnd
+greg k-h
