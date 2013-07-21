@@ -1,39 +1,24 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 19 Jul 2013 05:51:44 +0000
-Subject: [patch] intel_ips: fix error handling for debugfs_create_dir()
-Message-Id: <20130719055144.GE9729@elgon.mountain>
+Date: Sun, 21 Jul 2013 14:56:50 +0000
+Subject: Re: [patch] intel_ips: fix error handling for debugfs_create_dir()
+Message-Id: <20130721145650.GE5636@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130719055144.GE9729@elgon.mountain>
+In-Reply-To: <20130719055144.GE9729@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Matthew Garrett <matthew.garrett@nebula.com>
 Cc: platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If debugfs is not enabled then debugfs_create_dir() returns
-ERR_PTR(-ENODEV).  Also my static checker complains that we are trying
-to print the error code, but it's is always just NULL.
+On Fri, Jul 19, 2013 at 08:51:44AM +0300, Dan Carpenter wrote:
+> If debugfs is not enabled then debugfs_create_dir() returns
+> ERR_PTR(-ENODEV).  Also my static checker complains that we are trying
+> to print the error code, but it's is always just NULL.
+> 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Sorry about this.  This patch is wrong.  Please ignore.
 
-diff --git a/drivers/platform/x86/intel_ips.c b/drivers/platform/x86/intel_ips.c
-index 18dcb58..4416d92 100644
---- a/drivers/platform/x86/intel_ips.c
-+++ b/drivers/platform/x86/intel_ips.c
-@@ -1328,7 +1328,7 @@ static void ips_debugfs_init(struct ips_driver *ips)
- 	int i;
- 
- 	ips->debug_root = debugfs_create_dir("ips", NULL);
--	if (!ips->debug_root) {
-+	if (IS_ERR_OR_NULL(ips->debug_root)) {
- 		dev_err(&ips->dev->dev,
- 			"failed to create debugfs entries: %ld\n",
- 			PTR_ERR(ips->debug_root));
-@@ -1343,7 +1343,7 @@ static void ips_debugfs_init(struct ips_driver *ips)
- 		ent = debugfs_create_file(node->name, S_IFREG | S_IRUGO,
- 					  ips->debug_root, node,
- 					  &ips_debugfs_ops);
--		if (!ent) {
-+		if (IS_ERR_OR_NULL(ent)) {
- 			dev_err(&ips->dev->dev,
- 				"failed to create debug file: %ld\n",
- 				PTR_ERR(ent));
+regards,
+dan carpenter
+
