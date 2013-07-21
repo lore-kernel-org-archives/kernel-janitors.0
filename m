@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 06 Jul 2013 22:57:13 +0000
-Subject: build regressions 2013-07-06
-Message-Id: <51d8a0c9.ERHodBLjRbYLNNIA%fengguang.wu@intel.com>
+Date: Sun, 21 Jul 2013 22:15:23 +0000
+Subject: build regressions 2013-07-21
+Message-Id: <51ec5d7b.JI4Tuzy7nYRKldDB%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,40 +9,13 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/gpu/drm/drm_bufs.c:219: error: implicit declaration of function 'ioremap_wc'
-drivers/video/uvesafb.c:1563: error: implicit declaration of function 'ioremap_wc'
-ERROR: "rndis_msg_parser" undefined!
-ERROR: "rndis_signal_disconnect" undefined!
-ERROR: "rndis_get_next_response" undefined!
-ERROR: "rndis_signal_connect" undefined!
-ERROR: "rndis_set_param_vendor" undefined!
-ERROR: "rndis_register" undefined!
-ERROR: "rndis_uninit" undefined!
-ERROR: "rndis_deregister" undefined!
-ERROR: "rndis_rm_hdr" undefined!
-ERROR: "rndis_free_response" undefined!
-ERROR: "rndis_add_hdr" undefined!
-ERROR: "rndis_set_host_mac" undefined!
-ERROR: "rndis_set_param_medium" undefined!
-ERROR: "rndis_set_param_dev" undefined!
-ERROR: "ehci_init_driver" undefined!
-ERROR: "ehci_init_driver" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
-ERROR: "usb_gadget_map_request" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
-ERROR: "usb_del_gadget_udc" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
-ERROR: "usb_gadget_unmap_request" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
-ERROR: "usb_add_gadget_udc" [drivers/usb/chipidea/ci_hdrc.ko] undefined!
-
-[warnings]
-arch/arm/kernel/smp.c:436:2: warning: (near initialization for 'ipi_types[1].handler') [enabled by default]
-drivers/gpu/drm/drm_bufs.c:220: warning: assignment makes pointer from integer without a cast
-drivers/video/uvesafb.c:1563: warning: assignment makes pointer from integer without a cast
-kernel/hrtimer.c:785:27: warning: unused variable 'cpu_base' [-Wunused-variable]
-
-[sparse]
-drivers/gpu/drm/radeon/sumo_dpm.c:1836:5: sparse: symbol 'sumo_dpm_force_performance_level' was not declared. Should it be static?
-drivers/gpu/drm/radeon/trinity_dpm.c:1161:5: sparse: symbol 'trinity_dpm_force_performance_level' was not declared. Should it be static?
-drivers/gpu/drm/radeon/ni_dpm.c:1040:5: sparse: symbol 'ni_dpm_force_performance_level' was not declared. Should it be static?
-drivers/gpu/drm/radeon/si_dpm.c:3234:5: sparse: symbol 'si_dpm_force_performance_level' was not declared. Should it be static?
+clkdev.c:(.text+0xb4730): undefined reference to `shdma_chan_filter'
+ERROR: "of_get_next_parent" [drivers/mtd/devices/m25p80.ko] undefined!
+ERROR: "blk_mq_alloc_request" undefined!
+samsung-laptop.c:(.init.text+0x19f80): undefined reference to `acpi_video_unregister'
+crypto/built-in.o:(.rodata+0x12328): undefined reference to `RSA_public_key_algorithm'
+crypto/built-in.o:(.rodata+0x12328): undefined reference to `RSA_public_key_algorithm'
+hest.c:(.init.text+0x4651): undefined reference to `mce_disable_bank'
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
