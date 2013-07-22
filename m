@@ -1,23 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 24 Jul 2013 22:45:14 +0000
-Subject: Re: [patch] mlx5: use after free in mlx5_cmd_comp_handler()
-Message-Id: <20130724.154514.498183770995136243.davem@davemloft.net>
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Date: Mon, 22 Jul 2013 08:02:14 +0000
+Subject: [PATCH] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
+Message-Id: <1374480134.5175.6.camel@slavad-ubuntu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130722080201.GG14617@longonot.mountain>
-	<20130724163544.GA29427@mtldesk30>
-In-Reply-To: <20130724163544.GA29427@mtldesk30>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: eli-LDSdmyG8hGV8YrgS2mwiifqBs+8SCbDb@public.gmane.org
-Cc: dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, moshel-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, eli-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-nilfs <linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: KONISHI Ryusuke <konishi.ryusuke-Zyj7fXuS5i5L9jVzuh4AOg@public.gmane.org>, DanCarpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Linux FS Devel <linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
 
-From: Eli Cohen <eli@dev.mellanox.co.il>
-Date: Wed, 24 Jul 2013 19:35:44 +0300
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
 
-> This race has been spotted and fixed by Moshe Lazer two weeks ago.
-> Anyways,
-> 
-> Acked by Eli Cohen <eli@mellanox.com>
+This patch removes double call of bio_put() in nilfs_end_bio_write()
+for the case of BIO_EOPNOTSUPP error detection. The issue was found
+by Dan Carpenter and he suggests first version of the fix too.
 
-Applied.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+CC: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+---
+ fs/nilfs2/segbuf.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
+index dc9a913..5bacf46 100644
+--- a/fs/nilfs2/segbuf.c
++++ b/fs/nilfs2/segbuf.c
+@@ -345,8 +345,7 @@ static void nilfs_end_bio_write(struct bio *bio, int err)
+ 
+ 	if (err = -EOPNOTSUPP) {
+ 		set_bit(BIO_EOPNOTSUPP, &bio->bi_flags);
+-		bio_put(bio);
+-		/* to be detected by submit_seg_bio() */
++		/* to be detected by nilfs_segbuf_submit_bio() */
+ 	}
+ 
+ 	if (!uptodate)
+-- 
+1.7.9.5
+
+
+
