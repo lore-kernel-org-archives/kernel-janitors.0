@@ -1,32 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Jul 2013 06:56:54 +0000
-Subject: [patch] ASoC: core: double free in snd_soc_add_platform()
-Message-Id: <20130722065654.GC14617@longonot.mountain>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 22 Jul 2013 10:00:18 +0000
+Subject: Re: [patch] ASoC: core: double free in snd_soc_add_platform()
+Message-Id: <20130722100018.GN9858@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="p5BJhDJf0owydRUK"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>
+References: <20130722065654.GC14617@longonot.mountain>
+In-Reply-To: <20130722065654.GC14617@longonot.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>
 
-There are three callers for this function, and none of them want it to
-free platform for them.  It leads to a double free.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--p5BJhDJf0owydRUK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 0ec070c..d82ee38 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -3908,10 +3908,8 @@ int snd_soc_add_platform(struct device *dev, struct snd_soc_platform *platform,
- {
- 	/* create platform component name */
- 	platform->name = fmt_single_name(dev, &platform->id);
--	if (platform->name = NULL) {
--		kfree(platform);
-+	if (platform->name = NULL)
- 		return -ENOMEM;
--	}
- 
- 	platform->dev = dev;
- 	platform->driver = platform_drv;
+On Mon, Jul 22, 2013 at 09:56:54AM +0300, Dan Carpenter wrote:
+> There are three callers for this function, and none of them want it to
+> free platform for them.  It leads to a double free.
+
+Applied, thanks.
+
+--p5BJhDJf0owydRUK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR7QKvAAoJELSic+t+oim9woUP/A/YBClxti83BTcOQrmDTVIy
+vfyJ9Ora0Pzi57ohvA0y+5QyMhng3chYPzf3lONWnO7qmAoV3lt565Z2/6UNJU43
+HFye2yhm5KH44+ondrwmXkEf2hoKwzLl2uTW1sSZhNZ5XxkSJ+zKsj4PlZ7ZsnVt
+fbgPLU1OrFmi6Z1e9ZPwVLIKn7O/4OqR3Fl6H+749dBa2nd0uVS3C32raOdYzift
+xjmOP6j+Av0n6a0qxq5S0JfwvPKmYiD4lh6hbTYORq70+kYXQyme98HSuP5oxCSK
+f1ma3se/o3FLbiZbZqVEJz7t4aiHoX724ydATuSTL2q4Y2Zb0m67HHiwXhDcTSqe
+BGNhVspe1fv2JXRS1bdtSW774ol2Hjsn8KDd4Ci9A2ibNkKy/v5eVgQe+6nGy0EG
+y5U/cbw2cPZDXHWZwLZ8s9vHZ9fFnQeqtPo0Eupi7auBL0/9AiZH2hZhXzA2NfW9
+gyZEtS1z8SFhUQXuOrXQRvVFoJyE62J61ZfunUOyzxiXuiLMwVJ0CQO+DDumWN2o
+TM87oDy3jEuuSBeXpS6VCQT5ZdEIELqIaVgYOZY53Mst7opIdFQTQupKyETvTDDG
+KkXM061GqGyvQpaiBTc1PKV6nASaCmnQcbjSa4OqNo8QGCsQhURa8cR/3ebvfRBL
+m57+cRDCYwGO3ovJJoEM
+=QA6p
+-----END PGP SIGNATURE-----
+
+--p5BJhDJf0owydRUK--
