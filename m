@@ -1,50 +1,45 @@
-From: Vyacheslav Dubeyko <slava@dubeyko.com>
-Date: Sun, 21 Jul 2013 12:50:36 +0000
-Subject: Re: [RFC] nilfs2: double bio_put() in nilfs_end_bio_write()
-Message-Id: <CEDFCC8D-B88C-4148-A3A1-5851233C2D41@dubeyko.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Jul 2013 08:02:01 +0000
+Subject: [patch] mlx5: use after free in mlx5_cmd_comp_handler()
+Message-Id: <20130722080201.GG14617@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130719092603.GB22147@longonot.mountain>
-In-Reply-To: <20130719092603.GB22147@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eli Cohen <eli-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
+We can't dereference "ent" after passing it to free_cmd().
 
-On Jul 21, 2013, at 1:40 AM, Dan Carpenter wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> On Sat, Jul 20, 2013 at 01:10:23PM +0400, Vyacheslav Dubeyko wrote:
->>> diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
->>> index dc9a913..a660fd7 100644
->>> --- a/fs/nilfs2/segbuf.c
->>> +++ b/fs/nilfs2/segbuf.c
->>> @@ -346,7 +346,8 @@ static void nilfs_end_bio_write(struct bio *bio, int err)
->>> 	if (err = -EOPNOTSUPP) {
->>> 		set_bit(BIO_EOPNOTSUPP, &bio->bi_flags);
->>> 		bio_put(bio);
->>> -		/* to be detected by submit_seg_bio() */
->>> +		/* to be detected by nilfs_segbuf_submit_bio() */
->>> +		return;
->> 
->> I think that simple return from the function is not right way. As I understand the code,
->> then we increment error count in segbuf's sb_err field and signalize about completion of
->> operation. So, from my viewpoint, it needs to remove the bio_put() call for the case of
->> (err = -EOPNOTSUPP) instead of return from function.
->> 
-> 
-> Do you think you could send that patch and give me a reported-by
-> tag?  I feel weird signing off on it when I don't really understand
-> this code...
-> 
-
-Ok, sure. I'll send the patch and continue discussion with Ryusuke
-(if he will have objections).
-
-Thank you for the report and fix suggestion.
-
-With the best regards,
-Vyacheslav Dubeyko.
-
-> regards,
-> dan carpenter
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+index 205753a..4037406 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -1113,7 +1113,13 @@ void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, unsigned long vector)
+ 
+ 	for (i = 0; i < (1 << cmd->log_sz); i++) {
+ 		if (test_bit(i, &vector)) {
++			struct semaphore *sem;
++
+ 			ent = cmd->ent_arr[i];
++			if (ent->page_queue)
++				sem = &cmd->pages_sem;
++			else
++				sem = &cmd->sem;
+ 			ktime_get_ts(&ent->ts2);
+ 			memcpy(ent->out->first.data, ent->lay->out, sizeof(ent->lay->out));
+ 			dump_command(dev, ent, 0);
+@@ -1136,10 +1142,7 @@ void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, unsigned long vector)
+ 			} else {
+ 				complete(&ent->done);
+ 			}
+-			if (ent->page_queue)
+-				up(&cmd->pages_sem);
+-			else
+-				up(&cmd->sem);
++			up(sem);
+ 		}
+ 	}
+ }
