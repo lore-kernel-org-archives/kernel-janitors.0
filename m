@@ -1,24 +1,56 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 21 Jul 2013 14:56:50 +0000
-Subject: Re: [patch] intel_ips: fix error handling for debugfs_create_dir()
-Message-Id: <20130721145650.GE5636@mwanda>
+Date: Mon, 22 Jul 2013 06:55:15 +0000
+Subject: [patch] btrfs/raid56: fix and cleanup some error paths
+Message-Id: <20130722065515.GB14617@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130719055144.GE9729@elgon.mountain>
-In-Reply-To: <20130719055144.GE9729@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Garrett <matthew.garrett@nebula.com>
-Cc: platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@fusionio.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jul 19, 2013 at 08:51:44AM +0300, Dan Carpenter wrote:
-> If debugfs is not enabled then debugfs_create_dir() returns
-> ERR_PTR(-ENODEV).  Also my static checker complains that we are trying
-> to print the error code, but it's is always just NULL.
-> 
+The alloc_rbio() frees "raid_map" and "bbio" on error, so there is a
+potential double free bug in raid56_parity_write().  The
+raid56_parity_write() and raid56_parity_recover() functions should still
+free "raid_map" and "bbio" on error if other errors occur though, so I
+have added some more calls to kfree().
 
-Sorry about this.  This patch is wrong.  Please ignore.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+index 0525e13..0db856c 100644
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -1687,11 +1687,8 @@ int raid56_parity_write(struct btrfs_root *root, struct bio *bio,
+ 	struct blk_plug_cb *cb;
+ 
+ 	rbio = alloc_rbio(root, bbio, raid_map, stripe_len);
+-	if (IS_ERR(rbio)) {
+-		kfree(raid_map);
+-		kfree(bbio);
++	if (IS_ERR(rbio))
+ 		return PTR_ERR(rbio);
+-	}
+ 	bio_list_add(&rbio->bio_list, bio);
+ 	rbio->bio_list_bytes = bio->bi_size;
+ 
+@@ -2041,9 +2038,8 @@ int raid56_parity_recover(struct btrfs_root *root, struct bio *bio,
+ 	int ret;
+ 
+ 	rbio = alloc_rbio(root, bbio, raid_map, stripe_len);
+-	if (IS_ERR(rbio)) {
++	if (IS_ERR(rbio))
+ 		return PTR_ERR(rbio);
+-	}
+ 
+ 	rbio->read_rebuild = 1;
+ 	bio_list_add(&rbio->bio_list, bio);
+@@ -2052,6 +2048,8 @@ int raid56_parity_recover(struct btrfs_root *root, struct bio *bio,
+ 	rbio->faila = find_logical_bio_stripe(rbio, bio);
+ 	if (rbio->faila = -1) {
+ 		BUG();
++		kfree(raid_map);
++		kfree(bbio);
+ 		kfree(rbio);
+ 		return -EIO;
+ 	}
