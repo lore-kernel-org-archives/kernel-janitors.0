@@ -1,43 +1,36 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Fri, 19 Jul 2013 07:01:04 +0000
-Subject: Re: [patch 2/2] drm/i915: use after free on error path
-Message-Id: <20130719070104.GC5615@phenom.ffwll.local>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Jul 2013 20:41:00 +0000
+Subject: [patch v2] virtio: console: cleanup an error message
+Message-Id: <20130722204100.GB22020@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130719054627.GA9729@elgon.mountain>
-In-Reply-To: <20130719054627.GA9729@elgon.mountain>
+References: <201307191228.41794.arnd@arndb.de>
+In-Reply-To: <201307191228.41794.arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Amit Shah <amit.shah@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, virtualization@lists.linux-foundation.org
 
-On Fri, Jul 19, 2013 at 08:46:27AM +0300, Dan Carpenter wrote:
-> i915_gem_vma_destroy() frees its argument so we have to move the
-> drm_mm_remove_node() call up a few lines.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The PTR_ERR(NULL) here is not useful.
 
-Both applied, thanks for the patches.
--Daniel
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: completely different
 
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-> index 9a9a77a..f347ad5 100644
-> --- a/drivers/gpu/drm/i915/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/i915_gem.c
-> @@ -3161,9 +3161,9 @@ search_free:
->  	return 0;
->  
->  err_out:
-> +	drm_mm_remove_node(&vma->node);
->  	i915_gem_vma_destroy(vma);
->  	i915_gem_object_unpin_pages(obj);
-> -	drm_mm_remove_node(&vma->node);
->  	return ret;
->  }
->  
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 1b456fe..4cf46d8 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -2215,10 +2215,8 @@ static int __init init(void)
+ 	}
+ 
+ 	pdrvdata.debugfs_dir = debugfs_create_dir("virtio-ports", NULL);
+-	if (!pdrvdata.debugfs_dir) {
+-		pr_warning("Error %ld creating debugfs dir for virtio-ports\n",
+-			   PTR_ERR(pdrvdata.debugfs_dir));
+-	}
++	if (!pdrvdata.debugfs_dir)
++		pr_warning("Error creating debugfs dir for virtio-ports\n");
+ 	INIT_LIST_HEAD(&pdrvdata.consoles);
+ 	INIT_LIST_HEAD(&pdrvdata.portdevs);
+ 
