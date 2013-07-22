@@ -1,32 +1,32 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Wed, 03 Jul 2013 13:55:31 +0000
-Subject: Re: [PATCH] scripts: Coccinelle script for pci_free_consistent()
-Message-Id: <51D42D53.3000800@suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Jul 2013 06:56:54 +0000
+Subject: [patch] ASoC: core: double free in snd_soc_add_platform()
+Message-Id: <20130722065654.GC14617@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130508230308.Horde.hkDwg5wWGGBzmzKnqIjUhg1@wimap.feld.cvut.cz>
- <CAAxaTiPTtNTpo8DAE628=En=sa0hTzeOJ19DoxE9GwdiQnrUqg@mail.gmail.com>
-In-Reply-To: <CAAxaTiPTtNTpo8DAE628=En=sa0hTzeOJ19DoxE9GwdiQnrUqg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>
 
-On 25.6.2013 15:03, Nicolas Palix wrote:
-> On Wed, May 8, 2013 at 11:03 PM,  <strnape1@fel.cvut.cz> wrote:
->> Created coccinelle script for reporting missing pci_free_consistent() calls.
->>
->> Signed-off-by: Petr Strnad <strnape1@fel.cvut.cz>
-> 
-> Signed-off-by: Nicolas Palix <nicolas.palix@imag.fr>
+There are three callers for this function, and none of them want it to
+free platform for them.  It leads to a double free.
 
-Applied to kbuild.git#misc. BTW, the patch was malformed at several
-places, you mailer broke long lines like this:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->> +msg = "ERROR: missing pci_free_consistent; pci_alloc_consistent on line %s
->> and return without freeing on line %s" % (p1[0].line,p2[0].line)
-
-Please send the patch to yourself next time and verify that 'git am' can
-apply it, before sending it to the mailing list.
-
-Thanks,
-Michal
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 0ec070c..d82ee38 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -3908,10 +3908,8 @@ int snd_soc_add_platform(struct device *dev, struct snd_soc_platform *platform,
+ {
+ 	/* create platform component name */
+ 	platform->name = fmt_single_name(dev, &platform->id);
+-	if (platform->name = NULL) {
+-		kfree(platform);
++	if (platform->name = NULL)
+ 		return -ENOMEM;
+-	}
+ 
+ 	platform->dev = dev;
+ 	platform->driver = platform_drv;
