@@ -1,50 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 26 Jul 2013 08:47:08 +0000
-Subject: Re: [patch] RDMA/cxgb3: stack info leak in iwch_craete_cq()
-Message-Id: <20130726084708.GA5636@mwanda>
+Date: Mon, 22 Jul 2013 06:53:27 +0000
+Subject: [patch] fsnotify: potential use after free
+Message-Id: <20130722065327.GA14617@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130725170409.GB7026@elgon.mountain>
- <51F171D0.7050204@opengridcomputing.com>
-In-Reply-To: <51F171D0.7050204-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Wise <swise-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>
-Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Cc: Eric Paris <eparis@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Jul 25, 2013 at 01:43:28PM -0500, Steve Wise wrote:
-> On 7/25/2013 12:04 PM, Dan Carpenter wrote:
-> >The "uresp.reserved" field isn't initialized.  It's at the end, of the
-> >struct here so we don't need to copy it to the user.
-> >
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> >diff --git a/drivers/infiniband/hw/cxgb3/iwch_provider.c b/drivers/infiniband/hw/cxgb3/iwch_provider.c
-> >index e87f220..b8e26f2 100644
-> >--- a/drivers/infiniband/hw/cxgb3/iwch_provider.c
-> >+++ b/drivers/infiniband/hw/cxgb3/iwch_provider.c
-> >@@ -226,7 +226,7 @@ static struct ib_cq *iwch_create_cq(struct ib_device *ibdev, int entries, int ve
-> >  			mm->len = PAGE_ALIGN(((1UL << uresp.size_log2) + 1) *
-> >  					     sizeof(struct t3_cqe));
-> >  			uresp.memsize = mm->len;
-> >-			resplen = sizeof uresp;
-> >+			resplen = sizeof uresp - sizeof uresp.reserved;
-> >  		}
-> >  		if (ib_copy_to_udata(udata, &uresp, resplen)) {
-> >  			kfree(mm);
-> 
-> How did you find this?
+My static checker complains that if we drop the last reference then it
+would be a use after free.  I don't know if it's possible, but really
+the atomic_dec(&group->num_marks); should be done while we are holding a
+reference to "group".
 
-This is some incoming Smatch stuff.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> What if, in the future, the iwch_create_cq_resp struct is changed
-> and stuff added to the end?  I'm not sure this optimization is worth
-> it?
-
-Yeah.  I'm not sure either.  I wouldn't do it outside infiniband
-code because I was copying other code from there.  I can redo this.
-
-regards,
-dan carpenter
-
+diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+index 923fe4a..27e357e 100644
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -262,9 +262,9 @@ int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
+ err:
+ 	mark->flags &= ~FSNOTIFY_MARK_FLAG_ALIVE;
+ 	list_del_init(&mark->g_list);
++	atomic_dec(&group->num_marks);
+ 	fsnotify_put_group(group);
+ 	mark->group = NULL;
+-	atomic_dec(&group->num_marks);
+ 
+ 	spin_unlock(&mark->lock);
+ 
