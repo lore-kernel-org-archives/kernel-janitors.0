@@ -1,65 +1,50 @@
-From: Vyacheslav Dubeyko <slava@dubeyko.com>
-Date: Wed, 31 Jul 2013 10:36:47 +0000
-Subject: Re: [PATCH v2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
-Message-Id: <1375267007.2364.7.camel@slavad-ubuntu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 23 Jul 2013 13:48:01 +0000
+Subject: [parch] ceph: cleanup types in striped_read()
+Message-Id: <20130723134801.GA15116@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1374847154.3671.70.camel@slavad-ubuntu>
-	 <20130727.120232.356926182.konishi.ryusuke@lab.ntt.co.jp>
-In-Reply-To: <20130727.120232.356926182.konishi.ryusuke@lab.ntt.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-Cc: DanCarpenter <dan.carpenter@oracle.com>, linux-nilfs <linux-nilfs@vger.kernel.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, =?ISO-8859-1?Q?J=E9r=F4me?= Poulin <jeromepoulin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sage Weil <sage@inktank.com>
+Cc: ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Ryusuke,
+We pass in a u64 value for "len" and then immediately truncate away the
+upper 32 bits.
 
-On Sat, 2013-07-27 at 12:02 +0900, Ryusuke Konishi wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[snip]
-> 
-> This decrement looks wrong.
-> 
-> Otherwise, your change of nilfs_segbuf_submit_bio() is just a
-> equivalent transformation and doesn't fix problem, that is, a mismatch
-> of the number of calls between complete() and wait_for_completion().
-> 
-> In your patch, nilfs_end_bio_write() function calls the complete()
-> routine as before even if it received an EOPNOTSUPP error.
-> 
-> In that case, segbuf->sb_nbio must be incremented to call
-> wait_for_completion() the right number of times.
-> 
-> Note that wait_for_completion() is called based on the count of
-> segbuf->sb_nbio even if nilfs_segbuf_submit_bio() returns an error.
-> This is performed through the following path:
-> 
->             nilfs_segbuf_submit_bio
->           nilfs_segbuf_submit_bh
->         nilfs_segbuf_write
->       nilfs_write_logs
->     nilfs_segctor_write
->   nilfs_segctor_do_construct
->     nilfs_segctor_abort_construction
->       nilfs_wait_on_logs
->         nilfs_segbuf_wait
->           wait_for_completion
->             (repeated for the number of times of segbuf->sb_nbio)
-> 
-> 
-> If you think this is a separate problem, then it should be fixed in
-> another patch and nilfs_segbuf_submit_bio() should not be touched in
-> this patch.
-> 
-
-Sorry for delay with working on this patch. Now I am investigating
-the issue (Kernel Bug: unable to handle kernel paging request) that it
-was reported by Jérôme Poulin <jeromepoulin@gmail.com>. I suspect that
-the reported issue is related to this patch. So, I feel a necessity to
-investigate the issue more deeply before continuation to work on this
-patch.
-
-With the best regards,
-Vyacheslav Dubeyko.
-
-
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 2ddf061..93e53c8 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -313,9 +313,9 @@ static int striped_read(struct inode *inode,
+ {
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+-	u64 pos, this_len;
++	u64 pos, this_len, left;
+ 	int io_align, page_align;
+-	int left, pages_left;
++	int pages_left;
+ 	int read;
+ 	struct page **page_pos;
+ 	int ret;
+@@ -346,7 +346,7 @@ more:
+ 		ret = 0;
+ 	hit_stripe = this_len < left;
+ 	was_short = ret >= 0 && ret < this_len;
+-	dout("striped_read %llu~%u (read %u) got %d%s%s\n", pos, left, read,
++	dout("striped_read %llu~%llu (read %u) got %d%s%s\n", pos, left, read,
+ 	     ret, hit_stripe ? " HITSTRIPE" : "", was_short ? " SHORT" : "");
+ 
+ 	if (ret > 0) {
+@@ -378,7 +378,7 @@ more:
+ 			if (pos + left > inode->i_size)
+ 				left = inode->i_size - pos;
+ 
+-			dout("zero tail %d\n", left);
++			dout("zero tail %llu\n", left);
+ 			ceph_zero_page_vector_range(page_align + read, left,
+ 						    pages);
+ 			read += left;
