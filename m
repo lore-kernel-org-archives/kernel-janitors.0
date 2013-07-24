@@ -1,29 +1,50 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 17 Jul 2013 15:34:26 +0000
-Subject: Re: [patch] spi/xilinx: signedness issue checking platform_get_irq()
-Message-Id: <20130717153426.GD5585@mwanda>
+Date: Wed, 24 Jul 2013 10:39:57 +0000
+Subject: [patch -mainline] af_key: more info leaks in pfkey messages
+Message-Id: <20130724103956.GA30345@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130717122638.GB4851@elgon.mountain>
- <51E6B259.3030303@wwwdotorg.org>
-In-Reply-To: <51E6B259.3030303@wwwdotorg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-spi@vger.kernel.org
+To: Steffen Klassert <steffen.klassert@secunet.com>, Mathias Krause <minipli@googlemail.com>
+Cc: Herbert Xu <herbert@gondor.hengli.com.au>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 17, 2013 at 09:03:53AM -0600, Stephen Warren wrote:
-> On 07/17/2013 06:26 AM, Dan Carpenter wrote:
-> > "xspi->irq" is unsigned int so it's never less than zero.  I have added
-> > a cast.
-> 
-> Um. Doesn't this just hide a warning, not solve the problem? If the
-> value can't be negative, so the if condition never fires, then the cast
-> won't change that...
+This is inspired by a5cc68f3d6 "af_key: fix info leaks in notify
+messages".  There are some struct members which don't get initialized
+and could disclose small amounts of private information.
 
-No.  It fixes the problem but Mark is right that it's ugly.  Sorry
-for that.  I will resend.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm at the "monkey see, monkey do" level of understanding this code so
+let me know if I've missed something.
 
-regards,
-dan carpenter
-
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index 456b262..e939d32 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -2081,6 +2081,7 @@ static int pfkey_xfrm_policy2msg(struct sk_buff *skb, const struct xfrm_policy *
+ 			pol->sadb_x_policy_type = IPSEC_POLICY_NONE;
+ 	}
+ 	pol->sadb_x_policy_dir = dir+1;
++	pol->sadb_x_policy_reserved = 0;
+ 	pol->sadb_x_policy_id = xp->index;
+ 	pol->sadb_x_policy_priority = xp->priority;
+ 
+@@ -3137,7 +3138,9 @@ static int pfkey_send_acquire(struct xfrm_state *x, struct xfrm_tmpl *t, struct
+ 	pol->sadb_x_policy_exttype = SADB_X_EXT_POLICY;
+ 	pol->sadb_x_policy_type = IPSEC_POLICY_IPSEC;
+ 	pol->sadb_x_policy_dir = XFRM_POLICY_OUT + 1;
++	pol->sadb_x_policy_reserved = 0;
+ 	pol->sadb_x_policy_id = xp->index;
++	pol->sadb_x_policy_priority = 0;
+ 
+ 	/* Set sadb_comb's. */
+ 	if (x->id.proto = IPPROTO_AH)
+@@ -3525,6 +3528,7 @@ static int pfkey_send_migrate(const struct xfrm_selector *sel, u8 dir, u8 type,
+ 	pol->sadb_x_policy_exttype = SADB_X_EXT_POLICY;
+ 	pol->sadb_x_policy_type = IPSEC_POLICY_IPSEC;
+ 	pol->sadb_x_policy_dir = dir + 1;
++	pol->sadb_x_policy_reserved = 0;
+ 	pol->sadb_x_policy_id = 0;
+ 	pol->sadb_x_policy_priority = 0;
+ 
