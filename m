@@ -1,33 +1,36 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 26 Jul 2013 17:00:18 +0000
-Subject: build regressions 2013-07-26
-Message-Id: <51f2ab22.u+ijDeFLyGhDxm13%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jul 2013 17:04:59 +0000
+Subject: [patch] RDMA/nes: info leaks in nes_create_qp() and nes_create_cq()
+Message-Id: <20130725170459.GD7026@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Faisal Latif <faisal.latif@intel.com>
+Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-drivers/staging/gdm724x/gdm_endian.h:43:6: error: conflicting types for 'set_endian'
-drivers/staging/gdm724x/gdm_endian.h:43:6: error: conflicting types for 'set_endian'
-drivers/staging/gdm724x/gdm_endian.c:17:6: error: conflicting types for 'set_endian'
+We pass a few bytes of uninitialized stack memory to the user here.
 
-[warnings]
-drivers/media/pci/cx18/cx18-driver.c:357:1: warning: the frame size of 1060 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-include/trace/events/power.h:87:17: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
-include/trace/events/power.h:88:17: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
-include/trace/events/power.h:87:17: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
-include/trace/events/power.h:88:17: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[sparse]
-include/trace/events/power.h:69:1: sparse: incorrect type in initializer (different modifiers) @@    expected char *tmp_p @@    got char cchar *tmp_p @@
-include/trace/events/power.h:69:1: sparse: incorrect type in initializer (different modifiers) @@    expected char *tmp_i @@    got char cchar *tmp_i @@
-include/trace/events/power.h:69:1: sparse: incorrect type in initializer (different modifiers) @@    expected char *tmp_p @@    got char cchar *tmp_p @@
-include/trace/events/power.h:69:1: sparse: incorrect type in initializer (different modifiers) @@    expected char *tmp_i @@    got char cchar *tmp_i @@
-drivers/pnp/driver.c:223:25: sparse: symbol 'pnp_bus_dev_pm_ops' was not declared. Should it be static?
-drivers/gpu/drm/radeon/rv6xx_dpm.c:2093:5: sparse: symbol 'rv6xx_dpm_force_performance_level' was not declared. Should it be static?
-
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
+index 8f67fe2..5b53ca5 100644
+--- a/drivers/infiniband/hw/nes/nes_verbs.c
++++ b/drivers/infiniband/hw/nes/nes_verbs.c
+@@ -1384,6 +1384,7 @@ static struct ib_qp *nes_create_qp(struct ib_pd *ibpd,
+ 
+ 			if (ibpd->uobject) {
+ 				uresp.mmap_sq_db_index = nesqp->mmap_sq_db_index;
++				uresp.mmap_rq_db_index = 0;
+ 				uresp.actual_sq_size = sq_size;
+ 				uresp.actual_rq_size = rq_size;
+ 				uresp.qp_id = nesqp->hwqp.qp_id;
+@@ -1767,7 +1768,7 @@ static struct ib_cq *nes_create_cq(struct ib_device *ibdev, int entries,
+ 		resp.cq_id = nescq->hw_cq.cq_number;
+ 		resp.cq_size = nescq->hw_cq.cq_size;
+ 		resp.mmap_db_index = 0;
+-		if (ib_copy_to_udata(udata, &resp, sizeof resp)) {
++		if (ib_copy_to_udata(udata, &resp, sizeof resp - sizeof resp.reserved)) {
+ 			nes_free_resource(nesadapter, nesadapter->allocated_cqs, cq_num);
+ 			kfree(nescq);
+ 			return ERR_PTR(-EFAULT);
