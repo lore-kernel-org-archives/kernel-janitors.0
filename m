@@ -1,49 +1,33 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 31 Jul 2013 20:05:26 +0000
-Subject: Re: [patch] ASoC: dapm: using freed pointer in dapm_kcontrol_add_widget()
-Message-Id: <20130731200526.GD9858@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="pFZPy2DnCTuiDxp6"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jul 2013 16:46:22 +0000
+Subject: [patch] [media] bt8xx: info leak in ca_get_slot_info()
+Message-Id: <20130725164621.GA6945@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130731085244.GB8210@elgon.mountain>
- <51F8D2B5.7060504@metafoo.de>
- <CAOesGMgrztKFbLM4m3sr1cH=Od6FVy8p2BbEi_X=J_jDhyHBKw@mail.gmail.com>
- <51F9585F.8060505@metafoo.de> <51F95B01.7040002@metafoo.de>
-In-Reply-To: <51F95B01.7040002@metafoo.de>
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Olof Johansson <olof@lixom.net>, Dan Carpenter <dan.carpenter@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Antti Palosaari <crope@iki.fi>, Nickolai Zeldovich <nickolai@csail.mit.edu>, Peter Senna Tschudin <peter.senna@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+p_ca_slot_info was allocated with kmalloc() so we need to clear it
+before passing it to the user.
 
---pFZPy2DnCTuiDxp6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Wed, Jul 31, 2013 at 08:44:17PM +0200, Lars-Peter Clausen wrote:
-
-> Something along the lines of this:
-
-This seems to fix it for me, can you submit properly please?
-
---pFZPy2DnCTuiDxp6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR+W4DAAoJELSic+t+oim9qIUP/0F2BjiRJhxb2wcY8nWqyLxO
-t+cJFSdTts5duxfQxoizhn+hlY2MN7B6YLcskqrqewasZyRDQeeDDwam7/yhzOBF
-SYsVot+kUVVYd2Gz1/bTlLrMEYTkiZWfJDqr/sM6NFVWarnxOjYAhAIWHT6BLMSZ
-0a4Re6o0XplbswoOnCs6bAmpDZfxU5GMBg3BxAkTVbRY5+NMVrewAZBWUEoTMVER
-eHZv7DRaln48RIN8yrTsrtJ7nXA2mcXv3vK7Pwr+M1MDZTBBH49iMUPyg9aVK7Wn
-kOnyYvvEpy5OTQTLTOumWbMhOKhWaPYFadKSqKv0F/QIlpjWvGYbMBTDy2dBW+EA
-q+ciJoJbrhijYmYK/TX95Netsq5NP8+56HZGx1BmidYWZByAG9tmTGQGzjtgZ7jY
-53m20AdXGjW1Q8Qhqp9jegZkIMnIFnZY8B8tGHVdPd9qz17MT797FLQpY22bqCfC
-yPsgN1JcicvwM9U9FvMbXDF0H3yuLaWjAHlPbfJn82Zzm8o72yM6Bs8Zpdol7kOJ
-FgXfeiRSAikrIdJj2tk6/brSERSZnWy1jIrd9WK+zGD00T04jSLV1An8WY5YXxTV
-aNpHHSFI9uB11CVe9p6LPN59A7u3hKnkangrwgSkLZfAwsnDpUgtje6Pl0UmVNgG
-QBS6fOP8wyQ35PS8hyfp
-=MpJf
------END PGP SIGNATURE-----
-
---pFZPy2DnCTuiDxp6--
+diff --git a/drivers/media/pci/bt8xx/dst_ca.c b/drivers/media/pci/bt8xx/dst_ca.c
+index 0e788fc..6b9dc3f 100644
+--- a/drivers/media/pci/bt8xx/dst_ca.c
++++ b/drivers/media/pci/bt8xx/dst_ca.c
+@@ -302,8 +302,11 @@ static int ca_get_slot_info(struct dst_state *state, struct ca_slot_info *p_ca_s
+ 		p_ca_slot_info->flags = CA_CI_MODULE_READY;
+ 		p_ca_slot_info->num = 1;
+ 		p_ca_slot_info->type = CA_CI;
+-	} else
++	} else {
+ 		p_ca_slot_info->flags = 0;
++		p_ca_slot_info->num = 0;
++		p_ca_slot_info->type = 0;
++	}
+ 
+ 	if (copy_to_user(arg, p_ca_slot_info, sizeof (struct ca_slot_info)))
+ 		return -EFAULT;
