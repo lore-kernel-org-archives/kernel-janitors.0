@@ -1,90 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Jul 2013 20:43:40 +0000
-Subject: [patch v2] mtd: tiny debugfs related fixes
-Message-Id: <20130722204340.GC22020@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 25 Jul 2013 23:48:34 +0000
+Subject: build regressions 2013-07-25
+Message-Id: <51f1b952.HPqPg1OYXU+j57yW%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20130719054938.GC9729@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
+To: kernel-janitors@vger.kernel.org
 
-debugfs_create_dir() can't return an error pointer because we tested for
-IS_ENABLED(CONFIG_DEBUG_FS) earlier so we don't need to test for that.
-Also the way debugfs is designed, callers should not normally care about
-error pointer returns.
+[errors]
+include/drm/drm_mm.h:67:2: error: unknown type name 'spinlock_t'
+include/drm/drm_mm.h:100:2: error: implicit declaration of function 'BUG_ON' [-Werror=implicit-function-declaration]
+include/drm/drm_mm.h:67:2: error: unknown type name 'spinlock_t'
+include/drm/drm_mm.h:100:2: error: implicit declaration of function 'BUG_ON' [-Werror=implicit-function-declaration]
+include/drm/drm_mm.h:106:2: error: implicit declaration of function 'container_of' [-Werror=implicit-function-declaration]
+include/drm/drm_mm.h:107:6: error: expected expression before 'struct'
+drivers/staging/comedi/drivers/mite.h:76:2: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+dumpstack.c:(.kprobes.text+0x600): undefined reference to `.Ldo_extint'
+drivers/char/tile-srom.c:308:2: error: initializer element is not computable at load time
+drivers/power/Kconfig:266: syntax error
+drivers/power/Kconfig:265: unknown option "Say"
+drivers/power/Kconfig:266: unknown option "The"
+drivers/power/Kconfig:267: unknown option "pins"
+drivers/power/Kconfig:268: unknown option "handlers"
+drivers/power/Kconfig:266: syntax error
+drivers/power/Kconfig:265: unknown option "Say"
+drivers/power/Kconfig:266: unknown option "The"
+drivers/power/Kconfig:267: unknown option "pins"
+drivers/power/Kconfig:268: unknown option "handlers"
 
-The current code is a little buggy because it return success if
-debugfs_create_dir() fails instead of -ENODEV which was intended.
+[warnings]
+arch/arm/include/asm/spinlock.h:150:2: warning: passing argument 1 of '__builtin_prefetch' discards 'volatile' qualifier from pointer target type [enabled by default]
+arch/arm/include/asm/spinlock.h:169:2: warning: passing argument 1 of '__builtin_prefetch' discards 'volatile' qualifier from pointer target type [enabled by default]
+arch/arm/include/asm/spinlock.h:218:2: warning: passing argument 1 of '__builtin_prefetch' discards 'volatile' qualifier from pointer target type [enabled by default]
+arch/arm/include/asm/spinlock.h:239:2: warning: passing argument 1 of '__builtin_prefetch' discards 'volatile' qualifier from pointer target type [enabled by default]
+arch/arm/include/asm/spinlock.h:258:2: warning: passing argument 1 of '__builtin_prefetch' discards 'volatile' qualifier from pointer target type [enabled by default]
+drivers/usb/host/xhci.c:1184: warning: 'xhci' is used uninitialized in this function
+drivers/regulator/pfuze100-regulator.c:298:2: warning: return makes integer from pointer without a cast [enabled by default]
+drivers/char/tile-srom.c:307:2: warning: missing braces around initializer [-Wmissing-braces]
+drivers/char/tile-srom.c:307:2: warning: (near initialization for 'srom_dev_attrs[0]') [-Wmissing-braces]
+drivers/char/tile-srom.c:307:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/char/tile-srom.c:307:2: warning: (near initialization for 'srom_dev_attrs[0].name') [enabled by default]
+drivers/char/tile-srom.c:308:2: warning: initialization makes integer from pointer without a cast [enabled by default]
+drivers/char/tile-srom.c:308:2: warning: (near initialization for 'srom_dev_attrs[0].mode') [enabled by default]
+drivers/char/tile-srom.c:309:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/char/tile-srom.c:309:2: warning: (near initialization for 'srom_dev_attrs[1].name') [enabled by default]
+drivers/char/tile-srom.c:310:2: warning: initialization makes integer from pointer without a cast [enabled by default]
+drivers/char/tile-srom.c:310:2: warning: (near initialization for 'srom_dev_attrs[1].mode') [enabled by default]
+drivers/char/tile-srom.c:312:1: warning: initialization from incompatible pointer type [enabled by default]
+drivers/char/tile-srom.c:312:1: warning: (near initialization for 'srom_dev_group.attrs') [enabled by default]
+Warning(drivers/s390/cio/airq.c:104): No description found for parameter 'flags'
 
-I have also changed the error message slightly.
+[sparse]
+drivers/regulator/pfuze100-regulator.c:298:16: sparse: incorrect type in return expression (different base types) @@    expected int @@    got voiint @@
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v2: completely different
-
-diff --git a/drivers/mtd/ubi/debug.c b/drivers/mtd/ubi/debug.c
-index 63cb1d7..d3c99a6 100644
---- a/drivers/mtd/ubi/debug.c
-+++ b/drivers/mtd/ubi/debug.c
-@@ -235,12 +235,9 @@ int ubi_debugfs_init(void)
- 		return 0;
- 
- 	dfs_rootdir = debugfs_create_dir("ubi", NULL);
--	if (IS_ERR_OR_NULL(dfs_rootdir)) {
--		int err = dfs_rootdir ? -ENODEV : PTR_ERR(dfs_rootdir);
--
--		ubi_err("cannot create \"ubi\" debugfs directory, error %d\n",
--			err);
--		return err;
-+	if (!dfs_rootdir) {
-+		ubi_err("cannot create \"ubi\" debugfs directory.\n");
-+		return -ENODEV;
- 	}
- 
- 	return 0;
-diff --git a/drivers/mtd/nand/nandsim.c b/drivers/mtd/nand/nandsim.c
-index cb38f3d..3971465 100644
---- a/drivers/mtd/nand/nandsim.c
-+++ b/drivers/mtd/nand/nandsim.c
-@@ -523,24 +523,20 @@ static int nandsim_debugfs_create(struct nandsim *dev)
- {
- 	struct nandsim_debug_info *dbg = &dev->dbg;
- 	struct dentry *dent;
--	int err;
- 
- 	if (!IS_ENABLED(CONFIG_DEBUG_FS))
- 		return 0;
- 
- 	dent = debugfs_create_dir("nandsim", NULL);
--	if (IS_ERR_OR_NULL(dent)) {
--		int err = dent ? -ENODEV : PTR_ERR(dent);
--
--		NS_ERR("cannot create \"nandsim\" debugfs directory, err %d\n",
--			err);
--		return err;
-+	if (!dent) {
-+		NS_ERR("cannot create \"nandsim\" debugfs directory.");
-+		return -ENODEV;
- 	}
- 	dbg->dfs_root = dent;
- 
- 	dent = debugfs_create_file("wear_report", S_IRUSR,
- 				   dbg->dfs_root, dev, &dfs_fops);
--	if (IS_ERR_OR_NULL(dent))
-+	if (!dent)
- 		goto out_remove;
- 	dbg->dfs_wear_report = dent;
- 
-@@ -548,8 +544,7 @@ static int nandsim_debugfs_create(struct nandsim *dev)
- 
- out_remove:
- 	debugfs_remove_recursive(dbg->dfs_root);
--	err = dent ? PTR_ERR(dent) : -ENODEV;
--	return err;
-+	return -ENODEV;
- }
- 
- /**
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
