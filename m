@@ -1,50 +1,51 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 25 Jul 2013 17:29:09 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jul 2013 17:38:32 +0000
 Subject: Re: [patch] [media] bt8xx: info leak in ca_get_slot_info()
-Message-Id: <51F16065.40804@bfs.de>
+Message-Id: <20130725173832.GC5585@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130725164621.GA6945@elgon.mountain>
-In-Reply-To: <20130725164621.GA6945@elgon.mountain>
+ <51F16065.40804@bfs.de>
+In-Reply-To: <51F16065.40804@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: walter harms <wharms@bfs.de>
 Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Antti Palosaari <crope@iki.fi>, Nickolai Zeldovich <nickolai@csail.mit.edu>, Peter Senna Tschudin <peter.senna@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-Am 25.07.2013 18:46, schrieb Dan Carpenter:
-> p_ca_slot_info was allocated with kmalloc() so we need to clear it
-> before passing it to the user.
+On Thu, Jul 25, 2013 at 07:29:09PM +0200, walter harms wrote:
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> diff --git a/drivers/media/pci/bt8xx/dst_ca.c b/drivers/media/pci/bt8xx/dst_ca.c
-> index 0e788fc..6b9dc3f 100644
-> --- a/drivers/media/pci/bt8xx/dst_ca.c
-> +++ b/drivers/media/pci/bt8xx/dst_ca.c
-> @@ -302,8 +302,11 @@ static int ca_get_slot_info(struct dst_state *state, struct ca_slot_info *p_ca_s
->  		p_ca_slot_info->flags = CA_CI_MODULE_READY;
->  		p_ca_slot_info->num = 1;
->  		p_ca_slot_info->type = CA_CI;
-> -	} else
-> +	} else {
->  		p_ca_slot_info->flags = 0;
-> +		p_ca_slot_info->num = 0;
-> +		p_ca_slot_info->type = 0;
-> +	}
->  
->  	if (copy_to_user(arg, p_ca_slot_info, sizeof (struct ca_slot_info)))
->  		return -EFAULT;
+> Am 25.07.2013 18:46, schrieb Dan Carpenter:
+> > p_ca_slot_info was allocated with kmalloc() so we need to clear it
+> > before passing it to the user.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > 
+> > diff --git a/drivers/media/pci/bt8xx/dst_ca.c b/drivers/media/pci/bt8xx/dst_ca.c
+> > index 0e788fc..6b9dc3f 100644
+> > --- a/drivers/media/pci/bt8xx/dst_ca.c
+> > +++ b/drivers/media/pci/bt8xx/dst_ca.c
+> > @@ -302,8 +302,11 @@ static int ca_get_slot_info(struct dst_state *state, struct ca_slot_info *p_ca_s
+> >  		p_ca_slot_info->flags = CA_CI_MODULE_READY;
+> >  		p_ca_slot_info->num = 1;
+> >  		p_ca_slot_info->type = CA_CI;
+> > -	} else
+> > +	} else {
+> >  		p_ca_slot_info->flags = 0;
+> > +		p_ca_slot_info->num = 0;
+> > +		p_ca_slot_info->type = 0;
+> > +	}
+> >  
+> >  	if (copy_to_user(arg, p_ca_slot_info, sizeof (struct ca_slot_info)))
+> >  		return -EFAULT;
+> 
+> note: i have no clue how p_ca_slot_info looks like,
+> but to avoid information leaks via compiler padding etc. i could be more wise
+> to do a  memset(p_ca_slot_info,0,sizeof (struct ca_slot_info))
+> and then set the
 
-note: i have no clue how p_ca_slot_info looks like,
-but to avoid information leaks via compiler padding etc. i could be more wise
-to do a  memset(p_ca_slot_info,0,sizeof (struct ca_slot_info))
-and then set the
-	p_ca_slot_info->flags = CA_CI_MODULE_READY;
-	p_ca_slot_info->num = 1;
-	p_ca_slot_info->type = CA_CI;
+There is no compiler padding.  My static checker looks for that.
 
-just my 2 cents,
-re,
- wh
+regards,
+dan carpenter
+
