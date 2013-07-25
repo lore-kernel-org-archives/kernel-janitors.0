@@ -1,64 +1,75 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 05 Jul 2013 20:51:25 +0000
-Subject: build regressions 2013-07-05
-Message-Id: <51d731cd.QB1N/vFlLZnT6ROB%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jul 2013 17:05:32 +0000
+Subject: [patch] RDMA/ocrdma: several stack info leaks
+Message-Id: <20130725170532.GE7026@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Roland Dreier <roland@kernel.org>
+Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Naresh Gottumukkala <bgottumukkala@emulex.com>, Parav Pandit <parav.pandit@emulex.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-ERROR: "acpi_gbl_osi_data" [drivers/gpu/drm/i915/i915.ko] undefined!
-technisat-usb2.c:(.text+0xa739bd): undefined reference to `stv090x_set_gpio'
-drivers/gpu/drm/i915/i915_dma.c:1665:29: error: 'ACPI_OSI_WIN_8' undeclared (first use in this function)
-drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc0.c:1225:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc1.c:804:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc3.c:91:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/ctxnvc8.c:362:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/ctxnvd9.c:531:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/ctxnve4.c:1033:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/ctxnvf0.c:288:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/nvc0.c:1215:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/nvc1.c:143:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/nvc3.c:109:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/nvc8.c:140:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/nvd9.c:164:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/nve4.c:354:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/nvf0.c:176:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/ctxnvd7.c:303:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/nouveau/core/engine/graph/nvd7.c:167:1: internal compiler error: in expand_expr_real_1, at expr.c:10478
-drivers/gpu/drm/radeon/atombios_encoders.c:230:2: error: implicit declaration of function 'acpi_osi_version' [-Werror=implicit-function-declaration]
-drivers/gpu/drm/radeon/atombios_encoders.c:230:28: error: 'ACPI_OSI_WIN_8' undeclared (first use in this function)
-drivers/gpu/drm/radeon/atombios_encoders.c:231:3: error: implicit declaration of function 'acpi_video_backlight_unregister' [-Werror=implicit-function-declaration]
-drivers/media/platform/vsp1/vsp1_video.c:145:2: error: implicit declaration of function 'media_entity_remote_source' [-Werror=implicit-function-declaration]
-xt_TPROXY.c:(.text+0x6b4cb): undefined reference to `udp6_lib_lookup'
-xt_TPROXY.c:(.text+0x6b616): undefined reference to `udp6_lib_lookup'
-xt_TPROXY.c:(.text+0x6ba01): undefined reference to `udp6_lib_lookup'
+A grab bag of places which don't properly initialize stack data.  If the
+struct member was at the end of the struct then I fixed the issue by not
+passing the uninitialized bits to the user.  This seems like the
+prefered thing in infiniband drivers.
 
-[warnings]
-WARNING: drivers/usb/gadget/built-in.o(.data+0x1f58): Section mismatch in reference from the variable fotg210_driver to the function .init.text:usb_udc_init()
-WARNING: drivers/usb/built-in.o(.data+0x1d1f4): Section mismatch in reference from the variable fotg210_driver to the function .init.text:usb_init()
-drivers/media/platform/vsp1/vsp1_video.c:145:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/media/platform/vsp1/vsp1_video.c:191:6: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/media/platform/vsp1/vsp1_video.c:226:7: warning: assignment makes pointer from integer without a cast [enabled by default]
-WARNING: vmlinux.o(.data+0x2c8004): Section mismatch in reference from the variable fotg210_driver to the (unknown reference) .init.text:(unknown)
-WARNING: drivers/built-in.o(.data+0x120d4c): Section mismatch in reference from the variable fotg210_driver to the function .init.text:irqchip_init()
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[sparse]
-drivers/acpi/dock.c:839:51: sparse: Using plain integer as NULL pointer
-drivers/gpu/drm/radeon/atombios_encoders.c:230:13: sparse: undefined identifier 'acpi_osi_version'
-drivers/gpu/drm/radeon/atombios_encoders.c:231:17: sparse: undefined identifier 'acpi_video_backlight_unregister'
-drivers/gpu/drm/nouveau/core/engine/graph/fuc/hubnvd7.fuc.h:1:10: sparse: symbol 'nvd7_grhub_data' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/engine/graph/fuc/hubnvd7.fuc.h:208:10: sparse: symbol 'nvd7_grhub_code' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/engine/graph/fuc/gpcnvd7.fuc.h:1:10: sparse: symbol 'nvd7_grgpc_data' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/engine/graph/fuc/gpcnvd7.fuc.h:43:10: sparse: symbol 'nvd7_grgpc_code' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/engine/graph/fuc/hubnvf0.fuc.h:1:10: sparse: symbol 'nvf0_grhub_data' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/engine/graph/fuc/hubnvf0.fuc.h:208:10: sparse: symbol 'nvf0_grhub_code' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/engine/graph/fuc/gpcnvf0.fuc.h:1:10: sparse: symbol 'nvf0_grgpc_data' was not declared. Should it be static?
-drivers/gpu/drm/nouveau/core/engine/graph/fuc/gpcnvf0.fuc.h:43:10: sparse: symbol 'nvf0_grgpc_code' was not declared. Should it be static?
-drivers/media/platform/vsp1/vsp1_video.c:145:18: sparse: undefined identifier 'media_entity_remote_source'
-
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index dcfbab1..78bada7 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -256,7 +256,8 @@ struct ib_ucontext *ocrdma_alloc_ucontext(struct ib_device *ibdev,
+ 	resp.rsvd = 0;
+ 
+ 	memcpy(resp.fw_ver, dev->attr.fw_ver, sizeof(resp.fw_ver));
+-	status = ib_copy_to_udata(udata, &resp, sizeof(resp));
++	status = ib_copy_to_udata(udata, &resp,
++				  sizeof(resp) - sizeof(resp.rsvd1));
+ 	if (status)
+ 		goto cpy_err;
+ 	return &ctx->ibucontext;
+@@ -357,9 +358,12 @@ static int ocrdma_copy_pd_uresp(struct ocrdma_pd *pd,
+ 			goto dpp_map_err;
+ 		rsp.dpp_page_addr_hi = upper_32_bits(dpp_page_addr);
+ 		rsp.dpp_page_addr_lo = dpp_page_addr;
++	} else {
++		rsp.dpp_page_addr_hi = 0;
++		rsp.dpp_page_addr_lo = 0;
+ 	}
+ 
+-	status = ib_copy_to_udata(udata, &rsp, sizeof(rsp));
++	status = ib_copy_to_udata(udata, &rsp, sizeof(rsp) - sizeof(rsp.rsvd1));
+ 	if (status)
+ 		goto ucopy_err;
+ 
+@@ -700,7 +704,8 @@ static int ocrdma_copy_cq_uresp(struct ocrdma_cq *cq, struct ib_udata *udata,
+ 	uresp.db_page_addr = cq->dev->nic_info.unmapped_db;
+ 	uresp.db_page_size = cq->dev->nic_info.db_page_size;
+ 	uresp.phase_change = cq->phase_change ? 1 : 0;
+-	status = ib_copy_to_udata(udata, &uresp, sizeof(uresp));
++	status = ib_copy_to_udata(udata, &uresp,
++				  sizeof(uresp) - sizeof(u64) * 2);
+ 	if (status) {
+ 		pr_err("%s(%d) copy error cqid=0x%x.\n",
+ 		       __func__, cq->dev->id, cq->id);
+@@ -1461,6 +1466,8 @@ static int ocrdma_copy_srq_uresp(struct ocrdma_srq *srq, struct ib_udata *udata)
+ 	struct ocrdma_create_srq_uresp uresp;
+ 
+ 	uresp.rq_dbid = srq->rq.dbid;
++	uresp.resv0 = 0;
++	uresp.resv1 = 0;
+ 	uresp.num_rq_pages = 1;
+ 	uresp.rq_page_addr[0] = srq->rq.pa;
+ 	uresp.rq_page_size = srq->rq.len;
+@@ -1476,7 +1483,8 @@ static int ocrdma_copy_srq_uresp(struct ocrdma_srq *srq, struct ib_udata *udata)
+ 		uresp.db_shift = 16;
+ 	}
+ 
+-	status = ib_copy_to_udata(udata, &uresp, sizeof(uresp));
++	status = ib_copy_to_udata(udata, &uresp,
++				  sizeof(uresp) - sizeof(u64) * 2);
+ 	if (status)
+ 		return status;
+ 	status = ocrdma_add_mmap(srq->pd->uctx, uresp.rq_page_addr[0],
