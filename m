@@ -1,34 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 31 Jul 2013 14:50:17 +0000
-Subject: Re: Updated FarSync driver
-Message-Id: <20130731145017.GH5002@mwanda>
+Date: Thu, 25 Jul 2013 16:48:32 +0000
+Subject: [patch] RDMA/cxgb4: stack info leak in c4iw_create_qp()
+Message-Id: <20130725164832.GA7026@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E603DC592C92B54A89CEF6B0919A0B1CA86BBBD5E2@SOLO.hq.farsitecommunications.com>
-In-Reply-To: <E603DC592C92B54A89CEF6B0919A0B1CA86BBBD5E2@SOLO.hq.farsitecommunications.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steve Wise <swise@chelsio.com>
+Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jul 31, 2013 at 02:55:50PM +0100, Kevin Curtis wrote:
-> Hi Dan,
->     I am fixing the errors and warning reported by checkpatch.  I have quite a few of these:
-> 
-> ERROR: do not initialise globals to 0 or NULL
-> #90: FILE: drivers/net/wan/farsync.c:83:
-> +int fst_excluded_cards = 0;
-> 
-> Is this because when the module is loaded the globals are
-> guaranteed to be zero'd already, or is the module init is expected
-> to initialise them?
-> 
+"uresp.ma_sync_key" doesn't get set on this path so we leak 8 bytes of
+data.
 
-In C globals are always initialized to zero at the start.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I think there was a reason to prefer one way over the other with
-older versions of GCC but now it's just a style preference or
-something.
-
-regards,
-dan carpenter
-
+diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+index 2320404..a4975e1 100644
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -1657,6 +1657,8 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
+ 		if (mm5) {
+ 			uresp.ma_sync_key = ucontext->key;
+ 			ucontext->key += PAGE_SIZE;
++		} else {
++			uresp.ma_sync_key =  0;
+ 		}
+ 		uresp.sq_key = ucontext->key;
+ 		ucontext->key += PAGE_SIZE;
