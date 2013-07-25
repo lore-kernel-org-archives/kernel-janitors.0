@@ -1,33 +1,29 @@
-From: Dan Carpenter <error27@gmail.com>
-Date: Sun, 14 Jul 2013 19:40:37 +0000
-Subject: Re: [patch -stable] svcrdma: underflow issue in decode_write_list()
-Message-Id: <CA+_b7D+2O2E0S4vQY37SZcK3VTPUdd1cP8y9NuZM-HWwP3HNGw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jul 2013 17:04:09 +0000
+Subject: [patch] RDMA/cxgb3: stack info leak in iwch_craete_cq()
+Message-Id: <20130725170409.GB7026@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130712063903.GB29320@longonot.mountain>
-	<51DFBD49.7000205@bfs.de>
-In-Reply-To: <51DFBD49.7000205@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Trond Myklebust <Trond.Myklebust@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 7/12/13, walter harms <wharms@bfs.de> wrote:
+The "uresp.reserved" field isn't initialized.  It's at the end, of the
+struct here so we don't need to copy it to the user.
 
-> i am struggling to understand what is actually checked here.
-> Perhaps this improves the readability a bit
->  if ( nchunks < 0 ||
->        sizeof(struct rpcrdma_write_chunk) * nchunks > (SIZE_MAX - start) ||
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-That doesn't work.
-
-This is one of the few times I get to use algebra in real life.  Yay!
-The problem is you have to
-have the nchunks by itself and the trusted bits on the other side.  So
-the multiply becomes a
-divide.
-
-There are lots of these checks in the kernel.  It's idiomatic.
-
-regards,
-dan carpenter
+diff --git a/drivers/infiniband/hw/cxgb3/iwch_provider.c b/drivers/infiniband/hw/cxgb3/iwch_provider.c
+index e87f220..b8e26f2 100644
+--- a/drivers/infiniband/hw/cxgb3/iwch_provider.c
++++ b/drivers/infiniband/hw/cxgb3/iwch_provider.c
+@@ -226,7 +226,7 @@ static struct ib_cq *iwch_create_cq(struct ib_device *ibdev, int entries, int ve
+ 			mm->len = PAGE_ALIGN(((1UL << uresp.size_log2) + 1) *
+ 					     sizeof(struct t3_cqe));
+ 			uresp.memsize = mm->len;
+-			resplen = sizeof uresp;
++			resplen = sizeof uresp - sizeof uresp.reserved;
+ 		}
+ 		if (ib_copy_to_udata(udata, &uresp, resplen)) {
+ 			kfree(mm);
