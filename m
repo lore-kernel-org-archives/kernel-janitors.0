@@ -1,48 +1,29 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 17 Jul 2013 17:20:30 +0000
-Subject: Re: [patch v2] spi/xilinx: signedness issue checking platform_get_irq()
-Message-Id: <20130717172030.GW22506@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="rTHIjeKG9uUlSyhr"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 25 Jul 2013 16:40:17 +0000
+Subject: [patch] ASoC: adau1701: type bug with ADAU1707_CLKDIV_UNSET
+Message-Id: <20130725164016.GA4027@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130717150538.GT22506@sirena.org.uk>
- <20130717153448.GA963@elgon.mountain>
-In-Reply-To: <20130717153448.GA963@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-spi@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lars-Peter Clausen <lars@metafoo.de>, Daniel Mack <zonque@gmail.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@kernel.org>, device-drivers-devel@blackfin.uclinux.org, Grant Likely <grant.likely@linaro.org>
 
+ADAU1707_CLKDIV_UNSET is always compared against an unsigned int and
+not an unsigned long.  The current tests are always false.
 
---rTHIjeKG9uUlSyhr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Wed, Jul 17, 2013 at 06:34:48PM +0300, Dan Carpenter wrote:
-> In xilinx_spi_probe() we use xspi->irq to store negative error codes so
-> it has to be signed.  We weren't going to use the upper bit any way so
-> this is fine.
-
-Applied, thanks.
-
---rTHIjeKG9uUlSyhr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR5tJbAAoJELSic+t+oim90vwP/1CH/ZrKb01iUQCqXGsvPCAv
-nno3xY+lIuNPzf84Q3h8c2kBn1fZvpgL1IXAhs4DGxjoP/2IZqR+gYzsG7wWZN18
-ev86Uv+x3gzbK0pJ0gh17wAMr5DtL5tLFyCPnkndAZ0Wwfl1SXn6RQ6gd7WcKNE4
-S+YDG/VhNoN6wV+NDqKNNV5QUxztzjk4yvm1HGQatAk2pXyH89SdEpAtd9j3Wt8U
-n8hWlCACtD1JZ8xdX82pVORdRfQ45nEDPqNLNskpqsnIp/PXdp7Yjedtr0Pm2EG1
-f2Rv/DJ7kH9VDvn2fOKaJrScJKSxOz0jhyEmm/hGyQNKHfgDpJbDBNLvLFhyXcgO
-HFeaWR1xmQ4xp9qgR73kuOpAoi1FwrrIpq5wy9Mp4FbvKIOhTwg9JVYMb/a04CUL
-YOHWpClLNodV6CkFgPXjNH1FbkzE/hudVUq9Z4CJnRkEV+fUNoitlKsV8AMfR82A
-DKGLiTwg49ZT5pm3zrOR/DV7f3eVJlaPv8zEu8Oy2dHjHaRfsuiYCtkw9YelDj4I
-yVQ8+m3JaMGH9MWhphQgHevO10LWYQcL0ZY24uj7cMBGEmudLU768mEvpCi3qnZN
-+B/WExrXJ6+KqCoZqWT4U+R3okixBO++3vkBdptLjXGGrnVLJ72DgMwOfZwJ1xOL
-sZVYJ0R8CS96URlCUMMf
-=LzuP
------END PGP SIGNATURE-----
-
---rTHIjeKG9uUlSyhr--
+diff --git a/sound/soc/codecs/adau1701.c b/sound/soc/codecs/adau1701.c
+index 44d8a95..2c10252 100644
+--- a/sound/soc/codecs/adau1701.c
++++ b/sound/soc/codecs/adau1701.c
+@@ -91,7 +91,7 @@
+ #define ADAU1701_OSCIPOW_OPD		0x04
+ #define ADAU1701_DACSET_DACINIT		1
+ 
+-#define ADAU1707_CLKDIV_UNSET		(-1UL)
++#define ADAU1707_CLKDIV_UNSET		(-1U)
+ 
+ #define ADAU1701_FIRMWARE "adau1701.bin"
+ 
