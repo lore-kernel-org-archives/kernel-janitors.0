@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 29 Jul 2013 02:37:20 +0000
-Subject: build regressions 2013-07-28
-Message-Id: <51f5d560.EzhXTNs1IsZC0nIp%fengguang.wu@intel.com>
+Date: Fri, 26 Jul 2013 17:00:18 +0000
+Subject: build regressions 2013-07-26
+Message-Id: <51f2ab22.u+ijDeFLyGhDxm13%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,21 +9,24 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-pktgen.c:(.text+0x531e7): undefined reference to `udp4_hwcsum'
-pktgen.c:(.text+0x5314d): undefined reference to `ip_send_check'
-pktgen.c:(.text.unlikely+0x1ce1): undefined reference to `udp4_hwcsum'
-pktgen.c:(.text.unlikely+0x1c32): undefined reference to `ip_send_check'
-net/core/pktgen.c:2907:3: error: implicit declaration of function 'csum_ipv6_magic' [-Werror=implicit-function-declaration]
-ERROR: "udp4_hwcsum" [net/core/pktgen.ko] undefined!
-ERROR: "ip_send_check" [net/core/pktgen.ko] undefined!
-ERROR: "udp4_hwcsum" undefined!
-ERROR: "ip_send_check" undefined!
+drivers/staging/gdm724x/gdm_endian.h:43:6: error: conflicting types for 'set_endian'
+drivers/staging/gdm724x/gdm_endian.h:43:6: error: conflicting types for 'set_endian'
+drivers/staging/gdm724x/gdm_endian.c:17:6: error: conflicting types for 'set_endian'
+
+[warnings]
+drivers/media/pci/cx18/cx18-driver.c:357:1: warning: the frame size of 1060 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+include/trace/events/power.h:87:17: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+include/trace/events/power.h:88:17: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+include/trace/events/power.h:87:17: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+include/trace/events/power.h:88:17: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
 
 [sparse]
-net/core/pktgen.c:2772:38: sparse: incorrect type in argument 2 (different base types) @@    expected restricted __be32 [usertype] src @@    got restricted __be32 [usertype] src @@
-net/core/pktgen.c:2772:52: sparse: incorrect type in argument 3 (different base types) @@    expected restricted __be32 [usertype] dst @@    got restricted __be32 [usertype] dst @@
-net/core/pktgen.c:2777:53: sparse: incorrect type in argument 1 (different base types) @@    expected restricted __be32 [usertype] saddr @@    got restricted __be32 [usertype] saddr @@
-net/core/pktgen.c:2777:67: sparse: incorrect type in argument 2 (different base types) @@    expected restricted __be32 [usertype] daddr @@    got restricted __be32 [usertype] daddr @@
+include/trace/events/power.h:69:1: sparse: incorrect type in initializer (different modifiers) @@    expected char *tmp_p @@    got char cchar *tmp_p @@
+include/trace/events/power.h:69:1: sparse: incorrect type in initializer (different modifiers) @@    expected char *tmp_i @@    got char cchar *tmp_i @@
+include/trace/events/power.h:69:1: sparse: incorrect type in initializer (different modifiers) @@    expected char *tmp_p @@    got char cchar *tmp_p @@
+include/trace/events/power.h:69:1: sparse: incorrect type in initializer (different modifiers) @@    expected char *tmp_i @@    got char cchar *tmp_i @@
+drivers/pnp/driver.c:223:25: sparse: symbol 'pnp_bus_dev_pm_ops' was not declared. Should it be static?
+drivers/gpu/drm/radeon/rv6xx_dpm.c:2093:5: sparse: symbol 'rv6xx_dpm_force_performance_level' was not declared. Should it be static?
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
