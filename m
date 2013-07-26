@@ -1,80 +1,84 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 20 Jul 2013 18:58:58 +0000
-Subject: build regressions 2013-07-20
-Message-Id: <51eaddf2.JP/DG1I0lTJesVex%fengguang.wu@intel.com>
+From: Andreas Platschek <andi.platschek@gmail.com>
+Date: Fri, 26 Jul 2013 04:46:37 +0000
+Subject: [PATCH] tty: Remove dead code
+Message-Id: <1374813997-24671-1-git-send-email-andi.platschek@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: jslaby@suse.cz, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Platschek <andi.platschek@gmail.com>
 
-[errors]
-drivers/regulator/88pm800.c:141:44: error: array type has incomplete element type
-drivers/regulator/88pm800.c:142:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:142:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:142:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:142:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:143:4: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:144:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:144:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:144:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:145:4: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:145:4: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:149:44: error: array type has incomplete element type
-drivers/regulator/88pm800.c:150:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:150:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:150:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:150:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:151:4: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:152:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:152:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:152:2: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:153:4: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:153:4: error: field name not in record or union initializer
-drivers/regulator/88pm800.c:184:18: error: 'regulator_list_voltage_linear_range' undeclared here (not in a function)
-drivers/regulator/88pm800.c:185:17: error: 'regulator_map_voltage_linear_range' undeclared here (not in a function)
-drivers/regulator/88pm800.c:207:128: error: unknown field 'linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:207:128: error: unknown field 'n_linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:207:270: error: bit-field '<anonymous>' width not an integer constant
-drivers/regulator/88pm800.c:208:128: error: unknown field 'linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:208:128: error: unknown field 'n_linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:208:276: error: bit-field '<anonymous>' width not an integer constant
-drivers/regulator/88pm800.c:209:128: error: unknown field 'linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:209:128: error: unknown field 'n_linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:209:276: error: bit-field '<anonymous>' width not an integer constant
-drivers/regulator/88pm800.c:210:128: error: unknown field 'linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:210:128: error: unknown field 'n_linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:210:276: error: bit-field '<anonymous>' width not an integer constant
-drivers/regulator/88pm800.c:211:128: error: unknown field 'linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:211:128: error: unknown field 'n_linear_ranges' specified in initializer
-drivers/regulator/88pm800.c:211:276: error: bit-field '<anonymous>' width not an integer constant
-crypto/built-in.o:(.rodata+0x154a4): undefined reference to `RSA_public_key_algorithm'
-(.text+0x132b29): undefined reference to `i2c_smbus_write_byte_data'
-(.text+0x132bb7): undefined reference to `i2c_smbus_read_byte_data'
-(.text+0x132beb): undefined reference to `i2c_smbus_write_byte_data'
-(.text+0x132c73): undefined reference to `i2c_smbus_read_byte_data'
-include/linux/export.h:36:30: error: unknown field 'linear_ranges' specified in initializer
-include/linux/export.h:36:30: error: unknown field 'n_linear_ranges' specified in initializer
-include/linux/bug.h:33:45: error: bit-field '<anonymous>' width not an integer constant
-include/linux/export.h:36:30: error: unknown field 'linear_ranges' specified in initializer
-include/linux/export.h:36:30: error: unknown field 'n_linear_ranges' specified in initializer
-include/linux/bug.h:33:45: error: bit-field '<anonymous>' width not an integer constant
-include/linux/export.h:36:30: error: unknown field 'linear_ranges' specified in initializer
-include/linux/export.h:36:30: error: unknown field 'n_linear_ranges' specified in initializer
-include/linux/bug.h:33:45: error: bit-field '<anonymous>' width not an integer constant
-include/linux/export.h:36:30: error: unknown field 'linear_ranges' specified in initializer
-include/linux/export.h:36:30: error: unknown field 'n_linear_ranges' specified in initializer
-include/linux/bug.h:33:45: error: bit-field '<anonymous>' width not an integer constant
-include/linux/export.h:36:30: error: unknown field 'linear_ranges' specified in initializer
-include/linux/export.h:36:30: error: unknown field 'n_linear_ranges' specified in initializer
-include/linux/bug.h:33:45: error: bit-field '<anonymous>' width not an integer constant
+-> The ledptrs[] array is never initialized.
+-> There is no place where kbd->ledmode is set to LED_SHOW_MEM therefore the if
+   statement does not make much sense.
+-> Since LED_SHOW_MEM is not used, it can be removed from the header file as well.
 
-[warnings]
-drivers/regulator/88pm800.c:141:44: warning: 'buck1_volt_range' defined but not used [-Wunused-variable]
-drivers/regulator/88pm800.c:149:44: warning: 'buck2_5_volt_range' defined but not used [-Wunused-variable]
-drivers/mfd/stw481x.c:30:5: warning: unused variable 'regandval' [-Wunused-variable]
-drivers/regulator/stw481x-vmmc.c:156:20: warning: ignoring return value of 'sysfs_create_group', declared with attribute warn_unused_result [-Wunused-result]
-
+Signed-off-by: Andreas Platschek <andi.platschek@gmail.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/tty/vt/keyboard.c |   21 +--------------------
+ include/linux/kbd_kern.h  |    3 +--
+ 2 files changed, 2 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/tty/vt/keyboard.c b/drivers/tty/vt/keyboard.c
+index a9af1b9a..d0e3a44 100644
+--- a/drivers/tty/vt/keyboard.c
++++ b/drivers/tty/vt/keyboard.c
+@@ -132,12 +132,6 @@ static int shift_state = 0;
+ static unsigned char ledstate = 0xff;			/* undefined */
+ static unsigned char ledioctl;
+ 
+-static struct ledptr {
+-	unsigned int *addr;
+-	unsigned int mask;
+-	unsigned char valid:1;
+-} ledptrs[3];
+-
+ /*
+  * Notifier list for console keyboard events
+  */
+@@ -994,24 +988,11 @@ void setledstate(struct kbd_struct *kbd, unsigned int led)
+ static inline unsigned char getleds(void)
+ {
+ 	struct kbd_struct *kbd = kbd_table + fg_console;
+-	unsigned char leds;
+-	int i;
+ 
+ 	if (kbd->ledmode = LED_SHOW_IOCTL)
+ 		return ledioctl;
+ 
+-	leds = kbd->ledflagstate;
+-
+-	if (kbd->ledmode = LED_SHOW_MEM) {
+-		for (i = 0; i < 3; i++)
+-			if (ledptrs[i].valid) {
+-				if (*ledptrs[i].addr & ledptrs[i].mask)
+-					leds |= (1 << i);
+-				else
+-					leds &= ~(1 << i);
+-			}
+-	}
+-	return leds;
++	return kbd->ledflagstate;
+ }
+ 
+ static int kbd_update_leds_helper(struct input_handle *handle, void *data)
+diff --git a/include/linux/kbd_kern.h b/include/linux/kbd_kern.h
+index b7c8cdc..c164c04 100644
+--- a/include/linux/kbd_kern.h
++++ b/include/linux/kbd_kern.h
+@@ -36,10 +36,9 @@ struct kbd_struct {
+ #define VC_CTRLRLOCK	KG_CTRLR 	/* ctrlr lock mode */
+ 	unsigned char slockstate; 	/* for `sticky' Shift, Ctrl, etc. */
+ 
+-	unsigned char ledmode:2; 	/* one 2-bit value */
++	unsigned char ledmode:1;
+ #define LED_SHOW_FLAGS 0        /* traditional state */
+ #define LED_SHOW_IOCTL 1        /* only change leds upon ioctl */
+-#define LED_SHOW_MEM 2          /* `heartbeat': peek into memory */
+ 
+ 	unsigned char ledflagstate:4;	/* flags, not lights */
+ 	unsigned char default_ledflagstate:4;
+-- 
+1.7.10.4
+
