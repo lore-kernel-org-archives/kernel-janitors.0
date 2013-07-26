@@ -1,46 +1,34 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 26 Jul 2013 16:02:53 +0000
-Subject: Re: [patch] ASoC: adau1701: type bug with ADAU1707_CLKDIV_UNSET
-Message-Id: <20130726160253.GQ9858@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cgcPEDKc2RK7mT+z"
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 26 Jul 2013 15:51:27 +0000
+Subject: Re: Need clearance before sending patch
+Message-Id: <alpine.DEB.2.02.1307261746260.2266@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130725164016.GA4027@elgon.mountain>
-In-Reply-To: <20130725164016.GA4027@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Daniel Mack <zonque@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, device-drivers-devel@blackfin.uclinux.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+On Fri, 26 Jul 2013, Kumar Gaurav wrote:
 
---cgcPEDKc2RK7mT+z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi Dan,
+>
+> I had sent my first patch with lots of changes which wasn't correct.
+> Now i'm splitting them in parts as below:
+> 1.One patch for variable name replacement (one patch per file)
+> 2.One Patch for fixing coding style issue (one patch per file)
+> 3.One Patch for fixing warning about using pr_warn,pr_error functions instead 
+> of printk(KERN_WARNING... and printk(KERN_ERR... (havn't replaced yet as last 
+> time you weren't convinced)
+>
+> please tell me that should i apply these patches per file or one patch for 
+> replacement in all applied files?
 
-On Thu, Jul 25, 2013 at 07:40:17PM +0300, Dan Carpenter wrote:
-> ADAU1707_CLKDIV_UNSET is always compared against an unsigned int and
-> not an unsigned long.  The current tests are always false.
+I wonder if one would be better off by starting with small isolated bugs, 
+rather than these things that, even though they seem simple, are a bit 
+pervasive and rely a lot on taste?
 
-Applied, thanks.
+Finding real bugs is not so hard.  One can either use the various tools 
+that are provided, or study the git logs to see what kind of bugs others 
+have found.
 
---cgcPEDKc2RK7mT+z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR8p2qAAoJELSic+t+oim9IXwP/1+9FOHIzan33tzY8IeACcaw
-JkVUzc1oa2ZuQ/UXECm/wyS0MU1CeZVIKNIk+FFsGlu+0oBuySv87Z41/wH68mGG
-iWcg7LbKLmQeUM95yr3Gpjwodu1XwnPcSG4grdtMx/uyHpbiSfem32GT3uMupntc
-sXCrHgryTLhngJ1OwvZTQ1fmEApP6WHGdPFsI4VaosW2rzDa737GCn6JpRaEq7Gx
-CN6d2Y2xBWDV9rS67d9Y0Htv5DSmiqW1MaikgCT0eIemxuLedM9RYWWExMaUmiMx
-4oVOd5BMeQTMUsx2brjrh9LqSIq5p8iaz7CyhMpwWKLmW9PzhVsNR/hM8JUVAwLn
-rynFS6t5jQWXmWPnhQkHyDlt6FS7lidOuLqpypatLCwTql1IU2hTI7pnij7AcCoF
-C7CZS0cmwAVCJEmOL5pynJRKSGiMbpqJwM/TMrJPan8sxR4L7u7lhC1RFD5MioAT
-zNebnGjfnRvlphnYSP9kOEfKc8UirkVfjlytPciKOL870+zwkp655MQxCEzBRvCk
-XpPPsFoessOKAwRb6WU8FIuZcR8q6kbfz7IhNTnzsS+CiqezWZdW1K234XpM/Hjl
-pTcIBw/SbC17c3enolL6KkFa1debq96Wy3d70rDfcOGPFxe6KJhjU3CL+awHdEgP
-PxaV3HCGuwh9KCjlj47O
-=cikR
------END PGP SIGNATURE-----
-
---cgcPEDKc2RK7mT+z--
+julia
