@@ -1,7 +1,7 @@
-From: Andi Shyti <andi.shyti@gmail.com>
-Date: Sat, 27 Jul 2013 19:20:45 +0000
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 27 Jul 2013 19:53:34 +0000
 Subject: Re: [PATCH 1/2] staging: lustre: Fix non-ANSI sparse warnings
-Message-Id: <20130727192045.GA29842@jack.whiskey>
+Message-Id: <20130727195334.GB11837@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1374950412-15973-1-git-send-email-emilgoode@gmail.com>
 In-Reply-To: <1374950412-15973-1-git-send-email-emilgoode@gmail.com>
@@ -10,13 +10,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> This patch fixes a lot of non-ANSI sparse warnings.
+Hi Andi,
 
-would be better if you sepcify which non-ANSI sparse warnings.
+I ususally put the warnings in the change log but when it's a long list
+I prefer leaving them out. If you would like the full list I can resend.
+Perhaps I should change the commit message to:
+This patch fixes a lot of non-ANSI sparse warnings by adding void to
+parameterless functions.
 
-In this patch you are doing only one type of change that is to
-add a void parameter to functions which don't get one.
+Best regards,
 
-Andi
+Emil
 
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+On Sat, Jul 27, 2013 at 09:20:45PM +0200, Andi Shyti wrote:
+> > This patch fixes a lot of non-ANSI sparse warnings.
+> 
+> would be better if you sepcify which non-ANSI sparse warnings.
+> 
+> In this patch you are doing only one type of change that is to
+> add a void parameter to functions which don't get one.
+> 
+> Andi
+> 
+> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
