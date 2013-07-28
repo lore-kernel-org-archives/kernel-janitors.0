@@ -1,15 +1,41 @@
-From: Steve Wise <swise@opengridcomputing.com>
-Date: Mon, 29 Jul 2013 19:26:41 +0000
-Subject: Re: [patch v2] RDMA/cxgb3: stack info leak in iwch_craete_cq()
-Message-Id: <51F6C1F1.1090406@opengridcomputing.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 28 Jul 2013 20:27:38 +0000
+Subject: [patch] ALSA: usx2y: remove an unneeded check
+Message-Id: <20130728202738.GC8684@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130729191914.GA11977@elgon.mountain>
-In-Reply-To: <20130729191914.GA11977-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Antonio Ospite <ao2@amarulasolutions.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Steve Wise <swise@opengridcomputing.com>
+The test here is always true because S[i].urb is an array not a pointer.
+Also it's bogus because the intent was to test:
+	if (S->urb[i]) {
+instead of:
+	if (S[i].urb) {
 
+Anway, usb_kill_urb() and usb_free_urb() accept NULL pointers so we can
+just remove this.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/usb/usx2y/usbusx2y.c b/sound/usb/usx2y/usbusx2y.c
+index 1f9bbd5..5a51b18 100644
+--- a/sound/usb/usx2y/usbusx2y.c
++++ b/sound/usb/usx2y/usbusx2y.c
+@@ -305,11 +305,9 @@ static void usX2Y_unlinkSeq(struct snd_usX2Y_AsyncSeq *S)
+ {
+ 	int	i;
+ 	for (i = 0; i < URBS_AsyncSeq; ++i) {
+-		if (S[i].urb) {
+-			usb_kill_urb(S->urb[i]);
+-			usb_free_urb(S->urb[i]);
+-			S->urb[i] = NULL;
+-		}
++		usb_kill_urb(S->urb[i]);
++		usb_free_urb(S->urb[i]);
++		S->urb[i] = NULL;
+ 	}
+ 	kfree(S->buffer);
+ }
