@@ -1,38 +1,52 @@
-From: Kent Overstreet <kmo@daterainc.com>
-Date: Thu, 11 Jul 2013 01:48:34 +0000
-Subject: Re: [patch -next] bcache: check for allocation failures
-Message-Id: <20130711014834.GE13527@kmo-pixel>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 28 Jul 2013 20:04:45 +0000
+Subject: [patch -mainline v2] af_key: more info leaks in pfkey messages
+Message-Id: <20130728200444.GA8684@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130705060307.GB14443@elgon.mountain>
-In-Reply-To: <20130705060307.GB14443-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
+References: <20130725073205.GQ3109@secunet.com>
+In-Reply-To: <20130725073205.GQ3109@secunet.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Gabriel de Perthuis <g2p.code-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Neil Brown <neilb-l3A5Bk7waGM@public.gmane.org>, linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-raid-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.hengli.com.au>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Mathias Krause <minipli@googlemail.com>
 
-On Fri, Jul 05, 2013 at 09:05:46AM +0300, Dan Carpenter wrote:
-> There is a missing NULL check after the kzalloc().
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index 48f0353..4fe6ab2 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -232,6 +232,8 @@ STORE(__cached_dev)
->  			bch_uuid_write(dc->disk.c);
->  		}
->  		env =3D kzalloc(sizeof(struct kobj_uevent_env), GFP_KERNEL);
-> +		if (!env)
-> +			return -ENOMEM;
->  		add_uevent_var(env, "DRIVER=BCache");
->  		add_uevent_var(env, "CACHED_UUID=3D%pU", dc->sb.uuid),
->  		add_uevent_var(env, "CACHED_LABEL=3D%s", buf);
+This is inspired by a5cc68f3d6 "af_key: fix info leaks in notify
+messages".  There are some struct members which don't get initialized
+and could disclose small amounts of private information.
 
-Thanks - applied
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Mathias Krause <minipli@googlemail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: set ->sadb_x_policy_priority correctly instead of just clearing it
+
+diff --git a/net/key/af_key.c b/net/key/af_key.c
+index 456b262..d49f676 100644
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -2081,6 +2081,7 @@ static int pfkey_xfrm_policy2msg(struct sk_buff *skb, const struct xfrm_policy *
+ 			pol->sadb_x_policy_type = IPSEC_POLICY_NONE;
+ 	}
+ 	pol->sadb_x_policy_dir = dir+1;
++	pol->sadb_x_policy_reserved = 0;
+ 	pol->sadb_x_policy_id = xp->index;
+ 	pol->sadb_x_policy_priority = xp->priority;
+ 
+@@ -3137,7 +3138,9 @@ static int pfkey_send_acquire(struct xfrm_state *x, struct xfrm_tmpl *t, struct
+ 	pol->sadb_x_policy_exttype = SADB_X_EXT_POLICY;
+ 	pol->sadb_x_policy_type = IPSEC_POLICY_IPSEC;
+ 	pol->sadb_x_policy_dir = XFRM_POLICY_OUT + 1;
++	pol->sadb_x_policy_reserved = 0;
+ 	pol->sadb_x_policy_id = xp->index;
++	pol->sadb_x_policy_priority = xp->priority;
+ 
+ 	/* Set sadb_comb's. */
+ 	if (x->id.proto = IPPROTO_AH)
+@@ -3525,6 +3528,7 @@ static int pfkey_send_migrate(const struct xfrm_selector *sel, u8 dir, u8 type,
+ 	pol->sadb_x_policy_exttype = SADB_X_EXT_POLICY;
+ 	pol->sadb_x_policy_type = IPSEC_POLICY_IPSEC;
+ 	pol->sadb_x_policy_dir = dir + 1;
++	pol->sadb_x_policy_reserved = 0;
+ 	pol->sadb_x_policy_id = 0;
+ 	pol->sadb_x_policy_priority = 0;
+ 
