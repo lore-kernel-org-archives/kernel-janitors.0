@@ -1,34 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 Jul 2013 16:39:34 +0000
-Subject: [patch] drm/radeon: forever loop on error in radeon_do_test_moves()
-Message-Id: <20130701163934.GB4229@elgon.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 29 Jul 2013 02:37:20 +0000
+Subject: build regressions 2013-07-28
+Message-Id: <51f5d560.EzhXTNs1IsZC0nIp%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Jerome Glisse <jglisse@redhat.com>, Lauri Kasanen <cand@gmx.com>, Maarten Lankhorst <maarten.lankhorst@canonical.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The error path does this:
+[errors]
+pktgen.c:(.text+0x531e7): undefined reference to `udp4_hwcsum'
+pktgen.c:(.text+0x5314d): undefined reference to `ip_send_check'
+pktgen.c:(.text.unlikely+0x1ce1): undefined reference to `udp4_hwcsum'
+pktgen.c:(.text.unlikely+0x1c32): undefined reference to `ip_send_check'
+net/core/pktgen.c:2907:3: error: implicit declaration of function 'csum_ipv6_magic' [-Werror=implicit-function-declaration]
+ERROR: "udp4_hwcsum" [net/core/pktgen.ko] undefined!
+ERROR: "ip_send_check" [net/core/pktgen.ko] undefined!
+ERROR: "udp4_hwcsum" undefined!
+ERROR: "ip_send_check" undefined!
 
-	for (--i; i >= 0; --i) {
+[sparse]
+net/core/pktgen.c:2772:38: sparse: incorrect type in argument 2 (different base types) @@    expected restricted __be32 [usertype] src @@    got restricted __be32 [usertype] src @@
+net/core/pktgen.c:2772:52: sparse: incorrect type in argument 3 (different base types) @@    expected restricted __be32 [usertype] dst @@    got restricted __be32 [usertype] dst @@
+net/core/pktgen.c:2777:53: sparse: incorrect type in argument 1 (different base types) @@    expected restricted __be32 [usertype] saddr @@    got restricted __be32 [usertype] saddr @@
+net/core/pktgen.c:2777:67: sparse: incorrect type in argument 2 (different base types) @@    expected restricted __be32 [usertype] daddr @@    got restricted __be32 [usertype] daddr @@
 
-which is a forever loop because "i" is unsigned.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/gpu/drm/radeon/radeon_test.c b/drivers/gpu/drm/radeon/radeon_test.c
-index f4d6bce..12e8099 100644
---- a/drivers/gpu/drm/radeon/radeon_test.c
-+++ b/drivers/gpu/drm/radeon/radeon_test.c
-@@ -36,8 +36,8 @@ static void radeon_do_test_moves(struct radeon_device *rdev, int flag)
- 	struct radeon_bo *vram_obj = NULL;
- 	struct radeon_bo **gtt_obj = NULL;
- 	uint64_t gtt_addr, vram_addr;
--	unsigned i, n, size;
--	int r, ring;
-+	unsigned n, size;
-+	int i, r, ring;
- 
- 	switch (flag) {
- 	case RADEON_TEST_COPY_DMA:
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
