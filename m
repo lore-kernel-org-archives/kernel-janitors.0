@@ -1,193 +1,65 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sat, 27 Jul 2013 22:38:56 +0000
-Subject: [PATCH v2 2/2] staging: lustre: Fix sparse warnings about use of obsolete initializer
-Message-Id: <1374964736-10863-2-git-send-email-emilgoode@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 29 Jul 2013 19:34:29 +0000
+Subject: [patch v2] RDMA/ocrdma: several stack info leaks
+Message-Id: <20130729192431.GB11977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b54b5aaa-8efd-4a9c-899b-341c3808f9c4@CMEXHTCAS1.ad.emulex.com>
+In-Reply-To: <b54b5aaa-8efd-4a9c-899b-341c3808f9c4-3RiH6ntJJkP8BX6JNMqfyFjyZtpTMMwT@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Naresh Gottumukkala <bgottumukkala-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>, Parav Pandit <parav.pandit-laKkSmNT4hbQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-This patch fixes a lot of sparse warnings about use of obsolete
-struct and array initializer.
+A grab bag of places which don't properly initialize stack data.  I
+removed one place which cleared ".rsvd" because it's not needed now that
+I have added a memset() earlier in the function.
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v2: I forgot to mention this also fixes warnings about array initializer.
+v2: different approach to fixing the problem
 
- drivers/staging/lustre/lustre/ldlm/ldlm_lib.c      |   16 +++----
- drivers/staging/lustre/lustre/ldlm/ldlm_lock.c     |   50 ++++++++++----------
- drivers/staging/lustre/lustre/ldlm/ldlm_request.c  |    5 +-
- .../lustre/lustre/libcfs/linux/linux-debug.c       |    6 +--
- .../lustre/lustre/libcfs/linux/linux-module.c      |    6 +--
- drivers/staging/lustre/lustre/mdc/mdc_request.c    |    2 +-
- 6 files changed, 44 insertions(+), 41 deletions(-)
-
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lib.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lib.c
-index aace534..950f90a 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_lib.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lib.c
-@@ -762,14 +762,14 @@ void target_send_reply(struct ptlrpc_request *req, int rc, int fail_id)
- EXPORT_SYMBOL(target_send_reply);
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index dcfbab1..f36630e 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -242,6 +242,7 @@ struct ib_ucontext *ocrdma_alloc_ucontext(struct ib_device *ibdev,
+ 	memset(ctx->ah_tbl.va, 0, map_len);
+ 	ctx->ah_tbl.len = map_len;
  
- ldlm_mode_t lck_compat_array[] = {
--	[LCK_EX] LCK_COMPAT_EX,
--	[LCK_PW] LCK_COMPAT_PW,
--	[LCK_PR] LCK_COMPAT_PR,
--	[LCK_CW] LCK_COMPAT_CW,
--	[LCK_CR] LCK_COMPAT_CR,
--	[LCK_NL] LCK_COMPAT_NL,
--	[LCK_GROUP] LCK_COMPAT_GROUP,
--	[LCK_COS] LCK_COMPAT_COS,
-+	[LCK_EX]	= LCK_COMPAT_EX,
-+	[LCK_PW]	= LCK_COMPAT_PW,
-+	[LCK_PR]	= LCK_COMPAT_PR,
-+	[LCK_CW]	= LCK_COMPAT_CW,
-+	[LCK_CR]	= LCK_COMPAT_CR,
-+	[LCK_NL]	= LCK_COMPAT_NL,
-+	[LCK_GROUP]	= LCK_COMPAT_GROUP,
-+	[LCK_COS]	= LCK_COMPAT_COS,
- };
++	memset(&resp, 0, sizeof(resp));
+ 	resp.ah_tbl_len = ctx->ah_tbl.len;
+ 	resp.ah_tbl_page = ctx->ah_tbl.pa;
  
- /**
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-index ce1add1..a917420 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-@@ -49,45 +49,45 @@
+@@ -253,7 +254,6 @@ struct ib_ucontext *ocrdma_alloc_ucontext(struct ib_device *ibdev,
+ 	resp.wqe_size = dev->attr.wqe_size;
+ 	resp.rqe_size = dev->attr.rqe_size;
+ 	resp.dpp_wqe_size = dev->attr.wqe_size;
+-	resp.rsvd = 0;
  
- /* lock types */
- char *ldlm_lockname[] = {
--	[0] "--",
--	[LCK_EX] "EX",
--	[LCK_PW] "PW",
--	[LCK_PR] "PR",
--	[LCK_CW] "CW",
--	[LCK_CR] "CR",
--	[LCK_NL] "NL",
--	[LCK_GROUP] "GROUP",
--	[LCK_COS] "COS"
-+	[0]		= "--",
-+	[LCK_EX]	= "EX",
-+	[LCK_PW]	= "PW",
-+	[LCK_PR]	= "PR",
-+	[LCK_CW]	= "CW",
-+	[LCK_CR]	= "CR",
-+	[LCK_NL]	= "NL",
-+	[LCK_GROUP]	= "GROUP",
-+	[LCK_COS]	= "COS",
- };
- EXPORT_SYMBOL(ldlm_lockname);
+ 	memcpy(resp.fw_ver, dev->attr.fw_ver, sizeof(resp.fw_ver));
+ 	status = ib_copy_to_udata(udata, &resp, sizeof(resp));
+@@ -338,6 +338,7 @@ static int ocrdma_copy_pd_uresp(struct ocrdma_pd *pd,
+ 	struct ocrdma_alloc_pd_uresp rsp;
+ 	struct ocrdma_ucontext *uctx = get_ocrdma_ucontext(ib_ctx);
  
- char *ldlm_typename[] = {
--	[LDLM_PLAIN] "PLN",
--	[LDLM_EXTENT] "EXT",
--	[LDLM_FLOCK] "FLK",
--	[LDLM_IBITS] "IBT",
-+	[LDLM_PLAIN]	= "PLN",
-+	[LDLM_EXTENT]	= "EXT",
-+	[LDLM_FLOCK]	= "FLK",
-+	[LDLM_IBITS]	= "IBT",
- };
- EXPORT_SYMBOL(ldlm_typename);
++	memset(&rsp, 0, sizeof(rsp));
+ 	rsp.id = pd->id;
+ 	rsp.dpp_enabled = pd->dpp_enabled;
+ 	db_page_addr = pd->dev->nic_info.unmapped_db +
+@@ -692,6 +693,7 @@ static int ocrdma_copy_cq_uresp(struct ocrdma_cq *cq, struct ib_udata *udata,
+ 	struct ocrdma_ucontext *uctx;
+ 	struct ocrdma_create_cq_uresp uresp;
  
- static ldlm_policy_wire_to_local_t ldlm_policy_wire18_to_local[] = {
--	[LDLM_PLAIN - LDLM_MIN_TYPE] ldlm_plain_policy_wire_to_local,
--	[LDLM_EXTENT - LDLM_MIN_TYPE] ldlm_extent_policy_wire_to_local,
--	[LDLM_FLOCK - LDLM_MIN_TYPE] ldlm_flock_policy_wire18_to_local,
--	[LDLM_IBITS - LDLM_MIN_TYPE] ldlm_ibits_policy_wire_to_local,
-+	[LDLM_PLAIN - LDLM_MIN_TYPE]	= ldlm_plain_policy_wire_to_local,
-+	[LDLM_EXTENT - LDLM_MIN_TYPE]	= ldlm_extent_policy_wire_to_local,
-+	[LDLM_FLOCK - LDLM_MIN_TYPE]	= ldlm_flock_policy_wire18_to_local,
-+	[LDLM_IBITS - LDLM_MIN_TYPE]	= ldlm_ibits_policy_wire_to_local,
- };
++	memset(&uresp, 0, sizeof(uresp));
+ 	uresp.cq_id = cq->id;
+ 	uresp.page_size = cq->len;
+ 	uresp.num_pages = 1;
+@@ -1460,6 +1462,7 @@ static int ocrdma_copy_srq_uresp(struct ocrdma_srq *srq, struct ib_udata *udata)
+ 	int status;
+ 	struct ocrdma_create_srq_uresp uresp;
  
- static ldlm_policy_wire_to_local_t ldlm_policy_wire21_to_local[] = {
--	[LDLM_PLAIN - LDLM_MIN_TYPE] ldlm_plain_policy_wire_to_local,
--	[LDLM_EXTENT - LDLM_MIN_TYPE] ldlm_extent_policy_wire_to_local,
--	[LDLM_FLOCK - LDLM_MIN_TYPE] ldlm_flock_policy_wire21_to_local,
--	[LDLM_IBITS - LDLM_MIN_TYPE] ldlm_ibits_policy_wire_to_local,
-+	[LDLM_PLAIN - LDLM_MIN_TYPE]	= ldlm_plain_policy_wire_to_local,
-+	[LDLM_EXTENT - LDLM_MIN_TYPE]	= ldlm_extent_policy_wire_to_local,
-+	[LDLM_FLOCK - LDLM_MIN_TYPE]	= ldlm_flock_policy_wire21_to_local,
-+	[LDLM_IBITS - LDLM_MIN_TYPE]	= ldlm_ibits_policy_wire_to_local,
- };
- 
- static ldlm_policy_local_to_wire_t ldlm_policy_local_to_wire[] = {
--	[LDLM_PLAIN - LDLM_MIN_TYPE] ldlm_plain_policy_local_to_wire,
--	[LDLM_EXTENT - LDLM_MIN_TYPE] ldlm_extent_policy_local_to_wire,
--	[LDLM_FLOCK - LDLM_MIN_TYPE] ldlm_flock_policy_local_to_wire,
--	[LDLM_IBITS - LDLM_MIN_TYPE] ldlm_ibits_policy_local_to_wire,
-+	[LDLM_PLAIN - LDLM_MIN_TYPE]	= ldlm_plain_policy_local_to_wire,
-+	[LDLM_EXTENT - LDLM_MIN_TYPE]	= ldlm_extent_policy_local_to_wire,
-+	[LDLM_FLOCK - LDLM_MIN_TYPE]	= ldlm_flock_policy_local_to_wire,
-+	[LDLM_IBITS - LDLM_MIN_TYPE]	= ldlm_ibits_policy_local_to_wire,
- };
- 
- /**
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
-index c900706..6f21a12 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
-@@ -2068,7 +2068,10 @@ void ldlm_namespace_foreach(struct ldlm_namespace *ns,
- 			    ldlm_iterator_t iter, void *closure)
- 
- {
--	struct iter_helper_data helper = { iter: iter, closure: closure };
-+	struct iter_helper_data helper = {
-+		.iter		= iter,
-+		.closure	= closure,
-+	};
- 
- 	cfs_hash_for_each_nolock(ns->ns_rs_hash,
- 				 ldlm_res_iter_helper, &helper);
-diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-debug.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-debug.c
-index 6afb350..9b57304 100644
---- a/drivers/staging/lustre/lustre/libcfs/linux/linux-debug.c
-+++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-debug.c
-@@ -194,9 +194,9 @@ static int panic_notifier(struct notifier_block *self, unsigned long unused1,
- }
- 
- static struct notifier_block libcfs_panic_notifier = {
--	notifier_call :     panic_notifier,
--	next :	      NULL,
--	priority :	  10000
-+	.notifier_call	= panic_notifier,
-+	.next		= NULL,
-+	.priority	= 10000,
- };
- 
- void libcfs_register_panic_notifier(void)
-diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
-index d8f320e..7449f4f 100644
---- a/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
-+++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
-@@ -171,9 +171,9 @@ static long libcfs_ioctl(struct file *file,
- }
- 
- static struct file_operations libcfs_fops = {
--	unlocked_ioctl: libcfs_ioctl,
--	open :	  libcfs_psdev_open,
--	release :       libcfs_psdev_release
-+	.unlocked_ioctl	= libcfs_ioctl,
-+	.open		= libcfs_psdev_open,
-+	.release	= libcfs_psdev_release,
- };
- 
- struct miscdevice libcfs_dev = {
-diff --git a/drivers/staging/lustre/lustre/mdc/mdc_request.c b/drivers/staging/lustre/lustre/mdc/mdc_request.c
-index 191edc6..2dabfc0 100644
---- a/drivers/staging/lustre/lustre/mdc/mdc_request.c
-+++ b/drivers/staging/lustre/lustre/mdc/mdc_request.c
-@@ -2378,7 +2378,7 @@ static int mdc_resource_inode_free(struct ldlm_resource *res)
- }
- 
- struct ldlm_valblock_ops inode_lvbo = {
--	lvbo_free: mdc_resource_inode_free
-+	.lvbo_free = mdc_resource_inode_free,
- };
- 
- static int mdc_setup(struct obd_device *obd, struct lustre_cfg *cfg)
--- 
-1.7.10.4
-
++	memset(&uresp, 0, sizeof(uresp));
+ 	uresp.rq_dbid = srq->rq.dbid;
+ 	uresp.num_rq_pages = 1;
+ 	uresp.rq_page_addr[0] = srq->rq.pa;
