@@ -1,55 +1,38 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 28 Jul 2013 16:43:55 +0000
-Subject: Re: [PATCH v2 1/2] staging: lustre: Fix non-ANSI sparse warnings
-Message-Id: <20130728164355.GA8320@kroah.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Tue, 30 Jul 2013 17:35:36 +0000
+Subject: [PATCH 2/3] spi: spi-ep93xx: Fix format specifier warning
+Message-Id: <1375205737-3468-2-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1374964736-10863-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1374964736-10863-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Jul 28, 2013 at 06:19:29PM +0200, walter harms wrote:
-> 
-> 
-> Am 28.07.2013 00:38, schrieb Emil Goode:
-> > This patch fixes a lot of non-ANSI sparse warnings by adding void to
-> > parameterless functions.
-> > 
-> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> > ---
-> > v2: A bit more specific commit message.
-> > 
-> >  .../lustre/lnet/klnds/socklnd/socklnd_lib-linux.c        |    6 +++---
-> >  drivers/staging/lustre/lnet/lnet/api-ni.c                |    2 +-
-> >  drivers/staging/lustre/lnet/selftest/console.c           |    2 +-
-> >  .../staging/lustre/lustre/libcfs/linux/linux-tracefile.c |   14 +++++++-------
-> >  drivers/staging/lustre/lustre/ptlrpc/pack_generic.c      |    2 +-
-> >  drivers/staging/lustre/lustre/ptlrpc/pinger.c            |    4 ++--
-> >  6 files changed, 15 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_lib-linux.c b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_lib-linux.c
-> > index 3e08fe2..76e442b 100644
-> > --- a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_lib-linux.c
-> > +++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd_lib-linux.c
-> > @@ -325,20 +325,20 @@ ksocknal_lib_tunables_init ()
-> >  }
-> >  
-> >  void
-> > -ksocknal_lib_tunables_fini ()
-> > +ksocknal_lib_tunables_fini(void)
-> >  {
-> >  	if (ksocknal_tunables.ksnd_sysctl != NULL)
-> >  		unregister_sysctl_table(ksocknal_tunables.ksnd_sysctl);
-> >  }
-> 
-> this is not needed as unregister_sysctl_table() can handle NULL
+This patch fixes the following sparse warning by changing the
+the format specifier for size_t to %zu.
 
-There's lots of cleanup needed in this code, but as that's a separate
-thing from what the original poster was doing here, it isn't relevant
-for this patch.
+drivers/spi/spi-ep93xx.c:512:3: warning:
+	format ‘%d’ expects argument of	type ‘int’,
+	but argument 3 has type ‘size_t’ [-Wformat]
 
-Follow-on patches are always welcome...
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/spi/spi-ep93xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
+index 4c9a50c..31611f7 100644
+--- a/drivers/spi/spi-ep93xx.c
++++ b/drivers/spi/spi-ep93xx.c
+@@ -509,7 +509,7 @@ ep93xx_spi_dma_prepare(struct ep93xx_spi *espi, enum dma_transfer_direction dir)
+ 	}
+ 
+ 	if (WARN_ON(len)) {
+-		dev_warn(&espi->pdev->dev, "len = %d expected 0!", len);
++		dev_warn(&espi->pdev->dev, "len = %zu expected 0!", len);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-- 
+1.7.10.4
+
