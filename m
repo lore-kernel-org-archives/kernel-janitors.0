@@ -1,29 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 24 Jul 2013 07:37:10 +0000
-Subject: Re: Creating and sending patch without git
-Message-Id: <20130724073709.GU5585@mwanda>
+From: Dolan Murvihill <dmurvihill@gmail.com>
+Date: Tue, 30 Jul 2013 04:26:09 +0000
+Subject: What version should I be patching against?
+Message-Id: <51F74061.107@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130723213741.GS5636@mwanda>
-In-Reply-To: <20130723213741.GS5636@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 24, 2013 at 12:10:07PM +0530, Kumar Gaurav wrote:
-> Right now i have created a git repository with the tarball i had
-> downloaded (main repository is still getting downloaded). I'm
-> working using that. i hope it'll work well for me till git completes
-> cloning the remote repository.
-> Thanks for your reply.
+Q: What version should I be patching against?
 
-Yep.  That should work for sending git emails, but I really can't
-stress enough how quickly the tar ball will go out of date.  You
-can't actually use it for devel work because it will just annoy
-people.
+I saw this answer in the FAQ on https://code.google.com/p/kernel-janitors/ :
 
-I live in Africa and have somewhat crap internet as well...
+A: Latest "linus" (2.6.x-rcY from kernel.org).
 
-regards,
-dan carpenter
+Two questions about this:
+1. Is this still current? My understanding was that we moved past 2.6 
+long ago, and any changes would be ported from the latest 3.x release.
 
+2. Did you mean "torvalds", or is there another tree called "linus"?
+
+For now, I'm going to work with Linus' tree at 
+pub/scm/linux/kernel/git/torvalds/linux.git.
+
+-Dolan
