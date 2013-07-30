@@ -1,34 +1,45 @@
-From: Ferruh Yigit <fery@cypress.com>
-Date: Wed, 03 Jul 2013 13:53:23 +0000
-Subject: Re: [patch 3/3] Input: cyttsp4 - leak on error path in probe()
-Message-Id: <51D42CD3.2000705@cypress.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Tue, 30 Jul 2013 17:35:37 +0000
+Subject: [PATCH 3/3] spi: spi-txx9: Fix warning by including linux/gpio.h
+Message-Id: <1375205737-3468-3-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130702214455.GC1598@elgon.mountain> <51D42350.10504@cypress.com> <20130703135013.GU5714@mwanda>
-In-Reply-To: <20130703135013.GU5714@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 07/03/2013 04:50 PM, Dan Carpenter wrote:
-> On Wed, Jul 03, 2013 at 04:12:48PM +0300, Ferruh Yigit wrote:
->> On 07/03/2013 12:44 AM, Dan Carpenter wrote:
->>> We leak "cd" if the cd->xfer_buf allocation fails.  It was weird to
->>> "goto error_gpio_irq" so I changed the label name.  (Label names should
->>> reflect the label location not the goto location otherwise you get an
->>> "all roads lead to Rome problem").
->>>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->> xfer_buf still may not be freed, I propose following one instead:
->>
-> That's a good point.  I missed that leak.  The problem is that my
-> patch was already applied so this patch would have to be re-written
-> on top of that.  Also this patch is whitespace dammaged and won't
-> apply.
-OK, I am preparing the patch over previous one.
+According to the following commit direct inclusion of asm/gpio.h
+is deprecated.
+7563bbf89d065a2c3f05059ecbcc805645edcc62
+("gpiolib/arches: Centralise bolierplate asm/gpio.h")
 
-Thanks,
-ferruh
-This message and any attachments may contain Cypress (or its subsidiaries) confidential information. If it has been received in error, please advise the sender and immediately delete this message.
+This patch fixes the below warnings by including linux/gpio.h.
+
+arch/x86/include/asm/gpio.h:2:2: warning:
+	Include linux/gpio.h instead of asm/gpio.h
+
+In file included from drivers/spi/spi-txx9.c:29:0:
+arch/x86/include/asm/gpio.h:2:2: warning:
+	#warning Include linux/gpio.h instead of asm/gpio.h [-Wcpp]
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/spi/spi-txx9.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-txx9.c b/drivers/spi/spi-txx9.c
+index e9b7681..7c6d157 100644
+--- a/drivers/spi/spi-txx9.c
++++ b/drivers/spi/spi-txx9.c
+@@ -26,7 +26,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-#include <asm/gpio.h>
++#include <linux/gpio.h>
+ 
+ 
+ #define SPI_FIFO_SIZE 4
+-- 
+1.7.10.4
+
