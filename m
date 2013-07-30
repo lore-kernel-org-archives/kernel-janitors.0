@@ -1,7 +1,7 @@
-From: Nikola Pajkovsky <n.pajkovsky@gmail.com>
-Date: Tue, 30 Jul 2013 09:35:21 +0000
+From: Shaun Laing <shaun@bigps.ca>
+Date: Tue, 30 Jul 2013 13:40:38 +0000
 Subject: Re: What version should I be patching against?
-Message-Id: <m3k3k85r1i.fsf@redhat.com>
+Message-Id: <CAH1-EsYizteuhjLAwyGcVS4W1b4z4RmOvuHA4ODk0eqnguTnew@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <51F74061.107@gmail.com>
 In-Reply-To: <51F74061.107@gmail.com>
@@ -10,21 +10,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+That's really good information, thank you.
 
-> Wow...  Yes.  That information is totally out of date.  Do patches
-> against the daily linux-next.  Don't do them against mainline.
+Dan, I recently submitted a patch and the message back was:
 
-these commands would be useful to add
+"This is a note to let you know that I've just added the patch titled
 
-$ git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-$ cd linux
-$ git remote add linux-next git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-$ git fetch linux-next
-$ git fetch --tags linux-next
-... # later on
-$ git remote update
-...
+    staging: comedi: dt9812: Resolves sparse endian warnings.
 
--- 
-Nikola
+to my staging git tree which can be found at
+    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+in the staging-next branch.
+"
+
+Is it wrong to be patching against this
+(git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git),
+then? (I also see a reference to this at
+https://code.google.com/p/kernel-janitors/wiki/TODO under
+"Linux-Staging Tree").
