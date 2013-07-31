@@ -1,47 +1,45 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 31 Jul 2013 11:19:35 +0000
+From: Olof Johansson <olof@lixom.net>
+Date: Wed, 31 Jul 2013 18:17:36 +0000
 Subject: Re: [patch] ASoC: dapm: using freed pointer in dapm_kcontrol_add_widget()
-Message-Id: <20130731111935.GK9858@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="y4KgtkKhApPt9pfM"
+Message-Id: <CAOesGMgrztKFbLM4m3sr1cH=Od6FVy8p2BbEi_X=J_jDhyHBKw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130731085244.GB8210@elgon.mountain>
-In-Reply-To: <20130731085244.GB8210@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
+	<51F8D2B5.7060504@metafoo.de>
+In-Reply-To: <51F8D2B5.7060504@metafoo.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, kernel-janitors@vger.kernel.org
 
+Hi,
 
---y4KgtkKhApPt9pfM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Jul 31, 2013 at 2:02 AM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> On 07/31/2013 10:52 AM, Dan Carpenter wrote:
+>>
+>> There is a typo here so we end up using the old freed pointer instead of
+>> the newly allocated one.  (If the "n" is zero then the code works,
+>> obviously).
+>>
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+>
+> Thanks.
+>
+> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+>
+> Olof, can you check whether this fixes the crash you see?
 
-On Wed, Jul 31, 2013 at 11:52:44AM +0300, Dan Carpenter wrote:
-> There is a typo here so we end up using the old freed pointer instead of
-> the newly allocated one.  (If the "n" is zero then the code works,
-> obviously).
+Nope.
 
-Applied, thanks.
+There's also remaining issues with the code, that patch isn't enough.
+The structure that is krealloced() has a list_head in it, but the list
+isn't moved from the old head to the new one. There's no safe way to
+do that using krealloc, since the old list_head is gone by then, so
+it's probably easest to open-code with kzalloc/memcpy/kfree.
 
---y4KgtkKhApPt9pfM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+But even with that fixed, I still see the same issue. Boggle.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+(Btw, I'm testing on top of commit 5106b92f80a2cd37c52cffed80b4f5acfb77ccfd).
 
-iQIcBAEBAgAGBQJR+PLEAAoJELSic+t+oim9xBoP/RW1oSQ9HtqITt4hbTPk1Eni
-RfvCYtbogJMP5vPbA2R8EHYRfFUV2duv0WpbVnTSKVCyXTQOXqfYl2FukIN/tTih
-cNILCDBUStJBprrtc1/Kba87Nadh0+nWchLIgP1vKds+Iy/qhYiHUJUsAgohk0GE
-aYbJ5YH9xm2pk3UJ9/aMS1RUIwNVTXrXm+9WnHcT+dIXSr/aU8gTQhAcN9poSzDU
-AMoABr+oFLgKsuQ5JxGQYJMTg7MctbFvq4K8Tm0/IvE7SAyl9kijEZlyGx8Anznf
-eWDTTAVGSfWIgRUd30vDbUScU+kc1nfYTTtJgB/se/P3hFRfAumjdNE3vO4dn5yg
-Kp7oG+VORUxCenYle1tirx1xe06fY9D34U+TChvNKncGueP0lQ8uMEfANDmRb8eL
-xVMHd2wa4DKA7oGsZyJncSg/jQA3K5IGS1wvBIRw2/bq7boCg03Di83UScTvrwUD
-m6dhbOsKiA1CmbccvI4R+J39Bi3JKC0ze+HKAsErf0B2kYC6HK2dS+4pUBKpTj4G
-llesg6hLs2LwYnTI4P58eDM3Sa9/Bb4nSkaYELHXVuRBLLGLru91JyhrYqYfT01/
-93Hem9p/jCz24Xriz2xE/OIzLOHJEqoZN95yOhGofrYBcCuOOwfX8xn+g5eqAXwV
-YqnbG2gD/AOecj60am5s
-=+qvf
------END PGP SIGNATURE-----
-
---y4KgtkKhApPt9pfM--
+-Olof
