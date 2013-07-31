@@ -1,72 +1,76 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Fri, 26 Jul 2013 08:34:43 +0000
-Subject: Re: [patch -next] fb: fix recent breakage in correct_chipset()
-Message-Id: <51F234A3.3030504@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vWVOQCinPFBJO33lDE1q8n37mMMXt7xUI"
+From: Kumar Gaurav <kumargauravgupta3@gmail.com>
+Date: Wed, 31 Jul 2013 17:49:14 +0000
+Subject: [PATCH] USBIP:stub_dev.c fixing string splitted into multiple line issue
+Message-Id: <1375292922-13724-1-git-send-email-kumargauravgupta3@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130702062821.GC24410@elgon.mountain>
-In-Reply-To: <20130702062821.GC24410@elgon.mountain>
-To: linux-fbdev@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
---vWVOQCinPFBJO33lDE1q8n37mMMXt7xUI
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Fixed  String splitted into multiple line issue using macro
 
-On 02/07/13 09:28, Dan Carpenter wrote:
-> The 6e36308a6f "fb: fix atyfb build warning" isn't right.  It makes all=
+Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
+---
+ drivers/staging/usbip/stub_dev.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-> the indexes off by one.  This patch reverts it and casts the
-> ARRAY_SIZE() to int to silence the build warning.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/video/aty/atyfb_base.c b/drivers/video/aty/atyfb_b=
-ase.c
-> index a89c15d..9b0f12c 100644
-> --- a/drivers/video/aty/atyfb_base.c
-> +++ b/drivers/video/aty/atyfb_base.c
-> @@ -435,8 +435,8 @@ static int correct_chipset(struct atyfb_par *par)
->  	const char *name;
->  	int i;
-> =20
-> -	for (i =3D ARRAY_SIZE(aty_chips); i > 0; i--)
-> -		if (par->pci_id =3D=3D aty_chips[i - 1].pci_id)
-> +	for (i =3D (int)ARRAY_SIZE(aty_chips) - 1; i >=3D 0; i--)
-> +		if (par->pci_id =3D=3D aty_chips[i].pci_id)
->  			break;
-> =20
->  	if (i < 0)
->=20
+diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
+index 83d629a..3b881e1 100644
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@ -30,6 +30,8 @@
+  * In most cases, wildcard matching will be okay because driver binding can be
+  * changed dynamically by a userland program.
+  */
++#define USBIP_REG_INTF "register new interface (bus %u dev %u ifn %u)\n"
++#define USBIP_REG_DEV "register new device (bus %u dev %u ifn %u)\n"
+ static struct usb_device_id stub_table[] = {
+ #if 0
+ 	/* just an example */
+@@ -357,8 +359,9 @@ static int stub_probe(struct usb_interface *interface,
+ 	busid_priv = get_busid_priv(udev_busid);
+ 	if (!busid_priv || (busid_priv->status = STUB_BUSID_REMOV) ||
+ 	    (busid_priv->status = STUB_BUSID_OTHER)) {
+-		dev_info(&interface->dev, "%s is not in match_busid table... "
+-			 "skip!\n", udev_busid);
++		dev_info(&interface->dev,
++			 "%s is not in match_busid table... skip!\n",
++			udev_busid);
+ 
+ 		/*
+ 		 * Return value should be ENODEV or ENOXIO to continue trying
+@@ -386,8 +389,7 @@ static int stub_probe(struct usb_interface *interface,
+ 			return -ENODEV;
+ 
+ 		busid_priv->interf_count++;
+-		dev_info(&interface->dev, "usbip-host: register new interface "
+-			 "(bus %u dev %u ifn %u)\n",
++		dev_info(&interface->dev, USBIP_REG_INTF,
+ 			 udev->bus->busnum, udev->devnum,
+ 			 interface->cur_altsetting->desc.bInterfaceNumber);
+ 
+@@ -412,8 +414,8 @@ static int stub_probe(struct usb_interface *interface,
+ 	if (!sdev)
+ 		return -ENOMEM;
+ 
+-	dev_info(&interface->dev, "usbip-host: register new device "
+-		 "(bus %u dev %u ifn %u)\n", udev->bus->busnum, udev->devnum,
++	dev_info(&interface->dev, USBIP_REG_DEV,
++		 udev->bus->busnum, udev->devnum,
+ 		 interface->cur_altsetting->desc.bInterfaceNumber);
+ 
+ 	busid_priv->interf_count = 0;
+@@ -426,7 +428,8 @@ static int stub_probe(struct usb_interface *interface,
+ 
+ 	err = stub_add_files(&interface->dev);
+ 	if (err) {
+-		dev_err(&interface->dev, "stub_add_files for %s\n", udev_busid);
++		dev_err(&interface->dev, "stub_add_files for %s\n",
++			udev_busid);
+ 		usb_set_intfdata(interface, NULL);
+ 		usb_put_intf(interface);
+ 		usb_put_dev(udev);
+-- 
+1.7.9.5
 
-Thanks, I've applied this into my 3.11-fixes/fbdev branch.
-
- Tomi
-
-
-
---vWVOQCinPFBJO33lDE1q8n37mMMXt7xUI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJR8jSjAAoJEPo9qoy8lh713iUP/jS8DBgllzX4Fgr4VpoNnKis
-svAGn6tfj2Kd6x1INE3iPxnaWDH4Vp+hZRrR6jsOt+1Rxt5KhWNGlzPd0nZAR5fU
-wwfuk7IFKqx/SGyQaUsDV7ikLd3h4kIUacVQioQbG5++OIgcVDjPaMwA7QNydZjL
-oAJA+txWRBQT1BrmueJu9IickRz0j7SVEqy5Y1ohiEYMT9HqpB1p7B8491NfSH/F
-z/s7mmnD42t6SSSLXp0j5DmplOt5eS1hkF4CE7aD7spuSrpJld1O+Ll46O9xv/hK
-ilNDkeLoa7yxAcfvcqu5s6uwvRLf6PU90ocTh5FDIMiF0XHlr+84+MT6T6epwgcn
-c9qyR8tOqdrqUkdqidHbhAoJVrUth176Y3H0flS1xIBKDvdG2HDZtV2E6IMlxq1w
-VBCoIcOEMULMJIfhDUoF0ld8880RHx4zZ/aaOnNCqoC6JgUbY9dKDk+reWPnQf7b
-uAJMVhP2aRGILJIYpsnbWo23HqrD0kn/pie8eVqYamfq53wmkWcgY46tl2hB7WoY
-xyBKDsJe8sY3Bmb8HX9ILr3WTg90nwVz60TyaLTGNxhjKseieAuAnmaluY4flo8V
-Ly8499dS1EH3LKxGZ1VoKyBg0J9aIwdUD5xaVzw2taROUf9AgwLxi4YFqNByKQMQ
-YjIwCFGitZ1u2RP98GgJ
-=7DUs
------END PGP SIGNATURE-----
-
---vWVOQCinPFBJO33lDE1q8n37mMMXt7xUI--
