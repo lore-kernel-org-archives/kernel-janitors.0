@@ -1,118 +1,65 @@
-From: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-Date: Sat, 27 Jul 2013 03:02:32 +0000
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Date: Wed, 31 Jul 2013 10:36:47 +0000
 Subject: Re: [PATCH v2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
-Message-Id: <20130727.120232.356926182.konishi.ryusuke@lab.ntt.co.jp>
+Message-Id: <1375267007.2364.7.camel@slavad-ubuntu>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1374847154.3671.70.camel@slavad-ubuntu>
-In-Reply-To: <1374847154.3671.70.camel@slavad-ubuntu>
+	 <20130727.120232.356926182.konishi.ryusuke@lab.ntt.co.jp>
+In-Reply-To: <20130727.120232.356926182.konishi.ryusuke@lab.ntt.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Vyacheslav Dubeyko <slava-yeENwD64cLxBDgjK7y7TUQ@public.gmane.org>
-Cc: DanCarpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-nilfs <linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux FS Devel <linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+Cc: DanCarpenter <dan.carpenter@oracle.com>, linux-nilfs <linux-nilfs@vger.kernel.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, =?ISO-8859-1?Q?J=E9r=F4me?= Poulin <jeromepoulin@gmail.com>
 
-Hi Vyacheslav,
-On Fri, 26 Jul 2013 17:59:14 +0400, Vyacheslav Dubeyko wrote:
-> Hi Ryusuke,
+Hi Ryusuke,
+
+On Sat, 2013-07-27 at 12:02 +0900, Ryusuke Konishi wrote:
+
+[snip]
 > 
-> I changed place of increment operation of segbuf->sb_nbio in
-> nilfs_segbuf_submit_bio() and adding decrement operation for
-> BIO_EOPNOTSUPP case in second version of the patch.
+> This decrement looks wrong.
 > 
-> Could you share your opinion about this version of the patch?
+> Otherwise, your change of nilfs_segbuf_submit_bio() is just a
+> equivalent transformation and doesn't fix problem, that is, a mismatch
+> of the number of calls between complete() and wait_for_completion().
 > 
-> With the best regards,
-> Vyacheslav Dubeyko.
-> ---
-> From: Vyacheslav Dubeyko <slava@dubeyko.com>
-> Subject: [PATCH v2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
+> In your patch, nilfs_end_bio_write() function calls the complete()
+> routine as before even if it received an EOPNOTSUPP error.
 > 
-> This patch removes double call of bio_put() in nilfs_end_bio_write()
-> for the case of BIO_EOPNOTSUPP error detection. The issue was found
-> by Dan Carpenter and he suggests first version of the fix too.
+> In that case, segbuf->sb_nbio must be incremented to call
+> wait_for_completion() the right number of times.
 > 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Vyacheslav Dubeyko <slava@dubeyko.com>
-> CC: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-> ---
->  fs/nilfs2/segbuf.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Note that wait_for_completion() is called based on the count of
+> segbuf->sb_nbio even if nilfs_segbuf_submit_bio() returns an error.
+> This is performed through the following path:
 > 
-> diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
-> index dc9a913..0b09ec9 100644
-> --- a/fs/nilfs2/segbuf.c
-> +++ b/fs/nilfs2/segbuf.c
-> @@ -345,8 +345,7 @@ static void nilfs_end_bio_write(struct bio *bio, int err)
->  
->  	if (err = -EOPNOTSUPP) {
->  		set_bit(BIO_EOPNOTSUPP, &bio->bi_flags);
-> -		bio_put(bio);
-> -		/* to be detected by submit_seg_bio() */
-> +		/* to be detected by nilfs_segbuf_submit_bio() */
->  	}
->  
->  	if (!uptodate)
-> @@ -377,12 +376,13 @@ static int nilfs_segbuf_submit_bio(struct nilfs_segment_buffer *segbuf,
->  	bio->bi_private = segbuf;
->  	bio_get(bio);
->  	submit_bio(mode, bio);
-> +	segbuf->sb_nbio++;
->  	if (bio_flagged(bio, BIO_EOPNOTSUPP)) {
-
-> +		segbuf->sb_nbio--;
-
-This decrement looks wrong.
-
-Otherwise, your change of nilfs_segbuf_submit_bio() is just a
-equivalent transformation and doesn't fix problem, that is, a mismatch
-of the number of calls between complete() and wait_for_completion().
-
-In your patch, nilfs_end_bio_write() function calls the complete()
-routine as before even if it received an EOPNOTSUPP error.
-
-In that case, segbuf->sb_nbio must be incremented to call
-wait_for_completion() the right number of times.
-
-Note that wait_for_completion() is called based on the count of
-segbuf->sb_nbio even if nilfs_segbuf_submit_bio() returns an error.
-This is performed through the following path:
-
-            nilfs_segbuf_submit_bio
-          nilfs_segbuf_submit_bh
-        nilfs_segbuf_write
-      nilfs_write_logs
-    nilfs_segctor_write
-  nilfs_segctor_do_construct
-    nilfs_segctor_abort_construction
-      nilfs_wait_on_logs
-        nilfs_segbuf_wait
-          wait_for_completion
-            (repeated for the number of times of segbuf->sb_nbio)
-
-
-If you think this is a separate problem, then it should be fixed in
-another patch and nilfs_segbuf_submit_bio() should not be touched in
-this patch.
-
-
-Regards,
-Ryusuke Konishi
-
-
->  		bio_put(bio);
->  		err = -EOPNOTSUPP;
->  		goto failed;
->  	}
-> -	segbuf->sb_nbio++;
->  	bio_put(bio);
->  
->  	wi->bio = NULL;
-> -- 
-> 1.7.9.5
+>             nilfs_segbuf_submit_bio
+>           nilfs_segbuf_submit_bh
+>         nilfs_segbuf_write
+>       nilfs_write_logs
+>     nilfs_segctor_write
+>   nilfs_segctor_do_construct
+>     nilfs_segctor_abort_construction
+>       nilfs_wait_on_logs
+>         nilfs_segbuf_wait
+>           wait_for_completion
+>             (repeated for the number of times of segbuf->sb_nbio)
 > 
 > 
+> If you think this is a separate problem, then it should be fixed in
+> another patch and nilfs_segbuf_submit_bio() should not be touched in
+> this patch.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Sorry for delay with working on this patch. Now I am investigating
+the issue (Kernel Bug: unable to handle kernel paging request) that it
+was reported by Jérôme Poulin <jeromepoulin@gmail.com>. I suspect that
+the reported issue is related to this patch. So, I feel a necessity to
+investigate the issue more deeply before continuation to work on this
+patch.
+
+With the best regards,
+Vyacheslav Dubeyko.
+
+
