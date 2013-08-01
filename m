@@ -1,29 +1,113 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Aug 2013 12:49:24 +0000
-Subject: Re: [patch] staging: comedi: pcl812: missing break statement
-Message-Id: <20130821124924.GA4713@mwanda>
+From: Iker Pedrosa <ikerpedrosam@gmail.com>
+Date: Thu, 01 Aug 2013 19:43:41 +0000
+Subject: [PATCH] Staging: winbond: wb35reg: fixed some line over 80 characters
+Message-Id: <1375386221-3726-1-git-send-email-ikerpedrosam@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130821082804.GC5240@elgon.mountain>
-In-Reply-To: <20130821082804.GC5240@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 21, 2013 at 12:35:22PM +0100, Ian Abbott wrote:
-> 
-> Acked-by: Ian Abbott <abbotti@mev.co.uk>
-> Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
-> 
-> (whichever is appropriate)
+Fixed some coding style issues
 
-To me Acked-by is more emphatic.  Since you're the maintainer it's
-appropriate.  I normally use "Reviewed-by" because I don't have the
-authority to approve anything.  Also if it's a bug fix that I
-approve of or if I previously complained about the patch then I'll
-use Acked-by.
+This is my first patch ever so I know that it will be rejected but I will thank any advice that you can give me.
 
-I don't know how other people do it.  :P
+Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
+---
+ drivers/staging/winbond/wb35reg.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/staging/winbond/wb35reg.c b/drivers/staging/winbond/wb35reg.c
+index 9be1b3b..35d3beb 100644
+--- a/drivers/staging/winbond/wb35reg.c
++++ b/drivers/staging/winbond/wb35reg.c
+@@ -14,7 +14,8 @@ extern void phy_calibration_winbond(struct hw_data *phw_data, u32 frequency);
+  * Flag : AUTO_INCREMENT - RegisterNo will auto increment 4
+  *	  NO_INCREMENT - Function will write data into the same register
+  */
+-unsigned char Wb35Reg_BurstWrite(struct hw_data *pHwData, u16 RegisterNo, u32 *pRegisterData, u8 NumberOfData, u8 Flag)
++unsigned char Wb35Reg_BurstWrite(struct hw_data *pHwData, u16 RegisterNo,
++				 u32 *pRegisterData, u8 NumberOfData, u8 Flag)
+ {
+ 	struct wb35_reg		*reg = &pHwData->reg;
+ 	struct urb		*urb = NULL;
+@@ -72,7 +73,7 @@ unsigned char Wb35Reg_BurstWrite(struct hw_data *pHwData, u16 RegisterNo, u32 *p
+ 	return true;
+ }
+ 
+-void Wb35Reg_Update(struct hw_data *pHwData,  u16 RegisterNo,  u32 RegisterValue)
++void Wb35Reg_Update(struct hw_data *pHwData, u16 RegisterNo, u32 RegisterValue)
+ {
+ 	struct wb35_reg *reg = &pHwData->reg;
+ 	switch (RegisterNo) {
+@@ -118,7 +119,8 @@ void Wb35Reg_Update(struct hw_data *pHwData,  u16 RegisterNo,  u32 RegisterValue
+  * true  : read command process successfully
+  * false : register not support
+  */
+-unsigned char Wb35Reg_WriteSync(struct hw_data *pHwData, u16 RegisterNo, u32 RegisterValue)
++unsigned char Wb35Reg_WriteSync(struct hw_data *pHwData, u16 RegisterNo,
++				u32 RegisterValue)
+ {
+ 	struct wb35_reg *reg = &pHwData->reg;
+ 	int ret = -1;
+@@ -139,9 +141,10 @@ unsigned char Wb35Reg_WriteSync(struct hw_data *pHwData, u16 RegisterNo, u32 Reg
+ 	/* Sync IoCallDriver */
+ 	reg->EP0vm_state = VM_RUNNING;
+ 	ret = usb_control_msg(pHwData->udev,
+-			       usb_sndctrlpipe(pHwData->udev, 0),
+-			       0x03, USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_OUT,
+-			       0x0, RegisterNo, &RegisterValue, 4, HZ * 100);
++			      usb_sndctrlpipe(pHwData->udev, 0),
++			      0x03,
++			      USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_OUT,
++			      0x0, RegisterNo, &RegisterValue, 4, HZ * 100);
+ 	reg->EP0vm_state = VM_STOP;
+ 	reg->SyncIoPause = 0;
+ 
+@@ -159,7 +162,8 @@ unsigned char Wb35Reg_WriteSync(struct hw_data *pHwData, u16 RegisterNo, u32 Reg
+  * true  : read command process successfully
+  * false : register not support
+  */
+-unsigned char Wb35Reg_Write(struct hw_data *pHwData, u16 RegisterNo, u32 RegisterValue)
++unsigned char Wb35Reg_Write(struct hw_data *pHwData, u16 RegisterNo,
++			    u32 RegisterValue)
+ {
+ 	struct wb35_reg		*reg = &pHwData->reg;
+ 	struct usb_ctrlrequest	*dr;
+@@ -286,7 +290,8 @@ unsigned char Wb35Reg_WriteWithCallbackValue(struct hw_data *pHwData,
+  * pRegisterValue : It must be a resident buffer due to
+  *		    asynchronous read register.
+  */
+-unsigned char Wb35Reg_ReadSync(struct hw_data *pHwData, u16 RegisterNo, u32 *pRegisterValue)
++unsigned char Wb35Reg_ReadSync(struct hw_data *pHwData, u16 RegisterNo,
++			       u32 *pRegisterValue)
+ {
+ 	struct wb35_reg *reg = &pHwData->reg;
+ 	u32		*pltmp = pRegisterValue;
+@@ -305,9 +310,10 @@ unsigned char Wb35Reg_ReadSync(struct hw_data *pHwData, u16 RegisterNo, u32 *pRe
+ 
+ 	reg->EP0vm_state = VM_RUNNING;
+ 	ret = usb_control_msg(pHwData->udev,
+-			       usb_rcvctrlpipe(pHwData->udev, 0),
+-			       0x01, USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
+-			       0x0, RegisterNo, pltmp, 4, HZ * 100);
++			      usb_rcvctrlpipe(pHwData->udev, 0),
++			      0x01,
++			      USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
++			      0x0, RegisterNo, pltmp, 4, HZ * 100);
+ 
+ 	*pRegisterValue = cpu_to_le32(*pltmp);
+ 
+@@ -332,7 +338,8 @@ unsigned char Wb35Reg_ReadSync(struct hw_data *pHwData, u16 RegisterNo, u32 *pRe
+  * pRegisterValue : It must be a resident buffer due to
+  *		    asynchronous read register.
+  */
+-unsigned char Wb35Reg_Read(struct hw_data *pHwData, u16 RegisterNo, u32 *pRegisterValue)
++unsigned char Wb35Reg_Read(struct hw_data *pHwData, u16 RegisterNo,
++			   u32 *pRegisterValue)
+ {
+ 	struct wb35_reg		*reg = &pHwData->reg;
+ 	struct usb_ctrlrequest	*dr;
+-- 
+1.8.1.2
+
