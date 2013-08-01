@@ -1,25 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Aug 2013 10:32:01 +0000
-Subject: Re: [patch] usb: musb: unlock on error in cppi41_dma_callback()
-Message-Id: <20130828103201.GQ6329@mwanda>
+From: Olof Johansson <olof@lixom.net>
+Date: Thu, 01 Aug 2013 03:49:14 +0000
+Subject: Re: [patch] ASoC: dapm: using freed pointer in dapm_kcontrol_add_widget()
+Message-Id: <CAOesGMgh7j8U=3nAUfo0EnybS-b=mCdzt_M33PMqekAz8=GcUA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130821083821.GI5240@elgon.mountain>
-In-Reply-To: <20130821083821.GI5240@elgon.mountain>
+References: <20130731085244.GB8210@elgon.mountain>
+	<51F8D2B5.7060504@metafoo.de>
+	<CAOesGMgrztKFbLM4m3sr1cH=Od6FVy8p2BbEi_X=J_jDhyHBKw@mail.gmail.com>
+	<51F9585F.8060505@metafoo.de>
+	<51F95B01.7040002@metafoo.de>
+	<20130731200526.GD9858@sirena.org.uk>
+In-Reply-To: <20130731200526.GD9858@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, kernel-janitors@vger.kernel.org
 
-On Tue, Aug 27, 2013 at 03:05:27PM -0500, Felipe Balbi wrote:
-> On Wed, Aug 21, 2013 at 11:38:21AM +0300, Dan Carpenter wrote:
-> > We need to unlock and enable IRQs before returning on error.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> doesn't apply
+On Wed, Jul 31, 2013 at 1:05 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Jul 31, 2013 at 08:44:17PM +0200, Lars-Peter Clausen wrote:
+>
+>> Something along the lines of this:
+>
+> This seems to fix it for me, can you submit properly please?
 
-Wei Yongjun already fixed the bug.
+Here too. If you submit that as a patch, feel free to add:
 
-regards,
-dan carpenter
+Tested-by: Olof Johansson <olof@lixom.net>
 
+
+-Olof
