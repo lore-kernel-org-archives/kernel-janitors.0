@@ -1,67 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Aug 2013 16:51:49 +0000
-Subject: [PATCH 8/16] arch/arm/mach-pxa/palmz72.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
-Message-Id: <1376239917-15594-9-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 01 Aug 2013 15:44:26 +0000
+Subject: re: pktcdvd: add struct pktcdvd_device.name to pr_err logging where possible
+Message-Id: <20130801154426.GA5198@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Joe Perches,
 
-Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
-arity of the called function.
+This is a semi-automatic email about new static checker warnings.
 
-The semantic match that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The patch b5a0e979a657: "pktcdvd: add struct pktcdvd_device.name to 
+pr_err logging where possible" from Aug 1, 2013, leads to the 
+following Smatch complaint:
 
-// <smpl>
-@@
-expression e,f;
-@@
+drivers/block/pktcdvd.c:2363 pkt_make_request()
+	 error: we previously assumed 'pd' could be null (see line 2362)
 
-f(...,
-- ARRAY_AND_SIZE(e)
-+ e,ARRAY_SIZE(e)
-  ,...)
-// </smpl>
+drivers/block/pktcdvd.c
+  2361		pd = q->queuedata;
+  2362		if (!pd) {
+                    ^^^
+Old check.
+  2363			pkt_err(pd, "%s incorrect request queue\n",
+                                ^^^
+New dereference.
+  2364				bdevname(bio->bi_bdev, b));
+  2365			goto end_io;
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not compiled.
-
- arch/arm/mach-pxa/palmz72.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-pxa/palmz72.c b/arch/arm/mach-pxa/palmz72.c
-index 1a35ddf..5f8fd00 100644
---- a/arch/arm/mach-pxa/palmz72.c
-+++ b/arch/arm/mach-pxa/palmz72.c
-@@ -356,9 +356,11 @@ static inline void __init palmz72_cam_gpio_init(void)
- {
- 	int ret;
- 
--	ret = gpio_request_array(ARRAY_AND_SIZE(palmz72_camera_gpios));
-+	ret = gpio_request_array(palmz72_camera_gpios,
-+				 ARRAY_SIZE(palmz72_camera_gpios));
- 	if (!ret)
--		gpio_free_array(ARRAY_AND_SIZE(palmz72_camera_gpios));
-+		gpio_free_array(palmz72_camera_gpios,
-+				ARRAY_SIZE(palmz72_camera_gpios));
- 	else
- 		printk(KERN_ERR "Camera GPIO init failed!\n");
- 
-@@ -381,7 +383,7 @@ static inline void palmz72_camera_init(void) {}
-  ******************************************************************************/
- static void __init palmz72_init(void)
- {
--	pxa2xx_mfp_config(ARRAY_AND_SIZE(palmz72_pin_config));
-+	pxa2xx_mfp_config(palmz72_pin_config, ARRAY_SIZE(palmz72_pin_config));
- 	pxa_set_ffuart_info(NULL);
- 	pxa_set_btuart_info(NULL);
- 	pxa_set_stuart_info(NULL);
-
+regards,
+dan carpenter
