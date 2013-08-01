@@ -1,32 +1,32 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 16 Aug 2013 17:03:34 +0000
-Subject: build regressions 2013-08-16
-Message-Id: <520e5b66.pS6o5XCD+eMzxIH8%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 01 Aug 2013 15:47:05 +0000
+Subject: [patch] fs/binfmts: double unlock in search_binary_handler()
+Message-Id: <20130801154705.GC5198@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Zach Levis <zml@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, kernel-janitors@vger.kernel.org
 
-[errors]
-lib/assoc_array.c:1011:3: error: implicit declaration of function 'ERR_PTR' [-Werror=implicit-function-declaration]
-kernel/user_namespace.c:138:13: error: 'struct user_namespace' has no member named 'persistent_keyring_register'
-drivers/tty/ehv_bytechan.c:362:1: error: type defaults to 'int' in declaration of 'console_initcall' [-Werror=implicit-int]
-memory_hotplug.c:(.text+0xd0174): undefined reference to `is_hugepage_active'
-drivers/usb/gadget/g_ffs.c:79:1: error: type defaults to 'int' in declaration of 'USB_ETHERNET_MODULE_PARAMETERS' [-Werror=implicit-int]
-drivers/usb/gadget/g_ffs.c:79:1: error: function declaration isn't a prototype [-Werror=strict-prototypes]
-memory_hotplug.c:(.ref.text+0x52f): undefined reference to `is_hugepage_active'
+The recent -mm patch 3046d15088 "fs/binfmts: better handling of binfmt
+loops" introduced a new "continue" to the loop.  The problem is that we
+are supposed to be holding the lock at the start so we need to take it
+again.
 
-[warnings]
-lib/assoc_array.c:1011:3: warning: return makes pointer from integer without a cast [enabled by default]
-lib/assoc_array.c:1047:2: warning: return makes pointer from integer without a cast [enabled by default]
-lib/assoc_array.c:1123:3: warning: return makes pointer from integer without a cast [enabled by default]
-lib/assoc_array.c:1281:2: warning: return makes pointer from integer without a cast [enabled by default]
-lib/assoc_array.c:1314:3: warning: return makes pointer from integer without a cast [enabled by default]
-warning: (DRM_I915 && BIG_KEYS) selects TMPFS which has unmet direct dependencies (SHMEM)
-warning: (DRM_I915 && BIG_KEYS) selects TMPFS which has unmet direct dependencies (SHMEM)
-warning: (DRM_I915 && BIG_KEYS) selects TMPFS which has unmet direct dependencies (SHMEM)
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+Static checker stuff.  Untested.
+
+diff --git a/fs/exec.c b/fs/exec.c
+index f8b7ed1..e2785fc 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1426,6 +1426,7 @@ int search_binary_handler(struct linux_binprm *bprm)
+ 				copy_strings(bprm->argc_orig, *((struct user_arg_ptr *) bprm->argv_orig), bprm);
+ 				bprm->argc = bprm->argc_orig;
+ 				retval = -ENOEXEC;
++				read_lock(&binfmt_lock);
+ 				continue;
+ 			}
+ 
