@@ -1,84 +1,53 @@
-From: Shaun Laing <shaun@XResource.ca>
-Date: Thu, 01 Aug 2013 17:44:15 +0000
-Subject: [patch] staging: comedi: gsc_hpdi plx9080: Resolve sparse "different base types" warnings.
-Message-Id: <201308011744.r71HiFtV077932@rivendell.pollux.laing>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 02 Aug 2013 09:43:17 +0000
+Subject: Re: [patch] staging: comedi: gsc_hpdi plx9080: Resolve sparse "different base types" warnings.
+Message-Id: <20130802094317.GA5051@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <201308011744.r71HiFtV077932@rivendell.pollux.laing>
+In-Reply-To: <201308011744.r71HiFtV077932@rivendell.pollux.laing>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi all,
+On Thu, Aug 01, 2013 at 11:44:15AM -0600, Shaun Laing wrote:
+> Hi all,
+> 
+> Do you see anything wrong with submitting this patch?  My primary concern is
+> mixing the functional changes with the aesthetic changes.
+> 
+> Thanks.
+> 
+> * Resolves sparse warnings of the form 
+> 	"warning: incorrect type in assignment (different base types)".
 
-Do you see anything wrong with submitting this patch?  My primary concern is
-mixing the functional changes with the aesthetic changes.
+It feels like the ->dma_desc buffer is supposed to go to be used
+by the hardware but I don't see where that happens.  This driver
+looks like complete garbage.  We should re-write it completely.
+It's better to leave the static checker warnings there to mark that
+the driver needs to be re-written instead of silencing the warnings
+but not fixing the code.  Fixing the code proably means re-writing
+it to be CPU endian.
 
-Thanks.
+> * Adds byte swapping to DEBUG_PRINT statements.
 
-* Resolves sparse warnings of the form 
-	"warning: incorrect type in assignment (different base types)".
-* Adds byte swapping to DEBUG_PRINT statements.
-* Removes some spaces to elimite "checkpatch" warnings.
+These debug statments are just noise.  Delete them instead of
+modifying them.
 
-Signed-off-by: Shaun Laing <shaun@xresource.ca>
----
-diff --git a/drivers/staging/comedi/drivers/gsc_hpdi.c b/drivers/staging/comedi/drivers/gsc_hpdi.c
-index cdcc8f4..ca96af1 100644
---- a/drivers/staging/comedi/drivers/gsc_hpdi.c
-+++ b/drivers/staging/comedi/drivers/gsc_hpdi.c
-@@ -437,18 +437,18 @@ static int setup_dma_descriptors(struct comedi_device *dev,
- 
- 		DEBUG_PRINT(" desc %i\n", i);
- 		DEBUG_PRINT(" start addr virt 0x%p, phys 0x%lx\n",
--			    devpriv->desc_dio_buffer[i],
--			    (unsigned long)devpriv->dma_desc[i].
--			    pci_start_addr);
-+			devpriv->desc_dio_buffer[i],
-+			(unsigned long)le32_to_cpu(devpriv->dma_desc[i].
-+			pci_start_addr));
- 		DEBUG_PRINT(" next 0x%lx\n",
--			    (unsigned long)devpriv->dma_desc[i].next);
-+			(unsigned long)le32_to_cpu(devpriv->dma_desc[i].next));
- 	}
- 	devpriv->num_dma_descriptors = i;
- 	/*  fix last descriptor to point back to first */
- 	devpriv->dma_desc[i - 1].next  	    cpu_to_le32(devpriv->dma_desc_phys_addr | next_bits);
- 	DEBUG_PRINT(" desc %i next fixup 0x%lx\n", i - 1,
--		    (unsigned long)devpriv->dma_desc[i - 1].next);
-+		    (unsigned long)le32_to_cpu(devpriv->dma_desc[i - 1].next));
- 
- 	devpriv->block_size = transfer_size;
- 
-@@ -795,8 +795,8 @@ static void drain_dma_buffers(struct comedi_device *dev, unsigned int channel)
- 		devpriv->dma_desc_index %= devpriv->num_dma_descriptors;
- 
- 		DEBUG_PRINT("next desc addr 0x%lx\n", (unsigned long)
--			    devpriv->dma_desc[devpriv->dma_desc_index].
--			    next);
-+			le32_to_cpu(devpriv->dma_desc[devpriv->dma_desc_index].
-+			next));
- 		DEBUG_PRINT("pci addr reg 0x%x\n", next_transfer_addr);
- 	}
- 	/*  XXX check for buffer overrun somehow */
-diff --git a/drivers/staging/comedi/drivers/plx9080.h b/drivers/staging/comedi/drivers/plx9080.h
-index 0d254a1..dda878b 100644
---- a/drivers/staging/comedi/drivers/plx9080.h
-+++ b/drivers/staging/comedi/drivers/plx9080.h
-@@ -29,13 +29,13 @@
- 
- /*  descriptor block used for chained dma transfers */
- struct plx_dma_desc {
--	volatile uint32_t pci_start_addr;
--	volatile uint32_t local_start_addr;
-+	volatile __le32 pci_start_addr;
-+	volatile __le32 local_start_addr;
- 	/* transfer_size is in bytes, only first 23 bits of register are used */
--	volatile uint32_t transfer_size;
-+	volatile __le32 transfer_size;
- 	/* address of next descriptor (quad word aligned), plus some
- 	 * additional bits (see PLX_DMA0_DESCRIPTOR_REG) */
--	volatile uint32_t next;
-+	volatile __le32 next;
- };
- 
- /**********************************************************************
+> * Removes some spaces to elimite "checkpatch" warnings.
+
+I don't see any checkpatch warnings.  I assume you are talking about
+the indent changes here.
+
+>  		DEBUG_PRINT(" start addr virt 0x%p, phys 0x%lx\n",
+> -			    devpriv->desc_dio_buffer[i],
+> -			    (unsigned long)devpriv->dma_desc[i].
+> -			    pci_start_addr);
+> +			devpriv->desc_dio_buffer[i],
+> +			(unsigned long)le32_to_cpu(devpriv->dma_desc[i].
+> +			pci_start_addr));
+
+The indenting was correct in the original and the patch is wrong.
+
+regards,
+dan carpenter
