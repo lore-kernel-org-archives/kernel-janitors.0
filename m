@@ -1,50 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 14 Aug 2013 16:49:08 +0000
-Subject: Re: [PATCH 5/29] spi/spi-{bcm63xx.c,bfin-v3.c}: simplify use of devm_ioremap_resource
-Message-Id: <20130814164908.GA2401@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="5mCyUwZo2JvN/JJP"
+From: Joe Perches <joe@perches.com>
+Date: Fri, 02 Aug 2013 20:10:54 +0000
+Subject: [PATCH] pktcdvd: Fix defective misuses of pkt_<level>
+Message-Id: <1375474254.2034.134.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376471493-22215-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-6-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20130801154452.GB5198@elgon.mountain>
+In-Reply-To: <20130801154452.GB5198@elgon.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+
+Fix thinkos where pkt_<level> needs a valid
+pktcdvd_device * and the pointer is known to
+be NULL.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com> (go smatch!)
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+
+Andrew, I believe Jiri picked up this series and
+you can drop them from mm.  Thanks.
+
+ drivers/block/pktcdvd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 29a5194..5618847 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -2360,8 +2360,8 @@ static void pkt_make_request(struct request_queue *q, struct bio *bio)
+ 
+ 	pd = q->queuedata;
+ 	if (!pd) {
+-		pkt_err(pd, "%s incorrect request queue\n",
+-			bdevname(bio->bi_bdev, b));
++		pr_err("%s incorrect request queue\n",
++		       bdevname(bio->bi_bdev, b));
+ 		goto end_io;
+ 	}
+ 
+@@ -2841,7 +2841,7 @@ static int pkt_remove_dev(dev_t pkt_dev)
+ 			break;
+ 	}
+ 	if (idx = MAX_WRITERS) {
+-		pkt_dbg(1, pd, "dev not setup\n");
++		pr_debug("dev not setup\n");
+ 		ret = -ENXIO;
+ 		goto out;
+ 	}
 
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 14, 2013 at 11:11:09AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
-
-Applied, thanks.
-
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSC7T9AAoJELSic+t+oim9RUgP/iGWJ9ojjBPTSuLz9V0StxOK
-ARqaFHRNJgYvs6Nkor8p2IAvmOYqwBKInyUjgb1G2M92qxVs6C1Z9TR1WZchaLzk
-Pas9h5EAaRmIsuD2+IGUoXaKpEJ8NO4nvaydypjVaOhYdYOKszXTzLAd2jkW3fYe
-K7sI55VSzW7zpkMt6NC9Nw6AkVJItACmESwS12zE1Hy9pVlgy1HBYRpH2p4EF2kA
-uLyVoMkqtfviwKtnZs1UY7XXFcUCVvd//jpD9XJHSBltdufT3pzkdOfxzl81B6YI
-XiWHNq0jiwQJuGk/ovYnV2K00Kw5itmUnMGesUtb1EQIDCgvdcj1mwHN4gWt9tY6
-1tvYP0ZvqEiZ4fRra49piXbp2EzMQt77c8GP5jf6GerHWwWOSfOGo/OrXdNbTnmU
-l0HTkbab3FDaggSrSjGbgInyZoTEcWQvBNPnyEZR6q42KxfRVlA6eJ4q0oawXbak
-s0dcrhwwxIRPPAX2awzbN28goMjRZS3g3XlR2Z+yOlroBVDkPmEkncaxhV1R9IFM
-ctNyctCcgSAT59MiOppXzIZAm++DT+W8waagOi6ZXslYqBuWo/NPYPI4mLAa4jEs
-4uhsmnjIJrlfBqlS9oUwuJFY7vgdapYnWA96PZ9vnBU2BEnLU6vygHuH/iaE25ba
-tFnmsXm+lwyewezfNGu0
-=k3Jx
------END PGP SIGNATURE-----
-
---5mCyUwZo2JvN/JJP--
