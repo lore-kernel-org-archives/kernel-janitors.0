@@ -1,59 +1,146 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 19 Aug 2013 11:20:41 +0000
-Subject: [PATCH 7/7] mmc: mvsdio: replace devm_request_and_ioremap by devm_ioremap_resource
-Message-Id: <1376911241-27720-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 03 Aug 2013 14:06:31 +0000
+Subject: build regressions 2013-08-02
+Message-Id: <51fd0e67.7CSdq9MHCq7cDCNH%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nicolas Pitre <nico@fluxnic.net>
-Cc: kernel-janitors@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+fs/f2fs/namei.c:194: error: unknown field 'len' specified in initializer
+fs/f2fs/super.c:369: error: invalid type argument of '->'
+fs/f2fs/inode.c:63:15: error: incompatible types when assigning to type 'kuid_t' from type '__le32'
+fs/f2fs/inode.c:64:15: error: incompatible types when assigning to type 'kgid_t' from type '__le32'
+fs/f2fs/inode.c:161:2: error: aggregate value used where an integer was expected
+fs/f2fs/inode.c:162:2: error: aggregate value used where an integer was expected
 
-Use devm_ioremap_resource instead of devm_request_and_ioremap.
+[warnings]
+fs/f2fs/namei.c:194: warning: missing braces around initializer
+fs/f2fs/namei.c:194: warning: (near initialization for 'dotdot.<anonymous>')
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+Warning(include/net/cfg80211.h:2407): No description found for parameter 'channel_switch'
+drivers/gpu/drm/vmwgfx/vmwgfx_drv.c:786:7: warning: initialization discards 'const' qualifier from pointer target type [enabled by default]
+drivers/usb/gadget/g_ffs.c:76:1: warning: data definition has no type or storage class [enabled by default]
+drivers/usb/gadget/g_ffs.c:76:1: warning: type defaults to 'int' in declaration of 'USB_ETHERNET_MODULE_PARAMETERS' [-Wimplicit-int]
+drivers/usb/gadget/g_ffs.c:76:1: warning: function declaration isn't a prototype [-Wstrict-prototypes]
+drivers/gpu/drm/i915/i915_drv.h:2084:42: warning: 'ddi_translations_dp' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/mfd/max8998.c:178:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/infiniband/core/cma.c:489:23: warning: 'port' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-This was done using the semantic patch
-scripts/coccinelle/api/devm_ioremap_resource.cocci
+[sparse]
+drivers/target/mlx4_fc/mfc.c:57:5: sparse: symbol 'fctgt_dbg_lvl' was not declared. Should it be static?
+drivers/target/mlx4_fc/mfc.c:87:5: sparse: symbol 'max_cmd_per_lun' was not declared. Should it be static?
+drivers/target/mlx4_fc/mfc.c:97:21: sparse: symbol 'fip_ctlrs' was not declared. Should it be static?
+drivers/net/ethernet/mellanox/mlx4/mr.c:302:5: sparse: symbol 'mlx4_mr_reserve_range' was not declared. Should it be static?
+drivers/net/ethernet/mellanox/mlx4/mr.c:317:6: sparse: symbol 'mlx4_mr_release_range' was not declared. Should it be static?
 
-The relevant call to platform_get_resource was manually moved down to the
-call to devm_ioremap_resource.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[coccinelle]
+drivers/hid/uhid.c:390:1-7: Replace memcpy with struct assignment
+mm/memcontrol.c:1508:4-5: Unneeded semicolon
 
 ---
- drivers/mmc/host/mvsdio.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
-index 4ddd83f..2ac7d3a 100644
---- a/drivers/mmc/host/mvsdio.c
-+++ b/drivers/mmc/host/mvsdio.c
-@@ -687,9 +687,8 @@ static int __init mvsd_probe(struct platform_device *pdev)
- 	int ret, irq;
- 	struct pinctrl *pinctrl;
- 
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	irq = platform_get_irq(pdev, 0);
--	if (!r || irq < 0)
-+	if (irq < 0)
- 		return -ENXIO;
- 
- 	mmc = mmc_alloc_host(sizeof(struct mvsd_host), &pdev->dev);
-@@ -774,9 +773,10 @@ static int __init mvsd_probe(struct platform_device *pdev)
- 
- 	spin_lock_init(&host->lock);
- 
--	host->base = devm_request_and_ioremap(&pdev->dev, r);
--	if (!host->base) {
--		ret = -ENOMEM;
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	host->base = devm_ioremap_resource(&pdev->dev, r);
-+	if (IS_ERR(host->base)) {
-+		ret = PTR_ERR(host->base);
- 		goto out;
- 	}
- 
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
