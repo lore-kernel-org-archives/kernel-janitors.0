@@ -1,28 +1,17 @@
-From: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Date: Sun, 04 Aug 2013 03:41:28 +0000
-Subject: [PATCH] Staging:xgifb:Fixed a warning of Space before semicolon
-Message-Id: <1375586968-10733-1-git-send-email-kumargauravgupta3@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 04 Aug 2013 16:48:28 +0000
+Subject: Re: [PATCH] Staging:xgifb:Fixed a warning of Space before semicolon
+Message-Id: <20130804164828.GJ5102@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1375586968-10733-1-git-send-email-kumargauravgupta3@gmail.com>
+In-Reply-To: <1375586968-10733-1-git-send-email-kumargauravgupta3@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Kumar Gaurav <kumar@AnandLinux.(none)>
+Yes yes...  This applies fine.  Send it to the people...
 
-diff --git a/drivers/staging/xgifb/vb_setmode.h b/drivers/staging/xgifb/vb_setmode.h
-index 2c0a31c..679a822 100644
---- a/drivers/staging/xgifb/vb_setmode.h
-+++ b/drivers/staging/xgifb/vb_setmode.h
-@@ -13,7 +13,7 @@ extern void XGI_GetVBType(struct vb_device_info *);
- extern void XGI_SenseCRT1(struct vb_device_info *);
- extern unsigned char XGISetModeNew(struct xgifb_video_info *xgifb_info,
- 				   struct xgi_hw_device_info *HwDeviceExtension,
--				   unsigned short ModeNo) ;
-+				   unsigned short ModeNo);
- 
- extern unsigned char XGI_SearchModeID(unsigned short ModeNo,
- 				      unsigned short *ModeIdIndex,
--- 
-1.7.9.5
+regards,
+dan carpenter
 
