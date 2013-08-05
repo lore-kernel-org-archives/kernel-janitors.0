@@ -1,25 +1,40 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Mon, 12 Aug 2013 08:11:35 +0000
-Subject: Re: [patch] iwlwifi: pcie: returning positive instead of negative
-Message-Id: <1376295095.11514.0.camel@jlt4.sipsolutions.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 05 Aug 2013 14:47:38 +0000
+Subject: [PATCH] net/vmw_vsock/af_vsock.c: drop unneeded semicolon
+Message-Id: <1375714059-29567-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130810230321.GA19051@elgon.mountain>
-	 (sfid-20130811_010349_606599_4F723F94)
-In-Reply-To: <20130810230321.GA19051@elgon.mountain> (sfid-20130811_010349_606599_4F723F94)
+References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2013-08-11 at 02:03 +0300, Dan Carpenter wrote:
-> There is a missing '-' character here so we return positive 'ENOMEM'
-> instead of negative.  The caller doesn't care.  All non-zero returns
-> are translated to '-ENOMEM' in iwl_pcie_nic_init().
-> 
-> This is just a cleanup.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied, thanks.
+Drop the semicolon at the end of the list_for_each_entry loop header.
 
-johannes
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested, but I can't imagine how the current code could work, since vsk
+should end up pointing to a dummy value.
+
+ net/vmw_vsock/af_vsock.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index 593071d..4d93346 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -347,7 +347,7 @@ void vsock_for_each_connected_socket(void (*fn)(struct sock *sk))
+ 	for (i = 0; i < ARRAY_SIZE(vsock_connected_table); i++) {
+ 		struct vsock_sock *vsk;
+ 		list_for_each_entry(vsk, &vsock_connected_table[i],
+-				    connected_table);
++				    connected_table)
+ 			fn(sk_vsock(vsk));
+ 	}
+ 
 
