@@ -1,164 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 26 Aug 2013 15:10:01 +0000
-Subject: [patch] serial: icom: move array overflow checks earlier
-Message-Id: <20130826151001.GC12428@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 05 Aug 2013 14:47:37 +0000
+Subject: [PATCH] drivers/scsi/lpfc/lpfc_init.c: adjust code alignment
+Message-Id: <1375714059-29567-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James Smart <james.smart@emulex.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This code does an annoying thing where it writes to the array and then
-checks later for array overflows.  I don't know if it's actually
-possible to overflow but let's check before using the array index.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Adjust code alignment so that each statement is lined up with its neighbor.
 
-diff --git a/drivers/tty/serial/icom.c b/drivers/tty/serial/icom.c
-index 06555dd..c5ed86a 100644
---- a/drivers/tty/serial/icom.c
-+++ b/drivers/tty/serial/icom.c
-@@ -297,25 +297,25 @@ static void stop_processor(struct icom_port *icom_port)
- 	spin_lock_irqsave(&icom_lock, flags);
+In the second case, it could be desirable to put the call to
+lpfc_destroy_vport_work_array under the if.  The call, is, however, safe
+in case vports is NULL, so the patch just adjusts the indentation to
+reflect the current semantics.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+
+ drivers/scsi/lpfc/lpfc_init.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index e0b20fa..f870421 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -692,7 +692,7 @@ lpfc_hba_init_link_fc_topology(struct lpfc_hba *phba, uint32_t fc_topology,
+ 			"1302 Invalid speed for this board:%d "
+ 			"Reset link speed to auto.\n",
+ 			phba->cfg_link_speed);
+-			phba->cfg_link_speed = LPFC_USER_LINK_SPEED_AUTO;
++		phba->cfg_link_speed = LPFC_USER_LINK_SPEED_AUTO;
+ 	}
+ 	lpfc_init_link(phba, pmb, fc_topology, phba->cfg_link_speed);
+ 	pmb->mbox_cmpl = lpfc_sli_def_mbox_cmpl;
+@@ -2702,7 +2702,7 @@ lpfc_online(struct lpfc_hba *phba)
+ 			}
+ 			spin_unlock_irq(shost->host_lock);
+ 		}
+-		lpfc_destroy_vport_work_array(phba, vports);
++	lpfc_destroy_vport_work_array(phba, vports);
  
- 	port = icom_port->port;
-+	if (port >= ARRAY_SIZE(stop_proc)) {
-+		dev_err(&icom_port->adapter->pci_dev->dev,
-+			"Invalid port assignment\n");
-+		goto unlock;
-+	}
-+
- 	if (port = 0 || port = 1)
- 		stop_proc[port].global_control_reg = &icom_port->global_reg->control;
- 	else
- 		stop_proc[port].global_control_reg = &icom_port->global_reg->control_2;
- 
-+	temp = readl(stop_proc[port].global_control_reg);
-+	temp = (temp & ~start_proc[port].processor_id) | stop_proc[port].processor_id;
-+	writel(temp, stop_proc[port].global_control_reg);
- 
--	if (port < 4) {
--		temp = readl(stop_proc[port].global_control_reg);
--		temp -			(temp & ~start_proc[port].processor_id) | stop_proc[port].processor_id;
--		writel(temp, stop_proc[port].global_control_reg);
--
--		/* write flush */
--		readl(stop_proc[port].global_control_reg);
--	} else {
--		dev_err(&icom_port->adapter->pci_dev->dev,
--                        "Invalid port assignment\n");
--	}
-+	/* write flush */
-+	readl(stop_proc[port].global_control_reg);
- 
-+unlock:
- 	spin_unlock_irqrestore(&icom_lock, flags);
- }
- 
-@@ -328,23 +328,25 @@ static void start_processor(struct icom_port *icom_port)
- 	spin_lock_irqsave(&icom_lock, flags);
- 
- 	port = icom_port->port;
-+	if (port >= ARRAY_SIZE(start_proc)) {
-+		dev_err(&icom_port->adapter->pci_dev->dev,
-+			"Invalid port assignment\n");
-+		goto unlock;
-+	}
-+
- 	if (port = 0 || port = 1)
- 		start_proc[port].global_control_reg = &icom_port->global_reg->control;
- 	else
- 		start_proc[port].global_control_reg = &icom_port->global_reg->control_2;
--	if (port < 4) {
--		temp = readl(start_proc[port].global_control_reg);
--		temp -			(temp & ~stop_proc[port].processor_id) | start_proc[port].processor_id;
--		writel(temp, start_proc[port].global_control_reg);
- 
--		/* write flush */
--		readl(start_proc[port].global_control_reg);
--	} else {
--		dev_err(&icom_port->adapter->pci_dev->dev,
--                        "Invalid port assignment\n");
--	}
-+	temp = readl(start_proc[port].global_control_reg);
-+	temp = (temp & ~stop_proc[port].processor_id) | start_proc[port].processor_id;
-+	writel(temp, start_proc[port].global_control_reg);
-+
-+	/* write flush */
-+	readl(start_proc[port].global_control_reg);
- 
-+unlock:
- 	spin_unlock_irqrestore(&icom_lock, flags);
- }
- 
-@@ -557,6 +559,12 @@ static int startup(struct icom_port *icom_port)
- 	 */
- 	spin_lock_irqsave(&icom_lock, flags);
- 	port = icom_port->port;
-+	if (port >= ARRAY_SIZE(int_mask_tbl)) {
-+		dev_err(&icom_port->adapter->pci_dev->dev,
-+			"Invalid port assignment\n");
-+		goto unlock;
-+	}
-+
- 	if (port = 0 || port = 1)
- 		int_mask_tbl[port].global_int_mask = &icom_port->global_reg->int_mask;
- 	else
-@@ -566,17 +574,14 @@ static int startup(struct icom_port *icom_port)
- 		writew(0x00FF, icom_port->int_reg);
- 	else
- 		writew(0x3F00, icom_port->int_reg);
--	if (port < 4) {
--		temp = readl(int_mask_tbl[port].global_int_mask);
--		writel(temp & ~int_mask_tbl[port].processor_id, int_mask_tbl[port].global_int_mask);
- 
--		/* write flush */
--		readl(int_mask_tbl[port].global_int_mask);
--	} else {
--		dev_err(&icom_port->adapter->pci_dev->dev,
--                        "Invalid port assignment\n");
--	}
-+	temp = readl(int_mask_tbl[port].global_int_mask);
-+	writel(temp & ~int_mask_tbl[port].processor_id, int_mask_tbl[port].global_int_mask);
-+
-+	/* write flush */
-+	readl(int_mask_tbl[port].global_int_mask);
- 
-+unlock:
- 	spin_unlock_irqrestore(&icom_lock, flags);
+ 	lpfc_unblock_mgmt_io(phba);
  	return 0;
- }
-@@ -595,21 +600,23 @@ static void shutdown(struct icom_port *icom_port)
- 	 * disable all interrupts
- 	 */
- 	port = icom_port->port;
-+	if (port >= ARRAY_SIZE(int_mask_tbl)) {
-+		dev_err(&icom_port->adapter->pci_dev->dev,
-+			"Invalid port assignment\n");
-+		goto unlock;
-+	}
- 	if (port = 0 || port = 1)
- 		int_mask_tbl[port].global_int_mask = &icom_port->global_reg->int_mask;
- 	else
- 		int_mask_tbl[port].global_int_mask = &icom_port->global_reg->int_mask_2;
- 
--	if (port < 4) {
--		temp = readl(int_mask_tbl[port].global_int_mask);
--		writel(temp | int_mask_tbl[port].processor_id, int_mask_tbl[port].global_int_mask);
-+	temp = readl(int_mask_tbl[port].global_int_mask);
-+	writel(temp | int_mask_tbl[port].processor_id, int_mask_tbl[port].global_int_mask);
- 
--		/* write flush */
--		readl(int_mask_tbl[port].global_int_mask);
--	} else {
--		dev_err(&icom_port->adapter->pci_dev->dev,
--                        "Invalid port assignment\n");
--	}
-+	/* write flush */
-+	readl(int_mask_tbl[port].global_int_mask);
-+
-+unlock:
- 	spin_unlock_irqrestore(&icom_lock, flags);
- 
- 	/*
+
