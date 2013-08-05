@@ -1,48 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 05 Aug 2013 16:30:54 +0000
+From: Jonathan Corbet <corbet@lwn.net>
+Date: Mon, 05 Aug 2013 16:52:14 +0000
 Subject: Re: [PATCH] trivial: adjust code alignment
-Message-Id: <20130805163054.GN5102@mwanda>
+Message-Id: <20130805105214.14b77ced@lwn.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
- <1375714059-29567-5-git-send-email-Julia.Lawall@lip6.fr>
- <20130805160645.GI5051@mwanda>
- <1375719427.3133.31.camel@joe-AO722>
-In-Reply-To: <1375719427.3133.31.camel@joe-AO722>
+	<1375714059-29567-5-git-send-email-Julia.Lawall@lip6.fr>
+	<20130805160645.GI5051@mwanda>
+	<alpine.DEB.2.02.1308051810360.2134@hadrien>
+In-Reply-To: <alpine.DEB.2.02.1308051810360.2134@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, trivial@kernel.org, kernel-janitors@vger.kernel.org, m.chehab@samsung.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2013 at 09:17:07AM -0700, Joe Perches wrote:
-> On Mon, 2013-08-05 at 19:06 +0300, Dan Carpenter wrote:
-> > On Mon, Aug 05, 2013 at 04:47:39PM +0200, Julia Lawall wrote:
-> > > diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> []
-> > > @@ -1369,8 +1369,8 @@ static int ov7670_s_exp(struct v4l2_subdev *sd, int value)
-> > >  	unsigned char com1, com8, aech, aechh;
-> > >  
-> > >  	ret = ov7670_read(sd, REG_COM1, &com1) +
-> > > -		ov7670_read(sd, REG_COM8, &com8);
-> > > -		ov7670_read(sd, REG_AECHH, &aechh);
-> > > +	ov7670_read(sd, REG_COM8, &com8);
-> > > +	ov7670_read(sd, REG_AECHH, &aechh);
-> > >  	if (ret)
-> > >  		return ret;
-> > >  
-> > 
-> > The new indenting isn't correct here and anyway the intent was to
-> > combine all the error codes together and return them as an error
-> > code jumble.  I'm not a fan of error code jumbles, probably the
-> > right thing is to check each function call or, barring that, to
-> > return -EIO.
-> 
-> ov7670_read via i2c_transfer can return a positive # too.
-> Perhaps all of these should be individually tested for "< 0".
+On Mon, 5 Aug 2013 18:19:18 +0200 (CEST)
+Julia Lawall <julia.lawall@lip6.fr> wrote:
 
-You're misreading something.  ov7670_read_i2c() only returns zero
-and negative error codes.
+> Oops, thanks for spotting that.  I'm not sure whether it is safe to abort 
+> these calls as soon as the first one fails, but perhaps I could introduce 
+> some more variables, and test them all afterwards.
 
-regards,
-dan carpenter
+Yes, it would be safe.  But it's hard to imagine a scenario where any of
+those particular calls would fail that doesn't involve smoke.
 
+The code is evidence of ancient laziness on my part.  I'll add fixing it
+up to my list of things to do.
+
+Thanks,
+
+jon
