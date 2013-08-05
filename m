@@ -1,44 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 09 Aug 2013 07:21:58 +0000
-Subject: Re: Thoughts on removing this declaration
-Message-Id: <20130809072158.GG5502@mwanda>
+From: "Rustad, Mark D" <mark.d.rustad@intel.com>
+Date: Mon, 05 Aug 2013 18:18:01 +0000
+Subject: Re: [patch] net: remove an unneeded check
+Message-Id: <F3E01662-FC33-4FB8-AF30-47DF44252296@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <201308082332.r78NWRBq272176@rivendell.pollux.laing>
-In-Reply-To: <201308082332.r78NWRBq272176@rivendell.pollux.laing>
+References: <20130729191519.GA11874@elgon.mountain>
+In-Reply-To: <20130729191519.GA11874@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>, "<kernel-janitors@vger.kernel.org>" <kernel-janitors@vger.kernel.org>
 
-On Thu, Aug 08, 2013 at 05:32:27PM -0600, Shaun Laing wrote:
-> Hello -- what are your thoughts on this patch?  SBE_INCLUDE_SYMBOLS came out
-> easily... too easily really.  Was it there on purpose?
+On Jul 29, 2013, at 12:15 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> "ifa->ifa_label" is an array inside the in_ifaddr struct.  It can never
+> be NULL so we can remove this check.
 > 
-
-Yeah.  It's unfortunately a common thing.  :/  I'm not sure how it
-is useful.
-
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> Removed the unused SBE_INCLUDE_SYMBOLS #define, and the associated STATIC
-> #define, and replaced all occurances of STATIC with 'static'.  This was in
-> response to sparse warnings of the form "symbol 'XYZ' was not declared. Should
-> it be static?". 
+> diff --git a/net/ipv4/devinet.c b/net/ipv4/devinet.c
+> index 8d48c39..1b7f7ae 100644
+> --- a/net/ipv4/devinet.c
+> +++ b/net/ipv4/devinet.c
+> @@ -1124,10 +1124,7 @@ static int inet_gifconf(struct net_device *dev, char __user *buf, int len)
+> 		if (len < (int) sizeof(ifr))
+> 			break;
+> 		memset(&ifr, 0, sizeof(struct ifreq));
+> -		if (ifa->ifa_label)
+
+Is there any possibility that this was meant to check ifa->ifa_label[0]?
+
+> -			strcpy(ifr.ifr_name, ifa->ifa_label);
+> -		else
+> -			strcpy(ifr.ifr_name, dev->name);
+> +		strcpy(ifr.ifr_name, ifa->ifa_label);
 > 
-
-It is unneeded but it's not unused, it's always defined for
-everything.  When SBE_INCLUDE_SYMBOLS is defined it makes the STATIC
-disappear.
-
-> Also had to add #ifdef around a function prototype as the 'static' declaration
-> produced a new gcc warning, as the actual function was not defined.
-
-The function is defined, of course, as you know.  The forward
-declaration isn't needed.  Just remove it instead of adding the
-ifdef.
-
-Looks good, though.  Could you tweak the changelog, and remove the
-prototype and resend?
-
-regards,
-dan carpenter
+> 		(*(struct sockaddr_in *)&ifr.ifr_addr).sin_family = AF_INET;
+> 		(*(struct sockaddr_in *)&ifr.ifr_addr).sin_addr.s_addr 
+-- 
+Mark Rustad, Networking Division, Intel Corporation
 
