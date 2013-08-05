@@ -1,25 +1,48 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 05 Aug 2013 16:28:08 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 05 Aug 2013 16:30:54 +0000
 Subject: Re: [PATCH] trivial: adjust code alignment
-Message-Id: <alpine.DEB.2.02.1308051827580.2134@hadrien>
+Message-Id: <20130805163054.GN5102@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr> <1375714059-29567-5-git-send-email-Julia.Lawall@lip6.fr> <20130805160645.GI5051@mwanda> <alpine.DEB.2.02.1308051810360.2134@hadrien> <51FFD1CB.4080907@bfs.de>
-In-Reply-To: <51FFD1CB.4080907@bfs.de>
+References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1375714059-29567-5-git-send-email-Julia.Lawall@lip6.fr>
+ <20130805160645.GI5051@mwanda>
+ <1375719427.3133.31.camel@joe-AO722>
+In-Reply-To: <1375719427.3133.31.camel@joe-AO722>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Dan Carpenter <dan.carpenter@oracle.com>, trivial@kernel.org, kernel-janitors@vger.kernel.org, corbet@lwn.net, m.chehab@samsung.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joe Perches <joe@perches.com>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 5 Aug 2013, walter harms wrote:
+On Mon, Aug 05, 2013 at 09:17:07AM -0700, Joe Perches wrote:
+> On Mon, 2013-08-05 at 19:06 +0300, Dan Carpenter wrote:
+> > On Mon, Aug 05, 2013 at 04:47:39PM +0200, Julia Lawall wrote:
+> > > diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> []
+> > > @@ -1369,8 +1369,8 @@ static int ov7670_s_exp(struct v4l2_subdev *sd, int value)
+> > >  	unsigned char com1, com8, aech, aechh;
+> > >  
+> > >  	ret = ov7670_read(sd, REG_COM1, &com1) +
+> > > -		ov7670_read(sd, REG_COM8, &com8);
+> > > -		ov7670_read(sd, REG_AECHH, &aechh);
+> > > +	ov7670_read(sd, REG_COM8, &com8);
+> > > +	ov7670_read(sd, REG_AECHH, &aechh);
+> > >  	if (ret)
+> > >  		return ret;
+> > >  
+> > 
+> > The new indenting isn't correct here and anyway the intent was to
+> > combine all the error codes together and return them as an error
+> > code jumble.  I'm not a fan of error code jumbles, probably the
+> > right thing is to check each function call or, barring that, to
+> > return -EIO.
+> 
+> ov7670_read via i2c_transfer can return a positive # too.
+> Perhaps all of these should be individually tested for "< 0".
 
-> Hello Julia,
->
-> IMHO keep the patch as it is.
-> It does not change any code that is good.
-> Suspicious code that comes up here can be addressed
-> in a separate patch.
+You're misreading something.  ov7670_read_i2c() only returns zero
+and negative error codes.
 
-OK, thanks!
+regards,
+dan carpenter
 
-julia
