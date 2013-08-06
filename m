@@ -1,35 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 05 Aug 2013 17:05:45 +0000
+From: Joe Perches <joe@perches.com>
+Date: Tue, 06 Aug 2013 00:51:09 +0000
 Subject: Re: [PATCH] trivial: adjust code alignment
-Message-Id: <20130805170544.GO5102@mwanda>
+Message-Id: <1375750269.1968.18.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
- <1375714059-29567-5-git-send-email-Julia.Lawall@lip6.fr>
- <20130805160645.GI5051@mwanda>
- <alpine.DEB.2.02.1308051810360.2134@hadrien>
- <51FFD1CB.4080907@bfs.de>
-In-Reply-To: <51FFD1CB.4080907@bfs.de>
+	 <1375714059-29567-5-git-send-email-Julia.Lawall@lip6.fr>
+	 <20130805160645.GI5051@mwanda> <1375719427.3133.31.camel@joe-AO722>
+	 <20130805163054.GN5102@mwanda>
+In-Reply-To: <20130805163054.GN5102@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, trivial@kernel.org, kernel-janitors@vger.kernel.org, corbet@lwn.net, m.chehab@samsung.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2013 at 06:24:43PM +0200, walter harms wrote:
-> Hello Julia,
-> 
-> IMHO keep the patch as it is.
-> It does not change any code that is good.
-> Suspicious code that comes up here can be addressed
-> in a separate patch.
-> 
+On Mon, 2013-08-05 at 19:30 +0300, Dan Carpenter wrote:
+> On Mon, Aug 05, 2013 at 09:17:07AM -0700, Joe Perches wrote:
+> > ov7670_read via i2c_transfer can return a positive # too.
+> > Perhaps all of these should be individually tested for "< 0".
+> You're misreading something.  ov7670_read_i2c() only returns zero
+> and negative error codes.
 
-Gar... No, if we silence static checker warnings without fixing the
-bug then we are hiding real problems and making them more difficult
-to find.
+Yup, right, thanks, I skimmed over the
 
-Just drop this chunk.
+	if (ret >= 0) {
+		...
+		ret = 0;
+	}
 
-regards,
-dan carpenter
+bit in ov7670_read_i2c
+
+though I think this function via the i2c_transfer
+can return 0 messages transferred as "success".
+
 
