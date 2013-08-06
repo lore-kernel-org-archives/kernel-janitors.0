@@ -1,43 +1,62 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Date: Mon, 05 Aug 2013 14:59:55 +0000
+From: Steve Dickson <SteveD@redhat.com>
+Date: Tue, 06 Aug 2013 18:04:13 +0000
 Subject: Re: [PATCH] fs/nfs/inode.c: adjust code alignment
-Message-Id: <1375714793.7337.12.camel@leira.trondhjem.org>
+Message-Id: <52013A9D.4010905@RedHat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1375714059-29567-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1375714059-29567-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>  <1375714059-29567-2-git-send-email-Julia.Lawall@lip6.fr> <1375714793.7337.12.camel@leira.trondhjem.org>
+In-Reply-To: <1375714793.7337.12.camel@leira.trondhjem.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Steve Dickson <steved@redhat.com>, David Quigley <dpquigl@davequigley.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, David Quigley <dpquigl@davequigley.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-T24gTW9uLCAyMDEzLTA4LTA1IGF0IDE2OjQ3ICswMjAwLCBKdWxpYSBMYXdhbGwgd3JvdGU6DQo+
-IEZyb206IEp1bGlhIExhd2FsbCA8SnVsaWEuTGF3YWxsQGxpcDYuZnI+DQo+IA0KPiBTaWduZWQt
-b2ZmLWJ5OiBKdWxpYSBMYXdhbGwgPEp1bGlhLkxhd2FsbEBsaXA2LmZyPg0KPiANCj4gLS0tDQo+
-IA0KPiBUaGlzIHBhdGNoIGFkanVzdHMgdGhlIGNvZGUgc28gdGhhdCB0aGUgYWxpZ25tZW50IG1h
-dGNoZXMgdGhlIGN1cnJlbnQNCj4gc2VtYW50aWNzLiAgSSBoYXZlIG5vIGlkZWEgaWYgaXQgaXMg
-dGhlIGludGVuZGVkIHNlbWFudGljcywgdGhvdWdoLiAgU2hvdWxkDQo+IHRoZSBjYWxsIHRvIG5m
-c19zZXRzZWN1cml0eSBhbHNvIGJlIHVuZGVyIHRoZSBlbHNlPw0KPiANCg0KPiAgZnMvbmZzL2lu
-b2RlLmMgfCAgICAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
-ZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9mcy9uZnMvaW5vZGUuYyBiL2ZzL25mcy9pbm9k
-ZS5jDQo+IGluZGV4IGFmNmU4MDYuLmQ4YWQ2ODUgMTAwNjQ0DQo+IC0tLSBhL2ZzL25mcy9pbm9k
-ZS5jDQo+ICsrKyBiL2ZzL25mcy9pbm9kZS5jDQo+IEBAIC00NjMsNyArNDYzLDcgQEAgbmZzX2Zo
-Z2V0KHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHN0cnVjdCBuZnNfZmgNCj4gKmZoLCBzdHJ1Y3Qg
-bmZzX2ZhdHRyICpmYXR0ciwgc3QNCj4gICAgICAgICAgICAgICAgIHVubG9ja19uZXdfaW5vZGUo
-aW5vZGUpOw0KPiAgICAgICAgIH0gZWxzZQ0KPiAgICAgICAgICAgICAgICAgbmZzX3JlZnJlc2hf
-aW5vZGUoaW5vZGUsIGZhdHRyKTsNCj4gLSAgICAgICAgICAgICAgIG5mc19zZXRzZWN1cml0eShp
-bm9kZSwgZmF0dHIsIGxhYmVsKTsNCj4gKyAgICAgICBuZnNfc2V0c2VjdXJpdHkoaW5vZGUsIGZh
-dHRyLCBsYWJlbCk7DQo+ICAgICAgICAgZHByaW50aygiTkZTOiBuZnNfZmhnZXQoJXMvJUxkIGZo
-X2NyYz0weCUwOHggY3Q9JWQpXG4iLA0KPiAgICAgICAgICAgICAgICAgaW5vZGUtPmlfc2ItPnNf
-aWQsDQo+ICAgICAgICAgICAgICAgICAobG9uZyBsb25nKU5GU19GSUxFSUQoaW5vZGUpLA0KDQpI
-aSBKdWxpYSwNCg0KVGhhbmtzIGZvciBwb2ludGluZyB0aGlzIG91dCEgR2l2ZW4gdGhhdCB0aGUg
-J3RoZW4nIGNsYXVzZSBvZiB0aGUgaWYNCnN0YXRlbWVudCBhbHJlYWR5IGNhbGxzIG5mc19zZXRz
-ZWN1cml0eSBiZWZvcmUgdW5sb2NraW5nIHRoZSBpbm9kZSwgSQ0Kc3VzcGVjdCB0aGF0IHRoZSBh
-Ym92ZSBfc2hvdWxkXyByZWFsbHkgYmUgcGFydCBvZiB0aGUgJ2Vsc2UnIGNsYXVzZS4gDQoNClRo
-YXQgc2FpZCwgSSBjYW4ndCBzZWUgdGhhdCBjYWxsaW5nIG5mc19zZXRzZWN1cml0eSB0d2ljZSBv
-biB0aGUgaW5vZGUNCmNhbiBjYXVzZSBhbnkgdW5pbnRlbmRlZCBzaWRlLWVmZmVjdHMsIHNvIEkg
-c3VnZ2VzdCB0aGF0IHdlIHJhdGhlciBxdWV1ZQ0KdGhlIHBhdGNoIHVwIGZvciBpbmNsdXNpb24g
-aW4gMy4xMi4NClN0ZXZlIGFuZCBEYXZlLCBhbnkgY29tbWVudHM/DQoNCi0tIA0KVHJvbmQgTXlr
-bGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXINCg0KTmV0QXBwDQpUcm9uZC5NeWts
-ZWJ1c3RAbmV0YXBwLmNvbQ0Kd3d3Lm5ldGFwcC5jb20NCg=
+Hello,
+
+On 05/08/13 10:59, Myklebust, Trond wrote:
+> On Mon, 2013-08-05 at 16:47 +0200, Julia Lawall wrote:
+>> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>>
+>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>>
+>> ---
+>>
+>> This patch adjusts the code so that the alignment matches the current
+>> semantics.  I have no idea if it is the intended semantics, though.  Should
+>> the call to nfs_setsecurity also be under the else?
+>>
+> 
+>>  fs/nfs/inode.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+>> index af6e806..d8ad685 100644
+>> --- a/fs/nfs/inode.c
+>> +++ b/fs/nfs/inode.c
+>> @@ -463,7 +463,7 @@ nfs_fhget(struct super_block *sb, struct nfs_fh
+>> *fh, struct nfs_fattr *fattr, st
+>>                 unlock_new_inode(inode);
+>>         } else
+>>                 nfs_refresh_inode(inode, fattr);
+>> -               nfs_setsecurity(inode, fattr, label);
+>> +       nfs_setsecurity(inode, fattr, label);
+This call to nfs_setsecurity() is not needed. The security only needs
+to be set when the i-node is created... 
+
+steved.
+
+>>         dprintk("NFS: nfs_fhget(%s/%Ld fh_crc=0x%08x ct=%d)\n",
+>>                 inode->i_sb->s_id,
+>>                 (long long)NFS_FILEID(inode),
+> 
+> Hi Julia,
+> 
+> Thanks for pointing this out! Given that the 'then' clause of the if
+> statement already calls nfs_setsecurity before unlocking the inode, I
+> suspect that the above _should_ really be part of the 'else' clause. 
+> 
+> That said, I can't see that calling nfs_setsecurity twice on the inode
+> can cause any unintended side-effects, so I suggest that we rather queue
+> the patch up for inclusion in 3.12.
+> Steve and Dave, any comments?
+> 
