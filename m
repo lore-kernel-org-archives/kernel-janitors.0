@@ -1,68 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 08 Aug 2013 19:32:51 +0000
-Subject: [PATCH] convert comma to semicolon
-Message-Id: <1375990372-19033-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Joe Perches <joe@perches.com>
+Date: Thu, 08 Aug 2013 19:43:18 +0000
+Subject: Re: [PATCH] convert comma to semicolon
+Message-Id: <1375990998.2424.168.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1375990372-19033-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1375990372-19033-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: trivial@kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These patches result from the following semantic patch
-(http://coccinelle.lip6.fr/), which checks for expression statements
-separated by , rather than by ;.  The rule is quite conservative in that it
-only finds cases where this pattern appears after a statement that ends
-with ;, to ensure that the expression statements do not form an if branch
-or loop body.  Iteration is used to treat arbitrary sequences of commas.
+On Thu, 2013-08-08 at 21:32 +0200, Julia Lawall wrote:
+> These patches result from the following semantic patch
+> (http://coccinelle.lip6.fr/), which checks for expression statements
+> separated by , rather than by ;.  The rule is quite conservative in that it
+> only finds cases where this pattern appears after a statement that ends
+> with ;, to ensure that the expression statements do not form an if branch
+> or loop body.  Iteration is used to treat arbitrary sequences of commas.
 
-// <smpl>
-@initialize:ocaml@
+Nice.
 
-let tbl = Hashtbl.create(100)
+Maybe there also some cases where a block close brace
+is followed by a statement , then statement ;
 
-let add_if_not_present file try let _ = Hashtbl.find tbl file in ()
-with Not_found ->
-   Hashtbl.add tbl file ();
-   let it = new iteration() in
-   it#set_files [file];
-   it#register()
+Like from fs/reiserfs/fix_node.c
 
-@script:ocaml@
-@@
-Hashtbl.clear tbl
+   231          if ((unsigned int)cur_free >   232              (vn->vn_size -
+   233               ((vi->vi_type & VI_TYPE_LEFT_MERGEABLE) ? IH_SIZE : 0))) {
+   234                  /* all contents of S[0] fits into L[0] */
+   235  
+   236                  RFALSE(vn->vn_mode = M_INSERT || vn->vn_mode = M_PASTE,
+   237                         "vs-8055: invalid mode or balance condition failed");
+   238  
+   239                  tb->lnum[0] = vn->vn_nr_item;
+   240                  tb->lbytes = -1;
+   241                  return;
+   242          }
+   243  
+   244          d_size = 0, ih_size = IH_SIZE;
 
-@r@
-expression e1,e2,e;
-position p1,p2;
-type T;
-identifier i;
-@@
-
-(
-T i = ...;
-|
- e;
-)
- e1,@p1 e2@p2;
-
-@script:ocaml@
-p1 << r.p1;
-p2 << r.p2;
-@@
-
-if (List.hd p1).line = (List.hd p2).line
-then include_match false
-else add_if_not_present ((List.hd p1).file)
-
-@@
-expression e1,e2;
-position r.p1;
-@@
-
- e1
-- ,@p1
-+ ;
-  e2;
-// </smpl>
 
