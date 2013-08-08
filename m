@@ -1,46 +1,68 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Thu, 15 Aug 2013 03:19:44 +0000
-Subject: Re: [PATCH 20/29] watchdog: s3c2410_wdt: simplify use of devm_ioremap_resource
-Message-Id: <520C48D0.40509@roeck-us.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 08 Aug 2013 19:32:51 +0000
+Subject: [PATCH] convert comma to semicolon
+Message-Id: <1375990372-19033-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376471493-22215-21-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-21-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/14/2013 02:11 AM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
->
-> Move the call to platform_get_resource adjacent to the call to
-> devm_ioremap_resource to make the connection between them more clear.
->
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression pdev,res,n,e,e1;
-> expression ret != 0;
-> identifier l;
-> @@
->
-> - res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->    ... when != res
-> - if (res = NULL) { ... \(goto l;\|return ret;\) }
->    ... when != res
-> + res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->    e = devm_ioremap_resource(e1, res);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
+These patches result from the following semantic patch
+(http://coccinelle.lip6.fr/), which checks for expression statements
+separated by , rather than by ;.  The rule is quite conservative in that it
+only finds cases where this pattern appears after a statement that ends
+with ;, to ensure that the expression statements do not form an if branch
+or loop body.  Iteration is used to treat arbitrary sequences of commas.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+// <smpl>
+@initialize:ocaml@
 
+let tbl = Hashtbl.create(100)
+
+let add_if_not_present file try let _ = Hashtbl.find tbl file in ()
+with Not_found ->
+   Hashtbl.add tbl file ();
+   let it = new iteration() in
+   it#set_files [file];
+   it#register()
+
+@script:ocaml@
+@@
+Hashtbl.clear tbl
+
+@r@
+expression e1,e2,e;
+position p1,p2;
+type T;
+identifier i;
+@@
+
+(
+T i = ...;
+|
+ e;
+)
+ e1,@p1 e2@p2;
+
+@script:ocaml@
+p1 << r.p1;
+p2 << r.p2;
+@@
+
+if (List.hd p1).line = (List.hd p2).line
+then include_match false
+else add_if_not_present ((List.hd p1).file)
+
+@@
+expression e1,e2;
+position r.p1;
+@@
+
+ e1
+- ,@p1
++ ;
+  e2;
+// </smpl>
 
