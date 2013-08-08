@@ -1,28 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 30 Aug 2013 21:54:57 +0000
-Subject: Re: [patch v2] net/fec: cleanup types in fec_get_mac()
-Message-Id: <20130830.175457.2230524537752247474.davem@davemloft.net>
+From: Kumar Gaurav <kumargauravgupta3@gmail.com>
+Date: Thu, 08 Aug 2013 19:32:49 +0000
+Subject: [PATCH] net:ethernet:korina.c Removed IRQF_DISABLED
+Message-Id: <1375989649-7252-1-git-send-email-kumargauravgupta3@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1377261869.3364.3.camel@bwh-desktop.uk.level5networks.com>
-	<20130829082514.GB14334@elgon.mountain>
-In-Reply-To: <20130829082514.GB14334@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: grant.likely@linaro.org, rob.herring@calxeda.com, fabio.estevam@freescale.com, Frank.Li@freescale.com, jim_baxter@mentor.com, B38611@freescale.com, netdev@vger.kernel.org, bhutchings@solarflare.com, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, emilio@elopez.com.ar, mugunthanvnm@ti.com, jg1.han@samsung.com, hsweeten@visionengravers.com
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Kumar Gaurav <kumargauravgupta3@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Aug 2013 11:25:14 +0300
+Removed IRQF_DISABLED as it's no-op and should be removed
 
-> My static checker complains that on some arches unsigned longs can be 8
-> characters which is larger than the buffer is only 6 chars.
-> Additionally, Ben Hutchings points out that the buffer actually holds
-> big endian data and the buffer we are reading from is CPU endian.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: fix endian annotations and reverse the beXX_to_cpu() calls so that
->     they say cpu_to_beXX().
+Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
+---
+ drivers/net/ethernet/korina.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Applied, thanks.
+diff --git a/drivers/net/ethernet/korina.c b/drivers/net/ethernet/korina.c
+index 270e65f..a36fa80 100644
+--- a/drivers/net/ethernet/korina.c
++++ b/drivers/net/ethernet/korina.c
+@@ -996,14 +996,14 @@ static int korina_open(struct net_device *dev)
+ 	 * that handles the Done Finished
+ 	 * Ovr and Und Events */
+ 	ret = request_irq(lp->rx_irq, korina_rx_dma_interrupt,
+-			IRQF_DISABLED, "Korina ethernet Rx", dev);
++			0, "Korina ethernet Rx", dev);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "%s: unable to get Rx DMA IRQ %d\n",
+ 		    dev->name, lp->rx_irq);
+ 		goto err_release;
+ 	}
+ 	ret = request_irq(lp->tx_irq, korina_tx_dma_interrupt,
+-			IRQF_DISABLED, "Korina ethernet Tx", dev);
++			0, "Korina ethernet Tx", dev);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "%s: unable to get Tx DMA IRQ %d\n",
+ 		    dev->name, lp->tx_irq);
+@@ -1012,7 +1012,7 @@ static int korina_open(struct net_device *dev)
+ 
+ 	/* Install handler for overrun error. */
+ 	ret = request_irq(lp->ovr_irq, korina_ovr_interrupt,
+-			IRQF_DISABLED, "Ethernet Overflow", dev);
++			0, "Ethernet Overflow", dev);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "%s: unable to get OVR IRQ %d\n",
+ 		    dev->name, lp->ovr_irq);
+@@ -1021,7 +1021,7 @@ static int korina_open(struct net_device *dev)
+ 
+ 	/* Install handler for underflow error. */
+ 	ret = request_irq(lp->und_irq, korina_und_interrupt,
+-			IRQF_DISABLED, "Ethernet Underflow", dev);
++			0, "Ethernet Underflow", dev);
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "%s: unable to get UND IRQ %d\n",
+ 		    dev->name, lp->und_irq);
+-- 
+1.7.9.5
+
