@@ -1,38 +1,56 @@
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-Date: Sun, 04 Aug 2013 18:56:41 +0000
-Subject: Re: [PATCH] Staging:xgifb:Fixed a warning of Space before semicolon
-Message-Id: <20130804185630.GC29933@blackmetal.musicnaut.iki.fi>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 Aug 2013 09:49:05 +0000
+Subject: [patch] mtd: nand: silence some shift wrap warnings
+Message-Id: <20130809094904.GC29282@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375641662-17378-1-git-send-email-kumargauravgupta3@gmail.com>
-In-Reply-To: <1375641662-17378-1-git-send-email-kumargauravgupta3@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Cc: arnaud.patard@rtp-net.org, gregkh@linuxfoundation.org, dan.carpenter@oracle.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, kernel-janitors@vger.kernel.org, Matthieu CASTET <matthieu.castet@parrot.com>, Huang Shijie <b32955@freescale.com>, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>
 
-On Mon, Aug 05, 2013 at 12:11:02AM +0530, Kumar Gaurav wrote:
-> Fixed issue by removing Space before semicolon
-> 
-> Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
-> ---
->  drivers/staging/xgifb/vb_setmode.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/xgifb/vb_setmode.h b/drivers/staging/xgifb/vb_setmode.h
-> index 2c0a31c..679a822 100644
-> --- a/drivers/staging/xgifb/vb_setmode.h
-> +++ b/drivers/staging/xgifb/vb_setmode.h
-> @@ -13,7 +13,7 @@ extern void XGI_GetVBType(struct vb_device_info *);
->  extern void XGI_SenseCRT1(struct vb_device_info *);
->  extern unsigned char XGISetModeNew(struct xgifb_video_info *xgifb_info,
->  				   struct xgi_hw_device_info *HwDeviceExtension,
-> -				   unsigned short ModeNo) ;
-> +				   unsigned short ModeNo);
+There are static checkers which complain when we declare variables as
+64 bit bitfields but only use the lower 32 bits because of shift
+wrapping.  In this case "len" is declared as u64 as opposed to unsigned
+long or something which might be 32 bits.
 
-There's a similar issue in vb_table.h, line 1287. Maybe fix that also
-at the same time?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-
-A.
+diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+index 9a48758..3eddd04 100644
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -108,13 +108,13 @@ static int check_offs_len(struct mtd_info *mtd,
+ 	int ret = 0;
+ 
+ 	/* Start address must align on block boundary */
+-	if (ofs & ((1 << chip->phys_erase_shift) - 1)) {
++	if (ofs & ((1ULL << chip->phys_erase_shift) - 1)) {
+ 		pr_debug("%s: unaligned address\n", __func__);
+ 		ret = -EINVAL;
+ 	}
+ 
+ 	/* Length must align on block boundary */
+-	if (len & ((1 << chip->phys_erase_shift) - 1)) {
++	if (len & ((1ULL << chip->phys_erase_shift) - 1)) {
+ 		pr_debug("%s: length not block aligned\n", __func__);
+ 		ret = -EINVAL;
+ 	}
+@@ -394,7 +394,7 @@ static int nand_block_markbad_lowlevel(struct mtd_info *mtd, loff_t ofs)
+ 		memset(&einfo, 0, sizeof(einfo));
+ 		einfo.mtd = mtd;
+ 		einfo.addr = ofs;
+-		einfo.len = 1 << chip->phys_erase_shift;
++		einfo.len = 1ULL << chip->phys_erase_shift;
+ 		nand_erase_nand(mtd, &einfo, 0);
+ 
+ 		/* Write bad block marker to OOB */
+@@ -2630,7 +2630,7 @@ int nand_erase_nand(struct mtd_info *mtd, struct erase_info *instr,
+ 		}
+ 
+ 		/* Increment page address and decrement length */
+-		len -= (1 << chip->phys_erase_shift);
++		len -= (1ULL << chip->phys_erase_shift);
+ 		page += pages_per_block;
+ 
+ 		/* Check, if we cross a chip boundary */
