@@ -1,26 +1,35 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 28 Aug 2013 22:46:27 +0000
-Subject: Re: [patch] dma: cppi41: off by one in desc_to_chan()
-Message-Id: <20130828224627.GA4281@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 Aug 2013 09:52:31 +0000
+Subject: [patch] Hostap: copying wrong data prism2_ioctl_giwaplist()
+Message-Id: <20130809095231.GD29282@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130826083220.GM2748@intel.com>
- <20130828104844.GG19256@mwanda>
-In-Reply-To: <20130828104844.GG19256@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org
+To: Jouni Malinen <j@w1.fi>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Aug 28, 2013 at 01:48:44PM +0300, Dan Carpenter wrote:
-> The test here should be ">=" instead of ">".  The cdd->chan_busy[] array
-> has "ALLOC_DECS_NUM" elements.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Vinod Koul <vinod.koul@intel.com>
-> ---
-> Resending to Greg and the USB people because Vinod says this goes
-> through the USB tree.
+We want the data stored in "addr" and "qual", but the extra ampersands
+mean we are copying stack data instead.
 
-Really?  Ok, that seems odd, but whatever...
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Untested.  Should probably be applied to -stable
+as well.
 
+diff --git a/drivers/net/wireless/hostap/hostap_ioctl.c b/drivers/net/wireless/hostap/hostap_ioctl.c
+index ac07473..e509030 100644
+--- a/drivers/net/wireless/hostap/hostap_ioctl.c
++++ b/drivers/net/wireless/hostap/hostap_ioctl.c
+@@ -523,9 +523,9 @@ static int prism2_ioctl_giwaplist(struct net_device *dev,
+ 
+ 	data->length = prism2_ap_get_sta_qual(local, addr, qual, IW_MAX_AP, 1);
+ 
+-	memcpy(extra, &addr, sizeof(struct sockaddr) * data->length);
++	memcpy(extra, addr, sizeof(struct sockaddr) * data->length);
+ 	data->flags = 1; /* has quality information */
+-	memcpy(extra + sizeof(struct sockaddr) * data->length, &qual,
++	memcpy(extra + sizeof(struct sockaddr) * data->length, qual,
+ 	       sizeof(struct iw_quality) * data->length);
+ 
+ 	kfree(addr);
