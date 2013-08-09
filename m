@@ -1,27 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 21 Aug 2013 06:33:01 +0000
-Subject: Re: [patch -next v2] ipip: dereferencing an ERR_PTR in ip_tunnel_init_net()
-Message-Id: <20130820.233301.985050199020241179.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 Aug 2013 09:57:06 +0000
+Subject: [patch] sound: oss/dmabuf: remove an unneeded temporary variable
+Message-Id: <20130809095705.GE29282@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376917088.4226.50.camel@edumazet-glaptop>
-	<20130819222307.GA3622@elgon.mountain>
-In-Reply-To: <20130819222307.GA3622@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: nicolas.dichtel@6wind.com, kuznet@ms2.inr.ac.ru, eric.dumazet@gmail.com, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 20 Aug 2013 01:23:07 +0300
+We don't actually use the "go" variable so it can be removed.
 
-> The __ip_tunnel_create() function returns an ERR_PTR on error so we need
-> to check for that before dereferencing.  This bug was added in commit
-> 6c742e714d8c2 ("ipip: add x-netns support").
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Eric Dumazet said v1 patch looked racy and suggested the v2 fix.
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This doesn't apply cleanly, you'll need to respin it.
+diff --git a/sound/oss/dmabuf.c b/sound/oss/dmabuf.c
+index a59c888..461d94c 100644
+--- a/sound/oss/dmabuf.c
++++ b/sound/oss/dmabuf.c
+@@ -557,7 +557,6 @@ int DMAbuf_getrdbuffer(int dev, char **buf, int *len, int dontblock)
+ 	unsigned long flags;
+ 	int err = 0, n = 0;
+ 	struct dma_buffparms *dmap = adev->dmap_in;
+-	int go;
+ 
+ 	if (!(adev->open_mode & OPEN_READ))
+ 		return -EIO;
+@@ -584,7 +583,7 @@ int DMAbuf_getrdbuffer(int dev, char **buf, int *len, int dontblock)
+ 			spin_unlock_irqrestore(&dmap->lock,flags);
+ 			return -EAGAIN;
+ 		}
+-		if ((go = adev->go))
++		if (adev->go)
+ 			timeout = dmabuf_timeout(dmap);
+ 
+ 		spin_unlock_irqrestore(&dmap->lock,flags);
