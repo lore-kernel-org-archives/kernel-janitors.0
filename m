@@ -1,79 +1,55 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Date: Wed, 28 Aug 2013 07:50:10 +0000
-Subject: Re: [patch] [media] mx3-camera: locking typo in mx3_videobuf_queue()
-Message-Id: <Pine.LNX.4.64.1308280947190.22743@axis700.grange>
+From: Kumar Gaurav <kumargauravgupta3@gmail.com>
+Date: Fri, 09 Aug 2013 18:37:59 +0000
+Subject: [PATCH 17/17] net:ethernet:lantiq_etop.c: Removed deprecated IRQF_DISABLED
+Message-Id: <1376072759-11814-1-git-send-email-kumargauravgupta3@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823094530.GN31293@elgon.mountain>
- <Pine.LNX.4.64.1308232313220.14796@axis700.grange> <20130824070650.GA19256@mwanda>
-In-Reply-To: <20130824070650.GA19256@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, jiri@resnulli.us, gregkh@linuxfoundation.org, yongjun_wei@trendmicro.com.cn, konszert@marvell.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Kumar Gaurav <kumargauravgupta3@gmail.com>
 
-On Sat, 24 Aug 2013, Dan Carpenter wrote:
+Removed IRQF_DISABLED as it is deprecated and fixed a coding style issue
+of more than 80 chars on single line by sliting the line in two.
 
-> On Fri, Aug 23, 2013 at 11:16:51PM +0200, Guennadi Liakhovetski wrote:
-> > Hi Dan,
-> > 
-> > On Fri, 23 Aug 2013, Dan Carpenter wrote:
-> > 
-> > > There is a return in the middle where we haven't restored the IRQs to
-> > > their original state.
-> > > 
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > 
-> > > diff --git a/drivers/media/platform/soc_camera/mx3_camera.c b/drivers/media/platform/soc_camera/mx3_camera.c
-> > > index 1047e3e..4bae910 100644
-> > > --- a/drivers/media/platform/soc_camera/mx3_camera.c
-> > > +++ b/drivers/media/platform/soc_camera/mx3_camera.c
-> > > @@ -334,7 +334,7 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
-> > >  	if (!mx3_cam->active)
-> > >  		mx3_cam->active = buf;
-> > >  
-> > > -	spin_unlock_irq(&mx3_cam->lock);
-> > > +	spin_unlock_irqrestore(&mx3_cam->lock, flags);
-> > >  
-> > >  	cookie = txd->tx_submit(txd);
-> > >  	dev_dbg(icd->parent, "Submitted cookie %d DMA 0x%08x\n",
-> > 
-> > Please, wait with this. The above doesn't seem quite right to me. IIRC, 
-> > the purpose of unlock_irq(), i.e. of the unconditionally enabling IRQs was 
-> > to make sure ->tx_submit() is called with interrupts enabled. I'm 
-> > currently on holiday with very scarce internet access. Either please 
-> > double-check this yourself or I'll have another look at it when back home 
-> > next week.
-> > 
-> 
-> No problem.   This is static checker stuff.  The currect code is
-> definitely wrong because the return in the middle.  When the
-> function returns we don't know if IRQs are enabled or not.
-
-Ok, I did suspect this, but just wanted to check, when I have a better 
-access to sources. This function cannot be called with IRQs disabled. So, 
-it is ok to replace ..._irqsave() / ..._irqrestore() calls in it with 
-their plain ..._irq() counterparts. Could you cook up a patch, please?
-
-Thanks
-Guennadi
-
-> > > @@ -343,7 +343,7 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
-> > >  	if (cookie >= 0)
-> > >  		return;
->             ^^^^^^^^^^^
-> > >  
-> > > -	spin_lock_irq(&mx3_cam->lock);
-> > > +	spin_lock_irqsave(&mx3_cam->lock, flags);
-> 
-> I thought about using local_irq_restore(flags) but it seemed like
-> an obvious oversight.
-> 
-> regards,
-> dan carpenter
-> 
-
+Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
 ---
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
+ drivers/net/ethernet/lantiq_etop.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ethernet/lantiq_etop.c
+index bfdb0686..04c3a82 100644
+--- a/drivers/net/ethernet/lantiq_etop.c
++++ b/drivers/net/ethernet/lantiq_etop.c
+@@ -282,7 +282,7 @@ ltq_etop_hw_init(struct net_device *dev)
+ 
+ 		if (IS_TX(i)) {
+ 			ltq_dma_alloc_tx(&ch->dma);
+-			request_irq(irq, ltq_etop_dma_irq, IRQF_DISABLED,
++			request_irq(irq, ltq_etop_dma_irq, 0,
+ 				"etop_tx", priv);
+ 		} else if (IS_RX(i)) {
+ 			ltq_dma_alloc_rx(&ch->dma);
+@@ -291,7 +291,7 @@ ltq_etop_hw_init(struct net_device *dev)
+ 				if (ltq_etop_alloc_skb(ch))
+ 					return -ENOMEM;
+ 			ch->dma.desc = 0;
+-			request_irq(irq, ltq_etop_dma_irq, IRQF_DISABLED,
++			request_irq(irq, ltq_etop_dma_irq, 0,
+ 				"etop_rx", priv);
+ 		}
+ 		ch->dma.irq = irq;
+@@ -653,7 +653,9 @@ ltq_etop_init(struct net_device *dev)
+ 	if (err)
+ 		goto err_netdev;
+ 
+-	/* Set addr_assign_type here, ltq_etop_set_mac_address would reset it. */
++	/* Set addr_assign_type here,
++	 *ltq_etop_set_mac_address would reset it.
++	 */
+ 	if (random_mac)
+ 		dev->addr_assign_type = NET_ADDR_RANDOM;
+ 
+-- 
+1.7.9.5
+
