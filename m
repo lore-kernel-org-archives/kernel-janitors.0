@@ -1,168 +1,61 @@
-From: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Date: Sat, 10 Aug 2013 18:53:44 +0000
-Subject: Re: [PATCH] drivers:net:hamradio: Removing Depricated IRQF_DISABLED
-Message-Id: <52068C13.4020707@gmail.com>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Date: Fri, 09 Aug 2013 10:29:33 +0000
+Subject: Re: [Intel-gfx] [patch v2] drm/i915: fix a limit check in hsw_compute_wm_results()
+Message-Id: <20130809102933.GD5004@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376152738-14944-1-git-send-email-kumargauravgupta3@gmail.com> <alpine.DEB.2.02.1308101847260.2076@localhost6.localdomain6> <5206720C.4060405@gmail.com> <alpine.DEB.2.02.1308101923130.2076@localhost6.localdomain6> <52068329.4010400@gmail.com> <52068B3C.4030707@bfs.de>
-In-Reply-To: <52068B3C.4030707@bfs.de>
+References: <20130809095826.GA4313@cantiga.alporthouse.com>
+ <20130809100731.GA31727@elgon.mountain>
+In-Reply-To: <20130809100731.GA31727@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: Julia Lawall <julia.lawall@lip6.fr>, t.sailer@alumni.ethz.ch, jreuter@yaina.de, jpr@f6fbb.org, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Chris Wilson <chris@chris-wilson.co.uk>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Sunday 11 August 2013 12:19 AM, walter harms wrote:
-> Hello Kumar,
-> i will try to resolve the riddle ...
->
-> doing something like fn(a,b,c,0) is a bad habit.
-> 0 is called a "magic number" because noone reading the code has an idea
-> why it is there. Using the name IRQF_TRIGGER_NONE good.
->
-> Having a named bit like IRQ_TRIGGER|IRQ_NMI is most times also a good idea
-> because it correspond (most times) to the naming of the bits in the data sheet.
->
-> The problems starts when this hits reality since nothing is clearly black or white.
-> In this case when you remove IRQF_DISABLED disables "bit" something should be left.
->
-> a|b|IRQF_DISABLED -> a|b  (that is the easy part)
-> but
-> IRQF_DISABLED -> IRQF_TRIGGER_NONE
->
-> Otherwise you would be left with "0". That is a magic number (see above).
-> So this is to be replaced by a placeholder called IRQF_TRIGGER_NONE.
->
-> hope that really helps and that i have understood the discussion.
->
-> re,
->   wh
-Thanks for the clarification. I'll be following this.
+On Fri, Aug 09, 2013 at 01:07:31PM +0300, Dan Carpenter wrote:
+> The '!' here was not intended.  Since '!' has higher precedence than
+> compare, it means the check is never true.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards
-Kumar Gaurav
->
-> Am 10.08.2013 20:15, schrieb Kumar Gaurav:
->> On Saturday 10 August 2013 10:54 PM, Julia Lawall wrote:
->>> On Sat, 10 Aug 2013, Kumar Gaurav wrote:
->>>
->>>> On Saturday 10 August 2013 10:17 PM, Julia Lawall wrote:
->>>>> If it is in a | with something else, I think you can just remove it.
->>>>>
->>>>> julia
->>>>>
->>>>> On Sat, 10 Aug 2013, Kumar Gaurav wrote:
->>>>>
->>>>>> Removed IRQF_DISABLED as it's deprecated and should be removed
->>>>>>
->>>>>> Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
->>>>>> ---
->>>>>>     drivers/net/hamradio/baycom_ser_fdx.c |    2 +-
->>>>>>     drivers/net/hamradio/baycom_ser_hdx.c |    2 +-
->>>>>>     drivers/net/hamradio/scc.c            |    2 +-
->>>>>>     drivers/net/hamradio/yam.c            |    2 +-
->>>>>>     4 files changed, 4 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/net/hamradio/baycom_ser_fdx.c
->>>>>> b/drivers/net/hamradio/baycom_ser_fdx.c
->>>>>> index a974727..c114009 100644
->>>>>> --- a/drivers/net/hamradio/baycom_ser_fdx.c
->>>>>> +++ b/drivers/net/hamradio/baycom_ser_fdx.c
->>>>>> @@ -445,7 +445,7 @@ static int ser12_open(struct net_device *dev)
->>>>>>         outb(0, FCR(dev->base_addr));  /* disable FIFOs */
->>>>>>         outb(0x0d, MCR(dev->base_addr));
->>>>>>         outb(0, IER(dev->base_addr));
->>>>>> -    if (request_irq(dev->irq, ser12_interrupt, IRQF_DISABLED |
->>>>>> IRQF_SHARED,
->>>>>> +    if (request_irq(dev->irq, ser12_interrupt, IRQF_TRIGGER_NONE |
->>>>>> IRQF_SHARED,
->>>>>>                 "baycom_ser_fdx", dev)) {
->>>>>>             release_region(dev->base_addr, SER12_EXTENT);
->>>>>>             return -EBUSY;
->>>>>> diff --git a/drivers/net/hamradio/baycom_ser_hdx.c
->>>>>> b/drivers/net/hamradio/baycom_ser_hdx.c
->>>>>> index e349d86..d91c1fd 100644
->>>>>> --- a/drivers/net/hamradio/baycom_ser_hdx.c
->>>>>> +++ b/drivers/net/hamradio/baycom_ser_hdx.c
->>>>>> @@ -490,7 +490,7 @@ static int ser12_open(struct net_device *dev)
->>>>>>         outb(0, FCR(dev->base_addr));  /* disable FIFOs */
->>>>>>         outb(0x0d, MCR(dev->base_addr));
->>>>>>         outb(0, IER(dev->base_addr));
->>>>>> -    if (request_irq(dev->irq, ser12_interrupt, IRQF_DISABLED |
->>>>>> IRQF_SHARED,
->>>>>> +    if (request_irq(dev->irq, ser12_interrupt, IRQF_TRIGGER_NONE |
->>>>>> IRQF_SHARED,
->>>>>>                 "baycom_ser12", dev)) {
->>>>>>             release_region(dev->base_addr, SER12_EXTENT);
->>>>>>             return -EBUSY;
->>>>>> diff --git a/drivers/net/hamradio/scc.c b/drivers/net/hamradio/scc.c
->>>>>> index bc1d521..4bc6ee8 100644
->>>>>> --- a/drivers/net/hamradio/scc.c
->>>>>> +++ b/drivers/net/hamradio/scc.c
->>>>>> @@ -1734,7 +1734,7 @@ static int scc_net_ioctl(struct net_device *dev,
->>>>>> struct ifreq *ifr, int cmd)
->>>>>>                 if (!Ivec[hwcfg.irq].used && hwcfg.irq)
->>>>>>                 {
->>>>>>                     if (request_irq(hwcfg.irq, scc_isr,
->>>>>> -                        IRQF_DISABLED, "AX.25 SCC",
->>>>>> +                        0, "AX.25 SCC",
->>>>>>                             (void *)(long) hwcfg.irq))
->>>>>>                         printk(KERN_WARNING "z8530drv:
->>>>>> warning, cannot get IRQ %d\n", hwcfg.irq);
->>>>>>                     else
->>>>>> diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
->>>>>> index 0721e72..f947887 100644
->>>>>> --- a/drivers/net/hamradio/yam.c
->>>>>> +++ b/drivers/net/hamradio/yam.c
->>>>>> @@ -888,7 +888,7 @@ static int yam_open(struct net_device *dev)
->>>>>>             goto out_release_base;
->>>>>>         }
->>>>>>         outb(0, IER(dev->base_addr));
->>>>>> -    if (request_irq(dev->irq, yam_interrupt, IRQF_DISABLED |
->>>>>> IRQF_SHARED,
->>>>>> dev->name, dev)) {
->>>>>> +    if (request_irq(dev->irq, yam_interrupt, IRQF_TRIGGER_NONE |
->>>>>> IRQF_SHARED, dev->name, dev)) {
->>>>>>             printk(KERN_ERR "%s: irq %d busy\n", dev->name, dev->irq);
->>>>>>             ret = -EBUSY;
->>>>>>             goto out_release_base;
->>>>>> -- 
->>>>>> 1.7.9.5
->>>>>>
->>>>>> -- 
->>>>>> To unsubscribe from this list: send the line "unsubscribe
->>>>>> kernel-janitors"
->>>>>> in
->>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>>
->>>> Yes i was suggested for using IRQF_TRIGGER_NONE too so used this.
->>>> Please tell
->>>> me if this makes any difference or issue?
->>> I think that the suggestion was to use IRQF_TRIGGER_NONE only when
->>> removing IRQF_DISABLED would leave nothing left.
->>>
->>> - IRQF_DISABLED | e
->>> + e
->>>
->>> otherwise,
->>>
->>> - IRQF_DISABLED
->>> + 0
->>>
->>> julia
->> Sorry to prompt back but i'm confused. if removing IRQF_DISABLED leaves
->> nothing then should i use 0 or IRQF_TRIGGER_NONE?
->> I'm convinced with
->>
->>      - IRQF_DISABLED | e
->>      + e
->>
->> Regards
->>
->> Kumar Gaurav
->>
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe linux-hams" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
 
+The culprit for Daniel:
+
+commit 71fff20ff1bb790f4defe0c880e028581ffab420
+Author: Ville Syrj=E4l=E4 <ville.syrjala@linux.intel.com>
+Date:   Tue Aug 6 22:24:03 2013 +0300
+
+    drm/i915: Kill fbc_enable from hsw_lp_wm_results
+
+> ---
+> v2: My first patch was wrong.
+>=20
+> diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel=
+_pm.c
+> index 96234c6..0f5eb21 100644
+> --- a/drivers/gpu/drm/i915/intel_pm.c
+> +++ b/drivers/gpu/drm/i915/intel_pm.c
+> @@ -2685,7 +2685,7 @@ static void hsw_compute_wm_results(struct drm_devic=
+e *dev,
+>  	 * a WM level. */
+>  	results->enable_fbc_wm =3D true;
+>  	for (level =3D 1; level <=3D max_level; level++) {
+> -		if (!lp_results[level - 1].fbc_val > lp_maximums->fbc) {
+> +		if (lp_results[level - 1].fbc_val > lp_maximums->fbc) {
+>  			results->enable_fbc_wm =3D false;
+>  			lp_results[level - 1].fbc_val =3D 0;
+>  		}
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/intel-gfx
+
+--=20
+Ville Syrj=E4l=E4
+Intel OTC
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
