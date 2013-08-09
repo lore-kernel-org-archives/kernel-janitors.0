@@ -1,55 +1,56 @@
-From: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Date: Fri, 09 Aug 2013 03:50:04 +0000
+From: walter harms <wharms@bfs.de>
+Date: Fri, 09 Aug 2013 07:11:22 +0000
 Subject: Re: [PATCH] net:ethernet:korina.c Removed IRQF_DISABLED
-Message-Id: <5204641C.3090905@gmail.com>
+Message-Id: <5204961A.5020707@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375989649-7252-1-git-send-email-kumargauravgupta3@gmail.com>  <20130808210918.GE5502@mwanda>  <20130808.142054.1541424422807503741.davem@davemloft.net>  <1375997625.2087.14.camel@joe-AO722> <520452F4.2070804@gmail.com>  <1376015984.2087.31.camel@joe-AO722> <520457AD.9060508@gmail.com>  <1376016864.2087.34.camel@joe-AO722> <52045B31.9000002@gmail.com> <1376018881.2087.48.camel@joe-AO722>
-In-Reply-To: <1376018881.2087.48.camel@joe-AO722>
+References: <1375989649-7252-1-git-send-email-kumargauravgupta3@gmail.com>	 <20130808210918.GE5502@mwanda>	 <20130808.142054.1541424422807503741.davem@davemloft.net>	 <1375997625.2087.14.camel@joe-AO722> <520452F4.2070804@gmail.com> <1376015984.2087.31.camel@joe-AO722>
+In-Reply-To: <1376015984.2087.31.camel@joe-AO722>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Joe Perches <joe@perches.com>
-Cc: David Miller <davem@davemloft.net>, dan.carpenter@oracle.com, emilio@elopez.com.ar, mugunthanvnm@ti.com, jg1.han@samsung.com, hsweeten@visionengravers.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Kumar Gaurav <kumargauravgupta3@gmail.com>, David Miller <davem@davemloft.net>, dan.carpenter@oracle.com, emilio@elopez.com.ar, mugunthanvnm@ti.com, jg1.han@samsung.com, hsweeten@visionengravers.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Friday 09 August 2013 08:58 AM, Joe Perches wrote:
-> On Fri, 2013-08-09 at 08:30 +0530, Kumar Gaurav wrote:
->> On Friday 09 August 2013 08:24 AM, Joe Perches wrote:
->>> On Fri, 2013-08-09 at 08:15 +0530, Kumar Gaurav wrote:
->>>> On Friday 09 August 2013 08:09 AM, Joe Perches wrote:
->>> []
->>>>> And, maybe it'd be better to use IRQF_TRIGGER_NONE
->>>>> instead of 0.
->>>> I tried googling what to replace IRQF_DISABLED with but found nothing.
->>>> In the patch fixed earlier (not by me) it was replaced with 0 so i did
->>>> same. But from now on I'll use IRQF_TRIGGER_NONE. Thanks
->>> Maybe that's not the right thing to do.
->>> 0 is what's almost exclusively used.
->>> IRQF_TRIGGER_NONE is only used a few times.
->>> It's also a lot longer.
->>>
->> Sorry to poke back. But just want to confirm. I should use
->> IRQF_TRIGGER_NONE and not 0 right?
-> Hi again Kumar.
->
-> There's no rush to submit these sorts of patches.
-> Nothing is going to really be improved because of these
-> changes.
->
-> Submit an overall rfc patch description to the various
-> mailing lists (affected MAINTAINERS generally don't read
-> lkml but do read their specific mailing list) with options
-> like 0 or IRQF_TRIGGER_NONE to show what the issues are
-> and why you're doing this.
->
-> Wait at least a week for any comment.
->
-> You'll likely get some "useless churn" emails.
-> You can generally ignore those.
->
-> If you get any real comments, deal with them.
->
-> Then after at least that week passes, submit the patches.
->
-> cheers, Joe
->
-Will surely follow that thanks :)
+
+
+Am 09.08.2013 04:39, schrieb Joe Perches:
+> On Fri, 2013-08-09 at 07:54 +0530, Kumar Gaurav wrote:
+>> On Friday 09 August 2013 03:03 AM, Joe Perches wrote:
+>>> On Thu, 2013-08-08 at 14:20 -0700, David Miller wrote:
+>>>> So what's the problem again? :-)
+>> I'm quite new to kernel development. I saw in one of the patches which 
+>> fixes IRQF_DISABLED issue by removing so i did.
+> 
+> Hi Kumar.
+> 
+> No worries, welcome.
+> 
+>>> Wouldn't it be better to do a sed 's/IRQF_DISABLED/0/' instead?
+>>> Maybe Kumar wants to/is doing that?
+>> Yes i wanted to do the same and i retrieved list of all programs 
+>> containing IRQF_DISABLED but i didn't wanted to send all of them in one 
+>> patch. I would be sending them for one program in one patch.
+> 
+> You should definitely not send a single patch.
+> 
+> $ git grep -w --name-only IRQF_DISABLED | wc -l
+> 245
+> 
+> I think that's way too many modified files for a
+> single patch.
+> 
+> If you do it, please remember to change bits like
+> "(IRQF_<foo> | IRQF_DISABLED)" so that instead of
+> "(IRQF_<foo> | 0)", you use just "IRQF_<foo>".
+> 
+> And, maybe it'd be better to use IRQF_TRIGGER_NONE
+> instead of 0.
+> 
+
+
+yes !
+
+re,
+ wh
+
+
