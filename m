@@ -1,37 +1,29 @@
-From: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Date: Fri, 09 Aug 2013 03:31:15 +0000
-Subject: Re: [PATCH]arch:avr32:kernel:time.c: Removed IRQF_DISABLED
-Message-Id: <52045FB3.9060001@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 Aug 2013 09:43:02 +0000
+Subject: [patch] drm/i915: precedence bug in hsw_compute_wm_results()
+Message-Id: <20130809094302.GA29282@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376018243-8565-1-git-send-email-kumargauravgupta3@gmail.com>
-In-Reply-To: <1376018243-8565-1-git-send-email-kumargauravgupta3@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Cc: hskinnemoen@gmail.com, egtvedt@samfundet.no, tglx@linutronix.de, srivatsa.bhat@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-Please ignore the below patch. I'll be resending this with 0 instead of 
-IRQF_TRIGGER_NONE
-On Friday 09 August 2013 08:47 AM, Kumar Gaurav wrote:
-> Removed IRQF_DISABLED as it's no-op and should be removed
->
-> Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
-> ---
->   arch/avr32/kernel/time.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/avr32/kernel/time.c b/arch/avr32/kernel/time.c
-> index 869a1c6..0566c81 100644
-> --- a/arch/avr32/kernel/time.c
-> +++ b/arch/avr32/kernel/time.c
-> @@ -59,7 +59,7 @@ static irqreturn_t timer_interrupt(int irq, void *dev_id)
->   static struct irqaction timer_irqaction = {
->   	.handler	= timer_interrupt,
->   	/* Oprofile uses the same irq as the timer, so allow it to be shared */
-> -	.flags		= IRQF_TIMER | IRQF_DISABLED | IRQF_SHARED,
-> +	.flags		= IRQF_TIMER | IRQF_TRIGGER_NONE | IRQF_SHARED,
->   	.name		= "avr32_comparator",
->   };
->   
+The '!' operation has higher precedence than the compare so probably
+this test is never true.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
+index a5a9959..0b9d9a7 100644
+--- a/drivers/gpu/drm/i915/intel_pm.c
++++ b/drivers/gpu/drm/i915/intel_pm.c
+@@ -2562,7 +2562,7 @@ static void hsw_compute_wm_results(struct drm_device *dev,
+ 	 * a WM level. */
+ 	results->enable_fbc_wm = true;
+ 	for (level = 1; level <= max_level; level++) {
+-		if (!lp_results[level - 1].fbc_val > lp_maximums->fbc) {
++		if (lp_results[level - 1].fbc_val <= lp_maximums->fbc) {
+ 			results->enable_fbc_wm = false;
+ 			lp_results[level - 1].fbc_val = 0;
+ 		}
