@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 09 Aug 2013 09:23:06 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 Aug 2013 09:36:37 +0000
 Subject: Re: rfc: ARRAY_AND_SIZE
-Message-Id: <alpine.DEB.2.02.1308091119520.2295@hadrien>
+Message-Id: <20130809093637.GI5502@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5204A345.5060605@bfs.de>
 In-Reply-To: <5204A345.5060605@bfs.de>
@@ -10,31 +10,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 9 Aug 2013, Dan Carpenter wrote:
+On Fri, Aug 09, 2013 at 11:23:06AM +0200, Julia Lawall wrote:
 
-> It's mostly used like this:
->
-> static struct ltq_pmx_func falcon_funcs[] = {
-> 	{"rst",         ARRAY_AND_SIZE(ltq_rst_grps)},
-> 	{"ntr",         ARRAY_AND_SIZE(ltq_ntr_grps)},
-> 	{"mdio",        ARRAY_AND_SIZE(ltq_mdio_grps)},
-> 	{"led",         ARRAY_AND_SIZE(ltq_bled_grps)},
-> 	{"asc",         ARRAY_AND_SIZE(ltq_asc_grps)},
-> 	{"spi",         ARRAY_AND_SIZE(ltq_spi_grps)},
-> 	{"i2c",         ARRAY_AND_SIZE(ltq_i2c_grps)},
-> 	{"jtag",        ARRAY_AND_SIZE(ltq_jtag_grps)},
-> 	{"slic",        ARRAY_AND_SIZE(ltq_slic_grps)},
-> 	{"pcm",         ARRAY_AND_SIZE(ltq_pcm_grps)},
-> };
->
-> That's fine.
->
-> There are a few times when it's used as function parameters, which
-> looks like garbage.  If I were the maintainer, I would change it,
-> but I'm not so it's not worth arguing with maintainers about
-> something they did deliberately.
+> Actually, it is used 226 times as function arguments, in 77 files.  It is
+> used 39 times in a structure declaration.
 
-Actually, it is used 226 times as function arguments, in 77 files.  It is
-used 39 times in a structure declaration.
+Ah...  I was using cscope and so I missed ARM uses that weren't in
+my config.
 
-julia
+That's ugly, yes.  But I still think the maintainers aren't going to
+appreciate patches for this since they did it deliberately.
+
+regards,
+dan carpenter
+
