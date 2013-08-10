@@ -1,26 +1,33 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 08 Aug 2013 19:57:05 +0000
-Subject: build regressions 2013-08-08
-Message-Id: <5203f811.q/EfsswNL9Zra3TL%fengguang.wu@intel.com>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Sat, 10 Aug 2013 00:32:45 +0000
+Subject: [PATCH 2/3] staging: ced1401: fix non-ANSI function prototype.
+Message-Id: <1376094766-9175-3-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-[errors]
-include/linux/stddef.h:8:16: error: expected identifier or '(' before 'void'
-include/linux/stddef.h:8:23: error: expected ')' before numeric constant
-include/linux/stddef.h:8:16: error: expected identifier or '(' before 'void'
-include/linux/stddef.h:8:23: error: expected ')' before numeric constant
-fs/f2fs/f2fs.h:435:17: error: field 's_kobj' has incomplete type
+Add "void" to the parameterless function SafeTickCount().
 
-[warnings]
-drivers/gpu/drm/i915/intel_display.c:10426:18: warning: unused variable 'cpu_transcoder' [-Wunused-variable]
-fs/ext4/extents_status.c:950:6: warning: unused variable 'ret' [-Wunused-variable]
-Warning(include/drm/drm_flip_work.h:67): No description found for parameter ')'
-Warning(include/drm/drm_flip_work.h:67): No description found for parameter ')'
-
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/staging/ced1401/userspace/use1401.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/ced1401/userspace/use1401.c b/drivers/staging/ced1401/userspace/use1401.c
+index c9bc2eb..7f39eb4 100644
+--- a/drivers/staging/ced1401/userspace/use1401.c
++++ b/drivers/staging/ced1401/userspace/use1401.c
+@@ -376,7 +376,7 @@ static short U14Control1401(short sHand, LONG lCode, TCSBLOCK* pBlk)
+ ** SafeTickCount
+ ** Gets time in approximately units of a millisecond.
+ *****************************************************************************/
+-static long SafeTickCount()
++static long SafeTickCount(void)
+ {
+ #ifdef _IS_WINDOWS_
+     return GetTickCount();
+-- 
+1.8.3.1
+
