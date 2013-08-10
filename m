@@ -1,62 +1,77 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 09 Aug 2013 16:28:06 +0000
-Subject: Re: [PATCH] net:ethernet:korina.c Removed IRQF_DISABLED
-Message-Id: <1376065686.2087.102.camel@joe-AO722>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 10 Aug 2013 15:25:53 +0000
+Subject: [PATCH] arch/arm/mach-pxa/stargate2.c: use ARRAY_AND_SIZE consistently
+Message-Id: <1376148353-9699-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375989649-7252-1-git-send-email-kumargauravgupta3@gmail.com>
-	 <20130808210918.GE5502@mwanda>
-	 <20130808.142054.1541424422807503741.davem@davemloft.net>
-	 <1375997625.2087.14.camel@joe-AO722> <520452F4.2070804@gmail.com>
-	 <1376015984.2087.31.camel@joe-AO722> <520457AD.9060508@gmail.com>
-	 <1376016864.2087.34.camel@joe-AO722> <52045B31.9000002@gmail.com>
-	 <1376018881.2087.48.camel@joe-AO722> <5204641C.3090905@gmail.com>
-	 <CA+MoWDrsHf4NFE_iszymh6SaBfXsMybC194ZQaKgURmCFwiJRQ@mail.gmail.com>
-	 <1376061267.2087.91.camel@joe-AO722>
-	 <CA+MoWDqsDWSD_q93UyiPNFzmgXGGfCPMH9VeQf1YmiO6OYuhwQ@mail.gmail.com>
-In-Reply-To: <CA+MoWDqsDWSD_q93UyiPNFzmgXGGfCPMH9VeQf1YmiO6OYuhwQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Kumar Gaurav <kumargauravgupta3@gmail.com>, David Miller <davem@davemloft.net>, Dan Carpenter <dan.carpenter@oracle.com>, emilio@elopez.com.ar, mugunthanvnm@ti.com, jg1.han@samsung.com, hsweeten@visionengravers.com, netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, 2013-08-09 at 17:53 +0200, Peter Senna Tschudin wrote:
-> On Fri, Aug 9, 2013 at 5:14 PM, Joe Perches <joe@perches.com> wrote:
-> > On Fri, 2013-08-09 at 15:15 +0200, Peter Senna Tschudin wrote:
-> >> Coccinelle (http://coccinelle.lip6.fr/) can help you in this task.
-[]
-> Peter's useful conversion won't find/convert cases where
-> > IRQF_DISABLED is used in a #define like:
-> >> diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
-> >> []
-> >> @@ -915,7 +915,7 @@ static int ks_net_open(struct net_device *netdev)
-> >> []
-> >> -#define        KS_INT_FLAGS    (IRQF_DISABLED|IRQF_TRIGGER_LOW)
-> >> +#define        KS_INT_FLAGS    (IRQF_TRIGGER_LOW)
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Hi again.
+Because ARRAY_AND_SIZE changes the apparent arity of a function, if it is
+used for one call to a given function, it would be better, if possible, to
+use it for all of them.
 
-> Coccinelle works with macros,
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Sometimes yes.  Perfectly?  No.
+// <smpl>
+@call@
+identifier f;
+expression e;
+expression list[n] es;
+@@
 
-> the problem in this specific case [...]
+f(es,ARRAY_AND_SIZE(e),...)
 
-Other problems exist.
-#include processing is troublesome.
+@@
+expression e;
+identifier call.f;
+expression list[call.n] ess;
+@@
 
-> But, I would prefer to remove this define instead of patching it,
-> seems to make more sense to me.
+f(ess,
+- e,ARRAY_SIZE(e)
++ ARRAY_AND_SIZE(e)
+  ,...)
+// </smpl>
 
-That'd be OK with me too.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Anyway, the point was not that coccinelle is bad.
+---
+ arch/arm/mach-pxa/stargate2.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-Cocinelle's output, just like output from sed or
-any other automated tool, still needs thoughtful
-investigation and review.
-
-(did I mention Coccinelle's a way cool tool?)
-
-cheers, Joe
+diff --git a/arch/arm/mach-pxa/stargate2.c b/arch/arm/mach-pxa/stargate2.c
+index 62aea3e..ee7a42e 100644
+--- a/arch/arm/mach-pxa/stargate2.c
++++ b/arch/arm/mach-pxa/stargate2.c
+@@ -608,12 +608,10 @@ static void __init imote2_init(void)
+ 
+ 	imote2_stargate2_init();
+ 
+-	platform_add_devices(imote2_devices, ARRAY_SIZE(imote2_devices));
++	platform_add_devices(ARRAY_AND_SIZE(imote2_devices));
+ 
+-	i2c_register_board_info(0, imote2_i2c_board_info,
+-				ARRAY_SIZE(imote2_i2c_board_info));
+-	i2c_register_board_info(1, imote2_pwr_i2c_board_info,
+-				ARRAY_SIZE(imote2_pwr_i2c_board_info));
++	i2c_register_board_info(0, ARRAY_AND_SIZE(imote2_i2c_board_info));
++	i2c_register_board_info(1, ARRAY_AND_SIZE(imote2_pwr_i2c_board_info));
+ 
+ 	pxa_set_mci_info(&imote2_mci_platform_data);
+ 	pxa_set_udc_info(&imote2_udc_info);
+@@ -990,8 +988,7 @@ static void __init stargate2_init(void)
+ 	platform_add_devices(ARRAY_AND_SIZE(stargate2_devices));
+ 
+ 	i2c_register_board_info(0, ARRAY_AND_SIZE(stargate2_i2c_board_info));
+-	i2c_register_board_info(1, stargate2_pwr_i2c_board_info,
+-				ARRAY_SIZE(stargate2_pwr_i2c_board_info));
++	i2c_register_board_info(1, ARRAY_AND_SIZE(stargate2_pwr_i2c_board_info));
+ 
+ 	pxa_set_mci_info(&stargate2_mci_platform_data);
+ 
 
