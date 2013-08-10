@@ -1,39 +1,32 @@
-From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Date: Wed, 14 Aug 2013 07:18:47 +0000
-Subject: Re: Configure DMA atributes?
-Message-Id: <CAB=NE6UrZL21f8s_6g6eqLdRCGUXkHKbcu9ofjXUwiJWFQuSaQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 10 Aug 2013 23:03:21 +0000
+Subject: [patch] iwlwifi: pcie: returning positive instead of negative
+Message-Id: <20130810230321.GA19051@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CA+MoWDo8nhoomstYJx6Q5Krj-m=_swmpMu2iE5aHRH-gDf-QEQ@mail.gmail.com>
-In-Reply-To: <CA+MoWDo8nhoomstYJx6Q5Krj-m=_swmpMu2iE5aHRH-gDf-QEQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernelnewbies@lists.kernelnewbies.org
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Aug 12, 2013 at 10:55 AM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
-> DMA_BIT_MASK(64)
+There is a missing '-' character here so we return positive 'ENOMEM'
+instead of negative.  The caller doesn't care.  All non-zero returns
+are translated to '-ENOMEM' in iwl_pcie_nic_init().
 
-That's the key here. From Documentation/DMA-API-HOWTO.txt :
+This is just a cleanup.
 
-------------------------------------------------------------------------------------------------
-The standard 32-bit addressing device would do something like this:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-        if (dma_set_mask(dev, DMA_BIT_MASK(32))) {
-                printk(KERN_WARNING
-                       "mydev: No suitable DMA available.\n");
-                goto ignore_this_device;
-        }
-
-Another common scenario is a 64-bit capable device.  The approach here
-is to try for 64-bit addressing, but back down to a 32-bit mask that
-should not fail.  The kernel may fail the 64-bit mask not because the
-platform is not capable of 64-bit addressing.  Rather, it may fail in
-this case simply because 32-bit addressing is done more efficiently
-than 64-bit addressing.  For example, Sparc64 PCI SAC addressing is
-more efficient than DAC addressing.
-------------------------------------------------------------------------------------------------
-
-Hope that helps.
-
-  Luis
+diff --git a/drivers/net/wireless/iwlwifi/pcie/tx.c b/drivers/net/wireless/iwlwifi/pcie/tx.c
+index 134f7a1..a81d227 100644
+--- a/drivers/net/wireless/iwlwifi/pcie/tx.c
++++ b/drivers/net/wireless/iwlwifi/pcie/tx.c
+@@ -829,7 +829,7 @@ static int iwl_pcie_tx_alloc(struct iwl_trans *trans)
+ 				  sizeof(struct iwl_txq), GFP_KERNEL);
+ 	if (!trans_pcie->txq) {
+ 		IWL_ERR(trans, "Not enough memory for txq\n");
+-		ret = ENOMEM;
++		ret = -ENOMEM;
+ 		goto error;
+ 	}
+ 
