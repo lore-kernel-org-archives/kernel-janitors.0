@@ -1,86 +1,73 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 09:11:26 +0000
-Subject: [PATCH 22/29] host1x/{dev.c,drm/hdmi.c}: simplify use of devm_ioremap_resource
-Message-Id: <1376471493-22215-23-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:46 +0000
+Subject: [PATCH 5/16] arch/arm/mach-pxa/vpac270.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Remove unneeded error handling on the result of a call to
-platform_get_resource when the value is passed to devm_ioremap_resource.
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
 
-Move the call to platform_get_resource adjacent to the call to
-devm_ioremap_resource to make the connection between them more clear.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression pdev,res,n,e,e1;
-expression ret != 0;
-identifier l;
+expression e,f;
 @@
 
-- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  ... when != res
-- if (res = NULL) { ... \(goto l;\|return ret;\) }
-  ... when != res
-+ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  e = devm_ioremap_resource(e1, res);
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/gpu/host1x/dev.c      |    7 +------
- drivers/gpu/host1x/drm/hdmi.c |    3 ---
- 2 files changed, 1 insertion(+), 9 deletions(-)
+Not compiled.
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 28e28a2..e615edd 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -98,12 +98,6 @@ static int host1x_probe(struct platform_device *pdev)
- 	if (!id)
- 		return -EINVAL;
+ arch/arm/mach-pxa/vpac270.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/vpac270.c b/arch/arm/mach-pxa/vpac270.c
+index aa89488..bb5ceef 100644
+--- a/arch/arm/mach-pxa/vpac270.c
++++ b/arch/arm/mach-pxa/vpac270.c
+@@ -465,7 +465,8 @@ static struct i2c_board_info __initdata vpac270_i2c_devs[] = {
  
--	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!regs) {
--		dev_err(&pdev->dev, "failed to get registers\n");
--		return -ENXIO;
--	}
--
- 	syncpt_irq = platform_get_irq(pdev, 0);
- 	if (syncpt_irq < 0) {
- 		dev_err(&pdev->dev, "failed to get IRQ\n");
-@@ -120,6 +114,7 @@ static int host1x_probe(struct platform_device *pdev)
- 	/* set common host1x device data */
- 	platform_set_drvdata(pdev, host);
+ static void __init vpac270_rtc_init(void)
+ {
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(vpac270_i2c_devs));
++	i2c_register_board_info(0, vpac270_i2c_devs,
++				ARRAY_SIZE(vpac270_i2c_devs));
+ }
+ #else
+ static inline void vpac270_rtc_init(void) {}
+@@ -678,7 +679,8 @@ static struct i2c_board_info __initdata vpac270_pi2c_board_info[] = {
  
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	host->regs = devm_ioremap_resource(&pdev->dev, regs);
- 	if (IS_ERR(host->regs))
- 		return PTR_ERR(host->regs);
-diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdmi.c
-index 01097da..9ffece6 100644
---- a/drivers/gpu/host1x/drm/hdmi.c
-+++ b/drivers/gpu/host1x/drm/hdmi.c
-@@ -1248,9 +1248,6 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
- 		return err;
+ static void __init vpac270_pmic_init(void)
+ {
+-	i2c_register_board_info(1, ARRAY_AND_SIZE(vpac270_pi2c_board_info));
++	i2c_register_board_info(1, vpac270_pi2c_board_info,
++				ARRAY_SIZE(vpac270_pi2c_board_info));
+ }
+ #else
+ static inline void vpac270_pmic_init(void) {}
+@@ -690,7 +692,7 @@ static inline void vpac270_pmic_init(void) {}
+  ******************************************************************************/
+ static void __init vpac270_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(vpac270_pin_config));
++	pxa2xx_mfp_config(vpac270_pin_config, ARRAY_SIZE(vpac270_pin_config));
  
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!regs)
--		return -ENXIO;
--
- 	hdmi->regs = devm_ioremap_resource(&pdev->dev, regs);
- 	if (IS_ERR(hdmi->regs))
- 		return PTR_ERR(hdmi->regs);
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
 
