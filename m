@@ -1,109 +1,255 @@
-From: Shaun Laing <shaun@XResource.ca>
-Date: Tue, 06 Aug 2013 18:33:08 +0000
-Subject: [patch] staging: comedi: drivers: resolves sparse endian warnings
-Message-Id: <201308061833.r76IX8Fo153840@rivendell.pollux.laing>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:51 +0000
+Subject: [PATCH 10/16] arch/arm/mach-mmp: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Resolves sparse warnings of the form:
-	* cast to restricted
-	* incorrect type in assignment (different base types)
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Shaun Laing <shaun@xresource.ca>
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
+
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e,f;
+@@
+
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
+Not compiled.
 
-diff --git a/drivers/staging/comedi/drivers/mite.h b/drivers/staging/comedi/drivers/mite.h
-index 8423b8b..2f3f9eb 100644
---- a/drivers/staging/comedi/drivers/mite.h
-+++ b/drivers/staging/comedi/drivers/mite.h
-@@ -36,10 +36,10 @@
- #define MAX_MITE_DMA_CHANNELS 8
+ arch/arm/mach-mmp/aspenite.c      |    5 +++--
+ arch/arm/mach-mmp/avengers_lite.c |    3 ++-
+ arch/arm/mach-mmp/brownstone.c    |    5 +++--
+ arch/arm/mach-mmp/clock-mmp2.c    |    2 +-
+ arch/arm/mach-mmp/clock-pxa168.c  |    2 +-
+ arch/arm/mach-mmp/clock-pxa910.c  |    2 +-
+ arch/arm/mach-mmp/flint.c         |    2 +-
+ arch/arm/mach-mmp/gplugd.c        |    5 +++--
+ arch/arm/mach-mmp/jasper.c        |    5 +++--
+ arch/arm/mach-mmp/tavorevb.c      |    2 +-
+ arch/arm/mach-mmp/teton_bga.c     |    5 +++--
+ arch/arm/mach-mmp/ttc_dkb.c       |    7 ++++---
+ 12 files changed, 26 insertions(+), 19 deletions(-)
+
+diff --git a/arch/arm/mach-mmp/aspenite.c b/arch/arm/mach-mmp/aspenite.c
+index 0c00209..bc6c30d 100644
+--- a/arch/arm/mach-mmp/aspenite.c
++++ b/arch/arm/mach-mmp/aspenite.c
+@@ -242,11 +242,12 @@ static struct mv_usb_platform_data pxa168_sph_pdata = {
  
- struct mite_dma_descriptor {
--	u32 count;
--	u32 addr;
--	u32 next;
--	u32 dar;
-+	__le32 count;
-+	__le32 addr;
-+	__le32 next;
-+	__le32 dar;
- };
+ static void __init common_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(common_pin_config));
++	mfp_config(common_pin_config, ARRAY_SIZE(common_pin_config));
  
- struct mite_dma_descriptor_ring {
-diff --git a/drivers/staging/comedi/drivers/ni_pcimio.c b/drivers/staging/comedi/drivers/ni_pcimio.c
-index 536be83..29c95ca 100644
---- a/drivers/staging/comedi/drivers/ni_pcimio.c
-+++ b/drivers/staging/comedi/drivers/ni_pcimio.c
-@@ -1394,6 +1394,7 @@ static void m_series_init_eeprom_buffer(struct comedi_device *dev)
- 	unsigned old_iodwbsr1_bits;
- 	unsigned old_iodwcr1_bits;
- 	int i;
-+	__be32 tmp32 = 0;
+ 	/* on-chip devices */
+ 	pxa168_add_uart(1);
+-	pxa168_add_twsi(1, NULL, ARRAY_AND_SIZE(aspenite_i2c_info));
++	pxa168_add_twsi(1, NULL, aspenite_i2c_info,
++			ARRAY_SIZE(aspenite_i2c_info));
+ 	pxa168_add_ssp(1);
+ 	pxa168_add_nand(&aspenite_nand_info);
+ 	pxa168_add_fb(&aspenite_lcd_info);
+diff --git a/arch/arm/mach-mmp/avengers_lite.c b/arch/arm/mach-mmp/avengers_lite.c
+index a451a0f..c2a73cf 100644
+--- a/arch/arm/mach-mmp/avengers_lite.c
++++ b/arch/arm/mach-mmp/avengers_lite.c
+@@ -39,7 +39,8 @@ static struct pxa_gpio_platform_data pxa168_gpio_pdata = {
  
- 	old_iodwbsr_bits = readl(devpriv->mite->mite_io_addr + MITE_IODWBSR);
- 	old_iodwbsr1_bits = readl(devpriv->mite->mite_io_addr + MITE_IODWBSR_1);
-@@ -1407,10 +1408,10 @@ static void m_series_init_eeprom_buffer(struct comedi_device *dev)
+ static void __init avengers_lite_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(avengers_lite_pin_config_V16F));
++	mfp_config(avengers_lite_pin_config_V16F,
++		   ARRAY_SIZE(avengers_lite_pin_config_V16F));
  
- 	BUG_ON(serial_number_eeprom_length > sizeof(devpriv->serial_number));
- 	for (i = 0; i < serial_number_eeprom_length; ++i) {
--		char *byte_ptr = (char *)&devpriv->serial_number + i;
-+		char *byte_ptr = (char *)&tmp32 + i;
- 		*byte_ptr = ni_readb(serial_number_eeprom_offset + i);
- 	}
--	devpriv->serial_number = be32_to_cpu(devpriv->serial_number);
-+	devpriv->serial_number = be32_to_cpu(tmp32);
+ 	/* on-chip devices */
+ 	pxa168_add_uart(2);
+diff --git a/arch/arm/mach-mmp/brownstone.c b/arch/arm/mach-mmp/brownstone.c
+index ac25544..81d325a 100644
+--- a/arch/arm/mach-mmp/brownstone.c
++++ b/arch/arm/mach-mmp/brownstone.c
+@@ -202,7 +202,7 @@ static struct sram_platdata mmp2_isram_platdata = {
  
- 	for (i = 0; i < M_SERIES_EEPROM_SIZE; ++i)
- 		devpriv->eeprom_buffer[i] = ni_readb(Start_Cal_EEPROM + i);
-diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
-index 689b452..cd9e686 100644
---- a/drivers/staging/comedi/drivers/usbdux.c
-+++ b/drivers/staging/comedi/drivers/usbdux.c
-@@ -199,9 +199,9 @@ struct usbdux_private {
- 	/* size of the PWM buffer which holds the bit pattern */
- 	int pwm_buf_sz;
- 	/* input buffer for the ISO-transfer */
--	int16_t *in_buf;
-+	__le16 *in_buf;
- 	/* input buffer for single insn */
--	int16_t *insn_buf;
-+	__le16 *insn_buf;
+ static void __init brownstone_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(brownstone_pin_config));
++	mfp_config(brownstone_pin_config, ARRAY_SIZE(brownstone_pin_config));
  
- 	int8_t ao_chanlist[USBDUX_NUM_AO_CHAN];
- 	unsigned int ao_readback[USBDUX_NUM_AO_CHAN];
-diff --git a/drivers/staging/comedi/drivers/usbduxsigma.c b/drivers/staging/comedi/drivers/usbduxsigma.c
-index fca89c3..1dff45e 100644
---- a/drivers/staging/comedi/drivers/usbduxsigma.c
-+++ b/drivers/staging/comedi/drivers/usbduxsigma.c
-@@ -157,7 +157,7 @@ struct usbduxsigma_private {
- 	/* size of the PWM buffer which holds the bit pattern */
- 	int pwm_buf_sz;
- 	/* input buffer for the ISO-transfer */
--	int32_t *in_buf;
-+	__be32 *in_buf;
- 	/* input buffer for single insn */
- 	int8_t *insn_buf;
+ 	/* on-chip devices */
+ 	mmp2_add_uart(1);
+@@ -210,7 +210,8 @@ static void __init brownstone_init(void)
+ 	platform_device_add_data(&mmp2_device_gpio, &mmp2_gpio_pdata,
+ 				 sizeof(struct pxa_gpio_platform_data));
+ 	platform_device_register(&mmp2_device_gpio);
+-	mmp2_add_twsi(1, NULL, ARRAY_AND_SIZE(brownstone_twsi1_info));
++	mmp2_add_twsi(1, NULL, brownstone_twsi1_info,
++		      ARRAY_SIZE(brownstone_twsi1_info));
+ 	mmp2_add_sdhost(0, &mmp2_sdh_platdata_mmc0); /* SD/MMC */
+ 	mmp2_add_sdhost(2, &mmp2_sdh_platdata_mmc2); /* eMMC */
+ 	mmp2_add_asram(&mmp2_asram_platdata);
+diff --git a/arch/arm/mach-mmp/clock-mmp2.c b/arch/arm/mach-mmp/clock-mmp2.c
+index 53d77cb..a862d1d 100644
+--- a/arch/arm/mach-mmp/clock-mmp2.c
++++ b/arch/arm/mach-mmp/clock-mmp2.c
+@@ -107,5 +107,5 @@ static struct clk_lookup mmp2_clkregs[] = {
  
-@@ -793,7 +793,7 @@ static int usbduxsigma_ai_insn_read(struct comedi_device *dev,
- 		}
+ void __init mmp2_clk_init(void)
+ {
+-	clkdev_add_table(ARRAY_AND_SIZE(mmp2_clkregs));
++	clkdev_add_table(mmp2_clkregs, ARRAY_SIZE(mmp2_clkregs));
+ }
+diff --git a/arch/arm/mach-mmp/clock-pxa168.c b/arch/arm/mach-mmp/clock-pxa168.c
+index c572f21..7da2d77 100644
+--- a/arch/arm/mach-mmp/clock-pxa168.c
++++ b/arch/arm/mach-mmp/clock-pxa168.c
+@@ -87,5 +87,5 @@ static struct clk_lookup pxa168_clkregs[] = {
  
- 		/* 32 bits big endian from the A/D converter */
--		val = be32_to_cpu(*((int32_t *)((devpriv->insn_buf) + 1)));
-+		val = be32_to_cpu(*((__be32 *)((devpriv->insn_buf) + 1)));
- 		val &= 0x00ffffff;	/* strip status byte */
- 		val ^= 0x00800000;	/* convert to unsigned */
+ void __init pxa168_clk_init(void)
+ {
+-	clkdev_add_table(ARRAY_AND_SIZE(pxa168_clkregs));
++	clkdev_add_table(pxa168_clkregs, ARRAY_SIZE(pxa168_clkregs));
+ }
+diff --git a/arch/arm/mach-mmp/clock-pxa910.c b/arch/arm/mach-mmp/clock-pxa910.c
+index 379e1df..c01f3e1 100644
+--- a/arch/arm/mach-mmp/clock-pxa910.c
++++ b/arch/arm/mach-mmp/clock-pxa910.c
+@@ -63,5 +63,5 @@ static struct clk_lookup pxa910_clkregs[] = {
  
-@@ -1372,7 +1372,7 @@ static int usbduxsigma_getstatusinfo(struct comedi_device *dev, int chan)
- 		return ret;
+ void __init pxa910_clk_init(void)
+ {
+-	clkdev_add_table(ARRAY_AND_SIZE(pxa910_clkregs));
++	clkdev_add_table(pxa910_clkregs, ARRAY_SIZE(pxa910_clkregs));
+ }
+diff --git a/arch/arm/mach-mmp/flint.c b/arch/arm/mach-mmp/flint.c
+index 6291c33..102550d 100644
+--- a/arch/arm/mach-mmp/flint.c
++++ b/arch/arm/mach-mmp/flint.c
+@@ -111,7 +111,7 @@ static struct platform_device smc91x_device = {
  
- 	/* 32 bits big endian from the A/D converter */
--	val = be32_to_cpu(*((int32_t *)((devpriv->insn_buf)+1)));
-+	val = be32_to_cpu(*((__be32 *)((devpriv->insn_buf)+1)));
- 	val &= 0x00ffffff;	/* strip status byte */
- 	val ^= 0x00800000;	/* convert to unsigned */
+ static void __init flint_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(flint_pin_config));
++	mfp_config(flint_pin_config, ARRAY_SIZE(flint_pin_config));
  
+ 	/* on-chip devices */
+ 	mmp2_add_uart(1);
+diff --git a/arch/arm/mach-mmp/gplugd.c b/arch/arm/mach-mmp/gplugd.c
+index d81b247..a44ab84 100644
+--- a/arch/arm/mach-mmp/gplugd.c
++++ b/arch/arm/mach-mmp/gplugd.c
+@@ -183,14 +183,15 @@ static void __init select_disp_freq(void)
+ 
+ static void __init gplugd_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(gplugd_pin_config));
++	mfp_config(gplugd_pin_config, ARRAY_SIZE(gplugd_pin_config));
+ 
+ 	select_disp_freq();
+ 
+ 	/* on-chip devices */
+ 	pxa168_add_uart(3);
+ 	pxa168_add_ssp(1);
+-	pxa168_add_twsi(0, NULL, ARRAY_AND_SIZE(gplugd_i2c_board_info));
++	pxa168_add_twsi(0, NULL, gplugd_i2c_board_info,
++			ARRAY_SIZE(gplugd_i2c_board_info));
+ 	platform_device_add_data(&pxa168_device_gpio, &pxa168_gpio_pdata,
+ 				 sizeof(struct pxa_gpio_platform_data));
+ 	platform_device_register(&pxa168_device_gpio);
+diff --git a/arch/arm/mach-mmp/jasper.c b/arch/arm/mach-mmp/jasper.c
+index 0e9e5c0..f46549d 100644
+--- a/arch/arm/mach-mmp/jasper.c
++++ b/arch/arm/mach-mmp/jasper.c
+@@ -164,12 +164,13 @@ static struct sdhci_pxa_platdata mmp2_sdh_platdata_mmc0 = {
+ 
+ static void __init jasper_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(jasper_pin_config));
++	mfp_config(jasper_pin_config, ARRAY_SIZE(jasper_pin_config));
+ 
+ 	/* on-chip devices */
+ 	mmp2_add_uart(1);
+ 	mmp2_add_uart(3);
+-	mmp2_add_twsi(1, NULL, ARRAY_AND_SIZE(jasper_twsi1_info));
++	mmp2_add_twsi(1, NULL, jasper_twsi1_info,
++		      ARRAY_SIZE(jasper_twsi1_info));
+ 	platform_device_add_data(&mmp2_device_gpio, &mmp2_gpio_pdata,
+ 				 sizeof(struct pxa_gpio_platform_data));
+ 	platform_device_register(&mmp2_device_gpio);
+diff --git a/arch/arm/mach-mmp/tavorevb.c b/arch/arm/mach-mmp/tavorevb.c
+index cdfc9bf..30d597f 100644
+--- a/arch/arm/mach-mmp/tavorevb.c
++++ b/arch/arm/mach-mmp/tavorevb.c
+@@ -94,7 +94,7 @@ static struct platform_device smc91x_device = {
+ 
+ static void __init tavorevb_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(tavorevb_pin_config));
++	mfp_config(tavorevb_pin_config, ARRAY_SIZE(tavorevb_pin_config));
+ 
+ 	/* on-chip devices */
+ 	pxa910_add_uart(1);
+diff --git a/arch/arm/mach-mmp/teton_bga.c b/arch/arm/mach-mmp/teton_bga.c
+index 6aa53fb..43de296 100644
+--- a/arch/arm/mach-mmp/teton_bga.c
++++ b/arch/arm/mach-mmp/teton_bga.c
+@@ -82,12 +82,13 @@ static struct i2c_board_info teton_bga_i2c_info[] __initdata = {
+ 
+ static void __init teton_bga_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(teton_bga_pin_config));
++	mfp_config(teton_bga_pin_config, ARRAY_SIZE(teton_bga_pin_config));
+ 
+ 	/* on-chip devices */
+ 	pxa168_add_uart(1);
+ 	pxa168_add_keypad(&teton_bga_keypad_info);
+-	pxa168_add_twsi(0, NULL, ARRAY_AND_SIZE(teton_bga_i2c_info));
++	pxa168_add_twsi(0, NULL, teton_bga_i2c_info,
++			ARRAY_SIZE(teton_bga_i2c_info));
+ 	platform_device_add_data(&pxa168_device_gpio, &pxa168_gpio_pdata,
+ 				 sizeof(struct pxa_gpio_platform_data));
+ 	platform_device_register(&pxa168_device_gpio);
+diff --git a/arch/arm/mach-mmp/ttc_dkb.c b/arch/arm/mach-mmp/ttc_dkb.c
+index 8483906..9ddb70b 100644
+--- a/arch/arm/mach-mmp/ttc_dkb.c
++++ b/arch/arm/mach-mmp/ttc_dkb.c
+@@ -273,7 +273,7 @@ static void __init add_disp(void)
+ 
+ static void __init ttc_dkb_init(void)
+ {
+-	mfp_config(ARRAY_AND_SIZE(ttc_dkb_pin_config));
++	mfp_config(ttc_dkb_pin_config, ARRAY_SIZE(ttc_dkb_pin_config));
+ 
+ 	/* on-chip devices */
+ 	pxa910_add_uart(1);
+@@ -282,10 +282,11 @@ static void __init ttc_dkb_init(void)
+ #endif
+ 
+ 	/* off-chip devices */
+-	pxa910_add_twsi(0, NULL, ARRAY_AND_SIZE(ttc_dkb_i2c_info));
++	pxa910_add_twsi(0, NULL, ttc_dkb_i2c_info,
++			ARRAY_SIZE(ttc_dkb_i2c_info));
+ 	platform_device_add_data(&pxa910_device_gpio, &pxa910_gpio_pdata,
+ 				 sizeof(struct pxa_gpio_platform_data));
+-	platform_add_devices(ARRAY_AND_SIZE(ttc_dkb_devices));
++	platform_add_devices(ttc_dkb_devices, ARRAY_SIZE(ttc_dkb_devices));
+ 
+ #ifdef CONFIG_USB_MV_UDC
+ 	pxa168_device_u2o.dev.platform_data = &ttc_usb_pdata;
+
