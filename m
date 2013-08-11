@@ -1,71 +1,73 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 09:11:22 +0000
-Subject: [PATCH 18/29] tty: ar933x_uart: simplify use of devm_ioremap_resource
-Message-Id: <1376471493-22215-19-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:45 +0000
+Subject: [PATCH 4/16] arch/arm/mach-pxa/z2.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Remove unneeded error handling on the result of a call to
-platform_get_resource when the value is passed to devm_ioremap_resource.
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
 
-Move the call to platform_get_resource adjacent to the call to
-devm_ioremap_resource to make the connection between them more clear.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression pdev,res,n,e,e1;
-expression ret != 0;
-identifier l;
+expression e,f;
 @@
 
-- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  ... when != res
-- if (res = NULL) { ... \(goto l;\|return ret;\) }
-  ... when != res
-+ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  e = devm_ioremap_resource(e1, res);
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/tty/serial/ar933x_uart.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Not compiled.
 
-diff --git a/drivers/tty/serial/ar933x_uart.c b/drivers/tty/serial/ar933x_uart.c
-index 3f5517f..a712a3f 100644
---- a/drivers/tty/serial/ar933x_uart.c
-+++ b/drivers/tty/serial/ar933x_uart.c
-@@ -640,12 +640,6 @@ static int ar933x_uart_probe(struct platform_device *pdev)
- 	if (id > CONFIG_SERIAL_AR933X_NR_UARTS)
- 		return -EINVAL;
+ arch/arm/mach-pxa/z2.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/z2.c b/arch/arm/mach-pxa/z2.c
+index 2513d8f..d8fb360 100644
+--- a/arch/arm/mach-pxa/z2.c
++++ b/arch/arm/mach-pxa/z2.c
+@@ -500,7 +500,8 @@ static struct i2c_board_info __initdata z2_i2c_board_info[] = {
+ static void __init z2_i2c_init(void)
+ {
+ 	pxa_set_i2c_info(NULL);
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(z2_i2c_board_info));
++	i2c_register_board_info(0, z2_i2c_board_info,
++				ARRAY_SIZE(z2_i2c_board_info));
+ }
+ #else
+ static inline void z2_i2c_init(void) {}
+@@ -674,7 +675,8 @@ static struct i2c_board_info __initdata z2_pi2c_board_info[] = {
+ static void __init z2_pmic_init(void)
+ {
+ 	pxa27x_set_i2c_power_info(NULL);
+-	i2c_register_board_info(1, ARRAY_AND_SIZE(z2_pi2c_board_info));
++	i2c_register_board_info(1, z2_pi2c_board_info,
++				ARRAY_SIZE(z2_pi2c_board_info));
+ }
+ #else
+ static inline void z2_pmic_init(void) {}
+@@ -700,7 +702,7 @@ static void z2_power_off(void)
+  ******************************************************************************/
+ static void __init z2_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(z2_pin_config));
++	pxa2xx_mfp_config(z2_pin_config, ARRAY_SIZE(z2_pin_config));
  
--	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!mem_res) {
--		dev_err(&pdev->dev, "no MEM resource\n");
--		return -EINVAL;
--	}
--
- 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!irq_res) {
- 		dev_err(&pdev->dev, "no IRQ resource\n");
-@@ -659,6 +653,7 @@ static int ar933x_uart_probe(struct platform_device *pdev)
- 
- 	port = &up->port;
- 
-+	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	port->membase = devm_ioremap_resource(&pdev->dev, mem_res);
- 	if (IS_ERR(port->membase))
- 		return PTR_ERR(port->membase);
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
 
