@@ -1,27 +1,95 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 16 Aug 2013 14:40:42 +0000
-Subject: Re: [patch] mtd: create_freezable_workqueue() doesn't return an ERR_PTR
-Message-Id: <1376664042.2089.378.camel@sauron.fi.intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:50 +0000
+Subject: [PATCH 9/16] arch/arm/mach-pxa/mioa701.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130815075628.GC19280@elgon.mountain>
-In-Reply-To: <20130815075628.GC19280@elgon.mountain>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, 2013-08-15 at 10:56 +0300, Dan Carpenter wrote:
-> The create_freezable_workqueue() returns a NULL on error, it doesn't
-> return an ERR_PTR.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/mtd/sm_ftl.c b/drivers/mtd/sm_ftl.c
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Pushed to l2-mtd.git, thanks!
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
 
--- 
-Best Regards,
-Artem Bityutskiy
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e,f;
+@@
+
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not compiled.
+
+ arch/arm/mach-pxa/mioa701.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/mioa701.c b/arch/arm/mach-pxa/mioa701.c
+index acc9d3c..f287b1e 100644
+--- a/arch/arm/mach-pxa/mioa701.c
++++ b/arch/arm/mach-pxa/mioa701.c
+@@ -319,7 +319,7 @@ static int __init gsm_init(void)
+ {
+ 	int rc;
+ 
+-	rc = gpio_request_array(ARRAY_AND_SIZE(gsm_gpios));
++	rc = gpio_request_array(gsm_gpios, ARRAY_SIZE(gsm_gpios));
+ 	if (rc)
+ 		goto err_gpio;
+ 	rc = request_irq(gpio_to_irq(GPIO25_GSM_MOD_ON_STATE), gsm_on_irq,
+@@ -333,7 +333,7 @@ static int __init gsm_init(void)
+ 
+ err_irq:
+ 	printk(KERN_ERR "Mioa701: Can't request GSM_ON irq\n");
+-	gpio_free_array(ARRAY_AND_SIZE(gsm_gpios));
++	gpio_free_array(gsm_gpios, ARRAY_SIZE(gsm_gpios));
+ err_gpio:
+ 	printk(KERN_ERR "Mioa701: gsm not available\n");
+ 	return rc;
+@@ -342,7 +342,7 @@ err_gpio:
+ static void gsm_exit(void)
+ {
+ 	free_irq(gpio_to_irq(GPIO25_GSM_MOD_ON_STATE), NULL);
+-	gpio_free_array(ARRAY_AND_SIZE(gsm_gpios));
++	gpio_free_array(gsm_gpios, ARRAY_SIZE(gsm_gpios));
+ }
+ 
+ /*
+@@ -731,11 +731,11 @@ static void __init mioa701_machine_init(void)
+ 	__raw_writel(0x0001c391, MCIO0);
+ 
+ 
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(mioa701_pin_config));
++	pxa2xx_mfp_config(mioa701_pin_config, ARRAY_SIZE(mioa701_pin_config));
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+-	rc = gpio_request_array(ARRAY_AND_SIZE(global_gpios));
++	rc = gpio_request_array(global_gpios, ARRAY_SIZE(global_gpios));
+ 	if (rc)
+ 		pr_err("MioA701: Failed to request GPIOs: %d", rc);
+ 	bootstrap_init();
+@@ -748,7 +748,8 @@ static void __init mioa701_machine_init(void)
+ 	platform_add_devices(devices, ARRAY_SIZE(devices));
+ 	gsm_init();
+ 
+-	i2c_register_board_info(1, ARRAY_AND_SIZE(mioa701_pi2c_devices));
++	i2c_register_board_info(1, mioa701_pi2c_devices,
++				ARRAY_SIZE(mioa701_pi2c_devices));
+ 	pxa_set_i2c_info(&i2c_pdata);
+ 	pxa27x_set_i2c_power_info(NULL);
+ 	pxa_set_camera_info(&mioa701_pxacamera_platform_data);
 
