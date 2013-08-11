@@ -1,59 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Aug 2013 16:51:42 +0000
-Subject: [PATCH 1/16] sound/soc/pxa/mioa701_wm9713.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
-Message-Id: <1376239917-15594-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Sun, 11 Aug 2013 18:06:48 +0000
+Subject: Re: [PATCH 1/16] sound/soc/pxa/mioa701_wm9713.c: Avoid using ARRAY_AND_SIZE(e) as a function argumen
+Message-Id: <20130811180648.GA11327@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="PNTmBPCT7hxwcZjr"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Eric Miao <eric.y.miao@gmail.com>
-Cc: alsa-devel@alsa-project.org, Russell King <linux@arm.linux.org.uk>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
+ <1376239917-15594-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-2-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Eric Miao <eric.y.miao@gmail.com>, kernel-janitors@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
-arity of the called function.
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The semantic match that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+On Sun, Aug 11, 2013 at 06:51:42PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding t=
+he
+> arity of the called function.
 
-// <smpl>
-@@
-expression e,f;
-@@
+Applied, thanks.
 
-f(...,
-- ARRAY_AND_SIZE(e)
-+ e,ARRAY_SIZE(e)
-  ,...)
-// </smpl>
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
----
-Not compiled.
+iQIcBAEBAgAGBQJSB9K1AAoJELSic+t+oim9cVkQAI35kkM/JfHY2JsYDv+7wdiT
+evmDTrMnHjTYs//jsFWdJhTxjFm1hTNA33R9kQDlUWKX0mMqAziaDdFSzSglry6Z
+IWneLx+chfjs0VkZiMb1cIIaBTDQl82g6vnvaFLVTA+n1wbZQ8uunt42O8MLS+Kz
+mPXHN/PrN0sPbPzZHrnKQh201dpbHs77/qEEymDHbiy19k46J7EPnUq6Y2O1Lf+A
+lJyv4S4qbrSyr/4GDmxCvhCPBrPaAa5zIOQh1pxkckPYc1SB2+cqlrXLuv0jV6Q+
+O5O5z4dqEWFggima9+74DY0iYcv+wJgtTX0CeTA5zEtxB/ET6YiNCn0J4Chzqf82
+rVtjbH5YCmOXDqO1WTQo7gC08xK7r3OJPfZqI5+lEvkwlahVVZY/NPrAilCZMmj+
+Mld4BT1IwsQoyWDaiWF9bS46j1bDko30tFOQ9T23AjMvWFKh0ap0p+5MxVixzJk1
+5b0NFgitgKYTYKKDkOE3QQXo47p0EMCKT+kM+2H05gYrRsiCK+QS+Etr8/HnDBuv
+AAKasq7xsUOkDvwXP/gTaplhDfFyUSizw2mWgucz5yT2j08ymAtOuRhLsWi457dJ
+y16x9nhB0Rd+eaNiF03TxOHVWF7BWchujBF6aWzjnBIektpMMiqz3qqma12/KI2d
+gyA6Ljl5n7wo/KE2T+LA
+=aixY
+-----END PGP SIGNATURE-----
 
- sound/soc/pxa/mioa701_wm9713.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/pxa/mioa701_wm9713.c b/sound/soc/pxa/mioa701_wm9713.c
-index 97b711e..20fdce6 100644
---- a/sound/soc/pxa/mioa701_wm9713.c
-+++ b/sound/soc/pxa/mioa701_wm9713.c
-@@ -133,10 +133,11 @@ static int mioa701_wm9713_init(struct snd_soc_pcm_runtime *rtd)
- 	unsigned short reg;
- 
- 	/* Add mioa701 specific widgets */
--	snd_soc_dapm_new_controls(dapm, ARRAY_AND_SIZE(mioa701_dapm_widgets));
-+	snd_soc_dapm_new_controls(dapm, mioa701_dapm_widgets,
-+				  ARRAY_SIZE(mioa701_dapm_widgets));
- 
- 	/* Set up mioa701 specific audio path audio_mapnects */
--	snd_soc_dapm_add_routes(dapm, ARRAY_AND_SIZE(audio_map));
-+	snd_soc_dapm_add_routes(dapm, audio_map, ARRAY_SIZE(audio_map));
- 
- 	/* Prepare GPIO8 for rear speaker amplifier */
- 	reg = codec->driver->read(codec, AC97_GPIO_CFG);
-
+--PNTmBPCT7hxwcZjr--
