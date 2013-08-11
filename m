@@ -1,40 +1,128 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 10 Aug 2013 07:46:50 +0000
-Subject: [patch] dmaengine: make dma_submit_error() return an error code
-Message-Id: <20130810074650.GA14390@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:47 +0000
+Subject: [PATCH 6/16] arch/arm/mach-pxa: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <djbw@fb.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-The problem here is that the dma_xfer() functions in
-drivers/ata/pata_arasan_cf.c and drivers/mtd/nand/fsmc_nand.c expect
-dma_submit_error() to return an error code so they return 1 when they
-intended to return a negative.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-So far as I can tell, none of the ->tx_submit() functions ever do
-return error codes so this patch should have no effect in the current
-code.
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
 
-I also changed it from a define to an inline.
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@@
+expression e,f;
+@@
 
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index 5692bc3..16321fb 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -38,7 +38,10 @@ typedef s32 dma_cookie_t;
- #define DMA_MIN_COOKIE	1
- #define DMA_MAX_COOKIE	INT_MAX
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not compiled.
+
+ arch/arm/mach-pxa/palmld.c  |    2 +-
+ arch/arm/mach-pxa/palmt5.c  |    2 +-
+ arch/arm/mach-pxa/palmtc.c  |    2 +-
+ arch/arm/mach-pxa/palmte2.c |    7 ++++---
+ arch/arm/mach-pxa/palmtx.c  |    2 +-
+ 5 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/palmld.c b/arch/arm/mach-pxa/palmld.c
+index cf210b1..4e3016a 100644
+--- a/arch/arm/mach-pxa/palmld.c
++++ b/arch/arm/mach-pxa/palmld.c
+@@ -322,7 +322,7 @@ static void __init palmld_map_io(void)
  
--#define dma_submit_error(cookie) ((cookie) < 0 ? 1 : 0)
-+static inline int dma_submit_error(dma_cookie_t cookie)
-+{
-+	return cookie < 0 ? cookie : 0;
-+}
+ static void __init palmld_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(palmld_pin_config));
++	pxa2xx_mfp_config(palmld_pin_config, ARRAY_SIZE(palmld_pin_config));
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+diff --git a/arch/arm/mach-pxa/palmt5.c b/arch/arm/mach-pxa/palmt5.c
+index 3ed9b02..c054003 100644
+--- a/arch/arm/mach-pxa/palmt5.c
++++ b/arch/arm/mach-pxa/palmt5.c
+@@ -184,7 +184,7 @@ static void __init palmt5_reserve(void)
  
- /**
-  * enum dma_status - DMA transaction status
+ static void __init palmt5_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(palmt5_pin_config));
++	pxa2xx_mfp_config(palmt5_pin_config, ARRAY_SIZE(palmt5_pin_config));
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+diff --git a/arch/arm/mach-pxa/palmtc.c b/arch/arm/mach-pxa/palmtc.c
+index 100b176..aea2e19 100644
+--- a/arch/arm/mach-pxa/palmtc.c
++++ b/arch/arm/mach-pxa/palmtc.c
+@@ -517,7 +517,7 @@ static inline void palmtc_lcd_init(void) {}
+  ******************************************************************************/
+ static void __init palmtc_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(palmtc_pin_config));
++	pxa2xx_mfp_config(palmtc_pin_config, ARRAY_SIZE(palmtc_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+diff --git a/arch/arm/mach-pxa/palmte2.c b/arch/arm/mach-pxa/palmte2.c
+index 0742721..6cfd6b0 100644
+--- a/arch/arm/mach-pxa/palmte2.c
++++ b/arch/arm/mach-pxa/palmte2.c
+@@ -145,7 +145,8 @@ static struct gpio palmte_bl_gpios[] = {
+ 
+ static int palmte2_backlight_init(struct device *dev)
+ {
+-	return gpio_request_array(ARRAY_AND_SIZE(palmte_bl_gpios));
++	return gpio_request_array(palmte_bl_gpios,
++				  ARRAY_SIZE(palmte_bl_gpios));
+ }
+ 
+ static int palmte2_backlight_notify(struct device *dev, int brightness)
+@@ -157,7 +158,7 @@ static int palmte2_backlight_notify(struct device *dev, int brightness)
+ 
+ static void palmte2_backlight_exit(struct device *dev)
+ {
+-	gpio_free_array(ARRAY_AND_SIZE(palmte_bl_gpios));
++	gpio_free_array(palmte_bl_gpios, ARRAY_SIZE(palmte_bl_gpios));
+ }
+ 
+ static struct platform_pwm_backlight_data palmte2_backlight_data = {
+@@ -342,7 +343,7 @@ static void __init palmte2_udc_init(void)
+ 
+ static void __init palmte2_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(palmte2_pin_config));
++	pxa2xx_mfp_config(palmte2_pin_config, ARRAY_SIZE(palmte2_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+diff --git a/arch/arm/mach-pxa/palmtx.c b/arch/arm/mach-pxa/palmtx.c
+index 83f830d..750ff97 100644
+--- a/arch/arm/mach-pxa/palmtx.c
++++ b/arch/arm/mach-pxa/palmtx.c
+@@ -341,7 +341,7 @@ static void __init palmtx_map_io(void)
+ 
+ static void __init palmtx_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(palmtx_pin_config));
++	pxa2xx_mfp_config(palmtx_pin_config, ARRAY_SIZE(palmtx_pin_config));
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+
