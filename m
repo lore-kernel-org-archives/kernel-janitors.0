@@ -1,47 +1,54 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Tue, 20 Aug 2013 09:50:45 +0000
-Subject: Re: [patch] staging: comedi: dt282x: dt282x_ai_insn_read() always fails
-Message-Id: <52133BF5.7040703@mev.co.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:44 +0000
+Subject: [PATCH 3/16] arch/arm/mach-ux500/cpu-db8500.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130820085735.GB20170@elgon.mountain>
-In-Reply-To: <20130820085735.GB20170@elgon.mountain>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On 2013-08-20 09:57, Dan Carpenter wrote:
-> In dt282x_ai_insn_read() we call this macro like:
-> wait_for(!mux_busy(), comedi_error(dev, "timeout\n"); return -ETIME;);
-> Because the if statement doesn't have curly braces it means we always
-> return -ETIME and the function never succeeds.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This macro is very ugly, btw.
->
-> diff --git a/drivers/staging/comedi/drivers/dt282x.c b/drivers/staging/comedi/drivers/dt282x.c
-> index 23cb0335..4a25382 100644
-> --- a/drivers/staging/comedi/drivers/dt282x.c
-> +++ b/drivers/staging/comedi/drivers/dt282x.c
-> @@ -267,8 +267,9 @@ struct dt282x_private {
->   			}					\
->   			udelay(5);				\
->   		}						\
-> -		if (_i)						\
-> +		if (_i) {					\
->   			b					\
-> +		}						\
->   	} while (0)
->
->   static int prep_ai_dma(struct comedi_device *dev, int chan, int size);
->
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Ian Abbott <abbotti@mev.co.uk>
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
 
-The bug was introduced by commit 
-18e7e78e945527d9cb570a17f0835815f1794c2f in mainline.  And yes, it is ugly.
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
--=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
+// <smpl>
+@@
+expression e,f;
+@@
+
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not compiled.
+
+ arch/arm/mach-ux500/cpu-db8500.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-ux500/cpu-db8500.c b/arch/arm/mach-ux500/cpu-db8500.c
+index 12eee81..a73bb3d 100644
+--- a/arch/arm/mach-ux500/cpu-db8500.c
++++ b/arch/arm/mach-ux500/cpu-db8500.c
+@@ -157,7 +157,8 @@ static void __init db8500_add_gpios(struct device *parent)
+ 		.supports_sleepmode = true,
+ 	};
+ 
+-	dbx500_add_gpios(parent, ARRAY_AND_SIZE(db8500_gpio_base),
++	dbx500_add_gpios(parent, db8500_gpio_base,
++			 ARRAY_SIZE(db8500_gpio_base),
+ 			 IRQ_DB8500_GPIO0, &pdata);
+ 	dbx500_add_pinctrl(parent, "pinctrl-db8500", U8500_PRCMU_BASE);
+ }
+
