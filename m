@@ -1,19 +1,70 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Thu, 08 Aug 2013 12:02:54 +0000
-Subject: Re: [patch] netfilter: information leaks building packet message
-Message-Id: <20130808120254.GA6822@localhost>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:56 +0000
+Subject: [PATCH 15/16] arch/arm/mach-kirkwood: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-16-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130801093656.GA12455@elgon.mountain>
-In-Reply-To: <20130801093656.GA12455@elgon.mountain>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Aug 01, 2013 at 12:36:57PM +0300, Dan Carpenter wrote:
-> These structs have a "_pad" member.  Also the "phw" structs have an 8
-> byte "hw_addr[]" array but sometimes only the first 6 bytes are
-> initialized.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied, thanks.
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
+
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e,f;
+@@
+
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not compiled.
+
+ arch/arm/mach-kirkwood/openrd-setup.c    |    3 ++-
+ arch/arm/mach-kirkwood/rd88f6281-setup.c |    4 +++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-kirkwood/openrd-setup.c b/arch/arm/mach-kirkwood/openrd-setup.c
+index 6a6eb54..e5cf841 100644
+--- a/arch/arm/mach-kirkwood/openrd-setup.c
++++ b/arch/arm/mach-kirkwood/openrd-setup.c
+@@ -158,7 +158,8 @@ static void __init openrd_init(void)
+ 	kirkwood_mpp_conf(openrd_mpp_config);
+ 
+ 	kirkwood_uart0_init();
+-	kirkwood_nand_init(ARRAY_AND_SIZE(openrd_nand_parts), 25);
++	kirkwood_nand_init(openrd_nand_parts, ARRAY_SIZE(openrd_nand_parts),
++			   25);
+ 
+ 	kirkwood_ehci_init();
+ 
+diff --git a/arch/arm/mach-kirkwood/rd88f6281-setup.c b/arch/arm/mach-kirkwood/rd88f6281-setup.c
+index d242231..5154bd2 100644
+--- a/arch/arm/mach-kirkwood/rd88f6281-setup.c
++++ b/arch/arm/mach-kirkwood/rd88f6281-setup.c
+@@ -87,7 +87,9 @@ static void __init rd88f6281_init(void)
+ 	kirkwood_init();
+ 	kirkwood_mpp_conf(rd88f6281_mpp_config);
+ 
+-	kirkwood_nand_init(ARRAY_AND_SIZE(rd88f6281_nand_parts), 25);
++	kirkwood_nand_init(rd88f6281_nand_parts,
++			   ARRAY_SIZE(rd88f6281_nand_parts),
++			   25);
+ 	kirkwood_ehci_init();
+ 
+ 	kirkwood_ge00_init(&rd88f6281_ge00_data);
+
