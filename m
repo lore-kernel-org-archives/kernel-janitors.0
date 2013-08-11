@@ -1,59 +1,225 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 09:11:33 +0000
-Subject: [PATCH 29/29] usb: dwc3: omap: simplify use of devm_ioremap_resource
-Message-Id: <1376471493-22215-30-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:55 +0000
+Subject: [PATCH 14/16] arch/arm/mach-pxa/ezx.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Remove unneeded error handling on the result of a call to
-platform_get_resource when the value is passed to devm_ioremap_resource.
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression pdev,res,n,e,e1;
-expression ret != 0;
-identifier l;
+expression e,f;
 @@
 
-- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  ... when != res
-- if (res = NULL) { ... \(goto l;\|return ret;\) }
-  ... when != res
-+ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  e = devm_ioremap_resource(e1, res);
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/usb/dwc3/dwc3-omap.c |    5 -----
- 1 file changed, 5 deletions(-)
+Not compiled.
 
-diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
-index 7f7ea62..cbcd972 100644
---- a/drivers/usb/dwc3/dwc3-omap.c
-+++ b/drivers/usb/dwc3/dwc3-omap.c
-@@ -432,11 +432,6 @@ static int dwc3_omap_probe(struct platform_device *pdev)
+ arch/arm/mach-pxa/ezx.c |   75 +++++++++++++++++++++++++-----------------------
+ 1 file changed, 40 insertions(+), 35 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/ezx.c b/arch/arm/mach-pxa/ezx.c
+index fe2eb83..879cb1b 100644
+--- a/arch/arm/mach-pxa/ezx.c
++++ b/arch/arm/mach-pxa/ezx.c
+@@ -797,9 +797,9 @@ static struct platform_device *a780_devices[] __initdata = {
+ 
+ static void __init a780_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(ezx_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(gen1_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(a780_pin_config));
++	pxa2xx_mfp_config(ezx_pin_config, ARRAY_SIZE(ezx_pin_config));
++	pxa2xx_mfp_config(gen1_pin_config, ARRAY_SIZE(gen1_pin_config));
++	pxa2xx_mfp_config(a780_pin_config, ARRAY_SIZE(a780_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+@@ -816,8 +816,8 @@ static void __init a780_init(void)
+ 		platform_device_register(&a780_camera);
  	}
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(dev, "missing memory base resource\n");
--		return -EINVAL;
--	}
--
- 	base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+-	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+-	platform_add_devices(ARRAY_AND_SIZE(a780_devices));
++	platform_add_devices(ezx_devices, ARRAY_SIZE(ezx_devices));
++	platform_add_devices(a780_devices, ARRAY_SIZE(a780_devices));
+ }
+ 
+ MACHINE_START(EZX_A780, "Motorola EZX A780")
+@@ -868,23 +868,24 @@ static struct platform_device *e680_devices[] __initdata = {
+ 
+ static void __init e680_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(ezx_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(gen1_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(e680_pin_config));
++	pxa2xx_mfp_config(ezx_pin_config, ARRAY_SIZE(ezx_pin_config));
++	pxa2xx_mfp_config(gen1_pin_config, ARRAY_SIZE(gen1_pin_config));
++	pxa2xx_mfp_config(e680_pin_config, ARRAY_SIZE(e680_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+ 
+ 	pxa_set_i2c_info(NULL);
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(e680_i2c_board_info));
++	i2c_register_board_info(0, e680_i2c_board_info,
++				ARRAY_SIZE(e680_i2c_board_info));
+ 
+ 	pxa_set_fb_info(NULL, &ezx_fb_info_1);
+ 
+ 	pxa_set_keypad_info(&e680_keypad_platform_data);
+ 
+-	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+-	platform_add_devices(ARRAY_AND_SIZE(e680_devices));
++	platform_add_devices(ezx_devices, ARRAY_SIZE(ezx_devices));
++	platform_add_devices(e680_devices, ARRAY_SIZE(e680_devices));
+ }
+ 
+ MACHINE_START(EZX_E680, "Motorola EZX E680")
+@@ -935,23 +936,24 @@ static struct platform_device *a1200_devices[] __initdata = {
+ 
+ static void __init a1200_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(ezx_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(gen2_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(a1200_pin_config));
++	pxa2xx_mfp_config(ezx_pin_config, ARRAY_SIZE(ezx_pin_config));
++	pxa2xx_mfp_config(gen2_pin_config, ARRAY_SIZE(gen2_pin_config));
++	pxa2xx_mfp_config(a1200_pin_config, ARRAY_SIZE(a1200_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+ 
+ 	pxa_set_i2c_info(NULL);
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(a1200_i2c_board_info));
++	i2c_register_board_info(0, a1200_i2c_board_info,
++				ARRAY_SIZE(a1200_i2c_board_info));
+ 
+ 	pxa_set_fb_info(NULL, &ezx_fb_info_2);
+ 
+ 	pxa_set_keypad_info(&a1200_keypad_platform_data);
+ 
+-	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+-	platform_add_devices(ARRAY_AND_SIZE(a1200_devices));
++	platform_add_devices(ezx_devices, ARRAY_SIZE(ezx_devices));
++	platform_add_devices(a1200_devices, ARRAY_SIZE(a1200_devices));
+ }
+ 
+ MACHINE_START(EZX_A1200, "Motorola EZX A1200")
+@@ -1122,16 +1124,17 @@ static struct platform_device *a910_devices[] __initdata = {
+ 
+ static void __init a910_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(ezx_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(gen2_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(a910_pin_config));
++	pxa2xx_mfp_config(ezx_pin_config, ARRAY_SIZE(ezx_pin_config));
++	pxa2xx_mfp_config(gen2_pin_config, ARRAY_SIZE(gen2_pin_config));
++	pxa2xx_mfp_config(a910_pin_config, ARRAY_SIZE(a910_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+ 
+ 	pxa_set_i2c_info(NULL);
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(a910_i2c_board_info));
++	i2c_register_board_info(0, a910_i2c_board_info,
++				ARRAY_SIZE(a910_i2c_board_info));
+ 
+ 	pxa_set_fb_info(NULL, &ezx_fb_info_2);
+ 
+@@ -1142,8 +1145,8 @@ static void __init a910_init(void)
+ 		platform_device_register(&a910_camera);
+ 	}
+ 
+-	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+-	platform_add_devices(ARRAY_AND_SIZE(a910_devices));
++	platform_add_devices(ezx_devices, ARRAY_SIZE(ezx_devices));
++	platform_add_devices(a910_devices, ARRAY_SIZE(a910_devices));
+ }
+ 
+ MACHINE_START(EZX_A910, "Motorola EZX A910")
+@@ -1194,23 +1197,24 @@ static struct platform_device *e6_devices[] __initdata = {
+ 
+ static void __init e6_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(ezx_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(gen2_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(e6_pin_config));
++	pxa2xx_mfp_config(ezx_pin_config, ARRAY_SIZE(ezx_pin_config));
++	pxa2xx_mfp_config(gen2_pin_config, ARRAY_SIZE(gen2_pin_config));
++	pxa2xx_mfp_config(e6_pin_config, ARRAY_SIZE(e6_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+ 
+ 	pxa_set_i2c_info(NULL);
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(e6_i2c_board_info));
++	i2c_register_board_info(0, e6_i2c_board_info,
++				ARRAY_SIZE(e6_i2c_board_info));
+ 
+ 	pxa_set_fb_info(NULL, &ezx_fb_info_2);
+ 
+ 	pxa_set_keypad_info(&e6_keypad_platform_data);
+ 
+-	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+-	platform_add_devices(ARRAY_AND_SIZE(e6_devices));
++	platform_add_devices(ezx_devices, ARRAY_SIZE(ezx_devices));
++	platform_add_devices(e6_devices, ARRAY_SIZE(e6_devices));
+ }
+ 
+ MACHINE_START(EZX_E6, "Motorola EZX E6")
+@@ -1235,23 +1239,24 @@ static struct platform_device *e2_devices[] __initdata = {
+ 
+ static void __init e2_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(ezx_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(gen2_pin_config));
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(e2_pin_config));
++	pxa2xx_mfp_config(ezx_pin_config, ARRAY_SIZE(ezx_pin_config));
++	pxa2xx_mfp_config(gen2_pin_config, ARRAY_SIZE(gen2_pin_config));
++	pxa2xx_mfp_config(e2_pin_config, ARRAY_SIZE(e2_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+ 
+ 	pxa_set_i2c_info(NULL);
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(e2_i2c_board_info));
++	i2c_register_board_info(0, e2_i2c_board_info,
++				ARRAY_SIZE(e2_i2c_board_info));
+ 
+ 	pxa_set_fb_info(NULL, &ezx_fb_info_2);
+ 
+ 	pxa_set_keypad_info(&e2_keypad_platform_data);
+ 
+-	platform_add_devices(ARRAY_AND_SIZE(ezx_devices));
+-	platform_add_devices(ARRAY_AND_SIZE(e2_devices));
++	platform_add_devices(ezx_devices, ARRAY_SIZE(ezx_devices));
++	platform_add_devices(e2_devices, ARRAY_SIZE(e2_devices));
+ }
+ 
+ MACHINE_START(EZX_E2, "Motorola EZX E2")
 
