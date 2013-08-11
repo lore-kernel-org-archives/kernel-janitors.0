@@ -1,44 +1,60 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 11 Aug 2013 07:34:40 +0000
-Subject: Re: [PATCH] arch/arm/mach-pxa/stargate2.c: use ARRAY_AND_SIZE consistently
-Message-Id: <52073E90.2030008@bfs.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:53 +0000
+Subject: [PATCH 12/16] drivers/cpufreq/pxa3xx-cpufreq.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376148353-9699-1-git-send-email-Julia.Lawall@lip6.fr>
- <20130810223338.GM5502@mwanda>
- <alpine.DEB.2.02.1308110745030.2072@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1308110745030.2072@localhost6.localdomain6>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: kernel-janitors@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
 
-Am 11.08.2013 07:48, schrieb Julia Lawall:
-> On Sun, 11 Aug 2013, Dan Carpenter wrote:
-> 
->> ARRAY_AND_SIZE() macro is horrible, and I would like it if it were
->> removed.  What I meant before was just that probably people will
->> probably complain if we try to remove it.
-> 
-> Well, I could either wait for someone to defend it, or send a patch 
-> getting rid of it and see what happens...  I can't see what could go wrong 
-> with
-> 
-> f(...,
-> - ARRAY_AND_SIZE(e)
-> + e, ARRAY_SIZE(e)
->   , ...)
-> 
-> so it should be an easy patch to create.
-> 
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression e,f;
+@@
 
-if it is not to much work, send a patch to get rid of it.
-It seems all agree that the disadvantages outweighs it
-advantages.
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
+// </smpl>
 
-just my 2 cents,
- wh
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+Not compiled.
+
+ drivers/cpufreq/pxa3xx-cpufreq.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cpufreq/pxa3xx-cpufreq.c b/drivers/cpufreq/pxa3xx-cpufreq.c
+index 9c92ef0..d26306f 100644
+--- a/drivers/cpufreq/pxa3xx-cpufreq.c
++++ b/drivers/cpufreq/pxa3xx-cpufreq.c
+@@ -213,10 +213,12 @@ static int pxa3xx_cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->cur = policy->min = policy->max;
+ 
+ 	if (cpu_is_pxa300() || cpu_is_pxa310())
+-		ret = setup_freqs_table(policy, ARRAY_AND_SIZE(pxa300_freqs));
++		ret = setup_freqs_table(policy, pxa300_freqs,
++					ARRAY_SIZE(pxa300_freqs));
+ 
+ 	if (cpu_is_pxa320())
+-		ret = setup_freqs_table(policy, ARRAY_AND_SIZE(pxa320_freqs));
++		ret = setup_freqs_table(policy, pxa320_freqs,
++					ARRAY_SIZE(pxa320_freqs));
+ 
+ 	if (ret) {
+ 		pr_err("failed to setup frequency table\n");
 
