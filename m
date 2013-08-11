@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Aug 2013 16:51:45 +0000
-Subject: [PATCH 4/16] arch/arm/mach-pxa/z2.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
-Message-Id: <1376239917-15594-5-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:54 +0000
+Subject: [PATCH 13/16] arch/arm/mach-pxa/hx4700.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-14-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -34,40 +34,40 @@ Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 ---
 Not compiled.
 
- arch/arm/mach-pxa/z2.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm/mach-pxa/hx4700.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/z2.c b/arch/arm/mach-pxa/z2.c
-index 2513d8f..d8fb360 100644
---- a/arch/arm/mach-pxa/z2.c
-+++ b/arch/arm/mach-pxa/z2.c
-@@ -500,7 +500,8 @@ static struct i2c_board_info __initdata z2_i2c_board_info[] = {
- static void __init z2_i2c_init(void)
- {
- 	pxa_set_i2c_info(NULL);
--	i2c_register_board_info(0, ARRAY_AND_SIZE(z2_i2c_board_info));
-+	i2c_register_board_info(0, z2_i2c_board_info,
-+				ARRAY_SIZE(z2_i2c_board_info));
- }
- #else
- static inline void z2_i2c_init(void) {}
-@@ -674,7 +675,8 @@ static struct i2c_board_info __initdata z2_pi2c_board_info[] = {
- static void __init z2_pmic_init(void)
- {
- 	pxa27x_set_i2c_power_info(NULL);
--	i2c_register_board_info(1, ARRAY_AND_SIZE(z2_pi2c_board_info));
-+	i2c_register_board_info(1, z2_pi2c_board_info,
-+				ARRAY_SIZE(z2_pi2c_board_info));
- }
- #else
- static inline void z2_pmic_init(void) {}
-@@ -700,7 +702,7 @@ static void z2_power_off(void)
-  ******************************************************************************/
- static void __init z2_init(void)
- {
--	pxa2xx_mfp_config(ARRAY_AND_SIZE(z2_pin_config));
-+	pxa2xx_mfp_config(z2_pin_config, ARRAY_SIZE(z2_pin_config));
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index 133109e..8cac0a8 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -866,9 +866,9 @@ static void __init hx4700_init(void)
  
- 	pxa_set_ffuart_info(NULL);
- 	pxa_set_btuart_info(NULL);
+ 	PCFR = PCFR_GPR_EN | PCFR_OPDE;
+ 
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(hx4700_pin_config));
++	pxa2xx_mfp_config(hx4700_pin_config, ARRAY_SIZE(hx4700_pin_config));
+ 	gpio_set_wake(GPIO12_HX4700_ASIC3_IRQ, 1);
+-	ret = gpio_request_array(ARRAY_AND_SIZE(global_gpios));
++	ret = gpio_request_array(global_gpios, ARRAY_SIZE(global_gpios));
+ 	if (ret)
+ 		pr_err ("hx4700: Failed to request GPIOs.\n");
+ 
+@@ -882,10 +882,13 @@ static void __init hx4700_init(void)
+ 	pxa_set_ficp_info(&ficp_info);
+ 	pxa27x_set_i2c_power_info(NULL);
+ 	pxa_set_i2c_info(NULL);
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(i2c_board_info));
+-	i2c_register_board_info(1, ARRAY_AND_SIZE(pi2c_board_info));
++	i2c_register_board_info(0, i2c_board_info,
++				ARRAY_SIZE(i2c_board_info));
++	i2c_register_board_info(1, pi2c_board_info,
++				ARRAY_SIZE(pi2c_board_info));
+ 	pxa2xx_set_spi_info(2, &pxa_ssp2_master_info);
+-	spi_register_board_info(ARRAY_AND_SIZE(tsc2046_board_info));
++	spi_register_board_info(tsc2046_board_info,
++				ARRAY_SIZE(tsc2046_board_info));
+ 
+ 	gpio_set_value(GPIO71_HX4700_ASIC3_nRESET, 0);
+ 	mdelay(10);
 
