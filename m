@@ -1,35 +1,82 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 13 Aug 2013 07:09:49 +0000
-Subject: Re: no such file : /proc/net/dev
-Message-Id: <5209DBBD.5010506@bfs.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 11 Aug 2013 16:51:57 +0000
+Subject: [PATCH 16/16] arch/arm/mach-pxa/stargate2.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <1376239917-15594-17-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAOo4JD=8YdVXVRB3Ob8TdwKLZ-4yvtQP_h8rVNJw1zzVdFi31w@mail.gmail.com>
-In-Reply-To: <CAOo4JD=8YdVXVRB3Ob8TdwKLZ-4yvtQP_h8rVNJw1zzVdFi31w@mail.gmail.com>
+References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+arity of the called function.
 
-Am 13.08.2013 07:21, schrieb Hatte John:
->  hi:
-> 
->    I am trying to boot up my linux kerel from virtual machine
-> ,everything goes fine .
->    but when I typed 'ifconfig' command , it reports no such file :
-> /proc/net/dev  .
-> 
->   What is the reason ? I have enable netcard for my virtual machine
-> ,is this a problem of   software or hardware?
-> 
->    Is  the file " /proc/net/dev" created at netcard initailize function ?
-> 
-> Thanks!
-> --
+The semantic match that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression e,f;
+@@
 
-Is proc mounted ?
+f(...,
+- ARRAY_AND_SIZE(e)
++ e,ARRAY_SIZE(e)
+  ,...)
+// </smpl>
 
-re,
- wh
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not compiled.
+
+ arch/arm/mach-pxa/stargate2.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-pxa/stargate2.c b/arch/arm/mach-pxa/stargate2.c
+index 62aea3e..adacedd 100644
+--- a/arch/arm/mach-pxa/stargate2.c
++++ b/arch/arm/mach-pxa/stargate2.c
+@@ -406,7 +406,8 @@ static struct i2c_pxa_platform_data i2c_pdata = {
+ static void __init imote2_stargate2_init(void)
+ {
+ 
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(sg2_im2_unified_pin_config));
++	pxa2xx_mfp_config(sg2_im2_unified_pin_config,
++			  ARRAY_SIZE(sg2_im2_unified_pin_config));
+ 
+ 	pxa_set_ffuart_info(NULL);
+ 	pxa_set_btuart_info(NULL);
+@@ -604,7 +605,7 @@ static struct platform_device *imote2_devices[] = {
+ 
+ static void __init imote2_init(void)
+ {
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(imote2_pin_config));
++	pxa2xx_mfp_config(imote2_pin_config, ARRAY_SIZE(imote2_pin_config));
+ 
+ 	imote2_stargate2_init();
+ 
+@@ -983,13 +984,15 @@ static void __init stargate2_init(void)
+ 	   prior to connecting the MFP stuff up. */
+ 	__raw_writel(__raw_readl(MECR) & ~MECR_NOS, MECR);
+ 
+-	pxa2xx_mfp_config(ARRAY_AND_SIZE(stargate2_pin_config));
++	pxa2xx_mfp_config(stargate2_pin_config,
++			  ARRAY_SIZE(stargate2_pin_config));
+ 
+ 	imote2_stargate2_init();
+ 
+-	platform_add_devices(ARRAY_AND_SIZE(stargate2_devices));
++	platform_add_devices(stargate2_devices, ARRAY_SIZE(stargate2_devices));
+ 
+-	i2c_register_board_info(0, ARRAY_AND_SIZE(stargate2_i2c_board_info));
++	i2c_register_board_info(0, stargate2_i2c_board_info,
++				ARRAY_SIZE(stargate2_i2c_board_info));
+ 	i2c_register_board_info(1, stargate2_pwr_i2c_board_info,
+ 				ARRAY_SIZE(stargate2_pwr_i2c_board_info));
+ 
+
