@@ -1,59 +1,59 @@
-From: Tomas Cech <sleep_walker@suse.cz>
-Date: Tue, 13 Aug 2013 00:34:07 +0000
-Subject: Re: [PATCH 11/16] arch/arm/mach-pxa/palmtreo.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
-Message-Id: <20130813003407.GA1390@venom>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Q68bSM7Ycu6FN28Q"
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 12 Aug 2013 17:55:35 +0000
+Subject: Configure DMA atributes?
+Message-Id: <CA+MoWDo8nhoomstYJx6Q5Krj-m=_swmpMu2iE5aHRH-gDf-QEQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376239917-15594-12-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376239917-15594-12-git-send-email-Julia.Lawall@lip6.fr>
-To: linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernelnewbies@lists.kernelnewbies.org
+
+There are some PCI Ethernet drivers with code similar to:
+
+From: drivers/net/ethernet/realtek/8139cp.c
+
+        /* Configure DMA attributes. */
+        if ((sizeof(dma_addr_t) > 4) &&
+            !pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) &&
+            !pci_set_dma_mask(pdev, DMA_BIT_MASK(64))) {
+                pci_using_dac = 1;
+        } else {
+                pci_using_dac = 0;
+
+                rc = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+                if (rc) {
+                        dev_err(&pdev->dev,
+                                "No usable DMA configuration, aborting\n");
+                        goto err_out_res;
+                }
+                rc = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
+                if (rc) {
+                        dev_err(&pdev->dev,
+                                "No usable consistent DMA
+configuration, aborting\n");
+                        goto err_out_res;
+                }
+        }
+
+What is this code supposed to do?
+
+I did tests inside two KVM virtual machines using rtl8139 virtual
+network interface. One VM configured for x86_64 and the other
+configured for i686. On both VMs this code makes no visible difference
+at all. I can remove the code completely, or leave only parts of it,
+the result is always the same. The 8139cp module is loaded
+successfully and the network works after loading the module. Nothing
+is shown on dmesg.
+
+If I comment the assignment to pci_using_dac, the compiler issues
+warnings, but it makes no visible difference to assign 1 or 0.
+
+If I had real hardware what could I brake by playing with this code?
+
+Thanks!
 
 
---Q68bSM7Ycu6FN28Q
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-
-On Sun, Aug 11, 2013 at 06:51:52PM +0200, Julia Lawall wrote:
->From: Julia Lawall <Julia.Lawall@lip6.fr>
->
->Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
->arity of the called function.
->
->The semantic match that makes this change is as follows:
->(http://coccinelle.lip6.fr/)
->
->// <smpl>
->@@
->expression e,f;
->@@
->
->f(...,
->- ARRAY_AND_SIZE(e)
->+ e,ARRAY_SIZE(e)
->  ,...)
->// </smpl>
->
->Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
-I used to be happy with this macro as it improves readability.
-
-but ack.
 
 
-Tomas Cech
-
---Q68bSM7Ycu6FN28Q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iEYEARECAAYFAlIJfv8ACgkQ37XrCapiVCNnDwCdH/BQKaGsNRAAJxlrGDlAcBXT
-qrMAn1fQhF0dntxwrHzlJj4VpaQOdCRB
-=ZwEo
------END PGP SIGNATURE-----
-
---Q68bSM7Ycu6FN28Q--
+-- 
+Peter
