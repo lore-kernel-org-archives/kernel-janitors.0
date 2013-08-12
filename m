@@ -1,42 +1,128 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Thu, 15 Aug 2013 03:18:17 +0000
-Subject: Re: [PATCH 19/29] watchdog: ts72xx_wdt: simplify use of devm_ioremap_resource
-Message-Id: <520C4879.7000204@roeck-us.net>
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Date: Mon, 12 Aug 2013 13:16:28 +0000
+Subject: Re: [PATCH v2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
+Message-Id: <1376313388.2298.33.camel@slavad-ubuntu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr> <1376471493-22215-20-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-20-git-send-email-Julia.Lawall@lip6.fr>
+References: <1374847154.3671.70.camel@slavad-ubuntu>
+	 <20130727.120232.356926182.konishi.ryusuke@lab.ntt.co.jp>
+In-Reply-To: <20130727.120232.356926182.konishi.ryusuke-Zyj7fXuS5i5L9jVzuh4AOg@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Wim Van Sebroeck <wim@iguana.be>, kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ryusuke Konishi <konishi.ryusuke-Zyj7fXuS5i5L9jVzuh4AOg@public.gmane.org>
+Cc: DanCarpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-nilfs <linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux FS Devel <linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
 
-On 08/14/2013 02:11 AM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
->
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression pdev,res,n,e,e1;
-> expression ret != 0;
-> identifier l;
-> @@
->
-> - res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->    ... when != res
-> - if (res = NULL) { ... \(goto l;\|return ret;\) }
->    ... when != res
-> + res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->    e = devm_ioremap_resource(e1, res);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Hi Ryusuke,
+
+On Sat, 2013-07-27 at 12:02 +0900, Ryusuke Konishi wrote:
+
+> > From: Vyacheslav Dubeyko <slava@dubeyko.com>
+> > Subject: [PATCH v2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
+> > 
+> > This patch removes double call of bio_put() in nilfs_end_bio_write()
+> > for the case of BIO_EOPNOTSUPP error detection. The issue was found
+> > by Dan Carpenter and he suggests first version of the fix too.
+> > 
+> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > Signed-off-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+> > CC: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+> > ---
+> >  fs/nilfs2/segbuf.c |    6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
+> > index dc9a913..0b09ec9 100644
+> > --- a/fs/nilfs2/segbuf.c
+> > +++ b/fs/nilfs2/segbuf.c
+> > @@ -345,8 +345,7 @@ static void nilfs_end_bio_write(struct bio *bio, int err)
+> >  
+> >  	if (err = -EOPNOTSUPP) {
+> >  		set_bit(BIO_EOPNOTSUPP, &bio->bi_flags);
+> > -		bio_put(bio);
+> > -		/* to be detected by submit_seg_bio() */
+> > +		/* to be detected by nilfs_segbuf_submit_bio() */
+> >  	}
+> >  
+> >  	if (!uptodate)
+> > @@ -377,12 +376,13 @@ static int nilfs_segbuf_submit_bio(struct nilfs_segment_buffer *segbuf,
+> >  	bio->bi_private = segbuf;
+> >  	bio_get(bio);
+> >  	submit_bio(mode, bio);
+> > +	segbuf->sb_nbio++;
+> >  	if (bio_flagged(bio, BIO_EOPNOTSUPP)) {
+> 
+> > +		segbuf->sb_nbio--;
+> 
+> This decrement looks wrong.
+> 
+
+I tried to understand your vision but I am thinking that my patch is
+correct. Maybe, I missed something in my considerations. I describe my
+vision in more details.
+
+> Otherwise, your change of nilfs_segbuf_submit_bio() is just a
+> equivalent transformation and doesn't fix problem, that is, a mismatch
+> of the number of calls between complete() and wait_for_completion().
+> 
+> In your patch, nilfs_end_bio_write() function calls the complete()
+> routine as before even if it received an EOPNOTSUPP error.
+> 
+> In that case, segbuf->sb_nbio must be incremented to call
+> wait_for_completion() the right number of times.
+> 
+
+I moved incrementing of sb_nbio nearly after submit_bio(mode, bio). So,
+firstly, we call submit_bio(mode, bio) and segbuf->sb_nbio++. Then,
+because of asynchronous nature of nilfs_end_bio_write() call, we have
+two alternatives: (1) nilfs_end_bio_write() detects that BIO_EOPNOTSUPP
+flag is set; (2) BIO_EOPNOTSUPP flag isn't set because bio is not
+processed yet or we haven't error.
+
+If nilfs_end_bio_write() method would detect -EOPNOTSUPP error then it
+set BIO_EOPNOTSUPP flag, increment sb_err field and to call complete(). 
+
+So, if we detect that BIO_EOPNOTSUPP flag is set in
+nilfs_segbuf_submit_bio() then we decrement sb_nbio and to return from
+nilfs_segbuf_submit_bio() with error. And if we had submitted
+successfully some bios before then it will need to wait theirs
+completion.
+
+Otherwise, if BIO_EOPNOTSUPP flag is not set yet during check in
+nilfs_segbuf_submit_bio() then sb_nbio is remained incremented. And, for
+example, nilfs_segbuf_wait() can end correctly the cycle with
+wait_for_completion() call. We will know about error during bio
+processing because of sb_err was incremented in nilfs_end_bio_write().
+
+So, I suppose that my logic is right. Please, correct me if I am wrong.
+
+What do you think?
+
+By the way, why sb_err has atomic_t type but sb_nbio is simple int type?
+Maybe, sb_nbio should be atomic_t type too?
+
+With the best regards,
+Vyacheslav Dubeyko.
+
+
+> Note that wait_for_completion() is called based on the count of
+> segbuf->sb_nbio even if nilfs_segbuf_submit_bio() returns an error.
+> This is performed through the following path:
+> 
+>             nilfs_segbuf_submit_bio
+>           nilfs_segbuf_submit_bh
+>         nilfs_segbuf_write
+>       nilfs_write_logs
+>     nilfs_segctor_write
+>   nilfs_segctor_do_construct
+>     nilfs_segctor_abort_construction
+>       nilfs_wait_on_logs
+>         nilfs_segbuf_wait
+>           wait_for_completion
+>             (repeated for the number of times of segbuf->sb_nbio)
+> 
+> 
+> If you think this is a separate problem, then it should be fixed in
+> another patch and nilfs_segbuf_submit_bio() should not be touched in
+> this patch.
 
 
