@@ -1,20 +1,23 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Date: Thu, 15 Aug 2013 22:07:49 +0000
-Subject: Re: [PATCH 6/29] tegra: simplify use of devm_ioremap_resource
-Message-Id: <520D5135.7020503@wwwdotorg.org>
+From: Hatte John <june.tune.sea@gmail.com>
+Date: Tue, 13 Aug 2013 05:21:50 +0000
+Subject: no such file : /proc/net/dev
+Message-Id: <CAOo4JD=8YdVXVRB3Ob8TdwKLZ-4yvtQP_h8rVNJw1zzVdFi31w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr> <1376471493-22215-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-7-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-On 08/14/2013 03:11 AM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
+ hi:
 
-I have applied this to Tegra's for-3.12/cleanup branch.
+   I am trying to boot up my linux kerel from virtual machine
+,everything goes fine .
+   but when I typed 'ifconfig' command , it reports no such file :
+/proc/net/dev  .
+
+  What is the reason ? I have enable netcard for my virtual machine
+,is this a problem of   software or hardware?
+
+   Is  the file " /proc/net/dev" created at netcard initailize function ?
+
+Thanks!
