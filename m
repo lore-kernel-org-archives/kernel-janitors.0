@@ -1,72 +1,59 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Aug 2013 16:51:52 +0000
-Subject: [PATCH 11/16] arch/arm/mach-pxa/palmtreo.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
-Message-Id: <1376239917-15594-12-git-send-email-Julia.Lawall@lip6.fr>
+From: Tomas Cech <sleep_walker@suse.cz>
+Date: Tue, 13 Aug 2013 00:34:07 +0000
+Subject: Re: [PATCH 11/16] arch/arm/mach-pxa/palmtreo.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
+Message-Id: <20130813003407.GA1390@venom>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Q68bSM7Ycu6FN28Q"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ <1376239917-15594-12-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376239917-15594-12-git-send-email-Julia.Lawall@lip6.fr>
 To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
-arity of the called function.
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 
-The semantic match that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+On Sun, Aug 11, 2013 at 06:51:52PM +0200, Julia Lawall wrote:
+>From: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+>Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+>arity of the called function.
+>
+>The semantic match that makes this change is as follows:
+>(http://coccinelle.lip6.fr/)
+>
+>// <smpl>
+>@@
+>expression e,f;
+>@@
+>
+>f(...,
+>- ARRAY_AND_SIZE(e)
+>+ e,ARRAY_SIZE(e)
+>  ,...)
+>// </smpl>
+>
+>Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-// <smpl>
-@@
-expression e,f;
-@@
+I used to be happy with this macro as it improves readability.
 
-f(...,
-- ARRAY_AND_SIZE(e)
-+ e,ARRAY_SIZE(e)
-  ,...)
-// </smpl>
+but ack.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
-Not compiled.
+Tomas Cech
 
- arch/arm/mach-pxa/palmtreo.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/arch/arm/mach-pxa/palmtreo.c b/arch/arm/mach-pxa/palmtreo.c
-index d8b937c..bfe17c8 100644
---- a/arch/arm/mach-pxa/palmtreo.c
-+++ b/arch/arm/mach-pxa/palmtreo.c
-@@ -444,7 +444,7 @@ static void __init treo_reserve(void)
- 
- static void __init palmphone_common_init(void)
- {
--	pxa2xx_mfp_config(ARRAY_AND_SIZE(treo_pin_config));
-+	pxa2xx_mfp_config(treo_pin_config, ARRAY_SIZE(treo_pin_config));
- 	pxa_set_ffuart_info(NULL);
- 	pxa_set_btuart_info(NULL);
- 	pxa_set_stuart_info(NULL);
-@@ -512,7 +512,7 @@ void __init treo680_gpio_init(void)
- 
- static void __init treo680_init(void)
- {
--	pxa2xx_mfp_config(ARRAY_AND_SIZE(treo680_pin_config));
-+	pxa2xx_mfp_config(treo680_pin_config, ARRAY_SIZE(treo680_pin_config));
- 	palmphone_common_init();
- 	treo680_gpio_init();
- 	palm27x_mmc_init(GPIO_NR_TREO_SD_DETECT_N, GPIO_NR_TREO680_SD_READONLY,
-@@ -524,7 +524,8 @@ static void __init treo680_init(void)
- #ifdef CONFIG_MACH_CENTRO
- static void __init centro_init(void)
- {
--	pxa2xx_mfp_config(ARRAY_AND_SIZE(centro685_pin_config));
-+	pxa2xx_mfp_config(centro685_pin_config,
-+			  ARRAY_SIZE(centro685_pin_config));
- 	palmphone_common_init();
- 	palm27x_mmc_init(GPIO_NR_TREO_SD_DETECT_N, -1,
- 			GPIO_NR_CENTRO_SD_POWER, 1);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
+iEYEARECAAYFAlIJfv8ACgkQ37XrCapiVCNnDwCdH/BQKaGsNRAAJxlrGDlAcBXT
+qrMAn1fQhF0dntxwrHzlJj4VpaQOdCRB
+=ZwEo
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
