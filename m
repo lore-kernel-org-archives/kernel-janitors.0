@@ -1,25 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 25 Aug 2013 22:40:19 +0000
-Subject: Re: [patch -next] ipip: potential race in ip_tunnel_init_net()
-Message-Id: <20130825.184019.2151038981865894784.davem@davemloft.net>
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Date: Tue, 13 Aug 2013 13:50:33 +0000
+Subject: [PATCH v3 1/2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
+Message-Id: <1376401833.2274.9.camel@slavad-ubuntu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130820.233301.985050199020241179.davem@davemloft.net>
-	<20130823081537.GB31293@elgon.mountain>
-In-Reply-To: <20130823081537.GB31293@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, eric.dumazet@gmail.com
+To: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+Cc: DanCarpenter <dan.carpenter@oracle.com>, linux-nilfs@vger.kernel.org, Linux FS Devel <linux-fsdevel@vger.kernel.org>, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Aug 2013 11:15:37 +0300
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH v3 1/2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
 
-> Eric Dumazet says that my previous fix for an ERR_PTR dereference
-> (ea857f28ab 'ipip: dereferencing an ERR_PTR in ip_tunnel_init_net()')
-> could be racy and suggests the following fix instead.
-> 
-> Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This patch removes double call of bio_put() in nilfs_end_bio_write()
+for the case of BIO_EOPNOTSUPP error detection. The issue was found
+by Dan Carpenter and he suggests first version of the fix too.
 
-Applied, thanks Dan.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+CC: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+---
+ fs/nilfs2/segbuf.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
+index dc9a913..5bacf46 100644
+--- a/fs/nilfs2/segbuf.c
++++ b/fs/nilfs2/segbuf.c
+@@ -345,8 +345,7 @@ static void nilfs_end_bio_write(struct bio *bio, int err)
+ 
+ 	if (err = -EOPNOTSUPP) {
+ 		set_bit(BIO_EOPNOTSUPP, &bio->bi_flags);
+-		bio_put(bio);
+-		/* to be detected by submit_seg_bio() */
++		/* to be detected by nilfs_segbuf_submit_bio() */
+ 	}
+ 
+ 	if (!uptodate)
+-- 
+1.7.9.5
+
+
+
