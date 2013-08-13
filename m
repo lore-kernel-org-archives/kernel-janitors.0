@@ -1,51 +1,28 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 12 Aug 2013 21:40:50 +0000
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Tue, 13 Aug 2013 04:52:56 +0000
 Subject: Re: [PATCH 1/16 v2] sound/soc/pxa/mioa701_wm9713.c: Avoid using ARRAY_AND_SIZE(e) as a function argu
-Message-Id: <20130812214050.GI6427@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="gqUrV6DUXoHnB0ku"
+Message-Id: <alpine.DEB.2.02.1308130652080.1997@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376340564-7975-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376340564-7975-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: alsa-devel@alsa-project.org, Eric Miao <eric.y.miao@gmail.com>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Russell King <linux@arm.linux.org.uk>, robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
+References: <1376340564-7975-1-git-send-email-Julia.Lawall@lip6.fr> <20130812214050.GI6427@sirena.org.uk>
+In-Reply-To: <20130812214050.GI6427@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Brown <broonie@kernel.org>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Eric Miao <eric.y.miao@gmail.com>, robert.jarzmik@free.fr, kernel-janitors@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
+On Mon, 12 Aug 2013, Mark Brown wrote:
 
---gqUrV6DUXoHnB0ku
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Mon, Aug 12, 2013 at 10:49:24PM +0200, Julia Lawall wrote:
+> > From: Julia Lawall <Julia.Lawall@lip6.fr>
+> > 
+> > Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
+> > arity of the called function.
+> 
+> What is the difference between this and the patch I applied the other
+> day?
 
-On Mon, Aug 12, 2013 at 10:49:24PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding t=
-he
-> arity of the called function.
+Sorry, it should have also removed the local definition of ARRAY_AND_SIZE?  
+I thought that was in the commit message.
 
-What is the difference between this and the patch I applied the other
-day?
-
---gqUrV6DUXoHnB0ku
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSCVZfAAoJELSic+t+oim9mNkQAJzpxYPkBF49Qv88qzBnBeFZ
-PVubj8VLfgWrp/YnRUC0fIFpW5d5Z81j0GFlWtVmxrWxIkr9VGT7bLNfqNwPdXhd
-Wk2KwheLQ16qfqB2sndoX2lS0K7N/49K73t+H0AOoNC2JQHWsISvLeJiqqJ9wz0I
-9AZt8KIXqlQadl/dVApUaodpnAG6OsAYNQ+gYZxFrONTPp+YeDzkoxc6RopjZZ3U
-1HeoF83OM6xp7D4rzjBzpjau1eEVP0Hp5PZ0N3ECC5glR+JRABiwWbMbfayIdDId
-Ff/qw4XtrsZZ+oto0ERVOAFlS6hPa5d6CvnPtfff6ZPhu8Q3mm/14fKLPx43g+7a
-SA++xoJx/V3euevjzUlMgT5ihNq7KrC9ubXNfl1dTC75vVPMU2/VcQ7pbcMBJoJW
-ZO3fmyvmn+HFRCF5ZTWgMIXDMvjOa/pnkuosVeLsUOw8owneU7nRt4y9t12bpKil
-zGYt3vv6fdirMA5SaL4foQKK/W8BodRRWyI+fgSRRHSCfHJ0CuFKPcLPjGycfjVt
-gFfpCYVkxVj3QFSYXEgGofCsVui1oob6R4Li8WySFS9r0JGbv/ZNUKksajuAiS3q
-SCICQLWC54xhAQLz4pfYnXEqo8OAcq2RWxf/8m5SXbR0vkxEQSsjJGr8rcASX++q
-E7ozOEAvEaXOYEOojBLO
-=28+c
------END PGP SIGNATURE-----
-
---gqUrV6DUXoHnB0ku--
+julia
