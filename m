@@ -1,48 +1,60 @@
-From: Steven Whitehouse <swhiteho@redhat.com>
-Date: Thu, 15 Aug 2013 09:49:52 +0000
-Subject: Re: [patch] GFS2: alloc_workqueue() doesn't return an ERR_PTR
-Message-Id: <1376560192.2719.13.camel@menhir>
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Date: Tue, 13 Aug 2013 13:50:51 +0000
+Subject: [PATCH v3 2/2] nilfs2: fix issue with counting number of bio requests for BIO_EOPNOTSUPP error detec
+Message-Id: <1376401851.2274.10.camel@slavad-ubuntu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130815075443.GA19280@elgon.mountain>
-In-Reply-To: <20130815075443.GA19280@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+Cc: DanCarpenter <dan.carpenter@oracle.com>, linux-nilfs@vger.kernel.org, Linux FS Devel <linux-fsdevel@vger.kernel.org>, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org
 
-Hi,
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH v3 2/2] nilfs2: fix issue with counting number of bio requests for BIO_EOPNOTSUPP error detection
 
-On Thu, 2013-08-15 at 10:54 +0300, Dan Carpenter wrote:
-> alloc_workqueue() returns a NULL on error, it doesn't return an ERR_PTR.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Thanks, I've added this to the gfs2 git tree,
+This patch fixes the issue with improper counting number of
+flying bio requests for BIO_EOPNOTSUPP error detection case.
 
-Steve.
+The sb_nbio must be incremented exactly the same number of times as
+complete() function was called (or will be called) because
+nilfs_segbuf_wait() will call wail_for_completion() for the number of
+times set to sb_nbio:
 
-> diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-> index a9d8caf..5433777 100644
-> --- a/fs/gfs2/glock.c
-> +++ b/fs/gfs2/glock.c
-> @@ -1844,14 +1844,14 @@ int __init gfs2_glock_init(void)
->  
->  	glock_workqueue = alloc_workqueue("glock_workqueue", WQ_MEM_RECLAIM |
->  					  WQ_HIGHPRI | WQ_FREEZABLE, 0);
-> -	if (IS_ERR(glock_workqueue))
-> -		return PTR_ERR(glock_workqueue);
-> +	if (!glock_workqueue)
-> +		return -ENOMEM;
->  	gfs2_delete_workqueue = alloc_workqueue("delete_workqueue",
->  						WQ_MEM_RECLAIM | WQ_FREEZABLE,
->  						0);
-> -	if (IS_ERR(gfs2_delete_workqueue)) {
-> +	if (!gfs2_delete_workqueue) {
->  		destroy_workqueue(glock_workqueue);
-> -		return PTR_ERR(gfs2_delete_workqueue);
-> +		return -ENOMEM;
->  	}
->  
->  	register_shrinker(&glock_shrinker);
+do {
+    wait_for_completion(&segbuf->sb_bio_event);
+} while (--segbuf->sb_nbio > 0);
+
+Two functions complete() and wait_for_completion() must be called the
+same number of times for the same sb_bio_event. Otherwise,
+wait_for_completion() will hang or leak.
+
+Signed-off-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+CC: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+CC: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/nilfs2/segbuf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/nilfs2/segbuf.c b/fs/nilfs2/segbuf.c
+index 5bacf46..2d8be51 100644
+--- a/fs/nilfs2/segbuf.c
++++ b/fs/nilfs2/segbuf.c
+@@ -376,12 +376,12 @@ static int nilfs_segbuf_submit_bio(struct nilfs_segment_buffer *segbuf,
+ 	bio->bi_private = segbuf;
+ 	bio_get(bio);
+ 	submit_bio(mode, bio);
++	segbuf->sb_nbio++;
+ 	if (bio_flagged(bio, BIO_EOPNOTSUPP)) {
+ 		bio_put(bio);
+ 		err = -EOPNOTSUPP;
+ 		goto failed;
+ 	}
+-	segbuf->sb_nbio++;
+ 	bio_put(bio);
+ 
+ 	wi->bio = NULL;
+-- 
+1.7.9.5
+
 
 
