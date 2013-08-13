@@ -1,36 +1,56 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 28 Aug 2013 05:03:34 +0000
-Subject: Re: Patch Going to spam
-Message-Id: <alpine.DEB.2.02.1308280658320.2059@localhost6.localdomain6>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 13 Aug 2013 07:16:56 +0000
+Subject: [PATCH 1/5 v2] drivers/gpio/gpio-omap.c: convert comma to semicolon
+Message-Id: <1376378216-18473-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <521D68F4.50103@gmail.com>
-In-Reply-To: <521D68F4.50103@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 28 Aug 2013, Kumar Gaurav wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> Hi All,
-> 
-> I'm facing a weired problem when I'm trying to send my patch(size 39K) it's
-> asking me for encoding. Tough I'm giving UTF-8 it's going to spam and
-> probably that's why maintainer aren't replying to the patch. I've already
-> sent it twice and got this mail as Junk mail in my mailbox.
-> 
-> Here's my patch http://marc.info/?l=kernel-janitors&m7748297802415&w=2
-> 
-> Please let me know that how can i send this patch. I have to send this patch
-> as whole because it includes
->     change in definition of a function
->     change in all statements that calls the changed function.
-> If i send this patch by splitting then it'll break the build.
+Replace a comma between expression statements by a semicolon.  This changes
+the semantics of the code, but given the current indentation appears to be
+what is intended.
 
-I believe that I have received it.  I didn't notice anything strange about 
-what I received.
+A simplified version of the semantic patch that performs this
+transformation is as follows: (http://coccinelle.lip6.fr/)
 
-On the other hand, the subject at marc.info looks pretty odd.  Maybe you 
-can use a different mailer?  Normally, I just use sendmail.
+// <smpl>
+@r@
+expression e1,e2,e;
+type T;
+identifier i;
+@@
 
-julia
+ e1
+-,
++;
+ e2;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.  The first version did a different transformation to avoid
+changing the semantics.  This one leaves the layout as it is, but changes
+the semantics.
+
+ drivers/gpio/gpio-omap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index dfeb3a3..9f19ec9 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1030,7 +1030,7 @@ omap_mpuio_alloc_gc(struct gpio_bank *bank, unsigned int irq_start,
+ 	ct->chip.irq_set_type = gpio_irq_type;
+ 
+ 	if (bank->regs->wkup_en)
+-		ct->chip.irq_set_wake = gpio_wake_enable,
++		ct->chip.irq_set_wake = gpio_wake_enable;
+ 
+ 	ct->regs.mask = OMAP_MPUIO_GPIO_INT / bank->stride;
+ 	irq_setup_generic_chip(gc, IRQ_MSK(num), IRQ_GC_INIT_MASK_CACHE,
