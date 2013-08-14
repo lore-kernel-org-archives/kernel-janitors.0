@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 27 Aug 2013 16:57:35 +0000
-Subject: build regressions 2013-08-27
-Message-Id: <521cda7f.YLkco5RrdjwZ9rtY%fengguang.wu@intel.com>
+Date: Wed, 14 Aug 2013 17:24:29 +0000
+Subject: build regressions 2013-08-14
+Message-Id: <520bbd4d.h7d2opPz9sEp8n26%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,357 +9,263 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/of/of_reserved_mem.c:49:9: error: implicit declaration of function 'of_flat_dt_is_compatible' [-Werror=implicit-function-declaration]
-drivers/of/of_reserved_mem.c:57:2: error: implicit declaration of function 'of_get_flat_dt_prop' [-Werror=implicit-function-declaration]
-drivers/of/of_reserved_mem.c:64:23: error: 'dt_root_size_cells' undeclared (first use in this function)
-drivers/of/of_reserved_mem.c:64:44: error: 'dt_root_addr_cells' undeclared (first use in this function)
-drivers/of/of_reserved_mem.c:71:2: error: implicit declaration of function 'dt_mem_next_cell' [-Werror=implicit-function-declaration]
-drivers/of/of_reserved_mem.c:173:2: error: implicit declaration of function 'of_scan_flat_dt_by_path' [-Werror=implicit-function-declaration]
-drivers/base/core.c:496:2: error: implicit declaration of function 'sysfs_create_groups' [-Werror=implicit-function-declaration]
-drivers/base/core.c:502:2: error: implicit declaration of function 'sysfs_remove_groups' [-Werror=implicit-function-declaration]
-drivers/base/bus.c:887:2: error: implicit declaration of function 'sysfs_create_groups' [-Werror=implicit-function-declaration]
-drivers/base/bus.c:893:2: error: implicit declaration of function 'sysfs_remove_groups' [-Werror=implicit-function-declaration]
-drivers/base/driver.c:129:2: error: implicit declaration of function 'sysfs_create_groups' [-Werror=implicit-function-declaration]
-drivers/base/driver.c:135:2: error: implicit declaration of function 'sysfs_remove_groups' [-Werror=implicit-function-declaration]
-fs/f2fs/namei.c:450:31: error: expected ';' before ':' token
-kernel/capability.c:280:2: error: too few arguments to function 'audit_log_capset'
-xfs_trace.c:(.text+0x1a1480): undefined reference to `from_kqid'
-xfs_trace.c:(.text+0x1a15ca): undefined reference to `from_kqid'
+drivers/usb/host/fotg210-hcd.c:5856:2: error: implicit declaration of function 'iowrite32' [-Werror=implicit-function-declaration]
+drivers/usb/host/fotg210-hcd.c:5859:2: error: implicit declaration of function 'ioread32' [-Werror=implicit-function-declaration]
+(.text+0x160736): undefined reference to `__tracepoint_nfs4_setclientid'
+(.text+0x160847): undefined reference to `__tracepoint_nfs4_setclientid_confirm'
+(.text+0x161204): undefined reference to `__tracepoint_nfs4_bind_conn_to_session'
+(.text+0x16150f): undefined reference to `__tracepoint_nfs4_exchange_id'
+(.text+0x1616b6): undefined reference to `__tracepoint_nfs4_destroy_clientid'
+(.text+0x161a78): undefined reference to `__tracepoint_nfs4_create_session'
+(.text+0x161ba4): undefined reference to `__tracepoint_nfs4_destroy_session'
+fs/built-in.o:(__jump_table+0x80c): undefined reference to `__tracepoint_nfs4_setclientid'
+fs/built-in.o:(__jump_table+0x818): undefined reference to `__tracepoint_nfs4_setclientid_confirm'
+fs/built-in.o:(__jump_table+0x824): undefined reference to `__tracepoint_nfs4_bind_conn_to_session'
+fs/built-in.o:(__jump_table+0x830): undefined reference to `__tracepoint_nfs4_exchange_id'
+fs/built-in.o:(__jump_table+0x83c): undefined reference to `__tracepoint_nfs4_destroy_clientid'
+fs/built-in.o:(__jump_table+0x848): undefined reference to `__tracepoint_nfs4_create_session'
+fs/built-in.o:(__jump_table+0x854): undefined reference to `__tracepoint_nfs4_destroy_session'
+nfs4proc.c:(.text+0x15d88f): undefined reference to `__tracepoint_nfs4_close'
+fs/built-in.o:(__jump_table+0x80c): undefined reference to `__tracepoint_nfs4_close'
+nfs4proc.c:(.text+0x15fd83): undefined reference to `__tracepoint_nfs4_unlock'
+fs/built-in.o:(__jump_table+0x860): undefined reference to `__tracepoint_nfs4_unlock'
+nfs4proc.c:(.text+0x15d134): undefined reference to `__tracepoint_nfs4_set_security_label'
+fs/built-in.o:(__jump_table+0x824): undefined reference to `__tracepoint_nfs4_set_security_label'
+nfs4proc.c:(.text+0x15abad): undefined reference to `__tracepoint_nfs4_rename_async'
+fs/built-in.o:(__jump_table+0x80c): undefined reference to `__tracepoint_nfs4_rename_async'
+(.text+0x16e682): undefined reference to `__tracepoint_nfs4_set_delegation'
+(.text+0x16e808): undefined reference to `__tracepoint_nfs4_reclaim_delegation'
+(.text+0x172005): undefined reference to `__tracepoint_nfs4_recall_delegation'
+fs/built-in.o:(__jump_table+0x9b0): undefined reference to `__tracepoint_nfs4_set_delegation'
+fs/built-in.o:(__jump_table+0x9bc): undefined reference to `__tracepoint_nfs4_reclaim_delegation'
+fs/built-in.o:(__jump_table+0x9c8): undefined reference to `__tracepoint_nfs4_recall_delegation'
+(.text+0x16fef0): undefined reference to `__tracepoint_nfs4_map_name_to_uid'
+(.text+0x17001e): undefined reference to `__tracepoint_nfs4_map_group_to_gid'
+(.text+0x1701d8): undefined reference to `__tracepoint_nfs4_map_uid_to_name'
+(.text+0x1702f9): undefined reference to `__tracepoint_nfs4_map_gid_to_group'
+fs/built-in.o:(__jump_table+0x9c8): undefined reference to `__tracepoint_nfs4_map_name_to_uid'
+fs/built-in.o:(__jump_table+0x9d4): undefined reference to `__tracepoint_nfs4_map_group_to_gid'
+fs/built-in.o:(__jump_table+0x9e0): undefined reference to `__tracepoint_nfs4_map_uid_to_name'
+fs/built-in.o:(__jump_table+0x9ec): undefined reference to `__tracepoint_nfs4_map_gid_to_group'
+nfs4proc.c:(.text+0x15c8d2): undefined reference to `__tracepoint_nfs4_lookup_root'
+nfs4proc.c:(.text+0x15ca38): undefined reference to `__tracepoint_nfs4_fsinfo'
+nfs4proc.c:(.text+0x15d0c7): undefined reference to `__tracepoint_nfs4_getattr'
+fs/built-in.o:(__jump_table+0x824): undefined reference to `__tracepoint_nfs4_lookup_root'
+fs/built-in.o:(__jump_table+0x830): undefined reference to `__tracepoint_nfs4_fsinfo'
+fs/built-in.o:(__jump_table+0x848): undefined reference to `__tracepoint_nfs4_getattr'
+setup.c:(.text+0x0): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+multicalls.c:(.text+0x0): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+mmu.c:(.text+0x1f60): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+irq.c:(.text+0x1d0): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+time.c:(.text+0x5b0): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+suspend.c:(.text+0x20): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+platform-pci-unplug.c:(.text+0x0): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+p2m.c:(.text+0x0): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+smp.c:(.text+0xc00): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+apic.c:(.text+0x90): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+vga.c:(.text+0x0): multiple definition of `xen_init_spinlocks_pv'
+arch/x86/xen/enlighten.o:enlighten.c:(.text+0x12f0): first defined here
+arch/x86/xen/spinlock.c:393:11: error: 'irq_name' undeclared (first use in this function)
+arch/x86/xen/spinlock.c:410:16: error: 'irq_name' undeclared (first use in this function)
+arch/x86/xen/spinlock.c:288:3: error: implicit declaration of function 'jump_label_get_branch_default' [-Werror=implicit-function-declaration]
+ERROR: "xfrm_local_error" [net/ipv6/ipv6.ko] undefined!
+kernel/sched/debug.c:562:64: error: expected ';' before ')' token
+kernel/sched/debug.c:562:64: error: expected statement before ')' token
+ERROR: "__tracepoint_nfs4_close" undefined!
+ERROR: "__tracepoint_nfs4_unlock" undefined!
+ERROR: "__tracepoint_nfs4_remove_async" undefined!
+ERROR: "__tracepoint_nfs4_set_security_label" undefined!
+ERROR: "__tracepoint_nfs4_rename_async" undefined!
+ERROR: "__tracepoint_nfs4_reclaim_delegation" undefined!
+ERROR: "__tracepoint_nfs4_recall_delegation" undefined!
+ERROR: "__tracepoint_nfs4_set_delegation" undefined!
+ERROR: "__tracepoint_nfs4_map_gid_to_group" undefined!
+ERROR: "__tracepoint_nfs4_map_name_to_uid" undefined!
+ERROR: "__tracepoint_nfs4_map_group_to_gid" undefined!
+ERROR: "__tracepoint_nfs4_map_uid_to_name" undefined!
+ERROR: "__tracepoint_nfs4_lookup_root" undefined!
+ERROR: "__tracepoint_nfs4_fsinfo" undefined!
+ERROR: "__tracepoint_nfs4_getattr" undefined!
+fs/built-in.o:(.toc+0x0): undefined reference to `__tracepoint_nfs4_setclientid'
+fs/built-in.o:(.toc+0x8): undefined reference to `__tracepoint_nfs4_setclientid_confirm'
+fs/built-in.o:(.toc+0x10): undefined reference to `__tracepoint_nfs4_bind_conn_to_session'
+fs/built-in.o:(.toc+0x18): undefined reference to `__tracepoint_nfs4_exchange_id'
+fs/built-in.o:(.toc+0x20): undefined reference to `__tracepoint_nfs4_destroy_clientid'
+fs/built-in.o:(.toc+0x28): undefined reference to `__tracepoint_nfs4_create_session'
+fs/built-in.o:(.toc+0x30): undefined reference to `__tracepoint_nfs4_destroy_session'
+fs/built-in.o:(.toc+0x8): undefined reference to `__tracepoint_nfs4_close'
+fs/built-in.o:(.toc+0x18): undefined reference to `__tracepoint_nfs4_unlock'
+fs/built-in.o:(.toc+0x0): undefined reference to `__tracepoint_nfs4_rename_async'
+fs/built-in.o:(.toc+0x108): undefined reference to `__tracepoint_nfs4_set_delegation'
+fs/built-in.o:(.toc+0x110): undefined reference to `__tracepoint_nfs4_reclaim_delegation'
+fs/built-in.o:(.toc+0x118): undefined reference to `__tracepoint_nfs4_recall_delegation'
+fs/built-in.o:(.toc+0x118): undefined reference to `__tracepoint_nfs4_map_name_to_uid'
+fs/built-in.o:(.toc+0x120): undefined reference to `__tracepoint_nfs4_map_group_to_gid'
+fs/built-in.o:(.toc+0x128): undefined reference to `__tracepoint_nfs4_map_uid_to_name'
+fs/built-in.o:(.toc+0x130): undefined reference to `__tracepoint_nfs4_map_gid_to_group'
+fs/built-in.o:(.toc+0x10): undefined reference to `__tracepoint_nfs4_lookup_root'
+fs/built-in.o:(.toc+0x18): undefined reference to `__tracepoint_nfs4_fsinfo'
+fs/built-in.o:(.toc+0x28): undefined reference to `__tracepoint_nfs4_getattr'
+arch/powerpc/kernel/udbg_16550.c:305:6: error: 'udbg_comport' undeclared (first use in this function)
+arch/powerpc/kernel/udbg_16550.c:313:6: error: 'udbg_comport' undeclared (first use in this function)
+arch/powerpc/kernel/udbg_16550.c:323:6: error: 'udbg_comport' undeclared (first use in this function)
+arch/powerpc/kernel/udbg_16550.c:333:6: error: 'udbg_comport' undeclared (first use in this function)
+arch/powerpc/kernel/udbg_16550.c:311:13: error: 'udbg_wsp_putc' defined but not used [-Werror=unused-function]
+arch/powerpc/kernel/udbg_16550.c:321:12: error: 'udbg_wsp_getc' defined but not used [-Werror=unused-function]
+arch/powerpc/kernel/udbg_16550.c:331:12: error: 'udbg_wsp_getc_poll' defined but not used [-Werror=unused-function]
+drivers/target/mlx4_fc/mfc.c:347:2: error: implicit declaration of function 'pci_map_single' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc.c:349:2: error: implicit declaration of function 'pci_dma_mapping_error' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc.c:427:2: error: implicit declaration of function 'pci_unmap_single' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc.c:1738:2: error: implicit declaration of function 'ioremap' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc.c:1790:2: error: implicit declaration of function 'iounmap' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc_rfci.c:156:2: error: implicit declaration of function 'pci_unmap_single' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc_rfci.c:638:2: error: implicit declaration of function 'pci_map_single' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc_rfci.c:640:2: error: implicit declaration of function 'pci_dma_mapping_error' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc_exch.c:116:3: error: implicit declaration of function 'pci_unmap_single' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc_exch.c:941:2: error: implicit declaration of function 'pci_map_single' [-Werror=implicit-function-declaration]
+drivers/target/mlx4_fc/mfc_exch.c:942:2: error: implicit declaration of function 'pci_dma_mapping_error' [-Werror=implicit-function-declaration]
+ERROR: "__tracepoint_nfs4_lookup_root" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_bind_conn_to_session" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_rename_async" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_unlock" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_exchange_id" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_fsinfo" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_reclaim_delegation" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_remove_async" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_setclientid_confirm" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_setclientid" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_map_gid_to_group" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_set_security_label" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_destroy_clientid" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_map_name_to_uid" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_close" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_map_group_to_gid" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_map_uid_to_name" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_create_session" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_getattr" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_recall_delegation" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_destroy_session" [fs/nfs/nfsv4.ko] undefined!
+ERROR: "__tracepoint_nfs4_set_delegation" [fs/nfs/nfsv4.ko] undefined!
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
+arch/x86/xen/enlighten.o:(.text+0x1255): first defined here
 
 [warnings]
-drivers/net/wireless/ath/ath9k/ar9003_eeprom.c:3618: warning: 'regval' is used uninitialized in this function
-Warning(include/linux/fence.h:99): Excess struct/union/enum/typedef member 'priv' description in 'fence_cb'
-drivers/scsi/ufs/ufshcd.c:2687:3: warning: 'flush_work_sync' is deprecated (declared at include/linux/workqueue.h:619) [-Wdeprecated-declarations]
-drivers/scsi/arcmsr/arcmsr_hba.c:1602:2: warning: 'flush_work_sync' is deprecated (declared at include/linux/workqueue.h:619) [-Wdeprecated-declarations]
-drivers/scsi/arcmsr/arcmsr_hba.c:1664:2: warning: 'flush_work_sync' is deprecated (declared at include/linux/workqueue.h:619) [-Wdeprecated-declarations]
-kernel/cgroup.c:5741:3: warning: passing argument 2 of 'cgroup_css' makes pointer from integer without a cast [enabled by default]
-drivers/of/of_reserved_mem.c:57:9: warning: assignment makes pointer from integer without a cast [enabled by default]
-drivers/of/of_reserved_mem.c:63:7: warning: assignment makes pointer from integer without a cast [enabled by default]
-sound/soc/codecs/lm4857.c:197:2: warning: passing argument 1 of 'snd_soc_dapm_new_widgets' from incompatible pointer type [enabled by default]
-kernel/capability.c:280:2: warning: passing argument 1 of 'audit_log_capset' makes integer from pointer without a cast [enabled by default]
+drivers/target/mlx4_fc/mfc.c:1232: warning: integer constant is too large for 'long' type
+drivers/target/mlx4_fc/fcoib_discover.c:1812: warning: integer constant is too large for 'long' type
+drivers/target/mlx4_fc/mfc.c:866: warning: 'u64_to_wwpn' defined but not used
+drivers/target/mlx4_fc/mlx4_fc_configfs.c:344: warning: format '%016lx' expects type 'long unsigned int', but argument 2 has type 'u64'
+drivers/target/mlx4_fc/mlx4_fc_configfs.c:344: warning: format '%016lx' expects type 'long unsigned int', but argument 3 has type 'u64'
+drivers/target/mlx4_fc/mfc.c:1405: warning: too few arguments for format
+WARNING: drivers/target/built-in.o(.init.text+0xa3e): Section mismatch in reference from the function _mfc_init() to the function .exit.text:_mlx4_fc_deregister_configfs()
+drivers/cpufreq/speedstep-smi.c:260:15: warning: unused variable 'state' [-Wunused-variable]
+kernel/sched/debug.c:562:3: warning: statement with no effect [-Wunused-value]
+arch/s390/kvm/../../../virt/kvm/kvm_main.c:1688:3: warning: passing argument 1 of 'kvm_do_schedule' from incompatible pointer type [enabled by default]
+arch/s390/include/asm/kvm_host.h:277:43: warning: 'struct kvm_vcpu' declared inside parameter list [enabled by default]
+arch/s390/include/asm/kvm_host.h:277:43: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+arch/s390/include/asm/kvm_host.h:277:43: warning: 'struct kvm_vcpu' declared inside parameter list [enabled by default]
+arch/s390/include/asm/kvm_host.h:277:43: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+arch/s390/include/asm/kvm_host.h:277:43: warning: 'struct kvm_vcpu' declared inside parameter list [enabled by default]
+arch/s390/include/asm/kvm_host.h:277:43: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+drivers/target/mlx4_fc/mfc.c:1738:19: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/target/mlx4_fc/mfc.c:1405:2: warning: format '%u' expects a matching 'unsigned int' argument [-Wformat=]
+drivers/target/mlx4_fc/fcoe_main.c:295:5: warning: unused variable 'fh_d_id' [-Wunused-variable]
+drivers/target/mlx4_fc/fcoe_main.c:293:20: warning: unused variable 'ofc_ctlr' [-Wunused-variable]
+drivers/target/mlx4_fc/fcoe_main.c:468:2: warning: #warning FIXME: schedule_delayed_work disabled in link_state_changed [-Wcpp]
+drivers/target/mlx4_fc/fcoe_main.c:534:2: warning: #warning FIXME: schedule_delayed_work disabled in add_port [-Wcpp]
+drivers/target/mlx4_fc/fcoe_main.c:207:2: warning: #warning FIXME: Hardcoded initiator physical mac [-Wcpp]
+drivers/target/mlx4_fc/fcoe_main.c:287:2: warning: #warning FIXME: Hardcoded fcoe target mac [-Wcpp]
+WARNING: drivers/target/mlx4_fc/mlx4_fc.o(.init.literal+0x44): Section mismatch in reference from the (unknown reference) (unknown) to the function .exit.text:mlx4_fc_deregister_configfs()
 
 [sparse]
-kernel/cgroup.c:5741:43: sparse: incorrect type in argument 2 (different base types) @@    expected struct cgroup_subsys *ss @@    got roup_subsys *ss @@
-drivers/scsi/esas2r/esas2r_disc.c:1180:59: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1260:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] handle @@    got ed int [unsigned] [usertype] handle @@
-drivers/scsi/esas2r/esas2r.h:1278:17: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] ppsense_buf @@    got g long [unsigned] [usertype] ppsense_buf @@
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1260:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] handle @@    got ed int [unsigned] [usertype] handle @@
-drivers/scsi/esas2r/esas2r.h:1278:17: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] ppsense_buf @@    got g long [unsigned] [usertype] ppsense_buf @@
-drivers/scsi/esas2r/esas2r_disc.c:765:36: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1260:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] handle @@    got ed int [unsigned] [usertype] handle @@
-drivers/scsi/esas2r/esas2r.h:1278:17: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] ppsense_buf @@    got g long [unsigned] [usertype] ppsense_buf @@
-drivers/scsi/esas2r/esas2r_disc.c:849:30: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_disc.c:851:36: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_disc.c:853:21: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_disc.c:855:33: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1260:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] handle @@    got ed int [unsigned] [usertype] handle @@
-drivers/scsi/esas2r/esas2r.h:1278:17: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] ppsense_buf @@    got g long [unsigned] [usertype] ppsense_buf @@
-drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_disc.c:932:43: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_disc.c:962:27: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1260:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] handle @@    got ed int [unsigned] [usertype] handle @@
-drivers/scsi/esas2r/esas2r.h:1278:17: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] ppsense_buf @@    got g long [unsigned] [usertype] ppsense_buf @@
-drivers/scsi/esas2r/esas2r_disc.c:660:42: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_disc.c:661:42: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_flash.c:252:47: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:253:23: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] device_id @@    got  short [unsigned] [usertype] device_id @@
-drivers/scsi/esas2r/esas2r_flash.c:258:37: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:261:49: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] <noident> @@    got ed int [unsigned] [usertype] <noident> @@
-drivers/scsi/esas2r/esas2r_flash.c:288:52: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:290:31: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] device_id @@    got  short [unsigned] [usertype] device_id @@
-drivers/scsi/esas2r/esas2r_flash.c:291:32: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:603:24: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:604:24: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:613:38: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_flash.c:633:25: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:636:30: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:650:16: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:676:33: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:895:19: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_flash.c:900:32: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_flash.c:1050:24: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:1052:24: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:1061:40: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_flash.c:1119:52: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:1121:38: sparse: restricted __le16 degrades to integer
-drivers/scsi/esas2r/esas2r_flash.c:1137:33: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:1161:40: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_flash.c:1302:41: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_flash.c:1305:42: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_flash.c:1308:43: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ctl_len @@    got ed int [unsigned] [usertype] ctl_len @@
-drivers/scsi/esas2r/esas2r_flash.c:1310:43: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_init.c:697:22: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] device_state @@    got [unsigned] [usertype] device_state @@
-drivers/scsi/esas2r/esas2r_init.c:706:35: sparse: incorrect type in argument 2 (different base types) @@    expected restricted pci_power_t [usertype] state @@    got urestricted pci_power_t [usertype] state @@
-drivers/scsi/esas2r/esas2r_init.c:981:41: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1260:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] handle @@    got ed int [unsigned] [usertype] handle @@
-drivers/scsi/esas2r/esas2r.h:1278:17: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] ppsense_buf @@    got g long [unsigned] [usertype] ppsense_buf @@
-drivers/scsi/esas2r/esas2r_init.c:1253:41: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_init.c:1269:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1269:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1269:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1269:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1269:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1269:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1270:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1270:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1270:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1270:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1270:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1270:25: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r_init.c:1281:56: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ctl_len @@    got ed int [unsigned] [usertype] ctl_len @@
-drivers/scsi/esas2r/esas2r_init.c:1283:56: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_init.c:1296:41: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_init.c:1298:41: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1260:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] handle @@    got ed int [unsigned] [usertype] handle @@
-drivers/scsi/esas2r/esas2r.h:1278:17: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] ppsense_buf @@    got g long [unsigned] [usertype] ppsense_buf @@
-drivers/scsi/esas2r/esas2r_init.c:285:15: sparse: memset with byte count of 559632
-drivers/scsi/esas2r/esas2r_int.c:221:22: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_int.c:751:22: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_io.c:65:49: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] target_id @@    got  short [unsigned] [usertype] target_id @@
-drivers/scsi/esas2r/esas2r_io.c:166:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_io.c:167:25: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_io.c:256:51: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_io.c:258:52: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_io.c:268:60: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_io.c:308:43: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_io.c:309:44: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_io.c:327:35: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_io.c:334:44: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_io.c:417:60: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ctl_len @@    got ed int [unsigned] [usertype] ctl_len @@
-drivers/scsi/esas2r/esas2r_io.c:419:60: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_io.c:438:61: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_io.c:468:53: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ctl_len @@    got ed int [unsigned] [usertype] ctl_len @@
-drivers/scsi/esas2r/esas2r_io.c:469:53: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_io.c:486:44: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ctl_len @@    got ed int [unsigned] [usertype] ctl_len @@
-drivers/scsi/esas2r/esas2r_io.c:487:44: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_io.c:513:53: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_io.c:772:22: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_io.c:791:30: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_io.c:810:32: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_io.c:812:32: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_io.c:824:38: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:321:23: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:322:23: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:333:25: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_ioctl.c:334:29: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_ioctl.c:355:31: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ctrl_code @@    got ed int [unsigned] [usertype] ctrl_code @@
-drivers/scsi/esas2r/esas2r_ioctl.c:356:31: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] target_id @@    got  short [unsigned] [usertype] target_id @@
-drivers/scsi/esas2r/esas2r_ioctl.c:357:31: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:419:57: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] csmi_status @@    got ed int [unsigned] [usertype] csmi_status @@
-drivers/scsi/esas2r/esas2r_ioctl.c:425:29: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_ioctl.c:569:39: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:600:49: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] csmi_status @@    got ed int [unsigned] [usertype] csmi_status @@
-drivers/scsi/esas2r/esas2r_ioctl.c:632:21: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:642:22: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:697:17: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:1018:37: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_ioctl.c:1020:38: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_ioctl.c:1035:45: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_ioctl.c:1037:45: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_ioctl.c:1046:45: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_ioctl.c:1049:45: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_ioctl.c:960:39: sparse: memset with byte count of 524288
-drivers/scsi/esas2r/esas2r_vda.c:282:33: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_vda.c:290:41: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_vda.c:295:33: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_vda.c:306:42: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] data_length @@    got ed int [unsigned] [usertype] data_length @@
-drivers/scsi/esas2r/esas2r_vda.c:309:33: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_vda.c:314:38: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_vda.c:315:38: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_vda.c:333:25: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_vda.c:112:39: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:126:42: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] cmd_rsp_len @@    got ed int [unsigned] [usertype] cmd_rsp_len @@
-drivers/scsi/esas2r/esas2r_vda.c:128:37: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:169:45: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:172:59: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] payld_length @@    got ed int [unsigned] [usertype] payld_length @@
-drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_vda.c:187:45: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:200:40: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] dev_index @@    got  short [unsigned] [usertype] dev_index @@
-drivers/scsi/esas2r/esas2r_vda.c:221:37: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_vda.c:362:21: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:363:25: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] flash_addr @@    got ed int [unsigned] [usertype] flash_addr @@
-drivers/scsi/esas2r/esas2r_vda.c:385:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] dev_index @@    got  short [unsigned] [usertype] dev_index @@
-drivers/scsi/esas2r/esas2r_vda.c:386:21: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:393:44: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:394:45: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_vda.c:401:46: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ctl_len @@    got ed int [unsigned] [usertype] ctl_len @@
-drivers/scsi/esas2r/esas2r_vda.c:402:46: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_vda.c:425:21: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:430:36: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:431:37: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_vda.c:437:38: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ctl_len @@    got ed int [unsigned] [usertype] ctl_len @@
-drivers/scsi/esas2r/esas2r_vda.c:438:38: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] address @@    got g long [unsigned] [usertype] address @@
-drivers/scsi/esas2r/esas2r_vda.c:456:21: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:457:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] cmd_rsp_len @@    got ed int [unsigned] [usertype] cmd_rsp_len @@
-drivers/scsi/esas2r/esas2r_vda.c:473:21: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_vda.c:492:21: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_main.c:909:45: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_main.c:911:45: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_main.c:915:30: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] length @@    got ed int [unsigned] [usertype] length @@
-drivers/scsi/esas2r/esas2r_main.c:917:29: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r.h:1322:13: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1008:56: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1008:53: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_main.c:1014:53: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_main.c:1203:29: sparse: invalid assignment: |drivers/scsi/esas2r/esas2r_main.c:1449:31: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1457:25: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1470:31: sparse: cast to restricted __le64
-drivers/scsi/esas2r/esas2r_main.c:1471:33: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1472:36: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1473:32: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1474:26: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1475:31: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1498:31: sparse: cast to restricted __le64
-drivers/scsi/esas2r/esas2r_main.c:1499:33: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1500:33: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1501:31: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1504:41: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1517:32: sparse: cast to restricted __le64
-drivers/scsi/esas2r/esas2r_main.c:1518:32: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1519:33: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1520:32: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1527:37: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1528:35: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1536:45: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1556:38: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1557:37: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1558:35: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1559:34: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1560:36: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1561:43: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1577:30: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1582:30: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1583:38: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1584:43: sparse: cast to restricted __le16
-drivers/scsi/esas2r/esas2r_main.c:1589:35: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r_main.c:1591:35: sparse: cast to restricted __le32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1259:18: sparse: cast to restricted __be32
-drivers/scsi/esas2r/esas2r.h:1260:26: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] handle @@    got ed int [unsigned] [usertype] handle @@
-drivers/scsi/esas2r/esas2r.h:1278:17: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] [usertype] ppsense_buf @@    got g long [unsigned] [usertype] ppsense_buf @@
-drivers/scsi/esas2r/esas2r_main.c:1653:40: sparse: cast to restricted __le32
-drivers/scsi/arcmsr/arcmsr_attr.c:127:38: sparse: incorrect type in assignment (different address spaces) @@    expected unsigned char [noderef] [usertype] <asn:2>*vaddr @@    got sn:2>*vaddr @@
-drivers/scsi/arcmsr/arcmsr_attr.c:129:40: sparse: incorrect type in argument 1 (different address spaces) @@    expected void *to @@    got unsigned char [noderef] [usertype] <avoid *to @@
-drivers/scsi/arcmsr/arcmsr_attr.c:129:46: sparse: incorrect type in argument 2 (different address spaces) @@    expected void const *from @@    got unsigned char [noderef] [usertype] <asn:2>void const *from @@
-drivers/scsi/arcmsr/arcmsr_attr.c:137:50: sparse: incorrect type in argument 2 (different address spaces) @@    expected void const *from @@    got unsigned char [noderef] [usertype] <asn:2>void const *from @@
-drivers/scsi/arcmsr/arcmsr_attr.c:140:59: sparse: incorrect type in argument 2 (different address spaces) @@    expected void const *from @@    got unsigned char [noderef] [usertype] <asn:2>void const *from @@
-drivers/scsi/arcmsr/arcmsr_attr.c:142:50: sparse: incorrect type in argument 2 (different address spaces) @@    expected void const *from @@    got unsigned char [noderef] [usertype] <asn:2>void const *from @@
-drivers/scsi/arcmsr/arcmsr_attr.c:145:31: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const *<noident> @@    got unsigned char [noderef] [usertyvoid const *<noident> @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2953:46: sparse: incorrect type in assignment (different address spaces) @@    expected unsigned char [noderef] [usertype] <asn:2>*vaddr @@    got sn:2>*vaddr @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2959:48: sparse: incorrect type in argument 1 (different address spaces) @@    expected void *to @@    got unsigned char [noderef] [usertype] <avoid *to @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2988:39: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const *<noident> @@    got unsigned char [noderef] [usertyvoid const *<noident> @@
-drivers/scsi/arcmsr/arcmsr_hba.c:1367:26: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_C [noderef] <asn:2>*reg @@    got t_C [noderef] <asn:2>*reg @@
-drivers/scsi/arcmsr/arcmsr_hba.c:1377:26: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*reg @@    got t_D [noderef] <asn:2>*reg @@
-drivers/scsi/arcmsr/arcmsr_hba.c:443:46: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*reg @@    got t_D [noderef] <asn:2>*reg @@
-drivers/scsi/arcmsr/arcmsr_hba.c:521:18: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*reg @@    got t_D [noderef] <asn:2>*reg @@
-drivers/scsi/arcmsr/arcmsr_hba.c:1253:46: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*reg @@    got t_D [noderef] <asn:2>*reg @@
-drivers/scsi/arcmsr/arcmsr_hba.c:1856:48: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D *pmu @@    got struct MessageUnistruct MessageUnit_D *pmu @@
-drivers/scsi/arcmsr/arcmsr_hba.c:1931:18: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*reg @@    got t_D [noderef] <asn:2>*reg @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2087:26: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*reg @@    got t_D [noderef] <asn:2>*reg @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2119:18: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*pmu @@    got t_D [noderef] <asn:2>*pmu @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2096:1: sparse: symbol 'arcmsr_get_iop_wqbuffer' was not declared. Should it be static?
-drivers/scsi/arcmsr/arcmsr_hba.c:2145:38: sparse: incorrect type in assignment (different address spaces) @@    expected unsigned char [noderef] [usertype] <asn:2>*vaddr @@    got sn:2>*vaddr @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2151:40: sparse: incorrect type in argument 1 (different address spaces) @@    expected void *to @@    got unsigned char [noderef] [usertype] <avoid *to @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2160:34: sparse: incorrect type in assignment (different address spaces) @@    expected unsigned char [noderef] [usertype] <asn:2>*pQbuffer @@    got rtype] <asn:2>*pQbuffer @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2164:40: sparse: incorrect type in argument 1 (different address spaces) @@    expected void *to @@    got unsigned char [noderef] [usertype] <avoid *to @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2173:40: sparse: incorrect type in argument 1 (different address spaces) @@    expected void *to @@    got unsigned char [noderef] [usertype] <avoid *to @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2177:31: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const *<noident> @@    got unsigned char [noderef] [usertyvoid const *<noident> @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2128:1: sparse: symbol 'arcmsr_iop2drv_data_wrote_handle' was not declared. Should it be static?
-drivers/scsi/arcmsr/arcmsr_hba.c:2189:1: sparse: symbol 'arcmsr_iop2drv_data_read_handle' was not declared. Should it be static?
-drivers/scsi/arcmsr/arcmsr_hba.c:2343:18: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_C [noderef] <asn:2>*reg @@    got t_C [noderef] <asn:2>*reg @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2372:18: sparse: incorrect type in initializer (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*pmu @@    got t_D [noderef] <asn:2>*pmu @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2449:16: sparse: incorrect type in assignment (different address spaces) @@    expected struct MessageUnit_C [noderef] <asn:2>*phbcmu @@    got t_C [noderef] <asn:2>*phbcmu @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2486:13: sparse: incorrect type in assignment (different address spaces) @@    expected struct MessageUnit_D [noderef] <asn:2>*pmu @@    got t_D [noderef] <asn:2>*pmu @@
-drivers/scsi/arcmsr/arcmsr_hba.c:2529:41: sparse: too many warnings
-drivers/target/target_core_xcopy.c:1058:18: sparse: incorrect type in initializer (different base types) @@    expected int [signed] rc @@    got restricted sense_reason_int [signed] rc @@
-drivers/target/target_core_xcopy.c:1071:20: sparse: incorrect type in assignment (different base types) @@    expected int [signed] rc @@    got restricted sint [signed] rc @@
-drivers/target/target_core_xcopy.c:1081:16: sparse: incorrect type in return expression (different base types) @@    expected restricted sense_reason_t @@    got ense_reason_t @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-net/802/garp.c:586:9: sparse: cast removes address space of expression
-net/802/mrp.c:845:9: sparse: cast removes address space of expression
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-fs/afs/inode.c:448:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct afs_permits *volatile <noident> @@    got  afs_permits *volatile <noident> @@
-fs/afs/security.c:117:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct afs_permits *volatile <noident> @@    got  afs_permits *volatile <noident> @@
-fs/afs/security.c:202:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct afs_permits *volatile <noident> @@    got struct astruct afs_permits *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-include/linux/posix_acl.h:137:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct posix_acl *volatile <noident> @@    got struct pstruct posix_acl *volatile <noident> @@
-fs/proc/inode.c:50:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct ctl_table_header *volatile <noident> @@    got table_header *volatile <noident> @@
-net/dns_resolver/dns_key.c:163:9: sparse: incorrect type in assignment (different address spaces) @@    expected void *volatile <noident> @@    got struct user_key_payload [novoid *volatile <noident> @@
-net/netfilter/nfnetlink.c:257:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct sock *volatile <noident> @@    got struct sstruct sock *volatile <noident> @@
-drivers/scsi/libfc/fc_libfc.c:299:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct fc4_prov *volatile <noident> @@    got uct fc4_prov *volatile <noident> @@
-drivers/scsi/libfc/fc_libfc.c:301:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct fc4_prov *volatile <noident> @@    got uct fc4_prov *volatile <noident> @@
-kernel/events/callchain.c:55:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct callchain_cpus_entries *volatile <noident> @@    got cpus_entries *volatile <noident> @@
-kernel/events/callchain.c:85:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct callchain_cpus_entries *volatile <noident> @@    got struct cstruct callchain_cpus_entries *volatile <noident> @@
-net/phonet/pn_dev.c:376:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct net_device *volatile <noident> @@    got struct nstruct net_device *volatile <noident> @@
-net/sched/sch_generic.c:668:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct Qdisc *volatile <noident> @@    got struct Qstruct Qdisc *volatile <noident> @@
-net/sched/sch_generic.c:725:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct Qdisc *volatile <noident> @@    got struct Qstruct Qdisc *volatile <noident> @@
-net/sched/sch_generic.c:775:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct Qdisc *volatile <noident> @@    got struct Qstruct Qdisc *volatile <noident> @@
-net/sched/sch_generic.c:883:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct Qdisc *volatile <noident> @@    got struct Qstruct Qdisc *volatile <noident> @@
-net/netfilter/ipset/ip_set_hash_gen.h:572:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct htable *volatile <noident> @@    got struct hstruct htable *volatile <noident> @@
-kernel/nsproxy.c:220:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct nsproxy *volatile <noident> @@    got struct nstruct nsproxy *volatile <noident> @@
-kernel/notifier.c:30:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct notifier_block *volatile <noident> @@    got struct nstruct notifier_block *volatile <noident> @@
-kernel/notifier.c:45:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct notifier_block *volatile <noident> @@    got struct nstruct notifier_block *volatile <noident> @@
-kernel/notifier.c:54:25: sparse: incorrect type in assignment (different address spaces) @@    expected struct notifier_block *volatile <noident> @@    got struct nstruct notifier_block *volatile <noident> @@
-kernel/fork.c:989:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct sighand_struct *volatile <noident> @@    got struct sstruct sighand_struct *volatile <noident> @@
-fs/exec.c:1007:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct sighand_struct *volatile <noident> @@    got struct sstruct sighand_struct *volatile <noident> @@
-fs/fcntl.c:634:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct fasync_struct *volatile <noident> @@    got struct fstruct fasync_struct *volatile <noident> @@
-fs/file.c:323:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct file *volatile <noident> @@    got struct fstruct file *volatile <noident> @@
-net/xfrm/xfrm_user.c:3012:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct sock *volatile <noident> @@    got struct sstruct sock *volatile <noident> @@
-drivers/gpu/drm/radeon/radeon_cs.c:640:35: sparse: incorrect type in argument 1 (different base types) @@    expected unsigned long [unsigned] [usertype] size @@    got ned] [usertype] size @@
-drivers/gpu/drm/radeon/radeon_cs.c:640:66: sparse: incorrect type in argument 2 (different base types) @@    expected restricted gfp_t [usertype] flags @@    got t [usertype] flags @@
-sound/soc/codecs/lm4857.c:197:34: sparse: incorrect type in argument 1 (different base types) @@    expected struct snd_soc_card *card @@    got struct sstruct snd_soc_card *card @@
-fs/f2fs/namei.c:450:45: sparse: Expected ; at end of statement
-fs/f2fs/namei.c:450:45: sparse: got :
-drivers/target/target_core_spc.c:135:6: sparse: symbol 'spc_parse_naa_6h_vendor_specific' was not declared. Should it be static?
-drivers/target/target_core_device.c:50:1: sparse: symbol 'g_device_mutex' was not declared. Should it be static?
-drivers/target/target_core_device.c:51:1: sparse: symbol 'g_device_list' was not declared. Should it be static?
+arch/x86/xen/setup.c:531:16: sparse: symbol 'xen_enable_nmi' was not declared. Should it be static?
+drivers/char/tpm/xen-tpmfront.c:145:9: sparse: symbol 'tpm_show_locality' was not declared. Should it be static?
+drivers/char/tpm/xen-tpmfront.c:155:9: sparse: symbol 'tpm_store_locality' was not declared. Should it be static?
+drivers/char/tpm/xen-tpmfront.c:449:8: sparse: Using plain integer as NULL pointer
+fs/nfs/./nfs4trace.h:230:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:230:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:230:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:230:1: sparse: cast from restricted fmode_t
+fs/nfs/./nfs4trace.h:293:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:293:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:293:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:293:1: sparse: cast from restricted fmode_t
+fs/nfs/./nfs4trace.h:406:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:406:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:406:1: sparse: incorrect type in initializer (different base types) @@    expected unsigned long [unsigned] mask @@    got restrunsigned long [unsigned] mask @@
+fs/nfs/./nfs4trace.h:406:1: sparse: cast from restricted fmode_t
+fs/nfs/./nfs4trace.h:230:1: sparse: cast to restricted fmode_t
+fs/nfs/./nfs4trace.h:230:1: sparse: cast to restricted fmode_t
+fs/nfs/./nfs4trace.h:230:1: sparse: restricted fmode_t degrades to integer
+fs/nfs/./nfs4trace.h:230:1: sparse: restricted fmode_t degrades to integer
+fs/nfs/./nfs4trace.h:293:1: sparse: cast to restricted fmode_t
+fs/nfs/./nfs4trace.h:293:1: sparse: cast to restricted fmode_t
+fs/nfs/./nfs4trace.h:293:1: sparse: restricted fmode_t degrades to integer
+fs/nfs/./nfs4trace.h:293:1: sparse: restricted fmode_t degrades to integer
+fs/nfs/./nfs4trace.h:406:1: sparse: cast to restricted fmode_t
+fs/nfs/./nfs4trace.h:406:1: sparse: cast to restricted fmode_t
+fs/nfs/./nfs4trace.h:406:1: sparse: restricted fmode_t degrades to integer
+fs/nfs/./nfs4trace.h:406:1: sparse: restricted fmode_t degrades to integer
+drivers/gpu/drm/radeon/si.c:5223:6: sparse: symbol 'si_update_cg' was not declared. Should it be static?
+drivers/gpu/drm/radeon/r600_dma.c:239:30: sparse: incorrect type in initializer (different address spaces) @@    expected void [noderef] <asn:2>*ptr @@    got sn:2>*ptr @@
+drivers/gpu/drm/radeon/r600_dma.c:341:30: sparse: incorrect type in initializer (different address spaces) @@    expected void [noderef] <asn:2>*ptr @@    got sn:2>*ptr @@
+drivers/gpu/drm/radeon/cik_sdma.c:504:30: sparse: incorrect type in initializer (different address spaces) @@    expected void [noderef] <asn:2>*ptr @@    got sn:2>*ptr @@
+drivers/gpu/drm/radeon/cik_sdma.c:558:30: sparse: incorrect type in initializer (different address spaces) @@    expected void [noderef] <asn:2>*ptr @@    got sn:2>*ptr @@
+drivers/net/ppp/pptp.c:321:21: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] ack @@    got gned] [usertype] ack @@
+drivers/usb/host/./xhci-trace.h:96:1: sparse: cast to restricted __le32
+drivers/usb/host/./xhci-trace.h:96:1: sparse: cast to restricted __le32
+drivers/usb/host/./xhci-trace.h:96:1: sparse: restricted __le32 degrades to integer
+drivers/usb/host/./xhci-trace.h:96:1: sparse: restricted __le32 degrades to integer
+drivers/usb/host/./xhci-trace.h:96:1: sparse: cast from restricted __le32
+drivers/usb/host/./xhci-trace.h:96:1: sparse: restricted __le32 degrades to integer
+drivers/usb/host/./xhci-trace.h:96:1: sparse: cast to restricted __le64
+drivers/usb/host/./xhci-trace.h:96:1: sparse: cast from restricted __le32
+drivers/usb/host/./xhci-trace.h:96:1: sparse: restricted __le32 degrades to integer
+drivers/usb/host/./xhci-trace.h:96:1: sparse: cast to restricted __le64
+drivers/target/mlx4_fc/fcoe_main.c:468:2: sparse: FIXME: schedule_delayed_work disabled in link_state_changed
+drivers/target/mlx4_fc/fcoe_main.c:534:2: sparse: FIXME: schedule_delayed_work disabled in add_port
+drivers/target/mlx4_fc/fcoe_main.c:207:2: sparse: FIXME: Hardcoded initiator physical mac
+drivers/target/mlx4_fc/fcoe_main.c:287:2: sparse: FIXME: Hardcoded fcoe target mac
+kernel/sched/debug.c:562:78: sparse: Expected ; at end of statement
+kernel/sched/debug.c:562:78: sparse: got )
+arch/x86/kernel/paravirt-spinlocks.c:11:5: sparse: symbol 'taken_slow' was not declared. Should it be static?
+arch/x86/kernel/paravirt-spinlocks.c:12:5: sparse: symbol 'released_slow' was not declared. Should it be static?
+drivers/gpu/drm/radeon/dce6_afmt.c:59:6: sparse: symbol 'dce6_afmt_select_pin' was not declared. Should it be static?
+drivers/gpu/drm/radeon/dce6_afmt.c:73:6: sparse: symbol 'dce6_afmt_write_sad_regs' was not declared. Should it be static?
+drivers/gpu/drm/radeon/dce6_afmt.c:193:5: sparse: symbol 'dce6_audio_init' was not declared. Should it be static?
+drivers/gpu/drm/radeon/dce6_afmt.c:222:6: sparse: symbol 'dce6_audio_fini' was not declared. Should it be static?
+drivers/gpu/drm/radeon/ni_dma.c:253:6: sparse: symbol 'cayman_dma_vm_set_page' was not declared. Should it be static?
+drivers/gpu/drm/radeon/si_dma.c:72:6: sparse: symbol 'si_dma_vm_set_page' was not declared. Should it be static?
+drivers/gpu/drm/radeon/cik_sdma.c:199:6: sparse: symbol 'cik_sdma_enable' was not declared. Should it be static?
+drivers/gpu/drm/radeon/cik_sdma.c:365:5: sparse: symbol 'cik_sdma_resume' was not declared. Should it be static?
+drivers/gpu/drm/radeon/cik_sdma.c:401:6: sparse: symbol 'cik_sdma_fini' was not declared. Should it be static?
+drivers/gpu/drm/radeon/cik_sdma.c:650:6: sparse: symbol 'cik_sdma_vm_set_page' was not declared. Should it be static?
+drivers/gpu/drm/radeon/atombios_dp.c:53:6: sparse: symbol 'radeon_atom_copy_swap' was not declared. Should it be static?
+drivers/gpu/drm/radeon/ni.c:1603:5: sparse: symbol 'cayman_gpu_check_soft_reset' was not declared. Should it be static?
+drivers/gpu/drm/radeon/si.c:3492:5: sparse: symbol 'si_gpu_check_soft_reset' was not declared. Should it be static?
+drivers/gpu/drm/radeon/si.c:5157:5: sparse: symbol 'si_get_csb_size' was not declared. Should it be static?
+drivers/gpu/drm/radeon/si.c:5189:6: sparse: symbol 'si_get_csb_buffer' was not declared. Should it be static?
+drivers/gpu/drm/radeon/cik.c:4040:5: sparse: symbol 'cik_gpu_check_soft_reset' was not declared. Should it be static?
+drivers/gpu/drm/radeon/cik.c:5639:5: sparse: symbol 'cik_get_csb_size' was not declared. Should it be static?
+drivers/gpu/drm/radeon/cik.c:5671:6: sparse: symbol 'cik_get_csb_buffer' was not declared. Should it be static?
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
