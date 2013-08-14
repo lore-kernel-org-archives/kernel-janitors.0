@@ -1,233 +1,71 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 09 Aug 2013 16:28:33 +0000
-Subject: build regressions 2013-08-09
-Message-Id: <520518b1.QOWjx5CfF+oOOiw5%fengguang.wu@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:22 +0000
+Subject: [PATCH 18/29] tty: ar933x_uart: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-19-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[errors]
-fs/btrfs/ioctl.c:2756:3: error: implicit declaration of function '__put_user_unaligned' [-Werror=implicit-function-declaration]
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected identifier or '(' before 'volatile'
-include/linux/jump_label.h:181:19: error: expected ')' before '&' token
-include/linux/jump_label.h:181:19: error: expected declaration specifiers or '...' before '&' token
-arch/x86/kernel/microcode_amd.c:389:290: error: 'cpu' undeclared (first use in this function)
-include/linux/spinlock_types_up.h:19:3: error: conflicting types for 'arch_spinlock_t'
-include/linux/spinlock_types_up.h:33:3: error: conflicting types for 'arch_rwlock_t'
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[warnings]
-drivers/usb/serial/mxuport.c:221:2: warning: format '%d' expects argument of type 'int', but argument 5 has type 'size_t' [-Wformat]
-drivers/usb/serial/mxuport.c:221: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
-arch/x86/kernel/microcode_amd.c:377:15: warning: unused variable 'cpu' [-Wunused-variable]
-include/linux/spinlock_types_up.h:21:0: warning: "__ARCH_SPIN_LOCK_UNLOCKED" redefined [enabled by default]
-include/linux/spinlock_types_up.h:35:0: warning: "__ARCH_RW_LOCK_UNLOCKED" redefined [enabled by default]
-fs/btrfs/ioctl.c:2756:7: warning: right shift count >= width of type [enabled by default]
-include/linux/jump_label.h:181:19: warning: 'atomic_read' used but never defined [enabled by default]
-Warning(include/linux/mtd/nand.h:679): No description found for parameter 'ecc'
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-[sparse]
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast to non-scalar
-kernel/time/tick-sched.c:400:9: sparse: cast from non-scalar
-arch/x86/kernel/kvm.c:676:8: sparse: symbol 'lock_waiting' was not declared. Should it be static?
-arch/x86/xen/spinlock.c:123:8: sparse: symbol 'lock_waiting' was not declared. Should it be static?
-drivers/gpu/drm/qxl/qxl_release.c:90:17: sparse: undefined identifier 'i'
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/tty/serial/ar933x_uart.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/ar933x_uart.c b/drivers/tty/serial/ar933x_uart.c
+index 3f5517f..a712a3f 100644
+--- a/drivers/tty/serial/ar933x_uart.c
++++ b/drivers/tty/serial/ar933x_uart.c
+@@ -640,12 +640,6 @@ static int ar933x_uart_probe(struct platform_device *pdev)
+ 	if (id > CONFIG_SERIAL_AR933X_NR_UARTS)
+ 		return -EINVAL;
+ 
+-	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem_res) {
+-		dev_err(&pdev->dev, "no MEM resource\n");
+-		return -EINVAL;
+-	}
+-
+ 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!irq_res) {
+ 		dev_err(&pdev->dev, "no IRQ resource\n");
+@@ -659,6 +653,7 @@ static int ar933x_uart_probe(struct platform_device *pdev)
+ 
+ 	port = &up->port;
+ 
++	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	port->membase = devm_ioremap_resource(&pdev->dev, mem_res);
+ 	if (IS_ERR(port->membase))
+ 		return PTR_ERR(port->membase);
+
