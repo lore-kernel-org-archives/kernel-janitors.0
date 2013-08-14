@@ -1,28 +1,69 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Aug 2013 08:46:21 +0000
-Subject: [patch] [SCSI] esas2r: bitwise vs logical AND typo
-Message-Id: <20130829084620.GE14334@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:15 +0000
+Subject: [PATCH 11/29] marvell-ccic/mmp-driver.c: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bradley Grove <linuxdrivers@attotech.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The intent was to test if any bits were set but it used a logical AND.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-diff --git a/drivers/scsi/esas2r/esas2r_init.c b/drivers/scsi/esas2r/esas2r_init.c
-index 3a798e7..78b18c1 100644
---- a/drivers/scsi/esas2r/esas2r_init.c
-+++ b/drivers/scsi/esas2r/esas2r_init.c
-@@ -808,7 +808,7 @@ static void esas2r_init_pci_cfg_space(struct esas2r_adapter *a)
- 	int pcie_cap_reg;
- 
- 	pcie_cap_reg = pci_find_capability(a->pcid, PCI_CAP_ID_EXP);
--	if (0xffff && pcie_cap_reg) {
-+	if (0xffff & pcie_cap_reg) {
- 		u16 devcontrol;
- 
- 		pci_read_config_word(a->pcid, pcie_cap_reg + PCI_EXP_DEVCTL,
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/marvell-ccic/mmp-driver.c |    8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/media/platform/marvell-ccic/mmp-driver.c
+index f06daa4..b5a19af 100644
+--- a/drivers/media/platform/marvell-ccic/mmp-driver.c
++++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
+@@ -396,10 +396,6 @@ static int mmpcam_probe(struct platform_device *pdev)
+ 	 * Get our I/O memory.
+ 	 */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res = NULL) {
+-		dev_err(&pdev->dev, "no iomem resource!\n");
+-		return -ENODEV;
+-	}
+ 	mcam->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(mcam->regs))
+ 		return PTR_ERR(mcam->regs);
+@@ -409,10 +405,6 @@ static int mmpcam_probe(struct platform_device *pdev)
+ 	 * should really be managed outside of this driver?
+ 	 */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (res = NULL) {
+-		dev_err(&pdev->dev, "no power resource!\n");
+-		return -ENODEV;
+-	}
+ 	cam->power_regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(cam->power_regs))
+ 		return PTR_ERR(cam->power_regs);
+
