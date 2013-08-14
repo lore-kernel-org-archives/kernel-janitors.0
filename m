@@ -1,15 +1,14 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 09:11:31 +0000
+Date: Wed, 14 Aug 2013 09:11:32 +0000
 Subject: [PATCH 27/29] drivers/ata/sata_rcar.c: simplify use of devm_ioremap_resource
-Message-Id: <1376471493-22215-28-git-send-email-Julia.Lawall@lip6.fr>
+Message-Id: <1376471493-22215-29-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1376471493-22215-28-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-28-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tejun Heo <tj@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
@@ -40,30 +39,125 @@ identifier l;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/ata/sata_rcar.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/input/keyboard/imx_keypad.c     |    7 +------
+ drivers/input/keyboard/nspire-keypad.c  |    7 +------
+ drivers/input/keyboard/spear-keyboard.c |    7 +------
+ drivers/input/serio/arc_ps2.c           |    7 +------
+ drivers/input/serio/olpc_apsp.c         |    3 ---
+ 5 files changed, 4 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index 8108eb0..c2d95e9 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -778,10 +778,6 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	int irq;
- 	int ret = 0;
+diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
+index 03c8cc5..328cfc1 100644
+--- a/drivers/input/keyboard/imx_keypad.c
++++ b/drivers/input/keyboard/imx_keypad.c
+@@ -442,12 +442,6 @@ static int imx_keypad_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (mem = NULL)
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res = NULL) {
+-		dev_err(&pdev->dev, "no I/O memory defined in platform data\n");
 -		return -EINVAL;
+-	}
+-
+ 	input_dev = devm_input_allocate_device(&pdev->dev);
+ 	if (!input_dev) {
+ 		dev_err(&pdev->dev, "failed to allocate the input device\n");
+@@ -468,6 +462,7 @@ static int imx_keypad_probe(struct platform_device *pdev)
+ 	setup_timer(&keypad->check_matrix_timer,
+ 		    imx_keypad_check_for_events, (unsigned long) keypad);
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	keypad->mmio_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(keypad->mmio_base))
+ 		return PTR_ERR(keypad->mmio_base);
+diff --git a/drivers/input/keyboard/nspire-keypad.c b/drivers/input/keyboard/nspire-keypad.c
+index 20d872d..b3e3eda 100644
+--- a/drivers/input/keyboard/nspire-keypad.c
++++ b/drivers/input/keyboard/nspire-keypad.c
+@@ -171,12 +171,6 @@ static int nspire_keypad_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "missing platform resources\n");
+-		return -EINVAL;
+-	}
+-
+ 	keypad = devm_kzalloc(&pdev->dev, sizeof(struct nspire_keypad),
+ 			      GFP_KERNEL);
+ 	if (!keypad) {
+@@ -208,6 +202,7 @@ static int nspire_keypad_probe(struct platform_device *pdev)
+ 		return PTR_ERR(keypad->clk);
+ 	}
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	keypad->reg_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(keypad->reg_base))
+ 		return PTR_ERR(keypad->reg_base);
+diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
+index 7111124..85ff530 100644
+--- a/drivers/input/keyboard/spear-keyboard.c
++++ b/drivers/input/keyboard/spear-keyboard.c
+@@ -191,12 +191,6 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int error;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no keyboard resource defined\n");
+-		return -EBUSY;
+-	}
 -
  	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0)
- 		return -EINVAL;
-@@ -807,6 +803,7 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "not able to get irq for the device\n");
+@@ -228,6 +222,7 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 		kbd->suspended_rate = pdata->suspended_rate;
+ 	}
  
- 	host->private_data = priv;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	kbd->io_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(kbd->io_base))
+ 		return PTR_ERR(kbd->io_base);
+diff --git a/drivers/input/serio/arc_ps2.c b/drivers/input/serio/arc_ps2.c
+index 3fb7727..8024a6d 100644
+--- a/drivers/input/serio/arc_ps2.c
++++ b/drivers/input/serio/arc_ps2.c
+@@ -189,12 +189,6 @@ static int arc_ps2_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int error, id, i;
  
-+	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->base = devm_ioremap_resource(&pdev->dev, mem);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no IO memory defined\n");
+-		return -EINVAL;
+-	}
+-
+ 	irq = platform_get_irq_byname(pdev, "arc_ps2_irq");
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "no IRQ defined\n");
+@@ -208,6 +202,7 @@ static int arc_ps2_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	arc_ps2->addr = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(arc_ps2->addr))
+ 		return PTR_ERR(arc_ps2->addr);
+diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
+index 818aa46..51b1d40 100644
+--- a/drivers/input/serio/olpc_apsp.c
++++ b/drivers/input/serio/olpc_apsp.c
+@@ -183,9 +183,6 @@ static int olpc_apsp_probe(struct platform_device *pdev)
+ 
+ 	np = pdev->dev.of_node;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENOENT;
+-
+ 	priv->base = devm_ioremap_resource(&pdev->dev, res);
  	if (IS_ERR(priv->base)) {
- 		ret = PTR_ERR(priv->base);
+ 		dev_err(&pdev->dev, "Failed to map WTM registers\n");
 
