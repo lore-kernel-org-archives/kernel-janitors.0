@@ -1,31 +1,69 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 16 Aug 2013 12:44:00 +0000
-Subject: Re: [patch] USB: mos7720: use GFP_ATOMIC under spinlock
-Message-Id: <20130816124400.GA15075@kroah.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:27 +0000
+Subject: [PATCH 23/29] drivers/i2c/busses/i2c-ocores.c: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-24-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130816071659.GA6053@elgon.mountain>
-In-Reply-To: <20130816071659.GA6053@elgon.mountain>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Peter Korsgaard <jacmet@sunsite.dk>
+Cc: kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2013 at 12:12:10PM +0200, Johan Hovold wrote:
-> On Fri, Aug 16, 2013 at 10:16:59AM +0300, Dan Carpenter wrote:
-> > The write_parport_reg_nonblock() function shouldn't sleep because it's
-> > called with spinlocks held.
-> 
-> Ouch. Thanks for catching this.
-> 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Cc: stable@vger.kernel.org
-> Acked-by: Johan Hovold <jhovold@gmail.com>
-> 
-> Greg, this one is needed in 3.11 (with a stable tag) as the offending
-> commit ef6c8c1d ("USB: mos7720: fix broken control requests") is in
-> usb-3.11-rc6.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Ok, I'll mark it as such, thanks.
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-greg k-h
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/i2c/busses/i2c-ocores.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
+index 0e1f824..e686e2c 100644
+--- a/drivers/i2c/busses/i2c-ocores.c
++++ b/drivers/i2c/busses/i2c-ocores.c
+@@ -353,10 +353,6 @@ static int ocores_i2c_probe(struct platform_device *pdev)
+ 	int ret;
+ 	int i;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0)
+ 		return irq;
+@@ -365,6 +361,7 @@ static int ocores_i2c_probe(struct platform_device *pdev)
+ 	if (!i2c)
+ 		return -ENOMEM;
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	i2c->base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(i2c->base))
+ 		return PTR_ERR(i2c->base);
+
