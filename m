@@ -1,41 +1,70 @@
-From: Balaji T K <balajitk@ti.com>
-Date: Thu, 22 Aug 2013 14:58:28 +0000
-Subject: Re: [patch] mmc: omap_hsmmc: precedence bug in omap_hsmmc_context_restore()
-Message-Id: <52162444.1050908@ti.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:16 +0000
+Subject: [PATCH 12/29] sound/soc/samsung/ac97.c: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130822125613.GB2543@elgon.mountain>
-In-Reply-To: <20130822125613.GB2543@elgon.mountain>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Ball <cjb@laptop.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-On Thursday 22 August 2013 06:26 PM, Dan Carpenter wrote:
-> '!' has higher precedence than '&' so this doesn't work as intended
-> although since RESETDONE is 1 it would work if none of the other bits
-> are set.
->
-Hi Dan,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks for the patch, Indeed other bits are reserved.
-however ...
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Untested.
->
-> diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-> index 1865321..7346b15 100644
-> --- a/drivers/mmc/host/omap_hsmmc.c
-> +++ b/drivers/mmc/host/omap_hsmmc.c
-> @@ -612,7 +612,7 @@ static int omap_hsmmc_context_restore(struct omap_hsmmc_host *host)
->   	if (host->context_loss = context_loss)
->   		return 1;
->
-> -	if (!OMAP_HSMMC_READ(host->base, SYSSTATUS) & RESETDONE)
-> +	if (!(OMAP_HSMMC_READ(host->base, SYSSTATUS) & RESETDONE))
->   		return 1;
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
 
-This check is unnecessary, will send a patch to remove this.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/samsung/ac97.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+index 2dd623f..c732df9 100644
+--- a/sound/soc/samsung/ac97.c
++++ b/sound/soc/samsung/ac97.c
+@@ -404,18 +404,13 @@ static int s3c_ac97_probe(struct platform_device *pdev)
+ 		return -ENXIO;
+ 	}
+ 
+-	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem_res) {
+-		dev_err(&pdev->dev, "Unable to get register resource\n");
+-		return -ENXIO;
+-	}
+-
+ 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!irq_res) {
+ 		dev_err(&pdev->dev, "AC97 IRQ not provided!\n");
+ 		return -ENXIO;
+ 	}
+ 
++	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	s3c_ac97.regs = devm_ioremap_resource(&pdev->dev, mem_res);
+ 	if (IS_ERR(s3c_ac97.regs))
+ 		return PTR_ERR(s3c_ac97.regs);
 
