@@ -1,29 +1,69 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 16 Aug 2013 14:51:50 +0000
-Subject: Re: [PATCH 4/29] mtd: simplify use of devm_ioremap_resource
-Message-Id: <1376664710.2089.382.camel@sauron.fi.intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:23 +0000
+Subject: [PATCH 19/29] watchdog: ts72xx_wdt: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-20-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376471493-22215-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2013-08-14 at 11:11 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
-> 
-> Move the call to platform_get_resource adjacent to the call to
-> devm_ioremap_resource to make the connection between them more clear.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Pushed to l2-mtd.git, thanks!
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
--- 
-Best Regards,
-Artem Bityutskiy
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/watchdog/ts72xx_wdt.c |   10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/drivers/watchdog/ts72xx_wdt.c b/drivers/watchdog/ts72xx_wdt.c
+index 4da59b4..42913f1 100644
+--- a/drivers/watchdog/ts72xx_wdt.c
++++ b/drivers/watchdog/ts72xx_wdt.c
+@@ -403,21 +403,11 @@ static int ts72xx_wdt_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	r1 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r1) {
+-		dev_err(&pdev->dev, "failed to get memory resource\n");
+-		return -ENODEV;
+-	}
+-
+ 	wdt->control_reg = devm_ioremap_resource(&pdev->dev, r1);
+ 	if (IS_ERR(wdt->control_reg))
+ 		return PTR_ERR(wdt->control_reg);
+ 
+ 	r2 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (!r2) {
+-		dev_err(&pdev->dev, "failed to get memory resource\n");
+-		return -ENODEV;
+-	}
+-
+ 	wdt->feed_reg = devm_ioremap_resource(&pdev->dev, r2);
+ 	if (IS_ERR(wdt->feed_reg))
+ 		return PTR_ERR(wdt->feed_reg);
 
