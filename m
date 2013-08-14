@@ -1,53 +1,49 @@
-From: Barry Song <Barry.Song@csr.com>
-Date: Wed, 14 Aug 2013 09:16:22 +0000
-Subject: RE: [PATCH 25/29] drivers/spi/spi-sirf.c: simplify use of devm_ioremap_resource
-Message-Id: <5EB3BFCD089AD643B9BB63439F5FD5E9012A3BCC66@SHAASIEXM01.ASIA.ROOT.PRI>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 14 Aug 2013 18:09:07 +0000
+Subject: Re: [PATCH 25/29] drivers/spi/spi-sirf.c: simplify use of devm_ioremap_resource
+Message-Id: <20130814180907.GE2401@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="5Mfx4RzfBqgnTE/w"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
  <1376471493-22215-26-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1376471493-22215-26-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKdWxpYSBM
-YXdhbGwgW21haWx0bzpKdWxpYS5MYXdhbGxAbGlwNi5mcl0NCj4gU2VudDog
-V2VkbmVzZGF5LCBBdWd1c3QgMTQsIDIwMTMgNToxMSBQTQ0KPiBUbzogQmFy
-cnkgU29uZw0KPiBDYzoga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9y
-ZzsgTWFyayBCcm93bjsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnOyBsaW51eC1zcGlAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtQQVRDSCAy
-NS8yOV0gZHJpdmVycy9zcGkvc3BpLXNpcmYuYzogc2ltcGxpZnkgdXNlIG9m
-DQo+IGRldm1faW9yZW1hcF9yZXNvdXJjZQ0KPiANCj4gRnJvbTogSnVsaWEg
-TGF3YWxsIDxKdWxpYS5MYXdhbGxAbGlwNi5mcj4NCj4gDQo+IFJlbW92ZSB1
-bm5lZWRlZCBlcnJvciBoYW5kbGluZyBvbiB0aGUgcmVzdWx0IG9mIGEgY2Fs
-bCB0bw0KPiBwbGF0Zm9ybV9nZXRfcmVzb3VyY2Ugd2hlbiB0aGUgdmFsdWUg
-aXMgcGFzc2VkIHRvIGRldm1faW9yZW1hcF9yZXNvdXJjZS4NCj4gDQo+IE1v
-dmUgdGhlIGNhbGwgdG8gcGxhdGZvcm1fZ2V0X3Jlc291cmNlIGFkamFjZW50
-IHRvIHRoZSBjYWxsIHRvDQo+IGRldm1faW9yZW1hcF9yZXNvdXJjZSB0byBt
-YWtlIHRoZSBjb25uZWN0aW9uIGJldHdlZW4gdGhlbSBtb3JlIGNsZWFyLg0K
-PiANCj4gQSBzaW1wbGlmaWVkIHZlcnNpb24gb2YgdGhlIHNlbWFudGljIHBh
-dGNoIHRoYXQgbWFrZXMgdGhpcyBjaGFuZ2UgaXMgYXMNCj4gZm9sbG93czog
-KGh0dHA6Ly9jb2NjaW5lbGxlLmxpcDYuZnIvKQ0KPiANCj4gLy8gPHNtcGw+
-DQo+IEBADQo+IGV4cHJlc3Npb24gcGRldixyZXMsbixlLGUxOw0KPiBleHBy
-ZXNzaW9uIHJldCAhPSAwOw0KPiBpZGVudGlmaWVyIGw7DQo+IEBADQo+IA0K
-PiAtIHJlcyA9IHBsYXRmb3JtX2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09V
-UkNFX01FTSwgbik7DQo+ICAgLi4uIHdoZW4gIT0gcmVzDQo+IC0gaWYgKHJl
-cyA9PSBOVUxMKSB7IC4uLiBcKGdvdG8gbDtcfHJldHVybiByZXQ7XCkgfQ0K
-PiAgIC4uLiB3aGVuICE9IHJlcw0KPiArIHJlcyA9IHBsYXRmb3JtX2dldF9y
-ZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwgbik7DQo+ICAgZSA9IGRl
-dm1faW9yZW1hcF9yZXNvdXJjZShlMSwgcmVzKTsNCj4gLy8gPC9zbXBsPg0K
-PiANCj4gU2lnbmVkLW9mZi1ieTogSnVsaWEgTGF3YWxsIDxKdWxpYS5MYXdh
-bGxAbGlwNi5mcj4NCg0KQWNrZWQtYnk6IEJhcnJ5IFNvbmcgPEJhb2h1YS5T
-b25nQGNzci5jb20+DQoNCj4gDQo+IC0tLQ0KPiAgZHJpdmVycy9zcGkvc3Bp
-LXNpcmYuYyB8ICAgIDcgKy0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEg
-aW5zZXJ0aW9uKCspLCA2IGRlbGV0aW9ucygtKQ0KIA0KCgpNZW1iZXIgb2Yg
-dGhlIENTUiBwbGMgZ3JvdXAgb2YgY29tcGFuaWVzLiBDU1IgcGxjIHJlZ2lz
-dGVyZWQgaW4gRW5nbGFuZCBhbmQgV2FsZXMsIHJlZ2lzdGVyZWQgbnVtYmVy
-IDQxODczNDYsIHJlZ2lzdGVyZWQgb2ZmaWNlIENodXJjaGlsbCBIb3VzZSwg
-Q2FtYnJpZGdlIEJ1c2luZXNzIFBhcmssIENvd2xleSBSb2FkLCBDYW1icmlk
-Z2UsIENCNCAwV1osIFVuaXRlZCBLaW5nZG9tCk1vcmUgaW5mb3JtYXRpb24g
-Y2FuIGJlIGZvdW5kIGF0IHd3dy5jc3IuY29tLiBGb2xsb3cgQ1NSIG9uIFR3
-aXR0ZXIgYXQgaHR0cDovL3R3aXR0ZXIuY29tL0NTUl9QTEMgYW5kIHJlYWQg
-b3VyIGJsb2cgYXQgd3d3LmNzci5jb20vYmxvZwo
+
+--5Mfx4RzfBqgnTE/w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 14, 2013 at 11:11:29AM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Remove unneeded error handling on the result of a call to
+> platform_get_resource when the value is passed to devm_ioremap_resource.
+
+Applied, thanks.
+
+--5Mfx4RzfBqgnTE/w
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSC8fAAAoJELSic+t+oim9bggP/R6LtCCXRFnBopJg0oymKvWL
+6TRQrua89PUx05BFqg7CsSyaemU6DKh3RmojruXTfgbjXtd+/YdzuIBwMu/ou8c8
+oNXTZjzogMa2JctE4vAvIq3y/Pxh9BFc7WLrq9X08NlA7jEZ9eXgs1+HiOneHya9
+wAlDwAK6SpVF7BC5h0x0N7v7l43tkBce+SlZblGpEQzm/NhF4EIsASExc9Uc0DAa
+QUfuc8Y2iC/A9XAXZhGJWvk+mEPb9YKu6kRCLASQFaIe630wrsdVxupcAui46Cf4
+pRGBhUohjrA+Wa+3YHPtVOMosjgrbXD57erilwQqrMmU2XvzOWDWqfwvjW3FwYXN
+JHS2cWplR7WwyFLq8VTbqRGTxPr5HtCYR+TYZkxmw+jOzJJqUKR3Ovn6IbZO8EG/
+E4UDushEJAlxFvRSdWbBnIPvc9uMhHlkuNKeRpWEXDq5OOoc6Vo9yohHrmW+lzMk
+ZFZUQWRSzK56Ez6ho5X2jQ8Qf0lQZQdVSZwFYgZj7Tm7rl0RBw0dauCVhg0ui6+a
+MoMZ32TbU746YA1zCIbjcPYHYB9OVucSPmMixjFcl9YC0GEnrc2TW128rDQZRw/D
+OjkFrchh2k2kj7nI4NeUWgvUbiomLQB7viq4TOciiDzk9+g+6TAeoHHof+aknd3B
+H+9SvVv0atuPYDPStlse
+=OAMf
+-----END PGP SIGNATURE-----
+
+--5Mfx4RzfBqgnTE/w--
