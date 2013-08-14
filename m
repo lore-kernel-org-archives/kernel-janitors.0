@@ -1,30 +1,111 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 15 Aug 2013 08:39:07 +0000
-Subject: Re: [PATCH] drivers/net/ethernet/via/via-velocity.c: update napi implementation
-Message-Id: <20130815.013907.319502653692029822.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:21 +0000
+Subject: [PATCH 17/29] drivers/rtc: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-18-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376490413-12067-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376490413-12067-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: romieu@fr.zoreil.com, roszenrami@gmail.com, dshwatrz@gmail.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@linaro.org, rob.herring@calxeda.com
+To: Alessandro Zummo <a.zummo@towertech.it>
+Cc: kernel-janitors@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 16:26:53 +0200
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Drivers supporting NAPI should use a NAPI-specific function for receiving
-> packets.  Hence netif_rx is changed to netif_receive_skb.
-> 
-> Furthermore netif_napi_del should be used in the probe and remove function
-> to clean up the NAPI resource information.
-> 
-> Thanks to Francois Romieu, David Shwatrz and Rami Rosen for their help on
-> this patch.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-Applied, thanks.
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/rtc/rtc-ds1216.c |    4 +---
+ drivers/rtc/rtc-ds1286.c |    4 +---
+ drivers/rtc/rtc-spear.c  |    7 +------
+ 3 files changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/rtc/rtc-ds1216.c b/drivers/rtc/rtc-ds1216.c
+index 9c04fd2..c948bd3 100644
+--- a/drivers/rtc/rtc-ds1216.c
++++ b/drivers/rtc/rtc-ds1216.c
+@@ -144,15 +144,13 @@ static int __init ds1216_rtc_probe(struct platform_device *pdev)
+ 	struct ds1216_priv *priv;
+ 	u8 dummy[8];
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, priv);
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->ioaddr = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(priv->ioaddr))
+ 		return PTR_ERR(priv->ioaddr);
+diff --git a/drivers/rtc/rtc-ds1286.c b/drivers/rtc/rtc-ds1286.c
+index 50e109b..14c4b24 100644
+--- a/drivers/rtc/rtc-ds1286.c
++++ b/drivers/rtc/rtc-ds1286.c
+@@ -332,13 +332,11 @@ static int ds1286_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	struct ds1286_priv *priv;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(struct ds1286_priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->rtcregs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(priv->rtcregs))
+ 		return PTR_ERR(priv->rtcregs);
+diff --git a/drivers/rtc/rtc-spear.c b/drivers/rtc/rtc-spear.c
+index c492cf0..6470641 100644
+--- a/drivers/rtc/rtc-spear.c
++++ b/drivers/rtc/rtc-spear.c
+@@ -358,12 +358,6 @@ static int spear_rtc_probe(struct platform_device *pdev)
+ 	int status = 0;
+ 	int irq;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no resource defined\n");
+-		return -EBUSY;
+-	}
+-
+ 	config = devm_kzalloc(&pdev->dev, sizeof(*config), GFP_KERNEL);
+ 	if (!config) {
+ 		dev_err(&pdev->dev, "out of memory\n");
+@@ -385,6 +379,7 @@ static int spear_rtc_probe(struct platform_device *pdev)
+ 		return status;
+ 	}
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	config->ioaddr = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(config->ioaddr))
+ 		return PTR_ERR(config->ioaddr);
+
