@@ -1,31 +1,46 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 14 Aug 2013 11:56:21 +0000
-Subject: Re: [patch] nl80211: nl80211hdr_put() doesn't return an ERR_PTR
-Message-Id: <1376481381.14574.0.camel@jlt4.sipsolutions.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Aug 2013 19:51:20 +0000
+Subject: re: dmaengine: add interface of dma_get_slave_channel
+Message-Id: <20130814195120.GA16390@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130814115001.GB8044@elgon.mountain>
-In-Reply-To: <20130814115001.GB8044@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 2013-08-14 at 14:50 +0300, Dan Carpenter wrote:
-> There are a few places which check nl80211hdr_put() for an ERR_PTR
-> but actually it returns NULL on error and never error values.  In
-> nl80211_testmode_dump() the return wasn't checked at all so I have added
-> one.
+Hello Zhangfei Gao,
 
-Err, wow. How did we do this?!
+The patch 7bb587f4eef8: "dmaengine: add interface of 
+dma_get_slave_channel" from Jun 28, 2013, leads to the following 
+warning: "drivers/dma/dmaengine.c:531 dma_get_slave_channel()
+	 	error: potential NULL dereference 'chan'."
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is static checker stuff and I don't know the code well.  I was
-> especially not sure if I got the check right in nl80211_testmode_dump().
-> Please review that bit carefully.
+drivers/dma/dmaengine.c
+   516  struct dma_chan *dma_get_slave_channel(struct dma_chan *chan)
+   517  {
+   518          int err = -EBUSY;
+   519  
+   520          /* lock against __dma_request_channel */
+   521          mutex_lock(&dma_list_mutex);
+   522  
+   523          if (chan->client_count = 0)
+   524                  err = dma_chan_get(chan);
+   525          else
+   526                  chan = NULL;
+                        ^^^^^^^^^^^
+   527  
+   528          mutex_unlock(&dma_list_mutex);
+   529  
+   530          if (err)
+   531                  pr_debug("%s: failed to get %s: (%d)\n",
+   532                          __func__, dma_chan_name(chan), err);
+                                                        ^^^^
 
-Yes, looks fine. I'll apply this for 3.11, thanks.
+Dereferenced here.
 
-johannes
+   533  
+   534          return chan;
+
+regards,
+dan carpenter
 
