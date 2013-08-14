@@ -1,62 +1,99 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 27 Aug 2013 08:30:24 +0000
-Subject: Re: [patch 1/2] gpu: host1x: fix an integer overflow check
-Message-Id: <20130827083023.GJ8686@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="HcccYpVZDxQ8hzPO"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:09 +0000
+Subject: [PATCH 5/29] spi/spi-{bcm63xx.c,bfin-v3.c}: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823101825.GA1765@elgon.mountain>
-In-Reply-To: <20130823101825.GA1765@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mark Brown <broonie@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---HcccYpVZDxQ8hzPO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-On Fri, Aug 23, 2013 at 01:18:25PM +0300, Dan Carpenter wrote:
-> Tegra is a 32 bit arch.  On 32 bit systems then size_t is 32 bits so
-> "total" will never be higher than UINT_MAX because of integer overflows.
-> We need cast to u64 first before doing the math.
->=20
-> Also the addition earlier:
->=20
->         unsigned int num_unpins =3D num_cmdbufs + num_relocs;
->=20
-> That can overflow as well, but I think it's still safe because we check
-> both "num_cmdbufs" and "num_relocs" again in this test.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is something I spotted in code review.  I can't actually compile
-> this code.  I assume this overflow test has security implications.
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
 
-It did compile and looks good to me, so I've applied it.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-Thanks,
-Thierry
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
 
---HcccYpVZDxQ8hzPO
-Content-Type: application/pgp-signature
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-iQIcBAEBAgAGBQJSHGOfAAoJEN0jrNd/PrOhj+oP/jAFWTE3EgWri6RAM/vFiFrY
-7lOg8hlDZ0cv5v/nJkDhtZ3VOel2hWcEMt0Xx5yGjt/ls4FJ1CehyJwW9HtZEGsl
-DVO/1xjwWjpIgGo6OScp192+3/OOMe40drxsw3KYYK96b1Y9RN8IyWC36fBjMhAM
-a/jLhpr8PR8Avght5AaCd58+WjZk/9B4YhZtbCh9zBay1iCeiHbS/GnzIoKe6x07
-Pl2GybMLXtCPQYahrl1aRhGPgLFnggLoN1LSrS8SCt3GDe0OAkW4fHDUDAbYMk89
-2BRNZ2ebjY5PRQmGsNTnFSEjdSsFR6rH6jmCuqpnNe60GJcvIyei9zaIKcNbzU/G
-LipkOxlz/Yf49HN2dEQhtdoSY/6X2heAsfpeW7flpLuon+Og7hXRq/jjS491t4gb
-STnTCXm3saQ9vomOSbMrSaCscC1WmHuEtBZO8UXTMLsPNshndjoGo4hk9CyGIvmK
-+5gIXa1Xezb8ILVj/+fTlZCEwyCwa6q94IofqhPtovAYOWz75MNT+dRm2kDKS7Du
-/zfLstgT3mxc226RcviFPo342DV2zl+R5rWFTWLAvlv562Lj4KuXX+Jn2IehMj32
-OKCeVpIRgk6jpZB2pJ8g0JRHBk1jGbRhmE+eTWcULQVVJnFDuEmavu9A8Q1LV2DS
-9Fm0o4PnlEOQBPgU6PR3
-=oKqR
------END PGP SIGNATURE-----
+---
+ drivers/spi/spi-bcm63xx.c |    8 +-------
+ drivers/spi/spi-bfin-v3.c |    8 +-------
+ 2 files changed, 2 insertions(+), 14 deletions(-)
 
---HcccYpVZDxQ8hzPO--
+diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
+index 4ac028d..2b5c692 100644
+--- a/drivers/spi/spi-bcm63xx.c
++++ b/drivers/spi/spi-bcm63xx.c
+@@ -342,13 +342,6 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
+ 	struct bcm63xx_spi *bs;
+ 	int ret;
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!r) {
+-		dev_err(dev, "no iomem\n");
+-		ret = -ENXIO;
+-		goto out;
+-	}
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(dev, "no irq\n");
+@@ -375,6 +368,7 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, master);
+ 	bs->pdev = pdev;
+ 
++	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	bs->regs = devm_ioremap_resource(&pdev->dev, r);
+ 	if (IS_ERR(bs->regs)) {
+ 		ret = PTR_ERR(bs->regs);
+diff --git a/drivers/spi/spi-bfin-v3.c b/drivers/spi/spi-bfin-v3.c
+index 603d7e9..d5bab00 100644
+--- a/drivers/spi/spi-bfin-v3.c
++++ b/drivers/spi/spi-bfin-v3.c
+@@ -792,13 +792,6 @@ static int bfin_spi_probe(struct platform_device *pdev)
+ 		return -ENXIO;
+ 	}
+ 
+-	/* get register base and tx/rx dma */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(dev, "can not get register base\n");
+-		return -ENXIO;
+-	}
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+ 	if (!res) {
+ 		dev_err(dev, "can not get tx dma resource\n");
+@@ -838,6 +831,7 @@ static int bfin_spi_probe(struct platform_device *pdev)
+ 	drv_data->pin_req = info->pin_req;
+ 	drv_data->sclk = sclk;
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	drv_data->regs = devm_ioremap_resource(dev, mem);
+ 	if (IS_ERR(drv_data->regs)) {
+ 		ret = PTR_ERR(drv_data->regs);
+
