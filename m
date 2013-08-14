@@ -1,36 +1,161 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 10:44:28 +0000
-Subject: Re: [PATCH 1/2] arch/x86/crypto/camellia_glue.c: adjust code alignment
-Message-Id: <alpine.DEB.2.02.1308141243520.2257@hadrien>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 13:52:57 +0000
+Subject: [PATCH 1/2] arch/x86/crypto/camellia_glue.c: replace commas by semicolons and adjust code alignment
+Message-Id: <1376488378-10601-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376156077-6208-1-git-send-email-Julia.Lawall@lip6.fr> <1376156077-6208-2-git-send-email-Julia.Lawall@lip6.fr> <20130814104122.GA12970@gondor.apana.org.au>
-In-Reply-To: <20130814104122.GA12970@gondor.apana.org.au>
+References: <1376156077-6208-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376156077-6208-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.hengli.com.au>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, trivial@kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Adjust alignment and replace commas by semicolons in automatically
+generated code.
 
-On Wed, 14 Aug 2013, Herbert Xu wrote:
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> On Sat, Aug 10, 2013 at 07:34:36PM +0200, Julia Lawall wrote:
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > Adjust alignment in automatically generated code.  If this code
-> > will not be regenerated in the future, it may as well look nice.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> > This patch was generated from the result of the previous one, which
-> > replaced commas by semicolons.
->
-> Please fold this patch into the original one.
+---
+ arch/x86/crypto/camellia_glue.c |   48 ++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-OK, I will do that.  There is a second patch for another camellia file
-that is in the same situation.  I will send new versions of both.
+diff --git a/arch/x86/crypto/camellia_glue.c b/arch/x86/crypto/camellia_glue.c
+index 5cb86cc..39aebea 100644
+--- a/arch/x86/crypto/camellia_glue.c
++++ b/arch/x86/crypto/camellia_glue.c
+@@ -828,8 +828,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 
+ 	subRL[1] ^= (subRL[1] & ~subRL[9]) << 32;
+ 	/* modified for FLinv(kl2) */
+-	dw = (subRL[1] & subRL[9]) >> 32,
+-		subRL[1] ^= rol32(dw, 1);
++	dw = (subRL[1] & subRL[9]) >> 32;
++	subRL[1] ^= rol32(dw, 1);
+ 
+ 	/* round 8 */
+ 	subRL[11] ^= subRL[1];
+@@ -840,8 +840,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 
+ 	subRL[1] ^= (subRL[1] & ~subRL[17]) << 32;
+ 	/* modified for FLinv(kl4) */
+-	dw = (subRL[1] & subRL[17]) >> 32,
+-		subRL[1] ^= rol32(dw, 1);
++	dw = (subRL[1] & subRL[17]) >> 32;
++	subRL[1] ^= rol32(dw, 1);
+ 
+ 	/* round 14 */
+ 	subRL[19] ^= subRL[1];
+@@ -859,8 +859,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 	} else {
+ 		subRL[1] ^= (subRL[1] & ~subRL[25]) << 32;
+ 		/* modified for FLinv(kl6) */
+-		dw = (subRL[1] & subRL[25]) >> 32,
+-			subRL[1] ^= rol32(dw, 1);
++		dw = (subRL[1] & subRL[25]) >> 32;
++		subRL[1] ^= rol32(dw, 1);
+ 
+ 		/* round 20 */
+ 		subRL[27] ^= subRL[1];
+@@ -882,8 +882,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 
+ 		kw4 ^= (kw4 & ~subRL[24]) << 32;
+ 		/* modified for FL(kl5) */
+-		dw = (kw4 & subRL[24]) >> 32,
+-			kw4 ^= rol32(dw, 1);
++		dw = (kw4 & subRL[24]) >> 32;
++		kw4 ^= rol32(dw, 1);
+ 	}
+ 
+ 	/* round 17 */
+@@ -895,8 +895,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 
+ 	kw4 ^= (kw4 & ~subRL[16]) << 32;
+ 	/* modified for FL(kl3) */
+-	dw = (kw4 & subRL[16]) >> 32,
+-		kw4 ^= rol32(dw, 1);
++	dw = (kw4 & subRL[16]) >> 32;
++	kw4 ^= rol32(dw, 1);
+ 
+ 	/* round 11 */
+ 	subRL[14] ^= kw4;
+@@ -907,8 +907,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 
+ 	kw4 ^= (kw4 & ~subRL[8]) << 32;
+ 	/* modified for FL(kl1) */
+-	dw = (kw4 & subRL[8]) >> 32,
+-		kw4 ^= rol32(dw, 1);
++	dw = (kw4 & subRL[8]) >> 32;
++	kw4 ^= rol32(dw, 1);
+ 
+ 	/* round 5 */
+ 	subRL[6] ^= kw4;
+@@ -928,8 +928,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 	SET_SUBKEY_LR(6, subRL[5] ^ subRL[7]);			/* round 5 */
+ 
+ 	tl = (subRL[10] >> 32) ^ (subRL[10] & ~subRL[8]);
+-	dw = tl & (subRL[8] >> 32),				/* FL(kl1) */
+-		tr = subRL[10] ^ rol32(dw, 1);
++	dw = tl & (subRL[8] >> 32);				/* FL(kl1) */
++	tr = subRL[10] ^ rol32(dw, 1);
+ 	tt = (tr | ((u64)tl << 32));
+ 
+ 	SET_SUBKEY_LR(7, subRL[6] ^ tt);			/* round 6 */
+@@ -937,8 +937,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 	SET_SUBKEY_LR(9, subRL[9]);				/* FLinv(kl2) */
+ 
+ 	tl = (subRL[7] >> 32) ^ (subRL[7] & ~subRL[9]);
+-	dw = tl & (subRL[9] >> 32),				/* FLinv(kl2) */
+-		tr = subRL[7] ^ rol32(dw, 1);
++	dw = tl & (subRL[9] >> 32);				/* FLinv(kl2) */
++	tr = subRL[7] ^ rol32(dw, 1);
+ 	tt = (tr | ((u64)tl << 32));
+ 
+ 	SET_SUBKEY_LR(10, subRL[11] ^ tt);			/* round 7 */
+@@ -948,8 +948,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 	SET_SUBKEY_LR(14, subRL[13] ^ subRL[15]);		/* round 11 */
+ 
+ 	tl = (subRL[18] >> 32) ^ (subRL[18] & ~subRL[16]);
+-	dw = tl & (subRL[16] >> 32),				/* FL(kl3) */
+-		tr = subRL[18] ^ rol32(dw, 1);
++	dw = tl & (subRL[16] >> 32);				/* FL(kl3) */
++	tr = subRL[18] ^ rol32(dw, 1);
+ 	tt = (tr | ((u64)tl << 32));
+ 
+ 	SET_SUBKEY_LR(15, subRL[14] ^ tt);			/* round 12 */
+@@ -957,8 +957,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 	SET_SUBKEY_LR(17, subRL[17]);				/* FLinv(kl4) */
+ 
+ 	tl = (subRL[15] >> 32) ^ (subRL[15] & ~subRL[17]);
+-	dw = tl & (subRL[17] >> 32),				/* FLinv(kl4) */
+-		tr = subRL[15] ^ rol32(dw, 1);
++	dw = tl & (subRL[17] >> 32);				/* FLinv(kl4) */
++	tr = subRL[15] ^ rol32(dw, 1);
+ 	tt = (tr | ((u64)tl << 32));
+ 
+ 	SET_SUBKEY_LR(18, subRL[19] ^ tt);			/* round 13 */
+@@ -972,8 +972,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 		SET_SUBKEY_LR(24, subRL[24] ^ subRL[23]);	/* kw3 */
+ 	} else {
+ 		tl = (subRL[26] >> 32) ^ (subRL[26] & ~subRL[24]);
+-		dw = tl & (subRL[24] >> 32),			/* FL(kl5) */
+-			tr = subRL[26] ^ rol32(dw, 1);
++		dw = tl & (subRL[24] >> 32);			/* FL(kl5) */
++		tr = subRL[26] ^ rol32(dw, 1);
+ 		tt = (tr | ((u64)tl << 32));
+ 
+ 		SET_SUBKEY_LR(23, subRL[22] ^ tt);		/* round 18 */
+@@ -981,8 +981,8 @@ static void camellia_setup_tail(u64 *subkey, u64 *subRL, int max)
+ 		SET_SUBKEY_LR(25, subRL[25]);			/* FLinv(kl6) */
+ 
+ 		tl = (subRL[23] >> 32) ^ (subRL[23] & ~subRL[25]);
+-		dw = tl & (subRL[25] >> 32),			/* FLinv(kl6) */
+-			tr = subRL[23] ^ rol32(dw, 1);
++		dw = tl & (subRL[25] >> 32);			/* FLinv(kl6) */
++		tr = subRL[23] ^ rol32(dw, 1);
+ 		tt = (tr | ((u64)tl << 32));
+ 
+ 		SET_SUBKEY_LR(26, subRL[27] ^ tt);		/* round 19 */
 
-thanks,
-julia
