@@ -1,26 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Aug 2013 13:56:13 +0000
-Subject: Re: [patch] f2fs: alloc_page() doesn't return an ERR_PTR
-Message-Id: <20130814135613.GF4713@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:05 +0000
+Subject: [PATCH 1/29] pinctrl: nomadik: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130814114136.GA8044@elgon.mountain>
- <1376486676.2354.5.camel@kjgkr>
-In-Reply-To: <1376486676.2354.5.camel@kjgkr>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Wed, Aug 14, 2013 at 10:24:36PM +0900, Jaegeuk Kim wrote:
-> Hi Dan,
-> 
-> Agreed.
-> Could you make a patch that covers other alloc_page cases too?
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Sure.  Thanks for catching that.  I will resend a v2 of this one
-which fixes those as well.
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-regards,
-dan carpenter
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/pinctrl-nomadik.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-nomadik.c b/drivers/pinctrl/pinctrl-nomadik.c
+index 89280bc..be126fc 100644
+--- a/drivers/pinctrl/pinctrl-nomadik.c
++++ b/drivers/pinctrl/pinctrl-nomadik.c
+@@ -1055,10 +1055,6 @@ static int nmk_gpio_probe(struct platform_device *dev)
+ 		pdata->num_gpio   = NMK_GPIO_PER_CHIP;
+ 	}
+ 
+-	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENOENT;
+-
+ 	irq = platform_get_irq(dev, 0);
+ 	if (irq < 0)
+ 		return irq;
+@@ -1067,6 +1063,7 @@ static int nmk_gpio_probe(struct platform_device *dev)
+ 	if (secondary_irq >= 0 && !pdata->get_secondary_status)
+ 		return -EINVAL;
+ 
++	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&dev->dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
 
