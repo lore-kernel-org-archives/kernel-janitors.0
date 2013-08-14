@@ -1,35 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Aug 2013 01:16:02 +0000
-Subject: Re: [patch] tgafb: potential NULL dereference in init
-Message-Id: <20130827011602.GH6329@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:14 +0000
+Subject: [PATCH 10/29] drivers/watchdog/nuc900_wdt.c: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130826145610.GA12428@elgon.mountain>
-In-Reply-To: <20130826145610.GA12428@elgon.mountain>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, Aug 26, 2013 at 07:51:04PM +0200, Geert Uytterhoeven wrote:
-> On Mon, Aug 26, 2013 at 4:56 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > --- a/drivers/video/tgafb.c
-> > +++ b/drivers/video/tgafb.c
-> > @@ -1475,7 +1475,7 @@ tgafb_init_fix(struct fb_info *info)
-> >         int tga_bus_pci = TGA_BUS_PCI(par->dev);
-> >         int tga_bus_tc = TGA_BUS_TC(par->dev);
-> >         u8 tga_type = par->tga_type;
-> > -       const char *tga_type_name = NULL;
-> > +       const char *tga_type_name;
-> 
-> Now the real compiler (at least some versions of gcc) will complain
-> about an uninitialized variable...
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Oh crap!  The compiler is totally correct here.  I don't know what I was
-thinking.  I've just double checked now and my compiler does not catch
-this (GCC 4.7.2).
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-Sorry about that.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/watchdog/nuc900_wdt.c |    5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/watchdog/nuc900_wdt.c b/drivers/watchdog/nuc900_wdt.c
+index e2b6d2c..b15b6ef 100644
+--- a/drivers/watchdog/nuc900_wdt.c
++++ b/drivers/watchdog/nuc900_wdt.c
+@@ -256,11 +256,6 @@ static int nuc900wdt_probe(struct platform_device *pdev)
+ 	spin_lock_init(&nuc900_wdt->wdt_lock);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res = NULL) {
+-		dev_err(&pdev->dev, "no memory resource specified\n");
+-		return -ENOENT;
+-	}
+-
+ 	nuc900_wdt->wdt_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(nuc900_wdt->wdt_base))
+ 		return PTR_ERR(nuc900_wdt->wdt_base);
 
