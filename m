@@ -1,24 +1,30 @@
-From: David Vrabel <david.vrabel@citrix.com>
-Date: Tue, 27 Aug 2013 18:17:01 +0000
-Subject: Re: [patch -next] xen/evtchn: double free on error
-Message-Id: <521CED1D.30900@citrix.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Aug 2013 11:41:36 +0000
+Subject: [patch] f2fs: alloc_page() doesn't return an ERR_PTR
+Message-Id: <20130814114136.GA8044@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130826161817.GF12428@elgon.mountain>
-In-Reply-To: <20130826161817.GF12428@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 26/08/13 17:18, Dan Carpenter wrote:
-> The call to del_evtchn() frees "evtchn".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+alloc_page() returns a NULL on failure, it never returns an ERR_PTR.
 
-Good catch, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: David Vrabel <david.vrabel@citrix.com>
-
-This needs to be queued up for 3.12.
-
-David
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index f5172e2..3e87fe0 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1515,8 +1515,8 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 
+ 	/* alloc temporal page for read node */
+ 	page = alloc_page(GFP_NOFS | __GFP_ZERO);
+-	if (IS_ERR(page))
+-		return PTR_ERR(page);
++	if (!page)
++		return -ENOMEM;
+ 	lock_page(page);
+ 
+ 	/* scan the node segment */
