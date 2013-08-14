@@ -1,27 +1,32 @@
-From: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Date: Fri, 16 Aug 2013 14:55:38 +0000
-Subject: Re: [patch] mtd: nand: silence some shift wrap warnings
-Message-Id: <1376664938.2089.384.camel@sauron.fi.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Aug 2013 11:52:18 +0000
+Subject: [patch] pstore: d_alloc_name() doesn't return an ERR_PTR
+Message-Id: <20130814115218.GC8044@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130809094904.GC29282@elgon.mountain>
-In-Reply-To: <20130809094904.GC29282@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Matthieu CASTET <matthieu.castet@parrot.com>, Huang Shijie <b32955@freescale.com>, linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+To: Anton Vorontsov <anton@enomsg.org>
+Cc: Colin Cross <ccross@android.com>, Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 2013-08-09 at 12:49 +0300, Dan Carpenter wrote:
-> There are static checkers which complain when we declare variables as
-> 64 bit bitfields but only use the lower 32 bits because of shift
-> wrapping.  In this case "len" is declared as u64 as opposed to unsigned
-> long or something which might be 32 bits.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+d_alloc_name() returns NULL on error.  Also I changed the error code
+from -ENOSPC to -ENOMEM to reflect that we were short on RAM not disk
+space.
 
-Pushed to l2-mtd.git, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Best Regards,
-Artem Bityutskiy
-
+diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
+index 71bf5f4..6a4123d 100644
+--- a/fs/pstore/inode.c
++++ b/fs/pstore/inode.c
+@@ -345,9 +345,8 @@ int pstore_mkfile(enum pstore_type_id type, char *psname, u64 id, int count,
+ 
+ 	mutex_lock(&root->d_inode->i_mutex);
+ 
+-	rc = -ENOSPC;
+ 	dentry = d_alloc_name(root, name);
+-	if (IS_ERR(dentry))
++	if (!dentry)
+ 		goto fail_lockedalloc;
+ 
+ 	memcpy(private->data, data, size);
