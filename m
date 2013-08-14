@@ -1,77 +1,86 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Wed, 07 Aug 2013 19:14:29 +0000
-Subject: build regressions 2013-08-07
-Message-Id: <52029c95.QyeVpBt/kwGgtFWB%fengguang.wu@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:26 +0000
+Subject: [PATCH 22/29] host1x/{dev.c,drm/hdmi.c}: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-23-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[errors]
-arch/arm/mach-versatile/core.c:748:2: error: unknown field 'get_signal' specified in initializer
-arch/arm/mach-versatile/core.c:749:2: error: unknown field 'put_signal' specified in initializer
-sound/soc/fsl/fsl_ssi.c:916:3: error: implicit declaration of function 'snd_soc_set_ac97_ops_of_reset' [-Werror=implicit-function-declaration]
-clk-composite.c:(.text+0x56bb4): undefined reference to `drm_agp_clear'
-ak8975.c:(.text+0x655a0): undefined reference to `drm_agp_clear'
-drivers/regulator/helpers.o:(__tracepoints+0x54): multiple definition of `__tracepoint_regulator_disable'
-drivers/regulator/core.o:(__tracepoints+0x54): first defined here
-drivers/regulator/helpers.o:(__tracepoints+0x0): multiple definition of `__tracepoint_regulator_set_voltage_complete'
-drivers/regulator/core.o:(__tracepoints+0x0): first defined here
-drivers/regulator/helpers.o:(__tracepoints+0xa8): multiple definition of `__tracepoint_regulator_enable'
-drivers/regulator/core.o:(__tracepoints+0xa8): first defined here
-drivers/regulator/helpers.o:(__tracepoints+0x70): multiple definition of `__tracepoint_regulator_enable_complete'
-drivers/regulator/core.o:(__tracepoints+0x70): first defined here
-drivers/regulator/helpers.o:(__tracepoints+0x1c): multiple definition of `__tracepoint_regulator_set_voltage'
-drivers/regulator/core.o:(__tracepoints+0x1c): first defined here
-drivers/regulator/helpers.o:(__tracepoints+0x8c): multiple definition of `__tracepoint_regulator_enable_delay'
-drivers/regulator/core.o:(__tracepoints+0x8c): first defined here
-drivers/regulator/helpers.o:(__tracepoints+0x38): multiple definition of `__tracepoint_regulator_disable_complete'
-drivers/regulator/core.o:(__tracepoints+0x38): first defined here
-ERROR: "drm_agp_clear" undefined!
-/bin/bash: line 1: 56742 Segmentation fault      /usr/local/gcc-4.8.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld -m elf64ppc -r -o drivers/regulator/built-in.o drivers/regulator/core.o drivers/regulator/dummy.o drivers/regulator/fixed-helper.o drivers/regulator/helpers.o drivers/regulator/of_regulator.o
-arch/s390/pci/pci.c:412:17: error: 'aibv' undeclared (first use in this function)
-drivers/regulator/core.c:639:3: error: 'dev_attr_name' undeclared here (not in a function)
-drivers/regulator/core.c:640:3: error: 'dev_attr_num_users' undeclared here (not in a function)
-drivers/regulator/core.c:641:3: error: 'dev_attr_type' undeclared here (not in a function)
-drivers/regulator/core.c:655:2: error: unknown field 'dev_groups' specified in initializer
-drivers/regulator/core.c:655:16: error: 'regulator_dev_groups' undeclared here (not in a function)
-drivers/regulator/core.c:655:2: error: initializer element is not constant
-drivers/gpu/drm/i915/i915_gem_stolen.c:426:2: error: implicit declaration of function 'drm_mm_put_block' [-Werror=implicit-function-declaration]
-(.text+0x904a0): undefined reference to `drm_agp_clear'
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[warnings]
-arch/x86/kernel/paravirt.c:66:0: warning: "DEF_NATIVE" redefined [enabled by default]
-arch/x86/kernel/paravirt.c:66:0: warning: "DEF_NATIVE" redefined [enabled by default]
-arch/x86/xen/enlighten.c:1250:2: warning: initialization from incompatible pointer type [enabled by default]
-arch/x86/xen/enlighten.c:1250:2: warning: (near initialization for 'xen_cpu_ops.iret') [enabled by default]
-arch/x86/xen/enlighten.c:1251:2: warning: initialization from incompatible pointer type [enabled by default]
-arch/x86/xen/enlighten.c:1251:2: warning: (near initialization for 'xen_cpu_ops.irq_enable_sysexit') [enabled by default]
-drivers/net/ethernet/calxeda/xgmac.c:855:6: warning: unused variable 'i' [-Wunused-variable]
-drivers/regulator/core.c:333:8: warning: type defaults to 'int' in declaration of 'DEVICE_ATTR_RO' [-Wimplicit-int]
-drivers/regulator/core.c:333:1: warning: parameter names (without types) in function declaration [enabled by default]
-drivers/regulator/core.c:499:8: warning: type defaults to 'int' in declaration of 'DEVICE_ATTR_RO' [-Wimplicit-int]
-drivers/regulator/core.c:499:1: warning: parameter names (without types) in function declaration [enabled by default]
-drivers/regulator/core.c:514:8: warning: type defaults to 'int' in declaration of 'DEVICE_ATTR_RO' [-Wimplicit-int]
-drivers/regulator/core.c:514:1: warning: parameter names (without types) in function declaration [enabled by default]
-drivers/regulator/core.c:644:1: warning: data definition has no type or storage class [enabled by default]
-drivers/regulator/core.c:644:1: warning: type defaults to 'int' in declaration of 'ATTRIBUTE_GROUPS' [-Wimplicit-int]
-drivers/regulator/core.c:644:1: warning: parameter names (without types) in function declaration [enabled by default]
-drivers/regulator/core.c:638:26: warning: 'regulator_dev_attrs' defined but not used [-Wunused-variable]
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-[sparse]
-arch/x86/kernel/paravirt.c:66:9: sparse: preprocessor token DEF_NATIVE redefined
-arch/x86/lib/inat-tables.c:978:19: sparse: symbol 'inat_group_table_11' was not declared. Should it be static?
-arch/x86/lib/inat-tables.c:996:19: sparse: symbol 'inat_group_table_22_1' was not declared. Should it be static?
-arch/x86/lib/inat-tables.c:999:19: sparse: symbol 'inat_group_table_22_2' was not declared. Should it be static?
-arch/x86/lib/inat-tables.c:1007:19: sparse: symbol 'inat_group_table_4' was not declared. Should it be static?
-arch/x86/lib/inat-tables.c:1043:19: sparse: symbol 'inat_group_table_16' was not declared. Should it be static?
-arch/x86/lib/inat-tables.c:1049:19: sparse: symbol 'inat_group_table_16_1' was not declared. Should it be static?
-arch/x86/lib/inat-tables.c:1057:19: sparse: symbol 'inat_group_table_19' was not declared. Should it be static?
-arch/x86/lib/inat-tables.c:1063:19: sparse: symbol 'inat_group_table_19_2' was not declared. Should it be static?
-arch/x86/lib/inat-tables.c:1079:19: sparse: symbol 'inat_group_table_23' was not declared. Should it be static?
-arch/x86/kernel/kprobes/core.c:664:33: sparse: symbol 'trampoline_handler' was not declared. Should it be static?
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/gpu/host1x/dev.c      |    7 +------
+ drivers/gpu/host1x/drm/hdmi.c |    3 ---
+ 2 files changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 28e28a2..e615edd 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -98,12 +98,6 @@ static int host1x_probe(struct platform_device *pdev)
+ 	if (!id)
+ 		return -EINVAL;
+ 
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!regs) {
+-		dev_err(&pdev->dev, "failed to get registers\n");
+-		return -ENXIO;
+-	}
+-
+ 	syncpt_irq = platform_get_irq(pdev, 0);
+ 	if (syncpt_irq < 0) {
+ 		dev_err(&pdev->dev, "failed to get IRQ\n");
+@@ -120,6 +114,7 @@ static int host1x_probe(struct platform_device *pdev)
+ 	/* set common host1x device data */
+ 	platform_set_drvdata(pdev, host);
+ 
++	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	host->regs = devm_ioremap_resource(&pdev->dev, regs);
+ 	if (IS_ERR(host->regs))
+ 		return PTR_ERR(host->regs);
+diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdmi.c
+index 01097da..9ffece6 100644
+--- a/drivers/gpu/host1x/drm/hdmi.c
++++ b/drivers/gpu/host1x/drm/hdmi.c
+@@ -1248,9 +1248,6 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
+ 		return err;
+ 
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!regs)
+-		return -ENXIO;
+-
+ 	hdmi->regs = devm_ioremap_resource(&pdev->dev, regs);
+ 	if (IS_ERR(hdmi->regs))
+ 		return PTR_ERR(hdmi->regs);
+
