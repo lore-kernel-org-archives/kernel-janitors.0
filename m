@@ -1,58 +1,162 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Aug 2013 19:15:00 +0000
-Subject: Re: [PATCH v3] xHCI: Fixing xhci_readl definition and function call
-Message-Id: <20130828191500.GH19256@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 11:03:33 +0000
+Subject: [PATCH 28/29] drivers/input/{keyboard,serio}: simplify use of devm_ioremap_resource
+Message-Id: <1376478213-24091-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1377482937-7486-1-git-send-email-kumargauravgupta3@gmail.com>
- <20130828071304.GO6329@mwanda>
- <521E1292.5060709@gmail.com>
-In-Reply-To: <521E1292.5060709@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Cc: sarah.a.sharp@linux.intel.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2013 at 08:39:06PM +0530, Kumar Gaurav wrote:
-> On Wednesday 28 August 2013 12:43 PM, Dan Carpenter wrote:
-> >On Mon, Aug 26, 2013 at 07:38:57AM +0530, Kumar Gaurav wrote:
-> >>This patch redefine function xhci_readl.xhci_readl function doesn't use xhci_hcd argument.
-> >>Hence there is no need of keeping it in the function arguments.
-> >>
-> >>Redefining this function breaks other functions which calls this function.
-> >>This phatch also correct those calls in xhci driver.
-> >>
-> >>Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
-> >>---
-> >Could you put a list of changes since v2 here?:
-> >
-> >v3:  blah blah changelog mostly.
-> >
-> >Also this doesn't apply for me against linux-next.
-> >
-> >regards,
-> >dan carpenter
-> >
-> There's no change from v2. I was sending the same patch again
-> because the last one was lacking good description and i was told (or
-> as i understood) that if I'm sending the same patch or patch for the
-> same purpose as previous then i should increment version so i did.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Put:
-v2: no change.  just the changelog.
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-Otherwise we have to look for the change.
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
 
-> 
-> I had developed this patch against linux-git, haven't tested that on
-> linux-next as i haven't cloned  linux-next yet.
-> 
-> I've started cloning linux-next and as it's not applying on
-> linux-next, I'll try it on linux-next (once i cloned it)  and will
-> send again.
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-Yep.  Cleanups should be done against linux-next.
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
 
-regards,
-dan carpenter
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/input/keyboard/imx_keypad.c     |    7 +------
+ drivers/input/keyboard/nspire-keypad.c  |    7 +------
+ drivers/input/keyboard/spear-keyboard.c |    7 +------
+ drivers/input/serio/arc_ps2.c           |    7 +------
+ drivers/input/serio/olpc_apsp.c         |    3 ---
+ 5 files changed, 4 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
+index 03c8cc5..328cfc1 100644
+--- a/drivers/input/keyboard/imx_keypad.c
++++ b/drivers/input/keyboard/imx_keypad.c
+@@ -442,12 +442,6 @@ static int imx_keypad_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res = NULL) {
+-		dev_err(&pdev->dev, "no I/O memory defined in platform data\n");
+-		return -EINVAL;
+-	}
+-
+ 	input_dev = devm_input_allocate_device(&pdev->dev);
+ 	if (!input_dev) {
+ 		dev_err(&pdev->dev, "failed to allocate the input device\n");
+@@ -468,6 +462,7 @@ static int imx_keypad_probe(struct platform_device *pdev)
+ 	setup_timer(&keypad->check_matrix_timer,
+ 		    imx_keypad_check_for_events, (unsigned long) keypad);
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	keypad->mmio_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(keypad->mmio_base))
+ 		return PTR_ERR(keypad->mmio_base);
+diff --git a/drivers/input/keyboard/nspire-keypad.c b/drivers/input/keyboard/nspire-keypad.c
+index 20d872d..b3e3eda 100644
+--- a/drivers/input/keyboard/nspire-keypad.c
++++ b/drivers/input/keyboard/nspire-keypad.c
+@@ -171,12 +171,6 @@ static int nspire_keypad_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "missing platform resources\n");
+-		return -EINVAL;
+-	}
+-
+ 	keypad = devm_kzalloc(&pdev->dev, sizeof(struct nspire_keypad),
+ 			      GFP_KERNEL);
+ 	if (!keypad) {
+@@ -208,6 +202,7 @@ static int nspire_keypad_probe(struct platform_device *pdev)
+ 		return PTR_ERR(keypad->clk);
+ 	}
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	keypad->reg_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(keypad->reg_base))
+ 		return PTR_ERR(keypad->reg_base);
+diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
+index 7111124..85ff530 100644
+--- a/drivers/input/keyboard/spear-keyboard.c
++++ b/drivers/input/keyboard/spear-keyboard.c
+@@ -191,12 +191,6 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int error;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no keyboard resource defined\n");
+-		return -EBUSY;
+-	}
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "not able to get irq for the device\n");
+@@ -228,6 +222,7 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 		kbd->suspended_rate = pdata->suspended_rate;
+ 	}
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	kbd->io_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(kbd->io_base))
+ 		return PTR_ERR(kbd->io_base);
+diff --git a/drivers/input/serio/arc_ps2.c b/drivers/input/serio/arc_ps2.c
+index 3fb7727..8024a6d 100644
+--- a/drivers/input/serio/arc_ps2.c
++++ b/drivers/input/serio/arc_ps2.c
+@@ -189,12 +189,6 @@ static int arc_ps2_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int error, id, i;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no IO memory defined\n");
+-		return -EINVAL;
+-	}
+-
+ 	irq = platform_get_irq_byname(pdev, "arc_ps2_irq");
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "no IRQ defined\n");
+@@ -208,6 +202,7 @@ static int arc_ps2_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	arc_ps2->addr = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(arc_ps2->addr))
+ 		return PTR_ERR(arc_ps2->addr);
+diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
+index 818aa46..51b1d40 100644
+--- a/drivers/input/serio/olpc_apsp.c
++++ b/drivers/input/serio/olpc_apsp.c
+@@ -183,9 +183,6 @@ static int olpc_apsp_probe(struct platform_device *pdev)
+ 
+ 	np = pdev->dev.of_node;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENOENT;
+-
+ 	priv->base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(priv->base)) {
+ 		dev_err(&pdev->dev, "Failed to map WTM registers\n");
 
