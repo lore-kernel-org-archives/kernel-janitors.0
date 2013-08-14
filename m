@@ -1,69 +1,57 @@
-From: Dave Quigley <dpquigl@davequigley.com>
-Date: Wed, 07 Aug 2013 01:58:15 +0000
-Subject: Re: [PATCH] fs/nfs/inode.c: adjust code alignment
-Message-Id: <5201A9B7.1010605@davequigley.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:12 +0000
+Subject: [PATCH 8/29] drivers/cpuidle/cpuidle-kirkwood.c: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>  <1375714059-29567-2-git-send-email-Julia.Lawall@lip6.fr> <1375714793.7337.12.camel@leira.trondhjem.org> <52013A9D.4010905@RedHat.com>
-In-Reply-To: <52013A9D.4010905@RedHat.com>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Dickson <SteveD@redhat.com>
-Cc: "Myklebust, Trond" <Trond.Myklebust@netapp.com>, Julia Lawall <Julia.Lawall@lip6.fr>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: kernel-janitors@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 8/6/2013 2:04 PM, Steve Dickson wrote:
-> Hello,
->
-> On 05/08/13 10:59, Myklebust, Trond wrote:
->> On Mon, 2013-08-05 at 16:47 +0200, Julia Lawall wrote:
->>> From: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> ---
->>>
->>> This patch adjusts the code so that the alignment matches the current
->>> semantics.  I have no idea if it is the intended semantics, though.  Should
->>> the call to nfs_setsecurity also be under the else?
->>>
->>
->>>   fs/nfs/inode.c |    2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
->>> index af6e806..d8ad685 100644
->>> --- a/fs/nfs/inode.c
->>> +++ b/fs/nfs/inode.c
->>> @@ -463,7 +463,7 @@ nfs_fhget(struct super_block *sb, struct nfs_fh
->>> *fh, struct nfs_fattr *fattr, st
->>>                  unlock_new_inode(inode);
->>>          } else
->>>                  nfs_refresh_inode(inode, fattr);
->>> -               nfs_setsecurity(inode, fattr, label);
->>> +       nfs_setsecurity(inode, fattr, label);
-> This call to nfs_setsecurity() is not needed. The security only needs
-> to be set when the i-node is created...
->
-> steved.
->
->>>          dprintk("NFS: nfs_fhget(%s/%Ld fh_crc=0x%08x ct=%d)\n",
->>>                  inode->i_sb->s_id,
->>>                  (long long)NFS_FILEID(inode),
->>
->> Hi Julia,
->>
->> Thanks for pointing this out! Given that the 'then' clause of the if
->> statement already calls nfs_setsecurity before unlocking the inode, I
->> suspect that the above _should_ really be part of the 'else' clause.
->>
->> That said, I can't see that calling nfs_setsecurity twice on the inode
->> can cause any unintended side-effects, so I suggest that we rather queue
->> the patch up for inclusion in 3.12.
->> Steve and Dave, any comments?
->>
->
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I can't see why it would be needed either. I agree with Steve. We can 
-get rid of it.
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-Dave
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/cpuidle/cpuidle-kirkwood.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/cpuidle/cpuidle-kirkwood.c b/drivers/cpuidle/cpuidle-kirkwood.c
+index 521b0a7..2237135 100644
+--- a/drivers/cpuidle/cpuidle-kirkwood.c
++++ b/drivers/cpuidle/cpuidle-kirkwood.c
+@@ -60,9 +60,6 @@ static int kirkwood_cpuidle_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res = NULL)
+-		return -EINVAL;
+-
+ 	ddr_operation_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(ddr_operation_base))
+ 		return PTR_ERR(ddr_operation_base);
+
