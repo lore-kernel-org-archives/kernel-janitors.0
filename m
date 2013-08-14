@@ -1,34 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 01 Aug 2013 15:44:26 +0000
-Subject: re: pktcdvd: add struct pktcdvd_device.name to pr_err logging where possible
-Message-Id: <20130801154426.GA5198@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:30 +0000
+Subject: [PATCH 26/29] drivers/media/platform/coda.c: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-27-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Joe Perches,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This is a semi-automatic email about new static checker warnings.
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-The patch b5a0e979a657: "pktcdvd: add struct pktcdvd_device.name to 
-pr_err logging where possible" from Aug 1, 2013, leads to the 
-following Smatch complaint:
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-drivers/block/pktcdvd.c:2363 pkt_make_request()
-	 error: we previously assumed 'pd' could be null (see line 2362)
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
 
-drivers/block/pktcdvd.c
-  2361		pd = q->queuedata;
-  2362		if (!pd) {
-                    ^^^
-Old check.
-  2363			pkt_err(pd, "%s incorrect request queue\n",
-                                ^^^
-New dereference.
-  2364				bdevname(bio->bi_bdev, b));
-  2365			goto end_io;
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/platform/coda.c |    5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/media/platform/coda.c b/drivers/media/platform/coda.c
+index 66db0df..1a2192f 100644
+--- a/drivers/media/platform/coda.c
++++ b/drivers/media/platform/coda.c
+@@ -3122,11 +3122,6 @@ static int coda_probe(struct platform_device *pdev)
+ 
+ 	/* Get  memory for physical registers */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res = NULL) {
+-		dev_err(&pdev->dev, "failed to get memory region resource\n");
+-		return -ENOENT;
+-	}
+-
+ 	dev->regs_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(dev->regs_base))
+ 		return PTR_ERR(dev->regs_base);
+
