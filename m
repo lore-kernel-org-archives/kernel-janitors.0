@@ -1,45 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 09:11:04 +0000
-Subject: [PATCH 0/29] simplify use of devm_ioremap_resource
-Message-Id: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Aug 2013 09:44:39 +0000
+Subject: [patch] VFS: collect_mounts() should return an ERR_PTR
+Message-Id: <20130814094439.GD521@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, rtc-linux@googlegroups.com, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-devm_ioremap_resource often uses the result of a call to
-platform_get_resource as its last argument.  devm_ioremap_resource does
-appropriate error handling on this argument, so error handling can be
-removed from the call site.  To make the connection between the call to
-platform_get_resource and the call to devm_ioremap_resource more clear, the
-former is also moved down to be adjacent to the latter.
+This should actually be returning an ERR_PTR on error instead of NULL.
+That was how it was designed and all the callers expect it.
 
-In many cases, this patch changes the specific error value that is
-returned on failure of platform_get_resource.
+Cc: <stable@vger.kernel.org> # 3.10+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression pdev,res,n,e,e1;
-expression ret != 0;
-identifier l;
-@@
-
-(
-  res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-- if (res = NULL) { ... \(goto l;\|return ret;\) }
-  e = devm_ioremap_resource(e1, res);
-|
-- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  ... when != res
-- if (res = NULL) { ... \(goto l;\|return ret;\) }
-  ... when != res
-+ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  e = devm_ioremap_resource(e1, res);
-)
-// </smpl>
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 9809084..f1c61bb 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1429,7 +1429,7 @@ struct vfsmount *collect_mounts(struct path *path)
+ 			 CL_COPY_ALL | CL_PRIVATE);
+ 	namespace_unlock();
+ 	if (IS_ERR(tree))
+-		return NULL;
++		return ERR_CAST(tree);
+ 	return &tree->mnt;
+ }
+ 
