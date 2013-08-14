@@ -1,30 +1,61 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 29 Aug 2013 05:24:46 +0000
-Subject: Re: [patch -next] qlcnic: underflow in qlcnic_validate_max_tx_rings()
-Message-Id: <20130829.012446.182167937298557296.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 14:26:53 +0000
+Subject: [PATCH] drivers/net/ethernet/via/via-velocity.c: update napi implementation
+Message-Id: <1376490413-12067-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130827011622.GB17061@elgon.mountain>
-In-Reply-To: <20130827011622.GB17061@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: himanshu.madhani@qlogic.com, rajesh.borundia@qlogic.com, shahed.shaikh@qlogic.com, jitendra.kalsaria@qlogic.com, sony.chacko@qlogic.com, sucheta.chakraborty@qlogic.com, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Francois Romieu <romieu@fr.zoreil.com>, roszenrami@gmail.com, dshwatrz@gmail.com
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@linaro.org, rob.herring@calxeda.com
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Aug 2013 04:16:22 +0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> This function checks the upper bound but it doesn't check for negative
-> numbers:
-> 
-> 	if (txq > QLCNIC_MAX_TX_RINGS) {
-> 
-> I've solved this by making "txq" a u32 type.  I chose that because
-> ->tx_count in the ethtool_channels struct is a __u32.
-> 
-> This bug was added in aa4a1f7df7 ('qlcnic: Enable Tx queue changes using
-> ethtool for 82xx Series adapter.').
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Drivers supporting NAPI should use a NAPI-specific function for receiving
+packets.  Hence netif_rx is changed to netif_receive_skb.
 
-Applied, thanks.
+Furthermore netif_napi_del should be used in the probe and remove function
+to clean up the NAPI resource information.
+
+Thanks to Francois Romieu, David Shwatrz and Rami Rosen for their help on
+this patch.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+I still don't understand the reason for choosing netif_receive_skb,
+specifically.  This patch is not tested.
+
+ drivers/net/ethernet/via/via-velocity.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/via/via-velocity.c b/drivers/net/ethernet/via/via-velocity.c
+index ef77631..d022bf9 100644
+--- a/drivers/net/ethernet/via/via-velocity.c
++++ b/drivers/net/ethernet/via/via-velocity.c
+@@ -2100,7 +2100,7 @@ static int velocity_receive_frame(struct velocity_info *vptr, int idx)
+ 
+ 		__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vid);
+ 	}
+-	netif_rx(skb);
++	netif_receive_skb(skb);
+ 
+ 	stats->rx_bytes += pkt_len;
+ 	stats->rx_packets++;
+@@ -2904,6 +2904,7 @@ out:
+ 	return ret;
+ 
+ err_iounmap:
++	netif_napi_del(&vptr->napi);
+ 	iounmap(regs);
+ err_free_dev:
+ 	free_netdev(netdev);
+@@ -2924,6 +2925,7 @@ static int velocity_remove(struct device *dev)
+ 	struct velocity_info *vptr = netdev_priv(netdev);
+ 
+ 	unregister_netdev(netdev);
++	netif_napi_del(&vptr->napi);
+ 	iounmap(vptr->mac_regs);
+ 	free_netdev(netdev);
+ 	velocity_nics--;
+
