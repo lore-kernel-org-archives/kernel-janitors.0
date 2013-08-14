@@ -1,61 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 14:26:53 +0000
-Subject: [PATCH] drivers/net/ethernet/via/via-velocity.c: update napi implementation
-Message-Id: <1376490413-12067-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Wed, 14 Aug 2013 21:42:08 +0000
+Subject: Re: [PATCH] drivers/net/ethernet/via/via-velocity.c: update napi implementation
+Message-Id: <520BF9B0.80104@cogentembedded.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376490413-12067-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376490413-12067-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Francois Romieu <romieu@fr.zoreil.com>, roszenrami@gmail.com, dshwatrz@gmail.com
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@linaro.org, rob.herring@calxeda.com
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Francois Romieu <romieu@fr.zoreil.com>, roszenrami@gmail.com, dshwatrz@gmail.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@linaro.org, rob.herring@calxeda.com
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello.
 
-Drivers supporting NAPI should use a NAPI-specific function for receiving
-packets.  Hence netif_rx is changed to netif_receive_skb.
+On 08/14/2013 06:26 PM, Julia Lawall wrote:
 
-Furthermore netif_napi_del should be used in the probe and remove function
-to clean up the NAPI resource information.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks to Francois Romieu, David Shwatrz and Rami Rosen for their help on
-this patch.
+> Drivers supporting NAPI should use a NAPI-specific function for receiving
+> packets.  Hence netif_rx is changed to netif_receive_skb.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> Furthermore netif_napi_del should be used in the probe and remove function
+> to clean up the NAPI resource information.
 
----
-I still don't understand the reason for choosing netif_receive_skb,
-specifically.  This patch is not tested.
+> Thanks to Francois Romieu, David Shwatrz and Rami Rosen for their help on
+> this patch.
 
- drivers/net/ethernet/via/via-velocity.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/drivers/net/ethernet/via/via-velocity.c b/drivers/net/ethernet/via/via-velocity.c
-index ef77631..d022bf9 100644
---- a/drivers/net/ethernet/via/via-velocity.c
-+++ b/drivers/net/ethernet/via/via-velocity.c
-@@ -2100,7 +2100,7 @@ static int velocity_receive_frame(struct velocity_info *vptr, int idx)
- 
- 		__vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vid);
- 	}
--	netif_rx(skb);
-+	netif_receive_skb(skb);
- 
- 	stats->rx_bytes += pkt_len;
- 	stats->rx_packets++;
-@@ -2904,6 +2904,7 @@ out:
- 	return ret;
- 
- err_iounmap:
-+	netif_napi_del(&vptr->napi);
- 	iounmap(regs);
- err_free_dev:
- 	free_netdev(netdev);
-@@ -2924,6 +2925,7 @@ static int velocity_remove(struct device *dev)
- 	struct velocity_info *vptr = netdev_priv(netdev);
- 
- 	unregister_netdev(netdev);
-+	netif_napi_del(&vptr->napi);
- 	iounmap(vptr->mac_regs);
- 	free_netdev(netdev);
- 	velocity_nics--;
+> ---
+> I still don't understand the reason for choosing netif_receive_skb,
+> specifically.  This patch is not tested.
+
+    This driver is not the only one with the netif_rx() used with NAPI issue. 
+I also overlooked this when converting drivers/net/ethernet/renesas/sh_eth.c 
+to NAPI. I'll try to change the call and see if netperf would behave better...
+
+WBR, Sergei
 
