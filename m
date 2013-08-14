@@ -1,63 +1,69 @@
-From: Sage Weil <sage@inktank.com>
-Date: Thu, 15 Aug 2013 06:05:21 +0000
-Subject: Re: [patch 1/2] libceph: fix error handling in handle_reply()
-Message-Id: <alpine.DEB.2.00.1308142303020.1479@cobra.newdream.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:31 +0000
+Subject: [PATCH 27/29] drivers/ata/sata_rcar.c: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-28-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130815055158.GA23580@elgon.mountain>
-In-Reply-To: <20130815055158.GA23580@elgon.mountain>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Applied all 3 of these.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks, Dan!
-sage
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-On Thu, 15 Aug 2013, Dan Carpenter wrote:
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
 
-> We've tried to fix the error paths in this function before, but there
-> is still a hidden goto in the ceph_decode_need() macro which goes to the
-> wrong place.  We need to release the "req" and unlock a mutex before
-> returning.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index dbc0a73..559a832 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -1488,14 +1488,14 @@ static void handle_reply(struct ceph_osd_client *osdc, struct ceph_msg *msg,
->  	dout("handle_reply %p tid %llu req %p result %d\n", msg, tid,
->  	     req, result);
->  
-> -	ceph_decode_need(&p, end, 4, bad);
-> +	ceph_decode_need(&p, end, 4, bad_put);
->  	numops = ceph_decode_32(&p);
->  	if (numops > CEPH_OSD_MAX_OP)
->  		goto bad_put;
->  	if (numops != req->r_num_ops)
->  		goto bad_put;
->  	payload_len = 0;
-> -	ceph_decode_need(&p, end, numops * sizeof(struct ceph_osd_op), bad);
-> +	ceph_decode_need(&p, end, numops * sizeof(struct ceph_osd_op), bad_put);
->  	for (i = 0; i < numops; i++) {
->  		struct ceph_osd_op *op = p;
->  		int len;
-> @@ -1513,7 +1513,7 @@ static void handle_reply(struct ceph_osd_client *osdc, struct ceph_msg *msg,
->  		goto bad_put;
->  	}
->  
-> -	ceph_decode_need(&p, end, 4 + numops * 4, bad);
-> +	ceph_decode_need(&p, end, 4 + numops * 4, bad_put);
->  	retry_attempt = ceph_decode_32(&p);
->  	for (i = 0; i < numops; i++)
->  		req->r_reply_op_result[i] = ceph_decode_32(&p);
-> --
-> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/ata/sata_rcar.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+index 8108eb0..c2d95e9 100644
+--- a/drivers/ata/sata_rcar.c
++++ b/drivers/ata/sata_rcar.c
+@@ -778,10 +778,6 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int ret = 0;
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (mem = NULL)
+-		return -EINVAL;
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq <= 0)
+ 		return -EINVAL;
+@@ -807,6 +803,7 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 
+ 	host->private_data = priv;
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->base = devm_ioremap_resource(&pdev->dev, mem);
+ 	if (IS_ERR(priv->base)) {
+ 		ret = PTR_ERR(priv->base);
+
