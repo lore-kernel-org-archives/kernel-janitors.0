@@ -1,44 +1,56 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 03 Aug 2013 16:04:22 +0000
-Subject: build regressions 2013-08-03
-Message-Id: <51fd2a06.WrcDRlQ+xqbIB97F%fengguang.wu@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 14 Aug 2013 09:11:20 +0000
+Subject: [PATCH 16/29] amba: tegra-ahb: simplify use of devm_ioremap_resource
+Message-Id: <1376471493-22215-17-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>
+Cc: kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[errors]
-arch/x86/kernel/tsc.c:573:4: error: implicit declaration of function 'cpufreq_scale' [-Werror=implicit-function-declaration]
-drivers/cpufreq/cpufreq.c:273:15: error: 'loops_per_jiffy' undeclared (first use in this function)
-fs/f2fs/acl.c:91:21: error: 'struct posix_acl_entry' has no member named 'e_id'
-fs/f2fs/acl.c:129:47: error: 'const struct posix_acl_entry' has no member named 'e_id'
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[warnings]
-mm/madvise.c:101: warning: integer constant is too large for 'long' type
-mm/madvise.c:105: warning: integer constant is too large for 'long' type
-mm/madvise.c:109: warning: integer constant is too large for 'long' type
-mm/memory.c:3231: warning: integer constant is too large for 'long' type
-mm/memory.c:3261: warning: integer constant is too large for 'long' type
-<stdin>:1226:2: warning: #warning syscall remap_anon_pages not implemented [-Wcpp]
-mm/huge_memory.c:1481:17: warning: unused variable 'page' [-Wunused-variable]
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-[sparse]
-drivers/usb/serial/mos7840.c:2193:46: sparse: incorrect type in initializer (different base types) @@    expected unsigned short [unsigned] [usertype] product @@    got  short [unsigned] [usertype] product @@
-kernel/sched/fair.c:1172:16: sparse: no member 'numa_next_reset' in struct mm_struct
-fs/f2fs/f2fs.h:920:28: sparse: multiple definitions for function 'file_inode'
-fs/f2fs/dir.c:694:10: sparse: unknown field name in initializer
-fs/f2fs/file.c:42:9: sparse: undefined identifier 'vfs_check_frozen'
-fs/f2fs/inode.c:269:9: sparse: undefined identifier 'end_writeback'
-fs/f2fs/namei.c:194:32: sparse: unknown field name in initializer
-fs/f2fs/super.c:369:57: sparse: undefined identifier 'PDE'
-fs/f2fs/gc.c:47:28: sparse: no member 's_frozen' in struct super_block
-fs/f2fs/gc.h:100:37: sparse: no member 'rq' in struct request_queue
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-[coccinelle]
-arch/x86/kernel/sysfb.c:68:8-14: WARNING: PTR_RET can be used
-arch/x86/kernel/sysfb_simplefb.c:91:1-3: WARNING: PTR_RET can be used
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/amba/tegra-ahb.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
+index 1f44e56..558a239 100644
+--- a/drivers/amba/tegra-ahb.c
++++ b/drivers/amba/tegra-ahb.c
+@@ -256,8 +256,6 @@ static int tegra_ahb_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+ 	ahb->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(ahb->regs))
+ 		return PTR_ERR(ahb->regs);
+
