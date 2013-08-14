@@ -1,44 +1,40 @@
-From: Cyril Roelandt <tipecaml@gmail.com>
-Date: Sat, 10 Aug 2013 00:32:43 +0000
-Subject: [PATCH 0/3] staging: fix non-ANSI function prototypes.
-Message-Id: <1376094766-9175-1-git-send-email-tipecaml@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Aug 2013 09:02:30 +0000
+Subject: [patch] wmi: parse_wdg() should return kernel error codes
+Message-Id: <20130814090230.GA521@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matthew Garrett <matthew.garrett@nebula.com>
+Cc: platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Add "void" to parameterless function prototypes.
+The current code returns a mix of acpi_status and kernel error codes.
+It should just return kernel error codes.  There are already error paths
+in this function which return -ENOMEM and that's what the caller
+expects.
 
-Found using the following semantic patch:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-<smpl>
-@@
-identifier f;
-@@
--f()
-+f(void)
-{
-...
-}
-</smpl>
-
-Regards,
-Cyril Roelandt.
----
-
-Cyril Roelandt (3):
-  staging: usbip: fix non-ANSI function prototypes.
-  staging: ced1401: fix non-ANSI function prototype.
-  staging: lustre: fix non-ANSI function prototypes.
-
- drivers/staging/ced1401/userspace/use1401.c                   | 2 +-
- drivers/staging/lustre/lnet/klnds/socklnd/socklnd_lib-linux.c | 2 +-
- drivers/staging/lustre/lustre/libcfs/lwt.c                    | 4 ++--
- drivers/staging/usbip/userspace/libsrc/usbip_common.c         | 2 +-
- drivers/staging/usbip/userspace/libsrc/vhci_driver.c          | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
-
--- 
-1.8.3.1
-
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index b13344c..f75ea69 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -778,7 +778,7 @@ static bool guid_already_parsed(const char *guid_string)
+ /*
+  * Parse the _WDG method for the GUID data blocks
+  */
+-static acpi_status parse_wdg(acpi_handle handle)
++static int parse_wdg(acpi_handle handle)
+ {
+ 	struct acpi_buffer out = {ACPI_ALLOCATE_BUFFER, NULL};
+ 	union acpi_object *obj;
+@@ -810,7 +810,7 @@ static acpi_status parse_wdg(acpi_handle handle)
+ 
+ 		wblock = kzalloc(sizeof(struct wmi_block), GFP_KERNEL);
+ 		if (!wblock)
+-			return AE_NO_MEMORY;
++			return -ENOMEM;
+ 
+ 		wblock->handle = handle;
+ 		wblock->gblock = gblock[i];
