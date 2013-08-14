@@ -1,7 +1,7 @@
-From: Gareth Davies <grmd@lotwillow.co.uk>
-Date: Wed, 14 Aug 2013 06:31:02 +0000
+From: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+Date: Wed, 14 Aug 2013 07:18:47 +0000
 Subject: Re: Configure DMA atributes?
-Message-Id: <20130814073102.17686rp67c37s3l2@isher.org.uk>
+Message-Id: <CAB=NE6UrZL21f8s_6g6eqLdRCGUXkHKbcu9ofjXUwiJWFQuSaQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CA+MoWDo8nhoomstYJx6Q5Krj-m=_swmpMu2iE5aHRH-gDf-QEQ@mail.gmail.com>
 In-Reply-To: <CA+MoWDo8nhoomstYJx6Q5Krj-m=_swmpMu2iE5aHRH-gDf-QEQ@mail.gmail.com>
@@ -10,24 +10,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernelnewbies@lists.kernelnewbies.org
 
-On Mon, 12 Aug 2013 19:55:35 +0200, you wrote:
->
-> From: drivers/net/ethernet/realtek/8139cp.c
->
-[snip]
->
-> If I comment the assignment to pci_using_dac, the compiler issues
-> warnings, but it makes no visible difference to assign 1 or 0.
->
-> If I had real hardware what could I brake by playing with this code?
->
+On Mon, Aug 12, 2013 at 10:55 AM, Peter Senna Tschudin
+<peter.senna@gmail.com> wrote:
+> DMA_BIT_MASK(64)
 
-Does the following help:
-<URL:http://en.wikipedia.org/wiki/Conventional_PCI#Dual-cycle_address>
+That's the key here. From Documentation/DMA-API-HOWTO.txt :
 
-On real hardware, when using a PCI bus, setting the PCIDAC flag in  
-8139cp.c is intended to signify that 64-bit addressing is being used.
+------------------------------------------------------------------------------------------------
+The standard 32-bit addressing device would do something like this:
 
--- 
-Gareth Davies, Lotwillow Ltd
+        if (dma_set_mask(dev, DMA_BIT_MASK(32))) {
+                printk(KERN_WARNING
+                       "mydev: No suitable DMA available.\n");
+                goto ignore_this_device;
+        }
 
+Another common scenario is a 64-bit capable device.  The approach here
+is to try for 64-bit addressing, but back down to a 32-bit mask that
+should not fail.  The kernel may fail the 64-bit mask not because the
+platform is not capable of 64-bit addressing.  Rather, it may fail in
+this case simply because 32-bit addressing is done more efficiently
+than 64-bit addressing.  For example, Sparc64 PCI SAC addressing is
+more efficient than DAC addressing.
+------------------------------------------------------------------------------------------------
+
+Hope that helps.
+
+  Luis
