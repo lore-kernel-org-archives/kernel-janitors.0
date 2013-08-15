@@ -1,52 +1,48 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 21 Aug 2013 08:40:59 +0000
-Subject: Re: [patch] staging: drm/imx: ipu-dc: signedness bug in ipu_dc_init_sync()
-Message-Id: <20130821084059.GP31036@pengutronix.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Aug 2013 05:51:58 +0000
+Subject: [patch 1/2] libceph: fix error handling in handle_reply()
+Message-Id: <20130815055158.GA23580@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130821083008.GD5240@elgon.mountain>
-In-Reply-To: <20130821083008.GD5240@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sage Weil <sage@inktank.com>
+Cc: "David S. Miller" <davem@davemloft.net>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Aug 21, 2013 at 11:30:08AM +0300, Dan Carpenter wrote:
-> "map" needs to be signed for the error handling to work.  In the success
-> case then it holds a small non-negative value.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We've tried to fix the error paths in this function before, but there
+is still a hidden goto in the ceph_decode_need() macro which goes to the
+wrong place.  We need to release the "req" and unlock a mutex before
+returning.
 
-Acked-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Sascha
-
-> 
-> diff --git a/drivers/staging/imx-drm/ipu-v3/ipu-dc.c b/drivers/staging/imx-drm/ipu-v3/ipu-dc.c
-> index 59f03f9..21bf1c8 100644
-> --- a/drivers/staging/imx-drm/ipu-v3/ipu-dc.c
-> +++ b/drivers/staging/imx-drm/ipu-v3/ipu-dc.c
-> @@ -161,14 +161,15 @@ int ipu_dc_init_sync(struct ipu_dc *dc, struct ipu_di *di, bool interlaced,
->  		u32 pixel_fmt, u32 width)
->  {
->  	struct ipu_dc_priv *priv = dc->priv;
-> -	u32 reg = 0, map;
-> +	u32 reg = 0;
-> +	int map;
->  
->  	dc->di = ipu_di_get_num(di);
->  
->  	map = ipu_pixfmt_to_map(pixel_fmt);
->  	if (map < 0) {
->  		dev_dbg(priv->dev, "IPU_DISP: No MAP\n");
-> -		return -EINVAL;
-> +		return map;
->  	}
->  
->  	if (interlaced) {
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index dbc0a73..559a832 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -1488,14 +1488,14 @@ static void handle_reply(struct ceph_osd_client *osdc, struct ceph_msg *msg,
+ 	dout("handle_reply %p tid %llu req %p result %d\n", msg, tid,
+ 	     req, result);
+ 
+-	ceph_decode_need(&p, end, 4, bad);
++	ceph_decode_need(&p, end, 4, bad_put);
+ 	numops = ceph_decode_32(&p);
+ 	if (numops > CEPH_OSD_MAX_OP)
+ 		goto bad_put;
+ 	if (numops != req->r_num_ops)
+ 		goto bad_put;
+ 	payload_len = 0;
+-	ceph_decode_need(&p, end, numops * sizeof(struct ceph_osd_op), bad);
++	ceph_decode_need(&p, end, numops * sizeof(struct ceph_osd_op), bad_put);
+ 	for (i = 0; i < numops; i++) {
+ 		struct ceph_osd_op *op = p;
+ 		int len;
+@@ -1513,7 +1513,7 @@ static void handle_reply(struct ceph_osd_client *osdc, struct ceph_msg *msg,
+ 		goto bad_put;
+ 	}
+ 
+-	ceph_decode_need(&p, end, 4 + numops * 4, bad);
++	ceph_decode_need(&p, end, 4 + numops * 4, bad_put);
+ 	retry_attempt = ceph_decode_32(&p);
+ 	for (i = 0; i < numops; i++)
+ 		req->r_reply_op_result[i] = ceph_decode_32(&p);
