@@ -1,52 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 05 Aug 2013 14:47:37 +0000
-Subject: [PATCH] drivers/scsi/lpfc/lpfc_init.c: adjust code alignment
-Message-Id: <1375714059-29567-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Aug 2013 05:52:48 +0000
+Subject: [patch 2/2] libceph: potential NULL dereference in ceph_osdc_handle_map()
+Message-Id: <20130815055248.GB23580@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Smart <james.smart@emulex.com>
-Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sage Weil <sage@inktank.com>
+Cc: "David S. Miller" <davem@davemloft.net>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+There are two places where we read "nr_maps" if both of them are set to
+zero then we would hit a NULL dereference here.
 
-Adjust code alignment so that each statement is lined up with its neighbor.
-
-In the second case, it could be desirable to put the call to
-lpfc_destroy_vport_work_array under the if.  The call, is, however, safe
-in case vports is NULL, so the patch just adjusts the indentation to
-reflect the current semantics.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
+I think this is a real bug, but please review my fix for it because I'm
+not very familiar with this code.
 
- drivers/scsi/lpfc/lpfc_init.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index e0b20fa..f870421 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -692,7 +692,7 @@ lpfc_hba_init_link_fc_topology(struct lpfc_hba *phba, uint32_t fc_topology,
- 			"1302 Invalid speed for this board:%d "
- 			"Reset link speed to auto.\n",
- 			phba->cfg_link_speed);
--			phba->cfg_link_speed = LPFC_USER_LINK_SPEED_AUTO;
-+		phba->cfg_link_speed = LPFC_USER_LINK_SPEED_AUTO;
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 559a832..56f1fe5 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -1786,6 +1786,8 @@ void ceph_osdc_handle_map(struct ceph_osd_client *osdc, struct ceph_msg *msg)
+ 		nr_maps--;
  	}
- 	lpfc_init_link(phba, pmb, fc_topology, phba->cfg_link_speed);
- 	pmb->mbox_cmpl = lpfc_sli_def_mbox_cmpl;
-@@ -2702,7 +2702,7 @@ lpfc_online(struct lpfc_hba *phba)
- 			}
- 			spin_unlock_irq(shost->host_lock);
- 		}
--		lpfc_destroy_vport_work_array(phba, vports);
-+	lpfc_destroy_vport_work_array(phba, vports);
  
- 	lpfc_unblock_mgmt_io(phba);
- 	return 0;
-
++	if (!osdc->osdmap)
++		goto bad;
+ done:
+ 	downgrade_write(&osdc->map_sem);
+ 	ceph_monc_got_osdmap(&osdc->client->monc, osdc->osdmap->epoch);
