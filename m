@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Date: Wed, 14 Aug 2013 16:49:35 +0000
+Date: Thu, 15 Aug 2013 22:07:49 +0000
 Subject: Re: [PATCH 6/29] tegra: simplify use of devm_ioremap_resource
-Message-Id: <520BB51F.5000707@wwwdotorg.org>
+Message-Id: <520D5135.7020503@wwwdotorg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr> <1376471493-22215-7-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1376471493-22215-7-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
@@ -17,11 +17,4 @@ On 08/14/2013 03:11 AM, Julia Lawall wrote:
 > Remove unneeded error handling on the result of a call to
 > platform_get_resource when the value is passed to devm_ioremap_resource.
 
-I believe that drivers/iommu changes are usually applied by Joerg Roedel
-<joro@8bytes.org> and drivers/memory changes by Greg Kroah-Hartman
-<gregkh@linuxfoundation.org>, although admittedly neither of those is
-particularly called out by the MAINTAINERS file...
-
-I guess these are simple enough that I can take them through the Tegra
-tree though, since it doesn't look like there will be any conflicts
-doing so for 3.12.
+I have applied this to Tegra's for-3.12/cleanup branch.
