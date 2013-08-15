@@ -1,59 +1,38 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 15 Aug 2013 05:54:56 +0000
-Subject: [patch v2] f2fs: alloc_page() doesn't return an ERR_PTR
-Message-Id: <20130815055456.GD23580@elgon.mountain>
+Date: Thu, 15 Aug 2013 05:58:59 +0000
+Subject: [patch 3/2] libceph: create_singlethread_workqueue() doesn't return ERR_PTRs
+Message-Id: <20130815055859.GF23580@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376486676.2354.5.camel@kjgkr>
-In-Reply-To: <1376486676.2354.5.camel@kjgkr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Sage Weil <sage@inktank.com>
+Cc: "David S. Miller" <davem@davemloft.net>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-alloc_page() returns a NULL on failure, it never returns an ERR_PTR.
+create_singlethread_workqueue() returns NULL on error, and it doesn't
+return ERR_PTRs.
+
+I tweaked the error handling a little to be consistent with earlier in
+the function.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: fix the calls in recovery.c as well.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f5172e2..3e87fe0 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1515,8 +1515,8 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index dbc0a73..02c5246 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -2257,12 +2257,10 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
+ 	if (err < 0)
+ 		goto out_msgpool;
  
- 	/* alloc temporal page for read node */
- 	page = alloc_page(GFP_NOFS | __GFP_ZERO);
--	if (IS_ERR(page))
--		return PTR_ERR(page);
-+	if (!page)
-+		return -ENOMEM;
- 	lock_page(page);
++	err = -ENOMEM;
+ 	osdc->notify_wq = create_singlethread_workqueue("ceph-watch-notify");
+-	if (IS_ERR(osdc->notify_wq)) {
+-		err = PTR_ERR(osdc->notify_wq);
+-		osdc->notify_wq = NULL;
++	if (!osdc->notify_wq)
+ 		goto out_msgpool;
+-	}
+ 	return 0;
  
- 	/* scan the node segment */
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 639eb34..889b4bd 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -129,8 +129,8 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- 
- 	/* read node page */
- 	page = alloc_page(GFP_F2FS_ZERO);
--	if (IS_ERR(page))
--		return PTR_ERR(page);
-+	if (!page)
-+		return -ENOMEM;
- 	lock_page(page);
- 
- 	while (1) {
-@@ -367,7 +367,7 @@ static int recover_data(struct f2fs_sb_info *sbi,
- 
- 	/* read node page */
- 	page = alloc_page(GFP_NOFS | __GFP_ZERO);
--	if (IS_ERR(page))
-+	if (!page)
- 		return -ENOMEM;
- 
- 	lock_page(page);
-
+ out_msgpool:
