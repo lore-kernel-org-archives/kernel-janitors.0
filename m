@@ -1,69 +1,74 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 14 Aug 2013 09:11:27 +0000
-Subject: [PATCH 23/29] drivers/i2c/busses/i2c-ocores.c: simplify use of devm_ioremap_resource
-Message-Id: <1376471493-22215-24-git-send-email-Julia.Lawall@lip6.fr>
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Thu, 15 Aug 2013 14:18:58 +0000
+Subject: Re: [PATCH 23/29] drivers/i2c/busses/i2c-ocores.c: simplify use of devm_ioremap_resource
+Message-Id: <20130815141858.GM17155@katana>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="oiL9LJXJsdjS5rzq"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Korsgaard <jacmet@sunsite.dk>
-Cc: kernel-janitors@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+ <1376471493-22215-24-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376471493-22215-24-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Peter Korsgaard <jacmet@sunsite.dk>, kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Remove unneeded error handling on the result of a call to
-platform_get_resource when the value is passed to devm_ioremap_resource.
+--oiL9LJXJsdjS5rzq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Move the call to platform_get_resource adjacent to the call to
-devm_ioremap_resource to make the connection between them more clear.
+On Wed, Aug 14, 2013 at 11:11:27AM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Remove unneeded error handling on the result of a call to
+> platform_get_resource when the value is passed to devm_ioremap_resource.
+>=20
+> Move the call to platform_get_resource adjacent to the call to
+> devm_ioremap_resource to make the connection between them more clear.
+>=20
+> A simplified version of the semantic patch that makes this change is as
+> follows: (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @@
+> expression pdev,res,n,e,e1;
+> expression ret !=3D 0;
+> identifier l;
+> @@
+>=20
+> - res =3D platform_get_resource(pdev, IORESOURCE_MEM, n);
+>   ... when !=3D res
+> - if (res =3D=3D NULL) { ... \(goto l;\|return ret;\) }
+>   ... when !=3D res
+> + res =3D platform_get_resource(pdev, IORESOURCE_MEM, n);
+>   e =3D devm_ioremap_resource(e1, res);
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
+Applied to for-next, thanks!
 
-// <smpl>
-@@
-expression pdev,res,n,e,e1;
-expression ret != 0;
-identifier l;
-@@
 
-- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  ... when != res
-- if (res = NULL) { ... \(goto l;\|return ret;\) }
-  ... when != res
-+ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  e = devm_ioremap_resource(e1, res);
-// </smpl>
+--oiL9LJXJsdjS5rzq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
----
- drivers/i2c/busses/i2c-ocores.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+iQIcBAEBAgAGBQJSDONSAAoJEBQN5MwUoCm2f2QP/3b/muogXYR6bmM/kN7nK5I2
+SCEcRiQ+whckMtGORckIOFopERCqtc/mB0sWiSOmZYbA4BsU17yj75lUCd7QB7Nq
+zU/x2NgDGf4+5cINbhDxeUv+gCKhbcMB2BeW2GW/Z/rYIEFWki7+boqmXV1y2NtS
+BF0rDiFCF3uzEiFAggc4luBNXRDawhAF9N6Q6B1m6p4F/omh1ecGTy/3pUwyipQt
+mLnPYZH2DJB5TQdscZflf9+vudiwY86VssbhUa4+c1XgEMks/a60pOMNtwCXBxRz
+qOUa1HsT/wzCued9zE4h2xO4FxeKWyO5khDXLgK29VyEZnPKXqXhL4MzO4vV7xY0
+5nlnkq+n2Dpm+SXqMiyiHNuIaAGxeGcpd7BH5BCKAs+RZc5E82wY1+JTOiLqe1WR
+/9B/U0X32XKWxfq9cD7dLBOUyXn9r8BiNosLhCVdvx7sB5WpYk4pC3ABqWrDLDIC
+6IJ8oREuyd+YIpLFVQdIVrMsPqv2vmbWkVxR7jfs3NAK2PfVc2B1n/EBtUUFylDn
+Bi9MaunDvbl8XKR47x4KYC6z1o/JUBIrQsrDLfGthcCXdc1h1uUVZNGP/oWR9+F0
+kqQPua4WZUMNTRzUsWjWN0jEcstpmCl3CiF03riZKHB0dbBThk5VMGa0jMs6M96P
+lqpC6T8MxKs6KvtIa1OY
+=meFS
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
-index 0e1f824..e686e2c 100644
---- a/drivers/i2c/busses/i2c-ocores.c
-+++ b/drivers/i2c/busses/i2c-ocores.c
-@@ -353,10 +353,6 @@ static int ocores_i2c_probe(struct platform_device *pdev)
- 	int ret;
- 	int i;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
--
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
- 		return irq;
-@@ -365,6 +361,7 @@ static int ocores_i2c_probe(struct platform_device *pdev)
- 	if (!i2c)
- 		return -ENOMEM;
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	i2c->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(i2c->base))
- 		return PTR_ERR(i2c->base);
-
+--oiL9LJXJsdjS5rzq--
