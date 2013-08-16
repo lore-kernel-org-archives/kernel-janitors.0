@@ -1,40 +1,38 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Aug 2013 12:04:42 +0000
-Subject: Re: [patch] net: remove an unneeded check
-Message-Id: <20130806120442.GR5051@mwanda>
+From: Kumar Gaurav <kumargauravgupta3@gmail.com>
+Date: Fri, 16 Aug 2013 18:16:58 +0000
+Subject: Re: Explanation Needed
+Message-Id: <520E69CA.9060102@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130729191519.GA11874@elgon.mountain>
- <F3E01662-FC33-4FB8-AF30-47DF44252296@intel.com>
-In-Reply-To: <F3E01662-FC33-4FB8-AF30-47DF44252296@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Rustad, Mark D" <mark.d.rustad@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>, "<kernel-janitors@vger.kernel.org>" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 05, 2013 at 06:18:01PM +0000, Rustad, Mark D wrote:
-> On Jul 29, 2013, at 12:15 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > "ifa->ifa_label" is an array inside the in_ifaddr struct.  It can never
-> > be NULL so we can remove this check.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/net/ipv4/devinet.c b/net/ipv4/devinet.c
-> > index 8d48c39..1b7f7ae 100644
-> > --- a/net/ipv4/devinet.c
-> > +++ b/net/ipv4/devinet.c
-> > @@ -1124,10 +1124,7 @@ static int inet_gifconf(struct net_device *dev, char __user *buf, int len)
-> > 		if (len < (int) sizeof(ifr))
-> > 			break;
-> > 		memset(&ifr, 0, sizeof(struct ifreq));
-> > -		if (ifa->ifa_label)
-> 
-> Is there any possibility that this was meant to check ifa->ifa_label[0]?
+On Friday 16 August 2013 11:28 PM, Sarah Sharp wrote:
+> On Fri, Aug 16, 2013 at 11:09:12PM +0530, Kumar Gaurav wrote:
+>> Hi Sarah,
+>>
+>> I was just reading through xhci driver's code and found something
+>> which i'm unable to understand use of.
+>> Please help me understanding them
+>>
+>> 1.use of struct xhci_hcd in function xhci_readl
+>>      function definition doesn't uses this type of argument
+>>      static inline unsigned int xhci_readl(const struct xhci_hcd *xhci,__le32 __iomem *regs)
+>>      {
+>>          return readl(regs);
+>>      }
+> The function used to print when registers were read, and thus needed the
+> xhci_hcd argument.  It's no longer used, so if you want to submit a
+> patch to remove that argument, I would take it.  Please look at
+> Documentation/SubmittingPatches if you've never submitted a Linux kernel
+> patch before.
+>
+> Sarah Sharp
+Please correct me if i'm wrong, as far as i read "*regs" points to the 
+location of register to be read. Then what is use of xhci_hcd?
 
-It has been this way for almost 16 years and no one has complained.
-I should have put that into the changelog though, you are right.
+I'll be sending patch for the same.
 
-regards,
-dan carpenter
-
+Regards
+Kumar gaurav
