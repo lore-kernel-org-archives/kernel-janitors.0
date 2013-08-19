@@ -1,60 +1,59 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 06 Aug 2013 20:07:07 +0000
-Subject: build regressions 2013-08-06
-Message-Id: <5201576b./DnVlyNim34Yu2ds%fengguang.wu@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 Aug 2013 11:20:41 +0000
+Subject: [PATCH 7/7] mmc: mvsdio: replace devm_request_and_ioremap by devm_ioremap_resource
+Message-Id: <1376911241-27720-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Nicolas Pitre <nico@fluxnic.net>
+Cc: kernel-janitors@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[errors]
-sound/soc/codecs/pcm1792a.c:234:21: error: 'pcm1792a_of_match' undeclared here (not in a function)
-sound/soc/codecs/wm8994.c:1457:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1438:20: error: 'SOC_SINGLE_VALUE' undeclared here (not in a function)
-sound/soc/codecs/wm8994.c:1459:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1461:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1463:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1465:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1470:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1469:1: error: initializer element is not constant
-sound/soc/codecs/wm8994.c:1472:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1471:1: error: initializer element is not constant
-sound/soc/codecs/wm8994.c:1474:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1473:1: error: initializer element is not constant
-sound/soc/codecs/wm8994.c:1476:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1475:1: error: initializer element is not constant
-sound/soc/codecs/wm8994.c:1478:16: error: macro "SOC_SINGLE_VALUE" passed 5 arguments, but takes just 4
-sound/soc/codecs/wm8994.c:1477:1: error: initializer element is not constant
-fs/reiserfs/inode.c:3170:3: error: implicit declaration of function 'reiserfs_write_unlock_once' [-Werror=implicit-function-declaration]
-fs/reiserfs/inode.c:3170:43: error: 'depth' undeclared (first use in this function)
-mm/mmzone.c:101:5: error: redefinition of 'page_cpupid_xchg_last'
-drivers/net/wireless/ath/ath9k/ar9002_phy.c:560:36: error: 'struct ath_hw' has no member named 'btcoex_hw'
-ERROR: "dirty_expire_interval" undefined!
-(.text+0x3eb64): undefined reference to `i2c_smbus_read_byte_data'
-(.text+0x3eb88): undefined reference to `i2c_smbus_write_byte_data'
-(.text+0x3ebe2): undefined reference to `i2c_smbus_read_byte_data'
-(.text+0x3ec4a): undefined reference to `i2c_smbus_write_byte_data'
-stw481x.c:(.init.text+0x3278): undefined reference to `i2c_register_driver'
-mm/mprotect.c:68:6: error: implicit declaration of function 'cpupid_to_cpu' [-Werror=implicit-function-declaration]
-mm/mempolicy.c:2295:3: error: implicit declaration of function 'cpu_pid_to_cpupid' [-Werror=implicit-function-declaration]
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[warnings]
-kernel/sched/fair.c:819: warning: 'task_h_load' declared 'static' but never defined
-drivers/mtd/nand/nandsim.c:774:2: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'long unsigned int' [-Wformat]
-mm/memory.c:73:2: warning: #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid. [-Wcpp]
-mm/memory.c:73:2: warning: #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid. [-Wcpp]
-warning: (MFD_STW481X) selects I2C_SMBUS which has unmet direct dependencies (I2C && GENERIC_HARDIRQS)
-warning: (MFD_STW481X) selects I2C_SMBUS which has unmet direct dependencies (I2C && GENERIC_HARDIRQS)
-warning: (MFD_STW481X) selects I2C_SMBUS which has unmet direct dependencies (I2C && GENERIC_HARDIRQS)
-warning: (MFD_STW481X) selects I2C_SMBUS which has unmet direct dependencies (I2C && GENERIC_HARDIRQS)
-drivers/gpu/drm/i915/i915_irq.c:3289:11: warning: unused variable 'de_pipe_enables' [-Wunused-variable]
-drivers/gpu/drm/i915/i915_drv.h:2086:42: warning: 'ddi_translations_edp' may be used uninitialized in this function [-Wmaybe-uninitialized]
-fs/reiserfs/prints.c:368:1: warning: 'noreturn' function does return [enabled by default]
+Use devm_ioremap_resource instead of devm_request_and_ioremap.
 
-[coccinelle]
-drivers/leds/leds-pca9633.c:138:2-3: Unneeded semicolon
+This was done using the semantic patch
+scripts/coccinelle/api/devm_ioremap_resource.cocci
+
+The relevant call to platform_get_resource was manually moved down to the
+call to devm_ioremap_resource.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ drivers/mmc/host/mvsdio.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
+index 4ddd83f..2ac7d3a 100644
+--- a/drivers/mmc/host/mvsdio.c
++++ b/drivers/mmc/host/mvsdio.c
+@@ -687,9 +687,8 @@ static int __init mvsd_probe(struct platform_device *pdev)
+ 	int ret, irq;
+ 	struct pinctrl *pinctrl;
+ 
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	irq = platform_get_irq(pdev, 0);
+-	if (!r || irq < 0)
++	if (irq < 0)
+ 		return -ENXIO;
+ 
+ 	mmc = mmc_alloc_host(sizeof(struct mvsd_host), &pdev->dev);
+@@ -774,9 +773,10 @@ static int __init mvsd_probe(struct platform_device *pdev)
+ 
+ 	spin_lock_init(&host->lock);
+ 
+-	host->base = devm_request_and_ioremap(&pdev->dev, r);
+-	if (!host->base) {
+-		ret = -ENOMEM;
++	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	host->base = devm_ioremap_resource(&pdev->dev, r);
++	if (IS_ERR(host->base)) {
++		ret = PTR_ERR(host->base);
+ 		goto out;
+ 	}
+ 
+
