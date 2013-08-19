@@ -1,35 +1,86 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Fri, 16 Aug 2013 16:53:50 +0000
-Subject: Re: [patch] sata, highbank: clear whole array in highbank_initialize_phys()
-Message-Id: <20130816165350.GL2505@htj.dyndns.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 Aug 2013 11:20:35 +0000
+Subject: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
+Message-Id: <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130816073336.GA9881@elgon.mountain>
-In-Reply-To: <20130816073336.GA9881@elgon.mountain>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-ide@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello, Dan.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Fri, Aug 16, 2013 at 10:33:36AM +0300, Dan Carpenter wrote:
-> @@ -347,9 +347,9 @@ static int highbank_initialize_phys(struct device *dev, void __iomem *addr)
->  	struct device_node *phy_nodes[CPHY_PHY_COUNT];
->  	u32 tx_atten[CPHY_PORT_COUNT];
->  
-> -	memset(port_data, 0, sizeof(struct phy_lane_info) * CPHY_PORT_COUNT);
-> -	memset(phy_nodes, 0, sizeof(struct device_node*) * CPHY_PHY_COUNT);
-> -	memset(tx_atten, 0xff, CPHY_PORT_COUNT);
-> +	memset(port_data, 0, sizeof(port_data));
-> +	memset(phy_nodes, 0, sizeof(phy_nodes));
-> +	memset(tx_atten, 0xff, sizeof(tx_atten));
+Use devm_ioremap_resource instead of devm_request_and_ioremap.
 
-Ugh... why would anybody name a global variable port_data[]?  So,
-port_data is global and the other two are local.  Wouldn't it be
-better to just do "= { }" on declaration for the local ones?
+This was done using the semantic patch
+scripts/coccinelle/api/devm_ioremap_resource.cocci
 
-Thanks.
+Error-handling code was manually removed from the associated calls to
+platform_get_resource.
 
--- 
-tejun
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The first block of modified code is followed by a call to
+devm_request_mem_region for pcie->cs with no associated ioremap.  Should
+ioremap be used in this case as well?
+
+ drivers/pci/host/pci-tegra.c |   29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 7356741..db2ddc5 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -1031,28 +1031,17 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 		return err;
+ 	}
+ 
+-	/* request and remap controller registers */
+ 	pads = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pads");
+-	if (!pads) {
+-		err = -EADDRNOTAVAIL;
++	pcie->pads = devm_ioremap_resource(&pdev->dev, pads);
++	if (IS_ERR(pcie->pads)) {
++		err = PTR_ERR(pcie->pads);
+ 		goto poweroff;
+ 	}
+ 
+ 	afi = platform_get_resource_byname(pdev, IORESOURCE_MEM, "afi");
+-	if (!afi) {
+-		err = -EADDRNOTAVAIL;
+-		goto poweroff;
+-	}
+-
+-	pcie->pads = devm_request_and_ioremap(&pdev->dev, pads);
+-	if (!pcie->pads) {
+-		err = -EADDRNOTAVAIL;
+-		goto poweroff;
+-	}
+-
+-	pcie->afi = devm_request_and_ioremap(&pdev->dev, afi);
+-	if (!pcie->afi) {
+-		err = -EADDRNOTAVAIL;
++	pcie->afi = devm_ioremap_resource(&pdev->dev, afi);
++	if (IS_ERR(pcie->afi)) {
++		err = PTR_ERR(pcie->afi);
+ 		goto poweroff;
+ 	}
+ 
+@@ -1492,9 +1481,9 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 		rp->lanes = value;
+ 		rp->pcie = pcie;
+ 
+-		rp->base = devm_request_and_ioremap(pcie->dev, &rp->regs);
+-		if (!rp->base)
+-			return -EADDRNOTAVAIL;
++		rp->base = devm_ioremap_resource(pcie->dev, &rp->regs);
++		if (IS_ERR(rp->base))
++			return PTR_ERR(rp->base);
+ 
+ 		list_add_tail(&rp->list, &pcie->ports);
+ 	}
+
