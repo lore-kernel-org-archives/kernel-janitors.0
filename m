@@ -1,87 +1,72 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Mon, 12 Aug 2013 08:22:39 +0000
-Subject: Re: [PATCH 16/16] arch/arm/mach-pxa/stargate2.c: Avoid using ARRAY_AND_SIZE(e) as a function argumen
-Message-Id: <5208A95A.70606@kernel.org>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Mon, 19 Aug 2013 11:47:23 +0000
+Subject: [PATCH 4/6 v2] usb: musb: dsps: simplify platform_get_resource_byname/devm_ioremap_resource
+Message-Id: <alpine.DEB.2.02.1308191346390.2313@hadrien>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="8323329-1786006515-1376912843=:2313"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376239917-15594-17-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376239917-15594-17-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+References: <1376902316-18520-1-git-send-email-Julia.Lawall@lip6.fr> <1376902316-18520-5-git-send-email-Julia.Lawall@lip6.fr> <5211FED3.4090102@secomea.dk>
+In-Reply-To: <5211FED3.4090102@secomea.dk>
+To: =?ISO-8859-15?Q?Svenning_S=F8rensen?= <sss@secomea.dk>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Felipe Balbi <balbi@ti.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/11/13 17:51, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
-> arity of the called function.
-> 
-> The semantic match that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e,f;
-> @@
-> 
-> f(...,
-> - ARRAY_AND_SIZE(e)
-> + e,ARRAY_SIZE(e)
->   ,...)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Jonathan Cameron <jic23@kernel.org>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks,
-> 
-> ---
-> Not compiled.
-> 
->  arch/arm/mach-pxa/stargate2.c |   13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/mach-pxa/stargate2.c b/arch/arm/mach-pxa/stargate2.c
-> index 62aea3e..adacedd 100644
-> --- a/arch/arm/mach-pxa/stargate2.c
-> +++ b/arch/arm/mach-pxa/stargate2.c
-> @@ -406,7 +406,8 @@ static struct i2c_pxa_platform_data i2c_pdata = {
->  static void __init imote2_stargate2_init(void)
->  {
->  
-> -	pxa2xx_mfp_config(ARRAY_AND_SIZE(sg2_im2_unified_pin_config));
-> +	pxa2xx_mfp_config(sg2_im2_unified_pin_config,
-> +			  ARRAY_SIZE(sg2_im2_unified_pin_config));
->  
->  	pxa_set_ffuart_info(NULL);
->  	pxa_set_btuart_info(NULL);
-> @@ -604,7 +605,7 @@ static struct platform_device *imote2_devices[] = {
->  
->  static void __init imote2_init(void)
->  {
-> -	pxa2xx_mfp_config(ARRAY_AND_SIZE(imote2_pin_config));
-> +	pxa2xx_mfp_config(imote2_pin_config, ARRAY_SIZE(imote2_pin_config));
->  
->  	imote2_stargate2_init();
->  
-> @@ -983,13 +984,15 @@ static void __init stargate2_init(void)
->  	   prior to connecting the MFP stuff up. */
->  	__raw_writel(__raw_readl(MECR) & ~MECR_NOS, MECR);
->  
-> -	pxa2xx_mfp_config(ARRAY_AND_SIZE(stargate2_pin_config));
-> +	pxa2xx_mfp_config(stargate2_pin_config,
-> +			  ARRAY_SIZE(stargate2_pin_config));
->  
->  	imote2_stargate2_init();
->  
-> -	platform_add_devices(ARRAY_AND_SIZE(stargate2_devices));
-> +	platform_add_devices(stargate2_devices, ARRAY_SIZE(stargate2_devices));
->  
-> -	i2c_register_board_info(0, ARRAY_AND_SIZE(stargate2_i2c_board_info));
-> +	i2c_register_board_info(0, stargate2_i2c_board_info,
-> +				ARRAY_SIZE(stargate2_i2c_board_info));
->  	i2c_register_board_info(1, stargate2_pwr_i2c_board_info,
->  				ARRAY_SIZE(stargate2_pwr_i2c_board_info));
->  
-> 
+--8323329-1786006515-1376912843=:2313
+Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Remove unneeded error handling on the result of a call to
+platform_get_resource_byname when the value is passed to
+devm_ioremap_resource.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,e,e1;
+expression ret !=3D 0;
+identifier l;
+@@
+
+  res =3D platform_get_resource_byname(...);
+- if (res =3D=3D NULL) { ... \(goto l;\|return ret;\) }
+  e =3D devm_ioremap_resource(e1, res);
+// </smpl>
+
+This patch also adjusts the error-handling code on the call to
+devm_ioremap_resource to check the right value, noticed by Svenning S=F8ren=
+sen.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+v2: Fixed the bug on the test of the result of devm_ioremap_resource
+
+ drivers/usb/musb/musb_dsps.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_dsps.c b/drivers/usb/musb/musb_dsps.c
+index 4ffbaac..e60be6f 100644
+--- a/drivers/usb/musb/musb_dsps.c
++++ b/drivers/usb/musb/musb_dsps.c
+@@ -357,12 +357,9 @@ static int dsps_musb_init(struct musb *musb)
+ 	u32 rev, val;
+
+ 	r =3D platform_get_resource_byname(parent, IORESOURCE_MEM, "control");
+-	if (!r)
+-		return -EINVAL;
+-
+ 	reg_base =3D devm_ioremap_resource(dev, r);
+-	if (!musb->ctrl_base)
+-		return -EINVAL;
++        if (IS_ERR(reg_base))
++		return PTR_ERR(reg_base);
+ 	musb->ctrl_base =3D reg_base;
+
+ 	/* NOP driver needs change if supporting dual instance */
+--8323329-1786006515-1376912843=:2313--
