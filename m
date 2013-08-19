@@ -1,41 +1,73 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Mon, 19 Aug 2013 20:49:07 +0000
+From: Stephen Warren <swarren@wwwdotorg.org>
+Date: Mon, 19 Aug 2013 20:56:45 +0000
 Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
-Message-Id: <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
+Message-Id: <5212868D.2050604@wwwdotorg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo>
- <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com> <20130819201224.GC5191@mithrandir>
-In-Reply-To: <20130819201224.GC5191@mithrandir>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr> <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo> <alpine.DEB.2.02.1308191405450.2313@hadrien> <20130819121238.GB5740@ulmo> <alpine.DEB.2.02.1308191414360.2313@hadrien> <20130819193339.GB4961@mithrandir>
+In-Reply-To: <20130819193339.GB4961@mithrandir>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2013 at 2:12 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Mon, Aug 19, 2013 at 02:04:24PM -0600, Bjorn Helgaas wrote:
->> On Mon, Aug 19, 2013 at 6:02 AM, Thierry Reding
->> <thierry.reding@gmail.com> wrote:
->>
->> > Bjorn, how do you want to handle patches to the Tegra PCIe driver in the
->> > future? Do you want me to prepare a branch and pull from that or would
->> > you rather just take simple patches?
->>
->> I'm in the habit of applying patches from email, so that's easy for
->> me.  But a branch would be OK, too.
->
-> Patches work for me too. Is this cleanup patch something that you'd be
-> comfortable with applying after 3.12-rc1 or would you rather defer it to
-> 3.13?
+On 08/19/2013 01:33 PM, Thierry Reding wrote:
+> On Mon, Aug 19, 2013 at 02:15:39PM +0200, Julia Lawall wrote:
+>> 
+>> 
+>> On Mon, 19 Aug 2013, Thierry Reding wrote:
+>> 
+>>> On Mon, Aug 19, 2013 at 02:07:54PM +0200, Julia Lawall wrote:
+>>>> 
+>>>> 
+>>>> On Mon, 19 Aug 2013, Thierry Reding wrote:
+>>>> 
+>>>>> On Mon, Aug 19, 2013 at 01:20:35PM +0200, Julia Lawall
+>>>>> wrote:
+>>>>>> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>>>>>> 
+>>>>>> Use devm_ioremap_resource instead of
+>>>>>> devm_request_and_ioremap.
+>>>>>> 
+>>>>>> This was done using the semantic patch 
+>>>>>> scripts/coccinelle/api/devm_ioremap_resource.cocci
+>>>>>> 
+>>>>>> Error-handling code was manually removed from the
+>>>>>> associated calls to platform_get_resource.
+>>>>>> 
+>>>>>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>>>>>> 
+>>>>>> --- The first block of modified code is followed by a
+>>>>>> call to devm_request_mem_region for pcie->cs with no
+>>>>>> associated ioremap.  Should ioremap be used in this case
+>>>>>> as well?
+>>>>> 
+>>>>> No. The pcie->cs resource is 256 MiB so it's challenging to
+>>>>> map it at once. Furthermore it requires a non-linear
+>>>>> mapping so we do it on demand.
+>>>> 
+>>>> OK, thanks for the explanation.  Is the comment, though, a
+>>>> little misleading, since the mapping is not done here?
+>>>> 
+>>>> /* request and remap configuration space */
+>>> 
+>>> Yes, that's misleading. Given that it doesn't really add
+>>> anything useful information either, perhaps I should just
+>>> remove it.
+>> 
+>> OK, or maybe something like
+>> 
+>> /* request configuration space, but remap later, on demand */
+>> 
+>> To make it clear that something different is intended than the 
+>> devm_ioremap_resources that come just before..
+> 
+> Yes, that works for me too. Can you respin the patch with the
+> comment updated and my Acked-by and Tested-by so Bjorn can pick it
+> up?
 
-I'm not really sure how we should manage drivers/pci/host/*.  Those
-files are mostly arch code, and I'm not sure it's useful for me to be
-in the middle of managing them.
+Just a note though: Since the Tegra PCIe driver is only being added in
+v3.12-rc1, and that add is happening in the Tegra/arm-soc tree, Bjorn
+won't be able to accept the patch until after v3.12-rc1. Perhaps the
+arm-soc tree could take the patch before then though...
 
-I assume Stephen or somebody has a tree with the pci-tegra.c stuff
-that's in -next right now; it seems like it'd be simplest to just add
-this patch there and merge in during the v3.12 merge window.
-
-Bjorn
