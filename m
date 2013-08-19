@@ -1,47 +1,81 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 Jul 2013 16:35:34 +0000
-Subject: [patch -next] drm/radeon/dpm/btc: off by one in btc_set_mc_special_registers()
-Message-Id: <20130701163534.GA4229@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 Aug 2013 08:51:51 +0000
+Subject: [PATCH 1/6] ASoC: omap: simplify platform_get_resource_byname/devm_ioremap_resource
+Message-Id: <1376902316-18520-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1376902316-18520-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376902316-18520-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Jerome Glisse <jglisse@redhat.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>
 
-It should be ">=" instead of ">" here.  The table->mc_reg_address[]
-array has SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE (16) elements.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove unneeded error handling on the result of a call to
+platform_get_resource_byname when the value is passed to devm_ioremap_resource.
 
-diff --git a/drivers/gpu/drm/radeon/btc_dpm.c b/drivers/gpu/drm/radeon/btc_dpm.c
-index bab0185..55491e7 100644
---- a/drivers/gpu/drm/radeon/btc_dpm.c
-+++ b/drivers/gpu/drm/radeon/btc_dpm.c
-@@ -1913,7 +1913,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
- 			}
- 			j++;
+In the case of omap-dmic.c, the error-handling code of
+devm_ioremap_resource is also corrected to include releasing the clock.
+
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression pdev,res,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+  res = platform_get_resource_byname(...);
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/omap/omap-dmic.c  |    9 +++------
+ sound/soc/omap/omap-mcpdm.c |    3 ---
+ 2 files changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/sound/soc/omap/omap-dmic.c b/sound/soc/omap/omap-dmic.c
+index 4db1f8e..12e566b 100644
+--- a/sound/soc/omap/omap-dmic.c
++++ b/sound/soc/omap/omap-dmic.c
+@@ -480,15 +480,12 @@ static int asoc_dmic_probe(struct platform_device *pdev)
+ 	dmic->dma_data.filter_data = "up_link";
  
--			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
-+			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
- 				return -EINVAL;
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mpu");
+-	if (!res) {
+-		dev_err(dmic->dev, "invalid memory resource\n");
+-		ret = -ENODEV;
++	dmic->io_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(dmic->io_base)) {
++		ret = PTR_ERR(dmic->io_base);
+ 		goto err_put_clk;
+ 	}
  
- 			tmp = RREG32(MC_PMG_CMD_MRS);
-@@ -1928,7 +1928,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
- 			}
- 			j++;
+-	dmic->io_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(dmic->io_base))
+-		return PTR_ERR(dmic->io_base);
  
--			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
-+			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
- 				return -EINVAL;
- 			break;
- 		case MC_SEQ_RESERVE_M >> 2:
-@@ -1942,7 +1942,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
- 			}
- 			j++;
+ 	ret = snd_soc_register_component(&pdev->dev, &omap_dmic_component,
+ 					 &omap_dmic_dai, 1);
+diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
+index a49dc52..90d2a7c 100644
+--- a/sound/soc/omap/omap-mcpdm.c
++++ b/sound/soc/omap/omap-mcpdm.c
+@@ -480,9 +480,6 @@ static int asoc_mcpdm_probe(struct platform_device *pdev)
+ 	mcpdm->dma_data[1].filter_data = "up_link";
  
--			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
-+			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
- 				return -EINVAL;
- 			break;
- 		default:
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mpu");
+-	if (res = NULL)
+-		return -ENOMEM;
+-
+ 	mcpdm->io_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(mcpdm->io_base))
+ 		return PTR_ERR(mcpdm->io_base);
+
