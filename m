@@ -1,55 +1,98 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Mon, 19 Aug 2013 20:34:03 +0000
+From: Joe Perches <joe@perches.com>
+Date: Mon, 19 Aug 2013 21:10:44 +0000
 Subject: Re: rfc: trivial patches and slow deaths?
-Message-Id: <alpine.LNX.2.00.1308192229360.21654@pobox.suse.cz>
+Message-Id: <1376946644.2016.35.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376944033.2016.13.camel@joe-AO722>
-In-Reply-To: <1376944033.2016.13.camel@joe-AO722>
+	 <alpine.LNX.2.00.1308192229360.21654@pobox.suse.cz>
+In-Reply-To: <alpine.LNX.2.00.1308192229360.21654@pobox.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
+To: Jiri Kosina <jkosina@suse.cz>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On Mon, 19 Aug 2013, Joe Perches wrote:
-
-> Patches submitted to the trivial address
-> trivial@kernel.org seem to go nowhere slowly.
+On Mon, 2013-08-19 at 22:34 +0200, Jiri Kosina wrote:
+> On Mon, 19 Aug 2013, Joe Perches wrote:
 > 
-> Jiri, do you have any actual plans to try to
-> pick up these patches, notify the submitters
-> that the patches have been accepted or rejected,
-> and forward them on when appropriate?
+> > Patches submitted to the trivial address
+> > trivial@kernel.org seem to go nowhere slowly.
+> > 
+> > Jiri, do you have any actual plans to try to
+> > pick up these patches, notify the submitters
+> > that the patches have been accepted or rejected,
+> > and forward them on when appropriate?
+> > 
+> > Otherwise, the patches sit for _months_ without
+> > any action.  That's simply too long.
+> > 
+> > Should another mechanism or pathway be created
+> > instead?
 > 
-> Otherwise, the patches sit for _months_ without
-> any action.  That's simply too long.
+> Joe,
 > 
-> Should another mechanism or pathway be created
-> instead?
+> I disagree. Please look at what is happening in trivial.git over longer 
+> period of time.
 
-Joe,
+I need to look at years instead of months?
 
-I disagree. Please look at what is happening in trivial.git over longer 
-period of time.
+Would US Presidental election cycles or decades
+be better timeframes?
 
-The patches I am holding off are larger series which are submitted both to 
-trivial@ and maintainers as well. With such pathces, it's not clear who is 
-taking (which parts of) what, hence I hold them off for long time, and get 
-back to it eventually later.
+> The patches I am holding off are larger series which are submitted both to 
+> trivial@ and maintainers as well.
 
-It's time consuming, as I have to check linux-next for those patches, 
-hence it's delayed.
+What makes something "large" to you?
 
-One-shot single trivial patches are picked up reasonably fast (i.e. are 
-very rarely delayed for one Linus' release).
+This is a 7 line patch that corrects logging defects
+that has had no reply from you for the last month.
 
-But yes, I agree, you are usually sending cross-tree large patchsets, and 
-therefore you are often affected by what you describe.
+https://patchwork.kernel.org/patch/2833648/
 
-Perhaps if you send to trivial@ only those patches which haven't been 
-picked up by maintainers already, that'd lead to much faster application 
-of those, if that's what you are about.
+>  With such pathces, it's not clear who is 
+> taking (which parts of) what, hence I hold them off for long time, and get 
+> back to it eventually later.
+> It's time consuming, as I have to check linux-next for those patches, 
+> hence it's delayed.
 
--- 
-Jiri Kosina
-SUSE Labs
+No, I think you don't have to do that checking.
+
+When I submit patches to trivial, they are submitted to you
+with a simple, polite cc to the nominal maintainer(s).
+
+You delay these patches and you also provide no feedback
+as to whatever status may or may not exist to the handling
+of these patches.
+
+You're very opaque to these patches being handled or ignored.
+
+For instance, the ctl_table typedef removal series from over
+2 months ago:
+
+https://lkml.org/lkml/2013/6/13/650
+
+Originally, 33 patches sent to trivial (you) broken out by
+subsystem with cc's to nominal maintainers.
+
+Not a single reply to this by you to the series.
+
+You did apply 2 of the 33 when the other nominal
+maintainers supplied "acked-by"s.
+
+I submitted another single aggregated patch with the
+unapplied remainders a month ago and there's been no
+action by you at all on it.
+
+https://lkml.org/lkml/2013/7/22/600
+
+I think that's overly long a time frame (any patch
+series will bitrot) and too opaque for trivial patch
+submitters to have any idea what's going on.
+
+Also, if you're concerned that the trivial tree
+wouldn't merge well in next, couldn't you use
+pull+rebase to work out whether or not a patch has
+already been applied in another tree?
+
+cheers, Joe
+
