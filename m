@@ -1,32 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 05 Aug 2013 18:08:43 +0000
-Subject: Re: [PATCH] net/vmw_vsock/af_vsock.c: drop unneeded semicolon
-Message-Id: <20130805.110843.938924468911400543.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 Aug 2013 11:20:37 +0000
+Subject: [PATCH 3/7] iommu/arm: replace devm_request_and_ioremap by devm_ioremap_resource
+Message-Id: <1376911241-27720-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1375714059-29567-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1375714059-29567-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon,  5 Aug 2013 16:47:38 +0200
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Drop the semicolon at the end of the list_for_each_entry loop header.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> Not tested, but I can't imagine how the current code could work, since vsk
-> should end up pointing to a dummy value.
+Use devm_ioremap_resource instead of devm_request_and_ioremap.
 
-This bug has been there since the code was first checked in, and indeed
-it's going to work on garbage since it's going to pass in the list
-head transformed into a vsock structure.
+This was partly done using the semantic patch
+scripts/coccinelle/api/devm_ioremap_resource.cocci
 
-Applied, thanks Julia.
+The error-handling code on the call to platform_get_resource was removed
+manually, and the initialization of smmu->size was manually moved lower, to
+take advantage of the NULL test on res performed by devm_ioremap_resource.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/iommu/arm-smmu.c |   11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index ebd0a4c..dd91465 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -1761,15 +1761,10 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev)
+ 	smmu->dev = dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(dev, "missing base address/size\n");
+-		return -ENODEV;
+-	}
+-
++	smmu->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(smmu->base))
++		return PTR_ERR(smmu->base);
+ 	smmu->size = resource_size(res);
+-	smmu->base = devm_request_and_ioremap(dev, res);
+-	if (!smmu->base)
+-		return -EADDRNOTAVAIL;
+ 
+ 	if (of_property_read_u32(dev->of_node, "#global-interrupts",
+ 				 &smmu->num_global_irqs)) {
+
