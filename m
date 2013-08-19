@@ -1,46 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 14 Aug 2013 18:09:55 +0000
-Subject: Re: [patch] regulator: 88pm800: forever loop in pm800_regulator_probe()
-Message-Id: <20130814180955.GF2401@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Z0mFw3+mXTC5ycVe"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 Aug 2013 11:20:39 +0000
+Subject: [PATCH 5/7] bcm63xx_enet: replace devm_request_and_ioremap by devm_ioremap_resource
+Message-Id: <1376911241-27720-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130814161403.GA13601@elgon.mountain>
-In-Reply-To: <20130814161403.GA13601@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Axel Lin <axel.lin@ingics.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---Z0mFw3+mXTC5ycVe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Use devm_ioremap_resource instead of devm_request_and_ioremap.
 
-On Wed, Aug 14, 2013 at 07:14:03PM +0300, Dan Carpenter wrote:
-> This is supposed to be testing "i < ARRAY_SIZE()" instead of just
-> "ARRAY_SIZE()".
+This was done using the semantic patch
+scripts/coccinelle/api/devm_ioremap_resource.cocci
 
-Applied, thanks.
+The relevant call to platform_get_resource was manually moved down to the
+call to devm_ioremap_resource.
 
---Z0mFw3+mXTC5ycVe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+---
+ drivers/net/ethernet/broadcom/bcm63xx_enet.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-iQIcBAEBAgAGBQJSC8fvAAoJELSic+t+oim91EkP/RVbXWi7Hj1wdZaM13BsouKB
-MLpRc3Ax9Vow5RWtqU4esKVWkJrKOO6WOEPuAFi/6XlfGqD4vttIyZeaf1q59S7f
-/w6ZmsIMYR1JSqK49ulHJ1bZ35//gF+cx8/d3sERxih4AmpXJwnpQKQUVP1Zvyyp
-PJAb3UESuRwfDRn6cF9w3XwDiET5alylwHsVqBg/XnkM5t1KrMLMIP1fx7En9xUa
-iM7KEdsi9yjyufCRqUUVuBgLH2GHm4Sao3KIgxVjU3L7DrE99q8lNlrRW9VNFePP
-BgAoExk2EgqUFimUAu7nPBu0VC80FPXz+kzc/EDaE3jbW1oxmrk+D4038zgPCEZw
-iNGdDNSZJaYkGDCYCE46pe5gdE4RwruZzp1PZCoXUer5Q2sUCnG/FN5b82J/RQNm
-LePTD1/qNGcPcgRJkNmrVn/j7L68mpYAGUjQWIeXCP4dybrnOvcIBn2/nTtTyrG5
-WZn5spY2bgh0UppBJ90X/yM6X9eL85fLv7as18Sgy1taTqItMDxSwdnYeCyJZ47j
-Ke5bAM00ajhXYL+r1/03EuVtsPGW4cMan9IIsZOfLaSznhUb9ax81B6aBOq2LTlq
-hxTuPEoJ6HfaHFOKwn718KAse3/1lHiz5ZNYXdmeR6oyhzYKEetXKv7hEH6Z/1D4
-S/SUg66JJyV0wkjr35qx
-=FfpP
------END PGP SIGNATURE-----
+diff --git a/drivers/net/ethernet/broadcom/bcm63xx_enet.c b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+index b1bcd4b..89ff09e 100644
+--- a/drivers/net/ethernet/broadcom/bcm63xx_enet.c
++++ b/drivers/net/ethernet/broadcom/bcm63xx_enet.c
+@@ -1747,11 +1747,10 @@ static int bcm_enet_probe(struct platform_device *pdev)
+ 	if (!bcm_enet_shared_base[0])
+ 		return -ENODEV;
+ 
+-	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	res_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	res_irq_rx = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
+ 	res_irq_tx = platform_get_resource(pdev, IORESOURCE_IRQ, 2);
+-	if (!res_mem || !res_irq || !res_irq_rx || !res_irq_tx)
++	if (!res_irq || !res_irq_rx || !res_irq_tx)
+ 		return -ENODEV;
+ 
+ 	ret = 0;
+@@ -1767,9 +1766,10 @@ static int bcm_enet_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto out;
+ 
+-	priv->base = devm_request_and_ioremap(&pdev->dev, res_mem);
+-	if (priv->base = NULL) {
+-		ret = -ENOMEM;
++	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->base = devm_ioremap_resource(&pdev->dev, res_mem);
++	if (IS_ERR(priv->base)) {
++		ret = PTR_ERR(priv->base);
+ 		goto out;
+ 	}
+ 
 
---Z0mFw3+mXTC5ycVe--
