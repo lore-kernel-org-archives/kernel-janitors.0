@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 19 Aug 2013 09:12:21 +0000
+Date: Mon, 19 Aug 2013 10:12:55 +0000
 Subject: Re: [PATCH 5/6] regulator: ti-abb: simplify platform_get_resource_byname/devm_ioremap_resource
-Message-Id: <alpine.DEB.2.02.1308191112010.2313@hadrien>
+Message-Id: <alpine.DEB.2.02.1308191210300.2313@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376902316-18520-1-git-send-email-Julia.Lawall@lip6.fr> <1376902316-18520-6-git-send-email-Julia.Lawall@lip6.fr> <5211E111.4060406@bfs.de>
 In-Reply-To: <5211E111.4060406@bfs.de>
@@ -62,35 +62,10 @@ On Mon, 19 Aug 2013, walter harms wrote:
 >
 > is pname used by anything else ? (also below)
 
-I'll check.  Thanks for the feedback.
+I'm not sure to understand the sense of the question.  My patch does
+remove a use of pname, but there is another one on the line above, in the
+call to platform_get_resource_byname.  Perhaps the definition of pname
+could be inlined at this use, but it is a common pattern throughout the
+function.
 
 julia
-
-
->
-> re,
->  wh
->
-> > @@ -770,11 +765,6 @@ static int ti_abb_probe(struct platform_device *pdev)
-> >
-> >  	pname = "ldo-address";
-> >  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, pname);
-> > -	if (!res) {
-> > -		dev_dbg(dev, "Missing '%s' IO resource\n", pname);
-> > -		ret = -ENODEV;
-> > -		goto skip_opt;
-> > -	}
-> >  	abb->ldo_base = devm_ioremap_resource(dev, res);
-> >  	if (IS_ERR(abb->ldo_base)) {
-> >  		ret = PTR_ERR(abb->ldo_base);
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
