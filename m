@@ -1,39 +1,85 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sat, 31 Aug 2013 16:37:21 +0000
-Subject: Re: [patch 2/2] staging: rtl8188eu: || vs && typo
-Message-Id: <52221BC1.3040501@lwfinger.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 Aug 2013 08:51:56 +0000
+Subject: [PATCH 6/6] MIPS: ath79: simplify platform_get_resource_byname/devm_ioremap_resource
+Message-Id: <1376902316-18520-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130829214614.GC23197@elgon.mountain>
-In-Reply-To: <20130829214614.GC23197@elgon.mountain>
+References: <1376902316-18520-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376902316-18520-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
 
-On 08/29/2013 04:46 PM, Dan Carpenter wrote:
-> Obviously it's impossible for ->KeyLength to be both 5 and 13.  I assume
-> that && was intended here.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-> index 5fab477..193f641 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-> @@ -743,7 +743,7 @@ _func_enter_;
->
->   		/*  Check key length for WEP. For NDTEST, 2005.01.27, by rcnjko. */
->   		if ((encryptionalgo = _WEP40_ || encryptionalgo = _WEP104_) &&
-> -		    (key->KeyLength != 5 || key->KeyLength != 13)) {
-> +		    (key->KeyLength != 5 && key->KeyLength != 13)) {
->   			RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_err_, ("WEP KeyLength:0x%x != 5 or 13\n", key->KeyLength));
->   			ret = _FAIL;
->   			goto exit;
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Remove unneeded error handling on the result of a call to
+platform_get_resource_byname when the value is passed to devm_ioremap_resource.
 
-Thanks,
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-Larry
+// <smpl>
+@@
+expression pdev,res,e,e1;
+expression ret != 0;
+identifier l;
+@@
 
+  res = platform_get_resource_byname(...);
+- if (res = NULL) { ... \(goto l;\|return ret;\) }
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/mips/pci/pci-ar71xx.c |    3 ---
+ arch/mips/pci/pci-ar724x.c |    9 ---------
+ 2 files changed, 12 deletions(-)
+
+diff --git a/arch/mips/pci/pci-ar71xx.c b/arch/mips/pci/pci-ar71xx.c
+index 18517dd..d471a26 100644
+--- a/arch/mips/pci/pci-ar71xx.c
++++ b/arch/mips/pci/pci-ar71xx.c
+@@ -363,9 +363,6 @@ static int ar71xx_pci_probe(struct platform_device *pdev)
+ 	spin_lock_init(&apc->lock);
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg_base");
+-	if (!res)
+-		return -EINVAL;
+-
+ 	apc->cfg_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(apc->cfg_base))
+ 		return PTR_ERR(apc->cfg_base);
+diff --git a/arch/mips/pci/pci-ar724x.c b/arch/mips/pci/pci-ar724x.c
+index 65ec032..785b265 100644
+--- a/arch/mips/pci/pci-ar724x.c
++++ b/arch/mips/pci/pci-ar724x.c
+@@ -362,25 +362,16 @@ static int ar724x_pci_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctrl_base");
+-	if (!res)
+-		return -EINVAL;
+-
+ 	apc->ctrl_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(apc->ctrl_base))
+ 		return PTR_ERR(apc->ctrl_base);
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg_base");
+-	if (!res)
+-		return -EINVAL;
+-
+ 	apc->devcfg_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(apc->devcfg_base))
+ 		return PTR_ERR(apc->devcfg_base);
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "crp_base");
+-	if (!res)
+-		return -EINVAL;
+-
+ 	apc->crp_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(apc->crp_base))
+ 		return PTR_ERR(apc->crp_base);
 
