@@ -1,86 +1,75 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 19 Aug 2013 11:20:35 +0000
-Subject: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
-Message-Id: <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Mon, 19 Aug 2013 12:02:50 +0000
+Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
+Message-Id: <20130819120249.GA5740@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="/04w6evG8XlLl3ft"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>
+ <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Use devm_ioremap_resource instead of devm_request_and_ioremap.
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This was done using the semantic patch
-scripts/coccinelle/api/devm_ioremap_resource.cocci
+On Mon, Aug 19, 2013 at 01:20:35PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Use devm_ioremap_resource instead of devm_request_and_ioremap.
+>=20
+> This was done using the semantic patch
+> scripts/coccinelle/api/devm_ioremap_resource.cocci
+>=20
+> Error-handling code was manually removed from the associated calls to
+> platform_get_resource.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+> The first block of modified code is followed by a call to
+> devm_request_mem_region for pcie->cs with no associated ioremap.  Should
+> ioremap be used in this case as well?
 
-Error-handling code was manually removed from the associated calls to
-platform_get_resource.
+No. The pcie->cs resource is 256 MiB so it's challenging to map it at
+once. Furthermore it requires a non-linear mapping so we do it on
+demand.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>  drivers/pci/host/pci-tegra.c |   29 +++++++++--------------------
+>  1 file changed, 9 insertions(+), 20 deletions(-)
 
----
-The first block of modified code is followed by a call to
-devm_request_mem_region for pcie->cs with no associated ioremap.  Should
-ioremap be used in this case as well?
+Tested-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 
- drivers/pci/host/pci-tegra.c |   29 +++++++++--------------------
- 1 file changed, 9 insertions(+), 20 deletions(-)
+Bjorn, how do you want to handle patches to the Tegra PCIe driver in the
+future? Do you want me to prepare a branch and pull from that or would
+you rather just take simple patches?
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 7356741..db2ddc5 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -1031,28 +1031,17 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
- 		return err;
- 	}
- 
--	/* request and remap controller registers */
- 	pads = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pads");
--	if (!pads) {
--		err = -EADDRNOTAVAIL;
-+	pcie->pads = devm_ioremap_resource(&pdev->dev, pads);
-+	if (IS_ERR(pcie->pads)) {
-+		err = PTR_ERR(pcie->pads);
- 		goto poweroff;
- 	}
- 
- 	afi = platform_get_resource_byname(pdev, IORESOURCE_MEM, "afi");
--	if (!afi) {
--		err = -EADDRNOTAVAIL;
--		goto poweroff;
--	}
--
--	pcie->pads = devm_request_and_ioremap(&pdev->dev, pads);
--	if (!pcie->pads) {
--		err = -EADDRNOTAVAIL;
--		goto poweroff;
--	}
--
--	pcie->afi = devm_request_and_ioremap(&pdev->dev, afi);
--	if (!pcie->afi) {
--		err = -EADDRNOTAVAIL;
-+	pcie->afi = devm_ioremap_resource(&pdev->dev, afi);
-+	if (IS_ERR(pcie->afi)) {
-+		err = PTR_ERR(pcie->afi);
- 		goto poweroff;
- 	}
- 
-@@ -1492,9 +1481,9 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 		rp->lanes = value;
- 		rp->pcie = pcie;
- 
--		rp->base = devm_request_and_ioremap(pcie->dev, &rp->regs);
--		if (!rp->base)
--			return -EADDRNOTAVAIL;
-+		rp->base = devm_ioremap_resource(pcie->dev, &rp->regs);
-+		if (IS_ERR(rp->base))
-+			return PTR_ERR(rp->base);
- 
- 		list_add_tail(&rp->list, &pcie->ports);
- 	}
+Thierry
 
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSEglpAAoJEN0jrNd/PrOhOTcQAKuObLu6NluZG2adbr82G6Wi
+xzDJrTTVkyWS5CFDmhnRa7EutpxJODMBQhlZ6/gto1ii81rCMIHZLpzrpUV6e3BY
+YDMwwfIyjYaf/Nq1c5YA7sQSpIkw+FTRudoHSdwQub0gJr5hWXS6aI3MCsRT6gKp
+eiMA6cjYBsYs7czGXpdj6mwOTWv8qO4oey+gpdYhSMonzHg7v86W2JQ+jbnDqzXe
+1xmNFF89rnujJ2Uh/aAccRD25fO5B/d5H1d5VSKemO2Pmh4Gs1Ge1U5NN8slPE0w
+5Y8IYJg3lIT4KF1pxLtncvwJfb2y1/o7L19yCodrrfQShMh3BUm/+W4WENl7Y+TS
+NxP7CAgDM1+8Amrmqau3mbdCIPKMyhL+UOYOmTSlh4aQQSKn313rRlECYYX9cXdK
+1pzP1hRs2IQruFxVJwt98oqV//CTAvnzMfl0b/eKXY/8ojP789e3uVNu6m37iuNv
+y7SD9GCaL9QSkD9n7CHQKOcrc14nBszCk7jIEa8vurmqGvEZrEL8uuo3UbkyZ5rC
+BRS1B02i6RHBrZ7AVC4fErtS8nR0lqav4AG6n2azs0eWeRA6dvIi/p6vrS/zjkEN
+itII9CF3kUxuaKeT9Qi/eVCq2FyLM4ZfOhce6xSyCGQq4r3ade4bSKg2L8ktBEcl
+WxOPwJFYhAbderurSJDL
+=N18C
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
