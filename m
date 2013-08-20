@@ -1,54 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 20 Aug 2013 08:54:48 +0000
-Subject: [patch] crypto: tegra-aes - bitwise vs logical and
-Message-Id: <20130820085447.GA20170@elgon.mountain>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Date: Tue, 20 Aug 2013 16:31:41 +0000
+Subject: Re: [patch] crypto: tegra-aes - bitwise vs logical and
+Message-Id: <521399ED.9030701@wwwdotorg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130820085447.GA20170@elgon.mountain>
+In-Reply-To: <20130820085447.GA20170-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>
-Cc: "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Herbert Xu <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-The bug here is that:
+On 08/20/2013 02:54 AM, Dan Carpenter wrote:
+> The bug here is that:
+> 
+> 	while (eng_busy & (!icq_empty) & dma_busy)
+> 
+> is never true because it's using bitwise instead of logical ANDs.  The
+> other bitwise AND conditions work as intended but I changed them as well
+> for consistency.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Static checker stuff.  I don't have the hardware.
 
-	while (eng_busy & (!icq_empty) & dma_busy)
+Varun, can you please test the driver with this change applied and make
+sure it works correctly.
 
-is never true because it's using bitwise instead of logical ANDs.  The
-other bitwise AND conditions work as intended but I changed them as well
-for consistency.
+If you could also update our internal testing wiki with the steps you
+use for this testing, that'd be great too.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Static checker stuff.  I don't have the hardware.
+Thanks.
 
-diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
-index 85ea752..2d58da9 100644
---- a/drivers/crypto/tegra-aes.c
-+++ b/drivers/crypto/tegra-aes.c
-@@ -275,7 +275,7 @@ static int aes_start_crypt(struct tegra_aes_dev *dd, u32 in_addr, u32 out_addr,
- 			value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
- 			eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
- 			icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
--		} while (eng_busy & (!icq_empty));
-+		} while (eng_busy && !icq_empty);
- 		aes_writel(dd, cmdq[i], TEGRA_AES_ICMDQUE_WR);
- 	}
- 
-@@ -365,7 +365,7 @@ static int aes_set_key(struct tegra_aes_dev *dd)
- 		eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
- 		icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
- 		dma_busy = value & TEGRA_AES_DMA_BUSY_FIELD;
--	} while (eng_busy & (!icq_empty) & dma_busy);
-+	} while (eng_busy && !icq_empty && dma_busy);
- 
- 	/* settable command to get key into internal registers */
- 	value = CMD_SETTABLE << CMDQ_OPCODE_SHIFT |
-@@ -379,7 +379,7 @@ static int aes_set_key(struct tegra_aes_dev *dd)
- 		value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
- 		eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
- 		icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
--	} while (eng_busy & (!icq_empty));
-+	} while (eng_busy && !icq_empty);
- 
- 	return 0;
- }
