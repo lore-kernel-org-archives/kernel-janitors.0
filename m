@@ -1,53 +1,54 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 26 Aug 2013 16:02:33 +0000
-Subject: [patch] clk: vt8500: several forever loops
-Message-Id: <20130826154908.GD12428@elgon.mountain>
+Date: Tue, 20 Aug 2013 08:54:48 +0000
+Subject: [patch] crypto: tegra-aes - bitwise vs logical and
+Message-Id: <20130820085447.GA20170@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Herbert Xu <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>
+Cc: "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-This does a bunch of looping like this:
+The bug here is that:
 
-	for (div2 = 7; div2 >= 0; div2--)
+	while (eng_busy & (!icq_empty) & dma_busy)
 
-But unsigned values are always greater than or equal to zero so it just
-loops and loops.  Really "mul", "div1" and "div2" should all be declared
-as int for cleanliness sake.
+is never true because it's using bitwise instead of logical ANDs.  The
+other bitwise AND conditions work as intended but I changed them as well
+for consistency.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Static checker stuff.
+Static checker stuff.  I don't have the hardware.
 
-diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-index 82306f5..8d5b57c 100644
---- a/drivers/clk/clk-vt8500.c
-+++ b/drivers/clk/clk-vt8500.c
-@@ -363,7 +363,7 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
--	u32 mul, div1, div2;
-+	int mul, div1, div2;
- 	u32 best_mul, best_div1, best_div2;
- 	unsigned long tclk, rate_err, best_err;
+diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
+index 85ea752..2d58da9 100644
+--- a/drivers/crypto/tegra-aes.c
++++ b/drivers/crypto/tegra-aes.c
+@@ -275,7 +275,7 @@ static int aes_start_crypt(struct tegra_aes_dev *dd, u32 in_addr, u32 out_addr,
+ 			value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
+ 			eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+ 			icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+-		} while (eng_busy & (!icq_empty));
++		} while (eng_busy && !icq_empty);
+ 		aes_writel(dd, cmdq[i], TEGRA_AES_ICMDQUE_WR);
+ 	}
  
-@@ -431,7 +431,7 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
- static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
--	u32 mul, div1, div2;
-+	int mul, div1, div2;
- 	u32 best_mul, best_div1, best_div2;
- 	unsigned long tclk, rate_err, best_err;
+@@ -365,7 +365,7 @@ static int aes_set_key(struct tegra_aes_dev *dd)
+ 		eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+ 		icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+ 		dma_busy = value & TEGRA_AES_DMA_BUSY_FIELD;
+-	} while (eng_busy & (!icq_empty) & dma_busy);
++	} while (eng_busy && !icq_empty && dma_busy);
  
-@@ -475,7 +475,7 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
- 				u32 *multiplier, u32 *divisor1, u32 *divisor2)
- {
--	u32 mul, div1, div2;
-+	int mul, div1, div2;
- 	u32 best_mul, best_div1, best_div2;
- 	unsigned long tclk, rate_err, best_err;
+ 	/* settable command to get key into internal registers */
+ 	value = CMD_SETTABLE << CMDQ_OPCODE_SHIFT |
+@@ -379,7 +379,7 @@ static int aes_set_key(struct tegra_aes_dev *dd)
+ 		value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
+ 		eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+ 		icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+-	} while (eng_busy & (!icq_empty));
++	} while (eng_busy && !icq_empty);
  
+ 	return 0;
+ }
