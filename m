@@ -1,36 +1,34 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 06 Aug 2013 00:51:09 +0000
-Subject: Re: [PATCH] trivial: adjust code alignment
-Message-Id: <1375750269.1968.18.camel@joe-AO722>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 20 Aug 2013 08:57:35 +0000
+Subject: [patch] staging: comedi: dt282x: dt282x_ai_insn_read() always fails
+Message-Id: <20130820085735.GB20170@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1375714059-29567-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1375714059-29567-5-git-send-email-Julia.Lawall@lip6.fr>
-	 <20130805160645.GI5051@mwanda> <1375719427.3133.31.camel@joe-AO722>
-	 <20130805163054.GN5102@mwanda>
-In-Reply-To: <20130805163054.GN5102@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 2013-08-05 at 19:30 +0300, Dan Carpenter wrote:
-> On Mon, Aug 05, 2013 at 09:17:07AM -0700, Joe Perches wrote:
-> > ov7670_read via i2c_transfer can return a positive # too.
-> > Perhaps all of these should be individually tested for "< 0".
-> You're misreading something.  ov7670_read_i2c() only returns zero
-> and negative error codes.
+In dt282x_ai_insn_read() we call this macro like:
+wait_for(!mux_busy(), comedi_error(dev, "timeout\n"); return -ETIME;);
+Because the if statement doesn't have curly braces it means we always
+return -ETIME and the function never succeeds.
 
-Yup, right, thanks, I skimmed over the
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This macro is very ugly, btw.
 
-	if (ret >= 0) {
-		...
-		ret = 0;
-	}
-
-bit in ov7670_read_i2c
-
-though I think this function via the i2c_transfer
-can return 0 messages transferred as "success".
-
-
+diff --git a/drivers/staging/comedi/drivers/dt282x.c b/drivers/staging/comedi/drivers/dt282x.c
+index 23cb0335..4a25382 100644
+--- a/drivers/staging/comedi/drivers/dt282x.c
++++ b/drivers/staging/comedi/drivers/dt282x.c
+@@ -267,8 +267,9 @@ struct dt282x_private {
+ 			}					\
+ 			udelay(5);				\
+ 		}						\
+-		if (_i)						\
++		if (_i) {					\
+ 			b					\
++		}						\
+ 	} while (0)
+ 
+ static int prep_ai_dma(struct comedi_device *dev, int chan, int size);
