@@ -1,17 +1,17 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Date: Tue, 20 Aug 2013 16:31:41 +0000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 21 Aug 2013 11:51:18 +0000
 Subject: Re: [patch] crypto: tegra-aes - bitwise vs logical and
-Message-Id: <521399ED.9030701@wwwdotorg.org>
+Message-Id: <20130821115118.GG23287@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130820085447.GA20170@elgon.mountain>
-In-Reply-To: <20130820085447.GA20170-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
+In-Reply-To: <20130820085447.GA20170@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Herbert Xu <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Stephen Warren <swarren@wwwdotorg.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/20/2013 02:54 AM, Dan Carpenter wrote:
+On Tue, Aug 20, 2013 at 11:54:48AM +0300, Dan Carpenter wrote:
 > The bug here is that:
 > 
 > 	while (eng_busy & (!icq_empty) & dma_busy)
@@ -21,14 +21,9 @@ On 08/20/2013 02:54 AM, Dan Carpenter wrote:
 > for consistency.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static checker stuff.  I don't have the hardware.
 
-Varun, can you please test the driver with this change applied and make
-sure it works correctly.
-
-If you could also update our internal testing wiki with the steps you
-use for this testing, that'd be great too.
-
-Thanks.
-
+Also applied.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
