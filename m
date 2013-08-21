@@ -1,27 +1,42 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Fri, 16 Aug 2013 18:58:39 +0000
-Subject: Re: [PATCH 2/6] drivers/usb/host/xhci.c Fixing xhci_readl call
-Message-Id: <20130816185839.GC8768@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2013 08:40:24 +0000
+Subject: re: net: Add TI DaVinci EMAC driver
+Message-Id: <20130821084024.GK5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376678958-15316-1-git-send-email-kumargauravgupta3@gmail.com>
-In-Reply-To: <1376678958-15316-1-git-send-email-kumargauravgupta3@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, Aug 17, 2013 at 12:19:18AM +0530, Kumar Gaurav wrote:
-> Fixed xhci_readl call issue as per definition modified in patch
-> 0019-drivers-usb-host-xhci.h-Removing-xhci_hcd-from-argum.patch
+Hello Anant Gole,
 
-What patch is that?  It looks like a filename, not a git commit id.  Can
-you please fix this up?
+The patch a6286ee630f6: "net: Add TI DaVinci EMAC driver" from May 
+18, 2009, has the following potentially buggy code:
 
-> Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
+drivers/net/ethernet/ti/davinci_emac.c
+  1316                   ((EMAC_DEF_ERROR_FRAME_EN) ? (EMAC_RXMBP_CEFEN_MASK) : 0x0) |
+  1317                   ((EMAC_DEF_PROM_EN) ? (EMAC_RXMBP_CAFEN_MASK) : 0x0) |
+  1318                   ((EMAC_DEF_PROM_CH & EMAC_RXMBP_CHMASK) << \
+                           ^^^^^^^^^^^^^^^^
+This is bit 0 but it's used as a mask.  It should maybe be:
 
-Yeah, a signed-off-by line!  (hint, please put that in your other
-patches as well.)
+				EMAC_MBP_PROMISCCH(EMAC_DEF_PROM_CH) & EMAC_RXMBP_CHMASK
 
-thanks,
+  1319                          EMAC_RXMBP_PROMCH_SHIFT) |
+  1320                   ((EMAC_DEF_BCAST_EN) ? (EMAC_RXMBP_BROADEN_MASK) : 0x0) |
+  1321                   ((EMAC_DEF_BCAST_CH & EMAC_RXMBP_CHMASK) << \
+                           ^^^^^^^^^^^^^^^^^
+Same thing here.
 
-greg k-h
+  1322                          EMAC_RXMBP_BROADCH_SHIFT) |
+  1323                   ((EMAC_DEF_MCAST_EN) ? (EMAC_RXMBP_MULTIEN_MASK) : 0x0) |
+  1324                   ((EMAC_DEF_MCAST_CH & EMAC_RXMBP_CHMASK) << \
+                           ^^^^^^^^^^^^^^^^^
+  1325                          EMAC_RXMBP_MULTICH_SHIFT));
+
+Really, this whole section of bit masks is very hard to look at or
+review.
+
+regards,
+dan carpenter
+
