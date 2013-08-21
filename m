@@ -1,57 +1,118 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Aug 2013 08:42:24 +0000
-Subject: [patch] usb: gadget: double unlocks on error in atmel_usba_start()
-Message-Id: <20130821084224.GM5240@elgon.mountain>
+Date: Wed, 21 Aug 2013 08:31:18 +0000
+Subject: [patch] staging: gdm7240: fix error handling of probe()
+Message-Id: <20130821083118.GE5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-The "goto out" statements were wrong.  We aren't holding any locks at
-that point so we should return directly.
+The error handling is messy and not in kernel style.  On some paths it
+frees "mux_dev" twice.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I can't compile this.
 
-diff --git a/drivers/usb/gadget/atmel_usba_udc.c b/drivers/usb/gadget/atmel_usba_udc.c
-index 40d2338..2cb52e0 100644
---- a/drivers/usb/gadget/atmel_usba_udc.c
-+++ b/drivers/usb/gadget/atmel_usba_udc.c
-@@ -1772,7 +1772,7 @@ out:
- static int atmel_usba_start(struct usb_gadget *gadget,
- 		struct usb_gadget_driver *driver)
+diff --git a/drivers/staging/gdm724x/gdm_mux.c b/drivers/staging/gdm724x/gdm_mux.c
+index 9e217ff..5b1ef40 100644
+--- a/drivers/staging/gdm724x/gdm_mux.c
++++ b/drivers/staging/gdm724x/gdm_mux.c
+@@ -509,11 +509,11 @@ static int init_usb(struct mux_dev *mux_dev)
+ 
+ static int gdm_mux_probe(struct usb_interface *intf, const struct usb_device_id *id)
  {
+-	struct mux_dev *mux_dev = NULL;
+-	struct tty_dev *tty_dev = NULL;
++	struct mux_dev *mux_dev;
++	struct tty_dev *tty_dev;
+ 	u16 idVendor, idProduct;
+ 	int bInterfaceNumber;
 -	int ret = 0;
 +	int ret;
- 	struct usba_udc *udc = container_of(gadget, struct usba_udc, gadget);
- 	unsigned long flags;
+ 	int i;
+ 	struct usb_device *usbdev = interface_to_usbdev(intf);
+ 	bInterfaceNumber = intf->cur_altsetting->desc.bInterfaceNumber;
+@@ -523,61 +523,54 @@ static int gdm_mux_probe(struct usb_interface *intf, const struct usb_device_id
  
-@@ -1784,11 +1784,11 @@ static int atmel_usba_start(struct usb_gadget *gadget,
+ 	pr_info("mux vid = 0x%04x pid = 0x%04x\n", idVendor, idProduct);
  
- 	ret = clk_prepare_enable(udc->pclk);
- 	if (ret)
+-	if (bInterfaceNumber != 2) {
+-		ret = -ENODEV;
 -		goto out;
-+		return ret;
- 	ret = clk_prepare_enable(udc->hclk);
- 	if (ret) {
- 		clk_disable_unprepare(udc->pclk);
+-	}
++	if (bInterfaceNumber != 2)
++		return -ENODEV;
+ 
+ 	mux_dev = kzalloc(sizeof(struct mux_dev), GFP_KERNEL);
+-	if (!mux_dev) {
+-		ret = -ENOMEM;
 -		goto out;
-+		return ret;
+-	}
++	if (!mux_dev)
++		return -ENOMEM;
+ 
+ 	tty_dev = kzalloc(sizeof(struct tty_dev), GFP_KERNEL);
+ 	if (!tty_dev) {
+-		kfree(mux_dev);
+ 		ret = -ENOMEM;
+-		goto out;
++		goto err_free_mux;
  	}
  
- 	DBG(DBG_GADGET, "registered driver `%s'\n", driver->driver.name);
-@@ -1804,11 +1804,9 @@ static int atmel_usba_start(struct usb_gadget *gadget,
- 		usba_writel(udc, CTRL, USBA_ENABLE_MASK);
- 		usba_writel(udc, INT_ENB, USBA_END_OF_RESET);
- 	}
--
+ 	mux_dev->usbdev = usbdev;
+ 	mux_dev->control_intf = intf;
+ 
+ 	ret = init_usb(mux_dev);
+-	if (ret < 0)
+-		goto out;
++	if (ret)
++		goto err_free_tty;
+ 
+ 	tty_dev->priv_dev = (void *)mux_dev;
+ 	tty_dev->send_func = gdm_mux_send;
+ 	tty_dev->recv_func = gdm_mux_recv;
+ 	tty_dev->send_control = gdm_mux_send_control;
+ 
+-	if (register_lte_tty_device(tty_dev, &intf->dev) < 0) {
+-		unregister_lte_tty_device(tty_dev);
+-		mux_dev = tty_dev->priv_dev;
++	ret = register_lte_tty_device(tty_dev, &intf->dev);
++	if (ret)
++		goto err_unregister_tty;
+ 
+-		ret = -1;
+-		goto out;
+-	}
+ 	for (i = 0; i < TTY_MAX_COUNT; i++)
+ 		mux_dev->tty_dev = tty_dev;
+ 
 -out:
- 	spin_unlock_irqrestore(&udc->lock, flags);
+-	if (ret < 0) {
+-		kfree(tty_dev);
+-		if (mux_dev) {
+-			release_usb(mux_dev);
+-			kfree(mux_dev);
+-		}
+-	} else {
+-		mux_dev->intf = intf;
+-		mux_dev->usb_state = PM_NORMAL;
+-	}
++	mux_dev->intf = intf;
++	mux_dev->usb_state = PM_NORMAL;
  
--	return ret;
+ 	usb_get_dev(usbdev);
+ 	usb_set_intfdata(intf, tty_dev);
+ 
 +	return 0;
++
++err_unregister_tty:
++	unregister_lte_tty_device(tty_dev);
++	release_usb(mux_dev);
++err_free_tty:
++	kfree(tty_dev);
++err_free_mux:
++	kfree(mux_dev);
++
+ 	return ret;
  }
  
- static int atmel_usba_stop(struct usb_gadget *gadget,
