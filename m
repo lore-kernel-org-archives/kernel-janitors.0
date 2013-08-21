@@ -1,49 +1,36 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Wed, 14 Aug 2013 13:32:47 +0000
-Subject: Re: [PATCH 27/29] drivers/ata/sata_rcar.c: simplify use of devm_ioremap_resource
-Message-Id: <20130814133247.GD28628@htj.dyndns.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2013 08:27:27 +0000
+Subject: [patch] staging: comedi: comedi_bond: silence a shift wrapping warning
+Message-Id: <20130821082727.GB5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376471493-22215-28-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-28-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 14, 2013 at 11:11:31AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
-> 
-> Move the call to platform_get_resource adjacent to the call to
-> devm_ioremap_resource to make the connection between them more clear.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression pdev,res,n,e,e1;
-> expression ret != 0;
-> identifier l;
-> @@
-> 
-> - res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->   ... when != res
-> - if (res = NULL) { ... \(goto l;\|return ret;\) }
->   ... when != res
-> + res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->   e = devm_ioremap_resource(e1, res);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+We set this using:
 
-Applied to libata/for-3.12.
+	devs_closed |= (0x1 << bdev->minor)
 
-Thanks.
+Since 0x1 is an int then only the lower 32 bits are usable before we hit
+a shift wrapping bug.  There are some static checkers which complain
+about this.  I've silenced the warning by making devs_closed a 32 bit
+number.
 
--- 
-tejun
+32 bits should be enough for anybody.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/comedi/drivers/comedi_bond.c b/drivers/staging/comedi/drivers/comedi_bond.c
+index 7e20bf0..8f6c942 100644
+--- a/drivers/staging/comedi/drivers/comedi_bond.c
++++ b/drivers/staging/comedi/drivers/comedi_bond.c
+@@ -335,7 +335,7 @@ static int bonding_attach(struct comedi_device *dev,
+ static void bonding_detach(struct comedi_device *dev)
+ {
+ 	struct comedi_bond_private *devpriv = dev->private;
+-	unsigned long devs_closed = 0;
++	unsigned int devs_closed = 0;
+ 
+ 	if (devpriv) {
+ 		while (devpriv->ndevs-- && devpriv->devs) {
