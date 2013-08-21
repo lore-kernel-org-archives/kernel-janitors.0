@@ -1,67 +1,37 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Date: Wed, 14 Aug 2013 12:59:24 +0000
-Subject: Re: [PATCH 8/29] drivers/cpuidle/cpuidle-kirkwood.c: simplify use of devm_ioremap_resource
-Message-Id: <10943702.UYfHQJBDot@vostro.rjw.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2013 08:38:21 +0000
+Subject: [patch] usb: musb: unlock on error in cppi41_dma_callback()
+Message-Id: <20130821083821.GI5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr> <1376471493-22215-9-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wednesday, August 14, 2013 11:11:12 AM Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression pdev,res,n,e,e1;
-> expression ret != 0;
-> identifier l;
-> @@
-> 
-> - res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->   ... when != res
-> - if (res = NULL) { ... \(goto l;\|return ret;\) }
->   ... when != res
-> + res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->   e = devm_ioremap_resource(e1, res);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+We need to unlock and enable IRQs before returning on error.
 
-Queued up for 3.12.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I cannot compile this code.
 
-Thanks,
-Rafael
-
-
-> ---
->  drivers/cpuidle/cpuidle-kirkwood.c |    3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/cpuidle-kirkwood.c b/drivers/cpuidle/cpuidle-kirkwood.c
-> index 521b0a7..2237135 100644
-> --- a/drivers/cpuidle/cpuidle-kirkwood.c
-> +++ b/drivers/cpuidle/cpuidle-kirkwood.c
-> @@ -60,9 +60,6 @@ static int kirkwood_cpuidle_probe(struct platform_device *pdev)
->  	struct resource *res;
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (res = NULL)
-> -		return -EINVAL;
-> -
->  	ddr_operation_base = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(ddr_operation_base))
->  		return PTR_ERR(ddr_operation_base);
-> 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+diff --git a/drivers/usb/musb/musb_cppi41.c b/drivers/usb/musb/musb_cppi41.c
+index e64701d..5c42fc1 100644
+--- a/drivers/usb/musb/musb_cppi41.c
++++ b/drivers/usb/musb/musb_cppi41.c
+@@ -151,7 +151,7 @@ static void cppi41_dma_callback(void *private_data)
+ 				direction,
+ 				DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+ 		if (WARN_ON(!dma_desc))
+-			return;
++			goto out_unlock;
+ 
+ 		dma_desc->callback = cppi41_dma_callback;
+ 		dma_desc->callback_param = channel;
+@@ -164,6 +164,7 @@ static void cppi41_dma_callback(void *private_data)
+ 			musb_writew(epio, MUSB_RXCSR, csr);
+ 		}
+ 	}
++out_unlock:
+ 	spin_unlock_irqrestore(&musb->lock, flags);
+ }
+ 
