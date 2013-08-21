@@ -1,29 +1,57 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Aug 2013 21:45:42 +0000
-Subject: [patch 1/2] staging: rtl8188eu: off by one in rtw_set_802_11_add_wep()
-Message-Id: <20130829214542.GB23197@elgon.mountain>
+Date: Wed, 21 Aug 2013 08:42:24 +0000
+Subject: [patch] usb: gadget: double unlocks on error in atmel_usba_start()
+Message-Id: <20130821084224.GM5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-"keyid" is used as an offset into the ->dot11DefKey[] array.  The array
-has 4 elements.
+The "goto out" statements were wrong.  We aren't holding any locks at
+that point so we should return directly.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I can't compile this.
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-index 9e12774..5fab477 100644
---- a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-@@ -566,7 +566,7 @@ _func_enter_;
+diff --git a/drivers/usb/gadget/atmel_usba_udc.c b/drivers/usb/gadget/atmel_usba_udc.c
+index 40d2338..2cb52e0 100644
+--- a/drivers/usb/gadget/atmel_usba_udc.c
++++ b/drivers/usb/gadget/atmel_usba_udc.c
+@@ -1772,7 +1772,7 @@ out:
+ static int atmel_usba_start(struct usb_gadget *gadget,
+ 		struct usb_gadget_driver *driver)
+ {
+-	int ret = 0;
++	int ret;
+ 	struct usba_udc *udc = container_of(gadget, struct usba_udc, gadget);
+ 	unsigned long flags;
  
- 	keyid = wep->KeyIndex & 0x3fffffff;
+@@ -1784,11 +1784,11 @@ static int atmel_usba_start(struct usb_gadget *gadget,
  
--	if (keyid > 4) {
-+	if (keyid >= 4) {
- 		RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_err_, ("MgntActrtw_set_802_11_add_wep:keyid>4 =>fail\n"));
- 		ret = false;
- 		goto exit;
+ 	ret = clk_prepare_enable(udc->pclk);
+ 	if (ret)
+-		goto out;
++		return ret;
+ 	ret = clk_prepare_enable(udc->hclk);
+ 	if (ret) {
+ 		clk_disable_unprepare(udc->pclk);
+-		goto out;
++		return ret;
+ 	}
+ 
+ 	DBG(DBG_GADGET, "registered driver `%s'\n", driver->driver.name);
+@@ -1804,11 +1804,9 @@ static int atmel_usba_start(struct usb_gadget *gadget,
+ 		usba_writel(udc, CTRL, USBA_ENABLE_MASK);
+ 		usba_writel(udc, INT_ENB, USBA_END_OF_RESET);
+ 	}
+-
+-out:
+ 	spin_unlock_irqrestore(&udc->lock, flags);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int atmel_usba_stop(struct usb_gadget *gadget,
