@@ -1,68 +1,40 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 20 Aug 2013 11:49:26 +0000
-Subject: Re: [PATCH 3/7] iommu/arm: replace devm_request_and_ioremap by devm_ioremap_resource
-Message-Id: <alpine.DEB.2.02.1308201348570.2269@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2013 08:24:23 +0000
+Subject: [patch] mmc: sdhci-bcm-kona: '|' vs '&' typo
+Message-Id: <20130821082423.GA5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376911241-27720-4-git-send-email-Julia.Lawall@lip6.fr>
- <20130820113503.GC23007@mudshark.cambridge.arm.com>
-In-Reply-To: <20130820113503.GC23007@mudshark.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Christian Daudt <csd@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The intent was to test if a flag was set.  In the current code the
+conditions are always true.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Untested.
 
-On Tue, 20 Aug 2013, Will Deacon wrote:
-
-> Hi Julia,
->
-> On Mon, Aug 19, 2013 at 12:20:37PM +0100, Julia Lawall wrote:
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > Use devm_ioremap_resource instead of devm_request_and_ioremap.
-> >
-> > This was partly done using the semantic patch
-> > scripts/coccinelle/api/devm_ioremap_resource.cocci
-> >
-> > The error-handling code on the call to platform_get_resource was removed
-> > manually, and the initialization of smmu->size was manually moved lower, to
-> > take advantage of the NULL test on res performed by devm_ioremap_resource.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >  drivers/iommu/arm-smmu.c |   11 +++--------
-> >  1 file changed, 3 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> > index ebd0a4c..dd91465 100644
-> > --- a/drivers/iommu/arm-smmu.c
-> > +++ b/drivers/iommu/arm-smmu.c
-> > @@ -1761,15 +1761,10 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev)
-> >  	smmu->dev = dev;
-> >
-> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -	if (!res) {
-> > -		dev_err(dev, "missing base address/size\n");
-> > -		return -ENODEV;
-> > -	}
-> > -
-> > +	smmu->base = devm_ioremap_resource(dev, res);
-> > +	if (IS_ERR(smmu->base))
-> > +		return PTR_ERR(smmu->base);
-> >  	smmu->size = resource_size(res);
-> > -	smmu->base = devm_request_and_ioremap(dev, res);
-> > -	if (!smmu->base)
-> > -		return -EADDRNOTAVAIL;
->
-> This does mean we trade arguably more useful error codes for the catch-all
-> -EINVAL, but the code ends up looking neater so I can be swayed either way.
->
-> Is this part of a series you're dealing with, or would you like me to take
-> this (I already sent my SMMU patches for 3.12)?
-
-Please take it onwards.  Thanks.
-
-julia
+diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
+index 87175f9..9ffac0b 100644
+--- a/drivers/mmc/host/sdhci-bcm-kona.c
++++ b/drivers/mmc/host/sdhci-bcm-kona.c
+@@ -263,7 +263,7 @@ static int __init sdhci_bcm_kona_probe(struct platform_device *pdev)
+ 		(mmc_gpio_get_cd(host->mmc) != -ENOSYS) ? 'Y' : 'N',
+ 		(mmc_gpio_get_ro(host->mmc) != -ENOSYS) ? 'Y' : 'N');
+ 
+-	if (host->mmc->caps | MMC_CAP_NONREMOVABLE)
++	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
+ 		host->quirks |= SDHCI_QUIRK_BROKEN_CARD_DETECTION;
+ 
+ 	dev_dbg(dev, "is_8bit=%c\n",
+@@ -282,7 +282,7 @@ static int __init sdhci_bcm_kona_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* if device is eMMC, emulate card insert right here */
+-	if (host->mmc->caps | MMC_CAP_NONREMOVABLE) {
++	if (host->mmc->caps & MMC_CAP_NONREMOVABLE) {
+ 		ret = sdhci_bcm_kona_sd_card_emulate(host, 1);
+ 		if (ret) {
+ 			dev_err(dev,
