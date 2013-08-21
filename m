@@ -1,36 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Aug 2013 09:14:07 +0000
-Subject: Re: [patch] mmc: sdhci-bcm-kona: '|' vs '&' typo
-Message-Id: <20130821091407.GX4713@mwanda>
+From: "Christian Daudt" <csd@broadcom.com>
+Date: Wed, 21 Aug 2013 14:30:11 +0000
+Subject: RE: [patch] mmc: sdhci-bcm-kona: '|' vs '&' typo
+Message-Id: <400A4C8D93A8FA4CAECDE394033FA86A2AD236D7@SJEXCHMB09.corp.ad.broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130821082423.GA5240@elgon.mountain>
- <52148115.3050703@bfs.de>
-In-Reply-To: <52148115.3050703@bfs.de>
+In-Reply-To: <20130821082423.GA5240@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Chris Ball <cjb@laptop.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Christian Daudt <csd@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Chris Ball <cjb@laptop.org>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Arnd Bergmann <arnd@arndb.de>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Wed, Aug 21, 2013 at 10:57:57AM +0200, walter harms wrote:
-> 
-> 
-> Am 21.08.2013 10:24, schrieb Dan Carpenter:
-> > The intent was to test if a flag was set.  In the current code the
-> > conditions are always true.
-> 
-> I guess that it worked before ...
-> That leaves the Question: are the tests needed at all ?
+Hi Dan,
+ Good catch. This fix is already in the "ARM: mmc: fix NONREMOVABLE test in sdhci-bcm-kona" patch that is part of the git pull request sent to armsoc yesterday:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-August/193422.html
 
-It's flagging everything as broken, and I presume that isn't good.
-But on the other hand, these changes do occasionally break things
-because now a lot of new untested code is used.  It really is a good
-idea for someone to test this.
+ Thanks,
+   Csd
 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > Static checker stuff.  Untested.
+-----Original Message-----
+From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
+Sent: Wednesday, August 21, 2013 1:24 AM
+To: Chris Ball
+Cc: Grant Likely; Rob Herring; Christian Daudt; Arnd Bergmann; linux-mmc@vger.kernel.org; devicetree@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: [patch] mmc: sdhci-bcm-kona: '|' vs '&' typo
 
-regards,
-dan carpenter
+The intent was to test if a flag was set.  In the current code the
+conditions are always true.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Untested.
+
+diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
+index 87175f9..9ffac0b 100644
+--- a/drivers/mmc/host/sdhci-bcm-kona.c
++++ b/drivers/mmc/host/sdhci-bcm-kona.c
+@@ -263,7 +263,7 @@ static int __init sdhci_bcm_kona_probe(struct platform_device *pdev)
+ 		(mmc_gpio_get_cd(host->mmc) != -ENOSYS) ? 'Y' : 'N',
+ 		(mmc_gpio_get_ro(host->mmc) != -ENOSYS) ? 'Y' : 'N');
+ 
+-	if (host->mmc->caps | MMC_CAP_NONREMOVABLE)
++	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
+ 		host->quirks |= SDHCI_QUIRK_BROKEN_CARD_DETECTION;
+ 
+ 	dev_dbg(dev, "is_8bit=%c\n",
+@@ -282,7 +282,7 @@ static int __init sdhci_bcm_kona_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* if device is eMMC, emulate card insert right here */
+-	if (host->mmc->caps | MMC_CAP_NONREMOVABLE) {
++	if (host->mmc->caps & MMC_CAP_NONREMOVABLE) {
+ 		ret = sdhci_bcm_kona_sd_card_emulate(host, 1);
+ 		if (ret) {
+ 			dev_err(dev,
+
 
