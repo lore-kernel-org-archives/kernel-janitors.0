@@ -1,24 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Aug 2013 18:59:10 +0000
-Subject: Re: [patch] net/fec: "u32" is more explicit than "unsigned long"
-Message-Id: <20130827185909.GM6329@mwanda>
+Date: Wed, 21 Aug 2013 08:28:04 +0000
+Subject: [patch] staging: comedi: pcl812: missing break statement
+Message-Id: <20130821082804.GC5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823094920.GP31293@elgon.mountain>
- <1377261869.3364.3.camel@bwh-desktop.uk.level5networks.com>
- <20130827.145144.478588680902912563.davem@davemloft.net>
-In-Reply-To: <20130827.145144.478588680902912563.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: bhutchings@solarflare.com, grant.likely@linaro.org, rob.herring@calxeda.com, fabio.estevam@freescale.com, Frank.Li@freescale.com, jim_baxter@mentor.com, B38611@freescale.com, netdev@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 27, 2013 at 02:51:44PM -0400, David Miller wrote:
-> 
-> Dan please resubmit with Ben's suggested changes, thanks.
+Smatch complains that there is a missing break statement here.
 
-Yes.  Of course.  Sorry for that, I'll resend tomorrow.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This looks correct to me, but please double check.
 
-regards,
-dan carpenter
-
+diff --git a/drivers/staging/comedi/drivers/pcl812.c b/drivers/staging/comedi/drivers/pcl812.c
+index 35251e7..03a0989 100644
+--- a/drivers/staging/comedi/drivers/pcl812.c
++++ b/drivers/staging/comedi/drivers/pcl812.c
+@@ -1404,6 +1404,7 @@ no_dma:
+ 		if (it->options[3] > 0)
+ 						/*  we use external trigger */
+ 			devpriv->use_ext_trg = 1;
++		break;
+ 	case boardA821:
+ 		devpriv->max_812_ai_mode0_rangewait = 1;
+ 		devpriv->mode_reg_int = (irq << 4) & 0xf0;
