@@ -1,56 +1,36 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 21 Aug 2013 08:57:57 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2013 09:14:07 +0000
 Subject: Re: [patch] mmc: sdhci-bcm-kona: '|' vs '&' typo
-Message-Id: <52148115.3050703@bfs.de>
+Message-Id: <20130821091407.GX4713@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130821082423.GA5240@elgon.mountain>
-In-Reply-To: <20130821082423.GA5240@elgon.mountain>
+ <52148115.3050703@bfs.de>
+In-Reply-To: <52148115.3050703@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: walter harms <wharms@bfs.de>
 Cc: Chris Ball <cjb@laptop.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Christian Daudt <csd@broadcom.com>, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-Am 21.08.2013 10:24, schrieb Dan Carpenter:
-> The intent was to test if a flag was set.  In the current code the
-> conditions are always true.
-
-I guess that it worked before ...
-That leaves the Question: are the tests needed at all ?
-
-re,
- wh
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static checker stuff.  Untested.
+On Wed, Aug 21, 2013 at 10:57:57AM +0200, walter harms wrote:
 > 
-> diff --git a/drivers/mmc/host/sdhci-bcm-kona.c b/drivers/mmc/host/sdhci-bcm-kona.c
-> index 87175f9..9ffac0b 100644
-> --- a/drivers/mmc/host/sdhci-bcm-kona.c
-> +++ b/drivers/mmc/host/sdhci-bcm-kona.c
-> @@ -263,7 +263,7 @@ static int __init sdhci_bcm_kona_probe(struct platform_device *pdev)
->  		(mmc_gpio_get_cd(host->mmc) != -ENOSYS) ? 'Y' : 'N',
->  		(mmc_gpio_get_ro(host->mmc) != -ENOSYS) ? 'Y' : 'N');
->  
-> -	if (host->mmc->caps | MMC_CAP_NONREMOVABLE)
-> +	if (host->mmc->caps & MMC_CAP_NONREMOVABLE)
->  		host->quirks |= SDHCI_QUIRK_BROKEN_CARD_DETECTION;
->  
->  	dev_dbg(dev, "is_8bit=%c\n",
-> @@ -282,7 +282,7 @@ static int __init sdhci_bcm_kona_probe(struct platform_device *pdev)
->  	}
->  
->  	/* if device is eMMC, emulate card insert right here */
-> -	if (host->mmc->caps | MMC_CAP_NONREMOVABLE) {
-> +	if (host->mmc->caps & MMC_CAP_NONREMOVABLE) {
->  		ret = sdhci_bcm_kona_sd_card_emulate(host, 1);
->  		if (ret) {
->  			dev_err(dev,
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
+> Am 21.08.2013 10:24, schrieb Dan Carpenter:
+> > The intent was to test if a flag was set.  In the current code the
+> > conditions are always true.
+> 
+> I guess that it worked before ...
+> That leaves the Question: are the tests needed at all ?
+
+It's flagging everything as broken, and I presume that isn't good.
+But on the other hand, these changes do occasionally break things
+because now a lot of new untested code is used.  It really is a good
+idea for someone to test this.
+
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > Static checker stuff.  Untested.
+
+regards,
+dan carpenter
+
