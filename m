@@ -1,40 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 21 Aug 2013 08:39:22 +0000
-Subject: re: USB: Add EHCI support for MX27 and MX31 based boards
-Message-Id: <20130821083922.GJ5240@elgon.mountain>
+From: Daniel Mack <zonque@gmail.com>
+Date: Wed, 21 Aug 2013 09:18:20 +0000
+Subject: Re: USB: Add EHCI support for MX27 and MX31 based boards
+Message-Id: <521485DC.8050701@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130821083922.GJ5240@elgon.mountain>
+In-Reply-To: <20130821083922.GJ5240@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-[ This warning is very old actually ]
+On 21.08.2013 10:39, Dan Carpenter wrote:
+> [ This warning is very old actually ]
+> 
+> Hello Daniel Mack,
+> 
+> This is a semi-automatic email about new static checker warnings.
+> 
+> The patch 7e8d5cd93fac: "USB: Add EHCI support for MX27 and MX31 
+> based boards" from Oct 28, 2009, leads to the following Smatch 
+> complaint:
 
-Hello Daniel Mack,
+Indeed, that's quite old. I just sent out a patch to fix this.
 
-This is a semi-automatic email about new static checker warnings.
+Thanks for spotting!
 
-The patch 7e8d5cd93fac: "USB: Add EHCI support for MX27 and MX31 
-based boards" from Oct 28, 2009, leads to the following Smatch 
-complaint:
 
-drivers/usb/host/ehci-mxc.c:187 ehci_mxc_drv_remove()
-	 error: we previously assumed 'pdata' could be null (see line 184)
+Daniel
 
-drivers/usb/host/ehci-mxc.c
-   183	
-   184		if (pdata && pdata->exit)
-                    ^^^^^
-New check.
-
-   185			pdata->exit(pdev);
-   186	
-   187		if (pdata->otg)
-                    ^^^^^^^^^^
-New dereference.
-
-   188			usb_phy_shutdown(pdata->otg);
-   189	
-
-regards,
-dan carpenter
