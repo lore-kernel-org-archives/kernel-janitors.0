@@ -1,27 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 16 Aug 2013 15:15:21 +0000
-Subject: Re: [PATCH 1/5 v2] drivers/gpio/gpio-omap.c: convert comma to semicolon
-Message-Id: <CACRpkdanzU9gjKQ7apUVQcBbROBcTgjA9mOfS6C8+4oAD1t_yQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2013 08:30:08 +0000
+Subject: [patch] staging: drm/imx: ipu-dc: signedness bug in ipu_dc_init_sync()
+Message-Id: <20130821083008.GD5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376378216-18473-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376378216-18473-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Santosh Shilimkar <santosh.shilimkar@ti.com>, kernel-janitors@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 13, 2013 at 9:16 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+"map" needs to be signed for the error handling to work.  In the success
+case then it holds a small non-negative value.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Replace a comma between expression statements by a semicolon.  This changes
-> the semantics of the code, but given the current indentation appears to be
-> what is intended.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Aha there is the right patch, sorry for the noise.
-
-Patch applied with Kevin's ACK.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/staging/imx-drm/ipu-v3/ipu-dc.c b/drivers/staging/imx-drm/ipu-v3/ipu-dc.c
+index 59f03f9..21bf1c8 100644
+--- a/drivers/staging/imx-drm/ipu-v3/ipu-dc.c
++++ b/drivers/staging/imx-drm/ipu-v3/ipu-dc.c
+@@ -161,14 +161,15 @@ int ipu_dc_init_sync(struct ipu_dc *dc, struct ipu_di *di, bool interlaced,
+ 		u32 pixel_fmt, u32 width)
+ {
+ 	struct ipu_dc_priv *priv = dc->priv;
+-	u32 reg = 0, map;
++	u32 reg = 0;
++	int map;
+ 
+ 	dc->di = ipu_di_get_num(di);
+ 
+ 	map = ipu_pixfmt_to_map(pixel_fmt);
+ 	if (map < 0) {
+ 		dev_dbg(priv->dev, "IPU_DISP: No MAP\n");
+-		return -EINVAL;
++		return map;
+ 	}
+ 
+ 	if (interlaced) {
