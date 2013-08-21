@@ -1,38 +1,40 @@
-From: "Serge E. Hallyn" <serge@hallyn.com>
-Date: Wed, 14 Aug 2013 11:57:57 +0000
-Subject: Re: [patch] efs: iget_locked() doesn't return an ERR_PTR()
-Message-Id: <20130814115757.GA16458@mail.hallyn.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 Aug 2013 08:39:22 +0000
+Subject: re: USB: Add EHCI support for MX27 and MX31 based boards
+Message-Id: <20130821083922.GJ5240@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130814094940.GF521@elgon.mountain>
-In-Reply-To: <20130814094940.GF521@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Serge Hallyn <serge.hallyn@canonical.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (dan.carpenter@oracle.com):
-> The iget_locked() function returns NULL on error and never an ERR_PTR.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[ This warning is very old actually ]
 
-Acked-by: Serge Hallyn <serge.hallyn@canonical.com>
+Hello Daniel Mack,
 
-> diff --git a/fs/efs/inode.c b/fs/efs/inode.c
-> index f3913eb..d15ccf2 100644
-> --- a/fs/efs/inode.c
-> +++ b/fs/efs/inode.c
-> @@ -57,7 +57,7 @@ struct inode *efs_iget(struct super_block *super, unsigned long ino)
->  	struct inode *inode;
->  
->  	inode = iget_locked(super, ino);
-> -	if (IS_ERR(inode))
-> +	if (!inode)
->  		return ERR_PTR(-ENOMEM);
->  	if (!(inode->i_state & I_NEW))
->  		return inode;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+This is a semi-automatic email about new static checker warnings.
+
+The patch 7e8d5cd93fac: "USB: Add EHCI support for MX27 and MX31 
+based boards" from Oct 28, 2009, leads to the following Smatch 
+complaint:
+
+drivers/usb/host/ehci-mxc.c:187 ehci_mxc_drv_remove()
+	 error: we previously assumed 'pdata' could be null (see line 184)
+
+drivers/usb/host/ehci-mxc.c
+   183	
+   184		if (pdata && pdata->exit)
+                    ^^^^^
+New check.
+
+   185			pdata->exit(pdev);
+   186	
+   187		if (pdata->otg)
+                    ^^^^^^^^^^
+New dereference.
+
+   188			usb_phy_shutdown(pdata->otg);
+   189	
+
+regards,
+dan carpenter
