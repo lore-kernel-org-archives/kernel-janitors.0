@@ -1,59 +1,133 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 19 Aug 2013 11:20:38 +0000
-Subject: [PATCH 4/7] dma: replace devm_request_and_ioremap by devm_ioremap_resource
-Message-Id: <1376911241-27720-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Thu, 22 Aug 2013 16:16:50 +0000
+Subject: build regressions 2013-08-22
+Message-Id: <52163972.KgF7PWPWt7SlQaRh%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Dan Williams <djbw@fb.com>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+[errors]
+drivers/staging/imx-drm/imx-tve.c:24:26: fatal error: linux/of_i2c.h: No such file or directory
+sound/soc/fsl/imx-sgtl5000.c:16:26: fatal error: linux/of_i2c.h: No such file or directory
+sound/soc/fsl/imx-wm8962.c:18:26: fatal error: linux/of_i2c.h: No such file or directory
+ERROR: "snd_dmaengine_pcm_set_config_from_dai_data" [sound/soc/omap/snd-soc-omap.ko] undefined!
+ERROR: "snd_dmaengine_pcm_open_request_chan" [sound/soc/omap/snd-soc-omap.ko] undefined!
+ERROR: "snd_dmaengine_pcm_close_release_chan" [sound/soc/omap/snd-soc-omap.ko] undefined!
+drivers/gpu/host1x/drm/output.c:12:26: fatal error: linux/of_i2c.h: No such file or directory
+drivers/thermal/fair_share.c:85: error: invalid type argument of '->'
+drivers/thermal/fair_share.c:88: error: incompatible types in assignment
+drivers/gpu/drm/radeon/cik.c:5696:3: error: implicit declaration of function 'cik_update_gfx_pg' [-Werror=implicit-function-declaration]
+drivers/thermal/fair_share.c:85:6: error: wrong type argument to unary exclamation mark
+drivers/thermal/fair_share.c:85:26: error: invalid type argument of '->' (have 'struct thermal_zone_params')
+drivers/thermal/fair_share.c:88:6: error: incompatible types when assigning to type 'const struct thermal_zone_params *' from type 'struct thermal_zone_params'
+security/integrity/digsig.c:61:5: error: redefinition of 'integrity_init_keyring'
+sound/pci/rme96.c:1575:2: error: implicit declaration of function 'vfree' [-Werror=implicit-function-declaration]
+sound/pci/rme96.c:2490:2: error: implicit declaration of function 'vmalloc' [-Werror=implicit-function-declaration]
+drivers/clk/clk-voltage-notifier.c:195:2: error: implicit declaration of function 'regulator_set_voltage_time' [-Werror=implicit-function-declaration]
 
-Use devm_ioremap_resource instead of devm_request_and_ioremap.
+[warnings]
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+Warning(include/net/mac80211.h:1503): Enum value 'IEEE80211_HW_SUPPORTS_HT_CCK_RATES' not described in enum 'ieee80211_hw_flags'
+drivers/staging/dgnc/dgnc_driver.c:945:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/staging/dgnc/dgnc_tty.c:614:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+sound/pci/rme96.c:2490:33: warning: assignment makes pointer from integer without a cast [enabled by default]
+sound/pci/rme96.c:2497:32: warning: assignment makes pointer from integer without a cast [enabled by default]
 
-This was done using the semantic patch
-scripts/coccinelle/api/devm_ioremap_resource.cocci
-
-The relevant call to platform_get_resource was manually moved down to the
-call to devm_ioremap_resource.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+[sparse]
+fs/nfs/nfs4proc.c:939:45: sparse: incorrect type in assignment (different base types) @@    expected char [signed] [char] <noident> @@    got restrictchar [signed] [char] <noident> @@
+fs/nfs/nfs4proc.c:940:45: sparse: incorrect type in assignment (different base types) @@    expected char [signed] [char] <noident> @@    got restrictchar [signed] [char] <noident> @@
+drivers/thermal/fair_share.c:85:33: sparse: cannot dereference this type
+kernel/events/persistent.c:539:5: sparse: context imbalance in 'perf_event_attach' - different lock contexts for basic block
 
 ---
- drivers/dma/sh/sudmac.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/dma/sh/sudmac.c b/drivers/dma/sh/sudmac.c
-index c494417..8369c6f 100644
---- a/drivers/dma/sh/sudmac.c
-+++ b/drivers/dma/sh/sudmac.c
-@@ -345,9 +345,8 @@ static int sudmac_probe(struct platform_device *pdev)
- 	if (!pdata)
- 		return -ENODEV;
- 
--	chan = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!chan || !irq_res)
-+	if (!irq_res)
- 		return -ENODEV;
- 
- 	err = -ENOMEM;
-@@ -360,9 +359,10 @@ static int sudmac_probe(struct platform_device *pdev)
- 
- 	dma_dev = &su_dev->shdma_dev.dma_dev;
- 
--	su_dev->chan_reg = devm_request_and_ioremap(&pdev->dev, chan);
--	if (!su_dev->chan_reg)
--		return err;
-+	chan = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	su_dev->chan_reg = devm_ioremap_resource(&pdev->dev, chan);
-+	if (IS_ERR(su_dev->chan_reg))
-+		return PTR_ERR(su_dev->chan_reg);
- 
- 	dma_cap_set(DMA_SLAVE, dma_dev->cap_mask);
- 
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
