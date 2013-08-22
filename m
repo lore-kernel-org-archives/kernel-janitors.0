@@ -1,30 +1,33 @@
-From: Will Deacon <will.deacon@arm.com>
-Date: Wed, 21 Aug 2013 10:32:52 +0000
-Subject: Re: [patch 1/2] iommu/arm-smmu: fix a signedness bug
-Message-Id: <20130821103252.GC16380@mudshark.cambridge.arm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Aug 2013 17:07:17 +0000
+Subject: [patch] [media] snd_tea575x: precedence bug in fmr2_tea575x_get_pins()
+Message-Id: <20130822170717.GA21447@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130821083329.GF5240@elgon.mountain>
-In-Reply-To: <20130821083329.GF5240@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+The "|" operation has higher precedence that "?:" so this couldn't
+return both flags set at once as intended.
 
-On Wed, Aug 21, 2013 at 09:33:30AM +0100, Dan Carpenter wrote:
-> Unsigned char is never equal to -1.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Untested.
 
-D'oh! Thanks for the patches.
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I can't compile this code.
-
-I've compiled and tested both of them with an AArch32 MMU-500 model and they
-work fine. I'll send this lot in Joerg's direction with the other patches I
-currently have queued.
-
-Cheers,
-
-Will
+diff --git a/drivers/media/radio/radio-sf16fmr2.c b/drivers/media/radio/radio-sf16fmr2.c
+index 9c09904..72af59d 100644
+--- a/drivers/media/radio/radio-sf16fmr2.c
++++ b/drivers/media/radio/radio-sf16fmr2.c
+@@ -74,8 +74,8 @@ static u8 fmr2_tea575x_get_pins(struct snd_tea575x *tea)
+ 	struct fmr2 *fmr2 = tea->private_data;
+ 	u8 bits = inb(fmr2->io);
+ 
+-	return  (bits & STR_DATA) ? TEA575X_DATA : 0 |
+-		(bits & STR_MOST) ? TEA575X_MOST : 0;
++	return  ((bits & STR_DATA) ? TEA575X_DATA : 0) |
++		((bits & STR_MOST) ? TEA575X_MOST : 0);
+ }
+ 
+ static void fmr2_tea575x_set_direction(struct snd_tea575x *tea, bool output)
