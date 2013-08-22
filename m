@@ -1,94 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Aug 2013 09:38:32 +0000
-Subject: [patch] watchdog: ts72xx_wdt: cleanup return codes in ioctl
-Message-Id: <20130823093832.GL31293@elgon.mountain>
+Date: Thu, 22 Aug 2013 12:56:13 +0000
+Subject: [patch] mmc: omap_hsmmc: precedence bug in omap_hsmmc_context_restore()
+Message-Id: <20130822125613.GB2543@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Balaji T K <balajitk@ti.com>
+Cc: Chris Ball <cjb@laptop.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There seems to be some confusion here which functions return positive
-numbers and which return negative error codes.
-
-copy_to_user() returns the number of bytes remaining to be copied but we
-want to return -EFAULT.
-
-The rest is just clean up.  get_user() actually returns zero on success
-and -EFAULT on error so we can preserve the error code.  The
-timeout_to_regval() function returns -EINVAL on failure, but we can
-propogate that back instead of hardcoding -EINVAL ourselves.
+'!' has higher precedence than '&' so this doesn't work as intended
+although since RESETDONE is 1 it would work if none of the other bits
+are set.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Untested.
 
-diff --git a/drivers/watchdog/ts72xx_wdt.c b/drivers/watchdog/ts72xx_wdt.c
-index 4da59b4..9125b0f 100644
---- a/drivers/watchdog/ts72xx_wdt.c
-+++ b/drivers/watchdog/ts72xx_wdt.c
-@@ -305,7 +305,8 @@ static long ts72xx_wdt_ioctl(struct file *file, unsigned int cmd,
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index 1865321..7346b15 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -612,7 +612,7 @@ static int omap_hsmmc_context_restore(struct omap_hsmmc_host *host)
+ 	if (host->context_loss = context_loss)
+ 		return 1;
  
- 	switch (cmd) {
- 	case WDIOC_GETSUPPORT:
--		error = copy_to_user(argp, &winfo, sizeof(winfo));
-+		if (copy_to_user(argp, &winfo, sizeof(winfo)))
-+			error = -EFAULT;
- 		break;
+-	if (!OMAP_HSMMC_READ(host->base, SYSSTATUS) & RESETDONE)
++	if (!(OMAP_HSMMC_READ(host->base, SYSSTATUS) & RESETDONE))
+ 		return 1;
  
- 	case WDIOC_GETSTATUS:
-@@ -319,10 +320,9 @@ static long ts72xx_wdt_ioctl(struct file *file, unsigned int cmd,
- 	case WDIOC_SETOPTIONS: {
- 		int options;
- 
--		if (get_user(options, p)) {
--			error = -EFAULT;
-+		error = get_user(options, p);
-+		if (error)
- 			break;
--		}
- 
- 		error = -EINVAL;
- 
-@@ -340,30 +340,26 @@ static long ts72xx_wdt_ioctl(struct file *file, unsigned int cmd,
- 
- 	case WDIOC_SETTIMEOUT: {
- 		int new_timeout;
-+		int regval;
- 
--		if (get_user(new_timeout, p)) {
--			error = -EFAULT;
--		} else {
--			int regval;
--
--			regval = timeout_to_regval(new_timeout);
--			if (regval < 0) {
--				error = -EINVAL;
--			} else {
--				ts72xx_wdt_stop(wdt);
--				wdt->regval = regval;
--				ts72xx_wdt_start(wdt);
--			}
--		}
-+		error = get_user(new_timeout, p);
- 		if (error)
- 			break;
- 
-+		regval = timeout_to_regval(new_timeout);
-+		if (regval < 0) {
-+			error = regval;
-+			break;
-+		}
-+		ts72xx_wdt_stop(wdt);
-+		wdt->regval = regval;
-+		ts72xx_wdt_start(wdt);
-+
- 		/*FALLTHROUGH*/
- 	}
- 
- 	case WDIOC_GETTIMEOUT:
--		if (put_user(regval_to_timeout(wdt->regval), p))
--			error = -EFAULT;
-+		error = put_user(regval_to_timeout(wdt->regval), p);
- 		break;
- 
- 	default:
+ 	if (host->pdata->controller_flags & OMAP_HSMMC_SUPPORTS_DUAL_VOLT) {
