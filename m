@@ -1,34 +1,31 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 12 Aug 2013 20:24:59 +0000
-Subject: Re: [PATCH 9/16] arch/arm/mach-pxa/mioa701.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
-Message-Id: <alpine.DEB.2.02.1308122224430.2128@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 Aug 2013 12:42:50 +0000
+Subject: [patch] drm/omap: tiler: clear buffer properly
+Message-Id: <20130822124250.GA2543@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376239917-15594-10-git-send-email-Julia.Lawall@lip6.fr>
- <87r4dyy93t.fsf@free.fr>
-In-Reply-To: <87r4dyy93t.fsf@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: David Airlie <airlied@linux.ie>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Gross <andy.gross@ti.com>, Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-On Mon, 12 Aug 2013, Robert Jarzmik wrote:
+We're taking the sizeof() the wrong thing so it doesn't clear the whole
+buffer.
 
-> Julia Lawall <Julia.Lawall@lip6.fr> writes:
-> 
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
-> > arity of the called function.
-> 
-> Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> 
-> As a side I'm curious why this change didn't touch also :
-> sound/soc/pxa/mioa701_wm9713.c
-> 
-> If it does, this ack stands as well for the other file (with removal of the
-> #define in mioa701_wm9713.c).
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I can't compile this.
 
-I'll check.  Thanks for the feedback.
-
-julia
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index 9b794c9..acf6678 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -871,7 +871,7 @@ int tiler_map_show(struct seq_file *s, void *arg)
+ 		goto error;
+ 
+ 	for (lut_idx = 0; lut_idx < omap_dmm->num_lut; lut_idx++) {
+-		memset(map, 0, sizeof(h_adj * sizeof(*map)));
++		memset(map, 0, h_adj * sizeof(*map));
+ 		memset(global_map, ' ', (w_adj + 1) * h_adj);
+ 
+ 		for (i = 0; i < omap_dmm->container_height; i++) {
