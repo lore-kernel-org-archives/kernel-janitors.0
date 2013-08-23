@@ -1,29 +1,94 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Mon, 19 Aug 2013 13:38:09 +0000
-Subject: Re: [PATCH 3/6] mtd: fsmc_nand: simplify platform_get_resource_byname/devm_ioremap_resource
-Message-Id: <1376919489.2089.464.camel@sauron.fi.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 09:38:32 +0000
+Subject: [patch] watchdog: ts72xx_wdt: cleanup return codes in ioctl
+Message-Id: <20130823093832.GL31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376902316-18520-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376902316-18520-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376902316-18520-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 2013-08-19 at 10:51 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource_byname when the value is passed to devm_ioremap_resource.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
+There seems to be some confusion here which functions return positive
+numbers and which return negative error codes.
 
-Pushed to l2-mtd.git, thanks.
+copy_to_user() returns the number of bytes remaining to be copied but we
+want to return -EFAULT.
 
--- 
-Best Regards,
-Artem Bityutskiy
+The rest is just clean up.  get_user() actually returns zero on success
+and -EFAULT on error so we can preserve the error code.  The
+timeout_to_regval() function returns -EINVAL on failure, but we can
+propogate that back instead of hardcoding -EINVAL ourselves.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/watchdog/ts72xx_wdt.c b/drivers/watchdog/ts72xx_wdt.c
+index 4da59b4..9125b0f 100644
+--- a/drivers/watchdog/ts72xx_wdt.c
++++ b/drivers/watchdog/ts72xx_wdt.c
+@@ -305,7 +305,8 @@ static long ts72xx_wdt_ioctl(struct file *file, unsigned int cmd,
+ 
+ 	switch (cmd) {
+ 	case WDIOC_GETSUPPORT:
+-		error = copy_to_user(argp, &winfo, sizeof(winfo));
++		if (copy_to_user(argp, &winfo, sizeof(winfo)))
++			error = -EFAULT;
+ 		break;
+ 
+ 	case WDIOC_GETSTATUS:
+@@ -319,10 +320,9 @@ static long ts72xx_wdt_ioctl(struct file *file, unsigned int cmd,
+ 	case WDIOC_SETOPTIONS: {
+ 		int options;
+ 
+-		if (get_user(options, p)) {
+-			error = -EFAULT;
++		error = get_user(options, p);
++		if (error)
+ 			break;
+-		}
+ 
+ 		error = -EINVAL;
+ 
+@@ -340,30 +340,26 @@ static long ts72xx_wdt_ioctl(struct file *file, unsigned int cmd,
+ 
+ 	case WDIOC_SETTIMEOUT: {
+ 		int new_timeout;
++		int regval;
+ 
+-		if (get_user(new_timeout, p)) {
+-			error = -EFAULT;
+-		} else {
+-			int regval;
+-
+-			regval = timeout_to_regval(new_timeout);
+-			if (regval < 0) {
+-				error = -EINVAL;
+-			} else {
+-				ts72xx_wdt_stop(wdt);
+-				wdt->regval = regval;
+-				ts72xx_wdt_start(wdt);
+-			}
+-		}
++		error = get_user(new_timeout, p);
+ 		if (error)
+ 			break;
+ 
++		regval = timeout_to_regval(new_timeout);
++		if (regval < 0) {
++			error = regval;
++			break;
++		}
++		ts72xx_wdt_stop(wdt);
++		wdt->regval = regval;
++		ts72xx_wdt_start(wdt);
++
+ 		/*FALLTHROUGH*/
+ 	}
+ 
+ 	case WDIOC_GETTIMEOUT:
+-		if (put_user(regval_to_timeout(wdt->regval), p))
+-			error = -EFAULT;
++		error = put_user(regval_to_timeout(wdt->regval), p);
+ 		break;
+ 
+ 	default:
