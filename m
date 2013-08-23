@@ -1,34 +1,29 @@
-From: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Date: Thu, 08 Aug 2013 18:35:24 +0000
-Subject: [PATCH] Staging:zram:zram_drv.c Fixed Error of trailing whitespace
-Message-Id: <1375986205-5912-1-git-send-email-kumargauravgupta3@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 09:33:48 +0000
+Subject: [patch] [media] i2c/ov9650: off by one in ov965x_enum_frame_sizes()
+Message-Id: <20130823093348.GI31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, minchan@kernel.org, jiang.liu@huawei.com, ngupta@vflare.org, jmarchan@redhat.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, kumargauravgupta3@gmail.com
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixed by removing trailing whitespace
+The ">" should be ">=" otherwise we read one space beyond the end of the
+array.
 
-Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
----
- drivers/staging/zram/zram_drv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/zram/zram_drv.c b/drivers/staging/zram/zram_drv.c
-index 82c7202..f590715 100644
---- a/drivers/staging/zram/zram_drv.c
-+++ b/drivers/staging/zram/zram_drv.c
-@@ -169,7 +169,7 @@ static inline int is_partial_io(struct bio_vec *bvec)
- static inline int valid_io_request(struct zram *zram, struct bio *bio)
+diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
+index 1dbb811..4da90c6 100644
+--- a/drivers/media/i2c/ov9650.c
++++ b/drivers/media/i2c/ov9650.c
+@@ -1083,7 +1083,7 @@ static int ov965x_enum_frame_sizes(struct v4l2_subdev *sd,
  {
- 	u64 start, end, bound;
--	
-+
- 	/* unaligned request */
- 	if (unlikely(bio->bi_sector & (ZRAM_SECTOR_PER_LOGICAL_BLOCK - 1)))
- 		return 0;
--- 
-1.7.9.5
-
+ 	int i = ARRAY_SIZE(ov965x_formats);
+ 
+-	if (fse->index > ARRAY_SIZE(ov965x_framesizes))
++	if (fse->index >= ARRAY_SIZE(ov965x_framesizes))
+ 		return -EINVAL;
+ 
+ 	while (--i)
