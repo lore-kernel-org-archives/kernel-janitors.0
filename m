@@ -1,46 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 19 Aug 2013 08:51:50 +0000
-Subject: [PATCH 0/6] simplify platform_get_resource_byname/devm_ioremap_resource
-Message-Id: <1376902316-18520-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 10:02:06 +0000
+Subject: mtd: ndfc: silence an underflow static checker warning
+Message-Id: <20130823100206.GS31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Bill Pemberton <wfp5p@virginia.edu>, Huang Shijie <shijie8@gmail.com>, linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-devm_ioremap_resource often uses the result of a call to
-platform_get_resource_byname as its last argument.  devm_ioremap_resource
-does appropriate error handling on this argument, so error handling can be
-removed from the call to platform_get_resource_byname.
+"cs" is an index into the ndfc_ctrl[].  There is a sanity check which
+does:
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+	if (cs >= NDFC_MAX_CS) {
 
-// <smpl>
-@@
-expression pdev,res,n,e,e1;
-expression ret != 0;
-identifier l,f;
-expression list es;
-@@
+It doesn't check for underflows and that upsets my static checker.
 
-(
-  res = f(...);
-- if (res = NULL) { ... \(goto l;\|return ret;\) }
-  e = devm_ioremap_resource(e1, res);
-|
-- res = f(es);
-  ... when != res
-- if (res = NULL) { ... \(goto l;\|return ret;\) }
-  ... when != res
-+ res = f(es);
-  e = devm_ioremap_resource(e1, res);
-)
-// </smpl>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-In practice, f is always platform_get_resource_byname (or
-platform_get_resource, which was handled by a previous patch series).  And
-the call to platform_get_resource_byname always immediately precedes the
-call to devm_ioremap_resource.
-
+diff --git a/drivers/mtd/nand/ndfc.c b/drivers/mtd/nand/ndfc.c
+index 8e148f1..cd78b81 100644
+--- a/drivers/mtd/nand/ndfc.c
++++ b/drivers/mtd/nand/ndfc.c
+@@ -201,8 +201,9 @@ static int ndfc_probe(struct platform_device *ofdev)
+ {
+ 	struct ndfc_controller *ndfc;
+ 	const __be32 *reg;
++	unsigned int cs;
+ 	u32 ccr;
+-	int err, len, cs;
++	int err, len;
+ 
+ 	/* Read the reg property to get the chip select */
+ 	reg = of_get_property(ofdev->dev.of_node, "reg", &len);
