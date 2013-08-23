@@ -1,53 +1,29 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Date: Mon, 19 Aug 2013 04:49:21 +0000
-Subject: Re: [patch] PM / devfreq: create_freezable_workqueue() doesn't return an ERR_PTR
-Message-Id: <CAJ0PZbTNGDW2buntJUD2Sk4Yd_gB_YQceCvRjWOAEvbMaatrrw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 09:30:56 +0000
+Subject: [patch] dma: cppi41: off by one in desc_to_chan()
+Message-Id: <20130823093056.GG31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130815075509.GB19280@elgon.mountain>
-In-Reply-To: <20130815075509.GB19280@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <djbw@fb.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Aug 15, 2013 at 4:55 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The create_freezable_workqueue() function returns a NULL on error and
-> not an ERR_PTR.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The test here should be ">=" instead of ">".  The cdd->chan_busy[] array
+has "ALLOC_DECS_NUM" elements.
 
-Thanks. I'll apply this.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-
->
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index e94e619..5088523 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -983,10 +983,10 @@ static int __init devfreq_init(void)
->         }
->
->         devfreq_wq = create_freezable_workqueue("devfreq_wq");
-> -       if (IS_ERR(devfreq_wq)) {
-> +       if (!devfreq_wq) {
->                 class_destroy(devfreq_class);
->                 pr_err("%s: couldn't create workqueue\n", __FILE__);
-> -               return PTR_ERR(devfreq_wq);
-> +               return -ENOMEM;
->         }
->         devfreq_class->dev_attrs = devfreq_attrs;
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
-
---
-MyungJoo Ham, Ph.D.
-System S/W Lab, S/W Center, Samsung Electronics
+diff --git a/drivers/dma/cppi41.c b/drivers/dma/cppi41.c
+index 5dcebca..7f6524c 100644
+--- a/drivers/dma/cppi41.c
++++ b/drivers/dma/cppi41.c
+@@ -241,7 +241,7 @@ static struct cppi41_channel *desc_to_chan(struct cppi41_dd *cdd, u32 desc)
+ 	}
+ 
+ 	desc_num = (desc - cdd->descs_phys) / sizeof(struct cppi41_desc);
+-	BUG_ON(desc_num > ALLOC_DECS_NUM);
++	BUG_ON(desc_num >= ALLOC_DECS_NUM);
+ 	c = cdd->chan_busy[desc_num];
+ 	cdd->chan_busy[desc_num] = NULL;
+ 	return c;
