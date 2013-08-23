@@ -1,28 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Aug 2013 09:51:03 +0000
-Subject: [patch] bfs: iget_locked() doesn't return an ERR_PTR
-Message-Id: <20130814095103.GG521@elgon.mountain>
+Date: Fri, 23 Aug 2013 08:16:15 +0000
+Subject: [patch] gadgetfs: potential use after free in unbind()
+Message-Id: <20130823081615.GC31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Tigran A. Aivazian" <tigran@aivazian.fsnet.co.uk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-iget_locked() returns a NULL on error, it doesn't return an ERR_PTR.
+ffs_data_put() can sometimes free "ffs" so I have moved the call down
+a line below the dereference.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  I can't actually compile this file.
 
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index 5e376bb..8defc6b 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -40,7 +40,7 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 	int block, off;
+diff --git a/drivers/usb/gadget/f_fs.c b/drivers/usb/gadget/f_fs.c
+index f394f29..1a66c5b 100644
+--- a/drivers/usb/gadget/f_fs.c
++++ b/drivers/usb/gadget/f_fs.c
+@@ -1417,8 +1417,8 @@ static void functionfs_unbind(struct ffs_data *ffs)
+ 		usb_ep_free_request(ffs->gadget->ep0, ffs->ep0req);
+ 		ffs->ep0req = NULL;
+ 		ffs->gadget = NULL;
+-		ffs_data_put(ffs);
+ 		clear_bit(FFS_FL_BOUND, &ffs->flags);
++		ffs_data_put(ffs);
+ 	}
+ }
  
- 	inode = iget_locked(sb, ino);
--	if (IS_ERR(inode))
-+	if (!inode)
- 		return ERR_PTR(-ENOMEM);
- 	if (!(inode->i_state & I_NEW))
- 		return inode;
