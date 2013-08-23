@@ -1,30 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 21 Aug 2013 06:22:40 +0000
-Subject: Re: [PATCH 5/7] bcm63xx_enet: replace devm_request_and_ioremap by devm_ioremap_resource
-Message-Id: <20130820.232240.98227185752652907.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 09:54:44 +0000
+Subject: [patch] [media] sh_vou: almost forever loop in sh_vou_try_fmt_vid_out()
+Message-Id: <20130823095444.GR31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1376911241-27720-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376911241-27720-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Hans Verkuil <hans.verkuil@cisco.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 19 Aug 2013 13:20:39 +0200
+The "i < " part of the "i < ARRAY_SIZE()" condition was missing.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Use devm_ioremap_resource instead of devm_request_and_ioremap.
-> 
-> This was done using the semantic patch
-> scripts/coccinelle/api/devm_ioremap_resource.cocci
-> 
-> The relevant call to platform_get_resource was manually moved down to the
-> call to devm_ioremap_resource.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to net-next, thanks.
+diff --git a/drivers/media/platform/sh_vou.c b/drivers/media/platform/sh_vou.c
+index 7a9c5e9..41f612c 100644
+--- a/drivers/media/platform/sh_vou.c
++++ b/drivers/media/platform/sh_vou.c
+@@ -776,9 +776,10 @@ static int sh_vou_try_fmt_vid_out(struct file *file, void *priv,
+ 	v4l_bound_align_image(&pix->width, 0, VOU_MAX_IMAGE_WIDTH, 1,
+ 			      &pix->height, 0, VOU_MAX_IMAGE_HEIGHT, 1, 0);
+ 
+-	for (i = 0; ARRAY_SIZE(vou_fmt); i++)
++	for (i = 0; i < ARRAY_SIZE(vou_fmt); i++) {
+ 		if (vou_fmt[i].pfmt = pix->pixelformat)
+ 			return 0;
++	}
+ 
+ 	pix->pixelformat = vou_fmt[0].pfmt;
+ 
