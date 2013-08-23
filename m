@@ -1,47 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 20 Aug 2013 10:06:47 +0000
-Subject: Re: [patch] staging: comedi: pcmuio: remove an unneeded check
-Message-Id: <20130820100647.GW4713@mwanda>
+Date: Fri, 23 Aug 2013 09:23:43 +0000
+Subject: [patch] dmaengine: ste_dma40: off by one in d40_of_probe()
+Message-Id: <20130823092343.GF31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130820090013.GC20170@elgon.mountain>
-In-Reply-To: <20130820090013.GC20170@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue, Aug 20, 2013 at 11:02:45AM +0100, Ian Abbott wrote:
-> On 2013-08-20 10:00, Dan Carpenter wrote:
-> >"devpriv" is non-NULL at this point.  We dereference it earlier in the
-> >function and the inconsistent checking upsets static checkers.  We don't
-> >need to check "devpriv->sprivs" because kfree() accepts NULL pointers.
-> >
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> >diff --git a/drivers/staging/comedi/drivers/pcmuio.c b/drivers/staging/comedi/drivers/pcmuio.c
-> >index f942455..a779062 100644
-> >--- a/drivers/staging/comedi/drivers/pcmuio.c
-> >+++ b/drivers/staging/comedi/drivers/pcmuio.c
-> >@@ -676,8 +676,7 @@ static void pcmuio_detach(struct comedi_device *dev)
-> >  		if (devpriv->asics[i].irq)
-> >  			free_irq(devpriv->asics[i].irq, dev);
-> >  	}
-> >-	if (devpriv && devpriv->sprivs)
-> >-		kfree(devpriv->sprivs);
-> >+	kfree(devpriv->sprivs);
-> >  	comedi_legacy_detach(dev);
-> >  }
-> >
-> >
-> 
-> Actually, the function is buggy anyway as devpriv might be NULL
-> (pcmuio_detach() is called even if pcmuio_attach() returns an
-> error).
-> 
-> So let's drop this patch and I'll post a patch to fix the bug.
+If "num_disabled" is equal to STEDMA40_MAX_PHYS (32) then we would write
+one space beyond the end of the pdata->disable_channels[] array.
 
-Ah.  Sorry about that.  Thanks for catching this.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 0036756..e0157c8 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -3516,7 +3516,7 @@ static int __init d40_of_probe(struct platform_device *pdev,
+ 	list = of_get_property(np, "disabled-channels", &num_disabled);
+ 	num_disabled /= sizeof(*list);
+ 
+-	if (num_disabled > STEDMA40_MAX_PHYS || num_disabled < 0) {
++	if (num_disabled >= STEDMA40_MAX_PHYS || num_disabled < 0) {
+ 		d40_err(&pdev->dev,
+ 			"Invalid number of disabled channels specified (%d)\n",
+ 			num_disabled);
