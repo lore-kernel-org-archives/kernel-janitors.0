@@ -1,56 +1,33 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 15 Aug 2013 07:09:36 +0000
-Subject: Re: [PATCH 28/29] drivers/input/{keyboard,serio}: simplify use of devm_ioremap_resource
-Message-Id: <20130815070936.GB15691@core.coreip.homeip.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 10:19:11 +0000
+Subject: [patch 2/2] gpu: host1x: returning success instead of -ENOMEM
+Message-Id: <20130823101911.GA1824@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376478213-24091-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAOh2x=muvdm+tSR+ucUWLhb1vOvXB=_+vm_v9fHfa6mHUnhRRw@mail.gmail.com>
-In-Reply-To: <CAOh2x=muvdm+tSR+ucUWLhb1vOvXB=_+vm_v9fHfa6mHUnhRRw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, spear-devel <spear-devel@list.st.com>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, Aug 14, 2013 at 04:51:02PM +0530, Viresh Kumar wrote:
-> On Wed, Aug 14, 2013 at 4:33 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > Remove unneeded error handling on the result of a call to
-> > platform_get_resource when the value is passed to devm_ioremap_resource.
-> >
-> > Move the call to platform_get_resource adjacent to the call to
-> > devm_ioremap_resource to make the connection between them more clear.
-> >
-> > A simplified version of the semantic patch that makes this change is as
-> > follows: (http://coccinelle.lip6.fr/)
-> >
-> > // <smpl>
-> > @@
-> > expression pdev,res,n,e,e1;
-> > expression ret != 0;
-> > identifier l;
-> > @@
-> >
-> > - res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-> >   ... when != res
-> > - if (res = NULL) { ... \(goto l;\|return ret;\) }
-> >   ... when != res
-> > + res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-> >   e = devm_ioremap_resource(e1, res);
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> 
-> >  drivers/input/keyboard/spear-keyboard.c |    7 +------
-> 
-> For SPEAr:
-> 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+There is a mistake here so it returns PTR_ERR(NULL) which is success
+instead of -ENOMEM.
 
-Thanks, applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I can't compile this.
 
--- 
-Dmitry
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index cc80766..6cf41da 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -466,9 +466,8 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ 							 &job->gather_copy,
+ 							 GFP_KERNEL);
+ 	if (!job->gather_copy_mapped) {
+-		int err = PTR_ERR(job->gather_copy_mapped);
+ 		job->gather_copy_mapped = NULL;
+-		return err;
++		return -ENOMEM;
+ 	}
+ 
+ 	job->gather_copy_size = size;
