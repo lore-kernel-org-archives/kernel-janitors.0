@@ -1,32 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 15 Aug 2013 05:52:48 +0000
-Subject: [patch 2/2] libceph: potential NULL dereference in ceph_osdc_handle_map()
-Message-Id: <20130815055248.GB23580@elgon.mountain>
+Date: Fri, 23 Aug 2013 09:36:56 +0000
+Subject: [patch] [media] exynos4-is: print error message on timeout
+Message-Id: <20130823093656.GK31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sage Weil <sage@inktank.com>
-Cc: "David S. Miller" <davem@davemloft.net>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-There are two places where we read "nr_maps" if both of them are set to
-zero then we would hit a NULL dereference here.
+There is a stray '!' character so the error message never gets printed.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-I think this is a real bug, but please review my fix for it because I'm
-not very familiar with this code.
+Static checker stuff.  Not tested.
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 559a832..56f1fe5 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -1786,6 +1786,8 @@ void ceph_osdc_handle_map(struct ceph_osd_client *osdc, struct ceph_msg *msg)
- 		nr_maps--;
- 	}
- 
-+	if (!osdc->osdmap)
-+		goto bad;
- done:
- 	downgrade_write(&osdc->map_sem);
- 	ceph_monc_got_osdmap(&osdc->client->monc, osdc->osdmap->epoch);
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+index 63c68ec..42f2925 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+@@ -236,7 +236,7 @@ int fimc_is_itf_mode_change(struct fimc_is *is)
+ 	fimc_is_hw_change_mode(is);
+ 	ret = fimc_is_wait_event(is, IS_ST_CHANGE_MODE, 1,
+ 				FIMC_IS_CONFIG_TIMEOUT);
+-	if (!ret < 0)
++	if (ret < 0)
+ 		dev_err(&is->pdev->dev, "%s(): mode change (%d) timeout\n",
+ 			__func__, is->config_index);
+ 	return ret;
