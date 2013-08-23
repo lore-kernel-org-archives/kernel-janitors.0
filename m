@@ -1,18 +1,29 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Sun, 25 Aug 2013 11:06:25 +0000
-Subject: Re: [patch] dmaengine: ste_dma40: off by one in d40_of_probe()
-Message-Id: <20130825105425.GA2748@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 09:33:06 +0000
+Subject: [patch] [media] s5k6aa: off by one in s5k6aa_enum_frame_interval()
+Message-Id: <20130823093306.GH31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823092343.GF31293@elgon.mountain>
-In-Reply-To: <20130823092343.GF31293@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Aug 23, 2013 at 12:23:43PM +0300, Dan Carpenter wrote:
-> If "num_disabled" is equal to STEDMA40_MAX_PHYS (32) then we would write
-> one space beyond the end of the pdata->disable_channels[] array.
-Applied, thanks
+The check is off by one so we could read one space past the end of the
+array.
 
-~Vinod
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/media/i2c/s5k6aa.c b/drivers/media/i2c/s5k6aa.c
+index 789c02a..629a5cd 100644
+--- a/drivers/media/i2c/s5k6aa.c
++++ b/drivers/media/i2c/s5k6aa.c
+@@ -1003,7 +1003,7 @@ static int s5k6aa_enum_frame_interval(struct v4l2_subdev *sd,
+ 	const struct s5k6aa_interval *fi;
+ 	int ret = 0;
+ 
+-	if (fie->index > ARRAY_SIZE(s5k6aa_intervals))
++	if (fie->index >= ARRAY_SIZE(s5k6aa_intervals))
+ 		return -EINVAL;
+ 
+ 	v4l_bound_align_image(&fie->width, S5K6AA_WIN_WIDTH_MIN,
