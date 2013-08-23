@@ -1,43 +1,38 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Fri, 23 Aug 2013 13:16:01 +0000
-Subject: Re: [patch] [media] s5k6aa: off by one in s5k6aa_enum_frame_interval()
-Message-Id: <1950467.dfr4BcOJWF@avalon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 09:45:30 +0000
+Subject: [patch] [media] mx3-camera: locking typo in mx3_videobuf_queue()
+Message-Id: <20130823094530.GN31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823093306.GH31293@elgon.mountain> <4319865.UMEVfJshWy@avalon> <52175F95.2040108@samsung.com>
-In-Reply-To: <52175F95.2040108@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Sylwester,
+There is a return in the middle where we haven't restored the IRQs to
+their original state.
 
-On Friday 23 August 2013 15:11:49 Sylwester Nawrocki wrote:
-> On 08/23/2013 02:54 PM, Laurent Pinchart wrote:
-> > On Friday 23 August 2013 12:33:06 Dan Carpenter wrote:
-> >> The check is off by one so we could read one space past the end of the
-> >> array.
-> >> 
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> > Mauro, I have no other pending sensor patches, can you pick this one up
-> > from the list, or should I send you a pull request ?
-> 
-> I can handle all pending patches for the Samsung sensors, I was planning
-> to send a pull request today. I can pick up the ov9650 patch as well.
-> I'd like to also include the s5k5bafx sensor patch in one of my pull
-> requests.
-> 
-> IIRC it was agreed that we as Samsung will handle our stuff ourselves
-> and be sending it to Mauro directly.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-That's less work for me, so I will definitely not complain :-)
-
--- 
-Regards,
-
-Laurent Pinchart
-
+diff --git a/drivers/media/platform/soc_camera/mx3_camera.c b/drivers/media/platform/soc_camera/mx3_camera.c
+index 1047e3e..4bae910 100644
+--- a/drivers/media/platform/soc_camera/mx3_camera.c
++++ b/drivers/media/platform/soc_camera/mx3_camera.c
+@@ -334,7 +334,7 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
+ 	if (!mx3_cam->active)
+ 		mx3_cam->active = buf;
+ 
+-	spin_unlock_irq(&mx3_cam->lock);
++	spin_unlock_irqrestore(&mx3_cam->lock, flags);
+ 
+ 	cookie = txd->tx_submit(txd);
+ 	dev_dbg(icd->parent, "Submitted cookie %d DMA 0x%08x\n",
+@@ -343,7 +343,7 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
+ 	if (cookie >= 0)
+ 		return;
+ 
+-	spin_lock_irq(&mx3_cam->lock);
++	spin_lock_irqsave(&mx3_cam->lock, flags);
+ 
+ 	/* Submit error */
+ 	list_del_init(&buf->queue);
