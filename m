@@ -1,50 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 14 Aug 2013 19:10:28 +0000
-Subject: Re: [PATCH 1/16 v2] sound/soc/pxa/mioa701_wm9713.c: Avoid using ARRAY_AND_SIZE(e) as a function argu
-Message-Id: <20130814191028.GP2401@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="D8QxnvyRlKGQJxl7"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 Aug 2013 10:18:25 +0000
+Subject: [patch 1/2] gpu: host1x: fix an integer overflow check
+Message-Id: <20130823101825.GA1765@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376340564-7975-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376340564-7975-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Eric Miao <eric.y.miao@gmail.com>, robert.jarzmik@free.fr, kernel-janitors@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Tegra is a 32 bit arch.  On 32 bit systems then size_t is 32 bits so
+"total" will never be higher than UINT_MAX because of integer overflows.
+We need cast to u64 first before doing the math.
 
---D8QxnvyRlKGQJxl7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also the addition earlier:
 
-On Mon, Aug 12, 2013 at 10:49:24PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding t=
-he
-> arity of the called function.
+        unsigned int num_unpins = num_cmdbufs + num_relocs;
 
-Applied the incremental bit of this, thanks.
+That can overflow as well, but I think it's still safe because we check
+both "num_cmdbufs" and "num_relocs" again in this test.
 
---D8QxnvyRlKGQJxl7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is something I spotted in code review.  I can't actually compile
+this code.  I assume this overflow test has security implications.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSC9YhAAoJELSic+t+oim9ymEP+wSn7S9g6F/pfcebCIbtMVpb
-VbbfHhzp2OMv+o3ukEblE9BP+HT07QgQomhTBUUFSrhTu9owcDVePbzr6boG5XMh
-UN5AZOvPR0wEMdnYEtOXnJoi1Cr0nDMXigZjg5OHL2jwa7hJiV2hKQCMXQsZqcWY
-nthplxPqPgaot1c4L18LvTfS1hiiH6+mSUv7gDbe+VOQYYTt6uFv4I3JLQL0v3Wg
-qtJL4YsZM7gfMsCwuED8fkLTYJlOBRgYuQrdkgvO667fX7GdZTEJEPeClh1XFRRy
-TBL8Jc35FqvbBIW07xP3++QvagbL5Eh2ohz0LzXftbXpjI5QAvT2sQmjJT3agfRU
-9lgZ3GSGcM/D5oBJxGOdKRLz6Ul0hTHcpHhTfSgyuAosi38h+GhvioIqIPyx48GW
-jOR0+MfSyFsUZUktTVw3H+SRZWhoMVAOYdEyDX/OhfxOHR76sA97yB2qfYNmN/CZ
-XdVGL7HzcqhJkGlGLcyW9sHila6nqdcrhigTnjkvoOqBk09/Q2F28tQVnT30LxO6
-IkydCSjJ0704jD4VAnJG5MFx7mGnlvk3nE/TyX0R7zh7CRwWjR76g8CpHCtNvSNO
-prbAPsFEHWPevoW+O0Cb+oVnH/HSJM7GifBtjHIdILangYPXMDMgojqIsnVAVMCj
-ip/gyyc37ghppezt0S+T
-=55Gx
------END PGP SIGNATURE-----
-
---D8QxnvyRlKGQJxl7--
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index cc80766..18a47f9 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -42,12 +42,12 @@ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
+ 
+ 	/* Check that we're not going to overflow */
+ 	total = sizeof(struct host1x_job) +
+-		num_relocs * sizeof(struct host1x_reloc) +
+-		num_unpins * sizeof(struct host1x_job_unpin_data) +
+-		num_waitchks * sizeof(struct host1x_waitchk) +
+-		num_cmdbufs * sizeof(struct host1x_job_gather) +
+-		num_unpins * sizeof(dma_addr_t) +
+-		num_unpins * sizeof(u32 *);
++		(u64)num_relocs * sizeof(struct host1x_reloc) +
++		(u64)num_unpins * sizeof(struct host1x_job_unpin_data) +
++		(u64)num_waitchks * sizeof(struct host1x_waitchk) +
++		(u64)num_cmdbufs * sizeof(struct host1x_job_gather) +
++		(u64)num_unpins * sizeof(dma_addr_t) +
++		(u64)num_unpins * sizeof(u32 *);
+ 	if (total > ULONG_MAX)
+ 		return NULL;
+ 
