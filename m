@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 12 Aug 2013 16:49:10 +0000
-Subject: build regressions 2013-08-12
-Message-Id: <52091206.lMHkp0wBr4qo+nRV%fengguang.wu@intel.com>
+Date: Sun, 25 Aug 2013 01:08:18 +0000
+Subject: build regressions 2013-08-24
+Message-Id: <52195902.0WhnbIhon47cKI+v%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,163 +9,74 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-file.c:(.text+0x10b438): undefined reference to `__tracepoint_nfs4_lock_expired'
-file.c:(.text+0x10b538): undefined reference to `__tracepoint_nfs4_lock_reclaim'
-file.c:(.text+0x10b824): undefined reference to `__tracepoint_nfs4_readlink'
-file.c:(.text+0x10bff0): undefined reference to `__tracepoint_nfs4_set_acl'
-file.c:(.text+0x10c1b0): undefined reference to `__tracepoint_nfs4_get_acl'
-file.c:(.text+0x10c284): undefined reference to `__tracepoint_nfs4_rename'
-file.c:(.text+0x10c34c): undefined reference to `__tracepoint_nfs4_remove'
-file.c:(.text+0x10c440): undefined reference to `__tracepoint_nfs4_readdir'
-file.c:(.text+0x10c510): undefined reference to `__tracepoint_nfs4_link'
-file.c:(.text+0x10c728): undefined reference to `__tracepoint_nfs4_access'
-file.c:(.text+0x10d414): undefined reference to `__tracepoint_nfs4_open_expired'
-file.c:(.text+0x10d5dc): undefined reference to `__tracepoint_nfs4_open_reclaim'
-file.c:(.text+0x10dc84): undefined reference to `__tracepoint_nfs4_set_lock'
-file.c:(.text+0x10dc90): undefined reference to `__tracepoint_nfs4_get_lock'
-file.c:(.text+0x10de34): undefined reference to `__tracepoint_nfs4_mkdir'
-file.c:(.text+0x10df68): undefined reference to `__tracepoint_nfs4_symlink'
-file.c:(.text+0x10e114): undefined reference to `__tracepoint_nfs4_mknod'
-file.c:(.text+0x10e280): undefined reference to `__tracepoint_nfs4_setattr'
-file.c:(.text+0x10e9c0): undefined reference to `__tracepoint_nfs4_open_file'
-file.c:(.text+0x10f3f0): undefined reference to `__tracepoint_nfs4_delegreturn'
-file.c:(.text+0x10f614): undefined reference to `__tracepoint_nfs4_get_fs_locations'
-file.c:(.text+0x10f984): undefined reference to `__tracepoint_nfs4_lookup'
-file.c:(.text+0x10fc0c): undefined reference to `__tracepoint_nfs4_secinfo'
-nfs4proc.c:(.text+0x1590d9): undefined reference to `__tracepoint_nfs4_get_security_label'
-nfs4proc.c:(.text+0x15ce85): undefined reference to `__tracepoint_nfs4_readlink'
-nfs4proc.c:(.text+0x15d2ac): undefined reference to `__tracepoint_nfs4_rename'
-nfs4proc.c:(.text+0x15d374): undefined reference to `__tracepoint_nfs4_remove'
-nfs4proc.c:(.text+0x15d4cd): undefined reference to `__tracepoint_nfs4_setattr'
-nfs4proc.c:(.text+0x15d6b6): undefined reference to `__tracepoint_nfs4_readdir'
-nfs4proc.c:(.text+0x15d784): undefined reference to `__tracepoint_nfs4_link'
-nfs4proc.c:(.text+0x15d926): undefined reference to `__tracepoint_nfs4_access'
-nfs4proc.c:(.text+0x15da0d): undefined reference to `__tracepoint_nfs4_set_acl'
-nfs4proc.c:(.text+0x15db93): undefined reference to `__tracepoint_nfs4_get_acl'
-nfs4proc.c:(.text+0x15e47c): undefined reference to `__tracepoint_nfs4_mknod'
-nfs4proc.c:(.text+0x15e5b8): undefined reference to `__tracepoint_nfs4_mkdir'
-nfs4proc.c:(.text+0x15e70b): undefined reference to `__tracepoint_nfs4_symlink'
-nfs4proc.c:(.text+0x15eb98): undefined reference to `__tracepoint_nfs4_open_reclaim'
-nfs4proc.c:(.text+0x15ed10): undefined reference to `__tracepoint_nfs4_open_expired'
-nfs4proc.c:(.text+0x15f516): undefined reference to `__tracepoint_nfs4_open_file'
-nfs4proc.c:(.text+0x15fce0): undefined reference to `__tracepoint_nfs4_lock_expired'
-nfs4proc.c:(.text+0x15fe9c): undefined reference to `__tracepoint_nfs4_lock_reclaim'
-nfs4proc.c:(.text+0x16041a): undefined reference to `__tracepoint_nfs4_get_lock'
-nfs4proc.c:(.text+0x160437): undefined reference to `__tracepoint_nfs4_set_lock'
-(.text+0x1614c5): undefined reference to `__tracepoint_nfs4_delegreturn'
-(.text+0x1616e7): undefined reference to `__tracepoint_nfs4_get_fs_locations'
-nfs4proc.c:(.text+0x161a21): undefined reference to `__tracepoint_nfs4_lookup'
-(.text+0x161cb1): undefined reference to `__tracepoint_nfs4_secinfo'
-fs/built-in.o:(__jump_table+0x80c): undefined reference to `__tracepoint_nfs4_get_security_label'
-fs/built-in.o:(__jump_table+0x818): undefined reference to `__tracepoint_nfs4_readlink'
-fs/built-in.o:(__jump_table+0x824): undefined reference to `__tracepoint_nfs4_rename'
-fs/built-in.o:(__jump_table+0x830): undefined reference to `__tracepoint_nfs4_remove'
-fs/built-in.o:(__jump_table+0x83c): undefined reference to `__tracepoint_nfs4_setattr'
-fs/built-in.o:(__jump_table+0x848): undefined reference to `__tracepoint_nfs4_readdir'
-fs/built-in.o:(__jump_table+0x854): undefined reference to `__tracepoint_nfs4_link'
-fs/built-in.o:(__jump_table+0x860): undefined reference to `__tracepoint_nfs4_access'
-fs/built-in.o:(__jump_table+0x86c): undefined reference to `__tracepoint_nfs4_set_acl'
-fs/built-in.o:(__jump_table+0x878): undefined reference to `__tracepoint_nfs4_get_acl'
-fs/built-in.o:(__jump_table+0x884): undefined reference to `__tracepoint_nfs4_mknod'
-fs/built-in.o:(__jump_table+0x890): undefined reference to `__tracepoint_nfs4_mkdir'
-fs/built-in.o:(__jump_table+0x89c): undefined reference to `__tracepoint_nfs4_symlink'
-fs/built-in.o:(__jump_table+0x8a8): undefined reference to `__tracepoint_nfs4_open_reclaim'
-fs/built-in.o:(__jump_table+0x8b4): undefined reference to `__tracepoint_nfs4_open_expired'
-fs/built-in.o:(__jump_table+0x8c0): undefined reference to `__tracepoint_nfs4_open_file'
-fs/built-in.o:(__jump_table+0x8cc): undefined reference to `__tracepoint_nfs4_lock_expired'
-fs/built-in.o:(__jump_table+0x8d8): undefined reference to `__tracepoint_nfs4_lock_reclaim'
-fs/built-in.o:(__jump_table+0x8e4): undefined reference to `__tracepoint_nfs4_get_lock'
-fs/built-in.o:(__jump_table+0x8f0): undefined reference to `__tracepoint_nfs4_set_lock'
-fs/built-in.o:(__jump_table+0x8fc): undefined reference to `__tracepoint_nfs4_delegreturn'
-fs/built-in.o:(__jump_table+0x908): undefined reference to `__tracepoint_nfs4_get_fs_locations'
-fs/built-in.o:(__jump_table+0x914): undefined reference to `__tracepoint_nfs4_lookup'
-fs/built-in.o:(__jump_table+0x920): undefined reference to `__tracepoint_nfs4_secinfo'
-ERROR: "ramster_foreign_eph_pages" [drivers/staging/zcache/zcache.ko] undefined!
-ERROR: "ramster_foreign_pers_pages" [drivers/staging/zcache/zcache.ko] undefined!
-ERROR: "__tracepoint_nfs4_rename" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_setattr" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_get_lock" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_open_file" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_get_acl" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_lookup" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_secinfo" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_access" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_lock_expired" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_readlink" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_open_reclaim" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_link" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_mknod" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_set_acl" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_remove" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_readdir" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_set_lock" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_mkdir" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_get_fs_locations" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_delegreturn" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_lock_reclaim" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_symlink" [fs/nfs/nfsv4.ko] undefined!
-ERROR: "__tracepoint_nfs4_open_expired" [fs/nfs/nfsv4.ko] undefined!
-fs/built-in.o:(.toc+0x0): undefined reference to `__tracepoint_nfs4_readlink'
-fs/built-in.o:(.toc+0x8): undefined reference to `__tracepoint_nfs4_lock_expired'
-fs/built-in.o:(.toc+0x10): undefined reference to `__tracepoint_nfs4_lock_reclaim'
-fs/built-in.o:(.toc+0x18): undefined reference to `__tracepoint_nfs4_rename'
-fs/built-in.o:(.toc+0x20): undefined reference to `__tracepoint_nfs4_remove'
-fs/built-in.o:(.toc+0x28): undefined reference to `__tracepoint_nfs4_readdir'
-fs/built-in.o:(.toc+0x30): undefined reference to `__tracepoint_nfs4_link'
-fs/built-in.o:(.toc+0x38): undefined reference to `__tracepoint_nfs4_access'
-fs/built-in.o:(.toc+0x40): undefined reference to `__tracepoint_nfs4_get_acl'
-fs/built-in.o:(.toc+0x48): undefined reference to `__tracepoint_nfs4_set_acl'
-fs/built-in.o:(.toc+0x50): undefined reference to `__tracepoint_nfs4_get_lock'
-fs/built-in.o:(.toc+0x58): undefined reference to `__tracepoint_nfs4_set_lock'
-fs/built-in.o:(.toc+0x60): undefined reference to `__tracepoint_nfs4_mknod'
-fs/built-in.o:(.toc+0x68): undefined reference to `__tracepoint_nfs4_mkdir'
-fs/built-in.o:(.toc+0x70): undefined reference to `__tracepoint_nfs4_symlink'
-fs/built-in.o:(.toc+0x78): undefined reference to `__tracepoint_nfs4_setattr'
-fs/built-in.o:(.toc+0x80): undefined reference to `__tracepoint_nfs4_open_file'
-fs/built-in.o:(.toc+0x88): undefined reference to `__tracepoint_nfs4_open_reclaim'
-fs/built-in.o:(.toc+0x90): undefined reference to `__tracepoint_nfs4_open_expired'
-fs/built-in.o:(.toc+0x98): undefined reference to `__tracepoint_nfs4_delegreturn'
-fs/built-in.o:(.toc+0xa0): undefined reference to `__tracepoint_nfs4_get_fs_locations'
-fs/built-in.o:(.toc+0xa8): undefined reference to `__tracepoint_nfs4_lookup'
-fs/built-in.o:(.toc+0xb0): undefined reference to `__tracepoint_nfs4_secinfo'
-fs/nfs/nfs4proc.c:349:2: error: implicit declaration of function 'trace_handle_sync_exception' [-Werror=implicit-function-declaration]
-ERROR: "__tracepoint_nfs4_rename" undefined!
-ERROR: "__tracepoint_nfs4_setattr" undefined!
-ERROR: "__tracepoint_nfs4_get_lock" undefined!
-ERROR: "__tracepoint_nfs4_open_file" undefined!
-ERROR: "__tracepoint_nfs4_get_acl" undefined!
-ERROR: "__tracepoint_nfs4_lookup" undefined!
-ERROR: "__tracepoint_nfs4_secinfo" undefined!
-ERROR: "__tracepoint_nfs4_access" undefined!
-ERROR: "__tracepoint_nfs4_lock_expired" undefined!
-ERROR: "__tracepoint_nfs4_readlink" undefined!
-ERROR: "__tracepoint_nfs4_open_reclaim" undefined!
-ERROR: "__tracepoint_nfs4_link" undefined!
-ERROR: "__tracepoint_nfs4_mknod" undefined!
-ERROR: "__tracepoint_nfs4_set_acl" undefined!
-ERROR: "__tracepoint_nfs4_remove" undefined!
-ERROR: "__tracepoint_nfs4_readdir" undefined!
-ERROR: "__tracepoint_nfs4_set_lock" undefined!
-ERROR: "__tracepoint_nfs4_mkdir" undefined!
-ERROR: "__tracepoint_nfs4_get_security_label" undefined!
-ERROR: "__tracepoint_nfs4_get_fs_locations" undefined!
-ERROR: "__tracepoint_nfs4_delegreturn" undefined!
-ERROR: "__tracepoint_nfs4_lock_reclaim" undefined!
-ERROR: "__tracepoint_nfs4_symlink" undefined!
-ERROR: "__tracepoint_nfs4_open_expired" undefined!
-ERROR: "__tracepoint_nfs4_get_security_label" [fs/nfs/nfsv4.ko] undefined!
-include/linux/compiler.h:321:20: error: call to '__compiletime_assert_1559' declared with attribute error: BUILD_BUG_ON failed: RADIX_TREE_PRELOAD_NR > 1UL << (2 * RADIX_TREE_MAP_SHIFT)
+sound/soc/codecs/rt5640.c:735:2: error: implicit declaration of function 'SOC_DAPM_SINGLE_AUTODISABLE' [-Werror=implicit-function-declaration]
+sound/soc/codecs/rt5640.c:736:3: error: invalid initializer
+sound/soc/codecs/rt5640.c:740:3: error: invalid initializer
+sound/soc/codecs/rt5640.c:744:3: error: invalid initializer
+sound/soc/codecs/rt5640.c:748:3: error: invalid initializer
+drivers/gpu/drm/i915/intel_sprite.c:638:18: error: 'src' redeclared as different kind of symbol
+actions.c:(.text+0xa5cb5): undefined reference to `crc32c'
+actions.c:(.text+0xa5cd0): undefined reference to `crc32c'
+actions.c:(.text+0xa5cf2): undefined reference to `crc32c'
+actions.c:(.text+0xa5d21): undefined reference to `crc32c'
+actions.c:(.text+0xa5d7d): undefined reference to `crc32c'
+net/mac80211/debugfs_sta.c:463:3: error: implicit declaration of function 'debugfs_create_x64' [-Werror=implicit-function-declaration]
+fs/btrfs/volumes.c:676:3: error: implicit declaration of function 'btrfs_alloc_device' [-Werror=implicit-function-declaration]
+drivers/staging/dgnc/dgnc_driver.c:461:3: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+drivers/staging/dgnc/dgnc_driver.c:907:3: error: implicit declaration of function 'kmalloc' [-Werror=implicit-function-declaration]
+ERROR: "__umoddi3" [drivers/staging/media/msi3101/sdr-msi3101.ko] undefined!
+ERROR: "__udivdi3" [drivers/staging/media/msi3101/sdr-msi3101.ko] undefined!
+security/integrity/ima/ima_dir.c:78:32: error: 'const struct file_operations' has no member named 'readdir'
+security/integrity/ima/ima_dir.c:93:17: error: 'const struct file_operations' has no member named 'readdir'
+security/integrity/ima/ima_dir.c:282:17: error: 'struct ima_digest_data' has no member named 'type'
+security/integrity/ima/ima_dir.c:284:25: error: 'struct ima_digest_data' has no member named 'type'
+net/openvswitch/actions.c:374:3: error: implicit declaration of function 'sctp_compute_cksum' [-Werror=implicit-function-declaration]
+drivers/thermal/thermal_core.c:947:30: error: 'const struct thermal_zone_device' has no member named 'type'
+drivers/thermal/thermal_core.c:993:25: error: 'struct thermal_zone_device' has no member named 'type'
+drivers/thermal/thermal_core.c:1659:24: error: expected ')' before '{' token
+drivers/thermal/thermal_core.c:1733:1: error: expected expression before '}' token
+drivers/thermal/thermal_core.c:2009:0: error: unterminated argument list invoking macro "if"
+drivers/thermal/thermal_core.c:1659:2: error: expected '(' at end of input
+drivers/thermal/thermal_core.c:1659:2: error: expected declaration or statement at end of input
+
+[warnings]
+drivers/gpu/host1x/drm/dc.c:105:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/gpu/host1x/drm/dc.c:105:2: warning: (near initialization for 'tegra_plane_funcs.update_plane') [enabled by default]
+Warning(drivers/pci/probe.c:168): No description found for parameter 'PCI_COMMAND_IO'
+Warning(drivers/pci/probe.c:168): Excess function parameter 'dev' description in 'PCI_COMMAND_DECODE_ENABLE'
+Warning(drivers/pci/probe.c:168): Excess function parameter 'type' description in 'PCI_COMMAND_DECODE_ENABLE'
+Warning(drivers/pci/probe.c:168): Excess function parameter 'res' description in 'PCI_COMMAND_DECODE_ENABLE'
+Warning(drivers/pci/probe.c:168): Excess function parameter 'pos' description in 'PCI_COMMAND_DECODE_ENABLE'
+Warning(drivers/scsi/scsi_error.c:243): No description found for parameter 'sdev'
+drivers/scsi/scsi_error.c:245:16: warning: unused variable 'flags' [-Wunused-variable]
+fs/btrfs/volumes.c:676:14: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/staging/dgnc/dgnc_driver.c:907:13: warning: initialization makes pointer from integer without a cast [enabled by default]
+drivers/block/aoe/aoedev.c:252:174: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+drivers/sh/clk/cpg.c:41:2: warning: passing argument 1 of 'ioread8' discards 'const' qualifier from pointer target type [enabled by default]
+drivers/sh/clk/cpg.c:46:2: warning: passing argument 1 of 'ioread16' discards 'const' qualifier from pointer target type [enabled by default]
+drivers/sh/clk/cpg.c:51:2: warning: passing argument 1 of 'ioread32' discards 'const' qualifier from pointer target type [enabled by default]
+drivers/thermal/thermal_core.c:1621:6: warning: unused variable 'passive' [-Wunused-variable]
+drivers/thermal/thermal_core.c:1620:6: warning: unused variable 'count' [-Wunused-variable]
+drivers/thermal/thermal_core.c:1618:25: warning: unused variable 'trip_type' [-Wunused-variable]
+include/linux/device.h:526:26: warning: 'dev_attr_emul_temp' defined but not used [-Wunused-variable]
+include/linux/device.h:526:26: warning: 'dev_attr_passive' defined but not used [-Wunused-variable]
+drivers/thermal/thermal_core.c:1733:1: warning: control reaches end of non-void function [-Wreturn-type]
+include/linux/device.h:526:26: warning: 'dev_attr_type' defined but not used [-Wunused-variable]
+include/linux/device.h:526:26: warning: 'dev_attr_temp' defined but not used [-Wunused-variable]
+include/linux/device.h:526:26: warning: 'dev_attr_mode' defined but not used [-Wunused-variable]
+include/linux/device.h:526:26: warning: 'dev_attr_policy' defined but not used [-Wunused-variable]
 
 [sparse]
-fs/cifs/smb2ops.c:601:1: sparse: symbol 'smb2_query_symlink' was not declared. Should it be static?
-include/linux/spinlock.h:340:9: sparse: context imbalance in 'nouveau_event_put' - different lock contexts for basic block
-include/linux/spinlock.h:340:9: sparse: context imbalance in 'nouveau_event_get' - different lock contexts for basic block
-include/linux/spinlock.h:340:9: sparse: context imbalance in 'nouveau_event_trigger' - different lock contexts for basic block
-fs/nfs/nfs4proc.c:349:9: sparse: undefined identifier 'trace_handle_sync_exception'
+drivers/scsi/ufs/ufshcd.c:367:25: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] length @@    got  short [unsigned] [usertype] length @@
+drivers/scsi/ufs/ufshcd.c:368:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] value @@    got ed int [unsigned] [usertype] value @@
+drivers/scsi/ufs/ufshcd.c:1135:5: sparse: symbol 'ufshcd_query_attr' was not declared. Should it be static?
+fs/xfs/xfs_dir2_sf.c:133:1: sparse: symbol 'xfs_dir3_sfe_put_ino' was not declared. Should it be static?
+sound/soc/codecs/rt5640.c:735:9: sparse: undefined identifier 'SOC_DAPM_SINGLE_AUTODISABLE'
+net/openvswitch/actions.c:374:36: sparse: undefined identifier 'sctp_compute_cksum'
 
 [coccinelle]
-fs/nfs/nfs4super.c:324:3-9: WARNING: PTR_RET can be used
-fs/nfs/nfs4super.c:251:3-9: WARNING: PTR_RET can be used
+security/apparmor/apparmorfs.c:397:9-16: ERROR: PTR_ERR applied after initialization to constant on line 346
+security/integrity/ima/ima_template.c:62:41-47: ERROR: application of sizeof to pointer
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
