@@ -1,7 +1,7 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 23 Aug 2013 18:15:50 +0000
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Sun, 25 Aug 2013 11:06:25 +0000
 Subject: Re: [patch] dmaengine: ste_dma40: off by one in d40_of_probe()
-Message-Id: <CACRpkdbQs83Jm3t1N0+RwRATcipRAWsAWRCPwAcm6kO-oaVZUA@mail.gmail.com>
+Message-Id: <20130825105425.GA2748@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130823092343.GF31293@elgon.mountain>
 In-Reply-To: <20130823092343.GF31293@elgon.mountain>
@@ -10,15 +10,9 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Aug 23, 2013 at 11:23 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-
+On Fri, Aug 23, 2013 at 12:23:43PM +0300, Dan Carpenter wrote:
 > If "num_disabled" is equal to STEDMA40_MAX_PHYS (32) then we would write
 > one space beyond the end of the pdata->disable_channels[] array.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied, thanks
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+~Vinod
