@@ -1,8 +1,10 @@
 From: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Date: Thu, 22 Aug 2013 03:16:18 +0000
+Date: Mon, 26 Aug 2013 02:20:57 +0000
 Subject: =?UTF-8?q?=5BPATCH=20v3=5D=20xHCI=3A=20Fixing=20xhci=5Freadl=20definition=20and=20function=20call?=
-Message-Id: <1377140659-10562-1-git-send-email-kumargauravgupta3@gmail.com>
+Message-Id: <1377482937-7486-1-git-send-email-kumargauravgupta3@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1377140659-10562-1-git-send-email-kumargauravgupta3@gmail.com>
+In-Reply-To: <1377140659-10562-1-git-send-email-kumargauravgupta3@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
