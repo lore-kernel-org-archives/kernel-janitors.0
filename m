@@ -1,63 +1,41 @@
-From: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-Date: Thu, 15 Aug 2013 00:25:08 +0000
-Subject: Re: [PATCH v3 1/2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
-Message-Id: <20130815.092508.220044688.konishi.ryusuke@lab.ntt.co.jp>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 26 Aug 2013 14:56:10 +0000
+Subject: [patch] tgafb: potential NULL dereference in init
+Message-Id: <20130826145610.GA12428@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130814160001.3fa9e4dabb7dca81dab31e87@linux-foundation.org>
-	<20130815.084112.220043622.konishi.ryusuke@lab.ntt.co.jp>
-	<20130814164545.41be4873a71f321cc1ae3b16@linux-foundation.org>
-In-Reply-To: <20130814164545.41be4873a71f321cc1ae3b16@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vyacheslav Dubeyko <slava@dubeyko.com>, DanCarpenter <dan.carpenter@oracle.com>, linux-nilfs@vger.kernel.org, Linux FS Devel <linux-fsdevel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-On Wed, 14 Aug 2013 16:45:45 -0700, Andrew Morton <akpm@linux-foundation.org> wrote:
-> On Thu, 15 Aug 2013 08:41:12 +0900 (JST) Ryusuke Konishi wrote:
-> 
->> On Wed, 14 Aug 2013 16:00:01 -0700, Andrew Morton wrote:
->> > On Wed, 14 Aug 2013 01:51:48 +0900 (JST) Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp> wrote:
->> > 
->> >> On Tue, 13 Aug 2013 17:50:33 +0400, Vyacheslav Dubeyko wrote:
->> >> > From: Vyacheslav Dubeyko <slava@dubeyko.com>
->> >> > Subject: [PATCH v3 1/2] nilfs2: remove double bio_put() in nilfs_end_bio_write() for BIO_EOPNOTSUPP error
->> >> > 
->> >> > This patch removes double call of bio_put() in nilfs_end_bio_write()
->> >> > for the case of BIO_EOPNOTSUPP error detection. The issue was found
->> >> > by Dan Carpenter and he suggests first version of the fix too.
->> >> > 
->> >> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->> >> > Signed-off-by: Vyacheslav Dubeyko <slava@dubeyko.com>
->> >> > CC: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
->> >> 
->> >> Acked-by: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
->> >> Tested-by: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
->> >> 
->> >> I tested this patch by inserting a pseudo EOPNOTSUPP error, and this
->> >> actually fixed a crach "kernel BUG at fs/bio.c:498!" due to reference
->> >> count underflow of bio_put() that nilfs_end_bio_write() induced.
->> >> 
->> >> 
->> >> Andrew, please pick up this bug-fix preferably for this cycle.
->> > 
->> > Should we apply the fix to earlier kernel versions and if so, how
->> > far back in time does it go?
->> 
->> Yes, I think it should also be applied to earlier versions.
->> 
->> I looked back ealiear versions.
->> 
->> This bug, unfortunately, comes from the original version (2.6.30), and
->> the patch could be applied to all versions.
-> 
-> OK.  And what about
-> nilfs2-fix-issue-with-counting-number-of-bio-requests-for-bio_eopnotsupp-error-detection.patch?
+Static checkers complain that there are paths where "tga_type_name" can
+be NULL.  I've re-arranged the code slightly so that's impossible.
 
-This one should also be applied to ealier versions, but it was
-applicable only to 2.6.33 and later due to change at 2.6.33.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Regards,
-Ryusuke Konishi
-
+diff --git a/drivers/video/tgafb.c b/drivers/video/tgafb.c
+index c9c8e5a..2dcaf2e 100644
+--- a/drivers/video/tgafb.c
++++ b/drivers/video/tgafb.c
+@@ -1475,7 +1475,7 @@ tgafb_init_fix(struct fb_info *info)
+ 	int tga_bus_pci = TGA_BUS_PCI(par->dev);
+ 	int tga_bus_tc = TGA_BUS_TC(par->dev);
+ 	u8 tga_type = par->tga_type;
+-	const char *tga_type_name = NULL;
++	const char *tga_type_name;
+ 
+ 	switch (tga_type) {
+ 	case TGA_TYPE_8PLANE:
+@@ -1496,10 +1496,9 @@ tgafb_init_fix(struct fb_info *info)
+ 		if (tga_bus_tc)
+ 			tga_type_name = "Digital ZLX-E3";
+ 		break;
+-	default:
+-		tga_type_name = "Unknown";
+-		break;
+ 	}
++	if (!tga_type_name)
++		tga_type_name = "Unknown";
+ 
+ 	strlcpy(info->fix.id, tga_type_name, sizeof(info->fix.id));
+ 
