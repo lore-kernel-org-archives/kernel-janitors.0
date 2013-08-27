@@ -1,26 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 26 Aug 2013 16:18:17 +0000
-Subject: [patch -next] xen/evtchn: double free on error
-Message-Id: <20130826161817.GF12428@elgon.mountain>
+From: David Vrabel <david.vrabel@citrix.com>
+Date: Tue, 27 Aug 2013 18:17:01 +0000
+Subject: Re: [patch -next] xen/evtchn: double free on error
+Message-Id: <521CED1D.30900@citrix.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130826161817.GF12428@elgon.mountain>
+In-Reply-To: <20130826161817.GF12428@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The call to del_evtchn() frees "evtchn".
+On 26/08/13 17:18, Dan Carpenter wrote:
+> The call to del_evtchn() frees "evtchn".
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Good catch, thanks.
 
-diff --git a/drivers/xen/evtchn.c b/drivers/xen/evtchn.c
-index f328f12..8b3a69a 100644
---- a/drivers/xen/evtchn.c
-+++ b/drivers/xen/evtchn.c
-@@ -319,7 +319,6 @@ err:
- 	if (HYPERVISOR_event_channel_op(EVTCHNOP_close, &close) != 0)
- 		BUG();
- 	del_evtchn(u, evtchn);
--	kfree(evtchn);
- 	return rc;
- }
- 
+Reviewed-by: David Vrabel <david.vrabel@citrix.com>
+
+This needs to be queued up for 3.12.
+
+David
