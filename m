@@ -1,89 +1,50 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Fri, 30 Aug 2013 09:42:27 +0000
-Subject: Re: [PATCH 6/7] video: xilinxfb: replace devm_request_and_ioremap by devm_ioremap_resource
-Message-Id: <52206903.5050707@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="OvCuspnK2QPgdS5cVLBFxXjaPC4IJlRwR"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Aug 2013 01:16:22 +0000
+Subject: [patch -next] qlcnic: underflow in qlcnic_validate_max_tx_rings()
+Message-Id: <20130827011622.GB17061@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr> <1376911241-27720-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376911241-27720-7-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Himanshu Madhani <himanshu.madhani@qlogic.com>
+Cc: Rajesh Borundia <rajesh.borundia@qlogic.com>, Shahed Shaikh <shahed.shaikh@qlogic.com>, Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>, Sony Chacko <sony.chacko@qlogic.com>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---OvCuspnK2QPgdS5cVLBFxXjaPC4IJlRwR
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+This function checks the upper bound but it doesn't check for negative
+numbers:
 
-On 19/08/13 14:20, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Use devm_ioremap_resource instead of devm_request_and_ioremap.
->=20
-> This was done using the semantic patch
-> scripts/coccinelle/api/devm_ioremap_resource.cocci
->=20
-> The initialization of drvdata->regs_phys was manually moved lower, to t=
-ake
-> advantage of the NULL test on res performed by devm_ioremap_resource.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/video/xilinxfb.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/video/xilinxfb.c b/drivers/video/xilinxfb.c
-> index 6629b29..84c664e 100644
-> --- a/drivers/video/xilinxfb.c
-> +++ b/drivers/video/xilinxfb.c
-> @@ -259,12 +259,12 @@ static int xilinxfb_assign(struct platform_device=
- *pdev,
->  		struct resource *res;
-> =20
->  		res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -		drvdata->regs_phys =3D res->start;
-> -		drvdata->regs =3D devm_request_and_ioremap(&pdev->dev, res);
-> -		if (!drvdata->regs) {
-> -			rc =3D -EADDRNOTAVAIL;
-> +		drvdata->regs =3D devm_ioremap_resource(&pdev->dev, res);
-> +		if (IS_ERR(drvdata->regs)) {
-> +			rc =3D PTR_ERR(drvdata->regs);
->  			goto err_region;
->  		}
-> +		drvdata->regs_phys =3D res->start;
->  	}
-> =20
->  	/* Allocate the framebuffer memory */
+	if (txq > QLCNIC_MAX_TX_RINGS) {
 
-Thanks, queued for 3.12.
+I've solved this by making "txq" a u32 type.  I chose that because
+->tx_count in the ethtool_channels struct is a __u32.
 
- Tomi
+This bug was added in aa4a1f7df7 ('qlcnic: Enable Tx queue changes using
+ethtool for 82xx Series adapter.').
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-
---OvCuspnK2QPgdS5cVLBFxXjaPC4IJlRwR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJSIGkDAAoJEPo9qoy8lh715B8QAJjsbcyn3+mZZ7Arcov8Lw2+
-faIDL39Sg4d0stS5uzwePXqTfYdmAZbxmDY8CKG+tsD47ww2vi1jPdDu1D0mntTo
-/UmGvS9miAcrII7fh9yohd9h9DO2iMBzpK0P4uQS1B2LL/4mue7pAZM45TKAgVVG
-DlP/aQkWgPU9iUPTcGso54hnRk3HEqohz1ZzaC8psAupj79Ifmsw1R+0HAybwOrh
-S8Aflj3LcjDYCnNK5+P9z6RXiP2GiwV2ToCWlub6LMaYPoQxsahPPVJ6cH81ah0f
-ms53ZtSfPgV0MOW4p/dmoz4eKfdMkKJWpprzeaZijxQCOzm940viKYnTTtRK2oN8
-X34krrvsemtTVl3oEntpQK+ah9q3CeCeIJhZUT4Tl3nKLRUMcfPLrgmVqDbjI6yB
-T/xsAbFFnR8ehMoIWTNy8/k5NJB/NJ7pkqIVEbJNfvUanUOICbaR7684ZciSb49o
-/+GzPoOXK08pR6aYEKFOFyT2fmjjpAWNX0ygY4oYoKtSWqSKsQ+zzW5XkViGwQtg
-dGwgexLmZ4VSNVLBdJMdE/NS1JPS1lbHwyOqOd2m0vO2WDue9K8QDnmQasj7Mw1G
-GSabd2e/rw+A54d5oHZd2CONNJP0mOHf+l1lHy2xpITScSfbo+hs++wgZvd8Aho4
-Ryy42HIY7VhKYWCT0gcw
-=c3EN
------END PGP SIGNATURE-----
-
---OvCuspnK2QPgdS5cVLBFxXjaPC4IJlRwR--
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
+index 3f03856..ae9b444 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
+@@ -1537,7 +1537,7 @@ int qlcnic_diag_alloc_res(struct net_device *netdev, int test);
+ netdev_tx_t qlcnic_xmit_frame(struct sk_buff *skb, struct net_device *netdev);
+ int qlcnic_set_max_rss(struct qlcnic_adapter *, u8, int);
+ int qlcnic_validate_max_rss(struct qlcnic_adapter *, __u32);
+-int qlcnic_validate_max_tx_rings(struct qlcnic_adapter *, int);
++int qlcnic_validate_max_tx_rings(struct qlcnic_adapter *, u32 txq);
+ void qlcnic_alloc_lb_filters_mem(struct qlcnic_adapter *adapter);
+ void qlcnic_82xx_set_mac_filter_count(struct qlcnic_adapter *);
+ int qlcnic_enable_msix(struct qlcnic_adapter *, u32);
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+index 8321d1a..88e3c97 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
+@@ -3524,7 +3524,7 @@ qlcnicvf_start_firmware(struct qlcnic_adapter *adapter)
+ 	return err;
+ }
+ 
+-int qlcnic_validate_max_tx_rings(struct qlcnic_adapter *adapter, int txq)
++int qlcnic_validate_max_tx_rings(struct qlcnic_adapter *adapter, u32 txq)
+ {
+ 	struct net_device *netdev = adapter->netdev;
+ 	u8 max_hw = QLCNIC_MAX_TX_RINGS;
