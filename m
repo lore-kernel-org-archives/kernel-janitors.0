@@ -1,42 +1,26 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 07 Aug 2013 04:00:13 +0000
-Subject: Re: [PATCH] checkpatch: Better --fix of SPACING errors.
-Message-Id: <1375848013.2424.71.camel@joe-AO722>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 27 Aug 2013 04:27:26 +0000
+Subject: build regressions 2013-08-26
+Message-Id: <521c2aae.mD3sC59vgz5q1K80%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <55837ac7d8f48eb8dc9060f1b705c9c8b01bea59.1375843905.git.joe@perches.com>
-In-Reply-To: <55837ac7d8f48eb8dc9060f1b705c9c8b01bea59.1375843905.git.joe@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Phil Carmody <phil.carmody@partner.samsung.com>, Andy Whitcroft <apw@canonical.com>, linux-kernel@vger.kernel.org, devel <devel@linuxdriverproject.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 2013-08-06 at 19:55 -0700, Joe Perches wrote:
-> Previous attempt at fixing SPACING errors could
-> make a hash of several defects.
+[errors]
+(.text+0x153ff5): undefined reference to `cpufreq_table_validate_and_show'
+sound/soc/fsl/imx-mc13783.c:23:28: fatal error: asm/mach-types.h: No such file or directory
+(.text+0x37e3e): undefined reference to `i2c_del_adapter'
 
-I have run this against drivers/staging/...
+[sparse]
+drivers/mmc/host/omap_hsmmc.c:616:53: sparse: dubious: !x & y
+drivers/target/target_core_configfs.c:272:27: sparse: symbol 'target_core_subsystem' was not declared. Should it be static?
 
-It works rather better than the older version.
+[coccinelle]
+drivers/usb/host/isp116x-hcd.c:175:3-49: code aligned with following code on line 177
+drivers/usb/host/isp116x-hcd.c:128:3-48: code aligned with following code on line 130
 
-It does have an issue with c99 style comments
-when it needs to rewrite spacing as well.
-
-If you use this with -f, please convert the
-c99 // comments to /* ... */ first using the
---types c99_comments option,
-
-Maybe use:
-
-$ ./scripts/checkpatch.pl -f --fix --types=C99_comments <file>
-$ mv <file>.EXPERIMENTAL-checkpatch-fixes <file>
-$ ./scripts/checkpatch.pl -f --fix --types=3Dspacing <file>
-$ mv <file>.EXPERIMENTAL-checkpatch-fixes <file>
-$ git diff <file>
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
