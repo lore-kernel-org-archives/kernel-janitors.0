@@ -1,49 +1,29 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Date: Mon, 12 Aug 2013 19:14:07 +0000
-Subject: Re: [PATCH 15/16] arch/arm/mach-kirkwood: Avoid using ARRAY_AND_SIZE(e) as a function argument
-Message-Id: <20130812191407.GS25111@titan.lakedaemon.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 27 Aug 2013 01:19:42 +0000
+Subject: [patch] ab8500-charger: we print an unintended error message
+Message-Id: <20130827011942.GD17061@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376239917-15594-16-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376239917-15594-16-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Anton Vorontsov <anton@enomsg.org>
+Cc: David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Aug 11, 2013 at 06:51:56PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
-> arity of the called function.
-> 
-> The semantic match that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e,f;
-> @@
-> 
-> f(...,
-> - ARRAY_AND_SIZE(e)
-> + e,ARRAY_SIZE(e)
->   ,...)
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> Not compiled.
+There is a missing break statement here, so we print an error message
+that the USB type is invalid.  The original code still works fine
+though except for the error message.
 
-compiled fine on arm.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->  arch/arm/mach-kirkwood/openrd-setup.c    |    3 ++-
->  arch/arm/mach-kirkwood/rd88f6281-setup.c |    4 +++-
->  2 files changed, 5 insertions(+), 2 deletions(-)
-
-Applied to mvebu/boards
-
-thx,
-
-Jason.
+diff --git a/drivers/power/ab8500_charger.c b/drivers/power/ab8500_charger.c
+index f098fda..a4c4a10 100644
+--- a/drivers/power/ab8500_charger.c
++++ b/drivers/power/ab8500_charger.c
+@@ -774,6 +774,7 @@ static int ab8500_charger_max_usb_curr(struct ab8500_charger *di,
+ 		di->max_usb_in_curr.usb_type_max = USB_CH_IP_CUR_LVL_0P5;
+ 		dev_dbg(di->dev, "USB Type - 0x%02x MaxCurr: %d", link_status,
+ 				di->max_usb_in_curr.usb_type_max);
++		break;
+ 	case USB_STAT_NOT_VALID_LINK:
+ 		dev_err(di->dev, "USB Type invalid - try charging anyway\n");
+ 		di->max_usb_in_curr.usb_type_max = USB_CH_IP_CUR_LVL_0P5;
