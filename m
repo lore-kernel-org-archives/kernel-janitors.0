@@ -1,50 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Aug 2013 10:18:25 +0000
-Subject: [patch 1/2] gpu: host1x: fix an integer overflow check
-Message-Id: <20130823101825.GA1765@elgon.mountain>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Tue, 27 Aug 2013 08:30:24 +0000
+Subject: Re: [patch 1/2] gpu: host1x: fix an integer overflow check
+Message-Id: <20130827083023.GJ8686@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="HcccYpVZDxQ8hzPO"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20130823101825.GA1765@elgon.mountain>
+In-Reply-To: <20130823101825.GA1765@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Tegra is a 32 bit arch.  On 32 bit systems then size_t is 32 bits so
-"total" will never be higher than UINT_MAX because of integer overflows.
-We need cast to u64 first before doing the math.
 
-Also the addition earlier:
+--HcccYpVZDxQ8hzPO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-        unsigned int num_unpins = num_cmdbufs + num_relocs;
+On Fri, Aug 23, 2013 at 01:18:25PM +0300, Dan Carpenter wrote:
+> Tegra is a 32 bit arch.  On 32 bit systems then size_t is 32 bits so
+> "total" will never be higher than UINT_MAX because of integer overflows.
+> We need cast to u64 first before doing the math.
+>=20
+> Also the addition earlier:
+>=20
+>         unsigned int num_unpins =3D num_cmdbufs + num_relocs;
+>=20
+> That can overflow as well, but I think it's still safe because we check
+> both "num_cmdbufs" and "num_relocs" again in this test.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This is something I spotted in code review.  I can't actually compile
+> this code.  I assume this overflow test has security implications.
 
-That can overflow as well, but I think it's still safe because we check
-both "num_cmdbufs" and "num_relocs" again in this test.
+It did compile and looks good to me, so I've applied it.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This is something I spotted in code review.  I can't actually compile
-this code.  I assume this overflow test has security implications.
+Thanks,
+Thierry
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index cc80766..18a47f9 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -42,12 +42,12 @@ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
- 
- 	/* Check that we're not going to overflow */
- 	total = sizeof(struct host1x_job) +
--		num_relocs * sizeof(struct host1x_reloc) +
--		num_unpins * sizeof(struct host1x_job_unpin_data) +
--		num_waitchks * sizeof(struct host1x_waitchk) +
--		num_cmdbufs * sizeof(struct host1x_job_gather) +
--		num_unpins * sizeof(dma_addr_t) +
--		num_unpins * sizeof(u32 *);
-+		(u64)num_relocs * sizeof(struct host1x_reloc) +
-+		(u64)num_unpins * sizeof(struct host1x_job_unpin_data) +
-+		(u64)num_waitchks * sizeof(struct host1x_waitchk) +
-+		(u64)num_cmdbufs * sizeof(struct host1x_job_gather) +
-+		(u64)num_unpins * sizeof(dma_addr_t) +
-+		(u64)num_unpins * sizeof(u32 *);
- 	if (total > ULONG_MAX)
- 		return NULL;
- 
+--HcccYpVZDxQ8hzPO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHGOfAAoJEN0jrNd/PrOhj+oP/jAFWTE3EgWri6RAM/vFiFrY
+7lOg8hlDZ0cv5v/nJkDhtZ3VOel2hWcEMt0Xx5yGjt/ls4FJ1CehyJwW9HtZEGsl
+DVO/1xjwWjpIgGo6OScp192+3/OOMe40drxsw3KYYK96b1Y9RN8IyWC36fBjMhAM
+a/jLhpr8PR8Avght5AaCd58+WjZk/9B4YhZtbCh9zBay1iCeiHbS/GnzIoKe6x07
+Pl2GybMLXtCPQYahrl1aRhGPgLFnggLoN1LSrS8SCt3GDe0OAkW4fHDUDAbYMk89
+2BRNZ2ebjY5PRQmGsNTnFSEjdSsFR6rH6jmCuqpnNe60GJcvIyei9zaIKcNbzU/G
+LipkOxlz/Yf49HN2dEQhtdoSY/6X2heAsfpeW7flpLuon+Og7hXRq/jjS491t4gb
+STnTCXm3saQ9vomOSbMrSaCscC1WmHuEtBZO8UXTMLsPNshndjoGo4hk9CyGIvmK
++5gIXa1Xezb8ILVj/+fTlZCEwyCwa6q94IofqhPtovAYOWz75MNT+dRm2kDKS7Du
+/zfLstgT3mxc226RcviFPo342DV2zl+R5rWFTWLAvlv562Lj4KuXX+Jn2IehMj32
+OKCeVpIRgk6jpZB2pJ8g0JRHBk1jGbRhmE+eTWcULQVVJnFDuEmavu9A8Q1LV2DS
+9Fm0o4PnlEOQBPgU6PR3
+=oKqR
+-----END PGP SIGNATURE-----
+
+--HcccYpVZDxQ8hzPO--
