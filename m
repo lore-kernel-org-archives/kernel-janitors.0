@@ -1,31 +1,52 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Date: Fri, 23 Aug 2013 19:16:30 +0000
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Tue, 27 Aug 2013 09:07:57 +0000
 Subject: Re: [patch 2/2] gpu: host1x: returning success instead of -ENOMEM
-Message-Id: <5217B50E.5020101@wwwdotorg.org>
+Message-Id: <20130827090755.GK8686@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="W2ydbIOJmkm74tJ2"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130823101911.GA1824@elgon.mountain>
-In-Reply-To: <20130823101911.GA1824-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Terje_Ber?= =?ISO-8859-1?Q?gstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20130823101911.GA1824@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 08/23/2013 04:19 AM, Dan Carpenter wrote:
+
+--W2ydbIOJmkm74tJ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Aug 23, 2013 at 01:19:11PM +0300, Dan Carpenter wrote:
 > There is a mistake here so it returns PTR_ERR(NULL) which is success
 > instead of -ENOMEM.
-> 
+>=20
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
 > I can't compile this.
 
-For the record, just do:
+Good catch! Applied, thanks.
 
-export CROSS_COMPILE=xxx
-make ARCH=arm tegra_defconfig
-make ARCH=arm zImage
+Thierry
 
-The only slightly difficult part is getting a CROSS_COMPILE value. Many
-distros ship at least some ARM cross-compiler in their standard
-package-set these days, and if not, you can download the Linaro
-compilers or go to ftp://ftp.kernel.org/pub/tools/crosstool/index.html.
+--W2ydbIOJmkm74tJ2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHGxrAAoJEN0jrNd/PrOhD1MP/3oGRD7pkJOBf2UM0/sy0ydN
+NRWB4fTEWSb6Y7RJNLGBD5cID2hNDnkXV1kstKg4dDhQjulenoi32yvoszCs5xS+
+JBxh1wHJULPTcpEvKQ4MyB7PmlhcfEhToxOXd7fRi4mhHH7gBhQyu8+aJlfemT7e
+MVYUoUkDVOr1JxaDFI0pHSr7HHV0p1a/KdDgHWZX2ss3/7LOqfA6HZcXkqZumEL0
+Ft9mOuS+b7L2M5ba11XOh2vM4rxByzTNUOe7F4a1EeKKNP8ps4WWw5t7neoW3W+C
+wLKILXj7+Dhj0iFmqon14K3ioIe9Km9MFjAVOCPnoBpQIkCqXQOwfFeH9l19hYI6
+xIS1VzcfRKkQ6RN0Lcwd32g7pU2pWdCGSTG4K/7NkmYN3qw/X5T81BRP1YECDPDm
+ZuwHTlKLA19wlotlmHbOzJ2uRn6pvA0bF4lylyKOAh5IzJ+oePQ/9rtMwsoboUg0
+oKqbd8H4irbR61ACf2fB5L4ZF0QycVhl78MAAIs8M3UtwEr6khht2UDi9gP3FO0Z
+Fy5xddprMQhjdDoTva2atWF2RYNd0U6EgNd4JlFQt5ZRsCTju+Bqj9XR45ZkzdVn
+cmfOJBefTMurVH7O1HDOGEOsp7t4LyIZTCEUssJKDTGwl2LQBBwJ0Et0Ot4lPl44
++LtgT/qBgi8tGKO5+USH
+=zws0
+-----END PGP SIGNATURE-----
+
+--W2ydbIOJmkm74tJ2--
