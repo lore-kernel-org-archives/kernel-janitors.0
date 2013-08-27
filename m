@@ -1,85 +1,81 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 20 Aug 2013 19:31:31 +0000
+Date: Tue, 27 Aug 2013 08:14:46 +0000
 Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
-Message-Id: <20130820193130.GA14170@mithrandir>
+Message-Id: <20130827081443.GI8686@ulmo>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Qxx1br4bt0+wmkIi"
+Content-Type: multipart/mixed; boundary="MFZs98Tklfu0WsCO"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
  <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
  <20130819120249.GA5740@ulmo>
- <alpine.DEB.2.02.1308191405450.2313@hadrien>
- <20130819121238.GB5740@ulmo>
- <alpine.DEB.2.02.1308191414360.2313@hadrien>
- <20130819193339.GB4961@mithrandir>
- <alpine.DEB.2.02.1308201112400.2269@hadrien>
- <CAErSpo4WLt7zbyfkKfvMbXMQGmp0MAS=7AFiomUjtUCfdprDUA@mail.gmail.com>
- <5213BB2C.60908@wwwdotorg.org>
-In-Reply-To: <5213BB2C.60908@wwwdotorg.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+ <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com>
+ <20130819201224.GC5191@mithrandir>
+ <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
+In-Reply-To: <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
 
---Qxx1br4bt0+wmkIi
+--MFZs98Tklfu0WsCO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2013 at 12:53:32PM -0600, Stephen Warren wrote:
-> On 08/20/2013 10:26 AM, Bjorn Helgaas wrote:
-> > On Tue, Aug 20, 2013 at 3:13 AM, Julia Lawall <julia.lawall@lip6.fr> wr=
-ote:
-> >> From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Mon, Aug 19, 2013 at 02:49:07PM -0600, Bjorn Helgaas wrote:
+> On Mon, Aug 19, 2013 at 2:12 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Mon, Aug 19, 2013 at 02:04:24PM -0600, Bjorn Helgaas wrote:
+> >> On Mon, Aug 19, 2013 at 6:02 AM, Thierry Reding
+> >> <thierry.reding@gmail.com> wrote:
 > >>
-> >> Use devm_ioremap_resource instead of devm_request_and_ioremap.
+> >> > Bjorn, how do you want to handle patches to the Tegra PCIe driver in=
+ the
+> >> > future? Do you want me to prepare a branch and pull from that or wou=
+ld
+> >> > you rather just take simple patches?
 > >>
-> >> This was done using the semantic patch
-> >> scripts/coccinelle/api/devm_ioremap_resource.cocci
-> >>
-> >> Error-handling code was manually removed from the associated calls to
-> >> platform_get_resource.
-> >>
-> >> Adjust the comment at the third platform_get_resource_byname to make c=
-lear
-> >> why ioremap is not done at this point.
-> >>
-> >> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >> Acked-by: Thierry Reding <thierry.reding@gmail.com>
-> >> Tested-by: Thierry Reding <thierry.reding@gmail.com>
-> >=20
-> > I'm hoping this goes via arm-soc.  Let me know if you need me to do
-> > something.  If you need it:
-> >=20
-> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> >> I'm in the habit of applying patches from email, so that's easy for
+> >> me.  But a branch would be OK, too.
+> >
+> > Patches work for me too. Is this cleanup patch something that you'd be
+> > comfortable with applying after 3.12-rc1 or would you rather defer it to
+> > 3.13?
 >=20
-> In that case, Thierry, can you please bounce it to arm@kernel.org to be
-> applied on top of wherever Tegra's for-3.12/soc branch was merged.
+> I'm not really sure how we should manage drivers/pci/host/*.  Those
+> files are mostly arch code, and I'm not sure it's useful for me to be
+> in the middle of managing them.
 >=20
-> Acked-by: Stephen Warren <swarren@nvidia.com>
+> I assume Stephen or somebody has a tree with the pci-tegra.c stuff
+> that's in -next right now; it seems like it'd be simplest to just add
+> this patch there and merge in during the v3.12 merge window.
 
-Yes, I can do that. Thanks everyone.
+If Stephen's fine with it I suppose we could take pci-tegra.c driver
+changes through the Tegra tree. But I think it'd be good if we could
+still Cc you on patches so you're aware of what we're doing (that is
+the same for all drivers drivers/pci/host/*). And we're going to need
+your Acked-by on the patches as well.
 
 Thierry
 
---Qxx1br4bt0+wmkIi
+--MFZs98Tklfu0WsCO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSE8QSAAoJEN0jrNd/PrOha7cP/jHHviDSOEEdhLvAlWNYXNIA
-YZeqSc3FoIx0oYpfA0gJqrBI7TUKExYMgRB6pX64UObkql/p14MPI39Fwy0BSmIM
-YThoFDC8sPvbCdaHCc5EDaxxQVysgg39/lrmJcccQRKxJdPTiEvkzPfyQoxex/hY
-uMu1K49oGWZc7uSf/JYvPLo/C4YC1jPnxuvWi3BEtgUJcWfjH9YjDxT6OdUTcGY3
-AA5GQ/1fC81s+QjWtkqz9rQYylTTqW7kCXsdf8UCJoVYNcP6P3hCtD3K6eIVSBoa
-JKC0Rbgp4s6kDH21XcRfrSzODMKMBS903QZ403HltDiZJ7GV/lzvtIduFE0zT2Y+
-4bZuz8z17dkkLVWQ64VnSHv6mkT7hY5nR6fIbBsdaX02za2BqRSshPa/fkki1V82
-Z5kAGFF4wnMRJfylvu6Min5mNx/YA7eUll66h/02ZYG/piKSEJvvL5ERosbxDkNw
-aZoYye2jUcpdFCd7RmfNbfgLEo/KKOMxLlUSYeizYeeIQqFNOJLtWbPRt6zliXVg
-la6RMrEcIBxSQm9Fba067gQJKlsMmmGTxjZvn56PEfzJBpJ89NY4gn3LiVUG8p/w
-ilgualt13rvm7EsgGBtOhHpM+Z9JGiPv1lgn4vTJ50Bl5Rc+v2CxDbnw3CT73nfi
-5ruM8fJ8Db/OHwOY56I2
-=S6/L
+iQIcBAEBAgAGBQJSHF/zAAoJEN0jrNd/PrOh4LcQAJvIRnYZFA6phiVFvyQON8YI
+EinzYiHmV02pb5MDFKUivA2yDKSiy86MJRcVxNpRW/JxvXwFTdbpiN8B/7qtrCsC
+2uwrtFlKo0WGktGYJsIVM57aarPEBl66GMcAliAmDTBD1x6z00QCOjwdbociDmWO
+aZRUjn2IK+ZFvKAijiM8OZWForsiCriWNUUILGUZXggR8FNK8Tu3BtO0/1BNBJgA
+LGbcqzSLd8KHJlXXSkXKvzESpvx9q4nhe1Q+D/r92CW3jlJDgu9FQ4IjVC0Z2dav
+e+52ueTWOexlIT8lyf//hSn7W9EWvsuBxiWihwHg/nMUcHII8aUl3k9DzJz43yc0
+m+it531Sbtcu+/PsMOti3+GWBwwqt6pb5JYlSyNLhUAtKVUw35bp/uR6mr072c3d
+D2s4exsHRwHipB+GYNAEOMWVS76wE4ngNmCRViKNcIrHkNH7fDuJ1gJFyjNrCxtD
+erx2i6GHs9cQahd69EBMoZhTxGhQJ5xT8VQyJ6VxuSwJFtVVZuTShN/n+b9jQJll
+uDoCn2w6CYY2OSDvKLe9vBFBCtqIVjQePcKoJSoEiKzCtuOkeujMI44/kRY0qAUL
+63vaPUu7RAnDscd61Ay5uS2aRyjy62Dre6Atohkzb4BtNxtrZW3v2XG27keaKe40
+jcM6e+Iuq23A2UnHzW0O
+=g8NQ
 -----END PGP SIGNATURE-----
 
---Qxx1br4bt0+wmkIi--
+--MFZs98Tklfu0WsCO--
