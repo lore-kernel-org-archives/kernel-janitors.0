@@ -1,18 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 27 Aug 2013 01:16:22 +0000
-Subject: [patch -next] qlcnic: underflow in qlcnic_validate_max_tx_rings()
-Message-Id: <20130827011622.GB17061@elgon.mountain>
+From: Himanshu Madhani <himanshu.madhani@qlogic.com>
+Date: Tue, 27 Aug 2013 04:25:43 +0000
+Subject: RE: [patch -next] qlcnic: underflow in qlcnic_validate_max_tx_rings()
+Message-Id: <ADFE82A996F10145934E45547759F763311CC076@avmb3.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130827011622.GB17061@elgon.mountain>
+In-Reply-To: <20130827011622.GB17061@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Himanshu Madhani <himanshu.madhani@qlogic.com>
-Cc: Rajesh Borundia <rajesh.borundia@qlogic.com>, Shahed Shaikh <shahed.shaikh@qlogic.com>, Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>, Sony Chacko <sony.chacko@qlogic.com>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, linux-driver@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Rajesh Borundia <rajesh.borundia@qlogic.com>, Shahed Shaikh <shahed.shaikh@qlogic.com>, Jitendra Kalsaria <jitendra.kalsaria@qlogic.com>, Sony Chacko <sony.chacko@qlogic.com>, Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>, Dept-Eng Linux Driver <Linux-Driver@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+
+________________________________________
+From: Dan Carpenter [dan.carpenter@oracle.com]
+Sent: Monday, August 26, 2013 6:16 PM
+To: Himanshu Madhani
+Cc: Rajesh Borundia; Shahed Shaikh; Jitendra Kalsaria; Sony Chacko; Sucheta Chakraborty; Dept-Eng Linux Driver; netdev; kernel-janitors@vger.kernel.org
+Subject: [patch -next] qlcnic: underflow in qlcnic_validate_max_tx_rings()
 
 This function checks the upper bound but it doesn't check for negative
 numbers:
 
-	if (txq > QLCNIC_MAX_TX_RINGS) {
+        if (txq > QLCNIC_MAX_TX_RINGS) {
 
 I've solved this by making "txq" a u32 type.  I chose that because
 ->tx_count in the ethtool_channels struct is a __u32.
@@ -40,11 +49,15 @@ index 8321d1a..88e3c97 100644
 --- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
 +++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
 @@ -3524,7 +3524,7 @@ qlcnicvf_start_firmware(struct qlcnic_adapter *adapter)
- 	return err;
+        return err;
  }
- 
+
 -int qlcnic_validate_max_tx_rings(struct qlcnic_adapter *adapter, int txq)
 +int qlcnic_validate_max_tx_rings(struct qlcnic_adapter *adapter, u32 txq)
  {
- 	struct net_device *netdev = adapter->netdev;
- 	u8 max_hw = QLCNIC_MAX_TX_RINGS;
+        struct net_device *netdev = adapter->netdev;
+        u8 max_hw = QLCNIC_MAX_TX_RINGS;
+
+Thanks
+
+Acked-by: Himanshu Madhani <himanshu.madhani@qlogic.com>
