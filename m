@@ -1,23 +1,29 @@
-From: Anton Vorontsov <anton@enomsg.org>
-Date: Wed, 28 Aug 2013 01:13:42 +0000
-Subject: Re: [patch] ab8500-charger: we print an unintended error message
-Message-Id: <20130828011342.GB10506@lizard>
+From: Kumar Gaurav <kumargauravgupta3@gmail.com>
+Date: Wed, 28 Aug 2013 03:17:24 +0000
+Subject: Patch Going to spam
+Message-Id: <521D68F4.50103@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130827011942.GD17061@elgon.mountain>
-In-Reply-To: <20130827011942.GD17061@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 27, 2013 at 04:19:42AM +0300, Dan Carpenter wrote:
-> There is a missing break statement here, so we print an error message
-> that the USB type is invalid.  The original code still works fine
-> though except for the error message.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hi All,
 
-Applied, thanks a lot!
+I'm facing a weired problem when I'm trying to send my patch(size 39K) 
+it's asking me for encoding. Tough I'm giving UTF-8 it's going to spam 
+and probably that's why maintainer aren't replying to the patch. I've 
+already sent it twice and got this mail as Junk mail in my mailbox.
 
-Anton
+Here's my patch http://marc.info/?l=kernel-janitors&m7748297802415&w=2
+
+Please let me know that how can i send this patch. I have to send this 
+patch as whole because it includes
+     change in definition of a function
+     change in all statements that calls the changed function.
+If i send this patch by splitting then it'll break the build.
+
+Regards
+Kumar Gaurav
+
+
