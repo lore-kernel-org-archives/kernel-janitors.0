@@ -1,117 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 24 Aug 2013 17:13:15 +0000
-Subject: [PATCH 1/2] spi: simplify devm_request_mem_region/devm_ioremap
-Message-Id: <1377364396-27861-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 29 Aug 2013 12:39:53 +0000
+Subject: Re: [PATCH 1/2] spi: simplify devm_request_mem_region/devm_ioremap
+Message-Id: <20130829123953.GE10783@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="qPhbOctOI3h5o759"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1377364396-27861-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1377364396-27861-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
+ <1377364396-27861-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1377364396-27861-2-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Convert the composition of devm_request_mem_region and devm_ioremap to a
-single call to devm_ioremap_resource.  The associated call to
-platform_get_resource is also simplified and moved next to the new call to
-devm_ioremap_resource.
+--qPhbOctOI3h5o759
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This was done using a combination of the semantic patches
-devm_ioremap_resource.cocci and devm_request_and_ioremap.cocci, found in
-the scripts/coccinelle/api directory.
+On Sat, Aug 24, 2013 at 07:13:15PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Convert the composition of devm_request_mem_region and devm_ioremap to a
+> single call to devm_ioremap_resource.  The associated call to
+> platform_get_resource is also simplified and moved next to the new call to
+> devm_ioremap_resource.
 
-This patch also removes the label exit_busy, to use the error code returned
-by the failing operation, rather than always -EBUSY.
+Applied, thanks.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+--qPhbOctOI3h5o759
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
----
- drivers/spi/spi-altera.c  |   17 +++++------------
- drivers/spi/spi-oc-tiny.c |   22 +++++++++-------------
- 2 files changed, 14 insertions(+), 25 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-diff --git a/drivers/spi/spi-altera.c b/drivers/spi/spi-altera.c
-index 8a6bb37..63d25e6 100644
---- a/drivers/spi/spi-altera.c
-+++ b/drivers/spi/spi-altera.c
-@@ -234,15 +234,11 @@ static int altera_spi_probe(struct platform_device *pdev)
- 
- 	/* find and map our resources */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		goto exit_busy;
--	if (!devm_request_mem_region(&pdev->dev, res->start, resource_size(res),
--				     pdev->name))
--		goto exit_busy;
--	hw->base = devm_ioremap_nocache(&pdev->dev, res->start,
--					resource_size(res));
--	if (!hw->base)
--		goto exit_busy;
-+	hw->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(hw->base)) {
-+		err = PTR_ERR(hw->base);
-+		goto exit;
-+	}
- 	/* program defaults into the registers */
- 	hw->imr = 0;		/* disable spi interrupts */
- 	writel(hw->imr, hw->base + ALTERA_SPI_CONTROL);
-@@ -269,9 +265,6 @@ static int altera_spi_probe(struct platform_device *pdev)
- 	dev_info(&pdev->dev, "base %p, irq %d\n", hw->base, hw->irq);
- 
- 	return 0;
--
--exit_busy:
--	err = -EBUSY;
- exit:
- 	spi_master_put(master);
- 	return err;
-diff --git a/drivers/spi/spi-oc-tiny.c b/drivers/spi/spi-oc-tiny.c
-index 58deb79..d36ba90 100644
---- a/drivers/spi/spi-oc-tiny.c
-+++ b/drivers/spi/spi-oc-tiny.c
-@@ -315,15 +315,11 @@ static int tiny_spi_probe(struct platform_device *pdev)
- 
- 	/* find and map our resources */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		goto exit_busy;
--	if (!devm_request_mem_region(&pdev->dev, res->start, resource_size(res),
--				     pdev->name))
--		goto exit_busy;
--	hw->base = devm_ioremap_nocache(&pdev->dev, res->start,
--					resource_size(res));
--	if (!hw->base)
--		goto exit_busy;
-+	hw->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(hw->base)) {
-+		err = PTR_ERR(hw->base);
-+		goto exit;
-+	}
- 	/* irq is optional */
- 	hw->irq = platform_get_irq(pdev, 0);
- 	if (hw->irq >= 0) {
-@@ -337,8 +333,10 @@ static int tiny_spi_probe(struct platform_device *pdev)
- 	if (platp) {
- 		hw->gpio_cs_count = platp->gpio_cs_count;
- 		hw->gpio_cs = platp->gpio_cs;
--		if (platp->gpio_cs_count && !platp->gpio_cs)
--			goto exit_busy;
-+		if (platp->gpio_cs_count && !platp->gpio_cs) {
-+			err = -EBUSY;
-+			goto exit;
-+		}
- 		hw->freq = platp->freq;
- 		hw->baudwidth = platp->baudwidth;
- 	} else {
-@@ -365,8 +363,6 @@ static int tiny_spi_probe(struct platform_device *pdev)
- exit_gpio:
- 	while (i-- > 0)
- 		gpio_free(hw->gpio_cs[i]);
--exit_busy:
--	err = -EBUSY;
- exit:
- 	spi_master_put(master);
- 	return err;
+iQIcBAEBAgAGBQJSH0EWAAoJELSic+t+oim9N+4P/AvISWoVBHzyE8GAotu14Omi
+Bg0OQdQyL6LVw/CMImx84+Dw2JRiAaLKj0fTAqwonHlV/gaXjwMVmLXYSdxwV7T+
+2Lmj6OQS9DVRXHLcwhmAW7sT0vxfZMgikuGxuRsBw8J5+/CGveuCtqeNC5010lkY
+kNYFag6yGsWB/AIhrdU+hsh2maX/IC5b6HfMe8pIzVcizFNbWYe12FfIv5/kwT7y
+qeMjW6kopw1XblR/U+Fj+iLLSoCFBvMPdawiIynBobRWadwCFWOiuphtBCUsmM5l
+Wlw5XxOfhm167cQnMz4/7SypXVyhifamq3t3gEqzJT8bhwlVnEM3M2Gx8hmOb+Fk
+r0g8rEZwrEVE60rcAUapgt8/d5uSSygBBfc9Au+Ep1wDDhaFgdaWSBSCxouPTJ7p
+qAg4KC7cMuDMFzBt0Q5KSGI4XHr2VXxlM9HMuVtW1Yo1IdjD5Q1oStlIwWcH5b0a
+OJapBkMtEdxl6lYfornl+ia7ENshw9e3IvvrB4u6h7vWD9MOJDiDVLKU5ODtubjw
+4Ho043YLYUUEqBL2SaRrxWoSsAjT8DiET0l7EkcoVVVUAL7DRe2gMGnQ32KOR3F4
+1A9eu0pcuKNkVeffCas7weaHjGZDIypCIH7cwvy4YJIMYGT11dl29sbInJOKG4U5
+stPvttqnpnz1Go+bYZ61
+=b6ou
+-----END PGP SIGNATURE-----
 
+--qPhbOctOI3h5o759--
