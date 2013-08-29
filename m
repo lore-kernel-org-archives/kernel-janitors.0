@@ -1,38 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Aug 2013 08:25:14 +0000
-Subject: [patch v2] net/fec: cleanup types in fec_get_mac()
-Message-Id: <20130829082514.GB14334@elgon.mountain>
+From: Ben Hutchings <bhutchings@solarflare.com>
+Date: Thu, 29 Aug 2013 18:48:58 +0000
+Subject: Re: [patch v2] net/fec: cleanup types in fec_get_mac()
+Message-Id: <1377802138.5372.12.camel@bwh-desktop.uk.level5networks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1377261869.3364.3.camel@bwh-desktop.uk.level5networks.com>
-In-Reply-To: <1377261869.3364.3.camel@bwh-desktop.uk.level5networks.com>
+References: <20130829082514.GB14334@elgon.mountain>
+In-Reply-To: <20130829082514.GB14334@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Likely <grant.likely@linaro.org>
-Cc: Rob Herring <rob.herring@calxeda.com>, "David S. Miller" <davem@davemloft.net>, Fabio Estevam <fabio.estevam@freescale.com>, Frank Li <Frank.Li@freescale.com>, Jim Baxter <jim_baxter@mentor.com>, Fugang Duan <B38611@freescale.com>, netdev@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, "David S. Miller" <davem@davemloft.net>, Fabio Estevam <fabio.estevam@freescale.com>, Frank Li <Frank.Li@freescale.com>, Jim Baxter <jim_baxter@mentor.com>, Fugang Duan <B38611@freescale.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker complains that on some arches unsigned longs can be 8
-characters which is larger than the buffer is only 6 chars.
-Additionally, Ben Hutchings points out that the buffer actually holds
-big endian data and the buffer we are reading from is CPU endian.
+On Thu, 2013-08-29 at 11:25 +0300, Dan Carpenter wrote:
+> My static checker complains that on some arches unsigned longs can be 8
+> characters which is larger than the buffer is only 6 chars.
+> Additionally, Ben Hutchings points out that the buffer actually holds
+> big endian data and the buffer we are reading from is CPU endian.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: fix endian annotations and reverse the beXX_to_cpu() calls so that
-    they say cpu_to_beXX().
+It's not really as clear-cut as that. :-)  But I think it's slightly
+more logical this way.
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index fdf9307..0b12866 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1100,10 +1100,10 @@ static void fec_get_mac(struct net_device *ndev)
- 	 * 4) FEC mac registers set by bootloader
- 	 */
- 	if (!is_valid_ether_addr(iap)) {
--		*((unsigned long *) &tmpaddr[0]) -			be32_to_cpu(readl(fep->hwp + FEC_ADDR_LOW));
--		*((unsigned short *) &tmpaddr[4]) -			be16_to_cpu(readl(fep->hwp + FEC_ADDR_HIGH) >> 16);
-+		*((__be32 *) &tmpaddr[0]) +			cpu_to_be32(readl(fep->hwp + FEC_ADDR_LOW));
-+		*((__be16 *) &tmpaddr[4]) +			cpu_to_be16(readl(fep->hwp + FEC_ADDR_HIGH) >> 16);
- 		iap = &tmpaddr[0];
- 	}
- 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Reviewed-by: Ben Hutchings <bhutchings@solarflare.com>
+
+> ---
+> v2: fix endian annotations and reverse the beXX_to_cpu() calls so that
+>     they say cpu_to_beXX().
+> 
+> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+> index fdf9307..0b12866 100644
+> --- a/drivers/net/ethernet/freescale/fec_main.c
+> +++ b/drivers/net/ethernet/freescale/fec_main.c
+> @@ -1100,10 +1100,10 @@ static void fec_get_mac(struct net_device *ndev)
+>  	 * 4) FEC mac registers set by bootloader
+>  	 */
+>  	if (!is_valid_ether_addr(iap)) {
+> -		*((unsigned long *) &tmpaddr[0]) > -			be32_to_cpu(readl(fep->hwp + FEC_ADDR_LOW));
+> -		*((unsigned short *) &tmpaddr[4]) > -			be16_to_cpu(readl(fep->hwp + FEC_ADDR_HIGH) >> 16);
+> +		*((__be32 *) &tmpaddr[0]) > +			cpu_to_be32(readl(fep->hwp + FEC_ADDR_LOW));
+> +		*((__be16 *) &tmpaddr[4]) > +			cpu_to_be16(readl(fep->hwp + FEC_ADDR_HIGH) >> 16);
+>  		iap = &tmpaddr[0];
+>  	}
+>  
+
+-- 
+Ben Hutchings, Staff Engineer, Solarflare
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
+
