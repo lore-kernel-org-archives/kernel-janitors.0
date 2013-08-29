@@ -1,49 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 14 Aug 2013 18:09:07 +0000
-Subject: Re: [PATCH 25/29] drivers/spi/spi-sirf.c: simplify use of devm_ioremap_resource
-Message-Id: <20130814180907.GE2401@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="5Mfx4RzfBqgnTE/w"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Aug 2013 08:25:14 +0000
+Subject: [patch v2] net/fec: cleanup types in fec_get_mac()
+Message-Id: <20130829082514.GB14334@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376471493-22215-26-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-26-git-send-email-Julia.Lawall@lip6.fr>
-To: linux-arm-kernel@lists.infradead.org
+References: <1377261869.3364.3.camel@bwh-desktop.uk.level5networks.com>
+In-Reply-To: <1377261869.3364.3.camel@bwh-desktop.uk.level5networks.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Grant Likely <grant.likely@linaro.org>
+Cc: Rob Herring <rob.herring@calxeda.com>, "David S. Miller" <davem@davemloft.net>, Fabio Estevam <fabio.estevam@freescale.com>, Frank Li <Frank.Li@freescale.com>, Jim Baxter <jim_baxter@mentor.com>, Fugang Duan <B38611@freescale.com>, netdev@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+My static checker complains that on some arches unsigned longs can be 8
+characters which is larger than the buffer is only 6 chars.
+Additionally, Ben Hutchings points out that the buffer actually holds
+big endian data and the buffer we are reading from is CPU endian.
 
---5Mfx4RzfBqgnTE/w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: fix endian annotations and reverse the beXX_to_cpu() calls so that
+    they say cpu_to_beXX().
 
-On Wed, Aug 14, 2013 at 11:11:29AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
-
-Applied, thanks.
-
---5Mfx4RzfBqgnTE/w
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSC8fAAAoJELSic+t+oim9bggP/R6LtCCXRFnBopJg0oymKvWL
-6TRQrua89PUx05BFqg7CsSyaemU6DKh3RmojruXTfgbjXtd+/YdzuIBwMu/ou8c8
-oNXTZjzogMa2JctE4vAvIq3y/Pxh9BFc7WLrq9X08NlA7jEZ9eXgs1+HiOneHya9
-wAlDwAK6SpVF7BC5h0x0N7v7l43tkBce+SlZblGpEQzm/NhF4EIsASExc9Uc0DAa
-QUfuc8Y2iC/A9XAXZhGJWvk+mEPb9YKu6kRCLASQFaIe630wrsdVxupcAui46Cf4
-pRGBhUohjrA+Wa+3YHPtVOMosjgrbXD57erilwQqrMmU2XvzOWDWqfwvjW3FwYXN
-JHS2cWplR7WwyFLq8VTbqRGTxPr5HtCYR+TYZkxmw+jOzJJqUKR3Ovn6IbZO8EG/
-E4UDushEJAlxFvRSdWbBnIPvc9uMhHlkuNKeRpWEXDq5OOoc6Vo9yohHrmW+lzMk
-ZFZUQWRSzK56Ez6ho5X2jQ8Qf0lQZQdVSZwFYgZj7Tm7rl0RBw0dauCVhg0ui6+a
-MoMZ32TbU746YA1zCIbjcPYHYB9OVucSPmMixjFcl9YC0GEnrc2TW128rDQZRw/D
-OjkFrchh2k2kj7nI4NeUWgvUbiomLQB7viq4TOciiDzk9+g+6TAeoHHof+aknd3B
-H+9SvVv0atuPYDPStlse
-=OAMf
------END PGP SIGNATURE-----
-
---5Mfx4RzfBqgnTE/w--
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index fdf9307..0b12866 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -1100,10 +1100,10 @@ static void fec_get_mac(struct net_device *ndev)
+ 	 * 4) FEC mac registers set by bootloader
+ 	 */
+ 	if (!is_valid_ether_addr(iap)) {
+-		*((unsigned long *) &tmpaddr[0]) -			be32_to_cpu(readl(fep->hwp + FEC_ADDR_LOW));
+-		*((unsigned short *) &tmpaddr[4]) -			be16_to_cpu(readl(fep->hwp + FEC_ADDR_HIGH) >> 16);
++		*((__be32 *) &tmpaddr[0]) +			cpu_to_be32(readl(fep->hwp + FEC_ADDR_LOW));
++		*((__be16 *) &tmpaddr[4]) +			cpu_to_be16(readl(fep->hwp + FEC_ADDR_HIGH) >> 16);
+ 		iap = &tmpaddr[0];
+ 	}
+ 
