@@ -1,55 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 29 Aug 2013 08:23:36 +0000
-Subject: [patch v2] [media] mx3-camera: locking cleanup in mx3_videobuf_queue()
-Message-Id: <20130829082336.GA14334@elgon.mountain>
+Date: Thu, 29 Aug 2013 21:45:06 +0000
+Subject: [patch] staging: r8188eu: off by one bugs
+Message-Id: <20130829214506.GA23197@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.1308280947190.22743@axis700.grange>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch complains about the locking here because we mix spin_lock_irq()
-with spin_lock_irqsave() in an unusual way.  According to Smatch, it's
-not always clear if the IRQs are enabled or disabled when we return.  It
-turns out this function is always called with IRQs enabled and we can
-just use spin_lock_irq().
-
-It's called from __enqueue_in_driver().
+These should be "<" instead of "<=".  Also we can use the ARRAY_SIZE()
+macro.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: The first version changed everything to irq_save/restore() but that
-    wasn't right because we wanted IRQs enabled and not simply restored.
 
-diff --git a/drivers/media/platform/soc_camera/mx3_camera.c b/drivers/media/platform/soc_camera/mx3_camera.c
-index 1047e3e..18eab8e 100644
---- a/drivers/media/platform/soc_camera/mx3_camera.c
-+++ b/drivers/media/platform/soc_camera/mx3_camera.c
-@@ -266,7 +266,6 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
- 	struct idmac_channel *ichan = mx3_cam->idmac_channel[0];
- 	struct idmac_video_param *video = &ichan->params.video;
- 	const struct soc_mbus_pixelfmt *host_fmt = icd->current_fmt->host_fmt;
--	unsigned long flags;
- 	dma_cookie_t cookie;
- 	size_t new_size;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_cmd.c b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+index 859fc19..9632ef4 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_cmd.c
++++ b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+@@ -367,7 +367,7 @@ _next:
  
-@@ -328,7 +327,7 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
- 		memset(vb2_plane_vaddr(vb, 0), 0xaa, vb2_get_plane_payload(vb, 0));
- #endif
+ 		memcpy(pcmdbuf, pcmd->parmbuf, pcmd->cmdsz);
  
--	spin_lock_irqsave(&mx3_cam->lock, flags);
-+	spin_lock_irq(&mx3_cam->lock);
- 	list_add_tail(&buf->queue, &mx3_cam->capture);
+-		if (pcmd->cmdcode <= (sizeof(wlancmds) / sizeof(struct cmd_hdl))) {
++		if (pcmd->cmdcode < ARRAY_SIZE(wlancmds)) {
+ 			cmd_hdl = wlancmds[pcmd->cmdcode].h2cfuns;
  
- 	if (!mx3_cam->active)
-@@ -351,7 +350,7 @@ static void mx3_videobuf_queue(struct vb2_buffer *vb)
- 	if (mx3_cam->active = buf)
- 		mx3_cam->active = NULL;
+ 			if (cmd_hdl) {
+@@ -385,7 +385,7 @@ _next:
+ post_process:
  
--	spin_unlock_irqrestore(&mx3_cam->lock, flags);
-+	spin_unlock_irq(&mx3_cam->lock);
- error:
- 	vb2_buffer_done(vb, VB2_BUF_STATE_ERROR);
- }
+ 		/* call callback function for post-processed */
+-		if (pcmd->cmdcode <= (sizeof(rtw_cmd_callback) / sizeof(struct _cmd_callback))) {
++		if (pcmd->cmdcode < ARRAY_SIZE(rtw_cmd_callback)) {
+ 			pcmd_callback = rtw_cmd_callback[pcmd->cmdcode].callback;
+ 			if (pcmd_callback = NULL) {
+ 				RT_TRACE(_module_rtl871x_cmd_c_, _drv_info_, ("mlme_cmd_hdl(): pcmd_callback = 0x%p, cmdcode = 0x%x\n", pcmd_callback, pcmd->cmdcode));
