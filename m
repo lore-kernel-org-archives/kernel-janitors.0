@@ -1,42 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 30 Aug 2013 09:00:49 +0000
+From: David Miller <davem@davemloft.net>
+Date: Fri, 30 Aug 2013 21:54:57 +0000
 Subject: Re: [patch v2] net/fec: cleanup types in fec_get_mac()
-Message-Id: <20130830090049.GJ19256@mwanda>
+Message-Id: <20130830.175457.2230524537752247474.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130829082514.GB14334@elgon.mountain>
- <1377802138.5372.12.camel@bwh-desktop.uk.level5networks.com>
- <9848F2DB572E5649BA045B288BE08FBE01662A4B@039-SN2MPN1-021.039d.mgd.msft.net>
-In-Reply-To: <9848F2DB572E5649BA045B288BE08FBE01662A4B@039-SN2MPN1-021.039d.mgd.msft.net>
+References: <1377261869.3364.3.camel@bwh-desktop.uk.level5networks.com>
+	<20130829082514.GB14334@elgon.mountain>
+In-Reply-To: <20130829082514.GB14334@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Duan Fugang-B38611 <B38611@freescale.com>
-Cc: Ben Hutchings <bhutchings@solarflare.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, "David S. Miller" <davem@davemloft.net>, Estevam Fabio-R49496 <r49496@freescale.com>, Li Frank-B20596 <B20596@freescale.com>, Jim Baxter <jim_baxter@mentor.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: dan.carpenter@oracle.com
+Cc: grant.likely@linaro.org, rob.herring@calxeda.com, fabio.estevam@freescale.com, Frank.Li@freescale.com, jim_baxter@mentor.com, B38611@freescale.com, netdev@vger.kernel.org, bhutchings@solarflare.com, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Aug 30, 2013 at 02:02:00AM +0000, Duan Fugang-B38611 wrote:
-> From: Ben Hutchings [mailto:bhutchings@solarflare.com]
-> Data: Friday, August 30, 2013 2:49 AM
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 Aug 2013 11:25:14 +0300
+
+> My static checker complains that on some arches unsigned longs can be 8
+> characters which is larger than the buffer is only 6 chars.
+> Additionally, Ben Hutchings points out that the buffer actually holds
+> big endian data and the buffer we are reading from is CPU endian.
 > 
-> > To: Dan Carpenter
-> > Cc: Grant Likely; Rob Herring; David S. Miller; Estevam Fabio-R49496; Li
-> > Frank-B20596; Jim Baxter; Duan Fugang-B38611; netdev@vger.kernel.org;
-> > devicetree@vger.kernel.org; kernel-janitors@vger.kernel.org
-> > Subject: Re: [patch v2] net/fec: cleanup types in fec_get_mac()
-> > 
-> > On Thu, 2013-08-29 at 11:25 +0300, Dan Carpenter wrote:
-> > > My static checker complains that on some arches unsigned longs can be
-> > > 8 characters which is larger than the buffer is only 6 chars.
-> > > Additionally, Ben Hutchings points out that the buffer actually holds
-> > > big endian data and the buffer we are reading from is CPU endian.
-> > 
-> > It's not really as clear-cut as that. :-)  But I think it's slightly more
-> > logical this way.
-> > 
-> Yes, it is not clear, pls remove somebody's name from the commit log.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: fix endian annotations and reverse the beXX_to_cpu() calls so that
+>     they say cpu_to_beXX().
 
-Huh?  No, I'm going to leave Ben's name as is.  It's weird that you
-would ask for that.
-
-regards,
-dan carpenter
-
+Applied, thanks.
