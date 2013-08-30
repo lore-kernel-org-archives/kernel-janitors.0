@@ -1,51 +1,55 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Date: Thu, 29 Aug 2013 18:48:58 +0000
-Subject: Re: [patch v2] net/fec: cleanup types in fec_get_mac()
-Message-Id: <1377802138.5372.12.camel@bwh-desktop.uk.level5networks.com>
+From: Duan Fugang-B38611 <B38611@freescale.com>
+Date: Fri, 30 Aug 2013 02:02:00 +0000
+Subject: RE: [patch v2] net/fec: cleanup types in fec_get_mac()
+Message-Id: <9848F2DB572E5649BA045B288BE08FBE01662A4B@039-SN2MPN1-021.039d.mgd.msft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130829082514.GB14334@elgon.mountain>
-In-Reply-To: <20130829082514.GB14334@elgon.mountain>
+ <1377802138.5372.12.camel@bwh-desktop.uk.level5networks.com>
+In-Reply-To: <1377802138.5372.12.camel@bwh-desktop.uk.level5networks.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, "David S. Miller" <davem@davemloft.net>, Fabio Estevam <fabio.estevam@freescale.com>, Frank Li <Frank.Li@freescale.com>, Jim Baxter <jim_baxter@mentor.com>, Fugang Duan <B38611@freescale.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Ben Hutchings <bhutchings@solarflare.com>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, "David S. Miller" <davem@davemloft.net>, Estevam Fabio-R49496 <r49496@freescale.com>, Li Frank-B20596 <B20596@freescale.com>, Jim Baxter <jim_baxter@mentor.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Thu, 2013-08-29 at 11:25 +0300, Dan Carpenter wrote:
-> My static checker complains that on some arches unsigned longs can be 8
-> characters which is larger than the buffer is only 6 chars.
-> Additionally, Ben Hutchings points out that the buffer actually holds
-> big endian data and the buffer we are reading from is CPU endian.
-
-It's not really as clear-cut as that. :-)  But I think it's slightly
-more logical this way.
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Reviewed-by: Ben Hutchings <bhutchings@solarflare.com>
-
-> ---
-> v2: fix endian annotations and reverse the beXX_to_cpu() calls so that
->     they say cpu_to_beXX().
-> 
-> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-> index fdf9307..0b12866 100644
-> --- a/drivers/net/ethernet/freescale/fec_main.c
-> +++ b/drivers/net/ethernet/freescale/fec_main.c
-> @@ -1100,10 +1100,10 @@ static void fec_get_mac(struct net_device *ndev)
->  	 * 4) FEC mac registers set by bootloader
->  	 */
->  	if (!is_valid_ether_addr(iap)) {
-> -		*((unsigned long *) &tmpaddr[0]) > -			be32_to_cpu(readl(fep->hwp + FEC_ADDR_LOW));
-> -		*((unsigned short *) &tmpaddr[4]) > -			be16_to_cpu(readl(fep->hwp + FEC_ADDR_HIGH) >> 16);
-> +		*((__be32 *) &tmpaddr[0]) > +			cpu_to_be32(readl(fep->hwp + FEC_ADDR_LOW));
-> +		*((__be16 *) &tmpaddr[4]) > +			cpu_to_be16(readl(fep->hwp + FEC_ADDR_HIGH) >> 16);
->  		iap = &tmpaddr[0];
->  	}
->  
-
--- 
-Ben Hutchings, Staff Engineer, Solarflare
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+RnJvbTogQmVuIEh1dGNoaW5ncyBbbWFpbHRvOmJodXRjaGluZ3NAc29sYXJmbGFyZS5jb21dDQpE
+YXRhOiBGcmlkYXksIEF1Z3VzdCAzMCwgMjAxMyAyOjQ5IEFNDQoNCj4gVG86IERhbiBDYXJwZW50
+ZXINCj4gQ2M6IEdyYW50IExpa2VseTsgUm9iIEhlcnJpbmc7IERhdmlkIFMuIE1pbGxlcjsgRXN0
+ZXZhbSBGYWJpby1SNDk0OTY7IExpDQo+IEZyYW5rLUIyMDU5NjsgSmltIEJheHRlcjsgRHVhbiBG
+dWdhbmctQjM4NjExOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIu
+a2VybmVsLm9yZzsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBS
+ZTogW3BhdGNoIHYyXSBuZXQvZmVjOiBjbGVhbnVwIHR5cGVzIGluIGZlY19nZXRfbWFjKCkNCj4g
+DQo+IE9uIFRodSwgMjAxMy0wOC0yOSBhdCAxMToyNSArMDMwMCwgRGFuIENhcnBlbnRlciB3cm90
+ZToNCj4gPiBNeSBzdGF0aWMgY2hlY2tlciBjb21wbGFpbnMgdGhhdCBvbiBzb21lIGFyY2hlcyB1
+bnNpZ25lZCBsb25ncyBjYW4gYmUNCj4gPiA4IGNoYXJhY3RlcnMgd2hpY2ggaXMgbGFyZ2VyIHRo
+YW4gdGhlIGJ1ZmZlciBpcyBvbmx5IDYgY2hhcnMuDQo+ID4gQWRkaXRpb25hbGx5LCBCZW4gSHV0
+Y2hpbmdzIHBvaW50cyBvdXQgdGhhdCB0aGUgYnVmZmVyIGFjdHVhbGx5IGhvbGRzDQo+ID4gYmln
+IGVuZGlhbiBkYXRhIGFuZCB0aGUgYnVmZmVyIHdlIGFyZSByZWFkaW5nIGZyb20gaXMgQ1BVIGVu
+ZGlhbi4NCj4gDQo+IEl0J3Mgbm90IHJlYWxseSBhcyBjbGVhci1jdXQgYXMgdGhhdC4gOi0pICBC
+dXQgSSB0aGluayBpdCdzIHNsaWdodGx5IG1vcmUNCj4gbG9naWNhbCB0aGlzIHdheS4NCj4gDQpZ
+ZXMsIGl0IGlzIG5vdCBjbGVhciwgcGxzIHJlbW92ZSBzb21lYm9keSdzIG5hbWUgZnJvbSB0aGUg
+Y29tbWl0IGxvZy4NCg0KPiA+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJw
+ZW50ZXJAb3JhY2xlLmNvbT4NCj4gDQo+IFJldmlld2VkLWJ5OiBCZW4gSHV0Y2hpbmdzIDxiaHV0
+Y2hpbmdzQHNvbGFyZmxhcmUuY29tPg0KPiANCj4gPiAtLS0NCj4gPiB2MjogZml4IGVuZGlhbiBh
+bm5vdGF0aW9ucyBhbmQgcmV2ZXJzZSB0aGUgYmVYWF90b19jcHUoKSBjYWxscyBzbyB0aGF0DQo+
+ID4gICAgIHRoZXkgc2F5IGNwdV90b19iZVhYKCkuDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4gPiBiL2RyaXZlcnMvbmV0
+L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNfbWFpbi5jDQo+ID4gaW5kZXggZmRmOTMwNy4uMGIxMjg2
+NiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX21h
+aW4uYw0KPiA+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNfbWFpbi5j
+DQo+ID4gQEAgLTExMDAsMTAgKzExMDAsMTAgQEAgc3RhdGljIHZvaWQgZmVjX2dldF9tYWMoc3Ry
+dWN0IG5ldF9kZXZpY2UgKm5kZXYpDQo+ID4gIAkgKiA0KSBGRUMgbWFjIHJlZ2lzdGVycyBzZXQg
+YnkgYm9vdGxvYWRlcg0KPiA+ICAJICovDQo+ID4gIAlpZiAoIWlzX3ZhbGlkX2V0aGVyX2FkZHIo
+aWFwKSkgew0KPiA+IC0JCSooKHVuc2lnbmVkIGxvbmcgKikgJnRtcGFkZHJbMF0pID0NCj4gPiAt
+CQkJYmUzMl90b19jcHUocmVhZGwoZmVwLT5od3AgKyBGRUNfQUREUl9MT1cpKTsNCj4gPiAtCQkq
+KCh1bnNpZ25lZCBzaG9ydCAqKSAmdG1wYWRkcls0XSkgPQ0KPiA+IC0JCQliZTE2X3RvX2NwdShy
+ZWFkbChmZXAtPmh3cCArIEZFQ19BRERSX0hJR0gpID4+IDE2KTsNCj4gPiArCQkqKChfX2JlMzIg
+KikgJnRtcGFkZHJbMF0pID0NCj4gPiArCQkJY3B1X3RvX2JlMzIocmVhZGwoZmVwLT5od3AgKyBG
+RUNfQUREUl9MT1cpKTsNCj4gPiArCQkqKChfX2JlMTYgKikgJnRtcGFkZHJbNF0pID0NCj4gPiAr
+CQkJY3B1X3RvX2JlMTYocmVhZGwoZmVwLT5od3AgKyBGRUNfQUREUl9ISUdIKSA+PiAxNik7DQo+
+ID4gIAkJaWFwID0gJnRtcGFkZHJbMF07DQo+ID4gIAl9DQo+ID4NCj4gDQo+IC0tDQo+IEJlbiBI
+dXRjaGluZ3MsIFN0YWZmIEVuZ2luZWVyLCBTb2xhcmZsYXJlIE5vdCBzcGVha2luZyBmb3IgbXkg
+ZW1wbG95ZXI7DQo+IHRoYXQncyB0aGUgbWFya2V0aW5nIGRlcGFydG1lbnQncyBqb2IuDQo+IFRo
+ZXkgYXNrZWQgdXMgdG8gbm90ZSB0aGF0IFNvbGFyZmxhcmUgcHJvZHVjdCBuYW1lcyBhcmUgdHJh
+ZGVtYXJrZWQuDQo+IA0KDQoNCg0K
 
