@@ -1,82 +1,68 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Wed, 14 Aug 2013 09:28:53 +0000
-Subject: Re: [PATCH 21/29] pwm: simplify use of devm_ioremap_resource
-Message-Id: <CAOh2x=koA8UobcNTGPzrj5oBhWot6CFA=eg6YX0x_mzZ7+_Qxg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Aug 2013 20:53:02 +0000
+Subject: Re: Updated FarSync driver
+Message-Id: <20130830205302.GK19256@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1376471493-22215-22-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376471493-22215-22-git-send-email-Julia.Lawall@lip6.fr>
+References: <E603DC592C92B54A89CEF6B0919A0B1CA86BBBD5E2@SOLO.hq.farsitecommunications.com>
+In-Reply-To: <E603DC592C92B54A89CEF6B0919A0B1CA86BBBD5E2@SOLO.hq.farsitecommunications.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Thierry Reding <thierry.reding@gmail.com>, kernel-janitors@vger.kernel.org, linux-pwm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, spear-devel <spear-devel@list.st.com>
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 14, 2013 at 2:41 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
->
-> Move the call to platform_get_resource adjacent to the call to
-> devm_ioremap_resource to make the connection between them more clear.
->
-> A simplified version of the semantic patch that makes this change is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @@
-> expression pdev,res,n,e,e1;
-> expression ret != 0;
-> identifier l;
-> @@
->
-> - res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->   ... when != res
-> - if (res = NULL) { ... \(goto l;\|return ret;\) }
->   ... when != res
-> + res = platform_get_resource(pdev, IORESOURCE_MEM, n);
->   e = devm_ioremap_resource(e1, res);
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
+On Fri, Aug 30, 2013 at 02:50:13PM +0100, Kevin Curtis wrote:
+> Hi Dan,
+>     I have been working on getting the patches in to shape over the last month, and I think I have something that I hope will be acceptable.  I have reduced the 
+> 
+> total: 692 errors, 907 warnings
+> 
+> to
+> 
+> total: 0 errors, 52 warnings.
+> 
+> I thought I'd run it by the Janitors one more time before I formally submit it.
+> 
+> There is now a set of 7 patches.
+> 
+> 1 for the pci_ids.h file to add our new ids.
+> And then 5 files that modify existing files and create new ones.
+> And then 1 to update the Kconfig and Makefile.
+> 
 
->  drivers/pwm/pwm-spear.c       |    7 +------
+Much better, but there are still issues.
 
-For SPEAr:
+Anyway, the first trivial thing is that these need to be sent inline as
+a patch series.  Everyone has macros to apply patches automatically from
+email so these need to be in the normal format for "git am".  Mail them
+to yourself.  Save the raw text including headers.
+`cat email.txt | git am`.  There are tuturials on how to mail git patch
+series online.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Next, also very trivial, is that the patches are in the wrong order so the
+compile breaks if I only apply the first two.  That's not allowed.
 
+I help review staging patches so when I see something like
+farsync_patch_1 and farsync_patch_2 the patch is supposed to be adding a
+feature.  There are a lot of lines which start with '-' in the changelog
+and I would question those.  A lot of them are trivial white space
+changes.  If this were a staging patch I might ask that the white space
+changes be pulled out into a separate patch.  You can do this easily
+with "git citool".  Highlight the white space changes and right click
+and select "stage lines for commit".
 
-> diff --git a/drivers/pwm/pwm-spear.c b/drivers/pwm/pwm-spear.c
-> index a54d214..8ad26b8 100644
-> --- a/drivers/pwm/pwm-spear.c
-> +++ b/drivers/pwm/pwm-spear.c
-> @@ -178,18 +178,13 @@ static int spear_pwm_probe(struct platform_device *pdev)
->         int ret;
->         u32 val;
->
-> -       r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       if (!r) {
-> -               dev_err(&pdev->dev, "no memory resources defined\n");
-> -               return -ENODEV;
-> -       }
-> -
->         pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
->         if (!pc) {
->                 dev_err(&pdev->dev, "failed to allocate memory\n");
->                 return -ENOMEM;
->         }
->
-> +       r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         pc->mmio_base = devm_ioremap_resource(&pdev->dev, r);
->         if (IS_ERR(pc->mmio_base))
->                 return PTR_ERR(pc->mmio_base);
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+The other thing to be aware of is that we are coming up on a merge
+window so it might already be too late to get this merged in the up
+coming v3.12 kernel in November so you'll have to target v3.13 in Feb.
+Maybe just submit it to the netdev ASAP and see what people say.
+
+I think they will say that you need to reuse normal kernel CRC
+functions and FIFO api.  They might say that farsync_patch_1 needs to be
+a separate patch for each paragraph in the changelog.  They probably
+have other comments as well.
+
+But basically you've reached the end of kernel-janitor review.  :)  Good
+luck.
+
+regards,
+dan carpenter
+
