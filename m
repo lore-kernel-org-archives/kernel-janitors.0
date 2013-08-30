@@ -1,55 +1,42 @@
-From: Duan Fugang-B38611 <B38611@freescale.com>
-Date: Fri, 30 Aug 2013 02:02:00 +0000
-Subject: RE: [patch v2] net/fec: cleanup types in fec_get_mac()
-Message-Id: <9848F2DB572E5649BA045B288BE08FBE01662A4B@039-SN2MPN1-021.039d.mgd.msft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 30 Aug 2013 09:00:49 +0000
+Subject: Re: [patch v2] net/fec: cleanup types in fec_get_mac()
+Message-Id: <20130830090049.GJ19256@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130829082514.GB14334@elgon.mountain>
  <1377802138.5372.12.camel@bwh-desktop.uk.level5networks.com>
-In-Reply-To: <1377802138.5372.12.camel@bwh-desktop.uk.level5networks.com>
+ <9848F2DB572E5649BA045B288BE08FBE01662A4B@039-SN2MPN1-021.039d.mgd.msft.net>
+In-Reply-To: <9848F2DB572E5649BA045B288BE08FBE01662A4B@039-SN2MPN1-021.039d.mgd.msft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Hutchings <bhutchings@solarflare.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, "David S. Miller" <davem@davemloft.net>, Estevam Fabio-R49496 <r49496@freescale.com>, Li Frank-B20596 <B20596@freescale.com>, Jim Baxter <jim_baxter@mentor.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Duan Fugang-B38611 <B38611@freescale.com>
+Cc: Ben Hutchings <bhutchings@solarflare.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, "David S. Miller" <davem@davemloft.net>, Estevam Fabio-R49496 <r49496@freescale.com>, Li Frank-B20596 <B20596@freescale.com>, Jim Baxter <jim_baxter@mentor.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-RnJvbTogQmVuIEh1dGNoaW5ncyBbbWFpbHRvOmJodXRjaGluZ3NAc29sYXJmbGFyZS5jb21dDQpE
-YXRhOiBGcmlkYXksIEF1Z3VzdCAzMCwgMjAxMyAyOjQ5IEFNDQoNCj4gVG86IERhbiBDYXJwZW50
-ZXINCj4gQ2M6IEdyYW50IExpa2VseTsgUm9iIEhlcnJpbmc7IERhdmlkIFMuIE1pbGxlcjsgRXN0
-ZXZhbSBGYWJpby1SNDk0OTY7IExpDQo+IEZyYW5rLUIyMDU5NjsgSmltIEJheHRlcjsgRHVhbiBG
-dWdhbmctQjM4NjExOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIu
-a2VybmVsLm9yZzsga2VybmVsLWphbml0b3JzQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBS
-ZTogW3BhdGNoIHYyXSBuZXQvZmVjOiBjbGVhbnVwIHR5cGVzIGluIGZlY19nZXRfbWFjKCkNCj4g
-DQo+IE9uIFRodSwgMjAxMy0wOC0yOSBhdCAxMToyNSArMDMwMCwgRGFuIENhcnBlbnRlciB3cm90
-ZToNCj4gPiBNeSBzdGF0aWMgY2hlY2tlciBjb21wbGFpbnMgdGhhdCBvbiBzb21lIGFyY2hlcyB1
-bnNpZ25lZCBsb25ncyBjYW4gYmUNCj4gPiA4IGNoYXJhY3RlcnMgd2hpY2ggaXMgbGFyZ2VyIHRo
-YW4gdGhlIGJ1ZmZlciBpcyBvbmx5IDYgY2hhcnMuDQo+ID4gQWRkaXRpb25hbGx5LCBCZW4gSHV0
-Y2hpbmdzIHBvaW50cyBvdXQgdGhhdCB0aGUgYnVmZmVyIGFjdHVhbGx5IGhvbGRzDQo+ID4gYmln
-IGVuZGlhbiBkYXRhIGFuZCB0aGUgYnVmZmVyIHdlIGFyZSByZWFkaW5nIGZyb20gaXMgQ1BVIGVu
-ZGlhbi4NCj4gDQo+IEl0J3Mgbm90IHJlYWxseSBhcyBjbGVhci1jdXQgYXMgdGhhdC4gOi0pICBC
-dXQgSSB0aGluayBpdCdzIHNsaWdodGx5IG1vcmUNCj4gbG9naWNhbCB0aGlzIHdheS4NCj4gDQpZ
-ZXMsIGl0IGlzIG5vdCBjbGVhciwgcGxzIHJlbW92ZSBzb21lYm9keSdzIG5hbWUgZnJvbSB0aGUg
-Y29tbWl0IGxvZy4NCg0KPiA+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJw
-ZW50ZXJAb3JhY2xlLmNvbT4NCj4gDQo+IFJldmlld2VkLWJ5OiBCZW4gSHV0Y2hpbmdzIDxiaHV0
-Y2hpbmdzQHNvbGFyZmxhcmUuY29tPg0KPiANCj4gPiAtLS0NCj4gPiB2MjogZml4IGVuZGlhbiBh
-bm5vdGF0aW9ucyBhbmQgcmV2ZXJzZSB0aGUgYmVYWF90b19jcHUoKSBjYWxscyBzbyB0aGF0DQo+
-ID4gICAgIHRoZXkgc2F5IGNwdV90b19iZVhYKCkuDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4gPiBiL2RyaXZlcnMvbmV0
-L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNfbWFpbi5jDQo+ID4gaW5kZXggZmRmOTMwNy4uMGIxMjg2
-NiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX21h
-aW4uYw0KPiA+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNfbWFpbi5j
-DQo+ID4gQEAgLTExMDAsMTAgKzExMDAsMTAgQEAgc3RhdGljIHZvaWQgZmVjX2dldF9tYWMoc3Ry
-dWN0IG5ldF9kZXZpY2UgKm5kZXYpDQo+ID4gIAkgKiA0KSBGRUMgbWFjIHJlZ2lzdGVycyBzZXQg
-YnkgYm9vdGxvYWRlcg0KPiA+ICAJICovDQo+ID4gIAlpZiAoIWlzX3ZhbGlkX2V0aGVyX2FkZHIo
-aWFwKSkgew0KPiA+IC0JCSooKHVuc2lnbmVkIGxvbmcgKikgJnRtcGFkZHJbMF0pID0NCj4gPiAt
-CQkJYmUzMl90b19jcHUocmVhZGwoZmVwLT5od3AgKyBGRUNfQUREUl9MT1cpKTsNCj4gPiAtCQkq
-KCh1bnNpZ25lZCBzaG9ydCAqKSAmdG1wYWRkcls0XSkgPQ0KPiA+IC0JCQliZTE2X3RvX2NwdShy
-ZWFkbChmZXAtPmh3cCArIEZFQ19BRERSX0hJR0gpID4+IDE2KTsNCj4gPiArCQkqKChfX2JlMzIg
-KikgJnRtcGFkZHJbMF0pID0NCj4gPiArCQkJY3B1X3RvX2JlMzIocmVhZGwoZmVwLT5od3AgKyBG
-RUNfQUREUl9MT1cpKTsNCj4gPiArCQkqKChfX2JlMTYgKikgJnRtcGFkZHJbNF0pID0NCj4gPiAr
-CQkJY3B1X3RvX2JlMTYocmVhZGwoZmVwLT5od3AgKyBGRUNfQUREUl9ISUdIKSA+PiAxNik7DQo+
-ID4gIAkJaWFwID0gJnRtcGFkZHJbMF07DQo+ID4gIAl9DQo+ID4NCj4gDQo+IC0tDQo+IEJlbiBI
-dXRjaGluZ3MsIFN0YWZmIEVuZ2luZWVyLCBTb2xhcmZsYXJlIE5vdCBzcGVha2luZyBmb3IgbXkg
-ZW1wbG95ZXI7DQo+IHRoYXQncyB0aGUgbWFya2V0aW5nIGRlcGFydG1lbnQncyBqb2IuDQo+IFRo
-ZXkgYXNrZWQgdXMgdG8gbm90ZSB0aGF0IFNvbGFyZmxhcmUgcHJvZHVjdCBuYW1lcyBhcmUgdHJh
-ZGVtYXJrZWQuDQo+IA0KDQoNCg0K
+On Fri, Aug 30, 2013 at 02:02:00AM +0000, Duan Fugang-B38611 wrote:
+> From: Ben Hutchings [mailto:bhutchings@solarflare.com]
+> Data: Friday, August 30, 2013 2:49 AM
+> 
+> > To: Dan Carpenter
+> > Cc: Grant Likely; Rob Herring; David S. Miller; Estevam Fabio-R49496; Li
+> > Frank-B20596; Jim Baxter; Duan Fugang-B38611; netdev@vger.kernel.org;
+> > devicetree@vger.kernel.org; kernel-janitors@vger.kernel.org
+> > Subject: Re: [patch v2] net/fec: cleanup types in fec_get_mac()
+> > 
+> > On Thu, 2013-08-29 at 11:25 +0300, Dan Carpenter wrote:
+> > > My static checker complains that on some arches unsigned longs can be
+> > > 8 characters which is larger than the buffer is only 6 chars.
+> > > Additionally, Ben Hutchings points out that the buffer actually holds
+> > > big endian data and the buffer we are reading from is CPU endian.
+> > 
+> > It's not really as clear-cut as that. :-)  But I think it's slightly more
+> > logical this way.
+> > 
+> Yes, it is not clear, pls remove somebody's name from the commit log.
+
+Huh?  No, I'm going to leave Ben's name as is.  It's weird that you
+would ask for that.
+
+regards,
+dan carpenter
 
