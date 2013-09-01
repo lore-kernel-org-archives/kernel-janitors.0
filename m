@@ -1,45 +1,46 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 30 Sep 2013 14:29:31 +0000
-Subject: Re: [patch] staging: rtl8712: remove unneeded NULL check
-Message-Id: <52498ACB.7090705@lwfinger.net>
+From: Bojan Prtvar <prtvar.b@gmail.com>
+Date: Sun, 01 Sep 2013 20:18:44 +0000
+Subject: [PATCH] Staging: android: Mark local functions in binder.c as static
+Message-Id: <1378066724-6340-1-git-send-email-prtvar.b@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130928095833.GE26611@elgon.mountain>
-In-Reply-To: <20130928095833.GE26611@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 09/28/2013 04:58 AM, Dan Carpenter wrote:
-> We knew "peventbuf" was a valid pointer and "peventbuf + 2" is also
-> non-NULL.  I have removed the check.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/staging/rtl8712/rtl8712_cmd.c b/drivers/staging/rtl8712/rtl8712_cmd.c
-> index 088647c..53f247b 100644
-> --- a/drivers/staging/rtl8712/rtl8712_cmd.c
-> +++ b/drivers/staging/rtl8712/rtl8712_cmd.c
-> @@ -471,11 +471,9 @@ void r8712_event_handle(struct _adapter *padapter, uint *peventbuf)
->   	if (pevt_priv->event_seq > 127)
->   		pevt_priv->event_seq = 0;
->   	peventbuf = peventbuf + 2; /* move to event content, 8 bytes alignment */
-> -	if (peventbuf) {
-> -		event_callback = wlanevents[evt_code].event_callback;
-> -		if (event_callback)
-> -			event_callback(padapter, (u8 *)peventbuf);
-> -	}
-> +	event_callback = wlanevents[evt_code].event_callback;
-> +	if (event_callback)
-> +		event_callback(padapter, (u8 *)peventbuf);
->   	pevt_priv->evt_done_cnt++;
->   _abort_event_:
->   	return;
+This fixes the following sparse warnings
+drivers/staging/android/binder.c:1703:5: warning: symbol 'binder_thread_write' was not declared. Should it be static?
+drivers/staging/android/binder.c:2058:6: warning: symbol 'binder_stat_br' was not declared. Should it be static?
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+---
+ drivers/staging/android/binder.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
-Thanks,
-
-Larry
-
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index 98ac020..82b5861 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -1700,7 +1700,8 @@ err_no_context_mgr_node:
+ 		thread->return_error = return_error;
+ }
+ 
+-int binder_thread_write(struct binder_proc *proc, struct binder_thread *thread,
++static int binder_thread_write(struct binder_proc *proc,
++			struct binder_thread *thread,
+ 			void __user *buffer, size_t size, size_t *consumed)
+ {
+ 	uint32_t cmd;
+@@ -2055,7 +2056,8 @@ int binder_thread_write(struct binder_proc *proc, struct binder_thread *thread,
+ 	return 0;
+ }
+ 
+-void binder_stat_br(struct binder_proc *proc, struct binder_thread *thread,
++static void binder_stat_br(struct binder_proc *proc,
++			struct binder_thread *thread,
+ 		    uint32_t cmd)
+ {
+ 	trace_binder_return(cmd);
+-- 
+1.7.1
 
