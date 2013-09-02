@@ -1,72 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 02 Sep 2013 09:54:20 +0000
-Subject: [PATCH 1/2] spi: delete premature free_irq
-Message-Id: <1378115661-5371-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 02 Sep 2013 22:37:37 +0000
+Subject: Re: [PATCH 1/2] spi: delete premature free_irq
+Message-Id: <20130902223737.GA14209@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="sdtB3X0nJg68CQEu"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1378115661-5371-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1378115661-5371-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mark Brown <broonie@kernel.org>
+ <1378115661-5371-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1378115661-5371-2-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Free_irq is not needed if there has been no request_irq.  Free_irq is
-removed from both the probe and remove functions.  The correct request_irq
-and free_irq appear to be in the add_host and remove_host functions in
-spi-dw.c.
+--sdtB3X0nJg68CQEu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+On Mon, Sep 02, 2013 at 11:54:20AM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Free_irq is not needed if there has been no request_irq.  Free_irq is
+> removed from both the probe and remove functions.  The correct request_irq
+> and free_irq appear to be in the add_host and remove_host functions in
+> spi-dw.c.
 
-// <smpl>
-@@
-expression e;
-@@
+Applied, thanks.
 
-*e = platform_get_irq(...);
-... when != request_irq(e,...)
-*free_irq(e,...)
-// </smpl>
+--sdtB3X0nJg68CQEu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
----
-Not tested.
+iQIcBAEBAgAGBQJSJRMuAAoJELSic+t+oim9GxsP/A1zIlV32D5Zc0jVpwki24G4
+JXTJV7fNMkJUj+SgMBuiRZmgK4KU1MrnwfR82/PmCir6gEJKZmb9z4EffPmt7rUF
+V9jr4wIBeC17/tQIS19hzlm4GlGAqtN95mdWxsiYlHLAAtl1oS/51EZdvuazNTG0
+MyTHq4RwlCvHdCz3tvDRLwaXBHtwaVIQKO/pv1tjOCVthNfFhzxO+b0P7rIgb5nQ
+oz4TrGOFupCF8TSwx8Z0G3406H3qSIVIMsaOPn985qHxzTgIKbArCvdFEzBwLGTc
+RMCTIBbQNkL3AcIEJ50myp92YFFlHH0ahw7XHUlV0uYAmqKllmaIM+6fxfX/xVsX
+DV3NP7FYcpBh5v2SgtnaZuLjyBJlU3jHP27UhcGd2ZGETThZ1xLAm4wa/pMxCZDn
+/vli/wEwKFpiK/ruKTQSNf6tkEC3pFesKOlxy0VNjNgZWpWGF3bKEt2tWQkltmld
+wBzwWI8PPjpwSDbw2qD63Erl/CDfH+a9epRMS06dX1rG5IbXpubCYi3P9tCGwtsX
+HvvwFyJZY07Vu7Y5zyUKyWDTBOpp8+V//tvV0xtyJ1J16v2Vn9GZXduSTusRglKj
+a+4ijpnb1IXiLhDQCN0W9l4SY511QtlJEw+Fw4WHCjp0FggGwgybohm6/H1iEzmB
+dOTKr94YhHkPJVUDndmx
+=ETsu
+-----END PGP SIGNATURE-----
 
- drivers/spi/spi-dw-mmio.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index 4aa8be8..168c620 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -74,7 +74,7 @@ static int dw_spi_mmio_probe(struct platform_device *pdev)
- 	dwsmmio->clk = clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(dwsmmio->clk)) {
- 		ret = PTR_ERR(dwsmmio->clk);
--		goto err_irq;
-+		goto err_unmap;
- 	}
- 	clk_enable(dwsmmio->clk);
- 
-@@ -94,8 +94,6 @@ err_clk:
- 	clk_disable(dwsmmio->clk);
- 	clk_put(dwsmmio->clk);
- 	dwsmmio->clk = NULL;
--err_irq:
--	free_irq(dws->irq, dws);
- err_unmap:
- 	iounmap(dws->regs);
- err_release_reg:
-@@ -115,7 +113,6 @@ static int dw_spi_mmio_remove(struct platform_device *pdev)
- 	clk_put(dwsmmio->clk);
- 	dwsmmio->clk = NULL;
- 
--	free_irq(dwsmmio->dws.irq, &dwsmmio->dws);
- 	dw_spi_remove_host(&dwsmmio->dws);
- 	iounmap(dwsmmio->dws.regs);
- 	kfree(dwsmmio);
-
+--sdtB3X0nJg68CQEu--
