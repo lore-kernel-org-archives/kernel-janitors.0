@@ -1,49 +1,28 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Mon, 23 Sep 2013 19:40:33 +0000
-Subject: RE: [PATCH 11/19] wireless: Change variable type to bool
-Message-Id: <477F20668A386D41ADCC57781B1F70430F44C59426@SC-VEXCH1.marvell.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 02 Sep 2013 09:04:42 +0000
+Subject: [patch] sfc: check for allocation failure
+Message-Id: <20130902082828.GA30037@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
- <1379802471-30252-11-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-11-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: "linville@tuxdriver.com" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Solarflare linux maintainers <linux-net-drivers@solarflare.com>
+Cc: Ben Hutchings <bhutchings@solarflare.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Peter,
+It upsets static analyzers when we don't check for allocation failure.
 
-Thanks for your patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> The variables cancel_scan_cmd, enable_data, hs_activate and valid are
-> only assigned the values true and false. Change its type to bool.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
-Acked-by: Bing Zhao <bzhao@marvell.com>
-
-Thanks,
-Bing
-
-> ---
->  drivers/net/wireless/mwifiex/cmdevt.c  | 2 +-
->  drivers/net/wireless/mwifiex/join.c    | 2 +-
->  drivers/net/wireless/mwifiex/sta_cmd.c | 2 +-
->  drivers/net/wireless/mwifiex/wmm.c     | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
-
-
+diff --git a/drivers/net/ethernet/sfc/mtd.c b/drivers/net/ethernet/sfc/mtd.c
+index ba6c87a..aac6897 100644
+--- a/drivers/net/ethernet/sfc/mtd.c
++++ b/drivers/net/ethernet/sfc/mtd.c
+@@ -384,6 +384,8 @@ static int falcon_mtd_probe(struct efx_nic *efx)
+ 
+ 	/* Allocate space for maximum number of partitions */
+ 	parts = kcalloc(2, sizeof(*parts), GFP_KERNEL);
++	if (!parts)
++		return -ENOMEM;
+ 	n_parts = 0;
+ 
+ 	spi = &nic_data->spi_flash;
