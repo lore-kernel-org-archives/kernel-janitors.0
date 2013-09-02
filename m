@@ -1,37 +1,28 @@
-From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Date: Tue, 03 Sep 2013 15:58:57 +0000
-Subject: Re: [v4:No,Change] xHCI:Fixing xhci_readl definition and function call
-Message-Id: <20130903155857.GA2657@xanatos>
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Mon, 02 Sep 2013 12:19:39 +0000
+Subject: Re: [PATCH 4/7] dma: replace devm_request_and_ioremap by devm_ioremap_resource
+Message-Id: <20130902120739.GR7376@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5223383f.hCMXrpqEq1AlVw9b%wangshilong1991@gmail.com>
-In-Reply-To: <5223383f.hCMXrpqEq1AlVw9b%wangshilong1991@gmail.com>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1376911241-27720-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1376911241-27720-5-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wang Shilong <wangshilong1991@gmail.com>
-Cc: kumargauravgupta3@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Dan Williams <djbw@fb.com>, linux-kernel@vger.kernel.org
 
-On Sun, Sep 01, 2013 at 08:51:11PM +0800, Wang Shilong wrote:
-> Hello, Using checkpatch.pl, i get the following warnings(errors):
-> WARNING: Avoid CamelCase: <port_array[wIndex]>
-> #272: FILE: drivers/usb/host/xhci-hub.c:725:
-> +		temp = xhci_readl(port_array[wIndex]);
+On Mon, Aug 19, 2013 at 01:20:38PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> total: 0 errors, 1 warnings, 826 lines checked
+> Use devm_ioremap_resource instead of devm_request_and_ioremap.
 > 
-> patch has style problems, please review.
+> This was done using the semantic patch
+> scripts/coccinelle/api/devm_ioremap_resource.cocci
 > 
-> If any of these errors are false positives, please report
-> them to the maintainer, see CHECKPATCH in MAINTAINERS.
+> The relevant call to platform_get_resource was manually moved down to the
+> call to devm_ioremap_resource.
+Applied, thanks
 
-Ignore this warning.  The variable is called wIndex because it
-corresponds to a field in a USB control transfer, and that's what it's
-called in the spec.  In this case, wIndex is the index into the hub's
-port array, so it's perfectly valid to use it as an array index here.
+~Vinod
 
-In general, if checkpatch.pl complains about a variable a patch
-introduces that's CamelCase, you should pay attention to it.  If it's a
-variable that already present in USB code, it's probably used to match
-the spec.
-
-Sarah Sharp
