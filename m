@@ -1,79 +1,49 @@
-From: "Zheng, Lv" <lv.zheng@intel.com>
-Date: Tue, 10 Sep 2013 07:17:14 +0000
-Subject: RE: [PATCH] ACPI/ACPCICA: Remove references to non existing acpi_os_free()
-Message-Id: <1AE640813FDE7649BE1B193DEA596E880246264C@SHSMSX101.ccr.corp.intel.com>
+From: Bojan Prtvar <prtvar.b@gmail.com>
+Date: Mon, 02 Sep 2013 06:18:40 +0000
+Subject: [PATCH v2] Staging: android: Mark local functions in binder.c as static
+Message-Id: <1378102720-4200-1-git-send-email-prtvar.b@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1378566415-15857-1-git-send-email-prtvar.b@gmail.com>
-In-Reply-To: <1378566415-15857-1-git-send-email-prtvar.b@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PiBGcm9tOiBSYWZhZWwgSi4gV3lzb2NraSBbbWFpbHRvOnJqd0BzaXNrLnBsXQ0KPiBTZW50OiBT
-dW5kYXksIFNlcHRlbWJlciAwOCwgMjAxMyA1OjQ4IEFNDQo+IA0KPiBPbiBTYXR1cmRheSwgU2Vw
-dGVtYmVyIDA3LCAyMDEzIDA1OjA2OjU1IFBNIEJvamFuIFBydHZhciB3cm90ZToNCj4gPiBJbiBj
-b21taXQgMDI0MzhkODc3MWFlNmE0YjIxNTkzODk1OTgyNzY5MjAyNjM4MGJmOSBhY3BpX29zX2Zy
-ZWUoKQ0KPiA+IHdhcyBkZWxldGVkIGFuZCB3ZSBzd2l0Y2hlZCB0byB1c2luZyBrZnJlZSgpIGRp
-cmVjdGx5IGluc3RlYWQuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCb2phbiBQcnR2YXIgPHBy
-dHZhci5iQGdtYWlsLmNvbT4NCj4gDQo+IEl0IGxvb2tzIGxpa2Ugd2UgaGF2ZSBzb21lIGxlZnRv
-dmVycy4gOi0pDQo+IA0KPiBCb2IsIEx2LCBhbnkgb2JqZWN0aW9ucyBhZ2FpbnMgdGhpcyBwYXRj
-aD8NCg0KVGhlIGZpbGUgaXMgdXNlZCBieSBub24gT1NQTSBjb2Rlcywgc28ga2ZyZWUgc2hvdWxk
-IG5vdCBiZSBpbiBpdC4NCkFzIHlvdSBtYXkga25vdywgd2UgbmVlZCBkcml2ZXJzL2FjcGkvYWNw
-aWNhIGZpbGVzIHRvIGJlIGNvbXBpbGVkIGFzIGEgcGFydCBvZiBBY3BpRHVtcCB1dGlsaXR5IHdo
-aWNoIGlzIGEgdXNlciBzcGFjZSB1dGlsaXR5Lg0KSSBkb24ndCB0aGluayBrZnJlZSBjYW4gYmUg
-bGlua2VkIGJ5IGEgdXNlciBzcGFjZSBwcm9ncmFtLg0KDQpUaGUgY2xlYW5lciB3YXkgbWlnaHQg
-YmUgZG9uZSBieSBwb3J0aW5nIG1pc3NpbmcgQUNQSUNBIGFsbG9jYXRlL2ZyZWUgaW1wbGVtZW50
-YXRpb24gY29kZXMgdG8gdGhlIGtlcm5lbC4NCg0KVGhhbmtzIGFuZCBiZXN0IHJlZ2FyZHMNCi1M
-dg0KDQo+IA0KPiBSYWZhZWwNCj4gDQo+IA0KPiA+IC0tLQ0KPiA+IFRoaXMgaXMgamFuaXRvcmlh
-bCB3b3JrLCBwbGVhc2UgcmV2aWV3IGNhcmVmdWxseS4NCj4gPg0KPiA+ICBkcml2ZXJzL2FjcGkv
-YWNwaWNhL2FjbWFjcm9zLmggfCAgICAyICstDQo+ID4gIGRyaXZlcnMvYWNwaS9hY3BpY2EvdXRj
-YWNoZS5jICB8ICAgIDIgKy0NCj4gPiAgZHJpdmVycy9hY3BpL2FjcGljYS91dHRyYWNrLmMgIHwg
-ICAgNiArKystLS0NCj4gPiAgaW5jbHVkZS9hY3BpL2FjcGlvc3hmLmggICAgICAgIHwgICAgMiAt
-LQ0KPiA+ICA0IGZpbGVzIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkN
-Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2FjcGkvYWNwaWNhL2FjbWFjcm9zLmggYi9k
-cml2ZXJzL2FjcGkvYWNwaWNhL2FjbWFjcm9zLmgNCj4gPiBpbmRleCA1MzBhMmY4Li4zNjcwZGQ5
-IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvYWNwaS9hY3BpY2EvYWNtYWNyb3MuaA0KPiA+ICsr
-KyBiL2RyaXZlcnMvYWNwaS9hY3BpY2EvYWNtYWNyb3MuaA0KPiA+IEBAIC00MjUsNyArNDI1LDcg
-QEANCj4gPiAgI2RlZmluZSBBQ1BJX0FMTE9DQVRFX1pFUk9FRChhKSAgICAgYWNwaV91dF9hbGxv
-Y2F0ZV96ZXJvZWQoKGFjcGlfc2l6ZSkgKGEpLCBBQ1BJX01FTV9QQVJBTUVURVJTKQ0KPiA+ICAj
-ZW5kaWYNCj4gPiAgI2lmbmRlZiBBQ1BJX0ZSRUUNCj4gPiAtI2RlZmluZSBBQ1BJX0ZSRUUoYSkg
-ICAgICAgICAgICAgICAgYWNwaV9vc19mcmVlKGEpDQo+ID4gKyNkZWZpbmUgQUNQSV9GUkVFKGEp
-ICAgICAgICAgICAgICAgIGtmcmVlKGEpDQo+ID4gICNlbmRpZg0KPiA+ICAjZGVmaW5lIEFDUElf
-TUVNX1RSQUNLSU5HKGEpDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9hY3BpL2FjcGlj
-YS91dGNhY2hlLmMgYi9kcml2ZXJzL2FjcGkvYWNwaWNhL3V0Y2FjaGUuYw0KPiA+IGluZGV4IGE4
-NzdhOTYuLmZjYzU3MGMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9hY3BpL2FjcGljYS91dGNh
-Y2hlLmMNCj4gPiArKysgYi9kcml2ZXJzL2FjcGkvYWNwaWNhL3V0Y2FjaGUuYw0KPiA+IEBAIC0x
-NjYsNyArMTY2LDcgQEAgYWNwaV9zdGF0dXMgYWNwaV9vc19kZWxldGVfY2FjaGUoc3RydWN0IGFj
-cGlfbWVtb3J5X2xpc3QgKiBjYWNoZSkNCj4gPg0KPiA+ICAJLyogTm93IHdlIGNhbiBkZWxldGUg
-dGhlIGNhY2hlIG9iamVjdCAqLw0KPiA+DQo+ID4gLQlhY3BpX29zX2ZyZWUoY2FjaGUpOw0KPiA+
-ICsJa2ZyZWUoY2FjaGUpOw0KPiA+ICAJcmV0dXJuIChBRV9PSyk7DQo+ID4gIH0NCj4gPg0KPiA+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2FjcGkvYWNwaWNhL3V0dHJhY2suYyBiL2RyaXZlcnMvYWNw
-aS9hY3BpY2EvdXR0cmFjay5jDQo+ID4gaW5kZXggMTYwZjEzZi4uYWM4MTVlNSAxMDA2NDQNCj4g
-PiAtLS0gYS9kcml2ZXJzL2FjcGkvYWNwaWNhL3V0dHJhY2suYw0KPiA+ICsrKyBiL2RyaXZlcnMv
-YWNwaS9hY3BpY2EvdXR0cmFjay5jDQo+ID4gQEAgLTE0MSw3ICsxNDEsNyBAQCB2b2lkICphY3Bp
-X3V0X2FsbG9jYXRlX2FuZF90cmFjayhhY3BpX3NpemUgc2l6ZSwNCj4gPiAgCQkJCQkgIEFDUElf
-TUVNX01BTExPQywgY29tcG9uZW50LCBtb2R1bGUsDQo+ID4gIAkJCQkJICBsaW5lKTsNCj4gPiAg
-CWlmIChBQ1BJX0ZBSUxVUkUoc3RhdHVzKSkgew0KPiA+IC0JCWFjcGlfb3NfZnJlZShhbGxvY2F0
-aW9uKTsNCj4gPiArCQlrZnJlZShhbGxvY2F0aW9uKTsNCj4gPiAgCQlyZXR1cm4gKE5VTEwpOw0K
-PiA+ICAJfQ0KPiA+DQo+ID4gQEAgLTE5NSw3ICsxOTUsNyBAQCB2b2lkICphY3BpX3V0X2FsbG9j
-YXRlX3plcm9lZF9hbmRfdHJhY2soYWNwaV9zaXplIHNpemUsDQo+ID4gIAkJCQkJICBBQ1BJX01F
-TV9DQUxMT0MsIGNvbXBvbmVudCwgbW9kdWxlLA0KPiA+ICAJCQkJCSAgbGluZSk7DQo+ID4gIAlp
-ZiAoQUNQSV9GQUlMVVJFKHN0YXR1cykpIHsNCj4gPiAtCQlhY3BpX29zX2ZyZWUoYWxsb2NhdGlv
-bik7DQo+ID4gKwkJa2ZyZWUoYWxsb2NhdGlvbik7DQo+ID4gIAkJcmV0dXJuIChOVUxMKTsNCj4g
-PiAgCX0NCj4gPg0KPiA+IEBAIC0yNTQsNyArMjU0LDcgQEAgYWNwaV91dF9mcmVlX2FuZF90cmFj
-ayh2b2lkICphbGxvY2F0aW9uLA0KPiA+ICAJCUFDUElfRVhDRVBUSU9OKChBRV9JTkZPLCBzdGF0
-dXMsICJDb3VsZCBub3QgZnJlZSBtZW1vcnkiKSk7DQo+ID4gIAl9DQo+ID4NCj4gPiAtCWFjcGlf
-b3NfZnJlZShkZWJ1Z19ibG9jayk7DQo+ID4gKwlrZnJlZShkZWJ1Z19ibG9jayk7DQo+ID4gIAlB
-Q1BJX0RFQlVHX1BSSU5UKChBQ1BJX0RCX0FMTE9DQVRJT05TLCAiJXAgZnJlZWRcbiIsIGFsbG9j
-YXRpb24pKTsNCj4gPiAgCXJldHVybl9WT0lEOw0KPiA+ICB9DQo+ID4gZGlmZiAtLWdpdCBhL2lu
-Y2x1ZGUvYWNwaS9hY3Bpb3N4Zi5oIGIvaW5jbHVkZS9hY3BpL2FjcGlvc3hmLmgNCj4gPiBpbmRl
-eCA2NGI4Yzc2Li4wZjczMGNhIDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvYWNwaS9hY3Bpb3N4
-Zi5oDQo+ID4gKysrIGIvaW5jbHVkZS9hY3BpL2FjcGlvc3hmLmgNCj4gPiBAQCAtMTQ2LDggKzE0
-Niw2IEBAIHZvaWQgYWNwaV9vc19yZWxlYXNlX211dGV4KGFjcGlfbXV0ZXggaGFuZGxlKTsNCj4g
-PiAgICovDQo+ID4gIHZvaWQgKmFjcGlfb3NfYWxsb2NhdGUoYWNwaV9zaXplIHNpemUpOw0KPiA+
-DQo+ID4gLXZvaWQgYWNwaV9vc19mcmVlKHZvaWQgKm1lbW9yeSk7DQo+ID4gLQ0KPiA+ICB2b2lk
-IF9faW9tZW0gKmFjcGlfb3NfbWFwX21lbW9yeShhY3BpX3BoeXNpY2FsX2FkZHJlc3Mgd2hlcmUs
-DQo+ID4gIAkJCQlhY3BpX3NpemUgbGVuZ3RoKTsNCj4gPg0KPiA+DQo+IC0tDQo+IEkgc3BlYWsg
-b25seSBmb3IgbXlzZWxmLg0KPiBSYWZhZWwgSi4gV3lzb2NraSwgSW50ZWwgT3BlbiBTb3VyY2Ug
-VGVjaG5vbG9neSBDZW50ZXIuDQo
+This fixes the following sparse warnings
+drivers/staging/android/binder.c:1703:5: warning: symbol 'binder_thread_write' was not declared. Should it be static?
+drivers/staging/android/binder.c:2058:6: warning: symbol 'binder_stat_br' was not declared. Should it be static?
+
+Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+---
+ v2: Fixed indentig as suggested by Dan Carpenter.
+
+ drivers/staging/android/binder.c |    7 ++++---
+ 1 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/android/binder.c b/drivers/staging/android/binder.c
+index 98ac020..bb7c816 100644
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -1700,7 +1700,8 @@ err_no_context_mgr_node:
+ 		thread->return_error = return_error;
+ }
+ 
+-int binder_thread_write(struct binder_proc *proc, struct binder_thread *thread,
++static int binder_thread_write(struct binder_proc *proc,
++			struct binder_thread *thread,
+ 			void __user *buffer, size_t size, size_t *consumed)
+ {
+ 	uint32_t cmd;
+@@ -2055,8 +2056,8 @@ int binder_thread_write(struct binder_proc *proc, struct binder_thread *thread,
+ 	return 0;
+ }
+ 
+-void binder_stat_br(struct binder_proc *proc, struct binder_thread *thread,
+-		    uint32_t cmd)
++static void binder_stat_br(struct binder_proc *proc,
++			   struct binder_thread *thread, uint32_t cmd)
+ {
+ 	trace_binder_return(cmd);
+ 	if (_IOC_NR(cmd) < ARRAY_SIZE(binder_stats.br)) {
+-- 
+1.7.1
+
