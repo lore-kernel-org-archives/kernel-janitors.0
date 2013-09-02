@@ -1,41 +1,83 @@
-From: "Miller, Mike (OS Dev)" <Mike.Miller@hp.com>
-Date: Wed, 11 Sep 2013 17:23:06 +0000
-Subject: RE: [patch -resend] cpqarray: info leak in ida_locked_ioctl()
-Message-Id: <48275AD710FCA34184C2B6186B4016B32D0FD6A5@G6W2491.americas.hpqcorp.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 02 Sep 2013 09:54:21 +0000
+Subject: [PATCH 2/2] drivers:net: delete premature free_irq
+Message-Id: <1378115661-5371-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130603092516.GC16171@debian> <20130911073800.GA25349@mwanda>
-In-Reply-To: <20130911073800.GA25349@mwanda>
+References: <1378115661-5371-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1378115661-5371-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Chirag Kantharia <chirag.kantharia@hp.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: ISS StorageDev <iss_storagedev@hp.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Moritz Muehlenhoff <jmm@debian.org>
+To: linux-arm-kernel@lists.infradead.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Free_irq is not needed if there has been no request_irq.  Free_irq is
+removed from both the probe and remove functions.  The correct request_irq
+and free_irq are found in the open and close functions.
 
------Original Message-----
-From: Dan Carpenter [mailto:dan.carpenter@oracle.com] 
-Sent: Wednesday, September 11, 2013 2:38 AM
-To: Chirag Kantharia; Andrew Morton
-Cc: ISS StorageDev; linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org; Moritz Muehlenhoff
-Subject: [patch -resend] cpqarray: info leak in ida_locked_ioctl()
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-The pciinfo struct has a two byte hole after ->dev_fn so stack information could be leaked to the user.
+// <smpl>
+@@
+expression e;
+@@
 
-This was assigned CVE-2013-2147.
+*e = platform_get_irq(...);
+... when != request_irq(e,...)
+*free_irq(e,...)
+// </smpl>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Mike Miller <mike.miller@hp.com>
+---
+Not tested.
 
-diff --git a/drivers/block/cpqarray.c b/drivers/block/cpqarray.c index 639d26b..2b94403 100644
---- a/drivers/block/cpqarray.c
-+++ b/drivers/block/cpqarray.c
-@@ -1193,6 +1193,7 @@ out_passthru:
- 		ida_pci_info_struct pciinfo;
+ drivers/net/ethernet/nuvoton/w90p910_ether.c |   11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/nuvoton/w90p910_ether.c b/drivers/net/ethernet/nuvoton/w90p910_ether.c
+index dcfe58f..79645f7 100644
+--- a/drivers/net/ethernet/nuvoton/w90p910_ether.c
++++ b/drivers/net/ethernet/nuvoton/w90p910_ether.c
+@@ -1014,7 +1014,7 @@ static int w90p910_ether_probe(struct platform_device *pdev)
+ 	if (ether->rxirq < 0) {
+ 		dev_err(&pdev->dev, "failed to get ether rx irq\n");
+ 		error = -ENXIO;
+-		goto failed_free_txirq;
++		goto failed_free_io;
+ 	}
  
- 		if (!arg) return -EINVAL;
-+		memset(&pciinfo, 0, sizeof(pciinfo));
- 		pciinfo.bus = host->pci_dev->bus->number;
- 		pciinfo.dev_fn = host->pci_dev->devfn;
- 		pciinfo.board_id = host->board_id;
+ 	platform_set_drvdata(pdev, dev);
+@@ -1023,7 +1023,7 @@ static int w90p910_ether_probe(struct platform_device *pdev)
+ 	if (IS_ERR(ether->clk)) {
+ 		dev_err(&pdev->dev, "failed to get ether clock\n");
+ 		error = PTR_ERR(ether->clk);
+-		goto failed_free_rxirq;
++		goto failed_free_io;
+ 	}
+ 
+ 	ether->rmiiclk = clk_get(&pdev->dev, "RMII");
+@@ -1049,10 +1049,6 @@ failed_put_rmiiclk:
+ 	clk_put(ether->rmiiclk);
+ failed_put_clk:
+ 	clk_put(ether->clk);
+-failed_free_rxirq:
+-	free_irq(ether->rxirq, pdev);
+-failed_free_txirq:
+-	free_irq(ether->txirq, pdev);
+ failed_free_io:
+ 	iounmap(ether->reg);
+ failed_free_mem:
+@@ -1075,9 +1071,6 @@ static int w90p910_ether_remove(struct platform_device *pdev)
+ 	iounmap(ether->reg);
+ 	release_mem_region(ether->res->start, resource_size(ether->res));
+ 
+-	free_irq(ether->txirq, dev);
+-	free_irq(ether->rxirq, dev);
+-
+ 	del_timer_sync(&ether->check_timer);
+ 
+ 	free_netdev(dev);
+
