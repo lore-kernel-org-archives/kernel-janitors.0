@@ -1,51 +1,43 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Date: Wed, 18 Sep 2013 15:33:52 +0000
-Subject: Re: [PATCH 003/007] WAN Drivers: Update farsync driver and introduce fsflex driver
-Message-Id: <1379518432.1522.18.camel@bwh-desktop.uk.level5networks.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 03 Sep 2013 09:03:40 +0000
+Subject: [patch] x25: add a sanity check parsing X.25 facilities
+Message-Id: <20130903090340.GB4351@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E603DC592C92B54A89CEF6B0919A0B1CAAAA787DA2@SOLO.hq.farsitecommunications.com>
-In-Reply-To: <E603DC592C92B54A89CEF6B0919A0B1CAAAA787DA2@SOLO.hq.farsitecommunications.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kevin Curtis <Kevin.Curtis@farsite.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Dermot Smith <dermot.smith@farsite.com>
+To: Andrew Hendry <andrew.hendry@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-x25@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2013-09-18 at 11:12 +0100, Kevin Curtis wrote:
-> Farsite Communications FarSync driver update
-> 
-> Patch 3 of 7
-> 
-> Introduce a new include file required by the fsflex driver.
-> 
-> Signed-off-by: Kevin Curtis <kevin.curtis@farsite.com>
-> 
-> ---
-> 
-> diff -uprN -X linux-3.10.1/Documentation/dontdiff linux-3.10.1/drivers/net/wan/fscmn.h linux-3.10.1_new/drivers/net/wan/fscmn.h
-> --- linux-3.10.1/drivers/net/wan/fscmn.h	1970-01-01 01:00:00.000000000 +0100
-> +++ linux-3.10.1_new/drivers/net/wan/fscmn.h	2013-09-16 16:30:06.779104868 +0100
-[...]
-> +#ifdef UINT32
-> +#define u32 UINT32
-> +#define u16 UINT16
-> +#define u8  UCHAR
-> +#endif
-> +
-> +#ifdef USSTYPES_H
-> +#define u32 U32
-> +#define u16 U16
-> +#define u8  U8
-> +#endif
-[...]
+This was found with a manual audit and I don't have a reproducer.  We
+limit ->calling_len and ->called_len when we get them from
+copy_from_user() in x25_ioctl() so when they come from skb->data then
+we should cap them there as well.
 
-This sort of cruft doesn't belong in an in-tree driver.  unifdef may be
-useful for removing it when copying in out-of-tree 'portable' code.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Possibly should be applied to -stable.  My guess is that this leads to
+memory corruption, but I don't know.
 
-Ben.
-
--- 
-Ben Hutchings, Staff Engineer, Solarflare
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
-
+diff --git a/net/x25/x25_facilities.c b/net/x25/x25_facilities.c
+index 66c63873..b825325 100644
+--- a/net/x25/x25_facilities.c
++++ b/net/x25/x25_facilities.c
+@@ -156,6 +156,8 @@ int x25_parse_facilities(struct sk_buff *skb, struct x25_facilities *facilities,
+ 			case X25_FAC_CALLING_AE:
+ 				if (p[1] > X25_MAX_DTE_FACIL_LEN || p[1] <= 1)
+ 					return -1;
++				if (p[2] > X25_MAX_AE_LEN)
++					return -1;
+ 				dte_facs->calling_len = p[2];
+ 				memcpy(dte_facs->calling_ae, &p[3], p[1] - 1);
+ 				*vc_fac_mask |= X25_MASK_CALLING_AE;
+@@ -163,6 +165,8 @@ int x25_parse_facilities(struct sk_buff *skb, struct x25_facilities *facilities,
+ 			case X25_FAC_CALLED_AE:
+ 				if (p[1] > X25_MAX_DTE_FACIL_LEN || p[1] <= 1)
+ 					return -1;
++				if (p[2] > X25_MAX_AE_LEN)
++					return -1;
+ 				dte_facs->called_len = p[2];
+ 				memcpy(dte_facs->called_ae, &p[3], p[1] - 1);
+ 				*vc_fac_mask |= X25_MASK_CALLED_AE;
