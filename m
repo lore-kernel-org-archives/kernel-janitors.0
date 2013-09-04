@@ -1,43 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 03 Sep 2013 09:03:40 +0000
-Subject: [patch] x25: add a sanity check parsing X.25 facilities
-Message-Id: <20130903090340.GB4351@elgon.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 04 Sep 2013 04:54:19 +0000
+Subject: Re: [patch] x25: add a sanity check parsing X.25 facilities
+Message-Id: <20130904.005419.700065648971320112.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130903090340.GB4351@elgon.mountain>
+In-Reply-To: <20130903090340.GB4351@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Hendry <andrew.hendry@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-x25@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: andrew.hendry@gmail.com, linux-x25@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This was found with a manual audit and I don't have a reproducer.  We
-limit ->calling_len and ->called_len when we get them from
-copy_from_user() in x25_ioctl() so when they come from skb->data then
-we should cap them there as well.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 3 Sep 2013 12:03:40 +0300
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Possibly should be applied to -stable.  My guess is that this leads to
-memory corruption, but I don't know.
+> This was found with a manual audit and I don't have a reproducer.  We
+> limit ->calling_len and ->called_len when we get them from
+> copy_from_user() in x25_ioctl() so when they come from skb->data then
+> we should cap them there as well.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/net/x25/x25_facilities.c b/net/x25/x25_facilities.c
-index 66c63873..b825325 100644
---- a/net/x25/x25_facilities.c
-+++ b/net/x25/x25_facilities.c
-@@ -156,6 +156,8 @@ int x25_parse_facilities(struct sk_buff *skb, struct x25_facilities *facilities,
- 			case X25_FAC_CALLING_AE:
- 				if (p[1] > X25_MAX_DTE_FACIL_LEN || p[1] <= 1)
- 					return -1;
-+				if (p[2] > X25_MAX_AE_LEN)
-+					return -1;
- 				dte_facs->calling_len = p[2];
- 				memcpy(dte_facs->calling_ae, &p[3], p[1] - 1);
- 				*vc_fac_mask |= X25_MASK_CALLING_AE;
-@@ -163,6 +165,8 @@ int x25_parse_facilities(struct sk_buff *skb, struct x25_facilities *facilities,
- 			case X25_FAC_CALLED_AE:
- 				if (p[1] > X25_MAX_DTE_FACIL_LEN || p[1] <= 1)
- 					return -1;
-+				if (p[2] > X25_MAX_AE_LEN)
-+					return -1;
- 				dte_facs->called_len = p[2];
- 				memcpy(dte_facs->called_ae, &p[3], p[1] - 1);
- 				*vc_fac_mask |= X25_MASK_CALLED_AE;
+Applied.
