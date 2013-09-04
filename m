@@ -1,47 +1,113 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 13 Sep 2013 17:33:49 +0000
-Subject: Re: [patch] ASoC: max98095: a couple array underflows
-Message-Id: <20130913173349.GR29403@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cmVmsgMleI6OTR11"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Sep 2013 09:31:36 +0000
+Subject: [patch] drm/radeon: signedness bug in kv_dpm.c
+Message-Id: <20130904093136.GA13892@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130913075214.GB19211@elgon.mountain>
-In-Reply-To: <20130913075214.GB19211@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Bill Pemberton <wfp5p@virginia.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
+The problem here is that "unsigned i" is always greater than or equal to
+zero.  These loops mostly have a second check for "(i = 0)" so only the
+last two are actually buggy.  The rest is just cleanup.
 
---cmVmsgMleI6OTR11
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Bug 1:  kv_force_dpm_highest() doesn't have an "(i = 0)" check so it's
+a potential forever loop.
 
-On Fri, Sep 13, 2013 at 10:52:14AM +0300, Dan Carpenter wrote:
-> The ->put() function are called from snd_ctl_elem_write() with user
-> supplied data.  The limit checks here could underflow leading to a
-> crash.
+Bug 2: In kv_get_sleep_divider_id_from_clock() there is a typo and the
+test is reversed "<=" vs ">" so we never enter the loop.  That means
+normally we return KV_MAX_DEEPSLEEP_DIVIDER_ID (5).  The return value
+from here is saved in ->DeepSleepDivId and I wasn't able to determine
+how that is used.  This is a static checker fix and I have not tested
+it.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I considered making "i" signed but that doesn't actually change anything
+because the tests have to end on zero anyway.
 
---cmVmsgMleI6OTR11
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSM0x6AAoJELSic+t+oim9mcMP/0ZplkenCFSVAlld0A0FRryZ
-996U/nuBK3Z2PsGg9hb5PVctptcgpu9lgP69pOXx/nnb4Pdzew5IBa6GU4Ru/JS8
-S5gEMn3XiJrBI8HKTrNZh6wFUFE3JuOrG6JAQGlayp6iYOZA6e3iKtOCEHWVu+9y
-Ry1A7aPgX/D2PD7VzhEl3SNSkTZr+Y0/XfiARmfSxwpdGdapRTVCZzcJMztU1KZZ
-nb8Q3eAgkoZpS5vvFk8+0rKSbwqeGShZAQ83bLPxIy/hNdq5j9j4SxhBPXhYBZrX
-MK3c+2DNOIqYXXo9DZzeLk8DQOHL6yvPn+Io8zOgkatBT/jzpqzZyTwKz1qpKpoT
-AMrac8sTcu4YsZ6eIuSCm4LiTPAlXq+tchb0hFXchUkbdrspZrkmOnCX20u2IceH
-kIJS2JYt3XBcQ4LIY6WhtEUUxKoWW988YYpdiNEKBx8JsgXGNPkLbPgIMNCBHyTj
-Tp4yAp4OIDGRCrNGbLlGFZV2AoBvOQoXKDU1Byby3brzaR2s+GMJi4O/6h1ityES
-+en/0L3s9AicTZGSuQBRJDT6wA3S1kMQo+UjJqD6LwDFudyiE7R8kQD2aOEYq7d7
-9pakNlz1xHPpf70yLSMDbi3UYurh5fJD2Z+MsbL5/7pBnCo95VVOryVWWKH102g8
-W/Lqs79mDoIyWmHjWEjH
-=RA+t
------END PGP SIGNATURE-----
-
---cmVmsgMleI6OTR11--
+diff --git a/drivers/gpu/drm/radeon/kv_dpm.c b/drivers/gpu/drm/radeon/kv_dpm.c
+index ecd6080..c499daf 100644
+--- a/drivers/gpu/drm/radeon/kv_dpm.c
++++ b/drivers/gpu/drm/radeon/kv_dpm.c
+@@ -667,9 +667,8 @@ static int kv_program_bootup_state(struct radeon_device *rdev)
+ 		&rdev->pm.dpm.dyn_state.vddc_dependency_on_sclk;
+ 
+ 	if (table && table->count) {
+-		for (i = pi->graphics_dpm_level_count - 1; i >= 0; i--) {
+-			if ((table->entries[i].clk = pi->boot_pl.sclk) ||
+-			    (i = 0))
++		for (i = pi->graphics_dpm_level_count - 1; i > 0; i--) {
++			if (table->entries[i].clk = pi->boot_pl.sclk)
+ 				break;
+ 		}
+ 
+@@ -682,9 +681,8 @@ static int kv_program_bootup_state(struct radeon_device *rdev)
+ 		if (table->num_max_dpm_entries = 0)
+ 			return -EINVAL;
+ 
+-		for (i = pi->graphics_dpm_level_count - 1; i >= 0; i--) {
+-			if ((table->entries[i].sclk_frequency = pi->boot_pl.sclk) ||
+-			    (i = 0))
++		for (i = pi->graphics_dpm_level_count - 1; i > 0; i--) {
++			if (table->entries[i].sclk_frequency = pi->boot_pl.sclk)
+ 				break;
+ 		}
+ 
+@@ -1588,13 +1586,11 @@ static void kv_set_valid_clock_range(struct radeon_device *rdev,
+ 			}
+ 		}
+ 
+-		for (i = pi->graphics_dpm_level_count - 1; i >= 0; i--) {
+-			if ((table->entries[i].clk <= new_ps->levels[new_ps->num_levels -1].sclk) ||
+-			    (i = 0)) {
+-				pi->highest_valid = i;
++		for (i = pi->graphics_dpm_level_count - 1; i > 0; i--) {
++			if (table->entries[i].clk <= new_ps->levels[new_ps->num_levels - 1].sclk)
+ 				break;
+-			}
+ 		}
++		pi->highest_valid = i;
+ 
+ 		if (pi->lowest_valid > pi->highest_valid) {
+ 			if ((new_ps->levels[0].sclk - table->entries[pi->highest_valid].clk) >
+@@ -1615,14 +1611,12 @@ static void kv_set_valid_clock_range(struct radeon_device *rdev,
+ 			}
+ 		}
+ 
+-		for (i = pi->graphics_dpm_level_count - 1; i >= 0; i--) {
++		for (i = pi->graphics_dpm_level_count - 1; i > 0; i--) {
+ 			if (table->entries[i].sclk_frequency <-			    new_ps->levels[new_ps->num_levels - 1].sclk ||
+-			    i = 0) {
+-				pi->highest_valid = i;
++			    new_ps->levels[new_ps->num_levels - 1].sclk)
+ 				break;
+-			}
+ 		}
++		pi->highest_valid = i;
+ 
+ 		if (pi->lowest_valid > pi->highest_valid) {
+ 			if ((new_ps->levels[0].sclk -
+@@ -1871,7 +1865,7 @@ static int kv_force_dpm_highest(struct radeon_device *rdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	for (i = SMU7_MAX_LEVELS_GRAPHICS - 1; i >= 0; i--) {
++	for (i = SMU7_MAX_LEVELS_GRAPHICS - 1; i > 0; i--) {
+ 		if (enable_mask & (1 << i))
+ 			break;
+ 	}
+@@ -1911,9 +1905,9 @@ static u8 kv_get_sleep_divider_id_from_clock(struct radeon_device *rdev,
+ 	if (!pi->caps_sclk_ds)
+ 		return 0;
+ 
+-	for (i = KV_MAX_DEEPSLEEP_DIVIDER_ID; i <= 0; i--) {
++	for (i = KV_MAX_DEEPSLEEP_DIVIDER_ID; i > 0; i--) {
+ 		temp = sclk / sumo_get_sleep_divider_from_id(i);
+-		if ((temp >= min) || (i = 0))
++		if (temp >= min)
+ 			break;
+ 	}
+ 
