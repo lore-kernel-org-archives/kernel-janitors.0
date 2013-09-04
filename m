@@ -1,83 +1,59 @@
-From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Date: Wed, 04 Sep 2013 15:58:31 +0000
+From: Joe Perches <joe@perches.com>
+Date: Wed, 04 Sep 2013 23:08:06 +0000
 Subject: Re: [PATCH] checkpatch: Extend CamelCase types and ignore existing CamelCase uses in a patch
-Message-Id: <20130904155831.GB6061@xanatos>
+Message-Id: <1378336086.1787.48.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5223383f.hCMXrpqEq1AlVw9b%wangshilong1991@gmail.com>
- <20130903155857.GA2657@xanatos>
- <1378229121.7347.12.camel@joe-AO722>
-In-Reply-To: <1378229121.7347.12.camel@joe-AO722>
+	 <20130903155857.GA2657@xanatos> <1378229121.7347.12.camel@joe-AO722>
+	 <20130904155831.GB6061@xanatos>
+In-Reply-To: <20130904155831.GB6061@xanatos>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
+To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Wang Shilong <wangshilong1991@gmail.com>, kumargauravgupta3@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2013 at 10:25:21AM -0700, Joe Perches wrote:
-> Extend the CamelCase words found to include structure members.
-> 
-> In https://lkml.org/lkml/2013/9/3/318 Sarah Sharp (mostly) wrote: 
-> 
-> "In general, if checkpatch.pl complains about a variable a patch
-> introduces that's CamelCase, you should pay attention to it.
-> Otherwise, [] ignore it."
-> 
-> So, if checking a patch, scan the original patched file if it's
-> available and add any preexisting CamelCase types so reuses do
-> not generate CamelCase messages.
-> 
-> That also means Andrew's not so cruelly spurned anymore.
-> https://lkml.org/lkml/2013/2/22/426
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> Suggested-by: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+(sending for 3rd time, odd dns problems today, apologies for dupes)
 
-Thanks!  Will this mean checkpatch.pl still complains on CamelCase names
-if it's run against a file?  I think that's still valuable.
+On Wed, 2013-09-04 at 08:58 -0700, Sarah Sharp wrote:
+> On Tue, Sep 03, 2013 at 10:25:21AM -0700, Joe Perches wrote:
+> > Extend the CamelCase words found to include structure members.
+> > 
+> > In https://lkml.org/lkml/2013/9/3/318 Sarah Sharp (mostly) wrote: 
+> > 
+> > "In general, if checkpatch.pl complains about a variable a patch
+> > introduces that's CamelCase, you should pay attention to it.
+> > Otherwise, [] ignore it."
+> > 
+> > So, if checking a patch, scan the original patched file if it's
+> > available and add any preexisting CamelCase types so reuses do
+> > not generate CamelCase messages.
+[]
+> Thanks!  Will this mean checkpatch.pl still complains on CamelCase names
+> if it's run against a file?  I think that's still valuable.
 
-Sarah Sharp
+Yes.
 
-> ---
->  scripts/checkpatch.pl | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 9ba4fc4..b98a996 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -424,7 +424,7 @@ sub seed_camelcase_file {
->  		if ($line =~ /^[ \t]*(?:#[ \t]*define|typedef\s+$Type)\s+(\w*(?:[A-Z][a-z]|[a-z][A-Z])\w*)/) {
->  			$camelcase{$1} = 1;
->  		}
-> -	        elsif ($line =~ /^\s*$Declare\s+(\w*(?:[A-Z][a-z]|[a-z][A-Z])\w*)\s*\(/) {
-> +	        elsif ($line =~ /^\s*$Declare\s+(\w*(?:[A-Z][a-z]|[a-z][A-Z])\w*)\s*[\(\[,;]/) {
->  			$camelcase{$1} = 1;
->  		}
->  	}
-> @@ -1593,6 +1593,8 @@ sub process {
->  	my @setup_docs = ();
->  	my $setup_docs = 0;
->  
-> +	my $camelcase_file_seeded = 0;
-> +
->  	sanitise_line_reset();
->  	my $line;
->  	foreach my $rawline (@rawlines) {
-> @@ -3377,7 +3379,13 @@ sub process {
->  				while ($var =~ m{($Ident)}g) {
->  					my $word = $1;
->  					next if ($word !~ /[A-Z][a-z]|[a-z][A-Z]/);
-> -					seed_camelcase_includes() if ($check);
-> +					if ($check) {
-> +						seed_camelcase_includes();
-> +						if (!$file && !$camelcase_file_seeded) {
-> +							seed_camelcase_file($realfile);
-> +							$camelcase_file_seeded = 1;
-> +						}
-> +					}
->  					if (!defined $camelcase{$word}) {
->  						$camelcase{$word} = 1;
->  						CHK("CAMELCASE",
-> 
-> 
+First, checkpatch looks for all existing CamelCase #defines,
+typedefs, function names and struct/union members in the
+include path.  (it uses regexes so it's actually not at all
+close to even good at finding those).
+
+It stores all those CamelCase uses in a hash.
+
+If checkpatch is scanning a patch, it'll now read the file
+being patched for existing uses of CamelCase #defines, etc,
+and checkpatch adds those uses to the hash.
+
+If checkpatch is scanning a file, it doesn't doesn't
+prescan the file.
+
+Then, when checkpatch scans the patch or file and finds a
+CamelCase use, it looks for that use in the hash and is
+silent if it's there, noisy otherwise.
+
+This can still report CamelCase uses in a patch if say a
+CamelCase type is defined in a .h file in the same directory
+or some other include path and that word is not already used
+by the file.
+
