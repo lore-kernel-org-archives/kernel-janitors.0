@@ -1,8 +1,10 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 05 Sep 2013 16:32:57 +0000
+Date: Thu, 05 Sep 2013 17:07:55 +0000
 Subject: build regressions 2013-09-05
-Message-Id: <5228b239.i3r49DwYOMMsJ+V4%fengguang.wu@intel.com>
+Message-Id: <5228ba6b.5i8gr3hSW6gGNxPo%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5228b239.i3r49DwYOMMsJ+V4%fengguang.wu@intel.com>
+In-Reply-To: <5228b239.i3r49DwYOMMsJ+V4%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
