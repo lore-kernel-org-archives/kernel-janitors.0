@@ -1,7 +1,7 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Date: Sat, 07 Sep 2013 21:49:45 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 07 Sep 2013 22:53:45 +0000
 Subject: Re: [PATCH] ACPICIA: kfree() NULL pointer cleanup
-Message-Id: <3677074.IHJxVHCG7P@vostro.rjw.lan>
+Message-Id: <20130907225345.GW6329@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1378566444-15908-1-git-send-email-prtvar.b@gmail.com>
 In-Reply-To: <1378566444-15908-1-git-send-email-prtvar.b@gmail.com>
@@ -10,37 +10,8 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Saturday, September 07, 2013 05:07:24 PM Bojan Prtvar wrote:
+On Sat, Sep 07, 2013 at 05:07:24PM +0200, Bojan Prtvar wrote:
 > Checking for NULL pointers before kfree() is redundant.
-
-Please don't do this.  The ACPICA code comes from an external code base that
-is automatically converted to Linux and such changes will disrupt the
-convertion process.
-
-Thanks,
-Rafael
-
-
-> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
-> ---
-> This is janitorial work, please review carefully.
-> 
->  drivers/acpi/acpica/evgpeblk.c |    8 ++------
->  drivers/acpi/acpica/evrgnini.c |    4 +---
->  drivers/acpi/acpica/evxfgpe.c  |    4 +---
->  drivers/acpi/acpica/exfldio.c  |    4 +---
->  drivers/acpi/acpica/exnames.c  |    4 +---
->  drivers/acpi/acpica/nsxfname.c |   16 ++++------------
->  drivers/acpi/acpica/uterror.c  |    4 +---
->  7 files changed, 11 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/acpi/acpica/evgpeblk.c b/drivers/acpi/acpica/evgpeblk.c
-> index c1aa1ed..c25446e 100644
-> --- a/drivers/acpi/acpica/evgpeblk.c
-> +++ b/drivers/acpi/acpica/evgpeblk.c
-> @@ -303,12 +303,8 @@ acpi_ev_create_gpe_info_blocks(struct acpi_gpe_block_info *gpe_block)
->  	return_ACPI_STATUS(AE_OK);
->  
 >        error_exit:
 > -	if (gpe_register_info) {
 > -		ACPI_FREE(gpe_register_info);
@@ -50,111 +21,10 @@ Rafael
 > -	}
 > +	ACPI_FREE(gpe_register_info);
 > +	ACPI_FREE(gpe_event_info);
->  
->  	return_ACPI_STATUS(status);
->  }
-> diff --git a/drivers/acpi/acpica/evrgnini.c b/drivers/acpi/acpica/evrgnini.c
-> index 8354c4f..26b54c2 100644
-> --- a/drivers/acpi/acpica/evrgnini.c
-> +++ b/drivers/acpi/acpica/evrgnini.c
-> @@ -193,9 +193,7 @@ acpi_ev_pci_config_region_setup(acpi_handle handle,
->  
->  	*region_context = NULL;
->  	if (function = ACPI_REGION_DEACTIVATE) {
-> -		if (pci_id) {
-> -			ACPI_FREE(pci_id);
-> -		}
-> +		ACPI_FREE(pci_id);
->  		return_ACPI_STATUS(status);
->  	}
->  
-> diff --git a/drivers/acpi/acpica/evxfgpe.c b/drivers/acpi/acpica/evxfgpe.c
-> index 7662f1a..271e530 100644
-> --- a/drivers/acpi/acpica/evxfgpe.c
-> +++ b/drivers/acpi/acpica/evxfgpe.c
-> @@ -304,9 +304,7 @@ unlock_and_exit:
->  
->  	/* Delete the notify object if it was not used above */
->  
-> -	if (new_notify) {
-> -		ACPI_FREE(new_notify);
-> -	}
-> +	ACPI_FREE(new_notify);
->  	return_ACPI_STATUS(status);
->  }
->  ACPI_EXPORT_SYMBOL(acpi_setup_gpe_for_wake)
-> diff --git a/drivers/acpi/acpica/exfldio.c b/drivers/acpi/acpica/exfldio.c
-> index 7e0afe7..a29e4b6 100644
-> --- a/drivers/acpi/acpica/exfldio.c
-> +++ b/drivers/acpi/acpica/exfldio.c
-> @@ -1005,8 +1005,6 @@ acpi_ex_insert_into_field(union acpi_operand_object *obj_desc,
->        exit:
->  	/* Free temporary buffer if we used one */
->  
-> -	if (new_buffer) {
-> -		ACPI_FREE(new_buffer);
-> -	}
-> +	ACPI_FREE(new_buffer);
->  	return_ACPI_STATUS(status);
->  }
-> diff --git a/drivers/acpi/acpica/exnames.c b/drivers/acpi/acpica/exnames.c
-> index 14689de..4357121 100644
-> --- a/drivers/acpi/acpica/exnames.c
-> +++ b/drivers/acpi/acpica/exnames.c
-> @@ -422,9 +422,7 @@ acpi_ex_get_name_string(acpi_object_type data_type,
->  	}
->  
->  	if (ACPI_FAILURE(status)) {
-> -		if (name_string) {
-> -			ACPI_FREE(name_string);
-> -		}
-> +		ACPI_FREE(name_string);
->  		return_ACPI_STATUS(status);
->  	}
->  
-> diff --git a/drivers/acpi/acpica/nsxfname.c b/drivers/acpi/acpica/nsxfname.c
-> index f3a4d95..24fb89b 100644
-> --- a/drivers/acpi/acpica/nsxfname.c
-> +++ b/drivers/acpi/acpica/nsxfname.c
-> @@ -490,18 +490,10 @@ acpi_get_object_info(acpi_handle handle,
->  	status = AE_OK;
->  
->        cleanup:
-> -	if (hid) {
-> -		ACPI_FREE(hid);
-> -	}
-> -	if (uid) {
-> -		ACPI_FREE(uid);
-> -	}
-> -	if (sub) {
-> -		ACPI_FREE(sub);
-> -	}
-> -	if (cid_list) {
-> -		ACPI_FREE(cid_list);
-> -	}
-> +	ACPI_FREE(hid);
-> +	ACPI_FREE(uid);
-> +	ACPI_FREE(sub);
-> +	ACPI_FREE(cid_list);
->  	return (status);
->  }
->  
-> diff --git a/drivers/acpi/acpica/uterror.c b/drivers/acpi/acpica/uterror.c
-> index 154fdca..0f97110 100644
-> --- a/drivers/acpi/acpica/uterror.c
-> +++ b/drivers/acpi/acpica/uterror.c
-> @@ -228,9 +228,7 @@ acpi_ut_namespace_error(const char *module_name,
->  			acpi_os_printf("[COULD NOT EXTERNALIZE NAME]");
->  		}
->  
-> -		if (name) {
-> -			ACPI_FREE(name);
-> -		}
-> +		ACPI_FREE(name);
->  	}
->  
->  	acpi_os_printf(" Namespace lookup failure, %s",
-> 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+
+This isn't right.  If you have certain debugging turned on then
+ACPI_FREE() does not accept NULL pointers.
+
+regards,
+dan carpenter
+
