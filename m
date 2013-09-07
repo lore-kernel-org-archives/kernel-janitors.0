@@ -1,76 +1,62 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 22 Sep 2013 18:44:13 +0000
-Subject: [PATCH 5/5] Staging: crystalhd: Fix assignment of 0/1 to bool variables
-Message-Id: <1379875453-20083-5-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sat, 07 Sep 2013 17:43:33 +0000
+Subject: build regressions 2013-09-07
+Message-Id: <522b65c5.AkNe+0bNlMgu+bpN%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379875453-20083-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379875453-20083-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: nsankar@broadcom.com
-Cc: jarod@wilsonet.com, davilla@4pi.com, abraham.manu@gmail.com, gregkh@linuxfoundation.org, amarjargal16@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-Convert 0 to false and 1 to true when assigning values to bool
-variables. Inspired by commit 3db1cd5c05f35fb43eb134df6f321de4e63141f2.
+[errors]
+drivers/regulator/palmas-regulator.c:46:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SMPS12' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:61:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SMPS3' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:69:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SMPS45' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:85:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SMPS6' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:92:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SMPS7' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:100:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SMPS8' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:107:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SMPS9' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:113:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SMPS10' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:126:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO1' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:133:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO2' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:140:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO3' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:147:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO4' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:154:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO5' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:161:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO6' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:168:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO7' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:175:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO8' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:182:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDO9' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:189:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDOLN' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:196:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_LDOUSB' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:201:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_REGEN1' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:206:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_REGEN2' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:211:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_REGEN3' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:216:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SYSEN1' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:221:15: error: 'PALMAS_EXTERNAL_REQSTR_ID_SYSEN2' undeclared here (not in a function)
+drivers/regulator/palmas-regulator.c:583:2: error: implicit declaration of function 'palmas_ext_control_req_config' [-Werror=implicit-function-declaration]
+drivers/regulator/palmas-regulator.c:864:15: error: 'PALMAS_EXT_CONTROL_NSLEEP' undeclared (first use in this function)
+drivers/regulator/palmas-regulator.c:868:17: error: 'PALMAS_EXT_CONTROL_ENABLE1' undeclared (first use in this function)
+drivers/regulator/palmas-regulator.c:871:17: error: 'PALMAS_EXT_CONTROL_ENABLE2' undeclared (first use in this function)
 
-The simplified semantic patch that find this problem is as
-follows (http://coccinelle.lip6.fr/):
+[warnings]
+drivers/staging/lustre/lustre/llite/lproc_llite.c:1069:6: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type '__kernel_suseconds_t' [-Wformat]
+drivers/staging/lustre/lustre/llite/lproc_llite.c:1133:6: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type '__kernel_suseconds_t' [-Wformat]
+drivers/staging/lustre/lustre/llite/lproc_llite.c:1299:6: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type '__kernel_suseconds_t' [-Wformat]
+drivers/staging/lustre/lustre/obdclass/lprocfs_status.c:1070:5: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type '__kernel_suseconds_t' [-Wformat]
+drivers/staging/lustre/lustre/osc/lproc_osc.c:575:6: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type '__kernel_suseconds_t' [-Wformat]
+drivers/staging/lustre/lustre/osc/lproc_osc.c:687:6: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type '__kernel_suseconds_t' [-Wformat]
+drivers/staging/dgnc/dgnc_tty.c:526:2: warning: format '%ld' expects argument of type 'long int', but argument 4 has type '__kernel_suseconds_t' [-Wformat]
+drivers/staging/dgap/dgap_tty.c:576:2: warning: format '%ld' expects argument of type 'long int', but argument 4 has type '__kernel_suseconds_t' [-Wformat]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_io.c:922:4: warning: overflow in implicit constant conversion [-Woverflow]
+drivers/regulator/palmas-regulator.c:864:13: warning: assignment makes integer from pointer without a cast [enabled by default]
+drivers/regulator/palmas-regulator.c:868:15: warning: assignment makes integer from pointer without a cast [enabled by default]
+drivers/regulator/palmas-regulator.c:871:15: warning: assignment makes integer from pointer without a cast [enabled by default]
+drivers/regulator/palmas-regulator.c:874:15: warning: assignment makes integer from pointer without a cast [enabled by default]
 
-@@
-bool b;
-@@
-(
--b = 0
-+b = false
-|
--b = 1
-+b = true
-)
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+[sparse]
+drivers/scsi/ufs/ufshcd.c:2542:5: sparse: too many warnings
+drivers/scsi/ufs/ufshcd.c:1484:5: sparse: symbol 'ufshcd_uic_change_pwr_mode' was not declared. Should it be static?
 
 ---
- drivers/staging/crystalhd/crystalhd_hw.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff -u -p a/drivers/staging/crystalhd/crystalhd_hw.c b/drivers/staging/crystalhd/crystalhd_hw.c
---- a/drivers/staging/crystalhd/crystalhd_hw.c
-+++ b/drivers/staging/crystalhd/crystalhd_hw.c
-@@ -1517,7 +1517,7 @@ static void crystalhd_rx_isr(struct crys
- 	uint32_t i, list_avail = 0;
- 	enum BC_STATUS comp_sts = BC_STS_NO_DATA;
- 	uint32_t y_err_sts, uv_err_sts, y_dn_sz = 0, uv_dn_sz = 0;
--	bool ret = 0;
-+	bool ret = false;
- 
- 	if (!hw) {
- 		BCMLOG_ERR("Invalid Arguments\n");
-@@ -1852,7 +1852,7 @@ bool crystalhd_hw_interrupt(struct cryst
- {
- 	uint32_t intr_sts = 0;
- 	uint32_t deco_intr = 0;
--	bool rc = 0;
-+	bool rc = false;
- 
- 	if (!adp || !hw->dev_started)
- 		return rc;
-@@ -1865,7 +1865,7 @@ bool crystalhd_hw_interrupt(struct cryst
- 
- 	if (intr_sts) {
- 		/* let system know we processed interrupt..*/
--		rc = 1;
-+		rc = true;
- 		hw->stats.dev_interrupts++;
- 	}
- 
-@@ -1886,7 +1886,7 @@ bool crystalhd_hw_interrupt(struct cryst
- 		/* FIXME: jarod: No udelay? might this be
- 		 the real reason mini pci-e cards were stalling out? */
- 		bc_dec_reg_wr(adp, Stream2Host_Intr_Sts, 0);
--		rc = 1;
-+		rc = true;
- 	}
- 
- 	/* Rx interrupts */
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
