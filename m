@@ -1,62 +1,96 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 13 Sep 2013 12:34:56 +0000
-Subject: Re: [patch] ALSA: asihpi: a couple array out of bounds issues
-Message-Id: <s5h61u4hpcf.wl%tiwai@suse.de>
+From: Bojan Prtvar <prtvar.b@gmail.com>
+Date: Sat, 07 Sep 2013 15:06:55 +0000
+Subject: [PATCH] ACPI/ACPCICA: Remove references to non existing acpi_os_free()
+Message-Id: <1378566415-15857-1-git-send-email-prtvar.b@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130913074444.GA19211@elgon.mountain>
-In-Reply-To: <20130913074444.GA19211@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Eldad Zack <eldad@fogrefinery.com>, Bill Pemberton <wfp5p@virginia.edu>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-At Fri, 13 Sep 2013 10:44:44 +0300,
-Dan Carpenter wrote:
-> 
-> These ->put() functions are called from snd_ctl_elem_write() with user
-> supplied data.  snd_asihpi_tuner_band_put() is missing a limit check and
-> the check in snd_asihpi_clksrc_put() can underflow.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In commit 02438d8771ae6a4b215938959827692026380bf9 acpi_os_free()
+was deleted and we switched to using kfree() directly instead.
 
-Applied, thanks.
+Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+---
+This is janitorial work, please review carefully.
 
+ drivers/acpi/acpica/acmacros.h |    2 +-
+ drivers/acpi/acpica/utcache.c  |    2 +-
+ drivers/acpi/acpica/uttrack.c  |    6 +++---
+ include/acpi/acpiosxf.h        |    2 --
+ 4 files changed, 5 insertions(+), 7 deletions(-)
 
-Takashi
+diff --git a/drivers/acpi/acpica/acmacros.h b/drivers/acpi/acpica/acmacros.h
+index 530a2f8..3670dd9 100644
+--- a/drivers/acpi/acpica/acmacros.h
++++ b/drivers/acpi/acpica/acmacros.h
+@@ -425,7 +425,7 @@
+ #define ACPI_ALLOCATE_ZEROED(a)     acpi_ut_allocate_zeroed((acpi_size) (a), ACPI_MEM_PARAMETERS)
+ #endif
+ #ifndef ACPI_FREE
+-#define ACPI_FREE(a)                acpi_os_free(a)
++#define ACPI_FREE(a)                kfree(a)
+ #endif
+ #define ACPI_MEM_TRACKING(a)
+ 
+diff --git a/drivers/acpi/acpica/utcache.c b/drivers/acpi/acpica/utcache.c
+index a877a96..fcc570c 100644
+--- a/drivers/acpi/acpica/utcache.c
++++ b/drivers/acpi/acpica/utcache.c
+@@ -166,7 +166,7 @@ acpi_status acpi_os_delete_cache(struct acpi_memory_list * cache)
+ 
+ 	/* Now we can delete the cache object */
+ 
+-	acpi_os_free(cache);
++	kfree(cache);
+ 	return (AE_OK);
+ }
+ 
+diff --git a/drivers/acpi/acpica/uttrack.c b/drivers/acpi/acpica/uttrack.c
+index 160f13f..ac815e5 100644
+--- a/drivers/acpi/acpica/uttrack.c
++++ b/drivers/acpi/acpica/uttrack.c
+@@ -141,7 +141,7 @@ void *acpi_ut_allocate_and_track(acpi_size size,
+ 					  ACPI_MEM_MALLOC, component, module,
+ 					  line);
+ 	if (ACPI_FAILURE(status)) {
+-		acpi_os_free(allocation);
++		kfree(allocation);
+ 		return (NULL);
+ 	}
+ 
+@@ -195,7 +195,7 @@ void *acpi_ut_allocate_zeroed_and_track(acpi_size size,
+ 					  ACPI_MEM_CALLOC, component, module,
+ 					  line);
+ 	if (ACPI_FAILURE(status)) {
+-		acpi_os_free(allocation);
++		kfree(allocation);
+ 		return (NULL);
+ 	}
+ 
+@@ -254,7 +254,7 @@ acpi_ut_free_and_track(void *allocation,
+ 		ACPI_EXCEPTION((AE_INFO, status, "Could not free memory"));
+ 	}
+ 
+-	acpi_os_free(debug_block);
++	kfree(debug_block);
+ 	ACPI_DEBUG_PRINT((ACPI_DB_ALLOCATIONS, "%p freed\n", allocation));
+ 	return_VOID;
+ }
+diff --git a/include/acpi/acpiosxf.h b/include/acpi/acpiosxf.h
+index 64b8c76..0f730ca 100644
+--- a/include/acpi/acpiosxf.h
++++ b/include/acpi/acpiosxf.h
+@@ -146,8 +146,6 @@ void acpi_os_release_mutex(acpi_mutex handle);
+  */
+ void *acpi_os_allocate(acpi_size size);
+ 
+-void acpi_os_free(void *memory);
+-
+ void __iomem *acpi_os_map_memory(acpi_physical_address where,
+ 				acpi_size length);
+ 
+-- 
+1.7.1
 
-> 
-> diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
-> index dc632cd..5f2acd3 100644
-> --- a/sound/pci/asihpi/asihpi.c
-> +++ b/sound/pci/asihpi/asihpi.c
-> @@ -1913,6 +1913,7 @@ static int snd_asihpi_tuner_band_put(struct snd_kcontrol *kcontrol,
->  	struct snd_card_asihpi *asihpi = snd_kcontrol_chip(kcontrol);
->  	*/
->  	u32 h_control = kcontrol->private_value;
-> +	unsigned int idx;
->  	u16 band;
->  	u16 tuner_bands[HPI_TUNER_BAND_LAST];
->  	u32 num_bands = 0;
-> @@ -1920,7 +1921,10 @@ static int snd_asihpi_tuner_band_put(struct snd_kcontrol *kcontrol,
->  	num_bands = asihpi_tuner_band_query(kcontrol, tuner_bands,
->  			HPI_TUNER_BAND_LAST);
->  
-> -	band = tuner_bands[ucontrol->value.enumerated.item[0]];
-> +	idx = ucontrol->value.enumerated.item[0];
-> +	if (idx >= ARRAY_SIZE(tuner_bands))
-> +		idx = ARRAY_SIZE(tuner_bands) - 1;
-> +	band = tuner_bands[idx];
->  	hpi_handle_error(hpi_tuner_set_band(h_control, band));
->  
->  	return 1;
-> @@ -2383,7 +2387,8 @@ static int snd_asihpi_clksrc_put(struct snd_kcontrol *kcontrol,
->  	struct snd_card_asihpi *asihpi >  			(struct snd_card_asihpi *)(kcontrol->private_data);
->  	struct clk_cache *clkcache = &asihpi->cc;
-> -	int change, item;
-> +	unsigned int item;
-> +	int change;
->  	u32 h_control = kcontrol->private_value;
->  
->  	change = 1;
-> 
