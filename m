@@ -1,77 +1,148 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 04 Sep 2013 13:27:02 +0000
-Subject: Re: [patch] drm/radeon: clean up r600_free_extended_power_table()
-Message-Id: <CADnq5_M5E79z2XxuOPO35t+M44w1=Q3fiwQNZ5gCaxVVhpvg3g@mail.gmail.com>
+From: Bojan Prtvar <prtvar.b@gmail.com>
+Date: Sat, 07 Sep 2013 15:07:24 +0000
+Subject: [PATCH] ACPICIA: kfree() NULL pointer cleanup
+Message-Id: <1378566444-15908-1-git-send-email-prtvar.b@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130904093251.GB13892@elgon.mountain>
-In-Reply-To: <20130904093251.GB13892@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 4, 2013 at 5:32 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> kfree() can accept NULL pointers so I have removed the checks.  Also
-> I've used a pointer to shorten the lines.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Checking for NULL pointers before kfree() is redundant.
 
-I've added this to my tree.  thanks!
+Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+---
+This is janitorial work, please review carefully.
 
-Alex
+ drivers/acpi/acpica/evgpeblk.c |    8 ++------
+ drivers/acpi/acpica/evrgnini.c |    4 +---
+ drivers/acpi/acpica/evxfgpe.c  |    4 +---
+ drivers/acpi/acpica/exfldio.c  |    4 +---
+ drivers/acpi/acpica/exnames.c  |    4 +---
+ drivers/acpi/acpica/nsxfname.c |   16 ++++------------
+ drivers/acpi/acpica/uterror.c  |    4 +---
+ 7 files changed, 11 insertions(+), 33 deletions(-)
 
->
-> diff --git a/drivers/gpu/drm/radeon/r600_dpm.c b/drivers/gpu/drm/radeon/r600_dpm.c
-> index fa0de46..e65f211 100644
-> --- a/drivers/gpu/drm/radeon/r600_dpm.c
-> +++ b/drivers/gpu/drm/radeon/r600_dpm.c
-> @@ -1219,30 +1219,20 @@ int r600_parse_extended_power_table(struct radeon_device *rdev)
->
->  void r600_free_extended_power_table(struct radeon_device *rdev)
->  {
-> -       if (rdev->pm.dpm.dyn_state.vddc_dependency_on_sclk.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.vddc_dependency_on_sclk.entries);
-> -       if (rdev->pm.dpm.dyn_state.vddci_dependency_on_mclk.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.vddci_dependency_on_mclk.entries);
-> -       if (rdev->pm.dpm.dyn_state.vddc_dependency_on_mclk.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.vddc_dependency_on_mclk.entries);
-> -       if (rdev->pm.dpm.dyn_state.mvdd_dependency_on_mclk.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.mvdd_dependency_on_mclk.entries);
-> -       if (rdev->pm.dpm.dyn_state.cac_leakage_table.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.cac_leakage_table.entries);
-> -       if (rdev->pm.dpm.dyn_state.phase_shedding_limits_table.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.phase_shedding_limits_table.entries);
-> -       if (rdev->pm.dpm.dyn_state.ppm_table)
-> -               kfree(rdev->pm.dpm.dyn_state.ppm_table);
-> -       if (rdev->pm.dpm.dyn_state.cac_tdp_table)
-> -               kfree(rdev->pm.dpm.dyn_state.cac_tdp_table);
-> -       if (rdev->pm.dpm.dyn_state.vce_clock_voltage_dependency_table.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.vce_clock_voltage_dependency_table.entries);
-> -       if (rdev->pm.dpm.dyn_state.uvd_clock_voltage_dependency_table.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.uvd_clock_voltage_dependency_table.entries);
-> -       if (rdev->pm.dpm.dyn_state.samu_clock_voltage_dependency_table.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.samu_clock_voltage_dependency_table.entries);
-> -       if (rdev->pm.dpm.dyn_state.acp_clock_voltage_dependency_table.entries)
-> -               kfree(rdev->pm.dpm.dyn_state.acp_clock_voltage_dependency_table.entries);
-> +       struct radeon_dpm_dynamic_state *dyn_state = &rdev->pm.dpm.dyn_state;
-> +
-> +       kfree(dyn_state->vddc_dependency_on_sclk.entries);
-> +       kfree(dyn_state->vddci_dependency_on_mclk.entries);
-> +       kfree(dyn_state->vddc_dependency_on_mclk.entries);
-> +       kfree(dyn_state->mvdd_dependency_on_mclk.entries);
-> +       kfree(dyn_state->cac_leakage_table.entries);
-> +       kfree(dyn_state->phase_shedding_limits_table.entries);
-> +       kfree(dyn_state->ppm_table);
-> +       kfree(dyn_state->cac_tdp_table);
-> +       kfree(dyn_state->vce_clock_voltage_dependency_table.entries);
-> +       kfree(dyn_state->uvd_clock_voltage_dependency_table.entries);
-> +       kfree(dyn_state->samu_clock_voltage_dependency_table.entries);
-> +       kfree(dyn_state->acp_clock_voltage_dependency_table.entries);
->  }
->
->  enum radeon_pcie_gen r600_get_pcie_gen_support(struct radeon_device *rdev,
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/acpi/acpica/evgpeblk.c b/drivers/acpi/acpica/evgpeblk.c
+index c1aa1ed..c25446e 100644
+--- a/drivers/acpi/acpica/evgpeblk.c
++++ b/drivers/acpi/acpica/evgpeblk.c
+@@ -303,12 +303,8 @@ acpi_ev_create_gpe_info_blocks(struct acpi_gpe_block_info *gpe_block)
+ 	return_ACPI_STATUS(AE_OK);
+ 
+       error_exit:
+-	if (gpe_register_info) {
+-		ACPI_FREE(gpe_register_info);
+-	}
+-	if (gpe_event_info) {
+-		ACPI_FREE(gpe_event_info);
+-	}
++	ACPI_FREE(gpe_register_info);
++	ACPI_FREE(gpe_event_info);
+ 
+ 	return_ACPI_STATUS(status);
+ }
+diff --git a/drivers/acpi/acpica/evrgnini.c b/drivers/acpi/acpica/evrgnini.c
+index 8354c4f..26b54c2 100644
+--- a/drivers/acpi/acpica/evrgnini.c
++++ b/drivers/acpi/acpica/evrgnini.c
+@@ -193,9 +193,7 @@ acpi_ev_pci_config_region_setup(acpi_handle handle,
+ 
+ 	*region_context = NULL;
+ 	if (function = ACPI_REGION_DEACTIVATE) {
+-		if (pci_id) {
+-			ACPI_FREE(pci_id);
+-		}
++		ACPI_FREE(pci_id);
+ 		return_ACPI_STATUS(status);
+ 	}
+ 
+diff --git a/drivers/acpi/acpica/evxfgpe.c b/drivers/acpi/acpica/evxfgpe.c
+index 7662f1a..271e530 100644
+--- a/drivers/acpi/acpica/evxfgpe.c
++++ b/drivers/acpi/acpica/evxfgpe.c
+@@ -304,9 +304,7 @@ unlock_and_exit:
+ 
+ 	/* Delete the notify object if it was not used above */
+ 
+-	if (new_notify) {
+-		ACPI_FREE(new_notify);
+-	}
++	ACPI_FREE(new_notify);
+ 	return_ACPI_STATUS(status);
+ }
+ ACPI_EXPORT_SYMBOL(acpi_setup_gpe_for_wake)
+diff --git a/drivers/acpi/acpica/exfldio.c b/drivers/acpi/acpica/exfldio.c
+index 7e0afe7..a29e4b6 100644
+--- a/drivers/acpi/acpica/exfldio.c
++++ b/drivers/acpi/acpica/exfldio.c
+@@ -1005,8 +1005,6 @@ acpi_ex_insert_into_field(union acpi_operand_object *obj_desc,
+       exit:
+ 	/* Free temporary buffer if we used one */
+ 
+-	if (new_buffer) {
+-		ACPI_FREE(new_buffer);
+-	}
++	ACPI_FREE(new_buffer);
+ 	return_ACPI_STATUS(status);
+ }
+diff --git a/drivers/acpi/acpica/exnames.c b/drivers/acpi/acpica/exnames.c
+index 14689de..4357121 100644
+--- a/drivers/acpi/acpica/exnames.c
++++ b/drivers/acpi/acpica/exnames.c
+@@ -422,9 +422,7 @@ acpi_ex_get_name_string(acpi_object_type data_type,
+ 	}
+ 
+ 	if (ACPI_FAILURE(status)) {
+-		if (name_string) {
+-			ACPI_FREE(name_string);
+-		}
++		ACPI_FREE(name_string);
+ 		return_ACPI_STATUS(status);
+ 	}
+ 
+diff --git a/drivers/acpi/acpica/nsxfname.c b/drivers/acpi/acpica/nsxfname.c
+index f3a4d95..24fb89b 100644
+--- a/drivers/acpi/acpica/nsxfname.c
++++ b/drivers/acpi/acpica/nsxfname.c
+@@ -490,18 +490,10 @@ acpi_get_object_info(acpi_handle handle,
+ 	status = AE_OK;
+ 
+       cleanup:
+-	if (hid) {
+-		ACPI_FREE(hid);
+-	}
+-	if (uid) {
+-		ACPI_FREE(uid);
+-	}
+-	if (sub) {
+-		ACPI_FREE(sub);
+-	}
+-	if (cid_list) {
+-		ACPI_FREE(cid_list);
+-	}
++	ACPI_FREE(hid);
++	ACPI_FREE(uid);
++	ACPI_FREE(sub);
++	ACPI_FREE(cid_list);
+ 	return (status);
+ }
+ 
+diff --git a/drivers/acpi/acpica/uterror.c b/drivers/acpi/acpica/uterror.c
+index 154fdca..0f97110 100644
+--- a/drivers/acpi/acpica/uterror.c
++++ b/drivers/acpi/acpica/uterror.c
+@@ -228,9 +228,7 @@ acpi_ut_namespace_error(const char *module_name,
+ 			acpi_os_printf("[COULD NOT EXTERNALIZE NAME]");
+ 		}
+ 
+-		if (name) {
+-			ACPI_FREE(name);
+-		}
++		ACPI_FREE(name);
+ 	}
+ 
+ 	acpi_os_printf(" Namespace lookup failure, %s",
+-- 
+1.7.1
+
