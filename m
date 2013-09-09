@@ -1,25 +1,80 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 04 Sep 2013 17:08:13 +0000
-Subject: Re: [patch v2] sfc: check for allocation failure
-Message-Id: <20130904.130813.810425005355634326.davem@davemloft.net>
+From: eladwexler77@yahoo.com
+Date: Mon, 09 Sep 2013 20:25:02 +0000
+Subject: [PATCH] Staging: usbip: stub_dev: Fixed checkpatch warnings
+Message-Id: <1378758302-26966-1-git-send-email-eladwexler77@yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130903.224939.866623192858217581.davem@davemloft.net>
-	<20130904150727.GA32327@elgon.mountain>
-In-Reply-To: <20130904150727.GA32327@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: linux-net-drivers@solarflare.com, bhutchings@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 4 Sep 2013 18:07:27 +0300
+From: Elad Wexler <eladwexler77@yahoo.com>
 
-> It upsets static analyzers when we don't check for allocation failure.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: rebased on latest linux-next
+Coding style issues
 
-Applied, thanks Dan.
+Signed-off-by: Elad Wexler <eladwexler77@yahoo.com>
+---
+ drivers/staging/usbip/stub_dev.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/staging/usbip/stub_dev.c b/drivers/staging/usbip/stub_dev.c
+index d8957a5..76a1ff0 100644
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@ -357,8 +357,9 @@ static int stub_probe(struct usb_interface *interface,
+ 	busid_priv = get_busid_priv(udev_busid);
+ 	if (!busid_priv || (busid_priv->status = STUB_BUSID_REMOV) ||
+ 	    (busid_priv->status = STUB_BUSID_OTHER)) {
+-		dev_info(&interface->dev, "%s is not in match_busid table... "
+-			 "skip!\n", udev_busid);
++		dev_info(&interface->dev,
++			"%s is not in match_busid table... skip!\n",
++			udev_busid);
+ 
+ 		/*
+ 		 * Return value should be ENODEV or ENOXIO to continue trying
+@@ -375,8 +376,10 @@ static int stub_probe(struct usb_interface *interface,
+ 	}
+ 
+ 	if (!strcmp(udev->bus->bus_name, "vhci_hcd")) {
+-		dev_dbg(&udev->dev, "%s is attached on vhci_hcd... skip!\n",
+-			 udev_busid);
++		dev_dbg(&udev->dev,
++			"%s is attached on vhci_hcd... skip!\n",
++			udev_busid);
++
+ 		return -ENODEV;
+ 	}
+ 
+@@ -386,10 +389,10 @@ static int stub_probe(struct usb_interface *interface,
+ 			return -ENODEV;
+ 
+ 		busid_priv->interf_count++;
+-		dev_info(&interface->dev, "usbip-host: register new interface "
+-			 "(bus %u dev %u ifn %u)\n",
+-			 udev->bus->busnum, udev->devnum,
+-			 interface->cur_altsetting->desc.bInterfaceNumber);
++		dev_info(&interface->dev,
++			"usbip-host: register new interface (bus %u dev %u ifn %u)\n",
++			udev->bus->busnum, udev->devnum,
++			interface->cur_altsetting->desc.bInterfaceNumber);
+ 
+ 		/* set private data to usb_interface */
+ 		usb_set_intfdata(interface, sdev);
+@@ -412,9 +415,10 @@ static int stub_probe(struct usb_interface *interface,
+ 	if (!sdev)
+ 		return -ENOMEM;
+ 
+-	dev_info(&interface->dev, "usbip-host: register new device "
+-		 "(bus %u dev %u ifn %u)\n", udev->bus->busnum, udev->devnum,
+-		 interface->cur_altsetting->desc.bInterfaceNumber);
++	dev_info(&interface->dev,
++		"usbip-host: register new device (bus %u dev %u ifn %u)\n",
++		udev->bus->busnum, udev->devnum,
++		interface->cur_altsetting->desc.bInterfaceNumber);
+ 
+ 	busid_priv->interf_count = 0;
+ 	busid_priv->shutdown_busid = 0;
+-- 
+1.8.3.1
 
