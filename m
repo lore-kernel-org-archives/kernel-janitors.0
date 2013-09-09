@@ -1,50 +1,55 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 21 Sep 2013 22:27:36 +0000
-Subject: [PATCH 04/19] isdn: Change variable type to bool
-Message-Id: <1379802471-30252-4-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 09 Sep 2013 16:56:48 +0000
+Subject: build regressions 2013-09-09
+Message-Id: <522dfdd0.BST8lXsk80Jf4JsK%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mac@melware.de
-Cc: isdn4linux@listserv.isdn4linux.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-The variable noCh is only assigned the values true and false. Change
-its type to bool.
+[errors]
+fs/autofs4/dev-ioctl.c:193:2: error: implicit declaration of function 'user_path_mntpointat' [-Werror=implicit-function-declaration]
+arch/x86/kernel/devicetree.c:25:26: error: 'COMMAND_LINE_SIZE' undeclared here (not in a function)
+drivers/net/ethernet/xilinx/xilinx_axienet_main.c:1578:2: error: implicit declaration of function 'irq_of_parse_and_map' [-Werror=implicit-function-declaration]
+drivers/input/serio/xilinx_ps2.c:257:2: error: implicit declaration of function 'of_irq_to_resource' [-Werror=implicit-function-declaration]
+drivers/usb/host/ehci-xilinx-of.c:156:2: error: implicit declaration of function 'irq_of_parse_and_map' [-Werror=implicit-function-declaration]
+drivers/gpu/drm/virgl/virgl_ioctl.c:195:2: error: too few arguments to function 'ttm_eu_fence_buffer_objects'
+sound/soc/codecs/mc13783.c:129:13: error: 'PMIC_AUDIO_CODEC' undeclared (first use in this function)
+sound/soc/codecs/mc13783.c:129:40: error: 'PMIC_AUDIO_DAC' undeclared (first use in this function)
+drivers/of/of_pci_irq.c:5:22: fatal error: asm/prom.h: No such file or directory
 
-The simplified semantic patch that find this problem is as
-follows (http://coccinelle.lip6.fr/):
+[warnings]
+drivers/gpu/drm/virtio/virtgpu_fb.c:13:22: warning: 'virglfb_ops' defined but not used [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:125:25: warning: unused variable 'vgdev' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:205:25: warning: unused variable 'vgdev' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:220:6: warning: unused variable 'ret' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:217:25: warning: unused variable 'vgdev' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:316:25: warning: unused variable 'vgdev' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:370:6: warning: unused variable 'connected' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:369:25: warning: unused variable 'vgdev' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:366:25: warning: unused variable 'output' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:449:25: warning: unused variable 'vgdev' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:481:6: warning: unused variable 'max_allowed' [-Wunused-variable]
+drivers/gpu/drm/virtio/virtgpu_display.c:480:25: warning: unused variable 'gobj' [-Wunused-variable]
+drivers/media/i2c/adv7511.c:797:2: warning: initialization from incompatible pointer type [enabled by default]
+drivers/media/i2c/adv7511.c:797:2: warning: (near initialization for 'adv7511_core_ops.s_register') [enabled by default]
+WARNING: vmlinux.o(.text+0x458cd8): Section mismatch in reference from the function of_flat_dt_get_machine_name() to the function .init.text:of_get_flat_dt_root()
+WARNING: vmlinux.o(.text+0x458ce6): Section mismatch in reference from the function of_flat_dt_get_machine_name() to the function .init.text:of_get_flat_dt_prop()
+WARNING: vmlinux.o(.text+0x458d14): Section mismatch in reference from the function of_flat_dt_match_machine() to the function .init.text:of_get_flat_dt_root()
+WARNING: vmlinux.o(.text+0x458d58): Section mismatch in reference from the function of_flat_dt_match_machine() to the function .init.text:of_flat_dt_match()
+WARNING: vmlinux.o(.text+0x458d85): Section mismatch in reference from the function of_flat_dt_match_machine() to the function .init.text:of_get_flat_dt_prop()
+drivers/spi/spi-omap-100k.c:73:0: warning: "WRITE" redefined [enabled by default]
+drivers/spi/spi-omap-100k.c:74:0: warning: "READ" redefined [enabled by default]
+drivers/gpu/drm/virgl/virgl_ioctl.c:195:2: warning: passing argument 1 of 'ttm_eu_fence_buffer_objects' from incompatible pointer type [enabled by default]
+drivers/gpu/drm/virgl/virgl_ioctl.c:195:2: warning: passing argument 2 of 'ttm_eu_fence_buffer_objects' from incompatible pointer type [enabled by default]
 
-@exists@
-type T;
-identifier b;
-@@
-- T
-+ bool
-  b = ...;
-  ... when any
-  b = \(true\|false\)
+[sparse]
+fs/cifs/smb2ops.c:834:18: sparse: cast to restricted __le32
+fs/cifs/smb2ops.c:834:18: sparse: cast from restricted __le16
+fs/autofs4/dev-ioctl.c:193:19: sparse: undefined identifier 'user_path_mntpointat'
+sound/soc/codecs/mc13783.c:129:20: sparse: undefined identifier 'PMIC_AUDIO_CODEC'
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/isdn/hardware/eicon/message.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/isdn/hardware/eicon/message.c b/drivers/isdn/hardware/eicon/message.c
-index a82e542..05d889a 100644
---- a/drivers/isdn/hardware/eicon/message.c
-+++ b/drivers/isdn/hardware/eicon/message.c
-@@ -1207,7 +1207,7 @@ static byte connect_req(dword Id, word Number, DIVA_CAPI_ADAPTER *a,
- 	byte m;
- 	static byte esc_chi[35] = {0x02, 0x18, 0x01};
- 	static byte lli[2] = {0x01, 0x00};
--	byte noCh = 0;
-+	bool noCh = false;
- 	word dir = 0;
- 	byte *p_chi = "";
- 
--- 
-1.8.3.1
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
