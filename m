@@ -1,7 +1,7 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Date: Sat, 07 Sep 2013 21:48:00 +0000
-Subject: Re: [PATCH] ACPI/ACPCICA: Remove references to non existing acpi_os_free()
-Message-Id: <1789436.sxRn0yz4qx@vostro.rjw.lan>
+From: "Zheng, Lv" <lv.zheng@intel.com>
+Date: Mon, 09 Sep 2013 23:27:39 +0000
+Subject: RE: [PATCH] ACPI/ACPCICA: Remove references to non existing acpi_os_free()
+Message-Id: <1AE640813FDE7649BE1B193DEA596E8802460381@SHSMSX101.ccr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1378566415-15857-1-git-send-email-prtvar.b@gmail.com>
 In-Reply-To: <1378566415-15857-1-git-send-email-prtvar.b@gmail.com>
@@ -10,19 +10,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Saturday, September 07, 2013 05:06:55 PM Bojan Prtvar wrote:
+The ACPICA codes should not be maintained in such a manner.
+
+First of all, the uttrack.c is not used by Linux, it will never get compiled. Please see drivers/acpi/acpica/Makefile.
+
+From the perspective of the ACPICA maintenance, the codes under drivers/acpi/acpica should be consistent comparing to the ACPICA git repo so that ACPICA release can be done in a more automatic way without too much human intervention.
+So please don't send patch like this.  It will add difficulties to the ACPICA release.
+
+Thanks and best regards
+-Lv
+
+> -----Original Message-----
+> From: Bojan Prtvar [mailto:prtvar.b@gmail.com]
+> Sent: Saturday, September 07, 2013 11:07 PM
+> To: lenb@kernel.org; rjw@sisk.pl; Zheng, Lv; Moore, Robert; Guan, Chao; Tang, Feng
+> Cc: kernel-janitors@vger.kernel.org; Bojan Prtvar
+> Subject: [PATCH] ACPI/ACPCICA: Remove references to non existing acpi_os_free()
+> 
 > In commit 02438d8771ae6a4b215938959827692026380bf9 acpi_os_free()
 > was deleted and we switched to using kfree() directly instead.
 > 
 > Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
-
-It looks like we have some leftovers. :-)
-
-Bob, Lv, any objections agains this patch?
-
-Rafael
-
-
 > ---
 > This is janitorial work, please review carefully.
 > 
@@ -44,20 +52,20 @@ Rafael
 > +#define ACPI_FREE(a)                kfree(a)
 >  #endif
 >  #define ACPI_MEM_TRACKING(a)
->  
+> 
 > diff --git a/drivers/acpi/acpica/utcache.c b/drivers/acpi/acpica/utcache.c
 > index a877a96..fcc570c 100644
 > --- a/drivers/acpi/acpica/utcache.c
 > +++ b/drivers/acpi/acpica/utcache.c
 > @@ -166,7 +166,7 @@ acpi_status acpi_os_delete_cache(struct acpi_memory_list * cache)
->  
+> 
 >  	/* Now we can delete the cache object */
->  
+> 
 > -	acpi_os_free(cache);
 > +	kfree(cache);
 >  	return (AE_OK);
 >  }
->  
+> 
 > diff --git a/drivers/acpi/acpica/uttrack.c b/drivers/acpi/acpica/uttrack.c
 > index 160f13f..ac815e5 100644
 > --- a/drivers/acpi/acpica/uttrack.c
@@ -70,7 +78,7 @@ Rafael
 > +		kfree(allocation);
 >  		return (NULL);
 >  	}
->  
+> 
 > @@ -195,7 +195,7 @@ void *acpi_ut_allocate_zeroed_and_track(acpi_size size,
 >  					  ACPI_MEM_CALLOC, component, module,
 >  					  line);
@@ -79,11 +87,11 @@ Rafael
 > +		kfree(allocation);
 >  		return (NULL);
 >  	}
->  
+> 
 > @@ -254,7 +254,7 @@ acpi_ut_free_and_track(void *allocation,
 >  		ACPI_EXCEPTION((AE_INFO, status, "Could not free memory"));
 >  	}
->  
+> 
 > -	acpi_os_free(debug_block);
 > +	kfree(debug_block);
 >  	ACPI_DEBUG_PRINT((ACPI_DB_ALLOCATIONS, "%p freed\n", allocation));
@@ -96,13 +104,12 @@ Rafael
 > @@ -146,8 +146,6 @@ void acpi_os_release_mutex(acpi_mutex handle);
 >   */
 >  void *acpi_os_allocate(acpi_size size);
->  
+> 
 > -void acpi_os_free(void *memory);
 > -
 >  void __iomem *acpi_os_map_memory(acpi_physical_address where,
 >  				acpi_size length);
->  
 > 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+> --
+> 1.7.1
+
