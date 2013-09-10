@@ -1,7 +1,7 @@
 From: "Zheng, Lv" <lv.zheng@intel.com>
-Date: Mon, 09 Sep 2013 23:27:39 +0000
+Date: Tue, 10 Sep 2013 07:17:14 +0000
 Subject: RE: [PATCH] ACPI/ACPCICA: Remove references to non existing acpi_os_free()
-Message-Id: <1AE640813FDE7649BE1B193DEA596E8802460381@SHSMSX101.ccr.corp.intel.com>
+Message-Id: <1AE640813FDE7649BE1B193DEA596E880246264C@SHSMSX101.ccr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1378566415-15857-1-git-send-email-prtvar.b@gmail.com>
 In-Reply-To: <1378566415-15857-1-git-send-email-prtvar.b@gmail.com>
@@ -10,106 +10,70 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The ACPICA codes should not be maintained in such a manner.
-
-First of all, the uttrack.c is not used by Linux, it will never get compiled. Please see drivers/acpi/acpica/Makefile.
-
-From the perspective of the ACPICA maintenance, the codes under drivers/acpi/acpica should be consistent comparing to the ACPICA git repo so that ACPICA release can be done in a more automatic way without too much human intervention.
-So please don't send patch like this.  It will add difficulties to the ACPICA release.
-
-Thanks and best regards
--Lv
-
-> -----Original Message-----
-> From: Bojan Prtvar [mailto:prtvar.b@gmail.com]
-> Sent: Saturday, September 07, 2013 11:07 PM
-> To: lenb@kernel.org; rjw@sisk.pl; Zheng, Lv; Moore, Robert; Guan, Chao; Tang, Feng
-> Cc: kernel-janitors@vger.kernel.org; Bojan Prtvar
-> Subject: [PATCH] ACPI/ACPCICA: Remove references to non existing acpi_os_free()
-> 
-> In commit 02438d8771ae6a4b215938959827692026380bf9 acpi_os_free()
-> was deleted and we switched to using kfree() directly instead.
-> 
-> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
-> ---
-> This is janitorial work, please review carefully.
-> 
->  drivers/acpi/acpica/acmacros.h |    2 +-
->  drivers/acpi/acpica/utcache.c  |    2 +-
->  drivers/acpi/acpica/uttrack.c  |    6 +++---
->  include/acpi/acpiosxf.h        |    2 --
->  4 files changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/acpi/acpica/acmacros.h b/drivers/acpi/acpica/acmacros.h
-> index 530a2f8..3670dd9 100644
-> --- a/drivers/acpi/acpica/acmacros.h
-> +++ b/drivers/acpi/acpica/acmacros.h
-> @@ -425,7 +425,7 @@
->  #define ACPI_ALLOCATE_ZEROED(a)     acpi_ut_allocate_zeroed((acpi_size) (a), ACPI_MEM_PARAMETERS)
->  #endif
->  #ifndef ACPI_FREE
-> -#define ACPI_FREE(a)                acpi_os_free(a)
-> +#define ACPI_FREE(a)                kfree(a)
->  #endif
->  #define ACPI_MEM_TRACKING(a)
-> 
-> diff --git a/drivers/acpi/acpica/utcache.c b/drivers/acpi/acpica/utcache.c
-> index a877a96..fcc570c 100644
-> --- a/drivers/acpi/acpica/utcache.c
-> +++ b/drivers/acpi/acpica/utcache.c
-> @@ -166,7 +166,7 @@ acpi_status acpi_os_delete_cache(struct acpi_memory_list * cache)
-> 
->  	/* Now we can delete the cache object */
-> 
-> -	acpi_os_free(cache);
-> +	kfree(cache);
->  	return (AE_OK);
->  }
-> 
-> diff --git a/drivers/acpi/acpica/uttrack.c b/drivers/acpi/acpica/uttrack.c
-> index 160f13f..ac815e5 100644
-> --- a/drivers/acpi/acpica/uttrack.c
-> +++ b/drivers/acpi/acpica/uttrack.c
-> @@ -141,7 +141,7 @@ void *acpi_ut_allocate_and_track(acpi_size size,
->  					  ACPI_MEM_MALLOC, component, module,
->  					  line);
->  	if (ACPI_FAILURE(status)) {
-> -		acpi_os_free(allocation);
-> +		kfree(allocation);
->  		return (NULL);
->  	}
-> 
-> @@ -195,7 +195,7 @@ void *acpi_ut_allocate_zeroed_and_track(acpi_size size,
->  					  ACPI_MEM_CALLOC, component, module,
->  					  line);
->  	if (ACPI_FAILURE(status)) {
-> -		acpi_os_free(allocation);
-> +		kfree(allocation);
->  		return (NULL);
->  	}
-> 
-> @@ -254,7 +254,7 @@ acpi_ut_free_and_track(void *allocation,
->  		ACPI_EXCEPTION((AE_INFO, status, "Could not free memory"));
->  	}
-> 
-> -	acpi_os_free(debug_block);
-> +	kfree(debug_block);
->  	ACPI_DEBUG_PRINT((ACPI_DB_ALLOCATIONS, "%p freed\n", allocation));
->  	return_VOID;
->  }
-> diff --git a/include/acpi/acpiosxf.h b/include/acpi/acpiosxf.h
-> index 64b8c76..0f730ca 100644
-> --- a/include/acpi/acpiosxf.h
-> +++ b/include/acpi/acpiosxf.h
-> @@ -146,8 +146,6 @@ void acpi_os_release_mutex(acpi_mutex handle);
->   */
->  void *acpi_os_allocate(acpi_size size);
-> 
-> -void acpi_os_free(void *memory);
-> -
->  void __iomem *acpi_os_map_memory(acpi_physical_address where,
->  				acpi_size length);
-> 
-> --
-> 1.7.1
-
+PiBGcm9tOiBSYWZhZWwgSi4gV3lzb2NraSBbbWFpbHRvOnJqd0BzaXNrLnBsXQ0KPiBTZW50OiBT
+dW5kYXksIFNlcHRlbWJlciAwOCwgMjAxMyA1OjQ4IEFNDQo+IA0KPiBPbiBTYXR1cmRheSwgU2Vw
+dGVtYmVyIDA3LCAyMDEzIDA1OjA2OjU1IFBNIEJvamFuIFBydHZhciB3cm90ZToNCj4gPiBJbiBj
+b21taXQgMDI0MzhkODc3MWFlNmE0YjIxNTkzODk1OTgyNzY5MjAyNjM4MGJmOSBhY3BpX29zX2Zy
+ZWUoKQ0KPiA+IHdhcyBkZWxldGVkIGFuZCB3ZSBzd2l0Y2hlZCB0byB1c2luZyBrZnJlZSgpIGRp
+cmVjdGx5IGluc3RlYWQuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCb2phbiBQcnR2YXIgPHBy
+dHZhci5iQGdtYWlsLmNvbT4NCj4gDQo+IEl0IGxvb2tzIGxpa2Ugd2UgaGF2ZSBzb21lIGxlZnRv
+dmVycy4gOi0pDQo+IA0KPiBCb2IsIEx2LCBhbnkgb2JqZWN0aW9ucyBhZ2FpbnMgdGhpcyBwYXRj
+aD8NCg0KVGhlIGZpbGUgaXMgdXNlZCBieSBub24gT1NQTSBjb2Rlcywgc28ga2ZyZWUgc2hvdWxk
+IG5vdCBiZSBpbiBpdC4NCkFzIHlvdSBtYXkga25vdywgd2UgbmVlZCBkcml2ZXJzL2FjcGkvYWNw
+aWNhIGZpbGVzIHRvIGJlIGNvbXBpbGVkIGFzIGEgcGFydCBvZiBBY3BpRHVtcCB1dGlsaXR5IHdo
+aWNoIGlzIGEgdXNlciBzcGFjZSB1dGlsaXR5Lg0KSSBkb24ndCB0aGluayBrZnJlZSBjYW4gYmUg
+bGlua2VkIGJ5IGEgdXNlciBzcGFjZSBwcm9ncmFtLg0KDQpUaGUgY2xlYW5lciB3YXkgbWlnaHQg
+YmUgZG9uZSBieSBwb3J0aW5nIG1pc3NpbmcgQUNQSUNBIGFsbG9jYXRlL2ZyZWUgaW1wbGVtZW50
+YXRpb24gY29kZXMgdG8gdGhlIGtlcm5lbC4NCg0KVGhhbmtzIGFuZCBiZXN0IHJlZ2FyZHMNCi1M
+dg0KDQo+IA0KPiBSYWZhZWwNCj4gDQo+IA0KPiA+IC0tLQ0KPiA+IFRoaXMgaXMgamFuaXRvcmlh
+bCB3b3JrLCBwbGVhc2UgcmV2aWV3IGNhcmVmdWxseS4NCj4gPg0KPiA+ICBkcml2ZXJzL2FjcGkv
+YWNwaWNhL2FjbWFjcm9zLmggfCAgICAyICstDQo+ID4gIGRyaXZlcnMvYWNwaS9hY3BpY2EvdXRj
+YWNoZS5jICB8ICAgIDIgKy0NCj4gPiAgZHJpdmVycy9hY3BpL2FjcGljYS91dHRyYWNrLmMgIHwg
+ICAgNiArKystLS0NCj4gPiAgaW5jbHVkZS9hY3BpL2FjcGlvc3hmLmggICAgICAgIHwgICAgMiAt
+LQ0KPiA+ICA0IGZpbGVzIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkN
+Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2FjcGkvYWNwaWNhL2FjbWFjcm9zLmggYi9k
+cml2ZXJzL2FjcGkvYWNwaWNhL2FjbWFjcm9zLmgNCj4gPiBpbmRleCA1MzBhMmY4Li4zNjcwZGQ5
+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvYWNwaS9hY3BpY2EvYWNtYWNyb3MuaA0KPiA+ICsr
+KyBiL2RyaXZlcnMvYWNwaS9hY3BpY2EvYWNtYWNyb3MuaA0KPiA+IEBAIC00MjUsNyArNDI1LDcg
+QEANCj4gPiAgI2RlZmluZSBBQ1BJX0FMTE9DQVRFX1pFUk9FRChhKSAgICAgYWNwaV91dF9hbGxv
+Y2F0ZV96ZXJvZWQoKGFjcGlfc2l6ZSkgKGEpLCBBQ1BJX01FTV9QQVJBTUVURVJTKQ0KPiA+ICAj
+ZW5kaWYNCj4gPiAgI2lmbmRlZiBBQ1BJX0ZSRUUNCj4gPiAtI2RlZmluZSBBQ1BJX0ZSRUUoYSkg
+ICAgICAgICAgICAgICAgYWNwaV9vc19mcmVlKGEpDQo+ID4gKyNkZWZpbmUgQUNQSV9GUkVFKGEp
+ICAgICAgICAgICAgICAgIGtmcmVlKGEpDQo+ID4gICNlbmRpZg0KPiA+ICAjZGVmaW5lIEFDUElf
+TUVNX1RSQUNLSU5HKGEpDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9hY3BpL2FjcGlj
+YS91dGNhY2hlLmMgYi9kcml2ZXJzL2FjcGkvYWNwaWNhL3V0Y2FjaGUuYw0KPiA+IGluZGV4IGE4
+NzdhOTYuLmZjYzU3MGMgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9hY3BpL2FjcGljYS91dGNh
+Y2hlLmMNCj4gPiArKysgYi9kcml2ZXJzL2FjcGkvYWNwaWNhL3V0Y2FjaGUuYw0KPiA+IEBAIC0x
+NjYsNyArMTY2LDcgQEAgYWNwaV9zdGF0dXMgYWNwaV9vc19kZWxldGVfY2FjaGUoc3RydWN0IGFj
+cGlfbWVtb3J5X2xpc3QgKiBjYWNoZSkNCj4gPg0KPiA+ICAJLyogTm93IHdlIGNhbiBkZWxldGUg
+dGhlIGNhY2hlIG9iamVjdCAqLw0KPiA+DQo+ID4gLQlhY3BpX29zX2ZyZWUoY2FjaGUpOw0KPiA+
+ICsJa2ZyZWUoY2FjaGUpOw0KPiA+ICAJcmV0dXJuIChBRV9PSyk7DQo+ID4gIH0NCj4gPg0KPiA+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2FjcGkvYWNwaWNhL3V0dHJhY2suYyBiL2RyaXZlcnMvYWNw
+aS9hY3BpY2EvdXR0cmFjay5jDQo+ID4gaW5kZXggMTYwZjEzZi4uYWM4MTVlNSAxMDA2NDQNCj4g
+PiAtLS0gYS9kcml2ZXJzL2FjcGkvYWNwaWNhL3V0dHJhY2suYw0KPiA+ICsrKyBiL2RyaXZlcnMv
+YWNwaS9hY3BpY2EvdXR0cmFjay5jDQo+ID4gQEAgLTE0MSw3ICsxNDEsNyBAQCB2b2lkICphY3Bp
+X3V0X2FsbG9jYXRlX2FuZF90cmFjayhhY3BpX3NpemUgc2l6ZSwNCj4gPiAgCQkJCQkgIEFDUElf
+TUVNX01BTExPQywgY29tcG9uZW50LCBtb2R1bGUsDQo+ID4gIAkJCQkJICBsaW5lKTsNCj4gPiAg
+CWlmIChBQ1BJX0ZBSUxVUkUoc3RhdHVzKSkgew0KPiA+IC0JCWFjcGlfb3NfZnJlZShhbGxvY2F0
+aW9uKTsNCj4gPiArCQlrZnJlZShhbGxvY2F0aW9uKTsNCj4gPiAgCQlyZXR1cm4gKE5VTEwpOw0K
+PiA+ICAJfQ0KPiA+DQo+ID4gQEAgLTE5NSw3ICsxOTUsNyBAQCB2b2lkICphY3BpX3V0X2FsbG9j
+YXRlX3plcm9lZF9hbmRfdHJhY2soYWNwaV9zaXplIHNpemUsDQo+ID4gIAkJCQkJICBBQ1BJX01F
+TV9DQUxMT0MsIGNvbXBvbmVudCwgbW9kdWxlLA0KPiA+ICAJCQkJCSAgbGluZSk7DQo+ID4gIAlp
+ZiAoQUNQSV9GQUlMVVJFKHN0YXR1cykpIHsNCj4gPiAtCQlhY3BpX29zX2ZyZWUoYWxsb2NhdGlv
+bik7DQo+ID4gKwkJa2ZyZWUoYWxsb2NhdGlvbik7DQo+ID4gIAkJcmV0dXJuIChOVUxMKTsNCj4g
+PiAgCX0NCj4gPg0KPiA+IEBAIC0yNTQsNyArMjU0LDcgQEAgYWNwaV91dF9mcmVlX2FuZF90cmFj
+ayh2b2lkICphbGxvY2F0aW9uLA0KPiA+ICAJCUFDUElfRVhDRVBUSU9OKChBRV9JTkZPLCBzdGF0
+dXMsICJDb3VsZCBub3QgZnJlZSBtZW1vcnkiKSk7DQo+ID4gIAl9DQo+ID4NCj4gPiAtCWFjcGlf
+b3NfZnJlZShkZWJ1Z19ibG9jayk7DQo+ID4gKwlrZnJlZShkZWJ1Z19ibG9jayk7DQo+ID4gIAlB
+Q1BJX0RFQlVHX1BSSU5UKChBQ1BJX0RCX0FMTE9DQVRJT05TLCAiJXAgZnJlZWRcbiIsIGFsbG9j
+YXRpb24pKTsNCj4gPiAgCXJldHVybl9WT0lEOw0KPiA+ICB9DQo+ID4gZGlmZiAtLWdpdCBhL2lu
+Y2x1ZGUvYWNwaS9hY3Bpb3N4Zi5oIGIvaW5jbHVkZS9hY3BpL2FjcGlvc3hmLmgNCj4gPiBpbmRl
+eCA2NGI4Yzc2Li4wZjczMGNhIDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvYWNwaS9hY3Bpb3N4
+Zi5oDQo+ID4gKysrIGIvaW5jbHVkZS9hY3BpL2FjcGlvc3hmLmgNCj4gPiBAQCAtMTQ2LDggKzE0
+Niw2IEBAIHZvaWQgYWNwaV9vc19yZWxlYXNlX211dGV4KGFjcGlfbXV0ZXggaGFuZGxlKTsNCj4g
+PiAgICovDQo+ID4gIHZvaWQgKmFjcGlfb3NfYWxsb2NhdGUoYWNwaV9zaXplIHNpemUpOw0KPiA+
+DQo+ID4gLXZvaWQgYWNwaV9vc19mcmVlKHZvaWQgKm1lbW9yeSk7DQo+ID4gLQ0KPiA+ICB2b2lk
+IF9faW9tZW0gKmFjcGlfb3NfbWFwX21lbW9yeShhY3BpX3BoeXNpY2FsX2FkZHJlc3Mgd2hlcmUs
+DQo+ID4gIAkJCQlhY3BpX3NpemUgbGVuZ3RoKTsNCj4gPg0KPiA+DQo+IC0tDQo+IEkgc3BlYWsg
+b25seSBmb3IgbXlzZWxmLg0KPiBSYWZhZWwgSi4gV3lzb2NraSwgSW50ZWwgT3BlbiBTb3VyY2Ug
+VGVjaG5vbG9neSBDZW50ZXIuDQo
