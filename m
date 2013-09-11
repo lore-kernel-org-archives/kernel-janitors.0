@@ -1,29 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 01 Sep 2013 23:10:31 +0000
-Subject: Re: [PATCH] Staging: android: Mark local functions in binder.c as static
-Message-Id: <20130901231030.GX6329@mwanda>
+Date: Wed, 11 Sep 2013 07:38:00 +0000
+Subject: [patch -resend] cpqarray: info leak in ida_locked_ioctl()
+Message-Id: <20130911073800.GA25349@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1378066724-6340-1-git-send-email-prtvar.b@gmail.com>
-In-Reply-To: <1378066724-6340-1-git-send-email-prtvar.b@gmail.com>
+In-Reply-To: <20130603092516.GC16171@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chirag Kantharia <chirag.kantharia@hp.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: iss_storagedev@hp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Moritz Muehlenhoff <jmm@debian.org>
 
-On Sun, Sep 01, 2013 at 10:18:44PM +0200, Bojan Prtvar wrote:
-> -void binder_stat_br(struct binder_proc *proc, struct binder_thread *thread,
-> +static void binder_stat_br(struct binder_proc *proc,
-> +			struct binder_thread *thread,
->  		    uint32_t cmd)
+The pciinfo struct has a two byte hole after ->dev_fn so stack
+information could be leaked to the user.
 
-The indenting needs to be updated to match as well.  Add 3 spaces before
-"struct binder_thread" and move the "uint32_t cmd)" up a line.  Like
-this:
+This was assigned CVE-2013-2147.
 
-static void binder_stat_br(struct binder_proc *proc,
-			   struct binder_thread *thread, uint32_t cmd)
-{
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/block/cpqarray.c b/drivers/block/cpqarray.c
+index 639d26b..2b94403 100644
+--- a/drivers/block/cpqarray.c
++++ b/drivers/block/cpqarray.c
+@@ -1193,6 +1193,7 @@ out_passthru:
+ 		ida_pci_info_struct pciinfo;
+ 
+ 		if (!arg) return -EINVAL;
++		memset(&pciinfo, 0, sizeof(pciinfo));
+ 		pciinfo.bus = host->pci_dev->bus->number;
+ 		pciinfo.dev_fn = host->pci_dev->devfn;
+ 		pciinfo.board_id = host->board_id;
