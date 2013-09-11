@@ -1,27 +1,54 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 23 Sep 2013 00:29:29 +0000
-Subject: Re: [PATCH 1/5] scsi: Fix assignment of 0/1 to bool variables
-Message-Id: <1379896169.3575.1.camel@joe-AO722>
+From: Dave Chinner <dchinner@redhat.com>
+Date: Wed, 11 Sep 2013 02:07:25 +0000
+Subject: Re: [patch] xfs: = vs == typo in ASSERT()
+Message-Id: <20130911020725.GE2445@devil.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379875453-20083-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379875453-20083-1-git-send-email-peter.senna@gmail.com>
+References: <20130911211731.GA10527@elgon.mountain>
+In-Reply-To: <20130911211731.GA10527@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: JBottomley@parallels.com, naresh@chelsio.com, davem@davemloft.net, jj@chaosbits.net, arvindb@chelsio.com, hare@suse.de, michaelc@cs.wisc.edu, vijay.chauhan@netapp.com, bvanassche@acm.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ben Myers <bpm@sgi.com>, Alex Elder <elder@kernel.org>, kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
 
-On Sun, 2013-09-22 at 20:44 +0200, Peter Senna Tschudin wrote:
-> Convert 0 to false and 1 to true when assigning values to bool
-> variables. Inspired by commit 3db1cd5c05f35fb43eb134df6f321de4e63141f2.
-[]
-> @@
-> bool b;
-> @@
-> -b = 1
-> +b = true
+On Thu, Sep 12, 2013 at 12:17:31AM +0300, Dan Carpenter wrote:
+> There is a '=' vs '=' typo so the ASSERT()s are always true.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Introduced in 21b5c9784b ('xfs: swap extents operations for CRC
+> filesystems')
+> 
+> diff --git a/fs/xfs/xfs_bmap_btree.c b/fs/xfs/xfs_bmap_btree.c
+> index 531b020..bb8de8e 100644
+> --- a/fs/xfs/xfs_bmap_btree.c
+> +++ b/fs/xfs/xfs_bmap_btree.c
+> @@ -957,9 +957,9 @@ xfs_bmbt_change_owner(
+>  	ASSERT(tp || buffer_list);
+>  	ASSERT(!(tp && buffer_list));
+>  	if (whichfork = XFS_DATA_FORK)
+> -		ASSERT(ip->i_d.di_format = XFS_DINODE_FMT_BTREE);
+> +		ASSERT(ip->i_d.di_format = XFS_DINODE_FMT_BTREE);
+>  	else
+> -		ASSERT(ip->i_d.di_aformat = XFS_DINODE_FMT_BTREE);
+> +		ASSERT(ip->i_d.di_aformat = XFS_DINODE_FMT_BTREE);
+>  
 
-You might also look for non-zero values other than 1
-and convert those true too.
+Eek!
 
+Well, actually, it's harmless, because the only callers of that
+function do so after checking that ip->i_d.di_format =
+XFS_DINODE_FMT_BTREE.
 
+So, the fix is definitely needed, but it's not as bad as it looks.
+
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+
+Thanks, Dan.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+dchinner@redhat.com
