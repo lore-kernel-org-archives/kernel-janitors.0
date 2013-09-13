@@ -1,50 +1,62 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 13 Sep 2013 07:44:44 +0000
-Subject: [patch] ALSA: asihpi: a couple array out of bounds issues
-Message-Id: <20130913074444.GA19211@elgon.mountain>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Fri, 13 Sep 2013 12:34:56 +0000
+Subject: Re: [patch] ALSA: asihpi: a couple array out of bounds issues
+Message-Id: <s5h61u4hpcf.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130913074444.GA19211@elgon.mountain>
+In-Reply-To: <20130913074444.GA19211@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, Eldad Zack <eldad@fogrefinery.com>, Bill Pemberton <wfp5p@virginia.edu>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Eldad Zack <eldad@fogrefinery.com>, Bill Pemberton <wfp5p@virginia.edu>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-These ->put() functions are called from snd_ctl_elem_write() with user
-supplied data.  snd_asihpi_tuner_band_put() is missing a limit check and
-the check in snd_asihpi_clksrc_put() can underflow.
+At Fri, 13 Sep 2013 10:44:44 +0300,
+Dan Carpenter wrote:
+> 
+> These ->put() functions are called from snd_ctl_elem_write() with user
+> supplied data.  snd_asihpi_tuner_band_put() is missing a limit check and
+> the check in snd_asihpi_clksrc_put() can underflow.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied, thanks.
 
-diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
-index dc632cd..5f2acd3 100644
---- a/sound/pci/asihpi/asihpi.c
-+++ b/sound/pci/asihpi/asihpi.c
-@@ -1913,6 +1913,7 @@ static int snd_asihpi_tuner_band_put(struct snd_kcontrol *kcontrol,
- 	struct snd_card_asihpi *asihpi = snd_kcontrol_chip(kcontrol);
- 	*/
- 	u32 h_control = kcontrol->private_value;
-+	unsigned int idx;
- 	u16 band;
- 	u16 tuner_bands[HPI_TUNER_BAND_LAST];
- 	u32 num_bands = 0;
-@@ -1920,7 +1921,10 @@ static int snd_asihpi_tuner_band_put(struct snd_kcontrol *kcontrol,
- 	num_bands = asihpi_tuner_band_query(kcontrol, tuner_bands,
- 			HPI_TUNER_BAND_LAST);
- 
--	band = tuner_bands[ucontrol->value.enumerated.item[0]];
-+	idx = ucontrol->value.enumerated.item[0];
-+	if (idx >= ARRAY_SIZE(tuner_bands))
-+		idx = ARRAY_SIZE(tuner_bands) - 1;
-+	band = tuner_bands[idx];
- 	hpi_handle_error(hpi_tuner_set_band(h_control, band));
- 
- 	return 1;
-@@ -2383,7 +2387,8 @@ static int snd_asihpi_clksrc_put(struct snd_kcontrol *kcontrol,
- 	struct snd_card_asihpi *asihpi  			(struct snd_card_asihpi *)(kcontrol->private_data);
- 	struct clk_cache *clkcache = &asihpi->cc;
--	int change, item;
-+	unsigned int item;
-+	int change;
- 	u32 h_control = kcontrol->private_value;
- 
- 	change = 1;
+
+Takashi
+
+> 
+> diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+> index dc632cd..5f2acd3 100644
+> --- a/sound/pci/asihpi/asihpi.c
+> +++ b/sound/pci/asihpi/asihpi.c
+> @@ -1913,6 +1913,7 @@ static int snd_asihpi_tuner_band_put(struct snd_kcontrol *kcontrol,
+>  	struct snd_card_asihpi *asihpi = snd_kcontrol_chip(kcontrol);
+>  	*/
+>  	u32 h_control = kcontrol->private_value;
+> +	unsigned int idx;
+>  	u16 band;
+>  	u16 tuner_bands[HPI_TUNER_BAND_LAST];
+>  	u32 num_bands = 0;
+> @@ -1920,7 +1921,10 @@ static int snd_asihpi_tuner_band_put(struct snd_kcontrol *kcontrol,
+>  	num_bands = asihpi_tuner_band_query(kcontrol, tuner_bands,
+>  			HPI_TUNER_BAND_LAST);
+>  
+> -	band = tuner_bands[ucontrol->value.enumerated.item[0]];
+> +	idx = ucontrol->value.enumerated.item[0];
+> +	if (idx >= ARRAY_SIZE(tuner_bands))
+> +		idx = ARRAY_SIZE(tuner_bands) - 1;
+> +	band = tuner_bands[idx];
+>  	hpi_handle_error(hpi_tuner_set_band(h_control, band));
+>  
+>  	return 1;
+> @@ -2383,7 +2387,8 @@ static int snd_asihpi_clksrc_put(struct snd_kcontrol *kcontrol,
+>  	struct snd_card_asihpi *asihpi >  			(struct snd_card_asihpi *)(kcontrol->private_data);
+>  	struct clk_cache *clkcache = &asihpi->cc;
+> -	int change, item;
+> +	unsigned int item;
+> +	int change;
+>  	u32 h_control = kcontrol->private_value;
+>  
+>  	change = 1;
+> 
