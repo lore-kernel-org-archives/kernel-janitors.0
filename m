@@ -1,100 +1,50 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 17 Sep 2013 08:35:26 +0000
-Subject: Re: [PATCH] Staging: bcm: PHSModule.c: Matching the function definition with function declaration
-Message-Id: <alpine.DEB.2.02.1309171035000.2252@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Sep 2013 07:44:44 +0000
+Subject: [patch] ALSA: asihpi: a couple array out of bounds issues
+Message-Id: <20130913074444.GA19211@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379401962-10208-1-git-send-email-shalinmehta85@gmail.com>
-In-Reply-To: <1379401962-10208-1-git-send-email-shalinmehta85@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shalin Mehta <shalinmehta85@gmail.com>
-Cc: gregkh@linuxfoundation.org, klmckinney1@gmail.com, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Eldad Zack <eldad@fogrefinery.com>, Bill Pemberton <wfp5p@virginia.edu>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
 
-On Tue, 17 Sep 2013, Shalin Mehta wrote:
+These ->put() functions are called from snd_ctl_elem_write() with user
+supplied data.  snd_asihpi_tuner_band_put() is missing a limit check and
+the check in snd_asihpi_clksrc_put() can underflow.
 
-> From: Shalin Mehta <shalinmehta85@gmail.com>
->
-> NOTE: Sending it again. I got mail delivery failure due to typo in emai ID gregkh@linuxfoundation.org
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I think that such a comment should go below the ---, since it doesn't have
-to be preserved in git.
-
-julia
-
->
->
-> The function implementations of the PHSModule didn't match with the declaration. The functions are static
-> in the declaration but in the implemntation they are non-static
->
-> Signed-off-by: Shalin Mehta <shalinmehta85@gmail.com>
-> ---
->  drivers/staging/bcm/PHSModule.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/staging/bcm/PHSModule.c b/drivers/staging/bcm/PHSModule.c
-> index af5d22f..56c5bee 100644
-> --- a/drivers/staging/bcm/PHSModule.c
-> +++ b/drivers/staging/bcm/PHSModule.c
-> @@ -596,7 +596,7 @@ ULONG PhsDeleteSFRules(IN void *pvContext, IN B_UINT16 uiVcid)
->   * 0 if successful,
->   * >0 Error.
->   */
-> -ULONG PhsCompress(IN void *pvContext,
-> +static ULONG PhsCompress(IN void *pvContext,
->  		IN B_UINT16 uiVcid,
->  		IN B_UINT16 uiClsId,
->  		IN void *pvInputBuffer,
-> @@ -677,7 +677,7 @@ ULONG PhsCompress(IN void *pvContext,
->   * 0 if successful,
->   * >0 Error.
->   */
-> -ULONG PhsDeCompress(IN void *pvContext,
-> +static ULONG PhsDeCompress(IN void *pvContext,
->  		IN B_UINT16 uiVcid,
->  		IN void *pvInputBuffer,
->  		OUT void *pvOutputBuffer,
-> @@ -829,7 +829,7 @@ UINT GetServiceFlowEntry(IN struct bcm_phs_table *psServiceFlowTable,
->  	return PHS_INVALID_TABLE_INDEX;
->  }
->
-> -UINT GetClassifierEntry(IN struct bcm_phs_classifier_table *pstClassifierTable,
-> +static UINT GetClassifierEntry(IN struct bcm_phs_classifier_table *pstClassifierTable,
->  			IN B_UINT32 uiClsid, enum bcm_phs_classifier_context eClsContext,
->  			OUT struct bcm_phs_classifier_entry **ppstClassifierEntry)
->  {
-> @@ -880,7 +880,7 @@ static UINT GetPhsRuleEntry(IN struct bcm_phs_classifier_table *pstClassifierTab
->  	return PHS_INVALID_TABLE_INDEX;
->  }
->
-> -UINT CreateSFToClassifierRuleMapping(IN B_UINT16 uiVcid, IN B_UINT16  uiClsId,
-> +static UINT CreateSFToClassifierRuleMapping(IN B_UINT16 uiVcid, IN B_UINT16  uiClsId,
->  				IN struct bcm_phs_table *psServiceFlowTable,
->  				struct bcm_phs_rule *psPhsRule,
->  				B_UINT8 u8AssociatedPHSI)
-> @@ -913,7 +913,7 @@ UINT CreateSFToClassifierRuleMapping(IN B_UINT16 uiVcid, IN B_UINT16  uiClsId,
->  	return uiStatus;
->  }
->
-> -UINT CreateClassiferToPHSRuleMapping(IN B_UINT16 uiVcid,
-> +static UINT CreateClassiferToPHSRuleMapping(IN B_UINT16 uiVcid,
->  				IN B_UINT16 uiClsId,
->  				IN struct bcm_phs_entry *pstServiceFlowEntry,
->  				struct bcm_phs_rule *psPhsRule,
-> @@ -1239,7 +1239,7 @@ void DumpPhsRules(struct bcm_phs_extension *pDeviceExtension)
->   *			header.
->   *	0	-If PHS rule is NULL.If PHSI is 0 indicateing packet as uncompressed.
->   */
-> -int phs_decompress(unsigned char *in_buf,
-> +static int phs_decompress(unsigned char *in_buf,
->  		unsigned char *out_buf,
->  		struct bcm_phs_rule *decomp_phs_rules,
->  		UINT *header_size)
-> --
-> 1.8.1.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+index dc632cd..5f2acd3 100644
+--- a/sound/pci/asihpi/asihpi.c
++++ b/sound/pci/asihpi/asihpi.c
+@@ -1913,6 +1913,7 @@ static int snd_asihpi_tuner_band_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_card_asihpi *asihpi = snd_kcontrol_chip(kcontrol);
+ 	*/
+ 	u32 h_control = kcontrol->private_value;
++	unsigned int idx;
+ 	u16 band;
+ 	u16 tuner_bands[HPI_TUNER_BAND_LAST];
+ 	u32 num_bands = 0;
+@@ -1920,7 +1921,10 @@ static int snd_asihpi_tuner_band_put(struct snd_kcontrol *kcontrol,
+ 	num_bands = asihpi_tuner_band_query(kcontrol, tuner_bands,
+ 			HPI_TUNER_BAND_LAST);
+ 
+-	band = tuner_bands[ucontrol->value.enumerated.item[0]];
++	idx = ucontrol->value.enumerated.item[0];
++	if (idx >= ARRAY_SIZE(tuner_bands))
++		idx = ARRAY_SIZE(tuner_bands) - 1;
++	band = tuner_bands[idx];
+ 	hpi_handle_error(hpi_tuner_set_band(h_control, band));
+ 
+ 	return 1;
+@@ -2383,7 +2387,8 @@ static int snd_asihpi_clksrc_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_card_asihpi *asihpi  			(struct snd_card_asihpi *)(kcontrol->private_data);
+ 	struct clk_cache *clkcache = &asihpi->cc;
+-	int change, item;
++	unsigned int item;
++	int change;
+ 	u32 h_control = kcontrol->private_value;
+ 
+ 	change = 1;
