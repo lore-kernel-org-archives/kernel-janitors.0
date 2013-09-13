@@ -1,35 +1,44 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 23 Sep 2013 12:01:29 +0000
-Subject: Re: [PATCH 02/19] hv: Change variable type to bool
-Message-Id: <20130923120129.GI6192@mwanda>
+Date: Fri, 13 Sep 2013 12:29:27 +0000
+Subject: [patch v2 -stable] igbvf: integer wrapping bug setting the mtu
+Message-Id: <20130913122927.GA31819@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
- <1379802471-30252-2-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-2-git-send-email-peter.senna@gmail.com>
+References: <AE90C24D6B3A694183C094C60CF0A2F6026B7332@saturn3.aculab.com>
+In-Reply-To: <AE90C24D6B3A694183C094C60CF0A2F6026B7332@saturn3.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: kys@microsoft.com, devel@linuxdriverproject.org, haiyangz@microsoft.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, John Ronciak <john.ronciak@intel.com>, Tushar Dave <tushar.n.dave@intel.com>, "David S. Miller" <davem@davemloft.net>, Mitch Williams <mitch.a.williams@intel.com>, Patrick McHardy <kaber@trash.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Sep 22, 2013 at 12:27:34AM +0200, Peter Senna Tschudin wrote:
-> diff --git a/drivers/hv/hv_util.c b/drivers/hv/hv_util.c
-> index cb82233..fa37369 100644
-> --- a/drivers/hv/hv_util.c
-> +++ b/drivers/hv/hv_util.c
-> @@ -82,7 +82,7 @@ static void shutdown_onchannelcallback(void *context)
->  	struct vmbus_channel *channel = context;
->  	u32 recvlen;
->  	u64 requestid;
-> -	u8  execute_shutdown = false;
-> +	bool  execute_shutdown = false;
->  	u8  *shut_txf_buf = util_shutdown.recv_buffer;
->  
+If new_mtu is very large then "new_mtu + ETH_HLEN + ETH_FCS_LEN" can
+wrap and the check on the next line can underflow. This is one of those
+bugs which can be triggered by the user if you have namespaces
+configured.
 
-The two spaces are meant so first letters 'r', 'r', 'e', and 's' are on
-the same column.  It should just be one space so we don't have to
-re-align everything when we make a change like this.
+Also since this is something the user can trigger then we don't want to
+have dev_err() message.
 
-regards,
-dan carpenter
+This is a static checker fix and I'm not sure what the impact is.
+---
+v2: reformat and also remove the dev_err()
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
+index 95d5430..8cb7958 100644
+--- a/drivers/net/ethernet/intel/igbvf/netdev.c
++++ b/drivers/net/ethernet/intel/igbvf/netdev.c
+@@ -2344,10 +2344,9 @@ static int igbvf_change_mtu(struct net_device *netdev, int new_mtu)
+ 	struct igbvf_adapter *adapter = netdev_priv(netdev);
+ 	int max_frame = new_mtu + ETH_HLEN + ETH_FCS_LEN;
+ 
+-	if ((new_mtu < 68) || (max_frame > MAX_JUMBO_FRAME_SIZE)) {
+-		dev_err(&adapter->pdev->dev, "Invalid MTU setting\n");
++	if (new_mtu < 68 || new_mtu > INT_MAX - ETH_HLEN - ETH_FCS_LEN ||
++	    max_frame > MAX_JUMBO_FRAME_SIZE)
+ 		return -EINVAL;
+-	}
+ 
+ #define MAX_STD_JUMBO_FRAME_SIZE 9234
+ 	if (max_frame > MAX_STD_JUMBO_FRAME_SIZE) {
