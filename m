@@ -1,46 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 13 Sep 2013 17:34:50 +0000
-Subject: Re: [patch] ASoC: 88pm860x: array overflow in snd_soc_put_volsw_2r_st()
-Message-Id: <20130913173450.GS29403@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="tLoOelq4LT7wcLdm"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Sep 2013 08:07:13 +0000
+Subject: [patch] staging: line6: add bounds check in snd_toneport_source_put()
+Message-Id: <20130913080713.GI19211@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130913075248.GC19211@elgon.mountain>
-In-Reply-To: <20130913075248.GC19211@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Bill Pemberton <wfp5p@virginia.edu>, Lars-Peter Clausen <lars@metafoo.de>, Sachin Kamat <sachin.kamat@linaro.org>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Stefan Hajnoczi <stefanha@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+"source" comes from the user in snd_ctl_elem_write() so it needs to be
+checked.
 
---tLoOelq4LT7wcLdm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, Sep 13, 2013 at 10:52:49AM +0300, Dan Carpenter wrote:
-> This is called from snd_ctl_elem_write() with user supplied data so we
-> need to add some bounds checking.
-
-Applied, thanks.
-
---tLoOelq4LT7wcLdm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSM0y3AAoJELSic+t+oim9k9UP/iRBTBjnd8CFrEaHaqa2EVSx
-yn7pZ0mOFROyV2u+KAo+jsSfooBjeaHhbftFf8FNYX0d9S0kwu9qIVNgadzjdJDi
-yvGoJJhRndUcx28yi82Y/G7XzCBGk/b5mcx52SKdu+n/SvTHgceKCqtfMfy21ltp
-e/8UHmiS2vR6JUfFHqnrmcA6pdbG+i5p78WAHqk7ZrQrjsxUZ9OV59W4SVKmHkQQ
-bNdFwiw6ADukqvaH4w6qNURjh/ldDdY0cLg3tlgyW2Kz4UuQKKfEVyhvEyKzOuqm
-9b9pL5XacBU2t/E292EPhpil/I0jpbFh0xmuOVo6d2yyodaNCBfeyM+3OM0Can2X
-MPvUFhneWdUb92UyU/CVkZyxdHUx3o9CM7Y79E6n8JphqoP8z+v1NTUUGHsoNXm9
-DBlaAxGQEtuuWRcA5tT95k6Y/pPGSsrOmBsmTFfZz5LFzyJah5wfupbtgRzMVtJG
-JWqOg6J7VzJ5hN7V17JdubYn9PjsV8/Mcauuk2DG21YimJAiRemFx5X06v+5BC6D
-UyMrB57v448KczbxQvampgHMUaqUmwoXFV6q+uIcxul4cvtF935A5KHphzq51jd4
-xfinYFkfK6BXumOtWUMdKEHBXXP2EHzJii7qsfSK/sfvv3zHPxSR9b6L4BYsrPC4
-bByXkeKiqWeT65B0ue1p
-=NSD5
------END PGP SIGNATURE-----
-
---tLoOelq4LT7wcLdm--
+diff --git a/drivers/staging/line6/toneport.c b/drivers/staging/line6/toneport.c
+index 2f44d56..776d363 100644
+--- a/drivers/staging/line6/toneport.c
++++ b/drivers/staging/line6/toneport.c
+@@ -244,13 +244,17 @@ static int snd_toneport_source_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_line6_pcm *line6pcm = snd_kcontrol_chip(kcontrol);
+ 	struct usb_line6_toneport *toneport  	    (struct usb_line6_toneport *)line6pcm->line6;
++	unsigned int source;
+ 
+-	if (ucontrol->value.enumerated.item[0] = toneport->source)
++	source = ucontrol->value.enumerated.item[0];
++	if (source >= ARRAY_SIZE(toneport_source_info))
++		return -EINVAL;
++	if (source = toneport->source)
+ 		return 0;
+ 
+-	toneport->source = ucontrol->value.enumerated.item[0];
++	toneport->source = source;
+ 	toneport_send_cmd(toneport->line6.usbdev,
+-			  toneport_source_info[toneport->source].code, 0x0000);
++			  toneport_source_info[source].code, 0x0000);
+ 	return 1;
+ }
+ 
