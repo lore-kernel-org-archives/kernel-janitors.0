@@ -1,55 +1,39 @@
-From: "Dorau, Lukasz" <lukasz.dorau@intel.com>
-Date: Mon, 23 Sep 2013 14:11:04 +0000
-Subject: RE: [PATCH 14/19] scsi: Change variable type to bool
-Message-Id: <D9FFE20C522965449E182ACE73889AEB1A5EF079@IRSMSX105.ger.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Sep 2013 07:52:14 +0000
+Subject: [patch] ASoC: max98095: a couple array underflows
+Message-Id: <20130913075214.GB19211@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
- <43e0f3a4fb62473e9bdd308a8dc4490f@fmsmsx104.amr.corp.intel.com>
-In-Reply-To: <43e0f3a4fb62473e9bdd308a8dc4490f@fmsmsx104.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: "Patelczyk, Maciej" <maciej.patelczyk@intel.com>, "Jiang, Dave" <dave.jiang@intel.com>, "JBottomley@parallels.com" <JBottomley@parallels.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, intel-linux-scu <intel-linux-scu@intel.com>
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Bill Pemberton <wfp5p@virginia.edu>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Sunday, September 22, 2013 12:28 AM Peter Senna Tschudin <peter.senna@gmail.com> wrote:
-> 
-> The variable success is only assigned the values true and false.
-> Change its type to bool.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
->  drivers/scsi/isci/port.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/isci/port.c b/drivers/scsi/isci/port.c
-> index 13098b0..26f8e5c 100644
-> --- a/drivers/scsi/isci/port.c
-> +++ b/drivers/scsi/isci/port.c
-> @@ -174,7 +174,7 @@ static void isci_port_link_up(struct isci_host *isci_host,
->  {
->  	unsigned long flags;
->  	struct sci_port_properties properties;
-> -	unsigned long success = true;
-> +	bool success = true;
-> 
->  	dev_dbg(&isci_host->pdev->dev,
->  		"%s: isci_port = %p\n",
-> --
-> 1.8.3.1
+The ->put() function are called from snd_ctl_elem_write() with user
+supplied data.  The limit checks here could underflow leading to a
+crash.
 
-Acked-by: Lukasz Dorau <lukasz.dorau@intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/sound/soc/codecs/max98095.c b/sound/soc/codecs/max98095.c
+index 41cdd16..8dbcacd 100644
+--- a/sound/soc/codecs/max98095.c
++++ b/sound/soc/codecs/max98095.c
+@@ -1863,7 +1863,7 @@ static int max98095_put_eq_enum(struct snd_kcontrol *kcontrol,
+ 	struct max98095_pdata *pdata = max98095->pdata;
+ 	int channel = max98095_get_eq_channel(kcontrol->id.name);
+ 	struct max98095_cdata *cdata;
+-	int sel = ucontrol->value.integer.value[0];
++	unsigned int sel = ucontrol->value.integer.value[0];
+ 	struct max98095_eq_cfg *coef_set;
+ 	int fs, best, best_val, i;
+ 	int regmask, regsave;
+@@ -2016,7 +2016,7 @@ static int max98095_put_bq_enum(struct snd_kcontrol *kcontrol,
+ 	struct max98095_pdata *pdata = max98095->pdata;
+ 	int channel = max98095_get_bq_channel(codec, kcontrol->id.name);
+ 	struct max98095_cdata *cdata;
+-	int sel = ucontrol->value.integer.value[0];
++	unsigned int sel = ucontrol->value.integer.value[0];
+ 	struct max98095_biquad_cfg *coef_set;
+ 	int fs, best, best_val, i;
+ 	int regmask, regsave;
