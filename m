@@ -1,72 +1,130 @@
-From: Tyler Hicks <tyhicks@canonical.com>
-Date: Sat, 07 Sep 2013 00:30:39 +0000
-Subject: Re: [patch] ecryptfs: remove check for if an array is NULL
-Message-Id: <20130907003039.GO3853@boyd>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ZmZU9S7l/XJx5q9b"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 13 Sep 2013 08:12:28 +0000
+Subject: [patch] i40e: fix copy_from_user() error handling
+Message-Id: <20130913081228.GJ19211@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+There can never be a negative number of bytes_not_copied.  Also return
+-EFAULT on error.
 
---ZmZU9S7l/XJx5q9b
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 2013-07-31 12:10:10, Dan Carpenter wrote:
-> It doesn't make sense to check if an array is NULL.  The compiler just
-> removes the check.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks, Dan!
-
-I've pushed this to my next branch and it will be part of a pull request
-that should go out early next week.
-
-Tyler
-
-> ---
-> Or perhaps "if (!strlen(crypt_stat->cipher))" was intended?  I'm not
-> very familiar with this code.
->=20
-> diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-> index d107576..3bd35e2 100644
-> --- a/fs/ecryptfs/crypto.c
-> +++ b/fs/ecryptfs/crypto.c
-> @@ -609,10 +609,6 @@ int ecryptfs_init_crypt_ctx(struct ecryptfs_crypt_st=
-at *crypt_stat)
->  	char *full_alg_name;
->  	int rc =3D -EINVAL;
-> =20
-> -	if (!crypt_stat->cipher) {
-> -		ecryptfs_printk(KERN_ERR, "No cipher specified\n");
-> -		goto out;
-> -	}
->  	ecryptfs_printk(KERN_DEBUG,
->  			"Initializing cipher [%s]; strlen =3D [%d]; "
->  			"key_size_bits =3D [%zd]\n",
-
---ZmZU9S7l/XJx5q9b
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iQIcBAEBCgAGBQJSKnOvAAoJENaSAD2qAscKrBwQAKaVVXzpKtzN5hmqbuBRSjxC
-FZqlnXS978e4AVTduyeFJ4tpFWCG0h5UPsmy5NiAaxVWBfan/gMUnUwYQB2jtScv
-G9sU6JPKiN5hHsUTw5kXM33cif1AVRAog8IKdGrgxHJwgpb1s4Psl8zxZN+0kh8J
-nr2+0ssXw/k27ed3vPzu5Pt4tRRsBWYzzzucVAroRbDyjNNOpqJ3lTQsfS6nDjHX
-9Td/+02HUwpBsOPCoEhuTVHCEZE59SNas3k5lxL+LjokgOaR/Y7EtDPWRnZZlrXV
-l1vahDKRmBb6sWPx4veNfzAESYf1DZ2l8/jsZT5MU8mXe7rwPZlt/N/fpKu6CYsu
-mFG3OmhsWO3MBBcDnACTPgu+9+7DdPWjzscjuzLbEWGBFZyKyMCBOqnEImP2ncBo
-M4XRCUOQI3mm2LvIGSN5Ix+iouKwb64qoz769ktLA+7i/k4USgEgRs4Ehg2ow75m
-47Npgsnj0cAVunCVukz046GgCtlxkEKbnlejsHWzb8r1jdgcOIpfEi+f+RCb/LBk
-4x678lvNsc4jkkZMUzZLTXWkk/TkziLKzJ0WX7eb40V2azx2hehNTc5c+QJA7Q8b
-EUvp/LlLcROpnOiRzdrvt19IhFiYA64E9fmcDpLt0NtTQWHfR5xOQY86N74pIgyP
-+vaL2qjQqrZRaUp6S6Vl
-=v48P
------END PGP SIGNATURE-----
-
---ZmZU9S7l/XJx5q9b--
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_debugfs.c b/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
+index 8dbd91f..de9f60d 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
+@@ -93,7 +93,6 @@ static ssize_t i40e_dbg_dump_buffer_len;
+ static ssize_t i40e_dbg_dump_read(struct file *filp, char __user *buffer,
+ 				  size_t count, loff_t *ppos)
+ {
+-	int bytes_not_copied;
+ 	int len;
+ 
+ 	/* is *ppos bigger than the available data? */
+@@ -103,9 +102,8 @@ static ssize_t i40e_dbg_dump_read(struct file *filp, char __user *buffer,
+ 	/* be sure to not read beyond the end of available data */
+ 	len = min_t(int, count, (i40e_dbg_dump_data_len - *ppos));
+ 
+-	bytes_not_copied = copy_to_user(buffer, &i40e_dbg_dump_buf[*ppos], len);
+-	if (bytes_not_copied < 0)
+-		return bytes_not_copied;
++	if (copy_to_user(buffer, &i40e_dbg_dump_buf[*ppos], len))
++		return -EFAULT;
+ 
+ 	*ppos += len;
+ 	return len;
+@@ -153,7 +151,6 @@ static ssize_t i40e_dbg_dump_write(struct file *filp,
+ 	struct i40e_pf *pf = filp->private_data;
+ 	char dump_request_buf[16];
+ 	bool seid_found = false;
+-	int bytes_not_copied;
+ 	long seid = -1;
+ 	int buflen = 0;
+ 	int i, ret;
+@@ -166,11 +163,8 @@ static ssize_t i40e_dbg_dump_write(struct file *filp,
+ 	if (count >= sizeof(dump_request_buf))
+ 		return -ENOSPC;
+ 
+-	bytes_not_copied = copy_from_user(dump_request_buf, buffer, count);
+-	if (bytes_not_copied < 0)
+-		return bytes_not_copied;
+-	if (bytes_not_copied > 0)
+-		count -= bytes_not_copied;
++	if (copy_from_user(dump_request_buf, buffer, count))
++		return -EFAULT;
+ 	dump_request_buf[count] = '\0';
+ 
+ 	/* decode the SEID given to be dumped */
+@@ -357,9 +351,8 @@ static ssize_t i40e_dbg_command_read(struct file *filp, char __user *buffer,
+ 
+ 	bytes_not_copied = copy_to_user(buffer, buf, len);
+ 	kfree(buf);
+-
+-	if (bytes_not_copied < 0)
+-		return bytes_not_copied;
++	if (bytes_not_copied)
++		return -EFAULT;
+ 
+ 	*ppos = len;
+ 	return len;
+@@ -1028,7 +1021,6 @@ static ssize_t i40e_dbg_command_write(struct file *filp,
+ 				      size_t count, loff_t *ppos)
+ {
+ 	struct i40e_pf *pf = filp->private_data;
+-	int bytes_not_copied;
+ 	struct i40e_vsi *vsi;
+ 	u8 *print_buf_start;
+ 	u8 *print_buf;
+@@ -1044,11 +1036,8 @@ static ssize_t i40e_dbg_command_write(struct file *filp,
+ 	cmd_buf = kzalloc(count + 1, GFP_KERNEL);
+ 	if (!cmd_buf)
+ 		return count;
+-	bytes_not_copied = copy_from_user(cmd_buf, buffer, count);
+-	if (bytes_not_copied < 0)
+-		return bytes_not_copied;
+-	if (bytes_not_copied > 0)
+-		count -= bytes_not_copied;
++	if (copy_from_user(cmd_buf, buffer, count))
++		return -EFAULT;
+ 	cmd_buf[count] = '\0';
+ 
+ 	print_buf_start = kzalloc(I40E_MAX_DEBUG_OUT_BUFFER, GFP_KERNEL);
+@@ -1881,9 +1870,8 @@ static ssize_t i40e_dbg_netdev_ops_read(struct file *filp, char __user *buffer,
+ 
+ 	bytes_not_copied = copy_to_user(buffer, buf, len);
+ 	kfree(buf);
+-
+-	if (bytes_not_copied < 0)
+-		return bytes_not_copied;
++	if (bytes_not_copied)
++		return -EFAULT;
+ 
+ 	*ppos = len;
+ 	return len;
+@@ -1901,7 +1889,6 @@ static ssize_t i40e_dbg_netdev_ops_write(struct file *filp,
+ 					 size_t count, loff_t *ppos)
+ {
+ 	struct i40e_pf *pf = filp->private_data;
+-	int bytes_not_copied;
+ 	struct i40e_vsi *vsi;
+ 	int vsi_seid;
+ 	int i, cnt;
+@@ -1913,12 +1900,8 @@ static ssize_t i40e_dbg_netdev_ops_write(struct file *filp,
+ 		return -ENOSPC;
+ 
+ 	memset(i40e_dbg_netdev_ops_buf, 0, sizeof(i40e_dbg_netdev_ops_buf));
+-	bytes_not_copied = copy_from_user(i40e_dbg_netdev_ops_buf,
+-					  buffer, count);
+-	if (bytes_not_copied < 0)
+-		return bytes_not_copied;
+-	else if (bytes_not_copied > 0)
+-		count -= bytes_not_copied;
++	if (copy_from_user(i40e_dbg_netdev_ops_buf, buffer, count))
++		return -EFAULT;
+ 	i40e_dbg_netdev_ops_buf[count] = '\0';
+ 
+ 	if (strncmp(i40e_dbg_netdev_ops_buf, "tx_timeout", 10) = 0) {
