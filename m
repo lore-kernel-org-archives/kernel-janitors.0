@@ -1,49 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 27 Sep 2013 20:18:39 +0000
-Subject: [patch -next] drm/radeon/dpm/btc: off by one in btc_set_mc_special_registers()
-Message-Id: <20130927201838.GJ6247@mwanda>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 16 Sep 2013 00:51:39 +0000
+Subject: build regressions 2013-09-15
+Message-Id: <5236561b.CLkP5Ug6mG/r2YlR%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Jerome Glisse <jglisse@redhat.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-It should be ">=" instead of ">" here.  The table->mc_reg_address[]
-array has SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE (16) elements.
+[errors]
+(.data+0x67a04): undefined reference to `vb2_ops_wait_prepare'
+(.data+0x67a08): undefined reference to `vb2_ops_wait_finish'
+kernel/rcutree.c:732:6: error: redefinition of 'rcu_watching_this_cpu'
+include/linux/rcutiny.h:137:20: error: static declaration of 'rcu_watching_this_cpu' follows non-static declaration
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[coccinelle]
+drivers/staging/rtl8188eu/core/rtw_wlan_util.c:1414:7-49: duplicated argument to && or ||
+drivers/staging/rtl8188eu/core/rtw_mlme_ext.c:4420:2-29: code aligned with following code on line 4422
+drivers/staging/rtl8188eu/core/rtw_mlme_ext.c:8030:3-9: Replace memcpy with struct assignment
+drivers/staging/dgnc/dgnc_driver.c:510:3-7: WARNING: casting value returned by k[cmz]alloc to (char *) is useless.
+drivers/staging/dgnc/dgnc_driver.c:502:2-16: WARNING: casting value returned by k[cmz]alloc to (struct board_t *) is useless.
+drivers/staging/dgnc/dgnc_tty.c:554:41-42: WARNING comparing pointer to 0
+drivers/staging/dgap/dgap_tty.c:604:41-42: WARNING comparing pointer to 0
+drivers/staging/dgap/dgap_tty.c:1118:25-26: WARNING comparing pointer to 0
+drivers/staging/dgnc/dgnc_driver.c:502:2-19: WARNING: casting value returned by k[cmz]alloc to (struct dgnc_board *) is useless.
+
 ---
-Resend.
-
-diff --git a/drivers/gpu/drm/radeon/btc_dpm.c b/drivers/gpu/drm/radeon/btc_dpm.c
-index bab0185..55491e7 100644
---- a/drivers/gpu/drm/radeon/btc_dpm.c
-+++ b/drivers/gpu/drm/radeon/btc_dpm.c
-@@ -1913,7 +1913,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
- 			}
- 			j++;
- 
--			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
-+			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
- 				return -EINVAL;
- 
- 			tmp = RREG32(MC_PMG_CMD_MRS);
-@@ -1928,7 +1928,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
- 			}
- 			j++;
- 
--			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
-+			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
- 				return -EINVAL;
- 			break;
- 		case MC_SEQ_RESERVE_M >> 2:
-@@ -1942,7 +1942,7 @@ static int btc_set_mc_special_registers(struct radeon_device *rdev,
- 			}
- 			j++;
- 
--			if (j > SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
-+			if (j >= SMC_EVERGREEN_MC_REGISTER_ARRAY_SIZE)
- 				return -EINVAL;
- 			break;
- 		default:
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
