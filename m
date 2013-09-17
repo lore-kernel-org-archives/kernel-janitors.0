@@ -1,132 +1,30 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 26 Sep 2013 07:57:43 +0000
-Subject: Re: [PATCH 4/5] ALSA: Fix assignment of 0/1 to bool variables
-Message-Id: <s5hwqm4dngo.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 17 Sep 2013 10:47:54 +0000
+Subject: [patch] pinctrl: remove an unnecessary cast
+Message-Id: <20130917104754.GA29918@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379875453-20083-1-git-send-email-peter.senna@gmail.com>
-	<1379875453-20083-4-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379875453-20083-4-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: perex@perex.cz, wfp5p@virginia.edu, zonque@gmail.com, eldad@fogrefinery.com, david.henningsson@canonical.com, hegge@resisty.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Sun, 22 Sep 2013 20:44:12 +0200,
-Peter Senna Tschudin wrote:
-> 
-> Convert 0 to false and 1 to true when assigning values to bool
-> variables. Inspired by commit 3db1cd5c05f35fb43eb134df6f321de4e63141f2.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @@
-> bool b;
-> @@
-> (
-> -b = 0
-> +b = false
-> |
-> -b = 1
-> +b = true
-> )
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+sizeof() is already size_t so there is no need to cast here.  Generally,
+casting inside the min() macro instead of using min_t() is considered
+bad style.
 
-Thanks, applied now.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> ---
->  sound/pci/azt3328.c |   14 +++++++-------
->  sound/usb/mixer.c   |    4 ++--
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff -u -p a/sound/usb/mixer.c b/sound/usb/mixer.c
-> --- a/sound/usb/mixer.c
-> +++ b/sound/usb/mixer.c
-> @@ -1151,14 +1151,14 @@ static void check_no_speaker_on_headset(
->  	const char *names_to_check[] = {
->  		"Headset", "headset", "Headphone", "headphone", NULL};
->  	const char **s;
-> -	bool found = 0;
-> +	bool found = false;
->  
->  	if (strcmp("Speaker", kctl->id.name))
->  		return;
->  
->  	for (s = names_to_check; *s; s++)
->  		if (strstr(card->shortname, *s)) {
-> -			found = 1;
-> +			found = true;
->  			break;
->  		}
->  
-> diff -u -p a/sound/pci/azt3328.c b/sound/pci/azt3328.c
-> --- a/sound/pci/azt3328.c
-> +++ b/sound/pci/azt3328.c
-> @@ -715,14 +715,14 @@ snd_azf3328_mixer_ac97_read(struct snd_a
->  	const struct snd_azf3328 *chip = ac97->private_data;
->  	unsigned short reg_azf = snd_azf3328_mixer_ac97_map_reg_idx(reg_ac97);
->  	unsigned short reg_val = 0;
-> -	bool unsupported = 0;
-> +	bool unsupported = false;
->  
->  	snd_azf3328_dbgmixer(
->  		"snd_azf3328_mixer_ac97_read reg_ac97 %u\n",
->  			reg_ac97
->  	);
->  	if (reg_azf & AZF_AC97_REG_UNSUPPORTED)
-> -		unsupported = 1;
-> +		unsupported = true;
->  	else {
->  		if (reg_azf & AZF_AC97_REG_REAL_IO_READ)
->  			reg_val = snd_azf3328_mixer_inw(chip,
-> @@ -759,7 +759,7 @@ snd_azf3328_mixer_ac97_read(struct snd_a
->  				reg_val = azf_emulated_ac97_vendor_id & 0xffff;
->  				break;
->  			default:
-> -				unsupported = 1;
-> +				unsupported = true;
->  				break;
->  			}
->  		}
-> @@ -776,14 +776,14 @@ snd_azf3328_mixer_ac97_write(struct snd_
->  {
->  	const struct snd_azf3328 *chip = ac97->private_data;
->  	unsigned short reg_azf = snd_azf3328_mixer_ac97_map_reg_idx(reg_ac97);
-> -	bool unsupported = 0;
-> +	bool unsupported = false;
->  
->  	snd_azf3328_dbgmixer(
->  		"snd_azf3328_mixer_ac97_write reg_ac97 %u val %u\n",
->  			reg_ac97, val
->  	);
->  	if (reg_azf & AZF_AC97_REG_UNSUPPORTED)
-> -		unsupported = 1;
-> +		unsupported = true;
->  	else {
->  		if (reg_azf & AZF_AC97_REG_REAL_IO_WRITE)
->  			snd_azf3328_mixer_outw(
-> @@ -808,7 +808,7 @@ snd_azf3328_mixer_ac97_write(struct snd_
->  				 */
->  				break;
->  			default:
-> -				unsupported = 1;
-> +				unsupported = true;
->  				break;
->  			}
->  		}
-> @@ -1559,7 +1559,7 @@ snd_azf3328_pcm_trigger(struct snd_pcm_s
->  	struct snd_azf3328_codec_data *codec = runtime->private_data;
->  	int result = 0;
->  	u16 flags1;
-> -	bool previously_muted = 0;
-> +	bool previously_muted = false;
->  	bool is_main_mixer_playback_codec = (AZF_CODEC_PLAYBACK = codec->type);
->  
->  	snd_azf3328_dbgcalls("snd_azf3328_pcm_trigger cmd %d\n", cmd);
-> 
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index a138965..abe66d4 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -508,7 +508,7 @@ static int pinconf_dbg_config_write(struct file *file,
+ 	int i;
+ 
+ 	/* Get userspace string and assure termination */
+-	buf_size = min(count, (size_t)(sizeof(buf)-1));
++	buf_size = min(count, sizeof(buf) - 1);
+ 	if (copy_from_user(buf, user_buf, buf_size))
+ 		return -EFAULT;
+ 	buf[buf_size] = 0;
