@@ -1,15 +1,20 @@
 From: Shalin Mehta <shalinmehta85@gmail.com>
-Date: Tue, 17 Sep 2013 07:04:40 +0000
+Date: Tue, 17 Sep 2013 07:12:42 +0000
 Subject: [PATCH] Staging: bcm: PHSModule.c: Matching the function definition with function declaration
-Message-Id: <1379401480-10149-1-git-send-email-shalinmehta85@gmail.com>
+Message-Id: <1379401962-10208-1-git-send-email-shalinmehta85@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1379401480-10149-1-git-send-email-shalinmehta85@gmail.com>
+In-Reply-To: <1379401480-10149-1-git-send-email-shalinmehta85@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.or, klmckinney1@gmail.com, devel@driverdev.osuosl.org
+To: gregkh@linuxfoundation.org, klmckinney1@gmail.com, devel@driverdev.osuosl.org
 Cc: shalinmehta85@gmail.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Shalin Mehta <shalinmehta85@gmail.com>
+
+NOTE: Sending it again. I got mail delivery failure due to typo in emai ID gregkh@linuxfoundation.org
+
 
 The function implementations of the PHSModule didn't match with the declaration. The functions are static
 in the declaration but in the implemntation they are non-static
