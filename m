@@ -1,7 +1,7 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 18 Sep 2013 15:42:39 +0000
+From: Ben Hutchings <bhutchings@solarflare.com>
+Date: Wed, 18 Sep 2013 15:44:52 +0000
 Subject: Re: [PATCH 005/007] WAN Drivers: Update farsync driver and introduce fsflex driver
-Message-Id: <1379518959.1787.31.camel@joe-AO722>
+Message-Id: <1379519092.1522.27.camel@bwh-desktop.uk.level5networks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E603DC592C92B54A89CEF6B0919A0B1CAAAA787DA4@SOLO.hq.farsitecommunications.com>
 In-Reply-To: <E603DC592C92B54A89CEF6B0919A0B1CAAAA787DA4@SOLO.hq.farsitecommunications.com>
@@ -15,9 +15,56 @@ On Wed, 2013-09-18 at 11:12 +0100, Kevin Curtis wrote:
 > Farsite Communications FarSync driver update
 > 
 > Patch 5 of 7
+> Note that this patch must be applied with patch 4 (farsync_include_patch)
+> 
+> Update the current farsync driver to support all of the PCI and PCI X
+> cards manufactured by Farsite Communications.
+> 
+> Add a tty interface so that the ports can also be used by the ppp daemon.
+> 
+> Add support for big endian systems (the FarSite cards have a little endian
+> processor on board).
+[...]
 
-Please run your patches through checkpatch
+Should all be separate patches.  This is just doing way too much in one
+go.
 
-total: 4178 errors, 6155 warnings, 9910 lines checked
+And there are regressions in here like:
 
+>  static struct pci_driver fst_driver = {
+> -        .name          = FST_NAME,
+> -        .id_table      = fst_pci_dev_id,
+> -        .probe         = fst_add_one,
+> -        .remove        = fst_remove_one,
+> -        .suspend       = NULL,
+> -        .resume        = NULL,
+> +name: FST_NAME,
+> +id_table : fst_pci_dev_id,
+> +probe : fst_add_one,
+> +remove : fst_remove_one,
+> +suspend : NULL,
+> +resume : NULL,
+> +};
+
+And the addition of a file in procfs (at the top level, even!) as if
+it's still 2001 and sysfs doesn't exist:
+
+> +static int farsync_proc_open(struct inode *inode, struct file *file)
+> +{
+> +       return single_open(file, fst_proc_info, NULL);
+> +}
+> +
+> +static const struct file_operations farsync_proc_fops = {
+> +       .open = farsync_proc_open,
+> +       .read = seq_read,
+> +       .llseek = seq_lseek,
+> +       .release = single_release,
+>  };
+
+Ben.
+
+-- 
+Ben Hutchings, Staff Engineer, Solarflare
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
 
