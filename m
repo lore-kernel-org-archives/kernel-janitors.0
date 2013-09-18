@@ -1,38 +1,52 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Sun, 22 Sep 2013 13:35:50 +0000
-Subject: Re: [PATCH 17/19] staging: Change variable type to bool
-Message-Id: <20130922133550.GA8643@amd.pavel.ucw.cz>
+From: Kevin Curtis <Kevin.Curtis@farsite.com>
+Date: Wed, 18 Sep 2013 10:12:32 +0000
+Subject: [PATCH 007/007] WAN Drivers: Update farsync driver and introduce fsflex driver
+Message-Id: <E603DC592C92B54A89CEF6B0919A0B1CAAAA787DA6@SOLO.hq.farsitecommunications.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
- <1379802471-30252-17-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-17-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: gregkh@linuxfoundation.org, harsh1kumar@gmail.com, dan.carpenter@oracle.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Dermot Smith <dermot.smith@farsite.com>
 
-On Sun 2013-09-22 00:27:49, Peter Senna Tschudin wrote:
-> The variable Trigger is only assigned the values true and false.
-> Change its type to bool.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Farsite Communications FarSync driver update
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Patch 7 of 7
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Update the help text and description for farsync configuration in the Kernel.
+Build farsync and fsflex when the farsync driver is selected.
+
+Signed-off-by: Kevin Curtis <kevin.curtis@farsite.com>
+
+---
+
+diff -uprN -X linux-3.10.1/Documentation/dontdiff linux-3.10.1/drivers/net/wan/Kconfig linux-3.10.1_new/drivers/net/wan/Kconfig
+--- linux-3.10.1/drivers/net/wan/Kconfig	2013-07-13 19:42:41.000000000 +0100
++++ linux-3.10.1_new/drivers/net/wan/Kconfig	2013-07-31 14:11:05.792775800 +0100
+@@ -248,11 +248,11 @@ config C101
+ 	  If unsure, say N.
+ 
+ config FARSYNC
+-	tristate "FarSync T-Series support"
++	tristate "FarSync T-Series and Flex support"
+ 	depends on HDLC && PCI
+ 	---help---
+-	  Support for the FarSync T-Series X.21 (and V.35/V.24) cards by
+-	  FarSite Communications Ltd.
++	  Support for the FarSync T-Series and FarSync Flex X.21 (and
++          V.35/V.24) ports by FarSite Communications Ltd.
+ 
+ 	  Synchronous communication is supported on all ports at speeds up to
+ 	  8Mb/s (128K on V.24) using synchronous PPP, Cisco HDLC, raw HDLC,
+diff -uprN -X linux-3.10.1/Documentation/dontdiff linux-3.10.1/drivers/net/wan/Makefile linux-3.10.1_new/drivers/net/wan/Makefile
+--- linux-3.10.1/drivers/net/wan/Makefile	2013-07-13 19:42:41.000000000 +0100
++++ linux-3.10.1_new/drivers/net/wan/Makefile	2013-07-26 09:14:15.345354002 +0100
+@@ -16,7 +16,7 @@ obj-$(CONFIG_HDLC_X25)		+= hdlc_x25.o
+ obj-$(CONFIG_HOSTESS_SV11)	+= z85230.o	hostess_sv11.o
+ obj-$(CONFIG_SEALEVEL_4021)	+= z85230.o	sealevel.o
+ obj-$(CONFIG_COSA)		+= cosa.o
+-obj-$(CONFIG_FARSYNC)		+= farsync.o
++obj-$(CONFIG_FARSYNC)		+= farsync.o fsflex.o
+ obj-$(CONFIG_DSCC4)             += dscc4.o
+ obj-$(CONFIG_X25_ASY)		+= x25_asy.o
+
