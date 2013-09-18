@@ -1,100 +1,40 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 22 Sep 2013 20:24:22 +0000
-Subject: Re: [PATCH V2] wireless: rtlwifi: Replace variable with a brake
-Message-Id: <CA+MoWDpo-CD7B-DKmLX1wZ7AEyzp7+KjpEEE2-eGP8evYC4P=Q@mail.gmail.com>
+From: Kevin Curtis <Kevin.Curtis@farsite.com>
+Date: Wed, 18 Sep 2013 10:11:41 +0000
+Subject: [PATCH 001/007] WAN Drivers: Update farsync driver and introduce fsflex driver
+Message-Id: <E603DC592C92B54A89CEF6B0919A0B1CAAAA787DA0@SOLO.hq.farsitecommunications.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379879410-22787-1-git-send-email-peter.senna@gmail.com>
-	<523F4B76.80507@cogentembedded.com>
-In-Reply-To: <523F4B76.80507@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Larry.Finger@lwfinger.net, chaoming_li@realsil.com.cn, Joe Perches <joe@perches.com>, John Linville <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Dermot Smith <dermot.smith@farsite.com>
 
-On Sun, Sep 22, 2013 at 9:56 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Hello.
->
-> On 09/22/2013 11:50 PM, Peter Senna Tschudin wrote:
->
->    You have a typo in the subject -- "brake" is a device to stop a vehicle.
-> :-)
-Thanks, there was other similar typo after ---
+Farsite Communications FarSync driver update
 
->
->
->> This patch removes the variable continual, and change the while loop
->> to break when efuse_data = 0xFF.
->
->
->> Tested by compilation only.
->
->
->> CC: Joe Perches <joe@perches.com>
->> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
->> ---
->> Changes from V1:
->>   - Fix the indetation
->>   - Remove remaining } from removed else
->
->
->> Please ignore the patch:
->> [PATCH 12/19] wireless: Change variable type to bool
->
->
->> And apply this one instead.
->
->
->> The variable continual was declared as int, but was used as bool. I
->> sent previous patch changing the variable type to bool, but Joe Perches
->> proposed that removing the variable and adding a brake would be better.
->
->
->>   drivers/net/wireless/rtlwifi/efuse.c | 18 ++++++++----------
->>   1 file changed, 8 insertions(+), 10 deletions(-)
->
->
->> diff --git a/drivers/net/wireless/rtlwifi/efuse.c
->> b/drivers/net/wireless/rtlwifi/efuse.c
->> index 838a1ed..2aedd9f 100644
->> --- a/drivers/net/wireless/rtlwifi/efuse.c
->> +++ b/drivers/net/wireless/rtlwifi/efuse.c
->> @@ -1203,20 +1203,18 @@ static void efuse_power_switch(struct ieee80211_hw
->> *hw, u8 write, u8 pwrstate)
->>
->>   static u16 efuse_get_current_size(struct ieee80211_hw *hw)
->>   {
->> -       int continual = true;
->>         u16 efuse_addr = 0;
->>         u8 hworden;
->>         u8 efuse_data, word_cnts;
->>
->> -       while (continual && efuse_one_byte_read(hw, efuse_addr,
->> &efuse_data)
->> -              && (efuse_addr < EFUSE_MAX_SIZE)) {
->> -               if (efuse_data != 0xFF) {
->> -                       hworden = efuse_data & 0x0F;
->> -                       word_cnts = efuse_calculate_word_cnts(hworden);
->> -                       efuse_addr = efuse_addr + (word_cnts * 2) + 1;
->> -               } else {
->> -                       continual = false;
->> -               }
->> +       while (efuse_one_byte_read(hw, efuse_addr, &efuse_data) &&
->> +                                       (efuse_addr < EFUSE_MAX_SIZE)) {
->
->
->    Start this line under efuse_one_byte_read, please. Also, parens are not
-> needed.
-Fixed on V3.
+Patch 1 of 7
 
-Thanks!
-
->
-> WBR, Sergei
->
+Add new FarSite PCI ID's to the pci_ids.h file
 
 
+Signed-off-by: Kevin Curtis <kevin.curtis@farsite.com>
 
--- 
-Peter
+---
+
+diff -uprN -X linux-3.10.1/Documentation/dontdiff linux-3.10.1/include/linux/pci_ids.h linux-3.10.1_new/include/linux/pci_ids.h
+--- linux-3.10.1/include/linux/pci_ids.h	2013-07-13 19:42:41.000000000 +0100
++++ linux-3.10.1_new/include/linux/pci_ids.h	2013-07-26 11:18:39.821065185 +0100
+@@ -2284,6 +2284,14 @@
+ #define PCI_DEVICE_ID_FARSITE_T4U       0x0640
+ #define PCI_DEVICE_ID_FARSITE_TE1       0x1610
+ #define PCI_DEVICE_ID_FARSITE_TE1C      0x1612
++#define PCI_DEVICE_ID_FARSITE_DSL_S1    0x2610
++#define PCI_DEVICE_ID_FARSITE_T4E       0x3640
++#define PCI_DEVICE_ID_FARSITE_T4UE      0x4640
++#define PCI_DEVICE_ID_FARSITE_T2UE      0x4620
++#define PCI_DEVICE_ID_FARSITE_T2U_PMC   0x6620
++#define PCI_DEVICE_ID_FARSITE_T2Ee      0x5621
++#define PCI_DEVICE_ID_FARSITE_T4Ee      0x5641
++
+ 
+ #define PCI_VENDOR_ID_ARIMA		0x161f
+
