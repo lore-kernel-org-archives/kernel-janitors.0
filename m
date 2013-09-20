@@ -1,51 +1,40 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 21 Sep 2013 22:27:40 +0000
-Subject: [PATCH 08/19] net: Change variable type to bool
-Message-Id: <1379802471-30252-8-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Fri, 20 Sep 2013 17:54:38 +0000
+Subject: build regressions 2013-09-20
+Message-Id: <523c8bde.dmlMI9TmSpMOox6X%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jcliburn@gmail.com
-Cc: chris.snook@gmail.com, jkosina@suse.cz, rdunlap@infradead.org, standby24x7@gmail.com, peter.senna@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The variable ret is only assigned the values true and false.
-The function atl1c_read_eeprom already returns bool. Change
-ret type to bool.
+[errors]
+arch/arm/kernel/setup.c:602:2: error: implicit declaration of function 'erratum_a15_798181_init' [-Werror=implicit-function-declaration]
+drivers/pinctrl/pinctrl-adi2.c:25:25: fatal error: asm/portmux.h: No such file or directory
 
-The simplified semantic patch that find this problem is as
-follows (http://coccinelle.lip6.fr/):
+[warnings]
+arch/x86/kernel/cpu/perf_event_intel_ds.c:964:2: warning: format '%ld' expects argument of type 'long int', but argument 4 has type 'int' [-Wformat=]
 
-@exists@
-type T;
-identifier b;
-@@
-- T
-+ bool
-  b = ...;
-  ... when any
-  b = \(true\|false\)
+[sparse]
+net/nfc/digital_technology.c:272:20: sparse: cast to restricted __be16
+net/nfc/digital_technology.c:272:20: sparse: cast to restricted __be16
+net/nfc/digital_technology.c:272:20: sparse: cast to restricted __be16
+net/nfc/digital_technology.c:272:20: sparse: cast to restricted __be16
+net/nfc/digital_technology.c:640:5: sparse: symbol 'digital_tg_send_sensf_res' was not declared. Should it be static?
+drivers/gpu/drm/radeon/radeon_drv.c:168:5: sparse: symbol 'radeon_runtime_pm' was not declared. Should it be static?
+drivers/gpu/drm/radeon/radeon_atpx_handler.c:62:6: sparse: symbol 'radeon_is_px' was not declared. Should it be static?
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+[coccinelle]
+drivers/pinctrl/pinctrl-adi2.c:326:16-19: ERROR: port is NULL but dereferenced.
+drivers/pinctrl/pinctrl-adi2.c:371:16-19: ERROR: port is NULL but dereferenced.
+drivers/pinctrl/pinctrl-adi2.c:250:1-18: ERROR: nested lock+irqsave that reuses flags from line 249.
+drivers/pinctrl/pinctrl-adi2.c:352:1-18: ERROR: nested lock+irqsave that reuses flags from line 351.
+drivers/pinctrl/pinctrl-adi2.c:331:1-18: ERROR: nested lock+irqsave that reuses flags from line 330.
+drivers/pinctrl/pinctrl-adi2.c:378:1-18: ERROR: nested lock+irqsave that reuses flags from line 377.
+drivers/pinctrl/pinctrl-adi2.c:273:1-18: ERROR: nested lock+irqsave that reuses flags from line 272.
+drivers/pinctrl/pinctrl-adi2.c:296:1-18: ERROR: nested lock+irqsave that reuses flags from line 295.
+drivers/pinctrl/pinctrl-adi2.c:311:1-18: ERROR: nested lock+irqsave that reuses flags from line 310.
+
 ---
- drivers/net/ethernet/atheros/atl1c/atl1c_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c b/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
-index 3ef7092..1cda49a 100644
---- a/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
-+++ b/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
-@@ -153,7 +153,7 @@ static int atl1c_get_permanent_address(struct atl1c_hw *hw)
- bool atl1c_read_eeprom(struct atl1c_hw *hw, u32 offset, u32 *p_value)
- {
- 	int i;
--	int ret = false;
-+	bool ret = false;
- 	u32 otp_ctrl_data;
- 	u32 control;
- 	u32 data;
--- 
-1.8.3.1
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
