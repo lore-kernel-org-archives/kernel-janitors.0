@@ -1,31 +1,27 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Sep 2013 11:20:18 +0000
-Subject: [patch] drm/i915: cleanup a min_t() cast
-Message-Id: <20130920112018.GA8655@elgon.mountain>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Fri, 20 Sep 2013 21:50:17 +0000
+Subject: Re: [patch] drm/i915: cleanup a min_t() cast
+Message-Id: <20130920215017.GN32145@phenom.ffwll.local>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130920112018.GA8655@elgon.mountain>
+In-Reply-To: <20130920112018.GA8655@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-The lower layers of sysfs will not allow an "offset" of more than
-GEN7_L3LOG_SIZE and also l3_access_valid() caps it a second time.  But
-it's a little easier to audit if we don't have to worry that the
-subtraction will result in negative values.
+On Fri, Sep 20, 2013 at 02:20:18PM +0300, Dan Carpenter wrote:
+> The lower layers of sysfs will not allow an "offset" of more than
+> GEN7_L3LOG_SIZE and also l3_access_valid() caps it a second time.  But
+> it's a little easier to audit if we don't have to worry that the
+> subtraction will result in negative values.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/gpu/drm/i915/i915_sysfs.c b/drivers/gpu/drm/i915/i915_sysfs.c
-index d572435..b3f62b4 100644
---- a/drivers/gpu/drm/i915/i915_sysfs.c
-+++ b/drivers/gpu/drm/i915/i915_sysfs.c
-@@ -127,7 +127,7 @@ i915_l3_read(struct file *filp, struct kobject *kobj,
- 	if (ret)
- 		return ret;
- 
--	count = min_t(int, GEN7_L3LOG_SIZE-offset, count);
-+	count = min_t(size_t, GEN7_L3LOG_SIZE - offset, count);
- 
- 	ret = i915_mutex_lock_interruptible(drm_dev);
- 	if (ret)
+Queued for -next, thanks for the patch.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
