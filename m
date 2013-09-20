@@ -1,43 +1,42 @@
-From: Kalle Valo <kvalo@adurom.com>
-Date: Tue, 24 Sep 2013 10:54:49 +0000
-Subject: Re: [PATCH 12/19] wireless: Change variable type to bool
-Message-Id: <87wqm6sd52.fsf@purkki.adurom.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Sep 2013 11:37:36 +0000
+Subject: [patch] perf: potential underflow in perf_sample_ustack_size()
+Message-Id: <20130920113736.GB8655@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
-	<1379802471-30252-12-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-12-git-send-email-peter.senna@gmail.com> (Peter
-	Senna Tschudin's message of "Sun, 22 Sep 2013 00:27:44 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Larry.Finger@lwfinger.net, chaoming_li@realsil.com.cn, linville@tuxdriver.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@redhat.com>
+Cc: Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@ghostprotocols.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Peter Senna Tschudin <peter.senna@gmail.com> writes:
+The code here is trying to ensure that we don't have a
+"header_size + stack_size" which is more than USHRT_MAX.  I changed
+the overflow check a little to make it more clear.
 
-> The variable continual is only assigned the values true and false.
-> Change its type to bool.
->
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
->
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
->
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
->  drivers/net/wireless/rtlwifi/efuse.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+My concern here is that if "header_size + sizeof(u64)" is very large
+then we could end up with underflow doing the subtraction and end up
+with a "stack_size" larger than intended.
 
-Please prefix the patch title with "rtlwifi:". We use "wireless:" for
-changes to net/wireless.
+I don't know perf well enough to say if this is possible.
 
--- 
-Kalle Valo
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index dd236b6..eec9e683 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4217,11 +4217,13 @@ perf_sample_ustack_size(u16 stack_size, u16 header_size,
+ 	header_size += 2 * sizeof(u64);
+ 
+ 	/* Do we fit in with the current stack dump size? */
+-	if ((u16) (header_size + stack_size) < header_size) {
++	if (header_size > USHRT_MAX - stack_size) {
+ 		/*
+ 		 * If we overflow the maximum size for the sample,
+ 		 * we customize the stack dump size to fit in.
+ 		 */
++		if (header_size + sizeof(u64) > USHRT_MAX)
++			return 0;
+ 		stack_size = USHRT_MAX - header_size - sizeof(u64);
+ 		stack_size = round_up(stack_size, sizeof(u64));
+ 	}
