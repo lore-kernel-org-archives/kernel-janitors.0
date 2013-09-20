@@ -1,44 +1,31 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 21 Sep 2013 23:15:48 +0000
-Subject: Re: [PATCH 15/19] staging: Change variable type to bool
-Message-Id: <20130921231548.GA2769@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Sep 2013 11:20:18 +0000
+Subject: [patch] drm/i915: cleanup a min_t() cast
+Message-Id: <20130920112018.GA8655@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
- <1379802471-30252-15-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-15-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: maxtram95@gmail.com, yamanetoshi@gmail.com, viro@zeniv.linux.org.uk, wfp5p@virginia.edu, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Sun, Sep 22, 2013 at 12:27:47AM +0200, Peter Senna Tschudin wrote:
-> The variable ownbit_flag is only assigned the values true and false.
-> Change its type to bool.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
->  drivers/staging/rtl8187se/r8180_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The lower layers of sysfs will not allow an "offset" of more than
+GEN7_L3LOG_SIZE and also l3_access_valid() caps it a second time.  But
+it's a little easier to audit if we don't have to worry that the
+subtraction will result in negative values.
 
-You sent me 3 patches with the exact same subject: line, which doesn't
-bode well for the changelog.  You should update your script to put the
-driver name in the subject: to make it more unique and easier to
-identify in the future.  I'll fix these 3 up for now.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-thanks,
-
-greg k-h
+diff --git a/drivers/gpu/drm/i915/i915_sysfs.c b/drivers/gpu/drm/i915/i915_sysfs.c
+index d572435..b3f62b4 100644
+--- a/drivers/gpu/drm/i915/i915_sysfs.c
++++ b/drivers/gpu/drm/i915/i915_sysfs.c
+@@ -127,7 +127,7 @@ i915_l3_read(struct file *filp, struct kobject *kobj,
+ 	if (ret)
+ 		return ret;
+ 
+-	count = min_t(int, GEN7_L3LOG_SIZE-offset, count);
++	count = min_t(size_t, GEN7_L3LOG_SIZE - offset, count);
+ 
+ 	ret = i915_mutex_lock_interruptible(drm_dev);
+ 	if (ret)
