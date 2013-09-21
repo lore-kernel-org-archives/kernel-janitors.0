@@ -1,20 +1,19 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 21 Sep 2013 22:27:42 +0000
-Subject: [PATCH 10/19] net: Change variable type to bool
-Message-Id: <1379802471-30252-10-git-send-email-peter.senna@gmail.com>
+Date: Sat, 21 Sep 2013 22:27:40 +0000
+Subject: [PATCH 08/19] net: Change variable type to bool
+Message-Id: <1379802471-30252-8-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hykim@myri.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: jcliburn@gmail.com
+Cc: chris.snook@gmail.com, jkosina@suse.cz, rdunlap@infradead.org, standby24x7@gmail.com, peter.senna@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There is the rc variable on both myri10ge_ss_lock_napi and
-myri10ge_ss_lock_poll functions. In both cases rc is only assigned the
-values true and false. Both functions already return bool. Change rc
-type to bool.
+The variable ret is only assigned the values true and false.
+The function atl1c_read_eeprom already returns bool. Change
+ret type to bool.
 
 The simplified semantic patch that find this problem is as
 follows (http://coccinelle.lip6.fr/):
@@ -31,31 +30,22 @@ identifier b;
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/atheros/atl1c/atl1c_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-index 149355b..7792264 100644
---- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-+++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-@@ -934,7 +934,7 @@ static inline void myri10ge_ss_init_lock(struct myri10ge_slice_state *ss)
- 
- static inline bool myri10ge_ss_lock_napi(struct myri10ge_slice_state *ss)
+diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c b/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
+index 3ef7092..1cda49a 100644
+--- a/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
++++ b/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
+@@ -153,7 +153,7 @@ static int atl1c_get_permanent_address(struct atl1c_hw *hw)
+ bool atl1c_read_eeprom(struct atl1c_hw *hw, u32 offset, u32 *p_value)
  {
--	int rc = true;
-+	bool rc = true;
- 	spin_lock(&ss->lock);
- 	if ((ss->state & SLICE_LOCKED)) {
- 		WARN_ON((ss->state & SLICE_STATE_NAPI));
-@@ -957,7 +957,7 @@ static inline void myri10ge_ss_unlock_napi(struct myri10ge_slice_state *ss)
- 
- static inline bool myri10ge_ss_lock_poll(struct myri10ge_slice_state *ss)
- {
--	int rc = true;
-+	bool rc = true;
- 	spin_lock_bh(&ss->lock);
- 	if ((ss->state & SLICE_LOCKED)) {
- 		ss->state |= SLICE_STATE_POLL_YIELD;
+ 	int i;
+-	int ret = false;
++	bool ret = false;
+ 	u32 otp_ctrl_data;
+ 	u32 control;
+ 	u32 data;
 -- 
 1.8.3.1
 
