@@ -1,70 +1,64 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Date: Wed, 18 Sep 2013 15:57:45 +0000
-Subject: Re: [PATCH 007/007] WAN Drivers: Update farsync driver and introduce fsflex driver
-Message-Id: <1379519865.1522.37.camel@bwh-desktop.uk.level5networks.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 21 Sep 2013 22:27:37 +0000
+Subject: [PATCH 05/19] media: Change variable type to bool
+Message-Id: <1379802471-30252-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E603DC592C92B54A89CEF6B0919A0B1CAAAA787DA6@SOLO.hq.farsitecommunications.com>
-In-Reply-To: <E603DC592C92B54A89CEF6B0919A0B1CAAAA787DA6@SOLO.hq.farsitecommunications.com>
+References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kevin Curtis <Kevin.Curtis@farsite.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Dermot Smith <dermot.smith@farsite.com>
+To: m.chehab@samsung.com
+Cc: hfvogt@gmx.net, crope@iki.fi, peter.senna@gmail.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2013-09-18 at 11:12 +0100, Kevin Curtis wrote:
-> Farsite Communications FarSync driver update
-> 
-> Patch 7 of 7
-> 
-> Update the help text and description for farsync configuration in the Kernel.
-> Build farsync and fsflex when the farsync driver is selected.
+The variable vco_select is only assigned the values true and false.
+Change its type to bool.
 
-fsflex seems to be an entirely independent module and should have its
-own config option.
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
 
-Ben.
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
 
-> Signed-off-by: Kevin Curtis <kevin.curtis@farsite.com>
-> 
-> ---
-> 
-> diff -uprN -X linux-3.10.1/Documentation/dontdiff linux-3.10.1/drivers/net/wan/Kconfig linux-3.10.1_new/drivers/net/wan/Kconfig
-> --- linux-3.10.1/drivers/net/wan/Kconfig	2013-07-13 19:42:41.000000000 +0100
-> +++ linux-3.10.1_new/drivers/net/wan/Kconfig	2013-07-31 14:11:05.792775800 +0100
-> @@ -248,11 +248,11 @@ config C101
->  	  If unsure, say N.
->  
->  config FARSYNC
-> -	tristate "FarSync T-Series support"
-> +	tristate "FarSync T-Series and Flex support"
->  	depends on HDLC && PCI
->  	---help---
-> -	  Support for the FarSync T-Series X.21 (and V.35/V.24) cards by
-> -	  FarSite Communications Ltd.
-> +	  Support for the FarSync T-Series and FarSync Flex X.21 (and
-> +          V.35/V.24) ports by FarSite Communications Ltd.
->  
->  	  Synchronous communication is supported on all ports at speeds up to
->  	  8Mb/s (128K on V.24) using synchronous PPP, Cisco HDLC, raw HDLC,
-> diff -uprN -X linux-3.10.1/Documentation/dontdiff linux-3.10.1/drivers/net/wan/Makefile linux-3.10.1_new/drivers/net/wan/Makefile
-> --- linux-3.10.1/drivers/net/wan/Makefile	2013-07-13 19:42:41.000000000 +0100
-> +++ linux-3.10.1_new/drivers/net/wan/Makefile	2013-07-26 09:14:15.345354002 +0100
-> @@ -16,7 +16,7 @@ obj-$(CONFIG_HDLC_X25)		+= hdlc_x25.o
->  obj-$(CONFIG_HOSTESS_SV11)	+= z85230.o	hostess_sv11.o
->  obj-$(CONFIG_SEALEVEL_4021)	+= z85230.o	sealevel.o
->  obj-$(CONFIG_COSA)		+= cosa.o
-> -obj-$(CONFIG_FARSYNC)		+= farsync.o
-> +obj-$(CONFIG_FARSYNC)		+= farsync.o fsflex.o
->  obj-$(CONFIG_DSCC4)             += dscc4.o
->  obj-$(CONFIG_X25_ASY)		+= x25_asy.o
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/media/tuners/fc0012.c | 2 +-
+ drivers/media/tuners/fc0013.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/media/tuners/fc0012.c b/drivers/media/tuners/fc0012.c
+index f4d0e79..d74e920 100644
+--- a/drivers/media/tuners/fc0012.c
++++ b/drivers/media/tuners/fc0012.c
+@@ -139,7 +139,7 @@ static int fc0012_set_params(struct dvb_frontend *fe)
+ 	unsigned char reg[7], am, pm, multi, tmp;
+ 	unsigned long f_vco;
+ 	unsigned short xtal_freq_khz_2, xin, xdiv;
+-	int vco_select = false;
++	bool vco_select = false;
+ 
+ 	if (fe->callback) {
+ 		ret = fe->callback(priv->i2c, DVB_FRONTEND_COMPONENT_TUNER,
+diff --git a/drivers/media/tuners/fc0013.c b/drivers/media/tuners/fc0013.c
+index bd8f0f1..b416231 100644
+--- a/drivers/media/tuners/fc0013.c
++++ b/drivers/media/tuners/fc0013.c
+@@ -233,7 +233,7 @@ static int fc0013_set_params(struct dvb_frontend *fe)
+ 	unsigned char reg[7], am, pm, multi, tmp;
+ 	unsigned long f_vco;
+ 	unsigned short xtal_freq_khz_2, xin, xdiv;
+-	int vco_select = false;
++	bool vco_select = false;
+ 
+ 	if (fe->callback) {
+ 		ret = fe->callback(priv->i2c, DVB_FRONTEND_COMPONENT_TUNER,
 -- 
-Ben Hutchings, Staff Engineer, Solarflare
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+1.8.3.1
 
