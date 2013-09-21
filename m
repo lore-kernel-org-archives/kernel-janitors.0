@@ -1,61 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 25 Sep 2013 09:36:12 +0000
-Subject: [patch 2/2] backlight: lm3630: potential NULL deref in probe()
-Message-Id: <20130925093612.GR6192@mwanda>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 21 Sep 2013 22:27:41 +0000
+Subject: [PATCH 09/19] net: Change variable type to bool
+Message-Id: <1379802471-30252-9-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130925085549.GB6661@elgon.mountain>
-In-Reply-To: <20130925085549.GB6661@elgon.mountain>
+References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: eilong@broadcom.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-We dereference "pdata" later in the function so we can't leave it as
-NULL.
+The variable rc is only assigned the values true and false.
+The function bnx2x_prev_is_path_marked already returns bool.
+Change rc type to bool.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
 
-diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
-index 65392f9..6146481 100644
---- a/drivers/video/backlight/lm3630a_bl.c
-+++ b/drivers/video/backlight/lm3630a_bl.c
-@@ -389,22 +389,21 @@ static int lm3630a_probe(struct i2c_client *client,
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index fccfc1d..105cc80 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -9874,7 +9874,7 @@ static int bnx2x_prev_path_mark_eeh(struct bnx2x *bp)
+ static bool bnx2x_prev_is_path_marked(struct bnx2x *bp)
+ {
+ 	struct bnx2x_prev_path_list *tmp_list;
+-	int rc = false;
++	bool rc = false;
  
- 	i2c_set_clientdata(client, pchip);
- 	if (pdata = NULL) {
--		pchip->pdata = devm_kzalloc(pchip->dev,
--					    sizeof(struct
--						   lm3630a_platform_data),
--					    GFP_KERNEL);
--		if (pchip->pdata = NULL)
-+		pdata = devm_kzalloc(pchip->dev,
-+				     sizeof(struct lm3630a_platform_data),
-+				     GFP_KERNEL);
-+		if (pdata = NULL)
- 			return -ENOMEM;
- 		/* default values */
--		pchip->pdata->leda_ctrl = LM3630A_LEDA_ENABLE;
--		pchip->pdata->ledb_ctrl = LM3630A_LEDB_ENABLE;
--		pchip->pdata->leda_max_brt = LM3630A_MAX_BRIGHTNESS;
--		pchip->pdata->ledb_max_brt = LM3630A_MAX_BRIGHTNESS;
--		pchip->pdata->leda_init_brt = LM3630A_MAX_BRIGHTNESS;
--		pchip->pdata->ledb_init_brt = LM3630A_MAX_BRIGHTNESS;
--	} else {
--		pchip->pdata = pdata;
-+		pdata->leda_ctrl = LM3630A_LEDA_ENABLE;
-+		pdata->ledb_ctrl = LM3630A_LEDB_ENABLE;
-+		pdata->leda_max_brt = LM3630A_MAX_BRIGHTNESS;
-+		pdata->ledb_max_brt = LM3630A_MAX_BRIGHTNESS;
-+		pdata->leda_init_brt = LM3630A_MAX_BRIGHTNESS;
-+		pdata->ledb_init_brt = LM3630A_MAX_BRIGHTNESS;
- 	}
-+	pchip->pdata = pdata;
-+
- 	/* chip initialize */
- 	rval = lm3630a_chip_init(pchip);
- 	if (rval < 0) {
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ 	if (down_trylock(&bnx2x_prev_sem))
+ 		return false;
+-- 
+1.8.3.1
+
