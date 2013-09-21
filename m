@@ -1,38 +1,50 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 24 Sep 2013 09:25:22 +0000
-Subject: Re: [patch] drm/i915: precendence bug in GT_PARITY_ERROR()
-Message-Id: <20130924092522.GI13668@phenom.ffwll.local>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 21 Sep 2013 22:27:49 +0000
+Subject: [PATCH 17/19] staging: Change variable type to bool
+Message-Id: <1379802471-30252-17-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130924075735.GB29141@elgon.mountain>
- <87eh8e6333.fsf@intel.com>
-In-Reply-To: <87eh8e6333.fsf@intel.com>
+References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: pavel@ucw.cz
+Cc: gregkh@linuxfoundation.org, harsh1kumar@gmail.com, dan.carpenter@oracle.com, peter.senna@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Sep 24, 2013 at 11:22:56AM +0300, Jani Nikula wrote:
-> On Tue, 24 Sep 2013, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > The | operation has higher precedence than "?:" so the macro always
-> > returns GT_RENDER_L3_PARITY_ERROR_INTERRUPT_S1.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-> 
-> Introduced in
-> commit 35a85ac60618521d41cfdb14f3fbfc8ad7329e9e
-> Author: Ben Widawsky <benjamin.widawsky@intel.com>
-> Date:   Thu Sep 19 11:13:41 2013 -0700
-> 
->     drm/i915: Add second slice l3 remapping
-> 
-> which hasn't been merged to Linus' tree yet.
+The variable Trigger is only assigned the values true and false.
+Change its type to bool.
 
-Queued for -next, thanks for the patch.
--Daniel
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
+
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/staging/winbond/wb35tx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/winbond/wb35tx.c b/drivers/staging/winbond/wb35tx.c
+index 30a77cc..708c5b0 100644
+--- a/drivers/staging/winbond/wb35tx.c
++++ b/drivers/staging/winbond/wb35tx.c
+@@ -180,7 +180,7 @@ void Wb35Tx_CurrentTime(struct wbsoft_priv *adapter, u32 TimeCount)
+ {
+ 	struct hw_data *pHwData = &adapter->sHwData;
+ 	struct wb35_tx *pWb35Tx = &pHwData->Wb35Tx;
+-	unsigned char Trigger = false;
++	bool Trigger = false;
+ 
+ 	if (pWb35Tx->TxTimer > TimeCount)
+ 		Trigger = true;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+1.8.3.1
+
