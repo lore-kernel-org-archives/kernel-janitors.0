@@ -1,42 +1,64 @@
-From: "David Laight" <David.Laight@ACULAB.COM>
-Date: Fri, 13 Sep 2013 10:55:34 +0000
-Subject: RE: [patch -stable] igbvf: integer wrapping bug setting the mtu
-Message-Id: <AE90C24D6B3A694183C094C60CF0A2F6026B7332@saturn3.aculab.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 21 Sep 2013 22:27:35 +0000
+Subject: [PATCH 03/19] infiniband: Change variable type to bool
+Message-Id: <1379802471-30252-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130913083736.GK19211@elgon.mountain> <AE90C24D6B3A694183C094C60CF0A2F6026B732F@saturn3.aculab.com> <20130913095423.GH19256@mwanda>
-In-Reply-To: <20130913095423.GH19256@mwanda>
+References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, John Ronciak <john.ronciak@intel.com>, Tushar Dave <tushar.n.dave@intel.com>, "David S. Miller" <davem@davemloft.net>, Mitch Williams <mitch.a.williams@intel.com>, Patrick McHardy <kaber@trash.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: roland@kernel.org
+Cc: sean.hefty@intel.com, hal.rosenstock@gmail.com, bgottumukkala@emulex.com, tj@kernel.org, peter.senna@gmail.com, dan.carpenter@oracle.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> > >  static int igbvf_change_mtu(struct net_device *netdev, int new_mtu)
-> > >  {
-> > >  	struct igbvf_adapter *adapter = netdev_priv(netdev);
-> > > -	int max_frame = new_mtu + ETH_HLEN + ETH_FCS_LEN;
-> > > +	unsigned int max_frame = new_mtu + ETH_HLEN + ETH_FCS_LEN;
-> > >
-> > >  	if ((new_mtu < 68) || (max_frame > MAX_JUMBO_FRAME_SIZE)) {
-> > >  		dev_err(&adapter->pdev->dev, "Invalid MTU setting\n");
-> >
-> > It is safer to check:
-> >   	if ((new_mtu < 68) || (new_mtu > MAX_JUMBO_FRAME_SIZE - ETH_HLEN - ETH_FCS_LEN)) {
-> >
-> 
-> I believe my fix is already 100% safe...  Where is the bug in my code?
-> 
-> Your fix harder to read because of the additional math and because it's
-> checking "new_mtu" when we care about "max_frame".
+The variables found and is_uctx_pd are only assigned the values true
+and false. Change its type to bool.
 
-I don't like the window check on two variables.
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
 
-However if ETH_HLEN and ETH_FCS_LEN are 'int' (not an unsigned type)
-and 'new_mtu' is just below MAX_INT then the signed arithmetic
-could overflow - generating an indeterminate value.
-In which case 'max_frame' might not exceed MAX_JUMBO_FRAME_SIZE.
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
 
-	David
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_main.c  | 2 +-
+ drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_main.c b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
+index 56e0049..e30e342 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_main.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
+@@ -120,7 +120,7 @@ static bool ocrdma_add_sgid(struct ocrdma_dev *dev, unsigned char *mac_addr,
+ static bool ocrdma_del_sgid(struct ocrdma_dev *dev, unsigned char *mac_addr,
+ 			    bool is_vlan, u16 vlan_id)
+ {
+-	int found = false;
++	bool found = false;
+ 	int i;
+ 	union ib_gid sgid;
+ 	unsigned long flags;
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+index 6e982bb..843d18b 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
+@@ -537,7 +537,7 @@ struct ib_pd *ocrdma_alloc_pd(struct ib_device *ibdev,
+ 	struct ocrdma_pd *pd;
+ 	struct ocrdma_ucontext *uctx = NULL;
+ 	int status;
+-	u8 is_uctx_pd = false;
++	bool is_uctx_pd = false;
+ 
+ 	if (udata && context) {
+ 		uctx = get_ocrdma_ucontext(context);
+-- 
+1.8.3.1
 
