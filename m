@@ -1,61 +1,50 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 22 Sep 2013 19:24:42 +0000
-Subject: [PATCH] wireless: rtlwifi: Replace variable with a brake
-Message-Id: <1379877882-21254-1-git-send-email-peter.senna@gmail.com>
+Date: Sat, 21 Sep 2013 22:27:39 +0000
+Subject: [PATCH 07/19] mmc: Change variable type to bool
+Message-Id: <1379802471-30252-7-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry.Finger@lwfinger.net
-Cc: chaoming_li@realsil.com.cn, joe@perches.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
+To: cjb@laptop.org
+Cc: tgih.jun@samsung.com, linkinjeon@gmail.com, kdorfman@codeaurora.org, ygardi@codeaurora.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-This patch removes the variable continual, and change the while loop
-to break when efuse_data = 0xFF.
+The variable is_rpmb is only assigned the values true and false.
+Change its type to bool.
 
-CC: Joe Perches <joe@perches.com>
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
+
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
+
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-Please ignore the patch:
-[PATCH 12/19] wireless: Change variable type to bool
+ drivers/mmc/card/block.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And apply this one instead.
-
-The variable continual was declared as int, but was used as bool. I
-sent previous patch changing the variable type to bool, but Joe Perches
-proposed that removing the variable and adding a brake would be better.
-
- drivers/net/wireless/rtlwifi/efuse.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/rtlwifi/efuse.c b/drivers/net/wireless/rtlwifi/efuse.c
-index 838a1ed..d1328fc 100644
---- a/drivers/net/wireless/rtlwifi/efuse.c
-+++ b/drivers/net/wireless/rtlwifi/efuse.c
-@@ -1203,19 +1203,18 @@ static void efuse_power_switch(struct ieee80211_hw *hw, u8 write, u8 pwrstate)
+diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
+index 1a3163f..a5f5fb9 100644
+--- a/drivers/mmc/card/block.c
++++ b/drivers/mmc/card/block.c
+@@ -451,7 +451,7 @@ static int mmc_blk_ioctl_cmd(struct block_device *bdev,
+ 	struct mmc_request mrq = {NULL};
+ 	struct scatterlist sg;
+ 	int err;
+-	int is_rpmb = false;
++	bool is_rpmb = false;
+ 	u32 status = 0;
  
- static u16 efuse_get_current_size(struct ieee80211_hw *hw)
- {
--	int continual = true;
- 	u16 efuse_addr = 0;
- 	u8 hworden;
- 	u8 efuse_data, word_cnts;
- 
--	while (continual && efuse_one_byte_read(hw, efuse_addr, &efuse_data)
--	       && (efuse_addr < EFUSE_MAX_SIZE)) {
--		if (efuse_data != 0xFF) {
-+	while (efuse_one_byte_read(hw, efuse_addr, &efuse_data) &&
-+					(efuse_addr < EFUSE_MAX_SIZE)) {
-+		if (efuse_data = 0xFF)
-+			break;
-+
- 			hworden = efuse_data & 0x0F;
- 			word_cnts = efuse_calculate_word_cnts(hworden);
- 			efuse_addr = efuse_addr + (word_cnts * 2) + 1;
--		} else {
--			continual = false;
- 		}
- 	}
- 
+ 	/*
 -- 
 1.8.3.1
 
