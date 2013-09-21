@@ -1,49 +1,54 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 19 Sep 2013 10:17:42 +0000
-Subject: devm functions
-Message-Id: <alpine.DEB.2.02.1309191212060.2251@hadrien>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 21 Sep 2013 22:27:38 +0000
+Subject: [PATCH 06/19] media: Change variable type to bool
+Message-Id: <1379802471-30252-6-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: m.chehab@samsung.com
+Cc: sakari.ailus@iki.fi, hans.verkuil@cisco.com, peter.senna@gmail.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Is there a list anywhere of the kinds of drivers that are allowed to use
-devm functions?
+The variable frame_ready is only assigned the values true and false.
+Change its type to bool.
 
-I know that it is possible for platform drivers, but by tracing backwards
-from calls to eg the platform driver probe function, it was not easy to
-see why this was so - one seems to run into several levels of functions
-pointers, that I didn't bother tracing through.  Perhaps I have missed
-something obvious.
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
 
-As an approximation, I collected the entry points (functions stored insome
-data structure) for which there is at least one definition that calls
-devm_kzalloc.  The list on a moderately recent linux-next is as follows:
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
 
-amba_driver.probe
-ata_port_operations.port_start
-drm_driver.load
-dw_mci_drv_data.init
-ecard_driver.probe
-hid_driver.input_configured
-hid_driver.probe
-i2c_driver.probe
-iio_info.update_scan_mode
-iommu_ops.attach_dev
-macio_driver.probe
-mipi_dsim_lcd_driver.probe
-pci_driver.probe
-pcmcia_driver.probe
-pinctrl_ops.dt_node_to_map
-platform_driver.probe
-pwm_ops.request
-sdio_driver.probe
-sh_pfc_soc_operations.init
-snd_soc_codec_driver.probe
-spi_driver.probe
-usb_driver.probe
-v4l2_subdev_internal_ops.registered
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
 
-thanks,
-julia
+This fails at checkpatch due initializing static variable to false.
+I haven't changed the assignment.
+
+ drivers/media/usb/cpia2/cpia2_usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
+index be17192..351a78a 100644
+--- a/drivers/media/usb/cpia2/cpia2_usb.c
++++ b/drivers/media/usb/cpia2/cpia2_usb.c
+@@ -209,7 +209,7 @@ static void cpia2_usb_complete(struct urb *urb)
+ {
+ 	int i;
+ 	unsigned char *cdata;
+-	static int frame_ready = false;
++	static bool frame_ready = false;
+ 	struct camera_data *cam = (struct camera_data *) urb->context;
+ 
+ 	if (urb->status!=0) {
+-- 
+1.8.3.1
+
