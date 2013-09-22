@@ -1,49 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 28 Sep 2013 09:35:31 +0000
-Subject: [patch] drm/radeon/dpm: off by one in si_set_mc_special_registers()
-Message-Id: <20130928093530.GA26611@elgon.mountain>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sun, 22 Sep 2013 19:24:42 +0000
+Subject: [PATCH] wireless: rtlwifi: Replace variable with a brake
+Message-Id: <1379877882-21254-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130702062012.GA24410@elgon.mountain>
-In-Reply-To: <20130702062012.GA24410@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Alex Deucher <alexander.deucher@amd.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Larry.Finger@lwfinger.net
+Cc: chaoming_li@realsil.com.cn, joe@perches.com, linville@tuxdriver.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-These checks should be ">=" instead of ">".  j is used as an offset into
-the table->mc_reg_address[] array and that has
-SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE (16) elements.
+This patch removes the variable continual, and change the while loop
+to break when efuse_data = 0xFF.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+CC: Joe Perches <joe@perches.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Please ignore the patch:
+[PATCH 12/19] wireless: Change variable type to bool
 
-diff --git a/drivers/gpu/drm/radeon/si_dpm.c b/drivers/gpu/drm/radeon/si_dpm.c
-index cfe5d4d..4a1220c 100644
---- a/drivers/gpu/drm/radeon/si_dpm.c
-+++ b/drivers/gpu/drm/radeon/si_dpm.c
-@@ -5184,7 +5184,7 @@ static int si_set_mc_special_registers(struct radeon_device *rdev,
- 					table->mc_reg_table_entry[k].mc_data[j] |= 0x100;
- 			}
- 			j++;
--			if (j > SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
-+			if (j >= SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
- 				return -EINVAL;
+And apply this one instead.
+
+The variable continual was declared as int, but was used as bool. I
+sent previous patch changing the variable type to bool, but Joe Perches
+proposed that removing the variable and adding a brake would be better.
+
+ drivers/net/wireless/rtlwifi/efuse.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/rtlwifi/efuse.c b/drivers/net/wireless/rtlwifi/efuse.c
+index 838a1ed..d1328fc 100644
+--- a/drivers/net/wireless/rtlwifi/efuse.c
++++ b/drivers/net/wireless/rtlwifi/efuse.c
+@@ -1203,19 +1203,18 @@ static void efuse_power_switch(struct ieee80211_hw *hw, u8 write, u8 pwrstate)
  
- 			if (!pi->mem_gddr5) {
-@@ -5194,7 +5194,7 @@ static int si_set_mc_special_registers(struct radeon_device *rdev,
- 					table->mc_reg_table_entry[k].mc_data[j]  						(table->mc_reg_table_entry[k].mc_data[i] & 0xffff0000) >> 16;
- 				j++;
--				if (j > SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
-+				if (j >= SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
- 					return -EINVAL;
- 			}
- 			break;
-@@ -5207,7 +5207,7 @@ static int si_set_mc_special_registers(struct radeon_device *rdev,
- 					(temp_reg & 0xffff0000) |
- 					(table->mc_reg_table_entry[k].mc_data[i] & 0x0000ffff);
- 			j++;
--			if (j > SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
-+			if (j >= SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
- 				return -EINVAL;
- 			break;
- 		default:
+ static u16 efuse_get_current_size(struct ieee80211_hw *hw)
+ {
+-	int continual = true;
+ 	u16 efuse_addr = 0;
+ 	u8 hworden;
+ 	u8 efuse_data, word_cnts;
+ 
+-	while (continual && efuse_one_byte_read(hw, efuse_addr, &efuse_data)
+-	       && (efuse_addr < EFUSE_MAX_SIZE)) {
+-		if (efuse_data != 0xFF) {
++	while (efuse_one_byte_read(hw, efuse_addr, &efuse_data) &&
++					(efuse_addr < EFUSE_MAX_SIZE)) {
++		if (efuse_data = 0xFF)
++			break;
++
+ 			hworden = efuse_data & 0x0F;
+ 			word_cnts = efuse_calculate_word_cnts(hworden);
+ 			efuse_addr = efuse_addr + (word_cnts * 2) + 1;
+-		} else {
+-			continual = false;
+ 		}
+ 	}
+ 
+-- 
+1.8.3.1
+
