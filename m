@@ -1,40 +1,75 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 20 Sep 2013 17:54:38 +0000
-Subject: build regressions 2013-09-20
-Message-Id: <523c8bde.dmlMI9TmSpMOox6X%fengguang.wu@intel.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sun, 22 Sep 2013 20:22:46 +0000
+Subject: [PATCH V3] wireless: rtlwifi: Replace variable with a break
+Message-Id: <1379881366-25487-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Larry.Finger@lwfinger.net
+Cc: joe@perches.com, sergei.shtylyov@cogentembedded.com, chaoming_li@realsil.com.cn, linville@tuxdriver.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-[errors]
-arch/arm/kernel/setup.c:602:2: error: implicit declaration of function 'erratum_a15_798181_init' [-Werror=implicit-function-declaration]
-drivers/pinctrl/pinctrl-adi2.c:25:25: fatal error: asm/portmux.h: No such file or directory
+This patch removes the variable continual, and change the while loop
+to break when efuse_data = 0xFF.
 
-[warnings]
-arch/x86/kernel/cpu/perf_event_intel_ds.c:964:2: warning: format '%ld' expects argument of type 'long int', but argument 4 has type 'int' [-Wformat=]
+Tested by compilation only.
 
-[sparse]
-net/nfc/digital_technology.c:272:20: sparse: cast to restricted __be16
-net/nfc/digital_technology.c:272:20: sparse: cast to restricted __be16
-net/nfc/digital_technology.c:272:20: sparse: cast to restricted __be16
-net/nfc/digital_technology.c:272:20: sparse: cast to restricted __be16
-net/nfc/digital_technology.c:640:5: sparse: symbol 'digital_tg_send_sensf_res' was not declared. Should it be static?
-drivers/gpu/drm/radeon/radeon_drv.c:168:5: sparse: symbol 'radeon_runtime_pm' was not declared. Should it be static?
-drivers/gpu/drm/radeon/radeon_atpx_handler.c:62:6: sparse: symbol 'radeon_is_px' was not declared. Should it be static?
-
-[coccinelle]
-drivers/pinctrl/pinctrl-adi2.c:326:16-19: ERROR: port is NULL but dereferenced.
-drivers/pinctrl/pinctrl-adi2.c:371:16-19: ERROR: port is NULL but dereferenced.
-drivers/pinctrl/pinctrl-adi2.c:250:1-18: ERROR: nested lock+irqsave that reuses flags from line 249.
-drivers/pinctrl/pinctrl-adi2.c:352:1-18: ERROR: nested lock+irqsave that reuses flags from line 351.
-drivers/pinctrl/pinctrl-adi2.c:331:1-18: ERROR: nested lock+irqsave that reuses flags from line 330.
-drivers/pinctrl/pinctrl-adi2.c:378:1-18: ERROR: nested lock+irqsave that reuses flags from line 377.
-drivers/pinctrl/pinctrl-adi2.c:273:1-18: ERROR: nested lock+irqsave that reuses flags from line 272.
-drivers/pinctrl/pinctrl-adi2.c:296:1-18: ERROR: nested lock+irqsave that reuses flags from line 295.
-drivers/pinctrl/pinctrl-adi2.c:311:1-18: ERROR: nested lock+irqsave that reuses flags from line 310.
-
+CC: Joe Perches <joe@perches.com>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+Changes from V2:
+ - Fix typo in the subject
+ - Fix indentation
+
+Changes from V1:
+ - Fix the indetation
+ - Remove remaining } from removed else
+
+Please ignore the patch:
+[PATCH 12/19] wireless: Change variable type to bool
+
+And apply this one instead.
+
+The variable continual was declared as int, but was used as bool. I
+sent previous patch changing the variable type to bool, but Joe Perches
+proposed that removing the variable and adding a break would be better.
+
+ drivers/net/wireless/rtlwifi/efuse.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/wireless/rtlwifi/efuse.c b/drivers/net/wireless/rtlwifi/efuse.c
+index 838a1ed..ae13fb9 100644
+--- a/drivers/net/wireless/rtlwifi/efuse.c
++++ b/drivers/net/wireless/rtlwifi/efuse.c
+@@ -1203,20 +1203,18 @@ static void efuse_power_switch(struct ieee80211_hw *hw, u8 write, u8 pwrstate)
+ 
+ static u16 efuse_get_current_size(struct ieee80211_hw *hw)
+ {
+-	int continual = true;
+ 	u16 efuse_addr = 0;
+ 	u8 hworden;
+ 	u8 efuse_data, word_cnts;
+ 
+-	while (continual && efuse_one_byte_read(hw, efuse_addr, &efuse_data)
+-	       && (efuse_addr < EFUSE_MAX_SIZE)) {
+-		if (efuse_data != 0xFF) {
+-			hworden = efuse_data & 0x0F;
+-			word_cnts = efuse_calculate_word_cnts(hworden);
+-			efuse_addr = efuse_addr + (word_cnts * 2) + 1;
+-		} else {
+-			continual = false;
+-		}
++	while (efuse_one_byte_read(hw, efuse_addr, &efuse_data) &&
++	       efuse_addr < EFUSE_MAX_SIZE) {
++		if (efuse_data = 0xFF)
++			break;
++
++		hworden = efuse_data & 0x0F;
++		word_cnts = efuse_calculate_word_cnts(hworden);
++		efuse_addr = efuse_addr + (word_cnts * 2) + 1;
+ 	}
+ 
+ 	return efuse_addr;
+-- 
+1.8.3.1
+
