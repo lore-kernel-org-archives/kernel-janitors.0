@@ -1,64 +1,19 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 21 Sep 2013 22:27:35 +0000
-Subject: [PATCH 03/19] infiniband: Change variable type to bool
-Message-Id: <1379802471-30252-3-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Sun, 22 Sep 2013 17:48:53 +0000
+Subject: build regressions 2013-09-22
+Message-Id: <523f2d85.C2y+axw+xg397Ea4%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: roland@kernel.org
-Cc: sean.hefty@intel.com, hal.rosenstock@gmail.com, bgottumukkala@emulex.com, tj@kernel.org, peter.senna@gmail.com, dan.carpenter@oracle.com, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The variables found and is_uctx_pd are only assigned the values true
-and false. Change its type to bool.
+[errors]
+arch/arm/kernel/time.c:123:3: error: implicit declaration of function 'of_clk_init' [-Werror=implicit-function-declaration]
 
-The simplified semantic patch that find this problem is as
-follows (http://coccinelle.lip6.fr/):
+[coccinelle]
+fs/btrfs/ioctl.c:2730:8-15: WARNING opportunity for memdup_user
 
-@exists@
-type T;
-identifier b;
-@@
-- T
-+ bool
-  b = ...;
-  ... when any
-  b = \(true\|false\)
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_main.c  | 2 +-
- drivers/infiniband/hw/ocrdma/ocrdma_verbs.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_main.c b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-index 56e0049..e30e342 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_main.c
-@@ -120,7 +120,7 @@ static bool ocrdma_add_sgid(struct ocrdma_dev *dev, unsigned char *mac_addr,
- static bool ocrdma_del_sgid(struct ocrdma_dev *dev, unsigned char *mac_addr,
- 			    bool is_vlan, u16 vlan_id)
- {
--	int found = false;
-+	bool found = false;
- 	int i;
- 	union ib_gid sgid;
- 	unsigned long flags;
-diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-index 6e982bb..843d18b 100644
---- a/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_verbs.c
-@@ -537,7 +537,7 @@ struct ib_pd *ocrdma_alloc_pd(struct ib_device *ibdev,
- 	struct ocrdma_pd *pd;
- 	struct ocrdma_ucontext *uctx = NULL;
- 	int status;
--	u8 is_uctx_pd = false;
-+	bool is_uctx_pd = false;
- 
- 	if (udata && context) {
- 		uctx = get_ocrdma_ucontext(context);
--- 
-1.8.3.1
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
