@@ -1,30 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 17 Sep 2013 10:47:54 +0000
-Subject: [patch] pinctrl: remove an unnecessary cast
-Message-Id: <20130917104754.GA29918@elgon.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 23 Sep 2013 08:47:53 +0000
+Subject: Re: [patch] pinctrl: remove an unnecessary cast
+Message-Id: <CACRpkdb+cRbq8B09O+CtiFVHEcvRq4K4JZ1CFNx+h4n3tPvfBA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130917104754.GA29918@elgon.mountain>
+In-Reply-To: <20130917104754.GA29918@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-sizeof() is already size_t so there is no need to cast here.  Generally,
-casting inside the min() macro instead of using min_t() is considered
-bad style.
+On Tue, Sep 17, 2013 at 12:47 PM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> sizeof() is already size_t so there is no need to cast here.  Generally,
+> casting inside the min() macro instead of using min_t() is considered
+> bad style.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index a138965..abe66d4 100644
---- a/drivers/pinctrl/pinconf.c
-+++ b/drivers/pinctrl/pinconf.c
-@@ -508,7 +508,7 @@ static int pinconf_dbg_config_write(struct file *file,
- 	int i;
- 
- 	/* Get userspace string and assure termination */
--	buf_size = min(count, (size_t)(sizeof(buf)-1));
-+	buf_size = min(count, sizeof(buf) - 1);
- 	if (copy_from_user(buf, user_buf, buf_size))
- 		return -EFAULT;
- 	buf[buf_size] = 0;
+Patch applied!
+
+Thanks,
+Linus Walleij
