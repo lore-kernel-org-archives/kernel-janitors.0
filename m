@@ -1,44 +1,66 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 23 Sep 2013 14:04:50 +0000
+From: Joe Perches <joe@perches.com>
+Date: Mon, 23 Sep 2013 18:06:51 +0000
 Subject: Re: checkpatch guide for newbies
-Message-Id: <CAMuHMdVbjsg5g2or=g9k-W1KFd0HM4SN5uRWyMtZ9P_=aWhadg@mail.gmail.com>
+Message-Id: <1379959611.3575.40.camel@joe-AO722>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130923090100.GE6192@mwanda>
-	<CA+MoWDpwx_2kh9bEARh4D5xzyYhWekAceipf0YN=3a+Q5W4eNQ@mail.gmail.com>
-In-Reply-To: <CA+MoWDpwx_2kh9bEARh4D5xzyYhWekAceipf0YN=3a+Q5W4eNQ@mail.gmail.com>
+In-Reply-To: <20130923090100.GE6192@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2013 at 2:46 PM, Peter Senna Tschudin
-<peter.senna@gmail.com> wrote:
->> Ask yourself, is the warning message is clear?  Is it needed?  Could a
+On Mon, 2013-09-23 at 12:01 +0300, Dan Carpenter wrote:
+> I've written a checkpatch guide for newbies because it seems like they
+> make the same mistakes over and over.  I intend to put it under
+> Documentation/.  Could you look it over?
+> 
+> 
+> 		Introduction
+> 
+> This document is aimed at new kernel contributors using "checkpatch.pl --file".
+> 
+> The first thing to remember is that the aim is not to get rid of every
+> checkpatch.pl warning; the aim is to make the code cleaner and more readable.
+> The other thing to remember is that checkpatch.pl is not a very smart tool and
+> there are mistakes that it misses so keep your eyes open for those as well.
 
-s/is clear/clear/
+Maybe suggest using
 
->> It's preferred if the operator goes at the end of the first line instead of at
->> the start of the second line:
->> Bad:
->> -       PowerData = (1 << 31) | (0 << 30) | (24 << 24)
->> -                   | BitReverse(w89rf242_txvga_data[i][0], 24);
->> Good:
->> +       PowerData = (1 << 31) | (0 << 30) | (24 << 24) |
->> +                   BitReverse(w89rf242_txvga_data[i][0], 24);
-> What is the rule for where to start the second line here?
+	checkpatch.pl --file --fix --strict --types=<specific_type> <file>
+	mv <file>.EXPERIMENTAL-checkpatch-fixes <file>
+	git diff <file>
 
-Either aligned to the equivalent part on the previous line (i.e. "BitReverse" is
-aligned with "(1 << 31)"), or one indent step more than the beginning of the
-first line (i.e. "BitReverse" is indented by one more TAB tjan "PowerData").
+where <specific_types> is one of
 
-Gr{oetje,eeting}s,
+For whitespace only changes
+	SPACING
+	SPACE_BEFORE_TAB
+	POINTER_LOCATION
+For code changes:
+	C99_COMMENTS
+	PREFER_PACKED
+	PREFER_ALIGNED
+	AVOID_EXTERNS
+	PARENTHESIS_ALIGNMENT
 
-                        Geert
+> For example, checkpatch.pl could warn about a badly formatted warning message.
+> Ask yourself, is the warning message is clear?  Is it needed?  Could a
+> non-privileged user trigger the warning and flood the syslog?  Are there
+> spelling mistakes?  Since Checkpatch.pl has flagged the line as sloppy code,
+> there may be multiple mistakes.
+> 
+> In the Linux kernel, we take an enormous pride in our work and we want clean
+> code.  But the one major drawback to cleanup patches is that they break
+> "git blame" so it's not a good idea for newbies to send very trivial cleanup
+> patches to the kernel/ directory.  It's better to get a little experience in the
+> drivers/ directory first.  The drivers/staging/ directory in particular always
+> needs cleanup patches.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I think suggesting working _only_ in the drivers/staging/
+directory tree might be better.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Maybe I'll submit some auto-neatening script eventually
+and see what you think.
+
