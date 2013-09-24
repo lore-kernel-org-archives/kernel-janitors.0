@@ -1,62 +1,40 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 24 Sep 2013 19:29:49 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Sep 2013 19:59:58 +0000
 Subject: Re: checkpatch guide for newbies
-Message-Id: <CA+MoWDpnNjeEN+Crzh2kQ7DPJ_DqEOP4z-9n3=EqP7hiPgZRXg@mail.gmail.com>
+Message-Id: <20130924195958.GO6247@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130923090100.GE6192@mwanda>
-	<CAErSpo5XgvuG=75nExa7yCa7C+Bxhk+1LwruxY8pv2DU+r-_aA@mail.gmail.com>
-	<5241CB44.8080004@ahsoftware.de>
-In-Reply-To: <5241CB44.8080004@ahsoftware.de>
+ <CAErSpo5XgvuG=75nExa7yCa7C+Bxhk+1LwruxY8pv2DU+r-_aA@mail.gmail.com>
+ <5241CB44.8080004@ahsoftware.de>
+ <CA+MoWDpnNjeEN+Crzh2kQ7DPJ_DqEOP4z-9n3=EqP7hiPgZRXg@mail.gmail.com>
+In-Reply-To: <CA+MoWDpnNjeEN+Crzh2kQ7DPJ_DqEOP4z-9n3=EqP7hiPgZRXg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexander Holler <holler@ahsoftware.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: Alexander Holler <holler@ahsoftware.de>, Bjorn Helgaas <bhelgaas@google.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Sep 24, 2013 at 7:26 PM, Alexander Holler <holler@ahsoftware.de> wrote:
-> Am 24.09.2013 18:36, schrieb Bjorn Helgaas:
->>
->> On Mon, Sep 23, 2013 at 3:01 AM, Dan Carpenter <dan.carpenter@oracle.com>
->> wrote:
->>>
->>>                  Long Lines
->>>
->>> Historically screens were 80 characters wide and it was annoying when
->>> code went
->>> over the edge.  These days we have larger screens, but we keep the 80
->>> character
->>> limit because it forces us to write simpler code.
->
->
-> Sorry, but that just isn't true and never was. Having a line wide limit of
-> 80 characters while forcing tabs to be 8 characters long limits most code to
-> just 72 characters. And even less (max 64) inside constructs like if, for or
-> while.
->
-> The only outcome of that totally silly rule is that variable names will
-> become shorted to silly acronyms almost nobody does understand make code
-> unreadable.
->
-> I always feel like beeing in the IT stone age when programmers thought they
-> have to use variable names like a, b and c to save storage, memory or to
-> type less when reading linux kernel code.
-I was about to disagree because I've never seen variables named a, b
-or c, but I found that there are at least 2238 variables named a, b or
-c in linux-next. This is not good.
+On Tue, Sep 24, 2013 at 09:29:49PM +0200, Peter Senna Tschudin wrote:
+> I was about to disagree because I've never seen variables named a, b
+> or c, but I found that there are at least 2238 variables named a, b or
+> c in linux-next. This is not good.
+> 
 
->
-> Regards,
->
-> Alexander Holler
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+In XGIfb_mode_rate_to_ddata() we have:
 
+	int B, C, D, F, temp, j;
 
+The A and E variables were removed when the code was refactored.  ;P
+Places like this are fairly rare in the kernel outside of the staging/
+directory.
 
--- 
-Peter
+There are lots of times where a single letter variable name is very
+natural.
+
+	char c;
+
+C is terse.  This is explained in Documentation/CodingStyle.
+
+regards,
+dan carpenter
+
