@@ -1,35 +1,35 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Date: Wed, 04 Sep 2013 14:41:18 +0000
-Subject: Re: [patch] sfc: check for allocation failure
-Message-Id: <1378305678.1556.2.camel@bwh-desktop.uk.level5networks.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Sep 2013 07:54:51 +0000
+Subject: [patch] spi: spi-topcliff-pch: fix a pci_iomap() check
+Message-Id: <20130924075451.GA29141@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130902082828.GA30037@elgon.mountain>
-	 <20130903.224939.866623192858217581.davem@davemloft.net>
-In-Reply-To: <20130903.224939.866623192858217581.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: linux-net-drivers@solarflare.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, David Miller <davem@davemloft.net>
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 2013-09-03 at 22:49 -0400, David Miller wrote:
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Mon, 2 Sep 2013 12:04:42 +0300
-> 
-> > It upsets static analyzers when we don't check for allocation failure.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> This applies cleanly neither to net nor net-next, please send me a
-> version that does.
+If pci_iomap() returns NULL, adding "PCH_ADDRESS_SIZE * plat_dev->id"
+can make it non-NULL which breaks the error handling.
 
-Oh yes, I failed to spot the filename.  That function has since been
-moved to falcon.c.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Ben.
-
--- 
-Ben Hutchings, Staff Engineer, Solarflare
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
-
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index eaeeed5..777c404 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -1410,13 +1410,13 @@ static int pch_spi_pd_probe(struct platform_device *plat_dev)
+ 	/* baseaddress + address offset) */
+ 	data->io_base_addr = pci_resource_start(board_dat->pdev, 1) +
+ 					 PCH_ADDRESS_SIZE * plat_dev->id;
+-	data->io_remap_addr = pci_iomap(board_dat->pdev, 1, 0) +
+-					 PCH_ADDRESS_SIZE * plat_dev->id;
++	data->io_remap_addr = pci_iomap(board_dat->pdev, 1, 0);
+ 	if (!data->io_remap_addr) {
+ 		dev_err(&plat_dev->dev, "%s pci_iomap failed\n", __func__);
+ 		ret = -ENOMEM;
+ 		goto err_pci_iomap;
+ 	}
++	data->io_remap_addr += PCH_ADDRESS_SIZE * plat_dev->id;
+ 
+ 	dev_dbg(&plat_dev->dev, "[ch%d] remap_addr=%p\n",
+ 		plat_dev->id, data->io_remap_addr);
