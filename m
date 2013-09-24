@@ -1,73 +1,29 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 11 Aug 2013 16:51:54 +0000
-Subject: [PATCH 13/16] arch/arm/mach-pxa/hx4700.c: Avoid using ARRAY_AND_SIZE(e) as a function argument
-Message-Id: <1376239917-15594-14-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 24 Sep 2013 07:57:35 +0000
+Subject: [patch] drm/i915: precendence bug in GT_PARITY_ERROR()
+Message-Id: <20130924075735.GB29141@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1376239917-15594-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The | operation has higher precedence than "?:" so the macro always
+returns GT_RENDER_L3_PARITY_ERROR_INTERRUPT_S1.
 
-Replace ARRAY_AND_SIZE(e) in function argument position to avoid hiding the
-arity of the called function.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The semantic match that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e,f;
-@@
-
-f(...,
-- ARRAY_AND_SIZE(e)
-+ e,ARRAY_SIZE(e)
-  ,...)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not compiled.
-
- arch/arm/mach-pxa/hx4700.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-index 133109e..8cac0a8 100644
---- a/arch/arm/mach-pxa/hx4700.c
-+++ b/arch/arm/mach-pxa/hx4700.c
-@@ -866,9 +866,9 @@ static void __init hx4700_init(void)
+diff --git a/drivers/gpu/drm/i915/i915_reg.h b/drivers/gpu/drm/i915/i915_reg.h
+index c4f9bef..876666b 100644
+--- a/drivers/gpu/drm/i915/i915_reg.h
++++ b/drivers/gpu/drm/i915/i915_reg.h
+@@ -940,7 +940,7 @@
  
- 	PCFR = PCFR_GPR_EN | PCFR_OPDE;
+ #define GT_PARITY_ERROR(dev) \
+ 	(GT_RENDER_L3_PARITY_ERROR_INTERRUPT | \
+-	 IS_HASWELL(dev) ? GT_RENDER_L3_PARITY_ERROR_INTERRUPT_S1 : 0)
++	 (IS_HASWELL(dev) ? GT_RENDER_L3_PARITY_ERROR_INTERRUPT_S1 : 0))
  
--	pxa2xx_mfp_config(ARRAY_AND_SIZE(hx4700_pin_config));
-+	pxa2xx_mfp_config(hx4700_pin_config, ARRAY_SIZE(hx4700_pin_config));
- 	gpio_set_wake(GPIO12_HX4700_ASIC3_IRQ, 1);
--	ret = gpio_request_array(ARRAY_AND_SIZE(global_gpios));
-+	ret = gpio_request_array(global_gpios, ARRAY_SIZE(global_gpios));
- 	if (ret)
- 		pr_err ("hx4700: Failed to request GPIOs.\n");
- 
-@@ -882,10 +882,13 @@ static void __init hx4700_init(void)
- 	pxa_set_ficp_info(&ficp_info);
- 	pxa27x_set_i2c_power_info(NULL);
- 	pxa_set_i2c_info(NULL);
--	i2c_register_board_info(0, ARRAY_AND_SIZE(i2c_board_info));
--	i2c_register_board_info(1, ARRAY_AND_SIZE(pi2c_board_info));
-+	i2c_register_board_info(0, i2c_board_info,
-+				ARRAY_SIZE(i2c_board_info));
-+	i2c_register_board_info(1, pi2c_board_info,
-+				ARRAY_SIZE(pi2c_board_info));
- 	pxa2xx_set_spi_info(2, &pxa_ssp2_master_info);
--	spi_register_board_info(ARRAY_AND_SIZE(tsc2046_board_info));
-+	spi_register_board_info(tsc2046_board_info,
-+				ARRAY_SIZE(tsc2046_board_info));
- 
- 	gpio_set_value(GPIO71_HX4700_ASIC3_nRESET, 0);
- 	mdelay(10);
-
+ /* These are all the "old" interrupts */
+ #define ILK_BSD_USER_INTERRUPT				(1<<5)
