@@ -1,94 +1,136 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 23 Sep 2013 20:17:24 +0000
+From: Bjorn Helgaas <bhelgaas@google.com>
+Date: Tue, 24 Sep 2013 16:36:18 +0000
 Subject: Re: checkpatch guide for newbies
-Message-Id: <1379967444.3575.56.camel@joe-AO722>
+Message-Id: <CAErSpo5XgvuG=75nExa7yCa7C+Bxhk+1LwruxY8pv2DU+r-_aA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130923090100.GE6192@mwanda>
-	 <1379959611.3575.40.camel@joe-AO722>
-In-Reply-To: <1379959611.3575.40.camel@joe-AO722>
+In-Reply-To: <20130923090100.GE6192@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, 2013-09-23 at 11:06 -0700, Joe Perches wrote:
-> Maybe I'll submit some auto-neatening script eventually
-> and see what you think.
+On Mon, Sep 23, 2013 at 3:01 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> I've written a checkpatch guide for newbies because it seems like they
+> make the same mistakes over and over.  I intend to put it under
+> Documentation/.  Could you look it over?
 
-Maybe something like:
+I think this is great.
 
-From: Joe Perches <joe@perches.com>
-Subject: [PATCH] scripts/fix_with_checkpatch.sh: Add a trivial script to fix simple style defects
+>                 Introduction
+>
+> This document is aimed at new kernel contributors using "checkpatch.pl --file".
+>
+> The first thing to remember is that the aim is not to get rid of every
+> checkpatch.pl warning; the aim is to make the code cleaner and more readable.
+> The other thing to remember is that checkpatch.pl is not a very smart tool and
+> there are mistakes that it misses so keep your eyes open for those as well.
+>
+> For example, checkpatch.pl could warn about a badly formatted warning message.
+> Ask yourself, is the warning message is clear?  Is it needed?  Could a
+> non-privileged user trigger the warning and flood the syslog?  Are there
+> spelling mistakes?  Since Checkpatch.pl has flagged the line as sloppy code,
+> there may be multiple mistakes.
+>
+> In the Linux kernel, we take an enormous pride in our work and we want clean
+> code.  But the one major drawback to cleanup patches is that they break
+> "git blame" so it's not a good idea for newbies to send very trivial cleanup
+> patches to the kernel/ directory.  It's better to get a little experience in the
+> drivers/ directory first.  The drivers/staging/ directory in particular always
+> needs cleanup patches.
+>
+>
+>                 General Hints
+>
+> 1)  Don't put too many things in one patch because it makes it hard to review.
+> Break the patch up into a patch series like this made up example:
+>
+> [PATCH 1/4] subsystem: driver: Use tabs to indent instead of spaces
+> [PATCH 2/4] subsystem: driver: Add spaces around math operations
+> [PATCH 3/4] subsystem: driver: Remove extra braces
+> [PATCH 4/4] subsystem: driver: Delete LINUX_VERSION_CODE related code
 
-Add a few whitespace and style corrections to individual files.
+This is a good hint and a good example.  One thing that annoys me is
+when there's no consistency in subject lines; I wish people would run
+"git log --oneline <file>" and follow the existing convention,
+including spacing, brackets, capitalization, etc.  I also like Ingo's
+suggestion [1] for making them sentences, starting with a verb.
 
-Create git commits for those changes too.
+But maybe that's too nitty-gritty to include.  You already have a nice
+concise writeup and it would be a shame to let us ruin it by committee
+:)
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- scripts/fix_with_checkpatch.sh | 52 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100755 scripts/fix_with_checkpatch.sh
+Bjorn
 
-diff --git a/scripts/fix_with_checkpatch.sh b/scripts/fix_with_checkpatch.sh
-new file mode 100755
-index 0000000..c47b111b
---- /dev/null
-+++ b/scripts/fix_with_checkpatch.sh
-@@ -0,0 +1,50 @@
-+#/bin/sh
-+
-+whitespace_types="spacing space_before_tab pointer_location"
-+changecode_types="c99_comments prefer_packed prefer_aligned avoid_externs parenthesis_alignment"
-+
-+checkpatch_update ()
-+{
-+    local file="$1"
-+    type="$2"
-+
-+    ./scripts/checkpatch.pl --file --fix --strict --types=$type $file
-+    if [ ! -f $file.EXPERIMENTAL-checkpatch-fixes ] ; then
-+	return;
-+    fi
-+
-+    mv $file.EXPERIMENTAL-checkpatch-fixes $file
-+
-+    git diff --stat -p $file | cat
-+
-+    obj="$(echo $file|sed 's/\.c$/\.o/')"
-+
-+    make $obj
-+
-+    tmpfile=$(mktemp git_commit.XXXXXX)
-+    echo "$file: checkpatch neatening for $2" > $tmpfile
-+    echo "" >> $tmpfile
-+    echo "" >> $tmpfile
-+
-+    git commit -s -F $tmpfile -e $file
-+
-+    rm -f $tmpfile
-+}
-+
-+for file in "$@"
-+do
-+
-+    if [ ! -f $file ] ; then 
-+	echo "Argument '$file' is not a file"
-+	continue
-+    fi
-+
-+    for type in $whitespace_types ; do
-+	checkpatch_update $file $type
-+    done
-+
-+    for type in $changecode_types ; do
-+	checkpatch_update $file $type
-+    done
-+
-+done
--- 
-1.8.1.2.459.gbcd45b4.dirty
+[1] http://lkml.kernel.org/r/20120711080446.GA17713@gmail.com
 
-
-
+>                 Long Lines
+>
+> Historically screens were 80 characters wide and it was annoying when code went
+> over the edge.  These days we have larger screens, but we keep the 80 character
+> limit because it forces us to write simpler code.
+>
+> One way to remove indent levels is using functions.  If you find yourself
+> writing a loop or a switch statement and you're already indented several tabs
+> then probably it should be a new function instead.
+>
+> Whenever possible return immediately.
+> Bad:
+> -       foo = kmalloc();
+> -       if (foo) {
+> -               /* code indent 2 tabs */
+> -       }
+> -       return foo;
+> Good:
+> +       foo = kmalloc();
+> +       if (!foo)
+> +               return NULL;
+> +       /* code indented 1 tab */
+> +       return foo;
+>
+> Choose shorter names.
+> Bad:
+> -       for(uiIpv6AddIndex = 0; uiIpv6AddIndex < uiIpv6AddrNoLongWords;
+> -           uiIpv6AddIndex++) {
+> Good:
+> +       for (i = 0; i < long_words; i++) {
+>
+> Use temporary variable names:
+> Bad:
+> -       dev->backdev[count]->bitlistsize > -               dev->backdev[count]->devmagic->bitlistsize;
+> Good:
+> +       back = dev->backdev[count];
+> +       back->bitlistsize = back->devmagic->bitlistsize;
+>
+> Don't do complicated things in the initializer:
+> Bad:
+> -       struct binder_ref_death *tmp_death = container_of(w,
+> -                                               struct binder_ref_death, work);
+> Good:
+> +       struct binder_ref_death *tmp_death;
+> +
+> +       tmp_death = container_of(w, struct binder_ref_death, work);
+>
+> If you must break up a long line then align it nicely.  Use spaces if needed.
+> Bad:
+> -       if (adapter->flowcontrol = FLOW_RXONLY ||
+> -                       adapter->flowcontrol = FLOW_BOTH) {
+> Good:
+> +       if (adapter->flowcontrol = FLOW_RXONLY ||
+> +           adapter->flowcontrol = FLOW_BOTH) {
+>
+> It's preferred if the operator goes at the end of the first line instead of at
+> the start of the second line:
+> Bad:
+> -       PowerData = (1 << 31) | (0 << 30) | (24 << 24)
+> -                   | BitReverse(w89rf242_txvga_data[i][0], 24);
+> Good:
+> +       PowerData = (1 << 31) | (0 << 30) | (24 << 24) |
+> +                   BitReverse(w89rf242_txvga_data[i][0], 24);
+>
+>
+>                 Writing the Changelog
+>
+> Use the word "cleanup" instead of "fix".  "Fix" implies the runtime changed and
+> it fixes a bug.  "Cleanup" implies that runtime stayed exactly the same.
