@@ -1,26 +1,54 @@
-From: Matt Fleming <matt@console-pimps.org>
-Date: Thu, 05 Sep 2013 09:59:20 +0000
-Subject: Re: [PATCH] efivars: Mark local function as static
-Message-Id: <20130905095920.GK28598@console-pimps.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2013 08:55:49 +0000
+Subject: [patch 2/2] backlight: lm3630: potential NULL deref in probe()
+Message-Id: <20130925085549.GB6661@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1378191380-6048-1-git-send-email-prtvar.b@gmail.com>
-In-Reply-To: <1378191380-6048-1-git-send-email-prtvar.b@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bojan Prtvar <prtvar.b@gmail.com>
-Cc: matt.fleming@intel.com, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-On Tue, 03 Sep, at 08:56:20AM, Bojan Prtvar wrote:
-> This fixes the following sparse warning
-> drivers/firmware/efi/efivars.c:567:6: warning: symbol 'efivars_sysfs_exit' was not declared. Should it be static?
-> 
-> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
-> ---
->  drivers/firmware/efi/efivars.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
+We dereference "pdata" later in the function so we can't leave it as
+NULL.
 
-Applied, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Matt Fleming, Intel Open Source Technology Center
+diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+index 65392f9..6146481 100644
+--- a/drivers/video/backlight/lm3630a_bl.c
++++ b/drivers/video/backlight/lm3630a_bl.c
+@@ -389,22 +389,21 @@ static int lm3630a_probe(struct i2c_client *client,
+ 
+ 	i2c_set_clientdata(client, pchip);
+ 	if (pdata = NULL) {
+-		pchip->pdata = devm_kzalloc(pchip->dev,
+-					    sizeof(struct
+-						   lm3630a_platform_data),
+-					    GFP_KERNEL);
+-		if (pchip->pdata = NULL)
++		pdata = devm_kzalloc(pchip->dev,
++				     sizeof(struct lm3630a_platform_data),
++				     GFP_KERNEL);
++		if (pdata = NULL)
+ 			return -ENOMEM;
+ 		/* default values */
+-		pchip->pdata->leda_ctrl = LM3630A_LEDA_ENABLE;
+-		pchip->pdata->ledb_ctrl = LM3630A_LEDB_ENABLE;
+-		pchip->pdata->leda_max_brt = LM3630A_MAX_BRIGHTNESS;
+-		pchip->pdata->ledb_max_brt = LM3630A_MAX_BRIGHTNESS;
+-		pchip->pdata->leda_init_brt = LM3630A_MAX_BRIGHTNESS;
+-		pchip->pdata->ledb_init_brt = LM3630A_MAX_BRIGHTNESS;
+-	} else {
+-		pchip->pdata = pdata;
++		pdata->leda_ctrl = LM3630A_LEDA_ENABLE;
++		pdata->ledb_ctrl = LM3630A_LEDB_ENABLE;
++		pdata->leda_max_brt = LM3630A_MAX_BRIGHTNESS;
++		pdata->ledb_max_brt = LM3630A_MAX_BRIGHTNESS;
++		pdata->leda_init_brt = LM3630A_MAX_BRIGHTNESS;
++		pdata->ledb_init_brt = LM3630A_MAX_BRIGHTNESS;
+ 	}
++	pchip->pdata = pdata;
++
+ 	/* chip initialize */
+ 	rval = lm3630a_chip_init(pchip);
+ 	if (rval < 0) {
