@@ -1,21 +1,27 @@
-From: Stefan Hajnoczi <stefanha@gmail.com>
-Date: Sat, 14 Sep 2013 06:11:05 +0000
-Subject: Re: [patch] staging: line6: add bounds check in snd_toneport_source_put()
-Message-Id: <CAJSP0QWB2jvRZccC=_nNrPbutSKv_a80J03K5WLGf8iWA1P13g@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2013 08:54:51 +0000
+Subject: [patch 1/2] backlight: lm3630: signedness bug in lm3630a_chip_init()
+Message-Id: <20130925085451.GA6661@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130913080713.GI19211@elgon.mountain>
-In-Reply-To: <20130913080713.GI19211@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-On Fri, Sep 13, 2013 at 10:07 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> "source" comes from the user in snd_ctl_elem_write() so it needs to be
-> checked.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"rval" needs to be signed for the error handling to work.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+index c63f918..65392f9 100644
+--- a/drivers/video/backlight/lm3630a_bl.c
++++ b/drivers/video/backlight/lm3630a_bl.c
+@@ -105,7 +105,7 @@ static int lm3630a_chip_init(struct lm3630a_chip *pchip)
+ /* interrupt handling */
+ static void lm3630a_delayed_func(struct work_struct *work)
+ {
+-	unsigned int rval;
++	int rval;
+ 	struct lm3630a_chip *pchip;
+ 
+ 	pchip = container_of(work, struct lm3630a_chip, work.work);
