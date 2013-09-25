@@ -1,91 +1,32 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 05 Sep 2013 21:51:09 +0000
-Subject: build regressions 2013-09-05
-Message-Id: <5228fccd.7ZRTNUYKnMMugjPa%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 25 Sep 2013 08:57:30 +0000
+Subject: [patch] mwifiex: potential integer underflow in mwifiex_ret_wmm_get_status()
+Message-Id: <20130925085729.GC6661@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5228b239.i3r49DwYOMMsJ+V4%fengguang.wu@intel.com>
-In-Reply-To: <5228b239.i3r49DwYOMMsJ+V4%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Bing Zhao <bzhao@marvell.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-drivers/usb/phy/phy-am335x.c:56:4: error: too many arguments to function 'usb_phy_gen_create_phy'
-drivers/acpi/osl.c:575:27: error: 'NR_FIX_BTMAPS' undeclared (first use in this function)
-net/sunrpc/sched.c:1011:16: error: 'struct rpc_task' has no member named 'tk_pid'
+If "resp_len" gets set to negative then it counts as a high positive
+value.
 
-[warnings]
-drivers/usb/phy/phy-generic.c:263: warning: 'flags' is used uninitialized in this function
-kernel/sched/core.c:3226:1: warning: data definition has no type or storage class [enabled by default]
-kernel/sched/core.c:3226:1: warning: type defaults to 'int' in declaration of 'FTRACE_UNSAFE_RCU' [-Wimplicit-int]
-kernel/sched/core.c:3226:1: warning: parameter names (without types) in function declaration [enabled by default]
-
-[sparse]
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-include/linux/slab.h:433:53: sparse: restricted gfp_t degrades to integer
-drivers/acpi/osl.c:674:32: sparse: incorrect type in assignment (different address spaces) @@    expected char *dest_p @@    got void [noderef] <achar *dest_p @@
-drivers/acpi/osl.c:696:31: sparse: incorrect type in assignment (different address spaces) @@    expected char *src_p @@    got void [noderef] <achar *src_p @@
-drivers/usb/phy/phy-am335x.c:55:37: sparse: too many arguments for function usb_phy_gen_create_phy
-fs/cifs/fscache.c:243:6: sparse: symbol '__cifs_fscache_uncache_page' was not declared. Should it be static?
-
-[coccinelle]
-drivers/regulator/max77693.c:275:10-17: ERROR: PTR_ERR applied after initialization to constant on line 274
-drivers/regulator/max8997.c:1213:10-17: ERROR: PTR_ERR applied after initialization to constant on line 1212
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+I spotted this reviewing the int => bool changes, but I don't have the
+hardware and can't test it.
+
+diff --git a/drivers/net/wireless/mwifiex/wmm.c b/drivers/net/wireless/mwifiex/wmm.c
+index 2e8f9cd..3c6ee3a 100644
+--- a/drivers/net/wireless/mwifiex/wmm.c
++++ b/drivers/net/wireless/mwifiex/wmm.c
+@@ -772,6 +772,8 @@ int mwifiex_ret_wmm_get_status(struct mwifiex_private *priv,
+ 			break;
+ 		}
+ 
++		if (resp_len < tlv_len + sizeof(tlv_hdr->header))
++			break;
+ 		curr += (tlv_len + sizeof(tlv_hdr->header));
+ 		resp_len -= (tlv_len + sizeof(tlv_hdr->header));
+ 	}
