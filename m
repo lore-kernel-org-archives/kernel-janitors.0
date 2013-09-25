@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Sat, 21 Sep 2013 21:43:30 +0000
-Subject: build regressions 2013-09-21
-Message-Id: <523e1302.PNYWnlF3qlx+3356%fengguang.wu@intel.com>
+Date: Wed, 25 Sep 2013 17:31:45 +0000
+Subject: build regressions 2013-09-25
+Message-Id: <52431e01.z+fZFsmjqLni+w2p%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,50 +9,83 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/net/ethernet/sfc/rx.c:877:22: error: dereferencing pointer to incomplete type
-drivers/net/ethernet/sfc/rx.c:878:29: error: dereferencing pointer to incomplete type
-drivers/net/ethernet/sfc/rx.c:878:48: error: dereferencing pointer to incomplete type
-drivers/net/ethernet/sfc/rx.c:879:29: error: dereferencing pointer to incomplete type
-drivers/net/ethernet/sfc/rx.c:879:48: error: dereferencing pointer to incomplete type
-drivers/net/ethernet/sfc/rx.c:880:3: error: invalid use of undefined type 'struct ipv6hdr'
-drivers/gpio/gpio-bcm-kona.c:482:2: error: implicit declaration of function 'set_irq_flags' [-Werror=implicit-function-declaration]
-drivers/gpio/gpio-bcm-kona.c:482:22: error: 'IRQF_VALID' undeclared (first use in this function)
-drivers/gpio/gpio-bcm-kona.c:601:22: error: 'IRQF_VALID' undeclared (first use in this function)
-drivers/gpio/gpio-bcm-kona.c:537:2: error: implicit declaration of function 'of_irq_count' [-Werror=implicit-function-declaration]
-av7110_ir.c:(.text+0x2232d3): undefined reference to `input_event'
-av7110_ir.c:(.text+0x2232ec): undefined reference to `input_event'
-av7110_ir.c:(.text+0x2233cd): undefined reference to `input_event'
-av7110_ir.c:(.text+0x22340e): undefined reference to `input_event'
-av7110_ir.c:(.text+0x223420): undefined reference to `input_event'
-ti_am335x_adc.c:(.text+0x11af33): undefined reference to `iio_kfifo_free'
+drivers/usb/serial/mxuport.c:1106:7: error: 'TIOCSRS485' undeclared (first use in this function)
+drivers/usb/serial/mxuport.c:1112:7: error: 'TIOCGRS485' undeclared (first use in this function)
+security/keys/persistent.c:147: error: invalid operands to binary !security/keys/persistent.c:148: error: invalid operands to binary !security/keys/persistent.c:149: error: invalid operands to binary !security/keys/persistent.c:150: error: invalid operands to binary !include/linux/acpi.h:613:19: error: static declaration of 'acpi_gsi_to_irq' follows non-static declaration
+arch/x86/lguest/boot.c:1420:2: error: 'acpi_disabled' undeclared (first use in this function)
+arch/x86/kernel/early-quirks.c:83:6: error: 'acpi_use_timer_override' undeclared (first use in this function)
+arch/x86/kernel/early-quirks.c:87:3: error: 'acpi_skip_timer_override' undeclared (first use in this function)
+arch/x86/kernel/early-quirks.c:124:6: error: 'acpi_use_timer_override' undeclared (first use in this function)
+arch/x86/kernel/early-quirks.c:129:3: error: 'acpi_skip_timer_override' undeclared (first use in this function)
+arch/x86/kernel/early-quirks.c:161:3: error: 'acpi_fix_pin2_polarity' undeclared (first use in this function)
+arch/x86/kernel/early-quirks.c:171:6: error: 'acpi_use_timer_override' undeclared (first use in this function)
+arch/x86/kernel/early-quirks.c:177:3: error: 'acpi_skip_timer_override' undeclared (first use in this function)
+include/acpi/platform/aclinux.h:238:2: error: implicit declaration of function 'kmalloc' [-Werror=implicit-function-declaration]
+include/acpi/platform/aclinux.h:238:41: error: 'GFP_ATOMIC' undeclared (first use in this function)
+include/acpi/platform/aclinux.h:238:54: error: 'GFP_KERNEL' undeclared (first use in this function)
+include/acpi/platform/aclinux.h:243:2: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+include/acpi/platform/aclinux.h:243:41: error: 'GFP_ATOMIC' undeclared (first use in this function)
+include/acpi/platform/aclinux.h:243:54: error: 'GFP_KERNEL' undeclared (first use in this function)
+include/acpi/platform/aclinux.h:248:2: error: implicit declaration of function 'kmem_cache_zalloc' [-Werror=implicit-function-declaration]
+include/acpi/platform/aclinux.h:249:21: error: 'GFP_ATOMIC' undeclared (first use in this function)
+include/acpi/platform/aclinux.h:249:34: error: 'GFP_KERNEL' undeclared (first use in this function)
+include/acpi/platform/aclinux.h:254:2: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+arch/x86/include/asm/smp.h:93:20: error: static declaration of 'smp_send_stop' follows non-static declaration
+arch/x86/include/asm/smp.h:103:20: error: static declaration of 'smp_prepare_boot_cpu' follows non-static declaration
+arch/x86/include/asm/smp.h:108:20: error: static declaration of 'smp_prepare_cpus' follows non-static declaration
+arch/x86/include/asm/smp.h:113:20: error: static declaration of 'smp_cpus_done' follows non-static declaration
+arch/x86/include/asm/smp.h:118:19: error: static declaration of '__cpu_up' follows non-static declaration
+arch/x86/include/asm/smp.h:138:20: error: static declaration of 'smp_send_reschedule' follows non-static declaration
+include/linux/slub_def.h:158:30: error: conflicting types for 'kmalloc'
+include/linux/slab.h:534:21: error: conflicting types for 'kmem_cache_zalloc'
+include/linux/slab.h:544:21: error: conflicting types for 'kzalloc'
+arch/x86/kernel/apic/io_apic.c:2051:6: error: 'acpi_ioapic' undeclared (first use in this function)
+drivers/platform/x86/pvpanic.c:61:2: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
+include/linux/slob_def.h:21:30: error: conflicting types for 'kmalloc'
+arch/x86/platform/efi/efi-bgrt.c:52:3: error: implicit declaration of function 'ioremap' [-Werror=implicit-function-declaration]
+arch/x86/platform/efi/efi-bgrt.c:58:2: error: implicit declaration of function 'memcpy_fromio' [-Werror=implicit-function-declaration]
+arch/x86/platform/efi/efi-bgrt.c:60:3: error: implicit declaration of function 'iounmap' [-Werror=implicit-function-declaration]
+crypto/built-in.o:(.data+0x2740): undefined reference to `RSA_public_key_algorithm'
+include/linux/acpi.h:97:1: error: expected ';' before '}' token
+security/keys/persistent.c:147:11: error: invalid operands to binary != (have 'kuid_t' and 'kuid_t')
+security/keys/persistent.c:148:11: error: invalid operands to binary != (have 'kuid_t' and 'kuid_t')
+security/keys/persistent.c:149:11: error: invalid operands to binary != (have 'kuid_t' and 'kuid_t')
+security/keys/persistent.c:150:11: error: invalid operands to binary != (have 'kuid_t' and 'kuid_t')
+kernel/user_namespace.c:105:2: error: implicit declaration of function 'rwsem_init' [-Werror=implicit-function-declaration]
+include/acpi/platform/aclinux.h:82:31: error: expected ',' or ';' before '{' token
+include/acpi/platform/aclinux.h:82:31: error: expected ',' or ';' before '{' token
+include/acpi/platform/aclinux.h:82:31: error: expected ',' or ';' before '{' token
+include/acpi/platform/aclinux.h:82:31: error: expected ',' or ';' before '{' token
+include/acpi/platform/aclinux.h:82:31: error: expected ',' or ';' before '{' token
+include/acpi/platform/aclinux.h:82:31: error: expected ',' or ';' before '{' token
+arch/x86/kernel/irqinit.c:212:7: error: 'acpi_ioapic' undeclared (first use in this function)
+arch/x86/kernel/smpboot.c:1005:28: error: 'acpi_lapic' undeclared (first use in this function)
+arch/x86/kernel/apic/apic.c:1808:8: error: 'acpi_lapic' undeclared (first use in this function)
+arch/x86/kernel/mpparse.c:214:7: error: 'acpi_lapic' undeclared (first use in this function)
+arch/x86/kernel/mpparse.c:509:6: error: 'acpi_lapic' undeclared (first use in this function)
+arch/x86/kernel/mpparse.c:516:20: error: 'acpi_ioapic' undeclared (first use in this function)
+arch/x86/pci/common.c:557:3: error: implicit declaration of function 'acpi_noirq_set' [-Werror=implicit-function-declaration]
 
 [warnings]
-drivers/net/ethernet/sfc/tx.c:432:1: warning: label 'finish_packet' defined but not used [-Wunused-label]
-drivers/gpio/gpio-bcm-kona.c:586:2: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t' [-Wformat=]
-drivers/block/skd_main.c:4559:96: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'long unsigned int' [-Wformat=]
-drivers/block/skd_main.c:4614:78: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'long unsigned int' [-Wformat=]
-drivers/block/skd_main.c:4614:78: warning: format '%u' expects argument of type 'unsigned int', but argument 7 has type 'long unsigned int' [-Wformat=]
-drivers/block/skd_main.c:4626:95: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'long unsigned int' [-Wformat=]
-drivers/block/skd_main.c:4626:95: warning: format '%u' expects argument of type 'unsigned int', but argument 7 has type 'long unsigned int' [-Wformat=]
-drivers/block/skd_main.c:4671:72: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'long unsigned int' [-Wformat=]
-drivers/block/skd_main.c:4671:72: warning: format '%u' expects argument of type 'unsigned int', but argument 7 has type 'long unsigned int' [-Wformat=]
+arch/arm/mach-imx/time.c:126:2: warning: 'setup_sched_clock' is deprecated (declared at include/linux/sched_clock.h:18) [-Wdeprecated-declarations]
+arch/arm/plat-omap/counter_32k.c:118:2: warning: 'setup_sched_clock' is deprecated (declared at include/linux/sched_clock.h:18) [-Wdeprecated-declarations]
+arch/arm/mach-omap2/timer.c:464:2: warning: 'setup_sched_clock' is deprecated (declared at include/linux/sched_clock.h:18) [-Wdeprecated-declarations]
+include/linux/slab.h:132:6: warning: conflicting types for 'kfree' [enabled by default]
+arch/x86/platform/efi/efi-bgrt.c:52:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+arch/x86/platform/efi/efi-bgrt.c:68:9: warning: assignment makes pointer from integer without a cast [enabled by default]
+sound/soc/codecs/tlv320aic23.c:562:16: warning: unused variable 'aic23' [-Wunused-variable]
+drivers/usb/serial/mxuport.c:809:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+fs/nfs/fscache.c:263:21: warning: unused variable 'nfsi' [-Wunused-variable]
+fs/nfs/fscache.c:286:20: warning: unused variable 'nfsi' [-Wunused-variable]
+arch/xtensa/kernel/time.c:144:2: warning: 'setup_sched_clock' is deprecated (declared at include/linux/sched_clock.h:18) [-Wdeprecated-declarations]
 
 [sparse]
-drivers/net/ethernet/sfc/ef10.c:344:9: sparse: Variable length array is used.
-net/bridge/br_mdb.c:450:17: sparse: incorrect type in argument 2 (different address spaces) @@    expected struct net_bridge_port_group *<noident> @@    got struct net_bridgestruct net_bridge_port_group *<noident> @@
-drivers/net/bonding/bond_main.c:893:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct slave *volatile <noident> @@    got struct sstruct slave *volatile <noident> @@
-drivers/net/bonding/bond_main.c:1604:25: sparse: incorrect type in assignment (different address spaces) @@    expected struct slave *volatile <noident> @@    got struct sstruct slave *volatile <noident> @@
-drivers/net/bonding/bond_main.c:1804:17: sparse: incorrect type in assignment (different address spaces) @@    expected struct slave *volatile <noident> @@    got struct slave *volatile <noident> @@
-drivers/net/bonding/bond_alb.c:1670:9: sparse: incorrect type in assignment (different address spaces) @@    expected struct slave *volatile <noident> @@    got struct sstruct slave *volatile <noident> @@
-fs/binfmt_elf.c:2057:38: sparse: Using plain integer as NULL pointer
-drivers/video/backlight/lm3630a_bl.c:94:68: sparse: mixing different enum types
-drivers/video/aty/radeon_pm.c:2520:31: sparse: restricted pci_power_t degrades to integer
-drivers/video/aty/radeon_pm.c:2522:65: sparse: restricted pci_power_t degrades to integer
-drivers/iio/adc/ti_am335x_adc.c:229:5: sparse: symbol 'tiadc_iio_buffered_hardware_setup' was not declared. Should it be static?
-drivers/net/ethernet/sfc/tx.c:529:9: sparse: undefined identifier 'trace_sfc_transmit'
-drivers/net/ethernet/sfc/rx.c:463:9: sparse: undefined identifier 'trace_sfc_receive'
-drivers/net/ethernet/sfc/ptp.c:347:17: sparse: undefined identifier 'trace_sfc_receive'
-kernel/gcov/base.c:82:6: sparse: symbol '__gcov_merge_ior' was not declared. Should it be static?
+drivers/gpu/drm/i915/i915_gem.c:3162:1: sparse: symbol 'i915_gem_object_bind_to_vm' was not declared. Should it be static?
+
+[coccinelle]
+sound/soc/codecs/max98095.c:466:9-10: WARNING: return of 0/1 in function 'max98095_readable' with return type bool
+sound/soc/codecs/max98095.c:473:9-10: WARNING: return of 0/1 in function 'max98095_volatile' with return type bool
+sound/soc/codecs/max9850.c:55:9-10: WARNING: return of 0/1 in function 'max9850_volatile_register' with return type bool
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
