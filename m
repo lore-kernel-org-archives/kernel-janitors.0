@@ -1,50 +1,37 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Thu, 19 Sep 2013 23:20:38 +0000
-Subject: build regressions 2013-09-19
-Message-Id: <523b86c6.RpDgSQC/bEG+6cFB%fengguang.wu@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 28 Sep 2013 09:39:43 +0000
+Subject: [patch] ncpfs: add a sanity check in ncp_is_nfs_extras()
+Message-Id: <20130928093943.GD26611@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Petr Vandrovec <petr@vandrovec.name>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-[errors]
-arch/blackfin/mach-common/ints-priority.c:827:2: error: implicit declaration of function 'gpio_pm_wakeup_ctrl' [-Werror=implicit-function-declaration]
-arch/blackfin/include/asm/irq_handler.h:15:19: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'init_arch_irq'
-arch/blackfin/include/asm/irq_handler.h:17:20: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'program_IAR'
-arch/blackfin/include/asm/irq_handler.h:19:20: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'init_mach_irq'
-mm/mempolicy.c:2252:27: error: 'lastpid' undeclared (first use in this function)
-sound/soc/davinci/davinci-pcm.c:807:2: error: implicit declaration of function 'dma_alloc_writecombine' [-Werror=implicit-function-declaration]
-sound/soc/davinci/davinci-pcm.c:836:3: error: implicit declaration of function 'dma_free_writecombine' [-Werror=implicit-function-declaration]
-sound/soc/soc-fw.c:89:9: error: 'snd_soc_info_enum_ext' undeclared here (not in a function)
+The "volnum" can come from the server and my static checker complains
+that we can't trust it.  In theory, it could lead to an info leak but
+in real life, it is unlikely.
 
-[warnings]
-Warning(include/linux/interrupt.h:120): No description found for parameter 'active_cpus'
-Warning(kernel/irq/manage.c:1637): No description found for parameter 'mask'
-Warning(kernel/irq/manage.c:1687): No description found for parameter 'mask'
-Warning(kernel/irq/manage.c:1637): No description found for parameter 'mask'
-Warning(kernel/irq/manage.c:1687): No description found for parameter 'mask'
-sound/soc/davinci/davinci-mcasp.c:1050:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-sound/soc/davinci/davinci-pcm.c:273:47: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-sound/soc/davinci/davinci-pcm.c:285:28: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-sound/soc/davinci/davinci-pcm.c:296:27: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-sound/soc/davinci/davinci-pcm.c:807:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+One way this comes from the server is ncp_obtain_info() initializes
+target by calling:
 
-[sparse]
-sound/soc/davinci/davinci-mcasp.c:1092:73: sparse: incorrect type in argument 1 (different base types) @@    expected restricted __be32 const [usertype] *p @@    got icted __be32 const [usertype] *p @@
-fs/sysfs/dir.c:418:6: sparse: context imbalance in 'sysfs_addrm_start' - wrong count at exit
-fs/sysfs/dir.c:586:9: sparse: context imbalance in 'sysfs_addrm_finish' - wrong count at exit
-drivers/phy/phy-omap-pipe3.c:84:16: sparse: Using plain integer as NULL pointer
-mm/mempolicy.c:2252:14: sparse: undefined identifier 'lastpid'
+	ncp_extract_file_info(ncp_reply_data(server, 0), target);
 
-[coccinelle]
-sound/soc/davinci/davinci-evm.c:169:45-46: codec_dai_name: first occurrence line 174, second occurrence line 183
-sound/soc/davinci/davinci-evm.c:169:45-46: codec_name: first occurrence line 176, second occurrence line 184
-sound/soc/davinci/davinci-evm.c:169:45-46: cpu_dai_name: first occurrence line 173, second occurrence line 182
-sound/soc/davinci/davinci-evm.c:169:45-46: name: first occurrence line 171, second occurrence line 180
-sound/soc/davinci/davinci-evm.c:169:45-46: platform_name: first occurrence line 178, second occurrence line 185
-sound/soc/davinci/davinci-evm.c:169:45-46: stream_name: first occurrence line 172, second occurrence line 181
+It then passes target to ncp_obtain_nfs_info() and from there to
+ncp_is_nfs_extras().
 
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/ncpfs/ncplib_kernel.h b/fs/ncpfs/ncplib_kernel.h
+index 32c0658..ae08b9f 100644
+--- a/fs/ncpfs/ncplib_kernel.h
++++ b/fs/ncpfs/ncplib_kernel.h
+@@ -119,6 +119,7 @@ int ncp_create_new(struct inode *dir, struct dentry *dentry,
+ static inline int ncp_is_nfs_extras(struct ncp_server* server, unsigned int volnum) {
+ #ifdef CONFIG_NCPFS_NFS_NS
+ 	return (server->m.flags & NCP_MOUNT_NFS_EXTRAS) &&
++	       (volnum < ARRAY_SIZE(server->name_space)) &&
+ 	       (server->name_space[volnum] = NW_NS_NFS);
+ #else
+ 	return 0;
