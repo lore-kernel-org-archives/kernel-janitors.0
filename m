@@ -1,54 +1,254 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 21 Sep 2013 22:27:38 +0000
-Subject: [PATCH 06/19] media: Change variable type to bool
-Message-Id: <1379802471-30252-6-git-send-email-peter.senna@gmail.com>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Mon, 30 Sep 2013 18:14:46 +0000
+Subject: build regressions 2013-09-30
+Message-Id: <5249bf96.YIbdWAdOVIHKtetO%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1379802471-30252-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: m.chehab@samsung.com
-Cc: sakari.ailus@iki.fi, hans.verkuil@cisco.com, peter.senna@gmail.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The variable frame_ready is only assigned the values true and false.
-Change its type to bool.
+[errors]
+mcam-core.c:(.text+0x3bf73a): undefined reference to `vb2_dma_sg_memops'
+drivers/gpu/drm/drm_crtc.c:2084:36: error: 'CRTC_STEREO_DOUBLE' undeclared (first use in this function)
+smssdio.c:(.text+0x847ab): undefined reference to `smscore_putbuffer'
+smssdio.c:(.text+0x847b5): undefined reference to `smscore_unregister_device'
+smssdio.c:(.text+0x8482e): undefined reference to `smscore_getbuffer'
+smssdio.c:(.text+0x8490c): undefined reference to `smscore_putbuffer'
+smssdio.c:(.text+0x8494f): undefined reference to `smscore_onresponse'
+smssdio.c:(.text+0x84a7a): undefined reference to `sms_get_board'
+smssdio.c:(.text+0x84a98): undefined reference to `smscore_register_device'
+smssdio.c:(.text+0x84aaf): undefined reference to `smscore_set_board_id'
+smssdio.c:(.text+0x84b0c): undefined reference to `smscore_start_device'
+smssdio.c:(.text+0x84b3f): undefined reference to `smscore_unregister_device'
+smssdio.c:(.text+0x8c45c): undefined reference to `smsendian_handle_rx_message'
+smssdio.c:(.text+0x8c499): undefined reference to `smsendian_handle_tx_message'
 
-The simplified semantic patch that find this problem is as
-follows (http://coccinelle.lip6.fr/):
+[warnings]
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'vendor_commands'
+Warning(include/net/cfg80211.h:2898): No description found for parameter 'n_vendor_commands'
+security/apparmor/crypto.c:72:1: warning: 'aa_calc_profile_hash' uses dynamic stack allocation [enabled by default]
 
-@exists@
-type T;
-identifier b;
-@@
-- T
-+ bool
-  b = ...;
-  ... when any
-  b = \(true\|false\)
+[sparse]
+security/apparmor/crypto.c:37:47: sparse: Variable length array is used.
+arch/x86/platform/efi/efi.c:74:27: sparse: Using plain integer as NULL pointer
+drivers/firmware/efi/efi.c:161:27: sparse: Using plain integer as NULL pointer
+drivers/firmware/efi/efi.c:202:23: sparse: incorrect type in assignment (different address spaces) @@    expected void *config_tables @@    got void [noderef] <avoid *config_tables @@
+drivers/firmware/efi/efi.c:240:23: sparse: incorrect type in argument 1 (different address spaces) @@    expected void [noderef] <asn:2>*addr @@    got sn:2>*addr @@
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+[coccinelle]
+drivers/staging/rtl8188eu/os_dep/ioctl_linux.c:4536:43-50: ERROR: pregpriv is NULL but dereferenced.
+drivers/staging/rtl8188eu/os_dep/ioctl_linux.c:4548:48-60: ERROR: pregpriv is NULL but dereferenced.
+drivers/staging/rtl8188eu/os_dep/ioctl_linux.c:7232:2-17: code aligned with following code on line 7234
+drivers/staging/rtl8188eu/os_dep/ioctl_linux.c:6978:26-32: ERROR: application of sizeof to pointer
+drivers/staging/rtl8188eu/hal/rtl8188e_dm.c:60:24-30: ERROR: application of sizeof to pointer
+drivers/staging/rtl8188eu/core/rtw_mp.c:910:25-31: ERROR: application of sizeof to pointer
+drivers/regulator/da9063-regulator.c:701:2-3: Unneeded semicolon
+
 ---
-
-This fails at checkpatch due initializing static variable to false.
-I haven't changed the assignment.
-
- drivers/media/usb/cpia2/cpia2_usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/cpia2/cpia2_usb.c b/drivers/media/usb/cpia2/cpia2_usb.c
-index be17192..351a78a 100644
---- a/drivers/media/usb/cpia2/cpia2_usb.c
-+++ b/drivers/media/usb/cpia2/cpia2_usb.c
-@@ -209,7 +209,7 @@ static void cpia2_usb_complete(struct urb *urb)
- {
- 	int i;
- 	unsigned char *cdata;
--	static int frame_ready = false;
-+	static bool frame_ready = false;
- 	struct camera_data *cam = (struct camera_data *) urb->context;
- 
- 	if (urb->status!=0) {
--- 
-1.8.3.1
-
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
