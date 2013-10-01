@@ -1,52 +1,28 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Thu, 31 Oct 2013 11:57:49 +0000
-Subject: Re: [patch] i2c-scmi: remove some bogus NULL checks
-Message-Id: <20131031115749.GC3431@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="lCAWRPmW1mITcIfM"
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Tue, 01 Oct 2013 15:39:30 +0000
+Subject: Re: watchdog: ts72xx_wdt: cleanup return codes in ioctl
+Message-Id: <20131001153930.GA25875@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131019084622.GA9312@longonot.mountain>
-In-Reply-To: <20131019084622.GA9312@longonot.mountain>
+References: <20130823093832.GL31293@elgon.mountain>
+In-Reply-To: <20130823093832.GL31293@elgon.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jiang Liu <jiang.liu@huawei.com>, Toshi Kani <toshi.kani@hp.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Yinghai Lu <yinghai@kernel.org>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
---lCAWRPmW1mITcIfM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Oct 19, 2013 at 11:46:22AM +0300, Dan Carpenter wrote:
-> "obj" can't be NULL here.
->=20
-> We already know that "pkg->package.elements" gives us a valid pointer
-> so the next pointer after that is also non-NULL.
->=20
+On Fri, Aug 23, 2013 at 05:38:32PM -0000, Dan Carpenter wrote:
+> There seems to be some confusion here which functions return positive
+> numbers and which return negative error codes.
+> 
+> copy_to_user() returns the number of bytes remaining to be copied but we
+> want to return -EFAULT.
+> 
+> The rest is just clean up.  get_user() actually returns zero on success
+> and -EFAULT on error so we can preserve the error code.  The
+> timeout_to_regval() function returns -EINVAL on failure, but we can
+> propogate that back instead of hardcoding -EINVAL ourselves.
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied to for-next, thanks!
-
-
---lCAWRPmW1mITcIfM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSckW8AAoJEBQN5MwUoCm2zb8P/ja1eD7gaDcs9zslq1ndaZXe
-vB/mz7ZKvyCxCmI35jz1zJxARS7/yGXEFGqptn99PcXizVXkVlDBLxJTw20sYAUD
-o20aJuqs7tzt3ksgjBnfAUzxczIGUxHtvIZ1idUx0u4Uklm0sIJ9PYgqWqNVTO58
-1WBZ+gZgF4lzVcUFECOa/Lj6PjLHVblF3JatgpXOAS0Pw3mQFxqLsmBzmshYBspX
-znjvPAgGPpT64HgNhrMoFUv+NUKnFP0o1oBpeKrd0/bHxY2S8kfcAO0mVnM4IP59
-MWAUKC/imRai5Gy5Ln4zbyYSFrh5HLEOxT0YMZSoa15eWG6Uyzt6ABxWqlZ41WGX
-9PFjDetkmtdhZqQJYrgn6a6TvvuZngBjBNRmHfIV7cg0136VhI9T+OKulysar968
-654QWniAsS+9ktdadgLOfWwblolRkBl5GA38/KBIRvDlLwNH7tVK2U4BKxqgPqPn
-GgdgF0lB5WKdRSYEJUoONRZgdYLrsKwAd6GaPRM59W56XLsVe0pzGM42EDTwbril
-odtuCwOcgwnljBte26x8arfnioW/JttqKEa9rJtEnuaymFHOgrkcoFq9FdD37P7r
-zES4eNFt31jJhh1c6JMSRRXBAeo4p701Th8qAR8HVmgGU9OB4PfjAVgZhgiCLWAI
-ZWRQMlLGmWRqlbBf7b3g
-=P6HC
------END PGP SIGNATURE-----
-
---lCAWRPmW1mITcIfM--
+> 
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
