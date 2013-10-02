@@ -1,33 +1,64 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Date: Tue, 29 Oct 2013 07:44:26 +0000
-Subject: Re: [patch] watchdog: ts72xx_wdt: cleanup return codes in ioctl
-Message-Id: <20131029074426.GA19704@spo001.leaseweb.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 02 Oct 2013 12:19:50 +0000
+Subject: [PATCH 10/19 v2] net: myri10ge: Change variable type to bool
+Message-Id: <1380716391-20214-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823093832.GL31293@elgon.mountain>
-In-Reply-To: <20130823093832.GL31293@elgon.mountain>
+References: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hykim@myri.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-Hi Dan,
+There is the rc variable on both myri10ge_ss_lock_napi and
+myri10ge_ss_lock_poll functions. In both cases rc is only assigned the
+values true and false. Both functions already return bool. Change rc
+type to bool.
 
-> There seems to be some confusion here which functions return positive
-> numbers and which return negative error codes.
-> 
-> copy_to_user() returns the number of bytes remaining to be copied but we
-> want to return -EFAULT.
-> 
-> The rest is just clean up.  get_user() actually returns zero on success
-> and -EFAULT on error so we can preserve the error code.  The
-> timeout_to_regval() function returns -EINVAL on failure, but we can
-> propogate that back instead of hardcoding -EINVAL ourselves.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
 
-This patch has been added to linux-watchdog-next.
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
 
-Kind regards,
-Wim.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Changes from v1:
+ - Added subsystem prefix to shortlog
+
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+index 149355b..7792264 100644
+--- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
++++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+@@ -934,7 +934,7 @@ static inline void myri10ge_ss_init_lock(struct myri10ge_slice_state *ss)
+ 
+ static inline bool myri10ge_ss_lock_napi(struct myri10ge_slice_state *ss)
+ {
+-	int rc = true;
++	bool rc = true;
+ 	spin_lock(&ss->lock);
+ 	if ((ss->state & SLICE_LOCKED)) {
+ 		WARN_ON((ss->state & SLICE_STATE_NAPI));
+@@ -957,7 +957,7 @@ static inline void myri10ge_ss_unlock_napi(struct myri10ge_slice_state *ss)
+ 
+ static inline bool myri10ge_ss_lock_poll(struct myri10ge_slice_state *ss)
+ {
+-	int rc = true;
++	bool rc = true;
+ 	spin_lock_bh(&ss->lock);
+ 	if ((ss->state & SLICE_LOCKED)) {
+ 		ss->state |= SLICE_STATE_POLL_YIELD;
+-- 
+1.8.3.1
 
