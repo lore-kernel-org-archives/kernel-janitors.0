@@ -1,36 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 Oct 2013 19:41:15 +0000
-Subject: Re: [PATCH 19/19 v2] net: ipv4: Change variable type to bool
-Message-Id: <20131003.154115.1065424099933792289.davem@davemloft.net>
+From: Sagar Padhye <sgr.m.pdy@gmail.com>
+Date: Wed, 02 Oct 2013 18:59:04 +0000
+Subject: [PATCH] FIXED sparse warning : drivers/cpuidle/cpuidle.c:27:1: warning: symbol 'cpuidle_dev' was not
+Message-Id: <1380739624-17257-1-git-send-email-sgr.m.pdy@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
-	<1380716391-20214-4-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1380716391-20214-4-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: kuznet@ms2.inr.ac.ru, jmorris@namei.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed,  2 Oct 2013 14:19:51 +0200
+---
+This is the first patch I am sending out, hope this is ok. I checked that cpuidle_devices is only being used in cpuidle.c - hence thought that it can be made static and be removed from header.
 
-> The variable fully_acked is only assigned the values true and false.
-> Change its type to bool.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+ drivers/cpuidle/cpuidle.c | 4 ++--
+ include/linux/cpuidle.h   | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Applied.
+diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
+index d75040d..4826506 100644
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -23,8 +23,8 @@
+ 
+ #include "cpuidle.h"
+ 
+-DEFINE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
+-DEFINE_PER_CPU(struct cpuidle_device, cpuidle_dev);
++static DEFINE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
++static DEFINE_PER_CPU(struct cpuidle_device, cpuidle_dev);
+ 
+ DEFINE_MUTEX(cpuidle_lock);
+ LIST_HEAD(cpuidle_detected_devices);
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 781addc..96c8ed8 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -83,7 +83,6 @@ struct cpuidle_device {
+ #endif
+ };
+ 
+-DECLARE_PER_CPU(struct cpuidle_device *, cpuidle_devices);
+ 
+ /**
+  * cpuidle_get_last_residency - retrieves the last state's residency time
+-- 
+1.8.1.2
+
