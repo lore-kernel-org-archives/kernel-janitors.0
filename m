@@ -1,49 +1,60 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 01 Oct 2013 16:47:18 +0000
-Subject: build regressions 2013-10-01
-Message-Id: <524afc96.f1D2QrwyJHjbY+IO%fengguang.wu@intel.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 02 Oct 2013 15:35:02 +0000
+Subject: Re: [patch] drm/radeon/dpm: off by one in si_set_mc_special_registers()
+Message-Id: <CADnq5_Mu9s2KuTjmU=KAjkc3C902k7OY+ev5OBxtfyPuOYruHA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130702062012.GA24410@elgon.mountain>
+	<20130928093530.GA26611@elgon.mountain>
+In-Reply-To: <20130928093530.GA26611@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Airlie <airlied@linux.ie>, Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
 
-[errors]
-drivers/acpi/thermal.c:989:15: error: 'thermal_act' undeclared here (not in a function)
-drivers/acpi/thermal.c:997:15: error: 'thermal_psv' undeclared here (not in a function)
-drivers/acpi/thermal.c:1005:15: error: 'thermal_tzp' undeclared here (not in a function)
-drivers/acpi/thermal.c:1013:15: error: 'thermal_nocrt' undeclared here (not in a function)
-arch/x86/include/asm/rwsem.h:247:2: error: implicit declaration of function 'elide_unlock_check' [-Werror=implicit-function-declaration]
-fs/xfs/xfs_log_recover.c:1588:4: error: implicit declaration of function 'free' [-Werror=implicit-function-declaration]
-mm/filemap.c:667:3: error: implicit declaration of function 'up_read_state' [-Werror=implicit-function-declaration]
-kernel/futex.c:404:2: error: implicit declaration of function 'down_read_state' [-Werror=implicit-function-declaration]
-kernel/futex.c:407:2: error: implicit declaration of function 'up_read_state' [-Werror=implicit-function-declaration]
-drivers/i2c/Kconfig:5:error: recursive dependency detected!
-drivers/i2c/Kconfig:5:error: recursive dependency detected!
-include/linux/list_bl.h:65:2: error: implicit declaration of function '_xtest' [-Werror=implicit-function-declaration]
-arch/x86/mm/fault.c:789:2: error: implicit declaration of function 'elide_abort' [-Werror=implicit-function-declaration]
+On Sat, Sep 28, 2013 at 5:35 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> These checks should be ">=" instead of ">".  j is used as an offset into
+> the table->mc_reg_address[] array and that has
+> SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE (16) elements.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-[warnings]
-drivers/staging/comedi/drivers/ni_labpc_isadma.c:54:2: warning: 'virt_to_bus' is deprecated (declared at arch/alpha/include/asm/io.h:114) [-Wdeprecated-declarations]
-drivers/net/wireless/ath/ath10k/core.c:406:7: warning: format '%d' expects argument of type 'int', but argument 2 has type 'size_t' [-Wformat=]
-drivers/net/wireless/ath/ath10k/core.c:433:8: warning: format '%d' expects argument of type 'int', but argument 3 has type 'size_t' [-Wformat=]
-drivers/net/wireless/ath/ath10k/core.c:433:8: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-fs/xfs/xfs_log_recover.c:1588:4: warning: incompatible implicit declaration of built-in function 'free' [enabled by default]
-include/linux/dynamic_debug.h:64:16: warning: format '%X' expects argument of type 'unsigned int', but argument 8 has type 'ssize_t' [-Wformat=]
-drivers/usb/wusbcore/wa-xfer.c:304:4: warning: format '%X' expects argument of type 'unsigned int', but argument 8 has type 'ssize_t' [-Wformat=]
-kernel/futex.c:402:6: warning: unused variable 'state' [-Wunused-variable]
-include/linux/compiler.h:137:17: warning: format '%X' expects argument of type 'unsigned int', but argument 8 has type 'ssize_t' [-Wformat=]
+Applied.  thanks!
 
-[sparse]
-arch/x86/boot/compressed/../../../../drivers/firmware/efi/efi-stub-helper.c:550:15: sparse: memset with byte count of 0
-fs/xfs/xfs_log_recover.c:1588:25: sparse: undefined identifier 'free'
-arch/x86/kernel/smpboot.c:650:6: sparse: symbol 'smp_announce' was not declared. Should it be static?
-kernel/smp.c:527:13: sparse: symbol 'smp_announce' was not declared. Should it be static?
+Alex
 
-[coccinelle]
-drivers/net/wireless/ath/ath10k/core.c:507:2-3: Unneeded semicolon
-ipc/sem.c:330:4-10: preceding lock on line 317
-
----
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+>
+> diff --git a/drivers/gpu/drm/radeon/si_dpm.c b/drivers/gpu/drm/radeon/si_dpm.c
+> index cfe5d4d..4a1220c 100644
+> --- a/drivers/gpu/drm/radeon/si_dpm.c
+> +++ b/drivers/gpu/drm/radeon/si_dpm.c
+> @@ -5184,7 +5184,7 @@ static int si_set_mc_special_registers(struct radeon_device *rdev,
+>                                         table->mc_reg_table_entry[k].mc_data[j] |= 0x100;
+>                         }
+>                         j++;
+> -                       if (j > SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
+> +                       if (j >= SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
+>                                 return -EINVAL;
+>
+>                         if (!pi->mem_gddr5) {
+> @@ -5194,7 +5194,7 @@ static int si_set_mc_special_registers(struct radeon_device *rdev,
+>                                         table->mc_reg_table_entry[k].mc_data[j] >                                                 (table->mc_reg_table_entry[k].mc_data[i] & 0xffff0000) >> 16;
+>                                 j++;
+> -                               if (j > SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
+> +                               if (j >= SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
+>                                         return -EINVAL;
+>                         }
+>                         break;
+> @@ -5207,7 +5207,7 @@ static int si_set_mc_special_registers(struct radeon_device *rdev,
+>                                         (temp_reg & 0xffff0000) |
+>                                         (table->mc_reg_table_entry[k].mc_data[i] & 0x0000ffff);
+>                         j++;
+> -                       if (j > SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
+> +                       if (j >= SMC_SISLANDS_MC_REGISTER_ARRAY_SIZE)
+>                                 return -EINVAL;
+>                         break;
+>                 default:
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
