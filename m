@@ -1,37 +1,52 @@
-From: Bing Zhao <bzhao@marvell.com>
-Date: Thu, 10 Oct 2013 18:02:05 +0000
-Subject: RE: [patch] mwifiex: potential integer underflow in mwifiex_ret_wmm_get_status()
-Message-Id: <477F20668A386D41ADCC57781B1F70430F45346AA2@SC-VEXCH1.marvell.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 02 Oct 2013 12:19:48 +0000
+Subject: [PATCH 08/19 v2] net: atl1c: Change variable type to bool
+Message-Id: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130925085729.GC6661@elgon.mountain>
- <477F20668A386D41ADCC57781B1F70430F45077CDA@SC-VEXCH1.marvell.com>
- <20130925182359.GV6247@mwanda>
- <477F20668A386D41ADCC57781B1F70430F45077E52@SC-VEXCH1.marvell.com>
- <477F20668A386D41ADCC57781B1F70430F45078155@SC-VEXCH1.marvell.com>
- <20130926210703.GE6247@mwanda>
- <477F20668A386D41ADCC57781B1F70430F4507819C@SC-VEXCH1.marvell.com>
- <20131010172633.GC2691@tuxdriver.com>
-In-Reply-To: <20131010172633.GC2691@tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: jcliburn@gmail.com
+Cc: chris.snook@gmail.com, jkosina@suse.cz, rdunlap@infradead.org, standby24x7@gmail.com, peter.senna@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi John,
+The variable ret is only assigned the values true and false.
+The function atl1c_read_eeprom already returns bool. Change
+ret type to bool.
 
-> OK, I'm confused by this thread...I'm dropping it.
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
 
-Yes, please drop it.
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
 
-> 
-> Dan & Bing,
-> 
-> Please repost as a series of patches that I don't have to piece
-> together from a series of replies...
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Changes from v1:
+ - Added subsystem prefix to shortlog
 
-I'm working on some more patches that fix the similar issue.
-I will repost Dan's patch along with these patches in a series.
+ drivers/net/ethernet/atheros/atl1c/atl1c_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Bing
+diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c b/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
+index 3ef7092..1cda49a 100644
+--- a/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
++++ b/drivers/net/ethernet/atheros/atl1c/atl1c_hw.c
+@@ -153,7 +153,7 @@ static int atl1c_get_permanent_address(struct atl1c_hw *hw)
+ bool atl1c_read_eeprom(struct atl1c_hw *hw, u32 offset, u32 *p_value)
+ {
+ 	int i;
+-	int ret = false;
++	bool ret = false;
+ 	u32 otp_ctrl_data;
+ 	u32 control;
+ 	u32 data;
+-- 
+1.8.3.1
+
