@@ -1,25 +1,54 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Sat, 19 Oct 2013 16:06:09 +0000
-Subject: Re: [patch] hwmon: (w83793) Clean up a signedness issue
-Message-Id: <5262ADF1.5010106@roeck-us.net>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 02 Oct 2013 12:19:49 +0000
+Subject: [PATCH 09/19 v2] net: bnx2x: Change variable type to bool
+Message-Id: <1380716391-20214-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131019091222.GF9312@longonot.mountain>
-In-Reply-To: <20131019091222.GF9312@longonot.mountain>
+References: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: eilong@broadcom.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Peter Senna Tschudin <peter.senna@gmail.com>
 
-On 10/19/2013 02:12 AM, Dan Carpenter wrote:
-> We cap the upper bound of "mtimeout" but since it's signed we should
-> check for negative values as well.  The mistake is harmless.  But I have
-> changed it to unsigned as a cleanup.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-Applied to -next.
+The variable rc is only assigned the values true and false.
+The function bnx2x_prev_is_path_marked already returns bool.
+Change rc type to bool.
 
-Thanks,
-Guenter
+The simplified semantic patch that find this problem is as
+follows (http://coccinelle.lip6.fr/):
 
+@exists@
+type T;
+identifier b;
+@@
+- T
++ bool
+  b = ...;
+  ... when any
+  b = \(true\|false\)
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Changes from v1:
+ - Added subsystem prefix to shortlog
+
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index fccfc1d..105cc80 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -9874,7 +9874,7 @@ static int bnx2x_prev_path_mark_eeh(struct bnx2x *bp)
+ static bool bnx2x_prev_is_path_marked(struct bnx2x *bp)
+ {
+ 	struct bnx2x_prev_path_list *tmp_list;
+-	int rc = false;
++	bool rc = false;
+ 
+ 	if (down_trylock(&bnx2x_prev_sem))
+ 		return false;
+-- 
+1.8.3.1
 
