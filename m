@@ -1,39 +1,62 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Sun, 27 Oct 2013 12:16:58 +0000
-Subject: Re: [patch v2] sata, highbank: clear whole array in highbank_initialize_phys()
-Message-Id: <20131027121658.GI14934@mtj.dyndns.org>
+From: Shalin Mehta <shalinmehta85@gmail.com>
+Date: Thu, 03 Oct 2013 08:08:42 +0000
+Subject: [PATCH] staging: speakup: str initialization replaced with NULL where it was initialized with int
+Message-Id: <1380787722-27736-1-git-send-email-shalinmehta85@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131018084409.GA14256@longonot.mountain>
-In-Reply-To: <20131018084409.GA14256@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-ide@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, lisa@xenapiadmin.com, sachin.kamat@linaro.org, andriy.shevchenko@linux.intel.com, w.d.hubbs@gmail.com, dan.carpenter@oracle.com
+Cc: speakup@braille.uwo.ca, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kirk@reisers.ca, chris@the-brannons.com, kernel-janitors@vger.kernel.org, Shalin Mehta <shalinmehta85@gmail.com>
 
-On Fri, Oct 18, 2013 at 11:44:09AM +0300, Dan Carpenter wrote:
-> The original code used the wrong parameter to clear tx_atten[].  It
-> passed the number of elements instead of sizeof() the array to memset.
-> 
-> The other potential issue was that cphy_base[] wasn't cleared.  I'm not
-> sure if that was a real problem or not, but I have cleared it in my
-> patch.
-> 
-> Instead of using memset(), this patch uses empty initializers as a
-> cleanup.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixed warnings in all of three files where the string was initilized with an integer instead of NULL
 
-Applied to libata/for-3.13.  I didn't cc stable as it doesn't look
-like it caused actual problems.  Reading the code, I'm curious how
-port_data[] is supposed to work.  It's a static array used throughout
-the driver which is zeroed on each probe(), which doesn't make whole
-lot of sense - if I connect a second sata_highbank controller in, the
-struct used by the first one will be cleared.  Maybe the whole PHY
-thing is supposed to be completely static, but if so, it'd be great if
-the code is explicitly structured / explained that way.
+Signed-off-by: Shalin Mehta <shalinmehta85@gmail.com>
+---
+ drivers/staging/speakup/main.c           | 2 +-
+ drivers/staging/speakup/speakup_audptr.c | 2 +-
+ drivers/staging/speakup/varhandlers.c    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks.
-
+diff --git a/drivers/staging/speakup/main.c b/drivers/staging/speakup/main.c
+index 14079c4..47502fa 100644
+--- a/drivers/staging/speakup/main.c
++++ b/drivers/staging/speakup/main.c
+@@ -90,7 +90,7 @@ const struct st_bits_data spk_punc_info[] = {
+ 	{"repeats", "()", CH_RPT},
+ 	{"extended numeric", "", B_EXNUM},
+ 	{"symbols", "", B_SYM},
+-	{0, 0}
++	{NULL, NULL}
+ };
+ 
+ static char mark_cut_flag;
+diff --git a/drivers/staging/speakup/speakup_audptr.c b/drivers/staging/speakup/speakup_audptr.c
+index 3508aee..61a3cee 100644
+--- a/drivers/staging/speakup/speakup_audptr.c
++++ b/drivers/staging/speakup/speakup_audptr.c
+@@ -39,7 +39,7 @@ static struct var_t vars[] = {
+ 	{ RATE, .u.n = {"\x05[r%d]", 10, 0, 20, 100, -10, NULL } },
+ 	{ PITCH, .u.n = {"\x05[f%d]", 80, 39, 4500, 0, 0, NULL } },
+ 	{ VOL, .u.n = {"\x05[g%d]", 21, 0, 40, 0, 0, NULL } },
+-	{ TONE, .u.n = {"\x05[s%d]", 9, 0, 63, 0, 0, 0 } },
++	{ TONE, .u.n = {"\x05[s%d]", 9, 0, 63, 0, 0, NULL } },
+ 	{ PUNCT, .u.n = {"\x05[A%c]", 0, 0, 3, 0, 0, "nmsa" } },
+ 	{ DIRECT, .u.n = {NULL, 0, 0, 1, 0, 0, NULL } },
+ 	V_LAST_VAR
+diff --git a/drivers/staging/speakup/varhandlers.c b/drivers/staging/speakup/varhandlers.c
+index 9aa2a78..70231b6 100644
+--- a/drivers/staging/speakup/varhandlers.c
++++ b/drivers/staging/speakup/varhandlers.c
+@@ -46,7 +46,7 @@ static struct st_var_header var_headers[] = {
+ 	{ "direct", DIRECT, VAR_NUM, NULL, NULL },
+ };
+ 
+-static struct st_var_header *var_ptrs[MAXVARS] = { 0, 0, 0 };
++static struct st_var_header *var_ptrs[MAXVARS] = { NULL, NULL, NULL };
+ 
+ static struct punc_var_t punc_vars[] = {
+ 	{ PUNC_SOME, 1 },
 -- 
-tejun
+1.8.1.2
+
