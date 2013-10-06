@@ -1,31 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Oct 2013 16:44:19 +0000
-Subject: [patch -resend] paride: underflow bug in pg_write()
-Message-Id: <20131017164418.GH11731@mwanda>
+Date: Sun, 06 Oct 2013 00:32:53 +0000
+Subject: [patch] USB: cyberjack: fix buggy integer overflow test
+Message-Id: <20131006003253.GA16592@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tim Waugh <tim@cyberelk.net>, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The test here can underflow so we pass bogus lengths to the hardware.
-It's a static checker fix and I don't know the impact.
+"old_rdtodo" and "size" are short type.  They are type promoted to int
+and the condition is never true.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I sent this originally Jul 31, 2013 but there was no response.
 
-diff --git a/drivers/block/paride/pg.c b/drivers/block/paride/pg.c
-index 4a27b1d..2ce3dfd 100644
---- a/drivers/block/paride/pg.c
-+++ b/drivers/block/paride/pg.c
-@@ -581,7 +581,7 @@ static ssize_t pg_write(struct file *filp, const char __user *buf, size_t count,
+diff --git a/drivers/usb/serial/cyberjack.c b/drivers/usb/serial/cyberjack.c
+index 7814262..6e1b69d 100644
+--- a/drivers/usb/serial/cyberjack.c
++++ b/drivers/usb/serial/cyberjack.c
+@@ -279,7 +279,7 @@ static void cyberjack_read_int_callback(struct urb *urb)
  
- 	if (hdr.magic != PG_MAGIC)
- 		return -EINVAL;
--	if (hdr.dlen > PG_MAX_DATA)
-+	if (hdr.dlen < 0 || hdr.dlen > PG_MAX_DATA)
- 		return -EINVAL;
- 	if ((count - hs) > PG_MAX_DATA)
- 		return -EINVAL;
+ 		old_rdtodo = priv->rdtodo;
+ 
+-		if (old_rdtodo + size < old_rdtodo) {
++		if (old_rdtodo > SHRT_MAX - size) {
+ 			dev_dbg(dev, "To many bulk_in urbs to do.\n");
+ 			spin_unlock(&priv->lock);
+ 			goto resubmit;
