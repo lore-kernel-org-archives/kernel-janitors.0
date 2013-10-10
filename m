@@ -1,7 +1,7 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Date: Thu, 10 Oct 2013 17:26:33 +0000
-Subject: Re: [patch] mwifiex: potential integer underflow in mwifiex_ret_wmm_get_status()
-Message-Id: <20131010172633.GC2691@tuxdriver.com>
+From: Bing Zhao <bzhao@marvell.com>
+Date: Thu, 10 Oct 2013 18:02:05 +0000
+Subject: RE: [patch] mwifiex: potential integer underflow in mwifiex_ret_wmm_get_status()
+Message-Id: <477F20668A386D41ADCC57781B1F70430F45346AA2@SC-VEXCH1.marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130925085729.GC6661@elgon.mountain>
  <477F20668A386D41ADCC57781B1F70430F45077CDA@SC-VEXCH1.marvell.com>
@@ -10,32 +10,28 @@ References: <20130925085729.GC6661@elgon.mountain>
  <477F20668A386D41ADCC57781B1F70430F45078155@SC-VEXCH1.marvell.com>
  <20130926210703.GE6247@mwanda>
  <477F20668A386D41ADCC57781B1F70430F4507819C@SC-VEXCH1.marvell.com>
-In-Reply-To: <477F20668A386D41ADCC57781B1F70430F4507819C@SC-VEXCH1.marvell.com>
+ <20131010172633.GC2691@tuxdriver.com>
+In-Reply-To: <20131010172633.GC2691@tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bing Zhao <bzhao@marvell.com>
+To: "John W. Linville" <linville@tuxdriver.com>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-On Thu, Sep 26, 2013 at 02:57:21PM -0700, Bing Zhao wrote:
-> Hi Dan,
+Hi John,
+
+> OK, I'm confused by this thread...I'm dropping it.
+
+Yes, please drop it.
+
 > 
-> > There are several other similar functions as well.  For example, the
-> > while loops in mwifiex_ret_tx_rate_cfg() and mwifiex_get_power_level().
+> Dan & Bing,
 > 
-> Thanks for pointing it out. We will have them fixed.
-> 
-> Regards,
-> Bing
+> Please repost as a series of patches that I don't have to piece
+> together from a series of replies...
 
-OK, I'm confused by this thread...I'm dropping it.
+I'm working on some more patches that fix the similar issue.
+I will repost Dan's patch along with these patches in a series.
 
-Dan & Bing,
-
-Please repost as a series of patches that I don't have to piece
-together from a series of replies...
-
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+Thanks,
+Bing
