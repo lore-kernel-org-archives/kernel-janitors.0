@@ -1,30 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 19 Oct 2013 09:14:12 +0000
-Subject: [patch] RDMA/cxgb4: underflows in c4iw_create_qp()
-Message-Id: <20131019091411.GG9312@longonot.mountain>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Date: Tue, 15 Oct 2013 16:45:40 +0000
+Subject: build regressions 2013-10-15
+Message-Id: <525d7134.4C4C5VgtRmQc1XqV%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
-Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-These sizes should be unsigned so we don't allow negative values and
-have underflow bugs.  These can come from the user so there may be
-security implications, but I have not tested this.
+[warnings]
+Error(drivers/base/fence.c:35): cannot understand prototype: 'atomic_t fence_context_counter = ATOMIC_INIT(0); '
+arch/x86/platform/uv/uv_nmi.c:74:17: warning: 'uv_nmi_kexec_failed' defined but not used [-Wunused-variable]
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+[sparse]
+include/linux/spinlock.h:348:9: sparse: context imbalance in 'nouveau_event_put' - different lock contexts for basic block
+include/linux/spinlock.h:348:9: sparse: context imbalance in 'nouveau_event_get' - different lock contexts for basic block
+include/linux/spinlock.h:348:9: sparse: context imbalance in 'nouveau_event_trigger' - different lock contexts for basic block
+arch/x86/mm/pageattr.c:1754:40: sparse: Using plain integer as NULL pointer
+arch/x86/mm/pageattr.c:1773:40: sparse: Using plain integer as NULL pointer
+drivers/gpu/drm/drm_atomic_helper.c:192:6: sparse: symbol '_drm_atomic_helper_state_free' was not declared. Should it be static?
 
-diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
-index 5829367..72ea152 100644
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -1533,7 +1533,7 @@ struct ib_qp *c4iw_create_qp(struct ib_pd *pd, struct ib_qp_init_attr *attrs,
- 	struct c4iw_cq *schp;
- 	struct c4iw_cq *rchp;
- 	struct c4iw_create_qp_resp uresp;
--	int sqsize, rqsize;
-+	unsigned int sqsize, rqsize;
- 	struct c4iw_ucontext *ucontext;
- 	int ret;
- 	struct c4iw_mm_entry *mm1, *mm2, *mm3, *mm4, *mm5 = NULL;
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
