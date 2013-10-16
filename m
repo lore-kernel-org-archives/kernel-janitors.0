@@ -1,7 +1,7 @@
 From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Fri, 11 Oct 2013 16:03:59 +0000
-Subject: build regressions 2013-10-11
-Message-Id: <5258216f.MUpP56mNqpGuH/tr%fengguang.wu@intel.com>
+Date: Wed, 16 Oct 2013 16:07:30 +0000
+Subject: build regressions 2013-10-16
+Message-Id: <525eb9c2.PXLlyhR49SQNil8K%fengguang.wu@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,84 +9,149 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 [errors]
-drivers/thermal/thermal_core.c:947:30: error: 'const struct thermal_zone_device' has no member named 'type'
-drivers/thermal/thermal_core.c:993:25: error: 'struct thermal_zone_device' has no member named 'type'
-include/linux/init.h:298:27: error: invalid storage class for function '__inittest'
-include/linux/init.h:304:27: error: invalid storage class for function '__exittest'
-arch/x86/kernel/cpu/mshyperv.c:89:3: error: 'lapic_timer_frequency' undeclared (first use in this function)
-drivers/bluetooth/btsdio.c:162:23: error: 'hdev' undeclared (first use in this function)
-make[3]: *** No rule to make target `fs/btrfs/tests/btrfs-tests.o', needed by `fs/btrfs/btrfs.o'.
-drivers/acpi/ac.c:55:1: error: expected identifier or '(' before '<<' token
-drivers/acpi/ac.c:76:1: error: expected identifier or '(' before '>>' token
-drivers/acpi/ac.c:138:1: error: expected identifier or '(' before '<<' token
-drivers/acpi/ac.c:259:2: error: 'ac_sleep_before_get_state_ms' undeclared (first use in this function)
-drivers/acpi/ac.c:302:1: error: expected expression before '<<' token
-drivers/acpi/ac.c:309:1: error: expected expression before '=' token
-drivers/acpi/ac.c:311:1: error: expected expression before '>>' token
-drivers/acpi/ac.c:321:24: error: 'acpi_ac_notify_handler' undeclared (first use in this function)
-drivers/acpi/ac.c:331:1: error: expected expression before '<<' token
-drivers/acpi/ac.c:368:12: error: invalid storage class for function 'acpi_ac_remove'
-drivers/acpi/ac.c:381:1: error: expected expression before '<<' token
-drivers/acpi/ac.c:402:2: error: initializer element is not constant
-drivers/acpi/ac.c:406:14: error: 'acpi_ac_pm_ops' undeclared (first use in this function)
-drivers/acpi/ac.c:411:19: error: invalid storage class for function 'acpi_ac_init'
-drivers/acpi/ac.c:418:1: error: expected expression before '<<' token
-drivers/acpi/ac.c:430:1: error: expected expression before '=' token
-drivers/acpi/ac.c:433:1: error: expected expression before '>>' token
-drivers/acpi/ac.c:439:20: error: invalid storage class for function 'acpi_ac_exit'
-drivers/acpi/ac.c:441:1: error: expected expression before '<<' token
-drivers/acpi/ac.c:446:1: error: expected expression before '=' token
-drivers/acpi/ac.c:450:1: error: expected expression before '>>' token
-drivers/acpi/ac.c:453:1: error: initializer element is not constant
-drivers/acpi/ac.c:453:1: error: expected declaration or statement at end of input
-drivers/acpi/ac.c:453:1: error: expected declaration or statement at end of input
+drivers/ata/ahci.h:40:27: error: linux/phy/phy.h: No such file or directory
+drivers/ata/ahci_platform.c:144: error: implicit declaration of function 'devm_phy_get'
+drivers/ata/ahci_platform.c:155: error: implicit declaration of function 'phy_init'
+drivers/ata/ahci_platform.c:156: error: implicit declaration of function 'phy_power_on'
+drivers/ata/ahci_platform.c:240: error: implicit declaration of function 'phy_power_off'
+drivers/ata/ahci_platform.c:241: error: implicit declaration of function 'phy_exit'
+drivers/ata/ahci.h:40:27: error: linux/phy/phy.h: No such file or directory
+drivers/ata/ahci.h:40:27: fatal error: linux/phy/phy.h: No such file or directory
+include/../drivers/ata/ahci.h:40:27: fatal error: linux/phy/phy.h: No such file or directory
+drivers/staging/mt29f_spinand/mt29f_spinand.c:665:9: error: implicit declaration of function 'mtd_to_state' [-Werror=implicit-function-declaration]
+drivers/mfd/tc3589x.c:367:1: error: duplicate 'static'
+include/linux/kref.h:47:2: error: implicit declaration of function '__WARN' [-Werror=implicit-function-declaration]
+drivers/gpu/drm/tegra/bus.c:52:2: error: implicit declaration of function 'drm_dev_alloc' [-Werror=implicit-function-declaration]
+drivers/gpu/drm/tegra/bus.c:56:2: error: implicit declaration of function 'drm_dev_register' [-Werror=implicit-function-declaration]
+drivers/gpu/drm/tegra/bus.c:67:2: error: implicit declaration of function 'drm_dev_free' [-Werror=implicit-function-declaration]
+drivers/gpu/drm/tegra/gem.c:97:2: error: implicit declaration of function 'dma_free_writecombine' [-Werror=implicit-function-declaration]
+drivers/gpu/drm/tegra/gem.c:112:2: error: implicit declaration of function 'dma_alloc_writecombine' [-Werror=implicit-function-declaration]
+drivers/gpu/drm/tegra/output.c:285:15: error: 'DRM_MODE_CONNECTOR_DSI' undeclared (first use in this function)
+drivers/gpu/drm/tegra/output.c:286:13: error: 'DRM_MODE_ENCODER_DSI' undeclared (first use in this function)
+net/openvswitch/flow.c:1413:4: error: expected '}' before 'else'
+net/openvswitch/flow.c:1419:35: error: 'tci' undeclared (first use in this function)
+net/openvswitch/flow.c:1421:4: error: expected identifier or '(' before 'else'
+net/openvswitch/flow.c:91:4: error: expected identifier or '(' before 'while'
+net/openvswitch/flow.c:1424:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1439:4: error: expected identifier or '(' before 'else'
+net/openvswitch/flow.c:1443:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1467:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1498:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1522:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1540:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1558:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1576:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1587:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1598:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1613:2: error: expected identifier or '(' before 'if'
+net/openvswitch/flow.c:1616:2: error: expected identifier or '(' before 'return'
+net/openvswitch/flow.c:1617:1: error: expected identifier or '(' before '}' token
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+include/linux/compiler.h:134:2: error: expected identifier or '(' before 'if'
+include/linux/compiler.h:148:3: error: expected identifier or '(' before ')' token
+drivers/gpu/drm/i915/i915_drv.h:1228:29: error: field 'source' has incomplete type
 
 [warnings]
-drivers/staging/btmtk_usb/btmtk_usb.c:1583:17: warning: assignment from incompatible pointer type [enabled by default]
-arch/x86/kernel/cpu/mshyperv.c:72:6: warning: unused variable 'hv_lapic_frequency' [-Wunused-variable]
-drivers/acpi/ac.c:398:21: warning: 'alias' attribute ignored [-Wattributes]
-drivers/acpi/ac.c:452:1: warning: 'alias' attribute ignored [-Wattributes]
-drivers/acpi/ac.c:453:1: warning: 'alias' attribute ignored [-Wattributes]
-drivers/acpi/ac.c:73:12: warning: 'acpi_ac_resume' used but never defined [enabled by default]
-drivers/gpu/drm/i915/intel_panel.c:709:8: warning: passing argument 2 of 'backlight_device_register' from incompatible pointer type [enabled by default]
-fs/ext4/xattr.c:1355:9: warning: assignment from incompatible pointer type [enabled by default]
-drivers/acpi/ac.c:368:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-drivers/acpi/ac.c:400:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-drivers/acpi/ac.c:439:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-include/linux/init.h:217:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-drivers/acpi/ac.c:400:31: warning: unused variable 'acpi_ac_driver' [-Wunused-variable]
-drivers/acpi/ac.c:263:29: warning: 'ac_dmi_table' defined but not used [-Wunused-variable]
-net/wireless/util.c:1289:21: warning: 'radar_required' may be used uninitialized in this function [-Wmaybe-uninitialized]
+drivers/gpu/drm/tegra/hdmi.c:527:42: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+include/linux/reset.h:12:9: warning: 'struct device_node' declared inside parameter list [enabled by default]
+include/linux/reset.h:12:9: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+drivers/gpu/drm/tegra/hdmi.c:508: warning: format '%d' expects type 'int', but argument 3 has type 'ssize_t'
+drivers/ata/ahci_platform.c:144: warning: assignment makes pointer from integer without a cast
+drivers/cpufreq/intel_pstate.c:640:22: warning: unused variable 'max_pstate' [-Wunused-variable]
+drivers/cpufreq/intel_pstate.c:640:10: warning: unused variable 'min_pstate' [-Wunused-variable]
+drivers/gpu/drm/tegra/dc.c:261:24: warning: argument to 'sizeof' in '__builtin_memset' call is the same expression as the destination; did you mean to dereference it? [-Wsizeof-pointer-memaccess]
+drivers/staging/mt29f_spinand/mt29f_spinand.c:665:32: warning: initialization makes pointer from integer without a cast [enabled by default]
+drivers/staging/mt29f_spinand/mt29f_spinand.c:700:32: warning: initialization makes pointer from integer without a cast [enabled by default]
+drivers/staging/mt29f_spinand/mt29f_spinand.c:707:32: warning: initialization makes pointer from integer without a cast [enabled by default]
+drivers/gpu/drm/tegra/bus.c:52:6: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/gpu/drm/tegra/gem.c:112:12: warning: assignment makes pointer from integer without a cast [enabled by default]
+drivers/gpu/drm/tegra/output.c:162:2: warning: passing argument 3 of 'of_get_property' from incompatible pointer type [enabled by default]
+drivers/gpu/drm/tegra/hdmi.c:508:4: warning: format '%d' expects argument of type 'int', but argument 3 has type 'ssize_t' [-Wformat=]
+drivers/gpu/drm/tegra/dc.c:261:24: warning: argument to 'sizeof' in 'memset' call is the same expression as the destination; did you mean to dereference it? [-Wsizeof-pointer-memaccess]
+drivers/gpu/drm/tegra/drm.c:190:40: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/gpu/drm/tegra/drm.c:191:40: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+include/linux/gpio.h:226:4: warning: 'struct pinctrl_dev' declared inside parameter list [enabled by default]
+include/linux/gpio.h:226:4: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+net/openvswitch/flow.c:1389:6: warning: unused variable 'orig_attrs' [-Wunused-variable]
+net/openvswitch/flow.c:1421:2: warning: control reaches end of non-void function [-Wreturn-type]
 
 [sparse]
-drivers/net/wireless/ath/wcn36xx/wcn36xx.h:88:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] <noident> @@    got ed int [unsigned] [usertype] <noident> @@
-drivers/net/wireless/ath/wcn36xx/wcn36xx.h:88:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] <noident> @@    got ed int [unsigned] [usertype] <noident> @@
-drivers/gpu/drm/i915/intel_panel.c:708:44: sparse: incorrect type in argument 2 (different base types) @@    expected struct device *dev @@    got sstruct device *dev @@
-drivers/acpi/ac.c:55:1: sparse: missing identifier in declaration
-drivers/acpi/ac.c:226:9: sparse: Trying to use reserved word 'if' as identifier
-drivers/acpi/ac.c:229:9: sparse: Trying to use reserved word 'switch' as identifier
-drivers/acpi/ac.c:230:9: sparse: not in switch scope
-drivers/acpi/ac.c:233:9: sparse: not in switch scope
-drivers/acpi/ac.c:234:9: sparse: not in switch scope
-drivers/acpi/ac.c:235:9: sparse: not in switch scope
-drivers/acpi/ac.c:254:9: sparse: Trying to use reserved word 'return' as identifier
-drivers/acpi/ac.c:260:9: sparse: Trying to use reserved word 'return' as identifier
-net/mac80211/aes_ccm.c:28:65: sparse: Variable length array is used.
-net/mac80211/aes_ccm.c:52:65: sparse: Variable length array is used.
-drivers/acpi/ac.c:55:1: sparse: Expected ; at the end of type declaration
-drivers/acpi/ac.c:55:1: sparse: got <<
-drivers/acpi/ac.c:226:13: sparse: Expected ) in function declarator
-drivers/acpi/ac.c:260:16: sparse: Expected ; at end of declaration
-drivers/acpi/ac.c:302:1: sparse: Expected ; at end of statement
-drivers/acpi/ac.c:376:45: sparse: undefined identifier 'acpi_ac_notify_handler'
-drivers/acpi/ac.c:246:35: sparse: undefined identifier 'ac'
-drivers/acpi/ac.c:341:26: sparse: undefined identifier 'ac_dmi_table'
-drivers/acpi/ac.c:368:12: sparse: symbol 'acpi_ac_remove' redeclared with different type (originally declared at drivers/acpi/ac.c:63) - incompatible argument 1 (different base types)
-
-[coccinelle]
-drivers/net/wireless/ath/wcn36xx/smd.c:1330:2-8: preceding lock on line 1324
-drivers/net/wireless/ath/wcn36xx/debug.c:27:11-31: WARNING opportunity for simple_open, see also structure on line 106
-drivers/net/wireless/ath/wcn36xx/debug.c:27:11-31: WARNING opportunity for simple_open, see also structure on line 148
+drivers/leds/leds-pca9685.c:86:42: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [short] [usertype] <noident> @@    got unsigned] [short] [usertype] <noident> @@
+drivers/leds/leds-pca9685.c:91:42: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [short] [usertype] <noident> @@    got unsigned] [short] [usertype] <noident> @@
+drivers/leds/leds-pca9685.c:95:42: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [short] [usertype] <noident> @@    got unsigned] [short] [usertype] <noident> @@
+net/openvswitch/flow.c:1421:11: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1422:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1422:17: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1424:9: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1428:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1431:19: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1432:25: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1434:25: sparse: Trying to use reserved word 'return' as identifier
+net/openvswitch/flow.c:1437:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1437:17: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1440:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1440:17: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1447:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1448:25: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1450:25: sparse: Trying to use reserved word 'return' as identifier
+net/openvswitch/flow.c:1452:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1452:17: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1454:17: sparse: Trying to use reserved word 'do' as identifier
+net/openvswitch/flow.c:1454:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1454:17: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1456:17: sparse: Trying to use reserved word 'do' as identifier
+net/openvswitch/flow.c:1456:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1456:17: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1458:17: sparse: Trying to use reserved word 'do' as identifier
+net/openvswitch/flow.c:1458:17: sparse: Trying to use reserved word 'if' as identifier
+net/openvswitch/flow.c:1458:17: sparse: Trying to use reserved word 'else' as identifier
+net/openvswitch/flow.c:1460:17: sparse: Trying to use reserved word 'do' as identifier
+net/openvswitch/flow.c:1460:17: sparse: too many errors
+kernel/hrtimer.c:1247:36: sparse: context imbalance in '__run_hrtimer' - unexpected unlock
+drivers/gpu/drm/tegra/drm.c:418:19: sparse: symbol 'tegra_drm_driver' was not declared. Should it be static?
+drivers/gpu/drm/tegra/fb.c:230:27: sparse: incorrect type in assignment (different address spaces) @@    expected char [noderef] <asn:2>*screen_base @@    got sn:2>*screen_base @@
+drivers/gpu/drm/tegra/output.c:162:73: sparse: incorrect type in argument 3 (different type sizes) @@    expected int *lenp @@    got unsigned lint *lenp @@
+drivers/gpu/drm/tegra/hdmi.c:527:49: sparse: incompatible types in comparison expression (different type sizes)
+drivers/gpu/drm/tegra/drm.c:138:18: sparse: incorrect type in initializer (different address spaces) @@    expected struct drm_tegra_cmdbuf [noderef] <asn:1>*cmdbufs @@    got dbuf [noderef] <asn:1>*cmdbufs @@
+drivers/gpu/drm/tegra/drm.c:140:18: sparse: incorrect type in initializer (different address spaces) @@    expected struct drm_tegra_reloc [noderef] <asn:1>*relocs @@    got eloc [noderef] <asn:1>*relocs @@
+drivers/gpu/drm/tegra/drm.c:142:18: sparse: incorrect type in initializer (different address spaces) @@    expected struct drm_tegra_waitchk [noderef] <asn:1>*waitchks @@    got tchk [noderef] <asn:1>*waitchks @@
+drivers/gpu/drm/tegra/drm.c:207:40: sparse: incorrect type in argument 2 (different address spaces) @@    expected void const [noderef] <asn:1>*from @@    got onst [noderef] <asn:1>*from @@
+net/openvswitch/flow.c:1414:33: sparse: Expected ) in function call
+net/openvswitch/flow.c:1414:33: sparse: got {
+net/openvswitch/flow.c:1414:33: sparse: Expected ; at end of statement
+net/openvswitch/flow.c:1414:33: sparse: got )
+net/openvswitch/flow.c:1421:16: sparse: Expected ; at end of declaration
+net/openvswitch/flow.c:1421:16: sparse: got if
+net/openvswitch/flow.c:1422:17: sparse: Expected ; at the end of type declaration
+net/openvswitch/flow.c:1424:19: sparse: Expected ) in function declarator
+drivers/gpu/drm/tegra/bus.c:52:15: sparse: undefined identifier 'drm_dev_alloc'
+drivers/gpu/drm/tegra/bus.c:56:15: sparse: undefined identifier 'drm_dev_register'
+drivers/gpu/drm/tegra/bus.c:67:9: sparse: undefined identifier 'drm_dev_free'
+drivers/gpu/drm/tegra/gem.c:99:9: sparse: undefined identifier 'dma_free_writecombine'
+drivers/gpu/drm/tegra/gem.c:115:21: sparse: undefined identifier 'dma_alloc_writecombine'
+drivers/gpu/drm/tegra/output.c:285:29: sparse: undefined identifier 'DRM_MODE_CONNECTOR_DSI'
+drivers/gpu/drm/tegra/output.c:286:27: sparse: undefined identifier 'DRM_MODE_ENCODER_DSI'
 
 ---
 0-DAY kernel build testing backend              Open Source Technology Center
