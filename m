@@ -1,26 +1,31 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Wed, 30 Oct 2013 13:45:46 +0000
-Subject: Re: [patch] HID: logitech-dj: small cleanup in rdcat()
-Message-Id: <alpine.LNX.2.00.1310301444550.21144@pobox.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Oct 2013 09:06:56 +0000
+Subject: [patch] ax25: cleanup a range test
+Message-Id: <20131018090656.GA23528@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131019090859.GD9312@longonot.mountain>
-In-Reply-To: <20131019090859.GD9312@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joerg Reuter <jreuter@yaina.de>
+Cc: Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 19 Oct 2013, Dan Carpenter wrote:
+The current test works fine in practice.  The "amount" variable is
+actually used as a boolean so negative values or any non-zero values
+count as "true".  However since we don't allow numbers greater than one,
+let's not allow negative numbers either.
 
-> We could pass the "rdsec" pointer instead of the address of the "rdesc"
-> and it's a little simpler.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cosmetic change on a borderline of being justified to bother with :) 
-Thanks Dan, applying now for 3.13.
-
--- 
-Jiri Kosina
-SUSE Labs
+diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
+index 4b4d2b7..a00123e 100644
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -1735,7 +1735,7 @@ static int ax25_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			res = -EFAULT;
+ 			break;
+ 		}
+-		if (amount > AX25_NOUID_BLOCK) {
++		if (amount < 0 || amount > AX25_NOUID_BLOCK) {
+ 			res = -EINVAL;
+ 			break;
+ 		}
