@@ -1,37 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 Oct 2013 19:41:30 +0000
-Subject: Re: [PATCH 09/19 v2] net: bnx2x: Change variable type to bool
-Message-Id: <20131003.154130.845428835683264790.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Oct 2013 08:44:09 +0000
+Subject: [patch v2] sata, highbank: clear whole array in highbank_initialize_phys()
+Message-Id: <20131018084409.GA14256@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
-	<1380716391-20214-2-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1380716391-20214-2-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: eilong@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-ide@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed,  2 Oct 2013 14:19:49 +0200
+The original code used the wrong parameter to clear tx_atten[].  It
+passed the number of elements instead of sizeof() the array to memset.
 
-> The variable rc is only assigned the values true and false.
-> The function bnx2x_prev_is_path_marked already returns bool.
-> Change rc type to bool.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+The other potential issue was that cphy_base[] wasn't cleared.  I'm not
+sure if that was a real problem or not, but I have cleared it in my
+patch.
 
-Applied.
+Instead of using memset(), this patch uses empty initializers as a
+cleanup.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: used {} initialization instead of memset.  I also just went ahead
+    and cleared cphy_base[].
+
+diff --git a/drivers/ata/sata_highbank.c b/drivers/ata/sata_highbank.c
+index 7f5e5d9..ea3b3dc 100644
+--- a/drivers/ata/sata_highbank.c
++++ b/drivers/ata/sata_highbank.c
+@@ -343,13 +343,11 @@ static int highbank_initialize_phys(struct device *dev, void __iomem *addr)
+ {
+ 	struct device_node *sata_node = dev->of_node;
+ 	int phy_count = 0, phy, port = 0, i;
+-	void __iomem *cphy_base[CPHY_PHY_COUNT];
+-	struct device_node *phy_nodes[CPHY_PHY_COUNT];
+-	u32 tx_atten[CPHY_PORT_COUNT];
++	void __iomem *cphy_base[CPHY_PHY_COUNT] = {};
++	struct device_node *phy_nodes[CPHY_PHY_COUNT] = {};
++	u32 tx_atten[CPHY_PORT_COUNT] = {};
+ 
+ 	memset(port_data, 0, sizeof(struct phy_lane_info) * CPHY_PORT_COUNT);
+-	memset(phy_nodes, 0, sizeof(struct device_node*) * CPHY_PHY_COUNT);
+-	memset(tx_atten, 0xff, CPHY_PORT_COUNT);
+ 
+ 	do {
+ 		u32 tmp;
