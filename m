@@ -1,31 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 18 Oct 2013 09:06:56 +0000
-Subject: [patch] ax25: cleanup a range test
-Message-Id: <20131018090656.GA23528@longonot.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 18 Oct 2013 17:56:33 +0000
+Subject: Re: [patch] ax25: cleanup a range test
+Message-Id: <20131018.135633.1312926688041182414.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131018090656.GA23528@longonot.mountain>
+In-Reply-To: <20131018090656.GA23528@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joerg Reuter <jreuter@yaina.de>
-Cc: Ralf Baechle <ralf@linux-mips.org>, "David S. Miller" <davem@davemloft.net>, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: jreuter@yaina.de, ralf@linux-mips.org, linux-hams@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The current test works fine in practice.  The "amount" variable is
-actually used as a boolean so negative values or any non-zero values
-count as "true".  However since we don't allow numbers greater than one,
-let's not allow negative numbers either.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 18 Oct 2013 12:06:56 +0300
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> The current test works fine in practice.  The "amount" variable is
+> actually used as a boolean so negative values or any non-zero values
+> count as "true".  However since we don't allow numbers greater than one,
+> let's not allow negative numbers either.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
-index 4b4d2b7..a00123e 100644
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -1735,7 +1735,7 @@ static int ax25_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- 			res = -EFAULT;
- 			break;
- 		}
--		if (amount > AX25_NOUID_BLOCK) {
-+		if (amount < 0 || amount > AX25_NOUID_BLOCK) {
- 			res = -EINVAL;
- 			break;
- 		}
+Applied to net-next, thanks Dan.
