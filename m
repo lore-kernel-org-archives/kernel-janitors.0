@@ -1,51 +1,36 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Mon, 21 Oct 2013 12:30:05 +0000
-Subject: Re: [patch] Btrfs: fix access_ok() check in btrfs_ioctl_send()
-Message-Id: <20131021123004.GI1032@twin.jikos.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 19 Oct 2013 08:55:15 +0000
+Subject: [patch] hwmon: (nct6775) Remove an unused variable
+Message-Id: <20131019085515.GC9312@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130110085725.GA23063@elgon.mountain>
-In-Reply-To: <20130110085725.GA23063@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <chris.mason@fusionio.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Alexander Block <ablock84@googlemail.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, jbacik@fusionio.com
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 10, 2013 at 11:57:25AM +0300, Dan Carpenter wrote:
-> The closing parenthesis is in the wrong place.  We want to check
-> "sizeof(*arg->clone_sources) * arg->clone_sources_count" instead of
-> "sizeof(*arg->clone_sources * arg->clone_sources_count)".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We don't actually use "j" for anything.
 
-Original message id: <20130110085725.GA23063@elgon.mountain>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This patch hasn't been applied.
-
-> ---
-> This is also vulnerable to integer overflows.  It's only done under
-> root, but these days we are trying to restrict what root can do without
-> configuring Secure Boot in UEFI.
-
-Although it's a security fix, it's not exploitable by a user so it's not
-that urgent to get it merged. Nevertheless, I hope you can squeeze it
-into 3.12-rc so we can then start pushing it to stable kernels (at least
-3.10).
-
-> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> index 5445454..4be3832 100644
-> --- a/fs/btrfs/send.c
-> +++ b/fs/btrfs/send.c
-> @@ -4553,8 +4553,8 @@ long btrfs_ioctl_send(struct file *mnt_file, void __user *arg_)
->  	}
->  
->  	if (!access_ok(VERIFY_READ, arg->clone_sources,
-> -			sizeof(*arg->clone_sources *
-> -			arg->clone_sources_count))) {
-> +			sizeof(*arg->clone_sources) *
-> +			arg->clone_sources_count)) {
->  		ret = -EFAULT;
->  		goto out;
->  	}
-
-david
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index 7a1b6a7..d17325d 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -939,7 +939,7 @@ nct6775_create_attr_group(struct device *dev, struct sensor_template_group *tg,
+ 	struct sensor_device_attribute_2 *a2;
+ 	struct attribute **attrs;
+ 	struct sensor_device_template **t;
+-	int i, j, count;
++	int i, count;
+ 
+ 	if (repeat <= 0)
+ 		return ERR_PTR(-EINVAL);
+@@ -970,7 +970,7 @@ nct6775_create_attr_group(struct device *dev, struct sensor_template_group *tg,
+ 
+ 	for (i = 0; i < repeat; i++) {
+ 		t = tg->templates;
+-		for (j = 0; *t != NULL; j++) {
++		while (*t != NULL) {
+ 			snprintf(su->name, sizeof(su->name),
+ 				 (*t)->dev_attr.attr.name, tg->base + i);
+ 			if ((*t)->s2) {
