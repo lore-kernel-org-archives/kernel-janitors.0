@@ -1,40 +1,49 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 16 Oct 2013 09:24:12 +0000
-Subject: Re: [patch] ALSA: hdsp - info leak in snd_hdsp_hwdep_ioctl()
-Message-Id: <s5hli1tmuv7.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 19 Oct 2013 08:46:22 +0000
+Subject: [patch] i2c-scmi: remove some bogus NULL checks
+Message-Id: <20131019084622.GA9312@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131016084425.GA6287@longonot.mountain>
-In-Reply-To: <20131016084425.GA6287@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Adrian Knoth <adi@drcomp.erfurt.thur.de>, Bill Pemberton <wfp5p@virginia.edu>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, speiro@ai2.upv.es
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Jiang Liu <jiang.liu@huawei.com>, Toshi Kani <toshi.kani@hp.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Yinghai Lu <yinghai@kernel.org>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Wed, 16 Oct 2013 11:44:25 +0300,
-Dan Carpenter wrote:
-> 
-> In GCC the sizeof(hdsp_version) is 8 because there is a 2 byte hole at
-> the end of the struct after ->firmware_rev.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"obj" can't be NULL here.
 
-Thanks, applied.
+We already know that "pkg->package.elements" gives us a valid pointer
+so the next pointer after that is also non-NULL.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Takashi
-
-> 
-> diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
-> index 4f255df..f59a321 100644
-> --- a/sound/pci/rme9652/hdsp.c
-> +++ b/sound/pci/rme9652/hdsp.c
-> @@ -4845,6 +4845,7 @@ static int snd_hdsp_hwdep_ioctl(struct snd_hwdep *hw, struct file *file, unsigne
->  			if ((err = hdsp_get_iobox_version(hdsp)) < 0)
->  				return err;
->  		}
-> +		memset(&hdsp_version, 0, sizeof(hdsp_version));
->  		hdsp_version.io_type = hdsp->io_type;
->  		hdsp_version.firmware_rev = hdsp->firmware_rev;
->  		if ((err = copy_to_user(argp, &hdsp_version, sizeof(hdsp_version))))
-> 
+diff --git a/drivers/i2c/busses/i2c-scmi.c b/drivers/i2c/busses/i2c-scmi.c
+index c447e8d..5992355 100644
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -223,7 +223,7 @@ acpi_smbus_cmi_access(struct i2c_adapter *adap, u16 addr, unsigned short flags,
+ 		goto out;
+ 
+ 	obj = pkg->package.elements + 1;
+-	if (obj = NULL || obj->type != ACPI_TYPE_INTEGER) {
++	if (obj->type != ACPI_TYPE_INTEGER) {
+ 		ACPI_ERROR((AE_INFO, "Invalid argument type"));
+ 		result = -EIO;
+ 		goto out;
+@@ -235,7 +235,7 @@ acpi_smbus_cmi_access(struct i2c_adapter *adap, u16 addr, unsigned short flags,
+ 	case I2C_SMBUS_BYTE:
+ 	case I2C_SMBUS_BYTE_DATA:
+ 	case I2C_SMBUS_WORD_DATA:
+-		if (obj = NULL || obj->type != ACPI_TYPE_INTEGER) {
++		if (obj->type != ACPI_TYPE_INTEGER) {
+ 			ACPI_ERROR((AE_INFO, "Invalid argument type"));
+ 			result = -EIO;
+ 			goto out;
+@@ -246,7 +246,7 @@ acpi_smbus_cmi_access(struct i2c_adapter *adap, u16 addr, unsigned short flags,
+ 			data->byte = obj->integer.value;
+ 		break;
+ 	case I2C_SMBUS_BLOCK_DATA:
+-		if (obj = NULL || obj->type != ACPI_TYPE_BUFFER) {
++		if (obj->type != ACPI_TYPE_BUFFER) {
+ 			ACPI_ERROR((AE_INFO, "Invalid argument type"));
+ 			result = -EIO;
+ 			goto out;
