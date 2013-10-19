@@ -1,23 +1,30 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Sat, 19 Oct 2013 16:05:50 +0000
-Subject: Re: [patch] hwmon: (nct6775) Remove an unused variable
-Message-Id: <5262ADDE.6070307@roeck-us.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 19 Oct 2013 09:12:22 +0000
+Subject: [patch] hwmon: (w83793) Clean up a signedness issue
+Message-Id: <20131019091222.GF9312@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131019085515.GC9312@longonot.mountain>
-In-Reply-To: <20131019085515.GC9312@longonot.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 10/19/2013 01:55 AM, Dan Carpenter wrote:
-> We don't actually use "j" for anything.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-Applied to -next.
+We cap the upper bound of "mtimeout" but since it's signed we should
+check for negative values as well.  The mistake is harmless.  But I have
+changed it to unsigned as a cleanup.
 
-Thanks,
-Guenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
+diff --git a/drivers/hwmon/w83793.c b/drivers/hwmon/w83793.c
+index b6470ec..9d63d71 100644
+--- a/drivers/hwmon/w83793.c
++++ b/drivers/hwmon/w83793.c
+@@ -1199,7 +1199,8 @@ static void w83793_init_client(struct i2c_client *client)
+ 
+ static int watchdog_set_timeout(struct w83793_data *data, int timeout)
+ {
+-	int ret, mtimeout;
++	unsigned int mtimeout;
++	int ret;
+ 
+ 	mtimeout = DIV_ROUND_UP(timeout, 60);
+ 
