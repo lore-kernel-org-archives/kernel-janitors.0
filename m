@@ -1,36 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 Oct 2013 19:41:08 +0000
-Subject: Re: [PATCH 08/19 v2] net: atl1c: Change variable type to bool
-Message-Id: <20131003.154108.1994295488096974739.davem@davemloft.net>
+From: David Sterba <dsterba@suse.cz>
+Date: Mon, 21 Oct 2013 12:30:05 +0000
+Subject: Re: [patch] Btrfs: fix access_ok() check in btrfs_ioctl_send()
+Message-Id: <20131021123004.GI1032@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
+References: <20130110085725.GA23063@elgon.mountain>
+In-Reply-To: <20130110085725.GA23063@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: jcliburn@gmail.com, chris.snook@gmail.com, jkosina@suse.cz, rdunlap@infradead.org, standby24x7@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <chris.mason@fusionio.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Alexander Block <ablock84@googlemail.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org, jbacik@fusionio.com
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed,  2 Oct 2013 14:19:48 +0200
+On Thu, Jan 10, 2013 at 11:57:25AM +0300, Dan Carpenter wrote:
+> The closing parenthesis is in the wrong place.  We want to check
+> "sizeof(*arg->clone_sources) * arg->clone_sources_count" instead of
+> "sizeof(*arg->clone_sources * arg->clone_sources_count)".
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> The variable ret is only assigned the values true and false.
-> The function atl1c_read_eeprom already returns bool. Change
-> ret type to bool.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Original message id: <20130110085725.GA23063@elgon.mountain>
 
-Applied.
+This patch hasn't been applied.
+
+> ---
+> This is also vulnerable to integer overflows.  It's only done under
+> root, but these days we are trying to restrict what root can do without
+> configuring Secure Boot in UEFI.
+
+Although it's a security fix, it's not exploitable by a user so it's not
+that urgent to get it merged. Nevertheless, I hope you can squeeze it
+into 3.12-rc so we can then start pushing it to stable kernels (at least
+3.10).
+
+> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+> index 5445454..4be3832 100644
+> --- a/fs/btrfs/send.c
+> +++ b/fs/btrfs/send.c
+> @@ -4553,8 +4553,8 @@ long btrfs_ioctl_send(struct file *mnt_file, void __user *arg_)
+>  	}
+>  
+>  	if (!access_ok(VERIFY_READ, arg->clone_sources,
+> -			sizeof(*arg->clone_sources *
+> -			arg->clone_sources_count))) {
+> +			sizeof(*arg->clone_sources) *
+> +			arg->clone_sources_count)) {
+>  		ret = -EFAULT;
+>  		goto out;
+>  	}
+
+david
