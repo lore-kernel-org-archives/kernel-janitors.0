@@ -1,7 +1,7 @@
 From: Mika Kukkonen <m.kukkonen@samsung.com>
-Date: Tue, 29 Oct 2013 10:06:19 +0000
-Subject: [PATCH 9/14] JANITOR: Remove #include <linux/sys.h> from POWERPC
-Message-Id: <20131029100619.GI14214@nbf-011.seri.co.uk>
+Date: Tue, 29 Oct 2013 10:08:34 +0000
+Subject: [PATCH 13/14] JANITOR: Remove #include <linux/sys.h> from NET
+Message-Id: <20131029100833.GL14214@nbf-011.seri.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,101 +9,31 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-From 69f06d5db247f15537ed68f06d3997daddf633e4 Mon Sep 17 00:00:00 2001
+From 4f23652789773e113c866dd76f37d0b3f69f8d12 Mon Sep 17 00:00:00 2001
 From: Mika Kukkonen <m.kukkonen@samsung.com>
-Date: Tue, 29 Oct 2013 09:18:29 +0200
-Subject: [PATCH 09/14] 09/14 JANITOR: Remove <linux/sys.h> from POWERPC
+Date: Tue, 29 Oct 2013 09:31:21 +0200
+Subject: [PATCH 13/14] 13/14 JANITOR: Remove <linux/sys.h> from NET
 
 	Remove #include from files:
-		arch/powerpc/kernel/entry_32.S
-		arch/powerpc/kernel/misc_32.S
-		arch/powerpc/kernel/misc_64.S
-		arch/powerpc/kernel/syscalls.c
-		arch/powerpc/lib/checksum_32.S
-		arch/powerpc/lib/checksum_64.S
+		net/core/pktgen.c
 
 Signed-off-by: Mika Kukkonen <m.kukkonen@samsung.com>
 ---
- arch/powerpc/kernel/entry_32.S | 1 -
- arch/powerpc/kernel/misc_32.S  | 1 -
- arch/powerpc/kernel/misc_64.S  | 1 -
- arch/powerpc/kernel/syscalls.c | 1 -
- arch/powerpc/lib/checksum_32.S | 1 -
- arch/powerpc/lib/checksum_64.S | 1 -
- 6 files changed, 6 deletions(-)
+ net/core/pktgen.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index 22b45a4..d218e1a 100644
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -20,7 +20,6 @@
-  */
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 261357a..5b6d849 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -118,7 +118,6 @@
  
- #include <linux/errno.h>
--#include <linux/sys.h>
- #include <linux/threads.h>
- #include <asm/reg.h>
- #include <asm/page.h>
-diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
-index 2b0ad98..d72a45d 100644
---- a/arch/powerpc/kernel/misc_32.S
-+++ b/arch/powerpc/kernel/misc_32.S
-@@ -18,7 +18,6 @@
-  *
-  */
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
 -#include <linux/sys.h>
- #include <asm/unistd.h>
- #include <asm/errno.h>
- #include <asm/reg.h>
-diff --git a/arch/powerpc/kernel/misc_64.S b/arch/powerpc/kernel/misc_64.S
-index e59caf8..4834d58 100644
---- a/arch/powerpc/kernel/misc_64.S
-+++ b/arch/powerpc/kernel/misc_64.S
-@@ -14,7 +14,6 @@
-  *
-  */
- 
--#include <linux/sys.h>
- #include <asm/unistd.h>
- #include <asm/errno.h>
- #include <asm/processor.h>
-diff --git a/arch/powerpc/kernel/syscalls.c b/arch/powerpc/kernel/syscalls.c
-index 4e3cc47..d9abea0 100644
---- a/arch/powerpc/kernel/syscalls.c
-+++ b/arch/powerpc/kernel/syscalls.c
-@@ -30,7 +30,6 @@
- #include <linux/shm.h>
- #include <linux/stat.h>
- #include <linux/mman.h>
--#include <linux/sys.h>
- #include <linux/ipc.h>
- #include <linux/utsname.h>
- #include <linux/file.h>
-diff --git a/arch/powerpc/lib/checksum_32.S b/arch/powerpc/lib/checksum_32.S
-index 7874e8a..6e9ba71 100644
---- a/arch/powerpc/lib/checksum_32.S
-+++ b/arch/powerpc/lib/checksum_32.S
-@@ -12,7 +12,6 @@
-  * Severely hacked about by Paul Mackerras (paulus@cs.anu.edu.au).
-  */
- 
--#include <linux/sys.h>
- #include <asm/processor.h>
- #include <asm/errno.h>
- #include <asm/ppc_asm.h>
-diff --git a/arch/powerpc/lib/checksum_64.S b/arch/powerpc/lib/checksum_64.S
-index 57a0720..d9c11c2 100644
---- a/arch/powerpc/lib/checksum_64.S
-+++ b/arch/powerpc/lib/checksum_64.S
-@@ -12,7 +12,6 @@
-  * Severely hacked about by Paul Mackerras (paulus@cs.anu.edu.au).
-  */
- 
--#include <linux/sys.h>
- #include <asm/processor.h>
- #include <asm/errno.h>
- #include <asm/ppc_asm.h>
+ #include <linux/types.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
 -- 
 1.8.3.2
 
