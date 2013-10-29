@@ -1,7 +1,7 @@
 From: Mika Kukkonen <m.kukkonen@samsung.com>
-Date: Tue, 29 Oct 2013 09:58:53 +0000
-Subject: [PATCH 2/14] JANITOR: Remove #include <linux/sys.h> from CRIS
-Message-Id: <20131029095852.GB14214@nbf-011.seri.co.uk>
+Date: Tue, 29 Oct 2013 10:02:10 +0000
+Subject: [PATCH 5/14] JANITOR: Remove #include <linux/sys.h> from MICROBLAZE
+Message-Id: <20131029100210.GE14214@nbf-011.seri.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,45 +9,59 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-From 770c45a680ac068951c4543f69a86ddd250726a2 Mon Sep 17 00:00:00 2001
+From 657248752349218a7b5f31c6f704249258ba035e Mon Sep 17 00:00:00 2001
 From: Mika Kukkonen <m.kukkonen@samsung.com>
-Date: Mon, 28 Oct 2013 14:09:48 +0200
-Subject: [PATCH 02/14] 02/14 JANITOR: Remove <linux/sys.h> from CRIS
+Date: Tue, 29 Oct 2013 08:59:54 +0200
+Subject: [PATCH 05/14] 05/14 JANITOR: Remove <linux/sys.h> from MICROBLAZE
 
 	Remove #include from files:
-		arch/cris/arch-v10/kernel/entry.S
-		arch/cris/arch-v32/kernel/entry.S
+		arch/microblaze/kernel/entry.S
+		arch/microblaze/kernel/misc.S
+		arch/microblaze/kernel/sys_microblaze.c
 
 Signed-off-by: Mika Kukkonen <m.kukkonen@samsung.com>
 ---
- arch/cris/arch-v10/kernel/entry.S | 1 -
- arch/cris/arch-v32/kernel/entry.S | 1 -
- 2 files changed, 2 deletions(-)
+ arch/microblaze/kernel/entry.S          | 1 -
+ arch/microblaze/kernel/misc.S           | 1 -
+ arch/microblaze/kernel/sys_microblaze.c | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/arch/cris/arch-v10/kernel/entry.S b/arch/cris/arch-v10/kernel/entry.S
-index 897bba6..72481d8 100644
---- a/arch/cris/arch-v10/kernel/entry.S
-+++ b/arch/cris/arch-v10/kernel/entry.S
-@@ -21,7 +21,6 @@
+diff --git a/arch/microblaze/kernel/entry.S b/arch/microblaze/kernel/entry.S
+index 0536bc0..ca2ea8b 100644
+--- a/arch/microblaze/kernel/entry.S
++++ b/arch/microblaze/kernel/entry.S
+@@ -15,7 +15,6 @@
+  * Heavily modified by John Williams for Microblaze
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ 
+ #include <asm/entry.h>
+diff --git a/arch/microblaze/kernel/misc.S b/arch/microblaze/kernel/misc.S
+index 1dafdde..a8e732e 100644
+--- a/arch/microblaze/kernel/misc.S
++++ b/arch/microblaze/kernel/misc.S
+@@ -13,7 +13,6 @@
   */
  
  #include <linux/linkage.h>
 -#include <linux/sys.h>
  #include <asm/unistd.h>
- #include <arch/sv_addr_ag.h>
- #include <asm/errno.h>
-diff --git a/arch/cris/arch-v32/kernel/entry.S b/arch/cris/arch-v32/kernel/entry.S
-index faa6441..979faa2 100644
---- a/arch/cris/arch-v32/kernel/entry.S
-+++ b/arch/cris/arch-v32/kernel/entry.S
-@@ -18,7 +18,6 @@
-  */
- 
- #include <linux/linkage.h>
+ #include <linux/errno.h>
+ #include <asm/mmu.h>
+diff --git a/arch/microblaze/kernel/sys_microblaze.c b/arch/microblaze/kernel/sys_microblaze.c
+index f905b3a..9f6f496a 100644
+--- a/arch/microblaze/kernel/sys_microblaze.c
++++ b/arch/microblaze/kernel/sys_microblaze.c
+@@ -22,7 +22,6 @@
+ #include <linux/shm.h>
+ #include <linux/stat.h>
+ #include <linux/mman.h>
 -#include <linux/sys.h>
- #include <asm/unistd.h>
- #include <asm/errno.h>
- #include <asm/thread_info.h>
+ #include <linux/ipc.h>
+ #include <linux/file.h>
+ #include <linux/err.h>
 -- 
 1.8.3.2
 
