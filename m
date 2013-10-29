@@ -1,20 +1,62 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Tue, 01 Oct 2013 15:44:02 +0000
-Subject: Re: [2/2] watchdog: ts72xx_wdt: locking bug in ioctl
-Message-Id: <20131001154402.GA309@roeck-us.net>
+From: Mika Kukkonen <m.kukkonen@samsung.com>
+Date: Tue, 29 Oct 2013 10:09:25 +0000
+Subject: [PATCH 14/14] JANITOR: Delete include/linux/sys.h
+Message-Id: <20131029100924.GM14214@nbf-011.seri.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823084059.GE31293@elgon.mountain>
-In-Reply-To: <20130823084059.GE31293@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 23, 2013 at 04:40:59PM -0000, Dan Carpenter wrote:
-> Calling the WDIOC_GETSTATUS & WDIOC_GETBOOTSTATUS and twice will cause a
-> interruptible deadlock.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+From b5e9e1daa9e7d889b4dca32048ac55b9891e030f Mon Sep 17 00:00:00 2001
+From: Mika Kukkonen <m.kukkonen@samsung.com>
+Date: Tue, 29 Oct 2013 09:33:14 +0200
+Subject: [PATCH 14/14] 14/14 JANITOR: Delete include/linux/sys.h
+
+	All #include:s are gone, delete the file.
+
+Signed-off-by: Mika Kukkonen <m.kukkonen@samsung.com>
+---
+ include/linux/sys.h | 29 -----------------------------
+ 1 file changed, 29 deletions(-)
+ delete mode 100644 include/linux/sys.h
+
+diff --git a/include/linux/sys.h b/include/linux/sys.h
+deleted file mode 100644
+index daa6008..0000000
+--- a/include/linux/sys.h
++++ /dev/null
+@@ -1,29 +0,0 @@
+-#ifndef _LINUX_SYS_H
+-#define _LINUX_SYS_H
+-
+-/*
+- * This file is no longer used or needed
+- */
+-
+-/*
+- * These are system calls that will be removed at some time
+- * due to newer versions existing..
+- * (please be careful - ibcs2 may need some of these).
+- */
+-#ifdef notdef
+-#define _sys_waitpid	_sys_old_syscall	/* _sys_wait4 */
+-#define _sys_olduname	_sys_old_syscall	/* _sys_newuname */
+-#define _sys_uname	_sys_old_syscall	/* _sys_newuname */
+-#define _sys_stat	_sys_old_syscall	/* _sys_newstat */
+-#define _sys_fstat	_sys_old_syscall	/* _sys_newfstat */
+-#define _sys_lstat	_sys_old_syscall	/* _sys_newlstat */
+-#define _sys_signal	_sys_old_syscall	/* _sys_sigaction */
+-#define _sys_sgetmask	_sys_old_syscall	/* _sys_sigprocmask */
+-#define _sys_ssetmask	_sys_old_syscall	/* _sys_sigprocmask */
+-#endif
+-
+-/*
+- * These are system calls that haven't been implemented yet
+- * but have an entry in the table for future expansion..
+- */
+-#endif
+-- 
+1.8.3.2
+
