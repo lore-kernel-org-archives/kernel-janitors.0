@@ -1,76 +1,194 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Mon, 14 Oct 2013 20:01:30 +0000
-Subject: build regressions 2013-10-14
-Message-Id: <525c4d9a.phWIbeuPeGuj11dR%fengguang.wu@intel.com>
+From: Mika Kukkonen <m.kukkonen@samsung.com>
+Date: Tue, 29 Oct 2013 10:07:02 +0000
+Subject: [PATCH 10/14] JANITOR: Remove #include <linux/sys.h> from SH
+Message-Id: <20131029100702.GJ14214@nbf-011.seri.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-[errors]
-make: *** No rule to make target `BF526-EZBRD_defconfig'.  Stop.
-make: *** No rule to make target `BF533-EZKIT_defconfig'.  Stop.
-make: *** No rule to make target `BF561-EZKIT-SMP_defconfig'.  Stop.
-make: *** No rule to make target `TCM-BF537_defconfig'.  Stop.
-make: *** No rule to make target `etrax-100lx_v2_defconfig'.  Stop.
-make: *** No rule to make target `allyesconfig'.  Stop.
-fs/cifs/cifssmb.c:3217:40: error: 'COMPRESSION_FORMAT_DEFAULT' undeclared (first use in this function)
-Makefile:49: Your system does not have libxml, disabling c2xml
-Makefile:49: Your system does not have libxml, disabling c2xml
-Makefile:79: Your system does not have llvm, disabling sparse-llvm
-Makefile:79: Your system does not have llvm, disabling sparse-llvm
-/bin/sh: 1: llvm-config: not found
-/bin/sh: 1: llvm-config: not found
-make: *** No rule to make target `alldefconfig'.  Stop.
-make: *** No rule to make target `m32104ut_defconfig'.  Stop.
-make: *** No rule to make target `mappi3.smp_defconfig'.  Stop.
-make: *** No rule to make target `opsput_defconfig'.  Stop.
-make: *** No rule to make target `usrv_defconfig'.  Stop.
-/bin/sh: llvm-config: command not found
-/bin/sh: llvm-config: command not found
-/bin/sh: llvm-config: command not found
-make: *** No rule to make target `fuloong2e_defconfig'.  Stop.
-make: *** No rule to make target `b180_defconfig'.  Stop.
-make: *** No rule to make target `c3000_defconfig'.  Stop.
-make: *** No rule to make target `chroma_defconfig'.  Stop.
-make: *** No rule to make target `corenet64_smp_defconfig'.  Stop.
-make: *** No rule to make target `gamecube_defconfig'.  Stop.
-make: *** No rule to make target `linkstation_defconfig'.  Stop.
-make: *** No rule to make target `ppc64_defconfig'.  Stop.
-make: *** No rule to make target `wii_defconfig'.  Stop.
-make: *** No rule to make target `allmodconfig'.  Stop.
-make: *** No rule to make target `rsk7269_defconfig'.  Stop.
-make: *** No rule to make target `sh7785lcr_32bit_defconfig'.  Stop.
-make: *** No rule to make target `titan_defconfig'.  Stop.
-make: *** No rule to make target `defconfig'.  Stop.
-make: *** No rule to make target `allnoconfig'.  Stop.
-make: *** No rule to make target `oldconfig'.  Stop.
-make: *** No rule to make target `oldnoconfig'.  Stop.
-arch/xtensa/include/asm/pgalloc.h:49:7: error: 'i' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:78:2: error: 'page' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:49:7: error: 'i' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:78:2: error: 'page' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:49:7: error: 'i' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:78:2: error: 'page' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:49:7: error: 'i' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:78:2: error: 'page' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:49:7: error: 'i' undeclared (first use in this function)
-arch/xtensa/include/asm/pgalloc.h:78:2: error: 'page' undeclared (first use in this function)
-make: *** No rule to make target `common_defconfig'.  Stop.
-make: *** No rule to make target `iss_defconfig'.  Stop.
 
-[warnings]
-fs/cifs/ioctl.c:40:8: warning: unused variable 'ExtAttrMask' [-Wunused-variable]
-arch/xtensa/include/asm/pgalloc.h:51:1: warning: control reaches end of non-void function [-Wreturn-type]
+From 5d8011a97d10ba46d5a9154fc6497d3c17dc2b7e Mon Sep 17 00:00:00 2001
+From: Mika Kukkonen <m.kukkonen@samsung.com>
+Date: Tue, 29 Oct 2013 09:22:38 +0200
+Subject: [PATCH 10/14] 10/14 JANITOR: Remove <linux/sys.h> from SH
 
-[sparse]
-drivers/staging/media/lirc/lirc_bt829.c:156:17: sparse: incorrect type in argument 1 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got uvoid volatile [noderef] <asn:2>*addr @@
-drivers/staging/media/lirc/lirc_bt829.c:168:17: sparse: incorrect type in argument 1 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got uvoid volatile [noderef] <asn:2>*addr @@
-drivers/staging/media/solo6x10/solo6x10-disp.c:188:24: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [short] [usertype] <noident> @@    got unsigned] [short] [usertype] <noident> @@
-net/wireless/radiotap.c:139:45: sparse: Expected ) at end of sizeof
-net/wireless/radiotap.c:139:45: sparse: got >
+	Remove #include from files:
+		arch/sh/boards/mach-ap325rxa/sdram.S
+		arch/sh/boards/mach-ecovec24/sdram.S
+		arch/sh/boards/mach-kfr2r09/sdram.S
+		arch/sh/boards/mach-migor/sdram.S
+		arch/sh/boards/mach-se/7724/sdram.S
+		arch/sh/kernel/cpu/sh3/entry.S
+		arch/sh/kernel/cpu/sh3/swsusp.S
+		arch/sh/kernel/cpu/sh5/entry.S
+		arch/sh/kernel/cpu/shmobile/sleep.S
+		arch/sh/kernel/debugtraps.S
+		arch/sh/kernel/syscalls_32.S
+		arch/sh/kernel/syscalls_64.S
 
+Signed-off-by: Mika Kukkonen <m.kukkonen@samsung.com>
 ---
-0-DAY kernel build testing backend              Open Source Technology Center
-http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
+ arch/sh/boards/mach-ap325rxa/sdram.S | 1 -
+ arch/sh/boards/mach-ecovec24/sdram.S | 1 -
+ arch/sh/boards/mach-kfr2r09/sdram.S  | 1 -
+ arch/sh/boards/mach-migor/sdram.S    | 1 -
+ arch/sh/boards/mach-se/7724/sdram.S  | 1 -
+ arch/sh/kernel/cpu/sh3/entry.S       | 1 -
+ arch/sh/kernel/cpu/sh3/swsusp.S      | 1 -
+ arch/sh/kernel/cpu/sh5/entry.S       | 1 -
+ arch/sh/kernel/cpu/shmobile/sleep.S  | 1 -
+ arch/sh/kernel/debugtraps.S          | 1 -
+ arch/sh/kernel/syscalls_32.S         | 1 -
+ arch/sh/kernel/syscalls_64.S         | 2 --
+ 12 files changed, 13 deletions(-)
+
+diff --git a/arch/sh/boards/mach-ap325rxa/sdram.S b/arch/sh/boards/mach-ap325rxa/sdram.S
+index db24fbe..c159a3c 100644
+--- a/arch/sh/boards/mach-ap325rxa/sdram.S
++++ b/arch/sh/boards/mach-ap325rxa/sdram.S
+@@ -8,7 +8,6 @@
+  * for more details.
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+diff --git a/arch/sh/boards/mach-ecovec24/sdram.S b/arch/sh/boards/mach-ecovec24/sdram.S
+index 3963c6f..67814ce 100644
+--- a/arch/sh/boards/mach-ecovec24/sdram.S
++++ b/arch/sh/boards/mach-ecovec24/sdram.S
+@@ -8,7 +8,6 @@
+  * for more details.
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+diff --git a/arch/sh/boards/mach-kfr2r09/sdram.S b/arch/sh/boards/mach-kfr2r09/sdram.S
+index 0c9f55b..822a090 100644
+--- a/arch/sh/boards/mach-kfr2r09/sdram.S
++++ b/arch/sh/boards/mach-kfr2r09/sdram.S
+@@ -8,7 +8,6 @@
+  * for more details.
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+diff --git a/arch/sh/boards/mach-migor/sdram.S b/arch/sh/boards/mach-migor/sdram.S
+index 614aa3a..f6bd288 100644
+--- a/arch/sh/boards/mach-migor/sdram.S
++++ b/arch/sh/boards/mach-migor/sdram.S
+@@ -8,7 +8,6 @@
+  * for more details.
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+diff --git a/arch/sh/boards/mach-se/7724/sdram.S b/arch/sh/boards/mach-se/7724/sdram.S
+index 6fa4734..2b6990b 100644
+--- a/arch/sh/boards/mach-se/7724/sdram.S
++++ b/arch/sh/boards/mach-se/7724/sdram.S
+@@ -8,7 +8,6 @@
+  * for more details.
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+diff --git a/arch/sh/kernel/cpu/sh3/entry.S b/arch/sh/kernel/cpu/sh3/entry.S
+index 262db6e..a4eb41b 100644
+--- a/arch/sh/kernel/cpu/sh3/entry.S
++++ b/arch/sh/kernel/cpu/sh3/entry.S
+@@ -8,7 +8,6 @@
+  * License.  See the file "COPYING" in the main directory of this archive
+  * for more details.
+  */
+-#include <linux/sys.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+diff --git a/arch/sh/kernel/cpu/sh3/swsusp.S b/arch/sh/kernel/cpu/sh3/swsusp.S
+index 0114542..6d08020 100644
+--- a/arch/sh/kernel/cpu/sh3/swsusp.S
++++ b/arch/sh/kernel/cpu/sh3/swsusp.S
+@@ -7,7 +7,6 @@
+  * License.  See the file "COPYING" in the main directory of this archive
+  * for more details.
+  */
+-#include <linux/sys.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+diff --git a/arch/sh/kernel/cpu/sh5/entry.S b/arch/sh/kernel/cpu/sh5/entry.S
+index 0c8d037..bce91bd 100644
+--- a/arch/sh/kernel/cpu/sh5/entry.S
++++ b/arch/sh/kernel/cpu/sh5/entry.S
+@@ -11,7 +11,6 @@
+  */
+ #include <linux/errno.h>
+ #include <linux/init.h>
+-#include <linux/sys.h>
+ #include <cpu/registers.h>
+ #include <asm/processor.h>
+ #include <asm/unistd.h>
+diff --git a/arch/sh/kernel/cpu/shmobile/sleep.S b/arch/sh/kernel/cpu/shmobile/sleep.S
+index e6aac65..784fbee 100644
+--- a/arch/sh/kernel/cpu/shmobile/sleep.S
++++ b/arch/sh/kernel/cpu/shmobile/sleep.S
+@@ -10,7 +10,6 @@
+  * for more details.
+  */
+ 
+-#include <linux/sys.h>
+ #include <linux/errno.h>
+ #include <linux/linkage.h>
+ #include <asm/asm-offsets.h>
+diff --git a/arch/sh/kernel/debugtraps.S b/arch/sh/kernel/debugtraps.S
+index 7a1b46f..eb7c42f 100644
+--- a/arch/sh/kernel/debugtraps.S
++++ b/arch/sh/kernel/debugtraps.S
+@@ -9,7 +9,6 @@
+  * License.  See the file "COPYING" in the main directory of this archive
+  * for more details.
+  */
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ 
+ #if !defined(CONFIG_KGDB)
+diff --git a/arch/sh/kernel/syscalls_32.S b/arch/sh/kernel/syscalls_32.S
+index 734234b..6c79811 100644
+--- a/arch/sh/kernel/syscalls_32.S
++++ b/arch/sh/kernel/syscalls_32.S
+@@ -11,7 +11,6 @@
+  * for more details.
+  *
+  */
+-#include <linux/sys.h>
+ #include <linux/linkage.h>
+ 
+ 	.data
+diff --git a/arch/sh/kernel/syscalls_64.S b/arch/sh/kernel/syscalls_64.S
+index 579fcb9..1161e77 100644
+--- a/arch/sh/kernel/syscalls_64.S
++++ b/arch/sh/kernel/syscalls_64.S
+@@ -10,8 +10,6 @@
+  * for more details.
+  */
+ 
+-#include <linux/sys.h>
+-
+ 	.section .data, "aw"
+ 	.balign 32
+ 
+-- 
+1.8.3.2
+
