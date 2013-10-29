@@ -1,7 +1,7 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Tue, 01 Oct 2013 15:39:30 +0000
-Subject: Re: watchdog: ts72xx_wdt: cleanup return codes in ioctl
-Message-Id: <20131001153930.GA25875@roeck-us.net>
+From: Wim Van Sebroeck <wim@iguana.be>
+Date: Tue, 29 Oct 2013 07:44:26 +0000
+Subject: Re: [patch] watchdog: ts72xx_wdt: cleanup return codes in ioctl
+Message-Id: <20131029074426.GA19704@spo001.leaseweb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20130823093832.GL31293@elgon.mountain>
 In-Reply-To: <20130823093832.GL31293@elgon.mountain>
@@ -9,9 +9,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Aug 23, 2013 at 05:38:32PM -0000, Dan Carpenter wrote:
+Hi Dan,
+
 > There seems to be some confusion here which functions return positive
 > numbers and which return negative error codes.
 > 
@@ -24,5 +25,9 @@ On Fri, Aug 23, 2013 at 05:38:32PM -0000, Dan Carpenter wrote:
 > propogate that back instead of hardcoding -EINVAL ourselves.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+This patch has been added to linux-watchdog-next.
+
+Kind regards,
+Wim.
+
