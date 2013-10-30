@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Wed, 30 Oct 2013 11:03:57 +0000
+From: Mika Kukkonen <m.kukkonen@samsung.com>
+Date: Wed, 30 Oct 2013 11:29:31 +0000
 Subject: Re: [PATCH 0/14] JANITOR: Remove include/linux/sys.h
-Message-Id: <alpine.DEB.2.02.1310301202580.3170@hadrien>
+Message-Id: <20131030112931.GD26766@nbf-011.seri.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20131029095347.GA12832@nbf-011.seri.co.uk>
 In-Reply-To: <20131029095347.GA12832@nbf-011.seri.co.uk>
@@ -10,36 +10,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 30 Oct 2013, Mika Kukkonen wrote:
-
-> On Tue, Oct 29, 2013 at 01:36:09PM +0000, Dan Carpenter wrote:
+On Wed, Oct 30, 2013 at 11:03:57AM +0000, Julia Lawall wrote:
+> On Wed, 30 Oct 2013, Mika Kukkonen wrote:
+> 
+> > On Tue, Oct 29, 2013 at 01:36:09PM +0000, Dan Carpenter wrote:
+> > >
+> > > Kernel Janitors doesn't have an a patch tree.  In theory these could all
+> > > go through trivial@kernel.org or they could go to the subsystem
+> > > maintainers.  You pretty much have broken it up by subsystem already.
 > >
-> > Kernel Janitors doesn't have an a patch tree.  In theory these could all
-> > go through trivial@kernel.org or they could go to the subsystem
-> > maintainers.  You pretty much have broken it up by subsystem already.
->
-> Yes, but I chickened out and did not want to CC 14 subsystem maintainers. ;-)
+> > Yes, but I chickened out and did not want to CC 14 subsystem maintainers. ;-)
+> 
+> I've deleted the mail with the patches, but if it would be useful for the
+> maintainers to see the patches, you should send them to them.  That is,
+> send each patch to the people indicated by get_maintainers.
 
-I've deleted the mail with the patches, but if it would be useful for the
-maintainers to see the patches, you should send them to them.  That is,
-send each patch to the people indicated by get_maintainers.
+Yeah, I'll probably do that, but I got bunch other janitorial stuff(*) in pipeline,
+so I will probably delay this to next merge window as this is in no way urgent.
 
-julia
+--MiKu
 
->
-> > The complication with doing it by the subsystem is that the last patch
-> > as to go in last.  I would suggest sending the first 13 patches right
-> > away and holding off until v3.13-rc1 has been released in 4 weeks time.
-> > By then the earlier patches should have been merged.  Otherwise wait
-> > until v3.14 to apply the last patch.  It's not a race, and it will make
-> > it easiest if the 13 have gone to Linus before we take the final step.
->
-> Well, this is in no way urgent issue, so I'll revisit it in the next release
-> cycle if nothing happends before that. Thanks for your feedback!
->
-> --MiKu
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+(*) Basically I am trying to make "make W=1" usefull, I just happened to stumble
+    upon this <linux/sys.h> while working on that.
+
