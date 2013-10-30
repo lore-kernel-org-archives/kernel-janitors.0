@@ -1,38 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 Oct 2013 19:41:24 +0000
-Subject: Re: [PATCH 10/19 v2] net: myri10ge: Change variable type to bool
-Message-Id: <20131003.154124.919042100815203643.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Oct 2013 17:12:51 +0000
+Subject: [patch v2] libertas: potential oops in debugfs
+Message-Id: <20131030171251.GA4130@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1380716391-20214-1-git-send-email-peter.senna@gmail.com>
-	<1380716391-20214-3-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1380716391-20214-3-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <20131025144452.GA28451@ngolde.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: hykim@myri.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed,  2 Oct 2013 14:19:50 +0200
+If we do a zero size allocation then it will oops.  Also we can't be
+sure the user passes us a NUL terminated string so I've added a
+terminator.
 
-> There is the rc variable on both myri10ge_ss_lock_napi and
-> myri10ge_ss_lock_poll functions. In both cases rc is only assigned the
-> values true and false. Both functions already return bool. Change rc
-> type to bool.
-> 
-> The simplified semantic patch that find this problem is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> @exists@
-> type T;
-> identifier b;
-> @@
-> - T
-> + bool
->   b = ...;
->   ... when any
->   b = \(true\|false\)
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+This code can only be triggered by root.
 
-Applied.
+Reported-by: Nico Golde <nico@ngolde.de>
+Reported-by: Fabian Yamaguchi <fabs@goesec.de>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/wireless/libertas/debugfs.c b/drivers/net/wireless/libertas/debugfs.c
+index 668dd27..1917348 100644
+--- a/drivers/net/wireless/libertas/debugfs.c
++++ b/drivers/net/wireless/libertas/debugfs.c
+@@ -913,7 +913,10 @@ static ssize_t lbs_debugfs_write(struct file *f, const char __user *buf,
+ 	char *p2;
+ 	struct debug_data *d = f->private_data;
+ 
+-	pdata = kmalloc(cnt, GFP_KERNEL);
++	if (cnt = 0)
++		return 0;
++
++	pdata = kmalloc(cnt + 1, GFP_KERNEL);
+ 	if (pdata = NULL)
+ 		return 0;
+ 
+@@ -922,6 +925,7 @@ static ssize_t lbs_debugfs_write(struct file *f, const char __user *buf,
+ 		kfree(pdata);
+ 		return 0;
+ 	}
++	pdata[cnt] = '\0';
+ 
+ 	p0 = pdata;
+ 	for (i = 0; i < num_of_items; i++) {
