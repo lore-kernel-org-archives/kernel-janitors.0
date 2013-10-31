@@ -1,38 +1,52 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Oct 2013 16:39:33 +0000
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Thu, 31 Oct 2013 11:57:49 +0000
 Subject: Re: [patch] i2c-scmi: remove some bogus NULL checks
-Message-Id: <20131030163933.GH26669@mwanda>
+Message-Id: <20131031115749.GC3431@katana>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="lCAWRPmW1mITcIfM"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20131019084622.GA9312@longonot.mountain>
- <20131030160257.GF3663@katana>
-In-Reply-To: <20131030160257.GF3663@katana>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Wolfram Sang <wsa@the-dreams.de>
+In-Reply-To: <20131019084622.GA9312@longonot.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Jiang Liu <jiang.liu@huawei.com>, Toshi Kani <toshi.kani@hp.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Yinghai Lu <yinghai@kernel.org>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 30, 2013 at 05:02:58PM +0100, Wolfram Sang wrote:
-> > --- a/drivers/i2c/busses/i2c-scmi.c
-> > +++ b/drivers/i2c/busses/i2c-scmi.c
-> > @@ -223,7 +223,7 @@ acpi_smbus_cmi_access(struct i2c_adapter *adap, u16 addr, unsigned short flags,
-> >  		goto out;
-> >  
-> >  	obj = pkg->package.elements + 1;
-> > -	if (obj = NULL || obj->type != ACPI_TYPE_INTEGER) {
-> > +	if (obj->type != ACPI_TYPE_INTEGER) {
-> >  		ACPI_ERROR((AE_INFO, "Invalid argument type"));
-> >  		result = -EIO;
-> >  		goto out;
 
-For obj to be 0 then pkg->package.elements must be -1.  If we're getting
-a pointer of -1 then we're already screwed.  Also we already used
-pkg->elements without the "+ 1" so we know that's not -1.
+--lCAWRPmW1mITcIfM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The reason for this patch was that some compilers assume pointer math
-can't overflow and my checker was complaining.  We use
--fno-strict-overflow in the kernel, but it still seemed worth cleaning.
+On Sat, Oct 19, 2013 at 11:46:22AM +0300, Dan Carpenter wrote:
+> "obj" can't be NULL here.
+>=20
+> We already know that "pkg->package.elements" gives us a valid pointer
+> so the next pointer after that is also non-NULL.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
+Applied to for-next, thanks!
 
+
+--lCAWRPmW1mITcIfM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSckW8AAoJEBQN5MwUoCm2zb8P/ja1eD7gaDcs9zslq1ndaZXe
+vB/mz7ZKvyCxCmI35jz1zJxARS7/yGXEFGqptn99PcXizVXkVlDBLxJTw20sYAUD
+o20aJuqs7tzt3ksgjBnfAUzxczIGUxHtvIZ1idUx0u4Uklm0sIJ9PYgqWqNVTO58
+1WBZ+gZgF4lzVcUFECOa/Lj6PjLHVblF3JatgpXOAS0Pw3mQFxqLsmBzmshYBspX
+znjvPAgGPpT64HgNhrMoFUv+NUKnFP0o1oBpeKrd0/bHxY2S8kfcAO0mVnM4IP59
+MWAUKC/imRai5Gy5Ln4zbyYSFrh5HLEOxT0YMZSoa15eWG6Uyzt6ABxWqlZ41WGX
+9PFjDetkmtdhZqQJYrgn6a6TvvuZngBjBNRmHfIV7cg0136VhI9T+OKulysar968
+654QWniAsS+9ktdadgLOfWwblolRkBl5GA38/KBIRvDlLwNH7tVK2U4BKxqgPqPn
+GgdgF0lB5WKdRSYEJUoONRZgdYLrsKwAd6GaPRM59W56XLsVe0pzGM42EDTwbril
+odtuCwOcgwnljBte26x8arfnioW/JttqKEa9rJtEnuaymFHOgrkcoFq9FdD37P7r
+zES4eNFt31jJhh1c6JMSRRXBAeo4p701Th8qAR8HVmgGU9OB4PfjAVgZhgiCLWAI
+ZWRQMlLGmWRqlbBf7b3g
+=P6HC
+-----END PGP SIGNATURE-----
+
+--lCAWRPmW1mITcIfM--
