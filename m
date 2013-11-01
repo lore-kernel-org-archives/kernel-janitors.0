@@ -1,22 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 14 Nov 2013 21:50:54 +0000
-Subject: Re: [patch] isdnloop: use strlcpy() instead of strcpy()
-Message-Id: <20131114.165054.356251797193140551.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Nov 2013 10:20:44 +0000
+Subject: [patch -next] mlx5_core: warn if no space left in alloc_4k()
+Message-Id: <20131101102044.GB29795@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131114082110.GD8150@elgon.mountain>
-In-Reply-To: <20131114082110.GD8150@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: netdev@vger.kernel.org, isdn@linux-pingi.de, kernel-janitors@vger.kernel.org, isdn4linux@listserv.isdn4linux.de
+To: Eli Cohen <eli-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Nov 2013 11:21:10 +0300
+The warning was unreachable.  In the original code, it would print the
+line number and the function but I have added an error message.
 
-> These strings come from a copy_from_user() and there is no way to be
-> sure they are NUL terminated.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I haven't tested this, hopefully the warning is not annoying.
 
-Applied and queued up for -stable, thanks Dan.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+index ba816c2..cb86265 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+@@ -193,8 +193,8 @@ static int alloc_4k(struct mlx5_core_dev *dev, u64 *addr)
+ 	unsigned n;
+ 
+ 	if (list_empty(&dev->priv.free_list)) {
++		mlx5_core_warn(dev, "no available space\n");
+ 		return -ENOMEM;
+-		mlx5_core_warn(dev, "\n");
+ 	}
+ 
+ 	fp = list_entry(dev->priv.free_list.next, struct fw_page, list);
