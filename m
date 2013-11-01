@@ -1,53 +1,29 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 27 Nov 2013 10:46:26 +0000
-Subject: [PATCH v2] kernel/fork.c: make dup_mm() static
-Message-Id: <9650251.7MHoDipBHm@daeseok-laptop>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Nov 2013 10:34:40 +0000
+Subject: [patch -next] [media] cx231xx: use after free on error path in probe
+Message-Id: <20131101103440.GP29795@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Alf =?iso-8859-1?Q?H=F8gemark?= <alf@i100.no>, Peter Senna Tschudin <peter.senna@gmail.com>, Johannes Erdfelt <johannes@erdfelt.com>, Ezequiel Garcia <elezegarcia@gmail.com>, Matt Gomboc <gomboc0@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From 1e2d6adbdef3d91141ea19a0b3a8660e7fae7847 Mon Sep 17 00:00:00 2001
-From: Daeseok Youn <daeseok.youn@lge.com>
-Date: Wed, 27 Nov 2013 10:17:59 +0900
-Subject: [PATCH v2] kernel/fork.c: make dup_mm() static
+We dereference "dev" after it has already been freed.
 
-dup_mm() function is used only in kernel/fork.c
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- include/linux/sched.h |    2 --
- kernel/fork.c         |    2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 7e35d4b..b04d7b1 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2167,8 +2167,6 @@ extern struct mm_struct *get_task_mm(struct task_struct *task);
- extern struct mm_struct *mm_access(struct task_struct *task, unsigned int mode);
- /* Remove the current tasks stale references to the old mm_struct */
- extern void mm_release(struct task_struct *, struct mm_struct *);
--/* Allocate a new mm structure and copy contents from tsk->mm */
--extern struct mm_struct *dup_mm(struct task_struct *tsk);
+diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
+index e9d017b..528cce9 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-cards.c
++++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
+@@ -1412,8 +1412,8 @@ err_v4l2:
+ 	usb_set_intfdata(interface, NULL);
+ err_if:
+ 	usb_put_dev(udev);
+-	kfree(dev);
+ 	clear_bit(dev->devno, &cx231xx_devused);
++	kfree(dev);
+ 	return retval;
+ }
  
- extern int copy_thread(unsigned long, unsigned long, unsigned long,
- 			struct task_struct *);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 022a0af..1603aea 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -799,7 +799,7 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
-  * Allocate a new mm structure and copy contents from the
-  * mm structure of the passed in task structure.
-  */
--struct mm_struct *dup_mm(struct task_struct *tsk)
-+static struct mm_struct *dup_mm(struct task_struct *tsk)
- {
- 	struct mm_struct *mm, *oldmm = current->mm;
- 	int err;
--- 
-1.7.9.5
-
----
