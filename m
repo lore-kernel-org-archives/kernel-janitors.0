@@ -1,45 +1,46 @@
-From: Eli Cohen <eli@dev.mellanox.co.il>
-Date: Sun, 03 Nov 2013 07:03:27 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 03 Nov 2013 23:16:12 +0000
 Subject: Re: [patch -next] mlx5_core: warn if no space left in alloc_4k()
-Message-Id: <20131103070326.GA3051@mtldesk30>
+Message-Id: <20131103231612.GS20521@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20131101102044.GB29795@longonot.mountain>
-In-Reply-To: <20131101102044.GB29795-dZEljifmRObu9KfB+GxooP8+0UxHXcjY@public.gmane.org>
+ <20131103070326.GA3051@mtldesk30>
+In-Reply-To: <20131103070326.GA3051@mtldesk30>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Eli Cohen <eli-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Eli Cohen <eli@dev.mellanox.co.il>
+Cc: Eli Cohen <eli@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 01, 2013 at 01:20:44PM +0300, Dan Carpenter wrote:
-> The warning was unreachable.  In the original code, it would print the
-> line number and the function but I have added an error message.
+On Sun, Nov 03, 2013 at 09:03:27AM +0200, Eli Cohen wrote:
+> On Fri, Nov 01, 2013 at 01:20:44PM +0300, Dan Carpenter wrote:
+> > The warning was unreachable.  In the original code, it would print the
+> > line number and the function but I have added an error message.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > I haven't tested this, hopefully the warning is not annoying.
+> > 
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+> > index ba816c2..cb86265 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+> > @@ -193,8 +193,8 @@ static int alloc_4k(struct mlx5_core_dev *dev, u64 *addr)
+> >  	unsigned n;
+> >  
+> >  	if (list_empty(&dev->priv.free_list)) {
+> > +		mlx5_core_warn(dev, "no available space\n");
+> >  		return -ENOMEM;
+> > -		mlx5_core_warn(dev, "\n");
+> >  	}
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I haven't tested this, hopefully the warning is not annoying.
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> index ba816c2..cb86265 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> @@ -193,8 +193,8 @@ static int alloc_4k(struct mlx5_core_dev *dev, u64 *addr)
->  	unsigned n;
->  
->  	if (list_empty(&dev->priv.free_list)) {
-> +		mlx5_core_warn(dev, "no available space\n");
->  		return -ENOMEM;
-> -		mlx5_core_warn(dev, "\n");
->  	}
+> What we really need to do here is silently return -ENOMEM. The list
+> can be found empty on a regular basis so we don't want to flood dmesg
+> with annoying messages. The statement was probably left there from a
+> previous debug cycle.
 
-What we really need to do here is silently return -ENOMEM. The list
-can be found empty on a regular basis so we don't want to flood dmesg
-with annoying messages. The statement was probably left there from a
-previous debug cycle.
+Ah, ok.  Thanks for the review.  I will remove the message.
 
->  
->  	fp = list_entry(dev->priv.free_list.next, struct fw_page, list);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards,
+dan carpenter
+
