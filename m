@@ -1,39 +1,44 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Nov 2013 10:05:21 +0000
-Subject: re: gma500: initial medfield merge
-Message-Id: <20131108100521.GU27977@elgon.mountain>
+Date: Mon, 04 Nov 2013 12:58:56 +0000
+Subject: [patch] netfilter: nf_tables: use _safe version of list_for_each
+Message-Id: <20131104125856.GB12213@longonot.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Kirill A. Shutemov,
+We need to use the _safe version of list_for_each_entry() here otherwise
+we have a use after free bug.
 
-This is a semi-automatic email about new static checker warnings.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The patch 026abc333205: "gma500: initial medfield merge" from Mar 8, 
-2012, leads to the following Smatch complaint:
-
-drivers/gpu/drm/gma500/mdfld_dsi_pkg_sender.c:541 __read_panel_data()
-	 warn: variable dereferenced before check 'sender' (see line 536)
-
-drivers/gpu/drm/gma500/mdfld_dsi_pkg_sender.c
-   535		unsigned long flags;
-   536		struct drm_device *dev = sender->dev;
-                                         ^^^^^^^^^^^
-Dereference.
-
-   537		int i;
-   538		u32 gen_data_reg;
-   539		int retry = MDFLD_DSI_READ_MAX_COUNT;
-   540	
-   541		if (!sender || !data_out || !len_out) {
-                    ^^^^^^^
-Check.
-
-   542			DRM_ERROR("Invalid parameters\n");
-   543			return -EINVAL;
-
-regards,
-dan carpenter
+diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
+index 4811f76..a82667c 100644
+--- a/net/netfilter/nft_compat.c
++++ b/net/netfilter/nft_compat.c
+@@ -634,9 +634,9 @@ nft_match_select_ops(const struct nft_ctx *ctx,
+ 
+ static void nft_match_release(void)
+ {
+-	struct nft_xt *nft_match;
++	struct nft_xt *nft_match, *tmp;
+ 
+-	list_for_each_entry(nft_match, &nft_match_list, head)
++	list_for_each_entry_safe(nft_match, tmp, &nft_match_list, head)
+ 		kfree(nft_match);
+ }
+ 
+@@ -705,9 +705,9 @@ nft_target_select_ops(const struct nft_ctx *ctx,
+ 
+ static void nft_target_release(void)
+ {
+-	struct nft_xt *nft_target;
++	struct nft_xt *nft_target, *tmp;
+ 
+-	list_for_each_entry(nft_target, &nft_target_list, head)
++	list_for_each_entry_safe(nft_target, tmp, &nft_target_list, head)
+ 		kfree(nft_target);
+ }
+ 
