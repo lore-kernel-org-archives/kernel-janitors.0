@@ -1,27 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 05 Nov 2013 20:51:53 +0000
-Subject: Re: [patch v2] mlx5_core: delete some dead code
-Message-Id: <20131105.155153.1035193448394208433.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Nov 2013 20:21:01 +0000
+Subject: [patch] wcn36xx: missing unlocks on error paths
+Message-Id: <20131105202101.GD3949@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131103070326.GA3051@mtldesk30>
-	<20131104222056.GA4248@elgon.mountain>
-In-Reply-To: <20131104222056.GA4248@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: eli@mellanox.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Eugene Krasnikov <k.eugene.e@gmail.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 5 Nov 2013 01:20:56 +0300
+There are several places which are missing unlocks.
 
-> The printk() looks like it is left over debug code.  I have removed it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  Remove the printk instead of moving it infront of the return.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This doesn't apply to the current tree, I suspect some recent changes made
-this fix no longer applicable.  Please take a look.
-
-Thanks!
+diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
+index f8c3a10..de9eb2c 100644
+--- a/drivers/net/wireless/ath/wcn36xx/smd.c
++++ b/drivers/net/wireless/ath/wcn36xx/smd.c
+@@ -1286,7 +1286,8 @@ int wcn36xx_smd_send_beacon(struct wcn36xx *wcn, struct ieee80211_vif *vif,
+ 	} else {
+ 		wcn36xx_err("Beacon is to big: beacon size=%d\n",
+ 			      msg_body.beacon_length);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out;
+ 	}
+ 	memcpy(msg_body.bssid, vif->addr, ETH_ALEN);
+ 
+@@ -1327,7 +1328,8 @@ int wcn36xx_smd_update_proberesp_tmpl(struct wcn36xx *wcn,
+ 	if (skb->len > BEACON_TEMPLATE_SIZE) {
+ 		wcn36xx_warn("probe response template is too big: %d\n",
+ 			     skb->len);
+-		return -E2BIG;
++		ret = -E2BIG;
++		goto out;
+ 	}
+ 
+ 	msg.probe_resp_template_len = skb->len;
+@@ -1606,7 +1608,8 @@ int wcn36xx_smd_keep_alive_req(struct wcn36xx *wcn,
+ 		/* TODO: it also support ARP response type */
+ 	} else {
+ 		wcn36xx_warn("unknow keep alive packet type %d\n", packet_type);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	PREPARE_HAL_BUF(wcn->hal_buf, msg_body);
