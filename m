@@ -1,20 +1,16 @@
-From: "Dr. Mack Nellie" <notiffication@notiffication.onmicrosoft.com>
-Date: Sat, 12 Oct 2013 20:39:45 +0000
-Subject: I am expecting your urgent response
-Message-Id: <90957432-4f70-4dff-8692-9f1ff9de6733@HKNPR03MB034.apcprd03.prod.outlook.com>
+From: Luca Bartolacci <inductionv8@gmail.com>
+Date: Tue, 05 Nov 2013 20:30:09 +0000
+Subject: Request for an updated to-do list
+Message-Id: <CAAL8FfB_k11U41U44+yHUgxBBap8xLUScX6UOrSoupG=O92W1A@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Compliment of the day.
- 
-I am Dr. Mack Nellie. I am looking for a reliable Indian partner that understands the India local language and English as well; I have a business proposal that will benefit both of us outside our individual professions.
-Kindly contact me for the supply details on my personal email address;  dr.macknellie@barid.com  I will furnish you with more details as soon as I receive your mail.
-I am expecting your urgent response   
+I'm a Computer Science student, and as a project I have to contribute
+to the community by uploading a simple change. And I would like to
+know if there is an updated TODO list. I've been searching around but
+all I found was a list last updated in 2009.
 
-Regards 
-Dr. Mack Nellie
-Tel: +447014245023 
-E-Mail(dr.macknellie@barid.com)
+I'm sorry if my spelling is not perfect, as I'm not a native english speaker.
