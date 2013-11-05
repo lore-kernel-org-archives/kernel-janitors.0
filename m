@@ -1,44 +1,31 @@
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Date: Thu, 07 Nov 2013 22:02:48 +0000
-Subject: Re: [patch] ocfs2: remove some impossible checks
-Message-Id: <527C0E08.1000105@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Nov 2013 20:20:07 +0000
+Subject: [patch 2/2] ACPI, extlog: remove unneeded NULL check
+Message-Id: <20131105202007.GB3949@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107074232.GC21844@elgon.mountain>
-In-Reply-To: <20131107074232.GC21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Len Brown <lenb@kernel.org>, Chen@elgon.mountain, Gong <gong.chen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/07/2013 01:42 AM, Dan Carpenter wrote:
-> pv_major and pv_minor are unsigned char type so these checks are just
-> noise.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We dereference extlog_l1_addr so the check is too late.  The
+"extlog_l1_addr" pointer can never be NULL when this function is called
+so I have removed the check.
 
-Thanks. I will incorporate these changes alongwith Mark Fasheh's review 
-comments
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->
-> diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
-> index 4599de7..eca3f93 100644
-> --- a/fs/ocfs2/stack_user.c
-> +++ b/fs/ocfs2/stack_user.c
-> @@ -808,11 +808,7 @@ static int lvb_to_version(char *lvb, struct ocfs2_protocol_version *ver)
->   		&ocfs2_user_plugin.sp_max_proto;
->
->   	memcpy(&pv, lvb, sizeof(struct ocfs2_protocol_version));
-> -	if ((pv.pv_major = LONG_MIN) || (pv.pv_major = LONG_MAX) ||
-> -	    (pv.pv_major > (u8)-1) || (pv.pv_major < 1))
-> -		return -ERANGE;
-> -	if ((pv.pv_minor = LONG_MIN) || (pv.pv_minor = LONG_MAX) ||
-> -	    (pv.pv_minor > (u8)-1) || (pv.pv_minor < 0))
-> +	if (pv.pv_major < 1)
->   		return -ERANGE;
->   	if ((pv.pv_major != max->pv_major) ||
->   	    (pv.pv_minor > max->pv_minor))
->
-
-
--- 
-Goldwyn
+diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
+index c4d5e59..d59e4bb 100644
+--- a/drivers/acpi/acpi_extlog.c
++++ b/drivers/acpi/acpi_extlog.c
+@@ -308,8 +308,7 @@ static void __exit extlog_exit(void)
+ {
+ 	mce_unregister_decode_chain(&extlog_mce_dec);
+ 	((struct extlog_l1_head *)extlog_l1_addr)->flags &= ~FLAG_OS_OPTIN;
+-	if (extlog_l1_addr)
+-		acpi_os_unmap_memory(extlog_l1_addr, l1_size);
++	acpi_os_unmap_memory(extlog_l1_addr, l1_size);
+ 	if (elog_addr)
+ 		acpi_os_unmap_memory(elog_addr, elog_size);
+ 	release_mem_region(elog_base, elog_size);
