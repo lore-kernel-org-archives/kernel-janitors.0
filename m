@@ -1,29 +1,40 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 06 Nov 2013 07:41:28 +0000
-Subject: [patch] wcn36xx: harmless memory corruption bug in debugfs
-Message-Id: <20131106074128.GA13475@elgon.mountain>
+From: Eugene Krasnikov <k.eugene.e@gmail.com>
+Date: Wed, 06 Nov 2013 08:12:52 +0000
+Subject: Re: [patch] wcn36xx: harmless memory corruption bug in debugfs
+Message-Id: <CAFSJ42azGCbOPOEwGSsVDXti23NQuPxeqnW_VAj2x-qVguFd2Q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131106074128.GA13475@elgon.mountain>
+In-Reply-To: <20131106074128.GA13475@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eugene Krasnikov <k.eugene.e@gmail.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, wcn36xx <wcn36xx@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 64 bit systems we write past the end of the arg[] array.
+Looks good to me, thanx!
 
-Fixes: 8e84c2582169 ('wcn36xx: mac80211 driver for Qualcomm WCN3660/WCN3680 hardware')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Wed, Nov 6, 2013 at 7:41 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On 64 bit systems we write past the end of the arg[] array.
+>
+> Fixes: 8e84c2582169 ('wcn36xx: mac80211 driver for Qualcomm WCN3660/WCN3680 hardware')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/net/wireless/ath/wcn36xx/debug.c b/drivers/net/wireless/ath/wcn36xx/debug.c
+> index 5b84f7a..ef44a2da 100644
+> --- a/drivers/net/wireless/ath/wcn36xx/debug.c
+> +++ b/drivers/net/wireless/ath/wcn36xx/debug.c
+> @@ -126,7 +126,7 @@ static ssize_t write_file_dump(struct file *file,
+>                 if (begin = NULL)
+>                         break;
+>
+> -               if (kstrtoul(begin, 0, (unsigned long *)(arg + i)) != 0)
+> +               if (kstrtou32(begin, 0, &arg[i]) != 0)
+>                         break;
+>         }
+>
 
-diff --git a/drivers/net/wireless/ath/wcn36xx/debug.c b/drivers/net/wireless/ath/wcn36xx/debug.c
-index 5b84f7a..ef44a2da 100644
---- a/drivers/net/wireless/ath/wcn36xx/debug.c
-+++ b/drivers/net/wireless/ath/wcn36xx/debug.c
-@@ -126,7 +126,7 @@ static ssize_t write_file_dump(struct file *file,
- 		if (begin = NULL)
- 			break;
- 
--		if (kstrtoul(begin, 0, (unsigned long *)(arg + i)) != 0)
-+		if (kstrtou32(begin, 0, &arg[i]) != 0)
- 			break;
- 	}
- 
+
+
+-- 
+Best regards,
+Eugene
