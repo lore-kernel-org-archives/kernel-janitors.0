@@ -1,28 +1,46 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Nov 2013 07:18:35 +0000
-Subject: Re: [PATCH] various space fixes
-Message-Id: <20131111071835.GC5302@mwanda>
+Date: Thu, 07 Nov 2013 07:55:43 +0000
+Subject: [patch] Staging: vt6655-6: potential NULL dereference in hostap_disable_hostapd()
+Message-Id: <20131107075543.GM21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CA+1HSerVbdKzAoGFZ6YCTi+BrH+jC3JUo3yg6em1qJ9E-rq9Wg@mail.gmail.com>
-In-Reply-To: <CA+1HSerVbdKzAoGFZ6YCTi+BrH+jC3JUo3yg6em1qJ9E-rq9Wg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 11, 2013 at 12:01:51AM -0200, Marco Lavagnino wrote:
-> Fixes various warnings from empty spaces.
-> 
-> This is the first patch I submit, so I'm not completely sure if I'm
-> doing it right. If this is correct I might start submitting more
-> subtantial patches. If it is wrong, please tell me what did I do
-> wrong, so I can learn.
-> 
+We fixed this to use free_netdev() instead of kfree() but unfortunately
+free_netdev() doesn't accept NULL pointers.  Smatch complains about
+this, it's not something I discovered through testing.
 
-Send the patch to yourself first and make sure it applies with `git am`.
-Save the email as raw text (including headers and everything).
-cat raw_email.txt | git am.
+Fixes: 3030d40b5036 ('staging: vt6655: use free_netdev instead of kfree')
+Fixes: 0a438d5b381e ('staging: vt6656: use free_netdev instead of kfree')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/staging/vt6655/hostap.c b/drivers/staging/vt6655/hostap.c
+index aab0012..ab8b2ba 100644
+--- a/drivers/staging/vt6655/hostap.c
++++ b/drivers/staging/vt6655/hostap.c
+@@ -143,7 +143,8 @@ static int hostap_disable_hostapd(PSDevice pDevice, int rtnl_locked)
+ 		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "%s: Netdevice %s unregistered\n",
+ 			pDevice->dev->name, pDevice->apdev->name);
+ 	}
+-	free_netdev(pDevice->apdev);
++	if (pDevice->apdev)
++		free_netdev(pDevice->apdev);
+ 	pDevice->apdev = NULL;
+ 	pDevice->bEnable8021x = false;
+ 	pDevice->bEnableHostWEP = false;
+diff --git a/drivers/staging/vt6656/hostap.c b/drivers/staging/vt6656/hostap.c
+index ae1676d..67ba48b 100644
+--- a/drivers/staging/vt6656/hostap.c
++++ b/drivers/staging/vt6656/hostap.c
+@@ -133,7 +133,8 @@ static int hostap_disable_hostapd(struct vnt_private *pDevice, int rtnl_locked)
+             DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "%s: Netdevice %s unregistered\n",
+ 		       pDevice->dev->name, pDevice->apdev->name);
+ 	}
+-	free_netdev(pDevice->apdev);
++	if (pDevice->apdev)
++		free_netdev(pDevice->apdev);
+ 	pDevice->apdev = NULL;
+     pDevice->bEnable8021x = false;
+     pDevice->bEnableHostWEP = false;
