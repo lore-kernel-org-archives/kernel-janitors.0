@@ -1,29 +1,35 @@
-From: Suman Anna <s-anna@ti.com>
-Date: Mon, 11 Nov 2013 23:07:59 +0000
-Subject: Re: [patch] mailbox/omap: make mbox->irq signed for error handling
-Message-Id: <5281634F.2050607@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Nov 2013 08:13:00 +0000
+Subject: [patch] Staging: comedi: pcl730: fix some bitwise vs logical AND bugs
+Message-Id: <20131107081300.GT21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107074918.GG21844@elgon.mountain>
-In-Reply-To: <20131107074918.GG21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Omar Ramirez Luna <omar.ramirez@copitl.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, tony@atomide.com
+To: kernel-janitors@vger.kernel.org
 
+These conditions are never true because they use bitwise AND instead of
+logical ands.
 
-On 11/07/2013 01:49 AM, Dan Carpenter wrote:
-> There is a bug in omap2_mbox_probe() where we try do:
->
-> 		mbox->irq = platform_get_irq(pdev, info->irq_id);
-> 		if (mbox->irq < 0) {
->
-> The problem is that mbox->irq is unsigned so the error handling doesn't
-> work.  I've changed it to a signed integer.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: b3ff824a81e8 ('staging: comedi: drivers: use comedi_dio_update_state() for complex cases')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-LGTM, thanks for the fix.
-
-regards
-Suman
+diff --git a/drivers/staging/comedi/drivers/pcl730.c b/drivers/staging/comedi/drivers/pcl730.c
+index d041b71..2baaf1d 100644
+--- a/drivers/staging/comedi/drivers/pcl730.c
++++ b/drivers/staging/comedi/drivers/pcl730.c
+@@ -173,11 +173,11 @@ static int pcl730_do_insn_bits(struct comedi_device *dev,
+ 	if (mask) {
+ 		if (mask & 0x00ff)
+ 			outb(s->state & 0xff, dev->iobase + reg);
+-		if ((mask & 0xff00) & (s->n_chan > 8))
++		if ((mask & 0xff00) && (s->n_chan > 8))
+ 			outb((s->state >> 8) & 0xff, dev->iobase + reg + 1);
+-		if ((mask & 0xff0000) & (s->n_chan > 16))
++		if ((mask & 0xff0000) && (s->n_chan > 16))
+ 			outb((s->state >> 16) & 0xff, dev->iobase + reg + 2);
+-		if ((mask & 0xff000000) & (s->n_chan > 24))
++		if ((mask & 0xff000000) && (s->n_chan > 24))
+ 			outb((s->state >> 24) & 0xff, dev->iobase + reg + 3);
+ 	}
+ 
