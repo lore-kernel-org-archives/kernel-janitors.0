@@ -1,21 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Nov 2013 08:15:02 +0000
-Subject: Re: Request for an updated to-do list
-Message-Id: <20131108081502.GX26669@mwanda>
+Date: Thu, 07 Nov 2013 07:58:06 +0000
+Subject: [patch] isdn: icn: NULL dereference printing error message
+Message-Id: <20131107075806.GO21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAAL8FfB_k11U41U44+yHUgxBBap8xLUScX6UOrSoupG=O92W1A@mail.gmail.com>
-In-Reply-To: <CAAL8FfB_k11U41U44+yHUgxBBap8xLUScX6UOrSoupG=O92W1A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, isdn4linux@listserv.isdn4linux.de, kernel-janitors@vger.kernel.org
 
-These days we just say to pick something from staging and work on it.
+"card2" is NULL here so I have changed it to use "id2" instead of
+"card2->interface.id".
 
-Staging is full of a variety of code which is almost ok to code which is
-total crap.  There are security bugs, locking bugs, every single type of
-bug you can imagine all the way down to white space messiness.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/isdn/icn/icn.c b/drivers/isdn/icn/icn.c
+index e74df7c..53d487f 100644
+--- a/drivers/isdn/icn/icn.c
++++ b/drivers/isdn/icn/icn.c
+@@ -1580,8 +1580,7 @@ icn_addcard(int port, char *id1, char *id2)
+ 	}
+ 	if (!(card2 = icn_initcard(port, id2))) {
+ 		printk(KERN_INFO
+-		       "icn: (%s) half ICN-4B, port 0x%x added\n",
+-		       card2->interface.id, port);
++		       "icn: (%s) half ICN-4B, port 0x%x added\n", id2, port);
+ 		return 0;
+ 	}
+ 	card->doubleS0 = 1;
