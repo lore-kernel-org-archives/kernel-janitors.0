@@ -1,73 +1,32 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 29 Nov 2013 09:55:23 +0000
-Subject: Re: [patch] ALSA: dice: fix array limits in dice_proc_read()
-Message-Id: <s5hpppjedmc.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Nov 2013 07:42:32 +0000
+Subject: [patch] ocfs2: remove some impossible checks
+Message-Id: <20131107074232.GC21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131129081409.GA3490@elgon.mountain>
-	<529862EC.60104@bfs.de>
-In-Reply-To: <529862EC.60104@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-At Fri, 29 Nov 2013 10:48:28 +0100,
-walter harms wrote:
-> 
-> 
-> 
-> Am 29.11.2013 09:14, schrieb Dan Carpenter:
-> > The array limits are supposed to be in units of u32 instead of in bytes.
-> > The current code has a potential array overflow.
-> > 
-> > Fixes: c614475b0ea9 ('ALSA: dice: add a proc file to show device information')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/sound/firewire/dice.c b/sound/firewire/dice.c
-> > index 57bcd31fcc12..c0aa64941cee 100644
-> > --- a/sound/firewire/dice.c
-> > +++ b/sound/firewire/dice.c
-> > @@ -1019,7 +1019,7 @@ static void dice_proc_read(struct snd_info_entry *entry,
-> >  
-> >  	if (dice_proc_read_mem(dice, &tx_rx_header, sections[2], 2) < 0)
-> >  		return;
-> > -	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.tx));
-> > +	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.tx) / 4);
-> 
-> it is a bit late but ...
-> 
-> sizeof(buf.tx) / 4  looks like ARRAY_SIZE(buf.tx)
+pv_major and pv_minor are unsigned char type so these checks are just
+noise.
 
-Not in this case :)
-I thought of it at first, too, but understood it after reading the
-code.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> If yes i suggest ARRAY_SIZE() because it gets rid of the "magic" 4.
-> 
-> re,
->  wh
-> 
-> 
-> >  	for (stream = 0; stream < tx_rx_header.number; ++stream) {
-> >  		if (dice_proc_read_mem(dice, &buf.tx, sections[2] + 2 +
-> >  				       stream * tx_rx_header.size,
-> > @@ -1045,7 +1045,7 @@ static void dice_proc_read(struct snd_info_entry *entry,
-> >  
-> >  	if (dice_proc_read_mem(dice, &tx_rx_header, sections[4], 2) < 0)
-> >  		return;
-> > -	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.rx));
-> > +	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.rx) / 4);
-> >  	for (stream = 0; stream < tx_rx_header.number; ++stream) {
-> >  		if (dice_proc_read_mem(dice, &buf.rx, sections[4] + 2 +
-> >  				       stream * tx_rx_header.size,
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> 
+diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
+index 4599de7..eca3f93 100644
+--- a/fs/ocfs2/stack_user.c
++++ b/fs/ocfs2/stack_user.c
+@@ -808,11 +808,7 @@ static int lvb_to_version(char *lvb, struct ocfs2_protocol_version *ver)
+ 		&ocfs2_user_plugin.sp_max_proto;
+ 
+ 	memcpy(&pv, lvb, sizeof(struct ocfs2_protocol_version));
+-	if ((pv.pv_major = LONG_MIN) || (pv.pv_major = LONG_MAX) ||
+-	    (pv.pv_major > (u8)-1) || (pv.pv_major < 1))
+-		return -ERANGE;
+-	if ((pv.pv_minor = LONG_MIN) || (pv.pv_minor = LONG_MAX) ||
+-	    (pv.pv_minor > (u8)-1) || (pv.pv_minor < 0))
++	if (pv.pv_major < 1)
+ 		return -ERANGE;
+ 	if ((pv.pv_major != max->pv_major) ||
+ 	    (pv.pv_minor > max->pv_minor))
