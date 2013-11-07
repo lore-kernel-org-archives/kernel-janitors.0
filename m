@@ -1,29 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Nov 2013 22:12:40 +0000
-Subject: [patch] drm/sysfs: testing the wrong variable in drm_sysfs_device_add()
-Message-Id: <20131127221240.GA20822@elgon.mountain>
+Date: Thu, 07 Nov 2013 07:52:00 +0000
+Subject: [patch] dmaengine: s3c24xx-dma: make phy->irq signed for error handling
+Message-Id: <20131107075200.GJ21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-There is a typo here so we don't check for allocation failure properly.
+There is a bug in s3c24xx_dma_probe() where we do:
 
-Fixes: 760c960bd688 ('drm/sysfs: fix hotplug regression since lifetime changes')
+		phy->irq = platform_get_irq(pdev, i);
+		if (phy->irq < 0) {
+
+The problem is that "phy->irq" is unsigned so the error handling doesn't
+work.  I have changed it to signed.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
-index bd2bca395792..c22c3097c3e8 100644
---- a/drivers/gpu/drm/drm_sysfs.c
-+++ b/drivers/gpu/drm/drm_sysfs.c
-@@ -516,7 +516,7 @@ int drm_sysfs_device_add(struct drm_minor *minor)
-                 minor_str = "card%d";
- 
- 	minor->kdev = kzalloc(sizeof(*minor->kdev), GFP_KERNEL);
--	if (!minor->dev) {
-+	if (!minor->kdev) {
- 		r = -ENOMEM;
- 		goto error;
- 	}
+diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
+index 4cb1279..63b55f3 100644
+--- a/drivers/dma/s3c24xx-dma.c
++++ b/drivers/dma/s3c24xx-dma.c
+@@ -192,7 +192,7 @@ struct s3c24xx_dma_phy {
+ 	unsigned int			id;
+ 	bool				valid;
+ 	void __iomem			*base;
+-	unsigned int			irq;
++	int				irq;
+ 	struct clk			*clk;
+ 	spinlock_t			lock;
+ 	struct s3c24xx_dma_chan		*serving;
