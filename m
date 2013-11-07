@@ -1,31 +1,32 @@
-From: Greg KH <gregkh@linux.com>
-Date: Mon, 11 Nov 2013 22:50:21 +0000
-Subject: Re: [PATCH] staging: r8188eu: various space fixes
-Message-Id: <20131111225021.GA22449@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Nov 2013 07:41:08 +0000
+Subject: [patch] fat: double unlock on error path
+Message-Id: <20131107074108.GB21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CA+1HSeq-dLweV4rCNwC-4NDGhpx_Xj=o4XiitJsTj-Tc-2upbA@mail.gmail.com>
-In-Reply-To: <CA+1HSeq-dLweV4rCNwC-4NDGhpx_Xj=o4XiitJsTj-Tc-2upbA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Nov 11, 2013 at 04:15:08PM -0300, Marco Lavagnino wrote:
-> Fixes various space errors.
+There is a stray unlock here which was not intended.  I have removed it.
 
-What space errors?
+Fixes: 3f9f3dfb5755 ('fat: add fat_fallocate operation')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> Signed-off-by: Marco Lavagnino <marco.lavagnino@gmail.com>
-> ---
->  drivers/staging/rtl8188eu/core/rtw_cmd.c |   45
-> ++++++++++++++----------------
->  1 file changed, 21 insertions(+), 24 deletions(-)
-
-Your patch is line-wrapped and can not be applied :(
-
-Care to try again?
-
-thanks,
-
-greg k-h
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index 03f716f..befedee 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -257,10 +257,8 @@ static long fat_fallocate(struct file *file, int mode,
+ 		goto error;
+ 
+ 	err = inode_newsize_ok(inode, (len + offset));
+-	if (err) {
+-		mutex_unlock(&inode->i_mutex);
++	if (err)
+ 		goto error;
+-	}
+ 
+ 	if (mode & FALLOC_FL_KEEP_SIZE) {
+ 		/* First compute the number of clusters to be allocated */
