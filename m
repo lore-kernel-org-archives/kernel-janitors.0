@@ -1,32 +1,35 @@
-From: mrabu zakaria22 <mrabu.zakaria22@gmail.com>
-Date: Mon, 18 Nov 2013 19:13:34 +0000
-Subject: CAN I TRUST YOU
-Message-Id: <CAJe6_=x=QFqvrNQR=t3JVOSGE6cM3oJNtZB50p2aAajAPLKvsw@mail.gmail.com>
+From: Alexander Aring <alex.aring@gmail.com>
+Date: Thu, 07 Nov 2013 08:17:13 +0000
+Subject: Re: [Linux-zigbee-devel] [patch] 6lowpan: release device on error path
+Message-Id: <20131107081712.GA1035@x61s.campuswlan.hs-rm.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131107074445.GD21844@elgon.mountain>
+In-Reply-To: <20131107074445.GD21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>, Alan Ott <alan@signal11.us>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-zigbee-devel@lists.sourceforge.net
 
-Hello
-I work with a bank In West Africa , Burkina Faso .I have a business
-transaction for you.
-In my department we discovered an abandoned sum of$10.5 Million US
-Dollars .In an account that belongs to one of ourforeign customer who
-died along with his entire family in car bomb in Iraq .
-Since his supposed next of kin died along sidewith him at the Bomb
-blast, there is nobody to claim the left overbalance in the account. It
-is therefore upon this discovery that I and otherofficials in my
-department decided to seek your assistance andpresent you to the bank
-as his Next of kin.
-If you accept i would give you the guide lines ofhow we can achieve
-this transfer of the balance (10.5Million Dollars)to your account. and
-we will shear the money 50-50%.
-I expect that you will give me your telephone andfax numbers for easy
-communication with you and for more details.
-Kindly reply me to this my alternative email address.(
-mrabu.zakaria10@laposte.net )
-
-Best Regards
-Mr.ABU ZAKARIA
-CALL +22679674814
+On Thu, Nov 07, 2013 at 10:44:45AM +0300, Dan Carpenter wrote:
+> We recently added a new error path and it needs a dev_put().
+> 
+> Fixes: 7adac1ec8198 ('6lowpan: Only make 6lowpan links to IEEE802154 devices')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Compile tested only.  Please review carefully.
+> 
+> diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
+> index 9497c6f..426b5df 100644
+> --- a/net/ieee802154/6lowpan.c
+> +++ b/net/ieee802154/6lowpan.c
+> @@ -1358,8 +1358,10 @@ static int lowpan_newlink(struct net *src_net, struct net_device *dev,
+>  	real_dev = dev_get_by_index(src_net, nla_get_u32(tb[IFLA_LINK]));
+>  	if (!real_dev)
+>  		return -ENODEV;
+> -	if (real_dev->type != ARPHRD_IEEE802154)
+> +	if (real_dev->type != ARPHRD_IEEE802154) {
+> +		dev_put(real_dev);
+>  		return -EINVAL;
+> +	}
+looks correct for me.
