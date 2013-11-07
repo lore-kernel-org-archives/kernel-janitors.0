@@ -1,46 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sun, 03 Nov 2013 23:16:12 +0000
-Subject: Re: [patch -next] mlx5_core: warn if no space left in alloc_4k()
-Message-Id: <20131103231612.GS20521@mwanda>
+Date: Thu, 07 Nov 2013 07:48:49 +0000
+Subject: [patch] net: make ndev->irq signed for error handling
+Message-Id: <20131107074849.GF21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131101102044.GB29795@longonot.mountain>
- <20131103070326.GA3051@mtldesk30>
-In-Reply-To: <20131103070326.GA3051@mtldesk30>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eli Cohen <eli@dev.mellanox.co.il>
-Cc: Eli Cohen <eli@mellanox.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Nov 03, 2013 at 09:03:27AM +0200, Eli Cohen wrote:
-> On Fri, Nov 01, 2013 at 01:20:44PM +0300, Dan Carpenter wrote:
-> > The warning was unreachable.  In the original code, it would print the
-> > line number and the function but I have added an error message.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > I haven't tested this, hopefully the warning is not annoying.
-> > 
-> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> > index ba816c2..cb86265 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> > @@ -193,8 +193,8 @@ static int alloc_4k(struct mlx5_core_dev *dev, u64 *addr)
-> >  	unsigned n;
-> >  
-> >  	if (list_empty(&dev->priv.free_list)) {
-> > +		mlx5_core_warn(dev, "no available space\n");
-> >  		return -ENOMEM;
-> > -		mlx5_core_warn(dev, "\n");
-> >  	}
-> 
-> What we really need to do here is silently return -ENOMEM. The list
-> can be found empty on a regular basis so we don't want to flood dmesg
-> with annoying messages. The statement was probably left there from a
-> previous debug cycle.
+There is a bug in cpsw_probe() where we do:
 
-Ah, ok.  Thanks for the review.  I will remove the message.
+	ndev->irq = platform_get_irq(pdev, 0);
+	if (ndev->irq < 0) {
 
-regards,
-dan carpenter
+The problem is that "ndev->irq" is unsigned so the error handling
+doesn't work.  I have changed it to a regular int.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 9da6a04..bb011f6 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -1132,7 +1132,7 @@ struct net_device {
+ 	unsigned long		mem_end;	/* shared mem end	*/
+ 	unsigned long		mem_start;	/* shared mem start	*/
+ 	unsigned long		base_addr;	/* device I/O address	*/
+-	unsigned int		irq;		/* device IRQ number	*/
++	int			irq;		/* device IRQ number	*/
+ 
+ 	/*
+ 	 *	Some hardware also needs these fields, but they are not
