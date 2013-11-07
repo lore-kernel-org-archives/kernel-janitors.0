@@ -1,60 +1,30 @@
-From: Antti Palosaari <crope@iki.fi>
-Date: Fri, 22 Nov 2013 14:11:27 +0000
-Subject: Re: [patch] [media] af9035: unlock on error in af9035_i2c_master_xfer()
-Message-Id: <528F660F.9050100@iki.fi>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Nov 2013 07:56:51 +0000
+Subject: [patch] gpio: rcar: NULL dereference on error in probe()
+Message-Id: <20131107075651.GN21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131122075045.GA15726@elgon.mountain>
-In-Reply-To: <20131122075045.GA15726@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm@opensource.se>
+Cc: Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <rob.herring@calxeda.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Antti Palosaari <crope@iki.fi>
+It's not obvious from the label name but "err1" tries to release
+"p->irq_domain" which leads to a NULL dereference.
 
-Antti
+Fixes: 119f5e448d32 ('gpio: Renesas R-Car GPIO driver V3')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 22.11.2013 09:50, Dan Carpenter wrote:
-> We introduced a couple new error paths which are missing unlocks.
->
-> Fixes: 7760e148350b ('[media] af9035: Don't use dynamic static allocation')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
-> index c8fcd78425bd..625ef2489b23 100644
-> --- a/drivers/media/usb/dvb-usb-v2/af9035.c
-> +++ b/drivers/media/usb/dvb-usb-v2/af9035.c
-> @@ -245,7 +245,8 @@ static int af9035_i2c_master_xfer(struct i2c_adapter *adap,
->   				dev_warn(&d->udev->dev,
->   					 "%s: i2c xfer: len=%d is too big!\n",
->   					 KBUILD_MODNAME, msg[0].len);
-> -				return -EOPNOTSUPP;
-> +				ret = -EOPNOTSUPP;
-> +				goto unlock;
->   			}
->   			req.mbox |= ((msg[0].addr & 0x80)  >>  3);
->   			buf[0] = msg[1].len;
-> @@ -281,7 +282,8 @@ static int af9035_i2c_master_xfer(struct i2c_adapter *adap,
->   				dev_warn(&d->udev->dev,
->   					 "%s: i2c xfer: len=%d is too big!\n",
->   					 KBUILD_MODNAME, msg[0].len);
-> -				return -EOPNOTSUPP;
-> +				ret = -EOPNOTSUPP;
-> +				goto unlock;
->   			}
->   			req.mbox |= ((msg[0].addr & 0x80)  >>  3);
->   			buf[0] = msg[0].len;
-> @@ -319,6 +321,7 @@ static int af9035_i2c_master_xfer(struct i2c_adapter *adap,
->   		ret = -EOPNOTSUPP;
->   	}
->
-> +unlock:
->   	mutex_unlock(&d->i2c_mutex);
->
->   	if (ret < 0)
->
-
-
--- 
-http://palosaari.fi/
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index d3f15ae..fe088a3 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -381,7 +381,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	if (!p->irq_domain) {
+ 		ret = -ENXIO;
+ 		dev_err(&pdev->dev, "cannot initialize irq domain\n");
+-		goto err1;
++		goto err0;
+ 	}
+ 
+ 	if (devm_request_irq(&pdev->dev, irq->start,
