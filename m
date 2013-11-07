@@ -1,25 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 18 Nov 2013 10:45:27 +0000
-Subject: Re: [patch] gpio: rcar: NULL dereference on error in probe()
-Message-Id: <CACRpkdai2WdEC-eRiBJ1jDMcMOVcvnN78_yO-VtmyxM4SwWwLw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 07 Nov 2013 07:52:40 +0000
+Subject: [patch] Input: tnetv107x-keypad - make irqs signed for error handling
+Message-Id: <20131107075240.GK21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107075651.GN21844@elgon.mountain>
-In-Reply-To: <20131107075651.GN21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Magnus Damm <damm@opensource.se>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <rob.herring@calxeda.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bill Pemberton <wfp5p@virginia.edu>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Javier Martinez Canillas <javier@dowhile0.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Sachin Kamat <sachin.kamat@linaro.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 7, 2013 at 8:56 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+There is a bug in keypad_probe() where we do:
 
-> It's not obvious from the label name but "err1" tries to release
-> "p->irq_domain" which leads to a NULL dereference.
->
-> Fixes: 119f5e448d32 ('gpio: Renesas R-Car GPIO driver V3')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+	kp->irq_press   = platform_get_irq_byname(pdev, "press");
+	kp->irq_release = platform_get_irq_byname(pdev, "release");
+	if (kp->irq_press < 0 || kp->irq_release < 0) {
 
-Applied for fixes with Magnus' ACK and tagged for stable.
+The problem is that these irq variables are unsigned so the error
+handling doesn't work.  I've changed them to signed values.
 
-Yours,
-Linus Walleij
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/input/keyboard/tnetv107x-keypad.c b/drivers/input/keyboard/tnetv107x-keypad.c
+index 5f7b427..8bd24d5 100644
+--- a/drivers/input/keyboard/tnetv107x-keypad.c
++++ b/drivers/input/keyboard/tnetv107x-keypad.c
+@@ -60,8 +60,8 @@ struct keypad_data {
+ 	struct clk			*clk;
+ 	struct device			*dev;
+ 	spinlock_t			lock;
+-	u32				irq_press;
+-	u32				irq_release;
++	int				irq_press;
++	int				irq_release;
+ 	int				rows, cols, row_shift;
+ 	int				debounce_ms, active_low;
+ 	u32				prev_keys[3];
