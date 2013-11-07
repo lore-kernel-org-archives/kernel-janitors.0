@@ -1,59 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 01 Nov 2013 10:24:10 +0000
-Subject: [patch] [SCSI] mpt fusion: declare some sizes as unsigned
-Message-Id: <20131101102410.GD29795@longonot.mountain>
+Date: Thu, 07 Nov 2013 08:18:45 +0000
+Subject: [patch 2/2] ALSA: cs4236: fix pnp_irq() error handling
+Message-Id: <20131107081845.GV21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <Nagalakshmi.Nandigama@lsi.com>
-Cc: Sreekanth Reddy <Sreekanth.Reddy@lsi.com>, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, Bill Pemberton <wfp5p@virginia.edu>, kernel-janitors@vger.kernel.org
 
-In mptctl_do_mpt_command() we cap the upper bound of .maxSenseBytes but
-we don't check for negative values:
-
-	if (karg.maxSenseBytes > MPT_SENSE_BUFFER_SIZE)
-
-I've fixed this by making the type unsigned and I changed the
-surrounding types to match as well.
+pnp_irq() returns an unsigned value so the error handling here doesn't
+work.  I recently introduced a IORESOURCE_INVALID define to make this
+less confusing.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This needs [patch 1/2] or it won't compile.  Can both patches go through
+Andrew's tree?
 
-diff --git a/drivers/message/fusion/mptctl.h b/drivers/message/fusion/mptctl.h
-index d564cc9..9ea5a18 100644
---- a/drivers/message/fusion/mptctl.h
-+++ b/drivers/message/fusion/mptctl.h
-@@ -324,11 +324,11 @@ struct mpt_ioctl_command {
- 	char		__user *dataInBufPtr;
- 	char		__user *dataOutBufPtr;
- 	char		__user *senseDataPtr;
--	int		maxReplyBytes;
--	int		dataInSize;
--	int		dataOutSize;
--	int		maxSenseBytes;
--	int		dataSgeOffset;
-+	u32		maxReplyBytes;
-+	u32		dataInSize;
-+	u32		dataOutSize;
-+	u32		maxSenseBytes;
-+	u32		dataSgeOffset;
- 	char		MF[1];
- };
- 
-@@ -343,11 +343,11 @@ struct mpt_ioctl_command32 {
- 	u32	dataInBufPtr;
- 	u32	dataOutBufPtr;
- 	u32	senseDataPtr;
--	int	maxReplyBytes;
--	int	dataInSize;
--	int	dataOutSize;
--	int	maxSenseBytes;
--	int	dataSgeOffset;
-+	u32	maxReplyBytes;
-+	u32	dataInSize;
-+	u32	dataOutSize;
-+	u32	maxSenseBytes;
-+	u32	dataSgeOffset;
- 	char	MF[1];
- };
- #endif	/*}*/
+diff --git a/sound/isa/cs423x/cs4236.c b/sound/isa/cs423x/cs4236.c
+index 69614ac..9725843 100644
+--- a/sound/isa/cs423x/cs4236.c
++++ b/sound/isa/cs423x/cs4236.c
+@@ -293,7 +293,8 @@ static int snd_cs423x_pnp_init_mpu(int dev, struct pnp_dev *pdev)
+ 	} else {
+ 		mpu_port[dev] = pnp_port_start(pdev, 0);
+ 		if (mpu_irq[dev] >= 0 &&
+-		    pnp_irq_valid(pdev, 0) && pnp_irq(pdev, 0) >= 0) {
++		    pnp_irq_valid(pdev, 0) &&
++		    pnp_irq(pdev, 0) != IORESOURCE_INVALID) {
+ 			mpu_irq[dev] = pnp_irq(pdev, 0);
+ 		} else {
+ 			mpu_irq[dev] = -1;	/* disable interrupt */
