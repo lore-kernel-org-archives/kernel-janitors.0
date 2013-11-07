@@ -1,19 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Nov 2013 09:42:24 +0000
-Subject: Re: [patch] drm/tegra: small leak on error in tegra_fb_alloc()
-Message-Id: <20131111094223.GG5302@mwanda>
+Date: Thu, 07 Nov 2013 08:09:54 +0000
+Subject: [patch] [ALSA] sb16 - info leak in snd_sb_csp_ioctl()
+Message-Id: <20131107080954.GS21844@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131110053406.GB13643@elgon.mountain>
- <20131111090348.GD3884@ulmo.nvidia.com>
-In-Reply-To: <20131111090348.GD3884-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-Sure.  I will resend.
+There is a 2 byte hole after "info.func_nr" so we could leak unitialized
+stack information to userspace.
 
-regards,
-dan carpenter
+Fixes: 1da177e4c3f4 ('Linux-2.6.12-rc2')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/sound/isa/sb/sb16_csp.c b/sound/isa/sb/sb16_csp.c
+index c1aa21e..48da227 100644
+--- a/sound/isa/sb/sb16_csp.c
++++ b/sound/isa/sb/sb16_csp.c
+@@ -208,6 +208,7 @@ static int snd_sb_csp_ioctl(struct snd_hwdep * hw, struct file *file, unsigned i
+ 	switch (cmd) {
+ 		/* get information */
+ 	case SNDRV_SB_CSP_IOCTL_INFO:
++		memset(&info, 0, sizeof(info));
+ 		*info.codec_name = *p->codec_name;
+ 		info.func_nr = p->func_nr;
+ 		info.acc_format = p->acc_format;
