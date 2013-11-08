@@ -1,22 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 08 Nov 2013 00:13:31 +0000
-Subject: Re: [patch] 6lowpan: release device on error path
-Message-Id: <20131107.191331.5561975057667792.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2013 09:46:53 +0000
+Subject: [patch] ASoC: rcar: some dubious one-bit signed bitfields
+Message-Id: <20131108094653.GF27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107074445.GD21844@elgon.mountain>
-In-Reply-To: <20131107074445.GD21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: alex.bluesman.smirnov@gmail.com, alan@signal11.us, dbaryshkov@gmail.com, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 7 Nov 2013 10:44:45 +0300
+Because these are signed they can either be 0 or -1 instead of 0 and 1
+as intended.  It doesn't cause a problem from what I can see, but it's
+dangerous and Sparse complains:
 
-> We recently added a new error path and it needs a dev_put().
-> 
-> Fixes: 7adac1ec8198 ('6lowpan: Only make 6lowpan links to IEEE802154 devices')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+	sound/soc/sh/rcar/rsnd.h:177:25:
+		error: dubious one-bit signed bitfield
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index 9e463e5..b5ac3a2 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -174,11 +174,11 @@ struct rsnd_dai {
+ 	struct rsnd_dai_stream playback;
+ 	struct rsnd_dai_stream capture;
+ 
+-	int clk_master:1;
+-	int bit_clk_inv:1;
+-	int frm_clk_inv:1;
+-	int sys_delay:1;
+-	int data_alignment:1;
++	unsigned int clk_master:1;
++	unsigned int bit_clk_inv:1;
++	unsigned int frm_clk_inv:1;
++	unsigned int sys_delay:1;
++	unsigned int data_alignment:1;
+ };
+ 
+ #define rsnd_dai_nr(priv) ((priv)->dai_nr)
