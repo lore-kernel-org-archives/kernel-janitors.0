@@ -1,48 +1,28 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 07 Nov 2013 09:17:01 +0000
-Subject: Re: [patch] [ALSA] sb16 - info leak in snd_sb_csp_ioctl()
-Message-Id: <s5hiow4vaeq.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2013 09:50:24 +0000
+Subject: [patch 1/2] dma: pl330: off by one in pl330_probe()
+Message-Id: <20131108095024.GH27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107080954.GS21844@elgon.mountain>
-	<s5hli10vbqv.wl%tiwai@suse.de>
-	<20131107090947.GS26669@mwanda>
-In-Reply-To: <20131107090947.GS26669@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-At Thu, 7 Nov 2013 12:09:47 +0300,
-Dan Carpenter wrote:
-> 
-> On Thu, Nov 07, 2013 at 09:48:08AM +0100, Takashi Iwai wrote:
-> > At Thu, 7 Nov 2013 11:09:54 +0300,
-> > Dan Carpenter wrote:
-> > > 
-> > > There is a 2 byte hole after "info.func_nr" so we could leak unitialized
-> > > stack information to userspace.
-> > > 
-> > > Fixes: 1da177e4c3f4 ('Linux-2.6.12-rc2')
-> > 
-> > Does this help at all?  It means that the bug has been there even
-> > before moving to git.  I think it's better to be removed for avoid
-> > confusion.
-> 
-> I think if you are back porting it then you know it goes back all the
-> way.  That seems useful.
+There are only AMBA_NR_IRQS (2) elements in adev->irq[].  This code
+maybe works if the there is a zero directly after the array.
 
-Yeah, I understand the usefulness of the tag.  But my understanding is
-that this is used for pointing a regression point.  However, in this
-particular case, the commit you pointed there isn't the actual commit
-introducing the bug.  It's the genesis commit containing everything.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> The Fixes tag is still new so it's not totally clear what the rules are.
-> I don't have strong feelings about this either way.
-
-OK, then let me drop that tag in this case.
-
-
-thanks,
-
-Takashi
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 4b2583c..4af4b0c 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -2926,7 +2926,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	amba_set_drvdata(adev, pdmac);
+ 
+-	for (i = 0; i <= AMBA_NR_IRQS; i++) {
++	for (i = 0; i < AMBA_NR_IRQS; i++) {
+ 		irq = adev->irq[i];
+ 		if (irq) {
+ 			ret = devm_request_irq(&adev->dev, irq,
