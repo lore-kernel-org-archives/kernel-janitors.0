@@ -1,43 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 07 Nov 2013 14:33:57 +0000
-Subject: Re: [patch] watchdog: pcwd_usb: overflow in usb_pcwd_send_command()
-Message-Id: <20131107143356.GP20521@mwanda>
+Date: Fri, 08 Nov 2013 09:46:10 +0000
+Subject: [patch] ASoC: rcar: off by one in rsnd_scu_set_route()
+Message-Id: <20131108094610.GE27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107074028.GA21844@elgon.mountain>
- <527BA351.10705@roeck-us.net>
-In-Reply-To: <527BA351.10705@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>
 
-On Thu, Nov 07, 2013 at 06:27:29AM -0800, Guenter Roeck wrote:
-> On 11/06/2013 11:40 PM, Dan Carpenter wrote:
-> >We changed "buf" from being an array of 6 chars to being a pointer this
-> >sizeof(buf) needs to be updated as well.
-> >
-> oops ...
-> 
-> >Fixes: 2ddb8089a7e5 ('watchdog: pcwd_usb: Use allocated buffer for usb_control_msg')
-> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> >diff --git a/drivers/watchdog/pcwd_usb.c b/drivers/watchdog/pcwd_usb.c
-> >index 53598e8..7031b9b 100644
-> >--- a/drivers/watchdog/pcwd_usb.c
-> >+++ b/drivers/watchdog/pcwd_usb.c
-> >@@ -258,7 +258,7 @@ static int usb_pcwd_send_command(struct usb_pcwd_private *usb_pcwd,
-> >
-> >  	if (usb_control_msg(usb_pcwd->udev, usb_sndctrlpipe(usb_pcwd->udev, 0),
-> >  			HID_REQ_SET_REPORT, HID_DT_REPORT,
-> >-			0x0200, usb_pcwd->interface_number, buf, sizeof(buf),
-> >+			0x0200, usb_pcwd->interface_number, buf, 6,
-> >  			USB_COMMAND_TIMEOUT) != sizeof(buf)) {
-> 
-> Doesn't it have to be fixed here as well ?
+If "id = ARRAY_SIZE(routes)" then we read one space beyond the end of
+the routes[] array.
 
-Yeah.  Good eye.  I'll send a v2.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/sound/soc/sh/rcar/scu.c b/sound/soc/sh/rcar/scu.c
+index 1ab1bce..5e46ef2 100644
+--- a/sound/soc/sh/rcar/scu.c
++++ b/sound/soc/sh/rcar/scu.c
+@@ -68,7 +68,7 @@ static int rsnd_scu_set_route(struct rsnd_priv *priv,
+ 		return 0;
+ 
+ 	id = rsnd_mod_id(mod);
+-	if (id < 0 || id > ARRAY_SIZE(routes))
++	if (id < 0 || id >= ARRAY_SIZE(routes))
+ 		return -EIO;
+ 
+ 	/*
