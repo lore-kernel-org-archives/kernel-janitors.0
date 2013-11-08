@@ -1,44 +1,39 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sat, 23 Nov 2013 17:13:10 +0000
-Subject: [PATCH] dcache: update a comment to reflect the code
-Message-Id: <1385226790-29092-1-git-send-email-emilgoode@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2013 10:05:21 +0000
+Subject: re: gma500: initial medfield merge
+Message-Id: <20131108100521.GU27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Eric W. Biederman" <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Serge Hallyn <serge.hallyn@canonical.com>
-Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-The following commit introduced the function shrink_submounts_and_drop
-which replaces the function check_submounts_and_drop.
-This patch updates a comment to use the new function name.
+Hello Kirill A. Shutemov,
 
-commit 40216baa0101ec7ac9ce7c4f4f4d684f3a85eb93
-Author: Eric W. Biederman <ebiederman@twitter.com>
-Date:   Tue Oct 1 18:33:48 2013 -0700
+This is a semi-automatic email about new static checker warnings.
 
-    vfs: Lazily remove mounts on unlinked files and directories. v2
+The patch 026abc333205: "gma500: initial medfield merge" from Mar 8, 
+2012, leads to the following Smatch complaint:
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
- fs/dcache.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+drivers/gpu/drm/gma500/mdfld_dsi_pkg_sender.c:541 __read_panel_data()
+	 warn: variable dereferenced before check 'sender' (see line 536)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 9042a32..1c0576e 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1204,8 +1204,8 @@ EXPORT_SYMBOL(have_submounts);
-  * reachable (e.g. NFS can unhash a directory dentry and then the complete
-  * subtree can become unreachable).
-  *
-- * Only one of check_submounts_and_drop() and d_set_mounted() must succeed.  For
-- * this reason take rename_lock and d_lock on dentry and ancestors.
-+ * Only one of shrink_submounts_and_drop() and d_set_mounted() must succeed.
-+ * For this reason take rename_lock and d_lock on dentry and ancestors.
-  */
- int d_set_mounted(struct dentry *dentry)
- {
--- 
-1.7.10.4
+drivers/gpu/drm/gma500/mdfld_dsi_pkg_sender.c
+   535		unsigned long flags;
+   536		struct drm_device *dev = sender->dev;
+                                         ^^^^^^^^^^^
+Dereference.
 
+   537		int i;
+   538		u32 gen_data_reg;
+   539		int retry = MDFLD_DSI_READ_MAX_COUNT;
+   540	
+   541		if (!sender || !data_out || !len_out) {
+                    ^^^^^^^
+Check.
+
+   542			DRM_ERROR("Invalid parameters\n");
+   543			return -EINVAL;
+
+regards,
+dan carpenter
