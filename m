@@ -1,35 +1,40 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Nov 2013 13:29:28 +0000
-Subject: Re: [patch 2/2] drm/tegra: silence some sparse complaints
-Message-Id: <20131108132928.GT20521@mwanda>
+Date: Fri, 08 Nov 2013 08:24:49 +0000
+Subject: [patch 2/2 v2] ACPI, extlog: remove unneeded NULL check
+Message-Id: <20131108082449.GA19368@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131108100803.GY27977@elgon.mountain>
- <20131108123455.GA31551@ulmo.nvidia.com>
-In-Reply-To: <20131108123455.GA31551-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+References: <20131107072230.GA32127@gchen.bj.intel.com>
+In-Reply-To: <20131107072230.GA32127@gchen.bj.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Len Brown <lenb@kernel.org>, "Chen, Gong" <gong.chen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Tony Luck <tony.luck@gmail.com>, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 08, 2013 at 01:34:56PM +0100, Thierry Reding wrote:
-> On Fri, Nov 08, 2013 at 01:08:03PM +0300, Dan Carpenter wrote:
-> > I've shifted the __user markup to make Sparse happy.
-> > 
-> > drivers/gpu/drm/tegra/drm.c:138:18: warning: incorrect type in initializer (different address spaces)
-> > drivers/gpu/drm/tegra/drm.c:138:18:    expected struct drm_tegra_cmdbuf [noderef] <asn:1>*cmdbufs
-> > drivers/gpu/drm/tegra/drm.c:138:18:    got void *[noderef] <asn:1><noident>
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Hi Dan,
-> 
-> I fixed exactly the same sparse warnings (along with many others this
-> morning). We really ought to have a tag to put into a commit to credit
-> people who've come up with the same patch at the same time.
+We dereference extlog_l1_addr before checking if is NULL.  It turns out
+"extlog_l1_addr" pointer can never be NULL when this function is called
+so I have removed the check.
 
-No no.  First come first serve.  :)
+We can remove the "elog_addr" check as well.
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: remove the elog_addr check as well.
 
+diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
+index a6869e1..17da458 100644
+--- a/drivers/acpi/acpi_extlog.c
++++ b/drivers/acpi/acpi_extlog.c
+@@ -310,10 +310,8 @@ static void __exit extlog_exit(void)
+ {
+ 	mce_unregister_decode_chain(&extlog_mce_dec);
+ 	((struct extlog_l1_head *)extlog_l1_addr)->flags &= ~FLAG_OS_OPTIN;
+-	if (extlog_l1_addr)
+-		acpi_os_unmap_memory(extlog_l1_addr, l1_size);
+-	if (elog_addr)
+-		acpi_os_unmap_memory(elog_addr, elog_size);
++	acpi_os_unmap_memory(extlog_l1_addr, l1_size);
++	acpi_os_unmap_memory(elog_addr, elog_size);
+ 	release_mem_region(elog_base, elog_size);
+ 	release_mem_region(l1_dirbase, l1_size);
+ 	kfree(elog_buf);
