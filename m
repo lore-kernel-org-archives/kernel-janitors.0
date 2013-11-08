@@ -1,31 +1,72 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Wed, 13 Nov 2013 08:29:54 +0000
-Subject: Re: [patch] ALSA: snd-aoa: two copy and paste bugs
-Message-Id: <1384331394.14578.0.camel@jlt4.sipsolutions.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2013 10:07:37 +0000
+Subject: [patch 1/2] drm/tegra: return -EFAULT if copy_from_user() fails
+Message-Id: <20131108100737.GX27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131113074520.GD25541@elgon.mountain>
-	 <s5h4n7gso19.wl%tiwai@suse.de>
-In-Reply-To: <s5h4n7gso19.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <michael@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2013-11-13 at 09:29 +0100, Takashi Iwai wrote:
-> At Wed, 13 Nov 2013 10:45:20 +0300,
-> Dan Carpenter wrote:
-> > 
-> > These functions were cut and paste and the tests for NULL weren't
-> > updated properly.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Thanks, applied.
+copy_from_user() returns the number of bytes remaining if it fails, but
+we want to return -EFAULT here.
 
-FWIW, looks fine to me - I wonder how long this has been broken though,
-must be practically forever. I guess we never got it wrong and missed
-adding some pointers? :-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-johannes
-
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 28e1781..fd3ff3b 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -163,9 +163,10 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		struct drm_tegra_cmdbuf cmdbuf;
+ 		struct host1x_bo *bo;
+ 
+-		err = copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf));
+-		if (err)
++		if (copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf))) {
++			err = -EFAULT;
+ 			goto fail;
++		}
+ 
+ 		bo = host1x_bo_lookup(drm, file, cmdbuf.handle);
+ 		if (!bo) {
+@@ -178,10 +179,11 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		cmdbufs++;
+ 	}
+ 
+-	err = copy_from_user(job->relocarray, relocs,
+-			     sizeof(*relocs) * num_relocs);
+-	if (err)
++	if (copy_from_user(job->relocarray, relocs,
++			   sizeof(*relocs) * num_relocs)) {
++		err = -EFAULT;
+ 		goto fail;
++	}
+ 
+ 	while (num_relocs--) {
+ 		struct host1x_reloc *reloc = &job->relocarray[num_relocs];
+@@ -199,15 +201,17 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		}
+ 	}
+ 
+-	err = copy_from_user(job->waitchk, waitchks,
+-			     sizeof(*waitchks) * num_waitchks);
+-	if (err)
++	if (copy_from_user(job->waitchk, waitchks,
++			   sizeof(*waitchks) * num_waitchks)) {
++		err = -EFAULT;
+ 		goto fail;
++	}
+ 
+-	err = copy_from_user(&syncpt, (void * __user)(uintptr_t)args->syncpts,
+-			     sizeof(syncpt));
+-	if (err)
++	if (copy_from_user(&syncpt, (void * __user)(uintptr_t)args->syncpts,
++			   sizeof(syncpt))) {
++		err = -EFAULT;
+ 		goto fail;
++	}
+ 
+ 	job->is_addr_reg = context->client->ops->is_addr_reg;
+ 	job->syncpt_incrs = syncpt.incrs;
