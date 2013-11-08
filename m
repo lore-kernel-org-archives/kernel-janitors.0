@@ -1,32 +1,53 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Nov 2013 22:18:47 +0000
-Subject: [patch] drm/nv50/disp: min/max are reversed in nv50_crtc_gamma_set()
-Message-Id: <20131127221847.GB20822@elgon.mountain>
+Date: Fri, 08 Nov 2013 10:06:50 +0000
+Subject: re: pinctrl: abx500: fix abx500_gpio_dbg_show_one() to show pull up/down
+Message-Id: <20131108100650.GW27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1940853357.8722109.1385508166826.JavaMail.root@redhat.com>
-In-Reply-To: <1940853357.8722109.1385508166826.JavaMail.root@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-We should be taking the minimum here instead of the max.  It could lead
-to a buffer overflow.
+Hello Patrice Chotard,
 
-Fixes: 438d99e3b175 ('drm/nvd0/disp: initial crtc object implementation')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This is a semi-automatic email about new static checker warnings.
 
-diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
-index f8e66c08b11a..4e384a2f99c3 100644
---- a/drivers/gpu/drm/nouveau/nv50_display.c
-+++ b/drivers/gpu/drm/nouveau/nv50_display.c
-@@ -1265,7 +1265,7 @@ nv50_crtc_gamma_set(struct drm_crtc *crtc, u16 *r, u16 *g, u16 *b,
- 		    uint32_t start, uint32_t size)
- {
- 	struct nouveau_crtc *nv_crtc = nouveau_crtc(crtc);
--	u32 end = max(start + size, (u32)256);
-+	u32 end = min_t(u32, start + size, 256);
- 	u32 i;
- 
- 	for (i = start; i < end; i++) {
+The patch d2752ae54d4a: "pinctrl: abx500: fix 
+abx500_gpio_dbg_show_one() to show pull up/down" from May 24, 2013, 
+leads to the following Smatch complaint:
+
+drivers/pinctrl/pinctrl-abx500.c:624 abx500_gpio_dbg_show_one()
+	 warn: variable dereferenced before check 'pctldev' (see line 574)
+
+drivers/pinctrl/pinctrl-abx500.c
+   573	{
+   574		struct abx500_pinctrl *pct = pinctrl_dev_get_drvdata(pctldev);
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Patch introduces new unchecked dereference.
+
+   575		const char *label = gpiochip_is_requested(chip, offset - 1);
+   576		u8 gpio_offset = offset - 1;
+   577		int mode = -1;
+   578		bool is_out;
+   579		bool pd;
+   580		enum abx500_gpio_pull_updown pud = 0;
+   581		int ret;
+   582	
+
+[snip]
+
+   618	
+   619				seq_printf(s, " %-9s", pull_up_down[pd]);
+   620			}
+   621		} else
+   622			seq_printf(s, " %-9s", chip->get(chip, offset) ? "hi" : "lo");
+   623	
+   624		if (pctldev)
+                    ^^^^^^^
+Existing check is too late.
+
+   625			mode = abx500_get_mode(pctldev, chip, offset);
+   626	
+
+regards,
+dan carpenter
