@@ -1,23 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 19 Nov 2013 08:39:57 +0000
-Subject: Re: [patch] pinctrl: rockchip: missing unlock on error in rockchip_set_pull()
-Message-Id: <CACRpkdZxQcqj6WnG+gY_JAO7Du92Cm+EgzFiX=ngaQP90y-MHA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2013 09:24:19 +0000
+Subject: [patch v2] watchdog: pcwd_usb: overflow in usb_pcwd_send_command()
+Message-Id: <20131108092419.GA22389@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131114082254.GE8150@elgon.mountain>
-In-Reply-To: <20131114082254.GE8150@elgon.mountain>
+In-Reply-To: <527BA351.10705@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
 
-On Thu, Nov 14, 2013 at 9:22 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+We changed "buf" from being an array of 6 chars to being a pointer this
+sizeof(buf) needs to be updated as well.
 
-> We need to unlock here before returning -EINVAL.
->
-> Fixes: 6ca5274d1d12 ('pinctrl: rockchip: add rk3188 specifics')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 2ddb8089a7e5 ('watchdog: pcwd_usb: Use allocated buffer for usb_control_msg')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: Fix the bug that Guenter Roeck pointed out in v1.
 
-Applied with Heiko's ACK.
-
-Thanks!
-Linus Walleij
+diff --git a/drivers/watchdog/pcwd_usb.c b/drivers/watchdog/pcwd_usb.c
+index 53598e8..b731b5d 100644
+--- a/drivers/watchdog/pcwd_usb.c
++++ b/drivers/watchdog/pcwd_usb.c
+@@ -258,8 +258,8 @@ static int usb_pcwd_send_command(struct usb_pcwd_private *usb_pcwd,
+ 
+ 	if (usb_control_msg(usb_pcwd->udev, usb_sndctrlpipe(usb_pcwd->udev, 0),
+ 			HID_REQ_SET_REPORT, HID_DT_REPORT,
+-			0x0200, usb_pcwd->interface_number, buf, sizeof(buf),
+-			USB_COMMAND_TIMEOUT) != sizeof(buf)) {
++			0x0200, usb_pcwd->interface_number, buf, 6,
++			USB_COMMAND_TIMEOUT) != 6) {
+ 		dbg("usb_pcwd_send_command: error in usb_control_msg for "
+ 				"cmd 0x%x 0x%x 0x%x\n", cmd, *msb, *lsb);
+ 	}
