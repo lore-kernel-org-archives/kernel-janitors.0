@@ -1,54 +1,44 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Date: Fri, 08 Nov 2013 06:20:26 +0000
-Subject: Re: [patch] fat: double unlock on error path
-Message-Id: <CAKYAXd9M1W+2raJzkE+ZfTzL6Z=dnOiQ3UeL6c3fFAnTZnw3vg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2013 10:08:03 +0000
+Subject: [patch 2/2] drm/tegra: silence some sparse complaints
+Message-Id: <20131108100803.GY27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107074108.GB21844@elgon.mountain>
-	<87zjpfv5w3.fsf@devron.myhome.or.jp>
-In-Reply-To: <87zjpfv5w3.fsf@devron.myhome.or.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-2013/11/8, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>:
-> Dan Carpenter <dan.carpenter@oracle.com> writes:
->
->> There is a stray unlock here which was not intended.  I have removed it.
->>
->> Fixes: 3f9f3dfb5755 ('fat: add fat_fallocate operation')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/fs/fat/file.c b/fs/fat/file.c
->> index 03f716f..befedee 100644
->> --- a/fs/fat/file.c
->> +++ b/fs/fat/file.c
->> @@ -257,10 +257,8 @@ static long fat_fallocate(struct file *file, int
->> mode,
->>  		goto error;
->>
->>  	err = inode_newsize_ok(inode, (len + offset));
->> -	if (err) {
->> -		mutex_unlock(&inode->i_mutex);
->> +	if (err)
->>  		goto error;
->> -	}
->>
->>  	if (mode & FALLOC_FL_KEEP_SIZE) {
->>  		/* First compute the number of clusters to be allocated */
->
-> Right. Namjae, please include this fix to patchset at next time.
-Okay, I will include it in the next patch-set.
-Thank you!
+I've shifted the __user markup to make Sparse happy.
 
->
-> Thanks.
-> --
-> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
->
+drivers/gpu/drm/tegra/drm.c:138:18: warning: incorrect type in initializer (different address spaces)
+drivers/gpu/drm/tegra/drm.c:138:18:    expected struct drm_tegra_cmdbuf [noderef] <asn:1>*cmdbufs
+drivers/gpu/drm/tegra/drm.c:138:18:    got void *[noderef] <asn:1><noident>
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index fd3ff3b..96a9207 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -135,11 +135,11 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 	unsigned int num_relocs = args->num_relocs;
+ 	unsigned int num_waitchks = args->num_waitchks;
+ 	struct drm_tegra_cmdbuf __user *cmdbufs -		(void * __user)(uintptr_t)args->cmdbufs;
++		(void __user *)(uintptr_t)args->cmdbufs;
+ 	struct drm_tegra_reloc __user *relocs -		(void * __user)(uintptr_t)args->relocs;
++		(void __user *)(uintptr_t)args->relocs;
+ 	struct drm_tegra_waitchk __user *waitchks -		(void * __user)(uintptr_t)args->waitchks;
++		(void __user *)(uintptr_t)args->waitchks;
+ 	struct drm_tegra_syncpt syncpt;
+ 	struct host1x_job *job;
+ 	int err;
+@@ -207,7 +207,7 @@ int tegra_drm_submit(struct tegra_drm_context *context,
+ 		goto fail;
+ 	}
+ 
+-	if (copy_from_user(&syncpt, (void * __user)(uintptr_t)args->syncpts,
++	if (copy_from_user(&syncpt, (void __user *)(uintptr_t)args->syncpts,
+ 			   sizeof(syncpt))) {
+ 		err = -EFAULT;
+ 		goto fail;
