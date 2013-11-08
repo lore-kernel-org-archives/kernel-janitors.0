@@ -1,47 +1,30 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Sun, 24 Nov 2013 13:42:55 +0000
-Subject: Re: [patch] ASoC: rcar: some dubious one-bit signed bitfields
-Message-Id: <20131124134255.GW14725@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="m9FEOsnejx470nED"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2013 09:54:44 +0000
+Subject: [patch] ASoC: fsl: imx-wm8962: remove an unneeded check
+Message-Id: <20131108095444.GM27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131108094653.GF27977@elgon.mountain>
-In-Reply-To: <20131108094653.GF27977@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@freescale.com>, alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Wolfram Sang <wsa@the-dreams.de>, Takashi Iwai <tiwai@suse.de>, Nicolin Chen <b42378@freescale.com>, kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Sachin Kamat <sachin.kamat@linaro.org>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>
 
+"data->codec_clk" can't be an ERR_PTR here so I have removed the
+superflous check.
 
---m9FEOsnejx470nED
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, Nov 08, 2013 at 12:46:53PM +0300, Dan Carpenter wrote:
-> Because these are signed they can either be 0 or -1 instead of 0 and 1
-> as intended.  It doesn't cause a problem from what I can see, but it's
-> dangerous and Sparse complains:
-
-Applied, thanks.
-
---m9FEOsnejx470nED
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSkgJcAAoJELSic+t+oim9I+UP/RLKtSZD0GFl6jPzZH2QLCAM
-4lgEMFCfZclE0i75kfaFVv4UtHJwna7IloGEoZA8WL+LzLCk4qfG7i5lh8n9RqLY
-5BEXAjtGKyeDR/TXHt9tUfnHQ5WhVsn/ZYPhB1XV3zalguRdLx6EpOU2tV5RFfGS
-Pu9CCFIcK388nNNLa7z4Uael7C5fzJ8aQ2K8meIgIvv6JdaN2Qu92PU64I6tjWYl
-sc+cdjzNpZVHhsCaw0MsGVlITdRPymN574m2xtOPeYQWb/Yxo48610+qSy9nOEO2
-D0VA4zD9TiD1o8V2lccXmXJpos3VqYiYGxfaSyh95WMw8ugz01lhOm/n+knyj3TI
-UFQE2OX/cP3IuGYWVf2ZQZL4c1ZQ63TmgYb5N09V9lXIqbYU0nA6KTzxGiUqIJQ7
-wjTrVwg1J6JTvtEBxgPpTO36o5y0+uI/1Fhik/5K5eCQ+9KU7BzfjUL9BZlyI6in
-7DfdpSKTTIDgndJNLAKM5nOQeF+fBpGeIaXSn2pS9wZiE6MTIA5i9PQ+QpSN7REx
-BUs09xsS+ZiHox3jvGsQlXkdfHGGgfldqXWUvQHrU3HfsdHHPJ0Kv06ce+2CXo9E
-JT6UKqcvZScPEXdY5pOmsM41HxFOGVSwbEEE4zicvJLEBh0TtyTMN/ue9J/GMsQc
-NXw9+F2ghtdDQWmL/AMr
-=hYPZ
------END PGP SIGNATURE-----
-
---m9FEOsnejx470nED--
+diff --git a/sound/soc/fsl/imx-wm8962.c b/sound/soc/fsl/imx-wm8962.c
+index a1deac6..61e4885 100644
+--- a/sound/soc/fsl/imx-wm8962.c
++++ b/sound/soc/fsl/imx-wm8962.c
+@@ -279,8 +279,7 @@ static int imx_wm8962_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ clk_fail:
+-	if (!IS_ERR(data->codec_clk))
+-		clk_disable_unprepare(data->codec_clk);
++	clk_disable_unprepare(data->codec_clk);
+ fail:
+ 	if (ssi_np)
+ 		of_node_put(ssi_np);
