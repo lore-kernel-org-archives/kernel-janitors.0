@@ -1,24 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Nov 2013 07:42:24 +0000
-Subject: Re: squashfs: enhance parallel I/O
-Message-Id: <20131108074224.GW26669@mwanda>
+Date: Fri, 08 Nov 2013 10:01:38 +0000
+Subject: [patch] pinctrl: rockchip: testing the wrong variable
+Message-Id: <20131108100138.GO27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131106161836.GN15603@elgon.mountain>
-In-Reply-To: <20131106161836.GN15603@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Nov 08, 2013 at 01:34:38AM +0000, Phillip Lougher wrote:
+There is a copy and paste bug so we test "info->reg_base" instead of
+"info->reg_pull".
 
-> 
-> np :-)   I'll send the fix-up patch tomorrow.
-> 
-> Dan, I'll credit you with a Reported-by, unless you object.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I can't compile this.
 
-Awesome, thanks.  :)
-
-regards,
-dan carpenter
-
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index e939c28..fe2ec1b 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -1453,8 +1453,8 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
+ 	if (ctrl->type = RK3188) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 		info->reg_pull = devm_ioremap_resource(&pdev->dev, res);
+-		if (IS_ERR(info->reg_base))
+-			return PTR_ERR(info->reg_base);
++		if (IS_ERR(info->reg_pull))
++			return PTR_ERR(info->reg_pull);
+ 	}
+ 
+ 	ret = rockchip_gpiolib_register(pdev, info);
