@@ -1,28 +1,34 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Nov 2013 09:43:17 +0000
-Subject: [patch] usb: phy: twl6030-usb: signedness bug in twl6030_readb()
-Message-Id: <20131108094317.GA27977@elgon.mountain>
+Date: Fri, 08 Nov 2013 09:53:48 +0000
+Subject: [patch] serial: icom: dereference after free in load_code()
+Message-Id: <20131108095348.GL27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"ret" needs to be signed for the error handling to work.
+We use "fw" in the next line after we release it.  I've shifted the call
+to release_firmware() down a couple lines to fix this.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/usb/phy/phy-twl6030-usb.c b/drivers/usb/phy/phy-twl6030-usb.c
-index 30e8a61..bad57ce 100644
---- a/drivers/usb/phy/phy-twl6030-usb.c
-+++ b/drivers/usb/phy/phy-twl6030-usb.c
-@@ -127,7 +127,8 @@ static inline int twl6030_writeb(struct twl6030_usb *twl, u8 module,
+diff --git a/drivers/tty/serial/icom.c b/drivers/tty/serial/icom.c
+index d98e433..6742380 100644
+--- a/drivers/tty/serial/icom.c
++++ b/drivers/tty/serial/icom.c
+@@ -455,11 +455,11 @@ static void load_code(struct icom_port *icom_port)
+ 	for (index = 0; index < fw->size; index++)
+ 		new_page[index] = fw->data[index];
  
- static inline u8 twl6030_readb(struct twl6030_usb *twl, u8 module, u8 address)
- {
--	u8 data, ret = 0;
-+	u8 data;
-+	int ret;
+-	release_firmware(fw);
+-
+ 	writeb((char) ((fw->size + 16)/16), &icom_port->dram->mac_length);
+ 	writel(temp_pci, &icom_port->dram->mac_load_addr);
  
- 	ret = twl_i2c_read_u8(module, &data, address);
- 	if (ret >= 0)
++	release_firmware(fw);
++
+ 	/*Setting the syncReg to 0x80 causes adapter to start downloading
+ 	   the personality code into adapter instruction RAM.
+ 	   Once code is loaded, it will begin executing and, based on
