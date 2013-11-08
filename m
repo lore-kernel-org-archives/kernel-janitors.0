@@ -1,51 +1,30 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 28 Nov 2013 05:49:11 +0000
-Subject: [PATCH] kernel/fork.c : fix coding style issues
-Message-Id: <1579476.AWLPZBjh3G@daeseok-laptop>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 08 Nov 2013 10:01:09 +0000
+Subject: [patch] [media] v4l: ti-vpe: checking for IS_ERR() instead of NULL
+Message-Id: <20131108100109.GN27977@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <11646966.nLE5LGqd3A@daeseok-laptop>
-In-Reply-To: <11646966.nLE5LGqd3A@daeseok-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Archit Taneja <archit@ti.com>, Hans Verkuil <hans.verkuil@cisco.com>, Kamil Debski <k.debski@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From cdc59c7b26d6ff238e9ab7e27f0d0182e3e73875 Mon Sep 17 00:00:00 2001
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 28 Nov 2013 10:19:58 +0900
-Subject: [PATCH] kernel/fork.c : fix coding style issues
+devm_ioremap() returns NULL on error, it doesn't return an ERR_PTR.
 
-This patch fixes the following errors reported by checkpatch.pl.
-One of errors is parentheses, another is whitespace issue.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- kernel/fork.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 728d5be..56824f1 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1644,7 +1644,7 @@ SYSCALL_DEFINE0(fork)
- 	return do_fork(SIGCHLD, 0, 0, NULL, NULL);
- #else
- 	/* can not support in nommu mode */
--	return(-EINVAL);
-+	return -EINVAL;
- #endif
- }
- #endif
-@@ -1652,7 +1652,7 @@ SYSCALL_DEFINE0(fork)
- #ifdef __ARCH_WANT_SYS_VFORK
- SYSCALL_DEFINE0(vfork)
- {
--	return do_fork(CLONE_VFORK | CLONE_VM | SIGCHLD, 0, 
-+	return do_fork(CLONE_VFORK | CLONE_VM | SIGCHLD, 0,
- 			0, NULL, NULL);
- }
- #endif
--- 
-1.7.9.5
-
----
+diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
+index 4e58069..e163466 100644
+--- a/drivers/media/platform/ti-vpe/vpe.c
++++ b/drivers/media/platform/ti-vpe/vpe.c
+@@ -1962,8 +1962,8 @@ static int vpe_probe(struct platform_device *pdev)
+ 	 * registers based on the sub block base addresses
+ 	 */
+ 	dev->base = devm_ioremap(&pdev->dev, res->start, SZ_32K);
+-	if (IS_ERR(dev->base)) {
+-		ret = PTR_ERR(dev->base);
++	if (!dev->base) {
++		ret = -ENOMEM;
+ 		goto v4l2_dev_unreg;
+ 	}
+ 
