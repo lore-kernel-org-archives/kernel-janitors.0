@@ -1,32 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 08 Nov 2013 10:01:38 +0000
-Subject: [patch] pinctrl: rockchip: testing the wrong variable
-Message-Id: <20131108100138.GO27977@elgon.mountain>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Date: Fri, 08 Nov 2013 11:44:33 +0000
+Subject: Re: [patch] pinctrl: rockchip: testing the wrong variable
+Message-Id: <201311081244.34438.heiko@sntech.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131108100138.GO27977@elgon.mountain>
+In-Reply-To: <20131108100138.GO27977@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-There is a copy and paste bug so we test "info->reg_base" instead of
-"info->reg_pull".
+Am Freitag, 8. November 2013, 11:01:38 schrieb Dan Carpenter:
+> There is a copy and paste bug so we test "info->reg_base" instead of
+> "info->reg_pull".
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I can't compile this.
+Thanks for the catch
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index e939c28..fe2ec1b 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1453,8 +1453,8 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 	if (ctrl->type = RK3188) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 		info->reg_pull = devm_ioremap_resource(&pdev->dev, res);
--		if (IS_ERR(info->reg_base))
--			return PTR_ERR(info->reg_base);
-+		if (IS_ERR(info->reg_pull))
-+			return PTR_ERR(info->reg_pull);
- 	}
- 
- 	ret = rockchip_gpiolib_register(pdev, info);
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+> ---
+> I can't compile this.
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
+> b/drivers/pinctrl/pinctrl-rockchip.c index e939c28..fe2ec1b 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -1453,8 +1453,8 @@ static int rockchip_pinctrl_probe(struct
+> platform_device *pdev) if (ctrl->type = RK3188) {
+>  		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>  		info->reg_pull = devm_ioremap_resource(&pdev->dev, res);
+> -		if (IS_ERR(info->reg_base))
+> -			return PTR_ERR(info->reg_base);
+> +		if (IS_ERR(info->reg_pull))
+> +			return PTR_ERR(info->reg_pull);
+>  	}
+> 
+>  	ret = rockchip_gpiolib_register(pdev, info);
+
