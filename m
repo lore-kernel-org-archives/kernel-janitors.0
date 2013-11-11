@@ -1,47 +1,27 @@
 From: Guenter Roeck <linux@roeck-us.net>
-Date: Fri, 08 Nov 2013 14:24:46 +0000
+Date: Mon, 11 Nov 2013 16:00:21 +0000
 Subject: Re: [patch v2] watchdog: pcwd_usb: overflow in usb_pcwd_send_command()
-Message-Id: <527CF42E.10608@roeck-us.net>
+Message-Id: <20131111160021.GA24135@roeck-us.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131108092419.GA22389@elgon.mountain>
+References: <527BA351.10705@roeck-us.net>
+ <20131108092419.GA22389@elgon.mountain>
 In-Reply-To: <20131108092419.GA22389@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/08/2013 01:24 AM, Dan Carpenter wrote:
+On Fri, Nov 08, 2013 at 01:24:19AM -0800, Dan Carpenter wrote:
 > We changed "buf" from being an array of 6 chars to being a pointer this
 > sizeof(buf) needs to be updated as well.
->
+> 
 > Fixes: 2ddb8089a7e5 ('watchdog: pcwd_usb: Use allocated buffer for usb_control_msg')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-> ---
-> v2: Fix the bug that Guenter Roeck pointed out in v1.
->
-> diff --git a/drivers/watchdog/pcwd_usb.c b/drivers/watchdog/pcwd_usb.c
-> index 53598e8..b731b5d 100644
-> --- a/drivers/watchdog/pcwd_usb.c
-> +++ b/drivers/watchdog/pcwd_usb.c
-> @@ -258,8 +258,8 @@ static int usb_pcwd_send_command(struct usb_pcwd_private *usb_pcwd,
->
->   	if (usb_control_msg(usb_pcwd->udev, usb_sndctrlpipe(usb_pcwd->udev, 0),
->   			HID_REQ_SET_REPORT, HID_DT_REPORT,
-> -			0x0200, usb_pcwd->interface_number, buf, sizeof(buf),
-> -			USB_COMMAND_TIMEOUT) != sizeof(buf)) {
-> +			0x0200, usb_pcwd->interface_number, buf, 6,
-> +			USB_COMMAND_TIMEOUT) != 6) {
->   		dbg("usb_pcwd_send_command: error in usb_control_msg for "
->   				"cmd 0x%x 0x%x 0x%x\n", cmd, *msb, *lsb);
->   	}
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
+I thought I had replied earlier, but I don't find my reply anywhere.
+My apologies if this is a duplicate.
 
+Guenter
