@@ -1,72 +1,43 @@
-From: Eugene Krasnikov <k.eugene.e@gmail.com>
-Date: Wed, 06 Nov 2013 07:40:08 +0000
-Subject: Re: [patch] wcn36xx: missing unlocks on error paths
-Message-Id: <CAFSJ42YEt3hPDN1At-c3o0OqMJAbFX=Q+odWthjY6sAhTytP=A@mail.gmail.com>
+From: Luca Bartolacci <inductionv8@gmail.com>
+Date: Mon, 11 Nov 2013 02:52:06 +0000
+Subject: [patch 1/2]bluetooth:bfusb.c whitespace cleaning (with some questions).
+Message-Id: <CAAL8FfATS2ub-ZFL+pPvj-3dcsmV4DiyZX3UOft41568LvqZTQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131105202101.GD3949@elgon.mountain>
-	<CAFSJ42ZDg+1Z0jFqf_jTPBL_Sw+mtMk0wMNQ6WMenzFo-1gWmg@mail.gmail.com>
-In-Reply-To: <CAFSJ42ZDg+1Z0jFqf_jTPBL_Sw+mtMk0wMNQ6WMenzFo-1gWmg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, wcn36xx <wcn36xx@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Forgot to mention that there was an overlap with a patch from Wei
-Yongjun but that i will resolve myself because i was too slow with
-applying patches.
+The thing is this one, for example i already read about kerneljanitors
+and the we are "cleaning" the code with checkpatch. I put next here
+some "clean" of a whitespace on bluetooth/bfusb.c. The thing is: "Its
+ok to make a big patch, cleaning all the warnings?"
+We must do it all at once ?
+Example:
+total: 2 errors, 13 warnings, 742 lines checked
+If i clean all in one patch, its ok?.
+Im asking this because i know its a pain in the *ss to be
+cherrypicking from all the clean, not in this case. But there are code
+with 200 warnings (of line over 80 characters).
+Beside this, the other thing the is bothering me is: "Should i do this
+kind of patch or should i focus on find bugs in the code?"(Like
+locking bugs, security bugs, etc)
 
-On Wed, Nov 6, 2013 at 7:38 AM, Eugene Krasnikov <k.eugene.e@gmail.com> wrote:
-> Looks good to me, thanx!
->
-> On Tue, Nov 5, 2013 at 8:21 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->> There are several places which are missing unlocks.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
->> index f8c3a10..de9eb2c 100644
->> --- a/drivers/net/wireless/ath/wcn36xx/smd.c
->> +++ b/drivers/net/wireless/ath/wcn36xx/smd.c
->> @@ -1286,7 +1286,8 @@ int wcn36xx_smd_send_beacon(struct wcn36xx *wcn, struct ieee80211_vif *vif,
->>         } else {
->>                 wcn36xx_err("Beacon is to big: beacon size=%d\n",
->>                               msg_body.beacon_length);
->> -               return -ENOMEM;
->> +               ret = -ENOMEM;
->> +               goto out;
->>         }
->>         memcpy(msg_body.bssid, vif->addr, ETH_ALEN);
->>
->> @@ -1327,7 +1328,8 @@ int wcn36xx_smd_update_proberesp_tmpl(struct wcn36xx *wcn,
->>         if (skb->len > BEACON_TEMPLATE_SIZE) {
->>                 wcn36xx_warn("probe response template is too big: %d\n",
->>                              skb->len);
->> -               return -E2BIG;
->> +               ret = -E2BIG;
->> +               goto out;
->>         }
->>
->>         msg.probe_resp_template_len = skb->len;
->> @@ -1606,7 +1608,8 @@ int wcn36xx_smd_keep_alive_req(struct wcn36xx *wcn,
->>                 /* TODO: it also support ARP response type */
->>         } else {
->>                 wcn36xx_warn("unknow keep alive packet type %d\n", packet_type);
->> -               return -EINVAL;
->> +               ret = -EINVAL;
->> +               goto out;
->>         }
->>
->>         PREPARE_HAL_BUF(wcn->hal_buf, msg_body);
->
->
->
-> --
-> Best regards,
-> Eugene
+I apologize if I made/asked something wrong.
 
 
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index 3138699..cc8a707 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -145,8 +145,8 @@ static int bfusb_send_bulk(struct bfusb_data *data, struct s
 
--- 
-Best regards,
-Eugene
+        err = usb_submit_urb(urb, GFP_ATOMIC);
+        if (err) {
+-               BT_ERR("%s bulk tx submit failed urb %p err %d",
+-                                       data->hdev->name, urb, err);
++               BT_ERR("%s bulk tx submit failed urb %p err %d",
++                                        data->hdev->name, urb, err);
+                skb_unlink(skb, &data->pending_q);
+                usb_free_urb(urb);
+        } else
