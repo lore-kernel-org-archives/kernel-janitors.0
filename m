@@ -1,23 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 14 Nov 2013 08:12:05 +0000
-Subject: Re: [patch] net: mv643xx_eth: potential NULL dereference in probe()
-Message-Id: <20131114.031205.1409875507350049283.davem@davemloft.net>
+From: Luca Bartolacci <inductionv8@gmail.com>
+Date: Mon, 11 Nov 2013 04:06:21 +0000
+Subject: [patch 2/2] bluetooth:bfusb.c Clean assigment in if condition.
+Message-Id: <CAAL8FfATHpfzeJor5x8yj6VbguMGrKFjFt8Xk4d2ZkVF_-66_w@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131113075247.GI25541@elgon.mountain>
-In-Reply-To: <20131113075247.GI25541@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: sebastian.hesselbarth@gmail.com, jgunthorpe@obsidianresearch.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Nov 2013 10:52:47 +0300
+I'm not sure if the change is justified.
+An other question is. Can i "clean" a complete directory (Like
+/bluetooth) an put it all in one patch? That way is more easy for you?
+Im asking all these questions to understand what is better to avoid
+spam to the others.
+Im sure the these questions are dumb. But i really want to help to this project.
 
-> We assume that "mp->phy" can be NULL a couple lines before the
-> dereference.
-> 
-> Fixes: 1cce16d37d0f ('net: mv643xx_eth: Add missing phy_addr_set in DT mode')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+index 3138699..08fba91 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -131,8 +131,10 @@ static int bfusb_send_bulk(struct bfusb_data *data, struct
 
-Applied, thanks.
+        BT_DBG("bfusb %p skb %p len %d", data, skb, skb->len);
+
+-       if (!urb && !(urb = usb_alloc_urb(0, GFP_ATOMIC)))
+-               return -ENOMEM;
++       if (!urb)
++               urb = usb_alloc_urb(0, GFP_ATOMIC);
++               if (!urb)
++                       return -ENOMEM;
+
+        pipe = usb_sndbulkpipe(data->udev, data->bulk_out_ep);
+
+
+@@ -218,8 +220,10 @@ static int bfusb_rx_submit(struct bfusb_data *data, struct
+
+        BT_DBG("bfusb %p urb %p", data, urb);
+
+-       if (!urb && !(urb = usb_alloc_urb(0, GFP_ATOMIC)))
+-               return -ENOMEM;
++       if (!urb)
++               urb = usb_alloc_urb(0, GFP_ATOMIC);
++               if (!urb)
++                       return -ENOMEM;
