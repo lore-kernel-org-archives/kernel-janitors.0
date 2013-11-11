@@ -1,28 +1,42 @@
-From: Barrister Gulshan Verma <glsheikhibrahim22@gmail.com>
-Date: Sun, 17 Nov 2013 11:21:01 +0000
-Subject: RE:VERY URGENT REPLY
-Message-Id: <CAMmdzwfT4He_DrZ=xFvSNg+OrNWCsDihYtNdyKDmHGxAzvyY-w@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 11 Nov 2013 15:42:25 +0000
+Subject: re: Squashfs: Refactor decompressor interface and code
+Message-Id: <20131111154225.GA4779@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Dear Friend,
+Hello Phillip Lougher,
 
-Greeting and Good day, I am Barrister Gulshan Verma, a personal
-attorney to your late relative (Mr. David S) who left behind the sum
-of (US$7.5M) with a bank here before his sudden death. Please could
-you kindly reply me now for more details about this transaction for
-your better understanding?
+The patch ac379b0dec4b: "Squashfs: Refactor decompressor interface
+and code" from Oct 7, 2013, leads to the following
+static checker warning: "fs/squashfs/decompressor.c:138
+squashfs_decompressor_setup()
+	 warn: 'comp_opts' was already freed."
 
-Full Names..........
-Age.................
-Email............
-Tel................
-Country............
+fs/squashfs/decompressor.c
+   128  void *squashfs_decompressor_setup(struct super_block *sb, unsigned short flags)
+   129  {
+   130          struct squashfs_sb_info *msblk = sb->s_fs_info;
+   131          void *stream, *comp_opts = get_comp_opts(sb, flags);
+   132  
+   133          if (IS_ERR(comp_opts))
+   134                  return comp_opts;
+   135  
+   136          stream = squashfs_decompressor_create(msblk, comp_opts);
+   137          if (IS_ERR(stream))
+   138                  kfree(comp_opts);
 
-Waiting for your urgent reply
+The _single version of squashfs_decompressor_create() frees comp_opts
+but the _multi version doesn't.  I'm not sure what the right thing to do
+is here.
 
-Best Regard
-Barrister Gulshan Verma
+   139  
+   140          return stream;
+   141  }
+
+regards,
+dan carpenter
+
