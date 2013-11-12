@@ -1,41 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Nov 2013 11:48:27 +0000
-Subject: Re: [patch] vlynq: fix another resource size off by 1 error
-Message-Id: <20131111114827.GE5443@mwanda>
+Date: Tue, 12 Nov 2013 10:25:26 +0000
+Subject: [patch v2] drm/tegra: fix small leak on error in tegra_fb_alloc()
+Message-Id: <20131112102526.GA10651@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823081949.GD31293@elgon.mountain>
-In-Reply-To: <20130823081949.GD31293@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <florian@openwrt.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 
-We still need to apply this fix.
+If we don't have enough memory for ->planes then we leak "fb".
 
-regards,
-dan carpenter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: tiny style changes
 
-On Fri, Aug 23, 2013 at 11:19:49AM +0300, Dan Carpenter wrote:
-> We fixed the call to request_mem_region() patch
-> 3354f73 ('drivers/vlynq/vlynq.c: fix resource size off by 1 error').
-> But we need to fix the call the release_mem_region() as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static checker stuff.
-> 
-> diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
-> index 7b07135..c0227f9 100644
-> --- a/drivers/vlynq/vlynq.c
-> +++ b/drivers/vlynq/vlynq.c
-> @@ -762,7 +762,8 @@ static int vlynq_remove(struct platform_device *pdev)
->  
->  	device_unregister(&dev->dev);
->  	iounmap(dev->local);
-> -	release_mem_region(dev->regs_start, dev->regs_end - dev->regs_start);
-> +	release_mem_region(dev->regs_start,
-> +			   dev->regs_end - dev->regs_start + 1);
->  
->  	kfree(dev);
->  
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index 490f771..f9d2de6 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -98,8 +98,10 @@ static struct tegra_fb *tegra_fb_alloc(struct drm_device *drm,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	fb->planes = kzalloc(num_planes * sizeof(*planes), GFP_KERNEL);
+-	if (!fb->planes)
++	if (!fb->planes) {
++		kfree(fb);
+ 		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	fb->num_planes = num_planes;
+ 
