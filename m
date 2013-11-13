@@ -1,35 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Nov 2013 14:07:31 +0000
-Subject: Re: [patch] locks: missing unlock on error in generic_add_lease()
-Message-Id: <20131113140731.GN5302@mwanda>
+Date: Wed, 13 Nov 2013 07:42:34 +0000
+Subject: [PATCH] net: cdc_ncm: cleanup a type issue in cdc_ncm_setup()
+Message-Id: <20131113074234.GB25541@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131113075627.GJ25541@elgon.mountain>
- <20131113135103.GA27536@pad.fieldses.org>
-In-Reply-To: <20131113135103.GA27536@pad.fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "J. Bruce Fields" <bfields@redhat.com>
-Cc: Matthew Wilcox <matthew@wil.cx>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Oliver Neukum <oliver-GvhC2dPhHPQdnm+yROfE0A@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Wed, Nov 13, 2013 at 08:51:04AM -0500, J. Bruce Fields wrote:
-> On Wed, Nov 13, 2013 at 10:56:27AM +0300, Dan Carpenter wrote:
-> > We should unlock here before returning.
-> 
-> A buggy-caller case, so shouldn't be a huge deal, but obviously should
-> be fixed, thanks!
-> 
-> 	Acked-by: J. Bruce Fields <bfields@redhat.com>
-> 
-> I'm assuming Al will pick it up.
-> 
-> (Though error = -EAGAIN and "goto out" would be more consistent with
-> other exits.)
+This is harmless but cdc_ncm_setup() returns negative error codes
+truncated to u8 values.  There is only one caller and treats all
+non-zero returns as errors but doesn't store the the return code.  So
+the code works correctly but it's messy and upsets the static checkers.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--EINVAL, but yeah you're right.  I'll resend.
-
-regards,
-dan carpenter
-
-
+diff --git a/drivers/net/usb/cdc_ncm.c b/drivers/net/usb/cdc_ncm.c
+index f74786a..e15ec2b 100644
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -66,7 +66,7 @@ static void cdc_ncm_tx_timeout_start(struct cdc_ncm_ctx *ctx);
+ static enum hrtimer_restart cdc_ncm_tx_timer_cb(struct hrtimer *hr_timer);
+ static struct usb_driver cdc_ncm_driver;
+ 
+-static u8 cdc_ncm_setup(struct usbnet *dev)
++static int cdc_ncm_setup(struct usbnet *dev)
+ {
+ 	struct cdc_ncm_ctx *ctx = (struct cdc_ncm_ctx *)dev->data[0];
+ 	struct usb_cdc_ncm_ntb_parameters ncm_parm;
