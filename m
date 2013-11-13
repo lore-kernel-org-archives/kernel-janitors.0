@@ -1,49 +1,48 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Date: Thu, 07 Nov 2013 15:15:31 +0000
-Subject: Re: [patch] USB: make hcd->irq signed for error handling
-Message-Id: <Pine.LNX.4.44L0.1311071007320.1401-100000@iolanthe.rowland.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Nov 2013 07:48:11 +0000
+Subject: [patch] [SCSI] qla4xxx: overflow in qla4xxx_set_chap_entry()
+Message-Id: <20131113074811.GF25541@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107074538.GE21844@elgon.mountain>
-In-Reply-To: <20131107074538.GE21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Vikas Chaudhary <vikas.chaudhary@qlogic.com>, Adheer Chandravanshi <adheer.chandravanshi@qlogic.com>
+Cc: iscsi-driver@qlogic.com, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 7 Nov 2013, Dan Carpenter wrote:
+We should cap the size of memcpy() because it comes from the network
+and can't be trusted.
 
-> There is a bug in ehci_msm_probe() where we do:
-> 
-> 	hcd->irq = platform_get_irq(pdev, 0);
-> 	if (hcd->irq < 0) {
-> 
-> The problem is that hcd->irq is unsigned so the error handling doesn't
-> work.  I have made it signed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-> index b8aba19..95be4a0 100644
-> --- a/include/linux/usb/hcd.h
-> +++ b/include/linux/usb/hcd.h
-> @@ -143,7 +143,7 @@ struct usb_hcd {
->  	unsigned		has_tt:1;	/* Integrated TT in root hub */
->  	unsigned		amd_resume_bug:1; /* AMD remote wakeup quirk */
->  
-> -	unsigned int		irq;		/* irq allocated */
-> +	int			irq;		/* irq allocated */
->  	void __iomem		*regs;		/* device memory/io */
->  	resource_size_t		rsrc_start;	/* memory/io resource start */
->  	resource_size_t		rsrc_len;	/* memory/io resource length */
+Fixes: 26ffd7b45fe9 ('[SCSI] qla4xxx: Add support to set CHAP entries')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The .irq member of struct pci_dev is also unsigned int.  I suspect we 
-shouldn't break with tradition.  Besides, if you're going to change 
-this then you really ought to change the second parameter of 
-usb_hcd_request_irqs().
-
-Why not simply fix ehci_msm_probe() instead?  And while you're at it, 
-do the same thing for ehci_hcd_tilegx_drv_probe() and 
-ohci_hcd_tilegx_drv_probe().
-
-Alan Stern
-
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index a28d5e6..cf174a4 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -802,6 +802,7 @@ static int qla4xxx_set_chap_entry(struct Scsi_Host *shost, void *data, int len)
+ 	int type;
+ 	int rem = len;
+ 	int rc = 0;
++	int size;
+ 
+ 	memset(&chap_rec, 0, sizeof(chap_rec));
+ 
+@@ -816,12 +817,14 @@ static int qla4xxx_set_chap_entry(struct Scsi_Host *shost, void *data, int len)
+ 			chap_rec.chap_type = param_info->value[0];
+ 			break;
+ 		case ISCSI_CHAP_PARAM_USERNAME:
+-			memcpy(chap_rec.username, param_info->value,
+-			       param_info->len);
++			size = min_t(size_t, sizeof(chap_rec.username),
++				     param_info->len);
++			memcpy(chap_rec.username, param_info->value, size);
+ 			break;
+ 		case ISCSI_CHAP_PARAM_PASSWORD:
+-			memcpy(chap_rec.password, param_info->value,
+-			       param_info->len);
++			size = min_t(size_t, sizeof(chap_rec.password),
++				     param_info->len);
++			memcpy(chap_rec.password, param_info->value, size);
+ 			break;
+ 		case ISCSI_CHAP_PARAM_PASSWORD_LEN:
+ 			chap_rec.password_length = param_info->value[0];
