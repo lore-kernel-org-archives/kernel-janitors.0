@@ -1,67 +1,30 @@
-From: Vikas Chaudhary <vikas.chaudhary@qlogic.com>
-Date: Thu, 14 Nov 2013 03:53:56 +0000
-Subject: Re: [patch] [SCSI] qla4xxx: overflow in qla4xxx_set_chap_entry()
-Message-Id: <3FC4AB8B47ECD546BCD4B361A64BEACD8C62B35D@avmb3.qlogic.org>
-List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131113140600.GK5443@mwanda>
-In-Reply-To: <20131113140600.GK5443@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Adheer Chandravanshi <adheer.chandravanshi@qlogic.com>, Dept-Eng iSCSI Driver <Dept-iSCSIDriver@qlogic.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>
-
-
-
------Original Message-----
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wednesday, 13 November 2013 7:36 pm
-To: Vikas <vikas.chaudhary@qlogic.com>
-Cc: Adheer Chandravanshi <adheer.chandravanshi@qlogic.com>, Dept-Eng iSCSI
-Driver <Dept-iSCSIDriver@qlogic.com>, "James E.J. Bottomley"
-<JBottomley@parallels.com>, scsi <linux-scsi@vger.kernel.org>,
-"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "Eric
-W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [patch] [SCSI] qla4xxx: overflow in qla4xxx_set_chap_entry()
+Date: Wed, 13 Nov 2013 07:56:27 +0000
+Subject: [patch] locks: missing unlock on error in generic_add_lease()
+Message-Id: <20131113075627.GJ25541@elgon.mountain>
+List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Matthew Wilcox <matthew@wil.cx>, "J. Bruce Fields" <bfields@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->On Wed, Nov 13, 2013 at 03:08:12PM +0300, Dan Carpenter wrote:
->> On Wed, Nov 13, 2013 at 11:52:37AM +0000, Vikas Chaudhary wrote:
->> >=20
->> >=20
->> > -----Original Message-----
->> > From: Dan Carpenter <dan.carpenter@oracle.com>
->> > Date: Wednesday, 13 November 2013 1:18 pm
->> > To: Vikas <vikas.chaudhary@qlogic.com>, Adheer Chandravanshi
->> > <adheer.chandravanshi@qlogic.com>
->> > Cc: Dept-Eng iSCSI Driver <Dept-iSCSIDriver@qlogic.com>, "James E.J.
->> > Bottomley" <JBottomley@parallels.com>, scsi
->><linux-scsi@vger.kernel.org>,
->> > "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
->> > Subject: [patch] [SCSI] qla4xxx: overflow in qla4xxx_set_chap_entry()
->> >=20
->> > >We should cap the size of memcpy() because it comes from the network
->> > >and can't be trusted.
->> >=20
->> > This patch is on assumption that data is coming from network,
->> > but in this case data come from application (iscsiadm) with correct
->>length.
->> >=20
->>=20
->> No, that doesn't work.  We don't trust user space.
->
->Btw, the is especially true with network namespaces...  These days
->anyone who is ns_capable() could overflow the buffer after:
->df008c91f835 ('net: Allow userns root to control llc, netfilter, netlink,
->packet, and xfrm')
+We should unlock here before returning.
 
-Agreed, We can=B9t trust user space.
+Fixes: df4e8d2c1d2b ('locks: implement delegations')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.
 
-Acked-by: Vikas Chaudhary <vikas.chaudhary@qlogic.com>
-
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/locks.c b/fs/locks.c
+index f99d52b..92a0f0a 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1494,6 +1494,7 @@ static int generic_add_lease(struct file *filp, long arg, struct file_lock **flp
+ 
+ 	if (is_deleg && arg = F_WRLCK) {
+ 		/* Write delegations are not currently supported: */
++		mutex_unlock(&inode->i_mutex);
+ 		WARN_ON_ONCE(1);
+ 		return -EINVAL;
+ 	}
