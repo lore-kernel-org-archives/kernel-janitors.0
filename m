@@ -1,81 +1,40 @@
-From: "Chen, Gong" <gong.chen@linux.intel.com>
-Date: Mon, 11 Nov 2013 02:04:44 +0000
-Subject: Re: [patch 2/2 v2] ACPI, extlog: remove unneeded NULL check
-Message-Id: <20131111020444.GA1740@gchen.bj.intel.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="yrj/dFKFPuw6o+aM"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Nov 2013 07:40:30 +0000
+Subject: [patch] mfd: ab8500-debugfs: move dereference after check for NULL
+Message-Id: <20131113074030.GA25541@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107072230.GA32127@gchen.bj.intel.com>
- <20131108082449.GA19368@elgon.mountain>
-In-Reply-To: <20131108082449.GA19368@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Tony Luck <tony.luck@gmail.com>, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
+We dereference "desc" before check if it is NULL.  I've shifted it
+around so we check first before dereferencing.
 
---yrj/dFKFPuw6o+aM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I am not able to compile this.
 
-On Fri, Nov 08, 2013 at 12:24:49AM -0800, Dan Carpenter wrote:
-> Date: Fri, 8 Nov 2013 00:24:49 -0800 (PST)
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> To: Len Brown <lenb@kernel.org>, "Chen, Gong" <gong.chen@linux.intel.com>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org,
->  Tony Luck <tony.luck@gmail.com>, kernel-janitors@vger.kernel.org
-> Subject: [patch 2/2 v2] ACPI, extlog: remove unneeded NULL check
-> USER-AGENT: Mutt/1.5.21 (2010-09-15)
->=20
-> We dereference extlog_l1_addr before checking if is NULL.  It turns out
-> "extlog_l1_addr" pointer can never be NULL when this function is called
-> so I have removed the check.
->=20
-> We can remove the "elog_addr" check as well.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: remove the elog_addr check as well.
->=20
-> diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-> index a6869e1..17da458 100644
-> --- a/drivers/acpi/acpi_extlog.c
-> +++ b/drivers/acpi/acpi_extlog.c
-> @@ -310,10 +310,8 @@ static void __exit extlog_exit(void)
->  {
->  	mce_unregister_decode_chain(&extlog_mce_dec);
->  	((struct extlog_l1_head *)extlog_l1_addr)->flags &=3D ~FLAG_OS_OPTIN;
-> -	if (extlog_l1_addr)
-> -		acpi_os_unmap_memory(extlog_l1_addr, l1_size);
-> -	if (elog_addr)
-> -		acpi_os_unmap_memory(elog_addr, elog_size);
-> +	acpi_os_unmap_memory(extlog_l1_addr, l1_size);
-> +	acpi_os_unmap_memory(elog_addr, elog_size);
->  	release_mem_region(elog_base, elog_size);
->  	release_mem_region(l1_dirbase, l1_size);
->  	kfree(elog_buf);
-
-Signed-off-by: Chen, Gong <gong.chen@linux.intel.com>
-
---yrj/dFKFPuw6o+aM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSgDs8AAoJEI01n1+kOSLHihoP/jd+q/1487/RHPbTRQrS2+sH
-sGKcjvMdPh6WO6X9NyOuaiH20AZHB/0XaiLZPGs92PDRE6ElZwCKed6AEaqym/21
-rOd8hCrlzVTnqmrpWlfWDao86+UapRBEAAjP3aDnk/Uu/hEea2wZr9Bi745SFZ/i
-a82vG4VZXQnQWQmXXyD57VOqCZ2SmViL4E382Kfm4FDif0Q7f3AN3kA+fFjM/acr
-TYf8fDdADmLj/I7FPE+bWHChdT9h1Sy9UHGxmaduEV1skz39WqX4R35TmIsoAXvG
-zPBxDthnysWx0zBdbtGuDThWyEX3B5sZvoas9JfC9DjhfRS3JWmIqmkFnBPZ6WEE
-0OY5CbRJl8uFpd+pThMvrPNhlSJw/XEy953t0QB/ynpbVLEV2DlMqPNbd9FFB9s7
-Tc5B/yD9cgRkznRT3qxpXaCv+bzfGGwa9AHcq/7JM/ucZxiaWFmouatRkft/rUWy
-DTmi2l574xDwVcFCot+oi8iCDehgvnk63QYoGGzB/glAszDaBPzz7WO+Cpe1x25g
-aNKglvpYwjVmFs2WUVzKLKJjcpsuM+DcoqifmjFQ1wAHxjE9snxIXWfmOf/aOpVA
-6kyo3anRM7/cJRlX5C0sX+xYMFuV36gvii+5lwWm7vNLWSUY2vwzXEFysQcgMVI1
-921tithvHtDaGPG9oSwn
-=T046
------END PGP SIGNATURE-----
-
---yrj/dFKFPuw6o+aM--
+diff --git a/drivers/mfd/ab8500-debugfs.c b/drivers/mfd/ab8500-debugfs.c
+index e33e385..d1a22aa 100644
+--- a/drivers/mfd/ab8500-debugfs.c
++++ b/drivers/mfd/ab8500-debugfs.c
+@@ -1600,7 +1600,6 @@ static int ab8500_interrupts_print(struct seq_file *s, void *p)
+ 
+ 	for (line = 0; line < num_interrupt_lines; line++) {
+ 		struct irq_desc *desc = irq_to_desc(line + irq_first);
+-		struct irqaction *action = desc->action;
+ 
+ 		seq_printf(s, "%3i:  %6i %4i", line,
+ 			   num_interrupts[line],
+@@ -1608,7 +1607,9 @@ static int ab8500_interrupts_print(struct seq_file *s, void *p)
+ 
+ 		if (desc && desc->name)
+ 			seq_printf(s, "-%-8s", desc->name);
+-		if (action) {
++		if (desc && desc->action) {
++			struct irqaction *action = desc->action;
++
+ 			seq_printf(s, "  %s", action->name);
+ 			while ((action = action->next) != NULL)
+ 				seq_printf(s, ", %s", action->name);
