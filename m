@@ -1,50 +1,31 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 13 Nov 2013 08:29:06 +0000
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Wed, 13 Nov 2013 08:29:54 +0000
 Subject: Re: [patch] ALSA: snd-aoa: two copy and paste bugs
-Message-Id: <s5h4n7gso19.wl%tiwai@suse.de>
+Message-Id: <1384331394.14578.0.camel@jlt4.sipsolutions.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20131113074520.GD25541@elgon.mountain>
-In-Reply-To: <20131113074520.GD25541@elgon.mountain>
+	 <s5h4n7gso19.wl%tiwai@suse.de>
+In-Reply-To: <s5h4n7gso19.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Jaroslav Kysela <perex@perex.cz>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <michael@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <michael@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-At Wed, 13 Nov 2013 10:45:20 +0300,
-Dan Carpenter wrote:
+On Wed, 2013-11-13 at 09:29 +0100, Takashi Iwai wrote:
+> At Wed, 13 Nov 2013 10:45:20 +0300,
+> Dan Carpenter wrote:
+> > 
+> > These functions were cut and paste and the tests for NULL weren't
+> > updated properly.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> These functions were cut and paste and the tests for NULL weren't
-> updated properly.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Thanks, applied.
 
-Thanks, applied.
+FWIW, looks fine to me - I wonder how long this has been broken though,
+must be practically forever. I guess we never got it wrong and missed
+adding some pointers? :-)
 
+johannes
 
-Takashi
-
-> 
-> diff --git a/sound/aoa/fabrics/layout.c b/sound/aoa/fabrics/layout.c
-> index 61ab640..9dc5806 100644
-> --- a/sound/aoa/fabrics/layout.c
-> +++ b/sound/aoa/fabrics/layout.c
-> @@ -644,7 +644,7 @@ static int n##_control_put(struct snd_kcontrol *kcontrol,		\
->  			   struct snd_ctl_elem_value *ucontrol)		\
->  {									\
->  	struct gpio_runtime *gpio = snd_kcontrol_chip(kcontrol);	\
-> -	if (gpio->methods && gpio->methods->get_##n)			\
-> +	if (gpio->methods && gpio->methods->set_##n)			\
->  		gpio->methods->set_##n(gpio,				\
->  			!!ucontrol->value.integer.value[0]);		\
->  	return 1;							\
-> @@ -1135,7 +1135,7 @@ static int aoa_fabric_layout_resume(struct soundbus_dev *sdev)
->  {
->  	struct layout_dev *ldev = dev_get_drvdata(&sdev->ofdev.dev);
->  
-> -	if (ldev->gpio.methods && ldev->gpio.methods->all_amps_off)
-> +	if (ldev->gpio.methods && ldev->gpio.methods->all_amps_restore)
->  		ldev->gpio.methods->all_amps_restore(&ldev->gpio);
->  
->  	return 0;
-> 
