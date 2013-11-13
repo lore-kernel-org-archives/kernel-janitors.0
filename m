@@ -1,52 +1,28 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Fri, 08 Nov 2013 12:35:37 +0000
-Subject: Re: [patch 1/2] drm/tegra: return -EFAULT if copy_from_user() fails
-Message-Id: <20131108123536.GB31551@ulmo.nvidia.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="lEGEL1/lMxI0MVQ2"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Nov 2013 07:45:52 +0000
+Subject: [patch] drm/nouveau/disp: add a comment on confusing loop
+Message-Id: <20131113074552.GE25541@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131108100737.GX27977@elgon.mountain>
-In-Reply-To: <20131108100737.GX27977-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>
+Cc: David Herrmann <dh.herrmann@gmail.com>, Dave Airlie <airlied@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
 
+The "ret = -EIO" is deliberate.  It's a very uncommon thing to do and it
+upsets static checkers because they normally would expect "ret = -EIO".
 
---lEGEL1/lMxI0MVQ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, Nov 08, 2013 at 01:07:37PM +0300, Dan Carpenter wrote:
-> copy_from_user() returns the number of bytes remaining if it fails, but
-> we want to return -EFAULT here.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied (manually because there was a conflict with the __user
-annotation fix that I did earlier).
-
-Thanks,
-Thierry
-
---lEGEL1/lMxI0MVQ2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSfNqYAAoJEN0jrNd/PrOhiE8P/jvqYROBktA+4jbdrkSHmOmH
-f7vpkr6LPNEWmd75PbBNSr7MkZZYE9UiW47V4F95LUtZiZ2xGv0AgVaSRJq98W+b
-Y9nmI8MtnWEX+ReS4QOzE/fzQYk13lDEG0jlBu3JYjKNVaSwlvOSDklbcjWvY2cM
-C0Exsx/re3GBRbNsxXoNpU4ptPIZRPNV3ka6nlY8FCF8pCSfreQewoIOoT0uOTp+
-ZGQTArvczYwstsg/u4mI36ODPbcsR5dX5Y87wEdqJJ+jE31F1u/jkG25KYDlMAqf
-+AQDtmVR9ZXEeLsEmU+vI5tGxMF7xGHNadfSTgEgZF5fXZT9xZWha4EKpiwEndGd
-3sVkAPUdYXlleWu6mfst33wYSGGVGhiWlXiGKjqTkRsqn+rwppVNAlQGZ9/HvtVB
-vAfXKPbZVLpWoCfAdzQIX9bB+5H8p75o++DayEEyX02T7ugQI3LatKhrkXUP6BA7
-ueqqPA/MDWZxcAV3IEh7sHGpPKSLHKu8c+IRISAaKXl6otWJAaG10Eqtb25cmiza
-1Z3f39zNKl3Sfg7FgvsUu0AfXl3F6sq2cykUS1Y5HJY/Tmw+kzPrgzVb2YpOCVQn
-eiClcsyoowjF2g7TXUpC0InR6xMszOIOQYyrRcum/W8VmZOFG9f6Ti7zDp7OaSVt
-UwOBhiifew/fBwA9PEhG
-=YesS
------END PGP SIGNATURE-----
-
---lEGEL1/lMxI0MVQ2--
+diff --git a/drivers/gpu/drm/nouveau/core/engine/disp/dport.c b/drivers/gpu/drm/nouveau/core/engine/disp/dport.c
+index 1bd4c63..2bc45ae 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/disp/dport.c
++++ b/drivers/gpu/drm/nouveau/core/engine/disp/dport.c
+@@ -322,6 +322,7 @@ nouveau_dp_train(struct nouveau_disp *disp, const struct nouveau_dp_func *func,
+ 	while (*link_bw > (dp->dpcd[1] * 27000))
+ 		link_bw++;
+ 
++	/* set ret to -EIO on the last loop iteration */
+ 	while ((ret = -EIO) && link_bw[0]) {
+ 		/* find minimum required lane count at this link rate */
+ 		dp->link_nr = dp->dpcd[2] & DPCD_RC02_MAX_LANE_COUNT;
