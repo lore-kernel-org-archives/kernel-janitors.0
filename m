@@ -1,36 +1,35 @@
-From: DaeSeok Youn <daeseok.youn@gmail.com>
-Date: Wed, 27 Nov 2013 10:17:12 +0000
-Subject: Re: [PATCH] kernel/fork.c: make dup_mm() static
-Message-Id: <CAHb8M2A2=0ZEiopStfDxE6C1=9ewpfuidOoBT9SF9anaz+GGyw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 13 Nov 2013 07:50:24 +0000
+Subject: [patch] bus: mvebu-mbus: potential forever loop in mvebu_mbus_init()
+Message-Id: <20131113075024.GH25541@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1806554.PvRgdrjSaq@daeseok-laptop>
-In-Reply-To: <1806554.PvRgdrjSaq@daeseok-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Thanks for review.
+"of_id->compatible" is an array and not a pointer so it can never be
+NULL.
 
-I will modify subject as your comment.
-And I will re-send a patch again.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm not able to compile this.
 
-Daeseok Youn
-
-2013/11/27 Peter Zijlstra <peterz@infradead.org>:
-> On Wed, Nov 27, 2013 at 12:10:03PM +0900, Daeseok Youn wrote:
->> From 50e7d2058f0502e9c9138d5c0c75c8492ab8ed6a Mon Sep 17 00:00:00 2001
->> From: Daeseok Youn <daeseok.youn@lge.com>
->> Date: Wed, 27 Nov 2013 10:17:59 +0900
->> Subject: [PATCH] kernel/fork.c: make dup_mm() static
->
-> Strictly speaking you need a Changelog explaining what, why and how. I
-> suppose here a simple:
->
-> Make dup_mm() static as its not used elsewhere.
->
-> Will suffice.
->
->> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
->
-> Andrew, do you want this one or shall I take it?
+diff --git a/drivers/bus/mvebu-mbus.c b/drivers/bus/mvebu-mbus.c
+index 2394e97..c646a76 100644
+--- a/drivers/bus/mvebu-mbus.c
++++ b/drivers/bus/mvebu-mbus.c
+@@ -734,11 +734,11 @@ int __init mvebu_mbus_init(const char *soc, phys_addr_t mbuswins_phys_base,
+ {
+ 	const struct of_device_id *of_id;
+ 
+-	for (of_id = of_mvebu_mbus_ids; of_id->compatible; of_id++)
++	for (of_id = of_mvebu_mbus_ids; of_id->compatible[0]; of_id++)
+ 		if (!strcmp(of_id->compatible, soc))
+ 			break;
+ 
+-	if (!of_id->compatible) {
++	if (!of_id->compatible[0]) {
+ 		pr_err("could not find a matching SoC family\n");
+ 		return -ENODEV;
+ 	}
