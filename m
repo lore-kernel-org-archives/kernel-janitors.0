@@ -1,30 +1,33 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Mon, 11 Nov 2013 07:31:42 +0000
-Subject: Re: [patch] Input: tnetv107x-keypad - make irqs signed for error handling
-Message-Id: <20131111073142.GB7645@core.coreip.homeip.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Nov 2013 08:18:08 +0000
+Subject: [patch] Input: hp_sdc_rtc - unlock on error in hp_sdc_rtc_read_i8042timer()
+Message-Id: <20131114081808.GA8150@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107075240.GK21844@elgon.mountain>
-In-Reply-To: <20131107075240.GK21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Bill Pemberton <wfp5p@virginia.edu>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Javier Martinez Canillas <javier@dowhile0.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Sachin Kamat <sachin.kamat@linaro.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Helge Deller <deller@gmx.de>, David Howells <dhowells@redhat.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Nov 07, 2013 at 10:52:40AM +0300, Dan Carpenter wrote:
-> There is a bug in keypad_probe() where we do:
-> 
-> 	kp->irq_press   = platform_get_irq_byname(pdev, "press");
-> 	kp->irq_release = platform_get_irq_byname(pdev, "release");
-> 	if (kp->irq_press < 0 || kp->irq_release < 0) {
-> 
-> The problem is that these irq variables are unsigned so the error
-> handling doesn't work.  I've changed them to signed values.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The transaction task here is hp_sdc_tasklet() and it releases the lock.
+The problem is if we aren't able to queue the transaction then we need
+to release the lock ourselves.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thank you.
-
--- 
-Dmitry
+diff --git a/drivers/input/misc/hp_sdc_rtc.c b/drivers/input/misc/hp_sdc_rtc.c
+index 86b8228..45e0e3e 100644
+--- a/drivers/input/misc/hp_sdc_rtc.c
++++ b/drivers/input/misc/hp_sdc_rtc.c
+@@ -180,7 +180,10 @@ static int64_t hp_sdc_rtc_read_i8042timer (uint8_t loadcmd, int numreg)
+ 	if (WARN_ON(down_interruptible(&i8042tregs)))
+ 		return -1;
+ 
+-	if (hp_sdc_enqueue_transaction(&t)) return -1;
++	if (hp_sdc_enqueue_transaction(&t)) {
++		up(&i8042tregs);
++		return -1;
++	}
+ 	
+ 	/* Sleep until results come back. */
+ 	if (WARN_ON(down_interruptible(&i8042tregs)))
