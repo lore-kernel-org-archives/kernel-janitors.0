@@ -1,40 +1,27 @@
-From: Eugene Krasnikov <k.eugene.e@gmail.com>
-Date: Wed, 06 Nov 2013 08:12:52 +0000
-Subject: Re: [patch] wcn36xx: harmless memory corruption bug in debugfs
-Message-Id: <CAFSJ42azGCbOPOEwGSsVDXti23NQuPxeqnW_VAj2x-qVguFd2Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Nov 2013 08:22:54 +0000
+Subject: [patch] pinctrl: rockchip: missing unlock on error in rockchip_set_pull()
+Message-Id: <20131114082254.GE8150@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131106074128.GA13475@elgon.mountain>
-In-Reply-To: <20131106074128.GA13475@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, wcn36xx <wcn36xx@lists.infradead.org>, linux-wireless <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Looks good to me, thanx!
+We need to unlock here before returning -EINVAL.
 
-On Wed, Nov 6, 2013 at 7:41 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On 64 bit systems we write past the end of the arg[] array.
->
-> Fixes: 8e84c2582169 ('wcn36xx: mac80211 driver for Qualcomm WCN3660/WCN3680 hardware')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/net/wireless/ath/wcn36xx/debug.c b/drivers/net/wireless/ath/wcn36xx/debug.c
-> index 5b84f7a..ef44a2da 100644
-> --- a/drivers/net/wireless/ath/wcn36xx/debug.c
-> +++ b/drivers/net/wireless/ath/wcn36xx/debug.c
-> @@ -126,7 +126,7 @@ static ssize_t write_file_dump(struct file *file,
->                 if (begin = NULL)
->                         break;
->
-> -               if (kstrtoul(begin, 0, (unsigned long *)(arg + i)) != 0)
-> +               if (kstrtou32(begin, 0, &arg[i]) != 0)
->                         break;
->         }
->
+Fixes: 6ca5274d1d12 ('pinctrl: rockchip: add rk3188 specifics')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-
--- 
-Best regards,
-Eugene
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index e939c28..bfd1824 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -504,6 +504,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
+ 			data |= (3 << bit);
+ 			break;
+ 		default:
++			spin_unlock_irqrestore(&bank->slock, flags);
+ 			dev_err(info->dev, "unsupported pull setting %d\n",
+ 				pull);
+ 			return -EINVAL;
