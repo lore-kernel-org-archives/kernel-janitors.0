@@ -1,42 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Nov 2013 08:21:10 +0000
-Subject: [patch] isdnloop: use strlcpy() instead of strcpy()
-Message-Id: <20131114082110.GD8150@elgon.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 14 Nov 2013 21:50:54 +0000
+Subject: Re: [patch] isdnloop: use strlcpy() instead of strcpy()
+Message-Id: <20131114.165054.356251797193140551.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131114082110.GD8150@elgon.mountain>
+In-Reply-To: <20131114082110.GD8150@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org, Karsten Keil <isdn@linux-pingi.de>
-Cc: kernel-janitors@vger.kernel.org, isdn4linux@listserv.isdn4linux.de
+To: dan.carpenter@oracle.com
+Cc: netdev@vger.kernel.org, isdn@linux-pingi.de, kernel-janitors@vger.kernel.org, isdn4linux@listserv.isdn4linux.de
 
-These strings come from a copy_from_user() and there is no way to be
-sure they are NUL terminated.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 14 Nov 2013 11:21:10 +0300
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> These strings come from a copy_from_user() and there is no way to be
+> sure they are NUL terminated.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/isdn/isdnloop/isdnloop.c b/drivers/isdn/isdnloop/isdnloop.c
-index baf2686..02125e6 100644
---- a/drivers/isdn/isdnloop/isdnloop.c
-+++ b/drivers/isdn/isdnloop/isdnloop.c
-@@ -1083,8 +1083,10 @@ isdnloop_start(isdnloop_card *card, isdnloop_sdef *sdefp)
- 			spin_unlock_irqrestore(&card->isdnloop_lock, flags);
- 			return -ENOMEM;
- 		}
--		for (i = 0; i < 3; i++)
--			strcpy(card->s0num[i], sdef.num[i]);
-+		for (i = 0; i < 3; i++) {
-+			strlcpy(card->s0num[i], sdef.num[i],
-+				sizeof(card->s0num[0]));
-+		}
- 		break;
- 	case ISDN_PTYPE_1TR6:
- 		if (isdnloop_fake(card, "DRV1.04TC-1TR6-CAPI-CNS-BASIS-29.11.95",
-@@ -1097,7 +1099,7 @@ isdnloop_start(isdnloop_card *card, isdnloop_sdef *sdefp)
- 			spin_unlock_irqrestore(&card->isdnloop_lock, flags);
- 			return -ENOMEM;
- 		}
--		strcpy(card->s0num[0], sdef.num[0]);
-+		strlcpy(card->s0num[0], sdef.num[0], sizeof(card->s0num[0]));
- 		card->s0num[1][0] = '\0';
- 		card->s0num[2][0] = '\0';
- 		break;
+Applied and queued up for -stable, thanks Dan.
