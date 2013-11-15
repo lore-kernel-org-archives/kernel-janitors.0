@@ -1,46 +1,149 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 12 Nov 2013 01:26:13 +0000
-Subject: Re: [patch] ASoC: rcar: off by one in rsnd_scu_set_route()
-Message-Id: <20131112012613.GJ2674@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cN519qCC4CN1mUcX"
+From: Luca <bartolacci92@hotmail.com>
+Date: Fri, 15 Nov 2013 20:52:15 +0000
+Subject: [patch]parport:probe.c Cleanup Whitespaces
+Message-Id: <BLU0-SMTP95E0D0628583A91DFE38B4CAFB0@phx.gbl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131108094610.GE27977@elgon.mountain>
-In-Reply-To: <20131108094610.GE27977@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+
+Cleanup Whitespaces, let me know if something's wrong.
+
+Signed-off-by: Luca Bartolacci <inductionv8@gmail.com>
+---
+ drivers/parport/probe.c |   40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/parport/probe.c b/drivers/parport/probe.c
+index d763bc9..a46d7c7 100644
+--- a/drivers/parport/probe.c
++++ b/drivers/parport/probe.c
+@@ -20,7 +20,7 @@ static const struct {
+ 	{ "PRINTER",     "Printer" },
+ 	{ "MODEM",       "Modem" },
+ 	{ "NET",         "Network device" },
+-	{ "HDC",       	 "Hard disk" },
++	{ "HDC",         "Hard disk" },
+ 	{ "PCMCIA",      "PCMCIA" },
+ 	{ "MEDIA",       "Multimedia device" },
+ 	{ "FDC",         "Floppy disk" },
+@@ -40,9 +40,9 @@ static void pretty_print(struct parport *port, int device)
+ 	printk(KERN_INFO "%s", port->name);
+ 
+ 	if (device >= 0)
+-		printk (" (addr %d)", device);
++		printk(" (addr %d)", device);
+ 
+-	printk (": %s", classes[info->class].descr);
++	printk(": %s", classes[info->class].descr);
+ 	if (info->class)
+ 		printk(", %s %s", info->mfr, info->model);
+ 
+@@ -70,7 +70,7 @@ static void parse_data(struct parport *port, int device, char *str)
+ 			char *u;
+ 			*(sep++) = 0;
+ 			/* Get rid of trailing blanks */
+-			u = sep + strlen (sep) - 1;
++			u = sep + strlen(sep) - 1;
+ 			while (u >= p && *u = ' ')
+ 				*u-- = '\0';
+ 			u = p;
+@@ -132,7 +132,7 @@ static void parse_data(struct parport *port, int device, char *str)
+ /* Read up to count-1 bytes of device id. Terminate buffer with
+  * '\0'. Buffer begins with two Device ID length bytes as given by
+  * device. */
+-static ssize_t parport_read_device_id (struct parport *port, char *buffer,
++static ssize_t parport_read_device_id(struct parport *port, char *buffer,
+ 				       size_t count)
+ {
+ 	unsigned char length[2];
+@@ -144,7 +144,7 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
+ 	size_t len;
+ 
+ 	/* First two bytes are MSB,LSB of inclusive length. */
+-	retval = parport_read (port, length, 2);
++	retval = parport_read(port, length, 2);
+ 
+ 	if (retval < 0)
+ 		return retval;
+@@ -176,7 +176,7 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
+ 		 * just return constant nibble forever. This catches
+ 		 * also those cases. */
+ 		if (idlens[0] = 0 || idlens[0] > 0xFFF) {
+-			printk (KERN_DEBUG "%s: reported broken Device ID"
++			printk(KERN_DEBUG "%s: reported broken Device ID"
+ 				" length of %#zX bytes\n",
+ 				port->name, idlens[0]);
+ 			return -EIO;
+@@ -192,7 +192,7 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
+ 		if (idlen+1 >= count)
+ 			break;
+ 
+-		retval = parport_read (port, buffer+len, idlen-len);
++		retval = parport_read(port, buffer+len, idlen-len);
+ 
+ 		if (retval < 0)
+ 			return retval;
+@@ -200,7 +200,7 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
+ 
+ 		if (port->physport->ieee1284.phase != IEEE1284_PH_HBUSY_DAVAIL) {
+ 			if (belen != len) {
+-				printk (KERN_DEBUG "%s: Device ID was %zd bytes"
++				printk(KERN_DEBUG "%s: Device ID was %zd bytes"
+ 					" while device told it would be %d"
+ 					" bytes\n",
+ 					port->name, len, belen);
+@@ -213,7 +213,7 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
+ 		 * the first 256 bytes or so that we must have read so
+ 		 * far. */
+ 		if (buffer[len-1] = ';') {
+- 			printk (KERN_DEBUG "%s: Device ID reading stopped"
++			printk(KERN_DEBUG "%s: Device ID reading stopped"
+ 				" before device told data not available. "
+ 				"Current idlen %u of %u, len bytes %02X %02X\n",
+ 				port->name, current_idlen, numidlens,
+@@ -253,30 +253,30 @@ static ssize_t parport_read_device_id (struct parport *port, char *buffer,
+ }
+ 
+ /* Get Std 1284 Device ID. */
+-ssize_t parport_device_id (int devnum, char *buffer, size_t count)
++ssize_t parport_device_id(int devnum, char *buffer, size_t count)
+ {
+ 	ssize_t retval = -ENXIO;
+-	struct pardevice *dev = parport_open (devnum, "Device ID probe");
++	struct pardevice *dev = parport_open(devnum, "Device ID probe");
+ 	if (!dev)
+ 		return -ENXIO;
+ 
+-	parport_claim_or_block (dev);
++	parport_claim_or_block(dev);
+ 
+ 	/* Negotiate to compatibility mode, and then to device ID
+ 	 * mode. (This so that we start form beginning of device ID if
+ 	 * already in device ID mode.) */
+-	parport_negotiate (dev->port, IEEE1284_MODE_COMPAT);
+-	retval = parport_negotiate (dev->port,
++	parport_negotiate(dev->port, IEEE1284_MODE_COMPAT);
++	retval = parport_negotiate(dev->port,
+ 				    IEEE1284_MODE_NIBBLE | IEEE1284_DEVICEID);
+ 
+ 	if (!retval) {
+-		retval = parport_read_device_id (dev->port, buffer, count);
+-		parport_negotiate (dev->port, IEEE1284_MODE_COMPAT);
++		retval = parport_read_device_id(dev->port, buffer, count);
++		parport_negotiate(dev->port, IEEE1284_MODE_COMPAT);
+ 		if (retval > 2)
+-			parse_data (dev->port, dev->daisy, buffer+2);
++			parse_data(dev->port, dev->daisy, buffer+2);
+ 	}
+ 
+-	parport_release (dev);
+-	parport_close (dev);
++	parport_release(dev);
++	parport_close(dev);
+ 	return retval;
+ }
+--
 
 
---cN519qCC4CN1mUcX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Nov 08, 2013 at 12:46:10PM +0300, Dan Carpenter wrote:
-> If "id == ARRAY_SIZE(routes)" then we read one space beyond the end of
-> the routes[] array.
-
-Applied, thanks.
-
---cN519qCC4CN1mUcX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSgYOyAAoJELSic+t+oim9riIP/3e/M/mBEHTUXuPiERAix4Sw
-pmxkuWdRxiZsnakiZHOp5UHxAyBCYM2BwPynNVgl9mQv6+lbmTQZrFsBYy/+8TpT
-KN/B9P8BVyYbABq3AcNueoo8++DehjChfFnIQCyA3DfQBSRa4/7PsKQpfyG6jUS9
-ZGZxz248sAUT9HnfK4DEL1zM+Frr5WoG6YOTY+1omA8mKDI27T08Ca3SZDOHHj9Z
-g0dtGMPIjWHXhFs9+YB72CYtM7SXLVSV4xmxCU94NX5dfUDdObjaaxeMltiOcwNp
-JfzHT2npaNIcJ7HfNa0Gw07o4hrayxIdgeNX2YikB7j3AWLgSxqRNc93OuR5FjM+
-vlTASxrthLVOaxKb0Rw+5XWaaOp7XbcJNXfzEtn/5lJ5LchDdnVGlaCq+Cdwo+5p
-efTcyh9C3gK9gcDZu4KUj+NInO9hl4swBExWrKaJQFgZyQErgdWJ/PQCiKsLpFPi
-5BmNegX4XAxB/n28CdWeEMZQOJI1BnQQ/MuH60hMHn08ywx8Ajbx+KjguNXYzJGp
-XHgXakmHGXdUw7tQKh9Vc4t4Yv4kzhKOWbj8CU4i39SgZHyqx8AB2UzI7Hrlkri1
-3ijLHbrhC6QgLq/SnDFWDi2lHO7fGTdDCKRNlcHyrWGLp+4R+kMAWYhgRtoty0i/
-fMk3VeBEwnTFaF+ToMH+
-=rxYp
------END PGP SIGNATURE-----
-
---cN519qCC4CN1mUcX--
