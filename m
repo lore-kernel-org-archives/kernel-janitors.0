@@ -1,41 +1,27 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 13 Nov 2013 08:29:16 +0000
-Subject: Re: [patch] ALSA: isa: not allocating enough space
-Message-Id: <s5h38n0so0z.wl%tiwai@suse.de>
+From: David Sterba <dsterba@suse.cz>
+Date: Mon, 18 Nov 2013 10:57:17 +0000
+Subject: Re: [patch] Btrfs: fix access_ok() check in btrfs_ioctl_send()
+Message-Id: <20131118105717.GB5007@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131113075838.GK25541@elgon.mountain>
-In-Reply-To: <20131113075838.GK25541@elgon.mountain>
+References: <20131021123004.GI1032@twin.jikos.cz>
+In-Reply-To: <20131021123004.GI1032@twin.jikos.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Bill Pemberton <wfp5p@virginia.edu>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: jbacik@fusionio.com, Dan Carpenter <dan.carpenter@oracle.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Wed, 13 Nov 2013 10:58:38 +0300,
-Dan Carpenter wrote:
+On Mon, Oct 21, 2013 at 02:30:05PM +0200, David Sterba wrote:
+> On Thu, Jan 10, 2013 at 11:57:25AM +0300, Dan Carpenter wrote:
+> > The closing parenthesis is in the wrong place.  We want to check
+> > "sizeof(*arg->clone_sources) * arg->clone_sources_count" instead of
+> > "sizeof(*arg->clone_sources * arg->clone_sources_count)".
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
-> We allocate only 4 bytes here "sizeof(int)" instead of WF_MSAMPLE_BYTES
-> (259) which was intended.
+> Original message id: <20130110085725.GA23063@elgon.mountain>
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> This patch hasn't been applied.
 
-Thanks, applied.
+Please add this patch to btrfs-next.
 
-
-Takashi
-
-> 
-> diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
-> index a2f87f9..e5db001 100644
-> --- a/sound/isa/wavefront/wavefront_synth.c
-> +++ b/sound/isa/wavefront/wavefront_synth.c
-> @@ -1196,7 +1196,7 @@ wavefront_send_multisample (snd_wavefront_t *dev, wavefront_patch_info *header)
->  	int num_samples;
->  	unsigned char *msample_hdr;
->  
-> -	msample_hdr = kmalloc(sizeof(WF_MSAMPLE_BYTES), GFP_KERNEL);
-> +	msample_hdr = kmalloc(WF_MSAMPLE_BYTES, GFP_KERNEL);
->  	if (! msample_hdr)
->  		return -ENOMEM;
->  
-> 
+david
