@@ -1,40 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Nov 2013 07:40:30 +0000
-Subject: [patch] mfd: ab8500-debugfs: move dereference after check for NULL
-Message-Id: <20131113074030.GA25541@elgon.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 19 Nov 2013 08:07:36 +0000
+Subject: Re: [patch] mfd: ab8500-debugfs: move dereference after check for NULL
+Message-Id: <CACRpkdZ3GbUCkK3mte3wM_WCmtuvOvCYfu2PkJSy+7yhx_qpqQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131113074030.GA25541@elgon.mountain>
+In-Reply-To: <20131113074030.GA25541@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-We dereference "desc" before check if it is NULL.  I've shifted it
-around so we check first before dereferencing.
+On Wed, Nov 13, 2013 at 8:40 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I am not able to compile this.
+> We dereference "desc" before check if it is NULL.  I've shifted it
+> around so we check first before dereferencing.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I am not able to compile this.
 
-diff --git a/drivers/mfd/ab8500-debugfs.c b/drivers/mfd/ab8500-debugfs.c
-index e33e385..d1a22aa 100644
---- a/drivers/mfd/ab8500-debugfs.c
-+++ b/drivers/mfd/ab8500-debugfs.c
-@@ -1600,7 +1600,6 @@ static int ab8500_interrupts_print(struct seq_file *s, void *p)
- 
- 	for (line = 0; line < num_interrupt_lines; line++) {
- 		struct irq_desc *desc = irq_to_desc(line + irq_first);
--		struct irqaction *action = desc->action;
- 
- 		seq_printf(s, "%3i:  %6i %4i", line,
- 			   num_interrupts[line],
-@@ -1608,7 +1607,9 @@ static int ab8500_interrupts_print(struct seq_file *s, void *p)
- 
- 		if (desc && desc->name)
- 			seq_printf(s, "-%-8s", desc->name);
--		if (action) {
-+		if (desc && desc->action) {
-+			struct irqaction *action = desc->action;
-+
- 			seq_printf(s, "  %s", action->name);
- 			while ((action = action->next) != NULL)
- 				seq_printf(s, ", %s", action->name);
+Looks and compiles good.
+Tested-by: Linus Walleij <linus.walleij@linaro.org>
+
+Lee are you queueing this?
+
+Yours,
+Linus Walleij
