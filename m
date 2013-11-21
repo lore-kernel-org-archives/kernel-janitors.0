@@ -1,38 +1,37 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Wed, 13 Nov 2013 13:32:30 +0000
-Subject: Re: [patch 1/2] dma: pl330: off by one in pl330_probe()
-Message-Id: <20131113132030.GY8834@intel.com>
+From: Andreas Platschek <andi.platschek@gmail.com>
+Date: Thu, 21 Nov 2013 19:12:12 +0000
+Subject: [PATCH] tty: replace mutex_lock() with tty_write_lock()
+Message-Id: <1385061132-7254-1-git-send-email-andi.platschek@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131108095024.GH27977@elgon.mountain>
-In-Reply-To: <20131108095024.GH27977@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: jslaby@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andreas Platschek <andi.platschek@gmail.com>
 
-On Fri, Nov 08, 2013 at 12:50:24PM +0300, Dan Carpenter wrote:
-> There are only AMBA_NR_IRQS (2) elements in adev->irq[].  This code
-> maybe works if the there is a zero directly after the array.
-Applied both
+Use tty_write_lock()/tty_write_unlock() consistently.
 
-Thanks
-~Vinod
+This takes care of the following sparse warning:
+drivers/tty/tty_io.c:1169:17: warning: context imbalance in 'tty_write_message' - unexpected unlock
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 4b2583c..4af4b0c 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -2926,7 +2926,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->  
->  	amba_set_drvdata(adev, pdmac);
->  
-> -	for (i = 0; i <= AMBA_NR_IRQS; i++) {
-> +	for (i = 0; i < AMBA_NR_IRQS; i++) {
->  		irq = adev->irq[i];
->  		if (irq) {
->  			ret = devm_request_irq(&adev->dev, irq,
+Signed-off-by: Andreas Platschek <andi.platschek@gmail.com>
+---
+ drivers/tty/tty_io.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 3a1a01a..13dca92 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1165,7 +1165,7 @@ out:
+ void tty_write_message(struct tty_struct *tty, char *msg)
+ {
+ 	if (tty) {
+-		mutex_lock(&tty->atomic_write_lock);
++		tty_write_lock(tty,0);
+ 		tty_lock(tty);
+ 		if (tty->ops->write && !test_bit(TTY_CLOSING, &tty->flags)) {
+ 			tty_unlock(tty);
 -- 
+1.7.10.4
+
