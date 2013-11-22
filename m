@@ -1,45 +1,48 @@
-From: "Waskiewicz Jr, Peter P" <peter.p.waskiewicz.jr@intel.com>
-Date: Thu, 07 Nov 2013 08:45:08 +0000
-Subject: Re: [patch] Staging: vt6655-6: potential NULL dereference in hostap_disable_hostapd()
-Message-Id: <1383813909.776.134.camel@ppwaskie-mobl.amr.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Nov 2013 07:50:46 +0000
+Subject: [patch] [media] af9035: unlock on error in af9035_i2c_master_xfer()
+Message-Id: <20131122075045.GA15726@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107075543.GM21844@elgon.mountain>
-In-Reply-To: <20131107075543.GM21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gVGh1LCAyMDEzLTExLTA3IGF0IDEwOjU1ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBXZSBmaXhlZCB0aGlzIHRvIHVzZSBmcmVlX25ldGRldigpIGluc3RlYWQgb2Yga2ZyZWUoKSBi
-dXQgdW5mb3J0dW5hdGVseQ0KPiBmcmVlX25ldGRldigpIGRvZXNuJ3QgYWNjZXB0IE5VTEwgcG9p
-bnRlcnMuICBTbWF0Y2ggY29tcGxhaW5zIGFib3V0DQo+IHRoaXMsIGl0J3Mgbm90IHNvbWV0aGlu
-ZyBJIGRpc2NvdmVyZWQgdGhyb3VnaCB0ZXN0aW5nLg0KDQpXb3VsZG4ndCBhIGJldHRlciBhcHBy
-b2FjaCBiZSB0byBjaGFuZ2UgZnJlZV9uZXRkZXYoKSB0byBhbGxvdyBpdCB0bw0KdGFrZSBOVUxM
-IHBvaW50ZXJzPw0KDQotUEoNCg0KPiBGaXhlczogMzAzMGQ0MGI1MDM2ICgnc3RhZ2luZzogdnQ2
-NjU1OiB1c2UgZnJlZV9uZXRkZXYgaW5zdGVhZCBvZiBrZnJlZScpDQo+IEZpeGVzOiAwYTQzOGQ1
-YjM4MWUgKCdzdGFnaW5nOiB2dDY2NTY6IHVzZSBmcmVlX25ldGRldiBpbnN0ZWFkIG9mIGtmcmVl
-JykNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUu
-Y29tPg0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTUvaG9zdGFwLmMg
-Yi9kcml2ZXJzL3N0YWdpbmcvdnQ2NjU1L2hvc3RhcC5jDQo+IGluZGV4IGFhYjAwMTIuLmFiOGIy
-YmEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTUvaG9zdGFwLmMNCj4gKysr
-IGIvZHJpdmVycy9zdGFnaW5nL3Z0NjY1NS9ob3N0YXAuYw0KPiBAQCAtMTQzLDcgKzE0Myw4IEBA
-IHN0YXRpYyBpbnQgaG9zdGFwX2Rpc2FibGVfaG9zdGFwZChQU0RldmljZSBwRGV2aWNlLCBpbnQg
-cnRubF9sb2NrZWQpDQo+ICAJCURCR19QUlQoTVNHX0xFVkVMX0RFQlVHLCBLRVJOX0lORk8gIiVz
-OiBOZXRkZXZpY2UgJXMgdW5yZWdpc3RlcmVkXG4iLA0KPiAgCQkJcERldmljZS0+ZGV2LT5uYW1l
-LCBwRGV2aWNlLT5hcGRldi0+bmFtZSk7DQo+ICAJfQ0KPiAtCWZyZWVfbmV0ZGV2KHBEZXZpY2Ut
-PmFwZGV2KTsNCj4gKwlpZiAocERldmljZS0+YXBkZXYpDQo+ICsJCWZyZWVfbmV0ZGV2KHBEZXZp
-Y2UtPmFwZGV2KTsNCj4gIAlwRGV2aWNlLT5hcGRldiA9IE5VTEw7DQo+ICAJcERldmljZS0+YkVu
-YWJsZTgwMjF4ID0gZmFsc2U7DQo+ICAJcERldmljZS0+YkVuYWJsZUhvc3RXRVAgPSBmYWxzZTsN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaG9zdGFwLmMgYi9kcml2ZXJz
-L3N0YWdpbmcvdnQ2NjU2L2hvc3RhcC5jDQo+IGluZGV4IGFlMTY3NmQuLjY3YmE0OGIgMTAwNjQ0
-DQo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy92dDY2NTYvaG9zdGFwLmMNCj4gKysrIGIvZHJpdmVy
-cy9zdGFnaW5nL3Z0NjY1Ni9ob3N0YXAuYw0KPiBAQCAtMTMzLDcgKzEzMyw4IEBAIHN0YXRpYyBp
-bnQgaG9zdGFwX2Rpc2FibGVfaG9zdGFwZChzdHJ1Y3Qgdm50X3ByaXZhdGUgKnBEZXZpY2UsIGlu
-dCBydG5sX2xvY2tlZCkNCj4gICAgICAgICAgICAgIERCR19QUlQoTVNHX0xFVkVMX0RFQlVHLCBL
-RVJOX0lORk8gIiVzOiBOZXRkZXZpY2UgJXMgdW5yZWdpc3RlcmVkXG4iLA0KPiAgCQkgICAgICAg
-cERldmljZS0+ZGV2LT5uYW1lLCBwRGV2aWNlLT5hcGRldi0+bmFtZSk7DQo+ICAJfQ0KPiAtCWZy
-ZWVfbmV0ZGV2KHBEZXZpY2UtPmFwZGV2KTsNCj4gKwlpZiAocERldmljZS0+YXBkZXYpDQo+ICsJ
-CWZyZWVfbmV0ZGV2KHBEZXZpY2UtPmFwZGV2KTsNCj4gIAlwRGV2aWNlLT5hcGRldiA9IE5VTEw7
-DQo+ICAgICAgcERldmljZS0+YkVuYWJsZTgwMjF4ID0gZmFsc2U7DQo+ICAgICAgcERldmljZS0+
-YkVuYWJsZUhvc3RXRVAgPSBmYWxzZTsNCg0K
+We introduced a couple new error paths which are missing unlocks.
+
+Fixes: 7760e148350b ('[media] af9035: Don't use dynamic static allocation')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/media/usb/dvb-usb-v2/af9035.c b/drivers/media/usb/dvb-usb-v2/af9035.c
+index c8fcd78425bd..625ef2489b23 100644
+--- a/drivers/media/usb/dvb-usb-v2/af9035.c
++++ b/drivers/media/usb/dvb-usb-v2/af9035.c
+@@ -245,7 +245,8 @@ static int af9035_i2c_master_xfer(struct i2c_adapter *adap,
+ 				dev_warn(&d->udev->dev,
+ 					 "%s: i2c xfer: len=%d is too big!\n",
+ 					 KBUILD_MODNAME, msg[0].len);
+-				return -EOPNOTSUPP;
++				ret = -EOPNOTSUPP;
++				goto unlock;
+ 			}
+ 			req.mbox |= ((msg[0].addr & 0x80)  >>  3);
+ 			buf[0] = msg[1].len;
+@@ -281,7 +282,8 @@ static int af9035_i2c_master_xfer(struct i2c_adapter *adap,
+ 				dev_warn(&d->udev->dev,
+ 					 "%s: i2c xfer: len=%d is too big!\n",
+ 					 KBUILD_MODNAME, msg[0].len);
+-				return -EOPNOTSUPP;
++				ret = -EOPNOTSUPP;
++				goto unlock;
+ 			}
+ 			req.mbox |= ((msg[0].addr & 0x80)  >>  3);
+ 			buf[0] = msg[0].len;
+@@ -319,6 +321,7 @@ static int af9035_i2c_master_xfer(struct i2c_adapter *adap,
+ 		ret = -EOPNOTSUPP;
+ 	}
+ 
++unlock:
+ 	mutex_unlock(&d->i2c_mutex);
+ 
+ 	if (ret < 0)
