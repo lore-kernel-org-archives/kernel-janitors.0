@@ -1,43 +1,40 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 20 Nov 2013 11:54:22 +0000
-Subject: Re: [patch] drm/nouveau/disp: add a comment on confusing loop
-Message-Id: <528CA2EE.9090909@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 22 Nov 2013 07:51:47 +0000
+Subject: [patch] [media] cx18: check for allocation failure in cx18_read_eeprom()
+Message-Id: <20131122075146.GB15726@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131113074552.GE25541@elgon.mountain>
-In-Reply-To: <20131113074552.GE25541@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>, David Herrmann <dh.herrmann@gmail.com>, Dave Airlie <airlied@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Andy Walls <awalls@md.metrocast.net>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, ivtv-devel@ivtvdriver.org, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+It upsets static checkers when we don't check for allocation failure.  I
+moved the memset() of "tv" earlier so we don't use uninitialized data on
+error.
 
+Fixes: 1d212cf0c2d8 ('[media] cx18: struct i2c_client is too big for stack')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am 13.11.2013 08:45, schrieb Dan Carpenter:
-> The "ret = -EIO" is deliberate.  It's a very uncommon thing to do and it
-> upsets static checkers because they normally would expect "ret = -EIO".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/nouveau/core/engine/disp/dport.c b/drivers/gpu/drm/nouveau/core/engine/disp/dport.c
-> index 1bd4c63..2bc45ae 100644
-> --- a/drivers/gpu/drm/nouveau/core/engine/disp/dport.c
-> +++ b/drivers/gpu/drm/nouveau/core/engine/disp/dport.c
-> @@ -322,6 +322,7 @@ nouveau_dp_train(struct nouveau_disp *disp, const struct nouveau_dp_func *func,
->  	while (*link_bw > (dp->dpcd[1] * 27000))
->  		link_bw++;
->  
-> +	/* set ret to -EIO on the last loop iteration */
->  	while ((ret = -EIO) && link_bw[0]) {
->  		/* find minimum required lane count at this link rate */
->  		dp->link_nr = dp->dpcd[2] & DPCD_RC02_MAX_LANE_COUNT;
-
-
-It is sensible to do so now,
-but in the long runs it pays to rewrite that as it confuses not only
-static checkers but also the brains of people trying to understand
-the code.
-
-just my 2 cents,
-re,
- wh
+diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+index c1f8cc6f14b2..716bdc57fac6 100644
+--- a/drivers/media/pci/cx18/cx18-driver.c
++++ b/drivers/media/pci/cx18/cx18-driver.c
+@@ -327,13 +327,16 @@ void cx18_read_eeprom(struct cx18 *cx, struct tveeprom *tv)
+ 	struct i2c_client *c;
+ 	u8 eedata[256];
+ 
++	memset(tv, 0, sizeof(*tv));
++
+ 	c = kzalloc(sizeof(*c), GFP_KERNEL);
++	if (!c)
++		return;
+ 
+ 	strlcpy(c->name, "cx18 tveeprom tmp", sizeof(c->name));
+ 	c->adapter = &cx->i2c_adap[0];
+ 	c->addr = 0xa0 >> 1;
+ 
+-	memset(tv, 0, sizeof(*tv));
+ 	if (tveeprom_read(c, eedata, sizeof(eedata)))
+ 		goto ret;
+ 
