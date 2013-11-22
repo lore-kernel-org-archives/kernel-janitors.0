@@ -1,42 +1,82 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 11 Nov 2013 15:42:25 +0000
-Subject: re: Squashfs: Refactor decompressor interface and code
-Message-Id: <20131111154225.GA4779@elgon.mountain>
+Date: Fri, 22 Nov 2013 07:55:43 +0000
+Subject: [patch] [media] cxusb: unlock on error in cxusb_i2c_xfer()
+Message-Id: <20131122075543.GC15726@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Michael Krufky <mkrufky@linuxtv.org>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Phillip Lougher,
+We recently introduced some new error paths which are missing their
+unlocks.
 
-The patch ac379b0dec4b: "Squashfs: Refactor decompressor interface
-and code" from Oct 7, 2013, leads to the following
-static checker warning: "fs/squashfs/decompressor.c:138
-squashfs_decompressor_setup()
-	 warn: 'comp_opts' was already freed."
+Fixes: 64f7ef8afbf8 ('[media] cxusb: Don't use dynamic static allocation')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-fs/squashfs/decompressor.c
-   128  void *squashfs_decompressor_setup(struct super_block *sb, unsigned short flags)
-   129  {
-   130          struct squashfs_sb_info *msblk = sb->s_fs_info;
-   131          void *stream, *comp_opts = get_comp_opts(sb, flags);
-   132  
-   133          if (IS_ERR(comp_opts))
-   134                  return comp_opts;
-   135  
-   136          stream = squashfs_decompressor_create(msblk, comp_opts);
-   137          if (IS_ERR(stream))
-   138                  kfree(comp_opts);
-
-The _single version of squashfs_decompressor_create() frees comp_opts
-but the _multi version doesn't.  I'm not sure what the right thing to do
-is here.
-
-   139  
-   140          return stream;
-   141  }
-
-regards,
-dan carpenter
-
+diff --git a/drivers/media/usb/dvb-usb/cxusb.c b/drivers/media/usb/dvb-usb/cxusb.c
+index 20e345d9fe8f..a1c641e18362 100644
+--- a/drivers/media/usb/dvb-usb/cxusb.c
++++ b/drivers/media/usb/dvb-usb/cxusb.c
+@@ -149,6 +149,7 @@ static int cxusb_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
+ 			  int num)
+ {
+ 	struct dvb_usb_device *d = i2c_get_adapdata(adap);
++	int ret;
+ 	int i;
+ 
+ 	if (mutex_lock_interruptible(&d->i2c_mutex) < 0)
+@@ -173,7 +174,8 @@ static int cxusb_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
+ 			if (1 + msg[i].len > sizeof(ibuf)) {
+ 				warn("i2c rd: len=%d is too big!\n",
+ 				     msg[i].len);
+-				return -EOPNOTSUPP;
++				ret = -EOPNOTSUPP;
++				goto unlock;
+ 			}
+ 			obuf[0] = 0;
+ 			obuf[1] = msg[i].len;
+@@ -193,12 +195,14 @@ static int cxusb_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
+ 			if (3 + msg[i].len > sizeof(obuf)) {
+ 				warn("i2c wr: len=%d is too big!\n",
+ 				     msg[i].len);
+-				return -EOPNOTSUPP;
++				ret = -EOPNOTSUPP;
++				goto unlock;
+ 			}
+ 			if (1 + msg[i + 1].len > sizeof(ibuf)) {
+ 				warn("i2c rd: len=%d is too big!\n",
+ 				     msg[i + 1].len);
+-				return -EOPNOTSUPP;
++				ret = -EOPNOTSUPP;
++				goto unlock;
+ 			}
+ 			obuf[0] = msg[i].len;
+ 			obuf[1] = msg[i+1].len;
+@@ -223,7 +227,8 @@ static int cxusb_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
+ 			if (2 + msg[i].len > sizeof(obuf)) {
+ 				warn("i2c wr: len=%d is too big!\n",
+ 				     msg[i].len);
+-				return -EOPNOTSUPP;
++				ret = -EOPNOTSUPP;
++				goto unlock;
+ 			}
+ 			obuf[0] = msg[i].addr;
+ 			obuf[1] = msg[i].len;
+@@ -237,8 +242,14 @@ static int cxusb_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
+ 		}
+ 	}
+ 
++	if (i = num)
++		ret = num;
++	else
++		ret = -EREMOTEIO;
++
++unlock:
+ 	mutex_unlock(&d->i2c_mutex);
+-	return i = num ? num : -EREMOTEIO;
++	return ret;
+ }
+ 
+ static u32 cxusb_i2c_func(struct i2c_adapter *adapter)
