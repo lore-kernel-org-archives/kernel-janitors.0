@@ -1,35 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 13 Nov 2013 14:10:31 +0000
-Subject: [patch v2] locks: missing unlock on error in generic_add_lease()
-Message-Id: <20131113141031.GA29645@elgon.mountain>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 23 Nov 2013 17:13:10 +0000
+Subject: [PATCH] dcache: update a comment to reflect the code
+Message-Id: <1385226790-29092-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131113135103.GA27536@pad.fieldses.org>
-In-Reply-To: <20131113135103.GA27536@pad.fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew@wil.cx>, "J. Bruce Fields" <bfields@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Serge Hallyn <serge.hallyn@canonical.com>
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-We should unlock here before returning.
+The following commit introduced the function shrink_submounts_and_drop
+which replaces the function check_submounts_and_drop.
+This patch updates a comment to use the new function name.
 
-Fixes: df4e8d2c1d2b ('locks: implement delegations')
-Acked-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+commit 40216baa0101ec7ac9ce7c4f4f4d684f3a85eb93
+Author: Eric W. Biederman <ebiederman@twitter.com>
+Date:   Tue Oct 1 18:33:48 2013 -0700
+
+    vfs: Lazily remove mounts on unlinked files and directories. v2
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-v2: Style fix
+ fs/dcache.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index f99d52b..7b7ed7d 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1495,7 +1495,8 @@ static int generic_add_lease(struct file *filp, long arg, struct file_lock **flp
- 	if (is_deleg && arg = F_WRLCK) {
- 		/* Write delegations are not currently supported: */
- 		WARN_ON_ONCE(1);
--		return -EINVAL;
-+		error = -EINVAL;
-+		goto out;
- 	}
- 
- 	error = -EAGAIN;
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 9042a32..1c0576e 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1204,8 +1204,8 @@ EXPORT_SYMBOL(have_submounts);
+  * reachable (e.g. NFS can unhash a directory dentry and then the complete
+  * subtree can become unreachable).
+  *
+- * Only one of check_submounts_and_drop() and d_set_mounted() must succeed.  For
+- * this reason take rename_lock and d_lock on dentry and ancestors.
++ * Only one of shrink_submounts_and_drop() and d_set_mounted() must succeed.
++ * For this reason take rename_lock and d_lock on dentry and ancestors.
+  */
+ int d_set_mounted(struct dentry *dentry)
+ {
+-- 
+1.7.10.4
+
