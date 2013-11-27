@@ -1,51 +1,28 @@
-From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Wed, 27 Nov 2013 03:10:03 +0000
-Subject: [PATCH] kernel/fork.c: make dup_mm() static
-Message-Id: <1806554.PvRgdrjSaq@daeseok-laptop>
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed, 27 Nov 2013 09:41:35 +0000
+Subject: Re: [PATCH] kernel/fork.c: make dup_mm() static
+Message-Id: <20131127094135.GW10022@twins.programming.kicks-ass.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1806554.PvRgdrjSaq@daeseok-laptop>
+In-Reply-To: <1806554.PvRgdrjSaq@daeseok-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From 50e7d2058f0502e9c9138d5c0c75c8492ab8ed6a Mon Sep 17 00:00:00 2001
-From: Daeseok Youn <daeseok.youn@lge.com>
-Date: Wed, 27 Nov 2013 10:17:59 +0900
-Subject: [PATCH] kernel/fork.c: make dup_mm() static
+On Wed, Nov 27, 2013 at 12:10:03PM +0900, Daeseok Youn wrote:
+> From 50e7d2058f0502e9c9138d5c0c75c8492ab8ed6a Mon Sep 17 00:00:00 2001
+> From: Daeseok Youn <daeseok.youn@lge.com>
+> Date: Wed, 27 Nov 2013 10:17:59 +0900
+> Subject: [PATCH] kernel/fork.c: make dup_mm() static
 
-Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
----
- include/linux/sched.h |    2 --
- kernel/fork.c         |    2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
+Strictly speaking you need a Changelog explaining what, why and how. I
+suppose here a simple: 
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 7e35d4b..b04d7b1 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2167,8 +2167,6 @@ extern struct mm_struct *get_task_mm(struct task_struct *task);
- extern struct mm_struct *mm_access(struct task_struct *task, unsigned int mode);
- /* Remove the current tasks stale references to the old mm_struct */
- extern void mm_release(struct task_struct *, struct mm_struct *);
--/* Allocate a new mm structure and copy contents from tsk->mm */
--extern struct mm_struct *dup_mm(struct task_struct *tsk);
- 
- extern int copy_thread(unsigned long, unsigned long, unsigned long,
- 			struct task_struct *);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 022a0af..1603aea 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -799,7 +799,7 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
-  * Allocate a new mm structure and copy contents from the
-  * mm structure of the passed in task structure.
-  */
--struct mm_struct *dup_mm(struct task_struct *tsk)
-+static struct mm_struct *dup_mm(struct task_struct *tsk)
- {
- 	struct mm_struct *mm, *oldmm = current->mm;
- 	int err;
--- 
-1.7.9.5
+Make dup_mm() static as its not used elsewhere.
 
----
+Will suffice.
+
+> Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+
+Andrew, do you want this one or shall I take it?
