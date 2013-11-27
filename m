@@ -1,35 +1,32 @@
-From: Alexander Aring <alex.aring@gmail.com>
-Date: Thu, 07 Nov 2013 08:17:13 +0000
-Subject: Re: [Linux-zigbee-devel] [patch] 6lowpan: release device on error path
-Message-Id: <20131107081712.GA1035@x61s.campuswlan.hs-rm.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Nov 2013 22:18:47 +0000
+Subject: [patch] drm/nv50/disp: min/max are reversed in nv50_crtc_gamma_set()
+Message-Id: <20131127221847.GB20822@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107074445.GD21844@elgon.mountain>
-In-Reply-To: <20131107074445.GD21844@elgon.mountain>
+References: <1940853357.8722109.1385508166826.JavaMail.root@redhat.com>
+In-Reply-To: <1940853357.8722109.1385508166826.JavaMail.root@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>, Alan Ott <alan@signal11.us>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-zigbee-devel@lists.sourceforge.net
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
 
-On Thu, Nov 07, 2013 at 10:44:45AM +0300, Dan Carpenter wrote:
-> We recently added a new error path and it needs a dev_put().
-> 
-> Fixes: 7adac1ec8198 ('6lowpan: Only make 6lowpan links to IEEE802154 devices')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Compile tested only.  Please review carefully.
-> 
-> diff --git a/net/ieee802154/6lowpan.c b/net/ieee802154/6lowpan.c
-> index 9497c6f..426b5df 100644
-> --- a/net/ieee802154/6lowpan.c
-> +++ b/net/ieee802154/6lowpan.c
-> @@ -1358,8 +1358,10 @@ static int lowpan_newlink(struct net *src_net, struct net_device *dev,
->  	real_dev = dev_get_by_index(src_net, nla_get_u32(tb[IFLA_LINK]));
->  	if (!real_dev)
->  		return -ENODEV;
-> -	if (real_dev->type != ARPHRD_IEEE802154)
-> +	if (real_dev->type != ARPHRD_IEEE802154) {
-> +		dev_put(real_dev);
->  		return -EINVAL;
-> +	}
-looks correct for me.
+We should be taking the minimum here instead of the max.  It could lead
+to a buffer overflow.
+
+Fixes: 438d99e3b175 ('drm/nvd0/disp: initial crtc object implementation')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
+index f8e66c08b11a..4e384a2f99c3 100644
+--- a/drivers/gpu/drm/nouveau/nv50_display.c
++++ b/drivers/gpu/drm/nouveau/nv50_display.c
+@@ -1265,7 +1265,7 @@ nv50_crtc_gamma_set(struct drm_crtc *crtc, u16 *r, u16 *g, u16 *b,
+ 		    uint32_t start, uint32_t size)
+ {
+ 	struct nouveau_crtc *nv_crtc = nouveau_crtc(crtc);
+-	u32 end = max(start + size, (u32)256);
++	u32 end = min_t(u32, start + size, 256);
+ 	u32 i;
+ 
+ 	for (i = start; i < end; i++) {
