@@ -1,28 +1,43 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Date: Sun, 17 Nov 2013 19:06:31 +0000
-Subject: Re: [patch v2] watchdog: pcwd_usb: overflow in usb_pcwd_send_command()
-Message-Id: <20131117190631.GG10136@spo001.leaseweb.com>
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 28 Nov 2013 06:18:11 +0000
+Subject: [PATCH] kernel/fork.c : remove redundant NULL check in dup_mm()
+Message-Id: <1457075.dfc7RuZcNt@daeseok-laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <527BA351.10705@roeck-us.net> <20131108092419.GA22389@elgon.mountain>
-In-Reply-To: <20131108092419.GA22389@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+From f19c414860a1231460cd3380a7a15f6fb630ef64 Mon Sep 17 00:00:00 2001
+From: Daeseok Youn <daeseok.youn@gmail.com>
+Date: Thu, 28 Nov 2013 10:52:03 +0900
+Subject: [PATCH] kernel/fork.c : remove redundant NULL check in dup_mm()
 
-> We changed "buf" from being an array of 6 chars to being a pointer this
-> sizeof(buf) needs to be updated as well.
-> 
-> Fixes: 2ddb8089a7e5 ('watchdog: pcwd_usb: Use allocated buffer for usb_control_msg')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: Fix the bug that Guenter Roeck pointed out in v1.
+current->mm doesn't need to check NULL in dup_mm().
+Becasue dup_mm() is used only in copy_mm() and
+current->mm is checked whether it is NULL or not in copy_mm()
+before calling dup_mm().
 
-This was added to linux-watchdog-next.
+Signed-off-by: Daeseok Youn <daeseok.youn@gmail.com>
+---
+ kernel/fork.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-Kind regards,
-Wim.
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 728d5be..9339bbc 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -804,9 +804,6 @@ struct mm_struct *dup_mm(struct task_struct *tsk)
+ 	struct mm_struct *mm, *oldmm = current->mm;
+ 	int err;
+ 
+-	if (!oldmm)
+-		return NULL;
+-
+ 	mm = allocate_mm();
+ 	if (!mm)
+ 		goto fail_nomem;
+-- 
+1.7.9.5
 
+---
