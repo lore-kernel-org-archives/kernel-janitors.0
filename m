@@ -1,8 +1,10 @@
 From: Daeseok Youn <daeseok.youn@gmail.com>
-Date: Thu, 28 Nov 2013 05:48:10 +0000
+Date: Thu, 28 Nov 2013 05:49:11 +0000
 Subject: [PATCH] kernel/fork.c : fix coding style issues
-Message-Id: <11646966.nLE5LGqd3A@daeseok-laptop>
+Message-Id: <1579476.AWLPZBjh3G@daeseok-laptop>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <11646966.nLE5LGqd3A@daeseok-laptop>
+In-Reply-To: <11646966.nLE5LGqd3A@daeseok-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
