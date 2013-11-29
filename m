@@ -1,39 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 14 Nov 2013 08:19:18 +0000
-Subject: [patch 1/2] video: mmp: delete a stray mutex_unlock()
-Message-Id: <20131114081918.GB8150@elgon.mountain>
+Date: Fri, 29 Nov 2013 08:14:09 +0000
+Subject: [patch] ALSA: dice: fix array limits in dice_proc_read()
+Message-Id: <20131129081409.GA3490@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-We aren't holding the disp_lock so we shouldn't release it.
+The array limits are supposed to be in units of u32 instead of in bytes.
+The current code has a potential array overflow.
 
+Fixes: c614475b0ea9 ('ALSA: dice: add a proc file to show device information')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/video/mmp/core.c b/drivers/video/mmp/core.c
-index 84de263..c8d4265 100644
---- a/drivers/video/mmp/core.c
-+++ b/drivers/video/mmp/core.c
-@@ -173,7 +173,7 @@ struct mmp_path *mmp_register_path(struct mmp_path_info *info)
- 		+ sizeof(struct mmp_overlay) * info->overlay_num;
- 	path = kzalloc(size, GFP_KERNEL);
- 	if (!path)
--		goto failed;
-+		return NULL;
+diff --git a/sound/firewire/dice.c b/sound/firewire/dice.c
+index 57bcd31fcc12..c0aa64941cee 100644
+--- a/sound/firewire/dice.c
++++ b/sound/firewire/dice.c
+@@ -1019,7 +1019,7 @@ static void dice_proc_read(struct snd_info_entry *entry,
  
- 	/* path set */
- 	mutex_init(&path->access_ok);
-@@ -219,11 +219,6 @@ struct mmp_path *mmp_register_path(struct mmp_path_info *info)
+ 	if (dice_proc_read_mem(dice, &tx_rx_header, sections[2], 2) < 0)
+ 		return;
+-	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.tx));
++	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.tx) / 4);
+ 	for (stream = 0; stream < tx_rx_header.number; ++stream) {
+ 		if (dice_proc_read_mem(dice, &buf.tx, sections[2] + 2 +
+ 				       stream * tx_rx_header.size,
+@@ -1045,7 +1045,7 @@ static void dice_proc_read(struct snd_info_entry *entry,
  
- 	mutex_unlock(&disp_lock);
- 	return path;
--
--failed:
--	kfree(path);
--	mutex_unlock(&disp_lock);
--	return NULL;
- }
- EXPORT_SYMBOL_GPL(mmp_register_path);
- 
+ 	if (dice_proc_read_mem(dice, &tx_rx_header, sections[4], 2) < 0)
+ 		return;
+-	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.rx));
++	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.rx) / 4);
+ 	for (stream = 0; stream < tx_rx_header.number; ++stream) {
+ 		if (dice_proc_read_mem(dice, &buf.rx, sections[4] + 2 +
+ 				       stream * tx_rx_header.size,
