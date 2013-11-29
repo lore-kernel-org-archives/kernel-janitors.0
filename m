@@ -1,7 +1,7 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Fri, 29 Nov 2013 09:24:00 +0000
+From: walter harms <wharms@bfs.de>
+Date: Fri, 29 Nov 2013 09:48:28 +0000
 Subject: Re: [patch] ALSA: dice: fix array limits in dice_proc_read()
-Message-Id: <s5hwqjref2n.wl%tiwai@suse.de>
+Message-Id: <529862EC.60104@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20131129081409.GA3490@elgon.mountain>
 In-Reply-To: <20131129081409.GA3490@elgon.mountain>
@@ -9,22 +9,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Cc: Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-At Fri, 29 Nov 2013 11:14:09 +0300,
-Dan Carpenter wrote:
-> 
+
+
+Am 29.11.2013 09:14, schrieb Dan Carpenter:
 > The array limits are supposed to be in units of u32 instead of in bytes.
 > The current code has a potential array overflow.
 > 
 > Fixes: c614475b0ea9 ('ALSA: dice: add a proc file to show device information')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks, applied.
-
-
-Takashi
-
 > 
 > diff --git a/sound/firewire/dice.c b/sound/firewire/dice.c
 > index 57bcd31fcc12..c0aa64941cee 100644
@@ -36,6 +30,17 @@ Takashi
 >  		return;
 > -	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.tx));
 > +	quadlets = min_t(u32, tx_rx_header.size, sizeof(buf.tx) / 4);
+
+it is a bit late but ...
+
+sizeof(buf.tx) / 4  looks like ARRAY_SIZE(buf.tx)
+
+If yes i suggest ARRAY_SIZE() because it gets rid of the "magic" 4.
+
+re,
+ wh
+
+
 >  	for (stream = 0; stream < tx_rx_header.number; ++stream) {
 >  		if (dice_proc_read_mem(dice, &buf.tx, sections[2] + 2 +
 >  				       stream * tx_rx_header.size,
@@ -48,4 +53,8 @@ Takashi
 >  	for (stream = 0; stream < tx_rx_header.number; ++stream) {
 >  		if (dice_proc_read_mem(dice, &buf.rx, sections[4] + 2 +
 >  				       stream * tx_rx_header.size,
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
