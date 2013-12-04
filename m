@@ -1,33 +1,29 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Date: Wed, 04 Dec 2013 06:17:42 +0000
-Subject: Re: [PATCH] proposed consolidate spin_lock/unlock waiting with spin_unlock_wait
-Message-Id: <20131204061742.GD22188@opentech.at>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 04 Dec 2013 14:07:12 +0000
+Subject: [patch] mfd: max14577: cleanup an error message
+Message-Id: <20131204140712.GA11681@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131202145646.GA5126@opentech.at>
-In-Reply-To: <20131202145646.GA5126@opentech.at>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 03 Dec 2013, Dan Carpenter wrote:
+"pdata" is a NULL not an ERR_PTR so there is no use printing it.
 
-> On Tue, Dec 03, 2013 at 12:30:32AM +0100, Nicholas Mc Guire wrote:
-> > > 
-> > > This is not the patch which introduced spin_unlock_wait().  That
-> > > function was around before we adopted git.
-> > >
-> > 
-> > used git blame to find that - how would I find this information or is
-> > it not relevant to include it ?
-> >  
-> 
-> If it's older than git then forget about it.
->
-ok - so I guess that was a bit naive then :)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-cleaning up and will resubmit.
-
-many thanks!
-hofrat
+diff --git a/drivers/mfd/max14577.c b/drivers/mfd/max14577.c
+index 1337c4527028..a5e1c370c609 100644
+--- a/drivers/mfd/max14577.c
++++ b/drivers/mfd/max14577.c
+@@ -96,8 +96,7 @@ static int max14577_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	if (!pdata) {
+-		dev_err(&i2c->dev, "No platform data found: %ld\n",
+-				PTR_ERR(pdata));
++		dev_err(&i2c->dev, "No platform data found.\n");
+ 		return -EINVAL;
+ 	}
  
