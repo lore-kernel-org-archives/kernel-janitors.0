@@ -1,97 +1,57 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 31 Dec 2013 16:40:24 +0000
-Subject: Re: [PATCH 4/11]  use ether_addr_equal_64bits
-Message-Id: <alpine.DEB.2.10.1312311732080.2074@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Dec 2013 14:54:59 +0000
+Subject: [patch v2] hwmon: prevent some divide by zeros in FAN_TO_REG()
+Message-Id: <20131205145459.GB13302@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>  <1388427307-8691-5-git-send-email-Julia.Lawall@lip6.fr>  <1388429761.4410.1.camel@jlt4.sipsolutions.net>  <alpine.DEB.2.02.1312302057420.2209@localhost6.localdomain6>
- <1388438724.4573.2.camel@jlt4.sipsolutions.net>  <20131230215701.GA4938@khazad-dum.debian.net>  <1388445188.18164.0.camel@jlt4.sipsolutions.net> <1388445422.26796.38.camel@joe-AO722> <alpine.DEB.2.02.1312310726540.1930@localhost6.localdomain6>
- <52C2E8BA.6000800@candelatech.com> <alpine.DEB.2.10.1312311704320.2074@hadrien> <52C2F056.1020005@candelatech.com>
-In-Reply-To: <52C2F056.1020005@candelatech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ben Greear <greearb@candelatech.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>, Johannes Berg <johannes@sipsolutions.net>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+The "rpm * div" operations can overflow here, so this patch adds an
+upper limit to rpm to prevent that.  Jean Delvare helped me with this
+patch.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: cap "rpm" instead of just checking for divide by zero.
 
-On Tue, 31 Dec 2013, Ben Greear wrote:
-
-> On 12/31/2013 08:09 AM, Julia Lawall wrote:
-> >
-> >
-> > On Tue, 31 Dec 2013, Ben Greear wrote:
-> >
-> > > On 12/30/2013 10:32 PM, Julia Lawall wrote:
-> > > > > > > > I'm just thinking of a programmer, e.g. changing a struct like
-> > > > > > > > this:
-> > > > > > > >
-> > > > > > > >    struct foo {
-> > > > > > > >      u8 addr[ETH_ALEN];
-> > > > > > > > -  u16 dummy;
-> > > > > > > >    };
-> > > > >
-> > > > > I don't know of a way to catch that.
-> > > > > Anyone else?
-> > > >
-> > > > Well, one could have a semantic patch that checks for that.  But the
-> > > > problem is that it is very slow, and it only covers the cases that I can
-> > > > transform automatically, which currently means no pointers, only
-> > > > explicit
-> > > > arrays.
-> > > >
-> > > > On the other hand, I am finding the structure definition, so I can
-> > > > easily
-> > > > update the structure definition with an appropriate comment.
-> > > >
-> > > > struct foo {
-> > > >       u8 addr[ETH_ALEN]; /* must be followed by two bytes in the
-> > > > structure */
-> > > >       u16 dummy;
-> > > > };
-> > > >
-> > > > Unfortunately it is kind of verbose.  Could there be an attribute?  That
-> > > > could even easily be checked.
-> > >
-> > > Can you not just add a build-time macro to check that sizeof(foo) >= 8
-> > > for each of these struct foos?  Or, is it required that the dummy field
-> > > be there and be not used by anything else?
-> >
-> > It doesn't matter what the field is used for.  The problem is that is it
-> > necessary to ensure a property of the position of addr within the
-> > structure.  It has to have at least 16 bytes after it.
->
-> You mean 16 bits?
-
-Oops, yes.  16 bits.
-
-> >
-> > But maybe something with sizeof(foo) and offset_of would do?
-> >
-> > Could the macro be put near the declaration of the structure somehow?
->
-> I think that would work, but do not know all of the details of such
-> macros, so it's possible there is some catch.
->
-> If nothing else, then some run-time code that calculates the offset off
-> and asserts if it is broken in module initialization or similar might
-> be good enough.
-
-Could be OK.  Something right in or after the structure declaration would
-be nicest.
-
-julia
-
->
-> Thanks,
-> Ben
->
-> --
-> Ben Greear <greearb@candelatech.com>
-> Candela Technologies Inc  http://www.candelatech.com
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/drivers/hwmon/vt8231.c b/drivers/hwmon/vt8231.c
+index 48025b725777..b3babe3326fb 100644
+--- a/drivers/hwmon/vt8231.c
++++ b/drivers/hwmon/vt8231.c
+@@ -145,7 +145,7 @@ static const u8 regtempmin[] = { 0x3a, 0x3e, 0x2c, 0x2e, 0x30, 0x32 };
+  */
+ static inline u8 FAN_TO_REG(long rpm, int div)
+ {
+-	if (rpm = 0)
++	if (rpm <= 0 || rpm > 1310720)
+ 		return 0;
+ 	return clamp_val(1310720 / (rpm * div), 1, 255);
+ }
+diff --git a/drivers/hwmon/lm78.c b/drivers/hwmon/lm78.c
+index 6cf6bff79003..28976d64aa2b 100644
+--- a/drivers/hwmon/lm78.c
++++ b/drivers/hwmon/lm78.c
+@@ -94,6 +94,8 @@ static inline u8 FAN_TO_REG(long rpm, int div)
+ {
+ 	if (rpm <= 0)
+ 		return 255;
++	if (rpm > 1350000)
++		return 1;
+ 	return clamp_val((1350000 + rpm * div / 2) / (rpm * div), 1, 254);
+ }
+ 
+diff --git a/drivers/hwmon/sis5595.c b/drivers/hwmon/sis5595.c
+index 05565d2d1e54..7e7e25b0473d 100644
+--- a/drivers/hwmon/sis5595.c
++++ b/drivers/hwmon/sis5595.c
+@@ -141,6 +141,8 @@ static inline u8 FAN_TO_REG(long rpm, int div)
+ {
+ 	if (rpm <= 0)
+ 		return 255;
++	if (rpm > 1350000)
++		return 1;
+ 	return clamp_val((1350000 + rpm * div / 2) / (rpm * div), 1, 254);
+ }
+ 
