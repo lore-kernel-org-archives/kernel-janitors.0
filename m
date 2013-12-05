@@ -1,51 +1,54 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Tue, 17 Dec 2013 17:27:33 +0000
-Subject: Re: [patch] [media] v4l: omap4iss: use snprintf() to make smatch happy
-Message-Id: <1936770.TGxEZqmgZS@avalon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 05 Dec 2013 10:58:45 +0000
+Subject: [patch] hwmon: prevent some divide by zeros in FAN_TO_REG()
+Message-Id: <20131205105845.GA23161@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131216201950.GA19601@elgon.mountain>
-In-Reply-To: <20131216201950.GA19601@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrzej Hajda <a.hajda@samsung.com>, Sakari Ailus <sakari.ailus@iki.fi>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sergio Aguirre <sergio.a.aguirre@gmail.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+It's not enough to just test if "rpm" is zero, the "rpm * div" operation
+could overflow and that could also lead to a divide by zero.
 
-Thank you for the patch.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Monday 16 December 2013 23:19:50 Dan Carpenter wrote:
-> Smatch complains here because name is a 32 character buffer and we
-> adding the "OMAP4 ISS " prefix as well for a total of 42 characters.
-> The sd->name buffer can only hold 32 characters.  I've changed it to use
-> snprintf() to silence the overflow warning.
-> 
-> Also I have removed the call to strlcpy() which is a no-op.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
-> diff --git a/drivers/staging/media/omap4iss/iss_csi2.c
-> b/drivers/staging/media/omap4iss/iss_csi2.c index
-> 0ee8381c738d..7ab05126be5d 100644
-> --- a/drivers/staging/media/omap4iss/iss_csi2.c
-> +++ b/drivers/staging/media/omap4iss/iss_csi2.c
-> @@ -1273,8 +1273,7 @@ static int csi2_init_entities(struct iss_csi2_device
-> *csi2, const char *subname) v4l2_subdev_init(sd, &csi2_ops);
->  	sd->internal_ops = &csi2_internal_ops;
->  	sprintf(name, "CSI2%s", subname);
-> -	strlcpy(sd->name, "", sizeof(sd->name));
-> -	sprintf(sd->name, "OMAP4 ISS %s", name);
-> +	snprintf(sd->name, sizeof(sd->name), "OMAP4 ISS %s", name);
-> 
->  	sd->grp_id = 1 << 16;	/* group ID for iss subdevs */
->  	v4l2_set_subdevdata(sd, csi2);
--- 
-Regards,
-
-Laurent Pinchart
-
+diff --git a/drivers/hwmon/vt8231.c b/drivers/hwmon/vt8231.c
+index 0e7017841f7d..923c18034a5f 100644
+--- a/drivers/hwmon/vt8231.c
++++ b/drivers/hwmon/vt8231.c
+@@ -145,7 +145,7 @@ static const u8 regtempmin[] = { 0x3a, 0x3e, 0x2c, 0x2e, 0x30, 0x32 };
+  */
+ static inline u8 FAN_TO_REG(long rpm, int div)
+ {
+-	if (rpm = 0)
++	if (rpm * div = 0)
+ 		return 0;
+ 	return clamp_val(1310720 / (rpm * div), 1, 255);
+ }
+diff --git a/drivers/hwmon/lm78.c b/drivers/hwmon/lm78.c
+index 6cf6bff79003..fc4578195674 100644
+--- a/drivers/hwmon/lm78.c
++++ b/drivers/hwmon/lm78.c
+@@ -92,7 +92,7 @@ static inline u8 IN_TO_REG(unsigned long val)
+ 
+ static inline u8 FAN_TO_REG(long rpm, int div)
+ {
+-	if (rpm <= 0)
++	if (rpm <= 0 || rpm * div = 0)
+ 		return 255;
+ 	return clamp_val((1350000 + rpm * div / 2) / (rpm * div), 1, 254);
+ }
+diff --git a/drivers/hwmon/sis5595.c b/drivers/hwmon/sis5595.c
+index 1404e6319deb..811620fe63b4 100644
+--- a/drivers/hwmon/sis5595.c
++++ b/drivers/hwmon/sis5595.c
+@@ -139,7 +139,7 @@ static inline u8 IN_TO_REG(unsigned long val)
+ 
+ static inline u8 FAN_TO_REG(long rpm, int div)
+ {
+-	if (rpm <= 0)
++	if (rpm <= 0 || rpm * div = 0)
+ 		return 255;
+ 	return clamp_val((1350000 + rpm * div / 2) / (rpm * div), 1, 254);
+ }
