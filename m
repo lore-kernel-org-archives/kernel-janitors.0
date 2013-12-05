@@ -1,72 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Dec 2013 17:22:29 +0000
-Subject: [PATCH 7/11] iwlegacy: use ether_addr_equal_64bits
-Message-Id: <1388427307-8691-8-git-send-email-Julia.Lawall@lip6.fr>
+From: roger <roger@hiddenengine.co.uk>
+Date: Thu, 05 Dec 2013 11:07:51 +0000
+Subject: Re: [patch] hwmon: prevent some divide by zeros in =?UTF-8?Q?FAN=5FTO=5FREG=28=29?=
+Message-Id: <db3f06d585a4dea3efe200f9e2f5fca6@mailserver.hiddenengine.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On , Dan Carpenter wrote:
+> It's not enough to just test if "rpm" is zero, the "rpm * div" 
+> operation
+> could overflow and that could also lead to a divide by zero.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/hwmon/vt8231.c b/drivers/hwmon/vt8231.c
+> index 0e7017841f7d..923c18034a5f 100644
+> --- a/drivers/hwmon/vt8231.c
+> +++ b/drivers/hwmon/vt8231.c
+> @@ -145,7 +145,7 @@ static const u8 regtempmin[] = { 0x3a, 0x3e, 0x2c,
+> 0x2e, 0x30, 0x32 };
+>   */
+>  static inline u8 FAN_TO_REG(long rpm, int div)
+>  {
+> -	if (rpm = 0)
+> +	if (rpm * div = 0)
+>  		return 0;
+>  	return clamp_val(1310720 / (rpm * div), 1, 255);
+>  }
 
-Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
-used when each argument is an array within a structure that contains at
-least two bytes of data beyond the array.
+Seems a reasonable improvement to me, so ACK'd.
 
-The structures involved are:
-ieee80211_hdr defined in include/linux/ieee80211.h,
-il_priv defined in drivers/net/wireless/iwlegacy/common.h and
-il_rxon_cmd defined in drivers/net/wireless/iwlegacy/commands.h
+> diff --git a/drivers/hwmon/lm78.c b/drivers/hwmon/lm78.c
+> index 6cf6bff79003..fc4578195674 100644
+SNIP
+>  		return 255;
+>  	return clamp_val((1350000 + rpm * div / 2) / (rpm * div), 1, 254);
+>  }
 
-This was done using Coccinelle (http://coccinelle.lip6.fr/).
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-The semantic patch used is rather long and can be found in message 0 of
-this patch series.
-
- drivers/net/wireless/iwlegacy/3945.c   |    4 ++--
- drivers/net/wireless/iwlegacy/common.c |    8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/iwlegacy/3945.c b/drivers/net/wireless/iwlegacy/3945.c
-index f09e257..27e543c 100644
---- a/drivers/net/wireless/iwlegacy/3945.c
-+++ b/drivers/net/wireless/iwlegacy/3945.c
-@@ -466,10 +466,10 @@ il3945_is_network_packet(struct il_priv *il, struct ieee80211_hdr *header)
- 	switch (il->iw_mode) {
- 	case NL80211_IFTYPE_ADHOC:	/* Header: Dest. | Source    | BSSID */
- 		/* packets to our IBSS update information */
--		return ether_addr_equal(header->addr3, il->bssid);
-+		return ether_addr_equal_64bits(header->addr3, il->bssid);
- 	case NL80211_IFTYPE_STATION:	/* Header: Dest. | AP{BSSID} | Source */
- 		/* packets to our IBSS update information */
--		return ether_addr_equal(header->addr2, il->bssid);
-+		return ether_addr_equal_64bits(header->addr2, il->bssid);
- 	default:
- 		return 1;
- 	}
-diff --git a/drivers/net/wireless/iwlegacy/common.c b/drivers/net/wireless/iwlegacy/common.c
-index a27b14c..da4d24d 100644
---- a/drivers/net/wireless/iwlegacy/common.c
-+++ b/drivers/net/wireless/iwlegacy/common.c
-@@ -3746,10 +3746,10 @@ il_full_rxon_required(struct il_priv *il)
- 
- 	/* These items are only settable from the full RXON command */
- 	CHK(!il_is_associated(il));
--	CHK(!ether_addr_equal(staging->bssid_addr, active->bssid_addr));
--	CHK(!ether_addr_equal(staging->node_addr, active->node_addr));
--	CHK(!ether_addr_equal(staging->wlap_bssid_addr,
--			      active->wlap_bssid_addr));
-+	CHK(!ether_addr_equal_64bits(staging->bssid_addr, active->bssid_addr));
-+	CHK(!ether_addr_equal_64bits(staging->node_addr, active->node_addr));
-+	CHK(!ether_addr_equal_64bits(staging->wlap_bssid_addr,
-+				     active->wlap_bssid_addr));
- 	CHK_NEQ(staging->dev_type, active->dev_type);
- 	CHK_NEQ(staging->channel, active->channel);
- 	CHK_NEQ(staging->air_propagation, active->air_propagation);
+- Roger
