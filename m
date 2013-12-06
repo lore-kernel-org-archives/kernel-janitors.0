@@ -1,26 +1,35 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Date: Mon, 16 Dec 2013 16:55:47 +0000
-Subject: Re: [patch] spi: tegra: checking for ERR_PTR instead of NULL
-Message-Id: <52AF3093.30308@wwwdotorg.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 06 Dec 2013 14:12:13 +0000
+Subject: [patch v2] spi: bcm63xx-hsspi: checking for ERR_PTR instead of NULL
+Message-Id: <20131206141212.GA956@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131216140210.GA32033@elgon.mountain>
-In-Reply-To: <20131216140210.GA32033@elgon.mountain>
+References: <CAOiHx=k87c_bFqFtJ7zJc9HxnjOEr2oMofNUsLkQbfQPrC04hQ@mail.gmail.com>
+In-Reply-To: <CAOiHx=k87c_bFqFtJ7zJc9HxnjOEr2oMofNUsLkQbfQPrC04hQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On 12/16/2013 07:02 AM, Dan Carpenter wrote:
-> dma_request_slave_channel() returns NULL on error and not ERR_PTRs.
-> I've fixed this by using dma_request_slave_channel_reason() which does
-> return ERR_PTRs.
-> 
-> Fixes: a915d150f68d ('spi: tegra: convert to standard DMA DT bindings')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+devm_request_and_ioremap() returns NULL on error, it doesn't return an
+ERR_PTR().  This patch fixes it by switching to devm_ioremap_resource()
+which is the prefered function anyway.
 
-Oops. I validate there aren't any more issues like this, at least in the
-commits in the series this fixes.
+Fixes: 142168eba9dc ('spi: bcm63xx-hsspi: add bcm63xx HSSPI driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: switch to devm_ioremap_resource()
 
-I've applied this to Tegra's for-3.14/dmas-resets-rework branch, since
-that's the only place where the commit this fixes exists.
+diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
+index bc8d848d33b7..2cfe8eb619fd 100644
+--- a/drivers/spi/spi-bcm63xx-hsspi.c
++++ b/drivers/spi/spi-bcm63xx-hsspi.c
+@@ -338,7 +338,7 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	regs = devm_request_and_ioremap(dev, res_mem);
++	regs = devm_ioremap_resource(dev, res_mem);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
+ 
