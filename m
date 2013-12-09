@@ -1,49 +1,48 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Date: Fri, 06 Dec 2013 14:48:08 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 09 Dec 2013 17:24:40 +0000
 Subject: Re: [patch v2] spi: bcm63xx-hsspi: checking for ERR_PTR instead of NULL
-Message-Id: <CAOiHx=k5NFrCy9yJNdn-wYeYXJixrNXVCcdyy-TOHTMtb5WvxQ@mail.gmail.com>
+Message-Id: <20131209172440.GA29268@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="bEH3Ad9qdU9b/Xs9"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAOiHx=k87c_bFqFtJ7zJc9HxnjOEr2oMofNUsLkQbfQPrC04hQ@mail.gmail.com>
  <20131206141212.GA956@elgon.mountain>
-In-Reply-To: <20131206141212.GA956-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20131206141212.GA956@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jonas Gorski <jogo@openwrt.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 6, 2013 at 3:12 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+--bEH3Ad9qdU9b/Xs9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Dec 06, 2013 at 05:12:13PM +0300, Dan Carpenter wrote:
 > devm_request_and_ioremap() returns NULL on error, it doesn't return an
 > ERR_PTR().  This patch fixes it by switching to devm_ioremap_resource()
 > which is the prefered function anyway.
->
-> Fixes: 142168eba9dc ('spi: bcm63xx-hsspi: add bcm63xx HSSPI driver')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
+Applied, thanks.
 
-Acked-by: Jonas Gorski <jogo@openwrt.org>
+--bEH3Ad9qdU9b/Xs9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Jonas
+iQIcBAEBAgAGBQJSpfzVAAoJELSic+t+oim9gIsP+gLyT6X6TDxQckQmjZVi7Pl4
+CtZMoXUp0deg9RIUxUjXoaAsi9ABAPb8yDCS4NFeIwb6j2KCTmcII5PFkYXvVPp9
+RtL9P13gdkt3Aw2FWOhWeuPle2kCzCdXLuybE4uMGnY3DJfC+dZH93Q1qBgtS2YT
+R8Qma4SIsbwBVTctHU3m5askm1Rvlp/7KfAZlFLr8eMiRU6L78w83ealSLNt3YKt
+rozTJ7BOp2VUVywYyPEFbHk0YrWHclpLnVFI5wSQN9fvfg6LVIy1b8315WUpe+H/
+A2pAlYagHIZ4yigYJm5SU7G7bKAunpvgUfYyENv4yexcpXpotJaNOBdgEX5SrI3A
++xR8ErTPgRggDRpoAbgmrbMDK1ap3MWkBZ3q/YnAFFBOc4NMct+Ewii/lvwS7LER
+hMySqXzHb4gGe988SqKmZ2SaPZHEabFIn/0iEihJ5fRAQOM+LBahr69HrS3Gv6Xu
+1sDxFAfMX/ThdOPmIOq46C9BzK2AHkqaoDdvGwMmLdswH/xMgEypbJnCK7gTAqso
+2grrgBQ2+D90sVAzQUagfrilXbVE1me1RznDbqGwOMNL/KISIgP+stqRN1HH2qyN
+J7j963evNcJrETEYmCUrIpMu0TKX3Mj3rvtF35AkAdNECV3Bukbz6kMvBaoniwBp
+5dtDHE7bs3mdXnVSFXdD
+=Hoi0
+-----END PGP SIGNATURE-----
 
-> ---
-> v2: switch to devm_ioremap_resource()
->
-> diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
-> index bc8d848d33b7..2cfe8eb619fd 100644
-> --- a/drivers/spi/spi-bcm63xx-hsspi.c
-> +++ b/drivers/spi/spi-bcm63xx-hsspi.c
-> @@ -338,7 +338,7 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
->         }
->
->         res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       regs = devm_request_and_ioremap(dev, res_mem);
-> +       regs = devm_ioremap_resource(dev, res_mem);
->         if (IS_ERR(regs))
->                 return PTR_ERR(regs);
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--bEH3Ad9qdU9b/Xs9--
