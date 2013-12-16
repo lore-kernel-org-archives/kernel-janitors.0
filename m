@@ -1,71 +1,33 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Date: Mon, 30 Dec 2013 01:31:57 +0000
-Subject: Re: [PATCH 23/25] thermal: exynos: fix error return code
-Message-Id: <000001cf04fe$edccf3f0$c966dbd0$%han@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 16 Dec 2013 14:02:10 +0000
+Subject: [patch] spi: tegra: checking for ERR_PTR instead of NULL
+Message-Id: <20131216140210.GA32033@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
- <1388357260-4843-24-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-24-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Monday, December 30, 2013 7:48 AM, Julia Lawall wrote:
-> 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Set the return variable to an error code as done elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+dma_request_slave_channel() returns NULL on error and not ERR_PTRs.
+I've fixed this by using dma_request_slave_channel_reason() which does
+return ERR_PTRs.
 
-(+cc Amit Daniel Kachhap, Jonghwa Lee)
+Fixes: a915d150f68d ('spi: tegra: convert to standard DMA DT bindings')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
-
-Best regards,
-Jingoo Han
-
-> 
-> ---
-> Not tested.
-> 
->  drivers/thermal/samsung/exynos_tmu.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 32f38b9..0d96a51 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -205,6 +205,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  skip_calib_data:
->  	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
->  		dev_err(&pdev->dev, "Invalid max trigger level\n");
-> +		ret = -EINVAL;
->  		goto out;
->  	}
-> 
-> 
-> --
-
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 1e61e9854064..be3a069879c3 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -612,8 +612,8 @@ static int tegra_slink_init_dma_param(struct tegra_slink_data *tspi,
+ 	int ret;
+ 	struct dma_slave_config dma_sconfig;
+ 
+-	dma_chan = dma_request_slave_channel(tspi->dev,
+-					     dma_to_memory ? "rx" : "tx");
++	dma_chan = dma_request_slave_channel_reason(tspi->dev,
++						dma_to_memory ? "rx" : "tx");
+ 	if (IS_ERR(dma_chan)) {
+ 		ret = PTR_ERR(dma_chan);
+ 		if (ret != -EPROBE_DEFER)
