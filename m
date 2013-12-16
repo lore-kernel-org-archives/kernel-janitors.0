@@ -1,39 +1,36 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 07 Nov 2013 11:25:32 +0000
-Subject: [patch v2] staging: nvec: potential NULL dereference on error path
-Message-Id: <20131107112532.GA18980@mwanda>
+Date: Mon, 16 Dec 2013 13:56:23 +0000
+Subject: [patch v2] isdn: use strlcpy() instead strcpy()
+Message-Id: <20131216094626.GC13831@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAEA6rAzT2eZ-VGUP8gSjNbooKCdkxnixO-nEFA_hPcrUjWR4UQ@mail.gmail.com>
-In-Reply-To: <CAEA6rAzT2eZ-VGUP8gSjNbooKCdkxnixO-nEFA_hPcrUjWR4UQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Andres Klode <jak@jak-linux.org>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, ac100@lists.launchpad.net
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We assume nvec->rx can be NULL earlier so I have added a check here as
-well.
+I don't think the in-kernel drivers ever hit this strcpy() so this
+doesn't change how the code works.  But strlcpy() is safer.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-v2: print 0 instead of -1.
+v2: fix typo in changelog
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 3066ee2..c64e069 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -681,7 +681,8 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
- 			dev_err(nvec->dev,
- 				"RX buffer overflow on %p: "
- 				"Trying to write byte %u of %u\n",
--				nvec->rx, nvec->rx->pos, NVEC_MSG_SIZE);
-+				nvec->rx, nvec->rx ? nvec->rx->pos : 0,
-+				NVEC_MSG_SIZE);
- 		break;
- 	default:
- 		nvec->state = 0;
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/drivers/isdn/sc/event.c b/drivers/isdn/sc/event.c
+index 717003a3bdf4..833d96c2cf92 100644
+--- a/drivers/isdn/sc/event.c
++++ b/drivers/isdn/sc/event.c
+@@ -57,7 +57,7 @@ int indicate_status(int card, int event, ulong Channel, char *Data)
+ 			memcpy(&cmd.parm.setup, Data, sizeof(cmd.parm.setup));
+ 			break;
+ 		default:
+-			strcpy(cmd.parm.num, Data);
++			strlcpy(cmd.parm.num, Data, sizeof(cmd.parm.num));
+ 		}
+ 	}
+ 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
