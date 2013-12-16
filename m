@@ -1,38 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 20 Dec 2013 20:02:13 +0000
-Subject: re: net: vmxnet3 calls skb_set_hash
-Message-Id: <20131220200213.GA8911@elgon.mountain>
+From: Nicholas Mc Guire <der.herr@hofr.at>
+Date: Mon, 16 Dec 2013 17:22:07 +0000
+Subject: [PATCH 3/6] consolidate spin_lock/unlock waiting with spin_unlock_wait
+Message-Id: <20131216172207.GD15665@opentech.at>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Tom Herbert,
 
-The patch 0b6807034791: "net: vmxnet3 calls skb_set_hash" from Dec
-17, 2013, leads to the following static checker warning:
+fs/fscache/object.c
+consolidate spin_lock/unlock waiting with spin_unlock_wait()
 
-	drivers/net/vmxnet3/vmxnet3_drv.c:1238 vmxnet3_rq_rx_complete()
-	error: potentially dereferencing uninitialized 'skb'.
+config: x86_64_defconfig
+toolchain: debian wheezy default x86_64-linux-gnu 4.4.5
 
-drivers/net/vmxnet3/vmxnet3_drv.c
-  1233                                           PCI_DMA_FROMDEVICE);
-  1234  
-  1235  #ifdef VMXNET3_RSS
-  1236                          if (rcd->rssType != VMXNET3_RCD_RSS_TYPE_NONE &&
-  1237                              (adapter->netdev->features & NETIF_F_RXHASH))
-  1238                                  skb_set_hash(skb, le32_to_cpu(rcd->rssHash),
-                                                     ^^^
-Is it possible to hit this on the first loop iteration before "skb" has
-been set?
+Builds object.o without warnings.
+runs on x86_64 but no specific test case for this change
 
-  1239                                               PKT_HASH_TYPE_L3);
-  1240  #endif
-  1241                          skb_put(ctx->skb, rcd->len);
-  1242  
-  1243                          /* Immediate refill */
+CC: David Howells <dhowells@redhat.com>
+Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
+---
+ fs/fscache/object.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/fs/fscache/object.c b/fs/fscache/object.c
+index 53d35c5..43e1331 100644
+--- a/fs/fscache/object.c
++++ b/fs/fscache/object.c
+@@ -692,8 +692,7 @@ static const struct fscache_state *fscache_drop_object(struct fscache_object *ob
+ 	/* Prevent a race with our last child, which has to signal EV_CLEARED
+ 	 * before dropping our spinlock.
+ 	 */
+-	spin_lock(&object->lock);
+-	spin_unlock(&object->lock);
++	spin_unlock_wait(&object->lock);
+ 
+ 	/* Discard from the cache's collection of objects */
+ 	spin_lock(&cache->object_list_lock);
+-- 
+1.7.2.5
 
