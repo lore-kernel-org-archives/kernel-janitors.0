@@ -1,59 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Dec 2013 21:54:14 +0000
-Subject: [PATCH 24/25]  fix error return code
-Message-Id: <1388357260-4843-25-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 16 Dec 2013 09:49:23 +0000
+Subject: [patch v2] tgafb: potential NULL dereference in init
+Message-Id: <20131216094922.GE13831@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eddie Wai <eddie.wai@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Static checkers complain that there are paths where "tga_type_name" can
+be NULL.  I've re-arranged the code slightly so that's impossible.
 
-Set the return variable to an error code as done elsewhere in the function.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Not tested.
+v1: had introduced a "dereferencing uninitialized variable" bug.  Thanks
+to Geert Uytterhoeven for catching that.
 
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index 9b94850..d8cb194 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -2199,6 +2199,7 @@ static int _bnx2fc_create(struct net_device *netdev,
- 	interface = bnx2fc_interface_create(hba, netdev, fip_mode);
- 	if (!interface) {
- 		printk(KERN_ERR PFX "bnx2fc_interface_create failed\n");
-+		rc = -ENOMEM;
- 		goto ifput_err;
+diff --git a/drivers/video/tgafb.c b/drivers/video/tgafb.c
+index f28674fea909..afd8887fd656 100644
+--- a/drivers/video/tgafb.c
++++ b/drivers/video/tgafb.c
+@@ -1496,10 +1496,9 @@ tgafb_init_fix(struct fb_info *info)
+ 		if (tga_bus_tc)
+ 			tga_type_name = "Digital ZLX-E3";
+ 		break;
+-	default:
+-		tga_type_name = "Unknown";
+-		break;
  	}
++	if (!tga_type_name)
++		tga_type_name = "Unknown";
  
-
+ 	strlcpy(info->fix.id, tga_type_name, sizeof(info->fix.id));
+ 
