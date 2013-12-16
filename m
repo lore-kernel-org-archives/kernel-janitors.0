@@ -1,7 +1,7 @@
 From: Nicholas Mc Guire <der.herr@hofr.at>
-Date: Mon, 16 Dec 2013 17:22:07 +0000
-Subject: [PATCH 3/6] consolidate spin_lock/unlock waiting with spin_unlock_wait
-Message-Id: <20131216172207.GD15665@opentech.at>
+Date: Mon, 16 Dec 2013 17:20:25 +0000
+Subject: [PATCH 1/6] consolidate spin_lock/unlock waiting with spin_unlock_wait
+Message-Id: <20131216172025.GB15665@opentech.at>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,35 +9,36 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-fs/fscache/object.c
+blackfin BF561:
 consolidate spin_lock/unlock waiting with spin_unlock_wait()
 
-config: x86_64_defconfig
-toolchain: debian wheezy default x86_64-linux-gnu 4.4.5
+config: defconfig -> changed processor to BF561
+toolchain: blackfin-toolchain-elf-gcc-4.1-09r1-10
 
-Builds object.o without warnings.
-runs on x86_64 but no specific test case for this change
+Builds smp.o without warnings.
+No runtime check (no hardware available)
 
-CC: David Howells <dhowells@redhat.com>
+CC: Philippe Gerum <rpm@xenomai.org>
+CC: Mike Frysinger <vapier@gentoo.org>
 Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
 ---
- fs/fscache/object.c |    3 +--
+ arch/blackfin/mach-bf561/smp.c |    3 +--
  1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fscache/object.c b/fs/fscache/object.c
-index 53d35c5..43e1331 100644
---- a/fs/fscache/object.c
-+++ b/fs/fscache/object.c
-@@ -692,8 +692,7 @@ static const struct fscache_state *fscache_drop_object(struct fscache_object *ob
- 	/* Prevent a race with our last child, which has to signal EV_CLEARED
- 	 * before dropping our spinlock.
- 	 */
--	spin_lock(&object->lock);
--	spin_unlock(&object->lock);
-+	spin_unlock_wait(&object->lock);
+diff --git a/arch/blackfin/mach-bf561/smp.c b/arch/blackfin/mach-bf561/smp.c
+index 11789be..463d839 100644
+--- a/arch/blackfin/mach-bf561/smp.c
++++ b/arch/blackfin/mach-bf561/smp.c
+@@ -69,8 +69,7 @@ void platform_secondary_init(unsigned int cpu)
+ 	SSYNC();
  
- 	/* Discard from the cache's collection of objects */
- 	spin_lock(&cache->object_list_lock);
+ 	/* We are done with local CPU inits, unblock the boot CPU. */
+-	spin_lock(&boot_lock);
+-	spin_unlock(&boot_lock);
++	spin_unlock_wait(&boot_lock);
+ }
+ 
+ int platform_boot_secondary(unsigned int cpu, struct task_struct *idle)
 -- 
 1.7.2.5
 
