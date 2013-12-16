@@ -1,74 +1,48 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Dec 2013 21:56:41 +0000
-Subject: [PATCH 16/25] block: fix error return code
-Message-Id: <1388357260-4843-17-git-send-email-Julia.Lawall@lip6.fr>
+From: Nicholas Mc Guire <der.herr@hofr.at>
+Date: Mon, 16 Dec 2013 17:22:58 +0000
+Subject: [PATCH 4/6] consolidate spin_lock/unlock waiting with spin_unlock_wait
+Message-Id: <20131216172258.GE15665@opentech.at>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Set the return variable to an error code as done elsewhere in the function.
+llog_obd.c:
+consolidate spin_lock/unlock waiting with spin_unlock_wait()
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+config: x86_64_defconfig with the following addition
+        Device Drivers  --->
+          [*] Staging drivers  --->
+            <M>   Lustre file system client support
+toolchain: debian wheezy default x86_64-linux-gnu 4.4.5
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+Builds llog_obd.o without warnings.
+no runtime tests done
 
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+CC: Peng Tao <bergwolf@gmail.com>
+CC: Alex Zhuravlev <alexey.zhuravlev@intel.com>
+Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
 ---
-Not tested.
+ drivers/staging/lustre/lustre/obdclass/llog_obd.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
- drivers/cdrom/gdrom.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index 51e75ad..93d29b1 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -807,16 +807,20 @@ static int probe_gdrom(struct platform_device *devptr)
- 	if (err)
- 		goto probe_fail_cmdirq_register;
- 	gd.gdrom_rq = blk_init_queue(gdrom_request, &gdrom_lock);
--	if (!gd.gdrom_rq)
-+	if (!gd.gdrom_rq) {
-+		err = -ENOMEM;
- 		goto probe_fail_requestq;
-+	}
+diff --git a/drivers/staging/lustre/lustre/obdclass/llog_obd.c b/drivers/staging/lustre/lustre/obdclass/llog_obd.c
+index 71817af..e6c0b90 100644
+--- a/drivers/staging/lustre/lustre/obdclass/llog_obd.c
++++ b/drivers/staging/lustre/lustre/obdclass/llog_obd.c
+@@ -84,9 +84,8 @@ int __llog_ctxt_put(const struct lu_env *env, struct llog_ctxt *ctxt)
+ 	spin_unlock(&olg->olg_lock);
  
- 	err = probe_gdrom_setupqueue();
- 	if (err)
- 		goto probe_fail_toc;
+ 	obd = ctxt->loc_obd;
+-	spin_lock(&obd->obd_dev_lock);
+ 	/* sync with llog ctxt user thread */
+-	spin_unlock(&obd->obd_dev_lock);
++	spin_unlock_wait(&obd->obd_dev_lock);
  
- 	gd.toc = kzalloc(sizeof(struct gdromtoc), GFP_KERNEL);
--	if (!gd.toc)
-+	if (!gd.toc) {
-+		err = -ENOMEM;
- 		goto probe_fail_toc;
-+	}
- 	add_disk(gd.disk);
- 	return 0;
- 
+ 	/* obd->obd_starting is needed for the case of cleanup
+ 	 * in error case while obd is starting up. */
+-- 
+1.7.2.5
 
