@@ -1,65 +1,85 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Thu, 05 Dec 2013 15:00:50 +0000
-Subject: Re: [patch v2] hwmon: prevent some divide by zeros in FAN_TO_REG()
-Message-Id: <20131205160050.68bb31f9@endymion.delvare>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 16 Dec 2013 20:28:58 +0000
+Subject: [patch] Bluetooth: fix ->alloc_skb() error checking
+Message-Id: <20131216202857.GB19601@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131205145459.GB13302@elgon.mountain>
-In-Reply-To: <20131205145459.GB13302@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 5 Dec 2013 17:54:59 +0300, Dan Carpenter wrote:
-> The "rpm * div" operations can overflow here, so this patch adds an
-> upper limit to rpm to prevent that.  Jean Delvare helped me with this
-> patch.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: cap "rpm" instead of just checking for divide by zero.
-> 
-> diff --git a/drivers/hwmon/vt8231.c b/drivers/hwmon/vt8231.c
-> index 48025b725777..b3babe3326fb 100644
-> --- a/drivers/hwmon/vt8231.c
-> +++ b/drivers/hwmon/vt8231.c
-> @@ -145,7 +145,7 @@ static const u8 regtempmin[] = { 0x3a, 0x3e, 0x2c, 0x2e, 0x30, 0x32 };
->   */
->  static inline u8 FAN_TO_REG(long rpm, int div)
->  {
-> -	if (rpm = 0)
-> +	if (rpm <= 0 || rpm > 1310720)
->  		return 0;
->  	return clamp_val(1310720 / (rpm * div), 1, 255);
->  }
-> diff --git a/drivers/hwmon/lm78.c b/drivers/hwmon/lm78.c
-> index 6cf6bff79003..28976d64aa2b 100644
-> --- a/drivers/hwmon/lm78.c
-> +++ b/drivers/hwmon/lm78.c
-> @@ -94,6 +94,8 @@ static inline u8 FAN_TO_REG(long rpm, int div)
->  {
->  	if (rpm <= 0)
->  		return 255;
-> +	if (rpm > 1350000)
-> +		return 1;
->  	return clamp_val((1350000 + rpm * div / 2) / (rpm * div), 1, 254);
->  }
->  
-> diff --git a/drivers/hwmon/sis5595.c b/drivers/hwmon/sis5595.c
-> index 05565d2d1e54..7e7e25b0473d 100644
-> --- a/drivers/hwmon/sis5595.c
-> +++ b/drivers/hwmon/sis5595.c
-> @@ -141,6 +141,8 @@ static inline u8 FAN_TO_REG(long rpm, int div)
->  {
->  	if (rpm <= 0)
->  		return 255;
-> +	if (rpm > 1350000)
-> +		return 1;
->  	return clamp_val((1350000 + rpm * div / 2) / (rpm * div), 1, 254);
->  }
->  
+There are two functions that implement ->alloc_skb().
 
-Applied, thanks.
+a2mp_cahan_alloc_skb_cb() returns NULL.
+l2cap_sock_alloc_skb_cb() returns an ERR_PTR.
 
--- 
-Jean Delvare
+The callers all check for ERR_PTRs and don't check for NULL.  On the
+other hand bt_skb_alloc() and the core net alloc_skb() return NULL so
+returning an error pointer is inconsistent.  This confusion between some
+alloc_skb() functions returning ERR_PTR and some returning NULL has been
+a source of bugs such as 787949039fcd ('Bluetooth: fix return value
+check').  This patch makes ->alloc_skb() return NULL and changes the
+callers to match.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index b0ad2c752d73..84c3ce04cb35 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -2341,8 +2341,8 @@ static inline int l2cap_skbuff_fromiovec(struct l2cap_chan *chan,
+ 
+ 		tmp = chan->ops->alloc_skb(chan, count,
+ 					   msg->msg_flags & MSG_DONTWAIT);
+-		if (IS_ERR(tmp))
+-			return PTR_ERR(tmp);
++		if (!tmp)
++			return -ENOMEM;
+ 
+ 		*frag = tmp;
+ 
+@@ -2379,8 +2379,8 @@ static struct sk_buff *l2cap_create_connless_pdu(struct l2cap_chan *chan,
+ 
+ 	skb = chan->ops->alloc_skb(chan, count + hlen,
+ 				   msg->msg_flags & MSG_DONTWAIT);
+-	if (IS_ERR(skb))
+-		return skb;
++	if (!skb)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	skb->priority = priority;
+ 
+@@ -2413,8 +2413,8 @@ static struct sk_buff *l2cap_create_basic_pdu(struct l2cap_chan *chan,
+ 
+ 	skb = chan->ops->alloc_skb(chan, count + L2CAP_HDR_SIZE,
+ 				   msg->msg_flags & MSG_DONTWAIT);
+-	if (IS_ERR(skb))
+-		return skb;
++	if (skb)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	skb->priority = priority;
+ 
+@@ -2457,8 +2457,8 @@ static struct sk_buff *l2cap_create_iframe_pdu(struct l2cap_chan *chan,
+ 
+ 	skb = chan->ops->alloc_skb(chan, count + hlen,
+ 				   msg->msg_flags & MSG_DONTWAIT);
+-	if (IS_ERR(skb))
+-		return skb;
++	if (!skb)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	/* Create L2CAP header */
+ 	lh = (struct l2cap_hdr *) skb_put(skb, L2CAP_HDR_SIZE);
+@@ -2578,8 +2578,8 @@ static struct sk_buff *l2cap_create_le_flowctl_pdu(struct l2cap_chan *chan,
+ 
+ 	skb = chan->ops->alloc_skb(chan, count + hlen,
+ 				   msg->msg_flags & MSG_DONTWAIT);
+-	if (IS_ERR(skb))
+-		return skb;
++	if (!skb)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	/* Create L2CAP header */
+ 	lh = (struct l2cap_hdr *) skb_put(skb, L2CAP_HDR_SIZE);
