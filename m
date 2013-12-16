@@ -1,51 +1,49 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 03 Dec 2013 10:10:42 +0000
-Subject: Re: [patch v2] drm/tegra: fix small leak on error in tegra_fb_alloc()
-Message-Id: <20131203101041.GF21178@ulmo.nvidia.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="pyE8wggRBhVBcj8z"
+From: Nicholas Mc Guire <der.herr@hofr.at>
+Date: Mon, 16 Dec 2013 17:23:33 +0000
+Subject: [PATCH 5/6] consolidate spin_lock/unlock waiting with spin_unlock_wait
+Message-Id: <20131216172333.GF15665@opentech.at>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131112102526.GA10651@elgon.mountain>
-In-Reply-To: <20131112102526.GA10651-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
 
---pyE8wggRBhVBcj8z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+consolidate spin_lock/unlock waiting with spin_unlock_wait()
 
-On Tue, Nov 12, 2013 at 01:25:26PM +0300, Dan Carpenter wrote:
-> If we don't have enough memory for ->planes then we leak "fb".
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: tiny style changes
+config: x86_64_defconfig with the following addition
+        Device Drivers  --->
+          [*] Network device support  --->
+            [*]   Ethernet driver support  --->
+              <M>     Chelsio 10Gb Ethernet support
+toolchain: debian wheezy default x86_64-linux-gnu 4.4.5
 
-Applied, thanks.
+Builds xcgb2.o without warnings.
+no runtime testing (no hardware available)
 
-Thierry
+CC: Dimitrios Michailidis <dm@chelsio.com>
+CC: maintainers@chelsio.com
+Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
+---
+ drivers/net/ethernet/chelsio/cxgb/cxgb2.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
---pyE8wggRBhVBcj8z
-Content-Type: application/pgp-signature
+diff --git a/drivers/net/ethernet/chelsio/cxgb/cxgb2.c b/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+index e598713..e4a1bfe 100644
+--- a/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
++++ b/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+@@ -283,8 +283,8 @@ static int cxgb_close(struct net_device *dev)
+ 	    !(adapter->open_device_map & PORT_MASK)) {
+ 		/* Stop statistics accumulation. */
+ 		smp_mb__after_clear_bit();
+-		spin_lock(&adapter->work_lock);   /* sync with update task */
+-		spin_unlock(&adapter->work_lock);
++		/* sync with update task */
++		spin_unlock_wait(&adapter->work_lock);
+ 		cancel_mac_stats_update(adapter);
+ 	}
+ 
+-- 
+1.7.2.5
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSna4hAAoJEN0jrNd/PrOhYD4P/1FLJV7rh5Tnx0Gdw5Vv0Ni8
-/RHBmvmT1hYEMNAkoWudCLzA9rulWaKNqNXHbJ1zuD0TfVB9PdHOT8MfB1P04OTJ
-qb7vX6+ekvHh9Nnf3WB50yICVE0zmjbCnjLbd2PXpvl/cz4A6YamGsPxyqfiXLqO
-FV3nwMoTOXdgYo5yLSIH7CelS6zfHSZ93rQ1n3XfWQmFUNeT+C7QgGqoGptk6HIU
-i5GxkLALXAKJJrgrcDiMd16mamnfm8uvEf0mn3d8/grSVmyVsBT5hzhga6KBTNjy
-ZruVlS5CtgiC1hGiHkYJE8+UVc7kOZwPk7iAOHc/h0CkjlGVb9v98DHXO6mFiU2w
-d2NpA6fSyQMBGQYfc/V4amSQFBRdWs+5wz6V0NyUTrDLKeMZw3ZQrvZTULmcl9PE
-w+QfKJeL3DgQW4M8kzgFFUI1ir4UbZ2izmNVnIuR876TfjIG+9pVakvOqsXkzm3F
-NvhIxQvq1WA+QXLqAnP507EuCNU7HU9w2etxWBJC/bkDuaTQquUwMdHgsS7sEL3Y
-EiMcxj+yX/cwAWm8dN3c5kkMNxUxPXyU5yjz6w/VAdfZJmGVPbg6+W3x8fEHt47U
-8i4OnZ3VD7V+EPOHkFwzdeoEtIpLvXc2PIBZgu4bKcFK5epn7ft8lf4JgRUpIk87
-NwAecmHAmxUlKbC4uQBk
-=djln
------END PGP SIGNATURE-----
-
---pyE8wggRBhVBcj8z--
