@@ -1,29 +1,23 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Date: Mon, 30 Dec 2013 18:10:58 +0000
-Subject: Re: [PATCH 11/11] carl9170: use ether_addr_equal_64bits
-Message-Id: <10609239.5b8Q6kF6b9@debian64>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Mon, 16 Dec 2013 13:43:38 +0000
+Subject: Re: [patch] isdn: use strlcpy() instead strcpy()
+Message-Id: <1387201418.19078.225.camel@edumazet-glaptop2.roam.corp.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr> <1388427307-8691-12-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388427307-8691-12-git-send-email-Julia.Lawall@lip6.fr>
+References: <20131216094626.GC13831@elgon.mountain>
+In-Reply-To: <20131216094626.GC13831@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Monday, December 30, 2013 07:15:07 PM Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Mon, 2013-12-16 at 12:46 +0300, Dan Carpenter wrote:
+> I don't think the in-kernel drivers ever hit this strcpy() so this
+> doesn't change how the code works.  But strcpy() is safer.
 > 
-> Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
-> used when each argument is an array within a structure that contains at
-> least two bytes of data beyond the array.
-> 
-> The structures involved are:
-> ieee80211_hdr defined in include/linux/ieee80211.h,
-> ieee80211_bar defined in include/linux/ieee80211.h and
-> ath_common defined in drivers/net/wireless/ath/ath.h
-> 
-> This was done using Coccinelle (http://coccinelle.lip6.fr/).
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Christian Lamparter <chunkeey@googlemail.com>
+
+strcpy() is safer ?
+
+-ENOPARSE ...
+
+
