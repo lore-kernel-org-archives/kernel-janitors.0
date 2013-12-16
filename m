@@ -1,48 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Dec 2013 17:23:47 +0000
-Subject: [PATCH 10/11] at76c50x-usb: use ether_addr_equal_64bits
-Message-Id: <1388427307-8691-11-git-send-email-Julia.Lawall@lip6.fr>
+From: Nicholas Mc Guire <der.herr@hofr.at>
+Date: Mon, 16 Dec 2013 17:19:42 +0000
+Subject: [PATCH 0/6] API consolidation spin_lock/spin_unlock to spin_unlock_wait
+Message-Id: <20131216171942.GA15665@opentech.at>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi !
 
-Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
-used when each argument is an array within a structure that contains at
-least two bytes of data beyond the array.
+This patch set proposes a small API consolidation. 
+replacing:
+	spin_lock(lock);
+	spin_unlock(lock);
+by:
+	spin_unlock_wait(lock);
+in a number of locations.
 
-The structures involved are:
-at76_priv defined in drivers/net/wireless/at76c50x-usb.h and
-ieee80211_mgmt defined in include/linux/ieee80211.h
+patch and compile testing is against linux-next 3.13.0-rc4 (git pull today)
 
-This was done using Coccinelle (http://coccinelle.lip6.fr/).
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-The semantic patch used is rather long and can be found in message 0 of
-this patch series.
-
- drivers/net/wireless/at76c50x-usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/at76c50x-usb.c b/drivers/net/wireless/at76c50x-usb.c
-index 34c8a33..031d4ec 100644
---- a/drivers/net/wireless/at76c50x-usb.c
-+++ b/drivers/net/wireless/at76c50x-usb.c
-@@ -1721,7 +1721,7 @@ static void at76_mac80211_tx(struct ieee80211_hw *hw,
- 	 * following workaround is necessary. If the TX frame is an
- 	 * authentication frame extract the bssid and send the CMD_JOIN. */
- 	if (mgmt->frame_control & cpu_to_le16(IEEE80211_STYPE_AUTH)) {
--		if (!ether_addr_equal(priv->bssid, mgmt->bssid)) {
-+		if (!ether_addr_equal_64bits(priv->bssid, mgmt->bssid)) {
- 			memcpy(priv->bssid, mgmt->bssid, ETH_ALEN);
- 			ieee80211_queue_work(hw, &priv->work_join_bssid);
- 			dev_kfree_skb_any(skb);
-
+thx!
+hofrat
