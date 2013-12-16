@@ -1,33 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Dec 2013 14:02:10 +0000
-Subject: [patch] spi: tegra: checking for ERR_PTR instead of NULL
-Message-Id: <20131216140210.GA32033@elgon.mountain>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Date: Mon, 16 Dec 2013 16:55:47 +0000
+Subject: Re: [patch] spi: tegra: checking for ERR_PTR instead of NULL
+Message-Id: <52AF3093.30308@wwwdotorg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131216140210.GA32033@elgon.mountain>
+In-Reply-To: <20131216140210.GA32033@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-dma_request_slave_channel() returns NULL on error and not ERR_PTRs.
-I've fixed this by using dma_request_slave_channel_reason() which does
-return ERR_PTRs.
+On 12/16/2013 07:02 AM, Dan Carpenter wrote:
+> dma_request_slave_channel() returns NULL on error and not ERR_PTRs.
+> I've fixed this by using dma_request_slave_channel_reason() which does
+> return ERR_PTRs.
+> 
+> Fixes: a915d150f68d ('spi: tegra: convert to standard DMA DT bindings')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: a915d150f68d ('spi: tegra: convert to standard DMA DT bindings')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Oops. I validate there aren't any more issues like this, at least in the
+commits in the series this fixes.
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 1e61e9854064..be3a069879c3 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -612,8 +612,8 @@ static int tegra_slink_init_dma_param(struct tegra_slink_data *tspi,
- 	int ret;
- 	struct dma_slave_config dma_sconfig;
- 
--	dma_chan = dma_request_slave_channel(tspi->dev,
--					     dma_to_memory ? "rx" : "tx");
-+	dma_chan = dma_request_slave_channel_reason(tspi->dev,
-+						dma_to_memory ? "rx" : "tx");
- 	if (IS_ERR(dma_chan)) {
- 		ret = PTR_ERR(dma_chan);
- 		if (ret != -EPROBE_DEFER)
+I've applied this to Tegra's for-3.14/dmas-resets-rework branch, since
+that's the only place where the commit this fixes exists.
