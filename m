@@ -1,61 +1,59 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Dec 2013 21:59:33 +0000
-Subject: [PATCH 3/25]  fix error return code
-Message-Id: <1388357260-4843-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 16 Dec 2013 09:45:44 +0000
+Subject: [patch] [media] i2c: lm3560: missing unlocks on error in lm3560_set_ctrl()
+Message-Id: <20131216094544.GB13831@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Daniel Jeong <gshark.jeong@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+There are several error paths which don't unlock on error.
 
-The rest of the function uses ret to store the return value, even setting
-ret to i a few lines before this, so return ret instead of i.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not tested.
-
- drivers/media/usb/dvb-usb-v2/ec168.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/dvb-usb-v2/ec168.c b/drivers/media/usb/dvb-usb-v2/ec168.c
-index 5c68f39..0c2b377 100644
---- a/drivers/media/usb/dvb-usb-v2/ec168.c
-+++ b/drivers/media/usb/dvb-usb-v2/ec168.c
-@@ -170,7 +170,7 @@ static int ec168_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
+diff --git a/drivers/media/i2c/lm3560.c b/drivers/media/i2c/lm3560.c
+index ab5857d66f2d..fd96cfd6a9ec 100644
+--- a/drivers/media/i2c/lm3560.c
++++ b/drivers/media/i2c/lm3560.c
+@@ -214,20 +214,22 @@ static int lm3560_set_ctrl(struct v4l2_ctrl *ctrl, enum lm3560_led_id led_no)
+ 	case V4L2_CID_FLASH_STROBE_SOURCE:
+ 		rval = regmap_update_bits(flash->regmap,
+ 					  REG_CONFIG1, 0x04, (ctrl->val) << 2);
+-		if (rval < 0)
+-			goto err_out;
+ 		break;
  
- error:
- 	mutex_unlock(&d->i2c_mutex);
--	return i;
-+	return ret;
+ 	case V4L2_CID_FLASH_STROBE:
+-		if (flash->led_mode != V4L2_FLASH_LED_MODE_FLASH)
+-			return -EBUSY;
++		if (flash->led_mode != V4L2_FLASH_LED_MODE_FLASH) {
++			rval = -EBUSY;
++			goto err_unlock;
++		}
+ 		flash->led_mode = V4L2_FLASH_LED_MODE_FLASH;
+ 		rval = lm3560_mode_ctrl(flash);
+ 		break;
+ 
+ 	case V4L2_CID_FLASH_STROBE_STOP:
+-		if (flash->led_mode != V4L2_FLASH_LED_MODE_FLASH)
+-			return -EBUSY;
++		if (flash->led_mode != V4L2_FLASH_LED_MODE_FLASH) {
++			rval = -EBUSY;
++			goto err_unlock;
++		}
+ 		flash->led_mode = V4L2_FLASH_LED_MODE_NONE;
+ 		rval = lm3560_mode_ctrl(flash);
+ 		break;
+@@ -247,8 +249,9 @@ static int lm3560_set_ctrl(struct v4l2_ctrl *ctrl, enum lm3560_led_id led_no)
+ 		break;
+ 	}
+ 
++err_unlock:
+ 	mutex_unlock(&flash->lock);
+-err_out:
++
+ 	return rval;
  }
  
- static u32 ec168_i2c_func(struct i2c_adapter *adapter)
-
