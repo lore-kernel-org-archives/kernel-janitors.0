@@ -1,44 +1,50 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 06 Dec 2013 13:34:30 +0000
-Subject: Re: [patch] spi: bcm63xx-hsspi: checking for ERR_PTR instead of NULL
-Message-Id: <20131206133430.GF28413@mwanda>
+Date: Tue, 17 Dec 2013 11:57:30 +0000
+Subject: re: mlx4_en: Using blue flame support
+Message-Id: <20131217115730.GA10787@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131206125823.GA32369@elgon.mountain>
- <CAOiHx=k87c_bFqFtJ7zJc9HxnjOEr2oMofNUsLkQbfQPrC04hQ@mail.gmail.com>
-In-Reply-To: <CAOiHx=k87c_bFqFtJ7zJc9HxnjOEr2oMofNUsLkQbfQPrC04hQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Dec 06, 2013 at 02:08:08PM +0100, Jonas Gorski wrote:
-> On Fri, Dec 6, 2013 at 1:58 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > devm_request_and_ioremap() returns NULL on error, it doesn't return an
-> > ERR_PTR().
-> >
-> > Fixes: 142168eba9dc ('spi: bcm63xx-hsspi: add bcm63xx HSSPI driver')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
-> > index bc8d848d33b7..da9f85d55c81 100644
-> > --- a/drivers/spi/spi-bcm63xx-hsspi.c
-> > +++ b/drivers/spi/spi-bcm63xx-hsspi.c
-> > @@ -339,8 +339,8 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
-> >
-> >         res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >         regs = devm_request_and_ioremap(dev, res_mem);
-> > -       if (IS_ERR(regs))
-> > -               return PTR_ERR(regs);
-> > +       if (!regs)
-> > +               return -EADDRNOTAVAIL;
-> 
-> Instead of fixing the wrong handling of the return value, let's change
-> it to use devm_ioremap_resource() which actually returns the expected
-> ERR_PTR() and is preferred over request_and_ioremap().
-> 
+Hello Yevgeny Petrilin,
 
-Sure.  I'll resend a v2.
+The patch 87a5c3896f9c: "mlx4_en: Using blue flame support" from
+Mar 22, 2011, leads to the following static checker warning:
+
+	drivers/net/ethernet/mellanox/mlx4/en_tx.c:839 mlx4_en_xmit()
+	warn: potential memory corrupting cast 4 vs 2 bytes
+
+drivers/net/ethernet/mellanox/mlx4/en_tx.c
+   771          tx_desc->ctrl.ins_vlan = MLX4_WQE_CTRL_INS_VLAN *
+   772                  !!vlan_tx_tag_present(skb);
+   773          tx_desc->ctrl.fence_size = (real_size / 16) & 0x3f;
+
+We set ->ctrl.ins_vlan and ->ctrl.fence_size here.
+
+   774          tx_desc->ctrl.srcrb_flags = priv->ctrl_flags;
+   775          if (likely(skb->ip_summed = CHECKSUM_PARTIAL)) {
+   776                  tx_desc->ctrl.srcrb_flags |= cpu_to_be32(MLX4_WQE_CTRL_IP_CSUM |
+   777                                                           MLX4_WQE_CTRL_TCP_UDP_CSUM);
+   778                  ring->tx_csum++;
+   779          }
+
+[ snip ]
+
+   838          if (ring->bf_enabled && desc_size <= MAX_BF && !bounce && !vlan_tx_tag_present(skb)) {
+   839                  *(__be32 *) (&tx_desc->ctrl.vlan_tag) |= cpu_to_be32(ring->doorbell_qpn);
+
+And then sometimes we overwrite them here.  It's not clear if this is
+deliberate or accidental.  Maybe add a comment?
+
+   840                  op_own |= htonl((bf_index & 0xffff) << 8);
+   841                  /* Ensure new descirptor hits memory
+   842                  * before setting ownership of this descriptor to HW */
+   843                  wmb();
+   844                  tx_desc->ctrl.owner_opcode = op_own;
+   845  
+   846                  wmb();
 
 regards,
 dan carpenter
