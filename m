@@ -1,36 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Dec 2013 13:56:23 +0000
-Subject: [patch v2] isdn: use strlcpy() instead strcpy()
-Message-Id: <20131216094626.GC13831@elgon.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 18 Dec 2013 22:54:20 +0000
+Subject: Re: [patch v2] isdn: use strlcpy() instead strcpy()
+Message-Id: <20131218.175420.144235775285424457.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1387201418.19078.225.camel@edumazet-glaptop2.roam.corp.google.com>
+	<20131216094626.GC13831@elgon.mountain>
+In-Reply-To: <20131216094626.GC13831@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <isdn@linux-pingi.de>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, eric.dumazet@gmail.com
 
-I don't think the in-kernel drivers ever hit this strcpy() so this
-doesn't change how the code works.  But strlcpy() is safer.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 16 Dec 2013 16:56:23 +0300
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: fix typo in changelog
+> I don't think the in-kernel drivers ever hit this strcpy() so this
+> doesn't change how the code works.  But strlcpy() is safer.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/isdn/sc/event.c b/drivers/isdn/sc/event.c
-index 717003a3bdf4..833d96c2cf92 100644
---- a/drivers/isdn/sc/event.c
-+++ b/drivers/isdn/sc/event.c
-@@ -57,7 +57,7 @@ int indicate_status(int card, int event, ulong Channel, char *Data)
- 			memcpy(&cmd.parm.setup, Data, sizeof(cmd.parm.setup));
- 			break;
- 		default:
--			strcpy(cmd.parm.num, Data);
-+			strlcpy(cmd.parm.num, Data, sizeof(cmd.parm.num));
- 		}
- 	}
- 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+Applied to net-next, thanks.
