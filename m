@@ -1,48 +1,49 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Date: Mon, 16 Dec 2013 17:22:58 +0000
-Subject: [PATCH 4/6] consolidate spin_lock/unlock waiting with spin_unlock_wait
-Message-Id: <20131216172258.GE15665@opentech.at>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 18 Dec 2013 14:25:39 +0000
+Subject: re: bnx2x: add afex support
+Message-Id: <20131218142539.GA25830@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hello Barak Witkowski,
 
-llog_obd.c:
-consolidate spin_lock/unlock waiting with spin_unlock_wait()
+The patch a334872224a6: "bnx2x: add afex support" from Apr 23, 2012,
+leads to the following static checker warning:
+	drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c:5913 bnx2x_func_send_afex_update()
+	error: memset() 'rdata' too small (8 vs 24)
 
-config: x86_64_defconfig with the following addition
-        Device Drivers  --->
-          [*] Staging drivers  --->
-            <M>   Lustre file system client support
-toolchain: debian wheezy default x86_64-linux-gnu 4.4.5
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
+  5903  static inline int bnx2x_func_send_afex_update(struct bnx2x *bp,
+  5904                                           struct bnx2x_func_state_params *params)
+  5905  {
+  5906          struct bnx2x_func_sp_obj *o = params->f_obj;
+  5907          struct function_update_data *rdata = (void *)o->afex_rdata;
+  5908          dma_addr_t data_mapping = o->afex_rdata_mapping;
+  5909          struct bnx2x_func_afex_update_params *afex_update_params   5910                  &params->params.afex_update;
+  5911  
+  5912          memset(rdata, 0, sizeof(*rdata));
 
-Builds llog_obd.o without warnings.
-no runtime tests done
 
-CC: Peng Tao <bergwolf@gmail.com>
-CC: Alex Zhuravlev <alexey.zhuravlev@intel.com>
-Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
----
- drivers/staging/lustre/lustre/obdclass/llog_obd.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+->afex_rdata is a void pointer but actually it always points to a
+struct afex_vif_list_ramrod_data.  You can verify this by looking at
+bnx2x__init_func_obj() and following the code through the call to
+bnx2x_init_func_obj().
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/llog_obd.c b/drivers/staging/lustre/lustre/obdclass/llog_obd.c
-index 71817af..e6c0b90 100644
---- a/drivers/staging/lustre/lustre/obdclass/llog_obd.c
-+++ b/drivers/staging/lustre/lustre/obdclass/llog_obd.c
-@@ -84,9 +84,8 @@ int __llog_ctxt_put(const struct lu_env *env, struct llog_ctxt *ctxt)
- 	spin_unlock(&olg->olg_lock);
- 
- 	obd = ctxt->loc_obd;
--	spin_lock(&obd->obd_dev_lock);
- 	/* sync with llog ctxt user thread */
--	spin_unlock(&obd->obd_dev_lock);
-+	spin_unlock_wait(&obd->obd_dev_lock);
- 
- 	/* obd->obd_starting is needed for the case of cleanup
- 	 * in error case while obd is starting up. */
--- 
-1.7.2.5
+The bnx2x_func_sp_obj struct is 24 bytes and afex_vif_list_ramrod_data
+is 8 bytes so the static checker (pending changes to Smatch) seems
+correct that we are corrupting memory here.  I don't know what the fix
+is.
+
+  5913  
+  5914          /* Fill the ramrod data with provided parameters */
+  5915          rdata->vif_id_change_flg = 1;
+  5916          rdata->vif_id = cpu_to_le16(afex_update_params->vif_id);
+  5917          rdata->afex_default_vlan_change_flg = 1;
+  5918          rdata->afex_default_vlan   5919                  cpu_to_le16(afex_update_params->afex_default_vlan);
+
+regards,
+dan carpenter
 
