@@ -1,89 +1,42 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Mon, 30 Dec 2013 21:08:47 +0000
-Subject: Re: [PATCH 6/11] rtlwifi: use ether_addr_equal_64bits
-Message-Id: <52C1E0DF.2000800@lwfinger.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Dec 2013 21:01:40 +0000
+Subject: re: GenWQE Character device and DDCB queue
+Message-Id: <20131220210140.GA32504@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr> <1388427307-8691-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388427307-8691-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Chaoming Li <chaoming_li@realsil.com.cn>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 12/30/2013 12:15 PM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
-> used when each argument is an array within a structure that contains at
-> least two bytes of data beyond the array.
->
-> The structures involved are:
-> ieee80211_hdr defined in include/linux/ieee80211.h and
-> rtl_mac defined in drivers/net/wireless/rtlwifi/wifi.h
->
-> This was done using Coccinelle (http://coccinelle.lip6.fr/).
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Frank Haverkamp,
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+The patch eaf4722d4645: "GenWQE Character device and DDCB queue" from 
+Dec 9, 2013, leads to the following
+static checker warning: "drivers/misc/genwqe/card_dev.c:657 
+do_flash_update()
+	 warn: maybe return -EFAULT instead of the bytes remaining?"
 
-Larry
+drivers/misc/genwqe/card_dev.c
+   564                  tocopy = min_t(size_t, load->size, FLASH_BLOCK);
+   565  
+   566                  rc = copy_from_user(xbuf, buf, tocopy);
+   567                  if (rc) {
+   568                          dev_err(&pci_dev->dev,
+   569                                  "err: could not copy all data rc=%d\n", rc);
 
+There should be an "rc = -EFAULT" here.  Also printing lots of user
+triggerable dev_errs() is a DoS vector.  The caller doesn't check the
+error immediately; is that an information leak bug?
 
->
-> ---
-> The semantic patch used is rather long and can be found in message 0 of
-> this patch series.
->
->   drivers/net/wireless/rtlwifi/base.c |    4 ++--
->   drivers/net/wireless/rtlwifi/ps.c   |    4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/wireless/rtlwifi/ps.c b/drivers/net/wireless/rtlwifi/ps.c
-> index 0d81f76..deedae3 100644
-> --- a/drivers/net/wireless/rtlwifi/ps.c
-> +++ b/drivers/net/wireless/rtlwifi/ps.c
-> @@ -478,7 +478,7 @@ void rtl_swlps_beacon(struct ieee80211_hw *hw, void *data, unsigned int len)
->   		return;
->
->   	/* and only beacons from the associated BSSID, please */
-> -	if (!ether_addr_equal(hdr->addr3, rtlpriv->mac80211.bssid))
-> +	if (!ether_addr_equal_64bits(hdr->addr3, rtlpriv->mac80211.bssid))
->   		return;
->
->   	rtlpriv->psc.last_beacon = jiffies;
-> @@ -923,7 +923,7 @@ void rtl_p2p_info(struct ieee80211_hw *hw, void *data, unsigned int len)
->   		return;
->
->   	/* and only beacons from the associated BSSID, please */
-> -	if (!ether_addr_equal(hdr->addr3, rtlpriv->mac80211.bssid))
-> +	if (!ether_addr_equal_64bits(hdr->addr3, rtlpriv->mac80211.bssid))
->   		return;
->
->   	/* check if this really is a beacon */
-> diff --git a/drivers/net/wireless/rtlwifi/base.c b/drivers/net/wireless/rtlwifi/base.c
-> index fcf9b62..d63a12c 100644
-> --- a/drivers/net/wireless/rtlwifi/base.c
-> +++ b/drivers/net/wireless/rtlwifi/base.c
-> @@ -1293,7 +1293,7 @@ void rtl_beacon_statistic(struct ieee80211_hw *hw, struct sk_buff *skb)
->   		return;
->
->   	/* and only beacons from the associated BSSID, please */
-> -	if (!ether_addr_equal(hdr->addr3, rtlpriv->mac80211.bssid))
-> +	if (!ether_addr_equal_64bits(hdr->addr3, rtlpriv->mac80211.bssid))
->   		return;
->
->   	rtlpriv->link_info.bcn_rx_inperiod++;
-> @@ -1781,7 +1781,7 @@ void rtl_recognize_peer(struct ieee80211_hw *hw, u8 *data, unsigned int len)
->   		return;
->
->   	/* and only beacons from the associated BSSID, please */
-> -	if (!ether_addr_equal(hdr->addr3, rtlpriv->mac80211.bssid))
-> +	if (!ether_addr_equal_64bits(hdr->addr3, rtlpriv->mac80211.bssid))
->   		return;
->
->   	if (rtl_find_221_ie(hw, data, len))
->
->
+   570                          goto free_buffer;
+   571                  }
+   572                  crc = genwqe_crc32(xbuf, tocopy, 0xffffffff);
+   573  
+   574                  dev_info(&pci_dev->dev,
+   575                           "[%s] DMA: 0x%llx CRC: %08x SZ: %ld %d\n",
+   576                          __func__, dma_addr, crc, tocopy, blocks_to_flash);
+   577  
+
+regards,
+dan carpenter
 
