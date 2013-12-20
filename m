@@ -1,29 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Dec 2013 10:42:22 +0000
-Subject: [patch] pinctrl: off by one in msm_config_group_set()
-Message-Id: <20131216104222.GA19404@elgon.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 20 Dec 2013 09:31:57 +0000
+Subject: Re: [patch] pinctrl: off by one in msm_config_group_set()
+Message-Id: <CACRpkdbXP4gsK1+c+WUYyUzjETm2kq_+CH2QDUVWLmfSAdbD=g@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131216104222.GA19404@elgon.mountain>
+In-Reply-To: <20131216104222.GA19404@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-This should be ">= ARRAY_SIZE()" instead of "> ARRAY_SIZE()".
+On Mon, Dec 16, 2013 at 11:42 AM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
 
-Fixes: f365be092572 ('pinctrl: Add Qualcomm TLMM driver')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> This should be ">=3D ARRAY_SIZE()" instead of "> ARRAY_SIZE()".
+>
+> Fixes: f365be092572 ('pinctrl: Add Qualcomm TLMM driver')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/pinctrl/pinctrl-msm.c b/drivers/pinctrl/pinctrl-msm.c
-index 28b90aba708d..03c4e615ebb8 100644
---- a/drivers/pinctrl/pinctrl-msm.c
-+++ b/drivers/pinctrl/pinctrl-msm.c
-@@ -350,7 +350,7 @@ static int msm_config_group_set(struct pinctrl_dev *pctldev,
- 			break;
- 		case PIN_CONFIG_DRIVE_STRENGTH:
- 			/* Check for invalid values */
--			if (arg > ARRAY_SIZE(msm_drive_to_regval))
-+			if (arg >= ARRAY_SIZE(msm_drive_to_regval))
- 				arg = -1;
- 			else
- 				arg = msm_drive_to_regval[arg];
+This appears to be fixed already by one of Bj=F6rn's follow-up
+patches, so dropping this patch.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
