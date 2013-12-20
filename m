@@ -1,70 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Dec 2013 21:55:51 +0000
-Subject: [PATCH 12/25] HID: sony: fix error return code
-Message-Id: <1388357260-4843-13-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Dec 2013 20:02:13 +0000
+Subject: re: net: vmxnet3 calls skb_set_hash
+Message-Id: <20131220200213.GA8911@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Tom Herbert,
 
-Currently the return variable ret is always 0.  Set it to other values in
-error cases, as used in the direct return.
+The patch 0b6807034791: "net: vmxnet3 calls skb_set_hash" from Dec
+17, 2013, leads to the following static checker warning:
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+	drivers/net/vmxnet3/vmxnet3_drv.c:1238 vmxnet3_rq_rx_complete()
+	error: potentially dereferencing uninitialized 'skb'.
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+drivers/net/vmxnet3/vmxnet3_drv.c
+  1233                                           PCI_DMA_FROMDEVICE);
+  1234  
+  1235  #ifdef VMXNET3_RSS
+  1236                          if (rcd->rssType != VMXNET3_RCD_RSS_TYPE_NONE &&
+  1237                              (adapter->netdev->features & NETIF_F_RXHASH))
+  1238                                  skb_set_hash(skb, le32_to_cpu(rcd->rssHash),
+                                                     ^^^
+Is it possible to hit this on the first loop iteration before "skb" has
+been set?
 
-// </smpl>
+  1239                                               PKT_HASH_TYPE_L3);
+  1240  #endif
+  1241                          skb_put(ctx->skb, rcd->len);
+  1242  
+  1243                          /* Immediate refill */
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not tested.
-
- drivers/hid/hid-sony.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-sony.c b/drivers/hid/hid-sony.c
-index b60bc38..f57ab5e 100644
---- a/drivers/hid/hid-sony.c
-+++ b/drivers/hid/hid-sony.c
-@@ -585,6 +585,7 @@ static int sony_leds_init(struct hid_device *hdev)
- 		led = kzalloc(sizeof(struct led_classdev) + name_sz, GFP_KERNEL);
- 		if (!led) {
- 			hid_err(hdev, "Couldn't allocate memory for LED %d\n", n);
-+			ret = -ENOMEM;
- 			goto error_leds;
- 		}
- 
-@@ -596,7 +597,8 @@ static int sony_leds_init(struct hid_device *hdev)
- 		led->brightness_get = sony_led_get_brightness;
- 		led->brightness_set = sony_led_set_brightness;
- 
--		if (led_classdev_register(&hdev->dev, led)) {
-+		ret = led_classdev_register(&hdev->dev, led);
-+		if (ret) {
- 			hid_err(hdev, "Failed to register LED %d\n", n);
- 			kfree(led);
- 			goto error_leds;
+regards,
+dan carpenter
 
