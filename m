@@ -1,47 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Dec 2013 13:18:34 +0000
-Subject: re: mlx4: Structures and init/teardown for VF resource quotas
-Message-Id: <20131218131833.GA16427@elgon.mountain>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Date: Thu, 26 Dec 2013 11:18:34 +0000
+Subject: Re: mlx4: Structures and init/teardown for VF resource quotas
+Message-Id: <20131226131834.62b4ad2a@jpm-OptiPlex-GX620>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131218131833.GA16427@elgon.mountain>
+In-Reply-To: <20131218131833.GA16427@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Jack Morgenstein,
+On Wed, 18 Dec 2013 16:18:34 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-The patch 5a0d0a6161ae: "mlx4: Structures and init/teardown for VF 
-resource quotas" from Nov 3, 2013, leads to the following
-static checker warning: "drivers/net/ethernet/mellanox/mlx4/fw.c:261 
-mlx4_QUERY_FUNC_CAP_wrapper()
-	 error: buffer overflow 
-'priv->mfunc.master.res_tracker.res_alloc[0]->quota' 64 <= 127"
+>    260  
+>    261                  size > priv->mfunc.master.res_tracker.res_alloc[RES_QP].quota[slave]; ^^^^^
+> My concern here is that there are MLX4_MAX_NUM_VF (64) elements in the
+> .quota[] array and MLX4_MAX_NUM_SLAVES (80) slaves.
 
-drivers/net/ethernet/mellanox/mlx4/fw.c
-   246          } else if (vhcr->op_modifier = 0) {
-   247                  /* enable rdma and ethernet interfaces, and new quota locations */
-   248                  field = (QUERY_FUNC_CAP_FLAG_ETH | QUERY_FUNC_CAP_FLAG_RDMA |
-   249                           QUERY_FUNC_CAP_FLAG_QUOTAS);
-   250                  MLX4_PUT(outbox->buf, field, QUERY_FUNC_CAP_FLAGS_OFFSET);
-   251  
-   252                  field = dev->caps.num_ports;
-   253                  MLX4_PUT(outbox->buf, field, QUERY_FUNC_CAP_NUM_PORTS_OFFSET);
-   254  
-   255                  size = dev->caps.function_caps; /* set PF behaviours */
-   256                  MLX4_PUT(outbox->buf, size, QUERY_FUNC_CAP_PF_BHVR_OFFSET);
-   257  
-   258                  field = 0; /* protected FMR support not available as yet */
-   259                  MLX4_PUT(outbox->buf, field, QUERY_FUNC_CAP_FMR_OFFSET);
-   260  
-   261                  size = priv->mfunc.master.res_tracker.res_alloc[RES_QP].quota[slave];
-                                                                                      ^^^^^
-My concern here is that there are MLX4_MAX_NUM_VF (64) elements in the
-.quota[] array and MLX4_MAX_NUM_SLAVES (80) slaves.
+Hi Dan,
 
-   262                  MLX4_PUT(outbox->buf, size, QUERY_FUNC_CAP_QP_QUOTA_OFFSET);
-   263                  size = dev->caps.num_qps;
-   264                  MLX4_PUT(outbox->buf, size, QUERY_FUNC_CAP_QP_QUOTA_OFFSET_DEP);
+There is no problem here.  The ConnectX driver for SRIOV supports only
+1 PF.  The code snippet below indicates the initialization of the
+structure in the static-checker warning.
 
-regards,
-dan carpenter
+The array is malloc'ed as below, with num_vfs+1 elements.  num_vfs is
+the value given in the mlx4_core num_vfs module parameter.  Since slave
+numbers are given sequentially for the requested VFs, we will never
+overflow the array (e.g., if num_vfs = 5, say, then "slave" 0 is the
+PF, and slaves 1..5 are the VF slave numbers. Thus, an array of size 6
+is sufficient and will never overflow).
+
+Regards,
+-Jack
+
+======================
+int mlx4_init_resource_tracker(struct mlx4_dev *dev)
+{
+        struct mlx4_priv *priv = mlx4_priv(dev);
+        int i, j;
+        int t;
+
+        priv->mfunc.master.res_tracker.slave_list ....
+        for (i = 0; i < MLX4_NUM_OF_RESOURCE_TYPE; i++) {
+                struct resource_allocator *res_alloc                         &priv->mfunc.master.res_tracker.res_alloc[i];
+=>             res_alloc->quota = kmalloc((dev->num_vfs + 1) *
+                sizeof(int), GFP_KERNEL);
+
 
