@@ -1,54 +1,84 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 05 Dec 2013 14:53:50 +0000
-Subject: [patch v2] mtd: sm_ftl: heap corruption in sm_create_sysfs_attributes()
-Message-Id: <20131205145349.GA13302@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:54:56 +0000
+Subject: [PATCH 14/25] RDMA/amso1100: fix error return code
+Message-Id: <1388357260-4843-15-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <52A06B00.7070309@bfs.de>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org, walter harms <wharms@bfs.de>
+To: Tom Tucker <tom@opengridcomputing.com>
+Cc: kernel-janitors@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We always put a NUL terminator one space past the end of the "vendor"
-buffer.  Walter Harms also pointed out that this should just use
-kstrndup().
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Fixes: 7d17c02a01a1 ('mtd: Add new SmartMedia/xD FTL')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Set the return variable to an error code as done elsewhere in the function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-v2:  Use kstrndup().
-     Don't subtract 1 from the strnlen() limiter for the NUL.  I think
-     it's ok to go over?
+Not tested.
 
-diff --git a/drivers/mtd/sm_ftl.c b/drivers/mtd/sm_ftl.c
-index 4b8e89583f2a..cf49c22673b9 100644
---- a/drivers/mtd/sm_ftl.c
-+++ b/drivers/mtd/sm_ftl.c
-@@ -59,15 +59,12 @@ static struct attribute_group *sm_create_sysfs_attributes(struct sm_ftl *ftl)
- 	struct attribute_group *attr_group;
- 	struct attribute **attributes;
- 	struct sm_sysfs_attribute *vendor_attribute;
-+	char *vendor;
+ drivers/infiniband/hw/amso1100/c2.c      |    4 +++-
+ drivers/infiniband/hw/amso1100/c2_rnic.c |    3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/amso1100/c2.c b/drivers/infiniband/hw/amso1100/c2.c
+index d53cf51..00400c3 100644
+--- a/drivers/infiniband/hw/amso1100/c2.c
++++ b/drivers/infiniband/hw/amso1100/c2.c
+@@ -1082,6 +1082,7 @@ static int c2_probe(struct pci_dev *pcidev, const struct pci_device_id *ent)
  
--	int vendor_len = strnlen(ftl->cis_buffer + SM_CIS_VENDOR_OFFSET,
--					SM_SMALL_PAGE - SM_CIS_VENDOR_OFFSET);
--
--	char *vendor = kmalloc(vendor_len, GFP_KERNEL);
-+	vendor = kstrndup(ftl->cis_buffer + SM_CIS_VENDOR_OFFSET,
-+			  SM_SMALL_PAGE - SM_CIS_VENDOR_OFFSET, GFP_KERNEL);
- 	if (!vendor)
- 		goto error1;
--	memcpy(vendor, ftl->cis_buffer + SM_CIS_VENDOR_OFFSET, vendor_len);
--	vendor[vendor_len] = 0;
+ 	/* Initialize network device */
+ 	if ((netdev = c2_devinit(c2dev, mmio_regs)) = NULL) {
++		ret = -ENOMEM;
+ 		iounmap(mmio_regs);
+ 		goto bail4;
+ 	}
+@@ -1151,7 +1152,8 @@ static int c2_probe(struct pci_dev *pcidev, const struct pci_device_id *ent)
+ 		goto bail10;
+ 	}
  
- 	/* Initialize sysfs attributes */
- 	vendor_attribute @@ -78,7 +75,7 @@ static struct attribute_group *sm_create_sysfs_attributes(struct sm_ftl *ftl)
- 	sysfs_attr_init(&vendor_attribute->dev_attr.attr);
+-	if (c2_register_device(c2dev))
++	ret = c2_register_device(c2dev);
++	if (ret)
+ 		goto bail10;
  
- 	vendor_attribute->data = vendor;
--	vendor_attribute->len = vendor_len;
-+	vendor_attribute->len = strlen(vendor);
- 	vendor_attribute->dev_attr.attr.name = "vendor";
- 	vendor_attribute->dev_attr.attr.mode = S_IRUGO;
- 	vendor_attribute->dev_attr.show = sm_attr_show;
+ 	return 0;
+diff --git a/drivers/infiniband/hw/amso1100/c2_rnic.c b/drivers/infiniband/hw/amso1100/c2_rnic.c
+index b7c9869..d2a6d96 100644
+--- a/drivers/infiniband/hw/amso1100/c2_rnic.c
++++ b/drivers/infiniband/hw/amso1100/c2_rnic.c
+@@ -576,7 +576,8 @@ int c2_rnic_init(struct c2_dev *c2dev)
+ 		goto bail4;
+ 
+ 	/* Initialize cached the adapter limits */
+-	if (c2_rnic_query(c2dev, &c2dev->props))
++	err = c2_rnic_query(c2dev, &c2dev->props);
++	if (err)
+ 		goto bail5;
+ 
+ 	/* Initialize the PD pool */
+
