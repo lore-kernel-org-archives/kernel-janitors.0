@@ -1,47 +1,78 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Dec 2013 17:23:38 +0000
-Subject: [PATCH 9/11] ipw2x00: use ether_addr_equal_64bits
-Message-Id: <1388427307-8691-10-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:54:59 +0000
+Subject: [PATCH 9/25]  fix error return code
+Message-Id: <1388357260-4843-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislav Yakovlev <stas.yakovlev@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hiral Patel <hiralpat@cisco.com>
+Cc: kernel-janitors@vger.kernel.org, Suma Ramars <sramars@cisco.com>, Brian Uchino <buchino@cisco.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
-used when each argument is an array within a structure that contains at
-least two bytes of data beyond the array.
+Set the return variable to an error code as done elsewhere in the function.
 
-The structure involved is
-libipw_network defined in drivers/net/wireless/ipw2x00/libipw.h
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-This was done using Coccinelle (http://coccinelle.lip6.fr/).
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The semantic patch used is rather long and can be found in message 0 of
-this patch series.
+Not tested.
 
- drivers/net/wireless/ipw2x00/libipw_rx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/fnic/fnic_main.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ipw2x00/libipw_rx.c b/drivers/net/wireless/ipw2x00/libipw_rx.c
-index 9ffe659..ce27859 100644
---- a/drivers/net/wireless/ipw2x00/libipw_rx.c
-+++ b/drivers/net/wireless/ipw2x00/libipw_rx.c
-@@ -1468,7 +1468,7 @@ static inline int is_same_network(struct libipw_network *src,
- 	 * as one network */
- 	return ((src->ssid_len = dst->ssid_len) &&
- 		(src->channel = dst->channel) &&
--		ether_addr_equal(src->bssid, dst->bssid) &&
-+		ether_addr_equal_64bits(src->bssid, dst->bssid) &&
- 		!memcmp(src->ssid, dst->ssid, src->ssid_len));
- }
+diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
+index 33e4ec2..a3472a1 100644
+--- a/drivers/scsi/fnic/fnic_main.c
++++ b/drivers/scsi/fnic/fnic_main.c
+@@ -731,17 +731,23 @@ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		spin_lock_init(&fnic->io_req_lock[i]);
  
+ 	fnic->io_req_pool = mempool_create_slab_pool(2, fnic_io_req_cache);
+-	if (!fnic->io_req_pool)
++	if (!fnic->io_req_pool) {
++		err = -ENOMEM;
+ 		goto err_out_free_resources;
++	}
+ 
+ 	pool = mempool_create_slab_pool(2, fnic_sgl_cache[FNIC_SGL_CACHE_DFLT]);
+-	if (!pool)
++	if (!pool) {
++		err = -ENOMEM;
+ 		goto err_out_free_ioreq_pool;
++	}
+ 	fnic->io_sgl_pool[FNIC_SGL_CACHE_DFLT] = pool;
+ 
+ 	pool = mempool_create_slab_pool(2, fnic_sgl_cache[FNIC_SGL_CACHE_MAX]);
+-	if (!pool)
++	if (!pool) {
++		err = -ENOMEM;
+ 		goto err_out_free_dflt_pool;
++	}
+ 	fnic->io_sgl_pool[FNIC_SGL_CACHE_MAX] = pool;
+ 
+ 	/* setup vlan config, hw inserts vlan header */
 
