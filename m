@@ -1,48 +1,74 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 09 Dec 2013 17:24:40 +0000
-Subject: Re: [patch v2] spi: bcm63xx-hsspi: checking for ERR_PTR instead of NULL
-Message-Id: <20131209172440.GA29268@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="bEH3Ad9qdU9b/Xs9"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:59:28 +0000
+Subject: [PATCH 5/25] IB/mlx4: fix error return code
+Message-Id: <1388357260-4843-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAOiHx=k87c_bFqFtJ7zJc9HxnjOEr2oMofNUsLkQbfQPrC04hQ@mail.gmail.com>
- <20131206141212.GA956@elgon.mountain>
-In-Reply-To: <20131206141212.GA956@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jonas Gorski <jogo@openwrt.org>, linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Roland Dreier <roland@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---bEH3Ad9qdU9b/Xs9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Set the return variable to an error code as done elsewhere in the function.
 
-On Fri, Dec 06, 2013 at 05:12:13PM +0300, Dan Carpenter wrote:
-> devm_request_and_ioremap() returns NULL on error, it doesn't return an
-> ERR_PTR().  This patch fixes it by switching to devm_ioremap_resource()
-> which is the prefered function anyway.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Applied, thanks.
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
---bEH3Ad9qdU9b/Xs9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+// </smpl>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-iQIcBAEBAgAGBQJSpfzVAAoJELSic+t+oim9gIsP+gLyT6X6TDxQckQmjZVi7Pl4
-CtZMoXUp0deg9RIUxUjXoaAsi9ABAPb8yDCS4NFeIwb6j2KCTmcII5PFkYXvVPp9
-RtL9P13gdkt3Aw2FWOhWeuPle2kCzCdXLuybE4uMGnY3DJfC+dZH93Q1qBgtS2YT
-R8Qma4SIsbwBVTctHU3m5askm1Rvlp/7KfAZlFLr8eMiRU6L78w83ealSLNt3YKt
-rozTJ7BOp2VUVywYyPEFbHk0YrWHclpLnVFI5wSQN9fvfg6LVIy1b8315WUpe+H/
-A2pAlYagHIZ4yigYJm5SU7G7bKAunpvgUfYyENv4yexcpXpotJaNOBdgEX5SrI3A
-+xR8ErTPgRggDRpoAbgmrbMDK1ap3MWkBZ3q/YnAFFBOc4NMct+Ewii/lvwS7LER
-hMySqXzHb4gGe988SqKmZ2SaPZHEabFIn/0iEihJ5fRAQOM+LBahr69HrS3Gv6Xu
-1sDxFAfMX/ThdOPmIOq46C9BzK2AHkqaoDdvGwMmLdswH/xMgEypbJnCK7gTAqso
-2grrgBQ2+D90sVAzQUagfrilXbVE1me1RznDbqGwOMNL/KISIgP+stqRN1HH2qyN
-J7j963evNcJrETEYmCUrIpMu0TKX3Mj3rvtF35AkAdNECV3Bukbz6kMvBaoniwBp
-5dtDHE7bs3mdXnVSFXdD
-=Hoi0
------END PGP SIGNATURE-----
+---
+Not tested.
 
---bEH3Ad9qdU9b/Xs9--
+ drivers/infiniband/hw/mlx4/sysfs.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/sysfs.c b/drivers/infiniband/hw/mlx4/sysfs.c
+index 97516eb..db2ea31 100644
+--- a/drivers/infiniband/hw/mlx4/sysfs.c
++++ b/drivers/infiniband/hw/mlx4/sysfs.c
+@@ -582,8 +582,10 @@ static int add_port(struct mlx4_ib_dev *dev, int port_num, int slave)
+ 	p->pkey_group.attrs  		alloc_group_attrs(show_port_pkey, store_port_pkey,
+ 				  dev->dev->caps.pkey_table_len[port_num]);
+-	if (!p->pkey_group.attrs)
++	if (!p->pkey_group.attrs) {
++		ret = -ENOMEM;
+ 		goto err_alloc;
++	}
+ 
+ 	ret = sysfs_create_group(&p->kobj, &p->pkey_group);
+ 	if (ret)
+@@ -591,8 +593,10 @@ static int add_port(struct mlx4_ib_dev *dev, int port_num, int slave)
+ 
+ 	p->gid_group.name  = "gid_idx";
+ 	p->gid_group.attrs = alloc_group_attrs(show_port_gid_idx, NULL, 1);
+-	if (!p->gid_group.attrs)
++	if (!p->gid_group.attrs) {
++		ret = -ENOMEM;
+ 		goto err_free_pkey;
++	}
+ 
+ 	ret = sysfs_create_group(&p->kobj, &p->gid_group);
+ 	if (ret)
+
