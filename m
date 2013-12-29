@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Dec 2013 21:56:18 +0000
-Subject: [PATCH 10/25] usb: gadget: fix error return code
-Message-Id: <1388357260-4843-11-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:57:33 +0000
+Subject: [PATCH 6/25]  fix error return code
+Message-Id: <1388357260-4843-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
@@ -41,19 +41,22 @@ Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 ---
 Not tested.
 
- drivers/usb/gadget/printer.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/block/pktcdvd.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/printer.c b/drivers/usb/gadget/printer.c
-index bf7a56b..92b55bd 100644
---- a/drivers/usb/gadget/printer.c
-+++ b/drivers/usb/gadget/printer.c
-@@ -1133,6 +1133,7 @@ static int __init printer_bind_config(struct usb_configuration *c)
- 				  NULL, "g_printer");
- 	if (IS_ERR(dev->pdev)) {
- 		ERROR(dev, "Failed to create device: g_printer\n");
-+		status = PTR_ERR(dev->pdev);
- 		goto fail;
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 3dda09a..a2af73d 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -706,7 +706,9 @@ static int pkt_generic_packet(struct pktcdvd_device *pd, struct packet_command *
+ 			     WRITE : READ, __GFP_WAIT);
+ 
+ 	if (cgc->buflen) {
+-		if (blk_rq_map_kern(q, rq, cgc->buffer, cgc->buflen, __GFP_WAIT))
++		ret = blk_rq_map_kern(q, rq, cgc->buffer, cgc->buflen,
++				      __GFP_WAIT);
++		if (ret)
+ 			goto out;
  	}
  
 
