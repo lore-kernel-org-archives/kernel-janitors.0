@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Dec 2013 21:54:52 +0000
-Subject: [PATCH 22/25] RDMA/nes: fix error return code
-Message-Id: <1388357260-4843-23-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:56:41 +0000
+Subject: [PATCH 16/25] block: fix error return code
+Message-Id: <1388357260-4843-17-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Faisal Latif <faisal.latif@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
@@ -41,24 +41,34 @@ Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 ---
 Not tested.
 
- drivers/infiniband/hw/nes/nes.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/cdrom/gdrom.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/nes/nes.c b/drivers/infiniband/hw/nes/nes.c
-index 4291410..353c7b0 100644
---- a/drivers/infiniband/hw/nes/nes.c
-+++ b/drivers/infiniband/hw/nes/nes.c
-@@ -675,8 +675,11 @@ static int nes_probe(struct pci_dev *pcidev, const struct pci_device_id *ent)
- 	INIT_DELAYED_WORK(&nesdev->work, nes_recheck_link_status);
- 
- 	/* Initialize network devices */
--	if ((netdev = nes_netdev_init(nesdev, mmio_regs)) = NULL)
-+	netdev = nes_netdev_init(nesdev, mmio_regs);
-+	if (netdev = NULL) {
-+		ret = -ENOMEM;
- 		goto bail7;
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index 51e75ad..93d29b1 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -807,16 +807,20 @@ static int probe_gdrom(struct platform_device *devptr)
+ 	if (err)
+ 		goto probe_fail_cmdirq_register;
+ 	gd.gdrom_rq = blk_init_queue(gdrom_request, &gdrom_lock);
+-	if (!gd.gdrom_rq)
++	if (!gd.gdrom_rq) {
++		err = -ENOMEM;
+ 		goto probe_fail_requestq;
 +	}
  
- 	/* Register network device */
- 	ret = register_netdev(netdev);
+ 	err = probe_gdrom_setupqueue();
+ 	if (err)
+ 		goto probe_fail_toc;
+ 
+ 	gd.toc = kzalloc(sizeof(struct gdromtoc), GFP_KERNEL);
+-	if (!gd.toc)
++	if (!gd.toc) {
++		err = -ENOMEM;
+ 		goto probe_fail_toc;
++	}
+ 	add_disk(gd.disk);
+ 	return 0;
+ 
 
