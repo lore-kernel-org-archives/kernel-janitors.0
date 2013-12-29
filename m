@@ -1,43 +1,59 @@
-From: roger <roger@hiddenengine.co.uk>
-Date: Thu, 05 Dec 2013 11:07:51 +0000
-Subject: Re: [patch] hwmon: prevent some divide by zeros in =?UTF-8?Q?FAN=5FTO=5FREG=28=29?=
-Message-Id: <db3f06d585a4dea3efe200f9e2f5fca6@mailserver.hiddenengine.co.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:54:14 +0000
+Subject: [PATCH 24/25]  fix error return code
+Message-Id: <1388357260-4843-25-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eddie Wai <eddie.wai@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On , Dan Carpenter wrote:
-> It's not enough to just test if "rpm" is zero, the "rpm * div" 
-> operation
-> could overflow and that could also lead to a divide by zero.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/hwmon/vt8231.c b/drivers/hwmon/vt8231.c
-> index 0e7017841f7d..923c18034a5f 100644
-> --- a/drivers/hwmon/vt8231.c
-> +++ b/drivers/hwmon/vt8231.c
-> @@ -145,7 +145,7 @@ static const u8 regtempmin[] = { 0x3a, 0x3e, 0x2c,
-> 0x2e, 0x30, 0x32 };
->   */
->  static inline u8 FAN_TO_REG(long rpm, int div)
->  {
-> -	if (rpm = 0)
-> +	if (rpm * div = 0)
->  		return 0;
->  	return clamp_val(1310720 / (rpm * div), 1, 255);
->  }
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Seems a reasonable improvement to me, so ACK'd.
+Set the return variable to an error code as done elsewhere in the function.
 
-> diff --git a/drivers/hwmon/lm78.c b/drivers/hwmon/lm78.c
-> index 6cf6bff79003..fc4578195674 100644
-SNIP
->  		return 255;
->  	return clamp_val((1350000 + rpm * div / 2) / (rpm * div), 1, 254);
->  }
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-- Roger
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+index 9b94850..d8cb194 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -2199,6 +2199,7 @@ static int _bnx2fc_create(struct net_device *netdev,
+ 	interface = bnx2fc_interface_create(hba, netdev, fip_mode);
+ 	if (!interface) {
+ 		printk(KERN_ERR PFX "bnx2fc_interface_create failed\n");
++		rc = -ENOMEM;
+ 		goto ifput_err;
+ 	}
+ 
+
