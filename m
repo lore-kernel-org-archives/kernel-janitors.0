@@ -1,19 +1,20 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Dec 2013 21:57:33 +0000
-Subject: [PATCH 6/25]  fix error return code
-Message-Id: <1388357260-4843-7-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:59:33 +0000
+Subject: [PATCH 3/25]  fix error return code
+Message-Id: <1388357260-4843-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Set the return variable to an error code as done elsewhere in the function.
+The rest of the function uses ret to store the return value, even setting
+ret to i a few lines before this, so return ret instead of i.
 
 A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
@@ -41,22 +42,20 @@ Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 ---
 Not tested.
 
- drivers/block/pktcdvd.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/usb/dvb-usb-v2/ec168.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 3dda09a..a2af73d 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -706,7 +706,9 @@ static int pkt_generic_packet(struct pktcdvd_device *pd, struct packet_command *
- 			     WRITE : READ, __GFP_WAIT);
+diff --git a/drivers/media/usb/dvb-usb-v2/ec168.c b/drivers/media/usb/dvb-usb-v2/ec168.c
+index 5c68f39..0c2b377 100644
+--- a/drivers/media/usb/dvb-usb-v2/ec168.c
++++ b/drivers/media/usb/dvb-usb-v2/ec168.c
+@@ -170,7 +170,7 @@ static int ec168_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msg[],
  
- 	if (cgc->buflen) {
--		if (blk_rq_map_kern(q, rq, cgc->buffer, cgc->buflen, __GFP_WAIT))
-+		ret = blk_rq_map_kern(q, rq, cgc->buffer, cgc->buflen,
-+				      __GFP_WAIT);
-+		if (ret)
- 			goto out;
- 	}
+ error:
+ 	mutex_unlock(&d->i2c_mutex);
+-	return i;
++	return ret;
+ }
  
+ static u32 ec168_i2c_func(struct i2c_adapter *adapter)
 
