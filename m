@@ -1,64 +1,71 @@
-From: Emmanuel Grumbach <egrumbach@gmail.com>
-Date: Tue, 31 Dec 2013 06:26:47 +0000
-Subject: Re: [PATCH 4/11] use ether_addr_equal_64bits
-Message-Id: <CANUX_P0PX1g8uHJUHYoB4UyMMgbtLas0_pf4TYrLTgND5V37rg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 29 Dec 2013 21:58:02 +0000
+Subject: Re: [PATCH 19/25] fix error return code
+Message-Id: <CAMuHMdWQ5oiXsL7j3T0yuDhFe6uumwcv0S1Ym-L+uTwqqAvCcA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1388427307-8691-5-git-send-email-Julia.Lawall@lip6.fr>
-	<1388429761.4410.1.camel@jlt4.sipsolutions.net>
-	<alpine.DEB.2.02.1312302057420.2209@localhost6.localdomain6>
-	<1388438724.4573.2.camel@jlt4.sipsolutions.net>
-	<20131230215701.GA4938@khazad-dum.debian.net>
-	<1388445188.18164.0.camel@jlt4.sipsolutions.net>
-In-Reply-To: <1388445188.18164.0.camel@jlt4.sipsolutions.net>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1388357260-4843-20-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-20-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Geoff Levand <geoff@infradead.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "James E.J. Bottomley" <JBottomley@parallels.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "cbe-oss-dev@lists.ozlabs.org" <cbe-oss-dev@lists.ozlabs.org>, scsi <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 31, 2013 at 1:13 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
+On Sun, Dec 29, 2013 at 11:47 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 >
-> On Mon, 2013-12-30 at 19:57 -0200, Henrique de Moraes Holschuh wrote:
-> > On Mon, 30 Dec 2013, Johannes Berg wrote:
-> > > On Mon, 2013-12-30 at 20:58 +0100, Julia Lawall wrote:
-> > > > > Is there any way we could catch (sparse, or some other script?) that
-> > > > > struct reorganising won't break the condition needed ("within a
-> > > > > structure that contains at least two more bytes")?
-> > > >
-> > > > What kind of reorganizing could happen?  Do you mean that the programmer
-> > > > might do at some time in the future, or something the compiler might do?
-> > >
-> > > I'm just thinking of a programmer, e.g. changing a struct like this:
-> > >
-> > >  struct foo {
-> > >    u8 addr[ETH_ALEN];
-> > > -  u16 dummy;
-> > >  };
-> > >
-> > > for example.
-> >
-> > That is easily resolved by:
-> >
-> > struct foo {
-> >       u8 addr[ETH_ALEN];
-> >       u16 required_padding;   /* do not remove upon pain of death */
-> > };
+> Set the return variable to an error code as done elsewhere in the function.
 >
-> That'd be a stupid waste of struct space. If anything, there should be
-> *only* a comment saying that at least two bytes are needed - I'd still
-> prefer an automated check.
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
 >
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+>
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Frankly I am not sure I like the patch. This flow is not a fast path
-at all. While I don't really care for the waste in iwlwifi (because
-there isn't), I don't see the real point is make the code more
-sensitive to changes to earn basically nothing.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-This flow happens only upon association which means a few times an hour maybe...
-The only advantage I see here is that people like me who don't always
-have a chance to read / write much code outside their little tiny
-boring driver get to know about this kind of things. So, from an
-educational point of view - this is cool.
-But education is one thing, and the code is another.
+> ---
+> Not tested.
+>
+>  drivers/scsi/ps3rom.c |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/scsi/ps3rom.c b/drivers/scsi/ps3rom.c
+> index e6e2a30..04d77ce 100644
+> --- a/drivers/scsi/ps3rom.c
+> +++ b/drivers/scsi/ps3rom.c
+> @@ -387,6 +387,7 @@ static int ps3rom_probe(struct ps3_system_bus_device *_dev)
+>         if (!host) {
+>                 dev_err(&dev->sbd.core, "%s:%u: scsi_host_alloc failed\n",
+>                         __func__, __LINE__);
+> +               error = -ENOMEM;
+>                 goto fail_teardown;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
