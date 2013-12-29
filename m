@@ -1,38 +1,114 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Date: Mon, 30 Dec 2013 18:10:10 +0000
-Subject: Re: [PATCH 3/11] mac80211: use ether_addr_equal_64bits
-Message-Id: <1458346.msaUrcf9Zq@debian64>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:53:07 +0000
+Subject: [PATCH 21/25] fujitsu-laptop: fix error return code
+Message-Id: <1388357260-4843-22-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr> <1388427307-8691-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388427307-8691-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Woithe <jwoithe@just42.net>
+Cc: kernel-janitors@vger.kernel.org, Matthew Garrett <matthew.garrett@nebula.com>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Subject: p54: use ether_addr_equal_64bits
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Monday, December 30, 2013 07:14:59 PM you wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
-> used when each argument is an array within a structure that contains at
-> least two bytes of data beyond the array.
-> 
-> The structures involved are:
-> ieee80211_hdr defined in include/linux/ieee80211.h and
-> p54_common defined in drivers/net/wireless/p54/p54.h
-> 
-> This was done using Coccinelle (http://coccinelle.lip6.fr/).
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+These functions mix the use of result and error.  In acpi_fujitsu_add,
+result does not seem useful; it would seem reasonable to propagate the
+return value of acpi_bus_update_power in an error case.  On the other hand,
+in the case of acpi_fujitsu_hotkey_add, there is an initialization of
+result that can lead to what looks like a failure case, but that does not
+abort the function.  The variable result is kept for this case.
 
-Alright, I changed the subject to "p54: ..." (John, can you do that, or do
-you want another patch?). Since this has not much to do with mac80211. 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Acked-by: Christian Lamparter <chunkeey@googlemail.com>
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-Regards,
+// </smpl>
 
-Christian
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.  Not sure to be doing the right thing with result in the second
+case.
+
+ drivers/platform/x86/fujitsu-laptop.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+index 9d30d69..be02bcc 100644
+--- a/drivers/platform/x86/fujitsu-laptop.c
++++ b/drivers/platform/x86/fujitsu-laptop.c
+@@ -633,7 +633,6 @@ static struct dmi_system_id fujitsu_dmi_table[] = {
+ 
+ static int acpi_fujitsu_add(struct acpi_device *device)
+ {
+-	int result = 0;
+ 	int state = 0;
+ 	struct input_dev *input;
+ 	int error;
+@@ -669,8 +668,8 @@ static int acpi_fujitsu_add(struct acpi_device *device)
+ 	if (error)
+ 		goto err_free_input_dev;
+ 
+-	result = acpi_bus_update_power(fujitsu->acpi_handle, &state);
+-	if (result) {
++	error = acpi_bus_update_power(fujitsu->acpi_handle, &state);
++	if (error) {
+ 		pr_err("Error reading power state\n");
+ 		goto err_unregister_input_dev;
+ 	}
+@@ -700,7 +699,7 @@ static int acpi_fujitsu_add(struct acpi_device *device)
+ 		fujitsu->max_brightness = FUJITSU_LCD_N_LEVELS;
+ 	get_lcd_level();
+ 
+-	return result;
++	return 0;
+ 
+ err_unregister_input_dev:
+ 	input_unregister_device(input);
+@@ -708,7 +707,7 @@ err_unregister_input_dev:
+ err_free_input_dev:
+ 	input_free_device(input);
+ err_stop:
+-	return result;
++	return error;
+ }
+ 
+ static int acpi_fujitsu_remove(struct acpi_device *device)
+@@ -831,8 +830,8 @@ static int acpi_fujitsu_hotkey_add(struct acpi_device *device)
+ 	if (error)
+ 		goto err_free_input_dev;
+ 
+-	result = acpi_bus_update_power(fujitsu_hotkey->acpi_handle, &state);
+-	if (result) {
++	error = acpi_bus_update_power(fujitsu_hotkey->acpi_handle, &state);
++	if (error) {
+ 		pr_err("Error reading power state\n");
+ 		goto err_unregister_input_dev;
+ 	}
+@@ -907,7 +906,7 @@ err_free_input_dev:
+ err_free_fifo:
+ 	kfifo_free(&fujitsu_hotkey->fifo);
+ err_stop:
+-	return result;
++	return error;
+ }
+ 
+ static int acpi_fujitsu_hotkey_remove(struct acpi_device *device)
+
