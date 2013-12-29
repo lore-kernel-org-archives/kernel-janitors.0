@@ -1,99 +1,106 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Date: Mon, 02 Dec 2013 09:15:59 +0000
-Subject: [PATCH v2] drivers: phy: tweaks to phy_create()
-Message-Id: <1385975039-31835-1-git-send-email-kishon@ti.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:56:34 +0000
+Subject: [PATCH 18/25] mtd: nand: fix error return code
+Message-Id: <1388357260-4843-19-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com, linux-kernel@vger.kernel.org, kishon@ti.com
-Cc: gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org, t.figa@samsung.com, balbi@ti.com, s.nawrocki@samsung.com
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-If this was called with a NULL "dev" then it lead to a NULL dereference
-when we called dev_WARN().  I have changed it to WARN_ON() so that we
-get a stack dump and can fix the caller.
+Set the return variable to an error code as done elsewhere in the function.
 
-The rest of this patch is just cleanup like returning directly instead
-of having do-nothing gotos.  Using descriptive labels instead of
-GW-BASIC style "err0" and "err1".  I also flipped the order of
-put_device() and ida_remove() so they are a mirror reflection of the
-order they were allocated.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Changes from v1:
-rebased to git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git fixes
-since the original patch contains a fix which was already fixed.
+Not tested.
 
- drivers/phy/phy-core.c |   26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
+ drivers/mtd/nand/fsmc_nand.c    |    3 +++
+ drivers/mtd/tests/oobtest.c     |    1 +
+ drivers/mtd/tests/pagetest.c    |    1 +
+ drivers/mtd/tests/subpagetest.c |    1 +
+ 4 files changed, 6 insertions(+)
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index 712b358..58e0e97 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -437,23 +437,18 @@ struct phy *phy_create(struct device *dev, const struct phy_ops *ops,
- 	int id;
- 	struct phy *phy;
+diff --git a/drivers/mtd/nand/fsmc_nand.c b/drivers/mtd/nand/fsmc_nand.c
+index 8b27522..6f8c4f5 100644
+--- a/drivers/mtd/nand/fsmc_nand.c
++++ b/drivers/mtd/nand/fsmc_nand.c
+@@ -1040,12 +1040,15 @@ static int __init fsmc_nand_probe(struct platform_device *pdev)
+ 				pdata->read_dma_priv);
+ 		if (!host->read_dma_chan) {
+ 			dev_err(&pdev->dev, "Unable to get read dma channel\n");
++			ret = -EBUSY;
+ 			goto err_req_read_chnl;
+ 		}
+ 		host->write_dma_chan = dma_request_channel(mask, filter,
+ 				pdata->write_dma_priv);
+ 		if (!host->write_dma_chan) {
+ 			dev_err(&pdev->dev, "Unable to get write dma channel\n");
++
++			ret = -EBUSY;
+ 			goto err_req_write_chnl;
+ 		}
+ 		nand->read_buf = fsmc_read_buf_dma;
+diff --git a/drivers/mtd/tests/oobtest.c b/drivers/mtd/tests/oobtest.c
+index 2e9e2d1..26688e9 100644
+--- a/drivers/mtd/tests/oobtest.c
++++ b/drivers/mtd/tests/oobtest.c
+@@ -291,6 +291,7 @@ static int __init mtd_oobtest_init(void)
  
--	if (!dev) {
--		dev_WARN(dev, "no device provided for PHY\n");
--		ret = -EINVAL;
--		goto err0;
--	}
-+	if (WARN_ON(!dev))
-+		return ERR_PTR(-EINVAL);
- 
- 	phy = kzalloc(sizeof(*phy), GFP_KERNEL);
--	if (!phy) {
--		ret = -ENOMEM;
--		goto err0;
--	}
-+	if (!phy)
-+		return ERR_PTR(-ENOMEM);
- 
- 	id = ida_simple_get(&phy_ida, 0, 0, GFP_KERNEL);
- 	if (id < 0) {
- 		dev_err(dev, "unable to get id\n");
- 		ret = id;
--		goto err1;
-+		goto free_phy;
+ 	if (!mtd_type_is_nand(mtd)) {
+ 		pr_info("this test requires NAND flash\n");
++		err = -ENODEV;
+ 		goto out;
  	}
  
- 	device_initialize(&phy->dev);
-@@ -468,11 +463,11 @@ struct phy *phy_create(struct device *dev, const struct phy_ops *ops,
+diff --git a/drivers/mtd/tests/pagetest.c b/drivers/mtd/tests/pagetest.c
+index ed2d3f6..9a84460 100644
+--- a/drivers/mtd/tests/pagetest.c
++++ b/drivers/mtd/tests/pagetest.c
+@@ -355,6 +355,7 @@ static int __init mtd_pagetest_init(void)
  
- 	ret = dev_set_name(&phy->dev, "phy-%s.%d", dev_name(dev), id);
- 	if (ret)
--		goto err2;
-+		goto put_dev;
+ 	if (!mtd_type_is_nand(mtd)) {
+ 		pr_info("this test requires NAND flash\n");
++		err = -ENODEV;
+ 		goto out;
+ 	}
  
- 	ret = device_add(&phy->dev);
- 	if (ret)
--		goto err2;
-+		goto put_dev;
+diff --git a/drivers/mtd/tests/subpagetest.c b/drivers/mtd/tests/subpagetest.c
+index a876371..2baa93d 100644
+--- a/drivers/mtd/tests/subpagetest.c
++++ b/drivers/mtd/tests/subpagetest.c
+@@ -301,6 +301,7 @@ static int __init mtd_subpagetest_init(void)
  
- 	if (pm_runtime_enabled(dev)) {
- 		pm_runtime_enable(&phy->dev);
-@@ -481,12 +476,11 @@ struct phy *phy_create(struct device *dev, const struct phy_ops *ops,
+ 	if (!mtd_type_is_nand(mtd)) {
+ 		pr_info("this test requires NAND flash\n");
++		err = -ENODEV;
+ 		goto out;
+ 	}
  
- 	return phy;
- 
--err2:
--	ida_remove(&phy_ida, phy->id);
-+put_dev:
- 	put_device(&phy->dev);
--err1:
-+	ida_remove(&phy_ida, phy->id);
-+free_phy:
- 	kfree(phy);
--err0:
- 	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL_GPL(phy_create);
--- 
-1.7.10.4
 
