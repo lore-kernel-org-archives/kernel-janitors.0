@@ -1,48 +1,59 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Dec 2013 17:23:14 +0000
-Subject: [PATCH 5/11] mwl8k: use ether_addr_equal_64bits
-Message-Id: <1388427307-8691-6-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 22:00:25 +0000
+Subject: [PATCH 2/25] rsxx: fix error return code
+Message-Id: <1388357260-4843-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lennert Buytenhek <buytenh@wantstofly.org>
-Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Joshua Morris <josh.h.morris@us.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, Philip Kelleher <pjk1939@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
-used when each argument is an array within a structure that contains at
-least two bytes of data beyond the array.
+Set the return variable to an error code as done elsewhere in the function.
 
-The structures involved are:
-ieee80211_hdr defined in include/linux/ieee80211.h and
-mwl8k_priv defined in drivers/net/wireless/mwl8k.c
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-This was done using Coccinelle (http://coccinelle.lip6.fr/).
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The semantic patch used is rather long and can be found in message 0 of
-this patch series.
+Not tested.
 
- drivers/net/wireless/mwl8k.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/rsxx/core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/mwl8k.c b/drivers/net/wireless/mwl8k.c
-index b953ad6..13c9ac5 100644
---- a/drivers/net/wireless/mwl8k.c
-+++ b/drivers/net/wireless/mwl8k.c
-@@ -1258,7 +1258,7 @@ mwl8k_capture_bssid(struct mwl8k_priv *priv, struct ieee80211_hdr *wh)
- {
- 	return priv->capture_beacon &&
- 		ieee80211_is_beacon(wh->frame_control) &&
--		ether_addr_equal(wh->addr3, priv->capture_bssid);
-+		ether_addr_equal_64bits(wh->addr3, priv->capture_bssid);
- }
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index a8de2ee..fa8077a 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -942,6 +942,7 @@ static int rsxx_pci_probe(struct pci_dev *dev,
+ 	card->event_wq = create_singlethread_workqueue(DRIVER_NAME"_event");
+ 	if (!card->event_wq) {
+ 		dev_err(CARD_TO_DEV(card), "Failed card event setup.\n");
++		st = -ENOMEM;
+ 		goto failed_event_handler;
+ 	}
  
- static inline void mwl8k_save_beacon(struct ieee80211_hw *hw,
 
