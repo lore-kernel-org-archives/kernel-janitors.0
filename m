@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 29 Dec 2013 22:00:25 +0000
-Subject: [PATCH 2/25] rsxx: fix error return code
-Message-Id: <1388357260-4843-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:53:08 +0000
+Subject: [PATCH 20/25]  fix error return code
+Message-Id: <1388357260-4843-21-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joshua Morris <josh.h.morris@us.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, Philip Kelleher <pjk1939@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
@@ -41,19 +41,59 @@ Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 ---
 Not tested.
 
- drivers/block/rsxx/core.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/tuners/e4000.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index a8de2ee..fa8077a 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -942,6 +942,7 @@ static int rsxx_pci_probe(struct pci_dev *dev,
- 	card->event_wq = create_singlethread_workqueue(DRIVER_NAME"_event");
- 	if (!card->event_wq) {
- 		dev_err(CARD_TO_DEV(card), "Failed card event setup.\n");
-+		st = -ENOMEM;
- 		goto failed_event_handler;
+diff --git a/drivers/media/tuners/e4000.c b/drivers/media/tuners/e4000.c
+index 72971a8..40c1da7 100644
+--- a/drivers/media/tuners/e4000.c
++++ b/drivers/media/tuners/e4000.c
+@@ -243,8 +243,10 @@ static int e4000_set_params(struct dvb_frontend *fe)
+ 			break;
  	}
  
+-	if (i = ARRAY_SIZE(e4000_pll_lut))
++	if (i = ARRAY_SIZE(e4000_pll_lut)) {
++		ret = -EINVAL;
+ 		goto err;
++	}
+ 
+ 	/*
+ 	 * Note: Currently f_vco overflows when c->frequency is 1 073 741 824 Hz
+@@ -271,8 +273,10 @@ static int e4000_set_params(struct dvb_frontend *fe)
+ 			break;
+ 	}
+ 
+-	if (i = ARRAY_SIZE(e400_lna_filter_lut))
++	if (i = ARRAY_SIZE(e400_lna_filter_lut)) {
++		ret = -EINVAL;
+ 		goto err;
++	}
+ 
+ 	ret = e4000_wr_reg(priv, 0x10, e400_lna_filter_lut[i].val);
+ 	if (ret < 0)
+@@ -284,8 +288,10 @@ static int e4000_set_params(struct dvb_frontend *fe)
+ 			break;
+ 	}
+ 
+-	if (i = ARRAY_SIZE(e4000_if_filter_lut))
++	if (i = ARRAY_SIZE(e4000_if_filter_lut)) {
++		ret = -EINVAL;
+ 		goto err;
++	}
+ 
+ 	buf[0] = e4000_if_filter_lut[i].reg11_val;
+ 	buf[1] = e4000_if_filter_lut[i].reg12_val;
+@@ -300,8 +306,10 @@ static int e4000_set_params(struct dvb_frontend *fe)
+ 			break;
+ 	}
+ 
+-	if (i = ARRAY_SIZE(e4000_band_lut))
++	if (i = ARRAY_SIZE(e4000_band_lut)) {
++		ret = -EINVAL;
+ 		goto err;
++	}
+ 
+ 	ret = e4000_wr_reg(priv, 0x07, e4000_band_lut[i].reg07_val);
+ 	if (ret < 0)
 
