@@ -1,57 +1,71 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 30 Dec 2013 17:22:00 +0000
-Subject: [PATCH 2/11] ath5k: use ether_addr_equal_64bits
-Message-Id: <1388427307-8691-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:53:09 +0000
+Subject: [PATCH 15/25]  fix error return code
+Message-Id: <1388357260-4843-18-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jirislaby@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@lists.ath5k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
-used when each argument is an array within a structure that contains at
-least two bytes of data beyond the array.
+Set the return variable to an error code as done elsewhere in the function.
 
-The structures involved are:
-ieee80211_mgmt defined in include/linux/ieee80211.h and
-ath_common defined in drivers/net/wireless/ath/ath.h
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-This was done using Coccinelle (http://coccinelle.lip6.fr/).
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The semantic patch used is rather long and can be found in message 0 of
-this patch series.
+Not tested.
 
- drivers/net/wireless/ath/ath5k/base.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/umem.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath5k/base.c b/drivers/net/wireless/ath/ath5k/base.c
-index 69f58b0..6396ad4 100644
---- a/drivers/net/wireless/ath/ath5k/base.c
-+++ b/drivers/net/wireless/ath/ath5k/base.c
-@@ -1245,7 +1245,7 @@ ath5k_check_ibss_tsf(struct ath5k_hw *ah, struct sk_buff *skb,
+diff --git a/drivers/block/umem.c b/drivers/block/umem.c
+index 4cf81b5..371e819 100644
+--- a/drivers/block/umem.c
++++ b/drivers/block/umem.c
+@@ -881,6 +881,7 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	if (card->mm_pages[0].desc = NULL ||
+ 	    card->mm_pages[1].desc = NULL) {
+ 		dev_printk(KERN_ERR, &card->dev->dev, "alloc failed\n");
++		ret = -ENOMEM;
+ 		goto failed_alloc;
+ 	}
+ 	reset_page(&card->mm_pages[0]);
+@@ -891,8 +892,10 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	card->biotail = &card->bio;
  
- 	if (ieee80211_is_beacon(mgmt->frame_control) &&
- 	    le16_to_cpu(mgmt->u.beacon.capab_info) & WLAN_CAPABILITY_IBSS &&
--	    ether_addr_equal(mgmt->bssid, common->curbssid)) {
-+	    ether_addr_equal_64bits(mgmt->bssid, common->curbssid)) {
- 		/*
- 		 * Received an IBSS beacon with the same BSSID. Hardware *must*
- 		 * have updated the local TSF. We have to work around various
-@@ -1309,7 +1309,7 @@ ath5k_update_beacon_rssi(struct ath5k_hw *ah, struct sk_buff *skb, int rssi)
+ 	card->queue = blk_alloc_queue(GFP_KERNEL);
+-	if (!card->queue)
++	if (!card->queue) {
++		ret = -ENOMEM;
+ 		goto failed_alloc;
++	}
  
- 	/* only beacons from our BSSID */
- 	if (!ieee80211_is_beacon(mgmt->frame_control) ||
--	    !ether_addr_equal(mgmt->bssid, common->curbssid))
-+	    !ether_addr_equal_64bits(mgmt->bssid, common->curbssid))
- 		return;
- 
- 	ewma_add(&ah->ah_beacon_rssi_avg, rssi);
+ 	blk_queue_make_request(card->queue, mm_make_request);
+ 	card->queue->queue_lock = &card->lock;
 
