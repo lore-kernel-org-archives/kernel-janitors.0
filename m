@@ -1,35 +1,92 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Dec 2013 09:49:23 +0000
-Subject: [patch v2] tgafb: potential NULL dereference in init
-Message-Id: <20131216094922.GE13831@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 21:59:00 +0000
+Subject: [PATCH 7/25] net: fix error return code
+Message-Id: <1388357260-4843-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Geoff Levand <geoff@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, cbe-oss-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-Static checkers complain that there are paths where "tga_type_name" can
-be NULL.  I've re-arranged the code slightly so that's impossible.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Set the return variable to propagate any error code as done elsewhere in
+the function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-v1: had introduced a "dereferencing uninitialized variable" bug.  Thanks
-to Geert Uytterhoeven for catching that.
+Not tested.
 
-diff --git a/drivers/video/tgafb.c b/drivers/video/tgafb.c
-index f28674fea909..afd8887fd656 100644
---- a/drivers/video/tgafb.c
-+++ b/drivers/video/tgafb.c
-@@ -1496,10 +1496,9 @@ tgafb_init_fix(struct fb_info *info)
- 		if (tga_bus_tc)
- 			tga_type_name = "Digital ZLX-E3";
- 		break;
--	default:
--		tga_type_name = "Unknown";
--		break;
+ drivers/net/ethernet/toshiba/ps3_gelic_net.c |   18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.c b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+index f7f2ef4..d899d00 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_net.c
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+@@ -1739,12 +1739,14 @@ static int ps3_gelic_driver_probe(struct ps3_system_bus_device *dev)
+ 		GELIC_CARD_PORT_STATUS_CHANGED;
+ 
+ 
+-	if (gelic_card_init_chain(card, &card->tx_chain,
+-			card->descr, GELIC_NET_TX_DESCRIPTORS))
++	result = gelic_card_init_chain(card, &card->tx_chain,
++				       card->descr, GELIC_NET_TX_DESCRIPTORS);
++	if (result)
+ 		goto fail_alloc_tx;
+-	if (gelic_card_init_chain(card, &card->rx_chain,
+-				 card->descr + GELIC_NET_TX_DESCRIPTORS,
+-				 GELIC_NET_RX_DESCRIPTORS))
++	result = gelic_card_init_chain(card, &card->rx_chain,
++				       card->descr + GELIC_NET_TX_DESCRIPTORS,
++				       GELIC_NET_RX_DESCRIPTORS);
++	if (result)
+ 		goto fail_alloc_rx;
+ 
+ 	/* head of chain */
+@@ -1754,7 +1756,8 @@ static int ps3_gelic_driver_probe(struct ps3_system_bus_device *dev)
+ 		card->rx_top, card->tx_top, sizeof(struct gelic_descr),
+ 		GELIC_NET_RX_DESCRIPTORS);
+ 	/* allocate rx skbs */
+-	if (gelic_card_alloc_rx_skbs(card))
++	result = gelic_card_alloc_rx_skbs(card);
++	if (result)
+ 		goto fail_alloc_skbs;
+ 
+ 	spin_lock_init(&card->tx_lock);
+@@ -1772,7 +1775,8 @@ static int ps3_gelic_driver_probe(struct ps3_system_bus_device *dev)
  	}
-+	if (!tga_type_name)
-+		tga_type_name = "Unknown";
  
- 	strlcpy(info->fix.id, tga_type_name, sizeof(info->fix.id));
- 
+ #ifdef CONFIG_GELIC_WIRELESS
+-	if (gelic_wl_driver_probe(card)) {
++	result = gelic_wl_driver_probe(card);
++	if (result) {
+ 		dev_dbg(&dev->core, "%s: WL init failed\n", __func__);
+ 		goto fail_setup_netdev;
+ 	}
+
