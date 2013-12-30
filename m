@@ -1,53 +1,57 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Tue, 17 Dec 2013 17:28:13 +0000
-Subject: Re: [media] v4l: omap4iss: Restore irq flags correctly in omap4iss_video_buffer_next()
-Message-Id: <1389202.kRDKAQ31OA@avalon>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Dec 2013 17:22:00 +0000
+Subject: [PATCH 2/11] ath5k: use ether_addr_equal_64bits
+Message-Id: <1388427307-8691-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131216150612.GA15506@elgon.mountain>
-In-Reply-To: <20131216150612.GA15506@elgon.mountain>
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, Sergio Aguirre <sergio.a.aguirre@gmail.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@lists.ath5k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thank you for the patch.
+Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
+used when each argument is an array within a structure that contains at
+least two bytes of data beyond the array.
 
-On Monday 16 December 2013 18:06:12 Dan Carpenter wrote:
-> The spin_lock_irqsave() macro is not nestable.  The second call will
-> overwrite the first record of "flags" so the IRQs will not be enabled
-> correctly at the end of the function.
-> 
-> I haven't looked at all the callers but it could be that this function
-> is always called with interrupts disabled and the bug doesn't cause
-> problems in real life.
+The structures involved are:
+ieee80211_mgmt defined in include/linux/ieee80211.h and
+ath_common defined in drivers/net/wireless/ath/ath.h
 
-The function is called from interrupt handlers only. Would you like to 
-rephrase the commit message accordingly ?
+This was done using Coccinelle (http://coccinelle.lip6.fr/).
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/staging/media/omap4iss/iss_video.c
-> b/drivers/staging/media/omap4iss/iss_video.c index
-> 766491e6a8d0..c9b71c750b15 100644
-> --- a/drivers/staging/media/omap4iss/iss_video.c
-> +++ b/drivers/staging/media/omap4iss/iss_video.c
-> @@ -451,9 +451,9 @@ struct iss_buffer *omap4iss_video_buffer_next(struct
-> iss_video *video) }
-> 
->  	if (video->type = V4L2_BUF_TYPE_VIDEO_CAPTURE && pipe->input != NULL) {
-> -		spin_lock_irqsave(&pipe->lock, flags);
-> +		spin_lock(&pipe->lock);
->  		pipe->state &= ~ISS_PIPELINE_STREAM;
-> -		spin_unlock_irqrestore(&pipe->lock, flags);
-> +		spin_unlock(&pipe->lock);
->  	}
-> 
->  	buf = list_first_entry(&video->dmaqueue, struct iss_buffer,
--- 
-Regards,
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Laurent Pinchart
+---
+The semantic patch used is rather long and can be found in message 0 of
+this patch series.
+
+ drivers/net/wireless/ath/ath5k/base.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath5k/base.c b/drivers/net/wireless/ath/ath5k/base.c
+index 69f58b0..6396ad4 100644
+--- a/drivers/net/wireless/ath/ath5k/base.c
++++ b/drivers/net/wireless/ath/ath5k/base.c
+@@ -1245,7 +1245,7 @@ ath5k_check_ibss_tsf(struct ath5k_hw *ah, struct sk_buff *skb,
+ 
+ 	if (ieee80211_is_beacon(mgmt->frame_control) &&
+ 	    le16_to_cpu(mgmt->u.beacon.capab_info) & WLAN_CAPABILITY_IBSS &&
+-	    ether_addr_equal(mgmt->bssid, common->curbssid)) {
++	    ether_addr_equal_64bits(mgmt->bssid, common->curbssid)) {
+ 		/*
+ 		 * Received an IBSS beacon with the same BSSID. Hardware *must*
+ 		 * have updated the local TSF. We have to work around various
+@@ -1309,7 +1309,7 @@ ath5k_update_beacon_rssi(struct ath5k_hw *ah, struct sk_buff *skb, int rssi)
+ 
+ 	/* only beacons from our BSSID */
+ 	if (!ieee80211_is_beacon(mgmt->frame_control) ||
+-	    !ether_addr_equal(mgmt->bssid, common->curbssid))
++	    !ether_addr_equal_64bits(mgmt->bssid, common->curbssid))
+ 		return;
+ 
+ 	ewma_add(&ah->ah_beacon_rssi_avg, rssi);
 
