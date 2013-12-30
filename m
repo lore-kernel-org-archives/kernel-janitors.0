@@ -1,49 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 18 Dec 2013 14:25:39 +0000
-Subject: re: bnx2x: add afex support
-Message-Id: <20131218142539.GA25830@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Dec 2013 17:23:14 +0000
+Subject: [PATCH 5/11] mwl8k: use ether_addr_equal_64bits
+Message-Id: <1388427307-8691-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lennert Buytenhek <buytenh@wantstofly.org>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Barak Witkowski,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The patch a334872224a6: "bnx2x: add afex support" from Apr 23, 2012,
-leads to the following static checker warning:
-	drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c:5913 bnx2x_func_send_afex_update()
-	error: memset() 'rdata' too small (8 vs 24)
+Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
+used when each argument is an array within a structure that contains at
+least two bytes of data beyond the array.
 
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
-  5903  static inline int bnx2x_func_send_afex_update(struct bnx2x *bp,
-  5904                                           struct bnx2x_func_state_params *params)
-  5905  {
-  5906          struct bnx2x_func_sp_obj *o = params->f_obj;
-  5907          struct function_update_data *rdata = (void *)o->afex_rdata;
-  5908          dma_addr_t data_mapping = o->afex_rdata_mapping;
-  5909          struct bnx2x_func_afex_update_params *afex_update_params   5910                  &params->params.afex_update;
-  5911  
-  5912          memset(rdata, 0, sizeof(*rdata));
+The structures involved are:
+ieee80211_hdr defined in include/linux/ieee80211.h and
+mwl8k_priv defined in drivers/net/wireless/mwl8k.c
 
+This was done using Coccinelle (http://coccinelle.lip6.fr/).
 
-->afex_rdata is a void pointer but actually it always points to a
-struct afex_vif_list_ramrod_data.  You can verify this by looking at
-bnx2x__init_func_obj() and following the code through the call to
-bnx2x_init_func_obj().
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The bnx2x_func_sp_obj struct is 24 bytes and afex_vif_list_ramrod_data
-is 8 bytes so the static checker (pending changes to Smatch) seems
-correct that we are corrupting memory here.  I don't know what the fix
-is.
+---
+The semantic patch used is rather long and can be found in message 0 of
+this patch series.
 
-  5913  
-  5914          /* Fill the ramrod data with provided parameters */
-  5915          rdata->vif_id_change_flg = 1;
-  5916          rdata->vif_id = cpu_to_le16(afex_update_params->vif_id);
-  5917          rdata->afex_default_vlan_change_flg = 1;
-  5918          rdata->afex_default_vlan   5919                  cpu_to_le16(afex_update_params->afex_default_vlan);
+ drivers/net/wireless/mwl8k.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/net/wireless/mwl8k.c b/drivers/net/wireless/mwl8k.c
+index b953ad6..13c9ac5 100644
+--- a/drivers/net/wireless/mwl8k.c
++++ b/drivers/net/wireless/mwl8k.c
+@@ -1258,7 +1258,7 @@ mwl8k_capture_bssid(struct mwl8k_priv *priv, struct ieee80211_hdr *wh)
+ {
+ 	return priv->capture_beacon &&
+ 		ieee80211_is_beacon(wh->frame_control) &&
+-		ether_addr_equal(wh->addr3, priv->capture_bssid);
++		ether_addr_equal_64bits(wh->addr3, priv->capture_bssid);
+ }
+ 
+ static inline void mwl8k_save_beacon(struct ieee80211_hw *hw,
 
