@@ -1,59 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 16 Dec 2013 09:45:44 +0000
-Subject: [patch] [media] i2c: lm3560: missing unlocks on error in lm3560_set_ctrl()
-Message-Id: <20131216094544.GB13831@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Dec 2013 17:23:47 +0000
+Subject: [PATCH 10/11] at76c50x-usb: use ether_addr_equal_64bits
+Message-Id: <1388427307-8691-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Daniel Jeong <gshark.jeong@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There are several error paths which don't unlock on error.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
+used when each argument is an array within a structure that contains at
+least two bytes of data beyond the array.
 
-diff --git a/drivers/media/i2c/lm3560.c b/drivers/media/i2c/lm3560.c
-index ab5857d66f2d..fd96cfd6a9ec 100644
---- a/drivers/media/i2c/lm3560.c
-+++ b/drivers/media/i2c/lm3560.c
-@@ -214,20 +214,22 @@ static int lm3560_set_ctrl(struct v4l2_ctrl *ctrl, enum lm3560_led_id led_no)
- 	case V4L2_CID_FLASH_STROBE_SOURCE:
- 		rval = regmap_update_bits(flash->regmap,
- 					  REG_CONFIG1, 0x04, (ctrl->val) << 2);
--		if (rval < 0)
--			goto err_out;
- 		break;
- 
- 	case V4L2_CID_FLASH_STROBE:
--		if (flash->led_mode != V4L2_FLASH_LED_MODE_FLASH)
--			return -EBUSY;
-+		if (flash->led_mode != V4L2_FLASH_LED_MODE_FLASH) {
-+			rval = -EBUSY;
-+			goto err_unlock;
-+		}
- 		flash->led_mode = V4L2_FLASH_LED_MODE_FLASH;
- 		rval = lm3560_mode_ctrl(flash);
- 		break;
- 
- 	case V4L2_CID_FLASH_STROBE_STOP:
--		if (flash->led_mode != V4L2_FLASH_LED_MODE_FLASH)
--			return -EBUSY;
-+		if (flash->led_mode != V4L2_FLASH_LED_MODE_FLASH) {
-+			rval = -EBUSY;
-+			goto err_unlock;
-+		}
- 		flash->led_mode = V4L2_FLASH_LED_MODE_NONE;
- 		rval = lm3560_mode_ctrl(flash);
- 		break;
-@@ -247,8 +249,9 @@ static int lm3560_set_ctrl(struct v4l2_ctrl *ctrl, enum lm3560_led_id led_no)
- 		break;
- 	}
- 
-+err_unlock:
- 	mutex_unlock(&flash->lock);
--err_out:
-+
- 	return rval;
- }
- 
+The structures involved are:
+at76_priv defined in drivers/net/wireless/at76c50x-usb.h and
+ieee80211_mgmt defined in include/linux/ieee80211.h
+
+This was done using Coccinelle (http://coccinelle.lip6.fr/).
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch used is rather long and can be found in message 0 of
+this patch series.
+
+ drivers/net/wireless/at76c50x-usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/at76c50x-usb.c b/drivers/net/wireless/at76c50x-usb.c
+index 34c8a33..031d4ec 100644
+--- a/drivers/net/wireless/at76c50x-usb.c
++++ b/drivers/net/wireless/at76c50x-usb.c
+@@ -1721,7 +1721,7 @@ static void at76_mac80211_tx(struct ieee80211_hw *hw,
+ 	 * following workaround is necessary. If the TX frame is an
+ 	 * authentication frame extract the bssid and send the CMD_JOIN. */
+ 	if (mgmt->frame_control & cpu_to_le16(IEEE80211_STYPE_AUTH)) {
+-		if (!ether_addr_equal(priv->bssid, mgmt->bssid)) {
++		if (!ether_addr_equal_64bits(priv->bssid, mgmt->bssid)) {
+ 			memcpy(priv->bssid, mgmt->bssid, ETH_ALEN);
+ 			ieee80211_queue_work(hw, &priv->work_join_bssid);
+ 			dev_kfree_skb_any(skb);
+
