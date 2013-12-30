@@ -1,26 +1,36 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 30 Dec 2013 19:58:55 +0000
+From: Johannes Berg <johannes@sipsolutions.net>
+Date: Mon, 30 Dec 2013 21:25:24 +0000
 Subject: Re: [PATCH 4/11]  use ether_addr_equal_64bits
-Message-Id: <alpine.DEB.2.02.1312302057420.2209@localhost6.localdomain6>
+Message-Id: <1388438724.4573.2.camel@jlt4.sipsolutions.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>  <1388427307-8691-5-git-send-email-Julia.Lawall@lip6.fr>  (sfid-20131230_182319_112673_F481A1D3) <1388429761.4410.1.camel@jlt4.sipsolutions.net>
-In-Reply-To: <1388429761.4410.1.camel@jlt4.sipsolutions.net>
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+	  <1388427307-8691-5-git-send-email-Julia.Lawall@lip6.fr>
+	  (sfid-20131230_182319_112673_F481A1D3) <1388429761.4410.1.camel@jlt4.sipsolutions.net>
+	 <alpine.DEB.2.02.1312302057420.2209@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1312302057420.2209@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> Seems to be missing an "iwlwifi:" or so prefix, but I guess we can add
-> it when we take the patch ...
+On Mon, 2013-12-30 at 20:58 +0100, Julia Lawall wrote:
 
-Sorry.  Not sure why that happened.  I'll look into it.
+> > Is there any way we could catch (sparse, or some other script?) that
+> > struct reorganising won't break the condition needed ("within a
+> > structure that contains at least two more bytes")?
+> 
+> What kind of reorganizing could happen?  Do you mean that the programmer 
+> might do at some time in the future, or something the compiler might do?
 
-> Is there any way we could catch (sparse, or some other script?) that
-> struct reorganising won't break the condition needed ("within a
-> structure that contains at least two more bytes")?
+I'm just thinking of a programmer, e.g. changing a struct like this:
 
-What kind of reorganizing could happen?  Do you mean that the programmer 
-might do at some time in the future, or something the compiler might do?
+ struct foo {
+   u8 addr[ETH_ALEN];
+-  u16 dummy;
+ };
 
-julia
+for example.
+
+johannes
+
