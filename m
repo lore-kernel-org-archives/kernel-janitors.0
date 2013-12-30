@@ -1,23 +1,80 @@
-From: Amir Vadai <amirv@mellanox.com>
-Date: Tue, 17 Dec 2013 12:55:08 +0000
-Subject: Re: mlx4_en: Using blue flame support
-Message-Id: <52B049AC.50008@mellanox.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Dec 2013 17:22:47 +0000
+Subject: [PATCH 6/11] rtlwifi: use ether_addr_equal_64bits
+Message-Id: <1388427307-8691-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131217115730.GA10787@elgon.mountain>
-In-Reply-To: <20131217115730.GA10787@elgon.mountain>
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: kernel-janitors@vger.kernel.org, Chaoming Li <chaoming_li@realsil.com.cn>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 17/12/2013 13:57, Dan Carpenter wrote:
->    838          if (ring->bf_enabled && desc_size <= MAX_BF && !bounce && !vlan_tx_tag_present(skb)) {
->    839                  *(__be32 *) (&tx_desc->ctrl.vlan_tag) |= cpu_to_be32(ring->doorbell_qpn);
-> 
-> And then sometimes we overwrite them here.  It's not clear if this is
-> deliberate or accidental.  Maybe add a comment?
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yes, this is deliberate.
-I will send a patch to make it clearer.
+Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
+used when each argument is an array within a structure that contains at
+least two bytes of data beyond the array.
 
-Amir
+The structures involved are:
+ieee80211_hdr defined in include/linux/ieee80211.h and
+rtl_mac defined in drivers/net/wireless/rtlwifi/wifi.h
+
+This was done using Coccinelle (http://coccinelle.lip6.fr/).
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch used is rather long and can be found in message 0 of
+this patch series.
+
+ drivers/net/wireless/rtlwifi/base.c |    4 ++--
+ drivers/net/wireless/rtlwifi/ps.c   |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wireless/rtlwifi/ps.c b/drivers/net/wireless/rtlwifi/ps.c
+index 0d81f76..deedae3 100644
+--- a/drivers/net/wireless/rtlwifi/ps.c
++++ b/drivers/net/wireless/rtlwifi/ps.c
+@@ -478,7 +478,7 @@ void rtl_swlps_beacon(struct ieee80211_hw *hw, void *data, unsigned int len)
+ 		return;
+ 
+ 	/* and only beacons from the associated BSSID, please */
+-	if (!ether_addr_equal(hdr->addr3, rtlpriv->mac80211.bssid))
++	if (!ether_addr_equal_64bits(hdr->addr3, rtlpriv->mac80211.bssid))
+ 		return;
+ 
+ 	rtlpriv->psc.last_beacon = jiffies;
+@@ -923,7 +923,7 @@ void rtl_p2p_info(struct ieee80211_hw *hw, void *data, unsigned int len)
+ 		return;
+ 
+ 	/* and only beacons from the associated BSSID, please */
+-	if (!ether_addr_equal(hdr->addr3, rtlpriv->mac80211.bssid))
++	if (!ether_addr_equal_64bits(hdr->addr3, rtlpriv->mac80211.bssid))
+ 		return;
+ 
+ 	/* check if this really is a beacon */
+diff --git a/drivers/net/wireless/rtlwifi/base.c b/drivers/net/wireless/rtlwifi/base.c
+index fcf9b62..d63a12c 100644
+--- a/drivers/net/wireless/rtlwifi/base.c
++++ b/drivers/net/wireless/rtlwifi/base.c
+@@ -1293,7 +1293,7 @@ void rtl_beacon_statistic(struct ieee80211_hw *hw, struct sk_buff *skb)
+ 		return;
+ 
+ 	/* and only beacons from the associated BSSID, please */
+-	if (!ether_addr_equal(hdr->addr3, rtlpriv->mac80211.bssid))
++	if (!ether_addr_equal_64bits(hdr->addr3, rtlpriv->mac80211.bssid))
+ 		return;
+ 
+ 	rtlpriv->link_info.bcn_rx_inperiod++;
+@@ -1781,7 +1781,7 @@ void rtl_recognize_peer(struct ieee80211_hw *hw, u8 *data, unsigned int len)
+ 		return;
+ 
+ 	/* and only beacons from the associated BSSID, please */
+-	if (!ether_addr_equal(hdr->addr3, rtlpriv->mac80211.bssid))
++	if (!ether_addr_equal_64bits(hdr->addr3, rtlpriv->mac80211.bssid))
+ 		return;
+ 
+ 	if (rtl_find_221_ie(hw, data, len))
+
