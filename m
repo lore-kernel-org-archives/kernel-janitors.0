@@ -1,47 +1,62 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Date: Mon, 16 Dec 2013 17:24:11 +0000
-Subject: [PATCH 6/6] consolidate spin_lock/unlock waiting with spin_unlock_wait
-Message-Id: <20131216172411.GG15665@opentech.at>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Dec 2013 17:22:13 +0000
+Subject: [PATCH 8/11]  use ether_addr_equal_64bits
+Message-Id: <1388427307-8691-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
+used when each argument is an array within a structure that contains at
+least two bytes of data beyond the array.
 
-cpmac.c:
-consolidate spin_lock/unlock waiting with spin_unlock_wait()
+The structures involved are:
+ieee80211_hdr defined in include/linux/ieee80211.h
+ath_common defined in drivers/net/wireless/ath/ath.h
 
-config: ar7_defconfig (CONFIG_CPMAC=y)
-toolchain: gcc-4.4-mips-linux-gnu (emdebian wheezy)
+This was done using Coccinelle (http://coccinelle.lip6.fr/).
 
-Builds cpmac.o with unrelated warnings.
-drivers/net/ethernet/ti/cpmac.c: In function 'cpmac_start_xmit':
-drivers/net/ethernet/ti/cpmac.c:570: warning: comparison of distinct pointer types lacks a cast
-drivers/net/ethernet/ti/cpmac.c:1243:2: warning: #warning FIXME: unhardcode gpio&reset bits
-No runtime tests (no hardware available)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-CC: Florian Fainelli <florian@openwrt.org>
-Signed-off-by: Nicholas Mc Guire <der.herr@hofr.at>
 ---
- drivers/net/ethernet/ti/cpmac.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+The semantic patch used is rather long and can be found in message 0 of
+this patch series.
 
-diff --git a/drivers/net/ethernet/ti/cpmac.c b/drivers/net/ethernet/ti/cpmac.c
-index 2dc16b6..e62f812 100644
---- a/drivers/net/ethernet/ti/cpmac.c
-+++ b/drivers/net/ethernet/ti/cpmac.c
-@@ -579,8 +579,7 @@ static int cpmac_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 		return NETDEV_TX_BUSY;
+ drivers/net/wireless/ath/ath9k/htc_drv_txrx.c |    2 +-
+ drivers/net/wireless/ath/ath9k/recv.c         |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c b/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
+index c028df7..b41e008 100644
+--- a/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
++++ b/drivers/net/wireless/ath/ath9k/htc_drv_txrx.c
+@@ -1077,7 +1077,7 @@ static bool ath9k_rx_prepare(struct ath9k_htc_priv *priv,
+ 
+ 	if (ieee80211_is_beacon(hdr->frame_control) &&
+ 	    !is_zero_ether_addr(common->curbssid) &&
+-	    ether_addr_equal(hdr->addr3, common->curbssid)) {
++	    ether_addr_equal_64bits(hdr->addr3, common->curbssid)) {
+ 		s8 rssi = rxbuf->rxstatus.rs_rssi;
+ 
+ 		if (likely(last_rssi != ATH_RSSI_DUMMY_MARKER))
+diff --git a/drivers/net/wireless/ath/ath9k/recv.c b/drivers/net/wireless/ath/ath9k/recv.c
+index 3692b2a..0152318 100644
+--- a/drivers/net/wireless/ath/ath9k/recv.c
++++ b/drivers/net/wireless/ath/ath9k/recv.c
+@@ -982,7 +982,7 @@ static bool ath9k_is_mybeacon(struct ath_softc *sc, struct ieee80211_hdr *hdr)
+ 	if (ieee80211_is_beacon(hdr->frame_control)) {
+ 		RX_STAT_INC(rx_beacons);
+ 		if (!is_zero_ether_addr(common->curbssid) &&
+-		    ether_addr_equal(hdr->addr3, common->curbssid))
++		    ether_addr_equal_64bits(hdr->addr3, common->curbssid))
+ 			return true;
  	}
  
--	spin_lock(&priv->lock);
--	spin_unlock(&priv->lock);
-+	spin_unlock_wait(&priv->lock);
- 	desc->dataflags = CPMAC_SOP | CPMAC_EOP | CPMAC_OWN;
- 	desc->skb = skb;
- 	desc->data_mapping = dma_map_single(&dev->dev, skb->data, len,
--- 
-1.7.2.5
 
