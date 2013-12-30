@@ -1,50 +1,52 @@
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Date: Thu, 26 Dec 2013 11:18:34 +0000
-Subject: Re: mlx4: Structures and init/teardown for VF resource quotas
-Message-Id: <20131226131834.62b4ad2a@jpm-OptiPlex-GX620>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 30 Dec 2013 17:24:41 +0000
+Subject: [PATCH 1/11] rt2x00: use ether_addr_equal_64bits
+Message-Id: <1388427307-8691-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131218131833.GA16427@elgon.mountain>
-In-Reply-To: <20131218131833.GA16427@elgon.mountain>
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ivo van Doorn <IvDoorn@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Gertjan van Wingerde <gwingerde@gmail.com>, Helmut Schaa <helmut.schaa@googlemail.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, users@rt2x00.serialmonkey.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 18 Dec 2013 16:18:34 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
->    260  
->    261                  size > priv->mfunc.master.res_tracker.res_alloc[RES_QP].quota[slave]; ^^^^^
-> My concern here is that there are MLX4_MAX_NUM_VF (64) elements in the
-> .quota[] array and MLX4_MAX_NUM_SLAVES (80) slaves.
+Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
+used when each argument is an array within a structure that contains at
+least two bytes of data beyond the array.
 
-Hi Dan,
+The structures involved are:
+ieee80211_bar defined in include/linux/ieee80211.h and
+rt2x00_bar_list_entry defined in drivers/net/wireless/rt2x00/rt2x00.h.
 
-There is no problem here.  The ConnectX driver for SRIOV supports only
-1 PF.  The code snippet below indicates the initialization of the
-structure in the static-checker warning.
+This was done using Coccinelle (http://coccinelle.lip6.fr/).
 
-The array is malloc'ed as below, with num_vfs+1 elements.  num_vfs is
-the value given in the mlx4_core num_vfs module parameter.  Since slave
-numbers are given sequentially for the requested VFs, we will never
-overflow the array (e.g., if num_vfs = 5, say, then "slave" 0 is the
-PF, and slaves 1..5 are the VF slave numbers. Thus, an array of size 6
-is sufficient and will never overflow).
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Regards,
--Jack
+---
+The semantic patch used is rather long and can be found in message 0 of
+this patch series.
 
-======================
-int mlx4_init_resource_tracker(struct mlx4_dev *dev)
-{
-        struct mlx4_priv *priv = mlx4_priv(dev);
-        int i, j;
-        int t;
+ drivers/net/wireless/rt2x00/rt2x00dev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-        priv->mfunc.master.res_tracker.slave_list ....
-        for (i = 0; i < MLX4_NUM_OF_RESOURCE_TYPE; i++) {
-                struct resource_allocator *res_alloc                         &priv->mfunc.master.res_tracker.res_alloc[i];
-=>             res_alloc->quota = kmalloc((dev->num_vfs + 1) *
-                sizeof(int), GFP_KERNEL);
-
+diff --git a/drivers/net/wireless/rt2x00/rt2x00dev.c b/drivers/net/wireless/rt2x00/rt2x00dev.c
+index 00c3fae..2bde672 100644
+--- a/drivers/net/wireless/rt2x00/rt2x00dev.c
++++ b/drivers/net/wireless/rt2x00/rt2x00dev.c
+@@ -565,10 +565,10 @@ static void rt2x00lib_rxdone_check_ba(struct rt2x00_dev *rt2x00dev,
+ 
+ #undef TID_CHECK
+ 
+-		if (!ether_addr_equal(ba->ra, entry->ta))
++		if (!ether_addr_equal_64bits(ba->ra, entry->ta))
+ 			continue;
+ 
+-		if (!ether_addr_equal(ba->ta, entry->ra))
++		if (!ether_addr_equal_64bits(ba->ta, entry->ra))
+ 			continue;
+ 
+ 		/* Mark BAR since we received the according BA */
 
