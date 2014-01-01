@@ -1,84 +1,50 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 23 Jan 2014 10:48:43 +0000
-Subject: Re: [patch] ALSA: bits vs bytes bug in snd_card_create()
-Message-Id: <s5h7g9rj7n8.wl%tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 01 Jan 2014 12:11:37 +0000
+Subject: [PATCH] staging:iio: correct error check
+Message-Id: <1388581641-26782-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140123082128.GA28688@elgon.mountain>
-	<s5hwqhrt7qv.wl%tiwai@suse.de>
-In-Reply-To: <s5hwqhrt7qv.wl%tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Yacine Belkadi <yacine.belkadi.1@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-At Thu, 23 Jan 2014 09:36:24 +0100,
-Takashi Iwai wrote:
-> 
-> At Thu, 23 Jan 2014 11:21:28 +0300,
-> Dan Carpenter wrote:
-> > 
-> > The test here is intended intended to prevent shift wrapping bugs when
-> > we do "1U << idx2".  We should consider the number of bits in a u32
-> > instead of the number of bytes.
-> > 
-> > Fixes: 7bb2491b35a2 ('ALSA: Add kconfig to specify the max card numbers')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > WARNING:  Please check this one carefully because I might be wrong.
-> 
-> You're correct.  I obviously didn't test more than 4.
-> Applied (with Cc to stable) now, thanks.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I found there is another place doing it wrongly (a few lines above
-there), so fixed similarly in the same patch.
+iio_kfifo_allocate returns NULL in case of error.
 
-(And, yes, the code should be refactored; the patch will be sent soon
- later.)
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression *x;
+identifier f;
+statement S1,S2;
+@@
 
-Takashi
+*x = f(...);
+ if (x) { <+... when != if (...) S1 else S2
+     -ENOMEM ...+> }
+// </smpl>
 
--- 8< --
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] ALSA: bits vs bytes bug in snd_card_create()
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The test here is intended intended to prevent shift wrapping bugs when
-we do "1U << idx2".  We should consider the number of bits in a u32
-instead of the number of bytes.
-
-[fix another chunk similarly by tiwai]
-
-Fixes: 7bb2491b35a2 ('ALSA: Add kconfig to specify the max card numbers')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- sound/core/init.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/iio/impedance-analyzer/ad5933.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/core/init.c b/sound/core/init.c
-index 1351f22f651c..e3c93cd77ee7 100644
---- a/sound/core/init.c
-+++ b/sound/core/init.c
-@@ -170,7 +170,7 @@ int snd_card_create(int idx, const char *xid,
- 	if (idx < 0) {
- 		for (idx2 = 0; idx2 < SNDRV_CARDS; idx2++) {
- 			/* idx = -1 = 0xffff means: take any free slot */
--			if (idx2 < sizeof(int) && !(idx & (1U << idx2)))
-+			if (idx2 < 32 && !(idx & (1U << idx2)))
- 				continue;
- 			if (!test_bit(idx2, snd_cards_lock)) {
- 				if (module_slot_match(module, idx2)) {
-@@ -183,7 +183,7 @@ int snd_card_create(int idx, const char *xid,
- 	if (idx < 0) {
- 		for (idx2 = 0; idx2 < SNDRV_CARDS; idx2++) {
- 			/* idx = -1 = 0xffff means: take any free slot */
--			if (idx2 < sizeof(int) && !(idx & (1U << idx2)))
-+			if (idx2 < 32 && !(idx & (1U << idx2)))
- 				continue;
- 			if (!test_bit(idx2, snd_cards_lock)) {
- 				if (!slots[idx2] || !*slots[idx2]) {
--- 
-1.8.5.2
+diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+index 0a4298b..2b96665 100644
+--- a/drivers/staging/iio/impedance-analyzer/ad5933.c
++++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+@@ -629,7 +629,7 @@ static int ad5933_register_ring_funcs_and_init(struct iio_dev *indio_dev)
+ 	struct iio_buffer *buffer;
+ 
+ 	buffer = iio_kfifo_allocate(indio_dev);
+-	if (buffer)
++	if (!buffer)
+ 		return -ENOMEM;
+ 
+ 	iio_device_attach_buffer(indio_dev, buffer);
 
