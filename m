@@ -1,29 +1,28 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jan 2014 11:57:45 +0000
-Subject: [patch] skd: remove unneeded NULL check in skd_acquire_msix()
-Message-Id: <20140130115745.GH12734@elgon.mountain>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 02 Jan 2014 08:31:28 +0000
+Subject: Re: [PATCH 7/25] net: fix error return code
+Message-Id: <20140102.033128.1126194974741927303.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1388357260-4843-8-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-8-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia.Lawall@lip6.fr
+Cc: geoff@infradead.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, cbe-oss-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-kfree() takes NULL pointers and also the variable can never be NULL
-here anyway.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 29 Dec 2013 23:47:22 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Set the return variable to propagate any error code as done elsewhere in
+> the function.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+...
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index eb6e1e0e8db2..5ca729e6f644 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -4013,8 +4013,7 @@ static int skd_acquire_msix(struct skd_device *skdev)
- 	return 0;
- 
- msix_out:
--	if (entries)
--		kfree(entries);
-+	kfree(entries);
- 	skd_release_msix(skdev);
- 	return rc;
- }
+Applied.
