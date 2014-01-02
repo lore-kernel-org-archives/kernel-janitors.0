@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 02 Jan 2014 09:54:30 +0000
+Date: Thu, 02 Jan 2014 09:56:46 +0000
 Subject: Re: Yet another newbie hopes to join the fold
-Message-Id: <alpine.DEB.2.02.1401021051580.2182@localhost6.localdomain6>
+Message-Id: <alpine.DEB.2.02.1401021054590.2182@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CAPNrq4xas3OGqkv1027Bty+6CErw=Hk=RJxasPioED9KvkEGOA@mail.gmail.com>
 In-Reply-To: <CAPNrq4xas3OGqkv1027Bty+6CErw=Hk=RJxasPioED9KvkEGOA@mail.gmail.com>
@@ -34,14 +34,10 @@ On Thu, 2 Jan 2014, Gideon D'souza wrote:
 > go write a driver or is this something done only by a companies that
 > manufactures hardware?
 
-There are a number of tools that can be run from within the Linux scripts 
-directory that can find various kinds of bugs or opportunities for 
-improvement.
-
-Another option is to look at recent patches and see if those changes can 
-be applied elsewhere.
-
-You would want to be working on linux-next, to have the most recent 
-version of everyone's source code.
+Also, read carefully the documentation about submitting patches 
+(Documentation/SubmittingPatches) and do everything that it says.  And try 
+sending any patches to yourself and applying them before sending them to 
+the mailing list.  The get_maintainers.pl script helps you figure out who 
+to send your patches to.
 
 julia
