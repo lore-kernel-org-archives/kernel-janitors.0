@@ -1,69 +1,67 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Wed, 01 Jan 2014 12:35:55 +0000
-Subject: Re: [PATCH] staging:iio: correct error check
-Message-Id: <52C40BAB.4060703@kernel.org>
+From: Zhang Rui <rui.zhang@intel.com>
+Date: Thu, 02 Jan 2014 01:55:30 +0000
+Subject: Re: [PATCH 23/25] thermal: exynos: fix error return code
+Message-Id: <1388627730.3739.67.camel@rzhang1-mobl4>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388581641-26782-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388581641-26782-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1388357260-4843-24-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-24-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-
-
-On 01/01/14 13:07, Julia Lawall wrote:
+On Sun, 2013-12-29 at 23:47 +0100, Julia Lawall wrote:
 > From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> iio_kfifo_allocate returns NULL in case of error.
->
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->
+> 
+> Set the return variable to an error code as done elsewhere in the function.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
 > // <smpl>
-> @@
-> expression *x;
-> identifier f;
-> statement S1,S2;
-> @@
->
-> *x = f(...);
->   if (x) { <+... when != if (...) S1 else S2
->       -ENOMEM ...+> }
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+> 
 > // </smpl>
->
+> 
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Thanks. Certainly an 'interesting' bit of code :(
 
-Applied to the fixes-togreg branch of iio.git. Giving timing in the 
-current cycle and that it isn't a recent regression, this won't go
-in now until after 3.13 is released.
+applied.
 
-I've marked it for stable as well
-
-Jonathan
->
+thanks,
+rui
+> 
 > ---
->   drivers/staging/iio/impedance-analyzer/ad5933.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
-> index 0a4298b..2b96665 100644
-> --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
-> +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
-> @@ -629,7 +629,7 @@ static int ad5933_register_ring_funcs_and_init(struct iio_dev *indio_dev)
->   	struct iio_buffer *buffer;
->
->   	buffer = iio_kfifo_allocate(indio_dev);
-> -	if (buffer)
-> +	if (!buffer)
->   		return -ENOMEM;
->
->   	iio_device_attach_buffer(indio_dev, buffer);
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> Not tested.
+> 
+>  drivers/thermal/samsung/exynos_tmu.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 32f38b9..0d96a51 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -205,6 +205,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  skip_calib_data:
+>  	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
+>  		dev_err(&pdev->dev, "Invalid max trigger level\n");
+> +		ret = -EINVAL;
+>  		goto out;
+>  	}
+>  
+> 
+
+
