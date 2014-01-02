@@ -1,30 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 20 Jan 2014 10:31:16 +0000
-Subject: [patch] drm: use after free in drm_pci_exit()
-Message-Id: <20140120103116.GD14233@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 02 Jan 2014 22:45:05 +0000
+Subject: [PATCH 3/3] smsc9420: use named constants for pci_power_t values
+Message-Id: <1388706031-22180-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388706031-22180-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388706031-22180-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Steve Glendinning <steve.glendinning@shawell.net>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We can't use "dev" after we freed it on the line before.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Fixes: b3f2333de8e8 ('drm: restrict the device list for shadow attached drivers')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/gpu/drm/drm_pci.c b/drivers/gpu/drm/drm_pci.c
-index 5736aaa7e86c..f7af69bcf3f4 100644
---- a/drivers/gpu/drm/drm_pci.c
-+++ b/drivers/gpu/drm/drm_pci.c
-@@ -468,8 +468,8 @@ void drm_pci_exit(struct drm_driver *driver, struct pci_driver *pdriver)
- 	} else {
- 		list_for_each_entry_safe(dev, tmp, &driver->legacy_dev_list,
- 					 legacy_dev_list) {
--			drm_put_dev(dev);
- 			list_del(&dev->legacy_dev_list);
-+			drm_put_dev(dev);
- 		}
- 	}
- 	DRM_INFO("Module unloaded\n");
+// <smpl>
+@@
+expression e1,e2;
+@@
+
+pci_enable_wake(e1,
+- 0
++ PCI_D0
+,e2)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/smsc/smsc9420.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/smsc/smsc9420.c b/drivers/net/ethernet/smsc/smsc9420.c
+index 9d6effe..d3b967a 100644
+--- a/drivers/net/ethernet/smsc/smsc9420.c
++++ b/drivers/net/ethernet/smsc/smsc9420.c
+@@ -1540,7 +1540,7 @@ static int smsc9420_resume(struct pci_dev *pdev)
+ 
+ 	pci_set_master(pdev);
+ 
+-	err = pci_enable_wake(pdev, 0, 0);
++	err = pci_enable_wake(pdev, PCI_D0, 0);
+ 	if (err)
+ 		netif_warn(pd, ifup, pd->dev, "pci_enable_wake failed: %d\n",
+ 			   err);
+
