@@ -1,29 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 Jan 2014 06:50:51 +0000
-Subject: [patch] usb: phy: msm: tiny leak on error in probe()
-Message-Id: <20140121065051.GA14666@elgon.mountain>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Thu, 02 Jan 2014 12:51:10 +0000
+Subject: Re: [PATCH 12/25] HID: sony: fix error return code
+Message-Id: <alpine.LNX.2.00.1401021351000.14951@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr> <1388357260-4843-13-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-13-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Free "motog" on error.  This is more to appease the static checkers than
-a real worry.
+On Sun, 29 Dec 2013, Julia Lawall wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Currently the return variable ret is always 0.  Set it to other values in
+> error cases, as used in the direct return.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+> 
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/drivers/usb/phy/phy-msm-usb.c b/drivers/usb/phy/phy-msm-usb.c
-index 8546c8dccd51..64c9d14ea77d 100644
---- a/drivers/usb/phy/phy-msm-usb.c
-+++ b/drivers/usb/phy/phy-msm-usb.c
-@@ -1429,7 +1429,8 @@ static int __init msm_otg_probe(struct platform_device *pdev)
- 	motg->phy.otg = kzalloc(sizeof(struct usb_otg), GFP_KERNEL);
- 	if (!motg->phy.otg) {
- 		dev_err(&pdev->dev, "unable to allocate msm_otg\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto free_motg;
- 	}
- 
- 	motg->pdata = dev_get_platdata(&pdev->dev);
+Applied, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
