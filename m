@@ -1,54 +1,58 @@
-From: Wang Zhe <zhew@cs.unc.edu>
-Date: Wed, 29 Jan 2014 00:38:11 +0000
-Subject: Re: Getting Started with Kernel Janitors Project
-Message-Id: <CAEqxDEm8gC4vLapxsj-AV18P9zFQ-fYZ-sYdtjyzjVbKgsxdBw@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 02 Jan 2014 15:33:06 +0000
+Subject: [PATCH] net: tulip: delete useless tests on netdev_priv
+Message-Id: <1388680129-13661-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAEqxDE=rOu4Gdf_XVot3oDJNKmibT1Ke7kt93Pmgvj+EAmZjVw@mail.gmail.com>
-In-Reply-To: <CAEqxDE=rOu4Gdf_XVot3oDJNKmibT1Ke7kt93Pmgvj+EAmZjVw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Grant Grundler <grundler@parisc-linux.org>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thank you very much, Julia!
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Tue, Jan 28, 2014 at 4:08 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> On Tue, 28 Jan 2014, Wang Zhe wrote:
->
->> Hi all,
->> I am new to linux kernel project and came through the kernelnewbies
->> webpage saying kernel janitor project is a good way to get me started
->> contributing to kernel. But I am not quite sure how to get started
->> with the janitor project. I read through the TODO list
->> (http://kernelnewbies.org/KernelJanitors/Todo) but the items there
->> sounds very general to me. Is there any sort of list that looks like
->> the issue list of most Github project (i.e. has specified which file
->> should I look for, instead of more general TODO description)?
->>
->> In general, any suggestion on how to get me started contributing to
->> this project will be really appreciated.
->>
->> (This is the first time I send email to the mailing list and I
->> apologize if it's not appropriate ask this kind of question on the
->> mailing list.)
->
-> Actually, this question is asked often.  You may want to look through the
-> archives to see what we told the last person :)
->
-> Some suggestions are:
-> 1) There are some bug finding tools in the Linux kernel scripts directory.
-> Figure out how to use them, and fix the bugs that they identify.
-> 2) Look into the code in drivers/staging.  There are probably a lot of
-> easy cleanups there.
-> 3) Look through the git logs to see what other people have done recently.
-> In general, a problem never occurs only once, so changes made in one place
-> are probably needed in other places as well.
->
-> And in the interest of self-promotion, you may want to look at
-> http://coccinelle.lip6.fr/
->
-> Also be sure to read the documentation on submitting patches and do
-> everything it says.  You are still likely to make mistakes, so be ready
-> for some corrections.
->
-> julia
+Netdev_priv performs an addition, not a pointer dereference, so it seems
+quit unlikely that its result would ever be NULL.
+
+A semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+statement S;
+@@
+
+- if (!netdev_priv(...)) S
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/dec/tulip/uli526x.c |    6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/dec/tulip/uli526x.c b/drivers/net/ethernet/dec/tulip/uli526x.c
+index a5397b1..aa4ee38 100644
+--- a/drivers/net/ethernet/dec/tulip/uli526x.c
++++ b/drivers/net/ethernet/dec/tulip/uli526x.c
+@@ -1192,9 +1192,6 @@ static int uli526x_suspend(struct pci_dev *pdev, pm_message_t state)
+ 
+ 	ULI526X_DBUG(0, "uli526x_suspend", 0);
+ 
+-	if (!netdev_priv(dev))
+-		return 0;
+-
+ 	pci_save_state(pdev);
+ 
+ 	if (!netif_running(dev))
+@@ -1228,9 +1225,6 @@ static int uli526x_resume(struct pci_dev *pdev)
+ 
+ 	ULI526X_DBUG(0, "uli526x_resume", 0);
+ 
+-	if (!netdev_priv(dev))
+-		return 0;
+-
+ 	pci_restore_state(pdev);
+ 
+ 	if (!netif_running(dev))
+
