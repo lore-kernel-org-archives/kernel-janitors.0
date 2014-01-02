@@ -1,25 +1,49 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 13 Jan 2014 19:16:39 +0000
-Subject: Re: [patch] cxgb4: silence shift wrapping static checker warning
-Message-Id: <20140113.111639.277633933727182124.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 02 Jan 2014 22:44:40 +0000
+Subject: [PATCH 2/3] ALSA: cs5535audio: use named constants for pci_power_t values
+Message-Id: <1388706031-22180-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140109053400.GF1265@elgon.mountain>
-In-Reply-To: <20140109053400.GF1265@elgon.mountain>
+References: <1388706031-22180-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388706031-22180-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: dm@chelsio.com, kumaras@chelsio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaya Kumar <jayakumar.alsa@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 9 Jan 2014 08:34:00 +0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> I don't know how large "tp->vlan_shift" is but static checkers worry
-> about shift wrapping bugs here.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Applied to 'net'.
+// <smpl>
+@@
+expression pdev;
+@@
 
-I don't think I'll be able to get this into 3.13, but on the off chance
-Linus has to do another -rc I'll try to send it to him.
+pci_set_power_state(pdev,
+- 3
++ PCI_D3hot
+ )
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/cs5535audio/cs5535audio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/pci/cs5535audio/cs5535audio.c b/sound/pci/cs5535audio/cs5535audio.c
+index 902bebd..c0d2835 100644
+--- a/sound/pci/cs5535audio/cs5535audio.c
++++ b/sound/pci/cs5535audio/cs5535audio.c
+@@ -253,7 +253,7 @@ static irqreturn_t snd_cs5535audio_interrupt(int irq, void *dev_id)
+ static int snd_cs5535audio_free(struct cs5535audio *cs5535au)
+ {
+ 	synchronize_irq(cs5535au->irq);
+-	pci_set_power_state(cs5535au->pci, 3);
++	pci_set_power_state(cs5535au->pci, PCI_D3hot);
+ 
+ 	if (cs5535au->irq >= 0)
+ 		free_irq(cs5535au->irq, cs5535au);
+
