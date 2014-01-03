@@ -1,45 +1,29 @@
-From: Musa Hamed <drmusahamed@gmail.com>
-Date: Wed, 08 Jan 2014 20:37:07 +0000
-Subject: I have a very lucrative Business
-Message-Id: <CA+9aPWpR1LuBguT8cONfiU93jZaq0Nz08XnRR6w2p9u-q_mvcA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 03 Jan 2014 20:59:41 +0000
+Subject: [patch] staging: vt6656: remove an unneeded NULL check
+Message-Id: <20140103205941.GB9698@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-ATTN: Dear,
+We dereference "param->u.wpa_key.key" on the next line so the check
+here is inconsistent.  This is only called from iwctl_siwencodeext() and
+"param->u.wpa_key.key" is a valid pointer.
 
-I am Dr. Musa Hamed Executive Director of the Bank of Africa
-Plc B.O.A,Cotonou Benin Rep. I have a very lucrative Business proposal
-worth of 21,500,000.00 USD.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-An Iraqi named Hamadi Hashem a business man made a fixed deposit of
-21,500,000.00 USD . Upon maturity several notices was sent to him,
-even during the war,eleven years ago (2003) up till this date. Again
-after the war another notification was sent and still no response came
-from him. it has been found out that Hamadi Hashem and his family had
-been killed during the war in bomb blast that hit their home at
-Mukaradeeb where his personal oil well was. I am prepared to split the
-funds with you 50%:50%.By placing you as the NEXT OF KIN to his
-deposit.
-
-Should you be interested in doing this deal with me, please send me
-the following information:
-
-(1) Your Name
-(2) Resident Address
-(3) Your Occupation
-(4) Your Phone Number
-(5) Date of Birth
-(6) Resident Country
-
-And I will prefer you to reach me privately and securely on my personal
-email address: dr.musahamed30@yahoo.fr
-Tel: +229-988-400-97
-
-I will provide you with further information as soon as I hear
-positively from you.
-
-Regards,
-Dr. Musa Hamed
+diff --git a/drivers/staging/vt6656/wpactl.c b/drivers/staging/vt6656/wpactl.c
+index 003bd7c614e5..f4a8a5cb9feb 100644
+--- a/drivers/staging/vt6656/wpactl.c
++++ b/drivers/staging/vt6656/wpactl.c
+@@ -86,7 +86,7 @@ int wpa_set_keys(struct vnt_private *pDevice, void *ctx)
+ 		return ret;
+ 	}
+ 
+-	if (param->u.wpa_key.key && param->u.wpa_key.key_len > sizeof(abyKey))
++	if (param->u.wpa_key.key_len > sizeof(abyKey))
+ 		return -EINVAL;
+ 
+ 	memcpy(&abyKey[0], param->u.wpa_key.key, param->u.wpa_key.key_len);
