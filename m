@@ -1,52 +1,62 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Date: Mon, 06 Jan 2014 10:17:47 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 06 Jan 2014 10:48:02 +0000
 Subject: Re: [PATCH 4/11]  use ether_addr_equal_64bits
-Message-Id: <1389003467.5891.5.camel@jlt4.sipsolutions.net>
+Message-Id: <20140106104802.GN30234@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
-	   <1388427307-8691-5-git-send-email-Julia.Lawall@lip6.fr>
-	   <1388429761.4410.1.camel@jlt4.sipsolutions.net>
-	   <alpine.DEB.2.02.1312302057420.2209@localhost6.localdomain6>
-	   <1388438724.4573.2.camel@jlt4.sipsolutions.net>
-	   <20131230215701.GA4938@khazad-dum.debian.net>
-	   <1388445188.18164.0.camel@jlt4.sipsolutions.net>
-	  <1388445422.26796.38.camel@joe-AO722>
-	  <alpine.DEB.2.02.1312310726540.1930@localhost6.localdomain6>
-	  <52C2E8BA.6000800@candelatech.com>
-	  <alpine.DEB.2.10.1312311704320.2074@hadrien>
-	  <52C2F056.1020005@candelatech.com>
-	  <alpine.DEB.2.10.1312311732080.2074@hadrien>
-	 <1388999147.5891.2.camel@jlt4.sipsolutions.net>
-	 <alpine.DEB.2.10.1401061007160.2079@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1401061007160.2079@hadrien>
+ <1388427307-8691-5-git-send-email-Julia.Lawall@lip6.fr>
+ <1388429761.4410.1.camel@jlt4.sipsolutions.net>
+ <alpine.DEB.2.02.1312302057420.2209@localhost6.localdomain6>
+ <1388438724.4573.2.camel@jlt4.sipsolutions.net>
+ <20131230215701.GA4938@khazad-dum.debian.net>
+ <1388445188.18164.0.camel@jlt4.sipsolutions.net>
+In-Reply-To: <1388445188.18164.0.camel@jlt4.sipsolutions.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Ben Greear <greearb@candelatech.com>, Joe Perches <joe@perches.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2014-01-06 at 10:09 +0100, Julia Lawall wrote:
-
-> > BUILD_BUG_ON(sizeof(struct foo) - offsetof(struct foo, addr) < 8);
-> >
-> > with the user(s?) and that should catch the scenario I was worrying
-> > about?
+On Tue, Dec 31, 2013 at 12:13:08AM +0100, Johannes Berg wrote:
+> On Mon, 2013-12-30 at 19:57 -0200, Henrique de Moraes Holschuh wrote:
+> > On Mon, 30 Dec 2013, Johannes Berg wrote:
+> > > On Mon, 2013-12-30 at 20:58 +0100, Julia Lawall wrote:
+> > > > > Is there any way we could catch (sparse, or some other script?) that
+> > > > > struct reorganising won't break the condition needed ("within a
+> > > > > structure that contains at least two more bytes")?
+> > > > 
+> > > > What kind of reorganizing could happen?  Do you mean that the programmer 
+> > > > might do at some time in the future, or something the compiler might do?
+> > > 
+> > > I'm just thinking of a programmer, e.g. changing a struct like this:
+> > > 
+> > >  struct foo {
+> > >    u8 addr[ETH_ALEN];
+> > > -  u16 dummy;
+> > >  };
+> > > 
+> > > for example.
+> > 
+> > That is easily resolved by:
+> > 
+> > struct foo {
+> > 	u8 addr[ETH_ALEN];
+> > 	u16 required_padding;	/* do not remove upon pain of death */
+> > };
 > 
-> OK, thanks.  That is what I had in mind.  But I was hoping to be able to
-> put it with the structure.  
-
-Right - you might be able to do that with BUILD_BUG_ON_ZERO() as you
-pointed out, I haven't looked at these macros in a while.
-
-> Perhaps there is a way to make a macro that
-> expands to a dummy function that contains the BUILD_BUG_ON?  But I guess
-> that would waste space?
+> That'd be a stupid waste of struct space. If anything, there should be
+> *only* a comment saying that at least two bytes are needed - I'd still
+> prefer an automated check.
 > 
-> I think that 8 should be 16?
 
-No, that should be ETH_ALEN+2 really, I guess - it's not taking into
-account the size of the address member itself at all.
+This is the sort of thing where Smatch is probably the right tool.  I'll
+let you know how it turns out.
 
-johannes
+My guess is that it would be rare to run into this bug in real life.
+Most structs have 4 or 8 byte alignment and most times the addr is not
+at the end of the struct.  But I also agree that this function should
+only be used in a fast path.
 
+regards,
+dan carpenter
 
