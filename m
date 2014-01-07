@@ -1,70 +1,36 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Tue, 21 Jan 2014 10:02:57 +0000
-Subject: Re: [patch] x86, AMD, NB: silence an underflow test
-Message-Id: <20140121100257.GB9004@pd.tnic>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 07 Jan 2014 16:04:43 +0000
+Subject: [PATCH] ixgbevf: delete unneeded call to pci_set_power_state
+Message-Id: <1389114026-27854-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140121072209.GA22095@elgon.mountain>
-In-Reply-To: <20140121072209.GA22095@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Daniel J Blueman <daniel@numascale-asia.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, John Ronciak <john.ronciak@intel.com>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jan 21, 2014 at 10:22:09AM +0300, Dan Carpenter wrote:
-> This is under CAP_SYS_ADMIN but Smatch complains that mask comes from
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-"Smatch complains..." - you sound just like a politician - something
-inanimate and abstract complains that something's wrong - I'm not to
-blame, I'm innocent!
+This driver does not need to adjust the power state on suspend, so the
+call to pci_set_power_state in the resume function is a no-op.  Drop it, to
+make the code more understandable.
 
-Not "amd_set_subcaches should hand down an unsigned long like it was
-originally indended but then bugged into an int..."
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-:-) :-) :-)
+---
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-> the user and the test for "mask > 0xf" can underflow.  The fix is
-> simple.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index a5d3167..5709fb0 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -3226,7 +3226,6 @@ static int ixgbevf_resume(struct pci_dev *pdev)
+ 	struct net_device *netdev = adapter->netdev;
+ 	u32 err;
+ 
+-	pci_set_power_state(pdev, PCI_D0);
+ 	pci_restore_state(pdev);
+ 	/*
+ 	 * pci_restore_state clears dev->state_saved so call
 
-In any case:
-
-Acked-by: Borislav Petkov <bp@suse.de>
-
-Thanks!
-
-> diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd_nb.h
-> index a54ee1d054d9..0c4e3e47d462 100644
-> --- a/arch/x86/include/asm/amd_nb.h
-> +++ b/arch/x86/include/asm/amd_nb.h
-> @@ -19,7 +19,7 @@ extern int amd_cache_northbridges(void);
->  extern void amd_flush_garts(void);
->  extern int amd_numa_init(void);
->  extern int amd_get_subcaches(int);
-> -extern int amd_set_subcaches(int, int);
-> +extern int amd_set_subcaches(int, unsigned long);
->  
->  struct amd_l3_cache {
->  	unsigned indices;
-> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-> index 59554dca96ec..d9fceb697322 100644
-> --- a/arch/x86/kernel/amd_nb.c
-> +++ b/arch/x86/kernel/amd_nb.c
-> @@ -179,7 +179,7 @@ int amd_get_subcaches(int cpu)
->  	return (mask >> (4 * cuid)) & 0xf;
->  }
->  
-> -int amd_set_subcaches(int cpu, int mask)
-> +int amd_set_subcaches(int cpu, unsigned long mask)
->  {
->  	static unsigned int reset, ban;
->  	struct amd_northbridge *nb = node_to_amd_nb(amd_get_nb_id(cpu));
-> 
-
--- 
-Regards/Gruss,
-    Boris.
-
-Sent from a fat crate under my desk. Formatting is fine.
---
