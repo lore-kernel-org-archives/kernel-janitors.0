@@ -1,36 +1,44 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Tue, 28 Jan 2014 05:32:46 +0000
-Subject: Re: [patch v2] mtd: sm_ftl: heap corruption in sm_create_sysfs_attributes()
-Message-Id: <20140128053246.GF3162@norris-Latitude-E6410>
+From: Frank Haverkamp <haver@linux.vnet.ibm.com>
+Date: Tue, 07 Jan 2014 14:41:24 +0000
+Subject: [PATCH 2/3] GenWQE: Fix compile problems for Alpha
+Message-Id: <1389105685-25245-2-git-send-email-haver@linux.vnet.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <52A06B00.7070309@bfs.de> <20131205145349.GA13302@elgon.mountain>
-In-Reply-To: <20131205145349.GA13302@elgon.mountain>
+References: <1389105556.15325.22.camel@oc7383187364.ibm.com>
+In-Reply-To: <1389105556.15325.22.camel@oc7383187364.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, walter harms <wharms@bfs.de>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, dan.carpenter@oracle.com, fengguang.wu@intel.com, weiyj.lk@gmail.com, jim.epost@gmail.com, sfr@canb.auug.org.au, jsvogt@de.ibm.com, MIJUNG@de.ibm.com, michael@ibmra.de, schwidefsky@de.ibm.com, cody@linux.vnet.ibm.com, cascardo@linux.vnet.ibm.com, kernel-janitors@vger.kernel.org, haver@linux.vnet.ibm.com
 
-On Thu, Dec 05, 2013 at 05:53:50PM +0300, Dan Carpenter wrote:
-> We always put a NUL terminator one space past the end of the "vendor"
-> buffer.  Walter Harms also pointed out that this should just use
-> kstrndup().
-> 
-> Fixes: 7d17c02a01a1 ('mtd: Add new SmartMedia/xD FTL')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The header which contained the declaration for kcalloc() was not
+inlcuded.
 
-Patch looks good.
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
+---
+ drivers/misc/genwqe/card_base.h |    1 +
+ drivers/misc/genwqe/card_ddcb.c |    1 +
+ 2 files changed, 2 insertions(+)
 
-> ---
-> v2:  Use kstrndup().
->      Don't subtract 1 from the strnlen() limiter for the NUL.  I think
->      it's ok to go over?
+--- a/drivers/misc/genwqe/card_base.h
++++ b/drivers/misc/genwqe/card_base.h
+@@ -36,6 +36,7 @@
+ #include <linux/io.h>
+ #include <linux/version.h>
+ #include <linux/debugfs.h>
++#include <linux/slab.h>
+ 
+ #include <linux/genwqe/genwqe_card.h>
+ #include "genwqe_driver.h"
+--- a/drivers/misc/genwqe/card_ddcb.c
++++ b/drivers/misc/genwqe/card_ddcb.c
+@@ -38,6 +38,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/crc-itu-t.h>
+ 
++#include "card_base.h"
+ #include "card_ddcb.h"
+ 
+ /*
 
-I don't think you're "going over" anything. You're just (correctly)
-allocating the buffer as (at most) one byte larger than (SM_SMALL_PAGE -
-SM_CIS_VENDOR_OFFSET), which is perfect if you're copying up to
-(SM_SMALL_PAGE - SM_CIS_VENDOR_OFFSET) bytes of character data.
-
-Pushed to l2-mtd.git/next, queued for 3.15. Thanks.
-
-Brian
