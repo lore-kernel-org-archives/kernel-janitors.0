@@ -1,84 +1,45 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Mon, 20 Jan 2014 09:40:29 +0000
-Subject: Re: [PATCH 8/25] drivers/dma: fix error return code
-Message-Id: <20140120092829.GU26823@intel.com>
+From: Musa Hamed <drmusahamed@gmail.com>
+Date: Wed, 08 Jan 2014 20:37:07 +0000
+Subject: I have a very lucrative Business
+Message-Id: <CA+9aPWpR1LuBguT8cONfiU93jZaq0Nz08XnRR6w2p9u-q_mvcA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
- <1388357260-4843-9-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, Dec 29, 2013 at 11:47:23PM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Set the return variable to an error code as done elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Applied, thanks
+ATTN: Dear,
 
---
-~Vinod
-> 
-> ---
-> Not tested.
-> 
->  drivers/dma/cppi41.c      |    4 +++-
->  drivers/dma/ppc4xx/adma.c |    1 +
->  2 files changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/cppi41.c b/drivers/dma/cppi41.c
-> index c29dacf..c18aebf 100644
-> --- a/drivers/dma/cppi41.c
-> +++ b/drivers/dma/cppi41.c
-> @@ -972,8 +972,10 @@ static int cppi41_dma_probe(struct platform_device *pdev)
->  		goto err_chans;
->  
->  	irq = irq_of_parse_and_map(dev->of_node, 0);
-> -	if (!irq)
-> +	if (!irq) {
-> +		ret = -EINVAL;
->  		goto err_irq;
-> +	}
->  
->  	cppi_writel(USBSS_IRQ_PD_COMP, cdd->usbss_mem + USBSS_IRQ_ENABLER);
->  
-> diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
-> index 8bba298..ce7a8d7 100644
-> --- a/drivers/dma/ppc4xx/adma.c
-> +++ b/drivers/dma/ppc4xx/adma.c
-> @@ -4114,6 +4114,7 @@ static int ppc440spe_adma_probe(struct platform_device *ofdev)
->  	regs = ioremap(res.start, resource_size(&res));
->  	if (!regs) {
->  		dev_err(&ofdev->dev, "failed to ioremap regs!\n");
-> +		ret = -ENOMEM;
->  		goto err_regs_alloc;
->  	}
->  
-> 
+I am Dr. Musa Hamed Executive Director of the Bank of Africa
+Plc B.O.A,Cotonou Benin Rep. I have a very lucrative Business proposal
+worth of 21,500,000.00 USD.
 
--- 
+An Iraqi named Hamadi Hashem a business man made a fixed deposit of
+21,500,000.00 USD . Upon maturity several notices was sent to him,
+even during the war,eleven years ago (2003) up till this date. Again
+after the war another notification was sent and still no response came
+from him. it has been found out that Hamadi Hashem and his family had
+been killed during the war in bomb blast that hit their home at
+Mukaradeeb where his personal oil well was. I am prepared to split the
+funds with you 50%:50%.By placing you as the NEXT OF KIN to his
+deposit.
+
+Should you be interested in doing this deal with me, please send me
+the following information:
+
+(1) Your Name
+(2) Resident Address
+(3) Your Occupation
+(4) Your Phone Number
+(5) Date of Birth
+(6) Resident Country
+
+And I will prefer you to reach me privately and securely on my personal
+email address: dr.musahamed30@yahoo.fr
+Tel: +229-988-400-97
+
+I will provide you with further information as soon as I hear
+positively from you.
+
+Regards,
+Dr. Musa Hamed
