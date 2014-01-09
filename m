@@ -1,54 +1,29 @@
-From: Saurav Kashyap <saurav.kashyap@qlogic.com>
-Date: Wed, 22 Jan 2014 02:00:13 +0000
-Subject: Re: [patch] [SCSI] qla2xxx: fix error handling of qla2x00_mem_alloc()
-Message-Id: <F5D084D6342F9B479C34599BB0A03E4D8985D1B1@AVMB1.qlogic.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jan 2014 05:31:04 +0000
+Subject: [patch] i40e: potential array underflow in i40e_vc_process_vf_msg()
+Message-Id: <20140109053103.GD1265@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140121070010.GD31535@elgon.mountain>
-In-Reply-To: <20140121070010.GD31535@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Dept-Eng QLA2xxx Upstream <qla2xxx-upstream@qlogic.com>, Anirban Chakraborty <anirban.chakraborty@qlogic.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-Acked-by: Saurav Kashyap <saurav.kashyap@qlogic.com>
+If "vf_id" is smaller than hw->func_caps.vf_base_id then we leads to an
+array underflow of the pf->vf[] array.
 
-Thanks,
-~Saurav
+Fixes: 7efa84b7abc1 ('i40e: support VFs on PFs other than 0')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->qla2x00_mem_alloc() returns 1 on success and -ENOMEM on failure.  On the
->one hand the caller assumes non-zero is success but on the other hand
->the caller also assumes that it returns an error code.
->
->I've fixed it to return zero on success and a negative error code on
->failure.  This matches the documentation as well.
->
->Fixes: e315cd28b9ef ('[SCSI] qla2xxx: Code changes for qla data structure
->refactoring')
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
->index 89a53002b585..8d5a67fcffa1 100644
->--- a/drivers/scsi/qla2xxx/qla_os.c
->+++ b/drivers/scsi/qla2xxx/qla_os.c
->@@ -2536,7 +2536,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const
->struct pci_device_id *id)
-> 	    ha->flags.enable_64bit_addressing ? "enable" :
-> 	    "disable");
-> 	ret = qla2x00_mem_alloc(ha, req_length, rsp_length, &req, &rsp);
->-	if (!ret) {
->+	if (ret) {
-> 		ql_log_pci(ql_log_fatal, pdev, 0x0031,
-> 		    "Failed to allocate memory for adapter, aborting.\n");
-> 
->@@ -3481,7 +3481,7 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t
->req_len, uint16_t rsp_len,
-> 		    "loop_id_map=%p. \n", ha->loop_id_map);
-> 	}
-> 
->-	return 1;
->+	return 0;
-> 
-> fail_async_pd:
-> 	dma_pool_free(ha->s_dma_pool, ha->ex_init_cb, ha->ex_init_cb_dma);
-
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 55ec2db71fa1..89482a078e9d 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -1698,7 +1698,7 @@ int i40e_vc_process_vf_msg(struct i40e_pf *pf, u16 vf_id, u32 v_opcode,
+ 			   u32 v_retval, u8 *msg, u16 msglen)
+ {
+ 	struct i40e_hw *hw = &pf->hw;
+-	int local_vf_id = vf_id - hw->func_caps.vf_base_id;
++	unsigned int local_vf_id = vf_id - hw->func_caps.vf_base_id;
+ 	struct i40e_vf *vf;
+ 	int ret;
+ 
