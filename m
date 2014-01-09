@@ -1,68 +1,60 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Fri, 10 Jan 2014 11:31:42 +0000
-Subject: Re: [patch 2/2] video: mmp: Using plain integer as NULL pointer
-Message-Id: <52CFDA1E.3060902@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="VntJiupCc59N6Jq4JLpFFAVrkxHjcaAKO"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jan 2014 05:44:29 +0000
+Subject: [patch] staging: bcm: clean up a type issue in ConfigureEndPointTypesThroughEEPROM()
+Message-Id: <20140109054429.GA13954@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-fbdev@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
---VntJiupCc59N6Jq4JLpFFAVrkxHjcaAKO
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+We only ever set the highest 4 bytes of ulReg.  This would cause a
+problem on big endian systems.  The type should be u32 instead of
+unsigned long.
 
-On 2013-11-14 10:19, Dan Carpenter wrote:
-> Sparse complains here:
->=20
-> 	drivers/video/mmp/core.c:33:16:
-> 		warning: Using plain integer as NULL pointer
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/video/mmp/core.c b/drivers/video/mmp/core.c
-> index c8d4265..b563b92 100644
-> --- a/drivers/video/mmp/core.c
-> +++ b/drivers/video/mmp/core.c
-> @@ -30,7 +30,7 @@ static struct mmp_overlay *path_get_overlay(struct mm=
-p_path *path,
->  {
->  	if (path && overlay_id < path->overlay_num)
->  		return &path->overlays[overlay_id];
-> -	return 0;
-> +	return NULL;
->  }
-> =20
->  static int path_check_status(struct mmp_path *path)
->=20
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Queued for 3.14.
-
- Tomi
-
-
-
---VntJiupCc59N6Jq4JLpFFAVrkxHjcaAKO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJSz9oeAAoJEPo9qoy8lh71ISMP/j3BTOq9ahorG2SDXLxe0rre
-Qs9cBl5zqTzDkoVyUM4wRRn+I7QsII99bYKDpgeuKBtALnhgd3iTm+VtGXpJJPC2
-O2JaQIkX6BQPmNaV0l640aPT7yjrNpM0m75/AtiAMAsV88gJQsfJWUisvFZVs+G0
-FEzv+94UtZOUBq9orW4NHIJQp2BUo6Aj3Zd8UG3tqkjIdC2kHwxieBI+ytWjDL0X
-ZaVTbeXQ+fHaGMwuvwAWOs/7htVDUOuqvNL8ZnzcnnkKYXQft20L5T4zHZs5jGKi
-VAT0ChTNrI/O/26S0Iog4hHaT1R8mCFPahFH/JBZNkIgJCDyGOXE/nySJ9mC/Biz
-z+GwK2fSbQzEJ83zwCPCHroade1oI4qYRHvZgbO6aooqW1CU8AuMthQU2Qla9sXF
-uuQbiqb+FCkxkpJ2fKRwhgNHusD5XZCCcNYt/bPN70di/mlUmsM6X1EjyIRmSuU7
-XunpbABNcN8Z883A1xr5U3PbmOqyMaAIDMbZre9ENAkZvCuWiblHD2TSZDL+2NUD
-xMDvO+4ZXiS3Fs9n/mzZruP/zTH1j0Ye8yAEfS4dTvSGWf2f8Ge3ML7Pld8PlGq4
-YUFN0z1pWKANm1tsSlIeg8EWl03RLlmiCB1rye0SfdJ7M4NeHd90avlMwFgz7mPP
-DuesFko9b4ALrGYXBG6U
-=LX4U
------END PGP SIGNATURE-----
-
---VntJiupCc59N6Jq4JLpFFAVrkxHjcaAKO--
+diff --git a/drivers/staging/bcm/InterfaceInit.c b/drivers/staging/bcm/InterfaceInit.c
+index 3acdb58a10f5..94f32728f7c8 100644
+--- a/drivers/staging/bcm/InterfaceInit.c
++++ b/drivers/staging/bcm/InterfaceInit.c
+@@ -69,7 +69,7 @@ static void InterfaceAdapterFree(struct bcm_interface_adapter *psIntfAdapter)
+ 
+ static void ConfigureEndPointTypesThroughEEPROM(struct bcm_mini_adapter *Adapter)
+ {
+-	unsigned long ulReg = 0;
++	u32 ulReg;
+ 	int bytes;
+ 
+ 	/* Program EP2 MAX_PKT_SIZE */
+@@ -96,7 +96,7 @@ static void ConfigureEndPointTypesThroughEEPROM(struct bcm_mini_adapter *Adapter
+ 	BeceemEEPROMBulkWrite(Adapter, (PUCHAR)&ulReg, 0x140, 4, TRUE);
+ 
+ 	/* Program TX EP as interrupt(Alternate Setting) */
+-	bytes = rdmalt(Adapter, 0x0F0110F8, (u32 *)&ulReg, sizeof(u32));
++	bytes = rdmalt(Adapter, 0x0F0110F8, &ulReg, sizeof(u32));
+ 	if (bytes < 0) {
+ 		BCM_DEBUG_PRINT(Adapter, DBG_TYPE_INITEXIT, DRV_ENTRY, DBG_LVL_ALL,
+ 			"reading of Tx EP failed\n");
+@@ -119,18 +119,18 @@ static void ConfigureEndPointTypesThroughEEPROM(struct bcm_mini_adapter *Adapter
+ 	 * Update EEPROM Version.
+ 	 * Read 4 bytes from 508 and modify 511 and 510.
+ 	 */
+-	ReadBeceemEEPROM(Adapter, 0x1FC, (PUINT)&ulReg);
++	ReadBeceemEEPROM(Adapter, 0x1FC, &ulReg);
+ 	ulReg &= 0x0101FFFF;
+ 	BeceemEEPROMBulkWrite(Adapter, (PUCHAR)&ulReg, 0x1FC, 4, TRUE);
+ 
+ 	/* Update length field if required. Also make the string NULL terminated. */
+ 
+-	ReadBeceemEEPROM(Adapter, 0xA8, (PUINT)&ulReg);
++	ReadBeceemEEPROM(Adapter, 0xA8, &ulReg);
+ 	if ((ulReg&0x00FF0000)>>16 > 0x30) {
+ 		ulReg = (ulReg&0xFF00FFFF)|(0x30<<16);
+ 		BeceemEEPROMBulkWrite(Adapter, (PUCHAR)&ulReg, 0xA8, 4, TRUE);
+ 	}
+-	ReadBeceemEEPROM(Adapter, 0x148, (PUINT)&ulReg);
++	ReadBeceemEEPROM(Adapter, 0x148, &ulReg);
+ 	if ((ulReg&0x00FF0000)>>16 > 0x30) {
+ 		ulReg = (ulReg&0xFF00FFFF)|(0x30<<16);
+ 		BeceemEEPROMBulkWrite(Adapter, (PUCHAR)&ulReg, 0x148, 4, TRUE);
