@@ -1,29 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 15 Jan 2014 21:43:52 +0000
-Subject: Re: [PATCH 1/4] ksz884x: delete useless variable
-Message-Id: <20140115.134352.667699585785584026.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jan 2014 05:28:26 +0000
+Subject: [patch] f2fs: checking for IS_ERR() instead of NULL
+Message-Id: <20140109052825.GB1265@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1389629847-5330-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1389629847-5330-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1389629847-5330-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 13 Jan 2014 17:17:24 +0100
+grab_cache_page_write_begin() returns NULL on error, it doesn't return
+error pointers.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Delete a variable that is at most only assigned to a constant, but never
-> used otherwise.  In this code, it is the variable result that is used for
-> the return code, not rc.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: e18c65b2ac91 ('f2fs: key functions to handle inline data')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thank you.
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 69a923e38f0c..e0d800a1d79f 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -131,8 +131,8 @@ int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size)
+ 		return 0;
+ 
+ 	page = grab_cache_page_write_begin(inode->i_mapping, 0, AOP_FLAG_NOFS);
+-	if (IS_ERR(page))
+-		return PTR_ERR(page);
++	if (!page)
++		return -ENOMEM;
+ 
+ 	err = __f2fs_convert_inline_data(inode, page);
+ 	f2fs_put_page(page, 1);
