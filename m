@@ -1,38 +1,37 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Date: Fri, 31 Jan 2014 09:37:56 +0000
-Subject: Re: [patch] iio: dac: ad7303: remove an unneeded check
-Message-Id: <52EB6EF4.9020203@metafoo.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jan 2014 05:28:03 +0000
+Subject: [patch] gpio: davinci: signedness bug in davinci_gpio_irq_setup()
+Message-Id: <20140109052803.GA1265@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140130115849.GI12734@elgon.mountain>
-In-Reply-To: <20140130115849.GI12734@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Sachin Kamat <sachin.kamat@linaro.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
 
-On 01/30/2014 12:58 PM, Dan Carpenter wrote:
-> "ret" is zero here.  There is no need to check again.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+"irq" needs to be signed for the error handling to work.
 
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Fixes: 6075a8b2b6c3 ('gpio: davinci: don't create irq_domain in case of unbanked irqs')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
-
-> 
-> diff --git a/drivers/iio/dac/ad7303.c b/drivers/iio/dac/ad7303.c
-> index d0505fd22ef4..fa2810032968 100644
-> --- a/drivers/iio/dac/ad7303.c
-> +++ b/drivers/iio/dac/ad7303.c
-> @@ -92,7 +92,7 @@ static ssize_t ad7303_write_dac_powerdown(struct iio_dev *indio_dev,
->  	ad7303_write(st, chan->channel, st->dac_cache[chan->channel]);
->  
->  	mutex_unlock(&indio_dev->mlock);
-> -	return ret ? ret : len;
-> +	return len;
->  }
->  
->  static int ad7303_get_vref(struct ad7303_state *st,
-> 
-
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 7629b4f12b7f..b0e98d379217 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -423,7 +423,7 @@ static const struct irq_domain_ops davinci_gpio_irq_ops = {
+ 
+ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ {
+-	unsigned	gpio, irq, bank;
++	unsigned	gpio, bank;
+ 	struct clk	*clk;
+ 	u32		binten = 0;
+ 	unsigned	ngpio, bank_irq;
+@@ -433,6 +433,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 	struct davinci_gpio_platform_data *pdata = dev->platform_data;
+ 	struct davinci_gpio_regs __iomem *g;
+ 	struct irq_domain	*irq_domain = NULL;
++	int		irq;
+ 
+ 	ngpio = pdata->ngpio;
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
