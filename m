@@ -1,49 +1,42 @@
-From: Balaji T K <balajitk@ti.com>
-Date: Thu, 30 Jan 2014 13:16:15 +0000
-Subject: Re: [patch] mmc: omap_hsmmc: precedence bug in omap_hsmmc_context_restore()
-Message-Id: <52EA4DCF.6090408@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 09 Jan 2014 05:32:36 +0000
+Subject: [patch] iommu/vt-d: signedness bug in alloc_irte()
+Message-Id: <20140109053236.GE1265@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130822125613.GB2543@elgon.mountain> <52162444.1050908@ti.com> <20140130121526.GO4815@mwanda>
-In-Reply-To: <20140130121526.GO4815@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Ball <cjb@laptop.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Thursday 30 January 2014 05:45 PM, Dan Carpenter wrote:
-> On Thu, Aug 22, 2013 at 08:16:28PM +0530, Balaji T K wrote:
->> On Thursday 22 August 2013 06:26 PM, Dan Carpenter wrote:
->>> '!' has higher precedence than '&' so this doesn't work as intended
->>> although since RESETDONE is 1 it would work if none of the other bits
->>> are set.
->>>
->> Hi Dan,
->>
->> Thanks for the patch, Indeed other bits are reserved.
->> however ...
->>
->>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>> ---
->>> Untested.
->>>
->>> diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
->>> index 1865321..7346b15 100644
->>> --- a/drivers/mmc/host/omap_hsmmc.c
->>> +++ b/drivers/mmc/host/omap_hsmmc.c
->>> @@ -612,7 +612,7 @@ static int omap_hsmmc_context_restore(struct omap_hsmmc_host *host)
->>>   	if (host->context_loss = context_loss)
->>>   		return 1;
->>>
->>> -	if (!OMAP_HSMMC_READ(host->base, SYSSTATUS) & RESETDONE)
->>> +	if (!(OMAP_HSMMC_READ(host->base, SYSSTATUS) & RESETDONE))
->>>   		return 1;
->>
->> This check is unnecessary, will send a patch to remove this.
->
-> What happened with this?
+"index" needs to be signed for the error handling to work.  I deleted a
+little bit of obsolete cruft related to "index" and "start_index" as
+well.
 
-My bad, I missed it, will fix it.
+Fixes: 360eb3c5687e ('iommu/vt-d: use dedicated bitmap to track remapping entry allocation status')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks and Regards,
-Balaji T K
+diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+index 78fba6212ed2..ef5f65dbafe9 100644
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -71,18 +71,13 @@ static int alloc_irte(struct intel_iommu *iommu, int irq, u16 count)
+ 	struct ir_table *table = iommu->ir_table;
+ 	struct irq_2_iommu *irq_iommu = irq_2_iommu(irq);
+ 	struct irq_cfg *cfg = irq_get_chip_data(irq);
+-	u16 index, start_index;
+ 	unsigned int mask = 0;
+ 	unsigned long flags;
++	int index;
+ 
+ 	if (!count || !irq_iommu)
+ 		return -1;
+ 
+-	/*
+-	 * start the IRTE search from index 0.
+-	 */
+-	index = start_index = 0;
+-
+ 	if (count > 1) {
+ 		count = __roundup_pow_of_two(count);
+ 		mask = ilog2(count);
