@@ -1,47 +1,33 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Fri, 03 Jan 2014 09:08:43 +0000
-Subject: Re: [PATCH 6/25]  fix error return code
-Message-Id: <alpine.LNX.2.00.1401031008360.14951@pobox.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 11 Jan 2014 09:58:42 +0000
+Subject: [patch v2] i40e: potential array underflow in i40e_vc_process_vf_msg()
+Message-Id: <20140111095841.GA12350@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr> <1388357260-4843-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-7-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, 29 Dec 2013, Julia Lawall wrote:
+If "vf_id" is smaller than hw->func_caps.vf_base_id then it leads to
+an array underflow of the pf->vf[] array.  This is unlikely to happen
+unless the hardware is bad, but it's a small change and it silences a
+static checker warning.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Set the return variable to an error code as done elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: 7efa84b7abc1 ('i40e: support VFs on PFs other than 0')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: rebased.  commit message updated.
 
-Applied, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 51a4f6125437..b77d7e79d977 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -1772,7 +1772,7 @@ int i40e_vc_process_vf_msg(struct i40e_pf *pf, u16 vf_id, u32 v_opcode,
+ 			   u32 v_retval, u8 *msg, u16 msglen)
+ {
+ 	struct i40e_hw *hw = &pf->hw;
+-	int local_vf_id = vf_id - hw->func_caps.vf_base_id;
++	unsigned int local_vf_id = vf_id - hw->func_caps.vf_base_id;
+ 	struct i40e_vf *vf;
+ 	int ret;
+ 
