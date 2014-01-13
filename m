@@ -1,39 +1,38 @@
-From: Balaji T K <balajitk@ti.com>
-Date: Thu, 30 Jan 2014 13:11:54 +0000
-Subject: Re: [patch 1/2]  mmc: omap_hsmmc: remove a duplicative test
-Message-Id: <52EA4CCA.5010904@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 13 Jan 2014 08:16:20 +0000
+Subject: [patch -resend] vlynq: fix another resource size off by 1 error
+Message-Id: <20130823081949.GD31293@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140130121518.GA10368@elgon.mountain>
-In-Reply-To: <20140130121518.GA10368@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Ball <chris@printf.net>, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Florian Fainelli <florian@openwrt.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-On Thursday 30 January 2014 05:45 PM, Dan Carpenter wrote:
-> Static checkers complain that testing for both "next" and "!next" is
-> duplicative.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+We fixed the call to request_mem_region() patch
+3354f73 ('drivers/vlynq/vlynq.c: fix resource size off by 1 error').
+But we need to fix the call the release_mem_region() as well.
 
-Looks good to me
-Acked-by: Balaji T K <balajitk@ti.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Resending so that that Andrew can take it.
 
-> diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-> index 2a629fbde613..bfb0dbd052c0 100644
-> --- a/drivers/mmc/host/omap_hsmmc.c
-> +++ b/drivers/mmc/host/omap_hsmmc.c
-> @@ -1235,8 +1235,7 @@ static int omap_hsmmc_pre_dma_transfer(struct omap_hsmmc_host *host,
->   	}
->
->   	/* Check if next job is already prepared */
-> -	if (next ||
-> -	    (!next && data->host_cookie != host->next_data.cookie)) {
-> +	if (next || data->host_cookie != host->next_data.cookie) {
->   		dma_len = dma_map_sg(chan->device->dev, data->sg, data->sg_len,
->   				     omap_hsmmc_get_dma_dir(host, data));
->
->
+diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
+index 7b07135..c0227f9 100644
+--- a/drivers/vlynq/vlynq.c
++++ b/drivers/vlynq/vlynq.c
+@@ -762,7 +762,8 @@ static int vlynq_remove(struct platform_device *pdev)
+ 
+ 	device_unregister(&dev->dev);
+ 	iounmap(dev->local);
+-	release_mem_region(dev->regs_start, dev->regs_end - dev->regs_start);
++	release_mem_region(dev->regs_start,
++			   dev->regs_end - dev->regs_start + 1);
+ 
+ 	kfree(dev);
+ 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
