@@ -1,57 +1,56 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 09 Jan 2014 06:06:17 +0000
-Subject: Re: [patch] usb: gadget: gr_udc: debugfs functions return NULL on error
-Message-Id: <20140109060617.GW5443@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 13 Jan 2014 15:22:35 +0000
+Subject: [PATCH 2/4] i810: delete useless variable
+Message-Id: <1389629847-5330-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140109053936.GG1265@elgon.mountain>
-In-Reply-To: <20140109053936.GG1265@elgon.mountain>
+References: <1389629847-5330-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1389629847-5330-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Antonino Daplas <adaplas@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 08, 2014 at 10:01:21PM -0800, Greg Kroah-Hartman wrote:
-> On Thu, Jan 09, 2014 at 08:39:37AM +0300, Dan Carpenter wrote:
-> > Debugfs functions return NULL on error.  They return an ERR_PTR if you
-> > don't have debugfs configured.
-> > 
-> > The way it's designed is that normally you are only supposed to test for
-> > NULL.  In this code, if "dev->dfs_root" is an ERR_PTR then passing it to
-> > debugfs_create_file() will not cause a problem because
-> > debugfs_create_file() would also just a stub.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/usb/gadget/gr_udc.c b/drivers/usb/gadget/gr_udc.c
-> > index 5f9c65959dd2..b34a52171568 100644
-> > --- a/drivers/usb/gadget/gr_udc.c
-> > +++ b/drivers/usb/gadget/gr_udc.c
-> > @@ -226,13 +226,13 @@ static void gr_dfs_create(struct gr_udc *dev)
-> >  	const char *name = "gr_udc_state";
-> >  
-> >  	dev->dfs_root = debugfs_create_dir(dev_name(dev->dev), NULL);
-> > -	if (IS_ERR(dev->dfs_root)) {
-> > +	if (!dev->dfs_root) {
-> >  		dev_err(dev->dev, "Failed to create debugfs directory\n");
-> >  		return;
-> >  	}
-> >  	dev->dfs_state = debugfs_create_file(name, 0444, dev->dfs_root,
-> >  					     dev, &gr_dfs_fops);
-> > -	if (IS_ERR(dev->dfs_state))
-> > +	if (!dev->dfs_state)
-> >  		dev_err(dev->dev, "Failed to create debugfs file %s\n", name);
-> >  }
-> 
-> Don't even check the return value of the calls, I don't think it
-> matters, right?
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I assume your question is rhetorical since you wrote debugfs...  :P
-Yes, I looked and if we don't create the initial directory then the
-files get put in parent directory instead.
+Delete a variable that is at most only assigned to a constant, but never
+used otherwise.
 
-I'll resend this.
+A simplified version of the semantic patch that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+type T;
+identifier i;
+constant c;
+@@
+
+-T i;
+<... when != i
+-i = c;
+...>
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/video/i810/i810_main.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/video/i810/i810_main.c b/drivers/video/i810/i810_main.c
+index 038192a..bb674e4 100644
+--- a/drivers/video/i810/i810_main.c
++++ b/drivers/video/i810/i810_main.c
+@@ -2011,9 +2011,7 @@ static int i810fb_init_pci(struct pci_dev *dev,
+ 	struct fb_info    *info;
+ 	struct i810fb_par *par = NULL;
+ 	struct fb_videomode mode;
+-	int i, err = -1, vfreq, hfreq, pixclock;
+-
+-	i = 0;
++	int err = -1, vfreq, hfreq, pixclock;
+ 
+ 	info = framebuffer_alloc(sizeof(struct i810fb_par), &dev->dev);
+ 	if (!info)
 
