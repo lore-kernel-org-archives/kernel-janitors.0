@@ -1,45 +1,57 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Mon, 20 Jan 2014 23:59:12 +0000
-Subject: Re: [E1000-devel] [patch v2] i40e: potential array underflow in i40e_vc_process_vf_msg()
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B7313FC9F@ORSMSX101.amr.corp.intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 13 Jan 2014 15:22:50 +0000
+Subject: [PATCH 4/4] staging: tidspbridge: delete useless variable
+Message-Id: <1389629847-5330-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <309B89C4C689E141A5FF6A0C5FB2118B7312AC70@ORSMSX101.amr.corp.intel.com>
-In-Reply-To: <309B89C4C689E141A5FF6A0C5FB2118B7312AC70@ORSMSX101.amr.corp.intel.com>
+References: <1389629847-5330-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1389629847-5330-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Omar Ramirez Luna <omar.ramirez@copitl.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-T24gU2F0LCAyMDE0LTAxLTExIGF0IDEyOjU4ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+
-IElmICJ2Zl9pZCIgaXMgc21hbGxlciB0aGFuIGh3LT5mdW5jX2NhcHMudmZfYmFzZV9pZCB0aGVu
-IGl0IGxlYWRzIHRvCj4gYW4gYXJyYXkgdW5kZXJmbG93IG9mIHRoZSBwZi0+dmZbXSBhcnJheS4g
-IFRoaXMgaXMgdW5saWtlbHkgdG8gaGFwcGVuCj4gdW5sZXNzIHRoZSBoYXJkd2FyZSBpcyBiYWQs
-IGJ1dCBpdCdzIGEgc21hbGwgY2hhbmdlIGFuZCBpdCBzaWxlbmNlcyBhCj4gc3RhdGljIGNoZWNr
-ZXIgd2FybmluZy4KPiAKPiBGaXhlczogN2VmYTg0YjdhYmMxICgnaTQwZTogc3VwcG9ydCBWRnMg
-b24gUEZzIG90aGVyIHRoYW4gMCcpCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFu
-LmNhcnBlbnRlckBvcmFjbGUuY29tPgpUZXN0ZWQtYnk6IFNpYmFpIExpIDxzaWJhaS5saUBpbnRl
-bC5jb20+ClNpZ25lZC1vZmYtYnk6IEFhcm9uIEJyb3duIDxhYXJvbi5mLmJyb3duQGludGVsLmNv
-bT4KCj4gLS0tCj4gdjI6IHJlYmFzZWQuICBjb21taXQgbWVzc2FnZSB1cGRhdGVkLgo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pNDBlL2k0MGVfdmlydGNobmxf
-cGYuYyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2k0MGUvaTQwZV92aXJ0Y2hubF9wZi5j
-Cj4gaW5kZXggNTFhNGY2MTI1NDM3Li5iNzdkN2U3OWQ5NzcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvaW50ZWwvaTQwZS9pNDBlX3ZpcnRjaG5sX3BmLmMKPiArKysgYi9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pNDBlL2k0MGVfdmlydGNobmxfcGYuYwo+IEBAIC0xNzcy
-LDcgKzE3NzIsNyBAQCBpbnQgaTQwZV92Y19wcm9jZXNzX3ZmX21zZyhzdHJ1Y3QgaTQwZV9wZiAq
-cGYsIHUxNiB2Zl9pZCwgdTMyIHZfb3Bjb2RlLAo+ICAJCQkgICB1MzIgdl9yZXR2YWwsIHU4ICpt
-c2csIHUxNiBtc2dsZW4pCj4gIHsKPiAgCXN0cnVjdCBpNDBlX2h3ICpodyA9ICZwZi0+aHc7Cj4g
-LQlpbnQgbG9jYWxfdmZfaWQgPSB2Zl9pZCAtIGh3LT5mdW5jX2NhcHMudmZfYmFzZV9pZDsKPiAr
-CXVuc2lnbmVkIGludCBsb2NhbF92Zl9pZCA9IHZmX2lkIC0gaHctPmZ1bmNfY2Fwcy52Zl9iYXNl
-X2lkOwo+ICAJc3RydWN0IGk0MGVfdmYgKnZmOwo+ICAJaW50IHJldDsKPiAgCj4gCj4gLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tCj4gQ2VudHVyeUxpbmsgQ2xvdWQ6IFRoZSBMZWFkZXIgaW4gRW50ZXJw
-cmlzZSBDbG91ZCBTZXJ2aWNlcy4KPiBMZWFybiBXaHkgTW9yZSBCdXNpbmVzc2VzIEFyZSBDaG9v
-c2luZyBDZW50dXJ5TGluayBDbG91ZCBGb3IKPiBDcml0aWNhbCBXb3JrbG9hZHMsIERldmVsb3Bt
-ZW50IEVudmlyb25tZW50cyAmIEV2ZXJ5dGhpbmcgSW4gQmV0d2Vlbi4KPiBHZXQgYSBRdW90ZSBv
-ciBTdGFydCBhIEZyZWUgVHJpYWwgVG9kYXkuIAo+IGh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGlj
-ay5uZXQvZ2FtcGFkL2Nsaz9pZD0xMTk0MjA0MzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKPiBfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IEUxMDAwLWRldmVs
-IG1haWxpbmcgbGlzdAo+IEUxMDAwLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBz
-Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2UxMDAwLWRldmVsCj4gVG8g
-bGVhcm4gbW9yZSBhYm91dCBJbnRlbCYjMTc0OyBFdGhlcm5ldCwgdmlzaXQgaHR0cDovL2NvbW11
-bml0aWVzLmludGVsLmNvbS9jb21tdW5pdHkvd2lyZWQKCgo
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+The variable status is initialized to either 0 or an error code.  Return
+status to propagate the error value.
+
+A simplified version of the semantic patch that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+type T;
+identifier i;
+constant c;
+@@
+
+-T i;
+<... when != i
+-i = c;
+...>
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Most remove functions only return 0, as this one did before the change.  So
+perhaps the correct solution is to remove the status variable?
+
+ drivers/staging/tidspbridge/rmgr/drv_interface.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/tidspbridge/rmgr/drv_interface.c b/drivers/staging/tidspbridge/rmgr/drv_interface.c
+index cafca46..74d31da 100644
+--- a/drivers/staging/tidspbridge/rmgr/drv_interface.c
++++ b/drivers/staging/tidspbridge/rmgr/drv_interface.c
+@@ -589,7 +589,7 @@ func_cont:
+ 		class_destroy(bridge_class);
+ 
+ 	}
+-	return 0;
++	return status;
+ }
+ 
+ #ifdef CONFIG_PM
+
