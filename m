@@ -1,50 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 15 Jan 2014 07:21:19 +0000
-Subject: Re: [patch] gpio: davinci: signedness bug in davinci_gpio_irq_setup()
-Message-Id: <CACRpkdbSKE=d=_oxk+Nh8g3hAjr++ukvrh4nVujupqHk_xH-uw@mail.gmail.com>
+From: walter harms <wharms@bfs.de>
+Date: Wed, 15 Jan 2014 09:04:46 +0000
+Subject: Re: [patch] Staging: vt6655-6: potential NULL dereference in hostap_disable_hostapd()
+Message-Id: <52D64F2E.2020202@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140109052803.GA1265@elgon.mountain>
-In-Reply-To: <20140109052803.GA1265@elgon.mountain>
+References: <20131107075543.GM21844@elgon.mountain>
+In-Reply-To: <20131107075543.GM21844@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@linaro.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 9, 2014 at 6:28 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> "irq" needs to be signed for the error handling to work.
->
-> Fixes: 6075a8b2b6c3 ('gpio: davinci: don't create irq_domain in case of unbanked irqs')
+
+Am 07.11.2013 08:55, schrieb Dan Carpenter:
+> We fixed this to use free_netdev() instead of kfree() but unfortunately
+> free_netdev() doesn't accept NULL pointers.  Smatch complains about
+> this, it's not something I discovered through testing.
+> 
+> Fixes: 3030d40b5036 ('staging: vt6655: use free_netdev instead of kfree')
+> Fixes: 0a438d5b381e ('staging: vt6656: use free_netdev instead of kfree')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 7629b4f12b7f..b0e98d379217 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -423,7 +423,7 @@ static const struct irq_domain_ops davinci_gpio_irq_ops = {
->
->  static int davinci_gpio_irq_setup(struct platform_device *pdev)
->  {
-> -       unsigned        gpio, irq, bank;
-> +       unsigned        gpio, bank;
->         struct clk      *clk;
->         u32             binten = 0;
->         unsigned        ngpio, bank_irq;
-> @@ -433,6 +433,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->         struct davinci_gpio_platform_data *pdata = dev->platform_data;
->         struct davinci_gpio_regs __iomem *g;
->         struct irq_domain       *irq_domain = NULL;
-> +       int             irq;
->
->         ngpio = pdata->ngpio;
->         res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> 
+> diff --git a/drivers/staging/vt6655/hostap.c b/drivers/staging/vt6655/hostap.c
+> index aab0012..ab8b2ba 100644
+> --- a/drivers/staging/vt6655/hostap.c
+> +++ b/drivers/staging/vt6655/hostap.c
+> @@ -143,7 +143,8 @@ static int hostap_disable_hostapd(PSDevice pDevice, int rtnl_locked)
+>  		DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "%s: Netdevice %s unregistered\n",
+>  			pDevice->dev->name, pDevice->apdev->name);
+>  	}
+> -	free_netdev(pDevice->apdev);
+> +	if (pDevice->apdev)
+> +		free_netdev(pDevice->apdev);
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-This merge window the DaVinci GPIO changes are queued by the DaVinci
-maintainers (this patch does not even apply to my tree) so DaVinci guys:
-please pick up this patch.
+perhaps the better way is to fix free_netdev() to make it behave like kfree() and friends.
 
-Yours,
-Linus Walleij
+just my 2 cents,
+ wh
+
+>  	pDevice->apdev = NULL;
+>  	pDevice->bEnable8021x = false;
+>  	pDevice->bEnableHostWEP = false;
+> diff --git a/drivers/staging/vt6656/hostap.c b/drivers/staging/vt6656/hostap.c
+> index ae1676d..67ba48b 100644
+> --- a/drivers/staging/vt6656/hostap.c
+> +++ b/drivers/staging/vt6656/hostap.c
+> @@ -133,7 +133,8 @@ static int hostap_disable_hostapd(struct vnt_private *pDevice, int rtnl_locked)
+>              DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "%s: Netdevice %s unregistered\n",
+>  		       pDevice->dev->name, pDevice->apdev->name);
+>  	}
+> -	free_netdev(pDevice->apdev);
+> +	if (pDevice->apdev)
+> +		free_netdev(pDevice->apdev);
+>  	pDevice->apdev = NULL;
+>      pDevice->bEnable8021x = false;
+>      pDevice->bEnableHostWEP = false;
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
