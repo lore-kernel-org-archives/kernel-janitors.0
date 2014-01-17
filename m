@@ -1,41 +1,53 @@
-From: Balaji T K <balajitk@ti.com>
-Date: Thu, 30 Jan 2014 13:12:35 +0000
-Subject: Re: [patch 2/2] mmc: omap_hsmmc: checking for ERR_PTR instead of NULL
-Message-Id: <52EA4CF3.2000200@ti.com>
+From: Oleksij Rempel <linux@rempel-privat.de>
+Date: Fri, 17 Jan 2014 22:02:06 +0000
+Subject: Re: [PATCH 0/11] use ether_addr_equal_64bits
+Message-Id: <52D9A85E.8070306@rempel-privat.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="wPeiUu57NahR2I82nneDslo4JQxIfmkgx"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140130121548.GB10368@elgon.mountain>
-In-Reply-To: <20140130121548.GB10368@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Ball <chris@printf.net>, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr> <20140117212410.GA13930@amd.pavel.ucw.cz>
+In-Reply-To: <20140117212410.GA13930@amd.pavel.ucw.cz>
+To: Pavel Machek <pavel@ucw.cz>, Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: ath9k-devel@lists.ath9k.org, kernel-janitors@vger.kernel.org, ath5k-devel@lists.ath5k.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, users@rt2x00.serialmonkey.com
 
-On Thursday 30 January 2014 05:45 PM, Dan Carpenter wrote:
-> The of_get_hsmmc_pdata() function returns NULL on error, it doesn't
-> return ERR_PTRs.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
-> index bfb0dbd052c0..76dbc7b759c2 100644
-> --- a/drivers/mmc/host/omap_hsmmc.c
-> +++ b/drivers/mmc/host/omap_hsmmc.c
-> @@ -1761,9 +1761,8 @@ static int omap_hsmmc_probe(struct platform_device *pdev)
->   	match = of_match_device(of_match_ptr(omap_mmc_of_match), &pdev->dev);
->   	if (match) {
->   		pdata = of_get_hsmmc_pdata(&pdev->dev);
-> -
-> -		if (IS_ERR(pdata))
-> -			return PTR_ERR(pdata);
-> +		if (!pdata)
-> +			return -ENOMEM;
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--wPeiUu57NahR2I82nneDslo4JQxIfmkgx
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for reporting this.
-Caller needs to be fixed. I will send a patch to fix this.
+Am 17.01.2014 22:24, schrieb Pavel Machek:
+> On Mon 2013-12-30 19:14:56, Julia Lawall wrote:
+>> Ether_addr_equal_64bits is more efficient than ether_addr_equal, and c=
+an be
+>> used when each argument is an array within a structure that contains a=
+t
+>> least two bytes of data beyond the array.
+>=20
+> I mean, yes, it is probably faster, and yes, most structures probably
+> contain two more bytes, but... is the uglyness worth the speedup? I'd
+> say this should not be done except in very time-critical places...
+> 									Pavel
 
->
->   		if (match->data) {
->   			const u16 *offsetp = match->data;
->
+This code run on every received beacon, almost on every wifi driver (If
+i understand what you mean.)
 
+--=20
+Regards,
+Oleksij
+
+
+--wPeiUu57NahR2I82nneDslo4JQxIfmkgx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlLZqF4ACgkQHwImuRkmbWkVzQD/RakXROCReQFxlfH2WUvcgm/s
+h27RY898nl6Txplcd1QA/iBcXdKSu5CM6doc8bhMe1aOLsa1rkxYGv+fLl1IwOwr
+=oOX1
+-----END PGP SIGNATURE-----
+
+--wPeiUu57NahR2I82nneDslo4JQxIfmkgx--
