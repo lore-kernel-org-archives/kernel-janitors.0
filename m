@@ -1,42 +1,25 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Date: Fri, 10 Jan 2014 09:00:19 +0000
-Subject: Re: [patch] [media] i2c: lm3560: missing unlocks on error in lm3560_set_ctrl()
-Message-Id: <20140110090019.GB9997@valkosipuli.retiisi.org.uk>
+From: Pavel Machek <pavel@ucw.cz>
+Date: Fri, 17 Jan 2014 21:24:10 +0000
+Subject: Re: [PATCH 0/11] use ether_addr_equal_64bits
+Message-Id: <20140117212410.GA13930@amd.pavel.ucw.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131216094544.GB13831@elgon.mountain>
-In-Reply-To: <20131216094544.GB13831@elgon.mountain>
+References: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388427307-8691-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Daniel Jeong <gshark.jeong@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: ath9k-devel@lists.ath9k.org, kernel-janitors@vger.kernel.org, ath5k-devel@lists.ath5k.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, users@rt2x00.serialmonkey.com
 
-Hi Dan and Daniel,
+On Mon 2013-12-30 19:14:56, Julia Lawall wrote:
+> Ether_addr_equal_64bits is more efficient than ether_addr_equal, and can be
+> used when each argument is an array within a structure that contains at
+> least two bytes of data beyond the array.
 
-On Mon, Dec 16, 2013 at 12:45:44PM +0300, Dan Carpenter wrote:
-> There are several error paths which don't unlock on error.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks for the patch. However it seems this change has been already done by
-essentially similar patch (w/o the redundant rval check removal):
-
-commit eed8c3eebce72fe4fc766f9a23e4324b04bd86cf
-Author: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-Date:   Thu Nov 7 09:44:42 2013 -0300
-
-    [media] media: i2c: lm3560: fix missing unlock on error in lm3560_set_ctrl()
-    
-    Add the missing unlock before return from function lm3560_set_ctrl()
-    in the error handling case.
-    
-    Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-    Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
-
-This patch is in Mauro's tree already (and possibly elsewhere).
-
+I mean, yes, it is probably faster, and yes, most structures probably
+contain two more bytes, but... is the uglyness worth the speedup? I'd
+say this should not be done except in very time-critical places...
+									Pavel
 -- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
