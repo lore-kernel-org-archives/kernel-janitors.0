@@ -1,29 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 Jan 2014 20:59:41 +0000
-Subject: [patch] staging: vt6656: remove an unneeded NULL check
-Message-Id: <20140103205941.GB9698@elgon.mountain>
+From: john walker <jw.24hrs1@yandex.com>
+Date: Sun, 19 Jan 2014 02:25:41 +0000
+Subject: Let's have a great deal.
+Message-Id: <344111390098341@web13j.yandex.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: jw.24hrs1@yandex.com
 
-We dereference "param->u.wpa_key.key" on the next line so the check
-here is inconsistent.  This is only called from iwctl_siwencodeext() and
-"param->u.wpa_key.key" is a valid pointer.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/vt6656/wpactl.c b/drivers/staging/vt6656/wpactl.c
-index 003bd7c614e5..f4a8a5cb9feb 100644
---- a/drivers/staging/vt6656/wpactl.c
-+++ b/drivers/staging/vt6656/wpactl.c
-@@ -86,7 +86,7 @@ int wpa_set_keys(struct vnt_private *pDevice, void *ctx)
- 		return ret;
- 	}
- 
--	if (param->u.wpa_key.key && param->u.wpa_key.key_len > sizeof(abyKey))
-+	if (param->u.wpa_key.key_len > sizeof(abyKey))
- 		return -EINVAL;
- 
- 	memcpy(&abyKey[0], param->u.wpa_key.key, param->u.wpa_key.key_len);
+--=20
+Let's have a great deal.
+
+My name is John Walker, I discovered an unclaimed Inheritance Fund in Our B=
+ank, I know What Will be Required to Release The Fund to you.=9A
+
+Get back to Me with your information Via E-mail for More details: jw24hrs1@=
+ovi.com
+
+Regards,=9A
+
+John Walker
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
