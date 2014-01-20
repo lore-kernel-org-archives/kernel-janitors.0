@@ -1,64 +1,84 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 13 Jan 2014 15:23:10 +0000
-Subject: [PATCH 3/4] brcmsmac: delete useless variable
-Message-Id: <1389629847-5330-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Vinod Koul <vinod.koul@intel.com>
+Date: Mon, 20 Jan 2014 09:40:29 +0000
+Subject: Re: [PATCH 8/25] drivers/dma: fix error return code
+Message-Id: <20140120092829.GU26823@intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1389629847-5330-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1389629847-5330-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1388357260-4843-9-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1388357260-4843-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sun, Dec 29, 2013 at 11:47:23PM +0100, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Set the return variable to an error code as done elsewhere in the function.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+> 
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Applied, thanks
 
-Delete a variable that is at most only assigned to a constant, but never
-used otherwise.
+--
+~Vinod
+> 
+> ---
+> Not tested.
+> 
+>  drivers/dma/cppi41.c      |    4 +++-
+>  drivers/dma/ppc4xx/adma.c |    1 +
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/cppi41.c b/drivers/dma/cppi41.c
+> index c29dacf..c18aebf 100644
+> --- a/drivers/dma/cppi41.c
+> +++ b/drivers/dma/cppi41.c
+> @@ -972,8 +972,10 @@ static int cppi41_dma_probe(struct platform_device *pdev)
+>  		goto err_chans;
+>  
+>  	irq = irq_of_parse_and_map(dev->of_node, 0);
+> -	if (!irq)
+> +	if (!irq) {
+> +		ret = -EINVAL;
+>  		goto err_irq;
+> +	}
+>  
+>  	cppi_writel(USBSS_IRQ_PD_COMP, cdd->usbss_mem + USBSS_IRQ_ENABLER);
+>  
+> diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
+> index 8bba298..ce7a8d7 100644
+> --- a/drivers/dma/ppc4xx/adma.c
+> +++ b/drivers/dma/ppc4xx/adma.c
+> @@ -4114,6 +4114,7 @@ static int ppc440spe_adma_probe(struct platform_device *ofdev)
+>  	regs = ioremap(res.start, resource_size(&res));
+>  	if (!regs) {
+>  		dev_err(&ofdev->dev, "failed to ioremap regs!\n");
+> +		ret = -ENOMEM;
+>  		goto err_regs_alloc;
+>  	}
+>  
+> 
 
-A simplified version of the semantic patch that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-type T;
-identifier i;
-constant c;
-@@
-
--T i;
-<... when != i
--i = c;
-...>
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-I don't know whether the comment before the removed assignment should also
-be adjusted.
-
- drivers/net/wireless/brcm80211/brcmsmac/main.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/net/wireless/brcm80211/brcmsmac/main.c b/drivers/net/wireless/brcm80211/brcmsmac/main.c
-index 8138f1c..9417cb5 100644
---- a/drivers/net/wireless/brcm80211/brcmsmac/main.c
-+++ b/drivers/net/wireless/brcm80211/brcmsmac/main.c
-@@ -7108,7 +7108,6 @@ prep_mac80211_status(struct brcms_c_info *wlc, struct d11rxhdr *rxh,
- 		     struct sk_buff *p,
- 		     struct ieee80211_rx_status *rx_status)
- {
--	int preamble;
- 	int channel;
- 	u32 rspec;
- 	unsigned char *plcp;
-@@ -7191,7 +7190,6 @@ prep_mac80211_status(struct brcms_c_info *wlc, struct d11rxhdr *rxh,
- 			rx_status->rate_idx -= BRCMS_LEGACY_5G_RATE_OFFSET;
- 
- 		/* Determine short preamble and rate_idx */
--		preamble = 0;
- 		if (is_cck_rate(rspec)) {
- 			if (rxh->PhyRxStatus_0 & PRXS0_SHORTH)
- 				rx_status->flag |= RX_FLAG_SHORTPRE;
-
+-- 
