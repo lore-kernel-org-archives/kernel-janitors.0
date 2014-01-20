@@ -1,48 +1,32 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Thu, 02 Jan 2014 12:51:10 +0000
-Subject: Re: [PATCH 12/25] HID: sony: fix error return code
-Message-Id: <alpine.LNX.2.00.1401021351000.14951@pobox.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 20 Jan 2014 10:32:49 +0000
+Subject: [patch] IB/usnic: use GFP_ATOMIC under spinlock
+Message-Id: <20140120103248.GE14233@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr> <1388357260-4843-13-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-13-git-send-email-Julia.Lawall@lip6.fr>
+References: <20131211223934.GB3955@elgon.mountain>
+In-Reply-To: <20131211223934.GB3955-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Upinder Malhi <umalhi-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, 29 Dec 2013, Julia Lawall wrote:
+This is called from qp_grp_and_vf_bind() and we are holding the
+"vf->lock" so the allocation can't sleep.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Currently the return variable ret is always 0.  Set it to other values in
-> error cases, as used in the direct return.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: e3cf00d0a87f ('IB/usnic: Add Cisco VIC low-level hardware driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
+diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
+index ae6934c0d05a..16755cdab2c0 100644
+--- a/drivers/infiniband/hw/usnic/usnic_uiom.c
++++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
+@@ -498,7 +498,7 @@ int usnic_uiom_attach_dev_to_pd(struct usnic_uiom_pd *pd, struct device *dev)
+ 	struct usnic_uiom_dev *uiom_dev;
+ 	int err;
+ 
+-	uiom_dev = kzalloc(sizeof(*uiom_dev), GFP_KERNEL);
++	uiom_dev = kzalloc(sizeof(*uiom_dev), GFP_ATOMIC);
+ 	if (!uiom_dev)
+ 		return -ENOMEM;
+ 	uiom_dev->dev = dev;
