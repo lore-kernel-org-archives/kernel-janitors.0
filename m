@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Jan 2014 07:54:22 +0000
+From: "Brown, Aaron F" <aaron.f.brown@intel.com>
+Date: Mon, 20 Jan 2014 23:59:12 +0000
 Subject: Re: [E1000-devel] [patch v2] i40e: potential array underflow in i40e_vc_process_vf_msg()
-Message-Id: <20140113075422.GA7444@mwanda>
+Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B7313FC9F@ORSMSX101.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <309B89C4C689E141A5FF6A0C5FB2118B7312AC70@ORSMSX101.amr.corp.intel.com>
 In-Reply-To: <309B89C4C689E141A5FF6A0C5FB2118B7312AC70@ORSMSX101.amr.corp.intel.com>
@@ -10,26 +10,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, Jan 11, 2014 at 10:19:58PM +0000, Brown, Aaron F wrote:
-> Thanks Dan, I have applied it to Jeff's tree.  It still did not apply
-> cleanly but I went ahead and spun a new patch with the change to get
-> it into the queue.  Not sure what was going on, only visible
-> difference I could see is the original tree seemed to contain:
-> ---------------------------------------------------------
-> 			   u32 v_retval, u8 *msg, u16 msglen)
-> {
-> ---------------------------------------------------------
-> While the patch was looking for:
-> ------------------------------------------------------------
-> 			   u32 v_retval, u8 *msg, u16 msglen)  {
-> ------------------------------------------------------------
-> 
-
-Sorry about that, but I think the problem is in one of your mail servers
-somewhere.  The email in the marc.info archive has the curly braces in
-the right place.
-
-http://marc.info/?l=kernel-janitors&m8943435730292&w=2
-
-regards,
-dan carpenter
+T24gU2F0LCAyMDE0LTAxLTExIGF0IDEyOjU4ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+
+IElmICJ2Zl9pZCIgaXMgc21hbGxlciB0aGFuIGh3LT5mdW5jX2NhcHMudmZfYmFzZV9pZCB0aGVu
+IGl0IGxlYWRzIHRvCj4gYW4gYXJyYXkgdW5kZXJmbG93IG9mIHRoZSBwZi0+dmZbXSBhcnJheS4g
+IFRoaXMgaXMgdW5saWtlbHkgdG8gaGFwcGVuCj4gdW5sZXNzIHRoZSBoYXJkd2FyZSBpcyBiYWQs
+IGJ1dCBpdCdzIGEgc21hbGwgY2hhbmdlIGFuZCBpdCBzaWxlbmNlcyBhCj4gc3RhdGljIGNoZWNr
+ZXIgd2FybmluZy4KPiAKPiBGaXhlczogN2VmYTg0YjdhYmMxICgnaTQwZTogc3VwcG9ydCBWRnMg
+b24gUEZzIG90aGVyIHRoYW4gMCcpCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFu
+LmNhcnBlbnRlckBvcmFjbGUuY29tPgpUZXN0ZWQtYnk6IFNpYmFpIExpIDxzaWJhaS5saUBpbnRl
+bC5jb20+ClNpZ25lZC1vZmYtYnk6IEFhcm9uIEJyb3duIDxhYXJvbi5mLmJyb3duQGludGVsLmNv
+bT4KCj4gLS0tCj4gdjI6IHJlYmFzZWQuICBjb21taXQgbWVzc2FnZSB1cGRhdGVkLgo+IAo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pNDBlL2k0MGVfdmlydGNobmxf
+cGYuYyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2k0MGUvaTQwZV92aXJ0Y2hubF9wZi5j
+Cj4gaW5kZXggNTFhNGY2MTI1NDM3Li5iNzdkN2U3OWQ5NzcgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvaW50ZWwvaTQwZS9pNDBlX3ZpcnRjaG5sX3BmLmMKPiArKysgYi9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9pbnRlbC9pNDBlL2k0MGVfdmlydGNobmxfcGYuYwo+IEBAIC0xNzcy
+LDcgKzE3NzIsNyBAQCBpbnQgaTQwZV92Y19wcm9jZXNzX3ZmX21zZyhzdHJ1Y3QgaTQwZV9wZiAq
+cGYsIHUxNiB2Zl9pZCwgdTMyIHZfb3Bjb2RlLAo+ICAJCQkgICB1MzIgdl9yZXR2YWwsIHU4ICpt
+c2csIHUxNiBtc2dsZW4pCj4gIHsKPiAgCXN0cnVjdCBpNDBlX2h3ICpodyA9ICZwZi0+aHc7Cj4g
+LQlpbnQgbG9jYWxfdmZfaWQgPSB2Zl9pZCAtIGh3LT5mdW5jX2NhcHMudmZfYmFzZV9pZDsKPiAr
+CXVuc2lnbmVkIGludCBsb2NhbF92Zl9pZCA9IHZmX2lkIC0gaHctPmZ1bmNfY2Fwcy52Zl9iYXNl
+X2lkOwo+ICAJc3RydWN0IGk0MGVfdmYgKnZmOwo+ICAJaW50IHJldDsKPiAgCj4gCj4gLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tCj4gQ2VudHVyeUxpbmsgQ2xvdWQ6IFRoZSBMZWFkZXIgaW4gRW50ZXJw
+cmlzZSBDbG91ZCBTZXJ2aWNlcy4KPiBMZWFybiBXaHkgTW9yZSBCdXNpbmVzc2VzIEFyZSBDaG9v
+c2luZyBDZW50dXJ5TGluayBDbG91ZCBGb3IKPiBDcml0aWNhbCBXb3JrbG9hZHMsIERldmVsb3Bt
+ZW50IEVudmlyb25tZW50cyAmIEV2ZXJ5dGhpbmcgSW4gQmV0d2Vlbi4KPiBHZXQgYSBRdW90ZSBv
+ciBTdGFydCBhIEZyZWUgVHJpYWwgVG9kYXkuIAo+IGh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGlj
+ay5uZXQvZ2FtcGFkL2Nsaz9pZD0xMTk0MjA0MzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKPiBfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IEUxMDAwLWRldmVs
+IG1haWxpbmcgbGlzdAo+IEUxMDAwLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBz
+Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2UxMDAwLWRldmVsCj4gVG8g
+bGVhcm4gbW9yZSBhYm91dCBJbnRlbCYjMTc0OyBFdGhlcm5ldCwgdmlzaXQgaHR0cDovL2NvbW11
+bml0aWVzLmludGVsLmNvbS9jb21tdW5pdHkvd2lyZWQKCgo
