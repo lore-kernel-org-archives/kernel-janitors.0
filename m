@@ -1,27 +1,52 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 20 Jan 2014 10:30:47 +0000
-Subject: [patch] x86, microcode: remove an unneeded NULL check
-Message-Id: <20140120103046.GC14233@elgon.mountain>
+Date: Mon, 20 Jan 2014 14:29:00 +0000
+Subject: [patch] NFC: potential overflows in microread_target_discovered()
+Message-Id: <20140120142900.GA4954@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Eric Lapuyade <eric.lapuyade@linux.intel.com>
+Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, linux-wireless@vger.kernel.org, linux-nfc@ml01.01.org, kernel-janitors@vger.kernel.org
 
-"uci" is an element of the ucode_cpu_info[] array, it can't be NULL.
+Smatch says that skb->data is untrusted so we need to check to make sure
+that the memcpy() doesn't overflow.
 
+Fixes: cfad1ba87150 ('NFC: Initial support for Inside Secure microread')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Compile tested only.
 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 15c987698b0f..05db44e4198c 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -382,7 +382,7 @@ static enum ucode_state microcode_init_cpu(int cpu, bool refresh_fw)
- 	enum ucode_state ustate;
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
- 
--	if (uci && uci->valid)
-+	if (uci->valid)
- 		return UCODE_OK;
- 
- 	if (collect_cpu_info(cpu))
+diff --git a/drivers/nfc/microread/microread.c b/drivers/nfc/microread/microread.c
+index f868333271aa..963a4a5dc88e 100644
+--- a/drivers/nfc/microread/microread.c
++++ b/drivers/nfc/microread/microread.c
+@@ -501,9 +501,13 @@ static void microread_target_discovered(struct nfc_hci_dev *hdev, u8 gate,
+ 		targets->sens_res  			 be16_to_cpu(*(u16 *)&skb->data[MICROREAD_EMCF_A_ATQA]);
+ 		targets->sel_res = skb->data[MICROREAD_EMCF_A_SAK];
+-		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A_UID],
+-		       skb->data[MICROREAD_EMCF_A_LEN]);
+ 		targets->nfcid1_len = skb->data[MICROREAD_EMCF_A_LEN];
++		if (targets->nfcid1_len > sizeof(targets->nfcid1)) {
++			r = -EINVAL;
++			goto exit_free;
++		}
++		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A_UID],
++		       targets->nfcid1_len);
+ 		break;
+ 	case MICROREAD_GATE_ID_MREAD_ISO_A_3:
+ 		targets->supported_protocols @@ -511,9 +515,13 @@ static void microread_target_discovered(struct nfc_hci_dev *hdev, u8 gate,
+ 		targets->sens_res  			 be16_to_cpu(*(u16 *)&skb->data[MICROREAD_EMCF_A3_ATQA]);
+ 		targets->sel_res = skb->data[MICROREAD_EMCF_A3_SAK];
+-		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A3_UID],
+-		       skb->data[MICROREAD_EMCF_A3_LEN]);
+ 		targets->nfcid1_len = skb->data[MICROREAD_EMCF_A3_LEN];
++		if (targets->nfcid1_len > sizeof(targets->nfcid1)) {
++			r = -EINVAL;
++			goto exit_free;
++		}
++		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A3_UID],
++		       targets->nfcid1_len);
+ 		break;
+ 	case MICROREAD_GATE_ID_MREAD_ISO_B:
+ 		targets->supported_protocols = NFC_PROTO_ISO14443_B_MASK;
