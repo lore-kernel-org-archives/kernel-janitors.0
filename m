@@ -1,52 +1,43 @@
-From: Himanshu Madhani <himanshu.madhani@qlogic.com>
-Date: Tue, 28 Jan 2014 21:32:56 +0000
-Subject: Re: qlcnic: Enhance logic to calculate msix vectors.
-Message-Id: <ADFE82A996F10145934E45547759F7638CBA6B6E@avmb3.qlogic.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 21 Jan 2014 07:00:10 +0000
+Subject: [patch] [SCSI] qla2xxx: fix error handling of qla2x00_mem_alloc()
+Message-Id: <20140121070010.GD31535@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140128210428.GA20032@elgon.mountain>
-In-Reply-To: <20140128210428.GA20032@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: qla2xxx-upstream@qlogic.com, Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Jan 28, 2014, at 1:04 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+qla2x00_mem_alloc() returns 1 on success and -ENOMEM on failure.  On the
+one hand the caller assumes non-zero is success but on the other hand
+the caller also assumes that it returns an error code.
 
-> Hello Himanshu Madhani,
-> 
-> The patch cb9327d567be: "qlcnic: Enhance logic to calculate msix
-> vectors." from Jan 23, 2014, leads to the following
-> static checker warning:
-> 
-> 	drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c:678
-> 	qlcnic_setup_tss_rss_intr() info: ignoring unreachable code."
-> 
-> drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
->   669                  if (qlcnic_83xx_check(adapter))
->   670                          num_msix += 1;
->   671  
->   672                  netdev_info(adapter->netdev,
->   673                              "Restoring %d Tx, %d SDS rings for total %d vectors.\n",
->   674                              adapter->drv_tx_rings, adapter->drv_sds_rings,
->   675                              num_msix);
->   676                  goto restore;
->   677  
->   678                  err = -EIO;
->                        ^^^^^^^^^^
-> Should this be in front of the goto?
-> 
+I've fixed it to return zero on success and a negative error code on
+failure.  This matches the documentation as well.
 
-This needs to be removed. We will send a patch to fix this and add you as reporter of this problem. 
+Fixes: e315cd28b9ef ('[SCSI] qla2xxx: Code changes for qla data structure refactoring')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->   679          }
->   680  
->   681          return err;
->   682  }
-> 
-> 
-> regards,
-> dan carpenter
-> 
-
-Thanks,
--Himanshu
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 89a53002b585..8d5a67fcffa1 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -2536,7 +2536,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	    ha->flags.enable_64bit_addressing ? "enable" :
+ 	    "disable");
+ 	ret = qla2x00_mem_alloc(ha, req_length, rsp_length, &req, &rsp);
+-	if (!ret) {
++	if (ret) {
+ 		ql_log_pci(ql_log_fatal, pdev, 0x0031,
+ 		    "Failed to allocate memory for adapter, aborting.\n");
+ 
+@@ -3481,7 +3481,7 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
+ 		    "loop_id_map=%p. \n", ha->loop_id_map);
+ 	}
+ 
+-	return 1;
++	return 0;
+ 
+ fail_async_pd:
+ 	dma_pool_free(ha->s_dma_pool, ha->ex_init_cb, ha->ex_init_cb_dma);
