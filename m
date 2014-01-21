@@ -1,23 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 22 Jan 2014 01:03:11 +0000
-Subject: Re: [patch] rxrpc: out of bound read in debug code
-Message-Id: <20140121.170311.1774535393379603151.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 21 Jan 2014 06:57:48 +0000
+Subject: [patch] drm/exynos: potential use after free in exynos_drm_open()
+Message-Id: <20140121065748.GC31535@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140120102859.GA14233@elgon.mountain>
-In-Reply-To: <20140120102859.GA14233@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, kernel-janitors@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 20 Jan 2014 13:28:59 +0300
+If exynos_drm_subdrv_open() fails then we re-use "file_priv".
 
-> Smatch complains because we are using an untrusted index into the
-> rxrpc_acks[] array.  It's just a read and it's only in the debug code,
-> but it's simple enough to add a check and fix it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 96f5421523df ('drm/exynos: use a new anon file for exynos gem mmaper')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 9d096a0c5f8d..3c845292845a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -174,6 +174,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+ 	if (ret) {
+ 		kfree(file_priv);
+ 		file->driver_priv = NULL;
++		return ret;
+ 	}
+ 
+ 	anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
+@@ -186,7 +187,7 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+ 	anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
+ 	file_priv->anon_filp = anon_filp;
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static void exynos_drm_preclose(struct drm_device *dev,
