@@ -1,62 +1,36 @@
-From: Florian Fainelli <florian@openwrt.org>
-Date: Sun, 12 Jan 2014 19:43:36 +0000
-Subject: Re: [patch] vlynq: fix another resource size off by 1 error
-Message-Id: <2337301.FMvHPCUCYL@lenovo>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 22 Jan 2014 14:20:03 +0000
+Subject: [patch] gpu: ion: dereferencing an ERR_PTR
+Message-Id: <20140122142003.GA9681@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130823081949.GD31293@elgon.mountain> <20131111114827.GE5443@mwanda>
-In-Reply-To: <20131111114827.GE5443@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>, apkm@linux-foundation.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Le lundi 11 novembre 2013, 14:48:27 Dan Carpenter a =E9crit :
-> We still need to apply this fix.
+We dereference "heap->task" before checking if it's an ERR_PTR.
 
-Sorry for this late answer, vlynq changes usually go through AKPM's tree as=
- I=20
-don't maintain one due to the low number of changes in this code.
+Fixes: ea313b5f88ed ('gpu: ion: Also shrink memory cached in the deferred free list')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Which email list are android patches going to these days?  These didn't
+go through the staging list.
 
->=20
-> regards,
-> dan carpenter
->=20
-> On Fri, Aug 23, 2013 at 11:19:49AM +0300, Dan Carpenter wrote:
-> > We fixed the call to request_mem_region() patch
-> > 3354f73 ('drivers/vlynq/vlynq.c: fix resource size off by 1 error').
-> > But we need to fix the call the release_mem_region() as well.
-> >=20
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > Static checker stuff.
-> >=20
-> > diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
-> > index 7b07135..c0227f9 100644
-> > --- a/drivers/vlynq/vlynq.c
-> > +++ b/drivers/vlynq/vlynq.c
-> > @@ -762,7 +762,8 @@ static int vlynq_remove(struct platform_device *pde=
-v)
-> >=20
-> >  	device_unregister(&dev->dev);
-> >  	iounmap(dev->local);
-> >=20
-> > -	release_mem_region(dev->regs_start, dev->regs_end - dev->regs_start);
-> > +	release_mem_region(dev->regs_start,
-> > +			   dev->regs_end - dev->regs_start + 1);
-> >=20
-> >  	kfree(dev);
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-
---=20
-Florian
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/android/ion/ion_heap.c b/drivers/staging/android/ion/ion_heap.c
+index 296c74f98dc0..37e64d51394c 100644
+--- a/drivers/staging/android/ion/ion_heap.c
++++ b/drivers/staging/android/ion/ion_heap.c
+@@ -243,12 +243,12 @@ int ion_heap_init_deferred_free(struct ion_heap *heap)
+ 	init_waitqueue_head(&heap->waitqueue);
+ 	heap->task = kthread_run(ion_heap_deferred_free, heap,
+ 				 "%s", heap->name);
+-	sched_setscheduler(heap->task, SCHED_IDLE, &param);
+ 	if (IS_ERR(heap->task)) {
+ 		pr_err("%s: creating thread for deferred free failed\n",
+ 		       __func__);
+ 		return PTR_RET(heap->task);
+ 	}
++	sched_setscheduler(heap->task, SCHED_IDLE, &param);
+ 	return 0;
+ }
+ 
