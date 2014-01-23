@@ -1,33 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 23 Jan 2014 08:21:28 +0000
-Subject: [patch] ALSA: bits vs bytes bug in snd_card_create()
-Message-Id: <20140123082128.GA28688@elgon.mountain>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 23 Jan 2014 08:36:24 +0000
+Subject: Re: [patch] ALSA: bits vs bytes bug in snd_card_create()
+Message-Id: <s5hwqhrt7qv.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140123082128.GA28688@elgon.mountain>
+In-Reply-To: <20140123082128.GA28688@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, Yacine Belkadi <yacine.belkadi.1@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Yacine Belkadi <yacine.belkadi.1@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-The test here is intended intended to prevent shift wrapping bugs when
-we do "1U << idx2".  We should consider the number of bits in a u32
-instead of the number of bytes.
+At Thu, 23 Jan 2014 11:21:28 +0300,
+Dan Carpenter wrote:
+> 
+> The test here is intended intended to prevent shift wrapping bugs when
+> we do "1U << idx2".  We should consider the number of bits in a u32
+> instead of the number of bytes.
+> 
+> Fixes: 7bb2491b35a2 ('ALSA: Add kconfig to specify the max card numbers')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> WARNING:  Please check this one carefully because I might be wrong.
 
-Fixes: 7bb2491b35a2 ('ALSA: Add kconfig to specify the max card numbers')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-WARNING:  Please check this one carefully because I might be wrong.
+You're correct.  I obviously didn't test more than 4.
+Applied (with Cc to stable) now, thanks.
 
-diff --git a/sound/core/init.c b/sound/core/init.c
-index 1351f22f651c..e9e3db321e64 100644
---- a/sound/core/init.c
-+++ b/sound/core/init.c
-@@ -183,7 +183,7 @@ int snd_card_create(int idx, const char *xid,
- 	if (idx < 0) {
- 		for (idx2 = 0; idx2 < SNDRV_CARDS; idx2++) {
- 			/* idx = -1 = 0xffff means: take any free slot */
--			if (idx2 < sizeof(int) && !(idx & (1U << idx2)))
-+			if (idx2 < 32 && !(idx & (1U << idx2)))
- 				continue;
- 			if (!test_bit(idx2, snd_cards_lock)) {
- 				if (!slots[idx2] || !*slots[idx2]) {
+
+Takashi
+
+> 
+> diff --git a/sound/core/init.c b/sound/core/init.c
+> index 1351f22f651c..e9e3db321e64 100644
+> --- a/sound/core/init.c
+> +++ b/sound/core/init.c
+> @@ -183,7 +183,7 @@ int snd_card_create(int idx, const char *xid,
+>  	if (idx < 0) {
+>  		for (idx2 = 0; idx2 < SNDRV_CARDS; idx2++) {
+>  			/* idx = -1 = 0xffff means: take any free slot */
+> -			if (idx2 < sizeof(int) && !(idx & (1U << idx2)))
+> +			if (idx2 < 32 && !(idx & (1U << idx2)))
+>  				continue;
+>  			if (!test_bit(idx2, snd_cards_lock)) {
+>  				if (!slots[idx2] || !*slots[idx2]) {
+> 
