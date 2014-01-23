@@ -1,43 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Jan 2014 08:41:47 +0000
-Subject: [patch -resend] vlynq: fix another resource size off by 1 error
-Message-Id: <20140113084147.GA7499@mwanda>
+Date: Thu, 23 Jan 2014 08:21:28 +0000
+Subject: [patch] ALSA: bits vs bytes bug in snd_card_create()
+Message-Id: <20140123082128.GA28688@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <2337301.FMvHPCUCYL@lenovo>
-References: <20130823081949.GD31293@elgon.mountain>
-In-Reply-To: <20130823081949.GD31293@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Fainelli <florian@openwrt.org>, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Yacine Belkadi <yacine.belkadi.1@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-We fixed the call to request_mem_region() patch
-3354f73 ('drivers/vlynq/vlynq.c: fix resource size off by 1 error').
-But we need to fix the call the release_mem_region() as well.
+The test here is intended intended to prevent shift wrapping bugs when
+we do "1U << idx2".  We should consider the number of bits in a u32
+instead of the number of bytes.
 
+Fixes: 7bb2491b35a2 ('ALSA: Add kconfig to specify the max card numbers')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Resending (again) with Andrew's email corrected.
+WARNING:  Please check this one carefully because I might be wrong.
 
-Hi, Andrew, Florian says this has to go through your tree.  I assume
-that means he has Acked it.  :)
-
-diff --git a/drivers/vlynq/vlynq.c b/drivers/vlynq/vlynq.c
-index 7b07135..c0227f9 100644
---- a/drivers/vlynq/vlynq.c
-+++ b/drivers/vlynq/vlynq.c
-@@ -762,7 +762,8 @@ static int vlynq_remove(struct platform_device *pdev)
- 
- 	device_unregister(&dev->dev);
- 	iounmap(dev->local);
--	release_mem_region(dev->regs_start, dev->regs_end - dev->regs_start);
-+	release_mem_region(dev->regs_start,
-+			   dev->regs_end - dev->regs_start + 1);
- 
- 	kfree(dev);
- 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/sound/core/init.c b/sound/core/init.c
+index 1351f22f651c..e9e3db321e64 100644
+--- a/sound/core/init.c
++++ b/sound/core/init.c
+@@ -183,7 +183,7 @@ int snd_card_create(int idx, const char *xid,
+ 	if (idx < 0) {
+ 		for (idx2 = 0; idx2 < SNDRV_CARDS; idx2++) {
+ 			/* idx = -1 = 0xffff means: take any free slot */
+-			if (idx2 < sizeof(int) && !(idx & (1U << idx2)))
++			if (idx2 < 32 && !(idx & (1U << idx2)))
+ 				continue;
+ 			if (!test_bit(idx2, snd_cards_lock)) {
+ 				if (!slots[idx2] || !*slots[idx2]) {
