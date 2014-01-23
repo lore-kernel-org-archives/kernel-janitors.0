@@ -1,30 +1,45 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jan 2014 11:56:56 +0000
-Subject: [patch] ACPI: remove a pointless NULL check
-Message-Id: <20140130115656.GG12734@elgon.mountain>
+Date: Thu, 23 Jan 2014 08:24:27 +0000
+Subject: [patch] staging: cxt1e1: cleanup mfg_template[] a bit
+Message-Id: <20140123082426.GB28688@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Len Brown <lenb@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-"element" can't be NULL because it is the address of a struct member.
+1) Make it static.
+2) Change it to u8 data instead of short.
+3) This means we can memcpy() it to the correct location instead of
+   using a for loop.
+4) With memcpy() we can use the union member we want directly instead of
+   copying to the generic .bytes union member.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/acpi/utils.c b/drivers/acpi/utils.c
-index 492cf4f409fd..94dbbcb5827b 100644
---- a/drivers/acpi/utils.c
-+++ b/drivers/acpi/utils.c
-@@ -98,10 +98,6 @@ acpi_extract_package(union acpi_object *package,
+diff --git a/drivers/staging/cxt1e1/pmc93x6_eeprom.c b/drivers/staging/cxt1e1/pmc93x6_eeprom.c
+index 137b63cb5537..78cc1709ebdb 100644
+--- a/drivers/staging/cxt1e1/pmc93x6_eeprom.c
++++ b/drivers/staging/cxt1e1/pmc93x6_eeprom.c
+@@ -90,7 +90,7 @@ static int  ByteReverseBuilt = FALSE;
+  *------------------------------------------------------------------------
+  */
  
- 		union acpi_object *element = &(package->package.elements[i]);
+-short       mfg_template[sizeof (FLD_TYPE2)] +static u8 mfg_template[sizeof(FLD_TYPE2)]  {
+     PROM_FORMAT_TYPE2,          /* type; */
+     0x00, 0x1A,                 /* length[2]; */
+@@ -491,13 +491,11 @@ pmc_init_seeprom (u_int32_t addr, u_int32_t serialNum)
+     PROMFORMAT  buffer;         /* Memory image of structure */
+     u_int32_t   crc;            /* CRC of structure */
+     time_t      createTime;
+-    int         i;
  
--		if (!element) {
--			return AE_BAD_DATA;
--		}
--
- 		switch (element->type) {
+     createTime = get_seconds ();
  
- 		case ACPI_TYPE_INTEGER:
+     /* use template data */
+-    for (i = 0; i < sizeof (FLD_TYPE2); ++i)
+-        buffer.bytes[i] = mfg_template[i];
++    memcpy(&buffer.fldType2, mfg_template, sizeof(buffer.fldType2));
+ 
+     /* Update serial number field in buffer */
+     pmcSetBuffValue (&buffer.fldType2.Serial[3], serialNum, 3);
