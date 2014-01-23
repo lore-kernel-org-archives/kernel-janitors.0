@@ -1,24 +1,30 @@
-From: Joerg Roedel <joro@8bytes.org>
-Date: Thu, 09 Jan 2014 12:06:43 +0000
-Subject: Re: [patch] iommu/vt-d: signedness bug in alloc_irte()
-Message-Id: <20140109120643.GK29041@8bytes.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 23 Jan 2014 08:26:37 +0000
+Subject: [patch] tulip: cleanup by using ARRAY_SIZE()
+Message-Id: <20140123082637.GC28688@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140109053236.GE1265@elgon.mountain>
-In-Reply-To: <20140109053236.GE1265-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+To: Grant Grundler <grundler@parisc-linux.org>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, kernel-janitors@vger.kernel.org
 
-On Thu, Jan 09, 2014 at 08:32:36AM +0300, Dan Carpenter wrote:
-> "index" needs to be signed for the error handling to work.  I deleted a
-> little bit of obsolete cruft related to "index" and "start_index" as
-> well.
-> 
-> Fixes: 360eb3c5687e ('iommu/vt-d: use dedicated bitmap to track remapping entry allocation status')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In this situation then ARRAY_SIZE() and sizeof() are the same, but we're
+really dealing with array indexes and not byte offsets so ARRAY_SIZE()
+is cleaner.
 
-Applied, thanks Dan.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
+diff --git a/drivers/net/ethernet/dec/tulip/media.c b/drivers/net/ethernet/dec/tulip/media.c
+index 0d0ba725341a..dcf21a36a9cf 100644
+--- a/drivers/net/ethernet/dec/tulip/media.c
++++ b/drivers/net/ethernet/dec/tulip/media.c
+@@ -457,7 +457,7 @@ void tulip_find_mii(struct net_device *dev, int board_idx)
+ 	/* Find the connected MII xcvrs.
+ 	   Doing this in open() would allow detecting external xcvrs later,
+ 	   but takes much time. */
+-	for (phyn = 1; phyn <= 32 && phy_idx < sizeof (tp->phys); phyn++) {
++	for (phyn = 1; phyn <= 32 && phy_idx < ARRAY_SIZE(tp->phys); phyn++) {
+ 		int phy = phyn & 0x1f;
+ 		int mii_status = tulip_mdio_read (dev, phy, MII_BMSR);
+ 		if ((mii_status & 0x8301) = 0x8001 ||
