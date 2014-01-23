@@ -1,32 +1,50 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 20 Jan 2014 10:32:49 +0000
-Subject: [patch] IB/usnic: use GFP_ATOMIC under spinlock
-Message-Id: <20140120103248.GE14233@elgon.mountain>
+Date: Thu, 23 Jan 2014 16:10:59 +0000
+Subject: re: net: Add GRO support for UDP encapsulating protocols
+Message-Id: <20140123161059.GA29227@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131211223934.GB3955@elgon.mountain>
-In-Reply-To: <20131211223934.GB3955-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Upinder Malhi <umalhi-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-This is called from qp_grp_and_vf_bind() and we are holding the
-"vf->lock" so the allocation can't sleep.
+Hello Or Gerlitz,
 
-Fixes: e3cf00d0a87f ('IB/usnic: Add Cisco VIC low-level hardware driver')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch b582ef0990d4: "net: Add GRO support for UDP encapsulating
+protocols" from Jan 20, 2014, leads to the following static checker
+warning:
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
-index ae6934c0d05a..16755cdab2c0 100644
---- a/drivers/infiniband/hw/usnic/usnic_uiom.c
-+++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
-@@ -498,7 +498,7 @@ int usnic_uiom_attach_dev_to_pd(struct usnic_uiom_pd *pd, struct device *dev)
- 	struct usnic_uiom_dev *uiom_dev;
- 	int err;
- 
--	uiom_dev = kzalloc(sizeof(*uiom_dev), GFP_KERNEL);
-+	uiom_dev = kzalloc(sizeof(*uiom_dev), GFP_ATOMIC);
- 	if (!uiom_dev)
- 		return -ENOMEM;
- 	uiom_dev->dev = dev;
+	net/ipv4/udp_offload.c:104 udp_add_offload()
+	error: scheduling with locks held: 'spin_lock:sock_lock'"
+
+net/ipv4/udp_offload.c
+   101  int udp_add_offload(struct udp_offload *uo)
+   102  {
+   103          struct udp_offload_priv **head = &udp_offload_base;
+   104          struct udp_offload_priv *new_offload = kzalloc(sizeof(*new_offload), GFP_KERNEL);
+                                                                                     ^^^^^^^^^^
+Should be GFP_ATOMIC?
+
+   105  
+   106          if (!new_offload)
+   107                  return -ENOMEM;
+   108  
+   109          new_offload->offload = uo;
+   110  
+   111          spin_lock(&udp_offload_lock);
+   112          rcu_assign_pointer(new_offload->next, rcu_dereference(*head));
+   113          rcu_assign_pointer(*head, rcu_dereference(new_offload));
+   114          spin_unlock(&udp_offload_lock);
+   115  
+   116          return 0;
+   117  }
+
+The call tree looks like:
+
+  vxlan_socket_create() <-- holds the spinlock
+  -> vxlan_notify_add_rx_port()
+     -> udp_add_offload()  <-- shedules
+
+regards,
+dan carpenter
+
