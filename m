@@ -1,22 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 15 Jan 2014 02:19:45 +0000
-Subject: Re: [PATCH] sctp: remove a redundant NULL check
-Message-Id: <20140114.181945.615823290540787555.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 28 Jan 2014 14:00:52 +0000
+Subject: [patch] staging: r8821ae: a couple macro expansion bugs
+Message-Id: <20140128140052.GA15759@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140113134608.GA5232@elgon.mountain>
-In-Reply-To: <20140113134608.GA5232@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: vyasevich@gmail.com, nhorman@tuxdriver.com, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 13 Jan 2014 16:46:08 +0300
+These macros need parentheses, otherwise it causes a macro expansion bug
+when they are used like this:
 
-> It confuses Smatch when we check "sinit" for NULL and then non-NULL and
-> that causes a false positive warning later.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+	ch->flags &= ~IEEE80211_CHAN_NO_IBSS;
 
-Applied.
+This was found using Smatch:
+drivers/staging/rtl8821ae/regd.c:200 _rtl_reg_apply_beaconing_flags()
+	warn: the 'IEEE80211_CHAN_NO_IBSS' macro might need parens
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/rtl8821ae/regd.h b/drivers/staging/rtl8821ae/regd.h
+index abc60ab8165c..dceb3f18200b 100644
+--- a/drivers/staging/rtl8821ae/regd.h
++++ b/drivers/staging/rtl8821ae/regd.h
+@@ -30,8 +30,8 @@
+ #ifndef __RTL_REGD_H__
+ #define __RTL_REGD_H__
+ 
+-#define IEEE80211_CHAN_NO_IBSS		1<<2
+-#define IEEE80211_CHAN_PASSIVE_SCAN	1<<1
++#define IEEE80211_CHAN_NO_IBSS		(1 << 2)
++#define IEEE80211_CHAN_PASSIVE_SCAN	(1 << 1)
+ #define WIPHY_FLAG_CUSTOM_REGULATORY	BIT(0)
+ #define WIPHY_FLAG_STRICT_REGULATORY	BIT(1)
+ #define WIPHY_FLAG_DISABLE_BEACON_HINTS	BIT(2)
