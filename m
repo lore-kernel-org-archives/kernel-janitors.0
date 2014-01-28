@@ -1,38 +1,36 @@
-From: franklinbuthelezi1@yahoo.com
-Date: Fri, 10 Jan 2014 12:34:30 +0000
-Subject: =?UTF-8?Q?DiePresse.com_Mein_Freund,_der_Fahrradh=C3=A4ndler?=
-Message-Id: <128092799.1389357270538.JavaMail.root@dpoportal4.diepresse.apa.net>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Tue, 28 Jan 2014 05:32:46 +0000
+Subject: Re: [patch v2] mtd: sm_ftl: heap corruption in sm_create_sysfs_attributes()
+Message-Id: <20140128053246.GF3162@norris-Latitude-E6410>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <52A06B00.7070309@bfs.de> <20131205145349.GA13302@elgon.mountain>
+In-Reply-To: <20131205145349.GA13302@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, walter harms <wharms@bfs.de>
 
-Folgender Artikel auf http://diepresse.com wird Ihnen von Franklin Buthelezi empfohlen:
+On Thu, Dec 05, 2013 at 05:53:50PM +0300, Dan Carpenter wrote:
+> We always put a NUL terminator one space past the end of the "vendor"
+> buffer.  Walter Harms also pointed out that this should just use
+> kstrndup().
+> 
+> Fixes: 7d17c02a01a1 ('mtd: Add new SmartMedia/xD FTL')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Mein Freund, der Fahrradhändler
-Manche Dinge verändern sich über die langen Wintermonate hinweg. 
+Patch looks good.
 
-http://diepresse.com/home/leben/mode/kolumnezumtag/548717/index.do
+> ---
+> v2:  Use kstrndup().
+>      Don't subtract 1 from the strnlen() limiter for the NUL.  I think
+>      it's ok to go over?
 
-Notiz:
-Dear friend,
- 
-I am the international operations manager of ABSA bank South Africa. My name is Franklin Buthelezi. I have a sensitive and private offer from the top executive to seek your partnership in re-profiling some offshore investment funds worth 11.5M U.S.D (Eleven Million five hundred thousand United States Dollars) I am constrained however to withhold most of the details for now. This is a legitimate transaction. 
- 
-If we agree on the terms you will be given 15% of the total funds, if you are interested please write back via email providing me your personal details and phone number for further directives.
- 
-If you are interested and willing to render your assistance please respond via my private email address stated below.
- 
-I look forward to your response.
- 
-Best regards
-Franklin Buthelezi
-Email: franklinbuthelezi1@yahoo.com
+I don't think you're "going over" anything. You're just (correctly)
+allocating the buffer as (at most) one byte larger than (SM_SMALL_PAGE -
+SM_CIS_VENDOR_OFFSET), which is perfect if you're copying up to
+(SM_SMALL_PAGE - SM_CIS_VENDOR_OFFSET) bytes of character data.
 
+Pushed to l2-mtd.git/next, queued for 3.15. Thanks.
 
-------------------------------------
-DiePresse.com übernimmt keine Haftung für den Inhalt der persönlichen Nachricht.
-
-© DiePresse.com - http://diepresse.com
-
+Brian
