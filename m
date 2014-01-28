@@ -1,38 +1,29 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jan 2014 11:52:26 +0000
-Subject: re: VMCI: queue pairs implementation.
-Message-Id: <20140130115226.GD12734@elgon.mountain>
+From: Wang Zhe <zhew@cs.unc.edu>
+Date: Tue, 28 Jan 2014 20:54:48 +0000
+Subject: Getting Started with Kernel Janitors Project
+Message-Id: <CAEqxDE=rOu4Gdf_XVot3oDJNKmibT1Ke7kt93Pmgvj+EAmZjVw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130110193238.GB17997@elgon.mountain>
-In-Reply-To: <20130110193238.GB17997@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello George Zhang,
+Hi all,
+I am new to linux kernel project and came through the kernelnewbies
+webpage saying kernel janitor project is a good way to get me started
+contributing to kernel. But I am not quite sure how to get started
+with the janitor project. I read through the TODO list
+(http://kernelnewbies.org/KernelJanitors/Todo) but the items there
+sounds very general to me. Is there any sort of list that looks like
+the issue list of most Github project (i.e. has specified which file
+should I look for, instead of more general TODO description)?
 
-The patch 06164d2b72aa: "VMCI: queue pairs implementation." from Jan
-8, 2013, leads to the following static checker warning:
+In general, any suggestion on how to get me started contributing to
+this project will be really appreciated.
 
-	drivers/misc/vmw_vmci/vmci_queue_pair.c:1145 qp_detatch_guest_work()
-	warn: we tested 'entry' before and it was 'true'"
+(This is the first time I send email to the mailing list and I
+apologize if it's not appropriate ask this kind of question on the
+mailing list.)
 
-drivers/misc/vmw_vmci/vmci_queue_pair.c
-  1140          entry->qp.ref_count--;
-  1141          if (entry->qp.ref_count = 0)
-  1142                  qp_list_remove_entry(&qp_guest_endpoints, &entry->qp);
-  1143  
-  1144          /* If we didn't remove the entry, this could change once we unlock. */
-  1145          if (entry)
-                    ^^^^^
-This can never happen.  The comment makes me think we intended to test
-something else, but I'm not sure what?
-
-  1146                  ref_count = entry->qp.ref_count;
-  1147  
-  1148          mutex_unlock(&qp_guest_endpoints.mutex);
-
-regards,
-dan carpenter
-
+Thanks,
+Zhe
