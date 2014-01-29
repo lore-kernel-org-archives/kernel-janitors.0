@@ -1,59 +1,49 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 30 Jan 2014 12:12:31 +0000
-Subject: [patch] IB/qib: cleanup qib_register_observer()
-Message-Id: <20140130121231.GA17753@elgon.mountain>
+Date: Wed, 29 Jan 2014 13:17:57 +0000
+Subject: [patch] UBI: fix some use after free bugs
+Message-Id: <20140129131756.GC10678@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marciniszyn <infinipath@intel.com>
-Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Artem Bityutskiy <dedekind1@gmail.com>
 
-Returning directly is easier to read than do-nothing gotos.  Remove the
-duplicative check on "olp" and pulled the code in one indent level.
+Move the kmem_cache_free() calls down a couple lines.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/infiniband/hw/qib/qib_diag.c b/drivers/infiniband/hw/qib/qib_diag.c
-index 1686fd4bda87..52601ae4b327 100644
---- a/drivers/infiniband/hw/qib/qib_diag.c
-+++ b/drivers/infiniband/hw/qib/qib_diag.c
-@@ -689,28 +689,23 @@ int qib_register_observer(struct qib_devdata *dd,
- 			  const struct diag_observer *op)
- {
- 	struct diag_observer_list_elt *olp;
--	int ret = -EINVAL;
-+	unsigned long flags;
+diff --git a/drivers/mtd/ubi/fastmap.c b/drivers/mtd/ubi/fastmap.c
+index ead861307b3c..c5dad652614d 100644
+--- a/drivers/mtd/ubi/fastmap.c
++++ b/drivers/mtd/ubi/fastmap.c
+@@ -463,8 +463,8 @@ static int scan_pool(struct ubi_device *ubi, struct ubi_attach_info *ai,
+ 				}
+ 			}
+ 			if (found_orphan) {
+-				kmem_cache_free(ai->aeb_slab_cache, tmp_aeb);
+ 				list_del(&tmp_aeb->u.list);
++				kmem_cache_free(ai->aeb_slab_cache, tmp_aeb);
+ 			}
  
- 	if (!dd || !op)
--		goto bail;
--	ret = -ENOMEM;
-+		return -EINVAL;
- 	olp = vmalloc(sizeof *olp);
- 	if (!olp) {
- 		pr_err("vmalloc for observer failed\n");
--		goto bail;
-+		return -ENOMEM;
+ 			new_aeb = kmem_cache_alloc(ai->aeb_slab_cache,
+@@ -846,16 +846,16 @@ fail_bad:
+ 	ret = UBI_BAD_FASTMAP;
+ fail:
+ 	list_for_each_entry_safe(tmp_aeb, _tmp_aeb, &used, u.list) {
+-		kmem_cache_free(ai->aeb_slab_cache, tmp_aeb);
+ 		list_del(&tmp_aeb->u.list);
++		kmem_cache_free(ai->aeb_slab_cache, tmp_aeb);
  	}
--	if (olp) {
--		unsigned long flags;
+ 	list_for_each_entry_safe(tmp_aeb, _tmp_aeb, &eba_orphans, u.list) {
+-		kmem_cache_free(ai->aeb_slab_cache, tmp_aeb);
+ 		list_del(&tmp_aeb->u.list);
++		kmem_cache_free(ai->aeb_slab_cache, tmp_aeb);
+ 	}
+ 	list_for_each_entry_safe(tmp_aeb, _tmp_aeb, &free, u.list) {
+-		kmem_cache_free(ai->aeb_slab_cache, tmp_aeb);
+ 		list_del(&tmp_aeb->u.list);
++		kmem_cache_free(ai->aeb_slab_cache, tmp_aeb);
+ 	}
  
--		spin_lock_irqsave(&dd->qib_diag_trans_lock, flags);
--		olp->op = op;
--		olp->next = dd->diag_observer_list;
--		dd->diag_observer_list = olp;
--		spin_unlock_irqrestore(&dd->qib_diag_trans_lock, flags);
--		ret = 0;
--	}
--bail:
--	return ret;
-+	spin_lock_irqsave(&dd->qib_diag_trans_lock, flags);
-+	olp->op = op;
-+	olp->next = dd->diag_observer_list;
-+	dd->diag_observer_list = olp;
-+	spin_unlock_irqrestore(&dd->qib_diag_trans_lock, flags);
-+
-+	return 0;
- }
- 
- /* Remove all registered observers when device is closed */
+ 	return ret;
