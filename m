@@ -1,53 +1,33 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Thu, 09 Jan 2014 09:56:27 +0000
-Subject: Re: [patch] f2fs: checking for IS_ERR() instead of NULL
-Message-Id: <1389261387.3035.7.camel@kjgkr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Jan 2014 13:18:51 +0000
+Subject: [patch] IB/iser: use after free in iser_snd_completion()
+Message-Id: <20140129131850.GD10678@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140109052825.GB1265@elgon.mountain>
-In-Reply-To: <20140109052825.GB1265@elgon.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>
+Cc: Roi Dayan <roid-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Thank you for the patch.
-This was already fixed in the original patch with an issue trigger by
-Chao Yu before.
-I rebased it before, so that it seems you need to pull the f2fs again.
-Thanks,
+We use "tx_desc" again after we free it.
 
-2014-01-09 (=EB=AA=A9), 08:28 +0300, Dan Carpenter:
-> grab_cache_page_write_begin() returns NULL on error, it doesn't return
-> error pointers.
->=20
-> Fixes: e18c65b2ac91 ('f2fs: key functions to handle inline data')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 69a923e38f0c..e0d800a1d79f 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -131,8 +131,8 @@ int f2fs_convert_inline_data(struct inode *inode, pgo=
-ff_t to_size)
->  		return 0;
-> =20
->  	page =3D grab_cache_page_write_begin(inode->i_mapping, 0, AOP_FLAG_NOFS=
-);
-> -	if (IS_ERR(page))
-> -		return PTR_ERR(page);
-> +	if (!page)
-> +		return -ENOMEM;
-> =20
->  	err =3D __f2fs_convert_inline_data(inode, page);
->  	f2fs_put_page(page, 1);
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---=20
-Jaegeuk Kim
-Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/infiniband/ulp/iser/iser_initiator.c b/drivers/infiniband/ulp/iser/iser_initiator.c
+index 538822684d5b..334f34b1cd46 100644
+--- a/drivers/infiniband/ulp/iser/iser_initiator.c
++++ b/drivers/infiniband/ulp/iser/iser_initiator.c
+@@ -610,11 +610,12 @@ void iser_snd_completion(struct iser_tx_desc *tx_desc,
+ 		ib_dma_unmap_single(device->ib_device, tx_desc->dma_addr,
+ 					ISER_HEADERS_LEN, DMA_TO_DEVICE);
+ 		kmem_cache_free(ig.desc_cache, tx_desc);
++		tx_desc = NULL;
+ 	}
+ 
+ 	atomic_dec(&ib_conn->post_send_buf_count);
+ 
+-	if (tx_desc->type = ISCSI_TX_CONTROL) {
++	if (tx_desc && tx_desc->type = ISCSI_TX_CONTROL) {
+ 		/* this arithmetic is legal by libiscsi dd_data allocation */
+ 		task = (void *) ((long)(void *)tx_desc -
+ 				  sizeof(struct iscsi_task));
