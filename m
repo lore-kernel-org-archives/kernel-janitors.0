@@ -1,67 +1,62 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Date: Thu, 02 Jan 2014 01:55:30 +0000
-Subject: Re: [PATCH 23/25] thermal: exynos: fix error return code
-Message-Id: <1388627730.3739.67.camel@rzhang1-mobl4>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Jan 2014 11:46:28 +0000
+Subject: re: qlcnic: flash template based firmware reset recovery
+Message-Id: <20140130114628.GA12734@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1388357260-4843-1-git-send-email-Julia.Lawall@lip6.fr>
- <1388357260-4843-24-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1388357260-4843-24-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-On Sun, 2013-12-29 at 23:47 +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Set the return variable to an error code as done elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> 
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Sony Chacko,
 
-applied.
+The patch 81d0aeb0a4ff: "qlcnic: flash template based firmware reset
+recovery" from Jan 1, 2013, leads to the following static checker
+warning:
 
-thanks,
-rui
-> 
-> ---
-> Not tested.
-> 
->  drivers/thermal/samsung/exynos_tmu.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 32f38b9..0d96a51 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -205,6 +205,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  skip_calib_data:
->  	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
->  		dev_err(&pdev->dev, "Invalid max trigger level\n");
-> +		ret = -EINVAL;
->  		goto out;
->  	}
->  
-> 
+	drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c:1756
+		qlcnic_83xx_poll_list()
+	warn: we tested 'delay' before and it was 'true'
 
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
+  1745          delay = (long)p_hdr->delay;
+  1746  
+  1747          if (!delay) {
+                    ^^^^^^
+
+  1748                  for (i = 0; i < p_hdr->count; i++, entry++)
+  1749                          qlcnic_83xx_poll_reg(p_dev, entry->arg1,
+  1750                                               delay, poll->mask,
+  1751                                               poll->status);
+  1752          } else {
+  1753                  for (i = 0; i < p_hdr->count; i++, entry++) {
+  1754                          arg1 = entry->arg1;
+  1755                          arg2 = entry->arg2;
+  1756                          if (delay) {
+                                    ^^^^^
+"delay" is non-zero here.  No need to check again.
+
+  1757                                  if (qlcnic_83xx_poll_reg(p_dev,
+  1758                                                           arg1, delay,
+  1759                                                           poll->mask,
+  1760                                                           poll->status)){
+  1761                                          QLCRD32(p_dev, arg1, &err);
+  1762                                          if (err = -EIO)
+  1763                                                  return;
+  1764                                          QLCRD32(p_dev, arg2, &err);
+  1765                                          if (err = -EIO)
+  1766                                                  return;
+
+But my main reason for emailing is that I'm confused by the error
+handling here.  qlcnic_83xx_poll_reg() returns zero on success or
+positive timeout or a negative error code.  How does calling
+QLCRD32() fix the error?
+
+  1767                                  }
+  1768                          }
+  1769                  }
+  1770          }
+
+regards,
+dan carpenter
 
