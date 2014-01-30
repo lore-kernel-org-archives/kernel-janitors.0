@@ -1,36 +1,48 @@
-From: "Brown, Aaron F" <aaron.f.brown@intel.com>
-Date: Tue, 21 Jan 2014 20:47:17 +0000
-Subject: Re: [PATCH] ixgbevf: delete unneeded call to pci_set_power_state
-Message-Id: <309B89C4C689E141A5FF6A0C5FB2118B7314262D@ORSMSX101.amr.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Jan 2014 12:15:26 +0000
+Subject: Re: [patch] mmc: omap_hsmmc: precedence bug in omap_hsmmc_context_restore()
+Message-Id: <20140130121526.GO4815@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1389114026-27854-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1389114026-27854-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <20130822125613.GB2543@elgon.mountain>
+ <52162444.1050908@ti.com>
+In-Reply-To: <52162444.1050908@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Julia.Lawall@lip6.fr" <Julia.Lawall@lip6.fr>
-Cc: "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, "Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "Allan, Bruce W" <bruce.w.allan@intel.com>, "Wyborny, Carolyn" <carolyn.wyborny@intel.com>, "Skidmore, Donald C" <donald.c.skidmore@intel.com>, "Rose, Gregory V" <gregory.v.rose@intel.com>, "Duyck, Alexander H" <alexander.h.duyck@intel.com>, "Ronciak, John" <john.ronciak@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "e1000-devel@lists.sourceforge.net" <e1000-devel@lists.sourceforge.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Balaji T K <balajitk@ti.com>
+Cc: Chris Ball <cjb@laptop.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-T24gVHVlLCAyMDE0LTAxLTA3IGF0IDE4OjAwICswMTAwLCBKdWxpYSBMYXdhbGwgd3JvdGU6Cj4g
-RnJvbTogSnVsaWEgTGF3YWxsIDxKdWxpYS5MYXdhbGxAbGlwNi5mcj4KPiAKPiBUaGlzIGRyaXZl
-ciBkb2VzIG5vdCBuZWVkIHRvIGFkanVzdCB0aGUgcG93ZXIgc3RhdGUgb24gc3VzcGVuZCwgc28g
-dGhlCj4gY2FsbCB0byBwY2lfc2V0X3Bvd2VyX3N0YXRlIGluIHRoZSByZXN1bWUgZnVuY3Rpb24g
-aXMgYSBuby1vcC4gIERyb3AgaXQsIHRvCj4gbWFrZSB0aGUgY29kZSBtb3JlIHVuZGVyc3RhbmRh
-YmxlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEp1bGlhIExhd2FsbCA8SnVsaWEuTGF3YWxsQGxpcDYu
-ZnI+ClRlc3RlZC1ieTogUGhpbCBTY2htaXR0IDxwaGlsbGlwLmouc2NobWl0dEBpbnRlbC5jb20+
-ClNpZ25lZC1vZmYtYnk6IEFhcm9uIEJyb3duIDxhYXJvbi5mLmJyb3duQGludGVsLmNvbT4KCj4g
-LS0tCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2l4Z2JldmYvaXhnYmV2Zl9tYWluLmMg
-fCAgICAxIC0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvaXhnYmV2Zi9peGdiZXZmX21haW4uYyBiL2Ry
-aXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2l4Z2JldmYvaXhnYmV2Zl9tYWluLmMKPiBpbmRleCBh
-NWQzMTY3Li41NzA5ZmIwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVs
-L2l4Z2JldmYvaXhnYmV2Zl9tYWluLmMKPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9pbnRl
-bC9peGdiZXZmL2l4Z2JldmZfbWFpbi5jCj4gQEAgLTMyMjYsNyArMzIyNiw2IEBAIHN0YXRpYyBp
-bnQgaXhnYmV2Zl9yZXN1bWUoc3RydWN0IHBjaV9kZXYgKnBkZXYpCj4gIAlzdHJ1Y3QgbmV0X2Rl
-dmljZSAqbmV0ZGV2ID0gYWRhcHRlci0+bmV0ZGV2Owo+ICAJdTMyIGVycjsKPiAgCj4gLQlwY2lf
-c2V0X3Bvd2VyX3N0YXRlKHBkZXYsIFBDSV9EMCk7Cj4gIAlwY2lfcmVzdG9yZV9zdGF0ZShwZGV2
-KTsKPiAgCS8qCj4gIAkgKiBwY2lfcmVzdG9yZV9zdGF0ZSBjbGVhcnMgZGV2LT5zdGF0ZV9zYXZl
-ZCBzbyBjYWxsCj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0
-aGUgbGluZSAidW5zdWJzY3JpYmUgbmV0ZGV2IiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0
-byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0
-cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCgoK
+On Thu, Aug 22, 2013 at 08:16:28PM +0530, Balaji T K wrote:
+> On Thursday 22 August 2013 06:26 PM, Dan Carpenter wrote:
+> >'!' has higher precedence than '&' so this doesn't work as intended
+> >although since RESETDONE is 1 it would work if none of the other bits
+> >are set.
+> >
+> Hi Dan,
+> 
+> Thanks for the patch, Indeed other bits are reserved.
+> however ...
+> 
+> >Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> >---
+> >Untested.
+> >
+> >diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+> >index 1865321..7346b15 100644
+> >--- a/drivers/mmc/host/omap_hsmmc.c
+> >+++ b/drivers/mmc/host/omap_hsmmc.c
+> >@@ -612,7 +612,7 @@ static int omap_hsmmc_context_restore(struct omap_hsmmc_host *host)
+> >  	if (host->context_loss = context_loss)
+> >  		return 1;
+> >
+> >-	if (!OMAP_HSMMC_READ(host->base, SYSSTATUS) & RESETDONE)
+> >+	if (!(OMAP_HSMMC_READ(host->base, SYSSTATUS) & RESETDONE))
+> >  		return 1;
+> 
+> This check is unnecessary, will send a patch to remove this.
+
+What happened with this?
+
+regards,
+dan carpenter
+
