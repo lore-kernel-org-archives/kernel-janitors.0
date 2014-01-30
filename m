@@ -1,29 +1,30 @@
-From: john walker <jw.24hrs1@yandex.com>
-Date: Sun, 19 Jan 2014 02:25:41 +0000
-Subject: Let's have a great deal.
-Message-Id: <344111390098341@web13j.yandex.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Jan 2014 11:56:56 +0000
+Subject: [patch] ACPI: remove a pointless NULL check
+Message-Id: <20140130115656.GG12734@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: jw.24hrs1@yandex.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Len Brown <lenb@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+"element" can't be NULL because it is the address of a struct member.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---=20
-Let's have a great deal.
-
-My name is John Walker, I discovered an unclaimed Inheritance Fund in Our B=
-ank, I know What Will be Required to Release The Fund to you.=9A
-
-Get back to Me with your information Via E-mail for More details: jw24hrs1@=
-ovi.com
-
-Regards,=9A
-
-John Walker
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/acpi/utils.c b/drivers/acpi/utils.c
+index 492cf4f409fd..94dbbcb5827b 100644
+--- a/drivers/acpi/utils.c
++++ b/drivers/acpi/utils.c
+@@ -98,10 +98,6 @@ acpi_extract_package(union acpi_object *package,
+ 
+ 		union acpi_object *element = &(package->package.elements[i]);
+ 
+-		if (!element) {
+-			return AE_BAD_DATA;
+-		}
+-
+ 		switch (element->type) {
+ 
+ 		case ACPI_TYPE_INTEGER:
