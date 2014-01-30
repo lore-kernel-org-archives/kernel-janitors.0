@@ -1,95 +1,43 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 14 Jan 2014 08:06:18 +0000
-Subject: Re: [PATCH 2/4] i810: delete useless variable
-Message-Id: <52D4EFFA.8090205@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="sqxRxtgUBfQ1HqNuobL954PqphI6gFh38"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Jan 2014 12:10:48 +0000
+Subject: [patch 2/2] gru: cleanup gru_dump_context() a little
+Message-Id: <20140130121048.GA17321@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1389629847-5330-1-git-send-email-Julia.Lawall@lip6.fr> <1389629847-5330-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1389629847-5330-3-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Antonino Daplas <adaplas@gmail.com>, kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dimitri Sivanich <sivanich@sgi.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
---sqxRxtgUBfQ1HqNuobL954PqphI6gFh38
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+"ret" is zero here so we can remove the "!ret" part of the condition.
+"uhdr" is alread a __user pointer so we can remove the cast.
 
-On 2014-01-13 18:17, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Delete a variable that is at most only assigned to a constant, but neve=
-r
-> used otherwise.
->=20
-> A simplified version of the semantic patch that fixes this problem is a=
-s
-> follows: (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @@
-> type T;
-> identifier i;
-> constant c;
-> @@
->=20
-> -T i;
-> <... when !=3D i
-> -i =3D c;
-> ...>
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/video/i810/i810_main.c |    4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/video/i810/i810_main.c b/drivers/video/i810/i810_m=
-ain.c
-> index 038192a..bb674e4 100644
-> --- a/drivers/video/i810/i810_main.c
-> +++ b/drivers/video/i810/i810_main.c
-> @@ -2011,9 +2011,7 @@ static int i810fb_init_pci(struct pci_dev *dev,
->  	struct fb_info    *info;
->  	struct i810fb_par *par =3D NULL;
->  	struct fb_videomode mode;
-> -	int i, err =3D -1, vfreq, hfreq, pixclock;
-> -
-> -	i =3D 0;
-> +	int err =3D -1, vfreq, hfreq, pixclock;
-> =20
->  	info =3D framebuffer_alloc(sizeof(struct i810fb_par), &dev->dev);
->  	if (!info)
->=20
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Btw, speaking of __user pointers there are some places where we
+dereference them in this file.  It's not a security problem because we
+have already used copy_to_user() to successfully write to the pointer at
+point.  But if you have something like PAX which puts user pointers and
+kernel pointers in a separate address space then this will cause
+problems.
 
-Thanks, queued for 3.14.
+Run sparse to see the issue.
 
- Tomi
-
-
-
---sqxRxtgUBfQ1HqNuobL954PqphI6gFh38
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJS1O/6AAoJEPo9qoy8lh71XO0P/jEYBpToHRMyxiUxj4T//A/O
-bmtB4dk05lWjw9jyW8NqpHCB4z5EoWDh3P7lsfNFGlZMhBYBUrv1LTBxQKTjAzpT
-zuLIv0jBznVvL0jiVtpCnIL3Z/92TCYs19jE2ZcOuwPQj0K4A61QE9fiW7+Tialj
-SFwb8P9hTg+5Wc7BK6c3AhfqzGqXWZgfhMveVsyG/lGuKMljO/9m58RlpGmDKgDD
-5aJDTupaK6Mts59TQtrRJkbk8F41+Bbhg6iWaYlcjypCUbvLM5uKU2bNGsLYMBrY
-X6hLULDVDj3I+eM4BlyJI9WbPE532CFfAVhhdEc9nWl7PtytKUBiy1oSpq41gCLf
-ZvoelVJtb3I/CEIe+moLdrvExIOPkzoUweQsLeSxZXfvy7XdKG7yHF45OMLwq/gS
-2v9WdeJWtk1DmDo8/WEQ7eHhYnfw6psJS24sxJP/nhtnbwOXQ80Dds7UJ3GEf8uy
-mFItocfg7CrGQpnfsjTXkXY9Z8/fAhFX3urIg9pnc0z+uj21waDubpN3PGUvwXLD
-GFbERn5Ip4Ayoy0fGbQCystUhAHwOi0xCjloW6ztXYgaQxPrNdBcCdoB2zVNMv1E
-c/TlZMjtDrXRvbC+XIiKRMANX6GqkWYGAlZCkFh0heW1clGZPtiXq6417hFtrrfL
-WlfrX8yAgxLPxwRQiZlN
-=e4wL
------END PGP SIGNATURE-----
-
---sqxRxtgUBfQ1HqNuobL954PqphI6gFh38--
+diff --git a/drivers/misc/sgi-gru/grukdump.c b/drivers/misc/sgi-gru/grukdump.c
+index 2bef3f76032a..a3700a56b8ff 100644
+--- a/drivers/misc/sgi-gru/grukdump.c
++++ b/drivers/misc/sgi-gru/grukdump.c
+@@ -178,10 +178,10 @@ static int gru_dump_context(struct gru_state *gru, int ctxnum,
+ 	hdr.cbrcnt = cbrcnt;
+ 	hdr.dsrcnt = dsrcnt;
+ 	hdr.cch_locked = cch_locked;
+-	if (!ret && copy_to_user((void __user *)uhdr, &hdr, sizeof(hdr)))
+-		ret = -EFAULT;
++	if (copy_to_user(uhdr, &hdr, sizeof(hdr)))
++		return -EFAULT;
+ 
+-	return ret ? ret : bytes;
++	return bytes;
+ }
+ 
+ int gru_dump_chiplet_request(unsigned long arg)
