@@ -1,43 +1,29 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 02 Jan 2014 09:56:46 +0000
-Subject: Re: Yet another newbie hopes to join the fold
-Message-Id: <alpine.DEB.2.02.1401021054590.2182@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Jan 2014 12:00:34 +0000
+Subject: [patch] [media] tda10071: remove a duplicative test
+Message-Id: <20140130120034.GA13267@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAPNrq4xas3OGqkv1027Bty+6CErw=Hk=RJxasPioED9KvkEGOA@mail.gmail.com>
-In-Reply-To: <CAPNrq4xas3OGqkv1027Bty+6CErw=Hk=RJxasPioED9KvkEGOA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2 Jan 2014, Gideon D'souza wrote:
+"ret" is an error code here, we already tested that.
 
-> Hey Guys,
-> 
-> I'm just another hacking hoping to hack on the kernel.
-> 
-> I've played just a wee bit with toy OS's (from osdev.org), stuff like
-> MikeOS etc. I've just begun reading Robert Love's - Linux Kernel
-> Development.
-> 
-> I have two questions:
-> 
-> 1> I've got myself setup with Fedora 20 and I'm good to go, however Im
-> somewhat scared by how contrived the kernel bugs are, and I'm
-> wondering what kind of work can I do? Or any suggestions as to what I
-> can code or write to learn something, maybe write to a log file
-> everytime a process is created to understand that bit better?  IOW,
-> what toy projects can I do to explore various aspects of the kernel.
-> 
-> 2> I started reading a linux device driver series, but how is a real
-> driver written, can a random person get a technical hardware doc and
-> go write a driver or is this something done only by a companies that
-> manufactures hardware?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Also, read carefully the documentation about submitting patches 
-(Documentation/SubmittingPatches) and do everything that it says.  And try 
-sending any patches to yourself and applying them before sending them to 
-the mailing list.  The get_maintainers.pl script helps you figure out who 
-to send your patches to.
-
-julia
+diff --git a/drivers/media/dvb-frontends/tda10071.c b/drivers/media/dvb-frontends/tda10071.c
+index 8ad3a57cf640..a76df29c4973 100644
+--- a/drivers/media/dvb-frontends/tda10071.c
++++ b/drivers/media/dvb-frontends/tda10071.c
+@@ -1006,8 +1006,7 @@ static int tda10071_init(struct dvb_frontend *fe)
+ 				dev_err(&priv->i2c->dev, "%s: firmware " \
+ 						"download failed=%d\n",
+ 						KBUILD_MODNAME, ret);
+-				if (ret)
+-					goto error_release_firmware;
++				goto error_release_firmware;
+ 			}
+ 		}
+ 		release_firmware(fw);
