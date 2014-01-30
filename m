@@ -1,23 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 23 Jan 2014 21:29:03 +0000
-Subject: Re: [patch] tulip: cleanup by using ARRAY_SIZE()
-Message-Id: <20140123.132903.1418930141853313681.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 30 Jan 2014 11:58:50 +0000
+Subject: [patch] iio: dac: ad7303: remove an unneeded check
+Message-Id: <20140130115849.GI12734@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140123082637.GC28688@elgon.mountain>
-In-Reply-To: <20140123082637.GC28688@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: grundler@parisc-linux.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Sachin Kamat <sachin.kamat@linaro.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 23 Jan 2014 11:26:37 +0300
+"ret" is zero here.  There is no need to check again.
 
-> In this situation then ARRAY_SIZE() and sizeof() are the same, but we're
-> really dealing with array indexes and not byte offsets so ARRAY_SIZE()
-> is cleaner.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/iio/dac/ad7303.c b/drivers/iio/dac/ad7303.c
+index d0505fd22ef4..fa2810032968 100644
+--- a/drivers/iio/dac/ad7303.c
++++ b/drivers/iio/dac/ad7303.c
+@@ -92,7 +92,7 @@ static ssize_t ad7303_write_dac_powerdown(struct iio_dev *indio_dev,
+ 	ad7303_write(st, chan->channel, st->dac_cache[chan->channel]);
+ 
+ 	mutex_unlock(&indio_dev->mlock);
+-	return ret ? ret : len;
++	return len;
+ }
+ 
+ static int ad7303_get_vref(struct ad7303_state *st,
