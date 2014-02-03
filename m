@@ -1,44 +1,58 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Mon, 03 Feb 2014 21:45:12 +0000
-Subject: Re: [patch] iio: dac: ad7303: remove an unneeded check
-Message-Id: <52F00DE8.5070002@kernel.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Date: Mon, 03 Feb 2014 10:34:43 +0000
+Subject: Re: [patch] gpio: davinci: signedness bug in davinci_gpio_irq_setup()
+Message-Id: <52EF7DBE.3000201@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140130115849.GI12734@elgon.mountain> <52EB6EF4.9020203@metafoo.de>
-In-Reply-To: <52EB6EF4.9020203@metafoo.de>
+References: <20140109052803.GA1265@elgon.mountain> <CACRpkdbSKE=d=_oxk+Nh8g3hAjr++ukvrh4nVujupqHk_xH-uw@mail.gmail.com>
+In-Reply-To: <CACRpkdbSKE=d=_oxk+Nh8g3hAjr++ukvrh4nVujupqHk_xH-uw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Sachin Kamat <sachin.kamat@linaro.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Dan Carpenter <dan.carpenter@oracle.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Kevin Hilman <khilman@linaro.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>
 
+Hi Linus, Sekhar,
 
-
-On 31/01/14 09:37, Lars-Peter Clausen wrote:
-> On 01/30/2014 12:58 PM, Dan Carpenter wrote:
->> "ret" is zero here.  There is no need to check again.
+On 01/15/2014 09:21 AM, Linus Walleij wrote:
+> On Thu, Jan 9, 2014 at 6:28 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> 
+>> "irq" needs to be signed for the error handling to work.
 >>
+>> Fixes: 6075a8b2b6c3 ('gpio: davinci: don't create irq_domain in case of unbanked irqs')
 >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
-Applied to the togreg branch of iio.git
+>>
+>> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+>> index 7629b4f12b7f..b0e98d379217 100644
+>> --- a/drivers/gpio/gpio-davinci.c
+>> +++ b/drivers/gpio/gpio-davinci.c
+>> @@ -423,7 +423,7 @@ static const struct irq_domain_ops davinci_gpio_irq_ops = {
+>>
+>>   static int davinci_gpio_irq_setup(struct platform_device *pdev)
+>>   {
+>> -       unsigned        gpio, irq, bank;
+>> +       unsigned        gpio, bank;
+>>          struct clk      *clk;
+>>          u32             binten = 0;
+>>          unsigned        ngpio, bank_irq;
+>> @@ -433,6 +433,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+>>          struct davinci_gpio_platform_data *pdata = dev->platform_data;
+>>          struct davinci_gpio_regs __iomem *g;
+>>          struct irq_domain       *irq_domain = NULL;
+>> +       int             irq;
+>>
+>>          ngpio = pdata->ngpio;
+>>          res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> This merge window the DaVinci GPIO changes are queued by the DaVinci
+> maintainers (this patch does not even apply to my tree) so DaVinci guys:
+> please pick up this patch.
 
-Thanks,
->
-> Thanks.
->
->>
->> diff --git a/drivers/iio/dac/ad7303.c b/drivers/iio/dac/ad7303.c
->> index d0505fd22ef4..fa2810032968 100644
->> --- a/drivers/iio/dac/ad7303.c
->> +++ b/drivers/iio/dac/ad7303.c
->> @@ -92,7 +92,7 @@ static ssize_t ad7303_write_dac_powerdown(struct iio_dev *indio_dev,
->>   	ad7303_write(st, chan->channel, st->dac_cache[chan->channel]);
->>
->>   	mutex_unlock(&indio_dev->mlock);
->> -	return ret ? ret : len;
->> +	return len;
->>   }
->>
->>   static int ad7303_get_vref(struct ad7303_state *st,
->>
->
+This patch is not in 3.14 yet. Are there any chances to have it in 3.14, 
+as it introduces merge conflicts with future patches?
+
+Also, this is a fix.
+
+Regards,
+-grygorii
