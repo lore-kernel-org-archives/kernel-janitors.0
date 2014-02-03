@@ -1,58 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 10 Feb 2014 15:29:14 +0000
-Subject: Re: [patch v2] [SCSI] arcmsr: upper 32 of dma address lost
-Message-Id: <20140210152914.GT26722@mwanda>
+Date: Mon, 03 Feb 2014 22:38:03 +0000
+Subject: [patch 1/2] staging: r8188eu: array overflow in rtw_mp_ioctl_hdl()
+Message-Id: <20140203223803.GA28874@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140210151819.GA23898@elgon.mountain>
- <1392045722.2173.1.camel@dabdike.int.hansenpartnership.com>
-In-Reply-To: <1392045722.2173.1.camel@dabdike.int.hansenpartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Nick Cheng <nick.cheng@areca.com.tw>, Jingoo Han <jg1.han@samsung.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jiri Kosina <jkosina@suse.cz>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 10, 2014 at 07:22:02AM -0800, James Bottomley wrote:
-> On Mon, 2014-02-10 at 18:18 +0300, Dan Carpenter wrote:
-> > The original code always set the upper 32 bits to zero because it was
-> > doing a shift of the wrong variable.
-> > 
-> > Fixes: 1a4f550a09f8 ('[SCSI] arcmsr: 1.20.00.15: add SATA RAID plus other fixes')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: Add a cast to u64 to avoid a future static checker warning
-> > 
-> > diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-> > index 4f6a30b8e5f9..9cfd399c47c0 100644
-> > --- a/drivers/scsi/arcmsr/arcmsr_hba.c
-> > +++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-> > @@ -2500,16 +2500,15 @@ static int arcmsr_polling_ccbdone(struct AdapterControlBlock *acb,
-> >  static int arcmsr_iop_confirm(struct AdapterControlBlock *acb)
-> >  {
-> >  	uint32_t cdb_phyaddr, cdb_phyaddr_hi32;
-> > -	dma_addr_t dma_coherent_handle;
-> > +
-> >  	/*
-> >  	********************************************************************
-> >  	** here we need to tell iop 331 our freeccb.HighPart
-> >  	** if freeccb.HighPart is not zero
-> >  	********************************************************************
-> >  	*/
-> > -	dma_coherent_handle = acb->dma_coherent_handle;
-> > -	cdb_phyaddr = (uint32_t)(dma_coherent_handle);
-> > -	cdb_phyaddr_hi32 = (uint32_t)((cdb_phyaddr >> 16) >> 16);
-> > +	cdb_phyaddr = (uint32_t)(acb->dma_coherent_handle);
-> > +	cdb_phyaddr_hi32 = (uint32_t)((u64)acb->dma_coherent_handle >> 32);
-> 
-> The original 16 >> 16 is better because there's no requirement to cast
-> to u64 and take an expensive 64 bit build out on 32 bits just to avoid
-> the warning.
-> 
-> There's actually a macro in kernel.h (upper_32_bits) that does this.
-> 
+MAX_MP_IOCTL_SUBCODE (35) and mp_ioctl_hdl (32 elements) are no longer
+in sync.  It leads to a bogus pointer dereference.
 
-Ah.  I was wondering what that was.  Thanks.  I will resend.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+index dec992569476..684bc8107a48 100644
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -2500,7 +2500,7 @@ static int rtw_mp_ioctl_hdl(struct net_device *dev, struct iw_request_info *info
+ 		 ("rtw_mp_ioctl_hdl: subcode [%d], len[%d], buffer_len[%d]\r\n",
+ 		  poidparam->subcode, poidparam->len, len));
+ 
+-	if (poidparam->subcode >= MAX_MP_IOCTL_SUBCODE) {
++	if (poidparam->subcode >= ARRAY_SIZE(mp_ioctl_hdl)) {
+ 		RT_TRACE(_module_rtl871x_ioctl_os_c, _drv_err_, ("no matching drvext subcodes\r\n"));
+ 		ret = -EINVAL;
+ 		goto _rtw_mp_ioctl_hdl_exit;
