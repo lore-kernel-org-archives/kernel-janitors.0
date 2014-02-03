@@ -1,46 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 25 Feb 2014 23:46:44 +0000
-Subject: Re: [patch] ASoC: Intel: sst-firmware: missing curly braces (harmless)
-Message-Id: <20140225234644.GC2927@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="pAwQNkOnpTn9IO2O"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Feb 2014 22:38:35 +0000
+Subject: [patch 2/2] staging: r8188eu: overflow in rtw_p2p_get_go_device_address()
+Message-Id: <20140203223835.GB28874@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140221085240.GA13185@elgon.mountain>
-In-Reply-To: <20140221085240.GA13185@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+The go_devadd_str[] array is two characters too small to hold the
+address so we corrupt memory.
 
---pAwQNkOnpTn9IO2O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've changed the user space API slightly and I don't have a way to test
+if this breaks anything.  In the original code we truncated away the
+last digit of the address and the NUL terminator so it was already a bit
+broken.
 
-On Fri, Feb 21, 2014 at 11:52:40AM +0300, Dan Carpenter wrote:
-> There were some curly braces intended here, but the code actually
-> works the same either way so it's not a bug.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
-
---pAwQNkOnpTn9IO2O
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTDSthAAoJELSic+t+oim9XmQP/A095RfdPU/slmwJzywaLxa5
-pBVHXFpfzmDeodaZXJuddnc/SLckmr9+iL/F1Ut6Ids55NruVlhTZfPtrZ8iBjZZ
-CnpfGuE91tWdeeuMXO60Qs35wBMAiZK3VkNSeWy2xJwi8izHS6D+MK6Acl402MOG
-f1fGESI8HNZ6g9hT+MpdqwEwTlhfl873qNC8X+oMQ3v+ZtsfHatiZX4eyTm42K2M
-E3oCxnU9ErM/7Xc2rryzSjtJvd/BiDbPNCh/v3iE3zlU17lrqFK+32v3naHExDED
-Kak6iv/zKIGNRv7a2ugPAyQVfYfbPFJgUqdfYhyWSU0m8bGRQ3e1b7GW+joiLeCg
-wN7kJE/hrAkaNlSRyz8GzQwrgDzWvK/MmaIJeoftaHIZ7F5OyHg6V5Vv7nWPZs5C
-W2OVjwM5V0kIKtFz/BI/nhqciIlcBgR62Yy+zXF52h3ObI0Jj0KNzr7ivnJPzur7
-RRsU1JF+xen8JPwUzQeIch6UtCPM7lYp6UcToMriOFSkzf/pLg1PVAcTqUvk6J6N
-ZZucgdfTX/GYLywuECh6JQx1Vj+IRwXwHxDJyhVjI/xnrhyS5csu/DdGMScqFL6j
-ULfs8lhhC1OWk35kYjBdcO3ZNFxsUzUSO9TZ6RAB6HiFJU4Rx2vx7aIYODK/wHTe
-dc/znZG/Czqdic5/+Gdp
-=ZH2E
------END PGP SIGNATURE-----
-
---pAwQNkOnpTn9IO2O--
+diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+index dec992569476..4ad80ae1067f 100644
+--- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
+@@ -3164,9 +3164,7 @@ static int rtw_p2p_get_go_device_address(struct net_device *dev,
+ 	u8 *p2pie;
+ 	uint p2pielen = 0, attr_contentlen = 0;
+ 	u8 attr_content[100] = {0x00};
+-
+-	u8 go_devadd_str[17 + 10] = {0x00};
+-	/*  +10 is for the str "go_devadd =", we have to clear it at wrqu->data.pointer */
++	u8 go_devadd_str[17 + 12] = {};
+ 
+ 	/*	Commented by Albert 20121209 */
+ 	/*	The input data is the GO's interface address which the application wants to know its device address. */
+@@ -3223,12 +3221,12 @@ static int rtw_p2p_get_go_device_address(struct net_device *dev,
+ 	spin_unlock_bh(&pmlmepriv->scanned_queue.lock);
+ 
+ 	if (!blnMatch)
+-		sprintf(go_devadd_str, "\n\ndev_add = NULL");
++		snprintf(go_devadd_str, sizeof(go_devadd_str), "\n\ndev_add = NULL");
+ 	else
+-		sprintf(go_devadd_str, "\n\ndev_add =%.2X:%.2X:%.2X:%.2X:%.2X:%.2X",
++		snprintf(go_devadd_str, sizeof(go_devadd_str), "\n\ndev_add =%.2X:%.2X:%.2X:%.2X:%.2X:%.2X",
+ 			attr_content[0], attr_content[1], attr_content[2], attr_content[3], attr_content[4], attr_content[5]);
+ 
+-	if (copy_to_user(wrqu->data.pointer, go_devadd_str, 10 + 17))
++	if (copy_to_user(wrqu->data.pointer, go_devadd_str, sizeof(go_devadd_str)))
+ 		return -EFAULT;
+ 	return ret;
+ }
