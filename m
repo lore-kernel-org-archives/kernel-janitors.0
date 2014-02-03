@@ -1,24 +1,44 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Sun, 23 Feb 2014 02:37:07 +0000
-Subject: Re: [patch] mtd: nuc900_nand: NULL dereference in nuc900_nand_enable()
-Message-Id: <20140223023707.GA16834@norris-Latitude-E6410>
+From: Jonathan Cameron <jic23@kernel.org>
+Date: Mon, 03 Feb 2014 21:44:01 +0000
+Subject: Re: [patch] iio:imu:adis16400 remove an unneeded check
+Message-Id: <52F00DA1.20104@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140217200308.GA9845@elgon.mountain>
-In-Reply-To: <20140217200308.GA9845@elgon.mountain>
+References: <20140130115914.GJ12734@elgon.mountain> <52EB6F18.5070202@metafoo.de>
+In-Reply-To: <52EB6F18.5070202@metafoo.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Lars-Peter Clausen <lars@metafoo.de>, Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 17, 2014 at 11:03:08PM +0300, Dan Carpenter wrote:
-> Instead of writing to "nand->reg + REG_FMICSR" we write to "REG_FMICSR"
-> which is NULL and not a valid register.
-> 
-> Fixes: 8bff82cbc308 ('mtd: add nand support for w90p910 (v2)')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static checker stuff.
 
-Pushed to l2-mtd.git. Thanks!
 
-Brian
+On 31/01/14 09:38, Lars-Peter Clausen wrote:
+> On 01/30/2014 12:59 PM, Dan Carpenter wrote:
+>> We know "ret" is zero here so there is no need to check.
+>>
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Applied to the togreg branch of iio.git
+
+Thanks,
+>
+> Thanks.
+>
+>>
+>> diff --git a/drivers/iio/imu/adis16400_core.c b/drivers/iio/imu/adis16400_core.c
+>> index 368660dfe135..411586f49dae 100644
+>> --- a/drivers/iio/imu/adis16400_core.c
+>> +++ b/drivers/iio/imu/adis16400_core.c
+>> @@ -281,7 +281,7 @@ static ssize_t adis16400_write_frequency(struct device *dev,
+>>   	st->variant->set_freq(st, val);
+>>   	mutex_unlock(&indio_dev->mlock);
+>>
+>> -	return ret ? ret : len;
+>> +	return len;
+>>   }
+>>
+>>   /* Power down the device */
+>>
+>
