@@ -1,39 +1,26 @@
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Date: Wed, 12 Feb 2014 11:24:10 +0000
-Subject: Re: [patch] drm/vmwgfx: unlock on error path in vmw_execbuf_process()
-Message-Id: <52FB59DA.5020700@vmware.com>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Date: Tue, 04 Feb 2014 07:45:55 +0000
+Subject: Re: [patch] UBI: fix some use after free bugs
+Message-Id: <1391499955.1795.32.camel@sauron.fi.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140211160346.GA9406@elgon.mountain>
-In-Reply-To: <20140211160346.GA9406@elgon.mountain>
+References: <20140129131756.GC10678@elgon.mountain>
+In-Reply-To: <20140129131756.GC10678@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Maarten Lankhorst <m.b.lankhorst@gmail.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Brian Paul <brianp@vmware.com>
+Cc: Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
 
-On 02/11/2014 05:03 PM, Dan Carpenter wrote:
-> There is a missing unlock on error here.
->
-> Fixes: 30f82d816d2d ('drm/vmwgfx: Reemit context bindings when necessary v2')
+On Wed, 2014-01-29 at 16:17 +0300, Dan Carpenter wrote:
+> Move the kmem_cache_free() calls down a couple lines.
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> index 269b85cc875a..9fbbaaa9e541 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-> @@ -2469,7 +2469,7 @@ int vmw_execbuf_process(struct drm_file *file_priv,
->  	if (dev_priv->has_mob) {
->  		ret = vmw_rebind_contexts(sw_context);
->  		if (unlikely(ret != 0))
-> -			goto out_err;
-> +			goto out_unlock_binding;
->  	}
->  
->  	cmd = vmw_fifo_reserve(dev_priv, command_size);
 
-Dan, thanks,
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+Pushed to linux-ubifs.git, thanks!
 
-Queued for next vmwgfx-fixes pull.
+I'll send this to Linus for 3.13 inclusion.
 
-/Thomas
+-- 
+Best Regards,
+Artem Bityutskiy
+
