@@ -1,31 +1,27 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Feb 2014 08:33:44 +0000
-Subject: [patch 2/2] ASoC: sst-haswell-ipc: incorrect sizeof()
-Message-Id: <20140225083343.GB22416@elgon.mountain>
+Date: Wed, 05 Feb 2014 13:21:53 +0000
+Subject: [patch] dlm: silence a harmless use after free warning
+Message-Id: <20140205132153.GD800@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This should be sizeof(pos) instead of sizeof(&pos).  Most likely they
-are both 8 bytes though so it doesn't often make a difference in real
-life.
+We pass the freed "r" pointer back to the caller.  It's harmless but it
+upsets the static checkers.
 
-Fixes: 22981243589c ('ASoC: Intel: Add Haswell/Broadwell IPC')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/sound/soc/intel/sst-haswell-ipc.c b/sound/soc/intel/sst-haswell-ipc.c
-index 552aebf2c8f5..1f1576a9586a 100644
---- a/sound/soc/intel/sst-haswell-ipc.c
-+++ b/sound/soc/intel/sst-haswell-ipc.c
-@@ -617,7 +617,7 @@ static void hsw_notification_work(struct work_struct *work)
- 	case IPC_POSITION_CHANGED:
- 		trace_ipc_notification("DSP stream position changed for",
- 			stream->reply.stream_hw_id);
--		sst_dsp_inbox_read(hsw->dsp, pos, sizeof(&pos));
-+		sst_dsp_inbox_read(hsw->dsp, pos, sizeof(pos));
- 
- 		if (stream->notify_position)
- 			stream->notify_position(stream, stream->pdata);
+diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+index e223a911a834..5ec4d60525d8 100644
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -687,6 +687,7 @@ static int find_rsb_dir(struct dlm_ls *ls, char *name, int len,
+ 		log_error(ls, "find_rsb new from_other %d dir %d our %d %s",
+ 			  from_nodeid, dir_nodeid, our_nodeid, r->res_name);
+ 		dlm_free_rsb(r);
++		r = NULL;
+ 		error = -ENOTBLK;
+ 		goto out_unlock;
+ 	}
