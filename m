@@ -1,38 +1,46 @@
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Date: Wed, 12 Feb 2014 11:26:22 +0000
-Subject: Re: [patch] drm/vmwgfx: add error checking for kmalloc()
-Message-Id: <52FB5A5E.2040309@vmware.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Feb 2014 13:29:21 +0000
+Subject: [patch] tg3: cleanup an error path in tg3_phy_reset_5703_4_5()
+Message-Id: <20140205132920.GE800@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140211160416.GB9406@elgon.mountain>
-In-Reply-To: <20140211160416.GB9406@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: David Airlie <airlied@linux.ie>, Jakob Bornecrantz <jakob@vmware.com>, Zack Rusin <zackr@vmware.com>, Brian Paul <brianp@vmware.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: Nithin Nayak Sujir <nsujir@broadcom.com>
+Cc: Michael Chan <mchan@broadcom.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 02/11/2014 05:04 PM, Dan Carpenter wrote:
-> Return -ENOMEM if kmalloc() fails.
->
-> Fixes: d5bde956630b ('drm/vmwgfx: Emulate legacy shaders on guest-backed devices v2')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-> index 217d941b8176..23a32fd59a57 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-> @@ -779,6 +779,8 @@ vmw_compat_shader_man_create(struct vmw_private *dev_priv)
->  	int ret;
->  
->  	man = kzalloc(sizeof(*man), GFP_KERNEL);
-> +	if (!man)
-> +		return ERR_PTR(-ENOMEM);
->  
->  	man->dev_priv = dev_priv;
->  	INIT_LIST_HEAD(&man->list);
+In the original code, if tg3_readphy() fails then it does an unnecessary
+check to verify "err" is still zero and then returns -EBUSY.
 
-Thanks, Dan.
-A patch fixing the same problem has already been queued for the next
-vmwgfx-fixes!
+My static checker complains about the unnecessary "if (!err)" check and
+anyway it is better to propagate the -EBUSY error code from
+tg3_readphy() instead of hard coding it here.  And really the original
+code is confusing to look at.
 
-/Thomas
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index e2ca03e23dc1..c466e12b601e 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -2609,13 +2609,14 @@ static int tg3_phy_reset_5703_4_5(struct tg3 *tp)
+ 
+ 	tg3_writephy(tp, MII_CTRL1000, phy9_orig);
+ 
+-	if (!tg3_readphy(tp, MII_TG3_EXT_CTRL, &reg32)) {
+-		reg32 &= ~0x3000;
+-		tg3_writephy(tp, MII_TG3_EXT_CTRL, reg32);
+-	} else if (!err)
+-		err = -EBUSY;
++	err = tg3_readphy(tp, MII_TG3_EXT_CTRL, &reg32);
++	if (err)
++		return err;
+ 
+-	return err;
++	reg32 &= ~0x3000;
++	tg3_writephy(tp, MII_TG3_EXT_CTRL, reg32);
++
++	return 0;
+ }
+ 
+ static void tg3_carrier_off(struct tg3 *tp)
