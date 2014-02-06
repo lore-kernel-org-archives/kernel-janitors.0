@@ -1,61 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 15 Feb 2014 07:36:11 +0000
-Subject: [PATCH 1/3] staging: r8712u: delete unnecessary field initialization
-Message-Id: <1392449773-23429-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Feb 2014 12:39:34 +0000
+Subject: [patch] RDMA/cxgb3: remove a couple unneeded conditions
+Message-Id: <20140206123934.GA12503@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: kernel-janitors@vger.kernel.org, Florian Schilhabel <florian.c.schilhabel@googlemail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+We know that "reset_tpt_entry" is false on this side of the if else
+statement so there is no need to check again.
 
-On success, the function netdev_alloc_skb initializes the dev field of its
-result to its first argument, so this doesn't have to be done in the
-calling context.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression skb,privn,e;
-@@
-
-skb = netdev_alloc_skb(privn,...);
-... when strict
-(
--skb->dev = privn;
-|
-?skb = e
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/staging/rtl8712/rtl8712_recv.c |    2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/staging/rtl8712/rtl8712_recv.c b/drivers/staging/rtl8712/rtl8712_recv.c
-index ea96537..0723b2f 100644
---- a/drivers/staging/rtl8712/rtl8712_recv.c
-+++ b/drivers/staging/rtl8712/rtl8712_recv.c
-@@ -90,7 +90,6 @@ int r8712_init_recv_priv(struct recv_priv *precvpriv, struct _adapter *padapter)
- 		pskb = netdev_alloc_skb(padapter->pnetdev, MAX_RECVBUF_SZ +
- 		       RECVBUFF_ALIGN_SZ);
- 		if (pskb) {
--			pskb->dev = padapter->pnetdev;
- 			tmpaddr = (addr_t)pskb->data;
- 			alignment = tmpaddr & (RECVBUFF_ALIGN_SZ-1);
- 			skb_reserve(pskb, (RECVBUFF_ALIGN_SZ - alignment));
-@@ -1083,7 +1082,6 @@ static int recvbuf2recvframe(struct _adapter *padapter, struct sk_buff *pskb)
- 		alloc_sz += 6;
- 		pkt_copy = netdev_alloc_skb(padapter->pnetdev, alloc_sz);
- 		if (pkt_copy) {
--			pkt_copy->dev = padapter->pnetdev;
- 			precvframe->u.hdr.pkt = pkt_copy;
- 			skb_reserve(pkt_copy, 4 - ((addr_t)(pkt_copy->data)
- 				    % 4));
-
+diff --git a/drivers/infiniband/hw/cxgb3/cxio_hal.c b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+index c3f5aca4ef00..de1c61b417d6 100644
+--- a/drivers/infiniband/hw/cxgb3/cxio_hal.c
++++ b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+@@ -735,14 +735,12 @@ static int __cxio_tpt_op(struct cxio_rdev *rdev_p, u32 reset_tpt_entry,
+ 			((perm & TPT_MW_BIND) ? F_TPT_MW_BIND_ENABLE : 0) |
+ 			V_TPT_ADDR_TYPE((zbva ? TPT_ZBTO : TPT_VATO)) |
+ 			V_TPT_PAGE_SIZE(page_size));
+-		tpt.rsvd_pbl_addr = reset_tpt_entry ? 0 :
+-				    cpu_to_be32(V_TPT_PBL_ADDR(PBL_OFF(rdev_p, pbl_addr)>>3));
++		tpt.rsvd_pbl_addr = cpu_to_be32(V_TPT_PBL_ADDR(PBL_OFF(rdev_p, pbl_addr)>>3));
+ 		tpt.len = cpu_to_be32(len);
+ 		tpt.va_hi = cpu_to_be32((u32) (to >> 32));
+ 		tpt.va_low_or_fbo = cpu_to_be32((u32) (to & 0xFFFFFFFFULL));
+ 		tpt.rsvd_bind_cnt_or_pstag = 0;
+-		tpt.rsvd_pbl_size = reset_tpt_entry ? 0 :
+-				  cpu_to_be32(V_TPT_PBL_SIZE(pbl_size >> 2));
++		tpt.rsvd_pbl_size = cpu_to_be32(V_TPT_PBL_SIZE(pbl_size >> 2));
+ 	}
+ 	err = cxio_hal_ctrl_qp_write_mem(rdev_p,
+ 				       stag_idx +
