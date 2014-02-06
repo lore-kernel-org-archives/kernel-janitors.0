@@ -1,56 +1,30 @@
-From: Ben Skeggs <bskeggs@redhat.com>
-Date: Fri, 07 Feb 2014 05:37:05 +0000
-Subject: Re: [patch] drm/nouveau/hwmon: remove some redundant checks
-Message-Id: <1439365393.26189549.1391751425086.JavaMail.root@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Feb 2014 12:48:23 +0000
+Subject: [patch] RDMA/nes: clean up a conditon
+Message-Id: <20140206124822.GB16998@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140206092942.GC31780@elgon.mountain>
-In-Reply-To: <20140206092942.GC31780@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Martin Peres <martin.peres@labri.fr>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>
+To: Faisal Latif <faisal.latif@intel.com>
+Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
------ Original Message -----
-> From: "Dan Carpenter" <dan.carpenter@oracle.com>
-> To: "David Airlie" <airlied@linux.ie>
-> Cc: "Ben Skeggs" <bskeggs@redhat.com>, "Martin Peres" <martin.peres@labri.fr>, "Ilia Mirkin" <imirkin@alum.mit.edu>,
-> "Dave Airlie" <airlied@redhat.com>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-> Sent: Thursday, 6 February, 2014 7:29:43 PM
-> Subject: [patch] drm/nouveau/hwmon: remove some redundant checks
-> 
-> No need to check "ret" twice in a row.
-> 
-Got it.  Thank you!
+We don't need to test "ret" twice and also the white space is messed up.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_hwmon.c
-> b/drivers/gpu/drm/nouveau/nouveau_hwmon.c
-> index 4aff04fa483c..5e4ab58f4f6b 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_hwmon.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_hwmon.c
-> @@ -587,18 +587,14 @@ nouveau_hwmon_init(struct drm_device *dev)
->  
->  	/* set the default attributes */
->  	ret = sysfs_create_group(&hwmon_dev->kobj, &hwmon_default_attrgroup);
-> -	if (ret) {
-> -		if (ret)
-> -			goto error;
-> -	}
-> +	if (ret)
-> +		goto error;
->  
->  	/* if the card has a working thermal sensor */
->  	if (therm->temp_get(therm) >= 0) {
->  		ret = sysfs_create_group(&hwmon_dev->kobj, &hwmon_temp_attrgroup);
-> -		if (ret) {
-> -			if (ret)
-> -				goto error;
-> -		}
-> +		if (ret)
-> +			goto error;
->  	}
->  
->  	/* if the card has a pwm fan */
-> 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
+index 8308e3634767..2db2b58f70d9 100644
+--- a/drivers/infiniband/hw/nes/nes_verbs.c
++++ b/drivers/infiniband/hw/nes/nes_verbs.c
+@@ -3134,9 +3134,7 @@ int nes_modify_qp(struct ib_qp *ibqp, struct ib_qp_attr *attr,
+ 				" original_last_aeq = 0x%04X. last_aeq = 0x%04X.\n",
+ 				nesqp->hwqp.qp_id, atomic_read(&nesqp->refcount),
+ 				original_last_aeq, nesqp->last_aeq);
+-		if ((!ret) ||
+-				((original_last_aeq != NES_AEQE_AEID_RDMAP_ROE_BAD_LLP_CLOSE) &&
+-				(ret))) {
++		if (!ret || original_last_aeq != NES_AEQE_AEID_RDMAP_ROE_BAD_LLP_CLOSE) {
+ 			if (dont_wait) {
+ 				if (nesqp->cm_id && nesqp->hw_tcp_state != 0) {
+ 					nes_debug(NES_DBG_MOD_QP, "QP%u Queuing fake disconnect for QP refcount (%d),"
