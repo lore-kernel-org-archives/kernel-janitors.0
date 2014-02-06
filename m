@@ -1,13 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Feb 2014 12:48:23 +0000
-Subject: [patch] RDMA/nes: clean up a conditon
-Message-Id: <20140206124822.GB16998@elgon.mountain>
+From: "Nikolova, Tatyana E" <tatyana.e.nikolova@intel.com>
+Date: Thu, 06 Feb 2014 17:41:57 +0000
+Subject: RE: [patch] RDMA/nes: clean up a conditon
+Message-Id: <13AA599688F47243B14FCFCCC2C803BB0D887D7E@FMSMSX104.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140206124822.GB16998@elgon.mountain>
+In-Reply-To: <20140206124822.GB16998@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Faisal Latif <faisal.latif@intel.com>
-Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, "Latif, Faisal" <faisal.latif@intel.com>
+Cc: Roland Dreier <roland@kernel.org>, "Hefty, Sean" <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+
+Hello Dan,
+
+Your patch seems fine. If you want, feel free to add:
+
+Reviewed-by: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
+
+Thank you,
+Tatyana
+
+-----Original Message-----
+From: linux-rdma-owner@vger.kernel.org [mailto:linux-rdma-owner@vger.kernel.org] On Behalf Of Dan Carpenter
+Sent: Thursday, February 06, 2014 6:48 AM
+To: Latif, Faisal
+Cc: Roland Dreier; Hefty, Sean; Hal Rosenstock; linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
+Subject: [patch] RDMA/nes: clean up a conditon
 
 We don't need to test "ret" twice and also the white space is messed up.
 
@@ -24,7 +42,10 @@ index 8308e3634767..2db2b58f70d9 100644
 -		if ((!ret) ||
 -				((original_last_aeq != NES_AEQE_AEID_RDMAP_ROE_BAD_LLP_CLOSE) &&
 -				(ret))) {
-+		if (!ret || original_last_aeq != NES_AEQE_AEID_RDMAP_ROE_BAD_LLP_CLOSE) {
++		if (!ret || original_last_aeq != 
++NES_AEQE_AEID_RDMAP_ROE_BAD_LLP_CLOSE) {
  			if (dont_wait) {
  				if (nesqp->cm_id && nesqp->hw_tcp_state != 0) {
  					nes_debug(NES_DBG_MOD_QP, "QP%u Queuing fake disconnect for QP refcount (%d),"
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in the body of a message to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
