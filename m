@@ -1,51 +1,28 @@
-From: "Nikolova, Tatyana E" <tatyana.e.nikolova@intel.com>
-Date: Thu, 06 Feb 2014 17:41:57 +0000
-Subject: RE: [patch] RDMA/nes: clean up a conditon
-Message-Id: <13AA599688F47243B14FCFCCC2C803BB0D887D7E@FMSMSX104.amr.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 06 Feb 2014 09:24:02 +0000
+Subject: [patch] [media] stv0900: remove an unneeded check
+Message-Id: <20140206092402.GA31780@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140206124822.GB16998@elgon.mountain>
-In-Reply-To: <20140206124822.GB16998@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Latif, Faisal" <faisal.latif@intel.com>
-Cc: Roland Dreier <roland@kernel.org>, "Hefty, Sean" <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Michael Krufky <mkrufky@linuxtv.org>, Cong Ding <dinggnu@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Dan,
-
-Your patch seems fine. If you want, feel free to add:
-
-Reviewed-by: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-
-Thank you,
-Tatyana
-
------Original Message-----
-From: linux-rdma-owner@vger.kernel.org [mailto:linux-rdma-owner@vger.kernel.org] On Behalf Of Dan Carpenter
-Sent: Thursday, February 06, 2014 6:48 AM
-To: Latif, Faisal
-Cc: Roland Dreier; Hefty, Sean; Hal Rosenstock; linux-rdma@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: [patch] RDMA/nes: clean up a conditon
-
-We don't need to test "ret" twice and also the white space is messed up.
+No need to check "lock" twice here.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/infiniband/hw/nes/nes_verbs.c b/drivers/infiniband/hw/nes/nes_verbs.c
-index 8308e3634767..2db2b58f70d9 100644
---- a/drivers/infiniband/hw/nes/nes_verbs.c
-+++ b/drivers/infiniband/hw/nes/nes_verbs.c
-@@ -3134,9 +3134,7 @@ int nes_modify_qp(struct ib_qp *ibqp, struct ib_qp_attr *attr,
- 				" original_last_aeq = 0x%04X. last_aeq = 0x%04X.\n",
- 				nesqp->hwqp.qp_id, atomic_read(&nesqp->refcount),
- 				original_last_aeq, nesqp->last_aeq);
--		if ((!ret) ||
--				((original_last_aeq != NES_AEQE_AEID_RDMAP_ROE_BAD_LLP_CLOSE) &&
--				(ret))) {
-+		if (!ret || original_last_aeq != 
-+NES_AEQE_AEID_RDMAP_ROE_BAD_LLP_CLOSE) {
- 			if (dont_wait) {
- 				if (nesqp->cm_id && nesqp->hw_tcp_state != 0) {
- 					nes_debug(NES_DBG_MOD_QP, "QP%u Queuing fake disconnect for QP refcount (%d),"
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in the body of a message to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/media/dvb-frontends/stv0900_sw.c b/drivers/media/dvb-frontends/stv0900_sw.c
+index 0a40edfad739..4ce1d260b3eb 100644
+--- a/drivers/media/dvb-frontends/stv0900_sw.c
++++ b/drivers/media/dvb-frontends/stv0900_sw.c
+@@ -1081,7 +1081,7 @@ static int stv0900_wait_for_lock(struct stv0900_internal *intp,
+ 	lock = stv0900_get_demod_lock(intp, demod, dmd_timeout);
+ 
+ 	if (lock)
+-		lock = lock && stv0900_get_fec_lock(intp, demod, fec_timeout);
++		lock = stv0900_get_fec_lock(intp, demod, fec_timeout);
+ 
+ 	if (lock) {
+ 		lock = 0;
