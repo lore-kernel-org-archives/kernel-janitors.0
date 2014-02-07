@@ -1,26 +1,41 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Thu, 20 Feb 2014 10:56:27 +0000
-Subject: Re: [patch] EDAC: remove an unneeded condition in i5100_init_csrows()
-Message-Id: <20140220105627.GD8876@pd.tnic>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 07 Feb 2014 13:00:28 +0000
+Subject: [patch] [SCSI] arcmsr: upper 32 of dma address lost
+Message-Id: <20140207130028.GA6971@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140213111738.GB15549@elgon.mountain>
-In-Reply-To: <20140213111738.GB15549@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>, Nick Cheng <nick.cheng@areca.com.tw>
+Cc: Jingoo Han <jg1.han@samsung.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jiri Kosina <jkosina@suse.cz>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Feb 13, 2014 at 02:17:38PM +0300, Dan Carpenter wrote:
-> We checked that "npages" was not zero a couple lines earlier so we can
-> remove this and pull the code in one indent level.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The original code always set the upper 32 bits to zero because it was
+doing a shift of the wrong variable.
 
-Applied, thanks.
+Fixes: 1a4f550a09f8 ('[SCSI] arcmsr: 1.20.00.15: add SATA RAID plus other fixes')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Regards/Gruss,
-    Boris.
-
-Sent from a fat crate under my desk. Formatting is fine.
---
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 4f6a30b8e5f9..9cfd399c47c0 100644
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -2500,16 +2500,15 @@ static int arcmsr_polling_ccbdone(struct AdapterControlBlock *acb,
+ static int arcmsr_iop_confirm(struct AdapterControlBlock *acb)
+ {
+ 	uint32_t cdb_phyaddr, cdb_phyaddr_hi32;
+-	dma_addr_t dma_coherent_handle;
++
+ 	/*
+ 	********************************************************************
+ 	** here we need to tell iop 331 our freeccb.HighPart
+ 	** if freeccb.HighPart is not zero
+ 	********************************************************************
+ 	*/
+-	dma_coherent_handle = acb->dma_coherent_handle;
+-	cdb_phyaddr = (uint32_t)(dma_coherent_handle);
+-	cdb_phyaddr_hi32 = (uint32_t)((cdb_phyaddr >> 16) >> 16);
++	cdb_phyaddr = (uint32_t)(acb->dma_coherent_handle);
++	cdb_phyaddr_hi32 = (uint32_t)(acb->dma_coherent_handle >> 32);
+ 	acb->cdb_phyaddr_hi32 = cdb_phyaddr_hi32;
+ 	/*
+ 	***********************************************************************
