@@ -1,60 +1,32 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Feb 2014 19:43:40 +0000
-Subject: Re: [DRBD-user] [patch -resend] drbd: fix resync_dump_detail() output
-Message-Id: <20140217194340.GF26776@mwanda>
+Date: Fri, 07 Feb 2014 11:50:38 +0000
+Subject: [patch] ath5k: shifting the wrong variable for AR5K_AR5210
+Message-Id: <20140207115038.GA31250@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20120608123128.GA18293@elgon.mountain>
- <20120608185008.GC8030@soda.linbit>
-In-Reply-To: <20120608185008.GC8030@soda.linbit>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars Ellenberg <drbd-dev@lists.linbit.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, drbd-user@lists.linbit.com
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: Nick Kossifidis <mickflemm@gmail.com>, "Luis R. Rodriguez" <mcgrof@do-not-panic.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath5k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
-On Fri, Jun 08, 2012 at 08:50:08PM +0200, Lars Ellenberg wrote:
-> On Fri, Jun 08, 2012 at 03:31:28PM +0300, Dan Carpenter wrote:
-> > The tests here aren't correct.  It should be doing a shift before doing
-> > the bitwise AND.  (bme->flags & BME_NO_WRITES) is always false and
-> > (bme->flags & BME_LOCKED) checks for BME_NO_WRITES instead of checking
-> > for locked.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Ack.
-> 
-> > ---
-> > I sent this to the drbd-user list in March, but never recieved a
-> > response.
-> 
-> Sorry, seems to have been lost :-(
-> 
+In the original code we shift "AR5K_PHY(256) >> 28" which is zero but
+the intent was to shift the return value of ath5k_hw_reg_read() like we
+do a couple lines later.
 
-Still lost in 2014.  :P  Who is supposed to take this patch?  I assume
-it's someone on the drbd list?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  Untested.
 
-regards,
-dan carpenter
-
-> 	Lars
-> 
-> > diff --git a/drivers/block/drbd/drbd_proc.c b/drivers/block/drbd/drbd_proc.c
-> > index 2959cdf..ffe1ee4 100644
-> > --- a/drivers/block/drbd/drbd_proc.c
-> > +++ b/drivers/block/drbd/drbd_proc.c
-> > @@ -187,8 +187,10 @@ static void resync_dump_detail(struct seq_file *seq, struct lc_element *e)
-> >  	struct bm_extent *bme = lc_entry(e, struct bm_extent, lce);
-> >  
-> >  	seq_printf(seq, "%5d %s %s\n", bme->rs_left,
-> > -		   bme->flags & BME_NO_WRITES ? "NO_WRITES" : "---------",
-> > -		   bme->flags & BME_LOCKED ? "LOCKED" : "------"
-> > +		   test_bit(BME_NO_WRITES, &bme->flags) ?
-> > +			"NO_WRITES" : "---------",
-> > +		   test_bit(BME_LOCKED, &bme->flags) ?
-> > +			"LOCKED" : "------"
-> >  		   );
-> >  }
-> 
-> -- 
-> : Lars Ellenberg
-> : LINBIT | Your Way to High Availability
-> : DRBD/HA support and consulting http://www.linbit.com
+diff --git a/drivers/net/wireless/ath/ath5k/phy.c b/drivers/net/wireless/ath/ath5k/phy.c
+index d6bc7cb61bfb..1a2973b7acf2 100644
+--- a/drivers/net/wireless/ath/ath5k/phy.c
++++ b/drivers/net/wireless/ath/ath5k/phy.c
+@@ -110,7 +110,7 @@ ath5k_hw_radio_revision(struct ath5k_hw *ah, enum ieee80211_band band)
+ 		ath5k_hw_reg_write(ah, 0x00010000, AR5K_PHY(0x20));
+ 
+ 	if (ah->ah_version = AR5K_AR5210) {
+-		srev = ath5k_hw_reg_read(ah, AR5K_PHY(256) >> 28) & 0xf;
++		srev = (ath5k_hw_reg_read(ah, AR5K_PHY(256)) >> 28) & 0xf;
+ 		ret = (u16)ath5k_hw_bitswap(srev, 4) + 1;
+ 	} else {
+ 		srev = (ath5k_hw_reg_read(ah, AR5K_PHY(0x100)) >> 24) & 0xff;
