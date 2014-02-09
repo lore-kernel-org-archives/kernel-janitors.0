@@ -1,35 +1,36 @@
 From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 25 Feb 2014 12:18:58 +0000
-Subject: Re: [patch] crypto: caam - writel() arguments are swapped
-Message-Id: <20140225121857.GI12216@gondor.apana.org.au>
+Date: Sun, 09 Feb 2014 09:22:29 +0000
+Subject: Re: [patch] hw_random: cleanup in hwrng_register()
+Message-Id: <20140209092229.GG19429@gondor.apana.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140221085131.GB13078@elgon.mountain>
- <20140224184142.b8d3a2cfb35dfe5f31d332ee@freescale.com>
-In-Reply-To: <20140224184142.b8d3a2cfb35dfe5f31d332ee@freescale.com>
+References: <20140130114943.GB12734@elgon.mountain>
+ <87k3dgvgzg.fsf@rustcorp.com.au>
+In-Reply-To: <87k3dgvgzg.fsf@rustcorp.com.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kim Phillips <kim.phillips@freescale.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Alex Porosanu <alexandru.porosanu@freescale.com>, Ruchika Gupta <ruchika.gupta@freescale.com>, Vakul Garg <vakul@freescale.com>, linux-crypto@vger.kernel.org, Steve Cornelius <sec@pobox.com>, kernel-janitors@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Matt Mackall <mpm@selenic.com>, Satoru Takeuchi <satoru.takeuchi@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 24, 2014 at 06:41:42PM -0600, Kim Phillips wrote:
-> On Fri, 21 Feb 2014 11:51:31 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > My guess is that this little endian configuration is never found in real
-> > life, 
-> 
-> it is, but the code has not been upstreamed.  Steve?
-> 
-> > but if it were then the writel() arguments are in the wrong order
-> > so the driver would crash immediately.
-> > 
+On Fri, Jan 31, 2014 at 04:18:51PM +1030, Rusty Russell wrote:
+> Dan Carpenter <dan.carpenter@oracle.com> writes:
+> > My static checker complains that:
+> >
+> > 	drivers/char/hw_random/core.c:341 hwrng_register()
+> > 	warn: we tested 'old_rng' before and it was 'false'
+> >
+> > The problem is that sometimes we test "if (!old_rng)" and sometimes we
+> > test "if (must_register_misc)".  The static checker knows they are
+> > equivalent but a human being reading the code could easily be confused.
+> >
+> > I have simplified the code by removing the "must_register_misc" variable
+> > and I have removed the redundant check on "if (!old_rng)".
+> >
 > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
 > 
-> Meanwhile:
+> Yeah, clearer too.
 > 
-> Acked-by: Kim Phillips <kim.phillips@freescale.com>
+> Reviewed-by: Rusty Russell <rusty@rustcorp.com.au>
 
 Patch applied.
 -- 
