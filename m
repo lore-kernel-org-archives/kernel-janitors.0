@@ -1,64 +1,44 @@
-From: David Fries <David@Fries.net>
-Date: Tue, 11 Feb 2014 16:45:13 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 11 Feb 2014 21:12:28 +0000
 Subject: Re: [patch] w1: small type cleanup in sysfs
-Message-Id: <20140211164513.GF5530@spacedout.fries.net>
+Message-Id: <20140211211228.GY26722@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140211160826.GD9406@elgon.mountain>
-In-Reply-To: <20140211160826.GD9406@elgon.mountain>
+ <20140211164513.GF5530@spacedout.fries.net>
+In-Reply-To: <20140211164513.GF5530@spacedout.fries.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: David Fries <David@Fries.net>
 Cc: Evgeniy Polyakov <zbr@ioremap.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan,
-
-I have some other changes in work, how automated is your checkers?
-How much work is it for me to give a github repository and branch and
-find out if I introduced any problems before submitting them?
-
-
-I didn't get how you could get a less than one after a check for less
-than one from the description or patch until I looked at the rest of
-the source code.  Looks good if the description mentions
-max_slave_count is an int.
-
-How about wording it,
-
-On 64 bit systems, a large value for "long tmp" is truncated when
-assigning to "int md->max_slave_count" so we still end up with a value
-less than one despite the "tmp < 1" check.
-
-Acked-by: David Fries <david@fries.net>
-
-On Tue, Feb 11, 2014 at 07:08:26PM +0300, Dan Carpenter wrote:
-> On 64 bit systems, a large value for "tmp" could be truncated so we
-> still end up with a ->max_slave_count which is less than one despite the
-> "tmp < 1" check.
+On Tue, Feb 11, 2014 at 10:45:13AM -0600, David Fries wrote:
+> Dan,
 > 
-> This is more of a problem for static checkers than a real life issue,
-> but it's simple enough to fix.
+> I have some other changes in work, how automated is your checkers?
+> How much work is it for me to give a github repository and branch and
+> find out if I introduced any problems before submitting them?
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-> index 9eb816b2ea5e..b96f61b15dc6 100644
-> --- a/drivers/w1/w1.c
-> +++ b/drivers/w1/w1.c
-> @@ -320,10 +320,10 @@ static ssize_t w1_master_attribute_show_timeout(struct device *dev, struct devic
->  static ssize_t w1_master_attribute_store_max_slave_count(struct device *dev,
->  	struct device_attribute *attr, const char *buf, size_t count)
->  {
-> -	long tmp;
-> +	int tmp;
->  	struct w1_master *md = dev_to_w1_master(dev);
->  
-> -	if (kstrtol(buf, 0, &tmp) = -EINVAL || tmp < 1)
-> +	if (kstrtoint(buf, 0, &tmp) = -EINVAL || tmp < 1)
->  		return -EINVAL;
->  
->  	mutex_lock(&md->mutex);
 
--- 
-David Fries <david@fries.net>    PGP pub CB1EE8F0
-http://fries.net/~david/
+This is a Smatch thing I'm working on but haven't pushed yet.
+Eventually it will be a part of Fengguang Wu's automated kbuild zero
+day testing process.
+
+> 
+> I didn't get how you could get a less than one after a check for less
+> than one from the description or patch until I looked at the rest of
+> the source code.  Looks good if the description mentions
+> max_slave_count is an int.
+> 
+> How about wording it,
+> 
+> On 64 bit systems, a large value for "long tmp" is truncated when
+> assigning to "int md->max_slave_count" so we still end up with a value
+> less than one despite the "tmp < 1" check.
+> 
+
+Sure.  That's clearer.  I have resent it.
+
+regards,
+dan carpenter
+
