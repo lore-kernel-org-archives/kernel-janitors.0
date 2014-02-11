@@ -1,44 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Feb 2014 21:12:28 +0000
-Subject: Re: [patch] w1: small type cleanup in sysfs
-Message-Id: <20140211211228.GY26722@mwanda>
+Date: Tue, 11 Feb 2014 16:03:47 +0000
+Subject: [patch] drm/vmwgfx: unlock on error path in vmw_execbuf_process()
+Message-Id: <20140211160346.GA9406@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140211160826.GD9406@elgon.mountain>
- <20140211164513.GF5530@spacedout.fries.net>
-In-Reply-To: <20140211164513.GF5530@spacedout.fries.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Fries <David@Fries.net>
-Cc: Evgeniy Polyakov <zbr@ioremap.net>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Maarten Lankhorst <m.b.lankhorst@gmail.com>, Thomas Hellstrom <thellstrom@vmware.com>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Jerome Glisse <jglisse@redhat.com>, Brian Paul <brianp@vmware.com>
 
-On Tue, Feb 11, 2014 at 10:45:13AM -0600, David Fries wrote:
-> Dan,
-> 
-> I have some other changes in work, how automated is your checkers?
-> How much work is it for me to give a github repository and branch and
-> find out if I introduced any problems before submitting them?
-> 
+There is a missing unlock on error here.
 
-This is a Smatch thing I'm working on but haven't pushed yet.
-Eventually it will be a part of Fengguang Wu's automated kbuild zero
-day testing process.
+Fixes: 30f82d816d2d ('drm/vmwgfx: Reemit context bindings when necessary v2')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> 
-> I didn't get how you could get a less than one after a check for less
-> than one from the description or patch until I looked at the rest of
-> the source code.  Looks good if the description mentions
-> max_slave_count is an int.
-> 
-> How about wording it,
-> 
-> On 64 bit systems, a large value for "long tmp" is truncated when
-> assigning to "int md->max_slave_count" so we still end up with a value
-> less than one despite the "tmp < 1" check.
-> 
-
-Sure.  That's clearer.  I have resent it.
-
-regards,
-dan carpenter
-
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+index 269b85cc875a..9fbbaaa9e541 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -2469,7 +2469,7 @@ int vmw_execbuf_process(struct drm_file *file_priv,
+ 	if (dev_priv->has_mob) {
+ 		ret = vmw_rebind_contexts(sw_context);
+ 		if (unlikely(ret != 0))
+-			goto out_err;
++			goto out_unlock_binding;
+ 	}
+ 
+ 	cmd = vmw_fifo_reserve(dev_priv, command_size);
