@@ -1,38 +1,36 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Fri, 07 Feb 2014 02:50:29 +0000
-Subject: Re: [patch 1/2] staging: r8188eu: array overflow in rtw_mp_ioctl_hdl()
-Message-Id: <52F449F5.7050005@lwfinger.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Feb 2014 11:19:53 +0000
+Subject: [patch] jbd2: use after free in jbd2_journal_start_reserved()
+Message-Id: <20140213111953.GC15549@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140203223803.GA28874@elgon.mountain>
-In-Reply-To: <20140203223803.GA28874@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 02/03/2014 04:38 PM, Dan Carpenter wrote:
-> MAX_MP_IOCTL_SUBCODE (35) and mp_ioctl_hdl (32 elements) are no longer
-> in sync.  It leads to a bogus pointer dereference.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+If start_this_handle() fails then it leads to a use after free of
+"handle".
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Larry
-
->
-> diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-> index dec992569476..684bc8107a48 100644
-> --- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-> +++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-> @@ -2500,7 +2500,7 @@ static int rtw_mp_ioctl_hdl(struct net_device *dev, struct iw_request_info *info
->   		 ("rtw_mp_ioctl_hdl: subcode [%d], len[%d], buffer_len[%d]\r\n",
->   		  poidparam->subcode, poidparam->len, len));
->
-> -	if (poidparam->subcode >= MAX_MP_IOCTL_SUBCODE) {
-> +	if (poidparam->subcode >= ARRAY_SIZE(mp_ioctl_hdl)) {
->   		RT_TRACE(_module_rtl871x_ioctl_os_c, _drv_err_, ("no matching drvext subcodes\r\n"));
->   		ret = -EINVAL;
->   		goto _rtw_mp_ioctl_hdl_exit;
->
-
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index 8360674c85bc..60bb365f54a5 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -514,11 +514,13 @@ int jbd2_journal_start_reserved(handle_t *handle, unsigned int type,
+ 	 * similarly constrained call sites
+ 	 */
+ 	ret = start_this_handle(journal, handle, GFP_NOFS);
+-	if (ret < 0)
++	if (ret < 0) {
+ 		jbd2_journal_free_reserved(handle);
++		return ret;
++	}
+ 	handle->h_type = type;
+ 	handle->h_line_no = line_no;
+-	return ret;
++	return 0;
+ }
+ EXPORT_SYMBOL(jbd2_journal_start_reserved);
+ 
