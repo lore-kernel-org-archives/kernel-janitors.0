@@ -1,52 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 20 Jan 2014 14:29:00 +0000
-Subject: [patch] NFC: potential overflows in microread_target_discovered()
-Message-Id: <20140120142900.GA4954@elgon.mountain>
+Date: Thu, 13 Feb 2014 11:17:38 +0000
+Subject: [patch] EDAC: remove an unneeded condition in i5100_init_csrows()
+Message-Id: <20140213111738.GB15549@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Eric Lapuyade <eric.lapuyade@linux.intel.com>
-Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, linux-wireless@vger.kernel.org, linux-nfc@ml01.01.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Smatch says that skb->data is untrusted so we need to check to make sure
-that the memcpy() doesn't overflow.
+We checked that "npages" was not zero a couple lines earlier so we can
+remove this and pull the code in one indent level.
 
-Fixes: cfad1ba87150 ('NFC: Initial support for Inside Secure microread')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Compile tested only.
 
-diff --git a/drivers/nfc/microread/microread.c b/drivers/nfc/microread/microread.c
-index f868333271aa..963a4a5dc88e 100644
---- a/drivers/nfc/microread/microread.c
-+++ b/drivers/nfc/microread/microread.c
-@@ -501,9 +501,13 @@ static void microread_target_discovered(struct nfc_hci_dev *hdev, u8 gate,
- 		targets->sens_res  			 be16_to_cpu(*(u16 *)&skb->data[MICROREAD_EMCF_A_ATQA]);
- 		targets->sel_res = skb->data[MICROREAD_EMCF_A_SAK];
--		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A_UID],
--		       skb->data[MICROREAD_EMCF_A_LEN]);
- 		targets->nfcid1_len = skb->data[MICROREAD_EMCF_A_LEN];
-+		if (targets->nfcid1_len > sizeof(targets->nfcid1)) {
-+			r = -EINVAL;
-+			goto exit_free;
-+		}
-+		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A_UID],
-+		       targets->nfcid1_len);
- 		break;
- 	case MICROREAD_GATE_ID_MREAD_ISO_A_3:
- 		targets->supported_protocols @@ -511,9 +515,13 @@ static void microread_target_discovered(struct nfc_hci_dev *hdev, u8 gate,
- 		targets->sens_res  			 be16_to_cpu(*(u16 *)&skb->data[MICROREAD_EMCF_A3_ATQA]);
- 		targets->sel_res = skb->data[MICROREAD_EMCF_A3_SAK];
--		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A3_UID],
--		       skb->data[MICROREAD_EMCF_A3_LEN]);
- 		targets->nfcid1_len = skb->data[MICROREAD_EMCF_A3_LEN];
-+		if (targets->nfcid1_len > sizeof(targets->nfcid1)) {
-+			r = -EINVAL;
-+			goto exit_free;
-+		}
-+		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A3_UID],
-+		       targets->nfcid1_len);
- 		break;
- 	case MICROREAD_GATE_ID_MREAD_ISO_B:
- 		targets->supported_protocols = NFC_PROTO_ISO14443_B_MASK;
+diff --git a/drivers/edac/i5100_edac.c b/drivers/edac/i5100_edac.c
+index 36a38ee94fa8..6247d186177e 100644
+--- a/drivers/edac/i5100_edac.c
++++ b/drivers/edac/i5100_edac.c
+@@ -869,16 +869,13 @@ static void i5100_init_csrows(struct mem_ctl_info *mci)
+ 			       chan, rank, 0);
+ 
+ 		dimm->nr_pages = npages;
+-		if (npages) {
+-			dimm->grain = 32;
+-			dimm->dtype = (priv->mtr[chan][rank].width = 4) ?
+-					DEV_X4 : DEV_X8;
+-			dimm->mtype = MEM_RDDR2;
+-			dimm->edac_mode = EDAC_SECDED;
+-			snprintf(dimm->label, sizeof(dimm->label),
+-				"DIMM%u",
+-				i5100_rank_to_slot(mci, chan, rank));
+-		}
++		dimm->grain = 32;
++		dimm->dtype = (priv->mtr[chan][rank].width = 4) ?
++				DEV_X4 : DEV_X8;
++		dimm->mtype = MEM_RDDR2;
++		dimm->edac_mode = EDAC_SECDED;
++		snprintf(dimm->label, sizeof(dimm->label), "DIMM%u",
++			 i5100_rank_to_slot(mci, chan, rank));
+ 
+ 		edac_dbg(2, "dimm channel %d, rank %d, size %ld\n",
+ 			 chan, rank, (long)PAGES_TO_MiB(npages));
