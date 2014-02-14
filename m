@@ -1,28 +1,56 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Fri, 28 Feb 2014 22:24:03 +0000
-Subject: Re: [PATCH] staging: sb105x: b_pci_mp.c: fix for non-member access
-Message-Id: <20140228222403.GA8543@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Feb 2014 09:08:47 +0000
+Subject: [patch] direct-io: remove some left over checks
+Message-Id: <20140214090847.GB15629@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1393554063-25823-1-git-send-email-gmate.amit@gmail.com>
- <20140228222040.GA27989@kroah.com>
-In-Reply-To: <20140228222040.GA27989@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Kumar Amit Mehta <gmate.amit@gmail.com>
-Cc: devel@driverdev.osuosl.org, lisa@xenapiadmin.com, lidza.louina@gmail.com, kernel-janitors@vger.kernel.org, josh@joshtriplett.org, linux-kernel@vger.kernel.org, rashika.kheria@gmail.com, dan.carpenter@oracle.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Feb 28, 2014 at 02:20:40PM -0800, Greg KH wrote:
-> On Fri, Feb 28, 2014 at 04:21:03AM +0200, Kumar Amit Mehta wrote:
-> > 'struct tty_struct’ has no member named ‘low_latency’
-> 
-> This driver is marked BROKEN, and can't even compile, how did you test
-> this patch?
+We know that "ret > 0" is true here.  These tests were left over from
+02afc27faec9 ('direct-io: Handle O_(D)SYNC AIO') and aren't needed any
+more.
 
-Don't worry about it anymore, I've now deleted the driver entirely, as
-no one has cared about it in the past year that it has been disabled
-from the kernel build.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-thanks,
-
-greg k-h
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 1a5073959f32..6db7f7db7777 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -153,7 +153,7 @@ ext4_file_dio_write(struct kiocb *iocb, const struct iovec *iov,
+ 		ssize_t err;
+ 
+ 		err = generic_write_sync(file, iocb->ki_pos - ret, ret);
+-		if (err < 0 && ret > 0)
++		if (err < 0)
+ 			ret = err;
+ 	}
+ 	blk_finish_plug(&plug);
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 0165b8672f09..7331a230e30b 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1797,7 +1797,7 @@ static ssize_t btrfs_file_aio_write(struct kiocb *iocb,
+ 	BTRFS_I(inode)->last_sub_trans = root->log_transid;
+ 	if (num_written > 0) {
+ 		err = generic_write_sync(file, pos, num_written);
+-		if (err < 0 && num_written > 0)
++		if (err < 0)
+ 			num_written = err;
+ 	}
+ 
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index c7a7def27b07..ba0d2b05bb78 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1523,7 +1523,7 @@ ssize_t blkdev_aio_write(struct kiocb *iocb, const struct iovec *iov,
+ 		ssize_t err;
+ 
+ 		err = generic_write_sync(file, pos, ret);
+-		if (err < 0 && ret > 0)
++		if (err < 0)
+ 			ret = err;
+ 	}
+ 	blk_finish_plug(&plug);
