@@ -1,40 +1,104 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Sun, 23 Feb 2014 21:47:50 +0000
-Subject: Re: [patch] [media] gspca_stv06xx: remove an unneeded check
-Message-Id: <530A6C86.6010707@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Feb 2014 08:26:44 +0000
+Subject: [net-next:master 96/108] net/tipc/node.c:258 tipc_node_detach_link() error: buffer overflow 'n_ptr->
+Message-Id: <20140214082644.GY26776@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140218150044.GC6914@elgon.mountain>
-In-Reply-To: <20140218150044.GC6914@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Theodore Kilgore <kilgota@banach.math.auburn.edu>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi,
+This is a style question and not a real bug:
 
-On 02/18/2014 04:00 PM, Dan Carpenter wrote:
-> "err" is zero here so we don't need to check again.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/media/usb/gspca/stv06xx/stv06xx_vv6410.c b/drivers/media/usb/gspca/stv06xx/stv06xx_vv6410.c
-> index bf3e5c317a26..e60cbb3aa609 100644
-> --- a/drivers/media/usb/gspca/stv06xx/stv06xx_vv6410.c
-> +++ b/drivers/media/usb/gspca/stv06xx/stv06xx_vv6410.c
-> @@ -178,7 +178,7 @@ static int vv6410_stop(struct sd *sd)
->  
->  	PDEBUG(D_STREAM, "Halting stream");
->  
-> -	return (err < 0) ? err : 0;
-> +	return 0;
->  }
->  
->  static int vv6410_dump(struct sd *sd)
-> 
+Which is better:
 
-Thanks I've added this to my gspca tree for 3.15.
+OPTION #1: ignore static checker warnings
 
-Regards,
+	for (i = 0; i < ARRAY_SIZE(x); i++) {
+		if (found)
+			break;
+	}
+	x[i] = 0;
 
-Hans
+
+OPTION #2: stop on the last element
+
+	for (i = 0; i < ARRAY_SIZE(x) - 1; i++) {
+		if (found)
+			break;
+	}
+	x[i] = 0;
+
+
+OPTION #3: add a bogus error test
+
+	for (i = 0; i < ARRAY_SIZE(x); i++) {
+		if (found)
+			break;
+	}
+	if (i = ARRAY_SIZE(x))
+		return;
+	x[i] = 0;
+
+OPTION #4: convoluted code
+
+	for (i = 0; i < ARRAY_SIZE(x); i++) {
+		if (!found)
+			continue;
+		x[i] = 0;
+		break;
+	}
+
+It's not clear to me what the right answer is...
+
+regards,
+dan carpenter
+
+-----
+
+Hi Jon,
+
+FYI, there are new smatch warnings show up in
+
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
+head:   d4f2fa6ad61ec1db713569a179183df4d0fc6ae7
+commit: 7d33939f475d403e79124e3143d7951dcfe8629f [96/108] tipc: delay delete of link when failover is needed
+:::::: branch date: 5 hours ago
+:::::: commit date: 5 hours ago
+
+net/tipc/node.c:258 tipc_node_detach_link() error: buffer overflow 'n_ptr->links' 2 <= 2
+
+git remote add net-next git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+git remote update net-next
+git checkout 7d33939f475d403e79124e3143d7951dcfe8629f
+vim +258 net/tipc/node.c
+
+b97bf3fd Per Liden       2006-01-02  242  
+a18c4bc3 Paul Gortmaker  2011-12-29  243  void tipc_node_attach_link(struct tipc_node *n_ptr, struct tipc_link *l_ptr)
+b97bf3fd Per Liden       2006-01-02  244  {
+37b9c08a Allan Stephens  2011-02-28  245  	n_ptr->links[l_ptr->b_ptr->identity] = l_ptr;
+37b9c08a Allan Stephens  2011-02-28  246  	atomic_inc(&tipc_num_links);
+37b9c08a Allan Stephens  2011-02-28  247  	n_ptr->link_cnt++;
+b97bf3fd Per Liden       2006-01-02  248  }
+b97bf3fd Per Liden       2006-01-02  249  
+a18c4bc3 Paul Gortmaker  2011-12-29  250  void tipc_node_detach_link(struct tipc_node *n_ptr, struct tipc_link *l_ptr)
+b97bf3fd Per Liden       2006-01-02  251  {
+7d33939f Jon Paul Maloy  2014-02-13  252  	int i;
+7d33939f Jon Paul Maloy  2014-02-13  253  
+7d33939f Jon Paul Maloy  2014-02-13  254  	for (i = 0; i < MAX_BEARERS; i++) {
+7d33939f Jon Paul Maloy  2014-02-13  255  		if (l_ptr = n_ptr->links[i])
+7d33939f Jon Paul Maloy  2014-02-13  256  			break;
+7d33939f Jon Paul Maloy  2014-02-13  257  	}
+7d33939f Jon Paul Maloy  2014-02-13 @258  	n_ptr->links[i] = NULL;
+d1bcb115 Allan Stephens  2011-02-25  259  	atomic_dec(&tipc_num_links);
+b97bf3fd Per Liden       2006-01-02  260  	n_ptr->link_cnt--;
+b97bf3fd Per Liden       2006-01-02  261  }
+b97bf3fd Per Liden       2006-01-02  262  
+6c00055a David S. Miller 2008-09-02  263  static void node_established_contact(struct tipc_node *n_ptr)
+b97bf3fd Per Liden       2006-01-02  264  {
+51a8e4de Allan Stephens  2010-12-31  265  	tipc_k_signal((Handler)tipc_named_node_up, n_ptr->addr);
+c64f7a6a Jon Maloy       2012-11-16  266  	n_ptr->bclink.oos_state = 0;
+
+---
+0-DAY kernel build testing backend              Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
