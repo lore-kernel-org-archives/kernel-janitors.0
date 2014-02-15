@@ -1,28 +1,53 @@
-From: Evgeniy Polyakov <zbr@ioremap.net>
-Date: Fri, 14 Feb 2014 15:42:42 +0000
-Subject: Re: [patch v2] w1: small type cleanup in sysfs
-Message-Id: <85681392392562@web18h.yandex.ru>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 15 Feb 2014 07:36:12 +0000
+Subject: [PATCH 2/3] staging: r8188eu: delete unnecessary field initialization
+Message-Id: <1392449773-23429-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140211164513.GF5530@spacedout.fries.net> <20140211210755.GA25579@elgon.mountain>
-In-Reply-To: <20140211210755.GA25579@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, David Fries <david@fries.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-Hi
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-12.02.2014, 01:08, "Dan Carpenter" <dan.carpenter@oracle.com>:
-> On 64 bit systems, a large value for "long tmp" is truncated when
-> assigning to "int md->max_slave_count" so we still end up with a value
-> less than one despite the "tmp < 1" check.
->
-> This is more of a problem for static checkers than a real life issue,
-> but it's simple enough to fix.
->
-> Acked-by: David Fries <david@fries.net>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On success, the function netdev_alloc_skb initializes the dev field of its
+result to its first argument, so this doesn't have to be done in the
+calling context.
 
-Looks good to me, thank you
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression skb,privn,e;
+@@
+
+skb = netdev_alloc_skb(privn,...);
+... when strict
+(
+-skb->dev = privn;
+|
+?skb = e
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/rtl8188eu/hal/usb_ops_linux.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8188eu/hal/usb_ops_linux.c b/drivers/staging/rtl8188eu/hal/usb_ops_linux.c
+index 74ee2e6..b92b4f5 100644
+--- a/drivers/staging/rtl8188eu/hal/usb_ops_linux.c
++++ b/drivers/staging/rtl8188eu/hal/usb_ops_linux.c
+@@ -384,7 +384,6 @@ static int recvbuf2recvframe(struct adapter *adapt, struct sk_buff *pskb)
+ 
+ 		pkt_copy = netdev_alloc_skb(adapt->pnetdev, alloc_sz);
+ 		if (pkt_copy) {
+-			pkt_copy->dev = adapt->pnetdev;
+ 			precvframe->u.hdr.pkt = pkt_copy;
+ 			precvframe->u.hdr.rx_head = pkt_copy->data;
+ 			precvframe->u.hdr.rx_end = pkt_copy->data + alloc_sz;
+
