@@ -1,25 +1,32 @@
-From: "Dr. Pius Okagba" <renato.ardigo@alice.it>
-Date: Tue, 18 Feb 2014 11:36:19 +0000
-Subject: Dear
-Message-Id: <14444c84465.renato.ardigo@alice.it>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Feb 2014 20:11:28 +0000
+Subject: [patch] ncpfs: cleanup indenting in ncp_lookup()
+Message-Id: <20140217201128.GA27455@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Petr Vandrovec <petr@vandrovec.name>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Dave Chiluk <chiluk@canonical.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Attention:
-Regarding the transaction made so far, I waited for your message as you told 
-me
-with none received. Remember, I supposed to have traveled last night 
-but the
-weather is too bad. I will be leaving to Paraguay tomorrow for estate project.
-Meanwhile, contact the Bank manager with below address, i have kept the cheque
-worth of USD2.5M. They will either mail it to you or remit it for transfer
-depending on how you want it; Here is Bank contact information:
- 
-Name Of Manager: Mr. Franklin Barnard
-MAIL: (franklinb1@barid.com,
-okagbapius1@live.com
-Thank you
-UN Office.
+My static checker suggests adding curly braces here.  Probably that was
+the intent, but actually the code works the same either way.  I've just
+changed the indenting and left the code as-is.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/ncpfs/dir.c b/fs/ncpfs/dir.c
+index 91441de2529c..08b8ea8c353e 100644
+--- a/fs/ncpfs/dir.c
++++ b/fs/ncpfs/dir.c
+@@ -849,8 +849,8 @@ static struct dentry *ncp_lookup(struct inode *dir, struct dentry *dentry, unsig
+ 				 dentry->d_name.len, 1);
+ 		if (!res)
+ 			res = ncp_lookup_volume(server, __name, &(finfo.i));
+-			if (!res)
+-				ncp_update_known_namespace(server, finfo.i.volNumber, NULL);
++		if (!res)
++			ncp_update_known_namespace(server, finfo.i.volNumber, NULL);
+ 	} else {
+ 		res = ncp_io2vol(server, __name, &len, dentry->d_name.name,
+ 				 dentry->d_name.len, !ncp_preserve_case(dir));
