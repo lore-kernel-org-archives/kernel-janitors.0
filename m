@@ -1,37 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Feb 2014 19:56:06 +0000
-Subject: [patch 1/2] staging/bcm: two information leaks in ioctl
-Message-Id: <20140217195606.GA32630@elgon.mountain>
+From: Dave Jones <davej@redhat.com>
+Date: Mon, 17 Feb 2014 19:59:19 +0000
+Subject: Re: [patch 1/2] staging/bcm: two information leaks in ioctl
+Message-Id: <20140217195919.GA26373@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140217195606.GA32630@elgon.mountain>
+In-Reply-To: <20140217195606.GA32630@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-There are a couple paths where we don't check how much data we copy back
-to the user.
+On Mon, Feb 17, 2014 at 10:56:06PM +0300, Dan Carpenter wrote:
+ > There are a couple paths where we don't check how much data we copy back
+ > to the user.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I'm curious, is this something smatch is only picking up now that
+I chopped up that mega function into lots of little functions ?
 
-diff --git a/drivers/staging/bcm/Bcmchar.c b/drivers/staging/bcm/Bcmchar.c
-index fdebc3bba0b5..6f1997dc44c8 100644
---- a/drivers/staging/bcm/Bcmchar.c
-+++ b/drivers/staging/bcm/Bcmchar.c
-@@ -590,6 +590,8 @@ static int bcm_char_ioctl_gpio_multi_request(void __user *argp, struct bcm_mini_
- 
- 	if (IoBuffer.InputLength > sizeof(gpio_multi_info))
- 		return -EINVAL;
-+	if (IoBuffer.OutputLength > sizeof(gpio_multi_info))
-+		IoBuffer.OutputLength = sizeof(gpio_multi_info);
- 
- 	if (copy_from_user(&gpio_multi_info, IoBuffer.InputBuffer, IoBuffer.InputLength))
- 		return -EFAULT;
-@@ -680,6 +682,8 @@ static int bcm_char_ioctl_gpio_mode_request(void __user *argp, struct bcm_mini_a
- 
- 	if (IoBuffer.InputLength > sizeof(gpio_multi_mode))
- 		return -EINVAL;
-+	if (IoBuffer.OutputLength > sizeof(gpio_multi_mode))
-+		IoBuffer.OutputLength = sizeof(gpio_multi_mode);
- 
- 	if (copy_from_user(&gpio_multi_mode, IoBuffer.InputBuffer, IoBuffer.InputLength))
- 		return -EFAULT;
+	Dave
+
+
