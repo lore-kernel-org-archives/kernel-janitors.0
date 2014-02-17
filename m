@@ -1,42 +1,31 @@
-From: Jan Kara <jack@suse.cz>
-Date: Tue, 25 Feb 2014 09:49:29 +0000
-Subject: Re: [patch] ext3: remove an unneeded check in ext3_new_blocks()
-Message-Id: <20140225094929.GA1669@quack.suse.cz>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Feb 2014 20:03:08 +0000
+Subject: [patch] mtd: nuc900_nand: NULL dereference in nuc900_nand_enable()
+Message-Id: <20140217200308.GA9845@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140225083945.GC5023@elgon.mountain>
-In-Reply-To: <20140225083945.GC5023@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue 25-02-14 11:39:45, Dan Carpenter wrote:
-> We know "fatal" is zero here.  The code can be simplified a bit by
-> assigning directly.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-  Thanks. Added to my tree.
+Instead of writing to "nand->reg + REG_FMICSR" we write to "REG_FMICSR"
+which is NULL and not a valid register.
 
-								Honza
+Fixes: 8bff82cbc308 ('mtd: add nand support for w90p910 (v2)')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.
 
-> 
-> diff --git a/fs/ext3/balloc.c b/fs/ext3/balloc.c
-> index 22548f56197b..158b5d4ce067 100644
-> --- a/fs/ext3/balloc.c
-> +++ b/fs/ext3/balloc.c
-> @@ -1727,10 +1727,7 @@ allocated:
->  	percpu_counter_sub(&sbi->s_freeblocks_counter, num);
->  
->  	BUFFER_TRACE(gdp_bh, "journal_dirty_metadata for group descriptor");
-> -	err = ext3_journal_dirty_metadata(handle, gdp_bh);
-> -	if (!fatal)
-> -		fatal = err;
-> -
-> +	fatal = ext3_journal_dirty_metadata(handle, gdp_bh);
->  	if (fatal)
->  		goto out;
->  
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+diff --git a/drivers/mtd/nand/nuc900_nand.c b/drivers/mtd/nand/nuc900_nand.c
+index 331fccbdde61..e8a5fffd6ab2 100644
+--- a/drivers/mtd/nand/nuc900_nand.c
++++ b/drivers/mtd/nand/nuc900_nand.c
+@@ -225,7 +225,7 @@ static void nuc900_nand_enable(struct nuc900_nand *nand)
+ 	val = __raw_readl(nand->reg + REG_FMICSR);
+ 
+ 	if (!(val & NAND_EN))
+-		__raw_writel(val | NAND_EN, REG_FMICSR);
++		__raw_writel(val | NAND_EN, nand->reg + REG_FMICSR);
+ 
+ 	val = __raw_readl(nand->reg + REG_SMCSR);
+ 
