@@ -1,37 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Feb 2014 12:39:34 +0000
-Subject: [patch] RDMA/cxgb3: remove a couple unneeded conditions
-Message-Id: <20140206123934.GA12503@elgon.mountain>
+Date: Mon, 17 Feb 2014 19:57:31 +0000
+Subject: [patch 2/2] staging/bcm: integer underflow leads to Oom
+Message-Id: <20140217195731.GB32630@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
-Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-We know that "reset_tpt_entry" is false on this side of the if else
-statement so there is no need to check again.
+We do:
+
+        if (NOB > DEFAULT_BUFF_SIZE)
+                BuffSize = DEFAULT_BUFF_SIZE;
+        else
+                BuffSize = NOB;
+
+Since NOB can be negative it results in a larger than intended BuffSize
+and makes kzalloc() fail.
+
+The code is still a bit crap because it lets the users read as much as
+they want from nvram, but I don't know what a sensible upper limit
+should be.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/infiniband/hw/cxgb3/cxio_hal.c b/drivers/infiniband/hw/cxgb3/cxio_hal.c
-index c3f5aca4ef00..de1c61b417d6 100644
---- a/drivers/infiniband/hw/cxgb3/cxio_hal.c
-+++ b/drivers/infiniband/hw/cxgb3/cxio_hal.c
-@@ -735,14 +735,12 @@ static int __cxio_tpt_op(struct cxio_rdev *rdev_p, u32 reset_tpt_entry,
- 			((perm & TPT_MW_BIND) ? F_TPT_MW_BIND_ENABLE : 0) |
- 			V_TPT_ADDR_TYPE((zbva ? TPT_ZBTO : TPT_VATO)) |
- 			V_TPT_PAGE_SIZE(page_size));
--		tpt.rsvd_pbl_addr = reset_tpt_entry ? 0 :
--				    cpu_to_be32(V_TPT_PBL_ADDR(PBL_OFF(rdev_p, pbl_addr)>>3));
-+		tpt.rsvd_pbl_addr = cpu_to_be32(V_TPT_PBL_ADDR(PBL_OFF(rdev_p, pbl_addr)>>3));
- 		tpt.len = cpu_to_be32(len);
- 		tpt.va_hi = cpu_to_be32((u32) (to >> 32));
- 		tpt.va_low_or_fbo = cpu_to_be32((u32) (to & 0xFFFFFFFFULL));
- 		tpt.rsvd_bind_cnt_or_pstag = 0;
--		tpt.rsvd_pbl_size = reset_tpt_entry ? 0 :
--				  cpu_to_be32(V_TPT_PBL_SIZE(pbl_size >> 2));
-+		tpt.rsvd_pbl_size = cpu_to_be32(V_TPT_PBL_SIZE(pbl_size >> 2));
- 	}
- 	err = cxio_hal_ctrl_qp_write_mem(rdev_p,
- 				       stag_idx +
+diff --git a/drivers/staging/bcm/Bcmchar.c b/drivers/staging/bcm/Bcmchar.c
+index 6f1997dc44c8..5e4dfe031040 100644
+--- a/drivers/staging/bcm/Bcmchar.c
++++ b/drivers/staging/bcm/Bcmchar.c
+@@ -1894,7 +1894,7 @@ static int bcm_char_ioctl_nvm_raw_read(void __user *argp, struct bcm_mini_adapte
+ {
+ 	struct bcm_nvm_readwrite stNVMRead;
+ 	struct bcm_ioctl_buffer IoBuffer;
+-	INT NOB;
++	unsigned int NOB;
+ 	INT BuffSize;
+ 	INT ReadOffset = 0;
+ 	UINT ReadBytes = 0;
