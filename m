@@ -1,43 +1,37 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Tue, 11 Feb 2014 23:23:06 +0000
-Subject: Re: [patch] PCI hotplug: cpqphp: hex vs decimal typo in cpqhpc_probe()
-Message-Id: <20140211232306.GB21057@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Feb 2014 20:04:19 +0000
+Subject: [patch] [media] em28xx-cards: don't print a misleading message
+Message-Id: <20140217200419.GB9845@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140210152350.GA24189@elgon.mountain>
-In-Reply-To: <20140210152350.GA24189@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Marta Rybczynska <rybczynska@gmail.com>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 10, 2014 at 06:23:50PM +0300, Dan Carpenter wrote:
-> This is a static checker fix and I can't test it, but from the context
-> it definitely looks like hexidecimal 0x20 was intended here instead of
-> decimal 20.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There were some missing curly braces so it always says that the transfer
+mode changed even if it didn't.  Also the indenting uses spaces instead
+of tabs.
 
-Applied to pci/misc for v3.15, thanks a lot!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Bjorn
-
-> diff --git a/drivers/pci/hotplug/cpqphp_core.c b/drivers/pci/hotplug/cpqphp_core.c
-> index 31273e155e6c..037e2612c5bd 100644
-> --- a/drivers/pci/hotplug/cpqphp_core.c
-> +++ b/drivers/pci/hotplug/cpqphp_core.c
-> @@ -920,12 +920,12 @@ static int cpqhpc_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  				bus->max_bus_speed = PCI_SPEED_100MHz_PCIX;
->  				break;
->  			}
-> -			if (bus_cap & 20) {
-> +			if (bus_cap & 0x20) {
->  				dbg("bus max supports 66MHz PCI-X\n");
->  				bus->max_bus_speed = PCI_SPEED_66MHz_PCIX;
->  				break;
->  			}
-> -			if (bus_cap & 10) {
-> +			if (bus_cap & 0x10) {
->  				dbg("bus max supports 66MHz PCI\n");
->  				bus->max_bus_speed = PCI_SPEED_66MHz;
->  				break;
+diff --git a/drivers/media/usb/em28xx/em28xx-cards.c b/drivers/media/usb/em28xx/em28xx-cards.c
+index 4d97a76cc3b0..e8eedd35eea5 100644
+--- a/drivers/media/usb/em28xx/em28xx-cards.c
++++ b/drivers/media/usb/em28xx/em28xx-cards.c
+@@ -3329,10 +3329,11 @@ static int em28xx_usb_probe(struct usb_interface *interface,
+ 
+ 	/* Select USB transfer types to use */
+ 	if (has_video) {
+-	    if (!dev->analog_ep_isoc || (try_bulk && dev->analog_ep_bulk))
+-		dev->analog_xfer_bulk = 1;
+-		em28xx_info("analog set to %s mode.\n",
+-			    dev->analog_xfer_bulk ? "bulk" : "isoc");
++		if (!dev->analog_ep_isoc || (try_bulk && dev->analog_ep_bulk)) {
++			dev->analog_xfer_bulk = 1;
++			em28xx_info("analog set to %s mode.\n",
++				    dev->analog_xfer_bulk ? "bulk" : "isoc");
++		}
+ 	}
+ 	if (has_dvb) {
+ 	    if (!dev->dvb_ep_isoc || (try_bulk && dev->dvb_ep_bulk))
