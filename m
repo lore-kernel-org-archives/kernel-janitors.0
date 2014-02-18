@@ -1,32 +1,36 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 20 Feb 2014 13:23:16 +0000
-Subject: Re: [patch RFC] kvm, cpuid: silence a buffer overflow warning
-Message-Id: <20140220132316.GA26776@mwanda>
+Date: Tue, 18 Feb 2014 12:24:10 +0000
+Subject: re: regmap: Separate regmap dev initialization
+Message-Id: <20140218122410.GA9825@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140220123419.GA10110@elgon.mountain>
- <5305FE1E.6060902@redhat.com>
-In-Reply-To: <5305FE1E.6060902@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Gleb Natapov <gleb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Feb 20, 2014 at 02:07:42PM +0100, Paolo Bonzini wrote:
-> Il 20/02/2014 13:34, Dan Carpenter ha scritto:
-> > This seems like a harmless off by one overflow if "i" is the last
-> > element in the vcpu->arch.cpuid_entries[] array.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > Not tested.  I always wonder if it's worth fixing these or if it's worth
-> > reporting them?  Either of those seem like a lot of work for something
-> > harmless.
-> 
-> Could it oops if cpuid_nent is INT_MAX?
+Hello Michal Simek,
 
-cpuid_nent is capped at KVM_MAX_CPUID_ENTRIES (80).
+The patch 6cfec04bcc05: "regmap: Separate regmap dev initialization"
+from Feb 10, 2014, leads to the following static checker warning:
+
+	drivers/base/regmap/regmap.c:765 regmap_init()
+	warn: add curly braces?
+
+drivers/base/regmap/regmap.c
+   759          ret = regcache_init(map, config);
+   760          if (ret != 0)
+   761                  goto err_range;
+   762  
+   763          if (dev)
+   764                  ret = regmap_attach_dev(dev, map, config);
+   765                  if (ret != 0)
+   766                          goto err_regcache;
+
+Please add curly braces or adjust the indenting to not confuse the
+static checkers.
+
+   767  
+   768          return map;
 
 regards,
 dan carpenter
-
