@@ -1,48 +1,72 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Feb 2014 16:06:33 +0000
-Subject: [patch v3] [SCSI] arcmsr: upper 32 of dma address lost
-Message-Id: <20140211160633.GC9406@elgon.mountain>
+Date: Tue, 18 Feb 2014 14:59:26 +0000
+Subject: [patch] drm/gma500: cleanup in psb_mode_operation_ioctl()
+Message-Id: <20140218145925.GB6914@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140207130028.GA6971@elgon.mountain>
-In-Reply-To: <20140207130028.GA6971@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>, Nick Cheng <nick.cheng@areca.com.tw>
-Cc: Jingoo Han <jg1.han@samsung.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jiri Kosina <jkosina@suse.cz>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
 
-The original code always set the upper 32 bits to zero because it was
-doing a shift of the wrong variable.
+It looks like the "mode" test was changed at some point and but it
+wasn't totally cleaned up.  I've removed the unneeded indent block and
+the duplicative test for "if (mode)".
 
-Fixes: 1a4f550a09f8 ('[SCSI] arcmsr: 1.20.00.15: add SATA RAID plus other fixes')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v3: In v2 I introduced an expensive cast to solve a static checker
-    warning but James noticed and pointed me to the upper_32_bits()
-    macro.
 
-diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-index 4f6a30b8e5f9..9cfd399c47c0 100644
---- a/drivers/scsi/arcmsr/arcmsr_hba.c
-+++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-@@ -2500,16 +2500,15 @@ static int arcmsr_polling_ccbdone(struct AdapterControlBlock *acb,
- static int arcmsr_iop_confirm(struct AdapterControlBlock *acb)
- {
- 	uint32_t cdb_phyaddr, cdb_phyaddr_hi32;
--	dma_addr_t dma_coherent_handle;
-+
- 	/*
- 	********************************************************************
- 	** here we need to tell iop 331 our freeccb.HighPart
- 	** if freeccb.HighPart is not zero
- 	********************************************************************
- 	*/
--	dma_coherent_handle = acb->dma_coherent_handle;
--	cdb_phyaddr = (uint32_t)(dma_coherent_handle);
--	cdb_phyaddr_hi32 = (uint32_t)((cdb_phyaddr >> 16) >> 16);
-+	cdb_phyaddr = lower_32_bits(acb->dma_coherent_handle);
-+	cdb_phyaddr_hi32 = upper_32_bits(acb->dma_coherent_handle);
- 	acb->cdb_phyaddr_hi32 = cdb_phyaddr_hi32;
- 	/*
- 	***********************************************************************
-
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index 1199180667c9..411ed5b80d53 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -534,24 +534,22 @@ static int psb_mode_operation_ioctl(struct drm_device *dev, void *data,
+ 		}
+ 
+ 		/* drm_crtc_convert_umode(mode, umode); */
+-		{
+-			mode->clock = umode->clock;
+-			mode->hdisplay = umode->hdisplay;
+-			mode->hsync_start = umode->hsync_start;
+-			mode->hsync_end = umode->hsync_end;
+-			mode->htotal = umode->htotal;
+-			mode->hskew = umode->hskew;
+-			mode->vdisplay = umode->vdisplay;
+-			mode->vsync_start = umode->vsync_start;
+-			mode->vsync_end = umode->vsync_end;
+-			mode->vtotal = umode->vtotal;
+-			mode->vscan = umode->vscan;
+-			mode->vrefresh = umode->vrefresh;
+-			mode->flags = umode->flags;
+-			mode->type = umode->type;
+-			strncpy(mode->name, umode->name, DRM_DISPLAY_MODE_LEN);
+-			mode->name[DRM_DISPLAY_MODE_LEN-1] = 0;
+-		}
++		mode->clock = umode->clock;
++		mode->hdisplay = umode->hdisplay;
++		mode->hsync_start = umode->hsync_start;
++		mode->hsync_end = umode->hsync_end;
++		mode->htotal = umode->htotal;
++		mode->hskew = umode->hskew;
++		mode->vdisplay = umode->vdisplay;
++		mode->vsync_start = umode->vsync_start;
++		mode->vsync_end = umode->vsync_end;
++		mode->vtotal = umode->vtotal;
++		mode->vscan = umode->vscan;
++		mode->vrefresh = umode->vrefresh;
++		mode->flags = umode->flags;
++		mode->type = umode->type;
++		strncpy(mode->name, umode->name, DRM_DISPLAY_MODE_LEN);
++		mode->name[DRM_DISPLAY_MODE_LEN-1] = 0;
+ 
+ 		connector_funcs = (struct drm_connector_helper_funcs *)
+ 				   connector->helper_private;
+@@ -562,8 +560,7 @@ static int psb_mode_operation_ioctl(struct drm_device *dev, void *data,
+ 		}
+ 
+ 		/*do some clean up work*/
+-		if (mode)
+-			drm_mode_destroy(dev, mode);
++		drm_mode_destroy(dev, mode);
+ mode_op_out:
+ 		drm_modeset_unlock_all(dev);
+ 		return ret;
