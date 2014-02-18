@@ -1,27 +1,30 @@
-From: Dave Jones <davej@redhat.com>
-Date: Mon, 17 Feb 2014 20:23:34 +0000
-Subject: Re: [patch 1/2] staging/bcm: two information leaks in ioctl
-Message-Id: <20140217202334.GA27162@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Feb 2014 12:20:51 +0000
+Subject: [patch] af_packet: remove a stray tab in packet_set_ring()
+Message-Id: <20140218122050.GB9604@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140217195606.GA32630@elgon.mountain>
-In-Reply-To: <20140217195606.GA32630@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Daniel Borkmann <dborkman@redhat.com>, Willem de Bruijn <willemb@google.com>, Hannes Frederic Sowa <hannes@stressinduktion.org>, Eric Dumazet <edumazet@google.com>, Phil Sutter <phil@nwl.cc>, Atzm Watanabe <atzm@stratosphere.co.jp>, Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 17, 2014 at 11:13:16PM +0300, Dan Carpenter wrote:
- > On Mon, Feb 17, 2014 at 02:59:19PM -0500, Dave Jones wrote:
- > > On Mon, Feb 17, 2014 at 10:56:06PM +0300, Dan Carpenter wrote:
- > >  > There are a couple paths where we don't check how much data we copy back
- > >  > to the user.
- > > 
- > > I'm curious, is this something smatch is only picking up now that
- > > I chopped up that mega function into lots of little functions ?
- > 
- > Yes.  Smatch wasn't able to parse it before the breakup.  Too huge.
+At first glance it looks like there is a missing curly brace but
+actually the code works the same either way.  I have adjusted the
+indenting but left the code the same.
 
-Excellent. That gives me incentive to do that sort of crap work more often.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	Dave
-
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 6a2bb37506c5..7fd37de503d1 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -3786,7 +3786,7 @@ static int packet_set_ring(struct sock *sk, union tpacket_req_u *req_u,
+ 		 */
+ 			if (!tx_ring)
+ 				init_prb_bdqc(po, rb, pg_vec, req_u, tx_ring);
+-				break;
++			break;
+ 		default:
+ 			break;
+ 		}
