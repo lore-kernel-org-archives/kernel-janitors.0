@@ -1,27 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 07 Feb 2014 04:06:31 +0000
-Subject: Re: [patch] tg3: cleanup an error path in tg3_phy_reset_5703_4_5()
-Message-Id: <20140206.200631.1329672470949197117.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Feb 2014 15:00:45 +0000
+Subject: [patch] [media] gspca_stv06xx: remove an unneeded check
+Message-Id: <20140218150044.GC6914@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140205132920.GE800@elgon.mountain>
-In-Reply-To: <20140205132920.GE800@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: nsujir@broadcom.com, mchan@broadcom.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Theodore Kilgore <kilgota@banach.math.auburn.edu>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 5 Feb 2014 16:29:21 +0300
+"err" is zero here so we don't need to check again.
 
-> In the original code, if tg3_readphy() fails then it does an unnecessary
-> check to verify "err" is still zero and then returns -EBUSY.
-> 
-> My static checker complains about the unnecessary "if (!err)" check and
-> anyway it is better to propagate the -EBUSY error code from
-> tg3_readphy() instead of hard coding it here.  And really the original
-> code is confusing to look at.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/media/usb/gspca/stv06xx/stv06xx_vv6410.c b/drivers/media/usb/gspca/stv06xx/stv06xx_vv6410.c
+index bf3e5c317a26..e60cbb3aa609 100644
+--- a/drivers/media/usb/gspca/stv06xx/stv06xx_vv6410.c
++++ b/drivers/media/usb/gspca/stv06xx/stv06xx_vv6410.c
+@@ -178,7 +178,7 @@ static int vv6410_stop(struct sd *sd)
+ 
+ 	PDEBUG(D_STREAM, "Halting stream");
+ 
+-	return (err < 0) ? err : 0;
++	return 0;
+ }
+ 
+ static int vv6410_dump(struct sd *sd)
