@@ -1,30 +1,18 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 06 Feb 2014 07:49:47 +0000
-Subject: [patch] [media] dvb-frontends: decimal vs hex typo in ChannelConfiguration()
-Message-Id: <20140206074947.GA26661@elgon.mountain>
+From: Osamu Kaito I <kosamu@japanmail.com>
+Date: Thu, 20 Feb 2014 15:10:02 +0000
+Subject: =?UTF-8?B?UkU6IEJ1c2luZXNzIGFmZmFpciBmcm9tIFRva3lvLuKAjw==?=
+Message-Id: <E1WGVGE-0000AW-Ea@coreserver.moecojp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From the context this should be hex 0x80 instead of decimal 80.
+2 Tsuki 20, 2014
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Untested.
+Hajimemashite ! I hope that this mail finds you well. I will greatly appreciate your time in reading through the details of my business-proposal. I will like to intimate you with my letter of intent of a legal business-proposal you can handle directly from your country, which is of a complementary benefit mutually with no peril involved. With limited writing communication via email messaging system, I can?t disclose fully the structured contents of this business-proposal.
 
-diff --git a/drivers/media/dvb-frontends/tda18271c2dd.c b/drivers/media/dvb-frontends/tda18271c2dd.c
-index 2c54586ac07f..de0a1c110972 100644
---- a/drivers/media/dvb-frontends/tda18271c2dd.c
-+++ b/drivers/media/dvb-frontends/tda18271c2dd.c
-@@ -1030,7 +1030,7 @@ static int ChannelConfiguration(struct tda_state *state,
- 			state->m_Regs[EP4] = state->m_EP4 | state->m_IFLevelDigital;
- 
- 		if ((Standard = HF_FM_Radio) && state->m_bFMInput)
--			state->m_Regs[EP4] |= 80;
-+			state->m_Regs[EP4] |= 0x80;
- 
- 		state->m_Regs[MPD] &= ~0x80;
- 		if (Standard > HF_AnalogMax)
+If however you think you handle it from your country confidentially and require any further information, please feel free to contact me at the phone number and email provided at the top of this letter, so much more; I look forward to hear from you positively.
+
+Respectfully,
+Kaito Osamu. I
