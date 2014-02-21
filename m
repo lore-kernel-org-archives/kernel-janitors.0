@@ -1,51 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Feb 2014 13:07:13 +0000
-Subject: Re: [patch] [SCSI] arcmsr: upper 32 of dma address lost
-Message-Id: <20140207130713.GX26776@mwanda>
+Date: Fri, 21 Feb 2014 08:58:54 +0000
+Subject: [patch] ext3: remove unneeded check in ext3_ordered_writepage()
+Message-Id: <20140221085854.GC13185@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140207130028.GA6971@elgon.mountain>
-In-Reply-To: <20140207130028.GA6971@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>, Nick Cheng <nick.cheng@areca.com.tw>
-Cc: Jingoo Han <jg1.han@samsung.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jiri Kosina <jkosina@suse.cz>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Feb 07, 2014 at 04:00:28PM +0300, Dan Carpenter wrote:
-> The original code always set the upper 32 bits to zero because it was
-> doing a shift of the wrong variable.
-> 
+We already know "ret" is zero so there is no need to do:
 
-Actually let me redo this.  I want to add a cast to prevent a static
-checker warning on 32 bit systems.  Sorry, for the noise.
+		if (!ret)
+			ret = err;
 
-regards,
-dan carpenter
+We can just assign ret directly instead.
 
-> Fixes: 1a4f550a09f8 ('[SCSI] arcmsr: 1.20.00.15: add SATA RAID plus other fixes')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-> index 4f6a30b8e5f9..9cfd399c47c0 100644
-> --- a/drivers/scsi/arcmsr/arcmsr_hba.c
-> +++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-> @@ -2500,16 +2500,15 @@ static int arcmsr_polling_ccbdone(struct AdapterControlBlock *acb,
->  static int arcmsr_iop_confirm(struct AdapterControlBlock *acb)
->  {
->  	uint32_t cdb_phyaddr, cdb_phyaddr_hi32;
-> -	dma_addr_t dma_coherent_handle;
-> +
->  	/*
->  	********************************************************************
->  	** here we need to tell iop 331 our freeccb.HighPart
->  	** if freeccb.HighPart is not zero
->  	********************************************************************
->  	*/
-> -	dma_coherent_handle = acb->dma_coherent_handle;
-> -	cdb_phyaddr = (uint32_t)(dma_coherent_handle);
-> -	cdb_phyaddr_hi32 = (uint32_t)((cdb_phyaddr >> 16) >> 16);
-> +	cdb_phyaddr = (uint32_t)(acb->dma_coherent_handle);
-> +	cdb_phyaddr_hi32 = (uint32_t)(acb->dma_coherent_handle >> 32);
->  	acb->cdb_phyaddr_hi32 = cdb_phyaddr_hi32;
->  	/*
->  	***********************************************************************
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/fs/ext3/inode.c b/fs/ext3/inode.c
+index 384b6ebb655f..491f022c476a 100644
+--- a/fs/ext3/inode.c
++++ b/fs/ext3/inode.c
+@@ -1673,12 +1673,9 @@ static int ext3_ordered_writepage(struct page *page,
+ 	 * block_write_full_page() succeeded.  Otherwise they are unmapped,
+ 	 * and generally junk.
+ 	 */
+-	if (ret = 0) {
+-		err = walk_page_buffers(handle, page_bufs, 0, PAGE_CACHE_SIZE,
++	if (ret = 0)
++		ret = walk_page_buffers(handle, page_bufs, 0, PAGE_CACHE_SIZE,
+ 					NULL, journal_dirty_data_fn);
+-		if (!ret)
+-			ret = err;
+-	}
+ 	walk_page_buffers(handle, page_bufs, 0,
+ 			PAGE_CACHE_SIZE, NULL, bput_one);
+ 	err = ext3_journal_stop(handle);
