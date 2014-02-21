@@ -1,30 +1,29 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 25 Feb 2014 12:18:00 +0000
-Subject: Re: [patch] crypto: remove a duplicate checks in __cbc_decrypt()
-Message-Id: <20140225121800.GE12216@gondor.apana.org.au>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 21 Feb 2014 08:55:06 +0000
+Subject: [patch] Input: remove a duplicative NULL test
+Message-Id: <20140221085506.GB13185@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140213145832.GA11059@elgon.mountain>
- <20140214175544.GI2591@kronos.hofmann.stw.uni-erlangen.de>
-In-Reply-To: <20140214175544.GI2591@kronos.hofmann.stw.uni-erlangen.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Johannes =?iso-8859-1?Q?G=F6tzfried?= <johannes.goetzfried@cs.fau.de>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Jingoo Han <jg1.han@samsung.com>, Fugang Duan <B38611@freescale.com>, Benson Leung <bleung@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Feb 14, 2014 at 06:55:45PM +0100, Johannes G=F6tzfried wrote:
-> On Thu, Feb 13, 2014 at 05:58:32PM +0300, Dan Carpenter wrote:
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> Acked-by: Johannes G=F6tzfried <johannes.goetzfried@cs.fau.de>
+"pdata" is non-NULL here.  We verified that at the start of the
+function.
 
-Patch applied.  Thanks!
---=20
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index a70400754e92..40abe90cc924 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -1146,7 +1146,7 @@ static int mxt_probe(struct i2c_client *client,
+ 		goto err_free_mem;
+ 	}
+ 
+-	data->is_tp = pdata && pdata->is_tp;
++	data->is_tp = pdata->is_tp;
+ 
+ 	input_dev->name = (data->is_tp) ? "Atmel maXTouch Touchpad" :
+ 					  "Atmel maXTouch Touchscreen";
