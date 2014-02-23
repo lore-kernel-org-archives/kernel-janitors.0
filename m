@@ -1,43 +1,39 @@
-From: "fugang.duan@freescale.com" <fugang.duan@freescale.com>
-Date: Fri, 21 Feb 2014 09:14:38 +0000
-Subject: RE: [patch] Input: remove a duplicative NULL test
-Message-Id: <e1cf3227a1484c3b931abb61b97391a6@BLUPR03MB373.namprd03.prod.outlook.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Date: Sun, 23 Feb 2014 23:23:42 +0000
+Subject: Re: [patch] Input: remove a duplicative NULL test
+Message-Id: <22951681.102711393197819005.JavaMail.weblogic@epml01>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140221085506.GB13185@elgon.mountain>
 In-Reply-To: <20140221085506.GB13185@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Jingoo Han <jg1.han@samsung.com>, Benson Leung <bleung@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: "fugang.duan@freescale.com" <fugang.duan@freescale.com>, Dan Carpenter <dan.carpenter@oracle.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Benson Leung <bleung@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Data: Friday, February 21, 2014 4:55 PM
+T24gRnJpZGF5LCBGZWJydWFyeSAyMSwgMjAxNCA2OjE1IFBNLCBmdWdhbmcuZHVhbkBmcmVlc2Nh
+bGUuY29tIHdyb3RlOg0KPiANCj4gRnJvbTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBv
+cmFjbGUuY29tPg0KPiBEYXRhOiBGcmlkYXksIEZlYnJ1YXJ5IDIxLCAyMDE0IDQ6NTUgUE0NCj4g
+DQo+ID5UbzogRG1pdHJ5IFRvcm9raG92DQo+ID5DYzogUGF1bCBHb3J0bWFrZXI7IEppbmdvbyBI
+YW47IER1YW4gRnVnYW5nLUIzODYxMTsgQmVuc29uIExldW5nOyBEYW5pZWwgS3VydHo7DQo+ID5s
+aW51eC1pbnB1dEB2Z2VyLmtlcm5lbC5vcmc7IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5v
+cmcNCj4gPlN1YmplY3Q6IFtwYXRjaF0gSW5wdXQ6IHJlbW92ZSBhIGR1cGxpY2F0aXZlIE5VTEwg
+dGVzdA0KPiA+DQo+ID4icGRhdGEiIGlzIG5vbi1OVUxMIGhlcmUuICBXZSB2ZXJpZmllZCB0aGF0
+IGF0IHRoZSBzdGFydCBvZiB0aGUgZnVuY3Rpb24uDQo+ID4NCj4gPlNpZ25lZC1vZmYtYnk6IERh
+biBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gPg0KPiA+ZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvaW5wdXQvdG91Y2hzY3JlZW4vYXRtZWxfbXh0X3RzLmMNCj4gPmIvZHJpdmVy
+cy9pbnB1dC90b3VjaHNjcmVlbi9hdG1lbF9teHRfdHMuYw0KPiA+aW5kZXggYTcwNDAwNzU0ZTky
+Li40MGFiZTkwY2M5MjQgMTAwNjQ0DQo+ID4tLS0gYS9kcml2ZXJzL2lucHV0L3RvdWNoc2NyZWVu
+L2F0bWVsX214dF90cy5jDQo+ID4rKysgYi9kcml2ZXJzL2lucHV0L3RvdWNoc2NyZWVuL2F0bWVs
+X214dF90cy5jDQo+ID5AQCAtMTE0Niw3ICsxMTQ2LDcgQEAgc3RhdGljIGludCBteHRfcHJvYmUo
+c3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4gPiAJCWdvdG8gZXJyX2ZyZWVfbWVtOw0KPiA+
+IAl9DQo+ID4NCj4gPi0JZGF0YS0+aXNfdHAgPSBwZGF0YSAmJiBwZGF0YS0+aXNfdHA7DQo+ID4r
+CWRhdGEtPmlzX3RwID0gcGRhdGEtPmlzX3RwOw0KPiA+DQo+ID4gCWlucHV0X2Rldi0+bmFtZSA9
+IChkYXRhLT5pc190cCkgPyAiQXRtZWwgbWFYVG91Y2ggVG91Y2hwYWQiIDoNCj4gPiAJCQkJCSAg
+IkF0bWVsIG1hWFRvdWNoIFRvdWNoc2NyZWVuIjsNCj4gPg0KPiBBZ3JlZSwgaXQgaXMgcmVkdW5k
+YW50LiBBbmQgaWYgeW91IGhhdmUgZnJlZSB0aW1lLCB5b3UgY2FuIGNvbnZlcnQgdGhlIGRyaXZl
+ciB0byBzdXBwb3J0IGRldmljZXRyZWUuDQo+IA0KPiBBY2tlZC1ieTogRnVnYW5nIER1YW4gPEIz
+ODYxMUBmcmVlc2NhbGUuY29tPg0KDQpSZXZpZXdlZC1ieTogSmluZ29vIEhhbiA8amcxLmhhbkBz
+YW1zdW5nLmNvbT4NCg0KQmVzdCByZWdhcmRzLA0KSmluZ29vIEhhbg0K
 
->To: Dmitry Torokhov
->Cc: Paul Gortmaker; Jingoo Han; Duan Fugang-B38611; Benson Leung; Daniel Kurtz;
->linux-input@vger.kernel.org; kernel-janitors@vger.kernel.org
->Subject: [patch] Input: remove a duplicative NULL test
->
->"pdata" is non-NULL here.  We verified that at the start of the function.
->
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c
->b/drivers/input/touchscreen/atmel_mxt_ts.c
->index a70400754e92..40abe90cc924 100644
->--- a/drivers/input/touchscreen/atmel_mxt_ts.c
->+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
->@@ -1146,7 +1146,7 @@ static int mxt_probe(struct i2c_client *client,
-> 		goto err_free_mem;
-> 	}
->
->-	data->is_tp = pdata && pdata->is_tp;
->+	data->is_tp = pdata->is_tp;
->
-> 	input_dev->name = (data->is_tp) ? "Atmel maXTouch Touchpad" :
-> 					  "Atmel maXTouch Touchscreen";
->
-Agree, it is redundant. And if you have free time, you can convert the driver to support devicetree.
 
-Acked-by: Fugang Duan <B38611@freescale.com>
