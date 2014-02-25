@@ -1,26 +1,32 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Tue, 04 Feb 2014 07:45:55 +0000
-Subject: Re: [patch] UBI: fix some use after free bugs
-Message-Id: <1391499955.1795.32.camel@sauron.fi.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Feb 2014 08:39:45 +0000
+Subject: [patch] ext3: remove an unneeded check in ext3_new_blocks()
+Message-Id: <20140225083945.GC5023@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140129131756.GC10678@elgon.mountain>
-In-Reply-To: <20140129131756.GC10678@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Richard Weinberger <richard@nod.at>, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+To: Jan Kara <jack@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 2014-01-29 at 16:17 +0300, Dan Carpenter wrote:
-> Move the kmem_cache_free() calls down a couple lines.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We know "fatal" is zero here.  The code can be simplified a bit by
+assigning directly.
 
-Pushed to linux-ubifs.git, thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I'll send this to Linus for 3.13 inclusion.
-
--- 
-Best Regards,
-Artem Bityutskiy
-
+diff --git a/fs/ext3/balloc.c b/fs/ext3/balloc.c
+index 22548f56197b..158b5d4ce067 100644
+--- a/fs/ext3/balloc.c
++++ b/fs/ext3/balloc.c
+@@ -1727,10 +1727,7 @@ allocated:
+ 	percpu_counter_sub(&sbi->s_freeblocks_counter, num);
+ 
+ 	BUFFER_TRACE(gdp_bh, "journal_dirty_metadata for group descriptor");
+-	err = ext3_journal_dirty_metadata(handle, gdp_bh);
+-	if (!fatal)
+-		fatal = err;
+-
++	fatal = ext3_journal_dirty_metadata(handle, gdp_bh);
+ 	if (fatal)
+ 		goto out;
+ 
