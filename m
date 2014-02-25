@@ -1,7 +1,7 @@
 From: Steven Whitehouse <swhiteho@redhat.com>
-Date: Mon, 17 Feb 2014 10:16:21 +0000
+Date: Tue, 25 Feb 2014 10:07:20 +0000
 Subject: Re: [patch] fs: NULL dereference in posix_acl_to_xattr()
-Message-Id: <1392632181.2726.9.camel@menhir>
+Message-Id: <1393322840.2771.6.camel@menhir>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140214090549.GA15629@elgon.mountain>
 In-Reply-To: <20140214090549.GA15629@elgon.mountain>
@@ -21,15 +21,11 @@ On Fri, 2014-02-14 at 12:05 +0300, Dan Carpenter wrote:
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
 
-Al, are you going to take this, or should I put it through the GFS2 tree
-instead?
-
-I also wonder whether GFS2 should be calling posix_acl_xattr_size() like
-the other filesystems, or whether in fact calling posix_acl_to_xattr()
-with a NULL buffer is still accepted usage here?
+I've not heard anything from Al, so at least for the time being, I'm
+putting this in the GFS2 tree, that way it will at least get some
+exposure in -next,
 
 Steve.
-
 
 > diff --git a/fs/posix_acl.c b/fs/posix_acl.c
 > index 11c54fd51e16..9e363e41dacc 100644
