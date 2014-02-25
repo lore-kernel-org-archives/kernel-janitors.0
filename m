@@ -1,45 +1,30 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sat, 15 Feb 2014 20:41:58 +0000
-Subject: Re: [PATCH 2/3] staging: r8188eu: delete unnecessary field initialization
-Message-Id: <20140215204158.GA15040@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Feb 2014 08:35:09 +0000
+Subject: [patch] dm thin: inverted down_trylock() test
+Message-Id: <20140225083509.GB5023@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1392449773-23429-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1392449773-23429-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>, Joe Thornber <ejt@redhat.com>
+Cc: linux-raid@vger.kernel.org, dm-devel@redhat.com, kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
 
-On Sat, Feb 15, 2014 at 08:36:12AM +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> On success, the function netdev_alloc_skb initializes the dev field of its
-> result to its first argument, so this doesn't have to be done in the
-> calling context.
-> 
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression skb,privn,e;
-> @@
-> 
-> skb = netdev_alloc_skb(privn,...);
-> ... when strict
-> (
-> -skb->dev = privn;
-> |
-> ?skb = e
-> )
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/staging/rtl8188eu/hal/usb_ops_linux.c |    1 -
->  1 file changed, 1 deletion(-)
+down_trylock() is the opposite of mutex_trylock().  It returns zero on
+success and one on failure.
 
-No longer applies to my tree :(
+Fixes: f4ef95631ebf ('dm thin: do not run the worker thread if pool is suspended')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index 6cbe9d2e0385..7d8e03c21fa9 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -237,7 +237,7 @@ struct thin_c {
+  */
+ static void wake_worker(struct pool *pool)
+ {
+-	if (down_trylock(&pool->queue_work_lock)) {
++	if (!down_trylock(&pool->queue_work_lock)) {
+ 		queue_work(pool->wq, &pool->worker);
+ 		up(&pool->queue_work_lock);
+ 	}
