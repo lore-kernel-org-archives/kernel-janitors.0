@@ -1,37 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Feb 2014 08:52:40 +0000
-Subject: [patch] ASoC: Intel: sst-firmware: missing curly braces (harmless)
-Message-Id: <20140221085240.GA13185@elgon.mountain>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 25 Feb 2014 23:46:44 +0000
+Subject: Re: [patch] ASoC: Intel: sst-firmware: missing curly braces (harmless)
+Message-Id: <20140225234644.GC2927@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="pAwQNkOnpTn9IO2O"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>
+References: <20140221085240.GA13185@elgon.mountain>
+In-Reply-To: <20140221085240.GA13185@elgon.mountain>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-There were some curly braces intended here, but the code actually
-works the same either way so it's not a bug.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--pAwQNkOnpTn9IO2O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/sound/soc/intel/sst-firmware.c b/sound/soc/intel/sst-firmware.c
-index b6f9b5ecb66a..51b56a473bc5 100644
---- a/sound/soc/intel/sst-firmware.c
-+++ b/sound/soc/intel/sst-firmware.c
-@@ -293,7 +293,7 @@ static int block_module_prepare(struct sst_module *module)
- 	/* enable each block so that's it'e ready for module P/S data */
- 	list_for_each_entry(block, &module->block_list, module_list) {
- 
--		if (block->ops && block->ops->enable)
-+		if (block->ops && block->ops->enable) {
- 			ret = block->ops->enable(block);
- 			if (ret < 0) {
- 				dev_err(module->dsp->dev,
-@@ -301,6 +301,7 @@ static int block_module_prepare(struct sst_module *module)
- 					block->type, block->index);
- 				goto err;
- 			}
-+		}
- 	}
- 	return ret;
- 
+On Fri, Feb 21, 2014 at 11:52:40AM +0300, Dan Carpenter wrote:
+> There were some curly braces intended here, but the code actually
+> works the same either way so it's not a bug.
+
+Applied, thanks.
+
+--pAwQNkOnpTn9IO2O
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTDSthAAoJELSic+t+oim9XmQP/A095RfdPU/slmwJzywaLxa5
+pBVHXFpfzmDeodaZXJuddnc/SLckmr9+iL/F1Ut6Ids55NruVlhTZfPtrZ8iBjZZ
+CnpfGuE91tWdeeuMXO60Qs35wBMAiZK3VkNSeWy2xJwi8izHS6D+MK6Acl402MOG
+f1fGESI8HNZ6g9hT+MpdqwEwTlhfl873qNC8X+oMQ3v+ZtsfHatiZX4eyTm42K2M
+E3oCxnU9ErM/7Xc2rryzSjtJvd/BiDbPNCh/v3iE3zlU17lrqFK+32v3naHExDED
+Kak6iv/zKIGNRv7a2ugPAyQVfYfbPFJgUqdfYhyWSU0m8bGRQ3e1b7GW+joiLeCg
+wN7kJE/hrAkaNlSRyz8GzQwrgDzWvK/MmaIJeoftaHIZ7F5OyHg6V5Vv7nWPZs5C
+W2OVjwM5V0kIKtFz/BI/nhqciIlcBgR62Yy+zXF52h3ObI0Jj0KNzr7ivnJPzur7
+RRsU1JF+xen8JPwUzQeIch6UtCPM7lYp6UcToMriOFSkzf/pLg1PVAcTqUvk6J6N
+ZZucgdfTX/GYLywuECh6JQx1Vj+IRwXwHxDJyhVjI/xnrhyS5csu/DdGMScqFL6j
+ULfs8lhhC1OWk35kYjBdcO3ZNFxsUzUSO9TZ6RAB6HiFJU4Rx2vx7aIYODK/wHTe
+dc/znZG/Czqdic5/+Gdp
+=ZH2E
+-----END PGP SIGNATURE-----
+
+--pAwQNkOnpTn9IO2O--
