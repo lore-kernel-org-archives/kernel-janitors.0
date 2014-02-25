@@ -1,32 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Feb 2014 20:11:28 +0000
-Subject: [patch] ncpfs: cleanup indenting in ncp_lookup()
-Message-Id: <20140217201128.GA27455@elgon.mountain>
+From: Silvan Jegen <s.jegen@gmail.com>
+Date: Tue, 25 Feb 2014 17:07:10 +0000
+Subject: [PATCH] Staging: rtl8192e: Replace min macro with min_t
+Message-Id: <530cd6bf.c45a0f0a.7c86.ffffd79d@mx.google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Petr Vandrovec <petr@vandrovec.name>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Dave Chiluk <chiluk@canonical.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org
 
-My static checker suggests adding curly braces here.  Probably that was
-the intent, but actually the code works the same either way.  I've just
-changed the indenting and left the code as-is.
+Instead of an explicit cast the min_t macro should be used.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
+---
+ drivers/staging/rtl8192e/rtl8192e/rtl_wx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ncpfs/dir.c b/fs/ncpfs/dir.c
-index 91441de2529c..08b8ea8c353e 100644
---- a/fs/ncpfs/dir.c
-+++ b/fs/ncpfs/dir.c
-@@ -849,8 +849,8 @@ static struct dentry *ncp_lookup(struct inode *dir, struct dentry *dentry, unsig
- 				 dentry->d_name.len, 1);
- 		if (!res)
- 			res = ncp_lookup_volume(server, __name, &(finfo.i));
--			if (!res)
--				ncp_update_known_namespace(server, finfo.i.volNumber, NULL);
-+		if (!res)
-+			ncp_update_known_namespace(server, finfo.i.volNumber, NULL);
- 	} else {
- 		res = ncp_io2vol(server, __name, &len, dentry->d_name.name,
- 				 dentry->d_name.len, !ncp_preserve_case(dir));
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+index 6202358..498995d 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+@@ -609,7 +609,7 @@ static int r8192_wx_set_nick(struct net_device *dev,
+ 	if (wrqu->data.length > IW_ESSID_MAX_SIZE)
+ 		return -E2BIG;
+ 	down(&priv->wx_sem);
+-	wrqu->data.length = min((size_t) wrqu->data.length, sizeof(priv->nick));
++	wrqu->data.length = min_t(size_t, wrqu->data.length, sizeof(priv->nick));
+ 	memset(priv->nick, 0, sizeof(priv->nick));
+ 	memcpy(priv->nick, extra, wrqu->data.length);
+ 	up(&priv->wx_sem);
+-- 
+1.9.0
+
