@@ -1,36 +1,45 @@
-From: Liam Girdwood <liam.r.girdwood@intel.com>
-Date: Tue, 25 Feb 2014 13:12:11 +0000
-Subject: Re: [alsa-devel] [patch 1/2] ASoC: sst-haswell-ipc: restore IRQs on error
-Message-Id: <1393333931.2300.11.camel@loki>
+From: Mark Brown <broonie@kernel.org>
+Date: Tue, 25 Feb 2014 23:46:19 +0000
+Subject: Re: [patch 1/2] ASoC: sst-haswell-ipc: restore IRQs on error
+Message-Id: <20140225234619.GB2927@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="RASg3xLB4tUQ4RcS"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140225083250.GA22416@elgon.mountain>
 In-Reply-To: <20140225083250.GA22416@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>, kernel-janitors@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-T24gVHVlLCAyMDE0LTAyLTI1IGF0IDExOjMyICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOgo+
-IFRoaXMgc2hvdWxkIGJlIHNwaW5fdW5sb2NrX2lycXJlc3RvcmUoKSBpbnN0ZWFkIG9mIHNwaW5f
-dW5sb2NrKCkKPiAKPiBGaXhlczogMjI5ODEyNDM1ODljICgnQVNvQzogSW50ZWw6IEFkZCBIYXN3
-ZWxsL0Jyb2Fkd2VsbCBJUEMnKQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5j
-YXJwZW50ZXJAb3JhY2xlLmNvbT4KPiAKPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL2ludGVsL3Nz
-dC1oYXN3ZWxsLWlwYy5jIGIvc291bmQvc29jL2ludGVsL3NzdC1oYXN3ZWxsLWlwYy5jCj4gaW5k
-ZXggNjY4ZDQ4NjUyMGFlLi41NTJhZWJmMmM4ZjUgMTAwNjQ0Cj4gLS0tIGEvc291bmQvc29jL2lu
-dGVsL3NzdC1oYXN3ZWxsLWlwYy5jCj4gKysrIGIvc291bmQvc29jL2ludGVsL3NzdC1oYXN3ZWxs
-LWlwYy5jCj4gQEAgLTUyNyw3ICs1MjcsNyBAQCBzdGF0aWMgaW50IGlwY190eF9tZXNzYWdlKHN0
-cnVjdCBzc3RfaHN3ICpoc3csIHUzMiBoZWFkZXIsIHZvaWQgKnR4X2RhdGEsCj4gIAo+ICAJbXNn
-ID0gbXNnX2dldF9lbXB0eShoc3cpOwo+ICAJaWYgKG1zZyA9PSBOVUxMKSB7Cj4gLQkJc3Bpbl91
-bmxvY2soJmhzdy0+ZHNwLT5zcGlubG9jayk7Cj4gKwkJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgm
-aHN3LT5kc3AtPnNwaW5sb2NrLCBmbGFncyk7Cj4gIAkJcmV0dXJuIC1FQlVTWTsKPiAgCX0KPiAg
-CgpCb3RoIAoKQWNrZWQtYnk6IExpYW0gR2lyZHdvb2QgPGxpYW0uci5naXJkd29vZEBsaW51eC5p
-bnRlbC5jb20+CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkludGVsIENvcnBvcmF0aW9uIChVSykgTGltaXRlZApS
-ZWdpc3RlcmVkIE5vLiAxMTM0OTQ1IChFbmdsYW5kKQpSZWdpc3RlcmVkIE9mZmljZTogUGlwZXJz
-IFdheSwgU3dpbmRvbiBTTjMgMVJKClZBVCBObzogODYwIDIxNzMgNDcKClRoaXMgZS1tYWlsIGFu
-ZCBhbnkgYXR0YWNobWVudHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1hdGVyaWFsIGZvcgp0
-aGUgc29sZSB1c2Ugb2YgdGhlIGludGVuZGVkIHJlY2lwaWVudChzKS4gQW55IHJldmlldyBvciBk
-aXN0cmlidXRpb24KYnkgb3RoZXJzIGlzIHN0cmljdGx5IHByb2hpYml0ZWQuIElmIHlvdSBhcmUg
-bm90IHRoZSBpbnRlbmRlZApyZWNpcGllbnQsIHBsZWFzZSBjb250YWN0IHRoZSBzZW5kZXIgYW5k
-IGRlbGV0ZSBhbGwgY29waWVzLgo
+
+--RASg3xLB4tUQ4RcS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Feb 25, 2014 at 11:32:50AM +0300, Dan Carpenter wrote:
+> This should be spin_unlock_irqrestore() instead of spin_unlock()
+
+Applied both, thanks.
+
+--RASg3xLB4tUQ4RcS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTDStHAAoJELSic+t+oim9BHEQAIsC5fPFcvxcAz0GxxD8v++l
+zMtmpyAZ6MBq8M0Fz/vGl6VKOmO46adNGz5bmebiILrKwYn7ITiOgbz78jY1K9hj
+M+gme2foQNZjagFV+AEmzQ3OzEEyjtZCR+FtPU9Cqe5yZgLqNeLVaW+Z51NlAwsm
+pj31IkoobCcbdtWr3DYKPw+GCqz6nAUklcnKdG0/dSjpITrhv6dOwOixV6qpSfIM
+P4S9vCYvSpsWFispDOkE2243bsG3bRuFIGX5KzC+6zFUnCYrhTRJtokOmF+hBxpA
+gLAb18nzJpW7JZIWdakDoQpxbIbD6GpQnC5shhmm2Sru0rybrXkJ/8JJhX7gkITO
+bCS1bc6J7DmyitUWpQ3TBOu9otl8X4GdPVZSeIJchQ5WaYZbNzn9HUw5+D7NmODT
+mY8EPSG+hJikZH6JFFOY3Zz2pJPHhbqNKNSB9MQt4vHThKn0/sbrzncj/JCwq7ed
+MPfpu0ahgl2f4TFM3wGh/Kv1cq3rWEbm57T4///2f+J4cjHLfskPk/bUBfhOWt8k
+KdoXDTOkYBBWddEU4hunmYY8lFeZwJo01Kq/9Ko74giB3RH8Zygjd8k5a+IIsOjj
+o1QcBxtJQV/FatalHeNaPbKtDGeitBtN5yXbupqwZHnZmqwbZ9bzLWycf2XA+seM
+VxMfUClM9gNhuJk9I9+g
+=HdAe
+-----END PGP SIGNATURE-----
+
+--RASg3xLB4tUQ4RcS--
