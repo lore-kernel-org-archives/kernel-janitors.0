@@ -1,36 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 21 Feb 2014 08:51:31 +0000
-Subject: [patch] crypto: caam - writel() arguments are swapped
-Message-Id: <20140221085131.GB13078@elgon.mountain>
+From: Kim Phillips <kim.phillips@freescale.com>
+Date: Tue, 25 Feb 2014 00:41:42 +0000
+Subject: Re: [patch] crypto: caam - writel() arguments are swapped
+Message-Id: <20140224184142.b8d3a2cfb35dfe5f31d332ee@freescale.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140221085131.GB13078@elgon.mountain>
+In-Reply-To: <20140221085131.GB13078@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Alex Porosanu <alexandru.porosanu@freescale.com>, Ruchika Gupta <ruchika.gupta@freescale.com>, Vakul Garg <vakul@freescale.com>, Andy Fleming <afleming@freescale.com>, linux-crypto@vger.kernel.org, Steve Cornelius <sec@pobox.com>, Kim Phillips <kim.phillips@freescale.com>, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Alex Porosanu <alexandru.porosanu@freescale.com>, Ruchika Gupta <ruchika.gupta@freescale.com>, Vakul Garg <vakul@freescale.com>, linux-crypto@vger.kernel.org, Steve Cornelius <sec@pobox.com>, kernel-janitors@vger.kernel.org
 
-My guess is that this little endian configuration is never found in real
-life, but if it were then the writel() arguments are in the wrong order
-so the driver would crash immediately.
+On Fri, 21 Feb 2014 11:51:31 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I can't compile this code.
+> My guess is that this little endian configuration is never found in real
+> life, 
 
-diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index d50174f45b21..cbde8b95a6f8 100644
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -74,10 +74,10 @@
- #endif
- #else
- #ifdef __LITTLE_ENDIAN
--#define wr_reg32(reg, data) __raw_writel(reg, data)
-+#define wr_reg32(reg, data) __raw_writel(data, reg)
- #define rd_reg32(reg) __raw_readl(reg)
- #ifdef CONFIG_64BIT
--#define wr_reg64(reg, data) __raw_writeq(reg, data)
-+#define wr_reg64(reg, data) __raw_writeq(data, reg)
- #define rd_reg64(reg) __raw_readq(reg)
- #endif
- #endif
+it is, but the code has not been upstreamed.  Steve?
+
+> but if it were then the writel() arguments are in the wrong order
+> so the driver would crash immediately.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+
+Meanwhile:
+
+Acked-by: Kim Phillips <kim.phillips@freescale.com>
+
+Kim
+
