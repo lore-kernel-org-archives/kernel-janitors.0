@@ -1,72 +1,65 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 18 Feb 2014 14:59:26 +0000
-Subject: [patch] drm/gma500: cleanup in psb_mode_operation_ioctl()
-Message-Id: <20140218145925.GB6914@elgon.mountain>
+Date: Fri, 28 Feb 2014 13:42:39 +0000
+Subject: re: ALSA: hda - Update CA0132 codec to load DSP firmware binary
+Message-Id: <20140228134238.GA13812@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>
+To: kernel-janitors@vger.kernel.org
 
-It looks like the "mode" test was changed at some point and but it
-wasn't totally cleaned up.  I've removed the unneeded indent block and
-the duplicative test for "if (mode)".
+[ Not likely a bug.  Just confusing code ].
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hello Ian Minett,
 
-diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
-index 1199180667c9..411ed5b80d53 100644
---- a/drivers/gpu/drm/gma500/psb_drv.c
-+++ b/drivers/gpu/drm/gma500/psb_drv.c
-@@ -534,24 +534,22 @@ static int psb_mode_operation_ioctl(struct drm_device *dev, void *data,
- 		}
- 
- 		/* drm_crtc_convert_umode(mode, umode); */
--		{
--			mode->clock = umode->clock;
--			mode->hdisplay = umode->hdisplay;
--			mode->hsync_start = umode->hsync_start;
--			mode->hsync_end = umode->hsync_end;
--			mode->htotal = umode->htotal;
--			mode->hskew = umode->hskew;
--			mode->vdisplay = umode->vdisplay;
--			mode->vsync_start = umode->vsync_start;
--			mode->vsync_end = umode->vsync_end;
--			mode->vtotal = umode->vtotal;
--			mode->vscan = umode->vscan;
--			mode->vrefresh = umode->vrefresh;
--			mode->flags = umode->flags;
--			mode->type = umode->type;
--			strncpy(mode->name, umode->name, DRM_DISPLAY_MODE_LEN);
--			mode->name[DRM_DISPLAY_MODE_LEN-1] = 0;
--		}
-+		mode->clock = umode->clock;
-+		mode->hdisplay = umode->hdisplay;
-+		mode->hsync_start = umode->hsync_start;
-+		mode->hsync_end = umode->hsync_end;
-+		mode->htotal = umode->htotal;
-+		mode->hskew = umode->hskew;
-+		mode->vdisplay = umode->vdisplay;
-+		mode->vsync_start = umode->vsync_start;
-+		mode->vsync_end = umode->vsync_end;
-+		mode->vtotal = umode->vtotal;
-+		mode->vscan = umode->vscan;
-+		mode->vrefresh = umode->vrefresh;
-+		mode->flags = umode->flags;
-+		mode->type = umode->type;
-+		strncpy(mode->name, umode->name, DRM_DISPLAY_MODE_LEN);
-+		mode->name[DRM_DISPLAY_MODE_LEN-1] = 0;
- 
- 		connector_funcs = (struct drm_connector_helper_funcs *)
- 				   connector->helper_private;
-@@ -562,8 +560,7 @@ static int psb_mode_operation_ioctl(struct drm_device *dev, void *data,
- 		}
- 
- 		/*do some clean up work*/
--		if (mode)
--			drm_mode_destroy(dev, mode);
-+		drm_mode_destroy(dev, mode);
- mode_op_out:
- 		drm_modeset_unlock_all(dev);
- 		return ret;
+The patch 01ef7dbffb41: "ALSA: hda - Update CA0132 codec to load DSP
+firmware binary" from Sep 20, 2012, leads to the following static
+checker warning:
+
+	sound/pci/hda/patch_ca0132.c:2281 dspxfr_one_seg()
+	warn: we tested 'hci_write' before and it was 'false'
+
+sound/pci/hda/patch_ca0132.c
+  2255          const struct dsp_image_seg *hci_write = NULL;
+  2256          unsigned long timeout;
+  2257          bool dma_active;
+  2258  
+  2259          if (fls = NULL)
+  2260                  return -EINVAL;
+  2261          if (is_hci_prog_list_seg(fls)) {
+  2262                  hci_write = fls;
+  2263                  fls = get_next_seg_ptr(fls);
+  2264          }
+  2265  
+  2266          if (hci_write && (!fls || is_last(fls))) {
+
+If fls->count = 0 and hci_write is non-zero then we return here.
+
+  2267                  snd_printdd("hci_write\n");
+  2268                  return dspxfr_hci_write(codec, hci_write);
+  2269          }
+  2270  
+  2271          if (fls = NULL || dma_engine = NULL || port_map_mask = 0) {
+  2272                  snd_printdd("Invalid Params\n");
+  2273                  return -EINVAL;
+  2274          }
+  2275  
+  2276          data = fls->data;
+  2277          chip_addx = fls->chip_addr,
+  2278          words_to_write = fls->count;
+
+words_to_write is fls->count.
+
+  2279  
+  2280          if (!words_to_write)
+  2281                  return hci_write ? dspxfr_hci_write(codec, hci_write) : 0;
+
+If fls->count is zero then hci_write is zero so the test here is
+redundant/confusing.  Were we intentending to test something else?  This
+code is confusing.
+
+  2282          if (reloc)
+  2283                  chip_addx = (chip_addx & (0xFFFF0000 << 2)) + (reloc << 2);
+
+regards,
+dan carpenter
