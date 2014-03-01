@@ -1,46 +1,40 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Mar 2014 08:23:07 +0000
-Subject: [patch 2/2] net/mlx4: make buffer larger to avoid overflow warning
-Message-Id: <20140328082307.GG25192@mwanda>
+Date: Sat, 01 Mar 2014 13:55:29 +0000
+Subject: [patch] [media] ddbridge: remove unneeded an NULL check
+Message-Id: <20140301135529.GC23929@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Or Gerlitz <ogerlitz-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Matan Barak <matanb-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Moni Shoua <monis-VPRAkNaXOzVS1MOuV/RT9w@public.gmane.org>, Jack Morgenstein <jackm-LDSdmyG8hGV8YrgS2mwiifqBs+8SCbDb@public.gmane.org>, Yann Droneaud <ydroneaud-RlY5vtjFyJ3QT0dZR+AlfA@public.gmane.org>, Hadar Hen Zion <hadarh-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker complains that the sprintf() here can overflow.
+Static checkers complain about the inconsistent NULL check here.
 
-	drivers/infiniband/hw/mlx4/main.c:1836 mlx4_ib_alloc_eqs()
-	error: format string overflow. buf_size: 32 length: 69
+There is an unchecked dereference of "intput->fe" in the call to
+tuner_attach_tda18271() and there is a second unchecked dereference a
+couple lines later when we do:
+	input->fe2->tuner_priv = input->fe->tuner_priv;
 
-This seems like a valid complaint.  The "dev->pdev->bus->name" string
-can be 48 characters long.  I just made the buffer 80 characters instead
-of 69 and I changed the sprintf() to snprintf().
+But actually "intput->fe" can't be NULL because if demod_attach_drxk()
+fails to allocate it, then we would have return an error code.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 8d9d6b8..1b6dbe15 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -1803,7 +1803,7 @@ static void init_pkeys(struct mlx4_ib_dev *ibdev)
- 
- static void mlx4_ib_alloc_eqs(struct mlx4_dev *dev, struct mlx4_ib_dev *ibdev)
- {
--	char name[32];
-+	char name[80];
- 	int eq_per_port = 0;
- 	int added_eqs = 0;
- 	int total_eqs = 0;
-@@ -1833,8 +1833,8 @@ static void mlx4_ib_alloc_eqs(struct mlx4_dev *dev, struct mlx4_ib_dev *ibdev)
- 	eq = 0;
- 	mlx4_foreach_port(i, dev, MLX4_PORT_TYPE_IB) {
- 		for (j = 0; j < eq_per_port; j++) {
--			sprintf(name, "mlx4-ib-%d-%d@%s",
--				i, j, dev->pdev->bus->name);
-+			snprintf(name, sizeof(name), "mlx4-ib-%d-%d@%s",
-+				 i, j, dev->pdev->bus->name);
- 			/* Set IRQ for specific name (per ring) */
- 			if (mlx4_assign_eq(dev, name, NULL,
- 					   &ibdev->eq_table[eq])) {
+diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
+index 9375f30d9a81..fb52bda8d45f 100644
+--- a/drivers/media/pci/ddbridge/ddbridge-core.c
++++ b/drivers/media/pci/ddbridge/ddbridge-core.c
+@@ -876,10 +876,8 @@ static int dvb_input_attach(struct ddb_input *input)
+ 			return -ENODEV;
+ 		if (tuner_attach_tda18271(input) < 0)
+ 			return -ENODEV;
+-		if (input->fe) {
+-			if (dvb_register_frontend(adap, input->fe) < 0)
+-				return -ENODEV;
+-		}
++		if (dvb_register_frontend(adap, input->fe) < 0)
++			return -ENODEV;
+ 		if (input->fe2) {
+ 			if (dvb_register_frontend(adap, input->fe2) < 0)
+ 				return -ENODEV;
