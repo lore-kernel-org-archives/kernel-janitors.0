@@ -1,20 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Mar 2014 08:28:04 +0000
-Subject: Stuff for kernel janitors to do
-Message-Id: <20140307082804.GD29018@mwanda>
+Date: Sat, 01 Mar 2014 13:57:14 +0000
+Subject: [patch] clocksource: exynos_mct: silence a static checker warning
+Message-Id: <20140301135714.GD23929@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-We always get people asking for ideas.  It would be nice if we could
-start taking care of kernel bugzilla.  I have wanted to do this but in
-the end I got distracted.
+My guess is we aren't going to have a 2 digit cpuid here any time soon
+but the static checkers don't know that and complain that the snprintf()
+could overflow.
 
-Or here is another idea that might be fun.  Instead of directing people
-to staging we could take over one specific staging driver and focus on
-it.  It would be a good laugh to swarm all over one driver.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index ed49b25fa552..a6ee6d7cd63f 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -408,7 +408,7 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+ 	mevt = container_of(evt, struct mct_clock_event_device, evt);
+ 
+ 	mevt->base = EXYNOS4_MCT_L_BASE(cpu);
+-	sprintf(mevt->name, "mct_tick%d", cpu);
++	snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d", cpu);
+ 
+ 	evt->name = mevt->name;
+ 	evt->cpumask = cpumask_of(cpu);
