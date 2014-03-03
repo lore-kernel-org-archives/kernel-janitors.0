@@ -1,32 +1,23 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Mar 2014 08:21:39 +0000
-Subject: [patch 1/2] net/mlx4: fix some indenting in mlx4_ib_add()
-Message-Id: <20140328082139.GF25192@mwanda>
+From: David Miller <davem@davemloft.net>
+Date: Mon, 03 Mar 2014 20:30:15 +0000
+Subject: Re: [patch] hsr: off by one sanity check in hsr_register_frame_in()
+Message-Id: <20140303.153015.1785335562028272449.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140228231857.GD22115@elgon.mountain>
+In-Reply-To: <20140228231857.GD22115@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roland Dreier <roland@kernel.org>
-Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Or Gerlitz <ogerlitz@mellanox.com>, Matan Barak <matanb@mellanox.com>, Moni Shoua <monis@mellanox.co.il>, Jack Morgenstein <jackm@dev.mellanox.co.il>, Yann Droneaud <ydroneaud@opteya.com>, Hadar Hen Zion <hadarh@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: arvid.brodin@alten.se, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The code was indented too far and also kernel style says we should have
-curly braces.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 1 Mar 2014 02:18:57 +0300
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> This is a sanity check and we never pass invalid values so this patch
+> doesn't change anything.  However the node->time_in[] array has
+> HSR_MAX_SLAVE (2) elements and not HSR_MAX_DEV (3).
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 6cb8546..8d9d6b8 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -2048,8 +2048,9 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
- 			err = mlx4_counter_alloc(ibdev->dev, &ibdev->counters[i]);
- 			if (err)
- 				ibdev->counters[i] = -1;
--		} else
--				ibdev->counters[i] = -1;
-+		} else {
-+			ibdev->counters[i] = -1;
-+		}
- 	}
- 
- 	mlx4_foreach_port(i, dev, MLX4_PORT_TYPE_IB)
+Applied, thanks Dan.
