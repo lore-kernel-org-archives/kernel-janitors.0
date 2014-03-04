@@ -1,29 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 05 Mar 2014 08:43:19 +0000
-Subject: [patch]  Staging: rtl8712: fix an error test in start_drv_threads()
-Message-Id: <20140305084319.GA9779@elgon.mountain>
+From: Shaun Laing <shaun@xresource.ca>
+Date: Tue, 04 Mar 2014 19:44:21 +0000
+Subject: [PATCH] staging: cxt1e1: Add extern keyword for sparse 'static' warning
+Message-Id: <1393962261-2380992-1-git-send-email-shaun@xresource.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Testing for "if (IS_ERR(padapter->cmdThread) < 0)" doesn't make sense.
-The kthread_run() function returns error pointers on error pointers on
-error so it should just be "if (IS_ERR(padapter->cmdThread))".
+Resolve sparse "warning: symbol '...' was not declared.  Should it be static?"
+messages.  Includes "comet_tables.h", which contains extern declarations for
+the variables defined in comet_tables.c.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Shaun Laing <shaun@xresource.ca>
+---
+ drivers/staging/cxt1e1/comet_tables.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/rtl8712/os_intfs.c b/drivers/staging/rtl8712/os_intfs.c
-index 37fe33005c02..6bd08213cb70 100644
---- a/drivers/staging/rtl8712/os_intfs.c
-+++ b/drivers/staging/rtl8712/os_intfs.c
-@@ -239,7 +239,7 @@ static u32 start_drv_threads(struct _adapter *padapter)
- {
- 	padapter->cmdThread = kthread_run(r8712_cmd_thread, padapter, "%s",
- 			      padapter->pnetdev->name);
--	if (IS_ERR(padapter->cmdThread) < 0)
-+	if (IS_ERR(padapter->cmdThread))
- 		return _FAIL;
- 	return _SUCCESS;
- }
+diff --git a/drivers/staging/cxt1e1/comet_tables.c b/drivers/staging/cxt1e1/comet_tables.c
+index 8493111..e96665e 100644
+--- a/drivers/staging/cxt1e1/comet_tables.c
++++ b/drivers/staging/cxt1e1/comet_tables.c
+@@ -19,6 +19,7 @@
+  */
+ 
+ #include <linux/types.h>
++#include "comet_tables.h"
+ 
+ /*****************************************************************************
+ *
+-- 
+1.7.9.5
+
