@@ -1,31 +1,61 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Wed, 05 Mar 2014 19:41:52 +0000
-Subject: Re: [PATCH] staging: cxt1e1: moved version string declaration
-Message-Id: <20140305194152.GB15800@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Mar 2014 11:11:57 +0000
+Subject: [patch] ASoC: Baytrail: fix error handling in sst_byt_dsp_init()
+Message-Id: <20140305111157.GD16926@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1394047771-3244238-1-git-send-email-shaun@xresource.ca>
-In-Reply-To: <1394047771-3244238-1-git-send-email-shaun@xresource.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Wed, Mar 05, 2014 at 12:29:31PM -0700, Shaun Laing wrote:
-> To resolve a sparse "should it be static" warning, the declaration for the
-> pmcc4_OSSI_release version string was moved from its own file to linux.c, and
-> the resulting empty file was deleted.
-> 
-> Signed-off-by: Shaun Laing <shaun@xresource.ca>
-> ---
->  drivers/staging/cxt1e1/Makefile      |    1 -
->  drivers/staging/cxt1e1/linux.c       |    3 ++-
->  drivers/staging/cxt1e1/ossiRelease.c |   29 -----------------------------
->  3 files changed, 2 insertions(+), 31 deletions(-)
->  delete mode 100644 drivers/staging/cxt1e1/ossiRelease.c
+Calling "kfree(byt)" is a double free because that was allocated with
+devm_kzalloc().  There were a couple places which leak "byt->msg".  That
+memory is allocated in msg_empty_list_init().
 
-Just remove the string entirely, it's not needed anymore now that the
-driver is in the kernel source tree.
+Fixes: f7d01fd6754c ('ASoC: Intel: Add Intel Baytrail SST DSP IPC support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-thanks,
-
-greg k-h
+diff --git a/sound/soc/intel/sst-baytrail-ipc.c b/sound/soc/intel/sst-baytrail-ipc.c
+index c12e194bbc6b..d0eaeee21be4 100644
+--- a/sound/soc/intel/sst-baytrail-ipc.c
++++ b/sound/soc/intel/sst-baytrail-ipc.c
+@@ -796,7 +796,7 @@ int sst_byt_dsp_init(struct device *dev, struct sst_pdata *pdata)
+ 
+ 	err = msg_empty_list_init(byt);
+ 	if (err < 0)
+-		goto list_err;
++		return -ENOMEM;
+ 
+ 	/* start the IPC message thread */
+ 	init_kthread_worker(&byt->kworker);
+@@ -806,7 +806,7 @@ int sst_byt_dsp_init(struct device *dev, struct sst_pdata *pdata)
+ 	if (IS_ERR(byt->tx_thread)) {
+ 		err = PTR_ERR(byt->tx_thread);
+ 		dev_err(byt->dev, "error failed to create message TX task\n");
+-		goto list_err;
++		goto err_free_msg;
+ 	}
+ 	init_kthread_work(&byt->kwork, sst_byt_ipc_tx_msgs);
+ 
+@@ -816,7 +816,7 @@ int sst_byt_dsp_init(struct device *dev, struct sst_pdata *pdata)
+ 	byt->dsp = sst_dsp_new(dev, &byt_dev, pdata);
+ 	if (byt->dsp = NULL) {
+ 		err = -ENODEV;
+-		goto list_err;
++		goto err_free_msg;
+ 	}
+ 
+ 	/* keep the DSP in reset state for base FW loading */
+@@ -848,9 +848,9 @@ boot_err:
+ 	sst_fw_free(byt_sst_fw);
+ fw_err:
+ 	sst_dsp_free(byt->dsp);
++err_free_msg:
+ 	kfree(byt->msg);
+-list_err:
+-	kfree(byt);
++
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(sst_byt_dsp_init);
