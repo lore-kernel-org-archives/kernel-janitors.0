@@ -1,7 +1,7 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 05 Mar 2014 11:12:00 +0000
+From: walter harms <wharms@bfs.de>
+Date: Wed, 05 Mar 2014 11:21:29 +0000
 Subject: Re: [patch] ALSA: echoaudio: use after free on error
-Message-Id: <s5h4n3c527z.wl%tiwai@suse.de>
+Message-Id: <531708B9.6020007@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140305110715.GB16926@elgon.mountain>
 In-Reply-To: <20140305110715.GB16926@elgon.mountain>
@@ -9,21 +9,15 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-At Wed, 5 Mar 2014 14:07:15 +0300,
-Dan Carpenter wrote:
-> 
+
+
+Am 05.03.2014 12:07, schrieb Dan Carpenter:
 > There are some places where we dereference "chip" in the error message
 > but we've already freed it.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks, applied.
-
-
-Takashi
-
 > 
 > diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
 > index 166ec0c120d4..9f10c9e0df5e 100644
@@ -33,6 +27,15 @@ Takashi
 >  
 >  	if ((chip->iores = request_mem_region(chip->dsp_registers_phys, sz,
 >  					      ECHOCARD_NAME)) = NULL) {
+
+
+this should read:
+chip->iores = request_mem_region(chip->dsp_registers_phys, sz,ECHOCARD_NAME);
+if (chip->iores = NULL) {
+
+re,
+ wh
+
 > -		snd_echo_free(chip);
 >  		dev_err(chip->card->dev, "cannot get memory region\n");
 > +		snd_echo_free(chip);
@@ -69,4 +72,8 @@ Takashi
 >  		return -EBUSY;
 >  	}
 >  	chip->irq = pci->irq;
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
