@@ -1,47 +1,121 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Mar 2014 08:40:02 +0000
-Subject: [patch]  Staging: rtl8192e: array overflow in set_swcam()
-Message-Id: <20140328084002.GR25192@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 05 Mar 2014 22:50:08 +0000
+Subject: Re: [coccicheck Linux 3.14-rc5 PATCH 2 of 5] Deletion of unnecessary checks before specific function
+Message-Id: <5317AA20.1080402@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-"EntryNo" comes from the user in rtl8192_ioctl().  We should limit it
-to 31 to prevent memory corruption.
+>> If you are convinced that dropping the null tests is a good idea, then you 
+>> can submit the patch that makes the change to the relevant maintainers and 
+>> mailing lists.
 
-Also we may as well return on invalid data in setKey() as well.
+From 1d2de3c3cfa43cc3c78a91200c41cef438b26a8f Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Mar 2014 18:38:43 +0100
+Subject: [PATCH 2/5] Addition of a semantic patch file for listing of
+ functions that check their single parameter
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This semantic patch pattern tries to find functions that check their single
+parameter for usability.
+
+Example:
+Null pointer checks are often performed as input parameter validation.
+
+It uses Python statements to write information about the found source code
+places in a data format that is a variant of a CSV text file.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Static analysis.  I'm not certain this fix is enough to solve the whole
-problem.  Please review.
+ .../list_input_parameter_validation1.cocci         | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644
+scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
-index c46c65c..a6ca8982 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
-@@ -87,6 +87,10 @@ void set_swcam(struct net_device *dev, u8 EntryNo, u8 KeyIndex, u16 KeyType,
- 	RT_TRACE(COMP_DBG, "======>%s():EntryNo is %d,KeyIndex is "
- 		 "%d,KeyType is %d,is_mesh is %d\n", __func__, EntryNo,
- 		 KeyIndex, KeyType, is_mesh);
+diff --git a/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
+b/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
+new file mode 100644
+index 0000000..b0a5a52
+--- /dev/null
++++ b/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
+@@ -0,0 +1,55 @@
++@initialize:python@
++@@
++import sys
++result = []
++mark = ['"', '', '"']
++delimiter = '|'
 +
-+	if (EntryNo >= TOTAL_CAM_ENTRY)
-+		return;
++def store_positions(fun, typ, point, places):
++    """Add source code positions to an internal list."""
++    for place in places:
++        fields = []
++        fields.append(fun)
 +
- 	if (!is_mesh) {
- 		ieee->swcamtable[EntryNo].bused = true;
- 		ieee->swcamtable[EntryNo].key_index = KeyIndex;
-@@ -121,8 +125,10 @@ void setKey(struct net_device *dev, u8 EntryNo, u8 KeyIndex, u16 KeyType,
- 		}
- 	}
- 	priv->rtllib->is_set_key = true;
--	if (EntryNo >= TOTAL_CAM_ENTRY)
-+	if (EntryNo >= TOTAL_CAM_ENTRY) {
- 		RT_TRACE(COMP_ERR, "cam entry exceeds in setKey()\n");
-+		return;
-+	}
- 
- 	RT_TRACE(COMP_SEC, "==>to setKey(), dev:%p, EntryNo:%d, KeyIndex:%d,"
- 		 "KeyType:%d, MacAddr %pM\n", dev, EntryNo, KeyIndex,
++        mark[1] = typ
++        fields.append(''.join(mark))
++
++        fields.append(point)
++
++        mark[1] = place.file.replace('"', '""')
++        fields.append(''.join(mark))
++
++        fields.append(place.line)
++        fields.append(str(int(place.column) + 1))
++        result.append(delimiter.join(fields))
++
++@safety_check@
++identifier work, input;
++type data_type;
++position pos;
++statement is, es;
++@@
++ void work@pos(data_type input)
++ {
++  ... when any
++( if (input) is else es
++| if (likely(input)) is else es
++)
++  ... when any
++ }
++
++@script:python collection depends on safety_check@
++typ << safety_check.data_type;
++fun << safety_check.work;
++point << safety_check.input;
++places << safety_check.pos;
++@@
++store_positions(fun, typ, point, places)
++
++@finalize:python@
++@@
++if result:
++   result.insert(0, delimiter.join(("function", '"data type"', '"parameter"',
+'"source file"', "line", "column")))
++   print("\r\n".join(result))
++else:
++   sys.stderr.write("No result for this analysis!\n")
+-- 
+1.9.0
+
+
