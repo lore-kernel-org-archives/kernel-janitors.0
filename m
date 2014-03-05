@@ -1,112 +1,70 @@
-From: "GOOGLE Gewinnbenachrichtigung!!!" <gogle.promuk@live.com>
-Date: Tue, 18 Mar 2014 12:46:59 +0000
-Subject: GOOGLE Gewinnbenachrichtigung!!!
-Message-Id: <303ac12b29edc9784827601b586daf52.squirrel@23.96.39.92>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 05 Mar 2014 22:52:40 +0000
+Subject: Re: [coccicheck Linux 3.14-rc5 PATCH 3 of 5] Deletion of unnecessary checks before specific function
+Message-Id: <5317AAB8.20703@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr
 
-GOOGLE INTERNATIONALE F=F6rderung-GEWINNZUTEILUNG
-           GOOGLE  F=F6rderung
+>> If you are convinced that dropping the null tests is a good idea, then you 
+>> can submit the patch that makes the change to the relevant maintainers and 
+>> mailing lists.
 
-GOOGLE Einarbeitung=A9
-UROPA INTERLOTTO/EUROMILLINEN LOTTO BONUS-PROGRAMM
-BEL-GRAVE HOUSE, 76 BUCKINGHAM PALACE ROAD,
-LONDON SW1W 9TQ, UNITED KINGDOM.OFFICE;
-VOM SCHREIBTISCH VON VICE PRESIDENT INTERNATIONAL
-PROMOTION/PREISVERLEIHUNG AKTENZEICHEN: ANA/BCL654560010/ESP.
-OFFIZIELLE GEWINNBENACHRITIGUNG.
-DATUM: 18/03/2014.
+From f4608fceec40b2b94aa9b4abe3bbb6d98ed5eed9 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Mar 2014 18:58:30 +0100
+Subject: [PATCH 3/5] Addition of a SQLite script for a text file import
 
-ACHTUNG! DER BEG=DCNSTIGTE,
+A script was added so that a text file which was previously generated can be
+imported into a SQLite data base table.
+http://sqlite.org/sqlite.html
 
-GOOGLE Gewinnbenachrichtigung!!!
+The shown file name can be adjusted by a make file for example.
 
-Wir freuen uns,Ihnen noch einmal gratulieren zu dieser Notiz, die Teil
-unserer gl=FCcklichen Gewinner ausgew=E4hlt diesem Jahr. Diese Aktion wurde=
- im
-Anschluss an die aktive Nutzung des Google-Suchmaschine und im
-Google-Hilfsdienste anzukurbeln. Daher machen wir mit Ihren Preis zu
-gewinnen glauben, werden Sie weiterhin aktiv zu sein und Schirmherrschaft
-f=FCr dieses Unternehmen. Google ist heute der weltweit f=FChrende
-Suchmaschine weltweit und in dem Bestreben, sicherzustellen, dass sie die
-am weitesten verbreitete Suchmaschinen bleibt, ein Online-E-Mail
-Stimmabgabe aus wurde am 13/03/2014 ohne Ihr Wissen ausgef=FChrt wurde
-offiziell freigegeben am 18/03/2014. Wir m=F6chten Ihnen f=F6rmlich mitteil=
-en,
-dass Ihre E-Mail-Adresse zu einem Pauschalbetrag von:(=80450,000,00)(VIER
-HUNDERT UND F=DCNFZIG TAUSEND Euro.)Die summe ergibt sich einer
-gewinnausschuttung von.(=8018,000,000:00)(ACHTZEHN MILLIONEN EURO.)Die summe
-wurde durch 40 gewinnern aus der gleichen kategorie geteilt.HERZLICHEN
-GLUCKWUNSCH!!! befestigt war
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ .../coccinelle/deletions/handle_function_list_template.sqlite    | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+ create mode 100644
+scripts/coccinelle/deletions/handle_function_list_template.sqlite
 
-Wir m=F6chten Ihnen mitteilen, dass Sie erfolgreich den Anforderungen, den
-gesetzlichen Auflagen, =DCberpr=FCfungen und unsere zufriedenstellenden
-Bericht Test f=FCr alle unsere Online-Gewinner durchgef=FChrt weitergegeben.
-Eine gewinnende Scheck wird in Ihrem Namen von Google F=F6rderpreis Team
-erteilt werden, und auch eine Bescheinigung =FCber die Auszeichnung
-Anspr=FCche werden an der Seite Ihrer gewinnenden Scheck zugesandt.
+diff --git a/scripts/coccinelle/deletions/handle_function_list_template.sqlite
+b/scripts/coccinelle/deletions/handle_function_list_template.sqlite
+new file mode 100644
+index 0000000..bec366c
+--- /dev/null
++++ b/scripts/coccinelle/deletions/handle_function_list_template.sqlite
+@@ -0,0 +1,9 @@
++create table positions(function text,
++                       data_type text,
++                       parameter text,
++                       source_file text,
++                       line integer,
++                       column integer);
++.separator "|"
++.import list_input_pointer_validation1.txt positions
++.header OFF
+-- 
+1.9.0
 
-Dies sind Ihre Auszeichnung Details.
-Security Code Nummer: GU/N/3642375G
-Ticket Nr.: GU/K/699/33/2014
-Gewinnzahlen: UK/877/798/2014
 
-Erforderliche Angaben von Ihnen Teil unserer vorsorglich  zu verdoppeln
-behaupten und ungerechtfertigten Missbrauch von diesem  Programm  zu
-vermeiden. Um Ihren Preis gewonnen, bitte, sind die Mittel unserer
-ausl=E4ndischen  Transfer Manager Mr. Audrew C. Nielsen korrekt, Pr=FCfung =
-und
-Genehmigung  gef=FCllt
-
-        Bitte vollst=E4ndige =DCberpr=FCfung und Mittel freizugeben Form
-
-(1) Ihr vollst=E4ndiger Name ...............................
-(2) Kontakt-Adresse ........................................
-(3) Tel. Zahlen ...............................................
-(4) Mobile ......................................................
-(5) Nationalit=E4t / Land .....................................
-(6) Beruf .......................................................
-(7) Sex /Geschlecht........................................
-(8) Alter ........................................................
-(9) jemals gewonnen eine Online-Lotterie? .............
-(10) Mode von Preisgeld nach Hause: Courier Lieferung oder Bank=FCberweisung
-..........
-Die oben genannten Anforderungen sind erforderlich.
-
-Gl=FCckw=FCnsche noch einmal.
-
-    Mode des Geldpreises Transfer
-(1) =DCberweisung / Courier Lieferung Ihrer Certified Winning Scheck Name
-und andere Dokumente, um sicherzustellen, Sie gewinnen. Wir empfehlen,
-dass Ihr ausw=E4rtige Transfer Manager, Mr. Audrew C. Nielsen mit seiner
-privaten E-Mail unten, um unn=F6tige Verz=F6gerungen und Komplikationen:
-***********************************************
-AUSLANDSFORDERUNGEN MANAGER
-Dr. Mrs. ROSALINE CHARLES
-GOOGLE Sicherheitsabteilung [London]
-
-Kontakt E-Mail: gogle.eurolotto@gmail.com
-                Google-Verwaltung@linuxmail.org
-                Google-Verwaltung@planetmail.net
-***********************************************
-Security Code Nummer: GU/N/3642375G
-Ticket Nr.: GU/K/699/33/2014
-Gewinnzahlen: UK/877/798/2014
-***********************************************
-Herzlichen Gl=FCckwunsch noch einmal von Mitgliedern und Personal der
-Lotterie Bord.
-
-Herzlichst,
-Mr. larry Page.
-Chief Executive Officer (C.E.O)
-GOOGLE zonale Koordinator
-LONDON, UNITED KINGDOM.
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
