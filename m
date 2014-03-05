@@ -1,45 +1,60 @@
-From: Ian Abbott <abbotti@mev.co.uk>
-Date: Mon, 31 Mar 2014 14:40:32 +0000
-Subject: Re: [patch] staging: comedi: remove an unneeded variable
-Message-Id: <53397E60.9010409@mev.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Mar 2014 11:07:15 +0000
+Subject: [patch] ALSA: echoaudio: use after free on error
+Message-Id: <20140305110715.GB16926@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140331075036.GB24854@mwanda>
-In-Reply-To: <20140331075036.GB24854@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On 2014-03-31 08:50, Dan Carpenter wrote:
-> "chanlist" was left over, we don't need it any more.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-> index ea6dc36..1e91161 100644
-> --- a/drivers/staging/comedi/comedi_fops.c
-> +++ b/drivers/staging/comedi/comedi_fops.c
-> @@ -1597,7 +1597,6 @@ static int do_cmdtest_ioctl(struct comedi_device *dev,
->   {
->   	struct comedi_cmd cmd;
->   	struct comedi_subdevice *s;
-> -	unsigned int *chanlist = NULL;
->   	unsigned int __user *user_chanlist;
->   	int ret;
->
-> @@ -1626,8 +1625,6 @@ static int do_cmdtest_ioctl(struct comedi_device *dev,
->   		ret = -EFAULT;
->   	}
->
-> -	kfree(chanlist);
-> -
->   	return ret;
->   }
->
->
+There are some places where we dereference "chip" in the error message
+but we've already freed it.
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
--=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
--=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
+diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
+index 166ec0c120d4..9f10c9e0df5e 100644
+--- a/sound/pci/echoaudio/echoaudio.c
++++ b/sound/pci/echoaudio/echoaudio.c
+@@ -1990,8 +1990,8 @@ static int snd_echo_create(struct snd_card *card,
+ 
+ 	if ((chip->iores = request_mem_region(chip->dsp_registers_phys, sz,
+ 					      ECHOCARD_NAME)) = NULL) {
+-		snd_echo_free(chip);
+ 		dev_err(chip->card->dev, "cannot get memory region\n");
++		snd_echo_free(chip);
+ 		return -EBUSY;
+ 	}
+ 	chip->dsp_registers = (volatile u32 __iomem *)
+@@ -1999,8 +1999,8 @@ static int snd_echo_create(struct snd_card *card,
+ 
+ 	if (request_irq(pci->irq, snd_echo_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, chip)) {
+-		snd_echo_free(chip);
+ 		dev_err(chip->card->dev, "cannot grab irq\n");
++		snd_echo_free(chip);
+ 		return -EBUSY;
+ 	}
+ 	chip->irq = pci->irq;
+@@ -2012,8 +2012,8 @@ static int snd_echo_create(struct snd_card *card,
+ 	if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(chip->pci),
+ 				sizeof(struct comm_page),
+ 				&chip->commpage_dma_buf) < 0) {
+-		snd_echo_free(chip);
+ 		dev_err(chip->card->dev, "cannot allocate the comm page\n");
++		snd_echo_free(chip);
+ 		return -ENOMEM;
+ 	}
+ 	chip->comm_page_phys = chip->commpage_dma_buf.addr;
+@@ -2291,8 +2291,8 @@ static int snd_echo_resume(struct device *dev)
+ 
+ 	if (request_irq(pci->irq, snd_echo_interrupt, IRQF_SHARED,
+ 			KBUILD_MODNAME, chip)) {
+-		snd_echo_free(chip);
+ 		dev_err(chip->card->dev, "cannot grab irq\n");
++		snd_echo_free(chip);
+ 		return -EBUSY;
+ 	}
+ 	chip->irq = pci->irq;
