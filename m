@@ -1,29 +1,85 @@
-From: Michal Marek <mmarek@suse.cz>
-Date: Sat, 29 Mar 2014 20:37:23 +0000
-Subject: Re: [PATCH] Coccicheck: Remove memcpy to struct assignment test
-Message-Id: <53372F03.9010803@suse.cz>
+From: Shaun Laing <shaun@xresource.ca>
+Date: Wed, 05 Mar 2014 19:29:31 +0000
+Subject: [PATCH] staging: cxt1e1: moved version string declaration
+Message-Id: <1394047771-3244238-1-git-send-email-shaun@xresource.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1395177092-3023-1-git-send-email-peter.senna@gmail.com>
- <1395230578.12633.21.camel@thorin>
- <CA+MoWDoSYu-aSp39vBe7DmayH2iqagHNYP9BC7LefajMXk+FnQ@mail.gmail.com>
- <1395237927.12633.29.camel@thorin> <20140319164855.GB27142@kroah.com>
-In-Reply-To: <20140319164855.GB27142@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: kernel-janitors@vger.kernel.org
 
-Dne 19.3.2014 17:48, Greg Kroah-Hartman napsal(a):
->>>> On Die, 2014-03-18 at 22:11 +0100, Peter Senna Tschudin wrote:
->>>>> The Coccinelle script scripts/coccinelle/misc/memcpy-assign.cocci look
->>>>> for opportunities to replace a call to memcpy by a struct assignment.
->>>>> This patch removes memcpy-assign.cocci as it is not clear that this
->>>>> convention has an impact on the generated code.
-[...]
-> Can someone please just remove the check from the kernel as I'm getting
-> tired of rejecting patches that do this...
+To resolve a sparse "should it be static" warning, the declaration for the
+pmcc4_OSSI_release version string was moved from its own file to linux.c, and
+the resulting empty file was deleted.
 
-I just applied Peter's revert to kbuild.git#misc.
+Signed-off-by: Shaun Laing <shaun@xresource.ca>
+---
+ drivers/staging/cxt1e1/Makefile      |    1 -
+ drivers/staging/cxt1e1/linux.c       |    3 ++-
+ drivers/staging/cxt1e1/ossiRelease.c |   29 -----------------------------
+ 3 files changed, 2 insertions(+), 31 deletions(-)
+ delete mode 100644 drivers/staging/cxt1e1/ossiRelease.c
 
-Michal
+diff --git a/drivers/staging/cxt1e1/Makefile b/drivers/staging/cxt1e1/Makefile
+index 2f217e9..b879e7b 100644
+--- a/drivers/staging/cxt1e1/Makefile
++++ b/drivers/staging/cxt1e1/Makefile
+@@ -4,7 +4,6 @@ ccflags-y := -DSBE_PMCC4_ENABLE
+ ccflags-y += -DSBE_ISR_TASKLET
+ 
+ cxt1e1-y := 	\
+-  ossiRelease.o 	\
+   musycc.o 		\
+   pmcc4_drv.o 		\
+   comet.o 		\
+diff --git a/drivers/staging/cxt1e1/linux.c b/drivers/staging/cxt1e1/linux.c
+index 579e68e..b89ade1 100644
+--- a/drivers/staging/cxt1e1/linux.c
++++ b/drivers/staging/cxt1e1/linux.c
+@@ -81,7 +81,8 @@ status_t    musycc_chan_down(ci_t *, int);
+ irqreturn_t musycc_intr_th_handler(void *);
+ int         musycc_start_xmit(ci_t *, int, void *);
+ 
+-extern char pmcc4_OSSI_release[];
++static const char pmcc4_OSSI_release[] +	"$Release: PMCC4_3_1B,  Copyright (c) 2008 One Stop Systems$";
+ extern ci_t *CI;
+ extern struct s_hdw_info hdw_info[];
+ 
+diff --git a/drivers/staging/cxt1e1/ossiRelease.c b/drivers/staging/cxt1e1/ossiRelease.c
+deleted file mode 100644
+index f17a902..0000000
+--- a/drivers/staging/cxt1e1/ossiRelease.c
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/*-----------------------------------------------------------------------------
+- * ossiRelease.c -
+- *
+- * This string will be embedded into the executable and will track the
+- * release.  The embedded string may be displayed using the following:
+- *
+- *      strings <filename> | grep \$Rel
+- *
+- * Copyright (C) 2002-2008  One Stop Systems, Inc.
+- *
+- *   This program is free software; you can redistribute it and/or modify
+- *   it under the terms of the GNU General Public License as published by
+- *   the Free Software Foundation; either version 2 of the License, or
+- *   (at your option) any later version.
+- *
+- *   This program is distributed in the hope that it will be useful,
+- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *   GNU General Public License for more details.
+- *
+- * For further information, contact via email: support@onestopsystems.com
+- * One Stop Systems, Inc.  Escondido, California  U.S.A.
+- *
+- *-----------------------------------------------------------------------------
+- */
+-
+-char pmcc4_OSSI_release[] = "$Release: PMCC4_3_1B,  Copyright (c) 2008 One Stop Systems$";
+-
+-/***  End-of-File  ***/
+-- 
+1.7.9.5
 
