@@ -1,35 +1,78 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Mar 2014 08:24:59 +0000
-Subject: [patch] xen-pciback: silence an unwanted debug printk
-Message-Id: <20140328082459.GI25192@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 05 Mar 2014 22:48:07 +0000
+Subject: Re: [coccicheck Linux 3.14-rc5 PATCH 1 of 5] Deletion of unnecessary checks before specific function
+Message-Id: <5317A9A7.8080405@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-There is a missing curly brace here so we might print some extra debug
-information.
+>> If you are convinced that dropping the null tests is a good idea, then you 
+>> can submit the patch that makes the change to the relevant maintainers and 
+>> mailing lists.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From 48c9c4f61a7d7ea98538e02631a981a429281005 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Mar 2014 18:15:34 +0100
+Subject: [PATCH 1/5] Addition of a semantic patch file for showing unnecessary
+ checks before a few known functions
 
-diff --git a/drivers/xen/xen-pciback/pciback_ops.c b/drivers/xen/xen-pciback/pciback_ops.c
-index 929dd46..607e414 100644
---- a/drivers/xen/xen-pciback/pciback_ops.c
-+++ b/drivers/xen/xen-pciback/pciback_ops.c
-@@ -217,7 +217,7 @@ int xen_pcibk_enable_msix(struct xen_pcibk_device *pdev,
- 	if (result = 0) {
- 		for (i = 0; i < op->value; i++) {
- 			op->msix_entries[i].entry = entries[i].entry;
--			if (entries[i].vector)
-+			if (entries[i].vector) {
- 				op->msix_entries[i].vector  					xen_pirq_from_irq(entries[i].vector);
- 				if (unlikely(verbose_request))
-@@ -225,6 +225,7 @@ int xen_pcibk_enable_msix(struct xen_pcibk_device *pdev,
- 						"MSI-X[%d]: %d\n",
- 						pci_name(dev), i,
- 						op->msix_entries[i].vector);
-+			}
- 		}
- 	} else
- 		pr_warn_ratelimited("%s: error enabling MSI-X for guest %u: err %d!\n",
+This semantic patch pattern tries to find source code places where a check
+is performed for an expression that is passed to a function (like "kfree")
+which checks this single parameter itself for usability.
+Redundant value or pointer checks can be avoided here.
+
+The pattern contains a special comment in a regular expression for a SmPL
+constraint which supports extensions.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ .../deletions/delete_unnecessary_checks_template1.cocci     | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644
+scripts/coccinelle/deletions/delete_unnecessary_checks_template1.cocci
+
+diff --git
+a/scripts/coccinelle/deletions/delete_unnecessary_checks_template1.cocci
+b/scripts/coccinelle/deletions/delete_unnecessary_checks_template1.cocci
+new file mode 100644
+index 0000000..b092051
+--- /dev/null
++++ b/scripts/coccinelle/deletions/delete_unnecessary_checks_template1.cocci
+@@ -0,0 +1,13 @@
++@Delete_unnecessary_checks@
++expression x;
++identifier release =~ "^(?x)
++(?:
++   (?:kz?|slob_)free
++|
++   (?:
++# Alternation placeholder
++   )
++)$";
++@@
++-if (x)
++    release(x);
+-- 
+1.9.0
+
+
