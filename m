@@ -1,121 +1,62 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 05 Mar 2014 22:50:08 +0000
-Subject: Re: [coccicheck Linux 3.14-rc5 PATCH 2 of 5] Deletion of unnecessary checks before specific function
-Message-Id: <5317AA20.1080402@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Mar 2014 11:26:50 +0000
+Subject: [patch] staging: rtl8712: fix some confusing indenting
+Message-Id: <20140305112650.GE16926@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: kernel-janitors@vger.kernel.org
 
->> If you are convinced that dropping the null tests is a good idea, then you 
->> can submit the patch that makes the change to the relevant maintainers and 
->> mailing lists.
+These set off a static checker warning about "warn: add curly braces?",
+but actually the code it correct, it's just the indenting which is
+wrong.
 
-From 1d2de3c3cfa43cc3c78a91200c41cef438b26a8f Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Mar 2014 18:38:43 +0100
-Subject: [PATCH 2/5] Addition of a semantic patch file for listing of
- functions that check their single parameter
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This semantic patch pattern tries to find functions that check their single
-parameter for usability.
-
-Example:
-Null pointer checks are often performed as input parameter validation.
-
-It uses Python statements to write information about the found source code
-places in a data format that is a variant of a CSV text file.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- .../list_input_parameter_validation1.cocci         | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644
-scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
-
-diff --git a/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
-b/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
-new file mode 100644
-index 0000000..b0a5a52
---- /dev/null
-+++ b/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
-@@ -0,0 +1,55 @@
-+@initialize:python@
-+@@
-+import sys
-+result = []
-+mark = ['"', '', '"']
-+delimiter = '|'
-+
-+def store_positions(fun, typ, point, places):
-+    """Add source code positions to an internal list."""
-+    for place in places:
-+        fields = []
-+        fields.append(fun)
-+
-+        mark[1] = typ
-+        fields.append(''.join(mark))
-+
-+        fields.append(point)
-+
-+        mark[1] = place.file.replace('"', '""')
-+        fields.append(''.join(mark))
-+
-+        fields.append(place.line)
-+        fields.append(str(int(place.column) + 1))
-+        result.append(delimiter.join(fields))
-+
-+@safety_check@
-+identifier work, input;
-+type data_type;
-+position pos;
-+statement is, es;
-+@@
-+ void work@pos(data_type input)
-+ {
-+  ... when any
-+( if (input) is else es
-+| if (likely(input)) is else es
-+)
-+  ... when any
-+ }
-+
-+@script:python collection depends on safety_check@
-+typ << safety_check.data_type;
-+fun << safety_check.work;
-+point << safety_check.input;
-+places << safety_check.pos;
-+@@
-+store_positions(fun, typ, point, places)
-+
-+@finalize:python@
-+@@
-+if result:
-+   result.insert(0, delimiter.join(("function", '"data type"', '"parameter"',
-'"source file"', "line", "column")))
-+   print("\r\n".join(result))
-+else:
-+   sys.stderr.write("No result for this analysis!\n")
--- 
-1.9.0
-
-
+diff --git a/drivers/staging/rtl8712/ieee80211.c b/drivers/staging/rtl8712/ieee80211.c
+index cc68d9748edb..57fef70ad984 100644
+--- a/drivers/staging/rtl8712/ieee80211.c
++++ b/drivers/staging/rtl8712/ieee80211.c
+@@ -78,9 +78,9 @@ uint r8712_is_cckrates_included(u8 *rate)
+ 		if ((((rate[i]) & 0x7f) = 2) || (((rate[i]) & 0x7f) = 4) ||
+ 		    (((rate[i]) & 0x7f) = 11) || (((rate[i]) & 0x7f) = 22))
+ 			return true;
+-			i++;
+-		}
+-		return false;
++		i++;
++	}
++	return false;
+ }
+ 
+ uint r8712_is_cckratesonly_included(u8 *rate)
+diff --git a/drivers/staging/rtl8712/rtl871x_security.c b/drivers/staging/rtl8712/rtl871x_security.c
+index aae5125a2e7e..5ffc489e9501 100644
+--- a/drivers/staging/rtl8712/rtl871x_security.c
++++ b/drivers/staging/rtl8712/rtl871x_security.c
+@@ -1244,17 +1244,18 @@ static sint aes_decipher(u8 *key, uint	hdrlen,
+ 	    (frtype = WIFI_DATA_CFPOLL) ||
+ 	    (frtype = WIFI_DATA_CFACKPOLL)) {
+ 		qc_exists = 1;
+-		if (hdrlen !=  WLAN_HDR_A3_QOS_LEN)
++		if (hdrlen != WLAN_HDR_A3_QOS_LEN)
+ 			hdrlen += 2;
+-		}  else if ((frsubtype = 0x08) ||
++	} else if ((frsubtype = 0x08) ||
+ 		   (frsubtype = 0x09) ||
+ 		   (frsubtype = 0x0a) ||
+ 		   (frsubtype = 0x0b)) {
+-			if (hdrlen !=  WLAN_HDR_A3_QOS_LEN)
+-				hdrlen += 2;
+-			qc_exists = 1;
+-	} else
++		if (hdrlen != WLAN_HDR_A3_QOS_LEN)
++			hdrlen += 2;
++		qc_exists = 1;
++	} else {
+ 		qc_exists = 0;
++	}
+ 	/* now, decrypt pframe with hdrlen offset and plen long */
+ 	payload_index = hdrlen + 8; /* 8 is for extiv */
+ 	for (i = 0; i < num_blocks; i++) {
