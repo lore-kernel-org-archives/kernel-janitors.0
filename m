@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 05 Mar 2014 22:55:49 +0000
-Subject: Re: [coccicheck Linux 3.14-rc5 PATCH 4 of 5] Deletion of unnecessary checks before specific function
-Message-Id: <5317AB75.4000601@users.sourceforge.net>
+Date: Wed, 05 Mar 2014 22:30:53 +0000
+Subject: Re: [PATCH with Coccinelle?] Deletion of unnecessary checks before specific function calls
+Message-Id: <5317A59D.4@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,110 +19,38 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
->> If you are convinced that dropping the null tests is a good idea, then you 
->> can submit the patch that makes the change to the relevant maintainers and 
->> mailing lists.
+> If you are convinced that dropping the null tests is a good idea, then you 
+> can submit the patch that makes the change to the relevant maintainers and 
+> mailing lists.
 
-From e6a21b920fcca2f6f01c9528909dc036a9b3bc41 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Mar 2014 19:10:32 +0100
-Subject: [PATCH 4/5] Addition of a semantic patch file for listing of
- unnecessary checks before a few known functions
+Hello,
 
-This semantic patch pattern tries to find source code places where a check
-is performed for an expression that is passed to a function (like "kfree")
-which checks this single parameter itself for usability.
-Redundant value or pointer checks can be avoided here.
+A couple of functions perform input parameter validation before their
+implementations will try further actions with side effects. Some calling
+functions perform similar safety checks.
 
-The pattern contains a special comment in a regular expression for a SmPL
-constraint which supports extensions.
+Functions which release a system resource are often documented in the way that
+they tolerate the passing of a null pointer for example. I do not see a need
+because of this fact that a function caller repeats a corresponding check.
 
-It uses Python statements to write information about the found places in
-a data format that is a variant of a CSV text file.
+Now I would like to propose such a change again.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- ...nctions_with_unnecessary_checks_template1.cocci | 59 ++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644
-scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
+1. Extension of the infrastructure for the analysis tool "coccicheck"
+   Semantic patch patterns can help to identify update candidates also in the
+Linux source file hierarchy.
 
-diff --git
-a/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
-b/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
-new file mode 100644
-index 0000000..d2637e8
---- /dev/null
-+++
-b/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
-@@ -0,0 +1,59 @@
-+@initialize:python@
-+@@
-+import sys
-+result = []
-+mark = ['"', '', '"']
-+delimiter = '|'
-+
-+def store_positions(fun, point, places):
-+    """Add source code positions to an internal list."""
-+    for place in places:
-+        fields = []
-+        fields.append(fun)
-+
-+        fields.append(point)
-+
-+        mark[1] = place.file.replace('"', '""')
-+        fields.append(''.join(mark))
-+
-+        fields.append(place.line)
-+        fields.append(str(int(place.column) + 1))
-+        result.append(delimiter.join(fields))
-+
-+@is_unnecessary_check@
-+expression data;
-+identifier work;
-+identifier release =~ "^(?x)
-+(?:
-+   (?:kz?|slob_)free
-+|
-+   (?:
-+# Alternation placeholder
-+   )
-+)$";
-+position pos;
-+type t;
-+@@
-+ t work@pos(...)
-+ {
-+  ... when any
-+( if (data) release(data);
-+| if (likely(data)) release(data);
-+)
-+  ... when any
-+ }
-+
-+@script:python collection depends on is_unnecessary_check@
-+fun << is_unnecessary_check.work;
-+point << is_unnecessary_check.data;
-+places << is_unnecessary_check.pos;
-+@@
-+store_positions(fun, point, places)
-+
-+@finalize:python@
-+@@
-+if result:
-+   result.insert(0, delimiter.join(("function", '"parameter"', '"source file"',
-"line", "column")))
-+   print("\r\n".join(result))
-+else:
-+   sys.stderr.write("No result for this analysis!\n")
--- 
-1.9.0
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/scripts/coccinelle?idyf0345fefaafb7cde301a830471edd21a37989b
 
+2. Clarification for some automated update suggestions
+   My source code search approach found seventy functions at least which might
+need another review and corresponding corrections for Linux 3.14-rc5. Further
+software development will point out even more potentially open issues.
+
+Regards,
+Markus
