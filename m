@@ -1,28 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Feb 2014 11:09:37 +0000
-Subject: [patch] IB/qib: remove duplicative check in get_a_ctxt()
-Message-Id: <20140213110937.GA15549@elgon.mountain>
+Date: Fri, 07 Mar 2014 11:20:56 +0000
+Subject: [patch] x86/efi: use GFP_ATOMIC under spin_lock
+Message-Id: <20140307112055.GE2351@elgon.mountain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marciniszyn <infinipath-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Matt Fleming <matt.fleming@intel.com>, Nathan Zimmer <nzimmer@sgi.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-We already know "pusable" is non-zero, no need to check again.
+In phys_efi_get_time() we call efi_call_phys_prelog() with a spin_lock
+so this allocation should be atomic.
 
+Fixes: b8f2c21db390 ('efi, x86: Pass a proper identity mapping in efi_call_phys_prelog')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/infiniband/hw/qib/qib_file_ops.c b/drivers/infiniband/hw/qib/qib_file_ops.c
-index 275f247f9fca..cff8f830492c 100644
---- a/drivers/infiniband/hw/qib/qib_file_ops.c
-+++ b/drivers/infiniband/hw/qib/qib_file_ops.c
-@@ -1459,7 +1459,7 @@ static int get_a_ctxt(struct file *fp, const struct qib_user_info *uinfo,
- 					cused++;
- 				else
- 					cfree++;
--			if (pusable && cfree && cused < inuse) {
-+			if (cfree && cused < inuse) {
- 				udd = dd;
- 				inuse = cused;
- 			}
+diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+index 0c2a234fef1e..f5adcadb381b 100644
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -90,7 +90,7 @@ void __init efi_call_phys_prelog(void)
+ 	local_irq_save(efi_flags);
+ 
+ 	n_pgds = DIV_ROUND_UP((max_pfn << PAGE_SHIFT), PGDIR_SIZE);
+-	save_pgd = kmalloc(n_pgds * sizeof(pgd_t), GFP_KERNEL);
++	save_pgd = kmalloc(n_pgds * sizeof(pgd_t), GFP_ATOMIC);
+ 
+ 	for (pgd = 0; pgd < n_pgds; pgd++) {
+ 		save_pgd[pgd] = *pgd_offset_k(pgd * PGDIR_SIZE);
