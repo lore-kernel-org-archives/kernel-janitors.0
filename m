@@ -1,34 +1,25 @@
-From: Silvan Jegen <s.jegen@gmail.com>
-Date: Mon, 10 Mar 2014 21:33:50 +0000
-Subject: [PATCH] pata_legacy: Remove dead code
-Message-Id: <531e3c9a.085e0e0a.4316.ffffe91d@mx.google.com>
+From: Tejun Heo <tj@kernel.org>
+Date: Tue, 11 Mar 2014 12:32:02 +0000
+Subject: Re: [PATCH] pata_legacy: Remove dead code
+Message-Id: <20140311123202.GC11477@htj.dyndns.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <531e3c9a.085e0e0a.4316.ffffe91d@mx.google.com>
+In-Reply-To: <531e3c9a.085e0e0a.4316.ffffe91d@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Silvan Jegen <s.jegen@gmail.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The current flow of control prevents this function from being
-called. Let's remove the call.
+On Mon, Mar 10, 2014 at 10:33:50PM +0100, Silvan Jegen wrote:
+> The current flow of control prevents this function from being
+> called. Let's remove the call.
+> 
+> Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
 
-Signed-off-by: Silvan Jegen <s.jegen@gmail.com>
----
- drivers/ata/pata_legacy.c | 1 -
- 1 file changed, 1 deletion(-)
+Applied to libata/for-3.15.
 
-diff --git a/drivers/ata/pata_legacy.c b/drivers/ata/pata_legacy.c
-index be81642..bce2a8c 100644
---- a/drivers/ata/pata_legacy.c
-+++ b/drivers/ata/pata_legacy.c
-@@ -916,7 +916,6 @@ static __init int probe_chip_type(struct legacy_probe *probe)
- 			local_irq_restore(flags);
- 			return BIOS;
- 		}
--		local_irq_restore(flags);
- 	}
- 
- 	if (ht6560a & mask)
+Thanks.
+
 -- 
-1.9.0
-
+tejun
