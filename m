@@ -1,44 +1,58 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date: Mon, 17 Mar 2014 10:24:19 +0000
-Subject: Re: [patch] drm: use after free in drm_pci_exit()
-Message-Id: <CAKMK7uEjiXP8oeaBS9dRC37gJaRcdvOD5GF4rHE+6mzW7D5gUw@mail.gmail.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 15 Mar 2014 18:19:08 +0000
+Subject: [PATCH] ATHEROS-ALX: Use dma_set_mask_and_coherent and fix a bug
+Message-Id: <1394907548-10084-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140120103116.GD14233@elgon.mountain> <53232C12.20108@nvidia.com>
-In-Reply-To: <53232C12.20108@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Aaron Plattner <aplattner@nvidia.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, Dan Carpenter <dan.carpenter@oracle.com>
+To: jcliburn@gmail.com, chris.snook@gmail.com, davem@davemloft.net, johannes@sipsolutions.net, jg1.han@samsung.com, wangyijing@huawei.com, linux@hahnjo.de, sd@queasysnail.net, hahnjo@hahnjo.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Fri, Mar 14, 2014 at 5:19 PM, Aaron Plattner <aplattner@nvidia.com> wrote:
-> On 01/20/2014 02:31 AM, Dan Carpenter wrote:
->>
->> We can't use "dev" after we freed it on the line before.
->>
->> Fixes: b3f2333de8e8 ('drm: restrict the device list for shadow attached
->> drivers')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->
-> I just ran into this same problem, and this change fixes it.
->
-> Tested-by: Aaron Plattner <aplattner@nvidia.com>
-> Reviewed-by: Aaron Plattner <aplattner@nvidia.com>
->
-> and since he just sent me an independently-developed identical change,
->
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+ 1. For the 64 bits dma mask use dma_set_mask_and_coherent instead of
+ dma_set_mask and dma_set_coherent_mask.
 
-Hey, I have such a patch too!
+ 2. For the 32 bits dma mask dma_set_coherent_mask is only called if
+ dma_set_mask fails, which is unusual. Assuming this as a bug, fixes
+ it by replacing calls to dma_set_mask and dma_set_coherent_mask by a
+ call to dma_set_coherent_mask.
+ 
+ Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
 
-http://patchwork.freedesktop.org/patch/19163/
+ Tested by compilation only.
 
-Dave? I think I'll just send a pull for my random pile of drm core
-patches I've shepharded ...
+ drivers/net/ethernet/atheros/alx/main.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-Cheers, Daniel
+diff --git a/drivers/net/ethernet/atheros/alx/main.c b/drivers/net/ethernet/atheros/alx/main.c
+index 2e45f6e..380d249 100644
+--- a/drivers/net/ethernet/atheros/alx/main.c
++++ b/drivers/net/ethernet/atheros/alx/main.c
+@@ -1248,19 +1248,13 @@ static int alx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	 * shared register for the high 32 bits, so only a single, aligned,
+ 	 * 4 GB physical address range can be used for descriptors.
+ 	 */
+-	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64)) &&
+-	    !dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64))) {
++	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
+ 		dev_dbg(&pdev->dev, "DMA to 64-BIT addresses\n");
+ 	} else {
+-		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
++		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (err) {
+-			err = dma_set_coherent_mask(&pdev->dev,
+-						    DMA_BIT_MASK(32));
+-			if (err) {
+-				dev_err(&pdev->dev,
+-					"No usable DMA config, aborting\n");
+-				goto out_pci_disable;
+-			}
++			dev_err(&pdev->dev, "No usable DMA config, aborting\n");
++			goto out_pci_disable;
+ 		}
+ 	}
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+1.8.3.1
+
