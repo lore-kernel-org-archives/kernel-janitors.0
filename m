@@ -1,37 +1,60 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Date: Fri, 28 Mar 2014 10:58:47 +0000
-Subject: RE: [patch] RDMA/cxgb4: info leak in c4iw_alloc_ucontext()
-Message-Id: <063D6719AE5E284EB5DD2968C1650D6D0F6EB791@AcuExch.aculab.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 15 Mar 2014 23:30:52 +0000
+Subject: [PATCH V2] ATHEROS-ALX: Use dma_set_mask_and_coherent and fix a bug
+Message-Id: <1394926252-2269-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140328082428.GH25192@mwanda>
- <1396002468.3297.63.camel@localhost.localdomain>
-In-Reply-To: <1396002468.3297.63.camel-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Yann Droneaud' <ydroneaud-RlY5vtjFyJ3QT0dZR+AlfA@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, "roland-BHEL68pLQRGGvPXPguhicg@public.gmane.org" <roland-BHEL68pLQRGGvPXPguhicg@public.gmane.org>, "dm-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org" <dm-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, "leedom-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org" <leedom-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, "santosh-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org" <santosh-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, "kumaras-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org" <kumaras-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, "nirranjan-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org" <nirranjan-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, "hariprasad-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org" <hariprasad-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>, Steve Wise <swise-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>
+To: jcliburn@gmail.com, chris.snook@gmail.com, davem@davemloft.net, johannes@sipsolutions.net, jg1.han@samsung.com, wangyijing@huawei.com, linux@hahnjo.de, sd@queasysnail.net, hahnjo@hahnjo.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-RnJvbTogWWFubiBEcm9uZWF1ZA0KPiBIaSwNCj4gDQo+IExlIHZlbmRyZWRpIDI4IG1hcnMgMjAx
-NCAgMTE6MjQgKzAzMDAsIERhbiBDYXJwZW50ZXIgYSBjcml0IDoNCj4gPiBUaGUgYzRpd19hbGxv
-Y191Y29udGV4dF9yZXNwIHN0cnVjdCBoYXMgYSA0IGJ5dGUgaG9sZSBhZnRlciB0aGUgbGFzdA0K
-PiA+IG1lbWJlciBhbmQgd2Ugc2hvdWxkIGNsZWFyIGl0IGJlZm9yZSBwYXNzaW5nIGl0IHRvIHRo
-ZSB1c2VyLg0KPiA+DQo+ID4gRml4ZXM6IDA1ZWIyMzg5M2MyYyAoJ2N4Z2I0L2l3X2N4Z2I0OiBE
-b29yYmVsbCBEcm9wIEF2b2lkYW5jZSBCdWcgRml4ZXMnKQ0KPiA+IFNpZ25lZC1vZmYtYnk6IERh
-biBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gPg0KPiANCj4gSXQncyBu
-b3QgdGhlIHByb3BlciBmaXggZm9yIHRoaXMgaXNzdWU6IGFuIGV4cGxpY2l0IHBhZGRpbmcgaGFz
-IHRvIGJlDQo+IGFkZGVkIChhbmQgaW5pdGlhbGl6ZWQpLCBzZWUgIlJlOiBbUEFUQ0ggbmV0LW5l
-eHQgMi8yXSBjeGdiNC9pd19jeGdiNDoNCj4gRG9vcmJlbGwgRHJvcCBBdm9pZGFuY2UgQnVnIEZp
-eGVzIg0KPiBodHRwOi8vbWFyYy5pbmZvLz9pPTEzOTU4NDg5NzcuMzI5Ny4xNS5jYW1lbEBsb2Nh
-bGhvc3QubG9jYWxkb21haW4NCj4gDQo+IEluIGl0cyBjdXJyZW50IGZvcm0sIHRoZSBjNGl3X2Fs
-bG9jX3Vjb250ZXh0X3Jlc3Agc3RydWN0dXJlIGRvZXMgbm90DQo+IHJlcXVpcmUgcGFkZGluZyBv
-biBpMzg2LCBzbyBhIDMyYml0cyB1c2Vyc3BhY2UgcHJvZ3JhbSB1c2luZyB0aGlzDQo+IHN0cnVj
-dHVyZSBhZ2FpbnN0IGEgeDg2XzY0IGtlcm5lbCB3aWxsIG1ha2UgdGhlIGtlcm5lbCBkbyBhIGJ1
-ZmZlcg0KPiBvdmVyZmxvdyBpbiB1c2Vyc3BhY2UsIGxpa2VseSBvbiBzdGFjaywgYXMgYW5zd2Vy
-IG9mIGEgR0VUX0NPTlRFWFQNCj4gcmVxdWVzdDoNCi4uLg0KPiBzdHJ1Y3QgYzRpd19hbGxvY191
-Y29udGV4dF9yZXNwIHsNCj4gICAgICAgICBzdHJ1Y3QgaWJ2X2dldF9jb250ZXh0X3Jlc3AgaWJ2
-X3Jlc3A7DQo+ICAgICAgICAgX191NjQgc3RhdHVzX3BhZ2Vfa2V5Ow0KPiAgICAgICAgIF9fdTMy
-IHN0YXR1c19wYWdlX3NpemU7DQo+IH07DQoNCk9yIGFkZCBfX2F0dHJpYnV0ZV9fKChhbGlnbmVk
-KDQpKSkgdG8gdGhlIDY0Yml0IGZpZWxkcy4NCkFuZCBtYXliZSBhIGNvbXBpbGUgdGltZSBhc3Nl
-cnQgb24gdGhlIGxlbmd0aCBvZiB0aGUgc3RydWN0dXJlLg0KU2luY2UgaXQgaXMgcGFydCBvZiBh
-biBBQkkgaXQgbXVzdCBub3QgY2hhbmdlDQoNCglEYXZpZA0KDQo
+ 1. For the 64 bits dma mask use dma_set_mask_and_coherent instead of
+ dma_set_mask and dma_set_coherent_mask.
+
+ 2. For the 32 bits dma mask dma_set_coherent_mask is only called if
+ dma_set_mask fails, which is unusual. Assuming this as a bug, fixes
+ it by replacing calls to dma_set_mask and dma_set_coherent_mask by a
+ call to dma_set_mask_and_coherent.
+ 
+ Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+
+ Tested by compilation only.
+
+ Change from V1: Updated commit message.
+
+ drivers/net/ethernet/atheros/alx/main.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/alx/main.c b/drivers/net/ethernet/atheros/alx/main.c
+index 2e45f6e..380d249 100644
+--- a/drivers/net/ethernet/atheros/alx/main.c
++++ b/drivers/net/ethernet/atheros/alx/main.c
+@@ -1248,19 +1248,13 @@ static int alx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	 * shared register for the high 32 bits, so only a single, aligned,
+ 	 * 4 GB physical address range can be used for descriptors.
+ 	 */
+-	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64)) &&
+-	    !dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64))) {
++	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
+ 		dev_dbg(&pdev->dev, "DMA to 64-BIT addresses\n");
+ 	} else {
+-		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
++		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 		if (err) {
+-			err = dma_set_coherent_mask(&pdev->dev,
+-						    DMA_BIT_MASK(32));
+-			if (err) {
+-				dev_err(&pdev->dev,
+-					"No usable DMA config, aborting\n");
+-				goto out_pci_disable;
+-			}
++			dev_err(&pdev->dev, "No usable DMA config, aborting\n");
++			goto out_pci_disable;
+ 		}
+ 	}
+ 
+-- 
+1.8.3.1
+
