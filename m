@@ -1,47 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 06 Mar 2014 04:22:50 +0000
-Subject: Re: [patch] ASoC: Baytrail: fix error handling in sst_byt_dsp_init()
-Message-Id: <20140306042249.GX13126@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="f5vgRAyQYps+TnGK"
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 18 Mar 2014 16:11:25 +0000
+Subject: [PATCH 2/2] INTEL-IGB: Convert iounmap to pci_iounmap
+Message-Id: <1395159085-11691-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140305111157.GD16926@elgon.mountain>
-In-Reply-To: <20140305111157.GD16926@elgon.mountain>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+References: <1395159085-11691-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1395159085-11691-1-git-send-email-peter.senna@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: jeffrey.t.kirsher@intel.com, jesse.brandeburg@intel.com, bruce.w.allan@intel.com, carolyn.wyborny@intel.com, donald.c.skidmore@intel.com, gregory.v.rose@intel.com, alexander.h.duyck@intel.com, john.ronciak@intel.com, mitch.a.williams@intel.com, linux.nics@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
+Use pci_iounmap instead of iounmap when the virtual mapping was done
+with pci_iomap. A simplified version of the semantic patch that finds this
+issue is as follows: (http://coccinelle.lip6.fr/)
+    
+// <smpl>
+@r@
+expression addr;
+@@
+addr = pci_iomap(...)
 
---f5vgRAyQYps+TnGK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+@rr@
+expression r.addr;
+@@
+* iounmap(addr)
+// </smpl>
 
-On Wed, Mar 05, 2014 at 02:11:57PM +0300, Dan Carpenter wrote:
-> Calling "kfree(byt)" is a double free because that was allocated with
-> devm_kzalloc().  There were a couple places which leak "byt->msg".  That
-> memory is allocated in msg_empty_list_init().
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ Tested by compilation only.
 
-Applied, thanks.
+ drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---f5vgRAyQYps+TnGK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 340a344..fc49177 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -2623,7 +2623,7 @@ err_eeprom:
+ 		iounmap(hw->flash_address);
+ err_sw_init:
+ 	igb_clear_interrupt_scheme(adapter);
+-	iounmap(hw->hw_addr);
++	pci_iounmap(pdev, hw->hw_addr);
+ err_ioremap:
+ 	free_netdev(netdev);
+ err_alloc_etherdev:
+@@ -2790,7 +2790,7 @@ static void igb_remove(struct pci_dev *pdev)
+ 	igb_disable_sriov(pdev);
+ #endif
+ 
+-	iounmap(hw->hw_addr);
++	pci_iounmap(pdev, hw->hw_addr);
+ 	if (hw->flash_address)
+ 		iounmap(hw->flash_address);
+ 	pci_release_selected_regions(pdev,
+-- 
+1.8.3.1
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTF/gWAAoJELSic+t+oim9BrAQAIDUXeq+HRfCrcZqA4HC5jHb
-ZasP7MxxGEuMI9aH+AMTifeXR//ZwjD75fRqNS0H4P3lMqimkkd0wy6CQfbEYMo4
-1drOSqPZo1vcIyRL9LPi67QOLU+l8I49SxlN0eTi7vewcxdUWJRh59513/4LMGbs
-c1rpqfi0nbCGduCRoP74PLEzEvXjfQRzs0/R2v0YvSocVZVWRWPVQIW1h/taFgtJ
-dyoW5O4uEBYgk5kfFNmq167aKKN67LM6h1PBAauOFLJw3fBSCDvyaUyqqd7trwFe
-eZBUqxd3z4LUFjZVxsHpr3OJZRoYWtZkul1A4JsCubTyJwxxYkKxqmPpsR9pJ4bm
-+lpN9b6k8cWJxWg2BQKzDT3KUaJbD/iJgcjieXGkurPyMAGxMyVOzic2tPwOv/F0
-md+Dy0QoT5mfb6ZmVQF8Nh9AmUapP7DXhIU7DKmAQyggcVNK/bD1gRRWJoSkhwjK
-2cxGvcKzyKVAAMPwuT8y9XfK9IiawGJNSLabEYfc6L8bnKCATwdwtHCmas0cwDS7
-h8HaBHkRj0y9TX4MrgicsQgyQ8BM1pWr0Js2TJAAo+ZdqroJC2+Q4am2oviFY80H
-vmg4C4ItyBRn47zsXB4SstIf+tlh7qo/0le7kTRCaVPPjp8GsGT8mv4uk9YDS/qh
-gORoGw9yG9QBUivb1axE
-=TF0S
------END PGP SIGNATURE-----
-
---f5vgRAyQYps+TnGK--
