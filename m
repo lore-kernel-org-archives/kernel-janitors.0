@@ -1,49 +1,66 @@
-From: Eric Sandeen <sandeen@sandeen.net>
-Date: Sat, 29 Mar 2014 01:56:04 +0000
-Subject: Re: [patch] xfs: extra semi-colon breaks a condition
-Message-Id: <53362834.7090900@sandeen.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 26 Mar 2014 21:33:44 +0000
+Subject: [PATCH 6/7] hsr: replace del_timer by del_timer_sync
+Message-Id: <1395869625-15209-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140328080313.GA25192@mwanda>
-In-Reply-To: <20140328080313.GA25192@mwanda>
+References: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Dave Chinner <david@fromorbit.com>
-Cc: kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
+To: Arvid Brodin <arvid.brodin@alten.se>
+Cc: kernel-janitors@vger.kernel.org, tglx@linutronix.de, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 3/28/14, 3:03 AM, Dan Carpenter wrote:
-> There were some extra semi-colons here which mean that we return true
-> unintentionally.
-> 
-> Fixes: a49935f200e2 ('xfs: xfs_check_page_type buffer checks need help')
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-that's terrifying.
+Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+the driver exists.
 
-Reviewed-by: Eric Sandeen <sandeen@redhat.com>
+This change was suggested by Thomas Gleixner.
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 98016b3..75df77d 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -659,10 +659,10 @@ xfs_check_page_type(
->  			if (type = XFS_IO_UNWRITTEN)
->  				return true;
->  		} else if (buffer_delay(bh)) {
-> -			if (type = XFS_IO_DELALLOC);
-> +			if (type = XFS_IO_DELALLOC)
->  				return true;
->  		} else if (buffer_dirty(bh) && buffer_mapped(bh)) {
-> -			if (type = XFS_IO_OVERWRITE);
-> +			if (type = XFS_IO_OVERWRITE)
->  				return true;
->  		}
->  
-> 
-> _______________________________________________
-> xfs mailing list
-> xfs@oss.sgi.com
-> http://oss.sgi.com/mailman/listinfo/xfs
-> 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+declarer name module_exit;
+identifier ex;
+@@
+
+module_exit(ex);
+
+@@
+identifier r.ex;
+@@
+
+ex(...) {
+  <...
+- del_timer
++ del_timer_sync
+    (...)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ net/hsr/hsr_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/hsr/hsr_main.c b/net/hsr/hsr_main.c
+index 10010c5..3fee521 100644
+--- a/net/hsr/hsr_main.c
++++ b/net/hsr/hsr_main.c
+@@ -459,7 +459,7 @@ static int __init hsr_init(void)
+ static void __exit hsr_exit(void)
+ {
+ 	unregister_netdevice_notifier(&hsr_nb);
+-	del_timer(&prune_timer);
++	del_timer_sync(&prune_timer);
+ 	hsr_netlink_exit();
+ 	dev_remove_pack(&hsr_pt);
+ }
 
