@@ -1,45 +1,66 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 29 Mar 2014 09:58:52 +0000
-Subject: Re: [patch] iio: adc: checking for NULL instead of IS_ERR() in probe
-Message-Id: <5336995C.90701@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 26 Mar 2014 21:33:40 +0000
+Subject: [PATCH 2/7] atm: replace del_timer by del_timer_sync
+Message-Id: <1395869625-15209-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140328083126.GO25192@mwanda> <CAGH8bx77dKAm7w53F5MfTXaPm6KxQcVCXERnW-oXmR5Ww-HLTw@mail.gmail.com>
-In-Reply-To: <CAGH8bx77dKAm7w53F5MfTXaPm6KxQcVCXERnW-oXmR5Ww-HLTw@mail.gmail.com>
+References: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: johannes thumshirn <morbidrsa@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, tglx@linutronix.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 28/03/14 14:07, johannes thumshirn wrote:
-> On Fri, Mar 28, 2014 at 9:33 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>
->> mcb_request_mem() returns an ERR_PTR(), it doesn't return NULL.
->>
->> Fixes: 74aeac4da66f ('iio: adc: Add MEN 16z188 ADC driver')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>
->> diff --git a/drivers/iio/adc/men_z188_adc.c b/drivers/iio/adc/men_z188_adc.c
->> index 6989c16..b58d630 100644
->> --- a/drivers/iio/adc/men_z188_adc.c
->> +++ b/drivers/iio/adc/men_z188_adc.c
->> @@ -121,8 +121,8 @@ static int men_z188_probe(struct mcb_device *dev,
->>          indio_dev->num_channels = ARRAY_SIZE(z188_adc_iio_channels);
->>
->>          mem = mcb_request_mem(dev, "z188-adc");
->> -       if (!mem)
->> -               return -ENOMEM;
->> +       if (IS_ERR(mem))
->> +               return PTR_ERR(mem);
->>
->>          adc->base = ioremap(mem->start, resource_size(mem));
->>          if (adc->base = NULL)
->
-> Acked-by: Johannes Thumshirn <johannes.thumshirn@men.de>
->
-Acked-by: Jonathan Cameron <jic23@kernel.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Or I can pick this up after the merge window has closed if Greg hasn't
-already taken it.
+Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+the driver exists.
 
-Jonathan
+This change was suggested by Thomas Gleixner.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+declarer name module_exit;
+identifier ex;
+@@
+
+module_exit(ex);
+
+@@
+identifier r.ex;
+@@
+
+ex(...) {
+  <...
+- del_timer
++ del_timer_sync
+    (...)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ net/atm/mpc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/atm/mpc.c b/net/atm/mpc.c
+index b71ff6b..91dc58f 100644
+--- a/net/atm/mpc.c
++++ b/net/atm/mpc.c
+@@ -1492,7 +1492,7 @@ static void __exit atm_mpoa_cleanup(void)
+ 
+ 	mpc_proc_clean();
+ 
+-	del_timer(&mpc_timer);
++	del_timer_sync(&mpc_timer);
+ 	unregister_netdevice_notifier(&mpoa_notifier);
+ 	deregister_atm_ioctl(&atm_ioctl_ops);
+ 
+
