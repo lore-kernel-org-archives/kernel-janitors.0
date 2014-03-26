@@ -1,33 +1,66 @@
-From: Nick Dyer <nick.dyer@itdev.co.uk>
-Date: Wed, 19 Mar 2014 16:02:05 +0000
-Subject: Re: [patch] Input: remove a duplicative NULL test
-Message-Id: <5329BF7D.8080007@itdev.co.uk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 26 Mar 2014 21:33:45 +0000
+Subject: [PATCH 7/7] yam: replace del_timer by del_timer_sync
+Message-Id: <1395869625-15209-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140221085506.GB13185@elgon.mountain>	<e1cf3227a1484c3b931abb61b97391a6@BLUPR03MB373.namprd03.prod.outlook.com> <CANLzEktLFDcMpt7Gq19=7T1Ak2Be4qs3fmDPyswHUNrVJiGjSQ@mail.gmail.com>
-In-Reply-To: <CANLzEktLFDcMpt7Gq19=7T1Ak2Be4qs3fmDPyswHUNrVJiGjSQ@mail.gmail.com>
+References: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benson Leung <bleung@chromium.org>, "fugang.duan@freescale.com" <fugang.duan@freescale.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Jingoo Han <jg1.han@samsung.com>, Daniel Kurtz <djkurtz@chromium.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Jean-Paul Roubelat <jpr@f6fbb.org>
+Cc: kernel-janitors@vger.kernel.org, tglx@linutronix.de, linux-hams@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> On Fri, Feb 21, 2014 at 1:14 AM, fugang.duan@freescale.com
-> <fugang.duan@freescale.com> wrote:
->>
->> Agree, it is redundant. And if you have free time, you can convert
->> the driver to support devicetree.
-> 
-> Please check with Nick Dyer before you convert this driver to support
-> devicetree. Much of the platform data this driver uses has been
-> eliminated or consolidated in a patch series that he's been working
-> on.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-If you look at the "improve T19 GPIO keys handling" patch in the patch set
-I posted to linux-input on 17th March, this redundant NULL test has been
-removed.
+Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+the driver exists.
 
-I want to remove most of the existing platform data since it is not generic
-across all chips - see "remove unnecessary platform data" and "read screen
-config from chip" in that series of patches. It's high priority on my list
-to implement device tree support for the remaining items, which will be
-just irqflags and the touchpad key config.
+This change was suggested by Thomas Gleixner
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+declarer name module_exit;
+identifier ex;
+@@
+
+module_exit(ex);
+
+@@
+identifier r.ex;
+@@
+
+ex(...) {
+  <...
+- del_timer
++ del_timer_sync
+    (...)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ drivers/net/hamradio/yam.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
+index 61dd244..8190165 100644
+--- a/drivers/net/hamradio/yam.c
++++ b/drivers/net/hamradio/yam.c
+@@ -1184,7 +1184,7 @@ static void __exit yam_cleanup_driver(void)
+ 	struct yam_mcs *p;
+ 	int i;
+ 
+-	del_timer(&yam_timer);
++	del_timer_sync(&yam_timer);
+ 	for (i = 0; i < NR_PORTS; i++) {
+ 		struct net_device *dev = yam_devs[i];
+ 		if (dev) {
+
