@@ -1,30 +1,13 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 01 Mar 2014 13:51:36 +0000
-Subject: [patch] [media] av7110_hw: fix a sanity check in av7110_fw_cmd()
-Message-Id: <20140301135136.GA23929@elgon.mountain>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 26 Mar 2014 21:33:38 +0000
+Subject: [PATCH 0/7] replace del_timer by del_timer_sync
+Message-Id: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-serial@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@driverdev.osuosl.org, linux-mips@linux-mips.org, linux-hams@vger.kernel.org
 
-ARRAY_SIZE(buf) (8 elements) was intended instead of sizeof(buf) (16
-bytes).  But this is just a sanity check and the callers always pass
-valid values so this doesn't cause a problem.
+These patches replace del_timer by del_timer_sync in module_exit functions.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/media/pci/ttpci/av7110_hw.c b/drivers/media/pci/ttpci/av7110_hw.c
-index 6299d5dadb82..300bd3c94738 100644
---- a/drivers/media/pci/ttpci/av7110_hw.c
-+++ b/drivers/media/pci/ttpci/av7110_hw.c
-@@ -501,7 +501,7 @@ int av7110_fw_cmd(struct av7110 *av7110, int type, int com, int num, ...)
- 
- //	dprintk(4, "%p\n", av7110);
- 
--	if (2 + num > sizeof(buf)) {
-+	if (2 + num > ARRAY_SIZE(buf)) {
- 		printk(KERN_WARNING
- 		       "%s: %s len=%d is too big!\n",
- 		       KBUILD_MODNAME, __func__, num);
