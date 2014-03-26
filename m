@@ -1,23 +1,66 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 03 Mar 2014 20:30:15 +0000
-Subject: Re: [patch] hsr: off by one sanity check in hsr_register_frame_in()
-Message-Id: <20140303.153015.1785335562028272449.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 26 Mar 2014 21:33:42 +0000
+Subject: [PATCH 4/7] tty: serial: replace del_timer by del_timer_sync
+Message-Id: <1395869625-15209-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140228231857.GD22115@elgon.mountain>
-In-Reply-To: <20140228231857.GD22115@elgon.mountain>
+References: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: arvid.brodin@alten.se, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, tglx@linutronix.de, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 1 Mar 2014 02:18:57 +0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> This is a sanity check and we never pass invalid values so this patch
-> doesn't change anything.  However the node->time_in[] array has
-> HSR_MAX_SLAVE (2) elements and not HSR_MAX_DEV (3).
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+the driver exists.
 
-Applied, thanks Dan.
+This change was suggested by Thomas Gleixner.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+declarer name module_exit;
+identifier ex;
+@@
+
+module_exit(ex);
+
+@@
+identifier r.ex;
+@@
+
+ex(...) {
+  <...
+- del_timer
++ del_timer_sync
+    (...)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ drivers/tty/serial/mux.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/mux.c b/drivers/tty/serial/mux.c
+index 7fd6aaa..19845e3 100644
+--- a/drivers/tty/serial/mux.c
++++ b/drivers/tty/serial/mux.c
+@@ -613,7 +613,7 @@ static void __exit mux_exit(void)
+ {
+ 	/* Delete the Mux timer. */
+ 	if(port_cnt > 0) {
+-		del_timer(&mux_timer);
++		del_timer_sync(&mux_timer);
+ #ifdef CONFIG_SERIAL_MUX_CONSOLE
+ 		unregister_console(&mux_console);
+ #endif
+
