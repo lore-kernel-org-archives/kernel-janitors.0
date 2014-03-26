@@ -1,67 +1,96 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 07 Mar 2014 17:01:10 +0000
-Subject: Re: [patch v2] [patch] [media] em28xx-cards: remove a wrong indent level
-Message-Id: <20140307170110.GP4774@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 26 Mar 2014 21:33:39 +0000
+Subject: [PATCH 1/7] isdn: replace del_timer by del_timer_sync
+Message-Id: <1395869625-15209-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140305110937.GC16926@elgon.mountain>
- <5319F7E4.1000303@googlemail.com>
-In-Reply-To: <5319F7E4.1000303@googlemail.com>
+References: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Frank =?iso-8859-1?Q?Sch=E4fer?= <fschaefer.oss@googlemail.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: kernel-janitors@vger.kernel.org, tglx@linutronix.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Mar 07, 2014 at 05:46:28PM +0100, Frank Sch=E4fer wrote:
->=20
-> Am 05.03.2014 12:09, schrieb Dan Carpenter:
-> > This code is correct but the indenting is wrong and triggers a static
-> > checker warning "add curly braces?".
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: in v1 I added curly braces.
-> >
-> > diff --git a/drivers/media/usb/em28xx/em28xx-cards.c b/drivers/media/us=
-b/em28xx/em28xx-cards.c
-> > index 4d97a76cc3b0..33f06ffec4b2 100644
-> > --- a/drivers/media/usb/em28xx/em28xx-cards.c
-> > +++ b/drivers/media/usb/em28xx/em28xx-cards.c
-> > @@ -3331,8 +3331,8 @@ static int em28xx_usb_probe(struct usb_interface =
-*interface,
-> >  	if (has_video) {
-> >  	    if (!dev->analog_ep_isoc || (try_bulk && dev->analog_ep_bulk))
-> >  		dev->analog_xfer_bulk =3D 1;
-> > -		em28xx_info("analog set to %s mode.\n",
-> > -			    dev->analog_xfer_bulk ? "bulk" : "isoc");
-> > +	    em28xx_info("analog set to %s mode.\n",
-> > +			dev->analog_xfer_bulk ? "bulk" : "isoc");
->=20
-> Instead of moving em28xx_info(...) to the left the if section needs to
-> be moved to the right:
->=20
-> - 	    if (!dev->analog_ep_isoc || (try_bulk && dev->analog_ep_bulk))
-> - 		dev->analog_xfer_bulk =3D 1;
-> + 		if (!dev->analog_ep_isoc || (try_bulk && dev->analog_ep_bulk))
-> + 			dev->analog_xfer_bulk =3D 1;
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yes.  I'd happy to.
+Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+the driver exists.
 
->=20
-> While you are at it, could you also do fix the indention in the next
-> paragraph ?
+This change was suggested by Thomas Gleixner.
 
-The next paragraph is almost identical but my static checker was
-ignoring the curly braces because of the blank line.  I'll modify to
-complain about that as well.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-I'll resend.  Thanks for the review.
+// <smpl>
+@r@
+declarer name module_exit;
+identifier ex;
+@@
 
-regards,
-dan carpenter
+module_exit(ex);
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+@@
+identifier r.ex;
+@@
+
+ex(...) {
+  <...
+- del_timer
++ del_timer_sync
+    (...)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ drivers/isdn/act2000/module.c  |    2 +-
+ drivers/isdn/i4l/isdn_common.c |    2 +-
+ drivers/isdn/sc/init.c         |    4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/isdn/sc/init.c b/drivers/isdn/sc/init.c
+index 92acc81..d6f19b1 100644
+--- a/drivers/isdn/sc/init.c
++++ b/drivers/isdn/sc/init.c
+@@ -390,8 +390,8 @@ static void __exit sc_exit(void)
+ 		/*
+ 		 * kill the timers
+ 		 */
+-		del_timer(&(sc_adapter[i]->reset_timer));
+-		del_timer(&(sc_adapter[i]->stat_timer));
++		del_timer_sync(&(sc_adapter[i]->reset_timer));
++		del_timer_sync(&(sc_adapter[i]->stat_timer));
+ 
+ 		/*
+ 		 * Tell I4L we're toast
+diff --git a/drivers/isdn/i4l/isdn_common.c b/drivers/isdn/i4l/isdn_common.c
+index 130f216..9b856e1 100644
+--- a/drivers/isdn/i4l/isdn_common.c
++++ b/drivers/isdn/i4l/isdn_common.c
+@@ -2381,7 +2381,7 @@ static void __exit isdn_exit(void)
+ 	}
+ 	isdn_tty_exit();
+ 	unregister_chrdev(ISDN_MAJOR, "isdn");
+-	del_timer(&dev->timer);
++	del_timer_sync(&dev->timer);
+ 	/* call vfree with interrupts enabled, else it will hang */
+ 	vfree(dev);
+ 	printk(KERN_NOTICE "ISDN-subsystem unloaded\n");
+diff --git a/drivers/isdn/act2000/module.c b/drivers/isdn/act2000/module.c
+index b4147c0..c3a1b06 100644
+--- a/drivers/isdn/act2000/module.c
++++ b/drivers/isdn/act2000/module.c
+@@ -796,7 +796,7 @@ static void __exit act2000_exit(void)
+ 	act2000_card *last;
+ 	while (card) {
+ 		unregister_card(card);
+-		del_timer(&card->ptimer);
++		del_timer_sync(&card->ptimer);
+ 		card = card->next;
+ 	}
+ 	card = cards;
+
