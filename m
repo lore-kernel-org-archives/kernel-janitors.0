@@ -1,65 +1,33 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Sat, 15 Mar 2014 22:57:08 +0000
-Subject: Re: [PATCH] ATHEROS-ALX: Use dma_set_mask_and_coherent and fix a bug
-Message-Id: <5324E8AD.6000206@cogentembedded.com>
+From: Luis Ortega <luiorpe1@gmail.com>
+Date: Thu, 27 Mar 2014 15:19:16 +0000
+Subject: [PATCH] x86: Add function prototype for setup_default_timer_irq
+Message-Id: <1395937030-2210-1-git-send-email-luiorpe1@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1394907548-10084-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1394907548-10084-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>, jcliburn@gmail.com, chris.snook@gmail.com, davem@davemloft.net, johannes@sipsolutions.net, jg1.han@samsung.com, wangyijing@huawei.com, linux@hahnjo.de, sd@queasysnail.net, hahnjo@hahnjo.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-Hello.
+This eliminates the following warning in arch/x86/kernel/time.c:
+arch/x86/kernel/time.c:69:13: warning: no previous prototype for ‘setup_default_timer_irq’ [-Wmissing-prototypes]
 
-On 03/15/2014 09:19 PM, Peter Senna Tschudin wrote:
+Signed-off-by: Luis Ortega <luiorpe1@gmail.com>
+---
+ arch/x86/include/asm/time.h | 1 +
+ 1 file changed, 1 insertion(+)
 
->   1. For the 64 bits dma mask use dma_set_mask_and_coherent instead of
->   dma_set_mask and dma_set_coherent_mask.
+diff --git a/arch/x86/include/asm/time.h b/arch/x86/include/asm/time.h
+index 92b8aec..935ceb6 100644
+--- a/arch/x86/include/asm/time.h
++++ b/arch/x86/include/asm/time.h
+@@ -4,6 +4,7 @@
+ #include <linux/clocksource.h>
+ #include <asm/mc146818rtc.h>
 
->   2. For the 32 bits dma mask dma_set_coherent_mask is only called if
->   dma_set_mask fails, which is unusual. Assuming this as a bug, fixes
->   it by replacing calls to dma_set_mask and dma_set_coherent_mask by a
->   call to dma_set_coherent_mask.
++extern void setup_default_timer_irq(void);
+ extern void hpet_time_init(void);
+ extern void time_init(void);
 
-    You meant to say dma_set_mask_and_coherent() here?
-
->   Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
-
->   Tested by compilation only.
-
->   drivers/net/ethernet/atheros/alx/main.c | 14 ++++----------
->   1 file changed, 4 insertions(+), 10 deletions(-)
-
-> diff --git a/drivers/net/ethernet/atheros/alx/main.c b/drivers/net/ethernet/atheros/alx/main.c
-> index 2e45f6e..380d249 100644
-> --- a/drivers/net/ethernet/atheros/alx/main.c
-> +++ b/drivers/net/ethernet/atheros/alx/main.c
-> @@ -1248,19 +1248,13 @@ static int alx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   	 * shared register for the high 32 bits, so only a single, aligned,
->   	 * 4 GB physical address range can be used for descriptors.
->   	 */
-> -	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64)) &&
-> -	    !dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64))) {
-> +	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
->   		dev_dbg(&pdev->dev, "DMA to 64-BIT addresses\n");
->   	} else {
-> -		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
-> +		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
->   		if (err) {
-> -			err = dma_set_coherent_mask(&pdev->dev,
-> -						    DMA_BIT_MASK(32));
-> -			if (err) {
-> -				dev_err(&pdev->dev,
-> -					"No usable DMA config, aborting\n");
-> -				goto out_pci_disable;
-> -			}
-> +			dev_err(&pdev->dev, "No usable DMA config, aborting\n");
-> +			goto out_pci_disable;
->   		}
->   	}
-
-WBR, Sergei
-
+--
+1.9.1
 
