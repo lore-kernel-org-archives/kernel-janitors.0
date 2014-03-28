@@ -1,66 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 26 Mar 2014 21:33:42 +0000
-Subject: [PATCH 4/7] tty: serial: replace del_timer by del_timer_sync
-Message-Id: <1395869625-15209-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Mar 2014 08:24:59 +0000
+Subject: [patch] xen-pciback: silence an unwanted debug printk
+Message-Id: <20140328082459.GI25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, tglx@linutronix.de, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+There is a missing curly brace here so we might print some extra debug
+information.
 
-Use del_timer_sync to ensure that the timer is stopped on all CPUs before
-the driver exists.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This change was suggested by Thomas Gleixner.
-
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r@
-declarer name module_exit;
-identifier ex;
-@@
-
-module_exit(ex);
-
-@@
-identifier r.ex;
-@@
-
-ex(...) {
-  <...
-- del_timer
-+ del_timer_sync
-    (...)
-  ...>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Not tested.
-
- drivers/tty/serial/mux.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/mux.c b/drivers/tty/serial/mux.c
-index 7fd6aaa..19845e3 100644
---- a/drivers/tty/serial/mux.c
-+++ b/drivers/tty/serial/mux.c
-@@ -613,7 +613,7 @@ static void __exit mux_exit(void)
- {
- 	/* Delete the Mux timer. */
- 	if(port_cnt > 0) {
--		del_timer(&mux_timer);
-+		del_timer_sync(&mux_timer);
- #ifdef CONFIG_SERIAL_MUX_CONSOLE
- 		unregister_console(&mux_console);
- #endif
-
+diff --git a/drivers/xen/xen-pciback/pciback_ops.c b/drivers/xen/xen-pciback/pciback_ops.c
+index 929dd46..607e414 100644
+--- a/drivers/xen/xen-pciback/pciback_ops.c
++++ b/drivers/xen/xen-pciback/pciback_ops.c
+@@ -217,7 +217,7 @@ int xen_pcibk_enable_msix(struct xen_pcibk_device *pdev,
+ 	if (result = 0) {
+ 		for (i = 0; i < op->value; i++) {
+ 			op->msix_entries[i].entry = entries[i].entry;
+-			if (entries[i].vector)
++			if (entries[i].vector) {
+ 				op->msix_entries[i].vector  					xen_pirq_from_irq(entries[i].vector);
+ 				if (unlikely(verbose_request))
+@@ -225,6 +225,7 @@ int xen_pcibk_enable_msix(struct xen_pcibk_device *pdev,
+ 						"MSI-X[%d]: %d\n",
+ 						pci_name(dev), i,
+ 						op->msix_entries[i].vector);
++			}
+ 		}
+ 	} else
+ 		pr_warn_ratelimited("%s: error enabling MSI-X for guest %u: err %d!\n",
