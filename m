@@ -1,40 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 01 Mar 2014 13:55:29 +0000
-Subject: [patch] [media] ddbridge: remove unneeded an NULL check
-Message-Id: <20140301135529.GC23929@elgon.mountain>
+Date: Fri, 28 Mar 2014 08:06:00 +0000
+Subject: [patch] Btrfs: kmalloc() doesn't return an ERR_PTR
+Message-Id: <20140328080600.GD25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Hugo Mills <hugo@carfax.org.uk>
+Cc: Josef Bacik <jbacik@fb.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Static checkers complain about the inconsistent NULL check here.
+The error handling was copy and pasted from memdup_user().  It should be
+checking for NULL obviously.
 
-There is an unchecked dereference of "intput->fe" in the call to
-tuner_attach_tda18271() and there is a second unchecked dereference a
-couple lines later when we do:
-	input->fe2->tuner_priv = input->fe->tuner_priv;
-
-But actually "intput->fe" can't be NULL because if demod_attach_drxk()
-fails to allocate it, then we would have return an error code.
-
+Fixes: abccd00f8af2 ('btrfs: Fix 32/64-bit problem with BTRFS_SET_RECEIVED_SUBVOL ioctl')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
-index 9375f30d9a81..fb52bda8d45f 100644
---- a/drivers/media/pci/ddbridge/ddbridge-core.c
-+++ b/drivers/media/pci/ddbridge/ddbridge-core.c
-@@ -876,10 +876,8 @@ static int dvb_input_attach(struct ddb_input *input)
- 			return -ENODEV;
- 		if (tuner_attach_tda18271(input) < 0)
- 			return -ENODEV;
--		if (input->fe) {
--			if (dvb_register_frontend(adap, input->fe) < 0)
--				return -ENODEV;
--		}
-+		if (dvb_register_frontend(adap, input->fe) < 0)
-+			return -ENODEV;
- 		if (input->fe2) {
- 			if (dvb_register_frontend(adap, input->fe2) < 0)
- 				return -ENODEV;
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 0401397..27d551c 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -4531,9 +4531,8 @@ static long btrfs_ioctl_set_received_subvol_32(struct file *file,
+ 	}
+ 
+ 	args64 = kmalloc(sizeof(*args64), GFP_NOFS);
+-	if (IS_ERR(args64)) {
+-		ret = PTR_ERR(args64);
+-		args64 = NULL;
++	if (!args64) {
++		ret = -ENOMEM;
+ 		goto out;
+ 	}
+ 
