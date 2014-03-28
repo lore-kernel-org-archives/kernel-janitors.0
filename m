@@ -1,92 +1,47 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 05 Mar 2014 11:25:15 +0000
-Subject: Re: [patch] ALSA: echoaudio: use after free on error
-Message-Id: <s5hzjl43n1g.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Mar 2014 08:40:02 +0000
+Subject: [patch]  Staging: rtl8192e: array overflow in set_swcam()
+Message-Id: <20140328084002.GR25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140305110715.GB16926@elgon.mountain>
-	<531708B9.6020007@bfs.de>
-In-Reply-To: <531708B9.6020007@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wharms@bfs.de
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-At Wed, 05 Mar 2014 12:21:29 +0100,
-walter harms wrote:
-> 
-> 
-> 
-> Am 05.03.2014 12:07, schrieb Dan Carpenter:
-> > There are some places where we dereference "chip" in the error message
-> > but we've already freed it.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
-> > index 166ec0c120d4..9f10c9e0df5e 100644
-> > --- a/sound/pci/echoaudio/echoaudio.c
-> > +++ b/sound/pci/echoaudio/echoaudio.c
-> > @@ -1990,8 +1990,8 @@ static int snd_echo_create(struct snd_card *card,
-> >  
-> >  	if ((chip->iores = request_mem_region(chip->dsp_registers_phys, sz,
-> >  					      ECHOCARD_NAME)) = NULL) {
-> 
-> 
-> this should read:
-> chip->iores = request_mem_region(chip->dsp_registers_phys, sz,ECHOCARD_NAME);
-> if (chip->iores = NULL) {
+"EntryNo" comes from the user in rtl8192_ioctl().  We should limit it
+to 31 to prevent memory corruption.
 
-In general, better not to do many things at once.
-A fix patch should fix the bug, and that's all.
-A coding style cleanup can be done later, if any.
+Also we may as well return on invalid data in setKey() as well.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  I'm not certain this fix is enough to solve the whole
+problem.  Please review.
 
-Takashi
-
-> 
-> re,
->  wh
-> 
-> > -		snd_echo_free(chip);
-> >  		dev_err(chip->card->dev, "cannot get memory region\n");
-> > +		snd_echo_free(chip);
-> >  		return -EBUSY;
-> >  	}
-> >  	chip->dsp_registers = (volatile u32 __iomem *)
-> > @@ -1999,8 +1999,8 @@ static int snd_echo_create(struct snd_card *card,
-> >  
-> >  	if (request_irq(pci->irq, snd_echo_interrupt, IRQF_SHARED,
-> >  			KBUILD_MODNAME, chip)) {
-> > -		snd_echo_free(chip);
-> >  		dev_err(chip->card->dev, "cannot grab irq\n");
-> > +		snd_echo_free(chip);
-> >  		return -EBUSY;
-> >  	}
-> >  	chip->irq = pci->irq;
-> > @@ -2012,8 +2012,8 @@ static int snd_echo_create(struct snd_card *card,
-> >  	if (snd_dma_alloc_pages(SNDRV_DMA_TYPE_DEV, snd_dma_pci_data(chip->pci),
-> >  				sizeof(struct comm_page),
-> >  				&chip->commpage_dma_buf) < 0) {
-> > -		snd_echo_free(chip);
-> >  		dev_err(chip->card->dev, "cannot allocate the comm page\n");
-> > +		snd_echo_free(chip);
-> >  		return -ENOMEM;
-> >  	}
-> >  	chip->comm_page_phys = chip->commpage_dma_buf.addr;
-> > @@ -2291,8 +2291,8 @@ static int snd_echo_resume(struct device *dev)
-> >  
-> >  	if (request_irq(pci->irq, snd_echo_interrupt, IRQF_SHARED,
-> >  			KBUILD_MODNAME, chip)) {
-> > -		snd_echo_free(chip);
-> >  		dev_err(chip->card->dev, "cannot grab irq\n");
-> > +		snd_echo_free(chip);
-> >  		return -EBUSY;
-> >  	}
-> >  	chip->irq = pci->irq;
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> 
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
+index c46c65c..a6ca8982 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.c
+@@ -87,6 +87,10 @@ void set_swcam(struct net_device *dev, u8 EntryNo, u8 KeyIndex, u16 KeyType,
+ 	RT_TRACE(COMP_DBG, "======>%s():EntryNo is %d,KeyIndex is "
+ 		 "%d,KeyType is %d,is_mesh is %d\n", __func__, EntryNo,
+ 		 KeyIndex, KeyType, is_mesh);
++
++	if (EntryNo >= TOTAL_CAM_ENTRY)
++		return;
++
+ 	if (!is_mesh) {
+ 		ieee->swcamtable[EntryNo].bused = true;
+ 		ieee->swcamtable[EntryNo].key_index = KeyIndex;
+@@ -121,8 +125,10 @@ void setKey(struct net_device *dev, u8 EntryNo, u8 KeyIndex, u16 KeyType,
+ 		}
+ 	}
+ 	priv->rtllib->is_set_key = true;
+-	if (EntryNo >= TOTAL_CAM_ENTRY)
++	if (EntryNo >= TOTAL_CAM_ENTRY) {
+ 		RT_TRACE(COMP_ERR, "cam entry exceeds in setKey()\n");
++		return;
++	}
+ 
+ 	RT_TRACE(COMP_SEC, "==>to setKey(), dev:%p, EntryNo:%d, KeyIndex:%d,"
+ 		 "KeyType:%d, MacAddr %pM\n", dev, EntryNo, KeyIndex,
