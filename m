@@ -1,70 +1,32 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 05 Mar 2014 22:52:40 +0000
-Subject: Re: [coccicheck Linux 3.14-rc5 PATCH 3 of 5] Deletion of unnecessary checks before specific function
-Message-Id: <5317AAB8.20703@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Mar 2014 08:21:39 +0000
+Subject: [patch 1/2] net/mlx4: fix some indenting in mlx4_ib_add()
+Message-Id: <20140328082139.GF25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Roland Dreier <roland@kernel.org>
+Cc: Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, Or Gerlitz <ogerlitz@mellanox.com>, Matan Barak <matanb@mellanox.com>, Moni Shoua <monis@mellanox.co.il>, Jack Morgenstein <jackm@dev.mellanox.co.il>, Yann Droneaud <ydroneaud@opteya.com>, Hadar Hen Zion <hadarh@mellanox.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->> If you are convinced that dropping the null tests is a good idea, then you 
->> can submit the patch that makes the change to the relevant maintainers and 
->> mailing lists.
+The code was indented too far and also kernel style says we should have
+curly braces.
 
-From f4608fceec40b2b94aa9b4abe3bbb6d98ed5eed9 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Mar 2014 18:58:30 +0100
-Subject: [PATCH 3/5] Addition of a SQLite script for a text file import
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A script was added so that a text file which was previously generated can be
-imported into a SQLite data base table.
-http://sqlite.org/sqlite.html
-
-The shown file name can be adjusted by a make file for example.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- .../coccinelle/deletions/handle_function_list_template.sqlite    | 9 +++++++++
- 1 file changed, 9 insertions(+)
- create mode 100644
-scripts/coccinelle/deletions/handle_function_list_template.sqlite
-
-diff --git a/scripts/coccinelle/deletions/handle_function_list_template.sqlite
-b/scripts/coccinelle/deletions/handle_function_list_template.sqlite
-new file mode 100644
-index 0000000..bec366c
---- /dev/null
-+++ b/scripts/coccinelle/deletions/handle_function_list_template.sqlite
-@@ -0,0 +1,9 @@
-+create table positions(function text,
-+                       data_type text,
-+                       parameter text,
-+                       source_file text,
-+                       line integer,
-+                       column integer);
-+.separator "|"
-+.import list_input_pointer_validation1.txt positions
-+.header OFF
--- 
-1.9.0
-
-
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 6cb8546..8d9d6b8 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2048,8 +2048,9 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
+ 			err = mlx4_counter_alloc(ibdev->dev, &ibdev->counters[i]);
+ 			if (err)
+ 				ibdev->counters[i] = -1;
+-		} else
+-				ibdev->counters[i] = -1;
++		} else {
++			ibdev->counters[i] = -1;
++		}
+ 	}
+ 
+ 	mlx4_foreach_port(i, dev, MLX4_PORT_TYPE_IB)
