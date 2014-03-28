@@ -1,30 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 27 Mar 2014 19:28:39 +0000
-Subject: Re: [PATCH 2/7] atm: replace del_timer by del_timer_sync
-Message-Id: <20140327.152839.2062547253132146958.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Mar 2014 08:24:28 +0000
+Subject: [patch] RDMA/cxgb4: info leak in c4iw_alloc_ucontext()
+Message-Id: <20140328082428.GH25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1395869625-15209-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1395869625-15209-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1395869625-15209-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, tglx@linutronix.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 26 Mar 2014 22:33:40 +0100
+The c4iw_alloc_ucontext_resp struct has a 4 byte hole after the last
+member and we should clear it before passing it to the user.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Use del_timer_sync to ensure that the timer is stopped on all CPUs before
-> the driver exists.
-> 
-> This change was suggested by Thomas Gleixner.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: 05eb23893c2c ('cxgb4/iw_cxgb4: Doorbell Drop Avoidance Bug Fixes')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/infiniband/hw/cxgb4/provider.c b/drivers/infiniband/hw/cxgb4/provider.c
+index e36d2a2..a72aaa7 100644
+--- a/drivers/infiniband/hw/cxgb4/provider.c
++++ b/drivers/infiniband/hw/cxgb4/provider.c
+@@ -107,7 +107,7 @@ static struct ib_ucontext *c4iw_alloc_ucontext(struct ib_device *ibdev,
+ 	struct c4iw_ucontext *context;
+ 	struct c4iw_dev *rhp = to_c4iw_dev(ibdev);
+ 	static int warned;
+-	struct c4iw_alloc_ucontext_resp uresp;
++	struct c4iw_alloc_ucontext_resp uresp = {};
+ 	int ret = 0;
+ 	struct c4iw_mm_entry *mm = NULL;
+ 
