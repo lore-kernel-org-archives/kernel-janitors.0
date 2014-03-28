@@ -1,40 +1,34 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 05 Mar 2014 11:11:31 +0000
-Subject: Re: [patch] ALSA: lola: NULL deref on allocation error
-Message-Id: <s5h61ns528s.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Mar 2014 08:03:13 +0000
+Subject: [patch] xfs: extra semi-colon breaks a condition
+Message-Id: <20140328080313.GA25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140305105225.GA3599@elgon.mountain>
-In-Reply-To: <20140305105225.GA3599@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
 
-At Wed, 5 Mar 2014 13:55:09 +0300,
-Dan Carpenter wrote:
-> 
-> "chip" is NULL here.  We don't need a printk here because kmalloc() has
-> it built in.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There were some extra semi-colons here which mean that we return true
+unintentionally.
 
-Thanks, applied.
+Fixes: a49935f200e2 ('xfs: xfs_check_page_type buffer checks need help')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> diff --git a/sound/pci/lola/lola.c b/sound/pci/lola/lola.c
-> index d63434d8c3fb..68824cdd137d 100644
-> --- a/sound/pci/lola/lola.c
-> +++ b/sound/pci/lola/lola.c
-> @@ -586,7 +586,6 @@ static int lola_create(struct snd_card *card, struct pci_dev *pci,
->  
->  	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
->  	if (!chip) {
-> -		dev_err(chip->card->dev, "cannot allocate chip\n");
->  		pci_disable_device(pci);
->  		return -ENOMEM;
->  	}
-> 
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 98016b3..75df77d 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -659,10 +659,10 @@ xfs_check_page_type(
+ 			if (type = XFS_IO_UNWRITTEN)
+ 				return true;
+ 		} else if (buffer_delay(bh)) {
+-			if (type = XFS_IO_DELALLOC);
++			if (type = XFS_IO_DELALLOC)
+ 				return true;
+ 		} else if (buffer_dirty(bh) && buffer_mapped(bh)) {
+-			if (type = XFS_IO_OVERWRITE);
++			if (type = XFS_IO_OVERWRITE)
+ 				return true;
+ 		}
+ 
