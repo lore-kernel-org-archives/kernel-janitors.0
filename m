@@ -1,33 +1,38 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Mar 2014 08:06:00 +0000
-Subject: [patch] Btrfs: kmalloc() doesn't return an ERR_PTR
-Message-Id: <20140328080600.GD25192@mwanda>
+Date: Fri, 28 Mar 2014 08:26:03 +0000
+Subject: [patch] [media] av7110: fix confusing indenting
+Message-Id: <20140328082603.GJ25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <clm@fb.com>, Hugo Mills <hugo@carfax.org.uk>
-Cc: Josef Bacik <jbacik@fb.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The error handling was copy and pasted from memdup_user().  It should be
-checking for NULL obviously.
+The else statement here is not aligned with the correct if statement.
+I think the code works as intended and it's just the indenting which is
+wrong.  Also kernel style says we should use curly braces here so I have
+added those.
 
-Fixes: abccd00f8af2 ('btrfs: Fix 32/64-bit problem with BTRFS_SET_RECEIVED_SUBVOL ioctl')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This patch doesn't change how the code works, but I would still
+appreciate extra review because maybe the original code is wrong?
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 0401397..27d551c 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4531,9 +4531,8 @@ static long btrfs_ioctl_set_received_subvol_32(struct file *file,
+diff --git a/drivers/media/pci/ttpci/av7110_av.c b/drivers/media/pci/ttpci/av7110_av.c
+index 301029c..9544cfc 100644
+--- a/drivers/media/pci/ttpci/av7110_av.c
++++ b/drivers/media/pci/ttpci/av7110_av.c
+@@ -958,8 +958,10 @@ static unsigned int dvb_video_poll(struct file *file, poll_table *wait)
+ 		if (av7110->playing) {
+ 			if (FREE_COND)
+ 				mask |= (POLLOUT | POLLWRNORM);
+-			} else /* if not playing: may play if asked for */
+-				mask |= (POLLOUT | POLLWRNORM);
++		} else {
++			/* if not playing: may play if asked for */
++			mask |= (POLLOUT | POLLWRNORM);
++		}
  	}
  
- 	args64 = kmalloc(sizeof(*args64), GFP_NOFS);
--	if (IS_ERR(args64)) {
--		ret = PTR_ERR(args64);
--		args64 = NULL;
-+	if (!args64) {
-+		ret = -ENOMEM;
- 		goto out;
- 	}
- 
+ 	return mask;
