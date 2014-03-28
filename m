@@ -1,70 +1,28 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Date: Wed, 19 Mar 2014 04:33:06 +0000
-Subject: Re: [PATCH 2/2] INTEL-IGB: Convert iounmap to pci_iounmap
-Message-Id: <1395203586.2050.7.camel@jtkirshe-mobl>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-3zjns+ZL2TfZRMyWNk/3"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Mar 2014 08:29:50 +0000
+Subject: [patch] iommu/vt-d: returning free pointer in get_domain_for_dev()
+Message-Id: <20140328082950.GN25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1395159085-11691-1-git-send-email-peter.senna@gmail.com>
-	 <1395159085-11691-2-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1395159085-11691-2-git-send-email-peter.senna@gmail.com>
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: jesse.brandeburg@intel.com, bruce.w.allan@intel.com, carolyn.wyborny@intel.com, donald.c.skidmore@intel.com, gregory.v.rose@intel.com, alexander.h.duyck@intel.com, john.ronciak@intel.com, mitch.a.williams@intel.com, linux.nics@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-
---=-3zjns+ZL2TfZRMyWNk/3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 2014-03-18 at 17:11 +0100, Peter Senna Tschudin wrote:
-> Use pci_iounmap instead of iounmap when the virtual mapping was done
-> with pci_iomap. A simplified version of the semantic patch that finds
-> this
-> issue is as follows: (http://coccinelle.lip6.fr/)
->    =20
-> // <smpl>
-> @r@
-> expression addr;
-> @@
-> addr =3D pci_iomap(...)
->=20
-> @rr@
-> expression r.addr;
-> @@
-> * iounmap(addr)
-> // </smpl>
->=20
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
->  Tested by compilation only.
->=20
->  drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Thanks Peter, I have added you patch to my queue.
-
---=-3zjns+ZL2TfZRMyWNk/3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+If we hit this error condition then we want to return a NULL pointer and
+not a freed variable.
 
-iQIcBAABCgAGBQJTKR4CAAoJEOVv75VaS+3O2GYP/1ALxiYvn0+dv/9+AObLK5E1
-20+vVgc2arJO3SBxH8ItcROvatSXnnuVGIVYDr35ogGxutye/onu+pcxvNHEyjal
-0mlfBT6G5HfNrg6ahlMwf3VbB57aUgjY4SHYHU5EC+ogDKLdOhogMdNH+EN1UtCt
-SEyUVfz7HWrzq/i+otW7tUCflz8mK3KFS+HhAl1y5tsGiA/z85dG9F66lm5nPt0D
-NA52OBorr7auzD2lUGRF4TEPZIJs/D1ShSsTyg21IZj/JkkGWpvvVcHBp0yyXSiR
-O8cKg3gMmv0dEV43DxGOPrvqRJ2T/rG7bgW4IMgIjXRj4EGHljhichpNIj5iXV3Q
-9KHgp1UdPnjOJHTzy6bIYyV1mEmcWckU9MJmU9K+p58UovEtXB37YKcPWLDd1zbN
-7k5tlG/C/LUIXgKyjCXuHmEpSnBGEjwGMwC1cOAWCimpTug2N4+tYDBDhtrXKSDs
-qZObjAryn3521riFtAvP9CMct0JTDlnwni02Nnv5Np31RPFFumr0ZRDmVZTu/pOP
-qMq5A7/OxdOripXzHIPvzlqr2qZ822n5U6Fe1nqUZ7gc1/cmnz6u4dH/fFp/mrW9
-0nRlhxK0WvzQLi0xi9uaQvU/07gAI17A7wTNWfA8Vlsf+Hq6N+uSKteb3UMosEH6
-G3HAHy5UB23he3G0wXka
-=20Hr
------END PGP SIGNATURE-----
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---=-3zjns+ZL2TfZRMyWNk/3--
-
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 6fbce01..69fa7da 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2257,6 +2257,7 @@ static struct dmar_domain *get_domain_for_dev(struct device *dev, int gaw)
+ 		goto error;
+ 	if (iommu_attach_domain(domain, iommu)) {
+ 		free_domain_mem(domain);
++		domain = NULL;
+ 		goto error;
+ 	}
+ 	free = domain;
