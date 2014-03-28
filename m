@@ -1,50 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 31 Mar 2014 08:46:57 +0000
-Subject: Re: [patch] ALSA: asihpi: fix some indenting in snd_card_asihpi_pcm_new()
-Message-Id: <s5heh1i3gce.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Mar 2014 08:27:33 +0000
+Subject: [patch] rsi: rsi_91x: misleading debug printk
+Message-Id: <20140328082733.GK25192@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140331074915.GA24854@mwanda>
-In-Reply-To: <20140331074915.GA24854@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eldad Zack <eldad@fogrefinery.com>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Fariya Fatima <fariyaf@gmail.com>, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Mon, 31 Mar 2014 10:49:15 +0300,
-Dan Carpenter wrote:
-> 
-> This used to be a part of a condition until f3d145aac913 ('ALSA: asihpi:
-> MMAP for non-busmaster cards') but now it's not and we can remove an
-> indent level.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There is a missing set of curly braces here so the debug output says
+"Probe confirm received" unintentionally.
 
-Thanks, applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
-> index e4e42f2..901c949 100644
-> --- a/sound/pci/asihpi/asihpi.c
-> +++ b/sound/pci/asihpi/asihpi.c
-> @@ -1253,11 +1253,12 @@ static int snd_card_asihpi_pcm_new(struct snd_card_asihpi *asihpi, int device)
->  			num_outstreams,	num_instreams, &pcm);
->  	if (err < 0)
->  		return err;
-> +
->  	/* pointer to ops struct is stored, dont change ops afterwards! */
-> -		snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
-> -				&snd_card_asihpi_playback_mmap_ops);
-> -		snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE,
-> -				&snd_card_asihpi_capture_mmap_ops);
-> +	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
-> +			&snd_card_asihpi_playback_mmap_ops);
-> +	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE,
-> +			&snd_card_asihpi_capture_mmap_ops);
->  
->  	pcm->private_data = asihpi;
->  	pcm->info_flags = 0;
-> 
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mgmt.c b/drivers/net/wireless/rsi/rsi_91x_mgmt.c
+index ef37d4b..2361a68 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mgmt.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mgmt.c
+@@ -1292,10 +1292,11 @@ int rsi_mgmt_pkt_recv(struct rsi_common *common, u8 *msg)
+ 			return -EINVAL;
+ 		}
+ 	} else if (msg_type = TX_STATUS_IND) {
+-		if (msg[15] = PROBEREQ_CONFIRM)
++		if (msg[15] = PROBEREQ_CONFIRM) {
+ 			common->mgmt_q_block = false;
+ 			rsi_dbg(FSM_ZONE, "%s: Probe confirm received\n",
+ 				__func__);
++		}
+ 	} else {
+ 		return rsi_mgmt_pkt_to_core(common, msg, msg_len, msg_type);
+ 	}
