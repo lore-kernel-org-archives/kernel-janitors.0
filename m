@@ -1,21 +1,26 @@
-From: Brian Foster <bfoster@redhat.com>
-Date: Fri, 28 Mar 2014 12:09:18 +0000
+From: Eric Sandeen <sandeen@sandeen.net>
+Date: Sat, 29 Mar 2014 01:56:04 +0000
 Subject: Re: [patch] xfs: extra semi-colon breaks a condition
-Message-Id: <20140328120917.GA21961@bfoster.bfoster>
+Message-Id: <53362834.7090900@sandeen.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140328080313.GA25192@mwanda>
 In-Reply-To: <20140328080313.GA25192@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Dave Chinner <david@fromorbit.com>
 Cc: kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
 
-On Fri, Mar 28, 2014 at 11:03:13AM +0300, Dan Carpenter wrote:
+On 3/28/14, 3:03 AM, Dan Carpenter wrote:
 > There were some extra semi-colons here which mean that we return true
 > unintentionally.
 > 
 > Fixes: a49935f200e2 ('xfs: xfs_check_page_type buffer checks need help')
+
+that's terrifying.
+
+Reviewed-by: Eric Sandeen <sandeen@redhat.com>
+
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
 > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
@@ -35,13 +40,10 @@ On Fri, Mar 28, 2014 at 11:03:13AM +0300, Dan Carpenter wrote:
 >  				return true;
 >  		}
 >  
-
-Nice catch.
-
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-
 > 
 > _______________________________________________
 > xfs mailing list
 > xfs@oss.sgi.com
 > http://oss.sgi.com/mailman/listinfo/xfs
+> 
+
