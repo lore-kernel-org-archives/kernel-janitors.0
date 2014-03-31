@@ -1,41 +1,38 @@
-From: Ingo Molnar <mingo@kernel.org>
-Date: Mon, 31 Mar 2014 07:21:26 +0000
-Subject: Re: [PATCH] x86: Add function prototype for setup_default_timer_irq
-Message-Id: <20140331072126.GA1819@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 31 Mar 2014 07:49:15 +0000
+Subject: [patch] ALSA: asihpi: fix some indenting in snd_card_asihpi_pcm_new()
+Message-Id: <20140331074915.GA24854@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1395937030-2210-1-git-send-email-luiorpe1@gmail.com>
-In-Reply-To: <1395937030-2210-1-git-send-email-luiorpe1@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Eldad Zack <eldad@fogrefinery.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
+This used to be a part of a condition until f3d145aac913 ('ALSA: asihpi:
+MMAP for non-busmaster cards') but now it's not and we can remove an
+indent level.
 
-* Luis Ortega <luiorpe1@gmail.com> wrote:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> This eliminates the following warning in arch/x86/kernel/time.c:
-> arch/x86/kernel/time.c:69:13: warning: no previous prototype for ‘setup_default_timer_irq’ [-Wmissing-prototypes]
-> 
-> Signed-off-by: Luis Ortega <luiorpe1@gmail.com>
-> ---
->  arch/x86/include/asm/time.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/include/asm/time.h b/arch/x86/include/asm/time.h
-> index 92b8aec..935ceb6 100644
-> --- a/arch/x86/include/asm/time.h
-> +++ b/arch/x86/include/asm/time.h
-> @@ -4,6 +4,7 @@
->  #include <linux/clocksource.h>
->  #include <asm/mc146818rtc.h>
-> 
-> +extern void setup_default_timer_irq(void);
->  extern void hpet_time_init(void);
->  extern void time_init(void);
-
-Hm, there's already a prototype for that function, in 
-arch/x86/include/asm/setup.h.
-
-Thanks,
-
-	Ingo
+diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+index e4e42f2..901c949 100644
+--- a/sound/pci/asihpi/asihpi.c
++++ b/sound/pci/asihpi/asihpi.c
+@@ -1253,11 +1253,12 @@ static int snd_card_asihpi_pcm_new(struct snd_card_asihpi *asihpi, int device)
+ 			num_outstreams,	num_instreams, &pcm);
+ 	if (err < 0)
+ 		return err;
++
+ 	/* pointer to ops struct is stored, dont change ops afterwards! */
+-		snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
+-				&snd_card_asihpi_playback_mmap_ops);
+-		snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE,
+-				&snd_card_asihpi_capture_mmap_ops);
++	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
++			&snd_card_asihpi_playback_mmap_ops);
++	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE,
++			&snd_card_asihpi_capture_mmap_ops);
+ 
+ 	pcm->private_data = asihpi;
+ 	pcm->info_flags = 0;
