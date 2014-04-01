@@ -1,39 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Apr 2014 09:36:13 +0000
-Subject: [patch 1/2] staging: unisys: use after free in error messages
-Message-Id: <20140410093613.GA5839@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 01 Apr 2014 13:49:18 +0000
+Subject: [PATCH 2/3] ray_cs: replace del_timer by del_timer_sync
+Message-Id: <1396360159-16244-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We dereference "bus" when we report the error so we have to move the
-kfree() down a couple lines.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+the driver exits.
 
-diff --git a/drivers/staging/unisys/uislib/uislib.c b/drivers/staging/unisys/uislib/uislib.c
-index 8ea9c46..3152a21 100644
---- a/drivers/staging/unisys/uislib/uislib.c
-+++ b/drivers/staging/unisys/uislib/uislib.c
-@@ -381,17 +381,17 @@ create_bus(CONTROLVM_MESSAGE *msg, char *buf)
- 		cmd.add_vbus.busTypeGuid = msg->cmd.createBus.busDataTypeGuid;
- 		cmd.add_vbus.busInstGuid = msg->cmd.createBus.busInstGuid;
- 		if (!VirtControlChanFunc) {
--			kfree(bus);
- 			LOGERR("CONTROLVM_BUS_CREATE Failed: virtpci callback not registered.");
- 			POSTCODE_LINUX_3(BUS_CREATE_FAILURE_PC, bus->busNo,
- 					 POSTCODE_SEVERITY_ERR);
-+			kfree(bus);
- 			return CONTROLVM_RESP_ERROR_VIRTPCI_DRIVER_FAILURE;
- 		}
- 		if (!VirtControlChanFunc(&cmd)) {
--			kfree(bus);
- 			LOGERR("CONTROLVM_BUS_CREATE Failed: virtpci GUEST_ADD_VBUS returned error.");
- 			POSTCODE_LINUX_3(BUS_CREATE_FAILURE_PC, bus->busNo,
- 					 POSTCODE_SEVERITY_ERR);
-+			kfree(bus);
- 			return
- 			    CONTROLVM_RESP_ERROR_VIRTPCI_DRIVER_CALLBACK_ERROR;
- 		}
+This change was suggested by Thomas Gleixner.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier i,t,ex;
+@@
+struct t i = { .remove = ex, };
+
+@@
+identifier r.ex;
+@@
+ex(...) {
+  <...
+- del_timer
++ del_timer_sync
+    (...)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ drivers/net/wireless/ray_cs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ray_cs.c b/drivers/net/wireless/ray_cs.c
+index cbf0a58..8330fa3 100644
+--- a/drivers/net/wireless/ray_cs.c
++++ b/drivers/net/wireless/ray_cs.c
+@@ -343,7 +343,7 @@ static void ray_detach(struct pcmcia_device *link)
+ 	ray_release(link);
+ 
+ 	local = netdev_priv(dev);
+-	del_timer(&local->timer);
++	del_timer_sync(&local->timer);
+ 
+ 	if (link->priv) {
+ 		unregister_netdev(dev);
+
