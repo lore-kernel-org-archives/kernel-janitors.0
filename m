@@ -1,45 +1,63 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Apr 2014 09:36:03 +0000
-Subject: [patch v3] [media] em28xx-cards: fix indenting in probe()
-Message-Id: <20140430093603.GA20713@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 01 Apr 2014 13:49:17 +0000
+Subject: [PATCH 1/3] memstick: replace del_timer by del_timer_sync
+Message-Id: <1396360159-16244-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20140307170110.GP4774@mwanda>
+References: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: linux-media@vger.kernel.org, Frank =?iso-8859-1?Q?Sch=E4fer?= <fschaefer.oss@googlemail.com>, kernel-janitors@vger.kernel.org
+To: Alex Dubov <oakad@yahoo.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There was a mix of 4 space and tab indenting here which was confusing.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+the driver exits.
+
+This change was suggested by Thomas Gleixner.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+identifier i,t,ex;
+@@
+struct t i = { .remove = ex, };
+
+@@
+identifier r.ex;
+@@
+ex(...) {
+  <...
+- del_timer
++ del_timer_sync
+    (...)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-v3: Just fix all the surrounding indents as well.
-v2: At first I thought the code was buggy and was missing curly braces
-    but it was just the indenting which was confusing.
+Not tested.
 
-diff --git a/drivers/media/usb/em28xx/em28xx-cards.c b/drivers/media/usb/em28xx/em28xx-cards.c
-index 50aa5a5..3744766 100644
---- a/drivers/media/usb/em28xx/em28xx-cards.c
-+++ b/drivers/media/usb/em28xx/em28xx-cards.c
-@@ -3416,14 +3416,14 @@ static int em28xx_usb_probe(struct usb_interface *interface,
- 
- 	/* Select USB transfer types to use */
- 	if (has_video) {
--	    if (!dev->analog_ep_isoc || (try_bulk && dev->analog_ep_bulk))
--		dev->analog_xfer_bulk = 1;
--	    em28xx_info("analog set to %s mode.\n",
--			dev->analog_xfer_bulk ? "bulk" : "isoc");
-+		if (!dev->analog_ep_isoc || (try_bulk && dev->analog_ep_bulk))
-+			dev->analog_xfer_bulk = 1;
-+		em28xx_info("analog set to %s mode.\n",
-+			    dev->analog_xfer_bulk ? "bulk" : "isoc");
- 	}
- 	if (has_dvb) {
--	    if (!dev->dvb_ep_isoc || (try_bulk && dev->dvb_ep_bulk))
--		dev->dvb_xfer_bulk = 1;
-+		if (!dev->dvb_ep_isoc || (try_bulk && dev->dvb_ep_bulk))
-+			dev->dvb_xfer_bulk = 1;
- 
- 		em28xx_info("dvb set to %s mode.\n",
- 			    dev->dvb_xfer_bulk ? "bulk" : "isoc");
+ drivers/memstick/host/tifm_ms.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/memstick/host/tifm_ms.c b/drivers/memstick/host/tifm_ms.c
+index 7bafa72..bc643d7 100644
+--- a/drivers/memstick/host/tifm_ms.c
++++ b/drivers/memstick/host/tifm_ms.c
+@@ -605,7 +605,7 @@ static void tifm_ms_remove(struct tifm_dev *sock)
+ 	spin_lock_irqsave(&sock->lock, flags);
+ 	host->eject = 1;
+ 	if (host->req) {
+-		del_timer(&host->timer);
++		del_timer_sync(&host->timer);
+ 		writel(TIFM_FIFO_INT_SETALL,
+ 		       sock->addr + SOCK_DMA_FIFO_INT_ENABLE_CLEAR);
+ 		writel(TIFM_DMA_RESET, sock->addr + SOCK_DMA_CONTROL);
+
