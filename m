@@ -1,28 +1,13 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 29 Apr 2014 12:39:53 +0000
-Subject: [patch]  [SCSI] osst: indent for loop body
-Message-Id: <20140429123953.GA18437@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 01 Apr 2014 13:49:16 +0000
+Subject: [PATCH 0/3] replace del_timer by del_timer_sync
+Message-Id: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Willem Riede <osst@riede.org>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, osst-users@lists.sourceforge.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
 
-The for body loop isn't indented at all so it's confusing.
+These patches replace del_timer by del_timer_sync in remove functions.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
-index 21883a2..3074f6b 100644
---- a/drivers/scsi/osst.c
-+++ b/drivers/scsi/osst.c
-@@ -5430,7 +5430,7 @@ static int append_to_buffer(const char __user *ubp, struct osst_buffer *st_bp, i
- 
- 	for (i=0, offset=st_bp->buffer_bytes;
- 	     i < st_bp->sg_segs && offset >= st_bp->sg[i].length; i++)
--	offset -= st_bp->sg[i].length;
-+		offset -= st_bp->sg[i].length;
- 	if (i = st_bp->sg_segs) {  /* Should never happen */
- 		printk(KERN_WARNING "osst :A: Append_to_buffer offset overflow.\n");
- 		return (-EIO);
