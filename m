@@ -1,73 +1,63 @@
-From: Byungho An <bh74.an@samsung.com>
-Date: Wed, 02 Apr 2014 06:55:51 +0000
-Subject: RE: [patch 1/3] net: sxgbe: sxgbe_mdio_register() frees the bus
-Message-Id: <000301cf4e40$97f14a40$c7d3dec0$@samsung.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 01 Apr 2014 13:49:19 +0000
+Subject: [PATCH 3/3] watchdog: via_wdt: replace del_timer by del_timer_sync
+Message-Id: <1396360159-16244-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140401133844.GA11536@mwanda>
- <20140401.162322.2243641448457002118.davem@davemloft.net>
-In-Reply-To: <20140401.162322.2243641448457002118.davem@davemloft.net>
+References: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'David Miller' <davem@davemloft.net>, dan.carpenter@oracle.com
-Cc: ks.giri@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> :
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Tue, 1 Apr 2014 16:38:44 +0300
-> 
-> > @@ -219,13 +219,6 @@ int sxgbe_mdio_register(struct net_device *ndev)
-> >  		}
-> >  	}
-> >
-> > -	if (!err) {
-> > -		netdev_err(ndev, "PHY not found\n");
-> > -		mdiobus_unregister(mdio_bus);
-> > -		mdiobus_free(mdio_bus);
-> > -		goto mdiobus_err;
-> > -	}
-> > -
-> ...
-> > @@ -93,9 +93,9 @@ static void sxgbe_core_set_umac_addr(void __iomem
-> > *ioaddr, unsigned char *addr,  {
-> >  	u32 high_word, low_word;
-> >
-> > -	high_word = (addr[5] << 8) || (addr[4]);
-> > -	low_word = ((addr[3] << 24) || (addr[2] << 16) ||
-> > -		    (addr[1] << 8) || (addr[0]));
-> > +	high_word = (addr[5] << 8) | (addr[4]);
-> > +	low_word = (addr[3] << 24) | (addr[2] << 16) |
-> > +		   (addr[1] << 8) | (addr[0]);
-> >  	writel(high_word, ioaddr + SXGBE_CORE_ADD_HIGHOFFSET(reg_n));
-> >  	writel(low_word, ioaddr + SXGBE_CORE_ADD_LOWOFFSET(reg_n));  }
-> 
-> Nothing says "DRIVER NOT TESTED" like these two bugs.
-> 
-> The MDIO bus is always freed, and the MAC address is corrupted into a
-> boolean value before being programmed into the hardware.
-> 
-> Frankly, this kind of stuff is unacceptable.
-> 
-> I cannot see how this driver can function successfully with these two
-errors, it
-> looks simply impossible.
-> 
-> I'm not going to hide my feelings, this was a truly terrible driver
-submission.
-> The amount of reviewing resources consumed during all of these iterations
-was
-> huge, and it still went in with bugs like this.
-> 
-> It probably should have gone into staging.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Oops, my apologies. mdio err path and logical and bitwise for mac address are
-my mistake I didn't tested carefully (maybe tested with previous version)
-because I couldn't much time to test it due to facing merge window. sorry
-about that...
+Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+the driver exits.
 
-For logical and bitwise OR for mac address, actually I couldn't catch since
-"eth_hw_addr_random" is used.. however it is also mistake.
+This change was suggested by Thomas Gleixner.
 
-I apology again.
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
+// <smpl>
+@r@
+identifier i,t,ex;
+@@
+struct t i = { .remove = ex, };
+
+@@
+identifier r.ex;
+@@
+ex(...) {
+  <...
+- del_timer
++ del_timer_sync
+    (...)
+  ...>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not tested.
+
+ drivers/watchdog/via_wdt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/via_wdt.c b/drivers/watchdog/via_wdt.c
+index d2cd9f0..56369c4 100644
+--- a/drivers/watchdog/via_wdt.c
++++ b/drivers/watchdog/via_wdt.c
+@@ -232,7 +232,7 @@ err_out_disable_device:
+ static void wdt_remove(struct pci_dev *pdev)
+ {
+ 	watchdog_unregister_device(&wdt_dev);
+-	del_timer(&timer);
++	del_timer_sync(&timer);
+ 	iounmap(wdt_mem);
+ 	release_mem_region(mmio, VIA_WDT_MMIO_LEN);
+ 	release_resource(&wdt_res);
 
