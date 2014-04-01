@@ -1,34 +1,33 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Fri, 25 Apr 2014 21:34:14 +0000
-Subject: Re: Clarification needed on use of put_user inside a loop
-Message-Id: <20140425213414.GC18016@ZenIV.linux.org.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 01 Apr 2014 13:39:00 +0000
+Subject: [patch 2/3] net: sxgbe: fix logical vs bitwise operation
+Message-Id: <20140401133900.GB11536@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <535A88D5.3030008@gmail.com>
-In-Reply-To: <535A88D5.3030008@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: Girish K S <ks.giri@samsung.com>, Siva Reddy Kallam <siva.kallam@samsung.com>, Vipul Pandya <vipul.pandya@samsung.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Apr 25, 2014 at 09:39:57PM +0530, Kumar Gaurav wrote:
+Bitwise '|' was intended here instead of logical '||'.
 
-> I have  found some codes in the driver which use put_user() in loop.
-> Can we avoid the overhead of checking the same memory area( where
-> put_user() writes) again n again using __put_user() in side loop and
-> checking permission using access_ok before entering the loop?
+Fixes: 1edb9ca69e8a ('net: sxgbe: add basic framework for Samsung 10Gb ethernet driver')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->                         if (put_user(type, dst) ||
->                             put_user(chs_bytes, dst + 1))
->                                 return -EFAULT;
->                         dst += 2;
-			  ^^^^^^^^^
-Note that increment.  It's *not* "the same memory area" next time
-around.  Sure, you can check the whole range once before the loop
-and switch the stuff inside to __put_user()/__copy_to_user(), but
-it's not guaranteed to buy you any speedup.
-
-BTW, you might be a bit confused about the work done by access_ok() - e.g.
-on an architectures with separate kernel and userland MMU contexts it might
-very well be a no-op (always return true).  It's *not* checking if user has
-permissions of some sort.
+diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_core.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_core.c
+index 66d4a74..2e11da0 100644
+--- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_core.c
++++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_core.c
+@@ -93,9 +93,9 @@ static void sxgbe_core_set_umac_addr(void __iomem *ioaddr, unsigned char *addr,
+ {
+ 	u32 high_word, low_word;
+ 
+-	high_word = (addr[5] << 8) || (addr[4]);
+-	low_word = ((addr[3] << 24) || (addr[2] << 16) ||
+-		    (addr[1] << 8) || (addr[0]));
++	high_word = (addr[5] << 8) | (addr[4]);
++	low_word = (addr[3] << 24) | (addr[2] << 16) |
++		   (addr[1] << 8) | (addr[0]);
+ 	writel(high_word, ioaddr + SXGBE_CORE_ADD_HIGHOFFSET(reg_n));
+ 	writel(low_word, ioaddr + SXGBE_CORE_ADD_LOWOFFSET(reg_n));
+ }
