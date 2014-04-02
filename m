@@ -1,63 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 01 Apr 2014 13:49:17 +0000
-Subject: [PATCH 1/3] memstick: replace del_timer by del_timer_sync
-Message-Id: <1396360159-16244-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Apr 2014 10:48:14 +0000
+Subject: re: clk: qcom: Add support for root clock generators (RCGs)
+Message-Id: <20140402104814.GA19427@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Dubov <oakad@yahoo.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Stephen Boyd,
 
-Use del_timer_sync to ensure that the timer is stopped on all CPUs before
-the driver exits.
+The patch bcd61c0f535a: "clk: qcom: Add support for root clock
+generators (RCGs)" from Jan 15, 2014, leads to the following static
+checker warning:
 
-This change was suggested by Thomas Gleixner.
+	drivers/clk/qcom/clk-rcg2.c:79 clk_rcg2_get_parent()
+	warn: signedness bug returning '(-22)'
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+drivers/clk/qcom/clk-rcg2.c
+    61  static u8 clk_rcg2_get_parent(struct clk_hw *hw)
+    62  {
+    63          struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+    64          int num_parents = __clk_get_num_parents(hw->clk);
+    65          u32 cfg;
+    66          int i, ret;
+    67  
+    68          ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
+    69          if (ret)
+    70                  return ret;
+    71  
+    72          cfg &= CFG_SRC_SEL_MASK;
+    73          cfg >>= CFG_SRC_SEL_SHIFT;
+    74  
+    75          for (i = 0; i < num_parents; i++)
+    76                  if (cfg = rcg->parent_map[i])
+    77                          return i;
+    78  
+    79          return -EINVAL;
+                ^^^^^^^^^^^^^^
+    80  }
 
-// <smpl>
-@r@
-identifier i,t,ex;
-@@
-struct t i = { .remove = ex, };
+See also:
 
-@@
-identifier r.ex;
-@@
-ex(...) {
-  <...
-- del_timer
-+ del_timer_sync
-    (...)
-  ...>
-}
-// </smpl>
+        drivers/clk/qcom/clk-rcg.c:57 clk_rcg_get_parent()
+        warn: signedness bug returning '(-22)'
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+	drivers/clk/qcom/clk-rcg.c:86 clk_dyn_rcg_get_parent()
+	warn: signedness bug returning '(-22)'
 
----
-Not tested.
-
- drivers/memstick/host/tifm_ms.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/memstick/host/tifm_ms.c b/drivers/memstick/host/tifm_ms.c
-index 7bafa72..bc643d7 100644
---- a/drivers/memstick/host/tifm_ms.c
-+++ b/drivers/memstick/host/tifm_ms.c
-@@ -605,7 +605,7 @@ static void tifm_ms_remove(struct tifm_dev *sock)
- 	spin_lock_irqsave(&sock->lock, flags);
- 	host->eject = 1;
- 	if (host->req) {
--		del_timer(&host->timer);
-+		del_timer_sync(&host->timer);
- 		writel(TIFM_FIFO_INT_SETALL,
- 		       sock->addr + SOCK_DMA_FIFO_INT_ENABLE_CLEAR);
- 		writel(TIFM_DMA_RESET, sock->addr + SOCK_DMA_CONTROL);
-
+regards,
+dan carpenter
