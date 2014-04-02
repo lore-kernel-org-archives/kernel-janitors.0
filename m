@@ -1,56 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 10 Apr 2014 09:45:45 +0000
-Subject: [patch 2/2] Staging: unisys: use after free in list_for_each()
-Message-Id: <20140410094545.GB5839@mwanda>
+Date: Wed, 02 Apr 2014 15:08:58 +0000
+Subject: [patch] RDMA/cxgb4: release mutex on error in c4iw_reject_cr()
+Message-Id: <20140402150858.GA552@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001f01cf4e7f$6ceba770$46c2f650$@opengridcomputing.com>
+In-Reply-To: <001f01cf4e7f$6ceba770$46c2f650$@opengridcomputing.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steve Wise <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
+Cc: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-These should be using the _safe version of list_for_each() because we
-free the current element and it leads to a use after free bug.
+We recently added some locking to this function and there was an error
+path which missed the unlock.
 
+Fixes: 9306dcbc96f3 ('RDMA/cxgb4: Lock around accept/reject downcalls')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/unisys/visorchipset/visorchipset.h b/drivers/staging/unisys/visorchipset/visorchipset.h
-index d4bf203..d95825d 100644
---- a/drivers/staging/unisys/visorchipset/visorchipset.h
-+++ b/drivers/staging/unisys/visorchipset/visorchipset.h
-@@ -104,9 +104,9 @@ finddevice(struct list_head *list, U32 busNo, U32 devNo)
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index 303e29c..f3753a1 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -2524,6 +2524,7 @@ int c4iw_reject_cr(struct iw_cm_id *cm_id, const void *pdata, u8 pdata_len)
  
- static inline void delbusdevices(struct list_head *list, U32 busNo)
- {
--	VISORCHIPSET_DEVICE_INFO *p;
-+	VISORCHIPSET_DEVICE_INFO *p, *tmp;
- 
--	list_for_each_entry(p, list, entry) {
-+	list_for_each_entry_safe(p, tmp, list, entry) {
- 		if (p->busNo = busNo) {
- 			list_del(&p->entry);
- 			kfree(p);
-diff --git a/drivers/staging/unisys/visorchipset/visorchipset_main.c b/drivers/staging/unisys/visorchipset/visorchipset_main.c
-index 257c6e5..c475e25 100644
---- a/drivers/staging/unisys/visorchipset/visorchipset_main.c
-+++ b/drivers/staging/unisys/visorchipset/visorchipset_main.c
-@@ -605,16 +605,16 @@ EXPORT_SYMBOL_GPL(visorchipset_register_busdev_client);
- static void
- cleanup_controlvm_structures(void)
- {
--	VISORCHIPSET_BUS_INFO *bi;
--	VISORCHIPSET_DEVICE_INFO *di;
-+	VISORCHIPSET_BUS_INFO *bi, *tmp_bi;
-+	VISORCHIPSET_DEVICE_INFO *di, *tmp_di;
- 
--	list_for_each_entry(bi, &BusInfoList, entry) {
-+	list_for_each_entry_safe(bi, tmp_bi, &BusInfoList, entry) {
- 		busInfo_clear(bi);
- 		list_del(&bi->entry);
- 		kfree(bi);
+ 	mutex_lock(&ep->com.mutex);
+ 	if (ep->com.state = DEAD) {
++		mutex_unlock(&ep->com.mutex);
+ 		c4iw_put_ep(&ep->com);
+ 		return -ECONNRESET;
  	}
- 
--	list_for_each_entry(di, &DevInfoList, entry) {
-+	list_for_each_entry_safe(di, tmp_di, &DevInfoList, entry) {
- 		devInfo_clear(di);
- 		list_del(&di->entry);
- 		kfree(di);
