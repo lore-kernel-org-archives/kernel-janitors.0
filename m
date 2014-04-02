@@ -1,23 +1,35 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Wed, 16 Apr 2014 06:42:36 +0000
-Subject: Re: [patch] dmaengine: sirf: off by one in of_dma_sirfsoc_xlate()
-Message-Id: <20140416063036.GJ32284@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 02 Apr 2014 16:53:54 +0000
+Subject: [patch] Input: edt-ft5x06 - add a missing condition
+Message-Id: <20140402165354.GA9970@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140403072933.GD14286@mwanda>
-In-Reply-To: <20140403072933.GD14286@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Henrik Rydberg <rydberg@euromail.se>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Fugang Duan <B38611@freescale.com>, Jingoo Han <jg1.han@samsung.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, Apr 03, 2014 at 10:29:33AM +0300, Dan Carpenter wrote:
-> The ">" here should be ">=" or we are one step beyond the end of the
-> sdma->channels[] array.
-> 
-> Fixes: 2e041c94628c ('dmaengine: sirf: enable generic dt binding for dma channels')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The if condition was accidentally deleted here so we return every time
+instead of returning on error.
 
-Applied, thanks
+Fixes: fd335ab04b3f ('Input: edt-ft5x06 - add support for M09 firmware version')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-~Vinod
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index 75b666b..9d0b324 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -291,9 +291,10 @@ static int edt_ft5x06_register_read(struct edt_ft5x06_ts_data *tsdata,
+ 		wrbuf[1] = tsdata->factory_mode ? addr & 0x7f : addr & 0x3f;
+ 		wrbuf[1] |= tsdata->factory_mode ? 0x80 : 0x40;
+ 
+-		error = edt_ft5x06_ts_readwrite(tsdata->client,
+-						2, wrbuf, 2, rdbuf);
+-		return error;
++		error = edt_ft5x06_ts_readwrite(tsdata->client,	2, wrbuf, 2,
++						rdbuf);
++		if (error)
++			return error;
+ 
+ 		if ((wrbuf[0] ^ wrbuf[1] ^ rdbuf[0]) != rdbuf[1]) {
+ 			dev_err(&tsdata->client->dev,
