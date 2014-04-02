@@ -1,42 +1,64 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 07 Apr 2014 06:31:21 +0000
-Subject: [patch] Staging: rtl8188eu: overflow in update_sta_support_rate()
-Message-Id: <20140407063121.GB11581@mwanda>
+Date: Wed, 02 Apr 2014 10:48:44 +0000
+Subject: re: clk: ti: add support for basic mux clock
+Message-Id: <20140402104844.GB19427@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Faris de Haan <farisdehaan@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The ->SupportedRates[] array has NDIS_802_11_LENGTH_RATES_EX (16)
-elements.  Since "ie_len" comes from then network and can go up to 255
-then it means we should add a range check to prevent memory corruption.
+Hello Tero Kristo,
 
-Fixes: d6846af679e0 ('staging: r8188eu: Add files for new driver - part 7')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch 6a369c584fbe: "clk: ti: add support for basic mux clock"
+from Sep 13, 2013, leads to the following static checker warning:
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-index 3dd9059..6c9e9a1 100644
---- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-@@ -1599,13 +1599,18 @@ int update_sta_support_rate(struct adapter *padapter, u8 *pvar_ie, uint var_ie_l
- 	pIE = (struct ndis_802_11_var_ie *)rtw_get_ie(pvar_ie, _SUPPORTEDRATES_IE_, &ie_len, var_ie_len);
- 	if (pIE = NULL)
- 		return _FAIL;
-+	if (ie_len > NDIS_802_11_LENGTH_RATES_EX)
-+		return _FAIL;
- 
- 	memcpy(pmlmeinfo->FW_sta_info[cam_idx].SupportedRates, pIE->data, ie_len);
- 	supportRateNum = ie_len;
- 
- 	pIE = (struct ndis_802_11_var_ie *)rtw_get_ie(pvar_ie, _EXT_SUPPORTEDRATES_IE_, &ie_len, var_ie_len);
--	if (pIE)
-+	if (pIE) {
-+		if (supportRateNum + ie_len > NDIS_802_11_LENGTH_RATES_EX)
-+			return _FAIL;
- 		memcpy((pmlmeinfo->FW_sta_info[cam_idx].SupportedRates + supportRateNum), pIE->data, ie_len);
-+	}
- 
- 	return _SUCCESS;
- }
+	drivers/clk/ti/mux.c:52 ti_clk_mux_get_parent()
+	warn: signedness bug returning '(-22)'
+
+drivers/clk/ti/mux.c
+    30  static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
+    31  {
+    32          struct clk_mux *mux = to_clk_mux(hw);
+    33          int num_parents = __clk_get_num_parents(hw->clk);
+    34          u32 val;
+    35  
+    36          /*
+    37           * FIXME need a mux-specific flag to determine if val is bitwise or
+    38           * numeric. e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges
+    39           * from 0x1 to 0x7 (index starts at one)
+    40           * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+    41           * val = 0x4 really means "bit 2, index starts at bit 0"
+    42           */
+    43          val = ti_clk_ll_ops->clk_readl(mux->reg) >> mux->shift;
+    44          val &= mux->mask;
+    45  
+    46          if (mux->table) {
+    47                  int i;
+    48  
+    49                  for (i = 0; i < num_parents; i++)
+    50                          if (mux->table[i] = val)
+    51                                  return i;
+    52                  return -EINVAL;
+                        ^^^^^^^^^^^^^^
+Not a u8.
+
+    53          }
+    54  
+    55          if (val && (mux->flags & CLK_MUX_INDEX_BIT))
+    56                  val = ffs(val) - 1;
+    57  
+    58          if (val && (mux->flags & CLK_MUX_INDEX_ONE))
+    59                  val--;
+    60  
+    61          if (val >= num_parents)
+    62                  return -EINVAL;
+                         ^^^^^^^^^^^^^
+Same.
+
+    63  
+    64          return val;
+    65  }
+
+regards,
+dan carpenter
