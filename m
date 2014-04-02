@@ -1,68 +1,64 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 04 Apr 2014 15:32:58 +0000
-Subject: Re: [PATCH] staging: comedi: drivers: pcl812.c: fixed a coding style issue
-Message-Id: <20140404153258.GT18506@mwanda>
+Date: Wed, 02 Apr 2014 11:04:29 +0000
+Subject: Re: [patch] clk: vt8500: several forever loops
+Message-Id: <20140402110429.GJ18506@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1396605929-10514-1-git-send-email-gmate.amit@gmail.com>
- <20140404110707.GT6991@mwanda>
- <20140404114852.GA12452@gmail.com>
- <20140404132651.GV6991@mwanda>
- <20140404151756.GA14330@gmail.com>
-In-Reply-To: <20140404151756.GA14330@gmail.com>
+References: <20130826154908.GD12428@elgon.mountain>
+In-Reply-To: <20130826154908.GD12428@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Amit Mehta <gmate.amit@gmail.com>
-Cc: abbotti@mev.co.uk, hsweeten@visionengravers.com, wharms@bfs.de, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Apr 04, 2014 at 06:17:56PM +0300, Kumar Amit Mehta wrote:
-> On Fri, Apr 04, 2014 at 04:26:51PM +0300, Dan Carpenter wrote:
-> > On Fri, Apr 04, 2014 at 02:48:52PM +0300, Kumar Amit Mehta wrote:
-> > > On Fri, Apr 04, 2014 at 02:07:07PM +0300, Dan Carpenter wrote:
-> > > > On Fri, Apr 04, 2014 at 01:05:29PM +0300, Kumar Amit Mehta wrote:
-> > > > > Fixed a coding style issue. Reported by checkpatch.pl
-> > > > > 
-> > > > 
-> > > > It's better if the commit messages are more specific than this.
-> > > 
-> > > So, should I resend the patch with a more appropriate commit message ?
-> > 
-> > [PATCH] staging: comedi: drivers: pcl812.c: add curly braces for checkpatch
-> > 
-> > Kernel style is that if one side of the if else statement gets has curly
-> > braces then both side should have them.
-> 
-> Dan, 
-> 
-> What Walter mentioned also makes sense, So shouldn't it be something
-> like this:
-> 
-> [amit@localhost linux-next]$ git diff
-> diff --git a/drivers/staging/comedi/drivers/pcl812.c
-> b/drivers/staging/comedi/drivers/pcl812.c
-> index 160eac8..552b696 100644
-> --- a/drivers/staging/comedi/drivers/pcl812.c
-> +++ b/drivers/staging/comedi/drivers/pcl812.c
-> @@ -803,16 +803,14 @@ static int pcl812_ai_cmd(struct comedi_device
-> *dev, struct comedi_subdevice *s)
->  
->         pcl812_ai_set_chan_range(dev, cmd->chanlist[0], 1);
->  
-> +       devpriv->ai_dma = 0;
->         if (devpriv->dma) {     /*  check if we can use DMA transfer */
->                 devpriv->ai_dma = 1;
->                 for (i = 1; i < cmd->chanlist_len; i++)
->                         if (cmd->chanlist[0] != cmd->chanlist[i]) {
->                                 /*  we cann't use DMA :-( */
-> -                               devpriv->ai_dma = 0;
+This patch is still needed in linux-next.  It was Acked by Tony Prisk in
+a private email.
 
-You'd still want this assignment.
-
->                                 break;
->                         }
-> -       } else
-> -               devpriv->ai_dma = 0;
+Acked-by: Tony Prisk <linux@prisktech.co.nz>
 
 regards,
 dan carpenter
 
+On Mon, Aug 26, 2013 at 07:02:33PM +0300, Dan Carpenter wrote:
+> This does a bunch of looping like this:
+> 
+> 	for (div2 = 7; div2 >= 0; div2--)
+> 
+> But unsigned values are always greater than or equal to zero so it just
+> loops and loops.  Really "mul", "div1" and "div2" should all be declared
+> as int for cleanliness sake.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Static checker stuff.
+> 
+> diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+> index 82306f5..8d5b57c 100644
+> --- a/drivers/clk/clk-vt8500.c
+> +++ b/drivers/clk/clk-vt8500.c
+> @@ -363,7 +363,7 @@ static void vt8500_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  static void wm8650_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	int mul, div1, div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
+> @@ -431,7 +431,7 @@ static u32 wm8750_get_filter(u32 parent_rate, u32 divisor1)
+>  static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *filter, u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	int mul, div1, div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
+> @@ -475,7 +475,7 @@ static void wm8750_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  static void wm8850_find_pll_bits(unsigned long rate, unsigned long parent_rate,
+>  				u32 *multiplier, u32 *divisor1, u32 *divisor2)
+>  {
+> -	u32 mul, div1, div2;
+> +	int mul, div1, div2;
+>  	u32 best_mul, best_div1, best_div2;
+>  	unsigned long tclk, rate_err, best_err;
+>  
