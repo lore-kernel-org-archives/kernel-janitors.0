@@ -1,41 +1,46 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 29 Apr 2014 12:42:13 +0000
-Subject: [patch] staging: frontier: fix some indenting
-Message-Id: <20140429124213.GC18437@mwanda>
+Date: Wed, 02 Apr 2014 16:52:49 +0000
+Subject: Re: [patch] [MIPS] Lasat: a couple off by one bugs in picvue_proc.c
+Message-Id: <20140402165249.GL18506@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20131108094431.GC27977@elgon.mountain>
+In-Reply-To: <20131108094431.GC27977@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org
 
-There were a couple lines which were not indented far enough and it was
-confusing.
+These off by one bugs are still there in linux-next.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+regards,
+dan carpenter
 
-diff --git a/drivers/staging/frontier/tranzport.c b/drivers/staging/frontier/tranzport.c
-index 0571988..334ba04 100644
---- a/drivers/staging/frontier/tranzport.c
-+++ b/drivers/staging/frontier/tranzport.c
-@@ -271,8 +271,8 @@ static void usb_tranzport_interrupt_in_callback(struct urb *urb)
- 			 dev->interrupt_in_buffer[6],
- 			 dev->interrupt_in_buffer[7]);
- #if SUPPRESS_EXTRA_OFFLINE_EVENTS
--	if (dev->offline = 2 && dev->interrupt_in_buffer[1] = 0xff)
--		goto resubmit;
-+		if (dev->offline = 2 && dev->interrupt_in_buffer[1] = 0xff)
-+			goto resubmit;
- 		if (dev->offline = 1 && dev->interrupt_in_buffer[1] = 0xff) {
- 			dev->offline = 2;
- 			goto resubmit;
-@@ -285,8 +285,8 @@ static void usb_tranzport_interrupt_in_callback(struct urb *urb)
- 			dev->offline = 1;
- 
- #endif	/* SUPPRESS_EXTRA_OFFLINE_EVENTS */
--	   dbg_info(&dev->intf->dev, "%s: head, tail are %x, %x\n",
--		__func__, dev->ring_head, dev->ring_tail);
-+		dbg_info(&dev->intf->dev, "%s: head, tail are %x, %x\n",
-+			 __func__, dev->ring_head, dev->ring_tail);
- 
- 		next_ring_head = (dev->ring_head + 1) % ring_buffer_size;
- 
+On Fri, Nov 08, 2013 at 12:44:31PM +0300, Dan Carpenter wrote:
+> These should be ">=" instead of ">" or we go past the end of the
+> pvc_lines[] array.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/arch/mips/lasat/picvue_proc.c b/arch/mips/lasat/picvue_proc.c
+> index 638c5db..8c55de4 100644
+> --- a/arch/mips/lasat/picvue_proc.c
+> +++ b/arch/mips/lasat/picvue_proc.c
+> @@ -44,7 +44,7 @@ static int pvc_line_proc_show(struct seq_file *m, void *v)
+>  {
+>  	int lineno = *(int *)m->private;
+>  
+> -	if (lineno < 0 || lineno > PVC_NLINES) {
+> +	if (lineno < 0 || lineno >= PVC_NLINES) {
+>  		printk(KERN_WARNING "proc_read_line: invalid lineno %d\n", lineno);
+>  		return 0;
+>  	}
+> @@ -68,7 +68,7 @@ static ssize_t pvc_line_proc_write(struct file *file, const char __user *buf,
+>  	char kbuf[PVC_LINELEN];
+>  	size_t len;
+>  
+> -	BUG_ON(lineno < 0 || lineno > PVC_NLINES);
+> +	BUG_ON(lineno < 0 || lineno >= PVC_NLINES);
+>  
+>  	len = min(count, sizeof(kbuf) - 1);
+>  	if (copy_from_user(kbuf, buf, len))
