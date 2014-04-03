@@ -1,36 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 03 Apr 2014 09:13:16 +0000
-Subject: Re: [patch] i40e: remove an unneeded check
-Message-Id: <20140403091316.GF6991@mwanda>
+Date: Thu, 03 Apr 2014 07:22:54 +0000
+Subject: [patch] i2c: qup: off by ones in qup_i2c_probe()
+Message-Id: <20140403072254.GB14286@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140328082919.GM25192@mwanda>
-In-Reply-To: <20140328082919.GM25192@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Andy Gross <agross@codeaurora.org>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Mar 28, 2014 at 12:17:16PM -0700, Jeff Kirsher wrote:
-> On Fri, 2014-03-28 at 11:29 +0300, Dan Carpenter wrote:
-> > We know "ret" is zero here.  No need to check again.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Dan with the latest bunch of patches I just pushed and that Dave
-> accepted, the code changes which directly affect your patch to leaves
-> your patch only changing the return statement from:
-> 
-> return ret;
-> 
-> to 
-> 
-> return 0;
-> 
-> but with the recent change in the code, the ret value can be something
-> other than 0 so your patch does not appear to be needed any longer.
+These should ">= ARRAY_SIZE()" instead of "> ARRAY_SIZE()".
 
-Sure, yep.  It's not needed anymore.
+Fixes: 10c5a8425968 ('i2c: qup: New bus driver for the Qualcomm QUP I2C controller')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
+index c9d5f78..ee40980 100644
+--- a/drivers/i2c/busses/i2c-qup.c
++++ b/drivers/i2c/busses/i2c-qup.c
+@@ -633,12 +633,12 @@ static int qup_i2c_probe(struct platform_device *pdev)
+ 	 * associated with each byte written/received
+ 	 */
+ 	size = QUP_OUTPUT_BLOCK_SIZE(io_mode);
+-	if (size > ARRAY_SIZE(blk_sizes))
++	if (size >= ARRAY_SIZE(blk_sizes))
+ 		return -EIO;
+ 	qup->out_blk_sz = blk_sizes[size] / 2;
+ 
+ 	size = QUP_INPUT_BLOCK_SIZE(io_mode);
+-	if (size > ARRAY_SIZE(blk_sizes))
++	if (size >= ARRAY_SIZE(blk_sizes))
+ 		return -EIO;
+ 	qup->in_blk_sz = blk_sizes[size] / 2;
+ 
