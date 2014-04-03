@@ -1,48 +1,36 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Wed, 02 Apr 2014 14:08:59 +0000
-Subject: Re: [PATCH 3/3] watchdog: via_wdt: replace del_timer by del_timer_sync
-Message-Id: <533C19FB.8090302@roeck-us.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 03 Apr 2014 09:13:16 +0000
+Subject: Re: [patch] i40e: remove an unneeded check
+Message-Id: <20140403091316.GF6991@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr> <1396360159-16244-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1396360159-16244-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <20140328082919.GM25192@mwanda>
+In-Reply-To: <20140328082919.GM25192@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Wim Van Sebroeck <wim@iguana.be>
-Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 04/01/2014 06:49 AM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> Use del_timer_sync to ensure that the timer is stopped on all CPUs before
-> the driver exits.
->
-> This change was suggested by Thomas Gleixner.
->
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->
-> // <smpl>
-> @r@
-> identifier i,t,ex;
-> @@
-> struct t i = { .remove = ex, };
->
-> @@
-> identifier r.ex;
-> @@
-> ex(...) {
->    <...
-> - del_timer
-> + del_timer_sync
->      (...)
->    ...>
-> }
-> // </smpl>
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
+On Fri, Mar 28, 2014 at 12:17:16PM -0700, Jeff Kirsher wrote:
+> On Fri, 2014-03-28 at 11:29 +0300, Dan Carpenter wrote:
+> > We know "ret" is zero here.  No need to check again.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Dan with the latest bunch of patches I just pushed and that Dave
+> accepted, the code changes which directly affect your patch to leaves
+> your patch only changing the return statement from:
+> 
+> return ret;
+> 
+> to 
+> 
+> return 0;
+> 
+> but with the recent change in the code, the ret value can be something
+> other than 0 so your patch does not appear to be needed any longer.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Sure, yep.  It's not needed anymore.
 
+regards,
+dan carpenter
 
