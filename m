@@ -1,50 +1,60 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 Apr 2014 11:26:53 +0000
-Subject: Re: [patch] clk: vt8500: several forever loops
-Message-Id: <20140402112653.GK18506@mwanda>
+From: Cyril Roelandt <tipecaml@gmail.com>
+Date: Thu, 03 Apr 2014 22:05:21 +0000
+Subject: [PATCH] fs: cifs: remove unused variable.
+Message-Id: <1396562721-28354-1-git-send-email-tipecaml@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130826154908.GD12428@elgon.mountain>
- <20140402110429.GJ18506@mwanda>
- <CAKv+Gu9R7Y5OKy+P62FAyE2_zf7f=reiLQy-++XziXahbSM15A@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9R7Y5OKy+P62FAyE2_zf7f=reiLQy-++XziXahbSM15A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cyril Roelandt <tipecaml-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-On Wed, Apr 02, 2014 at 01:19:19PM +0200, Ard Biesheuvel wrote:
-> On 2 April 2014 13:04, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > This patch is still needed in linux-next.  It was Acked by Tony Prisk in
-> > a private email.
-> >
-> > Acked-by: Tony Prisk <linux@prisktech.co.nz>
-> >
-> > regards,
-> > dan carpenter
-> >
-> > On Mon, Aug 26, 2013 at 07:02:33PM +0300, Dan Carpenter wrote:
-> >> This does a bunch of looping like this:
-> >>
-> >>       for (div2 = 7; div2 >= 0; div2--)
-> >>
-> >> But unsigned values are always greater than or equal to zero so it just
-> >> loops and loops.  Really "mul", "div1" and "div2" should all be declared
-> >> as int for cleanliness sake.
-> >>
-> 
-> Apologies if this is a silly question from someone who is utterly
-> uninformed, but are values = 0 even legal for divisors?
-> It seems that, at least in some cases, 'div - 1' is or'ed into a
-> register value (WM8850_BITS_TO_VAL), and I don't think you are
-> expecting negative values there.
-> So perhaps instead, change the test to '> 0' ??
+In SMB2_set_compression(), the "res_key" variable is only initialized to NULL
+and later kfreed. It is therefore useless and should be removed.
 
-Those seem like totally valid points.  The truth is that I almost am
-"utterly uninformed" about this code.  Perhaps someone who knows more
-than the both of us could take a look?
+Found with the following semantic patch:
 
-Please give Ard and me reported by tags when you fix this.
+<smpl>
+@@
+identifier foo;
+identifier f;
+type T;
+@@
+* f(...) {
+...
+* T *foo = NULL;
+... when forall
+    when != foo
+* kfree(foo);
+...
+}
+</smpl>
 
-regards,
-dan carpenter
+Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
+---
+ fs/cifs/smb2pdu.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 8603447..3802f8c 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1352,7 +1352,6 @@ SMB2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
+ 		     u64 persistent_fid, u64 volatile_fid)
+ {
+ 	int rc;
+-	char *res_key = NULL;
+ 	struct  compress_ioctl fsctl_input;
+ 	char *ret_data = NULL;
+ 
+@@ -1365,7 +1364,6 @@ SMB2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
+ 			2 /* in data len */, &ret_data /* out data */, NULL);
+ 
+ 	cifs_dbg(FYI, "set compression rc %d\n", rc);
+-	kfree(res_key);
+ 
+ 	return rc;
+ }
+-- 
+1.9.1
 
