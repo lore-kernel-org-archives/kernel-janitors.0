@@ -1,64 +1,52 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 Apr 2014 10:48:44 +0000
-Subject: re: clk: ti: add support for basic mux clock
-Message-Id: <20140402104844.GB19427@mwanda>
+Date: Thu, 03 Apr 2014 07:28:53 +0000
+Subject: [patch] [SCSI] nsp32: fix an off by one
+Message-Id: <20140403072853.GC14286@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: GOTO Masanori <gotom@debian.or.jp>
+Cc: YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Tero Kristo,
+This off by one bug will cause memory corruption when we use every
+sglun.
 
-The patch 6a369c584fbe: "clk: ti: add support for basic mux clock"
-from Sep 13, 2013, leads to the following static checker warning:
+The problem is that NSP32_SG_TABLE_SIZE is too small.  Here is how
+it's caculated in the original code:
 
-	drivers/clk/ti/mux.c:52 ti_clk_mux_get_parent()
-	warn: signedness bug returning '(-22)'
+	sizeof(nsp32_sgtable) * NSP32_SG_SIZE * MAX_TARGET * MAX_LUN
 
-drivers/clk/ti/mux.c
-    30  static u8 ti_clk_mux_get_parent(struct clk_hw *hw)
-    31  {
-    32          struct clk_mux *mux = to_clk_mux(hw);
-    33          int num_parents = __clk_get_num_parents(hw->clk);
-    34          u32 val;
-    35  
-    36          /*
-    37           * FIXME need a mux-specific flag to determine if val is bitwise or
-    38           * numeric. e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges
-    39           * from 0x1 to 0x7 (index starts at one)
-    40           * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
-    41           * val = 0x4 really means "bit 2, index starts at bit 0"
-    42           */
-    43          val = ti_clk_ll_ops->clk_readl(mux->reg) >> mux->shift;
-    44          val &= mux->mask;
-    45  
-    46          if (mux->table) {
-    47                  int i;
-    48  
-    49                  for (i = 0; i < num_parents; i++)
-    50                          if (mux->table[i] = val)
-    51                                  return i;
-    52                  return -EINVAL;
-                        ^^^^^^^^^^^^^^
-Not a u8.
+But the problem is that the NSP32_SG_SIZE should be (NSP32_SG_SIZE + 1)
+like this:
 
-    53          }
-    54  
-    55          if (val && (mux->flags & CLK_MUX_INDEX_BIT))
-    56                  val = ffs(val) - 1;
-    57  
-    58          if (val && (mux->flags & CLK_MUX_INDEX_ONE))
-    59                  val--;
-    60  
-    61          if (val >= num_parents)
-    62                  return -EINVAL;
-                         ^^^^^^^^^^^^^
-Same.
+	sizeof(nsp32_sgtable) * (NSP32_SG_SIZE + 1) * MAX_TARGET * MAX_LUN
 
-    63  
-    64          return val;
-    65  }
+Or another more intuitive way to write it would be:
 
-regards,
-dan carpenter
+	sizeof(nsp32_sglun) * MAX_TARGET * MAX_LUN
+
+We use NSP32_SG_TABLE_SIZE to allocate data->sg_list which is an array
+of nsp32_sglun structs.  The array has MAX_TARGET * MAX_LUN elements.
+
+MAX_TARGET (8) * MAX_LUN (8) = 64 elements.  The missing "+ 1" means
+that we only allocate enough space for 63 elements.  In terms of bytes,
+the old code allocated 65536 bytes and now it allocates 66048 bytes.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.
+
+diff --git a/drivers/scsi/nsp32.h b/drivers/scsi/nsp32.h
+index c022182..d94f4cd 100644
+--- a/drivers/scsi/nsp32.h
++++ b/drivers/scsi/nsp32.h
+@@ -454,7 +454,7 @@ typedef struct _nsp32_sgtable {
+ typedef struct _nsp32_sglun {
+ 	nsp32_sgtable sgt[NSP32_SG_SIZE+1];	/* SG table */
+ } __attribute__ ((packed)) nsp32_sglun;
+-#define NSP32_SG_TABLE_SIZE (sizeof(nsp32_sgtable) * NSP32_SG_SIZE * MAX_TARGET * MAX_LUN)
++#define NSP32_SG_TABLE_SIZE (sizeof(nsp32_sglun) * MAX_TARGET * MAX_LUN)
+ 
+ /* Auto parameter mode memory map.   */
+ /* All values must be little endian. */
