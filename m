@@ -1,64 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 28 Apr 2014 11:41:26 +0000
-Subject: Re: [patch 2/2 v2] staging: lustre: integer overflow in obd_ioctl_is_invalid()
-Message-Id: <20140428114126.GK4963@mwanda>
+Date: Thu, 03 Apr 2014 07:21:34 +0000
+Subject: [patch] irqchip/irq-crossbar: not allocating enough memory
+Message-Id: <20140403072134.GA14286@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140428105858.GA31925@mwanda>
- <535E3CF7.9030609@bfs.de>
-In-Reply-To: <535E3CF7.9030609@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peng Tao <bergwolf@gmail.com>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, "John L. Hammond" <john.hammond@intel.com>, Dmitry Eremin <dmitry.eremin@intel.com>, Jinshan Xiong <jinshan.xiong@intel.com>, Dulshani Gunawardhana <dulshani.gunawardhana89@gmail.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Sricharan R <r.sricharan-l0cyMroinI0@public.gmane.org>
+Cc: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, Apr 28, 2014 at 01:35:19PM +0200, walter harms wrote:
-> 
-> 
-> Am 28.04.2014 12:58, schrieb Dan Carpenter:
-> > The obd_ioctl_getdata() function caps "data->ioc_len" at
-> > OBD_MAX_IOCTL_BUFFER and then calls this obd_ioctl_is_invalid() to check
-> > that the other values inside data are valid.
-> > 
-> > There are several lengths inside data but when they are added together
-> > they must not be larger than "data->ioc_len".  The checks against
-> > "(data->ioc_inllen1 > (1<<30))" are supposed to ensure that the addition
-> > does not have an integer overflow.  But "(1<<30) * 4" actually can
-> > overflow 32 bits, so the checks are insufficient.
-> > 
-> > I have changed it to "> OBD_MAX_IOCTL_BUFFER" instead.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > v2: Updated the error messages as Walter Harms pointed out.
-> > 
-> > diff --git a/drivers/staging/lustre/lustre/include/lustre_lib.h b/drivers/staging/lustre/lustre/include/lustre_lib.h
-> > index bdc9812..3c26bbd 100644
-> > --- a/drivers/staging/lustre/lustre/include/lustre_lib.h
-> > +++ b/drivers/staging/lustre/lustre/include/lustre_lib.h
-> > @@ -179,24 +179,25 @@ static inline int obd_ioctl_packlen(struct obd_ioctl_data *data)
-> >  
-> >  static inline int obd_ioctl_is_invalid(struct obd_ioctl_data *data)
-> >  {
-> > -	if (data->ioc_len > (1<<30)) {
-> > -		CERROR("OBD ioctl: ioc_len larger than 1<<30\n");
-> > +	if (data->ioc_len > OBD_MAX_IOCTL_BUFFER) {
-> > +		CERROR("OBD ioctl: ioc_len larger than %d\n",
-> > +		       OBD_MAX_IOCTL_BUFFER);
-> >  		return 1;
-> >  	}
-> > -	if (data->ioc_inllen1 > (1<<30)) {
-> > -		CERROR("OBD ioctl: ioc_inllen1 larger than 1<<30\n");
-> > +	if (data->ioc_inllen1 > OBD_MAX_IOCTL_BUFFER) {
-> > +		CERROR("OBD ioctl: ioc_inllen1 larger than ioc_len\n");
-> >  		return 1;
-> >  	}
-> 
-> The error mention ioc_len the compare is OBD_MAX_IOCTL_BUFFER ?
-> Is that intentional ?
+We are allocating the size of a pointer and not the size of the data.
+This will lead to memory corruption.
 
-Yep.
+There isn't actually a "cb_device" struct, btw.  The code is only able
+to compile because GCC knows that all pointers are the same size.
 
-regards,
-dan carpenter
+Fixes: 96ca848ef7ea ('DRIVERS: IRQCHIP: CROSSBAR: Add support for Crossbar IP')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/irqchip/irq-crossbar.c b/drivers/irqchip/irq-crossbar.c
+index fc817d2..3d15d16 100644
+--- a/drivers/irqchip/irq-crossbar.c
++++ b/drivers/irqchip/irq-crossbar.c
+@@ -107,7 +107,7 @@ static int __init crossbar_of_init(struct device_node *node)
+ 	int i, size, max, reserved = 0, entry;
+ 	const __be32 *irqsr;
+ 
+-	cb = kzalloc(sizeof(struct cb_device *), GFP_KERNEL);
++	cb = kzalloc(sizeof(*cb), GFP_KERNEL);
+ 
+ 	if (!cb)
+ 		return -ENOMEM;
