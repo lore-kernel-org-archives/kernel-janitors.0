@@ -1,28 +1,42 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 29 Apr 2014 12:41:01 +0000
-Subject: [patch] staging: r8188eu: indent for loop body
-Message-Id: <20140429124101.GB18437@mwanda>
+Date: Mon, 07 Apr 2014 06:31:21 +0000
+Subject: [patch] Staging: rtl8188eu: overflow in update_sta_support_rate()
+Message-Id: <20140407063121.GB11581@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>, Faris de Haan <farisdehaan@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The for loop body wasn't indented so it upset my static checker.  Also
-I removed an obsolete comment on the same line.
+The ->SupportedRates[] array has NDIS_802_11_LENGTH_RATES_EX (16)
+elements.  Since "ie_len" comes from then network and can go up to 255
+then it means we should add a range check to prevent memory corruption.
 
+Fixes: d6846af679e0 ('staging: r8188eu: Add files for new driver - part 7')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
-index c4b16ea..0533595 100644
---- a/drivers/staging/rtl8188eu/core/rtw_security.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_security.c
-@@ -1153,7 +1153,7 @@ static int aes_cipher(u8 *key, uint hdrlen, u8 *pframe, uint plen)
+diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+index 3dd9059..6c9e9a1 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+@@ -1599,13 +1599,18 @@ int update_sta_support_rate(struct adapter *padapter, u8 *pvar_ie, uint var_ie_l
+ 	pIE = (struct ndis_802_11_var_ie *)rtw_get_ie(pvar_ie, _SUPPORTEDRATES_IE_, &ie_len, var_ie_len);
+ 	if (pIE = NULL)
+ 		return _FAIL;
++	if (ie_len > NDIS_802_11_LENGTH_RATES_EX)
++		return _FAIL;
  
- 	/* Insert MIC into payload */
- 	for (j = 0; j < 8; j++)
--	pframe[payload_index+j] = mic[j];	/* message[payload_index+j] = mic[j]; */
-+		pframe[payload_index+j] = mic[j];
+ 	memcpy(pmlmeinfo->FW_sta_info[cam_idx].SupportedRates, pIE->data, ie_len);
+ 	supportRateNum = ie_len;
  
- 	payload_index = hdrlen + 8;
- 	for (i = 0; i < num_blocks; i++) {
+ 	pIE = (struct ndis_802_11_var_ie *)rtw_get_ie(pvar_ie, _EXT_SUPPORTEDRATES_IE_, &ie_len, var_ie_len);
+-	if (pIE)
++	if (pIE) {
++		if (supportRateNum + ie_len > NDIS_802_11_LENGTH_RATES_EX)
++			return _FAIL;
+ 		memcpy((pmlmeinfo->FW_sta_info[cam_idx].SupportedRates + supportRateNum), pIE->data, ie_len);
++	}
+ 
+ 	return _SUCCESS;
+ }
