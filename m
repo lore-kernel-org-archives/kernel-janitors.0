@@ -1,34 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 16 Apr 2014 19:24:30 +0000
-Subject: Re: [patch v2] isdn: icn: buffer overflow in icn_command()
-Message-Id: <20140416.152430.905344668036570538.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 07 Apr 2014 06:30:36 +0000
+Subject: [patch] clk: st: NULL dereference on error in st_of_clkgen_vcc_setup()
+Message-Id: <20140407063036.GA11581@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1397490748.2803.18.camel@joe-AO722>
-	<20140416112516.GA12917@mwanda>
-In-Reply-To: <20140416112516.GA12917@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, joe@perches.com
+To: Mike Turquette <mturquette@linaro.org>, Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+Cc: Pankaj Dev <pankaj.dev@st.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Apr 2014 14:25:16 +0300
+There are two allocations where, if they fail, then we end up
+dereferencing the NULL pointer in the error handling code.
 
-> This buffer over was detected using static analysis:
-> 
-> 	drivers/isdn/icn/icn.c:1325 icn_command()
-> 	error: format string overflow. buf_size: 60 length: 98
-> 
-> The calculation for the length of the string is off because it assumes
-> that the dial[] buffer holds a 50 character string, but actually it is
-> at most 31 characters and NUL.  I have removed the dial[] buffer because
-> it isn't needed.
-> 
-> The maximum length of the string is actually 79 characters and a NUL.  I
-> have made the cbuf[] array large enough to hold it and changed the
-> sprintf() to an snprintf() as a further safety enhancement.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 94885faf9dbc ('clk: st: Support for DIVMUX and PreDiv Clocks')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks Dan.
+diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
+index a329906..10899bc 100644
+--- a/drivers/clk/st/clkgen-mux.c
++++ b/drivers/clk/st/clkgen-mux.c
+@@ -714,14 +714,14 @@ void __init st_of_clkgen_vcc_setup(struct device_node *np)
+ 
+ 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 	if (!clk_data)
+-		goto err;
++		goto err_free_parents;
+ 
+ 	clk_data->clk_num = VCC_MAX_CHANNELS;
+ 	clk_data->clks = kzalloc(clk_data->clk_num * sizeof(struct clk *),
+ 				 GFP_KERNEL);
+ 
+ 	if (!clk_data->clks)
+-		goto err;
++		goto err_free_data;
+ 
+ 	for (i = 0; i < clk_data->clk_num; i++) {
+ 		struct clk *clk;
+@@ -811,10 +811,11 @@ err:
+ 		kfree(container_of(composite->mux_hw, struct clk_mux, hw));
+ 	}
+ 
+-	if (clk_data)
+-		kfree(clk_data->clks);
++	kfree(clk_data->clks);
+ 
++err_free_data:
+ 	kfree(clk_data);
++err_free_parents:
+ 	kfree(parents);
+ }
+ CLK_OF_DECLARE(clkgen_vcc, "st,clkgen-vcc", st_of_clkgen_vcc_setup);
