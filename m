@@ -1,93 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 08 Apr 2014 09:23:09 +0000
-Subject: [patch] isdnloop: several buffer overflows
-Message-Id: <20140408092309.GA26450@mwanda>
+From: David Laight <David.Laight@ACULAB.COM>
+Date: Tue, 08 Apr 2014 09:34:09 +0000
+Subject: RE: [patch] isdnloop: several buffer overflows
+Message-Id: <063D6719AE5E284EB5DD2968C1650D6D0F6F14A1@AcuExch.aculab.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140408092309.GA26450@mwanda>
+In-Reply-To: <20140408092309.GA26450@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <isdn@linux-pingi.de>
-Cc: "David S. Miller" <davem@davemloft.net>, YOSHIFUJI Hideaki / =?utf-8?B?5ZCJ6Jek6Iux5piO?= <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: 'Dan Carpenter' <dan.carpenter@oracle.com>, Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, YOSHIFUJI Hideaki / ???? <yoshfuji@linux-ipv6.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-There are three buffer overflows addressed in this patch.
+From: Dan Carpenter
+> There are three buffer overflows addressed in this patch.
+...
+> 2) In isdnloop_parse_cmd(), p points to a 6 characters into a 60
+> character buffer so we have 54 characters.  The ->eazlist[] is 11
+> characters long.  I have modified the code to return if the source
+> buffer is too long.
+...
+> @@ -903,6 +903,8 @@ isdnloop_parse_cmd(isdnloop_card *card)
+>  	case 7:
+>  		/* 0x;EAZ */
+>  		p += 3;
+> +		if (strlen(p) >= sizeof(card->eazlist[0]))
+> +			break;
+>  		strcpy(card->eazlist[ch - 1], p);
+>  		break;
+>  	case 8:
 
-1) In isdnloop_fake_err() we add an 'E' to a 60 character string and
-then copy it into a 60 character buffer.  I have made the destination
-buffer 64 characters and I'm changed the sprintf() to a snprintf().
+If you've done the strlen() you might as well use memcpy().
+There are also functions that will do a bounded strlen(),
+(eg memchr()).
 
-2) In isdnloop_parse_cmd(), p points to a 6 characters into a 60
-character buffer so we have 54 characters.  The ->eazlist[] is 11
-characters long.  I have modified the code to return if the source
-buffer is too long.
+	David
 
-3) In isdnloop_command() the cbuf[] array was 60 characters long but the
-max length of the string then can be up to 79 characters.  I made the
-cbuf array 80 characters long and changed the sprintf() to snprintf().
-I also removed the temporary "dial" buffer and changed it to use "p"
-directly.
 
-Unfortunately, we pass the "cbuf" string from isdnloop_command() to
-isdnloop_writecmd() which truncates anything over 60 characters to make
-it fit in card->omsg[].  (It can accept values up to 255 characters so
-long as there is a '\n' character every 60 characters).  For now I have
-just fixed the memory corruption bug and left the other problems in this
-driver alone.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/isdn/isdnloop/isdnloop.c b/drivers/isdn/isdnloop/isdnloop.c
-index e1f8748..5a4da94 100644
---- a/drivers/isdn/isdnloop/isdnloop.c
-+++ b/drivers/isdn/isdnloop/isdnloop.c
-@@ -518,9 +518,9 @@ static isdnloop_stat isdnloop_cmd_table[]  static void
- isdnloop_fake_err(isdnloop_card *card)
- {
--	char buf[60];
-+	char buf[64];
- 
--	sprintf(buf, "E%s", card->omsg);
-+	snprintf(buf, sizeof(buf), "E%s", card->omsg);
- 	isdnloop_fake(card, buf, -1);
- 	isdnloop_fake(card, "NAK", -1);
- }
-@@ -903,6 +903,8 @@ isdnloop_parse_cmd(isdnloop_card *card)
- 	case 7:
- 		/* 0x;EAZ */
- 		p += 3;
-+		if (strlen(p) >= sizeof(card->eazlist[0]))
-+			break;
- 		strcpy(card->eazlist[ch - 1], p);
- 		break;
- 	case 8:
-@@ -1133,7 +1135,7 @@ isdnloop_command(isdn_ctrl *c, isdnloop_card *card)
- {
- 	ulong a;
- 	int i;
--	char cbuf[60];
-+	char cbuf[80];
- 	isdn_ctrl cmd;
- 	isdnloop_cdef cdef;
- 
-@@ -1198,7 +1200,6 @@ isdnloop_command(isdn_ctrl *c, isdnloop_card *card)
- 			break;
- 		if ((c->arg & 255) < ISDNLOOP_BCH) {
- 			char *p;
--			char dial[50];
- 			char dcode[4];
- 
- 			a = c->arg;
-@@ -1210,10 +1211,10 @@ isdnloop_command(isdn_ctrl *c, isdnloop_card *card)
- 			} else
- 				/* Normal Dial */
- 				strcpy(dcode, "CAL");
--			strcpy(dial, p);
--			sprintf(cbuf, "%02d;D%s_R%s,%02d,%02d,%s\n", (int) (a + 1),
--				dcode, dial, c->parm.setup.si1,
--				c->parm.setup.si2, c->parm.setup.eazmsn);
-+			snprintf(cbuf, sizeof(cbuf),
-+				 "%02d;D%s_R%s,%02d,%02d,%s\n", (int) (a + 1),
-+				 dcode, p, c->parm.setup.si1,
-+				 c->parm.setup.si2, c->parm.setup.eazmsn);
- 			i = isdnloop_writecmd(cbuf, strlen(cbuf), 0, card);
- 		}
- 		break;
