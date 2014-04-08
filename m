@@ -1,54 +1,93 @@
-From: Hartmut Knaack <knaack.h@gmx.de>
-Date: Wed, 30 Apr 2014 20:37:01 +0000
-Subject: Re: [patch] staging: iio: ad799x: cleanup probe error handling
-Message-Id: <53615EED.8040600@gmx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 08 Apr 2014 09:23:09 +0000
+Subject: [patch] isdnloop: several buffer overflows
+Message-Id: <20140408092309.GA26450@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140430100822.GC20713@mwanda>
-In-Reply-To: <20140430100822.GC20713@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, Aida Mynzhasova <ai.c.c0der@gmail.com>, Masanari Iida <standby24x7@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, YOSHIFUJI Hideaki / =?utf-8?B?5ZCJ6Jek6Iux5piO?= <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Dan Carpenter schrieb:
-> My static checker is upset that we check IS_ERR(t->reg) when we know it
-> is not an ERR_PTR().  The code is harmless but I have cleaned it up and
-> removed the condition.
-Good spot. But doesn't that also apply to the two checks in ad799x_remove()?
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/iio/adc/ad799x.c b/drivers/iio/adc/ad799x.c
-> index 16a8b14..5c95cd9 100644
-> --- a/drivers/iio/adc/ad799x.c
-> +++ b/drivers/iio/adc/ad799x.c
-> @@ -717,7 +717,7 @@ static int ad799x_probe(struct i2c_client *client,
->  	ret = iio_triggered_buffer_setup(indio_dev, NULL,
->  		&ad799x_trigger_handler, NULL);
->  	if (ret)
-> -		goto error_disable_reg;
-> +		goto error_disable_vref;
->  
->  	if (client->irq > 0) {
->  		ret = devm_request_threaded_irq(&client->dev,
-> @@ -739,11 +739,10 @@ static int ad799x_probe(struct i2c_client *client,
->  
->  error_cleanup_ring:
->  	iio_triggered_buffer_cleanup(indio_dev);
-> +error_disable_vref:
-> +	regulator_disable(st->vref);
->  error_disable_reg:
-> -	if (!IS_ERR(st->vref))
-> -		regulator_disable(st->vref);
-> -	if (!IS_ERR(st->reg))
-> -		regulator_disable(st->reg);
-> +	regulator_disable(st->reg);
->  
->  	return ret;
->  }
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+There are three buffer overflows addressed in this patch.
 
+1) In isdnloop_fake_err() we add an 'E' to a 60 character string and
+then copy it into a 60 character buffer.  I have made the destination
+buffer 64 characters and I'm changed the sprintf() to a snprintf().
+
+2) In isdnloop_parse_cmd(), p points to a 6 characters into a 60
+character buffer so we have 54 characters.  The ->eazlist[] is 11
+characters long.  I have modified the code to return if the source
+buffer is too long.
+
+3) In isdnloop_command() the cbuf[] array was 60 characters long but the
+max length of the string then can be up to 79 characters.  I made the
+cbuf array 80 characters long and changed the sprintf() to snprintf().
+I also removed the temporary "dial" buffer and changed it to use "p"
+directly.
+
+Unfortunately, we pass the "cbuf" string from isdnloop_command() to
+isdnloop_writecmd() which truncates anything over 60 characters to make
+it fit in card->omsg[].  (It can accept values up to 255 characters so
+long as there is a '\n' character every 60 characters).  For now I have
+just fixed the memory corruption bug and left the other problems in this
+driver alone.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/isdn/isdnloop/isdnloop.c b/drivers/isdn/isdnloop/isdnloop.c
+index e1f8748..5a4da94 100644
+--- a/drivers/isdn/isdnloop/isdnloop.c
++++ b/drivers/isdn/isdnloop/isdnloop.c
+@@ -518,9 +518,9 @@ static isdnloop_stat isdnloop_cmd_table[]  static void
+ isdnloop_fake_err(isdnloop_card *card)
+ {
+-	char buf[60];
++	char buf[64];
+ 
+-	sprintf(buf, "E%s", card->omsg);
++	snprintf(buf, sizeof(buf), "E%s", card->omsg);
+ 	isdnloop_fake(card, buf, -1);
+ 	isdnloop_fake(card, "NAK", -1);
+ }
+@@ -903,6 +903,8 @@ isdnloop_parse_cmd(isdnloop_card *card)
+ 	case 7:
+ 		/* 0x;EAZ */
+ 		p += 3;
++		if (strlen(p) >= sizeof(card->eazlist[0]))
++			break;
+ 		strcpy(card->eazlist[ch - 1], p);
+ 		break;
+ 	case 8:
+@@ -1133,7 +1135,7 @@ isdnloop_command(isdn_ctrl *c, isdnloop_card *card)
+ {
+ 	ulong a;
+ 	int i;
+-	char cbuf[60];
++	char cbuf[80];
+ 	isdn_ctrl cmd;
+ 	isdnloop_cdef cdef;
+ 
+@@ -1198,7 +1200,6 @@ isdnloop_command(isdn_ctrl *c, isdnloop_card *card)
+ 			break;
+ 		if ((c->arg & 255) < ISDNLOOP_BCH) {
+ 			char *p;
+-			char dial[50];
+ 			char dcode[4];
+ 
+ 			a = c->arg;
+@@ -1210,10 +1211,10 @@ isdnloop_command(isdn_ctrl *c, isdnloop_card *card)
+ 			} else
+ 				/* Normal Dial */
+ 				strcpy(dcode, "CAL");
+-			strcpy(dial, p);
+-			sprintf(cbuf, "%02d;D%s_R%s,%02d,%02d,%s\n", (int) (a + 1),
+-				dcode, dial, c->parm.setup.si1,
+-				c->parm.setup.si2, c->parm.setup.eazmsn);
++			snprintf(cbuf, sizeof(cbuf),
++				 "%02d;D%s_R%s,%02d,%02d,%s\n", (int) (a + 1),
++				 dcode, p, c->parm.setup.si1,
++				 c->parm.setup.si2, c->parm.setup.eazmsn);
+ 			i = isdnloop_writecmd(cbuf, strlen(cbuf), 0, card);
+ 		}
+ 		break;
