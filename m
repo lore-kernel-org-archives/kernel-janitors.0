@@ -1,78 +1,56 @@
-From: Hartmut Knaack <knaack.h@gmx.de>
-Date: Wed, 30 Apr 2014 21:52:57 +0000
-Subject: Re: [patch v2] [patch] staging: iio: ad799x: remove some unneeded IS_ERR() checks
-Message-Id: <536170B9.8030708@gmx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 10 Apr 2014 09:45:45 +0000
+Subject: [patch 2/2] Staging: unisys: use after free in list_for_each()
+Message-Id: <20140410094545.GB5839@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140430210529.GA6008@mwanda>
-In-Reply-To: <20140430210529.GA6008@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, Aida Mynzhasova <ai.c.c0der@gmail.com>, Masanari Iida <standby24x7@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Dan Carpenter schrieb:
-> My static checker is upset that we check IS_ERR(t->reg) when we know it
-> is not an ERR_PTR.
->
-> Checking for IS_ERR() twice is often a sign of confusion and buggy code.
-> In this case, if the call to "ret = regulator_enable(st->vref);" fails,
-> then we call "regulator_disable(st->vref);" and that's a mistake because
-> "st->vref" is not enabled.
->
-> I fixed these problems and Hartmut Knaack pointed out a couple unneeded
-> IS_ERR() checks in ad799x_remove() so I have removed those as well.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Hartmut Knaack <knaack.h@gmx.de>
-> ---
-> v2: remove the unneeded checks in ad799x_remove() as well.  Updated the
->     commit message to say that it's actually a small bug fix.
->
-> diff --git a/drivers/iio/adc/ad799x.c b/drivers/iio/adc/ad799x.c
-> index 16a8b14..39b4cb4 100644
-> --- a/drivers/iio/adc/ad799x.c
-> +++ b/drivers/iio/adc/ad799x.c
-> @@ -717,7 +717,7 @@ static int ad799x_probe(struct i2c_client *client,
->  	ret = iio_triggered_buffer_setup(indio_dev, NULL,
->  		&ad799x_trigger_handler, NULL);
->  	if (ret)
-> -		goto error_disable_reg;
-> +		goto error_disable_vref;
->  
->  	if (client->irq > 0) {
->  		ret = devm_request_threaded_irq(&client->dev,
-> @@ -739,11 +739,10 @@ static int ad799x_probe(struct i2c_client *client,
->  
->  error_cleanup_ring:
->  	iio_triggered_buffer_cleanup(indio_dev);
-> +error_disable_vref:
-> +	regulator_disable(st->vref);
->  error_disable_reg:
-> -	if (!IS_ERR(st->vref))
-> -		regulator_disable(st->vref);
-> -	if (!IS_ERR(st->reg))
-> -		regulator_disable(st->reg);
-> +	regulator_disable(st->reg);
->  
->  	return ret;
->  }
-> @@ -756,10 +755,8 @@ static int ad799x_remove(struct i2c_client *client)
->  	iio_device_unregister(indio_dev);
->  
->  	iio_triggered_buffer_cleanup(indio_dev);
-> -	if (!IS_ERR(st->vref))
-> -		regulator_disable(st->vref);
-> -	if (!IS_ERR(st->reg))
-> -		regulator_disable(st->reg);
-> +	regulator_disable(st->vref);
-> +	regulator_disable(st->reg);
->  	kfree(st->rx_buf);
->  
->  	return 0;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+These should be using the _safe version of list_for_each() because we
+free the current element and it leads to a use after free bug.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/staging/unisys/visorchipset/visorchipset.h b/drivers/staging/unisys/visorchipset/visorchipset.h
+index d4bf203..d95825d 100644
+--- a/drivers/staging/unisys/visorchipset/visorchipset.h
++++ b/drivers/staging/unisys/visorchipset/visorchipset.h
+@@ -104,9 +104,9 @@ finddevice(struct list_head *list, U32 busNo, U32 devNo)
+ 
+ static inline void delbusdevices(struct list_head *list, U32 busNo)
+ {
+-	VISORCHIPSET_DEVICE_INFO *p;
++	VISORCHIPSET_DEVICE_INFO *p, *tmp;
+ 
+-	list_for_each_entry(p, list, entry) {
++	list_for_each_entry_safe(p, tmp, list, entry) {
+ 		if (p->busNo = busNo) {
+ 			list_del(&p->entry);
+ 			kfree(p);
+diff --git a/drivers/staging/unisys/visorchipset/visorchipset_main.c b/drivers/staging/unisys/visorchipset/visorchipset_main.c
+index 257c6e5..c475e25 100644
+--- a/drivers/staging/unisys/visorchipset/visorchipset_main.c
++++ b/drivers/staging/unisys/visorchipset/visorchipset_main.c
+@@ -605,16 +605,16 @@ EXPORT_SYMBOL_GPL(visorchipset_register_busdev_client);
+ static void
+ cleanup_controlvm_structures(void)
+ {
+-	VISORCHIPSET_BUS_INFO *bi;
+-	VISORCHIPSET_DEVICE_INFO *di;
++	VISORCHIPSET_BUS_INFO *bi, *tmp_bi;
++	VISORCHIPSET_DEVICE_INFO *di, *tmp_di;
+ 
+-	list_for_each_entry(bi, &BusInfoList, entry) {
++	list_for_each_entry_safe(bi, tmp_bi, &BusInfoList, entry) {
+ 		busInfo_clear(bi);
+ 		list_del(&bi->entry);
+ 		kfree(bi);
+ 	}
+ 
+-	list_for_each_entry(di, &DevInfoList, entry) {
++	list_for_each_entry_safe(di, tmp_di, &DevInfoList, entry) {
+ 		devInfo_clear(di);
+ 		list_del(&di->entry);
+ 		kfree(di);
