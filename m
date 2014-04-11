@@ -1,22 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 Apr 2014 18:54:22 +0000
-Subject: Re: [PATCH net-next 1/1] sxgbe: fix driver probe error path and driver removal leaks
-Message-Id: <20140403.145422.2017892921202259639.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 11 Apr 2014 11:51:18 +0000
+Subject: Re: [patch] clk: vexpress: NULL dereference on error path
+Message-Id: <20140411115118.GQ4963@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140402231343.GC5013@electric-eye.fr.zoreil.com>
-In-Reply-To: <20140402231343.GC5013@electric-eye.fr.zoreil.com>
+References: <20131107080844.GR21844@elgon.mountain>
+ <1383914574.3226.0.camel@hornet> <1383914641.3226.1.camel@hornet>
+In-Reply-To: <1383914641.3226.1.camel@hornet>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: romieu@fr.zoreil.com
-Cc: bh74.an@samsung.com, dan.carpenter@oracle.com, ks.giri@samsung.com, siva.kallam@samsung.com, vipul.pandya@samsung.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Francois Romieu <romieu@fr.zoreil.com>
-Date: Thu, 3 Apr 2014 01:13:43 +0200
-
-> sxgbe_drv_probe:  mdio and priv->hw leaks
-> sxgbe_drv_remove: clk and priv->hw leaks
+On Fri, Nov 08, 2013 at 12:44:01PM +0000, Pawel Moll wrote:
+> On Fri, 2013-11-08 at 12:42 +0000, Pawel Moll wrote:
+> > On Thu, 2013-11-07 at 08:08 +0000, Dan Carpenter wrote:
+> > > If the allocation fails then we dereference the NULL in the error path.
+> > > Just return directly.
+> > > 
+> > > Fixes: ed27ff1db869 ('clk: Versatile Express clock generators ("osc") driver')
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > 
+> > > diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+> > > index 2dc8b41..a535c7b 100644
+> > > --- a/drivers/clk/versatile/clk-vexpress-osc.c
+> > > +++ b/drivers/clk/versatile/clk-vexpress-osc.c
+> > > @@ -102,7 +102,7 @@ void __init vexpress_osc_of_setup(struct device_node *node)
+> > >  
+> > >  	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
+> > >  	if (!osc)
+> > > -		goto error;
+> > > +		return;
+> > >  
+> > >  	osc->func = vexpress_config_func_get_by_node(node);
+> > >  	if (!osc->func) {
+> > 
+> > Well spotted, thanks!
+> > 
+> > Will get it queued with other vexpress clk changes.
 > 
-> Signed-off-by: Francois Romieu <romieu@fr.zoreil.com>
+> Having said that - Mike, it's a bug fix. If you can still get it into
+> the current merge window, please do:
+> 
+> Acked-by: Pawel Moll <pawel.moll@arm.com>
+> 
 
-Also applied, thanks Francois.
+Heh.  Let's try again to get this merged.  :P
+
+regards,
+dan carpenter
+
