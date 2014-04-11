@@ -1,51 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Apr 2014 11:51:18 +0000
+From: Pawel Moll <pawel.moll@arm.com>
+Date: Fri, 11 Apr 2014 11:57:47 +0000
 Subject: Re: [patch] clk: vexpress: NULL dereference on error path
-Message-Id: <20140411115118.GQ4963@mwanda>
+Message-Id: <1397217467.3549.92.camel@hornet>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20131107080844.GR21844@elgon.mountain>
  <1383914574.3226.0.camel@hornet> <1383914641.3226.1.camel@hornet>
-In-Reply-To: <1383914641.3226.1.camel@hornet>
+ <20140411115118.GQ4963@mwanda>
+In-Reply-To: <20140411115118.GQ4963@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Fri, Nov 08, 2013 at 12:44:01PM +0000, Pawel Moll wrote:
-> On Fri, 2013-11-08 at 12:42 +0000, Pawel Moll wrote:
-> > On Thu, 2013-11-07 at 08:08 +0000, Dan Carpenter wrote:
-> > > If the allocation fails then we dereference the NULL in the error path.
-> > > Just return directly.
+On Fri, 2014-04-11 at 12:51 +0100, Dan Carpenter wrote:
+> On Fri, Nov 08, 2013 at 12:44:01PM +0000, Pawel Moll wrote:
+> > On Fri, 2013-11-08 at 12:42 +0000, Pawel Moll wrote:
+> > > On Thu, 2013-11-07 at 08:08 +0000, Dan Carpenter wrote:
+> > > > If the allocation fails then we dereference the NULL in the error path.
+> > > > Just return directly.
+> > > > 
+> > > > Fixes: ed27ff1db869 ('clk: Versatile Express clock generators ("osc") driver')
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > > 
+> > > > diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+> > > > index 2dc8b41..a535c7b 100644
+> > > > --- a/drivers/clk/versatile/clk-vexpress-osc.c
+> > > > +++ b/drivers/clk/versatile/clk-vexpress-osc.c
+> > > > @@ -102,7 +102,7 @@ void __init vexpress_osc_of_setup(struct device_node *node)
+> > > >  
+> > > >  	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
+> > > >  	if (!osc)
+> > > > -		goto error;
+> > > > +		return;
+> > > >  
+> > > >  	osc->func = vexpress_config_func_get_by_node(node);
+> > > >  	if (!osc->func) {
 > > > 
-> > > Fixes: ed27ff1db869 ('clk: Versatile Express clock generators ("osc") driver')
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > Well spotted, thanks!
 > > > 
-> > > diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
-> > > index 2dc8b41..a535c7b 100644
-> > > --- a/drivers/clk/versatile/clk-vexpress-osc.c
-> > > +++ b/drivers/clk/versatile/clk-vexpress-osc.c
-> > > @@ -102,7 +102,7 @@ void __init vexpress_osc_of_setup(struct device_node *node)
-> > >  
-> > >  	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
-> > >  	if (!osc)
-> > > -		goto error;
-> > > +		return;
-> > >  
-> > >  	osc->func = vexpress_config_func_get_by_node(node);
-> > >  	if (!osc->func) {
+> > > Will get it queued with other vexpress clk changes.
 > > 
-> > Well spotted, thanks!
+> > Having said that - Mike, it's a bug fix. If you can still get it into
+> > the current merge window, please do:
 > > 
-> > Will get it queued with other vexpress clk changes.
+> > Acked-by: Pawel Moll <pawel.moll@arm.com>
+> > 
 > 
-> Having said that - Mike, it's a bug fix. If you can still get it into
-> the current merge window, please do:
-> 
-> Acked-by: Pawel Moll <pawel.moll@arm.com>
-> 
+> Heh.  Let's try again to get this merged.  :P
 
-Heh.  Let's try again to get this merged.  :P
+Right, my fault, haven't followed this up with Mike, sorry.
 
-regards,
-dan carpenter
+Pawel
+
 
