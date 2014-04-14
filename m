@@ -1,72 +1,43 @@
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 04 Apr 2014 15:34:07 +0000
-Subject: Re: [PATCH] fs: cifs: remove unused variable.
-Message-Id: <CAH2r5msLru04=uyMKLMuyg0LLhRqX30goKvictaYnkwKpfeuLg@mail.gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Mon, 14 Apr 2014 18:46:18 +0000
+Subject: Re: Help required for Compiling a staging driver
+Message-Id: <20140414184618.GA13336@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1396562721-28354-1-git-send-email-tipecaml@gmail.com>
-In-Reply-To: <1396562721-28354-1-git-send-email-tipecaml-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Cyril Roelandt <tipecaml-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+On Tue, Apr 15, 2014 at 12:08:18AM +0530, Kumar Gaurav wrote:
+> Hi All,
+> 
+> I'm trying to upgrade a driver using semaphore to use mutex. I have 
+> applied the required changes. Now i want to compile it to ensure that i 
+> didn't broke the kernel.
+> 
+> Driver Path:drivers/staging/dgap/
+> I Marked this driver to load as loadable module
+> 
+>      kumar@anandlinux:/usr/linux-git$ grep CONFIG_DGAP .config
+>      CONFIG_DGAP=m
+> 
+> Now I'm trying to compile it using below command and getting result as given
+>      kumar@anandlinux:/usr/linux-git$ sudo make M=drivers/staging/dgap/
+>        Building modules, stage 2.
+>        MODPOST 0 modules
 
-On Thu, Apr 3, 2014 at 5:05 PM, Cyril Roelandt <tipecaml@gmail.com> wrote:
-> In SMB2_set_compression(), the "res_key" variable is only initialized to NULL
-> and later kfreed. It is therefore useless and should be removed.
->
-> Found with the following semantic patch:
->
-> <smpl>
-> @@
-> identifier foo;
-> identifier f;
-> type T;
-> @@
-> * f(...) {
-> ...
-> * T *foo = NULL;
-> ... when forall
->     when != foo
-> * kfree(foo);
-> ...
-> }
-> </smpl>
->
-> Signed-off-by: Cyril Roelandt <tipecaml@gmail.com>
-> ---
->  fs/cifs/smb2pdu.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index 8603447..3802f8c 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -1352,7 +1352,6 @@ SMB2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
->                      u64 persistent_fid, u64 volatile_fid)
->  {
->         int rc;
-> -       char *res_key = NULL;
->         struct  compress_ioctl fsctl_input;
->         char *ret_data = NULL;
->
-> @@ -1365,7 +1364,6 @@ SMB2_set_compression(const unsigned int xid, struct cifs_tcon *tcon,
->                         2 /* in data len */, &ret_data /* out data */, NULL);
->
->         cifs_dbg(FYI, "set compression rc %d\n", rc);
-> -       kfree(res_key);
->
->         return rc;
->  }
-> --
-> 1.9.1
->
+Never build kernel code as root.  We used to have a bug in the build
+system that if you did this, it would delete your whole filesystem.
+Some of us argued that we should leave it there just to keep people from
+ever doing this again :)
 
+> So, No module is getting build and again i'm not getting any Error as 
+> well. Please tell me where i'm doing wrong.
 
+Have you built this kernel source tree before?  Do a full build first,
+before trying to just build one directory.  That should resolve the
+issue.
 
--- 
-Thanks,
+And again, not as root please.
 
-Steve
+greg k-h
