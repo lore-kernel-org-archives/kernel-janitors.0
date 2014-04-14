@@ -1,32 +1,54 @@
-From: Pawel Moll <pawel.moll@arm.com>
-Date: Wed, 23 Apr 2014 15:53:27 +0000
-Subject: Re: [patch] clk: vexpress: NULL dereference on error path
-Message-Id: <1398268407.11961.19.camel@hornet>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 Apr 2014 08:09:29 +0000
+Subject: [patch] video: mmpfb: cleanup some static checker warnings in probe()
+Message-Id: <20140414080929.GB13372@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20131107080844.GR21844@elgon.mountain>
- <1383914574.3226.0.camel@hornet> <1383914641.3226.1.camel@hornet>
- <20140411115118.GQ4963@mwanda> <1397217467.3549.92.camel@hornet>
-In-Reply-To: <1397217467.3549.92.camel@hornet>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: linux-fbdev@vger.kernel.org
 
-On Fri, 2014-04-11 at 12:57 +0100, Pawel Moll wrote:
-> > > Having said that - Mike, it's a bug fix. If you can still get it into
-> > > the current merge window, please do:
-> > > 
-> > > Acked-by: Pawel Moll <pawel.moll@arm.com>
-> > > 
-> > 
-> > Heh.  Let's try again to get this merged.  :P
-> 
-> Right, my fault, haven't followed this up with Mike, sorry.
+Sparse complains about using zero instead of NULL for pointers.
+Probably, if we enabled the warning, then GCC would complain about the
+unused initializers.  I've just removed them.
 
-Mike, will you take it in as a fix for 3.15, or do you want me to queue
-it with other vexpress fixes and go through arm-soc?
+Smatch complains that we first check if "fbi" is NULL and then
+dereference it in the error handling.  It turns out that "fbi" can't be
+NULL so I've removed the check.
 
-Cheers!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Pawel
-
+diff --git a/drivers/video/fbdev/mmp/fb/mmpfb.c b/drivers/video/fbdev/mmp/fb/mmpfb.c
+index 7ab31eb..910fcc6 100644
+--- a/drivers/video/fbdev/mmp/fb/mmpfb.c
++++ b/drivers/video/fbdev/mmp/fb/mmpfb.c
+@@ -554,8 +554,8 @@ static void fb_info_clear(struct fb_info *info)
+ static int mmpfb_probe(struct platform_device *pdev)
+ {
+ 	struct mmp_buffer_driver_mach_info *mi;
+-	struct fb_info *info = 0;
+-	struct mmpfb_info *fbi = 0;
++	struct fb_info *info;
++	struct mmpfb_info *fbi;
+ 	int ret, modes_num;
+ 
+ 	mi = pdev->dev.platform_data;
+@@ -569,10 +569,6 @@ static int mmpfb_probe(struct platform_device *pdev)
+ 	if (info = NULL)
+ 		return -ENOMEM;
+ 	fbi = info->par;
+-	if (!fbi) {
+-		ret = -EINVAL;
+-		goto failed;
+-	}
+ 
+ 	/* init fb */
+ 	fbi->fb_info = info;
+@@ -667,7 +663,6 @@ failed_free_buff:
+ 		fbi->fb_start_dma);
+ failed_destroy_mutex:
+ 	mutex_destroy(&fbi->access_ok);
+-failed:
+ 	dev_err(fbi->dev, "mmp-fb: frame buffer device init failed\n");
+ 
+ 	framebuffer_release(info);
