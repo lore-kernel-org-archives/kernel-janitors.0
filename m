@@ -1,51 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 30 Apr 2014 10:06:03 +0000
-Subject: [patch] staging: rtl8192u: cleanup a switch statement
-Message-Id: <20140430100603.GB20713@mwanda>
+From: isabelle <contact_claude@isabelle.de>
+Date: Tue, 15 Apr 2014 19:47:38 +0000
+Subject: spende /Donation
+Message-Id: <yx4Sef42JyeoopbQKx5pAipXLBt1prSNuXPiRcWu1Nis@isabelle.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-fbdev@vger.kernel.org
 
-The white space was all wrong here.  The case statements were indented
-too far.  The if else blocks weren't indented at all.  There was a break
-statement aligned with the else block and it confused my static checker
-because "were curly braces intended" so that the break statement was
-only on the else side?  Also I removed some commented out code.
+Hallo
+Wenn ich diese Nachricht zu senden wollte, ist dies nicht einfach Zufall. D=
+ies ist, weil Ihre e-Mail vom elektronischen Roboter gesichert meine WX.7AR=
+ BW ausgew=E4hlt wurde.
+Zun=E4chst m=F6chte ich mich f=FCr dieses Eindringen in Ihr Leben zu entsch=
+uldigen, obwohl ich zugeben, dass es mir sehr wichtig. Ich bin Isabelle Vas=
+udev. Ich leide an Krebs im Hals seit nun mehr als 3 Jahre und eine halbe u=
+nd es leider, mein Arzt hat gerade informiert mich, dass ich bin voller unh=
+eilbar und, dass meine Tage, wegen meinen etwas gez=E4hlt sind abgebaut Zus=
+tand. Ich bin eine Witwe und ich habe keine Kind, das ich beginne zu bedaue=
+rn.
+In der Tat ist der Grund, warum ich Sie kontaktieren bin, m=F6chte ich eine=
+n Teil von meinem Grundst=FCck zu spenden, weil ich niemand, wer die Erben =
+konnte. Ich habe fast mein ganzes Zeug, darunter ein Unternehmen der Export=
+ von Holz, Gummi und Stahl-Industrie in Afrika, wo ich wohne nun mehr 10 Ja=
+hren, verkauft. Ein gro=DFer Teil der Gelder gesammelt wurde mit unterschie=
+dlichen Verb=E4nden humanit=E4ren Charakter =FCberall in der Welt, aber bes=
+onders hier in Afrika bezahlt.
+Im Hinblick auf den Rest der Summe genau in H=F6he von 750.000, 00euros (si=
+eben hundert und f=FCnfzig tausend Euro) auf eine gesperrte Mitarbeiter-Acc=
+ount, meine letzte w=FCnschen w=FCrde Sie es spenden, so dass Sie in Ihrer =
+Branche und vor allem den humanit=E4ren investieren k=F6nnen. Ich bin ganz =
+bewusst was ich zu tun beabsichtigen, und ich denke, trotz der Tatsache, di=
+e wir nicht wissen, werdet ihr diese Summe gut nutzen. Ich bitte Sie, bitte=
+ dieses Erbe zu akzeptieren, ohne jedoch Fragen Sie alles, was in zur=FCckg=
+eben wenn es nicht immer denken, gutes zu tun, um dich herum, was ich nicht=
+ getan habe, in meiner Existenz.
+Das hei=DFt, wird auf einer verantwortlichen Person und besonders gutem Gla=
+uben fallen zu lassen beruhigt, ich m=F6chte bitten, dass Sie bitte mich be=
+i den meisten schnell kontaktieren, um weitere Erkl=E4rung =FCber die Gr=FC=
+nde f=FCr meine Geste und den Verlauf der Dinge zu geben. Bitte kontaktiere=
+n Sie mich so bald wie m=F6glich, wenn Sie mein Angebot akzeptieren.
+Gott m=F6ge mit dir sein!
+Ich fordere Sie auf, mich =FCber meine pers=F6nliche e-Mail-Adresse zu kont=
+aktieren:
+Isabelle.claude654@laposte.net
+Der Frieden und Barmherzigkeit Gottes m=F6ge mit dir sein.
+Mrs Isabelle
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-index 2131912..9caf6fd 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_softmac.c
-@@ -1903,20 +1903,17 @@ static void ieee80211_process_action(struct ieee80211_device *ieee,
- 	}
- 	tmp = *act;
- 	act ++;
--	switch (tmp)
--	{
--		case ACT_CAT_BA:
--			if (*act = ACT_ADDBAREQ)
-+	switch (tmp) {
-+	case ACT_CAT_BA:
-+		if (*act = ACT_ADDBAREQ)
- 			ieee80211_rx_ADDBAReq(ieee, skb);
--			else if (*act = ACT_ADDBARSP)
-+		else if (*act = ACT_ADDBARSP)
- 			ieee80211_rx_ADDBARsp(ieee, skb);
--			else if (*act = ACT_DELBA)
-+		else if (*act = ACT_DELBA)
- 			ieee80211_rx_DELBA(ieee, skb);
--			break;
--		default:
--//			if (net_ratelimit())
--//			IEEE80211_DEBUG(IEEE80211_DL_BA, "unknown action frame(%d)\n", tmp);
--			break;
-+		break;
-+	default:
-+		break;
- 	}
- 	return;
- 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
