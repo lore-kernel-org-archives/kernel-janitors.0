@@ -1,63 +1,44 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 04 Apr 2014 08:50:37 +0000
-Subject: Re: [PATCH] staging: vme: Simplfy string usage in vme_user_probe()
-Message-Id: <533E725D.8090200@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Apr 2014 15:38:11 +0000
+Subject: [patch] ASoC: Intel: some incorrect sizeof() usages
+Message-Id: <20140416153811.GB16325@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1396544171-2458-1-git-send-email-prtvar.b@gmail.com>
-In-Reply-To: <1396544171-2458-1-git-send-email-prtvar.b@gmail.com>
+References: <20140413195636.32f31cb2@spike>
+In-Reply-To: <20140413195636.32f31cb2@spike>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, Christian Engelmayer <cengelma@gmx.at>, kernel-janitors@vger.kernel.org
 
+The intent was to say "sizeof(*pos)" and not "sizeof(pos)".
 
-looks good to me
+The sizeof(*pos) is 8 bytes so the bug won't show up on 64 bit systems.
+The sizeof(*dx) is 172 bytes so that will be a bugfix.
 
-reviewed-by: wharms <wharms@bfs.de>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  Not tested.
 
-@Bojan Prtvar:
-please note that i am not the maintainer
-
-Am 03.04.2014 18:56, schrieb Bojan Prtvar:
-> We can avoid usage of sprintf() and magic-sized array with simple pointer assignment.
-> 
-> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
-> ---
-> This parch should be applied on top of 
-> "staging: vme: Fix a small coding style issue in vme_user.c"
-> 
-> Compile tested only.
-> 
->  drivers/staging/vme/devices/vme_user.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/vme/devices/vme_user.c b/drivers/staging/vme/devices/vme_user.c
-> index 481192a..5fa7f83 100644
-> --- a/drivers/staging/vme/devices/vme_user.c
-> +++ b/drivers/staging/vme/devices/vme_user.c
-> @@ -684,7 +684,7 @@ static int vme_user_match(struct vme_dev *vdev)
->  static int vme_user_probe(struct vme_dev *vdev)
->  {
->  	int i, err;
-> -	char name[12];
-> +	char *name;
->  
->  	/* Save pointer to the bridge device */
->  	if (vme_user_bridge != NULL) {
-> @@ -794,13 +794,13 @@ static int vme_user_probe(struct vme_dev *vdev)
->  
->  		switch (type[i]) {
->  		case MASTER_MINOR:
-> -			sprintf(name, "bus/vme/m%%d");
-> +			name = "bus/vme/m%d";
->  			break;
->  		case CONTROL_MINOR:
-> -			sprintf(name, "bus/vme/ctl");
-> +			name = "bus/vme/ctl";
->  			break;
->  		case SLAVE_MINOR:
-> -			sprintf(name, "bus/vme/s%%d");
-> +			name = "bus/vme/s%d";
->  			break;
->  		default:
->  			err = -EINVAL;
+diff --git a/sound/soc/intel/sst-haswell-ipc.c b/sound/soc/intel/sst-haswell-ipc.c
+index f46bb4d..4ed2d17 100644
+--- a/sound/soc/intel/sst-haswell-ipc.c
++++ b/sound/soc/intel/sst-haswell-ipc.c
+@@ -617,7 +617,7 @@ static void hsw_notification_work(struct work_struct *work)
+ 	case IPC_POSITION_CHANGED:
+ 		trace_ipc_notification("DSP stream position changed for",
+ 			stream->reply.stream_hw_id);
+-		sst_dsp_inbox_read(hsw->dsp, pos, sizeof(pos));
++		sst_dsp_inbox_read(hsw->dsp, pos, sizeof(*pos));
+ 
+ 		if (stream->notify_position)
+ 			stream->notify_position(stream, stream->pdata);
+@@ -1609,7 +1609,7 @@ int sst_hsw_dx_set_state(struct sst_hsw *hsw,
+ 	trace_ipc_request("PM enter Dx state", state);
+ 
+ 	ret = ipc_tx_message_wait(hsw, header, &state_, sizeof(state_),
+-		dx, sizeof(dx));
++		dx, sizeof(*dx));
+ 	if (ret < 0) {
+ 		dev_err(hsw->dev, "ipc: error set dx state %d failed\n", state);
+ 		return ret;
