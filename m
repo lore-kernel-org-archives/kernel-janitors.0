@@ -1,127 +1,68 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Mon, 28 Apr 2014 19:36:40 +0000
-Subject: Re: [PATCH] x86/mce: Improve mcheck_init_device() error handling.
-Message-Id: <20140428193640.GD31522@pd.tnic>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Apr 2014 11:25:16 +0000
+Subject: [patch v2] isdn: icn: buffer overflow in icn_command()
+Message-Id: <20140416112516.GA12917@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1398447604-21471-1-git-send-email-mattieu.souchaud@free.fr>
-In-Reply-To: <1398447604-21471-1-git-send-email-mattieu.souchaud@free.fr>
+References: <1397490748.2803.18.camel@joe-AO722>
+In-Reply-To: <1397490748.2803.18.camel@joe-AO722>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mathieu Souchaud <mattieu.souchaud@free.fr>
-Cc: tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
 
-On Fri, Apr 25, 2014 at 07:40:04PM +0200, Mathieu Souchaud wrote:
-> Check return code of every function called.
-> 
-> Signed-off-by: Mathieu Souchaud <mattieu.souchaud@free.fr>
-> ---
->  arch/x86/kernel/cpu/mcheck/mce.c |   30 +++++++++++++++++++++++-------
->  1 file changed, 23 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-> index 68317c8..b865285 100644
-> --- a/arch/x86/kernel/cpu/mcheck/mce.c
-> +++ b/arch/x86/kernel/cpu/mcheck/mce.c
-> @@ -2437,33 +2437,49 @@ static __init int mcheck_init_device(void)
->  	int err;
->  	int i = 0;
->  
-> -	if (!mce_available(&boot_cpu_data))
-> -		return -EIO;
-> +	if (!mce_available(&boot_cpu_data)) {
-> +		err = -EIO;
-> +		goto err_out;
-> +	}
->  
-> -	zalloc_cpumask_var(&mce_device_initialized, GFP_KERNEL);
-> +	if (!zalloc_cpumask_var(&mce_device_initialized, GFP_KERNEL)) {
-> +		err = -ENOMEM;
-> +		goto err_out;
-> +	}
->  
->  	mce_init_banks();
->  
->  	err = subsys_system_register(&mce_subsys, NULL);
->  	if (err)
-> -		return err;
-> +		goto err_out_mem;
->  
->  	cpu_notifier_register_begin();
->  	for_each_online_cpu(i) {
->  		err = mce_device_create(i);
->  		if (err) {
->  			cpu_notifier_register_done();
-> -			return err;
-> +			goto err_out_mem;
+This buffer over was detected using static analysis:
 
-Actually, this should partially unwind what has been created already,
-like this:
+	drivers/isdn/icn/icn.c:1325 icn_command()
+	error: format string overflow. buf_size: 60 length: 98
 
-		if (err)
-			goto err_device_create;
+The calculation for the length of the string is off because it assumes
+that the dial[] buffer holds a 50 character string, but actually it is
+at most 31 characters and NUL.  I have removed the dial[] buffer because
+it isn't needed.
 
-and then at that label, you can do:
+The maximum length of the string is actually 79 characters and a NUL.  I
+have made the cbuf[] array large enough to hold it and changed the
+sprintf() to an snprintf() as a further safety enhancement.
 
-err_device_create:
-	while (--i > 0)
-		mce_device_remove(i);
-	cpu_notifier_register_done();
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: update changelog.
 
-And then here come your other labels:
+diff --git a/drivers/isdn/icn/icn.c b/drivers/isdn/icn/icn.c
+index 53d487f..88c0603 100644
+--- a/drivers/isdn/icn/icn.c
++++ b/drivers/isdn/icn/icn.c
+@@ -1155,7 +1155,7 @@ icn_command(isdn_ctrl *c, icn_card *card)
+ 	ulong a;
+ 	ulong flags;
+ 	int i;
+-	char cbuf[60];
++	char cbuf[80];
+ 	isdn_ctrl cmd;
+ 	icn_cdef cdef;
+ 	char __user *arg;
+@@ -1309,7 +1309,6 @@ icn_command(isdn_ctrl *c, icn_card *card)
+ 			break;
+ 		if ((c->arg & 255) < ICN_BCH) {
+ 			char *p;
+-			char dial[50];
+ 			char dcode[4];
+ 
+ 			a = c->arg;
+@@ -1321,10 +1320,10 @@ icn_command(isdn_ctrl *c, icn_card *card)
+ 			} else
+ 				/* Normal Dial */
+ 				strcpy(dcode, "CAL");
+-			strcpy(dial, p);
+-			sprintf(cbuf, "%02d;D%s_R%s,%02d,%02d,%s\n", (int) (a + 1),
+-				dcode, dial, c->parm.setup.si1,
+-				c->parm.setup.si2, c->parm.setup.eazmsn);
++			snprintf(cbuf, sizeof(cbuf),
++				 "%02d;D%s_R%s,%02d,%02d,%s\n", (int) (a + 1),
++				 dcode, p, c->parm.setup.si1,
++				 c->parm.setup.si2, c->parm.setup.eazmsn);
+ 			i = icn_writecmd(cbuf, strlen(cbuf), 0, card);
+ 		}
+ 		break;
 
-err_out_mem:
- ....
-
-And so on. Makes sense?
-
->  	register_syscore_ops(&mce_syscore_ops);
-> -	__register_hotcpu_notifier(&mce_cpu_notifier);
-> +	err = __register_hotcpu_notifier(&mce_cpu_notifier);
->  	cpu_notifier_register_done();
-> +	if (err)
-> +		goto err_out_mem;
-
-This needs to be a label which goes before err_device_create above and
-which does
-
-err_reg_hotcpu:
-	unregister_syscore_ops(&mce_syscore_ops);
-
->  
->  	/* register character device /dev/mcelog */
-> -	misc_register(&mce_chrdev_device);
-> +	err = misc_register(&mce_chrdev_device);
-> +	if (err)
-> +		goto err_out_mem;
-
-And this has to go to the top-label which unwinds all the work, along
-with the mce percpu devices like:
-
-	for_each_online_cpu(i)
-		mce_device_remove(i);
-
-	unregister_hotcpu_notifier(&mce_cpu_notifier);
-
-	...
-
-and so on.
-
-Ok, am I making sense?
-
-Don't be afraid to give it a try, even if it is wrong - we'll get it
-right eventually :-)
-
-For testing, you can use a kvm guest and "inject" errors in the
-registration code just to see whether it works as expected.
-
-And feel free to ask questions if something's not clear.
-
-Thanks!
-
--- 
-Regards/Gruss,
-    Boris.
-
-Sent from a fat crate under my desk. Formatting is fine.
---
