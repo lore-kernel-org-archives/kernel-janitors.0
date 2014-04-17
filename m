@@ -1,61 +1,78 @@
-From: Peng Tao <bergwolf@gmail.com>
-Date: Fri, 25 Apr 2014 03:20:28 +0000
-Subject: Re: [patch 1/2] staging: lustre: improve length checks in ioctls
-Message-Id: <CA+a=Yy5t1=13WM+Yufn5a_7vCZMjA1Z-XJZdm+kiipbGGv5NHw@mail.gmail.com>
+From: Kumar Gaurav <kumargauravgupta3@gmail.com>
+Date: Thu, 17 Apr 2014 15:55:51 +0000
+Subject: [PATCH] Staging:dgap:dgap_tty.c: Upgraded driver to use Mutex instead of semaphore
+Message-Id: <1397750132-21296-1-git-send-email-kumargauravgupta3@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140424214913.GA10490@mwanda>
-In-Reply-To: <20140424214913.GA10490@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, lidza.louina@gmail.com
+Cc: devel@driverdev.osuosl.org, Kumar Gaurav <kumargauravgupta3@gmail.com>, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 25, 2014 at 5:49 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We copy "hdr->ioc_len" from the user twice but we only verify that it's
-> within the limit on the first copy.  Otherwise we could read unmapped
-> memory and Oops.
->
-Thanks for the patch.
+dgap driver uses semaphore for obtaining lock. I upgraded it to use MUTEX.
 
-Reviewed-by: Peng Tao <bergwolf@gmail.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Not tested.
->
-> diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-> index e4e94cc..dec1037 100644
-> --- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-> +++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-> @@ -122,6 +122,8 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
->                 OBD_FREE_LARGE(*buf, hdr.ioc_len);
->                 return err;
->         }
-> +       if (hdr.ioc_len != data->ioc_len)
-> +               return -EINVAL;
->
->         if (obd_ioctl_is_invalid(data)) {
->                 CERROR("ioctl not correctly formatted\n");
-> diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
-> index e6eae06..9a3b07b 100644
-> --- a/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
-> +++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
-> @@ -44,6 +44,7 @@ int libcfs_ioctl_getdata(char *buf, char *end, void *arg)
->  {
->         struct libcfs_ioctl_hdr   *hdr;
->         struct libcfs_ioctl_data  *data;
-> +       int orig_len;
->         int err;
->
->         hdr = (struct libcfs_ioctl_hdr *)buf;
-> @@ -69,9 +70,12 @@ int libcfs_ioctl_getdata(char *buf, char *end, void *arg)
->                 return -EINVAL;
->         }
->
-> +       orig_len = hdr->ioc_len;
->         err = copy_from_user(buf, (void *)arg, hdr->ioc_len);
->         if (err)
->                 return err;
-will you fix this as well?
+Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
+---
+ drivers/staging/dgap/dgap_tty.c |   17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-Thanks,
-Tao
+diff --git a/drivers/staging/dgap/dgap_tty.c b/drivers/staging/dgap/dgap_tty.c
+index 2a7a372..0ca72a2 100755
+--- a/drivers/staging/dgap/dgap_tty.c
++++ b/drivers/staging/dgap/dgap_tty.c
+@@ -52,7 +52,7 @@
+ #include <asm/uaccess.h>	/* For copy_from_user/copy_to_user */
+ #include <asm/io.h>		/* For read[bwl]/write[bwl] */
+ #include <linux/pci.h>
+-
++#include<linux/mutex.h>
+ #include "dgap_driver.h"
+ #include "dgap_tty.h"
+ #include "dgap_types.h"
+@@ -61,18 +61,12 @@
+ #include "dgap_conf.h"
+ #include "dgap_sysfs.h"
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37)
+-#define init_MUTEX(sem)         sema_init(sem, 1)
+-#define DECLARE_MUTEX(name)     \
+-        struct semaphore name = __SEMAPHORE_INITIALIZER(name, 1)
+-#endif
+-
+ /*
+  * internal variables
+  */
+ static struct board_t	*dgap_BoardsByMajor[256];
+ static uchar		*dgap_TmpWriteBuf = NULL;
+-static DECLARE_MUTEX(dgap_TmpWriteSem);
++static DEFINE_MUTEX(dgap_TmpWriteSem);
+ 
+ /*
+  * Default transparent print information.
+@@ -2004,12 +1998,11 @@ static int dgap_tty_write(struct tty_struct *tty, const unsigned char *buf, int
+ 		 * the board.
+ 		 */
+ 		/* we're allowed to block if it's from_user */
+-		if (down_interruptible(&dgap_TmpWriteSem)) {
++		if (mutex_lock_interruptible(&dgap_TmpWriteSem))
+ 			return (-EINTR);
+-		}
+ 
+ 		if (copy_from_user(dgap_TmpWriteBuf, (const uchar __user *) buf, count)) {
+-			up(&dgap_TmpWriteSem);
++			mutex_unlock(&dgap_TmpWriteSem);
+ 			printk("Write: Copy from user failed!\n");
+ 			return -EFAULT;
+ 		}
+@@ -2093,7 +2086,7 @@ static int dgap_tty_write(struct tty_struct *tty, const unsigned char *buf, int
+ 
+ 	if (from_user) {
+ 		DGAP_UNLOCK(ch->ch_lock, lock_flags);
+-		up(&dgap_TmpWriteSem);
++		mutex_unlock(&dgap_TmpWriteSem);
+ 	} 
+ 	else {
+ 		DGAP_UNLOCK(ch->ch_lock, lock_flags);
+-- 
+1.7.9.5
+
