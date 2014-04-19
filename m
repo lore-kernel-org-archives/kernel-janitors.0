@@ -1,47 +1,53 @@
 From: bojan prtvar <prtvar.b@gmail.com>
-Date: Sat, 19 Apr 2014 07:58:23 +0000
+Date: Sat, 19 Apr 2014 08:27:50 +0000
 Subject: Re: [PATCH] Staging: crystalhd: Mark local functions as static
-Message-Id: <CAOmT4fRoz+TyxUKBS22RAqsZmyo-27qCuKQQsg-hHdsY5JRSWw@mail.gmail.com>
+Message-Id: <CAOmT4fRs8Gyg_tw2YhJwcH7Mzw4A2TVBRU4VXi8MCN8K+5vACA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1397843871-10850-1-git-send-email-prtvar.b@gmail.com>
 	<20140418232315.GA23165@kroah.com>
-In-Reply-To: <20140418232315.GA23165@kroah.com>
+	<CAOmT4fRoz+TyxUKBS22RAqsZmyo-27qCuKQQsg-hHdsY5JRSWw@mail.gmail.com>
+In-Reply-To: <CAOmT4fRoz+TyxUKBS22RAqsZmyo-27qCuKQQsg-hHdsY5JRSWw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Greg KH <gregkh@linuxfoundation.org>
 Cc: nsankar@broadcom.com, jarod@wilsonet.com, Scott Davilla <davilla@4pi.com>, Manu Abraham <abraham.manu@gmail.com>, Amarjargal G <amarjargal16@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
 
-On Sat, Apr 19, 2014 at 1:23 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Fri, Apr 18, 2014 at 07:57:51PM +0200, Bojan Prtvar wrote:
->> This fixes the following sparse warnings:
->> drivers/staging/crystalhd/crystalhd_lnx.c:631:5: warning: symbol 'chd_dec_pci_suspend' was not declared. Should it be static?
->> drivers/staging/crystalhd/crystalhd_lnx.c:665:5: warning: symbol 'chd_dec_pci_resume' was not declared. Should it be static?
->> drivers/staging/crystalhd/crystalhd_lnx.c:78:29: warning: symbol 'chd_dec_alloc_iodata' was not declared. Should it be static?
->> drivers/staging/crystalhd/crystalhd_lnx.c:99:6: warning: symbol 'chd_dec_free_iodata' was not declared. Should it be static?
+On Sat, Apr 19, 2014 at 9:58 AM, bojan prtvar <prtvar.b@gmail.com> wrote:
+> On Sat, Apr 19, 2014 at 1:23 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+>> On Fri, Apr 18, 2014 at 07:57:51PM +0200, Bojan Prtvar wrote:
+>>> This fixes the following sparse warnings:
+>>> drivers/staging/crystalhd/crystalhd_lnx.c:631:5: warning: symbol 'chd_dec_pci_suspend' was not declared. Should it be static?
+>>> drivers/staging/crystalhd/crystalhd_lnx.c:665:5: warning: symbol 'chd_dec_pci_resume' was not declared. Should it be static?
+>>> drivers/staging/crystalhd/crystalhd_lnx.c:78:29: warning: symbol 'chd_dec_alloc_iodata' was not declared. Should it be static?
+>>> drivers/staging/crystalhd/crystalhd_lnx.c:99:6: warning: symbol 'chd_dec_free_iodata' was not declared. Should it be static?
+>>>
+>>> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
+>>> ---
+>>>  drivers/staging/crystalhd/crystalhd_lnx.c |   10 +++++-----
+>>>  1 file changed, 5 insertions(+), 5 deletions(-)
 >>
->> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
->> ---
->>  drivers/staging/crystalhd/crystalhd_lnx.c |   10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
+>> This patch doesn't apply to my tree, can you redo it and resend?
+>>
+>> thanks,
+>>
+>> greg k-h
 >
-> This patch doesn't apply to my tree, can you redo it and resend?
+> I cloned your tree
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+> and on master branch I see work is already done in
 >
-> thanks,
+> commit 038d3f882926bf49562e5f119957fd81015a9390
+> Author: Valentina Manea <valentina.manea.m@gmail.com>
+> Date:   Mon Oct 7 23:12:14 2013 +0300
 >
-> greg k-h
+> Now what confuses me is the date of this patch. Why I didn't see it
+> linux-next and even in vanilla?
+> I know this question goes under 'basic workflow section'.
+>
+> Regards,
+> Bojan
 
-I cloned your tree
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-and on master branch I see work is already done in
-
-commit 038d3f882926bf49562e5f119957fd81015a9390
-Author: Valentina Manea <valentina.manea.m@gmail.com>
-Date:   Mon Oct 7 23:12:14 2013 +0300
-
-Now what confuses me is the date of this patch. Why I didn't see it
-linux-next and even in vanilla?
-I know this question goes under 'basic workflow section'.
-
-Regards,
-Bojan
+I re-checked. Everything is OK with  038d3f8829. I made a mess in my
+local branches.
+Drop this one. And sorry for the noise.
