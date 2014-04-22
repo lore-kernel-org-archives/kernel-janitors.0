@@ -1,25 +1,23 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 20 Apr 2014 15:28:13 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 22 Apr 2014 09:45:55 +0000
 Subject: Re: [PATCH] Staging:dgap:dgap_tty.c: Upgraded driver to use Mutex instead of semaphore
-Message-Id: <20140420152813.GA20165@kroah.com>
+Message-Id: <20140422094555.GD26890@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1397750132-21296-1-git-send-email-kumargauravgupta3@gmail.com>
- <535351CA.8000201@gmail.com>
-In-Reply-To: <535351CA.8000201@gmail.com>
+In-Reply-To: <1397750132-21296-1-git-send-email-kumargauravgupta3@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Cc: devel@driverdev.osuosl.org, lidza.louina@gmail.com, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, lidza.louina@gmail.com
 
-On Sun, Apr 20, 2014 at 10:19:14AM +0530, Kumar Gaurav wrote:
-> Hi All,
+On Thu, Apr 17, 2014 at 09:25:32PM +0530, Kumar Gaurav wrote:
+> dgap driver uses semaphore for obtaining lock. I upgraded it to use MUTEX.
 > 
-> Any update on below patch. Do i need to make any modification?
 
-Please give an overworked maintainer a chance to catch up on his email.
-If after a week you haven't heard anything, then ask again.
+You are patching ancient code that doesn't exist.  Work against
+linux-next.
 
-thanks,
+regards,
+dan carpenter
 
-greg k-h
