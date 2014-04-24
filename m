@@ -1,43 +1,56 @@
-From: Sricharan R <r.sricharan@ti.com>
-Date: Fri, 04 Apr 2014 06:42:36 +0000
-Subject: Re: [patch] irqchip/irq-crossbar: not allocating enough memory
-Message-Id: <533E518C.5020807@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 24 Apr 2014 21:49:13 +0000
+Subject: [patch 1/2] staging: lustre: improve length checks in ioctls
+Message-Id: <20140424214913.GA10490@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140403072134.GA14286@mwanda>
-In-Reply-To: <20140403072134.GA14286@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kernel-janitors@vger.kernel.org
 
-On Thursday 03 April 2014 12:51 PM, Dan Carpenter wrote:
-> We are allocating the size of a pointer and not the size of the data.
-> This will lead to memory corruption.
->
-> There isn't actually a "cb_device" struct, btw.  The code is only able
-> to compile because GCC knows that all pointers are the same size.
->
-> Fixes: 96ca848ef7ea ('DRIVERS: IRQCHIP: CROSSBAR: Add support for Crossbar IP')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/irqchip/irq-crossbar.c b/drivers/irqchip/irq-crossbar.c
-> index fc817d2..3d15d16 100644
-> --- a/drivers/irqchip/irq-crossbar.c
-> +++ b/drivers/irqchip/irq-crossbar.c
-> @@ -107,7 +107,7 @@ static int __init crossbar_of_init(struct device_node *node)
->  	int i, size, max, reserved = 0, entry;
->  	const __be32 *irqsr;
->  
-> -	cb = kzalloc(sizeof(struct cb_device *), GFP_KERNEL);
-> +	cb = kzalloc(sizeof(*cb), GFP_KERNEL);
->  
->  	if (!cb)
->  		return -ENOMEM;
-Yes. correct. Thanks for the catch.
+We copy "hdr->ioc_len" from the user twice but we only verify that it's
+within the limit on the first copy.  Otherwise we could read unmapped
+memory and Oops.
 
-Acked-by: Sricharan R <r.sricharan@ti.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
-
-Regards,
- Sricharan
+diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+index e4e94cc..dec1037 100644
+--- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
++++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+@@ -122,6 +122,8 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
+ 		OBD_FREE_LARGE(*buf, hdr.ioc_len);
+ 		return err;
+ 	}
++	if (hdr.ioc_len != data->ioc_len)
++		return -EINVAL;
+ 
+ 	if (obd_ioctl_is_invalid(data)) {
+ 		CERROR("ioctl not correctly formatted\n");
+diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
+index e6eae06..9a3b07b 100644
+--- a/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
++++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-module.c
+@@ -44,6 +44,7 @@ int libcfs_ioctl_getdata(char *buf, char *end, void *arg)
+ {
+ 	struct libcfs_ioctl_hdr   *hdr;
+ 	struct libcfs_ioctl_data  *data;
++	int orig_len;
+ 	int err;
+ 
+ 	hdr = (struct libcfs_ioctl_hdr *)buf;
+@@ -69,9 +70,12 @@ int libcfs_ioctl_getdata(char *buf, char *end, void *arg)
+ 		return -EINVAL;
+ 	}
+ 
++	orig_len = hdr->ioc_len;
+ 	err = copy_from_user(buf, (void *)arg, hdr->ioc_len);
+ 	if (err)
+ 		return err;
++	if (orig_len != data->ioc_len)
++		return -EINVAL;
+ 
+ 	if (libcfs_ioctl_is_invalid(data)) {
+ 		CERROR("PORTALS: ioctl not correctly formatted\n");
