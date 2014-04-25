@@ -1,47 +1,35 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Date: Thu, 10 Apr 2014 05:48:37 +0000
-Subject: Re: [patch] drm/panel: s6e8aa0: silence array overflow warning
-Message-Id: <534630B5.2080705@samsung.com>
+From: Mathieu Souchaud <mattieu.souchaud@free.fr>
+Date: Fri, 25 Apr 2014 09:48:15 +0000
+Subject: [PATCH] x86/mce: Check misc_register() return code.
+Message-Id: <1398419295-18590-1-git-send-email-mattieu.souchaud@free.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140409152112.GD24536@mwanda>
-In-Reply-To: <20140409152112.GD24536@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Mathieu Souchaud <mattieu.souchaud@free.fr>
 
-Hi Dan,
+The current code does not check the return from misc_register() so set
+the return variable with the return code of misc_register.
 
-Thanks for the patch.
+Signed-off-by: Mathieu Souchaud <mattieu.souchaud@free.fr>
+---
+ arch/x86/kernel/cpu/mcheck/mce.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 04/09/2014 05:21 PM, Dan Carpenter wrote:
-> Smatch complains that we are reading beyond the end of the array here:
->
-> 	drivers/gpu/drm/panel/panel-s6e8aa0.c:852 s6e8aa0_read_mtp_id()
-> 	warn: buffer overflow 's6e8aa0_variants' 4 <= 4
->
-> We set the error code, so it's not harmful but it looks like a return
-> was intended here so lets add that and silence the warning.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Andrzej Hajda <a.hajda@samsung.com>
-
-> ---
-> Compile tested only.
->
-> diff --git a/drivers/gpu/drm/panel/panel-s6e8aa0.c b/drivers/gpu/drm/panel/panel-s6e8aa0.c
-> index 35941d2..06e57a2 100644
-> --- a/drivers/gpu/drm/panel/panel-s6e8aa0.c
-> +++ b/drivers/gpu/drm/panel/panel-s6e8aa0.c
-> @@ -847,6 +847,7 @@ static void s6e8aa0_read_mtp_id(struct s6e8aa0 *ctx)
->  	if (i >= ARRAY_SIZE(s6e8aa0_variants)) {
->  		dev_err(ctx->dev, "unsupported display version %d\n", id[1]);
->  		ctx->error = -EINVAL;
-> +		return;
->  	}
->  
->  	ctx->variant = &s6e8aa0_variants[i];
->
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 68317c8..45fb7aa 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -2462,7 +2462,7 @@ static __init int mcheck_init_device(void)
+ 	cpu_notifier_register_done();
+ 
+ 	/* register character device /dev/mcelog */
+-	misc_register(&mce_chrdev_device);
++	err = misc_register(&mce_chrdev_device);
+ 
+ 	return err;
+ }
+-- 
+1.7.9.5
 
