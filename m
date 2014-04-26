@@ -1,56 +1,49 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 05 Mar 2014 22:30:53 +0000
-Subject: Re: [PATCH with Coccinelle?] Deletion of unnecessary checks before specific function calls
-Message-Id: <5317A59D.4@users.sourceforge.net>
+From: Lionel Debroux <lionel_debroux@yahoo.fr>
+Date: Sat, 26 Apr 2014 15:50:02 +0000
+Subject: [PATCH] arm/mach-ux500: remove unused macro.
+Message-Id: <123199.42585.bm@smtp144.mail.ir2.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-> If you are convinced that dropping the null tests is a good idea, then you 
-> can submit the patch that makes the change to the relevant maintainers and 
-> mailing lists.
+Based on PaX.
 
-Hello,
+---
 
-A couple of functions perform input parameter validation before their
-implementations will try further actions with side effects. Some calling
-functions perform similar safety checks.
+From 9c443a7dfe581da8db5566d968a19c54f06a7fa3 Mon Sep 17 00:00:00 2001
+From: Lionel Debroux <lionel_debroux@yahoo.fr>
+Date: Sat, 26 Apr 2014 15:44:22 +0200
+Subject: arm/mach-ux500: remove unused macro.
 
-Functions which release a system resource are often documented in the way that
-they tolerate the passing of a null pointer for example. I do not see a need
-because of this fact that a function caller repeats a corresponding check.
+Extracted from the PaX patch.
 
-Now I would like to propose such a change again.
+Signed-off-by: Lionel Debroux <lionel_debroux@yahoo.fr>
+Cc: PaX Team <pageexec@freemail.hu>
+---
+ arch/arm/mach-ux500/setup.h | 7 -------
+ 1 file changed, 7 deletions(-)
 
-1. Extension of the infrastructure for the analysis tool "coccicheck"
-   Semantic patch patterns can help to identify update candidates also in the
-Linux source file hierarchy.
+diff --git a/arch/arm/mach-ux500/setup.h b/arch/arm/mach-ux500/setup.h
+index 2dea8b5..6499da2 100644
+--- a/arch/arm/mach-ux500/setup.h
++++ b/arch/arm/mach-ux500/setup.h
+@@ -33,13 +33,6 @@ extern void ux500_timer_init(void);
+ 	.type		= MT_DEVICE,		\
+ }
+ 
+-#define __MEM_DEV_DESC(x, sz)	{		\
+-	.virtual	= IO_ADDRESS(x),	\
+-	.pfn		= __phys_to_pfn(x),	\
+-	.length		= sz,			\
+-	.type		= MT_MEMORY_RWX,		\
+-}
+-
+ extern struct smp_operations ux500_smp_ops;
+ extern void ux500_cpu_die(unsigned int cpu);
+ 
+-- 
+1.9.1.506.g7bf272c
 
-https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/scripts/coccinelle?idyf0345fefaafb7cde301a830471edd21a37989b
-
-2. Clarification for some automated update suggestions
-   My source code search approach found seventy functions at least which might
-need another review and corresponding corrections for Linux 3.14-rc5. Further
-software development will point out even more potentially open issues.
-
-Regards,
-Markus
