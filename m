@@ -1,96 +1,127 @@
-From: mathieu souchaud <mattieu.souchaud@free.fr>
-Date: Fri, 25 Apr 2014 17:47:12 +0000
+From: Borislav Petkov <bp@alien8.de>
+Date: Mon, 28 Apr 2014 19:36:40 +0000
 Subject: Re: [PATCH] x86/mce: Improve mcheck_init_device() error handling.
-Message-Id: <535A9FA0.6030104@free.fr>
+Message-Id: <20140428193640.GD31522@pd.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1398447604-21471-1-git-send-email-mattieu.souchaud@free.fr>
 In-Reply-To: <1398447604-21471-1-git-send-email-mattieu.souchaud@free.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: tony.luck@intel.com, bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mathieu Souchaud <mattieu.souchaud@free.fr>
+Cc: tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-In this patch, unwindind is still not perfect from the=20
-mce_device_create() calls. I guess, from this point, on error we should=20
-call mce_device_remove on every created device. But I think this will=20
-make the code rather complex. And I am not too confident on this kind of=20
-modification as I don't know much about MCE.
-
-Mathieu S.
-
-Le 25/04/2014 19:40, Mathieu Souchaud a =E9crit :
+On Fri, Apr 25, 2014 at 07:40:04PM +0200, Mathieu Souchaud wrote:
 > Check return code of every function called.
->
+> 
 > Signed-off-by: Mathieu Souchaud <mattieu.souchaud@free.fr>
 > ---
->   arch/x86/kernel/cpu/mcheck/mce.c |   30 +++++++++++++++++++++++-------
->   1 file changed, 23 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mchec=
-k/mce.c
+>  arch/x86/kernel/cpu/mcheck/mce.c |   30 +++++++++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
 > index 68317c8..b865285 100644
 > --- a/arch/x86/kernel/cpu/mcheck/mce.c
 > +++ b/arch/x86/kernel/cpu/mcheck/mce.c
 > @@ -2437,33 +2437,49 @@ static __init int mcheck_init_device(void)
->   	int err;
->   	int i =3D 0;
->  =20
+>  	int err;
+>  	int i = 0;
+>  
 > -	if (!mce_available(&boot_cpu_data))
 > -		return -EIO;
 > +	if (!mce_available(&boot_cpu_data)) {
-> +		err =3D -EIO;
+> +		err = -EIO;
 > +		goto err_out;
 > +	}
->  =20
+>  
 > -	zalloc_cpumask_var(&mce_device_initialized, GFP_KERNEL);
 > +	if (!zalloc_cpumask_var(&mce_device_initialized, GFP_KERNEL)) {
-> +		err =3D -ENOMEM;
+> +		err = -ENOMEM;
 > +		goto err_out;
 > +	}
->  =20
->   	mce_init_banks();
->  =20
->   	err =3D subsys_system_register(&mce_subsys, NULL);
->   	if (err)
+>  
+>  	mce_init_banks();
+>  
+>  	err = subsys_system_register(&mce_subsys, NULL);
+>  	if (err)
 > -		return err;
 > +		goto err_out_mem;
->  =20
->   	cpu_notifier_register_begin();
->   	for_each_online_cpu(i) {
->   		err =3D mce_device_create(i);
->   		if (err) {
->   			cpu_notifier_register_done();
+>  
+>  	cpu_notifier_register_begin();
+>  	for_each_online_cpu(i) {
+>  		err = mce_device_create(i);
+>  		if (err) {
+>  			cpu_notifier_register_done();
 > -			return err;
 > +			goto err_out_mem;
->   		}
->   	}
->  =20
->   	register_syscore_ops(&mce_syscore_ops);
-> -	__register_hotcpu_notifier(&mce_cpu_notifier);
-> +	err =3D __register_hotcpu_notifier(&mce_cpu_notifier);
->   	cpu_notifier_register_done();
-> +	if (err)
-> +		goto err_out_mem;
->  =20
->   	/* register character device /dev/mcelog */
-> -	misc_register(&mce_chrdev_device);
-> +	err =3D misc_register(&mce_chrdev_device);
-> +	if (err)
-> +		goto err_out_mem;
-> +
-> +	return 0;
-> +
-> +err_out_mem:
-> +	free_cpumask_var(mce_device_initialized);
->  =20
-> +err_out:
-> +	pr_err("Unable to init device /dev/mcelog (rc: %d)\n", err);
->   	return err;
->   }
->   device_initcall_sync(mcheck_init_device);
 
+Actually, this should partially unwind what has been created already,
+like this:
+
+		if (err)
+			goto err_device_create;
+
+and then at that label, you can do:
+
+err_device_create:
+	while (--i > 0)
+		mce_device_remove(i);
+	cpu_notifier_register_done();
+
+And then here come your other labels:
+
+err_out_mem:
+ ....
+
+And so on. Makes sense?
+
+>  	register_syscore_ops(&mce_syscore_ops);
+> -	__register_hotcpu_notifier(&mce_cpu_notifier);
+> +	err = __register_hotcpu_notifier(&mce_cpu_notifier);
+>  	cpu_notifier_register_done();
+> +	if (err)
+> +		goto err_out_mem;
+
+This needs to be a label which goes before err_device_create above and
+which does
+
+err_reg_hotcpu:
+	unregister_syscore_ops(&mce_syscore_ops);
+
+>  
+>  	/* register character device /dev/mcelog */
+> -	misc_register(&mce_chrdev_device);
+> +	err = misc_register(&mce_chrdev_device);
+> +	if (err)
+> +		goto err_out_mem;
+
+And this has to go to the top-label which unwinds all the work, along
+with the mce percpu devices like:
+
+	for_each_online_cpu(i)
+		mce_device_remove(i);
+
+	unregister_hotcpu_notifier(&mce_cpu_notifier);
+
+	...
+
+and so on.
+
+Ok, am I making sense?
+
+Don't be afraid to give it a try, even if it is wrong - we'll get it
+right eventually :-)
+
+For testing, you can use a kvm guest and "inject" errors in the
+registration code just to see whether it works as expected.
+
+And feel free to ask questions if something's not clear.
+
+Thanks!
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Sent from a fat crate under my desk. Formatting is fine.
 --
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
