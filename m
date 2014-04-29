@@ -1,54 +1,47 @@
-From: isabelle <contact_claude@isabelle.de>
-Date: Tue, 15 Apr 2014 19:47:38 +0000
-Subject: spende /Donation
-Message-Id: <yx4Sef42JyeoopbQKx5pAipXLBt1prSNuXPiRcWu1Nis@isabelle.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 29 Apr 2014 12:45:22 +0000
+Subject: Re: [patch] [SCSI] mpt3sas: tidy up output slightly
+Message-Id: <20140429124522.GR4963@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140328083901.GQ25192@mwanda>
+In-Reply-To: <20140328083901.GQ25192@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nagalakshmi Nandigama <Nagalakshmi.Nandigama@lsi.com>
+Cc: Sreekanth Reddy <Sreekanth.Reddy@lsi.com>, support@lsi.com, "James E.J. Bottomley" <JBottomley@parallels.com>, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hallo
-Wenn ich diese Nachricht zu senden wollte, ist dies nicht einfach Zufall. D=
-ies ist, weil Ihre e-Mail vom elektronischen Roboter gesichert meine WX.7AR=
- BW ausgew=E4hlt wurde.
-Zun=E4chst m=F6chte ich mich f=FCr dieses Eindringen in Ihr Leben zu entsch=
-uldigen, obwohl ich zugeben, dass es mir sehr wichtig. Ich bin Isabelle Vas=
-udev. Ich leide an Krebs im Hals seit nun mehr als 3 Jahre und eine halbe u=
-nd es leider, mein Arzt hat gerade informiert mich, dass ich bin voller unh=
-eilbar und, dass meine Tage, wegen meinen etwas gez=E4hlt sind abgebaut Zus=
-tand. Ich bin eine Witwe und ich habe keine Kind, das ich beginne zu bedaue=
-rn.
-In der Tat ist der Grund, warum ich Sie kontaktieren bin, m=F6chte ich eine=
-n Teil von meinem Grundst=FCck zu spenden, weil ich niemand, wer die Erben =
-konnte. Ich habe fast mein ganzes Zeug, darunter ein Unternehmen der Export=
- von Holz, Gummi und Stahl-Industrie in Afrika, wo ich wohne nun mehr 10 Ja=
-hren, verkauft. Ein gro=DFer Teil der Gelder gesammelt wurde mit unterschie=
-dlichen Verb=E4nden humanit=E4ren Charakter =FCberall in der Welt, aber bes=
-onders hier in Afrika bezahlt.
-Im Hinblick auf den Rest der Summe genau in H=F6he von 750.000, 00euros (si=
-eben hundert und f=FCnfzig tausend Euro) auf eine gesperrte Mitarbeiter-Acc=
-ount, meine letzte w=FCnschen w=FCrde Sie es spenden, so dass Sie in Ihrer =
-Branche und vor allem den humanit=E4ren investieren k=F6nnen. Ich bin ganz =
-bewusst was ich zu tun beabsichtigen, und ich denke, trotz der Tatsache, di=
-e wir nicht wissen, werdet ihr diese Summe gut nutzen. Ich bitte Sie, bitte=
- dieses Erbe zu akzeptieren, ohne jedoch Fragen Sie alles, was in zur=FCckg=
-eben wenn es nicht immer denken, gutes zu tun, um dich herum, was ich nicht=
- getan habe, in meiner Existenz.
-Das hei=DFt, wird auf einer verantwortlichen Person und besonders gutem Gla=
-uben fallen zu lassen beruhigt, ich m=F6chte bitten, dass Sie bitte mich be=
-i den meisten schnell kontaktieren, um weitere Erkl=E4rung =FCber die Gr=FC=
-nde f=FCr meine Geste und den Verlauf der Dinge zu geben. Bitte kontaktiere=
-n Sie mich so bald wie m=F6glich, wenn Sie mein Angebot akzeptieren.
-Gott m=F6ge mit dir sein!
-Ich fordere Sie auf, mich =FCber meine pers=F6nliche e-Mail-Adresse zu kont=
-aktieren:
-Isabelle.claude654@laposte.net
-Der Frieden und Barmherzigkeit Gottes m=F6ge mit dir sein.
-Mrs Isabelle
+Hi Nagalakshmi,
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Welcome back from vacation.  Please Ack this patch because output is
+still badly fromatted in linux-next.
+
+regards,
+dan carpenter
+
+On Fri, Mar 28, 2014 at 11:39:01AM +0300, Dan Carpenter wrote:
+> The indenting here for "pr_info("\n");" is not correct.  It's not part
+> of the if condition.
+> 
+> Also using pr_info() would put extra characters in the middle of the
+> line.  I suppose that people could complain that pr_cont() is racy but
+> at least it's better than the original code.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> index 0cf4f70..aa0e042 100644
+> --- a/drivers/scsi/mpt3sas/mpt3sas_base.c
+> +++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> @@ -585,9 +585,9 @@ _base_display_event_data(struct MPT3SAS_ADAPTER *ioc,
+>  		    (event_data->ReasonCode = MPI2_EVENT_SAS_DISC_RC_STARTED) ?
+>  		    "start" : "stop");
+>  		if (event_data->DiscoveryStatus)
+> -			pr_info("discovery_status(0x%08x)",
+> +			pr_cont("discovery_status(0x%08x)",
+>  			    le32_to_cpu(event_data->DiscoveryStatus));
+> -			pr_info("\n");
+> +		pr_cont("\n");
+>  		return;
+>  	}
+>  	case MPI2_EVENT_SAS_BROADCAST_PRIMITIVE:
