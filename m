@@ -1,28 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 02 Apr 2014 16:54:49 +0000
-Subject: [patch] sh: missing break statement
-Message-Id: <20140402165449.GA10002@mwanda>
+Date: Tue, 29 Apr 2014 12:39:53 +0000
+Subject: [patch]  [SCSI] osst: indent for loop body
+Message-Id: <20140429123953.GA18437@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-sh@vger.kernel.org
+To: Willem Riede <osst@riede.org>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, osst-users@lists.sourceforge.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-SH_BREAKPOINT_READ doesn't work because of the missing break in this
-switch statement.
+The for body loop isn't indented at all so it's confusing.
 
-Fixes: 09a072947791 ('sh: hw-breakpoints: Add preliminary support for SH-4A UBC.')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/arch/sh/kernel/hw_breakpoint.c b/arch/sh/kernel/hw_breakpoint.c
-index f9173766..42d30ac 100644
---- a/arch/sh/kernel/hw_breakpoint.c
-+++ b/arch/sh/kernel/hw_breakpoint.c
-@@ -160,6 +160,7 @@ int arch_bp_generic_fields(int sh_len, int sh_type,
- 	switch (sh_type) {
- 	case SH_BREAKPOINT_READ:
- 		*gen_type = HW_BREAKPOINT_R;
-+		break;
- 	case SH_BREAKPOINT_WRITE:
- 		*gen_type = HW_BREAKPOINT_W;
- 		break;
+diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
+index 21883a2..3074f6b 100644
+--- a/drivers/scsi/osst.c
++++ b/drivers/scsi/osst.c
+@@ -5430,7 +5430,7 @@ static int append_to_buffer(const char __user *ubp, struct osst_buffer *st_bp, i
+ 
+ 	for (i=0, offset=st_bp->buffer_bytes;
+ 	     i < st_bp->sg_segs && offset >= st_bp->sg[i].length; i++)
+-	offset -= st_bp->sg[i].length;
++		offset -= st_bp->sg[i].length;
+ 	if (i = st_bp->sg_segs) {  /* Should never happen */
+ 		printk(KERN_WARNING "osst :A: Append_to_buffer offset overflow.\n");
+ 		return (-EIO);
