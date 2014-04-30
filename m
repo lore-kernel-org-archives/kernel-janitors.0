@@ -1,39 +1,45 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sun, 13 Apr 2014 04:43:17 +0000
-Subject: Re: Need Clarification about Whether i can change some Specific Staging Code
-Message-Id: <20140413044317.GA15698@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Apr 2014 10:08:22 +0000
+Subject: [patch] staging: iio: ad799x: cleanup probe error handling
+Message-Id: <20140430100822.GC20713@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <534A0341.1050303@gmail.com>
-In-Reply-To: <534A0341.1050303@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, Aida Mynzhasova <ai.c.c0der@gmail.com>, Masanari Iida <standby24x7@gmail.com>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, Apr 13, 2014 at 08:53:45AM +0530, Kumar Gaurav wrote:
-> Hi Greg,
-> 
-> I was checking drivers code to see which are still using semaphore. I 
-> found some in staging. When i opened the code for upgrading that to 
-> MUTEX i found a note. that says:
-> 
->   *    NOTE TO LINUX KERNEL HACKERS:  DO NOT REFORMAT THIS CODE!
->   *
->   *    This is shared code between Digi's CVS archive and the
->   *    Linux Kernel sources.
->   *    Changing the source just for reformatting needlessly breaks
->   *    our CVS diff history.
->   *
->   *    Send any bug fixes/changes to:  Eng.Linux at digi dot com.
->   *    Thank you.
->   */
-> 
-> Involved codes are
-> ./drivers/staging/dgap/dgap_tty.c
->   ./drivers/staging/dgnc/dgnc_tty.c
-> 
-> Please let me know if i can submit a patch against these files.
+My static checker is upset that we check IS_ERR(t->reg) when we know it
+is not an ERR_PTR().  The code is harmless but I have cleaned it up and
+removed the condition.
 
-Yes you can, in fact, you can send a patch to remove those lines :)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-greg k-h
+diff --git a/drivers/iio/adc/ad799x.c b/drivers/iio/adc/ad799x.c
+index 16a8b14..5c95cd9 100644
+--- a/drivers/iio/adc/ad799x.c
++++ b/drivers/iio/adc/ad799x.c
+@@ -717,7 +717,7 @@ static int ad799x_probe(struct i2c_client *client,
+ 	ret = iio_triggered_buffer_setup(indio_dev, NULL,
+ 		&ad799x_trigger_handler, NULL);
+ 	if (ret)
+-		goto error_disable_reg;
++		goto error_disable_vref;
+ 
+ 	if (client->irq > 0) {
+ 		ret = devm_request_threaded_irq(&client->dev,
+@@ -739,11 +739,10 @@ static int ad799x_probe(struct i2c_client *client,
+ 
+ error_cleanup_ring:
+ 	iio_triggered_buffer_cleanup(indio_dev);
++error_disable_vref:
++	regulator_disable(st->vref);
+ error_disable_reg:
+-	if (!IS_ERR(st->vref))
+-		regulator_disable(st->vref);
+-	if (!IS_ERR(st->reg))
+-		regulator_disable(st->reg);
++	regulator_disable(st->reg);
+ 
+ 	return ret;
+ }
