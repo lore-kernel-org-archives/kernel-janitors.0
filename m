@@ -1,53 +1,69 @@
-From: bojan prtvar <prtvar.b@gmail.com>
-Date: Sat, 19 Apr 2014 08:27:50 +0000
-Subject: Re: [PATCH] Staging: crystalhd: Mark local functions as static
-Message-Id: <CAOmT4fRs8Gyg_tw2YhJwcH7Mzw4A2TVBRU4VXi8MCN8K+5vACA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 30 Apr 2014 21:05:29 +0000
+Subject: [patch v2] [patch] staging: iio: ad799x: remove some unneeded IS_ERR() checks
+Message-Id: <20140430210529.GA6008@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1397843871-10850-1-git-send-email-prtvar.b@gmail.com>
-	<20140418232315.GA23165@kroah.com>
-	<CAOmT4fRoz+TyxUKBS22RAqsZmyo-27qCuKQQsg-hHdsY5JRSWw@mail.gmail.com>
-In-Reply-To: <CAOmT4fRoz+TyxUKBS22RAqsZmyo-27qCuKQQsg-hHdsY5JRSWw@mail.gmail.com>
+In-Reply-To: <53615EED.8040600@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: nsankar@broadcom.com, jarod@wilsonet.com, Scott Davilla <davilla@4pi.com>, Manu Abraham <abraham.manu@gmail.com>, Amarjargal G <amarjargal16@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Hartmut Knaack <knaack.h@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, Aida Mynzhasova <ai.c.c0der@gmail.com>, Masanari Iida <standby24x7@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Apr 19, 2014 at 9:58 AM, bojan prtvar <prtvar.b@gmail.com> wrote:
-> On Sat, Apr 19, 2014 at 1:23 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
->> On Fri, Apr 18, 2014 at 07:57:51PM +0200, Bojan Prtvar wrote:
->>> This fixes the following sparse warnings:
->>> drivers/staging/crystalhd/crystalhd_lnx.c:631:5: warning: symbol 'chd_dec_pci_suspend' was not declared. Should it be static?
->>> drivers/staging/crystalhd/crystalhd_lnx.c:665:5: warning: symbol 'chd_dec_pci_resume' was not declared. Should it be static?
->>> drivers/staging/crystalhd/crystalhd_lnx.c:78:29: warning: symbol 'chd_dec_alloc_iodata' was not declared. Should it be static?
->>> drivers/staging/crystalhd/crystalhd_lnx.c:99:6: warning: symbol 'chd_dec_free_iodata' was not declared. Should it be static?
->>>
->>> Signed-off-by: Bojan Prtvar <prtvar.b@gmail.com>
->>> ---
->>>  drivers/staging/crystalhd/crystalhd_lnx.c |   10 +++++-----
->>>  1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> This patch doesn't apply to my tree, can you redo it and resend?
->>
->> thanks,
->>
->> greg k-h
->
-> I cloned your tree
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-> and on master branch I see work is already done in
->
-> commit 038d3f882926bf49562e5f119957fd81015a9390
-> Author: Valentina Manea <valentina.manea.m@gmail.com>
-> Date:   Mon Oct 7 23:12:14 2013 +0300
->
-> Now what confuses me is the date of this patch. Why I didn't see it
-> linux-next and even in vanilla?
-> I know this question goes under 'basic workflow section'.
->
-> Regards,
-> Bojan
+My static checker is upset that we check IS_ERR(t->reg) when we know it
+is not an ERR_PTR.
 
-I re-checked. Everything is OK with  038d3f8829. I made a mess in my
-local branches.
-Drop this one. And sorry for the noise.
+Checking for IS_ERR() twice is often a sign of confusion and buggy code.
+In this case, if the call to "ret = regulator_enable(st->vref);" fails,
+then we call "regulator_disable(st->vref);" and that's a mistake because
+"st->vref" is not enabled.
+
+I fixed these problems and Hartmut Knaack pointed out a couple unneeded
+IS_ERR() checks in ad799x_remove() so I have removed those as well.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: remove the unneeded checks in ad799x_remove() as well.  Updated the
+    commit message to say that it's actually a small bug fix.
+
+diff --git a/drivers/iio/adc/ad799x.c b/drivers/iio/adc/ad799x.c
+index 16a8b14..39b4cb4 100644
+--- a/drivers/iio/adc/ad799x.c
++++ b/drivers/iio/adc/ad799x.c
+@@ -717,7 +717,7 @@ static int ad799x_probe(struct i2c_client *client,
+ 	ret = iio_triggered_buffer_setup(indio_dev, NULL,
+ 		&ad799x_trigger_handler, NULL);
+ 	if (ret)
+-		goto error_disable_reg;
++		goto error_disable_vref;
+ 
+ 	if (client->irq > 0) {
+ 		ret = devm_request_threaded_irq(&client->dev,
+@@ -739,11 +739,10 @@ static int ad799x_probe(struct i2c_client *client,
+ 
+ error_cleanup_ring:
+ 	iio_triggered_buffer_cleanup(indio_dev);
++error_disable_vref:
++	regulator_disable(st->vref);
+ error_disable_reg:
+-	if (!IS_ERR(st->vref))
+-		regulator_disable(st->vref);
+-	if (!IS_ERR(st->reg))
+-		regulator_disable(st->reg);
++	regulator_disable(st->reg);
+ 
+ 	return ret;
+ }
+@@ -756,10 +755,8 @@ static int ad799x_remove(struct i2c_client *client)
+ 	iio_device_unregister(indio_dev);
+ 
+ 	iio_triggered_buffer_cleanup(indio_dev);
+-	if (!IS_ERR(st->vref))
+-		regulator_disable(st->vref);
+-	if (!IS_ERR(st->reg))
+-		regulator_disable(st->reg);
++	regulator_disable(st->vref);
++	regulator_disable(st->reg);
+ 	kfree(st->rx_buf);
+ 
+ 	return 0;
