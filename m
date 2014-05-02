@@ -1,45 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 05 May 2014 07:44:34 +0000
-Subject: Re: [patch] isdn: hisax: clean up some indenting
-Message-Id: <20140505074434.GN26890@mwanda>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Fri, 02 May 2014 11:21:11 +0000
+Subject: Re: [patch] drm/panel: s6e8aa0: silence array overflow warning
+Message-Id: <20140502112109.GA18693@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="lrZ03NoBR/3+SXJZ"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140503202012.GC32753@mwanda>
- <53668DFC.6040106@bfs.de>
-In-Reply-To: <53668DFC.6040106@bfs.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Karsten Keil <isdn@linux-pingi.de>, Jiri Kosina <jkosina@suse.cz>, Randy Dunlap <rdunlap@infradead.org>, Masanari Iida <standby24x7@gmail.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20140409152112.GD24536@mwanda>
+In-Reply-To: <20140409152112.GD24536@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>
 
-On Sun, May 04, 2014 at 08:59:08PM +0200, walter harms wrote:
-> > @@ -1051,12 +1054,13 @@ tx_b_frame(struct hfc4s8s_btype *bch)
-> >  			cnt -= 4;
-> >  		}
-> >  
-> > -		while (cnt--)
-> > +		while (cnt--) {
-> >  #ifdef HISAX_HFC4S8S_PCIMEM
-> >  			fWrite_hfc8(l1->hw, A_FIFO_DATA0, *cp++);
-> >  #else
-> > -		fWrite_hfc8(l1->hw, *cp++);
-> > +			fWrite_hfc8(l1->hw, *cp++);
-> >  #endif
-> > +		}
-> 
-> This looks wrong. The read above uses Read_hfc8/fRead_hfc8 (easy to
-> confuse but i am not the maintainer ....)
-> here we have 2* fWrite_hfc8() ?
-> Does this compile with HISAX_HFC4S8S_PCIMEM ??
-> 
 
-Yeah.  You're right.  The first fWrite_hfc8() should be Write_hfc8().
-This same mistake is made two other places which prevents the driver
-from compiling with HISAX_HFC4S8S_PCIMEM.
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will just delete this code since it has been broken since 2.6.12.
-Let me resend.
+On Wed, Apr 09, 2014 at 06:21:12PM +0300, Dan Carpenter wrote:
+> Smatch complains that we are reading beyond the end of the array here:
+>=20
+> 	drivers/gpu/drm/panel/panel-s6e8aa0.c:852 s6e8aa0_read_mtp_id()
+> 	warn: buffer overflow 's6e8aa0_variants' 4 <=3D 4
+>=20
+> We set the error code, so it's not harmful but it looks like a return
+> was intended here so lets add that and silence the warning.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
+Applied, thanks.
 
+Thierry
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTY3+lAAoJEN0jrNd/PrOh4QEP/ROsugmi/IXkqW6uAXJKnS+8
+cPza0VO6cPxE3tsPm3ArR3tvY6Qgx6D6z1Jl5bN3tast30vt9QalkCvqgK4HOljk
+KlUPnleVJj1SZbUM1BJH/n+NCmeMo1VnXBxsUe6fqE3Jk/WFcKbRfoyt1KKiet1D
+KnHopPE5cc0Iansu8Fiwl5Ewn3R+xU54a/j5d9Dz2Ov2l6NVCHFXMEd59A+37aIU
+3dmID0fkxOsksxHTep94pt+YcqdN9yKV1/JdM1Q2ItpBc4qSRdGSARLcBAGAMGqP
+Ts3xZSfU2qJuyc/UnhV6/BvLB3kzIoz7YJJgMoO7B1GkexaUl+CiPoLksTmDBF9v
+Xr0S59N/2v1HAjuv75mAUmkI5IWk92E1EkHKiwJY10bdneopYPlsX9ax3ZrVwJRw
+0msQvZZe9sAS7NTccQJTRKN037zaemaN1SZi6k0AE/Y/1V5ebEGcXNTMPJFzF+qR
+/BU3bTsWgARvXruHmt3TOAgEx51wqtgYC58dvSNmVB9iRQ5wJj8qA0gP+VqoKG88
+6yufxIe4T21SWAZ8zAT4WtWV1LhoZ89sFFRVZ7UkvAsIG+QpOAH56Xw6RBvHDikx
+xPyZFNIPrTTpavrYiBLDn4O2Z9xMQ9rs1fWZjBJNpGU/yy6qJPcjuBuG/yEiK6D2
+//EfySrU81Z4FrQbP8+m
+=Uy2x
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
