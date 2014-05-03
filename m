@@ -1,71 +1,99 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Fri, 09 May 2014 10:18:56 +0000
-Subject: Re: some divide by zero bugs in >fb_check_var() functions
-Message-Id: <536CAB90.5010900@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="9cALjThbF6DH3rRtvDtP1bjgcwxaRP9OE"
+From: Mathieu Souchaud <mattieu.souchaud@free.fr>
+Date: Sat, 03 May 2014 21:03:51 +0000
+Subject: [PATCH v2] x86/mce: Improve mcheck_init_device() error handling
+Message-Id: <1399151031-19905-1-git-send-email-mattieu.souchaud@free.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140124223503.GA4251@elgon.mountain>
-In-Reply-To: <20140124223503.GA4251@elgon.mountain>
-To: linux-fbdev@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: tony.luck@intel.com, bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Mathieu Souchaud <mattieu.souchaud@free.fr>
 
---9cALjThbF6DH3rRtvDtP1bjgcwxaRP9OE
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Check return code of every function called by mcheck_init_device().
 
-On 02/05/14 18:48, Geert Uytterhoeven wrote:
-> On Tue, Jan 28, 2014 at 10:28 PM, Kees Cook <keescook@chromium.org> wro=
-te:
->> Is it ever valid to have pixclock, xres_virtual, or bits_per_pixel be
->> zero? Seems like it'd be trivial to check for those in fb_set_var()?
->=20
-> pixclock could be zero for some special fixed type of display that does=
-n't
-> have timings. Hmm, you could use 1 for that. Are there any in-tree user=
-s?
+Signed-off-by: Mathieu Souchaud <mattieu.souchaud@free.fr>
+---
+ arch/x86/kernel/cpu/mcheck/mce.c |   49 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 41 insertions(+), 8 deletions(-)
 
-I have no idea if we have such drivers. But in that case I would rather
-use pixel clock of 0 than 1. It's usually much easier to notice uses of
-non-valid value if it's 0 than 1.
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 68317c8..284cfad 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -2437,32 +2437,65 @@ static __init int mcheck_init_device(void)
+ 	int err;
+ 	int i = 0;
+ 
+-	if (!mce_available(&boot_cpu_data))
+-		return -EIO;
++	if (!mce_available(&boot_cpu_data)) {
++		err = -EIO;
++		goto err_out;
++	}
+ 
+-	zalloc_cpumask_var(&mce_device_initialized, GFP_KERNEL);
++	if (!zalloc_cpumask_var(&mce_device_initialized, GFP_KERNEL)) {
++		err = -ENOMEM;
++		goto err_out;
++	}
+ 
+ 	mce_init_banks();
+ 
+ 	err = subsys_system_register(&mce_subsys, NULL);
+ 	if (err)
+-		return err;
++		goto err_out_mem;
+ 
+ 	cpu_notifier_register_begin();
+ 	for_each_online_cpu(i) {
+ 		err = mce_device_create(i);
+ 		if (err) {
+-			cpu_notifier_register_done();
+-			return err;
++			goto err_device_create;
+ 		}
+ 	}
+ 
+ 	register_syscore_ops(&mce_syscore_ops);
+-	__register_hotcpu_notifier(&mce_cpu_notifier);
++	err = __register_hotcpu_notifier(&mce_cpu_notifier);
++	if (err)
++		goto err_reg_hotcpu;
+ 	cpu_notifier_register_done();
+ 
+ 	/* register character device /dev/mcelog */
+-	misc_register(&mce_chrdev_device);
++	err = misc_register(&mce_chrdev_device);
++	if (err)
++		goto err_register;
++
++	return 0;
++
++
++err_register:
++	cpu_notifier_register_begin();
++	__unregister_hotcpu_notifier(&mce_cpu_notifier);
++
++err_reg_hotcpu:
++	unregister_syscore_ops(&mce_syscore_ops);
++
++err_device_create:
++	/*
++	 * mce_device_remove behave properly if mce_device_create was not
++	 * called on that device.
++	 */
++	for_each_possible_cpu(i)
++		mce_device_remove(i);
++	cpu_notifier_register_done();
++
++err_out_mem:
++	free_cpumask_var(mce_device_initialized);
++
++err_out:
++	pr_err("Unable to init device /dev/mcelog (rc: %d)\n", err);
+ 
+ 	return err;
+ }
+-- 
+1.7.9.5
 
-But maybe that'd warrant a new flag somewhere, to mark the fb as having
-no timings.
-
-> Anyway, the checker reported issues with specific drivers, not with the=
- core,
-> right?
-
-Yes, but the issue seemed to be so common that it'd be nice if the core
-would check it.
-
-But looking at the longer list sent by Dan, it looks to me that there
-are also lots of cases where it must be the driver doing the checks.
-
- Tomi
-
-
-
---9cALjThbF6DH3rRtvDtP1bjgcwxaRP9OE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTbKuQAAoJEPo9qoy8lh71q0MQAJvWooKjQnZp4Q3ONmS5YXeZ
-ylh9FOHYg+XnngCbU+LdJ9+YLp7rewomlnczwQHKLSuOxXdONJ6bq3n3Yc9kkJRk
-Fsf+0eERfmHRjUam+8N7EMI1h4IFysorHriVnLM6fzfd6qG++vtgR+F624ix18Js
-j+vRlp4W2kGVuYeu/X/Uxbva+2aPLxoCud8yms/WwqEWmPAQxT8L2zKHGOZKm+7g
-jV3U5TsQDx2XnORUgQlpR6QUqK/DdJqts3a020ZZeAmaw7gzdoDISqiw64negw6P
-Rb5+5tSUa0/CgyjFe2dNhM47Yb2oYiR3eNyv8X/OGmlhQkwrUEe7veaZCS0VRJM1
-xiPx9rKYlO7BiBrGKAKfx63nQD8dcsWSwG/KQ0bb+ygahw4EE4KlNjxR/PSvAMY9
-VA6rZPO7BtlCLAeu4fozAm/yXILguMpXacjLIJEgkUpKuBQEKLlHs0fGz9I+rMh1
-YeVkIiHlLGGd5EmWS3n4fQueyDaHu40tci1+A5Ewid7edaiJPQk1V4+NnROKg67t
-tttgHzB0MzydT3iVcC4yzwcxFtWtYRiKaco4ZXu1NV+/ANgZYUZaqZk58RHEGsHc
-/o2gv46QsAyH0rKI0b+i4jLJ8efsR93KEebihH4rPp2OKsG0R4/kIiq8cpCboMjF
-QS3maEwzq4nOVcAAvwn7
-=DFdY
------END PGP SIGNATURE-----
-
---9cALjThbF6DH3rRtvDtP1bjgcwxaRP9OE--
