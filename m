@@ -1,71 +1,21 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Date: Mon, 26 May 2014 18:49:04 +0000
-Subject: Re: [PATCH 3/3] watchdog: via_wdt: replace del_timer by del_timer_sync
-Message-Id: <20140526184904.GA21259@spo001.leaseweb.com>
+From: "Gva Abogados" <Molly.Mee@acf.hhs.gov>
+Date: Sat, 03 May 2014 12:20:40 +0000
+Subject: Please Acknowledge My Proposal
+Message-Id: <281f66fefbbe04055c78ea619c75c388.squirrel@162.222.106.162>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr> <1396360159-16244-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1396360159-16244-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-Hi Julia,
+Please Acknowledge My Proposal!!
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Use del_timer_sync to ensure that the timer is stopped on all CPUs before
-> the driver exits.
-> 
-> This change was suggested by Thomas Gleixner.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r@
-> identifier i,t,ex;
-> @@
-> struct t i = { .remove = ex, };
-> 
-> @@
-> identifier r.ex;
-> @@
-> ex(...) {
->   <...
-> - del_timer
-> + del_timer_sync
->     (...)
->   ...>
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> Not tested.
-> 
->  drivers/watchdog/via_wdt.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/via_wdt.c b/drivers/watchdog/via_wdt.c
-> index d2cd9f0..56369c4 100644
-> --- a/drivers/watchdog/via_wdt.c
-> +++ b/drivers/watchdog/via_wdt.c
-> @@ -232,7 +232,7 @@ err_out_disable_device:
->  static void wdt_remove(struct pci_dev *pdev)
->  {
->  	watchdog_unregister_device(&wdt_dev);
-> -	del_timer(&timer);
-> +	del_timer_sync(&timer);
->  	iounmap(wdt_mem);
->  	release_mem_region(mmio, VIA_WDT_MMIO_LEN);
->  	release_resource(&wdt_res);
-> 
+My name is Mr. Juan Martin Domingo a lawyer resident in Spain. I am
+writing to let you know I have some FUNDS I want to transfer and am
+seeking if you can be a beneficiary...Do not hesitate to Contact me for
+more information if interested: gva_abogados@aim.com
 
-This was added 2 or 3 weeks ago to linux-watchdog-next.
-
-Kind regards,
-Wim.
+Sincerely
+Juan Martin Domingo.
+Domijdo@aim.com
 
