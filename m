@@ -1,49 +1,36 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 29 May 2014 13:57:42 +0000
-Subject: Re: [patch 1/2] ALSA: fireworks: remove some stray checks
-Message-Id: <s5hsinsadrd.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 03 May 2014 20:18:11 +0000
+Subject: [patch] KVM: s390: return -EFAULT if copy_from_user() fails
+Message-Id: <20140503201811.GA32753@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140528164202.GB1824@mwanda>
-In-Reply-To: <20140528164202.GB1824@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Cornelia Huck <cornelia.huck@de.ibm.com>, linux390@de.ibm.com, Gleb Natapov <gleb@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Wed, 28 May 2014 19:42:02 +0300,
-Dan Carpenter wrote:
-> 
-> We checked "err" earlier.  These things seem to be left over code.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+When copy_from_user() fails, this code returns the number of bytes
+remaining instead of a negative error code.  The positive number is
+returned to the user but otherwise it is harmless.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I am not able to compile this.
 
-
-Takashi
-
-> 
-> diff --git a/sound/firewire/fireworks/fireworks.c b/sound/firewire/fireworks/fireworks.c
-> index a354d26..8e856cc 100644
-> --- a/sound/firewire/fireworks/fireworks.c
-> +++ b/sound/firewire/fireworks/fireworks.c
-> @@ -89,8 +89,6 @@ get_hardware_info(struct snd_efw *efw)
->  	snprintf(version, sizeof(version), "%u.%u",
->  		 (hwinfo->arm_version >> 24) & 0xff,
->  		 (hwinfo->arm_version >> 16) & 0xff);
-> -	if (err < 0)
-> -		goto end;
->  	efw->firmware_version = hwinfo->arm_version;
->  
->  	strcpy(efw->card->driver, "Fireworks");
-> @@ -101,8 +99,6 @@ get_hardware_info(struct snd_efw *efw)
->  		 hwinfo->vendor_name, hwinfo->model_name, version,
->  		 hwinfo->guid_hi, hwinfo->guid_lo,
->  		 dev_name(&efw->unit->device), 100 << fw_dev->max_speed);
-> -	if (err < 0)
-> -		goto end;
->  
->  	if (hwinfo->flags & BIT(FLAG_RESP_ADDR_CHANGABLE))
->  		efw->resp_addr_changable = true;
-> 
+diff --git a/arch/s390/kvm/guestdbg.c b/arch/s390/kvm/guestdbg.c
+index 757ccef..3e8d409 100644
+--- a/arch/s390/kvm/guestdbg.c
++++ b/arch/s390/kvm/guestdbg.c
+@@ -223,9 +223,10 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
+ 		goto error;
+ 	}
+ 
+-	ret = copy_from_user(bp_data, dbg->arch.hw_bp, size);
+-	if (ret)
++	if (copy_from_user(bp_data, dbg->arch.hw_bp, size)) {
++		ret = -EFAULT;
+ 		goto error;
++	}
+ 
+ 	for (i = 0; i < dbg->arch.nr_hw_bp; i++) {
+ 		switch (bp_data[i].type) {
