@@ -1,66 +1,32 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 17 May 2014 22:14:14 +0000
-Subject: [PATCH 2/4 V2] cpupower: Remove redundant error check
-Message-Id: <1400364854-9575-1-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 03 May 2014 20:27:00 +0000
+Subject: [patch resend] agp: info leak in agpioc_info_wrap()
+Message-Id: <20140503202700.GF32753@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>, Thomas Renninger <trenn@suse.de>, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alan Cox <alan@linux.intel.com>, kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com
+To: David Airlie <airlied@linux.ie>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove double checks, and move the call to print_error to the
-first check. Replace break by return, and return 0 on success.
-The simplified version of the coccinelle semantic patch that
-fixes this issue is as follows:
+On 64 bit systems the agp_info struct has a 4 byte hole between
+->agp_mode and ->aper_base.  We need to clear it to avoid disclosing
+stack information to userspace.
 
-// <smpl>
-@@
-expression E; identifier pr; expression list es;
-@@
-for(...;...;...){
-...
--	if (E) break;
-+	if (E){
-+		pr(es);
-+		break;
-+	}
-...
-}
-- if(E) pr(es);
-// </smpl>
-
-Untested.
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Changes from V1:
- - Replaced break with a return
- - Return 0 instead of ret on success
+I sent this before on 13 Apr 2013 and a reminder on 31 May 2013 so now
+I'm going to try sneak it in through the akpm tree.
 
- tools/power/cpupower/utils/cpufreq-set.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/tools/power/cpupower/utils/cpufreq-set.c b/tools/power/cpupower/utils/cpufreq-set.c
-index a416de8..f656e58 100644
---- a/tools/power/cpupower/utils/cpufreq-set.c
-+++ b/tools/power/cpupower/utils/cpufreq-set.c
-@@ -320,12 +320,11 @@ int cmd_freq_set(int argc, char **argv)
+diff --git a/drivers/char/agp/frontend.c b/drivers/char/agp/frontend.c
+index 8121b4c..b297033 100644
+--- a/drivers/char/agp/frontend.c
++++ b/drivers/char/agp/frontend.c
+@@ -730,6 +730,7 @@ static int agpioc_info_wrap(struct agp_file_private *priv, void __user *arg)
  
- 		printf(_("Setting cpu: %d\n"), cpu);
- 		ret = do_one_cpu(cpu, &new_pol, freq, policychange);
--		if (ret)
--			break;
-+		if (ret) {
-+			print_error();
-+			return ret;
-+		}
- 	}
+ 	agp_copy_info(agp_bridge, &kerninfo);
  
--	if (ret)
--		print_error();
--
--	return ret;
-+	return 0;
- }
++	memset(&userinfo, 0, sizeof(userinfo));
+ 	userinfo.version.major = kerninfo.version.major;
+ 	userinfo.version.minor = kerninfo.version.minor;
+ 	userinfo.bridge_id = kerninfo.device->vendor |
