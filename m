@@ -1,57 +1,39 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Mon, 19 May 2014 06:03:18 +0000
-Subject: Re: [PATCH 13/13] s390/irq: make return of 0 explicit
-Message-Id: <20140519060318.GA4459@osiris>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 05 May 2014 09:47:57 +0000
+Subject: [patch v2] [SCSI] qla2xxx: fix incorrect debug printk
+Message-Id: <20140505094757.GA22383@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
- <1400473875-22228-14-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1400473875-22228-14-git-send-email-Julia.Lawall@lip6.fr>
+References: <20140505094506.GM4963@mwanda>
+In-Reply-To: <20140505094506.GM4963@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Robert Richter <rric@kernel.org>, kernel-janitors@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux390@de.ibm.com, oprofile-list@lists.sf.net, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+To: qla2xxx-upstream@qlogic.com
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, May 19, 2014 at 06:31:15AM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Delete unnecessary local variable whose value is always 0 and that hides
-> the fact that the result is always 0.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  arch/s390/oprofile/hwsampler.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/s390/oprofile/hwsampler.c b/arch/s390/oprofile/hwsampler.c
-> index 276f2e2..28b2760 100644
-> --- a/arch/s390/oprofile/hwsampler.c
-> +++ b/arch/s390/oprofile/hwsampler.c
-> @@ -212,10 +212,8 @@ static void init_all_cpu_buffers(void)
->  static int prepare_cpu_buffers(void)
->  {
->  	int cpu;
-> -	int rc;
->  	struct hws_cpu_buffer *cb;
-> 
-> -	rc = 0;
->  	for_each_online_cpu(cpu) {
->  		cb = &per_cpu(sampler_cpu_buffer, cpu);
->  		atomic_set(&cb->ext_params, 0);
-> @@ -231,7 +229,7 @@ static int prepare_cpu_buffers(void)
->  		cb->stop_mode = 0;
->  	}
-> 
-> -	return rc;
-> +	return 0;
->  }
+There are missing curly braces here so it prints that the recovery
+failed even when it succeeded.
 
-Thanks Julia,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: version 1 patch was corrupted in sending somehow.
 
-I applied a slightly different version which also turns prepare_cpu_buffers
-into a void returning function.
-
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index afc8481..00754a2 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -4913,12 +4913,13 @@ qla2x00_do_dpc(void *data)
+ 				if (qlafx00_reset_initialize(base_vha)) {
+ 					/* Failed. Abort isp later. */
+ 					if (!test_bit(UNLOADING,
+-					    &base_vha->dpc_flags))
++					    &base_vha->dpc_flags)) {
+ 						set_bit(ISP_UNRECOVERABLE,
+ 						    &base_vha->dpc_flags);
+ 						ql_dbg(ql_dbg_dpc, base_vha,
+ 						    0x4021,
+ 						    "Reset Recovery Failed\n");
++					}
+ 				}
+ 			}
+ 
