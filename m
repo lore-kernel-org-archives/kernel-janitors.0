@@ -1,52 +1,42 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 10 May 2014 10:38:55 +0000
-Subject: Re: [patch] iio: hid-sensors: typo leads to potential forever loop
-Message-Id: <536E01BF.6020702@kernel.org>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Tue, 06 May 2014 14:56:19 +0000
+Subject: [PATCH] staging: lustre: remove unused variables
+Message-Id: <1399388179-7647-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140509115617.GC32027@mwanda> <536D089C.9040307@linux.intel.com>
-In-Reply-To: <536D089C.9040307@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peng Tao <bergwolf@gmail.com>, Andreas Dilger <andreas.dilger@intel.com>, Fredrick John Berchmans <fredrickprashanth@gmail.com>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On 09/05/14 17:55, Srinivas Pandruvada wrote:
-> OOPs. Good catch.
->
-> Thanks,
-> Srinivas
->
-> On 05/09/2014 04:56 AM, Dan Carpenter wrote:
->> The "i < " was missing in this condition.
->>
->> Fixes: 5d02edfc3957 ('iio: hid-sensors: Convert units and exponent')
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Applied to the togreg branch of iio.igt
+The following commit left some unused variables behind.
 
-Thanks,
+commit 80db2734acbc78db12798cfb611d6acc7fe389e6
+Author: Fredrick John Berchmans <fredrickprashanth@gmail.com>
+Date:   Fri May 2 19:50:15 2014 -0700
 
->>
->> diff --git a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
->> index 3729646..3052eb1 100644
->> --- a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
->> +++ b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
->> @@ -327,7 +327,7 @@ int hid_sensor_format_scale(u32 usage_id,
->>       *val0 = 1;
->>       *val1 = 0;
->> -    for (i = 0; ARRAY_SIZE(unit_conversion); ++i) {
->> +    for (i = 0; i < ARRAY_SIZE(unit_conversion); ++i) {
->>           if (unit_conversion[i].usage_id = usage_id &&
->>               unit_conversion[i].unit = attr_info->units) {
->>               exp  = hid_sensor_convert_exponent(
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+    staging: lustre use kernel socket sockopt apis
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c
+index 4153b4a..ac3a444 100644
+--- a/drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c
++++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c
+@@ -46,10 +46,8 @@
+ int
+ libcfs_sock_ioctl(int cmd, unsigned long arg)
+ {
+-	mm_segment_t    oldmm = get_fs();
+ 	struct socket  *sock;
+ 	int	     rc;
+-	struct file    *sock_filp;
+ 
+ 	rc = sock_create (PF_INET, SOCK_STREAM, 0, &sock);
+ 	if (rc != 0) {
+-- 
+1.7.10.4
 
