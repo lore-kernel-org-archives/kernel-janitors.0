@@ -1,16 +1,25 @@
-From: Ingo Molnar <mingo@kernel.org>
-Date: Tue, 06 May 2014 06:27:10 +0000
+From: mattieu.souchaud@free.fr
+Date: Wed, 07 May 2014 09:33:52 +0000
 Subject: Re: [PATCH v2] x86/mce: Improve mcheck_init_device() error handling
-Message-Id: <20140506062710.GB25208@gmail.com>
+Message-Id: <2103538240.232636551.1399455232411.JavaMail.root@zimbra10-e2.priv.proxad.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20140506062710.GB25208@gmail.com>
 References: <1399151031-19905-1-git-send-email-mattieu.souchaud@free.fr>
- <3908561D78D1C84285E8C5FCA982C28F327F8E9B@ORSMSX114.amr.corp.intel.com>
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F327F8E9B@ORSMSX114.amr.corp.intel.com>
+In-Reply-To: <1399151031-19905-1-git-send-email-mattieu.souchaud@free.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Mathieu Souchaud <mattieu.souchaud@free.fr>, "bp@alien8.de" <bp@alien8.de>, "tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ingo Molnar <mingo@kernel.org>
+Cc: bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Tony Luck <tony.luck@intel.com>
+
+Ok, thanks, that's better. I'll put your modifications in the patch v3.
+
+----- Mail original -----
+De: "Ingo Molnar" <mingo@kernel.org>
+À: "Tony Luck" <tony.luck@intel.com>
+Cc: "Mathieu Souchaud" <mattieu.souchaud@free.fr>, bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Envoyé: Mardi 6 Mai 2014 08:27:10
+Objet: Re: [PATCH v2] x86/mce: Improve mcheck_init_device() error handling
 
 
 * Luck, Tony <tony.luck@intel.com> wrote:
