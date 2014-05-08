@@ -1,21 +1,36 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Wed, 21 May 2014 00:38:20 +0000
-Subject: Re: [patch] mtd: cfi: indent some if statements
-Message-Id: <20140521003820.GA28907@ld-irv-0074>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Thu, 08 May 2014 23:07:17 +0000
+Subject: [PATCH] net: cassini: use nested lock annotation
+Message-Id: <1399590437-5548-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140514141900.GB18082@mwanda>
-In-Reply-To: <20140514141900.GB18082@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, David Woodhouse <dwmw2@infradead.org>
+To: "David S. Miller" <davem@davemloft.net>, Jingoo Han <jg1.han@samsung.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Ben Hutchings <ben@decadent.org.uk>, Arend van Spriel <arend@broadcom.com>, Joe Perches <joe@perches.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Wed, May 14, 2014 at 05:19:00PM +0300, Dan Carpenter wrote:
-> The break statements should be indented another tab.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In the cas_lock_tx function we acquire multiple locks in a loop and
+need to use nested lock annotation to prevent lockdep warnings.
 
-Applied to l2-mtd.git. Thanks!
+Reported-by: Meelis Roos <mroos@linux.ee>
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/net/ethernet/sun/cassini.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Brian
+diff --git a/drivers/net/ethernet/sun/cassini.c b/drivers/net/ethernet/sun/cassini.c
+index df8d383..b9ac20f 100644
+--- a/drivers/net/ethernet/sun/cassini.c
++++ b/drivers/net/ethernet/sun/cassini.c
+@@ -246,7 +246,7 @@ static inline void cas_lock_tx(struct cas *cp)
+ 	int i;
+ 
+ 	for (i = 0; i < N_TX_RINGS; i++)
+-		spin_lock(&cp->tx_lock[i]);
++		spin_lock_nested(&cp->tx_lock[i], i);
+ }
+ 
+ static inline void cas_lock_all(struct cas *cp)
+-- 
+1.7.10.4
+
