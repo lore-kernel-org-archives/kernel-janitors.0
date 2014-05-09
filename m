@@ -1,36 +1,31 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sat, 17 May 2014 22:57:27 +0000
-Subject: Re: [PATCH v3] ARM: imx: fix error handling in ipu device registration
-Message-Id: <20140517225727.GC20413@lianli>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 09 May 2014 11:55:09 +0000
+Subject: [patch] [media] Staging: dt3155v4l: set error code on failure
+Message-Id: <20140509115509.GA32027@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400352033-18262-1-git-send-email-emilgoode@gmail.com>
- <20140517191821.GD16662@pengutronix.de>
- <20140517220836.GI15585@mwanda>
- <20140517223555.GR3693@n2100.arm.linux.org.uk>
-In-Reply-To: <20140517223555.GR3693@n2100.arm.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hans.verkuil@cisco.com>, Jingoo Han <jg1.han@samsung.com>, Jon Mason <jdmason@kudzu.us>, Russell King <rmk+kernel@arm.linux.org.uk>, Sakari Ailus <sakari.ailus@iki.fi>, Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@gmail.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org
 
-Hello Russell,
+We should be returning -ENOMEM here instead of success.
 
-On Sat, May 17, 2014 at 11:35:55PM +0100, Russell King - ARM Linux wrote:
-> On Sun, May 18, 2014 at 01:08:36AM +0300, Dan Carpenter wrote:
-> > Let's look at that error handling again.
-> > 
-> > err:  <-- the name is not descriptive.  the location is bad.
-> > 		kfree(pdev->dev.dma_mask);  <- null dereference.
-> > 		platform_device_put(pdev);  <- ok
-> > 		return ERR_PTR(-ENODEV);    <- should be "return ERR_PTR(ret);"
-> > 
-> > 3 out of 4 of the lines are bad.
-> 
-> 2 out of 4.  kfree(NULL) is perfectly legal.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I believe pdev could potentially be NULL, so it's the dereference
-that is the problem.
-
-Best regards,
-
-Emil Goode
+diff --git a/drivers/staging/media/dt3155v4l/dt3155v4l.c b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+index afbc2e5..178aa5b 100644
+--- a/drivers/staging/media/dt3155v4l/dt3155v4l.c
++++ b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+@@ -907,8 +907,10 @@ dt3155_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (!pd)
+ 		return -ENOMEM;
+ 	pd->vdev = video_device_alloc();
+-	if (!pd->vdev)
++	if (!pd->vdev) {
++		err = -ENOMEM;
+ 		goto err_video_device_alloc;
++	}
+ 	*pd->vdev = dt3155_vdev;
+ 	pci_set_drvdata(pdev, pd);    /* for use in dt3155_remove() */
+ 	video_set_drvdata(pd->vdev, pd);  /* for use in video_fops */
