@@ -1,76 +1,45 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 20 May 2014 10:33:46 +0000
-Subject: [PATCH 6/8] USB: as102_usb_drv.c: Remove useless return variables
-Message-Id: <1400582028-24990-6-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 May 2014 16:13:07 +0000
+Subject: [patch] staging: dgnc: UART_IIR_XOFF code is buggy
+Message-Id: <20140514161307.GE18082@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Lidza Louina <lidza.louina@gmail.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, driverdev-devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org
 
-This patch remove variables that are initialized with a constant,
-are never updated, and are only used as parameter of return.
-Return the constant instead of using a variable.
+The UART_IIR_XOFF was supposed to be a no-op but, because there was a
+missing semi-colon, the if statement is not "Empty".  I have just deleted
+this code because it was supposed to be a no-op anyway.  UART_IIR_XOFF
+is a standard define and not something specific to this driver.
 
-Verified by compilation only.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The coccinelle script that find and fixes this issue is:
-// <smpl>
-@@
-type T;
-constant C;
-identifier ret;
-@@
-- T ret = C;
-... when != ret
-- return ret;
-+ return C;
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
- drivers/staging/media/as102/as102_usb_drv.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/media/as102/as102_usb_drv.c b/drivers/staging/media/as102/as102_usb_drv.c
-index e4a6945..e6f6278 100644
---- a/drivers/staging/media/as102/as102_usb_drv.c
-+++ b/drivers/staging/media/as102/as102_usb_drv.c
-@@ -249,7 +249,7 @@ static void as102_free_usb_stream_buffer(struct as102_dev_t *dev)
+diff --git a/drivers/staging/dgnc/dgnc_cls.h b/drivers/staging/dgnc/dgnc_cls.h
+index ffe8535..465d79a 100644
+--- a/drivers/staging/dgnc/dgnc_cls.h
++++ b/drivers/staging/dgnc/dgnc_cls.h
+@@ -61,7 +61,6 @@ struct cls_uart_struct {
+ #define UART_16654_FCR_RXTRIGGER_56	0x80
+ #define UART_16654_FCR_RXTRIGGER_60     0xC0
  
- static int as102_alloc_usb_stream_buffer(struct as102_dev_t *dev)
- {
--	int i, ret = 0;
-+	int i;
+-#define UART_IIR_XOFF			0x10	/* Received Xoff signal/Special character */
+ #define UART_IIR_CTSRTS			0x20	/* Received CTS/RTS change of state */
+ #define UART_IIR_RDI_TIMEOUT		0x0C    /* Receiver data TIMEOUT */
  
- 	dev->stream = usb_alloc_coherent(dev->bus_adap.usb_dev,
- 				       MAX_STREAM_URB * AS102_USB_BUF_SIZE,
-@@ -280,7 +280,7 @@ static int as102_alloc_usb_stream_buffer(struct as102_dev_t *dev)
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index 60d9b62..8e265c2 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -453,10 +453,6 @@ static inline void cls_parse_isr(struct dgnc_board *brd, uint port)
+ 			cls_copy_data_from_queue_to_uart(ch);
+ 		}
  
- 		dev->stream_urb[i] = urb;
- 	}
--	return ret;
-+	return 0;
- }
- 
- static void as102_usb_stop_stream(struct as102_dev_t *dev)
-@@ -458,7 +458,6 @@ exit:
- 
- static int as102_release(struct inode *inode, struct file *file)
- {
--	int ret = 0;
- 	struct as102_dev_t *dev = NULL;
- 
- 	dev = file->private_data;
-@@ -467,7 +466,7 @@ static int as102_release(struct inode *inode, struct file *file)
- 		kref_put(&dev->kref, as102_usb_release);
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- MODULE_DEVICE_TABLE(usb, as102_usb_id_table);
-
+-		/* Received Xoff signal/Special character */
+-		if (isr & UART_IIR_XOFF)
+-			/* Empty */
+-
+ 		/* CTS/RTS change of state */
+ 		if (isr & UART_IIR_CTSRTS) {
+ 			brd->intr_modem++;
