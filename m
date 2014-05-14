@@ -1,88 +1,32 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 29 May 2014 12:37:24 +0000
-Subject: Re: [PATCH 6/13] [NETFILTER]: arp_tables: make return of 0 explicit
-Message-Id: <alpine.DEB.2.02.1405291436590.1996@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 May 2014 12:57:20 +0000
+Subject: [patch]  PM / hibernate: memory corruption in resumedelay_setup()
+Message-Id: <20140514125720.GC14571@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr> <1400473875-22228-7-git-send-email-Julia.Lawall@lip6.fr> <20140529122400.GA5371@localhost>
-In-Reply-To: <20140529122400.GA5371@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: kernel-janitors@vger.kernel.org, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, netfilter-devel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Fabian Frederick <fabf@skynet.be>
+Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+"resume_delay" is not an unsigned long, it's an int, so this will
+corrupt memory on 64 bit systems.
 
+Fixes: 317cf7e5e85e ('PM / hibernate: convert simple_strtoul to kstrtoul')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Thu, 29 May 2014, Pablo Neira Ayuso wrote:
-
-> Hi Julia,
-> 
-> On Mon, May 19, 2014 at 06:31:08AM +0200, Julia Lawall wrote:
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > Delete unnecessary local variable whose value is always 0 and that hides
-> > the fact that the result is always 0.
-> >
-> > A simplified version of the semantic patch that fixes this problem is as
-> > follows: (http://coccinelle.lip6.fr/)
-> >
-> > // <smpl>
-> > @r exists@
-> > local idexpression ret;
-> > expression e;
-> > position p;
-> > @@
-> >
-> > -ret = 0;
-> > ... when != ret = e
-> > return
-> > - ret
-> > + 0
-> >   ;
-> > // </smpl>
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> >
-> > ---
-> >  net/ipv4/netfilter/arp_tables.c |    5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
-> > index f95b6f9..89f6737 100644
-> > --- a/net/ipv4/netfilter/arp_tables.c
-> > +++ b/net/ipv4/netfilter/arp_tables.c
-> > @@ -1289,9 +1289,8 @@ compat_copy_entry_from_user(struct compat_arpt_entry *e, void **dstptr,
-> >  	struct xt_target *target;
-> >  	struct arpt_entry *de;
-> >  	unsigned int origsize;
-> > -	int ret, h;
-> > +	int h;
-> >
-> > -	ret = 0;
-> >  	origsize = *size;
-> >  	de = (struct arpt_entry *)*dstptr;
-> >  	memcpy(de, e, sizeof(struct arpt_entry));
-> > @@ -1312,7 +1311,7 @@ compat_copy_entry_from_user(struct compat_arpt_entry *e, void **dstptr,
-> >  		if ((unsigned char *)de - base < newinfo->underflow[h])
-> >  			newinfo->underflow[h] -= origsize - *size;
-> >  	}
-> > -	return ret;
-> > +	return 0;
-> >  }
-> 
-> This looks good, but we can simplify this a bit further, given that
-> compat_copy_entry_from_user could be made void.
-> 
-> This branch below never happens.
-> 
->         xt_entry_foreach(iter0, entry0, total_size) {
->                 ret = compat_copy_entry_from_user(iter0, &pos, &size,
->                                                   name, newinfo, entry1);
->                 if (ret != 0)
->                         break;
->         }
-
-Are you taking care of this., or should I do something?
-
-thanks,
-julia
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 2377ff7..3659b26 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -1115,8 +1115,9 @@ static int __init resumewait_setup(char *str)
+ 
+ static int __init resumedelay_setup(char *str)
+ {
+-	int rc = kstrtoul(str, 0, (unsigned long *)&resume_delay);
++	int rc;
+ 
++	rc = kstrtoint(str, 0, &resume_delay);
+ 	if (rc)
+ 		return rc;
+ 	return 1;
