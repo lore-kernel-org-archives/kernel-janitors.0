@@ -1,64 +1,45 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 22 May 2014 15:48:15 +0000
-Subject: Re: [PATCH] ALSA: Replace DEFINE_PCI_DEVICE_TABLE macro use
-Message-Id: <s5hfvk1q0g0.wl%tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 May 2014 16:08:46 +0000
+Subject: [patch v2]  PM / hibernate: memory corruption in resumedelay_setup()
+Message-Id: <20140514160845.GA5273@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400771334-25112-1-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1400771334-25112-1-git-send-email-benoit.taine@lip6.fr>
+References: <20140514155602.GA9723@amd.pavel.ucw.cz>
+In-Reply-To: <20140514155602.GA9723@amd.pavel.ucw.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benoit Taine <benoit.taine@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Fabian Frederick <fabf@skynet.be>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Thu, 22 May 2014 17:08:54 +0200,
-Benoit Taine wrote:
-> 
-> We should prefer `const struct pci_device_id` over
-> `DEFINE_PCI_DEVICE_TABLE` to meet kernel coding style guidelines.
-> This issue was reported by checkpatch.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> // <smpl>
-> 
-> @@
-> identifier i;
-> declarer name DEFINE_PCI_DEVICE_TABLE;
-> initializer z;
-> @@
-> 
-> - DEFINE_PCI_DEVICE_TABLE(i)
-> + const struct pci_device_id i[]
-> = z;
-> 
-> // </smpl>
-> 
-> It has been tested by compilation.
-> 
-> Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+In the original code "resume_delay" is an int so on 64 bits, the call to
+kstrtoul() will cause memory corruption.  We may as well fix a style
+issue here as well and make "resume_delay" unsigned int, since that's
+what we pass to ssleep().
 
-Thanks, applied.
+Fixes: 317cf7e5e85e ('PM / hibernate: convert simple_strtoul to kstrtoul')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: style differences
 
-
-Takashi
-
-> ---
->  sound/pci/hda/hda_intel.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> index 2c54629..ab0fd6d 100644
-> --- a/sound/pci/hda/hda_intel.c
-> +++ b/sound/pci/hda/hda_intel.c
-> @@ -1730,7 +1730,7 @@ static void azx_remove(struct pci_dev *pci)
->  }
->  
->  /* PCI IDs */
-> -static DEFINE_PCI_DEVICE_TABLE(azx_ids) = {
-> +static const struct pci_device_id azx_ids[] = {
->  	/* CPT */
->  	{ PCI_DEVICE(0x8086, 0x1c20),
->  	  .driver_data = AZX_DRIVER_PCH | AZX_DCAPS_INTEL_PCH_NOPM },
-> 
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index 2377ff7..df88d55 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -35,7 +35,7 @@
+ static int nocompress;
+ static int noresume;
+ static int resume_wait;
+-static int resume_delay;
++static unsigned int resume_delay;
+ static char resume_file[256] = CONFIG_PM_STD_PARTITION;
+ dev_t swsusp_resume_device;
+ sector_t swsusp_resume_block;
+@@ -1115,7 +1115,7 @@ static int __init resumewait_setup(char *str)
+ 
+ static int __init resumedelay_setup(char *str)
+ {
+-	int rc = kstrtoul(str, 0, (unsigned long *)&resume_delay);
++	int rc = kstrtouint(str, 0, &resume_delay);
+ 
+ 	if (rc)
+ 		return rc;
