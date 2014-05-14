@@ -1,25 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 21 May 2014 19:56:55 +0000
-Subject: Re: [PATCH 3/4 V2] atm: idt77252: Remove redundant error check
-Message-Id: <20140521.155655.2246792997958517691.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 May 2014 13:54:47 +0000
+Subject: [patch v2] usb: phy: msm: change devm_ioremap() to devm_ioremap_resource()
+Message-Id: <20140514135447.GA17540@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400495212-9150-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1400495212-9150-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: chas@cmf.nrl.navy.mil, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 19 May 2014 12:26:52 +0200
+There are several issues here:
+1) platform_get_resource() can return NULL and that wasn't handled.
+2) We should request the memory before we remap it, and
+   devm_ioremap_resource() does that.
+3) devm_ioremap() returns a NULL but we were checking for IS_ERR().
 
-> Remove double checks, convert printk to pr_warn, and move the call to
-> pr_warn to the first check. The simplified version of the coccinelle
-> semantic patch that find this issue is as follows:
- ...
-> Tested by compilation only.
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Fixes: 6b99c68ec1f9 ('usb: phy: msm: Migrate to Managed Device Resource allocation')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: the first version just swapped the IS_ERR() check for a NULL check
 
-Applied to net-next, thanks.
+Thanks everyone for the review.  In the end, it was still a one line fix
+so I forgive you Ivan.
+
+diff --git a/drivers/usb/phy/phy-msm-usb.c b/drivers/usb/phy/phy-msm-usb.c
+index c522c4f..4f88174 100644
+--- a/drivers/usb/phy/phy-msm-usb.c
++++ b/drivers/usb/phy/phy-msm-usb.c
+@@ -1586,7 +1586,7 @@ static int msm_otg_probe(struct platform_device *pdev)
+ 				      np ? "alt_core" : "usb_hs_core_clk");
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	motg->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	motg->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(motg->regs))
+ 		return PTR_ERR(motg->regs);
+ 
