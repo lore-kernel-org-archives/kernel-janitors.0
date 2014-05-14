@@ -1,58 +1,34 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 26 May 2014 15:54:30 +0000
-Subject: Re: [PATCH 3/18] VMCI: Use kmemdup instead of kmalloc + memcpy
-Message-Id: <538363B6.2010803@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 May 2014 12:55:24 +0000
+Subject: [patch] usb: phy: msm: devm_ioremap() doesn't return ERR_PTRs
+Message-Id: <20140514125524.GB14571@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr> <1401117687-28911-3-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1401117687-28911-3-git-send-email-benoit.taine@lip6.fr>
+References: <1400050877.8431.9.camel@iivanov-dev>
+In-Reply-To: <1400050877.8431.9.camel@iivanov-dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benoit Taine <benoit.taine@lip6.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+devm_ioremap() returns a NULL on error so the IS_ERR() check needs to be
+updated.
 
+Fixes: 6b99c68ec1f9 ('usb: phy: msm: Migrate to Managed Device Resource allocation')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Am 26.05.2014 17:21, schrieb Benoit Taine:
-> This issue was reported by coccicheck using the semantic patch 
-> at scripts/coccinelle/api/memdup.cocci
-> 
-> Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
-> ---
-> Tested by compilation without errors.
-> 
->  drivers/misc/vmw_vmci/vmci_datagram.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/vmw_vmci/vmci_datagram.c b/drivers/misc/vmw_vmci/vmci_datagram.c
-> index f3cdd90..d93b469 100644
-> --- a/drivers/misc/vmw_vmci/vmci_datagram.c
-> +++ b/drivers/misc/vmw_vmci/vmci_datagram.c
-> @@ -276,11 +276,10 @@ static int dg_dispatch_as_host(u32 context_id, struct vmci_datagram *dg)
->  		}
->  
->  		/* We make a copy to enqueue. */
-> -		new_dg = kmalloc(dg_size, GFP_KERNEL);
-> +		new_dg = kmemdup(dg, dg_size, GFP_KERNEL);
->  		if (new_dg = NULL)
->  			return VMCI_ERROR_NO_MEM;
-
-
-i can not see much of the code but this looks like
-  new_dg=dg;
-what is possible in c99.
-
-re,
- wh
-
->  
-> -		memcpy(new_dg, dg, dg_size);
->  		retval = vmci_ctx_enqueue_datagram(dg->dst.context, new_dg);
->  		if (retval < VMCI_SUCCESS) {
->  			kfree(new_dg);
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/usb/phy/phy-msm-usb.c b/drivers/usb/phy/phy-msm-usb.c
+index c522c4f..bd32257 100644
+--- a/drivers/usb/phy/phy-msm-usb.c
++++ b/drivers/usb/phy/phy-msm-usb.c
+@@ -1587,8 +1587,8 @@ static int msm_otg_probe(struct platform_device *pdev)
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	motg->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+-	if (IS_ERR(motg->regs))
+-		return PTR_ERR(motg->regs);
++	if (!motg->regs)
++		return -ENOMEM;
+ 
+ 	/*
+ 	 * NOTE: The PHYs can be multiplexed between the chipidea controller
