@@ -1,31 +1,32 @@
-From: James Cameron <quozl@laptop.org>
-Date: Thu, 22 May 2014 21:57:50 +0000
-Subject: Re: [PATCH] libertas: fix return value when processing invalid packet
-Message-Id: <20140522215750.GF2161@us.netrek.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 May 2014 14:23:08 +0000
+Subject: [patch] ASoC: compress: indent an if statement
+Message-Id: <20140514142308.GC18082@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
- <1400473875-22228-2-git-send-email-Julia.Lawall@lip6.fr>
- <5379FCD0.2030506@cogentembedded.com>
- <1400520341.3819.15.camel@dcbw.local>
- <1400761961.15674.4.camel@dcbw.local>
-In-Reply-To: <1400761961.15674.4.camel@dcbw.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Williams <dcbw@redhat.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, kernel-janitors@vger.kernel.org, libertas-dev@lists.infradead.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On Thu, May 22, 2014 at 07:32:41AM -0500, Dan Williams wrote:
-> Nothing actually uses the return value yet, but we might as well
-> make it correct, like process_rxed_802_11_packet() does for the
-> same case.  Also ensure that if monitor mode is enabled (and
-> thus process_rxed_802_11_packet() is called) that the debugging
-> enter/leave functions are balanced.
-> 
-> Signed-off-by: Dan Williams <dcbw@redhat.com>
+The return statement was not indented correctly.  I lined up the
+condition a bit as well.
 
-Reviewed-by: James Cameron <quozl@laptop.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-James Cameron
-http://quozl.linux.org.au/
+diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
+index 91083e6..e4c7ad5 100644
+--- a/sound/soc/soc-compress.c
++++ b/sound/soc/soc-compress.c
+@@ -317,8 +317,9 @@ static int soc_compr_trigger_fe(struct snd_compr_stream *cstream, int cmd)
+ 		cmd = SND_COMPR_TRIGGER_DRAIN) {
+ 
+ 		if (platform->driver->compr_ops &&
+-			platform->driver->compr_ops->trigger)
+-		return platform->driver->compr_ops->trigger(cstream, cmd);
++		    platform->driver->compr_ops->trigger)
++			return platform->driver->compr_ops->trigger(cstream,
++								    cmd);
+ 	}
+ 
+ 	if (cstream->direction = SND_COMPRESS_PLAYBACK)
