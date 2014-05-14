@@ -1,52 +1,50 @@
-From: Fredrick Prashanth John Berchmans <fredrickprashanth@gmail.com>
-Date: Tue, 06 May 2014 18:49:04 +0000
-Subject: Re: [PATCH] staging: lustre: remove unused variables
-Message-Id: <CACwgvgU7xC0zzgByh-C6Nh6kwgrtHVRih40YQU4-LLnBPHgn1g@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 May 2014 16:16:44 +0000
+Subject: [patch] mm: fix some indenting in cmpxchg_double_slab()
+Message-Id: <20140514161644.GF18082@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1399388179-7647-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1399388179-7647-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peng Tao <bergwolf@gmail.com>, Andreas Dilger <andreas.dilger@intel.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Christoph Lameter <cl@linux-foundation.org>
+Cc: Pekka Enberg <penberg@kernel.org>, Matt Mackall <mpm@selenic.com>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
 
-On Tue, May 6, 2014 at 7:56 AM, Emil Goode <emilgoode@gmail.com> wrote:
-> The following commit left some unused variables behind.
->
-> commit 80db2734acbc78db12798cfb611d6acc7fe389e6
-> Author: Fredrick John Berchmans <fredrickprashanth@gmail.com>
-> Date:   Fri May 2 19:50:15 2014 -0700
->
->     staging: lustre use kernel socket sockopt apis
->
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
->  drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c |    2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c
-> index 4153b4a..ac3a444 100644
-> --- a/drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c
-> +++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-tcpip.c
-> @@ -46,10 +46,8 @@
->  int
->  libcfs_sock_ioctl(int cmd, unsigned long arg)
->  {
-> -       mm_segment_t    oldmm = get_fs();
->         struct socket  *sock;
->         int          rc;
-> -       struct file    *sock_filp;
->
->         rc = sock_create (PF_INET, SOCK_STREAM, 0, &sock);
->         if (rc != 0) {
-> --
-> 1.7.10.4
->
+The return statement goes with the cmpxchg_double() condition so it
+needs to be indented another tab.
 
-Hi Emil,
+Also these days the fashion is to line function parameters up, and it
+looks nicer that way because then the "freelist_new" is not at the same
+indent level as the "return 1;".
 
-I have already submitted a patch for this.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Fredrick
+diff --git a/mm/slub.c b/mm/slub.c
+index fdf0fe4..d96faa2 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -382,9 +382,9 @@ static inline bool __cmpxchg_double_slab(struct kmem_cache *s, struct page *page
+     defined(CONFIG_HAVE_ALIGNED_STRUCT_PAGE)
+ 	if (s->flags & __CMPXCHG_DOUBLE) {
+ 		if (cmpxchg_double(&page->freelist, &page->counters,
+-			freelist_old, counters_old,
+-			freelist_new, counters_new))
+-		return 1;
++				   freelist_old, counters_old,
++				   freelist_new, counters_new))
++			return 1;
+ 	} else
+ #endif
+ 	{
+@@ -418,9 +418,9 @@ static inline bool cmpxchg_double_slab(struct kmem_cache *s, struct page *page,
+     defined(CONFIG_HAVE_ALIGNED_STRUCT_PAGE)
+ 	if (s->flags & __CMPXCHG_DOUBLE) {
+ 		if (cmpxchg_double(&page->freelist, &page->counters,
+-			freelist_old, counters_old,
+-			freelist_new, counters_new))
+-		return 1;
++				   freelist_old, counters_old,
++				   freelist_new, counters_new))
++			return 1;
+ 	} else
+ #endif
+ 	{
