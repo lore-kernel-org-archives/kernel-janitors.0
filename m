@@ -1,41 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 17 May 2014 22:42:55 +0000
-Subject: Re: [PATCH 2/4] cpupower: Remove redundant error check
-Message-Id: <20140517224255.GJ15585@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 15 May 2014 03:43:20 +0000
+Subject: [PATCH 3/4] ip_tunnel: delete unneeded call to netdev_priv
+Message-Id: <1400125401-15512-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400350980-30455-2-git-send-email-peter.senna@gmail.com>
- <20140517202255.GF15585@mwanda>
- <CA+MoWDqLtr-O=VQNC7qqNUJvWkEPtVr8cw9t5sB=adQWkywLZw@mail.gmail.com>
- <20140517215615.GI16255@mwanda>
- <CA+MoWDqriZojBJAaxSjjFXEf1rpxDLqtsiuYYsRqDwtY1L6QyA@mail.gmail.com>
-In-Reply-To: <CA+MoWDqriZojBJAaxSjjFXEf1rpxDLqtsiuYYsRqDwtY1L6QyA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>, Thomas Renninger <trenn@suse.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alan Cox <alan@linux.intel.com>, kernel-janitors@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: kernel-janitors@vger.kernel.org, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, May 18, 2014 at 12:31:29AM +0200, Peter Senna Tschudin wrote:
-> >
-> > I am currently involved in a number of threads, not just yours, where I
-> > am encouraging people to replace ambiguous returns with "return 0;".
-> > This is my life now.
-> So maybe you like this list of 160 places in which the return variable
-> is initialized and only used as parameter to return(The list look
-> good, but I haven't reviewed all 160, so there could be problems):
-> http://pastebin.com/5kAbCP2e
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Fantastic!  :)  These things are easy to review because if it's wrong
-then the compile will break.
+Netdev_priv is an accessor function, and has no purpose if its result is
+not used.
 
-> 
-> Does it worth doing something about those trivial cases?
-> 
-> Do you have more examples of ambiguous returns, so I can help you hunt them?
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-The main thing is what your check finds.  If you know that ret is zero
-then return zero.
+// <smpl>
+@@ local idexpression x; @@
+-x = netdev_priv(...);
+... when != x
+// </smpl>
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ net/ipv4/ip_tunnel.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
+index b3f8597..059176d 100644
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -395,11 +395,10 @@ static struct ip_tunnel *ip_tunnel_create(struct net *net,
+ 					  struct ip_tunnel_net *itn,
+ 					  struct ip_tunnel_parm *parms)
+ {
+-	struct ip_tunnel *nt, *fbt;
++	struct ip_tunnel *nt;
+ 	struct net_device *dev;
+ 
+ 	BUG_ON(!itn->fb_tunnel_dev);
+-	fbt = netdev_priv(itn->fb_tunnel_dev);
+ 	dev = __ip_tunnel_create(net, itn->fb_tunnel_dev->rtnl_link_ops, parms);
+ 	if (IS_ERR(dev))
+ 		return ERR_CAST(dev);
 
