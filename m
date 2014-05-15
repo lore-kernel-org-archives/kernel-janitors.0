@@ -1,33 +1,76 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 15 May 2014 20:58:20 +0000
-Subject: Re: [PATCH 4/4] vti6: delete unneeded call to netdev_priv
-Message-Id: <20140515.165820.1971129599767939900.davem@davemloft.net>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Thu, 15 May 2014 19:24:30 +0000
+Subject: [PATCH] ARM: imx: clean up error handling
+Message-Id: <1400181871-10325-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400125401-15512-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1400125401-15512-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: steffen.klassert@secunet.com, kernel-janitors@vger.kernel.org, herbert@gondor.apana.org.au, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 15 May 2014 05:43:21 +0200
+If we fail to allocate struct platform_device pdev we
+dereference it after the goto label err.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Netdev_priv is an accessor function, and has no purpose if its result is
-> not used.
-> 
-> A simplified version of the semantic match that fixes this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@ local idexpression x; @@
-> -x = netdev_priv(...);
-> ... when != x
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+I have rearranged the error handling a bit to fix the issue
+and also make it more clear.
 
-Applied.
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ arch/arm/mach-imx/devices/platform-ipu-core.c |   22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mach-imx/devices/platform-ipu-core.c
+index fc4dd7c..14d61d9 100644
+--- a/arch/arm/mach-imx/devices/platform-ipu-core.c
++++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
+@@ -77,34 +77,38 @@ struct platform_device *__init imx_alloc_mx3_camera(
+ 
+ 	pdev = platform_device_alloc("mx3-camera", 0);
+ 	if (!pdev)
+-		goto err;
++		return ERR_PTR(ret);
+ 
+ 	pdev->dev.dma_mask = kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+ 	if (!pdev->dev.dma_mask)
+-		goto err;
++		goto put_pdev;
+ 
+ 	*pdev->dev.dma_mask = DMA_BIT_MASK(32);
+ 	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+ 
+ 	ret = platform_device_add_resources(pdev, res, ARRAY_SIZE(res));
+ 	if (ret)
+-		goto err;
++		goto free_dma_mask;
+ 
+ 	if (pdata) {
+ 		struct mx3_camera_pdata *copied_pdata;
+ 
+ 		ret = platform_device_add_data(pdev, pdata, sizeof(*pdata));
+-		if (ret) {
+-err:
+-			kfree(pdev->dev.dma_mask);
+-			platform_device_put(pdev);
+-			return ERR_PTR(-ENODEV);
+-		}
++		if (ret)
++			goto free_dma_mask;
++
+ 		copied_pdata = dev_get_platdata(&pdev->dev);
+ 		copied_pdata->dma_dev = &imx_ipu_coredev->dev;
+ 	}
+ 
+ 	return pdev;
++
++free_dma_mask:
++	kfree(pdev->dev.dma_mask);
++put_pdev:
++	platform_device_put(pdev);
++
++	return ERR_PTR(ret);
+ }
+ 
+ struct platform_device *__init imx_add_mx3_sdc_fb(
+-- 
+1.7.10.4
+
