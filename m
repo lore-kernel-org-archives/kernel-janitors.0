@@ -1,48 +1,52 @@
-From: Kevin Curtis <Kevin.Curtis@farsite.com>
-Date: Wed, 28 May 2014 07:09:19 +0000
-Subject: RE: [PATCH] wan: time_before()
-Message-Id: <E603DC592C92B54A89CEF6B0919A0B1CAFDE223C6D@SOLO.hq.farsitecommunications.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 15 May 2014 03:43:21 +0000
+Subject: [PATCH 4/4] vti6: delete unneeded call to netdev_priv
+Message-Id: <1400125401-15512-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401039163-10727-1-git-send-email-manuel.schoelling@gmx.de>
-	<1401040732.22191.8.camel@joe-AO725>
- <20140526.004045.1779020170437806699.davem@davemloft.net>
-In-Reply-To: <20140526.004045.1779020170437806699.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: David Miller <davem@davemloft.net>, "joe@perches.com" <joe@perches.com>
-Cc: "manuel.schoelling@gmx.de" <manuel.schoelling@gmx.de>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>, James Morris <jmorris@namei.org>, Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-    Yes, a usleep(10) would be just fine.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Netdev_priv is an accessor function, and has no purpose if its result is
+not used.
 
-Regards
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Kevin
+// <smpl>
+@@ local idexpression x; @@
+-x = netdev_priv(...);
+... when != x
+// </smpl>
 
------Original Message-----
-From: David Miller [mailto:davem@davemloft.net]=20
-Sent: 26 May 2014 05:41
-To: joe@perches.com
-Cc: manuel.schoelling@gmx.de; Kevin Curtis; netdev@vger.kernel.org; linux-k=
-ernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] wan: time_before()
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-From: Joe Perches <joe@perches.com>
-Date: Sun, 25 May 2014 10:58:52 -0700
+---
+ net/ipv6/ip6_vti.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-> On Sun, 2014-05-25 at 19:32 +0200, Manuel Sch=F6lling wrote:
->> To be future-proof and for better readability the time comparisons=20
->> are modified to use time_before() instead of plain, error-prone math.
->=20
-> Sensible change, but it seems these should be
-> udelay(some_constant) instead of a a rather variable time wait based=20
-> on a system/config defined jiffies.
+diff --git a/net/ipv6/ip6_vti.c b/net/ipv6/ip6_vti.c
+index 6cc9f93..9aaa6bb 100644
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -795,15 +795,12 @@ static const struct net_device_ops vti6_netdev_ops = {
+  **/
+ static void vti6_dev_setup(struct net_device *dev)
+ {
+-	struct ip6_tnl *t;
+-
+ 	dev->netdev_ops = &vti6_netdev_ops;
+ 	dev->destructor = vti6_dev_free;
+ 
+ 	dev->type = ARPHRD_TUNNEL6;
+ 	dev->hard_header_len = LL_MAX_HEADER + sizeof(struct ipv6hdr);
+ 	dev->mtu = ETH_DATA_LEN;
+-	t = netdev_priv(dev);
+ 	dev->flags |= IFF_NOARP;
+ 	dev->addr_len = sizeof(struct in6_addr);
+ 	dev->priv_flags &= ~IFF_XMIT_DST_RELEASE;
 
-Agreed, this code probably wants udelay(10) or something like that.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
