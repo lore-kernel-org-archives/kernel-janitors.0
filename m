@@ -1,40 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 09 May 2014 17:30:09 +0000
-Subject: Re: [patch] ASoC: wm0010: set error code on allocation failure
-Message-Id: <20140509173009.GL26890@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 15 May 2014 03:43:18 +0000
+Subject: [PATCH 1/4] drivers/net/wan: delete unneeded call to netdev_priv
+Message-Id: <1400125401-15512-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140509115538.GB32027@mwanda>
- <20140509161808.GE25203@opensource.wolfsonmicro.com>
-In-Reply-To: <20140509161808.GE25203@opensource.wolfsonmicro.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, patches@opensource.wolfsonmicro.com, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, May 09, 2014 at 05:18:08PM +0100, Charles Keepax wrote:
-> On Fri, May 09, 2014 at 02:55:38PM +0300, Dan Carpenter wrote:
-> > We should return -ENOMEM if the kzalloc() fails instead of returning
-> > -ENOMEM.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
-> > index 71ce315..8dac6c5 100644
-> > --- a/sound/soc/codecs/wm0010.c
-> > +++ b/sound/soc/codecs/wm0010.c
-> > @@ -682,6 +682,7 @@ static int wm0010_boot(struct snd_soc_codec *codec)
-> >  		if (!img_swap) {
-> >  			dev_err(codec->dev,
-> >  				"Failed to allocate image buffer\n");
-> > +			ret = -ENOMEM;
-> 
-> No need to set this here, it is set 12 lines earlier. I agree the
-> current code is not the most clear,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Oops.  That was my bad.  The code is actually totally clear, it was just
-sloppiness on my part.  Sorry for that.
+Netdev_priv is an accessor function, and has no purpose if its result is
+not used.
 
-regards,
-dan carpenter
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@ local idexpression x; @@
+-x = netdev_priv(...);
+... when != x
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/wan/sdla.c |    4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/net/wan/sdla.c b/drivers/net/wan/sdla.c
+index de3bbf4..cdd45fb 100644
+--- a/drivers/net/wan/sdla.c
++++ b/drivers/net/wan/sdla.c
+@@ -1322,10 +1322,6 @@ NOTE:  This is rather a useless action right now, as the
+ 
+ static int sdla_change_mtu(struct net_device *dev, int new_mtu)
+ {
+-	struct frad_local *flp;
+-
+-	flp = netdev_priv(dev);
+-
+ 	if (netif_running(dev))
+ 		return -EBUSY;
+ 
 
