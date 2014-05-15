@@ -1,53 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 15 May 2014 03:43:19 +0000
-Subject: [PATCH 2/4] net/ariadne: delete unneeded call to netdev_priv
-Message-Id: <1400125401-15512-2-git-send-email-Julia.Lawall@lip6.fr>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 15 May 2014 20:58:10 +0000
+Subject: Re: [PATCH 2/4] net/ariadne: delete unneeded call to netdev_priv
+Message-Id: <20140515.165810.1301594950523192843.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1400125401-15512-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1400125401-15512-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia.Lawall@lip6.fr
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 15 May 2014 05:43:19 +0200
 
-Netdev_priv is an accessor function, and has no purpose if its result is
-not used.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Netdev_priv is an accessor function, and has no purpose if its result is
+> not used.
+> 
+> A simplified version of the semantic match that fixes this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@ local idexpression x; @@
+> -x = netdev_priv(...);
+> ... when != x
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@ local idexpression x; @@
--x = netdev_priv(...);
-... when != x
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/ethernet/amd/ariadne.c |    3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/amd/ariadne.c b/drivers/net/ethernet/amd/ariadne.c
-index b08101b..968b7bf 100644
---- a/drivers/net/ethernet/amd/ariadne.c
-+++ b/drivers/net/ethernet/amd/ariadne.c
-@@ -718,7 +718,6 @@ static int ariadne_init_one(struct zorro_dev *z,
- 	unsigned long mem_start = board + ARIADNE_RAM;
- 	struct resource *r1, *r2;
- 	struct net_device *dev;
--	struct ariadne_private *priv;
- 	u32 serial;
- 	int err;
- 
-@@ -738,8 +737,6 @@ static int ariadne_init_one(struct zorro_dev *z,
- 		return -ENOMEM;
- 	}
- 
--	priv = netdev_priv(dev);
--
- 	r1->name = dev->name;
- 	r2->name = dev->name;
- 
-
+Applied.
