@@ -1,55 +1,127 @@
 From: Emil Goode <emilgoode@gmail.com>
-Date: Fri, 16 May 2014 22:47:33 +0000
+Date: Fri, 16 May 2014 23:18:55 +0000
 Subject: Re: [PATCH v2] ARM: imx: fix error handling
-Message-Id: <20140516224733.GA4323@lianli>
+Message-Id: <20140516231855.GB4323@lianli>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1400234045-6022-1-git-send-email-emilgoode@gmail.com>
  <20140516192451.GP16662@pengutronix.de>
- <20140516222108.GI8897@mwanda>
-In-Reply-To: <20140516222108.GI8897@mwanda>
+In-Reply-To: <20140516192451.GP16662@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: linux-arm-kernel@lists.infradead.org
 
+Hello Uwe,
 
-On Sat, May 17, 2014 at 01:21:08AM +0300, Dan Carpenter wrote:
-> On Fri, May 16, 2014 at 09:24:51PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > I didn't check if it is easily possible, but converting this file to use
-> > platform_device_register_full might simplify it considerably.
->=20
-> In a separate patch, though, please.
+Thank you for the review.
 
-Will consider another patch.
+On Fri, May 16, 2014 at 09:24:51PM +0200, Uwe Kleine-König wrote:
+> Hello Emil,
+> 
+> IMHO the subject is too general. Maybe better use:
+> 
+> 	ARM: imx: fix error handling in ipu device registration
 
->=20
-> >=20
-> > I'm not sure this fix is critical, because the problem happens if an
-> > allocation during boot fails. But still, if you want to get this fix
-> > into a stable release, you should simplify it, i.e. don't do the code
-> > reorganisations. (Also the "more clear" part seems to be subjective, I
-> > like the error handling better as it is now. But that might only be me.)
->=20
-> Emil's error handling is done exactly in the correct way...  The error
-> path and success path are separate.  Unwinding in the reverse order.
-> The label names describe the label locations.  Most days I spend hours
-> looking at linux kernel error handling and I can assure you that
-> sensible labels like this are a rare and wonderful gift.
->=20
-> It's hard for me to imagine how anyone could defend the original error
-> handling.  The label was "err".  The error handling was randomly plopped
-> in the middle of the success handling.  Whenever I see new "creative"
-> error handling like this it drives me nuts because obviously it's going
-> to be buggy like a swamp picnic.
+Agreed, will change this and resend.
 
-Thank you for the colorful reply, I guess there is no need for me to
-further defend my choice of labels :)
+> 
+> On Fri, May 16, 2014 at 11:54:05AM +0200, Emil Goode wrote:
+> > If we fail to allocate struct platform_device pdev we
+> > dereference it after the goto label err.
+> > 
+> > I have rearranged the error handling a bit to fix the issue
+> > and also make it more clear.
+> > 
+> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
+> > ---
+> > v2: Changed to return -ENOMEM instead of ret where possible and
+> >     updated the subject line.
+> > 
+> >  arch/arm/mach-imx/devices/platform-ipu-core.c |   22 +++++++++++++---------
+> >  1 file changed, 13 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mach-imx/devices/platform-ipu-core.c
+> > index fc4dd7c..68f2a4a 100644
+> > --- a/arch/arm/mach-imx/devices/platform-ipu-core.c
+> > +++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
+> > @@ -77,34 +77,38 @@ struct platform_device *__init imx_alloc_mx3_camera(
+> >  
+> >  	pdev = platform_device_alloc("mx3-camera", 0);
+> >  	if (!pdev)
+> > -		goto err;
+> > +		return ERR_PTR(-ENOMEM);
+> >  
+> >  	pdev->dev.dma_mask = kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+> >  	if (!pdev->dev.dma_mask)
+> > -		goto err;
+> > +		goto put_pdev;
+> >  
+> >  	*pdev->dev.dma_mask = DMA_BIT_MASK(32);
+> >  	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+> >  
+> >  	ret = platform_device_add_resources(pdev, res, ARRAY_SIZE(res));
+> >  	if (ret)
+> > -		goto err;
+> > +		goto free_dma_mask;
+> >  
+> >  	if (pdata) {
+> >  		struct mx3_camera_pdata *copied_pdata;
+> >  
+> >  		ret = platform_device_add_data(pdev, pdata, sizeof(*pdata));
+> > -		if (ret) {
+> > -err:
+> > -			kfree(pdev->dev.dma_mask);
+> > -			platform_device_put(pdev);
+> > -			return ERR_PTR(-ENODEV);
+> > -		}
+> > +		if (ret)
+> > +			goto free_dma_mask;
+> > +
+> >  		copied_pdata = dev_get_platdata(&pdev->dev);
+> >  		copied_pdata->dma_dev = &imx_ipu_coredev->dev;
+> >  	}
+> >  
+> >  	return pdev;
+> > +
+> > +free_dma_mask:
+> > +	kfree(pdev->dev.dma_mask);
+> > +put_pdev:
+> > +	platform_device_put(pdev);
+> > +
+> > +	return ERR_PTR(ret);
+> >  }
+> I didn't check if it is easily possible, but converting this file to use
+> platform_device_register_full might simplify it considerably.
+
+Will look into this and consider sending another patch.
+
+> 
+> I'm not sure this fix is critical, because the problem happens if an
+> allocation during boot fails. But still, if you want to get this fix
+> into a stable release, you should simplify it, i.e. don't do the code
+> reorganisations. (Also the "more clear" part seems to be subjective, I
+> like the error handling better as it is now. But that might only be me.)
+
+To my knowlege there is no impact on end users and I don't think the bug
+is critical since, as you say, the allocation happens during boot.
+Probably it's not necessary to have this fixed in stable kernels.
+
+> 
+> Are you using this code? I thought arch/arm/mach-imx/devices to be dead
+> as it is unused on dt platforms.
+
+The bug was found using coccinelle. I'm not using the code and I don't know
+what the plans are for this file in the transition to device tree. But as long
+as the file is in the kernel I think it's worth fixing the bug.
 
 Best regards,
 
 Emil Goode
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+> 
+> Best regards
+> Uwe
+> 
+> -- 
+> Pengutronix e.K.                           | Uwe Kleine-König            |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
