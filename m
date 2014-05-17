@@ -1,35 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 31 May 2014 20:23:51 +0000
-Subject: Re: [PATCH 6/11] net: wireless: Remove useless return variables
-Message-Id: <20140531202351.GN15585@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 17 May 2014 06:32:48 +0000
+Subject: [PATCH 1/2] mtd: delete unneeded call to platform_get_drvdata
+Message-Id: <1400308369-24375-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401542051-3174-6-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1401542051-3174-6-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Brett Rudley <brudley@broadcom.com>, kernel-janitors@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-mtd@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, May 31, 2014 at 10:14:06AM -0300, Peter Senna Tschudin wrote:
-> diff --git a/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c b/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
-> index b0fd807..57ecc05 100644
-> --- a/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
-> +++ b/drivers/net/wireless/brcm80211/brcmsmac/phy/phy_cmn.c
-> @@ -1538,11 +1538,7 @@ static s8
->  wlc_user_txpwr_antport_to_rfport(struct brcms_phy *pi, uint chan, u32 band,
->  				 u8 rate)
->  {
-> -	s8 offset = 0;
-> -
-> -	if (!pi->user_txpwr_at_rfport)
-> -		return offset;
-> -	return offset;
-> +	return 0;
->  }
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The original code looks buggy.  I wonder what it was supposed to do?
+Platform_get_drvdata is an accessor function, and has no purpose if its
+result is not used.
 
-regards,
-dan carpenter
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier x;
+type T;
+@@
+- T x = platform_get_drvdata(...);
+... when != x
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/mtd/nand/bf5xx_nand.c |    4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/mtd/nand/bf5xx_nand.c b/drivers/mtd/nand/bf5xx_nand.c
+index b7a2494..b5fbd48 100644
+--- a/drivers/mtd/nand/bf5xx_nand.c
++++ b/drivers/mtd/nand/bf5xx_nand.c
+@@ -840,15 +840,11 @@ out_err_kzalloc:
+ 
+ static int bf5xx_nand_suspend(struct platform_device *dev, pm_message_t pm)
+ {
+-	struct bf5xx_nand_info *info = platform_get_drvdata(dev);
+-
+ 	return 0;
+ }
+ 
+ static int bf5xx_nand_resume(struct platform_device *dev)
+ {
+-	struct bf5xx_nand_info *info = platform_get_drvdata(dev);
+-
+ 	return 0;
+ }
+ 
 
