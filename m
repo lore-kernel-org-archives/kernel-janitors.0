@@ -1,48 +1,48 @@
-From: Saurav Kashyap <saurav.kashyap@qlogic.com>
-Date: Tue, 20 May 2014 15:07:30 +0000
-Subject: Re: [PATCH 2/13 v2] [SCSI] qla2xxx: make return of 0 explicit
-Message-Id: <F5D084D6342F9B479C34599BB0A03E4D01284E79BF@AVMB1.qlogic.org>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 17 May 2014 06:32:49 +0000
+Subject: [PATCH 2/2] video: delete unneeded call to platform_get_drvdata
+Message-Id: <1400308369-24375-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400474832-22422-1-git-send-email-Julia.Lawall@lip6.fr>
- <F5D084D6342F9B479C34599BB0A03E4D01284E742E@AVMB1.qlogic.org>
- <20140519201202.GA15585@mwanda> <alpine.DEB.2.10.1405200735210.3003@hadrien>
- <20140519234623.GA17724@mwanda>
-In-Reply-To: <20140519234623.GA17724@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dept-Eng QLA2xxx Upstream <qla2xxx-upstream@qlogic.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: kernel-janitors@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Acked-by: Saurav Kashyap <saurav.kashyap@qlogic.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
->On Tue, May 20, 2014 at 07:36:48AM +0800, Julia Lawall wrote:
->> 
->> 
->> On Mon, 19 May 2014, Dan Carpenter wrote:
->> 
->> > On Mon, May 19, 2014 at 04:07:52PM +0000, Saurav Kashyap wrote:
->> > > Hi Julia,
->> > >
->> > > Status is already set to 0 at the beginning of the function, I think
->> > > we should just "return status" here to be consistent with the rest
->>of
->> > > the function.
->> >
->> > "return 0;" is more clear than "return status;".
->> >
->> > Consistency is great so long as it makes the code easier to read.
->>Don't
->> > lose track of the real goal.
->> 
->> If status were an informative word, there might be a reason for it.  But
->> integer typed functions almost always return their status, so there is
->>no
->> real information.
->
->Just to be clear, I'm agreeing with you...  "return 0;" is better.
->
->regards,
->dan carpenter
->
+Platform_get_drvdata is an accessor function, and has no purpose if its
+result is not used.
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier x;
+type T;
+@@
+- T x = platform_get_drvdata(...);
+... when != x
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/video/fbdev/bf54x-lq043fb.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/bf54x-lq043fb.c b/drivers/video/fbdev/bf54x-lq043fb.c
+index e2c42ad..adbef54 100644
+--- a/drivers/video/fbdev/bf54x-lq043fb.c
++++ b/drivers/video/fbdev/bf54x-lq043fb.c
+@@ -717,8 +717,6 @@ static int bfin_bf54x_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM
+ static int bfin_bf54x_suspend(struct platform_device *pdev, pm_message_t state)
+ {
+-	struct fb_info *fbinfo = platform_get_drvdata(pdev);
+-
+ 	bfin_write_EPPI0_CONTROL(bfin_read_EPPI0_CONTROL() & ~EPPI_EN);
+ 	disable_dma(CH_EPPI0);
+ 	bfin_write_EPPI0_STATUS(0xFFFF);
 
