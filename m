@@ -1,42 +1,61 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 29 May 2014 13:58:07 +0000
-Subject: Re: [patch] ALSA: bebob: sizeof() vs ARRAY_SIZE() typo
-Message-Id: <s5hppiwadqo.wl%tiwai@suse.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 17 May 2014 18:22:57 +0000
+Subject: [PATCH 1/4] VMCI: Remove redundant error check
+Message-Id: <1400350980-30455-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140528164330.GD1824@mwanda>
-In-Reply-To: <20140528164330.GD1824@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>, kernel-janitors@vger.kernel.org
 
-At Wed, 28 May 2014 19:43:30 +0300,
-Dan Carpenter wrote:
-> 
-> ARRAY_SIZE() was intended here instead of sizeof().  The
-> "bridgeco_freq_table" array holds integers so the original condition is
-> never true.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove double checks, and move the call to pr_devel to the
+first check. The simplified version of the coccinelle semantic
+patch that fixes this issue is as follows:
 
-Applied, thanks.
+// <smpl>
+@@
+expression E; identifier pr; expression list es;
+@@
+for(...;...;...){
+...
+-	if (E) break;
++	if (E){
++		pr(es);
++		break;
++	}
+...
+}
+- if(E) pr(es);
+// </smpl>
 
+Tested by compilation only.
 
-Takashi
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> 
-> diff --git a/sound/firewire/bebob/bebob_stream.c b/sound/firewire/bebob/bebob_stream.c
-> index 514c7c9..bc4f827 100644
-> --- a/sound/firewire/bebob/bebob_stream.c
-> +++ b/sound/firewire/bebob/bebob_stream.c
-> @@ -749,7 +749,7 @@ parse_stream_formation(u8 *buf, unsigned int len,
->  		if (buf[2] = bridgeco_freq_table[i])
->  			break;
->  	}
-> -	if (i = sizeof(bridgeco_freq_table))
-> +	if (i = ARRAY_SIZE(bridgeco_freq_table))
->  		return -ENOSYS;
->  
->  	/* Avoid double count by different entries for the same rate. */
-> 
+---
+ drivers/misc/vmw_vmci/vmci_context.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/misc/vmw_vmci/vmci_context.c b/drivers/misc/vmw_vmci/vmci_context.c
+index f866a4b..3995e64 100644
+--- a/drivers/misc/vmw_vmci/vmci_context.c
++++ b/drivers/misc/vmw_vmci/vmci_context.c
+@@ -836,12 +836,12 @@ int vmci_ctx_set_chkpt_state(u32 context_id,
+ 	for (i = 0; i < num_ids && result = VMCI_SUCCESS; i++) {
+ 		current_id = ((u32 *)cpt_buf)[i];
+ 		result = vmci_ctx_add_notification(context_id, current_id);
+-		if (result != VMCI_SUCCESS)
++		if (result != VMCI_SUCCESS) {
++			pr_devel("Failed to set cpt state (type=%d) (error=%d)\n",
++				 cpt_type, result);
+ 			break;
++		}
+ 	}
+-	if (result != VMCI_SUCCESS)
+-		pr_devel("Failed to set cpt state (type=%d) (error=%d)\n",
+-			 cpt_type, result);
+ 
+ 	return result;
+ }
+
