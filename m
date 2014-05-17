@@ -1,40 +1,80 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Date: Thu, 22 May 2014 05:16:13 +0000
-Subject: Re: [patch] usb: gadget: f_rndis: fix an error code on allocation failure
-Message-Id: <537D881D.6050408@samsung.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 17 May 2014 18:40:33 +0000
+Subject: [PATCH v3] ARM: imx: fix error handling in ipu device registration
+Message-Id: <1400352033-18262-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140521122655.GC23396@mwanda>
-In-Reply-To: <20140521122655.GC23396@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-W dniu 21.05.2014 14:26, Dan Carpenter pisze:
-> This should be return -ENOMEM.  The current code returns successs.
->
-> Fixes: de7a8d2d534f ('usb: gadget: f_rndis: OS descriptors support')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+If we fail to allocate struct platform_device pdev we
+dereference it after the goto label err.
 
-Acked-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+I have rearranged the error handling a bit to fix the issue
+and also make it more clear.
 
-> diff --git a/drivers/usb/gadget/f_rndis.c b/drivers/usb/gadget/f_rndis.c
-> index eed3ad8..31274f7 100644
-> --- a/drivers/usb/gadget/f_rndis.c
-> +++ b/drivers/usb/gadget/f_rndis.c
-> @@ -687,7 +687,7 @@ rndis_bind(struct usb_configuration *c, struct usb_function *f)
->   		f->os_desc_table = kzalloc(sizeof(*f->os_desc_table),
->   					   GFP_KERNEL);
->   		if (!f->os_desc_table)
-> -			return PTR_ERR(f->os_desc_table);
-> +			return -ENOMEM;
->   		f->os_desc_n = 1;
->   		f->os_desc_table[0].os_desc = &rndis_opts->rndis_os_desc;
->   	}
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+v3: Made subject line more specific.
+v2: Changed to return -ENOMEM instead of ret where possible and
+    updated the subject line.
+
+ arch/arm/mach-imx/devices/platform-ipu-core.c |   22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mach-imx/devices/platform-ipu-core.c
+index fc4dd7c..68f2a4a 100644
+--- a/arch/arm/mach-imx/devices/platform-ipu-core.c
++++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
+@@ -77,34 +77,38 @@ struct platform_device *__init imx_alloc_mx3_camera(
+ 
+ 	pdev = platform_device_alloc("mx3-camera", 0);
+ 	if (!pdev)
+-		goto err;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	pdev->dev.dma_mask = kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+ 	if (!pdev->dev.dma_mask)
+-		goto err;
++		goto put_pdev;
+ 
+ 	*pdev->dev.dma_mask = DMA_BIT_MASK(32);
+ 	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+ 
+ 	ret = platform_device_add_resources(pdev, res, ARRAY_SIZE(res));
+ 	if (ret)
+-		goto err;
++		goto free_dma_mask;
+ 
+ 	if (pdata) {
+ 		struct mx3_camera_pdata *copied_pdata;
+ 
+ 		ret = platform_device_add_data(pdev, pdata, sizeof(*pdata));
+-		if (ret) {
+-err:
+-			kfree(pdev->dev.dma_mask);
+-			platform_device_put(pdev);
+-			return ERR_PTR(-ENODEV);
+-		}
++		if (ret)
++			goto free_dma_mask;
++
+ 		copied_pdata = dev_get_platdata(&pdev->dev);
+ 		copied_pdata->dma_dev = &imx_ipu_coredev->dev;
+ 	}
+ 
+ 	return pdev;
++
++free_dma_mask:
++	kfree(pdev->dev.dma_mask);
++put_pdev:
++	platform_device_put(pdev);
++
++	return ERR_PTR(ret);
+ }
+ 
+ struct platform_device *__init imx_add_mx3_sdc_fb(
+-- 
+1.7.10.4
 
