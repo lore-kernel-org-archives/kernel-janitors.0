@@ -1,30 +1,26 @@
-From: Masaru Nomura <massa.nomura@gmail.com>
-Date: Sun, 18 May 2014 17:19:12 +0000
-Subject: [PATCH 0/5] staging: lustre: lnet: klnds: Fix coding style in socklnd.c
-Message-Id: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sun, 18 May 2014 20:33:27 +0000
+Subject: Re: [PATCH 0/5] staging: lustre: lnet: klnds: Fix coding style in socklnd.c
+Message-Id: <20140518203327.GN15585@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
+In-Reply-To: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, andreas.dilger@intel.com, oleg.drokin@intel.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Masaru Nomura <massa.nomura@gmail.com>
+Cc: gregkh@linuxfoundation.org, andreas.dilger@intel.com, oleg.drokin@intel.com, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-These patches fix warnings below in socklnd.c to meet coding style.
-Also fix some indenting due to changes to keep readability.
+On Sun, May 18, 2014 at 06:19:12PM +0100, Masaru Nomura wrote:
+> These patches fix warnings below in socklnd.c to meet coding style.
+> Also fix some indenting due to changes to keep readability.
+> 
+> WARNING: space prohibited between function name and open parenthesis '('
+> WARNING: line over 80 characters
+> 
 
-WARNING: space prohibited between function name and open parenthesis '('
-WARNING: line over 80 characters
+All five of these do the same thing.  It should just be one patch.
 
-Masaru Nomura (5):
-  staging: lustre: lnet: socklnd: Remove prohibited space
-  staging: lustre: lnet: socklnd: Clean up memset(...)
-  staging: lustre: lnet: socklnd: Clean up CDEBUG(...)
-  staging: lustre: lnet: socklnd: Clean up ksocknal_get_peer_info(...)
-  staging: lustre: lnet: socklnd: Clean up ksocknal_create_conn(...)
-
- .../staging/lustre/lnet/klnds/socklnd/socklnd.c    |  242 ++++++++++----------
- 1 file changed, 121 insertions(+), 121 deletions(-)
-
--- 
-1.7.9.5
+regards,
+dan carpenter
 
