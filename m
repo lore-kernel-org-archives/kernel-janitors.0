@@ -1,43 +1,30 @@
-From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Date: Wed, 14 May 2014 14:28:37 +0000
-Subject: Re: [Q] Sending a large patch
-Message-Id: <1400077717.18277.39.camel@thorin>
+From: Masaru Nomura <massa.nomura@gmail.com>
+Date: Sun, 18 May 2014 17:19:12 +0000
+Subject: [PATCH 0/5] staging: lustre: lnet: klnds: Fix coding style in socklnd.c
+Message-Id: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAAvxhqBUO2HSgZjw=H7=Bd2gdw=JSjAs2Lx8E7rrGw8uqieZAg@mail.gmail.com>
-In-Reply-To: <CAAvxhqBUO2HSgZjw=H7=Bd2gdw=JSjAs2Lx8E7rrGw8uqieZAg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@linuxfoundation.org, andreas.dilger@intel.com, oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mit, 2014-05-14 at 15:07 +0100, Masaru Nomura wrote:
-> >> Now, I'm cleaning up a file and it has over 100 warnings of line over
-> >> 80 character issues. As the problem seems to be the same, I may
-> >
-> > And you are really sure that is more readable afterwards with the
-> > additional line breaks?
-> 
-> Well, my intention is to follow the coding style[1].
+These patches fix warnings below in socklnd.c to meet coding style.
+Also fix some indenting due to changes to keep readability.
 
-Of course.
+WARNING: space prohibited between function name and open parenthesis '('
+WARNING: line over 80 characters
 
-> As far as I understand, we follow this for linux-code readability.
-> (Of course, I think I shouldn't split/break a line in a bad way though.)
->
-> Chap 2 says:
-> The limit on the length of lines is 80 columns and this is a strongly
-> preferred limit.
->
-> Or are there any situations where we ignore over 80 characters?
+Masaru Nomura (5):
+  staging: lustre: lnet: socklnd: Remove prohibited space
+  staging: lustre: lnet: socklnd: Clean up memset(...)
+  staging: lustre: lnet: socklnd: Clean up CDEBUG(...)
+  staging: lustre: lnet: socklnd: Clean up ksocknal_get_peer_info(...)
+  staging: lustre: lnet: socklnd: Clean up ksocknal_create_conn(...)
 
-There are maintainers who do not see it that strict.
-(Probably) no one has problem if one reorganizes 130 character lines. 
-But if a line with just some printk() has 81 characters if doesn't help
-readability/understandability if it is split just for the sake of the
-limit.
+ .../staging/lustre/lnet/klnds/socklnd/socklnd.c    |  242 ++++++++++----------
+ 1 file changed, 121 insertions(+), 121 deletions(-)
 
-	Bernd
 -- 
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-                     LUGA : http://www.luga.at
+1.7.9.5
 
