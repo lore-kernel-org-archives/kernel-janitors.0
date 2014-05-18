@@ -1,50 +1,31 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Wed, 14 May 2014 15:56:02 +0000
-Subject: Re: [patch]  PM / hibernate: memory corruption in resumedelay_setup()
-Message-Id: <20140514155602.GA9723@amd.pavel.ucw.cz>
+From: Andi Kleen <andi@firstfloor.org>
+Date: Sun, 18 May 2014 05:04:35 +0000
+Subject: Re: [PATCH RFC] Remove useless return variables
+Message-Id: <87y4xzpti4.fsf@tassilo.jf.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140514125720.GC14571@mwanda>
-In-Reply-To: <20140514125720.GC14571@mwanda>
+References: <1400379310-10214-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1400379310-10214-1-git-send-email-peter.senna@gmail.com> (Peter
+	Senna Tschudin's message of "Sun, 18 May 2014 04:15:10 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Fabian Frederick <fabf@skynet.be>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernelnewbies@lists.kernelnewbies.org
 
-Hi!
+Peter Senna Tschudin <peter.senna@gmail.com> writes:
 
-> "resume_delay" is not an unsigned long, it's an int, so this will
-> corrupt memory on 64 bit systems.
+> This patch remove variables that are initialized with a constant,
+> are never updated, and are only used as parameter of return.
+> Return the constant instead of using a variable.
 
-ssleep takes unsigned int.
+This ret variable pattern is pretty standard in Linux, as it makes it 
+easier to add new code that may trigger new errors
+(using the usual "goto forest" error handling pattern)
 
-Variable is int.
+I don't see any benefit in whole-sale removing it. The compiler
+doesn't care about it and will generate the same code in any 
+case.
 
-We parse it using kstrtoul.
+-Andi
 
-So I'd suggest: switch resume_delay variable to unsigned int, and use
-kstrtouint().
-
-> Fixes: 317cf7e5e85e ('PM / hibernate: convert simple_strtoul to kstrtoul')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-> index 2377ff7..3659b26 100644
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -1115,8 +1115,9 @@ static int __init resumewait_setup(char *str)
->  
->  static int __init resumedelay_setup(char *str)
->  {
-> -	int rc = kstrtoul(str, 0, (unsigned long *)&resume_delay);
-> +	int rc;
->  
-> +	rc = kstrtoint(str, 0, &resume_delay);
-
-...and if possible, keep it on one line.
-
-Thanks,
-								Pavel
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+ak@linux.intel.com -- Speaking for myself only
