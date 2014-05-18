@@ -1,37 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 May 2014 14:04:05 +0000
-Subject: [patch v2] [XFS] small cleanup in xfs_lowbit64()
-Message-Id: <20140522140405.GA27116@mwanda>
+From: Masaru Nomura <massa.nomura@gmail.com>
+Date: Sun, 18 May 2014 17:19:15 +0000
+Subject: [PATCH 3/5] staging: lustre: lnet: socklnd: Clean up CDEBUG(...)
+Message-Id: <1400433557-24985-4-git-send-email-massa.nomura@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20140521142909.GA22281@infradead.org>
+References: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
+In-Reply-To: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dave Chinner <david@fromorbit.com>
-Cc: kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
+To: gregkh@linuxfoundation.org, andreas.dilger@intel.com, oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There are two checkpatch.pl complaints here because of the bad indenting
-and because of the assignment inside the condition.
+Remove prohibited space and fix indenting of following parameters
+of CDEBUG(...) to meet kernel coding style.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
 ---
-v2: more cleanups
+ .../staging/lustre/lnet/klnds/socklnd/socklnd.c    |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/xfs_bit.h b/fs/xfs/xfs_bit.h
-index f1e3c90..e1649c0 100644
---- a/fs/xfs/xfs_bit.h
-+++ b/fs/xfs/xfs_bit.h
-@@ -66,8 +66,11 @@ static inline int xfs_lowbit64(__uint64_t v)
- 		n = ffs(w);
- 	} else {	/* upper bits */
- 		w = (__uint32_t)(v >> 32);
--		if (w && (n = ffs(w)))
--		n += 32;
-+		if (w) {
-+			n = ffs(w);
-+			if (n)
-+				n += 32;
-+		}
- 	}
- 	return n - 1;
- }
+diff --git a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
+index 2d6414a..26cb8ce 100644
+--- a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
++++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
+@@ -153,8 +153,8 @@ ksocknal_destroy_peer(ksock_peer_t *peer)
+ {
+ 	ksock_net_t    *net = peer->ksnp_ni->ni_data;
+ 
+-	CDEBUG (D_NET, "peer %s %p deleted\n",
+-		libcfs_id2str(peer->ksnp_id), peer);
++	CDEBUG(D_NET, "peer %s %p deleted\n",
++	       libcfs_id2str(peer->ksnp_id), peer);
+ 
+ 	LASSERT(atomic_read(&peer->ksnp_refcount) = 0);
+ 	LASSERT(peer->ksnp_accepting = 0);
+-- 
+1.7.9.5
+
