@@ -1,75 +1,41 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 31 May 2014 16:21:59 +0000
-Subject: [PATCH 4/11 V2] via-ircc: Remove useless return variables
-Message-Id: <1401553319-11763-1-git-send-email-peter.senna@gmail.com>
+From: Masaru Nomura <massa.nomura@gmail.com>
+Date: Sun, 18 May 2014 17:19:16 +0000
+Subject: [PATCH 4/5] staging: lustre: lnet: socklnd: Clean up ksocknal_get_peer_info(...)
+Message-Id: <1400433557-24985-5-git-send-email-massa.nomura@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
+In-Reply-To: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <samuel@sortiz.org>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gregkh@linuxfoundation.org, andreas.dilger@intel.com, oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch remove variables that are initialized with a constant,
-are never updated, and are only used as parameter of return.
-Return the constant instead of using a variable.
+Remove prohibited space and fix indenting of following parameter
+of ksocknal_get_peer_info(...) to meet kernel coding style.
 
-Verified by compilation only.
-
-The coccinelle script that find and fixes this issue is:
-// <smpl>
-@@
-type T;
-constant C;
-identifier ret;
-@@
-- T ret = C;
-... when != ret
-    when strict
-return
-- ret
-+ C
-;
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
+Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
 ---
-Changes from V1:
- - Moved comment about return value to near the return value
+ .../staging/lustre/lnet/klnds/socklnd/socklnd.c    |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/net/irda/via-ircc.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/irda/via-ircc.c b/drivers/net/irda/via-ircc.c
-index 2900af0..5a5e17b 100644
---- a/drivers/net/irda/via-ircc.c
-+++ b/drivers/net/irda/via-ircc.c
-@@ -510,10 +510,8 @@ static void via_hw_init(struct via_ircc_cb *self)
-  */
- static int via_ircc_read_dongle_id(int iobase)
- {
--	int dongle_id = 9;	/* Default to IBM */
--
- 	IRDA_ERROR("via-ircc: dongle probing not supported, please specify dongle_id module parameter.\n");
--	return dongle_id;
-+	return 9;	/* Default to IBM */
+diff --git a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
+index 26cb8ce..fd4cdc3 100644
+--- a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
++++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
+@@ -247,9 +247,9 @@ ksocknal_unlink_peer_locked(ksock_peer_t *peer)
  }
  
- /*
-@@ -926,7 +924,6 @@ static int via_ircc_dma_xmit(struct via_ircc_cb *self, u16 iobase)
- static int via_ircc_dma_xmit_complete(struct via_ircc_cb *self)
+ int
+-ksocknal_get_peer_info (lnet_ni_t *ni, int index,
+-			lnet_process_id_t *id, __u32 *myip, __u32 *peer_ip,
+-			int *port, int *conn_count, int *share_count)
++ksocknal_get_peer_info(lnet_ni_t *ni, int index,
++		       lnet_process_id_t *id, __u32 *myip, __u32 *peer_ip,
++		       int *port, int *conn_count, int *share_count)
  {
- 	int iobase;
--	int ret = TRUE;
- 	u8 Tx_status;
- 
- 	IRDA_DEBUG(3, "%s()\n", __func__);
-@@ -983,7 +980,7 @@ F01_E*/
- 	// Tell the network layer, that we can accept more frames 
- 	netif_wake_queue(self->netdev);
- //F01   }
--	return ret;
-+	return TRUE;
- }
- 
- /*
+ 	ksock_peer_t      *peer;
+ 	struct list_head	*ptmp;
+-- 
+1.7.9.5
+
