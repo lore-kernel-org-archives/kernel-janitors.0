@@ -1,7 +1,7 @@
 From: Emil Goode <emilgoode@gmail.com>
-Date: Sat, 17 May 2014 22:14:50 +0000
+Date: Sun, 18 May 2014 14:37:24 +0000
 Subject: Re: [PATCH v2] ARM: imx: fix error handling
-Message-Id: <20140517221450.GA20636@lianli>
+Message-Id: <20140518143724.GA4310@lianli>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1400234045-6022-1-git-send-email-emilgoode@gmail.com>
  <5375EB13.8000200@bfs.de> <20140516111646.GC4366@lianli>
@@ -123,9 +123,6 @@ On Sat, May 17, 2014 at 09:05:46PM +0200, Uwe Kleine-König wrote:
 > > imx_add_platform_device_dmamask()
 > I'd prefer to use platform_device_register_full directly (and let the
 > wrapper die).
-
-Ok, will skip the wrapper.
-
 > 
 > > But as you mentioned above we need to allocate a new platform_device
 > > struct before we can assign &imx_ipu_coredev->dev to dma_dev, since
@@ -134,9 +131,6 @@ Ok, will skip the wrapper.
 > No, that won't work, because after platform_device_register_full returns
 > you must assume that the device is already bound by a driver. And then
 > you must not change platform_data anymore.
-
-I see, thanks for explaining.
-
 > 
 > The only thing that would work is:
 > 
@@ -151,11 +145,43 @@ I see, thanks for explaining.
 > 
 > 	platform_device_register_full(... pdata ...)
 
-You are right, that would work.
+Looking at converting to platform_device_register_full() again
+it is a little bit more complicated than I first thought. The call
+to platform_device_add() is acctually done in a separate function.
+  
+The involed functions are these:
 
-Will look at this again tomorrow.
+mx31_3ds_init_camera()
+	imx31_alloc_mx3_camera()
+	dma_declare_coherent_memory()
+	platform_device_add()
 
-Thank you!
+imx35_3ds_init_camera()
+	imx31_alloc_mx3_camera()
+	dma_declare_coherent_memory()
+	platform_device_add()
+
+When looking at similar code like the following function:
+
+arch/arm/mach-imx/mach-imx27_visstrim_m10.c +244
+
+visstrim_analog_camera_init()
+	imx27_add_mx2_camera()
+		imx_add_platform_device_dmamask()
+			platform_device_register_full()
+	dma_declare_coherent_memory()
+
+It seems to be ok to call dma_declare_coherent_memory() after
+calling platform_device_register_full().
+
+So I'm considering rearranging the calls in the following way:
+
+mx31_3ds_init_camera()
+	imx31_alloc_mx3_camera()
+		platform_device_register_full()
+	dma_declare_coherent_memory()
+
+Please let me know if you think this would not be ok.
 
 Best regards,
 
