@@ -1,52 +1,37 @@
-From: Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>
-Date: Mon, 26 May 2014 05:28:29 +0000
-Subject: RE: [patch] qlcnic: info leak in qlcnic_dcb_peer_app_info()
-Message-Id: <290BEC245535C3449143D5D84900EEF78CE2AAD5@avmb3.qlogic.org>
+From: Masaru Nomura <massa.nomura@gmail.com>
+Date: Sun, 18 May 2014 17:19:14 +0000
+Subject: [PATCH 2/5] staging: lustre: lnet: socklnd: Clean up memset(...)
+Message-Id: <1400433557-24985-3-git-send-email-massa.nomura@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140523163721.GA14067@mwanda>
-In-Reply-To: <20140523163721.GA14067@mwanda>
+References: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
+In-Reply-To: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Shahed Shaikh <shahed.shaikh@qlogic.com>
-Cc: Dept-HSG Linux NIC Dev <Dept-HSGLinuxNICDev@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: gregkh@linuxfoundation.org, andreas.dilger@intel.com, oleg.drokin@intel.com
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Friday, May 23, 2014 10:07 PM
-> To: Shahed Shaikh; Sucheta Chakraborty
-> Cc: Dept-HSG Linux NIC Dev; netdev; kernel-janitors@vger.kernel.org
-> Subject: [patch] qlcnic: info leak in qlcnic_dcb_peer_app_info()
-> 
-> This function is called from dcbnl_build_peer_app().  The "info"
-> struct isn't initialized at all so we disclose 2 bytes of uninitialized
-> stack data.  We should clear it before passing it to the user.
-> 
-> Fixes: 48365e485275 ('qlcnic: dcb: Add support for CEE Netlink
-> interface.')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Remove prohibited space and fix line over 80 characters of
+memset(...) to meet kernel coding style.
 
-Acked-by: Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>
+Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
+---
+ .../staging/lustre/lnet/klnds/socklnd/socklnd.c    |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Sucheta.
+diff --git a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
+index 66af02e..2d6414a 100644
+--- a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
++++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
+@@ -113,7 +113,7 @@ ksocknal_create_peer(ksock_peer_t **peerp, lnet_ni_t *ni, lnet_process_id_t id)
+ 	if (peer = NULL)
+ 		return -ENOMEM;
+ 
+-	memset (peer, 0, sizeof (*peer));       /* NULL pointers/clear flags etc */
++	memset(peer, 0, sizeof(*peer));     /* NULL pointers/clear flags etc */
+ 
+ 	peer->ksnp_ni = ni;
+ 	peer->ksnp_id = id;
+-- 
+1.7.9.5
 
-> ---
-> This is a static analysis patch, and I am not familiar with this code.
-> We may want to put some useful information here, to go with the
-> app_count.
-> 
-> diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-> b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-> index a51fe18..561cb11 100644
-> --- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-> +++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
-> @@ -1020,6 +1020,7 @@ static int qlcnic_dcb_peer_app_info(struct
-> net_device *netdev,
->  	struct qlcnic_dcb_cee *peer;
->  	int i;
-> 
-> +	memset(info, 0, sizeof(*info));
->  	*app_count = 0;
-> 
->  	if (!test_bit(QLCNIC_DCB_STATE, &adapter->dcb->state))
