@@ -1,94 +1,125 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 31 May 2014 13:14:05 +0000
-Subject: [PATCH 5/11] drivers/scsi/bfa/bfad_bsg.c: Remove useless return variables
-Message-Id: <1401542051-3174-5-git-send-email-peter.senna@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 May 2014 04:31:02 +0000
+Subject: [PATCH 0/13] make return of 0 explicit
+Message-Id: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
-Cc: kernel-janitors@vger.kernel.org, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: brcm80211-dev-list@broadcom.com
+Cc: devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, alsa-devel@alsa-project.org, linux-scsi@vger.kernel.org, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, coreteam@netfilter.org, netfilter-devel@vger.kernel.org, netdev@vger.kernel.org, oprofile-list@lists.sf.net, netfilter@vger.kernel.org
 
-This patch remove variables that are initialized with a constant,
-are never updated, and are only used as parameter of return.
-Return the constant instead of using a variable.
+Sometimes a local variable is used as a return value in a case where the
+return value is always 0.  The result is more apparent if this variable is
+just replaced by 0.  This is done by the following semantic patch, although
+some cleanups may be needed. (http://coccinelle.lip6.fr/)
 
-Verified by compilation only.
-
-The coccinelle script that find and fixes this issue is:
 // <smpl>
+@r exists@
+local idexpression ret;
+identifier reti;
+expression e;
+position p;
 @@
+
+ret@reti = 0;
+... when != \(ret = e\|ret &= e\|ret |= e\|ret += e\|ret -= e\|ret *= e\|ret ^= e\)
+    when != \(++ret\|--ret\|ret++\|ret--\)
+    when != &ret
+return ret;@p
+
+@bad1 exists@
+expression e != 0;
+local idexpression r.ret;
+position r.p;
+@@
+
+ \(ret = e\|ret &= e\|ret |= e\|ret += e\|ret -= e\|ret *= e\|ret ^= e\|++ret\|--ret\|ret++\|ret--\|&ret\)
+ ...
+ return ret;@p
+
+@bad2 exists@
+identifier r.reti;
+position r.p;
+identifier f;
+type T;
+@@
+
+f(...,T reti,...) {
+ ...
+ return reti;@p
+}
+
+@change depends on !bad1 && !bad2@
+position r.p;
+local idexpression r.ret;
+identifier f;
+@@
+
+f(...) { <+...
+return 
+-ret
++0
+;@p
+...+> }
+
+@rewrite@
+local idexpression r.ret;
+expression e;
+position p;
+identifier change.f;
+@@
+
+f(...) { <+...
+ \(ret@p = e\|&ret@p\)
+...+> }
+
+@depends on change@
+local idexpression r.ret;
+position p != rewrite.p;
+identifier change.f;
+@@
+
+f(...) { <+...
+(
+break;
+|
+ret = 0;
+... when exists
+ret@p
+... when any
+|
+- ret = 0;
+)
+...+> }
+
+@depends on change@
+identifier r.reti;
 type T;
 constant C;
-identifier ret;
+identifier change.f;
 @@
-- T ret = C;
-... when != ret
-    when strict
-return
-- ret
-+ C
-;
+
+f(...) { ... when any
+-T reti = C;
+ ... when != reti
+     when strict
+ }
+
+@depends on change@
+identifier r.reti;
+type T;
+identifier change.f;
+@@
+
+f(...) { ... when any
+-T reti;
+ ... when != reti
+     when strict
+ }
 // </smpl>
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
- drivers/scsi/bfa/bfad_bsg.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c
-index 8994fb8..a6ee1cf 100644
---- a/drivers/scsi/bfa/bfad_bsg.c
-+++ b/drivers/scsi/bfa/bfad_bsg.c
-@@ -26,7 +26,6 @@ int
- bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)
- {
- 	struct bfa_bsg_gen_s *iocmd = (struct bfa_bsg_gen_s *)cmd;
--	int	rc = 0;
- 	unsigned long	flags;
- 
- 	spin_lock_irqsave(&bfad->bfad_lock, flags);
-@@ -34,7 +33,7 @@ bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)
- 	if (!bfa_ioc_is_disabled(&bfad->bfa.ioc)) {
- 		spin_unlock_irqrestore(&bfad->bfad_lock, flags);
- 		iocmd->status = BFA_STATUS_OK;
--		return rc;
-+		return 0;
- 	}
- 
- 	init_completion(&bfad->enable_comp);
-@@ -43,21 +42,20 @@ bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)
- 	spin_unlock_irqrestore(&bfad->bfad_lock, flags);
- 	wait_for_completion(&bfad->enable_comp);
- 
--	return rc;
-+	return 0;
- }
- 
- int
- bfad_iocmd_ioc_disable(struct bfad_s *bfad, void *cmd)
- {
- 	struct bfa_bsg_gen_s *iocmd = (struct bfa_bsg_gen_s *)cmd;
--	int	rc = 0;
- 	unsigned long	flags;
- 
- 	spin_lock_irqsave(&bfad->bfad_lock, flags);
- 	if (bfa_ioc_is_disabled(&bfad->bfa.ioc)) {
- 		spin_unlock_irqrestore(&bfad->bfad_lock, flags);
- 		iocmd->status = BFA_STATUS_OK;
--		return rc;
-+		return 0;
- 	}
- 
- 	if (bfad->disable_active) {
-@@ -74,7 +72,7 @@ bfad_iocmd_ioc_disable(struct bfad_s *bfad, void *cmd)
- 	bfad->disable_active = BFA_FALSE;
- 	iocmd->status = BFA_STATUS_OK;
- 
--	return rc;
-+	return 0;
- }
- 
- static int
+The first four rules detect cases where only 0 reaches a return.  The
+remaining rules clean up any variable initializations or declarations that
+are made unnecessary by this change.
 
