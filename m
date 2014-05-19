@@ -1,43 +1,94 @@
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Mon, 26 May 2014 15:21:15 +0000
-Subject: [PATCH 6/18] fusion: Use kmemdup instead of kmalloc + memcpy
-Message-Id: <1401117687-28911-7-git-send-email-benoit.taine@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 May 2014 04:31:07 +0000
+Subject: [PATCH 5/13] usb: gadget: make return of 0 explicit
+Message-Id: <1400473875-22228-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <Nagalakshmi.Nandigama@lsi.com>
-Cc: benoit.taine@lip6.fr, Sreekanth Reddy <Sreekanth.Reddy@lsi.com>, support@lsi.com, DL-MPTFusionLinux@lsi.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This issue was reported by coccicheck using the semantic patch 
-at scripts/coccinelle/api/memdup.cocci
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+Delete unnecessary local variable whose value is always 0 and that hides
+the fact that the result is always 0.
+
+A simplified version of the semantic patch that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+local idexpression ret;
+expression e;
+position p;
+@@
+
+-ret = 0;
+... when != ret = e
+return 
+- ret
++ 0
+  ;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Tested by compilation without errors.
+ drivers/usb/gadget/composite.c |    6 ++----
+ drivers/usb/gadget/dummy_hcd.c |    4 +---
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
- drivers/message/fusion/mptbase.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index 570b18a..6417a3f 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -6004,13 +6004,12 @@ mpt_findImVolumes(MPT_ADAPTER *ioc)
- 	if (mpt_config(ioc, &cfg) != 0)
- 		goto out;
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index 042c66b..f801519 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1312,9 +1312,7 @@ static void fill_ext_compat(struct usb_configuration *c, u8 *buf)
+ static int count_ext_prop(struct usb_configuration *c, int interface)
+ {
+ 	struct usb_function *f;
+-	int j, res;
+-
+-	res = 0;
++	int j;
  
--	mem = kmalloc(iocpage2sz, GFP_KERNEL);
-+	mem = kmemdup((u8 *)pIoc2, iocpage2sz, GFP_KERNEL);
- 	if (!mem) {
- 		rc = -ENOMEM;
- 		goto out;
+ 	f = c->interface[interface];
+ 	for (j = 0; j < f->os_desc_n; ++j) {
+@@ -1326,7 +1324,7 @@ static int count_ext_prop(struct usb_configuration *c, int interface)
+ 		if (d && d->ext_compat_id)
+ 			return d->ext_prop_count;
  	}
+-	return res;
++	return 0;
+ }
  
--	memcpy(mem, (u8 *)pIoc2, iocpage2sz);
- 	ioc->raid_data.pIocPg2 = (IOCPage2_t *) mem;
+ static int len_ext_prop(struct usb_configuration *c, int interface)
+diff --git a/drivers/usb/gadget/dummy_hcd.c b/drivers/usb/gadget/dummy_hcd.c
+index 8c06430..2b54955 100644
+--- a/drivers/usb/gadget/dummy_hcd.c
++++ b/drivers/usb/gadget/dummy_hcd.c
+@@ -561,7 +561,6 @@ static int dummy_disable(struct usb_ep *_ep)
+ 	struct dummy_ep		*ep;
+ 	struct dummy		*dum;
+ 	unsigned long		flags;
+-	int			retval;
  
- 	mpt_read_ioc_pg_3(ioc);
+ 	ep = usb_ep_to_dummy_ep(_ep);
+ 	if (!_ep || !ep->desc || _ep->name = ep0name)
+@@ -571,12 +570,11 @@ static int dummy_disable(struct usb_ep *_ep)
+ 	spin_lock_irqsave(&dum->lock, flags);
+ 	ep->desc = NULL;
+ 	ep->stream_en = 0;
+-	retval = 0;
+ 	nuke(dum, ep);
+ 	spin_unlock_irqrestore(&dum->lock, flags);
+ 
+ 	dev_dbg(udc_dev(dum), "disabled %s\n", _ep->name);
+-	return retval;
++	return 0;
+ }
+ 
+ static struct usb_request *dummy_alloc_request(struct usb_ep *_ep,
 
