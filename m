@@ -1,44 +1,35 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sun, 18 May 2014 20:50:59 +0000
-Subject: [PATCH 1/2 v4] ARM: imx: fix error handling in ipu device registration
-Message-Id: <1400446261-27085-2-git-send-email-emilgoode@gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
+Date: Mon, 19 May 2014 06:31:45 +0000
+Subject: Re: [PATCH 1/2 v4] ARM: imx: fix error handling in ipu device registration
+Message-Id: <20140519063145.GF16662@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1400446261-27085-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1400446261-27085-1-git-send-email-emilgoode@gmail.com>
+ <1400446261-27085-2-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1400446261-27085-2-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-If we fail to allocate struct platform_device pdev we
-dereference it after the goto label err.
+On Sun, May 18, 2014 at 10:50:59PM +0200, Emil Goode wrote:
+> If we fail to allocate struct platform_device pdev we
+> dereference it after the goto label err.
+>=20
+> This bug was found using coccinelle.
+>=20
+> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-This bug was found using coccinelle.
+Shawn, is it already to late for 3.15?
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
-v4: Simplified version that just fixes the bug.
-    Also updated the changelog.
-v3: Made subject line more specific.
-v2: Changed to return -ENOMEM instead of ret where possible and
-    updated the subject line.
+Thanks
+Uwe
 
- arch/arm/mach-imx/devices/platform-ipu-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mach-imx/devices/platform-ipu-core.c
-index fc4dd7c..6bd7c3f 100644
---- a/arch/arm/mach-imx/devices/platform-ipu-core.c
-+++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
-@@ -77,7 +77,7 @@ struct platform_device *__init imx_alloc_mx3_camera(
- 
- 	pdev = platform_device_alloc("mx3-camera", 0);
- 	if (!pdev)
--		goto err;
-+		return ERR_PTR(-ENOMEM);
- 
- 	pdev->dev.dma_mask = kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
- 	if (!pdev->dev.dma_mask)
--- 
-1.7.10.4
-
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
