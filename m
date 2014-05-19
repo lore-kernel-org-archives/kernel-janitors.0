@@ -1,58 +1,48 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 20 May 2014 10:33:44 +0000
-Subject: [PATCH 4/8] staging: ft1000: Remove useless return variables
-Message-Id: <1400582028-24990-4-git-send-email-peter.senna@gmail.com>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Mon, 19 May 2014 21:09:22 +0000
+Subject: [PATCH] lpfc: Use time_after()
+Message-Id: <1400533762-10338-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Marek Belisko <marek.belisko@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: james.smart@emulex.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-This patch remove variables that are initialized with a constant,
-are never updated, and are only used as parameter of return.
-Return the constant instead of using a variable.
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_after() instead of plain, error-prone math.
 
-Verified by compilation only.
-
-The coccinelle script that find and fixes this issue is:
-// <smpl>
-@@
-type T;
-constant C;
-identifier ret;
-@@
-- T ret = C;
-... when != ret
-- return ret;
-+ return C;
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
 ---
- drivers/staging/ft1000/ft1000-usb/ft1000_download.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_scsi.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/ft1000/ft1000-usb/ft1000_download.c b/drivers/staging/ft1000/ft1000-usb/ft1000_download.c
-index cab9cdf..65f9801 100644
---- a/drivers/staging/ft1000/ft1000-usb/ft1000_download.c
-+++ b/drivers/staging/ft1000/ft1000-usb/ft1000_download.c
-@@ -522,7 +522,6 @@ static void usb_dnld_complete(struct urb *urb)
- static int write_blk_fifo(struct ft1000_usb *ft1000dev, u16 **pUsFile,
- 			  u8 **pUcFile, long word_length)
+diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
+index 462453e..fb5351a 100644
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -380,12 +380,14 @@ lpfc_rampdown_queue_depth(struct lpfc_hba *phba)
  {
--	int Status = 0;
- 	int byte_length;
- 
- 	byte_length = word_length * 4;
-@@ -547,7 +546,7 @@ static int write_blk_fifo(struct ft1000_usb *ft1000dev, u16 **pUsFile,
- 	*pUsFile = *pUsFile + (word_length << 1);
- 	*pUcFile = *pUcFile + (word_length << 2);
- 
--	return Status;
-+	return 0;
- }
- 
- static int scram_start_dwnld(struct ft1000_usb *ft1000dev, u16 *hshake,
+ 	unsigned long flags;
+ 	uint32_t evt_posted;
++	unsigned long expires;
+=20
+ 	spin_lock_irqsave(&phba->hbalock, flags);
+ 	atomic_inc(&phba->num_rsrc_err);
+ 	phba->last_rsrc_error_time =3D jiffies;
+=20
+-	if ((phba->last_ramp_down_time + QUEUE_RAMP_DOWN_INTERVAL) > jiffies) {
++	expires =3D phba->last_ramp_down_time + QUEUE_RAMP_DOWN_INTERVAL;
++	if (time_after(expires, jiffies)) {
+ 		spin_unlock_irqrestore(&phba->hbalock, flags);
+ 		return;
+ 	}
+--=20
+1.7.10.4
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
