@@ -1,69 +1,54 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Wed, 28 May 2014 16:18:39 +0000
-Subject: Re: [PATCH] mfd: fix unintentional NULL check in menelaus_set_voltage()
-Message-Id: <20140528161839.GA16693@lianli>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Mon, 19 May 2014 20:59:04 +0000
+Subject: [PATCH] vxge: Use time_before()
+Message-Id: <1400533144-8473-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401284030-9650-1-git-send-email-emilgoode@gmail.com>
- <20140528152011.GB1954@lee--X1>
-In-Reply-To: <20140528152011.GB1954@lee--X1>
+References: <1400520928.30820.23.camel@joe-AO725>
+In-Reply-To: <1400520928.30820.23.camel@joe-AO725>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Jingoo Han <jg1.han@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: jdmason@kudzu.us
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, joe@perches.com, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-Hello,
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_before() instead of plain, error-prone math.
 
-On Wed, May 28, 2014 at 04:20:11PM +0100, Lee Jones wrote:
-> On Wed, 28 May 2014, Emil Goode wrote:
-> 
-> > The struct menelaus_vtg pointer vtg cannot be NULL here
-> > so the condition is never true and if it ever was true
-> > it would lead to a NULL pointer dereference when we goto
-> > label set_voltage.
-> > 
-> > Before the below patch was applied the code was:
-> > 
-> > if (vtg = 0)
-> > 
-> > The intention was to check if vtg_val is 0.
-> > 
-> > commit 59a9f7a32adf6537b4e4db8ca204eeb77d7a634e
-> > ("mfd: menelaus: Use NULL instead of 0")
-> > 
-> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> > ---
-> > Hello,
-> > 
-> > This is only build tested, it would be good to get a comment
-> > from someone who is familiar with this code.
-> > 
-> > Found using coccinelle.
-> > 
-> > Best regards,
-> > 
-> > Emil Goode
-> > 
-> >  drivers/mfd/menelaus.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
-> > index ad25bfa..4859597 100644
-> > --- a/drivers/mfd/menelaus.c
-> > +++ b/drivers/mfd/menelaus.c
-> > @@ -466,7 +466,7 @@ static int menelaus_set_voltage(const struct menelaus_vtg *vtg, int mV,
-> >  	struct i2c_client *c = the_menelaus->client;
-> >  
-> >  	mutex_lock(&the_menelaus->lock);
-> > -	if (!vtg)
-> > +	if (vtg_val = 0)
-> 
-> I would prefer:
-> 
->   if (!vtg_val)
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+---
+ drivers/net/ethernet/neterion/vxge/vxge-main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Ok, I will resend.
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-main.c b/drivers/net/e=
+thernet/neterion/vxge/vxge-main.c
+index d107bcb..7a0dead 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-main.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-main.c
+@@ -2122,7 +2122,7 @@ static int vxge_open_vpaths(struct vxgedev *vdev)
+ static void adaptive_coalesce_tx_interrupts(struct vxge_fifo *fifo)
+ {
+ 	fifo->interrupt_count++;
+-	if (jiffies > fifo->jiffies + HZ / 100) {
++	if (time_before(fifo->jiffies + HZ / 100, jiffies)) {
+ 		struct __vxge_hw_fifo *hw_fifo =3D fifo->handle;
+=20
+ 		fifo->jiffies =3D jiffies;
+@@ -2150,7 +2150,7 @@ static void adaptive_coalesce_tx_interrupts(struct vx=
+ge_fifo *fifo)
+ static void adaptive_coalesce_rx_interrupts(struct vxge_ring *ring)
+ {
+ 	ring->interrupt_count++;
+-	if (jiffies > ring->jiffies + HZ / 100) {
++	if (time_before(ring->jiffies + HZ / 100, jiffies)) {
+ 		struct __vxge_hw_ring *hw_ring =3D ring->handle;
+=20
+ 		ring->jiffies =3D jiffies;
+--=20
+1.7.10.4
 
-Best regards,
-
-Emil Goode
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
