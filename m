@@ -1,45 +1,52 @@
-From: Giedrius Rekasius <giedrius.rekasius@gmail.com>
-Date: Thu, 29 May 2014 20:51:03 +0000
-Subject: [PATCH] perf/x86/uncore: Remove unnecessary assignment to "box" in uncore_pci_remove(...)
-Message-Id: <1401396663-23829-1-git-send-email-giedrius.rekasius@gmail.com>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Mon, 19 May 2014 16:47:36 +0000
+Subject: [PATCH 1/3] net: vxge: Use time_is_before_jiffies() for time comparison
+Message-Id: <1400518056-12089-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1405282239190.3952@nanos>
-In-Reply-To: <alpine.DEB.2.10.1405282239190.3952@nanos>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-Local variable "box" gets assigned correct value when it is initialized.
-There is no need to assign the same value again. Variable declarations
-were reshuffled for better readability.
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_is_before_jiffies() instead of plain, error-prone math.
 
-Signed-off-by: Giedrius Rekasius <giedrius.rekasius@gmail.com>
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
 ---
-Original patch was amended for better readability based on feedback from Walter
-Harms and Thomas Gleixner.
+ drivers/net/ethernet/neterion/vxge/vxge-main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- arch/x86/kernel/cpu/perf_event_intel_uncore.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/perf_event_intel_uncore.c b/arch/x86/kernel/cpu/perf_event_intel_uncore.c
-index 65bbbea..6fe20db 100644
---- a/arch/x86/kernel/cpu/perf_event_intel_uncore.c
-+++ b/arch/x86/kernel/cpu/perf_event_intel_uncore.c
-@@ -3813,11 +3813,10 @@ static int uncore_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id
- 
- static void uncore_pci_remove(struct pci_dev *pdev)
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-main.c b/drivers/net/e=
+thernet/neterion/vxge/vxge-main.c
+index d107bcb..79f42db 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-main.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-main.c
+@@ -2122,7 +2122,7 @@ static int vxge_open_vpaths(struct vxgedev *vdev)
+ static void adaptive_coalesce_tx_interrupts(struct vxge_fifo *fifo)
  {
-+	int i, cpu, phys_id = pcibus_to_physid[pdev->bus->number];
- 	struct intel_uncore_box *box = pci_get_drvdata(pdev);
- 	struct intel_uncore_pmu *pmu;
--	int i, cpu, phys_id = pcibus_to_physid[pdev->bus->number];
- 
--	box = pci_get_drvdata(pdev);
- 	if (!box) {
- 		for (i = 0; i < UNCORE_EXTRA_PCI_DEV_MAX; i++) {
- 			if (extra_pci_dev[phys_id][i] = pdev) {
--- 
-1.9.3
+ 	fifo->interrupt_count++;
+-	if (jiffies > fifo->jiffies + HZ / 100) {
++	if (time_is_before_jiffies(fifo->jiffies + HZ / 100)) {
+ 		struct __vxge_hw_fifo *hw_fifo =3D fifo->handle;
+=20
+ 		fifo->jiffies =3D jiffies;
+@@ -2150,7 +2150,7 @@ static void adaptive_coalesce_tx_interrupts(struct vx=
+ge_fifo *fifo)
+ static void adaptive_coalesce_rx_interrupts(struct vxge_ring *ring)
+ {
+ 	ring->interrupt_count++;
+-	if (jiffies > ring->jiffies + HZ / 100) {
++	if (time_is_before_jiffies(ring->jiffies + HZ / 100)) {
+ 		struct __vxge_hw_ring *hw_ring =3D ring->handle;
+=20
+ 		ring->jiffies =3D jiffies;
+--=20
+1.7.10.4
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
