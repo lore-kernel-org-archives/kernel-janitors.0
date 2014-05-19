@@ -1,49 +1,56 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Date: Mon, 05 May 2014 07:30:31 +0000
-Subject: Re: [patch] KVM: s390: return -EFAULT if copy_from_user() fails
-Message-Id: <53673E17.6040705@de.ibm.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 May 2014 04:47:12 +0000
+Subject: [PATCH 2/13 v2] [SCSI] qla2xxx: make return of 0 explicit
+Message-Id: <1400474832-22422-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140503201811.GA32753@mwanda>
-In-Reply-To: <20140503201811.GA32753@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Cornelia Huck <cornelia.huck@de.ibm.com>, linux390@de.ibm.com, Gleb Natapov <gleb@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: qla2xxx-upstream@qlogic.com
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/05/14 22:18, Dan Carpenter wrote:
-> When copy_from_user() fails, this code returns the number of bytes
-> remaining instead of a negative error code.  The positive number is
-> returned to the user but otherwise it is harmless.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks. Applied to KVM/s390 fix queue.
+Delete unnecessary use of a local variable to immediately return 0.
 
+A simplified version of the semantic patch that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> ---
-> I am not able to compile this.
-> 
-> diff --git a/arch/s390/kvm/guestdbg.c b/arch/s390/kvm/guestdbg.c
-> index 757ccef..3e8d409 100644
-> --- a/arch/s390/kvm/guestdbg.c
-> +++ b/arch/s390/kvm/guestdbg.c
-> @@ -223,9 +223,10 @@ int kvm_s390_import_bp_data(struct kvm_vcpu *vcpu,
->  		goto error;
->  	}
-> 
-> -	ret = copy_from_user(bp_data, dbg->arch.hw_bp, size);
-> -	if (ret)
-> +	if (copy_from_user(bp_data, dbg->arch.hw_bp, size)) {
-> +		ret = -EFAULT;
->  		goto error;
-> +	}
-> 
->  	for (i = 0; i < dbg->arch.nr_hw_bp; i++) {
->  		switch (bp_data[i].type) {
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-s390" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+// <smpl>
+@r exists@
+local idexpression ret;
+expression e;
+position p;
+@@
+
+-ret = 0;
+... when != ret = e
+return 
+- ret
++ 0
+  ;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Changed subject line, which was not appreciated by some spam filters.
+
+ drivers/scsi/qla2xxx/qla_init.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 38aeb54..a63f9b6 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -4593,8 +4593,7 @@ qla2x00_abort_isp(scsi_qla_host_t *vha)
+ 		if (unlikely(pci_channel_offline(ha->pdev) &&
+ 		    ha->flags.pci_channel_io_perm_failure)) {
+ 			clear_bit(ISP_ABORT_RETRY, &vha->dpc_flags);
+-			status = 0;
+-			return status;
++			return 0;
+ 		}
+ 
+ 		ha->isp_ops->get_flash_version(vha, req->ring);
 
