@@ -1,45 +1,66 @@
-From: HUSAM AL SAYED <Husamalsayed@asia.com>
-Date: Mon, 26 May 2014 17:55:07 +0000
-Subject: Your Urgent reply.
-Message-Id: <CAKFyHyqpcAWW+QRNPNaLYsZbCCDm4nzxfd3Q9r3Y6ueQ5ZBt6Q@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 May 2014 04:31:14 +0000
+Subject: [PATCH 12/13] brcmsmac: make return of 0 explicit
+Message-Id: <1400473875-22228-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Brett Rudley <brudley@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dear Friend,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Delete unnecessary local variable whose value is always 0 and that hides
+the fact that the result is always 0.
 
-Compliments of the day.This mail May be a surprise to you Because you
-did not give me the permission to do so and Neither do you know me but
-before I tell you about myself I want you to please forgive me for
-sending this mail without your permission I have been in search of
-someone with this last name so when I saw you online, I was pushed to
-contact you and see how best we can assist each other. I am Mr. Husam
-Al Sayed, a Bank Officer here in U.A.E. I believe it is the wish of
-God for me to come across you now. I am having an important business
-discussion I wish to share with you which I  believe will interest
-you, because it is in connection with your last name and you are going
-to benefit from it.
+A simplified version of the semantic patch that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-One Late peter who was among the death victims in the May 27 2006
-Earthquake disaster in Java, Indonesia that killed over 5,000 people.
-He was in Indonesia on a business trip and that was how he met his
-end. My bank management is yet to know about his death, I knew about
-it because he was my friend and I am his account officer.he did not
-mention any Next of Kin/ Heir when the account was opened, and he was
-not married and no children. Last week my Bank Management requested
-that he should give instructions on what to do about his funds,I know
-this will happen and that is why I have been looking for a means to
-handle the situation,
+// <smpl>
+@r exists@
+local idexpression ret;
+expression e;
+position p;
+@@
 
-If you are interested send me your private Email Address so that i can
-send you more details of the transaction,
-Thanks for your understanding
+-ret = 0;
+... when != ret = e
+return 
+- ret
++ 0
+  ;
+// </smpl>
 
-I am waiting for your reply.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Best regards,
+---
+ drivers/net/wireless/brcm80211/brcmsmac/main.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Mr. Husam Al Sayed
+diff --git a/drivers/net/wireless/brcm80211/brcmsmac/main.c b/drivers/net/wireless/brcm80211/brcmsmac/main.c
+index 9417cb5..3054725 100644
+--- a/drivers/net/wireless/brcm80211/brcmsmac/main.c
++++ b/drivers/net/wireless/brcm80211/brcmsmac/main.c
+@@ -4875,9 +4875,6 @@ static int brcms_b_detach(struct brcms_c_info *wlc)
+ 	uint i;
+ 	struct brcms_hw_band *band;
+ 	struct brcms_hardware *wlc_hw = wlc->hw;
+-	int callbacks;
+-
+-	callbacks = 0;
+ 
+ 	brcms_b_detach_dmapio(wlc_hw);
+ 
+@@ -4901,7 +4898,7 @@ static int brcms_b_detach(struct brcms_c_info *wlc)
+ 		wlc_hw->sih = NULL;
+ 	}
+ 
+-	return callbacks;
++	return 0;
+ 
+ }
+ 
+
