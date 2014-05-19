@@ -1,27 +1,35 @@
-From: Miguel Oliveira <cmroliv@gmail.com>
-Date: Thu, 29 May 2014 22:07:58 +0000
-Subject: Re: [PATCH] Fixed coding style problem
-Message-Id: <CAMGgR5vjU6ifvJfvt+MGgX=0ZqBb86oadsgE9jiyK2C_aRYMzA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 May 2014 20:36:26 +0000
+Subject: [patch] module: static checker complains about negative values
+Message-Id: <20140519203626.GC5671@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401400436-4396-1-git-send-email-cmroliv@gmail.com>
-In-Reply-To: <1401400436-4396-1-git-send-email-cmroliv@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Thanks Dan and Greg for the hints, and sorry for this, its was my 1st
-attenpt to patch something.
+We cap "stat.size" at INT_MAX but we don't check for negative values so
+my static checker complains.  At this point, you already have control of
+the kernel and if you start passing negative values here then you
+deserve what happens next.
 
-2014-05-29 23:03 GMT+01:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> Work against linux-next.  Someone already fixed this.  The subject
-> should have been:
->
-> [PATCH] staging: wlan-ng: <something something netdev_err()>
->
-> With correct prefix and a more descriptive title.  See how Vitaly did
-> it: http://www.spinics.net/lists/linux-driver-devel/msg46770.html
->
-> regards,
-> dan carpenter
->
+On 64 bit systems the vmalloc() will definitely fail.  On 32 bit systems
+we truncate the upper 32 bits away so that could succeed.  I haven't
+followed it further than that.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/kernel/module.c b/kernel/module.c
+index 626d164..26e0d15 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2536,7 +2536,7 @@ static int copy_module_from_fd(int fd, struct load_info *info)
+ 	}
+ 
+ 	/* Don't hand 0 to vmalloc, it whines. */
+-	if (stat.size = 0) {
++	if (stat.size <= 0) {
+ 		err = -EINVAL;
+ 		goto out;
+ 	}
