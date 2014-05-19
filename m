@@ -1,44 +1,78 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 20 May 2014 09:15:26 +0000
-Subject: Re: [PATCH 1/2] mtd: delete unneeded call to platform_get_drvdata
-Message-Id: <20140520091526.GF15585@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 May 2014 04:31:06 +0000
+Subject: [PATCH 4/13] wimax/i2400m: make return of 0 explicit
+Message-Id: <1400473875-22228-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400308369-24375-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAOMZO5AymcCnC6Awt2LiGP9yz=baRA0HLoLRUSBgNeg3b5=9xQ@mail.gmail.com>
- <alpine.DEB.2.10.1405171511140.2587@hadrien>
- <20140520083531.GH2413@norris-Latitude-E6410>
-In-Reply-To: <20140520083531.GH2413@norris-Latitude-E6410>
+References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: Mike Frysinger <vapier.adi@gmail.com>, David Woodhouse <dwmw2@infradead.org>, kernel-janitors@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Fabio Estevam <festevam@gmail.com>
+To: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wimax@intel.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 20, 2014 at 01:35:31AM -0700, Brian Norris wrote:
-> > > >  static int bf5xx_nand_resume(struct platform_device *dev)
-> > > >  {
-> > > > -       struct bf5xx_nand_info *info = platform_get_drvdata(dev);
-> > > > -
-> > > >         return 0;
-> > >
-> > > In this case bf5xx_nand_suspend/resume could be removed?
-> > 
-> > I don't know.  It looks like it is intentional to have a definition that
-> > returns an indication of success?  The complete set of definitions is:
-> 
-> I'm not so sure. I believe suspend/resume works just fine without the
-> hooks, if those hooks would otherwise be doing nothing. It is notable
-> that this driver is not using the modern dev_pm_ops form of the
-> suspend/resume callbacks, so maybe it just hasn't aged gracefully--and
-> possibly was never supported properly in the first place.
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-These are called from platform_legacy_suspend/platform_legacy_resume.
-It looks like the functions are not needed.
+Delete unnecessary local variable whose value is always 0 and that hides
+the fact that the result is always 0.
 
-(I am not an expert on pm, I just querried my Smatch Cross Function
-Database which is awesome).
+A simplified version of the semantic patch that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@r exists@
+local idexpression ret;
+expression e;
+position p;
+@@
+
+-ret = 0;
+... when != ret = e
+return 
+- ret
++ 0
+  ;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Alternatively, is an error code wanted under the if?
+
+ drivers/net/wimax/i2400m/driver.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wimax/i2400m/driver.c b/drivers/net/wimax/i2400m/driver.c
+index 9c34d2f..901a534 100644
+--- a/drivers/net/wimax/i2400m/driver.c
++++ b/drivers/net/wimax/i2400m/driver.c
+@@ -500,26 +500,23 @@ int i2400m_pm_notifier(struct notifier_block *notifier,
+  */
+ int i2400m_pre_reset(struct i2400m *i2400m)
+ {
+-	int result;
+ 	struct device *dev = i2400m_dev(i2400m);
+ 
+ 	d_fnstart(3, dev, "(i2400m %p)\n", i2400m);
+ 	d_printf(1, dev, "pre-reset shut down\n");
+ 
+-	result = 0;
+ 	mutex_lock(&i2400m->init_mutex);
+ 	if (i2400m->updown) {
+ 		netif_tx_disable(i2400m->wimax_dev.net_dev);
+ 		__i2400m_dev_stop(i2400m);
+-		result = 0;
+ 		/* down't set updown to zero -- this way
+ 		 * post_reset can restore properly */
+ 	}
+ 	mutex_unlock(&i2400m->init_mutex);
+ 	if (i2400m->bus_release)
+ 		i2400m->bus_release(i2400m);
+-	d_fnend(3, dev, "(i2400m %p) = %d\n", i2400m, result);
+-	return result;
++	d_fnend(3, dev, "(i2400m %p) = %d\n", i2400m, 0);
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(i2400m_pre_reset);
+ 
 
