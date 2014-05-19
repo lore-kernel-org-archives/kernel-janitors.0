@@ -1,52 +1,97 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Mon, 26 May 2014 16:41:23 +0000
-Subject: [PATCH 3/3] ARM: imx: don't allocate memory for .dma_mask of struct device
-Message-Id: <1401122483-31603-3-git-send-email-emilgoode@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 19 May 2014 04:31:09 +0000
+Subject: [PATCH 7/13] staging: wlags49_h2: make return of 0 explicit
+Message-Id: <1400473875-22228-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401122483-31603-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1401122483-31603-1-git-send-email-emilgoode@gmail.com>
+References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Henk de Groot <pe1dnn@amsat.org>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-The first patch in this series changed the platform_device_alloc
-function to assign the u64 .dma_mask pointer of struct device to
-the address of a u64 .dma_mask member of struct platform_object.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This means that we no longer should allocate memory for the .dma_mask
-pointer of struct device when using platform_device_alloc() and the
-u64 .dma_mask of struct platform_object that it points to will be freed
-when the release callback function platform_device_release is called.
+Delete unnecessary local variable whose value is always 0 and that hides
+the fact that the result is always 0.
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+A simplified version of the semantic patch that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r exists@
+local idexpression ret;
+expression e;
+position p;
+@@
+
+-ret = 0;
+... when != ret = e
+return 
+- ret
++ 0
+  ;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- arch/arm/mach-imx/devices/platform-ipu-core.c |    5 -----
- 1 file changed, 5 deletions(-)
+I'm not sure to understand this code.  There seem to be two cases where
+ret was undefined at the point of the return (on failure of the case 0
+test and in the default case).
 
-diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mach-imx/devices/platform-ipu-core.c
-index 6bd7c3f..4499a7d 100644
---- a/arch/arm/mach-imx/devices/platform-ipu-core.c
-+++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
-@@ -79,10 +79,6 @@ struct platform_device *__init imx_alloc_mx3_camera(
- 	if (!pdev)
- 		return ERR_PTR(-ENOMEM);
- 
--	pdev->dev.dma_mask = kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
--	if (!pdev->dev.dma_mask)
--		goto err;
+ drivers/staging/wlags49_h2/wl_wext.c |   11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/wlags49_h2/wl_wext.c b/drivers/staging/wlags49_h2/wl_wext.c
+index 49eeeae..3aeff81 100644
+--- a/drivers/staging/wlags49_h2/wl_wext.c
++++ b/drivers/staging/wlags49_h2/wl_wext.c
+@@ -159,15 +159,12 @@ static int hermes_set_tkip_keys(ltv_t *ltv, u16 key_idx, u8 *addr,
+ /* Set up the LTV to clear the appropriate key */
+ static int hermes_clear_tkip_keys(ltv_t *ltv, u16 key_idx, u8 *addr)
+ {
+-	int ret;
 -
- 	*pdev->dev.dma_mask = DMA_BIT_MASK(32);
- 	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
- 
-@@ -96,7 +92,6 @@ struct platform_device *__init imx_alloc_mx3_camera(
- 		ret = platform_device_add_data(pdev, pdata, sizeof(*pdata));
- 		if (ret) {
- err:
--			kfree(pdev->dev.dma_mask);
- 			platform_device_put(pdev);
- 			return ERR_PTR(-ENODEV);
+ 	switch (key_idx) {
+ 	case 0:
+ 		if (!is_broadcast_ether_addr(addr)) {
+ 			ltv->len = 7;
+ 			ltv->typ = CFG_REMOVE_TKIP_MAPPED_KEY;
+ 			memcpy(&ltv->u.u8[0], addr, ETH_ALEN);
+-			ret = 0;
  		}
--- 
-1.7.10.4
+ 		break;
+ 	case 1:
+@@ -178,13 +175,12 @@ static int hermes_clear_tkip_keys(ltv_t *ltv, u16 key_idx, u8 *addr)
+ 		ltv->typ = CFG_REMOVE_TKIP_DEFAULT_KEY;
+ 		ltv->u.u16[0] = cpu_to_le16(key_idx);
+ 
+-		ret = 0;
+ 		break;
+ 	default:
+ 		break;
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ /* Set the WEP keys in the wl_private structure */
+@@ -3027,13 +3023,10 @@ static int wireless_set_genie(struct net_device *dev,
+ 			      struct iw_point *data, char *extra)
+ 
+ {
+-	int   ret = 0;
+-
+ 	/* We can't write this to the card, but apparently this
+ 	 * operation needs to succeed */
+-	ret = 0;
+ 
+-	return ret;
++	return 0;
+ }
+ /*======================================*/
+ 
 
