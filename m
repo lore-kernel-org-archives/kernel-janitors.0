@@ -1,40 +1,38 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 23 May 2014 17:18:26 +0000
-Subject: Re: [PATCH 3/8] drivers/staging: Remove useless return variables
-Message-Id: <20140523171826.GA4268@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 19 May 2014 20:35:19 +0000
+Subject: [patch] usb: phy: msm: fix bug in probe()
+Message-Id: <20140519203519.GB5671@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400582028-24990-3-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1400582028-24990-3-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, May 20, 2014 at 12:33:43PM +0200, Peter Senna Tschudin wrote:
-> This patch remove variables that are initialized with a constant,
-> are never updated, and are only used as parameter of return.
-> Return the constant instead of using a variable.
-> 
-> Verified by compilation only.
-> 
-> The coccinelle script that find and fixes this issue is:
-> // <smpl>
-> @@
-> type T;
-> constant C;
-> identifier ret;
-> @@
-> - T ret = C;
-> ... when != ret
-> - return ret;
-> + return C;
-> // </smpl>
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+My previous patch introduced a bug which prevented this driver from
+loading.  devm_ioremap_resource() has a call to
+devm_request_mem_region() which will fail because the address space is
+shared between this PHY driver and CI device controller driver.
 
-This patch no longer applies to my tree, can you refresh it and resend?
+Fixes: 10f0577aa5cb ('usb: phy: msm: change devm_ioremap() to devm_ioremap_resource()')
+Reported-by:"Ivan T. Ivanov" <iivanov@mm-sol.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-thanks,
-
-greg k-h
+diff --git a/drivers/usb/phy/phy-msm-usb.c b/drivers/usb/phy/phy-msm-usb.c
+index 4f88174..ced34f3 100644
+--- a/drivers/usb/phy/phy-msm-usb.c
++++ b/drivers/usb/phy/phy-msm-usb.c
+@@ -1586,9 +1586,11 @@ static int msm_otg_probe(struct platform_device *pdev)
+ 				      np ? "alt_core" : "usb_hs_core_clk");
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	motg->regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(motg->regs))
+-		return PTR_ERR(motg->regs);
++	if (!res)
++		return -EINVAL;
++	motg->regs = devm_ioremap(&pdev->dev, res->start, resource_size(res));
++	if (!motg->regs)
++		return -ENOMEM;
+ 
+ 	/*
+ 	 * NOTE: The PHYs can be multiplexed between the chipidea controller
