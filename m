@@ -1,162 +1,61 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sun, 18 May 2014 20:51:00 +0000
-Subject: [PATCH 2/2] ARM: imx: convert camera init to use platform_device_register_full()
-Message-Id: <1400446261-27085-3-git-send-email-emilgoode@gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
+Date: Mon, 19 May 2014 06:27:22 +0000
+Subject: Re: [PATCH 2/2] ARM: imx: convert camera init to use platform_device_register_full()
+Message-Id: <20140519062722.GE16662@pengutronix.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1400446261-27085-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1400446261-27085-1-git-send-email-emilgoode@gmail.com>
+ <1400446261-27085-3-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1400446261-27085-3-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-This converts the imx camera allocation and initialization functions
-to use platform_device_register_full() thus simplifying the code.
+Hello Emil,
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
-Only build tested, unfortunately I currently don't have the hardware.
+thanks for your effort.
 
- arch/arm/mach-imx/devices/platform-ipu-core.c |   43 +++++++++----------------
- arch/arm/mach-imx/mach-mx31_3ds.c             |    5 ++-
- arch/arm/mach-imx/mach-mx31moboard.c          |    6 ++--
- arch/arm/mach-imx/mach-mx35_3ds.c             |    5 ++-
- arch/arm/mach-imx/mach-pcm037.c               |    5 ++-
- 5 files changed, 23 insertions(+), 41 deletions(-)
+On Sun, May 18, 2014 at 10:51:00PM +0200, Emil Goode wrote:
+> This converts the imx camera allocation and initialization functions
+> to use platform_device_register_full() thus simplifying the code.
+>=20
+> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+> ---
+> Only build tested, unfortunately I currently don't have the hardware.
+>=20
+>  arch/arm/mach-imx/devices/platform-ipu-core.c |   43 +++++++++----------=
+------
+>  arch/arm/mach-imx/mach-mx31_3ds.c             |    5 ++-
+>  arch/arm/mach-imx/mach-mx31moboard.c          |    6 ++--
+>  arch/arm/mach-imx/mach-mx35_3ds.c             |    5 ++-
+>  arch/arm/mach-imx/mach-pcm037.c               |    5 ++-
+>  5 files changed, 23 insertions(+), 41 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mac=
+h-imx/devices/platform-ipu-core.c
+> index 6bd7c3f..13ea542 100644
+> --- a/arch/arm/mach-imx/devices/platform-ipu-core.c
+> +++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
+> @@ -69,42 +69,29 @@ struct platform_device *__init imx_alloc_mx3_camera(
+IMHO you should better rename the function because now it doesn't only
+allocate the device, but also registers it.
 
-diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mach-imx/devices/platform-ipu-core.c
-index 6bd7c3f..13ea542 100644
---- a/arch/arm/mach-imx/devices/platform-ipu-core.c
-+++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
-@@ -69,42 +69,29 @@ struct platform_device *__init imx_alloc_mx3_camera(
- 			.flags = IORESOURCE_MEM,
- 		},
- 	};
--	int ret = -ENOMEM;
--	struct platform_device *pdev;
-+	struct platform_device_info pdevinfo;
-+	struct mx3_camera_pdata tmppdata;
- 
- 	if (IS_ERR_OR_NULL(imx_ipu_coredev))
- 		return ERR_PTR(-ENODEV);
- 
--	pdev = platform_device_alloc("mx3-camera", 0);
--	if (!pdev)
--		return ERR_PTR(-ENOMEM);
--
--	pdev->dev.dma_mask = kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
--	if (!pdev->dev.dma_mask)
--		goto err;
--
--	*pdev->dev.dma_mask = DMA_BIT_MASK(32);
--	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
--
--	ret = platform_device_add_resources(pdev, res, ARRAY_SIZE(res));
--	if (ret)
--		goto err;
-+	memset(&pdevinfo, 0, sizeof(pdevinfo));
-+	pdevinfo.name = "mx3-camera";
-+	pdevinfo.id = 0;
-+	pdevinfo.res = res;
-+	pdevinfo.num_res = ARRAY_SIZE(res);
-+	pdevinfo.dma_mask = DMA_BIT_MASK(32);
- 
- 	if (pdata) {
--		struct mx3_camera_pdata *copied_pdata;
--
--		ret = platform_device_add_data(pdev, pdata, sizeof(*pdata));
--		if (ret) {
--err:
--			kfree(pdev->dev.dma_mask);
--			platform_device_put(pdev);
--			return ERR_PTR(-ENODEV);
--		}
--		copied_pdata = dev_get_platdata(&pdev->dev);
--		copied_pdata->dma_dev = &imx_ipu_coredev->dev;
-+		tmppdata = *pdata;
-+		tmppdata.dma_dev = &imx_ipu_coredev->dev;
-+
-+		pdata = &tmppdata;
-+		pdevinfo.data = pdata;
-+		pdevinfo.size_data = sizeof(*pdata);
- 	}
- 
--	return pdev;
-+	return platform_device_register_full(&pdevinfo);
- }
- 
- struct platform_device *__init imx_add_mx3_sdc_fb(
-diff --git a/arch/arm/mach-imx/mach-mx31_3ds.c b/arch/arm/mach-imx/mach-mx31_3ds.c
-index 4217871..a73a933 100644
---- a/arch/arm/mach-imx/mach-mx31_3ds.c
-+++ b/arch/arm/mach-imx/mach-mx31_3ds.c
-@@ -199,10 +199,9 @@ static int __init mx31_3ds_init_camera(void)
- 	if (!(dma & DMA_MEMORY_MAP))
- 		goto err;
- 
--	ret = platform_device_add(pdev);
--	if (ret)
-+	return 0;
- err:
--		platform_device_put(pdev);
-+	platform_device_put(pdev);
- 
- 	return ret;
- }
-diff --git a/arch/arm/mach-imx/mach-mx31moboard.c b/arch/arm/mach-imx/mach-mx31moboard.c
-index 08730f2..14ca3b8 100644
---- a/arch/arm/mach-imx/mach-mx31moboard.c
-+++ b/arch/arm/mach-imx/mach-mx31moboard.c
-@@ -492,13 +492,11 @@ static int __init mx31moboard_init_cam(void)
- 	if (!(dma & DMA_MEMORY_MAP))
- 		goto err;
- 
--	ret = platform_device_add(pdev);
--	if (ret)
-+	return 0;
- err:
--		platform_device_put(pdev);
-+	platform_device_put(pdev);
- 
- 	return ret;
--
- }
- 
- static void mx31moboard_poweroff(void)
-diff --git a/arch/arm/mach-imx/mach-mx35_3ds.c b/arch/arm/mach-imx/mach-mx35_3ds.c
-index 4e8b184..c5a1b44 100644
---- a/arch/arm/mach-imx/mach-mx35_3ds.c
-+++ b/arch/arm/mach-imx/mach-mx35_3ds.c
-@@ -282,10 +282,9 @@ static int __init imx35_3ds_init_camera(void)
- 	if (!(dma & DMA_MEMORY_MAP))
- 		goto err;
- 
--	ret = platform_device_add(pdev);
--	if (ret)
-+	return 0;
- err:
--		platform_device_put(pdev);
-+	platform_device_put(pdev);
- 
- 	return ret;
- }
-diff --git a/arch/arm/mach-imx/mach-pcm037.c b/arch/arm/mach-imx/mach-pcm037.c
-index 81b8aff..fa00e6d 100644
---- a/arch/arm/mach-imx/mach-pcm037.c
-+++ b/arch/arm/mach-imx/mach-pcm037.c
-@@ -425,10 +425,9 @@ static int __init pcm037_init_camera(void)
- 	if (!(dma & DMA_MEMORY_MAP))
- 		goto err;
- 
--	ret = platform_device_add(pdev);
--	if (ret)
-+	return 0;
- err:
--		platform_device_put(pdev);
-+	platform_device_put(pdev);
- 
- 	return ret;
- }
--- 
-1.7.10.4
+Also I doubt that it's OK to call dma_declare_coherent_memory after the
+device is added. In this case maybe extend
+platform_device_register_full? And also add a warning to
+dma_declare_coherent_memory if it is called for an already added device?
+(Added a few people to Cc: that might be able to comment this. I don't
+even know if there is a reliable way to check if a device is already
+added.)
 
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
