@@ -1,27 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 03 May 2014 20:23:29 +0000
-Subject: [patch] staging: lustre: info leak in lnet_ping()
-Message-Id: <20140503202329.GE32753@mwanda>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 19 May 2014 16:24:26 +0000
+Subject: [PATCH] staging: rts5208: Use pci_device_id rather than DEFINE_PCI_DEVICE_TABLE
+Message-Id: <1400516666-17303-1-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: benoit.taine@lip6.fr, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 64 bit systems there is a 4 byte hole after the last member of the
-struct.  We should clear it to avoid disclosing stack information.
+This patch enhances kernel style usage for the rts5208 driver.
+We should prefer `struct pci_device_id` over `DEFINE_PCI_DEVICE_TABLE` to meet
+kernel coding style guidelines. This issue was reported by checkpatch.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+ drivers/staging/rts5208/rtsx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
-index 85b8d81..d4cacb90 100644
---- a/drivers/staging/lustre/lnet/lnet/api-ni.c
-+++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
-@@ -1927,6 +1927,7 @@ lnet_ping (lnet_process_id_t id, int timeout_ms, lnet_process_id_t *ids, int n_i
+diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
+index d2d1345..c0a0e60 100644
+--- a/drivers/staging/rts5208/rtsx.c
++++ b/drivers/staging/rts5208/rtsx.c
+@@ -1030,7 +1030,7 @@ static void rtsx_remove(struct pci_dev *pci)
+ }
  
- 	rc = -EFAULT;			   /* If I SEGV... */
- 
-+	memset(&tmpid, 0, sizeof(tmpid));
- 	for (i = 0; i < n_ids; i++) {
- 		tmpid.pid = info->pi_pid;
- 		tmpid.nid = info->pi_ni[i].ns_nid;
+ /* PCI IDs */
+-static DEFINE_PCI_DEVICE_TABLE(rtsx_ids) = {
++static const struct pci_device_id rtsx_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK, 0x5208),
+ 		PCI_CLASS_OTHERS << 16, 0xFF0000 },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK, 0x5288),
+
