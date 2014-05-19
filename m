@@ -1,37 +1,65 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 May 2014 20:12:40 +0000
-Subject: Re: [PATCH] ARM: imx: add missing kfree call in error paths
-Message-Id: <20140522201240.GL15585@mwanda>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 19 May 2014 10:26:52 +0000
+Subject: [PATCH 3/4 V2] atm: idt77252: Remove redundant error check
+Message-Id: <1400495212-9150-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400764482-20147-1-git-send-email-emilgoode@gmail.com>
- <20140522135016.GK15585@mwanda> <20140522144446.GA7348@lianli>
-In-Reply-To: <20140522144446.GA7348@lianli>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Chas Williams <chas@cmf.nrl.navy.mil>
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, davem@davemloft.net
 
-On Thu, May 22, 2014 at 04:44:46PM +0200, Emil Goode wrote:
-> Hello Dan,
-> 
-> On Thu, May 22, 2014 at 04:50:16PM +0300, Dan Carpenter wrote:
-> > On Thu, May 22, 2014 at 03:14:42PM +0200, Emil Goode wrote:
-> > > We forgot to free pdev->dev.dma_mask as it is not freed
-> > > by platform_device_put().
-> > > 
-> > 
-> > Every function which calls imx31_alloc_mx3_camera() is buggy.  That
-> > means that, at best, it is a 2 on Rusty's API rating.
-> > http://sweng.the-davies.net/Home/rustys-api-design-manifesto
-> > 
-> > The correct fix is to introduce an imx31_free_mx3_camera() otherwise we
-> > will just keep introducing these bugs.
-> 
-> I guess I could add this to arch/arm/mach-imx/devices/platform-ipu-core.c
-> it would be a very small function though.
+Remove double checks, convert printk to pr_warn, and move the call to
+pr_warn to the first check. The simplified version of the coccinelle
+semantic patch that find this issue is as follows:
 
-A small function is fine.  :)
+// <smpl>
+@@
+expression E; identifier pr; expression list es;
+@@
+while(...){
+...
+-       if (E) break;
++       if (E){
++               pr(es);
++               break;
++       }
+...
+}
+- if(E) pr(es);
+// </smpl>
 
-regards,
-dan carpenter
+Tested by compilation only.
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Changes from V1:
+ - Convert printk(KERN_WARNING ... to pr_warn(...
+
+ drivers/atm/idt77252.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/atm/idt77252.c b/drivers/atm/idt77252.c
+index 1bdf104..b621f56 100644
+--- a/drivers/atm/idt77252.c
++++ b/drivers/atm/idt77252.c
+@@ -2551,12 +2551,12 @@ done:
+ 		timeout = 5 * 1000;
+ 		while (atomic_read(&vc->scq->used) > 0) {
+ 			timeout = msleep_interruptible(timeout);
+-			if (!timeout)
++			if (!timeout) {
++				pr_warn("%s: SCQ drain timeout: %u used\n",
++					card->name, atomic_read(&vc->scq->used));
+ 				break;
++			}
+ 		}
+-		if (!timeout)
+-			printk("%s: SCQ drain timeout: %u used\n",
+-			       card->name, atomic_read(&vc->scq->used));
+ 
+ 		writel(TCMDQ_HALT | vc->index, SAR_REG_TCMDQ);
+ 		clear_scd(card, vc->scq, vc->class);
+-- 
+1.8.3.1
 
