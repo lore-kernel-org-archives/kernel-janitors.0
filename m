@@ -1,46 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 31 May 2014 12:05:27 +0000
-Subject: Re: [PATCH] driver core/platform: remove unused implicit padding in platform_object
-Message-Id: <20140531120526.GL15585@mwanda>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Mon, 19 May 2014 11:25:48 +0000
+Subject: [PATCH] CLK: TI: DRA7: return error code in failure case
+Message-Id: <alpine.DEB.2.10.1405191924330.2564@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401480167-15091-1-git-send-email-ydroneaud@opteya.com>
- <20140530201054.GF17724@mwanda>
- <1401523299.15490.6.camel@localhost.localdomain>
-In-Reply-To: <1401523299.15490.6.camel@localhost.localdomain>
+References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr> <1400473875-22228-4-git-send-email-Julia.Lawall@lip6.fr> <20140519074155.GO15585@mwanda> <5379BC0C.3070401@ti.com>
+In-Reply-To: <5379BC0C.3070401@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Mike Turquette <mturquette@linaro.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, J Keerthy <j-keerthy@ti.com>
 
-On Sat, May 31, 2014 at 10:01:39AM +0200, Yann Droneaud wrote:
-> Hi Dan,
->=20
-> Le vendredi 30 mai 2014 =E0 23:10 +0300, Dan Carpenter a =E9crit :
-> > This changelog doesn't match the patch.
-> >=20
->=20
-> Hum, let me guess .... I've failed to set the proper subject prefix
-> to add v6 suffic to PATCH:=20
-> I've changed the patch title since v5 (from Emil Goode)... so it's like
-> a new one.
->=20
-> Is it really necessary to resend the patch ?
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Oh.  Sorry, I didn't understand what you were trying to say...  You're
-right.
+Add a returned error code in the MAX_APLL_WAIT_TRIES case.  Remove the
+updating of the return variable r to 0 if MAX_APLL_WAIT_TRIES is not yet
+reached, because r is already 0 at this point.
 
-For some reason I just looked at the patch first and then I started
-reading the changelog and got to the bit about GCC on ARM and said
-thought have been describing a different change without reading the
-rest.  This was my bad.  I should have read more carefully.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Very thourough patch description.  :)
+---
+diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+index b986f61..efc71a0 100644
+--- a/drivers/clk/ti/apll.c
++++ b/drivers/clk/ti/apll.c
+@@ -77,13 +77,11 @@ static int dra7_apll_enable(struct clk_hw *hw)
+ 	if (i = MAX_APLL_WAIT_TRIES) {
+ 		pr_warn("clock: %s failed transition to '%s'\n",
+ 			clk_name, (state) ? "locked" : "bypassed");
+-	} else {
++		r = -EBUSY;
++	} else
+ 		pr_debug("clock: %s transition to '%s' in %d loops\n",
+ 			 clk_name, (state) ? "locked" : "bypassed", i);
 
-regards,
-dan carpenter
+-		r = 0;
+-	}
+-
+ 	return r;
+ }
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
