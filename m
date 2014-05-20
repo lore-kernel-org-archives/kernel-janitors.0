@@ -1,59 +1,74 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=  <u.kleine-koenig@pengutronix.de>
-Date: Mon, 19 May 2014 06:27:22 +0000
+From: Emil Goode <emilgoode@gmail.com>
+Date: Tue, 20 May 2014 11:43:15 +0000
 Subject: Re: [PATCH 2/2] ARM: imx: convert camera init to use platform_device_register_full()
-Message-Id: <20140519062722.GE16662@pengutronix.de>
+Message-Id: <20140520114315.GA4438@lianli>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1400446261-27085-1-git-send-email-emilgoode@gmail.com>
  <1400446261-27085-3-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1400446261-27085-3-git-send-email-emilgoode@gmail.com>
+ <20140519062722.GE16662@pengutronix.de>
+In-Reply-To: <20140519062722.GE16662@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
-Hello Emil,
+Hello Uwe,
 
-thanks for your effort.
+Thank you for the review and sorry for the late response.
 
-On Sun, May 18, 2014 at 10:51:00PM +0200, Emil Goode wrote:
-> This converts the imx camera allocation and initialization functions
-> to use platform_device_register_full() thus simplifying the code.
+On Mon, May 19, 2014 at 08:27:22AM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Emil,
 >=20
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
-> Only build tested, unfortunately I currently don't have the hardware.
+> thanks for your effort.
 >=20
->  arch/arm/mach-imx/devices/platform-ipu-core.c |   43 +++++++++----------=
-------
->  arch/arm/mach-imx/mach-mx31_3ds.c             |    5 ++-
->  arch/arm/mach-imx/mach-mx31moboard.c          |    6 ++--
->  arch/arm/mach-imx/mach-mx35_3ds.c             |    5 ++-
->  arch/arm/mach-imx/mach-pcm037.c               |    5 ++-
->  5 files changed, 23 insertions(+), 41 deletions(-)
+> On Sun, May 18, 2014 at 10:51:00PM +0200, Emil Goode wrote:
+> > This converts the imx camera allocation and initialization functions
+> > to use platform_device_register_full() thus simplifying the code.
+> >=20
+> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
+> > ---
+> > Only build tested, unfortunately I currently don't have the hardware.
+> >=20
+> >  arch/arm/mach-imx/devices/platform-ipu-core.c |   43 +++++++++--------=
+--------
+> >  arch/arm/mach-imx/mach-mx31_3ds.c             |    5 ++-
+> >  arch/arm/mach-imx/mach-mx31moboard.c          |    6 ++--
+> >  arch/arm/mach-imx/mach-mx35_3ds.c             |    5 ++-
+> >  arch/arm/mach-imx/mach-pcm037.c               |    5 ++-
+> >  5 files changed, 23 insertions(+), 41 deletions(-)
+> >=20
+> > diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/m=
+ach-imx/devices/platform-ipu-core.c
+> > index 6bd7c3f..13ea542 100644
+> > --- a/arch/arm/mach-imx/devices/platform-ipu-core.c
+> > +++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
+> > @@ -69,42 +69,29 @@ struct platform_device *__init imx_alloc_mx3_camera(
+> IMHO you should better rename the function because now it doesn't only
+> allocate the device, but also registers it.
+
+Agreed.
+
 >=20
-> diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mac=
-h-imx/devices/platform-ipu-core.c
-> index 6bd7c3f..13ea542 100644
-> --- a/arch/arm/mach-imx/devices/platform-ipu-core.c
-> +++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
-> @@ -69,42 +69,29 @@ struct platform_device *__init imx_alloc_mx3_camera(
-IMHO you should better rename the function because now it doesn't only
-allocate the device, but also registers it.
+> Also I doubt that it's OK to call dma_declare_coherent_memory after the
+> device is added. In this case maybe extend
+> platform_device_register_full? And also add a warning to
+> dma_declare_coherent_memory if it is called for an already added device?
+> (Added a few people to Cc: that might be able to comment this. I don't
+> even know if there is a reliable way to check if a device is already
+> added.)
 
-Also I doubt that it's OK to call dma_declare_coherent_memory after the
-device is added. In this case maybe extend
-platform_device_register_full? And also add a warning to
-dma_declare_coherent_memory if it is called for an already added device?
-(Added a few people to Cc: that might be able to comment this. I don't
-even know if there is a reliable way to check if a device is already
-added.)
+Yes I also had doubts about that. However, apart from this patch there are
+three other places in arch/arm/mach-imx/ where dma_declare_coherent_memory()
+is called after calling platform_device_register_full().
 
-Best regards
-Uwe
+Perhaps this is enough reason to extend platform_device_register_full().
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+It would be great to get some more feedback on this and also if there is a
+reliable way to check if a device is already added.
+
+Best regards,
+
+Emil Goode
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
