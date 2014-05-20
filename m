@@ -1,7 +1,7 @@
 From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 20 May 2014 00:30:46 +0000
+Date: Tue, 20 May 2014 00:36:24 +0000
 Subject: Re: [PATCH 1/13] libertas: make return of 0 explicit
-Message-Id: <alpine.DEB.2.10.1405200829390.2723@hadrien>
+Message-Id: <alpine.DEB.2.10.1405200835490.2723@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr> <1400473875-22228-2-git-send-email-Julia.Lawall@lip6.fr> <5379FCD0.2030506@cogentembedded.com>
 In-Reply-To: <5379FCD0.2030506@cogentembedded.com>
@@ -70,8 +70,7 @@ On Mon, 19 May 2014, Sergei Shtylyov wrote:
 >
 >    Why not just "ret 0"?
 
-OK, I wasn't sure if it was useful to keep the same number of arguments.
-But I will update it, since from the definition of lbs_deb_leave_args it
-seems ok.
+Oops, I won't make any change here, because Dan Williams has proposed
+another patch that makes the ret variable useful.
 
 julia
