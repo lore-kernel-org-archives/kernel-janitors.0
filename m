@@ -1,13 +1,13 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 31 May 2014 13:14:10 +0000
-Subject: [PATCH 10/11] vxge: Remove useless return variables
-Message-Id: <1401542051-3174-10-git-send-email-peter.senna@gmail.com>
+Date: Tue, 20 May 2014 10:33:42 +0000
+Subject: [PATCH 2/8] staging: wlags49_h2: wl_priv: Remove useless return variables
+Message-Id: <1400582028-24990-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jon Mason <jdmason@kudzu.us>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Henk de Groot <pe1dnn@amsat.org>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
 This patch remove variables that are initialized with a constant,
 are never updated, and are only used as parameter of return.
@@ -24,136 +24,88 @@ identifier ret;
 @@
 - T ret = C;
 ... when != ret
-    when strict
-return
-- ret
-+ C
-;
+- return ret;
++ return C;
 // </smpl>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/net/ethernet/neterion/vxge/vxge-config.c |   22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ drivers/staging/wlags49_h2/wl_priv.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 089b713..2bbd01f 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -120,7 +120,6 @@ __vxge_hw_device_register_poll(void __iomem *reg, u64 mask, u32 max_millis)
+diff --git a/drivers/staging/wlags49_h2/wl_priv.c b/drivers/staging/wlags49_h2/wl_priv.c
+index 41f3324..aff9273 100644
+--- a/drivers/staging/wlags49_h2/wl_priv.c
++++ b/drivers/staging/wlags49_h2/wl_priv.c
+@@ -179,8 +179,6 @@ int wvlan_uil(struct uilreq *urq, struct wl_private *lp)
+  ******************************************************************************/
+ int wvlan_uil_connect(struct uilreq *urq, struct wl_private *lp)
  {
- 	u64 val64;
- 	u32 i = 0;
--	enum vxge_hw_status ret = VXGE_HW_FAIL;
+-	int result = 0;
+-
+ 	if (!(lp->flags & WVLAN2_UIL_CONNECTED)) {
+ 		lp->flags |= WVLAN2_UIL_CONNECTED;
+ 		urq->hcfCtx = &(lp->hcfCtx);
+@@ -190,7 +188,7 @@ int wvlan_uil_connect(struct uilreq *urq, struct wl_private *lp)
+ 		urq->result = UIL_ERR_IN_USE;
+ 	}
  
- 	udelay(10);
+-	return result;
++	return 0;
+ } /* wvlan_uil_connect */
+ /*======================================*/
  
-@@ -139,7 +138,7 @@ __vxge_hw_device_register_poll(void __iomem *reg, u64 mask, u32 max_millis)
- 		mdelay(1);
- 	} while (++i <= max_millis);
+@@ -218,8 +216,6 @@ int wvlan_uil_connect(struct uilreq *urq, struct wl_private *lp)
+  ******************************************************************************/
+ int wvlan_uil_disconnect(struct uilreq *urq, struct wl_private *lp)
+ {
+-	int result = 0;
+-
+ 	if (urq->hcfCtx = &(lp->hcfCtx)) {
+ 		if (lp->flags & WVLAN2_UIL_CONNECTED) {
+ 			lp->flags &= ~WVLAN2_UIL_CONNECTED;
+@@ -238,7 +234,7 @@ int wvlan_uil_disconnect(struct uilreq *urq, struct wl_private *lp)
+ 		urq->result = UIL_ERR_WRONG_IFB;
+ 	}
+ 
+-	return result;
++	return 0;
+ } /* wvlan_uil_disconnect */
+ /*======================================*/
+ 
+@@ -1580,7 +1576,6 @@ int wvlan_set_netname(struct net_device *dev,
+ {
+ 	struct wl_private *lp = wl_priv(dev);
+ 	unsigned long flags;
+-	int ret = 0;
+ 
+ 	wl_lock(lp, &flags);
+ 
+@@ -1591,7 +1586,7 @@ int wvlan_set_netname(struct net_device *dev,
+ 	wl_apply(lp);
+ 	wl_unlock(lp, &flags);
  
 -	return ret;
-+	return VXGE_HW_FAIL;
- }
++	return 0;
+ } /* wvlan_set_netname */
+ /*======================================*/
  
- static inline enum vxge_hw_status
-@@ -1682,12 +1681,10 @@ enum vxge_hw_status vxge_hw_driver_stats_get(
- 			struct __vxge_hw_device *hldev,
- 			struct vxge_hw_device_stats_sw_info *sw_stats)
- {
--	enum vxge_hw_status status = VXGE_HW_OK;
--
- 	memcpy(sw_stats, &hldev->stats.sw_dev_info_stats,
- 		sizeof(struct vxge_hw_device_stats_sw_info));
+@@ -1683,7 +1678,6 @@ int wvlan_set_station_nickname(struct net_device *dev,
+ 	struct wl_private *lp = wl_priv(dev);
+ 	unsigned long flags;
+ 	size_t len;
+-	int         ret = 0;
  
--	return status;
-+	return VXGE_HW_OK;
- }
+ 	wl_lock(lp, &flags);
  
- /*
-@@ -3228,7 +3225,6 @@ enum vxge_hw_status
- vxge_hw_vpath_strip_fcs_check(struct __vxge_hw_device *hldev, u64 vpath_mask)
- {
- 	struct vxge_hw_vpmgmt_reg       __iomem *vpmgmt_reg;
--	enum vxge_hw_status status = VXGE_HW_OK;
- 	int i = 0, j = 0;
+@@ -1695,7 +1689,7 @@ int wvlan_set_station_nickname(struct net_device *dev,
+ 	wl_apply(lp);
+ 	wl_unlock(lp, &flags);
  
- 	for (i = 0; i < VXGE_HW_MAX_VIRTUAL_PATHS; i++) {
-@@ -3241,7 +3237,7 @@ vxge_hw_vpath_strip_fcs_check(struct __vxge_hw_device *hldev, u64 vpath_mask)
- 				return VXGE_HW_FAIL;
- 		}
- 	}
--	return status;
-+	return VXGE_HW_OK;
- }
- /*
-  * vxge_hw_mgmt_reg_Write - Write Titan register.
-@@ -3979,7 +3975,6 @@ __vxge_hw_vpath_mgmt_read(
- {
- 	u32 i, mtu = 0, max_pyld = 0;
- 	u64 val64;
--	enum vxge_hw_status status = VXGE_HW_OK;
+-	return ret;
++	return 0;
+ } /* wvlan_set_station_nickname */
+ /*======================================*/
  
- 	for (i = 0; i < VXGE_HW_MAC_MAX_MAC_PORT_ID; i++) {
- 
-@@ -4009,7 +4004,7 @@ __vxge_hw_vpath_mgmt_read(
- 	else
- 		VXGE_HW_DEVICE_LINK_STATE_SET(vpath->hldev, VXGE_HW_LINK_DOWN);
- 
--	return status;
-+	return VXGE_HW_OK;
- }
- 
- /*
-@@ -4039,14 +4034,13 @@ static enum vxge_hw_status
- __vxge_hw_vpath_reset(struct __vxge_hw_device *hldev, u32 vp_id)
- {
- 	u64 val64;
--	enum vxge_hw_status status = VXGE_HW_OK;
- 
- 	val64 = VXGE_HW_CMN_RSTHDLR_CFG0_SW_RESET_VPATH(1 << (16 - vp_id));
- 
- 	__vxge_hw_pio_mem_write32_upper((u32)vxge_bVALn(val64, 0, 32),
- 				&hldev->common_reg->cmn_rsthdlr_cfg0);
- 
--	return status;
-+	return VXGE_HW_OK;
- }
- 
- /*
-@@ -4227,7 +4221,6 @@ static enum vxge_hw_status
- __vxge_hw_vpath_mac_configure(struct __vxge_hw_device *hldev, u32 vp_id)
- {
- 	u64 val64;
--	enum vxge_hw_status status = VXGE_HW_OK;
- 	struct __vxge_hw_virtualpath *vpath;
- 	struct vxge_hw_vp_config *vp_config;
- 	struct vxge_hw_vpath_reg __iomem *vp_reg;
-@@ -4283,7 +4276,7 @@ __vxge_hw_vpath_mac_configure(struct __vxge_hw_device *hldev, u32 vp_id)
- 
- 		writeq(val64, &vp_reg->rxmac_vcfg1);
- 	}
--	return status;
-+	return VXGE_HW_OK;
- }
- 
- /*
-@@ -4295,7 +4288,6 @@ static enum vxge_hw_status
- __vxge_hw_vpath_tim_configure(struct __vxge_hw_device *hldev, u32 vp_id)
- {
- 	u64 val64;
--	enum vxge_hw_status status = VXGE_HW_OK;
- 	struct __vxge_hw_virtualpath *vpath;
- 	struct vxge_hw_vpath_reg __iomem *vp_reg;
- 	struct vxge_hw_vp_config *config;
-@@ -4545,7 +4537,7 @@ __vxge_hw_vpath_tim_configure(struct __vxge_hw_device *hldev, u32 vp_id)
- 	val64 |= VXGE_HW_TIM_WRKLD_CLC_CNT_RX_TX(3);
- 	writeq(val64, &vp_reg->tim_wrkld_clc);
- 
--	return status;
-+	return VXGE_HW_OK;
- }
- 
- /*
 
