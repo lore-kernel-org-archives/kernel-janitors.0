@@ -1,62 +1,29 @@
-From: Manuel Schoelling <manuel.schoelling@gmx.de>
-Date: Sun, 25 May 2014 18:43:35 +0000
-Subject: Re: [PATCH] staging: gdm72xx: use time_before()
-Message-Id: <1401043415.7538.11.camel@schoellingm.dzne.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 May 2014 12:27:46 +0000
+Subject: [patch] [XFS] indent an if statement
+Message-Id: <20140521122746.GD23396@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401023339-29712-1-git-send-email-manuel.schoelling@gmx.de>
-	 <20140525181431.GA20614@kroah.com>
-	 <1401042273.7538.10.camel@schoellingm.dzne.de>
-	 <20140525183305.GA11364@kroah.com>
-In-Reply-To: <20140525183305.GA11364@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, arnd@arndb.de, peter.p.waskiewicz.jr@intel.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, khoroshilov@ispras.ru
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dave Chinner <david@fromorbit.com>
+Cc: kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
 
-On So, 2014-05-25 at 11:33 -0700, Greg KH wrote:
-> On Sun, May 25, 2014 at 08:24:33PM +0200, Manuel Schoelling wrote:
-> > On So, 2014-05-25 at 11:14 -0700, Greg KH wrote:
-> > > On Sun, May 25, 2014 at 03:08:59PM +0200, Manuel Schölling wrote:
-> > > > To be future-proof and for better readability the time comparisons are
-> > > > modified to use time_before() instead of plain, error-prone math.
-> > > > 
-> > > > Signed-off-by: Manuel Schölling <manuel.schoelling@gmx.de>
-> > > > ---
-> > > >  drivers/staging/gdm72xx/gdm_usb.c |    2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > This patch doesn't apply, can you please refresh it against my latest
-> > > tree and resend?
-> > That's weird. I pulled the lastest master from Linus and rebased the
-> > patch, but no modification of my patch was required (latest commit
-> > before my patch to that file was
-> > 8943a92fc257c439ffe55fb0f9896be57c58c56b according to my repo). 
-> > 
-> > Maybe you have a more recent version than Linus?
-> 
-> 
-> I have a much different version from Linus, with a few thousand patches
-> added, otherwise how would I be able to queue up stuff to go to Linus
-> for the next kernel release?  :)
-> 
-> For the staging patches, either use the linux-next tree (which you
-> should use for all kernel development), or my staging.git tree, and the
-> staging-next branch on git.kernel.org, which is what gets pulled into
-> linux-next every week-day.
-> 
-> If you have more questions about this, take a look at
-> Documentation/development-process/  it should explain how patches move
-> to Linus and why working against Linus's tree isn't going to get you
-> very far.
-Ok, thanks for your answer, Greg. I will use the linux-next tree and send you a new version of that patch today.
+The "n += 32;" goes with the if statement on the line before so it
+should be indented.
 
-Bye,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Manuel
-
-> thanks,
-> 
-> greg k-h
-
-
+diff --git a/fs/xfs/xfs_bit.h b/fs/xfs/xfs_bit.h
+index f1e3c90..f685942 100644
+--- a/fs/xfs/xfs_bit.h
++++ b/fs/xfs/xfs_bit.h
+@@ -67,7 +67,7 @@ static inline int xfs_lowbit64(__uint64_t v)
+ 	} else {	/* upper bits */
+ 		w = (__uint32_t)(v >> 32);
+ 		if (w && (n = ffs(w)))
+-		n += 32;
++			n += 32;
+ 	}
+ 	return n - 1;
+ }
