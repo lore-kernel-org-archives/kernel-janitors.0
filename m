@@ -1,39 +1,51 @@
-From: mathieu souchaud <mattieu.souchaud@free.fr>
-Date: Wed, 28 May 2014 20:50:02 +0000
-Subject: Re: [PATCH v3] x86/mce: Improve mcheck_init_device() error handling
-Message-Id: <53864BFA.6070103@free.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 21 May 2014 12:26:02 +0000
+Subject: [patch] usb: gadget: return -ENOMEM on allocation failure
+Message-Id: <20140521122602.GA23396@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401261157-1165-1-git-send-email-mattieu.souchaud@free.fr> <20140528095227.GA17196@pd.tnic>
-In-Reply-To: <20140528095227.GA17196@pd.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Borislav Petkov <bp@alien8.de>
-Cc: tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Thanks too, you helped me a lot.
+The error handling is confusing in this function, but if you look
+closely it is returning success after the allocation fails.  I have
+changed it to return -ENOMEM and re-written it to be more clear.
 
-I can do more work, if it's not too difficult for me.
+Fixes: 37a3a533429e ('usb: gadget: OS Feature Descriptors support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Mathieu
-
-Le 28/05/2014 11:52, Borislav Petkov a =C3=A9crit :
-> On Wed, May 28, 2014 at 09:12:37AM +0200, Mathieu Souchaud wrote:
->> Check return code of every function called by mcheck_init_device().
->>
->> Signed-off-by: Mathieu Souchaud <mattieu.souchaud@free.fr>
-> Applied, thanks!
->
-> I'll queue it for 3.17 though since we're very close to the 3.16 merge
-> window and this patch hasn't had any linux-next time.
->
-> Thanks for your good work, let me know if you want to do more around mce.
->
-> :-)
->
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index 042c66b..8e70057 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1924,24 +1924,19 @@ fail:
+ int composite_os_desc_req_prepare(struct usb_composite_dev *cdev,
+ 				  struct usb_ep *ep0)
+ {
+-	int ret = 0;
+-
+ 	cdev->os_desc_req = usb_ep_alloc_request(ep0, GFP_KERNEL);
+-	if (!cdev->os_desc_req) {
+-		ret = PTR_ERR(cdev->os_desc_req);
+-		goto end;
+-	}
++	if (!cdev->os_desc_req)
++		return -ENOMEM;
+ 
+ 	/* OS feature descriptor length <= 4kB */
+ 	cdev->os_desc_req->buf = kmalloc(4096, GFP_KERNEL);
+ 	if (!cdev->os_desc_req->buf) {
+-		ret = PTR_ERR(cdev->os_desc_req->buf);
+ 		kfree(cdev->os_desc_req);
+-		goto end;
++		return -ENOMEM;
+ 	}
+ 	cdev->os_desc_req->complete = composite_setup_complete;
+-end:
+-	return ret;
++
++	return 0;
+ }
+ 
+ void composite_dev_cleanup(struct usb_composite_dev *cdev)
