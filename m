@@ -1,60 +1,45 @@
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Mon, 26 May 2014 15:21:20 +0000
-Subject: [PATCH 11/18] usb: gadget: Use kmemdup instead of kmalloc + memcpy
-Message-Id: <1401117687-28911-12-git-send-email-benoit.taine@lip6.fr>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Wed, 21 May 2014 17:16:36 +0000
+Subject: [PATCH] lustre: Use time_before()
+Message-Id: <1400692596-13875-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Felipe Balbi <balbi@ti.com>
-Cc: benoit.taine@lip6.fr, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: gregkh@linuxfoundation.org
+Cc: bergwolf@gmail.com, andreas.dilger@intel.com, manuel.schoelling@gmx.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This issue was reported by coccicheck using the semantic patch 
-at scripts/coccinelle/api/memdup.cocci
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_before() instead of plain, error-prone math.
 
-Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
 ---
-Tested by compilation without errors.
+ drivers/staging/lustre/lustre/include/linux/obd.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/usb/gadget/configfs.c    |    4 +---
- drivers/usb/gadget/lpc32xx_udc.c |    3 +--
- 2 files changed, 2 insertions(+), 5 deletions(-)
+diff --git a/drivers/staging/lustre/lustre/include/linux/obd.h b/drivers/st=
+aging/lustre/lustre/include/linux/obd.h
+index dc36f75e..518e48a 100644
+--- a/drivers/staging/lustre/lustre/include/linux/obd.h
++++ b/drivers/staging/lustre/lustre/include/linux/obd.h
+@@ -80,8 +80,8 @@ static inline void __client_obd_list_lock(client_obd_lock=
+_t *lock,
+ 			break;
+ 		}
+=20
+-		if ((jiffies - cur > 5 * HZ) &&
+-		    (jiffies - lock->time > 5 * HZ)) {
++		if (time_before(cur + 5 * HZ, jiffies) &&
++		    time_before(lock->time + 5 * HZ, jiffies)) {
+ 			struct task_struct *task =3D lock->task;
+=20
+ 			if (task =3D NULL)
+--=20
+1.7.10.4
 
-diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-index 2ddcd63..bcc2a62 100644
---- a/drivers/usb/gadget/configfs.c
-+++ b/drivers/usb/gadget/configfs.c
-@@ -1021,12 +1021,10 @@ static ssize_t ext_prop_data_store(struct usb_os_desc_ext_prop *ext_prop,
- 
- 	if (page[len - 1] = '\n' || page[len - 1] = '\0')
- 		--len;
--	new_data = kzalloc(len, GFP_KERNEL);
-+	new_data = kmemdup(page, len, GFP_KERNEL);
- 	if (!new_data)
- 		return -ENOMEM;
- 
--	memcpy(new_data, page, len);
--
- 	if (desc->opts_mutex)
- 		mutex_lock(desc->opts_mutex);
- 	kfree(ext_prop->data);
-diff --git a/drivers/usb/gadget/lpc32xx_udc.c b/drivers/usb/gadget/lpc32xx_udc.c
-index e471580..0588231 100644
---- a/drivers/usb/gadget/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/lpc32xx_udc.c
-@@ -3045,11 +3045,10 @@ static int __init lpc32xx_udc_probe(struct platform_device *pdev)
- 	dma_addr_t dma_handle;
- 	struct device_node *isp1301_node;
- 
--	udc = kzalloc(sizeof(*udc), GFP_KERNEL);
-+	udc = kmemdup(&controller_template, sizeof(*udc), GFP_KERNEL);
- 	if (!udc)
- 		return -ENOMEM;
- 
--	memcpy(udc, &controller_template, sizeof(*udc));
- 	for (i = 0; i <= 15; i++)
- 		udc->ep[i].udc = udc;
- 	udc->gadget.ep0 = &udc->ep[0].ep;
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
