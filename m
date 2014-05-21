@@ -1,52 +1,27 @@
-From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Mon, 19 May 2014 20:59:04 +0000
-Subject: [PATCH] vxge: Use time_before()
-Message-Id: <1400533144-8473-1-git-send-email-manuel.schoelling@gmx.de>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 21 May 2014 20:43:03 +0000
+Subject: Re: [PATCH] vxge: Use time_before()
+Message-Id: <20140521.164303.1327740853923724994.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1400520928.30820.23.camel@joe-AO725>
-In-Reply-To: <1400520928.30820.23.camel@joe-AO725>
+	<1400533144-8473-1-git-send-email-manuel.schoelling@gmx.de>
+In-Reply-To: <1400533144-8473-1-git-send-email-manuel.schoelling@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: jdmason@kudzu.us
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, joe@perches.com, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+To: manuel.schoelling@gmx.de
+Cc: jdmason@kudzu.us, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, joe@perches.com
 
-To be future-proof and for better readability the time comparisons are modi=
-fied
-to use time_before() instead of plain, error-prone math.
+From: Manuel Sch=F6lling <manuel.schoelling@gmx.de>
+Date: Mon, 19 May 2014 22:59:04 +0200
 
-Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
----
- drivers/net/ethernet/neterion/vxge/vxge-main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> To be future-proof and for better readability the time comparisons are mo=
+dified
+> to use time_before() instead of plain, error-prone math.
+>=20
+> Signed-off-by: Manuel Sch=F6lling <manuel.schoelling@gmx.de>
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-main.c b/drivers/net/e=
-thernet/neterion/vxge/vxge-main.c
-index d107bcb..7a0dead 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-main.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-main.c
-@@ -2122,7 +2122,7 @@ static int vxge_open_vpaths(struct vxgedev *vdev)
- static void adaptive_coalesce_tx_interrupts(struct vxge_fifo *fifo)
- {
- 	fifo->interrupt_count++;
--	if (jiffies > fifo->jiffies + HZ / 100) {
-+	if (time_before(fifo->jiffies + HZ / 100, jiffies)) {
- 		struct __vxge_hw_fifo *hw_fifo =3D fifo->handle;
-=20
- 		fifo->jiffies =3D jiffies;
-@@ -2150,7 +2150,7 @@ static void adaptive_coalesce_tx_interrupts(struct vx=
-ge_fifo *fifo)
- static void adaptive_coalesce_rx_interrupts(struct vxge_ring *ring)
- {
- 	ring->interrupt_count++;
--	if (jiffies > ring->jiffies + HZ / 100) {
-+	if (time_before(ring->jiffies + HZ / 100, jiffies)) {
- 		struct __vxge_hw_ring *hw_ring =3D ring->handle;
-=20
- 		ring->jiffies =3D jiffies;
---=20
-1.7.10.4
-
+Applied, thanks.
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
