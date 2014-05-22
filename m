@@ -1,64 +1,42 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Thu, 15 May 2014 23:01:44 +0000
-Subject: Re: [PATCH] ARM: imx: clean up error handling
-Message-Id: <20140515230144.GA10217@lianli>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Thu, 22 May 2014 17:52:45 +0000
+Subject: [PATCH] micrel: Use time_before_eq()
+Message-Id: <1400781165-26498-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400181871-10325-1-git-send-email-emilgoode@gmail.com>
- <20140515203212.GD8897@mwanda>
-In-Reply-To: <20140515203212.GD8897@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: davem@davemloft.net
+Cc: jg1.han@samsung.com, dingtianhong@huawei.com, ebiederm@xmission.com, Julia.Lawall@lip6.fr, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-Hello Dan,
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_before_eq() instead of plain, error-prone math.
 
-Thanks for the review and sorry for the late reply.
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+---
+ drivers/net/ethernet/micrel/ksz884x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, May 15, 2014 at 11:32:13PM +0300, Dan Carpenter wrote:
-> On Thu, May 15, 2014 at 09:24:30PM +0200, Emil Goode wrote:
-> > If we fail to allocate struct platform_device pdev we
-> > dereference it after the goto label err.
-> > 
-> > I have rearranged the error handling a bit to fix the issue
-> > and also make it more clear.
-> > 
-> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> > ---
-> >  arch/arm/mach-imx/devices/platform-ipu-core.c |   22 +++++++++++++---------
-> >  1 file changed, 13 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mach-imx/devices/platform-ipu-core.c
-> > index fc4dd7c..14d61d9 100644
-> > --- a/arch/arm/mach-imx/devices/platform-ipu-core.c
-> > +++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
-> > @@ -77,34 +77,38 @@ struct platform_device *__init imx_alloc_mx3_camera(
-> >  
-> >  	pdev = platform_device_alloc("mx3-camera", 0);
-> >  	if (!pdev)
-> > -		goto err;
-> > +		return ERR_PTR(ret);
-> 
-> It's more readable to say "return ERR_PTR(-ENOMEM);".
+diff --git a/drivers/net/ethernet/micrel/ksz884x.c b/drivers/net/ethernet/m=
+icrel/ksz884x.c
+index 14ac0e2..90fa5f3 100644
+--- a/drivers/net/ethernet/micrel/ksz884x.c
++++ b/drivers/net/ethernet/micrel/ksz884x.c
+@@ -4930,7 +4930,7 @@ static void netdev_tx_timeout(struct net_device *dev)
+ 		 * Only reset the hardware if time between calls is long
+ 		 * enough.
+ 		 */
+-		if (jiffies - last_reset <=3D dev->watchdog_timeo)
++		if (time_before_eq(jiffies, last_reset + dev->watchdog_timeo))
+ 			hw_priv =3D NULL;
+ 	}
+=20
+--=20
+1.7.10.4
 
-I think so to, will change this one but still use the ret variable at the
-bottom of the function.
-
-> 
-> This patch is great but the subject should say "fix" and not "clean up"
-> since it fixes a NULL dereference bug.  The people who call their
-> checkpatch.pl clean ups "fixes" are also doing it wrong but those are
-> newbies and not worth educating.
-
-I agree, it's a bug fix and not a clean up.
-
-Will resend tomorrow.
-
-Best regards,
-
-Emil Goode
-
-> 
-> regards,
-> dan carpenter
-> 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
