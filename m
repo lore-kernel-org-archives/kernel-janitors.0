@@ -1,22 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 19 May 2014 01:14:12 +0000
-Subject: Re: [PATCH 3/4] atm: idt77252: Remove redundant error check
-Message-Id: <20140518.211412.1525385415713413915.davem@davemloft.net>
+From: Gengis Dave <root@gengisdave.org>
+Date: Thu, 22 May 2014 23:07:13 +0000
+Subject: [PATCH 2/2] staging: gdm72xx: return values cleanup
+Message-Id: <3522339.SasczoGKlN@mayhem>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400350980-30455-3-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1400350980-30455-3-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: chas@cmf.nrl.navy.mil, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 17 May 2014 20:22:59 +0200
+Return values cleanup
 
-> Remove double checks, and move the call to printk to the
-> first check. Also adds KERN_WARNING to printk. The simplified version
-> of the coccinelle semantic patch that fixes this issue is as follows:
+Signed-off-by: Davide Gianforte <davide@gengisdave.org>
+---
 
-The appropriate thing to use is pr_warning() rather than add
-KERN_WARNING.
+ drivers/staging/gdm72xx/gdm_wimax.c | 3 +--
+ drivers/staging/gdm72xx/usb_boot.c  | 5 +----
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/gdm72xx/gdm_wimax.c 
+b/drivers/staging/gdm72xx/gdm_wimax.c
+index 245fdea..e5e5115 100644
+--- a/drivers/staging/gdm72xx/gdm_wimax.c
++++ b/drivers/staging/gdm72xx/gdm_wimax.c
+@@ -167,7 +167,6 @@ static inline int gdm_wimax_header(struct sk_buff **pskb)
+ {
+ 	u16 buf[HCI_HEADER_SIZE / sizeof(u16)];
+ 	struct sk_buff *skb = *pskb;
+-	int ret = 0;
+ 
+ 	if (unlikely(skb_headroom(skb) < HCI_HEADER_SIZE)) {
+ 		struct sk_buff *skb2;
+@@ -187,7 +186,7 @@ static inline int gdm_wimax_header(struct sk_buff **pskb)
+ 	memcpy(skb->data, buf, HCI_HEADER_SIZE);
+ 
+ 	*pskb = skb;
+-	return ret;
++	return 0;
+ }
+ 
+ static void gdm_wimax_event_rcv(struct net_device *dev, u16 type, void *msg,
+diff --git a/drivers/staging/gdm72xx/usb_boot.c 
+b/drivers/staging/gdm72xx/usb_boot.c
+index 998af04..d59bac8 100644
+--- a/drivers/staging/gdm72xx/usb_boot.c
++++ b/drivers/staging/gdm72xx/usb_boot.c
+@@ -333,11 +333,8 @@ out:
+ 
+ static int em_fw_reset(struct usb_device *usbdev)
+ {
+-	int ret;
+-
+ 	/*Send ZLP*/
+-	ret = gdm_wibro_send(usbdev, NULL, 0);
+-	return ret;
++	return gdm_wibro_send(usbdev, NULL, 0);
+ }
+ 
+ int usb_emergency(struct usb_device *usbdev)
+
