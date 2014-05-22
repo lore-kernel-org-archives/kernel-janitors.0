@@ -1,29 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 09 May 2014 11:59:16 +0000
-Subject: [patch] applicom: dereferencing NULL on error path
-Message-Id: <20140509115916.GD32027@mwanda>
+Date: Thu, 22 May 2014 14:04:05 +0000
+Subject: [patch v2] [XFS] small cleanup in xfs_lowbit64()
+Message-Id: <20140522140405.GA27116@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20140521142909.GA22281@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Christophe Lucas <clucas@rotomalug.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: kernel-janitors@vger.kernel.org, xfs@oss.sgi.com
 
-This is a static checker fix.  The "dev" variable is always NULL after
-the while statement so we would be dereferencing a NULL pointer here.
+There are two checkpatch.pl complaints here because of the bad indenting
+and because of the assignment inside the condition.
 
-Fixes: 819a3eba4233 ('[PATCH] applicom: fix error handling')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: more cleanups
 
-diff --git a/drivers/char/applicom.c b/drivers/char/applicom.c
-index 974321a..1479030 100644
---- a/drivers/char/applicom.c
-+++ b/drivers/char/applicom.c
-@@ -345,7 +345,6 @@ out:
- 			free_irq(apbs[i].irq, &dummy);
- 		iounmap(apbs[i].RamIO);
+diff --git a/fs/xfs/xfs_bit.h b/fs/xfs/xfs_bit.h
+index f1e3c90..e1649c0 100644
+--- a/fs/xfs/xfs_bit.h
++++ b/fs/xfs/xfs_bit.h
+@@ -66,8 +66,11 @@ static inline int xfs_lowbit64(__uint64_t v)
+ 		n = ffs(w);
+ 	} else {	/* upper bits */
+ 		w = (__uint32_t)(v >> 32);
+-		if (w && (n = ffs(w)))
+-		n += 32;
++		if (w) {
++			n = ffs(w);
++			if (n)
++				n += 32;
++		}
  	}
--	pci_disable_device(dev);
- 	return ret;
+ 	return n - 1;
  }
- 
