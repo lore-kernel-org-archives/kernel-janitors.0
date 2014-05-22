@@ -1,53 +1,64 @@
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Thu, 22 May 2014 15:08:54 +0000
-Subject: [PATCH] ALSA: Replace DEFINE_PCI_DEVICE_TABLE macro use
-Message-Id: <1400771334-25112-1-git-send-email-benoit.taine@lip6.fr>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 22 May 2014 15:48:15 +0000
+Subject: Re: [PATCH] ALSA: Replace DEFINE_PCI_DEVICE_TABLE macro use
+Message-Id: <s5hfvk1q0g0.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1400771334-25112-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1400771334-25112-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: benoit.taine@lip6.fr, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Benoit Taine <benoit.taine@lip6.fr>
+Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-We should prefer `const struct pci_device_id` over
-`DEFINE_PCI_DEVICE_TABLE` to meet kernel coding style guidelines.
-This issue was reported by checkpatch.
+At Thu, 22 May 2014 17:08:54 +0200,
+Benoit Taine wrote:
+> 
+> We should prefer `const struct pci_device_id` over
+> `DEFINE_PCI_DEVICE_TABLE` to meet kernel coding style guidelines.
+> This issue was reported by checkpatch.
+> 
+> A simplified version of the semantic patch that makes this change is as
+> follows (http://coccinelle.lip6.fr/):
+> 
+> // <smpl>
+> 
+> @@
+> identifier i;
+> declarer name DEFINE_PCI_DEVICE_TABLE;
+> initializer z;
+> @@
+> 
+> - DEFINE_PCI_DEVICE_TABLE(i)
+> + const struct pci_device_id i[]
+> = z;
+> 
+> // </smpl>
+> 
+> It has been tested by compilation.
+> 
+> Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
 
-A simplified version of the semantic patch that makes this change is as
-follows (http://coccinelle.lip6.fr/):
+Thanks, applied.
 
-// <smpl>
 
-@@
-identifier i;
-declarer name DEFINE_PCI_DEVICE_TABLE;
-initializer z;
-@@
+Takashi
 
-- DEFINE_PCI_DEVICE_TABLE(i)
-+ const struct pci_device_id i[]
-= z;
-
-// </smpl>
-
-It has been tested by compilation.
-
-Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
----
- sound/pci/hda/hda_intel.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 2c54629..ab0fd6d 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -1730,7 +1730,7 @@ static void azx_remove(struct pci_dev *pci)
- }
- 
- /* PCI IDs */
--static DEFINE_PCI_DEVICE_TABLE(azx_ids) = {
-+static const struct pci_device_id azx_ids[] = {
- 	/* CPT */
- 	{ PCI_DEVICE(0x8086, 0x1c20),
- 	  .driver_data = AZX_DRIVER_PCH | AZX_DCAPS_INTEL_PCH_NOPM },
-
+> ---
+>  sound/pci/hda/hda_intel.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+> index 2c54629..ab0fd6d 100644
+> --- a/sound/pci/hda/hda_intel.c
+> +++ b/sound/pci/hda/hda_intel.c
+> @@ -1730,7 +1730,7 @@ static void azx_remove(struct pci_dev *pci)
+>  }
+>  
+>  /* PCI IDs */
+> -static DEFINE_PCI_DEVICE_TABLE(azx_ids) = {
+> +static const struct pci_device_id azx_ids[] = {
+>  	/* CPT */
+>  	{ PCI_DEVICE(0x8086, 0x1c20),
+>  	  .driver_data = AZX_DRIVER_PCH | AZX_DCAPS_INTEL_PCH_NOPM },
+> 
