@@ -1,76 +1,53 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 20 May 2014 00:36:24 +0000
-Subject: Re: [PATCH 1/13] libertas: make return of 0 explicit
-Message-Id: <alpine.DEB.2.10.1405200835490.2723@hadrien>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Thu, 22 May 2014 15:08:54 +0000
+Subject: [PATCH] ALSA: Replace DEFINE_PCI_DEVICE_TABLE macro use
+Message-Id: <1400771334-25112-1-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr> <1400473875-22228-2-git-send-email-Julia.Lawall@lip6.fr> <5379FCD0.2030506@cogentembedded.com>
-In-Reply-To: <5379FCD0.2030506@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, kernel-janitors@vger.kernel.org, libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: benoit.taine@lip6.fr, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
+We should prefer `const struct pci_device_id` over
+`DEFINE_PCI_DEVICE_TABLE` to meet kernel coding style guidelines.
+This issue was reported by checkpatch.
 
+A simplified version of the semantic patch that makes this change is as
+follows (http://coccinelle.lip6.fr/):
 
-On Mon, 19 May 2014, Sergei Shtylyov wrote:
+// <smpl>
 
-> Hello.
->
-> On 19-05-2014 8:31, Julia Lawall wrote:
->
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> > Delete unnecessary local variable whose value is always 0 and that hides
-> > the fact that the result is always 0.
->
-> > A simplified version of the semantic patch that fixes this problem is as
-> > follows: (http://coccinelle.lip6.fr/)
->
-> > // <smpl>
-> > @r exists@
-> > local idexpression ret;
-> > expression e;
-> > position p;
-> > @@
-> >
-> > -ret = 0;
-> > ... when != ret = e
-> > return
-> > - ret
-> > + 0
-> >    ;
-> > // </smpl>
->
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> > ---
-> > Alternatively, was an error code intended in the bad length case, as is
-> > done in process_brxed_802_11_packet?
->
-> >   drivers/net/wireless/libertas/rx.c |    7 ++-----
-> >   1 file changed, 2 insertions(+), 5 deletions(-)
->
-> > diff --git a/drivers/net/wireless/libertas/rx.c
-> > b/drivers/net/wireless/libertas/rx.c
-> > index c7366b0..807c5b8 100644
-> > --- a/drivers/net/wireless/libertas/rx.c
-> > +++ b/drivers/net/wireless/libertas/rx.c
-> [...]
-> > @@ -154,10 +152,9 @@ int lbs_process_rxed_packet(struct lbs_private *priv,
-> > struct sk_buff *skb)
-> >   	else
-> >   		netif_rx_ni(skb);
-> >
-> > -	ret = 0;
-> >   done:
-> > -	lbs_deb_leave_args(LBS_DEB_RX, "ret %d", ret);
-> > -	return ret;
-> > +	lbs_deb_leave_args(LBS_DEB_RX, "ret %d", 0);
->
->    Why not just "ret 0"?
+@@
+identifier i;
+declarer name DEFINE_PCI_DEVICE_TABLE;
+initializer z;
+@@
 
-Oops, I won't make any change here, because Dan Williams has proposed
-another patch that makes the ret variable useful.
+- DEFINE_PCI_DEVICE_TABLE(i)
++ const struct pci_device_id i[]
+= z;
 
-julia
+// </smpl>
+
+It has been tested by compilation.
+
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+ sound/pci/hda/hda_intel.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index 2c54629..ab0fd6d 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1730,7 +1730,7 @@ static void azx_remove(struct pci_dev *pci)
+ }
+ 
+ /* PCI IDs */
+-static DEFINE_PCI_DEVICE_TABLE(azx_ids) = {
++static const struct pci_device_id azx_ids[] = {
+ 	/* CPT */
+ 	{ PCI_DEVICE(0x8086, 0x1c20),
+ 	  .driver_data = AZX_DRIVER_PCH | AZX_DCAPS_INTEL_PCH_NOPM },
+
