@@ -1,35 +1,44 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 28 May 2014 16:16:56 +0000
-Subject: Re: [PATCH 2/2] lpc_eth: Use resource_size instead of computation
-Message-Id: <1401293816.19335.3.camel@joe-AO725>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Thu, 22 May 2014 20:21:30 +0000
+Subject: [PATCH] e1000: Use time_after() for time comparison
+Message-Id: <1400790090-13404-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
-	 <1401290047-30005-3-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1401290047-30005-3-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Benoit Taine <benoit.taine@lip6.fr>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: jeffrey.t.kirsher@intel.com
+Cc: jesse.brandeburg@intel.com, bruce.w.allan@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-On Wed, 2014-05-28 at 17:14 +0200, Benoit Taine wrote:
-> This issue was reported by coccicheck using the semantic patch 
-> at scripts/coccinelle/api/resource_size.cocci
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_after() instead of plain, error-prone math.
 
-Slightly associated trivial note:
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+---
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
-[]
-> @@ -1419,8 +1419,7 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
->  
->  	netdev_dbg(ndev, "IO address start     :0x%08x\n",
->  			res->start);
-> -	netdev_dbg(ndev, "IO address size      :%d\n",
-> -			res->end - res->start + 1);
-> +	netdev_dbg(ndev, "IO address size      :%d\n", resource_size(res));
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net=
+/ethernet/intel/e1000/e1000_ethtool.c
+index 73a8aee..1cbf281 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -1460,7 +1460,8 @@ static int e1000_run_loopback_test(struct e1000_adapt=
+er *adapter)
+ 			 * enough time to complete the receives, if it's
+ 			 * exceeded, break and error off
+ 			 */
+-		} while (good_cnt < 64 && jiffies < (time + 20));
++		} while (good_cnt < 64 && time_after(time + 20, jiffies));
++
+ 		if (good_cnt !=3D 64) {
+ 			ret_val =3D 13; /* ret_val is the same as mis-compare */
+ 			break;
+--=20
+1.7.10.4
 
-May be better using:
-
-	netdev_dbg(ndev, "IO                       :%pR\n", res)
-
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
