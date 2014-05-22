@@ -1,25 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 May 2014 19:53:31 +0000
-Subject: Re: [patch] net: cdc_ncm: fix typo in test for supported formats
-Message-Id: <20140522.155331.410747192737674451.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 May 2014 07:53:06 +0000
+Subject: [patch] ieee802154: missing put_dev() on error
+Message-Id: <20140522075306.GB4346@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140522075229.GA4346@mwanda>
-In-Reply-To: <20140522075229.GA4346@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: oliver@neukum.org, bjorn@mork.no, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alexander Smirnov <alex.bluesman.smirnov@gmail.com>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 22 May 2014 10:52:29 +0300
+We should call put_dev() on the error path here.
 
-> There is a typo here where we test for USB_CDC_NCM_NTH32_SIGN instead
-> of USB_CDC_NCM_NTB32_SUPPORTED.  The test probably still works as
-> written because 0x686D636E has (1 << 1) set and doesn't have (1 << 0)
-> set.
-> 
-> Fixes: f8afb73da375 ('net: cdc_ncm: factor out one-time device initialization')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 3e9c156e2c21 ('ieee802154: add netlink interfaces for llsec')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Applies to -next
 
-Applied to net-next, thanks.
+diff --git a/net/ieee802154/nl-mac.c b/net/ieee802154/nl-mac.c
+index 5617b4c..a3281b8 100644
+--- a/net/ieee802154/nl-mac.c
++++ b/net/ieee802154/nl-mac.c
+@@ -832,8 +832,10 @@ int ieee802154_llsec_getparams(struct sk_buff *skb, struct genl_info *info)
+ 		return -ENODEV;
+ 
+ 	ops = ieee802154_mlme_ops(dev);
+-	if (!ops->llsec)
+-		return -EOPNOTSUPP;
++	if (!ops->llsec) {
++		rc = -EOPNOTSUPP;
++		goto out_dev;
++	}
+ 
+ 	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
+ 	if (!msg)
