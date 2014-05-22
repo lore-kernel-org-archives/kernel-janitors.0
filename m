@@ -1,7 +1,7 @@
 From: Emil Goode <emilgoode@gmail.com>
-Date: Tue, 20 May 2014 11:43:15 +0000
+Date: Thu, 22 May 2014 10:32:40 +0000
 Subject: Re: [PATCH 2/2] ARM: imx: convert camera init to use platform_device_register_full()
-Message-Id: <20140520114315.GA4438@lianli>
+Message-Id: <20140522103240.GB4804@lianli>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1400446261-27085-1-git-send-email-emilgoode@gmail.com>
  <1400446261-27085-3-git-send-email-emilgoode@gmail.com>
@@ -13,8 +13,6 @@ Content-Transfer-Encoding: quoted-printable
 To: linux-arm-kernel@lists.infradead.org
 
 Hello Uwe,
-
-Thank you for the review and sorry for the late response.
 
 On Mon, May 19, 2014 at 08:27:22AM +0200, Uwe Kleine-K=C3=B6nig wrote:
 > Hello Emil,
@@ -45,9 +43,6 @@ ach-imx/devices/platform-ipu-core.c
 > > @@ -69,42 +69,29 @@ struct platform_device *__init imx_alloc_mx3_camera(
 > IMHO you should better rename the function because now it doesn't only
 > allocate the device, but also registers it.
-
-Agreed.
-
 >=20
 > Also I doubt that it's OK to call dma_declare_coherent_memory after the
 > device is added. In this case maybe extend
@@ -57,14 +52,9 @@ Agreed.
 > even know if there is a reliable way to check if a device is already
 > added.)
 
-Yes I also had doubts about that. However, apart from this patch there are
-three other places in arch/arm/mach-imx/ where dma_declare_coherent_memory()
-is called after calling platform_device_register_full().
-
-Perhaps this is enough reason to extend platform_device_register_full().
-
-It would be great to get some more feedback on this and also if there is a
-reliable way to check if a device is already added.
+According to the documentation dma_declare_coherent_memory() is only used
+in unlikely corner cases, so I concluded that it is probably better not to
+include it in platform_device_register_full().
 
 Best regards,
 
