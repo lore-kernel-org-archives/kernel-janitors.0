@@ -1,49 +1,72 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 27 May 2014 15:14:57 +0000
-Subject: Re: [PATCH 13/18] drm/edid: Use kmemdup instead of kmalloc + memcpy
-Message-Id: <CADnq5_MMWZPqth1EFL0-790wk=mBb_GRz9BCmkzroEhOYniKUw@mail.gmail.com>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Thu, 22 May 2014 19:10:28 +0000
+Subject: [PATCH] xilinx: Use time_before_eq()
+Message-Id: <1400785828-1551-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
- <1401117687-28911-14-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1401117687-28911-14-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Benoit Taine <benoit.taine@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-On Mon, May 26, 2014 at 11:21 AM, Benoit Taine <benoit.taine@lip6.fr> wrote:
-> This issue was reported by coccicheck using the semantic patch
-> at scripts/coccinelle/api/memdup.cocci
->
-> Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
-> ---
-> Tested by compilation without errors.
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_before_eq() instead of plain, error-prone math.
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+---
+ drivers/net/ethernet/xilinx/ll_temac_main.c       |    2 +-
+ drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c |    2 +-
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c     |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
->
->  drivers/gpu/drm/drm_edid.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 7a4fd2e..d74239f 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -3228,10 +3228,9 @@ int drm_edid_to_speaker_allocation(struct edid *edid, u8 **sadb)
->
->                         /* Speaker Allocation Data Block */
->                         if (dbl = 3) {
-> -                               *sadb = kmalloc(dbl, GFP_KERNEL);
-> +                               *sadb = kmemdup(&db[1], dbl, GFP_KERNEL);
->                                 if (!*sadb)
->                                         return -ENOMEM;
-> -                               memcpy(*sadb, &db[1], dbl);
->                                 count = dbl;
->                                 break;
->                         }
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethe=
+rnet/xilinx/ll_temac_main.c
+index fa193c4..4ef818a 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -75,7 +75,7 @@ int temac_indirect_busywait(struct temac_local *lp)
+ 	long end =3D jiffies + 2;
+=20
+ 	while (!(temac_ior(lp, XTE_RDY0_OFFSET) & XTE_RDY0_HARD_ACS_RDY_MASK)) {
+-		if (end - jiffies <=3D 0) {
++		if (time_before_eq(end, jiffies)) {
+ 			WARN_ON(1);
+ 			return -ETIMEDOUT;
+ 		}
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c b/drivers/ne=
+t/ethernet/xilinx/xilinx_axienet_mdio.c
+index 64b4639..d4abf47 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
+@@ -22,7 +22,7 @@ int axienet_mdio_wait_until_ready(struct axienet_local *l=
+p)
+ 	long end =3D jiffies + 2;
+ 	while (!(axienet_ior(lp, XAE_MDIO_MCR_OFFSET) &
+ 		 XAE_MDIO_MCR_READY_MASK)) {
+-		if (end - jiffies <=3D 0) {
++		if (time_before_eq(end, jiffies)) {
+ 			WARN_ON(1);
+ 			return -ETIMEDOUT;
+ 		}
+diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/et=
+hernet/xilinx/xilinx_emaclite.c
+index 0d87c67..8c4aed3 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
++++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+@@ -702,7 +702,7 @@ static int xemaclite_mdio_wait(struct net_local *lp)
+ 	*/
+ 	while (__raw_readl(lp->base_addr + XEL_MDIOCTRL_OFFSET) &
+ 			XEL_MDIOCTRL_MDIOSTS_MASK) {
+-		if (end - jiffies <=3D 0) {
++		if (time_before_eq(end, jiffies)) {
+ 			WARN_ON(1);
+ 			return -ETIMEDOUT;
+ 		}
+--=20
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
