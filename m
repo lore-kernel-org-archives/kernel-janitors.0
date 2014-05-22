@@ -1,97 +1,89 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 19 May 2014 04:31:13 +0000
-Subject: [PATCH 11/13] ufs: make return of 0 explicit
-Message-Id: <1400473875-22228-12-git-send-email-Julia.Lawall@lip6.fr>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Thu, 22 May 2014 20:42:37 +0000
+Subject: [PATCH] md: Use time_in_range()
+Message-Id: <1400791357-21047-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Evgeniy Dushistov <dushistov@mail.ru>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: agk@redhat.com
+Cc: snitzer@redhat.com, dm-devel@redhat.com, neilb@suse.de, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_in_range() instead of plain, error-prone math.
 
-Delete unnecessary local variable whose value is always 0 and that hides
-the fact that the result is always 0.
-
-A simplified version of the semantic patch that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-local idexpression ret;
-expression e;
-position p;
-@@
-
--ret = 0;
-... when != ret = e
-return 
-- ret
-+ 0
-  ;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
 ---
- fs/ufs/truncate.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/md/dm-cache-target.c       |    5 +++--
+ drivers/md/dm-log-userspace-base.c |    4 ++--
+ drivers/md/dm-thin.c               |    5 +++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ufs/truncate.c b/fs/ufs/truncate.c
-index f04f89f..a17f0a9 100644
---- a/fs/ufs/truncate.c
-+++ b/fs/ufs/truncate.c
-@@ -72,7 +72,6 @@ static int ufs_trunc_direct(struct inode *inode)
- 	u64 frag1, frag2, frag3, frag4, block1, block2;
- 	unsigned frag_to_free, free_count;
- 	unsigned i, tmp;
--	int retry;
- 	
- 	UFSD("ENTER: ino %lu\n", inode->i_ino);
- 
-@@ -81,7 +80,6 @@ static int ufs_trunc_direct(struct inode *inode)
- 	
- 	frag_to_free = 0;
- 	free_count = 0;
--	retry = 0;
- 	
- 	frag1 = DIRECT_FRAGMENT;
- 	frag4 = min_t(u64, UFS_NDIR_FRAGMENT, ufsi->i_lastfrag);
-@@ -164,7 +162,7 @@ next1:
-  next3:
- 
- 	UFSD("EXIT: ino %lu\n", inode->i_ino);
--	return retry;
-+	return 0;
+diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
+index 9380be7..4378d1d 100644
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -1429,8 +1429,9 @@ static void process_bio(struct cache *cache, struct p=
+realloc *structs,
+=20
+ static int need_commit_due_to_time(struct cache *cache)
+ {
+-	return jiffies < cache->last_commit_jiffies ||
+-	       jiffies > cache->last_commit_jiffies + COMMIT_PERIOD;
++	return !time_in_range(jiffies,
++	      cache->last_commit_jiffies,
++	      cache->last_commit_jiffies + COMMIT_PERIOD);
  }
- 
- 
-@@ -176,7 +174,6 @@ static int ufs_trunc_indirect(struct inode *inode, u64 offset, void *p)
- 	void *ind;
- 	u64 tmp, indirect_block, i, frag_to_free;
- 	unsigned free_count;
--	int retry;
- 
- 	UFSD("ENTER: ino %lu, offset %llu, p: %p\n",
- 	     inode->i_ino, (unsigned long long)offset, p);
-@@ -188,7 +185,6 @@ static int ufs_trunc_indirect(struct inode *inode, u64 offset, void *p)
- 
- 	frag_to_free = 0;
- 	free_count = 0;
--	retry = 0;
- 	
- 	tmp = ufs_data_ptr_to_cpu(sb, p);
- 	if (!tmp)
-@@ -248,7 +244,7 @@ static int ufs_trunc_indirect(struct inode *inode, u64 offset, void *p)
- 	
- 	UFSD("EXIT: ino %lu\n", inode->i_ino);
- 	
--	return retry;
-+	return 0;
+=20
+ static int commit_if_needed(struct cache *cache)
+diff --git a/drivers/md/dm-log-userspace-base.c b/drivers/md/dm-log-userspa=
+ce-base.c
+index b953db6..cd9b171 100644
+--- a/drivers/md/dm-log-userspace-base.c
++++ b/drivers/md/dm-log-userspace-base.c
+@@ -829,7 +829,7 @@ static int userspace_is_remote_recovering(struct dm_dir=
+ty_log *log,
+ 	int r;
+ 	uint64_t region64 =3D region;
+ 	struct log_c *lc =3D log->context;
+-	static unsigned long long limit;
++	static unsigned long limit;
+ 	struct {
+ 		int64_t is_recovering;
+ 		uint64_t in_sync_hint;
+@@ -845,7 +845,7 @@ static int userspace_is_remote_recovering(struct dm_dir=
+ty_log *log,
+ 	 */
+ 	if (region < lc->in_sync_hint)
+ 		return 0;
+-	else if (jiffies < limit)
++	else if (time_after(limit, jiffies))
+ 		return 1;
+=20
+ 	limit =3D jiffies + (HZ / 4);
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index 2e71de8..c83b363 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -1375,8 +1375,9 @@ static void process_bio_fail(struct thin_c *tc, struc=
+t bio *bio)
+  */
+ static int need_commit_due_to_time(struct pool *pool)
+ {
+-	return jiffies < pool->last_commit_jiffies ||
+-	       jiffies > pool->last_commit_jiffies + COMMIT_PERIOD;
++	return !time_in_range(jiffies,
++	      pool->last_commit_jiffies,
++	      pool->last_commit_jiffies + COMMIT_PERIOD);
  }
- 
- static int ufs_trunc_dindirect(struct inode *inode, u64 offset, void *p)
+=20
+ #define thin_pbd(node) rb_entry((node), struct dm_thin_endio_hook, rb_node)
+--=20
+1.7.10.4
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
