@@ -1,24 +1,92 @@
-From: Raghavendra KT <raghavendra.kt@linux.vnet.ibm.com>
-Date: Fri, 23 May 2014 13:52:02 +0000
-Subject: Re: [patch] sched: signedness bug in yield_to()
-Message-Id: <CAC4Lta3+GHLEMYNHsvx4vsN557vFdrBO_ROo8mN4JpG3T3ejJg@mail.gmail.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Thu, 22 May 2014 13:14:42 +0000
+Subject: [PATCH] ARM: imx: add missing kfree call in error paths
+Message-Id: <1400764482-20147-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140523102042.GA7267@mwanda>
-In-Reply-To: <20140523102042.GA7267@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Fri, May 23, 2014 at 3:50 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> yield_to() is supposed to return -ESRCH if there is no task to
-> yield to, but because the type is bool that is the same as returning
-> true.
->
-> The only place I see which cares is kvm_vcpu_on_spin().
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We forgot to free pdev->dev.dma_mask as it is not freed
+by platform_device_put().
 
-Thanks,  Please feel free to add
-Reviewed-by: Raghavendra <raghavendra.kt@linux.vnet.ibm.com>
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ arch/arm/mach-imx/mach-mx31_3ds.c    |    4 +++-
+ arch/arm/mach-imx/mach-mx31moboard.c |    4 +++-
+ arch/arm/mach-imx/mach-mx35_3ds.c    |    4 +++-
+ arch/arm/mach-imx/mach-pcm037.c      |    4 +++-
+ 4 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-imx/mach-mx31_3ds.c b/arch/arm/mach-imx/mach-mx31_3ds.c
+index 453f41a..8de1019 100644
+--- a/arch/arm/mach-imx/mach-mx31_3ds.c
++++ b/arch/arm/mach-imx/mach-mx31_3ds.c
+@@ -201,9 +201,11 @@ static int __init mx31_3ds_init_camera(void)
+ 		goto err;
+ 
+ 	ret = platform_device_add(pdev);
+-	if (ret)
++	if (ret) {
+ err:
++		kfree(pdev->dev.dma_mask);
+ 		platform_device_put(pdev);
++	}
+ 
+ 	return ret;
+ }
+diff --git a/arch/arm/mach-imx/mach-mx31moboard.c b/arch/arm/mach-imx/mach-mx31moboard.c
+index 6bed570..f24a93c 100644
+--- a/arch/arm/mach-imx/mach-mx31moboard.c
++++ b/arch/arm/mach-imx/mach-mx31moboard.c
+@@ -494,9 +494,11 @@ static int __init mx31moboard_init_cam(void)
+ 		goto err;
+ 
+ 	ret = platform_device_add(pdev);
+-	if (ret)
++	if (ret) {
+ err:
++		kfree(pdev->dev.dma_mask);
+ 		platform_device_put(pdev);
++	}
+ 
+ 	return ret;
+ 
+diff --git a/arch/arm/mach-imx/mach-mx35_3ds.c b/arch/arm/mach-imx/mach-mx35_3ds.c
+index 72cd77d..ffdddb3 100644
+--- a/arch/arm/mach-imx/mach-mx35_3ds.c
++++ b/arch/arm/mach-imx/mach-mx35_3ds.c
+@@ -284,9 +284,11 @@ static int __init imx35_3ds_init_camera(void)
+ 		goto err;
+ 
+ 	ret = platform_device_add(pdev);
+-	if (ret)
++	if (ret) {
+ err:
++		kfree(pdev->dev.dma_mask);
+ 		platform_device_put(pdev);
++	}
+ 
+ 	return ret;
+ }
+diff --git a/arch/arm/mach-imx/mach-pcm037.c b/arch/arm/mach-imx/mach-pcm037.c
+index 8eb1570..764a111 100644
+--- a/arch/arm/mach-imx/mach-pcm037.c
++++ b/arch/arm/mach-imx/mach-pcm037.c
+@@ -427,9 +427,11 @@ static int __init pcm037_init_camera(void)
+ 		goto err;
+ 
+ 	ret = platform_device_add(pdev);
+-	if (ret)
++	if (ret) {
+ err:
++		kfree(pdev->dev.dma_mask);
+ 		platform_device_put(pdev);
++	}
+ 
+ 	return ret;
+ }
+-- 
+1.7.10.4
+
