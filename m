@@ -1,16 +1,35 @@
-From: "Steve Wise" <swise@opengridcomputing.com>
-Date: Tue, 27 May 2014 14:29:56 +0000
-Subject: RE: [patch] RDMA/cxgb3: information leak in send_abort()
-Message-Id: <00d301cf79b8$21a182d0$64e48870$@opengridcomputing.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 May 2014 07:52:29 +0000
+Subject: [patch] net: cdc_ncm: fix typo in test for supported formats
+Message-Id: <20140522075229.GA4346@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140526210444.GA18660@mwanda>
-In-Reply-To: <20140526210444.GA18660@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: 'Dan Carpenter' <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, 'Steve Wise' <swise-ut6Up61K2wZBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Roland Dreier' <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Sean Hefty' <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, 'Hal Rosenstock' <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Oliver Neukum <oliver@neukum.org>, =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Acked-by: Steve Wise <swise@opengridcomputing.com>
+There is a typo here where we test for USB_CDC_NCM_NTH32_SIGN instead
+of USB_CDC_NCM_NTB32_SUPPORTED.  The test probably still works as
+written because 0x686D636E has (1 << 1) set and doesn't have (1 << 0)
+set.
 
+Fixes: f8afb73da375 ('net: cdc_ncm: factor out one-time device initialization')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static analysis.  Untested.  Applies on -next
 
+diff --git a/drivers/net/usb/cdc_ncm.c b/drivers/net/usb/cdc_ncm.c
+index ad2a386..93c9ca9 100644
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -357,7 +357,8 @@ static int cdc_ncm_init(struct usbnet *dev)
+ 	 * "The host shall only send this command while the NCM Data
+ 	 *  Interface is in alternate setting 0."
+ 	 */
+-	if (le16_to_cpu(ctx->ncm_parm.bmNtbFormatsSupported) & USB_CDC_NCM_NTH32_SIGN) {
++	if (le16_to_cpu(ctx->ncm_parm.bmNtbFormatsSupported) &
++						USB_CDC_NCM_NTB32_SUPPORTED) {
+ 		dev_dbg(&dev->intf->dev, "Setting NTB format to 16-bit\n");
+ 		err = usbnet_write_cmd(dev, USB_CDC_SET_NTB_FORMAT,
+ 				       USB_TYPE_CLASS | USB_DIR_OUT
