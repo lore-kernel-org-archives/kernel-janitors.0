@@ -1,52 +1,36 @@
 From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Thu, 22 May 2014 20:56:36 +0000
-Subject: [PATCH] acpi: Use time_before() for time comparison
-Message-Id: <1400792196-28477-1-git-send-email-manuel.schoelling@gmx.de>
+Date: Thu, 22 May 2014 17:45:23 +0000
+Subject: [PATCH] sched: Use time_after()
+Message-Id: <1400780723-24626-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: rjw@rjwysocki.net
-Cc: lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+To: mingo@redhat.com
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
 To be future-proof and for better readability the time comparisons are modi=
 fied
-to use time_before() instead of plain, error-prone math.
+to use time_after() instead of plain, error-prone math.
 
 Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
 ---
- drivers/acpi/acpi_pad.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ kernel/sched/fair.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
-index 37d7302..0a3bbf5 100644
---- a/drivers/acpi/acpi_pad.c
-+++ b/drivers/acpi/acpi_pad.c
-@@ -156,12 +156,13 @@ static int power_saving_thread(void *data)
-=20
- 	while (!kthread_should_stop()) {
- 		int cpu;
--		u64 expire_time;
-+		unsigned long expire_time;
-=20
- 		try_to_freeze();
-=20
- 		/* round robin to cpus */
--		if (last_jiffies + round_robin_time * HZ < jiffies) {
-+		expire_time =3D last_jiffies + round_robin_time * HZ;
-+		if (time_before(expire_time, jiffies)) {
- 			last_jiffies =3D jiffies;
- 			round_robin_cpu(tsk_index);
- 		}
-@@ -200,7 +201,7 @@ static int power_saving_thread(void *data)
- 					CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &cpu);
- 			local_irq_enable();
-=20
--			if (jiffies > expire_time) {
-+			if (time_before(expire_time, jiffies)) {
- 				do_sleep =3D 1;
- 				break;
- 			}
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 7570dd9..716360a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4014,7 +4014,7 @@ static void record_wakee(struct task_struct *p)
+ 	 * about the boundary, really active task won't care
+ 	 * about the loss.
+ 	 */
+-	if (jiffies > current->wakee_flip_decay_ts + HZ) {
++	if (time_after(jiffies, current->wakee_flip_decay_ts + HZ)) {
+ 		current->wakee_flips =3D 0;
+ 		current->wakee_flip_decay_ts =3D jiffies;
+ 	}
 --=20
 1.7.10.4
 
