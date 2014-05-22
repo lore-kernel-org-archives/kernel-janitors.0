@@ -1,29 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 07 May 2014 19:44:06 +0000
-Subject: Re: [patch v] isdn: hisax: remove some dead code
-Message-Id: <20140507.154406.1455843067836633870.davem@davemloft.net>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Thu, 22 May 2014 20:11:06 +0000
+Subject: [PATCH] ioat: Use time_before()
+Message-Id: <1400789466-11156-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53668DFC.6040106@bfs.de>
-	<20140505085305.GA17365@mwanda>
-In-Reply-To: <20140505085305.GA17365@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: isdn@linux-pingi.de, jkosina@suse.cz, rdunlap@infradead.org, standby24x7@gmail.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, wharms@bfs.de
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: vinod.koul@intel.com
+Cc: dan.j.williams@intel.com, b.zolnierkie@samsung.com, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 5 May 2014 11:53:05 +0300
+To be future-proof and for better readability the time comparisons are modi=
+fied
+to use time_before() instead of plain, error-prone math.
 
-> The HISAX_HFC4S8S_PCIMEM code hasn't been able to compile since before
-> the start of git history.  I have deleted it.
-> 
-> There are also a few indenting mistakes where one side of the ifdef
-> wasn't indented correctly which I fixed as well.
-> 
-> Reported-by: Walter Harms <wharms@bfs.de>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: delete the dead ifdefed code.
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+---
+ drivers/dma/ioat/dma_v2.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I'll apply this to net-next, thanks Dan.
+diff --git a/drivers/dma/ioat/dma_v2.c b/drivers/dma/ioat/dma_v2.c
+index 8d10580..fdd60c7 100644
+--- a/drivers/dma/ioat/dma_v2.c
++++ b/drivers/dma/ioat/dma_v2.c
+@@ -735,7 +735,8 @@ int ioat2_check_space_lock(struct ioat2_dma_chan *ioat,=
+ int num_descs)
+ 	 * called under bh_disabled so we need to trigger the timer
+ 	 * event directly
+ 	 */
+-	if (jiffies > chan->timer.expires && timer_pending(&chan->timer)) {
++	if (time_before(chan->timer.expires, jiffies)
++	    && timer_pending(&chan->timer)) {
+ 		struct ioatdma_device *device =3D chan->device;
+=20
+ 		mod_timer(&chan->timer, jiffies + COMPLETION_TIMEOUT);
+--=20
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
