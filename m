@@ -1,92 +1,27 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Thu, 22 May 2014 13:14:42 +0000
-Subject: [PATCH] ARM: imx: add missing kfree call in error paths
-Message-Id: <1400764482-20147-1-git-send-email-emilgoode@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 22 May 2014 13:50:16 +0000
+Subject: Re: [PATCH] ARM: imx: add missing kfree call in error paths
+Message-Id: <20140522135016.GK15585@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1400764482-20147-1-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1400764482-20147-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-We forgot to free pdev->dev.dma_mask as it is not freed
-by platform_device_put().
+On Thu, May 22, 2014 at 03:14:42PM +0200, Emil Goode wrote:
+> We forgot to free pdev->dev.dma_mask as it is not freed
+> by platform_device_put().
+> 
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
- arch/arm/mach-imx/mach-mx31_3ds.c    |    4 +++-
- arch/arm/mach-imx/mach-mx31moboard.c |    4 +++-
- arch/arm/mach-imx/mach-mx35_3ds.c    |    4 +++-
- arch/arm/mach-imx/mach-pcm037.c      |    4 +++-
- 4 files changed, 12 insertions(+), 4 deletions(-)
+Every function which calls imx31_alloc_mx3_camera() is buggy.  That
+means that, at best, it is a 2 on Rusty's API rating.
+http://sweng.the-davies.net/Home/rustys-api-design-manifesto
 
-diff --git a/arch/arm/mach-imx/mach-mx31_3ds.c b/arch/arm/mach-imx/mach-mx31_3ds.c
-index 453f41a..8de1019 100644
---- a/arch/arm/mach-imx/mach-mx31_3ds.c
-+++ b/arch/arm/mach-imx/mach-mx31_3ds.c
-@@ -201,9 +201,11 @@ static int __init mx31_3ds_init_camera(void)
- 		goto err;
- 
- 	ret = platform_device_add(pdev);
--	if (ret)
-+	if (ret) {
- err:
-+		kfree(pdev->dev.dma_mask);
- 		platform_device_put(pdev);
-+	}
- 
- 	return ret;
- }
-diff --git a/arch/arm/mach-imx/mach-mx31moboard.c b/arch/arm/mach-imx/mach-mx31moboard.c
-index 6bed570..f24a93c 100644
---- a/arch/arm/mach-imx/mach-mx31moboard.c
-+++ b/arch/arm/mach-imx/mach-mx31moboard.c
-@@ -494,9 +494,11 @@ static int __init mx31moboard_init_cam(void)
- 		goto err;
- 
- 	ret = platform_device_add(pdev);
--	if (ret)
-+	if (ret) {
- err:
-+		kfree(pdev->dev.dma_mask);
- 		platform_device_put(pdev);
-+	}
- 
- 	return ret;
- 
-diff --git a/arch/arm/mach-imx/mach-mx35_3ds.c b/arch/arm/mach-imx/mach-mx35_3ds.c
-index 72cd77d..ffdddb3 100644
---- a/arch/arm/mach-imx/mach-mx35_3ds.c
-+++ b/arch/arm/mach-imx/mach-mx35_3ds.c
-@@ -284,9 +284,11 @@ static int __init imx35_3ds_init_camera(void)
- 		goto err;
- 
- 	ret = platform_device_add(pdev);
--	if (ret)
-+	if (ret) {
- err:
-+		kfree(pdev->dev.dma_mask);
- 		platform_device_put(pdev);
-+	}
- 
- 	return ret;
- }
-diff --git a/arch/arm/mach-imx/mach-pcm037.c b/arch/arm/mach-imx/mach-pcm037.c
-index 8eb1570..764a111 100644
---- a/arch/arm/mach-imx/mach-pcm037.c
-+++ b/arch/arm/mach-imx/mach-pcm037.c
-@@ -427,9 +427,11 @@ static int __init pcm037_init_camera(void)
- 		goto err;
- 
- 	ret = platform_device_add(pdev);
--	if (ret)
-+	if (ret) {
- err:
-+		kfree(pdev->dev.dma_mask);
- 		platform_device_put(pdev);
-+	}
- 
- 	return ret;
- }
--- 
-1.7.10.4
+The correct fix is to introduce an imx31_free_mx3_camera() otherwise we
+will just keep introducing these bugs.
+
+regards,
+dan carpenter
 
