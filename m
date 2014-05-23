@@ -1,45 +1,78 @@
-From: Giedrius Rekasius <giedrius.rekasius@gmail.com>
-Date: Sun, 25 May 2014 14:23:31 +0000
-Subject: [PATCH] sched: remove redundant assignment to "rt_rq" in update_curr_rt(...)
-Message-Id: <1401027811-30066-1-git-send-email-giedrius.rekasius@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 23 May 2014 10:20:42 +0000
+Subject: [patch] sched: signedness bug in yield_to()
+Message-Id: <20140523102042.GA7267@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20130205113751.GA20521@elgon.mountain>
+In-Reply-To: <20130205113751.GA20521@elgon.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Variable "rt_rq" is used only in block "for_each_sched_rt_entity" so the
-value assigned to it at the beginning of the update_curr_rt(...) gets
-overwritten without ever being read. Remove redundant assignment and
-move variable declaration to the block in which it is being used.
+yield_to() is supposed to return -ESRCH if there is no task to
+yield to, but because the type is bool that is the same as returning
+true.
 
-Signed-off-by: Giedrius Rekasius <giedrius.rekasius@gmail.com>
----
- kernel/sched/rt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The only place I see which cares is kvm_vcpu_on_spin().
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index bd2267a..7e0ea78 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -885,7 +885,6 @@ static void update_curr_rt(struct rq *rq)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 9112646..7c72b14 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2173,7 +2173,7 @@ static inline void sched_autogroup_fork(struct signal_struct *sig) { }
+ static inline void sched_autogroup_exit(struct signal_struct *sig) { }
+ #endif
+ 
+-extern bool yield_to(struct task_struct *p, bool preempt);
++extern int yield_to(struct task_struct *p, bool preempt);
+ extern void set_user_nice(struct task_struct *p, long nice);
+ extern int task_prio(const struct task_struct *p);
+ /**
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 927fa33..40f8de4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4209,7 +4209,7 @@ EXPORT_SYMBOL(yield);
+  *	false (0) if we failed to boost the target.
+  *	-ESRCH if there's no task to yield to.
+  */
+-bool __sched yield_to(struct task_struct *p, bool preempt)
++int __sched yield_to(struct task_struct *p, bool preempt)
  {
- 	struct task_struct *curr = rq->curr;
- 	struct sched_rt_entity *rt_se = &curr->rt;
--	struct rt_rq *rt_rq = rt_rq_of_se(rt_se);
- 	u64 delta_exec;
+ 	struct task_struct *curr = current;
+ 	struct rq *rq, *p_rq;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 970c681..ec4e3bd 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -586,7 +586,7 @@ void mark_page_dirty(struct kvm *kvm, gfn_t gfn);
  
- 	if (curr->sched_class != &rt_sched_class)
-@@ -910,7 +909,7 @@ static void update_curr_rt(struct rq *rq)
- 		return;
+ void kvm_vcpu_block(struct kvm_vcpu *vcpu);
+ void kvm_vcpu_kick(struct kvm_vcpu *vcpu);
+-bool kvm_vcpu_yield_to(struct kvm_vcpu *target);
++int kvm_vcpu_yield_to(struct kvm_vcpu *target);
+ void kvm_vcpu_on_spin(struct kvm_vcpu *vcpu);
+ void kvm_load_guest_fpu(struct kvm_vcpu *vcpu);
+ void kvm_put_guest_fpu(struct kvm_vcpu *vcpu);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 95b4c2b..9458196 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1713,11 +1713,11 @@ void kvm_vcpu_kick(struct kvm_vcpu *vcpu)
+ EXPORT_SYMBOL_GPL(kvm_vcpu_kick);
+ #endif /* !CONFIG_S390 */
  
- 	for_each_sched_rt_entity(rt_se) {
--		rt_rq = rt_rq_of_se(rt_se);
-+		struct rt_rq *rt_rq = rt_rq_of_se(rt_se);
+-bool kvm_vcpu_yield_to(struct kvm_vcpu *target)
++int kvm_vcpu_yield_to(struct kvm_vcpu *target)
+ {
+ 	struct pid *pid;
+ 	struct task_struct *task = NULL;
+-	bool ret = false;
++	int ret = 0;
  
- 		if (sched_rt_runtime(rt_rq) != RUNTIME_INF) {
- 			raw_spin_lock(&rt_rq->rt_runtime_lock);
--- 
-1.9.3
-
+ 	rcu_read_lock();
+ 	pid = rcu_dereference(target->pid);
