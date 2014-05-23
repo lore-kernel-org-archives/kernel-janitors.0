@@ -1,78 +1,51 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 May 2014 10:20:42 +0000
-Subject: [patch] sched: signedness bug in yield_to()
-Message-Id: <20140523102042.GA7267@mwanda>
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Fri, 23 May 2014 10:46:48 +0000
+Subject: Re: [patch] sched: signedness bug in yield_to()
+Message-Id: <20140523104648.GC30445@twins.programming.kicks-ass.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="3tBQ62Qve5jUyRDo"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20130205113751.GA20521@elgon.mountain>
-In-Reply-To: <20130205113751.GA20521@elgon.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20140523102042.GA7267@mwanda>
+In-Reply-To: <20140523102042.GA7267@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-yield_to() is supposed to return -ESRCH if there is no task to
-yield to, but because the type is bool that is the same as returning
-true.
 
-The only place I see which cares is kvm_vcpu_on_spin().
+--3tBQ62Qve5jUyRDo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, May 23, 2014 at 01:20:42PM +0300, Dan Carpenter wrote:
+> yield_to() is supposed to return -ESRCH if there is no task to
+> yield to, but because the type is bool that is the same as returning
+> true.
+>=20
+> The only place I see which cares is kvm_vcpu_on_spin().
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 9112646..7c72b14 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2173,7 +2173,7 @@ static inline void sched_autogroup_fork(struct signal_struct *sig) { }
- static inline void sched_autogroup_exit(struct signal_struct *sig) { }
- #endif
- 
--extern bool yield_to(struct task_struct *p, bool preempt);
-+extern int yield_to(struct task_struct *p, bool preempt);
- extern void set_user_nice(struct task_struct *p, long nice);
- extern int task_prio(const struct task_struct *p);
- /**
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 927fa33..40f8de4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4209,7 +4209,7 @@ EXPORT_SYMBOL(yield);
-  *	false (0) if we failed to boost the target.
-  *	-ESRCH if there's no task to yield to.
-  */
--bool __sched yield_to(struct task_struct *p, bool preempt)
-+int __sched yield_to(struct task_struct *p, bool preempt)
- {
- 	struct task_struct *curr = current;
- 	struct rq *rq, *p_rq;
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 970c681..ec4e3bd 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -586,7 +586,7 @@ void mark_page_dirty(struct kvm *kvm, gfn_t gfn);
- 
- void kvm_vcpu_block(struct kvm_vcpu *vcpu);
- void kvm_vcpu_kick(struct kvm_vcpu *vcpu);
--bool kvm_vcpu_yield_to(struct kvm_vcpu *target);
-+int kvm_vcpu_yield_to(struct kvm_vcpu *target);
- void kvm_vcpu_on_spin(struct kvm_vcpu *vcpu);
- void kvm_load_guest_fpu(struct kvm_vcpu *vcpu);
- void kvm_put_guest_fpu(struct kvm_vcpu *vcpu);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 95b4c2b..9458196 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1713,11 +1713,11 @@ void kvm_vcpu_kick(struct kvm_vcpu *vcpu)
- EXPORT_SYMBOL_GPL(kvm_vcpu_kick);
- #endif /* !CONFIG_S390 */
- 
--bool kvm_vcpu_yield_to(struct kvm_vcpu *target)
-+int kvm_vcpu_yield_to(struct kvm_vcpu *target)
- {
- 	struct pid *pid;
- 	struct task_struct *task = NULL;
--	bool ret = false;
-+	int ret = 0;
- 
- 	rcu_read_lock();
- 	pid = rcu_dereference(target->pid);
+Thanks Dan!
+
+--3tBQ62Qve5jUyRDo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTfycYAAoJEHZH4aRLwOS6zRoP/3qj10vYVhd6BCBcxmxgG60z
+ILeADetiXfLbT+EjTEk+2wDw51tE8e48rJJaWI57XRDcQpG+L1UDuIKr/6pskGOx
+XYM4ioDtYa2RNve2fdFvawekzg69kxrhX9jboCwF8cUARPcltcQFhTqzCuCjlKvS
+2UlU1IWSf+l3bDDseUBUCYkqkxxUVk0fv4QoQyPiTOoZFCTkuEgp1B1rFwlONb3O
+zMBGkoIt+wN9UmiE15fq3/OEWQFkaLYmaQKcSObSBSTSsTXH+1l1AuKy5QIKV3gr
+0NGzw/quJB/PUb2v3QmE2+unZPvD+u1fx/rjcRvmVV9rc+o86fUrn6zeT924HFUY
+4y9ep1VcQsR75WQcVABOaUhx/T1/yOCwVRnh5h/lUjkkSvV06mA6ujA02c+06cbG
+yAnc00pUo8P3newSm+yo6kKIAkBrzKT6uPAc1nHes8OeccJUShQUkj9RszmwX5s+
+0S3PHVQo9DDNEmiUhrz2XTY8Nf+eEHf/5FB5htBUlxC2w6WvEI2lMyxnq4Tm3vO9
+LD3Uhn4A/0NprLAp89DDqwe+s6+qp8EThCN7lUtvzMEGDyIIjGsGXucg/9M2+tR7
+iD55umd19usfUryAGlVVMmuPzLH9RU5fK+1KU4oKOhmTFKn1WuK9WqJD/bVr8Es+
+SQz8aMx6O4Y2arQy49a9
+=dxlD
+-----END PGP SIGNATURE-----
+
+--3tBQ62Qve5jUyRDo--
