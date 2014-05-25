@@ -1,16 +1,50 @@
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Wed, 28 May 2014 15:14:05 +0000
-Subject: [PATCH 0/2] Use resource_size instead of computation
-Message-Id: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Sun, 25 May 2014 18:14:13 +0000
+Subject: [PATCH] sgi-gru: use time_before()
+Message-Id: <1401041653-20847-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: benoit.taine@lip6.fr, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: sivanich@sgi.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-These patches enhance kernel style usage, and make use of the
-resource_size() function instead of explicit computation.
+To be future-proof and for better readability the time comparisons are
+modified to use time_before() instead of plain, error-prone math.
 
-The semantic patch at scripts/coccinelle/api/resource_size.cocci was
-used to detect and edit this situation.
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+---
+ drivers/misc/sgi-gru/grumain.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/misc/sgi-gru/grumain.c b/drivers/misc/sgi-gru/grumain.c
+index ae16c8c..1525870 100644
+--- a/drivers/misc/sgi-gru/grumain.c
++++ b/drivers/misc/sgi-gru/grumain.c
+@@ -930,6 +930,7 @@ int gru_fault(struct vm_area_struct *vma, struct vm_fau=
+lt *vmf)
+ {
+ 	struct gru_thread_state *gts;
+ 	unsigned long paddr, vaddr;
++	unsigned long expires;
+=20
+ 	vaddr =3D (unsigned long)vmf->virtual_address;
+ 	gru_dbg(grudev, "vma %p, vaddr 0x%lx (0x%lx)\n",
+@@ -954,7 +955,8 @@ again:
+ 			mutex_unlock(&gts->ts_ctxlock);
+ 			set_current_state(TASK_INTERRUPTIBLE);
+ 			schedule_timeout(GRU_ASSIGN_DELAY);  /* true hack ZZZ */
+-			if (gts->ts_steal_jiffies + GRU_STEAL_DELAY < jiffies)
++			expires =3D gts->ts_steal_jiffies + GRU_STEAL_DELAY;
++			if (time_before(expires, jiffies))
+ 				gru_steal_context(gts);
+ 			goto again;
+ 		}
+--=20
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
