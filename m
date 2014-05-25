@@ -1,30 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 May 2014 11:28:32 +0000
-Subject: [patch] drbd: silence underflow warning in read_in_block()
-Message-Id: <20140506112832.GA25561@mwanda>
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Sun, 25 May 2014 13:08:59 +0000
+Subject: [PATCH] gdm72xx: use time_before()
+Message-Id: <1401023339-29712-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Lars Ellenberg <drbd-dev@lists.linbit.com>
-Cc: drbd-user@lists.linbit.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: gregkh@linuxfoundation.org
+Cc: peter.p.waskiewicz.jr@intel.com, kristina.martsenko@gmail.com, khoroshilov@ispras.ru, arnd@arndb.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-My static checker warns that "data_size" could be negative and underflow
-the limit check.  The code looks suspicious but I don't know if it is a
-real bug.
+To be future-proof and for better readability the time comparisons are
+modified to use time_before() instead of plain, error-prone math.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+---
+ drivers/staging/gdm72xx/gdm_usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index b6c8aaf..15daf86d 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -1528,7 +1528,7 @@ read_in_block(struct drbd_peer_device *peer_device, u64 id, sector_t sector,
- 	struct drbd_peer_request *peer_req;
- 	struct page *page;
- 	int dgs, ds, err;
--	int data_size = pi->size;
-+	unsigned int data_size = pi->size;
- 	void *dig_in = peer_device->connection->int_dig_in;
- 	void *dig_vv = peer_device->connection->int_dig_vv;
- 	unsigned long *data;
+diff --git a/drivers/staging/gdm72xx/gdm_usb.c b/drivers/staging/gdm72xx/gd=
+m_usb.c
+index 20539d8..9ddf8f5 100644
+--- a/drivers/staging/gdm72xx/gdm_usb.c
++++ b/drivers/staging/gdm72xx/gdm_usb.c
+@@ -730,7 +730,7 @@ static int k_mode_thread(void *arg)
+ 			spin_unlock_irqrestore(&k_lock, flags2);
+=20
+ 			expire =3D jiffies + K_WAIT_TIME;
+-			while (jiffies < expire)
++			while (time_before(jiffies, expire))
+ 				schedule_timeout(K_WAIT_TIME);
+=20
+ 			spin_lock_irqsave(&rx->lock, flags);
+--=20
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
