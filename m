@@ -1,41 +1,71 @@
-From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Thu, 22 May 2014 17:45:23 +0000
-Subject: [PATCH] sched: Use time_after()
-Message-Id: <1400780723-24626-1-git-send-email-manuel.schoelling@gmx.de>
+From: Wim Van Sebroeck <wim@iguana.be>
+Date: Mon, 26 May 2014 18:49:04 +0000
+Subject: Re: [PATCH 3/3] watchdog: via_wdt: replace del_timer by del_timer_sync
+Message-Id: <20140526184904.GA21259@spo001.leaseweb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1396360159-16244-1-git-send-email-Julia.Lawall@lip6.fr> <1396360159-16244-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1396360159-16244-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: mingo@redhat.com
-Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 
-To be future-proof and for better readability the time comparisons are modi=
-fied
-to use time_after() instead of plain, error-prone math.
+Hi Julia,
 
-Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
----
- kernel/sched/fair.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> Use del_timer_sync to ensure that the timer is stopped on all CPUs before
+> the driver exits.
+> 
+> This change was suggested by Thomas Gleixner.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @r@
+> identifier i,t,ex;
+> @@
+> struct t i = { .remove = ex, };
+> 
+> @@
+> identifier r.ex;
+> @@
+> ex(...) {
+>   <...
+> - del_timer
+> + del_timer_sync
+>     (...)
+>   ...>
+> }
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+> Not tested.
+> 
+>  drivers/watchdog/via_wdt.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/via_wdt.c b/drivers/watchdog/via_wdt.c
+> index d2cd9f0..56369c4 100644
+> --- a/drivers/watchdog/via_wdt.c
+> +++ b/drivers/watchdog/via_wdt.c
+> @@ -232,7 +232,7 @@ err_out_disable_device:
+>  static void wdt_remove(struct pci_dev *pdev)
+>  {
+>  	watchdog_unregister_device(&wdt_dev);
+> -	del_timer(&timer);
+> +	del_timer_sync(&timer);
+>  	iounmap(wdt_mem);
+>  	release_mem_region(mmio, VIA_WDT_MMIO_LEN);
+>  	release_resource(&wdt_res);
+> 
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7570dd9..716360a 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4014,7 +4014,7 @@ static void record_wakee(struct task_struct *p)
- 	 * about the boundary, really active task won't care
- 	 * about the loss.
- 	 */
--	if (jiffies > current->wakee_flip_decay_ts + HZ) {
-+	if (time_after(jiffies, current->wakee_flip_decay_ts + HZ)) {
- 		current->wakee_flips =3D 0;
- 		current->wakee_flip_decay_ts =3D jiffies;
- 	}
---=20
-1.7.10.4
+This was added 2 or 3 weeks ago to linux-watchdog-next.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kind regards,
+Wim.
+
