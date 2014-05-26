@@ -1,49 +1,31 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 25 May 2014 17:58:52 +0000
+From: David Miller <davem@davemloft.net>
+Date: Mon, 26 May 2014 04:40:45 +0000
 Subject: Re: [PATCH] wan: time_before()
-Message-Id: <1401040732.22191.8.camel@joe-AO725>
+Message-Id: <20140526.004045.1779020170437806699.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1401039163-10727-1-git-send-email-manuel.schoelling@gmx.de>
-In-Reply-To: <1401039163-10727-1-git-send-email-manuel.schoelling@gmx.de>
+	<1401040732.22191.8.camel@joe-AO725>
+In-Reply-To: <1401040732.22191.8.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: Manuel =?ISO-8859-1?Q?Sch=F6lling?= <manuel.schoelling@gmx.de>
-Cc: kevin.curtis@farsite.co.uk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: joe@perches.com
+Cc: manuel.schoelling@gmx.de, kevin.curtis@farsite.co.uk, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sun, 2014-05-25 at 19:32 +0200, Manuel Sch=F6lling wrote:
-> To be future-proof and for better readability the time comparisons are
-> modified to use time_before() instead of plain, error-prone math.
+From: Joe Perches <joe@perches.com>
+Date: Sun, 25 May 2014 10:58:52 -0700
 
-Sensible change, but it seems these should be
-udelay(some_constant) instead of a a rather
-variable time wait based on a system/config
-defined jiffies.
+> On Sun, 2014-05-25 at 19:32 +0200, Manuel Sch=F6lling wrote:
+>> To be future-proof and for better readability the time comparisons are
+>> modified to use time_before() instead of plain, error-prone math.
+>=20
+> Sensible change, but it seems these should be
+> udelay(some_constant) instead of a a rather
+> variable time wait based on a system/config
+> defined jiffies.
 
-Kevin?
-
-> diff --git a/drivers/net/wan/farsync.c b/drivers/net/wan/farsync.c
-[]
-> @@ -697,14 +697,14 @@ fst_cpureset(struct fst_card_info *card)
->  		 * We are delaying here to allow the 9054 to reset itself
->  		 */
->  		j =3D jiffies + 1;
-> -		while (jiffies < j)
-> +		while (time_before(jiffies, j))
->  			/* Do nothing */ ;
->  		outw(0x240f, card->pci_conf + CNTRL_9054 + 2);
->  		/*
->  		 * We are delaying here to allow the 9054 to reload its eeprom
->  		 */
->  		j =3D jiffies + 1;
-> -		while (jiffies < j)
-> +		while (time_before(jiffies, j))
->  			/* Do nothing */ ;
->  		outw(0x040f, card->pci_conf + CNTRL_9054 + 2);
-> =20
-
-
-
+Agreed, this code probably wants udelay(10) or something like
+that.
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
