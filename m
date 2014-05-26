@@ -1,39 +1,16 @@
-From: Masaru Nomura <massa.nomura@gmail.com>
-Date: Sun, 18 May 2014 17:19:15 +0000
-Subject: [PATCH 3/5] staging: lustre: lnet: socklnd: Clean up CDEBUG(...)
-Message-Id: <1400433557-24985-4-git-send-email-massa.nomura@gmail.com>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:09 +0000
+Subject: [PATCH 0/18] Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
-In-Reply-To: <1400433557-24985-1-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@linuxfoundation.org, andreas.dilger@intel.com, oleg.drokin@intel.com
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: benoit.taine@lip6.fr, dri-devel@lists.freedesktop.org, devel@driverdev.osuosl.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, wcn36xx@lists.infradead.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org, DL-MPTFusionLinux@lsi.com, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove prohibited space and fix indenting of following parameters
-of CDEBUG(...) to meet kernel coding style.
+These patches enhance kernel style usage, and allows smaller code while
+preventing accidental code edits to produce overflows.
 
-Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
----
- .../staging/lustre/lnet/klnds/socklnd/socklnd.c    |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
-index 2d6414a..26cb8ce 100644
---- a/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
-+++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
-@@ -153,8 +153,8 @@ ksocknal_destroy_peer(ksock_peer_t *peer)
- {
- 	ksock_net_t    *net = peer->ksnp_ni->ni_data;
- 
--	CDEBUG (D_NET, "peer %s %p deleted\n",
--		libcfs_id2str(peer->ksnp_id), peer);
-+	CDEBUG(D_NET, "peer %s %p deleted\n",
-+	       libcfs_id2str(peer->ksnp_id), peer);
- 
- 	LASSERT(atomic_read(&peer->ksnp_refcount) = 0);
- 	LASSERT(peer->ksnp_accepting = 0);
--- 
-1.7.9.5
-
+The semantic patch at scripts/coccinelle/api/memdup.cocci was used to
+detect and edit this situation.
