@@ -1,111 +1,60 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 31 May 2014 13:14:03 +0000
-Subject: [PATCH 3/11] isci: Remove useless return variables
-Message-Id: <1401542051-3174-3-git-send-email-peter.senna@gmail.com>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:20 +0000
+Subject: [PATCH 11/18] usb: gadget: Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-12-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Intel SCU Linux support <intel-linux-scu@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Artur Paszkiewicz <artur.paszkiewicz@intel.com>, Dave Jiang <dave.jiang@intel.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: benoit.taine@lip6.fr, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch remove variables that are initialized with a constant,
-are never updated, and are only used as parameter of return.
-Return the constant instead of using a variable.
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/memdup.cocci
 
-Verified by compilation only.
-
-The coccinelle script that find and fixes this issue is:
-// <smpl>
-@@
-type T;
-constant C;
-identifier ret;
-@@
-- T ret = C;
-... when != ret
-    when strict
-return
-- ret
-+ C
-;
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
 ---
- drivers/scsi/isci/request.c |   15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+Tested by compilation without errors.
 
-diff --git a/drivers/scsi/isci/request.c b/drivers/scsi/isci/request.c
-index 56e3809..ecf7924 100644
---- a/drivers/scsi/isci/request.c
-+++ b/drivers/scsi/isci/request.c
-@@ -1480,8 +1480,6 @@ static enum sci_status
- stp_request_pio_await_h2d_completion_tc_event(struct isci_request *ireq,
- 					      u32 completion_code)
- {
--	enum sci_status status = SCI_SUCCESS;
+ drivers/usb/gadget/configfs.c    |    4 +---
+ drivers/usb/gadget/lpc32xx_udc.c |    3 +--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index 2ddcd63..bcc2a62 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -1021,12 +1021,10 @@ static ssize_t ext_prop_data_store(struct usb_os_desc_ext_prop *ext_prop,
+ 
+ 	if (page[len - 1] = '\n' || page[len - 1] = '\0')
+ 		--len;
+-	new_data = kzalloc(len, GFP_KERNEL);
++	new_data = kmemdup(page, len, GFP_KERNEL);
+ 	if (!new_data)
+ 		return -ENOMEM;
+ 
+-	memcpy(new_data, page, len);
 -
- 	switch (SCU_GET_COMPLETION_TL_STATUS(completion_code)) {
- 	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_GOOD):
- 		ireq->scu_status = SCU_TASK_DONE_GOOD;
-@@ -1500,7 +1498,7 @@ stp_request_pio_await_h2d_completion_tc_event(struct isci_request *ireq,
- 		break;
- 	}
+ 	if (desc->opts_mutex)
+ 		mutex_lock(desc->opts_mutex);
+ 	kfree(ext_prop->data);
+diff --git a/drivers/usb/gadget/lpc32xx_udc.c b/drivers/usb/gadget/lpc32xx_udc.c
+index e471580..0588231 100644
+--- a/drivers/usb/gadget/lpc32xx_udc.c
++++ b/drivers/usb/gadget/lpc32xx_udc.c
+@@ -3045,11 +3045,10 @@ static int __init lpc32xx_udc_probe(struct platform_device *pdev)
+ 	dma_addr_t dma_handle;
+ 	struct device_node *isp1301_node;
  
--	return status;
-+	return SCI_SUCCESS;
- }
+-	udc = kzalloc(sizeof(*udc), GFP_KERNEL);
++	udc = kmemdup(&controller_template, sizeof(*udc), GFP_KERNEL);
+ 	if (!udc)
+ 		return -ENOMEM;
  
- static enum sci_status
-@@ -2103,8 +2101,6 @@ sci_io_request_frame_handler(struct isci_request *ireq,
- static enum sci_status stp_request_udma_await_tc_event(struct isci_request *ireq,
- 						       u32 completion_code)
- {
--	enum sci_status status = SCI_SUCCESS;
--
- 	switch (SCU_GET_COMPLETION_TL_STATUS(completion_code)) {
- 	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_GOOD):
- 		ireq->scu_status = SCU_TASK_DONE_GOOD;
-@@ -2148,14 +2144,12 @@ static enum sci_status stp_request_udma_await_tc_event(struct isci_request *ireq
- 		break;
- 	}
- 
--	return status;
-+	return SCI_SUCCESS;
- }
- 
- static enum sci_status atapi_raw_completion(struct isci_request *ireq, u32 completion_code,
- 						  enum sci_base_request_states next)
- {
--	enum sci_status status = SCI_SUCCESS;
--
- 	switch (SCU_GET_COMPLETION_TL_STATUS(completion_code)) {
- 	case SCU_MAKE_COMPLETION_STATUS(SCU_TASK_DONE_GOOD):
- 		ireq->scu_status = SCU_TASK_DONE_GOOD;
-@@ -2174,7 +2168,7 @@ static enum sci_status atapi_raw_completion(struct isci_request *ireq, u32 compl
- 		break;
- 	}
- 
--	return status;
-+	return SCI_SUCCESS;
- }
- 
- static enum sci_status atapi_data_tc_completion_handler(struct isci_request *ireq,
-@@ -3444,7 +3438,6 @@ int isci_request_execute(struct isci_host *ihost, struct isci_remote_device *ide
- 	enum sci_status status = SCI_FAILURE_UNSUPPORTED_PROTOCOL;
- 	struct isci_request *ireq;
- 	unsigned long flags;
--	int ret = 0;
- 
- 	/* do common allocation and init of request object. */
- 	ireq = isci_io_request_from_tag(ihost, task, tag);
-@@ -3524,5 +3517,5 @@ int isci_request_execute(struct isci_host *ihost, struct isci_remote_device *ide
- 		status = SCI_SUCCESS;
- 	}
- 
--	return ret;
-+	return 0;
- }
+-	memcpy(udc, &controller_template, sizeof(*udc));
+ 	for (i = 0; i <= 15; i++)
+ 		udc->ep[i].udc = udc;
+ 	udc->gadget.ep0 = &udc->ep[0].ep;
 
