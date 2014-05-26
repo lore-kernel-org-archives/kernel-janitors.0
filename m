@@ -1,89 +1,42 @@
-From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Thu, 22 May 2014 20:42:37 +0000
-Subject: [PATCH] md: Use time_in_range()
-Message-Id: <1400791357-21047-1-git-send-email-manuel.schoelling@gmx.de>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:12 +0000
+Subject: [PATCH 2/18] memstick: Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-4-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: agk@redhat.com
-Cc: snitzer@redhat.com, dm-devel@redhat.com, neilb@suse.de, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: benoit.taine@lip6.fr, kernel-janitors@vger.kernel.org
 
-To be future-proof and for better readability the time comparisons are modi=
-fied
-to use time_in_range() instead of plain, error-prone math.
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/memdup.cocci
 
-Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
 ---
- drivers/md/dm-cache-target.c       |    5 +++--
- drivers/md/dm-log-userspace-base.c |    4 ++--
- drivers/md/dm-thin.c               |    5 +++--
- 3 files changed, 8 insertions(+), 6 deletions(-)
+Tested by compilation without errors.
 
-diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
-index 9380be7..4378d1d 100644
---- a/drivers/md/dm-cache-target.c
-+++ b/drivers/md/dm-cache-target.c
-@@ -1429,8 +1429,9 @@ static void process_bio(struct cache *cache, struct p=
-realloc *structs,
-=20
- static int need_commit_due_to_time(struct cache *cache)
- {
--	return jiffies < cache->last_commit_jiffies ||
--	       jiffies > cache->last_commit_jiffies + COMMIT_PERIOD;
-+	return !time_in_range(jiffies,
-+	      cache->last_commit_jiffies,
-+	      cache->last_commit_jiffies + COMMIT_PERIOD);
- }
-=20
- static int commit_if_needed(struct cache *cache)
-diff --git a/drivers/md/dm-log-userspace-base.c b/drivers/md/dm-log-userspa=
-ce-base.c
-index b953db6..cd9b171 100644
---- a/drivers/md/dm-log-userspace-base.c
-+++ b/drivers/md/dm-log-userspace-base.c
-@@ -829,7 +829,7 @@ static int userspace_is_remote_recovering(struct dm_dir=
-ty_log *log,
- 	int r;
- 	uint64_t region64 =3D region;
- 	struct log_c *lc =3D log->context;
--	static unsigned long long limit;
-+	static unsigned long limit;
- 	struct {
- 		int64_t is_recovering;
- 		uint64_t in_sync_hint;
-@@ -845,7 +845,7 @@ static int userspace_is_remote_recovering(struct dm_dir=
-ty_log *log,
- 	 */
- 	if (region < lc->in_sync_hint)
- 		return 0;
--	else if (jiffies < limit)
-+	else if (time_after(limit, jiffies))
- 		return 1;
-=20
- 	limit =3D jiffies + (HZ / 4);
-diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
-index 2e71de8..c83b363 100644
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -1375,8 +1375,9 @@ static void process_bio_fail(struct thin_c *tc, struc=
-t bio *bio)
-  */
- static int need_commit_due_to_time(struct pool *pool)
- {
--	return jiffies < pool->last_commit_jiffies ||
--	       jiffies > pool->last_commit_jiffies + COMMIT_PERIOD;
-+	return !time_in_range(jiffies,
-+	      pool->last_commit_jiffies,
-+	      pool->last_commit_jiffies + COMMIT_PERIOD);
- }
-=20
- #define thin_pbd(node) rb_entry((node), struct dm_thin_endio_hook, rb_node)
---=20
-1.7.10.4
+ drivers/memstick/core/mspro_block.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
+index fc145d2..d52412d 100644
+--- a/drivers/memstick/core/mspro_block.c
++++ b/drivers/memstick/core/mspro_block.c
+@@ -1032,12 +1032,11 @@ static int mspro_block_read_attributes(struct memstick_dev *card)
+ 	}
+ 	msb->attr_group.name = "media_attributes";
+ 
+-	buffer = kmalloc(attr_len, GFP_KERNEL);
++	buffer = kmemdup((char *)attr, attr_len, GFP_KERNEL);
+ 	if (!buffer) {
+ 		rc = -ENOMEM;
+ 		goto out_free_attr;
+ 	}
+-	memcpy(buffer, (char *)attr, attr_len);
+ 
+ 	for (cnt = 0; cnt < attr_count; ++cnt) {
+ 		s_attr = kzalloc(sizeof(struct mspro_sys_attr), GFP_KERNEL);
+
