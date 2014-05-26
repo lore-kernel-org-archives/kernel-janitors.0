@@ -1,34 +1,109 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Date: Mon, 19 May 2014 06:47:02 +0000
-Subject: Re: [PATCH 1/2 v4] ARM: imx: fix error handling in ipu device registration
-Message-Id: <20140519064701.GK10685@dragon>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:18 +0000
+Subject: [PATCH 9/18] staging: rtl8723au: Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-10-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400446261-27085-1-git-send-email-emilgoode@gmail.com>
- <1400446261-27085-2-git-send-email-emilgoode@gmail.com>
- <20140519063145.GF16662@pengutronix.de>
-In-Reply-To: <20140519063145.GF16662@pengutronix.de>
+References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: benoit.taine@lip6.fr, Jes Sorensen <Jes.Sorensen@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, May 19, 2014 at 08:31:45AM +0200, Uwe Kleine-K=F6nig wrote:
-> On Sun, May 18, 2014 at 10:50:59PM +0200, Emil Goode wrote:
-> > If we fail to allocate struct platform_device pdev we
-> > dereference it after the goto label err.
-> >=20
-> > This bug was found using coccinelle.
-> >=20
-> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
->=20
-> Shawn, is it already to late for 3.15?
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/memdup.cocci
 
-Let me try to see.
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+Tested by compilation without errors.
 
-Shawn
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/staging/rtl8723au/hal/rtl8723a_hal_init.c |    3 +--
+ drivers/staging/rtl8723au/os_dep/ioctl_cfg80211.c |   16 ++++++----------
+ 2 files changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/staging/rtl8723au/hal/rtl8723a_hal_init.c b/drivers/staging/rtl8723au/hal/rtl8723a_hal_init.c
+index e2d426a..f917edd 100644
+--- a/drivers/staging/rtl8723au/hal/rtl8723a_hal_init.c
++++ b/drivers/staging/rtl8723au/hal/rtl8723a_hal_init.c
+@@ -339,12 +339,11 @@ int rtl8723a_FirmwareDownload(struct rtw_adapter *padapter)
+ 		rtStatus = _FAIL;
+ 		goto Exit;
+ 	}
+-	firmware_buf = kzalloc(fw->size, GFP_KERNEL);
++	firmware_buf = kmemdup(fw->data, fw->size, GFP_KERNEL);
+ 	if (!firmware_buf) {
+ 		rtStatus = _FAIL;
+ 		goto Exit;
+ 	}
+-	memcpy(firmware_buf, fw->data, fw->size);
+ 	buf = firmware_buf;
+ 	fw_size = fw->size;
+ 	release_firmware(fw);
+diff --git a/drivers/staging/rtl8723au/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723au/os_dep/ioctl_cfg80211.c
+index 182f57c..735eb99 100644
+--- a/drivers/staging/rtl8723au/os_dep/ioctl_cfg80211.c
++++ b/drivers/staging/rtl8723au/os_dep/ioctl_cfg80211.c
+@@ -1426,14 +1426,13 @@ static int rtw_cfg80211_set_probe_req_wpsp2pie(struct rtw_adapter *padapter,
+ 				pmlmepriv->wps_probe_req_ie = NULL;
+ 			}
+ 
+-			pmlmepriv->wps_probe_req_ie -				kmalloc(wps_ielen, GFP_KERNEL);
++			pmlmepriv->wps_probe_req_ie = kmemdup(wps_ie,
++							wps_ielen, GFP_KERNEL);
+ 			if (pmlmepriv->wps_probe_req_ie = NULL) {
+ 				DBG_8723A("%s()-%d: kmalloc() ERROR!\n",
+ 					  __func__, __LINE__);
+ 				return -EINVAL;
+ 			}
+-			memcpy(pmlmepriv->wps_probe_req_ie, wps_ie, wps_ielen);
+ 			pmlmepriv->wps_probe_req_ie_len = wps_ielen;
+ 		}
+ 	}
+@@ -1697,12 +1696,11 @@ static int rtw_cfg80211_set_wpa_ie(struct rtw_adapter *padapter, const u8 *pie,
+ 		ret = -EINVAL;
+ 		goto exit;
+ 	}
+-	buf = kzalloc(ielen, GFP_KERNEL);
++	buf = kmemdup(pie, ielen, GFP_KERNEL);
+ 	if (buf = NULL) {
+ 		ret = -ENOMEM;
+ 		goto exit;
+ 	}
+-	memcpy(buf, pie, ielen);
+ 
+ 	/* dump */
+ 	DBG_8723A("set wpa_ie(length:%zu):\n", ielen);
+@@ -3178,14 +3176,13 @@ static int rtw_cfg80211_set_beacon_wpsp2pie(struct net_device *ndev, char *buf,
+ 				pmlmepriv->wps_beacon_ie = NULL;
+ 			}
+ 
+-			pmlmepriv->wps_beacon_ie -				kmalloc(wps_ielen, GFP_KERNEL);
++			pmlmepriv->wps_beacon_ie = kmemdup(wps_ie, wps_ielen,
++							   GFP_KERNEL);
+ 			if (pmlmepriv->wps_beacon_ie = NULL) {
+ 				DBG_8723A("%s()-%d: kmalloc() ERROR!\n",
+ 					  __func__, __LINE__);
+ 				return -EINVAL;
+ 			}
+-			memcpy(pmlmepriv->wps_beacon_ie, wps_ie, wps_ielen);
+ 			pmlmepriv->wps_beacon_ie_len = wps_ielen;
+ 
+ #ifdef CONFIG_8723AU_AP_MODE
+@@ -3270,14 +3267,13 @@ static int rtw_cfg80211_set_assoc_resp_wpsp2pie(struct net_device *net,
+ 			pmlmepriv->wps_assoc_resp_ie = NULL;
+ 		}
+ 
+-		pmlmepriv->wps_assoc_resp_ie = kmalloc(len, GFP_KERNEL);
++		pmlmepriv->wps_assoc_resp_ie = kmemdup(buf, len, GFP_KERNEL);
+ 		if (pmlmepriv->wps_assoc_resp_ie = NULL) {
+ 			DBG_8723A("%s()-%d: kmalloc() ERROR!\n",
+ 				  __func__, __LINE__);
+ 			return -EINVAL;
+ 
+ 		}
+-		memcpy(pmlmepriv->wps_assoc_resp_ie, buf, len);
+ 		pmlmepriv->wps_assoc_resp_ie_len = len;
+ 	}
+ 
+
