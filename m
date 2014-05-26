@@ -1,45 +1,47 @@
-From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Wed, 21 May 2014 17:16:36 +0000
-Subject: [PATCH] lustre: Use time_before()
-Message-Id: <1400692596-13875-1-git-send-email-manuel.schoelling@gmx.de>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:19 +0000
+Subject: [PATCH 10/18] aacraid: Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-11-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: gregkh@linuxfoundation.org
-Cc: bergwolf@gmail.com, andreas.dilger@intel.com, manuel.schoelling@gmx.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>
+Cc: benoit.taine@lip6.fr, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-To be future-proof and for better readability the time comparisons are modi=
-fied
-to use time_before() instead of plain, error-prone math.
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/memdup.cocci
 
-Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
 ---
- drivers/staging/lustre/lustre/include/linux/obd.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Tested by compilation without errors.
 
-diff --git a/drivers/staging/lustre/lustre/include/linux/obd.h b/drivers/st=
-aging/lustre/lustre/include/linux/obd.h
-index dc36f75e..518e48a 100644
---- a/drivers/staging/lustre/lustre/include/linux/obd.h
-+++ b/drivers/staging/lustre/lustre/include/linux/obd.h
-@@ -80,8 +80,8 @@ static inline void __client_obd_list_lock(client_obd_lock=
-_t *lock,
- 			break;
- 		}
-=20
--		if ((jiffies - cur > 5 * HZ) &&
--		    (jiffies - lock->time > 5 * HZ)) {
-+		if (time_before(cur + 5 * HZ, jiffies) &&
-+		    time_before(lock->time + 5 * HZ, jiffies)) {
- 			struct task_struct *task =3D lock->task;
-=20
- 			if (task =3D NULL)
---=20
-1.7.10.4
+ drivers/scsi/aacraid/commctrl.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+index fbcd48d..0cdb16b 100644
+--- a/drivers/scsi/aacraid/commctrl.c
++++ b/drivers/scsi/aacraid/commctrl.c
+@@ -635,15 +635,14 @@ static int aac_send_raw_srb(struct aac_dev* dev, void __user * arg)
+ 			}
+ 		} else {
+ 			struct user_sgmap* usg;
+-			usg = kmalloc(actual_fibsize - sizeof(struct aac_srb)
+-			  + sizeof(struct sgmap), GFP_KERNEL);
++			usg = kmemdup(upsg, actual_fibsize -
++				sizeof(struct aac_srb) + sizeof(struct sgmap),
++				GFP_KERNEL);
+ 			if (!usg) {
+ 				dprintk((KERN_DEBUG"aacraid: Allocation error in Raw SRB command\n"));
+ 				rcode = -ENOMEM;
+ 				goto cleanup;
+ 			}
+-			memcpy (usg, upsg, actual_fibsize - sizeof(struct aac_srb)
+-			  + sizeof(struct sgmap));
+ 			actual_fibsize = actual_fibsize64;
+ 
+ 			for (i = 0; i < usg->count; i++) {
+
