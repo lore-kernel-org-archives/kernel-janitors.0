@@ -1,84 +1,59 @@
-From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Sun, 25 May 2014 13:05:24 +0000
-Subject: [PATCH] rtl8188eu: use time_before/time_after and change type of ips_deny_time
-Message-Id: <1401023124-28732-1-git-send-email-manuel.schoelling@gmx.de>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:21 +0000
+Subject: [PATCH 12/18] aic7xxx: Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-13-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: gregkh@linuxfoundation.org
-Cc: Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hannes Reinecke <hare@suse.de>
+Cc: benoit.taine@lip6.fr, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-To be future-proof and for better readability the time comparisons are
-modified to use time_before/_after() instead of plain, error-prone math.
-To suppress compiler warnings the type of ips_deny_time was changed.
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/memdup.cocci
 
-Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
 ---
- drivers/staging/rtl8188eu/core/rtw_pwrctrl.c    |    9 ++++++---
- drivers/staging/rtl8188eu/include/rtw_pwrctrl.h |    2 +-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+Tested by compilation without errors.
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c b/drivers/staging=
-/rtl8188eu/core/rtw_pwrctrl.c
-index f658373..eaf2630 100644
---- a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-@@ -122,7 +122,7 @@ static bool rtw_pwr_unassociated_idle(struct adapter *a=
-dapter)
-=20
- 	bool ret =3D false;
-=20
--	if (adapter->pwrctrlpriv.ips_deny_time >=3D jiffies)
-+	if (time_after_eq(adapter->pwrctrlpriv.ips_deny_time, jiffies))
- 		goto exit;
-=20
- 	if (check_fwstate(pmlmepriv, WIFI_ASOC_STATE|WIFI_SITE_MONITOR) ||
-@@ -523,9 +523,11 @@ int _rtw_pwr_wakeup(struct adapter *padapter, u32 ips_=
-deffer_ms, const char *cal
- {
- 	struct pwrctrl_priv *pwrpriv =3D &padapter->pwrctrlpriv;
- 	struct mlme_priv *pmlmepriv =3D &padapter->mlmepriv;
-+	unsigned long expires;
- 	int ret =3D _SUCCESS;
-=20
--	if (pwrpriv->ips_deny_time < jiffies + rtw_ms_to_systime(ips_deffer_ms))
-+	expires =3D jiffies + rtw_ms_to_systime(ips_deffer_ms);
-+	if (time_before(pwrpriv->ips_deny_time, expires))
- 		pwrpriv->ips_deny_time =3D jiffies + rtw_ms_to_systime(ips_deffer_ms);
-=20
- {
-@@ -580,7 +582,8 @@ int _rtw_pwr_wakeup(struct adapter *padapter, u32 ips_d=
-effer_ms, const char *cal
+ drivers/scsi/aic7xxx/aic79xx_core.c |    4 ++--
+ drivers/scsi/aic7xxx/aic7xxx_core.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
+index 0bcacf7..01353b1 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_core.c
++++ b/drivers/scsi/aic7xxx/aic79xx_core.c
+@@ -9494,10 +9494,10 @@ ahd_loadseq(struct ahd_softc *ahd)
+ 	if (cs_count != 0) {
+ 
+ 		cs_count *= sizeof(struct cs);
+-		ahd->critical_sections = kmalloc(cs_count, GFP_ATOMIC);
++		ahd->critical_sections = kmemdup(cs_table, cs_count,
++						 GFP_ATOMIC);
+ 		if (ahd->critical_sections = NULL)
+ 			panic("ahd_loadseq: Could not malloc");
+-		memcpy(ahd->critical_sections, cs_table, cs_count);
  	}
-=20
- exit:
--	if (pwrpriv->ips_deny_time < jiffies + rtw_ms_to_systime(ips_deffer_ms))
-+	expires =3D jiffies + rtw_ms_to_systime(ips_deffer_ms);
-+	if (time_before(pwrpriv->ips_deny_time, expires))
- 		pwrpriv->ips_deny_time =3D jiffies + rtw_ms_to_systime(ips_deffer_ms);
- 	return ret;
- }
-diff --git a/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h b/drivers/stag=
-ing/rtl8188eu/include/rtw_pwrctrl.h
-index 9a42859..4211023 100644
---- a/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h
-+++ b/drivers/staging/rtl8188eu/include/rtw_pwrctrl.h
-@@ -192,7 +192,7 @@ struct pwrctrl_priv {
- 	u8	ips_mode_req;	/*  used to accept the mode setting request,
- 				 *  will update to ipsmode later */
- 	uint bips_processing;
--	u32 ips_deny_time; /* will deny IPS when system time less than this */
-+	unsigned long ips_deny_time; /* will deny IPS when system time less than =
-this */
- 	u8 ps_processing; /* temp used to mark whether in rtw_ps_processor */
-=20
- 	u8	bLeisurePs;
---=20
-1.7.10.4
+ 	ahd_outb(ahd, SEQCTL0, PERRORDIS|FAILDIS|FASTMODE);
+ 
+diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
+index 10172a3..f09337a 100644
+--- a/drivers/scsi/aic7xxx/aic7xxx_core.c
++++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
+@@ -6941,10 +6941,10 @@ ahc_loadseq(struct ahc_softc *ahc)
+ 	if (cs_count != 0) {
+ 
+ 		cs_count *= sizeof(struct cs);
+-		ahc->critical_sections = kmalloc(cs_count, GFP_ATOMIC);
++		ahc->critical_sections = kmemdup(cs_table, cs_count,
++						 GFP_ATOMIC);
+ 		if (ahc->critical_sections = NULL)
+ 			panic("ahc_loadseq: Could not malloc");
+-		memcpy(ahc->critical_sections, cs_table, cs_count);
+ 	}
+ 	ahc_outb(ahc, SEQCTL, PERRORDIS|FAILDIS|FASTMODE);
+ 
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
