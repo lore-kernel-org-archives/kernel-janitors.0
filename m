@@ -1,41 +1,52 @@
-From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Sun, 25 May 2014 13:08:59 +0000
-Subject: [PATCH] gdm72xx: use time_before()
-Message-Id: <1401023339-29712-1-git-send-email-manuel.schoelling@gmx.de>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Mon, 26 May 2014 16:41:23 +0000
+Subject: [PATCH 3/3] ARM: imx: don't allocate memory for .dma_mask of struct device
+Message-Id: <1401122483-31603-3-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401122483-31603-1-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1401122483-31603-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: gregkh@linuxfoundation.org
-Cc: peter.p.waskiewicz.jr@intel.com, kristina.martsenko@gmail.com, khoroshilov@ispras.ru, arnd@arndb.de, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-arm-kernel@lists.infradead.org
 
-To be future-proof and for better readability the time comparisons are
-modified to use time_before() instead of plain, error-prone math.
+The first patch in this series changed the platform_device_alloc
+function to assign the u64 .dma_mask pointer of struct device to
+the address of a u64 .dma_mask member of struct platform_object.
 
-Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+This means that we no longer should allocate memory for the .dma_mask
+pointer of struct device when using platform_device_alloc() and the
+u64 .dma_mask of struct platform_object that it points to will be freed
+when the release callback function platform_device_release is called.
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
- drivers/staging/gdm72xx/gdm_usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-imx/devices/platform-ipu-core.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/staging/gdm72xx/gdm_usb.c b/drivers/staging/gdm72xx/gd=
-m_usb.c
-index 20539d8..9ddf8f5 100644
---- a/drivers/staging/gdm72xx/gdm_usb.c
-+++ b/drivers/staging/gdm72xx/gdm_usb.c
-@@ -730,7 +730,7 @@ static int k_mode_thread(void *arg)
- 			spin_unlock_irqrestore(&k_lock, flags2);
-=20
- 			expire =3D jiffies + K_WAIT_TIME;
--			while (jiffies < expire)
-+			while (time_before(jiffies, expire))
- 				schedule_timeout(K_WAIT_TIME);
-=20
- 			spin_lock_irqsave(&rx->lock, flags);
---=20
+diff --git a/arch/arm/mach-imx/devices/platform-ipu-core.c b/arch/arm/mach-imx/devices/platform-ipu-core.c
+index 6bd7c3f..4499a7d 100644
+--- a/arch/arm/mach-imx/devices/platform-ipu-core.c
++++ b/arch/arm/mach-imx/devices/platform-ipu-core.c
+@@ -79,10 +79,6 @@ struct platform_device *__init imx_alloc_mx3_camera(
+ 	if (!pdev)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	pdev->dev.dma_mask = kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+-	if (!pdev->dev.dma_mask)
+-		goto err;
+-
+ 	*pdev->dev.dma_mask = DMA_BIT_MASK(32);
+ 	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+ 
+@@ -96,7 +92,6 @@ struct platform_device *__init imx_alloc_mx3_camera(
+ 		ret = platform_device_add_data(pdev, pdata, sizeof(*pdata));
+ 		if (ret) {
+ err:
+-			kfree(pdev->dev.dma_mask);
+ 			platform_device_put(pdev);
+ 			return ERR_PTR(-ENODEV);
+ 		}
+-- 
 1.7.10.4
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
