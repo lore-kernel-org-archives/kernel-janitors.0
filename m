@@ -1,57 +1,45 @@
-From: "Reddy, Sreekanth" <Sreekanth.Reddy@lsi.com>
-Date: Fri, 02 May 2014 11:44:42 +0000
-Subject: RE: [patch] [SCSI] mpt3sas: tidy up output slightly
-Message-Id: <fa09e003610140d3940f5aafd431c3c9@DM2PR07MB302.namprd07.prod.outlook.com>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:14 +0000
+Subject: [PATCH 5/18] wcn36xx: Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-6-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140328083901.GQ25192@mwanda>
-In-Reply-To: <20140328083901.GQ25192@mwanda>
+References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, "Nandigama, Nagalakshmi" <Nagalakshmi.Nandigama@lsi.com>
-Cc: Support <support@lsi.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, DL-MPT Fusion Linux <DL-MPTFusionLinux@lsi.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Eugene Krasnikov <k.eugene.e@gmail.com>
+Cc: benoit.taine@lip6.fr, "John W. Linville" <linville@tuxdriver.com>, wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-James,
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/memdup.cocci
 
-This patch seem to be fine. Please consider this patch.
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+Tested by compilation without errors.
 
-Regards,
-Sreekanth
+ drivers/net/wireless/ath/wcn36xx/smd.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
->-----Original Message-----
->From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
->Sent: Friday, March 28, 2014 2:09 PM
->To: Nandigama, Nagalakshmi
->Cc: Reddy, Sreekanth; Support; James E.J. Bottomley; DL-MPT Fusion Linux;
->linux-scsi@vger.kernel.org; kernel-janitors@vger.kernel.org
->Subject: [patch] [SCSI] mpt3sas: tidy up output slightly
->
->The indenting here for "pr_info("\n");" is not correct.  It's not part of the if
->condition.
->
->Also using pr_info() would put extra characters in the middle of the line.  I
->suppose that people could complain that pr_cont() is racy but at least it's
->better than the original code.
->
->Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
->diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c
->b/drivers/scsi/mpt3sas/mpt3sas_base.c
->index 0cf4f70..aa0e042 100644
->--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
->+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
->@@ -585,9 +585,9 @@ _base_display_event_data(struct MPT3SAS_ADAPTER
->*ioc,
-> 		    (event_data->ReasonCode =
->MPI2_EVENT_SAS_DISC_RC_STARTED) ?
-> 		    "start" : "stop");
-> 		if (event_data->DiscoveryStatus)
->-			pr_info("discovery_status(0x%08x)",
->+			pr_cont("discovery_status(0x%08x)",
-> 			    le32_to_cpu(event_data->DiscoveryStatus));
->-			pr_info("\n");
->+		pr_cont("\n");
-> 		return;
-> 	}
-> 	case MPI2_EVENT_SAS_BROADCAST_PRIMITIVE:
+diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
+index 7bf0ef8..6398693 100644
+--- a/drivers/net/wireless/ath/wcn36xx/smd.c
++++ b/drivers/net/wireless/ath/wcn36xx/smd.c
+@@ -2068,7 +2068,7 @@ static void wcn36xx_smd_rsp_process(struct wcn36xx *wcn, void *buf, size_t len)
+ 		if (!msg_ind)
+ 			goto nomem;
+ 		msg_ind->msg_len = len;
+-		msg_ind->msg = kmalloc(len, GFP_KERNEL);
++		msg_ind->msg = kmemdup(buf, len, GFP_KERNEL);
+ 		if (!msg_ind->msg) {
+ 			kfree(msg_ind);
+ nomem:
+@@ -2080,7 +2080,6 @@ nomem:
+ 				    msg_header->msg_type);
+ 			break;
+ 		}
+-		memcpy(msg_ind->msg, buf, len);
+ 		mutex_lock(&wcn->hal_ind_mutex);
+ 		list_add_tail(&msg_ind->list, &wcn->hal_ind_queue);
+ 		queue_work(wcn->hal_ind_wq, &wcn->hal_ind_work);
 
