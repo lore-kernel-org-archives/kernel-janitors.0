@@ -1,57 +1,43 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sun, 18 May 2014 15:38:51 +0000
-Subject: Re: [PATCH v2] ARM: imx: fix error handling
-Message-Id: <20140518153851.GB4310@lianli>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:27 +0000
+Subject: [PATCH 18/18] pinctrl: pinconf-generic: Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-19-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400234045-6022-1-git-send-email-emilgoode@gmail.com>
- <5375EB13.8000200@bfs.de> <20140516111646.GC4366@lianli>
- <5375FB36.8020004@bfs.de> <20140516193139.GQ16662@pengutronix.de>
- <20140517153540.GA4309@lianli>
- <20140517190546.GC16662@pengutronix.de>
-In-Reply-To: <20140517190546.GC16662@pengutronix.de>
+References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: benoit.taine@lip6.fr, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-I appologise for providing incomplete information in my previous message.
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/memdup.cocci
 
-The involved call sites are the following:
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+Not compile tested, due incompatible architecture.
 
-arch/arm/mach-imx/mach-mx35_3ds.c +265
+ drivers/pinctrl/pinconf-generic.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-imx35_3ds_init_camera()
-	imx35_alloc_mx3_camera()
-		imx_alloc_mx3_camera()
-	dma_declare_coherent_memory()
-	platform_device_add()
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index 3d9a999..2457ca9 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -228,13 +228,12 @@ int pinconf_generic_parse_dt_config(struct device_node *np,
+ 	 * Now limit the number of configs to the real number of
+ 	 * found properties.
+ 	 */
+-	*configs = kzalloc(ncfg * sizeof(unsigned long), GFP_KERNEL);
++	*configs = kmemdup(cfg, ncfg * sizeof(unsigned long), GFP_KERNEL);
+ 	if (!*configs) {
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+-	memcpy(*configs, cfg, ncfg * sizeof(unsigned long));
+ 	*nconfigs = ncfg;
+ 
+ out:
 
-arch/arm/mach-imx/mach-mx31moboard.c +477
-
-mx31moboard_init_cam()
-	imx31_alloc_mx3_camera()
-		imx_alloc_mx3_camera()
-	dma_declare_coherent_memory()
-	platform_device_add()
-
-arch/arm/mach-imx/mach-mx31_3ds.c +182
-
-mx31_3ds_init_camera()
-	imx31_alloc_mx3_camera()
-		imx_alloc_mx3_camera()
-	dma_declare_coherent_memory()
-	platform_device_add()
-
-arch/arm/mach-imx/mach-pcm037.c +413
-
-pcm037_init_camera()
-	imx31_alloc_mx3_camera()
-		imx_alloc_mx3_camera()
-	dma_declare_coherent_memory()
-	platform_device_add()
-
-Sorry about the mistake!
-
-Best regards,
-
-Emil Goode
