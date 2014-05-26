@@ -1,34 +1,221 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 21 May 2014 21:19:37 +0000
-Subject: Re: [PATCH 4/13 v2] wimax/i2400m: make return of 0 explicit
-Message-Id: <20140521.171937.898588239489051362.davem@davemloft.net>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Mon, 26 May 2014 16:41:21 +0000
+Subject: [PATCH 1/3] driver core/platform: don't leak memory allocated for dma_mask
+Message-Id: <1401122483-31603-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-5-git-send-email-Julia.Lawall@lip6.fr>
-	<5379FD39.7020605@cogentembedded.com>
-	<alpine.DEB.2.10.1405200844010.2723@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1405200844010.2723@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: julia.lawall@lip6.fr
-Cc: sergei.shtylyov@cogentembedded.com, inaky.perez-gonzalez@intel.com, kernel-janitors@vger.kernel.org, linux-wimax@intel.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Tue, 20 May 2014 08:44:49 +0800 (SGT)
+From: Yann Droneaud <ydroneaud@opteya.com>
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Delete unnecessary local variable whose value is always 0 and that hides
-> the fact that the result is always 0.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> Alternatively, is an error code wanted under the if?
-> 
-> v2: remove the use of 0 as an argument in the call to d_fnend
+Since commit 01dcc60a7cb8, platform_device_register_full() is
+available to allocate and register a platform device.
 
-Applied to net-next, thanks.
+If a dma_mask is provided as part of platform_device_info,
+platform_device_register_full() allocate memory for a u64 using
+kmalloc().
+
+A comment in the code state that "[t]his memory isn't freed when the
+device is put".
+
+It's never a good thing to leak memory, but there's only very few
+users of platform_device_info's dma_mask, and those are mostly
+"static" devices that are not going to be plugged/unplugged often.
+
+So memory leak is not really an issue, but allocating 8 bytes through
+kmalloc() seems overkill.
+
+To address this issue, this patch adds dma_mask to struct platform_object
+and when using platform_device_alloc() or platform_device_register_full()
+the .dma_mask pointer of struct device is assigned the address of this new
+dma_mask member of struct platform_object.  And since it's within struct
+platform_object, dma_mask won't be leaked anymore when struct platform_devi=
+ce
+get released.
+
+No more memory leak, no small allocation and a slight reduction in code
+size.
+
+Built on Debian jessie, using GCC 4.8, for ARM and x86_64 architectures,
+the size of the object file and the data structure layout are updated
+as follows, produced with commands:
+
+$ size drivers/base/platform.o
+$ pahole drivers/base/platform.o \
+	--recursive		 \
+	--class_name device,pdev_archdata,platform_device,platform_object
+
+-- size+pahole_3.15-rc6_ARM
+++ size+pahole_3.15-rc6_ARM+
+@@ -2,7 +2,7 @@
+    text	   data	    bss	    dec	    hex	filename
+-   6530	   1008	      8	   7546	   1d7a	drivers/base/platform.o
++   6482	   1008	      8	   7498	   1d4a	drivers/base/platform.o
+
+@@ -93,8 +93,13 @@ struct platform_object {
+ 	/* --- cacheline 12 boundary (768 bytes) was 40 bytes ago --- */
+ 	char                       name[1];            /*   808     1 */
+
+-	/* size: 816, cachelines: 13, members: 2 */
+-	/* padding: 7 */
++	/* XXX 7 bytes hole, try to pack */
+
++	u64                        dma_mask;           /*   816     8 */
+
++	/* size: 824, cachelines: 13, members: 3 */
++	/* sum members: 817, holes: 1, sum holes: 7 */
+ 	/* paddings: 1, sum paddings: 4 */
+-	/* last cacheline: 48 bytes */
++	/* last cacheline: 56 bytes */
+ };
+
+-- size+pahole_3.15-rc6_x86_64
+++ size+pahole_3.15-rc6_x86_64+
+@@ -2,7 +2,7 @@
+    text	   data	    bss	    dec	    hex	filename
+-   8570	   5032	   3424	  17026	   4282	drivers/base/platform.o
++   8509	   5032	   3408	  16949	   4235	drivers/base/platform.o
+
+@@ -95,7 +95,11 @@ struct platform_object {
+ 	/* --- cacheline 22 boundary (1408 bytes) was 32 bytes ago --- */
+ 	char                       name[1];             /*  1440     1 */
+
+-	/* size: 1448, cachelines: 23, members: 2 */
+-	/* padding: 7 */
+-	/* last cacheline: 40 bytes */
++	/* XXX 7 bytes hole, try to pack */
+
++	u64                        dma_mask;            /*  1448     8 */
+
++	/* size: 1456, cachelines: 23, members: 3 */
++	/* sum members: 1449, holes: 1, sum holes: 7 */
++	/* last cacheline: 48 bytes */
+ };
+
+Changes from v4 [1]:
+- Split v4 of the patch into two separate patches.
+- Generated new object file size and data structure layout info.
+- Updated the changelog message.
+
+Changes from v3 [2]:
+- fixed commit message so that git am doesn't fail.
+
+Changes from v2 [3]:
+- move 'dma_mask' to platform_object so that it's always
+  allocated and won't leak on release; remove all previously
+  added support functions.
+- use C99 flexible array member for 'name' to remove padding
+  at the end of platform_object.
+
+Changes from v1 [4]:
+- remove unneeded kfree() from error path
+- add reference to author/commit adding allocation of dmamask
+
+Changes from v0 [5]:
+- small rewrite to squeeze the patch to a bare minimal
+
+[1] http://lkml.kernel.org/r/1390817152-30898-1-git-send-email-ydroneaud@op=
+teya.com
+    https://patchwork.kernel.org/patch/3541871/
+
+[2] http://lkml.kernel.org/r/1390771138-28348-1-git-send-email-ydroneaud@op=
+teya.com
+    https://patchwork.kernel.org/patch/3540081/
+
+[3] http://lkml.kernel.org/r/1389683909-17495-1-git-send-email-ydroneaud@op=
+teya.com
+    https://patchwork.kernel.org/patch/3484411/
+
+[4] http://lkml.kernel.org/r/1389649085-7365-1-git-send-email-ydroneaud@opt=
+eya.com
+    https://patchwork.kernel.org/patch/3480961/
+
+[5] http://lkml.kernel.org/r/1386886207-2735-1-git-send-email-ydroneaud@opt=
+eya.com
+
+Cc: Yann Droneaud <ydroneaud@opteya.com>
+Cc: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Yann Droneaud <ydroneaud@opteya.com>
+[Emil: split v4 of the patch in two and updated changelog]
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+Hello Greg,
+
+The first two patches in the series are created from v4 of the
+original patch, since I have not changed how the code works I think
+it is correct to keep the original author and Signed-off-by line.
+
+Best regards,
+
+Emil Goode
+
+ drivers/base/platform.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 9e9227e..dd1fa07 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -166,6 +166,7 @@ EXPORT_SYMBOL_GPL(platform_add_devices);
+ struct platform_object {
+ 	struct platform_device pdev;
+ 	char name[1];
++	u64 dma_mask;
+ };
+=20
+ /**
+@@ -201,6 +202,9 @@ static void platform_device_release(struct device *dev)
+  *
+  * Create a platform device object which can have other objects attached
+  * to it, and which will have attached objects freed when it is released.
++ *
++ * The associated struct device will be set up so that its dma_mask field
++ * is a valid pointer to an u64. This pointer must not be free'd manually.
+  */
+ struct platform_device *platform_device_alloc(const char *name, int id)
+ {
+@@ -211,6 +215,7 @@ struct platform_device *platform_device_alloc(const cha=
+r *name, int id)
+ 		strcpy(pa->name, name);
+ 		pa->pdev.name =3D pa->name;
+ 		pa->pdev.id =3D id;
++		pa->pdev.dev.dma_mask =3D &pa->dma_mask;
+ 		device_initialize(&pa->pdev.dev);
+ 		pa->pdev.dev.release =3D platform_device_release;
+ 		arch_setup_pdev_archdata(&pa->pdev);
+@@ -444,16 +449,9 @@ struct platform_device *platform_device_register_full(
+=20
+ 	if (pdevinfo->dma_mask) {
+ 		/*
+-		 * This memory isn't freed when the device is put,
+-		 * I don't have a nice idea for that though.  Conceptually
+ 		 * dma_mask in struct device should not be a pointer.
+ 		 * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
+ 		 */
+-		pdev->dev.dma_mask -			kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+-		if (!pdev->dev.dma_mask)
+-			goto err;
+-
+ 		*pdev->dev.dma_mask =3D pdevinfo->dma_mask;
+ 		pdev->dev.coherent_dma_mask =3D pdevinfo->dma_mask;
+ 	}
+@@ -472,7 +470,6 @@ struct platform_device *platform_device_register_full(
+ 	if (ret) {
+ err:
+ 		ACPI_COMPANION_SET(&pdev->dev, NULL);
+-		kfree(pdev->dev.dma_mask);
+=20
+ err_alloc:
+ 		platform_device_put(pdev);
+--=20
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
