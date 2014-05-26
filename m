@@ -1,33 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 15 May 2014 20:58:15 +0000
-Subject: Re: [PATCH 3/4] ip_tunnel: delete unneeded call to netdev_priv
-Message-Id: <20140515.165815.500119926518586830.davem@davemloft.net>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 26 May 2014 15:21:22 +0000
+Subject: [PATCH 13/18] drm/edid: Use kmemdup instead of kmalloc + memcpy
+Message-Id: <1401117687-28911-14-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400125401-15512-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1400125401-15512-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: kernel-janitors@vger.kernel.org, kuznet@ms2.inr.ac.ru, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: benoit.taine@lip6.fr, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 15 May 2014 05:43:20 +0200
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/memdup.cocci
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Netdev_priv is an accessor function, and has no purpose if its result is
-> not used.
-> 
-> A simplified version of the semantic match that fixes this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@ local idexpression x; @@
-> -x = netdev_priv(...);
-> ... when != x
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+Tested by compilation without errors.
 
-Applied.
+ drivers/gpu/drm/drm_edid.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index 7a4fd2e..d74239f 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -3228,10 +3228,9 @@ int drm_edid_to_speaker_allocation(struct edid *edid, u8 **sadb)
+ 
+ 			/* Speaker Allocation Data Block */
+ 			if (dbl = 3) {
+-				*sadb = kmalloc(dbl, GFP_KERNEL);
++				*sadb = kmemdup(&db[1], dbl, GFP_KERNEL);
+ 				if (!*sadb)
+ 					return -ENOMEM;
+-				memcpy(*sadb, &db[1], dbl);
+ 				count = dbl;
+ 				break;
+ 			}
+
