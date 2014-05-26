@@ -1,28 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 24 May 2014 18:01:51 +0000
-Subject: Re: [patch] qlcnic: info leak in qlcnic_dcb_peer_app_info()
-Message-Id: <20140524.140151.1688847033053939933.davem@davemloft.net>
+From: Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>
+Date: Mon, 26 May 2014 05:28:29 +0000
+Subject: RE: [patch] qlcnic: info leak in qlcnic_dcb_peer_app_info()
+Message-Id: <290BEC245535C3449143D5D84900EEF78CE2AAD5@avmb3.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140523163721.GA14067@mwanda>
 In-Reply-To: <20140523163721.GA14067@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: shahed.shaikh@qlogic.com, sucheta.chakraborty@qlogic.com, Dept-HSGLinuxNICDev@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>, Shahed Shaikh <shahed.shaikh@qlogic.com>
+Cc: Dept-HSG Linux NIC Dev <Dept-HSGLinuxNICDev@qlogic.com>, netdev <netdev@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 May 2014 19:37:21 +0300
-
+> -----Original Message-----
+> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
+> Sent: Friday, May 23, 2014 10:07 PM
+> To: Shahed Shaikh; Sucheta Chakraborty
+> Cc: Dept-HSG Linux NIC Dev; netdev; kernel-janitors@vger.kernel.org
+> Subject: [patch] qlcnic: info leak in qlcnic_dcb_peer_app_info()
+> 
 > This function is called from dcbnl_build_peer_app().  The "info"
 > struct isn't initialized at all so we disclose 2 bytes of uninitialized
 > stack data.  We should clear it before passing it to the user.
 > 
-> Fixes: 48365e485275 ('qlcnic: dcb: Add support for CEE Netlink interface.')
+> Fixes: 48365e485275 ('qlcnic: dcb: Add support for CEE Netlink
+> interface.')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: Sucheta Chakraborty <sucheta.chakraborty@qlogic.com>
+
+Thanks,
+Sucheta.
+
 > ---
 > This is a static analysis patch, and I am not familiar with this code.
 > We may want to put some useful information here, to go with the
 > app_count.
-
-I've applied this and queued it up for -stable, thanks Dan.
+> 
+> diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+> b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+> index a51fe18..561cb11 100644
+> --- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+> +++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+> @@ -1020,6 +1020,7 @@ static int qlcnic_dcb_peer_app_info(struct
+> net_device *netdev,
+>  	struct qlcnic_dcb_cee *peer;
+>  	int i;
+> 
+> +	memset(info, 0, sizeof(*info));
+>  	*app_count = 0;
+> 
+>  	if (!test_bit(QLCNIC_DCB_STATE, &adapter->dcb->state))
