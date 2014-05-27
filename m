@@ -1,42 +1,31 @@
-From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Sun, 25 May 2014 17:59:36 +0000
-Subject: [PATCH] mwifiex: use time_after()
-Message-Id: <1401040776-13711-1-git-send-email-manuel.schoelling@gmx.de>
+From: Bing Zhao <bzhao@marvell.com>
+Date: Tue, 27 May 2014 18:36:26 +0000
+Subject: RE: [PATCH] mwifiex: use time_after()
+Message-Id: <477F20668A386D41ADCC57781B1F70430F70F5E285@SC-VEXCH1.marvell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401040776-13711-1-git-send-email-manuel.schoelling@gmx.de>
+In-Reply-To: <1401040776-13711-1-git-send-email-manuel.schoelling@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: bzhao@marvell.com
-Cc: linville@tuxdriver.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: =?utf-8?B?TWFudWVsIFNjaMO2bGxpbmc=?= <manuel.schoelling@gmx.de>
+Cc: "linville@tuxdriver.com" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-To be future-proof and for better readability the time comparisons are
-modified to use time_after() instead of plain, error-prone math.
-
-Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
----
- drivers/net/wireless/mwifiex/main.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/mwifiex/main.h b/drivers/net/wireless/mwi=
-fiex/main.h
-index d53e1e8..3191066 100644
---- a/drivers/net/wireless/mwifiex/main.h
-+++ b/drivers/net/wireless/mwifiex/main.h
-@@ -1101,7 +1101,7 @@ mwifiex_11h_get_csa_closed_channel(struct mwifiex_pri=
-vate *priv)
- 		return 0;
-=20
- 	/* Clear csa channel, if DFS channel move time has passed */
--	if (jiffies > priv->csa_expire_time) {
-+	if (time_after(jiffies, priv->csa_expire_time)) {
- 		priv->csa_chan =3D 0;
- 		priv->csa_expire_time =3D 0;
- 	}
---=20
-1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgTWFudWVsLA0KDQpUaGFua3MgZm9yIHRoZSBwYXRjaC4NCg0KPiBUbyBiZSBmdXR1cmUtcHJv
+b2YgYW5kIGZvciBiZXR0ZXIgcmVhZGFiaWxpdHkgdGhlIHRpbWUgY29tcGFyaXNvbnMgYXJlDQo+
+IG1vZGlmaWVkIHRvIHVzZSB0aW1lX2FmdGVyKCkgaW5zdGVhZCBvZiBwbGFpbiwgZXJyb3ItcHJv
+bmUgbWF0aC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1hbnVlbCBTY2jDtmxsaW5nIDxtYW51ZWwu
+c2Nob2VsbGluZ0BnbXguZGU+DQoNCkFja2VkLWJ5OiBCaW5nIFpoYW8gPGJ6aGFvQG1hcnZlbGwu
+Y29tPg0KDQpSZWdhcmRzLA0KQmluZw0KDQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvd2lyZWxlc3Mv
+bXdpZmlleC9tYWluLmggfCAgICAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
+KyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93aXJlbGVz
+cy9td2lmaWV4L21haW4uaCBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL213aWZpZXgvbWFpbi5oDQo+
+IGluZGV4IGQ1M2UxZTguLjMxOTEwNjYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVs
+ZXNzL213aWZpZXgvbWFpbi5oDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL213aWZpZXgv
+bWFpbi5oDQo+IEBAIC0xMTAxLDcgKzExMDEsNyBAQCBtd2lmaWV4XzExaF9nZXRfY3NhX2Nsb3Nl
+ZF9jaGFubmVsKHN0cnVjdCBtd2lmaWV4X3ByaXZhdGUgKnByaXYpDQo+ICAJCXJldHVybiAwOw0K
+PiANCj4gIAkvKiBDbGVhciBjc2EgY2hhbm5lbCwgaWYgREZTIGNoYW5uZWwgbW92ZSB0aW1lIGhh
+cyBwYXNzZWQgKi8NCj4gLQlpZiAoamlmZmllcyA+IHByaXYtPmNzYV9leHBpcmVfdGltZSkgew0K
+PiArCWlmICh0aW1lX2FmdGVyKGppZmZpZXMsIHByaXYtPmNzYV9leHBpcmVfdGltZSkpIHsNCj4g
+IAkJcHJpdi0+Y3NhX2NoYW4gPSAwOw0KPiAgCQlwcml2LT5jc2FfZXhwaXJlX3RpbWUgPSAwOw0K
+PiAgCX0NCj4gLS0NCj4gMS43LjEwLjQNCg0K
