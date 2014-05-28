@@ -1,98 +1,33 @@
-From: Mathieu Souchaud <mattieu.souchaud@free.fr>
-Date: Wed, 28 May 2014 07:12:37 +0000
-Subject: [PATCH v3] x86/mce: Improve mcheck_init_device() error handling
-Message-Id: <1401261157-1165-1-git-send-email-mattieu.souchaud@free.fr>
+From: Borislav Petkov <bp@alien8.de>
+Date: Wed, 28 May 2014 09:52:27 +0000
+Subject: Re: [PATCH v3] x86/mce: Improve mcheck_init_device() error handling
+Message-Id: <20140528095227.GA17196@pd.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401261157-1165-1-git-send-email-mattieu.souchaud@free.fr>
+In-Reply-To: <1401261157-1165-1-git-send-email-mattieu.souchaud@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tony.luck@intel.com, bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Mathieu Souchaud <mattieu.souchaud@free.fr>
+To: Mathieu Souchaud <mattieu.souchaud@free.fr>
+Cc: tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Check return code of every function called by mcheck_init_device().
+On Wed, May 28, 2014 at 09:12:37AM +0200, Mathieu Souchaud wrote:
+> Check return code of every function called by mcheck_init_device().
+> 
+> Signed-off-by: Mathieu Souchaud <mattieu.souchaud@free.fr>
 
-Signed-off-by: Mathieu Souchaud <mattieu.souchaud@free.fr>
----
- arch/x86/kernel/cpu/mcheck/mce.c |   47 ++++++++++++++++++++++++++++++++------
- 1 file changed, 40 insertions(+), 7 deletions(-)
+Applied, thanks!
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 68317c8..e361681 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -2437,32 +2437,65 @@ static __init int mcheck_init_device(void)
- 	int err;
- 	int i = 0;
- 
--	if (!mce_available(&boot_cpu_data))
--		return -EIO;
-+	if (!mce_available(&boot_cpu_data)) {
-+		err = -EIO;
-+		goto err_out;
-+	}
- 
--	zalloc_cpumask_var(&mce_device_initialized, GFP_KERNEL);
-+	if (!zalloc_cpumask_var(&mce_device_initialized, GFP_KERNEL)) {
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
- 
- 	mce_init_banks();
- 
- 	err = subsys_system_register(&mce_subsys, NULL);
- 	if (err)
--		return err;
-+		goto err_out_mem;
- 
- 	cpu_notifier_register_begin();
- 	for_each_online_cpu(i) {
- 		err = mce_device_create(i);
- 		if (err) {
- 			cpu_notifier_register_done();
--			return err;
-+			goto err_device_create;
- 		}
- 	}
- 
--	register_syscore_ops(&mce_syscore_ops);
- 	__register_hotcpu_notifier(&mce_cpu_notifier);
- 	cpu_notifier_register_done();
- 
-+	register_syscore_ops(&mce_syscore_ops);
-+
- 	/* register character device /dev/mcelog */
--	misc_register(&mce_chrdev_device);
-+	err = misc_register(&mce_chrdev_device);
-+	if (err)
-+		goto err_register;
-+
-+	return 0;
-+
-+err_register:
-+	unregister_syscore_ops(&mce_syscore_ops);
-+
-+	cpu_notifier_register_begin();
-+	__unregister_hotcpu_notifier(&mce_cpu_notifier);
-+	cpu_notifier_register_done();
-+
-+err_device_create:
-+	/*
-+	 * We didn't keep track of which devices were created above, but
-+	 * even if we had, the set of online cpus might have changed.
-+	 * Play safe and remove for every possible cpu, since
-+	 * mce_device_remove() will do the right thing.
-+	 */
-+	for_each_possible_cpu(i)
-+		mce_device_remove(i);
-+
-+err_out_mem:
-+	free_cpumask_var(mce_device_initialized);
-+
-+err_out:
-+	pr_err("Unable to init device /dev/mcelog (rc: %d)\n", err);
- 
- 	return err;
- }
+I'll queue it for 3.17 though since we're very close to the 3.16 merge
+window and this patch hasn't had any linux-next time.
+
+Thanks for your good work, let me know if you want to do more around mce.
+
+:-)
+
 -- 
-1.7.9.5
+Regards/Gruss,
+    Boris.
 
+Sent from a fat crate under my desk. Formatting is fine.
+--
