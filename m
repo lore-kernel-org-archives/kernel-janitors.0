@@ -1,20 +1,17 @@
-From: Giedrius Rekasius <giedrius.rekasius@gmail.com>
-Date: Wed, 28 May 2014 20:10:21 +0000
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Wed, 28 May 2014 20:42:51 +0000
 Subject: Re: [PATCH] perf/x86/uncore: Remove unnecessary assignment to "box" in uncore_pci_remove(...)
-Message-Id: <20140528200609.GA1901@vaio>
+Message-Id: <alpine.DEB.2.10.1405282239190.3952@nanos>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401268294-28634-1-git-send-email-giedrius.rekasius@gmail.com>
- <5385B764.6090301@bfs.de>
+References: <1401268294-28634-1-git-send-email-giedrius.rekasius@gmail.com> <5385B764.6090301@bfs.de>
 In-Reply-To: <5385B764.6090301@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: walter harms <wharms@bfs.de>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Giedrius Rekasius <giedrius.rekasius@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, May 28, 2014 at 12:16:04PM +0200, walter harms wrote:
-> 
-> 
+On Wed, 28 May 2014, walter harms wrote:
 > Am 28.05.2014 11:11, schrieb Giedrius Rekasius:
 > > Local variable "box" gets assigned correct value when it is initialized.
 > > There is no need to assign the same value again.
@@ -40,12 +37,18 @@ On Wed, May 28, 2014 at 12:16:04PM +0200, walter harms wrote:
 > Just a remark,
 > for readability it is better to remove the other one.
 
-I could move the declaration itself closer to the if statement while
-still keeping whole statement in one line.
+I rather have stuff reshuffled a bit more:
 
-On the other hand I'm not so sure if it makes any real difference to
-have assignment right next to the if statement compared to a few lines
-above it.
+static void uncore_pci_remove(struct pci_dev *pdev)
+{
+	int i, cpu, phys_id = pcibus_to_physid[pdev->bus->number];
+	struct intel_uncore_box *box = pci_get_drvdata(pdev);
+	struct intel_uncore_pmu *pmu;
 
-Regards,
-Giedrius
+	if (!box) {
+
+That's less lines and entirely readable.
+
+Thanks,
+
+	tglx
