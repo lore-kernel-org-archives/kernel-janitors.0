@@ -1,31 +1,16 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 May 2014 16:41:01 +0000
-Subject: [patch] mfd: menelaus: typo in debug printk
-Message-Id: <20140528164101.GA1824@mwanda>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Wed, 28 May 2014 15:14:05 +0000
+Subject: [PATCH 0/2] Use resource_size instead of computation
+Message-Id: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: benoit.taine@lip6.fr, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, alsa-devel@alsa-project.org
 
-There should be a space between before the word "to".
+These patches enhance kernel style usage, and make use of the
+resource_size() function instead of explicit computation.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
-index ad25bfa..0d5367f 100644
---- a/drivers/mfd/menelaus.c
-+++ b/drivers/mfd/menelaus.c
-@@ -475,9 +475,9 @@ static int menelaus_set_voltage(const struct menelaus_vtg *vtg, int mV,
- 	val = ret & ~(((1 << vtg->vtg_bits) - 1) << vtg->vtg_shift);
- 	val |= vtg_val << vtg->vtg_shift;
- 
--	dev_dbg(&c->dev, "Setting voltage '%s'"
--			 "to %d mV (reg 0x%02x, val 0x%02x)\n",
--			vtg->name, mV, vtg->vtg_reg, val);
-+	dev_dbg(&c->dev,
-+		"Setting voltage '%s' to %d mV (reg 0x%02x, val 0x%02x)\n",
-+		vtg->name, mV, vtg->vtg_reg, val);
- 
- 	ret = menelaus_write_reg(vtg->vtg_reg, val);
- 	if (ret < 0)
+The semantic patch at scripts/coccinelle/api/resource_size.cocci was
+used to detect and edit this situation.
