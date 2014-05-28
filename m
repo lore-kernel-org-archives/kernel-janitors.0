@@ -1,28 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 22 May 2014 19:50:37 +0000
-Subject: Re: [PATCH] qlogic: Use time_before()
-Message-Id: <20140522.155037.86665103961019708.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 28 May 2014 16:42:02 +0000
+Subject: [patch 1/2] ALSA: fireworks: remove some stray checks
+Message-Id: <20140528164202.GB1824@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400693043-15786-1-git-send-email-manuel.schoelling@gmx.de>
-In-Reply-To: <1400693043-15786-1-git-send-email-manuel.schoelling@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: manuel.schoelling@gmx.de
-Cc: shahed.shaikh@qlogic.com, Dept-HSGLinuxNICDev@qlogic.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: Manuel Sch=F6lling <manuel.schoelling@gmx.de>
-Date: Wed, 21 May 2014 19:24:03 +0200
+We checked "err" earlier.  These things seem to be left over code.
 
-> To be future-proof and for better readability the time comparisons are mo=
-dified
-> to use time_before() instead of plain, error-prone math.
->=20
-> Signed-off-by: Manuel Sch=F6lling <manuel.schoelling@gmx.de>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/sound/firewire/fireworks/fireworks.c b/sound/firewire/fireworks/fireworks.c
+index a354d26..8e856cc 100644
+--- a/sound/firewire/fireworks/fireworks.c
++++ b/sound/firewire/fireworks/fireworks.c
+@@ -89,8 +89,6 @@ get_hardware_info(struct snd_efw *efw)
+ 	snprintf(version, sizeof(version), "%u.%u",
+ 		 (hwinfo->arm_version >> 24) & 0xff,
+ 		 (hwinfo->arm_version >> 16) & 0xff);
+-	if (err < 0)
+-		goto end;
+ 	efw->firmware_version = hwinfo->arm_version;
+ 
+ 	strcpy(efw->card->driver, "Fireworks");
+@@ -101,8 +99,6 @@ get_hardware_info(struct snd_efw *efw)
+ 		 hwinfo->vendor_name, hwinfo->model_name, version,
+ 		 hwinfo->guid_hi, hwinfo->guid_lo,
+ 		 dev_name(&efw->unit->device), 100 << fw_dev->max_speed);
+-	if (err < 0)
+-		goto end;
+ 
+ 	if (hwinfo->flags & BIT(FLAG_RESP_ADDR_CHANGABLE))
+ 		efw->resp_addr_changable = true;
