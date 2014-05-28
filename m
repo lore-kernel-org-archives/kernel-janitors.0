@@ -1,55 +1,48 @@
-From: Dimitri Sivanich <sivanich@sgi.com>
-Date: Fri, 30 May 2014 17:15:07 +0000
-Subject: Re: [PATCH RESEND] sgi-gru: use time_before()
-Message-Id: <20140530171507.GA85969@sgi.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Wed, 28 May 2014 16:43:51 +0000
+Subject: [PATCH v2] mfd: fix unintentional NULL check in menelaus_set_voltage()
+Message-Id: <1401295431-23833-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401457259-17401-1-git-send-email-manuel.schoelling@gmx.de>
-In-Reply-To: <1401457259-17401-1-git-send-email-manuel.schoelling@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Manuel =?iso-8859-1?Q?Sch=F6lling?= <manuel.schoelling@gmx.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Jingoo Han <jg1.han@samsung.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-Acked-by: Dimitri Sivanich <sivanich@sgi.com>
+The struct menelaus_vtg pointer vtg cannot be NULL here
+so the condition is never true and if it ever was true
+it would lead to a NULL pointer dereference when we goto
+label set_voltage.
 
-On Fri, May 30, 2014 at 03:40:59PM +0200, Manuel Sch=F6lling wrote:
-> To be future-proof and for better readability the time comparisons are
-> modified to use time_before() instead of plain, error-prone math.
->=20
-> Signed-off-by: Manuel Sch=F6lling <manuel.schoelling@gmx.de>
-> ---
->  drivers/misc/sgi-gru/grumain.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/misc/sgi-gru/grumain.c b/drivers/misc/sgi-gru/grumai=
-n.c
-> index ae16c8c..1525870 100644
-> --- a/drivers/misc/sgi-gru/grumain.c
-> +++ b/drivers/misc/sgi-gru/grumain.c
-> @@ -930,6 +930,7 @@ int gru_fault(struct vm_area_struct *vma, struct vm_f=
-ault *vmf)
->  {
->  	struct gru_thread_state *gts;
->  	unsigned long paddr, vaddr;
-> +	unsigned long expires;
-> =20
->  	vaddr =3D (unsigned long)vmf->virtual_address;
->  	gru_dbg(grudev, "vma %p, vaddr 0x%lx (0x%lx)\n",
-> @@ -954,7 +955,8 @@ again:
->  			mutex_unlock(&gts->ts_ctxlock);
->  			set_current_state(TASK_INTERRUPTIBLE);
->  			schedule_timeout(GRU_ASSIGN_DELAY);  /* true hack ZZZ */
-> -			if (gts->ts_steal_jiffies + GRU_STEAL_DELAY < jiffies)
-> +			expires =3D gts->ts_steal_jiffies + GRU_STEAL_DELAY;
-> +			if (time_before(expires, jiffies))
->  				gru_steal_context(gts);
->  			goto again;
->  		}
-> --=20
-> 1.7.10.4
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Before the below patch was applied the code was:
+
+if (vtg = 0)
+
+The intention was to check if vtg_val is 0.
+
+commit 59a9f7a32adf6537b4e4db8ca204eeb77d7a634e
+("mfd: menelaus: Use NULL instead of 0")
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+v2: Changed (vtg_val = 0) to (!vtg_val)
+
+ drivers/mfd/menelaus.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
+index ad25bfa..40df76a 100644
+--- a/drivers/mfd/menelaus.c
++++ b/drivers/mfd/menelaus.c
+@@ -466,7 +466,7 @@ static int menelaus_set_voltage(const struct menelaus_vtg *vtg, int mV,
+ 	struct i2c_client *c = the_menelaus->client;
+ 
+ 	mutex_lock(&the_menelaus->lock);
+-	if (!vtg)
++	if (!vtg_val)
+ 		goto set_voltage;
+ 
+ 	ret = menelaus_read_reg(vtg->vtg_reg);
+-- 
+1.7.10.4
+
