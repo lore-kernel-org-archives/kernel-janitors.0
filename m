@@ -1,44 +1,46 @@
-From: Yann Droneaud <ydroneaud@opteya.com>
-Date: Sun, 04 May 2014 21:46:30 +0000
-Subject: Re: [patch] RDMA/cxgb4: info leak in c4iw_alloc_ucontext()
-Message-Id: <1399239990.2957.6.camel@localhost.localdomain>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Wed, 28 May 2014 15:14:06 +0000
+Subject: [PATCH 1/2] ALSA: au1x00: Use resource_size instead of computation
+Message-Id: <1401290047-30005-2-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140328082428.GH25192@mwanda>
-	 <1396002468.3297.63.camel@localhost.localdomain>
-	 <20140502235616.GJ4963@mwanda>
-In-Reply-To: <20140502235616.GJ4963@mwanda>
+References: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Steve Wise <swise@chelsio.com>, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, davem@davemloft.net, roland@purestorage.com, dm@chelsio.com, leedom@chelsio.com, santosh@chelsio.com, kumaras@chelsio.com, nirranjan@chelsio.com, hariprasad@chelsio.com, Steve Wise <swise@opengridcomputing.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: benoit.taine@lip6.fr, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/resource_size.cocci
 
-Le samedi 03 mai 2014 à 02:56 +0300, Dan Carpenter a écrit :
-> On Fri, Mar 28, 2014 at 11:27:48AM +0100, Yann Droneaud wrote:
-> > Unfortunately, it's not the only structure which has this problem. I'm
-> > currently preparing a report on this issue for this driver (cxgb4) and
-> > another.
-> > 
-> 
-> This information leak is still present in linux-next.  These days we
-> count those things as security vulnerabilities with CVEs and everything.
-> 
-> When is it likely to get fixed?
-> 
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+Not compile tested, due incompatible architecture.
 
-Thanks for the reminder.
+ sound/mips/au1x00.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The patches were waiting for some times in my patch queue, I failed to
-provide them earlier. BTW, I've taken time during the week end to
-complete them. They should be available on linux-rdma@vger.kernel.org.
-See http://marc.info/?i=cover.1399216475.git.ydroneaud@opteya.com
-
-Regards.
-
--- 
-Yann Droneaud
-OPTEYA
-
+diff --git a/sound/mips/au1x00.c b/sound/mips/au1x00.c
+index d10ef76..fbcaa54 100644
+--- a/sound/mips/au1x00.c
++++ b/sound/mips/au1x00.c
+@@ -648,14 +648,14 @@ static int au1000_ac97_probe(struct platform_device *pdev)
+ 		goto out;
+ 
+ 	err = -EBUSY;
+-	au1000->ac97_res_port = request_mem_region(r->start,
+-					r->end - r->start + 1, pdev->name);
++	au1000->ac97_res_port = request_mem_region(r->start, resource_size(r),
++						   pdev->name);
+ 	if (!au1000->ac97_res_port) {
+ 		snd_printk(KERN_ERR "ALSA AC97: can't grab AC97 port\n");
+ 		goto out;
+ 	}
+ 
+-	io = ioremap(r->start, r->end - r->start + 1);
++	io = ioremap(r->start, resource_size(r));
+ 	if (!io)
+ 		goto out;
+ 
 
