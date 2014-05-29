@@ -1,54 +1,31 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 14 May 2014 14:47:08 +0000
-Subject: Re: [patch] ALSA: sb_mixer: missing return statement
-Message-Id: <s5hegzwh0yb.wl%tiwai@suse.de>
+From: Miguel Oliveira <cmroliv@gmail.com>
+Date: Thu, 29 May 2014 21:53:56 +0000
+Subject: [PATCH] Fixed coding style problem
+Message-Id: <1401400436-4396-1-git-send-email-cmroliv@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140514133221.GD14571@mwanda>
-In-Reply-To: <20140514133221.GD14571@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-At Wed, 14 May 2014 16:32:21 +0300,
-Dan Carpenter wrote:
-> 
-> The if condition here was supposed to return on error but the return
-> statement is missing.  The effect is that the ->mixername is set to
-> "???" instead of "DT019X".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Miguel Oliveira <cmroliv@gmail.com>
+---
+ drivers/staging/wlan-ng/p80211req.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, applied.
+diff --git a/drivers/staging/wlan-ng/p80211req.c b/drivers/staging/wlan-ng/p80211req.c
+index cdfd808..3b3fccc 100644
+--- a/drivers/staging/wlan-ng/p80211req.c
++++ b/drivers/staging/wlan-ng/p80211req.c
+@@ -109,7 +109,7 @@ int p80211req_dorequest(wlandevice_t *wlandev, u8 *msgbuf)
+ 	/* Check Permissions */
+ 	if (!capable(CAP_NET_ADMIN) &&
+ 	(msg->msgcode != DIDmsg_dot11req_mibget)) {
+-		printk(KERN_ERR
++		netdev_err(netdev,
+ 		       "%s: only dot11req_mibget allowed for non-root.\n",
+ 		       wlandev->name);
+ 		return -EPERM;
+--
+1.7.10.4
 
-
-Takashi
-
-> 
-> diff --git a/sound/isa/sb/sb_mixer.c b/sound/isa/sb/sb_mixer.c
-> index 6496822..1ff78ec 100644
-> --- a/sound/isa/sb/sb_mixer.c
-> +++ b/sound/isa/sb/sb_mixer.c
-> @@ -818,12 +818,14 @@ int snd_sbmixer_new(struct snd_sb *chip)
->  			return err;
->  		break;
->  	case SB_HW_DT019X:
-> -		if ((err = snd_sbmixer_init(chip,
-> -					    snd_dt019x_controls,
-> -					    ARRAY_SIZE(snd_dt019x_controls),
-> -					    snd_dt019x_init_values,
-> -					    ARRAY_SIZE(snd_dt019x_init_values),
-> -					    "DT019X")) < 0)
-> +		err = snd_sbmixer_init(chip,
-> +				       snd_dt019x_controls,
-> +				       ARRAY_SIZE(snd_dt019x_controls),
-> +				       snd_dt019x_init_values,
-> +				       ARRAY_SIZE(snd_dt019x_init_values),
-> +				       "DT019X");
-> +		if (err < 0)
-> +			return err;
->  		break;
->  	default:
->  		strcpy(card->mixername, "???");
-> 
