@@ -1,111 +1,66 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 20 May 2014 10:33:42 +0000
-Subject: [PATCH 2/8] staging: wlags49_h2: wl_priv: Remove useless return variables
-Message-Id: <1400582028-24990-2-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 29 May 2014 08:23:23 +0000
+Subject: [patch] DM RAID: fix a couple integer overflows
+Message-Id: <20140529082323.GA9209@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Henk de Groot <pe1dnn@amsat.org>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch remove variables that are initialized with a constant,
-are never updated, and are only used as parameter of return.
-Return the constant instead of using a variable.
+My static checker complains that if "num_raid_params" is UINT_MAX then
+the "if (num_raid_params + 1 > argc) {" check doesn't work as intended.
 
-Verified by compilation only.
+The other change is that I moved the "if (argc != (num_raid_devs * 2))"
+condition forward a few lines so it was before the call to
+context_alloc().  If we had an integer overflow inside that function
+then it would lead to an immediate crash.
 
-The coccinelle script that find and fixes this issue is:
-// <smpl>
-@@
-type T;
-constant C;
-identifier ret;
-@@
-- T ret = C;
-... when != ret
-- return ret;
-+ return C;
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/wlags49_h2/wl_priv.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+Static checker stuff.  Not tested.
 
-diff --git a/drivers/staging/wlags49_h2/wl_priv.c b/drivers/staging/wlags49_h2/wl_priv.c
-index 41f3324..aff9273 100644
---- a/drivers/staging/wlags49_h2/wl_priv.c
-+++ b/drivers/staging/wlags49_h2/wl_priv.c
-@@ -179,8 +179,6 @@ int wvlan_uil(struct uilreq *urq, struct wl_private *lp)
-  ******************************************************************************/
- int wvlan_uil_connect(struct uilreq *urq, struct wl_private *lp)
- {
--	int result = 0;
--
- 	if (!(lp->flags & WVLAN2_UIL_CONNECTED)) {
- 		lp->flags |= WVLAN2_UIL_CONNECTED;
- 		urq->hcfCtx = &(lp->hcfCtx);
-@@ -190,7 +188,7 @@ int wvlan_uil_connect(struct uilreq *urq, struct wl_private *lp)
- 		urq->result = UIL_ERR_IN_USE;
+diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+index 4880b69..e0d53fe 100644
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -1189,7 +1189,7 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	argv++;
+ 
+ 	/* Skip over RAID params for now and find out # of devices */
+-	if (num_raid_params + 1 > argc) {
++	if (num_raid_params >= argc) {
+ 		ti->error = "Arguments do not agree with counts given";
+ 		return -EINVAL;
+ 	}
+@@ -1200,6 +1200,12 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		return -EINVAL;
  	}
  
--	return result;
-+	return 0;
- } /* wvlan_uil_connect */
- /*======================================*/
++	argc -= num_raid_params + 1; /* +1: we already have num_raid_devs */
++	if (argc != (num_raid_devs * 2)) {
++		ti->error = "Supplied RAID devices does not match the count given";
++		return -EINVAL;
++	}
++
+ 	rs = context_alloc(ti, rt, (unsigned)num_raid_devs);
+ 	if (IS_ERR(rs))
+ 		return PTR_ERR(rs);
+@@ -1208,16 +1214,8 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	if (ret)
+ 		goto bad;
  
-@@ -218,8 +216,6 @@ int wvlan_uil_connect(struct uilreq *urq, struct wl_private *lp)
-  ******************************************************************************/
- int wvlan_uil_disconnect(struct uilreq *urq, struct wl_private *lp)
- {
--	int result = 0;
+-	ret = -EINVAL;
 -
- 	if (urq->hcfCtx = &(lp->hcfCtx)) {
- 		if (lp->flags & WVLAN2_UIL_CONNECTED) {
- 			lp->flags &= ~WVLAN2_UIL_CONNECTED;
-@@ -238,7 +234,7 @@ int wvlan_uil_disconnect(struct uilreq *urq, struct wl_private *lp)
- 		urq->result = UIL_ERR_WRONG_IFB;
- 	}
+-	argc -= num_raid_params + 1; /* +1: we already have num_raid_devs */
+ 	argv += num_raid_params + 1;
  
--	return result;
-+	return 0;
- } /* wvlan_uil_disconnect */
- /*======================================*/
- 
-@@ -1580,7 +1576,6 @@ int wvlan_set_netname(struct net_device *dev,
- {
- 	struct wl_private *lp = wl_priv(dev);
- 	unsigned long flags;
--	int ret = 0;
- 
- 	wl_lock(lp, &flags);
- 
-@@ -1591,7 +1586,7 @@ int wvlan_set_netname(struct net_device *dev,
- 	wl_apply(lp);
- 	wl_unlock(lp, &flags);
- 
--	return ret;
-+	return 0;
- } /* wvlan_set_netname */
- /*======================================*/
- 
-@@ -1683,7 +1678,6 @@ int wvlan_set_station_nickname(struct net_device *dev,
- 	struct wl_private *lp = wl_priv(dev);
- 	unsigned long flags;
- 	size_t len;
--	int         ret = 0;
- 
- 	wl_lock(lp, &flags);
- 
-@@ -1695,7 +1689,7 @@ int wvlan_set_station_nickname(struct net_device *dev,
- 	wl_apply(lp);
- 	wl_unlock(lp, &flags);
- 
--	return ret;
-+	return 0;
- } /* wvlan_set_station_nickname */
- /*======================================*/
- 
-
+-	if (argc != (num_raid_devs * 2)) {
+-		ti->error = "Supplied RAID devices does not match the count given";
+-		goto bad;
+-	}
+-
+ 	ret = dev_parms(rs, argv);
+ 	if (ret)
+ 		goto bad;
