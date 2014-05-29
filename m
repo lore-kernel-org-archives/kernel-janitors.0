@@ -1,24 +1,29 @@
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Date: Wed, 28 May 2014 21:57:11 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 29 May 2014 13:57:42 +0000
 Subject: Re: [patch 1/2] ALSA: fireworks: remove some stray checks
-Message-Id: <53865BB7.5020006@sakamocchi.jp>
+Message-Id: <s5hsinsadrd.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140528164202.GB1824@mwanda>
 In-Reply-To: <20140528164202.GB1824@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Clemens Ladisch <clemens@ladisch.de>
-Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-(May 29 2014 01:42), Dan Carpenter wrote:
+At Wed, 28 May 2014 19:42:02 +0300,
+Dan Carpenter wrote:
+> 
 > We checked "err" earlier.  These things seem to be left over code.
 > 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Reviewd-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Tested-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Applied, thanks.
 
+
+Takashi
+
+> 
 > diff --git a/sound/firewire/fireworks/fireworks.c b/sound/firewire/fireworks/fireworks.c
 > index a354d26..8e856cc 100644
 > --- a/sound/firewire/fireworks/fireworks.c
@@ -41,4 +46,4 @@ Tested-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 >  
 >  	if (hwinfo->flags & BIT(FLAG_RESP_ADDR_CHANGABLE))
 >  		efw->resp_addr_changable = true;
-
+> 
