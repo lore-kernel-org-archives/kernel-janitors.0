@@ -1,52 +1,50 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 22 May 2014 23:06:10 +0000
-Subject: Re: [PATCH] micrel: Use time_before_eq()
-Message-Id: <alpine.DEB.2.10.1405230705350.2606@hadrien>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323329-849477787-1400799994=:2606"
+From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Date: Fri, 30 May 2014 13:40:59 +0000
+Subject: [PATCH RESEND] sgi-gru: use time_before()
+Message-Id: <1401457259-17401-1-git-send-email-manuel.schoelling@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400781165-26498-1-git-send-email-manuel.schoelling@gmx.de>
-In-Reply-To: <1400781165-26498-1-git-send-email-manuel.schoelling@gmx.de>
-To: =?ISO-8859-15?Q?Manuel_Sch=F6lling?= <manuel.schoelling@gmx.de>
-Cc: davem@davemloft.net, jg1.han@samsung.com, dingtianhong@huawei.com, ebiederm@xmission.com, Julia.Lawall@lip6.fr, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: sivanich@sgi.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+To be future-proof and for better readability the time comparisons are
+modified to use time_before() instead of plain, error-prone math.
 
---8323329-849477787-1400799994=:2606
-Content-Type: TEXT/PLAIN; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+---
+ drivers/misc/sgi-gru/grumain.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On Thu, 22 May 2014, Manuel Schölling wrote:
+diff --git a/drivers/misc/sgi-gru/grumain.c b/drivers/misc/sgi-gru/grumain.c
+index ae16c8c..1525870 100644
+--- a/drivers/misc/sgi-gru/grumain.c
++++ b/drivers/misc/sgi-gru/grumain.c
+@@ -930,6 +930,7 @@ int gru_fault(struct vm_area_struct *vma, struct vm_fau=
+lt *vmf)
+ {
+ 	struct gru_thread_state *gts;
+ 	unsigned long paddr, vaddr;
++	unsigned long expires;
+=20
+ 	vaddr =3D (unsigned long)vmf->virtual_address;
+ 	gru_dbg(grudev, "vma %p, vaddr 0x%lx (0x%lx)\n",
+@@ -954,7 +955,8 @@ again:
+ 			mutex_unlock(&gts->ts_ctxlock);
+ 			set_current_state(TASK_INTERRUPTIBLE);
+ 			schedule_timeout(GRU_ASSIGN_DELAY);  /* true hack ZZZ */
+-			if (gts->ts_steal_jiffies + GRU_STEAL_DELAY < jiffies)
++			expires =3D gts->ts_steal_jiffies + GRU_STEAL_DELAY;
++			if (time_before(expires, jiffies))
+ 				gru_steal_context(gts);
+ 			goto again;
+ 		}
+--=20
+1.7.10.4
 
-> To be future-proof and for better readability the time comparisons are modified
-> to use time_before_eq() instead of plain, error-prone math.
-
-I had the impression that the real reason for these functions was that
-they were somehow sensitive to the possibility of overflow of jiffies?
-
-julia
-
-> Signed-off-by: Manuel Schölling <manuel.schoelling@gmx.de>
-> ---
->  drivers/net/ethernet/micrel/ksz884x.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/micrel/ksz884x.c b/drivers/net/ethernet/micrel/ksz884x.c
-> index 14ac0e2..90fa5f3 100644
-> --- a/drivers/net/ethernet/micrel/ksz884x.c
-> +++ b/drivers/net/ethernet/micrel/ksz884x.c
-> @@ -4930,7 +4930,7 @@ static void netdev_tx_timeout(struct net_device *dev)
->  		 * Only reset the hardware if time between calls is long
->  		 * enough.
->  		 */
-> -		if (jiffies - last_reset <= dev->watchdog_timeo)
-> +		if (time_before_eq(jiffies, last_reset + dev->watchdog_timeo))
->  			hw_priv = NULL;
->  	}
->
-> --
-> 1.7.10.4
->
->
---8323329-849477787-1400799994=:2606--
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
