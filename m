@@ -1,59 +1,94 @@
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Mon, 26 May 2014 15:21:21 +0000
-Subject: [PATCH 12/18] aic7xxx: Use kmemdup instead of kmalloc + memcpy
-Message-Id: <1401117687-28911-13-git-send-email-benoit.taine@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 31 May 2014 13:14:05 +0000
+Subject: [PATCH 5/11] drivers/scsi/bfa/bfad_bsg.c: Remove useless return variables
+Message-Id: <1401542051-3174-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hannes Reinecke <hare@suse.de>
-Cc: benoit.taine@lip6.fr, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
+Cc: kernel-janitors@vger.kernel.org, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This issue was reported by coccicheck using the semantic patch 
-at scripts/coccinelle/api/memdup.cocci
+This patch remove variables that are initialized with a constant,
+are never updated, and are only used as parameter of return.
+Return the constant instead of using a variable.
 
-Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+Verified by compilation only.
+
+The coccinelle script that find and fixes this issue is:
+// <smpl>
+@@
+type T;
+constant C;
+identifier ret;
+@@
+- T ret = C;
+... when != ret
+    when strict
+return
+- ret
++ C
+;
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
 ---
-Tested by compilation without errors.
+ drivers/scsi/bfa/bfad_bsg.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
- drivers/scsi/aic7xxx/aic79xx_core.c |    4 ++--
- drivers/scsi/aic7xxx/aic7xxx_core.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
-index 0bcacf7..01353b1 100644
---- a/drivers/scsi/aic7xxx/aic79xx_core.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-@@ -9494,10 +9494,10 @@ ahd_loadseq(struct ahd_softc *ahd)
- 	if (cs_count != 0) {
+diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c
+index 8994fb8..a6ee1cf 100644
+--- a/drivers/scsi/bfa/bfad_bsg.c
++++ b/drivers/scsi/bfa/bfad_bsg.c
+@@ -26,7 +26,6 @@ int
+ bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)
+ {
+ 	struct bfa_bsg_gen_s *iocmd = (struct bfa_bsg_gen_s *)cmd;
+-	int	rc = 0;
+ 	unsigned long	flags;
  
- 		cs_count *= sizeof(struct cs);
--		ahd->critical_sections = kmalloc(cs_count, GFP_ATOMIC);
-+		ahd->critical_sections = kmemdup(cs_table, cs_count,
-+						 GFP_ATOMIC);
- 		if (ahd->critical_sections = NULL)
- 			panic("ahd_loadseq: Could not malloc");
--		memcpy(ahd->critical_sections, cs_table, cs_count);
+ 	spin_lock_irqsave(&bfad->bfad_lock, flags);
+@@ -34,7 +33,7 @@ bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)
+ 	if (!bfa_ioc_is_disabled(&bfad->bfa.ioc)) {
+ 		spin_unlock_irqrestore(&bfad->bfad_lock, flags);
+ 		iocmd->status = BFA_STATUS_OK;
+-		return rc;
++		return 0;
  	}
- 	ahd_outb(ahd, SEQCTL0, PERRORDIS|FAILDIS|FASTMODE);
  
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-index 10172a3..f09337a 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -6941,10 +6941,10 @@ ahc_loadseq(struct ahc_softc *ahc)
- 	if (cs_count != 0) {
+ 	init_completion(&bfad->enable_comp);
+@@ -43,21 +42,20 @@ bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)
+ 	spin_unlock_irqrestore(&bfad->bfad_lock, flags);
+ 	wait_for_completion(&bfad->enable_comp);
  
- 		cs_count *= sizeof(struct cs);
--		ahc->critical_sections = kmalloc(cs_count, GFP_ATOMIC);
-+		ahc->critical_sections = kmemdup(cs_table, cs_count,
-+						 GFP_ATOMIC);
- 		if (ahc->critical_sections = NULL)
- 			panic("ahc_loadseq: Could not malloc");
--		memcpy(ahc->critical_sections, cs_table, cs_count);
+-	return rc;
++	return 0;
+ }
+ 
+ int
+ bfad_iocmd_ioc_disable(struct bfad_s *bfad, void *cmd)
+ {
+ 	struct bfa_bsg_gen_s *iocmd = (struct bfa_bsg_gen_s *)cmd;
+-	int	rc = 0;
+ 	unsigned long	flags;
+ 
+ 	spin_lock_irqsave(&bfad->bfad_lock, flags);
+ 	if (bfa_ioc_is_disabled(&bfad->bfa.ioc)) {
+ 		spin_unlock_irqrestore(&bfad->bfad_lock, flags);
+ 		iocmd->status = BFA_STATUS_OK;
+-		return rc;
++		return 0;
  	}
- 	ahc_outb(ahc, SEQCTL, PERRORDIS|FAILDIS|FASTMODE);
  
+ 	if (bfad->disable_active) {
+@@ -74,7 +72,7 @@ bfad_iocmd_ioc_disable(struct bfad_s *bfad, void *cmd)
+ 	bfad->disable_active = BFA_FALSE;
+ 	iocmd->status = BFA_STATUS_OK;
+ 
+-	return rc;
++	return 0;
+ }
+ 
+ static int
 
