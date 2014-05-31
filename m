@@ -1,66 +1,136 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 19 May 2014 04:31:14 +0000
-Subject: [PATCH 12/13] brcmsmac: make return of 0 explicit
-Message-Id: <1400473875-22228-13-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 31 May 2014 16:30:52 +0000
+Subject: [PATCH 9/11 V2] drivers/media: Remove useless return variables
+Message-Id: <1401553852-13753-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Brett Rudley <brudley@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This patch remove variables that are initialized with a constant,
+are never updated, and are only used as parameter of return.
+Return the constant instead of using a variable.
 
-Delete unnecessary local variable whose value is always 0 and that hides
-the fact that the result is always 0.
+Verified by compilation only.
 
-A simplified version of the semantic patch that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
+The coccinelle script that find and fixes this issue is:
 // <smpl>
-@r exists@
-local idexpression ret;
-expression e;
-position p;
 @@
-
--ret = 0;
-... when != ret = e
-return 
+type T;
+constant C;
+identifier ret;
+@@
+- T ret = C;
+... when != ret
+    when strict
+return
 - ret
-+ 0
-  ;
++ C
+;
 // </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/net/wireless/brcm80211/brcmsmac/main.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Changes from V1:
+ - Do not remove comment after the definition of return variable
 
-diff --git a/drivers/net/wireless/brcm80211/brcmsmac/main.c b/drivers/net/wireless/brcm80211/brcmsmac/main.c
-index 9417cb5..3054725 100644
---- a/drivers/net/wireless/brcm80211/brcmsmac/main.c
-+++ b/drivers/net/wireless/brcm80211/brcmsmac/main.c
-@@ -4875,9 +4875,6 @@ static int brcms_b_detach(struct brcms_c_info *wlc)
- 	uint i;
- 	struct brcms_hw_band *band;
- 	struct brcms_hardware *wlc_hw = wlc->hw;
--	int callbacks;
--
--	callbacks = 0;
+ drivers/media/pci/ngene/ngene-core.c      |   11 ++---------
+ drivers/media/usb/cx231xx/cx231xx-video.c |   11 +++++------
+ 2 files changed, 7 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
+index 970e833..826228c 100644
+--- a/drivers/media/pci/ngene/ngene-core.c
++++ b/drivers/media/pci/ngene/ngene-core.c
+@@ -910,7 +910,6 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+ {
+ 	dma_addr_t tmp;
+ 	u32 i, j;
+-	int status = 0;
+ 	u32 SCListMemSize = pRingBuffer->NumBuffers
+ 		* ((Buffer2Length != 0) ? (NUM_SCATTER_GATHER_ENTRIES * 2) :
+ 		    NUM_SCATTER_GATHER_ENTRIES)
+@@ -1010,14 +1009,12 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
  
- 	brcms_b_detach_dmapio(wlc_hw);
- 
-@@ -4901,7 +4898,7 @@ static int brcms_b_detach(struct brcms_c_info *wlc)
- 		wlc_hw->sih = NULL;
  	}
  
--	return callbacks;
+-	return status;
 +	return 0;
- 
  }
  
+ static int FillTSIdleBuffer(struct SRingBufferDescriptor *pIdleBuffer,
+ 			    struct SRingBufferDescriptor *pRingBuffer)
+ {
+-	int status = 0;
+-
+ 	/* Copy pointer to scatter gather list in TSRingbuffer
+ 	   structure for buffer 2
+ 	   Load number of buffer
+@@ -1038,7 +1035,7 @@ static int FillTSIdleBuffer(struct SRingBufferDescriptor *pIdleBuffer,
+ 			pIdleBuffer->Head->ngeneBuffer.Number_of_entries_1;
+ 		Cur = Cur->Next;
+ 	}
+-	return status;
++	return 0;
+ }
+ 
+ static u32 RingBufferSizes[MAX_STREAM] = {
+diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
+index 1f87513..cba7fea 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-video.c
++++ b/drivers/media/usb/cx231xx/cx231xx-video.c
+@@ -208,7 +208,7 @@ static inline void get_next_buf(struct cx231xx_dmaqueue *dma_q,
+ static inline int cx231xx_isoc_copy(struct cx231xx *dev, struct urb *urb)
+ {
+ 	struct cx231xx_dmaqueue *dma_q = urb->context;
+-	int i, rc = 1;
++	int i;
+ 	unsigned char *p_buffer;
+ 	u32 bytes_parsed = 0, buffer_size = 0;
+ 	u8 sav_eav = 0;
+@@ -299,13 +299,12 @@ static inline int cx231xx_isoc_copy(struct cx231xx *dev, struct urb *urb)
+ 		bytes_parsed = 0;
+ 
+ 	}
+-	return rc;
++	return 1;
+ }
+ 
+ static inline int cx231xx_bulk_copy(struct cx231xx *dev, struct urb *urb)
+ {
+ 	struct cx231xx_dmaqueue *dma_q = urb->context;
+-	int rc = 1;
+ 	unsigned char *p_buffer;
+ 	u32 bytes_parsed = 0, buffer_size = 0;
+ 	u8 sav_eav = 0;
+@@ -379,7 +378,7 @@ static inline int cx231xx_bulk_copy(struct cx231xx *dev, struct urb *urb)
+ 		bytes_parsed = 0;
+ 
+ 	}
+-	return rc;
++	return 1;
+ }
+ 
+ 
+@@ -1620,7 +1619,7 @@ static int radio_s_tuner(struct file *file, void *priv, const struct v4l2_tuner
+  */
+ static int cx231xx_v4l2_open(struct file *filp)
+ {
+-	int errCode = 0, radio = 0;
++	int radio = 0;
+ 	struct video_device *vdev = video_devdata(filp);
+ 	struct cx231xx *dev = video_drvdata(filp);
+ 	struct cx231xx_fh *fh;
+@@ -1718,7 +1717,7 @@ static int cx231xx_v4l2_open(struct file *filp)
+ 	mutex_unlock(&dev->lock);
+ 	v4l2_fh_add(&fh->fh);
+ 
+-	return errCode;
++	return 0;
+ }
+ 
+ /*
 
