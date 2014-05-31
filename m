@@ -1,13 +1,13 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 20 May 2014 10:33:47 +0000
-Subject: [PATCH 7/8] staging: ozwpan: Remove useless return variables
-Message-Id: <1400582028-24990-7-git-send-email-peter.senna@gmail.com>
+Date: Sat, 31 May 2014 16:21:59 +0000
+Subject: [PATCH 4/11 V2] via-ircc: Remove useless return variables
+Message-Id: <1401553319-11763-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rupesh Gujare <rupesh.gujare@atmel.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <samuel@sortiz.org>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 This patch remove variables that are initialized with a constant,
 are never updated, and are only used as parameter of return.
@@ -24,52 +24,52 @@ identifier ret;
 @@
 - T ret = C;
 ... when != ret
-- return ret;
-+ return C;
+    when strict
+return
+- ret
++ C
+;
 // </smpl>
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/staging/ozwpan/ozhcd.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Changes from V1:
+ - Moved comment about return value to near the return value
 
-diff --git a/drivers/staging/ozwpan/ozhcd.c b/drivers/staging/ozwpan/ozhcd.c
-index b3d401a..7be0058 100644
---- a/drivers/staging/ozwpan/ozhcd.c
-+++ b/drivers/staging/ozwpan/ozhcd.c
-@@ -1997,7 +1997,6 @@ static void oz_get_hub_descriptor(struct usb_hcd *hcd,
- static int oz_set_port_feature(struct usb_hcd *hcd, u16 wvalue, u16 windex)
+ drivers/net/irda/via-ircc.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/irda/via-ircc.c b/drivers/net/irda/via-ircc.c
+index 2900af0..5a5e17b 100644
+--- a/drivers/net/irda/via-ircc.c
++++ b/drivers/net/irda/via-ircc.c
+@@ -510,10 +510,8 @@ static void via_hw_init(struct via_ircc_cb *self)
+  */
+ static int via_ircc_read_dongle_id(int iobase)
  {
- 	struct oz_port *port;
--	int err = 0;
- 	u8 port_id = (u8)windex;
- 	struct oz_hcd *ozhcd = oz_hcd_private(hcd);
- 	unsigned set_bits = 0;
-@@ -2064,7 +2063,7 @@ static int oz_set_port_feature(struct usb_hcd *hcd, u16 wvalue, u16 windex)
- 		spin_unlock_bh(&port->port_lock);
- 	}
- 	oz_dbg(HUB, "Port[%d] status = 0x%x\n", port_id, port->status);
--	return err;
-+	return 0;
+-	int dongle_id = 9;	/* Default to IBM */
+-
+ 	IRDA_ERROR("via-ircc: dongle probing not supported, please specify dongle_id module parameter.\n");
+-	return dongle_id;
++	return 9;	/* Default to IBM */
  }
  
  /*
-@@ -2073,7 +2072,6 @@ static int oz_set_port_feature(struct usb_hcd *hcd, u16 wvalue, u16 windex)
- static int oz_clear_port_feature(struct usb_hcd *hcd, u16 wvalue, u16 windex)
+@@ -926,7 +924,6 @@ static int via_ircc_dma_xmit(struct via_ircc_cb *self, u16 iobase)
+ static int via_ircc_dma_xmit_complete(struct via_ircc_cb *self)
  {
- 	struct oz_port *port;
--	int err = 0;
- 	u8 port_id = (u8)windex;
- 	struct oz_hcd *ozhcd = oz_hcd_private(hcd);
- 	unsigned clear_bits = 0;
-@@ -2140,7 +2138,7 @@ static int oz_clear_port_feature(struct usb_hcd *hcd, u16 wvalue, u16 windex)
- 	}
- 	oz_dbg(HUB, "Port[%d] status = 0x%x\n",
- 	       port_id, ozhcd->ports[port_id-1].status);
--	return err;
-+	return 0;
+ 	int iobase;
+-	int ret = TRUE;
+ 	u8 Tx_status;
+ 
+ 	IRDA_DEBUG(3, "%s()\n", __func__);
+@@ -983,7 +980,7 @@ F01_E*/
+ 	// Tell the network layer, that we can accept more frames 
+ 	netif_wake_queue(self->netdev);
+ //F01   }
+-	return ret;
++	return TRUE;
  }
  
  /*
-
