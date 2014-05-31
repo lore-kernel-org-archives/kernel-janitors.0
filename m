@@ -1,50 +1,96 @@
-From: =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
-Date: Sun, 25 May 2014 18:14:13 +0000
-Subject: [PATCH] sgi-gru: use time_before()
-Message-Id: <1401041653-20847-1-git-send-email-manuel.schoelling@gmx.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 31 May 2014 13:14:07 +0000
+Subject: [PATCH 7/11] bnx2x: Remove useless return variables
+Message-Id: <1401542051-3174-7-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: sivanich@sgi.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, =?UTF-8?q?Manuel=20Sch=C3=B6lling?= <manuel.schoelling@gmx.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ariel Elior <ariele@broadcom.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-To be future-proof and for better readability the time comparisons are
-modified to use time_before() instead of plain, error-prone math.
+This patch remove variables that are initialized with a constant,
+are never updated, and are only used as parameter of return.
+Return the constant instead of using a variable.
 
-Signed-off-by: Manuel Sch=C3=B6lling <manuel.schoelling@gmx.de>
+Verified by compilation only.
+
+The coccinelle script that find and fixes this issue is:
+// <smpl>
+@@
+type T;
+constant C;
+identifier ret;
+@@
+- T ret = C;
+... when != ret
+    when strict
+return
+- ret
++ C
+;
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
 ---
- drivers/misc/sgi-gru/grumain.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/misc/sgi-gru/grumain.c b/drivers/misc/sgi-gru/grumain.c
-index ae16c8c..1525870 100644
---- a/drivers/misc/sgi-gru/grumain.c
-+++ b/drivers/misc/sgi-gru/grumain.c
-@@ -930,6 +930,7 @@ int gru_fault(struct vm_area_struct *vma, struct vm_fau=
-lt *vmf)
- {
- 	struct gru_thread_state *gts;
- 	unsigned long paddr, vaddr;
-+	unsigned long expires;
-=20
- 	vaddr =3D (unsigned long)vmf->virtual_address;
- 	gru_dbg(grudev, "vma %p, vaddr 0x%lx (0x%lx)\n",
-@@ -954,7 +955,8 @@ again:
- 			mutex_unlock(&gts->ts_ctxlock);
- 			set_current_state(TASK_INTERRUPTIBLE);
- 			schedule_timeout(GRU_ASSIGN_DELAY);  /* true hack ZZZ */
--			if (gts->ts_steal_jiffies + GRU_STEAL_DELAY < jiffies)
-+			expires =3D gts->ts_steal_jiffies + GRU_STEAL_DELAY;
-+			if (time_before(expires, jiffies))
- 				gru_steal_context(gts);
- 			goto again;
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+index 9b6b3d7..4fef1e1 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+@@ -2218,7 +2218,6 @@ int bnx2x_update_pfc(struct link_params *params,
+ 	 */
+ 	u32 val;
+ 	struct bnx2x *bp = params->bp;
+-	int bnx2x_status = 0;
+ 	u8 bmac_loopback = (params->loopback_mode = LOOPBACK_BMAC);
+ 
+ 	if (params->feature_config_flags & FEATURE_CONFIG_PFC_ENABLED)
+@@ -2232,7 +2231,7 @@ int bnx2x_update_pfc(struct link_params *params,
+ 	bnx2x_update_pfc_nig(params, vars, pfc_params);
+ 
+ 	if (!vars->link_up)
+-		return bnx2x_status;
++		return 0;
+ 
+ 	DP(NETIF_MSG_LINK, "About to update PFC in BMAC\n");
+ 
+@@ -2246,7 +2245,7 @@ int bnx2x_update_pfc(struct link_params *params,
+ 		    = 0) {
+ 			DP(NETIF_MSG_LINK, "About to update PFC in EMAC\n");
+ 			bnx2x_emac_enable(params, vars, 0);
+-			return bnx2x_status;
++			return 0;
  		}
---=20
-1.7.10.4
+ 		if (CHIP_IS_E2(bp))
+ 			bnx2x_update_pfc_bmac2(params, vars, bmac_loopback);
+@@ -2260,7 +2259,7 @@ int bnx2x_update_pfc(struct link_params *params,
+ 			val = 1;
+ 		REG_WR(bp, NIG_REG_BMAC0_PAUSE_OUT_EN + params->port*4, val);
+ 	}
+-	return bnx2x_status;
++	return 0;
+ }
+ 
+ static int bnx2x_bmac1_enable(struct link_params *params,
+@@ -6473,7 +6472,6 @@ int bnx2x_test_link(struct link_params *params, struct link_vars *vars,
+ static int bnx2x_link_initialize(struct link_params *params,
+ 				 struct link_vars *vars)
+ {
+-	int rc = 0;
+ 	u8 phy_index, non_ext_phy;
+ 	struct bnx2x *bp = params->bp;
+ 	/* In case of external phy existence, the line speed would be the
+@@ -6546,7 +6544,7 @@ static int bnx2x_link_initialize(struct link_params *params,
+ 			NIG_STATUS_XGXS0_LINK_STATUS |
+ 			NIG_STATUS_SERDES0_LINK_STATUS |
+ 			NIG_MASK_MI_INT));
+-	return rc;
++	return 0;
+ }
+ 
+ static void bnx2x_int_link_reset(struct bnx2x_phy *phy,
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
