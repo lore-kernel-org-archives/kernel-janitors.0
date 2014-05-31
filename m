@@ -1,40 +1,70 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 29 May 2014 13:57:55 +0000
-Subject: Re: [patch 2/2] ALSA: fireworks: small leak on error path
-Message-Id: <s5hr43cadr0.wl%tiwai@suse.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 31 May 2014 13:14:02 +0000
+Subject: [PATCH 2/11] cw1200: Remove useless return variables
+Message-Id: <1401542051-3174-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140528164246.GC1824@mwanda>
-In-Reply-To: <20140528164246.GC1824@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Solomon Peachy <pizza@shaftnet.org>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-At Wed, 28 May 2014 19:42:46 +0300,
-Dan Carpenter wrote:
-> 
-> There was a typo here so we return directly instead of freeing "hwinfo".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This patch remove variables that are initialized with a constant,
+are never updated, and are only used as parameter of return.
+Return the constant instead of using a variable.
 
-Applied, thanks.
+Verified by compilation only.
 
+The coccinelle script that find and fixes this issue is:
+// <smpl>
+@@
+type T;
+constant C;
+identifier ret;
+@@
+- T ret = C;
+... when != ret
+    when strict
+return
+- ret
++ C
+;
+// </smpl>
 
-Takashi
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-> 
-> diff --git a/sound/firewire/fireworks/fireworks.c b/sound/firewire/fireworks/fireworks.c
-> index 8e856cc..996fdc4 100644
-> --- a/sound/firewire/fireworks/fireworks.c
-> +++ b/sound/firewire/fireworks/fireworks.c
-> @@ -157,7 +157,7 @@ get_hardware_info(struct snd_efw *efw)
->  	/* Hardware metering. */
->  	if (hwinfo->phys_in_grp_count  > HWINFO_MAX_CAPS_GROUPS ||
->  	    hwinfo->phys_out_grp_count > HWINFO_MAX_CAPS_GROUPS) {
-> -		return -EIO;
-> +		err = -EIO;
->  		goto end;
->  	}
->  	efw->phys_in = hwinfo->phys_in;
-> 
+---
+ drivers/net/wireless/cw1200/sta.c |   19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
+
+diff --git a/drivers/net/wireless/cw1200/sta.c b/drivers/net/wireless/cw1200/sta.c
+index cd0cad7..622370c 100644
+--- a/drivers/net/wireless/cw1200/sta.c
++++ b/drivers/net/wireless/cw1200/sta.c
+@@ -2289,24 +2289,7 @@ static int cw1200_upload_null(struct cw1200_common *priv)
+ 
+ static int cw1200_upload_qosnull(struct cw1200_common *priv)
+ {
+-	int ret = 0;
+-	/* TODO:  This needs to be implemented
+-
+-	struct wsm_template_frame frame = {
+-		.frame_type = WSM_FRAME_TYPE_QOS_NULL,
+-		.rate = 0xFF,
+-	};
+-
+-	frame.skb = ieee80211_qosnullfunc_get(priv->hw, priv->vif);
+-	if (!frame.skb)
+-		return -ENOMEM;
+-
+-	ret = wsm_set_template_frame(priv, &frame);
+-
+-	dev_kfree_skb(frame.skb);
+-
+-	*/
+-	return ret;
++	return 0;
+ }
+ 
+ static int cw1200_enable_beaconing(struct cw1200_common *priv,
+
