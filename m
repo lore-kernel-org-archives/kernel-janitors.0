@@ -1,7 +1,7 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 31 May 2014 16:30:52 +0000
-Subject: [PATCH 9/11 V2] drivers/media: Remove useless return variables
-Message-Id: <1401553852-13753-1-git-send-email-peter.senna@gmail.com>
+Date: Sat, 31 May 2014 13:14:09 +0000
+Subject: [PATCH 9/11] drivers/media: Remove useless return variables
+Message-Id: <1401542051-3174-9-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -34,15 +34,12 @@ return
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
-Changes from V1:
- - Do not remove comment after the definition of return variable
-
  drivers/media/pci/ngene/ngene-core.c      |   11 ++---------
  drivers/media/usb/cx231xx/cx231xx-video.c |   11 +++++------
  2 files changed, 7 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/media/pci/ngene/ngene-core.c b/drivers/media/pci/ngene/ngene-core.c
-index 970e833..826228c 100644
+index 970e833..d8435a5 100644
 --- a/drivers/media/pci/ngene/ngene-core.c
 +++ b/drivers/media/pci/ngene/ngene-core.c
 @@ -910,7 +910,6 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
@@ -53,7 +50,7 @@ index 970e833..826228c 100644
  	u32 SCListMemSize = pRingBuffer->NumBuffers
  		* ((Buffer2Length != 0) ? (NUM_SCATTER_GATHER_ENTRIES * 2) :
  		    NUM_SCATTER_GATHER_ENTRIES)
-@@ -1010,14 +1009,12 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
+@@ -1010,18 +1009,12 @@ static int AllocateRingBuffers(struct pci_dev *pci_dev,
  
  	}
  
@@ -66,10 +63,14 @@ index 970e833..826228c 100644
  {
 -	int status = 0;
 -
- 	/* Copy pointer to scatter gather list in TSRingbuffer
- 	   structure for buffer 2
- 	   Load number of buffer
-@@ -1038,7 +1035,7 @@ static int FillTSIdleBuffer(struct SRingBufferDescriptor *pIdleBuffer,
+-	/* Copy pointer to scatter gather list in TSRingbuffer
+-	   structure for buffer 2
+-	   Load number of buffer
+-	*/
+ 	u32 n = pRingBuffer->NumBuffers;
+ 
+ 	/* Point to first buffer entry */
+@@ -1038,7 +1031,7 @@ static int FillTSIdleBuffer(struct SRingBufferDescriptor *pIdleBuffer,
  			pIdleBuffer->Head->ngeneBuffer.Number_of_entries_1;
  		Cur = Cur->Next;
  	}
