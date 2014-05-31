@@ -1,42 +1,63 @@
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Mon, 26 May 2014 15:21:12 +0000
-Subject: [PATCH 2/18] memstick: Use kmemdup instead of kmalloc + memcpy
-Message-Id: <1401117687-28911-4-git-send-email-benoit.taine@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 31 May 2014 16:12:26 +0000
+Subject: [PATCH 2/11 V2] cw1200: Remove useless return variables
+Message-Id: <1401552746-10615-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1401117687-28911-1-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: benoit.taine@lip6.fr, kernel-janitors@vger.kernel.org
+To: Solomon Peachy <pizza@shaftnet.org>
+Cc: kernel-janitors@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This issue was reported by coccicheck using the semantic patch 
-at scripts/coccinelle/api/memdup.cocci
+This patch remove variables that are initialized with a constant,
+are never updated, and are only used as parameter of return.
+Return the constant instead of using a variable.
 
-Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+Verified by compilation only.
+
+The coccinelle script that find and fixes this issue is:
+// <smpl>
+@@
+type T;
+constant C;
+identifier ret;
+@@
+- T ret = C;
+... when != ret
+    when strict
+return
+- ret
++ C
+;
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
 ---
-Tested by compilation without errors.
+Changes from V1:
+- Keep commented code instead of removing it
 
- drivers/memstick/core/mspro_block.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/cw1200/sta.c |   19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
-diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
-index fc145d2..d52412d 100644
---- a/drivers/memstick/core/mspro_block.c
-+++ b/drivers/memstick/core/mspro_block.c
-@@ -1032,12 +1032,11 @@ static int mspro_block_read_attributes(struct memstick_dev *card)
- 	}
- 	msb->attr_group.name = "media_attributes";
+diff --git a/drivers/net/wireless/cw1200/sta.c b/drivers/net/wireless/cw1200/sta.c
+index cd0cad7..5b84664 100644
+--- a/drivers/net/wireless/cw1200/sta.c
++++ b/drivers/net/wireless/cw1200/sta.c
+@@ -2289,7 +2289,6 @@ static int cw1200_upload_null(struct cw1200_common *priv)
  
--	buffer = kmalloc(attr_len, GFP_KERNEL);
-+	buffer = kmemdup((char *)attr, attr_len, GFP_KERNEL);
- 	if (!buffer) {
- 		rc = -ENOMEM;
- 		goto out_free_attr;
- 	}
--	memcpy(buffer, (char *)attr, attr_len);
+ static int cw1200_upload_qosnull(struct cw1200_common *priv)
+ {
+-	int ret = 0;
+ 	/* TODO:  This needs to be implemented
  
- 	for (cnt = 0; cnt < attr_count; ++cnt) {
- 		s_attr = kzalloc(sizeof(struct mspro_sys_attr), GFP_KERNEL);
-
+ 	struct wsm_template_frame frame = {
+@@ -2306,7 +2305,7 @@ static int cw1200_upload_qosnull(struct cw1200_common *priv)
+ 	dev_kfree_skb(frame.skb);
+ 
+ 	*/
+-	return ret;
++	return 0;
+ }
+ 
+ static int cw1200_enable_beaconing(struct cw1200_common *priv,
