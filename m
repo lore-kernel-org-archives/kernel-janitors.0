@@ -1,88 +1,74 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Date: Sat, 03 May 2014 10:17:04 +0000
-Subject: Re: [patch v2] [patch] staging: iio: ad799x: remove some unneeded IS_ERR() checks
-Message-Id: <5364C220.5010007@kernel.org>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 31 May 2014 13:14:01 +0000
+Subject: [PATCH 1/11] USB: kl5kusb105: Remove useless return variables
+Message-Id: <1401542051-3174-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140430210529.GA6008@mwanda> <536170B9.8030708@gmx.de>
-In-Reply-To: <536170B9.8030708@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hartmut Knaack <knaack.h@gmx.de>, Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, Aida Mynzhasova <ai.c.c0der@gmail.com>, Masanari Iida <standby24x7@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Oliver Neukum <oliver@neukum.org>
+Cc: kernel-janitors@vger.kernel.org, Johan Hovold <jhovold@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 30/04/14 22:52, Hartmut Knaack wrote:
-> Dan Carpenter schrieb:
->> My static checker is upset that we check IS_ERR(t->reg) when we know it
->> is not an ERR_PTR.
->>
->> Checking for IS_ERR() twice is often a sign of confusion and buggy code.
->> In this case, if the call to "ret = regulator_enable(st->vref);" fails,
->> then we call "regulator_disable(st->vref);" and that's a mistake because
->> "st->vref" is not enabled.
->>
->> I fixed these problems and Hartmut Knaack pointed out a couple unneeded
->> IS_ERR() checks in ad799x_remove() so I have removed those as well.
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Hartmut Knaack <knaack.h@gmx.de>
-Thanks to both of you for this.
+This patch remove variables that are initialized with a constant,
+are never updated, and are only used as parameter of return.
+Return the constant instead of using a variable.
 
-Applied to the togreg branch of iio.git as the cleanup that caused
-this was most likely part of a series that is only in staging-next at
-the moment.
+Verified by compilation only.
 
-Jonathan
+The coccinelle script that find and fixes this issue is:
+// <smpl>
+@@
+type T;
+constant C;
+identifier ret;
+@@
+- T ret = C;
+... when != ret
+    when strict
+return
+- ret
++ C
+;
+// </smpl>
 
->> ---
->> v2: remove the unneeded checks in ad799x_remove() as well.  Updated the
->>      commit message to say that it's actually a small bug fix.
->>
->> diff --git a/drivers/iio/adc/ad799x.c b/drivers/iio/adc/ad799x.c
->> index 16a8b14..39b4cb4 100644
->> --- a/drivers/iio/adc/ad799x.c
->> +++ b/drivers/iio/adc/ad799x.c
->> @@ -717,7 +717,7 @@ static int ad799x_probe(struct i2c_client *client,
->>   	ret = iio_triggered_buffer_setup(indio_dev, NULL,
->>   		&ad799x_trigger_handler, NULL);
->>   	if (ret)
->> -		goto error_disable_reg;
->> +		goto error_disable_vref;
->>
->>   	if (client->irq > 0) {
->>   		ret = devm_request_threaded_irq(&client->dev,
->> @@ -739,11 +739,10 @@ static int ad799x_probe(struct i2c_client *client,
->>
->>   error_cleanup_ring:
->>   	iio_triggered_buffer_cleanup(indio_dev);
->> +error_disable_vref:
->> +	regulator_disable(st->vref);
->>   error_disable_reg:
->> -	if (!IS_ERR(st->vref))
->> -		regulator_disable(st->vref);
->> -	if (!IS_ERR(st->reg))
->> -		regulator_disable(st->reg);
->> +	regulator_disable(st->reg);
->>
->>   	return ret;
->>   }
->> @@ -756,10 +755,8 @@ static int ad799x_remove(struct i2c_client *client)
->>   	iio_device_unregister(indio_dev);
->>
->>   	iio_triggered_buffer_cleanup(indio_dev);
->> -	if (!IS_ERR(st->vref))
->> -		regulator_disable(st->vref);
->> -	if (!IS_ERR(st->reg))
->> -		regulator_disable(st->reg);
->> +	regulator_disable(st->vref);
->> +	regulator_disable(st->reg);
->>   	kfree(st->rx_buf);
->>
->>   	return 0;
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
+---
+ drivers/usb/serial/kl5kusb105.c |   23 +----------------------
+ 1 file changed, 1 insertion(+), 22 deletions(-)
+
+diff --git a/drivers/usb/serial/kl5kusb105.c b/drivers/usb/serial/kl5kusb105.c
+index d7440b7..2657c00 100644
+--- a/drivers/usb/serial/kl5kusb105.c
++++ b/drivers/usb/serial/kl5kusb105.c
+@@ -605,28 +605,7 @@ static int klsi_105_tiocmget(struct tty_struct *tty)
+ static int klsi_105_tiocmset(struct tty_struct *tty,
+ 			     unsigned int set, unsigned int clear)
+ {
+-	int retval = -EINVAL;
+-
+-/* if this ever gets implemented, it should be done something like this:
+-	struct usb_serial *serial = port->serial;
+-	struct klsi_105_private *priv = usb_get_serial_port_data(port);
+-	unsigned long flags;
+-	int control;
+-
+-	spin_lock_irqsave (&priv->lock, flags);
+-	if (set & TIOCM_RTS)
+-		priv->control_state |= TIOCM_RTS;
+-	if (set & TIOCM_DTR)
+-		priv->control_state |= TIOCM_DTR;
+-	if (clear & TIOCM_RTS)
+-		priv->control_state &= ~TIOCM_RTS;
+-	if (clear & TIOCM_DTR)
+-		priv->control_state &= ~TIOCM_DTR;
+-	control = priv->control_state;
+-	spin_unlock_irqrestore (&priv->lock, flags);
+-	retval = mct_u232_set_modem_ctrl(serial, control);
+-*/
+-	return retval;
++	return -EINVAL;
+ }
+ 
+ module_usb_serial_driver(serial_drivers, id_table);
 
