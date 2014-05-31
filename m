@@ -1,56 +1,113 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 19 May 2014 04:31:12 +0000
-Subject: [PATCH 10/13] staging: rtl8192e: make return of 0 explicit
-Message-Id: <1400473875-22228-11-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 31 May 2014 13:14:08 +0000
+Subject: [PATCH 8/11] drivers/media/usb/usbvision/usbvision-core.c: Remove useless return variables
+Message-Id: <1401542051-3174-8-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This patch remove variables that are initialized with a constant,
+are never updated, and are only used as parameter of return.
+Return the constant instead of using a variable.
 
-Delete unnecessary use of a local variable to immediately return 0.
+Verified by compilation only.
 
-A simplified version of the semantic patch that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
+The coccinelle script that find and fixes this issue is:
 // <smpl>
-@r exists@
-local idexpression ret;
-expression e;
-position p;
 @@
-
--ret = 0;
-... when != ret = e
-return 
+type T;
+constant C;
+identifier ret;
+@@
+- T ret = C;
+... when != ret
+    when strict
+return
 - ret
-+ 0
-  ;
++ C
+;
 // </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
 ---
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/usb/usbvision/usbvision-core.c |   16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-index 356d521..2920e40 100644
---- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-@@ -1915,8 +1915,7 @@ int rtl8192_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	memcpy((unsigned char *)(skb->cb), &dev, sizeof(dev));
- 	if (queue_index = TXCMD_QUEUE) {
- 		rtl8192_tx_cmd(dev, skb);
--		ret = 0;
--		return ret;
+diff --git a/drivers/media/usb/usbvision/usbvision-core.c b/drivers/media/usb/usbvision/usbvision-core.c
+index 816b1cf..302aa07 100644
+--- a/drivers/media/usb/usbvision/usbvision-core.c
++++ b/drivers/media/usb/usbvision/usbvision-core.c
+@@ -1463,8 +1463,6 @@ static int usbvision_write_reg_irq(struct usb_usbvision *usbvision, int address,
+ 
+ static int usbvision_init_compression(struct usb_usbvision *usbvision)
+ {
+-	int err_code = 0;
+-
+ 	usbvision->last_isoc_frame_num = -1;
+ 	usbvision->isoc_data_count = 0;
+ 	usbvision->isoc_packet_count = 0;
+@@ -1475,7 +1473,7 @@ static int usbvision_init_compression(struct usb_usbvision *usbvision)
+ 	usbvision->request_intra = 1;
+ 	usbvision->isoc_measure_bandwidth_count = 0;
+ 
+-	return err_code;
++	return 0;
+ }
+ 
+ /* this function measures the used bandwidth since last call
+@@ -1484,11 +1482,9 @@ static int usbvision_init_compression(struct usb_usbvision *usbvision)
+  */
+ static int usbvision_measure_bandwidth(struct usb_usbvision *usbvision)
+ {
+-	int err_code = 0;
+-
+ 	if (usbvision->isoc_measure_bandwidth_count < 2) { /* this gives an average bandwidth of 3 frames */
+ 		usbvision->isoc_measure_bandwidth_count++;
+-		return err_code;
 +		return 0;
- 	} else {
- 		tcb_desc->RATRIndex = 7;
- 		tcb_desc->bTxDisableRateFallBack = 1;
+ 	}
+ 	if ((usbvision->isoc_packet_size > 0) && (usbvision->isoc_packet_count > 0)) {
+ 		usbvision->used_bandwidth = usbvision->isoc_data_count /
+@@ -1499,7 +1495,7 @@ static int usbvision_measure_bandwidth(struct usb_usbvision *usbvision)
+ 	usbvision->isoc_data_count = 0;
+ 	usbvision->isoc_packet_count = 0;
+ 	usbvision->isoc_skip_count = 0;
+-	return err_code;
++	return 0;
+ }
+ 
+ static int usbvision_adjust_compression(struct usb_usbvision *usbvision)
+@@ -1546,26 +1542,24 @@ static int usbvision_adjust_compression(struct usb_usbvision *usbvision)
+ 
+ static int usbvision_request_intra(struct usb_usbvision *usbvision)
+ {
+-	int err_code = 0;
+ 	unsigned char buffer[1];
+ 
+ 	PDEBUG(DBG_IRQ, "");
+ 	usbvision->request_intra = 1;
+ 	buffer[0] = 1;
+ 	usbvision_write_reg_irq(usbvision, USBVISION_FORCE_INTRA, buffer, 1);
+-	return err_code;
++	return 0;
+ }
+ 
+ static int usbvision_unrequest_intra(struct usb_usbvision *usbvision)
+ {
+-	int err_code = 0;
+ 	unsigned char buffer[1];
+ 
+ 	PDEBUG(DBG_IRQ, "");
+ 	usbvision->request_intra = 0;
+ 	buffer[0] = 0;
+ 	usbvision_write_reg_irq(usbvision, USBVISION_FORCE_INTRA, buffer, 1);
+-	return err_code;
++	return 0;
+ }
+ 
+ /*******************************
 
