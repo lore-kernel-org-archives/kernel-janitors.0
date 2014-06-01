@@ -1,22 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 11 Jun 2014 22:01:57 +0000
-Subject: Re: [patch] net: sxgbe: remove duplicate SXGBE_CORE_L34_ADDCTL_REG define
-Message-Id: <20140611.150157.537471197140401164.davem@davemloft.net>
+From: Yann Droneaud <ydroneaud@opteya.com>
+Date: Sun, 01 Jun 2014 08:00:16 +0000
+Subject: Re: [PATCH] driver core/platform: remove unused implicit padding in platform_object
+Message-Id: <1401609616.17059.2.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140609150901.GC9600@mwanda>
-In-Reply-To: <20140609150901.GC9600@mwanda>
+References: <1401480167-15091-1-git-send-email-ydroneaud@opteya.com>
+ <20140530201054.GF17724@mwanda>
+ <1401523299.15490.6.camel@localhost.localdomain>
+ <20140531120526.GL15585@mwanda>
+In-Reply-To: <20140531120526.GL15585@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: bh74.an@samsung.com, ks.giri@samsung.com, vipul.pandya@samsung.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: linux-arm-kernel@lists.infradead.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 9 Jun 2014 18:09:01 +0300
+Hi Dan,
 
-> The SXGBE_CORE_L34_ADDCTL_REG define is cut and pasted twice so we can
-> delete the second instance.
+Le samedi 31 mai 2014 à 15:05 +0300, Dan Carpenter a écrit :
+> On Sat, May 31, 2014 at 10:01:39AM +0200, Yann Droneaud wrote:
+> > Le vendredi 30 mai 2014 à 23:10 +0300, Dan Carpenter a écrit :
+> > > This changelog doesn't match the patch.
+> > > 
+> > 
+> > Hum, let me guess .... I've failed to set the proper subject prefix
+> > to add v6 suffic to PATCH: 
+> > I've changed the patch title since v5 (from Emil Goode)... so it's like
+> > a new one.
+> > 
+> > Is it really necessary to resend the patch ?
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Oh.  Sorry, I didn't understand what you were trying to say...  You're
+> right.
+> 
 
-Applied.
+Sorry about that.
+
+If it's unclear, I should modify the commit message.
+
+> For some reason I just looked at the patch first and then I started
+> reading the changelog and got to the bit about GCC on ARM and said
+> thought have been describing a different change without reading the
+> rest.  This was my bad.  I should have read more carefully.
+> 
+> Very thourough patch description.  :)
+> 
+
+Thank you.
+
+Regards.
+
+-- 
+Yann Droneaud
+OPTEYA
+
+
