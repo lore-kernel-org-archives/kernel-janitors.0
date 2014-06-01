@@ -1,44 +1,91 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Date: Tue, 10 Jun 2014 07:56:15 +0000
-Subject: Re: [patch] [media] davinci: vpfe: dm365: remove duplicate RSZ_LPF_INT_MASK
-Message-Id: <CA+V-a8uqoA2pi45K6o3XXnyXL4MMU692uQjE_GdGE=Sfgzf2mg@mail.gmail.com>
+From: walter harms <wharms@bfs.de>
+Date: Sun, 01 Jun 2014 11:42:30 +0000
+Subject: Re: [PATCH 4/11] via-ircc: Remove useless return variables
+Message-Id: <538B11A6.30306@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140609151046.GE9600@mwanda>
-In-Reply-To: <20140609151046.GE9600@mwanda>
+References: <1401542051-3174-4-git-send-email-peter.senna@gmail.com> <20140531203658.GO15585@mwanda>
+In-Reply-To: <20140531203658.GO15585@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media <linux-media@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>, Samuel Ortiz <samuel@sortiz.org>, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
 
-Thanks for the patch.
 
-On Mon, Jun 9, 2014 at 4:10 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The RSZ_LPF_INT_MASK define is cut and pasted twice so we can remove the
-> second instance.
->
-Applied.
+Am 31.05.2014 22:36, schrieb Dan Carpenter:
+> On Sat, May 31, 2014 at 10:14:04AM -0300, Peter Senna Tschudin wrote:
+>> This patch remove variables that are initialized with a constant,
+>> are never updated, and are only used as parameter of return.
+>> Return the constant instead of using a variable.
+>>
+>> Verified by compilation only.
+>>
+>> The coccinelle script that find and fixes this issue is:
+>> // <smpl>
+>> @@
+>> type T;
+>> constant C;
+>> identifier ret;
+>> @@
+>> - T ret = C;
+>> ... when != ret
+>>     when strict
+>> return
+>> - ret
+>> + C
+>> ;
+>> // </smpl>
+>>
+>> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+>>
+>> ---
+>>  drivers/net/irda/via-ircc.c |    9 +++------
+>>  1 file changed, 3 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/net/irda/via-ircc.c b/drivers/net/irda/via-ircc.c
+>> index 2900af0..3fde116 100644
+>> --- a/drivers/net/irda/via-ircc.c
+>> +++ b/drivers/net/irda/via-ircc.c
+>> @@ -509,11 +509,9 @@ static void via_hw_init(struct via_ircc_cb *self)
+>>   *
+>>   */
+>>  static int via_ircc_read_dongle_id(int iobase)
+>> -{
+>> -	int dongle_id = 9;	/* Default to IBM */
+>> -
+>> +{/* Default to IBM */
+> 
+> Yuck.  And anyway, the comment should be on return line.  (And of course
+> there should have been a #define IBM_DONGLE_ID 9, but that's probably
+> something for another patch.
+> 
+>>  	IRDA_ERROR("via-ircc: dongle probing not supported, please specify dongle_id module parameter.\n");
+>> -	return dongle_id;
+>> +	return 9;
 
-Regards,
---Prabhakar Lad
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe_hw.h b/drivers/staging/media/davinci_vpfe/dm365_ipipe_hw.h
-> index 010fdb2..81176fb 100644
-> --- a/drivers/staging/media/davinci_vpfe/dm365_ipipe_hw.h
-> +++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe_hw.h
-> @@ -479,7 +479,6 @@
->  #define RSZ_TYP_Y_SHIFT                        0
->  #define RSZ_TYP_C_SHIFT                        1
->  #define RSZ_LPF_INT_MASK               0x3f
-> -#define RSZ_LPF_INT_MASK               0x3f
->  #define RSZ_LPF_INT_C_SHIFT            6
->  #define RSZ_H_PHS_MASK                 0x3fff
->  #define RSZ_H_DIF_MASK                 0x3fff
+more over code and error msg do not fit,
+it returns a default of 9 (what ever that means) it does not look like
+an error. Sow the warning should be
+
+via-ircc: dongle probing not supported, please specify dongle_id module parameter. settting dongle_id=9
+
+re,
+ wh
+
+
+> So put the comment here.
+> 
+> 	return 9;  /* Everything is an IBM */
+>>  }
+>>  
+> 
+> regards,
+> dan carpenter
+> 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
