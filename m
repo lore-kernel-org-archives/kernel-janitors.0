@@ -1,27 +1,73 @@
-From: Andreas Platschek <platschek@ict.tuwien.ac.at>
-Date: Wed, 18 Jun 2014 18:50:50 +0000
-Subject: [PATCH v2] Staging: rtl8192e prohibit deferencing of NULL pointer
-Message-Id: <53A1DF7A.5080004@ict.tuwien.ac.at>
+From: Tony Lindgren <tony@atomide.com>
+Date: Mon, 02 Jun 2014 15:44:22 +0000
+Subject: Re: [PATCH v2] mfd: fix unintentional NULL check in menelaus_set_voltage()
+Message-Id: <20140602154421.GB11004@atomide.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53A1DDD7.6010901@ict.tuwien.ac.at>
-In-Reply-To: <53A1DDD7.6010901@ict.tuwien.ac.at>
+References: <1401295431-23833-1-git-send-email-emilgoode@gmail.com>
+ <000d01cf7adf$9528f9e0$bf7aeda0$%han@samsung.com>
+In-Reply-To: <000d01cf7adf$9528f9e0$bf7aeda0$%han@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Emil Goode' <emilgoode@gmail.com>, 'Lee Jones' <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Samuel Ortiz' <sameo@linux.intel.com>, 'Trilok Soni' <tsoni@codeaurora.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Jarkko Nikula <jarkko.nikula@bitmer.com>
 
-djI6IHJlbW92ZWQgYnJhY2VzIGZyb20gaWYgc3RhdGVtZW50DQoNCklmIGllZWUgPT0gTlVMTCB3
-ZSBqdW1wIHRvIHJ4X2Ryb3BwZWQuIFRoZXJlZm9yZSB3ZSBoYXZlIHRvIGNoZWNrIGFnYWluLA0K
-aWYgaWVlZSA9PSBOVUxMIGJlZm9yZSB3ZSB1c2UgaXQuDQoNClNpZ25lZC1vZmYtYnk6IEFuZHJl
-YXMgUGxhdHNjaGVrIDxwbGF0c2NoZWtAaWN0LnR1d2llbi5hYy5hdD4NCi0tLQ0KIGRyaXZlcnMv
-c3RhZ2luZy9ydGw4MTkyZS9ydGxsaWJfcnguYyB8ICAgIDMgKystDQogMSBmaWxlIGNoYW5nZWQs
-IDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9z
-dGFnaW5nL3J0bDgxOTJlL3J0bGxpYl9yeC5jDQpiL2RyaXZlcnMvc3RhZ2luZy9ydGw4MTkyZS9y
-dGxsaWJfcnguYw0KaW5kZXggNjBkZTU0Yy4uNzI1OGIxNyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
-c3RhZ2luZy9ydGw4MTkyZS9ydGxsaWJfcnguYw0KKysrIGIvZHJpdmVycy9zdGFnaW5nL3J0bDgx
-OTJlL3J0bGxpYl9yeC5jDQpAQCAtMTQ5Niw3ICsxNDk2LDggQEAgaW50IHJ0bGxpYl9yeChzdHJ1
-Y3QgcnRsbGliX2RldmljZSAqaWVlZSwgc3RydWN0DQpza19idWZmICpza2IsDQogICAgICAgIHJl
-dHVybiByZXQ7DQoNCiAgcnhfZHJvcHBlZDoNCi0gICAgICAgaWVlZS0+c3RhdHMucnhfZHJvcHBl
-ZCsrOw0KKyAgICAgICBpZiAoaWVlZSAhPSBOVUxMKQ0KKyAgICAgICAgICAgICAgIGllZWUtPnN0
-YXRzLnJ4X2Ryb3BwZWQrKzsNCiAgICAgICAgcmV0dXJuIDA7DQogfQ0KIEVYUE9SVF9TWU1CT0wo
-cnRsbGliX3J4KTsNCi0tIA0KMS43LjEwLjQ
+* Jingoo Han <jg1.han@samsung.com> [140528 18:45]:
+> On Thursday, May 29, 2014 1:44 AM, Emil Goode wrote:
+> > 
+> > The struct menelaus_vtg pointer vtg cannot be NULL here
+> > so the condition is never true and if it ever was true
+> > it would lead to a NULL pointer dereference when we goto
+> > label set_voltage.
+> > 
+> > Before the below patch was applied the code was:
+> > 
+> > if (vtg = 0)
+> > 
+> > The intention was to check if vtg_val is 0.
+> > 
+> > commit 59a9f7a32adf6537b4e4db8ca204eeb77d7a634e
+> > ("mfd: menelaus: Use NULL instead of 0")
+> > 
+> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
+> > ---
+> > v2: Changed (vtg_val = 0) to (!vtg_val)
+> > 
+> >  drivers/mfd/menelaus.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
+> > index ad25bfa..40df76a 100644
+> > --- a/drivers/mfd/menelaus.c
+> > +++ b/drivers/mfd/menelaus.c
+> > @@ -466,7 +466,7 @@ static int menelaus_set_voltage(const struct menelaus_vtg *vtg, int mV,
+> >  	struct i2c_client *c = the_menelaus->client;
+> > 
+> >  	mutex_lock(&the_menelaus->lock);
+> > -	if (!vtg)
+> > +	if (!vtg_val)
+> >  		goto set_voltage;
+> 
+> (+cc Trilok Soni, Tony Lindgren)
+> 
+> In this case, if 'vtg_val' is 0, setting voltage as 0 for
+> registers such as MENELAUS_xxx_CTRLx will be skipped. So,
+> it is not possible to set the voltage value as 0.
+> 
+> Is it right? If not, how about just removing this check and
+> the label 'set_voltage'?
+
+Added Aaro and Jarkko to Cc.
+
+Regards,
+
+Tony
+ 
+> Best regards,
+> Jingoo Han
+> 
+> > 
+> >  	ret = menelaus_read_reg(vtg->vtg_reg);
+> > --
+> > 1.7.10.4
+> 
