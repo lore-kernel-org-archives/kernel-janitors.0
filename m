@@ -1,7 +1,7 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Sun, 01 Jun 2014 17:47:31 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 02 Jun 2014 08:36:07 +0000
 Subject: Re: [PATCH] driver core/platform: remove unused implicit padding in platform_object
-Message-Id: <20140601174731.GC1281@kroah.com>
+Message-Id: <20140602083607.GS15585@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1401480167-15091-1-git-send-email-ydroneaud@opteya.com>
  <20140530201054.GF17724@mwanda>
@@ -39,9 +39,11 @@ ke
 >=20
 > If it's unclear, I should modify the commit message.
 
-Nah, it looks good, I'll queue it up this week, thanks.
+It's clear.  Sorry that was my bad.
 
-greg k-h
+regards,
+dan carpenter
+
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
