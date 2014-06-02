@@ -1,22 +1,28 @@
 From: David Miller <davem@davemloft.net>
-Date: Wed, 11 Jun 2014 22:01:53 +0000
-Subject: Re: [patch] qlcnic: remove duplicate QLC_83XX_GET_LSO_CAPABILITY define
-Message-Id: <20140611.150153.1890331283649482551.davem@davemloft.net>
+Date: Mon, 02 Jun 2014 02:27:05 +0000
+Subject: Re: [PATCH 2/2] lpc_eth: Use resource_size instead of computation
+Message-Id: <20140601.192705.693805935389177182.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140609145539.GB9600@mwanda>
-In-Reply-To: <20140609145539.GB9600@mwanda>
+References: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
+	<1401290047-30005-3-git-send-email-benoit.taine@lip6.fr>
+In-Reply-To: <1401290047-30005-3-git-send-email-benoit.taine@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: shahed.shaikh@qlogic.com, Dept-HSGLinuxNICDev@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: benoit.taine@lip6.fr
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 9 Jun 2014 17:55:39 +0300
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Wed, 28 May 2014 17:14:07 +0200
 
-> The QLC_83XX_GET_LSO_CAPABILITY define is cut and pasted twice so we can
-> delete the second instance.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> @@ -1419,8 +1419,7 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+>  
+>  	netdev_dbg(ndev, "IO address start     :0x%08x\n",
+>  			res->start);
+> -	netdev_dbg(ndev, "IO address size      :%d\n",
+> -			res->end - res->start + 1);
+> +	netdev_dbg(ndev, "IO address size      :%d\n", resource_size(res));
+>  	netdev_dbg(ndev, "IO address (mapped)  :0x%p\n",
+>  			pldat->net_base);
 
-Applied.
+Please replace all of this with %pR as suggested by Joe, thanks.
