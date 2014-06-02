@@ -1,163 +1,57 @@
-From: Masaru Nomura <massa.nomura@gmail.com>
-Date: Tue, 24 Jun 2014 21:52:13 +0000
-Subject: [PATCH 2/3] gpu: drm: Remove unnecessary parameter from drm_ht_remove_item()
-Message-Id: <1403646734-2838-3-git-send-email-massa.nomura@gmail.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Mon, 02 Jun 2014 09:30:50 +0000
+Subject: [PATCH] stmmac: Remove spin_lock call in stmmac_get_pauseparam()
+Message-Id: <1401701450-1203-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
-In-Reply-To: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie
-Cc: thellstrom@vmware.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>
+To: Yang Wei <Wei.Yang@windriver.com>, David Miller <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-removed drm_open_hash from drm_ht_remove_item() as the parameter is
-not used within the function.
+The following patch removed unnecessary spin_lock/unlock calls
+in ethtool_ops callback functions. In the second and final version
+of the patch one spin_lock call was left behind.
 
-Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
+commit cab6715c3e8029e98b0b5d4056ceda007c0f6380
+Author: Yang Wei <Wei.Yang@windriver.com>
+Date:   Sun May 25 09:53:44 2014 +0800
+
+    net: driver: stmicro: Remove some useless the lock protection
+
+This introduced the following sparse warning:
+
+drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c:424:1: warning:
+	context imbalance in 'stmmac_get_pauseparam' -
+	different lock contexts for basic block
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
-Please review this patch carefully. The reason the parameter is passed
-might be some historical one or clarity of which drm_open_hash
-we remove an item from.
+Hello,
 
- drivers/gpu/drm/drm_auth.c              | 2 +-
- drivers/gpu/drm/drm_hashtab.c           | 2 +-
- drivers/gpu/drm/drm_stub.c              | 2 +-
- drivers/gpu/drm/ttm/ttm_object.c        | 8 +++-----
- drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 4 ++--
- drivers/gpu/drm/vmwgfx/vmwgfx_shader.c  | 4 ++--
- include/drm/drm_hashtab.h               | 2 +-
- 7 files changed, 11 insertions(+), 13 deletions(-)
+Some spin_lock/unlock calls where also left behind in
+stmmac_ethtool_setsettings(), I'm not sure if it was intentional?
 
-diff --git a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
-index 3cedae1..f7ceea0 100644
---- a/drivers/gpu/drm/drm_auth.c
-+++ b/drivers/gpu/drm/drm_auth.c
-@@ -115,7 +115,7 @@ int drm_remove_magic(struct drm_master *master, drm_magic_t magic)
- 		return -EINVAL;
- 	}
- 	pt = drm_hash_entry(hash, struct drm_magic_entry, hash_item);
--	drm_ht_remove_item(&master->magiclist, hash);
-+	drm_ht_remove_item(hash);
- 	list_del(&pt->head);
- 	mutex_unlock(&dev->struct_mutex);
+Best regards,
+
+Emil Goode
+
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+index 7892666..c62e67f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
+@@ -429,8 +429,6 @@ stmmac_get_pauseparam(struct net_device *netdev,
+ 	if (priv->pcs)	/* FIXME */
+ 		return;
  
-diff --git a/drivers/gpu/drm/drm_hashtab.c b/drivers/gpu/drm/drm_hashtab.c
-index c3b80fd..a66447f 100644
---- a/drivers/gpu/drm/drm_hashtab.c
-+++ b/drivers/gpu/drm/drm_hashtab.c
-@@ -188,7 +188,7 @@ int drm_ht_remove_key(struct drm_open_hash *ht, unsigned long key)
- 	return -EINVAL;
- }
- 
--int drm_ht_remove_item(struct drm_open_hash *ht, struct drm_hash_item *item)
-+int drm_ht_remove_item(struct drm_hash_item *item)
- {
- 	hlist_del_init_rcu(&item->head);
- 	return 0;
-diff --git a/drivers/gpu/drm/drm_stub.c b/drivers/gpu/drm/drm_stub.c
-index 14d1646..6ffed45 100644
---- a/drivers/gpu/drm/drm_stub.c
-+++ b/drivers/gpu/drm/drm_stub.c
-@@ -166,7 +166,7 @@ static void drm_master_destroy(struct kref *kref)
- 
- 	list_for_each_entry_safe(pt, next, &master->magicfree, head) {
- 		list_del(&pt->head);
--		drm_ht_remove_item(&master->magiclist, &pt->hash_item);
-+		drm_ht_remove_item(&pt->hash_item);
- 		kfree(pt);
- 	}
- 
-diff --git a/drivers/gpu/drm/ttm/ttm_object.c b/drivers/gpu/drm/ttm/ttm_object.c
-index d2a0533..42f73a8 100644
---- a/drivers/gpu/drm/ttm/ttm_object.c
-+++ b/drivers/gpu/drm/ttm/ttm_object.c
-@@ -188,7 +188,7 @@ int ttm_base_object_init(struct ttm_object_file *tfile,
- 	return 0;
- out_err1:
- 	spin_lock(&tdev->object_lock);
--	(void)drm_ht_remove_item_rcu(&tdev->object_hash, &base->hash);
-+	drm_ht_remove_item_rcu(&base->hash);
- 	spin_unlock(&tdev->object_lock);
- out_err0:
- 	return ret;
-@@ -202,7 +202,7 @@ static void ttm_release_base(struct kref *kref)
- 	struct ttm_object_device *tdev = base->tfile->tdev;
- 
- 	spin_lock(&tdev->object_lock);
--	(void)drm_ht_remove_item_rcu(&tdev->object_hash, &base->hash);
-+	drm_ht_remove_item_rcu(&base->hash);
- 	spin_unlock(&tdev->object_lock);
- 
- 	/*
-@@ -390,11 +390,9 @@ static void ttm_ref_object_release(struct kref *kref)
- 	    container_of(kref, struct ttm_ref_object, kref);
- 	struct ttm_base_object *base = ref->obj;
- 	struct ttm_object_file *tfile = ref->tfile;
--	struct drm_open_hash *ht;
- 	struct ttm_mem_global *mem_glob = tfile->tdev->mem_glob;
- 
--	ht = &tfile->ref_hash[ref->ref_type];
--	(void)drm_ht_remove_item_rcu(ht, &ref->hash);
-+	drm_ht_remove_item_rcu(&ref->hash);
- 	list_del(&ref->head);
- 	spin_unlock(&tfile->lock);
- 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-index 87df0b3..1780f5e 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-@@ -2185,13 +2185,13 @@ static void vmw_clear_validations(struct vmw_sw_context *sw_context)
- 				 base.head) {
- 		list_del(&entry->base.head);
- 		ttm_bo_unref(&entry->base.bo);
--		(void) drm_ht_remove_item(&sw_context->res_ht, &entry->hash);
-+		drm_ht_remove_item(&entry->hash);
- 		sw_context->cur_val_buf--;
- 	}
- 	BUG_ON(sw_context->cur_val_buf != 0);
- 
- 	list_for_each_entry(val, &sw_context->resource_list, head)
--		(void) drm_ht_remove_item(&sw_context->res_ht, &val->hash);
-+		drm_ht_remove_item(&val->hash);
- }
- 
- static int vmw_validate_single_buffer(struct vmw_private *dev_priv,
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-index 01cc8ea..bbb30c3 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-@@ -542,7 +542,7 @@ static void vmw_compat_shader_free(struct vmw_compat_shader_manager *man,
- 				   struct vmw_compat_shader *entry)
- {
- 	list_del(&entry->head);
--	WARN_ON(drm_ht_remove_item(&man->shaders, &entry->hash));
-+	WARN_ON(drm_ht_remove_item(&entry->hash));
- 	WARN_ON(ttm_ref_object_base_unref(entry->tfile, entry->handle,
- 					  TTM_REF_USAGE));
- 	kfree(entry);
-@@ -652,7 +652,7 @@ int vmw_compat_shader_remove(struct vmw_compat_shader_manager *man,
- 		vmw_compat_shader_free(man, entry);
- 		break;
- 	case VMW_COMPAT_COMMITED:
--		(void) drm_ht_remove_item(&man->shaders, &entry->hash);
-+		drm_ht_remove_item(&entry->hash);
- 		list_del(&entry->head);
- 		entry->state = VMW_COMPAT_DEL;
- 		list_add_tail(&entry->head, list);
-diff --git a/include/drm/drm_hashtab.h b/include/drm/drm_hashtab.h
-index fce2ef3..ae34607 100644
---- a/include/drm/drm_hashtab.h
-+++ b/include/drm/drm_hashtab.h
-@@ -58,7 +58,7 @@ extern int drm_ht_find_item(struct drm_open_hash *ht, unsigned long key, struct
- 
- extern void drm_ht_verbose_list(struct drm_open_hash *ht, unsigned long key);
- extern int drm_ht_remove_key(struct drm_open_hash *ht, unsigned long key);
--extern int drm_ht_remove_item(struct drm_open_hash *ht, struct drm_hash_item *item);
-+extern int drm_ht_remove_item(struct drm_hash_item *item);
- extern void drm_ht_remove(struct drm_open_hash *ht);
- 
- /*
+-	spin_lock(&priv->lock);
+-
+ 	pause->rx_pause = 0;
+ 	pause->tx_pause = 0;
+ 	pause->autoneg = priv->phydev->autoneg;
 -- 
-1.9.3
+1.7.10.4
 
