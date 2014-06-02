@@ -1,30 +1,49 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 12 Jun 2014 07:20:25 +0000
-Subject: [patch] gma500: out of bounds read in debug code comma
-Message-Id: <20140612072025.GA17733@mwanda>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Mon, 02 Jun 2014 11:24:19 +0000
+Subject: [PATCH 2/2 v2] lpc_eth: Use resource_size instead of computation
+Message-Id: <20140602112419.GA3625@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
+ <1401290047-30005-3-git-send-email-benoit.taine@lip6.fr>
+ <20140601.192705.693805935389177182.davem@davemloft.net>
+In-Reply-To: <20140601.192705.693805935389177182.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The code assume that this array has 32 elements but because of a missing
-comma, then it only has 31.  This array is only used when error occurs
-and debugging is enabled so it's not very serious.
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/resource_size.cocci
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+Not compile tested, due incompatible architecture.
 
-diff --git a/drivers/gpu/drm/gma500/mdfld_dsi_pkg_sender.c b/drivers/gpu/drm/gma500/mdfld_dsi_pkg_sender.c
-index 489ffd2..a3d37e4 100644
---- a/drivers/gpu/drm/gma500/mdfld_dsi_pkg_sender.c
-+++ b/drivers/gpu/drm/gma500/mdfld_dsi_pkg_sender.c
-@@ -85,7 +85,7 @@ static const char *const dsi_errors[] = {
- 	"RX Prot Violation",
- 	"HS Generic Write FIFO Full",
- 	"LP Generic Write FIFO Full",
--	"Generic Read Data Avail"
-+	"Generic Read Data Avail",
- 	"Special Packet Sent",
- 	"Tearing Effect",
- };
+diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
+index 422d9b5..645dac3 100644
+--- a/drivers/net/ethernet/nxp/lpc_eth.c
++++ b/drivers/net/ethernet/nxp/lpc_eth.c
+@@ -1361,7 +1361,7 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+        __lpc_eth_clock_enable(pldat, true);
+ 
+        /* Map IO space */
+-       pldat->net_base = ioremap(res->start, res->end - res->start + 1);
++       pldat->net_base = ioremap(res->start, resource_size(res));
+        if (!pldat->net_base) {
+                dev_err(&pdev->dev, "failed to map registers\n");
+                ret = -ENOMEM;
+@@ -1417,10 +1417,8 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+        }
+        pldat->dma_buff_base_p = dma_handle;
+ 
+-       netdev_dbg(ndev, "IO address start     :0x%08x\n",
+-                       res->start);
+-       netdev_dbg(ndev, "IO address size      :%d\n",
+-                       res->end - res->start + 1);
++       netdev_dbg(ndev, "IO address space     :%pR", res);
++       netdev_dbg(ndev, "IO address size      :%d\n", resource_size(res));
+        netdev_dbg(ndev, "IO address (mapped)  :0x%p\n",
+                        pldat->net_base);
+        netdev_dbg(ndev, "IRQ number           :%d\n", ndev->irq);
+
