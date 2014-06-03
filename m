@@ -1,28 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 09 Jun 2014 15:18:20 +0000
-Subject: [patch] MIPS: mipsreg: remove duplicate MIPS_CONF4_FTLBSETS_SHIFT
-Message-Id: <20140609151820.GK9600@mwanda>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Tue, 03 Jun 2014 10:32:54 +0000
+Subject: [PATCH 2/2 v4] lpc_eth: Use resource_size instead of computation
+Message-Id: <20140603103254.GA20794@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
+ <1401290047-30005-3-git-send-email-benoit.taine@lip6.fr>
+ <20140601.192705.693805935389177182.davem@davemloft.net>
+ <20140602112419.GA3625@lip6.fr>
+ <20140602113430.GA3823@lip6.fr>
+In-Reply-To: <20140602113430.GA3823@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ralf Baechle <ralf@linux-mips.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>
-Cc: Markos Chandras <markos.chandras@imgtec.com>, John Crispin <blogic@openwrt.org>, Paul Burton <paul.burton@imgtec.com>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The MIPS_CONF4_FTLBSETS_SHIFT define is cut and pasted twice so we can
-remove the second define.
+This issue was reported by coccicheck using the semantic patch 
+at scripts/coccinelle/api/resource_size.cocci
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+---
+Not compile tested, due incompatible architecture.
 
-diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
-index 98e9754..dcc7872 100644
---- a/arch/mips/include/asm/mipsregs.h
-+++ b/arch/mips/include/asm/mipsregs.h
-@@ -630,7 +630,6 @@
- #define MIPS_CONF4_MMUSIZEEXT_SHIFT	(0)
- #define MIPS_CONF4_MMUSIZEEXT	(_ULCAST_(255) << 0)
- #define MIPS_CONF4_FTLBSETS_SHIFT	(0)
--#define MIPS_CONF4_FTLBSETS_SHIFT	(0)
- #define MIPS_CONF4_FTLBSETS	(_ULCAST_(15) << MIPS_CONF4_FTLBSETS_SHIFT)
- #define MIPS_CONF4_FTLBWAYS_SHIFT	(4)
- #define MIPS_CONF4_FTLBWAYS	(_ULCAST_(15) << MIPS_CONF4_FTLBWAYS_SHIFT)
+Changes from V3:
+ - should now apply correctly
+
+Changes from V2:
+ - added line break to debug message
+
+Changes from V1:
+ - Use %pR format type with the debug message (Thanks to Joe Perches)
+
+diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
+index 422d9b5..8706c0d 100644
+--- a/drivers/net/ethernet/nxp/lpc_eth.c
++++ b/drivers/net/ethernet/nxp/lpc_eth.c
+@@ -1361,7 +1361,7 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+ 	__lpc_eth_clock_enable(pldat, true);
+ 
+ 	/* Map IO space */
+-	pldat->net_base = ioremap(res->start, res->end - res->start + 1);
++	pldat->net_base = ioremap(res->start, resource_size(res));
+ 	if (!pldat->net_base) {
+ 		dev_err(&pdev->dev, "failed to map registers\n");
+ 		ret = -ENOMEM;
+@@ -1417,10 +1417,8 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+ 	}
+ 	pldat->dma_buff_base_p = dma_handle;
+ 
+-	netdev_dbg(ndev, "IO address start     :0x%08x\n",
+-			res->start);
+-	netdev_dbg(ndev, "IO address size      :%d\n",
+-			res->end - res->start + 1);
++	netdev_dbg(ndev, "IO address space     :%pR\n", res);
++	netdev_dbg(ndev, "IO address size      :%d\n", resource_size(res));
+ 	netdev_dbg(ndev, "IO address (mapped)  :0x%p\n",
+ 			pldat->net_base);
+ 	netdev_dbg(ndev, "IRQ number           :%d\n", ndev->irq);
