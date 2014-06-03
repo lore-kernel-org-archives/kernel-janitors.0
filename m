@@ -1,80 +1,25 @@
-From: Masaru Nomura <massa.nomura@gmail.com>
-Date: Tue, 24 Jun 2014 21:52:11 +0000
-Subject: [PATCH 0/3] gpu: drm: Fix memory leak in vmwgfx_shader.c
-Message-Id: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 03 Jun 2014 00:03:10 +0000
+Subject: Re: [PATCH 7/11] bnx2x: Remove useless return variables
+Message-Id: <20140602.170310.1942398518648623496.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401542051-3174-7-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1401542051-3174-7-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie
-Cc: thellstrom@vmware.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>
+To: peter.senna@gmail.com
+Cc: ariele@broadcom.com, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch fixes memory leak detected by Kernel memory leak detector, 
-and cleans up functions which call drm_ht_remove_item() and 
-vmw_compat_shader_free() so that an unused parameter is not passed.
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 31 May 2014 10:14:07 -0300
 
-Part of logs from /sys/kernel/debug/kmemleak is as follows:
+> This patch remove variables that are initialized with a constant,
+> are never updated, and are only used as parameter of return.
+> Return the constant instead of using a variable.
+> 
+> Verified by compilation only.
+ ...
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 
-unreferenced object 0xffffc900086ed000 (size 32768):
-  comm "plymouthd", pid 287, jiffies 4294682116 (age 5911.149s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff816f7b6e>] kmemleak_alloc+0x4e/0xb0
-    [<ffffffff811b9382>] __vmalloc_node_range+0x1b2/0x2a0
-    [<ffffffff811b950b>] vzalloc+0x4b/0x50
-    [<ffffffffa009c7e5>] drm_ht_create+0x65/0xa0 [drm]
-    [<ffffffffa011a068>] vmw_compat_shader_man_create+0x78/0xb0 [vmwgfx]
-    [<ffffffffa0109ac2>] vmw_driver_open+0x62/0xa0 [vmwgfx]
-    [<ffffffffa0093307>] drm_open+0x1b7/0x4c0 [drm]
-    [<ffffffffa00936b5>] drm_stub_open+0xa5/0x100 [drm]
-    [<ffffffff811f6c29>] chrdev_open+0xb9/0x1a0
-    [<ffffffff811ef58f>] do_dentry_open+0x1ff/0x340
-    [<ffffffff811ef8a1>] finish_open+0x31/0x40
-    [<ffffffff812017e4>] do_last+0xa64/0x1190
-    [<ffffffff81201fdd>] path_openat+0xcd/0x670
-    [<ffffffff81202ddd>] do_filp_open+0x4d/0xb0
-    [<ffffffff811f12fd>] do_sys_open+0x13d/0x230
-    [<ffffffff811f140e>] SyS_open+0x1e/0x20
-unreferenced object 0xffffc900086e4000 (size 32768):
-  comm "Xorg", pid 751, jiffies 4294687683 (age 5917.505s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff816f7b6e>] kmemleak_alloc+0x4e/0xb0
-    [<ffffffff811b9382>] __vmalloc_node_range+0x1b2/0x2a0
-    [<ffffffff811b950b>] vzalloc+0x4b/0x50
-    [<ffffffffa009c7e5>] drm_ht_create+0x65/0xa0 [drm]
-    [<ffffffffa011a068>] vmw_compat_shader_man_create+0x78/0xb0 [vmwgfx]
-    [<ffffffffa0109ac2>] vmw_driver_open+0x62/0xa0 [vmwgfx]
-    [<ffffffffa0093307>] drm_open+0x1b7/0x4c0 [drm]
-    [<ffffffffa00936b5>] drm_stub_open+0xa5/0x100 [drm]
-    [<ffffffff811f6c29>] chrdev_open+0xb9/0x1a0
-    [<ffffffff811ef58f>] do_dentry_open+0x1ff/0x340
-    [<ffffffff811ef8a1>] finish_open+0x31/0x40
-    [<ffffffff812017e4>] do_last+0xa64/0x1190
-    [<ffffffff81201fdd>] path_openat+0xcd/0x670
-    [<ffffffff81202ddd>] do_filp_open+0x4d/0xb0
-    [<ffffffff811f12fd>] do_sys_open+0x13d/0x230
-    [<ffffffff811f140e>] SyS_open+0x1e/0x20
-
-Masaru Nomura (3):
-  gpu: drm: vmwgfx: Fix memory leak by adding drm_ht_remove()
-  gpu: drm: Remove unnecessary parameter from drm_ht_remove_item()
-  gpu: drm: vmwgfx: Remove unnecessary parameter from
-    vmw_compat_shader_free()
-
- drivers/gpu/drm/drm_auth.c              |  2 +-
- drivers/gpu/drm/drm_hashtab.c           |  2 +-
- drivers/gpu/drm/drm_stub.c              |  2 +-
- drivers/gpu/drm/ttm/ttm_object.c        |  8 +++-----
- drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |  4 ++--
- drivers/gpu/drm/vmwgfx/vmwgfx_shader.c  | 16 ++++++++--------
- include/drm/drm_hashtab.h               |  2 +-
- 7 files changed, 17 insertions(+), 19 deletions(-)
-
--- 
-1.9.3
-
+Applied.
