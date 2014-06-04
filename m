@@ -1,58 +1,64 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Date: Wed, 11 Jun 2014 09:44:20 +0000
-Subject: Re: [patch] [media] davinci: vpif: missing unlocks on error
-Message-Id: <CA+V-a8vhEyNdQRqNrzRV=t-D+uh6rCEY5-qLjTOWDfHwUai1Kg@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 04 Jun 2014 09:07:58 +0000
+Subject: [PATCH 8/10] s390/pci: use safer test on the result of find_first_zero_bit
+Message-Id: <1401872880-23685-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140611073108.GE16443@mwanda>
-In-Reply-To: <20140611073108.GE16443@mwanda>
+References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media <linux-media@vger.kernel.org>, dlos <davinci-linux-open-source@linux.davincidsp.com>, kernel-janitors@vger.kernel.org
+To: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks for the patch.
+Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
+return a larger number than the maximum position argument if that position
+is not a multiple of BITS_PER_LONG.
 
-On Wed, Jun 11, 2014 at 8:31 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We recently changed some locking around so we need some new unlocks on
-> the error paths.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Please review this one carefully.  I don't know if the unlock should go
-> before or after the list_for_each_entry_safe() loop.
->
-Yes the unlock should go after the list_for_each_entry_safe() loop
-please respin another version fixing it.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-Thanks,
---Prabhakar Lad
+// <smpl>
+@@
+expression e1,e2,e3;
+statement S1,S2;
+@@
 
-> diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
-> index a7ed164..2c08fbd 100644
-> --- a/drivers/media/platform/davinci/vpif_capture.c
-> +++ b/drivers/media/platform/davinci/vpif_capture.c
-> @@ -265,6 +265,8 @@ static int vpif_start_streaming(struct vb2_queue *vq, unsigned int count)
->         return 0;
->
->  err:
-> +       spin_unlock_irqrestore(&common->irqlock, flags);
-> +
->         list_for_each_entry_safe(buf, tmp, &common->dma_queue, list) {
->                 list_del(&buf->list);
->                 vb2_buffer_done(&buf->vb, VB2_BUF_STATE_QUEUED);
-> diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
-> index 5bb085b..b7b2bdf 100644
-> --- a/drivers/media/platform/davinci/vpif_display.c
-> +++ b/drivers/media/platform/davinci/vpif_display.c
-> @@ -229,6 +229,8 @@ static int vpif_start_streaming(struct vb2_queue *vq, unsigned int count)
->         return 0;
->
->  err:
-> +       spin_unlock_irqrestore(&common->irqlock, flags);
-> +
->         list_for_each_entry_safe(buf, tmp, &common->dma_queue, list) {
->                 list_del(&buf->list);
->                 vb2_buffer_done(&buf->vb, VB2_BUF_STATE_QUEUED);
+e1 = find_first_zero_bit(e2,e3)
+...
+if (e1 
+- =
++ >  e3)
+S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/s390/pci/pci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -u -p a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
+--- a/arch/s390/pci/pci.c
++++ b/arch/s390/pci/pci.c
+@@ -566,7 +566,7 @@ static int zpci_alloc_iomap(struct zpci_
+ 
+ 	spin_lock(&zpci_iomap_lock);
+ 	entry = find_first_zero_bit(zpci_iomap, ZPCI_IOMAP_MAX_ENTRIES);
+-	if (entry = ZPCI_IOMAP_MAX_ENTRIES) {
++	if (entry >= ZPCI_IOMAP_MAX_ENTRIES) {
+ 		spin_unlock(&zpci_iomap_lock);
+ 		return -ENOSPC;
+ 	}
+@@ -746,7 +746,7 @@ static int zpci_alloc_domain(struct zpci
+ {
+ 	spin_lock(&zpci_domain_lock);
+ 	zdev->domain = find_first_zero_bit(zpci_domain, ZPCI_NR_DEVICES);
+-	if (zdev->domain = ZPCI_NR_DEVICES) {
++	if (zdev->domain >= ZPCI_NR_DEVICES) {
+ 		spin_unlock(&zpci_domain_lock);
+ 		return -ENOSPC;
+ 	}
+
