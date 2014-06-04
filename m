@@ -1,73 +1,55 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Date: Tue, 24 Jun 2014 17:27:35 +0000
-Subject: [PATCH 6/6] include/rxrpc/types.h: Remove unused header
-Message-Id: <1403630855-29186-7-git-send-email-linux@rasmusvillemoes.dk>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 04 Jun 2014 09:07:57 +0000
+Subject: [PATCH 7/10] cciss: use safer test on the result of find_first_zero_bit
+Message-Id: <1401872880-23685-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
-In-Reply-To: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
+References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Mike Miller <mike.miller@hp.com>
+Cc: kernel-janitors@vger.kernel.org, iss_storagedev@hp.com, linux-kernel@vger.kernel.org
 
-The header file include/rxrpc/types.h does not seem to be used
-anywhere. It was orphaned by 63b6be55 "[AF_RXRPC]: Delete the old
-RxRPC code.". Remove it.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
+return a larger number than the maximum position argument if that position
+is not a multiple of BITS_PER_LONG.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2,e3;
+statement S1,S2;
+@@
+
+e1 = find_first_zero_bit(e2,e3)
+...
+if (e1 
+- =
++ >  e3)
+S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- include/rxrpc/types.h | 41 -----------------------------------------
- 1 file changed, 41 deletions(-)
- delete mode 100644 include/rxrpc/types.h
+ drivers/block/cciss.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/rxrpc/types.h b/include/rxrpc/types.h
-deleted file mode 100644
-index 30d48f6..0000000
---- a/include/rxrpc/types.h
-+++ /dev/null
-@@ -1,41 +0,0 @@
--/* types.h: Rx types
-- *
-- * Copyright (C) 2002 Red Hat, Inc. All Rights Reserved.
-- * Written by David Howells (dhowells@redhat.com)
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version
-- * 2 of the License, or (at your option) any later version.
-- */
--
--#ifndef _LINUX_RXRPC_TYPES_H
--#define _LINUX_RXRPC_TYPES_H
--
--#include <linux/types.h>
--#include <linux/list.h>
--#include <linux/socket.h>
--#include <linux/in.h>
--#include <linux/spinlock.h>
--#include <linux/atomic.h>
--
--typedef uint32_t	rxrpc_seq_t;	/* Rx message sequence number */
--typedef uint32_t	rxrpc_serial_t;	/* Rx message serial number */
--typedef __be32	rxrpc_seq_net_t; /* on-the-wire Rx message sequence number */
--typedef __be32	rxrpc_serial_net_t; /* on-the-wire Rx message serial number */
--
--struct rxrpc_call;
--struct rxrpc_connection;
--struct rxrpc_header;
--struct rxrpc_message;
--struct rxrpc_operation;
--struct rxrpc_peer;
--struct rxrpc_service;
--typedef struct rxrpc_timer rxrpc_timer_t;
--struct rxrpc_transport;
--
--typedef void (*rxrpc_call_attn_func_t)(struct rxrpc_call *call);
--typedef void (*rxrpc_call_error_func_t)(struct rxrpc_call *call);
--typedef void (*rxrpc_call_aemap_func_t)(struct rxrpc_call *call);
--
--#endif /* _LINUX_RXRPC_TYPES_H */
--- 
-1.9.2
+diff -u -p a/drivers/block/cciss.c b/drivers/block/cciss.c
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -980,7 +980,7 @@ static CommandList_struct *cmd_alloc(ctl
+ 
+ 	do {
+ 		i = find_first_zero_bit(h->cmd_pool_bits, h->nr_cmds);
+-		if (i = h->nr_cmds)
++		if (i >= h->nr_cmds)
+ 			return NULL;
+ 	} while (test_and_set_bit(i, h->cmd_pool_bits) != 0);
+ 	c = h->cmd_pool + i;
 
