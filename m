@@ -1,59 +1,55 @@
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Tue, 03 Jun 2014 10:32:54 +0000
-Subject: [PATCH 2/2 v4] lpc_eth: Use resource_size instead of computation
-Message-Id: <20140603103254.GA20794@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 04 Jun 2014 09:07:55 +0000
+Subject: [PATCH 5/10] ARC: use safer test on the result of find_first_zero_bit
+Message-Id: <1401872880-23685-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401290047-30005-1-git-send-email-benoit.taine@lip6.fr>
- <1401290047-30005-3-git-send-email-benoit.taine@lip6.fr>
- <20140601.192705.693805935389177182.davem@davemloft.net>
- <20140602112419.GA3625@lip6.fr>
- <20140602113430.GA3823@lip6.fr>
-In-Reply-To: <20140602113430.GA3823@lip6.fr>
+References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Vineet Gupta <vgupta@synopsys.com>, linux-kernel@vger.kernel.org
 
-This issue was reported by coccicheck using the semantic patch 
-at scripts/coccinelle/api/resource_size.cocci
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
+return a larger number than the maximum position argument if that position
+is not a multiple of BITS_PER_LONG.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2,e3;
+statement S1,S2;
+@@
+
+e1 = find_first_zero_bit(e2,e3)
+...
+if (e1 
+- =
++ >  e3)
+S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-Not compile tested, due incompatible architecture.
+ arch/arc/kernel/perf_event.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from V3:
- - should now apply correctly
-
-Changes from V2:
- - added line break to debug message
-
-Changes from V1:
- - Use %pR format type with the debug message (Thanks to Joe Perches)
-
-diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
-index 422d9b5..8706c0d 100644
---- a/drivers/net/ethernet/nxp/lpc_eth.c
-+++ b/drivers/net/ethernet/nxp/lpc_eth.c
-@@ -1361,7 +1361,7 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
- 	__lpc_eth_clock_enable(pldat, true);
+diff -u -p a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
+--- a/arch/arc/kernel/perf_event.c
++++ b/arch/arc/kernel/perf_event.c
+@@ -205,7 +205,7 @@ static int arc_pmu_add(struct perf_event
+ 	if (__test_and_set_bit(idx, arc_pmu->used_mask)) {
+ 		idx = find_first_zero_bit(arc_pmu->used_mask,
+ 					  arc_pmu->n_counters);
+-		if (idx = arc_pmu->n_counters)
++		if (idx >= arc_pmu->n_counters)
+ 			return -EAGAIN;
  
- 	/* Map IO space */
--	pldat->net_base = ioremap(res->start, res->end - res->start + 1);
-+	pldat->net_base = ioremap(res->start, resource_size(res));
- 	if (!pldat->net_base) {
- 		dev_err(&pdev->dev, "failed to map registers\n");
- 		ret = -ENOMEM;
-@@ -1417,10 +1417,8 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
- 	}
- 	pldat->dma_buff_base_p = dma_handle;
- 
--	netdev_dbg(ndev, "IO address start     :0x%08x\n",
--			res->start);
--	netdev_dbg(ndev, "IO address size      :%d\n",
--			res->end - res->start + 1);
-+	netdev_dbg(ndev, "IO address space     :%pR\n", res);
-+	netdev_dbg(ndev, "IO address size      :%d\n", resource_size(res));
- 	netdev_dbg(ndev, "IO address (mapped)  :0x%p\n",
- 			pldat->net_base);
- 	netdev_dbg(ndev, "IRQ number           :%d\n", ndev->irq);
+ 		__set_bit(idx, arc_pmu->used_mask);
+
