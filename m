@@ -1,21 +1,15 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 11 Jun 2014 22:40:47 +0000
-Subject: Re: [patch] amd-xgbe: unwind on error in xgbe_mdio_register()
-Message-Id: <20140611.154047.1548691621132222113.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 04 Jun 2014 09:07:50 +0000
+Subject: [PATCH 0/10] use safer test on the result of find_first_zero_bit
+Message-Id: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140611065626.GC16443@mwanda>
-In-Reply-To: <20140611065626.GC16443@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: thomas.lendacky@amd.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-rdma@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-scsi@vger.kernel.org, iss_storagedev@hp.com, linux-sh@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org, adi-buildroot-devel@lists.sourceforge.net, netdev@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 11 Jun 2014 09:56:26 +0300
+Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
+return a larger number than the maximum position argument if that position
+is not a multiple of BITS_PER_LONG.
 
-> There is a typo here so we return directly instead of unwinding.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Applied.
