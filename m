@@ -1,28 +1,55 @@
-From: INFO <freelotto12@ascend482.onmicrosoft.com>
-Date: Sat, 07 Jun 2014 23:06:55 +0000
-Subject: Free Lotto Award Notification(Reference:WIN-37-14-29-14)
-Message-Id: <b923a932-a2a0-4d32-b2ab-8bf0de21fc8f@DB3PR02MB0284.eurprd02.prod.outlook.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 04 Jun 2014 09:07:52 +0000
+Subject: [PATCH 2/10] ath10k: use safer test on the result of find_first_zero_bit
+Message-Id: <1401872880-23685-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>, netdev@vger.kernel.org
 
-From claim=B4s processing office.
-Free Lotto Lottery Award Notification
-Confirmation Ticket No: 33-48-19-H5H
-Reference:WIN-37-14-29-14
-You have won( 1 Million Euros )in the Free Lotto Lottery Award 2014 held in=
- Madrid Spain
-This email was sent to notify you officially as you are advise to contact t=
-he claim=B4s processing office with your details immediately for claim,
-Contact Person: Martinez Adela
-Contact Email: freelottoaward066@gmail.com
-Signed (Announcer)
-Director, Cooperate HR and Communication.
-FREE LOTTO LOTTERY AWARD
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
+return a larger number than the maximum position argument if that position
+is not a multiple of BITS_PER_LONG.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2,e3;
+statement S1,S2;
+@@
+
+e1 = find_first_zero_bit(e2,e3)
+...
+if (e1 
+- =
++ >  e3)
+S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/wireless/ath/ath10k/htt_tx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/net/wireless/ath/ath10k/htt_tx.c b/drivers/net/wireless/ath/ath10k/htt_tx.c
+--- a/drivers/net/wireless/ath/ath10k/htt_tx.c
++++ b/drivers/net/wireless/ath/ath10k/htt_tx.c
+@@ -64,7 +64,7 @@ int ath10k_htt_tx_alloc_msdu_id(struct a
+ 
+ 	msdu_id = find_first_zero_bit(htt->used_msdu_ids,
+ 				      htt->max_num_pending_tx);
+-	if (msdu_id = htt->max_num_pending_tx)
++	if (msdu_id >= htt->max_num_pending_tx)
+ 		return -ENOBUFS;
+ 
+ 	ath10k_dbg(ATH10K_DBG_HTT, "htt tx alloc msdu_id %d\n", msdu_id);
+
