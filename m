@@ -1,24 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 02 Jun 2014 17:58:59 +0000
-Subject: Re: [PATCH 2/2 v3] lpc_eth: Use resource_size instead of computation
-Message-Id: <20140602.105859.1728862913327118150.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 04 Jun 2014 09:07:56 +0000
+Subject: [PATCH 6/10] hpsa: use safer test on the result of find_first_zero_bit
+Message-Id: <1401872880-23685-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140601.192705.693805935389177182.davem@davemloft.net>
-	<20140602112419.GA3625@lip6.fr>
-	<20140602113430.GA3823@lip6.fr>
-In-Reply-To: <20140602113430.GA3823@lip6.fr>
+References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benoit.taine@lip6.fr
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Stephen M. Cameron" <scameron@beardog.cce.hp.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, iss_storagedev@hp.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Mon, 2 Jun 2014 13:34:30 +0200
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> This issue was reported by coccicheck using the semantic patch 
-> at scripts/coccinelle/api/resource_size.cocci
-> 
-> Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
+return a larger number than the maximum position argument if that position
+is not a multiple of BITS_PER_LONG.
 
-This patch doesn't apply cleanly to any of my trees.
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2,e3;
+statement S1,S2;
+@@
+
+e1 = find_first_zero_bit(e2,e3)
+...
+if (e1 
+- =
++ >  e3)
+S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/scsi/hpsa.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -4703,7 +4703,7 @@ static struct CommandList *cmd_alloc(str
+ 	spin_lock_irqsave(&h->lock, flags);
+ 	do {
+ 		i = find_first_zero_bit(h->cmd_pool_bits, h->nr_cmds);
+-		if (i = h->nr_cmds) {
++		if (i >= h->nr_cmds) {
+ 			spin_unlock_irqrestore(&h->lock, flags);
+ 			return NULL;
+ 		}
+
