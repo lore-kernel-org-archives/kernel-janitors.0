@@ -1,55 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 04 Jun 2014 09:07:59 +0000
-Subject: [PATCH 9/10] IB/qib: use safer test on the result of find_first_zero_bit
-Message-Id: <1401872880-23685-10-git-send-email-Julia.Lawall@lip6.fr>
+From: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>
+Date: Wed, 04 Jun 2014 18:41:03 +0000
+Subject: RE: [PATCH 9/10] IB/qib: use safer test on the result of find_first_zero_bit
+Message-Id: <32E1700B9017364D9B60AED9960492BC21BE92E6@fmsmsx120.amr.corp.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1401872880-23685-10-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1401872880-23685-10-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Marciniszyn <infinipath@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, infinipath <infinipath@intel.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Roland Dreier <roland@kernel.org>, "Hefty, Sean" <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+> Subject: [PATCH 9/10] IB/qib: use safer test on the result of find_first_zero_bit
+> 
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
-return a larger number than the maximum position argument if that position
-is not a multiple of BITS_PER_LONG.
+Thanks for the patch!
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+Roland, I'm marking this as stable since a memory corruption can occur in the _set_bit().
 
-// <smpl>
-@@
-expression e1,e2,e3;
-statement S1,S2;
-@@
-
-e1 = find_first_zero_bit(e2,e3)
-...
-if (e1 
-- =
-+ >  e3)
-S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/infiniband/hw/qib/qib_file_ops.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/infiniband/hw/qib/qib_file_ops.c b/drivers/infiniband/hw/qib/qib_file_ops.c
---- a/drivers/infiniband/hw/qib/qib_file_ops.c
-+++ b/drivers/infiniband/hw/qib/qib_file_ops.c
-@@ -1187,7 +1187,7 @@ static void assign_ctxt_affinity(struct
- 		int cpu;
- 		cpu = find_first_zero_bit(qib_cpulist,
- 					  qib_cpulist_count);
--		if (cpu = qib_cpulist_count)
-+		if (cpu >= qib_cpulist_count)
- 			qib_dev_err(dd,
- 			"no cpus avail for affinity PID %u\n",
- 			current->pid);
-
+Cc: <stable@vger.kernel.org>
+Acked-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
