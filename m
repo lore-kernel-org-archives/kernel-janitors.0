@@ -1,27 +1,55 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 09 Jun 2014 15:12:12 +0000
-Subject: [patch] VME: remove duplicate CA91CX42_DCTL_VDW_M define
-Message-Id: <20140609151212.GG9600@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 04 Jun 2014 09:07:51 +0000
+Subject: [PATCH 1/10] sh: use safer test on the result of find_first_zero_bit
+Message-Id: <1401872880-23685-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org
 
-The CA91CX42_DCTL_VDW_M define is cut and pasted twice so we can delete
-the second instance.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
+return a larger number than the maximum position argument if that position
+is not a multiple of BITS_PER_LONG.
 
-diff --git a/drivers/vme/bridges/vme_ca91cx42.h b/drivers/vme/bridges/vme_ca91cx42.h
-index 02a7c79..d46b12d 100644
---- a/drivers/vme/bridges/vme_ca91cx42.h
-+++ b/drivers/vme/bridges/vme_ca91cx42.h
-@@ -360,7 +360,6 @@ static const int CA91CX42_VSI_TO[] = { VSI0_TO, VSI1_TO, VSI2_TO, VSI3_TO,
-  */
- #define CA91CX42_DCTL_L2V		(1<<31)
- #define CA91CX42_DCTL_VDW_M		(3<<22)
--#define CA91CX42_DCTL_VDW_M		(3<<22)
- #define CA91CX42_DCTL_VDW_D8		0
- #define CA91CX42_DCTL_VDW_D16		(1<<22)
- #define CA91CX42_DCTL_VDW_D32		(1<<23)
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2,e3;
+statement S1,S2;
+@@
+
+e1 = find_first_zero_bit(e2,e3)
+...
+if (e1 
+- =
++ >  e3)
+S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/sh/kernel/perf_event.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -u -p a/arch/sh/kernel/perf_event.c b/arch/sh/kernel/perf_event.c
+--- a/arch/sh/kernel/perf_event.c
++++ b/arch/sh/kernel/perf_event.c
+@@ -281,7 +281,7 @@ static int sh_pmu_add(struct perf_event
+ 
+ 	if (__test_and_set_bit(idx, cpuc->used_mask)) {
+ 		idx = find_first_zero_bit(cpuc->used_mask, sh_pmu->num_events);
+-		if (idx = sh_pmu->num_events)
++		if (idx >= sh_pmu->num_events)
+ 			goto out;
+ 
+ 		__set_bit(idx, cpuc->used_mask);
+
