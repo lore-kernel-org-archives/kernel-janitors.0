@@ -1,72 +1,55 @@
-From: Masaru Nomura <massa.nomura@gmail.com>
-Date: Tue, 24 Jun 2014 21:52:14 +0000
-Subject: [PATCH 3/3] gpu: drm: vmwgfx: Remove unnecessary parameter from vmw_compat_shader_free()
-Message-Id: <1403646734-2838-4-git-send-email-massa.nomura@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 04 Jun 2014 09:08:00 +0000
+Subject: [PATCH 10/10] blackfin: use safer test on the result of find_first_zero_bit
+Message-Id: <1401872880-23685-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
-In-Reply-To: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
+References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie
-Cc: thellstrom@vmware.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>
+To: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Steven Miao <realmz6@gmail.com>, linux-kernel@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net
 
-vm_compat_shader_manager is only used for drm_ht_remove_item() within the function.
-As drm_ht_remove_item() does not need a paremeter drm_open_hash(&man-> shaders),
-vm_compat_shader_manager(*man) does not have to be passed to this function.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
+Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
+return a larger number than the maximum position argument if that position
+is not a multiple of BITS_PER_LONG.
+
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e1,e2,e3;
+statement S1,S2;
+@@
+
+e1 = find_first_zero_bit(e2,e3)
+...
+if (e1 
+- =
++ >  e3)
+S1 else S2
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_shader.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ arch/blackfin/kernel/perf_event.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-index bbb30c3..2fdbf8e 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-@@ -532,14 +532,12 @@ int vmw_compat_shader_lookup(struct vmw_compat_shader_manager *man,
- /**
-  * vmw_compat_shader_free - Free a compat shader.
-  *
-- * @man: Pointer to the compat shader manager.
-  * @entry: Pointer to a struct vmw_compat_shader.
-  *
-  * Frees a struct vmw_compat_shder entry and drops its reference to the
-  * guest backed shader.
-  */
--static void vmw_compat_shader_free(struct vmw_compat_shader_manager *man,
--				   struct vmw_compat_shader *entry)
-+static void vmw_compat_shader_free(struct vmw_compat_shader *entry)
- {
- 	list_del(&entry->head);
- 	WARN_ON(drm_ht_remove_item(&entry->hash));
-@@ -602,7 +600,7 @@ void vmw_compat_shaders_revert(struct vmw_compat_shader_manager *man,
- 	list_for_each_entry_safe(entry, next, list, head) {
- 		switch (entry->state) {
- 		case VMW_COMPAT_ADD:
--			vmw_compat_shader_free(man, entry);
-+			vmw_compat_shader_free(entry);
- 			break;
- 		case VMW_COMPAT_DEL:
- 			ret = drm_ht_insert_item(&man->shaders, &entry->hash);
-@@ -649,7 +647,7 @@ int vmw_compat_shader_remove(struct vmw_compat_shader_manager *man,
+diff -u -p a/arch/blackfin/kernel/perf_event.c b/arch/blackfin/kernel/perf_event.c
+--- a/arch/blackfin/kernel/perf_event.c
++++ b/arch/blackfin/kernel/perf_event.c
+@@ -354,7 +354,7 @@ static int bfin_pmu_add(struct perf_even
  
- 	switch (entry->state) {
- 	case VMW_COMPAT_ADD:
--		vmw_compat_shader_free(man, entry);
-+		vmw_compat_shader_free(entry);
- 		break;
- 	case VMW_COMPAT_COMMITED:
- 		drm_ht_remove_item(&entry->hash);
-@@ -804,7 +802,7 @@ void vmw_compat_shader_man_destroy(struct vmw_compat_shader_manager *man)
+ 	if (__test_and_set_bit(idx, cpuc->used_mask)) {
+ 		idx = find_first_zero_bit(cpuc->used_mask, MAX_HWEVENTS);
+-		if (idx = MAX_HWEVENTS)
++		if (idx >= MAX_HWEVENTS)
+ 			goto out;
  
- 	mutex_lock(&man->dev_priv->cmdbuf_mutex);
- 	list_for_each_entry_safe(entry, next, &man->list, head)
--		vmw_compat_shader_free(man, entry);
-+		vmw_compat_shader_free(entry);
- 
- 	drm_ht_remove(&man->shaders);
- 
--- 
-1.9.3
+ 		__set_bit(idx, cpuc->used_mask);
 
