@@ -1,58 +1,110 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Date: Tue, 17 Jun 2014 22:11:40 +0000
-Subject: Re: [patch] char: xilinx_hwicap: missing error code if ioremap() fails
-Message-Id: <087c9c34-0a21-4116-8179-174551750d4e@BY2FFO11FD026.protection.gbl>
+From: Simon Budig <simon.budig@kernelconcepts.de>
+Date: Sat, 07 Jun 2014 23:53:48 +0000
+Subject: [patch] Input: edt-ft5x06 - fix an i2c write for M09 support
+Message-Id: <5393A60C.8040207@kernelconcepts.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="xtlSJbV10amoe3SfbmwQo92WsCOvhaL3A"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140611060433.GB7569@mwanda>
- <000001cf8540$017e4f90$047aeeb0$%han@samsung.com>
- <add7f4d9-0279-4c49-b936-d70f34008ab4@BY2FFO11FD044.protection.gbl>
- <20140617060324.GS5015@mwanda>
-In-Reply-To: <20140617060324.GS5015@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, =?ISO-8859-1?Q?Lothar_?= =?ISO-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Henrik Rydberg <rydberg@euromail.se>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Fugang Duan <B38611@freescale.com>, Jingoo Han <jg1.han@samsung.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org, =?ISO-8859-1?Q?Robert_W=F6rle?= <rwoerle@mibtec.de>
 
-On 06/17/2014 08:03 AM, Dan Carpenter wrote:
-> On Tue, Jun 17, 2014 at 02:53:27AM +0200, Michal Simek wrote:
->> On 06/11/2014 08:40 AM, Jingoo Han wrote:
->>> On Wednesday, June 11, 2014 3:05 PM, Dan Carpenter wrote:
->>>>
->>>> Return -ENOMEM instead of success if ioremap() fails.
->>>>
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>
->>> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
->>>
->>> Best regards,
->>> Jingoo Han
->>>
->>>> ---
->>>> Static checker stuff, I can't compile this.
->>>>
->>>> diff --git a/drivers/char/xilinx_hwicap/xilinx_hwicap.c b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
->>>> index f6345f9..9b1a5ac 100644
->>>> --- a/drivers/char/xilinx_hwicap/xilinx_hwicap.c
->>>> +++ b/drivers/char/xilinx_hwicap/xilinx_hwicap.c
->>>> @@ -661,6 +661,7 @@ static int hwicap_setup(struct device *dev, int id,
->>>>  	drvdata->base_address = ioremap(drvdata->mem_start, drvdata->mem_size);
->>>>  	if (!drvdata->base_address) {
->>>>  		dev_err(dev, "ioremap() failed\n");
->>>> +		retval = -ENOMEM;
->>
->> Isn't it just better to do?
->>
->> if (IS_ERR(drvdata->base_address)) {
->> 	...
->> 	retval = PTR_ERR(drvdata->base_address);
->> }
-> 
-> ioremap() returns NULL on error, not an ERR_PTR.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--xtlSJbV10amoe3SfbmwQo92WsCOvhaL3A
+Content-Type: multipart/mixed;
+ boundary="------------030101020804060900070105"
 
-Ah ok. Fair enough.
+This is a multi-part message in MIME format.
+--------------030101020804060900070105
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Hi all.
+
+I received notice from Robert W=F6rle who spotted a bug in the ft5x06
+driver (M09 support) which can result in bogus values being written into
+the configuration registers.
+
+Paul wrote:
+> I think i found the problem, as the driver sends 3 bytes instead of 2
+> when accessing a register on the M09 firmware.
+> Therefore , writing to gain seems to overflow into the offset register.=
+
+>=20
+> This seems to be even in the lastet upstream driver so i created a patc=
+h
+> for this driver  which you find attached.
+>=20
+> @Simon Budig
+>=20
+> Find attached a patch to fix this edt driver bug, feel free to comment =
+,
+> test and commit upstream ;-)
+
+He is right, his fix is correct. Please include his patch into the
+repository.
+
+Acked-By: Simon Budig <simon.budig@kernelconcepts.de>
 
 Thanks,
-Michal
+        Simon
+--=20
+       Simon Budig                        kernel concepts GmbH
+       simon.budig@kernelconcepts.de      Sieghuetter Hauptweg 48
+       +49-271-771091-17                  D-57072 Siegen
 
 
+--------------030101020804060900070105
+Content-Type: text/x-patch;
+ name="0001-Input-edt-ft5x06-fix-i2c-writes-to-2-bytes-on-M09-fi.patch"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename*0="0001-Input-edt-ft5x06-fix-i2c-writes-to-2-bytes-on-M09-fi.pa";
+ filename*1="tch"
 
+=46rom 36b9ac0e8206efefc8795c925b0f3b63ab29fd08 Mon Sep 17 00:00:00 2001
+From: Robert Woerle <robert@linuxdevelopment.de>
+Date: Wed, 28 May 2014 13:22:09 +0200
+Subject: [PATCH] Input: edt-ft5x06 - fix i2c writes to 2 bytes on M09
+ firmware
+
+Signed-off-by: Robert Woerle <robert@linuxdevelopment.de>
+---
+ drivers/input/touchscreen/edt-ft5x06.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touch=
+screen/edt-ft5x06.c
+index f8815be..d4f3399 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -271,7 +271,7 @@ static int edt_ft5x06_register_write(struct edt_ft5x0=
+6_ts_data *tsdata,
+ 		wrbuf[0] =3D addr;
+ 		wrbuf[1] =3D value;
+=20
+-		return edt_ft5x06_ts_readwrite(tsdata->client, 3,
++		return edt_ft5x06_ts_readwrite(tsdata->client, 2,
+ 					wrbuf, 0, NULL);
+=20
+ 	default:
+--=20
+1.7.9.5
+
+
+--------------030101020804060900070105--
+
+--xtlSJbV10amoe3SfbmwQo92WsCOvhaL3A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+Comment: Using GnuPG with Icedove - http://www.enigmail.net/
+
+iEYEARECAAYFAlOTpgwACgkQO2O/RXesiHC5nQCgqm6o35qTeLqcS+XQaLx1tjct
+YOgAoIOauVOumDCnknHwiYJF921woYaG
+=0JFk
+-----END PGP SIGNATURE-----
+
+--xtlSJbV10amoe3SfbmwQo92WsCOvhaL3A--
