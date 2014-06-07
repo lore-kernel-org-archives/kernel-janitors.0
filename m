@@ -1,92 +1,28 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 01 Jun 2014 13:56:29 +0000
-Subject: [PATCH 4/11 V3] via-ircc: Remove useless return variables
-Message-Id: <1401630989-5773-1-git-send-email-peter.senna@gmail.com>
+From: INFO <freelotto12@ascend482.onmicrosoft.com>
+Date: Sat, 07 Jun 2014 23:06:55 +0000
+Subject: Free Lotto Award Notification(Reference:WIN-37-14-29-14)
+Message-Id: <b923a932-a2a0-4d32-b2ab-8bf0de21fc8f@DB3PR02MB0284.eurprd02.prod.outlook.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <samuel@sortiz.org>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, dan.carpenter@oracle.com, wharms@bfs.de
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-This patch remove variables that are initialized with a constant,
-are never updated, and are only used as parameter of return.
-Return the constant instead of using a variable.
-
-For via_ircc_read_dongle_id(), return IBM_DONGLE_ID instead of 9.
-The #define IBM_DONGLE_ID 9 is added by this patch.
-
-Verified by compilation only.
-
-The coccinelle script that find and fixes this issue is:
-// <smpl>
-@@
-type T;
-constant C;
-identifier ret;
-@@
-- T ret = C;
-... when != ret
-    when strict
-return
-- ret
-+ C
-;
-// </smpl>
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-
----
-Changes from V2:
- - added #define IBM_DONGLE_ID 9
- - return IBM_DONGLE_ID instead of 9
-
-Changes from V1:
- - Moved comment about return value to near the return value
-
- drivers/net/irda/via-ircc.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/irda/via-ircc.c b/drivers/net/irda/via-ircc.c
-index 2900af0..2dd6582 100644
---- a/drivers/net/irda/via-ircc.c
-+++ b/drivers/net/irda/via-ircc.c
-@@ -65,6 +65,7 @@ F02 Oct/28/02: Add SB device ID for 3147 and 3177.
- 
- #define VIA_MODULE_NAME "via-ircc"
- #define CHIP_IO_EXTENT 0x40
-+#define IBM_DONGLE_ID 9
- 
- static char *driver_name = VIA_MODULE_NAME;
- 
-@@ -510,10 +511,10 @@ static void via_hw_init(struct via_ircc_cb *self)
-  */
- static int via_ircc_read_dongle_id(int iobase)
- {
--	int dongle_id = 9;	/* Default to IBM */
--
- 	IRDA_ERROR("via-ircc: dongle probing not supported, please specify dongle_id module parameter.\n");
--	return dongle_id;
-+
-+	/* Everything is an IBM */
-+	return IBM_DONGLE_ID;
- }
- 
- /*
-@@ -926,7 +927,6 @@ static int via_ircc_dma_xmit(struct via_ircc_cb *self, u16 iobase)
- static int via_ircc_dma_xmit_complete(struct via_ircc_cb *self)
- {
- 	int iobase;
--	int ret = TRUE;
- 	u8 Tx_status;
- 
- 	IRDA_DEBUG(3, "%s()\n", __func__);
-@@ -983,7 +983,7 @@ F01_E*/
- 	// Tell the network layer, that we can accept more frames 
- 	netif_wake_queue(self->netdev);
- //F01   }
--	return ret;
-+	return TRUE;
- }
- 
- /*
+From claim=B4s processing office.
+Free Lotto Lottery Award Notification
+Confirmation Ticket No: 33-48-19-H5H
+Reference:WIN-37-14-29-14
+You have won( 1 Million Euros )in the Free Lotto Lottery Award 2014 held in=
+ Madrid Spain
+This email was sent to notify you officially as you are advise to contact t=
+he claim=B4s processing office with your details immediately for claim,
+Contact Person: Martinez Adela
+Contact Email: freelottoaward066@gmail.com
+Signed (Announcer)
+Director, Cooperate HR and Communication.
+FREE LOTTO LOTTERY AWARD
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
