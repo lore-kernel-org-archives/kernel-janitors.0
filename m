@@ -1,20 +1,28 @@
-From: Joe Perches <joe@perches.com>
-Date: Tue, 24 Jun 2014 17:34:23 +0000
-Subject: Re: [PATCH 0/6] Remove various orphaned header files
-Message-Id: <1403631263.29061.17.camel@joe-AO725>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jun 2014 15:09:01 +0000
+Subject: [patch] net: sxgbe: remove duplicate SXGBE_CORE_L34_ADDCTL_REG define
+Message-Id: <20140609150901.GC9600@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
-In-Reply-To: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Byungho An <bh74.an@samsung.com>
+Cc: Girish K S <ks.giri@samsung.com>, Vipul Pandya <vipul.pandya@samsung.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 2014-06-24 at 19:27 +0200, Rasmus Villemoes wrote:
-> AFAICT, these headers are not used anywhere, and are just accidental
-> leftovers from past cleanups.
+The SXGBE_CORE_L34_ADDCTL_REG define is cut and pasted twice so we can
+delete the second instance.
 
-Thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
+diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h b/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
+index 56f8bf5..81437d9 100644
+--- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
++++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
+@@ -188,7 +188,6 @@
+ 
+ /* L3/L4 function registers */
+ #define SXGBE_CORE_L34_ADDCTL_REG	0x0C00
+-#define SXGBE_CORE_L34_ADDCTL_REG	0x0C00
+ #define SXGBE_CORE_L34_DATA_REG		0x0C04
+ 
+ /* ARP registers */
