@@ -1,22 +1,28 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Date: Tue, 24 Jun 2014 19:21:23 +0000
-Subject: Re: [PATCH 5/6] include/linux/platform_data/tegra_emc.h: Remove unused header
-Message-Id: <53A9CFB3.6080501@wwwdotorg.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jun 2014 15:19:17 +0000
+Subject: [patch] powerpc/spufs: remove duplicate SPUFS_CNTL_MAP_SIZE define
+Message-Id: <20140609151917.GM9600@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk> <1403630855-29186-6-git-send-email-linux@rasmusvillemoes.dk>
-In-Reply-To: <1403630855-29186-6-git-send-email-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Jeremy Kerr <jk@ozlabs.org>
+Cc: cbe-oss-dev@lists.ozlabs.org, Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-On 06/24/2014 11:27 AM, Rasmus Villemoes wrote:
-> The header file include/linux/platform_data/tegra_emc.h does not seem
-> to be used anywhere. It was orphaned by a7cbe92c "ARM: tegra: remove
-> tegra EMC scaling driver". Remove it.
+The SPUFS_CNTL_MAP_SIZE define is cut and pasted twice so we can delete
+the second instance.
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Perhaps this should go through the arm-soc tree like the original
-commit, but it doesn't really matter either way.
+diff --git a/arch/powerpc/platforms/cell/spufs/spufs.h b/arch/powerpc/platforms/cell/spufs/spufs.h
+index 0ba3c95..bcfd6f0 100644
+--- a/arch/powerpc/platforms/cell/spufs/spufs.h
++++ b/arch/powerpc/platforms/cell/spufs/spufs.h
+@@ -35,7 +35,6 @@
+ #define SPUFS_PS_MAP_SIZE	0x20000
+ #define SPUFS_MFC_MAP_SIZE	0x1000
+ #define SPUFS_CNTL_MAP_SIZE	0x1000
+-#define SPUFS_CNTL_MAP_SIZE	0x1000
+ #define SPUFS_SIGNAL_MAP_SIZE	PAGE_SIZE
+ #define SPUFS_MSS_MAP_SIZE	0x1000
+ 
