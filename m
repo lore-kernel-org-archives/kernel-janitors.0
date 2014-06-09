@@ -1,24 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 03 Jun 2014 23:09:15 +0000
-Subject: Re: [PATCH 2/2 v5] lpc_eth: Use resource_size instead of computation
-Message-Id: <20140603.160915.450521382704524671.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jun 2014 15:09:52 +0000
+Subject: [patch] regulator: 88pm800: remove duplicate PM800_BUCK3 define
+Message-Id: <20140609150951.GD9600@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140602113430.GA3823@lip6.fr>
-	<20140603103254.GA20794@lip6.fr>
-	<20140603104559.GA21087@lip6.fr>
-In-Reply-To: <20140603104559.GA21087@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benoit.taine@lip6.fr
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Benoit Taine <benoit.taine@lip6.fr>
-Date: Tue, 3 Jun 2014 12:45:59 +0200
+The PM800_BUCK3 define is cut and pasted twice so we can remove the
+second instance.
 
-> This issue was reported by coccicheck using the semantic patch 
-> at scripts/coccinelle/api/resource_size.cocci
-> 
-> Signed-off-by: Benoit Taine <benoit.taine@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/drivers/regulator/88pm800.c b/drivers/regulator/88pm800.c
+index 7a721d67..4e6c8c6 100644
+--- a/drivers/regulator/88pm800.c
++++ b/drivers/regulator/88pm800.c
+@@ -52,7 +52,6 @@
+ #define PM800_BUCK1_3		(0x3F)
+ #define PM800_BUCK2		(0x40)
+ #define PM800_BUCK3		(0x41)
+-#define PM800_BUCK3		(0x41)
+ #define PM800_BUCK4		(0x42)
+ #define PM800_BUCK4_1		(0x43)
+ #define PM800_BUCK4_2		(0x44)
