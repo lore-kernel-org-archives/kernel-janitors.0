@@ -1,102 +1,28 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Tue, 24 Jun 2014 21:42:28 +0000
-Subject: [PATCH 2/2] [media] Cleanup line > 80 character violations
-Message-Id: <1403646148-25385-2-git-send-email-emilgoode@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jun 2014 15:18:20 +0000
+Subject: [patch] MIPS: mipsreg: remove duplicate MIPS_CONF4_FTLBSETS_SHIFT
+Message-Id: <20140609151820.GK9600@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403646148-25385-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1403646148-25385-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>, Jiri Kosina <jkosina@suse.cz>, Hans Verkuil <hans.verkuil@cisco.com>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+To: Ralf Baechle <ralf@linux-mips.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>
+Cc: Markos Chandras <markos.chandras@imgtec.com>, John Crispin <blogic@openwrt.org>, Paul Burton <paul.burton@imgtec.com>, Leonid Yegoshin <Leonid.Yegoshin@imgtec.com>, linux-mips@linux-mips.org, kernel-janitors@vger.kernel.org
 
-This cleans up some line over 80 character violations.
+The MIPS_CONF4_FTLBSETS_SHIFT define is cut and pasted twice so we can
+remove the second define.
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
- drivers/media/dvb-frontends/stb6100_cfg.h |   12 ++++++++----
- drivers/media/dvb-frontends/tda8261_cfg.h |    9 ++++++---
- 2 files changed, 14 insertions(+), 7 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/dvb-frontends/stb6100_cfg.h b/drivers/media/dvb-frontends/stb6100_cfg.h
-index 0e10ad89..6edc153 100644
---- a/drivers/media/dvb-frontends/stb6100_cfg.h
-+++ b/drivers/media/dvb-frontends/stb6100_cfg.h
-@@ -27,7 +27,8 @@ static int stb6100_get_frequency(struct dvb_frontend *fe, u32 *frequency)
- 	int err = 0;
- 
- 	if (tuner_ops->get_state) {
--		if ((err = tuner_ops->get_state(fe, DVBFE_TUNER_FREQUENCY, &t_state)) < 0) {
-+		err = tuner_ops->get_state(fe, DVBFE_TUNER_FREQUENCY, &t_state);
-+		if (err < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
- 			return err;
- 		}
-@@ -46,7 +47,8 @@ static int stb6100_set_frequency(struct dvb_frontend *fe, u32 frequency)
- 	t_state.frequency = frequency;
- 
- 	if (tuner_ops->set_state) {
--		if ((err = tuner_ops->set_state(fe, DVBFE_TUNER_FREQUENCY, &t_state)) < 0) {
-+		err = tuner_ops->set_state(fe, DVBFE_TUNER_FREQUENCY, &t_state);
-+		if (err < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
- 			return err;
- 		}
-@@ -62,7 +64,8 @@ static int stb6100_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
- 	int err = 0;
- 
- 	if (tuner_ops->get_state) {
--		if ((err = tuner_ops->get_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state)) < 0) {
-+		err = tuner_ops->get_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state);
-+		if (err < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
- 			return err;
- 		}
-@@ -81,7 +84,8 @@ static int stb6100_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth)
- 	t_state.bandwidth = bandwidth;
- 
- 	if (tuner_ops->set_state) {
--		if ((err = tuner_ops->set_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state)) < 0) {
-+		err = tuner_ops->set_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state);
-+		if (err < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
- 			return err;
- 		}
-diff --git a/drivers/media/dvb-frontends/tda8261_cfg.h b/drivers/media/dvb-frontends/tda8261_cfg.h
-index 7de65c3..04a19e1 100644
---- a/drivers/media/dvb-frontends/tda8261_cfg.h
-+++ b/drivers/media/dvb-frontends/tda8261_cfg.h
-@@ -25,7 +25,8 @@ static int tda8261_get_frequency(struct dvb_frontend *fe, u32 *frequency)
- 	int err = 0;
- 
- 	if (tuner_ops->get_state) {
--		if ((err = tuner_ops->get_state(fe, DVBFE_TUNER_FREQUENCY, &t_state)) < 0) {
-+		err = tuner_ops->get_state(fe, DVBFE_TUNER_FREQUENCY, &t_state);
-+		if (err < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
- 			return err;
- 		}
-@@ -45,7 +46,8 @@ static int tda8261_set_frequency(struct dvb_frontend *fe, u32 frequency)
- 	t_state.frequency = frequency;
- 
- 	if (tuner_ops->set_state) {
--		if ((err = tuner_ops->set_state(fe, DVBFE_TUNER_FREQUENCY, &t_state)) < 0) {
-+		err = tuner_ops->set_state(fe, DVBFE_TUNER_FREQUENCY, &t_state);
-+		if (err < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
- 			return err;
- 		}
-@@ -62,7 +64,8 @@ static int tda8261_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
- 	int err = 0;
- 
- 	if (tuner_ops->get_state) {
--		if ((err = tuner_ops->get_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state)) < 0) {
-+		err = tuner_ops->get_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state);
-+		if (err < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
- 			return err;
- 		}
--- 
-1.7.10.4
-
+diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
+index 98e9754..dcc7872 100644
+--- a/arch/mips/include/asm/mipsregs.h
++++ b/arch/mips/include/asm/mipsregs.h
+@@ -630,7 +630,6 @@
+ #define MIPS_CONF4_MMUSIZEEXT_SHIFT	(0)
+ #define MIPS_CONF4_MMUSIZEEXT	(_ULCAST_(255) << 0)
+ #define MIPS_CONF4_FTLBSETS_SHIFT	(0)
+-#define MIPS_CONF4_FTLBSETS_SHIFT	(0)
+ #define MIPS_CONF4_FTLBSETS	(_ULCAST_(15) << MIPS_CONF4_FTLBSETS_SHIFT)
+ #define MIPS_CONF4_FTLBWAYS_SHIFT	(4)
+ #define MIPS_CONF4_FTLBWAYS	(_ULCAST_(15) << MIPS_CONF4_FTLBWAYS_SHIFT)
