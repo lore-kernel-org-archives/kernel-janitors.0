@@ -1,32 +1,28 @@
-From: Yi Li <lovelylich@gmail.com>
-Date: Tue, 10 Jun 2014 17:39:21 +0000
-Subject: Re: [Q] Which tree should we work agains?
-Message-Id: <539742C9.1080003@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jun 2014 15:20:23 +0000
+Subject: [patch] gma500: remove duplicate FB_REG09 define
+Message-Id: <20140609152023.GO9600@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <006601cf8478$52fb3310$f8f19930$@gmail.com>
-In-Reply-To: <006601cf8478$52fb3310$f8f19930$@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: David Airlie <airlied@linux.ie>
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
 
+The FB_REG09 define is cut and pasted twice so we can remove the second
+instance.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-于 2014年06月10日 19:16, Dan Carpenter 写道:
-> On Tue, Jun 10, 2014 at 11:29:55AM +0200, Sima Baymani wrote:
->> The patch you responded to in that link was aimed for staging. Previously,
->> I have understood that staging work is done on staging-next - has this
->> changed?
->
-> linux-next is compiled each day from staging-next and 100+ other devel
-> trees.  It might be up to 24 hours behind staging-next but it's
-> basically the same thing.
->
-> regards,
-> dan carpenter
->
->
-Thanks, Dan. it is very useful!
-
-regards,
-Yi
+diff --git a/drivers/gpu/drm/gma500/mid_bios.c b/drivers/gpu/drm/gma500/mid_bios.c
+index a97e38e..d75ecb3 100644
+--- a/drivers/gpu/drm/gma500/mid_bios.c
++++ b/drivers/gpu/drm/gma500/mid_bios.c
+@@ -39,7 +39,6 @@ static void mid_get_fuse_settings(struct drm_device *dev)
+ #define FB_REG06 0xD0810600
+ #define FB_MIPI_DISABLE  (1 << 11)
+ #define FB_REG09 0xD0810900
+-#define FB_REG09 0xD0810900
+ #define FB_SKU_MASK  0x7000
+ #define FB_SKU_SHIFT 12
+ #define FB_SKU_100 0
