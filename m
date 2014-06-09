@@ -1,35 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Mon, 02 Jun 2014 17:38:34 +0000
-Subject: Re: [PATCH] stmmac: Remove spin_lock call in stmmac_get_pauseparam()
-Message-Id: <20140602.103834.1994455666478487120.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 09 Jun 2014 14:55:39 +0000
+Subject: [patch] qlcnic: remove duplicate QLC_83XX_GET_LSO_CAPABILITY define
+Message-Id: <20140609145539.GB9600@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401701450-1203-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1401701450-1203-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: emilgoode@gmail.com
-Cc: Wei.Yang@windriver.com, peppe.cavallaro@st.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Shahed Shaikh <shahed.shaikh@qlogic.com>
+Cc: Dept-HSGLinuxNICDev@qlogic.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Emil Goode <emilgoode@gmail.com>
-Date: Mon,  2 Jun 2014 11:30:50 +0200
+The QLC_83XX_GET_LSO_CAPABILITY define is cut and pasted twice so we can
+delete the second instance.
 
-> The following patch removed unnecessary spin_lock/unlock calls
-> in ethtool_ops callback functions. In the second and final version
-> of the patch one spin_lock call was left behind.
-> 
-> commit cab6715c3e8029e98b0b5d4056ceda007c0f6380
-> Author: Yang Wei <Wei.Yang@windriver.com>
-> Date:   Sun May 25 09:53:44 2014 +0800
-> 
->     net: driver: stmicro: Remove some useless the lock protection
-> 
-> This introduced the following sparse warning:
-> 
-> drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c:424:1: warning:
-> 	context imbalance in 'stmmac_get_pauseparam' -
-> 	different lock contexts for basic block
-> 
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Good catch, applied, thanks Emil.
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
+index 97784d0..2bf101a 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.h
+@@ -418,7 +418,6 @@ enum qlcnic_83xx_states {
+ #define QLC_83XX_GET_FUNC_MODE_FROM_NPAR_INFO(val)	(val & 0x80000000)
+ #define QLC_83XX_GET_LRO_CAPABILITY(val)		(val & 0x20)
+ #define QLC_83XX_GET_LSO_CAPABILITY(val)		(val & 0x40)
+-#define QLC_83XX_GET_LSO_CAPABILITY(val)		(val & 0x40)
+ #define QLC_83XX_GET_HW_LRO_CAPABILITY(val)		(val & 0x400)
+ #define QLC_83XX_GET_VLAN_ALIGN_CAPABILITY(val)	(val & 0x4000)
+ #define QLC_83XX_GET_FW_LRO_MSS_CAPABILITY(val)	(val & 0x20000)
