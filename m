@@ -1,39 +1,107 @@
-From: Masaru Nomura <massa.nomura@gmail.com>
-Date: Tue, 24 Jun 2014 21:52:12 +0000
-Subject: [PATCH 1/3] gpu: drm: vmwgfx: Fix memory leak by adding drm_ht_remove()
-Message-Id: <1403646734-2838-2-git-send-email-massa.nomura@gmail.com>
+From: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
+Date: Tue, 10 Jun 2014 11:24:46 +0000
+Subject: RE: [PATCH 5/11] drivers/scsi/bfa/bfad_bsg.c: Remove useless return variables
+Message-Id: <C08020CBD5BE83488A998B4818797E8414288A@avmb3.qlogic.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
-In-Reply-To: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
+References: <1401542051-3174-5-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1401542051-3174-5-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie
-Cc: thellstrom@vmware.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>
+To: Peter Senna Tschudin <peter.senna@gmail.com>, Anil Gurumurthy <Anil.Gurumurthy@qlogic.com>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-drm_ht_remove() should be called in vmw_compat_shader_man_destroy()
-This is because memory was allocated for (&man->shaders)->table by
-vmw_compat_shader_man_create() -> drm_ht_create()
-but this memory is not freed when vmw_compat_shader_mager is destroied.
+Thanks for the patch.
+Acked-by: Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>
 
-Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
+-----Original Message-----
+From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-owner@vger.kernel.org] On Behalf Of Peter Senna Tschudin
+Sent: 31 May 2014 18:44
+To: Anil Gurumurthy
+Cc: kernel-janitors@vger.kernel.org; Sudarsana Kalluru; James E.J. Bottomley; linux-scsi; linux-kernel
+Subject: [PATCH 5/11] drivers/scsi/bfa/bfad_bsg.c: Remove useless return variables
+
+This patch remove variables that are initialized with a constant, are never updated, and are only used as parameter of return.
+Return the constant instead of using a variable.
+
+Verified by compilation only.
+
+The coccinelle script that find and fixes this issue is:
+// <smpl>
+@@
+type T;
+constant C;
+identifier ret;
+@@
+- T ret = C;
+... when != ret
+    when strict
+return
+- ret
++ C
+;
+// </smpl>
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_shader.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/bfa/bfad_bsg.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-index c1559eea..01cc8ea 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
-@@ -806,6 +806,8 @@ void vmw_compat_shader_man_destroy(struct vmw_compat_shader_manager *man)
- 	list_for_each_entry_safe(entry, next, &man->list, head)
- 		vmw_compat_shader_free(man, entry);
- 
-+	drm_ht_remove(&man->shaders);
-+
- 	mutex_unlock(&man->dev_priv->cmdbuf_mutex);
- 	kfree(man);
+diff --git a/drivers/scsi/bfa/bfad_bsg.c b/drivers/scsi/bfa/bfad_bsg.c index 8994fb8..a6ee1cf 100644
+--- a/drivers/scsi/bfa/bfad_bsg.c
++++ b/drivers/scsi/bfa/bfad_bsg.c
+@@ -26,7 +26,6 @@ int
+ bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)  {
+        struct bfa_bsg_gen_s *iocmd = (struct bfa_bsg_gen_s *)cmd;
+-       int     rc = 0;
+        unsigned long   flags;
+
+        spin_lock_irqsave(&bfad->bfad_lock, flags); @@ -34,7 +33,7 @@ bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)
+        if (!bfa_ioc_is_disabled(&bfad->bfa.ioc)) {
+                spin_unlock_irqrestore(&bfad->bfad_lock, flags);
+                iocmd->status = BFA_STATUS_OK;
+-               return rc;
++               return 0;
+        }
+
+        init_completion(&bfad->enable_comp);
+@@ -43,21 +42,20 @@ bfad_iocmd_ioc_enable(struct bfad_s *bfad, void *cmd)
+        spin_unlock_irqrestore(&bfad->bfad_lock, flags);
+        wait_for_completion(&bfad->enable_comp);
+
+-       return rc;
++       return 0;
  }
--- 
-1.9.3
 
+ int
+ bfad_iocmd_ioc_disable(struct bfad_s *bfad, void *cmd)  {
+        struct bfa_bsg_gen_s *iocmd = (struct bfa_bsg_gen_s *)cmd;
+-       int     rc = 0;
+        unsigned long   flags;
+
+        spin_lock_irqsave(&bfad->bfad_lock, flags);
+        if (bfa_ioc_is_disabled(&bfad->bfa.ioc)) {
+                spin_unlock_irqrestore(&bfad->bfad_lock, flags);
+                iocmd->status = BFA_STATUS_OK;
+-               return rc;
++               return 0;
+        }
+
+        if (bfad->disable_active) {
+@@ -74,7 +72,7 @@ bfad_iocmd_ioc_disable(struct bfad_s *bfad, void *cmd)
+        bfad->disable_active = BFA_FALSE;
+        iocmd->status = BFA_STATUS_OK;
+
+-       return rc;
++       return 0;
+ }
+
+ static int
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-scsi" in the body of a message to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+________________________________
+
+This message and any attached documents contain information from QLogic Corporation or its wholly-owned subsidiaries that may be confidential. If you are not the intended recipient, you may not read, copy, distribute, or use this information. If you have received this transmission in error, please notify the sender immediately by reply e-mail and then delete this message.
