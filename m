@@ -1,70 +1,43 @@
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Date: Wed, 04 Jun 2014 11:09:12 +0000
-Subject: Re: [PATCH 8/10] s390/pci: use safer test on the result of find_first_zero_bit
-Message-Id: <alpine.LFD.2.11.1406041308450.1560@denkbrett>
+From: "Yi Li" <lovelylich@gmail.com>
+Date: Tue, 10 Jun 2014 06:50:45 +0000
+Subject: [Q] Which tree should we work agains?
+Message-Id: <006601cf8478$52fb3310$f8f19930$@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr> <1401872880-23685-9-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1401872880-23685-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 4 Jun 2014, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
-> return a larger number than the maximum position argument if that position
-> is not a multiple of BITS_PER_LONG.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> expression e1,e2,e3;
-> statement S1,S2;
-> @@
-> 
-> e1 = find_first_zero_bit(e2,e3)
-> ...
-> if (e1 
-> - =
-> + >>   e3)
-> S1 else S2
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  arch/s390/pci/pci.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff -u -p a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
-> --- a/arch/s390/pci/pci.c
-> +++ b/arch/s390/pci/pci.c
-> @@ -566,7 +566,7 @@ static int zpci_alloc_iomap(struct zpci_
-> 
->  	spin_lock(&zpci_iomap_lock);
->  	entry = find_first_zero_bit(zpci_iomap, ZPCI_IOMAP_MAX_ENTRIES);
-> -	if (entry = ZPCI_IOMAP_MAX_ENTRIES) {
-> +	if (entry >= ZPCI_IOMAP_MAX_ENTRIES) {
->  		spin_unlock(&zpci_iomap_lock);
->  		return -ENOSPC;
->  	}
-> @@ -746,7 +746,7 @@ static int zpci_alloc_domain(struct zpci
->  {
->  	spin_lock(&zpci_domain_lock);
->  	zdev->domain = find_first_zero_bit(zpci_domain, ZPCI_NR_DEVICES);
-> -	if (zdev->domain = ZPCI_NR_DEVICES) {
-> +	if (zdev->domain >= ZPCI_NR_DEVICES) {
->  		spin_unlock(&zpci_domain_lock);
->  		return -ENOSPC;
->  	}
-> 
-> 
+Hi Dan,
+I=E2=80=99m a kernel newbie, and sorry for bother you in advanced.
+From your this email: http://article.gmane.org/gmane.linux.kernel.janitors/=
+30739,
+you have pointed out we should work against linux-next tree. is it true for=
+ all of us?
 
-Thanks, applied.
-Sebastian
+From this site: https://code.google.com/p/kernel-janitors/, I got this stat=
+ements:
+"Q: What version should I be patching against?=20
+A: Latest "linus" (2.6.x-rcY from kernel.org). Be sure to check -mm and -kj=
+ trees to see=20
+	if someone already did that. "
+For -mm tree, is it means the linux-mm tree? after reading this wiki: http:=
+//en.wikipedia.org/wiki/Mm_tree,
+it seems linux-next is the substitution for linux-mm tree's "new features" =
+functionality.
+For the -kj tree, I event can't find it from https://git.kernel.org/cgit we=
+bsite, only found it at here: http://cba.si/kj/
+is it outdated, and un-useful?
 
+So, in one word, could you kindly point me out which tree I should work aga=
+inst ?Or just kindly give me the links for document.
+Thanks for your help in advanced.
+
+regards,
+Yi
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
