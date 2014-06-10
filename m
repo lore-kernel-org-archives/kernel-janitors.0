@@ -1,16 +1,18 @@
-From: Sima Baymani <sima@kth.se>
-Date: Tue, 10 Jun 2014 12:22:20 +0000
+From: Yi Li <lovelylich@gmail.com>
+Date: Tue, 10 Jun 2014 17:39:21 +0000
 Subject: Re: [Q] Which tree should we work agains?
-Message-Id: <CAL8k4FxDRmtjCWg4fSiKU8tFKj-4xAzA=O=3e-0pzRDV1YiW2Q@mail.gmail.com>
+Message-Id: <539742C9.1080003@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <006601cf8478$52fb3310$f8f19930$@gmail.com>
 In-Reply-To: <006601cf8478$52fb3310$f8f19930$@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 10, 2014 at 1:16 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+
+于 2014年06月10日 19:16, Dan Carpenter 写道:
 > On Tue, Jun 10, 2014 at 11:29:55AM +0200, Sima Baymani wrote:
 >> The patch you responded to in that link was aimed for staging. Previously,
 >> I have understood that staging work is done on staging-next - has this
@@ -20,11 +22,11 @@ On Tue, Jun 10, 2014 at 1:16 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > trees.  It might be up to 24 hours behind staging-next but it's
 > basically the same thing.
 >
-
-That clears things up, thanks!
-
--Sima
-
 > regards,
 > dan carpenter
 >
+>
+Thanks, Dan. it is very useful!
+
+regards,
+Yi
