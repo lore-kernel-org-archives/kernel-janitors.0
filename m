@@ -1,94 +1,76 @@
-From: Johan Hovold <jhovold@gmail.com>
-Date: Sun, 01 Jun 2014 09:31:17 +0000
-Subject: Re: [PATCH 1/11 V2] USB: kl5kusb105: Remove klsi_105_tiocmset function
-Message-Id: <20140601093117.GC14935@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 10 Jun 2014 08:59:27 +0000
+Subject: re: extcon: palmas: Use devm_extcon_dev_allocate for extcon_dev
+Message-Id: <20140610085927.GA5837@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401552180-9445-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1401552180-9445-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Oliver Neukum <oliver@neukum.org>, kernel-janitors@vger.kernel.org, Johan Hovold <jhovold@gmail.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Sat, May 31, 2014 at 01:03:00PM -0300, Peter Senna Tschudin wrote:
-> This patch remove the function klsi_105_tiocmset which was only
-> returning -EINVAL. It also removes the function prototype and
-> the .tiocmset entry in the struct usb_serial_driver.
-> 
-> Verified by compilation only.
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+[ This wasn't really your bug, but maybe you know the code? -dan ]
 
-Signed-off-by: Johan Hovold <jhovold@gmail.com>
+Hello Chanwoo Choi,
 
-> ---
-> Changes from V1:
->  - remove the function klsi_105_tiocmset instead of simplifying it
->  - remove the function prototype
->  - remove the .tiocmset entry in the struct usb_serial_driver
->  - update commit message and subject
+This is a semi-automatic email about new static checker warnings.
 
-Thanks for the update, Peter.
+The patch 3f79a3fb5f41: "extcon: palmas: Use devm_extcon_dev_allocate
+for extcon_dev" from Apr 21, 2014, leads to the following Smatch
+complaint:
 
-Johan
- 
-> 
->  drivers/usb/serial/kl5kusb105.c |   23 +----------------------
->  1 file changed, 1 insertion(+), 22 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/kl5kusb105.c b/drivers/usb/serial/kl5kusb105.c
-> index d7440b7..e020ad2 100644
-> --- a/drivers/usb/serial/kl5kusb105.c
-> +++ b/drivers/usb/serial/kl5kusb105.c
-> @@ -62,8 +62,6 @@ static void klsi_105_close(struct usb_serial_port *port);
->  static void klsi_105_set_termios(struct tty_struct *tty,
->  			struct usb_serial_port *port, struct ktermios *old);
->  static int  klsi_105_tiocmget(struct tty_struct *tty);
-> -static int  klsi_105_tiocmset(struct tty_struct *tty,
-> -			unsigned int set, unsigned int clear);
->  static void klsi_105_process_read_urb(struct urb *urb);
->  static int klsi_105_prepare_write_buffer(struct usb_serial_port *port,
->  						void *dest, size_t size);
-> @@ -93,7 +91,6 @@ static struct usb_serial_driver kl5kusb105d_device = {
->  	.set_termios =		klsi_105_set_termios,
->  	/*.break_ctl =		klsi_105_break_ctl,*/
->  	.tiocmget =		klsi_105_tiocmget,
-> -	.tiocmset =		klsi_105_tiocmset,
->  	.port_probe =		klsi_105_port_probe,
->  	.port_remove =		klsi_105_port_remove,
->  	.throttle =		usb_serial_generic_throttle,
-> @@ -602,33 +599,6 @@ static int klsi_105_tiocmget(struct tty_struct *tty)
->  	return (int)line_state;
->  }
->  
-> -static int klsi_105_tiocmset(struct tty_struct *tty,
-> -			     unsigned int set, unsigned int clear)
-> -{
-> -	int retval = -EINVAL;
-> -
-> -/* if this ever gets implemented, it should be done something like this:
-> -	struct usb_serial *serial = port->serial;
-> -	struct klsi_105_private *priv = usb_get_serial_port_data(port);
-> -	unsigned long flags;
-> -	int control;
-> -
-> -	spin_lock_irqsave (&priv->lock, flags);
-> -	if (set & TIOCM_RTS)
-> -		priv->control_state |= TIOCM_RTS;
-> -	if (set & TIOCM_DTR)
-> -		priv->control_state |= TIOCM_DTR;
-> -	if (clear & TIOCM_RTS)
-> -		priv->control_state &= ~TIOCM_RTS;
-> -	if (clear & TIOCM_DTR)
-> -		priv->control_state &= ~TIOCM_DTR;
-> -	control = priv->control_state;
-> -	spin_unlock_irqrestore (&priv->lock, flags);
-> -	retval = mct_u232_set_modem_ctrl(serial, control);
-> -*/
-> -	return retval;
-> -}
-> -
->  module_usb_serial_driver(serial_drivers, id_table);
->  
->  MODULE_AUTHOR(DRIVER_AUTHOR);
+drivers/extcon/extcon-palmas.c:196 palmas_usb_probe()
+	 error: we previously assumed 'node' could be null (see line 157)
+
+drivers/extcon/extcon-palmas.c
+   156	
+   157		if (node && !pdata) {
+                    ^^^^
+Checked.
+
+   158			palmas_usb->wakeup = of_property_read_bool(node, "ti,wakeup");
+   159			palmas_usb->enable_id_detection = of_property_read_bool(node,
+   160							"ti,enable-id-detection");
+   161			palmas_usb->enable_vbus_detection = of_property_read_bool(node,
+   162							"ti,enable-vbus-detection");
+   163		} else {
+   164			palmas_usb->wakeup = true;
+   165			palmas_usb->enable_id_detection = true;
+   166			palmas_usb->enable_vbus_detection = true;
+   167	
+   168			if (pdata)
+   169				palmas_usb->wakeup = pdata->wakeup;
+   170		}
+   171	
+   172		palmas->usb = palmas_usb;
+   173		palmas_usb->palmas = palmas;
+   174	
+   175		palmas_usb->dev	 = &pdev->dev;
+   176	
+   177		palmas_usb->id_otg_irq = regmap_irq_get_virq(palmas->irq_data,
+   178							PALMAS_ID_OTG_IRQ);
+   179		palmas_usb->id_irq = regmap_irq_get_virq(palmas->irq_data,
+   180							PALMAS_ID_IRQ);
+   181		palmas_usb->vbus_otg_irq = regmap_irq_get_virq(palmas->irq_data,
+   182							PALMAS_VBUS_OTG_IRQ);
+   183		palmas_usb->vbus_irq = regmap_irq_get_virq(palmas->irq_data,
+   184							PALMAS_VBUS_IRQ);
+   185	
+   186		palmas_usb_wakeup(palmas, palmas_usb->wakeup);
+   187	
+   188		platform_set_drvdata(pdev, palmas_usb);
+   189	
+   190		palmas_usb->edev = devm_extcon_dev_allocate(&pdev->dev,
+   191							    palmas_extcon_cable);
+   192		if (IS_ERR(palmas_usb->edev)) {
+   193			dev_err(&pdev->dev, "failed to allocate extcon device\n");
+   194			return -ENOMEM;
+   195		}
+   196		palmas_usb->edev->name = kstrdup(node->name, GFP_KERNEL);
+                                                 ^^^^^^^^^^
+Dereferenced without a check.
+
+   197		palmas_usb->edev->dev.parent = palmas_usb->dev;
+   198		palmas_usb->edev->mutually_exclusive = mutually_exclusive;
+
+regards,
+dan carpenter
