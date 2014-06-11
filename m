@@ -1,23 +1,38 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 11 Jun 2014 22:40:54 +0000
-Subject: Re: [patch] drivers: net: davinci_cpdma: double free on error
-Message-Id: <20140611.154054.1561256983795392462.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jun 2014 06:45:35 +0000
+Subject: [patch] video/mbx: indent some if statements
+Message-Id: <20140611064535.GA16443@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140611081651.GB29572@mwanda>
-In-Reply-To: <20140611081651.GB29572@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: olof@lixom.net, george.cherian@ti.com, christian.riesch@omicron.at, zonque@gmail.com, bigeasy@linutronix.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 11 Jun 2014 11:16:51 +0300
+Checkpatch.pl worries that we have left off the conditional bit because
+it isn't indented correctly.
 
-> We recently change the kzalloc() to devm_kzalloc() so freeing "ctlr"
-> here could lead to a double free.
-> 
-> Fixes: e194312854ed ('drivers: net: davinci_cpdma: Convert kzalloc() to devm_kzalloc().')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+WARNING: suspect code indent for conditional statements (24, 24)
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/video/fbdev/mbx/mbxfb.c b/drivers/video/fbdev/mbx/mbxfb.c
+index 2bd52ed..698df954 100644
+--- a/drivers/video/fbdev/mbx/mbxfb.c
++++ b/drivers/video/fbdev/mbx/mbxfb.c
+@@ -628,14 +628,14 @@ static int mbxfb_ioctl(struct fb_info *info, unsigned int cmd,
+ 		case MBXFB_IOCS_PLANEORDER:
+ 			if (copy_from_user(&porder, (void __user*)arg,
+ 					sizeof(struct mbxfb_planeorder)))
+-			return -EFAULT;
++				return -EFAULT;
+ 
+ 			return mbxfb_ioctl_planeorder(&porder);
+ 
+ 		case MBXFB_IOCS_ALPHA:
+ 			if (copy_from_user(&alpha, (void __user*)arg,
+ 					sizeof(struct mbxfb_alphaCtl)))
+-			return -EFAULT;
++				return -EFAULT;
+ 
+ 			return mbxfb_ioctl_alphactl(&alpha);
+ 
