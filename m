@@ -1,40 +1,45 @@
-From: Tero Kristo <t-kristo@ti.com>
-Date: Thu, 19 Jun 2014 11:25:12 +0000
-Subject: Re: [patch] CLK: TI: APLL: not allocating enough data
-Message-Id: <53A2C898.4090607@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jun 2014 07:31:08 +0000
+Subject: [patch] [media] davinci: vpif: missing unlocks on error
+Message-Id: <20140611073108.GE16443@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140616093233.GA9446@mwanda>
-In-Reply-To: <20140616093233.GA9446@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Mike Turquette <mturquette@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, J Keerthy <j-keerthy@ti.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, kernel-janitors@vger.kernel.org
 
-On 06/16/2014 12:32 PM, Dan Carpenter wrote:
-> There is a cut and paste bug here which will lead to memory corruption
-> because we don't allocate enough data.
->
-> Fixes: 4d008589e271 ('CLK: TI: APLL: add support for omap2 aplls')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We recently changed some locking around so we need some new unlocks on
+the error paths.
 
-Thanks, queued for 3.16-rc fixes.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Please review this one carefully.  I don't know if the unlock should go
+before or after the list_for_each_entry_safe() loop.
 
--Tero
-
->
-> diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
-> index 5428c9c..18dbaf12 100644
-> --- a/drivers/clk/ti/apll.c
-> +++ b/drivers/clk/ti/apll.c
-> @@ -338,7 +338,7 @@ static void __init of_omap2_apll_setup(struct device_node *node)
->   	const char *parent_name;
->   	u32 val;
->
-> -	ad = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
-> +	ad = kzalloc(sizeof(*ad), GFP_KERNEL);
->   	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
->   	init = kzalloc(sizeof(*init), GFP_KERNEL);
->
->
-
+diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
+index a7ed164..2c08fbd 100644
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -265,6 +265,8 @@ static int vpif_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	return 0;
+ 
+ err:
++	spin_unlock_irqrestore(&common->irqlock, flags);
++
+ 	list_for_each_entry_safe(buf, tmp, &common->dma_queue, list) {
+ 		list_del(&buf->list);
+ 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_QUEUED);
+diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
+index 5bb085b..b7b2bdf 100644
+--- a/drivers/media/platform/davinci/vpif_display.c
++++ b/drivers/media/platform/davinci/vpif_display.c
+@@ -229,6 +229,8 @@ static int vpif_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 	return 0;
+ 
+ err:
++	spin_unlock_irqrestore(&common->irqlock, flags);
++
+ 	list_for_each_entry_safe(buf, tmp, &common->dma_queue, list) {
+ 		list_del(&buf->list);
+ 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_QUEUED);
