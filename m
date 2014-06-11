@@ -1,28 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 09 Jun 2014 15:09:01 +0000
-Subject: [patch] net: sxgbe: remove duplicate SXGBE_CORE_L34_ADDCTL_REG define
-Message-Id: <20140609150901.GC9600@mwanda>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 11 Jun 2014 22:01:57 +0000
+Subject: Re: [patch] net: sxgbe: remove duplicate SXGBE_CORE_L34_ADDCTL_REG define
+Message-Id: <20140611.150157.537471197140401164.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140609150901.GC9600@mwanda>
+In-Reply-To: <20140609150901.GC9600@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Byungho An <bh74.an@samsung.com>
-Cc: Girish K S <ks.giri@samsung.com>, Vipul Pandya <vipul.pandya@samsung.com>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: dan.carpenter@oracle.com
+Cc: bh74.an@samsung.com, ks.giri@samsung.com, vipul.pandya@samsung.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The SXGBE_CORE_L34_ADDCTL_REG define is cut and pasted twice so we can
-delete the second instance.
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 9 Jun 2014 18:09:01 +0300
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> The SXGBE_CORE_L34_ADDCTL_REG define is cut and pasted twice so we can
+> delete the second instance.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h b/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
-index 56f8bf5..81437d9 100644
---- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
-+++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
-@@ -188,7 +188,6 @@
- 
- /* L3/L4 function registers */
- #define SXGBE_CORE_L34_ADDCTL_REG	0x0C00
--#define SXGBE_CORE_L34_ADDCTL_REG	0x0C00
- #define SXGBE_CORE_L34_DATA_REG		0x0C04
- 
- /* ARP registers */
+Applied.
