@@ -1,35 +1,49 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 20 Jun 2014 21:08:21 +0000
-Subject: Re: [Cocci] Linux Plumbers Conference
-Message-Id: <alpine.DEB.2.02.1406202307130.2335@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jun 2014 10:17:41 +0000
+Subject: [patch v2] mfd: vexpress: fix error handling vexpress_syscfg_regmap_init()
+Message-Id: <20140611101740.GA13148@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1406202247530.2335@localhost6.localdomain6>
- <20140620210039.GA3723@katana>
-In-Reply-To: <20140620210039.GA3723@katana>
+In-Reply-To: <1402478542.3523.9.camel@hornet>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+This function should be returning an ERR_PTR() on failure instead of
+NULL.  Also there is a use after free bug if regmap_init() fails because
+we free "func" and then dereference doing the return.
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, 20 Jun 2014, Wolfram Sang wrote:
-
-> Hi Julia,
-> 
-> > I have proposed a microconference on development tools at the 2014 Linux 
-> > Plumbers Conference (http://www.linuxplumbersconf.org/2014/) in Dusseldorf 
-> > in October.  If you are interested in participating, either by attending, 
-> > by giving a presentation, or by suggesting some issues that should be 
-> > discussed, please let me know.
-> 
-> Great! For sure, I'd like to attend at least. Is the deadline for
-> presentations also July, 11th?
-
-I've added you to the list of potential attendeees.
-
-For the presentations, I'm not sure if there is a hard deadline.  The 
-point at the moment is to get the microconference approved.
-
-thanks,
-julia
+diff --git a/drivers/misc/vexpress-syscfg.c b/drivers/misc/vexpress-syscfg.c
+index 73068e5..3250fc1 100644
+--- a/drivers/misc/vexpress-syscfg.c
++++ b/drivers/misc/vexpress-syscfg.c
+@@ -199,7 +199,7 @@ static struct regmap *vexpress_syscfg_regmap_init(struct device *dev,
+ 	func = kzalloc(sizeof(*func) + sizeof(*func->template) * num,
+ 			GFP_KERNEL);
+ 	if (!func)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	func->syscfg = syscfg;
+ 	func->num_templates = num;
+@@ -231,10 +231,14 @@ static struct regmap *vexpress_syscfg_regmap_init(struct device *dev,
+ 	func->regmap = regmap_init(dev, NULL, func,
+ 			&vexpress_syscfg_regmap_config);
+ 
+-	if (IS_ERR(func->regmap))
++	if (IS_ERR(func->regmap)) {
++		void *err = func->regmap;
++
+ 		kfree(func);
+-	else
+-		list_add(&func->list, &syscfg->funcs);
++		return err;
++	}
++
++	list_add(&func->list, &syscfg->funcs);
+ 
+ 	return func->regmap;
+ }
