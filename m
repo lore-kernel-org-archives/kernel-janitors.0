@@ -1,28 +1,33 @@
-From: Alan Cox <alan@linux.intel.com>
-Date: Tue, 10 Jun 2014 21:42:16 +0000
-Subject: Re: [patch] gma500: remove duplicate FB_REG09 define
-Message-Id: <1402436536.13849.185.camel@acox1-desk.ger.corp.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jun 2014 08:16:51 +0000
+Subject: [patch] drivers: net: davinci_cpdma: double free on error
+Message-Id: <20140611081651.GB29572@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140609152023.GO9600@mwanda> <87ppiigkfa.fsf@intel.com>
-	 <CAMeQTsaho4UbNWXy4s0KVRQpRzPU4NFG2JjOUV3V0NJD_9wWrA@mail.gmail.com>
-In-Reply-To: <CAMeQTsaho4UbNWXy4s0KVRQpRzPU4NFG2JjOUV3V0NJD_9wWrA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, David Airlie <airlied@linux.ie>, trivial@kernel.org, kernel-janitors@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Olof Johansson <olof@lixom.net>, George Cherian <george.cherian@ti.com>, Christian Riesch <christian.riesch@omicron.at>, Daniel Mack <zonque@gmail.com>, Sebastian Siewior <bigeasy@linutronix.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Adding an entry would make people think that I have time to spend on gma500
-> development or is in some way responsible for it. At the moment, that is sadly
-> not the case. I have a few things on my todo-list which I intend to fix but
-> after that I would much rather work on something more productive.
+We recently change the kzalloc() to devm_kzalloc() so freeing "ctlr"
+here could lead to a double free.
 
-A wise man indeed.
+Fixes: e194312854ed ('drivers: net: davinci_cpdma: Convert kzalloc() to devm_kzalloc().')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I'll try and keep an eye on it for minor fixes but hopefully its "done".
-Apart from one person trying to port Linux to the Lenovo Tablet 2 I
-don't think there is anything that is likely to happen here new ?
-
-Alan
-
-
+diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
+index 539dbde..4a000f6 100644
+--- a/drivers/net/ethernet/ti/davinci_cpdma.c
++++ b/drivers/net/ethernet/ti/davinci_cpdma.c
+@@ -285,10 +285,8 @@ struct cpdma_ctlr *cpdma_ctlr_create(struct cpdma_params *params)
+ 					    ctlr->params.desc_hw_addr,
+ 					    ctlr->params.desc_mem_size,
+ 					    ctlr->params.desc_align);
+-	if (!ctlr->pool) {
+-		kfree(ctlr);
++	if (!ctlr->pool)
+ 		return NULL;
+-	}
+ 
+ 	if (WARN_ON(ctlr->num_chan > CPDMA_MAX_CHANNELS))
+ 		ctlr->num_chan = CPDMA_MAX_CHANNELS;
