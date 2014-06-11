@@ -1,47 +1,78 @@
-From: Inki Dae <inki.dae@samsung.com>
-Date: Wed, 18 Jun 2014 05:06:59 +0000
-Subject: Re: [patch] drm/exynos: change zero to NULL for sparse
-Message-Id: <53A11E73.3070208@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jun 2014 08:13:17 +0000
+Subject: [patch v2] iio: adc: at91: signedness bug in at91_adc_get_trigger_value_by_name()
+Message-Id: <20140611081317.GA29444@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140611063623.GA16247@mwanda>
-In-Reply-To: <20140611063623.GA16247@mwanda>
+In-Reply-To: <53980711.5030604@bfs.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Josh Wu <josh.wu@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Lars-Peter Clausen <lars@metafoo.de>, Thomas Meyer <thomas@m3y3r.de>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Sachin Kamat <sachin.kamat@linaro.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 2014년 06월 11일 15:36, Dan Carpenter wrote:
-> We recently changed this function to return a pointer instead of an int
-> so we need to change this zero to a NULL or Sparse complains:
-> 
-> 	drivers/gpu/drm/exynos/exynos_drm_drv.h:346:47:
-> 	warning: Using plain integer as NULL pointer
+at91_adc_get_trigger_value_by_name() was returning -ENOMEM truncated to
+a positive u8 and that doesn't work.  I've changed it to int and
+refactored it to preserve the error code.
 
-Applied.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I'm not able to compile this code.
 
-Thanks,
-Inki Dae
+v2:  Preserve the -ENOMEM
 
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> index 36535f3..06cde45 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -343,7 +343,7 @@ struct exynos_drm_display * exynos_dpi_probe(struct device *dev);
->  int exynos_dpi_remove(struct device *dev);
->  #else
->  static inline struct exynos_drm_display *
-> -exynos_dpi_probe(struct device *dev) { return 0; }
-> +exynos_dpi_probe(struct device *dev) { return NULL; }
->  static inline int exynos_dpi_remove(struct device *dev) { return 0; }
->  #endif
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
+diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+index 3b5bacd..2b6a9ce 100644
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
+@@ -510,12 +510,11 @@ static int at91_adc_channel_init(struct iio_dev *idev)
+ 	return idev->num_channels;
+ }
+ 
+-static u8 at91_adc_get_trigger_value_by_name(struct iio_dev *idev,
++static int at91_adc_get_trigger_value_by_name(struct iio_dev *idev,
+ 					     struct at91_adc_trigger *triggers,
+ 					     const char *trigger_name)
+ {
+ 	struct at91_adc_state *st = iio_priv(idev);
+-	u8 value = 0;
+ 	int i;
+ 
+ 	for (i = 0; i < st->trigger_number; i++) {
+@@ -528,15 +527,16 @@ static u8 at91_adc_get_trigger_value_by_name(struct iio_dev *idev,
+ 			return -ENOMEM;
+ 
+ 		if (strcmp(trigger_name, name) = 0) {
+-			value = triggers[i].value;
+ 			kfree(name);
+-			break;
++			if (triggers[i].value = 0)
++				return -EINVAL;
++			return triggers[i].value;
+ 		}
+ 
+ 		kfree(name);
+ 	}
+ 
+-	return value;
++	return -EINVAL;
+ }
+ 
+ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
+@@ -546,14 +546,14 @@ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
+ 	struct iio_buffer *buffer = idev->buffer;
+ 	struct at91_adc_reg_desc *reg = st->registers;
+ 	u32 status = at91_adc_readl(st, reg->trigger_register);
+-	u8 value;
++	int value;
+ 	u8 bit;
+ 
+ 	value = at91_adc_get_trigger_value_by_name(idev,
+ 						   st->trigger_list,
+ 						   idev->trig->name);
+-	if (value = 0)
+-		return -EINVAL;
++	if (value < 0)
++		return value;
+ 
+ 	if (state) {
+ 		st->buffer = kmalloc(idev->scan_bytes, GFP_KERNEL);
