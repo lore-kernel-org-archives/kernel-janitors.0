@@ -1,35 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 11 Jun 2014 06:07:25 +0000
-Subject: [patch] mfd: vexpress: use after free in vexpress_syscfg_regmap_init()
-Message-Id: <20140611060725.GC7569@mwanda>
+From: Pawel Moll <pawel.moll@arm.com>
+Date: Wed, 11 Jun 2014 09:22:22 +0000
+Subject: Re: [patch] mfd: vexpress: use after free in vexpress_syscfg_regmap_init()
+Message-Id: <1402478542.3523.9.camel@hornet>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140611060725.GC7569@mwanda>
+In-Reply-To: <20140611060725.GC7569@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee.jones@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-We should return NULL if regmap_init() fails instead of continuing.
+On Wed, 2014-06-11 at 07:07 +0100, Dan Carpenter wrote:
+> We should return NULL if regmap_init() fails instead of continuing.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/misc/vexpress-syscfg.c b/drivers/misc/vexpress-syscfg.c
+> index 73068e5..2c0ddb2 100644
+> --- a/drivers/misc/vexpress-syscfg.c
+> +++ b/drivers/misc/vexpress-syscfg.c
+> @@ -231,10 +231,12 @@ static struct regmap *vexpress_syscfg_regmap_init(struct device *dev,
+>  	func->regmap = regmap_init(dev, NULL, func,
+>  			&vexpress_syscfg_regmap_config);
+>  
+> -	if (IS_ERR(func->regmap))
+> +	if (IS_ERR(func->regmap)) {
+>  		kfree(func);
+> -	else
+> -		list_add(&func->list, &syscfg->funcs);
+> +		return NULL;
+> +	}
+> +
+> +	list_add(&func->list, &syscfg->funcs);
+>  
+>  	return func->regmap;
+>  }
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Not really, no. What made you think so?
 
-diff --git a/drivers/misc/vexpress-syscfg.c b/drivers/misc/vexpress-syscfg.c
-index 73068e5..2c0ddb2 100644
---- a/drivers/misc/vexpress-syscfg.c
-+++ b/drivers/misc/vexpress-syscfg.c
-@@ -231,10 +231,12 @@ static struct regmap *vexpress_syscfg_regmap_init(struct device *dev,
- 	func->regmap = regmap_init(dev, NULL, func,
- 			&vexpress_syscfg_regmap_config);
- 
--	if (IS_ERR(func->regmap))
-+	if (IS_ERR(func->regmap)) {
- 		kfree(func);
--	else
--		list_add(&func->list, &syscfg->funcs);
-+		return NULL;
-+	}
-+
-+	list_add(&func->list, &syscfg->funcs);
- 
- 	return func->regmap;
- }
+vexpress_config_bridge_ops.regmap_init should return an ERR_PTR in case
+of troubles, not a NULL. See devm_regmap_init_vexpress_config() in
+drivers/bus/vexpress-config.c:
+
+        regmap = bridge->ops->regmap_init(dev, bridge->context);
+        if (IS_ERR(regmap)) {                                
+
+Pawel
+
