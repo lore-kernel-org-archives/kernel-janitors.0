@@ -1,39 +1,30 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Date: Wed, 11 Jun 2014 08:36:17 +0000
-Subject: Re: [patch] pinctrl: berlin: fix an error code in berlin_pinctrl_probe()
-Message-Id: <53981501.9090404@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 11 Jun 2014 06:53:56 +0000
+Subject: [patch] iio: adc: at91: signedness bug in at91_adc_get_trigger_value_by_name()
+Message-Id: <20140611065356.GB16443@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140611081513.GA29572@mwanda>
-In-Reply-To: <20140611081513.GA29572@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Josh Wu <josh.wu@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Lars-Peter Clausen <lars@metafoo.de>, Thomas Meyer <thomas@m3y3r.de>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Sachin Kamat <sachin.kamat@linaro.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 06/11/2014 10:15 AM, Dan Carpenter wrote:
-> We are returning success here because PTR_ERR(NULL) is zero.  We should
-> be returning -ENODEV.
->
-> Fixes: 3de68d331c24 ('pinctrl: berlin: add the core pinctrl driver for Marvell Berlin SoCs')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The function returns a u8 so the -ENOMEM is truncated to a positive
+value.  The caller tests for zero returns and treats them as an error
+so I have changed the -ENOMEM to 0.
 
-Dan, thanks for the fix!
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-
-> diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
-> index edf5d2f..86db223 100644
-> --- a/drivers/pinctrl/berlin/berlin.c
-> +++ b/drivers/pinctrl/berlin/berlin.c
-> @@ -320,7 +320,7 @@ int berlin_pinctrl_probe(struct platform_device *pdev,
->
->   	regmap = dev_get_regmap(&pdev->dev, NULL);
->   	if (!regmap)
-> -		return PTR_ERR(regmap);
-> +		return -ENODEV;
->
->   	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
->   	if (!pctrl)
->
-
+diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+index 3b5bacd..5ebe33d 100644
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
+@@ -525,7 +525,7 @@ static u8 at91_adc_get_trigger_value_by_name(struct iio_dev *idev,
+ 				idev->id,
+ 				triggers[i].name);
+ 		if (!name)
+-			return -ENOMEM;
++			return 0;
+ 
+ 		if (strcmp(trigger_name, name) = 0) {
+ 			value = triggers[i].value;
