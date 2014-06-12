@@ -1,73 +1,69 @@
-From: Tony Lindgren <tony@atomide.com>
-Date: Mon, 02 Jun 2014 15:44:22 +0000
-Subject: Re: [PATCH v2] mfd: fix unintentional NULL check in menelaus_set_voltage()
-Message-Id: <20140602154421.GB11004@atomide.com>
+From: Bernhard Praschinger <shadowlord@utanet.at>
+Date: Thu, 12 Jun 2014 17:28:55 +0000
+Subject: Re: [Mjpeg-users] [patch] [media] zoran: remove duplicate ZR050_MO_COMP define
+Message-Id: <5399E357.3040203@utanet.at>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401295431-23833-1-git-send-email-emilgoode@gmail.com>
- <000d01cf7adf$9528f9e0$bf7aeda0$%han@samsung.com>
-In-Reply-To: <000d01cf7adf$9528f9e0$bf7aeda0$%han@samsung.com>
+References: <20140609152135.GQ9600@mwanda>
+In-Reply-To: <20140609152135.GQ9600@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Emil Goode' <emilgoode@gmail.com>, 'Lee Jones' <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 'Samuel Ortiz' <sameo@linux.intel.com>, 'Trilok Soni' <tsoni@codeaurora.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Jarkko Nikula <jarkko.nikula@bitmer.com>
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: MJPEG-tools user list <mjpeg-users@lists.sourceforge.net>, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, dan.carpenter@oracle.com
 
-* Jingoo Han <jg1.han@samsung.com> [140528 18:45]:
-> On Thursday, May 29, 2014 1:44 AM, Emil Goode wrote:
-> > 
-> > The struct menelaus_vtg pointer vtg cannot be NULL here
-> > so the condition is never true and if it ever was true
-> > it would lead to a NULL pointer dereference when we goto
-> > label set_voltage.
-> > 
-> > Before the below patch was applied the code was:
-> > 
-> > if (vtg = 0)
-> > 
-> > The intention was to check if vtg_val is 0.
-> > 
-> > commit 59a9f7a32adf6537b4e4db8ca204eeb77d7a634e
-> > ("mfd: menelaus: Use NULL instead of 0")
-> > 
-> > Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> > ---
-> > v2: Changed (vtg_val = 0) to (!vtg_val)
-> > 
-> >  drivers/mfd/menelaus.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
-> > index ad25bfa..40df76a 100644
-> > --- a/drivers/mfd/menelaus.c
-> > +++ b/drivers/mfd/menelaus.c
-> > @@ -466,7 +466,7 @@ static int menelaus_set_voltage(const struct menelaus_vtg *vtg, int mV,
-> >  	struct i2c_client *c = the_menelaus->client;
-> > 
-> >  	mutex_lock(&the_menelaus->lock);
-> > -	if (!vtg)
-> > +	if (!vtg_val)
-> >  		goto set_voltage;
-> 
-> (+cc Trilok Soni, Tony Lindgren)
-> 
-> In this case, if 'vtg_val' is 0, setting voltage as 0 for
-> registers such as MENELAUS_xxx_CTRLx will be skipped. So,
-> it is not possible to set the voltage value as 0.
-> 
-> Is it right? If not, how about just removing this check and
-> the label 'set_voltage'?
+Hallo
 
-Added Aaro and Jarkko to Cc.
+More than 15 years have passed since the first working module for a 
+zoran chipset based PCI card existed. Well not included into the Linux 
+kernel at that time.
+According to my experience, the driver started to make problems when 64 
+Bit and more than 2GB Ram became popular. In May 2011 there was a patch 
+available that made the cards working in machines with more than 2GB 
+Ram, and AMD&Intel x64 architectures. According to my information that 
+patch did not make it into the linux kernel (the Patch was for the Linux 
+2.6.38 Kernel)
 
-Regards,
+So people spend time looking at code that does not work (well it 
+compiles and does not cause troubles), and send patches the world will 
+never honor.
 
-Tony
- 
-> Best regards,
-> Jingoo Han
-> 
-> > 
-> >  	ret = menelaus_read_reg(vtg->vtg_reg);
-> > --
-> > 1.7.10.4
-> 
+I haven't had a question related to a zoran based card's in years. So 
+I'm quite sure there are not much users out there that use a zoran based 
+video cards in a up to date environment.
+
+Because of that I would really suggest that somebody removes the whole 
+zoran driver from the linux kernel.
+
+Dan Carpenter wrote:
+> The ZR050_MO_COMP define is cut and pasted twice so we can delete the
+> second instance.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/media/pci/zoran/zr36050.h b/drivers/media/pci/zoran/zr36050.h
+> index 9f52f0c..ea083ad 100644
+> --- a/drivers/media/pci/zoran/zr36050.h
+> +++ b/drivers/media/pci/zoran/zr36050.h
+> @@ -126,7 +126,6 @@ struct zr36050 {
+>   /* zr36050 mode register bits */
+>
+>   #define ZR050_MO_COMP                0x80
+> -#define ZR050_MO_COMP                0x80
+>   #define ZR050_MO_ATP                 0x40
+>   #define ZR050_MO_PASS2               0x20
+>   #define ZR050_MO_TLM                 0x10
+>
+> ------------------------------------------------------------------------------
+> HPCC Systems Open Source Big Data Platform from LexisNexis Risk Solutions
+> Find What Matters Most in Your Big Data with HPCC Systems
+> Open Source. Fast. Scalable. Simple. Ideal for Dirty Data.
+> Leverages Graph Analysis for Fast Processing & Easy Data Exploration
+> http://p.sf.net/sfu/hpccsystems
+> _______________________________________________
+> Mjpeg-users mailing list
+> Mjpeg-users@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/mjpeg-users
+
+Kind Regards
+Bernhard Praschinger
+Docwriter, probably the last mjpegtools maintainer
