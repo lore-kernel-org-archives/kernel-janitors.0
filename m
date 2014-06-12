@@ -1,66 +1,43 @@
-From: Tero Kristo <t-kristo@ti.com>
-Date: Thu, 19 Jun 2014 11:24:29 +0000
-Subject: Re: [PATCH] CLK: TI: DRA7: return error code in failure case
-Message-Id: <53A2C86D.5040308@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 12 Jun 2014 07:01:45 +0000
+Subject: [patch v2] [media] davinci: vpif: missing unlocks on error
+Message-Id: <20140612070145.GA18563@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr> <1400473875-22228-4-git-send-email-Julia.Lawall@lip6.fr> <20140519074155.GO15585@mwanda> <5379BC0C.3070401@ti.com> <alpine.DEB.2.10.1405191924330.2564@hadrien> <5379F7AE.2040806@ti.com> <20140528214739.10062.75330@quantum>
-In-Reply-To: <20140528214739.10062.75330@quantum>
+In-Reply-To: <CA+V-a8vhEyNdQRqNrzRV=t-D+uh6rCEY5-qLjTOWDfHwUai1Kg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Turquette <mturquette@linaro.org>, Julia Lawall <julia.lawall@lip6.fr>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, J Keerthy <j-keerthy@ti.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, kernel-janitors@vger.kernel.org
 
-On 05/29/2014 12:47 AM, Mike Turquette wrote:
-> Quoting Tero Kristo (2014-05-19 05:23:10)
->> On 05/19/2014 02:25 PM, Julia Lawall wrote:
->>> From: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> Add a returned error code in the MAX_APLL_WAIT_TRIES case.  Remove the
->>> updating of the return variable r to 0 if MAX_APLL_WAIT_TRIES is not yet
->>> reached, because r is already 0 at this point.
->>>
->>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->>
->> Acked-by: Tero Kristo <t-kristo@ti.com>
->>
->> Mike, do you want to queue this as a fix or shall I add this to be
->> queued for 3.16?
->
-> It's not a visible regression, so let's go with 3.16.
+We recently changed some locking around so we need some new unlocks on
+the error paths.
 
-Thanks, queued for 3.16-rc fixes now, sorry about the latency.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: move the unlock so the list_for_each_entry_safe() loop is protected
 
--Tero
-
->
-> Regards,
-> Mike
->
->>
->> -Tero
->>
->>>
->>> ---
->>> diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
->>> index b986f61..efc71a0 100644
->>> --- a/drivers/clk/ti/apll.c
->>> +++ b/drivers/clk/ti/apll.c
->>> @@ -77,13 +77,11 @@ static int dra7_apll_enable(struct clk_hw *hw)
->>>        if (i = MAX_APLL_WAIT_TRIES) {
->>>                pr_warn("clock: %s failed transition to '%s'\n",
->>>                        clk_name, (state) ? "locked" : "bypassed");
->>> -     } else {
->>> +             r = -EBUSY;
->>> +     } else
->>>                pr_debug("clock: %s transition to '%s' in %d loops\n",
->>>                         clk_name, (state) ? "locked" : "bypassed", i);
->>>
->>> -             r = 0;
->>> -     }
->>> -
->>>        return r;
->>>    }
->>>
->>
-
+diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
+index a7ed164..1e4ec69 100644
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -269,6 +269,7 @@ err:
+ 		list_del(&buf->list);
+ 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_QUEUED);
+ 	}
++	spin_unlock_irqrestore(&common->irqlock, flags);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/media/platform/davinci/vpif_display.c b/drivers/media/platform/davinci/vpif_display.c
+index 5bb085b..b431b58 100644
+--- a/drivers/media/platform/davinci/vpif_display.c
++++ b/drivers/media/platform/davinci/vpif_display.c
+@@ -233,6 +233,7 @@ err:
+ 		list_del(&buf->list);
+ 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_QUEUED);
+ 	}
++	spin_unlock_irqrestore(&common->irqlock, flags);
+ 
+ 	return ret;
+ }
