@@ -1,63 +1,30 @@
-From: Johannes Thumshirn <morbidrsa@gmail.com>
-Date: Sun, 15 Jun 2014 15:23:53 +0000
-Subject: Re: [patch] iio: adc: checking for NULL instead of IS_ERR() in probe
-Message-Id: <87wqcici2e.fsf@sauron.localdomain>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 16 Jun 2014 09:32:33 +0000
+Subject: [patch] CLK: TI: APLL: not allocating enough data
+Message-Id: <20140616093233.GA9446@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140328083126.GO25192@mwanda>
-	<CAGH8bx77dKAm7w53F5MfTXaPm6KxQcVCXERnW-oXmR5Ww-HLTw@mail.gmail.com>
-	<5336995C.90701@kernel.org> <87lht2q86y.fsf@sauron.localdomain>
-	<539C6783.4060607@kernel.org>
-In-Reply-To: <539C6783.4060607@kernel.org> (Jonathan Cameron's message of
-	"Sat, 14 Jun 2014 16:17:23 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>, J Keerthy <j-keerthy@ti.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Jonathan Cameron <jic23@kernel.org> writes:
+There is a cut and paste bug here which will lead to memory corruption
+because we don't allocate enough data.
 
-> On 12/06/14 19:44, Johannes Thumshirn wrote:
->> Jonathan Cameron <jic23@kernel.org> writes:
->>
->>> On 28/03/14 14:07, johannes thumshirn wrote:
->>>> On Fri, Mar 28, 2014 at 9:33 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>>>>
->>>>> mcb_request_mem() returns an ERR_PTR(), it doesn't return NULL.
->>>>>
->>>>> Fixes: 74aeac4da66f ('iio: adc: Add MEN 16z188 ADC driver')
->>>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>>>
->>>>> diff --git a/drivers/iio/adc/men_z188_adc.c b/drivers/iio/adc/men_z188_adc.c
->>>>> index 6989c16..b58d630 100644
->>>>> --- a/drivers/iio/adc/men_z188_adc.c
->>>>> +++ b/drivers/iio/adc/men_z188_adc.c
->>>>> @@ -121,8 +121,8 @@ static int men_z188_probe(struct mcb_device *dev,
->>>>>           indio_dev->num_channels = ARRAY_SIZE(z188_adc_iio_channels);
->>>>>
->>>>>           mem = mcb_request_mem(dev, "z188-adc");
->>>>> -       if (!mem)
->>>>> -               return -ENOMEM;
->>>>> +       if (IS_ERR(mem))
->>>>> +               return PTR_ERR(mem);
->>>>>
->>>>>           adc->base = ioremap(mem->start, resource_size(mem));
->>>>>           if (adc->base = NULL)
->>>>
->>>> Acked-by: Johannes Thumshirn <johannes.thumshirn@men.de>
->>>>
->>> Acked-by: Jonathan Cameron <jic23@kernel.org>
->>>
->>> Or I can pick this up after the merge window has closed if Greg hasn't
->>> already taken it.
->>>
->>> Jonathan
->>
->> Did someone actually take this patch, or was it somehow lost?
->>
-> I've picked it up now and applied it to the fixes-togreg branch of iio.git
->
-> Thanks for pointing out I'd forgotten it and sorry about that. I've also
-> marked it for stable.
+Fixes: 4d008589e271 ('CLK: TI: APLL: add support for omap2 aplls')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks a lot
+diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+index 5428c9c..18dbaf12 100644
+--- a/drivers/clk/ti/apll.c
++++ b/drivers/clk/ti/apll.c
+@@ -338,7 +338,7 @@ static void __init of_omap2_apll_setup(struct device_node *node)
+ 	const char *parent_name;
+ 	u32 val;
+ 
+-	ad = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
++	ad = kzalloc(sizeof(*ad), GFP_KERNEL);
+ 	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
+ 	init = kzalloc(sizeof(*init), GFP_KERNEL);
+ 
