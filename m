@@ -1,8 +1,10 @@
 From: Andreas Platschek <platschek@ict.tuwien.ac.at>
-Date: Wed, 18 Jun 2014 18:45:26 +0000
+Date: Wed, 18 Jun 2014 18:50:50 +0000
 Subject: [PATCH v2] Staging: rtl8192e prohibit deferencing of NULL pointer
-Message-Id: <53A1DDD7.6010901@ict.tuwien.ac.at>
+Message-Id: <53A1DF7A.5080004@ict.tuwien.ac.at>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <53A1DDD7.6010901@ict.tuwien.ac.at>
+In-Reply-To: <53A1DDD7.6010901@ict.tuwien.ac.at>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
