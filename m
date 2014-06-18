@@ -1,30 +1,25 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Fri, 20 Jun 2014 18:42:43 +0000
-Subject: Re: [patch] crypto: caam - remove duplicate FIFOST_CONT_MASK define
-Message-Id: <20140620184243.GJ3169@gondor.apana.org.au>
+From: Andreas Platschek <platschek@ict.tuwien.ac.at>
+Date: Wed, 18 Jun 2014 18:45:26 +0000
+Subject: [PATCH v2] Staging: rtl8192e prohibit deferencing of NULL pointer
+Message-Id: <53A1DDD7.6010901@ict.tuwien.ac.at>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140609151941.GN9600@mwanda>
- <20140612181812.cbc7c9b0adfe42d74ea2f636@freescale.com>
-In-Reply-To: <20140612181812.cbc7c9b0adfe42d74ea2f636@freescale.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kim Phillips <kim.phillips@freescale.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Alex Porosanu <alexandru.porosanu@freescale.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 12, 2014 at 06:18:12PM -0500, Kim Phillips wrote:
-> On Mon, 9 Jun 2014 18:19:41 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > The FIFOST_CONT_MASK define is cut and pasted twice so we can delete the
-> > second instance.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Acked-by: Kim Phillips <kim.phillips@freescale.com>
-
-Patch applied.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+djI6IHJlbW92ZWQgYnJhY2VzIGZyb20gaWYgc3RhdGVtZW50DQoNCklmIGllZWUgPT0gTlVMTCB3
+ZSBqdW1wIHRvIHJ4X2Ryb3BwZWQuIFRoZXJlZm9yZSB3ZSBoYXZlIHRvIGNoZWNrIGFnYWluLA0K
+aWYgaWVlZSA9PSBOVUxMIGJlZm9yZSB3ZSB1c2UgaXQuDQoNClNpZ25lZC1vZmYtYnk6IEFuZHJl
+YXMgUGxhdHNjaGVrIDxwbGF0c2NoZWtAaWN0LnR1d2llbi5hYy5hdD4NCi0tLQ0KIGRyaXZlcnMv
+c3RhZ2luZy9ydGw4MTkyZS9ydGxsaWJfcnguYyB8ICAgIDMgKystDQogMSBmaWxlIGNoYW5nZWQs
+IDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9z
+dGFnaW5nL3J0bDgxOTJlL3J0bGxpYl9yeC5jDQpiL2RyaXZlcnMvc3RhZ2luZy9ydGw4MTkyZS9y
+dGxsaWJfcnguYw0KaW5kZXggNjBkZTU0Yy4uNzI1OGIxNyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
+c3RhZ2luZy9ydGw4MTkyZS9ydGxsaWJfcnguYw0KKysrIGIvZHJpdmVycy9zdGFnaW5nL3J0bDgx
+OTJlL3J0bGxpYl9yeC5jDQpAQCAtMTQ5Niw3ICsxNDk2LDggQEAgaW50IHJ0bGxpYl9yeChzdHJ1
+Y3QgcnRsbGliX2RldmljZSAqaWVlZSwgc3RydWN0DQpza19idWZmICpza2IsDQogICAgICAgIHJl
+dHVybiByZXQ7DQoNCiAgcnhfZHJvcHBlZDoNCi0gICAgICAgaWVlZS0+c3RhdHMucnhfZHJvcHBl
+ZCsrOw0KKyAgICAgICBpZiAoaWVlZSAhPSBOVUxMKQ0KKyAgICAgICAgICAgICAgIGllZWUtPnN0
+YXRzLnJ4X2Ryb3BwZWQrKzsNCiAgICAgICAgcmV0dXJuIDA7DQogfQ0KIEVYUE9SVF9TWU1CT0wo
+cnRsbGliX3J4KTsNCi0tIA0KMS43LjEwLjQ
