@@ -1,66 +1,66 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 13 Jun 2014 14:02:46 +0000
-Subject: Re: [patch v2] mfd: vexpress: fix error handling vexpress_syscfg_regmap_init()
-Message-Id: <201406131602.46893.arnd@arndb.de>
+From: Tero Kristo <t-kristo@ti.com>
+Date: Thu, 19 Jun 2014 11:24:29 +0000
+Subject: Re: [PATCH] CLK: TI: DRA7: return error code in failure case
+Message-Id: <53A2C86D.5040308@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140611101740.GA13148@mwanda> <1402482800.3523.20.camel@hornet>
-In-Reply-To: <1402482800.3523.20.camel@hornet>
+References: <1400473875-22228-1-git-send-email-Julia.Lawall@lip6.fr> <1400473875-22228-4-git-send-email-Julia.Lawall@lip6.fr> <20140519074155.GO15585@mwanda> <5379BC0C.3070401@ti.com> <alpine.DEB.2.10.1405191924330.2564@hadrien> <5379F7AE.2040806@ti.com> <20140528214739.10062.75330@quantum>
+In-Reply-To: <20140528214739.10062.75330@quantum>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pawel Moll <pawel.moll@arm.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Olof Johansson <olof@lixom.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Mike Turquette <mturquette@linaro.org>, Julia Lawall <julia.lawall@lip6.fr>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, J Keerthy <j-keerthy@ti.com>
 
-On Wednesday 11 June 2014, Pawel Moll wrote:
-> On Wed, 2014-06-11 at 11:17 +0100, Dan Carpenter wrote:
-> > This function should be returning an ERR_PTR() on failure instead of
-> > NULL.  Also there is a use after free bug if regmap_init() fails because
-> > we free "func" and then dereference doing the return.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/misc/vexpress-syscfg.c b/drivers/misc/vexpress-syscfg.c
-> > index 73068e5..3250fc1 100644
-> > --- a/drivers/misc/vexpress-syscfg.c
-> > +++ b/drivers/misc/vexpress-syscfg.c
-> > @@ -199,7 +199,7 @@ static struct regmap *vexpress_syscfg_regmap_init(struct device *dev,
-> >       func = kzalloc(sizeof(*func) + sizeof(*func->template) * num,
-> >                       GFP_KERNEL);
-> >       if (!func)
-> > -             return NULL;
-> > +             return ERR_PTR(-ENOMEM);
-> >  
-> >       func->syscfg = syscfg;
-> >       func->num_templates = num;
-> > @@ -231,10 +231,14 @@ static struct regmap *vexpress_syscfg_regmap_init(struct device *dev,
-> >       func->regmap = regmap_init(dev, NULL, func,
-> >                       &vexpress_syscfg_regmap_config);
-> >  
-> > -     if (IS_ERR(func->regmap))
-> > +     if (IS_ERR(func->regmap)) {
-> > +             void *err = func->regmap;
-> > +
-> >               kfree(func);
-> > -     else
-> > -             list_add(&func->list, &syscfg->funcs);
-> > +             return err;
-> > +     }
-> > +
-> > +     list_add(&func->list, &syscfg->funcs);
-> >  
-> >       return func->regmap;
-> >  }
-> 
-> Uh, right. Dereferencing a freed structure. My bad. Thanks for spotting
-> this!
-> 
-> Acked-by: Pawel Moll <pawel.moll@arm.com>
-> 
-> (nit: the subject should be "misc: vexpress:" rather then "mfd:")
-> 
-> Arnd, Olof, can you pick this one as an early fix or do you want me to
-> queue it for rc1-based fixes branch?
+On 05/29/2014 12:47 AM, Mike Turquette wrote:
+> Quoting Tero Kristo (2014-05-19 05:23:10)
+>> On 05/19/2014 02:25 PM, Julia Lawall wrote:
+>>> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>>>
+>>> Add a returned error code in the MAX_APLL_WAIT_TRIES case.  Remove the
+>>> updating of the return variable r to 0 if MAX_APLL_WAIT_TRIES is not yet
+>>> reached, because r is already 0 at this point.
+>>>
+>>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>>
+>> Acked-by: Tero Kristo <t-kristo@ti.com>
+>>
+>> Mike, do you want to queue this as a fix or shall I add this to be
+>> queued for 3.16?
+>
+> It's not a visible regression, so let's go with 3.16.
 
-I've applied it to the fixes branch now. Thanks!
+Thanks, queued for 3.16-rc fixes now, sorry about the latency.
 
-	Arnd
+-Tero
+
+>
+> Regards,
+> Mike
+>
+>>
+>> -Tero
+>>
+>>>
+>>> ---
+>>> diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
+>>> index b986f61..efc71a0 100644
+>>> --- a/drivers/clk/ti/apll.c
+>>> +++ b/drivers/clk/ti/apll.c
+>>> @@ -77,13 +77,11 @@ static int dra7_apll_enable(struct clk_hw *hw)
+>>>        if (i = MAX_APLL_WAIT_TRIES) {
+>>>                pr_warn("clock: %s failed transition to '%s'\n",
+>>>                        clk_name, (state) ? "locked" : "bypassed");
+>>> -     } else {
+>>> +             r = -EBUSY;
+>>> +     } else
+>>>                pr_debug("clock: %s transition to '%s' in %d loops\n",
+>>>                         clk_name, (state) ? "locked" : "bypassed", i);
+>>>
+>>> -             r = 0;
+>>> -     }
+>>> -
+>>>        return r;
+>>>    }
+>>>
+>>
+
