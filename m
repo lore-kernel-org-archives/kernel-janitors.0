@@ -1,46 +1,35 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 09 Jun 2014 19:58:53 +0000
-Subject: Re: [patch] regulator: 88pm800: remove duplicate PM800_BUCK3 define
-Message-Id: <20140609195853.GM5099@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="iym2iLi12j4kk03o"
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 20 Jun 2014 21:50:37 +0000
+Subject: [PATCH] video: Remove kfree call since devm_kzalloc() is used
+Message-Id: <1403301037-10699-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140609150951.GD9600@mwanda>
-In-Reply-To: <20140609150951.GD9600@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jingoo Han <jg1.han@samsung.com>, H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
+We use devm_kzalloc() to allocate memory for the struct vt8500lcd_info
+pointer fbi, so there is no need to free it in vt8500lcd_remove().
 
---iym2iLi12j4kk03o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/video/fbdev/vt8500lcdfb.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-On Mon, Jun 09, 2014 at 06:09:52PM +0300, Dan Carpenter wrote:
-> The PM800_BUCK3 define is cut and pasted twice so we can remove the
-> second instance.
+diff --git a/drivers/video/fbdev/vt8500lcdfb.c b/drivers/video/fbdev/vt8500lcdfb.c
+index a8f2b28..a1134c3 100644
+--- a/drivers/video/fbdev/vt8500lcdfb.c
++++ b/drivers/video/fbdev/vt8500lcdfb.c
+@@ -474,8 +474,6 @@ static int vt8500lcd_remove(struct platform_device *pdev)
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	release_mem_region(res->start, resource_size(res));
+ 
+-	kfree(fbi);
+-
+ 	return 0;
+ }
+ 
+-- 
+1.7.10.4
 
-Applied, thanks.
-
---iym2iLi12j4kk03o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTlhH6AAoJELSic+t+oim9P1wP/3TKoOlZlE7tQnfX2R0j3XwS
-gqkErSkQQAi7NpIfNG/IZa7BW+oi7a2o2kgQDDtKZh2KIKRKHlqTmyqvhc2wsStd
-4w9c9otDj0t6y5g2BhNDHfaoIfqvvsz0IcAQXI4JvPgvzcBRt8Y6EgSfmRq+eIgm
-50+6cE+hRTHCaQriKDI5AzuWKiZKtFyrIvRFHUXOT1Pu3I+ePyiLCRJNFn2hoEIR
-8RY05gG0l+NWHEgVw4qrVhIJm/mYTJXRgSqfxk5yNizwf4sPP0sVFTn+bh/smGme
-7wI/CAvHc1ELJnBZAGXJ/ons0qHLXsUN4PXKQ41xUoCRJBJamRW7HkxJ765/y2ia
-mYQgV5KQWsTwinihAzx7RND3wW9IyaAAiDkM2Wcuy0rD0KCmq95wmuad79wnKPLm
-m8vIEEWHZgd6VFpXmjg5luyu6dFwzrCPECqV7KyEq9ZeF+8K3YcXbBcR5pr0H+lP
-EXgv1P0mbsAtfD6DmJb/7RANdWn5mjuMtEh5Rd0gQnBq3gXPO0UITJS513DckmU+
-zITLigQQ7ywH5RkrXKIA0To79TCtag0tYHzk+kDuBPWIX99VVZBjSFXnATeqnbdG
-3cAL9MclIevoGVk5ID7LDM2hmfif171NHWQs6dthm1S5kTqGDYdu/SRfRi7mtMrj
-7qS8HRDWDbZJpDy3ntBY
-=iZJI
------END PGP SIGNATURE-----
-
---iym2iLi12j4kk03o--
