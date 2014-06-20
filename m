@@ -1,55 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 04 Jun 2014 09:08:00 +0000
-Subject: [PATCH 10/10] blackfin: use safer test on the result of find_first_zero_bit
-Message-Id: <1401872880-23685-11-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 20 Jun 2014 17:40:04 +0000
+Subject: re: tracing: Add help of snapshot feature when snapshot is empty
+Message-Id: <20140620174004.GA10971@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Steven Miao <realmz6@gmail.com>, linux-kernel@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Steven Rostedt (Red Hat),
 
-Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
-return a larger number than the maximum position argument if that position
-is not a multiple of BITS_PER_LONG.
+This is a semi-automatic email about new static checker warnings.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+The patch d8741e2e88ac: "tracing: Add help of snapshot feature when 
+snapshot is empty" from Mar 5, 2013, leads to the following Smatch 
+complaint:
 
-// <smpl>
-@@
-expression e1,e2,e3;
-statement S1,S2;
-@@
+kernel/trace/trace.c:2933 s_show()
+	 error: we previously assumed 'iter->tr' could be null (see line 2927)
 
-e1 = find_first_zero_bit(e2,e3)
-...
-if (e1 
-- =
-+ >  e3)
-S1 else S2
-// </smpl>
+kernel/trace/trace.c
+  2926		if (iter->ent = NULL) {
+  2927			if (iter->tr) {
+                            ^^^^^^^^
+Existing check for "iter->tr".
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+  2928				seq_printf(m, "# tracer: %s\n", iter->trace->name);
+  2929				seq_puts(m, "#\n");
+  2930				test_ftrace_alive(m);
+  2931			}
+  2932			if (iter->snapshot && trace_empty(iter))
+  2933				print_snapshot_help(m, iter);
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"iter->tr" gets dereferenced inside the new call to print_snapshot_help().
 
----
- arch/blackfin/kernel/perf_event.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  2934			else if (iter->trace && iter->trace->print_header)
+  2935				iter->trace->print_header(m);
 
-diff -u -p a/arch/blackfin/kernel/perf_event.c b/arch/blackfin/kernel/perf_event.c
---- a/arch/blackfin/kernel/perf_event.c
-+++ b/arch/blackfin/kernel/perf_event.c
-@@ -354,7 +354,7 @@ static int bfin_pmu_add(struct perf_even
- 
- 	if (__test_and_set_bit(idx, cpuc->used_mask)) {
- 		idx = find_first_zero_bit(cpuc->used_mask, MAX_HWEVENTS);
--		if (idx = MAX_HWEVENTS)
-+		if (idx >= MAX_HWEVENTS)
- 			goto out;
- 
- 		__set_bit(idx, cpuc->used_mask);
-
+regards,
+dan carpenter
