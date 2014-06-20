@@ -1,51 +1,44 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 02 Jun 2014 08:36:07 +0000
-Subject: Re: [PATCH] driver core/platform: remove unused implicit padding in platform_object
-Message-Id: <20140602083607.GS15585@mwanda>
+Date: Fri, 20 Jun 2014 19:22:05 +0000
+Subject: [patch] cifs: fix error code in cifs_match_super()
+Message-Id: <20140620192205.GC19824@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401480167-15091-1-git-send-email-ydroneaud@opteya.com>
- <20140530201054.GF17724@mwanda>
- <1401523299.15490.6.camel@localhost.localdomain>
- <20140531120526.GL15585@mwanda>
- <1401609616.17059.2.camel@localhost.localdomain>
-In-Reply-To: <1401609616.17059.2.camel@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Pavel Shilovsky <piastry-7qunaywFIewox3rIn2DAYQ@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, Jun 01, 2014 at 10:00:16AM +0200, Yann Droneaud wrote:
-> Hi Dan,
->=20
-> Le samedi 31 mai 2014 =E0 15:05 +0300, Dan Carpenter a =E9crit :
-> > On Sat, May 31, 2014 at 10:01:39AM +0200, Yann Droneaud wrote:
-> > > Le vendredi 30 mai 2014 =E0 23:10 +0300, Dan Carpenter a =E9crit :
-> > > > This changelog doesn't match the patch.
-> > > >=20
-> > >=20
-> > > Hum, let me guess .... I've failed to set the proper subject prefix
-> > > to add v6 suffic to PATCH:=20
-> > > I've changed the patch title since v5 (from Emil Goode)... so it's li=
-ke
-> > > a new one.
-> > >=20
-> > > Is it really necessary to resend the patch ?
-> >=20
-> > Oh.  Sorry, I didn't understand what you were trying to say...  You're
-> > right.
-> >=20
->=20
-> Sorry about that.
->=20
-> If it's unclear, I should modify the commit message.
+It looks like there is a typo here where return "rc" which is "success"
+instead of PTR_ERR(tlink) which is a negative error code.
 
-It's clear.  Sorry that was my bad.
+I have also removed the unneeded initialization so that GCC has a chance
+to warn about this sort of thing next time.
 
-regards,
-dan carpenter
+Fixes: 25c7f41e9234 ('CIFS: Migrate to shared superblock model')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is a static checker warning and I'm not certain this is the correct
+fix.  Please review this one carefully.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 20d75b8..a5704e1 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -2730,14 +2730,14 @@ cifs_match_super(struct super_block *sb, void *data)
+ 	struct cifs_ses *ses;
+ 	struct cifs_tcon *tcon;
+ 	struct tcon_link *tlink;
+-	int rc = 0;
++	int rc;
+ 
+ 	spin_lock(&cifs_tcp_ses_lock);
+ 	cifs_sb = CIFS_SB(sb);
+ 	tlink = cifs_get_tlink(cifs_sb_master_tlink(cifs_sb));
+ 	if (IS_ERR(tlink)) {
+ 		spin_unlock(&cifs_tcp_ses_lock);
+-		return rc;
++		return PTR_ERR(tlink);
+ 	}
+ 	tcon = tlink_tcon(tlink);
+ 	ses = tcon->ses;
