@@ -1,258 +1,98 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Tue, 24 Jun 2014 21:42:27 +0000
-Subject: [PATCH 1/2] [media] Remove checks of struct member addresses
-Message-Id: <1403646148-25385-1-git-send-email-emilgoode@gmail.com>
+From: Tina Johnson <tinajohnson.1234@gmail.com>
+Date: Sun, 22 Jun 2014 12:42:02 +0000
+Subject: [PATCH] Base: attribute_container: Fixed coding style errors and warnings
+Message-Id: <1403440202-17438-1-git-send-email-tinajohnson.1234@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>, Jiri Kosina <jkosina@suse.cz>, Hans Verkuil <hans.verkuil@cisco.com>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-This removes checks of struct member addresses since they likely result
-in the condition always being true. Also in the stb6100_get_bandwidth
-and tda8261_get_bandwidth functions the pointers frontend_ops and
-tuner_ops are assigned the same addresses twice.
+Fixed coding style and whitespace errors/warnings.
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
+Signed-off-by: Tina Johnson <tinajohnson.1234@gmail.com>
 ---
- drivers/media/dvb-frontends/stb6100_cfg.h  |   30 +++++++-----------------
- drivers/media/dvb-frontends/stb6100_proc.h |   34 ++++++++--------------------
- drivers/media/dvb-frontends/stv0367.c      |    9 ++------
- drivers/media/dvb-frontends/tda8261_cfg.h  |   21 ++++-------------
- 4 files changed, 25 insertions(+), 69 deletions(-)
+ drivers/base/attribute_container.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/stb6100_cfg.h b/drivers/media/dvb-frontends/stb6100_cfg.h
-index 6314d18..0e10ad89 100644
---- a/drivers/media/dvb-frontends/stb6100_cfg.h
-+++ b/drivers/media/dvb-frontends/stb6100_cfg.h
-@@ -21,15 +21,11 @@
- 
- static int stb6100_get_frequency(struct dvb_frontend *fe, u32 *frequency)
+diff --git a/drivers/base/attribute_container.c b/drivers/base/attribute_container.c
+index b84ca8f..aeca7f6 100644
+--- a/drivers/base/attribute_container.c
++++ b/drivers/base/attribute_container.c
+@@ -74,9 +74,9 @@ int
+ attribute_container_register(struct attribute_container *cont)
  {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	t_state;
- 	int err = 0;
- 
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
- 	if (tuner_ops->get_state) {
- 		if ((err = tuner_ops->get_state(fe, DVBFE_TUNER_FREQUENCY, &t_state)) < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
-@@ -42,16 +38,13 @@ static int stb6100_get_frequency(struct dvb_frontend *fe, u32 *frequency)
- 
- static int stb6100_set_frequency(struct dvb_frontend *fe, u32 frequency)
- {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	t_state;
- 	int err = 0;
- 
- 	t_state.frequency = frequency;
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
+ 	INIT_LIST_HEAD(&cont->node);
+-	klist_init(&cont->containers,internal_container_klist_get,
++	klist_init(&cont->containers, internal_container_klist_get,
+ 		   internal_container_klist_put);
+-		
 +
- 	if (tuner_ops->set_state) {
- 		if ((err = tuner_ops->set_state(fe, DVBFE_TUNER_FREQUENCY, &t_state)) < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
-@@ -68,10 +61,6 @@ static int stb6100_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
- 	struct tuner_state	t_state;
- 	int err = 0;
- 
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
- 	if (tuner_ops->get_state) {
- 		if ((err = tuner_ops->get_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state)) < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
-@@ -84,16 +73,13 @@ static int stb6100_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
- 
- static int stb6100_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth)
+ 	mutex_lock(&attribute_container_mutex);
+ 	list_add_tail(&cont->node, &attribute_container_list);
+ 	mutex_unlock(&attribute_container_mutex);
+@@ -94,6 +94,7 @@ int
+ attribute_container_unregister(struct attribute_container *cont)
  {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	t_state;
- 	int err = 0;
- 
- 	t_state.bandwidth = bandwidth;
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
+ 	int retval = -EBUSY;
 +
- 	if (tuner_ops->set_state) {
- 		if ((err = tuner_ops->set_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state)) < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
-diff --git a/drivers/media/dvb-frontends/stb6100_proc.h b/drivers/media/dvb-frontends/stb6100_proc.h
-index 112163a..bd8a0ec 100644
---- a/drivers/media/dvb-frontends/stb6100_proc.h
-+++ b/drivers/media/dvb-frontends/stb6100_proc.h
-@@ -19,15 +19,11 @@
- 
- static int stb6100_get_freq(struct dvb_frontend *fe, u32 *frequency)
- {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	state;
- 	int err = 0;
- 
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
- 	if (tuner_ops->get_state) {
- 		if (frontend_ops->i2c_gate_ctrl)
- 			frontend_ops->i2c_gate_ctrl(fe, 1);
-@@ -49,16 +45,13 @@ static int stb6100_get_freq(struct dvb_frontend *fe, u32 *frequency)
- 
- static int stb6100_set_freq(struct dvb_frontend *fe, u32 frequency)
- {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	state;
- 	int err = 0;
- 
- 	state.frequency = frequency;
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
+ 	mutex_lock(&attribute_container_mutex);
+ 	spin_lock(&cont->containers.k_lock);
+ 	if (!list_empty(&cont->containers.k_list))
+@@ -104,14 +105,14 @@ attribute_container_unregister(struct attribute_container *cont)
+ 	spin_unlock(&cont->containers.k_lock);
+ 	mutex_unlock(&attribute_container_mutex);
+ 	return retval;
+-		
 +
- 	if (tuner_ops->set_state) {
- 		if (frontend_ops->i2c_gate_ctrl)
- 			frontend_ops->i2c_gate_ctrl(fe, 1);
-@@ -79,15 +72,11 @@ static int stb6100_set_freq(struct dvb_frontend *fe, u32 frequency)
+ }
+ EXPORT_SYMBOL_GPL(attribute_container_unregister);
  
- static int stb6100_get_bandw(struct dvb_frontend *fe, u32 *bandwidth)
+ /* private function used as class release */
+ static void attribute_container_release(struct device *classdev)
  {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	state;
- 	int err = 0;
+-	struct internal_container *ic 
++	struct internal_container *ic
+ 		= container_of(classdev, struct internal_container, classdev);
+ 	struct device *dev = classdev->parent;
  
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
- 	if (tuner_ops->get_state) {
- 		if (frontend_ops->i2c_gate_ctrl)
- 			frontend_ops->i2c_gate_ctrl(fe, 1);
-@@ -109,16 +98,13 @@ static int stb6100_get_bandw(struct dvb_frontend *fe, u32 *bandwidth)
- 
- static int stb6100_set_bandw(struct dvb_frontend *fe, u32 bandwidth)
- {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	state;
- 	int err = 0;
- 
- 	state.bandwidth = bandwidth;
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
+@@ -184,8 +185,8 @@ attribute_container_add_device(struct device *dev,
+ 		struct klist_node *n = klist_next(iter); \
+ 		n ? container_of(n, typeof(*pos), member) : \
+ 			({ klist_iter_exit(iter) ; NULL; }); \
+-	}) ) != NULL; )
+-			
++	})) != NULL;)
 +
- 	if (tuner_ops->set_state) {
- 		if (frontend_ops->i2c_gate_ctrl)
- 			frontend_ops->i2c_gate_ctrl(fe, 1);
-diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
-index 4587727..59b6e66 100644
---- a/drivers/media/dvb-frontends/stv0367.c
-+++ b/drivers/media/dvb-frontends/stv0367.c
-@@ -922,18 +922,13 @@ static int stv0367ter_gate_ctrl(struct dvb_frontend *fe, int enable)
  
- static u32 stv0367_get_tuner_freq(struct dvb_frontend *fe)
+ /**
+  * attribute_container_remove_device - make device eligible for removal.
+@@ -247,7 +248,7 @@ attribute_container_remove_device(struct device *dev,
+  * container, then use attribute_container_trigger() instead.
+  */
+ void
+-attribute_container_device_trigger(struct device *dev, 
++attribute_container_device_trigger(struct device *dev,
+ 				   int (*fn)(struct attribute_container *,
+ 					     struct device *,
+ 					     struct device *))
+@@ -349,6 +350,7 @@ int
+ attribute_container_add_class_device(struct device *classdev)
  {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	u32 freq = 0;
- 	int err = 0;
- 
- 	dprintk("%s:\n", __func__);
- 
--
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
- 	if (tuner_ops->get_frequency) {
- 		err = tuner_ops->get_frequency(fe, &freq);
- 		if (err < 0) {
-diff --git a/drivers/media/dvb-frontends/tda8261_cfg.h b/drivers/media/dvb-frontends/tda8261_cfg.h
-index 4671074..7de65c3 100644
---- a/drivers/media/dvb-frontends/tda8261_cfg.h
-+++ b/drivers/media/dvb-frontends/tda8261_cfg.h
-@@ -19,15 +19,11 @@
- 
- static int tda8261_get_frequency(struct dvb_frontend *fe, u32 *frequency)
- {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	t_state;
- 	int err = 0;
- 
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
- 	if (tuner_ops->get_state) {
- 		if ((err = tuner_ops->get_state(fe, DVBFE_TUNER_FREQUENCY, &t_state)) < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
-@@ -41,16 +37,13 @@ static int tda8261_get_frequency(struct dvb_frontend *fe, u32 *frequency)
- 
- static int tda8261_set_frequency(struct dvb_frontend *fe, u32 frequency)
- {
--	struct dvb_frontend_ops	*frontend_ops = NULL;
--	struct dvb_tuner_ops	*tuner_ops = NULL;
-+	struct dvb_frontend_ops	*frontend_ops = &fe->ops;
-+	struct dvb_tuner_ops	*tuner_ops = &frontend_ops->tuner_ops;
- 	struct tuner_state	t_state;
- 	int err = 0;
- 
- 	t_state.frequency = frequency;
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
+ 	int error = device_add(classdev);
 +
- 	if (tuner_ops->set_state) {
- 		if ((err = tuner_ops->set_state(fe, DVBFE_TUNER_FREQUENCY, &t_state)) < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
-@@ -68,10 +61,6 @@ static int tda8261_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
- 	struct tuner_state	t_state;
- 	int err = 0;
+ 	if (error)
+ 		return error;
+ 	return attribute_container_add_attrs(classdev);
+@@ -387,7 +389,7 @@ attribute_container_remove_attrs(struct device *classdev)
  
--	if (&fe->ops)
--		frontend_ops = &fe->ops;
--	if (&frontend_ops->tuner_ops)
--		tuner_ops = &frontend_ops->tuner_ops;
- 	if (tuner_ops->get_state) {
- 		if ((err = tuner_ops->get_state(fe, DVBFE_TUNER_BANDWIDTH, &t_state)) < 0) {
- 			printk("%s: Invalid parameter\n", __func__);
+ 	if (cont->grp) {
+ 		sysfs_remove_group(&classdev->kobj, cont->grp);
+-		return ;
++		return;
+ 	}
+ 
+ 	for (i = 0; attrs[i]; i++)
 -- 
 1.7.10.4
 
