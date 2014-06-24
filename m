@@ -1,55 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 04 Jun 2014 09:07:52 +0000
-Subject: [PATCH 2/10] ath10k: use safer test on the result of find_first_zero_bit
-Message-Id: <1401872880-23685-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Masaru Nomura <massa.nomura@gmail.com>
+Date: Tue, 24 Jun 2014 21:52:12 +0000
+Subject: [PATCH 1/3] gpu: drm: vmwgfx: Fix memory leak by adding drm_ht_remove()
+Message-Id: <1403646734-2838-2-git-send-email-massa.nomura@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
+In-Reply-To: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org, "John W. Linville" <linville@tuxdriver.com>, netdev@vger.kernel.org
+To: airlied@linux.ie
+Cc: thellstrom@vmware.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+drm_ht_remove() should be called in vmw_compat_shader_man_destroy()
+This is because memory was allocated for (&man->shaders)->table by
+vmw_compat_shader_man_create() -> drm_ht_create()
+but this memory is not freed when vmw_compat_shader_mager is destroied.
 
-Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
-return a larger number than the maximum position argument if that position
-is not a multiple of BITS_PER_LONG.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e1,e2,e3;
-statement S1,S2;
-@@
-
-e1 = find_first_zero_bit(e2,e3)
-...
-if (e1 
-- =
-+ >  e3)
-S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
 ---
- drivers/net/wireless/ath/ath10k/htt_tx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_shader.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff -u -p a/drivers/net/wireless/ath/ath10k/htt_tx.c b/drivers/net/wireless/ath/ath10k/htt_tx.c
---- a/drivers/net/wireless/ath/ath10k/htt_tx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_tx.c
-@@ -64,7 +64,7 @@ int ath10k_htt_tx_alloc_msdu_id(struct a
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
+index c1559eea..01cc8ea 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
+@@ -806,6 +806,8 @@ void vmw_compat_shader_man_destroy(struct vmw_compat_shader_manager *man)
+ 	list_for_each_entry_safe(entry, next, &man->list, head)
+ 		vmw_compat_shader_free(man, entry);
  
- 	msdu_id = find_first_zero_bit(htt->used_msdu_ids,
- 				      htt->max_num_pending_tx);
--	if (msdu_id = htt->max_num_pending_tx)
-+	if (msdu_id >= htt->max_num_pending_tx)
- 		return -ENOBUFS;
- 
- 	ath10k_dbg(ATH10K_DBG_HTT, "htt tx alloc msdu_id %d\n", msdu_id);
++	drm_ht_remove(&man->shaders);
++
+ 	mutex_unlock(&man->dev_priv->cmdbuf_mutex);
+ 	kfree(man);
+ }
+-- 
+1.9.3
 
