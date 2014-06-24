@@ -1,25 +1,72 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 03 Jun 2014 00:02:58 +0000
-Subject: Re: [PATCH 10/11] vxge: Remove useless return variables
-Message-Id: <20140602.170258.144328105696750793.davem@davemloft.net>
+From: Masaru Nomura <massa.nomura@gmail.com>
+Date: Tue, 24 Jun 2014 21:52:14 +0000
+Subject: [PATCH 3/3] gpu: drm: vmwgfx: Remove unnecessary parameter from vmw_compat_shader_free()
+Message-Id: <1403646734-2838-4-git-send-email-massa.nomura@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401542051-3174-10-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1401542051-3174-10-git-send-email-peter.senna@gmail.com>
+References: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
+In-Reply-To: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: peter.senna@gmail.com
-Cc: jdmason@kudzu.us, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: airlied@linux.ie
+Cc: thellstrom@vmware.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sat, 31 May 2014 10:14:10 -0300
+vm_compat_shader_manager is only used for drm_ht_remove_item() within the function.
+As drm_ht_remove_item() does not need a paremeter drm_open_hash(&man-> shaders),
+vm_compat_shader_manager(*man) does not have to be passed to this function.
 
-> This patch remove variables that are initialized with a constant,
-> are never updated, and are only used as parameter of return.
-> Return the constant instead of using a variable.
-> 
-> Verified by compilation only.
-...
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_shader.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Applied.
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
+index bbb30c3..2fdbf8e 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
+@@ -532,14 +532,12 @@ int vmw_compat_shader_lookup(struct vmw_compat_shader_manager *man,
+ /**
+  * vmw_compat_shader_free - Free a compat shader.
+  *
+- * @man: Pointer to the compat shader manager.
+  * @entry: Pointer to a struct vmw_compat_shader.
+  *
+  * Frees a struct vmw_compat_shder entry and drops its reference to the
+  * guest backed shader.
+  */
+-static void vmw_compat_shader_free(struct vmw_compat_shader_manager *man,
+-				   struct vmw_compat_shader *entry)
++static void vmw_compat_shader_free(struct vmw_compat_shader *entry)
+ {
+ 	list_del(&entry->head);
+ 	WARN_ON(drm_ht_remove_item(&entry->hash));
+@@ -602,7 +600,7 @@ void vmw_compat_shaders_revert(struct vmw_compat_shader_manager *man,
+ 	list_for_each_entry_safe(entry, next, list, head) {
+ 		switch (entry->state) {
+ 		case VMW_COMPAT_ADD:
+-			vmw_compat_shader_free(man, entry);
++			vmw_compat_shader_free(entry);
+ 			break;
+ 		case VMW_COMPAT_DEL:
+ 			ret = drm_ht_insert_item(&man->shaders, &entry->hash);
+@@ -649,7 +647,7 @@ int vmw_compat_shader_remove(struct vmw_compat_shader_manager *man,
+ 
+ 	switch (entry->state) {
+ 	case VMW_COMPAT_ADD:
+-		vmw_compat_shader_free(man, entry);
++		vmw_compat_shader_free(entry);
+ 		break;
+ 	case VMW_COMPAT_COMMITED:
+ 		drm_ht_remove_item(&entry->hash);
+@@ -804,7 +802,7 @@ void vmw_compat_shader_man_destroy(struct vmw_compat_shader_manager *man)
+ 
+ 	mutex_lock(&man->dev_priv->cmdbuf_mutex);
+ 	list_for_each_entry_safe(entry, next, &man->list, head)
+-		vmw_compat_shader_free(man, entry);
++		vmw_compat_shader_free(entry);
+ 
+ 	drm_ht_remove(&man->shaders);
+ 
+-- 
+1.9.3
+
