@@ -1,55 +1,57 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 04 Jun 2014 09:07:57 +0000
-Subject: [PATCH 7/10] cciss: use safer test on the result of find_first_zero_bit
-Message-Id: <1401872880-23685-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Date: Tue, 24 Jun 2014 17:27:33 +0000
+Subject: [PATCH 4/6] include/linux/phonedev.h: Remove unused header
+Message-Id: <1403630855-29186-5-git-send-email-linux@rasmusvillemoes.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
+In-Reply-To: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Miller <mike.miller@hp.com>
-Cc: kernel-janitors@vger.kernel.org, iss_storagedev@hp.com, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The header file include/linux/phonedev.h does not seem to be used
+anywhere. It was orphaned by 7326446c "Staging: remove telephony
+drivers". Remove it.
 
-Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
-return a larger number than the maximum position argument if that position
-is not a multiple of BITS_PER_LONG.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e1,e2,e3;
-statement S1,S2;
-@@
-
-e1 = find_first_zero_bit(e2,e3)
-...
-if (e1 
-- =
-+ >  e3)
-S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/block/cciss.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/phonedev.h | 25 -------------------------
+ 1 file changed, 25 deletions(-)
+ delete mode 100644 include/linux/phonedev.h
 
-diff -u -p a/drivers/block/cciss.c b/drivers/block/cciss.c
---- a/drivers/block/cciss.c
-+++ b/drivers/block/cciss.c
-@@ -980,7 +980,7 @@ static CommandList_struct *cmd_alloc(ctl
- 
- 	do {
- 		i = find_first_zero_bit(h->cmd_pool_bits, h->nr_cmds);
--		if (i = h->nr_cmds)
-+		if (i >= h->nr_cmds)
- 			return NULL;
- 	} while (test_and_set_bit(i, h->cmd_pool_bits) != 0);
- 	c = h->cmd_pool + i;
+diff --git a/include/linux/phonedev.h b/include/linux/phonedev.h
+deleted file mode 100644
+index 4269de9..0000000
+--- a/include/linux/phonedev.h
++++ /dev/null
+@@ -1,25 +0,0 @@
+-#ifndef __LINUX_PHONEDEV_H
+-#define __LINUX_PHONEDEV_H
+-
+-#include <linux/types.h>
+-
+-#ifdef __KERNEL__
+-
+-#include <linux/poll.h>
+-
+-struct phone_device {
+-	struct phone_device *next;
+-	const struct file_operations *f_op;
+-	int (*open) (struct phone_device *, struct file *);
+-	int board;		/* Device private index */
+-	int minor;
+-};
+-
+-extern int phonedev_init(void);
+-#define PHONE_MAJOR	100
+-extern int phone_register_device(struct phone_device *, int unit);
+-#define PHONE_UNIT_ANY	-1
+-extern void phone_unregister_device(struct phone_device *);
+-
+-#endif
+-#endif
+-- 
+1.9.2
 
