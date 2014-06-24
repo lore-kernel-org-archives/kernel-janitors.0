@@ -1,76 +1,80 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 10 Jun 2014 08:59:27 +0000
-Subject: re: extcon: palmas: Use devm_extcon_dev_allocate for extcon_dev
-Message-Id: <20140610085927.GA5837@mwanda>
+From: Masaru Nomura <massa.nomura@gmail.com>
+Date: Tue, 24 Jun 2014 21:52:11 +0000
+Subject: [PATCH 0/3] gpu: drm: Fix memory leak in vmwgfx_shader.c
+Message-Id: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: airlied@linux.ie
+Cc: thellstrom@vmware.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>
 
-[ This wasn't really your bug, but maybe you know the code? -dan ]
+This patch fixes memory leak detected by Kernel memory leak detector, 
+and cleans up functions which call drm_ht_remove_item() and 
+vmw_compat_shader_free() so that an unused parameter is not passed.
 
-Hello Chanwoo Choi,
+Part of logs from /sys/kernel/debug/kmemleak is as follows:
 
-This is a semi-automatic email about new static checker warnings.
+unreferenced object 0xffffc900086ed000 (size 32768):
+  comm "plymouthd", pid 287, jiffies 4294682116 (age 5911.149s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff816f7b6e>] kmemleak_alloc+0x4e/0xb0
+    [<ffffffff811b9382>] __vmalloc_node_range+0x1b2/0x2a0
+    [<ffffffff811b950b>] vzalloc+0x4b/0x50
+    [<ffffffffa009c7e5>] drm_ht_create+0x65/0xa0 [drm]
+    [<ffffffffa011a068>] vmw_compat_shader_man_create+0x78/0xb0 [vmwgfx]
+    [<ffffffffa0109ac2>] vmw_driver_open+0x62/0xa0 [vmwgfx]
+    [<ffffffffa0093307>] drm_open+0x1b7/0x4c0 [drm]
+    [<ffffffffa00936b5>] drm_stub_open+0xa5/0x100 [drm]
+    [<ffffffff811f6c29>] chrdev_open+0xb9/0x1a0
+    [<ffffffff811ef58f>] do_dentry_open+0x1ff/0x340
+    [<ffffffff811ef8a1>] finish_open+0x31/0x40
+    [<ffffffff812017e4>] do_last+0xa64/0x1190
+    [<ffffffff81201fdd>] path_openat+0xcd/0x670
+    [<ffffffff81202ddd>] do_filp_open+0x4d/0xb0
+    [<ffffffff811f12fd>] do_sys_open+0x13d/0x230
+    [<ffffffff811f140e>] SyS_open+0x1e/0x20
+unreferenced object 0xffffc900086e4000 (size 32768):
+  comm "Xorg", pid 751, jiffies 4294687683 (age 5917.505s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff816f7b6e>] kmemleak_alloc+0x4e/0xb0
+    [<ffffffff811b9382>] __vmalloc_node_range+0x1b2/0x2a0
+    [<ffffffff811b950b>] vzalloc+0x4b/0x50
+    [<ffffffffa009c7e5>] drm_ht_create+0x65/0xa0 [drm]
+    [<ffffffffa011a068>] vmw_compat_shader_man_create+0x78/0xb0 [vmwgfx]
+    [<ffffffffa0109ac2>] vmw_driver_open+0x62/0xa0 [vmwgfx]
+    [<ffffffffa0093307>] drm_open+0x1b7/0x4c0 [drm]
+    [<ffffffffa00936b5>] drm_stub_open+0xa5/0x100 [drm]
+    [<ffffffff811f6c29>] chrdev_open+0xb9/0x1a0
+    [<ffffffff811ef58f>] do_dentry_open+0x1ff/0x340
+    [<ffffffff811ef8a1>] finish_open+0x31/0x40
+    [<ffffffff812017e4>] do_last+0xa64/0x1190
+    [<ffffffff81201fdd>] path_openat+0xcd/0x670
+    [<ffffffff81202ddd>] do_filp_open+0x4d/0xb0
+    [<ffffffff811f12fd>] do_sys_open+0x13d/0x230
+    [<ffffffff811f140e>] SyS_open+0x1e/0x20
 
-The patch 3f79a3fb5f41: "extcon: palmas: Use devm_extcon_dev_allocate
-for extcon_dev" from Apr 21, 2014, leads to the following Smatch
-complaint:
+Masaru Nomura (3):
+  gpu: drm: vmwgfx: Fix memory leak by adding drm_ht_remove()
+  gpu: drm: Remove unnecessary parameter from drm_ht_remove_item()
+  gpu: drm: vmwgfx: Remove unnecessary parameter from
+    vmw_compat_shader_free()
 
-drivers/extcon/extcon-palmas.c:196 palmas_usb_probe()
-	 error: we previously assumed 'node' could be null (see line 157)
+ drivers/gpu/drm/drm_auth.c              |  2 +-
+ drivers/gpu/drm/drm_hashtab.c           |  2 +-
+ drivers/gpu/drm/drm_stub.c              |  2 +-
+ drivers/gpu/drm/ttm/ttm_object.c        |  8 +++-----
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |  4 ++--
+ drivers/gpu/drm/vmwgfx/vmwgfx_shader.c  | 16 ++++++++--------
+ include/drm/drm_hashtab.h               |  2 +-
+ 7 files changed, 17 insertions(+), 19 deletions(-)
 
-drivers/extcon/extcon-palmas.c
-   156	
-   157		if (node && !pdata) {
-                    ^^^^
-Checked.
+-- 
+1.9.3
 
-   158			palmas_usb->wakeup = of_property_read_bool(node, "ti,wakeup");
-   159			palmas_usb->enable_id_detection = of_property_read_bool(node,
-   160							"ti,enable-id-detection");
-   161			palmas_usb->enable_vbus_detection = of_property_read_bool(node,
-   162							"ti,enable-vbus-detection");
-   163		} else {
-   164			palmas_usb->wakeup = true;
-   165			palmas_usb->enable_id_detection = true;
-   166			palmas_usb->enable_vbus_detection = true;
-   167	
-   168			if (pdata)
-   169				palmas_usb->wakeup = pdata->wakeup;
-   170		}
-   171	
-   172		palmas->usb = palmas_usb;
-   173		palmas_usb->palmas = palmas;
-   174	
-   175		palmas_usb->dev	 = &pdev->dev;
-   176	
-   177		palmas_usb->id_otg_irq = regmap_irq_get_virq(palmas->irq_data,
-   178							PALMAS_ID_OTG_IRQ);
-   179		palmas_usb->id_irq = regmap_irq_get_virq(palmas->irq_data,
-   180							PALMAS_ID_IRQ);
-   181		palmas_usb->vbus_otg_irq = regmap_irq_get_virq(palmas->irq_data,
-   182							PALMAS_VBUS_OTG_IRQ);
-   183		palmas_usb->vbus_irq = regmap_irq_get_virq(palmas->irq_data,
-   184							PALMAS_VBUS_IRQ);
-   185	
-   186		palmas_usb_wakeup(palmas, palmas_usb->wakeup);
-   187	
-   188		platform_set_drvdata(pdev, palmas_usb);
-   189	
-   190		palmas_usb->edev = devm_extcon_dev_allocate(&pdev->dev,
-   191							    palmas_extcon_cable);
-   192		if (IS_ERR(palmas_usb->edev)) {
-   193			dev_err(&pdev->dev, "failed to allocate extcon device\n");
-   194			return -ENOMEM;
-   195		}
-   196		palmas_usb->edev->name = kstrdup(node->name, GFP_KERNEL);
-                                                 ^^^^^^^^^^
-Dereferenced without a check.
-
-   197		palmas_usb->edev->dev.parent = palmas_usb->dev;
-   198		palmas_usb->edev->mutually_exclusive = mutually_exclusive;
-
-regards,
-dan carpenter
