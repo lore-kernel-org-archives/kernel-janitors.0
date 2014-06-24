@@ -1,63 +1,66 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 24 Jun 2014 07:56:05 +0000
-Subject: Re: [PATCH 3/10] video: use safer test on the result of find_first_zero_bit
-Message-Id: <53A92F15.9010702@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vE5cpRCgTAnt0HDL7MwbsMIcwxd01BGIK"
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Date: Tue, 24 Jun 2014 17:27:34 +0000
+Subject: [PATCH 5/6] include/linux/platform_data/tegra_emc.h: Remove unused header
+Message-Id: <1403630855-29186-6-git-send-email-linux@rasmusvillemoes.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr> <1401872880-23685-4-git-send-email-Julia.Lawall@lip6.fr> <53A81470.5030606@ti.com> <alpine.DEB.2.10.1406231612030.3905@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1406231612030.3905@hadrien>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
+In-Reply-To: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
---vE5cpRCgTAnt0HDL7MwbsMIcwxd01BGIK
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+The header file include/linux/platform_data/tegra_emc.h does not seem
+to be used anywhere. It was orphaned by a7cbe92c "ARM: tegra: remove
+tegra EMC scaling driver". Remove it.
 
-On 23/06/14 17:12, Julia Lawall wrote:
-> On Mon, 23 Jun 2014, Tomi Valkeinen wrote:
->=20
->> On 04/06/14 12:07, Julia Lawall wrote:
->>> From: Julia Lawall <Julia.Lawall@lip6.fr>
->>>
->>> Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus =
-may
->>> return a larger number than the maximum position argument if that pos=
-ition
->>> is not a multiple of BITS_PER_LONG.
->>
->> Thanks, queued for 3.17.
->=20
-> No, sorry you can drop it.  It doesn't hurt anything, but it is not
-> necessary either.  Returning a larger number is actually not possible.
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ include/linux/platform_data/tegra_emc.h | 34 ---------------------------------
+ 1 file changed, 34 deletions(-)
+ delete mode 100644 include/linux/platform_data/tegra_emc.h
 
-Ok, dropped.
+diff --git a/include/linux/platform_data/tegra_emc.h b/include/linux/platform_data/tegra_emc.h
+deleted file mode 100644
+index df67505..0000000
+--- a/include/linux/platform_data/tegra_emc.h
++++ /dev/null
+@@ -1,34 +0,0 @@
+-/*
+- * Copyright (C) 2011 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross@android.com>
+- *	Olof Johansson <olof@lixom.net>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#ifndef __TEGRA_EMC_H_
+-#define __TEGRA_EMC_H_
+-
+-#define TEGRA_EMC_NUM_REGS 46
+-
+-struct tegra_emc_table {
+-	unsigned long rate;
+-	u32 regs[TEGRA_EMC_NUM_REGS];
+-};
+-
+-struct tegra_emc_pdata {
+-	int num_tables;
+-	struct tegra_emc_table *tables;
+-};
+-
+-#endif
+-- 
+1.9.2
 
- Tomi
-
-
-
---vE5cpRCgTAnt0HDL7MwbsMIcwxd01BGIK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTqS8ZAAoJEPo9qoy8lh71xiYP/iW1vUnUaBnyfUXEIrQ7roNl
-J92NObRssndacXVHQA/m4EDVzc7qP8V+6uzbpgBQ7jYotnMJWgvzSCEde1eK8sFb
-mEC0zQK1ogQ8s5EurCVcw7Rd8d/VR0VSeqPHwU7kwU+sUZO/5qSjAAARosBGLvUS
-+m9xnpfejW5e80FjlL9Z6EWr7Yg1l0Dk8YKzfew8qT4aI3SDE13BexOWnDyZE6Qp
-YymKE15+2S48UJAHB5+ha1JpLs0WnXShtWb8OF9kmujr7HUbAAowWF9tNtQ+xbWq
-N3O/8gU2482HlsYKKGugXpPeOeNSSbK+LQ/r5FYOs2naPb5phRrrpohMpnNLi1q+
-BSHvavNkb41C+YNcuS+Cf+ehi9e5b0ZhMJNFAfCBxuGQPf+3jQ1f4ZUsxWOVYJNi
-USX3Cf95xCLAOzSjFTWyaMlwf5IOPFbRq2wOpXQMsIljJrBR1EXEn86h0tdAub1x
-KbDmz7uBgnTGNXm29I5eGRAymn5zEU+SsBNf4i/Jm0ZC6dr8uv3WgUwYJ7olqQPI
-zH/scqJ8VKJM3ATgeGNvncp56a7phCz6/wcHbQY17PdPr06A/TibwnaN/+5o56hQ
-M/qOz435n2bYx0CdvDGqL3gGXQ2jaXczygsHiSEDv28THd4EqxbN7+Md402aTtl3
-OTXbZaGpLuX8csAofx12
-=gyZt
------END PGP SIGNATURE-----
-
---vE5cpRCgTAnt0HDL7MwbsMIcwxd01BGIK--
