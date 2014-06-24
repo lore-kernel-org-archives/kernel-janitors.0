@@ -1,55 +1,125 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 04 Jun 2014 09:07:55 +0000
-Subject: [PATCH 5/10] ARC: use safer test on the result of find_first_zero_bit
-Message-Id: <1401872880-23685-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Date: Tue, 24 Jun 2014 17:27:32 +0000
+Subject: [PATCH 3/6] include/linux/mfd/ti_ssp.h: Remove unused header
+Message-Id: <1403630855-29186-4-git-send-email-linux@rasmusvillemoes.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
+In-Reply-To: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: kernel-janitors@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Vineet Gupta <vgupta@synopsys.com>, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The header file include/linux/mfd/ti_ssp.h does not seem to be used
+anywhere. It was orphaned by 3033ee62 "mfd: Remove obsolete ti-ssp
+driver". Remove it.
 
-Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
-return a larger number than the maximum position argument if that position
-is not a multiple of BITS_PER_LONG.
-
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e1,e2,e3;
-statement S1,S2;
-@@
-
-e1 = find_first_zero_bit(e2,e3)
-...
-if (e1 
-- =
-+ >  e3)
-S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- arch/arc/kernel/perf_event.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/mfd/ti_ssp.h | 93 ----------------------------------------------
+ 1 file changed, 93 deletions(-)
+ delete mode 100644 include/linux/mfd/ti_ssp.h
 
-diff -u -p a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
---- a/arch/arc/kernel/perf_event.c
-+++ b/arch/arc/kernel/perf_event.c
-@@ -205,7 +205,7 @@ static int arc_pmu_add(struct perf_event
- 	if (__test_and_set_bit(idx, arc_pmu->used_mask)) {
- 		idx = find_first_zero_bit(arc_pmu->used_mask,
- 					  arc_pmu->n_counters);
--		if (idx = arc_pmu->n_counters)
-+		if (idx >= arc_pmu->n_counters)
- 			return -EAGAIN;
- 
- 		__set_bit(idx, arc_pmu->used_mask);
+diff --git a/include/linux/mfd/ti_ssp.h b/include/linux/mfd/ti_ssp.h
+deleted file mode 100644
+index dbb4b43..0000000
+--- a/include/linux/mfd/ti_ssp.h
++++ /dev/null
+@@ -1,93 +0,0 @@
+-/*
+- * Sequencer Serial Port (SSP) driver for Texas Instruments' SoCs
+- *
+- * Copyright (C) 2010 Texas Instruments Inc
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- */
+-
+-#ifndef __TI_SSP_H__
+-#define __TI_SSP_H__
+-
+-struct ti_ssp_dev_data {
+-	const char	*dev_name;
+-	void		*pdata;
+-	size_t		pdata_size;
+-};
+-
+-struct ti_ssp_data {
+-	unsigned long		out_clock;
+-	struct ti_ssp_dev_data	dev_data[2];
+-};
+-
+-struct ti_ssp_spi_data {
+-	unsigned long	iosel;
+-	int		num_cs;
+-	void		(*select)(int cs);
+-};
+-
+-/*
+- * Sequencer port IO pin configuration bits.  These do not correlate 1-1 with
+- * the hardware.  The iosel field in the port data combines iosel1 and iosel2,
+- * and is therefore not a direct map to register space.  It is best to use the
+- * macros below to construct iosel values.
+- *
+- * least significant 16 bits --> iosel1
+- * most significant 16 bits  --> iosel2
+- */
+-
+-#define SSP_IN			0x0000
+-#define SSP_DATA		0x0001
+-#define SSP_CLOCK		0x0002
+-#define SSP_CHIPSEL		0x0003
+-#define SSP_OUT			0x0004
+-#define SSP_PIN_SEL(pin, v)	((v) << ((pin) * 3))
+-#define SSP_PIN_MASK(pin)	SSP_PIN_SEL(pin, 0x7)
+-#define SSP_INPUT_SEL(pin)	((pin) << 16)
+-
+-/* Sequencer port config bits */
+-#define SSP_EARLY_DIN		BIT(8)
+-#define SSP_DELAY_DOUT		BIT(9)
+-
+-/* Sequence map definitions */
+-#define SSP_CLK_HIGH		BIT(0)
+-#define SSP_CLK_LOW		0
+-#define SSP_DATA_HIGH		BIT(1)
+-#define SSP_DATA_LOW		0
+-#define SSP_CS_HIGH		BIT(2)
+-#define SSP_CS_LOW		0
+-#define SSP_OUT_MODE		BIT(3)
+-#define SSP_IN_MODE		0
+-#define SSP_DATA_REG		BIT(4)
+-#define SSP_ADDR_REG		0
+-
+-#define SSP_OPCODE_DIRECT	((0x0) << 5)
+-#define SSP_OPCODE_TOGGLE	((0x1) << 5)
+-#define SSP_OPCODE_SHIFT	((0x2) << 5)
+-#define SSP_OPCODE_BRANCH0	((0x4) << 5)
+-#define SSP_OPCODE_BRANCH1	((0x5) << 5)
+-#define SSP_OPCODE_BRANCH	((0x6) << 5)
+-#define SSP_OPCODE_STOP		((0x7) << 5)
+-#define SSP_BRANCH(addr)	((addr) << 8)
+-#define SSP_COUNT(cycles)	((cycles) << 8)
+-
+-int ti_ssp_raw_read(struct device *dev);
+-int ti_ssp_raw_write(struct device *dev, u32 val);
+-int ti_ssp_load(struct device *dev, int offs, u32* prog, int len);
+-int ti_ssp_run(struct device *dev, u32 pc, u32 input, u32 *output);
+-int ti_ssp_set_mode(struct device *dev, int mode);
+-int ti_ssp_set_iosel(struct device *dev, u32 iosel);
+-
+-#endif /* __TI_SSP_H__ */
+-- 
+1.9.2
 
