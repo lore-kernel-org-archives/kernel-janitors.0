@@ -1,94 +1,34 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 29 Jul 2014 15:16:42 +0000
-Subject: [PATCH 0/9] use correct structure type name in sizeof
-Message-Id: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Kumar Gaurav <kumargauravgupta3@gmail.com>
+Date: Wed, 02 Jul 2014 19:51:58 +0000
+Subject: [PATCH] Block: rsxx: core: Removed depricated flag IRQF_DISABLED
+Message-Id: <1404329998-30640-1-git-send-email-kumargauravgupta3@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-wireless@vger.kernel.org
-Cc: devel@driverdev.osuosl.org, linux-ia64@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, toralf.foerster@gmx.de, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, hmh@hmh.eng.br, netdev@vger.kernel.org, ceph-devel@vger.kernel.org, linux-media@vger.kernel.org
+To: josh.h.morris@us.ibm.com, pjk1939@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Kumar Gaurav <kumargauravgupta3@gmail.com>
 
-These patches fix typos in the name of a type referenced in a sizeof
-command.  These problems are not caught by the compiler, because they have
-no impact on execution - the size of a pointer is independent of the size
-of the pointed value.
+IRQF_DISABLED flag is depricated and should be removed.
 
-The semantic patch that finds these problems is shown below
-(http://coccinelle.lip6.fr/).  This semantic patch distinguishes between
-structures that are defined in C files, and thus are expected to be visible
-in only that file, and structures that are defined in header files, which
-could potential be visible everywhere.  This distinction seems to be
-unnecessary in practice, though.
+Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
+---
+ drivers/block/rsxx/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-<smpl>
-virtual after_start
-
-@initialize:ocaml@
-@@
-
-type fl = C of string | H
-
-let structures = Hashtbl.create 101
-let restarted = ref false
-
-let add_if_not_present _   if not !restarted
-  then
-    begin
-      restarted := true;
-      let it = new iteration() in
-      it#add_virtual_rule After_start;
-      it#register()
-    end
-
-let hashadd str file   let cell     try Hashtbl.find structures str
-    with Not_found ->
-      let cell = ref [] in
-      Hashtbl.add structures str cell;
-      cell in
-  if not (List.mem file !cell) then cell := file :: !cell
-
-let get_file fl   if Filename.check_suffix fl ".c"
-  then C fl
-  else H
-
-@script:ocaml depends on !after_start@
-@@
-add_if_not_present()
-
-@r depends on !after_start@
-identifier nm;
-position p;
-@@
-
-struct nm@p { ... };
-
-@script:ocaml@
-nm << r.nm;
-p << r.p;
-@@
-
-hashadd nm (get_file (List.hd p).file)
-
-// -------------------------------------------------------------------------
-
-@sz depends on after_start@
-identifier nm;
-position p;
-@@
-
-sizeof(struct nm@p *)
-
-@script:ocaml@
-nm << sz.nm;
-p << sz.p;
-@@
-
-try
-  let allowed = !(Hashtbl.find structures nm) in
-  if List.mem H allowed or List.mem (get_file (List.hd p).file) allowed
-  then ()
-  else print_main nm p
-with Not_found -> print_main nm p
-</smpl>
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index a8de2ee..ddb6b2b 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -886,7 +886,7 @@ static int rsxx_pci_probe(struct pci_dev *dev,
+ 				"Failed to enable MSI\n");
+ 	}
+ 
+-	st = request_irq(dev->irq, rsxx_isr, IRQF_DISABLED | IRQF_SHARED,
++	st = request_irq(dev->irq, rsxx_isr, IRQF_SHARED,
+ 			 DRIVER_NAME, card);
+ 	if (st) {
+ 		dev_err(CARD_TO_DEV(card),
+-- 
+1.7.9.5
 
