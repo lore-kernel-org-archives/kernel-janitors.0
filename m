@@ -1,24 +1,36 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 08 Jul 2014 11:51:48 +0000
-Subject: Re: [PATCH] staging: ft1000-usb: check for errors in card_send_command
-Message-Id: <20140708115148.GO25880@mwanda>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Wed, 02 Jul 2014 09:25:51 +0000
+Subject: [PATCH] Staging: rtl8192e: Fix potential NULL pointer dereference
+Message-Id: <1404293151-15804-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1404519914-31078-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1404519914-31078-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, greg@kroah.com, marek.belisko@gmail.com
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rashika Kheria <rashika.kheria@gmail.com>, Valentina Manea <valentina.manea.m@gmail.com>, Josh Triplett <josh@joshtriplett.org>, Andrea Merello <andrea.merello@gmail.com>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Sat, Jul 05, 2014 at 03:25:14AM +0300, Andrey Utkin wrote:
-> See https://bugzilla.kernel.org/show_bug.cgi?idx561
-> ---8<---
-> Reported-by: Maksymilian Arciemowicz <max@cert.cx>
-> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+We need to make sure the struct rtllib_device pointer ieee is not NULL
+after the goto rx_dropped label since it is dereferenced there.
 
-Can you resend all of these which don't have changelogs?
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/staging/rtl8192e/rtllib_rx.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
+index 60de54c..7db3e74 100644
+--- a/drivers/staging/rtl8192e/rtllib_rx.c
++++ b/drivers/staging/rtl8192e/rtllib_rx.c
+@@ -1496,7 +1496,8 @@ int rtllib_rx(struct rtllib_device *ieee, struct sk_buff *skb,
+ 	return ret;
+ 
+  rx_dropped:
+-	ieee->stats.rx_dropped++;
++	if (ieee)
++		ieee->stats.rx_dropped++;
+ 	return 0;
+ }
+ EXPORT_SYMBOL(rtllib_rx);
+-- 
+1.7.10.4
 
