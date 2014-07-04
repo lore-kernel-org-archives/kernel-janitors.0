@@ -1,115 +1,32 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 13 Jul 2014 19:11:20 +0000
-Subject: [PATCH V2 3/4] staging: vt6556: Cleanup coding style issues
-Message-Id: <1405278681-3348-3-git-send-email-peter.senna@gmail.com>
+From: Haojian Zhuang <haojian.zhuang@gmail.com>
+Date: Fri, 04 Jul 2014 12:23:06 +0000
+Subject: Re: [patch] [ARM] pxa: remove duplicate SM_SCLK_SM_SCLK define
+Message-Id: <CAN1soZwjwD0LGjt65K-taMBhW_148FPeeRCMU=5hx48niSw_Uw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
+References: <20140609151343.GH9600@mwanda>
+In-Reply-To: <20140609151343.GH9600@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
 
-This patch cleanup coding style issues reported by checkpatch.
+On Mon, Jun 9, 2014 at 11:13 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> The SM_SCLK_SM_SCLK is define is cut and pasted twice.  I have removed
+> the second define.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/arch/arm/mach-mmp/include/mach/mfp-pxa910.h b/arch/arm/mach-mmp/include/mach/mfp-pxa910.h
+> index fbd7ee8..8c78f2b1 100644
+> --- a/arch/arm/mach-mmp/include/mach/mfp-pxa910.h
+> +++ b/arch/arm/mach-mmp/include/mach/mfp-pxa910.h
+> @@ -23,7 +23,6 @@
+>  #define SM_nCS0_nCS0           MFP_CFG(SM_nCS0, AF0)
+>  #define SM_ADV_SM_ADV          MFP_CFG(SM_ADV, AF0)
+>  #define SM_SCLK_SM_SCLK                MFP_CFG(SM_SCLK, AF0)
+> -#define SM_SCLK_SM_SCLK                MFP_CFG(SM_SCLK, AF0)
+>  #define SM_BE0_SM_BE0          MFP_CFG(SM_BE0, AF1)
+>  #define SM_BE1_SM_BE1          MFP_CFG(SM_BE1, AF1)
+>
 
-Additionally this typedef was removed from card.h:
-
-typedef enum _CARD_PHY_TYPE {
-    PHY_TYPE_AUTO = 0,
-    PHY_TYPE_11B,
-    PHY_TYPE_11G,
-    PHY_TYPE_11A
-} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
-
-Tested by compilation only.
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-Cahnges from V1:
- - Sent all patches in a series
-
-Made against latest staging-next.
-
- drivers/staging/vt6656/card.c | 19 ++++++++-----------
- drivers/staging/vt6656/card.h | 13 +++----------
- 2 files changed, 11 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/staging/vt6656/card.c b/drivers/staging/vt6656/card.c
-index ea06b63..f469d68 100644
---- a/drivers/staging/vt6656/card.c
-+++ b/drivers/staging/vt6656/card.c
-@@ -55,11 +55,12 @@
- #include "key.h"
- #include "usbpipe.h"
- 
--//const u16 cwRXBCNTSFOff[MAX_RATE] -//{17, 34, 96, 192, 34, 23, 17, 11, 8, 5, 4, 3};
-+/* const u16 cwRXBCNTSFOff[MAX_RATE] +   {17, 34, 96, 192, 34, 23, 17, 11, 8, 5, 4, 3}; */
- 
--static const u16 cwRXBCNTSFOff[MAX_RATE] -{192, 96, 34, 17, 34, 23, 17, 11, 8, 5, 4, 3};
-+static const u16 cwRXBCNTSFOff[MAX_RATE] = {
-+	192, 96, 34, 17, 34, 23, 17, 11, 8, 5, 4, 3
-+};
- 
- /*
-  * Description: Set NIC media channel
-@@ -477,7 +478,7 @@ void vnt_update_top_rates(struct vnt_private *priv)
- 	}
- 
- 	priv->byTopCCKBasicRate = top_cck;
-- }
-+}
- 
- int vnt_ofdm_min_rate(struct vnt_private *priv)
- {
-@@ -673,9 +674,7 @@ void vnt_reset_next_tbtt(struct vnt_private *priv, u16 beacon_interval)
- 	data[7] = (u8)(next_tbtt >> 56);
- 
- 	vnt_control_out(priv, MESSAGE_TYPE_SET_TSFTBTT,
--		MESSAGE_REQUEST_TBTT, 0, 8, data);
--
--	return;
-+			MESSAGE_REQUEST_TBTT, 0, 8, data);
- }
- 
- /*
-@@ -710,11 +709,9 @@ void vnt_update_next_tbtt(struct vnt_private *priv, u64 tsf,
- 	data[7] = (u8)(tsf >> 56);
- 
- 	vnt_control_out(priv, MESSAGE_TYPE_SET_TSFTBTT,
--		MESSAGE_REQUEST_TBTT, 0, 8, data);
-+			MESSAGE_REQUEST_TBTT, 0, 8, data);
- 
- 	dev_dbg(&priv->usb->dev, "%s TBTT: %8llx\n", __func__, tsf);
--
--	return;
- }
- 
- /*
-diff --git a/drivers/staging/vt6656/card.h b/drivers/staging/vt6656/card.h
-index 5b7cc5a..03fc167 100644
---- a/drivers/staging/vt6656/card.h
-+++ b/drivers/staging/vt6656/card.h
-@@ -32,16 +32,9 @@
- 
- /* init card type */
- 
--typedef enum _CARD_PHY_TYPE {
--    PHY_TYPE_AUTO = 0,
--    PHY_TYPE_11B,
--    PHY_TYPE_11G,
--    PHY_TYPE_11A
--} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
--
--#define CB_MAX_CHANNEL_24G  14
--#define CB_MAX_CHANNEL_5G       42 /* add channel9(5045MHz), 41=>42 */
--#define CB_MAX_CHANNEL      (CB_MAX_CHANNEL_24G+CB_MAX_CHANNEL_5G)
-+#define CB_MAX_CHANNEL_24G	14
-+#define CB_MAX_CHANNEL_5G	42 /* add channel9(5045MHz), 41=>42 */
-+#define CB_MAX_CHANNEL		(CB_MAX_CHANNEL_24G + CB_MAX_CHANNEL_5G)
- 
- struct vnt_private;
- 
--- 
-1.9.3
-
+Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
