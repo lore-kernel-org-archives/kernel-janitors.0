@@ -1,41 +1,36 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 13 Jul 2014 03:06:36 +0000
-Subject: Re: [PATCH] reformat_with_checkpatch: Add automation to checkpatch
-Message-Id: <1405220796.9132.31.camel@joe-AO725>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Fri, 04 Jul 2014 17:07:03 +0000
+Subject: [PATCH] MIPS: Fix incorrect NULL check in local_flush_tlb_page()
+Message-Id: <1404493623-22705-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405128087.6751.12.camel@joe-AO725>
-	<20140712013444.GA30368@kroah.com> <1405129216.6751.18.camel@joe-AO725>
-	<20140712093043.GG25880@mwanda> <20140712175526.GA17077@kroah.com>
-	<1405189777.9132.27.camel@joe-AO725> <20140712192846.GB25649@kroah.com>
-In-Reply-To: <20140712192846.GB25649@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernelnewbies@lists.kernelnewbies.org
+To: Ralf Baechle <ralf@linux-mips.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, John Crispin <blogic@openwrt.org>
+Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Sat, 2014-07-12 at 12:28 -0700, Greg KH wrote:
-> On Sat, Jul 12, 2014 at 11:29:37AM -0700, Joe Perches wrote:
-> > On Sat, 2014-07-12 at 10:55 -0700, Greg KH wrote:
-> > > Yes, the warnings are all due to line-length, but Joe, you shouldn't add
-> > > a patch that causes more checkpatch warnings than before :)
-> > 
-> > Yeah, that was intentional though.
-> > 
-> > This script does a series of relatively discrete changes.
-> > 
-> > Lindent would more or less work, but it's _horrible_ at
-> > wrapping overlong lines and merges all types of changes
-> > together.
-> 
-> Oh I agree, I don't want to see Lindent, but maybe, if the patch adds
-> checkpatch warnings, it should be at least "flagged" as maybe a problem?
+We check that the struct vm_area_struct pointer vma is NULL and
+then dereference it. The intent must have been to check that
+vma is not NULL before we dereference it in the next condition.
 
-The script I submitted does run checkpatch
-before any commit is done.
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ arch/mips/mm/tlb-r3k.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Would you want to be on the receiving end of this patch script?
-
-You might have noticed I don't have a kernel.org
-account.
-
+diff --git a/arch/mips/mm/tlb-r3k.c b/arch/mips/mm/tlb-r3k.c
+index d657493..6546758 100644
+--- a/arch/mips/mm/tlb-r3k.c
++++ b/arch/mips/mm/tlb-r3k.c
+@@ -158,7 +158,7 @@ void local_flush_tlb_page(struct vm_area_struct *vma, unsigned long page)
+ {
+ 	int cpu = smp_processor_id();
+ 
+-	if (!vma || cpu_context(cpu, vma->vm_mm) != 0) {
++	if (vma && cpu_context(cpu, vma->vm_mm) != 0) {
+ 		unsigned long flags;
+ 		int oldpid, newpid, idx;
+ 
+-- 
+1.7.10.4
 
