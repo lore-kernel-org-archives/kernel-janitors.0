@@ -1,50 +1,40 @@
-From: Dimitri Sivanich <sivanich@sgi.com>
-Date: Mon, 21 Jul 2014 20:12:09 +0000
-Subject: Re: [PATCH 3/4] drivers/misc/sgi-gru/grukdump.c: drop negativity check for unsgined req.gid
-Message-Id: <20140721201209.GA19927@sgi.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 05 Jul 2014 23:23:58 +0000
+Subject: [PATCH] MIPS: Remove incorrect NULL check in local_flush_tlb_page()
+Message-Id: <1404602638-16447-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405605307-13657-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1405605307-13657-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Ralf Baechle <ralf@linux-mips.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, John Crispin <blogic@openwrt.org>, Jonas Gorski <jogo@openwrt.org>
+Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-Acked-by: Dimitri Sivanich <sivanich@sgi.com>
+We check that the struct vm_area_struct pointer vma is NULL and then
+dereference it a few lines below. The intent was to make sure vma is
+not NULL but this is not necessary since the bug pre-dates GIT history
+and seem to never have caused a problem. The tlb-4k and tlb-8k versions
+of local_flush_tlb_page() don't bother checking if vma is NULL, also
+vma is dereferenced before being passed to local_flush_tlb_page(),
+thus it is safe to remove this NULL check.
 
-On Thu, Jul 17, 2014 at 04:55:07PM +0300, Andrey Utkin wrote:
-> [linux-3.16-rc5/drivers/misc/sgi-gru/grukdump.c:199]: (style) Checking if
-> unsigned variable 'gid' is less than zero.
->=20
->     if (req.gid >=3D gru_max_gids || req.gid < 0)
->         return -EINVAL;
->=20
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80461
-> Reported-by: David Binderman <dcb314@hotmail.com>
-> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-> ---
->  drivers/misc/sgi-gru/grukdump.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/misc/sgi-gru/grukdump.c b/drivers/misc/sgi-gru/grukd=
-ump.c
-> index a3700a5..e0e0e7e 100644
-> --- a/drivers/misc/sgi-gru/grukdump.c
-> +++ b/drivers/misc/sgi-gru/grukdump.c
-> @@ -196,7 +196,7 @@ int gru_dump_chiplet_request(unsigned long arg)
->  		return -EFAULT;
-> =20
->  	/* Currently, only dump by gid is implemented */
-> -	if (req.gid >=3D gru_max_gids || req.gid < 0)
-> +	if (req.gid >=3D gru_max_gids)
->  		return -EINVAL;
-> =20
->  	gru =3D GID_TO_GRU(req.gid);
-> --=20
-> 1.8.5.5
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ arch/mips/mm/tlb-r3k.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/mm/tlb-r3k.c b/arch/mips/mm/tlb-r3k.c
+index d657493..4094bbd 100644
+--- a/arch/mips/mm/tlb-r3k.c
++++ b/arch/mips/mm/tlb-r3k.c
+@@ -158,7 +158,7 @@ void local_flush_tlb_page(struct vm_area_struct *vma, unsigned long page)
+ {
+ 	int cpu = smp_processor_id();
+ 
+-	if (!vma || cpu_context(cpu, vma->vm_mm) != 0) {
++	if (cpu_context(cpu, vma->vm_mm) != 0) {
+ 		unsigned long flags;
+ 		int oldpid, newpid, idx;
+ 
+-- 
+1.7.10.4
+
