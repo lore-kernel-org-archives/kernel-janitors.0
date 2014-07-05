@@ -1,39 +1,53 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Date: Fri, 04 Jul 2014 21:52:51 +0000
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 05 Jul 2014 00:30:53 +0000
 Subject: Re: [PATCH] MIPS: Fix incorrect NULL check in local_flush_tlb_page()
-Message-Id: <CAOiHx==mR0eioTk=tc457z4ANbhFR2vS2A2y3wzw119jnCi2Pw@mail.gmail.com>
+Message-Id: <20140705003053.GB3404@lianli>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1404493623-22705-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1404493623-22705-1-git-send-email-emilgoode@gmail.com>
+ <CAOiHx==mR0eioTk=tc457z4ANbhFR2vS2A2y3wzw119jnCi2Pw@mail.gmail.com>
+In-Reply-To: <CAOiHx==mR0eioTk=tc457z4ANbhFR2vS2A2y3wzw119jnCi2Pw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
+To: Jonas Gorski <jogo@openwrt.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, John Crispin <blogic@openwrt.org>, MIPS Mailing List <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Fri, Jul 4, 2014 at 7:07 PM, Emil Goode <emilgoode@gmail.com> wrote:
-> We check that the struct vm_area_struct pointer vma is NULL and
-> then dereference it. The intent must have been to check that
-> vma is not NULL before we dereference it in the next condition.
+Hello Jonas,
 
-Actually if it is NULL, then it will short-cut and won't dereference
-it (because !vma is true it can never become false again), so the
-condition would be fine previously.
+On Fri, Jul 04, 2014 at 11:52:51PM +0200, Jonas Gorski wrote:
+> On Fri, Jul 4, 2014 at 7:07 PM, Emil Goode <emilgoode@gmail.com> wrote:
+> > We check that the struct vm_area_struct pointer vma is NULL and
+> > then dereference it. The intent must have been to check that
+> > vma is not NULL before we dereference it in the next condition.
+> 
+> Actually if it is NULL, then it will short-cut and won't dereference
+> it (because !vma is true it can never become false again), so the
+> condition would be fine previously.
+> 
+> But, looking at the code a few lines into branch:
+> 
+>         if (!vma || cpu_context(cpu, vma->vm_mm) != 0) {
+>                 unsigned long flags;
+>                 int oldpid, newpid, idx;
+> 
+> #ifdef DEBUG_TLB
+>                 printk("[tlbpage<%lu,0x%08lx>]", cpu_context(cpu,
+> vma->vm_mm), page);
+> #endif
+>                 newpid = cpu_context(cpu, vma->vm_mm) & ASID_MASK;
+> 
+> it will be then dereferenced here, so the change is actually sensible,
+> even if the description isn't quite spot-on where it breaks.
 
-But, looking at the code a few lines into branch:
+Sorry, this is what I meant but failed to explain clearly.
 
-        if (!vma || cpu_context(cpu, vma->vm_mm) != 0) {
-                unsigned long flags;
-                int oldpid, newpid, idx;
+Perhaps the following is a bit better?
 
-#ifdef DEBUG_TLB
-                printk("[tlbpage<%lu,0x%08lx>]", cpu_context(cpu,
-vma->vm_mm), page);
-#endif
-                newpid = cpu_context(cpu, vma->vm_mm) & ASID_MASK;
+We check that the struct vm_area_struct pointer vma is NULL and then
+dereference it a few lines below. The intent must have been to make sure
+that vma is not NULL and then to check the value from cpu_context() for the
+condition to be true.
 
-it will be then dereferenced here, so the change is actually sensible,
-even if the description isn't quite spot-on where it breaks.
+Best regards,
 
-
-Jonas
+Emil Goode
