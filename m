@@ -1,52 +1,58 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Tue, 08 Jul 2014 13:41:11 +0000
-Subject: Re: [PATCH 2/3] gpu: drm: Remove unnecessary parameter from drm_ht_remove_item()
-Message-Id: <20140708134111.GF17271@phenom.ffwll.local>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Sat, 05 Jul 2014 04:28:14 +0000
+Subject: [PATCH] appletalk: Set skb with destructor
+Message-Id: <1404534494-6253-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
- <1403646734-2838-3-git-send-email-massa.nomura@gmail.com>
- <20140708112442.GA17271@phenom.ffwll.local>
- <53BBD8BC.7040602@vmware.com>
-In-Reply-To: <53BBD8BC.7040602@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Hellstrom <thellstrom@vmware.com>
-Cc: kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, acme@ghostprotocols.net
+Cc: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Tue, Jul 08, 2014 at 01:40:44PM +0200, Thomas Hellstrom wrote:
-> On 07/08/2014 01:24 PM, Daniel Vetter wrote:
-> > On Tue, Jun 24, 2014 at 10:52:13PM +0100, Masaru Nomura wrote:
-> >> removed drm_open_hash from drm_ht_remove_item() as the parameter is
-> >> not used within the function.
-> >>
-> >> Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
-> >> ---
-> >> Please review this patch carefully. The reason the parameter is passed
-> >> might be some historical one or clarity of which drm_open_hash
-> >> we remove an item from.
-> > Reasons for this are probably lost. On the patch:
-> >
-> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> 
-> Acked-by: Thomas Hellstrom <thellstrom@vmware.com>
-> 
-> >
-> > Aside: Imo we could/should just move all the users to directly employ the
-> > linux hashtab instead of partially reinventing the wheel here in drm.
-> > -Daniel
-> >
-> 
-> Actually, in this case, the wheel was invented in drm before it was made
-> generic :).
-> It's possible to utilize part of "hashtable.h" but I don't think the
-> code size gain
-> will be major...
+See https://bugzilla.kernel.org/show_bug.cgi?idy441
+---8<---
+Made changes similar to 0ae89beb283a0db5980d1d4781c7d7be2f2810d6
 
-Yeah, lots of work and little gain ;-) There needs to be a terribly boring
-and rainy day to get around to that ...
--Daniel
+Reported-by: Ed Martin <edman007@edman007.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ net/appletalk/ddp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+index 01a1082..3d8ab34 100644
+--- a/net/appletalk/ddp.c
++++ b/net/appletalk/ddp.c
+@@ -1399,6 +1399,11 @@ drop:
+ 	return NET_RX_DROP;
+ }
+ 
++static inline void atalk_skb_destructor(struct sk_buff *skb)
++{
++	sock_put(skb->sk);
++}
++
+ /**
+  *	atalk_rcv - Receive a packet (in skb) from device dev
+  *	@skb - packet received
+@@ -1489,6 +1494,8 @@ static int atalk_rcv(struct sk_buff *skb, struct net_device *dev,
+ 		goto drop;
+ 
+ 	/* Queue packet (standard) */
++	sock_hold(sock);
++	skb->destructor = atalk_skb_destructor;
+ 	skb->sk = sock;
+ 
+ 	if (sock_queue_rcv_skb(sock, skb) < 0)
+@@ -1644,6 +1651,8 @@ static int atalk_sendmsg(struct kiocb *iocb, struct socket *sock, struct msghdr
+ 	if (!skb)
+ 		goto out;
+ 
++	sock_hold(sk);
++	skb->destructor = atalk_skb_destructor;
+ 	skb->sk = sk;
+ 	skb_reserve(skb, ddp_dl->header_length);
+ 	skb_reserve(skb, dev->hard_header_len);
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+1.8.3.2
+
