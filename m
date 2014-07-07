@@ -1,46 +1,38 @@
-From: Artemiy Volkov <artemiyv@acm.org>
-Date: Tue, 22 Jul 2014 17:58:36 +0000
-Subject: [PATCH 4/5] ext2: ialloc.c: Merge string literals on adjacent lines
-Message-Id: <1406051917-3823-5-git-send-email-artemiyv@acm.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 07 Jul 2014 09:37:31 +0000
+Subject: re: perf/hwpb: Invoke __perf_event_disable() if interrupts are already disabled
+Message-Id: <20140707093731.GA32260@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This patch joins lines and merges quoted strings in ialloc.c, for use of grep-ability.
+Hello K.Prasad,
 
-Signed-off-by: Artemiy Volkov <artemiyv@acm.org>
----
- fs/ext2/ialloc.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+This is a semi-automatic email about new static checker warnings.
 
-diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
-index 7d66fb0..94ebf89 100644
---- a/fs/ext2/ialloc.c
-+++ b/fs/ext2/ialloc.c
-@@ -55,8 +55,7 @@ read_inode_bitmap(struct super_block * sb, unsigned long block_group)
- 	bh = sb_bread(sb, le32_to_cpu(desc->bg_inode_bitmap));
- 	if (!bh)
- 		ext2_error(sb, "read_inode_bitmap",
--			    "Cannot read inode bitmap - "
--			    "block_group = %lu, inode_bitmap = %u",
-+			    "Cannot read inode bitmap - block_group = %lu, inode_bitmap = %u",
- 			    block_group, le32_to_cpu(desc->bg_inode_bitmap));
- error_out:
- 	return bh;
-@@ -518,9 +517,8 @@ got:
- 	ino += group * EXT2_INODES_PER_GROUP(sb) + 1;
- 	if (ino < EXT2_FIRST_INO(sb) || ino > le32_to_cpu(es->s_inodes_count)) {
- 		ext2_error (sb, "ext2_new_inode",
--			    "reserved inode or inode > inodes count - "
--			    "block_group = %d,inode=%lu", group,
--			    (unsigned long) ino);
-+			    "reserved inode or inode > inodes count - block_group = %d,inode=%lu",
-+			    group, (unsigned long) ino);
- 		err = -EIO;
- 		goto fail;
- 	}
--- 
-1.9.1
+The patch 500ad2d8b013: "perf/hwpb: Invoke __perf_event_disable() if
+interrupts are already disabled" from Aug 2, 2012, leads to the
+following Smatch complaint:
 
+kernel/events/hw_breakpoint.c:449 modify_user_hw_breakpoint()
+	 error: we previously assumed 'bp->ctx' could be null (see line 446)
+
+kernel/events/hw_breakpoint.c
+   445		 */
+   446		if (irqs_disabled() && bp->ctx && bp->ctx->task = current)
+                                       ^^^^^^^
+We add a new assumption that bp->ctx can be NULL in this patch.
+
+   447			__perf_event_disable(bp);
+   448		else
+   449			perf_event_disable(bp);
+                        ^^^^^^^^^^^^^^^^^^^^^^
+But it is dereferenced unconditionally in perf_event_disable().
+
+   450	
+   451		bp->attr.bp_addr = attr->bp_addr;
+
+regards,
+dan carpenter
