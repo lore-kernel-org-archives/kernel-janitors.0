@@ -1,27 +1,43 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Jul 2014 09:21:36 +0000
-Subject: [patch] video: of: display_timing: double free on error
-Message-Id: <20140711092136.GA9339@mwanda>
+Date: Mon, 07 Jul 2014 10:49:33 +0000
+Subject: re: [PATCH] configfs: User-driven configuration filesystem
+Message-Id: <20140707104933.GA8740@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-The display_timings_release() function frees "disp" and we free it
-again on the next line.
+Hello Joel Becker,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This is a semi-automatic email about new static checker warnings.
 
-diff --git a/drivers/video/of_display_timing.c b/drivers/video/of_display_timing.c
-index 987edf1..5c098d5 100644
---- a/drivers/video/of_display_timing.c
-+++ b/drivers/video/of_display_timing.c
-@@ -236,6 +236,7 @@ timingfail:
- 	if (native_mode)
- 		of_node_put(native_mode);
- 	display_timings_release(disp);
-+	disp = NULL;
- entryfail:
- 	kfree(disp);
- dispfail:
+The patch 7063fbf22611: "[PATCH] configfs: User-driven configuration
+filesystem" from Dec 15, 2005, leads to the following Smatch
+complaint:
+
+fs/configfs/inode.c:256 configfs_drop_dentry()
+	 error: we previously assumed 'dentry->d_inode' could be null (see line 252)
+
+fs/configfs/inode.c
+   251			spin_lock(&dentry->d_lock);
+   252			if (!(d_unhashed(dentry) && dentry->d_inode)) {
+                                                    ^^^^^^^^^^^^^^^
+We want ->d_inode to be NULL (or d_unhashed() to be false).
+
+   253				dget_dlock(dentry);
+   254				__d_drop(dentry);
+   255				spin_unlock(&dentry->d_lock);
+   256				simple_unlink(parent->d_inode, dentry);
+                                                               ^^^^^^
+But then we dereference dentry->d_inode here inside the call to
+simple_unlink() which is puzzling and means the initial condition is
+wrong somehow.  Maybe the parenthesis are wrong and it should be:
+
+		if (!d_unhashed(dentry) && dentry->d_inode) {
+
+   257			} else
+   258				spin_unlock(&dentry->d_lock);
+
+regards,
+dan carpenter
