@@ -1,46 +1,32 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 31 Jul 2014 15:30:11 +0000
-Subject: [patch] ISDN: pcbit: off by one bugs in pcbit_set_msn()
-Message-Id: <20140731153011.GF31539@mwanda>
+From: Johan Hovold <johan@kernel.org>
+Date: Mon, 07 Jul 2014 08:53:43 +0000
+Subject: Re: [PATCH 1/11 V2] USB: kl5kusb105: Remove klsi_105_tiocmset function
+Message-Id: <20140707085343.GE29098@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1401552180-9445-1-git-send-email-peter.senna@gmail.com>
+ <20140601093117.GC14935@localhost>
+In-Reply-To: <20140601093117.GC14935@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Karsten Keil <isdn@linux-pingi.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Peter Senna Tschudin <peter.senna@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Oliver Neukum <oliver@neukum.org>, kernel-janitors@vger.kernel.org, Johan Hovold <jhovold@gmail.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-1) We don't allocate enough space for the NUL terminator so we end up
-   corrupting one character beyond the end of the buffer.
+On Sun, Jun 01, 2014 at 11:31:17AM +0200, Johan Hovold wrote:
+> On Sat, May 31, 2014 at 01:03:00PM -0300, Peter Senna Tschudin wrote:
+> > This patch remove the function klsi_105_tiocmset which was only
+> > returning -EINVAL. It also removes the function prototype and
+> > the .tiocmset entry in the struct usb_serial_driver.
+> > 
+> > Verified by compilation only.
+> > 
+> > Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> 
+> Signed-off-by: Johan Hovold <jhovold@gmail.com>
 
-2) The "len - 1" should just be "len".  The code is trying to copy a
-   word from a buffer up to a comma or the last word in the buffer.
-   Say you have the buffer, "foo,bar,baz", then this code truncates the
-   last letter off each word so you get "fo", "ba", and "ba".  You would
-   hope this kind of bug would get noticed in testing...
+It seems this one was never picked up, but I'm applying it to my tree
+now.
 
-   I'm not very familiar with this code and I can't test it, but I think
-   we should copy the final character.
+Thanks again, Peter.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/isdn/pcbit/drv.c b/drivers/isdn/pcbit/drv.c
-index f02cc50..4172e22 100644
---- a/drivers/isdn/pcbit/drv.c
-+++ b/drivers/isdn/pcbit/drv.c
-@@ -1035,14 +1035,14 @@ static void pcbit_set_msn(struct pcbit_dev *dev, char *list)
- 		}
- 		ptr->next = NULL;
- 
--		ptr->msn = kmalloc(len, GFP_ATOMIC);
-+		ptr->msn = kmalloc(len + 1, GFP_ATOMIC);
- 		if (!ptr->msn) {
- 			printk(KERN_WARNING "kmalloc failed\n");
- 			kfree(ptr);
- 			return;
- 		}
- 
--		memcpy(ptr->msn, sp, len - 1);
-+		memcpy(ptr->msn, sp, len);
- 		ptr->msn[len] = 0;
- 
- #ifdef DEBUG
+Johan
