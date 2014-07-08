@@ -1,43 +1,52 @@
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Date: Tue, 08 Jul 2014 11:40:44 +0000
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Tue, 08 Jul 2014 13:41:11 +0000
 Subject: Re: [PATCH 2/3] gpu: drm: Remove unnecessary parameter from drm_ht_remove_item()
-Message-Id: <53BBD8BC.7040602@vmware.com>
+Message-Id: <20140708134111.GF17271@phenom.ffwll.local>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
  <1403646734-2838-3-git-send-email-massa.nomura@gmail.com>
  <20140708112442.GA17271@phenom.ffwll.local>
-In-Reply-To: <20140708112442.GA17271@phenom.ffwll.local>
+ <53BBD8BC.7040602@vmware.com>
+In-Reply-To: <53BBD8BC.7040602@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Masaru Nomura <massa.nomura@gmail.com>, airlied@linux.ie, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Thomas Hellstrom <thellstrom@vmware.com>
+Cc: kernel-janitors@vger.kernel.org, Masaru Nomura <massa.nomura@gmail.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 07/08/2014 01:24 PM, Daniel Vetter wrote:
-> On Tue, Jun 24, 2014 at 10:52:13PM +0100, Masaru Nomura wrote:
->> removed drm_open_hash from drm_ht_remove_item() as the parameter is
->> not used within the function.
->>
->> Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
->> ---
->> Please review this patch carefully. The reason the parameter is passed
->> might be some historical one or clarity of which drm_open_hash
->> we remove an item from.
-> Reasons for this are probably lost. On the patch:
->
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+On Tue, Jul 08, 2014 at 01:40:44PM +0200, Thomas Hellstrom wrote:
+> On 07/08/2014 01:24 PM, Daniel Vetter wrote:
+> > On Tue, Jun 24, 2014 at 10:52:13PM +0100, Masaru Nomura wrote:
+> >> removed drm_open_hash from drm_ht_remove_item() as the parameter is
+> >> not used within the function.
+> >>
+> >> Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
+> >> ---
+> >> Please review this patch carefully. The reason the parameter is passed
+> >> might be some historical one or clarity of which drm_open_hash
+> >> we remove an item from.
+> > Reasons for this are probably lost. On the patch:
+> >
+> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> 
+> Acked-by: Thomas Hellstrom <thellstrom@vmware.com>
+> 
+> >
+> > Aside: Imo we could/should just move all the users to directly employ the
+> > linux hashtab instead of partially reinventing the wheel here in drm.
+> > -Daniel
+> >
+> 
+> Actually, in this case, the wheel was invented in drm before it was made
+> generic :).
+> It's possible to utilize part of "hashtable.h" but I don't think the
+> code size gain
+> will be major...
 
-Acked-by: Thomas Hellstrom <thellstrom@vmware.com>
-
->
-> Aside: Imo we could/should just move all the users to directly employ the
-> linux hashtab instead of partially reinventing the wheel here in drm.
-> -Daniel
->
-
-Actually, in this case, the wheel was invented in drm before it was made
-generic :).
-It's possible to utilize part of "hashtable.h" but I don't think the
-code size gain
-will be major...
-
-/Thomas
+Yeah, lots of work and little gain ;-) There needs to be a terribly boring
+and rainy day to get around to that ...
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
