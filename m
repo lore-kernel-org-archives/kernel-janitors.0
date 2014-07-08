@@ -1,38 +1,41 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 31 Jul 2014 09:41:23 +0000
-Subject: [patch] NFC: st21nfcb: double free on allocation error
-Message-Id: <20140731094123.GI30276@mwanda>
+Date: Tue, 08 Jul 2014 12:52:35 +0000
+Subject: re: cxgb4 : Add DCBx support codebase and dcbnl_ops
+Message-Id: <20140708125235.GA9963@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-"info" is allocated with devm_kzalloc() so calling kfree() here will
-lead to a double free.
+Hello Anish Bhatt,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch 76bcb31efc06: "cxgb4 : Add DCBx support codebase and
+dcbnl_ops" from Jun 19, 2014, leads to the following static checker
+warning:
 
-diff --git a/drivers/nfc/st21nfcb/st21nfcb.c b/drivers/nfc/st21nfcb/st21nfcb.c
-index 4d95863..6944f9e 100644
---- a/drivers/nfc/st21nfcb/st21nfcb.c
-+++ b/drivers/nfc/st21nfcb/st21nfcb.c
-@@ -94,8 +94,7 @@ int st21nfcb_nci_probe(struct llt_ndlc *ndlc, int phy_headroom,
- 					phy_headroom, phy_tailroom);
- 	if (!ndlc->ndev) {
- 		pr_err("Cannot allocate nfc ndev\n");
--		r = -ENOMEM;
--		goto err_alloc_ndev;
-+		return -ENOMEM;
- 	}
- 	info->ndlc = ndlc;
- 
-@@ -109,8 +108,6 @@ int st21nfcb_nci_probe(struct llt_ndlc *ndlc, int phy_headroom,
- err_regdev:
- 	nci_free_device(ndlc->ndev);
- 
--err_alloc_ndev:
--	kfree(info);
- 	return r;
- }
- EXPORT_SYMBOL_GPL(st21nfcb_nci_probe);
+	drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:679 cxgb4_setapp()
+	warn: signedness bug returning '(-22)'
+
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
+   669  static u8 cxgb4_setapp(struct net_device *dev, u8 app_idtype, u16 app_id,
+   670                         u8 app_prio)
+   671  {
+   672          struct fw_port_cmd pcmd;
+   673          struct port_info *pi = netdev2pinfo(dev);
+   674          struct adapter *adap = pi->adapter;
+   675          int i, err;
+   676  
+   677  
+   678          if (pi->dcb.state != CXGB4_DCB_STATE_FW_ALLSYNCED)
+   679                  return -EINVAL;
+                        ^^^^^^^^^^^^^^
+
+See also:
+
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:683 cxgb4_setapp() warn: signedness bug returning '(-67)'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:687 cxgb4_setapp() warn: signedness bug returning '(-22)'
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:713 cxgb4_setapp() warn: signedness bug returning '(-16)'
+
+regards,
+dan carpenter
