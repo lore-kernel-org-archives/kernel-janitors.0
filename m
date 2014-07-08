@@ -1,80 +1,48 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Jul 2014 13:11:04 +0000
-Subject: Re: [PATCH] drivers/staging/comedi/drivers/ni_atmio16d.c: remove pointless condition
-Message-Id: <20140711131104.GY25880@mwanda>
+Date: Tue, 08 Jul 2014 10:55:36 +0000
+Subject: [patch] dm: fix an error code in local_init()
+Message-Id: <20140708105536.GC19737@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405073603-21468-1-git-send-email-andrey.krieger.utkin@gmail.com>
- <53BFD1FF.20309@mev.co.uk>
- <CANZNk82rsdbg+zQGQODmNMpScaHZiZ8MeooGWabWZPGwzErCyQ@mail.gmail.com>
-In-Reply-To: <CANZNk82rsdbg+zQGQODmNMpScaHZiZ8MeooGWabWZPGwzErCyQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: Ian Abbott <abbotti@mev.co.uk>, OSUOSL Drivers <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dcb314@hotmail.com
+To: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jul 11, 2014 at 03:30:15PM +0300, Andrey Utkin wrote:
-> 2014-07-11 15:01 GMT+03:00 Ian Abbott <abbotti@mev.co.uk>:
-> > On 2014-07-11 11:13, Andrey Utkin wrote:
-> >>
-> >> The issue was discovered with static analysis and has two instances in
-> >> this file. The code looks like this
-> >> if (x < 65536000) {
-> >>         ...
-> >> } else if (x < 655360000) {
-> >>         ...
-> >> } else if (x <= 0xffffffff /* 6553600000 */) {
-> >>         ...
-> >> } else if (x <= 0xffffffff /* 65536000000 */) {
-> >>         ...
-> >> }
-> >>
-> >> The meaning of this block is to select appropriate clock frequency for
-> >> interval timer basing on "x", which is amount of time.
-> >>
-> >> Notes:
-> >> 1. That last condition matches previous one - that's the issue.
-> >> 2. Decimal numbers in comments don't match hex numbers in expressions.
-> >> But in first case the numbers have same order, while in the second case
-> >> the hex number is the same, and the decimal one is 10 times bigger.
-> >> 3. Actually type of "x" is "unsigned int", so its exact upper limit is
-> >> not obviously known.
-> >> 4. There's no "else" block.
-> >>
-> >> So it makes sense to make an "else" block from last "else if" case. The
-> >> code inside the block seems correct for such usage.
-> >>
-> >> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?idy871
-> >> Reported-by: David Binderman <dcb314@hotmail.com>
-> >> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-> >> ---
-> >>   drivers/staging/comedi/drivers/ni_atmio16d.c | 4 ++--
-> >>   1 file changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/staging/comedi/drivers/ni_atmio16d.c
-> >> b/drivers/staging/comedi/drivers/ni_atmio16d.c
-> >> index 6ad27f5..895b56d 100644
-> >> --- a/drivers/staging/comedi/drivers/ni_atmio16d.c
-> >> +++ b/drivers/staging/comedi/drivers/ni_atmio16d.c
-> >> @@ -338,7 +338,7 @@ static int atmio16d_ai_cmd(struct comedi_device *dev,
-> >>         } else if (cmd->convert_arg <= 0xffffffff /* 6553600000 */) {
-> >>                 base_clock = CLOCK_10_KHZ;
-> >>                 timer = cmd->convert_arg / 100000;
-> >> -       } else if (cmd->convert_arg <= 0xffffffff /* 65536000000 */) {
-> >> +       } else {
-> >>                 base_clock = CLOCK_1_KHZ;
-> >>                 timer = cmd->convert_arg / 1000000;
-> >>         }
-> >
-> >
-> > Since 0xffffffff is the maximum value 'cmd->convert_arg' can be,
-> 
-> Could you please substantiate this? I see that convert_arg has type
-> "unsigned int" which may be 8 bytes on 64-bit platform.
+We return success if we can't allocate a work queue but we should return
+-ENOMEM.  The code was a bit messy so that's why this small bug was
+introduced and I have cleaned that as well.
 
-No.  On linux unsigned int is always 32 bits.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
-
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 3281615..aa2b12e 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -263,12 +263,12 @@ EXPORT_SYMBOL_GPL(dm_get_reserved_rq_based_ios);
+ 
+ static int __init local_init(void)
+ {
+-	int r = -ENOMEM;
++	int r;
+ 
+ 	/* allocate a slab for the dm_ios */
+ 	_io_cache = KMEM_CACHE(dm_io, 0);
+ 	if (!_io_cache)
+-		return r;
++		return -ENOMEM;
+ 
+ 	_rq_tio_cache = KMEM_CACHE(dm_rq_target_io, 0);
+ 	if (!_rq_tio_cache)
+@@ -279,8 +279,10 @@ static int __init local_init(void)
+ 		goto out_free_rq_tio_cache;
+ 
+ 	deferred_remove_workqueue = alloc_workqueue("kdmremove", WQ_UNBOUND, 1);
+-	if (!deferred_remove_workqueue)
++	if (!deferred_remove_workqueue) {
++		r = -ENOMEM;
+ 		goto out_uevent_exit;
++	}
+ 
+ 	_major = major;
+ 	r = register_blkdev(_major, _name);
