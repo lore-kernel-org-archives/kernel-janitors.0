@@ -1,51 +1,183 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Thu, 10 Jul 2014 11:12:53 +0000
-Subject: Re: [PATCH] usb: usb5303: make use of uninitialized err variable
-Message-Id: <20140710111253.GA5352@lianli>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Tue, 08 Jul 2014 11:24:43 +0000
+Subject: Re: [PATCH 2/3] gpu: drm: Remove unnecessary parameter from drm_ht_remove_item()
+Message-Id: <20140708112442.GA17271@phenom.ffwll.local>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401731125-19780-1-git-send-email-emilgoode@gmail.com>
- <20140709224647.GA23929@kroah.com>
- <CAMuHMdVq3BX=NwaCsma-N5iTdTkCS-rsX16dQL1Qr9Sepo8qww@mail.gmail.com>
-In-Reply-To: <CAMuHMdVq3BX=NwaCsma-N5iTdTkCS-rsX16dQL1Qr9Sepo8qww@mail.gmail.com>
+References: <1403646734-2838-1-git-send-email-massa.nomura@gmail.com>
+ <1403646734-2838-3-git-send-email-massa.nomura@gmail.com>
+In-Reply-To: <1403646734-2838-3-git-send-email-massa.nomura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@linaro.org>, Olof Johansson <olof@lixom.net>, Dongjin Kim <tobetter@gmail.com>, Julius Werner <jwerner@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, USB list <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: Masaru Nomura <massa.nomura@gmail.com>
+Cc: thellstrom@vmware.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Hello Greg and Geert,
+On Tue, Jun 24, 2014 at 10:52:13PM +0100, Masaru Nomura wrote:
+> removed drm_open_hash from drm_ht_remove_item() as the parameter is
+> not used within the function.
+> 
+> Signed-off-by: Masaru Nomura <massa.nomura@gmail.com>
+> ---
+> Please review this patch carefully. The reason the parameter is passed
+> might be some historical one or clarity of which drm_open_hash
+> we remove an item from.
 
-On Thu, Jul 10, 2014 at 09:38:00AM +0200, Geert Uytterhoeven wrote:
-> Hi Greg,
-> 
-> On Thu, Jul 10, 2014 at 12:46 AM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Mon, Jun 02, 2014 at 07:45:25PM +0200, Emil Goode wrote:
-> >> The variable err is not initialized here, this patch uses it
-> >> to store an eventual error value from devm_clk_get().
-> >>
-> >> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> >> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >> ---
-> >>  drivers/usb/misc/usb3503.c |   10 +++++++---
-> >>  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> > This patch fails to apply to my tree :(
-> 
-> You've already applied
-> commit ec5734c41bee2ee7c938a8f34853d31cada7e67a
-> Author: Tushar Behera <tushar.b@samsung.com>
-> Date:   Tue Jun 17 16:38:50 2014 +0530
-> 
->     usb: misc: usb3503: Update error code in print message
-> 
->     'err' is uninitialized, rather print the error code directly.
-> 
-> which fixes it slightly different.
+Reasons for this are probably lost. On the patch:
 
-Yes, my patch was sent about two weeks earlier, but of course please pick
-the one you think is best.
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Best regards,
+Aside: Imo we could/should just move all the users to directly employ the
+linux hashtab instead of partially reinventing the wheel here in drm.
+-Daniel
 
-Emil Goode
+> 
+>  drivers/gpu/drm/drm_auth.c              | 2 +-
+>  drivers/gpu/drm/drm_hashtab.c           | 2 +-
+>  drivers/gpu/drm/drm_stub.c              | 2 +-
+>  drivers/gpu/drm/ttm/ttm_object.c        | 8 +++-----
+>  drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c | 4 ++--
+>  drivers/gpu/drm/vmwgfx/vmwgfx_shader.c  | 4 ++--
+>  include/drm/drm_hashtab.h               | 2 +-
+>  7 files changed, 11 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
+> index 3cedae1..f7ceea0 100644
+> --- a/drivers/gpu/drm/drm_auth.c
+> +++ b/drivers/gpu/drm/drm_auth.c
+> @@ -115,7 +115,7 @@ int drm_remove_magic(struct drm_master *master, drm_magic_t magic)
+>  		return -EINVAL;
+>  	}
+>  	pt = drm_hash_entry(hash, struct drm_magic_entry, hash_item);
+> -	drm_ht_remove_item(&master->magiclist, hash);
+> +	drm_ht_remove_item(hash);
+>  	list_del(&pt->head);
+>  	mutex_unlock(&dev->struct_mutex);
+>  
+> diff --git a/drivers/gpu/drm/drm_hashtab.c b/drivers/gpu/drm/drm_hashtab.c
+> index c3b80fd..a66447f 100644
+> --- a/drivers/gpu/drm/drm_hashtab.c
+> +++ b/drivers/gpu/drm/drm_hashtab.c
+> @@ -188,7 +188,7 @@ int drm_ht_remove_key(struct drm_open_hash *ht, unsigned long key)
+>  	return -EINVAL;
+>  }
+>  
+> -int drm_ht_remove_item(struct drm_open_hash *ht, struct drm_hash_item *item)
+> +int drm_ht_remove_item(struct drm_hash_item *item)
+>  {
+>  	hlist_del_init_rcu(&item->head);
+>  	return 0;
+> diff --git a/drivers/gpu/drm/drm_stub.c b/drivers/gpu/drm/drm_stub.c
+> index 14d1646..6ffed45 100644
+> --- a/drivers/gpu/drm/drm_stub.c
+> +++ b/drivers/gpu/drm/drm_stub.c
+> @@ -166,7 +166,7 @@ static void drm_master_destroy(struct kref *kref)
+>  
+>  	list_for_each_entry_safe(pt, next, &master->magicfree, head) {
+>  		list_del(&pt->head);
+> -		drm_ht_remove_item(&master->magiclist, &pt->hash_item);
+> +		drm_ht_remove_item(&pt->hash_item);
+>  		kfree(pt);
+>  	}
+>  
+> diff --git a/drivers/gpu/drm/ttm/ttm_object.c b/drivers/gpu/drm/ttm/ttm_object.c
+> index d2a0533..42f73a8 100644
+> --- a/drivers/gpu/drm/ttm/ttm_object.c
+> +++ b/drivers/gpu/drm/ttm/ttm_object.c
+> @@ -188,7 +188,7 @@ int ttm_base_object_init(struct ttm_object_file *tfile,
+>  	return 0;
+>  out_err1:
+>  	spin_lock(&tdev->object_lock);
+> -	(void)drm_ht_remove_item_rcu(&tdev->object_hash, &base->hash);
+> +	drm_ht_remove_item_rcu(&base->hash);
+>  	spin_unlock(&tdev->object_lock);
+>  out_err0:
+>  	return ret;
+> @@ -202,7 +202,7 @@ static void ttm_release_base(struct kref *kref)
+>  	struct ttm_object_device *tdev = base->tfile->tdev;
+>  
+>  	spin_lock(&tdev->object_lock);
+> -	(void)drm_ht_remove_item_rcu(&tdev->object_hash, &base->hash);
+> +	drm_ht_remove_item_rcu(&base->hash);
+>  	spin_unlock(&tdev->object_lock);
+>  
+>  	/*
+> @@ -390,11 +390,9 @@ static void ttm_ref_object_release(struct kref *kref)
+>  	    container_of(kref, struct ttm_ref_object, kref);
+>  	struct ttm_base_object *base = ref->obj;
+>  	struct ttm_object_file *tfile = ref->tfile;
+> -	struct drm_open_hash *ht;
+>  	struct ttm_mem_global *mem_glob = tfile->tdev->mem_glob;
+>  
+> -	ht = &tfile->ref_hash[ref->ref_type];
+> -	(void)drm_ht_remove_item_rcu(ht, &ref->hash);
+> +	drm_ht_remove_item_rcu(&ref->hash);
+>  	list_del(&ref->head);
+>  	spin_unlock(&tfile->lock);
+>  
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+> index 87df0b3..1780f5e 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+> @@ -2185,13 +2185,13 @@ static void vmw_clear_validations(struct vmw_sw_context *sw_context)
+>  				 base.head) {
+>  		list_del(&entry->base.head);
+>  		ttm_bo_unref(&entry->base.bo);
+> -		(void) drm_ht_remove_item(&sw_context->res_ht, &entry->hash);
+> +		drm_ht_remove_item(&entry->hash);
+>  		sw_context->cur_val_buf--;
+>  	}
+>  	BUG_ON(sw_context->cur_val_buf != 0);
+>  
+>  	list_for_each_entry(val, &sw_context->resource_list, head)
+> -		(void) drm_ht_remove_item(&sw_context->res_ht, &val->hash);
+> +		drm_ht_remove_item(&val->hash);
+>  }
+>  
+>  static int vmw_validate_single_buffer(struct vmw_private *dev_priv,
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
+> index 01cc8ea..bbb30c3 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_shader.c
+> @@ -542,7 +542,7 @@ static void vmw_compat_shader_free(struct vmw_compat_shader_manager *man,
+>  				   struct vmw_compat_shader *entry)
+>  {
+>  	list_del(&entry->head);
+> -	WARN_ON(drm_ht_remove_item(&man->shaders, &entry->hash));
+> +	WARN_ON(drm_ht_remove_item(&entry->hash));
+>  	WARN_ON(ttm_ref_object_base_unref(entry->tfile, entry->handle,
+>  					  TTM_REF_USAGE));
+>  	kfree(entry);
+> @@ -652,7 +652,7 @@ int vmw_compat_shader_remove(struct vmw_compat_shader_manager *man,
+>  		vmw_compat_shader_free(man, entry);
+>  		break;
+>  	case VMW_COMPAT_COMMITED:
+> -		(void) drm_ht_remove_item(&man->shaders, &entry->hash);
+> +		drm_ht_remove_item(&entry->hash);
+>  		list_del(&entry->head);
+>  		entry->state = VMW_COMPAT_DEL;
+>  		list_add_tail(&entry->head, list);
+> diff --git a/include/drm/drm_hashtab.h b/include/drm/drm_hashtab.h
+> index fce2ef3..ae34607 100644
+> --- a/include/drm/drm_hashtab.h
+> +++ b/include/drm/drm_hashtab.h
+> @@ -58,7 +58,7 @@ extern int drm_ht_find_item(struct drm_open_hash *ht, unsigned long key, struct
+>  
+>  extern void drm_ht_verbose_list(struct drm_open_hash *ht, unsigned long key);
+>  extern int drm_ht_remove_key(struct drm_open_hash *ht, unsigned long key);
+> -extern int drm_ht_remove_item(struct drm_open_hash *ht, struct drm_hash_item *item);
+> +extern int drm_ht_remove_item(struct drm_hash_item *item);
+>  extern void drm_ht_remove(struct drm_open_hash *ht);
+>  
+>  /*
+> -- 
+> 1.9.3
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
