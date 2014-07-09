@@ -1,66 +1,48 @@
-From: Dave Chinner <david@fromorbit.com>
-Date: Sun, 20 Jul 2014 22:23:18 +0000
-Subject: Re: How to automate checkpatch && get_maintainers && git send-email of commits range?
-Message-Id: <20140720222318.GL4453@dastard>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 09 Jul 2014 22:46:47 +0000
+Subject: Re: [PATCH] usb: usb5303: make use of uninitialized err variable
+Message-Id: <20140709224647.GA23929@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CANZNk81LiTM9vY0dRV=T0BCT9k-BxU45Ojw_PyOcpdmtXHKM2Q@mail.gmail.com>
-	<20140718222215.GF18775@thunk.org>
-	<20140719013138.GA21252@home.goodmis.org>
-	<CAJd=RBBqW-Nk62DnNW3XDERbmzwqROhw9dAu9avSXn2891m3dg@mail.gmail.com>
-In-Reply-To: <CAJd=RBBqW-Nk62DnNW3XDERbmzwqROhw9dAu9avSXn2891m3dg@mail.gmail.com>
+References: <1401731125-19780-1-git-send-email-emilgoode@gmail.com>
+In-Reply-To: <1401731125-19780-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernelnewbies@lists.kernelnewbies.org
+To: Emil Goode <emilgoode@gmail.com>
+Cc: Mark Brown <broonie@linaro.org>, Olof Johansson <olof@lixom.net>, Dongjin Kim <tobetter@gmail.com>, Julius Werner <jwerner@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, Jul 19, 2014 at 11:35:45AM +0800, Hillf Danton wrote:
-> On Sat, Jul 19, 2014 at 9:31 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > On Fri, Jul 18, 2014 at 06:22:15PM -0400, Theodore Ts'o wrote:
-> >>
-> >> And then think very hard about which patches people need to see in
-> >> order to be able to evaluate a patch.  For example, if you have patch
-> >> 1 out of a series which adds a new function, and then patches 2
-> >> through 1000 modify a thousand different drivers to use that new
-> >> function, if you use an automated get_maintainers.pl script to send
-> >> each patch to just the maintainer, then the device driver maintainer
-> >> might not see patch #1 which is critical context to understanding the
-> >> patch that you want to make to his driver.  And then you will have
-> >> several hundred very angry and annoyed developers wondering why you
-> >> sent them patch 345/1000, with no other context, and wondering what
-> >> the heck they are supposed to do with the email that you have just
-> >> launched into their inbox.
-> >
-> > I'm still stuck in the old stone/quilt age, where I use quilt mail to
-> > send my patch bombs. Although, I have scripts that pulls my patches out
-> > from git with format-patch, and then creates a quilt queue from them.
-> > I do this for that very reason that I want to review all patches before
-> > I hit send, and quilt mail is very basic and sends what I tell it.
-> > I still a bit gun shy from using git sendmail as I never got that to
-> > work (note, the last time I tried, it was still doing the staircase
-> > threads with patches by default).
-> >
-> > I'm still content with quilt, but the one thing I don't care about it
-> > is that all Cc'd on the 0/1000 patch gets Cc'd on all patches. I wish
-> > there was a way to tell quilt that they should only get Cc'd on the
-> > cover patch and no more, unless the patch has them Cc'd. The reason this
-> > bothers me is that I tend to do exactly what you stated above. I will
-> > just Cc patch 345/1000 to someone with no context of what that patch
-> > is.
-> >
-> > I figured people would do the same thing that I do when I get that 345th
-> > patch. As I'm subscribed to LKML, I will just go into my lkml folder and
-> > search for that patch and see how that thread applies to me with full
-> > context. I'm assuming that's what others may do too.
-> >
-> Hi Steve
+On Mon, Jun 02, 2014 at 07:45:25PM +0200, Emil Goode wrote:
+> The variable err is not initialized here, this patch uses it
+> to store an eventual error value from devm_clk_get().
 > 
-> Why not share your quilt skills, say by adding a file in the Document directory?
+> Signed-off-by: Emil Goode <emilgoode@gmail.com>
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  drivers/usb/misc/usb3503.c |   10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/misc/usb3503.c b/drivers/usb/misc/usb3503.c
+> index f43c619..c86c3fa 100644
+> --- a/drivers/usb/misc/usb3503.c
+> +++ b/drivers/usb/misc/usb3503.c
+> @@ -191,9 +191,13 @@ static int usb3503_probe(struct usb3503 *hub)
+>  		hub->port_off_mask = 0;
+>  
+>  		clk = devm_clk_get(dev, "refclk");
+> -		if (IS_ERR(clk) && PTR_ERR(clk) != -ENOENT) {
+> -			dev_err(dev, "unable to request refclk (%d)\n", err);
+> -			return PTR_ERR(clk);
+> +		if (IS_ERR(clk)) {
+> +			err = PTR_ERR(clk);
+> +			if (err != -ENOENT) {
+> +				dev_err(dev, "unable to request refclk (%d)\n",
+> +					err);
+> +				return err;
+> +			}
+>  		}
+>  
+>  		if (!IS_ERR(clk)) {
+> -- 
+> 1.7.10.4
 
-guilt (quilt for git) already does all this scripting for you.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+This patch fails to apply to my tree :(
