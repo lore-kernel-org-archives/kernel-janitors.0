@@ -1,206 +1,55 @@
-From: Davide Gianforte <davide@gengisdave.org>
-Date: Tue, 01 Jul 2014 12:33:43 +0000
-Subject: [PATCH 2/2] staging: silicom: function return fixes
-Message-Id: <1488578.ritUTSl26I@mayhem>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 09 Jul 2014 18:59:14 +0000
+Subject: Re: [PATCH 2/2] staging: silicom: function return fixes
+Message-Id: <20140709185914.GA28612@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1972083.WZLDx2N35Z@mayhem>
-In-Reply-To: <1972083.WZLDx2N35Z@mayhem>
+ <1488578.ritUTSl26I@mayhem>
+In-Reply-To: <1488578.ritUTSl26I@mayhem>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Davide Gianforte <davide@gengisdave.org>
 Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Linux Kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-Function return fixes
+On Tue, Jul 01, 2014 at 02:33:43PM +0200, Davide Gianforte wrote:
+> Function return fixes
+> 
+> Some functions don't need a temporary variable to store return value.
+> 
+> Where functions always return 0, changed into void functions.
+> 
+> Signed-off-by: Davide Gianforte <davide@gengisdave.org>
+> --
+> 
+>  drivers/staging/silicom/bpctl_mod.c | 62 ++++++++++---------------------------
+>  1 file changed, 16 insertions(+), 46 deletions(-)
+> 
+> diff --git a/drivers/staging/silicom/bpctl_mod.c b/drivers/staging/silicom/bpctl_mod.c
+> index 1322437..c9a4c40 100644
+> --- a/drivers/staging/silicom/bpctl_mod.c
+> +++ b/drivers/staging/silicom/bpctl_mod.c
+> @@ -117,7 +117,7 @@ static struct bpctl_dev *get_status_port_fn(struct bpctl_dev *pbpctl_dev);
+>  static void if_scan_init(void);
+>  
+>  static int bypass_proc_create_dev_sd(struct bpctl_dev *pbp_device_block);
+> -static int bypass_proc_remove_dev_sd(struct bpctl_dev *pbp_device_block);
+> +static void bypass_proc_remove_dev_sd(struct bpctl_dev *pbp_device_block);
+>  
+>  static int is_bypass_fn(struct bpctl_dev *pbpctl_dev);
+>  static int get_dev_idx_bsf(int bus, int slot, int func);
+> @@ -1458,9 +1458,8 @@ static int send_wdt_pulse(struct bpctl_dev *pbpctl_dev)
+>  static void send_bypass_clear_pulse(struct bpctl_dev *pbpctl_dev,
+>  				    unsigned int value)
+>  {
+> -	uint32_t ctrl_ext = 0;
+> +	uint32_t ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
+>  
+> -	ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
 
-Some functions don't need a temporary variable to store return value.
+How about just removing the " = 0;" part of the variable definition?
+That would be a smaller patch, and still keep everything "clean".
 
-Where functions always return 0, changed into void functions.
+thanks,
 
-Signed-off-by: Davide Gianforte <davide@gengisdave.org>
---
-
- drivers/staging/silicom/bpctl_mod.c | 62 ++++++++++---------------------------
- 1 file changed, 16 insertions(+), 46 deletions(-)
-
-diff --git a/drivers/staging/silicom/bpctl_mod.c b/drivers/staging/silicom/bpctl_mod.c
-index 1322437..c9a4c40 100644
---- a/drivers/staging/silicom/bpctl_mod.c
-+++ b/drivers/staging/silicom/bpctl_mod.c
-@@ -117,7 +117,7 @@ static struct bpctl_dev *get_status_port_fn(struct bpctl_dev *pbpctl_dev);
- static void if_scan_init(void);
- 
- static int bypass_proc_create_dev_sd(struct bpctl_dev *pbp_device_block);
--static int bypass_proc_remove_dev_sd(struct bpctl_dev *pbp_device_block);
-+static void bypass_proc_remove_dev_sd(struct bpctl_dev *pbp_device_block);
- 
- static int is_bypass_fn(struct bpctl_dev *pbpctl_dev);
- static int get_dev_idx_bsf(int bus, int slot, int func);
-@@ -1458,9 +1458,8 @@ static int send_wdt_pulse(struct bpctl_dev *pbpctl_dev)
- static void send_bypass_clear_pulse(struct bpctl_dev *pbpctl_dev,
- 				    unsigned int value)
- {
--	uint32_t ctrl_ext = 0;
-+	uint32_t ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 
--	ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 	BPCTL_BP_WRITE_REG(pbpctl_dev, CTRL_EXT, ((ctrl_ext |	/* 0 */
- 						   BPCTLI_CTRL_EXT_SDP6_DIR) &
- 						  ~BPCTLI_CTRL_EXT_SDP6_DATA));
-@@ -1566,48 +1565,40 @@ int pulse_get1_fn(struct bpctl_dev *pbpctl_dev)
- 	return ctrl_value;
- }
- 
--int gpio6_set_fn(struct bpctl_dev *pbpctl_dev)
-+void gpio6_set_fn(struct bpctl_dev *pbpctl_dev)
- {
--	uint32_t ctrl_ext = 0;
-+	uint32_t ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 
--	ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 	BPCTL_BP_WRITE_REG(pbpctl_dev, CTRL_EXT, ctrl_ext |
- 			   BPCTLI_CTRL_EXT_SDP6_DIR |
- 			   BPCTLI_CTRL_EXT_SDP6_DATA);
--	return 0;
- }
- 
--int gpio7_set_fn(struct bpctl_dev *pbpctl_dev)
-+void gpio7_set_fn(struct bpctl_dev *pbpctl_dev)
- {
--	uint32_t ctrl_ext = 0;
-+	uint32_t ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 
--	ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 	BPCTL_BP_WRITE_REG(pbpctl_dev, CTRL_EXT, ctrl_ext |
- 			   BPCTLI_CTRL_EXT_SDP7_DIR |
- 			   BPCTLI_CTRL_EXT_SDP7_DATA);
--	return 0;
- }
- 
--int gpio7_clear_fn(struct bpctl_dev *pbpctl_dev)
-+void gpio7_clear_fn(struct bpctl_dev *pbpctl_dev)
- {
--	uint32_t ctrl_ext = 0;
-+	uint32_t ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 
--	ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 	BPCTL_BP_WRITE_REG(pbpctl_dev, CTRL_EXT, ((ctrl_ext |
- 						   BPCTLI_CTRL_EXT_SDP7_DIR) &
- 						  ~BPCTLI_CTRL_EXT_SDP7_DATA));
--	return 0;
- }
- 
--int gpio6_clear_fn(struct bpctl_dev *pbpctl_dev)
-+void gpio6_clear_fn(struct bpctl_dev *pbpctl_dev)
- {
--	uint32_t ctrl_ext = 0;
-+	uint32_t ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 
--	ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
- 	BPCTL_BP_WRITE_REG(pbpctl_dev, CTRL_EXT, ((ctrl_ext |
- 						   BPCTLI_CTRL_EXT_SDP6_DIR) &
- 						  ~BPCTLI_CTRL_EXT_SDP6_DATA));
--	return 0;
- }
- #endif				/*BYPASS_DEBUG */
- 
-@@ -4428,14 +4419,10 @@ static int set_disc_fn(struct bpctl_dev *pbpctl_dev, int disc_mode)
- 
- static int get_disc_fn(struct bpctl_dev *pbpctl_dev)
- {
--	int ret = 0;
--
- 	if (!pbpctl_dev)
- 		return -1;
- 
--	ret = disc_status(pbpctl_dev);
--
--	return ret;
-+	return disc_status(pbpctl_dev);
- }
- 
- static int set_disc_pwup_fn(struct bpctl_dev *pbpctl_dev, int disc_mode)
-@@ -4470,13 +4457,10 @@ static int get_disc_pwup_fn(struct bpctl_dev *pbpctl_dev)
- 
- static int get_disc_change_fn(struct bpctl_dev *pbpctl_dev)
- {
--	int ret = 0;
--
- 	if (!pbpctl_dev)
- 		return -1;
- 
--	ret = disc_change_status(pbpctl_dev);
--	return ret;
-+	return disc_change_status(pbpctl_dev);
- }
- 
- static int set_dis_disc_fn(struct bpctl_dev *pbpctl_dev, int dis_param)
-@@ -4500,14 +4484,10 @@ static int set_dis_disc_fn(struct bpctl_dev *pbpctl_dev, int dis_param)
- 
- static int get_dis_disc_fn(struct bpctl_dev *pbpctl_dev)
- {
--	int ret = 0;
--
- 	if (!pbpctl_dev)
- 		return -1;
- 
--	ret = dis_disc_cap_status(pbpctl_dev);
--
--	return ret;
-+	return dis_disc_cap_status(pbpctl_dev);
- }
- 
- static int get_wd_exp_mode_fn(struct bpctl_dev *pbpctl_dev)
-@@ -4846,16 +4826,12 @@ static int set_bp_wait_at_pwup_fn(struct bpctl_dev *pbpctl_dev, int tap_mode)
- 
- static int get_bp_wait_at_pwup_fn(struct bpctl_dev *pbpctl_dev)
- {
--	int ret = 0;
--
- 	if (!pbpctl_dev)
- 		return -1;
- 
- 	/* bp_lock(pbp_device_block); */
--	ret = bp_wait_at_pwup_status(pbpctl_dev);
-+	return bp_wait_at_pwup_status(pbpctl_dev);
- 	/* bp_unlock(pbp_device_block); */
--
--	return ret;
- }
- 
- static int set_bp_hw_reset_fn(struct bpctl_dev *pbpctl_dev, int tap_mode)
-@@ -4880,20 +4856,15 @@ static int set_bp_hw_reset_fn(struct bpctl_dev *pbpctl_dev, int tap_mode)
- 
- static int get_bp_hw_reset_fn(struct bpctl_dev *pbpctl_dev)
- {
--	int ret = 0;
--
- 	if (!pbpctl_dev)
- 		return -1;
- 
- 	/* bp_lock(pbp_device_block); */
--	ret = bp_hw_reset_status(pbpctl_dev);
-+	return bp_hw_reset_status(pbpctl_dev);
- 
- 	/* bp_unlock(pbp_device_block); */
--
--	return ret;
- }
- 
--
- static int get_bypass_info_fn(struct bpctl_dev *pbpctl_dev, char *dev_name,
- 		       char *add_param)
- {
-@@ -7486,11 +7457,10 @@ static int bypass_proc_create_dev_sd(struct bpctl_dev *pbp_device_block)
- 	return ret;
- }
- 
--static int bypass_proc_remove_dev_sd(struct bpctl_dev *pbp_device_block)
-+static void bypass_proc_remove_dev_sd(struct bpctl_dev *pbp_device_block)
- {
- 	struct bypass_pfs_sd *current_pfs = &pbp_device_block->bypass_pfs_set;
- 
- 	remove_proc_subtree(current_pfs->dir_name, bp_procfs_dir);
- 	current_pfs->bypass_entry = NULL;
--	return 0;
- }
+greg k-h
