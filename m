@@ -1,53 +1,34 @@
-From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Date: Thu, 17 Jul 2014 13:54:35 +0000
-Subject: [PATCH 2/4] drivers/message/i2o/i2o_block.c: drop negativity check of unsigned long arg
-Message-Id: <1405605275-13608-1-git-send-email-andrey.krieger.utkin@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 09 Jul 2014 09:38:08 +0000
+Subject: Re: [PATCH 1/2] staging: silicom: checkpatch fixes
+Message-Id: <20140709093808.GU25880@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1972083.WZLDx2N35Z@mayhem>
+In-Reply-To: <1972083.WZLDx2N35Z@mayhem>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Davide Gianforte <davide@gengisdave.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-[linux-3.16-rc5/drivers/message/i2o/i2o_block.c:674]: (style) Checking if
-unsigned variable 'arg' is less than zero.
+The patch does too many things, break it up into one type of fix per
+patch.
 
-Source code is
+On Tue, Jul 01, 2014 at 02:24:36PM +0200, Davide Gianforte wrote:
+> Chechpatch.pl cleanup
+> 
+> There are still some warnings, most of them are lines over 80 chars
+> (mainly a semicolon or closing parenthesis).
+> 
+> Where not specified, I defaulted printk with no log level into pr_debug
 
-        if (arg < 0 || arg > CACHE_SMARTFETCH)
-            break;
-but
+No.  You can't just use pr_debug for everything.  Also some of them are
+not whole line prints so the pr_debug() will put extra info in the
+middle of the lines.
 
-static int i2o_block_ioctl(struct block_device *bdev, fmode_t mode,
-               unsigned int cmd, unsigned long arg)
+Write a hello_world.ko kernel module and play with the printk until you
+understand what I mean.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80451
-Reported-by: David Binderman <dcb314@hotmail.com>
-Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
----
- drivers/message/i2o/i2o_block.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+regards,
+dan carpenter
 
-diff --git a/drivers/message/i2o/i2o_block.c b/drivers/message/i2o/i2o_bloc=
-k.c
-index 6fc3866..2b684ec 100644
---- a/drivers/message/i2o/i2o_block.c
-+++ b/drivers/message/i2o/i2o_block.c
-@@ -671,7 +671,7 @@ static int i2o_block_ioctl(struct block_device *bdev, f=
-mode_t mode,
- 		break;
- 	case BLKI2OSRSTRAT:
- 		ret =3D -EINVAL;
--		if (arg < 0 || arg > CACHE_SMARTFETCH)
-+		if (arg > CACHE_SMARTFETCH)
- 			break;
- 		dev->rcache =3D arg;
- 		ret =3D 0;
---=20
-1.8.5.5
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
