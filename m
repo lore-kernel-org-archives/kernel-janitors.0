@@ -1,55 +1,34 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 09 Jul 2014 18:59:14 +0000
+From: Davide Gianforte <davide@gengisdave.org>
+Date: Fri, 11 Jul 2014 07:12:25 +0000
 Subject: Re: [PATCH 2/2] staging: silicom: function return fixes
-Message-Id: <20140709185914.GA28612@kroah.com>
+Message-Id: <3841595.FCr3AICt7G@mayhem>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1972083.WZLDx2N35Z@mayhem>
- <1488578.ritUTSl26I@mayhem>
-In-Reply-To: <1488578.ritUTSl26I@mayhem>
+References: <1972083.WZLDx2N35Z@mayhem> <1488578.ritUTSl26I@mayhem> <20140709185914.GA28612@kroah.com>
+In-Reply-To: <20140709185914.GA28612@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Davide Gianforte <davide@gengisdave.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Linux Kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On Tue, Jul 01, 2014 at 02:33:43PM +0200, Davide Gianforte wrote:
-> Function return fixes
+On Wed, Jul 09, 2014 at 11:59:14, Greg Kroah-Hartman wrote:
+> On Tue, Jul 01, 2014 at 02:33:43PM +0200, Davide Gianforte wrote:
+> > +	uint32_t ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
+> >  
+> > -	ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
 > 
-> Some functions don't need a temporary variable to store return value.
+> How about just removing the " = 0;" part of the variable definition?
+> That would be a smaller patch, and still keep everything "clean".
 > 
-> Where functions always return 0, changed into void functions.
+> thanks,
 > 
-> Signed-off-by: Davide Gianforte <davide@gengisdave.org>
-> --
-> 
->  drivers/staging/silicom/bpctl_mod.c | 62 ++++++++++---------------------------
->  1 file changed, 16 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/staging/silicom/bpctl_mod.c b/drivers/staging/silicom/bpctl_mod.c
-> index 1322437..c9a4c40 100644
-> --- a/drivers/staging/silicom/bpctl_mod.c
-> +++ b/drivers/staging/silicom/bpctl_mod.c
-> @@ -117,7 +117,7 @@ static struct bpctl_dev *get_status_port_fn(struct bpctl_dev *pbpctl_dev);
->  static void if_scan_init(void);
->  
->  static int bypass_proc_create_dev_sd(struct bpctl_dev *pbp_device_block);
-> -static int bypass_proc_remove_dev_sd(struct bpctl_dev *pbp_device_block);
-> +static void bypass_proc_remove_dev_sd(struct bpctl_dev *pbp_device_block);
->  
->  static int is_bypass_fn(struct bpctl_dev *pbpctl_dev);
->  static int get_dev_idx_bsf(int bus, int slot, int func);
-> @@ -1458,9 +1458,8 @@ static int send_wdt_pulse(struct bpctl_dev *pbpctl_dev)
->  static void send_bypass_clear_pulse(struct bpctl_dev *pbpctl_dev,
->  				    unsigned int value)
->  {
-> -	uint32_t ctrl_ext = 0;
-> +	uint32_t ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
->  
-> -	ctrl_ext = BPCTL_READ_REG(pbpctl_dev, CTRL_EXT);
+> greg k-h
 
-How about just removing the " = 0;" part of the variable definition?
-That would be a smaller patch, and still keep everything "clean".
+Also I prefer the style to keep definitions separated from assignments.
+I've seen a lot of kernel code which initialize variables with function returns,
+but as you said, it is not "clean", even if it is code-correct.
 
-thanks,
+I'll rewrite the patch and I will send asap.
 
-greg k-h
+thanks
+davide
