@@ -1,55 +1,54 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Mon, 14 Jul 2014 17:26:02 +0000
-Subject: Re: [PATCH V2 1/4] staging: vt6556: Cleanup coding style issues
-Message-Id: <20140714172602.GB9870@kroah.com>
+From: Arvid Brodin <arvid.brodin@alten.se>
+Date: Fri, 11 Jul 2014 16:21:12 +0000
+Subject: [PATCH net-next] net/hsr: Remove left-over never-true conditional code.
+Message-Id: <53C00EF8.1040403@alten.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
- <20140713193647.GA31010@kroah.com>
- <20140714085932.GA2958@hp-peter.rsr.lip6.fr>
- <20140714141231.GM25880@mwanda>
- <CA+MoWDpQBQYqZ2ZLM3-17cfQQ0LjMcv702ZxVv10M5Wd895rJg@mail.gmail.com>
-In-Reply-To: <CA+MoWDpQBQYqZ2ZLM3-17cfQQ0LjMcv702ZxVv10M5Wd895rJg@mail.gmail.com>
+References: <20140710210037.GA14669@mwanda>
+In-Reply-To: <20140710210037.GA14669@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org, Malcolm Priestley <tvboxspy@gmail.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Forest Bond <forest@alittletooquiet.net>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: David Miller <davem@davemloft.net>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, kernel-janitors@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On Mon, Jul 14, 2014 at 07:01:37PM +0200, Peter Senna Tschudin wrote:
-> <note>
-> I'm not trying to push my changes over the rules. I'm trying to
-> understand the problem, to avoid creating similar noise in the future.
-> </note>
-> 
-> Now I understand that the problem with the series of 4 patches is that
-> the subject is the same on the 4 patches. Having the same subject in 4
-> patches is not good. I got this one.
-> 
-> But I have no clue why joining 4 cleanup patches into 1 is bad. The
-> patches are all for the same driver, are all silencing checkpatch
-> warnings, and even the typedef stuff was reported by checkpatch. The
-> commit message of the single patch describes it all. If the subject of
-> the series is the problem, why not make a single patch instead of a
-> series of similar patches? It made sense from my perspective. So what
-> is the problem in re-submit 4 similar patches as a single patch?
+MacAddressB is an array (unsigned char MacAddressB[ETH_ALEN]) and is alloca=
+ted
+as a part of *node_dst (which is a struct hsr_node). So the condition is al=
+ways
+false.
 
-Because it is _much_ harder to review a patch that way.  I get a few
-hundred patches a week to review.  If you only do one thing per patch,
-it is trivial to review, and you don't have to pick through a patch to
-determine if all of it is correct based on a larger patch, that does
-multiple things.
+Detected by Dan Carpenter.
 
-Also, the rule for a kernel patch is "do only one thing".  If you do:
-	- remove typedef
-	- fix space layout
-for a single file, that really is 2 different things, yet you could
-claim they are both "coding style cleanups".  Reviewing both of these at
-the same time, together, makes it much harder to do.
+Signed-off-by: Arvid Brodin <arvid.brodin@alten.se>
+---
+ net/hsr/hsr_framereg.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Remember, for the kernel, we waste individual developer's time, at the
-expense of reviewer's time, as we have far more developers than
-reviewers.
+diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+index c709c13..bace124 100644
+--- a/net/hsr/hsr_framereg.c
++++ b/net/hsr/hsr_framereg.c
+@@ -290,10 +290,6 @@ void hsr_addr_subst_dest(struct hsr_node *node_src, st=
+ruct sk_buff *skb,
+ 	}
+ 	if (port->type !=3D node_dst->AddrB_port)
+ 		return;
+-	if (!node_dst->MacAddressB) {
+-		WARN_ONCE(1, "%s: No MacAddressB\n", __func__);
+-		return;
+-	}
+=20
+ 	ether_addr_copy(eth_hdr(skb)->h_dest, node_dst->MacAddressB);
+ }
+--=20
+1.8.3.2
 
-Hope this helps explain things more.
-
-greg k-h
+--=20
+Arvid Brodin | Consultant (Linux)
+ALTEN | Knarrarn=E4sgatan 7 | SE-164 40 Kista | Sweden
+arvid.brodin@alten.se | www.alten.se/en/
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
