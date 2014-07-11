@@ -1,60 +1,95 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Jul 2014 14:58:11 +0000
-Subject: Re: [PATCH 1/3] arch/metag/kernel/cachepart.c: fix failure check
-Message-Id: <20140717145811.GI25880@mwanda>
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Fri, 11 Jul 2014 14:32:07 +0000
+Subject: [PATCH v2] From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Message-Id: <1405089127-21646-1-git-send-email-abbotti@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405603586-12515-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1405603586-12515-1-git-send-email-andrey.krieger.utkin@gmail.com>
+References: <1405073603-21468-1-git-send-email-andrey.krieger.utkin@gmail.com>
+In-Reply-To: <1405073603-21468-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-metag@vger.kernel.org, james.hogan@imgtec.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: gregkh@linuxfoundation.org, hsweeten@visionengravers.com, abbotti@mev.co.uk, dcb314@hotmail.com, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Thu, Jul 17, 2014 at 04:26:26PM +0300, Andrey Utkin wrote:
-> [linux-3.16-rc5/arch/metag/kernel/cachepart.c:102]: (style) Checking if u=
-nsigned variable 'thread_cache_size' is less than zero.
->=20
-> Source code is
->=20
->         if (thread_cache_size < 0)
->             pr_emerg("Can't read %s cache size\n",
->                  cache_type ? "DCACHE" : "ICACHE");
->=20
-> but
->=20
->     unsigned int thread_cache_size;
->=20
-> Function get_thread_cache_size returns an error code
-> as (unsigned int) -1.
->=20
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80361
-> Reported-by: David Binderman <dcb314@hotmail.com>
-> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-> ---
->  arch/metag/kernel/cachepart.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/metag/kernel/cachepart.c b/arch/metag/kernel/cachepart.c
-> index 0a2385f..b137034 100644
-> --- a/arch/metag/kernel/cachepart.c
-> +++ b/arch/metag/kernel/cachepart.c
-> @@ -99,7 +99,7 @@ void check_for_cache_aliasing(int thread_id)
->  	for (cache_type =3D ICACHE; cache_type <=3D DCACHE; cache_type++) {
->  		thread_cache_size >  				get_thread_cache_size(cache_type, thread_id);
-> -		if (thread_cache_size < 0)
-> +		if (thread_cache_size =3D (unsigned int)-1)
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-Oh, wow.  Every single variable in this file is an unsigned int.  :P
+drivers/staging/comedi/drivers/ni_atmio16d.c: remove pointless condition
 
-We should just make this int.  The values of thread_cache_size do not
-go that high.
+The issue was discovered with static analysis and has two instances in
+this file. The code looks like this
+if (x < 65536000) {
+	...
+} else if (x < 655360000) {
+	...
+} else if (x <= 0xffffffff /* 6553600000 */) {
+	...
+} else if (x <= 0xffffffff /* 65536000000 */) {
+	...
+}
 
-regards,
-dan carpenter
+The meaning of this block is to select appropriate clock frequency for
+interval timer basing on "x", which is amount of time.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Notes:
+1. That last condition matches previous one - that's the issue.
+2. Decimal numbers in comments don't match hex numbers in expressions.
+But in first case the numbers have same order, while in the second case
+the hex number is the same, and the decimal one is 10 times bigger.
+3. Actually type of "x" is "unsigned int", so its exact upper limit is
+not obviously known.
+4. There's no "else" block.
+
+So it makes sense to make an "else" block from last "else if" case. The
+code inside the block seems correct for such usage.
+
+[ Actually, get rid of the final "else if" case and change the
+next-to-last "else if" case to an "else" as the upper limit of "x" _is_
+known to be 0xffffffff (UINT_MAX), which is less than 6553600000 -- Ian ]
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?idy871
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+v2: Removed final "else if" block and changed preceding "else if" block
+to "else" block as the condition is always true due to limited range of
+"unsigned int". -- Ian
+---
+ drivers/staging/comedi/drivers/ni_atmio16d.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/comedi/drivers/ni_atmio16d.c b/drivers/staging/comedi/drivers/ni_atmio16d.c
+index 6ad27f5..b1b4744 100644
+--- a/drivers/staging/comedi/drivers/ni_atmio16d.c
++++ b/drivers/staging/comedi/drivers/ni_atmio16d.c
+@@ -335,12 +335,9 @@ static int atmio16d_ai_cmd(struct comedi_device *dev,
+ 	} else if (cmd->convert_arg < 655360000) {
+ 		base_clock = CLOCK_100_KHZ;
+ 		timer = cmd->convert_arg / 10000;
+-	} else if (cmd->convert_arg <= 0xffffffff /* 6553600000 */) {
++	} else /* cmd->convert_arg < 6553600000 */ {
+ 		base_clock = CLOCK_10_KHZ;
+ 		timer = cmd->convert_arg / 100000;
+-	} else if (cmd->convert_arg <= 0xffffffff /* 65536000000 */) {
+-		base_clock = CLOCK_1_KHZ;
+-		timer = cmd->convert_arg / 1000000;
+ 	}
+ 	outw(0xFF03, dev->iobase + AM9513A_COM_REG);
+ 	outw(base_clock, dev->iobase + AM9513A_DATA_REG);
+@@ -403,12 +400,9 @@ static int atmio16d_ai_cmd(struct comedi_device *dev,
+ 		} else if (cmd->scan_begin_arg < 655360000) {
+ 			base_clock = CLOCK_100_KHZ;
+ 			timer = cmd->scan_begin_arg / 10000;
+-		} else if (cmd->scan_begin_arg < 0xffffffff /* 6553600000 */) {
++		} else /* cmd->scan_begin_arg < 6553600000 */ {
+ 			base_clock = CLOCK_10_KHZ;
+ 			timer = cmd->scan_begin_arg / 100000;
+-		} else if (cmd->scan_begin_arg < 0xffffffff /* 65536000000 */) {
+-			base_clock = CLOCK_1_KHZ;
+-			timer = cmd->scan_begin_arg / 1000000;
+ 		}
+ 		outw(0xFF02, dev->iobase + AM9513A_COM_REG);
+ 		outw(base_clock, dev->iobase + AM9513A_DATA_REG);
+-- 
+2.0.0
+
