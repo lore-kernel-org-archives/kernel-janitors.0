@@ -1,45 +1,96 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 31 Jul 2014 19:27:25 +0000
-Subject: Re: [patch] ASoC: pxa: pxa-ssp: small leak in probe()
-Message-Id: <20140731192725.GN17528@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="F6eHirymJZHcVyJm"
+From: Ian Abbott <abbotti@mev.co.uk>
+Date: Fri, 11 Jul 2014 14:38:30 +0000
+Subject: [PATCH v3] drivers/staging/comedi/drivers/ni_atmio16d.c: remove pointless condition
+Message-Id: <1405089510-23182-1-git-send-email-abbotti@mev.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140731125751.GA31539@mwanda>
-In-Reply-To: <20140731125751.GA31539@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+References: <1405089127-21646-1-git-send-email-abbotti@mev.co.uk>
+In-Reply-To: <1405089127-21646-1-git-send-email-abbotti@mev.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: gregkh@linuxfoundation.org, hsweeten@visionengravers.com, abbotti@mev.co.uk, dcb314@hotmail.com, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
---F6eHirymJZHcVyJm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Thu, Jul 31, 2014 at 03:57:51PM +0300, Dan Carpenter wrote:
-> There is a small memory leak if probe() fails.
+The issue was discovered with static analysis and has two instances in
+this file. The code looks like this
+if (x < 65536000) {
+	...
+} else if (x < 655360000) {
+	...
+} else if (x <= 0xffffffff /* 6553600000 */) {
+	...
+} else if (x <= 0xffffffff /* 65536000000 */) {
+	...
+}
 
-Applied, thanks.
+The meaning of this block is to select appropriate clock frequency for
+interval timer basing on "x", which is amount of time.
 
---F6eHirymJZHcVyJm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Notes:
+1. That last condition matches previous one - that's the issue.
+2. Decimal numbers in comments don't match hex numbers in expressions.
+But in first case the numbers have same order, while in the second case
+the hex number is the same, and the decimal one is 10 times bigger.
+3. Actually type of "x" is "unsigned int", so its exact upper limit is
+not obviously known.
+4. There's no "else" block.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+So it makes sense to make an "else" block from last "else if" case. The
+code inside the block seems correct for such usage.
 
-iQIcBAEBAgAGBQJT2piaAAoJELSic+t+oim9GkcP/RqnklzisQ7VC+GQu+nd8494
-XxmcC27O0YyTsXUe+idCnqIQ2FWpgjkItbiX//sCXZStE6kd8jV7Jm+9oZpTonmk
-rLyT5MEiHVwMTcIYAG45jhFSgknpus6wYXTVkIJrmKYvs9AFoHwWqCb21+3YXYS+
-lGE2KgSwAxVDMrdat8N0ClKJi8TCfcimkju1S6IxGBVniYq8fqrv9Wa+g/prfsum
-fF7Ap3L8ksop9jV+HNVomKeddUo5SUilInnw7Pt4PW61uz+G8a25UlPQr8kRNctQ
-tuJSPYz3PtPkNNkOd21fNQOVYWkC1poQAe8Fe2XCv4NItQRaE55keJT3Eoiumi+H
-rWxqtpoiX++e73C2GWTrGGjQ06nxPqfj4Pq4IlVrumyl+AAM62sKKBQS3Ftsyy6l
-lfIyR8P4Ii3odtAbF0Putacqyabjb3RiViHObH3WP2j6+LE7ARqObFTyY8PxNe7j
-44M1hPUFCflYE+4PkuYyxf6pu5CI7jzcmm5XZhIUb5xAuW5l3NHlK34dOvV5HdwT
-fvYjbFiU5JIJPsXY9sXCKVbnn6DXloTaji1eVsmn0fmCtP2iuK4Pf0xoQkO2tLJU
-YRyEn1ecigk6OBJev0gN+96GCWyIpbaCj8kjTGNrJuNbn7qQ+XflZ2HePasii4TW
-6qkH9+P0qLWe4g0D2mOb
-=ncQr
------END PGP SIGNATURE-----
+[ Actually, get rid of the final "else if" case and change the
+next-to-last "else if" case to an "else" as the upper limit of "x" _is_
+known to be 0xffffffff (UINT_MAX), which is less than 6553600000 -- Ian ]
 
---F6eHirymJZHcVyJm--
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?idy871
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+v2: Removed final "else if" block and changed preceding "else if" block
+to "else" block as the condition is always true due to limited range of
+"unsigned int". -- Ian
+v3: Corrected subject line I messed up in v2. -- Ian
+---
+ drivers/staging/comedi/drivers/ni_atmio16d.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/comedi/drivers/ni_atmio16d.c b/drivers/staging/comedi/drivers/ni_atmio16d.c
+index 6ad27f5..b1b4744 100644
+--- a/drivers/staging/comedi/drivers/ni_atmio16d.c
++++ b/drivers/staging/comedi/drivers/ni_atmio16d.c
+@@ -335,12 +335,9 @@ static int atmio16d_ai_cmd(struct comedi_device *dev,
+ 	} else if (cmd->convert_arg < 655360000) {
+ 		base_clock = CLOCK_100_KHZ;
+ 		timer = cmd->convert_arg / 10000;
+-	} else if (cmd->convert_arg <= 0xffffffff /* 6553600000 */) {
++	} else /* cmd->convert_arg < 6553600000 */ {
+ 		base_clock = CLOCK_10_KHZ;
+ 		timer = cmd->convert_arg / 100000;
+-	} else if (cmd->convert_arg <= 0xffffffff /* 65536000000 */) {
+-		base_clock = CLOCK_1_KHZ;
+-		timer = cmd->convert_arg / 1000000;
+ 	}
+ 	outw(0xFF03, dev->iobase + AM9513A_COM_REG);
+ 	outw(base_clock, dev->iobase + AM9513A_DATA_REG);
+@@ -403,12 +400,9 @@ static int atmio16d_ai_cmd(struct comedi_device *dev,
+ 		} else if (cmd->scan_begin_arg < 655360000) {
+ 			base_clock = CLOCK_100_KHZ;
+ 			timer = cmd->scan_begin_arg / 10000;
+-		} else if (cmd->scan_begin_arg < 0xffffffff /* 6553600000 */) {
++		} else /* cmd->scan_begin_arg < 6553600000 */ {
+ 			base_clock = CLOCK_10_KHZ;
+ 			timer = cmd->scan_begin_arg / 100000;
+-		} else if (cmd->scan_begin_arg < 0xffffffff /* 65536000000 */) {
+-			base_clock = CLOCK_1_KHZ;
+-			timer = cmd->scan_begin_arg / 1000000;
+ 		}
+ 		outw(0xFF02, dev->iobase + AM9513A_COM_REG);
+ 		outw(base_clock, dev->iobase + AM9513A_DATA_REG);
+-- 
+2.0.0
+
