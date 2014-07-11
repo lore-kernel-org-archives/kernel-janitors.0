@@ -1,42 +1,27 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 23 Jul 2014 12:11:06 +0000
-Subject: [patch v2] checkpatch: warn on missing spaces in broken up quoted
-Message-Id: <20140723121106.GA18400@mwanda>
+Date: Fri, 11 Jul 2014 09:21:36 +0000
+Subject: [patch] video: of: display_timing: double free on error
+Message-Id: <20140711092136.GA9339@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <1402943256.3182.2.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andy Whitcroft <apw@canonical.com>
-Cc: Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
 
-Checkpatch already complains when people break up quoted strings but
-it's still pretty common.  One mistake that people often make is they
-leave out the space character between the two strings.
-
-This check adds around 450 new warnings and has a low rate of false
-positives.
+The display_timings_release() function frees "disp" and we free it
+again on the next line.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: Move to correct spot in checkpatch
-    Fix indenting
-    Use "\w" instead of "[a-zA-Z]"
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index a0880ed..132e6e2 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2361,6 +2361,12 @@ sub process {
- 			     "quoted string split across lines\n" . $hereprev);
- 		}
- 
-+# check for missing a space in a string concatination
-+		if ($prevrawline =~ /[^\\]\w"$/ && $rawline =~ /^\+[\t ]+"\w/) {
-+			WARN('MISSING_SPACE',
-+			     "break quoted strings at a space character\n" . $hereprev);
-+		}
-+
- # check for spaces before a quoted newline
- 		if ($rawline =~ /^.*\".*\s\\n/) {
- 			if (WARN("QUOTED_WHITESPACE_BEFORE_NEWLINE",
+diff --git a/drivers/video/of_display_timing.c b/drivers/video/of_display_timing.c
+index 987edf1..5c098d5 100644
+--- a/drivers/video/of_display_timing.c
++++ b/drivers/video/of_display_timing.c
+@@ -236,6 +236,7 @@ timingfail:
+ 	if (native_mode)
+ 		of_node_put(native_mode);
+ 	display_timings_release(disp);
++	disp = NULL;
+ entryfail:
+ 	kfree(disp);
+ dispfail:
