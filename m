@@ -1,42 +1,75 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 12 Jul 2014 01:57:24 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Sat, 12 Jul 2014 02:05:20 +0000
 Subject: Re: [PATCH] reformat_with_checkpatch: Add automation to checkpatch
-Message-Id: <1405130244.6751.32.camel@joe-AO725>
+Message-Id: <20140712020520.GA18611@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405128087.6751.12.camel@joe-AO725>
-	<20140712015327.GA26496@kroah.com>
-In-Reply-To: <20140712015327.GA26496@kroah.com>
+	<20140712013927.GA30781@kroah.com>
+	<1405129612.6751.24.camel@joe-AO725>
+	<20140712020114.GA12301@kroah.com>
+In-Reply-To: <20140712020114.GA12301@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernelnewbies@lists.kernelnewbies.org
 
-On Fri, 2014-07-11 at 18:53 -0700, Greg KH wrote:
-> On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
-> > A simple script to run checkpatch --fix for various types of
-> > of cleanups.
-[]
-> Anyway, try running this script on
-> drivers/staging/lustre/lnet/lnet/acceptor.c to see how this build fails.
+On Fri, Jul 11, 2014 at 07:01:14PM -0700, Greg KH wrote:
+> On Fri, Jul 11, 2014 at 06:46:52PM -0700, Joe Perches wrote:
+> > On Fri, 2014-07-11 at 18:39 -0700, Greg KH wrote:
+> > > On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
+> > > > A simple script to run checkpatch --fix for various types of
+> > > > of cleanups.
+> > ]
+> > > drivers/staging/lustre/include/linux/lnet/api.h has no obvious style =
+problems and is ready for submission.
+> > > file: <drivers/staging/lustre/include/linux/lnet/api.h> description: =
+<update c90 comment style> types:<c99_comments>
+> > > Useless use of greediness modifier '+' in regex; marked by <-- HERE i=
+n m/(^\+.*) {8,8}+ <-- HERE \t/ at ./scripts/checkpatch.pl line 2217.
+> > []
+> > > drivers/staging/lustre/include/linux/lnet/api.h has no obvious style =
+problems and is ready for submission.
+> > []
+> > > Is that expected?
+> >=20
+> > No, I haven't seen that.
+> >=20
+> > Can you tell me what git tree you're working on?
+>=20
+> My staging-next branch of staging.git on git.kernel.org
+>=20
+> > Also, can you use the scripts/checkpatch from -next
+> > tag next-20140711
+>=20
+> that will take a bit to checkout, I'll do that afterward.
+>=20
+> > My system has:
+> >=20
+> > $ perl --version=20
+> >=20
+> > This is perl 5, version 18, subversion 2 (v5.18.2) built for i686-linux=
+-gnu-thread-multi-64int
+> > (with 41 registered patches, see perl -V for more detail)
+>=20
+> I think this started showing up for me for perl 5.20.  Let me go
+> checkout linux-next and see if that fixes anything or not...
 
-lustre doesn't use "normal" kernel makefiles.
+Ok, with linux-next I get the same thing:
 
-I supposed that the entire staging/lustre/
-path could be built for every change, but for
-most of staging, and nearly all of the rest
-of the kernel tree, using:
+~/linux/tmp/linux-next $ ./scripts/checkpatch.pl -f --strict drivers/stagin=
+g/lustre/include/linux/lnet/api.h --types=C99_comments
+Useless use of greediness modifier '+' in regex; marked by <-- HERE in m/(^=
+\+.*) {8,8}+ <-- HERE \t/ at ./scripts/checkpatch.pl line 2358.
+total: 0 errors, 0 warnings, 0 checks, 220 lines checked
 
-	make <path>file.o
+NOTE: Used message types: C99_COMMENTS
 
-works.
+drivers/staging/lustre/include/linux/lnet/api.h has no obvious style proble=
+ms and is ready for submission.
 
-I know there can be many enhancements to the
-reformat script, but I think a minimally
-acceptable version is a decent start.
 
-So, thanks for trying it out.
-
-And keep the complaints coming.
-
-cheers, Joe
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
