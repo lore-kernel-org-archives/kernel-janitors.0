@@ -1,20 +1,44 @@
-From: Hartley Sweeten <HartleyS@visionengravers.com>
-Date: Thu, 31 Jul 2014 17:35:44 +0000
-Subject: RE: [patch] staging: comedi: ni_tio: remove some dead code
-Message-Id: <DC148C5AA1CEBA4E87973D432B1C2D8825F2E5BC@P3PWEX4MB008.ex4.secureserver.net>
+From: Joe Perches <joe@perches.com>
+Date: Sat, 12 Jul 2014 02:09:30 +0000
+Subject: [PATCH] checkpatch: Remove unnecessary + after {8,8}
+Message-Id: <1405130970.6751.37.camel@joe-AO725>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140731092918.GD30276@mwanda>
-In-Reply-To: <20140731092918.GD30276@mwanda>
+References: <1405128087.6751.12.camel@joe-AO725>
+	<20140712013927.GA30781@kroah.com> <1405129612.6751.24.camel@joe-AO725>
+	<20140712020114.GA12301@kroah.com> <20140712020520.GA18611@kroah.com>
+In-Reply-To: <20140712020520.GA18611@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernelnewbies@lists.kernelnewbies.org
 
-On Thursday, July 31, 2014 2:29 AM, Dan Carpenter wrote:
-> These conditions can never be true because "i" is always one more than
-> NI_660X_MAX_RTSI_CHAN after the loop.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There's a useless "+" use that needs to be removed as perl 5.20
+emits a "Useless use of greediness modifier '+'" message each
+time it's hit.
 
-Reviewed-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+Reported-by: Greg KH <gregkh@linuxfoundation.org>
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+On Fri, 2014-07-11 at 19:05 -0700, Greg KH wrote:
+> Ok, with linux-next I get the same thing:
+
+Thanks Greg.
+
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index d5ac001..370a974 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2376,7 +2376,7 @@ sub process {
+ 				"please, no space before tabs\n" . $herevet) &&
+ 			    $fix) {
+ 				while ($fixed[$fixlinenr] =~
+-					   s/(^\+.*) {8,8}+\t/$1\t\t/) {}
++					   s/(^\+.*) {8,8}\t/$1\t\t/) {}
+ 				while ($fixed[$fixlinenr] =~
+ 					   s/(^\+.*) +\t/$1\t/) {}
+ 			}
+
 
