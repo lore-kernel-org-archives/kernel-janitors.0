@@ -1,37 +1,116 @@
-From: Joe Perches <joe@perches.com>
-Date: Sat, 12 Jul 2014 01:50:40 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Sat, 12 Jul 2014 01:53:27 +0000
 Subject: Re: [PATCH] reformat_with_checkpatch: Add automation to checkpatch
-Message-Id: <1405129840.6751.28.camel@joe-AO725>
+Message-Id: <20140712015327.GA26496@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405128087.6751.12.camel@joe-AO725>
-	<20140712014325.GB30781@kroah.com>
-In-Reply-To: <20140712014325.GB30781@kroah.com>
+In-Reply-To: <1405128087.6751.12.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernelnewbies@lists.kernelnewbies.org
 
-On Fri, 2014-07-11 at 18:43 -0700, Greg KH wrote:
-> On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
-> > A simple script to run checkpatch --fix for various types of
-> > of cleanups.
-[]
-> If I pick drivers/staging/lustre/include/linux/lnet/types.h, then I get:
+On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
+> A simple script to run checkpatch --fix for various types of
+> of cleanups.
 > 
-> 	staging: lnet: checkpatch cleanup: whitespace neatening
+> This script is useful primarily for staging.
 > 
-> and no 'types.h' here, is that intentional?  If so, why?
+> This reformats code to a more CodingStyle conforming style,
+> compiles it, verifies that the object code hasn't changed,
+> and git commits it too.
+> 
+> You must have the necessary development tools, git, and a
+> recent git tree.  Ideally use Greg KH's staging-next, which
+> can be retrieved via these commands:
+> 
+> git clone git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+> git checkout staging-next
+> 
+> To use this script try a sequence of commands like:
+> 
+> 	cd <linux_repository>
+> 	git checkout -b <your_branch>
+> 	make allyesconfig
+> 	mkdir patches
+> 	./scripts/reformat_with_checkpatch.sh drivers/staging/<dir>/*.[ch]
+> 	git format-patch --cover-letter -o patches/<your_branch> staging-next
+> 	git send-email patches/<your_branch>
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  scripts/reformat_with_checkpatch.sh | 141 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 141 insertions(+)
+>  create mode 100755 scripts/reformat_with_checkpatch.sh
+> 
+> diff --git a/scripts/reformat_with_checkpatch.sh b/scripts/reformat_with_checkpatch.sh
+> new file mode 100755
+> index 0000000..5415a8e
+> --- /dev/null
+> +++ b/scripts/reformat_with_checkpatch.sh
+> @@ -0,0 +1,141 @@
+> +#!/bin/bash
+> +# (c) 2014, Joe Perches <joe@perches.com>
+> +#
+> +# Automate checkpatch modifications and git commits to
+> +# neaten code that doesn't conform to CodingStyle.
+> +# Useful primarily for files in drivers/staging
+> +#
+> +# Licensed under the terms of the GNU GPL License version 2
+> +
+> +declare -ar whitespace_types=(	\
+> +    'whitespace_neatening:spacing,space_before_tab,pointer_location,trailing_whitespace,bracket_space'	\
+> +    'remove_spaces_before_tabs:space_before_tab'		\
+> +    'fix_label_positions:indented_label'		\
+> +    'align_arguments_to_parenthesis:parenthesis_alignment'	\
+> +)
+> +
+> +declare -ar changecode_types=(	\
+> +    'fix_brace_positions:open_brace,braces,else_after_brace,while_after_brace'		\
+> +    'fix_blank_lines:line_spacing'		\
+> +    'use_standard_attributes:prefer_packed,prefer_aligned'		\
+> +    'remove_unnecessary_externs:avoid_externs'		\
+> +    'update_c90_comment_style:c99_comments'		\
+> +)
+> +
+> +checkpatch_update ()
+> +{
+> +    file=$1
+> +
+> +    desc=$(echo $2 | cut -f1 -d: | sed 's/_/ /g')
+> +    types=$(echo $2 | cut -f2- -d:)
+> +
+> +    echo "file: <$file> description: <$desc> types:<$types>"
+> +
+> +    ./scripts/checkpatch.pl --file --fix-inplace --strict --types="$types" $file
+> +
+> +    checkpatch_fixes=$file.diff
+> +    git diff --stat -p --exit-code $file > $checkpatch_fixes
+> +    if [ $? = 0 ] ; then
+> +	rm -f $checkpatch_fixes
+> +	return
+> +    fi
+> +
+> +    basename=$(basename $file)
+> +    if [ "${basename##*.}" = "c" ] ; then
+> +
+> +	git checkout $file
+> +	obj="$(echo $file | sed 's/\.c$/\.o/')"
+> +	if [ -e $obj ] ; then
+> +	    rm -f $obj
+> +	fi
+> +
+> +	echo "Compiling original version..."
+> +
+> +	${CROSS_COMPILE}make $obj
 
-Yes, it's how it's written.
-It uses just the directory name, not any basename($file)
+This fails for when a cflags option is set (like an include path).  Now,
+I could argue that having an include path override in a kernel Makefile
+is a bug, but well, it's staging...
 
-It can be changed if that's what's desired.
+Anyway, try running this script on
+drivers/staging/lustre/lnet/lnet/acceptor.c to see how this build fails.
 
-> And this is fun, I'm going to let this rip on the lustre code...
+thanks,
 
-It doesn't autocommit, it does show the various changes
-it makes and asks you to accept them.
-
-I suppose that could be automated with something better
-than "yes", but I didn't want it to be completely automatic.
-
+greg k-h
