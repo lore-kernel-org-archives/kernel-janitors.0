@@ -1,36 +1,132 @@
 From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 12 Jul 2014 08:08:57 +0000
+Date: Sat, 12 Jul 2014 08:18:37 +0000
 Subject: Re: [PATCH] reformat_with_checkpatch: Add automation to checkpatch
-Message-Id: <20140712080857.GA17634@kroah.com>
+Message-Id: <20140712081837.GA28704@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405128087.6751.12.camel@joe-AO725>
-	<20140712015327.GA26496@kroah.com>
-	<1405130244.6751.32.camel@joe-AO725>
-In-Reply-To: <1405130244.6751.32.camel@joe-AO725>
+In-Reply-To: <1405128087.6751.12.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernelnewbies@lists.kernelnewbies.org
 
-On Fri, Jul 11, 2014 at 06:57:24PM -0700, Joe Perches wrote:
-> On Fri, 2014-07-11 at 18:53 -0700, Greg KH wrote:
-> > On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
-> > > A simple script to run checkpatch --fix for various types of
-> > > of cleanups.
-> []
-> > Anyway, try running this script on
-> > drivers/staging/lustre/lnet/lnet/acceptor.c to see how this build fails.
+On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
+> A simple script to run checkpatch --fix for various types of
+> of cleanups.
 > 
-> lustre doesn't use "normal" kernel makefiles.
+> This script is useful primarily for staging.
+> 
+> This reformats code to a more CodingStyle conforming style,
+> compiles it, verifies that the object code hasn't changed,
+> and git commits it too.
+> 
+> You must have the necessary development tools, git, and a
+> recent git tree.  Ideally use Greg KH's staging-next, which
+> can be retrieved via these commands:
+> 
+> git clone git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+> git checkout staging-next
+> 
+> To use this script try a sequence of commands like:
+> 
+> 	cd <linux_repository>
+> 	git checkout -b <your_branch>
+> 	make allyesconfig
+> 	mkdir patches
+> 	./scripts/reformat_with_checkpatch.sh drivers/staging/<dir>/*.[ch]
+> 	git format-patch --cover-letter -o patches/<your_branch> staging-next
+> 	git send-email patches/<your_branch>
 
-Ok, I've fixed all of the lustre Makefile crud up and checked it into my
-staging-next branch.  In doing so, it exposed just what a horrid mess
-the lustre include files are, which is good, hopefully people will
-notice and start fixing it up.
+When running this on drivers/base/bus.c, it says that the .o files are
+different, when the diffstat for what makes them different is only
+whitespace.
 
-And with the fixes, this script now properly can build and test lustre
-files.
+I did the following:
+
+$ scripts/reformat_with_checkpatch.sh drivers/base/bus.c
+
+Ignore the first set of things it tries to commit by answering N to the
+"Would you like to commit these changes".
+
+Then the second thing it tries to change in the file says that there is
+a .o file difference.
+
+Yet the diff is below, I don't see how this happens.  Is this due to
+there being some old temp file around because I did not accept the first
+set of changes?
 
 thanks,
 
 greg k-h
+
+-------------
+diff:
+
+ drivers/base/bus.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 83e910a57563..3546d02b46f0 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -32,7 +32,6 @@ static struct kset *system_kset;
+ 
+ #define to_drv_attr(_attr) container_of(_attr, struct driver_attribute, attr)
+ 
+-
+ static int __must_check bus_rescan_devices_helper(struct device *dev,
+ 						void *data);
+ 
+@@ -128,6 +127,7 @@ static const struct sysfs_ops bus_sysfs_ops = {
+ int bus_create_file(struct bus_type *bus, struct bus_attribute *attr)
+ {
+ 	int error;
++
+ 	if (bus_get(bus)) {
+ 		error = sysfs_create_file(&bus->p->subsys.kobj, &attr->attr);
+ 		bus_put(bus);
+@@ -817,6 +817,7 @@ EXPORT_SYMBOL_GPL(device_reprobe);
+ struct bus_type *find_bus(char *name)
+ {
+ 	struct kobject *k = kset_find_obj(bus_kset, name);
++
+ 	return k ? to_bus(k) : NULL;
+ }
+ #endif  /*  0  */
+
+--------------
+
+
+What the script complained about:
+
+Comparing objects...
+--- drivers/base/bus.o.new	2014-07-12 01:16:32.984755945 -0700
++++ drivers/base/bus.o.old	2014-07-12 01:16:31.924755967 -0700
+@@ -2449,13 +2449,13 @@
+ 
+ 0000000000000000 <descriptor.17493>:
+ 	...
+-:	bf 03 00 00 00       	mov    $0x3,%edi
++:	be 03 00 00 00       	mov    $0x3,%esi
+ :	00 00                	add    %al,(%rax)
+ 	...
+ 
+ 0000000000000028 <descriptor.17483>:
+ 	...
+-:	a2 03 00 00 00 00 00 	movabs %al,0x3
++:	a1 03 00 00 00 00 00 	movabs 0x3,%eax
+ :	00 00 
+ 
+ 0000000000000050 <descriptor.17406>:
+@@ -2468,7 +2468,7 @@
+ 
+ 0000000000000078 <descriptor.17073>:
+ 	...
+-:	56                   	push   %rsi
++:	57                   	push   %rdi
+ :	00 00                	add    %al,(%rax)
+ :	00 00                	add    %al,(%rax)
+ :	00 00                	add    %al,(%rax)
+Object differences exist! - Verify changes before commit!
+
+
