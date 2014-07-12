@@ -1,42 +1,74 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Sat, 19 Jul 2014 09:23:35 +0000
-Subject: Re: [PATCH 5/5] fs/ubifs/{sb,super}.c: drop negativity check on unsigned value
-Message-Id: <1405761815.28207.15.camel@sauron.fi.intel.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sat, 12 Jul 2014 19:55:56 +0000
+Subject: [PATCH] staging: android: Cleanup style issues
+Message-Id: <1405194956-4590-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405697725-23866-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1405697725-23866-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dcb314@hotmail.com, adrian.hunter@intel.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: gregkh@linuxfoundation.org, swetland@google.com, daniel@ffwll.ch, maarten.lankhorst@canonical.com, john.stultz@linaro.org, sumit.semwal@linaro.org, peter.senna@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 2014-07-18 at 18:35 +0300, Andrey Utkin wrote:
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80581
-> Reported-by: David Binderman <dcb314@hotmail.com>
-> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+This patch fixes the following checkpatch warnings:
+ - Remove else after return
+ - Add space after declaration
 
-Hi, thanks, but I already have a patch which does the same in the
-linux-ubifs.git tree:
+Tested by compilation only.
 
-commit b793a8c8885d87d9867fb2dbfdc1ef7b5877d71b
-Author: hujianyang <hujianyang@huawei.com>
-Date:   Wed Jun 11 10:42:52 2014 +0800
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+ drivers/staging/android/sync_debug.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-    UBIFS: remove useless statements
-   =20
-    This patch removes useless and duplicate statements.
-   =20
-    Signed-off-by: hujianyang <hujianyang@huawei.com>
-    Signed-off-by: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+diff --git a/drivers/staging/android/sync_debug.c b/drivers/staging/android/sync_debug.c
+index a9f7fd5..257fc91 100644
+--- a/drivers/staging/android/sync_debug.c
++++ b/drivers/staging/android/sync_debug.c
+@@ -74,10 +74,11 @@ static const char *sync_status_str(int status)
+ {
+ 	if (status = 0)
+ 		return "signaled";
+-	else if (status > 0)
++
++	if (status > 0)
+ 		return "active";
+-	else
+-		return "error";
++
++	return "error";
+ }
+ 
+ static void sync_print_pt(struct seq_file *s, struct sync_pt *pt, bool fence)
+@@ -95,12 +96,14 @@ static void sync_print_pt(struct seq_file *s, struct sync_pt *pt, bool fence)
+ 
+ 	if (status <= 0) {
+ 		struct timeval tv = ktime_to_timeval(pt->base.timestamp);
++
+ 		seq_printf(s, "@%ld.%06ld", tv.tv_sec, tv.tv_usec);
+ 	}
+ 
+ 	if (parent->ops->timeline_value_str &&
+ 	    parent->ops->pt_value_str) {
+ 		char value[64];
++
+ 		parent->ops->pt_value_str(pt, value, sizeof(value));
+ 		seq_printf(s, ": %s", value);
+ 		if (fence) {
+@@ -122,6 +125,7 @@ static void sync_print_obj(struct seq_file *s, struct sync_timeline *obj)
+ 
+ 	if (obj->ops->timeline_value_str) {
+ 		char value[64];
++
+ 		obj->ops->timeline_value_str(obj, value, sizeof(value));
+ 		seq_printf(s, ": %s", value);
+ 	}
+@@ -234,6 +238,7 @@ void sync_dump(void)
+ 	for (i = 0; i < s.count; i += DUMP_CHUNK) {
+ 		if ((s.count - i) > DUMP_CHUNK) {
+ 			char c = s.buf[i + DUMP_CHUNK];
++
+ 			s.buf[i + DUMP_CHUNK] = 0;
+ 			pr_cont("%s", s.buf + i);
+ 			s.buf[i + DUMP_CHUNK] = c;
+-- 
+1.9.3
 
---=20
-Best Regards,
-Artem Bityutskiy
-
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
