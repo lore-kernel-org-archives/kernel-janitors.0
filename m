@@ -1,115 +1,51 @@
 From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 12 Jul 2014 01:53:27 +0000
+Date: Sat, 12 Jul 2014 01:57:06 +0000
 Subject: Re: [PATCH] reformat_with_checkpatch: Add automation to checkpatch
-Message-Id: <20140712015327.GA26496@kroah.com>
+Message-Id: <20140712020114.GA12301@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405128087.6751.12.camel@joe-AO725>
-In-Reply-To: <1405128087.6751.12.camel@joe-AO725>
+	<20140712013927.GA30781@kroah.com>
+	<1405129612.6751.24.camel@joe-AO725>
+In-Reply-To: <1405129612.6751.24.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernelnewbies@lists.kernelnewbies.org
 
-On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
-> A simple script to run checkpatch --fix for various types of
-> of cleanups.
+On Fri, Jul 11, 2014 at 06:46:52PM -0700, Joe Perches wrote:
+> On Fri, 2014-07-11 at 18:39 -0700, Greg KH wrote:
+> > On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
+> > > A simple script to run checkpatch --fix for various types of
+> > > of cleanups.
+> ]
+> > drivers/staging/lustre/include/linux/lnet/api.h has no obvious style problems and is ready for submission.
+> > file: <drivers/staging/lustre/include/linux/lnet/api.h> description: <update c90 comment style> types:<c99_comments>
+> > Useless use of greediness modifier '+' in regex; marked by <-- HERE in m/(^\+.*) {8,8}+ <-- HERE \t/ at ./scripts/checkpatch.pl line 2217.
+> []
+> > drivers/staging/lustre/include/linux/lnet/api.h has no obvious style problems and is ready for submission.
+> []
+> > Is that expected?
 > 
-> This script is useful primarily for staging.
+> No, I haven't seen that.
 > 
-> This reformats code to a more CodingStyle conforming style,
-> compiles it, verifies that the object code hasn't changed,
-> and git commits it too.
-> 
-> You must have the necessary development tools, git, and a
-> recent git tree.  Ideally use Greg KH's staging-next, which
-> can be retrieved via these commands:
-> 
-> git clone git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-> git checkout staging-next
-> 
-> To use this script try a sequence of commands like:
-> 
-> 	cd <linux_repository>
-> 	git checkout -b <your_branch>
-> 	make allyesconfig
-> 	mkdir patches
-> 	./scripts/reformat_with_checkpatch.sh drivers/staging/<dir>/*.[ch]
-> 	git format-patch --cover-letter -o patches/<your_branch> staging-next
-> 	git send-email patches/<your_branch>
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  scripts/reformat_with_checkpatch.sh | 141 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 141 insertions(+)
->  create mode 100755 scripts/reformat_with_checkpatch.sh
-> 
-> diff --git a/scripts/reformat_with_checkpatch.sh b/scripts/reformat_with_checkpatch.sh
-> new file mode 100755
-> index 0000000..5415a8e
-> --- /dev/null
-> +++ b/scripts/reformat_with_checkpatch.sh
-> @@ -0,0 +1,141 @@
-> +#!/bin/bash
-> +# (c) 2014, Joe Perches <joe@perches.com>
-> +#
-> +# Automate checkpatch modifications and git commits to
-> +# neaten code that doesn't conform to CodingStyle.
-> +# Useful primarily for files in drivers/staging
-> +#
-> +# Licensed under the terms of the GNU GPL License version 2
-> +
-> +declare -ar whitespace_types=(	\
-> +    'whitespace_neatening:spacing,space_before_tab,pointer_location,trailing_whitespace,bracket_space'	\
-> +    'remove_spaces_before_tabs:space_before_tab'		\
-> +    'fix_label_positions:indented_label'		\
-> +    'align_arguments_to_parenthesis:parenthesis_alignment'	\
-> +)
-> +
-> +declare -ar changecode_types=(	\
-> +    'fix_brace_positions:open_brace,braces,else_after_brace,while_after_brace'		\
-> +    'fix_blank_lines:line_spacing'		\
-> +    'use_standard_attributes:prefer_packed,prefer_aligned'		\
-> +    'remove_unnecessary_externs:avoid_externs'		\
-> +    'update_c90_comment_style:c99_comments'		\
-> +)
-> +
-> +checkpatch_update ()
-> +{
-> +    file=$1
-> +
-> +    desc=$(echo $2 | cut -f1 -d: | sed 's/_/ /g')
-> +    types=$(echo $2 | cut -f2- -d:)
-> +
-> +    echo "file: <$file> description: <$desc> types:<$types>"
-> +
-> +    ./scripts/checkpatch.pl --file --fix-inplace --strict --types="$types" $file
-> +
-> +    checkpatch_fixes=$file.diff
-> +    git diff --stat -p --exit-code $file > $checkpatch_fixes
-> +    if [ $? = 0 ] ; then
-> +	rm -f $checkpatch_fixes
-> +	return
-> +    fi
-> +
-> +    basename=$(basename $file)
-> +    if [ "${basename##*.}" = "c" ] ; then
-> +
-> +	git checkout $file
-> +	obj="$(echo $file | sed 's/\.c$/\.o/')"
-> +	if [ -e $obj ] ; then
-> +	    rm -f $obj
-> +	fi
-> +
-> +	echo "Compiling original version..."
-> +
-> +	${CROSS_COMPILE}make $obj
+> Can you tell me what git tree you're working on?
 
-This fails for when a cflags option is set (like an include path).  Now,
-I could argue that having an include path override in a kernel Makefile
-is a bug, but well, it's staging...
+My staging-next branch of staging.git on git.kernel.org
 
-Anyway, try running this script on
-drivers/staging/lustre/lnet/lnet/acceptor.c to see how this build fails.
+> Also, can you use the scripts/checkpatch from -next
+> tag next-20140711
+
+that will take a bit to checkout, I'll do that afterward.
+
+> My system has:
+> 
+> $ perl --version 
+> 
+> This is perl 5, version 18, subversion 2 (v5.18.2) built for i686-linux-gnu-thread-multi-64int
+> (with 41 registered patches, see perl -V for more detail)
+
+I think this started showing up for me for perl 5.20.  Let me go
+checkout linux-next and see if that fixes anything or not...
 
 thanks,
 
