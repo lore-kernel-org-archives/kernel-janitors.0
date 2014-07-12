@@ -1,52 +1,42 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 12 Jul 2014 01:57:06 +0000
+From: Joe Perches <joe@perches.com>
+Date: Sat, 12 Jul 2014 01:57:24 +0000
 Subject: Re: [PATCH] reformat_with_checkpatch: Add automation to checkpatch
-Message-Id: <20140712020114.GA12301@kroah.com>
+Message-Id: <1405130244.6751.32.camel@joe-AO725>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405128087.6751.12.camel@joe-AO725>
-	<20140712013927.GA30781@kroah.com>
-	<1405129612.6751.24.camel@joe-AO725>
-In-Reply-To: <1405129612.6751.24.camel@joe-AO725>
+	<20140712015327.GA26496@kroah.com>
+In-Reply-To: <20140712015327.GA26496@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernelnewbies@lists.kernelnewbies.org
 
-On Fri, Jul 11, 2014 at 06:46:52PM -0700, Joe Perches wrote:
-> On Fri, 2014-07-11 at 18:39 -0700, Greg KH wrote:
-> > On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
-> > > A simple script to run checkpatch --fix for various types of
-> > > of cleanups.
-> ]
-> > drivers/staging/lustre/include/linux/lnet/api.h has no obvious style problems and is ready for submission.
-> > file: <drivers/staging/lustre/include/linux/lnet/api.h> description: <update c90 comment style> types:<c99_comments>
-> > Useless use of greediness modifier '+' in regex; marked by <-- HERE in m/(^\+.*) {8,8}+ <-- HERE \t/ at ./scripts/checkpatch.pl line 2217.
-> []
-> > drivers/staging/lustre/include/linux/lnet/api.h has no obvious style problems and is ready for submission.
-> []
-> > Is that expected?
-> 
-> No, I haven't seen that.
-> 
-> Can you tell me what git tree you're working on?
+On Fri, 2014-07-11 at 18:53 -0700, Greg KH wrote:
+> On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
+> > A simple script to run checkpatch --fix for various types of
+> > of cleanups.
+[]
+> Anyway, try running this script on
+> drivers/staging/lustre/lnet/lnet/acceptor.c to see how this build fails.
 
-My staging-next branch of staging.git on git.kernel.org
+lustre doesn't use "normal" kernel makefiles.
 
-> Also, can you use the scripts/checkpatch from -next
-> tag next-20140711
+I supposed that the entire staging/lustre/
+path could be built for every change, but for
+most of staging, and nearly all of the rest
+of the kernel tree, using:
 
-that will take a bit to checkout, I'll do that afterward.
+	make <path>file.o
 
-> My system has:
-> 
-> $ perl --version 
-> 
-> This is perl 5, version 18, subversion 2 (v5.18.2) built for i686-linux-gnu-thread-multi-64int
-> (with 41 registered patches, see perl -V for more detail)
+works.
 
-I think this started showing up for me for perl 5.20.  Let me go
-checkout linux-next and see if that fixes anything or not...
+I know there can be many enhancements to the
+reformat script, but I think a minimally
+acceptable version is a decent start.
 
-thanks,
+So, thanks for trying it out.
 
-greg k-h
+And keep the complaints coming.
+
+cheers, Joe
+
