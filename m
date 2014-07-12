@@ -1,27 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 11 Jul 2014 19:40:00 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Sat, 12 Jul 2014 00:39:21 +0000
 Subject: Re: [PATCH v3] drivers/staging/comedi/drivers/ni_atmio16d.c: remove pointless condition
-Message-Id: <20140711194000.GE25880@mwanda>
+Message-Id: <20140712003921.GA9303@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405089127-21646-1-git-send-email-abbotti@mev.co.uk>
  <1405089510-23182-1-git-send-email-abbotti@mev.co.uk>
- <CANZNk83KxB-FQkbe8xxYFY_htAM+MOvS1HPTBuvW2-LoKbfaQQ@mail.gmail.com>
-In-Reply-To: <CANZNk83KxB-FQkbe8xxYFY_htAM+MOvS1HPTBuvW2-LoKbfaQQ@mail.gmail.com>
+ <53BFF734.2050009@mev.co.uk>
+In-Reply-To: <53BFF734.2050009@mev.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: Ian Abbott <abbotti@mev.co.uk>, OSUOSL Drivers <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dcb314@hotmail.com
+To: Ian Abbott <abbotti@mev.co.uk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, dcb314@hotmail.com
 
-On Fri, Jul 11, 2014 at 08:54:01PM +0300, Andrey Utkin wrote:
-> 2014-07-11 17:38 GMT+03:00 Ian Abbott <abbotti@mev.co.uk>:
-> > Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+On Fri, Jul 11, 2014 at 03:39:48PM +0100, Ian Abbott wrote:
+> On 2014-07-11 15:38, Ian Abbott wrote:
+> >From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+> >
+> >From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 > 
-> I think it's incorrect that you have instantly placed my signoff
-> statement on this new patch.
+> Dammit!  Greg, do you want to sort that out or should I have another go?
 
-Ian gave you credit but also wrote in the changelog that he modified the
-patch from what you sent.  That's pretty normal.
+Heh, no worries, I can fix it up, thanks.
 
-regards,
-dan carpenter
+greg k-h
