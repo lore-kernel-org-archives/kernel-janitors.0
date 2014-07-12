@@ -1,161 +1,71 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 12 Jul 2014 01:43:25 +0000
+From: Joe Perches <joe@perches.com>
+Date: Sat, 12 Jul 2014 01:46:52 +0000
 Subject: Re: [PATCH] reformat_with_checkpatch: Add automation to checkpatch
-Message-Id: <20140712014325.GB30781@kroah.com>
+Message-Id: <1405129612.6751.24.camel@joe-AO725>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405128087.6751.12.camel@joe-AO725>
-In-Reply-To: <1405128087.6751.12.camel@joe-AO725>
+	<20140712013927.GA30781@kroah.com>
+In-Reply-To: <20140712013927.GA30781@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernelnewbies@lists.kernelnewbies.org
 
-On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
-> A simple script to run checkpatch --fix for various types of
-> of cleanups.
-> 
-> This script is useful primarily for staging.
-> 
-> This reformats code to a more CodingStyle conforming style,
-> compiles it, verifies that the object code hasn't changed,
-> and git commits it too.
-> 
-> You must have the necessary development tools, git, and a
-> recent git tree.  Ideally use Greg KH's staging-next, which
-> can be retrieved via these commands:
-> 
-> git clone git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-> git checkout staging-next
-> 
-> To use this script try a sequence of commands like:
-> 
-> 	cd <linux_repository>
-> 	git checkout -b <your_branch>
-> 	make allyesconfig
-> 	mkdir patches
-> 	./scripts/reformat_with_checkpatch.sh drivers/staging/<dir>/*.[ch]
-> 	git format-patch --cover-letter -o patches/<your_branch> staging-next
-> 	git send-email patches/<your_branch>
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  scripts/reformat_with_checkpatch.sh | 141 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 141 insertions(+)
->  create mode 100755 scripts/reformat_with_checkpatch.sh
-> 
-> diff --git a/scripts/reformat_with_checkpatch.sh b/scripts/reformat_with_checkpatch.sh
-> new file mode 100755
-> index 0000000..5415a8e
-> --- /dev/null
-> +++ b/scripts/reformat_with_checkpatch.sh
-> @@ -0,0 +1,141 @@
-> +#!/bin/bash
-> +# (c) 2014, Joe Perches <joe@perches.com>
-> +#
-> +# Automate checkpatch modifications and git commits to
-> +# neaten code that doesn't conform to CodingStyle.
-> +# Useful primarily for files in drivers/staging
-> +#
-> +# Licensed under the terms of the GNU GPL License version 2
-> +
-> +declare -ar whitespace_types=(	\
-> +    'whitespace_neatening:spacing,space_before_tab,pointer_location,trailing_whitespace,bracket_space'	\
-> +    'remove_spaces_before_tabs:space_before_tab'		\
-> +    'fix_label_positions:indented_label'		\
-> +    'align_arguments_to_parenthesis:parenthesis_alignment'	\
-> +)
-> +
-> +declare -ar changecode_types=(	\
-> +    'fix_brace_positions:open_brace,braces,else_after_brace,while_after_brace'		\
-> +    'fix_blank_lines:line_spacing'		\
-> +    'use_standard_attributes:prefer_packed,prefer_aligned'		\
-> +    'remove_unnecessary_externs:avoid_externs'		\
-> +    'update_c90_comment_style:c99_comments'		\
-> +)
-> +
-> +checkpatch_update ()
-> +{
-> +    file=$1
-> +
-> +    desc=$(echo $2 | cut -f1 -d: | sed 's/_/ /g')
-> +    types=$(echo $2 | cut -f2- -d:)
-> +
-> +    echo "file: <$file> description: <$desc> types:<$types>"
-> +
-> +    ./scripts/checkpatch.pl --file --fix-inplace --strict --types="$types" $file
-> +
-> +    checkpatch_fixes=$file.diff
-> +    git diff --stat -p --exit-code $file > $checkpatch_fixes
-> +    if [ $? = 0 ] ; then
-> +	rm -f $checkpatch_fixes
-> +	return
-> +    fi
-> +
-> +    basename=$(basename $file)
-> +    if [ "${basename##*.}" = "c" ] ; then
-> +
-> +	git checkout $file
-> +	obj="$(echo $file | sed 's/\.c$/\.o/')"
-> +	if [ -e $obj ] ; then
-> +	    rm -f $obj
-> +	fi
-> +
-> +	echo "Compiling original version..."
-> +
-> +	${CROSS_COMPILE}make $obj
-> +
-> +	${CROSS_COMPILE}objdump -D $obj | \
-> +	    sed "s/^[[:space:]]\+[0-9a-f]\+//" > $obj.old
-> +
-> +	patch -p1 < $checkpatch_fixes
-> +
-> +	echo "Compiling modified version..."
-> +
-> +	${CROSS_COMPILE}make $obj
-> +
-> +	${CROSS_COMPILE}objdump -D $obj | \
-> +	    sed "s/^[[:space:]]\+[0-9a-f]\+//" > $obj.new
-> +
-> +	echo "Comparing objects..."
-> +	diff -Nurd $obj.new $obj.old
-> +	if [ $? -ne 0 ] ; then
-> +	    echo "Object differences exist! - Verify changes before commit!"
-> +	    read -s -p "Press the 'enter' key to continue: "
-> +	else
-> +	    echo "No object differences found"
-> +	fi
-> +	rm -f $obj.old
-> +	rm -f $obj.new
-> +    fi
-> +
-> +    echo "running checkpatch on possible checkpatch fixes..."
-> +
-> +    ./scripts/checkpatch.pl --no-summary --no-signoff $checkpatch_fixes
-> +    rm -f $checkpatch_fixes
-> +
-> +    echo "Verify checkpatch output and make any necessary changes"
-> +    echo "Edit '$file' if appropriate"
-> +    read -s -p "Press the 'enter' key to continue: "
-> +
-> +    commit_log_file=$(mktemp git_commit.XXXXXX)
-> +
-> +    if [ -e $commit_log_file ] ; then
-> +	rm -f $commit_log_file
-> +    fi
-> +
-> +    if [[ $file =~ ^drivers/staging/ ]] ; then
-> +	echo -n "staging: " >> $commit_log_file
-> +    fi
-> +    echo "$(basename $(dirname $file)): checkpatch cleanup: $desc" >> $commit_log_file
+On Fri, 2014-07-11 at 18:39 -0700, Greg KH wrote:
+> On Fri, Jul 11, 2014 at 06:21:27PM -0700, Joe Perches wrote:
+> > A simple script to run checkpatch --fix for various types of
+> > of cleanups.
+]
+> drivers/staging/lustre/include/linux/lnet/api.h has no obvious style prob=
+lems and is ready for submission.
+> file: <drivers/staging/lustre/include/linux/lnet/api.h> description: <upd=
+ate c90 comment style> types:<c99_comments>
+> Useless use of greediness modifier '+' in regex; marked by <-- HERE in m/=
+(^\+.*) {8,8}+ <-- HERE \t/ at ./scripts/checkpatch.pl line 2217.
+[]
+> drivers/staging/lustre/include/linux/lnet/api.h has no obvious style prob=
+lems and is ready for submission.
+[]
+> Is that expected?
 
-If I pick drivers/staging/lustre/include/linux/lnet/types.h, then I get:
+No, I haven't seen that.
 
-	staging: lnet: checkpatch cleanup: whitespace neatening
+Can you tell me what git tree you're working on?
+Also, can you use the scripts/checkpatch from -next
+tag next-20140711
 
-and no 'types.h' here, is that intentional?  If so, why?
+My system has:
 
-And this is fun, I'm going to let this rip on the lustre code...
+$ perl --version=20
 
-thanks,
+This is perl 5, version 18, subversion 2 (v5.18.2) built for i686-linux-gnu=
+-thread-multi-64int
+(with 41 registered patches, see perl -V for more detail)
 
-greg k-h
+Copyright 1987-2013, Larry Wall
+
+Perl may be copied only under the terms of either the Artistic License or t=
+he
+GNU General Public License, which may be found in the Perl 5 source kit.
+
+Complete documentation for Perl, including FAQ lists, should be found on
+this system using "man perl" or "perldoc perl".  If you have access to the
+Internet, point your browser at http://www.perl.org/, the Perl Home Page.
+
+and using that:
+
+$ ./scripts/checkpatch.pl -f --strict drivers/staging/lustre/include/linux/=
+lnet/api.h --types=C99_comments
+total: 0 errors, 0 warnings, 0 checks, 220 lines checked
+
+NOTE: Used message types: C99_COMMENTS
+
+drivers/staging/lustre/include/linux/lnet/api.h has no obvious style proble=
+ms and is ready for submission.
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
