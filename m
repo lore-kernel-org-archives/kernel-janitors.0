@@ -1,49 +1,115 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Date: Mon, 14 Jul 2014 23:02:43 +0000
-Subject: Re: [PATCH] drivers/platform/x86/thinkpad_acpi.c: don't test unsigned int for negativity
-Message-Id: <20140714230243.GD5939@khazad-dum.debian.net>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sun, 13 Jul 2014 19:11:20 +0000
+Subject: [PATCH V2 3/4] staging: vt6556: Cleanup coding style issues
+Message-Id: <1405278681-3348-3-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405378581-12146-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1405378581-12146-1-git-send-email-andrey.krieger.utkin@gmail.com>
+References: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, ibm-acpi@hmh.eng.br, matthew.garrett@nebula.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Tue, 15 Jul 2014, Andrey Utkin wrote:
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80231
-> Reported-by: David Binderman <dcb314@hotmail.com>
-> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+This patch cleanup coding style issues reported by checkpatch.
 
-Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Additionally this typedef was removed from card.h:
 
-> ---
->  drivers/platform/x86/thinkpad_acpi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/=
-thinkpad_acpi.c
-> index d82f196..4d59b09 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -6144,7 +6144,7 @@ static int brightness_set(unsigned int value)
->  {
->  	int res;
-> =20
-> -	if (value > bright_maxlvl || value < 0)
-> +	if (value > bright_maxlvl)
->  		return -EINVAL;
-> =20
->  	vdbg_printk(TPACPI_DBG_BRGHT,
+typedef enum _CARD_PHY_TYPE {
+    PHY_TYPE_AUTO = 0,
+    PHY_TYPE_11B,
+    PHY_TYPE_11G,
+    PHY_TYPE_11A
+} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
 
---=20
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Tested by compilation only.
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Cahnges from V1:
+ - Sent all patches in a series
+
+Made against latest staging-next.
+
+ drivers/staging/vt6656/card.c | 19 ++++++++-----------
+ drivers/staging/vt6656/card.h | 13 +++----------
+ 2 files changed, 11 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/staging/vt6656/card.c b/drivers/staging/vt6656/card.c
+index ea06b63..f469d68 100644
+--- a/drivers/staging/vt6656/card.c
++++ b/drivers/staging/vt6656/card.c
+@@ -55,11 +55,12 @@
+ #include "key.h"
+ #include "usbpipe.h"
+ 
+-//const u16 cwRXBCNTSFOff[MAX_RATE] -//{17, 34, 96, 192, 34, 23, 17, 11, 8, 5, 4, 3};
++/* const u16 cwRXBCNTSFOff[MAX_RATE] +   {17, 34, 96, 192, 34, 23, 17, 11, 8, 5, 4, 3}; */
+ 
+-static const u16 cwRXBCNTSFOff[MAX_RATE] -{192, 96, 34, 17, 34, 23, 17, 11, 8, 5, 4, 3};
++static const u16 cwRXBCNTSFOff[MAX_RATE] = {
++	192, 96, 34, 17, 34, 23, 17, 11, 8, 5, 4, 3
++};
+ 
+ /*
+  * Description: Set NIC media channel
+@@ -477,7 +478,7 @@ void vnt_update_top_rates(struct vnt_private *priv)
+ 	}
+ 
+ 	priv->byTopCCKBasicRate = top_cck;
+- }
++}
+ 
+ int vnt_ofdm_min_rate(struct vnt_private *priv)
+ {
+@@ -673,9 +674,7 @@ void vnt_reset_next_tbtt(struct vnt_private *priv, u16 beacon_interval)
+ 	data[7] = (u8)(next_tbtt >> 56);
+ 
+ 	vnt_control_out(priv, MESSAGE_TYPE_SET_TSFTBTT,
+-		MESSAGE_REQUEST_TBTT, 0, 8, data);
+-
+-	return;
++			MESSAGE_REQUEST_TBTT, 0, 8, data);
+ }
+ 
+ /*
+@@ -710,11 +709,9 @@ void vnt_update_next_tbtt(struct vnt_private *priv, u64 tsf,
+ 	data[7] = (u8)(tsf >> 56);
+ 
+ 	vnt_control_out(priv, MESSAGE_TYPE_SET_TSFTBTT,
+-		MESSAGE_REQUEST_TBTT, 0, 8, data);
++			MESSAGE_REQUEST_TBTT, 0, 8, data);
+ 
+ 	dev_dbg(&priv->usb->dev, "%s TBTT: %8llx\n", __func__, tsf);
+-
+-	return;
+ }
+ 
+ /*
+diff --git a/drivers/staging/vt6656/card.h b/drivers/staging/vt6656/card.h
+index 5b7cc5a..03fc167 100644
+--- a/drivers/staging/vt6656/card.h
++++ b/drivers/staging/vt6656/card.h
+@@ -32,16 +32,9 @@
+ 
+ /* init card type */
+ 
+-typedef enum _CARD_PHY_TYPE {
+-    PHY_TYPE_AUTO = 0,
+-    PHY_TYPE_11B,
+-    PHY_TYPE_11G,
+-    PHY_TYPE_11A
+-} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
+-
+-#define CB_MAX_CHANNEL_24G  14
+-#define CB_MAX_CHANNEL_5G       42 /* add channel9(5045MHz), 41=>42 */
+-#define CB_MAX_CHANNEL      (CB_MAX_CHANNEL_24G+CB_MAX_CHANNEL_5G)
++#define CB_MAX_CHANNEL_24G	14
++#define CB_MAX_CHANNEL_5G	42 /* add channel9(5045MHz), 41=>42 */
++#define CB_MAX_CHANNEL		(CB_MAX_CHANNEL_24G + CB_MAX_CHANNEL_5G)
+ 
+ struct vnt_private;
+ 
+-- 
+1.9.3
+
