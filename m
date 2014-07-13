@@ -1,44 +1,110 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Tue, 15 Jul 2014 15:07:38 +0000
-Subject: Re: [PATCH V4 5/6] staging: vt6556: Cleanup indentation on statements
-Message-Id: <20140715150738.GB19185@kroah.com>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sun, 13 Jul 2014 16:14:37 +0000
+Subject: [PATCH] staging: vt6556: Cleanup coding style issues
+Message-Id: <1405268077-8802-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
- <1405365333-17170-5-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1405365333-17170-5-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: forest@alittletooquiet.net, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Mon, Jul 14, 2014 at 09:15:32PM +0200, Peter Senna Tschudin wrote:
-> Use tabs instead of spaces in a set of statements and fix lines
-> over 80 chars. Reported by checkpatch.
-> 
-> Tested by compilation only.
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
-> Cahnges from V3:
->  - Splitted the patches by change type
-> 
->  drivers/staging/vt6656/main_usb.c | 44 ++++++++++++++++++++-------------------
->  1 file changed, 23 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-> index 553a8e9..cc0281a 100644
-> --- a/drivers/staging/vt6656/main_usb.c
-> +++ b/drivers/staging/vt6656/main_usb.c
-> @@ -382,38 +382,40 @@ static int device_init_registers(struct vnt_private *pDevice)
->  	/* load vt3266 calibration parameters in EEPROM */
->  	if (pDevice->byRFType = RF_VT3226D0) {
->  		if ((pDevice->abyEEPROM[EEP_OFS_MAJOR_VER] = 0x1) &&
-> -			(pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
-> +		   (pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
+This patch cleanup coding style issues reported by checkpatch.
 
-Shouldn't this be indented by 1 more space?
+Additionally this typedef was removed from card.h:
 
-thanks,
+typedef enum _CARD_PHY_TYPE {
+    PHY_TYPE_AUTO = 0,
+    PHY_TYPE_11B,
+    PHY_TYPE_11G,
+    PHY_TYPE_11A
+} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
 
-greg k-h
+Tested by compilation only.
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Done against latest staging-next.
+
+ drivers/staging/vt6656/card.c | 19 ++++++++-----------
+ drivers/staging/vt6656/card.h | 13 +++----------
+ 2 files changed, 11 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/staging/vt6656/card.c b/drivers/staging/vt6656/card.c
+index ea06b63..f469d68 100644
+--- a/drivers/staging/vt6656/card.c
++++ b/drivers/staging/vt6656/card.c
+@@ -55,11 +55,12 @@
+ #include "key.h"
+ #include "usbpipe.h"
+ 
+-//const u16 cwRXBCNTSFOff[MAX_RATE] -//{17, 34, 96, 192, 34, 23, 17, 11, 8, 5, 4, 3};
++/* const u16 cwRXBCNTSFOff[MAX_RATE] +   {17, 34, 96, 192, 34, 23, 17, 11, 8, 5, 4, 3}; */
+ 
+-static const u16 cwRXBCNTSFOff[MAX_RATE] -{192, 96, 34, 17, 34, 23, 17, 11, 8, 5, 4, 3};
++static const u16 cwRXBCNTSFOff[MAX_RATE] = {
++	192, 96, 34, 17, 34, 23, 17, 11, 8, 5, 4, 3
++};
+ 
+ /*
+  * Description: Set NIC media channel
+@@ -477,7 +478,7 @@ void vnt_update_top_rates(struct vnt_private *priv)
+ 	}
+ 
+ 	priv->byTopCCKBasicRate = top_cck;
+- }
++}
+ 
+ int vnt_ofdm_min_rate(struct vnt_private *priv)
+ {
+@@ -673,9 +674,7 @@ void vnt_reset_next_tbtt(struct vnt_private *priv, u16 beacon_interval)
+ 	data[7] = (u8)(next_tbtt >> 56);
+ 
+ 	vnt_control_out(priv, MESSAGE_TYPE_SET_TSFTBTT,
+-		MESSAGE_REQUEST_TBTT, 0, 8, data);
+-
+-	return;
++			MESSAGE_REQUEST_TBTT, 0, 8, data);
+ }
+ 
+ /*
+@@ -710,11 +709,9 @@ void vnt_update_next_tbtt(struct vnt_private *priv, u64 tsf,
+ 	data[7] = (u8)(tsf >> 56);
+ 
+ 	vnt_control_out(priv, MESSAGE_TYPE_SET_TSFTBTT,
+-		MESSAGE_REQUEST_TBTT, 0, 8, data);
++			MESSAGE_REQUEST_TBTT, 0, 8, data);
+ 
+ 	dev_dbg(&priv->usb->dev, "%s TBTT: %8llx\n", __func__, tsf);
+-
+-	return;
+ }
+ 
+ /*
+diff --git a/drivers/staging/vt6656/card.h b/drivers/staging/vt6656/card.h
+index 5b7cc5a..03fc167 100644
+--- a/drivers/staging/vt6656/card.h
++++ b/drivers/staging/vt6656/card.h
+@@ -32,16 +32,9 @@
+ 
+ /* init card type */
+ 
+-typedef enum _CARD_PHY_TYPE {
+-    PHY_TYPE_AUTO = 0,
+-    PHY_TYPE_11B,
+-    PHY_TYPE_11G,
+-    PHY_TYPE_11A
+-} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
+-
+-#define CB_MAX_CHANNEL_24G  14
+-#define CB_MAX_CHANNEL_5G       42 /* add channel9(5045MHz), 41=>42 */
+-#define CB_MAX_CHANNEL      (CB_MAX_CHANNEL_24G+CB_MAX_CHANNEL_5G)
++#define CB_MAX_CHANNEL_24G	14
++#define CB_MAX_CHANNEL_5G	42 /* add channel9(5045MHz), 41=>42 */
++#define CB_MAX_CHANNEL		(CB_MAX_CHANNEL_24G + CB_MAX_CHANNEL_5G)
+ 
+ struct vnt_private;
+ 
+-- 
+1.9.3
+
