@@ -1,27 +1,250 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Sun, 27 Jul 2014 19:50:41 +0000
-Subject: Re: [PATCH] nfs3_list_one_acl(): check get_acl() result with IS_ERR_OR_NULL
-Message-Id: <20140727195041.GA11575@infradead.org>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sun, 13 Jul 2014 15:39:55 +0000
+Subject: [PATCH 2/2] staging: vt6556: Cleanup coding style issues
+Message-Id: <1405265995-6724-2-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1406375881-18837-1-git-send-email-andrey.krieger.utkin@gmail.com>
- <20140727131917.GA32153@infradead.org>
- <CAHQdGtRzDzpOuwZYWaBake-bH0z0eyMd2g-RTVwO0d2f0Zmsow@mail.gmail.com>
-In-Reply-To: <CAHQdGtRzDzpOuwZYWaBake-bH0z0eyMd2g-RTVwO0d2f0Zmsow@mail.gmail.com>
+References: <1405265995-6724-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1405265995-6724-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Trond Myklebust <trond.myklebust@primarydata.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Andrey Utkin <andrey.krieger.utkin@gmail.com>, Linux Kernel mailing list <linux-kernel@vger.kernel.org>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org, Russell King <linux@arm.linux.org.uk>
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-On Sun, Jul 27, 2014 at 11:13:50AM -0400, Trond Myklebust wrote:
-> Why are we not passing the error code back to the caller here in the
-> case where we have one? One of the main purposes of returning an error
-> in get_acl() is to ensure that we pass -EOPNOTSUPP if the operation
-> fails due to lack of server support.
+This patch cleanup coding style issues reported by checkpatch.
 
-Do we really want to return EOPNOTSUPP from listxattr?  Seems like
-simply not listing anything if the server doesn't support ACLs would
-be the usual behaviour.  E.g. on local filesystems we'll also just get
-back an empty list of xattrs if ACLs aren't supported and not other
-attribute is set.
+Tested by compilation only.
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Based on latest staging-next.
+
+ drivers/staging/vt6656/main_usb.c | 118 +++++++++++++++++---------------------
+ 1 file changed, 54 insertions(+), 64 deletions(-)
+
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index 4cdf29e..13be8b2 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -62,7 +62,7 @@
+ #include "int.h"
+ 
+ /* static int msglevel = MSG_LEVEL_DEBUG; */
+-static int          msglevel                =MSG_LEVEL_INFO;
++static int msglevel = MSG_LEVEL_INFO;
+ 
+ /*
+  * define module options
+@@ -75,18 +75,18 @@ MODULE_AUTHOR(DRIVER_AUTHOR);
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION(DEVICE_FULL_DRV_NAM);
+ 
+-#define DEVICE_PARAM(N,D) \
+-        static int N[MAX_UINTS]=OPTION_DEFAULT;\
+-        module_param_array(N, int, NULL, 0);\
+-        MODULE_PARM_DESC(N, D);
++#define DEVICE_PARAM(N, D) \
++	static int N[MAX_UINTS] = OPTION_DEFAULT;	\
++	module_param_array(N, int, NULL, 0);		\
++	MODULE_PARM_DESC(N, D)
+ 
+-#define RX_DESC_DEF0     64
+-DEVICE_PARAM(RxDescriptors0,"Number of receive usb desc buffer");
++#define RX_DESC_DEF0 64
++DEVICE_PARAM(RxDescriptors0, "Number of receive usb desc buffer");
+ 
+-#define TX_DESC_DEF0     64
+-DEVICE_PARAM(TxDescriptors0,"Number of transmit usb desc buffer");
++#define TX_DESC_DEF0 64
++DEVICE_PARAM(TxDescriptors0, "Number of transmit usb desc buffer");
+ 
+-#define CHANNEL_DEF     6
++#define CHANNEL_DEF 6
+ DEVICE_PARAM(Channel, "Channel number");
+ 
+ /* PreambleType[] is the preamble length used for transmit.
+@@ -177,13 +177,12 @@ static struct usb_device_id vt6656_table[] = {
+ /* frequency list (map channels to frequencies) */
+ /*
+ static const long frequency_list[] = {
+-    2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467, 2472, 2484,
+-    4915, 4920, 4925, 4935, 4940, 4945, 4960, 4980,
+-    5035, 5040, 5045, 5055, 5060, 5080, 5170, 5180, 5190, 5200, 5210, 5220, 5230, 5240,
+-    5260, 5280, 5300, 5320, 5500, 5520, 5540, 5560, 5580, 5600, 5620, 5640, 5660, 5680,
+-    5700, 5745, 5765, 5785, 5805, 5825
+-	};
+-
++	2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467,
++	2472, 2484, 4915, 4920, 4925, 4935, 4940, 4945, 4960, 4980, 5035, 5040,
++	5045, 5055, 5060, 5080, 5170, 5180, 5190, 5200, 5210, 5220, 5230, 5240,
++	5260, 5280, 5300, 5320, 5500, 5520, 5540, 5560, 5580, 5600, 5620, 5640,
++	5660, 5680, 5700, 5745, 5765, 5785, 5805, 5825
++};
+ */
+ 
+ static int vt6656_probe(struct usb_interface *intf,
+@@ -206,16 +205,16 @@ static void usb_device_reset(struct vnt_private *pDevice);
+ 
+ static void
+ device_set_options(struct vnt_private *pDevice) {
+-    pDevice->cbTD = TX_DESC_DEF0;
+-    pDevice->cbRD = RX_DESC_DEF0;
+-    pDevice->byShortRetryLimit = SHORT_RETRY_DEF;
+-    pDevice->byLongRetryLimit = LONG_RETRY_DEF;
+-    pDevice->op_mode = NL80211_IFTYPE_UNSPECIFIED;
+-    pDevice->byBBType = BBP_TYPE_DEF;
+-    pDevice->byPacketType = pDevice->byBBType;
+-    pDevice->byAutoFBCtrl = AUTO_FB_0;
+-    pDevice->byPreambleType = 0;
+-    pDevice->bExistSWNetAddr = false;
++	pDevice->cbTD = TX_DESC_DEF0;
++	pDevice->cbRD = RX_DESC_DEF0;
++	pDevice->byShortRetryLimit = SHORT_RETRY_DEF;
++	pDevice->byLongRetryLimit = LONG_RETRY_DEF;
++	pDevice->op_mode = NL80211_IFTYPE_UNSPECIFIED;
++	pDevice->byBBType = BBP_TYPE_DEF;
++	pDevice->byPacketType = pDevice->byBBType;
++	pDevice->byAutoFBCtrl = AUTO_FB_0;
++	pDevice->byPreambleType = 0;
++	pDevice->bExistSWNetAddr = false;
+ }
+ 
+ /*
+@@ -383,38 +382,40 @@ static int device_init_registers(struct vnt_private *pDevice)
+ 	/* load vt3266 calibration parameters in EEPROM */
+ 	if (pDevice->byRFType = RF_VT3226D0) {
+ 		if ((pDevice->abyEEPROM[EEP_OFS_MAJOR_VER] = 0x1) &&
+-			(pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
++		   (pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
+ 
+ 			byCalibTXIQ = pDevice->abyEEPROM[EEP_OFS_CALIB_TX_IQ];
+ 			byCalibTXDC = pDevice->abyEEPROM[EEP_OFS_CALIB_TX_DC];
+ 			byCalibRXIQ = pDevice->abyEEPROM[EEP_OFS_CALIB_RX_IQ];
+ 			if (byCalibTXIQ || byCalibTXDC || byCalibRXIQ) {
+-			/* CR255, enable TX/RX IQ and DC compensation mode */
++				/* CR255, enable TX/RX IQ and
++				   DC compensation mode */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xff,
+-					0x03);
+-			/* CR251, TX I/Q Imbalance Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xff,
++						   0x03);
++				/* CR251, TX I/Q Imbalance Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfb,
+-					byCalibTXIQ);
+-			/* CR252, TX DC-Offset Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xfb,
++						   byCalibTXIQ);
++				/* CR252, TX DC-Offset Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfC,
+-					byCalibTXDC);
+-			/* CR253, RX I/Q Imbalance Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xfC,
++						   byCalibTXDC);
++				/* CR253, RX I/Q Imbalance Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfd,
+-					byCalibRXIQ);
++						   MESSAGE_REQUEST_BBREG,
++						   0xfd,
++						   byCalibRXIQ);
+ 			} else {
+-			/* CR255, turn off BB Calibration compensation */
++				/* CR255, turn off
++				   BB Calibration compensation */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xff,
+-					0x0);
++						   MESSAGE_REQUEST_BBREG,
++						   0xff,
++						   0x0);
+ 			}
+ 		}
+ 	}
+@@ -494,8 +495,6 @@ static void device_free_tx_bufs(struct vnt_private *priv)
+ 
+ 		kfree(tx_context);
+ 	}
+-
+-	return;
+ }
+ 
+ static void device_free_rx_bufs(struct vnt_private *priv)
+@@ -520,24 +519,20 @@ static void device_free_rx_bufs(struct vnt_private *priv)
+ 
+ 		kfree(rcb);
+ 	}
+-
+-	return;
+ }
+ 
+ static void usb_device_reset(struct vnt_private *pDevice)
+ {
+- int status;
+- status = usb_reset_device(pDevice->usb);
++	int status;
++
++	status = usb_reset_device(pDevice->usb);
+ 	if (status)
+-            printk("usb_device_reset fail status=%d\n",status);
+-	return ;
++		pr_warn("usb_device_reset fail status=%d\n", status);
+ }
+ 
+ static void device_free_int_bufs(struct vnt_private *priv)
+ {
+ 	kfree(priv->int_buf.data_buf);
+-
+-	return;
+ }
+ 
+ static bool device_alloc_bufs(struct vnt_private *priv)
+@@ -718,8 +713,6 @@ static void vnt_stop(struct ieee80211_hw *hw)
+ 
+ 	usb_kill_urb(priv->pInterruptURB);
+ 	usb_free_urb(priv->pInterruptURB);
+-
+-	return;
+ }
+ 
+ static int vnt_add_interface(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
+@@ -785,8 +778,6 @@ static void vnt_remove_interface(struct ieee80211_hw *hw,
+ 
+ 	/* LED slow blink */
+ 	vnt_mac_set_led(priv, LEDSTS_STS, LEDSTS_SLOW);
+-
+-	return;
+ }
+ 
+ static int vnt_config(struct ieee80211_hw *hw, u32 changed)
+@@ -836,6 +827,7 @@ static void vnt_bss_info_changed(struct ieee80211_hw *hw,
+ 		u32 changed)
+ {
+ 	struct vnt_private *priv = hw->priv;
++
+ 	priv->current_aid = conf->aid;
+ 
+ 	if (changed & BSS_CHANGED_BSSID)
+@@ -965,8 +957,6 @@ static void vnt_configure(struct ieee80211_hw *hw,
+ 	vnt_control_out_u8(priv, MESSAGE_REQUEST_MACREG, MAC_REG_RCR, rx_mode);
+ 
+ 	dev_dbg(&priv->usb->dev, "rx mode out= %x\n", rx_mode);
+-
+-	return;
+ }
+ 
+ static int vnt_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
+-- 
+1.9.3
 
