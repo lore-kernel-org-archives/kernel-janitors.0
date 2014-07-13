@@ -1,50 +1,101 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 16 Jul 2014 14:34:13 +0000
-Subject: Re: [patch] ALSA: compress: fix an integer overflow check
-Message-Id: <s5hfvi1pe3e.wl%tiwai@suse.de>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Sun, 13 Jul 2014 19:11:18 +0000
+Subject: [PATCH V2 1/4] staging: vt6556: Cleanup coding style issues
+Message-Id: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140716063704.GA26371@mwanda>
-In-Reply-To: <20140716063704.GA26371@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Vinod Koul <vinod.koul@intel.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-At Wed, 16 Jul 2014 09:37:04 +0300,
-Dan Carpenter wrote:
-> 
-> I previously added an integer overflow check here but looking at it now,
-> it's still buggy.
-> 
-> The bug happens in snd_compr_allocate_buffer().  We multiply
-> ".fragments" and ".fragment_size" and that doesn't overflow but then we
-> save it in an unsigned int so it truncates the high bits away and we
-> allocate a smaller than expected size.
-> 
-> Fixes: b35cc8225845 ('ALSA: compress_core: integer overflow in snd_compr_allocate_buffer()')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The other option would be to declare buffer_size as size_t instead of
-> an unsigned int.  This feels like a safer fix though.
+This patch cleanup coding style issues reported by checkpatch.
 
-Agreed, I took the patch now as is.  Thanks.
+Tested by compilation only.
 
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Cahnges from V1:
+ - Sent all patches in a series
 
-Takashi
+Made against latest staging-next.
 
-> 
-> diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-> index 7403f34..89028fa 100644
-> --- a/sound/core/compress_offload.c
-> +++ b/sound/core/compress_offload.c
-> @@ -491,7 +491,7 @@ static int snd_compress_check_input(struct snd_compr_params *params)
->  {
->  	/* first let's check the buffer parameter's */
->  	if (params->buffer.fragment_size = 0 ||
-> -			params->buffer.fragments > SIZE_MAX / params->buffer.fragment_size)
-> +	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
->  		return -EINVAL;
->  
->  	/* now codec parameters */
-> 
+ drivers/staging/vt6656/baseband.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/staging/vt6656/baseband.c b/drivers/staging/vt6656/baseband.c
+index c1675d5..040b232 100644
+--- a/drivers/staging/vt6656/baseband.c
++++ b/drivers/staging/vt6656/baseband.c
+@@ -26,9 +26,10 @@
+  * Date: Jun. 5, 2002
+  *
+  * Functions:
+- *      vnt_get_frame_time        - Calculate data frame transmitting time
+- *      vnt_get_phy_field   - Calculate PhyLength, PhyService and Phy Signal parameter for baseband Tx
+- *      BBbVT3184Init          - VIA VT3184 baseband chip init code
++ *	vnt_get_frame_time	- Calculate data frame transmitting time
++ *	vnt_get_phy_field	- Calculate PhyLength, PhyService and Phy
++ *				  Signal parameter for baseband Tx
++ *	BBbVT3184Init		- VIA VT3184 baseband chip init code
+  *
+  * Revision History:
+  *
+@@ -86,7 +87,7 @@ static u8 vnt_vt3184_al2230[] = {
+ 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  /* 0xff */
+ };
+ 
+-//{{RobertYu:20060515, new BB setting for VT3226D0
++/* {{RobertYu:20060515, new BB setting for VT3226D0 */
+ static u8 vnt_vt3184_vt3226d0[] = {
+ 	0x31, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00,
+ 	0x70, 0x45, 0x2a, 0x76, 0x00, 0x00, 0x80, 0x00, /* 0x0f */
+@@ -122,8 +123,9 @@ static u8 vnt_vt3184_vt3226d0[] = {
+ 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  /* 0xff */
+ };
+ 
+-static const u16 awcFrameTime[MAX_RATE] -{10, 20, 55, 110, 24, 36, 48, 72, 96, 144, 192, 216};
++static const u16 awcFrameTime[MAX_RATE] = {
++	10, 20, 55, 110, 24, 36, 48, 72, 96, 144, 192, 216
++};
+ 
+ /*
+  * Description: Calculate data frame transmitting time
+@@ -191,9 +193,9 @@ unsigned int vnt_get_frame_time(u8 preamble_type, u8 pkt_type,
+  *      tx_rate           - Tx Rate
+  *  Out:
+  *	struct vnt_phy_field *phy
+- * 			- pointer to Phy Length field
+- *			- pointer to Phy Service field
+- * 			- pointer to Phy Signal field
++ *		- pointer to Phy Length field
++ *		- pointer to Phy Service field
++ *		- pointer to Phy Signal field
+  *
+  * Return Value: none
+  *
+@@ -450,8 +452,9 @@ int BBbVT3184Init(struct vnt_private *priv)
+ 		priv->ldBmThreshold[2] = 0;
+ 		priv->ldBmThreshold[3] = 0;
+ 		/* Fix VT3226 DFC system timing issue */
+-		vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL2, SOFTPWRCTL_RFLEOPT);
+-	} else if ((priv->byRFType = RF_VT3342A0)) {
++		vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL2,
++				    SOFTPWRCTL_RFLEOPT);
++	} else if (priv->byRFType = RF_VT3342A0) {
+ 		priv->byBBRxConf = vnt_vt3184_vt3226d0[10];
+ 		length = sizeof(vnt_vt3184_vt3226d0);
+ 		addr = vnt_vt3184_vt3226d0;
+@@ -467,7 +470,8 @@ int BBbVT3184Init(struct vnt_private *priv)
+ 		priv->ldBmThreshold[2] = 0;
+ 		priv->ldBmThreshold[3] = 0;
+ 		/* Fix VT3226 DFC system timing issue */
+-		vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL2, SOFTPWRCTL_RFLEOPT);
++		vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL2,
++				    SOFTPWRCTL_RFLEOPT);
+ 	} else {
+ 		return true;
+ 	}
+-- 
+1.9.3
+
