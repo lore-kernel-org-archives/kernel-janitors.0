@@ -1,8 +1,10 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 13 Jul 2014 16:14:37 +0000
+Date: Sun, 13 Jul 2014 16:36:09 +0000
 Subject: [PATCH] staging: vt6556: Cleanup coding style issues
-Message-Id: <1405268077-8802-1-git-send-email-peter.senna@gmail.com>
+Message-Id: <1405269369-16236-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1405268077-8802-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1405268077-8802-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,100 +13,92 @@ Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
 This patch cleanup coding style issues reported by checkpatch.
 
-Additionally this typedef was removed from card.h:
-
-typedef enum _CARD_PHY_TYPE {
-    PHY_TYPE_AUTO = 0,
-    PHY_TYPE_11B,
-    PHY_TYPE_11G,
-    PHY_TYPE_11A
-} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
+This patch change the following enums:
+ - typedef enum __device_msg_level
+ - typedef enum __DEVICE_NDIS_STATUS
 
 Tested by compilation only.
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-Done against latest staging-next.
+Made against latest staging-next.
+ drivers/staging/vt6656/channel.c |  5 +++--
+ drivers/staging/vt6656/device.h  | 27 +++++++++++++--------------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
 
- drivers/staging/vt6656/card.c | 19 ++++++++-----------
- drivers/staging/vt6656/card.h | 13 +++----------
- 2 files changed, 11 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/staging/vt6656/card.c b/drivers/staging/vt6656/card.c
-index ea06b63..f469d68 100644
---- a/drivers/staging/vt6656/card.c
-+++ b/drivers/staging/vt6656/card.c
-@@ -55,11 +55,12 @@
- #include "key.h"
- #include "usbpipe.h"
+diff --git a/drivers/staging/vt6656/channel.c b/drivers/staging/vt6656/channel.c
+index fb1838e..4a53f1a 100644
+--- a/drivers/staging/vt6656/channel.c
++++ b/drivers/staging/vt6656/channel.c
+@@ -28,8 +28,9 @@
+  *
+  *
+  * Revision History:
+- *      01-18-2005      RobertYu:  remove the for loop searching in ChannelValid,
+- *                                 change ChannelRuleTab to lookup-type, reorder table items.
++ *	01-18-2005	RobertYu:	remove the for loop searching in
++ *					ChannelValid, change ChannelRuleTab
++ *					to lookup-type, reorder table items.
+  *
+  *
+  */
+diff --git a/drivers/staging/vt6656/device.h b/drivers/staging/vt6656/device.h
+index 789c55d..e3acf2f 100644
+--- a/drivers/staging/vt6656/device.h
++++ b/drivers/staging/vt6656/device.h
+@@ -187,13 +187,13 @@
  
--//const u16 cwRXBCNTSFOff[MAX_RATE] -//{17, 34, 96, 192, 34, 23, 17, 11, 8, 5, 4, 3};
-+/* const u16 cwRXBCNTSFOff[MAX_RATE] +   {17, 34, 96, 192, 34, 23, 17, 11, 8, 5, 4, 3}; */
+ #define DBG_PRT(l, p, args...) { if (l <= msglevel) printk(p, ##args); }
  
--static const u16 cwRXBCNTSFOff[MAX_RATE] -{192, 96, 34, 17, 34, 23, 17, 11, 8, 5, 4, 3};
-+static const u16 cwRXBCNTSFOff[MAX_RATE] = {
-+	192, 96, 34, 17, 34, 23, 17, 11, 8, 5, 4, 3
+-typedef enum __device_msg_level {
++enum {
+ 	MSG_LEVEL_ERR = 0,            /* Errors causing abnormal operation */
+ 	MSG_LEVEL_NOTICE = 1,         /* Errors needing user notification */
+ 	MSG_LEVEL_INFO = 2,           /* Normal message. */
+ 	MSG_LEVEL_VERBOSE = 3,        /* Will report all trival errors. */
+ 	MSG_LEVEL_DEBUG = 4           /* Only for debug purpose. */
+-} DEVICE_MSG_LEVEL, *PDEVICE_MSG_LEVEL;
 +};
  
- /*
-  * Description: Set NIC media channel
-@@ -477,7 +478,7 @@ void vnt_update_top_rates(struct vnt_private *priv)
- 	}
+ #define DEVICE_INIT_COLD	0x0 /* cold init */
+ #define DEVICE_INIT_RESET	0x1 /* reset init or Dx to D0 power remain */
+@@ -268,13 +268,12 @@ struct vnt_interrupt_buffer {
  
- 	priv->byTopCCKBasicRate = top_cck;
-- }
-+}
+ /*++ NDIS related */
  
- int vnt_ofdm_min_rate(struct vnt_private *priv)
- {
-@@ -673,9 +674,7 @@ void vnt_reset_next_tbtt(struct vnt_private *priv, u16 beacon_interval)
- 	data[7] = (u8)(next_tbtt >> 56);
- 
- 	vnt_control_out(priv, MESSAGE_TYPE_SET_TSFTBTT,
--		MESSAGE_REQUEST_TBTT, 0, 8, data);
+-typedef enum __DEVICE_NDIS_STATUS {
+-    STATUS_SUCCESS = 0,
+-    STATUS_FAILURE,
+-    STATUS_RESOURCES,
+-    STATUS_PENDING,
+-} DEVICE_NDIS_STATUS, *PDEVICE_NDIS_STATUS;
 -
--	return;
-+			MESSAGE_REQUEST_TBTT, 0, 8, data);
++enum {
++	STATUS_SUCCESS = 0,
++	STATUS_FAILURE,
++	STATUS_RESOURCES,
++	STATUS_PENDING,
++};
+ 
+ /* flags for options */
+ #define     DEVICE_FLAGS_UNPLUG          0x00000001UL
+@@ -443,11 +442,11 @@ struct vnt_private {
+ 	struct ieee80211_low_level_stats low_stats;
+ };
+ 
+-#define ADD_ONE_WITH_WRAP_AROUND(uVar, uModulo) {   \
+-    if ((uVar) >= ((uModulo) - 1))                  \
+-        (uVar) = 0;                                 \
+-    else                                            \
+-        (uVar)++;                                   \
++#define ADD_ONE_WITH_WRAP_AROUND(uVar, uModulo) {	\
++	if ((uVar) >= ((uModulo) - 1))			\
++		(uVar) = 0;				\
++	else						\
++		(uVar)++;				\
  }
  
- /*
-@@ -710,11 +709,9 @@ void vnt_update_next_tbtt(struct vnt_private *priv, u64 tsf,
- 	data[7] = (u8)(tsf >> 56);
- 
- 	vnt_control_out(priv, MESSAGE_TYPE_SET_TSFTBTT,
--		MESSAGE_REQUEST_TBTT, 0, 8, data);
-+			MESSAGE_REQUEST_TBTT, 0, 8, data);
- 
- 	dev_dbg(&priv->usb->dev, "%s TBTT: %8llx\n", __func__, tsf);
--
--	return;
- }
- 
- /*
-diff --git a/drivers/staging/vt6656/card.h b/drivers/staging/vt6656/card.h
-index 5b7cc5a..03fc167 100644
---- a/drivers/staging/vt6656/card.h
-+++ b/drivers/staging/vt6656/card.h
-@@ -32,16 +32,9 @@
- 
- /* init card type */
- 
--typedef enum _CARD_PHY_TYPE {
--    PHY_TYPE_AUTO = 0,
--    PHY_TYPE_11B,
--    PHY_TYPE_11G,
--    PHY_TYPE_11A
--} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
--
--#define CB_MAX_CHANNEL_24G  14
--#define CB_MAX_CHANNEL_5G       42 /* add channel9(5045MHz), 41=>42 */
--#define CB_MAX_CHANNEL      (CB_MAX_CHANNEL_24G+CB_MAX_CHANNEL_5G)
-+#define CB_MAX_CHANNEL_24G	14
-+#define CB_MAX_CHANNEL_5G	42 /* add channel9(5045MHz), 41=>42 */
-+#define CB_MAX_CHANNEL		(CB_MAX_CHANNEL_24G + CB_MAX_CHANNEL_5G)
- 
- struct vnt_private;
- 
+ #define fMP_DISCONNECTED                    0x00000002
 -- 
 1.9.3
 
