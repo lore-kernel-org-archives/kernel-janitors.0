@@ -1,98 +1,64 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 15 Jul 2014 21:23:24 +0000
-Subject: [PATCH V5 1/4] staging: vt6556: Cleanup coding style: #define
-Message-Id: <1405459407-9311-1-git-send-email-peter.senna@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Mon, 14 Jul 2014 06:53:48 +0000
+Subject: Re: [patch] drm/tegra: sor - missing unlock on error
+Message-Id: <20140714065346.GF2081@ulmo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="65ImJOski3p8EhYV"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>
+References: <20140611070608.GD16443@mwanda>
+In-Reply-To: <20140611070608.GD16443@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>
 
-This patch cleanup coding style issues on #defines.
 
-Tested by compilation only.
+--65ImJOski3p8EhYV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-Changes from V4:
- - Splitted [PATCH V4 1/6] in 4 smaller patches
+On Wed, Jun 11, 2014 at 10:06:09AM +0300, Dan Carpenter wrote:
+> We should unlock before returning the error code.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> index 27c979b..64f57fa 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -516,7 +516,7 @@ static int tegra_output_sor_enable(struct tegra_outpu=
+t *output)
+>  		if (err < 0) {
+>  			dev_err(sor->dev, "failed to probe eDP link: %d\n",
+>  				err);
+> -			return err;
+> +			goto unlock;
+>  		}
+>  	}
+> =20
 
- drivers/staging/vt6656/card.h     |  6 +++---
- drivers/staging/vt6656/device.h   | 10 +++++-----
- drivers/staging/vt6656/main_usb.c | 18 +++++++++---------
- 3 files changed, 17 insertions(+), 17 deletions(-)
+Applied, thanks.
 
-diff --git a/drivers/staging/vt6656/card.h b/drivers/staging/vt6656/card.h
-index 5b7cc5a..80fcd53 100644
---- a/drivers/staging/vt6656/card.h
-+++ b/drivers/staging/vt6656/card.h
-@@ -39,9 +39,9 @@ typedef enum _CARD_PHY_TYPE {
-     PHY_TYPE_11A
- } CARD_PHY_TYPE, *PCARD_PHY_TYPE;
- 
--#define CB_MAX_CHANNEL_24G  14
--#define CB_MAX_CHANNEL_5G       42 /* add channel9(5045MHz), 41=>42 */
--#define CB_MAX_CHANNEL      (CB_MAX_CHANNEL_24G+CB_MAX_CHANNEL_5G)
-+#define CB_MAX_CHANNEL_24G	14
-+#define CB_MAX_CHANNEL_5G	42 /* add channel9(5045MHz), 41=>42 */
-+#define CB_MAX_CHANNEL		(CB_MAX_CHANNEL_24G + CB_MAX_CHANNEL_5G)
- 
- struct vnt_private;
- 
-diff --git a/drivers/staging/vt6656/device.h b/drivers/staging/vt6656/device.h
-index 436f109..b7b3131 100644
---- a/drivers/staging/vt6656/device.h
-+++ b/drivers/staging/vt6656/device.h
-@@ -441,11 +441,11 @@ struct vnt_private {
- 	struct ieee80211_low_level_stats low_stats;
- };
- 
--#define ADD_ONE_WITH_WRAP_AROUND(uVar, uModulo) {   \
--    if ((uVar) >= ((uModulo) - 1))                  \
--        (uVar) = 0;                                 \
--    else                                            \
--        (uVar)++;                                   \
-+#define ADD_ONE_WITH_WRAP_AROUND(uVar, uModulo) {	\
-+	if ((uVar) >= ((uModulo) - 1))			\
-+		(uVar) = 0;				\
-+	else						\
-+		(uVar)++;				\
- }
- 
- #define fMP_DISCONNECTED                    0x00000002
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index dffd0c7..95a87ef 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -75,18 +75,18 @@ MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION(DEVICE_FULL_DRV_NAM);
- 
--#define DEVICE_PARAM(N,D) \
--        static int N[MAX_UINTS]=OPTION_DEFAULT;\
--        module_param_array(N, int, NULL, 0);\
--        MODULE_PARM_DESC(N, D);
-+#define DEVICE_PARAM(N, D)				\
-+	static int N[MAX_UINTS] = OPTION_DEFAULT;	\
-+	module_param_array(N, int, NULL, 0);		\
-+	MODULE_PARM_DESC(N, D)
- 
--#define RX_DESC_DEF0     64
--DEVICE_PARAM(RxDescriptors0,"Number of receive usb desc buffer");
-+#define RX_DESC_DEF0 64
-+DEVICE_PARAM(RxDescriptors0, "Number of receive usb desc buffer");
- 
--#define TX_DESC_DEF0     64
--DEVICE_PARAM(TxDescriptors0,"Number of transmit usb desc buffer");
-+#define TX_DESC_DEF0 64
-+DEVICE_PARAM(TxDescriptors0, "Number of transmit usb desc buffer");
- 
--#define CHANNEL_DEF     6
-+#define CHANNEL_DEF 6
- DEVICE_PARAM(Channel, "Channel number");
- 
- /* PreambleType[] is the preamble length used for transmit.
--- 
-1.9.3
+Thierry
 
+--65ImJOski3p8EhYV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTw356AAoJEN0jrNd/PrOh3g4P/0+STeMG3I1Zs65+h5idfkRH
+jmRcj22nV2yVJUOAm3YiBLpQJAUim5yl6S4n+4eTEsBaWSFDYCalO3jJN1JtxEbJ
+K3d+yEarK2bZiE3uDWYIJUH6fNOWvv7ahVj7T7aQuBtgbQv20M8LX1riFNt6WzjS
+gzrwCs6DvmjIuo+MF9sBD9w7sRDprHfzWnnDTLd21LvJXdsZzbfTc/nLOEwrTZZi
+NWA4UZmXmEmD25Yx92mWCVRvwgki7DHnomK9vI6ySzbcmsF5PE8fcB74XEfAKSSL
+dmJiI+7BIATr5/m01r3SZ4UIfFxh6HENwhh1t8fE564FpQzXSsYqt6n4aIL5/owo
+4m5crN8czZkyFLM7BuFZVvkPd6or4oIBveNFXsqUm1DCDhGrHgwP0ck2Tqa5WG26
+LBcfkesVeRM98eC9/E6D+gkuApV0dAFOdIysNcrWBO1ErU2PH6EnYnTz3t1U94VK
+Epr3DLzQpmOuvOisI7VV2GOzL2v7TYpRUp48aJBkcPmy5yUvbj+Os4IQLj8FdN7V
+uIYSVCDYlxc2NY7JnfumibeNEZIt2DEzz8qgDP5wA3YwdgavsdD3mBVIZ4NZJ0KF
+Ae3FLSUWckoSAWk1/vx3pW9nTwwMe6XkhJfO662rm9lmjdTeaK7snger9ZzwCssA
+eU2wbr2uLo7I73Hw8gpJ
+=rzRF
+-----END PGP SIGNATURE-----
+
+--65ImJOski3p8EhYV--
