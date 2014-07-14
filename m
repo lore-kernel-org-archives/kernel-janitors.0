@@ -1,49 +1,62 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 13 Jul 2014 16:36:09 +0000
-Subject: [PATCH] staging: vt6556: Cleanup coding style issues
-Message-Id: <1405269369-16236-1-git-send-email-peter.senna@gmail.com>
+Date: Mon, 14 Jul 2014 19:15:31 +0000
+Subject: [PATCH V4 4/6] staging: vt6556: Remove typedefs
+Message-Id: <1405365333-17170-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405268077-8802-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1405268077-8802-1-git-send-email-peter.senna@gmail.com>
+References: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-This patch cleanup coding style issues reported by checkpatch.
+This patch removes uneeded typedefs reported by chackpatch and removes
+one enum. The removed enum from card.h:
 
-This patch change the following enums:
- - typedef enum __device_msg_level
- - typedef enum __DEVICE_NDIS_STATUS
+typedef enum _CARD_PHY_TYPE {
+    PHY_TYPE_AUTO = 0,
+    PHY_TYPE_11B,
+    PHY_TYPE_11G,
+    PHY_TYPE_11A
+} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
+
+The following typedefs were removed, but enums were kept at device.h:
+
+ typedef enum __device_msg_level
+ typedef enum __DEVICE_NDIS_STATUS
 
 Tested by compilation only.
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-Made against latest staging-next.
- drivers/staging/vt6656/channel.c |  5 +++--
- drivers/staging/vt6656/device.h  | 27 +++++++++++++--------------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+Cahnges from V3:
+ - Splitted the patches by change type
 
-diff --git a/drivers/staging/vt6656/channel.c b/drivers/staging/vt6656/channel.c
-index fb1838e..4a53f1a 100644
---- a/drivers/staging/vt6656/channel.c
-+++ b/drivers/staging/vt6656/channel.c
-@@ -28,8 +28,9 @@
-  *
-  *
-  * Revision History:
-- *      01-18-2005      RobertYu:  remove the for loop searching in ChannelValid,
-- *                                 change ChannelRuleTab to lookup-type, reorder table items.
-+ *	01-18-2005	RobertYu:	remove the for loop searching in
-+ *					ChannelValid, change ChannelRuleTab
-+ *					to lookup-type, reorder table items.
-  *
-  *
-  */
+ drivers/staging/vt6656/card.h   |  7 -------
+ drivers/staging/vt6656/device.h | 17 ++++++++---------
+ 2 files changed, 8 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/staging/vt6656/card.h b/drivers/staging/vt6656/card.h
+index 80fcd53..03fc167 100644
+--- a/drivers/staging/vt6656/card.h
++++ b/drivers/staging/vt6656/card.h
+@@ -32,13 +32,6 @@
+ 
+ /* init card type */
+ 
+-typedef enum _CARD_PHY_TYPE {
+-    PHY_TYPE_AUTO = 0,
+-    PHY_TYPE_11B,
+-    PHY_TYPE_11G,
+-    PHY_TYPE_11A
+-} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
+-
+ #define CB_MAX_CHANNEL_24G	14
+ #define CB_MAX_CHANNEL_5G	42 /* add channel9(5045MHz), 41=>42 */
+ #define CB_MAX_CHANNEL		(CB_MAX_CHANNEL_24G + CB_MAX_CHANNEL_5G)
 diff --git a/drivers/staging/vt6656/device.h b/drivers/staging/vt6656/device.h
-index 789c55d..e3acf2f 100644
+index 50a6749..e3acf2f 100644
 --- a/drivers/staging/vt6656/device.h
 +++ b/drivers/staging/vt6656/device.h
 @@ -187,13 +187,13 @@
@@ -82,23 +95,6 @@ index 789c55d..e3acf2f 100644
  
  /* flags for options */
  #define     DEVICE_FLAGS_UNPLUG          0x00000001UL
-@@ -443,11 +442,11 @@ struct vnt_private {
- 	struct ieee80211_low_level_stats low_stats;
- };
- 
--#define ADD_ONE_WITH_WRAP_AROUND(uVar, uModulo) {   \
--    if ((uVar) >= ((uModulo) - 1))                  \
--        (uVar) = 0;                                 \
--    else                                            \
--        (uVar)++;                                   \
-+#define ADD_ONE_WITH_WRAP_AROUND(uVar, uModulo) {	\
-+	if ((uVar) >= ((uModulo) - 1))			\
-+		(uVar) = 0;				\
-+	else						\
-+		(uVar)++;				\
- }
- 
- #define fMP_DISCONNECTED                    0x00000002
 -- 
 1.9.3
 
