@@ -1,7 +1,7 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 14 Jul 2014 17:09:27 +0000
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Mon, 14 Jul 2014 17:26:02 +0000
 Subject: Re: [PATCH V2 1/4] staging: vt6556: Cleanup coding style issues
-Message-Id: <20140714170927.GF23001@mwanda>
+Message-Id: <20140714172602.GB9870@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
  <20140713193647.GA31010@kroah.com>
@@ -13,7 +13,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, Malcolm Priestley <tvboxspy@gmail.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Forest Bond <forest@alittletooquiet.net>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, devel@driverdev.osuosl.org, Malcolm Priestley <tvboxspy@gmail.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Forest Bond <forest@alittletooquiet.net>
 
 On Mon, Jul 14, 2014 at 07:01:37PM +0200, Peter Senna Tschudin wrote:
 > <note>
@@ -33,15 +33,23 @@ On Mon, Jul 14, 2014 at 07:01:37PM +0200, Peter Senna Tschudin wrote:
 > series of similar patches? It made sense from my perspective. So what
 > is the problem in re-submit 4 similar patches as a single patch?
 
-The one thing per patch rule is a bit ambiguous, but normally we auto
-reject patches which "fix every checkpatch warning in somefile_foo.c"
-and sugest that they instead be broken into one type of fix per patch.
+Because it is _much_ harder to review a patch that way.  I get a few
+hundred patches a week to review.  If you only do one thing per patch,
+it is trivial to review, and you don't have to pick through a patch to
+determine if all of it is correct based on a larger patch, that does
+multiple things.
 
-Breaking it up like this is maybe not always beautiful but it's simple
-to explain to newbies and generally easier to review.
+Also, the rule for a kernel patch is "do only one thing".  If you do:
+	- remove typedef
+	- fix space layout
+for a single file, that really is 2 different things, yet you could
+claim they are both "coding style cleanups".  Reviewing both of these at
+the same time, together, makes it much harder to do.
 
-If there are very few warnings in the file then "fix everything" is ok.
+Remember, for the kernel, we waste individual developer's time, at the
+expense of reviewer's time, as we have far more developers than
+reviewers.
 
-regards,
-dan carpenter
+Hope this helps explain things more.
 
+greg k-h
