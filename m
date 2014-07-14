@@ -1,77 +1,47 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 14 Jul 2014 17:01:37 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 14 Jul 2014 17:09:27 +0000
 Subject: Re: [PATCH V2 1/4] staging: vt6556: Cleanup coding style issues
-Message-Id: <CA+MoWDpQBQYqZ2ZLM3-17cfQQ0LjMcv702ZxVv10M5Wd895rJg@mail.gmail.com>
+Message-Id: <20140714170927.GF23001@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
-	<20140713193647.GA31010@kroah.com>
-	<20140714085932.GA2958@hp-peter.rsr.lip6.fr>
-	<20140714141231.GM25880@mwanda>
-In-Reply-To: <20140714141231.GM25880@mwanda>
+ <20140713193647.GA31010@kroah.com>
+ <20140714085932.GA2958@hp-peter.rsr.lip6.fr>
+ <20140714141231.GM25880@mwanda>
+ <CA+MoWDpQBQYqZ2ZLM3-17cfQQ0LjMcv702ZxVv10M5Wd895rJg@mail.gmail.com>
+In-Reply-To: <CA+MoWDpQBQYqZ2ZLM3-17cfQQ0LjMcv702ZxVv10M5Wd895rJg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Peter Senna Tschudin <peter.senna@gmail.com>
 Cc: Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, Malcolm Priestley <tvboxspy@gmail.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Forest Bond <forest@alittletooquiet.net>
 
-<note>
-I'm not trying to push my changes over the rules. I'm trying to
-understand the problem, to avoid creating similar noise in the future.
-</note>
+On Mon, Jul 14, 2014 at 07:01:37PM +0200, Peter Senna Tschudin wrote:
+> <note>
+> I'm not trying to push my changes over the rules. I'm trying to
+> understand the problem, to avoid creating similar noise in the future.
+> </note>
+> 
+> Now I understand that the problem with the series of 4 patches is that
+> the subject is the same on the 4 patches. Having the same subject in 4
+> patches is not good. I got this one.
+> 
+> But I have no clue why joining 4 cleanup patches into 1 is bad. The
+> patches are all for the same driver, are all silencing checkpatch
+> warnings, and even the typedef stuff was reported by checkpatch. The
+> commit message of the single patch describes it all. If the subject of
+> the series is the problem, why not make a single patch instead of a
+> series of similar patches? It made sense from my perspective. So what
+> is the problem in re-submit 4 similar patches as a single patch?
 
-Now I understand that the problem with the series of 4 patches is that
-the subject is the same on the 4 patches. Having the same subject in 4
-patches is not good. I got this one.
+The one thing per patch rule is a bit ambiguous, but normally we auto
+reject patches which "fix every checkpatch warning in somefile_foo.c"
+and sugest that they instead be broken into one type of fix per patch.
 
-But I have no clue why joining 4 cleanup patches into 1 is bad. The
-patches are all for the same driver, are all silencing checkpatch
-warnings, and even the typedef stuff was reported by checkpatch. The
-commit message of the single patch describes it all. If the subject of
-the series is the problem, why not make a single patch instead of a
-series of similar patches? It made sense from my perspective. So what
-is the problem in re-submit 4 similar patches as a single patch?
+Breaking it up like this is maybe not always beautiful but it's simple
+to explain to newbies and generally easier to review.
 
-On Mon, Jul 14, 2014 at 4:12 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Since you're going to redo this patch anyway, I may as well give you
-> the normal feedback for these kinds of patches.
->
->> >From 69cd87aca39730c0578592d1296b738f7f223f29 Mon Sep 17 00:00:00 2001
->> From: Peter Senna Tschudin <peter.senna@gmail.com>
->> Date: Mon, 14 Jul 2014 10:28:42 +0200
->> Subject: [PATCH V3] staging: vt6556: Cleanup coding style issues
->>
->> This patch cleanup coding style issues reported by checkpatch.
->>
->> This typedef, reported by checkpatch, was removed from card.h:
->> typedef enum _CARD_PHY_TYPE {
->>     PHY_TYPE_AUTO = 0,
->>     PHY_TYPE_11B,
->>     PHY_TYPE_11G,
->>     PHY_TYPE_11A
->> } CARD_PHY_TYPE, *PCARD_PHY_TYPE;
->>
->> The following typedefs were removed, but enums were kept at device.h:
->>  - typedef enum __device_msg_level
->>  - typedef enum __DEVICE_NDIS_STATUS
->>
->
-> Break this kind of patch into patches which fix one type of mistake per
-> patch:
-> patch 1: fix whitespace stuff
-> patch 2: remove useless returns
-> patch 3: remove typedefs
-> etc.
->
->> -//{{RobertYu:20060515, new BB setting for VT3226D0
->> +/* {{RobertYu:20060515, new BB setting for VT3226D0 */
->
-> Just delete these, because we have version control.
->
-> regards,
-> dan carpenter
->
+If there are very few warnings in the file then "fix everything" is ok.
 
+regards,
+dan carpenter
 
-
--- 
-Peter
