@@ -1,29 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 31 Jul 2014 02:14:05 +0000
-Subject: Re: [PATCH 2/9] CAPI: use correct structure type name in sizeof
-Message-Id: <20140730.191405.497343033042623279.davem@davemloft.net>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 14 Jul 2014 19:15:33 +0000
+Subject: [PATCH V4 6/6] staging: vt6556: Replace printk by pr_warn
+Message-Id: <1405365333-17170-6-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1406647011-8543-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1406647011-8543-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: isdn@linux-pingi.de, kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 29 Jul 2014 17:16:44 +0200
+This patch fixes a checkpatch warning by replacing printk by pr_warn.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Correct typo in the name of the type given to sizeof.  Because it is the
-> size of a pointer that is wanted, the typo has no impact on compilation or
-> execution.
-> 
-> This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
-> semantic patch used can be found in message 0 of this patch series.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Tested by compilation only.
 
-Relatively harmless, so applied to net-next, thanks.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Cahnges from V3:
+ - Splitted the patches by change type
+
+ drivers/staging/vt6656/main_usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index cc0281a..64c25e2 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -527,7 +527,7 @@ static void usb_device_reset(struct vnt_private *pDevice)
+ 
+ 	status = usb_reset_device(pDevice->usb);
+ 	if (status)
+-            printk("usb_device_reset fail status=%d\n",status);
++		pr_warn("usb_device_reset fail status=%d\n", status);
+ }
+ 
+ static void device_free_int_bufs(struct vnt_private *priv)
+-- 
+1.9.3
+
