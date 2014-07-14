@@ -1,26 +1,95 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 29 Jul 2014 00:28:21 +0000
-Subject: Re: [patch] bonding: fix a memory leak in bond_arp_send_all()
-Message-Id: <20140728.172821.1662975923710334910.davem@davemloft.net>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Mon, 14 Jul 2014 19:15:32 +0000
+Subject: [PATCH V4 5/6] staging: vt6556: Cleanup indentation on statements
+Message-Id: <1405365333-17170-5-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140725122121.GC528@mwanda>
-In-Reply-To: <20140725122121.GC528@mwanda>
+References: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: j.vosburgh@gmail.com, vfalico@gmail.com, andy@greyhouse.net, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 25 Jul 2014 15:21:21 +0300
+Use tabs instead of spaces in a set of statements and fix lines
+over 80 chars. Reported by checkpatch.
 
-> This test is reversed so the memory is always leaked.  It's better style
-> to remove the test anyway.
-> 
-> Fixes: 3e403a77779f ('bonding: make it possible to have unlimited nested upper vlans')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Tested by compilation only.
 
-Applied, but in the future please make "net-next" submissions explicit by saying
-something like "[PATCH net-next] " in your subject.
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Cahnges from V3:
+ - Splitted the patches by change type
 
-Thanks.
+ drivers/staging/vt6656/main_usb.c | 44 ++++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index 553a8e9..cc0281a 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -382,38 +382,40 @@ static int device_init_registers(struct vnt_private *pDevice)
+ 	/* load vt3266 calibration parameters in EEPROM */
+ 	if (pDevice->byRFType = RF_VT3226D0) {
+ 		if ((pDevice->abyEEPROM[EEP_OFS_MAJOR_VER] = 0x1) &&
+-			(pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
++		   (pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
+ 
+ 			byCalibTXIQ = pDevice->abyEEPROM[EEP_OFS_CALIB_TX_IQ];
+ 			byCalibTXDC = pDevice->abyEEPROM[EEP_OFS_CALIB_TX_DC];
+ 			byCalibRXIQ = pDevice->abyEEPROM[EEP_OFS_CALIB_RX_IQ];
+ 			if (byCalibTXIQ || byCalibTXDC || byCalibRXIQ) {
+-			/* CR255, enable TX/RX IQ and DC compensation mode */
++				/* CR255, enable TX/RX IQ and
++				   DC compensation mode */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xff,
+-					0x03);
+-			/* CR251, TX I/Q Imbalance Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xff,
++						   0x03);
++				/* CR251, TX I/Q Imbalance Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfb,
+-					byCalibTXIQ);
+-			/* CR252, TX DC-Offset Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xfb,
++						   byCalibTXIQ);
++				/* CR252, TX DC-Offset Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfC,
+-					byCalibTXDC);
+-			/* CR253, RX I/Q Imbalance Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xfC,
++						   byCalibTXDC);
++				/* CR253, RX I/Q Imbalance Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfd,
+-					byCalibRXIQ);
++						   MESSAGE_REQUEST_BBREG,
++						   0xfd,
++						   byCalibRXIQ);
+ 			} else {
+-			/* CR255, turn off BB Calibration compensation */
++				/* CR255, turn off
++				   BB Calibration compensation */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xff,
+-					0x0);
++						   MESSAGE_REQUEST_BBREG,
++						   0xff,
++						   0x0);
+ 			}
+ 		}
+ 	}
+-- 
+1.9.3
+
