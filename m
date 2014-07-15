@@ -1,42 +1,98 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 29 Jul 2014 15:16:49 +0000
-Subject: [PATCH 7/9] scsi: use correct structure type name in sizeof
-Message-Id: <1406647011-8543-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Tue, 15 Jul 2014 21:23:27 +0000
+Subject: [PATCH V5 4/4] staging: vt6556: Cleanup coding style: indentation
+Message-Id: <1405459407-9311-4-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1405459407-9311-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1405459407-9311-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dario Ballabio <ballabio_dario@emc.com>
-Cc: kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This patch cleanup the follwoing coding style issues:
+ - indentation style
+ - new line after declaration
 
-Correct typo in the name of the type given to sizeof.  Because it is the
-size of a pointer that is wanted, the typo has no impact on compilation or
-execution.
+Tested by compilation only.
 
-This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
-semantic patch used can be found in message 0 of this patch series.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- drivers/scsi/u14-34f.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes from V4:
+ - Splitted [PATCH V4 1/6] in 4 smaller patches
 
-diff --git a/drivers/scsi/u14-34f.c b/drivers/scsi/u14-34f.c
-index 4e76fe8..617d72a 100644
---- a/drivers/scsi/u14-34f.c
-+++ b/drivers/scsi/u14-34f.c
-@@ -585,7 +585,7 @@ struct mscp {
-    struct sg_list *sglist; /* pointer to the allocated SG list */
-    };
+ drivers/staging/vt6656/main_usb.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index d103df1..ba5c8a9 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -62,7 +62,7 @@
+ #include "int.h"
  
--#define CP_TAIL_SIZE (sizeof(struct sglist *) + sizeof(dma_addr_t))
-+#define CP_TAIL_SIZE (sizeof(struct sg_list *) + sizeof(dma_addr_t))
+ /* static int msglevel = MSG_LEVEL_DEBUG; */
+-static int          msglevel                =MSG_LEVEL_INFO;
++static int msglevel = MSG_LEVEL_INFO;
  
- struct hostdata {
-    struct mscp cp[MAX_MAILBOXES];       /* Mailboxes for this board */
+ /*
+  * define module options
+@@ -177,13 +177,12 @@ static struct usb_device_id vt6656_table[] = {
+ /* frequency list (map channels to frequencies) */
+ /*
+ static const long frequency_list[] = {
+-    2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467, 2472, 2484,
+-    4915, 4920, 4925, 4935, 4940, 4945, 4960, 4980,
+-    5035, 5040, 5045, 5055, 5060, 5080, 5170, 5180, 5190, 5200, 5210, 5220, 5230, 5240,
+-    5260, 5280, 5300, 5320, 5500, 5520, 5540, 5560, 5580, 5600, 5620, 5640, 5660, 5680,
+-    5700, 5745, 5765, 5785, 5805, 5825
+-	};
+-
++	2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467,
++	2472, 2484, 4915, 4920, 4925, 4935, 4940, 4945, 4960, 4980, 5035, 5040,
++	5045, 5055, 5060, 5080, 5170, 5180, 5190, 5200, 5210, 5220, 5230, 5240,
++	5260, 5280, 5300, 5320, 5500, 5520, 5540, 5560, 5580, 5600, 5620, 5640,
++	5660, 5680, 5700, 5745, 5765, 5785, 5805, 5825
++};
+ */
+ 
+ static int vt6656_probe(struct usb_interface *intf,
+@@ -206,16 +205,16 @@ static void usb_device_reset(struct vnt_private *pDevice);
+ 
+ static void
+ device_set_options(struct vnt_private *pDevice) {
+-    pDevice->cbTD = TX_DESC_DEF0;
+-    pDevice->cbRD = RX_DESC_DEF0;
+-    pDevice->byShortRetryLimit = SHORT_RETRY_DEF;
+-    pDevice->byLongRetryLimit = LONG_RETRY_DEF;
+-    pDevice->op_mode = NL80211_IFTYPE_UNSPECIFIED;
+-    pDevice->byBBType = BBP_TYPE_DEF;
+-    pDevice->byPacketType = pDevice->byBBType;
+-    pDevice->byAutoFBCtrl = AUTO_FB_0;
+-    pDevice->byPreambleType = 0;
+-    pDevice->bExistSWNetAddr = false;
++	pDevice->cbTD = TX_DESC_DEF0;
++	pDevice->cbRD = RX_DESC_DEF0;
++	pDevice->byShortRetryLimit = SHORT_RETRY_DEF;
++	pDevice->byLongRetryLimit = LONG_RETRY_DEF;
++	pDevice->op_mode = NL80211_IFTYPE_UNSPECIFIED;
++	pDevice->byBBType = BBP_TYPE_DEF;
++	pDevice->byPacketType = pDevice->byBBType;
++	pDevice->byAutoFBCtrl = AUTO_FB_0;
++	pDevice->byPreambleType = 0;
++	pDevice->bExistSWNetAddr = false;
+ }
+ 
+ /*
+@@ -837,6 +836,7 @@ static void vnt_bss_info_changed(struct ieee80211_hw *hw,
+ 		u32 changed)
+ {
+ 	struct vnt_private *priv = hw->priv;
++
+ 	priv->current_aid = conf->aid;
+ 
+ 	if (changed & BSS_CHANGED_BSSID)
+-- 
+1.9.3
 
