@@ -1,7 +1,7 @@
 From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Wed, 16 Jul 2014 16:08:02 +0000
-Subject: [PATCH V6 6/6] staging: vt6556: Replace printk by dev_warn
-Message-Id: <1405526882-7904-1-git-send-email-peter.senna@gmail.com>
+Date: Tue, 15 Jul 2014 20:46:48 +0000
+Subject: [PATCH V5 5/6] staging: vt6556: Cleanup indentation on statements
+Message-Id: <1405457209-6584-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,31 +9,85 @@ Content-Transfer-Encoding: 7bit
 To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-This patch fixes a checkpatch warning by replacing printk
-by dev_warn. Tested by compilation only.
+Use tabs instead of spaces in a set of statements and fix lines
+over 80 chars. Reported by checkpatch.
+
+Tested by compilation only.
 
 Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
-Changes from V5
- - Refresh for staging-next of 16/07/2014
+Cahnges from V4:
+ - Fix identation issue found on V4
 
- drivers/staging/vt6656/main_usb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/vt6656/main_usb.c | 44 ++++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index a3057da..c595a15 100644
+index 553a8e9..cc0281a 100644
 --- a/drivers/staging/vt6656/main_usb.c
 +++ b/drivers/staging/vt6656/main_usb.c
-@@ -534,7 +534,8 @@ static void usb_device_reset(struct vnt_private *pDevice)
+@@ -382,38 +382,40 @@ static int device_init_registers(struct vnt_private *pDevice)
+ 	/* load vt3266 calibration parameters in EEPROM */
+ 	if (pDevice->byRFType = RF_VT3226D0) {
+ 		if ((pDevice->abyEEPROM[EEP_OFS_MAJOR_VER] = 0x1) &&
+-			(pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
++		    (pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
  
- 	status = usb_reset_device(pDevice->usb);
- 	if (status)
--            printk("usb_device_reset fail status=%d\n",status);
-+		dev_warn(&pDevice->usb->dev,
-+			 "usb_device_reset fail status=%d\n", status);
- 	return ;
- }
- 
+ 			byCalibTXIQ = pDevice->abyEEPROM[EEP_OFS_CALIB_TX_IQ];
+ 			byCalibTXDC = pDevice->abyEEPROM[EEP_OFS_CALIB_TX_DC];
+ 			byCalibRXIQ = pDevice->abyEEPROM[EEP_OFS_CALIB_RX_IQ];
+ 			if (byCalibTXIQ || byCalibTXDC || byCalibRXIQ) {
+-			/* CR255, enable TX/RX IQ and DC compensation mode */
++				/* CR255, enable TX/RX IQ and
++				   DC compensation mode */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xff,
+-					0x03);
+-			/* CR251, TX I/Q Imbalance Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xff,
++						   0x03);
++				/* CR251, TX I/Q Imbalance Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfb,
+-					byCalibTXIQ);
+-			/* CR252, TX DC-Offset Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xfb,
++						   byCalibTXIQ);
++				/* CR252, TX DC-Offset Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfC,
+-					byCalibTXDC);
+-			/* CR253, RX I/Q Imbalance Calibration */
++						   MESSAGE_REQUEST_BBREG,
++						   0xfC,
++						   byCalibTXDC);
++				/* CR253, RX I/Q Imbalance Calibration */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xfd,
+-					byCalibRXIQ);
++						   MESSAGE_REQUEST_BBREG,
++						   0xfd,
++						   byCalibRXIQ);
+ 			} else {
+-			/* CR255, turn off BB Calibration compensation */
++				/* CR255, turn off
++				   BB Calibration compensation */
+ 				vnt_control_out_u8(pDevice,
+-					MESSAGE_REQUEST_BBREG,
+-					0xff,
+-					0x0);
++						   MESSAGE_REQUEST_BBREG,
++						   0xff,
++						   0x0);
+ 			}
+ 		}
+ 	}
 -- 
 1.9.3
 
