@@ -1,95 +1,44 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 14 Jul 2014 19:15:32 +0000
-Subject: [PATCH V4 5/6] staging: vt6556: Cleanup indentation on statements
-Message-Id: <1405365333-17170-5-git-send-email-peter.senna@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Tue, 15 Jul 2014 15:07:38 +0000
+Subject: Re: [PATCH V4 5/6] staging: vt6556: Cleanup indentation on statements
+Message-Id: <20140715150738.GB19185@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
+ <1405365333-17170-5-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1405365333-17170-5-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>
+To: Peter Senna Tschudin <peter.senna@gmail.com>
+Cc: forest@alittletooquiet.net, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Use tabs instead of spaces in a set of statements and fix lines
-over 80 chars. Reported by checkpatch.
+On Mon, Jul 14, 2014 at 09:15:32PM +0200, Peter Senna Tschudin wrote:
+> Use tabs instead of spaces in a set of statements and fix lines
+> over 80 chars. Reported by checkpatch.
+> 
+> Tested by compilation only.
+> 
+> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+> ---
+> Cahnges from V3:
+>  - Splitted the patches by change type
+> 
+>  drivers/staging/vt6656/main_usb.c | 44 ++++++++++++++++++++-------------------
+>  1 file changed, 23 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+> index 553a8e9..cc0281a 100644
+> --- a/drivers/staging/vt6656/main_usb.c
+> +++ b/drivers/staging/vt6656/main_usb.c
+> @@ -382,38 +382,40 @@ static int device_init_registers(struct vnt_private *pDevice)
+>  	/* load vt3266 calibration parameters in EEPROM */
+>  	if (pDevice->byRFType = RF_VT3226D0) {
+>  		if ((pDevice->abyEEPROM[EEP_OFS_MAJOR_VER] = 0x1) &&
+> -			(pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
+> +		   (pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
 
-Tested by compilation only.
+Shouldn't this be indented by 1 more space?
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-Cahnges from V3:
- - Splitted the patches by change type
+thanks,
 
- drivers/staging/vt6656/main_usb.c | 44 ++++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index 553a8e9..cc0281a 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -382,38 +382,40 @@ static int device_init_registers(struct vnt_private *pDevice)
- 	/* load vt3266 calibration parameters in EEPROM */
- 	if (pDevice->byRFType = RF_VT3226D0) {
- 		if ((pDevice->abyEEPROM[EEP_OFS_MAJOR_VER] = 0x1) &&
--			(pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
-+		   (pDevice->abyEEPROM[EEP_OFS_MINOR_VER] >= 0x4)) {
- 
- 			byCalibTXIQ = pDevice->abyEEPROM[EEP_OFS_CALIB_TX_IQ];
- 			byCalibTXDC = pDevice->abyEEPROM[EEP_OFS_CALIB_TX_DC];
- 			byCalibRXIQ = pDevice->abyEEPROM[EEP_OFS_CALIB_RX_IQ];
- 			if (byCalibTXIQ || byCalibTXDC || byCalibRXIQ) {
--			/* CR255, enable TX/RX IQ and DC compensation mode */
-+				/* CR255, enable TX/RX IQ and
-+				   DC compensation mode */
- 				vnt_control_out_u8(pDevice,
--					MESSAGE_REQUEST_BBREG,
--					0xff,
--					0x03);
--			/* CR251, TX I/Q Imbalance Calibration */
-+						   MESSAGE_REQUEST_BBREG,
-+						   0xff,
-+						   0x03);
-+				/* CR251, TX I/Q Imbalance Calibration */
- 				vnt_control_out_u8(pDevice,
--					MESSAGE_REQUEST_BBREG,
--					0xfb,
--					byCalibTXIQ);
--			/* CR252, TX DC-Offset Calibration */
-+						   MESSAGE_REQUEST_BBREG,
-+						   0xfb,
-+						   byCalibTXIQ);
-+				/* CR252, TX DC-Offset Calibration */
- 				vnt_control_out_u8(pDevice,
--					MESSAGE_REQUEST_BBREG,
--					0xfC,
--					byCalibTXDC);
--			/* CR253, RX I/Q Imbalance Calibration */
-+						   MESSAGE_REQUEST_BBREG,
-+						   0xfC,
-+						   byCalibTXDC);
-+				/* CR253, RX I/Q Imbalance Calibration */
- 				vnt_control_out_u8(pDevice,
--					MESSAGE_REQUEST_BBREG,
--					0xfd,
--					byCalibRXIQ);
-+						   MESSAGE_REQUEST_BBREG,
-+						   0xfd,
-+						   byCalibRXIQ);
- 			} else {
--			/* CR255, turn off BB Calibration compensation */
-+				/* CR255, turn off
-+				   BB Calibration compensation */
- 				vnt_control_out_u8(pDevice,
--					MESSAGE_REQUEST_BBREG,
--					0xff,
--					0x0);
-+						   MESSAGE_REQUEST_BBREG,
-+						   0xff,
-+						   0x0);
- 			}
- 		}
- 	}
--- 
-1.9.3
-
+greg k-h
