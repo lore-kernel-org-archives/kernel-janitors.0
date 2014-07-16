@@ -1,64 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 04 Jun 2014 09:07:54 +0000
-Subject: [PATCH 4/10] staging: tidspbridge: use safer test on the result of find_first_zero_bit
-Message-Id: <1401872880-23685-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 16 Jul 2014 06:37:04 +0000
+Subject: [patch] ALSA: compress: fix an integer overflow check
+Message-Id: <20140716063704.GA26371@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1401872880-23685-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Omar Ramirez Luna <omar.ramirez@copitl.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+I previously added an integer overflow check here but looking at it now,
+it's still buggy.
 
-Find_first_zero_bit considers BITS_PER_LONG bits at a time, and thus may
-return a larger number than the maximum position argument if that position
-is not a multiple of BITS_PER_LONG.
+The bug happens in snd_compr_allocate_buffer().  We multiply
+".fragments" and ".fragment_size" and that doesn't overflow but then we
+save it in an unsigned int so it truncates the high bits away and we
+allocate a smaller than expected size.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e1,e2,e3;
-statement S1,S2;
-@@
-
-e1 = find_first_zero_bit(e2,e3)
-...
-if (e1 
-- =
-+ >  e3)
-S1 else S2
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Fixes: b35cc8225845 ('ALSA: compress_core: integer overflow in snd_compr_allocate_buffer()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/tidspbridge/rmgr/node.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The other option would be to declare buffer_size as size_t instead of
+an unsigned int.  This feels like a safer fix though.
 
-diff -u -p a/drivers/staging/tidspbridge/rmgr/node.c b/drivers/staging/tidspbridge/rmgr/node.c
---- a/drivers/staging/tidspbridge/rmgr/node.c
-+++ b/drivers/staging/tidspbridge/rmgr/node.c
-@@ -935,7 +935,7 @@ int node_connect(struct node_object *nod
- 				 node2_type = NODE_DAISSOCKET)) {
- 		/* Find available pipe */
- 		pipe_id = find_first_zero_bit(hnode_mgr->pipe_map, MAXPIPES);
--		if (pipe_id = MAXPIPES) {
-+		if (pipe_id >= MAXPIPES) {
- 			status = -ECONNREFUSED;
- 			goto out_unlock;
- 		}
-@@ -1008,7 +1008,7 @@ int node_connect(struct node_object *nod
- 			status = -EINVAL;
- 			goto out_unlock;
- 		}
--		if (chnl_id = CHNL_MAXCHANNELS) {
-+		if (chnl_id >= CHNL_MAXCHANNELS) {
- 			status = -ECONNREFUSED;
- 			goto out_unlock;
- 		}
-
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index 7403f34..89028fa 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -491,7 +491,7 @@ static int snd_compress_check_input(struct snd_compr_params *params)
+ {
+ 	/* first let's check the buffer parameter's */
+ 	if (params->buffer.fragment_size = 0 ||
+-			params->buffer.fragments > SIZE_MAX / params->buffer.fragment_size)
++	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
+ 		return -EINVAL;
+ 
+ 	/* now codec parameters */
