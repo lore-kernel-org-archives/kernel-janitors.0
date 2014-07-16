@@ -1,34 +1,100 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 09 Jul 2014 09:38:08 +0000
-Subject: Re: [PATCH 1/2] staging: silicom: checkpatch fixes
-Message-Id: <20140709093808.GU25880@mwanda>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 16 Jul 2014 16:13:43 +0000
+Subject: [PATCH V5 4/6] staging: vt6556: Remove typedefs
+Message-Id: <1405527223-8959-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1972083.WZLDx2N35Z@mayhem>
-In-Reply-To: <1972083.WZLDx2N35Z@mayhem>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Davide Gianforte <davide@gengisdave.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-The patch does too many things, break it up into one type of fix per
-patch.
+This patch removes uneeded typedefs reported by chackpatch and removes
+one enum that is not in use. As checkpatch complained about the typedef
+and the enum is not being used, this patch removes both typedef and enum.
+The removed enum from card.h:
 
-On Tue, Jul 01, 2014 at 02:24:36PM +0200, Davide Gianforte wrote:
-> Chechpatch.pl cleanup
-> 
-> There are still some warnings, most of them are lines over 80 chars
-> (mainly a semicolon or closing parenthesis).
-> 
-> Where not specified, I defaulted printk with no log level into pr_debug
+typedef enum _CARD_PHY_TYPE {
+    PHY_TYPE_AUTO = 0,
+    PHY_TYPE_11B,
+    PHY_TYPE_11G,
+    PHY_TYPE_11A
+} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
 
-No.  You can't just use pr_debug for everything.  Also some of them are
-not whole line prints so the pr_debug() will put extra info in the
-middle of the lines.
+The following typedefs were removed, but enums were kept at device.h:
 
-Write a hello_world.ko kernel module and play with the printk until you
-understand what I mean.
+ typedef enum __device_msg_level
+ typedef enum __DEVICE_NDIS_STATUS
 
-regards,
-dan carpenter
+Tested by compilation only.
+
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+---
+Cahnges from V4:
+ - Updated commit message
+
+ drivers/staging/vt6656/card.h   |  7 -------
+ drivers/staging/vt6656/device.h | 17 ++++++++---------
+ 2 files changed, 8 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/staging/vt6656/card.h b/drivers/staging/vt6656/card.h
+index 80fcd53..03fc167 100644
+--- a/drivers/staging/vt6656/card.h
++++ b/drivers/staging/vt6656/card.h
+@@ -32,13 +32,6 @@
+ 
+ /* init card type */
+ 
+-typedef enum _CARD_PHY_TYPE {
+-    PHY_TYPE_AUTO = 0,
+-    PHY_TYPE_11B,
+-    PHY_TYPE_11G,
+-    PHY_TYPE_11A
+-} CARD_PHY_TYPE, *PCARD_PHY_TYPE;
+-
+ #define CB_MAX_CHANNEL_24G	14
+ #define CB_MAX_CHANNEL_5G	42 /* add channel9(5045MHz), 41=>42 */
+ #define CB_MAX_CHANNEL		(CB_MAX_CHANNEL_24G + CB_MAX_CHANNEL_5G)
+diff --git a/drivers/staging/vt6656/device.h b/drivers/staging/vt6656/device.h
+index 50a6749..e3acf2f 100644
+--- a/drivers/staging/vt6656/device.h
++++ b/drivers/staging/vt6656/device.h
+@@ -187,13 +187,13 @@
+ 
+ #define DBG_PRT(l, p, args...) { if (l <= msglevel) printk(p, ##args); }
+ 
+-typedef enum __device_msg_level {
++enum {
+ 	MSG_LEVEL_ERR = 0,            /* Errors causing abnormal operation */
+ 	MSG_LEVEL_NOTICE = 1,         /* Errors needing user notification */
+ 	MSG_LEVEL_INFO = 2,           /* Normal message. */
+ 	MSG_LEVEL_VERBOSE = 3,        /* Will report all trival errors. */
+ 	MSG_LEVEL_DEBUG = 4           /* Only for debug purpose. */
+-} DEVICE_MSG_LEVEL, *PDEVICE_MSG_LEVEL;
++};
+ 
+ #define DEVICE_INIT_COLD	0x0 /* cold init */
+ #define DEVICE_INIT_RESET	0x1 /* reset init or Dx to D0 power remain */
+@@ -268,13 +268,12 @@ struct vnt_interrupt_buffer {
+ 
+ /*++ NDIS related */
+ 
+-typedef enum __DEVICE_NDIS_STATUS {
+-    STATUS_SUCCESS = 0,
+-    STATUS_FAILURE,
+-    STATUS_RESOURCES,
+-    STATUS_PENDING,
+-} DEVICE_NDIS_STATUS, *PDEVICE_NDIS_STATUS;
+-
++enum {
++	STATUS_SUCCESS = 0,
++	STATUS_FAILURE,
++	STATUS_RESOURCES,
++	STATUS_PENDING,
++};
+ 
+ /* flags for options */
+ #define     DEVICE_FLAGS_UNPLUG          0x00000001UL
+-- 
+1.9.3
 
