@@ -1,38 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 16 Jul 2014 06:37:04 +0000
-Subject: [patch] ALSA: compress: fix an integer overflow check
-Message-Id: <20140716063704.GA26371@mwanda>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Wed, 16 Jul 2014 14:34:13 +0000
+Subject: Re: [patch] ALSA: compress: fix an integer overflow check
+Message-Id: <s5hfvi1pe3e.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140716063704.GA26371@mwanda>
+In-Reply-To: <20140716063704.GA26371@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-I previously added an integer overflow check here but looking at it now,
-it's still buggy.
+At Wed, 16 Jul 2014 09:37:04 +0300,
+Dan Carpenter wrote:
+> 
+> I previously added an integer overflow check here but looking at it now,
+> it's still buggy.
+> 
+> The bug happens in snd_compr_allocate_buffer().  We multiply
+> ".fragments" and ".fragment_size" and that doesn't overflow but then we
+> save it in an unsigned int so it truncates the high bits away and we
+> allocate a smaller than expected size.
+> 
+> Fixes: b35cc8225845 ('ALSA: compress_core: integer overflow in snd_compr_allocate_buffer()')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> The other option would be to declare buffer_size as size_t instead of
+> an unsigned int.  This feels like a safer fix though.
 
-The bug happens in snd_compr_allocate_buffer().  We multiply
-".fragments" and ".fragment_size" and that doesn't overflow but then we
-save it in an unsigned int so it truncates the high bits away and we
-allocate a smaller than expected size.
+Agreed, I took the patch now as is.  Thanks.
 
-Fixes: b35cc8225845 ('ALSA: compress_core: integer overflow in snd_compr_allocate_buffer()')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-The other option would be to declare buffer_size as size_t instead of
-an unsigned int.  This feels like a safer fix though.
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index 7403f34..89028fa 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -491,7 +491,7 @@ static int snd_compress_check_input(struct snd_compr_params *params)
- {
- 	/* first let's check the buffer parameter's */
- 	if (params->buffer.fragment_size = 0 ||
--			params->buffer.fragments > SIZE_MAX / params->buffer.fragment_size)
-+	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
- 		return -EINVAL;
- 
- 	/* now codec parameters */
+Takashi
+
+> 
+> diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+> index 7403f34..89028fa 100644
+> --- a/sound/core/compress_offload.c
+> +++ b/sound/core/compress_offload.c
+> @@ -491,7 +491,7 @@ static int snd_compress_check_input(struct snd_compr_params *params)
+>  {
+>  	/* first let's check the buffer parameter's */
+>  	if (params->buffer.fragment_size = 0 ||
+> -			params->buffer.fragments > SIZE_MAX / params->buffer.fragment_size)
+> +	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
+>  		return -EINVAL;
+>  
+>  	/* now codec parameters */
+> 
