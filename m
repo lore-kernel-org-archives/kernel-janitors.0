@@ -1,41 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 29 Jul 2014 15:16:46 +0000
-Subject: [PATCH 4/9] reiserfs: use correct structure type name in sizeof
-Message-Id: <1406647011-8543-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Peter Senna Tschudin <peter.senna@gmail.com>
+Date: Wed, 16 Jul 2014 16:08:02 +0000
+Subject: [PATCH V6 6/6] staging: vt6556: Replace printk by dev_warn
+Message-Id: <1405526882-7904-1-git-send-email-peter.senna@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: reiserfs-devel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, linux-kernel@vger.kernel.org
+To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Peter Senna Tschudin <peter.senna@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+This patch fixes a checkpatch warning by replacing printk
+by dev_warn. Tested by compilation only.
 
-Correct typo in the name of the type given to sizeof.  Because it is the
-size of a pointer that is wanted, the typo has no impact on compilation or
-execution.
-
-This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
-semantic patch used can be found in message 0 of this patch series.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
 ---
- fs/reiserfs/resize.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes from V5
+ - Refresh for staging-next of 16/07/2014
 
-diff --git a/fs/reiserfs/resize.c b/fs/reiserfs/resize.c
-index 6052d32..e69051b 100644
---- a/fs/reiserfs/resize.c
-+++ b/fs/reiserfs/resize.c
-@@ -99,7 +99,7 @@ int reiserfs_resize(struct super_block *s, unsigned long block_count_new)
- 		 */
- 		copy_size = bmap_nr_new < bmap_nr ? bmap_nr_new : bmap_nr;
- 		copy_size -		    copy_size * sizeof(struct reiserfs_list_bitmap_node *);
-+		    copy_size * sizeof(struct reiserfs_bitmap_node *);
- 		for (i = 0; i < JOURNAL_NUM_BITMAPS; i++) {
- 			struct reiserfs_bitmap_node **node_tmp;
- 			jb = SB_JOURNAL(s)->j_list_bitmap + i;
+ drivers/staging/vt6656/main_usb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index a3057da..c595a15 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -534,7 +534,8 @@ static void usb_device_reset(struct vnt_private *pDevice)
+ 
+ 	status = usb_reset_device(pDevice->usb);
+ 	if (status)
+-            printk("usb_device_reset fail status=%d\n",status);
++		dev_warn(&pDevice->usb->dev,
++			 "usb_device_reset fail status=%d\n", status);
+ 	return ;
+ }
+ 
+-- 
+1.9.3
 
