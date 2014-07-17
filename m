@@ -1,24 +1,35 @@
-From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Date: Thu, 17 Jul 2014 13:58:35 +0000
+From: Markos Chandras <Markos.Chandras@imgtec.com>
+Date: Thu, 17 Jul 2014 14:12:26 +0000
 Subject: Re: [PATCH 2/3] arch/mips/net/bpf_jit.c: fix failure check
-Message-Id: <CANZNk81DOOxYYFSKZMCh=uABd3ONB8wToTFc3_L_9TfyQDS1yQ@mail.gmail.com>
+Message-Id: <53C7D9CA.20405@imgtec.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405603655-12571-1-git-send-email-andrey.krieger.utkin@gmail.com>
-        <53C7D52E.5020205@imgtec.com>
-In-Reply-To: <53C7D52E.5020205@imgtec.com>
+References: <1405603655-12571-1-git-send-email-andrey.krieger.utkin@gmail.com>  <53C7D52E.5020205@imgtec.com> <CANZNk81DOOxYYFSKZMCh=uABd3ONB8wToTFc3_L_9TfyQDS1yQ@mail.gmail.com>
+In-Reply-To: <CANZNk81DOOxYYFSKZMCh=uABd3ONB8wToTFc3_L_9TfyQDS1yQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Markos Chandras <Markos.Chandras@imgtec.com>
+To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org, dborkman@redhat.com, ralf@linux-mips.org
 
-2014-07-17 16:52 GMT+03:00 Markos Chandras <Markos.Chandras@imgtec.com>:
-> Thanks for the patch. I would personally prefer to use a new signed int
-> variable, but I am fine either way.
+On 07/17/2014 02:58 PM, Andrey Utkin wrote:
+> 2014-07-17 16:52 GMT+03:00 Markos Chandras <Markos.Chandras@imgtec.com>:
+>> Thanks for the patch. I would personally prefer to use a new signed int
+>> variable, but I am fine either way.
+> 
+> If that's not a problem for performance etc., then i'll resubmit with
+> new temporary signed variable, because i believe it would be simpler
+> to comprehend.
+> 
+Hi Andrey,
 
-If that's not a problem for performance etc., then i'll resubmit with
-new temporary signed variable, because i believe it would be simpler
-to comprehend.
+Well, this function is executed during the filter compilation so it's
+only executed once (or maybe a few times) per filter (assuming the
+filter uses the SKF_AD_PKTTYPE opcode at all) so performance is not
+really critical at this point. The performance become a critical factor
+for the execution of the jitted filter. But yes, avoiding passing the
+argument and doing the pointer operation later on could save some
+instructions which is both good for compilation performance and also
+makes the function simpler as you said.
 
 -- 
-Andrey Utkin
+markos
