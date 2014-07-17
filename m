@@ -1,56 +1,46 @@
-From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Date: Thu, 17 Jul 2014 12:13:23 +0000
-Subject: [PATCH 1/3] drivers/ata/pata_ep93xx.c: use signed int type for result of platform_get_irq()
-Message-Id: <1405599203-11113-1-git-send-email-andrey.krieger.utkin@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+Date: Thu, 17 Jul 2014 12:36:47 +0000
+Subject: Re: [PATCH 1/3] drivers/ata/pata_ep93xx.c: use signed int type for result of platform_get_irq()
+Message-Id: <20140717123647.GA21390@htj.dyndns.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1405599203-11113-1-git-send-email-andrey.krieger.utkin@gmail.com>
+In-Reply-To: <1405599203-11113-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dcb314@hotmail.com, tj@kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>
+To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dcb314@hotmail.com
 
-[linux-3.16-rc5/drivers/ata/pata_ep93xx.c:929]: (style) Checking if unsigned
-variable 'irq' is less than zero.
+On Thu, Jul 17, 2014 at 03:13:23PM +0300, Andrey Utkin wrote:
+> [linux-3.16-rc5/drivers/ata/pata_ep93xx.c:929]: (style) Checking if unsig=
+ned
+> variable 'irq' is less than zero.
+>=20
+> Source code is
+>=20
+>     irq =3D platform_get_irq(pdev, 0);
+>     if (irq < 0) {
+>=20
+> but
+>=20
+>     unsigned int irq;
+>=20
+> $ fgrep platform_get_irq `find . -name \*.h -print`
+> ./include/linux/platform_device.h:extern int platform_get_irq(struct
+> platform_device *, unsigned int);
+>=20
+> Now using "int" type instead of "unsigned int" for "irq" variable.
+>=20
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80401
+> Reported-by: David Binderman <dcb314@hotmail.com>
+> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-Source code is
+Applied to libata/for-3.16-fixes.
 
-    irq =3D platform_get_irq(pdev, 0);
-    if (irq < 0) {
+Thanks.
 
-but
-
-    unsigned int irq;
-
-$ fgrep platform_get_irq `find . -name \*.h -print`
-./include/linux/platform_device.h:extern int platform_get_irq(struct
-platform_device *, unsigned int);
-
-Now using "int" type instead of "unsigned int" for "irq" variable.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80401
-Reported-by: David Binderman <dcb314@hotmail.com>
-Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
----
- drivers/ata/pata_ep93xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/ata/pata_ep93xx.c b/drivers/ata/pata_ep93xx.c
-index 6ad5c07..4d37c54 100644
---- a/drivers/ata/pata_ep93xx.c
-+++ b/drivers/ata/pata_ep93xx.c
-@@ -915,7 +915,7 @@ static int ep93xx_pata_probe(struct platform_device *pd=
-ev)
- 	struct ep93xx_pata_data *drv_data;
- 	struct ata_host *host;
- 	struct ata_port *ap;
--	unsigned int irq;
-+	int irq;
- 	struct resource *mem_res;
- 	void __iomem *ide_base;
- 	int err;
 --=20
-1.8.5.5
-
+tejun
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
 in
