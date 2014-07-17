@@ -1,71 +1,62 @@
 From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Date: Thu, 17 Jul 2014 13:28:25 +0000
-Subject: [PATCH 3/3] arch/sh/kernel/ptrace_{32,64}.c: drop negativity checks for unsigned long addr
-Message-Id: <1405603705-12625-1-git-send-email-andrey.krieger.utkin@gmail.com>
+Date: Thu, 17 Jul 2014 12:15:24 +0000
+Subject: [PATCH 3/3] drivers/crypto/omap-{des,aes}.c: fix sanity checks
+Message-Id: <1405599324-11215-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-sh@vger.kernel.org
-Cc: eparis@redhat.com, Andrey Utkin <andrey.krieger.utkin@gmail.com>
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc: dcb314@hotmail.com, davem@davemloft.net, herbert@gondor.apana.org.au, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80381
+Unsigned variable "total" was tested for negativity after subtraction
+operation. 2 instances.
+Replaced that with the test of minuend being greater than subtrahend
+before the subtraction.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80421
 Reported-by: David Binderman <dcb314@hotmail.com>
 Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 ---
- arch/sh/kernel/ptrace_32.c | 4 ++--
- arch/sh/kernel/ptrace_64.c | 4 ++--
+ drivers/crypto/omap-aes.c | 4 ++--
+ drivers/crypto/omap-des.c | 4 ++--
  2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/sh/kernel/ptrace_32.c b/arch/sh/kernel/ptrace_32.c
-index c1a6b89..78effcb 100644
---- a/arch/sh/kernel/ptrace_32.c
-+++ b/arch/sh/kernel/ptrace_32.c
-@@ -379,7 +379,7 @@ long arch_ptrace(struct task_struct *child, long reques=
-t,
- 		unsigned long tmp;
+diff --git a/drivers/crypto/omap-aes.c b/drivers/crypto/omap-aes.c
+index cb98fa5..413ed78 100644
+--- a/drivers/crypto/omap-aes.c
++++ b/drivers/crypto/omap-aes.c
+@@ -1038,10 +1038,10 @@ static irqreturn_t omap_aes_irq(int irq, void *dev_=
+id)
+ 			}
+ 		}
 =20
- 		ret =3D -EIO;
--		if ((addr & 3) || addr < 0 ||
-+		if ((addr & 3) ||
- 		    addr > sizeof(struct user) - 3)
- 			break;
++		BUG_ON(dd->total < AES_BLOCK_SIZE);
++
+ 		dd->total -=3D AES_BLOCK_SIZE;
 =20
-@@ -419,7 +419,7 @@ long arch_ptrace(struct task_struct *child, long reques=
-t,
+-		BUG_ON(dd->total < 0);
+-
+ 		/* Clear IRQ status */
+ 		status &=3D ~AES_REG_IRQ_DATA_OUT;
+ 		omap_aes_write(dd, AES_REG_IRQ_STATUS(dd), status);
+diff --git a/drivers/crypto/omap-des.c b/drivers/crypto/omap-des.c
+index b8bc84b..93aa213 100644
+--- a/drivers/crypto/omap-des.c
++++ b/drivers/crypto/omap-des.c
+@@ -965,10 +965,10 @@ static irqreturn_t omap_des_irq(int irq, void *dev_id)
+ 			}
+ 		}
 =20
- 	case PTRACE_POKEUSR: /* write the word at location addr in the USER area =
-*/
- 		ret =3D -EIO;
--		if ((addr & 3) || addr < 0 ||
-+		if ((addr & 3) ||
- 		    addr > sizeof(struct user) - 3)
- 			break;
++		BUG_ON(dd->total < DES_BLOCK_SIZE);
++
+ 		dd->total -=3D DES_BLOCK_SIZE;
 =20
-diff --git a/arch/sh/kernel/ptrace_64.c b/arch/sh/kernel/ptrace_64.c
-index 5cea973..138b2b1 100644
---- a/arch/sh/kernel/ptrace_64.c
-+++ b/arch/sh/kernel/ptrace_64.c
-@@ -395,7 +395,7 @@ long arch_ptrace(struct task_struct *child, long reques=
-t,
- 		unsigned long tmp;
-=20
- 		ret =3D -EIO;
--		if ((addr & 3) || addr < 0)
-+		if (addr & 3)
- 			break;
-=20
- 		if (addr < sizeof(struct pt_regs))
-@@ -423,7 +423,7 @@ long arch_ptrace(struct task_struct *child, long reques=
-t,
-                    this could crash the kernel or result in a security
-                    loophole. */
- 		ret =3D -EIO;
--		if ((addr & 3) || addr < 0)
-+		if (addr & 3)
- 			break;
-=20
- 		if (addr < sizeof(struct pt_regs)) {
+-		BUG_ON(dd->total < 0);
+-
+ 		/* Clear IRQ status */
+ 		status &=3D ~DES_REG_IRQ_DATA_OUT;
+ 		omap_des_write(dd, DES_REG_IRQ_STATUS(dd), status);
 --=20
 1.8.5.5
 
