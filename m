@@ -1,35 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 22 Jul 2014 09:14:41 +0000
-Subject: Re: [PATCH 3/5] net/netfilter/ipvs/ip_vs_ctl.c: drop argument range check just before the check for 
-Message-Id: <20140722091441.GN18338@mwanda>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Thu, 17 Jul 2014 16:29:39 +0000
+Subject: [PATCH 4/4] drivers/pinctrl/qcom/pinctrl-msm.c: drop negativity check on unsigned value
+Message-Id: <1405614579-4652-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405697638-23767-1-git-send-email-andrey.krieger.utkin@gmail.com>
- <alpine.LFD.2.11.1407182339160.2273@ja.home.ssi.bg>
- <CANZNk83dJCXAWrQ+i5rh=sdUuiiD5ZhzDua-rjJpBZCzzNGDJA@mail.gmail.com>
- <alpine.LFD.2.11.1407212253100.2358@ja.home.ssi.bg>
- <20140722074214.GL25880@mwanda>
- <alpine.LFD.2.11.1407221136420.1949@ja.home.ssi.bg>
-In-Reply-To: <alpine.LFD.2.11.1407221136420.1949@ja.home.ssi.bg>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julian Anastasov <ja@ssi.bg>
-Cc: Andrey Utkin <andrey.krieger.utkin@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, coreteam@netfilter.org, netfilter-devel@vger.kernel.org, lvs-devel@vger.kernel.org, netdev@vger.kernel.org, dcb314@hotmail.com, David Miller <davem@davemloft.net>, kadlec@blackhole.kfki.hu, Patrick McHardy <kaber@trash.net>, pablo@netfilter.org, Simon Horman <horms@verge.net.au>, wensong@linux-vs.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: sboyd@codeaurora.org, bjorn.andersson@sonymobile.com, linus.walleij@linaro.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Tue, Jul 22, 2014 at 11:52:02AM +0300, Julian Anastasov wrote:
-> > > -	if (copylen > 128)
-> > > +	if (*len < (int) copylen || *len < 0) {
-> > > +		pr_err("get_ctl: len %d < %u\n", *len, copylen);
-> > 
-> > Don't let users flood dmesg.  Just return an error.  (This can be
-> > triggered by non-root as well).
-> 
-> 	For now both set and get are privileged operations,
-> so we can keep it, it can catch if something wrong happens
-> with the structure sizes.
+[linux-3.16-rc5/drivers/pinctrl/pinctrl-msm.c:145]: (style) Checking if
+unsigned variable 'mux_bit' is less than zero.
 
-If you have namespaces enabled then it's not *that* privaleged.
+    if (WARN_ON(g->mux_bit < 0))
+        return -EINVAL;
 
-regards,
-dan carpenter
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80491
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinc=
+trl-msm.c
+index 90d383d..2738108 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -142,9 +142,6 @@ static int msm_pinmux_enable(struct pinctrl_dev *pctlde=
+v,
+=20
+ 	g =3D &pctrl->soc->groups[group];
+=20
+-	if (WARN_ON(g->mux_bit < 0))
+-		return -EINVAL;
+-
+ 	for (i =3D 0; i < g->nfuncs; i++) {
+ 		if (g->funcs[i] =3D function)
+ 			break;
+--=20
+1.8.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
