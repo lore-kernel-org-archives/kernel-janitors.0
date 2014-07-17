@@ -1,43 +1,60 @@
-From: Christophe RICARD <christophe.ricard@gmail.com>
-Date: Fri, 25 Jul 2014 09:13:14 +0000
-Subject: Re: [PATCH] NFC: st21nfca: Remove double assignment of .owner in struct device_driver
-Message-Id: <20140725111314.0578f122@toffy-MacBookPro>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Thu, 17 Jul 2014 14:22:38 +0000
+Subject: [PATCH] arch/mips/net/bpf_jit.c: fix failure check
+Message-Id: <1405606958-14383-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1401718860-10901-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1401718860-10901-1-git-send-email-emilgoode@gmail.com>
+References: <1405603655-12571-1-git-send-email-andrey.krieger.utkin@gmail.com>
+In-Reply-To: <1405603655-12571-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, linux-nfc@lists.01.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mips@linux-mips.org
+Cc: dborkman@redhat.com, markos.chandras@imgtec.com, ralf@linux-mips.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Mon,  2 Jun 2014 16:21:00 +0200
-Emil Goode <emilgoode@gmail.com> wrote:
+static int pkt_type_offset(void) returned -1 in case of failure, and actual
+(positive) offset value in case of success. In the only instance of its usa=
+ge,
+the result was saved to local "unsigned int off" variable, which is used in=
+ a
+lot of places in the same (large) function, so changing its type could cause
+many warnings. So new signed int variable was added.
 
-> The .owner member of struct device_driver is assigned THIS_MODULE
-> twice.
-> 
-> Introduced by:
-> 
-> commit c44cb2edd01ca31471d9385f0895891b006ab904
-> ("NFC: dts: st21nfca: Add device-tree (Open Firmware) support to
-> st21nfca")
-> 
-> Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> ---
->  drivers/nfc/st21nfca/i2c.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/nfc/st21nfca/i2c.c b/drivers/nfc/st21nfca/i2c.c
-> index 3f954ed..95942ca 100644
-> --- a/drivers/nfc/st21nfca/i2c.c
-> +++ b/drivers/nfc/st21nfca/i2c.c
-> @@ -710,7 +710,6 @@ static struct i2c_driver st21nfca_hci_i2c_driver
-> = { .driver = {
->  		.owner = THIS_MODULE,
->  		.name = ST21NFCA_HCI_I2C_DRIVER_NAME,
-> -		.owner = THIS_MODULE,
->  		.of_match_table > of_match_ptr(of_st21nfca_i2c_match), },
->  	.probe = st21nfca_hci_i2c_probe,
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80371
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ arch/mips/net/bpf_jit.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Acked-by: Christophe RICARD <christophe-h.ricard@st.com>
+diff --git a/arch/mips/net/bpf_jit.c b/arch/mips/net/bpf_jit.c
+index b87390a..918b341 100644
+--- a/arch/mips/net/bpf_jit.c
++++ b/arch/mips/net/bpf_jit.c
+@@ -793,6 +793,7 @@ static int build_body(struct jit_ctx *ctx)
+ 	const struct sock_filter *inst;
+ 	unsigned int i, off, load_order, condt;
+ 	u32 k, b_off __maybe_unused;
++	int tmp;
+=20
+ 	for (i =3D 0; i < prog->len; i++) {
+ 		u16 code;
+@@ -1332,9 +1333,9 @@ jmp_cmp:
+ 		case BPF_ANC | SKF_AD_PKTTYPE:
+ 			ctx->flags |=3D SEEN_SKB;
+=20
+-			off =3D pkt_type_offset();
++			tmp =3D off =3D pkt_type_offset();
+=20
+-			if (off < 0)
++			if (tmp < 0)
+ 				return -1;
+ 			emit_load_byte(r_tmp, r_skb, off, ctx);
+ 			/* Keep only the last 3 bits */
+--=20
+1.8.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
