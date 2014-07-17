@@ -1,32 +1,40 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Date: Fri, 04 Jul 2014 12:23:06 +0000
-Subject: Re: [patch] [ARM] pxa: remove duplicate SM_SCLK_SM_SCLK define
-Message-Id: <CAN1soZwjwD0LGjt65K-taMBhW_148FPeeRCMU=5hx48niSw_Uw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Jul 2014 07:44:47 +0000
+Subject: [patch] RDMA/amso1100: integer overflow in c2_alloc_cq_buf()
+Message-Id: <20140717074447.GA477@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140609151343.GH9600@mwanda>
-In-Reply-To: <20140609151343.GH9600@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Tom Tucker <tom-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>
+Cc: Steve Wise <swise-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Mon, Jun 9, 2014 at 11:13 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The SM_SCLK_SM_SCLK is define is cut and pasted twice.  I have removed
-> the second define.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/arch/arm/mach-mmp/include/mach/mfp-pxa910.h b/arch/arm/mach-mmp/include/mach/mfp-pxa910.h
-> index fbd7ee8..8c78f2b1 100644
-> --- a/arch/arm/mach-mmp/include/mach/mfp-pxa910.h
-> +++ b/arch/arm/mach-mmp/include/mach/mfp-pxa910.h
-> @@ -23,7 +23,6 @@
->  #define SM_nCS0_nCS0           MFP_CFG(SM_nCS0, AF0)
->  #define SM_ADV_SM_ADV          MFP_CFG(SM_ADV, AF0)
->  #define SM_SCLK_SM_SCLK                MFP_CFG(SM_SCLK, AF0)
-> -#define SM_SCLK_SM_SCLK                MFP_CFG(SM_SCLK, AF0)
->  #define SM_BE0_SM_BE0          MFP_CFG(SM_BE0, AF1)
->  #define SM_BE1_SM_BE1          MFP_CFG(SM_BE1, AF1)
->
+This is a static checker fix.  The static checker says that q_size comes
+from the user and can be any 32 bit value.  The call tree is:
+  --> ib_uverbs_create_cq()
+      --> c2_create_cq()
+          --> c2_init_cq()
 
-Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/infiniband/hw/amso1100/c2_cq.c b/drivers/infiniband/hw/amso1100/c2_cq.c
+index 49e0e85..1b63185 100644
+--- a/drivers/infiniband/hw/amso1100/c2_cq.c
++++ b/drivers/infiniband/hw/amso1100/c2_cq.c
+@@ -260,11 +260,14 @@ static void c2_free_cq_buf(struct c2_dev *c2dev, struct c2_mq *mq)
+ 			  mq->msg_pool.host, dma_unmap_addr(mq, mapping));
+ }
+ 
+-static int c2_alloc_cq_buf(struct c2_dev *c2dev, struct c2_mq *mq, int q_size,
+-			   int msg_size)
++static int c2_alloc_cq_buf(struct c2_dev *c2dev, struct c2_mq *mq,
++			   size_t q_size, size_t msg_size)
+ {
+ 	u8 *pool_start;
+ 
++	if (q_size > SIZE_MAX / msg_size)
++		return -EINVAL;
++
+ 	pool_start = dma_alloc_coherent(&c2dev->pcidev->dev, q_size * msg_size,
+ 					&mq->host_dma, GFP_KERNEL);
+ 	if (!pool_start)
