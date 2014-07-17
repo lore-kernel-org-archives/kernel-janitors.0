@@ -1,62 +1,82 @@
 From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Date: Thu, 17 Jul 2014 12:15:24 +0000
-Subject: [PATCH 3/3] drivers/crypto/omap-{des,aes}.c: fix sanity checks
-Message-Id: <1405599324-11215-1-git-send-email-andrey.krieger.utkin@gmail.com>
+Date: Thu, 17 Jul 2014 13:56:37 +0000
+Subject: [PATCH 4/4] ath9k: drop negativity checks for unsigned values coming from kstrtoul()
+Message-Id: <1405605397-13749-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc: dcb314@hotmail.com, davem@davemloft.net, herbert@gondor.apana.org.au, Andrey Utkin <andrey.krieger.utkin@gmail.com>
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, ath9k-devel@lists.ath9k.org, linux-wireless@vger.kernel.org, ath9k-devel@qca.qualcomm.com
+Cc: linville@tuxdriver.com, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-Unsigned variable "total" was tested for negativity after subtraction
-operation. 2 instances.
-Replaced that with the test of minuend being greater than subtrahend
-before the subtraction.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80421
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80471
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80481
 Reported-by: David Binderman <dcb314@hotmail.com>
 Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 ---
- drivers/crypto/omap-aes.c | 4 ++--
- drivers/crypto/omap-des.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath9k/debug.c    | 2 +-
+ drivers/net/wireless/ath/ath9k/spectral.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/crypto/omap-aes.c b/drivers/crypto/omap-aes.c
-index cb98fa5..413ed78 100644
---- a/drivers/crypto/omap-aes.c
-+++ b/drivers/crypto/omap-aes.c
-@@ -1038,10 +1038,10 @@ static irqreturn_t omap_aes_irq(int irq, void *dev_=
-id)
- 			}
- 		}
+diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/=
+ath/ath9k/debug.c
+index ce073e9..d227936 100644
+--- a/drivers/net/wireless/ath/ath9k/debug.c
++++ b/drivers/net/wireless/ath/ath9k/debug.c
+@@ -202,7 +202,7 @@ static ssize_t write_file_ani(struct file *file,
+ 	if (kstrtoul(buf, 0, &ani))
+ 		return -EINVAL;
 =20
-+		BUG_ON(dd->total < AES_BLOCK_SIZE);
-+
- 		dd->total -=3D AES_BLOCK_SIZE;
+-	if (ani < 0 || ani > 1)
++	if (ani > 1)
+ 		return -EINVAL;
 =20
--		BUG_ON(dd->total < 0);
--
- 		/* Clear IRQ status */
- 		status &=3D ~AES_REG_IRQ_DATA_OUT;
- 		omap_aes_write(dd, AES_REG_IRQ_STATUS(dd), status);
-diff --git a/drivers/crypto/omap-des.c b/drivers/crypto/omap-des.c
-index b8bc84b..93aa213 100644
---- a/drivers/crypto/omap-des.c
-+++ b/drivers/crypto/omap-des.c
-@@ -965,10 +965,10 @@ static irqreturn_t omap_des_irq(int irq, void *dev_id)
- 			}
- 		}
+ 	common->disable_ani =3D !ani;
+diff --git a/drivers/net/wireless/ath/ath9k/spectral.c b/drivers/net/wirele=
+ss/ath/ath9k/spectral.c
+index 99f4de9..5fe29b9 100644
+--- a/drivers/net/wireless/ath/ath9k/spectral.c
++++ b/drivers/net/wireless/ath/ath9k/spectral.c
+@@ -313,7 +313,7 @@ static ssize_t write_file_spectral_short_repeat(struct =
+file *file,
+ 	if (kstrtoul(buf, 0, &val))
+ 		return -EINVAL;
 =20
-+		BUG_ON(dd->total < DES_BLOCK_SIZE);
-+
- 		dd->total -=3D DES_BLOCK_SIZE;
+-	if (val < 0 || val > 1)
++	if (val > 1)
+ 		return -EINVAL;
 =20
--		BUG_ON(dd->total < 0);
--
- 		/* Clear IRQ status */
- 		status &=3D ~DES_REG_IRQ_DATA_OUT;
- 		omap_des_write(dd, DES_REG_IRQ_STATUS(dd), status);
+ 	sc->spec_config.short_repeat =3D val;
+@@ -361,7 +361,7 @@ static ssize_t write_file_spectral_count(struct file *f=
+ile,
+ 	if (kstrtoul(buf, 0, &val))
+ 		return -EINVAL;
+=20
+-	if (val < 0 || val > 255)
++	if (val > 255)
+ 		return -EINVAL;
+=20
+ 	sc->spec_config.count =3D val;
+@@ -409,7 +409,7 @@ static ssize_t write_file_spectral_period(struct file *=
+file,
+ 	if (kstrtoul(buf, 0, &val))
+ 		return -EINVAL;
+=20
+-	if (val < 0 || val > 255)
++	if (val > 255)
+ 		return -EINVAL;
+=20
+ 	sc->spec_config.period =3D val;
+@@ -457,7 +457,7 @@ static ssize_t write_file_spectral_fft_period(struct fi=
+le *file,
+ 	if (kstrtoul(buf, 0, &val))
+ 		return -EINVAL;
+=20
+-	if (val < 0 || val > 15)
++	if (val > 15)
+ 		return -EINVAL;
+=20
+ 	sc->spec_config.fft_period =3D val;
 --=20
 1.8.5.5
 
