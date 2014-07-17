@@ -1,67 +1,46 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Thu, 31 Jul 2014 15:36:19 +0000
-Subject: Re: [patch 1/2] pinctrl: tegra-xusb: fix an off by one test
-Message-Id: <20140731153617.GA21098@ulmo.nvidia.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="7JfCtLOvnd9MIVvH"
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Thu, 17 Jul 2014 13:55:07 +0000
+Subject: [PATCH 3/4] drivers/misc/sgi-gru/grukdump.c: drop negativity check for unsgined req.gid
+Message-Id: <1405605307-13657-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140731152217.GD31539@mwanda>
-In-Reply-To: <20140731152217.GD31539@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-
---7JfCtLOvnd9MIVvH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: sivanich@sgi.com, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Thu, Jul 31, 2014 at 06:22:17PM +0300, Dan Carpenter wrote:
-> This shoudld be ">=3D ARRAY_SIZE()" instead of "> ARRAY_SIZE()".
->=20
-> Fixes: dc0a39386687 ('pinctrl: Add NVIDIA Tegra XUSB pad controller suppo=
-rt')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinct=
-rl-tegra-xusb.c
-> index a066204..419a047 100644
-> --- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-> +++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-> @@ -680,7 +680,7 @@ static struct phy *tegra_xusb_padctl_xlate(struct dev=
-ice *dev,
->  	if (args->args_count <=3D 0)
->  		return ERR_PTR(-EINVAL);
-> =20
-> -	if (index > ARRAY_SIZE(padctl->phys))
-> +	if (index >=3D ARRAY_SIZE(padctl->phys))
->  		return ERR_PTR(-EINVAL);
-> =20
->  	return padctl->phys[index];
+[linux-3.16-rc5/drivers/misc/sgi-gru/grukdump.c:199]: (style) Checking if
+unsigned variable 'gid' is less than zero.
 
-Good catch!
+    if (req.gid >=3D gru_max_gids || req.gid < 0)
+        return -EINVAL;
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80461
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ drivers/misc/sgi-gru/grukdump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---7JfCtLOvnd9MIVvH
-Content-Type: application/pgp-signature
+diff --git a/drivers/misc/sgi-gru/grukdump.c b/drivers/misc/sgi-gru/grukdum=
+p.c
+index a3700a5..e0e0e7e 100644
+--- a/drivers/misc/sgi-gru/grukdump.c
++++ b/drivers/misc/sgi-gru/grukdump.c
+@@ -196,7 +196,7 @@ int gru_dump_chiplet_request(unsigned long arg)
+ 		return -EFAULT;
+=20
+ 	/* Currently, only dump by gid is implemented */
+-	if (req.gid >=3D gru_max_gids || req.gid < 0)
++	if (req.gid >=3D gru_max_gids)
+ 		return -EINVAL;
+=20
+ 	gru =3D GID_TO_GRU(req.gid);
+--=20
+1.8.5.5
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT2mJxAAoJEN0jrNd/PrOhVXoQAJGxgD2IgMyZ87Wb9AScmN97
-Hl4TXEbVuu2cf0SzBulo9CvGEJKjQYWDfC3m8RMGdwa+vQzaUPgpV8d1ZBWhgXPr
-2gXcaeQBCK70C5/JT863q9i1gFLfBR266IojcyswG8b+3qSaGhIPq050+M2TzcUm
-efnI8G1uPxXChRxXD0XbRoyTAGiL/TDcJEG4++R7r1NaMMqFe4qwJraZ2pxhHxbA
-wjpcDp8cHU2vTbtvRuKwq4eT02b5F9Dvk4qzm8AVgI0uh2W9BFcwbaqu/X4bwHvV
-JdRb8RR69L1a7xgHAkd2Dg6JnZbv8LVMa6k4vlsJ01AsJziKcow5eDtfEZqZi3LQ
-tVi5o06y7vZ861/QJeX/NmlREOxCkQlc4kMvSdNIqk/1qwjRbivoXA6VR9opz7HP
-vFI1y4cWMwFWJNvbE/xqAnsNQfopaxINnXyZBPg2JUB/DRy2uN5q+z4GU4gTbHbr
-lyItw1kHhfOr0l974N6wMqF47DF4a0bUT5TWzoelHdAVgsiQ3af8Mj640GXU6vM1
-INy2mR4da3kQn73U07PR+Mze0g8pqzREMzBsSBjMeJpNrOZSkJipjCF/LorlJAqw
-2RYsdRzq4Cn/sFTP1XrRrgyHS0JJclutSBP5CW7cTPNqpTIiMjS864PEUCsgdFGK
-BL3mcLsHV54Mk7LOwVad
-=gsoS
------END PGP SIGNATURE-----
-
---7JfCtLOvnd9MIVvH--
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
