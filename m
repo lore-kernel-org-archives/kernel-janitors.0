@@ -1,38 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 07 Jul 2014 09:37:31 +0000
-Subject: re: perf/hwpb: Invoke __perf_event_disable() if interrupts are already disabled
-Message-Id: <20140707093731.GA32260@mwanda>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Thu, 17 Jul 2014 13:54:35 +0000
+Subject: [PATCH 2/4] drivers/message/i2o/i2o_block.c: drop negativity check of unsigned long arg
+Message-Id: <1405605275-13608-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-Hello K.Prasad,
+[linux-3.16-rc5/drivers/message/i2o/i2o_block.c:674]: (style) Checking if
+unsigned variable 'arg' is less than zero.
 
-This is a semi-automatic email about new static checker warnings.
+Source code is
 
-The patch 500ad2d8b013: "perf/hwpb: Invoke __perf_event_disable() if
-interrupts are already disabled" from Aug 2, 2012, leads to the
-following Smatch complaint:
+        if (arg < 0 || arg > CACHE_SMARTFETCH)
+            break;
+but
 
-kernel/events/hw_breakpoint.c:449 modify_user_hw_breakpoint()
-	 error: we previously assumed 'bp->ctx' could be null (see line 446)
+static int i2o_block_ioctl(struct block_device *bdev, fmode_t mode,
+               unsigned int cmd, unsigned long arg)
 
-kernel/events/hw_breakpoint.c
-   445		 */
-   446		if (irqs_disabled() && bp->ctx && bp->ctx->task = current)
-                                       ^^^^^^^
-We add a new assumption that bp->ctx can be NULL in this patch.
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80451
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ drivers/message/i2o/i2o_block.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   447			__perf_event_disable(bp);
-   448		else
-   449			perf_event_disable(bp);
-                        ^^^^^^^^^^^^^^^^^^^^^^
-But it is dereferenced unconditionally in perf_event_disable().
+diff --git a/drivers/message/i2o/i2o_block.c b/drivers/message/i2o/i2o_bloc=
+k.c
+index 6fc3866..2b684ec 100644
+--- a/drivers/message/i2o/i2o_block.c
++++ b/drivers/message/i2o/i2o_block.c
+@@ -671,7 +671,7 @@ static int i2o_block_ioctl(struct block_device *bdev, f=
+mode_t mode,
+ 		break;
+ 	case BLKI2OSRSTRAT:
+ 		ret =3D -EINVAL;
+-		if (arg < 0 || arg > CACHE_SMARTFETCH)
++		if (arg > CACHE_SMARTFETCH)
+ 			break;
+ 		dev->rcache =3D arg;
+ 		ret =3D 0;
+--=20
+1.8.5.5
 
-   450	
-   451		bp->attr.bp_addr = attr->bp_addr;
-
-regards,
-dan carpenter
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
