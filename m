@@ -1,42 +1,94 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 29 Jul 2014 15:16:47 +0000
-Subject: [PATCH 5/9] scsi: use correct structure type name in sizeof
-Message-Id: <1406647011-8543-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Thu, 17 Jul 2014 16:28:21 +0000
+Subject: [PATCH 3/4]  drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c: drop incorrect checks
+Message-Id: <1405614501-4554-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dario Ballabio <ballabio_dario@emc.com>
-Cc: kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: gregkh@linuxfoundation.org, knivey@botops.net, hsweeten@visionengravers.com, abbotti@mev.co.uk, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Dropped some "< 0" and ">=3D 0" checks on unsigned int values.
 
-Correct typo in the name of the type given to sizeof.  Because it is the
-size of a pointer that is wanted, the typo has no impact on compilation or
-execution.
-
-This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
-semantic patch used can be found in message 0 of this patch series.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80501
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 ---
- drivers/scsi/eata.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../comedi/drivers/addi-data/hwdrv_apci3200.c        | 20 ++++++++++------=
+----
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/scsi/eata.c b/drivers/scsi/eata.c
-index 813dd5c..4caf221 100644
---- a/drivers/scsi/eata.c
-+++ b/drivers/scsi/eata.c
-@@ -811,7 +811,7 @@ struct mscp {
- 	struct sg_list *sglist;	/* pointer to the allocated SG list */
- };
- 
--#define CP_TAIL_SIZE (sizeof(struct sglist *) + sizeof(dma_addr_t))
-+#define CP_TAIL_SIZE (sizeof(struct sg_list *) + sizeof(dma_addr_t))
- 
- struct hostdata {
- 	struct mscp cp[MAX_MAILBOXES];	/* Mailboxes for this board */
+diff --git a/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c b/dr=
+ivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
+index a3026a2..3a215ac 100644
+--- a/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
++++ b/drivers/staging/comedi/drivers/addi-data/hwdrv_apci3200.c
+@@ -1750,34 +1750,34 @@ static int apci3200_ai_config(struct comedi_device =
+*dev,
+ 	/* END JK 06.07.04: Management of sevrals boards */
+=20
+ 	if (data[5] =3D 0) {
+-		if (ui_ChannelNo < 0 || ui_ChannelNo > 15) {
++		if (ui_ChannelNo > 15) {
+ 			printk("\nThe Selection of the channel is in error\n");
+ 			i_err++;
+-		}		/*  if(ui_ChannelNo<0 || ui_ChannelNo>15) */
++		}		/*  if(ui_ChannelNo>15) */
+ 	}			/* if(data[5]=3D0) */
+ 	else {
+ 		if (data[14] =3D 2) {
+-			if (ui_ChannelNo < 0 || ui_ChannelNo > 3) {
++			if (ui_ChannelNo > 3) {
+ 				printk("\nThe Selection of the channel is in error\n");
+ 				i_err++;
+-			}	/*  if(ui_ChannelNo<0 || ui_ChannelNo>3) */
++			}	/*  if(ui_ChannelNo>3) */
+ 		}		/* if(data[14]=3D2) */
+ 		else {
+-			if (ui_ChannelNo < 0 || ui_ChannelNo > 7) {
++			if (ui_ChannelNo > 7) {
+ 				printk("\nThe Selection of the channel is in error\n");
+ 				i_err++;
+-			}	/*  if(ui_ChannelNo<0 || ui_ChannelNo>7) */
++			}	/*  if(ui_ChannelNo>7) */
+ 		}		/* elseif(data[14]=3D2) */
+ 	}			/* elseif(data[5]=3D0) */
+ 	if (data[12] =3D 0 || data[12] =3D 1) {
+ 		switch (data[5]) {
+ 		case 0:
+-			if (ui_ChannelNo >=3D 0 && ui_ChannelNo <=3D 3) {
++			if (ui_ChannelNo <=3D 3) {
+ 				/* BEGIN JK 06.07.04: Management of sevrals boards */
+ 				/* i_Offset=3D0; */
+ 				s_BoardInfos[dev->minor].i_Offset =3D 0;
+ 				/* END JK 06.07.04: Management of sevrals boards */
+-			}	/* if(ui_ChannelNo >=3D0 && ui_ChannelNo <=3D3) */
++			}	/* if(ui_ChannelNo <=3D3) */
+ 			if (ui_ChannelNo >=3D 4 && ui_ChannelNo <=3D 7) {
+ 				/* BEGIN JK 06.07.04: Management of sevrals boards */
+ 				/* i_Offsetd; */
+@@ -1831,12 +1831,12 @@ static int apci3200_ai_config(struct comedi_device =
+*dev,
+ 				ui_ChannelNo =3D 0;
+ 				break;
+ 			}	/* if(data[14]=3D2) */
+-			if (ui_ChannelNo >=3D 0 && ui_ChannelNo <=3D 1) {
++			if (ui_ChannelNo <=3D 1) {
+ 				/* BEGIN JK 06.07.04: Management of sevrals boards */
+ 				/* i_Offset=3D0; */
+ 				s_BoardInfos[dev->minor].i_Offset =3D 0;
+ 				/* END JK 06.07.04: Management of sevrals boards */
+-			}	/* if(ui_ChannelNo >=3D0 && ui_ChannelNo <=3D1) */
++			}	/* if(ui_ChannelNo <=3D1) */
+ 			if (ui_ChannelNo >=3D 2 && ui_ChannelNo <=3D 3) {
+ 				/* BEGIN JK 06.07.04: Management of sevrals boards */
+ 				/* i_ChannelNo=3Di_ChannelNo-2; */
+--=20
+1.8.5.5
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
