@@ -1,36 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 Jul 2014 13:25:27 +0000
-Subject: Re: [PATCH 4/4] drivers/pinctrl/qcom/pinctrl-msm.c: drop negativity check on unsigned value
-Message-Id: <CACRpkdZJQTBX00zBt418-Yqi7VsYF9epuB3WuzW=Y5vV0QOsaw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 17 Jul 2014 08:03:10 +0000
+Subject: [patch] wan/x25_asy: integer overflow in x25_asy_change_mtu()
+Message-Id: <20140717080310.GB477@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405614579-4652-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1405614579-4652-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 17, 2014 at 6:29 PM, Andrey Utkin
-<andrey.krieger.utkin@gmail.com> wrote:
+If "newmtu * 2 + 4" is too large then it can cause an integer overflow
+leading to memory corruption.  Btw, "newmtu" is not allowed to be a
+negative number because of the check in dev_set_mtu(), so that's ok.
 
-> [linux-3.16-rc5/drivers/pinctrl/pinctrl-msm.c:145]: (style) Checking if
-> unsigned variable 'mux_bit' is less than zero.
->
->     if (WARN_ON(g->mux_bit < 0))
->         return -EINVAL;
->
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80491
-> Reported-by: David Binderman <dcb314@hotmail.com>
-> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied after fixing $SUBJECT, Bj=C3=B6rn protest if you don't like
-it...
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/net/wan/x25_asy.c b/drivers/net/wan/x25_asy.c
+index 5895f19..f04c8c1 100644
+--- a/drivers/net/wan/x25_asy.c
++++ b/drivers/net/wan/x25_asy.c
+@@ -122,8 +122,11 @@ static int x25_asy_change_mtu(struct net_device *dev, int newmtu)
+ {
+ 	struct x25_asy *sl = netdev_priv(dev);
+ 	unsigned char *xbuff, *rbuff;
+-	int len = 2 * newmtu;
++	int len;
+ 
++	if (newmtu > INT_MAX / 2 - 4)
++		return -EINVAL;
++	len = 2 * newmtu;
+ 	xbuff = kmalloc(len + 4, GFP_ATOMIC);
+ 	rbuff = kmalloc(len + 4, GFP_ATOMIC);
+ 
