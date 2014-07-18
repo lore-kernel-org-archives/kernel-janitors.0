@@ -1,62 +1,55 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Date: Thu, 31 Jul 2014 11:34:04 +0000
-Subject: Re: pinctrl: Add pinctrl-s3c24xx driver
-Message-Id: <1812930.OGpzSztg9R@diego>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Fri, 18 Jul 2014 15:35:25 +0000
+Subject: [PATCH 5/5] fs/ubifs/{sb,super}.c: drop negativity check on unsigned value
+Message-Id: <1405697725-23866-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140731103936.GA7194@mwanda>
-In-Reply-To: <20140731103936.GA7194@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org
+Cc: Andrey Utkin <andrey.krieger.utkin@gmail.com>, adrian.hunter@intel.com, dcb314@hotmail.com, dedekind1@gmail.com
 
-Hi Dan,
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80581
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ fs/ubifs/sb.c    | 2 +-
+ fs/ubifs/super.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Am Donnerstag, 31. Juli 2014, 13:39:36 schrieb Dan Carpenter:
-> Hello Heiko Stuebner,
-> 
-> The patch af99a7507469: "pinctrl: Add pinctrl-s3c24xx driver" from
-> May 21, 2013, leads to the following static checker warning:
-> 
-> 	drivers/pinctrl/samsung/pinctrl-s3c24xx.c:188 s3c24xx_eint_type()
-> 	warn: are you sure the precedence is correct here?
-> 
-> drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->    186          /* Set up interrupt trigger */
->    187          reg = d->virt_base + EINT_REG(index);
->    188          shift = EINT_OFFS(index);
->    189
-> 
-> EINT_OFFS() is defined with two different precedences.  One of them is
-> probably wrong and it's probably this one here that does the MOD
-> operation first followed by the multiply.
-> 
-> #define EINT_OFFS(i) ((i) % EINT_MAX_PER_GROUP * 4)
-> #define EINT_OFFS(i) ((i) % (2 * EINT_MAX_PER_GROUP))
+diff --git a/fs/ubifs/sb.c b/fs/ubifs/sb.c
+index 4c37607..c2c3d13 100644
+--- a/fs/ubifs/sb.c
++++ b/fs/ubifs/sb.c
+@@ -447,7 +447,7 @@ static int validate_sb(struct ubifs_info *c, struct ubi=
+fs_sb_node *sup)
+ 		goto failed;
+ 	}
+=20
+-	if (c->default_compr < 0 || c->default_compr >=3D UBIFS_COMPR_TYPES_CNT) {
++	if (c->default_compr >=3D UBIFS_COMPR_TYPES_CNT) {
+ 		err =3D 13;
+ 		goto failed;
+ 	}
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index e5bd068..9c59c10 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -75,7 +75,7 @@ static int validate_inode(struct ubifs_info *c, const str=
+uct inode *inode)
+ 		return 1;
+ 	}
+=20
+-	if (ui->compr_type < 0 || ui->compr_type >=3D UBIFS_COMPR_TYPES_CNT) {
++	if (ui->compr_type >=3D UBIFS_COMPR_TYPES_CNT) {
+ 		ubifs_err("unknown compression type %d", ui->compr_type);
+ 		return 2;
+ 	}
+--=20
+1.8.5.5
 
-I suppose the other EINT_OFFS definition 
-	((i) % (2 * EINT_MAX_PER_GROUP))
-is from pinctrl-64xx.c, right?
-
-On the s3c24xx, the eints are arranged in a set of registers:
-eint0 bits [2:0]
-eint1 bits [6:4]
-...
-eint7 bits [30:28]
-
-(next register):
-eint8 bits [2:0]
-...
-eint15 bits [30:28]
-...
-
-EINT_MAX_PER_GROUP is of course 8, so for example
-eint15 % 8 = 7
-7 * 4 = 28 ... the correct bit offset in the register.
-
-
-The eint layout on the s3c64xx is slightly different, so the offset calculation 
-is likely too.
-
-
-Heiko
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
