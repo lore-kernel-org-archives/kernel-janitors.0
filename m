@@ -1,43 +1,40 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Tue, 15 Jul 2014 15:06:40 +0000
-Subject: Re: [PATCH V4 6/6] staging: vt6556: Replace printk by pr_warn
-Message-Id: <20140715150640.GA19185@kroah.com>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Fri, 18 Jul 2014 15:31:57 +0000
+Subject: [PATCH 2/5] net/rxrpc/ar-key.c: drop negativity check on unsigned value
+Message-Id: <1405697517-23673-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
- <1405365333-17170-6-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1405365333-17170-6-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Peter Senna Tschudin <peter.senna@gmail.com>
-Cc: forest@alittletooquiet.net, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Cc: dcb314@hotmail.com, nwf@cs.jhu.edu, dhowells@redhat.com, davem@davemloft.net, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Mon, Jul 14, 2014 at 09:15:33PM +0200, Peter Senna Tschudin wrote:
-> This patch fixes a checkpatch warning by replacing printk by pr_warn.
-> 
-> Tested by compilation only.
-> 
-> Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
-> ---
-> Cahnges from V3:
->  - Splitted the patches by change type
-> 
->  drivers/staging/vt6656/main_usb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-> index cc0281a..64c25e2 100644
-> --- a/drivers/staging/vt6656/main_usb.c
-> +++ b/drivers/staging/vt6656/main_usb.c
-> @@ -527,7 +527,7 @@ static void usb_device_reset(struct vnt_private *pDevice)
->  
->  	status = usb_reset_device(pDevice->usb);
->  	if (status)
-> -            printk("usb_device_reset fail status=%d\n",status);
-> +		pr_warn("usb_device_reset fail status=%d\n", status);
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80611
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ net/rxrpc/ar-key.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please use dev_warn() instead.
+diff --git a/net/rxrpc/ar-key.c b/net/rxrpc/ar-key.c
+index 0ad0807..eec998e 100644
+--- a/net/rxrpc/ar-key.c
++++ b/net/rxrpc/ar-key.c
+@@ -346,7 +346,7 @@ static int rxrpc_krb5_decode_tagged_array(struct krb5_t=
+agged_data **_td,
+=20
+ 	n_elem =3D ntohl(*xdr++);
+ 	toklen -=3D 4;
+-	if (n_elem < 0 || n_elem > max_n_elem)
++	if (n_elem > max_n_elem)
+ 		return -EINVAL;
+ 	*_n_elem =3D n_elem;
+ 	if (n_elem > 0) {
+--=20
+1.8.5.5
 
-thanks,
-
-greg k-h
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
