@@ -1,30 +1,39 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 08 Jul 2014 15:07:22 +0000
-Subject: Re: [PATCH] staging: rtl8192ee: Correct bitmask in comparsion
-Message-Id: <20140708150722.GP25880@mwanda>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Fri, 18 Jul 2014 15:34:52 +0000
+Subject: [PATCH 4/5] kernel/debug/kdb/kdb_bp.c: drop negativity check on unsigned value
+Message-Id: <1405697692-23816-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1404827699-7295-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1404827699-7295-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, gulsah.1004@gmail.com, gregkh@linuxfoundation.org, linville@tuxdriver.com, paulmck@linux.vnet.ibm.com, Larry.Finger@lwfinger.net
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Cc: dcb314@hotmail.com, jason.wessel@windriver.com, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Tue, Jul 08, 2014 at 04:54:59PM +0300, Andrey Utkin wrote:
-> The issue is discovered by static checker. The proposed change (0x000c0
-> -> 0x000c) is likely correct because:
-> 1. 16-bit `map` holds value coming from struct
-> ieee80211_vht_mcs_info.tx_mcs_map, which is described so: "TX MCS map 2
-> bits for each stream, total 8 streams". The changed code refers to case
-> of 2 TX streams, and 0x000c mask filters two bits related to the second
-> stream. Some codelines below 0x0003 mask is used to test first stream.
-> 2. Mask 0x000c is used 3 more times in that place.
-> 3. Specifying 5 digits of hex value is uncommon, especially while working
-> with `u16` variable. So likely the trailing zero is a typo.
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80591
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ kernel/debug/kdb/kdb_bp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This changelog is perfect.  Thanks.
+diff --git a/kernel/debug/kdb/kdb_bp.c b/kernel/debug/kdb/kdb_bp.c
+index 70a5046..f27dfb8 100644
+--- a/kernel/debug/kdb/kdb_bp.c
++++ b/kernel/debug/kdb/kdb_bp.c
+@@ -39,7 +39,7 @@ static char *kdb_rwtypes[] =3D {
+=20
+ static char *kdb_bptype(kdb_bp_t *bp)
+ {
+-	if (bp->bp_type < 0 || bp->bp_type > 4)
++	if (bp->bp_type > 4)
+ 		return "";
+=20
+ 	return kdb_rwtypes[bp->bp_type];
+--=20
+1.8.5.5
 
-regards,
-dan carpenter
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
