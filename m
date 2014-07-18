@@ -1,53 +1,40 @@
-From: Emil Goode <emilgoode@gmail.com>
-Date: Sat, 05 Jul 2014 00:30:53 +0000
-Subject: Re: [PATCH] MIPS: Fix incorrect NULL check in local_flush_tlb_page()
-Message-Id: <20140705003053.GB3404@lianli>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Fri, 18 Jul 2014 15:30:45 +0000
+Subject: [PATCH 1/5] tools/power/cpupower/utils/helpers/sysfs.c: drop negativity check on unsigned value
+Message-Id: <1405697445-23620-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1404493623-22705-1-git-send-email-emilgoode@gmail.com>
- <CAOiHx==mR0eioTk=tc457z4ANbhFR2vS2A2y3wzw119jnCi2Pw@mail.gmail.com>
-In-Reply-To: <CAOiHx==mR0eioTk=tc457z4ANbhFR2vS2A2y3wzw119jnCi2Pw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, John Crispin <blogic@openwrt.org>, MIPS Mailing List <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: dcb314@hotmail.com, rafael.j.wysocki@intel.com, trenn@suse.de, linux@dominikbrodowski.net, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-Hello Jonas,
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80621
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ tools/power/cpupower/utils/helpers/sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, Jul 04, 2014 at 11:52:51PM +0200, Jonas Gorski wrote:
-> On Fri, Jul 4, 2014 at 7:07 PM, Emil Goode <emilgoode@gmail.com> wrote:
-> > We check that the struct vm_area_struct pointer vma is NULL and
-> > then dereference it. The intent must have been to check that
-> > vma is not NULL before we dereference it in the next condition.
-> 
-> Actually if it is NULL, then it will short-cut and won't dereference
-> it (because !vma is true it can never become false again), so the
-> condition would be fine previously.
-> 
-> But, looking at the code a few lines into branch:
-> 
->         if (!vma || cpu_context(cpu, vma->vm_mm) != 0) {
->                 unsigned long flags;
->                 int oldpid, newpid, idx;
-> 
-> #ifdef DEBUG_TLB
->                 printk("[tlbpage<%lu,0x%08lx>]", cpu_context(cpu,
-> vma->vm_mm), page);
-> #endif
->                 newpid = cpu_context(cpu, vma->vm_mm) & ASID_MASK;
-> 
-> it will be then dereferenced here, so the change is actually sensible,
-> even if the description isn't quite spot-on where it breaks.
+diff --git a/tools/power/cpupower/utils/helpers/sysfs.c b/tools/power/cpupo=
+wer/utils/helpers/sysfs.c
+index 851c7a1..09afe5d 100644
+--- a/tools/power/cpupower/utils/helpers/sysfs.c
++++ b/tools/power/cpupower/utils/helpers/sysfs.c
+@@ -81,7 +81,7 @@ int sysfs_is_cpu_online(unsigned int cpu)
+ 	close(fd);
+=20
+ 	value =3D strtoull(linebuf, &endp, 0);
+-	if (value > 1 || value < 0)
++	if (value > 1)
+ 		return -EINVAL;
+=20
+ 	return value;
+--=20
+1.8.5.5
 
-Sorry, this is what I meant but failed to explain clearly.
-
-Perhaps the following is a bit better?
-
-We check that the struct vm_area_struct pointer vma is NULL and then
-dereference it a few lines below. The intent must have been to make sure
-that vma is not NULL and then to check the value from cpu_context() for the
-condition to be true.
-
-Best regards,
-
-Emil Goode
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
