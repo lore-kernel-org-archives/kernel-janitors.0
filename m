@@ -1,57 +1,31 @@
-From: Hillf Danton <dhillf@gmail.com>
-Date: Sat, 19 Jul 2014 03:35:45 +0000
+From: Nick Krause <xerofoify@gmail.com>
+Date: Sat, 19 Jul 2014 04:05:38 +0000
 Subject: Re: How to automate checkpatch && get_maintainers && git send-email of commits range?
-Message-Id: <CAJd=RBBqW-Nk62DnNW3XDERbmzwqROhw9dAu9avSXn2891m3dg@mail.gmail.com>
+Message-Id: <CAPDOMVjBJX59yC-h1gY=uv5POLDU7wq_zYWHwZR-+_OHxLgrgA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <CANZNk81LiTM9vY0dRV=T0BCT9k-BxU45Ojw_PyOcpdmtXHKM2Q@mail.gmail.com>
 	<20140718222215.GF18775@thunk.org>
 	<20140719013138.GA21252@home.goodmis.org>
-In-Reply-To: <20140719013138.GA21252@home.goodmis.org>
+	<CAJd=RBBqW-Nk62DnNW3XDERbmzwqROhw9dAu9avSXn2891m3dg@mail.gmail.com>
+In-Reply-To: <CAJd=RBBqW-Nk62DnNW3XDERbmzwqROhw9dAu9avSXn2891m3dg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernelnewbies@lists.kernelnewbies.org
 
-On Sat, Jul 19, 2014 at 9:31 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Fri, Jul 18, 2014 at 06:22:15PM -0400, Theodore Ts'o wrote:
->>
->> And then think very hard about which patches people need to see in
->> order to be able to evaluate a patch.  For example, if you have patch
->> 1 out of a series which adds a new function, and then patches 2
->> through 1000 modify a thousand different drivers to use that new
->> function, if you use an automated get_maintainers.pl script to send
->> each patch to just the maintainer, then the device driver maintainer
->> might not see patch #1 which is critical context to understanding the
->> patch that you want to make to his driver.  And then you will have
->> several hundred very angry and annoyed developers wondering why you
->> sent them patch 345/1000, with no other context, and wondering what
->> the heck they are supposed to do with the email that you have just
->> launched into their inbox.
+> Hi Steve
 >
-> I'm still stuck in the old stone/quilt age, where I use quilt mail to
-> send my patch bombs. Although, I have scripts that pulls my patches out
-> from git with format-patch, and then creates a quilt queue from them.
-> I do this for that very reason that I want to review all patches before
-> I hit send, and quilt mail is very basic and sends what I tell it.
-> I still a bit gun shy from using git sendmail as I never got that to
-> work (note, the last time I tried, it was still doing the staircase
-> threads with patches by default).
+> Why not share your quilt skills, say by adding a file in the Document directory?
 >
-> I'm still content with quilt, but the one thing I don't care about it
-> is that all Cc'd on the 0/1000 patch gets Cc'd on all patches. I wish
-> there was a way to tell quilt that they should only get Cc'd on the
-> cover patch and no more, unless the patch has them Cc'd. The reason this
-> bothers me is that I tend to do exactly what you stated above. I will
-> just Cc patch 345/1000 to someone with no context of what that patch
-> is.
->
-> I figured people would do the same thing that I do when I get that 345th
-> patch. As I'm subscribed to LKML, I will just go into my lkml folder and
-> search for that patch and see how that thread applies to me with full
-> context. I'm assuming that's what others may do too.
->
-Hi Steve
+> Hillf
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-Why not share your quilt skills, say by adding a file in the Document directory?
 
-Hillf
+I agree with hillf here this may be of use to other developers on the
+lkml and you
+should write a file in the Document dictionary.
+Nick
