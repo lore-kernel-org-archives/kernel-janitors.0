@@ -1,13 +1,20 @@
 From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Date: Fri, 18 Jul 2014 15:30:45 +0000
+Date: Sat, 19 Jul 2014 19:14:04 +0000
 Subject: [PATCH 1/5] tools/power/cpupower/utils/helpers/sysfs.c: drop negativity check on unsigned value
-Message-Id: <1405697445-23620-1-git-send-email-andrey.krieger.utkin@gmail.com>
+Message-Id: <1405797244-5182-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1405697445-23620-1-git-send-email-andrey.krieger.utkin@gmail.com>
+In-Reply-To: <1405697445-23620-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: dcb314@hotmail.com, rafael.j.wysocki@intel.com, trenn@suse.de, linux@dominikbrodowski.net, Andrey Utkin <andrey.krieger.utkin@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, dcb314@hotmail.com, rafael.j.wysocki@intel.com, trenn@suse.de, linux@dominikbrodowski.net, linux-pm@vger.kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>
+
+Resubmitting to send also to linux-pm@vger.kernel.org as requested by
+Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+---8<---
 
 Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80621
 Reported-by: David Binderman <dcb314@hotmail.com>
