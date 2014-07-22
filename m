@@ -1,38 +1,34 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 07 Jul 2014 14:25:09 +0000
-Subject: re: component: add support for component match array
-Message-Id: <20140707142509.GA16408@mwanda>
+From: Artemiy Volkov <artemiyv@acm.org>
+Date: Tue, 22 Jul 2014 17:58:37 +0000
+Subject: [PATCH 5/5] ext2: xip.c: Merge string literals on adjacent lines
+Message-Id: <1406051917-3823-6-git-send-email-artemiyv@acm.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Russell King,
+This patch joins lines and merges quoted strings in xip.c, for use of grep-ability.
 
-This is a semi-automatic email about new static checker warnings.
+Signed-off-by: Artemiy Volkov <artemiyv@acm.org>
+---
+ fs/ext2/xip.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The patch 6955b58254c2: "component: add support for component match 
-array" from Apr 19, 2014, leads to the following Smatch complaint:
+diff --git a/fs/ext2/xip.c b/fs/ext2/xip.c
+index e98171a..6c1cbb4 100644
+--- a/fs/ext2/xip.c
++++ b/fs/ext2/xip.c
+@@ -69,8 +69,7 @@ void ext2_xip_verify_sb(struct super_block *sb)
+ 	    !sb->s_bdev->bd_disk->fops->direct_access) {
+ 		sbi->s_mount_opt &= (~EXT2_MOUNT_XIP);
+ 		ext2_msg(sb, KERN_WARNING,
+-			     "warning: ignoring xip option - "
+-			     "not supported by bdev");
++			     "warning: ignoring xip option - not supported by bdev");
+ 	}
+ }
+ 
+-- 
+1.9.1
 
-drivers/base/component.c:297 component_master_add_with_match()
-	 error: we previously assumed 'match' could be null (see line 293)
-
-drivers/base/component.c
-   292	
-   293		if (ops->add_components && match)
-                                           ^^^^^
-Patch adds new check.
-
-   294			return -EINVAL;
-   295	
-   296		/* Reallocate the match array for its true size */
-   297		match = component_match_realloc(dev, match, match->num);
-                                                            ^^^^^^^^^^
-Patch adds unchecked dereference.
-
-   298		if (IS_ERR(match))
-   299			return PTR_ERR(match);
-
-regards,
-dan carpenter
