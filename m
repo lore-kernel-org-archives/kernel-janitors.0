@@ -1,45 +1,128 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Mon, 14 Jul 2014 19:15:29 +0000
-Subject: [PATCH V4 2/6] staging: vt6556: Remove double parentheses
-Message-Id: <1405365333-17170-2-git-send-email-peter.senna@gmail.com>
+From: Artemiy Volkov <artemiyv@acm.org>
+Date: Tue, 22 Jul 2014 17:58:34 +0000
+Subject: [PATCH 2/5] ext2: balloc.c: Merge string literals on adjacent lines
+Message-Id: <1406051917-3823-3-git-send-email-artemiyv@acm.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1405365333-17170-1-git-send-email-peter.senna@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-This patch cleanup a checkpatch warning by removing double parentheses
-from if condition. Additionally it fixes a line over 80 chars.
+This patch joins lines and merges quoted strings in balloc.c, for use of grep-ability.
 
-Tested by compilation only.
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Artemiy Volkov <artemiyv@acm.org>
 ---
-Cahnges from V3:
- - Splitted the patches by change type
+ fs/ext2/balloc.c | 34 +++++++++++++---------------------
+ 1 file changed, 13 insertions(+), 21 deletions(-)
 
- drivers/staging/vt6656/baseband.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/vt6656/baseband.c b/drivers/staging/vt6656/baseband.c
-index 8678b41..040b232 100644
---- a/drivers/staging/vt6656/baseband.c
-+++ b/drivers/staging/vt6656/baseband.c
-@@ -452,8 +452,9 @@ int BBbVT3184Init(struct vnt_private *priv)
- 		priv->ldBmThreshold[2] = 0;
- 		priv->ldBmThreshold[3] = 0;
- 		/* Fix VT3226 DFC system timing issue */
--		vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL2, SOFTPWRCTL_RFLEOPT);
--	} else if ((priv->byRFType = RF_VT3342A0)) {
-+		vnt_mac_reg_bits_on(priv, MAC_REG_SOFTPWRCTL2,
-+				    SOFTPWRCTL_RFLEOPT);
-+	} else if (priv->byRFType = RF_VT3342A0) {
- 		priv->byBBRxConf = vnt_vt3184_vt3226d0[10];
- 		length = sizeof(vnt_vt3184_vt3226d0);
- 		addr = vnt_vt3184_vt3226d0;
+diff --git a/fs/ext2/balloc.c b/fs/ext2/balloc.c
+index 9f9992b..787a3ff 100644
+--- a/fs/ext2/balloc.c
++++ b/fs/ext2/balloc.c
+@@ -47,8 +47,7 @@ struct ext2_group_desc * ext2_get_group_desc(struct super_block * sb,
+ 
+ 	if (block_group >= sbi->s_groups_count) {
+ 		ext2_error (sb, "ext2_get_group_desc",
+-			    "block_group >= groups_count - "
+-			    "block_group = %d, groups_count = %lu",
++			    "block_group >= groups_count - block_group = %d, groups_count = %lu",
+ 			    block_group, sbi->s_groups_count);
+ 
+ 		return NULL;
+@@ -58,8 +57,7 @@ struct ext2_group_desc * ext2_get_group_desc(struct super_block * sb,
+ 	offset = block_group & (EXT2_DESC_PER_BLOCK(sb) - 1);
+ 	if (!sbi->s_group_desc[group_desc]) {
+ 		ext2_error (sb, "ext2_get_group_desc",
+-			    "Group descriptor not loaded - "
+-			    "block_group = %d, group_desc = %lu, desc = %lu",
++			    "Group descriptor not loaded - block_group = %d, group_desc = %lu, desc = %lu",
+ 			     block_group, group_desc, offset);
+ 		return NULL;
+ 	}
+@@ -108,8 +106,7 @@ static int ext2_valid_block_bitmap(struct super_block *sb,
+ 
+ err_out:
+ 	ext2_error(sb, __func__,
+-			"Invalid block bitmap - "
+-			"block_group = %d, block = %lu",
++			"Invalid block bitmap - block_group = %d, block = %lu",
+ 			block_group, bitmap_blk);
+ 	return 0;
+ }
+@@ -134,8 +131,7 @@ read_block_bitmap(struct super_block *sb, unsigned int block_group)
+ 	bh = sb_getblk(sb, bitmap_blk);
+ 	if (unlikely(!bh)) {
+ 		ext2_error(sb, __func__,
+-			    "Cannot read block bitmap - "
+-			    "block_group = %d, block_bitmap = %u",
++			    "Cannot read block bitmap - block_group = %d, block_bitmap = %u",
+ 			    block_group, le32_to_cpu(desc->bg_block_bitmap));
+ 		return NULL;
+ 	}
+@@ -145,8 +141,7 @@ read_block_bitmap(struct super_block *sb, unsigned int block_group)
+ 	if (bh_submit_read(bh) < 0) {
+ 		brelse(bh);
+ 		ext2_error(sb, __func__,
+-			    "Cannot read block bitmap - "
+-			    "block_group = %d, block_bitmap = %u",
++			    "Cannot read block bitmap - block_group = %d, block_bitmap = %u",
+ 			    block_group, le32_to_cpu(desc->bg_block_bitmap));
+ 		return NULL;
+ 	}
+@@ -212,8 +207,7 @@ restart:
+ 	while (n) {
+ 		rsv = rb_entry(n, struct ext2_reserve_window_node, rsv_node);
+ 		if (verbose)
+-			printk("reservation window 0x%p "
+-				"start: %lu, end: %lu\n",
++			printk("reservation window 0x%p start: %lu, end: %lu\n",
+ 				rsv, rsv->rsv_start, rsv->rsv_end);
+ 		if (rsv->rsv_start && rsv->rsv_start >= rsv->rsv_end) {
+ 			printk("Bad reservation %p (start >= end)\n",
+@@ -492,8 +486,8 @@ void ext2_free_blocks (struct inode * inode, unsigned long block,
+ 	    block + count < block ||
+ 	    block + count > le32_to_cpu(es->s_blocks_count)) {
+ 		ext2_error (sb, "ext2_free_blocks",
+-			    "Freeing blocks not in datazone - "
+-			    "block = %lu, count = %lu", block, count);
++			    "Freeing blocks not in datazone - block = %lu, count = %lu",
++			    block, count);
+ 		goto error_return;
+ 	}
+ 
+@@ -529,8 +523,7 @@ do_more:
+ 	    in_range (block + count - 1, le32_to_cpu(desc->bg_inode_table),
+ 		      sbi->s_itb_per_group)) {
+ 		ext2_error (sb, "ext2_free_blocks",
+-			    "Freeing blocks in system zones - "
+-			    "Block = %lu, count = %lu",
++			    "Freeing blocks in system zones - Block = %lu, count = %lu",
+ 			    block, count);
+ 		goto error_return;
+ 	}
+@@ -1376,8 +1369,7 @@ allocated:
+ 	    in_range(ret_block + num - 1, le32_to_cpu(gdp->bg_inode_table),
+ 		      EXT2_SB(sb)->s_itb_per_group)) {
+ 		ext2_error(sb, "ext2_new_blocks",
+-			    "Allocating block in system zone - "
+-			    "blocks from "E2FSBLK", length %lu",
++			    "Allocating block in system zone - blocks from "E2FSBLK", length %lu",
+ 			    ret_block, num);
+ 		/*
+ 		 * ext2_try_to_allocate marked the blocks we allocated as in
+@@ -1391,9 +1383,9 @@ allocated:
+ 
+ 	if (ret_block + num - 1 >= le32_to_cpu(es->s_blocks_count)) {
+ 		ext2_error(sb, "ext2_new_blocks",
+-			    "block("E2FSBLK") >= blocks count(%d) - "
+-			    "block_group = %d, es = %p ", ret_block,
+-			le32_to_cpu(es->s_blocks_count), group_no, es);
++			    "block("E2FSBLK") >= blocks count(%d) - block_group = %d, es = %p ",
++			    ret_block, le32_to_cpu(es->s_blocks_count),
++			    group_no, es);
+ 		goto out;
+ 	}
+ 
 -- 
-1.9.3
+1.9.1
 
