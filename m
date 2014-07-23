@@ -1,29 +1,22 @@
-From: Artemiy Volkov <artemiyv@acm.org>
-Date: Tue, 22 Jul 2014 17:58:32 +0000
-Subject: [PATCH 0/5] ext2: Merge string literals on adjacent lines
-Message-Id: <1406051917-3823-1-git-send-email-artemiyv@acm.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Jul 2014 08:13:12 +0000
+Subject: Re: [PATCH 0/5] ext2: Merge string literals on adjacent lines
+Message-Id: <20140723081312.GQ25880@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1406051917-3823-1-git-send-email-artemiyv@acm.org>
+In-Reply-To: <1406051917-3823-1-git-send-email-artemiyv@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Join lines and merge strings in ext2 files for ease of grep-ability, one file per patch.
+On Wed, Jul 23, 2014 at 03:58:32AM +1000, Artemiy Volkov wrote:
+> Join lines and merge strings in ext2 files for ease of grep-ability, one file per patch.
+> 
 
-Artemiy Volkov (5):
-  ext2: super.c: Merge string literals on adjacent lines
-  ext2: balloc.c: Merge string literals on adjacent lines
-  ext2: dir.c: Merge string literals on adjacent lines
-  ext2: inode.c: Merge string literals on adjacent lines
-  ext2: xip.c: Merge string literals on adjacent lines
+To be honest, I don't know if the ext2 devs really want to bother with
+this...
 
- fs/ext2/balloc.c | 32 +++++++++++-------------------
- fs/ext2/dir.c    | 11 +++++------
- fs/ext2/ialloc.c |  6 ++----
- fs/ext2/super.c  | 60 +++++++++++++++++++++++---------------------------------
- fs/ext2/xip.c    |  3 +--
- 5 files changed, 43 insertions(+), 69 deletions(-)
-
--- 
-1.9.1
+regards,
+dan carpenter
 
