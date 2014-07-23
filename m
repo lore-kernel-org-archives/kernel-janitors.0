@@ -1,56 +1,53 @@
-From: Artemiy Volkov <artemiyv@acm.org>
-Date: Tue, 22 Jul 2014 17:58:35 +0000
-Subject: [PATCH 3/5] ext2: dir.c: Merge string literals on adjacent lines
-Message-Id: <1406051917-3823-4-git-send-email-artemiyv@acm.org>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Wed, 23 Jul 2014 10:47:33 +0000
+Subject: [PATCH] drivers/staging/bcm/Misc.c: fix a check
+Message-Id: <1406112453-2393-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: standby24x7@gmail.com, lisa@xenapiadmin.com, sulamiification@gmail.com, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, dcb314@hotmail.com, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-This patch joins lines and merges quoted strings in dir.c, for use of grep-ability.
+The issue was reported by static analysis.
+The value holding flags was &-ed with 0x02, being compared to 0x01
+(TRUE) after that. Such comparsion is always false.
 
-Signed-off-by: Artemiy Volkov <artemiyv@acm.org>
+Resolution: drop the comparsion to TRUE in the condition.
+
+&-ing with 0x02 is right, according to result variable name
+(reporting_mode) and description in drivers/staging/bcm/target_params.h
+("bit 1 =3D 1: CINR reporting in Idlemode Msg").
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80801
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
 ---
- fs/ext2/dir.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/staging/bcm/Misc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
-index 6e1d4ab..6ab6a68 100644
---- a/fs/ext2/dir.c
-+++ b/fs/ext2/dir.c
-@@ -160,8 +160,8 @@ out:
- Ebadsize:
- 	if (!quiet)
- 		ext2_error(sb, __func__,
--			"size of directory #%lu is not a multiple "
--			"of chunk size", dir->i_ino);
-+			"size of directory #%lu is not a multiple of chunk size",
-+			dir->i_ino);
- 	goto fail;
- Eshort:
- 	error = "rec_len is smaller than minimal";
-@@ -179,8 +179,8 @@ Einumber:
- 	error = "inode out of bounds";
- bad_entry:
- 	if (!quiet)
--		ext2_error(sb, __func__, "bad entry in directory #%lu: : %s - "
--			"offset=%lu, inode=%lu, rec_len=%d, name_len=%d",
-+		ext2_error(sb, __func__,
-+			"bad entry in directory #%lu: : %s - offset=%lu, inode=%lu, rec_len=%d, name_len=%d",
- 			dir->i_ino, error, (page->index<<PAGE_CACHE_SHIFT)+offs,
- 			(unsigned long) le32_to_cpu(p->inode),
- 			rec_len, p->name_len);
-@@ -189,8 +189,7 @@ Eend:
- 	if (!quiet) {
- 		p = (ext2_dirent *)(kaddr + offs);
- 		ext2_error(sb, "ext2_check_page",
--			"entry in directory #%lu spans the page boundary"
--			"offset=%lu, inode=%lu",
-+			"entry in directory #%lu spans the page boundary offset=%lu, inode=%lu",
- 			dir->i_ino, (page->index<<PAGE_CACHE_SHIFT)+offs,
- 			(unsigned long) le32_to_cpu(p->inode));
+diff --git a/drivers/staging/bcm/Misc.c b/drivers/staging/bcm/Misc.c
+index a1c833c..883f739 100644
+--- a/drivers/staging/bcm/Misc.c
++++ b/drivers/staging/bcm/Misc.c
+@@ -1154,7 +1154,7 @@ static void doPowerAutoCorrection(struct bcm_mini_ada=
+pter *psAdapter)
+ 	reporting_mode =3D ntohl(psAdapter->pstargetparams->m_u32PowerSavingModeO=
+ptions) & 0x02;
+ 	psAdapter->bIsAutoCorrectEnabled =3D !((char)(psAdapter->ulPowerSaveMode =
+>> 3) & 0x1);
+=20
+-	if (reporting_mode =3D TRUE) {
++	if (reporting_mode) {
+ 		BCM_DEBUG_PRINT(psAdapter, DBG_TYPE_INITEXIT, MP_INIT, DBG_LVL_ALL, "can=
+'t do suspen/resume as reporting mode is enable");
+ 		psAdapter->bDoSuspend =3D false;
  	}
--- 
-1.9.1
+--=20
+1.8.5.5
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
