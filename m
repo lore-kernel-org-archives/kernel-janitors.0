@@ -1,108 +1,42 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Sun, 13 Jul 2014 19:11:21 +0000
-Subject: [PATCH V2 4/4] staging: vt6556: Cleanup coding style issues
-Message-Id: <1405278681-3348-4-git-send-email-peter.senna@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 23 Jul 2014 12:11:06 +0000
+Subject: [patch v2] checkpatch: warn on missing spaces in broken up quoted
+Message-Id: <20140723121106.GA18400@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1405278681-3348-1-git-send-email-peter.senna@gmail.com>
+In-Reply-To: <1402943256.3182.2.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>
+To: Andy Whitcroft <apw@canonical.com>
+Cc: Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This patch cleanup coding style issues reported by checkpatch.
+Checkpatch already complains when people break up quoted strings but
+it's still pretty common.  One mistake that people often make is they
+leave out the space character between the two strings.
 
-This patch change the following enums:
- - typedef enum __device_msg_level
- - typedef enum __DEVICE_NDIS_STATUS
+This check adds around 450 new warnings and has a low rate of false
+positives.
 
-Tested by compilation only.
-
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Cahnges from V1:
- - Sent all patches in a series
+v2: Move to correct spot in checkpatch
+    Fix indenting
+    Use "\w" instead of "[a-zA-Z]"
 
-Made against latest staging-next.
-
- drivers/staging/vt6656/channel.c |  5 +++--
- drivers/staging/vt6656/device.h  | 27 +++++++++++++--------------
- 2 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/staging/vt6656/channel.c b/drivers/staging/vt6656/channel.c
-index fb1838e..4a53f1a 100644
---- a/drivers/staging/vt6656/channel.c
-+++ b/drivers/staging/vt6656/channel.c
-@@ -28,8 +28,9 @@
-  *
-  *
-  * Revision History:
-- *      01-18-2005      RobertYu:  remove the for loop searching in ChannelValid,
-- *                                 change ChannelRuleTab to lookup-type, reorder table items.
-+ *	01-18-2005	RobertYu:	remove the for loop searching in
-+ *					ChannelValid, change ChannelRuleTab
-+ *					to lookup-type, reorder table items.
-  *
-  *
-  */
-diff --git a/drivers/staging/vt6656/device.h b/drivers/staging/vt6656/device.h
-index 789c55d..e3acf2f 100644
---- a/drivers/staging/vt6656/device.h
-+++ b/drivers/staging/vt6656/device.h
-@@ -187,13 +187,13 @@
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index a0880ed..132e6e2 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2361,6 +2361,12 @@ sub process {
+ 			     "quoted string split across lines\n" . $hereprev);
+ 		}
  
- #define DBG_PRT(l, p, args...) { if (l <= msglevel) printk(p, ##args); }
- 
--typedef enum __device_msg_level {
-+enum {
- 	MSG_LEVEL_ERR = 0,            /* Errors causing abnormal operation */
- 	MSG_LEVEL_NOTICE = 1,         /* Errors needing user notification */
- 	MSG_LEVEL_INFO = 2,           /* Normal message. */
- 	MSG_LEVEL_VERBOSE = 3,        /* Will report all trival errors. */
- 	MSG_LEVEL_DEBUG = 4           /* Only for debug purpose. */
--} DEVICE_MSG_LEVEL, *PDEVICE_MSG_LEVEL;
-+};
- 
- #define DEVICE_INIT_COLD	0x0 /* cold init */
- #define DEVICE_INIT_RESET	0x1 /* reset init or Dx to D0 power remain */
-@@ -268,13 +268,12 @@ struct vnt_interrupt_buffer {
- 
- /*++ NDIS related */
- 
--typedef enum __DEVICE_NDIS_STATUS {
--    STATUS_SUCCESS = 0,
--    STATUS_FAILURE,
--    STATUS_RESOURCES,
--    STATUS_PENDING,
--} DEVICE_NDIS_STATUS, *PDEVICE_NDIS_STATUS;
--
-+enum {
-+	STATUS_SUCCESS = 0,
-+	STATUS_FAILURE,
-+	STATUS_RESOURCES,
-+	STATUS_PENDING,
-+};
- 
- /* flags for options */
- #define     DEVICE_FLAGS_UNPLUG          0x00000001UL
-@@ -443,11 +442,11 @@ struct vnt_private {
- 	struct ieee80211_low_level_stats low_stats;
- };
- 
--#define ADD_ONE_WITH_WRAP_AROUND(uVar, uModulo) {   \
--    if ((uVar) >= ((uModulo) - 1))                  \
--        (uVar) = 0;                                 \
--    else                                            \
--        (uVar)++;                                   \
-+#define ADD_ONE_WITH_WRAP_AROUND(uVar, uModulo) {	\
-+	if ((uVar) >= ((uModulo) - 1))			\
-+		(uVar) = 0;				\
-+	else						\
-+		(uVar)++;				\
- }
- 
- #define fMP_DISCONNECTED                    0x00000002
--- 
-1.9.3
-
++# check for missing a space in a string concatination
++		if ($prevrawline =~ /[^\\]\w"$/ && $rawline =~ /^\+[\t ]+"\w/) {
++			WARN('MISSING_SPACE',
++			     "break quoted strings at a space character\n" . $hereprev);
++		}
++
+ # check for spaces before a quoted newline
+ 		if ($rawline =~ /^.*\".*\s\\n/) {
+ 			if (WARN("QUOTED_WHITESPACE_BEFORE_NEWLINE",
