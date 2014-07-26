@@ -1,54 +1,30 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 02 Jul 2014 17:32:55 +0000
-Subject: Re: [PATCH] Staging: rtl8192e: Fix potential NULL pointer dereference
-Message-Id: <20140702173255.GA18649@kroah.com>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Sat, 26 Jul 2014 11:58:01 +0000
+Subject: [PATCH] nfs3_list_one_acl(): check get_acl() result with IS_ERR_OR_NULL
+Message-Id: <1406375881-18837-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1404293151-15804-1-git-send-email-emilgoode@gmail.com>
- <20140702163334.GA19349@kroah.com>
- <20140702172620.GA4848@lianli>
-In-Reply-To: <20140702172620.GA4848@lianli>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: Rashika Kheria <rashika.kheria@gmail.com>, Valentina Manea <valentina.manea.m@gmail.com>, Josh Triplett <josh@joshtriplett.org>, Andrea Merello <andrea.merello@gmail.com>, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: trond.myklebust@primarydata.com
+Cc: linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Wed, Jul 02, 2014 at 07:26:20PM +0200, Emil Goode wrote:
-> Hello Greg,
-> 
-> On Wed, Jul 02, 2014 at 09:33:34AM -0700, Greg Kroah-Hartman wrote:
-> > On Wed, Jul 02, 2014 at 11:25:51AM +0200, Emil Goode wrote:
-> > > We need to make sure the struct rtllib_device pointer ieee is not NULL
-> > > after the goto rx_dropped label since it is dereferenced there.
-> > > 
-> > > Signed-off-by: Emil Goode <emilgoode@gmail.com>
-> > > ---
-> > >  drivers/staging/rtl8192e/rtllib_rx.c |    3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-> > > index 60de54c..7db3e74 100644
-> > > --- a/drivers/staging/rtl8192e/rtllib_rx.c
-> > > +++ b/drivers/staging/rtl8192e/rtllib_rx.c
-> > > @@ -1496,7 +1496,8 @@ int rtllib_rx(struct rtllib_device *ieee, struct sk_buff *skb,
-> > >  	return ret;
-> > >  
-> > >   rx_dropped:
-> > > -	ieee->stats.rx_dropped++;
-> > > +	if (ieee)
-> > > +		ieee->stats.rx_dropped++;
-> > >  	return 0;
-> > >  }
-> > >  EXPORT_SYMBOL(rtllib_rx);
-> > 
-> > Is this something that is hitting users today in the tree, or is this
-> > just a bug you found looking at the code?
-> 
-> It's a static checker fix and I'm not aware of any impact on users.
-> If you want I will resend with that information added?
-
-No, that's fine, just trying to see which kernel to apply this to...
-
-thanks,
-
-greg k-h
+VGhlcmUgd2FzIGEgY2hlY2sgZm9yIHJlc3VsdCBiZWluZyBub3QgTlVMTC4gQnV0IGdldF9hY2wo
+KSBtYXkgcmV0dXJuCk5VTEwsIG9yIEVSUl9QVFIsIG9yIGFjdHVhbCBwb2ludGVyLgpUaGUgcHVy
+cG9zZSBvZiB0aGUgZnVuY3Rpb24gd2hlcmUgY3VycmVudCBjaGFuZ2UgaXMgZG9uZSBpcyB0byAi
+bGlzdApBQ0xzIG9ubHkgd2hlbiB0aGV5IGFyZSBhdmFpbGFibGUiLCBzbyBhbnkgZXJyb3IgY29u
+ZGl0aW9uIG9mIGdldF9hY2woKQptdXN0bid0IGJlIGVsZXZhdGVkLCBhbmQgcmV0dXJuaW5nIDAg
+dGhlcmUgaXMgc3RpbGwgdmFsaWQuCgpCdWd6aWxsYTogaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwu
+b3JnL3Nob3dfYnVnLmNnaT9pZIExMTEKU2lnbmVkLW9mZi1ieTogQW5kcmV5IFV0a2luIDxhbmRy
+ZXkua3JpZWdlci51dGtpbkBnbWFpbC5jb20+Ci0tLQogZnMvbmZzL25mczNhY2wuYyB8IDIgKy0K
+IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdp
+dCBhL2ZzL25mcy9uZnMzYWNsLmMgYi9mcy9uZnMvbmZzM2FjbC5jCmluZGV4IDhmODU0ZGQuLmQw
+ZmVjMjYgMTAwNjQ0Ci0tLSBhL2ZzL25mcy9uZnMzYWNsLmMKKysrIGIvZnMvbmZzL25mczNhY2wu
+YwpAQCAtMjU2LDcgKzI1Niw3IEBAIG5mczNfbGlzdF9vbmVfYWNsKHN0cnVjdCBpbm9kZSAqaW5v
+ZGUsIGludCB0eXBlLCBjb25zdCBjaGFyICpuYW1lLCB2b2lkICpkYXRhLAogCWNoYXIgKnAgPSBk
+YXRhICsgKnJlc3VsdDsKIAogCWFjbCA9IGdldF9hY2woaW5vZGUsIHR5cGUpOwotCWlmICghYWNs
+KQorCWlmIChJU19FUlJfT1JfTlVMTChhY2wpKQogCQlyZXR1cm4gMDsKIAogCXBvc2l4X2FjbF9y
+ZWxlYXNlKGFjbCk7Ci0tIAoyLjAuMAoKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6
+IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkg
+b2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8g
+aW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
