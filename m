@@ -1,37 +1,27 @@
-From: Trond Myklebust <trond.myklebust@primarydata.com>
-Date: Sun, 27 Jul 2014 15:13:50 +0000
+From: Christoph Hellwig <hch@infradead.org>
+Date: Sun, 27 Jul 2014 19:50:41 +0000
 Subject: Re: [PATCH] nfs3_list_one_acl(): check get_acl() result with IS_ERR_OR_NULL
-Message-Id: <CAHQdGtRzDzpOuwZYWaBake-bH0z0eyMd2g-RTVwO0d2f0Zmsow@mail.gmail.com>
+Message-Id: <20140727195041.GA11575@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1406375881-18837-1-git-send-email-andrey.krieger.utkin@gmail.com>
-	<20140727131917.GA32153@infradead.org>
-In-Reply-To: <20140727131917.GA32153@infradead.org>
+ <20140727131917.GA32153@infradead.org>
+ <CAHQdGtRzDzpOuwZYWaBake-bH0z0eyMd2g-RTVwO0d2f0Zmsow@mail.gmail.com>
+In-Reply-To: <CAHQdGtRzDzpOuwZYWaBake-bH0z0eyMd2g-RTVwO0d2f0Zmsow@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Andrey Utkin <andrey.krieger.utkin@gmail.com>, Linux Kernel mailing list <linux-kernel@vger.kernel.org>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org, Russell King <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Andrey Utkin <andrey.krieger.utkin@gmail.com>, Linux Kernel mailing list <linux-kernel@vger.kernel.org>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, kernel-janitors@vger.kernel.org, Russell King <linux@arm.linux.org.uk>
 
-T24gU3VuLCBKdWwgMjcsIDIwMTQgYXQgOToxOSBBTSwgQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBp
-bmZyYWRlYWQub3JnPiB3cm90ZToKPiBPbiBTYXQsIEp1bCAyNiwgMjAxNCBhdCAwMjo1ODowMVBN
-ICswMzAwLCBBbmRyZXkgVXRraW4gd3JvdGU6Cj4+IFRoZXJlIHdhcyBhIGNoZWNrIGZvciByZXN1
-bHQgYmVpbmcgbm90IE5VTEwuIEJ1dCBnZXRfYWNsKCkgbWF5IHJldHVybgo+PiBOVUxMLCBvciBF
-UlJfUFRSLCBvciBhY3R1YWwgcG9pbnRlci4KPj4gVGhlIHB1cnBvc2Ugb2YgdGhlIGZ1bmN0aW9u
-IHdoZXJlIGN1cnJlbnQgY2hhbmdlIGlzIGRvbmUgaXMgdG8gImxpc3QKPj4gQUNMcyBvbmx5IHdo
-ZW4gdGhleSBhcmUgYXZhaWxhYmxlIiwgc28gYW55IGVycm9yIGNvbmRpdGlvbiBvZiBnZXRfYWNs
-KCkKPj4gbXVzdG4ndCBiZSBlbGV2YXRlZCwgYW5kIHJldHVybmluZyAwIHRoZXJlIGlzIHN0aWxs
-IHZhbGlkLgo+Pgo+PiBCdWd6aWxsYTogaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3df
-YnVnLmNnaT9pZIExMTEKPj4gU2lnbmVkLW9mZi1ieTogQW5kcmV5IFV0a2luIDxhbmRyZXkua3Jp
-ZWdlci51dGtpbkBnbWFpbC5jb20+Cj4KPiBMb29rcyBnb29kLCB0aGFua3MhCj4KPiBSZXZpZXdl
-ZC1ieTogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+Cj4KPiBzaG91bGQgcHJvYmFibHkg
-Z2V0IGEgY2MgdG8gc3RhYmxlIGFzIHRoZSBvcmlnaW5hbCBwYXRjaCBoYXMgb25lCj4gYXMgd2Vs
-bC4KCldoeSBhcmUgd2Ugbm90IHBhc3NpbmcgdGhlIGVycm9yIGNvZGUgYmFjayB0byB0aGUgY2Fs
-bGVyIGhlcmUgaW4gdGhlCmNhc2Ugd2hlcmUgd2UgaGF2ZSBvbmU/IE9uZSBvZiB0aGUgbWFpbiBw
-dXJwb3NlcyBvZiByZXR1cm5pbmcgYW4gZXJyb3IKaW4gZ2V0X2FjbCgpIGlzIHRvIGVuc3VyZSB0
-aGF0IHdlIHBhc3MgLUVPUE5PVFNVUFAgaWYgdGhlIG9wZXJhdGlvbgpmYWlscyBkdWUgdG8gbGFj
-ayBvZiBzZXJ2ZXIgc3VwcG9ydC4KCkNoZWVycwogIFRyb25kCgotLSAKVHJvbmQgTXlrbGVidXN0
-CgpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXIsIFByaW1hcnlEYXRhCgp0cm9uZC5teWtsZWJ1
-c3RAcHJpbWFyeWRhdGEuY29tCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
-IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEg
-bWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8g
-YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
+On Sun, Jul 27, 2014 at 11:13:50AM -0400, Trond Myklebust wrote:
+> Why are we not passing the error code back to the caller here in the
+> case where we have one? One of the main purposes of returning an error
+> in get_acl() is to ensure that we pass -EOPNOTSUPP if the operation
+> fails due to lack of server support.
+
+Do we really want to return EOPNOTSUPP from listxattr?  Seems like
+simply not listing anything if the server doesn't support ACLs would
+be the usual behaviour.  E.g. on local filesystems we'll also just get
+back an empty list of xattrs if ACLs aren't supported and not other
+attribute is set.
+
