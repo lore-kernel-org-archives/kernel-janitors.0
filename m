@@ -1,7 +1,7 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Date: Mon, 21 Jul 2014 02:54:46 +0000
+Date: Sun, 27 Jul 2014 14:53:01 +0000
 Subject: Re: [PATCH] kernel-doc compliant documentation for net_device
-Message-Id: <53CC80F6.6000302@infradead.org>
+Message-Id: <53D5124D.3090004@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1405870622-17222-1-git-send-email-karoly.kemeny@gmail.com>
 In-Reply-To: <1405870622-17222-1-git-send-email-karoly.kemeny@gmail.com>
