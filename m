@@ -1,48 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 31 Jul 2014 09:44:22 +0000
-Subject: re: extcon: sm5502: Add support new SM5502 extcon device driver
-Message-Id: <20140731094422.GA30971@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 29 Jul 2014 15:16:51 +0000
+Subject: [PATCH 9/9] uwb/whci: use correct structure type name in sizeof
+Message-Id: <1406647011-8543-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, linux-kernel@vger.kernel.org
 
-Hello Chanwoo Choi,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The patch 914b881f9452: "extcon: sm5502: Add support new SM5502
-extcon device driver" from May 22, 2014, leads to the following
-static checker warning:
+Correct typo in the name of the type given to sizeof.  Because it is the
+size of a pointer that is wanted, the typo has no impact on compilation or
+execution.
 
-	drivers/extcon/extcon-sm5502.c:398 sm5502_muic_cable_handler()
-	warn: we tested 'attached' before and it was 'false'
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
+semantic patch used can be found in message 0 of this patch series.
 
-drivers/extcon/extcon-sm5502.c
-   381  static int sm5502_muic_cable_handler(struct sm5502_muic_info *info,
-   382                                       bool attached)
-   383  {
-   384          static unsigned int prev_cable_type = SM5502_MUIC_ADC_GROUND;
-   385          const char **cable_names = info->edev->supported_cable;
-   386          unsigned int cable_type = SM5502_MUIC_ADC_GROUND;
-   387          unsigned int con_sw = DM_DP_SWITCH_OPEN;
-   388          unsigned int vbus_sw = VBUSIN_SWITCH_OPEN;
-   389          unsigned int idx = 0;
-   390          int ret;
-   391  
-   392          if (!cable_names)
-   393                  return 0;
-   394  
-   395          /* Get the type of attached or detached cable */
-   396          if (attached)
-                    ^^^^^^^^
-   397                  cable_type = sm5502_muic_get_cable_type(info);
-   398          else if (!attached)
-                         ^^^^^^^^^
-This is obviously implied.  It upsets the static checkers to check known
-variables.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-   399                  cable_type = prev_cable_type;
-   400          prev_cable_type = cable_type;
+---
+ drivers/uwb/whci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/uwb/whci.c b/drivers/uwb/whci.c
+index c9df8ba..46b7cfc 100644
+--- a/drivers/uwb/whci.c
++++ b/drivers/uwb/whci.c
+@@ -175,7 +175,7 @@ static int whci_probe(struct pci_dev *pci, const struct pci_device_id *id)
+ 
+ 	err = -ENOMEM;
+ 	card = kzalloc(sizeof(struct whci_card)
+-		       + sizeof(struct whci_dev *) * (n_caps + 1),
++		       + sizeof(struct umc_dev *) * (n_caps + 1),
+ 		       GFP_KERNEL);
+ 	if (card = NULL)
+ 		goto error_kzalloc;
+
