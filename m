@@ -1,61 +1,42 @@
-From: Ionut Alexa <ionut.m.alexa@gmail.com>
-Date: Fri, 11 Jul 2014 23:39:10 +0000
-Subject: [PATCH] kernel:dma : fix coding style errors
-Message-Id: <1405121950-22273-1-git-send-email-ionut.m.alexa@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 29 Jul 2014 15:16:43 +0000
+Subject: [PATCH 1/9] drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c: use correct structure type name in
+Message-Id: <1406647011-8543-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mmarek@suse.cz
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Ionut Alexa <ionut.m.alexa@gmail.com>
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: devel@driverdev.osuosl.org, linux-ia64@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, hmh@hmh.eng.br, toralf.foerster@gmx.de, ceph-devel@vger.kernel.org, linux-media@vger.kernel.org
 
-Fixed coding style errors.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Ionut Alexa <ionut.m.alexa@gmail.com>
+Correct typo in the name of the type given to sizeof.  Because it is the
+size of a pointer that is wanted, the typo has no impact on compilation or
+execution.
+
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
+semantic patch used can be found in message 0 of this patch series.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- kernel/dma.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/dma.c b/kernel/dma.c
-index 6c6262f..ae9ba17 100644
---- a/kernel/dma.c
-+++ b/kernel/dma.c
-@@ -66,7 +66,7 @@ static struct dma_chan dma_chan_busy[MAX_DMA_CHANNELS] = {
-  * @dmanr: DMA channel number
-  * @device_id: reserving device ID string, used in /proc/dma
-  */
--int request_dma(unsigned int dmanr, const char * device_id)
-+int request_dma(unsigned int dmanr, const char *device_id)
- {
- 	if (dmanr >= MAX_DMA_CHANNELS)
- 		return -EINVAL;
-@@ -87,12 +87,12 @@ int request_dma(unsigned int dmanr, const char * device_id)
- void free_dma(unsigned int dmanr)
- {
- 	if (dmanr >= MAX_DMA_CHANNELS) {
--		printk(KERN_WARNING "Trying to free DMA%d\n", dmanr);
-+		pr_warn("Trying to free DMA%d\n", dmanr);
- 		return;
- 	}
+diff --git a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
+index cda8388..255590f 100644
+--- a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
++++ b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
+@@ -227,7 +227,7 @@ static int vpfe_enable_clock(struct vpfe_device *vpfe_dev)
+ 		return 0;
  
- 	if (xchg(&dma_chan_busy[dmanr].lock, 0) = 0) {
--		printk(KERN_WARNING "Trying to free free DMA%d\n", dmanr);
-+		pr_warn("Trying to free free DMA%d\n", dmanr);
- 		return;
- 	}
- 
-@@ -152,9 +152,10 @@ static int __init proc_dma_init(void)
- 	return 0;
- }
- 
--__initcall(proc_dma_init);
-+device_initcall(proc_dma_init);
- #endif
- 
- EXPORT_SYMBOL(request_dma);
- EXPORT_SYMBOL(free_dma);
- EXPORT_SYMBOL(dma_spin_lock);
-+
--- 
-1.7.10.4
+ 	vpfe_dev->clks = kzalloc(vpfe_cfg->num_clocks *
+-				   sizeof(struct clock *), GFP_KERNEL);
++				   sizeof(struct clk *), GFP_KERNEL);
+ 	if (vpfe_dev->clks = NULL) {
+ 		v4l2_err(vpfe_dev->pdev->driver, "Memory allocation failed\n");
+ 		return -ENOMEM;
 
