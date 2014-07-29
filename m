@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Tue, 29 Jul 2014 15:16:43 +0000
-Subject: [PATCH 1/9] drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c: use correct structure type name in
-Message-Id: <1406647011-8543-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Tue, 29 Jul 2014 15:16:50 +0000
+Subject: [PATCH 8/9] iwlegacy: use correct structure type name in sizeof
+Message-Id: <1406647011-8543-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: devel@driverdev.osuosl.org, linux-ia64@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, hmh@hmh.eng.br, toralf.foerster@gmx.de, ceph-devel@vger.kernel.org, linux-media@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
@@ -23,20 +23,21 @@ semantic patch used can be found in message 0 of this patch series.
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/iwlegacy/common.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-index cda8388..255590f 100644
---- a/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-+++ b/drivers/staging/media/davinci_vpfe/vpfe_mc_capture.c
-@@ -227,7 +227,7 @@ static int vpfe_enable_clock(struct vpfe_device *vpfe_dev)
- 		return 0;
- 
- 	vpfe_dev->clks = kzalloc(vpfe_cfg->num_clocks *
--				   sizeof(struct clock *), GFP_KERNEL);
-+				   sizeof(struct clk *), GFP_KERNEL);
- 	if (vpfe_dev->clks = NULL) {
- 		v4l2_err(vpfe_dev->pdev->driver, "Memory allocation failed\n");
- 		return -ENOMEM;
+diff --git a/drivers/net/wireless/iwlegacy/common.c b/drivers/net/wireless/iwlegacy/common.c
+index 03de746..2c4fa49 100644
+--- a/drivers/net/wireless/iwlegacy/common.c
++++ b/drivers/net/wireless/iwlegacy/common.c
+@@ -2980,7 +2980,8 @@ il_tx_queue_alloc(struct il_priv *il, struct il_tx_queue *txq, u32 id)
+ 	/* Driver ilate data, only for Tx (not command) queues,
+ 	 * not shared with device. */
+ 	if (id != il->cmd_queue) {
+-		txq->skbs = kcalloc(TFD_QUEUE_SIZE_MAX, sizeof(struct skb *),
++		txq->skbs = kcalloc(TFD_QUEUE_SIZE_MAX,
++				    sizeof(struct sk_buff *),
+ 				    GFP_KERNEL);
+ 		if (!txq->skbs) {
+ 			IL_ERR("Fail to alloc skbs\n");
 
