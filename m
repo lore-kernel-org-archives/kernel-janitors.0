@@ -1,48 +1,42 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 22 Jul 2014 07:53:13 +0000
-Subject: Re: [PATCH] kernel/debug/kdb/kdb_bp.c: fix argument range check
-Message-Id: <20140722075207.GN25880@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 29 Jul 2014 15:16:45 +0000
+Subject: [PATCH 3/9] i40e: use correct structure type name in sizeof
+Message-Id: <1406647011-8543-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405705224-32171-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1405705224-32171-1-git-send-email-andrey.krieger.utkin@gmail.com>
+References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, dcb314@hotmail.com, jason.wessel@windriver.com, wharms@bfs.de
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, Jesse Brandeburg <jesse.brandeburg@intel.com>, Bruce Allan <bruce.w.allan@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Greg Rose <gregory.v.rose@intel.com>, Alex Duyck <alexander.h.duyck@intel.com>, John Ronciak <john.ronciak@intel.com>, Mitch Williams <mitch.a.williams@intel.com>, Linux NICS <linux.nics@intel.com>, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 18, 2014 at 08:40:24PM +0300, Andrey Utkin wrote:
-> Dropped negativity check; enhanced upper limit check as proposed by
-> Walter Harms <wharms@bfs.de>
->=20
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80591
-> Reported-by: David Binderman <dcb314@hotmail.com>
-> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-> ---
->  kernel/debug/kdb/kdb_bp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/kernel/debug/kdb/kdb_bp.c b/kernel/debug/kdb/kdb_bp.c
-> index 70a5046..371150f 100644
-> --- a/kernel/debug/kdb/kdb_bp.c
-> +++ b/kernel/debug/kdb/kdb_bp.c
-> @@ -39,7 +39,7 @@ static char *kdb_rwtypes[] =3D {
-> =20
->  static char *kdb_bptype(kdb_bp_t *bp)
->  {
-> -	if (bp->bp_type < 0 || bp->bp_type > 4)
-> +	if (bp->bp_type >=3D ARRAY_SIZE(kdb_rwtypes))
->  		return "";
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I like this version of the patch because it silences the static checker
-warning like the first one does but it also makes the code more
-readable.
+Correct typo in the name of the type given to sizeof.  Because it is the
+size of a pointer that is wanted, the typo has no impact on compilation or
+execution.
 
-regards,
-dan carpenter
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
+semantic patch used can be found in message 0 of this patch series.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/intel/i40e/i40e_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 821fcc1..b913c27 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -6137,7 +6137,7 @@ static int i40e_vsi_alloc_arrays(struct i40e_vsi *vsi, bool alloc_qvectors)
+ 
+ 	if (alloc_qvectors) {
+ 		/* allocate memory for q_vector pointers */
+-		size = sizeof(struct i40e_q_vectors *) * vsi->num_q_vectors;
++		size = sizeof(struct i40e_q_vector *) * vsi->num_q_vectors;
+ 		vsi->q_vectors = kzalloc(size, GFP_KERNEL);
+ 		if (!vsi->q_vectors) {
+ 			ret = -ENOMEM;
+
