@@ -1,55 +1,42 @@
-From: Arvid Brodin <arvid.brodin@alten.se>
-Date: Fri, 11 Jul 2014 16:12:31 +0000
-Subject: Re: net/hsr: Better frame dispatch
-Message-Id: <53C00CEF.1070100@alten.se>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Tue, 29 Jul 2014 15:16:44 +0000
+Subject: [PATCH 2/9] CAPI: use correct structure type name in sizeof
+Message-Id: <1406647011-8543-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140710210037.GA14669@mwanda>
-In-Reply-To: <20140710210037.GA14669@mwanda>
+References: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1406647011-8543-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: kernel-janitors@vger.kernel.org, linux-ia64@vger.kernel.org, ceph-devel@vger.kernel.org, toralf.foerster@gmx.de, hmh@hmh.eng.br, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2014-07-10 23:00, Dan Carpenter wrote:
-> Hello Arvid Brodin,
->=20
-> The patch f266a683a480: "net/hsr: Better frame dispatch" from Jul 4,
-> 2014, leads to the following static checker warning:
->=20
-> 	net/hsr/hsr_framereg.c:293 hsr_addr_subst_dest()
-> 	warn: this array is probably non-NULL. 'node_dst->MacAddressB'
->=20
-> net/hsr/hsr_framereg.c
->    286          node_dst =3D find_node_by_AddrA(&port->hsr->node_db, eth_=
-hdr(skb)->h_dest);
->    287          if (!node_dst) {
->    288                  WARN_ONCE(1, "%s: Unknown node\n", __func__);
->    289                  return;
->    290          }
->    291          if (port->type !=3D node_dst->AddrB_port)
->    292                  return;
->    293          if (!node_dst->MacAddressB) {
->                     ^^^^^^^^^^^^^^^^^^^^^^
-> This test is never true.  It could be deleted or replaced.
->=20
->    294                  WARN_ONCE(1, "%s: No MacAddressB\n", __func__);
->    295                  return;
->    296          }
->    297 =20
->=20
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Yes, this code (the whole if block; lines 293-296) is useless and should be=
- deleted.=20
-Thanks for finding it!
+Correct typo in the name of the type given to sizeof.  Because it is the
+size of a pointer that is wanted, the typo has no impact on compilation or
+execution.
 
+This problem was found using Coccinelle (http://coccinelle.lip6.fr/).  The
+semantic patch used can be found in message 0 of this patch series.
 
---=20
-Arvid Brodin | Consultant (Linux)
-ALTEN | Knarrarn=E4sgatan 7 | SE-164 40 Kista | Sweden
-arvid.brodin@alten.se | www.alten.se/en/
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+ drivers/isdn/capi/capi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/isdn/capi/capi.c b/drivers/isdn/capi/capi.c
+index f9a87ed..6a2df32 100644
+--- a/drivers/isdn/capi/capi.c
++++ b/drivers/isdn/capi/capi.c
+@@ -1260,7 +1260,7 @@ static int __init capinc_tty_init(void)
+ 	if (capi_ttyminors <= 0)
+ 		capi_ttyminors = CAPINC_NR_PORTS;
+ 
+-	capiminors = kzalloc(sizeof(struct capi_minor *) * capi_ttyminors,
++	capiminors = kzalloc(sizeof(struct capiminor *) * capi_ttyminors,
+ 			     GFP_KERNEL);
+ 	if (!capiminors)
+ 		return -ENOMEM;
+
