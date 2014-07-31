@@ -1,34 +1,30 @@
-From: Kumar Gaurav <kumargauravgupta3@gmail.com>
-Date: Wed, 02 Jul 2014 19:51:58 +0000
-Subject: [PATCH] Block: rsxx: core: Removed depricated flag IRQF_DISABLED
-Message-Id: <1404329998-30640-1-git-send-email-kumargauravgupta3@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 Jul 2014 15:36:20 +0000
+Subject: [patch] mtd: ndfc: silence an array underflow static checker warning
+Message-Id: <20140731153620.GH31539@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: josh.h.morris@us.ibm.com, pjk1939@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Kumar Gaurav <kumargauravgupta3@gmail.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Grant Likely <grant.likely@linaro.org>, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org, Rob Herring <robh+dt@kernel.org>
 
-IRQF_DISABLED flag is depricated and should be removed.
+We check "cs" for array overflows but we don't check for underflows and
+it upsets the static checkers.
 
-Signed-off-by: Kumar Gaurav <kumargauravgupta3@gmail.com>
----
- drivers/block/rsxx/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index a8de2ee..ddb6b2b 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -886,7 +886,7 @@ static int rsxx_pci_probe(struct pci_dev *dev,
- 				"Failed to enable MSI\n");
- 	}
+diff --git a/drivers/mtd/nand/ndfc.c b/drivers/mtd/nand/ndfc.c
+index 69eaba6..253a644 100644
+--- a/drivers/mtd/nand/ndfc.c
++++ b/drivers/mtd/nand/ndfc.c
+@@ -203,7 +203,8 @@ static int ndfc_probe(struct platform_device *ofdev)
+ 	struct ndfc_controller *ndfc;
+ 	const __be32 *reg;
+ 	u32 ccr;
+-	int err, len, cs;
++	u32 cs;
++	int err, len;
  
--	st = request_irq(dev->irq, rsxx_isr, IRQF_DISABLED | IRQF_SHARED,
-+	st = request_irq(dev->irq, rsxx_isr, IRQF_SHARED,
- 			 DRIVER_NAME, card);
- 	if (st) {
- 		dev_err(CARD_TO_DEV(card),
--- 
-1.7.9.5
-
+ 	/* Read the reg property to get the chip select */
+ 	reg = of_get_property(ofdev->dev.of_node, "reg", &len);
