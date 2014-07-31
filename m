@@ -1,43 +1,29 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Sun, 20 Jul 2014 20:19:24 +0000
-Subject: Re: [PATCH] staging: input: sunkbd.c: Fix coding style
-Message-Id: <20140720201924.GA18347@core.coreip.homeip.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 Jul 2014 15:22:17 +0000
+Subject: [patch 1/2] pinctrl: tegra-xusb: fix an off by one test
+Message-Id: <20140731152217.GD31539@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140720120103.GA5294@kalio-PC>
- <1405871574.5135.24.camel@joe-AO725>
-In-Reply-To: <1405871574.5135.24.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Bivolaru Catalin <bivolaru.catalin@gmail.com>, kernel-janitors@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, paul.gortmaker@windriver.com
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-On Sun, Jul 20, 2014 at 08:52:54AM -0700, Joe Perches wrote:
-> On Sun, 2014-07-20 at 15:01 +0300, Bivolaru Catalin wrote:
-> > Fix coding style with regard to missing spaces after , and the column limit
-> > that was violated after the first change.
-> 
-> Some checkpatch errors should be ignored.
-> 
-> These are some of them.
-> 
-> This change doesn't make it easier to read
-> or to find any array entry.
-> 
-> It's currently in groups of 16 (0x10).
-> 
-> This change would make it very difficult
-> to find any particular entry.
-> 
-> It might make some sense to change the last
-> line to add a trailing "  0,  0" entry as
-> the compiler does to make it a bit clearer
-> the table has 128 entries.
+This shoudld be ">= ARRAY_SIZE()" instead of "> ARRAY_SIZE()".
 
-I'd rather not change a thing in this table - it has been working as is
-for many years.
+Fixes: dc0a39386687 ('pinctrl: Add NVIDIA Tegra XUSB pad controller support')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
-
--- 
-Dmitry
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+index a066204..419a047 100644
+--- a/drivers/pinctrl/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -680,7 +680,7 @@ static struct phy *tegra_xusb_padctl_xlate(struct device *dev,
+ 	if (args->args_count <= 0)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	if (index > ARRAY_SIZE(padctl->phys))
++	if (index >= ARRAY_SIZE(padctl->phys))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	return padctl->phys[index];
