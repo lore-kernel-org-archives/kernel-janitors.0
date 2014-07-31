@@ -1,41 +1,48 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 08 Jul 2014 12:52:35 +0000
-Subject: re: cxgb4 : Add DCBx support codebase and dcbnl_ops
-Message-Id: <20140708125235.GA9963@mwanda>
+Date: Thu, 31 Jul 2014 09:44:22 +0000
+Subject: re: extcon: sm5502: Add support new SM5502 extcon device driver
+Message-Id: <20140731094422.GA30971@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Anish Bhatt,
+Hello Chanwoo Choi,
 
-The patch 76bcb31efc06: "cxgb4 : Add DCBx support codebase and
-dcbnl_ops" from Jun 19, 2014, leads to the following static checker
-warning:
+The patch 914b881f9452: "extcon: sm5502: Add support new SM5502
+extcon device driver" from May 22, 2014, leads to the following
+static checker warning:
 
-	drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:679 cxgb4_setapp()
-	warn: signedness bug returning '(-22)'
+	drivers/extcon/extcon-sm5502.c:398 sm5502_muic_cable_handler()
+	warn: we tested 'attached' before and it was 'false'
 
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c
-   669  static u8 cxgb4_setapp(struct net_device *dev, u8 app_idtype, u16 app_id,
-   670                         u8 app_prio)
-   671  {
-   672          struct fw_port_cmd pcmd;
-   673          struct port_info *pi = netdev2pinfo(dev);
-   674          struct adapter *adap = pi->adapter;
-   675          int i, err;
-   676  
-   677  
-   678          if (pi->dcb.state != CXGB4_DCB_STATE_FW_ALLSYNCED)
-   679                  return -EINVAL;
-                        ^^^^^^^^^^^^^^
+drivers/extcon/extcon-sm5502.c
+   381  static int sm5502_muic_cable_handler(struct sm5502_muic_info *info,
+   382                                       bool attached)
+   383  {
+   384          static unsigned int prev_cable_type = SM5502_MUIC_ADC_GROUND;
+   385          const char **cable_names = info->edev->supported_cable;
+   386          unsigned int cable_type = SM5502_MUIC_ADC_GROUND;
+   387          unsigned int con_sw = DM_DP_SWITCH_OPEN;
+   388          unsigned int vbus_sw = VBUSIN_SWITCH_OPEN;
+   389          unsigned int idx = 0;
+   390          int ret;
+   391  
+   392          if (!cable_names)
+   393                  return 0;
+   394  
+   395          /* Get the type of attached or detached cable */
+   396          if (attached)
+                    ^^^^^^^^
+   397                  cable_type = sm5502_muic_get_cable_type(info);
+   398          else if (!attached)
+                         ^^^^^^^^^
+This is obviously implied.  It upsets the static checkers to check known
+variables.
 
-See also:
-
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:683 cxgb4_setapp() warn: signedness bug returning '(-67)'
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:687 cxgb4_setapp() warn: signedness bug returning '(-22)'
-drivers/net/ethernet/chelsio/cxgb4/cxgb4_dcb.c:713 cxgb4_setapp() warn: signedness bug returning '(-16)'
+   399                  cable_type = prev_cable_type;
+   400          prev_cable_type = cable_type;
 
 regards,
 dan carpenter
