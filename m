@@ -1,43 +1,46 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 07 Jul 2014 10:49:33 +0000
-Subject: re: [PATCH] configfs: User-driven configuration filesystem
-Message-Id: <20140707104933.GA8740@mwanda>
+Date: Thu, 31 Jul 2014 15:30:11 +0000
+Subject: [patch] ISDN: pcbit: off by one bugs in pcbit_set_msn()
+Message-Id: <20140731153011.GF31539@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Karsten Keil <isdn@linux-pingi.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Joel Becker,
+1) We don't allocate enough space for the NUL terminator so we end up
+   corrupting one character beyond the end of the buffer.
 
-This is a semi-automatic email about new static checker warnings.
+2) The "len - 1" should just be "len".  The code is trying to copy a
+   word from a buffer up to a comma or the last word in the buffer.
+   Say you have the buffer, "foo,bar,baz", then this code truncates the
+   last letter off each word so you get "fo", "ba", and "ba".  You would
+   hope this kind of bug would get noticed in testing...
 
-The patch 7063fbf22611: "[PATCH] configfs: User-driven configuration
-filesystem" from Dec 15, 2005, leads to the following Smatch
-complaint:
+   I'm not very familiar with this code and I can't test it, but I think
+   we should copy the final character.
 
-fs/configfs/inode.c:256 configfs_drop_dentry()
-	 error: we previously assumed 'dentry->d_inode' could be null (see line 252)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-fs/configfs/inode.c
-   251			spin_lock(&dentry->d_lock);
-   252			if (!(d_unhashed(dentry) && dentry->d_inode)) {
-                                                    ^^^^^^^^^^^^^^^
-We want ->d_inode to be NULL (or d_unhashed() to be false).
-
-   253				dget_dlock(dentry);
-   254				__d_drop(dentry);
-   255				spin_unlock(&dentry->d_lock);
-   256				simple_unlink(parent->d_inode, dentry);
-                                                               ^^^^^^
-But then we dereference dentry->d_inode here inside the call to
-simple_unlink() which is puzzling and means the initial condition is
-wrong somehow.  Maybe the parenthesis are wrong and it should be:
-
-		if (!d_unhashed(dentry) && dentry->d_inode) {
-
-   257			} else
-   258				spin_unlock(&dentry->d_lock);
-
-regards,
-dan carpenter
+diff --git a/drivers/isdn/pcbit/drv.c b/drivers/isdn/pcbit/drv.c
+index f02cc50..4172e22 100644
+--- a/drivers/isdn/pcbit/drv.c
++++ b/drivers/isdn/pcbit/drv.c
+@@ -1035,14 +1035,14 @@ static void pcbit_set_msn(struct pcbit_dev *dev, char *list)
+ 		}
+ 		ptr->next = NULL;
+ 
+-		ptr->msn = kmalloc(len, GFP_ATOMIC);
++		ptr->msn = kmalloc(len + 1, GFP_ATOMIC);
+ 		if (!ptr->msn) {
+ 			printk(KERN_WARNING "kmalloc failed\n");
+ 			kfree(ptr);
+ 			return;
+ 		}
+ 
+-		memcpy(ptr->msn, sp, len - 1);
++		memcpy(ptr->msn, sp, len);
+ 		ptr->msn[len] = 0;
+ 
+ #ifdef DEBUG
