@@ -1,71 +1,38 @@
-From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Date: Thu, 17 Jul 2014 16:27:16 +0000
-Subject: [PATCH 2/4] drivers/staging/media/davinci_vpfe/dm365_ipipeif.c: fix negativity check
-Message-Id: <1405614436-4506-1-git-send-email-andrey.krieger.utkin@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 Jul 2014 09:41:23 +0000
+Subject: [patch] NFC: st21nfcb: double free on allocation error
+Message-Id: <20140731094123.GI30276@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, linux-media@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, m.chehab@samsung.com, Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-[linux-3.16-rc5/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c:210]:
-(style) Checking if unsigned variable 'val' is less than zero.
+"info" is allocated with devm_kzalloc() so calling kfree() here will
+lead to a double free.
 
-    val =3D get_oneshot_mode(ipipeif->input);
-    if (val < 0) {
-        pr_err("ipipeif: links setup required");
-        return -EINVAL;
-    }
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-but
-
-static int get_oneshot_mode(enum ipipeif_input_entity input)
-
-Introduced temporary variable for negativity check.
-"val" is afterwards used in a lot of bitwise operations, so changing its ty=
-pe
-to signed is not safe, according to CERT C Secure Coding Standards chapter
-INT13-C: "Use bitwise operators only on unsigned operands"
-https://www.securecoding.cert.org/confluence/display/seccode/INT13-C.+Use+b=
-itwise+operators+only+on+unsigned+operands
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=80521
-Reported-by: David Binderman <dcb314@hotmail.com>
-Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
----
- drivers/staging/media/davinci_vpfe/dm365_ipipeif.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c b/drivers/s=
-taging/media/davinci_vpfe/dm365_ipipeif.c
-index 59540cd..6d4893b 100644
---- a/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c
-+++ b/drivers/staging/media/davinci_vpfe/dm365_ipipeif.c
-@@ -196,6 +196,7 @@ static int ipipeif_hw_setup(struct v4l2_subdev *sd)
- 	int data_shift;
- 	int pack_mode;
- 	int source1;
-+	int tmp;
-=20
- 	ipipeif_base_addr =3D ipipeif->ipipeif_base_addr;
-=20
-@@ -206,8 +207,8 @@ static int ipipeif_hw_setup(struct v4l2_subdev *sd)
- 	outformat =3D &ipipeif->formats[IPIPEIF_PAD_SOURCE];
-=20
- 	/* Combine all the fields to make CFG1 register of IPIPEIF */
--	val =3D get_oneshot_mode(ipipeif->input);
--	if (val < 0) {
-+	tmp =3D val =3D get_oneshot_mode(ipipeif->input);
-+	if (tmp < 0) {
- 		pr_err("ipipeif: links setup required");
- 		return -EINVAL;
+diff --git a/drivers/nfc/st21nfcb/st21nfcb.c b/drivers/nfc/st21nfcb/st21nfcb.c
+index 4d95863..6944f9e 100644
+--- a/drivers/nfc/st21nfcb/st21nfcb.c
++++ b/drivers/nfc/st21nfcb/st21nfcb.c
+@@ -94,8 +94,7 @@ int st21nfcb_nci_probe(struct llt_ndlc *ndlc, int phy_headroom,
+ 					phy_headroom, phy_tailroom);
+ 	if (!ndlc->ndev) {
+ 		pr_err("Cannot allocate nfc ndev\n");
+-		r = -ENOMEM;
+-		goto err_alloc_ndev;
++		return -ENOMEM;
  	}
---=20
-1.8.5.5
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ 	info->ndlc = ndlc;
+ 
+@@ -109,8 +108,6 @@ int st21nfcb_nci_probe(struct llt_ndlc *ndlc, int phy_headroom,
+ err_regdev:
+ 	nci_free_device(ndlc->ndev);
+ 
+-err_alloc_ndev:
+-	kfree(info);
+ 	return r;
+ }
+ EXPORT_SYMBOL_GPL(st21nfcb_nci_probe);
