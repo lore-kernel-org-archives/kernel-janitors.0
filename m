@@ -1,40 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 17 Jul 2014 07:44:47 +0000
-Subject: [patch] RDMA/amso1100: integer overflow in c2_alloc_cq_buf()
-Message-Id: <20140717074447.GA477@mwanda>
+Date: Thu, 31 Jul 2014 15:30:51 +0000
+Subject: [patch] usb: dwc3: omap: signedness bug in dwc3_omap_set_utmi_mode()
+Message-Id: <20140731153051.GG31539@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tom Tucker <tom-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>
-Cc: Steve Wise <swise-7bPotxP6k4+P2YhJcF5u+vpXobYPEAuW@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-This is a static checker fix.  The static checker says that q_size comes
-from the user and can be any 32 bit value.  The call tree is:
-  --> ib_uverbs_create_cq()
-      --> c2_create_cq()
-          --> c2_init_cq()
+"ret" should be signed.  It's only used for zero and negative error
+codes.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/infiniband/hw/amso1100/c2_cq.c b/drivers/infiniband/hw/amso1100/c2_cq.c
-index 49e0e85..1b63185 100644
---- a/drivers/infiniband/hw/amso1100/c2_cq.c
-+++ b/drivers/infiniband/hw/amso1100/c2_cq.c
-@@ -260,11 +260,14 @@ static void c2_free_cq_buf(struct c2_dev *c2dev, struct c2_mq *mq)
- 			  mq->msg_pool.host, dma_unmap_addr(mq, mapping));
- }
+diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
+index ef4936f..9dcfbe7 100644
+--- a/drivers/usb/dwc3/dwc3-omap.c
++++ b/drivers/usb/dwc3/dwc3-omap.c
+@@ -425,7 +425,7 @@ static void dwc3_omap_set_utmi_mode(struct dwc3_omap *omap)
  
--static int c2_alloc_cq_buf(struct c2_dev *c2dev, struct c2_mq *mq, int q_size,
--			   int msg_size)
-+static int c2_alloc_cq_buf(struct c2_dev *c2dev, struct c2_mq *mq,
-+			   size_t q_size, size_t msg_size)
+ static int dwc3_omap_extcon_register(struct dwc3_omap *omap)
  {
- 	u8 *pool_start;
+-	u32			ret;
++	int			ret;
+ 	struct device_node	*node = omap->dev->of_node;
+ 	struct extcon_dev	*edev;
  
-+	if (q_size > SIZE_MAX / msg_size)
-+		return -EINVAL;
-+
- 	pool_start = dma_alloc_coherent(&c2dev->pcidev->dev, q_size * msg_size,
- 					&mq->host_dma, GFP_KERNEL);
- 	if (!pool_start)
