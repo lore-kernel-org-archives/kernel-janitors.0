@@ -1,29 +1,47 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 31 Jul 2014 09:32:09 +0000
-Subject: [patch -next] ASoC: fsl_asrc: fix an error code in fsl_asrc_probe()
-Message-Id: <20140731093209.GF30276@mwanda>
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 31 Jul 2014 19:24:02 +0000
+Subject: Re: [patch -next] ASoC: fsl_asrc: fix an error code in fsl_asrc_probe()
+Message-Id: <20140731192402.GL17528@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="1km+XC/p/ep4c9cZ"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Timur Tabi <timur@tabi.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
+References: <20140731093209.GF30276@mwanda>
+In-Reply-To: <20140731093209.GF30276@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Timur Tabi <timur@tabi.org>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
 
-There is a cut and paste bug so it returns success instead of the error
-code.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--1km+XC/p/ep4c9cZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
-index b9a2888..b04438c 100644
---- a/sound/soc/fsl/fsl_asrc.c
-+++ b/sound/soc/fsl/fsl_asrc.c
-@@ -826,7 +826,7 @@ static int fsl_asrc_probe(struct platform_device *pdev)
- 	asrc_priv->mem_clk = devm_clk_get(&pdev->dev, "mem");
- 	if (IS_ERR(asrc_priv->mem_clk)) {
- 		dev_err(&pdev->dev, "failed to get mem clock\n");
--		return PTR_ERR(asrc_priv->ipg_clk);
-+		return PTR_ERR(asrc_priv->mem_clk);
- 	}
- 
- 	asrc_priv->ipg_clk = devm_clk_get(&pdev->dev, "ipg");
+On Thu, Jul 31, 2014 at 12:32:09PM +0300, Dan Carpenter wrote:
+> There is a cut and paste bug so it returns success instead of the error
+> code.
+
+Applied, thanks.  Might be worth looking at how you're generating your
+CC lists here, it seems a bit random.
+
+--1km+XC/p/ep4c9cZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT2pfPAAoJELSic+t+oim9dEUQAIWxQhqoVk38JF6Z0yvVc8+O
+B+zV4AYxzjY+9gLpGY7uDI/Dmdw06RpbuYfrk3t2o/kd7/XdfQiq7tr7h/ea6aFA
+lIvmqovviaWyJR3SaeNa0agwN9Tb6YRAoRboVfoZ0nDVLryaKoeyWWG0jcygzliG
+w7BQyOL5KEDbL0aRdn1cqA2t7R5eyHMj8H0N4K+K8y7PmvGAr+n0FfUhbXzwL5ht
+rULwprgHW3ArYSrOSsVrkkGRuQqnfUXoTIpd+ebgIqxGrvmyQxIY61wkgmrU80Nr
+es2iUdkI3/dWrvMfL1oKwt4PKa1OPi/BhOPaVhQFlNKg2B/EjmxaCGqQNgbJY9sK
+7gOVWgP2YzIfmrCiwsm0y9+2RJAGs2pI1D9MI3ttsrLxyxIXvetGu3brCEZMtosh
+Bb3mmXFk+uMChjCgcBMpBJtu7CmjrkzbTQkWZ281r2aGNmgDvPbgbgWwvG4rmat/
+BhbPAOtlDpLk6TNtdcd3zH3WKWEQo0S5bBCefLJfLTAohXNyXXZCtKtw3IBJamJd
+QwOBKIxSUdV8KP7Nf5Fnya1ej/s+Rodf7/iKZsfc36AlOm31B7O24frsjS8q1B/d
+1IHMewZV1u7SzQlv5LqWVTk63Fg3PiFe7ahUQR8+2AGJ9aea9/FAHcQD8i+asjI7
+iU/SnumU7/Ol39WptEPQ
+=PNDi
+-----END PGP SIGNATURE-----
+
+--1km+XC/p/ep4c9cZ--
