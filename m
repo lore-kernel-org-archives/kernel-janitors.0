@@ -1,40 +1,36 @@
-From: Jens Axboe <axboe@kernel.dk>
-Date: Tue, 05 Aug 2014 19:13:38 +0000
-Subject: Re: [patch] partitions: aix.c: off by one bug
-Message-Id: <53E12CE2.7080305@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Aug 2014 08:25:14 +0000
+Subject: [patch] ghes_edac: use snprintf() to silence a static checker warning
+Message-Id: <20140801082514.GD28869@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140805080959.GA13605@mwanda>
-In-Reply-To: <20140805080959.GA13605@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Philippe De Muyter <phdm@macqel.be>
-Cc: Fabian Frederick <fabf@skynet.be>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 08/05/2014 02:09 AM, Dan Carpenter wrote:
-> The lvip[] array has "state->limit" elements so the condition here
-> should be >= instead of >.
-> 
-> Fixes: 6ceea22bbbc8 ('partitions: add aix lvm partition support files')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/block/partitions/aix.c b/block/partitions/aix.c
-> index 0a6ed54..f3ed7b2 100644
-> --- a/block/partitions/aix.c
-> +++ b/block/partitions/aix.c
-> @@ -253,7 +253,7 @@ int aix_partition(struct parsed_partitions *state)
->  				continue;
->  			}
->  			lv_ix = be16_to_cpu(p->lv_ix) - 1;
-> -			if (lv_ix > state->limit) {
-> +			if (lv_ix >= state->limit) {
->  				cur_lv_ix = -1;
->  				continue;
->  			}
-> 
+My static checker complains because the "e->location" has up to 256
+characters but we are copying it into the "pvt->detail_location" which
+only has space for 240 characters.  That's not counting the surrounding
+text and the "e->other_detail" string which can be over 80 characters
+long.
 
-Applied, thanks.
+I am not familiar with this code but presumably it normally works.
+Let's add a limit though for safety.
 
--- 
-Jens Axboe
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+index 8399b4e..b246819 100644
+--- a/drivers/edac/ghes_edac.c
++++ b/drivers/edac/ghes_edac.c
+@@ -413,8 +413,8 @@ void ghes_edac_report_mem_error(struct ghes *ghes, int sev,
+ 
+ 	/* Generate the trace event */
+ 	grain_bits = fls_long(e->grain);
+-	sprintf(pvt->detail_location, "APEI location: %s %s",
+-		e->location, e->other_detail);
++	snprintf(pvt->detail_location, sizeof(pvt->detail_location),
++		 "APEI location: %s %s", e->location, e->other_detail);
+ 	trace_mc_event(type, e->msg, e->label, e->error_count,
+ 		       mci->mc_idx, e->top_layer, e->mid_layer, e->low_layer,
+ 		       PAGES_TO_MiB(e->page_frame_number) | e->offset_in_page,
