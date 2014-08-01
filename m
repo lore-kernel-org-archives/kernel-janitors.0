@@ -1,151 +1,98 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 30 Aug 2014 14:41:23 +0000
-Subject: [PATCH] staging: lustre: fid,fld: expand the GOTO macro
-Message-Id: <1409409683-5288-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Patrice Chotard <patrice.chotard@st.com>
+Date: Fri, 01 Aug 2014 07:40:44 +0000
+Subject: Re: pinctrl: abx500: fix abx500_gpio_dbg_show_one() to show pull up/down
+Message-Id: <53DB447C.9030001@st.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, "Dilger, Andreas" <andreas.dilger@intel.com>, "Drokin, Oleg" <oleg.drokin@intel.com>, Peng Tao <bergwolf@gmail.com>
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Dan
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+On 07/31/2014 12:54 PM, Dan Carpenter wrote:
+> [ This is not very new, sorry.  -dan ]
 
-// <smpl>
-@@
-identifier lbl;
-identifier rc;
-constant c;
-@@
+Yes, sorry for that :-(
+A fix has just been submitted to Linus Walleij.
 
-- GOTO(lbl,\(rc\|c\));
-+ goto lbl;
+Thanks
 
-@@
-identifier lbl;
-expression rc;
-@@
-
-- GOTO(lbl,rc);
-+ rc;
-+ goto lbl;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/staging/lustre/lustre/fid/fid_request.c |   18 +++++++++++-------
- drivers/staging/lustre/lustre/fld/fld_request.c |   14 ++++++++------
- 2 files changed, 19 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/staging/lustre/lustre/fid/fid_request.c b/drivers/staging/lustre/lustre/fid/fid_request.c
-index 46c11ca..64b1d80 100644
---- a/drivers/staging/lustre/lustre/fid/fid_request.c
-+++ b/drivers/staging/lustre/lustre/fid/fid_request.c
-@@ -113,7 +113,7 @@ static int seq_client_rpc(struct lu_client_seq *seq,
- 	if (seq->lcs_type = LUSTRE_SEQ_METADATA)
- 		mdc_put_rpc_lock(exp->exp_obd->u.cli.cl_rpc_lock, NULL);
- 	if (rc)
--		GOTO(out_req, rc);
-+		goto out_req;
- 
- 	out = req_capsule_server_get(&req->rq_pill, &RMF_SEQ_RANGE);
- 	*output = *out;
-@@ -121,13 +121,15 @@ static int seq_client_rpc(struct lu_client_seq *seq,
- 	if (!range_is_sane(output)) {
- 		CERROR("%s: Invalid range received from server: "
- 		       DRANGE"\n", seq->lcs_name, PRANGE(output));
--		GOTO(out_req, rc = -EINVAL);
-+		rc = -EINVAL;
-+		goto out_req;
- 	}
- 
- 	if (range_is_exhausted(output)) {
- 		CERROR("%s: Range received from server is exhausted: "
- 		       DRANGE"]\n", seq->lcs_name, PRANGE(output));
--		GOTO(out_req, rc = -EINVAL);
-+		rc = -EINVAL;
-+		goto out_req;
- 	}
- 
- 	CDEBUG_LIMIT(debug_mask, "%s: Allocated %s-sequence "DRANGE"]\n",
-@@ -430,7 +432,7 @@ static int seq_client_proc_init(struct lu_client_seq *seq)
- 	if (rc) {
- 		CERROR("%s: Can't init sequence manager proc, rc %d\n",
- 		       seq->lcs_name, rc);
--		GOTO(out_cleanup, rc);
-+		goto out_cleanup;
- 	}
- 
- 	return 0;
-@@ -508,8 +510,10 @@ int client_fid_init(struct obd_device *obd,
- 		return -ENOMEM;
- 
- 	OBD_ALLOC(prefix, MAX_OBD_NAME + 5);
--	if (prefix = NULL)
--		GOTO(out_free_seq, rc = -ENOMEM);
-+	if (prefix = NULL) {
-+		rc = -ENOMEM;
-+		goto out_free_seq;
-+	}
- 
- 	snprintf(prefix, MAX_OBD_NAME + 5, "cli-%s", obd->obd_name);
- 
-@@ -517,7 +521,7 @@ int client_fid_init(struct obd_device *obd,
- 	rc = seq_client_init(cli->cl_seq, exp, type, prefix, NULL);
- 	OBD_FREE(prefix, MAX_OBD_NAME + 5);
- 	if (rc)
--		GOTO(out_free_seq, rc);
-+		goto out_free_seq;
- 
- 	return rc;
- out_free_seq:
-diff --git a/drivers/staging/lustre/lustre/fld/fld_request.c b/drivers/staging/lustre/lustre/fld/fld_request.c
-index 4539a02..f63c669 100644
---- a/drivers/staging/lustre/lustre/fld/fld_request.c
-+++ b/drivers/staging/lustre/lustre/fld/fld_request.c
-@@ -293,7 +293,7 @@ static int fld_client_proc_init(struct lu_client_fld *fld)
- 	if (rc) {
- 		CERROR("%s: Can't init FLD proc, rc %d\n",
- 		       fld->lcf_name, rc);
--		GOTO(out_cleanup, rc);
-+		goto out_cleanup;
- 	}
- 
- 	return 0;
-@@ -363,12 +363,12 @@ int fld_client_init(struct lu_client_fld *fld,
- 	if (IS_ERR(fld->lcf_cache)) {
- 		rc = PTR_ERR(fld->lcf_cache);
- 		fld->lcf_cache = NULL;
--		GOTO(out, rc);
-+		goto out;
- 	}
- 
- 	rc = fld_client_proc_init(fld);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- out:
- 	if (rc)
- 		fld_client_fini(fld);
-@@ -441,11 +441,13 @@ int fld_client_rpc(struct obd_export *exp,
- 	if (fld_op != FLD_LOOKUP)
- 		mdc_put_rpc_lock(exp->exp_obd->u.cli.cl_rpc_lock, NULL);
- 	if (rc)
--		GOTO(out_req, rc);
-+		goto out_req;
- 
- 	prange = req_capsule_server_get(&req->rq_pill, &RMF_FLD_MDFLD);
--	if (prange = NULL)
--		GOTO(out_req, rc = -EFAULT);
-+	if (prange = NULL) {
-+		rc = -EFAULT;
-+		goto out_req;
-+	}
- 	*range = *prange;
- out_req:
- 	ptlrpc_req_finished(req);
+Patrice
+>
+> Hello Patrice Chotard,
+>
+> This is a semi-automatic email about new static checker warnings.
+>
+> The patch d2752ae54d4a: "pinctrl: abx500: fix
+> abx500_gpio_dbg_show_one() to show pull up/down" from May 24, 2013,
+> leads to the following Smatch complaint:
+>
+> drivers/pinctrl/nomadik/pinctrl-abx500.c:623 abx500_gpio_dbg_show_one()
+> 	 warn: variable dereferenced before check 'pctldev' (see line 573)
+>
+> drivers/pinctrl/nomadik/pinctrl-abx500.c
+>     572	{
+>     573		struct abx500_pinctrl *pct = pinctrl_dev_get_drvdata(pctldev);
+>                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Patch adds a new unchecked dereference.
+>
+>     574		const char *label = gpiochip_is_requested(chip, offset - 1);
+>     575		u8 gpio_offset = offset - 1;
+>     576		int mode = -1;
+>     577		bool is_out;
+>     578		bool pd;
+>     579		enum abx500_gpio_pull_updown pud = 0;
+>     580		int ret;
+>     581	
+>     582		const char *modes[] = {
+>     583			[ABX500_DEFAULT]	= "default",
+>     584			[ABX500_ALT_A]		= "altA",
+>     585			[ABX500_ALT_B]		= "altB",
+>     586			[ABX500_ALT_C]		= "altC",
+>     587		};
+>     588	
+>     589		const char *pull_up_down[] = {
+>     590			[ABX500_GPIO_PULL_DOWN]		= "pull down",
+>     591			[ABX500_GPIO_PULL_NONE]		= "pull none",
+>     592			[ABX500_GPIO_PULL_NONE + 1]	= "pull none",
+>     593			[ABX500_GPIO_PULL_UP]		= "pull up",
+>     594		};
+>     595	
+>     596		ret = abx500_gpio_get_bit(chip, AB8500_GPIO_DIR1_REG,
+>     597				gpio_offset, &is_out);
+>     598		if (ret < 0)
+>     599			goto out;
+>     600	
+>     601		seq_printf(s, " gpio-%-3d (%-20.20s) %-3s",
+>     602			   gpio, label ?: "(none)",
+>     603			   is_out ? "out" : "in ");
+>     604	
+>     605		if (!is_out) {
+>     606			if (abx500_pullud_supported(chip, offset)) {
+>     607				ret = abx500_get_pull_updown(pct, offset, &pud);
+>     608				if (ret < 0)
+>     609					goto out;
+>     610	
+>     611				seq_printf(s, " %-9s", pull_up_down[pud]);
+>     612			} else {
+>     613				ret = abx500_gpio_get_bit(chip, AB8500_GPIO_PUD1_REG,
+>     614						gpio_offset, &pd);
+>     615				if (ret < 0)
+>     616					goto out;
+>     617	
+>     618				seq_printf(s, " %-9s", pull_up_down[pd]);
+>     619			}
+>     620		} else
+>     621			seq_printf(s, " %-9s", chip->get(chip, offset) ? "hi" : "lo");
+>     622	
+>     623		if (pctldev)
+>                      ^^^^^^^
+> The existing code assumes "pctldev" can be NULL.
+>
+>     624			mode = abx500_get_mode(pctldev, chip, offset);
+>     625	
+>
+> regards,
+> dan carpenter
 
