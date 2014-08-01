@@ -1,7 +1,7 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Fri, 01 Aug 2014 12:51:09 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 01 Aug 2014 14:32:08 +0000
 Subject: Re: [patch] clk: shmobile: r8a7779: silence some static checker warnings
-Message-Id: <1995244.UIfbW0RkjC@avalon>
+Message-Id: <20140801143208.GN4804@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20140801081926.GB28869@mwanda>
 In-Reply-To: <20140801081926.GB28869@mwanda>
@@ -10,81 +10,45 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
 
-On Friday 01 August 2014 11:19:26 Dan Carpenter wrote:
-> It may seem like the laziest thing to leave an obvious memory leak but,
-> in the long run, it's even less work to just fix it.  Lots of people
-> review static checker warnings so let's not waste their time.
-> 
-> Also deliberately putting false positive static checker warnings in the
-> code means that we will miss real bugs when they are introduced because
-> there is too much noise and not enough signal.
+The code here checks for NULL and then prints an error and there is a
+comment saying that it won't handle it correctly because why bother?
 
-I agree with your argument. However, I still feel there's a problem to 
-address, maybe at a bigger scale.
+It's more normal to just not check for NULL at all.  I am able to find
+2 places which do that:
 
-The kfree() calls below adds useless code to the kernel, increasing the image 
-size. The increase is of course small, but if we add all the occurrences of 
-cleanup code that will anyway lead to system crash, I believe there's room for 
-optimization. On the other hand, we need to make sure code validation tools 
-will not generate false positives, for the reason you've outlined above. Could 
-we find a common solution to both problems ? Is that a topic that should be 
-brought up on LKML ?
+mm/vmalloc.c:1198 vmalloc_init() error: potential null dereference 'va'.  (kzalloc returns null)
+drivers/tty/vt/vt.c:2979 con_init() error: potential null dereference 'vc'.  (kzalloc returns null)
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/clk/shmobile/clk-rcar-gen2.c
-> b/drivers/clk/shmobile/clk-rcar-gen2.c index dff7f79..cf3bf9e 100644
-> --- a/drivers/clk/shmobile/clk-rcar-gen2.c
-> +++ b/drivers/clk/shmobile/clk-rcar-gen2.c
-> @@ -292,10 +292,8 @@ static void __init rcar_gen2_cpg_clocks_init(struct
-> device_node *np) cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
->  	clks = kzalloc(num_clks * sizeof(*clks), GFP_KERNEL);
->  	if (cpg = NULL || clks = NULL) {
-> -		/* We're leaking memory on purpose, there's no point in cleaning
-> -		 * up as the system won't boot anyway.
-> -		 */
-> -		pr_err("%s: failed to allocate cpg\n", __func__);
-> +		kfree(cpg);
-> +		kfree(clks);
->  		return;
->  	}
-> 
-> diff --git a/drivers/clk/shmobile/clk-r8a7740.c
-> b/drivers/clk/shmobile/clk-r8a7740.c index 1e2eaae..54fb56a 100644
-> --- a/drivers/clk/shmobile/clk-r8a7740.c
-> +++ b/drivers/clk/shmobile/clk-r8a7740.c
-> @@ -163,9 +163,8 @@ static void __init r8a7740_cpg_clocks_init(struct
-> device_node *np) cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
->  	clks = kzalloc(num_clks * sizeof(*clks), GFP_KERNEL);
->  	if (cpg = NULL || clks = NULL) {
-> -		/* We're leaking memory on purpose, there's no point in cleaning
-> -		 * up as the system won't boot anyway.
-> -		 */
-> +		kfree(cpg);
-> +		kfree(clks);
->  		return;
->  	}
-> 
-> diff --git a/drivers/clk/shmobile/clk-r8a7779.c
-> b/drivers/clk/shmobile/clk-r8a7779.c index 652ecac..56e29dd 100644
-> --- a/drivers/clk/shmobile/clk-r8a7779.c
-> +++ b/drivers/clk/shmobile/clk-r8a7779.c
-> @@ -137,9 +137,8 @@ static void __init r8a7779_cpg_clocks_init(struct
-> device_node *np) cpg = kzalloc(sizeof(*cpg), GFP_KERNEL);
->  	clks = kzalloc(CPG_NUM_CLOCKS * sizeof(*clks), GFP_KERNEL);
->  	if (cpg = NULL || clks = NULL) {
-> -		/* We're leaking memory on purpose, there's no point in cleaning
-> -		 * up as the system won't boot anyway.
-> -		 */
-> +		kfree(cpg);
-> +		kfree(clks);
->  		return;
->  	}
+We used to have a lot more code like that but it caused static checker
+warnings so people updated it to look like this:
 
--- 
-Regards,
+	uv_blade_info = kzalloc(bytes, GFP_KERNEL);
+	BUG_ON(!uv_blade_info);
 
-Laurent Pinchart
+Then btrfs started handling allocation errors that way so I made that
+trigger a static checker warning as well.  Here are the places that
+handle memory allocation that way during bootup.
 
+kernel/power/snapshot.c:861 __register_nosave_region() warn: bug on allocation failure 'region'
+kernel/workqueue.c:4802 wq_numa_init() warn: bug on allocation failure 'tbl'
+kernel/params.c:741 locate_module_kobject() warn: bug on allocation failure 'mk'
+arch/x86/kernel/apic/x2apic_uv_x.c:904 uv_system_init() warn: bug on allocation failure 'uv_blade_info'
+arch/x86/kernel/apic/x2apic_uv_x.c:913 uv_system_init() warn: bug on allocation failure 'uv_node_to_blade'
+arch/x86/kernel/apic/x2apic_uv_x.c:918 uv_system_init() warn: bug on allocation failure 'uv_cpu_to_blade'
+arch/x86/platform/uv/uv_nmi.c:712 uv_nmi_setup() warn: bug on allocation failure 'uv_hub_nmi_list'
+mm/memory_hotplug.c:133 register_memory_resource() warn: bug on allocation failure 'res'
+mm/slub.c:5109 create_unique_id() warn: bug on allocation failure 'name'
+mm/hugetlb.c:2165 hugetlb_init() warn: bug on allocation failure 'htlb_fault_mutex_table'
+drivers/block/xen-blkfront.c:1544 blkif_recover() warn: bug on allocation failure 'split_bio'
+
+13 warnings is very small in terms of the whole kernel which means that
+most people just gave in and added NULL checks and error handling to
+handle errors during boot even though they knew the errors weren't
+recoverable.
+
+Another option is would be to use __GFP_NOFAIL.  I don't know if anyone
+has done that just to silence static checker warnings but it would work.
+
+regards,
+dan carpenter
