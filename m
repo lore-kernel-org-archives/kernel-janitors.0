@@ -1,32 +1,31 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Date: Sun, 31 Aug 2014 20:58:50 +0000
-Subject: Re: [PATCH] checkpatch: Remove unnecessary + after {8,8}
-Message-Id: <7d350fb4-2a54-4b3f-b81c-6c0737ff32fb@BY2FFO11FD028.protection.gbl>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 01 Aug 2014 05:15:29 +0000
+Subject: Re: [patch] ISDN: pcbit: off by one bugs in pcbit_set_msn()
+Message-Id: <20140731.221529.330940073121612159.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405128087.6751.12.camel@joe-AO725>
-	<20140712013927.GA30781@kroah.com> <1405129612.6751.24.camel@joe-AO725>
-	<20140712020114.GA12301@kroah.com> <20140712020520.GA18611@kroah.com>
-	<1405130970.6751.37.camel@joe-AO725>
-In-Reply-To: <1405130970.6751.37.camel@joe-AO725>
+References: <20140731153011.GF31539@mwanda>
+In-Reply-To: <20140731153011.GF31539@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernelnewbies@lists.kernelnewbies.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: dan.carpenter@oracle.com
+Cc: isdn@linux-pingi.de, arnd@arndb.de, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Joe,
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 31 Jul 2014 18:30:11 +0300
 
-On Fri, 2014-07-11 at 07:09PM -0700, Joe Perches wrote:
-> There's a useless "+" use that needs to be removed as perl 5.20
-> emits a "Useless use of greediness modifier '+'" message each
-> time it's hit.
+> 1) We don't allocate enough space for the NUL terminator so we end up
+>    corrupting one character beyond the end of the buffer.
+> 
+> 2) The "len - 1" should just be "len".  The code is trying to copy a
+>    word from a buffer up to a comma or the last word in the buffer.
+>    Say you have the buffer, "foo,bar,baz", then this code truncates the
+>    last letter off each word so you get "fo", "ba", and "ba".  You would
+>    hope this kind of bug would get noticed in testing...
+> 
+>    I'm not very familiar with this code and I can't test it, but I think
+>    we should copy the final character.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-I saw this Perl warning today as well and wondered whether this patch is
-coming or not. Apparently it's not in linux-next (yet).
-
-	Thanks,
-	S=C3=B6ren
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Applied to net-next, thanks Dan.
