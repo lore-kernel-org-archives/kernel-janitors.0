@@ -1,39 +1,37 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Aug 2014 11:04:07 +0000
-Subject: Re: [PATCH 0/6] Remove various orphaned header files
-Message-Id: <20140827110407.GJ5046@mwanda>
+Date: Fri, 01 Aug 2014 08:27:15 +0000
+Subject: [patch] x86/pmc_atom: silence shift wrapping warnings in pmc_sleep_tmr_show()
+Message-Id: <20140801082715.GE28869@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1403630855-29186-1-git-send-email-linux@rasmusvillemoes.dk>
- <1403631263.29061.17.camel@joe-AO725>
- <8761hksfnf.fsf@rasmusvillemoes.dk>
-In-Reply-To: <8761hksfnf.fsf@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 22, 2014 at 05:33:24PM +0200, Rasmus Villemoes wrote:
-> Joe Perches <joe@perches.com> writes:
-> 
-> > On Tue, 2014-06-24 at 19:27 +0200, Rasmus Villemoes wrote:
-> >> AFAICT, these headers are not used anywhere, and are just accidental
-> >> leftovers from past cleanups.
-> >
-> > Thanks.
-> 
-> Did anyone pick these [1] up? All six files still seem to be present.
+I don't know if we really need 64 bits here but these variables are
+declared as u64 and it can't hurt to cast this so we prevent any shift
+wrapping.
 
-Greg is not the right maintainer for most of these.  Resend them to the
-correct people.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-patch 1 I never received it
-patch 2 netdev and Dave M.
-patch 3 Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
-patch 4 Greg or Dave M, netdev
-patch 5 <linux-tegra@vger.kernel.org>
-patch 6 netdev and Dave M.
-
-regards,
-dan carpenter
-
+diff --git a/arch/x86/kernel/pmc_atom.c b/arch/x86/kernel/pmc_atom.c
+index 0d92ef6..0c424a6 100644
+--- a/arch/x86/kernel/pmc_atom.c
++++ b/arch/x86/kernel/pmc_atom.c
+@@ -174,11 +174,11 @@ static int pmc_sleep_tmr_show(struct seq_file *s, void *unused)
+ 	struct pmc_dev *pmc = s->private;
+ 	u64 s0ir_tmr, s0i1_tmr, s0i2_tmr, s0i3_tmr, s0_tmr;
+ 
+-	s0ir_tmr = pmc_reg_read(pmc, PMC_S0IR_TMR) << PMC_TMR_SHIFT;
+-	s0i1_tmr = pmc_reg_read(pmc, PMC_S0I1_TMR) << PMC_TMR_SHIFT;
+-	s0i2_tmr = pmc_reg_read(pmc, PMC_S0I2_TMR) << PMC_TMR_SHIFT;
+-	s0i3_tmr = pmc_reg_read(pmc, PMC_S0I3_TMR) << PMC_TMR_SHIFT;
+-	s0_tmr = pmc_reg_read(pmc, PMC_S0_TMR) << PMC_TMR_SHIFT;
++	s0ir_tmr = (u64)pmc_reg_read(pmc, PMC_S0IR_TMR) << PMC_TMR_SHIFT;
++	s0i1_tmr = (u64)pmc_reg_read(pmc, PMC_S0I1_TMR) << PMC_TMR_SHIFT;
++	s0i2_tmr = (u64)pmc_reg_read(pmc, PMC_S0I2_TMR) << PMC_TMR_SHIFT;
++	s0i3_tmr = (u64)pmc_reg_read(pmc, PMC_S0I3_TMR) << PMC_TMR_SHIFT;
++	s0_tmr = (u64)pmc_reg_read(pmc, PMC_S0_TMR) << PMC_TMR_SHIFT;
+ 
+ 	seq_printf(s, "S0IR Residency:\t%lldus\n", s0ir_tmr);
+ 	seq_printf(s, "S0I1 Residency:\t%lldus\n", s0i1_tmr);
