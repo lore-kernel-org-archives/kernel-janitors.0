@@ -1,67 +1,79 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Fri, 08 Aug 2014 16:50:47 +0000
-Subject: Re: [PATCH 1/14] i2c: mpc: delete unneeded test before of_node_put
-Message-Id: <20140808165047.GB2847@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="JYK4vJDZwFMowpUq"
+From: Joe Perches <joe@perches.com>
+Date: Sun, 03 Aug 2014 00:46:46 +0000
+Subject: Re: [PATCH 1/1] cris: fix %d confusingly prefixed with 0x in format string
+Message-Id: <1407026806.1835.21.camel@joe-AO725>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407492475-26283-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407492475-26283-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+References: <1407018043-648-1-git-send-email-hans@hanshq.net>
+In-Reply-To: <1407018043-648-1-git-send-email-hans-7z9IcJk4adCsTnJN9+BGXg@public.gmane.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Hans Wennborg <hans-7z9IcJk4adCsTnJN9+BGXg@public.gmane.org>
+Cc: starvik-VrBV9hrLPhE@public.gmane.org, linux-cris-kernel-VrBV9hrLPhE@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors <kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devel <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+
+On Sat, 2014-08-02 at 15:20 -0700, Hans Wennborg wrote:
+> Signed-off-by: Hans Wennborg <hans@hanshq.net>
+> ---
+>  arch/cris/arch-v32/drivers/cryptocop.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/cris/arch-v32/drivers/cryptocop.c b/arch/cris/arch-v32/drivers/cryptocop.c
+[]
+> @@ -3155,7 +3155,7 @@ static void print_dma_descriptors(struct cryptocop_int_operation *iop)
+>  	printk("print_dma_descriptors start\n");
+>  
+>  	printk("iop:\n");
+> -	printk("\tsid: 0x%lld\n", iop->sid);
+> +	printk("\tsid: 0x%llx\n", iop->sid);
+>  
+>  	printk("\tcdesc_out: 0x%p\n", iop->cdesc_out);
+>  	printk("\tcdesc_in: 0x%p\n", iop->cdesc_in);
+
+Thanks.
+
+This is a surprisingly common error:
+
+$ /usr/bin/git grep -P '0x\%(?!ull\b|ul\b|u\b|lu\b|llu\b|llux\b|lux\b|lx\b|lluX\b|luX\b|lX\b)[ul]*[ud]'
+arch/arm/mach-omap2/id.c:               pr_warn("%s: unknown idcode=0x%08x (hawkeye=0x%08x,rev=0x%d)\n",
+arch/cris/arch-v32/drivers/cryptocop.c: printk("\tsid: 0x%lld\n", iop->sid);
+drivers/atm/eni.c:                      return sprintf(page,"tx[%d]:    0x%ld-0x%ld "
+drivers/atm/eni.c:                              length += sprintf(page+length,"0x%ld-0x%ld "
+drivers/block/DAC960.c:         DAC960_Error("IO port 0x%d busy for Controller at\n",
+drivers/block/DAC960.c:         DAC960_Error("IO port 0x%d busy for Controller at\n",
+drivers/block/cciss.c:  dev_dbg(&h->pdev->dev, "   Max outstanding commands = 0x%d\n",
+drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c:        mfc_debug(2, "stream buf addr: 0x%08lx, size: 0x%d\n",
+drivers/mfd/htc-i2cpld.c:       snprintf(client->name, I2C_NAME_SIZE, "Chip_0x%d", client->addr);
+drivers/mfd/omap-usb-host.c:                     "USB HOST Rev:0x%d not recognized, assuming %d ports\n",
+drivers/misc/sgi-gru/grumain.c: gru_dbg(grudev, "gid %d, gts %p, gms %p, ctxnum 0x%d, asidmap 0x%lx\n",
+drivers/net/ethernet/smsc/smc911x.c:    DBG(SMC_DEBUG_MISC, dev, "phy_id1=0x%x, phy_id2=0x%x phyaddr=0x%d\n",
+drivers/net/wireless/ath/ath6kl/init.c:                            "found reserved ram size ie 0x%d\n",
+drivers/net/wireless/ath/ath6kl/main.c:         ath6kl_err("failed to write 0x%x during diagnose window to 0x%d\n",
+drivers/net/wireless/iwlegacy/4965-mac.c:                       IL_ERR("failed setting tx power (0x%d).\n", ret);
+drivers/net/wireless/rtlwifi/pci.c:                              "more desc left, wake skb_queue@%d, ring->idx = %d, skb_queue_len = 0x%d\n",
+drivers/net/wireless/rtlwifi/pci.c:                              "No more TX desc@%d, ring->idx = %d, idx = %d, skb_queue_len = 0x%d\n",
+drivers/net/wireless/rtlwifi/pci.c:                      "less desc left, stop skb_queue@%d, ring->idx = %d, idx = %d, skb_queue_len = 0x%d\n",
+drivers/net/wireless/rtlwifi/rtl8192de/phy.c:            "MCSTxPowerLevelOriginalOffset[%d][%d] = 0x%ulx\n",
+drivers/net/wireless/rtlwifi/rtl8192de/phy.c:                   "ver 1 set RF-A, 5G,    0x28 = 0x%ulx !!\n", u4tmp);
+drivers/net/wireless/rtlwifi/rtl8192de/phy.c:                   "ver 3 set RF-B, 2G, 0x28 = 0x%ulx !!\n", u4tmp);
+drivers/net/wireless/rtlwifi/rtl8192de/phy.c:                   "ver 3 set RF-B, 2G, 0x28 = 0x%ulx !!\n",
+drivers/parisc/dino.c:          printk(KERN_ERR "DINO: Hey! Someone took my MMIO space (0x%ld)!\n",
+drivers/scsi/hpsa.c:    dev_info(dev, "   Max outstanding commands = 0x%d\n",
+drivers/staging/nokia_h4p/nokia_core.c:         dev_err(info->dev, "Cannot get GPIO line 0x%d",
+drivers/staging/rtl8192ee/pci.c:                                 ("more desc left, wake skb_queue@%d,ring->idx = %d, skb_queue_len = 0x%d\n",
+drivers/staging/rtl8192ee/pci.c:                                 ("No more TX desc@%d, ring->idx = %d, idx = %d, skb_queue_len = 0x%d\n",
+drivers/staging/rtl8192ee/pci.c:                         ("less desc left, stop skb_queue@%d, ring->idx = %d, idx = %d, skb_queue_len = 0x%d\n",
+drivers/staging/rtl8821ae/pci.c:                                         "skb_queue_len = 0x%d\n",
+drivers/staging/rtl8821ae/pci.c:                                  "idx = %d, skb_queue_len = 0x%d\n",
+drivers/staging/rtl8821ae/pci.c:                          "idx = %d, skb_queue_len = 0x%d\n",
+fs/cifs/cifs_debug.c:                                   "\n\tPathComponentMax: %d Status: 0x%d",
+fs/cifs/misc.c:                 cifs_dbg(FYI, "notify err 0x%d\n",
+fs/cifs/misc.c: cifs_dbg(FYI, "oplock type 0x%d level 0x%d\n",
+fs/cifs/smb2misc.c:             cifs_dbg(FYI, "lease key match, lease break 0x%d\n",
+fs/cifs/smb2misc.c:             cifs_dbg(FYI, "lease key match, lease break 0x%d\n",
+fs/cifs/smb2misc.c:     cifs_dbg(FYI, "oplock level 0x%d\n", rsp->OplockLevel);
+sound/firewire/fireworks/fireworks_proc.c:                          "phys in grp[0x%d]: type 0x%d, count 0x%d\n",
+sound/firewire/fireworks/fireworks_proc.c:                          "phys out grps[0x%d]: type 0x%d, count 0x%d\n",
+sound/pci/riptide/riptide.c:    snd_printdd("sent mixer %d: 0x%d 0x%d\n", num, rval, lval);
+sound/pci/riptide/riptide.c:    snd_printdd("got mixer %d: 0x%d 0x%d\n", num, *rval, *lval);
 
 
---JYK4vJDZwFMowpUq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Aug 08, 2014 at 12:07:42PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Of_node_put supports NULL as its argument, so the initial test is not
-> necessary.
->=20
-> Suggested by Uwe Kleine-K=C3=B6nig.
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @@
-> expression e;
-> @@
->=20
-> -if (e)
->    of_node_put(e);
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-
-Applied to for-next, thanks!
-
-
---JYK4vJDZwFMowpUq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJT5P/mAAoJEBQN5MwUoCm23oEP/3xaDlEmZcHGxlguV81zvj3u
-BWLPGXuz5/hZ055G25tTcHifj/GdJCKlx5cGRm8LiYmbmbOyto709UhlEGgYmP8B
-1m9fOM2tHQRSb6IpaGfsHORC1RNLjZuUoZmiAvPk+TDEKuhOxXhq3tXBPuEDfZPO
-uM7ceUeuZPHMaWc1jd20ol0umxEzMMwMJJNG6lZbqbbHrh0FwSyDOkGcrvbulZt7
-q3gUO/ndxL6tx2ob2U6ysxUKQawys0PVG8LI/KGienthaG+d2nDQMm/9eDjv909g
-v1RJqpSX1kf9tg0hG+loW6Lzqxrxm6pteFkFNRrj9IY78D4mWw/3Ur8QD7BJLvSA
-3mAzKZSmcdqE5azxVzJkIRgRV0n9pSsz5Jr2rPo2evGg16+lB1Ok+LCfZ+KTMUpo
-zXVKi+ntWEjj5LV3KbRVwkvPtwic9QznIigM6H3ILAAAFyMlWTAJG4lxyWqHb/Fk
-pRWLakRT00stH698XozvCo9O036laXM2jIiZER0TYcWyN6fBgbde47sg17weYvrZ
-gUTu1OyY5gKjzxCb5O1ekxnH6Ca9HoJoGo5yVa7oTH8O3Jo7oPnga5DPvSDbWDwa
-eu3sgd4NKETNcfsV8JDqk1JmYWlARNL9HK03cjGTROG/+VRJE3wUangM11dDCbrD
-uZs2GF+V8QHJn33NmHBi
-=U1nD
------END PGP SIGNATURE-----
-
---JYK4vJDZwFMowpUq--
