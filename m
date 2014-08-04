@@ -1,86 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Aug 2014 11:20:27 +0000
-Subject: [PATCH 5/9] lustre: obdclass: use c99 initializers in structures
-Message-Id: <1408792831-25615-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Mon, 04 Aug 2014 20:04:52 +0000
+Subject: [PATCH] drivers/media/dvb-frontends/stv0900_sw.c: Fix break placement
+Message-Id: <1407182692-1234-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: m.chehab@samsung.com, dan.carpenter@oracle.com, mkrufky@linuxtv.org, dcb314@hotmail.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-
-Use c99 initializers for structures.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@decl@
-identifier i1,fld;
-type T;
-field list[n] fs;
-@@
-
-struct i1 {
- fs
- T fld;
- ...};
-
-@bad@
-identifier decl.i1,i2;
-expression e;
-initializer list[decl.n] is;
-@@
-
-struct i1 i2 = { is,
-+ .fld = e
-- e
- ,...};
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-The patches in this series do not depend on each other.
-
- drivers/staging/lustre/lustre/obdclass/obd_mount.c      |   10 ++++++++--
- drivers/staging/lustre/lustre/obdclass/lprocfs_status.c |    5 ++++-
- 2 files changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/lustre/lustre/obdclass/obd_mount.c b/drivers/staging/lustre/lustre/obdclass/obd_mount.c
-index d972f71..54ba8df 100644
---- a/drivers/staging/lustre/lustre/obdclass/obd_mount.c
-+++ b/drivers/staging/lustre/lustre/obdclass/obd_mount.c
-@@ -1276,7 +1276,10 @@ EXPORT_SYMBOL(lustre_register_kill_super_cb);
- struct dentry *lustre_mount(struct file_system_type *fs_type, int flags,
- 				const char *devname, void *data)
- {
--	struct lustre_mount_data2 lmd2 = { data, NULL };
-+	struct lustre_mount_data2 lmd2 = {
-+		.lmd2_data = data,
-+		.lmd2_mnt = NULL
-+	};
- 
- 	return mount_nodev(fs_type, flags, &lmd2, lustre_fill_super);
- }
-diff --git a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
-index 8309d4c..1c5c1c9 100644
---- a/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
-+++ b/drivers/staging/lustre/lustre/obdclass/lprocfs_status.c
-@@ -1572,7 +1572,10 @@ lproc_exp_hash_seq_show(struct seq_file *m, void *unused)
- {
- 	struct nid_stat *stats = (struct nid_stat *)m->private;
- 	struct obd_device *obd = stats->nid_obd;
--	struct exp_hash_cb_data cb_data = {m, true};
-+	struct exp_hash_cb_data cb_data = {
-+		.m = m,
-+		.first = true
-+	};
- 
- 	cfs_hash_for_each_key(obd->obd_nid_hash, &stats->nid,
- 			      lprocfs_exp_print_hash, &cb_data);
-
+QnVnemlsbGE6IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWSBNjIx
+ClJlcG9ydGVkLWJ5OiBEYXZpZCBCaW5kZXJtYW4gPGRjYjMxNEBob3RtYWlsLmNvbT4KU2lnbmVk
+LW9mZi1ieTogQW5kcmV5IFV0a2luIDxhbmRyZXkua3JpZWdlci51dGtpbkBnbWFpbC5jb20+Ci0t
+LQogZHJpdmVycy9tZWRpYS9kdmItZnJvbnRlbmRzL3N0djA5MDBfc3cuYyB8IDMgKystCiAxIGZp
+bGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9tZWRpYS9kdmItZnJvbnRlbmRzL3N0djA5MDBfc3cuYyBiL2RyaXZlcnMvbWVkaWEv
+ZHZiLWZyb250ZW5kcy9zdHYwOTAwX3N3LmMKaW5kZXggNGNlMWQyNi4uYTBhN2IxNiAxMDA2NDQK
+LS0tIGEvZHJpdmVycy9tZWRpYS9kdmItZnJvbnRlbmRzL3N0djA5MDBfc3cuYworKysgYi9kcml2
+ZXJzL21lZGlhL2R2Yi1mcm9udGVuZHMvc3R2MDkwMF9zdy5jCkBAIC0xNzMzLDkgKzE3MzMsMTAg
+QEAgc3RhdGljIHZvaWQgc3R2MDkwMF9zZXRfc2VhcmNoX3N0YW5kYXJkKHN0cnVjdCBzdHYwOTAw
+X2ludGVybmFsICppbnRwLAogCQlicmVhazsKIAljYXNlIFNUVjA5MDBfU0VBUkNIX0RTUzoKIAkJ
+ZHByaW50aygiU2VhcmNoIFN0YW5kYXJkID0gRFNTXG4iKTsKLQljYXNlIFNUVjA5MDBfU0VBUkNI
+X0RWQlMyOgogCQlicmVhazsKKwljYXNlIFNUVjA5MDBfU0VBUkNIX0RWQlMyOgogCQlkcHJpbnRr
+KCJTZWFyY2ggU3RhbmRhcmQgPSBEVkJTMlxuIik7CisJCWJyZWFrOwogCWNhc2UgU1RWMDkwMF9B
+VVRPX1NFQVJDSDoKIAlkZWZhdWx0OgogCQlkcHJpbnRrKCJTZWFyY2ggU3RhbmRhcmQgPSBBVVRP
+XG4iKTsKLS0gCjEuOC41LjUKCi0tClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5k
+IHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMiIGluCnRoZSBib2R5IG9mIGEg
+bWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1vcmUgbWFqb3Jkb21vIGluZm8g
+YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA==
