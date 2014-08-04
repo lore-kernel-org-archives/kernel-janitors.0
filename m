@@ -1,46 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 29 Aug 2014 11:21:04 +0000
-Subject: Re: [patch] VMCI: integer overflow in vmci_datagram_dispatch()
-Message-Id: <20140829112104.GF5071@mwanda>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Mon, 04 Aug 2014 20:47:41 +0000
+Subject: [PATCH] arch/sparc/math-emu/math_32.c: drop stray break operator
+Message-Id: <1407185261-1799-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140829084256.GA14780@mwanda>
- <5400606B.8010905@bfs.de>
-In-Reply-To: <5400606B.8010905@bfs.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: linux-kernel@vger.kernel.org, George Zhang <georgezhang@vmware.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: davem@davemloft.net
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-On Fri, Aug 29, 2014 at 01:13:47PM +0200, walter harms wrote:
-> 
-> 
-> Am 29.08.2014 10:42, schrieb Dan Carpenter:
-> > This is untrusted user data from vmci_host_do_send_datagram() so the
-> > VMCI_DG_SIZE() macro can have an integer overflow.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/drivers/misc/vmw_vmci/vmci_datagram.c b/drivers/misc/vmw_vmci/vmci_datagram.c
-> > index f3cdd90..8226652 100644
-> > --- a/drivers/misc/vmw_vmci/vmci_datagram.c
-> > +++ b/drivers/misc/vmw_vmci/vmci_datagram.c
-> > @@ -328,7 +328,8 @@ int vmci_datagram_dispatch(u32 context_id,
-> >  
-> >  	BUILD_BUG_ON(sizeof(struct vmci_datagram) != 24);
-> >  
-> > -	if (VMCI_DG_SIZE(dg) > VMCI_MAX_DG_SIZE) {
-> > +	if (dg->payload_size > VMCI_MAX_DG_SIZE ||
-> > +	    VMCI_DG_SIZE(dg) > VMCI_MAX_DG_SIZE) {
-> >  		pr_devel("Payload (size=%llu bytes) too big to send\n",
-> >  			 (unsigned long long)dg->payload_size);
-> >  		return VMCI_ERROR_INVALID_ARGS;
-> 
-> Are your sure about that ">" ? maybe ">=" was intended ?
-
-Yes, I'm sure.  As a rule of thumb, > is used for size comparisons and
->= is used for index comparisons.
-
-regards,
-dan carpenter
-
+VGhpcyBjb21taXQgaXMgYSBndWVzc3dvcmssIGJ1dCBpdCBzZWVtcyB0byBtYWtlIHNlbnNlIHRv
+IGRyb3AgdGhpcwpicmVhaywgYXMgb3RoZXJ3aXNlIHRoZSBmb2xsb3dpbmcgbGluZSBpcyBuZXZl
+ciBleGVjdXRlZCBhbmQgYmVjb21lcwpkZWFkIGNvZGUuIEFuZCB0aGF0IGZvbGxvd2luZyBsaW5l
+IGFjdHVhbGx5IHNhdmVzIHRoZSByZXN1bHQgb2YKbG9jYWwgY2FsY3VsYXRpb24gYnkgdGhlIHBv
+aW50ZXIgZ2l2ZW4gaW4gZnVuY3Rpb24gYXJndW1lbnQuIFNvIHRoZQpwcm9wb3NlZCBjaGFuZ2Ug
+bWFrZXMgc2Vuc2UgaWYgdGhpcyBjb2RlIGluIHRoZSB3aG9sZSBtYWtlcyBzZW5zZSAoYnV0IEkK
+YW0gdW5hYmxlIHRvIGFuYWx5emUgaXQgaW4gdGhlIHdob2xlKS4KCkJ1Z3ppbGxhOiBodHRwczov
+L2J1Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkgTY0MQpSZXBvcnRlZC1ieTogRGF2
+aWQgQmluZGVybWFuIDxkY2IzMTRAaG90bWFpbC5jb20+ClNpZ25lZC1vZmYtYnk6IEFuZHJleSBV
+dGtpbiA8YW5kcmV5LmtyaWVnZXIudXRraW5AZ21haWwuY29tPgotLS0KIGFyY2gvc3BhcmMvbWF0
+aC1lbXUvbWF0aF8zMi5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAx
+IGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9zcGFyYy9tYXRoLWVtdS9tYXRoXzMyLmMg
+Yi9hcmNoL3NwYXJjL21hdGgtZW11L21hdGhfMzIuYwppbmRleCBhYTRkNTViLi41Y2U4ZjJmIDEw
+MDY0NAotLS0gYS9hcmNoL3NwYXJjL21hdGgtZW11L21hdGhfMzIuYworKysgYi9hcmNoL3NwYXJj
+L21hdGgtZW11L21hdGhfMzIuYwpAQCAtNDk5LDcgKzQ5OSw3IEBAIHN0YXRpYyBpbnQgZG9fb25l
+X21hdGhlbXUodTMyIGluc24sIHVuc2lnbmVkIGxvbmcgKnBmc3IsIHVuc2lnbmVkIGxvbmcgKmZy
+ZWdzKQogCQljYXNlIDA6IGZzciA9ICpwZnNyOwogCQkJaWYgKElSID0gLTEpIElSID0gMjsKIAkJ
+CS8qIGZjYyBpcyBhbHdheXMgZmNjMCAqLwotCQkJZnNyICY9IH4weGMwMDsgZnNyIHw9IChJUiA8
+PCAxMCk7IGJyZWFrOworCQkJZnNyICY9IH4weGMwMDsgZnNyIHw9IChJUiA8PCAxMCk7CiAJCQkq
+cGZzciA9IGZzcjsKIAkJCWJyZWFrOwogCQljYXNlIDE6IHJkLT5zID0gSVI7IGJyZWFrOwotLSAK
+MS44LjUuNQoKLS0KVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
+InVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIgaW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
+IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDov
+L3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
