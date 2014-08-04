@@ -1,31 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 28 Aug 2014 13:21:30 +0000
-Subject: re: irqchip: keystone: Add irq controller ip driver
-Message-Id: <20140828132130.GC24477@mwanda>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Mon, 04 Aug 2014 21:15:54 +0000
+Subject: Re: [patch] mtd: ndfc: silence an array underflow static checker warning
+Message-Id: <20140804211554.GW3711@ld-irv-0074>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140731153620.GH31539@mwanda>
+In-Reply-To: <20140731153620.GH31539@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Grant Likely <grant.likely@linaro.org>, linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, David Woodhouse <dwmw2@infradead.org>
 
-Hello Grygorii Strashko,
+On Thu, Jul 31, 2014 at 06:36:20PM +0300, Dan Carpenter wrote:
+> We check "cs" for array overflows but we don't check for underflows and
+> it upsets the static checkers.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The patch 89323f8c504a: "irqchip: keystone: Add irq controller ip
-driver" from Jul 23, 2014, leads to the following static checker
-warning:
+Queued to l2-mtd.git/next.
 
-	drivers/irqchip/irq-keystone.c:166 keystone_irq_probe()
-	warn: unsigned 'kirq->irq' is never less than zero.
-
-drivers/irqchip/irq-keystone.c
-   164  
-   165          kirq->irq = platform_get_irq(pdev, 0);
-   166          if (kirq->irq < 0) {
-                    ^^^^^^^^^^^^^
-   167                  dev_err(dev, "no irq resource %d\n", kirq->irq);
-   168                  return kirq->irq;
-   169          }
-   170  
-
-regards,
-dan carpenter
+Brian
