@@ -1,49 +1,27 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 11 Aug 2014 13:05:21 +0000
-Subject: Re: [PATCH] scripts/coccinelle/free/ifnullfree.cocci: simplify and extend to of_node_put
-Message-Id: <alpine.DEB.2.10.1408111503550.2518@hadrien>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Mon, 04 Aug 2014 20:13:10 +0000
+Subject: [PATCH] arch/powerpc/mm/numa.c: Fix break placement
+Message-Id: <1407183190-1397-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407752653-16883-1-git-send-email-Julia.Lawall@lip6.fr>
- <53E8BE84.3080505@users.sourceforge.net>
-In-Reply-To: <53E8BE84.3080505@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
+To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, akpm@linux-foundation.org, srivatsa.bhat@linux.vnet.ibm.com, sfr@canb.auug.org.au, qiuxishi@huawei.com, wangyun@linux.vnet.ibm.com, qiudayu@linux.vnet.ibm.com, joe@perches.com, alistair@popple.id.au, rcj@linux.vnet.ibm.com
+Cc: kernel-janitors@vger.kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
-
-
-On Mon, 11 Aug 2014, SF Markus Elfring wrote:
-
-> >  @r depends on context || report || org @
-> > @@ -37,7 +35,8 @@ position p;
-> >  @@
-> >
-> >  * if (E)
-> > -*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
-> > +*  \(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb@p\|
-> > +*    of_node_put@p\)(E);
->
-> Why do you want to limit this semantic patch pattern to such a small list of
-> function names?
-
-Because these are the ones that kernel developers have cited as
-interesting for this kind of transformation.
-
-> Would you like to consider also the hundreds of other functions which perform
-> input parameter validation?
-
-Personally, no.  I think I have explained why several times already.
-
-julia
-
-> Are you interested to make the checked list more complete with further
-> (eventually automatic?) extensions?
->
-> Regards,
-> Markus
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+QnVnemlsbGE6IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWSBNjMx
+ClJlcG9ydGVkLWJ5OiBEYXZpZCBCaW5kZXJtYW4gPGRjYjMxNEBob3RtYWlsLmNvbT4KU2lnbmVk
+LW9mZi1ieTogQW5kcmV5IFV0a2luIDxhbmRyZXkua3JpZWdlci51dGtpbkBnbWFpbC5jb20+Ci0t
+LQogYXJjaC9wb3dlcnBjL21tL251bWEuYyB8IDIgKy0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2Vy
+dGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2FyY2gvcG93ZXJwYy9tbS9udW1h
+LmMgYi9hcmNoL3Bvd2VycGMvbW0vbnVtYS5jCmluZGV4IDNiMTgxYjIuLmQzZTlhNzggMTAwNjQ0
+Ci0tLSBhL2FyY2gvcG93ZXJwYy9tbS9udW1hLmMKKysrIGIvYXJjaC9wb3dlcnBjL21tL251bWEu
+YwpAQCAtNjExLDggKzYxMSw4IEBAIHN0YXRpYyBpbnQgY3B1X251bWFfY2FsbGJhY2soc3RydWN0
+IG5vdGlmaWVyX2Jsb2NrICpuZmIsIHVuc2lnbmVkIGxvbmcgYWN0aW9uLAogCWNhc2UgQ1BVX1VQ
+X0NBTkNFTEVEOgogCWNhc2UgQ1BVX1VQX0NBTkNFTEVEX0ZST1pFTjoKIAkJdW5tYXBfY3B1X2Zy
+b21fbm9kZShsY3B1KTsKLQkJYnJlYWs7CiAJCXJldCA9IE5PVElGWV9PSzsKKwkJYnJlYWs7CiAj
+ZW5kaWYKIAl9CiAJcmV0dXJuIHJldDsKLS0gCjEuOC41LjUKCi0tClRvIHVuc3Vic2NyaWJlIGZy
+b20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMi
+IGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1v
+cmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWlu
+Zm8uaHRtbA==
