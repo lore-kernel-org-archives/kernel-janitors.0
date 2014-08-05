@@ -1,27 +1,32 @@
-From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Date: Mon, 04 Aug 2014 20:13:10 +0000
-Subject: [PATCH] arch/powerpc/mm/numa.c: Fix break placement
-Message-Id: <1407183190-1397-1-git-send-email-andrey.krieger.utkin@gmail.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date: Tue, 05 Aug 2014 09:16:59 +0000
+Subject: Re: [PATCH] arch/powerpc/mm/numa.c: Fix break placement
+Message-Id: <1407230219.3073.5.camel@pasglop>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1407183190-1397-1-git-send-email-andrey.krieger.utkin@gmail.com>
+In-Reply-To: <1407183190-1397-1-git-send-email-andrey.krieger.utkin@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1254"
 Content-Transfer-Encoding: base64
-To: benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, akpm@linux-foundation.org, srivatsa.bhat@linux.vnet.ibm.com, sfr@canb.auug.org.au, qiuxishi@huawei.com, wangyun@linux.vnet.ibm.com, qiudayu@linux.vnet.ibm.com, joe@perches.com, alistair@popple.id.au, rcj@linux.vnet.ibm.com
-Cc: kernel-janitors@vger.kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Cc: sfr@canb.auug.org.au, rcj@linux.vnet.ibm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, paulus@samba.org, wangyun@linux.vnet.ibm.com, srivatsa.bhat@linux.vnet.ibm.com, alistair@popple.id.au, joe@perches.com, qiuxishi@huawei.com, akpm@linux-foundation.org, qiudayu@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org
 
+T24gTW9uLCAyMDE0LTA4LTA0IGF0IDIzOjEzICswMzAwLCBBbmRyZXkgVXRraW4gd3JvdGU6Cj4g
 QnVnemlsbGE6IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWSBNjMx
-ClJlcG9ydGVkLWJ5OiBEYXZpZCBCaW5kZXJtYW4gPGRjYjMxNEBob3RtYWlsLmNvbT4KU2lnbmVk
-LW9mZi1ieTogQW5kcmV5IFV0a2luIDxhbmRyZXkua3JpZWdlci51dGtpbkBnbWFpbC5jb20+Ci0t
-LQogYXJjaC9wb3dlcnBjL21tL251bWEuYyB8IDIgKy0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2Vy
-dGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2FyY2gvcG93ZXJwYy9tbS9udW1h
-LmMgYi9hcmNoL3Bvd2VycGMvbW0vbnVtYS5jCmluZGV4IDNiMTgxYjIuLmQzZTlhNzggMTAwNjQ0
-Ci0tLSBhL2FyY2gvcG93ZXJwYy9tbS9udW1hLmMKKysrIGIvYXJjaC9wb3dlcnBjL21tL251bWEu
-YwpAQCAtNjExLDggKzYxMSw4IEBAIHN0YXRpYyBpbnQgY3B1X251bWFfY2FsbGJhY2soc3RydWN0
-IG5vdGlmaWVyX2Jsb2NrICpuZmIsIHVuc2lnbmVkIGxvbmcgYWN0aW9uLAogCWNhc2UgQ1BVX1VQ
-X0NBTkNFTEVEOgogCWNhc2UgQ1BVX1VQX0NBTkNFTEVEX0ZST1pFTjoKIAkJdW5tYXBfY3B1X2Zy
-b21fbm9kZShsY3B1KTsKLQkJYnJlYWs7CiAJCXJldCA9IE5PVElGWV9PSzsKKwkJYnJlYWs7CiAj
-ZW5kaWYKIAl9CiAJcmV0dXJuIHJldDsKLS0gCjEuOC41LjUKCi0tClRvIHVuc3Vic2NyaWJlIGZy
-b20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMi
-IGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1v
-cmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWlu
-Zm8uaHRtbA==
+Cj4gUmVwb3J0ZWQtYnk6IERhdmlkIEJpbmRlcm1hbiA8ZGNiMzE0QGhvdG1haWwuY29tPgo+IFNp
+Z25lZC1vZmYtYnk6IEFuZHJleSBVdGtpbiA8YW5kcmV5LmtyaWVnZXIudXRraW5AZ21haWwuY29t
+PgoKVGhhbmtzLCBJIHdvbmRlciBob3cgdGhhdCBtYW5hZ2VkIHRvIHJlbWFpbiB1bm5vdGljZWQg
+Zm9yIHNvIGxvbmcgIQoKQ2hlZXJzLApCZW4uCgo+IC0tLQo+ICBhcmNoL3Bvd2VycGMvbW0vbnVt
+YS5jIHwgMiArLQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24o
+LSkKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9wb3dlcnBjL21tL251bWEuYyBiL2FyY2gvcG93ZXJw
+Yy9tbS9udW1hLmMKPiBpbmRleCAzYjE4MWIyLi5kM2U5YTc4IDEwMDY0NAo+IC0tLSBhL2FyY2gv
+cG93ZXJwYy9tbS9udW1hLmMKPiArKysgYi9hcmNoL3Bvd2VycGMvbW0vbnVtYS5jCj4gQEAgLTYx
+MSw4ICs2MTEsOCBAQCBzdGF0aWMgaW50IGNwdV9udW1hX2NhbGxiYWNrKHN0cnVjdCBub3RpZmll
+cl9ibG9jayAqbmZiLCB1bnNpZ25lZCBsb25nIGFjdGlvbiwKPiAgCWNhc2UgQ1BVX1VQX0NBTkNF
+TEVEOgo+ICAJY2FzZSBDUFVfVVBfQ0FOQ0VMRURfRlJPWkVOOgo+ICAJCXVubWFwX2NwdV9mcm9t
+X25vZGUobGNwdSk7Cj4gLQkJYnJlYWs7Cj4gIAkJcmV0ID0gTk9USUZZX09LOwo+ICsJCWJyZWFr
+Owo+ICAjZW5kaWYKPiAgCX0KPiAgCXJldHVybiByZXQ7CgoKLS0KVG8gdW5zdWJzY3JpYmUgZnJv
+bSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIg
+aW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9y
+ZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5m
+by5odG1s
