@@ -1,32 +1,29 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date: Tue, 05 Aug 2014 09:16:59 +0000
+From: Michael Ellerman <mpe@ellerman.id.au>
+Date: Tue, 05 Aug 2014 12:39:54 +0000
 Subject: Re: [PATCH] arch/powerpc/mm/numa.c: Fix break placement
-Message-Id: <1407230219.3073.5.camel@pasglop>
+Message-Id: <1407242394.11569.2.camel@concordia>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1407183190-1397-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1407183190-1397-1-git-send-email-andrey.krieger.utkin@gmail.com>
+ <1407230219.3073.5.camel@pasglop>
+In-Reply-To: <1407230219.3073.5.camel@pasglop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1254"
 Content-Transfer-Encoding: base64
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: sfr@canb.auug.org.au, rcj@linux.vnet.ibm.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, paulus@samba.org, wangyun@linux.vnet.ibm.com, srivatsa.bhat@linux.vnet.ibm.com, alistair@popple.id.au, joe@perches.com, qiuxishi@huawei.com, akpm@linux-foundation.org, qiudayu@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: sfr@canb.auug.org.au, rcj@linux.vnet.ibm.com, alistair@popple.id.au, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>, paulus@samba.org, wangyun@linux.vnet.ibm.com, srivatsa.bhat@linux.vnet.ibm.com, joe@perches.com, qiuxishi@huawei.com, akpm@linux-foundation.org, qiudayu@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org
 
-T24gTW9uLCAyMDE0LTA4LTA0IGF0IDIzOjEzICswMzAwLCBBbmRyZXkgVXRraW4gd3JvdGU6Cj4g
-QnVnemlsbGE6IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWSBNjMx
-Cj4gUmVwb3J0ZWQtYnk6IERhdmlkIEJpbmRlcm1hbiA8ZGNiMzE0QGhvdG1haWwuY29tPgo+IFNp
-Z25lZC1vZmYtYnk6IEFuZHJleSBVdGtpbiA8YW5kcmV5LmtyaWVnZXIudXRraW5AZ21haWwuY29t
-PgoKVGhhbmtzLCBJIHdvbmRlciBob3cgdGhhdCBtYW5hZ2VkIHRvIHJlbWFpbiB1bm5vdGljZWQg
-Zm9yIHNvIGxvbmcgIQoKQ2hlZXJzLApCZW4uCgo+IC0tLQo+ICBhcmNoL3Bvd2VycGMvbW0vbnVt
-YS5jIHwgMiArLQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24o
-LSkKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9wb3dlcnBjL21tL251bWEuYyBiL2FyY2gvcG93ZXJw
-Yy9tbS9udW1hLmMKPiBpbmRleCAzYjE4MWIyLi5kM2U5YTc4IDEwMDY0NAo+IC0tLSBhL2FyY2gv
-cG93ZXJwYy9tbS9udW1hLmMKPiArKysgYi9hcmNoL3Bvd2VycGMvbW0vbnVtYS5jCj4gQEAgLTYx
-MSw4ICs2MTEsOCBAQCBzdGF0aWMgaW50IGNwdV9udW1hX2NhbGxiYWNrKHN0cnVjdCBub3RpZmll
-cl9ibG9jayAqbmZiLCB1bnNpZ25lZCBsb25nIGFjdGlvbiwKPiAgCWNhc2UgQ1BVX1VQX0NBTkNF
-TEVEOgo+ICAJY2FzZSBDUFVfVVBfQ0FOQ0VMRURfRlJPWkVOOgo+ICAJCXVubWFwX2NwdV9mcm9t
-X25vZGUobGNwdSk7Cj4gLQkJYnJlYWs7Cj4gIAkJcmV0ID0gTk9USUZZX09LOwo+ICsJCWJyZWFr
-Owo+ICAjZW5kaWYKPiAgCX0KPiAgCXJldHVybiByZXQ7CgoKLS0KVG8gdW5zdWJzY3JpYmUgZnJv
-bSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGtlcm5lbC1qYW5pdG9ycyIg
-aW4KdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKTW9y
-ZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5m
-by5odG1s
+T24gVHVlLCAyMDE0LTA4LTA1IGF0IDE5OjE2ICsxMDAwLCBCZW5qYW1pbiBIZXJyZW5zY2htaWR0
+IHdyb3RlOgo+IE9uIE1vbiwgMjAxNC0wOC0wNCBhdCAyMzoxMyArMDMwMCwgQW5kcmV5IFV0a2lu
+IHdyb3RlOgo+ID4gQnVnemlsbGE6IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1
+Zy5jZ2k/aWSBNjMxCj4gPiBSZXBvcnRlZC1ieTogRGF2aWQgQmluZGVybWFuIDxkY2IzMTRAaG90
+bWFpbC5jb20+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBBbmRyZXkgVXRraW4gPGFuZHJleS5rcmllZ2Vy
+LnV0a2luQGdtYWlsLmNvbT4KPiAKPiBUaGFua3MsIEkgd29uZGVyIGhvdyB0aGF0IG1hbmFnZWQg
+dG8gcmVtYWluIHVubm90aWNlZCBmb3Igc28gbG9uZyAhCgoxLiBObyBvbmUgdGVzdGVkIGl0IDop
+CjIuIFRoZSBjb2RlIHN0dXBpZGx5IGluaXRpYWxpc2VzIHJldCBhdCB0aGUgYmVnaW5uaW5nIG9m
+IHRoZSBmdW5jdGlvbiwgc28gdGhlCiAgIGNvbXBpbGVyIGNhbid0IGhlbHAgdXMgZGV0ZWN0IHRo
+ZSB1bml0aWFsaXNlZCB1c2FnZS4KMy4gTk9USUZZX09LIGFuZCBOT1RJRllfRE9ORSBhcHBlYXIg
+dG8gYmUgZXF1aXZhbGVudCBpbiBwcmFjdGljZS4KCmNoZWVycwoKCgotLQpUbyB1bnN1YnNjcmli
+ZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUga2VybmVsLWphbml0
+b3JzIiBpbgp0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9y
+ZwpNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9t
+by1pbmZvLmh0bWw=
