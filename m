@@ -1,49 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 13 Aug 2014 11:14:25 +0000
-Subject: Re: [PATCH 8/14] ASoC: rsnd: delete unneeded test before of_node_put
-Message-Id: <20140813111425.GO17528@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Kfy0q0s2rBHKMG0i"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 05 Aug 2014 08:11:13 +0000
+Subject: [patch] [media] vmalloc_sg: off by one in error handling
+Message-Id: <20140805081113.GB13605@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407492475-26283-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407492475-26283-8-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>, James Harper <james.harper@ejbdigital.com.au>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+The "i--" needs to happen at the start of the loop or it will try to
+release something bogus (probably it will crash) and it won't release
+the first ->vaddr_page[].
 
---Kfy0q0s2rBHKMG0i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 7b4eeed174b7 ('[media] vmalloc_sg: make sure all pages in vmalloc area are really DMA-ready')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Fri, Aug 08, 2014 at 12:07:49PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Of_node_put supports NULL as its argument, so the initial test is not
-> necessary.
-
-Applied, thanks.
-
---Kfy0q0s2rBHKMG0i
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT60iOAAoJELSic+t+oim9Qu4P/02dlKJ+WIXGN3WoYbKUQWZ5
-ZMMcea2h9M2pCz4A5MNmfgW1/SEX/bu6W0+Fq2FrIkXgFdH8GxSM3y8E/lKXuVLS
-nTZXs4PfKf2cPtoRf/PTHskcCiyV6A5gpp9Z49iheGmzgGVwOTgZuHHe44e5Dz5M
-UyE+haT6L5PZ22FaRXi/R0V6bqJdZKaRKjM6qTfatRGS/b3lq96QV5zl9CsSOeoB
-q5xIsMJC4Ji0Us2MRk/G+i/oRqXGTvU4xEv757nwfObUrKbcHU0eQ6fEULGk7jVB
-Xq/XyQk4oGYpf4SnOZsqr09+VE1dX6K0X074MFIKKbl+CzZ1UnZmhkYlO00MlLYK
-PqaMLVKorHupYIRzoj1pgzGVYW0RfTwYOZ9RWtnk4gHdGVv7SZ0oIR/O26felrgf
-D8A1roJs15vQ3LynsD2D9eIRa/2XNNd+lt8jXsJwNVS/JZCPU39IWmeULMvU2QdZ
-aTlZdbO+Y2ztbS0fWHAGAMLdlw/YefxWWZ8K7X0fm7oRWz7TL+mtxOPF5yaVARyg
-pZ2S2+vq5+ffKcwKu74e0lD5gWx7+TBFZJem4m3saLqZ32cuNsKdzPlV1/K5trjQ
-sP3HGS5yUM4rPZVduKxmEFz0TPvj9XZRWhQtXCKtraKL7rzvgHKxBIBiANFdx0kC
-3/vrdSylDWhhCovG+DAy
-=0zvg
------END PGP SIGNATURE-----
-
---Kfy0q0s2rBHKMG0i--
+diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
+index 3c8cc02..3ff15f1 100644
+--- a/drivers/media/v4l2-core/videobuf-dma-sg.c
++++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
+@@ -253,9 +253,11 @@ int videobuf_dma_init_kernel(struct videobuf_dmabuf *dma, int direction,
+ 	return 0;
+ out_free_pages:
+ 	while (i > 0) {
+-		void *addr = page_address(dma->vaddr_pages[i]);
+-		dma_free_coherent(dma->dev, PAGE_SIZE, addr, dma->dma_addr[i]);
++		void *addr;
++
+ 		i--;
++		addr = page_address(dma->vaddr_pages[i]);
++		dma_free_coherent(dma->dev, PAGE_SIZE, addr, dma->dma_addr[i]);
+ 	}
+ 	kfree(dma->dma_addr);
+ 	dma->dma_addr = NULL;
