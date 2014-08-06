@@ -1,33 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 09 Aug 2014 09:13:58 +0000
-Subject: Re: [patch 119/197] scripts/coccinelle/free: Delete NULL test before freeing functions?
-Message-Id: <53E5E656.1000606@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 06 Aug 2014 20:12:15 +0000
+Subject: [PATCH 2/4] mfd: twl6040: fix error return code
+Message-Id: <1407355938-10932-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <53e53fd1.zO3IbUqJ421c7VXf%akpm@linux-foundation.org>
- <53E5DA60.90902@users.sourceforge.net>
- <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
 
-> I still don't think this should be done for any random function that 
-> performs a null test on its argument.  The corrections involved here are 
-> not as trivial as they would seem.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I would prefer to make the list of corresponding function names more complete.
+Convert a zero return value on error to a negative one, as returned
+elsewhere in the function.
 
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-> Often it is not the case that the null test at the call site should be
-> just deleted, instead the code should be reorganized.
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-Which source code places do you know where a different approach might look better?
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> (Personally, I don't like the whole null test removal idea. [...]
+---
+ drivers/mfd/twl6040.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Would you like to clarify involved software concerns a bit more?
+diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
+index f9c06c5..9687645 100644
+--- a/drivers/mfd/twl6040.c
++++ b/drivers/mfd/twl6040.c
+@@ -679,6 +679,7 @@ static int twl6040_probe(struct i2c_client *client,
+ 	if (twl6040->rev < 0) {
+ 		dev_err(&client->dev, "Failed to read revision register: %d\n",
+ 			twl6040->rev);
++		ret = twl6040->rev;
+ 		goto gpio_err;
+ 	}
+ 
 
-Regards,
-Markus
