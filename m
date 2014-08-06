@@ -1,63 +1,66 @@
-From: "Li, Aubrey" <aubrey.li@linux.intel.com>
-Date: Sat, 02 Aug 2014 14:56:07 +0000
-Subject: Re: [patch] x86/pmc_atom: silence shift wrapping warnings in pmc_sleep_tmr_show()
-Message-Id: <53DCFC07.9040006@linux.intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 06 Aug 2014 20:12:18 +0000
+Subject: [PATCH 4/4] drivers: video: fbdev: atmel_lcdfb.c: fix error return code
+Message-Id: <1407355938-10932-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140801082715.GE28869@mwanda>
-In-Reply-To: <20140801082715.GE28869@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2014/8/2 0:42, Kasagar, Srinidhi wrote:
-> On Fri, Aug 01, 2014 at 11:27:15AM +0300, Dan Carpenter wrote:
->> I don't know if we really need 64 bits here but these variables are
->> declared as u64 and it can't hurt to cast this so we prevent any shift
->> wrapping.
-> 
-> Hmm..not sure the usage of u64 for these registers. AFAIK these registers
-> are 32-bit wide..
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I didn't declare the registers, I declared the variables in microsecond.
+Convert a zero return value on error to a negative one, as returned
+elsewhere in the function.
 
-> 
-> Aubrey, any reason declaring them as u64?
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-These registers are the time spent in units of 32us. So yes, we need
-64bits here for the conversion.
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 
-> 
-> Srinidhi
-> 
->>
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// </smpl>
 
-The patch looks good to me.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Aubrey Li <aubrey.li@linux.intel.com>
+---
+The error codes chosen are the ones that are commonly used elsewhere or
+these functions.  Perhaps something else is wanted.
 
->>
->> diff --git a/arch/x86/kernel/pmc_atom.c b/arch/x86/kernel/pmc_atom.c
->> index 0d92ef6..0c424a6 100644
->> --- a/arch/x86/kernel/pmc_atom.c
->> +++ b/arch/x86/kernel/pmc_atom.c
->> @@ -174,11 +174,11 @@ static int pmc_sleep_tmr_show(struct seq_file *s, void *unused)
->>  	struct pmc_dev *pmc = s->private;
->>  	u64 s0ir_tmr, s0i1_tmr, s0i2_tmr, s0i3_tmr, s0_tmr;
->>  
->> -	s0ir_tmr = pmc_reg_read(pmc, PMC_S0IR_TMR) << PMC_TMR_SHIFT;
->> -	s0i1_tmr = pmc_reg_read(pmc, PMC_S0I1_TMR) << PMC_TMR_SHIFT;
->> -	s0i2_tmr = pmc_reg_read(pmc, PMC_S0I2_TMR) << PMC_TMR_SHIFT;
->> -	s0i3_tmr = pmc_reg_read(pmc, PMC_S0I3_TMR) << PMC_TMR_SHIFT;
->> -	s0_tmr = pmc_reg_read(pmc, PMC_S0_TMR) << PMC_TMR_SHIFT;
->> +	s0ir_tmr = (u64)pmc_reg_read(pmc, PMC_S0IR_TMR) << PMC_TMR_SHIFT;
->> +	s0i1_tmr = (u64)pmc_reg_read(pmc, PMC_S0I1_TMR) << PMC_TMR_SHIFT;
->> +	s0i2_tmr = (u64)pmc_reg_read(pmc, PMC_S0I2_TMR) << PMC_TMR_SHIFT;
->> +	s0i3_tmr = (u64)pmc_reg_read(pmc, PMC_S0I3_TMR) << PMC_TMR_SHIFT;
->> +	s0_tmr = (u64)pmc_reg_read(pmc, PMC_S0_TMR) << PMC_TMR_SHIFT;
->>  
->>  	seq_printf(s, "S0IR Residency:\t%lldus\n", s0ir_tmr);
->>  	seq_printf(s, "S0I1 Residency:\t%lldus\n", s0i1_tmr);
-> 
+ drivers/video/fbdev/atmel_lcdfb.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+index 92640d4..1d8bdb9 100644
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -1102,12 +1102,14 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+ 	timings = of_get_display_timings(display_np);
+ 	if (!timings) {
+ 		dev_err(dev, "failed to get display timings\n");
++		ret = -EINVAL;
+ 		goto put_display_node;
+ 	}
+ 
+ 	timings_np = of_find_node_by_name(display_np, "display-timings");
+ 	if (!timings_np) {
+ 		dev_err(dev, "failed to find display-timings node\n");
++		ret = -ENODEV;
+ 		goto put_display_node;
+ 	}
+ 
 
