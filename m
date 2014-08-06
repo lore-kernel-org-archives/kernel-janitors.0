@@ -1,47 +1,64 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Tue, 12 Aug 2014 18:44:21 +0000
-Subject: Re: [PATCH 0/1] Replace DEFINE_PCI_DEVICE_TABLE macro use
-Message-Id: <20140812184421.GA5516@google.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Wed, 06 Aug 2014 10:39:11 +0000
+Subject: [PATCH 1/1] dpt_i2o: delete unnecessary null test on array
+Message-Id: <1407321551-27479-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407506163-8371-1-git-send-email-benoit.taine@lip6.fr>
-In-Reply-To: <1407506163-8371-1-git-send-email-benoit.taine@lip6.fr>
+References: <1407321551-27479-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407321551-27479-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benoit Taine <benoit.taine@lip6.fr>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Adaptec OEM Raid Solutions <aacraid@adaptec.com>
+Cc: kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com
 
-On Fri, Aug 08, 2014 at 03:56:02PM +0200, Benoit Taine wrote:
-> We should prefer `const struct pci_device_id` over
-> `DEFINE_PCI_DEVICE_TABLE` to meet kernel coding style guidelines.
-> This issue was reported by checkpatch.
-> 
-> A simplified version of the semantic patch that makes this change is as
-> follows (http://coccinelle.lip6.fr/):
-> 
-> // <smpl>
-> 
-> @@
-> identifier i;
-> declarer name DEFINE_PCI_DEVICE_TABLE;
-> initializer z;
-> @@
-> 
-> - DEFINE_PCI_DEVICE_TABLE(i)
-> + const struct pci_device_id i[]
-> = z;
-> 
-> // </smpl>
-> 
-> I previously sent parts of this patch to check wether or not it was
-> worth sending, and Bjorn answered:
-> > Benoit, how about if you wait until about half-way through the merge
-> > window after v3.16 releases, generate an up-to-date single patch, and
-> > post that?  Then we can try to get it in before v3.17-rc1 to minimize
-> > merge hassles.
-> 
-> So here it is, based on linux-next on 2014-08-07.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied to my for-linus branch for v3.17, thanks!
+Delete NULL test on array (always false).
 
-Bjorn
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@r@
+type T;
+T [] e;
+position p;
+@@
+e =@p NULL
+
+@ disable fld_to_ptr@
+expression e;
+identifier f;
+position r.p;
+@@
+* e.f =@p NULL
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+I don't know if this is the correct change, or if some other test was
+intended.  But the code has been this way since at least 2.4.20, so it
+would seem that no one has been bothered by the lack of whatever this was
+supposed to test for.
+
+ drivers/scsi/dpt_i2o.c |    5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
+index 67283ef..62e276b 100644
+--- a/drivers/scsi/dpt_i2o.c
++++ b/drivers/scsi/dpt_i2o.c
+@@ -1169,11 +1169,6 @@ static struct adpt_device* adpt_find_device(adpt_hba* pHba, u32 chan, u32 id, u6
+ 	if(chan < 0 || chan >= MAX_CHANNEL)
+ 		return NULL;
+ 	
+-	if( pHba->channel[chan].device = NULL){
+-		printk(KERN_DEBUG"Adaptec I2O RAID: Trying to find device before they are allocated\n");
+-		return NULL;
+-	}
+-
+ 	d = pHba->channel[chan].device[id];
+ 	if(!d || d->tid = 0) {
+ 		return NULL;
+
