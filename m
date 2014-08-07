@@ -1,75 +1,174 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Date: Sat, 09 Aug 2014 17:47:16 +0000
-Subject: Re: [PATCH] staging: soc_camera: soc_camera_platform.c: Fixed a Missing blank line coding style issu
-Message-Id: <53E65EA4.6080106@xs4all.nl>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 07 Aug 2014 12:49:04 +0000
+Subject: [PATCH 0/5] fix error return code
+Message-Id: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407604952-15492-1-git-send-email-suman@inforcecomputing.com> <Pine.LNX.4.64.1408091934100.20541@axis700.grange>
-In-Reply-To: <Pine.LNX.4.64.1408091934100.20541@axis700.grange>
+References: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1344926858-1162-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Suman Kumar <suman@inforcecomputing.com>
-Cc: m.chehab@samsung.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: coreteam@netfilter.org
+Cc: kernel-janitors@vger.kernel.org, netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, kexec@lists.infradead.org
 
-On 08/09/2014 07:36 PM, Guennadi Liakhovetski wrote:
-> Hi Suman,
-> 
-> On Sat, 9 Aug 2014, Suman Kumar wrote:
-> 
->>     Fixes a coding style issue reported by checkpatch.pl
-> 
-> Thanks for your patch. To my taste checkpatch.pl has unfortunately become 
-> too noisy with meaningless / unimportant warnings like this one. Is this 
-> in CodingStyle? If not, my intention is to drop this.
+The complate semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-I don't see it being mentioned explicitly in the CodingStyle, but the coding
-style follows K&R, and they put an empty line between local variables and the
-start of the code. And I like it that way as well, it makes it easier to review.
+// <smpl>
+// identify a function that returns a negative return value at least once.
+@ok exists@
+identifier f,ret,i;
+expression e;
+constant c;
+@@
 
-If you don't want to be bothered by such patches, just delegate them to me in
-patchwork, I don't mind.
+f(...) {
+... when any
+(
+return -c@i;
+|
+ret =3D -c@i;
+... when !=3D ret =3D e
+return ret;
+|
+if (ret < 0) { ... return ret; }
+)
+... when any
+}
 
-Regards,
+// identify a case where the return variable is set to a non-negative value
+// and then returned in error-handling code
+@r exists@
+identifier ret,ok.f,fn;
+expression e1,e2,e3,e4,e5,e6,x;
+statement S,S1;
+position p1,p2,p3;
+@@
 
-	Hans
+f(...) {
+... when any
+(
+if@p1 (\(ret < 0\|ret !=3D 0\))
+ { ... return ret; }
+|
+ret@p1 =3D 0
+)
+... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
+    when !=3D &ret
+    when any
+(
+ if (<+... ret =3D e5 ...+>) S1
+|
+ if (<+... &ret ...+>) S1
+|
+if@p2(<+...x =3D fn(...)...+>)
+ {
+  ... when !=3D ret =3D e6
+      when forall
+ return@p3 ret;
+}
+|
+break;
+|
+x =3D fn(...)
+... when !=3D \(ret =3D e4\|ret++\|ret--\|ret+=E4\|ret-=E4\)
+    when !=3D &ret
+(
+ if (<+... ret =3D e3 ...+>) S
+|
+ if (<+... &ret ...+>) S
+|
+if@p2(<+...\(x !=3D 0\|x < 0\|x =3D NULL\|IS_ERR(x)\)...+>)
+ {
+  ... when !=3D ret =3D e2
+      when forall
+ return@p3 ret;
+}
+)
+)
+... when any
+}
 
-> However, Mauro may 
-> override by either taking this himself or asking me to apply this.
-> 
-> Thanks
-> Guennadi
-> 
->>
->> Signed-off-by: Suman Kumar <suman@inforcecomputing.com>
->> ---
->>  drivers/media/platform/soc_camera/soc_camera_platform.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/media/platform/soc_camera/soc_camera_platform.c b/drivers/media/platform/soc_camera/soc_camera_platform.c
->> index ceaddfb..fe15a80 100644
->> --- a/drivers/media/platform/soc_camera/soc_camera_platform.c
->> +++ b/drivers/media/platform/soc_camera/soc_camera_platform.c
->> @@ -27,12 +27,14 @@ struct soc_camera_platform_priv {
->>  static struct soc_camera_platform_priv *get_priv(struct platform_device *pdev)
->>  {
->>  	struct v4l2_subdev *subdev = platform_get_drvdata(pdev);
->> +
->>  	return container_of(subdev, struct soc_camera_platform_priv, subdev);
->>  }
->>  
->>  static int soc_camera_platform_s_stream(struct v4l2_subdev *sd, int enable)
->>  {
->>  	struct soc_camera_platform_info *p = v4l2_get_subdevdata(sd);
->> +
->>  	return p->set_capture(p, enable);
->>  }
->>  
->> -- 
->> 1.8.2
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+@printer depends on r@
+position p;
+identifier ok.f,pr;
+constant char [] c;
+@@
 
+f(...) { <...pr@p(...,c,...)...> }
+
+@bad0 exists@
+identifier r.ret,ok.f,g !=3D {ERR_PTR,IS_ERR};
+position p !=3D printer.p;
+@@
+
+f(...) { ... when any
+g@p(...,ret,...)
+... when any
+ }
+
+// ignore the above if there is some path where the variable is set to
+// something else
+@bad depends on !bad0 exists@
+position r.p1,r.p2;
+statement S1,S2;
+identifier r.ret;
+expression e1;
+@@
+
+(
+if@p1 (\(ret < 0\|ret !=3D 0\)) S1
+|
+ret@p1 =3D 0
+)
+... when any
+ \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\|&ret\)
+... when any
+if@p2(...) S2
+
+@bad1 depends on !bad0 && !bad exists@
+position r.p2;
+statement S2;
+identifier r.ret;
+expression e1;
+constant c;
+@@
+
+ret =3D -c
+... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
+    when !=3D &ret
+    when any
+if@p2(...) S2
+
+// likewise ignore it if there has been an intervening return
+@bad2 depends on !bad0 && !bad && !bad1 exists@
+position r.p1,r.p2;
+identifier r.ret;
+expression e1;
+statement S2;
+constant c;
+@@
+
+ret@p1 =3D 0
+... when !=3D if (...) { ... ret =3D e1 ... return ret; }
+    when !=3D if (...) { ... return -c; }
+    when any
+if@p2(...) S2
+
+
+@script:python depends on !bad0 && !bad && !bad1 && !bad2@
+p1 << r.p1;
+p2 << r.p2;
+p3 << r.p3;
+@@
+
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+cocci.print_secs("",p3)
+// </smpl>
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
