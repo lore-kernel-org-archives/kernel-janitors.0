@@ -1,72 +1,40 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 07 Aug 2014 20:57:45 +0000
-Subject: [PATCH 1/4] umem: fix error return code
-Message-Id: <1407445067-4044-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Jeff Moyer <jmoyer@redhat.com>
+Date: Thu, 07 Aug 2014 21:41:29 +0000
+Subject: Re: [PATCH 1/4] umem: fix error return code
+Message-Id: <x491tssasfq.fsf@segfault.boston.devel.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1407445067-4044-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407445067-4044-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1407445067-4044-3-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407445067-4044-3-git-send-email-Julia.Lawall@lip6.fr> (Julia
+	Lawall's message of "Thu, 7 Aug 2014 22:57:45 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Julia Lawall <Julia.Lawall@lip6.fr> writes:
 
-Convert a zero return value on error to a negative one, as returned
-elsewhere in the function.
+> diff --git a/drivers/block/umem.c b/drivers/block/umem.c
+> index 4cf81b5..371e819 100644
+> --- a/drivers/block/umem.c
+> +++ b/drivers/block/umem.c
+> @@ -881,6 +881,7 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>  	if (card->mm_pages[0].desc = NULL ||
+>  	    card->mm_pages[1].desc = NULL) {
+>  		dev_printk(KERN_ERR, &card->dev->dev, "alloc failed\n");
+> +		ret = -ENOMEM;
+>  		goto failed_alloc;
+>  	}
+>  	reset_page(&card->mm_pages[0]);
+> @@ -891,8 +892,10 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>  	card->biotail = &card->bio;
+>  
+>  	card->queue = blk_alloc_queue(GFP_KERNEL);
+> -	if (!card->queue)
+> +	if (!card->queue) {
+> +		ret = -ENOMEM;
+>  		goto failed_alloc;
+> +	}
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/block/umem.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/umem.c b/drivers/block/umem.c
-index 4cf81b5..371e819 100644
---- a/drivers/block/umem.c
-+++ b/drivers/block/umem.c
-@@ -881,6 +881,7 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	if (card->mm_pages[0].desc = NULL ||
- 	    card->mm_pages[1].desc = NULL) {
- 		dev_printk(KERN_ERR, &card->dev->dev, "alloc failed\n");
-+		ret = -ENOMEM;
- 		goto failed_alloc;
- 	}
- 	reset_page(&card->mm_pages[0]);
-@@ -891,8 +892,10 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	card->biotail = &card->bio;
- 
- 	card->queue = blk_alloc_queue(GFP_KERNEL);
--	if (!card->queue)
-+	if (!card->queue) {
-+		ret = -ENOMEM;
- 		goto failed_alloc;
-+	}
- 
- 	blk_queue_make_request(card->queue, mm_make_request);
- 	card->queue->queue_lock = &card->lock;
-
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
