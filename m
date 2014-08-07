@@ -1,62 +1,35 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 07 Aug 2014 13:31:05 +0000
+From: chas williams - CONTRACTOR <chas@cmf.nrl.navy.mil>
+Date: Thu, 07 Aug 2014 13:41:16 +0000
 Subject: Re: [PATCH 3/5] drivers/atm/atmtcp.c: fix error return code
-Message-Id: <alpine.DEB.2.10.1408071530230.2337@hadrien>
+Message-Id: <20140807094116.20efc324@thirdoffive.cmf.nrl.navy.mil>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr> <1407415749-19978-3-git-send-email-Julia.Lawall@lip6.fr> <20140807091012.793ef5c7@thirdoffive.cmf.nrl.navy.mil>
-In-Reply-To: <20140807091012.793ef5c7@thirdoffive.cmf.nrl.navy.mil>
+References: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1407415749-19978-3-git-send-email-Julia.Lawall@lip6.fr>
+	<20140807091012.793ef5c7@thirdoffive.cmf.nrl.navy.mil>
+	<alpine.DEB.2.10.1408071530230.2337@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1408071530230.2337@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: chas williams - CONTRACTOR <chas@cmf.nrl.navy.mil>
+To: Julia Lawall <julia.lawall@lip6.fr>
 Cc: kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Thu, 7 Aug 2014 15:31:05 +0200 (CEST)
+Julia Lawall <julia.lawall@lip6.fr> wrote:
 
-Convert a zero return value on error to a negative one, as returned
-elsewhere in the function.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+> diff --git a/drivers/atm/atmtcp.c b/drivers/atm/atmtcp.c
+> index 0e3f8f9..c8e4fb4 100644
+> --- a/drivers/atm/atmtcp.c
+> +++ b/drivers/atm/atmtcp.c
+> @@ -299,6 +299,7 @@ static int atmtcp_c_send(struct atm_vcc *vcc,struct sk_buff *skb)
+>  	out_vcc = find_vcc(dev, ntohs(hdr->vpi), ntohs(hdr->vci));
+>  	read_unlock(&vcc_sklist_lock);
+>  	if (!out_vcc) {
+> +		result = -EUNATCH;
+>  		atomic_inc(&vcc->stats->tx_err);
+>  		goto done;
+>  	}
+> 
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-v2; changed error code to -EUNATCH
-
- drivers/atm/atmtcp.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/atm/atmtcp.c b/drivers/atm/atmtcp.c
-index 0e3f8f9..c8e4fb4 100644
---- a/drivers/atm/atmtcp.c
-+++ b/drivers/atm/atmtcp.c
-@@ -299,6 +299,7 @@ static int atmtcp_c_send(struct atm_vcc *vcc,struct sk_buff *skb)
- 	out_vcc = find_vcc(dev, ntohs(hdr->vpi), ntohs(hdr->vci));
- 	read_unlock(&vcc_sklist_lock);
- 	if (!out_vcc) {
-+		result = -EUNATCH;
- 		atomic_inc(&vcc->stats->tx_err);
- 		goto done;
- 	}
-
+Acked-by: Chas Williams <chas@cmf.nrl.navy.mil>
