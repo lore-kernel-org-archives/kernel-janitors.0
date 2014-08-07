@@ -1,57 +1,64 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 08 Aug 2014 10:07:50 +0000
-Subject: =?UTF-8?q?=5BPATCH=209/14=5D=20imx-drm=3A=20imx-drm-core=3A=20delete=20unneeded=20test=20before=20of
-Message-Id: <1407492475-26283-9-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 07 Aug 2014 12:49:09 +0000
+Subject: [PATCH 5/5] kexec: fix error return code
+Message-Id: <1407415749-19978-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Eric Biederman <ebiederm@xmission.com>
+Cc: kernel-janitors@vger.kernel.org, kexec@lists.infradead.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Of_node_put supports NULL as its argument, so the initial test is not
-necessary.
+Convert a zero return value on error to a negative one, as returned
+elsewhere in the function.
 
-Suggested by Uwe Kleine-K=C3=B6nig.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression e;
+identifier ret; expression e1,e2;
 @@
-
--if (e)
-   of_node_put(e);
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/imx-drm/imx-drm-core.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/kexec.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/imx-drm/imx-drm-core.c b/drivers/staging/imx-d=
-rm/imx-drm-core.c
-index 6b22106..1852300 100644
---- a/drivers/staging/imx-drm/imx-drm-core.c
-+++ b/drivers/staging/imx-drm/imx-drm-core.c
-@@ -471,8 +471,7 @@ int imx_drm_encoder_parse_of(struct drm_device *drm,
- 		crtc_mask |=3D mask;
- 	}
-=20
--	if (ep)
--		of_node_put(ep);
-+	of_node_put(ep);
- 	if (i =3D 0)
- 		return -ENOENT;
-=20
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index 0b49a0a..dcd7a1f 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -2212,8 +2212,10 @@ static int kexec_calculate_store_digests(struct kimage *image)
+ 
+ 	sha_region_sz = KEXEC_SEGMENT_MAX * sizeof(struct kexec_sha_region);
+ 	sha_regions = vzalloc(sha_region_sz);
+-	if (!sha_regions)
++	if (!sha_regions) {
++		ret = -ENOMEM;
+ 		goto out_free_desc;
++	}
+ 
+ 	desc->tfm   = tfm;
+ 	desc->flags = 0;
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
