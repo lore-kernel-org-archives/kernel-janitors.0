@@ -1,22 +1,60 @@
-From: Josh Triplett <josh@joshtriplett.org>
-Date: Sat, 23 Aug 2014 15:21:04 +0000
-Subject: Re: [PATCH 0/9] use c99 initializers in structures
-Message-Id: <20140823152104.GC2074@thin>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 07 Aug 2014 12:49:07 +0000
+Subject: [PATCH 2/5] solos-pci: fix error return code
+Message-Id: <1407415749-19978-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-nfc@lists.01.org, linux-wireless@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, devel@driverdev.osuosl.org, linux-omap@vger.kernel.org, rtc-linux@googlegroups.com
+To: Chas Williams <chas@cmf.nrl.navy.mil>
+Cc: kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Aug 23, 2014 at 01:20:22PM +0200, Julia Lawall wrote:
-> These patches add labels in the initializations of structure fields (c99
-> initializers).  The complete semantic patch thta makes this change is shown
-> below.  This rule ignores cases where the initialization is just 0 or NULL,
-> where some of the fields already use labels, and where there are nested
-> structures.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I responded to patches 6 and 8 with comments; for the rest (1-5, 7, 9):
-Reviewed-by: Josh Triplett <josh@joshtriplett.org>
+Convert a zero return value on error to a negative one, as returned
+elsewhere in the function.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/atm/solos-pci.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/atm/solos-pci.c b/drivers/atm/solos-pci.c
+index 943cf0d..7652e8d 100644
+--- a/drivers/atm/solos-pci.c
++++ b/drivers/atm/solos-pci.c
+@@ -1278,6 +1278,7 @@ static int fpga_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 			card->dma_bounce = kmalloc(card->nr_ports * BUF_SIZE, GFP_KERNEL);
+ 			if (!card->dma_bounce) {
+ 				dev_warn(&card->dev->dev, "Failed to allocate DMA bounce buffers\n");
++				err = -ENOMEM;
+ 				/* Fallback to MMIO doesn't work */
+ 				goto out_unmap_both;
+ 			}
+
