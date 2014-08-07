@@ -1,26 +1,75 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Date: Sun, 17 Aug 2014 17:20:51 +0000
-Subject: Re: [patch] irqchip/irq-crossbar: off by one bugs in init
-Message-Id: <20140817172051.GF12769@titan.lakedaemon.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 07 Aug 2014 20:57:44 +0000
+Subject: [PATCH 2/4] gdrom: fix error return code
+Message-Id: <1407445067-4044-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140807152821.GB10299@mwanda>
-In-Reply-To: <20140807152821.GB10299@mwanda>
+References: <1407445067-4044-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407445067-4044-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Sricharan R <r.sricharan@ti.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-Dan,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Thu, Aug 07, 2014 at 06:28:21PM +0300, Dan Carpenter wrote:
-> My static checker complains that the ">" should be ">=" or else we go
-> beyoned the end of the cb->irq_map[] array on the next line.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Convert a zero return value on error to a negative one, as returned
+elsewhere in the function.
 
-Applied to irqchip/urgent
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-thx,
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-Jason.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/cdrom/gdrom.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index 584bc31..46ecd95 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -807,16 +807,20 @@ static int probe_gdrom(struct platform_device *devptr)
+ 	if (err)
+ 		goto probe_fail_cmdirq_register;
+ 	gd.gdrom_rq = blk_init_queue(gdrom_request, &gdrom_lock);
+-	if (!gd.gdrom_rq)
++	if (!gd.gdrom_rq) {
++		err = -ENOMEM;
+ 		goto probe_fail_requestq;
++	}
+ 
+ 	err = probe_gdrom_setupqueue();
+ 	if (err)
+ 		goto probe_fail_toc;
+ 
+ 	gd.toc = kzalloc(sizeof(struct gdromtoc), GFP_KERNEL);
+-	if (!gd.toc)
++	if (!gd.toc) {
++		err = -ENOMEM;
+ 		goto probe_fail_toc;
++	}
+ 	add_disk(gd.disk);
+ 	return 0;
+ 
+
