@@ -1,35 +1,32 @@
-From: chas williams - CONTRACTOR <chas@cmf.nrl.navy.mil>
-Date: Thu, 07 Aug 2014 13:41:16 +0000
+From: David Miller <davem@davemloft.net>
+Date: Thu, 07 Aug 2014 23:05:10 +0000
 Subject: Re: [PATCH 3/5] drivers/atm/atmtcp.c: fix error return code
-Message-Id: <20140807094116.20efc324@thirdoffive.cmf.nrl.navy.mil>
+Message-Id: <20140807.160510.734997025610406474.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1407415749-19978-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1407415749-19978-3-git-send-email-Julia.Lawall@lip6.fr>
 	<20140807091012.793ef5c7@thirdoffive.cmf.nrl.navy.mil>
 	<alpine.DEB.2.10.1408071530230.2337@hadrien>
 In-Reply-To: <alpine.DEB.2.10.1408071530230.2337@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: julia.lawall@lip6.fr
+Cc: chas@cmf.nrl.navy.mil, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 7 Aug 2014 15:31:05 +0200 (CEST)
-Julia Lawall <julia.lawall@lip6.fr> wrote:
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Thu, 7 Aug 2014 15:31:05 +0200 (CEST)
 
-
-> diff --git a/drivers/atm/atmtcp.c b/drivers/atm/atmtcp.c
-> index 0e3f8f9..c8e4fb4 100644
-> --- a/drivers/atm/atmtcp.c
-> +++ b/drivers/atm/atmtcp.c
-> @@ -299,6 +299,7 @@ static int atmtcp_c_send(struct atm_vcc *vcc,struct sk_buff *skb)
->  	out_vcc = find_vcc(dev, ntohs(hdr->vpi), ntohs(hdr->vci));
->  	read_unlock(&vcc_sklist_lock);
->  	if (!out_vcc) {
-> +		result = -EUNATCH;
->  		atomic_inc(&vcc->stats->tx_err);
->  		goto done;
->  	}
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
+> Convert a zero return value on error to a negative one, as returned
+> elsewhere in the function.
+> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+ ...
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+> v2; changed error code to -EUNATCH
 
-Acked-by: Chas Williams <chas@cmf.nrl.navy.mil>
+Applied.
