@@ -1,37 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 25 Aug 2014 17:10:59 +0000
-Subject: re: bnx2x: Safe bnx2x_panic_dump()
-Message-Id: <20140825171059.GA22518@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 08 Aug 2014 10:07:49 +0000
+Subject: =?UTF-8?q?=5BPATCH=208/14=5D=20ASoC=3A=20rsnd=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5Fp
+Message-Id: <1407492475-26283-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Liam Girdwood <lgirdwood@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 
-Hello Yuval Mintz,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The patch e261199872a2: "bnx2x: Safe bnx2x_panic_dump()" from Aug 17,
-2014, leads to the following static checker warning:
+Of_node_put supports NULL as its argument, so the initial test is not
+necessary.
 
-	drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:987 bnx2x_panic_dump()
-	warn: this array is probably non-NULL. 'fp->txdata_ptr'
+Suggested by Uwe Kleine-K=C3=B6nig.
 
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-   983  
-   984                  /* Tx */
-   985                  for_each_cos_in_tx_queue(fp, cos)
-   986                  {
-   987                          if (!fp->txdata_ptr)
-                                     ^^^^^^^^^^^^^^
-Maybe, "if (fp->txdata_ptr[cos])" was intended?
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-   988                                  break;
-   989  
-   990                          txdata = *fp->txdata_ptr[cos];
-   991  
-   992                          if (!txdata.tx_cons_sb)
-   993                                  continue;
-   994  
+// <smpl>
+@@
+expression e;
+@@
 
-regards,
-dan carpenter
+-if (e)
+   of_node_put(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/sh/rcar/core.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 19f7896..1922ec5 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -798,10 +798,8 @@ if (name##_node) {							\
+ 			mod_parse(src);
+ 			mod_parse(dvc);
+=20
+-			if (playback)
+-				of_node_put(playback);
+-			if (capture)
+-				of_node_put(capture);
++			of_node_put(playback);
++			of_node_put(capture);
+ 		}
+=20
+ 		dai_i++;
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
