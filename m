@@ -1,78 +1,58 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Aug 2014 11:20:23 +0000
-Subject: [PATCH 1/9] [media] v4l: ti-vpe: use c99 initializers in structures
-Message-Id: <1408792831-25615-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 08 Aug 2014 10:07:47 +0000
+Subject: =?UTF-8?q?=5BPATCH=204/14=5D=20powerpc/pseries=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5F
+Message-Id: <1407492475-26283-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linuxppc-dev@lists.ozlabs.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Use c99 initializers for structures.
+Of_node_put supports NULL as its argument, so the initial test is not
+necessary.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Suggested by Uwe Kleine-K=C3=B6nig.
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@decl@
-identifier i1,fld;
-type T;
-field list[n] fs;
 @@
-
-struct i1 {
- fs
- T fld;
- ...};
-
-@bad@
-identifier decl.i1,i2;
 expression e;
-initializer list[decl.n] is;
 @@
 
-struct i1 i2 = { is,
-+ .fld = e
-- e
- ,...};
+-if (e)
+   of_node_put(e);
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The patches in this series do not depend on each other.
+ arch/powerpc/platforms/pseries/iommu.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Not compiled.
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platform=
+s/pseries/iommu.c
+index 33b552f..2ea6831 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -575,8 +575,7 @@ static void pci_dma_bus_setup_pSeries(struct pci_bus *b=
+us)
+ 	while (isa_dn && isa_dn !=3D dn)
+ 		isa_dn =3D isa_dn->parent;
+=20
+-	if (isa_dn_orig)
+-		of_node_put(isa_dn_orig);
++	of_node_put(isa_dn_orig);
+=20
+ 	/* Count number of direct PCI children of the PHB. */
+ 	for (children =3D 0, tmp =3D dn->child; tmp; tmp =3D tmp->sibling)
 
- drivers/media/platform/ti-vpe/vpe.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-index 972f43f..20dd7ea 100644
---- a/drivers/media/platform/ti-vpe/vpe.c
-+++ b/drivers/media/platform/ti-vpe/vpe.c
-@@ -138,12 +138,12 @@ struct vpe_dei_regs {
-  * default expert DEI register values, unlikely to be modified.
-  */
- static const struct vpe_dei_regs dei_regs = {
--	0x020C0804u,
--	0x0118100Fu,
--	0x08040200u,
--	0x1010100Cu,
--	0x10101010u,
--	0x10101010u,
-+	.mdt_spacial_freq_thr_reg = 0x020C0804u,
-+	.edi_config_reg = 0x0118100Fu,
-+	.edi_lut_reg0 = 0x08040200u,
-+	.edi_lut_reg1 = 0x1010100Cu,
-+	.edi_lut_reg2 = 0x10101010u,
-+	.edi_lut_reg3 = 0x10101010u,
- };
- 
- /*
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
