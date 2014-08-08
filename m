@@ -1,100 +1,56 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Aug 2014 18:33:21 +0000
-Subject: [PATCH 0/7] delete double assignment
-Message-Id: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 08 Aug 2014 10:07:53 +0000
+Subject: =?UTF-8?q?=5BPATCH=2012/14=5D=20ll=5Ftemac=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5Fput?
+Message-Id: <1407492475-26283-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-mips@linux-mips.org
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-serial@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-These patches fix cases where there are two adjacent assignments to the
-same location.  In practice, many such occurrences appear to be
-intentional, eg to initialize volatile memory, but these cases do not seem
-to fall into that category.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The complete semantic match that finds these problems is as follows:
+Of_node_put supports NULL as its argument, so the initial test is not
+necessary.
+
+Suggested by Uwe Kleine-K=C3=B6nig.
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r@
-expression i,f;
-position p1,p2;
+@@
+expression e;
 @@
 
-(
- i = <+...f(...)...+>;
-|
- i |= <+...f(...)...+>;
-|
- i &= <+...f(...)...+>;
-|
- i += <+...f(...)...+>;
-|
- i -= <+...f(...)...+>;
-|
- i *= <+...f(...)...+>;
-|
- i /= <+...f(...)...+>;
-|
- i %= <+...f(...)...+>;
-|
- i ^= <+...f(...)...+>;
-|
- i <<= <+...f(...)...+>;
-|
- i >>= <+...f(...)...+>;
-|
- i@p1 = ...;
-|
- i@p1 |= ...;
-|
- i@p1 &= ...;
-|
- i@p1 += ...;
-|
- i@p1 -= ...;
-|
- i@p1 *= ...;
-|
- i@p1 /= ...;
-|
- i@p1 %= ...;
-|
- i@p1 ^= ...;
-|
- i@p1 <<= ...;
-|
- i@p1 >>= ...;
-|
- i@p1 ++;
-|
- ++i@p1;
-|
- i@p1 --;
-|
- --i@p1;
-)
-(
- i = <+...i...+>;
-|
- i = <+...f(...)...+>;
-|
- i@p2 = ...;
-)
-
-@@
-expression i,j,f;
-position r.p1,r.p2;
-@@
-
-(
- (<+...i@p1...+>);
-)
-(
- (<+...\(j++\|++j\|j--\|--j\|f(...)\)...+>) = ...;
-|
-*i@p2 = ...;
-)
+-if (e)
+   of_node_put(e);
 // </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/xilinx/ll_temac_main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethe=
+rnet/xilinx/ll_temac_main.c
+index 8a6e5c2..36f4459 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -1148,8 +1148,7 @@ static int temac_of_remove(struct platform_device *op)
+ 	temac_mdio_teardown(lp);
+ 	unregister_netdev(ndev);
+ 	sysfs_remove_group(&lp->dev->kobj, &temac_attr_group);
+-	if (lp->phy_node)
+-		of_node_put(lp->phy_node);
++	of_node_put(lp->phy_node);
+ 	lp->phy_node =3D NULL;
+ 	iounmap(lp->regs);
+ 	if (lp->sdma_regs)
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
