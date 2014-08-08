@@ -1,42 +1,68 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 07 Aug 2014 15:56:30 +0000
-Subject: Re: [patch] drm/radeon: add a check for allocation failure
-Message-Id: <20140807155630.GD11899@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 08 Aug 2014 10:07:44 +0000
+Subject: [PATCH 7/14] cpu: delete unneeded test before of_node_put
+Message-Id: <1407492475-26283-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140807152736.GA10299@mwanda>
- <CADnq5_Mxw=ZY-7cxj440Df6PG4bFDNBvX=v70i4CR5O-277bJw@mail.gmail.com>
-In-Reply-To: <CADnq5_Mxw=ZY-7cxj440Df6PG4bFDNBvX=v70i4CR5O-277bJw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linuxppc-dev@lists.ozlabs.org
 
-On Thu, Aug 07, 2014 at 11:31:15AM -0400, Alex Deucher wrote:
-> On Thu, Aug 7, 2014 at 11:27 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > We can easily return -ENOMEM here if kzalloc() fails.
-> >
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > diff --git a/drivers/gpu/drm/radeon/radeon_vm.c b/drivers/gpu/drm/radeon/radeon_vm.c
-> > index ccae4d9..d15d987 100644
-> > --- a/drivers/gpu/drm/radeon/radeon_vm.c
-> > +++ b/drivers/gpu/drm/radeon/radeon_vm.c
-> > @@ -483,6 +483,8 @@ int radeon_vm_bo_set_addr(struct radeon_device *rdev,
-> >                         /* add a clone of the bo_va to clear the old address */
-> >                         struct radeon_bo_va *tmp;
-> >                         tmp = kzalloc(sizeof(struct radeon_bo_va), GFP_KERNEL);
-> > +                       if (!tmp)
-> > +                               return -ENOMEM;
-> 
-> We need to drop the lock here too.  I'll apply and fix it up.  Thanks!
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Gar.  I'm sorry.  I thought it looked easier than it was.
+Simplify the error path to avoid calling of_node_put when it is not needed.
 
-Also I really should have caught that in my qc.  :/  I'm not sure what
-happened.
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+expression e;
+@@
+
+-if (e)
+   of_node_put(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/powerpc/sysdev/ppc4xx_cpm.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/powerpc/sysdev/ppc4xx_cpm.c b/arch/powerpc/sysdev/ppc4xx_cpm.c
+index 82e2cfe..ba95adf 100644
+--- a/arch/powerpc/sysdev/ppc4xx_cpm.c
++++ b/arch/powerpc/sysdev/ppc4xx_cpm.c
+@@ -281,7 +281,7 @@ static int __init cpm_init(void)
+ 		printk(KERN_ERR "cpm: could not parse dcr property for %s\n",
+ 		       np->full_name);
+ 		ret = -EINVAL;
+-		goto out;
++		goto node_put;
+ 	}
+ 
+ 	cpm.dcr_host = dcr_map(np, dcr_base, dcr_len);
+@@ -290,7 +290,7 @@ static int __init cpm_init(void)
+ 		printk(KERN_ERR "cpm: failed to map dcr property for %s\n",
+ 		       np->full_name);
+ 		ret = -EINVAL;
+-		goto out;
++		goto node_put;
+ 	}
+ 
+ 	/* All 4xx SoCs with a CPM controller have one of two
+@@ -330,9 +330,9 @@ static int __init cpm_init(void)
+ 
+ 	if (cpm.standby || cpm.suspend)
+ 		suspend_set_ops(&cpm_suspend_ops);
++node_put:
++	of_node_put(np);
+ out:
+-	if (np)
+-		of_node_put(np);
+ 	return ret;
+ }
+ 
 
