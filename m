@@ -1,98 +1,67 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Date: Tue, 15 Jul 2014 21:23:27 +0000
-Subject: [PATCH V5 4/4] staging: vt6556: Cleanup coding style: indentation
-Message-Id: <1405459407-9311-4-git-send-email-peter.senna@gmail.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Date: Fri, 08 Aug 2014 10:45:11 +0000
+Subject: Re: [PATCH 12/14] ll_temac: delete unneeded test before of_node_put
+Message-Id: <8c6f53e8-f0ae-4b5e-b852-50603bff0060@BN1BFFO11FD029.protection.gbl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405459407-9311-1-git-send-email-peter.senna@gmail.com>
-In-Reply-To: <1405459407-9311-1-git-send-email-peter.senna@gmail.com>
+References: <1407492475-26283-12-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407492475-26283-12-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: forest@alittletooquiet.net, gregkh@linuxfoundation.org, tvboxspy@gmail.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-This patch cleanup the follwoing coding style issues:
- - indentation style
- - new line after declaration
+On 08/08/2014 12:07 PM, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Of_node_put supports NULL as its argument, so the initial test is not
+> necessary.
+>=20
+> Suggested by Uwe Kleine-K=C3=B6nig.
+>=20
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @@
+> expression e;
+> @@
+>=20
+> -if (e)
+>    of_node_put(e);
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+>  drivers/net/ethernet/xilinx/ll_temac_main.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/et=
+hernet/xilinx/ll_temac_main.c
+> index 8a6e5c2..36f4459 100644
+> --- a/drivers/net/ethernet/xilinx/ll_temac_main.c
+> +++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+> @@ -1148,8 +1148,7 @@ static int temac_of_remove(struct platform_device *=
+op)
+>  	temac_mdio_teardown(lp);
+>  	unregister_netdev(ndev);
+>  	sysfs_remove_group(&lp->dev->kobj, &temac_attr_group);
+> -	if (lp->phy_node)
+> -		of_node_put(lp->phy_node);
+> +	of_node_put(lp->phy_node);
+>  	lp->phy_node =3D NULL;
+>  	iounmap(lp->regs);
+>  	if (lp->sdma_regs)
 
-Tested by compilation only.
+Reviewed-by: Michal Simek <michal.simek@xilinx.com>
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
----
-Changes from V4:
- - Splitted [PATCH V4 1/6] in 4 smaller patches
+Thanks,
+Michal
 
- drivers/staging/vt6656/main_usb.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index d103df1..ba5c8a9 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -62,7 +62,7 @@
- #include "int.h"
- 
- /* static int msglevel = MSG_LEVEL_DEBUG; */
--static int          msglevel                =MSG_LEVEL_INFO;
-+static int msglevel = MSG_LEVEL_INFO;
- 
- /*
-  * define module options
-@@ -177,13 +177,12 @@ static struct usb_device_id vt6656_table[] = {
- /* frequency list (map channels to frequencies) */
- /*
- static const long frequency_list[] = {
--    2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467, 2472, 2484,
--    4915, 4920, 4925, 4935, 4940, 4945, 4960, 4980,
--    5035, 5040, 5045, 5055, 5060, 5080, 5170, 5180, 5190, 5200, 5210, 5220, 5230, 5240,
--    5260, 5280, 5300, 5320, 5500, 5520, 5540, 5560, 5580, 5600, 5620, 5640, 5660, 5680,
--    5700, 5745, 5765, 5785, 5805, 5825
--	};
--
-+	2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467,
-+	2472, 2484, 4915, 4920, 4925, 4935, 4940, 4945, 4960, 4980, 5035, 5040,
-+	5045, 5055, 5060, 5080, 5170, 5180, 5190, 5200, 5210, 5220, 5230, 5240,
-+	5260, 5280, 5300, 5320, 5500, 5520, 5540, 5560, 5580, 5600, 5620, 5640,
-+	5660, 5680, 5700, 5745, 5765, 5785, 5805, 5825
-+};
- */
- 
- static int vt6656_probe(struct usb_interface *intf,
-@@ -206,16 +205,16 @@ static void usb_device_reset(struct vnt_private *pDevice);
- 
- static void
- device_set_options(struct vnt_private *pDevice) {
--    pDevice->cbTD = TX_DESC_DEF0;
--    pDevice->cbRD = RX_DESC_DEF0;
--    pDevice->byShortRetryLimit = SHORT_RETRY_DEF;
--    pDevice->byLongRetryLimit = LONG_RETRY_DEF;
--    pDevice->op_mode = NL80211_IFTYPE_UNSPECIFIED;
--    pDevice->byBBType = BBP_TYPE_DEF;
--    pDevice->byPacketType = pDevice->byBBType;
--    pDevice->byAutoFBCtrl = AUTO_FB_0;
--    pDevice->byPreambleType = 0;
--    pDevice->bExistSWNetAddr = false;
-+	pDevice->cbTD = TX_DESC_DEF0;
-+	pDevice->cbRD = RX_DESC_DEF0;
-+	pDevice->byShortRetryLimit = SHORT_RETRY_DEF;
-+	pDevice->byLongRetryLimit = LONG_RETRY_DEF;
-+	pDevice->op_mode = NL80211_IFTYPE_UNSPECIFIED;
-+	pDevice->byBBType = BBP_TYPE_DEF;
-+	pDevice->byPacketType = pDevice->byBBType;
-+	pDevice->byAutoFBCtrl = AUTO_FB_0;
-+	pDevice->byPreambleType = 0;
-+	pDevice->bExistSWNetAddr = false;
- }
- 
- /*
-@@ -837,6 +836,7 @@ static void vnt_bss_info_changed(struct ieee80211_hw *hw,
- 		u32 changed)
- {
- 	struct vnt_private *priv = hw->priv;
-+
- 	priv->current_aid = conf->aid;
- 
- 	if (changed & BSS_CHANGED_BSSID)
--- 
-1.9.3
 
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
