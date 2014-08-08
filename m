@@ -1,36 +1,41 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Date: Mon, 25 Aug 2014 19:09:53 +0000
-Subject: Re: [PATCH 4/7] MIPS: BCM63xx: delete double assignment
-Message-Id: <CAOiHx=m_-GmRwAmPOWFg8w9pFMPU8Vn9U-UO+k=jDdDxNH7R3Q@mail.gmail.com>
+From: Benoit Taine <benoit.taine@lip6.fr>
+Date: Fri, 08 Aug 2014 13:56:02 +0000
+Subject: [PATCH 0/1] Replace DEFINE_PCI_DEVICE_TABLE macro use
+Message-Id: <1407506163-8371-1-git-send-email-benoit.taine@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
- <1408818808-18850-5-git-send-email-Julia.Lawall@lip6.fr> <20140825112754.GE27724@linux-mips.org>
-In-Reply-To: <20140825112754.GE27724@linux-mips.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, joe@perches.com, kernel-janitors@vger.kernel.org, MIPS Mailing List <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: bhelgaas@google.com
+Cc: benoit.taine@lip6.fr, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, Aug 25, 2014 at 1:27 PM, Ralf Baechle <ralf@linux-mips.org> wrote:
-> On Sat, Aug 23, 2014 at 08:33:25PM +0200, Julia Lawall wrote:
->
->> Delete successive assignments to the same location.  In each case, the
->> duplicated assignment is modified to be in line with other nearby code.
->>
->> A simplified version of the semantic match that finds this problem is as
->> follows: (http://coccinelle.lip6.fr/)
->
-> Looking good, applied.
+We should prefer `const struct pci_device_id` over
+`DEFINE_PCI_DEVICE_TABLE` to meet kernel coding style guidelines.
+This issue was reported by checkpatch.
 
-Huh, somehow gmail decided the original emails were spam.
+A simplified version of the semantic patch that makes this change is as
+follows (http://coccinelle.lip6.fr/):
 
-> Thanks,
->
->   Ralf
+// <smpl>
 
-Also thanks from me for cleaning up behind me! These mistakes were
-definitely mine.
+@@
+identifier i;
+declarer name DEFINE_PCI_DEVICE_TABLE;
+initializer z;
+@@
 
+- DEFINE_PCI_DEVICE_TABLE(i)
++ const struct pci_device_id i[]
+= z;
 
-Jonas
+// </smpl>
+
+I previously sent parts of this patch to check wether or not it was
+worth sending, and Bjorn answered:
+> Benoit, how about if you wait until about half-way through the merge
+> window after v3.16 releases, generate an up-to-date single patch, and
+> post that?  Then we can try to get it in before v3.17-rc1 to minimize
+> merge hassles.
+
+So here it is, based on linux-next on 2014-08-07.
+
