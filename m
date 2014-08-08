@@ -1,51 +1,58 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Aug 2014 18:33:26 +0000
-Subject: [PATCH 5/7] wusb: delete double assignment
-Message-Id: <1408818808-18850-6-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 08 Aug 2014 10:07:46 +0000
+Subject: =?UTF-8?q?=5BPATCH=205/14=5D=20powerpc/mpc5xxx=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5F
+Message-Id: <1407492475-26283-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linuxppc-dev@lists.ozlabs.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Delete successive assignments to the same location.
+Of_node_put supports NULL as its argument, so the initial test is not
+necessary.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Suggested by Uwe Kleine-K=C3=B6nig.
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression i;
+expression e;
 @@
 
-*i = ...;
- i = ...;
+-if (e)
+   of_node_put(e);
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The patches in this series do not depend on each other.
+ arch/powerpc/sysdev/mpc5xxx_clocks.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/usb/wusbcore/crypto.c |    2 --
- 1 file changed, 2 deletions(-)
+diff --git a/arch/powerpc/sysdev/mpc5xxx_clocks.c b/arch/powerpc/sysdev/mpc=
+5xxx_clocks.c
+index 5492dc5..f4f0301 100644
+--- a/arch/powerpc/sysdev/mpc5xxx_clocks.c
++++ b/arch/powerpc/sysdev/mpc5xxx_clocks.c
+@@ -26,8 +26,7 @@ unsigned long mpc5xxx_get_bus_frequency(struct device_nod=
+e *node)
+ 		of_node_put(node);
+ 		node =3D np;
+ 	}
+-	if (node)
+-		of_node_put(node);
++	of_node_put(node);
+=20
+ 	return p_bus_freq ? *p_bus_freq : 0;
+ }
 
-diff --git a/drivers/usb/wusbcore/crypto.c b/drivers/usb/wusbcore/crypto.c
-index 9a95b2d..50ce80d 100644
---- a/drivers/usb/wusbcore/crypto.c
-+++ b/drivers/usb/wusbcore/crypto.c
-@@ -222,8 +222,6 @@ static int wusb_ccm_mac(struct crypto_blkcipher *tfm_cbc,
- 	WARN_ON(sizeof(ax) != sizeof(struct aes_ccm_block));
- 
- 	result = -ENOMEM;
--	zero_padding = sizeof(struct aes_ccm_block)
--		- blen % sizeof(struct aes_ccm_block);
- 	zero_padding = blen % sizeof(struct aes_ccm_block);
- 	if (zero_padding)
- 		zero_padding = sizeof(struct aes_ccm_block) - zero_padding;
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
