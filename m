@@ -1,48 +1,57 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Wed, 06 Aug 2014 10:39:10 +0000
-Subject: [PATCH 0/1] delete unnecessary null test on array
-Message-Id: <1407321551-27479-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 08 Aug 2014 10:07:43 +0000
+Subject: =?UTF-8?q?=5BPATCH=202/14=5D=20net=3A=20axienet=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5
+Message-Id: <1407492475-26283-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, Adaptec OEM Raid Solutions <aacraid@adaptec.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-Delete NULL test on array.  The complete semantic patch that finds this
-problem is as follows: (http://coccinelle.lip6.fr/)
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+
+Of_node_put supports NULL as its argument, so the initial test is not
+necessary.
+
+Suggested by Uwe Kleine-K=C3=B6nig.
+
+The semantic patch that fixes this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
-@r@
-type T;
-T [] e;
-position p;
 @@
-
-(
- e =@p NULL
-|
- e !=@p NULL
-|
- !@p e
-)
-
-@ disable fld_to_ptr@
 expression e;
-identifier f;
-position r.p;
 @@
 
-(
-* (e.f) =@p NULL
-|
-* (e.f) !=@p NULL
-|
-* !@p(e.f)
-)
+-if (e)
+   of_node_put(e);
 // </smpl>
 
-For best results, this semantic patch requires lots of type information,
-and should be used with the options --recursive-includes and
---relax-include-path.  This may take a long time to run.
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+---
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/ne=
+t/ethernet/xilinx/xilinx_axienet_main.c
+index 7b0a735..30e8608 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -1630,8 +1630,7 @@ static int axienet_of_remove(struct platform_device *=
+op)
+ 	axienet_mdio_teardown(lp);
+ 	unregister_netdev(ndev);
+=20
+-	if (lp->phy_node)
+-		of_node_put(lp->phy_node);
++	of_node_put(lp->phy_node);
+ 	lp->phy_node =3D NULL;
+=20
+ 	iounmap(lp->regs);
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
