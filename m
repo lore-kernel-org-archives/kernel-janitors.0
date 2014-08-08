@@ -1,22 +1,22 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 11 Aug 2014 07:56:54 +0000
-Subject: [PATCH 7/14 v2] powerpc/4xx/cpm: delete unneeded test before of_node_put
-Message-Id: <alpine.DEB.2.10.1408110956090.2316@hadrien>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 08 Aug 2014 10:07:51 +0000
+Subject: =?UTF-8?q?=5BPATCH=2010/14=5D=20gpio=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5Fput?=
+Message-Id: <1407492475-26283-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407492475-26283-3-git-send-email-Julia.Lawall@lip6.fr>
- <1407725796.4508.54.camel@pasglop>
-In-Reply-To: <1407725796.4508.54.camel@pasglop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Simplify the error path to avoid calling of_node_put when it is not needed.
+Of_node_put supports NULL as its argument, so the initial test is not
+necessary.
 
-The semantic patch that finds this problem is as follows:
+Suggested by Uwe Kleine-K=C3=B6nig.
+
+The semantic patch that fixes this problem is as follows:
 (http://coccinelle.lip6.fr/)
 
 // <smpl>
@@ -31,43 +31,25 @@ expression e;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-v2: new subject
+ drivers/gpio/gpiolib-of.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- arch/powerpc/sysdev/ppc4xx_cpm.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/powerpc/sysdev/ppc4xx_cpm.c b/arch/powerpc/sysdev/ppc4xx_cpm.c
-index 82e2cfe..ba95adf 100644
---- a/arch/powerpc/sysdev/ppc4xx_cpm.c
-+++ b/arch/powerpc/sysdev/ppc4xx_cpm.c
-@@ -281,7 +281,7 @@ static int __init cpm_init(void)
- 		printk(KERN_ERR "cpm: could not parse dcr property for %s\n",
- 		       np->full_name);
- 		ret = -EINVAL;
--		goto out;
-+		goto node_put;
- 	}
-
- 	cpm.dcr_host = dcr_map(np, dcr_base, dcr_len);
-@@ -290,7 +290,7 @@ static int __init cpm_init(void)
- 		printk(KERN_ERR "cpm: failed to map dcr property for %s\n",
- 		       np->full_name);
- 		ret = -EINVAL;
--		goto out;
-+		goto node_put;
- 	}
-
- 	/* All 4xx SoCs with a CPM controller have one of two
-@@ -330,9 +330,9 @@ static int __init cpm_init(void)
-
- 	if (cpm.standby || cpm.suspend)
- 		suspend_set_ops(&cpm_suspend_ops);
-+node_put:
-+	of_node_put(np);
- out:
--	if (np)
--		of_node_put(np);
- 	return ret;
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 7cfdc22..604dbe6 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -307,7 +307,5 @@ void of_gpiochip_add(struct gpio_chip *chip)
+ void of_gpiochip_remove(struct gpio_chip *chip)
+ {
+ 	gpiochip_remove_pin_ranges(chip);
+-
+-	if (chip->of_node)
+-		of_node_put(chip->of_node);
++	of_node_put(chip->of_node);
  }
 
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
