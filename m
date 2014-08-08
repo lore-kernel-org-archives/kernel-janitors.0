@@ -1,30 +1,34 @@
-From: Pavel Shilovsky <pshilovsky@samba.org>
-Date: Tue, 26 Aug 2014 15:35:38 +0000
-Subject: Re: [patch] cifs: update a check for NULL function pointer
-Message-Id: <CAKywueRAT56E4_o5j6nHRmiipov+rhL0b_Vjac6zYBgDGBf4tQ@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Fri, 08 Aug 2014 17:28:49 +0000
+Subject: Re: [PATCH 13/14] fec_mpc52xx: delete unneeded test before of_node_put
+Message-Id: <20140808.102849.869385054592371813.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140826073802.GA31076@mwanda>
-	<CAKywueS8pjGrY=SkmxSazVTYVMmnj7zrNhcPCWYgf7NNrNZnYg@mail.gmail.com>
-	<20140826122516.GE5100@mwanda>
-In-Reply-To: <20140826122516.GE5100@mwanda>
+References: <1407492475-26283-13-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407492475-26283-13-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Steve French <sfrench@samba.org>, linux-cifs <linux-cifs@vger.kernel.org>, samba-technical <samba-technical@lists.samba.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Julia.Lawall@lip6.fr
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, u.kleine-koenig@pengutronix.de
 
-2014-08-26 16:25 GMT+04:00 Dan Carpenter <dan.carpenter@oracle.com>:
-> On Tue, Aug 26, 2014 at 12:21:07PM +0400, Pavel Shilovsky wrote:
->> Dan, would you mind if I merge your code change as well as your
->> Signed-off-by line into the original patch "CIFS: Fix wrong restart
->> readdir for SMB1" since the latter hasn't been merged into the
->> mainline yet?
->>
->
-> Sure.  No problem.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri,  8 Aug 2014 12:07:54 +0200
 
-Thanks. Posted the second version to the list.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Of_node_put supports NULL as its argument, so the initial test is not
+> necessary.
+>=20
+> Suggested by Uwe Kleine-K=F6nig.
+>=20
+> The semantic patch that fixes this problem is as follows:
+> (http://coccinelle.lip6.fr/)
+ ...
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-Best regards,
-Pavel Shilovsky.
+Applied.
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
