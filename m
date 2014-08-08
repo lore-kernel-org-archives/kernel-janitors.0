@@ -1,19 +1,18 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 08 Aug 2014 14:38:21 +0000
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Date: Fri, 08 Aug 2014 16:59:39 +0000
 Subject: Re: [PATCH 1/1] dpt_i2o: delete unnecessary null test on array
-Message-Id: <53E4E0DD.2020901@bfs.de>
+Message-Id: <1407517179.2044.13.camel@jarvis.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407321551-27479-1-git-send-email-Julia.Lawall@lip6.fr> <1407321551-27479-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1407321551-27479-1-git-send-email-Julia.Lawall@lip6.fr>
+	 <1407321551-27479-2-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1407321551-27479-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com
+Cc: Adaptec OEM Raid Solutions <aacraid@adaptec.com>, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com
 
-
-
-Am 06.08.2014 12:39, schrieb Julia Lawall:
+On Wed, 2014-08-06 at 12:39 +0200, Julia Lawall wrote:
 > From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
 > Delete NULL test on array (always false).
@@ -56,24 +55,18 @@ Am 06.08.2014 12:39, schrieb Julia Lawall:
 >  	if(chan < 0 || chan >= MAX_CHANNEL)
 >  		return NULL;
 >  	
-
-chan is u32 and u32 < 0 ?
-for the next round.
-
-re,
- wh
-
 > -	if( pHba->channel[chan].device = NULL){
 > -		printk(KERN_DEBUG"Adaptec I2O RAID: Trying to find device before they are allocated\n");
 > -		return NULL;
 > -	}
-> -
->  	d = pHba->channel[chan].device[id];
->  	if(!d || d->tid = 0) {
->  		return NULL;
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+dpt_i2o is always weirdly fun, but I think, based on the message, this
+check is supposed to be 
+
+if( pHba->channel[chan].device[id] = NULL){
+
+Since device is an array of device pointers which are allocated by
+parsing data.
+
+James
+
