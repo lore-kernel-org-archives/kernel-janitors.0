@@ -1,23 +1,79 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 27 Aug 2014 23:29:11 +0000
-Subject: Re: [PATCH net-next] bnx2x: Fix static checker warning regarding `txdata_ptr'
-Message-Id: <20140827.162911.2304971595773773996.davem@davemloft.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 08 Aug 2014 10:07:52 +0000
+Subject: [PATCH 11/14] ARM: brcmstb: delete unneeded test before of_node_put
+Message-Id: <1407492475-26283-11-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1409037881-4192-1-git-send-email-Yuval.Mintz@qlogic.com>
-In-Reply-To: <1409037881-4192-1-git-send-email-Yuval.Mintz@qlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yuval.Mintz@qlogic.com
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, Ariel.Elior@qlogic.com, dan.carpenter@oracle.com
+To: linux-arm-kernel@lists.infradead.org
 
-From: Yuval Mintz <Yuval.Mintz@qlogic.com>
-Date: Tue, 26 Aug 2014 10:24:41 +0300
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> Incorrect checking of array instead of array contents in panic_dump
-> flow - results of commit e261199872a2 ("bnx2x: Safe bnx2x_panic_dump()").
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Yuval Mintz <Yuval.Mintz@qlogic.com>
+Simplify the error path to avoid calling of_node_put when it is not needed.
 
-Applied, thanks.
+The semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression e;
+@@
+
+-if (e)
+   of_node_put(e);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ arch/arm/mach-bcm/platsmp-brcmstb.c |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-bcm/platsmp-brcmstb.c b/arch/arm/mach-bcm/platsmp-brcmstb.c
+index af780e9..c515ea1 100644
+--- a/arch/arm/mach-bcm/platsmp-brcmstb.c
++++ b/arch/arm/mach-bcm/platsmp-brcmstb.c
+@@ -227,7 +227,7 @@ static int __init setup_hifcpubiuctrl_regs(struct device_node *np)
+ 	if (!syscon_np) {
+ 		pr_err("can't find phandle %s\n", name);
+ 		rc = -EINVAL;
+-		goto cleanup;
++		goto out;
+ 	}
+ 
+ 	cpubiuctrl_block = of_iomap(syscon_np, 0);
+@@ -256,9 +256,8 @@ static int __init setup_hifcpubiuctrl_regs(struct device_node *np)
+ 	}
+ 
+ cleanup:
+-	if (syscon_np)
+-		of_node_put(syscon_np);
+-
++	of_node_put(syscon_np);
++out:
+ 	return rc;
+ }
+ 
+@@ -274,7 +273,7 @@ static int __init setup_hifcont_regs(struct device_node *np)
+ 	if (!syscon_np) {
+ 		pr_err("can't find phandle %s\n", name);
+ 		rc = -EINVAL;
+-		goto cleanup;
++		goto out;
+ 	}
+ 
+ 	hif_cont_block = of_iomap(syscon_np, 0);
+@@ -288,9 +287,8 @@ static int __init setup_hifcont_regs(struct device_node *np)
+ 	hif_cont_reg = 0;
+ 
+ cleanup:
+-	if (syscon_np)
+-		of_node_put(syscon_np);
+-
++	of_node_put(syscon_np);
++out:
+ 	return rc;
+ }
+ 
+
