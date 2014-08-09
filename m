@@ -1,70 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Aug 2014 11:20:26 +0000
-Subject: [PATCH 4/9] NFC: use c99 initializers in structures
-Message-Id: <1408792831-25615-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Christophe RICARD <christophe.ricard@gmail.com>
+Date: Sat, 09 Aug 2014 21:49:03 +0000
+Subject: Re: [patch] NFC: st21nfcb: double free on allocation error
+Message-Id: <20140809234903.030b479f@toffy-MacBookPro>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
-Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, linux-nfc@lists.01.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Dan,
 
-Use c99 initializers for structures.
+A patch fixing this issue got already sent to the linux-nfc mailing
+list.
+Here is a pointer to the patch:
+https://lists.01.org/pipermail/linux-nfc/2014-July/002647.html
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+You are welcome to comment if anything is wrong.
 
-// <smpl>
-@decl@
-identifier i1,fld;
-type T;
-field list[n] fs;
-@@
+Best Regards
+Christophe
+On Thu, 31 Jul 2014 12:41:23 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-struct i1 {
- fs
- T fld;
- ...};
-
-@bad@
-identifier decl.i1,i2;
-expression e;
-initializer list[decl.n] is;
-@@
-
-struct i1 i2 = { is,
-+ .fld = e
-- e
- ,...};
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-The patches in this series do not depend on each other.
-
- drivers/nfc/nfcwilink.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nfc/nfcwilink.c b/drivers/nfc/nfcwilink.c
-index 683671a..e83df00 100644
---- a/drivers/nfc/nfcwilink.c
-+++ b/drivers/nfc/nfcwilink.c
-@@ -461,7 +461,11 @@ static int nfcwilink_close(struct nci_dev *ndev)
- static int nfcwilink_send(struct nci_dev *ndev, struct sk_buff *skb)
- {
- 	struct nfcwilink *drv = nci_get_drvdata(ndev);
--	struct nfcwilink_hdr hdr = {NFCWILINK_CHNL, NFCWILINK_OPCODE, 0x0000};
-+	struct nfcwilink_hdr hdr = {
-+		.chnl = NFCWILINK_CHNL,
-+		.opcode = NFCWILINK_OPCODE,
-+		.len = 0x0000
-+	};
- 	long len;
- 
- 	dev_dbg(&drv->pdev->dev, "send entry, len %d\n", skb->len);
+> "info" is allocated with devm_kzalloc() so calling kfree() here will
+> lead to a double free.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/nfc/st21nfcb/st21nfcb.c
+> b/drivers/nfc/st21nfcb/st21nfcb.c index 4d95863..6944f9e 100644
+> --- a/drivers/nfc/st21nfcb/st21nfcb.c
+> +++ b/drivers/nfc/st21nfcb/st21nfcb.c
+> @@ -94,8 +94,7 @@ int st21nfcb_nci_probe(struct llt_ndlc *ndlc, int
+> phy_headroom, phy_headroom, phy_tailroom);
+>  	if (!ndlc->ndev) {
+>  		pr_err("Cannot allocate nfc ndev\n");
+> -		r = -ENOMEM;
+> -		goto err_alloc_ndev;
+> +		return -ENOMEM;
+>  	}
+>  	info->ndlc = ndlc;
+>  
+> @@ -109,8 +108,6 @@ int st21nfcb_nci_probe(struct llt_ndlc *ndlc, int
+> phy_headroom, err_regdev:
+>  	nci_free_device(ndlc->ndev);
+>  
+> -err_alloc_ndev:
+> -	kfree(info);
+>  	return r;
+>  }
+>  EXPORT_SYMBOL_GPL(st21nfcb_nci_probe);
 
