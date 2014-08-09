@@ -1,28 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 07 Aug 2014 23:04:59 +0000
-Subject: Re: [PATCH 2/5] solos-pci: fix error return code
-Message-Id: <20140807.160459.766871119996172680.davem@davemloft.net>
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Sat, 09 Aug 2014 11:51:15 +0000
+Subject: [PATCH] btrfs: Drop stray check of fixup_workers creation
+Message-Id: <1407585075-31035-1-git-send-email-andrey.krieger.utkin@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1407415749-19978-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407415749-19978-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: chas@cmf.nrl.navy.mil, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: clm@fb.com, jbacik@fb.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrey Utkin <andrey.krieger.utkin@gmail.com>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu,  7 Aug 2014 14:49:07 +0200
+The issue was introduced in a79b7d4b3e8118f265dcb4bdf9a572c392f02708,
+adding allocation of extent_workers, so this stray check is surely not
+meant to be a check of something else.
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Convert a zero return value on error to a negative one, as returned
-> elsewhere in the function.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=82021
+Reported-by: Maks Naumov <maksqwe1@ukr.net>
+Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+---
+ fs/btrfs/disk-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 08e65e9..1881713 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2601,7 +2601,7 @@ int open_ctree(struct super_block *sb,
+ 	      fs_info->endio_freespace_worker && fs_info->rmw_workers &&
+ 	      fs_info->caching_workers && fs_info->readahead_workers &&
+ 	      fs_info->fixup_workers && fs_info->delayed_workers &&
+-	      fs_info->fixup_workers && fs_info->extent_workers &&
++	      fs_info->extent_workers &&
+ 	      fs_info->qgroup_rescan_workers)) {
+ 		err =3D -ENOMEM;
+ 		goto fail_sb_buffer;
+--=20
+1.8.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
