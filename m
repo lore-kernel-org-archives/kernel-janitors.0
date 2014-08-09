@@ -1,57 +1,33 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 09 Aug 2014 08:37:51 +0000
-Subject: Re: [patch 119/197] scripts/coccinelle/free: Delete NULL test before freeing functions
-Message-Id: <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 09 Aug 2014 09:13:58 +0000
+Subject: Re: [patch 119/197] scripts/coccinelle/free: Delete NULL test before freeing functions?
+Message-Id: <53E5E656.1000606@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <53e53fd1.zO3IbUqJ421c7VXf%akpm@linux-foundation.org>
  <53E5DA60.90902@users.sourceforge.net>
-In-Reply-To: <53E5DA60.90902@users.sourceforge.net>
+ <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
+In-Reply-To: <alpine.DEB.2.02.1408091028520.2016@localhost6.localdomain6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-On Sat, 9 Aug 2014, SF Markus Elfring wrote:
+> I still don't think this should be done for any random function that 
+> performs a null test on its argument.  The corrections involved here are 
+> not as trivial as they would seem.
 
-> > +@r depends on context || report || org @
-> > +expression E;
-> > +position p;
-> > +@@
-> > +
-> > +* if (E)
-> > +*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
-> 
-> How do you think about to add the construct "@p" also behind the function name
-> "usb_free_urb"?
+I would prefer to make the list of corresponding function names more complete.
 
-Yes, that would be needed, thanks.  Also, it was recently suggested to add 
-of_node_put to the list of things that are checked for.
 
-> Is my previous update suggestion for such an issue worth for another look, too?
+> Often it is not the case that the null test at the call site should be
+> just deleted, instead the code should be reorganized.
 
-I still don't think this should be done for any random function that 
-performs a null test on its argument.  The corrections involved here are 
-not as trivial as they would seem.  Often it is not the case that the null 
-test at the call site should be just deleted, instead the code should be 
-reorganized.  Making a rule that treats 5000 functions that are 
-automatically selected will just encourage people to do sloppy things.
+Which source code places do you know where a different approach might look better?
 
-(Personally, I don't like the whole null test removal idea.  It mixes the 
-notion of something that is necessary and has failed and something that is 
-optional.  In the case of something that is necessary and has failed, the 
-null value is usually statically apparent, and the code can be reorganized 
-so that a null value doesn't go where it is not wanted.  In the case of 
-something that is simply optional, the presence of the null test gives 
-the reader of the code some information.  Removing this information in 
-rarely executed code seems unfortunate.)
 
-julia
+> (Personally, I don't like the whole null test removal idea. [...]
 
-> 
-> Regards,
-> Markus
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Would you like to clarify involved software concerns a bit more?
+
+Regards,
+Markus
