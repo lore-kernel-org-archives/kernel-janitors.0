@@ -1,48 +1,28 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 06 Aug 2014 07:09:11 +0000
-Subject: Re: [PATCH] arch/sparc/math-emu/math_32.c: drop stray break operator
-Message-Id: <53E1D497.3080309@bfs.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 09 Aug 2014 08:22:56 +0000
+Subject: Re: [patch 119/197] scripts/coccinelle/free: Delete NULL test before freeing functions
+Message-Id: <53E5DA60.90902@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407185261-1799-1-git-send-email-andrey.krieger.utkin@gmail.com>	<53E083B8.4090008@bfs.de> <20140805.124939.1701979639778778101.davem@davemloft.net>
-In-Reply-To: <20140805.124939.1701979639778778101.davem@davemloft.net>
+References: <53e53fd1.zO3IbUqJ421c7VXf%akpm@linux-foundation.org>
+In-Reply-To: <53e53fd1.zO3IbUqJ421c7VXf%akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: David Miller <davem@davemloft.net>
-Cc: andrey.krieger.utkin@gmail.com, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr
 
-CgpBbSAwNS4wOC4yMDE0IDIxOjQ5LCBzY2hyaWViIERhdmlkIE1pbGxlcjoKPiBGcm9tOiB3YWx0
-ZXIgaGFybXMgPHdoYXJtc0BiZnMuZGU+Cj4gRGF0ZTogVHVlLCAwNSBBdWcgMjAxNCAwOToxMTo1
-MiArMDIwMAo+IAo+Pgo+Pgo+PiBBbSAwNC4wOC4yMDE0IDIyOjQ3LCBzY2hyaWViIEFuZHJleSBV
-dGtpbjoKPj4+IFRoaXMgY29tbWl0IGlzIGEgZ3Vlc3N3b3JrLCBidXQgaXQgc2VlbXMgdG8gbWFr
-ZSBzZW5zZSB0byBkcm9wIHRoaXMKPj4+IGJyZWFrLCBhcyBvdGhlcndpc2UgdGhlIGZvbGxvd2lu
-ZyBsaW5lIGlzIG5ldmVyIGV4ZWN1dGVkIGFuZCBiZWNvbWVzCj4+PiBkZWFkIGNvZGUuIEFuZCB0
-aGF0IGZvbGxvd2luZyBsaW5lIGFjdHVhbGx5IHNhdmVzIHRoZSByZXN1bHQgb2YKPj4+IGxvY2Fs
-IGNhbGN1bGF0aW9uIGJ5IHRoZSBwb2ludGVyIGdpdmVuIGluIGZ1bmN0aW9uIGFyZ3VtZW50LiBT
-byB0aGUKPj4+IHByb3Bvc2VkIGNoYW5nZSBtYWtlcyBzZW5zZSBpZiB0aGlzIGNvZGUgaW4gdGhl
-IHdob2xlIG1ha2VzIHNlbnNlIChidXQgSQo+Pj4gYW0gdW5hYmxlIHRvIGFuYWx5emUgaXQgaW4g
-dGhlIHdob2xlKS4KPj4+Cj4+PiBCdWd6aWxsYTogaHR0cHM6Ly9idWd6aWxsYS5rZXJuZWwub3Jn
-L3Nob3dfYnVnLmNnaT9pZIE2NDEKPj4+IFJlcG9ydGVkLWJ5OiBEYXZpZCBCaW5kZXJtYW4gPGRj
-YjMxNEBob3RtYWlsLmNvbT4KPj4+IFNpZ25lZC1vZmYtYnk6IEFuZHJleSBVdGtpbiA8YW5kcmV5
-LmtyaWVnZXIudXRraW5AZ21haWwuY29tPgo+Pj4gLS0tCj4+PiAgYXJjaC9zcGFyYy9tYXRoLWVt
-dS9tYXRoXzMyLmMgfCAyICstCj4+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAx
-IGRlbGV0aW9uKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2FyY2gvc3BhcmMvbWF0aC1lbXUvbWF0
-aF8zMi5jIGIvYXJjaC9zcGFyYy9tYXRoLWVtdS9tYXRoXzMyLmMKPj4+IGluZGV4IGFhNGQ1NWIu
-LjVjZThmMmYgMTAwNjQ0Cj4+PiAtLS0gYS9hcmNoL3NwYXJjL21hdGgtZW11L21hdGhfMzIuYwo+
-Pj4gKysrIGIvYXJjaC9zcGFyYy9tYXRoLWVtdS9tYXRoXzMyLmMKPj4+IEBAIC00OTksNyArNDk5
-LDcgQEAgc3RhdGljIGludCBkb19vbmVfbWF0aGVtdSh1MzIgaW5zbiwgdW5zaWduZWQgbG9uZyAq
-cGZzciwgdW5zaWduZWQgbG9uZyAqZnJlZ3MpCj4+PiAgCQljYXNlIDA6IGZzciA9ICpwZnNyOwo+
-Pj4gIAkJCWlmIChJUiA9IC0xKSBJUiA9IDI7Cj4+PiAgCQkJLyogZmNjIGlzIGFsd2F5cyBmY2Mw
-ICovCj4+Cj4+IFRoZSBwYXRjaCBsb29rcyBvaywgYnV0IGNhbiBzb21lYm9keSBjb21tZW50IG9u
-IHRoaXMgY29tbWVudCA/Cj4+IHdoYXQgImZjYyIgPyBzaG91bGQgaXQgYmUgYSBmc3IgPwo+IAo+
-IEl0J3MgdGhlIGNvbmRpdGlvbiBjb2RlIGZpZWxkIGluc2lkZSBvZiB0aGUgJWZzciByZWdpc3Rl
-ci4KPiAKPiBJbiAzMi1iaXQgY2hpcHMgdGhlcmUgaXMgb25seSBvbmUgc2V0IG9mIGNvbmRpdGlv
-biBjb2Rlcywgd2hlcmVhcwo+IG9uIDY0LWJpdCBjaGlwcyB0aGVyZSBhcmUgNCBzZXRzIHJlZmVy
-cmVkIHRvIGFzIGZjYzAsIGZjYzEsIGZjYzIsCj4gYW5kIGZjYzMuCj4gCj4gVGhhdCdzIHdoYXQg
-dGhpcyBjb21tZW50IGlzIHRhbGtpbmcgYWJvdXQuCj4gCnRoeCBmb3IgaW5mbywKCndvdWxkIHlv
-dSBtaW5kIHRvIGFkZCB5b3VyIGV4cGxhbmF0aW9uID8KSXQgaXMgbXVjaCBtb3IgaGVscGZ1bCB0
-aGF0IHRoZSBjb21tZW50IHJpZ2h0IG5vdy4KCnJlLAogd2gKCi0tClRvIHVuc3Vic2NyaWJlIGZy
-b20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBrZXJuZWwtamFuaXRvcnMi
-IGluCnRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCk1v
-cmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWlu
-Zm8uaHRtbA==
+> +@r depends on context || report || org @
+> +expression E;
+> +position p;
+> +@@
+> +
+> +* if (E)
+> +*	\(kfree@p\|debugfs_remove@p\|debugfs_remove_recursive@p\|usb_free_urb\)(E);
+
+How do you think about to add the construct "@p" also behind the function name
+"usb_free_urb"?
+
+
+Is my previous update suggestion for such an issue worth for another look, too?
+
+Regards,
+Markus
