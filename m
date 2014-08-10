@@ -1,58 +1,88 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 08 Aug 2014 10:07:47 +0000
-Subject: =?UTF-8?q?=5BPATCH=204/14=5D=20powerpc/pseries=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5F
-Message-Id: <1407492475-26283-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Suman Kumar <suman@inforcecomputing.com>
+Date: Sun, 10 Aug 2014 20:51:12 +0000
+Subject: [PATCH] staging: soc_camera.c: Fixed a Missing blank line coding style issue
+Message-Id: <1407703152-1847-1-git-send-email-suman@inforcecomputing.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: hverkuil@xs4all.nl
+Cc: g.liakhovetski@gmx.de, m.chehab@samsung.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, suman@inforcecomputing.com, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+    Fixes a coding style issue of 'Missing a blank line after
+    declarations' reported by checkpatch.pl
 
-Of_node_put supports NULL as its argument, so the initial test is not
-necessary.
-
-Suggested by Uwe Kleine-K=C3=B6nig.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e;
-@@
-
--if (e)
-   of_node_put(e);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Suman Kumar <suman@inforcecomputing.com>
 ---
- arch/powerpc/platforms/pseries/iommu.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/soc_camera/soc_camera.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platform=
-s/pseries/iommu.c
-index 33b552f..2ea6831 100644
---- a/arch/powerpc/platforms/pseries/iommu.c
-+++ b/arch/powerpc/platforms/pseries/iommu.c
-@@ -575,8 +575,7 @@ static void pci_dma_bus_setup_pSeries(struct pci_bus *b=
-us)
- 	while (isa_dn && isa_dn !=3D dn)
- 		isa_dn =3D isa_dn->parent;
-=20
--	if (isa_dn_orig)
--		of_node_put(isa_dn_orig);
-+	of_node_put(isa_dn_orig);
-=20
- 	/* Count number of direct PCI children of the PHB. */
- 	for (children =3D 0, tmp =3D dn->child; tmp; tmp =3D tmp->sibling)
+diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
+index 7fec8cd..968a64b 100644
+--- a/drivers/media/platform/soc_camera/soc_camera.c
++++ b/drivers/media/platform/soc_camera/soc_camera.c
+@@ -830,6 +830,7 @@ void soc_camera_lock(struct vb2_queue *vq)
+ {
+ 	struct soc_camera_device *icd = vb2_get_drv_priv(vq);
+ 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
++
+ 	mutex_lock(&ici->host_lock);
+ }
+ EXPORT_SYMBOL(soc_camera_lock);
+@@ -838,6 +839,7 @@ void soc_camera_unlock(struct vb2_queue *vq)
+ {
+ 	struct soc_camera_device *icd = vb2_get_drv_priv(vq);
+ 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
++
+ 	mutex_unlock(&ici->host_lock);
+ }
+ EXPORT_SYMBOL(soc_camera_unlock);
+@@ -1703,6 +1705,7 @@ static int soc_camera_remove(struct soc_camera_device *icd)
+ 	} else {
+ 		struct device *dev = to_soc_camera_control(icd);
+ 		struct device_driver *drv = dev ? dev->driver : NULL;
++
+ 		if (drv) {
+ 			sdesc->host_desc.del_device(icd);
+ 			module_put(drv->owner);
+@@ -1728,18 +1731,21 @@ static int default_cropcap(struct soc_camera_device *icd,
+ 			   struct v4l2_cropcap *a)
+ {
+ 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
++
+ 	return v4l2_subdev_call(sd, video, cropcap, a);
+ }
+ 
+ static int default_g_crop(struct soc_camera_device *icd, struct v4l2_crop *a)
+ {
+ 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
++
+ 	return v4l2_subdev_call(sd, video, g_crop, a);
+ }
+ 
+ static int default_s_crop(struct soc_camera_device *icd, const struct v4l2_crop *a)
+ {
+ 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
++
+ 	return v4l2_subdev_call(sd, video, s_crop, a);
+ }
+ 
+@@ -1747,6 +1753,7 @@ static int default_g_parm(struct soc_camera_device *icd,
+ 			  struct v4l2_streamparm *parm)
+ {
+ 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
++
+ 	return v4l2_subdev_call(sd, video, g_parm, parm);
+ }
+ 
+@@ -1754,6 +1761,7 @@ static int default_s_parm(struct soc_camera_device *icd,
+ 			  struct v4l2_streamparm *parm)
+ {
+ 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
++
+ 	return v4l2_subdev_call(sd, video, s_parm, parm);
+ }
+ 
+-- 
+1.8.2
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
