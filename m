@@ -1,78 +1,114 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date: Mon, 11 Aug 2014 02:56:36 +0000
-Subject: Re: [PATCH 7/14] cpu: delete unneeded test before of_node_put
-Message-Id: <1407725796.4508.54.camel@pasglop>
+From: Suman Kumar <suman@inforcecomputing.com>
+Date: Sun, 10 Aug 2014 20:53:41 +0000
+Subject: [PATCH] staging: soc_camera.c: fixed coding style: lines over 80 char
+Message-Id: <1407703301-2037-1-git-send-email-suman@inforcecomputing.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407492475-26283-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407492475-26283-3-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linuxppc-dev@lists.ozlabs.org
+To: hverkuil@xs4all.nl
+Cc: g.liakhovetski@gmx.de, m.chehab@samsung.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, suman@inforcecomputing.com, kernel-janitors@vger.kernel.org
 
-On Fri, 2014-08-08 at 12:07 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Simplify the error path to avoid calling of_node_put when it is not needed.
-> 
-> The semantic patch that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+    Fixes a coding style issue of 'lines over 80 char' reported by
+    checkpatch.pl
 
-Change the subject to powerpc/4xx/cpm or something like that,
-appart from that:
+Signed-off-by: Suman Kumar <suman@inforcecomputing.com>
+---
+ drivers/media/platform/soc_camera/soc_camera.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-
-> 
-> // <smpl>
-> @@
-> expression e;
-> @@
-> 
-> -if (e)
->    of_node_put(e);
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  arch/powerpc/sysdev/ppc4xx_cpm.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/powerpc/sysdev/ppc4xx_cpm.c b/arch/powerpc/sysdev/ppc4xx_cpm.c
-> index 82e2cfe..ba95adf 100644
-> --- a/arch/powerpc/sysdev/ppc4xx_cpm.c
-> +++ b/arch/powerpc/sysdev/ppc4xx_cpm.c
-> @@ -281,7 +281,7 @@ static int __init cpm_init(void)
->  		printk(KERN_ERR "cpm: could not parse dcr property for %s\n",
->  		       np->full_name);
->  		ret = -EINVAL;
-> -		goto out;
-> +		goto node_put;
->  	}
->  
->  	cpm.dcr_host = dcr_map(np, dcr_base, dcr_len);
-> @@ -290,7 +290,7 @@ static int __init cpm_init(void)
->  		printk(KERN_ERR "cpm: failed to map dcr property for %s\n",
->  		       np->full_name);
->  		ret = -EINVAL;
-> -		goto out;
-> +		goto node_put;
->  	}
->  
->  	/* All 4xx SoCs with a CPM controller have one of two
-> @@ -330,9 +330,9 @@ static int __init cpm_init(void)
->  
->  	if (cpm.standby || cpm.suspend)
->  		suspend_set_ops(&cpm_suspend_ops);
-> +node_put:
-> +	of_node_put(np);
->  out:
-> -	if (np)
-> -		of_node_put(np);
->  	return ret;
->  }
->  
-
+diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
+index 968a64b..1b7e0e1 100644
+--- a/drivers/media/platform/soc_camera/soc_camera.c
++++ b/drivers/media/platform/soc_camera/soc_camera.c
+@@ -115,7 +115,8 @@ eregenable:
+ }
+ EXPORT_SYMBOL(soc_camera_power_on);
+ 
+-int soc_camera_power_off(struct device *dev, struct soc_camera_subdev_desc *ssdd,
++int soc_camera_power_off(struct device *dev,
++			 struct soc_camera_subdev_desc *ssdd,
+ 			 struct v4l2_clk *clk)
+ {
+ 	int ret = 0;
+@@ -144,7 +145,8 @@ int soc_camera_power_off(struct device *dev, struct soc_camera_subdev_desc *ssdd
+ }
+ EXPORT_SYMBOL(soc_camera_power_off);
+ 
+-int soc_camera_power_init(struct device *dev, struct soc_camera_subdev_desc *ssdd)
++int soc_camera_power_init(struct device *dev,
++			  struct soc_camera_subdev_desc *ssdd)
+ {
+ 	/* Should not have any effect in synchronous case */
+ 	return devm_regulator_bulk_get(dev, ssdd->sd_pdata.num_regulators,
+@@ -199,7 +201,9 @@ unsigned long soc_camera_apply_board_flags(struct soc_camera_subdev_desc *ssdd,
+ {
+ 	unsigned long f, flags = cfg->flags;
+ 
+-	/* If only one of the two polarities is supported, switch to the opposite */
++	/* If only one of the two polarities is supported,
++	 * switch to the opposite
++	 */
+ 	if (ssdd->flags & SOCAM_SENSOR_INVERT_HSYNC) {
+ 		f = flags & (V4L2_MBUS_HSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_LOW);
+ 		if (f = V4L2_MBUS_HSYNC_ACTIVE_HIGH || f = V4L2_MBUS_HSYNC_ACTIVE_LOW)
+@@ -1430,7 +1434,7 @@ static int soc_camera_async_bound(struct v4l2_async_notifier *notifier,
+ 				  struct v4l2_async_subdev *asd)
+ {
+ 	struct soc_camera_async_client *sasc = container_of(notifier,
+-					struct soc_camera_async_client, notifier);
++				    struct soc_camera_async_client, notifier);
+ 	struct soc_camera_device *icd = platform_get_drvdata(sasc->pdev);
+ 
+ 	if (asd = sasc->sensor && !WARN_ON(icd->control)) {
+@@ -1463,7 +1467,7 @@ static void soc_camera_async_unbind(struct v4l2_async_notifier *notifier,
+ 				    struct v4l2_async_subdev *asd)
+ {
+ 	struct soc_camera_async_client *sasc = container_of(notifier,
+-					struct soc_camera_async_client, notifier);
++				    struct soc_camera_async_client, notifier);
+ 	struct soc_camera_device *icd = platform_get_drvdata(sasc->pdev);
+ 
+ 	if (icd->clk) {
+@@ -1475,7 +1479,7 @@ static void soc_camera_async_unbind(struct v4l2_async_notifier *notifier,
+ static int soc_camera_async_complete(struct v4l2_async_notifier *notifier)
+ {
+ 	struct soc_camera_async_client *sasc = container_of(notifier,
+-					struct soc_camera_async_client, notifier);
++				    struct soc_camera_async_client, notifier);
+ 	struct soc_camera_device *icd = platform_get_drvdata(sasc->pdev);
+ 
+ 	if (to_soc_camera_control(icd)) {
+@@ -1735,14 +1739,16 @@ static int default_cropcap(struct soc_camera_device *icd,
+ 	return v4l2_subdev_call(sd, video, cropcap, a);
+ }
+ 
+-static int default_g_crop(struct soc_camera_device *icd, struct v4l2_crop *a)
++static int default_g_crop(struct soc_camera_device *icd,
++			  struct v4l2_crop *a)
+ {
+ 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
+ 
+ 	return v4l2_subdev_call(sd, video, g_crop, a);
+ }
+ 
+-static int default_s_crop(struct soc_camera_device *icd, const struct v4l2_crop *a)
++static int default_s_crop(struct soc_camera_device *icd,
++			  const struct v4l2_crop *a)
+ {
+ 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
+ 
+@@ -1926,8 +1932,8 @@ static int soc_camera_device_register(struct soc_camera_device *icd)
+ 	icd->host_priv		= NULL;
+ 
+ 	/*
+-	 * Dynamically allocated devices set the bit earlier, but it doesn't hurt setting
+-	 * it again
++	 * Dynamically allocated devices set the bit earlier,
++	 * but it doesn't hurt setting it again
+ 	 */
+ 	i = to_platform_device(icd->pdev)->id;
+ 	if (i < 0)
+-- 
+1.8.2
 
