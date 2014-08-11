@@ -1,74 +1,31 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 26 Aug 2014 11:30:39 +0000
-Subject: Re: [patch] video: of: display_timing: double free on error
-Message-Id: <53FC6FDF.6000506@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="s6lbsModbiSIjjkxNXRgBHUNdi4cOVoTr"
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 11 Aug 2014 08:17:22 +0000
+Subject: Re: [PATCH 10/14] gpio: delete unneeded test before of_node_put
+Message-Id: <CACRpkdb8+o0BA_3v9acBX0xybbZSK9zBPFCnjUnpbj=QHjmUyA@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-fbdev@vger.kernel.org
-
---s6lbsModbiSIjjkxNXRgBHUNdi4cOVoTr
-Content-Type: text/plain; charset=windows-1252
+References: <1407492475-26283-10-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407492475-26283-10-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 
-On 11/07/14 12:21, Dan Carpenter wrote:
-> The display_timings_release() function frees "disp" and we free it
-> again on the next line.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/video/of_display_timing.c b/drivers/video/of_displ=
-ay_timing.c
-> index 987edf1..5c098d5 100644
-> --- a/drivers/video/of_display_timing.c
-> +++ b/drivers/video/of_display_timing.c
-> @@ -236,6 +236,7 @@ timingfail:
->  	if (native_mode)
->  		of_node_put(native_mode);
->  	display_timings_release(disp);
-> +	disp =3D NULL;
->  entryfail:
->  	kfree(disp);
->  dispfail:
->=20
+On Fri, Aug 8, 2014 at 12:07 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-Thanks, queued for 3.17 fbdev fixes.
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> Of_node_put supports NULL as its argument, so the initial test is not
+> necessary.
+>
+> Suggested by Uwe Kleine-K=C3=B6nig.
 
-The code looks a bit messy to me, though. I'm not fond of "kalloc here,
-kfree there" style.
+Patch applied.
 
-Maybe this would be slightly cleaner, if display_timings_release() would
-accept NULL parameter. Then the code above could just use
-display_timings_release(), and there'd be no need for kfree.
-
-In any case, that's stuff for an other patch. This one is fine fix for 3.=
-17.
-
- Tomi
-
-
-
---s6lbsModbiSIjjkxNXRgBHUNdi4cOVoTr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJT/G/fAAoJEPo9qoy8lh71dRkP/AgK/bSmLTXrA6e4GLrdQf59
-Kmzom5czAfMgfEaMZx8JO8qgKE0PaPAEDyPK4T2qSXRMksgbG5+MAXc2qwfts9vs
-bYJ5dnndbhxNVAWFbsryFJoT+CBleyHOUFEipdEitdgSnCKHp790+Xqp8OxH0LDI
-V/kAU150RguTIky3wtt9+xaMoDzbTRPmhDBT3TwLY4JqtBb8vcY3TI5xqMwD1fQS
-wWSm/boG8Qpd/+cbzRSYnkwqooXJY2AnI8tZr3/uuhMqVW6z93hxDeGxpMCeYXDY
-4tyyroiEwCRQNvcxB5OA2u25z5WR61T95WLOSkrMj6NgTXR4nxeiEh0HEeP/JFiz
-n+vkbQFq3yMWekRicXBnrj56/NG4wf5kAn5orBGvWT55FPWWA7gtEI0nvhSn4Oj1
-TRHSQdu8O+vUQdIXmjSKWb8DAVMTTE+B71sA364HPAQlDqFzM3RT4+NDVeYKXzWY
-W1V1jDAenI9U3DQc//Jr7jmSTeLa1795h6udQgrWuMhtYs+JWijNF7PLvVR83LHv
-zdCeSbfgpF9PCyjM5vs8oQcUmTazb9f7cs1L+vAJNlwu1djO4NxgawXWE0XQwQyW
-ayqL3CHNGQcaZDO2nqiZYFNEcm+ZSvDap3TwI6vfih5raowrE193FyvLpZYUVzsg
-j54M4WCHw5NajuMBDC5m
-=bGeL
------END PGP SIGNATURE-----
-
---s6lbsModbiSIjjkxNXRgBHUNdi4cOVoTr--
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
