@@ -1,33 +1,24 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 08 Aug 2014 17:29:06 +0000
-Subject: Re: [PATCH 2/14] net: axienet: delete unneeded test before of_node_put
-Message-Id: <20140808.102906.1434751133512128265.davem@davemloft.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 11 Aug 2014 06:57:47 +0000
+Subject: Re: [patch 2/2] pinctrl: tegra-xusb: testing wrong variable in probe()
+Message-Id: <CACRpkdb97mP2G+1uwyn3k6ShOVkRwyUzWY471emX_fv4wnE6cg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407492475-26283-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407492475-26283-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <20140731152308.GE31539@mwanda>
+In-Reply-To: <20140731152308.GE31539@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri,  8 Aug 2014 12:07:43 +0200
+On Thu, Jul 31, 2014 at 5:23 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Of_node_put supports NULL as its argument, so the initial test is not
-> necessary.
->=20
-> Suggested by Uwe Kleine-K=F6nig.
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> There is a cut and paste bug so we test the wrong variable.  "err" is
+> never less than zero at this point.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Patch applied with Stephen's and Thierry's ACKs.
+
+Yours,
+Linus Walleij
