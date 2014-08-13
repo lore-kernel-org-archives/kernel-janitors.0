@@ -1,88 +1,49 @@
-From: Suman Kumar <suman@inforcecomputing.com>
-Date: Sun, 10 Aug 2014 20:51:12 +0000
-Subject: [PATCH] staging: soc_camera.c: Fixed a Missing blank line coding style issue
-Message-Id: <1407703152-1847-1-git-send-email-suman@inforcecomputing.com>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 13 Aug 2014 11:14:25 +0000
+Subject: Re: [PATCH 8/14] ASoC: rsnd: delete unneeded test before of_node_put
+Message-Id: <20140813111425.GO17528@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Kfy0q0s2rBHKMG0i"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: hverkuil@xs4all.nl
-Cc: g.liakhovetski@gmx.de, m.chehab@samsung.com, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, suman@inforcecomputing.com, kernel-janitors@vger.kernel.org
+References: <1407492475-26283-8-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1407492475-26283-8-git-send-email-Julia.Lawall@lip6.fr>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 
-    Fixes a coding style issue of 'Missing a blank line after
-    declarations' reported by checkpatch.pl
 
-Signed-off-by: Suman Kumar <suman@inforcecomputing.com>
----
- drivers/media/platform/soc_camera/soc_camera.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+--Kfy0q0s2rBHKMG0i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/platform/soc_camera/soc_camera.c b/drivers/media/platform/soc_camera/soc_camera.c
-index 7fec8cd..968a64b 100644
---- a/drivers/media/platform/soc_camera/soc_camera.c
-+++ b/drivers/media/platform/soc_camera/soc_camera.c
-@@ -830,6 +830,7 @@ void soc_camera_lock(struct vb2_queue *vq)
- {
- 	struct soc_camera_device *icd = vb2_get_drv_priv(vq);
- 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
-+
- 	mutex_lock(&ici->host_lock);
- }
- EXPORT_SYMBOL(soc_camera_lock);
-@@ -838,6 +839,7 @@ void soc_camera_unlock(struct vb2_queue *vq)
- {
- 	struct soc_camera_device *icd = vb2_get_drv_priv(vq);
- 	struct soc_camera_host *ici = to_soc_camera_host(icd->parent);
-+
- 	mutex_unlock(&ici->host_lock);
- }
- EXPORT_SYMBOL(soc_camera_unlock);
-@@ -1703,6 +1705,7 @@ static int soc_camera_remove(struct soc_camera_device *icd)
- 	} else {
- 		struct device *dev = to_soc_camera_control(icd);
- 		struct device_driver *drv = dev ? dev->driver : NULL;
-+
- 		if (drv) {
- 			sdesc->host_desc.del_device(icd);
- 			module_put(drv->owner);
-@@ -1728,18 +1731,21 @@ static int default_cropcap(struct soc_camera_device *icd,
- 			   struct v4l2_cropcap *a)
- {
- 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
-+
- 	return v4l2_subdev_call(sd, video, cropcap, a);
- }
- 
- static int default_g_crop(struct soc_camera_device *icd, struct v4l2_crop *a)
- {
- 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
-+
- 	return v4l2_subdev_call(sd, video, g_crop, a);
- }
- 
- static int default_s_crop(struct soc_camera_device *icd, const struct v4l2_crop *a)
- {
- 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
-+
- 	return v4l2_subdev_call(sd, video, s_crop, a);
- }
- 
-@@ -1747,6 +1753,7 @@ static int default_g_parm(struct soc_camera_device *icd,
- 			  struct v4l2_streamparm *parm)
- {
- 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
-+
- 	return v4l2_subdev_call(sd, video, g_parm, parm);
- }
- 
-@@ -1754,6 +1761,7 @@ static int default_s_parm(struct soc_camera_device *icd,
- 			  struct v4l2_streamparm *parm)
- {
- 	struct v4l2_subdev *sd = soc_camera_to_subdev(icd);
-+
- 	return v4l2_subdev_call(sd, video, s_parm, parm);
- }
- 
--- 
-1.8.2
+On Fri, Aug 08, 2014 at 12:07:49PM +0200, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> Of_node_put supports NULL as its argument, so the initial test is not
+> necessary.
 
+Applied, thanks.
+
+--Kfy0q0s2rBHKMG0i
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT60iOAAoJELSic+t+oim9Qu4P/02dlKJ+WIXGN3WoYbKUQWZ5
+ZMMcea2h9M2pCz4A5MNmfgW1/SEX/bu6W0+Fq2FrIkXgFdH8GxSM3y8E/lKXuVLS
+nTZXs4PfKf2cPtoRf/PTHskcCiyV6A5gpp9Z49iheGmzgGVwOTgZuHHe44e5Dz5M
+UyE+haT6L5PZ22FaRXi/R0V6bqJdZKaRKjM6qTfatRGS/b3lq96QV5zl9CsSOeoB
+q5xIsMJC4Ji0Us2MRk/G+i/oRqXGTvU4xEv757nwfObUrKbcHU0eQ6fEULGk7jVB
+Xq/XyQk4oGYpf4SnOZsqr09+VE1dX6K0X074MFIKKbl+CzZ1UnZmhkYlO00MlLYK
+PqaMLVKorHupYIRzoj1pgzGVYW0RfTwYOZ9RWtnk4gHdGVv7SZ0oIR/O26felrgf
+D8A1roJs15vQ3LynsD2D9eIRa/2XNNd+lt8jXsJwNVS/JZCPU39IWmeULMvU2QdZ
+aTlZdbO+Y2ztbS0fWHAGAMLdlw/YefxWWZ8K7X0fm7oRWz7TL+mtxOPF5yaVARyg
+pZ2S2+vq5+ffKcwKu74e0lD5gWx7+TBFZJem4m3saLqZ32cuNsKdzPlV1/K5trjQ
+sP3HGS5yUM4rPZVduKxmEFz0TPvj9XZRWhQtXCKtraKL7rzvgHKxBIBiANFdx0kC
+3/vrdSylDWhhCovG+DAy
+=0zvg
+-----END PGP SIGNATURE-----
+
+--Kfy0q0s2rBHKMG0i--
