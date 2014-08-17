@@ -1,38 +1,26 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 07 Aug 2014 15:28:21 +0000
-Subject: [patch] irqchip/irq-crossbar: off by one bugs in init
-Message-Id: <20140807152821.GB10299@mwanda>
+From: Jason Cooper <jason@lakedaemon.net>
+Date: Sun, 17 Aug 2014 17:20:51 +0000
+Subject: Re: [patch] irqchip/irq-crossbar: off by one bugs in init
+Message-Id: <20140817172051.GF12769@titan.lakedaemon.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140807152821.GB10299@mwanda>
+In-Reply-To: <20140807152821.GB10299@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>, Sricharan R <r.sricharan@ti.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Sricharan R <r.sricharan@ti.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker complains that the ">" should be ">=" or else we go
-beyoned the end of the cb->irq_map[] array on the next line.
+Dan,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Thu, Aug 07, 2014 at 06:28:21PM +0300, Dan Carpenter wrote:
+> My static checker complains that the ">" should be ">=" or else we go
+> beyoned the end of the cb->irq_map[] array on the next line.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/irqchip/irq-crossbar.c b/drivers/irqchip/irq-crossbar.c
-index 85c2985..bbbaf5d 100644
---- a/drivers/irqchip/irq-crossbar.c
-+++ b/drivers/irqchip/irq-crossbar.c
-@@ -220,7 +220,7 @@ static int __init crossbar_of_init(struct device_node *node)
- 			of_property_read_u32_index(node,
- 						   "ti,irqs-reserved",
- 						   i, &entry);
--			if (entry > max) {
-+			if (entry >= max) {
- 				pr_err("Invalid reserved entry\n");
- 				ret = -EINVAL;
- 				goto err_irq_map;
-@@ -238,7 +238,7 @@ static int __init crossbar_of_init(struct device_node *node)
- 			of_property_read_u32_index(node,
- 						   "ti,irqs-skip",
- 						   i, &entry);
--			if (entry > max) {
-+			if (entry >= max) {
- 				pr_err("Invalid skip entry\n");
- 				ret = -EINVAL;
- 				goto err_irq_map;
+Applied to irqchip/urgent
+
+thx,
+
+Jason.
