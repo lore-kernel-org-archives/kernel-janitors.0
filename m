@@ -1,68 +1,143 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date: Mon, 11 Aug 2014 02:56:50 +0000
-Subject: Re: [PATCH 6/14] powerpc/fsl: fsl_soc: delete unneeded test before of_node_put
-Message-Id: <1407725810.4508.55.camel@pasglop>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sat, 23 Aug 2014 16:09:56 +0000
+Subject: [PATCH 6/9 v2] drm: use c99 initializers in structures
+Message-Id: <alpine.DEB.2.02.1408231808400.2068@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407492475-26283-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407492475-26283-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr> <1408792831-25615-7-git-send-email-Julia.Lawall@lip6.fr> <20140823151648.GA2074@thin>
+In-Reply-To: <20140823151648.GA2074@thin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-On Fri, 2014-08-08 at 12:07 +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Of_node_put supports NULL as its argument, so the initial test is not
-> necessary.
->=20
-> Suggested by Uwe Kleine-K=C3=B6nig.
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @@
-> expression e;
-> @@
->=20
-> -if (e)
->    of_node_put(e);
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Use c99 initializers for structures.
 
-> ---
->  arch/powerpc/sysdev/fsl_soc.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/arch/powerpc/sysdev/fsl_soc.c b/arch/powerpc/sysdev/fsl_soc.c
-> index ffd1169..bfb5b6c 100644
-> --- a/arch/powerpc/sysdev/fsl_soc.c
-> +++ b/arch/powerpc/sysdev/fsl_soc.c
-> @@ -197,8 +197,7 @@ static int __init setup_rstcr(void)
->  	if (!rstcr && ppc_md.restart =3D fsl_rstcr_restart)
->  		printk(KERN_ERR "No RSTCR register, warm reboot won't work\n");
-> =20
-> -	if (np)
-> -		of_node_put(np);
-> +	of_node_put(np);
-> =20
->  	return 0;
->  }
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Drop 0 initializers in drivers/gpu/drm/sti/sti_vtac.c.  A 0x0 initializer
+is left in vtac_mode_aux in drivers/gpu/drm/sti/sti_vtac.c to highlight the
+relation to vtac_mode_main.
 
+A simplified version of the semantic match that finds the first problem is
+as follows: (http://coccinelle.lip6.fr/)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+// <smpl>
+@decl@
+identifier i1,fld;
+type T;
+field list[n] fs;
+@@
+
+struct i1 {
+ fs
+ T fld;
+ ...};
+
+@bad@
+identifier decl.i1,i2;
+expression e;
+initializer list[decl.n] is;
+@@
+
+struct i1 i2 = { is,
++ .fld = e
+- e
+ ,...};
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The patches in this series do not depend on each other.
+
+v2: Drop 0 initializers and add trailing commas at the suggestions of Josh
+Triplett.
+
+ drivers/gpu/drm/drm_edid.c     |   21 ++++++++++++---------
+ drivers/gpu/drm/sti/sti_vtac.c |   12 ++++++++++--
+ 2 files changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpu/drm/sti/sti_vtac.c b/drivers/gpu/drm/sti/sti_vtac.c
+index 82a51d4..4576536 100644
+--- a/drivers/gpu/drm/sti/sti_vtac.c
++++ b/drivers/gpu/drm/sti/sti_vtac.c
+@@ -56,8 +56,16 @@ struct sti_vtac_mode {
+ 	u32 phyts_per_pixel;
+ };
+ 
+-static const struct sti_vtac_mode vtac_mode_main = {0x2, 0x2, VTAC_5_PPP};
+-static const struct sti_vtac_mode vtac_mode_aux = {0x1, 0x0, VTAC_17_PPP};
++static const struct sti_vtac_mode vtac_mode_main = {
++	.vid_in_width = 0x2,
++	.phyts_width = 0x2,
++	.phyts_per_pixel = VTAC_5_PPP,
++};
++static const struct sti_vtac_mode vtac_mode_aux = {
++	.vid_in_width = 0x1,
++	.phyts_width = 0x0,
++	.phyts_per_pixel = VTAC_17_PPP,
++};
+ 
+ /**
+  * VTAC structure
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index 1dbf3bc..859ae1c 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -2103,7 +2103,8 @@ static int
+ add_inferred_modes(struct drm_connector *connector, struct edid *edid)
+ {
+ 	struct detailed_mode_closure closure = {
+-		connector, edid, 0, 0, 0
++		.connector = connector,
++		.edid = edid,
+ 	};
+ 
+ 	if (version_greater(edid, 1, 0))
+@@ -2169,7 +2170,8 @@ add_established_modes(struct drm_connector *connector, struct edid *edid)
+ 		((edid->established_timings.mfg_rsvd & 0x80) << 9);
+ 	int i, modes = 0;
+ 	struct detailed_mode_closure closure = {
+-		connector, edid, 0, 0, 0
++		.connector = connector,
++		.edid = edid,
+ 	};
+ 
+ 	for (i = 0; i <= EDID_EST_TIMINGS; i++) {
+@@ -2227,7 +2229,8 @@ add_standard_modes(struct drm_connector *connector, struct edid *edid)
+ {
+ 	int i, modes = 0;
+ 	struct detailed_mode_closure closure = {
+-		connector, edid, 0, 0, 0
++		.connector = connector,
++		.edid = edid,
+ 	};
+ 
+ 	for (i = 0; i < EDID_STD_TIMINGS; i++) {
+@@ -2313,7 +2316,8 @@ static int
+ add_cvt_modes(struct drm_connector *connector, struct edid *edid)
+ {	
+ 	struct detailed_mode_closure closure = {
+-		connector, edid, 0, 0, 0
++		.connector = connector,
++		.edid = edid,
+ 	};
+ 
+ 	if (version_greater(edid, 1, 2))
+@@ -2357,11 +2361,10 @@ add_detailed_modes(struct drm_connector *connector, struct edid *edid,
+ 		   u32 quirks)
+ {
+ 	struct detailed_mode_closure closure = {
+-		connector,
+-		edid,
+-		1,
+-		quirks,
+-		0
++		.connector = connector,
++		.edid = edid,
++		.preferred = 1,
++		.quirks = quirks,
+ 	};
+ 
+ 	if (closure.preferred && !version_greater(edid, 1, 3))
