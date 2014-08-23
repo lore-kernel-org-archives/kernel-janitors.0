@@ -1,36 +1,83 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 05 Aug 2014 08:11:13 +0000
-Subject: [patch] [media] vmalloc_sg: off by one in error handling
-Message-Id: <20140805081113.GB13605@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Aug 2014 11:20:29 +0000
+Subject: [PATCH 7/9] OMAPDSS: DSI: use c99 initializers in structures
+Message-Id: <1408792831-25615-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>, James Harper <james.harper@ejbdigital.com.au>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The "i--" needs to happen at the start of the loop or it will try to
-release something bogus (probably it will crash) and it won't release
-the first ->vaddr_page[].
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Fixes: 7b4eeed174b7 ('[media] vmalloc_sg: make sure all pages in vmalloc area are really DMA-ready')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Use c99 initializers for structures.
 
-diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-index 3c8cc02..3ff15f1 100644
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -253,9 +253,11 @@ int videobuf_dma_init_kernel(struct videobuf_dmabuf *dma, int direction,
- 	return 0;
- out_free_pages:
- 	while (i > 0) {
--		void *addr = page_address(dma->vaddr_pages[i]);
--		dma_free_coherent(dma->dev, PAGE_SIZE, addr, dma->dma_addr[i]);
-+		void *addr;
-+
- 		i--;
-+		addr = page_address(dma->vaddr_pages[i]);
-+		dma_free_coherent(dma->dev, PAGE_SIZE, addr, dma->dma_addr[i]);
- 	}
- 	kfree(dma->dma_addr);
- 	dma->dma_addr = NULL;
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@decl@
+identifier i1,fld;
+type T;
+field list[n] fs;
+@@
+
+struct i1 {
+ fs
+ T fld;
+ ...};
+
+@bad@
+identifier decl.i1,i2;
+expression e;
+initializer list[decl.n] is;
+@@
+
+struct i1 i2 = { is,
++ .fld = e
+- e
+ ,...};
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The patches in this series do not depend on each other.
+
+Not compiled.
+
+ drivers/video/fbdev/omap2/dss/dsi.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/omap2/dss/dsi.c b/drivers/video/fbdev/omap2/dss/dsi.c
+index 56b9244..b6f6ae1 100644
+--- a/drivers/video/fbdev/omap2/dss/dsi.c
++++ b/drivers/video/fbdev/omap2/dss/dsi.c
+@@ -2571,7 +2571,10 @@ static int dsi_sync_vc_vp(struct platform_device *dsidev, int channel)
+ {
+ 	struct dsi_data *dsi = dsi_get_dsidrv_data(dsidev);
+ 	DECLARE_COMPLETION_ONSTACK(completion);
+-	struct dsi_packet_sent_handler_data vp_data = { dsidev, &completion };
++	struct dsi_packet_sent_handler_data vp_data = {
++		.dsidev = dsidev,
++		.completion = &completion
++	};
+ 	int r = 0;
+ 	u8 bit;
+ 
+@@ -2617,7 +2620,10 @@ static void dsi_packet_sent_handler_l4(void *data, u32 mask)
+ static int dsi_sync_vc_l4(struct platform_device *dsidev, int channel)
+ {
+ 	DECLARE_COMPLETION_ONSTACK(completion);
+-	struct dsi_packet_sent_handler_data l4_data = { dsidev, &completion };
++	struct dsi_packet_sent_handler_data l4_data = {
++		.dsidev = dsidev,
++		.completion = &completion
++	};
+ 	int r = 0;
+ 
+ 	r = dsi_register_isr_vc(dsidev, channel, dsi_packet_sent_handler_l4,
+
