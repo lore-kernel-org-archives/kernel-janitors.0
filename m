@@ -1,80 +1,22 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Aug 2014 11:20:22 +0000
-Subject: [PATCH 0/9] use c99 initializers in structures
-Message-Id: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Josh Triplett <josh@joshtriplett.org>
+Date: Sat, 23 Aug 2014 15:21:04 +0000
+Subject: Re: [PATCH 0/9] use c99 initializers in structures
+Message-Id: <20140823152104.GC2074@thin>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dri-devel@lists.freedesktop.org
-Cc: devel@driverdev.osuosl.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, rtc-linux@googlegroups.com, linux-nfc@lists.01.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, josh@joshtriplett.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-media@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-nfc@lists.01.org, linux-wireless@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, devel@driverdev.osuosl.org, linux-omap@vger.kernel.org, rtc-linux@googlegroups.com
 
-These patches add labels in the initializations of structure fields (c99
-initializers).  The complete semantic patch thta makes this change is shown
-below.  This rule ignores cases where the initialization is just 0 or NULL,
-where some of the fields already use labels, and where there are nested
-structures.
+On Sat, Aug 23, 2014 at 01:20:22PM +0200, Julia Lawall wrote:
+> These patches add labels in the initializations of structure fields (c99
+> initializers).  The complete semantic patch thta makes this change is shown
+> below.  This rule ignores cases where the initialization is just 0 or NULL,
+> where some of the fields already use labels, and where there are nested
+> structures.
 
-// <smpl>
-@ok1@
-identifier i1,i2;
-position p;
-@@
-
-struct i1 i2@p = { \(0\|NULL\) };
-
-@ok2@
-identifier i1,i2,i3;
-position p;
-expression e;
-@@
-
-struct i1 i2@p = { ..., .i3 = e, ... };
-
-@ok3@
-identifier i1,i2;
-position p;
-@@
-
-struct i1 i2@p = { ..., { ... }, ... };
-
-@decl@
-identifier i1,fld;
-type T;
-field list[n] fs;
-@@
-
-struct i1 {
- fs
- T fld;
- ...};
-
-@bad@
-identifier decl.i1,i2;
-expression e;
-position p != {ok1.p,ok2.p,ok3.p};
-constant nm;
-initializer list[decl.n] is;
-position fix;
-@@
-
-struct i1 i2@p = { is,
-(
- nm(...)
-|
- e@fix
-)
- ,...};
-
-@@
-identifier decl.i1,i2,decl.fld;
-expression e;
-position bad.p, bad.fix;
-@@
-
-struct i1 i2@p = { ...,
-+ .fld = e
-- e@fix
- ,...};
-// </smpl>
-
+I responded to patches 6 and 8 with comments; for the rest (1-5, 7, 9):
+Reviewed-by: Josh Triplett <josh@joshtriplett.org>
