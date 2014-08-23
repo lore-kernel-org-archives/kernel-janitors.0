@@ -1,169 +1,220 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 07 Aug 2014 20:57:43 +0000
-Subject: [PATCH 0/4] fix error return code
-Message-Id: <1407445067-4044-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 23 Aug 2014 05:34:45 +0000
+Subject: =?y?q?=5BPATCH=20v2=5D=20coccinelle=3A=20misc=3A=20semantic=20patch=20to=20delete=20overly=20complex
+Message-Id: <1408772085-28818-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-The complate semantic patch that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-// <smpl>
-// identify a function that returns a negative return value at least once.
-@ok exists@
-identifier f,ret,i;
-expression e;
-constant c;
-@@
+This semantic patch simplifies cases where the effect of the processing of
+a function call's return code is just to return the result of the function
+directly.  It may also delete a local return flag variable, if this is no
+longer used.
 
-f(...) {
-... when any
-(
-return -c@i;
-|
-ret =3D -c@i;
-... when !=3D ret =3D e
-return ret;
-|
-if (ret < 0) { ... return ret; }
-)
-... when any
-}
+This was proposed by Uwe Kleine-K=C3=B6nig.
 
-// identify a case where the return variable is set to a non-negative value
-// and then returned in error-handling code
-@r exists@
-identifier ret,ok.f,fn;
-expression e1,e2,e3,e4,e5,e6,x;
-statement S,S1;
-position p1,p2,p3;
-@@
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-f(...) {
-... when any
-(
-if@p1 (\(ret < 0\|ret !=3D 0\))
- { ... return ret; }
-|
-ret@p1 =3D 0
-)
-... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
-    when !=3D &ret
-    when any
-(
- if (<+... ret =3D e5 ...+>) S1
-|
- if (<+... &ret ...+>) S1
-|
-if@p2(<+...x =3D fn(...)...+>)
- {
-  ... when !=3D ret =3D e6
-      when forall
- return@p3 ret;
-}
-|
-break;
-|
-x =3D fn(...)
-... when !=3D \(ret =3D e4\|ret++\|ret--\|ret+=E4\|ret-=E4\)
-    when !=3D &ret
-(
- if (<+... ret =3D e3 ...+>) S
-|
- if (<+... &ret ...+>) S
-|
-if@p2(<+...\(x !=3D 0\|x < 0\|x =3D NULL\|IS_ERR(x)\)...+>)
- {
-  ... when !=3D ret =3D e2
-      when forall
- return@p3 ret;
-}
-)
-)
-... when any
-}
+---
+v2: wrong email address
 
-@printer depends on r@
-position p;
-identifier ok.f,pr;
-constant char [] c;
-@@
+ scripts/coccinelle/misc/simple_return.cocci |  180 +++++++++++++++++++++++=
++++++
+ 1 file changed, 180 insertions(+)
 
-f(...) { <...pr@p(...,c,...)...> }
-
-@bad0 exists@
-identifier r.ret,ok.f,g !=3D {ERR_PTR,IS_ERR};
-position p !=3D printer.p;
-@@
-
-f(...) { ... when any
-g@p(...,ret,...)
-... when any
- }
-
-// ignore the above if there is some path where the variable is set to
-// something else
-@bad depends on !bad0 exists@
-position r.p1,r.p2;
-statement S1,S2;
-identifier r.ret;
-expression e1;
-@@
-
-(
-if@p1 (\(ret < 0\|ret !=3D 0\)) S1
-|
-ret@p1 =3D 0
-)
-... when any
- \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\|&ret\)
-... when any
-if@p2(...) S2
-
-@bad1 depends on !bad0 && !bad exists@
-position r.p2;
-statement S2;
-identifier r.ret;
-expression e1;
-constant c;
-@@
-
-ret =3D -c
-... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
-    when !=3D &ret
-    when any
-if@p2(...) S2
-
-// likewise ignore it if there has been an intervening return
-@bad2 depends on !bad0 && !bad && !bad1 exists@
-position r.p1,r.p2;
-identifier r.ret;
-expression e1;
-statement S2;
-constant c;
-@@
-
-ret@p1 =3D 0
-... when !=3D if (...) { ... ret =3D e1 ... return ret; }
-    when !=3D if (...) { ... return -c; }
-    when any
-if@p2(...) S2
-
-
-@script:python depends on !bad0 && !bad && !bad1 && !bad2@
-p1 << r.p1;
-p2 << r.p2;
-p3 << r.p3;
-@@
-
-cocci.print_main("",p1)
-cocci.print_secs("",p2)
-cocci.print_secs("",p3)
-// </smpl>
+diff --git a/scripts/coccinelle/misc/simple_return.cocci b/scripts/coccinel=
+le/misc/simple_return.cocci
+new file mode 100644
+index 0000000..47f7084
+--- /dev/null
++++ b/scripts/coccinelle/misc/simple_return.cocci
+@@ -0,0 +1,180 @@
++/// Simplify a trivial if-return sequence.  Possibly combine with a
++/// preceding function call.
++//
++// Confidence: High
++// Copyright: (C) 2014 Julia Lawall, INRIA/LIP6.  GPLv2.
++// Copyright: (C) 2014 Gilles Muller, INRIA/LiP6.  GPLv2.
++// URL: http://coccinelle.lip6.fr/
++// Comments:
++// Options: --no-includes --include-headers
++
++virtual patch
++virtual context
++virtual org
++virtual report
++
++@r depends on patch@
++local idexpression e;
++identifier i,f,fn;
++@@
++
++fn(...) { <...
++- e@i ++ return
++    f(...);
++-if (i !=3D 0) return i;
++-return 0;
++...> }
++
++@depends on patch@
++identifier r.i;
++type t;
++@@
++
++-t i;
++ ... when !=3D i
++
++@depends on patch@
++expression e;
++@@
++
++-if (e !=3D 0)
++   return e;
++-return 0;
++
++// -----------------------------------------------------------------------
++
++@s1 depends on context || org || report@
++local idexpression e;
++identifier i,f,fn;
++position p,p1,p2;
++@@
++
++fn(...) { <...
++* e@i@p =3D f(...);
++  if (\(i@p1 !=3D 0\|i@p2 < 0\))
++     return i;
++  return 0;
++...> }
++
++@s2 depends on context || org || report forall@
++identifier s1.i;
++type t;
++position q,s1.p;
++expression e,f;
++@@
++
++* t i@q;
++  ... when !=3D i
++  e@p =3D f(...);
++
++@s3 depends on context || org || report@
++expression e;
++position p1!=3Ds1.p1;
++position p2!=3Ds1.p2;
++@@
++
++*if (\(e@p1 !=3D 0\|e@p2 < 0\))
++   return e;
++ return 0;
++
++// -----------------------------------------------------------------------
++
++@script:python depends on org@
++p << s1.p;
++p1 << s1.p1;
++q << s2.q;
++@@
++
++cocci.print_main("decl",q)
++cocci.print_secs("use",p)
++cocci.include_match(False)
++
++@script:python depends on org@
++p << s1.p;
++p2 << s1.p2;
++q << s2.q;
++@@
++
++cocci.print_main("decl",q)
++cocci.print_secs("use with questionable test",p)
++cocci.include_match(False)
++
++@script:python depends on org@
++p << s1.p;
++p1 << s1.p1;
++@@
++
++cocci.print_main("use",p)
++
++@script:python depends on org@
++p << s1.p;
++p2 << s1.p2;
++@@
++
++cocci.print_main("use with questionable test",p)
++
++@script:python depends on org@
++p << s3.p1;
++@@
++
++cocci.print_main("test",p)
++
++@script:python depends on org@
++p << s3.p2;
++@@
++
++cocci.print_main("questionable test",p)
++
++// -----------------------------------------------------------------------
++
++@script:python depends on report@
++p << s1.p;
++p1 << s1.p1;
++q << s2.q;
++@@
++
++msg =3D "WARNING: end returns can be simpified and declaration on line %s =
+can be dropped" % (q[0].line)
++coccilib.report.print_report(p[0],msg)
++cocci.include_match(False)
++
++@script:python depends on report@
++p << s1.p;
++p1 << s1.p1;
++q << s2.q
++;
++@@
++
++msg =3D "WARNING: end returns may be simpified if negative or 0 value and =
+declaration on line %s can be dropped" % (q[0].line)
++coccilib.report.print_report(p[0],msg)
++cocci.include_match(False)
++
++@script:python depends on report@
++p << s1.p;
++p1 << s1.p1;
++@@
++
++msg =3D "WARNING: end returns can be simpified"
++coccilib.report.print_report(p[0],msg)
++
++@script:python depends on report@
++p << s1.p;
++p2 << s1.p2;
++@@
++
++msg =3D "WARNING: end returns can be simpified if negative or 0 value"
++coccilib.report.print_report(p[0],msg)
++
++@script:python depends on report@
++p << s3.p1;
++@@
++
++msg =3D "WARNING: end returns can be simpified"
++coccilib.report.print_report(p[0],msg)
++
++@script:python depends on report@
++p << s3.p2;
++@@
++
++msg =3D "WARNING: end returns can be simpified if tested value is negative=
+ or 0"
++coccilib.report.print_report(p[0],msg)
 
 --
 To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
