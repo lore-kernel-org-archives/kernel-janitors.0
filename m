@@ -1,57 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 27 Aug 2014 10:13:53 +0000
-Subject: Re: [PATCH 11/14] ARM: brcmstb: delete unneeded test before of_node_put
-Message-Id: <20140827101353.GG5046@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Aug 2014 18:33:27 +0000
+Subject: [PATCH 6/7] video: fbdev: sis: delete double assignment
+Message-Id: <1408818808-18850-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407492475-26283-11-git-send-email-Julia.Lawall@lip6.fr>
- <20140813222212.GB18411@ld-irv-0074>
- <alpine.DEB.2.02.1408140733190.2053@localhost6.localdomain6>
- <20140814065310.GK11952@brian-ubuntu>
-In-Reply-To: <20140814065310.GK11952@brian-ubuntu>
+References: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Thomas Winischhofer <thomas@winischhofer.net>
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 13, 2014 at 11:53:10PM -0700, Brian Norris wrote:
-> > > >  cleanup:
-> > > > -	if (syscon_np)
-> > > > -		of_node_put(syscon_np);
-> > > > -
-> > > > +	of_node_put(syscon_np);
-> > > > +out:
-> > > 
-> > > Is there a good reason for this new label? I thought part of the point
-> > > of this semantic patch is that the previous line (of_node_put()) is a
-> > > no-op for NULL arguments.
-> > 
-> > Personally, I prefer code to only be executed if it needs to be.  It is 
-> > helpful from a program analysis point of view, and I think it helps 
-> > someone trying to understand the code.
-> > 
-> > That is, when I am trying to understand some unknown code, I may look at 
-> > the cleanup code and try to figure out why each piece of it is executed.  
-> > If some of it is statically known to be irrelevant, it is confusing.
-> > 
-> > But I you think the other way around, and would rather have just one label 
-> > that contains anything that might ever be useful, then I guess that is a 
-> > reasonable point of view as well.
-> 
-> Yeah, I personally just look to avoid unnecessary labels.
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Having more than one label is better because it helps you avoid "One Err
-Bugs".  This is a common kind of bug which is cause when functions have
-only one "err:" label which does all the error handling.
+Delete successive assignments to the same location.  The second assignment
+is changed to update a different field, as done in other nearby code.
 
-Some examples of this type of bug are:
-234ad18249a4 ('staging: gdm7240: fix error handling of probe()')
-85a258b70d48 ('ocfs2: fix error handling in ocfs2_ioctl_move_extents()')
-920c4f4c3651 ('drivers/leds/leds-tca6507.c: cleanup error handling in tca6507_probe()')
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-If you unwind in the exact reversed order of how things were allocated
-then it makes the code a lot easier to understand so it avoids bugs.
+// <smpl>
+@@
+expression i;
+@@
 
-regards,
-dan carpenter
+*i = ...;
+ i = ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The patches in this series do not depend on each other.
+
+This changes the semantics of the code and is not tested.
+
+ drivers/video/fbdev/sis/init301.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/sis/init301.c b/drivers/video/fbdev/sis/init301.c
+index a89e3ca..295e0de 100644
+--- a/drivers/video/fbdev/sis/init301.c
++++ b/drivers/video/fbdev/sis/init301.c
+@@ -1714,7 +1714,7 @@ SiS_GetLCDResInfo(struct SiS_Private *SiS_Pr, unsigned short ModeNo, unsigned sh
+ 			       SiS_Pr->PanelVCLKIdx315 = VCLK81_315; /* ? */
+ 			    } else {
+ 			       SiS_Pr->PanelHT   = 1688; SiS_Pr->PanelVT   =  802;
+-			       SiS_Pr->PanelHRS  =   48; SiS_Pr->PanelHRS  =  112;
++			       SiS_Pr->PanelHRS  =   48; SiS_Pr->PanelHRE  =  112;
+ 			       SiS_Pr->PanelVRS  =    3; SiS_Pr->PanelVRE  =    6;
+ 			       SiS_Pr->PanelVCLKIdx300 = VCLK81_300;
+ 			       SiS_Pr->PanelVCLKIdx315 = VCLK81_315;
 
