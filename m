@@ -1,56 +1,78 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 08 Aug 2014 10:07:45 +0000
-Subject: =?UTF-8?q?=5BPATCH=206/14=5D=20powerpc/fsl=3A=20fsl=5Fsoc=3A=20delete=20unneeded=20test=20before=20o
-Message-Id: <1407492475-26283-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 23 Aug 2014 11:20:23 +0000
+Subject: [PATCH 1/9] [media] v4l: ti-vpe: use c99 initializers in structures
+Message-Id: <1408792831-25615-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Of_node_put supports NULL as its argument, so the initial test is not
-necessary.
+Use c99 initializers for structures.
 
-Suggested by Uwe Kleine-K=C3=B6nig.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression e;
+@decl@
+identifier i1,fld;
+type T;
+field list[n] fs;
 @@
 
--if (e)
-   of_node_put(e);
+struct i1 {
+ fs
+ T fld;
+ ...};
+
+@bad@
+identifier decl.i1,i2;
+expression e;
+initializer list[decl.n] is;
+@@
+
+struct i1 i2 = { is,
++ .fld = e
+- e
+ ,...};
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- arch/powerpc/sysdev/fsl_soc.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The patches in this series do not depend on each other.
 
-diff --git a/arch/powerpc/sysdev/fsl_soc.c b/arch/powerpc/sysdev/fsl_soc.c
-index ffd1169..bfb5b6c 100644
---- a/arch/powerpc/sysdev/fsl_soc.c
-+++ b/arch/powerpc/sysdev/fsl_soc.c
-@@ -197,8 +197,7 @@ static int __init setup_rstcr(void)
- 	if (!rstcr && ppc_md.restart =3D fsl_rstcr_restart)
- 		printk(KERN_ERR "No RSTCR register, warm reboot won't work\n");
-=20
--	if (np)
--		of_node_put(np);
-+	of_node_put(np);
-=20
- 	return 0;
- }
+Not compiled.
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/media/platform/ti-vpe/vpe.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
+index 972f43f..20dd7ea 100644
+--- a/drivers/media/platform/ti-vpe/vpe.c
++++ b/drivers/media/platform/ti-vpe/vpe.c
+@@ -138,12 +138,12 @@ struct vpe_dei_regs {
+  * default expert DEI register values, unlikely to be modified.
+  */
+ static const struct vpe_dei_regs dei_regs = {
+-	0x020C0804u,
+-	0x0118100Fu,
+-	0x08040200u,
+-	0x1010100Cu,
+-	0x10101010u,
+-	0x10101010u,
++	.mdt_spacial_freq_thr_reg = 0x020C0804u,
++	.edi_config_reg = 0x0118100Fu,
++	.edi_lut_reg0 = 0x08040200u,
++	.edi_lut_reg1 = 0x1010100Cu,
++	.edi_lut_reg2 = 0x10101010u,
++	.edi_lut_reg3 = 0x10101010u,
+ };
+ 
+ /*
+
