@@ -1,102 +1,119 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Mon, 25 Aug 2014 09:44:52 +0000
-Subject: Re: [PATCH 3/9] pwm: lpss: use c99 initializers in structures
-Message-Id: <20140825094450.GC2399@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="2/5bycvrmDh4d1IB"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Aug 2014 11:20:30 +0000
+Subject: [PATCH 8/9] video: fbdev: aty: use c99 initializers in structures
+Message-Id: <1408792831-25615-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
- <1408792831-25615-4-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1408792831-25615-4-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paul Mackerras <paulus@samba.org>
+Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---2/5bycvrmDh4d1IB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use c99 initializers for structures.
 
-On Sat, Aug 23, 2014 at 01:20:25PM +0200, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Use c99 initializers for structures.
->=20
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @decl@
-> identifier i1,fld;
-> type T;
-> field list[n] fs;
-> @@
->=20
-> struct i1 {
->  fs
->  T fld;
->  ...};
->=20
-> @bad@
-> identifier decl.i1,i2;
-> expression e;
-> initializer list[decl.n] is;
-> @@
->=20
-> struct i1 i2 =3D { is,
-> + .fld =3D e
-> - e
->  ,...};
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
-> The patches in this series do not depend on each other.
->=20
->  drivers/pwm/pwm-lpss.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/pwm-lpss.c b/drivers/pwm/pwm-lpss.c
-> index 4df994f..441a046 100644
-> --- a/drivers/pwm/pwm-lpss.c
-> +++ b/drivers/pwm/pwm-lpss.c
-> @@ -45,7 +45,7 @@ struct pwm_lpss_boardinfo {
-> =20
->  /* BayTrail */
->  static const struct pwm_lpss_boardinfo byt_info =3D {
-> -	25000000
-> +	.clk_rate =3D 25000000
->  };
-> =20
->  static inline struct pwm_lpss_chip *to_lpwm(struct pwm_chip *chip)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-I've applied this patch to the for-next branch of the PWM tree. There
-was a conflict due to a patch that was recently applied, but it was
-trivial to fix it up, so I did.
+// <smpl>
+@decl@
+identifier i1,fld;
+type T;
+field list[n] fs;
+@@
 
-Thanks,
-Thierry
+struct i1 {
+ fs
+ T fld;
+ ...};
 
---2/5bycvrmDh4d1IB
-Content-Type: application/pgp-signature
+@bad@
+identifier decl.i1,i2;
+expression e;
+initializer list[decl.n] is;
+@@
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+struct i1 i2 = { is,
++ .fld = e
+- e
+ ,...};
+// </smpl>
 
-iQIcBAEBAgAGBQJT+wWSAAoJEN0jrNd/PrOhZpcP/0Fe4z6FfKJO3zjA0R9If1Ef
-0BaphloBbqfcxWH14dd/YUW20WhtwttXvhUMIcLra9VWdDdrU+/HLL3OcgCmOxO7
-LX56E0XcMBdxZPDqWKgTuaOZMgjbpvMSW1Xi0+LsaG7E0cY+ECBvy8Ga8P5iPXHY
-dH2eDqUqI8i+Z+PSBUyZXRBkFTM+ySHlYl7u8iz7G1CHTkbqJEzWIJE2pg2qLA0m
-edWVTDKuxNoVep4mAA1HazNLMKNZ2/Vq2TTx5DVhjWsNStykctzwB/XTE6phpSPm
-NqDqGqnmj3bYq76dNH60TBH+BwmSztPIDHdFT4X5E9WsM17QlMWqXfxdYh3osjdr
-YMrjLOvFKUozbYUyFn2M/BWT3RsQvbrfOCsNAvbGoYjvfYGMlkr2+eNdD0og48g/
-JX62GAamC0wLPLjPnrn6OU+nF18NIEOPQTDl/41NNwfYJ7LdZjhasKmSpWOH1ojE
-WJFT0XBK8ZTaWSp83MYmIZokevx9qa/q5P3RNPSOGKZVqt6Nz1BZNPDYj56sHfrr
-ZnzrB/3w4dd3D8YjCjkqkRZ082A+Dd18aHXwKicWe/57FK0vvfI1ouEZDk0MrhRB
-0m49Ehil/Oym/dI2O7nS0155QgUmdKHnOY1RsRGkPvNVC0D3JMki+PIWKnxV9Pxf
-ufJdAf/ZQ9WL21bMksuR
-=H9WT
------END PGP SIGNATURE-----
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
---2/5bycvrmDh4d1IB--
+---
+The patches in this series do not depend on each other.
+
+ drivers/video/fbdev/aty/aty128fb.c |   59 +++++++++++++++++++++++++++++++------
+ 1 file changed, 51 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/video/fbdev/aty/aty128fb.c b/drivers/video/fbdev/aty/aty128fb.c
+index ff60701..5a72fbd 100644
+--- a/drivers/video/fbdev/aty/aty128fb.c
++++ b/drivers/video/fbdev/aty/aty128fb.c
+@@ -324,14 +324,57 @@ struct aty128_meminfo {
+ };
+ 
+ /* various memory configurations */
+-static const struct aty128_meminfo sdr_128   -	{ 4, 4, 3, 3, 1, 3, 1, 16, 30, 16, "128-bit SDR SGRAM (1:1)" };
+-static const struct aty128_meminfo sdr_64    -	{ 4, 8, 3, 3, 1, 3, 1, 17, 46, 17, "64-bit SDR SGRAM (1:1)" };
+-static const struct aty128_meminfo sdr_sgram -	{ 4, 4, 1, 2, 1, 2, 1, 16, 24, 16, "64-bit SDR SGRAM (2:1)" };
+-static const struct aty128_meminfo ddr_sgram -	{ 4, 4, 3, 3, 2, 3, 1, 16, 31, 16, "64-bit DDR SGRAM" };
++static const struct aty128_meminfo sdr_128 = {
++	.ML = 4,
++	.MB = 4,
++	.Trcd = 3,
++	.Trp = 3,
++	.Twr = 1,
++	.CL = 3,
++	.Tr2w = 1,
++	.LoopLatency = 16,
++	.DspOn = 30,
++	.Rloop = 16,
++	.name = "128-bit SDR SGRAM (1:1)" };
++
++static const struct aty128_meminfo sdr_64 = {
++	.ML = 4,
++	.MB = 8,
++	.Trcd = 3,
++	.Trp = 3,
++	.Twr = 1,
++	.CL = 3,
++	.Tr2w = 1,
++	.LoopLatency = 17,
++	.DspOn = 46,
++	.Rloop = 17,
++	.name = "64-bit SDR SGRAM (1:1)" };
++
++static const struct aty128_meminfo sdr_sgram = {
++	.ML = 4,
++	.MB = 4,
++	.Trcd = 1,
++	.Trp = 2,
++	.Twr = 1,
++	.CL = 2,
++	.Tr2w = 1,
++	.LoopLatency = 16,
++	.DspOn = 24,
++	.Rloop = 16,
++	.name = "64-bit SDR SGRAM (2:1)" };
++
++static const struct aty128_meminfo ddr_sgram = {
++	.ML = 4,
++	.MB = 4,
++	.Trcd = 3,
++	.Trp = 3,
++	.Twr = 2,
++	.CL = 3,
++	.Tr2w = 1,
++	.LoopLatency = 16,
++	.DspOn = 31,
++	.Rloop = 16,
++	.name = "64-bit DDR SGRAM" };
+ 
+ static struct fb_fix_screeninfo aty128fb_fix = {
+ 	.id		= "ATY Rage128",
+
