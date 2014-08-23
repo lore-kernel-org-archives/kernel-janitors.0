@@ -1,34 +1,100 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 08 Aug 2014 17:28:49 +0000
-Subject: Re: [PATCH 13/14] fec_mpc52xx: delete unneeded test before of_node_put
-Message-Id: <20140808.102849.869385054592371813.davem@davemloft.net>
-List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407492475-26283-13-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407492475-26283-13-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Julia.Lawall@lip6.fr
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, u.kleine-koenig@pengutronix.de
-
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri,  8 Aug 2014 12:07:54 +0200
+Date: Sat, 23 Aug 2014 18:33:21 +0000
+Subject: [PATCH 0/7] delete double assignment
+Message-Id: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
+List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-mips@linux-mips.org
+Cc: joe@perches.com, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-serial@vger.kernel.org, linux-usb@vger.kernel.org
 
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> Of_node_put supports NULL as its argument, so the initial test is not
-> necessary.
->=20
-> Suggested by Uwe Kleine-K=F6nig.
->=20
-> The semantic patch that fixes this problem is as follows:
-> (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+These patches fix cases where there are two adjacent assignments to the
+same location.  In practice, many such occurrences appear to be
+intentional, eg to initialize volatile memory, but these cases do not seem
+to fall into that category.
 
-Applied.
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The complete semantic match that finds these problems is as follows:
+
+// <smpl>
+@r@
+expression i,f;
+position p1,p2;
+@@
+
+(
+ i = <+...f(...)...+>;
+|
+ i |= <+...f(...)...+>;
+|
+ i &= <+...f(...)...+>;
+|
+ i += <+...f(...)...+>;
+|
+ i -= <+...f(...)...+>;
+|
+ i *= <+...f(...)...+>;
+|
+ i /= <+...f(...)...+>;
+|
+ i %= <+...f(...)...+>;
+|
+ i ^= <+...f(...)...+>;
+|
+ i <<= <+...f(...)...+>;
+|
+ i >>= <+...f(...)...+>;
+|
+ i@p1 = ...;
+|
+ i@p1 |= ...;
+|
+ i@p1 &= ...;
+|
+ i@p1 += ...;
+|
+ i@p1 -= ...;
+|
+ i@p1 *= ...;
+|
+ i@p1 /= ...;
+|
+ i@p1 %= ...;
+|
+ i@p1 ^= ...;
+|
+ i@p1 <<= ...;
+|
+ i@p1 >>= ...;
+|
+ i@p1 ++;
+|
+ ++i@p1;
+|
+ i@p1 --;
+|
+ --i@p1;
+)
+(
+ i = <+...i...+>;
+|
+ i = <+...f(...)...+>;
+|
+ i@p2 = ...;
+)
+
+@@
+expression i,j,f;
+position r.p1,r.p2;
+@@
+
+(
+ (<+...i@p1...+>);
+)
+(
+ (<+...\(j++\|++j\|j--\|--j\|f(...)\)...+>) = ...;
+|
+*i@p2 = ...;
+)
+// </smpl>
+
