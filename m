@@ -1,42 +1,80 @@
-From: Jeff Moyer <jmoyer@redhat.com>
-Date: Thu, 07 Aug 2014 21:50:08 +0000
-Subject: Re: [PATCH 4/4] usb: gadget: fix error return code
-Message-Id: <x49oavw9dgv.fsf@segfault.boston.devel.redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 23 Aug 2014 11:20:22 +0000
+Subject: [PATCH 0/9] use c99 initializers in structures
+Message-Id: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407445067-4044-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1407445067-4044-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407445067-4044-5-git-send-email-Julia.Lawall@lip6.fr> (Julia
-	Lawall's message of "Thu, 7 Aug 2014 22:57:47 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Felipe Balbi <balbi@ti.com>, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: devel@driverdev.osuosl.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, rtc-linux@googlegroups.com, linux-nfc@lists.01.org, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, josh@joshtriplett.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-media@vger.kernel.org
 
-Julia Lawall <Julia.Lawall@lip6.fr> writes:
+These patches add labels in the initializations of structure fields (c99
+initializers).  The complete semantic patch thta makes this change is shown
+below.  This rule ignores cases where the initialization is just 0 or NULL,
+where some of the fields already use labels, and where there are nested
+structures.
 
-> diff --git a/drivers/usb/gadget/udc/fusb300_udc.c b/drivers/usb/gadget/udc/fusb300_udc.c
-> index d40255f..5c5d1ad 100644
-> --- a/drivers/usb/gadget/udc/fusb300_udc.c
-> +++ b/drivers/usb/gadget/udc/fusb300_udc.c
-> @@ -1398,13 +1398,17 @@ static int fusb300_probe(struct platform_device *pdev)
->  
->  	/* initialize udc */
->  	fusb300 = kzalloc(sizeof(struct fusb300), GFP_KERNEL);
-> -	if (fusb300 = NULL)
-> +	if (fusb300 = NULL) {
-> +		ret = -ENOMEM;
->  		goto clean_up;
-> +	}
->  
->  	for (i = 0; i < FUSB300_MAX_NUM_EP; i++) {
->  		_ep[i] = kzalloc(sizeof(struct fusb300_ep), GFP_KERNEL);
-> -		if (_ep[i] = NULL)
-> +		if (_ep[i] = NULL) {
-> +			ret = -ENOMEM;
->  			goto clean_up;
-> +		}
->  		fusb300->ep[i] = _ep[i];
->  	}
+// <smpl>
+@ok1@
+identifier i1,i2;
+position p;
+@@
 
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+struct i1 i2@p = { \(0\|NULL\) };
+
+@ok2@
+identifier i1,i2,i3;
+position p;
+expression e;
+@@
+
+struct i1 i2@p = { ..., .i3 = e, ... };
+
+@ok3@
+identifier i1,i2;
+position p;
+@@
+
+struct i1 i2@p = { ..., { ... }, ... };
+
+@decl@
+identifier i1,fld;
+type T;
+field list[n] fs;
+@@
+
+struct i1 {
+ fs
+ T fld;
+ ...};
+
+@bad@
+identifier decl.i1,i2;
+expression e;
+position p != {ok1.p,ok2.p,ok3.p};
+constant nm;
+initializer list[decl.n] is;
+position fix;
+@@
+
+struct i1 i2@p = { is,
+(
+ nm(...)
+|
+ e@fix
+)
+ ,...};
+
+@@
+identifier decl.i1,i2,decl.fld;
+expression e;
+position bad.p, bad.fix;
+@@
+
+struct i1 i2@p = { ...,
++ .fld = e
+- e@fix
+ ,...};
+// </smpl>
+
