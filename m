@@ -1,56 +1,89 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 08 Aug 2014 10:07:42 +0000
-Subject: =?UTF-8?q?=5BPATCH=201/14=5D=20i2c=3A=20mpc=3A=20delete=20unneeded=20test=20before=20of=5Fnode=5Fput
-Message-Id: <1407492475-26283-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 23 Aug 2014 11:20:31 +0000
+Subject: [PATCH 9/9] rtc: use c99 initializers in structures
+Message-Id: <1408792831-25615-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alessandro Zummo <a.zummo@towertech.it>
+Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Of_node_put supports NULL as its argument, so the initial test is not
-necessary.
+Use c99 initializers for structures.
 
-Suggested by Uwe Kleine-K=C3=B6nig.
-
-The semantic patch that fixes this problem is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
-@@
-expression e;
+@decl@
+identifier i1,fld;
+type T;
+field list[n] fs;
 @@
 
--if (e)
-   of_node_put(e);
+struct i1 {
+ fs
+ T fld;
+ ...};
+
+@bad@
+identifier decl.i1,i2;
+expression e;
+initializer list[decl.n] is;
+@@
+
+struct i1 i2 = { is,
++ .fld = e
+- e
+ ,...};
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/i2c/busses/i2c-mpc.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The patches in this series do not depend on each other.
 
-diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
-index 6a32aa0..0edf630 100644
---- a/drivers/i2c/busses/i2c-mpc.c
-+++ b/drivers/i2c/busses/i2c-mpc.c
-@@ -341,8 +341,7 @@ static u32 mpc_i2c_get_sec_cfg_8xxx(void)
- 			iounmap(reg);
- 		}
- 	}
--	if (node)
--		of_node_put(node);
-+	of_node_put(node);
-=20
- 	return val;
- }
+ drivers/rtc/rtc-pcf8583.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/rtc/rtc-pcf8583.c b/drivers/rtc/rtc-pcf8583.c
+index c263984..5911a6d 100644
+--- a/drivers/rtc/rtc-pcf8583.c
++++ b/drivers/rtc/rtc-pcf8583.c
+@@ -176,7 +176,11 @@ static int pcf8583_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	unsigned char ctrl, year[2];
+-	struct rtc_mem mem = { CMOS_YEAR, sizeof(year), year };
++	struct rtc_mem mem = {
++		.loc = CMOS_YEAR,
++		.nr = sizeof(year),
++		.data = year
++	};
+ 	int real_year, year_offset, err;
+ 
+ 	/*
+@@ -222,8 +226,16 @@ static int pcf8583_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	unsigned char year[2], chk;
+-	struct rtc_mem cmos_year  = { CMOS_YEAR, sizeof(year), year };
+-	struct rtc_mem cmos_check = { CMOS_CHECKSUM, 1, &chk };
++	struct rtc_mem cmos_year  = {
++		.loc = CMOS_YEAR,
++		.nr = sizeof(year),
++		.data = year
++	};
++	struct rtc_mem cmos_check = {
++		.loc = CMOS_CHECKSUM,
++		.nr = 1,
++		.data = &chk
++	};
+ 	unsigned int proper_year = tm->tm_year + 1900;
+ 	int ret;
+ 
+
