@@ -1,160 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Aug 2014 11:20:24 +0000
-Subject: [PATCH 2/9] video: fbdev: matrox: use c99 initializers in structures
-Message-Id: <1408792831-25615-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 25 Aug 2014 17:07:45 +0000
+Subject: re: bnx2x: Utilize FW 7.10.51
+Message-Id: <20140825170745.GA22328@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1408792831-25615-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: josh@joshtriplett.org, kernel-janitors@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hello Dmitry Kravkov,
 
-Use c99 initializers for structures.
+The patch e42780b66aab: "bnx2x: Utilize FW 7.10.51" from Aug 17,
+2014, leads to the following static checker warning:
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+	drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c:3653 bnx2x_update_pbds_gso_enc()
+	warn: double left shift '1 << (1 << 0)'
 
-// <smpl>
-@decl@
-identifier i1,fld;
-type T;
-field list[n] fs;
-@@
+The ETH_TUNNEL_DATA_IP_HDR_TYPE_OUTER is defined twice, once for big
+endian and once for little endian.  It's defined the same way for both
+endiannesses.
 
-struct i1 {
- fs
- T fld;
- ...};
+#define ETH_TUNNEL_DATA_IP_HDR_TYPE_OUTER (0x1<<0)
 
-@bad@
-identifier decl.i1,i2;
-expression e;
-initializer list[decl.n] is;
-@@
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+  3644  
+  3645                  outerip_len = iph->ihl << 1;
+  3646  
+  3647                  pbd2->fw_ip_csum_wo_len_flags_frag   3648                          bswab16(csum_fold((__force __wsum)csum));
+  3649          } else {
+  3650                  pbd2->fw_ip_hdr_to_payload_w   3651                          hlen_w - ((sizeof(struct ipv6hdr)) >> 1);
+  3652                  pbd_e2->data.tunnel_data.flags |  3653                          1 /*IPv6*/ << ETH_TUNNEL_DATA_IP_HDR_TYPE_OUTER;
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-struct i1 i2 = { is,
-+ .fld = e
-- e
- ,...};
-// </smpl>
+This code is a bit suspicious because we are shifting by a shift macro
+and that's very rare.  Also how does this affect endiannes?  I don't
+know the code very well but it's suspicious enough to send an email.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+  3654          }
 
----
-The patches in this series do not depend on each other.
-
- drivers/video/fbdev/matrox/matroxfb_maven.c |   20 +++++-----
- drivers/video/fbdev/matrox/matroxfb_base.c  |   52 ++++++++++++++++++++++++----
- 2 files changed, 56 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/video/fbdev/matrox/matroxfb_maven.c b/drivers/video/fbdev/matrox/matroxfb_maven.c
-index ee41a0f..bf5ce04 100644
---- a/drivers/video/fbdev/matrox/matroxfb_maven.c
-+++ b/drivers/video/fbdev/matrox/matroxfb_maven.c
-@@ -201,21 +201,23 @@ struct matrox_pll_ctl {
- };
- 
- static const struct matrox_pll_features2 maven1000_pll = {
--	 50000000,
--	300000000,
--	 5, 128,
--	 3,  32,
--	 3
-+	.vco_freq_min = 50000000,
-+	.vco_freq_max = 300000000,
-+	.feed_div_min = 5,
-+	.feed_div_max = 128,
-+	.in_div_min = 3,
-+	.in_div_max = 32,
-+	.post_shift_max = 3
- };
- 
- static const struct matrox_pll_ctl maven_PAL = {
--	540000,
--	    50
-+	.ref_freq = 540000,
-+	.den = 50
- };
- 
- static const struct matrox_pll_ctl maven_NTSC = {
--	450450,	/* 27027000/60 = 27000000/59.94005994 */
--	    60
-+	.ref_freq = 450450,	/* 27027000/60 = 27000000/59.94005994 */
-+	.den = 60
- };
- 
- static int matroxfb_PLL_mavenclock(const struct matrox_pll_features2* pll,
-diff --git a/drivers/video/fbdev/matrox/matroxfb_base.c b/drivers/video/fbdev/matrox/matroxfb_base.c
-index 7116c53..62539ca 100644
---- a/drivers/video/fbdev/matrox/matroxfb_base.c
-+++ b/drivers/video/fbdev/matrox/matroxfb_base.c
-@@ -1341,19 +1341,57 @@ struct video_board {
- 	struct matrox_switch* lowlevel;
- 		 };
- #ifdef CONFIG_FB_MATROX_MILLENIUM
--static struct video_board vbMillennium		= {0x0800000, 0x0800000, FB_ACCEL_MATROX_MGA2064W,	&matrox_millennium};
--static struct video_board vbMillennium2		= {0x1000000, 0x0800000, FB_ACCEL_MATROX_MGA2164W,	&matrox_millennium};
--static struct video_board vbMillennium2A	= {0x1000000, 0x0800000, FB_ACCEL_MATROX_MGA2164W_AGP,	&matrox_millennium};
-+static struct video_board vbMillennium = {
-+	.maxvram = 0x0800000,
-+	.maxdisplayable = 0x0800000,
-+	.accelID = FB_ACCEL_MATROX_MGA2064W,
-+	.lowlevel = &matrox_millennium
-+};
-+
-+static struct video_board vbMillennium2 = {
-+	.maxvram = 0x1000000,
-+	.maxdisplayable = 0x0800000,
-+	.accelID = FB_ACCEL_MATROX_MGA2164W,
-+	.lowlevel = &matrox_millennium
-+};
-+
-+static struct video_board vbMillennium2A = {
-+	.maxvram = 0x1000000,
-+	.maxdisplayable = 0x0800000,
-+	.accelID = FB_ACCEL_MATROX_MGA2164W_AGP,
-+	.lowlevel = &matrox_millennium
-+};
- #endif	/* CONFIG_FB_MATROX_MILLENIUM */
- #ifdef CONFIG_FB_MATROX_MYSTIQUE
--static struct video_board vbMystique		= {0x0800000, 0x0800000, FB_ACCEL_MATROX_MGA1064SG,	&matrox_mystique};
-+static struct video_board vbMystique = {
-+	.maxvram = 0x0800000,
-+	.maxdisplayable = 0x0800000,
-+	.accelID = FB_ACCEL_MATROX_MGA1064SG,
-+	.lowlevel = &matrox_mystique
-+};
- #endif	/* CONFIG_FB_MATROX_MYSTIQUE */
- #ifdef CONFIG_FB_MATROX_G
--static struct video_board vbG100		= {0x0800000, 0x0800000, FB_ACCEL_MATROX_MGAG100,	&matrox_G100};
--static struct video_board vbG200		= {0x1000000, 0x1000000, FB_ACCEL_MATROX_MGAG200,	&matrox_G100};
-+static struct video_board vbG100 = {
-+	.maxvram = 0x0800000,
-+	.maxdisplayable = 0x0800000,
-+	.accelID = FB_ACCEL_MATROX_MGAG100,
-+	.lowlevel = &matrox_G100
-+};
-+
-+static struct video_board vbG200 = {
-+	.maxvram = 0x1000000,
-+	.maxdisplayable = 0x1000000,
-+	.accelID = FB_ACCEL_MATROX_MGAG200,
-+	.lowlevel = &matrox_G100
-+};
- /* from doc it looks like that accelerator can draw only to low 16MB :-( Direct accesses & displaying are OK for
-    whole 32MB */
--static struct video_board vbG400		= {0x2000000, 0x1000000, FB_ACCEL_MATROX_MGAG400,	&matrox_G100};
-+static struct video_board vbG400 = {
-+	.maxvram = 0x2000000,
-+	.maxdisplayable = 0x1000000,
-+	.accelID = FB_ACCEL_MATROX_MGAG400,
-+	.lowlevel = &matrox_G100
-+};
- #endif
- 
- #define DEVF_VIDEO64BIT		0x0001
-
+regards,
+dan carpenter
