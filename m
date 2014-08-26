@@ -1,32 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 01 Aug 2014 08:14:17 +0000
-Subject: [patch] clk: checking wrong variable in __set_clk_parents()
-Message-Id: <20140801081417.GA28869@mwanda>
+Date: Tue, 26 Aug 2014 07:55:51 +0000
+Subject: [patch]  staging: comedi: amplc_pci230: fix a precedence bug
+Message-Id: <20140826073908.GB31076@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-There is a cut and paste bug so we check "pclk" instead of "clk".
+The addition operation has higher precedence than ?: so this would write
+to PCI230_DACOUT1 instead of devpriv->daqio + PCI230_DACOUT1.
 
+Fixes: 4f9c63fe5333 ('staging: comedi: amplc_pci230: refactor iobase addresses')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 1f73019..4e1bda7 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -55,10 +55,10 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 			goto err;
- 		}
- 		clk = of_clk_get_by_clkspec(&clkspec);
--		if (IS_ERR(pclk)) {
-+		if (IS_ERR(clk)) {
- 			pr_warn("clk: couldn't get parent clock %d for %s\n",
- 				index, node->full_name);
--			rc = PTR_ERR(pclk);
-+			rc = PTR_ERR(clk);
- 			goto err;
- 		}
+diff --git a/drivers/staging/comedi/drivers/amplc_pci230.c b/drivers/staging/comedi/drivers/amplc_pci230.c
+index 0fd212f..60d21e0 100644
+--- a/drivers/staging/comedi/drivers/amplc_pci230.c
++++ b/drivers/staging/comedi/drivers/amplc_pci230.c
+@@ -628,7 +628,7 @@ static inline void pci230_ao_write_nofifo(struct comedi_device *dev,
  
+ 	/* Write mangled datum to appropriate DACOUT register. */
+ 	outw(pci230_ao_mangle_datum(dev, datum),
+-	     devpriv->daqio + ((chan) = 0) ? PCI230_DACOUT1 : PCI230_DACOUT2);
++	     devpriv->daqio + ((chan = 0) ? PCI230_DACOUT1 : PCI230_DACOUT2));
+ }
+ 
+ static inline void pci230_ao_write_fifo(struct comedi_device *dev,
