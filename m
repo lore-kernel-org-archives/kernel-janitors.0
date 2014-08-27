@@ -1,61 +1,57 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Date: Thu, 14 Aug 2014 06:53:10 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 27 Aug 2014 10:13:53 +0000
 Subject: Re: [PATCH 11/14] ARM: brcmstb: delete unneeded test before of_node_put
-Message-Id: <20140814065310.GK11952@brian-ubuntu>
+Message-Id: <20140827101353.GG5046@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1407492475-26283-11-git-send-email-Julia.Lawall@lip6.fr>
  <20140813222212.GB18411@ld-irv-0074>
  <alpine.DEB.2.02.1408140733190.2053@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1408140733190.2053@localhost6.localdomain6>
+ <20140814065310.GK11952@brian-ubuntu>
+In-Reply-To: <20140814065310.GK11952@brian-ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Thu, Aug 14, 2014 at 07:37:28AM +0200, Julia Lawall wrote:
-> On Wed, 13 Aug 2014, Brian Norris wrote:
-> > On Fri, Aug 08, 2014 at 12:07:52PM +0200, Julia Lawall wrote:
-> > > diff --git a/arch/arm/mach-bcm/platsmp-brcmstb.c b/arch/arm/mach-bcm/platsmp-brcmstb.c
-> > > index af780e9..c515ea1 100644
-> > > --- a/arch/arm/mach-bcm/platsmp-brcmstb.c
-> > > +++ b/arch/arm/mach-bcm/platsmp-brcmstb.c
-> > > @@ -227,7 +227,7 @@ static int __init setup_hifcpubiuctrl_regs(struct device_node *np)
-> > >  	if (!syscon_np) {
-> > >  		pr_err("can't find phandle %s\n", name);
-> > >  		rc = -EINVAL;
-> > > -		goto cleanup;
-> > > +		goto out;
-> > >  	}
-> > >  
-> > >  	cpubiuctrl_block = of_iomap(syscon_np, 0);
-> > > @@ -256,9 +256,8 @@ static int __init setup_hifcpubiuctrl_regs(struct device_node *np)
-> > >  	}
-> > >  
-> > >  cleanup:
-> > > -	if (syscon_np)
-> > > -		of_node_put(syscon_np);
-> > > -
-> > > +	of_node_put(syscon_np);
-> > > +out:
+On Wed, Aug 13, 2014 at 11:53:10PM -0700, Brian Norris wrote:
+> > > >  cleanup:
+> > > > -	if (syscon_np)
+> > > > -		of_node_put(syscon_np);
+> > > > -
+> > > > +	of_node_put(syscon_np);
+> > > > +out:
+> > > 
+> > > Is there a good reason for this new label? I thought part of the point
+> > > of this semantic patch is that the previous line (of_node_put()) is a
+> > > no-op for NULL arguments.
 > > 
-> > Is there a good reason for this new label? I thought part of the point
-> > of this semantic patch is that the previous line (of_node_put()) is a
-> > no-op for NULL arguments.
+> > Personally, I prefer code to only be executed if it needs to be.  It is 
+> > helpful from a program analysis point of view, and I think it helps 
+> > someone trying to understand the code.
+> > 
+> > That is, when I am trying to understand some unknown code, I may look at 
+> > the cleanup code and try to figure out why each piece of it is executed.  
+> > If some of it is statically known to be irrelevant, it is confusing.
+> > 
+> > But I you think the other way around, and would rather have just one label 
+> > that contains anything that might ever be useful, then I guess that is a 
+> > reasonable point of view as well.
 > 
-> Personally, I prefer code to only be executed if it needs to be.  It is 
-> helpful from a program analysis point of view, and I think it helps 
-> someone trying to understand the code.
+> Yeah, I personally just look to avoid unnecessary labels.
 > 
-> That is, when I am trying to understand some unknown code, I may look at 
-> the cleanup code and try to figure out why each piece of it is executed.  
-> If some of it is statically known to be irrelevant, it is confusing.
-> 
-> But I you think the other way around, and would rather have just one label 
-> that contains anything that might ever be useful, then I guess that is a 
-> reasonable point of view as well.
 
-Yeah, I personally just look to avoid unnecessary labels.
+Having more than one label is better because it helps you avoid "One Err
+Bugs".  This is a common kind of bug which is cause when functions have
+only one "err:" label which does all the error handling.
 
-Thanks for explaining your thought process.
+Some examples of this type of bug are:
+234ad18249a4 ('staging: gdm7240: fix error handling of probe()')
+85a258b70d48 ('ocfs2: fix error handling in ocfs2_ioctl_move_extents()')
+920c4f4c3651 ('drivers/leds/leds-tca6507.c: cleanup error handling in tca6507_probe()')
 
-Brian
+If you unwind in the exact reversed order of how things were allocated
+then it makes the code a lot easier to understand so it avoids bugs.
+
+regards,
+dan carpenter
+
