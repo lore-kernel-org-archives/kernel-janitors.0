@@ -1,50 +1,151 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 23 Aug 2014 18:33:22 +0000
-Subject: [PATCH 1/7] video: fbdev: riva: delete double assignment
-Message-Id: <1408818808-18850-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sat, 30 Aug 2014 14:41:23 +0000
+Subject: [PATCH] staging: lustre: fid,fld: expand the GOTO macro
+Message-Id: <1409409683-5288-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1408818808-18850-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antonino Daplas <adaplas@gmail.com>
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, "Dilger, Andreas" <andreas.dilger@intel.com>, "Drokin, Oleg" <oleg.drokin@intel.com>, Peng Tao <bergwolf@gmail.com>
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Delete successive assignments to the same location.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression i;
+identifier lbl;
+identifier rc;
+constant c;
 @@
 
-*i = ...;
- i = ...;
+- GOTO(lbl,\(rc\|c\));
++ goto lbl;
+
+@@
+identifier lbl;
+expression rc;
+@@
+
+- GOTO(lbl,rc);
++ rc;
++ goto lbl;
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The patches in this series do not depend on each other.
+ drivers/staging/lustre/lustre/fid/fid_request.c |   18 +++++++++++-------
+ drivers/staging/lustre/lustre/fld/fld_request.c |   14 ++++++++------
+ 2 files changed, 19 insertions(+), 13 deletions(-)
 
- drivers/video/fbdev/riva/riva_hw.c |    1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/riva/riva_hw.c b/drivers/video/fbdev/riva/riva_hw.c
-index 78fdbf5..8bdf37f 100644
---- a/drivers/video/fbdev/riva/riva_hw.c
-+++ b/drivers/video/fbdev/riva/riva_hw.c
-@@ -430,7 +430,6 @@ static char nv3_arb(nv3_fifo_info * res_info, nv3_sim_state * state,  nv3_arb_in
-     int mmisses, gmisses, vmisses, eburst_size, mburst_size;
-     int refresh_cycle;
+diff --git a/drivers/staging/lustre/lustre/fid/fid_request.c b/drivers/staging/lustre/lustre/fid/fid_request.c
+index 46c11ca..64b1d80 100644
+--- a/drivers/staging/lustre/lustre/fid/fid_request.c
++++ b/drivers/staging/lustre/lustre/fid/fid_request.c
+@@ -113,7 +113,7 @@ static int seq_client_rpc(struct lu_client_seq *seq,
+ 	if (seq->lcs_type = LUSTRE_SEQ_METADATA)
+ 		mdc_put_rpc_lock(exp->exp_obd->u.cli.cl_rpc_lock, NULL);
+ 	if (rc)
+-		GOTO(out_req, rc);
++		goto out_req;
  
--    refresh_cycle = 0;
-     refresh_cycle = 2*(state->mclk_khz/state->pclk_khz) + 5;
-     mmisses = 2;
-     if (state->mem_aligned) gmisses = 2;
+ 	out = req_capsule_server_get(&req->rq_pill, &RMF_SEQ_RANGE);
+ 	*output = *out;
+@@ -121,13 +121,15 @@ static int seq_client_rpc(struct lu_client_seq *seq,
+ 	if (!range_is_sane(output)) {
+ 		CERROR("%s: Invalid range received from server: "
+ 		       DRANGE"\n", seq->lcs_name, PRANGE(output));
+-		GOTO(out_req, rc = -EINVAL);
++		rc = -EINVAL;
++		goto out_req;
+ 	}
+ 
+ 	if (range_is_exhausted(output)) {
+ 		CERROR("%s: Range received from server is exhausted: "
+ 		       DRANGE"]\n", seq->lcs_name, PRANGE(output));
+-		GOTO(out_req, rc = -EINVAL);
++		rc = -EINVAL;
++		goto out_req;
+ 	}
+ 
+ 	CDEBUG_LIMIT(debug_mask, "%s: Allocated %s-sequence "DRANGE"]\n",
+@@ -430,7 +432,7 @@ static int seq_client_proc_init(struct lu_client_seq *seq)
+ 	if (rc) {
+ 		CERROR("%s: Can't init sequence manager proc, rc %d\n",
+ 		       seq->lcs_name, rc);
+-		GOTO(out_cleanup, rc);
++		goto out_cleanup;
+ 	}
+ 
+ 	return 0;
+@@ -508,8 +510,10 @@ int client_fid_init(struct obd_device *obd,
+ 		return -ENOMEM;
+ 
+ 	OBD_ALLOC(prefix, MAX_OBD_NAME + 5);
+-	if (prefix = NULL)
+-		GOTO(out_free_seq, rc = -ENOMEM);
++	if (prefix = NULL) {
++		rc = -ENOMEM;
++		goto out_free_seq;
++	}
+ 
+ 	snprintf(prefix, MAX_OBD_NAME + 5, "cli-%s", obd->obd_name);
+ 
+@@ -517,7 +521,7 @@ int client_fid_init(struct obd_device *obd,
+ 	rc = seq_client_init(cli->cl_seq, exp, type, prefix, NULL);
+ 	OBD_FREE(prefix, MAX_OBD_NAME + 5);
+ 	if (rc)
+-		GOTO(out_free_seq, rc);
++		goto out_free_seq;
+ 
+ 	return rc;
+ out_free_seq:
+diff --git a/drivers/staging/lustre/lustre/fld/fld_request.c b/drivers/staging/lustre/lustre/fld/fld_request.c
+index 4539a02..f63c669 100644
+--- a/drivers/staging/lustre/lustre/fld/fld_request.c
++++ b/drivers/staging/lustre/lustre/fld/fld_request.c
+@@ -293,7 +293,7 @@ static int fld_client_proc_init(struct lu_client_fld *fld)
+ 	if (rc) {
+ 		CERROR("%s: Can't init FLD proc, rc %d\n",
+ 		       fld->lcf_name, rc);
+-		GOTO(out_cleanup, rc);
++		goto out_cleanup;
+ 	}
+ 
+ 	return 0;
+@@ -363,12 +363,12 @@ int fld_client_init(struct lu_client_fld *fld,
+ 	if (IS_ERR(fld->lcf_cache)) {
+ 		rc = PTR_ERR(fld->lcf_cache);
+ 		fld->lcf_cache = NULL;
+-		GOTO(out, rc);
++		goto out;
+ 	}
+ 
+ 	rc = fld_client_proc_init(fld);
+ 	if (rc)
+-		GOTO(out, rc);
++		goto out;
+ out:
+ 	if (rc)
+ 		fld_client_fini(fld);
+@@ -441,11 +441,13 @@ int fld_client_rpc(struct obd_export *exp,
+ 	if (fld_op != FLD_LOOKUP)
+ 		mdc_put_rpc_lock(exp->exp_obd->u.cli.cl_rpc_lock, NULL);
+ 	if (rc)
+-		GOTO(out_req, rc);
++		goto out_req;
+ 
+ 	prange = req_capsule_server_get(&req->rq_pill, &RMF_FLD_MDFLD);
+-	if (prange = NULL)
+-		GOTO(out_req, rc = -EFAULT);
++	if (prange = NULL) {
++		rc = -EFAULT;
++		goto out_req;
++	}
+ 	*range = *prange;
+ out_req:
+ 	ptlrpc_req_finished(req);
 
