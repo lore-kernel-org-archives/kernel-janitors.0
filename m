@@ -1,64 +1,32 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 07 Aug 2014 12:49:09 +0000
-Subject: [PATCH 5/5] kexec: fix error return code
-Message-Id: <1407415749-19978-6-git-send-email-Julia.Lawall@lip6.fr>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Date: Sun, 31 Aug 2014 20:58:50 +0000
+Subject: Re: [PATCH] checkpatch: Remove unnecessary + after {8,8}
+Message-Id: <7d350fb4-2a54-4b3f-b81c-6c0737ff32fb@BY2FFO11FD028.protection.gbl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1407415749-19978-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1405128087.6751.12.camel@joe-AO725>
+	<20140712013927.GA30781@kroah.com> <1405129612.6751.24.camel@joe-AO725>
+	<20140712020114.GA12301@kroah.com> <20140712020520.GA18611@kroah.com>
+	<1405130970.6751.37.camel@joe-AO725>
+In-Reply-To: <1405130970.6751.37.camel@joe-AO725>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Eric Biederman <ebiederm@xmission.com>
-Cc: kernel-janitors@vger.kernel.org, kexec@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernelnewbies@lists.kernelnewbies.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Hi Joe,
 
-Convert a zero return value on error to a negative one, as returned
-elsewhere in the function.
+On Fri, 2014-07-11 at 07:09PM -0700, Joe Perches wrote:
+> There's a useless "+" use that needs to be removed as perl 5.20
+> emits a "Useless use of greediness modifier '+'" message each
+> time it's hit.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+I saw this Perl warning today as well and wondered whether this patch is
+coming or not. Apparently it's not in linux-next (yet).
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- kernel/kexec.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index 0b49a0a..dcd7a1f 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -2212,8 +2212,10 @@ static int kexec_calculate_store_digests(struct kimage *image)
- 
- 	sha_region_sz = KEXEC_SEGMENT_MAX * sizeof(struct kexec_sha_region);
- 	sha_regions = vzalloc(sha_region_sz);
--	if (!sha_regions)
-+	if (!sha_regions) {
-+		ret = -ENOMEM;
- 		goto out_free_desc;
-+	}
- 
- 	desc->tfm   = tfm;
- 	desc->flags = 0;
-
+	Thanks,
+	S=C3=B6ren
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
