@@ -1,41 +1,56 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 10 Sep 2014 11:05:25 +0000
-Subject: Re: [patch] usb: gadget: f_fs: signedness bug in __ffs_func_bind_do_descs()
-Message-Id: <20140910110525.GP6549@mwanda>
+Date: Mon, 01 Sep 2014 17:27:29 +0000
+Subject: [patch -RESEND] NFC: potential overflows in microread_target_discovered()
+Message-Id: <20140901172729.GA6549@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140909120609.GB19760@mwanda>
-In-Reply-To: <20140909120609.GB19760@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Eric Lapuyade <eric.lapuyade@linux.intel.com>
+Cc: Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, linux-wireless@vger.kernel.org, linux-nfc@ml01.01.org, kernel-janitors@vger.kernel.org, Kees Cook <keescook@chromium.org>
 
-On Tue, Sep 09, 2014 at 06:37:02PM +0200, Michal Nazarewicz wrote:
-> On Tue, Sep 09 2014, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > On Tue, Sep 09, 2014 at 03:57:26PM +0200, Michal Nazarewicz wrote:
-> >> On Tue, Sep 09 2014, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >> > Btw, there is a sparse warning:
-> >> >
-> >> > drivers/usb/gadget/function/f_fs.c:401:44: warning: Variable length array is used.
-> >> >
-> >> > The risk here is that the array would be too large.  I don't know the
-> >> > code well enough to say if it can be triggered, but from an outsider
-> >> > perspective it looks scary (security implications).  There should be a
-> >> > comment explaining why it can't be used to overflow the 8k stack.
-> >> 
-> >> n in that function can be at most 4
-> >
-> > I looked for where this limit is set but couldn't figure it out.  Which
-> > function is it?
-> 
-> The limit is never explicitly set, but logic in this function guarantees
-> it:
-> 
+Smatch says that skb->data is untrusted so we need to check to make sure
+that the memcpy() doesn't overflow.
 
-Ok.  Thanks.  I maybe could have found this on my own because I store
-this sort of information in Smatch except that "ev" is an anonymous
-struct.
+Fixes: cfad1ba87150 ('NFC: Initial support for Inside Secure microread')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I sent this in January but never received any response.  I don't know
+the subsystem very well but it looks like it could have security
+implications.
 
-regards,
-dan carpenter
+Compile tested only.
 
+diff --git a/drivers/nfc/microread/microread.c b/drivers/nfc/microread/microread.c
+index f868333271aa..963a4a5dc88e 100644
+--- a/drivers/nfc/microread/microread.c
++++ b/drivers/nfc/microread/microread.c
+@@ -501,9 +501,13 @@ static void microread_target_discovered(struct nfc_hci_dev *hdev, u8 gate,
+ 		targets->sens_res  			 be16_to_cpu(*(u16 *)&skb->data[MICROREAD_EMCF_A_ATQA]);
+ 		targets->sel_res = skb->data[MICROREAD_EMCF_A_SAK];
+-		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A_UID],
+-		       skb->data[MICROREAD_EMCF_A_LEN]);
+ 		targets->nfcid1_len = skb->data[MICROREAD_EMCF_A_LEN];
++		if (targets->nfcid1_len > sizeof(targets->nfcid1)) {
++			r = -EINVAL;
++			goto exit_free;
++		}
++		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A_UID],
++		       targets->nfcid1_len);
+ 		break;
+ 	case MICROREAD_GATE_ID_MREAD_ISO_A_3:
+ 		targets->supported_protocols @@ -511,9 +515,13 @@ static void microread_target_discovered(struct nfc_hci_dev *hdev, u8 gate,
+ 		targets->sens_res  			 be16_to_cpu(*(u16 *)&skb->data[MICROREAD_EMCF_A3_ATQA]);
+ 		targets->sel_res = skb->data[MICROREAD_EMCF_A3_SAK];
+-		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A3_UID],
+-		       skb->data[MICROREAD_EMCF_A3_LEN]);
+ 		targets->nfcid1_len = skb->data[MICROREAD_EMCF_A3_LEN];
++		if (targets->nfcid1_len > sizeof(targets->nfcid1)) {
++			r = -EINVAL;
++			goto exit_free;
++		}
++		memcpy(targets->nfcid1, &skb->data[MICROREAD_EMCF_A3_UID],
++		       targets->nfcid1_len);
+ 		break;
+ 	case MICROREAD_GATE_ID_MREAD_ISO_B:
+ 		targets->supported_protocols = NFC_PROTO_ISO14443_B_MASK;
