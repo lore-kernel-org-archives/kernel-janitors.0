@@ -1,26 +1,48 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Date: Thu, 04 Sep 2014 23:03:12 +0000
-Subject: Re: [patch -RESEND] NFC: potential overflows in microread_target_discovered()
-Message-Id: <20140904230312.GA6702@zurbaran>
+From: Joe Perches <joe@perches.com>
+Date: Mon, 01 Sep 2014 16:55:06 +0000
+Subject: [PATCH - resend] checkpatch: Remove unnecessary + after {8,8}
+Message-Id: <1409590506.2614.4.camel@joe-AO725>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140901172729.GA6549@mwanda>
-In-Reply-To: <20140901172729.GA6549@mwanda>
+References: <1405128087.6751.12.camel@joe-AO725>
+	<20140712013927.GA30781@kroah.com> <1405129612.6751.24.camel@joe-AO725>
+	<20140712020114.GA12301@kroah.com> <20140712020520.GA18611@kroah.com>
+In-Reply-To: <20140712020520.GA18611@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Eric Lapuyade <eric.lapuyade@linux.intel.com>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, "John W. Linville" <linville@tuxdriver.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, linux-wireless@vger.kernel.org, linux-nfc@ml01.01.org, kernel-janitors@vger.kernel.org, Kees Cook <keescook@chromium.org>
+To: kernelnewbies@lists.kernelnewbies.org
 
-Hi Dan,
+There's a useless "+" use that needs to be removed as perl 5.20
+emits a "Useless use of greediness modifier '+'" message each
+time it's hit.
 
-On Mon, Sep 01, 2014 at 08:27:29PM +0300, Dan Carpenter wrote:
-> Smatch says that skb->data is untrusted so we need to check to make sure
-> that the memcpy() doesn't overflow.
-Applied to nfc-fixes, thanks.
+Reported-by: Greg KH <gregkh@linuxfoundation.org>
+Signed-off-by: Joe Perches <joe@perches.com>
+---
 
-Cheers,
-Samuel.
+Resending, maybe Andrew's all-seeing eye blinked...
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+On Fri, 2014-07-11 at 19:05 -0700, Greg KH wrote:
+> Ok, with linux-next I get the same thing:
+
+Thanks Greg.
+
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index d5ac001..370a974 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2376,7 +2376,7 @@ sub process {
+ 				"please, no space before tabs\n" . $herevet) &&
+ 			    $fix) {
+ 				while ($fixed[$fixlinenr] =~
+-					   s/(^\+.*) {8,8}+\t/$1\t\t/) {}
++					   s/(^\+.*) {8,8}\t/$1\t\t/) {}
+ 				while ($fixed[$fixlinenr] =~
+ 					   s/(^\+.*) +\t/$1\t/) {}
+ 			}
+
+
+
