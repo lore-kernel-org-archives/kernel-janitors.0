@@ -1,7 +1,7 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Sep 2014 16:18:29 +0000
-Subject: [PATCH 1/7] staging: lustre: ptlrpc: expand the GOTO macro
-Message-Id: <1410106715-9573-1-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 01 Sep 2014 20:21:09 +0000
+Subject: [PATCH 1/2] staging: lustre: ldlm: expand the GOTO macro
+Message-Id: <1409602870-4642-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -37,1226 +37,752 @@ expression rc;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/lustre/lustre/ptlrpc/client.c        |   32 ++++----
- drivers/staging/lustre/lustre/ptlrpc/connection.c    |    2 
- drivers/staging/lustre/lustre/ptlrpc/import.c        |   46 ++++++-----
- drivers/staging/lustre/lustre/ptlrpc/llog_client.c   |   76 ++++++++++++-------
- drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c  |   54 +++++++++----
- drivers/staging/lustre/lustre/ptlrpc/niobuf.c        |   16 ++--
- drivers/staging/lustre/lustre/ptlrpc/nrs.c           |   46 ++++++-----
- drivers/staging/lustre/lustre/ptlrpc/ptlrpc_module.c |   16 ++--
- drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c       |   26 ++++--
- drivers/staging/lustre/lustre/ptlrpc/recover.c       |    8 +-
- drivers/staging/lustre/lustre/ptlrpc/sec.c           |   24 +++---
- drivers/staging/lustre/lustre/ptlrpc/sec_config.c    |   17 ++--
- drivers/staging/lustre/lustre/ptlrpc/service.c       |   43 ++++++----
- 13 files changed, 246 insertions(+), 160 deletions(-)
+ drivers/staging/lustre/lustre/ldlm/ldlm_lib.c      |   51 +++++++-----
+ drivers/staging/lustre/lustre/ldlm/ldlm_lock.c     |   49 +++++++----
+ drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c    |   34 ++++----
+ drivers/staging/lustre/lustre/ldlm/ldlm_pool.c     |   11 +-
+ drivers/staging/lustre/lustre/ldlm/ldlm_request.c  |   88 +++++++++++++--------
+ drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |   18 ++--
+ 6 files changed, 154 insertions(+), 97 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/client.c b/drivers/staging/lustre/lustre/ptlrpc/client.c
-index f1c3522..4519aee 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/client.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/client.c
-@@ -578,7 +578,7 @@ static int __ptlrpc_request_bufs_pack(struct ptlrpc_request *request,
- 	else {
- 		rc = sptlrpc_req_get_ctx(request);
- 		if (rc)
--			GOTO(out_free, rc);
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lib.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lib.c
+index 8307896..7701b2d 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_lib.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lib.c
+@@ -74,8 +74,10 @@ static int import_set_conn(struct obd_import *imp, struct obd_uuid *uuid,
+ 
+ 	if (create) {
+ 		OBD_ALLOC(imp_conn, sizeof(*imp_conn));
+-		if (!imp_conn)
+-			GOTO(out_put, rc = -ENOMEM);
++		if (!imp_conn) {
++			rc = -ENOMEM;
++			goto out_put;
++		}
+ 	}
+ 
+ 	spin_lock(&imp->imp_lock);
+@@ -91,7 +93,8 @@ static int import_set_conn(struct obd_import *imp, struct obd_uuid *uuid,
+ 			       imp, imp->imp_obd->obd_name, uuid->uuid,
+ 			       (priority ? ", moved to head" : ""));
+ 			spin_unlock(&imp->imp_lock);
+-			GOTO(out_free, rc = 0);
++			rc = 0;
 +			goto out_free;
- 	}
- 
- 	sptlrpc_req_set_flavor(request, opcode);
-@@ -587,7 +587,7 @@ static int __ptlrpc_request_bufs_pack(struct ptlrpc_request *request,
- 				 lengths, bufs);
- 	if (rc) {
- 		LASSERT(!request->rq_pool);
--		GOTO(out_ctx, rc);
-+		goto out_ctx;
- 	}
- 
- 	lustre_msg_add_version(request->rq_reqmsg, version);
-@@ -1585,7 +1585,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 			continue;
- 
- 		if (req->rq_phase = RQ_PHASE_INTERPRET)
--			GOTO(interpret, req->rq_status);
-+			goto interpret;
- 
- 		/*
- 		 * Note that this also will start async reply unlink.
-@@ -1604,7 +1604,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 				if (req->rq_status = 0)
- 					req->rq_status = -EIO;
- 				ptlrpc_rqphase_move(req, RQ_PHASE_INTERPRET);
--				GOTO(interpret, req->rq_status);
-+				goto interpret;
- 			} else {
- 				continue;
- 			}
-@@ -1617,7 +1617,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 			if (req->rq_status = 0)
- 				req->rq_status = -EIO;
- 			ptlrpc_rqphase_move(req, RQ_PHASE_INTERPRET);
--			GOTO(interpret, req->rq_status);
-+			goto interpret;
  		}
- 
- 		/* ptlrpc_set_wait->l_wait_event sets lwi_allow_intr
-@@ -1633,7 +1633,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 				     req->rq_wait_ctx)) {
- 			req->rq_status = -EINTR;
- 			ptlrpc_rqphase_move(req, RQ_PHASE_INTERPRET);
--			GOTO(interpret, req->rq_status);
-+			goto interpret;
- 		}
- 
- 		if (req->rq_phase = RQ_PHASE_RPC) {
-@@ -1662,7 +1662,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 					ptlrpc_rqphase_move(req,
- 						RQ_PHASE_INTERPRET);
- 					spin_unlock(&imp->imp_lock);
--					GOTO(interpret, req->rq_status);
-+					goto interpret;
- 				}
- 				if (ptlrpc_no_resend(req) &&
- 				    !req->rq_wait_ctx) {
-@@ -1670,7 +1670,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 					ptlrpc_rqphase_move(req,
- 							    RQ_PHASE_INTERPRET);
- 					spin_unlock(&imp->imp_lock);
--					GOTO(interpret, req->rq_status);
-+					goto interpret;
- 				}
- 
- 				list_del_init(&req->rq_list);
-@@ -1780,7 +1780,7 @@ int ptlrpc_check_set(const struct lu_env *env, struct ptlrpc_request_set *set)
- 			 */
- 			if (req->rq_bulk = NULL || req->rq_status < 0) {
- 				ptlrpc_rqphase_move(req, RQ_PHASE_INTERPRET);
--				GOTO(interpret, req->rq_status);
-+				goto interpret;
- 			}
- 
- 			ptlrpc_rqphase_move(req, RQ_PHASE_BULK);
-@@ -2491,7 +2491,7 @@ void ptlrpc_free_committed(struct obd_import *imp)
- 		}
- 		if (req->rq_import_generation < imp->imp_generation) {
- 			DEBUG_REQ(D_RPCTRACE, req, "free request with old gen");
--			GOTO(free_req, 0);
-+			goto free_req;
- 		}
- 
- 		/* not yet committed */
-@@ -2701,13 +2701,16 @@ static int ptlrpc_replay_interpret(const struct lu_env *env,
- 
- 	if (!ptlrpc_client_replied(req)) {
- 		CERROR("request replay timed out, restarting recovery\n");
--		GOTO(out, rc = -ETIMEDOUT);
-+		rc = -ETIMEDOUT;
-+		goto out;
  	}
- 
- 	if (lustre_msg_get_type(req->rq_repmsg) = PTL_RPC_MSG_ERR &&
- 	    (lustre_msg_get_status(req->rq_repmsg) = -ENOTCONN ||
--	     lustre_msg_get_status(req->rq_repmsg) = -ENODEV))
--		GOTO(out, rc = lustre_msg_get_status(req->rq_repmsg));
-+	     lustre_msg_get_status(req->rq_repmsg) = -ENODEV)) {
-+		rc = lustre_msg_get_status(req->rq_repmsg);
-+		goto out;
-+	}
- 
- 	/** VBR: check version failure */
- 	if (lustre_msg_get_status(req->rq_repmsg) = -EOVERFLOW) {
-@@ -2742,7 +2745,8 @@ static int ptlrpc_replay_interpret(const struct lu_env *env,
- 			  "Reported transno %llu is bigger than the replayed one: %llu",
- 			  req->rq_transno,
- 			  lustre_msg_get_transno(req->rq_reqmsg));
--		GOTO(out, rc = -EINVAL);
-+		rc = -EINVAL;
-+		goto out;
- 	}
- 
- 	DEBUG_REQ(D_HA, req, "got rep");
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/connection.c b/drivers/staging/lustre/lustre/ptlrpc/connection.c
-index 6f63333..2a875ab 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/connection.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/connection.c
-@@ -52,7 +52,7 @@ ptlrpc_connection_get(lnet_process_id_t peer, lnet_nid_t self,
- 
- 	conn = cfs_hash_lookup(conn_hash, &peer);
- 	if (conn)
--		GOTO(out, conn);
-+		goto out;
- 
- 	OBD_ALLOC_PTR(conn);
- 	if (!conn)
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/import.c b/drivers/staging/lustre/lustre/ptlrpc/import.c
-index b25fa95..2e7e717 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/import.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/import.c
-@@ -669,11 +669,11 @@ int ptlrpc_connect_import(struct obd_import *imp)
- 
- 	rc = import_select_connection(imp);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	rc = sptlrpc_import_sec_adapt(imp, NULL, NULL);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	/* Reset connect flags to the originally requested flags, in case
- 	 * the server is updated on-the-fly we will get the new features. */
-@@ -686,17 +686,19 @@ int ptlrpc_connect_import(struct obd_import *imp)
- 	rc = obd_reconnect(NULL, imp->imp_obd->obd_self_export, obd,
- 			   &obd->obd_uuid, &imp->imp_connect_data, NULL);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	request = ptlrpc_request_alloc(imp, &RQF_MDS_CONNECT);
--	if (request = NULL)
--		GOTO(out, rc = -ENOMEM);
-+	if (request = NULL) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
- 
- 	rc = ptlrpc_request_bufs_pack(request, LUSTRE_OBD_VERSION,
- 				      imp->imp_connect_op, bufs, NULL);
- 	if (rc) {
- 		ptlrpc_request_free(request);
--		GOTO(out, rc);
-+		goto out;
- 	}
- 
- 	/* Report the rpc service time to the server so that it knows how long
-@@ -804,7 +806,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
- 		imp->imp_force_reconnect = ptlrpc_busy_reconnect(rc);
+ 	/* No existing import connection found for \a uuid. */
+@@ -109,7 +112,8 @@ static int import_set_conn(struct obd_import *imp, struct obd_uuid *uuid,
+ 		       (priority ? "head" : "tail"));
+ 	} else {
  		spin_unlock(&imp->imp_lock);
- 		ptlrpc_maybe_ping_import_soon(imp);
--		GOTO(out, rc);
-+		goto out;
+-		GOTO(out_free, rc = -ENOENT);
++		rc = -ENOENT;
++		goto out_free;
  	}
+ 
  	spin_unlock(&imp->imp_lock);
- 
-@@ -822,7 +824,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
- 		CERROR("%s: no connect data from server\n",
- 		       imp->imp_obd->obd_name);
- 		rc = -EPROTO;
+@@ -143,7 +147,7 @@ int client_import_del_conn(struct obd_import *imp, struct obd_uuid *uuid)
+ 	spin_lock(&imp->imp_lock);
+ 	if (list_empty(&imp->imp_conn_list)) {
+ 		LASSERT(!imp->imp_connection);
 -		GOTO(out, rc);
 +		goto out;
  	}
  
- 	spin_lock(&imp->imp_lock);
-@@ -846,7 +848,8 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
- 		CERROR("%s: Server didn't granted asked subset of flags: asked=%#llx grranted=%#llx\n",
- 		       imp->imp_obd->obd_name, imp->imp_connect_flags_orig,
- 		       ocd->ocd_connect_flags);
--		GOTO(out, rc = -EPROTO);
-+		rc = -EPROTO;
-+		goto out;
- 	}
- 
- 	if (!exp) {
-@@ -854,7 +857,8 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
- 		   connect attempt */
- 		CERROR("%s: missing export after connect\n",
- 		       imp->imp_obd->obd_name);
--		GOTO(out, rc = -ENODEV);
-+		rc = -ENODEV;
-+		goto out;
- 	}
- 	old_connect_flags = exp_connect_flags(exp);
- 	exp->exp_connect_data = *ocd;
-@@ -893,7 +897,8 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
- 			ptlrpc_activate_import(imp);
- 		}
- 
--		GOTO(finish, rc = 0);
-+		rc = 0;
-+		goto finish;
- 	}
- 
- 	/* Determine what recovery state to move the import to. */
-@@ -905,7 +910,8 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
- 				      obd2cli_tgt(imp->imp_obd),
- 				      imp->imp_connection->c_remote_uuid.uuid,
- 				      imp->imp_dlm_handle.cookie);
--			GOTO(out, rc = -ENOTCONN);
-+			rc = -ENOTCONN;
-+			goto out;
- 		}
- 
- 		if (memcmp(&imp->imp_remote_handle,
-@@ -945,7 +951,8 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
- 
- 			if (!(MSG_CONNECT_RECOVERING & msg_flags)) {
- 				IMPORT_SET_STATE(imp, LUSTRE_IMP_EVICTED);
--				GOTO(finish, rc = 0);
-+				rc = 0;
-+				goto finish;
+ 	list_for_each_entry(imp_conn, &imp->imp_conn_list, oic_item) {
+@@ -157,7 +161,8 @@ int client_import_del_conn(struct obd_import *imp, struct obd_uuid *uuid)
+ 			if (imp->imp_state != LUSTRE_IMP_CLOSED &&
+ 			    imp->imp_state != LUSTRE_IMP_DISCON) {
+ 				CERROR("can't remove current connection\n");
+-				GOTO(out, rc = -EBUSY);
++				rc = -EBUSY;
++				goto out;
  			}
  
- 		} else {
-@@ -1034,7 +1041,8 @@ finish:
- 				      imp->imp_connection->c_remote_uuid.uuid,
- 				      imp->imp_connect_flags_orig,
- 				      ocd->ocd_connect_flags);
--			GOTO(out, rc = -EPROTO);
-+			rc = -EPROTO;
-+			goto out;
- 		}
- 
- 		if ((ocd->ocd_connect_flags & OBD_CONNECT_VERSION) &&
-@@ -1378,7 +1386,7 @@ int ptlrpc_import_recovery_state_machine(struct obd_import *imp)
- 			IMPORT_SET_STATE(imp, LUSTRE_IMP_REPLAY_LOCKS);
- 			rc = ldlm_replay_locks(imp);
- 			if (rc)
--				GOTO(out, rc);
-+				goto out;
- 		}
- 		rc = 0;
+ 			ptlrpc_connection_put(imp->imp_connection);
+@@ -398,15 +403,17 @@ int client_obd_setup(struct obd_device *obddev, struct lustre_cfg *lcfg)
+ 	rc = ldlm_get_ref();
+ 	if (rc) {
+ 		CERROR("ldlm_get_ref failed: %d\n", rc);
+-		GOTO(err, rc);
++		goto err;
  	}
-@@ -1388,7 +1396,7 @@ int ptlrpc_import_recovery_state_machine(struct obd_import *imp)
- 			IMPORT_SET_STATE(imp, LUSTRE_IMP_REPLAY_WAIT);
- 			rc = signal_completed_replay(imp);
- 			if (rc)
--				GOTO(out, rc);
-+				goto out;
- 		}
  
+ 	ptlrpc_init_client(rq_portal, rp_portal, name,
+ 			   &obddev->obd_ldlm_client);
+ 
+ 	imp = class_new_import(obddev);
+-	if (imp = NULL)
+-		GOTO(err_ldlm, rc = -ENOENT);
++	if (imp = NULL) {
++		rc = -ENOENT;
++		goto err_ldlm;
++	}
+ 	imp->imp_client = &obddev->obd_ldlm_client;
+ 	imp->imp_connect_op = connect_op;
+ 	memcpy(cli->cl_target_uuid.uuid, lustre_cfg_buf(lcfg, 1),
+@@ -416,7 +423,7 @@ int client_obd_setup(struct obd_device *obddev, struct lustre_cfg *lcfg)
+ 	rc = client_import_add_conn(imp, &server_uuid, 1);
+ 	if (rc) {
+ 		CERROR("can't add initial connection\n");
+-		GOTO(err_import, rc);
++		goto err_import;
  	}
-@@ -1406,7 +1414,7 @@ int ptlrpc_import_recovery_state_machine(struct obd_import *imp)
  
- 		rc = ptlrpc_resend(imp);
- 		if (rc)
--			GOTO(out, rc);
+ 	cli->cl_import = imp;
+@@ -442,7 +449,8 @@ int client_obd_setup(struct obd_device *obddev, struct lustre_cfg *lcfg)
+ 	if (obddev->obd_namespace = NULL) {
+ 		CERROR("Unable to create client namespace - %s\n",
+ 		       obddev->obd_name);
+-		GOTO(err_import, rc = -ENOMEM);
++		rc = -ENOMEM;
++		goto err_import;
+ 	}
+ 
+ 	cli->cl_qchk_stat = CL_NOT_QUOTACHECKED;
+@@ -485,12 +493,14 @@ int client_connect_import(const struct lu_env *env,
+ 
+ 	*exp = NULL;
+ 	down_write(&cli->cl_sem);
+-	if (cli->cl_conn_count > 0 )
+-		GOTO(out_sem, rc = -EALREADY);
++	if (cli->cl_conn_count > 0) {
++		rc = -EALREADY;
++		goto out_sem;
++	}
+ 
+ 	rc = class_connect(&conn, obd, cluuid);
+ 	if (rc)
+-		GOTO(out_sem, rc);
++		goto out_sem;
+ 
+ 	cli->cl_conn_count++;
+ 	*exp = class_conn2export(&conn);
+@@ -500,7 +510,7 @@ int client_connect_import(const struct lu_env *env,
+ 	imp->imp_dlm_handle = conn;
+ 	rc = ptlrpc_init_import(imp);
+ 	if (rc != 0)
+-		GOTO(out_ldlm, rc);
++		goto out_ldlm;
+ 
+ 	ocd = &imp->imp_connect_data;
+ 	if (data) {
+@@ -511,7 +521,7 @@ int client_connect_import(const struct lu_env *env,
+ 	rc = ptlrpc_connect_import(imp);
+ 	if (rc != 0) {
+ 		LASSERT(imp->imp_state = LUSTRE_IMP_DISCON);
+-		GOTO(out_ldlm, rc);
++		goto out_ldlm;
+ 	}
+ 	LASSERT(*exp != NULL && (*exp)->exp_connection);
+ 
+@@ -560,12 +570,15 @@ int client_disconnect_export(struct obd_export *exp)
+ 	if (!cli->cl_conn_count) {
+ 		CERROR("disconnecting disconnected device (%s)\n",
+ 		       obd->obd_name);
+-		GOTO(out_disconnect, rc = -EINVAL);
++		rc = -EINVAL;
++		goto out_disconnect;
+ 	}
+ 
+ 	cli->cl_conn_count--;
+-	if (cli->cl_conn_count)
+-		GOTO(out_disconnect, rc = 0);
++	if (cli->cl_conn_count) {
++		rc = 0;
++		goto out_disconnect;
++	}
+ 
+ 	/* Mark import deactivated now, so we don't try to reconnect if any
+ 	 * of the cleanup RPCs fails (e.g. LDLM cancel, etc).  We don't
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
+index 7fa5d43..6140130 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
+@@ -1254,18 +1254,26 @@ ldlm_mode_t ldlm_lock_match(struct ldlm_namespace *ns, __u64 flags,
+ 
+ 	lock = search_queue(&res->lr_granted, &mode, policy, old_lock,
+ 			    flags, unref);
+-	if (lock != NULL)
+-		GOTO(out, rc = 1);
+-	if (flags & LDLM_FL_BLOCK_GRANTED)
+-		GOTO(out, rc = 0);
++	if (lock != NULL) {
++		rc = 1;
++		goto out;
++	}
++	if (flags & LDLM_FL_BLOCK_GRANTED) {
++		rc = 0;
++		goto out;
++	}
+ 	lock = search_queue(&res->lr_converting, &mode, policy, old_lock,
+ 			    flags, unref);
+-	if (lock != NULL)
+-		GOTO(out, rc = 1);
++	if (lock != NULL) {
++		rc = 1;
++		goto out;
++	}
+ 	lock = search_queue(&res->lr_waiting, &mode, policy, old_lock,
+ 			    flags, unref);
+-	if (lock != NULL)
+-		GOTO(out, rc = 1);
++	if (lock != NULL) {
++		rc = 1;
++		goto out;
++	}
+ 
+  out:
+ 	unlock_res(res);
+@@ -1355,11 +1363,11 @@ ldlm_mode_t ldlm_revalidate_lock_handle(struct lustre_handle *lockh,
+ 	if (lock != NULL) {
+ 		lock_res_and_lock(lock);
+ 		if (lock->l_flags & LDLM_FL_GONE_MASK)
+-			GOTO(out, mode);
 +			goto out;
- 		IMPORT_SET_STATE(imp, LUSTRE_IMP_FULL);
- 		ptlrpc_activate_import(imp);
  
-@@ -1433,7 +1441,7 @@ int ptlrpc_disconnect_import(struct obd_import *imp, int noclose)
- 	int rq_opc, rc = 0;
+ 		if (lock->l_flags & LDLM_FL_CBPENDING &&
+ 		    lock->l_readers = 0 && lock->l_writers = 0)
+-			GOTO(out, mode);
++			goto out;
  
- 	if (imp->imp_obd->obd_force)
--		GOTO(set_state, rc);
-+		goto set_state;
+ 		if (bits)
+ 			*bits = lock->l_policy_data.l_inodebits.bits;
+@@ -1513,19 +1521,19 @@ struct ldlm_lock *ldlm_lock_create(struct ldlm_namespace *ns,
+ 	/* if this is the extent lock, allocate the interval tree node */
+ 	if (type = LDLM_EXTENT) {
+ 		if (ldlm_interval_alloc(lock) = NULL)
+-			GOTO(out, 0);
++			goto out;
+ 	}
  
- 	switch (imp->imp_connect_op) {
- 	case OST_CONNECT:
-@@ -1479,7 +1487,7 @@ int ptlrpc_disconnect_import(struct obd_import *imp, int noclose)
+ 	if (lvb_len) {
+ 		lock->l_lvb_len = lvb_len;
+ 		OBD_ALLOC(lock->l_lvb_data, lvb_len);
+ 		if (lock->l_lvb_data = NULL)
+-			GOTO(out, 0);
++			goto out;
+ 	}
  
- 	spin_lock(&imp->imp_lock);
- 	if (imp->imp_state != LUSTRE_IMP_FULL)
+ 	lock->l_lvb_type = lvb_type;
+ 	if (OBD_FAIL_CHECK(OBD_FAIL_LDLM_NEW_LOCK))
 -		GOTO(out, 0);
 +		goto out;
- 	spin_unlock(&imp->imp_lock);
  
- 	req = ptlrpc_request_alloc_pack(imp, &RQF_MDS_DISCONNECT,
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/llog_client.c b/drivers/staging/lustre/lustre/ptlrpc/llog_client.c
-index d068be7..56f825f 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/llog_client.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/llog_client.c
-@@ -93,8 +93,10 @@ static int llog_client_open(const struct lu_env *env,
- 	LASSERT(lgh);
+ 	return lock;
  
- 	req = ptlrpc_request_alloc(imp, &RQF_LLOG_ORIGIN_HANDLE_CREATE);
--	if (req = NULL)
--		GOTO(out, rc = -ENOMEM);
-+	if (req = NULL) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
- 
- 	if (name)
- 		req_capsule_set_size(&req->rq_pill, &RMF_NAME, RCL_CLIENT,
-@@ -105,7 +107,7 @@ static int llog_client_open(const struct lu_env *env,
- 	if (rc) {
- 		ptlrpc_request_free(req);
- 		req = NULL;
--		GOTO(out, rc);
+@@ -1593,14 +1601,15 @@ ldlm_error_t ldlm_lock_enqueue(struct ldlm_namespace *ns,
+ 		 * need to do anything else. */
+ 		*flags &= ~(LDLM_FL_BLOCK_GRANTED |
+ 			    LDLM_FL_BLOCK_CONV | LDLM_FL_BLOCK_WAIT);
+-		GOTO(out, ELDLM_OK);
 +		goto out;
  	}
- 	ptlrpc_request_set_replen(req);
  
-@@ -124,11 +126,13 @@ static int llog_client_open(const struct lu_env *env,
- 
- 	rc = ptlrpc_queue_wait(req);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	body = req_capsule_server_get(&req->rq_pill, &RMF_LLOGD_BODY);
--	if (body = NULL)
--		GOTO(out, rc = -EFAULT);
-+	if (body = NULL) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
- 
- 	lgh->lgh_id = body->lgd_logid;
- 	lgh->lgh_ctxt = ctxt;
-@@ -150,8 +154,10 @@ static int llog_client_destroy(const struct lu_env *env,
- 	req = ptlrpc_request_alloc_pack(imp, &RQF_LLOG_ORIGIN_HANDLE_DESTROY,
- 					LUSTRE_LOG_VERSION,
- 					LLOG_ORIGIN_HANDLE_DESTROY);
--	if (req = NULL)
--		GOTO(err_exit, rc =-ENOMEM);
-+	if (req = NULL) {
-+		rc = -ENOMEM;
-+		goto err_exit;
-+	}
- 
- 	body = req_capsule_client_get(&req->rq_pill, &RMF_LLOGD_BODY);
- 	body->lgd_logid = loghandle->lgh_id;
-@@ -186,8 +192,10 @@ static int llog_client_next_block(const struct lu_env *env,
- 	req = ptlrpc_request_alloc_pack(imp, &RQF_LLOG_ORIGIN_HANDLE_NEXT_BLOCK,
- 					LUSTRE_LOG_VERSION,
- 					LLOG_ORIGIN_HANDLE_NEXT_BLOCK);
--	if (req = NULL)
--		GOTO(err_exit, rc = -ENOMEM);
-+	if (req = NULL) {
-+		rc = -ENOMEM;
-+		goto err_exit;
-+	}
- 
- 	body = req_capsule_client_get(&req->rq_pill, &RMF_LLOGD_BODY);
- 	body->lgd_logid = loghandle->lgh_id;
-@@ -202,16 +210,20 @@ static int llog_client_next_block(const struct lu_env *env,
- 	ptlrpc_request_set_replen(req);
- 	rc = ptlrpc_queue_wait(req);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	body = req_capsule_server_get(&req->rq_pill, &RMF_LLOGD_BODY);
--	if (body = NULL)
--		GOTO(out, rc = -EFAULT);
-+	if (body = NULL) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
- 
- 	/* The log records are swabbed as they are processed */
- 	ptr = req_capsule_server_get(&req->rq_pill, &RMF_EADATA);
--	if (ptr = NULL)
--		GOTO(out, rc = -EFAULT);
-+	if (ptr = NULL) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
- 
- 	*cur_idx = body->lgd_saved_index;
- 	*cur_offset = body->lgd_cur_offset;
-@@ -238,8 +250,10 @@ static int llog_client_prev_block(const struct lu_env *env,
- 	req = ptlrpc_request_alloc_pack(imp, &RQF_LLOG_ORIGIN_HANDLE_PREV_BLOCK,
- 					LUSTRE_LOG_VERSION,
- 					LLOG_ORIGIN_HANDLE_PREV_BLOCK);
--	if (req = NULL)
--		GOTO(err_exit, rc = -ENOMEM);
-+	if (req = NULL) {
-+		rc = -ENOMEM;
-+		goto err_exit;
-+	}
- 
- 	body = req_capsule_client_get(&req->rq_pill, &RMF_LLOGD_BODY);
- 	body->lgd_logid = loghandle->lgh_id;
-@@ -253,15 +267,19 @@ static int llog_client_prev_block(const struct lu_env *env,
- 
- 	rc = ptlrpc_queue_wait(req);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	body = req_capsule_server_get(&req->rq_pill, &RMF_LLOGD_BODY);
--	if (body = NULL)
--		GOTO(out, rc = -EFAULT);
-+	if (body = NULL) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
- 
- 	ptr = req_capsule_server_get(&req->rq_pill, &RMF_EADATA);
--	if (ptr = NULL)
--		GOTO(out, rc = -EFAULT);
-+	if (ptr = NULL) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
- 
- 	memcpy(buf, ptr, len);
- out:
-@@ -285,8 +303,10 @@ static int llog_client_read_header(const struct lu_env *env,
- 	req = ptlrpc_request_alloc_pack(imp, &RQF_LLOG_ORIGIN_HANDLE_READ_HEADER,
- 					LUSTRE_LOG_VERSION,
- 					LLOG_ORIGIN_HANDLE_READ_HEADER);
--	if (req = NULL)
--		GOTO(err_exit, rc = -ENOMEM);
-+	if (req = NULL) {
-+		rc = -ENOMEM;
-+		goto err_exit;
-+	}
- 
- 	body = req_capsule_client_get(&req->rq_pill, &RMF_LLOGD_BODY);
- 	body->lgd_logid = handle->lgh_id;
-@@ -296,11 +316,13 @@ static int llog_client_read_header(const struct lu_env *env,
- 	ptlrpc_request_set_replen(req);
- 	rc = ptlrpc_queue_wait(req);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	hdr = req_capsule_server_get(&req->rq_pill, &RMF_LLOG_LOG_HDR);
--	if (hdr = NULL)
--		GOTO(out, rc = -EFAULT);
-+	if (hdr = NULL) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
- 
- 	memcpy(handle->lgh_hdr, hdr, sizeof(*hdr));
- 	handle->lgh_last_idx = handle->lgh_hdr->llh_tail.lrt_index;
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c b/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
-index ace12e8..87b9764a 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/lproc_ptlrpc.c
-@@ -500,8 +500,10 @@ static int ptlrpc_lprocfs_nrs_seq_show(struct seq_file *m, void *n)
- 	spin_unlock(&nrs->nrs_lock);
- 
- 	OBD_ALLOC(infos, num_pols * sizeof(*infos));
--	if (infos = NULL)
--		GOTO(out, rc = -ENOMEM);
-+	if (infos = NULL) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
- again:
- 
- 	ptlrpc_service_for_each_part(svcpt, i, svc) {
-@@ -640,26 +642,34 @@ static ssize_t ptlrpc_lprocfs_nrs_seq_write(struct file *file,
- 	char			       *token;
- 	int				rc = 0;
- 
--	if (count >= LPROCFS_NRS_WR_MAX_CMD)
--		GOTO(out, rc = -EINVAL);
-+	if (count >= LPROCFS_NRS_WR_MAX_CMD) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
- 
- 	OBD_ALLOC(cmd, LPROCFS_NRS_WR_MAX_CMD);
--	if (cmd = NULL)
--		GOTO(out, rc = -ENOMEM);
-+	if (cmd = NULL) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
- 	/**
- 	 * strsep() modifies its argument, so keep a copy
- 	 */
- 	cmd_copy = cmd;
- 
--	if (copy_from_user(cmd, buffer, count))
--		GOTO(out, rc = -EFAULT);
-+	if (copy_from_user(cmd, buffer, count)) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
- 
- 	cmd[count] = '\0';
- 
- 	token = strsep(&cmd, " ");
- 
--	if (strlen(token) > NRS_POL_NAME_MAX - 1)
--		GOTO(out, rc = -EINVAL);
-+	if (strlen(token) > NRS_POL_NAME_MAX - 1) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
- 
- 	/**
- 	 * No [reg|hp] token has been specified
-@@ -674,13 +684,17 @@ static ssize_t ptlrpc_lprocfs_nrs_seq_write(struct file *file,
- 		queue = PTLRPC_NRS_QUEUE_REG;
- 	else if (strcmp(cmd, "hp") = 0)
- 		queue = PTLRPC_NRS_QUEUE_HP;
--	else
--		GOTO(out, rc = -EINVAL);
-+	else {
-+		rc = -EINVAL;
-+		goto out;
-+	}
- 
- default_queue:
- 
--	if (queue = PTLRPC_NRS_QUEUE_HP && !nrs_svc_has_hp(svc))
--		GOTO(out, rc = -ENODEV);
-+	if (queue = PTLRPC_NRS_QUEUE_HP && !nrs_svc_has_hp(svc)) {
-+		rc = -ENODEV;
-+		goto out;
-+	}
- 	else if (queue = PTLRPC_NRS_QUEUE_BOTH && !nrs_svc_has_hp(svc))
- 		queue = PTLRPC_NRS_QUEUE_REG;
- 
-@@ -1258,14 +1272,18 @@ int lprocfs_wr_import(struct file *file, const char *buffer,
- 	if (kbuf = NULL)
- 		return -ENOMEM;
- 
--	if (copy_from_user(kbuf, buffer, count))
--		GOTO(out, count = -EFAULT);
-+	if (copy_from_user(kbuf, buffer, count)) {
-+		count = -EFAULT;
-+		goto out;
-+	}
- 
- 	kbuf[count] = 0;
- 
- 	/* only support connection=uuid::instance now */
--	if (strncmp(prefix, kbuf, prefix_len) != 0)
--		GOTO(out, count = -EINVAL);
-+	if (strncmp(prefix, kbuf, prefix_len) != 0) {
-+		count = -EINVAL;
-+		goto out;
-+	}
- 
- 	uuid = kbuf + prefix_len;
- 	ptr = strstr(uuid, "::");
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/niobuf.c b/drivers/staging/lustre/lustre/ptlrpc/niobuf.c
-index 8fb37f0..0067e06 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/niobuf.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/niobuf.c
-@@ -537,13 +537,13 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
- 
- 	rc = sptlrpc_cli_wrap_request(request);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	/* bulk register should be done after wrap_request() */
- 	if (request->rq_bulk != NULL) {
- 		rc = ptlrpc_register_bulk(request);
- 		if (rc != 0)
--			GOTO(out, rc);
-+			goto out;
- 	}
- 
- 	if (!noreply) {
-@@ -560,7 +560,7 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
- 				request->rq_err = 1;
- 				spin_unlock(&request->rq_lock);
- 				request->rq_status = rc;
--				GOTO(cleanup_bulk, rc);
-+				goto cleanup_bulk;
- 			}
- 		} else {
- 			request->rq_repdata = NULL;
-@@ -573,7 +573,8 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
- 		if (rc != 0) {
- 			CERROR("LNetMEAttach failed: %d\n", rc);
- 			LASSERT(rc = -ENOMEM);
--			GOTO(cleanup_bulk, rc = -ENOMEM);
+ 	ldlm_resource_unlink_lock(lock);
+ 	if (res->lr_type = LDLM_EXTENT && lock->l_tree_node = NULL) {
+ 		if (node = NULL) {
+ 			ldlm_lock_destroy_nolock(lock);
+-			GOTO(out, rc = -ENOMEM);
 +			rc = -ENOMEM;
-+			goto cleanup_bulk;
- 		}
- 	}
- 
-@@ -616,7 +617,8 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
- 			/* ...but the MD attach didn't succeed... */
- 			request->rq_receiving_reply = 0;
- 			spin_unlock(&request->rq_lock);
--			GOTO(cleanup_me, rc = -ENOMEM);
-+			rc = -ENOMEM;
-+			goto cleanup_me;
- 		}
- 
- 		CDEBUG(D_NET, "Setup reply buffer: %u bytes, xid %llu, portal %u\n",
-@@ -650,11 +652,11 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
- 			  request->rq_request_portal,
- 			  request->rq_xid, 0);
- 	if (rc = 0)
--		GOTO(out, rc);
-+		goto out;
- 
- 	ptlrpc_req_finished(request);
- 	if (noreply)
--		GOTO(out, rc);
-+		goto out;
- 
-  cleanup_me:
- 	/* MEUnlink is safe; the PUT didn't even get off the ground, and
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/nrs.c b/drivers/staging/lustre/lustre/ptlrpc/nrs.c
-index af5b987..181301b 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/nrs.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/nrs.c
-@@ -264,7 +264,7 @@ static int nrs_policy_start_locked(struct ptlrpc_nrs_policy *policy)
- 				module_put(policy->pol_desc->pd_owner);
- 
- 			policy->pol_state = NRS_POL_STATE_STOPPED;
--			GOTO(out, rc);
 +			goto out;
  		}
- 	}
  
-@@ -635,8 +635,10 @@ static int nrs_policy_ctl(struct ptlrpc_nrs *nrs, char *name,
- 	spin_lock(&nrs->nrs_lock);
- 
- 	policy = nrs_policy_find_locked(nrs, name);
--	if (policy = NULL)
--		GOTO(out, rc = -ENOENT);
-+	if (policy = NULL) {
-+		rc = -ENOENT;
+ 		INIT_LIST_HEAD(&node->li_group);
+@@ -1630,7 +1639,7 @@ ldlm_error_t ldlm_lock_enqueue(struct ldlm_namespace *ns,
+ 			ldlm_resource_add_lock(res, &res->lr_waiting, lock);
+ 		else
+ 			ldlm_grant_lock(lock, NULL);
+-		GOTO(out, ELDLM_OK);
 +		goto out;
-+	}
- 
- 	switch (opc) {
- 		/**
-@@ -956,19 +958,21 @@ static int nrs_svcpt_setup_locked(struct ptlrpc_service_part *svcpt)
- 	nrs = nrs_svcpt2nrs(svcpt, false);
- 	rc = nrs_svcpt_setup_locked0(nrs, svcpt);
- 	if (rc < 0)
--		GOTO(out, rc);
-+		goto out;
- 
- 	/**
- 	 * Optionally allocate a high-priority NRS head.
- 	 */
- 	if (svcpt->scp_service->srv_ops.so_hpreq_handler = NULL)
--		GOTO(out, rc);
-+		goto out;
- 
- 	OBD_CPT_ALLOC_PTR(svcpt->scp_nrs_hp,
- 			  svcpt->scp_service->srv_cptable,
- 			  svcpt->scp_cpt);
--	if (svcpt->scp_nrs_hp = NULL)
+ 	} else {
+ 		CERROR("This is client-side-only module, cannot handle "
+ 		       "LDLM_NAMESPACE_SERVER resource type lock.\n");
+@@ -1837,14 +1846,16 @@ int ldlm_run_ast_work(struct ldlm_namespace *ns, struct list_head *rpc_list,
+ 	 * to keep the number of requests in flight to ns_max_parallel_ast */
+ 	arg->set = ptlrpc_prep_fcset(ns->ns_max_parallel_ast ? : UINT_MAX,
+ 				     work_ast_lock, arg);
+-	if (arg->set = NULL)
 -		GOTO(out, rc = -ENOMEM);
-+	if (svcpt->scp_nrs_hp = NULL) {
++	if (arg->set = NULL) {
 +		rc = -ENOMEM;
 +		goto out;
 +	}
  
- 	nrs = nrs_svcpt2nrs(svcpt, true);
- 	rc = nrs_svcpt_setup_locked0(nrs, svcpt);
-@@ -1154,12 +1158,15 @@ int ptlrpc_nrs_policy_register(struct ptlrpc_nrs_pol_conf *conf)
- 		CERROR("NRS: failing to register policy %s which has already "
- 		       "been registered with NRS core!\n",
- 		       conf->nc_name);
--		GOTO(fail, rc = -EEXIST);
-+		rc = -EEXIST;
-+		goto fail;
- 	}
+ 	ptlrpc_set_wait(arg->set);
+ 	ptlrpc_set_destroy(arg->set);
  
- 	OBD_ALLOC_PTR(desc);
--	if (desc = NULL)
--		GOTO(fail, rc = -ENOMEM);
-+	if (desc = NULL) {
-+		rc = -ENOMEM;
-+		goto fail;
-+	}
- 
- 	strncpy(desc->pd_name, conf->nc_name, NRS_POL_NAME_MAX);
- 	desc->pd_ops		 = conf->nc_ops;
-@@ -1214,7 +1221,7 @@ again:
- 				LASSERT(rc2 = 0);
- 				mutex_unlock(&ptlrpc_all_services_mutex);
- 				OBD_FREE_PTR(desc);
--				GOTO(fail, rc);
-+				goto fail;
- 			}
- 
- 			if (!hp && nrs_svc_has_hp(svc)) {
-@@ -1237,7 +1244,7 @@ again:
- 				LASSERT(rc2 = 0);
- 				mutex_unlock(&ptlrpc_all_services_mutex);
- 				OBD_FREE_PTR(desc);
--				GOTO(fail, rc);
-+				goto fail;
- 			}
- 		}
- 	}
-@@ -1288,7 +1295,8 @@ int ptlrpc_nrs_policy_unregister(struct ptlrpc_nrs_pol_conf *conf)
- 		CERROR("Failing to unregister NRS policy %s which has "
- 		       "not been registered with NRS core!\n",
- 		       conf->nc_name);
--		GOTO(not_exist, rc = -ENOENT);
-+		rc = -ENOENT;
-+		goto not_exist;
- 	}
- 
- 	mutex_lock(&ptlrpc_all_services_mutex);
-@@ -1299,7 +1307,7 @@ int ptlrpc_nrs_policy_unregister(struct ptlrpc_nrs_pol_conf *conf)
- 			CERROR("Please first stop policy %s on all service "
- 			       "partitions and then retry to unregister the "
- 			       "policy.\n", conf->nc_name);
--		GOTO(fail, rc);
-+		goto fail;
- 	}
- 
- 	CDEBUG(D_INFO, "Unregistering policy %s from NRS core.\n",
-@@ -1347,7 +1355,7 @@ int ptlrpc_service_nrs_setup(struct ptlrpc_service *svc)
- 	ptlrpc_service_for_each_part(svcpt, i, svc) {
- 		rc = nrs_svcpt_setup_locked(svcpt);
- 		if (rc != 0)
--			GOTO(failed, rc);
-+			goto failed;
- 	}
- 
- 	/**
-@@ -1361,7 +1369,7 @@ int ptlrpc_service_nrs_setup(struct ptlrpc_service *svc)
- 		if (desc->pd_ops->op_lprocfs_init != NULL) {
- 			rc = desc->pd_ops->op_lprocfs_init(svc);
- 			if (rc != 0)
--				GOTO(failed, rc);
-+				goto failed;
- 		}
- 	}
- 
-@@ -1679,7 +1687,7 @@ int ptlrpc_nrs_policy_control(const struct ptlrpc_service *svc,
- 					    opc, arg);
- 			if (rc != 0 || (queue = PTLRPC_NRS_QUEUE_REG &&
- 					single))
--				GOTO(out, rc);
-+				goto out;
- 		}
- 
- 		if ((queue & PTLRPC_NRS_QUEUE_HP) != 0) {
-@@ -1694,7 +1702,7 @@ int ptlrpc_nrs_policy_control(const struct ptlrpc_service *svc,
- 			rc = nrs_policy_ctl(nrs_svcpt2nrs(svcpt, true), name,
- 					    opc, arg);
- 			if (rc != 0 || single)
--				GOTO(out, rc);
-+				goto out;
- 		}
- 	}
+ 	rc = atomic_read(&arg->restart) ? -ERESTART : 0;
+-	GOTO(out, rc);
++	goto out;
  out:
-@@ -1721,7 +1729,7 @@ int ptlrpc_nrs_init(void)
- 
- 	rc = ptlrpc_nrs_policy_register(&nrs_conf_fifo);
- 	if (rc != 0)
--		GOTO(fail, rc);
-+		goto fail;
- 
- 
+ 	OBD_FREE_PTR(arg);
  	return rc;
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/ptlrpc_module.c b/drivers/staging/lustre/lustre/ptlrpc/ptlrpc_module.c
-index 6d92a56..5268887 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/ptlrpc_module.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/ptlrpc_module.c
-@@ -75,45 +75,45 @@ __init int ptlrpc_init(void)
- 	cleanup_phase = 1;
- 	rc = ptlrpc_request_cache_init();
- 	if (rc)
--		GOTO(cleanup, rc);
-+		goto cleanup;
- 
- 	cleanup_phase = 2;
- 	rc = ptlrpc_init_portals();
- 	if (rc)
--		GOTO(cleanup, rc);
-+		goto cleanup;
- 
- 	cleanup_phase = 3;
- 
- 	rc = ptlrpc_connection_init();
- 	if (rc)
--		GOTO(cleanup, rc);
-+		goto cleanup;
- 
- 	cleanup_phase = 4;
- 	ptlrpc_put_connection_superhack = ptlrpc_connection_put;
- 
- 	rc = ptlrpc_start_pinger();
- 	if (rc)
--		GOTO(cleanup, rc);
-+		goto cleanup;
- 
- 	cleanup_phase = 5;
- 	rc = ldlm_init();
- 	if (rc)
--		GOTO(cleanup, rc);
-+		goto cleanup;
- 
- 	cleanup_phase = 6;
- 	rc = sptlrpc_init();
- 	if (rc)
--		GOTO(cleanup, rc);
-+		goto cleanup;
- 
- 	cleanup_phase = 7;
- 	rc = ptlrpc_nrs_init();
- 	if (rc)
--		GOTO(cleanup, rc);
-+		goto cleanup;
- 
- 	cleanup_phase = 8;
- 	rc = tgt_mod_init();
- 	if (rc)
--		GOTO(cleanup, rc);
-+		goto cleanup;
- 	return 0;
- 
- cleanup:
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c b/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c
-index 9c60e2a..357ea9f 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/ptlrpcd.c
-@@ -615,8 +615,10 @@ int ptlrpcd_start(int index, int max, const char *name, struct ptlrpcd_ctl *pc)
- 	spin_lock_init(&pc->pc_lock);
- 	strlcpy(pc->pc_name, name, sizeof(pc->pc_name));
- 	pc->pc_set = ptlrpc_prep_set();
--	if (pc->pc_set = NULL)
--		GOTO(out, rc = -ENOMEM);
-+	if (pc->pc_set = NULL) {
-+		rc = -ENOMEM;
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
+index 952e10e..91cf7eb 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
+@@ -202,7 +202,8 @@ static void ldlm_handle_cp_callback(struct ptlrpc_request *req,
+ 	lvb_len = req_capsule_get_size(&req->rq_pill, &RMF_DLM_LVB, RCL_CLIENT);
+ 	if (lvb_len < 0) {
+ 		LDLM_ERROR(lock, "Fail to get lvb_len, rc = %d", lvb_len);
+-		GOTO(out, rc = lvb_len);
++		rc = lvb_len;
 +		goto out;
-+	}
+ 	} else if (lvb_len > 0) {
+ 		if (lock->l_lvb_len > 0) {
+ 			/* for extent lock, lvb contains ost_lvb{}. */
+@@ -213,7 +214,8 @@ static void ldlm_handle_cp_callback(struct ptlrpc_request *req,
+ 					   "expectation, expected = %d, "
+ 					   "replied = %d",
+ 					   lock->l_lvb_len, lvb_len);
+-				GOTO(out, rc = -EINVAL);
++				rc = -EINVAL;
++				goto out;
+ 			}
+ 		} else if (ldlm_has_layout(lock)) { /* for layout lock, lvb has
+ 						     * variable length */
+@@ -222,7 +224,8 @@ static void ldlm_handle_cp_callback(struct ptlrpc_request *req,
+ 			OBD_ALLOC(lvb_data, lvb_len);
+ 			if (lvb_data = NULL) {
+ 				LDLM_ERROR(lock, "No memory: %d.\n", lvb_len);
+-				GOTO(out, rc = -ENOMEM);
++				rc = -ENOMEM;
++				goto out;
+ 			}
  
- 	/*
- 	 * So far only "client" ptlrpcd uses an environment. In the future,
-@@ -625,19 +627,21 @@ int ptlrpcd_start(int index, int max, const char *name, struct ptlrpcd_ctl *pc)
- 	 */
- 	rc = lu_context_init(&pc->pc_env.le_ctx, LCT_CL_THREAD|LCT_REMEMBER);
- 	if (rc != 0)
--		GOTO(out_set, rc);
-+		goto out_set;
- 
- 	{
- 		struct task_struct *task;
- 		if (index >= 0) {
- 			rc = ptlrpcd_bind(index, max);
- 			if (rc < 0)
--				GOTO(out_env, rc);
-+				goto out_env;
- 		}
- 
- 		task = kthread_run(ptlrpcd, pc, "%s", pc->pc_name);
--		if (IS_ERR(task))
--			GOTO(out_env, rc = PTR_ERR(task));
-+		if (IS_ERR(task)) {
-+			rc = PTR_ERR(task);
-+			goto out_env;
-+		}
- 
- 		wait_for_completion(&pc->pc_starting);
+ 			lock_res_and_lock(lock);
+@@ -240,7 +243,8 @@ static void ldlm_handle_cp_callback(struct ptlrpc_request *req,
+ 		/* bug 11300: the lock has already been granted */
+ 		unlock_res_and_lock(lock);
+ 		LDLM_DEBUG(lock, "Double grant race happened");
+-		GOTO(out, rc = 0);
++		rc = 0;
++		goto out;
  	}
-@@ -741,14 +745,16 @@ static int ptlrpcd_init(void)
  
- 	size = offsetof(struct ptlrpcd, pd_threads[nthreads]);
- 	OBD_ALLOC(ptlrpcds, size);
--	if (ptlrpcds = NULL)
--		GOTO(out, rc = -ENOMEM);
-+	if (ptlrpcds = NULL) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
+ 	/* If we receive the completion AST before the actual enqueue returned,
+@@ -267,7 +271,7 @@ static void ldlm_handle_cp_callback(struct ptlrpc_request *req,
+ 				&dlm_req->lock_desc.l_resource.lr_name);
+ 		if (rc < 0) {
+ 			LDLM_ERROR(lock, "Failed to allocate resource");
+-			GOTO(out, rc);
++			goto out;
+ 		}
+ 		LDLM_DEBUG(lock, "completion AST, new resource");
+ 		CERROR("change resource!\n");
+@@ -287,7 +291,7 @@ static void ldlm_handle_cp_callback(struct ptlrpc_request *req,
+ 				   lock->l_lvb_data, lvb_len);
+ 		if (rc < 0) {
+ 			unlock_res_and_lock(lock);
+-			GOTO(out, rc);
++			goto out;
+ 		}
+ 	}
  
- 	snprintf(name, sizeof(name), "ptlrpcd_rcv");
- 	set_bit(LIOD_RECOVERY, &ptlrpcds->pd_thread_rcv.pc_flags);
- 	rc = ptlrpcd_start(-1, nthreads, name, &ptlrpcds->pd_thread_rcv);
- 	if (rc < 0)
+@@ -304,7 +308,7 @@ static void ldlm_handle_cp_callback(struct ptlrpc_request *req,
+ 
+ 	LDLM_DEBUG_NOLOCK("client completion callback handler END (lock %p)",
+ 			  lock);
+-	GOTO(out, rc);
++	goto out;
+ 
+ out:
+ 	if (rc < 0) {
+@@ -980,7 +984,7 @@ int ldlm_init_export(struct obd_export *exp)
+ 
+ 	rc = ldlm_init_flock_export(exp);
+ 	if (rc)
+-		GOTO(err, rc);
++		goto err;
+ 
+ 	return 0;
+ err:
+@@ -1014,7 +1018,7 @@ static int ldlm_setup(void)
+ 
+ 	rc = ldlm_proc_setup();
+ 	if (rc != 0)
 -		GOTO(out, rc);
 +		goto out;
  
- 	/* XXX: We start nthreads ptlrpc daemons. Each of them can process any
- 	 *      non-recovery async RPC to improve overall async RPC efficiency.
-@@ -766,7 +772,7 @@ static int ptlrpcd_init(void)
- 		snprintf(name, sizeof(name), "ptlrpcd_%d", i);
- 		rc = ptlrpcd_start(i, nthreads, name, &ptlrpcds->pd_threads[i]);
+ 	memset(&conf, 0, sizeof(conf));
+ 	conf = (typeof(conf)) {
+@@ -1051,13 +1055,15 @@ static int ldlm_setup(void)
+ 		CERROR("failed to start service\n");
+ 		rc = PTR_ERR(ldlm_state->ldlm_cb_service);
+ 		ldlm_state->ldlm_cb_service = NULL;
+-		GOTO(out, rc);
++		goto out;
+ 	}
+ 
+ 
+ 	OBD_ALLOC(blp, sizeof(*blp));
+-	if (blp = NULL)
+-		GOTO(out, rc = -ENOMEM);
++	if (blp = NULL) {
++		rc = -ENOMEM;
++		goto out;
++	}
+ 	ldlm_state->ldlm_bl_pool = blp;
+ 
+ 	spin_lock_init(&blp->blp_lock);
+@@ -1079,14 +1085,14 @@ static int ldlm_setup(void)
+ 	for (i = 0; i < blp->blp_min_threads; i++) {
+ 		rc = ldlm_bl_thread_start(blp);
  		if (rc < 0)
 -			GOTO(out, rc);
 +			goto out;
  	}
  
- 	ptlrpcds->pd_size = size;
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/recover.c b/drivers/staging/lustre/lustre/ptlrpc/recover.c
-index 5e4a1a5..9d74f24 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/recover.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/recover.c
-@@ -317,7 +317,7 @@ int ptlrpc_recover_import(struct obd_import *imp, char *new_uuid, int async)
- 		rc = -EINVAL;
- 	spin_unlock(&imp->imp_lock);
- 	if (rc)
+ 
+ 	rc = ldlm_pools_init();
+ 	if (rc) {
+ 		CERROR("Failed to initialize LDLM pools: %d\n", rc);
 -		GOTO(out, rc);
 +		goto out;
+ 	}
+ 	return 0;
  
- 	/* force import to be disconnected. */
- 	ptlrpc_set_import_discon(imp, 0);
-@@ -329,7 +329,7 @@ int ptlrpc_recover_import(struct obd_import *imp, char *new_uuid, int async)
- 		obd_str2uuid(&uuid, new_uuid);
- 		rc = import_set_conn_priority(imp, &uuid);
- 		if (rc)
--			GOTO(out, rc);
-+			goto out;
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c b/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
+index 150b44d..37f1973 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
+@@ -735,7 +735,8 @@ static int ldlm_pool_proc_init(struct ldlm_pool *pl)
+ 	if (parent_ns_proc = NULL) {
+ 		CERROR("%s: proc entry is not initialized\n",
+ 		       ldlm_ns_name(ns));
+-		GOTO(out_free_name, rc = -EINVAL);
++		rc = -EINVAL;
++		goto out_free_name;
+ 	}
+ 	pl->pl_proc_dir = lprocfs_register("pool", parent_ns_proc,
+ 					   NULL, NULL);
+@@ -743,7 +744,7 @@ static int ldlm_pool_proc_init(struct ldlm_pool *pl)
+ 		CERROR("LProcFS failed in ldlm-pool-init\n");
+ 		rc = PTR_ERR(pl->pl_proc_dir);
+ 		pl->pl_proc_dir = NULL;
+-		GOTO(out_free_name, rc);
++		goto out_free_name;
  	}
  
- 	/* Check if reconnect is already in progress */
-@@ -340,11 +340,11 @@ int ptlrpc_recover_import(struct obd_import *imp, char *new_uuid, int async)
- 	}
- 	spin_unlock(&imp->imp_lock);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
+ 	var_name[MAX_STRING_SIZE] = '\0';
+@@ -767,8 +768,10 @@ static int ldlm_pool_proc_init(struct ldlm_pool *pl)
  
- 	rc = ptlrpc_connect_import(imp);
- 	if (rc)
--		GOTO(out, rc);
-+		goto out;
- 
- 	if (!async) {
- 		struct l_wait_info lwi;
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec.c b/drivers/staging/lustre/lustre/ptlrpc/sec.c
-index bf59f3e..4ce7685 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/sec.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/sec.c
-@@ -1095,15 +1095,18 @@ int sptlrpc_cli_unwrap_early_reply(struct ptlrpc_request *req,
- 	early_size = req->rq_nob_received;
- 	early_bufsz = size_roundup_power2(early_size);
- 	OBD_ALLOC_LARGE(early_buf, early_bufsz);
--	if (early_buf = NULL)
--		GOTO(err_req, rc = -ENOMEM);
-+	if (early_buf = NULL) {
+ 	pl->pl_stats = lprocfs_alloc_stats(LDLM_POOL_LAST_STAT -
+ 					   LDLM_POOL_FIRST_STAT, 0);
+-	if (!pl->pl_stats)
+-		GOTO(out_free_name, rc = -ENOMEM);
++	if (!pl->pl_stats) {
 +		rc = -ENOMEM;
-+		goto err_req;
++		goto out_free_name;
 +	}
  
- 	/* sanity checkings and copy data out, do it inside spinlock */
- 	spin_lock(&req->rq_lock);
+ 	lprocfs_counter_init(pl->pl_stats, LDLM_POOL_GRANTED_STAT,
+ 			     LPROCFS_CNTR_AVGMINMAX | LPROCFS_CNTR_STDDEV,
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
+index 07de715..655a1c7 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
+@@ -423,8 +423,10 @@ int ldlm_cli_enqueue_local(struct ldlm_namespace *ns,
  
- 	if (req->rq_replied) {
- 		spin_unlock(&req->rq_lock);
--		GOTO(err_buf, rc = -EALREADY);
-+		rc = -EALREADY;
-+		goto err_buf;
+ 	lock = ldlm_lock_create(ns, res_id, type, mode, &cbs, data, lvb_len,
+ 				lvb_type);
+-	if (unlikely(!lock))
+-		GOTO(out_nolock, err = -ENOMEM);
++	if (unlikely(!lock)) {
++		err = -ENOMEM;
++		goto out_nolock;
++	}
+ 
+ 	ldlm_lock2handle(lock, lockh);
+ 
+@@ -444,7 +446,7 @@ int ldlm_cli_enqueue_local(struct ldlm_namespace *ns,
+ 
+ 	err = ldlm_lock_enqueue(ns, &lock, policy, flags);
+ 	if (unlikely(err != ELDLM_OK))
+-		GOTO(out, err);
++		goto out;
+ 
+ 	if (policy != NULL)
+ 		*policy = lock->l_policy_data;
+@@ -535,13 +537,15 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
+ 			   rc = ELDLM_LOCK_ABORTED ? "ABORTED" : "FAILED");
+ 
+ 		if (rc != ELDLM_LOCK_ABORTED)
+-			GOTO(cleanup, rc);
++			goto cleanup;
  	}
  
- 	LASSERT(req->rq_repbuf);
-@@ -1113,7 +1116,8 @@ int sptlrpc_cli_unwrap_early_reply(struct ptlrpc_request *req,
- 	if (req->rq_reply_off != 0) {
- 		CERROR("early reply with offset %u\n", req->rq_reply_off);
- 		spin_unlock(&req->rq_lock);
--		GOTO(err_buf, rc = -EPROTO);
+ 	/* Before we return, swab the reply */
+ 	reply = req_capsule_server_get(&req->rq_pill, &RMF_DLM_REP);
+-	if (reply = NULL)
+-		GOTO(cleanup, rc = -EPROTO);
++	if (reply = NULL) {
 +		rc = -EPROTO;
-+		goto err_buf;
++		goto cleanup;
++	}
+ 
+ 	if (lvb_len != 0) {
+ 		LASSERT(lvb != NULL);
+@@ -550,12 +554,14 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
+ 					    RCL_SERVER);
+ 		if (size < 0) {
+ 			LDLM_ERROR(lock, "Fail to get lvb_len, rc = %d", size);
+-			GOTO(cleanup, rc = size);
++			rc = size;
++			goto cleanup;
+ 		} else if (unlikely(size > lvb_len)) {
+ 			LDLM_ERROR(lock, "Replied LVB is larger than "
+ 				   "expectation, expected = %d, replied = %d",
+ 				   lvb_len, size);
+-			GOTO(cleanup, rc = -EINVAL);
++			rc = -EINVAL;
++			goto cleanup;
+ 		}
  	}
  
- 	if (req->rq_nob_received != early_size) {
-@@ -1121,14 +1125,16 @@ int sptlrpc_cli_unwrap_early_reply(struct ptlrpc_request *req,
- 		CERROR("data size has changed from %u to %u\n",
- 		       early_size, req->rq_nob_received);
- 		spin_unlock(&req->rq_lock);
--		GOTO(err_buf, rc = -EINVAL);
-+		rc = -EINVAL;
-+		goto err_buf;
+@@ -563,7 +569,8 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
+ 		if (lvb_len != 0)
+ 			rc = ldlm_fill_lvb(lock, &req->rq_pill, RCL_SERVER,
+ 					   lvb, size);
+-		GOTO(cleanup, rc = (rc != 0 ? rc : ELDLM_LOCK_ABORTED));
++		rc = (rc != 0 ? rc : ELDLM_LOCK_ABORTED);
++		goto cleanup;
  	}
  
- 	if (req->rq_nob_received < sizeof(struct lustre_msg)) {
- 		CERROR("early reply length %d too small\n",
- 		       req->rq_nob_received);
- 		spin_unlock(&req->rq_lock);
--		GOTO(err_buf, rc = -EALREADY);
-+		rc = -EALREADY;
-+		goto err_buf;
+ 	/* lock enqueued on the server */
+@@ -616,8 +623,10 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
+ 
+ 			rc = ldlm_lock_change_resource(ns, lock,
+ 					&reply->lock_desc.l_resource.lr_name);
+-			if (rc || lock->l_resource = NULL)
+-				GOTO(cleanup, rc = -ENOMEM);
++			if (rc || lock->l_resource = NULL) {
++				rc = -ENOMEM;
++				goto cleanup;
++			}
+ 			LDLM_DEBUG(lock, "client-side enqueue, new resource");
+ 		}
+ 		if (with_policy)
+@@ -658,7 +667,7 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
+ 		unlock_res_and_lock(lock);
+ 		if (rc < 0) {
+ 			cleanup_phase = 1;
+-			GOTO(cleanup, rc);
++			goto cleanup;
+ 		}
  	}
  
- 	memcpy(early_buf, req->rq_repbuf, early_size);
-@@ -1148,7 +1154,7 @@ int sptlrpc_cli_unwrap_early_reply(struct ptlrpc_request *req,
- 	if (rc) {
- 		DEBUG_REQ(D_ADAPTTO, early_req,
- 			  "error %d unwrap early reply", rc);
--		GOTO(err_ctx, rc);
-+		goto err_ctx;
- 	}
+@@ -1037,14 +1046,18 @@ int ldlm_cli_convert(struct lustre_handle *lockh, int new_mode, __u32 *flags)
+ 	ptlrpc_request_set_replen(req);
+ 	rc = ptlrpc_queue_wait(req);
+ 	if (rc != ELDLM_OK)
+-		GOTO(out, rc);
++		goto out;
  
- 	LASSERT(early_req->rq_repmsg);
-@@ -1434,7 +1440,7 @@ int sptlrpc_import_sec_adapt(struct obd_import *imp,
- 		char    str2[24];
+ 	reply = req_capsule_server_get(&req->rq_pill, &RMF_DLM_REP);
+-	if (reply = NULL)
+-		GOTO(out, rc = -EPROTO);
++	if (reply = NULL) {
++		rc = -EPROTO;
++		goto out;
++	}
  
- 		if (flavor_equal(&sf, &sec->ps_flvr))
--			GOTO(out, rc);
+-	if (req->rq_status)
+-		GOTO(out, rc = req->rq_status);
++	if (req->rq_status) {
++		rc = req->rq_status;
++		goto out;
++	}
+ 
+ 	res = ldlm_lock_convert(lock, new_mode, &reply->lock_flags);
+ 	if (res != NULL) {
+@@ -1055,7 +1068,7 @@ int ldlm_cli_convert(struct lustre_handle *lockh, int new_mode, __u32 *flags)
+ 			rc = lock->l_completion_ast(lock, LDLM_FL_WAIT_NOREPROC,
+ 						    NULL);
+ 			if (rc)
+-				GOTO(out, rc);
++				goto out;
+ 		}
+ 	} else {
+ 		rc = LUSTRE_EDEADLK;
+@@ -1179,8 +1192,10 @@ int ldlm_cli_cancel_req(struct obd_export *exp, struct list_head *cancels,
+ 		}
+ 
+ 		req = ptlrpc_request_alloc(imp, &RQF_LDLM_CANCEL);
+-		if (req = NULL)
+-			GOTO(out, rc = -ENOMEM);
++		if (req = NULL) {
++			rc = -ENOMEM;
 +			goto out;
++		}
  
- 		CDEBUG(D_SEC, "import %s->%s: changing flavor %s -> %s\n",
- 		       imp->imp_obd->obd_name,
-@@ -1447,7 +1453,7 @@ int sptlrpc_import_sec_adapt(struct obd_import *imp,
- 		    SPTLRPC_FLVR_MECH(sf.sf_rpc) =
- 		    SPTLRPC_FLVR_MECH(sec->ps_flvr.sf_rpc)) {
- 			sptlrpc_import_sec_adapt_inplace(imp, sec, &sf);
+ 		req_capsule_filled_sizes(&req->rq_pill, RCL_CLIENT);
+ 		req_capsule_set_size(&req->rq_pill, &RMF_DLM_REQ, RCL_CLIENT,
+@@ -1189,7 +1204,7 @@ int ldlm_cli_cancel_req(struct obd_export *exp, struct list_head *cancels,
+ 		rc = ptlrpc_request_pack(req, LUSTRE_DLM_VERSION, LDLM_CANCEL);
+ 		if (rc) {
+ 			ptlrpc_request_free(req);
 -			GOTO(out, rc);
 +			goto out;
  		}
- 	} else if (SPTLRPC_FLVR_BASE(sf.sf_rpc) ! 		   SPTLRPC_FLVR_BASE(SPTLRPC_FLVR_NULL)) {
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/sec_config.c b/drivers/staging/lustre/lustre/ptlrpc/sec_config.c
-index c9e9da7..10800f9 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/sec_config.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/sec_config.c
-@@ -1023,7 +1023,7 @@ int sptlrpc_target_local_copy_conf(struct obd_device *obd,
- 		rc = PTR_ERR(dentry);
- 		CERROR("cannot lookup %s directory: rc = %d\n",
- 		       MOUNT_CONFIGS_DIR, rc);
--		GOTO(out_ctx, rc);
-+		goto out_ctx;
- 	}
  
- 	/* erase the old tmp log */
-@@ -1031,16 +1031,16 @@ int sptlrpc_target_local_copy_conf(struct obd_device *obd,
- 	if (rc < 0 && rc != -ENOENT) {
- 		CERROR("%s: cannot erase temporary sptlrpc log: rc = %d\n",
- 		       obd->obd_name, rc);
--		GOTO(out_dput, rc);
-+		goto out_dput;
- 	}
+ 		req->rq_request_portal = LDLM_CANCEL_REQUEST_PORTAL;
+@@ -1202,7 +1217,7 @@ int ldlm_cli_cancel_req(struct obd_export *exp, struct list_head *cancels,
+ 		if (flags & LCF_ASYNC) {
+ 			ptlrpcd_add_req(req, PDL_POLICY_LOCAL, -1);
+ 			sent = count;
+-			GOTO(out, 0);
++			goto out;
+ 		} else {
+ 			rc = ptlrpc_queue_wait(req);
+ 		}
+@@ -1961,22 +1976,28 @@ int ldlm_resource_foreach(struct ldlm_resource *res, ldlm_iterator_t iter,
+ 	list_for_each_safe(tmp, next, &res->lr_granted) {
+ 		lock = list_entry(tmp, struct ldlm_lock, l_res_link);
  
- 	/* write temporary log */
- 	rc = llog_open_create(NULL, ctxt, &llh, NULL, LOG_SPTLRPC_TMP);
- 	if (rc)
--		GOTO(out_dput, rc);
-+		goto out_dput;
- 	rc = llog_init_handle(NULL, llh, LLOG_F_IS_PLAIN, NULL);
- 	if (rc)
--		GOTO(out_close, rc);
-+		goto out_close;
- 
- 	rc = sptlrpc_record_rules(llh, conf);
- 
-@@ -1112,16 +1112,17 @@ int sptlrpc_target_local_read_conf(struct obd_device *obd,
- 	if (rc < 0) {
- 		if (rc = -ENOENT)
- 			rc = 0;
--		GOTO(out_pop, rc);
-+		goto out_pop;
- 	}
- 
- 	rc = llog_init_handle(NULL, llh, LLOG_F_IS_PLAIN, NULL);
- 	if (rc)
--		GOTO(out_close, rc);
-+		goto out_close;
- 
- 	if (llog_get_size(llh) <= 1) {
- 		CDEBUG(D_SEC, "no local sptlrpc copy found\n");
--		GOTO(out_close, rc = 0);
-+		rc = 0;
-+		goto out_close;
- 	}
- 
- 	rc = llog_process(NULL, llh, local_read_handler, (void *)conf, NULL);
-@@ -1174,7 +1175,7 @@ int sptlrpc_conf_target_get_rules(struct obd_device *obd,
- 	conf = sptlrpc_conf_get(fsname, 0);
- 	if (conf = NULL) {
- 		CERROR("missing sptlrpc config log\n");
--		GOTO(out, rc);
-+		goto out;
- 	}
- 
- 	if (conf->sc_updated  = 0) {
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/service.c b/drivers/staging/lustre/lustre/ptlrpc/service.c
-index 160ec3e..a8df8a7 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/service.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/service.c
-@@ -781,13 +781,15 @@ ptlrpc_register_service(struct ptlrpc_service_conf *conf,
- 			cpt = cpts != NULL ? cpts[i] : i;
- 
- 		OBD_CPT_ALLOC(svcpt, cptable, cpt, sizeof(*svcpt));
--		if (svcpt = NULL)
--			GOTO(failed, rc = -ENOMEM);
-+		if (svcpt = NULL) {
-+			rc = -ENOMEM;
-+			goto failed;
-+		}
- 
- 		service->srv_parts[i] = svcpt;
- 		rc = ptlrpc_service_part_init(service, svcpt, cpt);
- 		if (rc != 0)
--			GOTO(failed, rc);
-+			goto failed;
- 	}
- 
- 	ptlrpc_server_nthreads_check(service, conf);
-@@ -804,7 +806,7 @@ ptlrpc_register_service(struct ptlrpc_service_conf *conf,
- 
- 	rc = ptlrpc_service_nrs_setup(service);
- 	if (rc != 0)
--		GOTO(failed, rc);
-+		goto failed;
- 
- 	CDEBUG(D_NET, "%s: Started, listening on portal %d\n",
- 	       service->srv_name, service->srv_req_portal);
-@@ -813,7 +815,7 @@ ptlrpc_register_service(struct ptlrpc_service_conf *conf,
- 	if (rc != 0) {
- 		CERROR("Failed to start threads for service %s: %d\n",
- 		       service->srv_name, rc);
--		GOTO(failed, rc);
-+		goto failed;
- 	}
- 
- 	return service;
-@@ -1308,8 +1310,10 @@ static int ptlrpc_at_send_early_reply(struct ptlrpc_request *req)
- 	if (reqcopy = NULL)
- 		return -ENOMEM;
- 	OBD_ALLOC_LARGE(reqmsg, req->rq_reqlen);
--	if (!reqmsg)
--		GOTO(out_free, rc = -ENOMEM);
-+	if (!reqmsg) {
-+		rc = -ENOMEM;
-+		goto out_free;
-+	}
- 
- 	*reqcopy = *req;
- 	reqcopy->rq_reply_state = NULL;
-@@ -1327,24 +1331,29 @@ static int ptlrpc_at_send_early_reply(struct ptlrpc_request *req)
- 	if (atomic_read(&req->rq_refcount) = 1) {
- 		DEBUG_REQ(D_ADAPTTO, reqcopy, "Normal reply already sent out, "
- 			  "abort sending early reply\n");
--		GOTO(out, rc = -EINVAL);
-+		rc = -EINVAL;
-+		goto out;
- 	}
- 
- 	/* Connection ref */
- 	reqcopy->rq_export = class_conn2export(
- 				     lustre_msg_get_handle(reqcopy->rq_reqmsg));
--	if (reqcopy->rq_export = NULL)
--		GOTO(out, rc = -ENODEV);
-+	if (reqcopy->rq_export = NULL) {
-+		rc = -ENODEV;
-+		goto out;
-+	}
- 
- 	/* RPC ref */
- 	class_export_rpc_inc(reqcopy->rq_export);
- 	if (reqcopy->rq_export->exp_obd &&
--	    reqcopy->rq_export->exp_obd->obd_fail)
--		GOTO(out_put, rc = -ENODEV);
-+	    reqcopy->rq_export->exp_obd->obd_fail) {
-+		rc = -ENODEV;
-+		goto out_put;
-+	}
- 
- 	rc = lustre_pack_reply_flags(reqcopy, 1, NULL, NULL, LPRFL_EARLY_REPLY);
- 	if (rc)
--		GOTO(out_put, rc);
-+		goto out_put;
- 
- 	rc = ptlrpc_send_reply(reqcopy, PTLRPC_REPLY_EARLY);
- 
-@@ -1849,7 +1858,7 @@ ptlrpc_server_handle_req_in(struct ptlrpc_service_part *svcpt,
- 	/* Move it over to the request processing queue */
- 	rc = ptlrpc_server_request_add(svcpt, req);
- 	if (rc)
--		GOTO(err_req, rc);
-+		goto err_req;
- 
- 	wake_up(&svcpt->scp_waitq);
- 	return 1;
-@@ -2787,8 +2796,10 @@ int ptlrpc_hr_init(void)
- 		LASSERT(hrp->hrp_nthrs > 0);
- 		OBD_CPT_ALLOC(hrp->hrp_thrs, ptlrpc_hr.hr_cpt_table, i,
- 			      hrp->hrp_nthrs * sizeof(*hrt));
--		if (hrp->hrp_thrs = NULL)
--			GOTO(out, rc = -ENOMEM);
-+		if (hrp->hrp_thrs = NULL) {
-+			rc = -ENOMEM;
+-		if (iter(lock, closure) = LDLM_ITER_STOP)
+-			GOTO(out, rc = LDLM_ITER_STOP);
++		if (iter(lock, closure) = LDLM_ITER_STOP) {
++			rc = LDLM_ITER_STOP;
 +			goto out;
 +		}
+ 	}
  
- 		for (j = 0; j < hrp->hrp_nthrs; j++) {
- 			hrt = &hrp->hrp_thrs[j];
+ 	list_for_each_safe(tmp, next, &res->lr_converting) {
+ 		lock = list_entry(tmp, struct ldlm_lock, l_res_link);
+ 
+-		if (iter(lock, closure) = LDLM_ITER_STOP)
+-			GOTO(out, rc = LDLM_ITER_STOP);
++		if (iter(lock, closure) = LDLM_ITER_STOP) {
++			rc = LDLM_ITER_STOP;
++			goto out;
++		}
+ 	}
+ 
+ 	list_for_each_safe(tmp, next, &res->lr_waiting) {
+ 		lock = list_entry(tmp, struct ldlm_lock, l_res_link);
+ 
+-		if (iter(lock, closure) = LDLM_ITER_STOP)
+-			GOTO(out, rc = LDLM_ITER_STOP);
++		if (iter(lock, closure) = LDLM_ITER_STOP) {
++			rc = LDLM_ITER_STOP;
++			goto out;
++		}
+ 	}
+  out:
+ 	unlock_res(res);
+@@ -2081,12 +2102,14 @@ static int replay_lock_interpret(const struct lu_env *env,
+ 
+ 	atomic_dec(&req->rq_import->imp_replay_inflight);
+ 	if (rc != ELDLM_OK)
+-		GOTO(out, rc);
++		goto out;
+ 
+ 
+ 	reply = req_capsule_server_get(&req->rq_pill, &RMF_DLM_REP);
+-	if (reply = NULL)
+-		GOTO(out, rc = -EPROTO);
++	if (reply = NULL) {
++		rc = -EPROTO;
++		goto out;
++	}
+ 
+ 	lock = ldlm_handle2lock(&aa->lock_handle);
+ 	if (!lock) {
+@@ -2095,7 +2118,8 @@ static int replay_lock_interpret(const struct lu_env *env,
+ 		       aa->lock_handle.cookie, reply->lock_handle.cookie,
+ 		       req->rq_export->exp_client_uuid.uuid,
+ 		       libcfs_id2str(req->rq_peer));
+-		GOTO(out, rc = -ESTALE);
++		rc = -ESTALE;
++		goto out;
+ 	}
+ 
+ 	/* Key change rehash lock in per-export hash with new key */
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
+index 8fec984..a785b7a 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
+@@ -102,7 +102,7 @@ int ldlm_proc_setup(void)
+ 	if (IS_ERR(ldlm_type_proc_dir)) {
+ 		CERROR("LProcFS failed in ldlm-init\n");
+ 		rc = PTR_ERR(ldlm_type_proc_dir);
+-		GOTO(err, rc);
++		goto err;
+ 	}
+ 
+ 	ldlm_ns_proc_dir = lprocfs_register("namespaces",
+@@ -111,7 +111,7 @@ int ldlm_proc_setup(void)
+ 	if (IS_ERR(ldlm_ns_proc_dir)) {
+ 		CERROR("LProcFS failed in ldlm-init\n");
+ 		rc = PTR_ERR(ldlm_ns_proc_dir);
+-		GOTO(err_type, rc);
++		goto err_type;
+ 	}
+ 
+ 	ldlm_svc_proc_dir = lprocfs_register("services",
+@@ -120,7 +120,7 @@ int ldlm_proc_setup(void)
+ 	if (IS_ERR(ldlm_svc_proc_dir)) {
+ 		CERROR("LProcFS failed in ldlm-init\n");
+ 		rc = PTR_ERR(ldlm_svc_proc_dir);
+-		GOTO(err_ns, rc);
++		goto err_ns;
+ 	}
+ 
+ 	rc = lprocfs_add_vars(ldlm_type_proc_dir, list, NULL);
+@@ -580,7 +580,7 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
+ 		nsd = &ldlm_ns_hash_defs[idx];
+ 		if (nsd->nsd_type = LDLM_NS_TYPE_UNKNOWN) {
+ 			CERROR("Unknown type %d for ns %s\n", ns_type, name);
+-			GOTO(out_ref, NULL);
++			goto out_ref;
+ 		}
+ 
+ 		if (nsd->nsd_type = ns_type)
+@@ -589,7 +589,7 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
+ 
+ 	OBD_ALLOC_PTR(ns);
+ 	if (!ns)
+-		GOTO(out_ref, NULL);
++		goto out_ref;
+ 
+ 	ns->ns_rs_hash = cfs_hash_create(name,
+ 					 nsd->nsd_all_bits, nsd->nsd_all_bits,
+@@ -602,7 +602,7 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
+ 					 CFS_HASH_SPIN_BKTLOCK |
+ 					 CFS_HASH_NO_ITEMREF);
+ 	if (ns->ns_rs_hash = NULL)
+-		GOTO(out_ns, NULL);
++		goto out_ns;
+ 
+ 	cfs_hash_for_each_bucket(ns->ns_rs_hash, &bd, idx) {
+ 		nsb = cfs_hash_bd_extra_get(ns->ns_rs_hash, &bd);
+@@ -636,14 +636,14 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
+ 	rc = ldlm_namespace_proc_register(ns);
+ 	if (rc != 0) {
+ 		CERROR("Can't initialize ns proc, rc %d\n", rc);
+-		GOTO(out_hash, rc);
++		goto out_hash;
+ 	}
+ 
+ 	idx = ldlm_namespace_nr_read(client);
+ 	rc = ldlm_pool_init(&ns->ns_pool, ns, idx, client);
+ 	if (rc) {
+ 		CERROR("Can't initialize lock pool, rc %d\n", rc);
+-		GOTO(out_proc, rc);
++		goto out_proc;
+ 	}
+ 
+ 	ldlm_namespace_register(ns, client);
+@@ -822,7 +822,7 @@ force_wait:
+ 				       "namespace with %d resources in use, "
+ 				       "(rc=%d)\n", ldlm_ns_name(ns),
+ 				       atomic_read(&ns->ns_bref), rc);
+-			GOTO(force_wait, rc);
++			goto force_wait;
+ 		}
+ 
+ 		if (atomic_read(&ns->ns_bref)) {
+
