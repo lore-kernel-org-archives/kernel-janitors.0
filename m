@@ -1,44 +1,37 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Sep 2014 09:57:42 +0000
-Subject: re: target: target_core_transport.c: Cleaning up missing null-terminate in conjunction with strncpy
-Message-Id: <20140903095742.GA5058@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 01 Sep 2014 20:21:10 +0000
+Subject: [PATCH 2/2] staging: lustre: ldlm: simplify rc initialization
+Message-Id: <1409602870-4642-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rickard_strandqvist@spectrumdigital.se, Nicholas Bellinger <nab@linux-iscsi.org>
-Cc: target-devel@vger.kernel.org, Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, "Dilger, Andreas" <andreas.dilger@intel.com>, "Drokin, Oleg" <oleg.drokin@intel.com>, Peng Tao <bergwolf@gmail.com>
 
-The patch 6cfa853ceee4: "target: target_core_transport.c: Cleaning up
-missing null-terminate in conjunction with strncpy" from Aug 3, 2014,
-leads to the following static checker warning:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-	drivers/target/target_core_transport.c:956 transport_dump_vpd_ident_type()
-	error: potentially dereferencing uninitialized 'len'.
+Simplify initialization of rc to take advantage of the fact that it is done
+at statement level.
 
-drivers/target/target_core_transport.c
-   955          default:
-   956                  len = strlen(len);
-                        ^^^^^^^^^^^^^^^^^
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This was obviously supposed to be strlen(buf) and no one compile tested
-it...  But the patch is called "missing null-terminate" when actually
-the original code was fine as far as I can see.
+---
+ drivers/staging/lustre/lustre/ldlm/ldlm_request.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Apparently, as a safety measure we're trying to replace every strncpy()
-with:
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
+index 655a1c7..9ce437b 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
+@@ -569,7 +569,8 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
+ 		if (lvb_len != 0)
+ 			rc = ldlm_fill_lvb(lock, &req->rq_pill, RCL_SERVER,
+ 					   lvb, size);
+-		rc = (rc != 0 ? rc : ELDLM_LOCK_ABORTED);
++		if (rc = 0)
++			rc = ELDLM_LOCK_ABORTED;
+ 		goto cleanup;
+ 	}
+ 
 
-	strncpy(foo, bar, sizeof(foo));
-	foo[sizeof(foo) - 1] = '\0';
-
-We should have a function for this.  We used to use strlcpy() but people
-complained that it could read beyond the end of the src string.  Also it
-doesn't pad the string with zeros.  So now we're open coding NUL
-terminators everywhere so the code is easier to audit.
-
-That sucks and makes the code messier.
-
-Rickard, please, let's find a cleaner way to do this.
-
-regards,
-dan carpenter
