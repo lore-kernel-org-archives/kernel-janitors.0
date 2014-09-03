@@ -1,25 +1,30 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Date: Fri, 19 Sep 2014 15:15:21 +0000
-Subject: Re: [patch] UBI: return on error in rename_volumes()
-Message-Id: <1411139721.28850.143.camel@sauron.fi.intel.com>
+From: Jonathan Klee <jklee@nosuchfail.org>
+Date: Wed, 03 Sep 2014 15:32:14 +0000
+Subject: [PATCH] fix coding style error
+Message-Id: <1409758334-32721-1-git-send-email-jklee@nosuchfail.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140919104848.GC26391@mwanda>
-In-Reply-To: <20140919104848.GC26391@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+To: kernel-janitors@vger.kernel.org
 
-On Fri, 2014-09-19 at 13:56 +0300, Dan Carpenter wrote:
-> I noticed this during a code review.  We are checking that the strlen()
-> of ->name is not less than the ->name_len which the user gave us.  I
-> believe this bug is harmless but clearly we meant to return here instead
-> of setting an error code and then not using it.
+---
+ drivers/hid/hid-apple.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Pushed to linux-ubifs.git, thanks!
-
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index f822fd2..df9348f 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -160,7 +160,7 @@ static const struct apple_key_translation swapped_option_cmd_keys[] = {
+ 	{ KEY_LEFTALT,	KEY_LEFTMETA },
+ 	{ KEY_LEFTMETA,	KEY_LEFTALT },
+ 	{ KEY_RIGHTALT,	KEY_RIGHTMETA },
+-	{ KEY_RIGHTMETA,KEY_RIGHTALT },
++	{ KEY_RIGHTMETA, KEY_RIGHTALT },
+ 	{ }
+ };
+ 
 -- 
-Best Regards,
-Artem Bityutskiy
+2.1.0
 
