@@ -1,55 +1,34 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Tue, 23 Sep 2014 09:10:03 +0000
-Subject: Re: [PATCH v2] brcmfmac: Fix off by one bug in brcmf_count_20mhz_channels()
-Message-Id: <542138EB.40708@broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Sep 2014 11:11:23 +0000
+Subject: [patch -next] hyperv: NULL dereference on error
+Message-Id: <20140904111123.GD21504@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1411426195-13467-1-git-send-email-emilgoode@gmail.com>
-In-Reply-To: <1411426195-13467-1-git-send-email-emilgoode@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Daniel Kim <dekim@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>
+Cc: devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
-On 09/23/14 00:49, Emil Goode wrote:
-> In the brcmf_count_20mhz_channels function we are looping through a list
-> of channels received from firmware. Since the index of the first channel
-> is 0 the condition leads to an off by one bug. This is causing us to hit
-> the WARN_ON_ONCE(1) calls in the brcmu_d11n_decchspec function, which is
-> how I discovered the bug.
->
-> Introduced by:
-> commit b48d891676f756d48b4d0ee131e4a7a5d43ca417
-> ("brcmfmac: rework wiphy structure setup")
->
+We try to call free_netvsc_device(net_device) when "net_device" is NULL.
+It leads to an Oops.
 
-Hi John,
+Fixes: f90251c8a6d0 ('hyperv: Increase the buffer length for netvsc_channel_cb()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This bug was introduced in 3.17 so can it still go in the wireless tree? 
-I verified it applies to wireless/master branch.
-
-Regards,
-Arend
-
-> Acked-by: Arend van Spriel<arend@broadcom.com>
-> Signed-off-by: Emil Goode<emilgoode@gmail.com>
-> ---
-> v2: Added Arends "Acked-by" tag.
->
->   drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-> index 12a60ca..0517687 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-> @@ -4924,7 +4924,7 @@ static void brcmf_count_20mhz_channels(struct brcmf_cfg80211_info *cfg,
->   	struct brcmu_chan ch;
->   	int i;
->
-> -	for (i = 0; i<= total; i++) {
-> +	for (i = 0; i<  total; i++) {
->   		ch.chspec = (u16)le32_to_cpu(chlist->element[i]);
->   		cfg->d11inf.decchspec(&ch);
->
-
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index 5b5644a..977984b 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -1054,10 +1054,8 @@ int netvsc_device_add(struct hv_device *device, void *additional_info)
+ 	struct net_device *ndev;
+ 
+ 	net_device = alloc_net_device(device);
+-	if (!net_device) {
+-		ret = -ENOMEM;
+-		goto cleanup;
+-	}
++	if (!net_device)
++		return -ENOMEM;
+ 
+ 	net_device->ring_size = ring_size;
+ 
