@@ -1,21 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 12 Sep 2014 11:08:03 +0000
-Subject: Re: [PATCH 1/6] Coccinelle: Semantic patch for replacing puts with putc
-Message-Id: <5412D413.3080404@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 05 Sep 2014 12:09:28 +0000
+Subject: [patch] [media] ttusb-dec: buffer overflow in ioctl
+Message-Id: <20140905120928.GA30311@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1410513954-28909-1-git-send-email-linux@rasmusvillemoes.dk>
- <1410513954-28909-2-git-send-email-linux@rasmusvillemoes.dk>
-In-Reply-To: <1410513954-28909-2-git-send-email-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> Using seq_puts to write a one-character string is suboptimal,
-> since puts has to call strlen().
+We need to add a limit check here so we don't overflow the buffer.
 
-Are there any more functions which work with such strings in a similar way?
-Would it make sense to look also at other function names?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
+diff --git a/drivers/media/usb/ttusb-dec/ttusbdecfe.c b/drivers/media/usb/ttusb-dec/ttusbdecfe.c
+index 5c45c9d..9c29552 100644
+--- a/drivers/media/usb/ttusb-dec/ttusbdecfe.c
++++ b/drivers/media/usb/ttusb-dec/ttusbdecfe.c
+@@ -156,6 +156,9 @@ static int ttusbdecfe_dvbs_diseqc_send_master_cmd(struct dvb_frontend* fe, struc
+ 		   0x00, 0x00, 0x00, 0x00,
+ 		   0x00, 0x00 };
+ 
++	if (cmd->msg_len > sizeof(b) - 4)
++		return -EINVAL;
++
+ 	memcpy(&b[4], cmd->msg, cmd->msg_len);
+ 
+ 	state->config->send_command(fe, 0x72,
