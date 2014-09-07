@@ -1,41 +1,81 @@
-From: Antti Palosaari <crope@iki.fi>
-Date: Wed, 24 Sep 2014 10:48:47 +0000
-Subject: Re: [patch] [media] hackrf: harmless off by one in debug code
-Message-Id: <5422A18F.9090106@iki.fi>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Sep 2014 16:18:34 +0000
+Subject: [PATCH 6/7] staging: lustre: obdclass: expand the GOTO macro + break
+Message-Id: <1410106715-9573-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140924103639.GB15107@mwanda>
-In-Reply-To: <20140924103639.GB15107@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, "Dilger, Andreas" <andreas.dilger@intel.com>, "Drokin, Oleg" <oleg.drokin@intel.com>, Peng Tao <bergwolf@gmail.com>
 
-Acked-by: Antti Palosaari <crope@iki.fi>
-Reviewed-by: Antti Palosaari <crope@iki.fi>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Antti
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-On 09/24/2014 01:36 PM, Dan Carpenter wrote:
-> My static checker complains that "i" could be one element beyond the end
-> of the array.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
-> index 328b5ba..fd1fa41 100644
-> --- a/drivers/media/usb/hackrf/hackrf.c
-> +++ b/drivers/media/usb/hackrf/hackrf.c
-> @@ -932,7 +932,7 @@ static int hackrf_set_bandwidth(struct hackrf_dev *dev)
->   	dev->bandwidth->val = bandwidth;
->   	dev->bandwidth->cur.val = bandwidth;
->
-> -	dev_dbg(dev->dev, "bandwidth selected=%d\n", bandwidth_lut[i].freq);
-> +	dev_dbg(dev->dev, "bandwidth selected=%d\n", bandwidth);
->
->   	u16tmp = 0;
->   	u16tmp |= ((bandwidth >> 0) & 0xff) << 0;
->
+// <smpl>
+@@
+identifier lbl,rc,f;
+constant c;
+@@
 
--- 
-http://palosaari.fi/
+- GOTO(lbl,\(rc\|rc->f\|c\));
+- break;
++ goto lbl;
+
+@@
+identifier lbl;
+expression rc;
+@@
+
+- GOTO(lbl,rc);
+- break;
++ rc;
++ goto lbl;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/staging/lustre/lustre/obdclass/obd_config.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/obdclass/obd_config.c b/drivers/staging/lustre/lustre/obdclass/obd_config.c
+index f41695d..8a9752f 100644
+--- a/drivers/staging/lustre/lustre/obdclass/obd_config.c
++++ b/drivers/staging/lustre/lustre/obdclass/obd_config.c
+@@ -1226,25 +1226,25 @@ int class_process_config(struct lustre_cfg *lcfg)
+ 	}
+ 	case LCFG_POOL_NEW: {
+ 		err = obd_pool_new(obd, lustre_cfg_string(lcfg, 2));
+-		GOTO(out, err = 0);
+-		break;
++		err = 0;
++		goto out;
+ 	}
+ 	case LCFG_POOL_ADD: {
+ 		err = obd_pool_add(obd, lustre_cfg_string(lcfg, 2),
+ 				   lustre_cfg_string(lcfg, 3));
+-		GOTO(out, err = 0);
+-		break;
++		err = 0;
++		goto out;
+ 	}
+ 	case LCFG_POOL_REM: {
+ 		err = obd_pool_rem(obd, lustre_cfg_string(lcfg, 2),
+ 				   lustre_cfg_string(lcfg, 3));
+-		GOTO(out, err = 0);
+-		break;
++		err = 0;
++		goto out;
+ 	}
+ 	case LCFG_POOL_DEL: {
+ 		err = obd_pool_del(obd, lustre_cfg_string(lcfg, 2));
+-		GOTO(out, err = 0);
+-		break;
++		err = 0;
++		goto out;
+ 	}
+ 	default: {
+ 		err = obd_process_config(obd, sizeof(*lcfg), lcfg);
