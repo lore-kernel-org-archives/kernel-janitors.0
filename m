@@ -1,47 +1,41 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 18 Sep 2014 12:23:36 +0000
-Subject: [patch] [media] mx2-camera: potential negative underflow bug
-Message-Id: <20140918122336.GA13147@mwanda>
+Date: Mon, 08 Sep 2014 11:17:35 +0000
+Subject: [patch] xen-scsiback: clean up a type issue in scsiback_make_tpg()
+Message-Id: <20140908111735.GB6947@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Juergen Gross <jgross@suse.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, David Vrabel <david.vrabel@citrix.com>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-My static checker complains:
+This code was confusing because we had an unsigned long and then we
+compared it to UINT_MAX and then we stored it in a u16.  How many bytes
+is this supposed to have: 2, 4 or 16???
 
-	drivers/media/platform/soc_camera/mx2_camera.c:1070
-	mx2_emmaprp_resize() warn: no lower bound on 'num'
-
-The heuristic is that it's looking for values which the user can
-influence and we put an upper bound on them but we (perhaps
-accidentally) allow negative numbers.
-
-I am not very familiar with this code but I have looked at it and think
-there might be a bug.  Making the variable unsigned seems like a safe
-option either way and this silences the static checker warning.
-
-The call tree is:
-  -> subdev_do_ioctl()
-     -> mx2_camera_set_fmt()
-        -> mx2_emmaprp_resize()
-The check:
-	if (num > RESIZE_NUM_MAX)
-can underflow and then we use "num" on the else path.
+I've made it a u16 throughout.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/platform/soc_camera/mx2_camera.c b/drivers/media/platform/soc_camera/mx2_camera.c
-index b40bc2e..bc27a47 100644
---- a/drivers/media/platform/soc_camera/mx2_camera.c
-+++ b/drivers/media/platform/soc_camera/mx2_camera.c
-@@ -1003,7 +1003,7 @@ static int mx2_emmaprp_resize(struct mx2_camera_dev *pcdev,
- 			      struct v4l2_mbus_framefmt *mf_in,
- 			      struct v4l2_pix_format *pix_out, bool apply)
- {
--	int num, den;
-+	unsigned int num, den;
- 	unsigned long m;
- 	int i, dir;
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index 7b565632..ad11258 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -1885,13 +1885,14 @@ scsiback_make_tpg(struct se_wwn *wwn,
+ 			struct scsiback_tport, tport_wwn);
  
+ 	struct scsiback_tpg *tpg;
+-	unsigned long tpgt;
++	u16 tpgt;
+ 	int ret;
+ 
+ 	if (strstr(name, "tpgt_") != name)
+ 		return ERR_PTR(-EINVAL);
+-	if (kstrtoul(name + 5, 10, &tpgt) || tpgt > UINT_MAX)
+-		return ERR_PTR(-EINVAL);
++	ret = kstrtou16(name + 5, 10, &tpgt);
++	if (ret)
++		return ERR_PTR(ret);
+ 
+ 	tpg = kzalloc(sizeof(struct scsiback_tpg), GFP_KERNEL);
+ 	if (!tpg)
