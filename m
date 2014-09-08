@@ -1,72 +1,47 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Tue, 23 Sep 2014 09:33:04 +0000
-Subject: Re: [PATCH] brcmfmac: Fix off by one bug in brcmf_count_20mhz_channels()
-Message-Id: <54213E50.4020207@broadcom.com>
+From: Juergen Gross <jgross@suse.com>
+Date: Mon, 08 Sep 2014 11:30:05 +0000
+Subject: Re: [Xen-devel] [patch] xen-scsifront: use GFP_ATOMIC under spin_lock
+Message-Id: <540D933D.9020809@suse.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1411253932-27973-1-git-send-email-emilgoode@gmail.com> <541FF25B.9000404@broadcom.com> <20140922230833.GB10356@lianli>
-In-Reply-To: <20140922230833.GB10356@lianli>
+References: <20140908111542.GA6947@mwanda>
+In-Reply-To: <20140908111542.GA6947@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Emil Goode <emilgoode@gmail.com>
-Cc: Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Daniel Kim <dekim@broadcom.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, "James E.J. Bottomley" <JBottomley@parallels.com>, David Vrabel <david.vrabel@citrix.com>, xen-devel@lists.xenproject.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-On 09/23/14 01:08, Emil Goode wrote:
-> Hello Arend,
+On 09/08/2014 01:15 PM, Dan Carpenter wrote:
+> This function is only called with a spin_lock held and IRQs disabled.
+> The allocation is not allowed to sleep and NOIO is not sufficient, it
+> has to be ATOMIC.
 >
-> Sorry for the late reply. I have attached a kernel log with brcmfmac
-> debugging enabled (without my patch applied).
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+Thanks,
+
+Juergen
+
 >
-> Let me know if I can provide any other useful information.
-
-No problem, Emil
-
-I was wondering what was returned on "chanspecs" query. So 17 channel 
-configs which is expected.
-
-Regards,
-Arend
-
-> Best regards,
+> diff --git a/drivers/scsi/xen-scsifront.c b/drivers/scsi/xen-scsifront.c
+> index 0aceb70..7e88659 100644
+> --- a/drivers/scsi/xen-scsifront.c
+> +++ b/drivers/scsi/xen-scsifront.c
+> @@ -359,7 +359,7 @@ static int map_data_for_request(struct vscsifrnt_info *info,
+>   		}
+>   		seg_grants = vscsiif_grants_sg(data_grants);
+>   		shadow->sg = kcalloc(data_grants,
+> -			sizeof(struct scsiif_request_segment), GFP_NOIO);
+> +			sizeof(struct scsiif_request_segment), GFP_ATOMIC);
+>   		if (!shadow->sg)
+>   			return -ENOMEM;
+>   	}
 >
-> Emil
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xen.org
+> http://lists.xen.org/xen-devel
 >
-> On Mon, Sep 22, 2014 at 11:56:43AM +0200, Arend van Spriel wrote:
->> On 09/21/14 00:58, Emil Goode wrote:
->>> In the brcmf_count_20mhz_channels function we are looping through a list
->>> of channels received from firmware. Since the index of the first channel
->>> is 0 the condition leads to an off by one bug. This is causing us to hit
->>> the WARN_ON_ONCE(1) calls in the brcmu_d11n_decchspec function, which is
->>> how I discovered the bug.
->>
->> The fix is fine. Would like to know what exactly is going wrong. Can you
->> provide a kernel log with brcmfmac debugging enabled, ie. insmod brcmfmac.ko
->> debug=0x1416
->>
->> Regards,
->> Arend
->>
->>> Introduced by:
->>> commit b48d891676f756d48b4d0ee131e4a7a5d43ca417
->>> ("brcmfmac: rework wiphy structure setup")
->>>
->>> Signed-off-by: Emil Goode<emilgoode@gmail.com>
->>> ---
->>>   drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
->>> index 02fe706..93b5dd9 100644
->>> --- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
->>> +++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
->>> @@ -4918,7 +4918,7 @@ static void brcmf_count_20mhz_channels(struct brcmf_cfg80211_info *cfg,
->>>   	struct brcmu_chan ch;
->>>   	int i;
->>>
->>> -	for (i = 0; i<= total; i++) {
->>> +	for (i = 0; i<   total; i++) {
->>>   		ch.chspec = (u16)le32_to_cpu(chlist->element[i]);
->>>   		cfg->d11inf.decchspec(&ch);
->>>
->>
 
