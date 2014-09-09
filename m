@@ -1,60 +1,31 @@
-From: "fugang.duan@freescale.com" <fugang.duan@freescale.com>
-Date: Tue, 16 Sep 2014 10:16:55 +0000
-Subject: RE: net: fec: change data structure to support multiqueue
-Message-Id: <e849c49814f7496492ee8ca886d0d312@BLUPR03MB373.namprd03.prod.outlook.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Sep 2014 12:11:50 +0000
+Subject: [patch] PCI: xilinx: testing wrong variable in setup irq function
+Message-Id: <20140909121150.GD19760@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140916093935.GA24540@mwanda>
-In-Reply-To: <20140916093935.GA24540@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Srikanth Thokala <sthokal@xilinx.com>
+Cc: Michal Simek <michal.simek@xilinx.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com> Sent: Tuesday, September 16, 2014 5:40 PM
->To: Duan Fugang-B38611
->Cc: Duan Fugang-B38611; kernel-janitors@vger.kernel.org
->Subject: re: net: fec: change data structure to support multiqueue
->
->Hello Fugang Duan,
->
->The patch 4d494cdc92b3: "net: fec: change data structure to support
->multiqueue" from Sep 13, 2014, leads to the following static checker
->warning:
->
->	drivers/net/ethernet/freescale/fec_main.c:1418 fec_enet_rx_queue()
->	warn: add curly braces? (if)
->
->drivers/net/ethernet/freescale/fec_main.c
->  1413
->  1414                          /* Extract the frame data without the VLAN
->header. */
->  1415                          skb_copy_to_linear_data(skb, data, (2 *
->ETH_ALEN));
->  1416                          if (vlan_packet_rcvd)
->  1417                                  payload_offset = (2 * ETH_ALEN) +
->VLAN_HLEN;
->  1418                                  skb_copy_to_linear_data_offset(skb,
->(2 * ETH_ALEN),
->  1419                                                         data +
->payload_offset,
->  1420                                                         pkt_len - 4
->- (2 * ETH_ALEN));
->
->The patch pushed this call to skb_copy_to_linear_data_offset() in one
->indent level but didn't add curly braces.  It's not clear to me if the
->indenting was intentional or not.
->
->  1421
->  1422                          skb->protocol = eth_type_trans(skb, ndev);
->  1423
->
->regards,
->dan carpenter
+We should be testing "hwirq" instead of "irq".  "irq" is unsigned so
+it's never less than zero.  Also it's uninitialized.
 
-Hi, Dan,
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks for your point out the issue, I will submit one patch to fix it.
-It just indent issue.
-
-Thanks,
-Andy
+diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
+index 44f8944..ccc496b 100644
+--- a/drivers/pci/host/pcie-xilinx.c
++++ b/drivers/pci/host/pcie-xilinx.c
+@@ -359,8 +359,8 @@ static int xilinx_pcie_msi_setup_irq(struct msi_chip *chip,
+ 	phys_addr_t msg_addr;
+ 
+ 	hwirq = xilinx_pcie_assign_msi(port);
+-	if (irq < 0)
+-		return irq;
++	if (hwirq < 0)
++		return hwirq;
+ 
+ 	irq = irq_create_mapping(port->irq_domain, hwirq);
+ 	if (!irq)
