@@ -1,67 +1,52 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Sep 2014 16:18:32 +0000
-Subject: [PATCH 4/7] staging: lustre: lvfs: expand the GOTO macro
-Message-Id: <1410106715-9573-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Sep 2014 12:11:23 +0000
+Subject: [patch v2] [media] firewire: firedtv-avc: potential buffer overflow
+Message-Id: <20140909121123.GC19760@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+In-Reply-To: <20140908144033.42a0762d@kant>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, "Dilger, Andreas" <andreas.dilger@intel.com>, "Drokin, Oleg" <oleg.drokin@intel.com>, Peng Tao <bergwolf@gmail.com>
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, linux1394-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+"program_info_length" is user controlled and can go up to 4095.  The
+operand[] array has 509 bytes so we need to add a limit here to prevent
+buffer overflows.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+The " - 4" in the limit check is because we have 4 bytes more data to
+add after the memcpy().
 
-// <smpl>
-@@
-identifier lbl;
-identifier rc;
-constant c;
-@@
-
-- GOTO(lbl,\(rc\|c\));
-+ goto lbl;
-
-@@
-identifier lbl;
-expression rc;
-@@
-
-- GOTO(lbl,rc);
-+ rc;
-+ goto lbl;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/staging/lustre/lustre/lvfs/lvfs_linux.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+v2:  The first version didn't have the - 4.  Thanks for catching that
+Stafan.
 
-diff --git a/drivers/staging/lustre/lustre/lvfs/lvfs_linux.c b/drivers/staging/lustre/lustre/lvfs/lvfs_linux.c
-index eea0b2c..d9209b9 100644
---- a/drivers/staging/lustre/lustre/lvfs/lvfs_linux.c
-+++ b/drivers/staging/lustre/lustre/lvfs/lvfs_linux.c
-@@ -215,12 +215,16 @@ int lustre_rename(struct dentry *dir, struct vfsmount *mnt,
- 	if (IS_ERR(dchild_old))
- 		return PTR_ERR(dchild_old);
+diff --git a/drivers/media/firewire/firedtv-avc.c b/drivers/media/firewire/firedtv-avc.c
+index d1a1a13..251a556 100644
+--- a/drivers/media/firewire/firedtv-avc.c
++++ b/drivers/media/firewire/firedtv-avc.c
+@@ -1157,6 +1157,10 @@ int avc_ca_pmt(struct firedtv *fdtv, char *msg, int length)
+ 		if (pmt_cmd_id != 1 && pmt_cmd_id != 4)
+ 			dev_err(fdtv->device,
+ 				"invalid pmt_cmd_id %d\n", pmt_cmd_id);
++		if (program_info_length > sizeof(c->operand) - 4 - write_pos) {
++			ret = -EINVAL;
++			goto out;
++		}
  
--	if (!dchild_old->d_inode)
--		GOTO(put_old, err = -ENOENT);
-+	if (!dchild_old->d_inode) {
-+		err = -ENOENT;
-+		goto put_old;
-+	}
+ 		memcpy(&c->operand[write_pos], &msg[read_pos],
+ 		       program_info_length);
+@@ -1180,6 +1184,12 @@ int avc_ca_pmt(struct firedtv *fdtv, char *msg, int length)
+ 				dev_err(fdtv->device, "invalid pmt_cmd_id %d "
+ 					"at stream level\n", pmt_cmd_id);
  
- 	dchild_new = ll_lookup_one_len(newname, dir, strlen(newname));
--	if (IS_ERR(dchild_new))
--		GOTO(put_old, err = PTR_ERR(dchild_new));
-+	if (IS_ERR(dchild_new)) {
-+		err = PTR_ERR(dchild_new);
-+		goto put_old;
-+	}
- 
- 	err = ll_vfs_rename(dir->d_inode, dchild_old, mnt,
- 			    dir->d_inode, dchild_new, mnt);
++			if (es_info_length > sizeof(c->operand) - 4 -
++					     write_pos) {
++				ret = -EINVAL;
++				goto out;
++			}
++
+ 			memcpy(&c->operand[write_pos], &msg[read_pos],
+ 			       es_info_length);
+ 			read_pos += es_info_length;
