@@ -1,48 +1,38 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Date: Tue, 23 Sep 2014 06:36:35 +0000
-Subject: Re: [patch] [media] davinci: remove an unneeded check
-Message-Id: <CA+V-a8uFTMJS+_u7YZuO1qxj5+crYKCtDNdssA23Pd5ur4NeNQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 09 Sep 2014 12:06:09 +0000
+Subject: [patch] usb: gadget: f_fs: signedness bug in __ffs_func_bind_do_descs()
+Message-Id: <20140909120609.GB19760@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140922080008.GB12362@mwanda>
-In-Reply-To: <20140922080008.GB12362@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media <linux-media@vger.kernel.org>, dlos <davinci-linux-open-source@linux.davincidsp.com>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+We need "idx" to be signed for the error handling to work.
 
-Thanks for the patch!
+Fixes: 6d5c1c77bbf9 ('usb: gadget: f_fs: fix the redundant ep files problem')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Btw, there is a sparse warning:
 
-On Mon, Sep 22, 2014 at 9:00 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We don't need to check "ret", we know it's zero.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/usb/gadget/function/f_fs.c:401:44: warning: Variable length array is used.
 
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+The risk here is that the array would be too large.  I don't know the
+code well enough to say if it can be triggered, but from an outsider
+perspective it looks scary (security implications).  There should be a
+comment explaining why it can't be used to overflow the 8k stack.
 
-Regards,
---Prabhakar Lad
-
->
-> diff --git a/drivers/media/platform/davinci/vpfe_capture.c b/drivers/media/platform/davinci/vpfe_capture.c
-> index c557eb5..3eb6e4b 100644
-> --- a/drivers/media/platform/davinci/vpfe_capture.c
-> +++ b/drivers/media/platform/davinci/vpfe_capture.c
-> @@ -442,11 +442,10 @@ static int vpfe_config_image_format(struct vpfe_device *vpfe_dev,
->                 return ret;
->
->         /* Update the values of sizeimage and bytesperline */
-> -       if (!ret) {
-> -               pix->bytesperline = ccdc_dev->hw_ops.get_line_length();
-> -               pix->sizeimage = pix->bytesperline * pix->height;
-> -       }
-> -       return ret;
-> +       pix->bytesperline = ccdc_dev->hw_ops.get_line_length();
-> +       pix->sizeimage = pix->bytesperline * pix->height;
-> +
-> +       return 0;
->  }
->
->  static int vpfe_initialize_device(struct vpfe_device *vpfe_dev)
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index 0dc3552..7ad7137 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -2393,7 +2393,8 @@ static int __ffs_func_bind_do_descs(enum ffs_entity_type type, u8 *valuep,
+ 	struct usb_endpoint_descriptor *ds = (void *)desc;
+ 	struct ffs_function *func = priv;
+ 	struct ffs_ep *ffs_ep;
+-	unsigned ep_desc_id, idx;
++	unsigned ep_desc_id;
++	int idx;
+ 	static const char *speed_names[] = { "full", "high", "super" };
+ 
+ 	if (type != FFS_DESCRIPTOR)
