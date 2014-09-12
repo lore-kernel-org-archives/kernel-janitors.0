@@ -1,59 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Sep 2014 07:58:53 +0000
-Subject: [patch] [media] as102: remove some unneeded checks
-Message-Id: <20140922075853.GA12362@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 12 Sep 2014 11:08:03 +0000
+Subject: Re: [PATCH 1/6] Coccinelle: Semantic patch for replacing puts with putc
+Message-Id: <5412D413.3080404@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1410513954-28909-1-git-send-email-linux@rasmusvillemoes.dk>
+ <1410513954-28909-2-git-send-email-linux@rasmusvillemoes.dk>
+In-Reply-To: <1410513954-28909-2-git-send-email-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Mauro Dreissig <mukadr@gmail.com>, Martin Kepplinger <martink@posteo.de>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Peter Senna Tschudin <peter.senna@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-We know "ret" is zero so we don't need to test for it.  It upsets the
-static checkers when we test stuff but we know the answer.
+> Using seq_puts to write a one-character string is suboptimal,
+> since puts has to call strlen().
 
-drivers/media/usb/as102/as102_usb_drv.c:164 as102_send_ep1() warn: we tested 'ret' before and it was 'false'
-drivers/media/usb/as102/as102_usb_drv.c:189 as102_read_ep2() warn: we tested 'ret' before and it was 'false'
+Are there any more functions which work with such strings in a similar way?
+Would it make sense to look also at other function names?
 
-Also, we don't need to initialize "ret".
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/media/usb/as102/as102_usb_drv.c b/drivers/media/usb/as102/as102_usb_drv.c
-index 43133df..3f66906 100644
---- a/drivers/media/usb/as102/as102_usb_drv.c
-+++ b/drivers/media/usb/as102/as102_usb_drv.c
-@@ -145,7 +145,7 @@ static int as102_send_ep1(struct as10x_bus_adapter_t *bus_adap,
- 			  int send_buf_len,
- 			  int swap32)
- {
--	int ret = 0, actual_len;
-+	int ret, actual_len;
- 
- 	ret = usb_bulk_msg(bus_adap->usb_dev,
- 			   usb_sndbulkpipe(bus_adap->usb_dev, 1),
-@@ -161,13 +161,13 @@ static int as102_send_ep1(struct as10x_bus_adapter_t *bus_adap,
- 			actual_len, send_buf_len);
- 		return -1;
- 	}
--	return ret ? ret : actual_len;
-+	return actual_len;
- }
- 
- static int as102_read_ep2(struct as10x_bus_adapter_t *bus_adap,
- 		   unsigned char *recv_buf, int recv_buf_len)
- {
--	int ret = 0, actual_len;
-+	int ret, actual_len;
- 
- 	if (recv_buf = NULL)
- 		return -EINVAL;
-@@ -186,7 +186,7 @@ static int as102_read_ep2(struct as10x_bus_adapter_t *bus_adap,
- 			actual_len, recv_buf_len);
- 		return -1;
- 	}
--	return ret ? ret : actual_len;
-+	return actual_len;
- }
- 
- static struct as102_priv_ops_t as102_priv_ops = {
+Regards,
+Markus
