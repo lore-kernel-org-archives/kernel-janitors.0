@@ -1,30 +1,35 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 09 Sep 2014 12:05:28 +0000
-Subject: [patch] [media] dvb: si21xx: buffer overflow in si21_writeregs()
-Message-Id: <20140909120528.GA19760@mwanda>
+Date: Sat, 13 Sep 2014 08:09:28 +0000
+Subject: [patch -next] blk-mq: NULL dereference in __blk_mq_alloc_rq_maps()
+Message-Id: <20140913080928.GA6469@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "Elliott, Robert (Server Storage)" <Elliott@hp.com>
 
-"len" is user controlled and can be up to 255.  Anything more than 59
-will cause a buffer overflow so we need to add a test for that.
+We shouldn't set "set->tags" to NULL here because if we return -ENOMEM
+here then we call the function a second time.  On the second time
+through the loop then the statement:
 
+	set->tags[i] = blk_mq_init_rq_map(set, i);
+
+will Oops.  Also it is a memory leak and a layering violation.  There is
+a correct call to kfree(set->tags) in blk_mq_alloc_tag_set().
+
+Fixes: a516440542af ('blk-mq: scale depth and rq map appropriate if low on memory')
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/media/dvb-frontends/si21xx.c b/drivers/media/dvb-frontends/si21xx.c
-index 73b47cc..16850e2 100644
---- a/drivers/media/dvb-frontends/si21xx.c
-+++ b/drivers/media/dvb-frontends/si21xx.c
-@@ -236,6 +236,9 @@ static int si21_writeregs(struct si21xx_state *state, u8 reg1,
- 				.len = len + 1
- 	};
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 3d863df..7e7ca57 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1961,7 +1961,6 @@ out_unwind:
+ 	while (--i >= 0)
+ 		blk_mq_free_rq_map(set, set->tags[i], i);
  
-+	if (len > sizeof(buf) - 1)
-+		return -EINVAL;
-+
- 	msg.buf[0] =  reg1;
- 	memcpy(msg.buf + 1, data, len);
+-	set->tags = NULL;
+ 	return -ENOMEM;
+ }
  
