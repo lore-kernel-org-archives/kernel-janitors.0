@@ -1,37 +1,42 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Tue, 16 Sep 2014 23:47:04 +0000
-Subject: Re: [patch] PCI: xilinx: testing wrong variable in setup irq function
-Message-Id: <20140916234704.GK5050@google.com>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Sat, 20 Sep 2014 22:58:52 +0000
+Subject: [PATCH] brcmfmac: Fix off by one bug in brcmf_count_20mhz_channels()
+Message-Id: <1411253932-27973-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140909121150.GD19760@mwanda>
-In-Reply-To: <20140909121150.GD19760@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Srikanth Thokala <sthokal@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Arend van Spriel <arend@broadcom.com>, Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Daniel Kim <dekim@broadcom.com>
+Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-On Tue, Sep 09, 2014 at 03:11:50PM +0300, Dan Carpenter wrote:
-> We should be testing "hwirq" instead of "irq".  "irq" is unsigned so
-> it's never less than zero.  Also it's uninitialized.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In the brcmf_count_20mhz_channels function we are looping through a list
+of channels received from firmware. Since the index of the first channel
+is 0 the condition leads to an off by one bug. This is causing us to hit
+the WARN_ON_ONCE(1) calls in the brcmu_d11n_decchspec function, which is
+how I discovered the bug.
 
-Applied with Srikanth's ack to pci/host-xilinx for v3.18, thanks.
+Introduced by:
+commit b48d891676f756d48b4d0ee131e4a7a5d43ca417
+("brcmfmac: rework wiphy structure setup")
 
-> 
-> diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
-> index 44f8944..ccc496b 100644
-> --- a/drivers/pci/host/pcie-xilinx.c
-> +++ b/drivers/pci/host/pcie-xilinx.c
-> @@ -359,8 +359,8 @@ static int xilinx_pcie_msi_setup_irq(struct msi_chip *chip,
->  	phys_addr_t msg_addr;
->  
->  	hwirq = xilinx_pcie_assign_msi(port);
-> -	if (irq < 0)
-> -		return irq;
-> +	if (hwirq < 0)
-> +		return hwirq;
->  
->  	irq = irq_create_mapping(port->irq_domain, hwirq);
->  	if (!irq)
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
+---
+ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+index 02fe706..93b5dd9 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+@@ -4918,7 +4918,7 @@ static void brcmf_count_20mhz_channels(struct brcmf_cfg80211_info *cfg,
+ 	struct brcmu_chan ch;
+ 	int i;
+ 
+-	for (i = 0; i <= total; i++) {
++	for (i = 0; i < total; i++) {
+ 		ch.chspec = (u16)le32_to_cpu(chlist->element[i]);
+ 		cfg->d11inf.decchspec(&ch);
+ 
+-- 
+2.1.0
+
