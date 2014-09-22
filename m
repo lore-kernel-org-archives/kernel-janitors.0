@@ -1,30 +1,20 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 08 Sep 2014 11:15:42 +0000
-Subject: [patch] xen-scsifront: use GFP_ATOMIC under spin_lock
-Message-Id: <20140908111542.GA6947@mwanda>
+From: "Benjamin Siaka" <siajaka@gmail.com>
+Date: Mon, 22 Sep 2014 01:17:45 +0000
+Subject: HOW ARE YOU?
+Message-Id: <20140922011756.82F473AE86B2@studentsvm0.itb.ac.id>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Juergen Gross <jgross@suse.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, David Vrabel <david.vrabel@citrix.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This function is only called with a spin_lock held and IRQs disabled.
-The allocation is not allowed to sleep and NOIO is not sufficient, it
-has to be ATOMIC.
+Hello my Dear,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+I will greatly appreciate my correspondence meets you in good health condition.
 
-diff --git a/drivers/scsi/xen-scsifront.c b/drivers/scsi/xen-scsifront.c
-index 0aceb70..7e88659 100644
---- a/drivers/scsi/xen-scsifront.c
-+++ b/drivers/scsi/xen-scsifront.c
-@@ -359,7 +359,7 @@ static int map_data_for_request(struct vscsifrnt_info *info,
- 		}
- 		seg_grants = vscsiif_grants_sg(data_grants);
- 		shadow->sg = kcalloc(data_grants,
--			sizeof(struct scsiif_request_segment), GFP_NOIO);
-+			sizeof(struct scsiif_request_segment), GFP_ATOMIC);
- 		if (!shadow->sg)
- 			return -ENOMEM;
- 	}
+My name is Mr. Benjamin Siaka. I am seeking for your co-operation for investment partnership in your Country. I shall provide the FUND for the investment. When you acknowledged the receipt of this correspondence, thereafter I will give you the Full Details of my investment proposal.
+
+I await your response in earliest.
+
+My regards,
+Mr. Benjamin Siaka.
