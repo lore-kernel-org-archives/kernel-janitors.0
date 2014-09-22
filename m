@@ -1,48 +1,45 @@
-From: Joe Perches <joe@perches.com>
-Date: Mon, 01 Sep 2014 16:55:06 +0000
-Subject: [PATCH - resend] checkpatch: Remove unnecessary + after {8,8}
-Message-Id: <1409590506.2614.4.camel@joe-AO725>
+From: Emil Goode <emilgoode@gmail.com>
+Date: Mon, 22 Sep 2014 22:49:55 +0000
+Subject: [PATCH v2] brcmfmac: Fix off by one bug in brcmf_count_20mhz_channels()
+Message-Id: <1411426195-13467-1-git-send-email-emilgoode@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1405128087.6751.12.camel@joe-AO725>
-	<20140712013927.GA30781@kroah.com> <1405129612.6751.24.camel@joe-AO725>
-	<20140712020114.GA12301@kroah.com> <20140712020520.GA18611@kroah.com>
-In-Reply-To: <20140712020520.GA18611@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernelnewbies@lists.kernelnewbies.org
+To: Arend van Spriel <arend@broadcom.com>, Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Daniel Kim <dekim@broadcom.com>
+Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 
-There's a useless "+" use that needs to be removed as perl 5.20
-emits a "Useless use of greediness modifier '+'" message each
-time it's hit.
+In the brcmf_count_20mhz_channels function we are looping through a list
+of channels received from firmware. Since the index of the first channel
+is 0 the condition leads to an off by one bug. This is causing us to hit
+the WARN_ON_ONCE(1) calls in the brcmu_d11n_decchspec function, which is
+how I discovered the bug.
 
-Reported-by: Greg KH <gregkh@linuxfoundation.org>
-Signed-off-by: Joe Perches <joe@perches.com>
+Introduced by:
+commit b48d891676f756d48b4d0ee131e4a7a5d43ca417
+("brcmfmac: rework wiphy structure setup")
+
+Acked-by: Arend van Spriel <arend@broadcom.com>
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
+v2: Added Arends "Acked-by" tag.
 
-Resending, maybe Andrew's all-seeing eye blinked...
-
-On Fri, 2014-07-11 at 19:05 -0700, Greg KH wrote:
-> Ok, with linux-next I get the same thing:
-
-Thanks Greg.
-
- scripts/checkpatch.pl | 2 +-
+ drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index d5ac001..370a974 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2376,7 +2376,7 @@ sub process {
- 				"please, no space before tabs\n" . $herevet) &&
- 			    $fix) {
- 				while ($fixed[$fixlinenr] =~
--					   s/(^\+.*) {8,8}+\t/$1\t\t/) {}
-+					   s/(^\+.*) {8,8}\t/$1\t\t/) {}
- 				while ($fixed[$fixlinenr] =~
- 					   s/(^\+.*) +\t/$1\t/) {}
- 			}
-
-
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+index 12a60ca..0517687 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
+@@ -4924,7 +4924,7 @@ static void brcmf_count_20mhz_channels(struct brcmf_cfg80211_info *cfg,
+ 	struct brcmu_chan ch;
+ 	int i;
+ 
+-	for (i = 0; i <= total; i++) {
++	for (i = 0; i < total; i++) {
+ 		ch.chspec = (u16)le32_to_cpu(chlist->element[i]);
+ 		cfg->d11inf.decchspec(&ch);
+ 
+-- 
+2.1.0
 
