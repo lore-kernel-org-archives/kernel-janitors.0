@@ -1,7 +1,7 @@
 From: Arend van Spriel <arend@broadcom.com>
-Date: Mon, 22 Sep 2014 09:49:56 +0000
+Date: Mon, 22 Sep 2014 09:56:43 +0000
 Subject: Re: [PATCH] brcmfmac: Fix off by one bug in brcmf_count_20mhz_channels()
-Message-Id: <541FF0C4.9020805@broadcom.com>
+Message-Id: <541FF25B.9000404@broadcom.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1411253932-27973-1-git-send-email-emilgoode@gmail.com>
 In-Reply-To: <1411253932-27973-1-git-send-email-emilgoode@gmail.com>
@@ -17,14 +17,18 @@ On 09/21/14 00:58, Emil Goode wrote:
 > is 0 the condition leads to an off by one bug. This is causing us to hit
 > the WARN_ON_ONCE(1) calls in the brcmu_d11n_decchspec function, which is
 > how I discovered the bug.
->
+
+The fix is fine. Would like to know what exactly is going wrong. Can you 
+provide a kernel log with brcmfmac debugging enabled, ie. insmod 
+brcmfmac.ko debug=0x1416
+
+Regards,
+Arend
+
 > Introduced by:
 > commit b48d891676f756d48b4d0ee131e4a7a5d43ca417
 > ("brcmfmac: rework wiphy structure setup")
-
-My bad :-(. You can add:
-
-Acked-by: Arend van Spriel <arend@broadcom.com>
+>
 > Signed-off-by: Emil Goode<emilgoode@gmail.com>
 > ---
 >   drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c | 2 +-
