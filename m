@@ -1,34 +1,29 @@
-From: Darren Hart <dvhart@infradead.org>
-Date: Wed, 03 Sep 2014 17:48:15 +0000
-Subject: Re: [patch] toshiba_acpi: fix and cleanup toshiba_kbd_bl_mode_store()
-Message-Id: <20140903174815.GA7153@vmdeb7>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 24 Sep 2014 10:36:39 +0000
+Subject: [patch] [media] hackrf: harmless off by one in debug code
+Message-Id: <20140924103639.GB15107@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140903114437.GA3359@mwanda>
-In-Reply-To: <20140903114437.GA3359@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Matthew Garrett <matthew.garrett@nebula.com>, Azael Avalos <coproscefalo@gmail.com>, platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Sep 03, 2014 at 02:44:37PM +0300, Dan Carpenter wrote:
-> The current code just returns -EINVAL because mode can't be equal to
-> both 1 and 2.
-> 
-> Also this function is messy so I have cleaned it up:
-> 1) Remove initializers like "int time = -1".  Initializing variables to
->    garbage values turns off GCC's uninitialized variable warnings so it
->    can lead to bugs.
-> 2) Use kstrtoint() instead of sscanf().
-> 3) Use SCI_KBD_MODE_FNZ and SCI_KBD_MODE_AUTO instead of magic numbers 1
->    and 2.
-> 4) Don't check for "mode = -1" because that can't happen.
-> 5) Preserve the error code from toshiba_kbd_illum_status_set().
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+My static checker complains that "i" could be one element beyond the end
+of the array.
 
-Queued, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Darren Hart
-Intel Open Source Technology Center
+diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
+index 328b5ba..fd1fa41 100644
+--- a/drivers/media/usb/hackrf/hackrf.c
++++ b/drivers/media/usb/hackrf/hackrf.c
+@@ -932,7 +932,7 @@ static int hackrf_set_bandwidth(struct hackrf_dev *dev)
+ 	dev->bandwidth->val = bandwidth;
+ 	dev->bandwidth->cur.val = bandwidth;
+ 
+-	dev_dbg(dev->dev, "bandwidth selected=%d\n", bandwidth_lut[i].freq);
++	dev_dbg(dev->dev, "bandwidth selected=%d\n", bandwidth);
+ 
+ 	u16tmp = 0;
+ 	u16tmp |= ((bandwidth >> 0) & 0xff) << 0;
