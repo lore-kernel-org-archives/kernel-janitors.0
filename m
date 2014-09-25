@@ -1,57 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 01 Aug 2014 15:59:05 +0000
-Subject: re: net: stmmac: Support devicetree configs for mcast and ucast filter entries
-Message-Id: <20140801155905.GA31489@mwanda>
+Date: Thu, 25 Sep 2014 11:39:41 +0000
+Subject: [patch] [media] em28xx-input: NULL dereference on error
+Message-Id: <20140925113941.GB3708@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>, Frank Schaefer <fschaefer.oss@googlemail.com>
+Cc: linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Vince Bridgers,
+We call "kfree(ir->i2c_client);" in the error handling and that doesn't
+work if "ir" is NULL.
 
-The patch 3b57de958e2a: "net: stmmac: Support devicetree configs for
-mcast and ucast filter entries" from Jul 31, 2014, leads to the
-following static checker warning:
+Fixes: 78e719a5f30b ('[media] em28xx-input: i2c IR decoders: improve i2c_client handling')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-	drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c:123 dwmac1000_set_mchash()
-	error: buffer overflow 'mcfilterbits' 2 <= 7
-
-drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
-   100  static void dwmac1000_set_mchash(void __iomem *ioaddr, u32 *mcfilterbits,
-   101                                   int mcbitslog2)
-   102  {
-   103          int numhashregs, regs;
-   104  
-   105          switch (mcbitslog2) {
-   106          case 6:
-   107                  writel(mcfilterbits[0], ioaddr + GMAC_HASH_LOW);
-   108                  writel(mcfilterbits[1], ioaddr + GMAC_HASH_HIGH);
-   109                  return;
-   110                  break;
-
-These days checkpatch complains about extra unreachable break
-statements.
-
-   111          case 7:
-   112                  numhashregs = 4;
-   113                  break;
-   114          case 8:
-   115                  numhashregs = 8;
-   116                  break;
-   117          default:
-   118                  pr_debug("STMMAC: err in setting mulitcast filter\n");
-   119                  return;
-   120                  break;
-   121          }
-   122          for (regs = 0; regs < numhashregs; regs++)
-   123                  writel(mcfilterbits[regs],
-
-There is only one caller for this function and mcfilterbits[] only has
-2 elements.  So neither 4 nor 8 is correct.  I don't understand.
-
-   124                         ioaddr + GMAC_EXTHASH_BASE + regs * 4);
-   125  }
-
-regards,
-dan carpenter
+diff --git a/drivers/media/usb/em28xx/em28xx-input.c b/drivers/media/usb/em28xx/em28xx-input.c
+index 581f6da..23f8f6a 100644
+--- a/drivers/media/usb/em28xx/em28xx-input.c
++++ b/drivers/media/usb/em28xx/em28xx-input.c
+@@ -712,8 +712,10 @@ static int em28xx_ir_init(struct em28xx *dev)
+ 	em28xx_info("Registering input extension\n");
+ 
+ 	ir = kzalloc(sizeof(*ir), GFP_KERNEL);
++	if (!ir)
++		return -ENOMEM;
+ 	rc = rc_allocate_device();
+-	if (!ir || !rc)
++	if (!rc)
+ 		goto error;
+ 
+ 	/* record handles to ourself */
