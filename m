@@ -1,46 +1,62 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 03 Oct 2014 15:14:13 +0000
-Subject: Re: [patch] checkpatch: remove the ether_addr_copy warning
-Message-Id: <alpine.DEB.2.10.1410031712250.2371@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 01 Oct 2014 14:34:59 +0000
+Subject: re: clk: add gpio gated clock
+Message-Id: <20141001143459.GA31403@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141003093505.GA7393@mwanda>  <1412346147.3247.97.camel@joe-AO725>  <alpine.DEB.2.10.1410031628420.2371@hadrien> <1412349028.3247.113.camel@joe-AO725>
-In-Reply-To: <1412349028.3247.113.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Andy Whitcroft <apw@canonical.com>, Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org
+To: kernel-janitors@vger.kernel.org
 
+Hello Jyri Sarha,
 
+The patch c873d14d30b8: "clk: add gpio gated clock" from Sep 5, 2014,
+leads to the following static checker warning:
 
-On Fri, 3 Oct 2014, Joe Perches wrote:
+	drivers/clk/clk-gpio-gate.c:123 clk_register_gpio_gate()
+	warn: passing devm_ allocated variable to kfree. 'clk_gpio'
 
-> On Fri, 2014-10-03 at 16:30 +0200, Julia Lawall wrote:
-> > On Fri, 3 Oct 2014, Joe Perches wrote:
-> > > On Fri, 2014-10-03 at 12:35 +0300, Dan Carpenter wrote:
-> > > > Most people sending checkpatch.pl fixes don't know how to verify the
-> > > > alignment.  This checkpatch warning just encourages newbies to try
-> > > > introduce bugs.  Patch submitters tell us that they just sed the code
-> > > > and it's the job for the maintainer to check that it's correct.
-> > >
-> > > I haven't seen many instances of bad patch submittals
-> > > on netdev.  Is this mostly an issue for staging?
-> > >
-> > > Maybe a downgrade to CHK requiring --strict is OK.
-> []
-> > I think it is too bad to have a piece of knowledge that was apparent be
-> > made more obscure.  Why not just change the checkpatch warning to make
-> > more explicit that a lot of expertise is required to make the change?
->
-> Any wordsmithing appreciated.  Maybe something like:
->
-> from: Prefer ether_addr_copy() over memcpy() if the Ethernet addresses are __aligned(2)
-> to: Where both Ethernet addresses are guaranteed to be __aligned(2), prefer ether_addr_copy() over memcpy()
->
-> That won't stop people from blindly following any message.
+drivers/clk/clk-gpio-gate.c
+    97          if (dev)
+    98                  clk_gpio = devm_kzalloc(dev, sizeof(struct clk_gpio),
+    99                                          GFP_KERNEL);
+   100          else
+   101                  clk_gpio = kzalloc(sizeof(struct clk_gpio), GFP_KERNEL);
+   102  
+   103          if (!clk_gpio) {
+   104                  clk = ERR_PTR(-ENOMEM);
+   105                  goto clk_register_gpio_gate_err;
+   106          }
+   107  
+   108          init.name = name;
+   109          init.ops = &clk_gpio_gate_ops;
+   110          init.flags = flags | CLK_IS_BASIC;
+   111          init.parent_names = (parent_name ? &parent_name : NULL);
+   112          init.num_parents = (parent_name ? 1 : 0);
+   113  
+   114          clk_gpio->gpiod = gpiod;
+   115          clk_gpio->hw.init = &init;
+   116  
+   117          clk = clk_register(dev, &clk_gpio->hw);
+   118  
+   119          if (!IS_ERR(clk))
+   120                  return clk;
+   121  
+   122          if (!dev)
+   123                  kfree(clk_gpio);
+                        ^^^^^^^^^^^^^^^
+It's complaing about this.  Obviously there is an "if (dev)" on the
+allocation side.  Also Smatch is supposed to be able to follow logic
+like that.  The other thing which may affect this, is that this is dead
+code.  Smatch tends to deliberately print error messages in dead code
+because Smatch is confused by dead code.
 
-Perhaps add: Note that checking whether the addresses are aligned may
-require knowing properties of all possible architectures on which the code
-may be executed.  Make this change only if you have this information.
+Anyway, the point is that this API sucks.  If it ever stops being dead
+code then it's going to be a source of bugs.
 
-julia
+Also in the kernel we tend to frown on putting in code before there is
+a user for it.  So lets delete all the "if (dev) " code because that
+pointer is always NULL.
+
+regards,
+dan carpenter
