@@ -1,29 +1,67 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 02 Oct 2014 10:20:53 +0000
-Subject: [patch 1/2 -next] cxgb4: potential shift wrapping bug
-Message-Id: <20141002102052.GA14241@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 01 Oct 2014 13:01:32 +0000
+Subject: Re: [PATCH with Coccinelle?] Deletion of unnecessary checks before specific function calls
+Message-Id: <542BFB2C.5070609@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hariprasad S <hariprasad@chelsio.com>
-Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-"cntxt_id" is an unsigned int but "udb" is a u64 so there is a potential
-shift wrapping bug here.
+>> If you are convinced that dropping the null tests is a good idea, then you 
+>> can submit the patch that makes the change to the relevant maintainers and 
+>> mailing lists.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hello,
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/sge.c b/drivers/net/ethernet/chelsio/cxgb4/sge.c
-index bb7851e..e8e90ce 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
-@@ -2258,7 +2258,7 @@ static u64 udb_address(struct adapter *adap, unsigned int cntxt_id,
- 		(QUEUESPERPAGEPF1 - QUEUESPERPAGEPF0) * adap->fn);
- 	udb_density = 1 << ((qpp >> s_qpp) & QUEUESPERPAGEPF0_MASK);
- 	qpshift = PAGE_SHIFT - ilog2(udb_density);
--	udb = cntxt_id << qpshift;
-+	udb = (u64)cntxt_id << qpshift;
- 	udb &= PAGE_MASK;
- 	page = udb / PAGE_SIZE;
- 	udb += (cntxt_id - (page * udb_density)) * SGE_UDB_SIZE;
+A couple of functions perform input parameter validation before their
+implementations will try further actions with side effects. Some calling
+functions perform similar safety checks.
+
+Functions which release a system resource are occasionally documented in the way
+that they tolerate the passing of a null pointer for example.
+I do not see a need because of this fact that a function caller repeats a
+corresponding check.
+
+Now I would like to propose such a change again.
+
+1. Extension of the infrastructure for the analysis tool "coccicheck"
+   Semantic patch patterns can help to identify update candidates also in the
+Linux source file hierarchy.
+
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/scripts/coccinelle?idyf0345fefaafb7cde301a830471edd21a37989b
+
+   Would you like to reconsider an approach which was discussed with a subject
+like "scripts/coccinelle/free: Delete NULL test before freeing functions?" a
+while ago?
+   https://lkml.org/lkml/2014/8/9/36
+   https://groups.google.com/d/msg/linux.kernel/rIWfYsRRW6I/cTs6y0STf2cJ
+
+
+2. Clarification for some automated update suggestions
+   My source code search approach found 227 functions with the help of the
+software "Coccinelle 1.0.0-rc22" at least which might need another review and
+corresponding corrections for Linux 3.16.3. Further software development will
+point out even more potentially open issues.
+
+Regards,
+Markus
+
