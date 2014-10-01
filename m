@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 01 Oct 2014 14:06:45 +0000
-Subject: Re: [coccicheck PATCH 2/5] Deletion of unnecessary checks before specific function calls
-Message-Id: <542C0A75.3070702@users.sourceforge.net>
+Date: Wed, 01 Oct 2014 14:07:12 +0000
+Subject: Re: [coccicheck PATCH 4/5] Deletion of unnecessary checks before specific function calls
+Message-Id: <542C0A90.3080702@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -30,35 +30,39 @@ To: cocci@systeme.lip6.fr
 >>> can submit the patch that makes the change to the relevant maintainers and 
 >>> mailing lists.
 
-From 1d2de3c3cfa43cc3c78a91200c41cef438b26a8f Mon Sep 17 00:00:00 2001
+From e6a21b920fcca2f6f01c9528909dc036a9b3bc41 Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Mar 2014 18:38:43 +0100
-Subject: [PATCH 2/5] Addition of a semantic patch file for listing of
- functions that check their single parameter
+Date: Wed, 5 Mar 2014 19:10:32 +0100
+Subject: [PATCH 4/5] Addition of a semantic patch file for listing of
+ unnecessary checks before a few known functions
 
-This semantic patch pattern tries to find functions that check their single
-parameter for usability.
+This semantic patch pattern tries to find source code places where a check
+is performed for an expression that is passed to a function (like "kfree")
+which checks this single parameter itself for usability.
+Redundant value or pointer checks can be avoided here.
 
-Example:
-Null pointer checks are often performed as input parameter validation.
+The pattern contains a special comment in a regular expression for a SmPL
+constraint which supports extensions.
 
-It uses Python statements to write information about the found source code
-places in a data format that is a variant of a CSV text file.
+It uses Python statements to write information about the found places in
+a data format that is a variant of a CSV text file.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- .../list_input_parameter_validation1.cocci         | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ ...nctions_with_unnecessary_checks_template1.cocci | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
  create mode 100644
-scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
+scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
 
-diff --git a/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
-b/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
+diff --git
+a/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
+b/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
 new file mode 100644
-index 0000000..b0a5a52
+index 0000000..d2637e8
 --- /dev/null
-+++ b/scripts/coccinelle/deletions/list_input_parameter_validation1.cocci
-@@ -0,0 +1,55 @@
++++
+b/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
+@@ -0,0 +1,59 @@
 +@initialize:python@
 +@@
 +import sys
@@ -66,14 +70,11 @@ index 0000000..b0a5a52
 +mark = ['"', '', '"']
 +delimiter = '|'
 +
-+def store_positions(fun, typ, point, places):
++def store_positions(fun, point, places):
 +    """Add source code positions to an internal list."""
 +    for place in places:
 +        fields = []
 +        fields.append(fun)
-+
-+        mark[1] = typ
-+        fields.append(''.join(mark))
 +
 +        fields.append(point)
 +
@@ -84,38 +85,46 @@ index 0000000..b0a5a52
 +        fields.append(str(int(place.column) + 1))
 +        result.append(delimiter.join(fields))
 +
-+@safety_check@
-+identifier work, input;
-+type data_type;
++@is_unnecessary_check@
++expression data;
++identifier work;
++identifier release =~ "^(?x)
++(?:
++   (?:kz?|slob_)free
++|
++   (?:
++# Alternation placeholder
++   )
++)$";
 +position pos;
-+statement is, es;
++type t;
 +@@
-+ void work@pos(data_type input)
++ t work@pos(...)
 + {
 +  ... when any
-+( if (input) is else es
-+| if (likely(input)) is else es
++( if (data) release(data);
++| if (likely(data)) release(data);
 +)
 +  ... when any
 + }
 +
-+@script:python collection depends on safety_check@
-+typ << safety_check.data_type;
-+fun << safety_check.work;
-+point << safety_check.input;
-+places << safety_check.pos;
++@script:python collection depends on is_unnecessary_check@
++fun << is_unnecessary_check.work;
++point << is_unnecessary_check.data;
++places << is_unnecessary_check.pos;
 +@@
-+store_positions(fun, typ, point, places)
++store_positions(fun, point, places)
 +
 +@finalize:python@
 +@@
 +if result:
-+   result.insert(0, delimiter.join(("function", '"data type"', '"parameter"',
-'"source file"', "line", "column")))
++   result.insert(0, delimiter.join(("function", '"parameter"', '"source file"',
+"line", "column")))
 +   print("\r\n".join(result))
 +else:
 +   sys.stderr.write("No result for this analysis!\n")
 -- 
 1.9.0
+
 
 
