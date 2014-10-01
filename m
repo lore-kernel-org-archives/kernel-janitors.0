@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Oct 2014 19:10:21 +0000
-Subject: Re: [PATCH 1/1] SCSI-QLA2...: Deletion of unnecessary checks before the function call "vfree"
-Message-Id: <5448011D.1000500@users.sourceforge.net>
+Date: Wed, 01 Oct 2014 14:07:25 +0000
+Subject: Re: [coccicheck PATCH 5/5] Deletion of unnecessary checks before specific function calls
+Message-Id: <542C0A9D.4030903@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,155 +19,200 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <542BFB2C.5070609@users.sourceforge.net>
+In-Reply-To: <542BFB2C.5070609@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: cocci@systeme.lip6.fr
 
->> If you are convinced that dropping the null tests is a good idea, then you 
->> can submit the patch that makes the change to the relevant maintainers and 
->> mailing lists.
+>>> If you are convinced that dropping the null tests is a good idea, then =
+you=20
+>>> can submit the patch that makes the change to the relevant maintainers =
+and=20
+>>> mailing lists.
 
-I resent the request once more because another "Triple-X" software development
-adventure might follow ...?
-
-Regards,
-Markus
-
-
-From ff44962f88ac2dae9324e30819629da4fb33f0ff Mon Sep 17 00:00:00 2001
+From bedf1cb3ddd162ee3b4c31cbb98d97431f70103d Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 22 Oct 2014 20:40:31 +0200
-Subject: [PATCH] SCSI-QLA2XXX: Deletion of unnecessary checks before the
- function call "vfree"
+Date: Wed, 5 Mar 2014 19:40:43 +0100
+Subject: [PATCH 5/5] Addition of a make file for build automation
 
-A semantic patch approach was proposed with the subject "[PATCH with
-Coccinelle?] Deletion of unnecessary checks before specific function calls"
-on 2014-03-05.
-https://lkml.org/lkml/2014/3/5/344
-http://article.gmane.org/gmane.comp.version-control.coccinelle/3513/
+This script can be used to combine some input files for the desired data ou=
+tput
+which will eventually show update candidates for further source code review.
+Some build targets were defined. Values for the used make variables can be
+adjusted by parameters on the command line as usual.
 
-This patch pattern application was repeated with the help of the software
-"Coccinelle 1.0.0-rc22" on the source files for Linux 3.17.1. An extract
-of the automatically generated update suggestions is shown here.
+A few implementation details might need more fine-tuning.
+- Automatic determination of the Linux source directory from a calling
+  make process
 
-It was determined that the affected source code places call functions
-which perform input parameter validation already. It is therefore not
-needed that a similar safety check is repeated at the call site.
+- Setting of an extra output directory for the generated files
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/qla2xxx/qla_attr.c |  6 ++----
- drivers/scsi/qla2xxx/qla_init.c | 18 ++++++------------
- drivers/scsi/qla2xxx/qla_os.c   |  6 ++----
- 3 files changed, 10 insertions(+), 20 deletions(-)
+ scripts/coccinelle/deletions/makefile | 126 ++++++++++++++++++++++++++++++=
+++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 scripts/coccinelle/deletions/makefile
 
-diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
-index 82b92c4..95c4c09 100644
---- a/drivers/scsi/qla2xxx/qla_attr.c
-+++ b/drivers/scsi/qla2xxx/qla_attr.c
-@@ -175,10 +175,8 @@ qla2x00_sysfs_write_fw_dump_template(struct file *filp,
-struct kobject *kobj,
- 	uint32_t size;
+diff --git a/scripts/coccinelle/deletions/makefile
+b/scripts/coccinelle/deletions/makefile
+new file mode 100644
+index 0000000..6464bae
+--- /dev/null
++++ b/scripts/coccinelle/deletions/makefile
+@@ -0,0 +1,126 @@
++SED=3Dsed
++SPATCH=3Dspatch.opt --sp-file
++RM=3Drm -f
++LINUX_SOURCE_DIR=3D/usr/src/linux-stable
++EXTRACT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER=3Dlist_input_parameter=
+_validation1.cocci
++SQLITE=3Dsqlite3
++SQLITE_IMPORT_SCRIPT=3Dhandle_function_list.sqlite
++SQLITE_IMPORT_SCRIPT_TEMPLATE=3Dhandle_function_list_template.sqlite
++RESULT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER=3Dlist_input_parameter_=
+validation1.txt
++RESULT_SQL_DATA_BASE=3Dresult.db
++RESULT_FUNCTIONS_WITH_PREFIX=ADd_prefix-SQL.txt
++RESULT_FUNCTIONS_WITH_UNNECESSARY_CHECKS_AS_LIST=3Dlist_functions_with_unn=
+ecessary_checks1.txt
++RESULT_FUNCTIONS_WITH_UNNECESSARY_CHECKS_AS_PATCH=3Dfunctions_with_unneces=
+sary_checks1.diff
++LOG_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER=3Dlist_input_parameter_val=
+idation1-errors.txt
++LOG_LIST_FUNCTIONS_WITH_UNNECESSARY_CHECKS=3Dlist_functions_with_unnecessa=
+ry_checks1-errors.txt
++LOG_PATCH_FUNCTIONS_WITH_UNNECESSARY_CHECKS=3Dfunctions_with_unnecessary_c=
+hecks1-errors.txt
++LIST_PATTERN_TEMPLATE=3Dlist_functions_with_unnecessary_checks_template1.c=
+occi
++LIST_PATTERN=3Dlist_functions_with_unnecessary_checks1.cocci
++PATCH_PATTERN_TEMPLATE=DElete_unnecessary_checks_template1.cocci
++PATCH_PATTERN=DElete_unnecessary_checks1.cocci
++ESCAPING=3DXY=3D$$(< $(RESULT_FUNCTIONS_WITH_PREFIX)) \
++         && XY=3D$${XY/|/ } \
++         && XY=3D$${XY//%/\\%} \
++         && $(SED) "s%\# Alternation placeholder%$${XY//$$'\n'/$$'\\\\\n'}=
+%"
++TEXT1=3DA pattern file was built from which a
++TEXT2=3Dwas generated. Good luck with source code review!
++
++default: build_update_candidate_list
++
++$(RESULT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER): \
++$(EXTRACT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER)
++	$(SPATCH) $(EXTRACT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER) \
++-dir $(LINUX_SOURCE_DIR) \
++> $@ 2> $(LOG_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER)
++
++# This replacement action is needed for the use case that the corresponding
++# variable was overridden.
++$(SQLITE_IMPORT_SCRIPT): $(SQLITE_IMPORT_SCRIPT_TEMPLATE)
++	$(SED) "s%import list_input_pointer_validation1\.txt%import $(subst
+%,\%,$(RESULT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER))%" \
++$(SQLITE_IMPORT_SCRIPT_TEMPLATE) > $@
++
++$(RESULT_SQL_DATA_BASE) $(RESULT_FUNCTIONS_WITH_PREFIX): \
++$(RESULT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER) \
++$(SQLITE_IMPORT_SCRIPT)
++	@$(RM) $(RESULT_SQL_DATA_BASE)
++	$(SQLITE) -init $(SQLITE_IMPORT_SCRIPT) $(RESULT_SQL_DATA_BASE) \
++'select '\''   |  '\'' || function from positions group by function order =
+by
+function desc;' \
++> $(RESULT_FUNCTIONS_WITH_PREFIX)
++
++$(LIST_PATTERN): $(RESULT_FUNCTIONS_WITH_PREFIX)
++	$(ESCAPING) $(LIST_PATTERN_TEMPLATE) > $@
++
++$(PATCH_PATTERN): $(RESULT_FUNCTIONS_WITH_PREFIX)
++	$(ESCAPING) $(PATCH_PATTERN_TEMPLATE) > $@
++
++$(RESULT_FUNCTIONS_WITH_UNNECESSARY_CHECKS_AS_LIST): $(LIST_PATTERN)
++	$(SPATCH) $(LIST_PATTERN) -dir $(LINUX_SOURCE_DIR) \
++> $@ 2> $(LOG_LIST_FUNCTIONS_WITH_UNNECESSARY_CHECKS)
++
++$(RESULT_FUNCTIONS_WITH_UNNECESSARY_CHECKS_AS_PATCH): $(PATCH_PATTERN)
++	$(SPATCH) $(PATCH_PATTERN) -dir $(LINUX_SOURCE_DIR) \
++> $@ 2> $(LOG_PATCH_FUNCTIONS_WITH_UNNECESSARY_CHECKS)
++
++build_check_list generate_list_of_functions_which_check_their_single_param=
+eter: \
++$(RESULT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER)
++	@echo 'The list of functions which check their single parameter was gener=
+ated.'
++
++build_import_script: $(SQLITE_IMPORT_SCRIPT)
++	@echo 'A script was generated which should contain appropriate parameters=
+ for
+a data base.'
++
++build_data_base: $(RESULT_SQL_DATA_BASE)
++	@echo 'A SQL data base was built.'
++
++build_alternation add_prefix_to_functions: build_data_base
++	@echo 'The function name list was converted to a component for a regular
+expression.'
++
++build_list_pattern: $(LIST_PATTERN)
++	@echo '$(TEXT1) list can be generated.'
++
++build_patch_pattern: $(PATCH_PATTERN)
++	@echo '$(TEXT1) patch can be generated.'
++
++build_update_candidate_list show_list_of_update_candidates: build_list_pat=
+tern \
++$(RESULT_FUNCTIONS_WITH_UNNECESSARY_CHECKS_AS_LIST)
++	@echo 'The list of update candidates $(TEXT2)'
++
++build_patch show_update_suggestion: build_patch_pattern \
++$(RESULT_FUNCTIONS_WITH_UNNECESSARY_CHECKS_AS_PATCH)
++	@echo 'A patch file $(TEXT2)'
++
++all: build_update_candidate_list build_patch
++
++clean:
++	$(RM) *-errors.txt \
++$(LIST_PATTERN) \
++$(PATCH_PATTERN) \
++$(RESULT_FUNCTIONS_WITH_PREFIX) \
++$(RESULT_SQL_DATA_BASE) \
++$(RESULT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER) \
++$(SQLITE_IMPORT_SCRIPT)
++
++delete_data_base:
++	$(RM) $(RESULT_SQL_DATA_BASE) \
++$(RESULT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER)
++
++.PHONY: all \
++build_check_list \
++build_data_base \
++build_import_script \
++build_list_pattern \
++build_patch \
++build_patch_pattern \
++build_update_candidate_list \
++clean \
++default \
++delete_data_base \
++generate_list_of_functions_which_check_their_single_parameter \
++show_list_of_update_candidates \
++show_update_suggestion
++
++
++# The following input files should not need further actions here.
++$(EXTRACT_FUNCTIONS_THAT_CHECK_THEIR_SINGLE_PARAMETER) \
++$(SQLITE_IMPORT_SCRIPT_TEMPLATE) \
++$(LIST_PATTERN_TEMPLATE) \
++$(PATCH_PATTERN_TEMPLATE): ;
+--=20
+1.9.0
 
- 	if (off = 0) {
--		if (ha->fw_dump)
--			vfree(ha->fw_dump);
--		if (ha->fw_dump_template)
--			vfree(ha->fw_dump_template);
-+		vfree(ha->fw_dump);
-+		vfree(ha->fw_dump_template);
 
- 		ha->fw_dump = NULL;
- 		ha->fw_dump_len = 0;
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index a4dde7e..8da3d4f 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -5256,8 +5256,7 @@ qla24xx_load_risc_flash(scsi_qla_host_t *vha, uint32_t
-*srisc_addr,
- 	if (!IS_QLA27XX(ha))
- 		return rval;
-
--	if (ha->fw_dump_template)
--		vfree(ha->fw_dump_template);
-+	vfree(ha->fw_dump_template);
- 	ha->fw_dump_template = NULL;
- 	ha->fw_dump_template_len = 0;
-
-@@ -5307,8 +5306,7 @@ qla24xx_load_risc_flash(scsi_qla_host_t *vha, uint32_t
-*srisc_addr,
-
- default_template:
- 	ql_log(ql_log_warn, vha, 0x0168, "Using default fwdump template\n");
--	if (ha->fw_dump_template)
--		vfree(ha->fw_dump_template);
-+	vfree(ha->fw_dump_template);
- 	ha->fw_dump_template = NULL;
- 	ha->fw_dump_template_len = 0;
-
-@@ -5342,8 +5340,7 @@ default_template:
-
- failed_template:
- 	ql_log(ql_log_warn, vha, 0x016d, "Failed default fwdump template\n");
--	if (ha->fw_dump_template)
--		vfree(ha->fw_dump_template);
-+	vfree(ha->fw_dump_template);
- 	ha->fw_dump_template = NULL;
- 	ha->fw_dump_template_len = 0;
- 	return rval;
-@@ -5559,8 +5556,7 @@ qla24xx_load_risc_blob(scsi_qla_host_t *vha, uint32_t
-*srisc_addr)
- 	if (!IS_QLA27XX(ha))
- 		return rval;
-
--	if (ha->fw_dump_template)
--		vfree(ha->fw_dump_template);
-+	vfree(ha->fw_dump_template);
- 	ha->fw_dump_template = NULL;
- 	ha->fw_dump_template_len = 0;
-
-@@ -5609,8 +5605,7 @@ qla24xx_load_risc_blob(scsi_qla_host_t *vha, uint32_t
-*srisc_addr)
-
- default_template:
- 	ql_log(ql_log_warn, vha, 0x0178, "Using default fwdump template\n");
--	if (ha->fw_dump_template)
--		vfree(ha->fw_dump_template);
-+	vfree(ha->fw_dump_template);
- 	ha->fw_dump_template = NULL;
- 	ha->fw_dump_template_len = 0;
-
-@@ -5644,8 +5639,7 @@ default_template:
-
- failed_template:
- 	ql_log(ql_log_warn, vha, 0x017d, "Failed default fwdump template\n");
--	if (ha->fw_dump_template)
--		vfree(ha->fw_dump_template);
-+	vfree(ha->fw_dump_template);
- 	ha->fw_dump_template = NULL;
- 	ha->fw_dump_template_len = 0;
- 	return rval;
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index db3dbd9..0f9c378 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -3676,10 +3676,8 @@ qla2x00_free_fw_dump(struct qla_hw_data *ha)
- 		dma_free_coherent(&ha->pdev->dev,
- 		    EFT_SIZE, ha->eft, ha->eft_dma);
-
--	if (ha->fw_dump)
--		vfree(ha->fw_dump);
--	if (ha->fw_dump_template)
--		vfree(ha->fw_dump_template);
-+	vfree(ha->fw_dump);
-+	vfree(ha->fw_dump_template);
-
- 	ha->fce = NULL;
- 	ha->fce_dma = 0;
--- 
-2.1.2
-
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
