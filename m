@@ -1,20 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 26 Oct 2014 12:10:31 +0000
-Subject: Re: [PATCH 1/1] GPU-DRM-GMA500: Deletion of unnecessary checks before two function calls
-Message-Id: <544CE4B7.6040700@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 02 Oct 2014 11:22:19 +0000
+Subject: [patch 1/2 -next] cxgb4: clean up a type issue
+Message-Id: <20141002112219.GA25606@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>	<530A086E.8010901@users.sourceforge.net>	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>	<530A72AA.3000601@users.sourceforge.net>	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>	<530B5FB6.6010207@users.sourceforge.net>	<alpine.DEB.2.10.1402241710370.2074@hadrien>	<530C5E18.1020800@users.sourceforge.net>	<alpine.DEB.2.10.1402251014170.2080@hadrien>	<530CD2C4.4050903@users.sourceforge.net>	<alpine.DEB.2.10.1402251840450.7035@hadrien>	<530CF8FF.8080600@users.sourceforge.net>	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>	<530DD06F.4090703@users.sourceforge.net>	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.sourceforge.net>	<5447DFD5.5020905@users.sourceforge.net>
- <20141023122616.4f66d31a@alan.etchedpixels.co.uk>
-In-Reply-To: <20141023122616.4f66d31a@alan.etchedpixels.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Hariprasad S <hariprasad@chelsio.com>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> What platforms have you tested the code on at this point ?
+The tx_desc struct hold 8 __be64 values.  The original code took a
+tx_desc pointer then casted it to an int pointer and then casted it to a
+u64 pointer.  It was confusing and triggered some static checker
+warnings.
 
-None. - My "test computer" does not provide the corresponding hardware for the
-affected driver source files.
+I have changed the cxgb_pio_copy() to only take tx_desc pointers.  This
+isn't really a loss of flexibility because anything else was buggy to
+begin with.
 
-Regards,
-Markus
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/sge.c b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+index bb7851e..599cdfd 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+@@ -854,9 +854,10 @@ static void write_sgl(const struct sk_buff *skb, struct sge_txq *q,
+  * memory mapped BAR2 space(user space writes).
+  * For coalesced WR SGE, fetches data from the FIFO instead of from Host.
+  */
+-static void cxgb_pio_copy(u64 __iomem *dst, u64 *src)
++static void cxgb_pio_copy(u64 __iomem *dst, struct tx_desc *desc)
+ {
+-	int count = 8;
++	int count = sizeof(*desc) / sizeof(u64);
++	u64 *src = (u64 *)desc;
+ 
+ 	while (count) {
+ 		writeq(*src, dst);
+@@ -914,12 +915,11 @@ static inline void ring_tx_db(struct adapter *adap, struct sge_txq *q, int n)
+ 			int index = (q->pidx
+ 				     ? (q->pidx - 1)
+ 				     : (q->size - 1));
+-			unsigned int *wr = (unsigned int *)&q->desc[index];
++			struct tx_desc *desc = &q->desc[index];
+ 
+ 			cxgb_pio_copy((u64 __iomem *)
+ 				      (adap->bar2 + q->udb +
+-				       SGE_UDB_WCDOORBELL),
+-				      (u64 *)wr);
++				       SGE_UDB_WCDOORBELL), desc);
+ 		} else {
+ 			writel(val,  adap->bar2 + q->udb + SGE_UDB_KDOORBELL);
+ 		}
