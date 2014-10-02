@@ -1,74 +1,115 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 Oct 2014 12:43:54 +0000
-Subject: Re: [patch] DM RAID: fix a couple integer overflows
-Message-Id: <20141021124354.GB26918@mwanda>
+From: Jyri Sarha <jsarha@ti.com>
+Date: Thu, 02 Oct 2014 07:53:32 +0000
+Subject: [PATCH 2/2] clk: gpio-gate: Rename the struct from clk_gpio to clk_gpio_gate
+Message-Id: <5ca791d0bda38fe4cc3da4d6bde7e0a374822ee1.1412234778.git.jsarha@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140529082323.GA9209@mwanda>
-In-Reply-To: <20140529082323.GA9209@mwanda>
+References: <cover.1412234778.git.jsarha@ti.com>
+In-Reply-To: <cover.1412234778.git.jsarha@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>
-Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, kernel-janitors@vger.kernel.org
+Cc: dan.carpenter@oracle.com, detheridge@ti.com, Jyri Sarha <jsarha@ti.com>
 
-These array overflows are still there in linux-next.
+I forgot to change this when changing the clk name from clk_gpio to
+clk_gpio_gate. Since I already changed the comment above the
+struct definition it is better to go all the way.
 
-regards,
-dan carpenter
+Signed-off-by: Jyri Sarha <jsarha@ti.com>
+---
+ drivers/clk/clk-gpio-gate.c  |   22 +++++++++++-----------
+ include/linux/clk-provider.h |    2 +-
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-On Thu, May 29, 2014 at 11:23:23AM +0300, Dan Carpenter wrote:
-> My static checker complains that if "num_raid_params" is UINT_MAX then
-> the "if (num_raid_params + 1 > argc) {" check doesn't work as intended.
-> 
-> The other change is that I moved the "if (argc != (num_raid_devs * 2))"
-> condition forward a few lines so it was before the call to
-> context_alloc().  If we had an integer overflow inside that function
-> then it would lead to an immediate crash.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static checker stuff.  Not tested.
-> 
-> diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
-> index 4880b69..e0d53fe 100644
-> --- a/drivers/md/dm-raid.c
-> +++ b/drivers/md/dm-raid.c
-> @@ -1189,7 +1189,7 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
->  	argv++;
->  
->  	/* Skip over RAID params for now and find out # of devices */
-> -	if (num_raid_params + 1 > argc) {
-> +	if (num_raid_params >= argc) {
->  		ti->error = "Arguments do not agree with counts given";
->  		return -EINVAL;
->  	}
-> @@ -1200,6 +1200,12 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
->  		return -EINVAL;
->  	}
->  
-> +	argc -= num_raid_params + 1; /* +1: we already have num_raid_devs */
-> +	if (argc != (num_raid_devs * 2)) {
-> +		ti->error = "Supplied RAID devices does not match the count given";
-> +		return -EINVAL;
-> +	}
-> +
->  	rs = context_alloc(ti, rt, (unsigned)num_raid_devs);
->  	if (IS_ERR(rs))
->  		return PTR_ERR(rs);
-> @@ -1208,16 +1214,8 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
->  	if (ret)
->  		goto bad;
->  
-> -	ret = -EINVAL;
-> -
-> -	argc -= num_raid_params + 1; /* +1: we already have num_raid_devs */
->  	argv += num_raid_params + 1;
->  
-> -	if (argc != (num_raid_devs * 2)) {
-> -		ti->error = "Supplied RAID devices does not match the count given";
-> -		goto bad;
-> -	}
-> -
->  	ret = dev_parms(rs, argv);
->  	if (ret)
->  		goto bad;
+diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
+index a648761..053939a 100644
+--- a/drivers/clk/clk-gpio-gate.c
++++ b/drivers/clk/clk-gpio-gate.c
+@@ -28,11 +28,11 @@
+  * parent - fixed parent.  No clk_set_parent support
+  */
+ 
+-#define to_clk_gpio(_hw) container_of(_hw, struct clk_gpio, hw)
++#define to_clk_gpio(_hw) container_of(_hw, struct clk_gpio_gate, hw)
+ 
+ static int clk_gpio_gate_enable(struct clk_hw *hw)
+ {
+-	struct clk_gpio *clk = to_clk_gpio(hw);
++	struct clk_gpio_gate *clk = to_clk_gpio(hw);
+ 
+ 	gpiod_set_value(clk->gpiod, 1);
+ 
+@@ -41,14 +41,14 @@ static int clk_gpio_gate_enable(struct clk_hw *hw)
+ 
+ static void clk_gpio_gate_disable(struct clk_hw *hw)
+ {
+-	struct clk_gpio *clk = to_clk_gpio(hw);
++	struct clk_gpio_gate *clk = to_clk_gpio(hw);
+ 
+ 	gpiod_set_value(clk->gpiod, 0);
+ }
+ 
+ static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
+ {
+-	struct clk_gpio *clk = to_clk_gpio(hw);
++	struct clk_gpio_gate *clk = to_clk_gpio(hw);
+ 
+ 	return gpiod_get_value(clk->gpiod);
+ }
+@@ -71,7 +71,7 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 		const char *parent_name, struct gpio_desc *gpiod,
+ 		unsigned long flags)
+ {
+-	struct clk_gpio *clk_gpio = NULL;
++	struct clk_gpio_gate *clk_gpio_gate = NULL;
+ 	struct clk *clk = ERR_PTR(-EINVAL);
+ 	struct clk_init_data init = { NULL };
+ 	unsigned long gpio_flags;
+@@ -89,9 +89,9 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 		return ERR_PTR(err);
+ 	}
+ 
+-	clk_gpio = kzalloc(sizeof(struct clk_gpio), GFP_KERNEL);
++	clk_gpio_gate = kzalloc(sizeof(struct clk_gpio_gate), GFP_KERNEL);
+ 
+-	if (!clk_gpio) {
++	if (!clk_gpio_gate) {
+ 		clk = ERR_PTR(-ENOMEM);
+ 		goto clk_register_gpio_gate_err;
+ 	}
+@@ -102,15 +102,15 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 	init.parent_names = (parent_name ? &parent_name : NULL);
+ 	init.num_parents = (parent_name ? 1 : 0);
+ 
+-	clk_gpio->gpiod = gpiod;
+-	clk_gpio->hw.init = &init;
++	clk_gpio_gate->gpiod = gpiod;
++	clk_gpio_gate->hw.init = &init;
+ 
+-	clk = clk_register(dev, &clk_gpio->hw);
++	clk = clk_register(dev, &clk_gpio_gate->hw);
+ 
+ 	if (!IS_ERR(clk))
+ 		return clk;
+ 
+-	kfree(clk_gpio);
++	kfree(clk_gpio_gate);
+ 
+ clk_register_gpio_gate_err:
+ 	gpiod_put(gpiod);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index ec1581b..860cb0c 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -498,7 +498,7 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+  * Implements .enable, .disable and .is_enabled
+  */
+ 
+-struct clk_gpio {
++struct clk_gpio_gate {
+ 	struct clk_hw	hw;
+ 	struct gpio_desc *gpiod;
+ };
+-- 
+1.7.9.5
+
