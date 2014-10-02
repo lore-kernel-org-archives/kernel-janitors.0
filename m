@@ -1,54 +1,65 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Wed, 22 Oct 2014 12:11:25 +0000
-Subject: Re: [patch] netfilter: ipset: off by one in ip_set_nfnl_get_byindex()
-Message-Id: <20141022121125.GA25804@salvia>
+From: Jyri Sarha <jsarha@ti.com>
+Date: Thu, 02 Oct 2014 07:53:31 +0000
+Subject: [PATCH 1/2] clk: gpio-gate: Stop using devres API
+Message-Id: <59d52e97a4954e0593a9aebc5b7d0d968a10f485.1412234778.git.jsarha@ti.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141021082812.GB28426@mwanda>
- <alpine.DEB.2.10.1410211146160.27469@blackhole.kfki.hu>
-In-Reply-To: <alpine.DEB.2.10.1410211146160.27469@blackhole.kfki.hu>
+References: <cover.1412234778.git.jsarha@ti.com>
+In-Reply-To: <cover.1412234778.git.jsarha@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>, Jiri Kosina <jkosina@suse.cz>, Ilia Mirkin <imirkin@alum.mit.edu>, Sergey Popovich <popovich_sergei@mail.ru>, Joe Perches <joe@perches.com>, Anton Danilov <littlesmilingcloud@gmail.com>, stephen hemminger <stephen@networkplumber.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, kernel-janitors@vger.kernel.org
+Cc: dan.carpenter@oracle.com, detheridge@ti.com, Jyri Sarha <jsarha@ti.com>
 
-On Tue, Oct 21, 2014 at 11:51:12AM +0200, Jozsef Kadlecsik wrote:
-> On Tue, 21 Oct 2014, Dan Carpenter wrote:
-> 
-> > The ->ip_set_list[] array is initialized in ip_set_net_init() and it
-> > has ->ip_set_max elements so this check should be >= instead of >
-> > otherwise we are off by one.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > I am not very familiar with this code, so please review cautiously.
-> > This is an old bug which should go to -stable.
-> > 
-> > diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
-> > index 912e5a0..86f9d76 100644
-> > --- a/net/netfilter/ipset/ip_set_core.c
-> > +++ b/net/netfilter/ipset/ip_set_core.c
-> > @@ -659,7 +659,7 @@ ip_set_nfnl_get_byindex(struct net *net, ip_set_id_t index)
-> >  	struct ip_set *set;
-> >  	struct ip_set_net *inst = ip_set_pernet(net);
-> >  
-> > -	if (index > inst->ip_set_max)
-> > +	if (index >= inst->ip_set_max)
-> >  		return IPSET_INVALID_ID;
-> >  
-> >  	nfnl_lock(NFNL_SUBSYS_IPSET);
-> > 
-> 
-> Absolutely right and it should go to stable too!
-> 
-> Acked-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+If some driver calls clk_register_gpio_gate() directly, then the
+driver needs to kfree the resulting struct clk pointer in remove
+function.
 
-Applied, thanks.
+Signed-off-by: Jyri Sarha <jsarha@ti.com>
+---
+ drivers/clk/clk-gpio-gate.c |   16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-My script says this applies cleanly to:
+diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
+index b87e5f0..a648761 100644
+--- a/drivers/clk/clk-gpio-gate.c
++++ b/drivers/clk/clk-gpio-gate.c
+@@ -82,23 +82,14 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 	else
+ 		gpio_flags = GPIOF_OUT_INIT_LOW;
+ 
+-	if (dev)
+-		err = devm_gpio_request_one(dev, desc_to_gpio(gpiod),
+-					    gpio_flags, name);
+-	else
+-		err = gpio_request_one(desc_to_gpio(gpiod), gpio_flags, name);
+-
++	err = gpio_request_one(desc_to_gpio(gpiod), gpio_flags, name);
+ 	if (err) {
+ 		pr_err("%s: %s: Error requesting clock control gpio %u\n",
+ 		       __func__, name, desc_to_gpio(gpiod));
+ 		return ERR_PTR(err);
+ 	}
+ 
+-	if (dev)
+-		clk_gpio = devm_kzalloc(dev, sizeof(struct clk_gpio),
+-					GFP_KERNEL);
+-	else
+-		clk_gpio = kzalloc(sizeof(struct clk_gpio), GFP_KERNEL);
++	clk_gpio = kzalloc(sizeof(struct clk_gpio), GFP_KERNEL);
+ 
+ 	if (!clk_gpio) {
+ 		clk = ERR_PTR(-ENOMEM);
+@@ -119,8 +110,7 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
+ 	if (!IS_ERR(clk))
+ 		return clk;
+ 
+-	if (!dev)
+-		kfree(clk_gpio);
++	kfree(clk_gpio);
+ 
+ clk_register_gpio_gate_err:
+ 	gpiod_put(gpiod);
+-- 
+1.7.9.5
 
-3.14.x
-3.16.x
-3.17.x
-
-So I'll enqueue this for those.
