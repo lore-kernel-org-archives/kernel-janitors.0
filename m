@@ -1,41 +1,41 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 03 Oct 2014 14:47:29 +0000
+From: Joe Perches <joe@perches.com>
+Date: Fri, 03 Oct 2014 15:10:28 +0000
 Subject: Re: [patch] checkpatch: remove the ether_addr_copy warning
-Message-Id: <20141003144729.GK23154@mwanda>
+Message-Id: <1412349028.3247.113.camel@joe-AO725>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141003093505.GA7393@mwanda>
- <1412346147.3247.97.camel@joe-AO725>
-In-Reply-To: <1412346147.3247.97.camel@joe-AO725>
+	 <1412346147.3247.97.camel@joe-AO725>
+	 <alpine.DEB.2.10.1410031628420.2371@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1410031628420.2371@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Andy Whitcroft <apw@canonical.com>, Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Andy Whitcroft <apw@canonical.com>, Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, gregkh@linuxfoundation.org
 
-On Fri, Oct 03, 2014 at 07:22:27AM -0700, Joe Perches wrote:
-> On Fri, 2014-10-03 at 12:35 +0300, Dan Carpenter wrote:
-> > Most people sending checkpatch.pl fixes don't know how to verify the
-> > alignment.  This checkpatch warning just encourages newbies to try
-> > introduce bugs.  Patch submitters tell us that they just sed the code
-> > and it's the job for the maintainer to check that it's correct.
-> 
-> I haven't seen many instances of bad patch submittals
-> on netdev.  Is this mostly an issue for staging?
+On Fri, 2014-10-03 at 16:30 +0200, Julia Lawall wrote:
+> On Fri, 3 Oct 2014, Joe Perches wrote:
+> > On Fri, 2014-10-03 at 12:35 +0300, Dan Carpenter wrote:
+> > > Most people sending checkpatch.pl fixes don't know how to verify the
+> > > alignment.  This checkpatch warning just encourages newbies to try
+> > > introduce bugs.  Patch submitters tell us that they just sed the code
+> > > and it's the job for the maintainer to check that it's correct.
+> >
+> > I haven't seen many instances of bad patch submittals
+> > on netdev.  Is this mostly an issue for staging?
+> >
+> > Maybe a downgrade to CHK requiring --strict is OK.
+[]
+> I think it is too bad to have a piece of knowledge that was apparent be
+> made more obscure.  Why not just change the checkpatch warning to make
+> more explicit that a lot of expertise is required to make the change?
 
-I don't follow netdev so I can't say.
+Any wordsmithing appreciated.  Maybe something like:
 
-Most of the time data is aligned at a 4 byte mark so probably you are
-just getting lucky.  I really doubt that netdev checkpatch newbies know
-about alignment...
+from: Prefer ether_addr_copy() over memcpy() if the Ethernet addresses are __aligned(2)
+to: Where both Ethernet addresses are guaranteed to be __aligned(2), prefer ether_addr_copy() over memcpy() 
 
-> 
-> Maybe a downgrade to CHK requiring --strict is OK.
+That won't stop people from blindly following any message.
 
-I would actually like to turn --strict by default in staging.
 
-Checkpatch is a good concept, but it should only do safe things instead
-of telling newbies to send buggy patches.
-
-regards,
-dan carpenter
 
