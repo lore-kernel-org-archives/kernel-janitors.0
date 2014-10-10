@@ -1,48 +1,69 @@
-From: Stanislav Yakovlev <stas.yakovlev@gmail.com>
-Date: Tue, 28 Oct 2014 09:20:50 +0000
-Subject: Re: [patch] ipw2x00: shift wrap bugs setting ->rt_tsf
-Message-Id: <CA++WF2NJ73=mFsb7tpPYL09XpuBLZ65-1UpH_1vBW-Oqxrr4xA@mail.gmail.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Fri, 10 Oct 2014 07:54:16 +0000
+Subject: Re: [Cocci] [RFC] drop owner assignment from platform_drivers
+Message-Id: <alpine.DEB.2.10.1410100951250.2402@hadrien>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141024081534.GA11140@mwanda>
-	<1414143811.15751.14.camel@perches.com>
-In-Reply-To: <1414143811.15751.14.camel@perches.com>
+References: <20141010072439.GA1741@katana>
+In-Reply-To: <20141010072439.GA1741@katana>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "John W. Linville" <linville@tuxdriver.com>, wireless <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-Hello, Joe,
-
-On 24 October 2014 02:43, Joe Perches <joe@perches.com> wrote:
+> @match1@
+> declarer name module_platform_driver;
+> declarer name module_platform_driver_probe;
+> identifier __driver;
+> @@
+> (
+> 	module_platform_driver(__driver);
+> |
+> 	module_platform_driver_probe(__driver, ...);
+> )
 >
-> struct ipw_rt_hdr {
->         struct ieee80211_radiotap_header rt_hdr;
->         u64 rt_tsf;      /* TSF */      /* XXX */
->         u8 rt_flags;    /* radiotap packet flags *
->         u8 rt_rate;     /* rate in 500kb/s */
->         __le16 rt_channel;      /* channel in mhz */
->         __le16 rt_chbitmask;    /* channel bitfield */
->         s8 rt_dbmsignal;        /* signal in dbM, kluged to signed */
->         s8 rt_dbmnoise;
->         u8 rt_antenna;  /* antenna number */
->         u8 payload[0];  /* payload... */
-> } __packed;
+> @fix1 depends on match1@
+> identifier match1.__driver;
+> @@
+> 	static struct platform_driver __driver = {
+> 		.driver = {
+> -			.owner = THIS_MODULE,
+> 		}
+> 	};
 >
-> Maybe rt_tsf (which is otherwise unused in this code),
-> should be __le64 so maybe use (u32) ?
+> @match2@
+> identifier __driver;
+> @@
+> (
+> 	platform_driver_register(&__driver)
+> |
+> 	platform_driver_probe(&__driver, ...)
+> |
+> 	platform_create_bundle(&__driver, ...)
+> )
 >
+> @fix2 depends on match2@
+> identifier match2.__driver;
+> @@
+> 	static struct platform_driver __driver = {
+> 		.driver = {
+> -			.owner = THIS_MODULE,
+> 		}
+> 	};
 
-Yes, you are right, the field definition should be __le64 as you
-suggest. All values in radiotap header are specified in little endian
-byte order according to the documentation at www.radiotap.org.
+The semantic patch looks fine.  I'm a little surprised that it doesn't
+complain about the lack of a comma after
 
->         ipw_rt->rt_txf = cpu_to_le64((u32)(frame->parent_tsf[3] << 24 |
->                                            frame->parent_tsf[2] << 16 |
->                                            frame->parent_tsf[1] << 8  |
->                                            frame->parent_tsf[0]));
->
+.driver = { .owner = THIS_MODULE, }
 
-That looks fine for me. Will you send a patch?
+but it seems that it does not.
 
-Stanislav.
+If you think that it would be useful to have this in the Linux kernel, so
+people don't add the owner initializer back in the future, you can try
+
+coccinelle/tools/sgen/sgen
+
+(run make in the coccinelle/tools/sgen directory).  That will guide you
+through the process of making a Linux-ready semantic patch.  Feedback
+would be appreciated.
+
+julia
