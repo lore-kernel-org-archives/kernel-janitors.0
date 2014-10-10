@@ -1,97 +1,70 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Fri, 10 Oct 2014 18:26:05 +0000
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 10 Oct 2014 19:39:10 +0000
 Subject: Re: [RFC] drop owner assignment from platform_drivers
-Message-Id: <20141010182604.GC6075@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="+nBD6E3TurpgldQp"
+Message-Id: <5588520.7NmcEzOB7Z@wuerfel>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141010072439.GA1741@katana>
- <20141010083627.GL5182@n2100.arm.linux.org.uk>
-In-Reply-To: <20141010083627.GL5182@n2100.arm.linux.org.uk>
+References: <20141010072439.GA1741@katana> <2106140.DbuFLh1xav@wuerfel>
+ <20141010181218.GB6075@katana>
+In-Reply-To: <20141010181218.GB6075@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
+On Friday 10 October 2014 20:12:21 Wolfram Sang wrote:
+> Hi Arnd,
+> 
+> thanks for taking a look!
+> 
+> On Fri, Oct 10, 2014 at 10:30:08AM +0200, Arnd Bergmann wrote:
+> > On Friday 10 October 2014 09:24:39 Wolfram Sang wrote:
+> > > people found out that for platform_driver, we don't need to set the
+> > > .owner field because this is done by the platform driver core. So far,
+> > > so good. However, now I got patches removing the .owner field for this
+> > > single i2c driver or for that one. To prevent getting thousands of
+> > > patches fixing single drivers, I used coccinelle to remove all instances
+> > > from the kernel. The SmPL looks like this, it doesn't blindly remove all
+> > > THIS_MODULE, but checks if the platform_driver struct was really used by
+> > > a call actually setting the .owner field:
+> > 
+> > Is the intention just to save a few lines in the kernel source, or are
+> > there any additional upsides to doing this?
+> 
+> As written above, I don't like getting patches removing this line for
+> single drivers. I already got two and I am expecting more. So I'd prefer
+> to do this on subsystem level. I will apply the I2C part, for sure.
 
---+nBD6E3TurpgldQp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah, right, that is certainly a good reason. Have you checked how many
+other patches like this got merged? If it's a common theme, then doing
+all at once sounds like a really good idea.
 
-On Fri, Oct 10, 2014 at 09:36:27AM +0100, Russell King - ARM Linux wrote:
-> On Fri, Oct 10, 2014 at 09:24:39AM +0200, Wolfram Sang wrote:
-> > people found out that for platform_driver, we don't need to set the
-> > .owner field because this is done by the platform driver core. So far,
-> > so good. However, now I got patches removing the .owner field for this
-> > single i2c driver or for that one. To prevent getting thousands of
-> > patches fixing single drivers, I used coccinelle to remove all instances
-> > from the kernel. The SmPL looks like this, it doesn't blindly remove all
-> > THIS_MODULE, but checks if the platform_driver struct was really used by
-> > a call actually setting the .owner field:
->=20
-> Is this correct?
->=20
-> #define platform_driver_register(drv) \
->         __platform_driver_register(drv, THIS_MODULE)
-> extern int __platform_driver_register(struct platform_driver *,
->                                         struct module *);
->=20
-> Fine for those which use platform_driver_register(), but:
->=20
-> /* non-hotpluggable platform devices may use this so that probe() and
->  * its support may live in __init sections, conserving runtime memory.
->  */
-> extern int platform_driver_probe(struct platform_driver *driver,
->                 int (*probe)(struct platform_device *));
->=20
-> platform_driver_probe() doesn't seem to know which module called it.
-> This is also true of platform_create_bundle:
->=20
-> extern struct platform_device *platform_create_bundle(
->         struct platform_driver *driver, int (*probe)(struct platform_devi=
-ce *),
->         struct resource *res, unsigned int n_res,
->         const void *data, size_t size);
->=20
-> So, it's not as trivial as just "all platform driver's should not have a
-> .owner field" - the real answer is far more complex than that.
+> > While it looks like an obvious cleanup, it also seems to me that there
+> > is zero effect in terms of functionality, code size or enabling future
+> > changes.
+> 
+> Well, the kernel image will compress better ;)
 
-platform_create_bundle() calls platform_driver_probe().
-platform_driver_probe() calls platform_driver_register().
-platform_driver_register() modifies driver.owner.
+Right, I hadn't thought of that.
 
-So, it is correct from the point of view that it doesn't make sense to
-set the .owner field if it gets overwritten anyhow.
+> And well, it is cleaner.
+> Why should we set up something if it gets overwritten anyhow?
 
-You got me wondering, though, that it could not be correct to call
-platform_driver_register() from the platform core instead of module
-init. I will check tomorrow. Still, this would be a bug independent of
-my series. Although I'd need to respin it if platform_driver_probe()
-needed a fix.
+Of course we shouldn't. To take the analogy: just like it doesn't
+matter what the initial value of the .owner fields is after it gets
+overwritten by the probe call, the patch to remove the origonal
+initialization isn't very valuable after the code that has the
+useless initialization is already part of the kernel ;-)
 
-Thanks,
+> > I'm all for adding your semantic patch to scripts/coccinelle so it gets
+> > picked up by anyone writing new drivers or doing code cleanup on their
+> > driver, but I'm unsure about the value of applying all your patches
+> > for the existing drivers.
+> 
+> I could try reducing the number of patches. Any other downsides?
 
-   Wolfram
+Just to be clear: I don't really see any downsides to your patches,
+the problem is that the upsides relatively small, so it's unclear if
+all maintainers are better off applying the patches or not even
+knowing about them.
 
-
---+nBD6E3TurpgldQp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUOCS8AAoJEBQN5MwUoCm2lwIP/jzWKs2TLozBIKj77Uuusj7y
-BU9EfbVBVbSNsG7iC5ZXh+ik2GzvgjNXzjNClD8ipDKFdp24lZ+Lsmfm70EdWLpe
-+Chq9ozkUnscArlCe7Q1N5/F6fagsmGstbNe8yKWxI1pUdXWt4K+VcKjuqv510HY
-f5XX3z2pDXGHolFt5NyDXEfzKgNI2UK+LDAMWimhjruCBrKKS80OG7HP9TX5k/+f
-veDdP1mqEMPW64v79KRkcOsoXX6wQQ9x3bs8MWXaE1hk0gIwJ/L76SmJbOjUzbaY
-WaMkV0XyJaO2so85CQWc/5tkOjLXnwOYyZNczJMk7ORvw7vP8wsLhKCtrPATyN15
-Mq7yHlgyKQfn+ewne28tQ3mkkCekiu/kZShERjHkdKXng4p3ZuyMDeIVyfMZydLT
-tvpxaGTesvm1b9FHBsPJvTgx5xIBUlfyZBJWkledsQadqB4WTFyzRHzX1dSrawoS
-jNfFikNFmBWqkfQadtW8J6kV2dPoOoR9G38h8/34PW0weWJ9g3ZnUqIo7GM73b0w
-HNh8/vDmLzD6b7VSiABKXqNNFdso4uQNEjD36azEoJ2G93ClUPjvROfl/ssw/jzJ
-0v/rt7RiqvnjRJIwd7yReB3ynE6DVVv/ZXce7u3uiSuSSGkBvrU5lR1vb2VZJ/9r
-LSCJ887vhplRtmEJeO5L
-=vJvQ
------END PGP SIGNATURE-----
-
---+nBD6E3TurpgldQp--
+	Arnd
