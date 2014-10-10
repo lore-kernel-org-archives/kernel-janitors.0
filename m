@@ -1,51 +1,81 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Date: Fri, 10 Oct 2014 08:36:27 +0000
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Fri, 10 Oct 2014 18:12:21 +0000
 Subject: Re: [RFC] drop owner assignment from platform_drivers
-Message-Id: <20141010083627.GL5182@n2100.arm.linux.org.uk>
+Message-Id: <20141010181218.GB6075@katana>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="GID0FwUMdk1T2AWN"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141010072439.GA1741@katana>
-In-Reply-To: <20141010072439.GA1741@katana>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ <2106140.DbuFLh1xav@wuerfel>
+In-Reply-To: <2106140.DbuFLh1xav@wuerfel>
 To: cocci@systeme.lip6.fr
 
-On Fri, Oct 10, 2014 at 09:24:39AM +0200, Wolfram Sang wrote:
-> people found out that for platform_driver, we don't need to set the
-> .owner field because this is done by the platform driver core. So far,
-> so good. However, now I got patches removing the .owner field for this
-> single i2c driver or for that one. To prevent getting thousands of
-> patches fixing single drivers, I used coccinelle to remove all instances
-> from the kernel. The SmPL looks like this, it doesn't blindly remove all
-> THIS_MODULE, but checks if the platform_driver struct was really used by
-> a call actually setting the .owner field:
 
-Is this correct?
+--GID0FwUMdk1T2AWN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#define platform_driver_register(drv) \
-        __platform_driver_register(drv, THIS_MODULE)
-extern int __platform_driver_register(struct platform_driver *,
-                                        struct module *);
+Hi Arnd,
 
-Fine for those which use platform_driver_register(), but:
+thanks for taking a look!
 
-/* non-hotpluggable platform devices may use this so that probe() and
- * its support may live in __init sections, conserving runtime memory.
- */
-extern int platform_driver_probe(struct platform_driver *driver,
-                int (*probe)(struct platform_device *));
+On Fri, Oct 10, 2014 at 10:30:08AM +0200, Arnd Bergmann wrote:
+> On Friday 10 October 2014 09:24:39 Wolfram Sang wrote:
+> > people found out that for platform_driver, we don't need to set the
+> > .owner field because this is done by the platform driver core. So far,
+> > so good. However, now I got patches removing the .owner field for this
+> > single i2c driver or for that one. To prevent getting thousands of
+> > patches fixing single drivers, I used coccinelle to remove all instances
+> > from the kernel. The SmPL looks like this, it doesn't blindly remove all
+> > THIS_MODULE, but checks if the platform_driver struct was really used by
+> > a call actually setting the .owner field:
+>=20
+> Is the intention just to save a few lines in the kernel source, or are
+> there any additional upsides to doing this?
 
-platform_driver_probe() doesn't seem to know which module called it.
-This is also true of platform_create_bundle:
+As written above, I don't like getting patches removing this line for
+single drivers. I already got two and I am expecting more. So I'd prefer
+to do this on subsystem level. I will apply the I2C part, for sure.
 
-extern struct platform_device *platform_create_bundle(
-        struct platform_driver *driver, int (*probe)(struct platform_device *),
-        struct resource *res, unsigned int n_res,
-        const void *data, size_t size);
+> While it looks like an obvious cleanup, it also seems to me that there
+> is zero effect in terms of functionality, code size or enabling future
+> changes.
 
-So, it's not as trivial as just "all platform driver's should not have a
-.owner field" - the real answer is far more complex than that.
+Well, the kernel image will compress better ;) And well, it is cleaner.
+Why should we set up something if it gets overwritten anyhow?
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+> I'm all for adding your semantic patch to scripts/coccinelle so it gets
+> picked up by anyone writing new drivers or doing code cleanup on their
+> driver, but I'm unsure about the value of applying all your patches
+> for the existing drivers.
+
+I could try reducing the number of patches. Any other downsides?
+
+Thanks,
+
+   Wolfram
+
+--GID0FwUMdk1T2AWN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUOCGCAAoJEBQN5MwUoCm247oP/0xYtJ0IjAo9/B8FCDgynKiy
+2JXKw3gpa56m63/Sq18Ij59t5Q4n9MoxKpAAAprv3uB2gIUc+SGkSMSsjAkSH1iP
+xe9mG2bIwc+mEc4PgAluJo3hAEZyQT3oFm1Y2CXjeev4gaHJmiOLxcC0zCTDzkgw
+8Xf9bnSwt//rqidDIrscfwm/JRCrNlSu6he2wfJCGdtGcGdYaWoljA8+VtR5+wNw
+rRgh+Aey1LPS1AYFD+rWtv2P8B082r8Q55JZQHr1WEcpyJsi2xKdZTStPkYQIAiq
+bXNHrTAlySQVXJNI1aX2fJ0TYFF5la1XBHQQEIUpYcA2lH1jKVuUcePALXDspIHC
+Dje3gPjs4uti0wCd/cLTvQ65bFVn4YE0SA3V3Eir5hGVyK7O1WYky7pYp+MKVTRG
+SkslFyAIUZRYwk2Hzb08KsGoiJWMgqdcJNT1MaK/sJINi+rvtZiDpc8SFJaPWPnB
+Zt5C/frYybST2T2w4NGdzDxVVJky2yPYmTcB5nyJiJO88ERFsBr0Zgyb0xyGBFjH
+oRBXqjuhtOdLq58M7QI7kJZScSOGuOF2SvJ35xGMGgvkhPgmL9Avab49IwpVLOek
+3AEGsB8J+pCeooPM9wjYikxwEDWjxwoSlcjGLC6tTWMT5385AYCRcltVxCDQ3TeO
+MGrOy3Miz+KcT+FtwlOH
+=uT18
+-----END PGP SIGNATURE-----
+
+--GID0FwUMdk1T2AWN--
