@@ -1,69 +1,55 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 10 Oct 2014 07:54:16 +0000
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Fri, 10 Oct 2014 18:04:35 +0000
 Subject: Re: [Cocci] [RFC] drop owner assignment from platform_drivers
-Message-Id: <alpine.DEB.2.10.1410100951250.2402@hadrien>
+Message-Id: <20141010180429.GA6075@katana>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="xHFwDpU9dbj6ez1V"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141010072439.GA1741@katana>
-In-Reply-To: <20141010072439.GA1741@katana>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ <alpine.DEB.2.10.1410100951250.2402@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1410100951250.2402@hadrien>
 To: cocci@systeme.lip6.fr
 
-> @match1@
-> declarer name module_platform_driver;
-> declarer name module_platform_driver_probe;
-> identifier __driver;
-> @@
-> (
-> 	module_platform_driver(__driver);
-> |
-> 	module_platform_driver_probe(__driver, ...);
-> )
->
-> @fix1 depends on match1@
-> identifier match1.__driver;
-> @@
-> 	static struct platform_driver __driver = {
-> 		.driver = {
-> -			.owner = THIS_MODULE,
-> 		}
-> 	};
->
-> @match2@
-> identifier __driver;
-> @@
-> (
-> 	platform_driver_register(&__driver)
-> |
-> 	platform_driver_probe(&__driver, ...)
-> |
-> 	platform_create_bundle(&__driver, ...)
-> )
->
-> @fix2 depends on match2@
-> identifier match2.__driver;
-> @@
-> 	static struct platform_driver __driver = {
-> 		.driver = {
-> -			.owner = THIS_MODULE,
-> 		}
-> 	};
 
-The semantic patch looks fine.  I'm a little surprised that it doesn't
-complain about the lack of a comma after
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-.driver = { .owner = THIS_MODULE, }
 
-but it seems that it does not.
+> The semantic patch looks fine.
 
-If you think that it would be useful to have this in the Linux kernel, so
-people don't add the owner initializer back in the future, you can try
+Wow, nothing to improve on the semantic patch? Now I am proud :) Thanks
+Julia for your support, as always!
 
-coccinelle/tools/sgen/sgen
+> If you think that it would be useful to have this in the Linux kernel, so
+> people don't add the owner initializer back in the future, you can try
+>=20
+> coccinelle/tools/sgen/sgen
 
-(run make in the coccinelle/tools/sgen directory).  That will guide you
-through the process of making a Linux-ready semantic patch.  Feedback
-would be appreciated.
+Will try later this weekend, thanks!
 
-julia
+
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUOB+sAAoJEBQN5MwUoCm2fT8P/AiaifinQjgJ7WqD0QgD1RnT
+OM0ncVgkXxtUflnrKU3qVHaCaHM3zHc/+2ok264TlzYUl8GLnZRbAP5oHst/3rTB
+8Tei8xuuZb8jXiWamZQ39RUpa7TtCxF86OPmhuoJNGU5xqnzZJJRZ3D7W6za6U1a
+9dbb+GwMWDI8t2Gqo0wPCiJcOTod3XognVplAVYNk8JaK/3jd5w098DJO3Tgxm1a
+sVi9+aRuFk2wg7x+7IIpkY09OF0AXX6nOph3XEIHxvahTUnpGDqOcL3yijcwWQhy
+sQdQSdIWXCHtmw//dHGAolktiw1Hxk7W47zyoI00IQQMbLUux6U/q+A1zHUfA0pF
+8soVwWYOwrgwRViGpyuGsDiQhQ0is9Nv+SCQuZNCV1IR5PCinairG76lMN5HVeoX
+x4oAZCp//3hBiHaaoqwueBSgDH/vYv/hKqPyFsxjfdRo/Eg783b0jXqyf+F6MXEV
+RtumwPUrro1aOgJxCtdTqltxBFGnB6uMlQLmb9i+KBL83/m2LFc3UE9tpBiGlyF9
+Aw491T4y0g7g0i/bE/jfhJ9ahlJRsQdj823foUwOmaVjL4nFkZs7khYpMrTyqL8o
+VgZ1MDxasEoDkt1BoWnEQExbBvZRmfAhlqPVSmzk74/+jHDzvylOp2vniQCLgeBW
+BmKJWoI6bQkcjYuCcWcz
+=r1Ih
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
