@@ -1,52 +1,57 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 11 Oct 2014 20:55:27 +0000
+From: Wolfram Sang <wsa@the-dreams.de>
+Date: Sun, 12 Oct 2014 05:51:46 +0000
 Subject: Re: [RFC] drop owner assignment from platform_drivers
-Message-Id: <20141011205527.GA30877@kroah.com>
+Message-Id: <20141012055146.GA1310@katana>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="sm4nu43k4a2Rpi4c"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141010072439.GA1741@katana>
  <20141010083627.GL5182@n2100.arm.linux.org.uk>
  <20141010182604.GC6075@katana> <2769473.KEN6DZKnT7@wuerfel>
- <20141011165650.GA1263@katana>
-In-Reply-To: <20141011165650.GA1263@katana>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ <20141011165650.GA1263@katana> <20141011205527.GA30877@kroah.com>
+In-Reply-To: <20141011205527.GA30877@kroah.com>
 To: cocci@systeme.lip6.fr
 
-On Sat, Oct 11, 2014 at 06:56:51PM +0200, Wolfram Sang wrote:
-> 
-> > > You got me wondering, though, that it could not be correct to call
-> > > platform_driver_register() from the platform core instead of module
-> > > init. I will check tomorrow. Still, this would be a bug independent of
-> > > my series. Although I'd need to respin it if platform_driver_probe()
-> > > needed a fix.
-> > 
-> > Right, this seems to be a preexisting bug. platform_create_bundle 
-> > and platform_driver_probe will both overwrite the .owner field with
-> > NULL since they live in builtin code. They need to be replaced with
-> > __platform_driver_probe and __platform_driver_register that both
-> > take an extra owner argument passed down from the caller in the driver
-> > module.
-> 
-> Yeah, that would be one solution. However, my personal favourite would
-> meanwhile be to revert the commit that Russell mentioned. I think it is
-> cleaner to have the owner explicitly set in the module rather than
-> hidden away by a function call. However, grepping through include/linux,
-> there are a few subsystems hiding it this way. So, it is a pattern
-> somewhow. Oh well...
 
-The pattern is to not have to manually set MODULE_OWNER, and have the
-pre-processor do it for you, otherwise you will forget or get it wrong.
+--sm4nu43k4a2Rpi4c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-That is why I accepted this patch to the platform driver interface, as
-it is in line with many other bus driver apis (pci, usb, etc.).
 
-I missed the one code path you pointed out, and that should be fixed,
-but that doesn't mean that the original patch should be reverted, as it
-is the way we want things to be, let's just fix up the bug and move on.
+> I missed the one code path you pointed out, and that should be fixed,
+> but that doesn't mean that the original patch should be reverted, as it
+> is the way we want things to be, let's just fix up the bug and move on.
 
-And again, may I just say how much I hate the platform driver code, one
-of these days I'm going to lock myself in a room for a week and figure
-out a way to just delete that stuff...
+OK, that is a clear statement.
 
-greg k-h
+So, what is your opinion on the original cleanup series removing
+unnecessary '.owner = THIS_MODULE' lines in drivers? Helpful? Noise?
+
+Thanks,
+
+   Wolfram
+
+
+--sm4nu43k4a2Rpi4c
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUOhbyAAoJEBQN5MwUoCm2rz8QALApWGKZOOzy3XNzFQGGw3Nc
+YZNbz41KX+OxK+cxcTSQbYKXWVRLUdTUf3iewDFOoTr6ggG2Ra2VyX28mLBUxWUy
+SXGBOZLQpyNZbsE4KPPjijRInWYtCIrtZofcMkMs72+zWburqkfaQN+sHWnaIqVh
+sD+TmWNrJHI+ZVYtUAn2LjBmfdN06uCIHOIYxwHG1xmFTkcoTSgQai8Jby8FM6nj
+L8x/Zud92CFqoFLNCFUmdmXEld5hFcGxXgzUZ+fGAQ4MKBxMGIogZWQHLKsjSfJ9
+hzQxDnLJ+cegSLFf2n8aIv2hlBzOXZLSLEmq+r7VUG8L9vKK8Wz89FO3x2cbOXWw
+ldoOntGQZecQUfJMf2+hQVkcAMfZnLEwK9UdWIwsgVF7sWXa4Z5wW4gpB/fePwUB
+Yj8nvpkdqLBwkn+SvxfLgU5YtjVgHk4P9b+Ykive2mqYbqK4LLqP78iho5Jxtcu3
+4TBDBrBsdpAgC5ABIQSlHmi1yiEPXurbjkA66PuHeSoKKpwDSGDeD9w8+JHtiWyV
+atkDZckWt0a2qo0XD8TqMlPMWSMR/xn6M+OBAvIiRG/uiLfjcidp5kJgd7+V+R+l
+Wlg3ddYltl0SjFzxYgtfrVFyKPi5FAkzWIWyUfxzpegmX1A3V/DozRNZkCpZkeqE
+fVdKjc1TEHTkvzkfn9En
+=xv9Z
+-----END PGP SIGNATURE-----
+
+--sm4nu43k4a2Rpi4c--
