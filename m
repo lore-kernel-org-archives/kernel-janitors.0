@@ -1,59 +1,24 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 16 Oct 2014 08:25:45 +0000
-Subject: Re: [patch] [media] usbvision-video: two use after frees
-Message-Id: <5545024.x6hpeqSvG5@avalon>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 15 Oct 2014 13:40:08 +0000
+Subject: Re: [patch] [media] xc5000: use after free in release()
+Message-Id: <20141015134008.GO26918@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141016075721.GC29096@mwanda> <1494643.LQNyJpdPt6@avalon> <543F8069.8020005@xs4all.nl>
-In-Reply-To: <543F8069.8020005@xs4all.nl>
+References: <20140925114008.GC3708@mwanda>
+In-Reply-To: <20140925114008.GC3708@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>, Shuah Khan <shuah.kh@samsung.com>
+Cc: Fabian Frederick <fabf@skynet.be>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thursday 16 October 2014 10:23:05 Hans Verkuil wrote:
-> On 10/16/2014 10:09 AM, Laurent Pinchart wrote:
-> > On Thursday 16 October 2014 10:57:21 Dan Carpenter wrote:
-> >> The lock has been freed in usbvision_release() so there is no need to
-> >> call mutex_unlock() here.
-> > 
-> > Yuck :-/
-> > 
-> > The driver should really be converted to use video_device::release. That
-> > might be out of scope for this fix though. Is usbvision maintained ?
+On Thu, Sep 25, 2014 at 02:40:08PM +0300, Dan Carpenter wrote:
+> I moved the call to hybrid_tuner_release_state(priv) after
+> "priv->firmware" dereference.
 > 
-> I have hardware, and at some point I plan to convert it to modern
-> frameworks. But ENOTIME for now. So I guess I might be the closest to a
-> being a maintainer.
+> Fixes: 5264a522a597 ('[media] media: tuner xc5000 - release firmwware from xc5000_release()')
 
-Can you ack the patch then ? :-)
+We still need this patch.
 
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >> 
-> >> diff --git a/drivers/media/usb/usbvision/usbvision-video.c
-> >> b/drivers/media/usb/usbvision/usbvision-video.c index 68bc961..9bfa041
-> >> 100644
-> >> --- a/drivers/media/usb/usbvision/usbvision-video.c
-> >> +++ b/drivers/media/usb/usbvision/usbvision-video.c
-> >> @@ -446,6 +446,7 @@ static int usbvision_v4l2_close(struct file *file)
-> >>  	if (usbvision->remove_pending) {
-> >>  		printk(KERN_INFO "%s: Final disconnect\n", __func__);
-> >>  		usbvision_release(usbvision);
-> >> +		return 0;
-> >>  	}
-> >>  	mutex_unlock(&usbvision->v4l2_lock);
-> >> 
-> >> @@ -1221,6 +1222,7 @@ static int usbvision_radio_close(struct file *file)
-> >>  	if (usbvision->remove_pending) {
-> >>  		printk(KERN_INFO "%s: Final disconnect\n", __func__);
-> >>  		usbvision_release(usbvision);
-> >> +		return err_code;
-> >>  	}
-> >>  	
-> >>  	mutex_unlock(&usbvision->v4l2_lock);
-
--- 
-Regards,
-
-Laurent Pinchart
+regards,
+dan carpenter
 
