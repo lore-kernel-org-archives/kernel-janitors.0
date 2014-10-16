@@ -1,38 +1,39 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 27 Oct 2014 15:40:16 +0000
-Subject: Re: [patch] mmc: silence a shift wrapping warning
-Message-Id: <CAPDyKFpeCUVPA2Axw16Zfg=hXV9RqarFLEE2Y6VHEMbWQs+sqQ@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Oct 2014 12:38:20 +0000
+Subject: [patch] i40e: _MASK vs _SHIFT typo in i40e_handle_mdd_event()
+Message-Id: <20141016123820.GA30053@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141023113700.GB13250@mwanda>
-In-Reply-To: <20141023113700.GB13250@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Ball <chris@printf.net>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mmc <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On 23 October 2014 13:37, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Presumably ->slotno is normally fairly small and the shift doesn't wrap
-> but static checkers will complain about it.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We accidentally mask by the _SHIFT variable.  It means that "event" is
+always zero.
 
-Thanks! Applied for next.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Not tested.
 
-Kind regards
-Uffe
-
->
-> diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
-> index 6da97b1..9a98cc7 100644
-> --- a/drivers/mmc/core/sdio_bus.c
-> +++ b/drivers/mmc/core/sdio_bus.c
-> @@ -295,7 +295,7 @@ struct sdio_func *sdio_alloc_func(struct mmc_card *card)
->  static void sdio_acpi_set_handle(struct sdio_func *func)
->  {
->         struct mmc_host *host = func->card->host;
-> -       u64 addr = (host->slotno << 16) | func->num;
-> +       u64 addr = ((u64)host->slotno << 16) | func->num;
->
->         acpi_preset_companion(&func->dev, ACPI_COMPANION(host->parent), addr);
->  }
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index ed5f1c1..c3a7f4a 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -6151,7 +6151,7 @@ static void i40e_handle_mdd_event(struct i40e_pf *pf)
+ 				I40E_GL_MDET_TX_PF_NUM_SHIFT;
+ 		u8 vf_num = (reg & I40E_GL_MDET_TX_VF_NUM_MASK) >>
+ 				I40E_GL_MDET_TX_VF_NUM_SHIFT;
+-		u8 event = (reg & I40E_GL_MDET_TX_EVENT_SHIFT) >>
++		u8 event = (reg & I40E_GL_MDET_TX_EVENT_MASK) >>
+ 				I40E_GL_MDET_TX_EVENT_SHIFT;
+ 		u8 queue = (reg & I40E_GL_MDET_TX_QUEUE_MASK) >>
+ 				I40E_GL_MDET_TX_QUEUE_SHIFT;
+@@ -6165,7 +6165,7 @@ static void i40e_handle_mdd_event(struct i40e_pf *pf)
+ 	if (reg & I40E_GL_MDET_RX_VALID_MASK) {
+ 		u8 func = (reg & I40E_GL_MDET_RX_FUNCTION_MASK) >>
+ 				I40E_GL_MDET_RX_FUNCTION_SHIFT;
+-		u8 event = (reg & I40E_GL_MDET_RX_EVENT_SHIFT) >>
++		u8 event = (reg & I40E_GL_MDET_RX_EVENT_MASK) >>
+ 				I40E_GL_MDET_RX_EVENT_SHIFT;
+ 		u8 queue = (reg & I40E_GL_MDET_RX_QUEUE_MASK) >>
+ 				I40E_GL_MDET_RX_QUEUE_SHIFT;
