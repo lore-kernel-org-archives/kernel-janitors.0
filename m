@@ -1,28 +1,36 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Thu, 30 Oct 2014 16:24:23 +0000
-Subject: Re: [patch] Bluetooth: 6lowpan: use after free in disconnect_devices()
-Message-Id: <3DFF075B-22A1-4E52-8675-00207AE385C4@holtmann.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 16 Oct 2014 07:57:21 +0000
+Subject: [patch] [media] usbvision-video: two use after frees
+Message-Id: <20141016075721.GC29096@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141029161057.GF5290@mwanda>
-In-Reply-To: <20141029161057.GF5290@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "Gustavo F. Padovan" <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, BlueZ development <linux-bluetooth@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi Dan,
+The lock has been freed in usbvision_release() so there is no need to
+call mutex_unlock() here.
 
-> This was accidentally changed from list_for_each_entry_safe() to
-> list_for_each_entry() so now it has a use after free bug.  I've changed
-> it back.
-> 
-> Fixes: 90305829635d ('Bluetooth: 6lowpan: Converting rwlocks to use RCU')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
-
+diff --git a/drivers/media/usb/usbvision/usbvision-video.c b/drivers/media/usb/usbvision/usbvision-video.c
+index 68bc961..9bfa041 100644
+--- a/drivers/media/usb/usbvision/usbvision-video.c
++++ b/drivers/media/usb/usbvision/usbvision-video.c
+@@ -446,6 +446,7 @@ static int usbvision_v4l2_close(struct file *file)
+ 	if (usbvision->remove_pending) {
+ 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
+ 		usbvision_release(usbvision);
++		return 0;
+ 	}
+ 	mutex_unlock(&usbvision->v4l2_lock);
+ 
+@@ -1221,6 +1222,7 @@ static int usbvision_radio_close(struct file *file)
+ 	if (usbvision->remove_pending) {
+ 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
+ 		usbvision_release(usbvision);
++		return err_code;
+ 	}
+ 
+ 	mutex_unlock(&usbvision->v4l2_lock);
