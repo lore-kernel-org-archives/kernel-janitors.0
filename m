@@ -1,32 +1,31 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 21 Oct 2014 08:08:35 +0000
-Subject: [patch] mtd: off by one in INFTL_dumpVUchains()
-Message-Id: <20141021080637.GA28426@mwanda>
+Date: Thu, 16 Oct 2014 07:56:25 +0000
+Subject: [patch] staging: lustre: silence a static checker warning
+Message-Id: <20141016075625.GB29096@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kernel-janitors@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, linux-mtd@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-The ->PUtable[] array has "->nb_blocks" number of elemetns so this
-comparison should be ">=" instead of ">".  Otherwise it could result in
-a minor read beyond the end of an array.
+Static checkers warn that if  cfs_cpt_table_print() returns an error
+other than -EFBIG, then it would lead to a double free.  This is true
+but cfs_cpt_table_print() only returns -EFBIG on error so it also won't
+happen in real life.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Static analysis stuff.  Not tested.
 
-diff --git a/drivers/mtd/inftlmount.c b/drivers/mtd/inftlmount.c
-index 487e64f..1388c8d 100644
---- a/drivers/mtd/inftlmount.c
-+++ b/drivers/mtd/inftlmount.c
-@@ -518,7 +518,7 @@ void INFTL_dumpVUchains(struct INFTLrecord *s)
- 	pr_debug("INFTL Virtual Unit Chains:\n");
- 	for (logical = 0; logical < s->nb_blocks; logical++) {
- 		block = s->VUtable[logical];
--		if (block > s->nb_blocks)
-+		if (block >= s->nb_blocks)
+diff --git a/drivers/staging/lustre/lustre/libcfs/linux/linux-proc.c b/drivers/staging/lustre/lustre/libcfs/linux/linux-proc.c
+index bbe2c68..83d3f08 100644
+--- a/drivers/staging/lustre/lustre/libcfs/linux/linux-proc.c
++++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-proc.c
+@@ -365,8 +365,8 @@ static int __proc_cpt_table(void *data, int write,
+ 		if (rc >= 0)
+ 			break;
+ 
+-		LIBCFS_FREE(buf, len);
+ 		if (rc = -EFBIG) {
++			LIBCFS_FREE(buf, len);
+ 			len <<= 1;
  			continue;
- 		pr_debug("  LOGICAL %d --> %d ", logical, block);
- 		for (i = 0; i < s->nb_blocks; i++) {
+ 		}
