@@ -1,37 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Oct 2014 10:18:19 +0000
-Subject: Re: [patch 1/2 -next] cxgb4: clean up a type issue
-Message-Id: <20141008101819.GB26918@mwanda>
+Date: Tue, 21 Oct 2014 12:43:36 +0000
+Subject: [patch] dm raid: pointer math issue in super_sync()
+Message-Id: <20141021124336.GA20791@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141002112219.GA25606@mwanda>
- <20141003.154629.555967384624529643.davem@davemloft.net>
-In-Reply-To: <20141003.154629.555967384624529643.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: hariprasad@chelsio.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Oct 03, 2014 at 03:46:29PM -0700, David Miller wrote:
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Date: Thu, 2 Oct 2014 14:22:19 +0300
-> 
-> > The tx_desc struct hold 8 __be64 values.  The original code took a
-> > tx_desc pointer then casted it to an int pointer and then casted it to a
-> > u64 pointer.  It was confusing and triggered some static checker
-> > warnings.
-> > 
-> > I have changed the cxgb_pio_copy() to only take tx_desc pointers.  This
-> > isn't really a loss of flexibility because anything else was buggy to
-> > begin with.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Please address the feedback you've received, resubmit this series, and actually
-> number this second change "2/2" instead of "1/2" :-)
-> 
+"sb" is a dm_raid_superblock struct pointer so the pointer math doesn't
+work and we will end up corrupting memory.
 
-Yes.  Sorry for the delay.  I'll send that this afternoon.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
+diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+index b802644..a7cb9dd 100644
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -826,7 +826,7 @@ static void super_sync(struct mddev *mddev, struct md_rdev *rdev)
+ 		    test_bit(Faulty, &(rs->dev[i].rdev.flags)))
+ 			failed_devices |= (1ULL << i);
+ 
+-	memset(sb + sizeof(*sb), 0, rdev->sb_size - sizeof(*sb));
++	memset(sb + 1, 0, rdev->sb_size - sizeof(*sb));
+ 
+ 	sb->magic = cpu_to_le32(DM_RAID_MAGIC);
+ 	sb->features = cpu_to_le32(0);	/* No features yet */
