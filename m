@@ -1,27 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 01 Oct 2014 17:55:16 +0000
-Subject: Re: defxx: DEFEA's ESIC port I/O decoding cleanup
-Message-Id: <20141001175516.GE5865@mwanda>
+Date: Tue, 21 Oct 2014 08:28:12 +0000
+Subject: [patch] netfilter: ipset: off by one in ip_set_nfnl_get_byindex()
+Message-Id: <20141021082812.GB28426@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141001170107.GA11786@mwanda>
-In-Reply-To: <20141001170107.GA11786@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, Jiri Kosina <jkosina@suse.cz>, Ilia Mirkin <imirkin@alum.mit.edu>, Sergey Popovich <popovich_sergei@mail.ru>, Joe Perches <joe@perches.com>, Anton Danilov <littlesmilingcloud@gmail.com>, stephen hemminger <stephen@networkplumber.org>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 01, 2014 at 06:20:00PM +0100, Maciej W. Rozycki wrote:
+The ->ip_set_list[] array is initialized in ip_set_net_init() and it
+has ->ip_set_max elements so this check should be >= instead of >
+otherwise we are off by one.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I am not very familiar with this code, so please review cautiously.
+This is an old bug which should go to -stable.
+
+diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
+index 912e5a0..86f9d76 100644
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -659,7 +659,7 @@ ip_set_nfnl_get_byindex(struct net *net, ip_set_id_t index)
+ 	struct ip_set *set;
+ 	struct ip_set_net *inst = ip_set_pernet(net);
  
->  I think your checker might be just a little bit too picky for this case, 
-
-
-Yeah.  This check is too picky for me to release publicly.  Often I can
-tell which uses are intentional but sometimes it's not clear.
-
-Anyway, thanks for the feedback.
-
-regards,
-dan carpenter
-
-
-
+-	if (index > inst->ip_set_max)
++	if (index >= inst->ip_set_max)
+ 		return IPSET_INVALID_ID;
+ 
+ 	nfnl_lock(NFNL_SUBSYS_IPSET);
