@@ -1,34 +1,74 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Oct 2014 08:16:15 +0000
-Subject: [patch] decompress_bunzip2: off by one in get_next_block()
-Message-Id: <20141022081615.GD31384@mwanda>
+Date: Tue, 21 Oct 2014 12:43:54 +0000
+Subject: Re: [patch] DM RAID: fix a couple integer overflows
+Message-Id: <20141021124354.GB26918@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20140529082323.GA9209@mwanda>
+In-Reply-To: <20140529082323.GA9209@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>, Alain Knaff <alain@knaff.lu>
-Cc: Yinghai Lu <yinghai@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+To: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"origPtr" is used as an offset into the bd->dbuf[] array.  That array
-is allocated in start_bunzip() and has "bd->dbufSize" number of elements
-so the test here should be >= instead of >.
+These array overflows are still there in linux-next.
 
-Later we check "origPtr" again before using it as an offset so I don't
-know if this bug can be triggered in real life.
+regards,
+dan carpenter
 
-Fixes: bc22c17e12c1 ('bzip2/lzma: library support for gzip, bzip2 and lzma decompression')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/lib/decompress_bunzip2.c b/lib/decompress_bunzip2.c
-index 8290e0b..6dd0335 100644
---- a/lib/decompress_bunzip2.c
-+++ b/lib/decompress_bunzip2.c
-@@ -184,7 +184,7 @@ static int INIT get_next_block(struct bunzip_data *bd)
- 	if (get_bits(bd, 1))
- 		return RETVAL_OBSOLETE_INPUT;
- 	origPtr = get_bits(bd, 24);
--	if (origPtr > dbufSize)
-+	if (origPtr >= dbufSize)
- 		return RETVAL_DATA_ERROR;
- 	/* mapping table: if some byte values are never used (encoding things
- 	   like ascii text), the compression code removes the gaps to have fewer
+On Thu, May 29, 2014 at 11:23:23AM +0300, Dan Carpenter wrote:
+> My static checker complains that if "num_raid_params" is UINT_MAX then
+> the "if (num_raid_params + 1 > argc) {" check doesn't work as intended.
+> 
+> The other change is that I moved the "if (argc != (num_raid_devs * 2))"
+> condition forward a few lines so it was before the call to
+> context_alloc().  If we had an integer overflow inside that function
+> then it would lead to an immediate crash.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Static checker stuff.  Not tested.
+> 
+> diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+> index 4880b69..e0d53fe 100644
+> --- a/drivers/md/dm-raid.c
+> +++ b/drivers/md/dm-raid.c
+> @@ -1189,7 +1189,7 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  	argv++;
+>  
+>  	/* Skip over RAID params for now and find out # of devices */
+> -	if (num_raid_params + 1 > argc) {
+> +	if (num_raid_params >= argc) {
+>  		ti->error = "Arguments do not agree with counts given";
+>  		return -EINVAL;
+>  	}
+> @@ -1200,6 +1200,12 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  		return -EINVAL;
+>  	}
+>  
+> +	argc -= num_raid_params + 1; /* +1: we already have num_raid_devs */
+> +	if (argc != (num_raid_devs * 2)) {
+> +		ti->error = "Supplied RAID devices does not match the count given";
+> +		return -EINVAL;
+> +	}
+> +
+>  	rs = context_alloc(ti, rt, (unsigned)num_raid_devs);
+>  	if (IS_ERR(rs))
+>  		return PTR_ERR(rs);
+> @@ -1208,16 +1214,8 @@ static int raid_ctr(struct dm_target *ti, unsigned argc, char **argv)
+>  	if (ret)
+>  		goto bad;
+>  
+> -	ret = -EINVAL;
+> -
+> -	argc -= num_raid_params + 1; /* +1: we already have num_raid_devs */
+>  	argv += num_raid_params + 1;
+>  
+> -	if (argc != (num_raid_devs * 2)) {
+> -		ti->error = "Supplied RAID devices does not match the count given";
+> -		goto bad;
+> -	}
+> -
+>  	ret = dev_parms(rs, argv);
+>  	if (ret)
+>  		goto bad;
