@@ -1,30 +1,30 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Oct 2014 08:43:25 +0000
-Subject: [patch] goldfish: off by one in goldfish_tty_console_setup()
-Message-Id: <20141029084325.GB8939@mwanda>
+Date: Wed, 22 Oct 2014 08:13:07 +0000
+Subject: [patch] ocfs2: fix an off-by-one BUG_ON() statement
+Message-Id: <20141022081307.GC31384@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-The goldfish_ttys[] array has "goldfish_tty_line_count" number of
-elements.  It's allocated in goldfish_tty_create_driver().  This test
-should be >= instead of >.
+The ->si_slots[] array is allocated in ocfs2_init_slot_info() it has
+"->max_slots" number of elements so this test should be >= instead of >.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker work.  Compile tested only.
 
-diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
-index 09495f5..2f68540 100644
---- a/drivers/tty/goldfish.c
-+++ b/drivers/tty/goldfish.c
-@@ -155,7 +155,7 @@ static struct tty_driver *goldfish_tty_console_device(struct console *c,
+diff --git a/fs/ocfs2/slot_map.c b/fs/ocfs2/slot_map.c
+index a88b2a4..d5493e3 100644
+--- a/fs/ocfs2/slot_map.c
++++ b/fs/ocfs2/slot_map.c
+@@ -306,7 +306,7 @@ int ocfs2_slot_to_node_num_locked(struct ocfs2_super *osb, int slot_num,
+ 	assert_spin_locked(&osb->osb_lock);
  
- static int goldfish_tty_console_setup(struct console *co, char *options)
- {
--	if ((unsigned)co->index > goldfish_tty_line_count)
-+	if ((unsigned)co->index >= goldfish_tty_line_count)
- 		return -ENODEV;
- 	if (goldfish_ttys[co->index].base = 0)
- 		return -ENODEV;
+ 	BUG_ON(slot_num < 0);
+-	BUG_ON(slot_num > osb->max_slots);
++	BUG_ON(slot_num >= osb->max_slots);
+ 
+ 	if (!si->si_slots[slot_num].sl_valid)
+ 		return -ENOENT;
