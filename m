@@ -1,53 +1,100 @@
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 29 Oct 2014 16:26:07 +0000
-Subject: Re: [patch] drm/radeon: remove some buggy dead code
-Message-Id: <CADnq5_NryAMC=h_3f-iHH1pk7tZq23426ktpfhH1Hocn5FWCkA@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Oct 2014 18:00:17 +0000
+Subject: Re: [PATCH 1/1] IOMMU-MSM: Deletion of unnecessary checks before the function call "clk_disable"
+Message-Id: <5447F0B1.9010707@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141029154707.GA5290@mwanda>
-In-Reply-To: <20141029154707.GA5290@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>
+To: cocci@systeme.lip6.fr
 
-On Wed, Oct 29, 2014 at 11:47 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> The calculation of "num_shader_engines" has a precedence bug because
-> the right shift happens before the mask, but this variable is never used
-> so we can just delete it.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> If you are convinced that dropping the null tests is a good idea, then you 
+>> can submit the patch that makes the change to the relevant maintainers and 
+>> mailing lists.
 
-Applied in preference to Joe Perches's patch.
+From af73fb59d5d4b2c2890000fb236d0752522b6b38 Mon Sep 17 00:00:00 2001
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Oct 2014 19:39:21 +0200
+Subject: [PATCH] IOMMU-MSM: Deletion of unnecessary checks before the function
+ call "clk_disable"
 
-Thanks!
+A semantic patch approach was proposed with the subject "[PATCH with
+Coccinelle?] Deletion of unnecessary checks before specific function calls"
+on 2014-03-05.
+https://lkml.org/lkml/2014/3/5/344
+http://article.gmane.org/gmane.comp.version-control.coccinelle/3513/
 
-Alex
+This patch pattern application was repeated with the help of the software
+"Coccinelle 1.0.0-rc22" on the source files for Linux 3.17.1. An extract
+of the automatically generated update suggestions is shown here.
 
->
-> diff --git a/drivers/gpu/drm/radeon/evergreen.c b/drivers/gpu/drm/radeon/evergreen.c
-> index a31f1ca..f37d39d 100644
-> --- a/drivers/gpu/drm/radeon/evergreen.c
-> +++ b/drivers/gpu/drm/radeon/evergreen.c
-> @@ -3005,7 +3005,7 @@ static void evergreen_gpu_init(struct radeon_device *rdev)
->         u32 vgt_cache_invalidation;
->         u32 hdp_host_path_cntl, tmp;
->         u32 disabled_rb_mask;
-> -       int i, j, num_shader_engines, ps_thread_count;
-> +       int i, j, ps_thread_count;
->
->         switch (rdev->family) {
->         case CHIP_CYPRESS:
-> @@ -3303,8 +3303,6 @@ static void evergreen_gpu_init(struct radeon_device *rdev)
->         rdev->config.evergreen.tile_config |>                 ((gb_addr_config & 0x30000000) >> 28) << 12;
->
-> -       num_shader_engines = (gb_addr_config & NUM_SHADER_ENGINES(3) >> 12) + 1;
-> -
->         if ((rdev->family >= CHIP_CEDAR) && (rdev->family <= CHIP_HEMLOCK)) {
->                 u32 efuse_straps_4;
->                 u32 efuse_straps_3;
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+It was determined that the affected source code places call functions
+which perform input parameter validation already. It is therefore not
+needed that a similar safety check is repeated at the call site.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/iommu/msm_iommu.c     | 3 +--
+ drivers/iommu/msm_iommu_dev.c | 6 ++----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+index 6e3dcc28..3e4d888 100644
+--- a/drivers/iommu/msm_iommu.c
++++ b/drivers/iommu/msm_iommu.c
+@@ -73,8 +73,7 @@ fail:
+
+ static void __disable_clocks(struct msm_iommu_drvdata *drvdata)
+ {
+-	if (drvdata->clk)
+-		clk_disable(drvdata->clk);
++	clk_disable(drvdata->clk);
+ 	clk_disable(drvdata->pclk);
+ }
+
+diff --git a/drivers/iommu/msm_iommu_dev.c b/drivers/iommu/msm_iommu_dev.c
+index 61def7cb..9574d21 100644
+--- a/drivers/iommu/msm_iommu_dev.c
++++ b/drivers/iommu/msm_iommu_dev.c
+@@ -224,8 +224,7 @@ static int msm_iommu_probe(struct platform_device *pdev)
+
+ 	platform_set_drvdata(pdev, drvdata);
+
+-	if (iommu_clk)
+-		clk_disable(iommu_clk);
++	clk_disable(iommu_clk);
+
+ 	clk_disable(iommu_pclk);
+
+@@ -323,8 +322,7 @@ static int msm_iommu_ctx_probe(struct platform_device *pdev)
+ 		SET_NSCFG(drvdata->base, mid, 3);
+ 	}
+
+-	if (drvdata->clk)
+-		clk_disable(drvdata->clk);
++	clk_disable(drvdata->clk);
+ 	clk_disable(drvdata->pclk);
+
+ 	dev_info(&pdev->dev, "context %s using bank %d\n", c->name, c->num);
+-- 
+2.1.2
+
+
