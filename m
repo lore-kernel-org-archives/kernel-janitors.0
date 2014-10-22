@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 01 Oct 2014 14:07:12 +0000
-Subject: Re: [coccicheck PATCH 4/5] Deletion of unnecessary checks before specific function calls
-Message-Id: <542C0A90.3080702@users.sourceforge.net>
+Date: Wed, 22 Oct 2014 19:10:21 +0000
+Subject: Re: [PATCH 1/1] SCSI-QLA2...: Deletion of unnecessary checks before the function call "vfree"
+Message-Id: <5448011D.1000500@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,112 +19,155 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <542BFB2C.5070609@users.sourceforge.net>
-In-Reply-To: <542BFB2C.5070609@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
->>> If you are convinced that dropping the null tests is a good idea, then you 
->>> can submit the patch that makes the change to the relevant maintainers and 
->>> mailing lists.
+>> If you are convinced that dropping the null tests is a good idea, then you 
+>> can submit the patch that makes the change to the relevant maintainers and 
+>> mailing lists.
 
-From e6a21b920fcca2f6f01c9528909dc036a9b3bc41 Mon Sep 17 00:00:00 2001
+I resent the request once more because another "Triple-X" software development
+adventure might follow ...?
+
+Regards,
+Markus
+
+
+From ff44962f88ac2dae9324e30819629da4fb33f0ff Mon Sep 17 00:00:00 2001
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Mar 2014 19:10:32 +0100
-Subject: [PATCH 4/5] Addition of a semantic patch file for listing of
- unnecessary checks before a few known functions
+Date: Wed, 22 Oct 2014 20:40:31 +0200
+Subject: [PATCH] SCSI-QLA2XXX: Deletion of unnecessary checks before the
+ function call "vfree"
 
-This semantic patch pattern tries to find source code places where a check
-is performed for an expression that is passed to a function (like "kfree")
-which checks this single parameter itself for usability.
-Redundant value or pointer checks can be avoided here.
+A semantic patch approach was proposed with the subject "[PATCH with
+Coccinelle?] Deletion of unnecessary checks before specific function calls"
+on 2014-03-05.
+https://lkml.org/lkml/2014/3/5/344
+http://article.gmane.org/gmane.comp.version-control.coccinelle/3513/
 
-The pattern contains a special comment in a regular expression for a SmPL
-constraint which supports extensions.
+This patch pattern application was repeated with the help of the software
+"Coccinelle 1.0.0-rc22" on the source files for Linux 3.17.1. An extract
+of the automatically generated update suggestions is shown here.
 
-It uses Python statements to write information about the found places in
-a data format that is a variant of a CSV text file.
+It was determined that the affected source code places call functions
+which perform input parameter validation already. It is therefore not
+needed that a similar safety check is repeated at the call site.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- ...nctions_with_unnecessary_checks_template1.cocci | 59 ++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644
-scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
+ drivers/scsi/qla2xxx/qla_attr.c |  6 ++----
+ drivers/scsi/qla2xxx/qla_init.c | 18 ++++++------------
+ drivers/scsi/qla2xxx/qla_os.c   |  6 ++----
+ 3 files changed, 10 insertions(+), 20 deletions(-)
 
-diff --git
-a/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
-b/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
-new file mode 100644
-index 0000000..d2637e8
---- /dev/null
-+++
-b/scripts/coccinelle/deletions/list_functions_with_unnecessary_checks_template1.cocci
-@@ -0,0 +1,59 @@
-+@initialize:python@
-+@@
-+import sys
-+result = []
-+mark = ['"', '', '"']
-+delimiter = '|'
-+
-+def store_positions(fun, point, places):
-+    """Add source code positions to an internal list."""
-+    for place in places:
-+        fields = []
-+        fields.append(fun)
-+
-+        fields.append(point)
-+
-+        mark[1] = place.file.replace('"', '""')
-+        fields.append(''.join(mark))
-+
-+        fields.append(place.line)
-+        fields.append(str(int(place.column) + 1))
-+        result.append(delimiter.join(fields))
-+
-+@is_unnecessary_check@
-+expression data;
-+identifier work;
-+identifier release =~ "^(?x)
-+(?:
-+   (?:kz?|slob_)free
-+|
-+   (?:
-+# Alternation placeholder
-+   )
-+)$";
-+position pos;
-+type t;
-+@@
-+ t work@pos(...)
-+ {
-+  ... when any
-+( if (data) release(data);
-+| if (likely(data)) release(data);
-+)
-+  ... when any
-+ }
-+
-+@script:python collection depends on is_unnecessary_check@
-+fun << is_unnecessary_check.work;
-+point << is_unnecessary_check.data;
-+places << is_unnecessary_check.pos;
-+@@
-+store_positions(fun, point, places)
-+
-+@finalize:python@
-+@@
-+if result:
-+   result.insert(0, delimiter.join(("function", '"parameter"', '"source file"',
-"line", "column")))
-+   print("\r\n".join(result))
-+else:
-+   sys.stderr.write("No result for this analysis!\n")
+diff --git a/drivers/scsi/qla2xxx/qla_attr.c b/drivers/scsi/qla2xxx/qla_attr.c
+index 82b92c4..95c4c09 100644
+--- a/drivers/scsi/qla2xxx/qla_attr.c
++++ b/drivers/scsi/qla2xxx/qla_attr.c
+@@ -175,10 +175,8 @@ qla2x00_sysfs_write_fw_dump_template(struct file *filp,
+struct kobject *kobj,
+ 	uint32_t size;
+
+ 	if (off = 0) {
+-		if (ha->fw_dump)
+-			vfree(ha->fw_dump);
+-		if (ha->fw_dump_template)
+-			vfree(ha->fw_dump_template);
++		vfree(ha->fw_dump);
++		vfree(ha->fw_dump_template);
+
+ 		ha->fw_dump = NULL;
+ 		ha->fw_dump_len = 0;
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index a4dde7e..8da3d4f 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -5256,8 +5256,7 @@ qla24xx_load_risc_flash(scsi_qla_host_t *vha, uint32_t
+*srisc_addr,
+ 	if (!IS_QLA27XX(ha))
+ 		return rval;
+
+-	if (ha->fw_dump_template)
+-		vfree(ha->fw_dump_template);
++	vfree(ha->fw_dump_template);
+ 	ha->fw_dump_template = NULL;
+ 	ha->fw_dump_template_len = 0;
+
+@@ -5307,8 +5306,7 @@ qla24xx_load_risc_flash(scsi_qla_host_t *vha, uint32_t
+*srisc_addr,
+
+ default_template:
+ 	ql_log(ql_log_warn, vha, 0x0168, "Using default fwdump template\n");
+-	if (ha->fw_dump_template)
+-		vfree(ha->fw_dump_template);
++	vfree(ha->fw_dump_template);
+ 	ha->fw_dump_template = NULL;
+ 	ha->fw_dump_template_len = 0;
+
+@@ -5342,8 +5340,7 @@ default_template:
+
+ failed_template:
+ 	ql_log(ql_log_warn, vha, 0x016d, "Failed default fwdump template\n");
+-	if (ha->fw_dump_template)
+-		vfree(ha->fw_dump_template);
++	vfree(ha->fw_dump_template);
+ 	ha->fw_dump_template = NULL;
+ 	ha->fw_dump_template_len = 0;
+ 	return rval;
+@@ -5559,8 +5556,7 @@ qla24xx_load_risc_blob(scsi_qla_host_t *vha, uint32_t
+*srisc_addr)
+ 	if (!IS_QLA27XX(ha))
+ 		return rval;
+
+-	if (ha->fw_dump_template)
+-		vfree(ha->fw_dump_template);
++	vfree(ha->fw_dump_template);
+ 	ha->fw_dump_template = NULL;
+ 	ha->fw_dump_template_len = 0;
+
+@@ -5609,8 +5605,7 @@ qla24xx_load_risc_blob(scsi_qla_host_t *vha, uint32_t
+*srisc_addr)
+
+ default_template:
+ 	ql_log(ql_log_warn, vha, 0x0178, "Using default fwdump template\n");
+-	if (ha->fw_dump_template)
+-		vfree(ha->fw_dump_template);
++	vfree(ha->fw_dump_template);
+ 	ha->fw_dump_template = NULL;
+ 	ha->fw_dump_template_len = 0;
+
+@@ -5644,8 +5639,7 @@ default_template:
+
+ failed_template:
+ 	ql_log(ql_log_warn, vha, 0x017d, "Failed default fwdump template\n");
+-	if (ha->fw_dump_template)
+-		vfree(ha->fw_dump_template);
++	vfree(ha->fw_dump_template);
+ 	ha->fw_dump_template = NULL;
+ 	ha->fw_dump_template_len = 0;
+ 	return rval;
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index db3dbd9..0f9c378 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3676,10 +3676,8 @@ qla2x00_free_fw_dump(struct qla_hw_data *ha)
+ 		dma_free_coherent(&ha->pdev->dev,
+ 		    EFT_SIZE, ha->eft, ha->eft_dma);
+
+-	if (ha->fw_dump)
+-		vfree(ha->fw_dump);
+-	if (ha->fw_dump_template)
+-		vfree(ha->fw_dump_template);
++	vfree(ha->fw_dump);
++	vfree(ha->fw_dump_template);
+
+ 	ha->fce = NULL;
+ 	ha->fce_dma = 0;
 -- 
-1.9.0
-
+2.1.2
 
 
