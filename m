@@ -1,39 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Oct 2014 09:24:43 +0000
-Subject: re: ssb: get alp clock from devices with PMU
-Message-Id: <20141029092443.GA9208@mwanda>
+Date: Wed, 22 Oct 2014 14:23:07 +0000
+Subject: [patch 2/2 v2] staging: lustre: validate size in ll_setxattr()
+Message-Id: <20141022142306.GA2279@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Hauke Mehrtens,
+If size is smaller than the lov_user_md struct then we are reading
+beyond the end of the buffer.  I guess this is an information leak or it
+could cause an Oops if the memory is not mapped.
 
-The patch f924e1e989b0: "ssb: get alp clock from devices with PMU"
-from Dec 5, 2012, leads to the following static checker warning:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  Andrew Perepechko pointed out that the check needs to be inside the
+if statement.
 
-	drivers/ssb/driver_chipcommon_pmu.c:624 ssb_pmu_get_alp_clock_clk0()
-	warn: shift is higher precedence than mask
-
-drivers/ssb/driver_chipcommon_pmu.c
-   619  static u32 ssb_pmu_get_alp_clock_clk0(struct ssb_chipcommon *cc)
-   620  {
-   621          u32 crystalfreq;
-   622          const struct pmu0_plltab_entry *e = NULL;
-   623  
-   624          crystalfreq = chipco_read32(cc, SSB_CHIPCO_PMU_CTL) &
-   625                        SSB_CHIPCO_PMU_CTL_XTALFREQ >> SSB_CHIPCO_PMU_CTL_XTALFREQ_SHIFT;
-
-This was probably supposed to be:
-
-		crystalfreq = (chipco_read32(cc, SSB_CHIPCO_PMU_CTL) &
-			       SSB_CHIPCO_PMU_CTL_XTALFREQ) >> SSB_CHIPCO_PMU_CTL_XTALFREQ_SHIFT;
-
-   626          e = pmu0_plltab_find_entry(crystalfreq);
-   627          BUG_ON(!e);
-   628          return e->freq * 1000;
-   629  }
-
-regards,
-dan carpenter
+diff --git a/drivers/staging/lustre/lustre/llite/xattr.c b/drivers/staging/lustre/lustre/llite/xattr.c
+index 252a619..3ad9796 100644
+--- a/drivers/staging/lustre/lustre/llite/xattr.c
++++ b/drivers/staging/lustre/lustre/llite/xattr.c
+@@ -234,6 +234,9 @@ int ll_setxattr(struct dentry *dentry, const char *name,
+ 		struct lov_user_md *lump = (struct lov_user_md *)value;
+ 		int rc = 0;
+ 
++		if (size != 0 && size < sizeof(struct lov_user_md))
++			return -EINVAL;
++
+ 		/* Attributes that are saved via getxattr will always have
+ 		 * the stripe_offset as 0.  Instead, the MDS should be
+ 		 * allowed to pick the starting OST index.   b846 */
