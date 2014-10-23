@@ -1,29 +1,29 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Date: Wed, 29 Oct 2014 18:38:53 +0000
-Subject: Re: [patch] mfd: wm8350: fix a printk
-Message-Id: <20141029183853.GK23178@opensource.wolfsonmicro.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 23 Oct 2014 11:37:00 +0000
+Subject: [patch] mmc: silence a shift wrapping warning
+Message-Id: <20141023113700.GB13250@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141029161118.GG5290@mwanda>
-In-Reply-To: <20141029161118.GG5290@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Chris Ball <chris@printf.net>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Aaron Lu <aaron.lu@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 29, 2014 at 07:11:18PM +0300, Dan Carpenter wrote:
-> There is a precedence bug here because >> has higher precedence than &
-> so we end up printing the wrong mode.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
+Presumably ->slotno is normally fairly small and the shift doesn't wrap
+but static checkers will complain about it.
 
-Looks like Joe already been you to the punch on this one:
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-https://lkml.org/lkml/2014/10/27/36
-
-Although I don't really mind which one Lee applies :-) so:
-
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-
-Thanks,
-Charles
+diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
+index 6da97b1..9a98cc7 100644
+--- a/drivers/mmc/core/sdio_bus.c
++++ b/drivers/mmc/core/sdio_bus.c
+@@ -295,7 +295,7 @@ struct sdio_func *sdio_alloc_func(struct mmc_card *card)
+ static void sdio_acpi_set_handle(struct sdio_func *func)
+ {
+ 	struct mmc_host *host = func->card->host;
+-	u64 addr = (host->slotno << 16) | func->num;
++	u64 addr = ((u64)host->slotno << 16) | func->num;
+ 
+ 	acpi_preset_companion(&func->dev, ACPI_COMPANION(host->parent), addr);
+ }
