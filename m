@@ -1,57 +1,41 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Date: Mon, 27 Oct 2014 13:21:36 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 27 Oct 2014 18:18:30 +0000
 Subject: Re: [patch v2] regulator: max77802: fix a test in max77802_set_suspend_mode()
-Message-Id: <544E46E0.90608@collabora.co.uk>
+Message-Id: <20141027181830.GD18557@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="mu4SaHkdL1Az71rA"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141027104506.GA22704@mwanda>
+References: <71442C69-B48C-46B8-93A1-068AC26E01C2@collabora.co.uk>
+ <20141027104506.GA22704@mwanda>
 In-Reply-To: <20141027104506.GA22704@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Dan,
 
-On 10/27/2014 11:45 AM, Dan Carpenter wrote:
+--mu4SaHkdL1Az71rA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Oct 27, 2014 at 01:45:06PM +0300, Dan Carpenter wrote:
 > The original test triggers a static checker warning.  Javier Martinez
 > Canillas says that the "!" is a typo and should be removed.
-> 
-> Fixes: 2e0eaa1aa008 ('regulator: max77802: Add set suspend mode for BUCKs and simplify code')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  The first version of this patch was buggy.  Thanks Javier for
-> your review.
-> 
-> diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
-> index 5839c45..7718c8a 100644
-> --- a/drivers/regulator/max77802.c
-> +++ b/drivers/regulator/max77802.c
-> @@ -179,7 +179,7 @@ static int max77802_set_suspend_mode(struct regulator_dev *rdev,
->  	 * If the regulator has been disabled for suspend
->  	 * then is invalid to try setting a suspend mode.
->  	 */
-> -	if (!max77802->opmode[id] = MAX77802_OFF_PWRREQ) {
-> +	if (max77802->opmode[id] = MAX77802_OFF_PWRREQ) {
->  		dev_warn(&rdev->dev, "%s: is disabled, mode: 0x%x not set\n",
->  			 rdev->desc->name, mode);
->  		return 0;
-> 
 
-The typo was not found during testing because the expression always evaluated
-to 0 which was expected since a regulator marked to be disabled for suspend
-shouldn't have a suspend mode to be set.
+Applied, thanks.
 
-But when trying to trigger that specific case the test was indeed failing and
-the regulator mode was changed even when the regulator was marked as disabled.
+--mu4SaHkdL1Az71rA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-This patch solves the issue by making max77802_set_suspend_mode() to return
-early if the regulator was marked as disabled
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Thanks a lot for finding this bug.
+iQEcBAEBAgAGBQJUTox2AAoJECTWi3JdVIfQY0IH/jkZbtpqfSvfKXT7EOK0iZT+
+KOrcHAcDAbqxQbpJ+EI21Xuw7H6gRb/Hzd8tg8m7lO0ubX7S9GCo+LYpC4MnKPwK
+xGa7T3gMKW+hFP9rAm5urCWxBIqzmP5yFjy9JeR9lnt09I2QtVKL/6ZrWl9qQkPe
+j9KatlZWTFUk8em5Y8WdDTBjp6NAVMRGxSjYjRySbe1If3BwKxxN1mpA7mkPDYMz
+1Fpe2AswT+nRxr5+dk56bMq7+1D4au4wVQz4e0H/Rmo3ryZIDTlm5CSOaiPeUW4A
+66jfO5h92crg86t5vuzc7VLkAiChvVTQvGMcEthKHIAMJ/UQQ6GRx7pAsd8Utp8=
+=lSWF
+-----END PGP SIGNATURE-----
 
-Acked-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-Best regards,
-Javier
+--mu4SaHkdL1Az71rA--
