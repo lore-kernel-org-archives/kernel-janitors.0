@@ -1,58 +1,34 @@
-From: Juergen Gross <jgross@suse.com>
-Date: Mon, 08 Sep 2014 11:31:57 +0000
-Subject: Re: [Xen-devel] [patch] xen-scsiback: clean up a type issue in scsiback_make_tpg()
-Message-Id: <540D93AD.3050500@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 27 Oct 2014 10:45:06 +0000
+Subject: [patch v2] regulator: max77802: fix a test in max77802_set_suspend_mode()
+Message-Id: <20141027104506.GA22704@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140908111735.GB6947@mwanda>
-In-Reply-To: <20140908111735.GB6947@mwanda>
+In-Reply-To: <71442C69-B48C-46B8-93A1-068AC26E01C2@collabora.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, David Vrabel <david.vrabel@citrix.com>, xen-devel@lists.xenproject.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 09/08/2014 01:17 PM, Dan Carpenter wrote:
-> This code was confusing because we had an unsigned long and then we
-> compared it to UINT_MAX and then we stored it in a u16.  How many bytes
-> is this supposed to have: 2, 4 or 16???
->
-> I've made it a u16 throughout.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The original test triggers a static checker warning.  Javier Martinez
+Canillas says that the "!" is a typo and should be removed.
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Fixes: 2e0eaa1aa008 ('regulator: max77802: Add set suspend mode for BUCKs and simplify code')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2:  The first version of this patch was buggy.  Thanks Javier for
+your review.
 
-Thanks,
-
-Juergen
-
->
-> diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
-> index 7b565632..ad11258 100644
-> --- a/drivers/xen/xen-scsiback.c
-> +++ b/drivers/xen/xen-scsiback.c
-> @@ -1885,13 +1885,14 @@ scsiback_make_tpg(struct se_wwn *wwn,
->   			struct scsiback_tport, tport_wwn);
->
->   	struct scsiback_tpg *tpg;
-> -	unsigned long tpgt;
-> +	u16 tpgt;
->   	int ret;
->
->   	if (strstr(name, "tpgt_") != name)
->   		return ERR_PTR(-EINVAL);
-> -	if (kstrtoul(name + 5, 10, &tpgt) || tpgt > UINT_MAX)
-> -		return ERR_PTR(-EINVAL);
-> +	ret = kstrtou16(name + 5, 10, &tpgt);
-> +	if (ret)
-> +		return ERR_PTR(ret);
->
->   	tpg = kzalloc(sizeof(struct scsiback_tpg), GFP_KERNEL);
->   	if (!tpg)
->
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xen.org
-> http://lists.xen.org/xen-devel
->
-
+diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
+index 5839c45..7718c8a 100644
+--- a/drivers/regulator/max77802.c
++++ b/drivers/regulator/max77802.c
+@@ -179,7 +179,7 @@ static int max77802_set_suspend_mode(struct regulator_dev *rdev,
+ 	 * If the regulator has been disabled for suspend
+ 	 * then is invalid to try setting a suspend mode.
+ 	 */
+-	if (!max77802->opmode[id] = MAX77802_OFF_PWRREQ) {
++	if (max77802->opmode[id] = MAX77802_OFF_PWRREQ) {
+ 		dev_warn(&rdev->dev, "%s: is disabled, mode: 0x%x not set\n",
+ 			 rdev->desc->name, mode);
+ 		return 0;
