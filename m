@@ -1,26 +1,28 @@
-From: Tejun Heo <tj@kernel.org>
-Date: Wed, 29 Oct 2014 14:35:23 +0000
-Subject: Re: [patch] percpu: off by one in BUG_ON()
-Message-Id: <20141029143523.GB25226@htj.dyndns.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 27 Oct 2014 13:27:02 +0000
+Subject: [patch] cpuset: lock vs unlock typo
+Message-Id: <20141027132702.GA32133@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141029084504.GD8939@mwanda>
-In-Reply-To: <20141029084504.GD8939@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Christoph Lameter <cl@linux-foundation.org>, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 29, 2014 at 11:45:04AM +0300, Dan Carpenter wrote:
-> The unit_map[] array has "nr_cpu_ids" number of elements.  It's
-> allocated a few lines earlier in the function.  So this test should be
-> >= instead of >.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This will deadlock instead of unlocking.
 
-Applied to percpu/for-3.19.
+Fixes: f73eae8d8384 ('cpuset: simplify cpuset_node_allowed API')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks.
-
--- 
-tejun
+diff --git a/kernel/cpuset.c b/kernel/cpuset.c
+index 38f7433..4eaa203 100644
+--- a/kernel/cpuset.c
++++ b/kernel/cpuset.c
+@@ -1992,7 +1992,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+ 	spin_lock_irq(&callback_lock);
+ 	cs->mems_allowed = parent->mems_allowed;
+ 	cpumask_copy(cs->cpus_allowed, parent->cpus_allowed);
+-	spin_lock_irq(&callback_lock);
++	spin_unlock_irq(&callback_lock);
+ out_unlock:
+ 	mutex_unlock(&cpuset_mutex);
+ 	return 0;
