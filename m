@@ -1,35 +1,38 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 15 Oct 2014 16:15:21 +0000
-Subject: Re: [patch] [media] xc5000: use after free in release()
-Message-Id: <20141015161521.GC23154@mwanda>
+Date: Wed, 29 Oct 2014 15:47:07 +0000
+Subject: [patch] drm/radeon: remove some buggy dead code
+Message-Id: <20141029154707.GA5290@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20140925114008.GC3708@mwanda>
- <20141015134008.GO26918@mwanda>
- <543E8EEE.7080404@osg.samsung.com>
-In-Reply-To: <543E8EEE.7080404@osg.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Shuah Khan <shuah.kh@samsung.com>, Fabian Frederick <fabf@skynet.be>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: kernel-janitors@vger.kernel.org, Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org
 
-On Wed, Oct 15, 2014 at 09:12:46AM -0600, Shuah Khan wrote:
-> On 10/15/2014 07:40 AM, Dan Carpenter wrote:
-> > On Thu, Sep 25, 2014 at 02:40:08PM +0300, Dan Carpenter wrote:
-> >> I moved the call to hybrid_tuner_release_state(priv) after
-> >> "priv->firmware" dereference.
-> >>
-> >> Fixes: 5264a522a597 ('[media] media: tuner xc5000 - release firmwware from xc5000_release()')
-> > 
-> > We still need this patch.
-> > 
-> 
-> I didn't see it in media pull request for 3.18. Mauro probably
-> has this on his list for next round.
-> 
+The calculation of "num_shader_engines" has a precedence bug because
+the right shift happens before the mask, but this variable is never used
+so we can just delete it.
 
-It's not in linux-next.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/gpu/drm/radeon/evergreen.c b/drivers/gpu/drm/radeon/evergreen.c
+index a31f1ca..f37d39d 100644
+--- a/drivers/gpu/drm/radeon/evergreen.c
++++ b/drivers/gpu/drm/radeon/evergreen.c
+@@ -3005,7 +3005,7 @@ static void evergreen_gpu_init(struct radeon_device *rdev)
+ 	u32 vgt_cache_invalidation;
+ 	u32 hdp_host_path_cntl, tmp;
+ 	u32 disabled_rb_mask;
+-	int i, j, num_shader_engines, ps_thread_count;
++	int i, j, ps_thread_count;
+ 
+ 	switch (rdev->family) {
+ 	case CHIP_CYPRESS:
+@@ -3303,8 +3303,6 @@ static void evergreen_gpu_init(struct radeon_device *rdev)
+ 	rdev->config.evergreen.tile_config | 		((gb_addr_config & 0x30000000) >> 28) << 12;
+ 
+-	num_shader_engines = (gb_addr_config & NUM_SHADER_ENGINES(3) >> 12) + 1;
+-
+ 	if ((rdev->family >= CHIP_CEDAR) && (rdev->family <= CHIP_HEMLOCK)) {
+ 		u32 efuse_straps_4;
+ 		u32 efuse_straps_3;
