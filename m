@@ -1,71 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 01 Oct 2014 14:06:56 +0000
-Subject: Re: [coccicheck PATCH 3/5] Deletion of unnecessary checks before specific function calls
-Message-Id: <542C0A80.3090207@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Oct 2014 15:47:41 +0000
+Subject: [patch] media: dvb_core: fix an error message
+Message-Id: <20141029154741.GB5290@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <542BFB2C.5070609@users.sourceforge.net>
-In-Reply-To: <542BFB2C.5070609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Cc: "David S. Miller" <davem@davemloft.net>, dingtianhong <dingtianhong@huawei.com>, Yang Yingliang <yangyingliang@huawei.com>, Tom Gundersen <teg@jklm.no>, David Herrmann <dh.herrmann@gmail.com>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
->>> If you are convinced that dropping the null tests is a good idea, then you 
->>> can submit the patch that makes the change to the relevant maintainers and 
->>> mailing lists.
+The right shift has higher precedence than the mask so the warning
+doesn't match what the test was checking.  Also it's better to use TS_SC
+instead of magic number 0xC0.
 
-From f4608fceec40b2b94aa9b4abe3bbb6d98ed5eed9 Mon Sep 17 00:00:00 2001
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Mar 2014 18:58:30 +0100
-Subject: [PATCH 3/5] Addition of a SQLite script for a text file import
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A script was added so that a text file which was previously generated can be
-imported into a SQLite data base table.
-http://sqlite.org/sqlite.html
-
-The shown file name can be adjusted by a make file for example.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- .../coccinelle/deletions/handle_function_list_template.sqlite    | 9 +++++++++
- 1 file changed, 9 insertions(+)
- create mode 100644
-scripts/coccinelle/deletions/handle_function_list_template.sqlite
-
-diff --git a/scripts/coccinelle/deletions/handle_function_list_template.sqlite
-b/scripts/coccinelle/deletions/handle_function_list_template.sqlite
-new file mode 100644
-index 0000000..bec366c
---- /dev/null
-+++ b/scripts/coccinelle/deletions/handle_function_list_template.sqlite
-@@ -0,0 +1,9 @@
-+create table positions(function text,
-+                       data_type text,
-+                       parameter text,
-+                       source_file text,
-+                       line integer,
-+                       column integer);
-+.separator "|"
-+.import list_input_pointer_validation1.txt positions
-+.header OFF
--- 
-1.9.0
-
-
-
+diff --git a/drivers/media/dvb-core/dvb_net.c b/drivers/media/dvb-core/dvb_net.c
+index 059e611..360ef2b 100644
+--- a/drivers/media/dvb-core/dvb_net.c
++++ b/drivers/media/dvb-core/dvb_net.c
+@@ -379,7 +379,7 @@ static void dvb_net_ule( struct net_device *dev, const u8 *buf, size_t buf_len )
+ 			/* Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control . */
+ 			if ((ts[0] != TS_SYNC) || (ts[1] & TS_TEI) || ((ts[3] & TS_SC) != 0)) {
+ 				printk(KERN_WARNING "%lu: Invalid TS cell: SYNC %#x, TEI %u, SC %#x.\n",
+-				       priv->ts_count, ts[0], ts[1] & TS_TEI >> 7, ts[3] & 0xC0 >> 6);
++				       priv->ts_count, ts[0], (ts[1] & TS_TEI) >> 7, (ts[3] & TS_SC) >> 6);
+ 
+ 				/* Drop partly decoded SNDU, reset state, resync on PUSI. */
+ 				if (priv->ule_skb) {
