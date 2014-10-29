@@ -1,39 +1,33 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 29 Oct 2014 18:53:04 +0000
-Subject: Re: [patch] ath9k: fix some debugfs output
-Message-Id: <20141029185303.GJ6890@mwanda>
+Date: Wed, 29 Oct 2014 08:44:16 +0000
+Subject: [patch] SUNRPC: off by one in BUG_ON()
+Message-Id: <20141029084416.GC8939@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141029154805.GC5290@mwanda>
- <1414598919.11707.3.camel@perches.com>
- <20141029161021.GH6890@mwanda>
- <1414599204.11707.5.camel@perches.com>
-In-Reply-To: <1414599204.11707.5.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Trond Myklebust <trond.myklebust@primarydata.com>, "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 29, 2014 at 09:13:24AM -0700, Joe Perches wrote:
-> On Wed, 2014-10-29 at 19:10 +0300, Dan Carpenter wrote:
-> > On Wed, Oct 29, 2014 at 09:08:39AM -0700, Joe Perches wrote:
-> > > On Wed, 2014-10-29 at 18:48 +0300, Dan Carpenter wrote:
-> > > > The right shift operation has higher precedence than the mask so we
-> > > > left shift by "(i * 3)" and then immediately right shift by "(i * 3)"
-> > > > then we mask.  It should be left shift, mask, and then right shift.
-> []
-> > > My grep pattern doesn't like operations on the thing masked.
-> > > Did you find this by some tool or visual inspection via grep?
-> []
-> > I wrote a Smatch check inspired by the i40e bug you found earlier.
-> 
-> Nice.  fyi: I sent a bunch of these already.
-> 
-> https://lkml.org/lkml/2014/10/27/38
->
+The m->pool_to[] array has "maxpools" number of elements.  It's
+allocated in svc_pool_map_alloc_arrays() which we called earlier in the
+function.  This test should be >= instead of >.
 
-Ah...  Your grep found a bunch of stuff that I missed because it wasn't
-in my allmodconfig.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is very old code, but hopefully the off by one doesn't affect
+runtime.
 
-regards,
-dan carpenter 
+diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
+index ca8a795..349c98f 100644
+--- a/net/sunrpc/svc.c
++++ b/net/sunrpc/svc.c
+@@ -189,7 +189,7 @@ svc_pool_map_init_percpu(struct svc_pool_map *m)
+ 		return err;
+ 
+ 	for_each_online_cpu(cpu) {
+-		BUG_ON(pidx > maxpools);
++		BUG_ON(pidx >= maxpools);
+ 		m->to_pool[cpu] = pidx;
+ 		m->pool_to[pidx] = cpu;
+ 		pidx++;
