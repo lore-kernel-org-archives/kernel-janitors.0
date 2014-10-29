@@ -1,30 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 08 Oct 2014 10:40:37 +0000
-Subject: [patch] usb: gadget: f_uac1: remove an unneeded NULL check
-Message-Id: <20141008104037.GB23096@mwanda>
+Date: Wed, 29 Oct 2014 09:24:43 +0000
+Subject: re: ssb: get alp clock from devices with PMU
+Message-Id: <20141029092443.GA9208@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This NULL check sets off a static checker warning because we already
-dereferenced "card" earlier in the function.  However, since "card" is
-never NULL so we can just remove the check.
+Hello Hauke Mehrtens,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch f924e1e989b0: "ssb: get alp clock from devices with PMU"
+from Dec 5, 2012, leads to the following static checker warning:
 
-diff --git a/drivers/usb/gadget/function/u_uac1.c b/drivers/usb/gadget/function/u_uac1.c
-index a44a07f..53842a1 100644
---- a/drivers/usb/gadget/function/u_uac1.c
-+++ b/drivers/usb/gadget/function/u_uac1.c
-@@ -213,9 +213,6 @@ static int gaudio_open_snd_dev(struct gaudio *card)
- 	fn_cap = opts->fn_cap;
- 	fn_cntl = opts->fn_cntl;
- 
--	if (!card)
--		return -ENODEV;
--
- 	/* Open control device */
- 	snd = &card->control;
- 	snd->filp = filp_open(fn_cntl, O_RDWR, 0);
+	drivers/ssb/driver_chipcommon_pmu.c:624 ssb_pmu_get_alp_clock_clk0()
+	warn: shift is higher precedence than mask
+
+drivers/ssb/driver_chipcommon_pmu.c
+   619  static u32 ssb_pmu_get_alp_clock_clk0(struct ssb_chipcommon *cc)
+   620  {
+   621          u32 crystalfreq;
+   622          const struct pmu0_plltab_entry *e = NULL;
+   623  
+   624          crystalfreq = chipco_read32(cc, SSB_CHIPCO_PMU_CTL) &
+   625                        SSB_CHIPCO_PMU_CTL_XTALFREQ >> SSB_CHIPCO_PMU_CTL_XTALFREQ_SHIFT;
+
+This was probably supposed to be:
+
+		crystalfreq = (chipco_read32(cc, SSB_CHIPCO_PMU_CTL) &
+			       SSB_CHIPCO_PMU_CTL_XTALFREQ) >> SSB_CHIPCO_PMU_CTL_XTALFREQ_SHIFT;
+
+   626          e = pmu0_plltab_find_entry(crystalfreq);
+   627          BUG_ON(!e);
+   628          return e->freq * 1000;
+   629  }
+
+regards,
+dan carpenter
