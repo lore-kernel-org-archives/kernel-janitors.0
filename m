@@ -1,65 +1,35 @@
-From: Jyri Sarha <jsarha@ti.com>
-Date: Thu, 02 Oct 2014 07:53:31 +0000
-Subject: [PATCH 1/2] clk: gpio-gate: Stop using devres API
-Message-Id: <59d52e97a4954e0593a9aebc5b7d0d968a10f485.1412234778.git.jsarha@ti.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Oct 2014 08:42:50 +0000
+Subject: [patch] hangcheck-timer: cleanup casting in hangcheck_init()
+Message-Id: <20141029084250.GA8939@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cover.1412234778.git.jsarha@ti.com>
-In-Reply-To: <cover.1412234778.git.jsarha@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, kernel-janitors@vger.kernel.org
-Cc: dan.carpenter@oracle.com, detheridge@ti.com, Jyri Sarha <jsarha@ti.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-If some driver calls clk_register_gpio_gate() directly, then the
-driver needs to kfree the resulting struct clk pointer in remove
-function.
+The 32 bit addition "(hangcheck_margin + hangcheck_tick)" could
+potentially overflow.  It triggers a static checker warning to have an
+overflowed addition followed by a no-op cast.  I have moved the cast so
+that the addition can't overflow.
 
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
----
- drivers/clk/clk-gpio-gate.c |   16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+Also I removed the unneeded cast on the following line since both
+"hangcheck_tsc_margin" and "TIMER_FREQ" are already 64 bit types.
 
-diff --git a/drivers/clk/clk-gpio-gate.c b/drivers/clk/clk-gpio-gate.c
-index b87e5f0..a648761 100644
---- a/drivers/clk/clk-gpio-gate.c
-+++ b/drivers/clk/clk-gpio-gate.c
-@@ -82,23 +82,14 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
- 	else
- 		gpio_flags = GPIOF_OUT_INIT_LOW;
- 
--	if (dev)
--		err = devm_gpio_request_one(dev, desc_to_gpio(gpiod),
--					    gpio_flags, name);
--	else
--		err = gpio_request_one(desc_to_gpio(gpiod), gpio_flags, name);
--
-+	err = gpio_request_one(desc_to_gpio(gpiod), gpio_flags, name);
- 	if (err) {
- 		pr_err("%s: %s: Error requesting clock control gpio %u\n",
- 		       __func__, name, desc_to_gpio(gpiod));
- 		return ERR_PTR(err);
- 	}
- 
--	if (dev)
--		clk_gpio = devm_kzalloc(dev, sizeof(struct clk_gpio),
--					GFP_KERNEL);
--	else
--		clk_gpio = kzalloc(sizeof(struct clk_gpio), GFP_KERNEL);
-+	clk_gpio = kzalloc(sizeof(struct clk_gpio), GFP_KERNEL);
- 
- 	if (!clk_gpio) {
- 		clk = ERR_PTR(-ENOMEM);
-@@ -119,8 +110,7 @@ struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
- 	if (!IS_ERR(clk))
- 		return clk;
- 
--	if (!dev)
--		kfree(clk_gpio);
-+	kfree(clk_gpio);
- 
- clk_register_gpio_gate_err:
- 	gpiod_put(gpiod);
--- 
-1.7.9.5
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+diff --git a/drivers/char/hangcheck-timer.c b/drivers/char/hangcheck-timer.c
+index ebc4c73..a7c5c59 100644
+--- a/drivers/char/hangcheck-timer.c
++++ b/drivers/char/hangcheck-timer.c
+@@ -168,8 +168,8 @@ static int __init hangcheck_init(void)
+ 	printk("Hangcheck: starting hangcheck timer %s (tick is %d seconds, margin is %d seconds).\n",
+ 	       VERSION_STR, hangcheck_tick, hangcheck_margin);
+ 	hangcheck_tsc_margin -		(unsigned long long)(hangcheck_margin + hangcheck_tick);
+-	hangcheck_tsc_margin *= (unsigned long long)TIMER_FREQ;
++		(unsigned long long)hangcheck_margin + hangcheck_tick;
++	hangcheck_tsc_margin *= TIMER_FREQ;
+ 
+ 	hangcheck_tsc = ktime_get_ns();
+ 	mod_timer(&hangcheck_ticktock, jiffies + (hangcheck_tick*HZ));
