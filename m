@@ -1,27 +1,30 @@
-From: Emmanuel Grumbach <egrumbach@gmail.com>
-Date: Wed, 29 Oct 2014 16:16:18 +0000
-Subject: Re: [patch] iwlwifi: cleanup a mask shift in iwlagn_bt_traffic_is_sco()
-Message-Id: <CANUX_P1QCfB5JXptesgzqNtBFjGmzmTxNO=Z6sSZup373w-DAw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Oct 2014 15:48:05 +0000
+Subject: [patch] ath9k: fix some debugfs output
+Message-Id: <20141029154805.GC5290@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141029160827.GD5290@mwanda>
-In-Reply-To: <20141029160827.GD5290@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless <linux-wireless@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, ath9k-devel@venema.h4ckr.net, kernel-janitors@vger.kernel.org
 
-On Wed, Oct 29, 2014 at 6:08 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The shift operation is higher precedence so the code is wrong and it
-> sets of a static checker warning.  But it doesn't affect real life
-> because BT_UART_MSG_FRAME3SCOESCO_POS is zero so the shift is a no-op.
->
-> I have re-written it in normal style and with parenthesis as a cleanup
-> and to silence the static checker warning.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+The right shift operation has higher precedence than the mask so we
+left shift by "(i * 3)" and then immediately right shift by "(i * 3)"
+then we mask.  It should be left shift, mask, and then right shift.
 
-In my tree already - I got it from Joe.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-https://git.kernel.org/cgit/linux/kernel/git/iwlwifi/iwlwifi-next.git/commit/?idPf6635afe565a0e1c5ab78f040294fe1dc41de0
+diff --git a/drivers/net/wireless/ath/ath9k/debug.c b/drivers/net/wireless/ath/ath9k/debug.c
+index 2a2a17d..c9afc15 100644
+--- a/drivers/net/wireless/ath/ath9k/debug.c
++++ b/drivers/net/wireless/ath/ath9k/debug.c
+@@ -455,7 +455,7 @@ static ssize_t read_file_dma(struct file *file, char __user *user_buf,
+ 			 "%2d          %2x      %1x     %2x           %2x\n",
+ 			 i, (*qcuBase & (0x7 << qcuOffset)) >> qcuOffset,
+ 			 (*qcuBase & (0x8 << qcuOffset)) >> (qcuOffset + 3),
+-			 val[2] & (0x7 << (i * 3)) >> (i * 3),
++			 (val[2] & (0x7 << (i * 3))) >> (i * 3),
+ 			 (*dcuBase & (0x1f << dcuOffset)) >> dcuOffset);
+ 	}
+ 
