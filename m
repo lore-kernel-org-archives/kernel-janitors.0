@@ -1,33 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Oct 2014 14:23:07 +0000
-Subject: [patch 2/2 v2] staging: lustre: validate size in ll_setxattr()
-Message-Id: <20141022142306.GA2279@mwanda>
+Date: Wed, 29 Oct 2014 08:46:11 +0000
+Subject: [patch] USB: HWA: fix a warning message
+Message-Id: <20141029084611.GE8939@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-If size is smaller than the lov_user_md struct then we are reading
-beyond the end of the buffer.  I guess this is an information leak or it
-could cause an Oops if the memory is not mapped.
+We wanted to print the version as (major).(minor) but because the shift
+operation is higher precedence than the mask then we print
+(minor).(minor).
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2:  Andrew Perepechko pointed out that the check needs to be inside the
-if statement.
 
-diff --git a/drivers/staging/lustre/lustre/llite/xattr.c b/drivers/staging/lustre/lustre/llite/xattr.c
-index 252a619..3ad9796 100644
---- a/drivers/staging/lustre/lustre/llite/xattr.c
-+++ b/drivers/staging/lustre/lustre/llite/xattr.c
-@@ -234,6 +234,9 @@ int ll_setxattr(struct dentry *dentry, const char *name,
- 		struct lov_user_md *lump = (struct lov_user_md *)value;
- 		int rc = 0;
- 
-+		if (size != 0 && size < sizeof(struct lov_user_md))
-+			return -EINVAL;
-+
- 		/* Attributes that are saved via getxattr will always have
- 		 * the stripe_offset as 0.  Instead, the MDS should be
- 		 * allowed to pick the starting OST index.   b846 */
+diff --git a/drivers/usb/host/hwa-hc.c b/drivers/usb/host/hwa-hc.c
+index d0d8fad..1db0626 100644
+--- a/drivers/usb/host/hwa-hc.c
++++ b/drivers/usb/host/hwa-hc.c
+@@ -607,7 +607,7 @@ found:
+ 	wa->wa_descr = wa_descr = (struct usb_wa_descriptor *) hdr;
+ 	if (le16_to_cpu(wa_descr->bcdWAVersion) > 0x0100)
+ 		dev_warn(dev, "Wire Adapter v%d.%d newer than groked v1.0\n",
+-			 le16_to_cpu(wa_descr->bcdWAVersion) & 0xff00 >> 8,
++			 (le16_to_cpu(wa_descr->bcdWAVersion) & 0xff00) >> 8,
+ 			 le16_to_cpu(wa_descr->bcdWAVersion) & 0x00ff);
+ 	result = 0;
+ error:
