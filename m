@@ -1,20 +1,33 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 30 Oct 2014 06:31:21 +0000
-Subject: Re: Where's the current ToDo?
-Message-Id: <alpine.DEB.2.02.1410300728240.2374@localhost6.localdomain6>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Oct 2014 16:08:27 +0000
+Subject: [patch] iwlwifi: cleanup a mask shift in iwlagn_bt_traffic_is_sco()
+Message-Id: <20141029160827.GD5290@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141026054124.GA30544@rho.novalocal>
-In-Reply-To: <20141026054124.GA30544@rho.novalocal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, "John W. Linville" <linville@tuxdriver.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The Linux OPW (Outreach Program for Women) has a nice tutorial at 
-http://kernelnewbies.org/OPWfirstpatch
+The shift operation is higher precedence so the code is wrong and it
+sets of a static checker warning.  But it doesn't affect real life
+because BT_UART_MSG_FRAME3SCOESCO_POS is zero so the shift is a no-op.
 
-There are also a lot of small kernel projects suggested for the 
-application process that anyone could do 
-(http://kernelnewbies.org/OPWIntro).
+I have re-written it in normal style and with parenthesis as a cleanup
+and to silence the static checker warning.
 
-julia
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/wireless/iwlwifi/dvm/lib.c b/drivers/net/wireless/iwlwifi/dvm/lib.c
+index 2191621..065d3d5 100644
+--- a/drivers/net/wireless/iwlwifi/dvm/lib.c
++++ b/drivers/net/wireless/iwlwifi/dvm/lib.c
+@@ -418,7 +418,7 @@ void iwlagn_bt_adjust_rssi_monitor(struct iwl_priv *priv, bool rssi_ena)
+ 
+ static bool iwlagn_bt_traffic_is_sco(struct iwl_bt_uart_msg *uart_msg)
+ {
+-	return BT_UART_MSG_FRAME3SCOESCO_MSK & uart_msg->frame3 >>
++	return (uart_msg->frame3 & BT_UART_MSG_FRAME3SCOESCO_MSK) >>
+ 			BT_UART_MSG_FRAME3SCOESCO_POS;
+ }
+ 
