@@ -1,30 +1,40 @@
-From: Stanislav Yakovlev <stas.yakovlev@gmail.com>
-Date: Wed, 15 Oct 2014 20:51:07 +0000
-Subject: Re: [patch 1/2] ipw2x00: remove unused ->ibss_dfs pointer
-Message-Id: <CA++WF2NinL3_pGtqZxjr6p4BpHBkGRbBTXaXFNSdoxgzX_Lb=Q@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Oct 2014 16:10:57 +0000
+Subject: [patch] Bluetooth: 6lowpan: use after free in disconnect_devices()
+Message-Id: <20141029161057.GF5290@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141009095742.GA20875@mwanda>
-In-Reply-To: <20141009095742.GA20875@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, wireless <linux-wireless@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Gustavo Padovan <gustavo@padovan.org>, Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hello Dan,
+This was accidentally changed from list_for_each_entry_safe() to
+list_for_each_entry() so now it has a use after free bug.  I've changed
+it back.
 
-On 9 October 2014 02:57, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> The ->ibss_dfs pointer is always allocated with a user controlled
-> length.  This caused a static checker warning because what if the length
-> was zero?  In that case, any dereference of ->ibss_dfs would lead to an
-> Oops.
->
-> It turns out that this isn't a problem because the ->ibss_dfs pointer is
-> never used.  This patch deletes it along with all the related code.  In
-> particular the entire libipw_network_reset() function can be removed.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 90305829635d ('Bluetooth: 6lowpan: Converting rwlocks to use RCU')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Looks fine, thanks.
-
-Stanislav.
+diff --git a/net/bluetooth/6lowpan.c b/net/bluetooth/6lowpan.c
+index 7254bdd..eef298d 100644
+--- a/net/bluetooth/6lowpan.c
++++ b/net/bluetooth/6lowpan.c
+@@ -1383,7 +1383,7 @@ static const struct file_operations lowpan_control_fops = {
+ 
+ static void disconnect_devices(void)
+ {
+-	struct lowpan_dev *entry, *new_dev;
++	struct lowpan_dev *entry, *tmp, *new_dev;
+ 	struct list_head devices;
+ 
+ 	INIT_LIST_HEAD(&devices);
+@@ -1408,7 +1408,7 @@ static void disconnect_devices(void)
+ 
+ 	rcu_read_unlock();
+ 
+-	list_for_each_entry(entry, &devices, list) {
++	list_for_each_entry_safe(entry, tmp, &devices, list) {
+ 		ifdown(entry->netdev);
+ 		BT_DBG("Unregistering netdev %s %p",
+ 		       entry->netdev->name, entry->netdev);
