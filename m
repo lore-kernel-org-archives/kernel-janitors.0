@@ -1,27 +1,30 @@
-From: Jose-Luis Rivas <ghostbar@riseup.net>
-Date: Sun, 26 Oct 2014 05:41:24 +0000
-Subject: Where's the current ToDo?
-Message-Id: <20141026054124.GA30544@rho.novalocal>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 29 Oct 2014 08:26:41 +0000
+Subject: Re: Where's the current ToDo?
+Message-Id: <20141029082640.GJ6879@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141026054124.GA30544@rho.novalocal>
+In-Reply-To: <20141026054124.GA30544@rho.novalocal>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+On Sun, Oct 26, 2014 at 12:41:24AM -0500, Jose-Luis Rivas wrote:
+> Hi,
+> 
+> I was checking out the ToDo list and AFAICS [0] seems to be pretty much
+> outdated. Don't know if there's a more up-to-date list of ToDos or I'm
+> supposed to check them all and see which ones are current. Just asking
+> since I want to be sure I'm checking at the right place.
+> 
+> [0] http://kernelnewbies.org/KernelJanitors/Todo/ApiChanges
+> 
 
-I was checking out the ToDo list and AFAICS [0] seems to be pretty much
-outdated. Don't know if there's a more up-to-date list of ToDos or I'm
-supposed to check them all and see which ones are current. Just asking
-since I want to be sure I'm checking at the right place.
+Sorry we don't have a current TODO list.  These days we normally just
+tell people to cleanup staging drivers or fix compile warnings and
+static checker issues.
 
-[0] http://kernelnewbies.org/KernelJanitors/Todo/ApiChanges
+regards,
+dan carpenter
 
---=20
-Jose Luis Rivas =B7 https://joseluisrivas.net https://ghostbar.co
-GPG =B7 4096R/D278 F9C1 5E54 61AA 3C1E 2FCD 13EC 43EE B9AC 8C43
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
