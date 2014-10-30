@@ -1,28 +1,72 @@
-From: =?iso-8859-1?Q?J=F6rg_R=F6del?= <joro@8bytes.org>
-Date: Thu, 23 Oct 2014 12:51:54 +0000
-Subject: Re: [PATCH 1/1] IOMMU-MSM: Deletion of unnecessary checks before the function call "clk_disable"
-Message-Id: <20141023125153.GC10053@8bytes.org>
+From: Borislav Petkov <bp@alien8.de>
+Date: Thu, 30 Oct 2014 11:12:04 +0000
+Subject: Re: [PATCH - resend] checkpatch: Remove unnecessary + after {8,8}
+Message-Id: <20141030111204.GA11295@pd.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <5447F0B1.9010707@users.sourceforge.net>
-In-Reply-To: <5447F0B1.9010707@users.sourceforge.net>
+References: <1405128087.6751.12.camel@joe-AO725>
+	<20140712013927.GA30781@kroah.com>
+	<1405129612.6751.24.camel@joe-AO725>
+	<20140712020114.GA12301@kroah.com>
+	<20140712020520.GA18611@kroah.com>
+	<1409590506.2614.4.camel@joe-AO725>
+In-Reply-To: <1409590506.2614.4.camel@joe-AO725>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: kernelnewbies@lists.kernelnewbies.org
 
-On Wed, Oct 22, 2014 at 08:00:17PM +0200, SF Markus Elfring wrote:
->  drivers/iommu/msm_iommu.c     | 3 +--
->  drivers/iommu/msm_iommu_dev.c | 6 ++----
->  2 files changed, 3 insertions(+), 6 deletions(-)
+Hey Andrew,
 
-Applied to arm/msm, thanks.
+can we get this one applied already - I'm seeing this warning at least
+since before my summer vacation started! :-P
 
+Thanks.
+
+On Mon, Sep 01, 2014 at 09:55:06AM -0700, Joe Perches wrote:
+> There's a useless "+" use that needs to be removed as perl 5.20
+> emits a "Useless use of greediness modifier '+'" message each
+> time it's hit.
+> 
+> Reported-by: Greg KH <gregkh@linuxfoundation.org>
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+> 
+> Resending, maybe Andrew's all-seeing eye blinked...
+> 
+> On Fri, 2014-07-11 at 19:05 -0700, Greg KH wrote:
+> > Ok, with linux-next I get the same thing:
+> 
+> Thanks Greg.
+> 
+>  scripts/checkpatch.pl | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index d5ac001..370a974 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -2376,7 +2376,7 @@ sub process {
+>  				"please, no space before tabs\n" . $herevet) &&
+>  			    $fix) {
+>  				while ($fixed[$fixlinenr] =~
+> -					   s/(^\+.*) {8,8}+\t/$1\t\t/) {}
+> +					   s/(^\+.*) {8,8}\t/$1\t\t/) {}
+>  				while ($fixed[$fixlinenr] =~
+>  					   s/(^\+.*) +\t/$1\t/) {}
+>  			}
+> 
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Sent from a fat crate under my desk. Formatting is fine.
+--
