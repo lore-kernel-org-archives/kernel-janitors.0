@@ -1,65 +1,66 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 22 Oct 2014 08:11:39 +0000
-Subject: [patch 1/2] staging: lustre: validate size in lustre_posix_acl_xattr_filter()
-Message-Id: <20141022081139.GA31384@mwanda>
+Date: Fri, 31 Oct 2014 10:41:05 +0000
+Subject: [patch 2/2] staging: r8188eu: cleanups in rtw_android_set_block()
+Message-Id: <20141031104105.GB27683@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is mostly to silence static checker complaints.
-
-In theory the problem here is that if size is in the 1-3 range then we
-don't allocate enough memory for the posix_acl_xattr_header struct and
-it results in memory corruption.  But in reality kmalloc() return values
-are aligned at sizeof(long) so corrupting this small amount of data is
-not harmful.
-
-The "size" variable should be type size_t.  The value of size is checked
-in setxattr() so we know it is a number between "0 - XATTR_SIZE_MAX".
-There is no need to check for negative sizes.
+1) We can tighten up the code a little by returning directly and it
+   makes the code more future proof and easier to read.
+2) "free" is a better name than "exit".
+3) sizeof(priv_cmd) is shorter and more clear than sizeof(struct
+   android_wifi_priv_cmd).
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Static checker stuff not tested.
 
-diff --git a/drivers/staging/lustre/lustre/include/lustre_eacl.h b/drivers/staging/lustre/lustre/include/lustre_eacl.h
-index b94f76a..0f8f76c 100644
---- a/drivers/staging/lustre/lustre/include/lustre_eacl.h
-+++ b/drivers/staging/lustre/lustre/include/lustre_eacl.h
-@@ -74,7 +74,7 @@ typedef struct {
- extern ext_acl_xattr_header *
- lustre_posix_acl_xattr_2ext(posix_acl_xattr_header *header, int size);
- extern int
--lustre_posix_acl_xattr_filter(posix_acl_xattr_header *header, int size,
-+lustre_posix_acl_xattr_filter(posix_acl_xattr_header *header, size_t size,
- 			      posix_acl_xattr_header **out);
- extern void
- lustre_posix_acl_xattr_free(posix_acl_xattr_header *header, int size);
-diff --git a/drivers/staging/lustre/lustre/obdclass/acl.c b/drivers/staging/lustre/lustre/obdclass/acl.c
-index 2619bfe..9a69f6b 100644
---- a/drivers/staging/lustre/lustre/obdclass/acl.c
-+++ b/drivers/staging/lustre/lustre/obdclass/acl.c
-@@ -171,17 +171,17 @@ EXPORT_SYMBOL(lustre_posix_acl_xattr_2ext);
- /*
-  * Filter out the "nobody" entries in the posix ACL.
-  */
--int lustre_posix_acl_xattr_filter(posix_acl_xattr_header *header, int size,
-+int lustre_posix_acl_xattr_filter(posix_acl_xattr_header *header, size_t size,
- 				  posix_acl_xattr_header **out)
+diff --git a/drivers/staging/rtl8188eu/os_dep/rtw_android.c b/drivers/staging/rtl8188eu/os_dep/rtw_android.c
+index b403178..99ce077 100644
+--- a/drivers/staging/rtl8188eu/os_dep/rtw_android.c
++++ b/drivers/staging/rtl8188eu/os_dep/rtw_android.c
+@@ -148,20 +148,15 @@ static int rtw_android_set_block(struct net_device *net, char *command,
+ int rtw_android_priv_cmd(struct net_device *net, struct ifreq *ifr, int cmd)
  {
- 	int count, i, j, rc = 0;
- 	__u32 id;
- 	posix_acl_xattr_header *new;
+ 	int ret = 0;
+-	char *command = NULL;
++	char *command;
+ 	int cmd_num;
+ 	int bytes_written = 0;
+ 	struct android_wifi_priv_cmd priv_cmd;
  
--	if (unlikely(size < 0))
--		return -EINVAL;
--	else if (!size)
-+	if (!size)
- 		return 0;
-+	if (size < sizeof(*new))
+-	if (!ifr->ifr_data) {
+-		ret = -EINVAL;
+-		goto exit;
+-	}
+-	if (copy_from_user(&priv_cmd, ifr->ifr_data,
+-			   sizeof(struct android_wifi_priv_cmd))) {
+-		ret = -EFAULT;
+-		goto exit;
+-	}
++	if (!ifr->ifr_data)
 +		return -EINVAL;
- 
- 	OBD_ALLOC(new, size);
- 	if (unlikely(new = NULL))
++	if (copy_from_user(&priv_cmd, ifr->ifr_data, sizeof(priv_cmd)))
++		return -EFAULT;
+ 	if (priv_cmd.total_len < 1)
+ 		return -EINVAL;
+ 	command = memdup_user(priv_cmd.buf, priv_cmd.total_len);
+@@ -181,7 +176,7 @@ int rtw_android_priv_cmd(struct net_device *net, struct ifreq *ifr, int cmd)
+ 		DBG_88E("%s: Ignore private cmd \"%s\" - iface %s is down\n",
+ 			__func__, command, ifr->ifr_name);
+ 		ret = 0;
+-		goto exit;
++		goto free;
+ 	}
+ 	switch (cmd_num) {
+ 	case ANDROID_WIFI_CMD_STOP:
+@@ -269,7 +264,7 @@ response:
+ 	} else {
+ 		ret = bytes_written;
+ 	}
+-exit:
++free:
+ 	kfree(command);
+ 	return ret;
+ }
