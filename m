@@ -1,54 +1,129 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Date: Wed, 29 Oct 2014 20:01:13 +0000
-Subject: Re: [patch] i40e: precedence bug in i40e_get_pfc_delay()
-Message-Id: <1414612873.2420.60.camel@jtkirshe-mobl>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-86iV/rNFU0BPYOI4Q4RD"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 31 Oct 2014 17:55:25 +0000
+Subject: [PATCH resent] staging: rtl8188eu: Deletion of unnecessary checks before three function calls
+Message-Id: <5453CD0D.9010206@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141029161028.GE5290@mwanda>
-In-Reply-To: <20141029161028.GE5290@mwanda>
-To: kernel-janitors@vger.kernel.org
-
-
---=-86iV/rNFU0BPYOI4Q4RD
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2014-10-29 at 19:10 +0300, Dan Carpenter wrote:
-> The ">>" operation has higher precedence than the "&" operation.  Also
-> the casting is not needed.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This is static checker work and I haven't tested it on real hardware.
-
-As Shannon has already mentioned, we found this internally and I think
-that I already have a patch in the queue to resolve this.  Thank you,
-and if I find I am incorrect and we do not already have a patch
-resolving this, I will add your patch to the queue.  Thank you Dan!
-
---=-86iV/rNFU0BPYOI4Q4RD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
+ <20141029084702.GA18675@kroah.com>
+In-Reply-To: <20141029084702.GA18675@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: cocci@systeme.lip6.fr
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+The functions kfree(), rtw_free_netdev() and vfree() test whether their
+argument is NULL and then return immediately. Thus the test around the call
+is not needed.
 
-iQIcBAABCgAGBQJUUUeJAAoJEOVv75VaS+3O5dwP/RShWVTZt+Y3gmb49m55PSGc
-DXwkOGy4yJgkdy9LJ1OwZxlOZFQVc59/4menZpGX+4CtQezo9fQVPPIrN5cXTlm3
-eaObN6nv1BQqwkOgVpezNH1rarvNcFh8tOh8YdHbhAhZAlCvFaK4XMSD34dMtAt8
-51mjdNOirycbexyt9PP75JQh3J+asX3i78h9orTeb73h4UH8On/V1v2ke0dwBGUL
-Nix4Bq1cAGlJt5M+NnpWuyeJNpE4taNlCc70SDsWbKaLvRjNKmUQE8ZlGDeoxlDZ
-MrF2niyijcHQFe4hJtn1lykgVHJtwCZjQQ66lWJNbbxZM7idwqqV6MbC167hIGdp
-VUFkIrWLtVhjAu3C10fKgFEOGJaNkfSdYXn+vpeGzus/wSaCsLL6d7YLdM92YTc4
-d5evvBl0nPOcKsoYIAZJOp4NPpHqOpP/siLzlzhPWIIuYaUzSsc10bg2H8ZxQEHb
-DPUIBVPR9FOfdeILS6Kw7PUq/7wuTMAXrI2E/9pFObhileomZf6RX3SuTtOVp7Mp
-ui3RSe/Hmt2uENpvwW3CLHigz3pZqOYusn36LdGPqK0sYuYWXJphGU48PorLKblZ
-lMIotpgwNnssiEPZF4Ris/CnHCslZI3VVJnIBdaHMMC0OpgAS9TS1lRdGW9ox4DX
-U7GzeeMa9i3dYozPtHhV
-=7pXq
------END PGP SIGNATURE-----
+This issue was detected by using the Coccinelle software.
 
---=-86iV/rNFU0BPYOI4Q4RD--
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/rtl8188eu/core/rtw_efuse.c   | 3 +--
+ drivers/staging/rtl8188eu/core/rtw_mlme.c    | 3 +--
+ drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 3 +--
+ drivers/staging/rtl8188eu/core/rtw_xmit.c    | 6 ++----
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c  | 5 ++---
+ 5 files changed, 7 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c
+b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+index 7006088..77f7552 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
++++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+@@ -212,8 +212,7 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16
+_size_byte, u8  *pbuf)
+ exit:
+ 	kfree(efuseTbl);
+
+-	if (eFuseWord)
+-		kfree(eFuseWord);
++	kfree(eFuseWord);
+ }
+
+ static void efuse_read_phymap_from_txpktbuf(
+diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c
+b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+index 149c271..df54350 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+@@ -122,8 +122,7 @@ void rtw_free_mlme_priv(struct mlme_priv *pmlmepriv)
+ 	rtw_free_mlme_priv_ie_data(pmlmepriv);
+
+ 	if (pmlmepriv) {
+-		if (pmlmepriv->free_bss_buf)
+-			vfree(pmlmepriv->free_bss_buf);
++		vfree(pmlmepriv->free_bss_buf);
+ 	}
+ }
+
+diff --git a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+index e1dc8fa..af1de9c 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
++++ b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+@@ -201,8 +201,7 @@ u32	_rtw_free_sta_priv(struct	sta_priv *pstapriv)
+
+ 		rtw_mfree_sta_priv_lock(pstapriv);
+
+-		if (pstapriv->pallocated_stainfo_buf)
+-			vfree(pstapriv->pallocated_stainfo_buf);
++		vfree(pstapriv->pallocated_stainfo_buf);
+ 	}
+
+ 	return _SUCCESS;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c
+b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index 639ace0..011c9cf 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -246,11 +246,9 @@ void _rtw_free_xmit_priv (struct xmit_priv *pxmitpriv)
+ 		pxmitbuf++;
+ 	}
+
+-	if (pxmitpriv->pallocated_frame_buf)
+-		vfree(pxmitpriv->pallocated_frame_buf);
++	vfree(pxmitpriv->pallocated_frame_buf);
+
+-	if (pxmitpriv->pallocated_xmitbuf)
+-		vfree(pxmitpriv->pallocated_xmitbuf);
++	vfree(pxmitpriv->pallocated_xmitbuf);
+
+ 	/*  free xmit extension buff */
+ 	pxmitbuf = (struct xmit_buf *)pxmitpriv->pxmit_extbuf;
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index 407a318..cdb70e4 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -456,7 +456,7 @@ free_adapter:
+ 	if (status != _SUCCESS) {
+ 		if (pnetdev)
+ 			rtw_free_netdev(pnetdev);
+-		else if (padapter)
++		else
+ 			vfree(padapter);
+ 		padapter = NULL;
+ 	}
+@@ -487,8 +487,7 @@ static void rtw_usb_if1_deinit(struct adapter *if1)
+ 	DBG_88E("+r871xu_dev_remove, hw_init_completed=%d\n",
+ 		if1->hw_init_completed);
+ 	rtw_free_drv_sw(if1);
+-	if (pnetdev)
+-		rtw_free_netdev(pnetdev);
++	rtw_free_netdev(pnetdev);
+ }
+
+ static int rtw_drv_init(struct usb_interface *pusb_intf, const struct
+usb_device_id *pdid)
+-- 
+2.1.2
 
