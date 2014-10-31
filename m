@@ -1,55 +1,59 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Date: Fri, 10 Oct 2014 18:04:35 +0000
-Subject: Re: [Cocci] [RFC] drop owner assignment from platform_drivers
-Message-Id: <20141010180429.GA6075@katana>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="xHFwDpU9dbj6ez1V"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 31 Oct 2014 09:14:39 +0000
+Subject: [patch] HID: logitech-hidpp: leaks and NULL dereferences
+Message-Id: <20141031091439.GA11252@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141010072439.GA1741@katana>
- <alpine.DEB.2.10.1410100951250.2402@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1410100951250.2402@hadrien>
-To: cocci@systeme.lip6.fr
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jiri Kosina <jkosina@suse.cz>, Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Henrik Rydberg <rydberg@euromail.se>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Shift the allocation down a few lines to avoid a memory leak and also
+add a check for allocation failure.
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 2f31c5252910 ('HID: Introduce hidpp, a module to handle Logitech hid++ devices')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-> The semantic patch looks fine.
-
-Wow, nothing to improve on the semantic patch? Now I am proud :) Thanks
-Julia for your support, as always!
-
-> If you think that it would be useful to have this in the Linux kernel, so
-> people don't add the owner initializer back in the future, you can try
->=20
-> coccinelle/tools/sgen/sgen
-
-Will try later this weekend, thanks!
-
-
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUOB+sAAoJEBQN5MwUoCm2fT8P/AiaifinQjgJ7WqD0QgD1RnT
-OM0ncVgkXxtUflnrKU3qVHaCaHM3zHc/+2ok264TlzYUl8GLnZRbAP5oHst/3rTB
-8Tei8xuuZb8jXiWamZQ39RUpa7TtCxF86OPmhuoJNGU5xqnzZJJRZ3D7W6za6U1a
-9dbb+GwMWDI8t2Gqo0wPCiJcOTod3XognVplAVYNk8JaK/3jd5w098DJO3Tgxm1a
-sVi9+aRuFk2wg7x+7IIpkY09OF0AXX6nOph3XEIHxvahTUnpGDqOcL3yijcwWQhy
-sQdQSdIWXCHtmw//dHGAolktiw1Hxk7W47zyoI00IQQMbLUux6U/q+A1zHUfA0pF
-8soVwWYOwrgwRViGpyuGsDiQhQ0is9Nv+SCQuZNCV1IR5PCinairG76lMN5HVeoX
-x4oAZCp//3hBiHaaoqwueBSgDH/vYv/hKqPyFsxjfdRo/Eg783b0jXqyf+F6MXEV
-RtumwPUrro1aOgJxCtdTqltxBFGnB6uMlQLmb9i+KBL83/m2LFc3UE9tpBiGlyF9
-Aw491T4y0g7g0i/bE/jfhJ9ahlJRsQdj823foUwOmaVjL4nFkZs7khYpMrTyqL8o
-VgZ1MDxasEoDkt1BoWnEQExbBvZRmfAhlqPVSmzk74/+jHDzvylOp2vniQCLgeBW
-BmKJWoI6bQkcjYuCcWcz
-=r1Ih
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index 361e97d..3cce995 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -200,13 +200,15 @@ static int hidpp_send_fap_command_sync(struct hidpp_device *hidpp,
+ 	u8 feat_index, u8 funcindex_clientid, u8 *params, int param_count,
+ 	struct hidpp_report *response)
+ {
+-	struct hidpp_report *message = kzalloc(sizeof(struct hidpp_report),
+-			GFP_KERNEL);
++	struct hidpp_report *message;
+ 	int ret;
+ 
+ 	if (param_count > sizeof(message->fap.params))
+ 		return -EINVAL;
+ 
++	message = kzalloc(sizeof(struct hidpp_report), GFP_KERNEL);
++	if (!message)
++		return -ENOMEM;
+ 	message->report_id = REPORT_ID_HIDPP_LONG;
+ 	message->fap.feature_index = feat_index;
+ 	message->fap.funcindex_clientid = funcindex_clientid;
+@@ -221,8 +223,7 @@ static int hidpp_send_rap_command_sync(struct hidpp_device *hidpp_dev,
+ 	u8 report_id, u8 sub_id, u8 reg_address, u8 *params, int param_count,
+ 	struct hidpp_report *response)
+ {
+-	struct hidpp_report *message = kzalloc(sizeof(struct hidpp_report),
+-			GFP_KERNEL);
++	struct hidpp_report *message;
+ 	int ret;
+ 
+ 	if ((report_id != REPORT_ID_HIDPP_SHORT) &&
+@@ -232,6 +233,9 @@ static int hidpp_send_rap_command_sync(struct hidpp_device *hidpp_dev,
+ 	if (param_count > sizeof(message->rap.params))
+ 		return -EINVAL;
+ 
++	message = kzalloc(sizeof(struct hidpp_report), GFP_KERNEL);
++	if (!message)
++		return -ENOMEM;
+ 	message->report_id = report_id;
+ 	message->rap.sub_id = sub_id;
+ 	message->rap.reg_address = reg_address;
