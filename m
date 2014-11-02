@@ -1,66 +1,72 @@
-From: Andreas Noever <andreas.noever@gmail.com>
-Date: Fri, 21 Nov 2014 11:29:03 +0000
-Subject: Re: [PATCH 1/1] thunderbolt: Deletion of unnecessary checks before the function call "ring_free"
-Message-Id: <CAMxnaaVLhKHjbzUJy5p_0n8BUprzSQ=A3sdF6iQzW_wqmq8N4A@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 02 Nov 2014 18:27:20 +0000
+Subject: [PATCH 1/1] PCI: EMU10K1: Deletion of unnecessary checks before three function calls
+Message-Id: <54567788.9060008@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546F16A5.8030405@users.sourceforge.net>
-In-Reply-To: <546F16A5.8030405@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-Hi Markus,
+The functions kfree(), release_firmware() and snd_util_memhdr_free() test
+whether their argument is NULL and then return immediately. Thus the test
+around the call is not needed.
 
-ring_free does not check for null:
-http://lxr.free-electrons.com/source/drivers/thunderbolt/nhi.c#L398
+This issue was detected by using the Coccinelle software.
 
-Maybe your software confuses the method with:
-http://lxr.free-electrons.com/source/drivers/char/tpm/xen-tpmfront.c#L268
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/emu10k1/emu10k1_main.c | 9 +++------
+ sound/pci/emu10k1/emufx.c        | 3 +--
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-Andreas
+diff --git a/sound/pci/emu10k1/emu10k1_main.c b/sound/pci/emu10k1/emu10k1_main.c
+index 2292697..b4458a6 100644
+--- a/sound/pci/emu10k1/emu10k1_main.c
++++ b/sound/pci/emu10k1/emu10k1_main.c
+@@ -1289,10 +1289,8 @@ static int snd_emu10k1_free(struct snd_emu10k1 *emu)
+ 	}
+ 	if (emu->emu1010.firmware_thread)
+ 		kthread_stop(emu->emu1010.firmware_thread);
+-	if (emu->firmware)
+-		release_firmware(emu->firmware);
+-	if (emu->dock_fw)
+-		release_firmware(emu->dock_fw);
++	release_firmware(emu->firmware);
++	release_firmware(emu->dock_fw);
+ 	if (emu->irq >= 0)
+ 		free_irq(emu->irq, emu);
+ 	/* remove reserved page */
+@@ -1301,8 +1299,7 @@ static int snd_emu10k1_free(struct snd_emu10k1 *emu)
+ 			(struct snd_util_memblk *)emu->reserved_page);
+ 		emu->reserved_page = NULL;
+ 	}
+-	if (emu->memhdr)
+-		snd_util_memhdr_free(emu->memhdr);
++	snd_util_memhdr_free(emu->memhdr);
+ 	if (emu->silent_page.area)
+ 		snd_dma_free_pages(&emu->silent_page);
+ 	if (emu->ptb_pages.area)
+diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
+index 745f062..eb5c0ab 100644
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -777,8 +777,7 @@ static void snd_emu10k1_ctl_private_free(struct snd_kcontrol
+*kctl)
+ 	kctl->private_value = 0;
+ 	list_del(&ctl->list);
+ 	kfree(ctl);
+-	if (kctl->tlv.p)
+-		kfree(kctl->tlv.p);
++	kfree(kctl->tlv.p);
+ }
 
-On Fri, Nov 21, 2014 at 11:40 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 21 Nov 2014 11:30:18 +0100
->
-> The ring_free() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/thunderbolt/ctl.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
-> index 799634b..55b9bdf 100644
-> --- a/drivers/thunderbolt/ctl.c
-> +++ b/drivers/thunderbolt/ctl.c
-> @@ -520,10 +520,8 @@ err:
->  void tb_ctl_free(struct tb_ctl *ctl)
->  {
->         int i;
-> -       if (ctl->rx)
-> -               ring_free(ctl->rx);
-> -       if (ctl->tx)
-> -               ring_free(ctl->tx);
-> +       ring_free(ctl->rx);
-> +       ring_free(ctl->tx);
->
->         /* free RX packets */
->         for (i = 0; i < TB_CTL_RX_PKG_COUNT; i++)
-> --
-> 2.1.3
->
+ static int snd_emu10k1_add_controls(struct snd_emu10k1 *emu,
+-- 
+2.1.3
+
+
