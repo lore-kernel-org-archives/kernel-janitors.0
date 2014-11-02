@@ -1,112 +1,103 @@
-From: Vyacheslav Dubeyko <slava@dubeyko.com>
-Date: Mon, 17 Nov 2014 19:18:16 +0000
-Subject: Re: [PATCH 1/1] hfs/hfs+: Deletion of unnecessary checks before the function call "hfs_bnode_put"
-Message-Id: <1416251896.2937.1.camel@ubuntu>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 02 Nov 2014 15:12:30 +0000
+Subject: [PATCH 1/1] PCI: Deletion of unnecessary checks before three function calls
+Message-Id: <545649DE.80304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	 <530A086E.8010901@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	 <530A72AA.3000601@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	 <530B5FB6.6010207@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402241710370.2074@hadrien>
-	 <530C5E18.1020800@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402251014170.2080@hadrien>
-	 <530CD2C4.4050903@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402251840450.7035@hadrien>
-	 <530CF8FF.8080600@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	 <530DD06F.4090703@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	 <5317A59D.4@users.sourceforge.net> <546A3C2A.9050401@users.sourceforge.net>
-In-Reply-To: <546A3C2A.9050401@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+To: cocci@systeme.lip6.fr
 
-On Mon, 2014-11-17 at 19:19 +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 17 Nov 2014 19:13:56 +0100
-> 
-> The hfs_bnode_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
+The functions pci_dev_put(), pci_pme_wakeup_bus() and put_device() test
+whether their argument is NULL and then return immediately. Thus the test
+around the call is not needed.
 
-Thank you. It's the reasonable correction. Looks good for me.
+This issue was detected by using the Coccinelle software.
 
-Reviewed-by: Vyacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/pci/pci-acpi.c     | 3 +--
+ drivers/pci/probe.c        | 3 +--
+ drivers/pci/search.c       | 3 +--
+ drivers/pci/xen-pcifront.c | 3 +--
+ 4 files changed, 4 insertions(+), 8 deletions(-)
 
-Thanks,
-Vyacheslav Dubeyko.
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index 37263b0..a8fe5de 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -60,8 +60,7 @@ static void pci_acpi_wake_dev(struct work_struct *work)
+ 	pci_wakeup_event(pci_dev);
+ 	pm_runtime_resume(&pci_dev->dev);
 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/hfs/bfind.c     | 3 +--
->  fs/hfs/brec.c      | 3 +--
->  fs/hfsplus/bfind.c | 3 +--
->  fs/hfsplus/brec.c  | 3 +--
->  4 files changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-> index de69d8a..0e26523 100644
-> --- a/fs/hfs/bfind.c
-> +++ b/fs/hfs/bfind.c
-> @@ -100,8 +100,7 @@ int hfs_brec_find(struct hfs_find_data *fd)
->  	int height, res;
->  
->  	tree = fd->tree;
-> -	if (fd->bnode)
-> -		hfs_bnode_put(fd->bnode);
-> +	hfs_bnode_put(fd->bnode);
->  	fd->bnode = NULL;
->  	nidx = tree->root;
->  	if (!nidx)
-> diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-> index 9f4ee7f..3a52b2c 100644
-> --- a/fs/hfs/brec.c
-> +++ b/fs/hfs/brec.c
-> @@ -272,8 +272,7 @@ static struct hfs_bnode *hfs_bnode_split(struct hfs_find_data *fd)
->  		/* panic? */
->  		hfs_bnode_put(node);
->  		hfs_bnode_put(new_node);
-> -		if (next_node)
-> -			hfs_bnode_put(next_node);
-> +		hfs_bnode_put(next_node);
->  		return ERR_PTR(-ENOSPC);
->  	}
->  
-> diff --git a/fs/hfsplus/bfind.c b/fs/hfsplus/bfind.c
-> index c1422d9..7be88e3 100644
-> --- a/fs/hfsplus/bfind.c
-> +++ b/fs/hfsplus/bfind.c
-> @@ -171,8 +171,7 @@ int hfs_brec_find(struct hfs_find_data *fd, search_strategy_t do_key_compare)
->  	int height, res;
->  
->  	tree = fd->tree;
-> -	if (fd->bnode)
-> -		hfs_bnode_put(fd->bnode);
-> +	hfs_bnode_put(fd->bnode);
->  	fd->bnode = NULL;
->  	nidx = tree->root;
->  	if (!nidx)
-> diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-> index 6e560d5..59bab47 100644
-> --- a/fs/hfsplus/brec.c
-> +++ b/fs/hfsplus/brec.c
-> @@ -276,8 +276,7 @@ static struct hfs_bnode *hfs_bnode_split(struct hfs_find_data *fd)
->  		/* panic? */
->  		hfs_bnode_put(node);
->  		hfs_bnode_put(new_node);
-> -		if (next_node)
-> -			hfs_bnode_put(next_node);
-> +		hfs_bnode_put(next_node);
->  		return ERR_PTR(-ENOSPC);
->  	}
->  
+-	if (pci_dev->subordinate)
+-		pci_pme_wakeup_bus(pci_dev->subordinate);
++	pci_pme_wakeup_bus(pci_dev->subordinate);
+ }
+
+ /**
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 4170113..e93f16e 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -86,8 +86,7 @@ static void release_pcibus_dev(struct device *dev)
+ {
+ 	struct pci_bus *pci_bus = to_pci_bus(dev);
+
+-	if (pci_bus->bridge)
+-		put_device(pci_bus->bridge);
++	put_device(pci_bus->bridge);
+ 	pci_bus_remove_resources(pci_bus);
+ 	pci_release_bus_of_node(pci_bus);
+ 	kfree(pci_bus);
+diff --git a/drivers/pci/search.c b/drivers/pci/search.c
+index 827ad83..2d806bd 100644
+--- a/drivers/pci/search.c
++++ b/drivers/pci/search.c
+@@ -305,8 +305,7 @@ static struct pci_dev *pci_get_dev_by_id(const struct
+pci_device_id *id,
+ 			      match_pci_dev_by_id);
+ 	if (dev)
+ 		pdev = to_pci_dev(dev);
+-	if (from)
+-		pci_dev_put(from);
++	pci_dev_put(from);
+ 	return pdev;
+ }
+
+diff --git a/drivers/pci/xen-pcifront.c b/drivers/pci/xen-pcifront.c
+index 53df39a..46664cc 100644
+--- a/drivers/pci/xen-pcifront.c
++++ b/drivers/pci/xen-pcifront.c
+@@ -596,8 +596,7 @@ static pci_ers_result_t pcifront_common_process(int cmd,
+ 	pcidev = pci_get_bus_and_slot(bus, devfn);
+ 	if (!pcidev || !pcidev->driver) {
+ 		dev_err(&pdev->xdev->dev, "device or AER driver is NULL\n");
+-		if (pcidev)
+-			pci_dev_put(pcidev);
++		pci_dev_put(pcidev);
+ 		return result;
+ 	}
+ 	pdrv = pcidev->driver;
+-- 
+2.1.3
 
 
