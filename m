@@ -1,44 +1,102 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 03 Nov 2014 12:28:28 +0000
-Subject: Re: [patch] mfd: wm8350: fix a printk
-Message-Id: <20141103122828.GC4538@x1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 02 Nov 2014 14:20:59 +0000
+Subject: [PATCH 1/1] ceph: Deletion of unnecessary checks before two function calls
+Message-Id: <54563DCB.2010103@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141029161118.GG5290@mwanda>
-In-Reply-To: <20141029161118.GG5290@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Sage Weil <sage@inktank.com>, ceph-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-On Wed, 29 Oct 2014, Charles Keepax wrote:
+The functions ceph_put_snap_context() and iput() test whether their argument
+is NULL and then return immediately. Thus the test around the call
+is not needed.
 
-> On Wed, Oct 29, 2014 at 07:11:18PM +0300, Dan Carpenter wrote:
-> > There is a precedence bug here because >> has higher precedence than &
-> > so we end up printing the wrong mode.
-> >=20
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >=20
->=20
-> Looks like Joe already been you to the punch on this one:
->=20
-> https://lkml.org/lkml/2014/10/27/36
->=20
-> Although I don't really mind which one Lee applies :-) so:
+This issue was detected by using the Coccinelle software.
 
-I'm going to apply Joe's patch.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/ceph/caps.c       | 3 +--
+ fs/ceph/mds_client.c | 6 ++----
+ fs/ceph/snap.c       | 9 +++------
+ 3 files changed, 6 insertions(+), 12 deletions(-)
 
-> Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
->=20
-> Thanks,
-> Charles
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 6d1cd45..7d99fc8 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -3136,8 +3136,7 @@ flush_cap_releases:
+ done:
+ 	mutex_unlock(&session->s_mutex);
+ done_unlocked:
+-	if (inode)
+-		iput(inode);
++	iput(inode);
+ 	return;
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ bad:
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index bad07c0..3b0ab05 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -523,8 +523,7 @@ void ceph_mdsc_release_request(struct kref *kref)
+ 	}
+ 	if (req->r_locked_dir)
+ 		ceph_put_cap_refs(ceph_inode(req->r_locked_dir), CEPH_CAP_PIN);
+-	if (req->r_target_inode)
+-		iput(req->r_target_inode);
++	iput(req->r_target_inode);
+ 	if (req->r_dentry)
+ 		dput(req->r_dentry);
+ 	if (req->r_old_dentry)
+@@ -995,8 +994,7 @@ out:
+ 	session->s_cap_iterator = NULL;
+ 	spin_unlock(&session->s_cap_lock);
+
+-	if (last_inode)
+-		iput(last_inode);
++	iput(last_inode);
+ 	if (old_cap)
+ 		ceph_put_cap(session->s_mdsc, old_cap);
+
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index f01645a..c1cc993 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -365,8 +365,7 @@ static int build_snap_context(struct ceph_snap_realm *realm)
+ 	     realm->ino, realm, snapc, snapc->seq,
+ 	     (unsigned int) snapc->num_snaps);
+
+-	if (realm->cached_context)
+-		ceph_put_snap_context(realm->cached_context);
++	ceph_put_snap_context(realm->cached_context);
+ 	realm->cached_context = snapc;
+ 	return 0;
+
+@@ -590,15 +589,13 @@ static void queue_realm_cap_snaps(struct ceph_snap_realm
+*realm)
+ 		if (!inode)
+ 			continue;
+ 		spin_unlock(&realm->inodes_with_caps_lock);
+-		if (lastinode)
+-			iput(lastinode);
++		iput(lastinode);
+ 		lastinode = inode;
+ 		ceph_queue_cap_snap(ci);
+ 		spin_lock(&realm->inodes_with_caps_lock);
+ 	}
+ 	spin_unlock(&realm->inodes_with_caps_lock);
+-	if (lastinode)
+-		iput(lastinode);
++	iput(lastinode);
+
+ 	list_for_each_entry(child, &realm->children, child_item) {
+ 		dout("queue_realm_cap_snaps %p %llx queue child %p %llx\n",
+-- 
+2.1.3
+
+
