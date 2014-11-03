@@ -1,79 +1,37 @@
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Date: Wed, 12 Nov 2014 16:57:26 +0000
-Subject: Re: amd-xgbe: Initial AMD 10GbE platform driver
-Message-Id: <54639176.7000207@amd.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 03 Nov 2014 09:50:59 +0000
+Subject: Re: [PATCH 1/1] s390/net: Deletion of unnecessary checks before two function calls
+Message-Id: <20141103095059.GL6879@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141112120329.GA12773@mwanda>
-In-Reply-To: <20141112120329.GA12773@mwanda>
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <5453C98C.90105@users.sourceforge.net>
+In-Reply-To: <5453C98C.90105@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-On 11/12/2014 06:03 AM, Dan Carpenter wrote:
-> Hello Lendacky, Thomas,
->
-> The patch c5aa9e3b8156: "amd-xgbe: Initial AMD 10GbE platform driver"
-> from Jun 5, 2014, leads to the following Smatch warning:
->
-> 	drivers/net/ethernet/amd/xgbe/xgbe-dev.c:1633 xgbe_dev_read()
-> 	warn: we tested 'err' before and it was 'true'
->
-> drivers/net/ethernet/amd/xgbe/xgbe-dev.c
->    1628          /* Check for errors (only valid in last descriptor) */
->    1629          err = XGMAC_GET_BITS_LE(rdesc->desc3, RX_NORMAL_DESC3, ES);
->    1630          etlt = XGMAC_GET_BITS_LE(rdesc->desc3, RX_NORMAL_DESC3, ETLT);
->    1631          DBGPR("  err=%u, etlt=%#x\n", err, etlt);
->    1632
->    1633          if (!err || (err && !etlt)) {
->                      ^^^^^^^^^^^^^^^^^^^^^^
-> Smatch is saying that we could re-write this as:
->
-> 		if (!err || !etlt) {
->
-> Which is true, but I'm not sure if that was really the original intent
-> of the code.  If it was then maybe we could make it more explicit by
+This one is buggy.
 
-The original intent is to handle the case where err is zero (no error)
-or err is one but etlt is zero (no error, even though err is one).
+I'm sorry, but please stop sending these.
 
-I'll step back a bit and try to see what looks best.  I'm leaning
-towards the Smatch suggestion and I'll just add a comment explaining
-it.
+For kfree(), at least we all know that kfree() accepts NULL pointer.
+But for this one:
+1) I don't know what the functions do so I have to look at the code.
+2) It's in a arch that I don't compile so cscope isn't set up meaning
+   it's hard to find the functions.
 
-Thanks,
-Tom
+You're sending a lot of patches and they are all hard to review and some
+of them are buggy and none of them really add any value.  It's a waste
+of your time and it's a waste of my time.
 
-> saying:
->
-> 	if (etlt = 0x00) {
-> 		/* do nothing */
-> 	} else if (!err) {
-> 		if (etlt = 0x09 &&
-> 		...
-> 	} else {
-> 		if (etlt = 0x05 || etlt = 0x06)
-> 		...
->
->    1634                  if ((etlt = 0x09) &&
->    1635                      (netdev->features & NETIF_F_HW_VLAN_CTAG_RX)) {
->    1636                          XGMAC_SET_BITS(packet->attributes, RX_PACKET_ATTRIBUTES,
->    1637                                         VLAN_CTAG, 1);
->    1638                          packet->vlan_ctag = XGMAC_GET_BITS_LE(rdesc->desc0,
->    1639                                                                RX_NORMAL_DESC0,
->    1640                                                                OVT);
->    1641                          DBGPR("  vlan-ctag=0x%04x\n", packet->vlan_ctag);
->    1642                  }
->    1643          } else {
->    1644                  if ((etlt = 0x05) || (etlt = 0x06))
->    1645                          XGMAC_SET_BITS(packet->attributes, RX_PACKET_ATTRIBUTES,
->    1646                                         CSUM_DONE, 0);
->    1647                  else
->    1648                          XGMAC_SET_BITS(packet->errors, RX_PACKET_ERRORS,
->    1649                                         FRAME, 1);
->    1650          }
->    1651
->
-> regards,
-> dan carpenter
->
+regards,
+dan carpenter
