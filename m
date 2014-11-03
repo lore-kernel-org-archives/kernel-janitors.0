@@ -1,34 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Nov 2014 09:33:37 +0000
-Subject: Re: [PATCH v2 2/2] staging: rtl8188eu: Better memory clean-up in efuse_phymap_to_logical()
-Message-Id: <54647AF1.6@users.sourceforge.net>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Mon, 03 Nov 2014 13:27:52 +0000
+Subject: Re: [patch] HID: logitech-hidpp: leaks and NULL dereferences
+Message-Id: <alpine.LNX.2.00.1411031427370.19451@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
- <20141029084702.GA18675@kroah.com> <5453CD0D.9010206@users.sourceforge.net>
- <alpine.DEB.2.10.1410311900201.2481@hadrien>
- <5463C10D.6020409@users.sourceforge.net>
- <5463C373.5050804@users.sourceforge.net>
- <alpine.DEB.2.10.1411130942150.2389@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1411130942150.2389@hadrien>
+References: <20141031091439.GA11252@mwanda> <20141031134901.GB24511@mail.corp.redhat.com>
+In-Reply-To: <20141031134901.GB24511@mail.corp.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Henrik Rydberg <rydberg@euromail.se>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> You are not using the most recent version of the code.  The issue has
-> already been fixed.
+On Fri, 31 Oct 2014, Benjamin Tissoires wrote:
 
-Thanks for your reminder.
+> > Shift the allocation down a few lines to avoid a memory leak and also
+> > add a check for allocation failure.
+> > 
+> > Fixes: 2f31c5252910 ('HID: Introduce hidpp, a module to handle Logitech hid++ devices')
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > 
+> 
+> Ouch, I am ashamed of not having spot that :/
+> 
+> Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/drivers/staging/rtl8188eu/core/rtw_efuse.c?id<fab18ce55282a85e2c7e5db15c5daf065efdb4
+Good catch. Applied, thanks.
 
-Regards,
-Markus
+-- 
+Jiri Kosina
+SUSE Labs
