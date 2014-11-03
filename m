@@ -1,36 +1,84 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 26 Nov 2014 14:06:49 +0000
-Subject: [patch] USB: adutux: NULL dereferences on disconnect
-Message-Id: <20141126140649.GB18740@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 03 Nov 2014 18:40:51 +0000
+Subject: [PATCH v2] kconfig: Deletion of unnecessary checks before the function call "sym_calc_value"
+Message-Id: <5457CC33.4050906@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54568924.5010008@users.sourceforge.net>
+In-Reply-To: <54568924.5010008@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-Both "dev->udev" and "interface->dev" are NULL.  These printks are not
-very interesting so I just deleted them.
+From: Markus Elfring <elfring@users.sourceforge.net>
 
-Fixes: 03270634e242 ('USB: Add ADU support for Ontrak ADU devices')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The sym_calc_value() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-diff --git a/drivers/usb/misc/adutux.c b/drivers/usb/misc/adutux.c
-index 493c7f2..3071c0e 100644
---- a/drivers/usb/misc/adutux.c
-+++ b/drivers/usb/misc/adutux.c
-@@ -814,15 +814,10 @@ static void adu_disconnect(struct usb_interface *interface)
- 	usb_set_intfdata(interface, NULL);
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Paul Bolle <pebolle@tiscali.nl>
+---
+ scripts/kconfig/confdata.c | 6 ++----
+ scripts/kconfig/symbol.c   | 3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index f88d90f..3073cb6 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -262,8 +262,7 @@ int conf_read_simple(const char *name, int def)
+ 			goto load;
+ 		sym_add_change_count(1);
+ 		if (!sym_defconfig_list) {
+-			if (modules_sym)
+-				sym_calc_value(modules_sym);
++			sym_calc_value(modules_sym);
+ 			return 1;
+ 		}
  
- 	/* if the device is not opened, then we clean up right now */
--	dev_dbg(&dev->udev->dev, "%s : open count %d\n",
--		__func__, dev->open_count);
- 	if (!dev->open_count)
- 		adu_delete(dev);
+@@ -399,8 +398,7 @@ setsym:
+ 	free(line);
+ 	fclose(in);
  
- 	mutex_unlock(&adutux_mutex);
--
--	dev_info(&interface->dev, "ADU device adutux%d now disconnected\n",
--		 (minor - ADU_MINOR_BASE));
+-	if (modules_sym)
+-		sym_calc_value(modules_sym);
++	sym_calc_value(modules_sym);
+ 	return 0;
  }
  
- /* usb specific object needed to register this driver with the usb subsystem */
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index 7caabdb..3f7797b 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -447,8 +447,7 @@ void sym_clear_all_valid(void)
+ 	for_all_symbols(i, sym)
+ 		sym->flags &= ~SYMBOL_VALID;
+ 	sym_add_change_count(1);
+-	if (modules_sym)
+-		sym_calc_value(modules_sym);
++	sym_calc_value(modules_sym);
+ }
+ 
+ void sym_set_changed(struct symbol *sym)
+-- 
+2.1.3
+
+
