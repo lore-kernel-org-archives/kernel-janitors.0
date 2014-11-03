@@ -1,86 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 17 Nov 2014 12:45:36 +0000
-Subject: Re: [PATCH 1/1] ALSA: hda: Deletion of unnecessary checks before two function calls
-Message-Id: <s5hmw7qknbj.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 03 Nov 2014 13:27:06 +0000
+Subject: Re: ceph: Deletion of unnecessary checks before two function calls
+Message-Id: <545782AA.5080408@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<5469C8C8.8010306@users.sourceforge.net>
-In-Reply-To: <5469C8C8.8010306@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>	<530A086E.8010901@users.sourceforge.net>	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>	<530A72AA.3000601@users.sourceforge.net>	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>	<530B5FB6.6010207@users.sourceforge.net>	<alpine.DEB.2.10.1402241710370.2074@hadrien>	<530C5E18.1020800@users.sourceforge.net>	<alpine.DEB.2.10.1402251014170.2080@hadrien>	<530CD2C4.4050903@users.sourceforge.net>	<alpine.DEB.2.10.1402251840450.7035@hadrien>	<530CF8FF.8080600@users.sourceforge.net>	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>	<530DD06F.4090703@users.sourceforge.net>	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.so
+ urceforge.net>	<54563DCB.2010103@users.sourceforge.net> <CALFYKtAJG5W9-BAHrqEcC-FfqdJERCqkBADo4yTUyjzb+wCHnQ@mail.gmail.com>
+In-Reply-To: <CALFYKtAJG5W9-BAHrqEcC-FfqdJERCqkBADo4yTUyjzb+wCHnQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+To: Ilya Dryomov <ilya.dryomov@inktank.com>
+Cc: Sage Weil <sage@inktank.com>, Ceph Development <ceph-devel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Coccinelle <cocci@systeme.lip6.fr>, "Yan, Zheng" <zyan@redhat.com>
 
-At Mon, 17 Nov 2014 11:07:04 +0100,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 17 Nov 2014 10:44:33 +0100
-> 
-> The functions kfree() and release_firmware() test whether their argument
-> is NULL and then return immediately. Thus the test around the call
-> is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> dput() also checks for NULL argument, but the check is wrapped into
+> unlikely(), which is why I presume it wasn't picked up.  It would be
+> great if you could improve your coccinelle script to handle
+> {un,}likely() as well.
 
-Applied, thanks.
+Thanks for your suggestion.
+
+Should I consider any more fine-tuning for the affected script
+"list_input_parameter_validation1.cocci" in the near future?
+https://lkml.org/lkml/2014/3/5/362
+http://article.gmane.org/gmane.comp.version-control.coccinelle/3514
 
 
-Takashi
+>> @@ -590,15 +589,13 @@ static void queue_realm_cap_snaps(struct ceph_snap_realm
+>> *realm)
+> 
+> The patch was corrupted, that should have been a single line.  I fixed
+> it up but you may want to look into your email client settings.
 
-> ---
->  sound/pci/hda/hda_codec.c | 3 +--
->  sound/pci/hda/hda_intel.c | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
-> index ec6a7d0..3fe8859 100644
-> --- a/sound/pci/hda/hda_codec.c
-> +++ b/sound/pci/hda/hda_codec.c
-> @@ -827,8 +827,7 @@ static void snd_hda_bus_free(struct hda_bus *bus)
->  	WARN_ON(!list_empty(&bus->codec_list));
->  	if (bus->workq)
->  		flush_workqueue(bus->workq);
-> -	if (bus->unsol)
-> -		kfree(bus->unsol);
-> +	kfree(bus->unsol);
->  	if (bus->ops.private_free)
->  		bus->ops.private_free(bus);
->  	if (bus->workq)
-> diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> index 0a7f848..b4ec4e1 100644
-> --- a/sound/pci/hda/hda_intel.c
-> +++ b/sound/pci/hda/hda_intel.c
-> @@ -1129,8 +1129,7 @@ static int azx_free(struct azx *chip)
->  	pci_disable_device(chip->pci);
->  	kfree(chip->azx_dev);
->  #ifdef CONFIG_SND_HDA_PATCH_LOADER
-> -	if (chip->fw)
-> -		release_firmware(chip->fw);
-> +	release_firmware(chip->fw);
->  #endif
->  	if (chip->driver_caps & AZX_DCAPS_I915_POWERWELL) {
->  		hda_display_power(false);
-> -- 
-> 2.1.3
-> 
-> 
+Thanks for your feedback.
+
+Does this example show a conflict between long comments after patch ranges and
+line length limitation for email eventually?
+
+Regards,
+Markus
