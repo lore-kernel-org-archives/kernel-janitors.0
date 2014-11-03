@@ -1,43 +1,60 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 29 Nov 2014 15:30:27 +0000
-Subject: [PATCH 1/1] net-ipvlan: Deletion of an unnecessary check before the function call "free_percpu"
-Message-Id: <5479E693.3010200@users.sourceforge.net>
+Date: Mon, 03 Nov 2014 15:55:12 +0000
+Subject: Re: s390/net: Deletion of unnecessary checks before two function calls
+Message-Id: <5457A560.2020304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <5453C98C.90105@users.sourceforge.net>
+ <20141103095059.GL6879@mwanda>
+In-Reply-To: <20141103095059.GL6879@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: cocci@systeme.lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 29 Nov 2014 16:23:20 +0100
+> This one is buggy.
 
-The free_percpu() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+I am still interested to clarify this opinion a bit more.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ipvlan/ipvlan_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> I'm sorry, but please stop sending these.
 
-diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
-index 96b71b0..feb1853 100644
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -125,8 +125,7 @@ static void ipvlan_uninit(struct net_device *dev)
- 	struct ipvl_dev *ipvlan = netdev_priv(dev);
- 	struct ipvl_port *port = ipvlan->port;
- 
--	if (ipvlan->pcpu_stats)
--		free_percpu(ipvlan->pcpu_stats);
-+	free_percpu(ipvlan->pcpu_stats);
- 
- 	port->count -= 1;
- 	if (!port->count)
--- 
-2.1.3
+I am going to improve more implementation details in affected source files.
 
+
+> But for this one:
+> 1) I don't know what the functions do so I have to look at the code.
+
+I hope that static source code analysis can help here.
+
+
+> 2) It's in a arch that I don't compile so cscope isn't set up meaning
+>    it's hard to find the functions.
+
+Do you find the Coccinelle software also useful for your area?
+
+
+> You're sending a lot of patches and they are all hard to review and some
+> of them are buggy and none of them really add any value.
+
+Thanks for your feedback.
+
+
+The suggested source code clean-up might result in a measurable effect
+depending on the call frequency for the changed functions.
+Can I help you in any ways to make corresponding review easier?
+
+
+> It's a waste of your time and it's a waste of my time.
+
+It can be your choice to reject my update suggestion.
+
+Regards,
+Markus
