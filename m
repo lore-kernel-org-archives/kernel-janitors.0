@@ -1,64 +1,29 @@
-From: Jeff Layton <jeff.layton@primarydata.com>
-Date: Fri, 28 Nov 2014 01:17:53 +0000
-Subject: Re: [patch] nfsd: minor off by one checks in __write_versions()
-Message-Id: <20141127201753.26753f9d@tlielax.poochiereds.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 04 Nov 2014 10:37:17 +0000
+Subject: [patch 1/2] bnx2fc: check IS_ERR() instead of NULL
+Message-Id: <20141104103717.GA19096@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141127155854.GB21914@mwanda>
-In-Reply-To: <20141127155854.GB21914@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: QLogic-Storage-Upstream@qlogic.com
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 27 Nov 2014 18:58:54 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The bnx2fc_if_create() function returns NULL on failure, it never
+returns an error pointer.
 
-> My static checker complains that if "len = remaining" then it means we
-> have truncated the last character off the version string.
-> 
-> The intent of the code is that we print as many versions as we can
-> without truncating a version.  Then we put a newline at the end.  If the
-> newline can't fit we return -EINVAL.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> index 9506ea5..19ace74 100644
-> --- a/fs/nfsd/nfsctl.c
-> +++ b/fs/nfsd/nfsctl.c
-> @@ -608,7 +608,7 @@ static ssize_t __write_versions(struct file *file, char *buf, size_t size)
->  				       num);
->  			sep = " ";
->  
-> -			if (len > remaining)
-> +			if (len >= remaining)
->  				break;
->  			remaining -= len;
->  			buf += len;
-> @@ -623,7 +623,7 @@ static ssize_t __write_versions(struct file *file, char *buf, size_t size)
->  						'+' : '-',
->  					minor);
->  
-> -			if (len > remaining)
-> +			if (len >= remaining)
->  				break;
->  			remaining -= len;
->  			buf += len;
-> @@ -631,7 +631,7 @@ static ssize_t __write_versions(struct file *file, char *buf, size_t size)
->  		}
->  
->  	len = snprintf(buf, remaining, "\n");
-> -	if (len > remaining)
-> +	if (len >= remaining)
->  		return -EINVAL;
->  	return tlen + len;
->  }
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Looks correct. Good catch.
-
-Reviewed-by: Jeff Layton <jlayton@primarydata.com>
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+index 79e5c94..dfed4be 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -1081,7 +1081,7 @@ static int bnx2fc_vport_create(struct fc_vport *vport, bool disabled)
+ 	mutex_unlock(&bnx2fc_dev_lock);
+ 	rtnl_unlock();
+ 
+-	if (IS_ERR(vn_port)) {
++	if (!vn_port) {
+ 		printk(KERN_ERR PFX "bnx2fc_vport_create (%s) failed\n",
+ 			netdev->name);
+ 		return -EIO;
