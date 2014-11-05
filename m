@@ -1,51 +1,30 @@
-From: santosh nayak <santoshprasadnayak@gmail.com>
-Date: Wed, 05 Nov 2014 10:56:52 +0000
+From: Richard Weinberger <richard@nod.at>
+Date: Wed, 05 Nov 2014 11:18:40 +0000
 Subject: Re: How to access Linux Kernel environment Variables ?
-Message-Id: <CAOD=uF6oBZ0cmNH4Jf9Hs4ZU3Y4WO-wfvc4k0b7Ezpo63S7Dag@mail.gmail.com>
+Message-Id: <545A0790.2050302@nod.at>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAOD=uF4L+jvR=ckMdo3o4wdSsRcGynQnv_KOpDeyJst74YOxuA@mail.gmail.com>
-	<CAFLxGvywuEox+2fYZ-+ZLop=Za7Kum8P+q1kHx3cFWF2nG6O5A@mail.gmail.com>
-In-Reply-To: <CAFLxGvywuEox+2fYZ-+ZLop=Za7Kum8P+q1kHx3cFWF2nG6O5A@mail.gmail.com>
+References: <CAOD=uF4L+jvR=ckMdo3o4wdSsRcGynQnv_KOpDeyJst74YOxuA@mail.gmail.com>	<CAFLxGvywuEox+2fYZ-+ZLop=Za7Kum8P+q1kHx3cFWF2nG6O5A@mail.gmail.com> <CAOD=uF6oBZ0cmNH4Jf9Hs4ZU3Y4WO-wfvc4k0b7Ezpo63S7Dag@mail.gmail.com>
+In-Reply-To: <CAOD=uF6oBZ0cmNH4Jf9Hs4ZU3Y4WO-wfvc4k0b7Ezpo63S7Dag@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Weinberger <richard.weinberger@gmail.com>
+To: santosh nayak <santoshprasadnayak@gmail.com>
 Cc: linux-kernel <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Thanks Richard for your response.
+Am 05.11.2014 um 11:56 schrieb santosh nayak:
+> Thanks Richard for your response.
+> 
+> Is there any system call in Linux which can access and set variables
+> in /proc/cmdline ?  (Similar to kenv() in FreeBSD which can access and
+> set variables in /boot/loader.conf).
 
-Is there any system call in Linux which can access and set variables
-in /proc/cmdline ?  (Similar to kenv() in FreeBSD which can access and
-set variables in /boot/loader.conf).
+No.
 
-I would like to use that system call in linux C code, the  way I am
-using kenv() in freeBSD environment.
+> I would like to use that system call in linux C code, the  way I am
+> using kenv() in freeBSD environment.
 
-Regards
-Santosh
+Create a wrapper function which behaves like kenv().
+Should be doable in a few lines of code.
 
-On Wed, Nov 5, 2014 at 2:44 PM, Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
-> On Wed, Nov 5, 2014 at 9:03 AM, santosh prasad nayak
-> <santoshprasadnayak@gmail.com> wrote:
->> Hi all,
->>
->> Is there any system call in Linux which serve the purpose of  "kenv()"
->> of FreeBSD ?
->>
->>
->> In FreeBSD:
->> -----------------
->> Kernel environment variables are saved at "/boot/loader.conf"  and
->> those variables can be accessed using "kenv()"  system call in C
->> program.
->> ----------------
->>
->>
->> Is there any similar functionality available in Linux kernel ?
->
-> /proc/cmdline?
->
-> --
-> Thanks,
-> //richard
+Thanks,
+//richard
