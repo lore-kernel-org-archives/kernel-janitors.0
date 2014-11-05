@@ -1,48 +1,33 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Date: Tue, 18 Nov 2014 23:32:07 +0000
-Subject: Re: [PATCH 1/1] kernel-power: Deletion of an unnecessary check before the function call "vfree"
-Message-Id: <3338798.z9fqSjyBWX@vostro.rjw.lan>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Nov 2014 20:38:37 +0000
+Subject: [patch] scsi: missing braces in scsi_extd_sense_format()
+Message-Id: <20141105203837.GA26314@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <5317A59D.4@users.sourceforge.net> <5468A677.1030004@users.sourceforge.net>
-In-Reply-To: <5468A677.1030004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+To: "James E.J. Bottomley" <JBottomley@parallels.com>, Hannes Reinecke <hare@suse.de>
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sunday, November 16, 2014 02:28:23 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 16 Nov 2014 14:18:28 +0100
-> 
-> The vfree() function performs also input parameter validation. Thus the test
-> around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+There were missing curly braces so we always return the first
+additional2[] string.
 
-Queued up for 3.19-rc1, thanks!
+Fixes: 7046d2fa6dbd ('scsi: use sdev as argument for sense code printing')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-> ---
->  kernel/power/swap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> index aaa3261..337c7a9 100644
-> --- a/kernel/power/swap.c
-> +++ b/kernel/power/swap.c
-> @@ -1374,7 +1374,7 @@ out_clean:
->  				kthread_stop(data[thr].thr);
->  		vfree(data);
->  	}
-> -	if (page) vfree(page);
-> +	vfree(page);
->  
->  	return ret;
->  }
-> 
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+diff --git a/drivers/scsi/constants.c b/drivers/scsi/constants.c
+index a1a7fca..0cf43f6 100644
+--- a/drivers/scsi/constants.c
++++ b/drivers/scsi/constants.c
+@@ -1282,9 +1282,10 @@ scsi_extd_sense_format(unsigned char asc, unsigned char ascq, const char **fmt)
+ 	for (i = 0; additional2[i].fmt; i++) {
+ 		if (additional2[i].code1 = asc &&
+ 		    ascq >= additional2[i].code2_min &&
+-		    ascq <= additional2[i].code2_max)
++		    ascq <= additional2[i].code2_max) {
+ 			*fmt = additional2[i].fmt;
+ 			return additional2[i].str;
++		}
+ 	}
+ #endif
+ 	return NULL;
