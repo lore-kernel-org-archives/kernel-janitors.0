@@ -1,58 +1,23 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 29 Nov 2014 13:42:02 +0000
-Subject: [PATCH 1/1] HID: Wacom: Deletion of an unnecessary check before the function call "vfree"
-Message-Id: <5479CD2A.9030009@users.sourceforge.net>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Wed, 05 Nov 2014 21:20:08 +0000
+Subject: Re: [patch] mtd: off by one in INFTL_dumpVUchains()
+Message-Id: <20141105212008.GW23619@ld-irv-0074>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <20141021080637.GA28426@mwanda>
+In-Reply-To: <20141021080637.GA28426@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 29 Nov 2014 14:34:59 +0100
+On Tue, Oct 21, 2014 at 11:08:35AM +0300, Dan Carpenter wrote:
+> The ->PUtable[] array has "->nb_blocks" number of elemetns so this
+> comparison should be ">=" instead of ">".  Otherwise it could result in
+> a minor read beyond the end of an array.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The vfree() function performs also input parameter validation.
-Thus the test around the call is not needed.
+Pushed to l2-mtd.git.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/net/ethernet/sun/cassini.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/sun/cassini.c b/drivers/net/ethernet/sun/cassini.c
-index 37f87ff..d745808 100644
---- a/drivers/net/ethernet/sun/cassini.c
-+++ b/drivers/net/ethernet/sun/cassini.c
-@@ -5179,8 +5179,7 @@ static void cas_remove_one(struct pci_dev *pdev)
- 	cp = netdev_priv(dev);
- 	unregister_netdev(dev);
- 
--	if (cp->fw_data)
--		vfree(cp->fw_data);
-+	vfree(cp->fw_data);
- 
- 	mutex_lock(&cp->pm_mutex);
- 	cancel_work_sync(&cp->reset_task);
--- 
-2.1.3
-
+Brian
