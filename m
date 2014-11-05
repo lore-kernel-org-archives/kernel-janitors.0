@@ -1,41 +1,60 @@
-From: Borislav Petkov <bp@alien8.de>
-Date: Wed, 19 Nov 2014 16:40:40 +0000
-Subject: Re: [PATCH 1/1] EDAC: Deletion of unnecessary checks before the function call "pci_dev_put"
-Message-Id: <20141119164040.GA4102@pd.tnic>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 05 Nov 2014 20:39:09 +0000
+Subject: [patch -next] NVMe: blk_mq_alloc_request() returns error pointers
+Message-Id: <20141105203909.GB26314@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <546CB20D.4070808@users.sourceforge.net>
-In-Reply-To: <546CB20D.4070808@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Doug Thompson <dougthompson@xmission.com>, Jason Uhlenkott <juhlenko@akamai.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Tim Small <tim@buttersideup.com>, linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 19, 2014 at 04:06:53PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Nov 2014 16:00:13 +0100
-> 
-> The pci_dev_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+We recently converted this to blk_mq but the error checks have to be
+updated to check for IS_ERR() instead of NULL.
 
-Applied, thanks.
+Fixes: a4aea5623d4a ('NVMe: Convert to blk-mq')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Regards/Gruss,
-    Boris.
-
-Sent from a fat crate under my desk. Formatting is fine.
---
+diff --git a/drivers/block/nvme-core.c b/drivers/block/nvme-core.c
+index 39050a3..f7a8717 100644
+--- a/drivers/block/nvme-core.c
++++ b/drivers/block/nvme-core.c
+@@ -826,8 +826,8 @@ static int nvme_submit_async_admin_req(struct nvme_dev *dev)
+ 	struct request *req;
+ 
+ 	req = blk_mq_alloc_request(dev->admin_q, WRITE, GFP_KERNEL, false);
+-	if (!req)
+-		return -ENOMEM;
++	if (IS_ERR(req))
++		return PTR_ERR(req);
+ 
+ 	cmd_info = blk_mq_rq_to_pdu(req);
+ 	nvme_set_info(cmd_info, req, async_req_completion);
+@@ -848,8 +848,8 @@ static int nvme_submit_admin_async_cmd(struct nvme_dev *dev,
+ 	struct nvme_cmd_info *cmd_rq;
+ 
+ 	req = blk_mq_alloc_request(dev->admin_q, WRITE, GFP_KERNEL, false);
+-	if (!req)
+-		return -ENOMEM;
++	if (IS_ERR(req))
++		return PTR_ERR(req);
+ 
+ 	req->timeout = timeout;
+ 	cmd_rq = blk_mq_rq_to_pdu(req);
+@@ -1026,7 +1026,7 @@ static void nvme_abort_req(struct request *req)
+ 
+ 	abort_req = blk_mq_alloc_request(dev->admin_q, WRITE, GFP_ATOMIC,
+ 									false);
+-	if (!abort_req)
++	if (IS_ERR(abort_req))
+ 		return;
+ 
+ 	abort_cmd = blk_mq_rq_to_pdu(abort_req);
+@@ -1884,7 +1884,7 @@ static struct nvme_ns *nvme_alloc_ns(struct nvme_dev *dev, unsigned nsid,
+ 	if (!ns)
+ 		return NULL;
+ 	ns->queue = blk_mq_init_queue(&dev->tagset);
+-	if (!ns->queue)
++	if (IS_ERR(ns->queue))
+ 		goto out_free_ns;
+ 	queue_flag_set_unlocked(QUEUE_FLAG_NOMERGES, ns->queue);
+ 	queue_flag_set_unlocked(QUEUE_FLAG_NONROT, ns->queue);
