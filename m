@@ -1,33 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 05 Nov 2014 20:38:37 +0000
-Subject: [patch] scsi: missing braces in scsi_extd_sense_format()
-Message-Id: <20141105203837.GA26314@mwanda>
+From: Christoph Hellwig <hch@infradead.org>
+Date: Thu, 06 Nov 2014 06:39:32 +0000
+Subject: Re: [patch] scsi: missing braces in scsi_extd_sense_format()
+Message-Id: <20141106063932.GB26433@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141105203837.GA26314@mwanda>
+In-Reply-To: <20141105203837.GA26314@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>, Hannes Reinecke <hare@suse.de>
-Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, Hannes Reinecke <hare@suse.de>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-There were missing curly braces so we always return the first
-additional2[] string.
+On Wed, Nov 05, 2014 at 11:38:37PM +0300, Dan Carpenter wrote:
+> There were missing curly braces so we always return the first
+> additional2[] string.
+> 
+> Fixes: 7046d2fa6dbd ('scsi: use sdev as argument for sense code printing')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: 7046d2fa6dbd ('scsi: use sdev as argument for sense code printing')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/constants.c b/drivers/scsi/constants.c
-index a1a7fca..0cf43f6 100644
---- a/drivers/scsi/constants.c
-+++ b/drivers/scsi/constants.c
-@@ -1282,9 +1282,10 @@ scsi_extd_sense_format(unsigned char asc, unsigned char ascq, const char **fmt)
- 	for (i = 0; additional2[i].fmt; i++) {
- 		if (additional2[i].code1 = asc &&
- 		    ascq >= additional2[i].code2_min &&
--		    ascq <= additional2[i].code2_max)
-+		    ascq <= additional2[i].code2_max) {
- 			*fmt = additional2[i].fmt;
- 			return additional2[i].str;
-+		}
- 	}
- #endif
- 	return NULL;
+Thanks! 
