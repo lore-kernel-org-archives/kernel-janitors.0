@@ -1,64 +1,47 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 20 Nov 2014 17:34:01 +0000
-Subject: [PATCH 6/7] host: ehci-w90x900: fix error return code
-Message-Id: <1416504842-18548-7-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 09 Nov 2014 09:06:33 +0000
+Subject: [PATCH 2/3] staging: lustre: libcfs_debug.h: remove final uses of the GOTO macro
+Message-Id: <1415523994-12520-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1415523994-12520-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1415523994-12520-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Oleg Drokin <oleg.drokin@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Return a negative error code on failure.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+Remove the GOTO macro, as it is no longer used.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The patches in this series are independent of each other.
+ drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h |   12 ------------
+ 1 file changed, 12 deletions(-)
 
- drivers/usb/host/ehci-w90x900.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/ehci-w90x900.c b/drivers/usb/host/ehci-w90x900.c
-index 93d9cd6..e42a29e 100644
---- a/drivers/usb/host/ehci-w90x900.c
-+++ b/drivers/usb/host/ehci-w90x900.c
-@@ -75,8 +75,10 @@ static int usb_w90x900_probe(const struct hc_driver *driver,
- 	__raw_writel(val, ehci->regs+PHY1_CTR);
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
+index 8888b27..2e5a9e5 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
+@@ -242,18 +242,6 @@ do {									\
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
-+	if (irq < 0) {
-+		retval = irq;
- 		goto err2;
-+	}
+ #define LCONSOLE_EMERG(format, ...) CDEBUG(D_CONSOLE | D_EMERG, format, ## __VA_ARGS__)
  
- 	retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (retval != 0)
+-void libcfs_log_goto(struct libcfs_debug_msg_data *, const char *, long_ptr_t);
+-#define GOTO(label, rc)							\
+-do {									\
+-	if (cfs_cdebug_show(D_TRACE, DEBUG_SUBSYSTEM)) {		\
+-		LIBCFS_DEBUG_MSG_DATA_DECL(msgdata, D_TRACE, NULL);	\
+-		libcfs_log_goto(&msgdata, #label, (long_ptr_t)(rc));	\
+-	} else {							\
+-		(void)(rc);						\
+-	}								\
+-	goto label;							\
+-} while (0)
+-
+ int libcfs_debug_msg(struct libcfs_debug_msg_data *msgdata,
+ 			    const char *format1, ...)
+ 	__attribute__ ((format (printf, 2, 3)));
 
