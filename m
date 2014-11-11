@@ -1,17 +1,9 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 02 Nov 2014 15:12:30 +0000
-Subject: [PATCH 1/1] PCI: Deletion of unnecessary checks before three function calls
-Message-Id: <545649DE.80304@users.sourceforge.net>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Date: Tue, 11 Nov 2014 04:07:17 +0000
+Subject: Re: [PATCH 1/1] PCI: Deletion of unnecessary checks before three function calls
+Message-Id: <20141111040717.GD28161@google.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
+References: <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.10.1402251014170.2080@hadrien>
  <530CD2C4.4050903@users.sourceforge.net>
  <alpine.DEB.2.10.1402251840450.7035@hadrien>
@@ -20,84 +12,89 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <545649DE.80304@users.sourceforge.net>
+In-Reply-To: <545649DE.80304@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-The functions pci_dev_put(), pci_pme_wakeup_bus() and put_device() test
-whether their argument is NULL and then return immediately. Thus the test
-around the call is not needed.
+On Sun, Nov 02, 2014 at 04:12:30PM +0100, SF Markus Elfring wrote:
+> The functions pci_dev_put(), pci_pme_wakeup_bus() and put_device() test
+> whether their argument is NULL and then return immediately. Thus the test
+> around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This issue was detected by using the Coccinelle software.
+Applied to pci/misc for v3.19, thanks!
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/pci/pci-acpi.c     | 3 +--
- drivers/pci/probe.c        | 3 +--
- drivers/pci/search.c       | 3 +--
- drivers/pci/xen-pcifront.c | 3 +--
- 4 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index 37263b0..a8fe5de 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -60,8 +60,7 @@ static void pci_acpi_wake_dev(struct work_struct *work)
- 	pci_wakeup_event(pci_dev);
- 	pm_runtime_resume(&pci_dev->dev);
-
--	if (pci_dev->subordinate)
--		pci_pme_wakeup_bus(pci_dev->subordinate);
-+	pci_pme_wakeup_bus(pci_dev->subordinate);
- }
-
- /**
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 4170113..e93f16e 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -86,8 +86,7 @@ static void release_pcibus_dev(struct device *dev)
- {
- 	struct pci_bus *pci_bus = to_pci_bus(dev);
-
--	if (pci_bus->bridge)
--		put_device(pci_bus->bridge);
-+	put_device(pci_bus->bridge);
- 	pci_bus_remove_resources(pci_bus);
- 	pci_release_bus_of_node(pci_bus);
- 	kfree(pci_bus);
-diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-index 827ad83..2d806bd 100644
---- a/drivers/pci/search.c
-+++ b/drivers/pci/search.c
-@@ -305,8 +305,7 @@ static struct pci_dev *pci_get_dev_by_id(const struct
-pci_device_id *id,
- 			      match_pci_dev_by_id);
- 	if (dev)
- 		pdev = to_pci_dev(dev);
--	if (from)
--		pci_dev_put(from);
-+	pci_dev_put(from);
- 	return pdev;
- }
-
-diff --git a/drivers/pci/xen-pcifront.c b/drivers/pci/xen-pcifront.c
-index 53df39a..46664cc 100644
---- a/drivers/pci/xen-pcifront.c
-+++ b/drivers/pci/xen-pcifront.c
-@@ -596,8 +596,7 @@ static pci_ers_result_t pcifront_common_process(int cmd,
- 	pcidev = pci_get_bus_and_slot(bus, devfn);
- 	if (!pcidev || !pcidev->driver) {
- 		dev_err(&pdev->xdev->dev, "device or AER driver is NULL\n");
--		if (pcidev)
--			pci_dev_put(pcidev);
-+		pci_dev_put(pcidev);
- 		return result;
- 	}
- 	pdrv = pcidev->driver;
--- 
-2.1.3
-
-
+> ---
+>  drivers/pci/pci-acpi.c     | 3 +--
+>  drivers/pci/probe.c        | 3 +--
+>  drivers/pci/search.c       | 3 +--
+>  drivers/pci/xen-pcifront.c | 3 +--
+>  4 files changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+> index 37263b0..a8fe5de 100644
+> --- a/drivers/pci/pci-acpi.c
+> +++ b/drivers/pci/pci-acpi.c
+> @@ -60,8 +60,7 @@ static void pci_acpi_wake_dev(struct work_struct *work)
+>  	pci_wakeup_event(pci_dev);
+>  	pm_runtime_resume(&pci_dev->dev);
+> 
+> -	if (pci_dev->subordinate)
+> -		pci_pme_wakeup_bus(pci_dev->subordinate);
+> +	pci_pme_wakeup_bus(pci_dev->subordinate);
+>  }
+> 
+>  /**
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 4170113..e93f16e 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -86,8 +86,7 @@ static void release_pcibus_dev(struct device *dev)
+>  {
+>  	struct pci_bus *pci_bus = to_pci_bus(dev);
+> 
+> -	if (pci_bus->bridge)
+> -		put_device(pci_bus->bridge);
+> +	put_device(pci_bus->bridge);
+>  	pci_bus_remove_resources(pci_bus);
+>  	pci_release_bus_of_node(pci_bus);
+>  	kfree(pci_bus);
+> diff --git a/drivers/pci/search.c b/drivers/pci/search.c
+> index 827ad83..2d806bd 100644
+> --- a/drivers/pci/search.c
+> +++ b/drivers/pci/search.c
+> @@ -305,8 +305,7 @@ static struct pci_dev *pci_get_dev_by_id(const struct
+> pci_device_id *id,
+>  			      match_pci_dev_by_id);
+>  	if (dev)
+>  		pdev = to_pci_dev(dev);
+> -	if (from)
+> -		pci_dev_put(from);
+> +	pci_dev_put(from);
+>  	return pdev;
+>  }
+> 
+> diff --git a/drivers/pci/xen-pcifront.c b/drivers/pci/xen-pcifront.c
+> index 53df39a..46664cc 100644
+> --- a/drivers/pci/xen-pcifront.c
+> +++ b/drivers/pci/xen-pcifront.c
+> @@ -596,8 +596,7 @@ static pci_ers_result_t pcifront_common_process(int cmd,
+>  	pcidev = pci_get_bus_and_slot(bus, devfn);
+>  	if (!pcidev || !pcidev->driver) {
+>  		dev_err(&pdev->xdev->dev, "device or AER driver is NULL\n");
+> -		if (pcidev)
+> -			pci_dev_put(pcidev);
+> +		pci_dev_put(pcidev);
+>  		return result;
+>  	}
+>  	pdrv = pcidev->driver;
+> -- 
+> 2.1.3
+> 
+> 
