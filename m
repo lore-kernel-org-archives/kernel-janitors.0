@@ -1,70 +1,130 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 17 Nov 2014 12:47:01 +0000
-Subject: Re: [PATCH 1/1] ALSA: hdsp: Deletion of an unnecessary check before the function call "release_firmw
-Message-Id: <s5hioiekn96.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Nov 2014 20:25:15 +0000
+Subject: [PATCH v2 1/2] staging: rtl8188eu: Deletion of unnecessary checks before three function calls
+Message-Id: <5463C22B.7060405@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<5469E61F.6000002@users.sourceforge.net>
-In-Reply-To: <5469E61F.6000002@users.sourceforge.net>
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
+ <20141029084702.GA18675@kroah.com> <5453CD0D.9010206@users.sourceforge.net>
+ <alpine.DEB.2.10.1410311900201.2481@hadrien>
+ <5463C10D.6020409@users.sourceforge.net>
+In-Reply-To: <5463C10D.6020409@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+To: cocci@systeme.lip6.fr
 
-At Mon, 17 Nov 2014 13:12:15 +0100,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 17 Nov 2014 13:04:14 +0100
-> 
-> The release_firmware() function tests whether its argument is NULL and then
-> return immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Nov 2014 20:25:49 +0100
 
-Applied, thanks.
+The functions kfree(), rtw_free_netdev() and vfree() test whether their
+argument is NULL and then return immediately. Thus the test around the call
+is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/rtl8188eu/core/rtw_efuse.c   | 3 +--
+ drivers/staging/rtl8188eu/core/rtw_mlme.c    | 3 +--
+ drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 3 +--
+ drivers/staging/rtl8188eu/core/rtw_xmit.c    | 6 ++----
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c  | 6 +++---
+ 5 files changed, 8 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+index 5b997b2..697876b 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
++++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+@@ -212,8 +212,7 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
+ exit:
+ 	kfree(efuseTbl);
+ 
+-	if (eFuseWord)
+-		kfree(eFuseWord);
++	kfree(eFuseWord);
+ }
+ 
+ static void efuse_read_phymap_from_txpktbuf(
+diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+index 149c271..df54350 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
+@@ -122,8 +122,7 @@ void rtw_free_mlme_priv(struct mlme_priv *pmlmepriv)
+ 	rtw_free_mlme_priv_ie_data(pmlmepriv);
+ 
+ 	if (pmlmepriv) {
+-		if (pmlmepriv->free_bss_buf)
+-			vfree(pmlmepriv->free_bss_buf);
++		vfree(pmlmepriv->free_bss_buf);
+ 	}
+ }
+ 
+diff --git a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+index e1dc8fa..af1de9c 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
++++ b/drivers/staging/rtl8188eu/core/rtw_sta_mgt.c
+@@ -201,8 +201,7 @@ u32	_rtw_free_sta_priv(struct	sta_priv *pstapriv)
+ 
+ 		rtw_mfree_sta_priv_lock(pstapriv);
+ 
+-		if (pstapriv->pallocated_stainfo_buf)
+-			vfree(pstapriv->pallocated_stainfo_buf);
++		vfree(pstapriv->pallocated_stainfo_buf);
+ 	}
+ 
+ 	return _SUCCESS;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index 639ace0..011c9cf 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -246,11 +246,9 @@ void _rtw_free_xmit_priv (struct xmit_priv *pxmitpriv)
+ 		pxmitbuf++;
+ 	}
+ 
+-	if (pxmitpriv->pallocated_frame_buf)
+-		vfree(pxmitpriv->pallocated_frame_buf);
++	vfree(pxmitpriv->pallocated_frame_buf);
+ 
+-	if (pxmitpriv->pallocated_xmitbuf)
+-		vfree(pxmitpriv->pallocated_xmitbuf);
++	vfree(pxmitpriv->pallocated_xmitbuf);
+ 
+ 	/*  free xmit extension buff */
+ 	pxmitbuf = (struct xmit_buf *)pxmitpriv->pxmit_extbuf;
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index 407a318..4e2c34b 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -456,8 +456,9 @@ free_adapter:
+ 	if (status != _SUCCESS) {
+ 		if (pnetdev)
+ 			rtw_free_netdev(pnetdev);
+-		else if (padapter)
++		else
+ 			vfree(padapter);
++
+ 		padapter = NULL;
+ 	}
+ exit:
+@@ -487,8 +488,7 @@ static void rtw_usb_if1_deinit(struct adapter *if1)
+ 	DBG_88E("+r871xu_dev_remove, hw_init_completed=%d\n",
+ 		if1->hw_init_completed);
+ 	rtw_free_drv_sw(if1);
+-	if (pnetdev)
+-		rtw_free_netdev(pnetdev);
++	rtw_free_netdev(pnetdev);
+ }
+ 
+ static int rtw_drv_init(struct usb_interface *pusb_intf, const struct usb_device_id *pdid)
+-- 
+2.1.3
 
 
-Takashi
-
-> ---
->  sound/pci/rme9652/hdsp.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
-> index 7646ba1..0ae568d 100644
-> --- a/sound/pci/rme9652/hdsp.c
-> +++ b/sound/pci/rme9652/hdsp.c
-> @@ -5368,8 +5368,7 @@ static int snd_hdsp_free(struct hdsp *hdsp)
->  
->  	snd_hdsp_free_buffers(hdsp);
->  
-> -	if (hdsp->firmware)
-> -		release_firmware(hdsp->firmware);
-> +	release_firmware(hdsp->firmware);
->  	vfree(hdsp->fw_uploaded);
->  
->  	if (hdsp->iobase)
-> -- 
-> 2.1.3
-> 
-> 
