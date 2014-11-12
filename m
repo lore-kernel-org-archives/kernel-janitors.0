@@ -1,56 +1,80 @@
-From: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-Date: Wed, 19 Nov 2014 00:09:54 +0000
-Subject: Re: [PATCH 1/1] nilfs2: Deletion of an unnecessary check before the function call "iput"
-Message-Id: <20141119.090954.206625370231465945.konishi.ryusuke@lab.ntt.co.jp>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Nov 2014 20:30:43 +0000
+Subject: [PATCH v2 2/2] staging: rtl8188eu: Better memory clean-up in efuse_phymap_to_logical()
+Message-Id: <5463C373.5050804@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<546B4E19.8050405@users.sourceforge.net>
-In-Reply-To: <546B4E19.8050405@users.sourceforge.net>
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
+ <20141029084702.GA18675@kroah.com> <5453CD0D.9010206@users.sourceforge.net>
+ <alpine.DEB.2.10.1410311900201.2481@hadrien>
+ <5463C10D.6020409@users.sourceforge.net>
+In-Reply-To: <5463C10D.6020409@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-nilfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr
+To: cocci@systeme.lip6.fr
 
-On Tue, 18 Nov 2014 14:48:09 +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Nov 2014 14:41:27 +0100
-> 
-> The iput() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Nov 2014 20:40:12 +0100
 
-Applied to nilfs2 git tree.  Thanks.
+Memory releases were handled in an inefficient way by the implementation of
+the efuse_phymap_to_logical() function in case of an allocation failure.
+The corresponding clean-up was improved by reordering of kfree() calls
+and a few adjustments for jump labels.
 
-Ryusuke Konishi
+Reported-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/rtl8188eu/core/rtw_efuse.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+index 697876b..359f169 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
++++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
+@@ -112,7 +112,7 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
+ 	eFuseWord = (u16 **)rtw_malloc2d(EFUSE_MAX_SECTION_88E, EFUSE_MAX_WORD_UNIT, sizeof(u16));
+ 	if (eFuseWord = NULL) {
+ 		DBG_88E("%s: alloc eFuseWord fail!\n", __func__);
+-		goto exit;
++		goto cleanup1;
+ 	}
+ 
+ 	/*  0. Refresh efuse init map as all oxFF. */
+@@ -130,7 +130,7 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
+ 		eFuse_Addr++;
+ 	} else {
+ 		DBG_88E("EFUSE is empty efuse_Addr-%d efuse_data =%x\n", eFuse_Addr, rtemp8);
+-		goto exit;
++		goto cleanup2;
+ 	}
+ 
+ 	/*  */
+@@ -209,10 +209,14 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
+ 	/*  5. Calculate Efuse utilization. */
+ 	/*  */
+ 
+-exit:
++cleanup2:
++	kfree(eFuseWord);
++
++cleanup1:
+ 	kfree(efuseTbl);
+ 
+-	kfree(eFuseWord);
++exit:
++	;
+ }
+ 
+ static void efuse_read_phymap_from_txpktbuf(
+-- 
+2.1.3
 
 
-> ---
->  fs/nilfs2/the_nilfs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/nilfs2/the_nilfs.c b/fs/nilfs2/the_nilfs.c
-> index 9da25fe..69bd801 100644
-> --- a/fs/nilfs2/the_nilfs.c
-> +++ b/fs/nilfs2/the_nilfs.c
-> @@ -808,8 +808,7 @@ void nilfs_put_root(struct nilfs_root *root)
->  		spin_lock(&nilfs->ns_cptree_lock);
->  		rb_erase(&root->rb_node, &nilfs->ns_cptree);
->  		spin_unlock(&nilfs->ns_cptree_lock);
-> -		if (root->ifile)
-> -			iput(root->ifile);
-> +		iput(root->ifile);
->  
->  		kfree(root);
->  	}
-> -- 
-> 2.1.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
