@@ -1,72 +1,64 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 16 Nov 2014 15:56:58 +0000
-Subject: Re: [PATCH 1/1] kernel-trace: Deletion of an unnecessary check before the function call "iput"
-Message-Id: <alpine.DEB.2.10.1411161656340.2364@hadrien>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 12 Nov 2014 12:03:29 +0000
+Subject: re: amd-xgbe: Initial AMD 10GbE platform driver
+Message-Id: <20141112120329.GA12773@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5468ABBD.6000903@users.sourceforge.net>
-In-Reply-To: <5468ABBD.6000903@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: kernel-janitors@vger.kernel.org
 
-On Sun, 16 Nov 2014, SF Markus Elfring wrote:
+Hello Lendacky, Thomas,
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 16 Nov 2014 14:46:28 +0100
->
-> The iput() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  kernel/trace/trace_uprobe.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index 33ff6a2..ec002c0 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -552,8 +552,7 @@ error:
->  	return ret;
->
->  fail_address_parse:
-> -	if (inode)
-> -		iput(inode);
-> +	iput(inode);
+The patch c5aa9e3b8156: "amd-xgbe: Initial AMD 10GbE platform driver"
+from Jun 5, 2014, leads to the following Smatch warning:
 
-There are jumps to fail_address_parse where the value of inode can only be
-NULL.
+	drivers/net/ethernet/amd/xgbe/xgbe-dev.c:1633 xgbe_dev_read()
+	warn: we tested 'err' before and it was 'true'
 
-julia
+drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+  1628          /* Check for errors (only valid in last descriptor) */
+  1629          err = XGMAC_GET_BITS_LE(rdesc->desc3, RX_NORMAL_DESC3, ES);
+  1630          etlt = XGMAC_GET_BITS_LE(rdesc->desc3, RX_NORMAL_DESC3, ETLT);
+  1631          DBGPR("  err=%u, etlt=%#x\n", err, etlt);
+  1632  
+  1633          if (!err || (err && !etlt)) {
+                    ^^^^^^^^^^^^^^^^^^^^^^
+Smatch is saying that we could re-write this as:
 
->
->  	pr_info("Failed to parse address or file.\n");
->
-> --
-> 2.1.3
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+		if (!err || !etlt) {
+
+Which is true, but I'm not sure if that was really the original intent
+of the code.  If it was then maybe we could make it more explicit by
+saying:
+
+	if (etlt = 0x00) {
+		/* do nothing */
+	} else if (!err) {
+		if (etlt = 0x09 &&
+		...
+	} else {
+		if (etlt = 0x05 || etlt = 0x06)
+		...
+
+  1634                  if ((etlt = 0x09) &&
+  1635                      (netdev->features & NETIF_F_HW_VLAN_CTAG_RX)) {
+  1636                          XGMAC_SET_BITS(packet->attributes, RX_PACKET_ATTRIBUTES,
+  1637                                         VLAN_CTAG, 1);
+  1638                          packet->vlan_ctag = XGMAC_GET_BITS_LE(rdesc->desc0,
+  1639                                                                RX_NORMAL_DESC0,
+  1640                                                                OVT);
+  1641                          DBGPR("  vlan-ctag=0x%04x\n", packet->vlan_ctag);
+  1642                  }
+  1643          } else {
+  1644                  if ((etlt = 0x05) || (etlt = 0x06))
+  1645                          XGMAC_SET_BITS(packet->attributes, RX_PACKET_ATTRIBUTES,
+  1646                                         CSUM_DONE, 0);
+  1647                  else
+  1648                          XGMAC_SET_BITS(packet->errors, RX_PACKET_ERRORS,
+  1649                                         FRAME, 1);
+  1650          }
+  1651  
+
+regards,
+dan carpenter
