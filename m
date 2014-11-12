@@ -1,86 +1,119 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 20 Nov 2014 17:34:02 +0000
-Subject: [PATCH 7/7] parport_sunbpp: fix error return code
-Message-Id: <1416504842-18548-8-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Nov 2014 10:51:44 +0000
+Subject: Re: [PATCH with SmPL?] staging: rtl8188eu: Adjustments around jump labels
+Message-Id: <54633BC0.3030700@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
+ <20141029084702.GA18675@kroah.com> <5453CD0D.9010206@users.sourceforge.net>
+ <alpine.DEB.2.10.1410311900201.2481@hadrien>
+ <5453D013.9000007@users.sourceforge.net>
+ <alpine.DEB.2.10.1410311911070.2481@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1410311911070.2481@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+>>>> @@ -212,8 +212,7 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16
+>>>> _size_byte, u8  *pbuf)
+>>>>  exit:
+>>>>  	kfree(efuseTbl);
+>>>>
+>>>> -	if (eFuseWord)
+>>>> -		kfree(eFuseWord);
+>>>> +	kfree(eFuseWord);
+>>>
+>>> I think that this code has been updated already.  It would be better to
+>>> add labels so that kfree is only executed when needed.
+>>
+>> Are there any chances to achieve the suggested fine-tuning for jump labels
+>> also with another semantic patch approach?
+> 
+> No, I don't think so.  The pattern is not regular enough.
 
-Return a negative error code on failure.
+Now I have got a different impression for corresponding improvement possibilities.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
 
-// <smpl>
+elfring@Sonne:~/Projekte/Linux/stable-patched> spatch.opt -debug -sp-file ~/Projekte/Coccinelle/janitor/move_function_call_before_jump_label1.cocci drivers/staging/rtl8188eu/core/rtw_efuse.c
+init_defs_builtins: /usr/local/share/coccinelle/standard.h
+-----------------------------------------------------------------------
+processing semantic patch file: /home/elfring/Projekte/Coccinelle/janitor/move_function_call_before_jump_label1.cocci
+with isos from: /usr/local/share/coccinelle/standard.iso
+-----------------------------------------------------------------------
+@move_function_call_before_jump_label@
+expression x;
+identifier fu, label;
+type t;
 @@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-The patch also removes a newly unnecessary initialization of err, replaces
-spaces by a tab, and pulls an assignment out of a conditional test
-expression.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-The patches in this series are independent of each other.
-
- drivers/parport/parport_sunbpp.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/parport/parport_sunbpp.c b/drivers/parport/parport_sunbpp.c
-index 01cf1c1..14f4cb8 100644
---- a/drivers/parport/parport_sunbpp.c
-+++ b/drivers/parport/parport_sunbpp.c
-@@ -269,7 +269,7 @@ static int bpp_probe(struct platform_device *op)
+ t fu(...)
  {
- 	struct parport_operations *ops;
- 	struct bpp_regs __iomem *regs;
--	int irq, dma, err = 0, size;
-+	int irq, dma, err, size;
- 	unsigned char value_tcr;
- 	void __iomem *base;
- 	struct parport *p;
-@@ -286,12 +286,17 @@ static int bpp_probe(struct platform_device *op)
- 
- 	ops = kmemdup(&parport_sunbpp_ops, sizeof(struct parport_operations),
- 		      GFP_KERNEL);
--        if (!ops)
-+	if (!ops) {
-+		err = -ENOMEM;
- 		goto out_unmap;
-+	}
- 
- 	dprintk(("register_port\n"));
--	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops)))
-+	p = parport_register_port((unsigned long)base, irq, dma, ops);
-+	if (!p) {
-+		err = -ENOMEM;
- 		goto out_free_ops;
-+	}
- 
- 	p->size = size;
- 	p->dev = &op->dev;
+  ... when any
+  x = kzalloc(...);
+  if (x = NULL) {
+     ...
+     goto label;
+  }
+  ... when any
++    kfree(x);
+  label:
+-    kfree(x);
+  ...
+ }
 
+HANDLING: drivers/staging/rtl8188eu/core/rtw_efuse.c
+-----------------------------------------------------------------------
+let's go
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+move_function_call_before_jump_label = 
+-----------------------------------------------------------------------
+dependencies for rule move_function_call_before_jump_label satisfied:
+binding in = []
+binding relevant in = []
+     (ONCE) USING optional_storage builtin isomorphism
+     transformation info returned:
+          transform state: 5
+               with rule_elem: 
+                                 <<< kfree(move_function_call_before_jump_label:x);
+                               move_function_call_before_jump_label:label:
+               with binding: [move_function_call_before_jump_label.x --> efuseTbl]
+          transform state: 204
+               with rule_elem: -kfree-(-move_function_call_before_jump_label:x-)-;
+               with binding: [move_function_call_before_jump_label.x --> efuseTbl]
+     binding out = []
+     transform one node: 204
+     transform one node: 5
+-----------------------------------------------------------------------
+Finished
+-----------------------------------------------------------------------
+diff = 
+--- drivers/staging/rtl8188eu/core/rtw_efuse.c
++++ /tmp/cocci-output-4498-349827-rtw_efuse.c
+@@ -209,8 +209,8 @@ efuse_phymap_to_logical(u8 *phymap, u16
+        /*  5. Calculate Efuse utilization. */
+        /*  */
+ 
++kfree(efuseTbl);
+ exit:
+-       kfree(efuseTbl);
+ 
+        kfree(eFuseWord);
+ }
+Check duplication for 1 files
+
+
+
+Can my update suggestion be generalised a bit more for the movement of specific jump labels
+towards the end of a function implementation like in the use case "efuse_phymap_to_logical()"?
+
+Regards,
+Markus
