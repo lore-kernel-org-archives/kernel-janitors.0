@@ -1,12 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 11 Nov 2014 13:06:01 +0000
-Subject: re: cxgb4: Cleanup macros so they follow the same style and look consistent, part 2
-Message-Id: <20141111130601.GC19962@mwanda>
+From: Hariprasad S <hariprasad@chelsio.com>
+Date: Wed, 12 Nov 2014 08:43:21 +0000
+Subject: RE: cxgb4: Cleanup macros so they follow the same style and look consistent, part 2
+Message-Id: <26E3F92EC670BD429DB5CB319D773C13C0C806@nice.asicdesigners.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141111130601.GC19962@mwanda>
+In-Reply-To: <20141111130601.GC19962@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+
+Thanks Dan... I will send a patch ASAP which fixes it.
+________________________________________
+From: Dan Carpenter [dan.carpenter@oracle.com]
+Sent: Tuesday, November 11, 2014 6:36 PM
+To: Hariprasad S
+Cc: kernel-janitors@vger.kernel.org
+Subject: re: cxgb4: Cleanup macros so they follow the same style and look consistent, part 2
 
 Hello Hariprasad Shenai,
 
@@ -14,8 +24,8 @@ The patch e2ac9628959c: "cxgb4: Cleanup macros so they follow the
 same style and look consistent, part 2" from Nov 7, 2014, leads to
 the following static checker warning:
 
-	drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:5756 adap_init0()
-	info: ignoring unreachable code.
+        drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:5756 adap_init0()
+        info: ignoring unreachable code.
 
 drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
   5739                          if (ret < 0)
@@ -27,7 +37,7 @@ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
   5745                                   * File from the host if we want to override
   5746                                   * the Configuration File in flash.
   5747                                   */
-  5748  
+  5748
   5749                                  ret = adap_init0_config(adap, reset);
   5750                                  if (ret = -ENOENT) {
   5751                                          dev_info(adap->pdev_dev,
@@ -46,3 +56,4 @@ a new static checker warning.
 
 regards,
 dan carpenter
+
