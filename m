@@ -1,66 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 16:59:31 +0000
-Subject: [PATCH 5/8] dm: replace memset by memzero_explicit
-Message-Id: <1417366774-32412-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Nov 2014 20:20:29 +0000
+Subject: [PATCH v2 0/2] staging: rtl8188eu: Deletion of a few unnecessary checks
+Message-Id: <5463C10D.6020409@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
+ <20141029084702.GA18675@kroah.com> <5453CD0D.9010206@users.sourceforge.net>
+ <alpine.DEB.2.10.1410311900201.2481@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1410311900201.2481@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alasdair Kergon <agk@redhat.com>
-Cc: dborkman@redhat.com, herbert@gondor.apana.org.au, kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: cocci@systeme.lip6.fr
 
-From: Julia Lawall <julia@diku.dk>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 12 Nov 2014 20:42:18 +0100
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+Another update suggestion was taken into account after patches were applied
+from static source code analysis.
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
+Markus Elfring (2):
+  staging: rtl8188eu: Deletion of unnecessary checks before three
+    function calls
+  staging: rtl8188eu: Better memory clean-up in efuse_phymap_to_logical()
 
-{
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
-}
-// </smpl>
+ drivers/staging/rtl8188eu/core/rtw_efuse.c   | 13 ++++++++-----
+ drivers/staging/rtl8188eu/core/rtw_mlme.c    |  3 +--
+ drivers/staging/rtl8188eu/core/rtw_sta_mgt.c |  3 +--
+ drivers/staging/rtl8188eu/core/rtw_xmit.c    |  6 ++----
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c  |  6 +++---
+ 5 files changed, 15 insertions(+), 16 deletions(-)
 
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+-- 
+2.1.3
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
-
- drivers/md/dm-crypt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index fc93b93..08981be 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -705,7 +705,7 @@ static int crypt_iv_tcw_whitening(struct crypt_config *cc,
- 	for (i = 0; i < ((1 << SECTOR_SHIFT) / 8); i++)
- 		crypto_xor(data + i * 8, buf, 8);
- out:
--	memset(buf, 0, sizeof(buf));
-+	memzero_explicit(buf, sizeof(buf));
- 	return r;
- }
- 
 
