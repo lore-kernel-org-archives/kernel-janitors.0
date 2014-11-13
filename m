@@ -1,37 +1,50 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Nov 2014 10:35:25 +0000
-Subject: [patch 1/2 -next] mfd: dln2: add a limit check for invalid "echo"
-Message-Id: <20141113103525.GA17038@mwanda>
+From: Octavian Purdila <octavian.purdila@intel.com>
+Date: Thu, 13 Nov 2014 11:01:27 +0000
+Subject: Re: [patch 1/2 -next] mfd: dln2: add a limit check for invalid "echo"
+Message-Id: <CAE1zot+cvXbAYOZn444J=XakDLzWgZaDmMHMeUUwLHWavc9UAQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141113103525.GA17038@mwanda>
+In-Reply-To: <20141113103525.GA17038@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Samuel Ortiz <sameo@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, lkml <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We check the other variables and traditionally we don't trust data from
-USB devices so adding a check here is normal.  This silences a static
-checker warning.
+On Thu, Nov 13, 2014 at 12:35 PM, Dan Carpenter
+<dan.carpenter@oracle.com> wrote:
+> We check the other variables and traditionally we don't trust data from
+> USB devices so adding a check here is normal.  This silences a static
+> checker warning.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I am unsure if this fix is correct and I don't have the hardware.
+> Please review this one carefully.  The "goto out;" seems to use the
+> invalid data and I don't understand why.
+>
+> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+> index 9765a17..3101e5e 100644
+> --- a/drivers/mfd/dln2.c
+> +++ b/drivers/mfd/dln2.c
+> @@ -280,6 +280,11 @@ static void dln2_rx(struct urb *urb)
+>                 goto out;
+>         }
+>
+> +       if (echo >= DLN2_MAX_RX_SLOTS) {
+> +               dev_warn(dev, "invalid echo %d\n", echo);
+> +               goto out;
+> +       }
+> +
+>         data = urb->transfer_buffer + sizeof(struct dln2_header);
+>         len = urb->actual_length - sizeof(struct dln2_header);
+>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-I am unsure if this fix is correct and I don't have the hardware.
-Please review this one carefully.  The "goto out;" seems to use the
-invalid data and I don't understand why.
+Hi Dan,
 
-diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-index 9765a17..3101e5e 100644
---- a/drivers/mfd/dln2.c
-+++ b/drivers/mfd/dln2.c
-@@ -280,6 +280,11 @@ static void dln2_rx(struct urb *urb)
- 		goto out;
- 	}
- 
-+	if (echo >= DLN2_MAX_RX_SLOTS) {
-+		dev_warn(dev, "invalid echo %d\n", echo);
-+		goto out;
-+	}
-+
- 	data = urb->transfer_buffer + sizeof(struct dln2_header);
- 	len = urb->actual_length - sizeof(struct dln2_header);
- 
+Thanks for the patch. You are right that we need to check echo, but
+only in the case that it is not an event. In that case the echo
+counter increments for every event and can easily be greater the
+DLN2_MAX_RX_SLOTS. So the correct patch is to check in
+dln2_transfer_complete() that rx_slot is valid. I will follow-up with
+a patch for that shortly.
