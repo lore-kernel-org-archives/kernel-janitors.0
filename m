@@ -1,119 +1,51 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 12:48:03 +0000
-Subject: [PATCH 1/10] sound/soc/ux500/ux500_msp_i2s.c: better use devm functions and fix error return code
-Message-Id: <1416746890-22719-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Nov 2014 10:36:08 +0000
+Subject: [patch 2/2 -next] mfd: dln2: a couple endian fixes
+Message-Id: <20141113103607.GB17038@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Sparse catches a couple endian bugs.
 
-Remove unnecessary calls to devm_kfree and replace iounmap by devm_iounmap
-(and use resource_size for the third argument).  These changes make it
-possible to remove the error-handling code at the end of
-ux500_msp_i2s_init_msp, and all of the gotos become direct returns.
-
-In the case of the second call to devm_kzalloc, the return variable ret was
-not initialized.  Here it is changed to a direct return of -ENOMEM.
-
-A simplified version of the semantic match that finds the second problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- sound/soc/ux500/ux500_msp_i2s.c |   25 +++++--------------------
- 1 file changed, 5 insertions(+), 20 deletions(-)
+Not tested.
 
-diff --git a/sound/soc/ux500/ux500_msp_i2s.c b/sound/soc/ux500/ux500_msp_i2s.c
-index 36be11e..1b7c2f5 100644
---- a/sound/soc/ux500/ux500_msp_i2s.c
-+++ b/sound/soc/ux500/ux500_msp_i2s.c
-@@ -663,7 +663,6 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
- 			struct ux500_msp **msp_p,
- 			struct msp_i2s_platform_data *platform_data)
- {
--	int ret = 0;
- 	struct resource *res = NULL;
- 	struct i2s_controller *i2s_cont;
- 	struct ux500_msp *msp;
-@@ -687,15 +686,14 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
- 	if (res = NULL) {
- 		dev_err(&pdev->dev, "%s: ERROR: Unable to get resource!\n",
- 			__func__);
--		ret = -ENOMEM;
--		goto err_res;
-+		return -ENOMEM;
+diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+index 3101e5e..babf7b6 100644
+--- a/drivers/mfd/dln2.c
++++ b/drivers/mfd/dln2.c
+@@ -437,6 +437,7 @@ static int _dln2_transfer(struct dln2_dev *dln2, u16 handle, u16 cmd,
+ 	struct device *dev = &dln2->interface->dev;
+ 	const unsigned long timeout = DLN2_USB_TIMEOUT * HZ / 1000;
+ 	struct dln2_mod_rx_slots *rxs = &dln2->mod_rx_slots[handle];
++	int size;
+ 
+ 	spin_lock(&dln2->disconnect_lock);
+ 	if (!dln2->disconnect)
+@@ -476,8 +477,9 @@ static int _dln2_transfer(struct dln2_dev *dln2, u16 handle, u16 cmd,
+ 
+ 	/* if we got here we know that the response header has been checked */
+ 	rsp = rxc->urb->transfer_buffer;
++	size = le16_to_cpu(rsp->hdr.size);
+ 
+-	if (rsp->hdr.size < sizeof(*rsp)) {
++	if (size < sizeof(*rsp)) {
+ 		ret = -EPROTO;
+ 		goto out_free_rx_slot;
+ 	}
+@@ -494,8 +496,8 @@ static int _dln2_transfer(struct dln2_dev *dln2, u16 handle, u16 cmd,
+ 		goto out_free_rx_slot;
  	}
  
--	msp->registers = ioremap(res->start, (res->end - res->start + 1));
-+	msp->registers = devm_ioremap(&pdev->dev, res->start,
-+				      resource_size(res));
- 	if (msp->registers = NULL) {
- 		dev_err(&pdev->dev, "%s: ERROR: ioremap failed!\n", __func__);
--		ret = -ENOMEM;
--		goto err_res;
-+		return -ENOMEM;
- 	}
+-	if (*ibuf_len > rsp->hdr.size - sizeof(*rsp))
+-		*ibuf_len = rsp->hdr.size - sizeof(*rsp);
++	if (*ibuf_len > size - sizeof(*rsp))
++		*ibuf_len = size - sizeof(*rsp);
  
- 	msp->msp_state = MSP_STATE_IDLE;
-@@ -707,7 +705,7 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
- 		dev_err(&pdev->dev,
- 			"%s: ERROR: Failed to allocate I2S-controller!\n",
- 			__func__);
--		goto err_i2s_cont;
-+		return -ENOMEM;
- 	}
- 	i2s_cont->dev.parent = &pdev->dev;
- 	i2s_cont->data = (void *)msp;
-@@ -718,14 +716,6 @@ int ux500_msp_i2s_init_msp(struct platform_device *pdev,
- 	msp->i2s_cont = i2s_cont;
+ 	memcpy(ibuf, rsp + 1, *ibuf_len);
  
- 	return 0;
--
--err_i2s_cont:
--	iounmap(msp->registers);
--
--err_res:
--	devm_kfree(&pdev->dev, msp);
--
--	return ret;
- }
- 
- void ux500_msp_i2s_cleanup_msp(struct platform_device *pdev,
-@@ -734,11 +724,6 @@ void ux500_msp_i2s_cleanup_msp(struct platform_device *pdev,
- 	dev_dbg(msp->dev, "%s: Enter (id = %d).\n", __func__, msp->id);
- 
- 	device_unregister(&msp->i2s_cont->dev);
--	devm_kfree(&pdev->dev, msp->i2s_cont);
--
--	iounmap(msp->registers);
--
--	devm_kfree(&pdev->dev, msp);
- }
- 
- MODULE_LICENSE("GPL v2");
-
