@@ -1,53 +1,37 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Date: Tue, 11 Nov 2014 17:19:41 +0000
-Subject: Re: tty: Change tty lock order to master->slave
-Message-Id: <5462452D.8020306@hurleysoftware.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 13 Nov 2014 10:35:25 +0000
+Subject: [patch 1/2 -next] mfd: dln2: add a limit check for invalid "echo"
+Message-Id: <20141113103525.GA17038@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141111125011.GA12942@mwanda>
-In-Reply-To: <20141111125011.GA12942@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: kernel-janitors@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, linux-next <linux-next@vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 11/11/2014 07:50 AM, Dan Carpenter wrote:
-> Hello Peter Hurley,
->
-> The patch 2aff5e2bc62d: "tty: Change tty lock order to master->slave"
-> from Nov 5, 2014, leads to the following static checker warning:
->
-> 	drivers/tty/tty_mutex.c:50 tty_lock_slave()
-> 	warn: add some parenthesis here?
->
-> drivers/tty/tty_mutex.c
->     47  void __lockfunc tty_lock_slave(struct tty_struct *tty)
->     48  {
->     49          if (tty && tty != tty->link) {
->     50                  WARN_ON(!mutex_is_locked(&tty->link->legacy_mutex) ||
->     51                          !tty->driver->type = TTY_DRIVER_TYPE_PTY ||
->     52                          !tty->driver->type = PTY_TYPE_SLAVE);
->
-> ! has high precedence than = so those tests are never true.  != doesn't
-> make sense either.  Probably the negate operatons are just copy-and-paste
-> errors?
+We check the other variables and traditionally we don't trust data from
+USB devices so adding a check here is normal.  This silences a static
+checker warning.
 
-Thanks for catching this, Dan.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+I am unsure if this fix is correct and I don't have the hardware.
+Please review this one carefully.  The "goto out;" seems to use the
+invalid data and I don't understand why.
 
-Unfortunately, this is not a copy-and-paste error; apparently, emacs cannot
-code-what-I-mean rather than code-what-I-type.
-
-The warning is not necessary now; when I respun this series with fixed lock
-subclasses I should have ripped this out. I will send a patch forthwith.
-
-Regards,
-Peter Hurley
-
-
->     53                  tty_lock(tty);
->     54          }
->     55  }
->
-> regards,
-> dan carpenter
-
+diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
+index 9765a17..3101e5e 100644
+--- a/drivers/mfd/dln2.c
++++ b/drivers/mfd/dln2.c
+@@ -280,6 +280,11 @@ static void dln2_rx(struct urb *urb)
+ 		goto out;
+ 	}
+ 
++	if (echo >= DLN2_MAX_RX_SLOTS) {
++		dev_warn(dev, "invalid echo %d\n", echo);
++		goto out;
++	}
++
+ 	data = urb->transfer_buffer + sizeof(struct dln2_header);
+ 	len = urb->actual_length - sizeof(struct dln2_header);
+ 
