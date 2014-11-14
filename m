@@ -1,64 +1,53 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Thu, 20 Nov 2014 04:22:37 +0000
-Subject: Re: [PATCH 1/1] DRM-vmwgfx: Deletion of an unnecessary check before the function call "vfree"
-Message-Id: <149cb7002e0.2771.879d79c6f3490faa837fa11cb97f42bf@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 14 Nov 2014 08:54:10 +0000
+Subject: re: exit: reparent: cleanup the changing of ->parent
+Message-Id: <20141114085410.GA9293@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <546CCB7E.3050109@users.sourceforge.net>
-In-Reply-To: <546CCB7E.3050109@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On November 19, 2014 5:57:13 PM SF Markus Elfring 
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Nov 2014 17:50:19 +0100
->
-> The vfree() function performes also input parameter validation. Thus the test
-> around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c 
-> b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> index 14b2f50..f9a67b8 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> @@ -889,8 +889,7 @@ static int vmw_driver_unload(struct drm_device *dev)
->
->  	if (dev_priv->ctx.res_ht_initialized)
->  		drm_ht_remove(&dev_priv->ctx.res_ht);
-> -	if (dev_priv->ctx.cmd_bounce)
-> -		vfree(dev_priv->ctx.cmd_bounce);
-> +	vfree(dev_priv->ctx.cmd_bounce);
->  	if (dev_priv->enable_fb) {
->  		vmw_fb_close(dev_priv);
->  		vmw_kms_restore_vga(dev_priv);
+Hello Oleg Nesterov,
 
-Reviewed-by: Thierry Reding <thierry.reding@gmail.com>
+The patch eb6d8479b73d: "exit: reparent: cleanup the changing of
+->parent" from Nov 13, 2014, leads to the following static checker
+warning:
+
+	kernel/exit.c:543 forget_original_parent()
+	warn: add some parenthesis here?
+
+kernel/exit.c
+   538          /* Can drop and reacquire tasklist_lock */
+   539          reaper = find_new_reaper(father);
+   540          list_for_each_entry(p, &father->children, sibling) {
+   541                  for_each_thread(p, t) {
+   542                          t->real_parent = reaper;
+   543                          BUG_ON(!t->ptrace != (t->parent = father));
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The reason for this warning is that many people forget that ! is higher
+precedence than =.  This is a complicated condition however you write
+it, but it might be more clear to say:
+
+				BUG_ON((!!t->ptrace) = (t->parent = father));
+
+I'm not sure.
+
+   544                          if (likely(!t->ptrace))
+   545                                  t->parent = t->real_parent;
+   546                          if (t->pdeath_signal)
+   547                                  group_send_sig_info(t->pdeath_signal,
+   548                                                      SEND_SIG_NOINFO, t);
+   549                  }
+   550                  /*
+   551                   * If this is a threaded reparent there is no need to
+   552                   * notify anyone anything has happened.
+   553                   */
+   554                  if (!same_thread_group(reaper, father))
+   555                          reparent_leader(father, p, &dead_children);
+   556          }
 
 
+regards,
+dan carpenter
