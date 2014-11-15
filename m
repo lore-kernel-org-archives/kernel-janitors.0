@@ -1,43 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 15:33:25 +0000
-Subject: [PATCH 1/1] video: fbdev-VIA: Deletion of an unnecessary check before the function call "framebuffer
-Message-Id: <5471FE45.4010802@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 15 Nov 2014 18:57:18 +0000
+Subject: [patch -next] x86/lguest: interrupt[] array size has changed
+Message-Id: <20141115185718.GB6530@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 16:30:05 +0100
+Smatch complains that there is a buffer overflow here because we
+recently changed interrupt[] from having "NR_VECTORS -
+FIRST_EXTERNAL_VECTOR" elements to now have "FIRST_SYSTEM_VECTOR -
+FIRST_EXTERNAL_VECTOR" elements.
 
-The framebuffer_release() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Fixes: 8c66877ee65e ('x86: Avoid building unused IRQ entry stubs')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/video/fbdev/via/viafbdev.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I can't actually compile this code, and I'm an lguest newbie.  Please
+review this one carefully.
 
-diff --git a/drivers/video/fbdev/via/viafbdev.c b/drivers/video/fbdev/via/viafbdev.c
-index 325c43c..f9718f0 100644
---- a/drivers/video/fbdev/via/viafbdev.c
-+++ b/drivers/video/fbdev/via/viafbdev.c
-@@ -1937,8 +1937,7 @@ out_fb1_unreg_lcd_cle266:
- out_dealloc_cmap:
- 	fb_dealloc_cmap(&viafbinfo->cmap);
- out_fb1_release:
--	if (viafbinfo1)
--		framebuffer_release(viafbinfo1);
-+	framebuffer_release(viafbinfo1);
- out_fb_release:
- 	i2c_bus_free(viaparinfo->shared);
- 	framebuffer_release(viafbinfo);
--- 
-2.1.3
-
+diff --git a/arch/x86/lguest/boot.c b/arch/x86/lguest/boot.c
+index aae9413..c1c1544 100644
+--- a/arch/x86/lguest/boot.c
++++ b/arch/x86/lguest/boot.c
+@@ -841,7 +841,7 @@ static void __init lguest_init_IRQ(void)
+ {
+ 	unsigned int i;
+ 
+-	for (i = FIRST_EXTERNAL_VECTOR; i < NR_VECTORS; i++) {
++	for (i = FIRST_EXTERNAL_VECTOR; i < FIRST_SYSTEM_VECTOR; i++) {
+ 		/* Some systems map "vectors" to interrupts weirdly.  Not us! */
+ 		__this_cpu_write(vector_irq[i], i - FIRST_EXTERNAL_VECTOR);
+ 		if (i != SYSCALL_VECTOR)
