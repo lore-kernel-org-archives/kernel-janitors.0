@@ -1,63 +1,122 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 10:44:51 +0000
-Subject: [PATCH 1/1] video: udlfb: Deletion of unnecessary checks before the function call "vfree"
-Message-Id: <5471BAA3.3010409@users.sourceforge.net>
+Date: Sat, 15 Nov 2014 20:44:26 +0000
+Subject: [PATCH 1/1] lib/mpi: Deletion of unnecessary checks before the function call "mpi_free_limb_space"
+Message-Id: <5467BB2A.2030108@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
 In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: cocci@systeme.lip6.fr
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 11:40:47 +0100
+Date: Sat, 15 Nov 2014 21:33:26 +0100
 
-The vfree() function performs also input parameter validation. Thus the test
-around the call is not needed.
+The mpi_free_limb_space() function tests whether its argument is NULL and
+then returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/video/fbdev/udlfb.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ lib/mpi/mpi-pow.c  | 15 +++++----------
+ lib/mpi/mpih-mul.c | 21 +++++++--------------
+ 2 files changed, 12 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index 77b890e..01fff0c 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -922,8 +922,7 @@ static void dlfb_free(struct kref *kref)
+diff --git a/lib/mpi/mpi-pow.c b/lib/mpi/mpi-pow.c
+index 5464c87..c28882f 100644
+--- a/lib/mpi/mpi-pow.c
++++ b/lib/mpi/mpi-pow.c
+@@ -308,16 +308,11 @@ leave:
+ enomem:
+ 	if (assign_rp)
+ 		mpi_assign_limb_space(res, rp, size);
+-	if (mp_marker)
+-		mpi_free_limb_space(mp_marker);
+-	if (bp_marker)
+-		mpi_free_limb_space(bp_marker);
+-	if (ep_marker)
+-		mpi_free_limb_space(ep_marker);
+-	if (xp_marker)
+-		mpi_free_limb_space(xp_marker);
+-	if (tspace)
+-		mpi_free_limb_space(tspace);
++	mpi_free_limb_space(mp_marker);
++	mpi_free_limb_space(bp_marker);
++	mpi_free_limb_space(ep_marker);
++	mpi_free_limb_space(xp_marker);
++	mpi_free_limb_space(tspace);
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(mpi_powm);
+diff --git a/lib/mpi/mpih-mul.c b/lib/mpi/mpih-mul.c
+index 7c84171..ff021cc 100644
+--- a/lib/mpi/mpih-mul.c
++++ b/lib/mpi/mpih-mul.c
+@@ -339,8 +339,7 @@ mpihelp_mul_karatsuba_case(mpi_ptr_t prodp,
+ 	mpi_limb_t cy;
+ 
+ 	if (!ctx->tspace || ctx->tspace_size < vsize) {
+-		if (ctx->tspace)
+-			mpi_free_limb_space(ctx->tspace);
++		mpi_free_limb_space(ctx->tspace);
+ 		ctx->tspace = mpi_alloc_limb_space(2 * vsize);
+ 		if (!ctx->tspace)
+ 			return -ENOMEM;
+@@ -354,12 +353,10 @@ mpihelp_mul_karatsuba_case(mpi_ptr_t prodp,
+ 	usize -= vsize;
+ 	if (usize >= vsize) {
+ 		if (!ctx->tp || ctx->tp_size < vsize) {
+-			if (ctx->tp)
+-				mpi_free_limb_space(ctx->tp);
++			mpi_free_limb_space(ctx->tp);
+ 			ctx->tp = mpi_alloc_limb_space(2 * vsize);
+ 			if (!ctx->tp) {
+-				if (ctx->tspace)
+-					mpi_free_limb_space(ctx->tspace);
++				mpi_free_limb_space(ctx->tspace);
+ 				ctx->tspace = NULL;
+ 				return -ENOMEM;
+ 			}
+@@ -407,16 +404,12 @@ void mpihelp_release_karatsuba_ctx(struct karatsuba_ctx *ctx)
  {
- 	struct dlfb_data *dev = container_of(kref, struct dlfb_data, kref);
+ 	struct karatsuba_ctx *ctx2;
  
--	if (dev->backing_buffer)
--		vfree(dev->backing_buffer);
-+	vfree(dev->backing_buffer);
- 
- 	kfree(dev->edid);
- 
-@@ -953,8 +952,7 @@ static void dlfb_free_framebuffer(struct dlfb_data *dev)
- 			fb_dealloc_cmap(&info->cmap);
- 		if (info->monspecs.modedb)
- 			fb_destroy_modedb(info->monspecs.modedb);
--		if (info->screen_base)
--			vfree(info->screen_base);
-+		vfree(info->screen_base);
- 
- 		fb_destroy_modelist(&info->modelist);
- 
-@@ -1203,8 +1201,7 @@ static int dlfb_realloc_framebuffer(struct dlfb_data *dev, struct fb_info *info)
- 		if (!new_back)
- 			pr_info("No shadow/backing buffer allocated\n");
- 		else {
--			if (dev->backing_buffer)
--				vfree(dev->backing_buffer);
-+			vfree(dev->backing_buffer);
- 			dev->backing_buffer = new_back;
- 		}
+-	if (ctx->tp)
+-		mpi_free_limb_space(ctx->tp);
+-	if (ctx->tspace)
+-		mpi_free_limb_space(ctx->tspace);
++	mpi_free_limb_space(ctx->tp);
++	mpi_free_limb_space(ctx->tspace);
+ 	for (ctx = ctx->next; ctx; ctx = ctx2) {
+ 		ctx2 = ctx->next;
+-		if (ctx->tp)
+-			mpi_free_limb_space(ctx->tp);
+-		if (ctx->tspace)
+-			mpi_free_limb_space(ctx->tspace);
++		mpi_free_limb_space(ctx->tp);
++		mpi_free_limb_space(ctx->tspace);
+ 		kfree(ctx);
  	}
+ }
 -- 
 2.1.3
+
 
