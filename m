@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 29 Nov 2014 14:05:33 +0000
-Subject: [PATCH 1/1] net: cassini: Deletion of an unnecessary check before the function call "vfree"
-Message-Id: <5479D2AD.9060704@users.sourceforge.net>
+Date: Sat, 15 Nov 2014 18:19:36 +0000
+Subject: [PATCH 1/1] fs-ext4: Deletion of an unnecessary check before the function call "iput"
+Message-Id: <54679938.3020106@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,40 +19,41 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5479CD2A.9030009@users.sourceforge.net>
-In-Reply-To: <5479CD2A.9030009@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 29 Nov 2014 14:34:59 +0100
+Date: Sat, 15 Nov 2014 19:04:06 +0100
 
-The vfree() function performs also input parameter validation.
-Thus the test around the call is not needed.
+The iput() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/sun/cassini.c | 3 +--
+ fs/ext4/mballoc.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/sun/cassini.c b/drivers/net/ethernet/sun/cassini.c
-index 37f87ff..d745808 100644
---- a/drivers/net/ethernet/sun/cassini.c
-+++ b/drivers/net/ethernet/sun/cassini.c
-@@ -5179,8 +5179,7 @@ static void cas_remove_one(struct pci_dev *pdev)
- 	cp = netdev_priv(dev);
- 	unregister_netdev(dev);
- 
--	if (cp->fw_data)
--		vfree(cp->fw_data);
-+	vfree(cp->fw_data);
- 
- 	mutex_lock(&cp->pm_mutex);
- 	cancel_work_sync(&cp->reset_task);
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 8b0f9ef..e1a2521 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -2712,8 +2712,7 @@ int ext4_mb_release(struct super_block *sb)
+ 	}
+ 	kfree(sbi->s_mb_offsets);
+ 	kfree(sbi->s_mb_maxs);
+-	if (sbi->s_buddy_cache)
+-		iput(sbi->s_buddy_cache);
++	iput(sbi->s_buddy_cache);
+ 	if (sbi->s_mb_stats) {
+ 		ext4_msg(sb, KERN_INFO,
+ 		       "mballoc: %u blocks %u reqs (%u success)",
 -- 
 2.1.3
+
 
