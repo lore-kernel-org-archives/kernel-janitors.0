@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 16 Nov 2014 13:29:02 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 16 Nov 2014 14:26:05 +0000
 Subject: Re: [Cocci] [PATCH 1/1] kprobes: Deletion of an unnecessary check before the function call "module_p
-Message-Id: <alpine.DEB.2.10.1411161428190.2364@hadrien>
+Message-Id: <5468B3FD.20409@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -20,53 +20,32 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net> <546899CF.8020808@users.sourceforge.net>
-In-Reply-To: <546899CF.8020808@users.sourceforge.net>
+ <alpine.DEB.2.10.1411161428190.2364@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1411161428190.2364@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-On Sun, 16 Nov 2014, SF Markus Elfring wrote:
+>> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+>> index 3995f54..f1e7d45 100644
+>> --- a/kernel/kprobes.c
+>> +++ b/kernel/kprobes.c
+>> @@ -1527,8 +1527,7 @@ int register_kprobe(struct kprobe *p)
+>>  out:
+>>  	mutex_unlock(&kprobe_mutex);
+>>
+>> -	if (probed_mod)
+>> -		module_put(probed_mod);
+>> +	module_put(probed_mod);
+> 
+> There is an out label, so please check whether the labels could not be
+> better positioned to avoid calling module_put when it is not needed.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 16 Nov 2014 12:20:31 +0100
->
-> The module_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  kernel/kprobes.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 3995f54..f1e7d45 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -1527,8 +1527,7 @@ int register_kprobe(struct kprobe *p)
->  out:
->  	mutex_unlock(&kprobe_mutex);
->
-> -	if (probed_mod)
-> -		module_put(probed_mod);
-> +	module_put(probed_mod);
+I do not see refactoring opportunities around jump labels in this use case
+for the implementation of the register_kprobe() function so far because
+the mutex_unlock() function must be called.
+Would you like to suggest any other source code fine-tuning?
 
-There is an out label, so please check whether the labels could not be
-better positioned to avoid calling module_put when it is not needed.
-
-julia
-
->
->  	return ret;
->  }
-> --
-> 2.1.3
->
->
-> _______________________________________________
-> Cocci mailing list
-> Cocci@systeme.lip6.fr
-> https://systeme.lip6.fr/mailman/listinfo/cocci
->
+Regards,
+Markus
