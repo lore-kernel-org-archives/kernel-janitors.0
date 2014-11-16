@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 16 Nov 2014 15:43:51 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 16 Nov 2014 16:57:24 +0000
 Subject: Re: [Cocci] [PATCH 1/1] kprobes: Deletion of an unnecessary check before the function call "module_p
-Message-Id: <alpine.DEB.2.10.1411161639310.2364@hadrien>
+Message-Id: <5468D774.60901@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -22,41 +22,18 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <5317A59D.4@users.sourceforge.net> <546899CF.8020808@users.sourceforge.net>
  <alpine.DEB.2.10.1411161428190.2364@hadrien>
  <5468B3FD.20409@users.sourceforge.net>
-In-Reply-To: <5468B3FD.20409@users.sourceforge.net>
+ <alpine.DEB.2.10.1411161639310.2364@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1411161639310.2364@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-On Sun, 16 Nov 2014, SF Markus Elfring wrote:
+> The if around the module_put is helpful to the reader to understand
+> that this possibility exists.
 
-> >> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> >> index 3995f54..f1e7d45 100644
-> >> --- a/kernel/kprobes.c
-> >> +++ b/kernel/kprobes.c
-> >> @@ -1527,8 +1527,7 @@ int register_kprobe(struct kprobe *p)
-> >>  out:
-> >>  	mutex_unlock(&kprobe_mutex);
-> >>
-> >> -	if (probed_mod)
-> >> -		module_put(probed_mod);
-> >> +	module_put(probed_mod);
-> >
-> > There is an out label, so please check whether the labels could not be
-> > better positioned to avoid calling module_put when it is not needed.
->
-> I do not see refactoring opportunities around jump labels in this use case
-> for the implementation of the register_kprobe() function so far because
-> the mutex_unlock() function must be called.
-> Would you like to suggest any other source code fine-tuning?
+I have got a different opinion. I would still prefer a small code clean-up there.
 
-OK.  I don't think that removing the if is a good choice in this case.
-The code ret = check_kprobe_address_safe(p, &probed_mod); is unusual, in
-that it can fail to do anything in two ways.  One is by setting ret, on
-detecting an error, and the other is by returning 0 but still putting a
-NULL value in probed_mod when there is nothing to do.  Thus, in the
-successful execution of the rest of the function, a probed module might or
-might not exist.  The if around the module_put is helpful to the reader to
-understand that this possibility exists.
+Regards,
+Markus
 
-julia
