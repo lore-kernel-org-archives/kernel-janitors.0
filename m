@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Nov 2014 10:00:35 +0000
-Subject: [PATCH 1/1] ARM: OMAP2: Deletion of unnecessary checks before three function calls
-Message-Id: <54705EC3.90708@users.sourceforge.net>
+Date: Sun, 16 Nov 2014 19:13:26 +0000
+Subject: [PATCH v2 0/2] kernel-trace: Fixes around the jump label "fail_address_parse"
+Message-Id: <5468F756.8070807@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,71 +19,30 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <5468ABBD.6000903@users.sourceforge.net>
+ <alpine.DEB.2.10.1411161656340.2364@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1411161656340.2364@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: cocci@systeme.lip6.fr
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 22 Nov 2014 10:50:33 +0100
+Date: Sun, 16 Nov 2014 19:56:15 +0100
 
-The functions clk_disable(), of_node_put() and omap_device_delete() test
-whether their argument is NULL and then return immediately.
-Thus the test around the call is not needed.
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (2):
+  kernel-trace: Deletion of an unnecessary check before the function
+    call "iput"
+  kernel-trace: Less calls for iput() in create_trace_uprobe() after
+    error detection
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-omap2/omap_device.c | 3 +--
- arch/arm/mach-omap2/omap_hwmod.c  | 3 +--
- arch/arm/mach-omap2/timer.c       | 3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ kernel/trace/trace_uprobe.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
-index d22c30d..5108859 100644
---- a/arch/arm/mach-omap2/omap_device.c
-+++ b/arch/arm/mach-omap2/omap_device.c
-@@ -199,8 +199,7 @@ static int _omap_device_notifier_call(struct notifier_block *nb,
- 
- 	switch (event) {
- 	case BUS_NOTIFY_DEL_DEVICE:
--		if (pdev->archdata.od)
--			omap_device_delete(pdev->archdata.od);
-+		omap_device_delete(pdev->archdata.od);
- 		break;
- 	case BUS_NOTIFY_ADD_DEVICE:
- 		if (pdev->dev.of_node)
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 9e91a4e..e2406c4 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -917,8 +917,7 @@ static int _disable_clocks(struct omap_hwmod *oh)
- 
- 	pr_debug("omap_hwmod: %s: disabling clocks\n", oh->name);
- 
--	if (oh->_clk)
--		clk_disable(oh->_clk);
-+	clk_disable(oh->_clk);
- 
- 	p = oh->slave_ports.next;
- 
-diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
-index 43d03fb..5b428a0 100644
---- a/arch/arm/mach-omap2/timer.c
-+++ b/arch/arm/mach-omap2/timer.c
-@@ -205,8 +205,7 @@ static void __init omap_dmtimer_init(void)
- 	/* If we are a secure device, remove any secure timer nodes */
- 	if ((omap_type() != OMAP2_DEVICE_TYPE_GP)) {
- 		np = omap_get_timer_dt(omap_timer_match, "ti,timer-secure");
--		if (np)
--			of_node_put(np);
-+		of_node_put(np);
- 	}
- }
- 
 -- 
 2.1.3
+
 
