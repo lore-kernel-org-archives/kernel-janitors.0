@@ -1,44 +1,44 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 24 Nov 2014 13:33:08 +0000
-Subject: Re: [patch] kvm: x86: potential shift wrapping bug
-Message-Id: <54733394.2080604@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 13:15:01 +0000
+Subject: ASoC: omap-mcbsp: Deletion of an unnecessary check before the function call "kfree"
+Message-Id: <5469F4D5.9050908@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141124125300.GA11942@mwanda>
-In-Reply-To: <20141124125300.GA11942@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Gleb Natapov <gleb@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jarkko Nikula <jarkko.nikula@bitmer.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Takashi Iwai <tiwai@suse.de>, linux-omap@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 14:05:27 +0100
 
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-On 24/11/2014 13:53, Dan Carpenter wrote:
-> cs.base is declared as a __u64 variable and vector is a u32 so this
-> causes a static checker warning.  I'm not very familiar with this code
-> but my understanding is that the user can set "sipi_vector" to any u32
-> value in kvm_vcpu_ioctl_x86_set_vcpu_events().
+This issue was detected by using the Coccinelle software.
 
-The user can do so, but it should not set it to any value greater than
-255.  So the right fix is to cast to (u8).
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/omap/mcbsp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks for the report!
+diff --git a/sound/soc/omap/mcbsp.c b/sound/soc/omap/mcbsp.c
+index 86c7538..68a1252 100644
+--- a/sound/soc/omap/mcbsp.c
++++ b/sound/soc/omap/mcbsp.c
+@@ -621,8 +621,7 @@ void omap_mcbsp_free(struct omap_mcbsp *mcbsp)
+ 	mcbsp->reg_cache = NULL;
+ 	spin_unlock(&mcbsp->lock);
+ 
+-	if (reg_cache)
+-		kfree(reg_cache);
++	kfree(reg_cache);
+ }
+ 
+ /*
+-- 
+2.1.3
 
-Paolo
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 34c8f94..6608115 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -7000,7 +7000,7 @@ void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, unsigned int vector)
->  
->  	kvm_get_segment(vcpu, &cs, VCPU_SREG_CS);
->  	cs.selector = vector << 8;
-> -	cs.base = vector << 12;
-> +	cs.base = (u64)vector << 12;
->  	kvm_set_segment(vcpu, &cs, VCPU_SREG_CS);
->  	kvm_rip_write(vcpu, 0);
->  }
-> 
