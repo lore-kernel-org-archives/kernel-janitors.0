@@ -1,49 +1,45 @@
-From: Oded Gabbay <oded.gabbay@amd.com>
-Date: Tue, 25 Nov 2014 12:27:30 +0000
-Subject: Re: [patch] amdkfd: fix some error handling in ioctl
-Message-Id: <547475B2.9040108@amd.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 11:48:44 +0000
+Subject: [PATCH 1/1] ALSA: lola: Deletion of an unnecessary check before the function call "vfree"
+Message-Id: <5469E09C.6040808@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141125102129.GB23215@mwanda>
-In-Reply-To: <20141125102129.GB23215@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Andrew Lewycky <Andrew.Lewycky@amd.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-On 11/25/2014 12:21 PM, Dan Carpenter wrote:
-> There is a typo here so the errors from kfd_bind_process_to_device()
-> are not detected.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 12:42:16 +0100
 
-Patch is:
-Reviewed-by: Oded Gabbay <oded.gabbay@amd.com>
-And applied to my 3.19-next-wip tree
+The vfree() function performs also input parameter validation. Thus the test
+around the call is not needed.
 
-	Oded
+This issue was detected by using the Coccinelle software.
 
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> index 64c73ba..c5dd0ae 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> @@ -236,7 +236,7 @@ static long kfd_ioctl_create_queue(struct file *filep, struct kfd_process *p,
->   	mutex_lock(&p->mutex);
->
->   	pdd = kfd_bind_process_to_device(dev, p);
-> -	if (IS_ERR(pdd) < 0) {
-> +	if (IS_ERR(pdd)) {
->   		err = PTR_ERR(pdd);
->   		goto err_bind_process;
->   	}
-> @@ -381,7 +381,7 @@ static long kfd_ioctl_set_memory_policy(struct file *filep,
->   	mutex_lock(&p->mutex);
->
->   	pdd = kfd_bind_process_to_device(dev, p);
-> -	if (IS_ERR(pdd) < 0) {
-> +	if (IS_ERR(pdd)) {
->   		err = PTR_ERR(pdd);
->   		goto out;
->   	}
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/lola/lola_mixer.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/pci/lola/lola_mixer.c b/sound/pci/lola/lola_mixer.c
+index 782f4d8..e7fe15d 100644
+--- a/sound/pci/lola/lola_mixer.c
++++ b/sound/pci/lola/lola_mixer.c
+@@ -108,8 +108,7 @@ int lola_init_pins(struct lola *chip, int dir, int *nidp)
+ 
+ void lola_free_mixer(struct lola *chip)
+ {
+-	if (chip->mixer.array_saved)
+-		vfree(chip->mixer.array_saved);
++	vfree(chip->mixer.array_saved);
+ }
+ 
+ int lola_init_mixer_widget(struct lola *chip, int nid)
+-- 
+2.1.3
+
+
