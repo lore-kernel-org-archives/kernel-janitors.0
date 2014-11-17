@@ -1,44 +1,61 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 21:04:16 +0000
-Subject: [PATCH 1/1] Sony-laptop: Deletion of an unnecessary check before the function call "pci_dev_put"
-Message-Id: <54739D50.5060104@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 10:07:04 +0000
+Subject: [PATCH 1/1] ALSA: hda: Deletion of unnecessary checks before two function calls
+Message-Id: <5469C8C8.8010306@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
 In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Darren Hart <dvhart@infradead.org>, Mattia Dongili <malattia@linux.it>, platform-driver-x86@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 22:00:21 +0100
+Date: Mon, 17 Nov 2014 10:44:33 +0100
 
-The pci_dev_put() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call
+The functions kfree() and release_firmware() test whether their argument
+is NULL and then return immediately. Thus the test around the call
 is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/platform/x86/sony-laptop.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/pci/hda/hda_codec.c | 3 +--
+ sound/pci/hda/hda_intel.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
-index 26ad9ff..22b173d 100644
---- a/drivers/platform/x86/sony-laptop.c
-+++ b/drivers/platform/x86/sony-laptop.c
-@@ -3717,8 +3717,7 @@ static void sony_pic_detect_device_type(struct sony_pic_dev *dev)
- 	dev->event_types = type2_events;
- 
- out:
--	if (pcidev)
--		pci_dev_put(pcidev);
-+	pci_dev_put(pcidev);
- 
- 	pr_info("detected Type%d model\n",
- 		dev->model = SONYPI_DEVICE_TYPE1 ? 1 :
+diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
+index ec6a7d0..3fe8859 100644
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -827,8 +827,7 @@ static void snd_hda_bus_free(struct hda_bus *bus)
+ 	WARN_ON(!list_empty(&bus->codec_list));
+ 	if (bus->workq)
+ 		flush_workqueue(bus->workq);
+-	if (bus->unsol)
+-		kfree(bus->unsol);
++	kfree(bus->unsol);
+ 	if (bus->ops.private_free)
+ 		bus->ops.private_free(bus);
+ 	if (bus->workq)
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index 0a7f848..b4ec4e1 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1129,8 +1129,7 @@ static int azx_free(struct azx *chip)
+ 	pci_disable_device(chip->pci);
+ 	kfree(chip->azx_dev);
+ #ifdef CONFIG_SND_HDA_PATCH_LOADER
+-	if (chip->fw)
+-		release_firmware(chip->fw);
++	release_firmware(chip->fw);
+ #endif
+ 	if (chip->driver_caps & AZX_DCAPS_I915_POWERWELL) {
+ 		hda_display_power(false);
 -- 
 2.1.3
+
 
