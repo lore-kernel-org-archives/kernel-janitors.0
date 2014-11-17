@@ -1,75 +1,58 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Wed, 26 Nov 2014 22:01:07 +0000
-Subject: Re: [PATCH 4/5] drm/rcar-du: fix error return code
-Message-Id: <2892924.lmSyP4ZfXU@avalon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 17:40:18 +0000
+Subject: [PATCH 1/1] mm/zswap: Deletion of an unnecessary check before the function call "free_percpu"
+Message-Id: <546A3302.9040804@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr> <1416748278-22881-5-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416748278-22881-5-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-Hi Julia,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 18:33:33 +0100
 
-Thank you for the patch.
+The free_percpu() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-On Sunday 23 November 2014 14:11:17 Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Propagate the error code on failure.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier ret; expression e1,e2;
-> @@
-> (
-> if (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> 
-> ret = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> *if(...)
-> {
->   ... when != ret = e2
->       when forall
->  return ret;
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This issue was detected by using the Coccinelle software.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ mm/zswap.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I've applied the patch to my tree and sent a pull request.
-
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index 088bfd8..23cc910 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> @@ -586,7 +586,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp,
-> unsigned int index)
-> 
->  	if (irq < 0) {
->  		dev_err(rcdu->dev, "no IRQ for CRTC %u\n", index);
-> -		return ret;
-> +		return irq;
->  	}
-> 
->  	ret = devm_request_irq(rcdu->dev, irq, rcar_du_crtc_irq, irqflags,
-
+diff --git a/mm/zswap.c b/mm/zswap.c
+index ea064c1..35629f0 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -152,8 +152,7 @@ static int __init zswap_comp_init(void)
+ static void zswap_comp_exit(void)
+ {
+ 	/* free percpu transforms */
+-	if (zswap_comp_pcpu_tfms)
+-		free_percpu(zswap_comp_pcpu_tfms);
++	free_percpu(zswap_comp_pcpu_tfms);
+ }
+ 
+ /*********************************
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.3
 
