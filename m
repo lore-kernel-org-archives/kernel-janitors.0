@@ -1,86 +1,45 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 16:59:34 +0000
-Subject: [PATCH 8/8] wusb: replace memset by memzero_explicit
-Message-Id: <1417366774-32412-9-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 12:12:15 +0000
+Subject: [PATCH 1/1] ALSA: hdsp: Deletion of an unnecessary check before the function call "release_firmware"
+Message-Id: <5469E61F.6000002@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: dborkman@redhat.com, herbert@gondor.apana.org.au, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-From: Julia Lawall <julia@diku.dk>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 13:04:14 +0100
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+The release_firmware() function tests whether its argument is NULL and then
+return immediately. Thus the test around the call is not needed.
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
+This issue was detected by using the Coccinelle software.
 
-{
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
-}
-// </smpl>
-
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
+ sound/pci/rme9652/hdsp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/usb/wusbcore/dev-sysfs.c |    2 +-
- drivers/usb/wusbcore/security.c  |    8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
+index 7646ba1..0ae568d 100644
+--- a/sound/pci/rme9652/hdsp.c
++++ b/sound/pci/rme9652/hdsp.c
+@@ -5368,8 +5368,7 @@ static int snd_hdsp_free(struct hdsp *hdsp)
+ 
+ 	snd_hdsp_free_buffers(hdsp);
+ 
+-	if (hdsp->firmware)
+-		release_firmware(hdsp->firmware);
++	release_firmware(hdsp->firmware);
+ 	vfree(hdsp->fw_uploaded);
+ 
+ 	if (hdsp->iobase)
+-- 
+2.1.3
 
-diff --git a/drivers/usb/wusbcore/dev-sysfs.c b/drivers/usb/wusbcore/dev-sysfs.c
-index 1018345..415b140 100644
---- a/drivers/usb/wusbcore/dev-sysfs.c
-+++ b/drivers/usb/wusbcore/dev-sysfs.c
-@@ -101,7 +101,7 @@ static ssize_t wusb_ck_store(struct device *dev,
- 	if (wusbhc = NULL)
- 		return -ENODEV;
- 	result = wusb_dev_4way_handshake(wusbhc, usb_dev->wusb_dev, &ck);
--	memset(&ck, 0, sizeof(ck));
-+	memzero_explicit(&ck, sizeof(ck));
- 	wusbhc_put(wusbhc);
- 	return result < 0 ? result : size;
- }
-diff --git a/drivers/usb/wusbcore/security.c b/drivers/usb/wusbcore/security.c
-index cc74d66..b66faaf 100644
---- a/drivers/usb/wusbcore/security.c
-+++ b/drivers/usb/wusbcore/security.c
-@@ -522,10 +522,10 @@ error_hs3:
- error_hs2:
- error_hs1:
- 	memset(hs, 0, 3*sizeof(hs[0]));
--	memset(&keydvt_out, 0, sizeof(keydvt_out));
--	memset(&keydvt_in, 0, sizeof(keydvt_in));
--	memset(&ccm_n, 0, sizeof(ccm_n));
--	memset(mic, 0, sizeof(mic));
-+	memzero_explicit(&keydvt_out, sizeof(keydvt_out));
-+	memzero_explicit(&keydvt_in, sizeof(keydvt_in));
-+	memzero_explicit(&ccm_n, sizeof(ccm_n));
-+	memzero_explicit(mic, sizeof(mic));
- 	if (result < 0)
- 		wusb_dev_set_encryption(usb_dev, 0);
- error_dev_set_encryption:
 
