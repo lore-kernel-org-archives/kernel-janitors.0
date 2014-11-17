@@ -1,105 +1,60 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 03 Nov 2014 09:45:30 +0000
-Subject: Re: [PATCH 1/1] PCI: EMU10K1: Deletion of unnecessary checks before three function calls
-Message-Id: <s5ha94839dx.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 10:34:22 +0000
+Subject: [PATCH 1/1] ALSA: ice17xx: Deletion of unnecessary checks before the function call "snd_ac97_resume"
+Message-Id: <5469CF2E.6040408@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54567788.9060008@users.sourceforge.net>
-In-Reply-To: <54567788.9060008@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-At Sun, 02 Nov 2014 19:27:20 +0100,
-SF Markus Elfring wrote:
-> 
-> The functions kfree(), release_firmware() and snd_util_memhdr_free() test
-> whether their argument is NULL and then return immediately. Thus the test
-> around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 11:28:02 +0100
 
-Your patch can't be applied cleanly due to your MUA breaking the
-lines.  Please fix your MUA setup, or use an attachment if it's
-impossible, and resend the patch.
+The snd_ac97_resume() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Also, try to align the subject line with the relevant commits.  See
-"git log sound/pci/emu10k1" 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/ice1712/ice1712.c | 3 +--
+ sound/pci/ice1712/ice1724.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/sound/pci/ice1712/ice1712.c b/sound/pci/ice1712/ice1712.c
+index 87f7fc4..e1e18b5 100644
+--- a/sound/pci/ice1712/ice1712.c
++++ b/sound/pci/ice1712/ice1712.c
+@@ -2905,8 +2905,7 @@ static int snd_ice1712_resume(struct device *dev)
+ 	outw(ice->pm_saved_spdif_ctrl, ICEMT(ice, ROUTE_SPDOUT));
+ 	outw(ice->pm_saved_route, ICEMT(ice, ROUTE_PSDOUT03));
+ 
+-	if (ice->ac97)
+-		snd_ac97_resume(ice->ac97);
++	snd_ac97_resume(ice->ac97);
+ 
+ 	snd_power_change_state(card, SNDRV_CTL_POWER_D0);
+ 	return 0;
+diff --git a/sound/pci/ice1712/ice1724.c b/sound/pci/ice1712/ice1724.c
+index 08cb08a..0e56835 100644
+--- a/sound/pci/ice1712/ice1724.c
++++ b/sound/pci/ice1712/ice1724.c
+@@ -2884,8 +2884,7 @@ static int snd_vt1724_resume(struct device *dev)
+ 	outb(ice->pm_saved_spdif_cfg, ICEREG1724(ice, SPDIF_CFG));
+ 	outl(ice->pm_saved_route, ICEMT1724(ice, ROUTE_PLAYBACK));
+ 
+-	if (ice->ac97)
+-		snd_ac97_resume(ice->ac97);
++	snd_ac97_resume(ice->ac97);
+ 
+ 	snd_power_change_state(card, SNDRV_CTL_POWER_D0);
+ 	return 0;
+-- 
+2.1.3
 
 
-thanks,
-
-Takashi
-
-
-> ---
->  sound/pci/emu10k1/emu10k1_main.c | 9 +++------
->  sound/pci/emu10k1/emufx.c        | 3 +--
->  2 files changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/sound/pci/emu10k1/emu10k1_main.c b/sound/pci/emu10k1/emu10k1_main.c
-> index 2292697..b4458a6 100644
-> --- a/sound/pci/emu10k1/emu10k1_main.c
-> +++ b/sound/pci/emu10k1/emu10k1_main.c
-> @@ -1289,10 +1289,8 @@ static int snd_emu10k1_free(struct snd_emu10k1 *emu)
->  	}
->  	if (emu->emu1010.firmware_thread)
->  		kthread_stop(emu->emu1010.firmware_thread);
-> -	if (emu->firmware)
-> -		release_firmware(emu->firmware);
-> -	if (emu->dock_fw)
-> -		release_firmware(emu->dock_fw);
-> +	release_firmware(emu->firmware);
-> +	release_firmware(emu->dock_fw);
->  	if (emu->irq >= 0)
->  		free_irq(emu->irq, emu);
->  	/* remove reserved page */
-> @@ -1301,8 +1299,7 @@ static int snd_emu10k1_free(struct snd_emu10k1 *emu)
->  			(struct snd_util_memblk *)emu->reserved_page);
->  		emu->reserved_page = NULL;
->  	}
-> -	if (emu->memhdr)
-> -		snd_util_memhdr_free(emu->memhdr);
-> +	snd_util_memhdr_free(emu->memhdr);
->  	if (emu->silent_page.area)
->  		snd_dma_free_pages(&emu->silent_page);
->  	if (emu->ptb_pages.area)
-> diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
-> index 745f062..eb5c0ab 100644
-> --- a/sound/pci/emu10k1/emufx.c
-> +++ b/sound/pci/emu10k1/emufx.c
-> @@ -777,8 +777,7 @@ static void snd_emu10k1_ctl_private_free(struct snd_kcontrol
-> *kctl)
->  	kctl->private_value = 0;
->  	list_del(&ctl->list);
->  	kfree(ctl);
-> -	if (kctl->tlv.p)
-> -		kfree(kctl->tlv.p);
-> +	kfree(kctl->tlv.p);
->  }
-> 
->  static int snd_emu10k1_add_controls(struct snd_emu10k1 *emu,
-> -- 
-> 2.1.3
-> 
-> 
