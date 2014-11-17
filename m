@@ -1,42 +1,57 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 16 Nov 2014 12:07:39 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 17 Nov 2014 07:34:08 +0000
 Subject: Re: [PATCH 1/1] kernel-audit: Deletion of an unnecessary check before the function call "audit_log_e
-Message-Id: <5468938B.502@users.sourceforge.net>
+Message-Id: <20141117073408.GC4905@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
+References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
  <530CF8FF.8080600@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54687F1A.1010809@users.sourceforge.net>
- <20141116112457.GB4905@mwanda>
-In-Reply-To: <20141116112457.GB4905@mwanda>
+ <5317A59D.4@users.sourceforge.net>
+ <54687F1A.1010809@users.sourceforge.net>
+ <20141116111023.GA4905@mwanda> <20141116111446.GA4956@mwanda>
+ <54688F15.9070703@users.sourceforge.net>
+In-Reply-To: <54688F15.9070703@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-> The original code is very clear, the new code works exactly the same but
-> it's not clear if the author forgot about handling errors from
-> audit_log_start().
-
-We have got different expectations on source code clarity here.
-
-
-> So now someone will come along later and add:
-> 	if (!ab)
-> 		return;
+On Sun, Nov 16, 2014 at 12:48:37PM +0100, SF Markus Elfring wrote:
+> > An example of a bug introduced is here:
+> > 
+> > https://lkml.org/lkml/2014/11/3/505
 > 
-> We get a lot of mindless "add error handling" patches like that.
+> It seems that we try to clarify a different interpretation of "bugs", don't we?
+> 
 
-This is an interesting background information.
+You removed the statement from "if (foo) kfree_fsm(foo);" so now it
+prints a warning.
 
-Do you eventually prefer to improve the affected error detection
-and corresponding exception handling?
-Will a condition check become absolutely necessary there?
+drivers/s390/net/fsm.c
+    71  void
+    72  kfree_fsm(fsm_instance *this)
+    73  {
+    74          if (this) {
+    75                  if (this->f) {
+    76                          kfree(this->f->jumpmatrix);
+    77                          kfree(this->f);
+    78                  }
+    79                  kfree(this);
+    80          } else
+    81                  printk(KERN_WARNING
+    82                          "fsm: kfree_fsm called with NULL argument\n");
+    83  }
 
-Regards,
-Markus
+> It is an usual software development challenge to decide on the best source code places
+> where to put input parameter validation (and when it can be omitted), isn't it?
+
+No, it's not.  You should just try to write the most readable software
+you can instead of removing if statements because you can.
+
+But that's not my point.  My point is that these patches are not always
+welcome so we should not merge them through the trivial tree.
+
+regards,
+dan carpenter
