@@ -1,76 +1,73 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 20 Nov 2014 17:33:56 +0000
-Subject: [PATCH 2/7] gdrom: fix error return code
-Message-Id: <1416504842-18548-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 18:42:35 +0000
+Subject: [PATCH 1/1] configfs: Deletion of unnecessary checks before the function call "config_item_put"
+Message-Id: <546A419B.7060409@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Nov 2014 19:37:03 +0100
 
-Return a negative error code on failure.
+The config_item_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+This issue was detected by using the Coccinelle software.
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-The patches in this series are independent of each other.
+ fs/configfs/file.c | 3 +--
+ fs/configfs/item.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
- drivers/cdrom/gdrom.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index 584bc31..46ecd95 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -807,16 +807,20 @@ static int probe_gdrom(struct platform_device *devptr)
- 	if (err)
- 		goto probe_fail_cmdirq_register;
- 	gd.gdrom_rq = blk_init_queue(gdrom_request, &gdrom_lock);
--	if (!gd.gdrom_rq)
-+	if (!gd.gdrom_rq) {
-+		err = -ENOMEM;
- 		goto probe_fail_requestq;
-+	}
+diff --git a/fs/configfs/file.c b/fs/configfs/file.c
+index 1d1c41f..48f36e7 100644
+--- a/fs/configfs/file.c
++++ b/fs/configfs/file.c
+@@ -291,8 +291,7 @@ static int configfs_release(struct inode * inode, struct file * filp)
+ 	struct module * owner = attr->ca_owner;
+ 	struct configfs_buffer * buffer = filp->private_data;
  
- 	err = probe_gdrom_setupqueue();
- 	if (err)
- 		goto probe_fail_toc;
+-	if (item)
+-		config_item_put(item);
++	config_item_put(item);
+ 	/* After this point, attr should not be accessed. */
+ 	module_put(owner);
  
- 	gd.toc = kzalloc(sizeof(struct gdromtoc), GFP_KERNEL);
--	if (!gd.toc)
-+	if (!gd.toc) {
-+		err = -ENOMEM;
- 		goto probe_fail_toc;
-+	}
- 	add_disk(gd.disk);
- 	return 0;
+diff --git a/fs/configfs/item.c b/fs/configfs/item.c
+index e65f9ff..891b20e 100644
+--- a/fs/configfs/item.c
++++ b/fs/configfs/item.c
+@@ -153,8 +153,7 @@ static void config_item_cleanup(struct config_item *item)
+ 		t->ct_item_ops->release(item);
+ 	if (s)
+ 		config_group_put(s);
+-	if (parent)
+-		config_item_put(parent);
++	config_item_put(parent);
+ }
  
+ static void config_item_release(struct kref *kref)
+-- 
+2.1.3
 
