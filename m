@@ -1,37 +1,113 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 29 Nov 2014 12:49:54 +0000
-Subject: [patch] USB: mos7720: delete some unneeded code
-Message-Id: <20141129124954.GC27251@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 13:10:43 +0000
+Subject: [PATCH 1/1] NFS: Deletion of unnecessary checks before the function call "nfs_put_client"
+Message-Id: <546B4553.5040404@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-The "status" is uninitialized so this creates a static checker warning.
-But it's harmless, we can just delete it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 13:23:43 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The nfs_put_client() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
-index 312b0fe..4f70df3 100644
---- a/drivers/usb/serial/mos7720.c
-+++ b/drivers/usb/serial/mos7720.c
-@@ -1299,8 +1299,6 @@ static void mos7720_throttle(struct tty_struct *tty)
- 		mos7720_port->shadowMCR &= ~UART_MCR_RTS;
- 		write_mos_reg(port->serial, port->port_number, MCR,
- 			      mos7720_port->shadowMCR);
--		if (status != 0)
--			return;
- 	}
- }
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/nfs/filelayout/filelayoutdev.c |  3 +--
+ fs/nfs/nfs4client.c               | 15 +++++----------
+ 2 files changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/fs/nfs/filelayout/filelayoutdev.c b/fs/nfs/filelayout/filelayoutdev.c
+index 8540516..cc5e7d6 100644
+--- a/fs/nfs/filelayout/filelayoutdev.c
++++ b/fs/nfs/filelayout/filelayoutdev.c
+@@ -204,8 +204,7 @@ destroy_ds(struct nfs4_pnfs_ds *ds)
+ 	ifdebug(FACILITY)
+ 		print_ds(ds);
  
-@@ -1331,8 +1329,6 @@ static void mos7720_unthrottle(struct tty_struct *tty)
- 		mos7720_port->shadowMCR |= UART_MCR_RTS;
- 		write_mos_reg(port->serial, port->port_number, MCR,
- 			      mos7720_port->shadowMCR);
--		if (status != 0)
--			return;
- 	}
- }
+-	if (ds->ds_clp)
+-		nfs_put_client(ds->ds_clp);
++	nfs_put_client(ds->ds_clp);
  
+ 	while (!list_empty(&ds->ds_addrs)) {
+ 		da = list_first_entry(&ds->ds_addrs,
+diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
+index ffdb28d..5f07a0e 100644
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -498,8 +498,7 @@ int nfs40_walk_client_list(struct nfs_client *new,
+ 			atomic_inc(&pos->cl_count);
+ 			spin_unlock(&nn->nfs_client_lock);
+ 
+-			if (prev)
+-				nfs_put_client(prev);
++			nfs_put_client(prev);
+ 			prev = pos;
+ 
+ 			status = nfs_wait_client_init_complete(pos);
+@@ -517,8 +516,7 @@ int nfs40_walk_client_list(struct nfs_client *new,
+ 		atomic_inc(&pos->cl_count);
+ 		spin_unlock(&nn->nfs_client_lock);
+ 
+-		if (prev)
+-			nfs_put_client(prev);
++		nfs_put_client(prev);
+ 		prev = pos;
+ 
+ 		status = nfs4_proc_setclientid_confirm(pos, &clid, cred);
+@@ -549,8 +547,7 @@ int nfs40_walk_client_list(struct nfs_client *new,
+ 
+ 	/* No match found. The server lost our clientid */
+ out:
+-	if (prev)
+-		nfs_put_client(prev);
++	nfs_put_client(prev);
+ 	dprintk("NFS: <-- %s status = %d\n", __func__, status);
+ 	return status;
+ }
+@@ -641,8 +638,7 @@ int nfs41_walk_client_list(struct nfs_client *new,
+ 			atomic_inc(&pos->cl_count);
+ 			spin_unlock(&nn->nfs_client_lock);
+ 
+-			if (prev)
+-				nfs_put_client(prev);
++			nfs_put_client(prev);
+ 			prev = pos;
+ 
+ 			status = nfs_wait_client_init_complete(pos);
+@@ -675,8 +671,7 @@ int nfs41_walk_client_list(struct nfs_client *new,
+ 	/* No matching nfs_client found. */
+ 	spin_unlock(&nn->nfs_client_lock);
+ 	dprintk("NFS: <-- %s status = %d\n", __func__, status);
+-	if (prev)
+-		nfs_put_client(prev);
++	nfs_put_client(prev);
+ 	return status;
+ }
+ #endif	/* CONFIG_NFS_V4_1 */
+-- 
+2.1.3
+
