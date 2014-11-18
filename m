@@ -1,61 +1,79 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 16 Nov 2014 19:18:13 +0000
-Subject: [PATCH v2 1/2] kernel-trace: Deletion of an unnecessary check before the function call "iput"
-Message-Id: <5468F875.7080907@users.sourceforge.net>
+From: julio <julio7k@gmail.com>
+Date: Tue, 18 Nov 2014 03:54:58 +0000
+Subject: error while installing staging kernel GKH
+Message-Id: <546AC312.7080805@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5468ABBD.6000903@users.sourceforge.net>
- <alpine.DEB.2.10.1411161656340.2364@hadrien>
- <5468F756.8070807@users.sourceforge.net>
-In-Reply-To: <5468F756.8070807@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 16 Nov 2014 14:46:28 +0100
+Hi,
 
-The iput() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+I was following the tutorial on how to build your first patch and came 
+across this error when running
+sudo make modules_install install
 
-This issue was detected by using the Coccinelle software.
+INSTALL sound/firewire/fireworks/snd-fireworks.ko
+   DEPMOD  3.18.0-rc4-01142-gcc03f9b
+sh ./arch/x86/boot/install.sh 3.18.0-rc4-01142-gcc03f9b 
+arch/x86/boot/bzImage \
+     System.map "/boot"
+run-parts: executing /etc/kernel/postinst.d/apt-auto-removal 
+3.18.0-rc4-01142-gcc03f9b /boot/vmlinuz-3.18.0-rc4-01142-gcc03f9b
+run-parts: executing /etc/kernel/postinst.d/dkms 
+3.18.0-rc4-01142-gcc03f9b /boot/vmlinuz-3.18.0-rc4-01142-gcc03f9b
+Error! Bad return status for module build on kernel: 
+3.18.0-rc4-01142-gcc03f9b (x86_64)
+Consult /var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/make.log for more 
+information.
+^Carch/x86/boot/Makefile:185: recipe for target 'install' failed
+make[1]: *** [install] Interrupt
+arch/x86/Makefile:239: recipe for target 'install' failed
+make: *** [install] Interrupt
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- kernel/trace/trace_uprobe.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+this is the staging tree GKH.
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 33ff6a2..ec002c0 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -552,8 +552,7 @@ error:
- 	return ret;
- 
- fail_address_parse:
--	if (inode)
--		iput(inode);
-+	iput(inode);
- 
- 	pr_info("Failed to parse address or file.\n");
- 
--- 
-2.1.3
+cat /var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/make.log
 
+returns the following message:
 
+DKMS make.log for bcmwl-6.30.223.248+bdcom for kernel 
+3.18.0-rc4-01142-gcc03f9b (x86_64)
+lun 17 nov 20:54:47 CST 2014
+CFG80211 API is prefered for this kernel version
+Using CFG80211 API
+   LD      /var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/built-in.o
+   CC [M] 
+/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/shared/linux_osl.o
+   CC [M] 
+/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.o
+/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.c: In 
+function ‘wl_alloc_linux_if’:
+/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.c:1316:64: 
+error: macro "alloc_netdev" requires 4 arguments, but only 3 given
+   dev = alloc_netdev(sizeof(priv_link_t), intf_name, ether_setup);
+                                                                 ^
+/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.c:1316:8: 
+error: ‘alloc_netdev’ undeclared (first use in this function)
+   dev = alloc_netdev(sizeof(priv_link_t), intf_name, ether_setup);
+         ^
+/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.c:1316:8: 
+note: each undeclared identifier is reported only once for each function 
+it appears in
+scripts/Makefile.build:257: recipe for target 
+'/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.o' failed
+make[3]: *** 
+[/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.o] 
+Error 1
+Makefile:1380: recipe for target 
+'_module_/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build' failed
+make[2]: *** [_module_/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build] Error 2
+
+the question is should I report a bug on a staging driver?
+and how this could be fixed? did the alloc_netdev function changed?
+this kernel was compiled with make allyesconfig
+Thanks,
+PD: I am a Kernel newbie trying to commit my first patch...
+Sorry if this is not the right mailing list
+Julio Ordonez-Viales
