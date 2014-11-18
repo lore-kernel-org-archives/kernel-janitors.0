@@ -1,91 +1,104 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Thu, 20 Nov 2014 18:04:26 +0000
-Subject: Re: [PATCH 1/1] net: brcm80211: Deletion of unnecessary checks before two function calls
-Message-Id: <546E2D2A.6090101@broadcom.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 19:47:31 +0000
+Subject: [PATCH 1/1] netfilter: Deletion of unnecessary checks before two function calls
+Message-Id: <546BA253.6030100@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546E0DC8.3050906@users.sourceforge.net>
-In-Reply-To: <546E0DC8.3050906@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Brett Rudley <brudley@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: "David S. Miller" <davem@davemloft.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Simon Horman <horms@verge.net.au>, Wensong Zhang <wensong@linux-vs.org>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
 
-On 11/20/14 16:50, SF Markus Elfring wrote:
-> From: Markus Elfring<elfring@users.sourceforge.net>
-> Date: Thu, 20 Nov 2014 16:42:51 +0100
->
-> The functions brcmu_pkt_buf_free_skb() and release_firmware() test whether
-> their argument is NULL and then return immediately. Thus the test around
-> the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 20:37:05 +0100
 
-Goodo for coccinelle and you for running it.
+The functions free_percpu() and module_put() test whether their argument
+is NULL and then return immediately. Thus the test around the call is
+not needed.
 
-Acked-by: Arend van Spriel <arend@broadcom.com>
-> Signed-off-by: Markus Elfring<elfring@users.sourceforge.net>
-> ---
->   drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c | 3 +--
->   drivers/net/wireless/brcm80211/brcmfmac/firmware.c | 3 +--
->   drivers/net/wireless/brcm80211/brcmfmac/msgbuf.c   | 3 +--
->   drivers/net/wireless/brcm80211/brcmsmac/main.c     | 3 +--
->   4 files changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c b/drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c
-> index f55f625..8ff7037 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c
-> @@ -2539,8 +2539,7 @@ static void brcmf_sdio_bus_stop(struct device *dev)
->   	brcmu_pktq_flush(&bus->txq, true, NULL, NULL);
->
->   	/* Clear any held glomming stuff */
-> -	if (bus->glomd)
-> -		brcmu_pkt_buf_free_skb(bus->glomd);
-> +	brcmu_pkt_buf_free_skb(bus->glomd);
->   	brcmf_sdio_free_glom(bus);
->
->   	/* Clear rx control and wake any waiters */
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/firmware.c b/drivers/net/wireless/brcm80211/brcmfmac/firmware.c
-> index 8ea9f28..3a2d014 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/firmware.c
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/firmware.c
-> @@ -262,8 +262,7 @@ static void brcmf_fw_request_nvram_done(const struct firmware *fw, void *ctx)
->
->   fail:
->   	brcmf_dbg(TRACE, "failed: dev=%s\n", dev_name(fwctx->dev));
-> -	if (fwctx->code)
-> -		release_firmware(fwctx->code);
-> +	release_firmware(fwctx->code);
->   	device_release_driver(fwctx->dev);
->   	kfree(fwctx);
->   }
-> diff --git a/drivers/net/wireless/brcm80211/brcmfmac/msgbuf.c b/drivers/net/wireless/brcm80211/brcmfmac/msgbuf.c
-> index 8f8b937..0cb00dc 100644
-> --- a/drivers/net/wireless/brcm80211/brcmfmac/msgbuf.c
-> +++ b/drivers/net/wireless/brcm80211/brcmfmac/msgbuf.c
-> @@ -506,8 +506,7 @@ static int brcmf_msgbuf_query_dcmd(struct brcmf_pub *drvr, int ifidx,
->   		memcpy(buf, skb->data, (len<  msgbuf->ioctl_resp_ret_len) ?
->   				       len : msgbuf->ioctl_resp_ret_len);
->   	}
-> -	if (skb)
-> -		brcmu_pkt_buf_free_skb(skb);
-> +	brcmu_pkt_buf_free_skb(skb);
->
->   	return msgbuf->ioctl_resp_status;
->   }
-> diff --git a/drivers/net/wireless/brcm80211/brcmsmac/main.c b/drivers/net/wireless/brcm80211/brcmsmac/main.c
-> index 1b47482..ce538a1 100644
-> --- a/drivers/net/wireless/brcm80211/brcmsmac/main.c
-> +++ b/drivers/net/wireless/brcm80211/brcmsmac/main.c
-> @@ -1009,8 +1009,7 @@ brcms_c_dotxstatus(struct brcms_c_info *wlc, struct tx_status *txs)
->   		if (txh)
->   			trace_brcms_txdesc(&wlc->hw->d11core->dev, txh,
->   					   sizeof(*txh));
-> -		if (p)
-> -			brcmu_pkt_buf_free_skb(p);
-> +		brcmu_pkt_buf_free_skb(p);
->   	}
->
->   	if (dma&&  queue<  NFIFO) {
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ net/netfilter/ipvs/ip_vs_ctl.c   | 3 +--
+ net/netfilter/ipvs/ip_vs_pe.c    | 3 +--
+ net/netfilter/ipvs/ip_vs_sched.c | 3 +--
+ net/netfilter/ipvs/ip_vs_sync.c  | 3 +--
+ net/netfilter/nf_tables_api.c    | 3 +--
+ 5 files changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index fd3f444..7c5e40a 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -465,8 +465,7 @@ __ip_vs_bind_svc(struct ip_vs_dest *dest, struct ip_vs_service *svc)
+ 
+ static void ip_vs_service_free(struct ip_vs_service *svc)
+ {
+-	if (svc->stats.cpustats)
+-		free_percpu(svc->stats.cpustats);
++	free_percpu(svc->stats.cpustats);
+ 	kfree(svc);
+ }
+ 
+diff --git a/net/netfilter/ipvs/ip_vs_pe.c b/net/netfilter/ipvs/ip_vs_pe.c
+index 1a82b29..0df17ca 100644
+--- a/net/netfilter/ipvs/ip_vs_pe.c
++++ b/net/netfilter/ipvs/ip_vs_pe.c
+@@ -37,8 +37,7 @@ struct ip_vs_pe *__ip_vs_pe_getbyname(const char *pe_name)
+ 			rcu_read_unlock();
+ 			return pe;
+ 		}
+-		if (pe->module)
+-			module_put(pe->module);
++		module_put(pe->module);
+ 	}
+ 	rcu_read_unlock();
+ 
+diff --git a/net/netfilter/ipvs/ip_vs_sched.c b/net/netfilter/ipvs/ip_vs_sched.c
+index 4dbcda6..199760c 100644
+--- a/net/netfilter/ipvs/ip_vs_sched.c
++++ b/net/netfilter/ipvs/ip_vs_sched.c
+@@ -104,8 +104,7 @@ static struct ip_vs_scheduler *ip_vs_sched_getbyname(const char *sched_name)
+ 			mutex_unlock(&ip_vs_sched_mutex);
+ 			return sched;
+ 		}
+-		if (sched->module)
+-			module_put(sched->module);
++		module_put(sched->module);
+ 	}
+ 
+ 	mutex_unlock(&ip_vs_sched_mutex);
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index eadffb2..cafe28d 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -820,8 +820,7 @@ ip_vs_conn_fill_param_sync(struct net *net, int af, union ip_vs_sync_conn *sc,
+ 
+ 		p->pe_data = kmemdup(pe_data, pe_data_len, GFP_ATOMIC);
+ 		if (!p->pe_data) {
+-			if (p->pe->module)
+-				module_put(p->pe->module);
++			module_put(p->pe->module);
+ 			return -ENOMEM;
+ 		}
+ 		p->pe_data_len = pe_data_len;
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index deeb95f..b115f54 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -3472,8 +3472,7 @@ static int nf_tables_abort(struct sk_buff *skb)
+ 			break;
+ 		case NFT_MSG_NEWCHAIN:
+ 			if (nft_trans_chain_update(trans)) {
+-				if (nft_trans_chain_stats(trans))
+-					free_percpu(nft_trans_chain_stats(trans));
++				free_percpu(nft_trans_chain_stats(trans));
+ 
+ 				nft_trans_destroy(trans);
+ 			} else {
+-- 
+2.1.3
 
