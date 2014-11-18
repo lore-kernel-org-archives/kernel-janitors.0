@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 18:33:55 +0000
-Subject: [PATCH 0/2] staging: android: ion: Deletion of a few unnecessary checks
-Message-Id: <54722893.6020301@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 21:03:35 +0000
+Subject: [PATCH 1/1] keys: Deletion of an unnecessary check before the function call "key_put"
+Message-Id: <546BB427.2050101@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,24 +24,35 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, devel@driverdev.osuosl.org, linux-tegra@vger.kernel.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: cocci@systeme.lip6.fr
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 19:13:56 +0100
+Date: Tue, 18 Nov 2014 21:57:14 +0100
 
-Another update suggestion was taken into account after a patch was applied
-from static source code analysis.
+The key_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Markus Elfring (2):
-  Deletion of unnecessary checks before two function calls
-  One function call less in ion_buffer_create() after error detection
+This issue was detected by using the Coccinelle software.
 
- drivers/staging/android/ion/ion.c              | 9 +++------
- drivers/staging/android/ion/ion_dummy_driver.c | 6 ++----
- drivers/staging/android/ion/tegra/tegra_ion.c  | 6 ++----
- 3 files changed, 7 insertions(+), 14 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ security/keys/process_keys.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index 0cf8a13..ce00e11 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -242,8 +242,7 @@ int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
+ 	old = cred->session_keyring;
+ 	rcu_assign_pointer(cred->session_keyring, keyring);
+ 
+-	if (old)
+-		key_put(old);
++	key_put(old);
+ 
+ 	return 0;
+ }
 -- 
 2.1.3
 
