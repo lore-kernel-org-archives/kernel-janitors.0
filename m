@@ -1,26 +1,71 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Date: Wed, 26 Nov 2014 01:16:23 +0000
-Subject: Re: [1/1] fs-ext4: Deletion of an unnecessary check before the function call "iput"
-Message-Id: <20141126011623.GA20977@thunk.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 18:02:46 +0000
+Subject: [PATCH 2/2] fs-udf: One function call less in udf_fill_super() after error detection
+Message-Id: <546B89C6.4070308@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54679938.3020106@users.sourceforge.net>
-In-Reply-To: <54679938.3020106@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <546B8814.2030701@users.sourceforge.net>
+In-Reply-To: <546B8814.2030701@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-On Sat, Nov 15, 2014 at 07:19:36PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 15 Nov 2014 19:04:06 +0100
-> 
-> The iput() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 18:29:10 +0100
 
-Thanks, applied.
+The iput() function was called in up to three cases by the udf_fill_super()
+function during error handling even if the passed data structure element
+contained still a null pointer. This implementation detail could be improved
+by the introduction of another jump label.
 
-						- Ted
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/udf/super.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index f93c65d..3ccb2f1 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -2082,12 +2082,12 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+ 	mutex_init(&sbi->s_alloc_mutex);
+ 
+ 	if (!udf_parse_options((char *)options, &uopt, false))
+-		goto error_out;
++		goto parse_options_failure;
+ 
+ 	if (uopt.flags & (1 << UDF_FLAG_UTF8) &&
+ 	    uopt.flags & (1 << UDF_FLAG_NLS_MAP)) {
+ 		udf_err(sb, "utf8 cannot be combined with iocharset\n");
+-		goto error_out;
++		goto parse_options_failure;
+ 	}
+ #ifdef CONFIG_UDF_NLS
+ 	if ((uopt.flags & (1 << UDF_FLAG_NLS_MAP)) && !uopt.nls_map) {
+@@ -2238,6 +2238,7 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+ 
+ error_out:
+ 	iput(sbi->s_vat_inode);
++parse_options_failure:
+ #ifdef CONFIG_UDF_NLS
+ 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
+ 		unload_nls(sbi->s_nls_map);
+-- 
+2.1.3
+
