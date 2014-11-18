@@ -1,31 +1,73 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Date: Sat, 29 Nov 2014 16:07:55 +0000
-Subject: Re: [patch] usb: storage: debug: uninitialized var in usb_stor_show_sense()
-Message-Id: <1417277275.2202.35.camel@HansenPartnership.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 10:35:28 +0000
+Subject: [PATCH 1/1] GFS2: Deletion of unnecessary checks before two function calls
+Message-Id: <546B20F0.9040202@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141129124801.GA27251@mwanda>
-In-Reply-To: <20141129124801.GA27251@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Matthew Dharm <mdharm-usb@one-eyed-alien.net>, Hannes Reinecke <hare@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, =?ISO-8859-1?Q?J=F6rn?= Engel <joern@purestorage.com>
+To: cocci@systeme.lip6.fr
 
-On Sat, 2014-11-29 at 15:48 +0300, Dan Carpenter wrote:
-> The "fmt" variable might be used uninitialized, it should be set to NULL
-> at the start.
-> 
-> Fixes: d811b848ebb7 ('scsi: use sdev as argument for sense code printing')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 11:31:23 +0100
 
-Hm, that' falls into the category of an interface that's hard to get
-right if every caller has to remember to set fmt to NULL.
+The functions iput() and put_pid() test whether their argument is NULL
+and then return immediately. Thus the test around the call is not needed.
 
-Could you instead set *fmt to NULL in scsi_extd_sense_format()?  That
-way the interface is much easier.
+This issue was detected by using the Coccinelle software.
 
-Thanks,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/gfs2/glock.c      | 3 +--
+ fs/gfs2/ops_fstype.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-James
-
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index 7f513b1..f4aa085 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -836,8 +836,7 @@ void gfs2_holder_reinit(unsigned int state, unsigned flags, struct gfs2_holder *
+ 	gh->gh_flags = flags;
+ 	gh->gh_iflags = 0;
+ 	gh->gh_ip = (unsigned long)__builtin_return_address(0);
+-	if (gh->gh_owner_pid)
+-		put_pid(gh->gh_owner_pid);
++	put_pid(gh->gh_owner_pid);
+ 	gh->gh_owner_pid = get_pid(task_pid(current));
+ }
+ 
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index d3eae24..272ff81 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -918,8 +918,7 @@ fail_qc_i:
+ fail_ut_i:
+ 	iput(sdp->sd_sc_inode);
+ fail:
+-	if (pn)
+-		iput(pn);
++	iput(pn);
+ 	return error;
+ }
+ 
+-- 
+2.1.3
 
