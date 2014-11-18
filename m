@@ -1,51 +1,35 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 27 Nov 2014 15:23:32 +0000
-Subject: Re: [PATCH 2/2] staging: android: ion: One function call less in ion_buffer_create() after error det
-Message-Id: <547741F4.2090306@bfs.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 18 Nov 2014 07:44:22 +0000
+Subject: [patch] exit: silence a bogus static checker warning
+Message-Id: <20141118074422.GA17829@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54722AF8.3000609@users.sourceforge.net>
-In-Reply-To: <54722AF8.3000609@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Michal Hocko <mhocko@suse.cz>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>, Ionut Alexa <ionut.m.alexa@gmail.com>, Peter Hurley <peter@hurleysoftware.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+Smatch complains about this:
 
+	kernel/exit.c:543 forget_original_parent()
+	warn: add some parenthesis here?
 
-Am 27.11.2014 15:25, schrieb SF Markus Elfring:
->>> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
->>> index df12cc3..7a26b85 100644
->>> --- a/drivers/staging/android/ion/ion.c
->>> +++ b/drivers/staging/android/ion/ion.c
->>> @@ -226,7 +226,7 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
->>>  		buffer->pages = vmalloc(sizeof(struct page *) * num_pages);
->>>  		if (!buffer->pages) {
->>>  			ret = -ENOMEM;
->>> -			goto err1;
->>> +			goto err2;
->>>  		}
->>>  
->>>  		for_each_sg(table->sgl, sg, table->nents, i) {
->>> @@ -262,7 +262,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
->>>  err:
->>>  	heap->ops->unmap_dma(heap, buffer);
->>>  	heap->ops->free(buffer);
->>> -err1:
->>>  	vfree(buffer->pages);
->>>  err2:
->>
->> Now we have "err" and "err2", which doesn't make much sense,
->> please fix up.
-> 
-> How do you want this source code to be improved?
-> Should I introduce longer names for the affected jump labels?
-> 
+I don't normally advocate changing the code to make the static checker
+happy but these are normally precedence bugs so I think it's ok to put
+parenthesis so it's clear the code is deliberate.
 
-hi markus,
-the confusion arises because the errX are numbered and now on in the sequence is missing.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-So far i see you can renumber them or give more descriptiv names.
-
-hope that helps,
-re,
- wh
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 6192422..1192d12 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -540,7 +540,7 @@ static void forget_original_parent(struct task_struct *father)
+ 	list_for_each_entry(p, &father->children, sibling) {
+ 		for_each_thread(p, t) {
+ 			t->real_parent = reaper;
+-			BUG_ON(!t->ptrace != (t->parent = father));
++			BUG_ON((!t->ptrace) != (t->parent = father));
+ 			if (likely(!t->ptrace))
+ 				t->parent = t->real_parent;
+ 			if (t->pdeath_signal)
