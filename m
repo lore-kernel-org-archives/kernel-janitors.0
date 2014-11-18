@@ -1,124 +1,44 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 13:15:37 +0000
-Subject: Re: [PATCH 0/10] fix error return code
-Message-Id: <alpine.DEB.2.02.1411231415030.2261@localhost6.localdomain6>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 17:55:32 +0000
+Subject: [PATCH 0/2] fs-udf: Deletion of two unnecessary checks
+Message-Id: <546B8814.2030701@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-Oops!!!  These are ancient patches.  I meant to send something else.  
-Sorry for the noise.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 18 Nov 2014 18:33:08 +0100
 
-julia
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-On Sun, 23 Nov 2014, Julia Lawall wrote:
+Markus Elfring (2):
+  Deletion of unnecessary checks before the function call "iput"
+  One function call less in udf_fill_super() after error detection
 
-> These patches fix cases where the return code appears to be unintentially
-> nonnegative.
-> 
-> The complete semantic match that finds the problem is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @ok exists@
-> identifier f,ret,i;
-> expression e;
-> constant c;
-> @@
-> 
-> f(...) {
-> <+...
-> (
-> return -c@i;
-> |
-> ret = -c@i;
-> ... when != ret = e
-> return ret;
-> |
-> if (ret < 0) { ... return ret; }
-> )
-> ...+> }
-> 
-> @r exists@
-> identifier ret,l,ok.f;
-> expression e1,e2,e3;
-> statement S;
-> position p1,p2,p3;
-> @@
-> 
-> f(...) {
-> ... when any
-> (
-> if@p1 (\(ret < 0\|ret != 0\))
->  { ... return ret; }
-> |
-> ret@p1 = 0
-> )
-> ... when != ret = e1
->     when != &ret
-> (
->  if (<+... ret = e3 ...+>) S
-> |
->  if (<+... &ret ...+>) S
-> |
-> if@p2(...)
->  {
->   ... when != ret = e2
->       when forall
->  return@p3 ret;
-> }
-> )
-> ... when any
-> }
-> 
-> @bad exists@
-> position r.p1,r.p2;
-> statement S1,S2;
-> identifier r.ret;
-> expression e1;
-> @@
-> 
-> (
-> if@p1 (\(ret < 0\|ret != 0\)) S1
-> |
-> ret@p1 = 0
-> )
-> ... when any
-> ret = e1
-> ... when any
-> if@p2(...) S2
-> 
-> @bad2@
-> position r.p1,r.p2;
-> identifier r.ret;
-> expression e1;
-> statement S2;
-> @@
-> 
-> ret@p1 = 0
-> ... when != if (...) { ... ret = e1 ... return ret; }
->     when any
-> if@p2(...) S2
-> 
-> 
-> @script:python depends on !bad && !bad2@
-> p1 << r.p1;
-> p2 << r.p2;
-> p3 << r.p3;
-> @@
-> 
-> cocci.print_main("",p1)
-> cocci.print_secs("",p2)
-> cocci.print_secs("",p3)
-> // </smpl>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+ fs/udf/super.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+-- 
+2.1.3
+
