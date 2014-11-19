@@ -1,61 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 12:48:05 +0000
-Subject: [PATCH 7/9] sound/pci/sis7019.c: fix error return code
-Message-Id: <1416746890-22719-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 15:40:14 +0000
+Subject: [PATCH 1/1] DRM-EDID: Deletion of an unnecessary check before the function call "release_firmware"
+Message-Id: <546CB9DE.8010701@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 16:33:17 +0100
 
-Initialize rc before returning on failure, as done elsewhere in the
-function.
+The release_firmware() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+This issue was detected by using the Coccinelle software.
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- sound/pci/sis7019.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_edid_load.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/pci/sis7019.c b/sound/pci/sis7019.c
-index 535efe2..51e4340 100644
---- a/sound/pci/sis7019.c
-+++ b/sound/pci/sis7019.c
-@@ -1377,8 +1377,9 @@ static int __devinit sis_chip_create(struct snd_card *card,
- 	if (rc)
- 		goto error_out_cleanup;
+diff --git a/drivers/gpu/drm/drm_edid_load.c b/drivers/gpu/drm/drm_edid_load.c
+index 0a235fe..732cb6f 100644
+--- a/drivers/gpu/drm/drm_edid_load.c
++++ b/drivers/gpu/drm/drm_edid_load.c
+@@ -254,8 +254,7 @@ static void *edid_load(struct drm_connector *connector, const char *name,
+ 	    name, connector_name);
  
--	if (request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
--			sis)) {
-+	rc = request_irq(pci->irq, sis_interrupt, IRQF_SHARED, KBUILD_MODNAME,
-+			 sis);
-+	if (rc) {
- 		dev_err(&pci->dev, "unable to allocate irq %d\n", sis->irq);
- 		goto error_out_cleanup;
- 	}
+ out:
+-	if (fw)
+-		release_firmware(fw);
++	release_firmware(fw);
+ 	return edid;
+ }
+ 
+-- 
+2.1.3
+
