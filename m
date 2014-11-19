@@ -1,69 +1,59 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 12:51:06 +0000
-Subject: [PATCH 1/1] tty: Deletion of unnecessary checks before two function calls
-Message-Id: <546F353A.9060301@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 18:25:31 +0000
+Subject: [PATCH 1/1] InfiniBand: Deletion of unnecessary checks before two function calls
+Message-Id: <546CE09B.9090101@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 13:42:29 +0100
+Date: Wed, 19 Nov 2014 19:19:21 +0100
 
-The functions put_device() and tty_kref_put() test whether their argument
-is NULL and then return immediately.
-Thus the test around the call is not needed.
+The functions kfree() and pci_dev_put() test whether their argument is NULL
+and then return immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/tty_io.c   | 6 ++----
- drivers/tty/tty_port.c | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/infiniband/hw/mlx4/main.c         | 3 +--
+ drivers/infiniband/hw/mthca/mthca_reset.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 848c17a..3302789 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -169,8 +169,7 @@ void free_tty_struct(struct tty_struct *tty)
- {
- 	if (!tty)
- 		return;
--	if (tty->dev)
--		put_device(tty->dev);
-+	put_device(tty->dev);
- 	kfree(tty->write_buf);
- 	tty->magic = 0xDEADDEAD;
- 	kfree(tty);
-@@ -1612,8 +1611,7 @@ static void release_tty(struct tty_struct *tty, int idx)
- 		tty->link->port->itty = NULL;
- 	cancel_work_sync(&tty->port->buf.work);
+diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
+index 8b72cf3..50dee1a 100644
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2512,8 +2512,7 @@ static void do_slave_init(struct mlx4_ib_dev *ibdev, int slave, int do_init)
+ 		if (!dm[i]) {
+ 			pr_err("failed to allocate memory for tunneling qp update work struct\n");
+ 			for (i = 0; i < dev->caps.num_ports; i++) {
+-				if (dm[i])
+-					kfree(dm[i]);
++				kfree(dm[i]);
+ 			}
+ 			goto out;
+ 		}
+diff --git a/drivers/infiniband/hw/mthca/mthca_reset.c b/drivers/infiniband/hw/mthca/mthca_reset.c
+index 74c6a94..c521654 100644
+--- a/drivers/infiniband/hw/mthca/mthca_reset.c
++++ b/drivers/infiniband/hw/mthca/mthca_reset.c
+@@ -279,8 +279,7 @@ good:
+ 	}
  
--	if (tty->link)
--		tty_kref_put(tty->link);
-+	tty_kref_put(tty->link);
- 	tty_kref_put(tty);
- }
+ out:
+-	if (bridge)
+-		pci_dev_put(bridge);
++	pci_dev_put(bridge);
+ 	kfree(bridge_header);
+ 	kfree(hca_header);
  
-diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
-index 1b93357..856c064 100644
---- a/drivers/tty/tty_port.c
-+++ b/drivers/tty/tty_port.c
-@@ -193,8 +193,7 @@ void tty_port_tty_set(struct tty_port *port, struct tty_struct *tty)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&port->lock, flags);
--	if (port->tty)
--		tty_kref_put(port->tty);
-+	tty_kref_put(port->tty);
- 	port->tty = tty_kref_get(tty);
- 	spin_unlock_irqrestore(&port->lock, flags);
- }
 -- 
 2.1.3
 
