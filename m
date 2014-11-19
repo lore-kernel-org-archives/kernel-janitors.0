@@ -1,28 +1,27 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Fri, 07 Nov 2014 21:41:00 +0000
-Subject: Re: [PATCH] Replace mentions of "list_struct" to "list_head"
-Message-Id: <20141107214100.GA1640@kroah.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 09:51:31 +0000
+Subject: Re: net: xfrm: Deletion of an unnecessary check before the function call "ipcomp_free_tfms"
+Message-Id: <546C6823.50900@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1415395128-7976-1-git-send-email-andrey.krieger.utkin@gmail.com>
-In-Reply-To: <1415395128-7976-1-git-send-email-andrey.krieger.utkin@gmail.com>
+References: <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546BAFF5.5020603@users.sourceforge.net> <20141119084542.GK4905@mwanda>
+In-Reply-To: <20141119084542.GK4905@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: shuah.kh@samsung.com, kenhelias@firemail.de, kernel-janitors@vger.kernel.org, valentina.manea.m@gmail.com, dri-devel@lists.freedesktop.org, oleg@redhat.com, mgorman@suse.de, paulmck@linux.vnet.ibm.com, jeffrey.t.kirsher@intel.com, linux-kbuild@vger.kernel.org, josh@joshtriplett.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com, yann.morin.1998@free.fr, ddstreet@ieee.org, awalls@md.metrocast.net, laijs@cn.fujitsu.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, yamada.m@jp.panasonic.com, alexander.deucher@amd.com, akpm@linux-foundation.org, linux-media@vger.kernel.org, christian.koenig@amd.com, m.chehab@samsung.com
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, Steffen Klassert <steffen.klassert@secunet.com>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, Nov 08, 2014 at 01:18:48AM +0400, Andrey Utkin wrote:
-> There's no such thing as "list_struct".
+>> The ipcomp_free_tfms() function tests whether its argument is NULL and then
+>> returns immediately. Thus the test around the call is not needed.
 > 
-> Signed-off-by: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-> ---
->  drivers/gpu/drm/radeon/mkregtable.c  | 24 ++++++++++++------------
->  drivers/media/pci/cx18/cx18-driver.h |  2 +-
->  include/linux/list.h                 | 34 +++++++++++++++++-----------------
->  include/linux/plist.h                | 10 +++++-----
->  include/linux/rculist.h              |  8 ++++----
->  scripts/kconfig/list.h               |  6 +++---
->  tools/usb/usbip/libsrc/list.h        |  2 +-
->  7 files changed, 43 insertions(+), 43 deletions(-)
+> It doesn't though...
 
-Stuff like this should be sent to the trivial maintainer...
+You are right that this function implementation does a bit more before
+returning because of a detected null pointer.
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/net/xfrm/xfrm_ipcomp.c?id94efd19d5fcae936261bd48e5b33b21897aacf8#n247
+
+Can you agree that input parameter validation is also performed there?
+Do you want that I resend my patch with a corrected commit message?
+
+Regards,
+Markus
