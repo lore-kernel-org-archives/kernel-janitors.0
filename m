@@ -1,39 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 27 Nov 2014 10:59:41 +0000
-Subject: Re: [patch] ASoC: sigmadsp: uninitialized variable in sigmadsp_activate_ctrl()
-Message-Id: <20141127105941.GF7712@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="2br5ESIskQR/DsXr"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 19:55:18 +0000
+Subject: [PATCH 1/1] mISDN: Deletion of unnecessary checks before the function call "vfree"
+Message-Id: <546CF5A6.3030305@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141126223516.GB443@mwanda>
-In-Reply-To: <20141126223516.GB443@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 20:48:26 +0100
 
---2br5ESIskQR/DsXr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The vfree() function performs also input parameter validation. Thus the test
+around the call is not needed.
 
-On Thu, Nov 27, 2014 at 01:35:16AM +0300, Dan Carpenter wrote:
-> The "changed" variable should be set to false at the start.
+This issue was detected by using the Coccinelle software.
 
-Applied, thanks.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/isdn/mISDN/l1oip_codec.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---2br5ESIskQR/DsXr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/drivers/isdn/mISDN/l1oip_codec.c b/drivers/isdn/mISDN/l1oip_codec.c
+index a601c84..9b033be 100644
+--- a/drivers/isdn/mISDN/l1oip_codec.c
++++ b/drivers/isdn/mISDN/l1oip_codec.c
+@@ -312,10 +312,8 @@ l1oip_ulaw_to_alaw(u8 *data, int len, u8 *result)
+ void
+ l1oip_4bit_free(void)
+ {
+-	if (table_dec)
+-		vfree(table_dec);
+-	if (table_com)
+-		vfree(table_com);
++	vfree(table_dec);
++	vfree(table_com);
+ 	table_com = NULL;
+ 	table_dec = NULL;
+ }
+-- 
+2.1.3
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUdwQdAAoJECTWi3JdVIfQvO4H/3TRnw0fyBYi0iJOkOtdh3Rj
-+pwLMgavF/Ha+lrPe0mgS5RC/7WSS9QZ+OyfeX2VCPDezUdQr4jH7G/Zw4jTGDSc
-O2kstEhbrw8IbvrZFZP3SelHjB29ccKBsXmop9KA9HJXvtBCYkZ1HvUXv5VybVm1
-tyYooNJVabN+/HiZQ7rQhm+jiiYJQWsasyy7EXdsbzjNZvBgOM7NmDTo5xTGlQyM
-jISkvVYknAH6W5UVaQtI9OKOdjKTUsJvN4k3oAyajZ1CZIySwqRff+YkpanNT3bv
-//ha9tbvcWjQM67iXB/5Sbdz9qA0nUaCZrFN7LjMwE78EPgqPKtTaUx0vYjzKlM=
-=MFKq
------END PGP SIGNATURE-----
-
---2br5ESIskQR/DsXr--
