@@ -1,46 +1,23 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Date: Tue, 18 Nov 2014 15:39:32 +0000
-Subject: Re: [patch] exit: silence a bogus static checker warning
-Message-Id: <20141118153932.GA3790@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 18:49:52 +0000
+Subject: Re: net: sched: Deletion of an unnecessary check before the function call "kfree"
+Message-Id: <546CE650.6080205@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141118074422.GA17829@mwanda>
-In-Reply-To: <20141118074422.GA17829@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546BAB93.4010406@users.sourceforge.net> <546CC9B3.5060405@gmail.com>
+In-Reply-To: <546CC9B3.5060405@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.cz>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Rik van Riel <riel@redhat.com>, Ionut Alexa <ionut.m.alexa@gmail.com>, Peter Hurley <peter@hurleysoftware.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: John Fastabend <john.fastabend@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 11/18, Dan Carpenter wrote:
->
-> Smatch complains about this:
->
-> 	kernel/exit.c:543 forget_original_parent()
-> 	warn: add some parenthesis here?
->
-> I don't normally advocate changing the code to make the static checker
-> happy but these are normally precedence bugs so I think it's ok to put
-> parenthesis so it's clear the code is deliberate.
+> Marcus, what tree are you looking at?
 
-I still think that "if (!A = B)" doesn't look as a potential precedence
-bug, but I won't argue.
+I dared to base this update suggestion on the source files
+for Linux 3.17.3. Are newer software developments relevant here?
 
-Andrew, this fixes   exit-reparent-cleanup-the-changing-of-parent.patch
-in -mm tree.
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/log/net/sched/
 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index 6192422..1192d12 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -540,7 +540,7 @@ static void forget_original_parent(struct task_struct *father)
->  	list_for_each_entry(p, &father->children, sibling) {
->  		for_each_thread(p, t) {
->  			t->real_parent = reaper;
-> -			BUG_ON(!t->ptrace != (t->parent = father));
-> +			BUG_ON((!t->ptrace) != (t->parent = father));
->  			if (likely(!t->ptrace))
->  				t->parent = t->real_parent;
->  			if (t->pdeath_signal)
+Regards,
+Markus
 
