@@ -1,88 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 17:03:49 +0000
-Subject: [PATCH 8/8 v2] wusb: replace memset by memzero_explicit
-Message-Id: <1417367029-32762-9-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 10:44:27 +0000
+Subject: [PATCH 1/1] firmware class: Deletion of an unnecessary check before the function call "vunmap"
+Message-Id: <546C748B.1010208@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ming Lei <ming.lei@canonical.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 11:38:38 +0100
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+The vunmap() function performes also input parameter validation. Thus the test
+around the call is not needed.
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
+This issue was detected by using the Coccinelle software.
 
-{
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
-}
-// </smpl>
-
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
+ drivers/base/firmware_class.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-v2: fixed email address
-
- drivers/usb/wusbcore/dev-sysfs.c |    2 +-
- drivers/usb/wusbcore/security.c  |    8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/usb/wusbcore/dev-sysfs.c b/drivers/usb/wusbcore/dev-sysfs.c
-index 1018345..415b140 100644
---- a/drivers/usb/wusbcore/dev-sysfs.c
-+++ b/drivers/usb/wusbcore/dev-sysfs.c
-@@ -101,7 +101,7 @@ static ssize_t wusb_ck_store(struct device *dev,
- 	if (wusbhc = NULL)
- 		return -ENODEV;
- 	result = wusb_dev_4way_handshake(wusbhc, usb_dev->wusb_dev, &ck);
--	memset(&ck, 0, sizeof(ck));
-+	memzero_explicit(&ck, sizeof(ck));
- 	wusbhc_put(wusbhc);
- 	return result < 0 ? result : size;
- }
-diff --git a/drivers/usb/wusbcore/security.c b/drivers/usb/wusbcore/security.c
-index cc74d66..b66faaf 100644
---- a/drivers/usb/wusbcore/security.c
-+++ b/drivers/usb/wusbcore/security.c
-@@ -522,10 +522,10 @@ error_hs3:
- error_hs2:
- error_hs1:
- 	memset(hs, 0, 3*sizeof(hs[0]));
--	memset(&keydvt_out, 0, sizeof(keydvt_out));
--	memset(&keydvt_in, 0, sizeof(keydvt_in));
--	memset(&ccm_n, 0, sizeof(ccm_n));
--	memset(mic, 0, sizeof(mic));
-+	memzero_explicit(&keydvt_out, sizeof(keydvt_out));
-+	memzero_explicit(&keydvt_in, sizeof(keydvt_in));
-+	memzero_explicit(&ccm_n, sizeof(ccm_n));
-+	memzero_explicit(mic, sizeof(mic));
- 	if (result < 0)
- 		wusb_dev_set_encryption(usb_dev, 0);
- error_dev_set_encryption:
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index 3d785eb..532662c 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -591,8 +591,7 @@ static int fw_map_pages_buf(struct firmware_buf *buf)
+ 	if (!buf->is_paged_buf)
+ 		return 0;
+ 
+-	if (buf->data)
+-		vunmap(buf->data);
++	vunmap(buf->data);
+ 	buf->data = vmap(buf->pages, buf->nr_pages, 0, PAGE_KERNEL_RO);
+ 	if (!buf->data)
+ 		return -ENOMEM;
+-- 
+2.1.3
 
