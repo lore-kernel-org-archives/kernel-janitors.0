@@ -1,99 +1,88 @@
-From: Ilya Dryomov <ilya.dryomov@inktank.com>
-Date: Mon, 03 Nov 2014 14:23:12 +0000
-Subject: Re: ceph: Deletion of unnecessary checks before two function calls
-Message-Id: <CALFYKtAW2q-6xgCoV53iTGrt=6o+mHzX0bB+Ltg6AShx-g1qrw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 15:06:53 +0000
+Subject: [PATCH 1/1] EDAC: Deletion of unnecessary checks before the function call "pci_dev_put"
+Message-Id: <546CB20D.4070808@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54563DCB.2010103@users.sourceforge.net>
-	<CALFYKtAJG5W9-BAHrqEcC-FfqdJERCqkBADo4yTUyjzb+wCHnQ@mail.gmail.com>
-	<545782AA.5080408@users.sourceforge.net>
-In-Reply-To: <545782AA.5080408@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Sage Weil <sage@inktank.com>, Ceph Development <ceph-devel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, trivial@kernel.org, Coccinelle <cocci@systeme.lip6.fr>, "Yan, Zheng" <zyan@redhat.com>
+To: Borislav Petkov <bp@alien8.de>, Doug Thompson <dougthompson@xmission.com>, Jason Uhlenkott <juhlenko@akamai.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Tim Small <tim@buttersideup.com>, linux-edac@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Nov 3, 2014 at 4:27 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
->> dput() also checks for NULL argument, but the check is wrapped into
->> unlikely(), which is why I presume it wasn't picked up.  It would be
->> great if you could improve your coccinelle script to handle
->> {un,}likely() as well.
->
-> Thanks for your suggestion.
->
-> Should I consider any more fine-tuning for the affected script
-> "list_input_parameter_validation1.cocci" in the near future?
-> https://lkml.org/lkml/2014/3/5/362
-> http://article.gmane.org/gmane.comp.version-control.coccinelle/3514
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 16:00:13 +0100
 
-Make sure it at least catches stuff like:
+The pci_dev_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-{
-    if (input) {
+This issue was detected by using the Coccinelle software.
 
-    }
-}
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/edac/i3000_edac.c      | 3 +--
+ drivers/edac/i3200_edac.c      | 3 +--
+ drivers/edac/i82443bxgx_edac.c | 3 +--
+ drivers/edac/x38_edac.c        | 3 +--
+ 4 files changed, 4 insertions(+), 8 deletions(-)
 
-{
-    if (likely(input)) {
+diff --git a/drivers/edac/i3000_edac.c b/drivers/edac/i3000_edac.c
+index cd28b96..5cb36a6 100644
+--- a/drivers/edac/i3000_edac.c
++++ b/drivers/edac/i3000_edac.c
+@@ -542,8 +542,7 @@ fail1:
+ 	pci_unregister_driver(&i3000_driver);
+ 
+ fail0:
+-	if (mci_pdev)
+-		pci_dev_put(mci_pdev);
++	pci_dev_put(mci_pdev);
+ 
+ 	return pci_rc;
+ }
+diff --git a/drivers/edac/i3200_edac.c b/drivers/edac/i3200_edac.c
+index aa98b13..4ad062b 100644
+--- a/drivers/edac/i3200_edac.c
++++ b/drivers/edac/i3200_edac.c
+@@ -523,8 +523,7 @@ fail1:
+ 	pci_unregister_driver(&i3200_driver);
+ 
+ fail0:
+-	if (mci_pdev)
+-		pci_dev_put(mci_pdev);
++	pci_dev_put(mci_pdev);
+ 
+ 	return pci_rc;
+ }
+diff --git a/drivers/edac/i82443bxgx_edac.c b/drivers/edac/i82443bxgx_edac.c
+index d730e276..b4705d9 100644
+--- a/drivers/edac/i82443bxgx_edac.c
++++ b/drivers/edac/i82443bxgx_edac.c
+@@ -458,8 +458,7 @@ static void __exit i82443bxgx_edacmc_exit(void)
+ 	if (!i82443bxgx_registered)
+ 		i82443bxgx_edacmc_remove_one(mci_pdev);
+ 
+-	if (mci_pdev)
+-		pci_dev_put(mci_pdev);
++	pci_dev_put(mci_pdev);
+ }
+ 
+ module_init(i82443bxgx_edacmc_init);
+diff --git a/drivers/edac/x38_edac.c b/drivers/edac/x38_edac.c
+index e644b52..7c5cdc6 100644
+--- a/drivers/edac/x38_edac.c
++++ b/drivers/edac/x38_edac.c
+@@ -500,8 +500,7 @@ fail1:
+ 	pci_unregister_driver(&x38_driver);
+ 
+ fail0:
+-	if (mci_pdev)
+-		pci_dev_put(mci_pdev);
++	pci_dev_put(mci_pdev);
+ 
+ 	return pci_rc;
+ }
+-- 
+2.1.3
 
-    }
-}
-
-{
-    if (!input)
-        return;
-
-    ...
-}
-
-{
-    if (unlikely(!input))
-        return;
-
-    ...
-}
-
-And of course each match then has to be validated manually.
-
->
->
->>> @@ -590,15 +589,13 @@ static void queue_realm_cap_snaps(struct ceph_snap_realm
->>> *realm)
->>
->> The patch was corrupted, that should have been a single line.  I fixed
->> it up but you may want to look into your email client settings.
->
-> Thanks for your feedback.
->
-> Does this example show a conflict between long comments after patch ranges and
-> line length limitation for email eventually?
-
-There is no line length limitation for email, at least one that would
-be relevant here.  Patches should be sent verbatim, no line wrapping,
-expandtab, etc or they won't apply.  I'd recommend git-send-email, but
-if you want to make thunderbird work for patches (which is what you
-seem to be using) have a look at the "Thunderbird (GUI)" section of
-Documentation/email-clients.txt in the kernel tree.
-
-Thanks,
-
-                Ilya
