@@ -1,68 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 17:03:45 +0000
-Subject: [PATCH 4/8 v2] cifs: replace memset by memzero_explicit
-Message-Id: <1417367029-32762-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 13:28:50 +0000
+Subject: [PATCH 1/1] agp/intel-gtt: Deletion of unnecessary checks before the function call "pci_dev_put"
+Message-Id: <546C9B12.5070800@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steve French <sfrench@samba.org>
-Cc: kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 19 Nov 2014 14:24:20 +0100
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+The pci_dev_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
+This issue was detected by using the Coccinelle software.
 
-{
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
-}
-// </smpl>
-
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
+ drivers/char/agp/intel-gtt.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-v2: fixed email address
-
- fs/cifs/smbencrypt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/cifs/smbencrypt.c b/fs/cifs/smbencrypt.c
-index 6c15663..6512c19 100644
---- a/fs/cifs/smbencrypt.c
-+++ b/fs/cifs/smbencrypt.c
-@@ -221,7 +221,7 @@ E_md4hash(const unsigned char *passwd, unsigned char *p16,
- 	}
+diff --git a/drivers/char/agp/intel-gtt.c b/drivers/char/agp/intel-gtt.c
+index 9a024f8..db5877e 100644
+--- a/drivers/char/agp/intel-gtt.c
++++ b/drivers/char/agp/intel-gtt.c
+@@ -1434,10 +1434,8 @@ void intel_gmch_remove(void)
+ 	if (--intel_private.refcount)
+ 		return;
  
- 	rc = mdfour(p16, (unsigned char *) wpwd, len * sizeof(__le16));
--	memset(wpwd, 0, 129 * sizeof(__le16));
-+	memzero_explicit(wpwd, 129 * sizeof(__le16));
- 
- 	return rc;
+-	if (intel_private.pcidev)
+-		pci_dev_put(intel_private.pcidev);
+-	if (intel_private.bridge_dev)
+-		pci_dev_put(intel_private.bridge_dev);
++	pci_dev_put(intel_private.pcidev);
++	pci_dev_put(intel_private.bridge_dev);
+ 	intel_private.driver = NULL;
  }
+ EXPORT_SYMBOL(intel_gmch_remove);
+-- 
+2.1.3
 
