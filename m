@@ -1,49 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 17:15:11 +0000
-Subject: [PATCH 2/6] SCSI-libfc: Fix typos for the word "destroy"
-Message-Id: <5473679F.1000909@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 16:47:29 +0000
+Subject: [PATCH 1/1] PCI: hotplug: Deletion of an unnecessary check before the function call "pci_dev_put"
+Message-Id: <546E1B21.2070206@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54736422.90409@users.sourceforge.net>
-In-Reply-To: <54736422.90409@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E. J. Bottomley" <JBottomley@parallels.com>, Robert Love <robert.w.love@intel.com>, linux-scsi@vger.kernel.org, fcoe-devel@open-fcoe.org
-Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>, Scott Murray <scott@spiteful.org>, linux-pci@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 15:40:41 +0100
+Date: Thu, 20 Nov 2014 17:42:23 +0100
 
-Identifiers were corrected in descriptions for the functions
-fc_fcp_pkt_destroy() and fc_fcp_destroy().
+The pci_dev_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/libfc/fc_fcp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/hotplug/cpci_hotplug_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/libfc/fc_fcp.c b/drivers/scsi/libfc/fc_fcp.c
-index 1d7e76e..5649fc9 100644
---- a/drivers/scsi/libfc/fc_fcp.c
-+++ b/drivers/scsi/libfc/fc_fcp.c
-@@ -191,7 +191,7 @@ static void fc_fcp_pkt_hold(struct fc_fcp_pkt *fsp)
+diff --git a/drivers/pci/hotplug/cpci_hotplug_core.c b/drivers/pci/hotplug/cpci_hotplug_core.c
+index e09cf78..82c969b 100644
+--- a/drivers/pci/hotplug/cpci_hotplug_core.c
++++ b/drivers/pci/hotplug/cpci_hotplug_core.c
+@@ -211,8 +211,7 @@ static void release_slot(struct hotplug_slot *hotplug_slot)
+ 
+ 	kfree(slot->hotplug_slot->info);
+ 	kfree(slot->hotplug_slot);
+-	if (slot->dev)
+-		pci_dev_put(slot->dev);
++	pci_dev_put(slot->dev);
+ 	kfree(slot);
  }
  
- /**
-- * fc_fcp_pkt_destory() - Release hold on a fcp_pkt
-+ * fc_fcp_pkt_destroy() - Release hold on a fcp_pkt
-  * @seq: The sequence that the FCP packet is on (required by destructor API)
-  * @fsp: The FCP packet to be released
-  *
-@@ -2216,7 +2216,7 @@ int fc_change_queue_type(struct scsi_device *sdev, int tag_type)
- EXPORT_SYMBOL(fc_change_queue_type);
- 
- /**
-- * fc_fcp_destory() - Tear down the FCP layer for a given local port
-+ * fc_fcp_destroy() - Tear down the FCP layer for a given local port
-  * @lport: The local port that no longer needs the FCP layer
-  */
- void fc_fcp_destroy(struct fc_lport *lport)
 -- 
 2.1.3
 
