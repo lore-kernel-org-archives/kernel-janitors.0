@@ -1,62 +1,61 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 18:14:14 +0000
-Subject: [PATCH 3/4] staging: unisys: remove unneeded structure
-Message-Id: <1417371255-2282-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 20 Nov 2014 17:34:00 +0000
+Subject: [PATCH 5/7] rsxx: fix error return code
+Message-Id: <1416504842-18548-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Benjamin Romer <benjamin.romer@unisys.com>
-Cc: kernel-janitors@vger.kernel.org, David Kershner <david.kershner@unisys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sparmaintainer@unisys.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Joshua Morris <josh.h.morris@us.ibm.com>
+Cc: kernel-janitors@vger.kernel.org, Philip Kelleher <pjk1939@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Delete a local structure that is only used to be initialized by memset.
+Return a negative error code on failure.
 
-A semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-identifier x,i;
+identifier ret; expression e1,e2;
 @@
-
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
 {
-... when any
--struct i x;
-<+... when != x
-- memset(&x,...);
-...+>
+  ... when != ret = e2
+      when forall
+ return ret;
 }
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/staging/unisys/visorchipset/visorchipset_main.c |    3 ---
- 1 file changed, 3 deletions(-)
+The patches in this series are independent of each other.
 
-diff --git a/drivers/staging/unisys/visorchipset/visorchipset_main.c b/drivers/staging/unisys/visorchipset/visorchipset_main.c
-index c8f7bea..7e6be32 100644
---- a/drivers/staging/unisys/visorchipset/visorchipset_main.c
-+++ b/drivers/staging/unisys/visorchipset/visorchipset_main.c
-@@ -1940,7 +1940,6 @@ static HOSTADDRESS controlvm_get_channel_address(void)
- static void
- controlvm_periodic_work(struct work_struct *work)
- {
--	struct visorchipset_channel_info chanInfo;
- 	struct controlvm_message inmsg;
- 	BOOL gotACommand = FALSE;
- 	BOOL handle_command_failed = FALSE;
-@@ -1955,8 +1954,6 @@ controlvm_periodic_work(struct work_struct *work)
- 	if (visorchipset_clientregwait && !clientregistered)
- 		goto Away;
+ drivers/block/rsxx/core.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
+index d8b2488..3801721 100644
+--- a/drivers/block/rsxx/core.c
++++ b/drivers/block/rsxx/core.c
+@@ -893,6 +893,7 @@ static int rsxx_pci_probe(struct pci_dev *dev,
+ 	card->event_wq = create_singlethread_workqueue(DRIVER_NAME"_event");
+ 	if (!card->event_wq) {
+ 		dev_err(CARD_TO_DEV(card), "Failed card event setup.\n");
++		st = -ENOMEM;
+ 		goto failed_event_handler;
+ 	}
  
--	memset(&chanInfo, 0, sizeof(struct visorchipset_channel_info));
--
- 	Poll_Count++;
- 	if (Poll_Count >= 250)
- 		;	/* keep going */
 
