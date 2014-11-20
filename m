@@ -1,43 +1,73 @@
-From: Boaz Harrosh <openosd@gmail.com>
-Date: Tue, 18 Nov 2014 09:13:31 +0000
-Subject: Re: [osd-dev] [PATCH 1/1] exofs: Deletion of an unnecessary check before the function call "ore_put_
-Message-Id: <546B0DBB.7080000@gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 13:50:26 +0000
+Subject: [PATCH 1/1] net: Xilinx: Deletion of unnecessary checks before two function calls
+Message-Id: <546DF1A2.8090208@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>	<530A086E.8010901@users.sourceforge.net>	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>	<530A72AA.3000601@users.sourceforge.net>	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>	<530B5FB6.6010207@users.sourceforge.net>	<alpine.DEB.2.10.1402241710370.2074@hadrien>	<530C5E18.1020800@users.sourceforge.net>	<alpine.DEB.2.10.1402251014170.2080@hadrien>	<530CD2C4.4050903@users.sourceforge.net>	<alpine.DEB.2.10.1402251840450.7035@hadrien>	<530CF8FF.8080600@users.sourceforge.net>	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>	<530DD06F.4090703@users.sourceforge.net>	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.sourceforge.net> <546B0D08.2070305@users.sourceforge.net>
-In-Reply-To: <546B0D08.2070305@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Benny Halevy <bhalevy@primarydata.com>, Boaz Harrosh <bharrosh@panasas.com>, osd-dev@open-osd.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Coccinelle <cocci@systeme.lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-On 11/18/2014 11:10 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Nov 2014 10:05:19 +0100
-> 
-> The ore_put_io_state() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/exofs/ore_raid.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
-> index 84529b8..5dc7c4c 100644
-> --- a/fs/exofs/ore_raid.c
-> +++ b/fs/exofs/ore_raid.c
-> @@ -716,6 +716,5 @@ void _ore_free_raid_stuff(struct ore_io_state *ios)
->  		if (ios->extra_part_alloc)
->  			kfree(ios->per_dev[0].sglist);
->  	}
-> -	if (ios->ios_read_4_write)
-> -		ore_put_io_state(ios->ios_read_4_write);
-> +	ore_put_io_state(ios->ios_read_4_write);
->  }
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 14:47:12 +0100
 
-Thanks will submit for next Kernel
-Boaz
+The functions kfree() and of_node_put() test whether their argument is NULL
+and then return immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/xilinx/ll_temac_main.c   | 3 +--
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index fda5891..af60867 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -224,8 +224,7 @@ static void temac_dma_bd_release(struct net_device *ndev)
+ 		dma_free_coherent(ndev->dev.parent,
+ 				sizeof(*lp->tx_bd_v) * TX_BD_NUM,
+ 				lp->tx_bd_v, lp->tx_bd_p);
+-	if (lp->rx_skb)
+-		kfree(lp->rx_skb);
++	kfree(lp->rx_skb);
+ }
+ 
+ /**
+diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+index 28dbbdc..2485879 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
++++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+@@ -1200,8 +1200,7 @@ static int xemaclite_of_remove(struct platform_device *of_dev)
+ 
+ 	unregister_netdev(ndev);
+ 
+-	if (lp->phy_node)
+-		of_node_put(lp->phy_node);
++	of_node_put(lp->phy_node);
+ 	lp->phy_node = NULL;
+ 
+ 	xemaclite_remove_ndev(ndev);
+-- 
+2.1.3
+
