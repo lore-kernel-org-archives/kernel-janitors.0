@@ -1,82 +1,64 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 17:03:44 +0000
-Subject: [PATCH 3/8 v2] crypto: replace memset by memzero_explicit
-Message-Id: <1417367029-32762-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 20 Nov 2014 17:34:01 +0000
+Subject: [PATCH 6/7] host: ehci-w90x900: fix error return code
+Message-Id: <1416504842-18548-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+Return a negative error code on failure.
+
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-identifier x;
-type T;
+identifier ret; expression e1,e2;
 @@
-
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
 {
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
+  ... when != ret = e2
+      when forall
+ return ret;
 }
 // </smpl>
-
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
+The patches in this series are independent of each other.
 
-v2: fixed email address
+ drivers/usb/host/ehci-w90x900.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- arch/x86/crypto/sha256_ssse3_glue.c |    2 +-
- arch/x86/crypto/sha512_ssse3_glue.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/crypto/sha512_ssse3_glue.c b/arch/x86/crypto/sha512_ssse3_glue.c
-index 26a5898..0b6af26 100644
---- a/arch/x86/crypto/sha512_ssse3_glue.c
-+++ b/arch/x86/crypto/sha512_ssse3_glue.c
-@@ -219,7 +219,7 @@ static int sha384_ssse3_final(struct shash_desc *desc, u8 *hash)
- 	sha512_ssse3_final(desc, D);
+diff --git a/drivers/usb/host/ehci-w90x900.c b/drivers/usb/host/ehci-w90x900.c
+index 93d9cd6..e42a29e 100644
+--- a/drivers/usb/host/ehci-w90x900.c
++++ b/drivers/usb/host/ehci-w90x900.c
+@@ -75,8 +75,10 @@ static int usb_w90x900_probe(const struct hc_driver *driver,
+ 	__raw_writel(val, ehci->regs+PHY1_CTR);
  
- 	memcpy(hash, D, SHA384_DIGEST_SIZE);
--	memset(D, 0, SHA512_DIGEST_SIZE);
-+	memzero_explicit(D, SHA512_DIGEST_SIZE);
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
++	if (irq < 0) {
++		retval = irq;
+ 		goto err2;
++	}
  
- 	return 0;
- }
-diff --git a/arch/x86/crypto/sha256_ssse3_glue.c b/arch/x86/crypto/sha256_ssse3_glue.c
-index 4dc100d..8fad72f 100644
---- a/arch/x86/crypto/sha256_ssse3_glue.c
-+++ b/arch/x86/crypto/sha256_ssse3_glue.c
-@@ -211,7 +211,7 @@ static int sha224_ssse3_final(struct shash_desc *desc, u8 *hash)
- 	sha256_ssse3_final(desc, D);
- 
- 	memcpy(hash, D, SHA224_DIGEST_SIZE);
--	memset(D, 0, SHA256_DIGEST_SIZE);
-+	memzero_explicit(D, SHA256_DIGEST_SIZE);
- 
- 	return 0;
- }
+ 	retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (retval != 0)
 
