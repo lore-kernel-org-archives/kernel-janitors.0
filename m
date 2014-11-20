@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 11:45:50 +0000
-Subject: [PATCH 1/1] tty-hvsi_lib: Deletion of an unnecessary check before the function call "tty_kref_put"
-Message-Id: <546F25EE.5090601@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 10:50:32 +0000
+Subject: [PATCH 1/1] [media] platform: Deletion of unnecessary checks before two function calls
+Message-Id: <546DC778.8050204@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -24,36 +24,61 @@ In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linuxppc-dev@lists.ozlabs.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 12:40:32 +0100
+Date: Thu, 20 Nov 2014 11:44:20 +0100
 
-The tty_kref_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+The functions i2c_put_adapter() and release_firmware() test whether their
+argument is NULL and then return immediately. Thus the test around the call
+is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/tty/hvc/hvsi_lib.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-is.c   | 6 ++----
+ drivers/media/platform/s3c-camif/camif-core.c | 3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/hvc/hvsi_lib.c b/drivers/tty/hvc/hvsi_lib.c
-index 7ae6c29..a270f04 100644
---- a/drivers/tty/hvc/hvsi_lib.c
-+++ b/drivers/tty/hvc/hvsi_lib.c
-@@ -405,8 +405,7 @@ void hvsilib_close(struct hvsi_priv *pv, struct hvc_struct *hp)
- 		hvsi_send_close(pv);
- 	}
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 5476dce..a1db27b 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -428,8 +428,7 @@ static void fimc_is_load_firmware(const struct firmware *fw, void *context)
+ 	 * needed around for copying to the IS working memory every
+ 	 * time before the Cortex-A5 is restarted.
+ 	 */
+-	if (is->fw.f_w)
+-		release_firmware(is->fw.f_w);
++	release_firmware(is->fw.f_w);
+ 	is->fw.f_w = fw;
+ done:
+ 	mutex_unlock(&is->lock);
+@@ -937,8 +936,7 @@ static int fimc_is_remove(struct platform_device *pdev)
+ 	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
+ 	fimc_is_put_clocks(is);
+ 	fimc_is_debugfs_remove(is);
+-	if (is->fw.f_w)
+-		release_firmware(is->fw.f_w);
++	release_firmware(is->fw.f_w);
+ 	fimc_is_free_cpu_memory(is);
  
--	if (pv->tty)
--		tty_kref_put(pv->tty);
-+	tty_kref_put(pv->tty);
- 	pv->tty = NULL;
+ 	return 0;
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index b385747..3b09b5b 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -256,8 +256,7 @@ static void camif_unregister_sensor(struct camif_dev *camif)
+ 	v4l2_device_unregister_subdev(sd);
+ 	camif->sensor.sd = NULL;
+ 	i2c_unregister_device(client);
+-	if (adapter)
+-		i2c_put_adapter(adapter);
++	i2c_put_adapter(adapter);
  }
  
+ static int camif_create_media_links(struct camif_dev *camif)
 -- 
 2.1.3
 
