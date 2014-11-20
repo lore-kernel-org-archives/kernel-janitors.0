@@ -1,43 +1,172 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 30 Nov 2014 21:55:18 +0000
-Subject: [PATCH 1/1] [media] ddbridge: Deletion of an unnecessary check before the function call "dvb_unregis
-Message-Id: <547B9246.3080209@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 20 Nov 2014 17:33:55 +0000
+Subject: [PATCH 0/7] fix error return code
+Message-Id: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 30 Nov 2014 22:50:20 +0100
+The complate semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-The dvb_unregister_device() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+// <smpl>
+@ok exists@
+identifier f,ret,i;
+expression e;
+constant c;
+@@
 
-This issue was detected by using the Coccinelle software.
+// identify a function that returns a negative return value at least once.
+f(...) {
+... when any
+(
+return -c@i;
+|
+ret =3D -c@i;
+... when !=3D ret =3D e
+return ret;
+|
+if (ret < 0) { ... return ret; }
+)
+... when any
+}
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/pci/ddbridge/ddbridge-core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+@r exists@
+identifier ret,ok.f,fn;
+expression e1,e2,e3,e4,e5,e6,x;
+statement S,S1;
+position p1,p2,p3;
+@@
 
-diff --git a/drivers/media/pci/ddbridge/ddbridge-core.c b/drivers/media/pci/ddbridge/ddbridge-core.c
-index c82e855..9e3492e 100644
---- a/drivers/media/pci/ddbridge/ddbridge-core.c
-+++ b/drivers/media/pci/ddbridge/ddbridge-core.c
-@@ -1118,8 +1118,7 @@ static void ddb_ports_detach(struct ddb *dev)
- 			dvb_input_detach(port->input[1]);
- 			break;
- 		case DDB_PORT_CI:
--			if (port->output->dev)
--				dvb_unregister_device(port->output->dev);
-+			dvb_unregister_device(port->output->dev);
- 			if (port->en) {
- 				ddb_input_stop(port->input[0]);
- 				ddb_output_stop(port->output);
--- 
-2.1.3
+// identify a case where the return variable is set to a non-negative value
+// and then returned in error-handling code
+f(...) {
+... when any
+(
+if@p1 (\(ret < 0\|ret !=3D 0\))
+ { ... return ret; }
+|
+ret@p1 =3D 0
+)
+... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
+    when !=3D &ret
+    when any
+(
+ if (<+... ret =3D e5 ...+>) S1
+|
+ if (<+... &ret ...+>) S1
+|
+if@p2(<+...x =3D fn(...)...+>)
+ {
+  ... when !=3D ret =3D e6
+      when forall
+ return@p3 ret;
+}
+|
+break;
+|
+x =3D fn(...)
+... when !=3D \(ret =3D e4\|ret++\|ret--\|ret+=E4\|ret-=E4\)
+    when !=3D &ret
+(
+ if (<+... ret =3D e3 ...+>) S
+|
+ if (<+... &ret ...+>) S
+|
+if@p2(<+...\(x !=3D 0\|x < 0\|x =3D NULL\|IS_ERR(x)\)...+>)
+ {
+  ... when !=3D ret =3D e2
+      when forall
+ return@p3 ret;
+}
+)
+)
+... when any
+}
 
+@printer depends on r@
+position p;
+identifier ok.f,pr;
+constant char [] c;
+@@
+
+f(...) { <...pr@p(...,c,...)...> }
+
+@bad0 exists@
+identifier r.ret,ok.f,g !=3D {ERR_PTR,IS_ERR};
+position p !=3D printer.p;
+@@
+
+f(...) { ... when any
+g@p(...,ret,...)
+... when any
+ }
+
+@bad depends on !bad0 exists@
+position r.p1,r.p2;
+statement S1,S2;
+identifier r.ret;
+expression e1;
+@@
+
+// ignore the above if there is some path where the variable is set to
+// something else
+(
+if@p1 (\(ret < 0\|ret !=3D 0\)) S1
+|
+ret@p1 =3D 0
+)
+... when any
+ \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\|&ret\)
+... when any
+if@p2(...) S2
+
+@bad1 depends on !bad0 && !bad exists@
+position r.p2;
+statement S2;
+identifier r.ret;
+expression e1;
+constant c;
+@@
+
+ret =3D -c
+... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
+    when !=3D &ret
+    when any
+if@p2(...) S2
+
+@bad2 depends on !bad0 && !bad && !bad1 exists@
+position r.p1,r.p2;
+identifier r.ret;
+expression e1;
+statement S2;
+constant c;
+@@
+
+// likewise ignore it if there has been an intervening return
+ret@p1 =3D 0
+... when !=3D if (...) { ... ret =3D e1 ... return ret; }
+    when !=3D if (...) { ... return -c; }
+    when any
+if@p2(...) S2
+
+
+@script:python depends on !bad0 && !bad && !bad1 && !bad2@
+p1 << r.p1;
+p2 << r.p2;
+p3 << r.p3;
+@@
+
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+cocci.print_secs("",p3)
+
+// </smpl>
+
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
