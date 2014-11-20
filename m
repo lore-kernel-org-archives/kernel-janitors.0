@@ -1,57 +1,86 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Nov 2014 13:42:48 +0000
-Subject: [PATCH 1/1] tools lib traceevent: Deletion of an unnecessary check before the function call "free_ar
-Message-Id: <5469FB58.4070205@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 12:33:25 +0000
+Subject: [PATCH 1/1] [media] USB: Deletion of unnecessary checks before three function calls
+Message-Id: <546DDF95.5090300@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
 In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>, Mike Isely <isely@pobox.com>, linux-media@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Nov 2014 14:38:14 +0100
+Date: Thu, 20 Nov 2014 13:26:36 +0100
 
-The free_arg() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+The functions pvr2_hdw_destroy(), rc_unregister_device() and vfree() perform
+also input parameter validation. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- tools/lib/traceevent/parse-filter.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/usb/au0828/au0828-input.c     | 3 +--
+ drivers/media/usb/em28xx/em28xx-input.c     | 3 +--
+ drivers/media/usb/pvrusb2/pvrusb2-context.c | 2 +-
+ drivers/media/usb/s2255/s2255drv.c          | 3 +--
+ 4 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index b502344..78debaf 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -1237,8 +1237,7 @@ filter_event(struct event_filter *filter, struct event_format *event,
- 	if (filter_type = NULL)
- 		return PEVENT_ERRNO__MEM_ALLOC_FAILED;
+diff --git a/drivers/media/usb/au0828/au0828-input.c b/drivers/media/usb/au0828/au0828-input.c
+index fd0d3a90..3357141 100644
+--- a/drivers/media/usb/au0828/au0828-input.c
++++ b/drivers/media/usb/au0828/au0828-input.c
+@@ -353,8 +353,7 @@ void au0828_rc_unregister(struct au0828_dev *dev)
+ 	if (!ir)
+ 		return;
  
--	if (filter_type->filter)
--		free_arg(filter_type->filter);
-+	free_arg(filter_type->filter);
- 	filter_type->filter = arg;
+-	if (ir->rc)
+-		rc_unregister_device(ir->rc);
++	rc_unregister_device(ir->rc);
  
+ 	/* done */
+ 	kfree(ir);
+diff --git a/drivers/media/usb/em28xx/em28xx-input.c b/drivers/media/usb/em28xx/em28xx-input.c
+index ed843bd..67a22f4 100644
+--- a/drivers/media/usb/em28xx/em28xx-input.c
++++ b/drivers/media/usb/em28xx/em28xx-input.c
+@@ -838,8 +838,7 @@ static int em28xx_ir_fini(struct em28xx *dev)
+ 	if (!ir)
+ 		goto ref_put;
+ 
+-	if (ir->rc)
+-		rc_unregister_device(ir->rc);
++	rc_unregister_device(ir->rc);
+ 
+ 	/* done */
+ 	kfree(ir);
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-context.c b/drivers/media/usb/pvrusb2/pvrusb2-context.c
+index 7c19ff7..c8761c7 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-context.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-context.c
+@@ -80,7 +80,7 @@ static void pvr2_context_set_notify(struct pvr2_context *mp, int fl)
+ static void pvr2_context_destroy(struct pvr2_context *mp)
+ {
+ 	pvr2_trace(PVR2_TRACE_CTXT,"pvr2_context %p (destroy)",mp);
+-	if (mp->hdw) pvr2_hdw_destroy(mp->hdw);
++	pvr2_hdw_destroy(mp->hdw);
+ 	pvr2_context_set_notify(mp, 0);
+ 	mutex_lock(&pvr2_context_mutex);
+ 	if (mp->exist_next) {
+diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
+index 2c90186..3cab886 100644
+--- a/drivers/media/usb/s2255/s2255drv.c
++++ b/drivers/media/usb/s2255/s2255drv.c
+@@ -1976,8 +1976,7 @@ static int s2255_release_sys_buffers(struct s2255_vc *vc)
+ {
+ 	unsigned long i;
+ 	for (i = 0; i < SYS_FRAMES; i++) {
+-		if (vc->buffer.frame[i].lpvbits)
+-			vfree(vc->buffer.frame[i].lpvbits);
++		vfree(vc->buffer.frame[i].lpvbits);
+ 		vc->buffer.frame[i].lpvbits = NULL;
+ 	}
  	return 0;
 -- 
 2.1.3
