@@ -1,42 +1,73 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 18:05:35 +0000
-Subject: [PATCH v2] backlight: lp8788: Deletion of a check before backlight_device_unregister()
-Message-Id: <5473736F.8070705@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 20 Nov 2014 17:33:57 +0000
+Subject: [PATCH 1/7] umem: fix error return code
+Message-Id: <1416504842-18548-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54720DEB.4060109@users.sourceforge.net> <20141124101006.GD4241@x1>
-In-Reply-To: <20141124101006.GD4241@x1>
+References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jg1.han@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The backlight_device_unregister() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Return a negative error code on failure.
 
-This issue was detected by using the Coccinelle software.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/video/backlight/lp8788_bl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The patches in this series are independent of each other.
 
-diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backlight/lp8788_bl.c
-index d6c4f6a..24a055c 100644
---- a/drivers/video/backlight/lp8788_bl.c
-+++ b/drivers/video/backlight/lp8788_bl.c
-@@ -221,8 +221,7 @@ static void lp8788_backlight_unregister(struct lp8788_bl *bl)
- {
- 	struct backlight_device *bl_dev = bl->bl_dev;
+ drivers/block/umem.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/block/umem.c b/drivers/block/umem.c
+index 4cf81b5..371e819 100644
+--- a/drivers/block/umem.c
++++ b/drivers/block/umem.c
+@@ -881,6 +881,7 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	if (card->mm_pages[0].desc = NULL ||
+ 	    card->mm_pages[1].desc = NULL) {
+ 		dev_printk(KERN_ERR, &card->dev->dev, "alloc failed\n");
++		ret = -ENOMEM;
+ 		goto failed_alloc;
+ 	}
+ 	reset_page(&card->mm_pages[0]);
+@@ -891,8 +892,10 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	card->biotail = &card->bio;
  
--	if (bl_dev)
--		backlight_device_unregister(bl_dev);
-+	backlight_device_unregister(bl_dev);
- }
+ 	card->queue = blk_alloc_queue(GFP_KERNEL);
+-	if (!card->queue)
++	if (!card->queue) {
++		ret = -ENOMEM;
+ 		goto failed_alloc;
++	}
  
- static ssize_t lp8788_get_bl_ctl_mode(struct device *dev,
--- 
-2.1.3
+ 	blk_queue_make_request(card->queue, mm_make_request);
+ 	card->queue->queue_lock = &card->lock;
 
