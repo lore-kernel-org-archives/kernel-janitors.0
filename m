@@ -1,46 +1,86 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Nov 2014 12:50:25 +0000
-Subject: [PATCH 1/1] GPU-DRM-MSM-Adreno: Deletion of unnecessary checks before the function call "release_fir
-Message-Id: <54747B11.9070104@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 20 Nov 2014 17:34:02 +0000
+Subject: [PATCH 7/7] parport_sunbpp: fix error return code
+Message-Id: <1416504842-18548-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Nov 2014 13:44:20 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The release_firmware() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Return a negative error code on failure.
 
-This issue was detected by using the Coccinelle software.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+The patch also removes a newly unnecessary initialization of err, replaces
+spaces by a tab, and pulls an assignment out of a conditional test
+expression.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/gpu/drm/msm/adreno/adreno_gpu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+The patches in this series are independent of each other.
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index 655ce5b..757052c 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -404,9 +404,7 @@ void adreno_gpu_cleanup(struct adreno_gpu *gpu)
- 			msm_gem_put_iova(gpu->memptrs_bo, gpu->base.id);
- 		drm_gem_object_unreference(gpu->memptrs_bo);
- 	}
--	if (gpu->pm4)
--		release_firmware(gpu->pm4);
--	if (gpu->pfp)
--		release_firmware(gpu->pfp);
-+	release_firmware(gpu->pm4);
-+	release_firmware(gpu->pfp);
- 	msm_gpu_cleanup(&gpu->base);
- }
--- 
-2.1.3
+ drivers/parport/parport_sunbpp.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/parport/parport_sunbpp.c b/drivers/parport/parport_sunbpp.c
+index 01cf1c1..14f4cb8 100644
+--- a/drivers/parport/parport_sunbpp.c
++++ b/drivers/parport/parport_sunbpp.c
+@@ -269,7 +269,7 @@ static int bpp_probe(struct platform_device *op)
+ {
+ 	struct parport_operations *ops;
+ 	struct bpp_regs __iomem *regs;
+-	int irq, dma, err = 0, size;
++	int irq, dma, err, size;
+ 	unsigned char value_tcr;
+ 	void __iomem *base;
+ 	struct parport *p;
+@@ -286,12 +286,17 @@ static int bpp_probe(struct platform_device *op)
+ 
+ 	ops = kmemdup(&parport_sunbpp_ops, sizeof(struct parport_operations),
+ 		      GFP_KERNEL);
+-        if (!ops)
++	if (!ops) {
++		err = -ENOMEM;
+ 		goto out_unmap;
++	}
+ 
+ 	dprintk(("register_port\n"));
+-	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops)))
++	p = parport_register_port((unsigned long)base, irq, dma, ops);
++	if (!p) {
++		err = -ENOMEM;
+ 		goto out_free_ops;
++	}
+ 
+ 	p->size = size;
+ 	p->dev = &op->dev;
 
