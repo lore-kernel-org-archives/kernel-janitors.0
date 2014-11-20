@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sat, 22 Nov 2014 14:39:16 +0000
-Subject: [PATCH 3/6] HSI: nokia-modem: fix error return code
-Message-Id: <1416667159-9808-4-git-send-email-Julia.Lawall@lip6.fr>
+Date: Thu, 20 Nov 2014 17:33:58 +0000
+Subject: [PATCH 3/7] dwc3: dwc3-keystone: fix error return code
+Message-Id: <1416504842-18548-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416667159-9808-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416667159-9808-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sebastian Reichel <sre@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
@@ -41,19 +41,21 @@ ret = 0
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/hsi/clients/nokia-modem.c |    1 +
+The patches in this series are independent of each other.
+
+ drivers/usb/dwc3/dwc3-keystone.c |    1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hsi/clients/nokia-modem.c b/drivers/hsi/clients/nokia-modem.c
-index f0c2145..e07009a 100644
---- a/drivers/hsi/clients/nokia-modem.c
-+++ b/drivers/hsi/clients/nokia-modem.c
-@@ -199,6 +199,7 @@ static int nokia_modem_probe(struct device *dev)
- 	modem->ssi_protocol = hsi_new_client(port, &ssip);
- 	if (!modem->ssi_protocol) {
- 		dev_err(dev, "Could not register ssi-protocol device\n");
-+		err = -ENOMEM;
- 		goto error2;
+diff --git a/drivers/usb/dwc3/dwc3-keystone.c b/drivers/usb/dwc3/dwc3-keystone.c
+index dd8d2df..fe3b933 100644
+--- a/drivers/usb/dwc3/dwc3-keystone.c
++++ b/drivers/usb/dwc3/dwc3-keystone.c
+@@ -123,6 +123,7 @@ static int kdwc3_probe(struct platform_device *pdev)
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "missing irq\n");
++		error = irq;
+ 		goto err_irq;
  	}
  
 
