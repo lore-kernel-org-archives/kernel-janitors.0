@@ -1,61 +1,59 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 18:14:15 +0000
-Subject: [PATCH 4/4] usbip: remove unneeded structure
-Message-Id: <1417371255-2282-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 17:55:14 +0000
+Subject: [PATCH 1/1] SCSI: Deletion of unnecessary checks before the function call "put_device"
+Message-Id: <546E2B02.5090902@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Valentina Manea <valentina.manea.m@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Shuah Khan <shuah.kh@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 18:48:52 +0100
 
-Delete a local structure that is only used to be initialized by memset.
+The put_device() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-A semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+This issue was detected by using the Coccinelle software.
 
-// <smpl>
-@@
-identifier x,i;
-@@
-
-{
-... when any
--struct i x;
-<+... when != x
-- memset(&x,...);
-...+>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- tools/usb/usbip/src/usbipd.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/scsi/hosts.c      | 3 +--
+ drivers/scsi/scsi_sysfs.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/tools/usb/usbip/src/usbipd.c b/tools/usb/usbip/src/usbipd.c
-index 2f87f2d..2a7cd2b 100644
---- a/tools/usb/usbip/src/usbipd.c
-+++ b/tools/usb/usbip/src/usbipd.c
-@@ -91,7 +91,6 @@ static void usbipd_help(void)
- static int recv_request_import(int sockfd)
- {
- 	struct op_import_request req;
--	struct op_common reply;
- 	struct usbip_exported_device *edev;
- 	struct usbip_usb_device pdu_udev;
- 	struct list_head *i;
-@@ -100,7 +99,6 @@ static int recv_request_import(int sockfd)
- 	int rc;
+diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
+index 6de80e3..57afb19 100644
+--- a/drivers/scsi/hosts.c
++++ b/drivers/scsi/hosts.c
+@@ -337,8 +337,7 @@ static void scsi_host_dev_release(struct device *dev)
  
- 	memset(&req, 0, sizeof(req));
--	memset(&reply, 0, sizeof(reply));
+ 	kfree(shost->shost_data);
  
- 	rc = usbip_net_recv(sockfd, &req, sizeof(req));
- 	if (rc < 0) {
+-	if (parent)
+-		put_device(parent);
++	put_device(parent);
+ 	kfree(shost);
+ }
+ 
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index 8b4105a..c977c99 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -426,8 +426,7 @@ static void scsi_device_dev_release_usercontext(struct work_struct *work)
+ 	kfree(sdev->inquiry);
+ 	kfree(sdev);
+ 
+-	if (parent)
+-		put_device(parent);
++	put_device(parent);
+ }
+ 
+ static void scsi_device_dev_release(struct device *dev)
+-- 
+2.1.3
 
