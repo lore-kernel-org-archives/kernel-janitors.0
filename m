@@ -1,79 +1,65 @@
-From: julio <julio7k@gmail.com>
-Date: Tue, 18 Nov 2014 03:54:58 +0000
-Subject: error while installing staging kernel GKH
-Message-Id: <546AC312.7080805@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Thu, 20 Nov 2014 17:33:59 +0000
+Subject: [PATCH 4/7] serial: icom: fix error return code
+Message-Id: <1416504842-18548-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-I was following the tutorial on how to build your first patch and came 
-across this error when running
-sudo make modules_install install
+Return a negative error code on failure.
 
-INSTALL sound/firewire/fireworks/snd-fireworks.ko
-   DEPMOD  3.18.0-rc4-01142-gcc03f9b
-sh ./arch/x86/boot/install.sh 3.18.0-rc4-01142-gcc03f9b 
-arch/x86/boot/bzImage \
-     System.map "/boot"
-run-parts: executing /etc/kernel/postinst.d/apt-auto-removal 
-3.18.0-rc4-01142-gcc03f9b /boot/vmlinuz-3.18.0-rc4-01142-gcc03f9b
-run-parts: executing /etc/kernel/postinst.d/dkms 
-3.18.0-rc4-01142-gcc03f9b /boot/vmlinuz-3.18.0-rc4-01142-gcc03f9b
-Error! Bad return status for module build on kernel: 
-3.18.0-rc4-01142-gcc03f9b (x86_64)
-Consult /var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/make.log for more 
-information.
-^Carch/x86/boot/Makefile:185: recipe for target 'install' failed
-make[1]: *** [install] Interrupt
-arch/x86/Makefile:239: recipe for target 'install' failed
-make: *** [install] Interrupt
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-this is the staging tree GKH.
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-cat /var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/make.log
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-returns the following message:
+---
+The patches in this series are independent of each other.
 
-DKMS make.log for bcmwl-6.30.223.248+bdcom for kernel 
-3.18.0-rc4-01142-gcc03f9b (x86_64)
-lun 17 nov 20:54:47 CST 2014
-CFG80211 API is prefered for this kernel version
-Using CFG80211 API
-   LD      /var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/built-in.o
-   CC [M] 
-/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/shared/linux_osl.o
-   CC [M] 
-/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.o
-/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.c: In 
-function ‘wl_alloc_linux_if’:
-/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.c:1316:64: 
-error: macro "alloc_netdev" requires 4 arguments, but only 3 given
-   dev = alloc_netdev(sizeof(priv_link_t), intf_name, ether_setup);
-                                                                 ^
-/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.c:1316:8: 
-error: ‘alloc_netdev’ undeclared (first use in this function)
-   dev = alloc_netdev(sizeof(priv_link_t), intf_name, ether_setup);
-         ^
-/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.c:1316:8: 
-note: each undeclared identifier is reported only once for each function 
-it appears in
-scripts/Makefile.build:257: recipe for target 
-'/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.o' failed
-make[3]: *** 
-[/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build/src/wl/sys/wl_linux.o] 
-Error 1
-Makefile:1380: recipe for target 
-'_module_/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build' failed
-make[2]: *** [_module_/var/lib/dkms/bcmwl/6.30.223.248+bdcom/build] Error 2
+ drivers/tty/serial/icom.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-the question is should I report a bug on a staging driver?
-and how this could be fixed? did the alloc_netdev function changed?
-this kernel was compiled with make allyesconfig
-Thanks,
-PD: I am a Kernel newbie trying to commit my first patch...
-Sorry if this is not the right mailing list
-Julio Ordonez-Viales
+diff --git a/drivers/tty/serial/icom.c b/drivers/tty/serial/icom.c
+index d4620fe..45fc323 100644
+--- a/drivers/tty/serial/icom.c
++++ b/drivers/tty/serial/icom.c
+@@ -1550,8 +1550,10 @@ static int icom_probe(struct pci_dev *dev,
+ 
+ 	icom_adapter->base_addr = pci_ioremap_bar(dev, 0);
+ 
+-	if (!icom_adapter->base_addr)
++	if (!icom_adapter->base_addr) {
++		retval = -ENOMEM;
+ 		goto probe_exit1;
++	}
+ 
+ 	 /* save off irq and request irq line */
+ 	 if ( (retval = request_irq(dev->irq, icom_interrupt,
+
