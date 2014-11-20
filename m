@@ -1,52 +1,44 @@
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Date: Sat, 29 Nov 2014 16:08:56 +0000
-Subject: Re: fs-fat: Less function calls in fat_fill_super() after error detection
-Message-Id: <87egsm2dlz.fsf@devron.myhome.or.jp>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 22:46:52 +0000
+Subject: [PATCH 1/1] SCSI-bfa: Deletion of an unnecessary check before the function call "vfree"
+Message-Id: <546E6F5C.6050604@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<5467B12C.4010602@users.sourceforge.net>
-	<alpine.DEB.2.02.1411152117540.2225@localhost6.localdomain6>
-	<54796B5E.5040707@users.sourceforge.net>
-	<87sih22sn8.fsf@devron.myhome.or.jp>
-	<alpine.DEB.2.10.1411291338530.2378@hadrien>
-	<87lhmu2jl8.fsf@devron.myhome.or.jp>
-	<5479DD48.6030508@users.sourceforge.net>
-In-Reply-To: <5479DD48.6030508@users.sourceforge.net> (SF Markus Elfring's
-	message of "Sat, 29 Nov 2014 15:50:48 +0100")
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-SF Markus Elfring <elfring@users.sourceforge.net> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 23:43:17 +0100
 
->> More labels are more chances of bug (and we don't care micro optimize
->> on this error path), isn't it?
->
-> I would prefer that a few jump targets can be redirected so that unnecessary
-> function calls (and corresponding checks) can be avoided.
+The vfree() function performs also input parameter validation. Thus the test
+around the call is not needed.
 
-It is from real bugs in my experience, it saw several times those (mine
-and other guys, in linux and others). And I think it doesn't have value
-to maintain labels for micro optimization in *this error path* though.
+This issue was detected by using the Coccinelle software.
 
-So, if you or analyzer can check bugs by the patches affect to those
-label usage in future,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/scsi/bfa/bfad_debugfs.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+diff --git a/drivers/scsi/bfa/bfad_debugfs.c b/drivers/scsi/bfa/bfad_debugfs.c
+index 8e83d04..a72170f 100644
+--- a/drivers/scsi/bfa/bfad_debugfs.c
++++ b/drivers/scsi/bfa/bfad_debugfs.c
+@@ -399,8 +399,7 @@ bfad_debugfs_release_fwtrc(struct inode *inode, struct file *file)
+ 	if (!fw_debug)
+ 		return 0;
+ 
+-	if (fw_debug->debug_buffer)
+-		vfree(fw_debug->debug_buffer);
++	vfree(fw_debug->debug_buffer);
+ 
+ 	file->private_data = NULL;
+ 	kfree(fw_debug);
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+2.1.3
+
