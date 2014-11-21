@@ -1,44 +1,69 @@
-From: Oded Gabbay <oded.gabbay@amd.com>
-Date: Tue, 25 Nov 2014 13:15:53 +0000
-Subject: Re: [patch] amdkfd: fix an error handling bug in pqm_create_queue()
-Message-Id: <54748109.4090504@amd.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 09:30:42 +0000
+Subject: [PATCH 1/1] target: Deletion of unnecessary checks before the function call "module_put"
+Message-Id: <546F0642.4060007@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141125102451.GC23215@mwanda>
-In-Reply-To: <20141125102451.GC23215@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Ben Goz <ben.goz@amd.com>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, target-devel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 10:25:45 +0100
 
+The module_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-On 11/25/2014 12:24 PM, Dan Carpenter wrote:
-> The call to kernel_queue_uninit(NULL) will trigger a BUG(), and also the
-> error code is incorrect.
->
-> Fixes: 45102048f77e ('amdkfd: Add process queue manager module')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
+This issue was detected by using the Coccinelle software.
 
-Patch is:
-Reviewed-by: Oded Gabbay <oded.gabbay@amd.com>
-And applied to my 3.19-next-wip tree.
-Thanks!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/target/iscsi/iscsi_target_transport.c | 3 +--
+ drivers/target/target_core_hba.c              | 6 ++----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-     Oded
+diff --git a/drivers/target/iscsi/iscsi_target_transport.c b/drivers/target/iscsi/iscsi_target_transport.c
+index 882728f..08217d6 100644
+--- a/drivers/target/iscsi/iscsi_target_transport.c
++++ b/drivers/target/iscsi/iscsi_target_transport.c
+@@ -26,8 +26,7 @@ struct iscsit_transport *iscsit_get_transport(int type)
+ 
+ void iscsit_put_transport(struct iscsit_transport *t)
+ {
+-	if (t->owner)
+-		module_put(t->owner);
++	module_put(t->owner);
+ }
+ 
+ int iscsit_register_transport(struct iscsit_transport *t)
+diff --git a/drivers/target/target_core_hba.c b/drivers/target/target_core_hba.c
+index a25051a..e6e496f 100644
+--- a/drivers/target/target_core_hba.c
++++ b/drivers/target/target_core_hba.c
+@@ -137,8 +137,7 @@ core_alloc_hba(const char *plugin_name, u32 plugin_dep_id, u32 hba_flags)
+ 	return hba;
+ 
+ out_module_put:
+-	if (hba->transport->owner)
+-		module_put(hba->transport->owner);
++	module_put(hba->transport->owner);
+ 	hba->transport = NULL;
+ out_free_hba:
+ 	kfree(hba);
+@@ -159,8 +158,7 @@ core_delete_hba(struct se_hba *hba)
+ 	pr_debug("CORE_HBA[%d] - Detached HBA from Generic Target"
+ 			" Core\n", hba->hba_id);
+ 
+-	if (hba->transport->owner)
+-		module_put(hba->transport->owner);
++	module_put(hba->transport->owner);
+ 
+ 	hba->transport = NULL;
+ 	kfree(hba);
+-- 
+2.1.3
 
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> index c7859fc..7ce7a25 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process_queue_manager.c
-> @@ -208,7 +208,7 @@ int pqm_create_queue(struct process_queue_manager *pqm,
->   	case KFD_QUEUE_TYPE_DIQ:
->   		kq = kernel_queue_init(dev, KFD_QUEUE_TYPE_DIQ);
->   		if (kq = NULL) {
-> -			kernel_queue_uninit(kq);
-> +			retval = -ENOMEM;
->   			goto err_create_queue;
->   		}
->   		kq->queue->properties.queue_id = *qid;
->
