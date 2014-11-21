@@ -1,71 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 18:02:46 +0000
-Subject: [PATCH 2/2] fs-udf: One function call less in udf_fill_super() after error detection
-Message-Id: <546B89C6.4070308@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 12:51:06 +0000
+Subject: [PATCH 1/1] tty: Deletion of unnecessary checks before two function calls
+Message-Id: <546F353A.9060301@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546B8814.2030701@users.sourceforge.net>
-In-Reply-To: <546B8814.2030701@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 18:29:10 +0100
+Date: Fri, 21 Nov 2014 13:42:29 +0100
 
-The iput() function was called in up to three cases by the udf_fill_super()
-function during error handling even if the passed data structure element
-contained still a null pointer. This implementation detail could be improved
-by the introduction of another jump label.
+The functions put_device() and tty_kref_put() test whether their argument
+is NULL and then return immediately.
+Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/udf/super.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/tty_io.c   | 6 ++----
+ drivers/tty/tty_port.c | 3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index f93c65d..3ccb2f1 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -2082,12 +2082,12 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
- 	mutex_init(&sbi->s_alloc_mutex);
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 848c17a..3302789 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -169,8 +169,7 @@ void free_tty_struct(struct tty_struct *tty)
+ {
+ 	if (!tty)
+ 		return;
+-	if (tty->dev)
+-		put_device(tty->dev);
++	put_device(tty->dev);
+ 	kfree(tty->write_buf);
+ 	tty->magic = 0xDEADDEAD;
+ 	kfree(tty);
+@@ -1612,8 +1611,7 @@ static void release_tty(struct tty_struct *tty, int idx)
+ 		tty->link->port->itty = NULL;
+ 	cancel_work_sync(&tty->port->buf.work);
  
- 	if (!udf_parse_options((char *)options, &uopt, false))
--		goto error_out;
-+		goto parse_options_failure;
+-	if (tty->link)
+-		tty_kref_put(tty->link);
++	tty_kref_put(tty->link);
+ 	tty_kref_put(tty);
+ }
  
- 	if (uopt.flags & (1 << UDF_FLAG_UTF8) &&
- 	    uopt.flags & (1 << UDF_FLAG_NLS_MAP)) {
- 		udf_err(sb, "utf8 cannot be combined with iocharset\n");
--		goto error_out;
-+		goto parse_options_failure;
- 	}
- #ifdef CONFIG_UDF_NLS
- 	if ((uopt.flags & (1 << UDF_FLAG_NLS_MAP)) && !uopt.nls_map) {
-@@ -2238,6 +2238,7 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
+index 1b93357..856c064 100644
+--- a/drivers/tty/tty_port.c
++++ b/drivers/tty/tty_port.c
+@@ -193,8 +193,7 @@ void tty_port_tty_set(struct tty_port *port, struct tty_struct *tty)
+ 	unsigned long flags;
  
- error_out:
- 	iput(sbi->s_vat_inode);
-+parse_options_failure:
- #ifdef CONFIG_UDF_NLS
- 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
- 		unload_nls(sbi->s_nls_map);
+ 	spin_lock_irqsave(&port->lock, flags);
+-	if (port->tty)
+-		tty_kref_put(port->tty);
++	tty_kref_put(port->tty);
+ 	port->tty = tty_kref_get(tty);
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ }
 -- 
 2.1.3
 
