@@ -1,50 +1,38 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 19 Nov 2014 10:51:05 +0000
-Subject: Re: [patch] mmc: toshsd: move dereference below check for NULL
-Message-Id: <CAPDyKFqhPS5JCk0asDV4-ts=PL1xbczXJq=aTnKBMAkuvSk0yQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 15:48:39 +0000
+Subject: Re: USB: serial: Deletion of an unnecessary check before the function call "release_firmware"
+Message-Id: <546F5ED7.1000206@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141115185641.GA6530@mwanda>
-In-Reply-To: <20141115185641.GA6530@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546F5831.5060404@users.sourceforge.net> <alpine.DEB.2.10.1411211625380.2433@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1411211625380.2433@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Chris Ball <chris@printf.net>, Ondrej Zary <linux@rainbow-software.org>, linux-mmc <linux-mmc@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On 15 November 2014 19:56, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> We check for NULL pointers after dereferencing so it's too late.  Oddly
-> enough, Smatch misses this code but complains about the caller passing
-> NULL pointers to this function:
->
->         drivers/mmc/host/toshsd.c:389 toshsd_irq()
->         error: we previously assumed 'host->cmd' could be null (see line 349)
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> diff --git a/drivers/usb/serial/mxuport.c b/drivers/usb/serial/mxuport.c
+>> index ab1d690..3653ec1 100644
+>> --- a/drivers/usb/serial/mxuport.c
+>> +++ b/drivers/usb/serial/mxuport.c
+>> @@ -1101,8 +1101,7 @@ static int mxuport_probe(struct usb_serial *serial,
+>>  	 */
+>>  	usb_set_serial_data(serial, (void *)id->driver_info);
+>>  out:
+>> -	if (fw_p)
+>> -		release_firmware(fw_p);
+>> +	release_firmware(fw_p);
+> 
+> I think that the if should stay.
 
-Thanks! Applied for next.
+I have got an other opinion.
 
-Kind regards
-Uffe
 
->
-> diff --git a/drivers/mmc/host/toshsd.c b/drivers/mmc/host/toshsd.c
-> index edb06d6..4666262 100644
-> --- a/drivers/mmc/host/toshsd.c
-> +++ b/drivers/mmc/host/toshsd.c
-> @@ -206,14 +206,14 @@ static irqreturn_t toshsd_thread_irq(int irq, void *dev_id)
->  static void toshsd_cmd_irq(struct toshsd_host *host)
->  {
->         struct mmc_command *cmd = host->cmd;
-> -       u8 *buf = (u8 *) cmd->resp;
-> +       u8 *buf;
->         u16 data;
->
->         if (!host->cmd) {
->                 dev_warn(&host->pdev->dev, "Spurious CMD irq\n");
->                 return;
->         }
-> -
-> +       buf = (u8 *)cmd->resp;
->         host->cmd = NULL;
->
->         if (cmd->flags & MMC_RSP_PRESENT && cmd->flags & MMC_RSP_136) {
+> There were two cases on the allocation, so there should be two cases
+> on the release.
+
+I find that this implementation detail does not really matter for the
+necessity of a null pointer check directly before such a function call.
+
+Regards,
+Markus
