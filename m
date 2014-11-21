@@ -1,47 +1,24 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Nov 2014 19:58:49 +0000
-Subject: Re: exit: reparent: cleanup the changing of ->parent
-Message-Id: <20141117195849.GG4905@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 22:15:42 +0000
+Subject: Re: net: Hyper-V: Deletion of an unnecessary check before the function call "vfree"
+Message-Id: <546FB98E.5070703@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141114085410.GA9293@mwanda>
-In-Reply-To: <20141114085410.GA9293@mwanda>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.sourceforge.net>	<546DF9D7.6080801@users.sourceforge.net> <20141121.151503.1986113223309494197.davem@davemloft.net>
+In-Reply-To: <20141121.151503.1986113223309494197.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: haiyangz@microsoft.com, kys@microsoft.com, devel@linuxdriverproject.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
 
-On Mon, Nov 17, 2014 at 07:42:28PM +0100, Oleg Nesterov wrote:
-> On 11/14, Dan Carpenter wrote:
-> >
-> > The patch eb6d8479b73d: "exit: reparent: cleanup the changing of
-> > ->parent" from Nov 13, 2014, leads to the following static checker
-> > warning:
-> >
-> > 	kernel/exit.c:543 forget_original_parent()
-> > 	warn: add some parenthesis here?
-> >
-> > kernel/exit.c
-> >    538          /* Can drop and reacquire tasklist_lock */
-> >    539          reaper = find_new_reaper(father);
-> >    540          list_for_each_entry(p, &father->children, sibling) {
-> >    541                  for_each_thread(p, t) {
-> >    542                          t->real_parent = reaper;
-> >    543                          BUG_ON(!t->ptrace != (t->parent = father));
-> >                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >
-> > The reason for this warning is that many people forget that ! is higher
-> > precedence than =.
-> 
-> Do you really think we should try to shut up this warning?
-> 
-> IMO this warning is wrong, "!A = B" or "!A != B" looks fine to me...
-> 
+> This does not apply to the net-next tree, please respin.
 
-Most of the time when Smatch prints a warning about those then it's a
-bug.  It's a mix of precedence bugs and adding accidental negates.
+Thanks for your reply.
 
-I'll send a patch to put some parenthesis around the negate.
+How do you think about to try out the scripts which I published
+in March to get more constructive feedback?
+Will they run faster for another analysis on current
+Linux source files with your test systems (than my computer)?
 
-regards,
-dan carpenter
-
+Regards,
+Markus
