@@ -1,46 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 26 Nov 2014 15:46:35 +0000
-Subject: Re: [patch] tracing: off by one in __trace_array_vprintk()
-Message-Id: <20141126154635.GI4835@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 18:11:47 +0000
+Subject: [PATCH 1/1] ALSA: es1688_lib: Deletion of an unnecessary check before the function call "release_and
+Message-Id: <546F8063.3090002@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141126140621.GA18740@mwanda>
- <20141126092706.5d4038d4@gandalf.local.home>
- <20141126143719.GT4893@mwanda>
- <20141126094306.4f465616@gandalf.local.home>
- <20141126150541.GU4893@mwanda>
- <20141126102244.4bffa4b2@gandalf.local.home>
-In-Reply-To: <20141126102244.4bffa4b2@gandalf.local.home>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Nov 26, 2014 at 10:22:44AM -0500, Steven Rostedt wrote:
-> On Wed, 26 Nov 2014 18:05:41 +0300
-> Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> 
-> > On Wed, Nov 26, 2014 at 09:43:06AM -0500, Steven Rostedt wrote:
-> > > I highly doubt it's much of a speed up. And we do that by sacrificing
-> > > that one byte of buffer, which would lose the printk if len does equal
-> > > TRACE_BUF_SIZE.
-> > > 
-> > > I don't see a bug here. What exactly are you trying to fix?
-> > 
-> > Heh.  vsnprintf() is going to put a NUL char at the end of the string
-> > even if you don't plan to use it.  :P
-> > 
-> > Another option would be to just print truncated output.  We could use
-> > vscnprintf() and remove the off by one limit check.
-> 
-> Yes, that is a better patch. The previous one wasn't really fixing
-> anything. But printing truncated output is better than nothing.
-> 
-> Want to send it officially?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 19:05:50 +0100
 
-Will do.
+The release_and_free_resource() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/isa/es1688/es1688_lib.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/isa/es1688/es1688_lib.c b/sound/isa/es1688/es1688_lib.c
+index b3b4f15..fb259491 100644
+--- a/sound/isa/es1688/es1688_lib.c
++++ b/sound/isa/es1688/es1688_lib.c
+@@ -614,8 +614,7 @@ static int snd_es1688_free(struct snd_es1688 *chip)
+ {
+ 	if (chip->hardware != ES1688_HW_UNDEF)
+ 		snd_es1688_init(chip, 0);
+-	if (chip->res_port)
+-		release_and_free_resource(chip->res_port);
++	release_and_free_resource(chip->res_port);
+ 	if (chip->irq >= 0)
+ 		free_irq(chip->irq, (void *) chip);
+ 	if (chip->dma8 >= 0) {
+-- 
+2.1.3
 
