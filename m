@@ -1,79 +1,60 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Tue, 25 Nov 2014 10:55:14 +0000
-Subject: Re: [PATCH 3/6] video: fbdev-MMP: Fix typos for the word "destroy"
-Message-Id: <54746012.3050505@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="iNfvWhrwnEhIOmgsVxmQUaC48RJdl7ub3"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 18:35:18 +0000
+Subject: [PATCH 1/1] ALSA: sb: Deletion of unnecessary checks before two function calls
+Message-Id: <546F85E6.5020306@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54736422.90409@users.sourceforge.net> <547368BB.2050401@users.sourceforge.net>
-In-Reply-To: <547368BB.2050401@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org, trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
---iNfvWhrwnEhIOmgsVxmQUaC48RJdl7ub3
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 19:32:02 +0100
 
-On 24/11/14 19:19, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 24 Nov 2014 15:50:15 +0100
->=20
-> Two mistyped words were corrected in the description for
-> the mmp_unregister_path() function.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/video/fbdev/mmp/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/video/fbdev/mmp/core.c b/drivers/video/fbdev/mmp/c=
-ore.c
-> index b563b92..43ed576 100644
-> --- a/drivers/video/fbdev/mmp/core.c
-> +++ b/drivers/video/fbdev/mmp/core.c
-> @@ -223,10 +223,10 @@ struct mmp_path *mmp_register_path(struct mmp_pat=
-h_info *info)
->  EXPORT_SYMBOL_GPL(mmp_register_path);
-> =20
->  /*
-> - * mmp_unregister_path - unregister and destory path
-> + * mmp_unregister_path - unregister and destroy path
->   * @p: path to be destoried.
->   *
-> - * this function registers path and destorys it.
-> + * this function registers path and destroys it.
->   */
->  void mmp_unregister_path(struct mmp_path *path)
->  {
->=20
+The functions release_and_free_resource() and snd_util_memhdr_free() test
+whether their argument is NULL and then return immediately.
+Thus the test around the call is not needed.
 
-Thanks, applied this and the patch 5/6 to fbdev tree.
+This issue was detected by using the Coccinelle software.
 
- Tomi
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/isa/sb/emu8000_synth.c | 3 +--
+ sound/isa/sb/sb_common.c     | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/sound/isa/sb/emu8000_synth.c b/sound/isa/sb/emu8000_synth.c
+index 4e3fcfb..95b39be 100644
+--- a/sound/isa/sb/emu8000_synth.c
++++ b/sound/isa/sb/emu8000_synth.c
+@@ -105,8 +105,7 @@ static int snd_emu8000_delete_device(struct snd_seq_device *dev)
+ 		snd_device_free(dev->card, hw->pcm);
+ 	if (hw->emu)
+ 		snd_emux_free(hw->emu);
+-	if (hw->memhdr)
+-		snd_util_memhdr_free(hw->memhdr);
++	snd_util_memhdr_free(hw->memhdr);
+ 	hw->emu = NULL;
+ 	hw->memhdr = NULL;
+ 	return 0;
+diff --git a/sound/isa/sb/sb_common.c b/sound/isa/sb/sb_common.c
+index 3ef9906..f22b448 100644
+--- a/sound/isa/sb/sb_common.c
++++ b/sound/isa/sb/sb_common.c
+@@ -184,8 +184,7 @@ static int snd_sbdsp_probe(struct snd_sb * chip)
+ 
+ static int snd_sbdsp_free(struct snd_sb *chip)
+ {
+-	if (chip->res_port)
+-		release_and_free_resource(chip->res_port);
++	release_and_free_resource(chip->res_port);
+ 	if (chip->irq >= 0)
+ 		free_irq(chip->irq, (void *) chip);
+ #ifdef CONFIG_ISA
+-- 
+2.1.3
 
-
---iNfvWhrwnEhIOmgsVxmQUaC48RJdl7ub3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUdGASAAoJEPo9qoy8lh71oQ4QAJW03l7JJL5NGV6nY3nMrAlX
-FrxP+x0V85vdyp4BYvYAZ+jiU1KIu8ObpgHcvbvmyU6lPjhhIcm9VTKt6/lWAA7a
-9Yr8aS0r+Xowh8z6LEBkSblMAL2VfnjsBiG/Ti6IPZgec+uD0aFGcgmi9EP597iB
-/GDyZZTn1Eb0i/Z359/kAYcrIfj6DcLNCniNbxWvk8Q9Q1Ij+UwV5CsbehgDw0pz
-4ERkEjhAQI0z2fMro1n4JEikutUuNCJb2B/J/5sfKM/l/jpTovfAETXyJqnoxZ5e
-52mz5N7yAo+Nrem/2bGGLrwuU+O/DSwYTyA+rxBUSIDLz0ZJViLjBYpP2BpA9IyA
-S794k2C92EjoybC4zFXjyLXqa2fGmQoCCqu3olwpUSoCLzh18BaqTAp48Zt1MytZ
-E12rqnGUosZREAIEJsd19Poq0JxHxrY44JkGkxa/DpCCT4SGqE5sjfH+LaT6NkOY
-mdL8W9JxcG4g5imCDLAaif+OSiCroKoriB9B8pIARdqRKTm1LFOIsVhY4PdPauxj
-3unM5DLoxN1+xfiAmc5p3FNM9ennU3OcKLVIjH2ssIKlmo8hcevg/TjglUTqVFnY
-v5wrWigjzSJEr9tb1FFoWDVNNrJREs9hyL/nG3gWh9i3sI6BEbnO4XeKMMeGlNmj
-eUq2/7QtIKmW6a1L8ibu
-=xW4g
------END PGP SIGNATURE-----
-
---iNfvWhrwnEhIOmgsVxmQUaC48RJdl7ub3--
