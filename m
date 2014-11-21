@@ -1,68 +1,64 @@
-From: Jon Mason <jdmason@kudzu.us>
-Date: Tue, 25 Nov 2014 15:48:59 +0000
-Subject: Re: [PATCH 1/1] x86: PCI-Calgary: Deletion of an unnecessary check before the function call "free_tc
-Message-Id: <CAPoiz9znciQsg5ZXZf7xsM-8dt5umRnTX7RkEEADANQ6jqGEYQ@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 10:12:39 +0000
+Subject: [PATCH 1/1] thermal: Exynos: Deletion of unnecessary checks before two function calls
+Message-Id: <546F1017.5080403@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<54707ADB.30807@users.sourceforge.net>
-In-Reply-To: <54707ADB.30807@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Muli Ben-Yehuda <muli@il.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, discuss@x86-64.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-On Sat, Nov 22, 2014 at 7:00 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 22 Nov 2014 12:55:28 +0100
->
-> The free_tce_table() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 11:06:33 +0100
 
-Looks good to me
+The functions cpufreq_cooling_unregister() and thermal_zone_device_unregister()
+test whether their argument is NULL and then return immediately.
+Thus the test around the call is not needed.
 
-Acked-by: Jon Mason <jdmason@kudzu.us>
+This issue was detected by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/thermal/samsung/exynos_thermal_common.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> ---
->  arch/x86/kernel/pci-calgary_64.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kernel/pci-calgary_64.c b/arch/x86/kernel/pci-calgary_64.c
-> index 0497f71..d22a386 100644
-> --- a/arch/x86/kernel/pci-calgary_64.c
-> +++ b/arch/x86/kernel/pci-calgary_64.c
-> @@ -1476,8 +1476,7 @@ cleanup:
->         for (--bus; bus >= 0; --bus) {
->                 struct calgary_bus_info *info = &bus_info[bus];
->
-> -               if (info->tce_space)
-> -                       free_tce_table(info->tce_space);
-> +               free_tce_table(info->tce_space);
->         }
->         return -ENOMEM;
->  }
-> --
-> 2.1.3
->
+diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
+index 3f5ad25..1cbb9d0 100644
+--- a/drivers/thermal/samsung/exynos_thermal_common.c
++++ b/drivers/thermal/samsung/exynos_thermal_common.c
+@@ -417,12 +417,10 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf)
+ 
+ 	th_zone = sensor_conf->pzone_data;
+ 
+-	if (th_zone->therm_dev)
+-		thermal_zone_device_unregister(th_zone->therm_dev);
++	thermal_zone_device_unregister(th_zone->therm_dev);
+ 
+ 	for (i = 0; i < th_zone->cool_dev_size; i++) {
+-		if (th_zone->cool_dev[i])
+-			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
++		cpufreq_cooling_unregister(th_zone->cool_dev[i]);
+ 	}
+ 
+ 	dev_info(sensor_conf->dev,
+-- 
+2.1.3
+
