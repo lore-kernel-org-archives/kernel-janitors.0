@@ -1,59 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Nov 2014 18:25:31 +0000
-Subject: [PATCH 1/1] InfiniBand: Deletion of unnecessary checks before two function calls
-Message-Id: <546CE09B.9090101@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 14:55:22 +0000
+Subject: [PATCH 1/1] USB-SIS: Deletion of an unnecessary check before the function call "usb_put_dev"
+Message-Id: <546F525A.7050002@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Winischhofer <thomas@winischhofer.net>, linux-usb@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Nov 2014 19:19:21 +0100
+Date: Fri, 21 Nov 2014 15:50:44 +0100
 
-The functions kfree() and pci_dev_put() test whether their argument is NULL
-and then return immediately. Thus the test around the call is not needed.
+The usb_put_dev() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/infiniband/hw/mlx4/main.c         | 3 +--
- drivers/infiniband/hw/mthca/mthca_reset.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/usb/misc/sisusbvga/sisusb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 8b72cf3..50dee1a 100644
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -2512,8 +2512,7 @@ static void do_slave_init(struct mlx4_ib_dev *ibdev, int slave, int do_init)
- 		if (!dm[i]) {
- 			pr_err("failed to allocate memory for tunneling qp update work struct\n");
- 			for (i = 0; i < dev->caps.num_ports; i++) {
--				if (dm[i])
--					kfree(dm[i]);
-+				kfree(dm[i]);
- 			}
- 			goto out;
- 		}
-diff --git a/drivers/infiniband/hw/mthca/mthca_reset.c b/drivers/infiniband/hw/mthca/mthca_reset.c
-index 74c6a94..c521654 100644
---- a/drivers/infiniband/hw/mthca/mthca_reset.c
-+++ b/drivers/infiniband/hw/mthca/mthca_reset.c
-@@ -279,8 +279,7 @@ good:
- 	}
+diff --git a/drivers/usb/misc/sisusbvga/sisusb.c b/drivers/usb/misc/sisusbvga/sisusb.c
+index 633caf6..022dc00 100644
+--- a/drivers/usb/misc/sisusbvga/sisusb.c
++++ b/drivers/usb/misc/sisusbvga/sisusb.c
+@@ -2472,8 +2472,7 @@ sisusb_delete(struct kref *kref)
+ 	if (!sisusb)
+ 		return;
  
- out:
--	if (bridge)
--		pci_dev_put(bridge);
-+	pci_dev_put(bridge);
- 	kfree(bridge_header);
- 	kfree(hca_header);
+-	if (sisusb->sisusb_dev)
+-		usb_put_dev(sisusb->sisusb_dev);
++	usb_put_dev(sisusb->sisusb_dev);
  
+ 	sisusb->sisusb_dev = NULL;
+ 	sisusb_free_buffers(sisusb);
 -- 
 2.1.3
 
