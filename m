@@ -1,54 +1,46 @@
-From: Arend van Spriel <arend@broadcom.com>
-Date: Fri, 28 Nov 2014 10:08:14 +0000
-Subject: Re: [patch] brcmsmac: NULL dereferences in brcms_c_detach_mfree()
-Message-Id: <5478498E.3070508@broadcom.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 10:40:37 +0000
+Subject: [PATCH 1/1] thunderbolt: Deletion of unnecessary checks before the function call "ring_free"
+Message-Id: <546F16A5.8030405@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141128094340.GA10364@mwanda>
-In-Reply-To: <20141128094340.GA10364@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>, Brett Rudley <brudley@broadcom.com>
-Cc: "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Markus Elfring <elfring@users.sourceforge.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
+To: Andreas Noever <andreas.noever@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 28-11-14 10:43, Dan Carpenter wrote:
-> The brcms_c_attach_malloc() function can call this with a NULL
-> "wlc->corestate" or "wlc->hw".
-> 
-> Also I threw in a bonus cleanup by deleting an obvious comment and a
-> no-op NULL assignment.  :)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 11:30:18 +0100
 
-Thanks for the patch+bonus
+The ring_free() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Acked-by: Arend van Spriel <arend@broadcom.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/net/wireless/brcm80211/brcmsmac/main.c b/drivers/net/wireless/brcm80211/brcmsmac/main.c
-> index 738cfac..a104d7a 100644
-> --- a/drivers/net/wireless/brcm80211/brcmsmac/main.c
-> +++ b/drivers/net/wireless/brcm80211/brcmsmac/main.c
-> @@ -445,18 +445,18 @@ static void brcms_c_detach_mfree(struct brcms_c_info *wlc)
->  	kfree(wlc->protection);
->  	kfree(wlc->stf);
->  	kfree(wlc->bandstate[0]);
-> -	kfree(wlc->corestate->macstat_snapshot);
-> +	if (wlc->corestate)
-> +		kfree(wlc->corestate->macstat_snapshot);
->  	kfree(wlc->corestate);
-> -	kfree(wlc->hw->bandstate[0]);
-> +	if (wlc->hw)
-> +		kfree(wlc->hw->bandstate[0]);
->  	kfree(wlc->hw);
->  	if (wlc->beacon)
->  		dev_kfree_skb_any(wlc->beacon);
->  	if (wlc->probe_resp)
->  		dev_kfree_skb_any(wlc->probe_resp);
->  
-> -	/* free the wlc */
->  	kfree(wlc);
-> -	wlc = NULL;
->  }
->  
->  static struct brcms_bss_cfg *brcms_c_bsscfg_malloc(uint unit)
-> 
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/thunderbolt/ctl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index 799634b..55b9bdf 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -520,10 +520,8 @@ err:
+ void tb_ctl_free(struct tb_ctl *ctl)
+ {
+ 	int i;
+-	if (ctl->rx)
+-		ring_free(ctl->rx);
+-	if (ctl->tx)
+-		ring_free(ctl->tx);
++	ring_free(ctl->rx);
++	ring_free(ctl->tx);
+ 
+ 	/* free RX packets */
+ 	for (i = 0; i < TB_CTL_RX_PKG_COUNT; i++)
+-- 
+2.1.3
 
