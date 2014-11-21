@@ -1,7 +1,7 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 18:00:09 +0000
-Subject: [PATCH 1/2] fs-udf: Deletion of unnecessary checks before the function call "iput"
-Message-Id: <546B8929.9010409@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 16:17:26 +0000
+Subject: [PATCH v2] thermal: Exynos: Deletion of unnecessary checks before two function calls
+Message-Id: <546F6596.6010103@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,50 +19,49 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546B8814.2030701@users.sourceforge.net>
-In-Reply-To: <546B8814.2030701@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net> <546F1017.5080403@users.sourceforge.net>
+ <alpine.DEB.2.10.1411211116580.2554@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1411211116580.2554@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-arm-kernel@lists.infradead.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 17:17:46 +0100
+Date: Fri, 21 Nov 2014 17:11:49 +0100
 
-The iput() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+The functions cpufreq_cooling_unregister() and thermal_zone_device_unregister()
+test whether their argument is NULL and then return immediately.
+Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/udf/super.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/thermal/samsung/exynos_thermal_common.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index e229315..f93c65d 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -2237,8 +2237,7 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
- 	return 0;
+diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
+index 3f5ad25..b6be572 100644
+--- a/drivers/thermal/samsung/exynos_thermal_common.c
++++ b/drivers/thermal/samsung/exynos_thermal_common.c
+@@ -417,13 +417,10 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf)
  
- error_out:
--	if (sbi->s_vat_inode)
--		iput(sbi->s_vat_inode);
-+	iput(sbi->s_vat_inode);
- #ifdef CONFIG_UDF_NLS
- 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
- 		unload_nls(sbi->s_nls_map);
-@@ -2291,8 +2290,7 @@ static void udf_put_super(struct super_block *sb)
+ 	th_zone = sensor_conf->pzone_data;
  
- 	sbi = UDF_SB(sb);
+-	if (th_zone->therm_dev)
+-		thermal_zone_device_unregister(th_zone->therm_dev);
++	thermal_zone_device_unregister(th_zone->therm_dev);
  
--	if (sbi->s_vat_inode)
--		iput(sbi->s_vat_inode);
-+	iput(sbi->s_vat_inode);
- #ifdef CONFIG_UDF_NLS
- 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_NLS_MAP))
- 		unload_nls(sbi->s_nls_map);
+-	for (i = 0; i < th_zone->cool_dev_size; i++) {
+-		if (th_zone->cool_dev[i])
+-			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
+-	}
++	for (i = 0; i < th_zone->cool_dev_size; ++i)
++		cpufreq_cooling_unregister(th_zone->cool_dev[i]);
+ 
+ 	dev_info(sensor_conf->dev,
+ 		"Exynos: Kernel Thermal management unregistered\n");
 -- 
 2.1.3
 
