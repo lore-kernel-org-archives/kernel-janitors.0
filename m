@@ -1,67 +1,92 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 17:40:49 +0000
-Subject: [PATCH 1/1] ALSA: core: Deletion of unnecessary checks before two function calls
-Message-Id: <546F7921.2000406@users.sourceforge.net>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Fri, 21 Nov 2014 19:07:53 +0000
+Subject: Re: [PATCH 1/1] ALSA: core: Deletion of unnecessary checks before two function calls
+Message-Id: <s5hmw7kbcdy.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+	<530A086E.8010901@users.sourceforge.net>
+	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+	<530A72AA.3000601@users.sourceforge.net>
+	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+	<530B5FB6.6010207@users.sourceforge.net>
+	<alpine.DEB.2.10.1402241710370.2074@hadrien>
+	<530C5E18.1020800@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251014170.2080@hadrien>
+	<530CD2C4.4050903@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251840450.7035@hadrien>
+	<530CF8FF.8080600@users.sourceforge.net>
+	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+	<530DD06F.4090703@users.sourceforge.net>
+	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<546F7921.2000406@users.sourceforge.net>
+In-Reply-To: <546F7921.2000406@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 18:34:48 +0100
+At Fri, 21 Nov 2014 18:40:49 +0100,
+SF Markus Elfring wrote:
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 21 Nov 2014 18:34:48 +0100
+> 
+> The functions snd_seq_oss_timer_delete() and vunmap() perform also input
+> parameter validation. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The functions snd_seq_oss_timer_delete() and vunmap() perform also input
-parameter validation. Thus the test around the call is not needed.
+Applied, thanks.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/core/seq/oss/seq_oss_init.c | 9 +++------
- sound/core/sgbuf.c                | 3 +--
- 2 files changed, 4 insertions(+), 8 deletions(-)
+Takashi
 
-diff --git a/sound/core/seq/oss/seq_oss_init.c b/sound/core/seq/oss/seq_oss_init.c
-index b9184d2..b0e32e1 100644
---- a/sound/core/seq/oss/seq_oss_init.c
-+++ b/sound/core/seq/oss/seq_oss_init.c
-@@ -403,14 +403,11 @@ free_devinfo(void *private)
- {
- 	struct seq_oss_devinfo *dp = (struct seq_oss_devinfo *)private;
- 
--	if (dp->timer)
--		snd_seq_oss_timer_delete(dp->timer);
-+	snd_seq_oss_timer_delete(dp->timer);
- 		
--	if (dp->writeq)
--		snd_seq_oss_writeq_delete(dp->writeq);
-+	snd_seq_oss_writeq_delete(dp->writeq);
- 
--	if (dp->readq)
--		snd_seq_oss_readq_delete(dp->readq);
-+	snd_seq_oss_readq_delete(dp->readq);
- 	
- 	kfree(dp);
- }
-diff --git a/sound/core/sgbuf.c b/sound/core/sgbuf.c
-index 0a41850..84fffab 100644
---- a/sound/core/sgbuf.c
-+++ b/sound/core/sgbuf.c
-@@ -39,8 +39,7 @@ int snd_free_sgbuf_pages(struct snd_dma_buffer *dmab)
- 	if (! sgbuf)
- 		return -EINVAL;
- 
--	if (dmab->area)
--		vunmap(dmab->area);
-+	vunmap(dmab->area);
- 	dmab->area = NULL;
- 
- 	tmpb.dev.type = SNDRV_DMA_TYPE_DEV;
--- 
-2.1.3
-
+> ---
+>  sound/core/seq/oss/seq_oss_init.c | 9 +++------
+>  sound/core/sgbuf.c                | 3 +--
+>  2 files changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/sound/core/seq/oss/seq_oss_init.c b/sound/core/seq/oss/seq_oss_init.c
+> index b9184d2..b0e32e1 100644
+> --- a/sound/core/seq/oss/seq_oss_init.c
+> +++ b/sound/core/seq/oss/seq_oss_init.c
+> @@ -403,14 +403,11 @@ free_devinfo(void *private)
+>  {
+>  	struct seq_oss_devinfo *dp = (struct seq_oss_devinfo *)private;
+>  
+> -	if (dp->timer)
+> -		snd_seq_oss_timer_delete(dp->timer);
+> +	snd_seq_oss_timer_delete(dp->timer);
+>  		
+> -	if (dp->writeq)
+> -		snd_seq_oss_writeq_delete(dp->writeq);
+> +	snd_seq_oss_writeq_delete(dp->writeq);
+>  
+> -	if (dp->readq)
+> -		snd_seq_oss_readq_delete(dp->readq);
+> +	snd_seq_oss_readq_delete(dp->readq);
+>  	
+>  	kfree(dp);
+>  }
+> diff --git a/sound/core/sgbuf.c b/sound/core/sgbuf.c
+> index 0a41850..84fffab 100644
+> --- a/sound/core/sgbuf.c
+> +++ b/sound/core/sgbuf.c
+> @@ -39,8 +39,7 @@ int snd_free_sgbuf_pages(struct snd_dma_buffer *dmab)
+>  	if (! sgbuf)
+>  		return -EINVAL;
+>  
+> -	if (dmab->area)
+> -		vunmap(dmab->area);
+> +	vunmap(dmab->area);
+>  	dmab->area = NULL;
+>  
+>  	tmpb.dev.type = SNDRV_DMA_TYPE_DEV;
+> -- 
+> 2.1.3
+> 
