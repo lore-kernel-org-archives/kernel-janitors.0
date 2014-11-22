@@ -1,55 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 13 Nov 2014 06:20:59 +0000
-Subject: [patch 2/2 -next] usb: gadget: f_hid: fix error handling in ghid_setup()
-Message-Id: <20141113062059.GC1280@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 22 Nov 2014 14:39:16 +0000
+Subject: [PATCH 3/6] HSI: nokia-modem: fix error return code
+Message-Id: <1416667159-9808-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1416667159-9808-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416667159-9808-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There were a two issues here.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-1) We returned PTR_ERR(NULL) which means success if class_create()
-   failed.
-2) If alloc_chrdev_region() failed then we should clean up before
-   returning.
+Return a negative error code on failure.
 
-Also kernel style is to have "error handling" as opposed to "success
-handling".  In the original code checking for "if (!status) " is
-confusing and this bad style is what lead to bug #2.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
-index 220035f..cecdc75 100644
---- a/drivers/usb/gadget/function/f_hid.c
-+++ b/drivers/usb/gadget/function/f_hid.c
-@@ -972,17 +972,22 @@ int ghid_setup(struct usb_gadget *g, int count)
- 
- 	hidg_class = class_create(THIS_MODULE, "hidg");
- 	if (IS_ERR(hidg_class)) {
-+		status = PTR_ERR(hidg_class);
- 		hidg_class = NULL;
--		return PTR_ERR(hidg_class);
-+		return status;
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/hsi/clients/nokia-modem.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/hsi/clients/nokia-modem.c b/drivers/hsi/clients/nokia-modem.c
+index f0c2145..e07009a 100644
+--- a/drivers/hsi/clients/nokia-modem.c
++++ b/drivers/hsi/clients/nokia-modem.c
+@@ -199,6 +199,7 @@ static int nokia_modem_probe(struct device *dev)
+ 	modem->ssi_protocol = hsi_new_client(port, &ssip);
+ 	if (!modem->ssi_protocol) {
+ 		dev_err(dev, "Could not register ssi-protocol device\n");
++		err = -ENOMEM;
+ 		goto error2;
  	}
  
- 	status = alloc_chrdev_region(&dev, 0, count, "hidg");
--	if (!status) {
--		major = MAJOR(dev);
--		minors = count;
-+	if (status) {
-+		class_destroy(hidg_class);
-+		hidg_class = NULL;
-+		return status;
- 	}
- 
--	return status;
-+	major = MAJOR(dev);
-+	minors = count;
-+
-+	return 0;
- }
- 
- void ghid_cleanup(void)
+
