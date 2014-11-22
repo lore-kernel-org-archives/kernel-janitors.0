@@ -1,29 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 19 Nov 2014 21:54:39 +0000
-Subject: Re: [PATCH 1/1] mISDN: Deletion of unnecessary checks before the function call "vfree"
-Message-Id: <20141119.165439.1170554636889327742.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 22 Nov 2014 18:29:01 +0000
+Subject: [patch] sound: oss: uart401: remove unneeded NULL check
+Message-Id: <20141122182901.GA6994@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<546CF5A6.3030305@users.sourceforge.net>
-In-Reply-To: <546CF5A6.3030305@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Himangi Saraogi <himangi774@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Nov 2014 20:55:18 +0100
+"devc" can't be NULL here so there is no need to check.  Also I removed
+the "devc = NULL" assignment because devc is stored on stack so it's
+a no-op.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 19 Nov 2014 20:48:26 +0100
-> 
-> The vfree() function performs also input parameter validation. Thus the test
-> around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+diff --git a/sound/oss/uart401.c b/sound/oss/uart401.c
+index 279bc56..dae4d43 100644
+--- a/sound/oss/uart401.c
++++ b/sound/oss/uart401.c
+@@ -412,13 +412,10 @@ void unload_uart401(struct address_info *hw_config)
+ 
+ 	if (!devc->share_irq)
+ 		free_irq(devc->irq, devc);
+-	if (devc)
+-	{
+-		kfree(midi_devs[devc->my_dev]->converter);
+-		kfree(midi_devs[devc->my_dev]);
+-		kfree(devc);
+-		devc = NULL;
+-	}
++	kfree(midi_devs[devc->my_dev]->converter);
++	kfree(midi_devs[devc->my_dev]);
++	kfree(devc);
++
+ 	/* This kills midi_devs[x] */
+ 	sound_unload_mididev(hw_config->slots[4]);
+ }
