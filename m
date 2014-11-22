@@ -1,88 +1,66 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Nov 2014 08:33:52 +0000
-Subject: [PATCH 1/3] [media] DVB-frontends: Deletion of unnecessary checks before the function call "release_
-Message-Id: <546DA770.5050709@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 22 Nov 2014 14:39:14 +0000
+Subject: [PATCH 1/6] NFC: pn533: fix error return code
+Message-Id: <1416667159-9808-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546DA419.7050405@users.sourceforge.net>
-In-Reply-To: <546DA419.7050405@users.sourceforge.net>
+References: <1416667159-9808-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416667159-9808-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Lauro Ramos Venancio <lauro.venancio@openbossa.org>
+Cc: kernel-janitors@vger.kernel.org, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Nov 2014 22:27:24 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The release_firmware() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Return a negative error code on failure.
 
-This issue was detected by using the Coccinelle software.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/media/dvb-frontends/drx39xyj/drxj.c | 3 +--
- drivers/media/dvb-frontends/drxk_hard.c     | 3 +--
- drivers/media/dvb-frontends/m88ds3103.c     | 3 +--
- drivers/media/dvb-frontends/si2168.c        | 3 +--
- 4 files changed, 4 insertions(+), 8 deletions(-)
+The error code is chosen according to the other call to this function
+in the same file.
 
-diff --git a/drivers/media/dvb-frontends/drx39xyj/drxj.c b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-index 7ca7a21..08e6ca5 100644
---- a/drivers/media/dvb-frontends/drx39xyj/drxj.c
-+++ b/drivers/media/dvb-frontends/drx39xyj/drxj.c
-@@ -12255,8 +12255,7 @@ static void drx39xxj_release(struct dvb_frontend *fe)
- 	kfree(demod->my_ext_attr);
- 	kfree(demod->my_common_attr);
- 	kfree(demod->my_i2c_dev_addr);
--	if (demod->firmware)
--		release_firmware(demod->firmware);
-+	release_firmware(demod->firmware);
- 	kfree(demod);
- 	kfree(state);
- }
-diff --git a/drivers/media/dvb-frontends/drxk_hard.c b/drivers/media/dvb-frontends/drxk_hard.c
-index cce94a7..f871478 100644
---- a/drivers/media/dvb-frontends/drxk_hard.c
-+++ b/drivers/media/dvb-frontends/drxk_hard.c
-@@ -6309,8 +6309,7 @@ static void drxk_release(struct dvb_frontend *fe)
- 	struct drxk_state *state = fe->demodulator_priv;
+ drivers/nfc/pn533.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/nfc/pn533.c b/drivers/nfc/pn533.c
+index d46a700..a859303 100644
+--- a/drivers/nfc/pn533.c
++++ b/drivers/nfc/pn533.c
+@@ -2554,8 +2554,10 @@ static int pn533_data_exchange_complete(struct pn533 *dev, void *_arg,
+ 	}
  
- 	dprintk(1, "\n");
--	if (state->fw)
--		release_firmware(state->fw);
-+	release_firmware(state->fw);
+ 	skb = pn533_build_response(dev);
+-	if (!skb)
++	if (!skb) {
++		rc = -EIO;
+ 		goto error;
++	}
  
- 	kfree(state);
- }
-diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
-index dfe0c2f..e88f0f6 100644
---- a/drivers/media/dvb-frontends/m88ds3103.c
-+++ b/drivers/media/dvb-frontends/m88ds3103.c
-@@ -637,8 +637,7 @@ skip_fw_download:
- 
- 	return 0;
- err:
--	if (fw)
--		release_firmware(fw);
-+	release_firmware(fw);
- 
- 	dev_dbg(&priv->i2c->dev, "%s: failed=%d\n", __func__, ret);
- 	return ret;
-diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
-index 8f81d97..6a455f9 100644
---- a/drivers/media/dvb-frontends/si2168.c
-+++ b/drivers/media/dvb-frontends/si2168.c
-@@ -469,8 +469,7 @@ static int si2168_init(struct dvb_frontend *fe)
- 
- 	return 0;
- err:
--	if (fw)
--		release_firmware(fw);
-+	release_firmware(fw);
- 
- 	dev_dbg(&s->client->dev, "%s: failed=%d\n", __func__, ret);
- 	return ret;
--- 
-2.1.3
+ 	arg->cb(arg->cb_context, skb, 0);
+ 	kfree(arg);
 
