@@ -1,28 +1,28 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Nov 2014 15:56:22 +0000
-Subject: [patch 2/2] usb: gadget: udc: remove bogus NULL check
-Message-Id: <20141125155622.GB19894@mwanda>
+Date: Sat, 22 Nov 2014 18:30:12 +0000
+Subject: [patch] tracing: remove unneeded NULL check
+Message-Id: <20141122183012.GB6994@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-"ep" isn't NULL here, and static checkers complain because we
-dereferenced it on the previous line.
+We checked "iter->trace" earlier so there is no need to check here.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/usb/gadget/udc/bdc/bdc_ep.c b/drivers/usb/gadget/udc/bdc/bdc_ep.c
-index 2f4ac6e..7e502ef 100644
---- a/drivers/usb/gadget/udc/bdc/bdc_ep.c
-+++ b/drivers/usb/gadget/udc/bdc/bdc_ep.c
-@@ -718,7 +718,7 @@ static int ep_queue(struct bdc_ep *ep, struct bdc_req *req)
- 	int ret = 0;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 9ddd6aa..52fbbc5 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3019,7 +3019,7 @@ __tracing_open(struct inode *inode, struct file *file, bool snapshot)
+ 	mutex_init(&iter->mutex);
  
- 	bdc = ep->bdc;
--	if (!req || !ep || !ep->usb_ep.desc)
-+	if (!req || !ep->usb_ep.desc)
- 		return -EINVAL;
+ 	/* Notify the tracer early; before we stop tracing. */
+-	if (iter->trace && iter->trace->open)
++	if (iter->trace->open)
+ 		iter->trace->open(iter);
  
- 	req->usb_req.actual = 0;
+ 	/* Annotate start of buffers if we had overruns */
