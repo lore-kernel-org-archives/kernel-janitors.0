@@ -1,47 +1,43 @@
-From: Ilya Dryomov <ilya.dryomov@inktank.com>
-Date: Fri, 28 Nov 2014 17:25:38 +0000
-Subject: Re: [patch] ceph: do_sync is never initialized
-Message-Id: <CALFYKtB4e=TbBQVkHUOW5wAC+-103n_UXnuMtW=ZjZYGsy0LHg@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Nov 2014 12:00:27 +0000
+Subject: [PATCH 1/1] x86: PCI-Calgary: Deletion of an unnecessary check before the function call "free_tce_ta
+Message-Id: <54707ADB.30807@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141128083334.GB10252@mwanda>
-In-Reply-To: <20141128083334.GB10252@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sage Weil <sage@inktank.com>, =?UTF-8?B?6ams5bu65pyL?= <majianpeng@gmail.com>, Ceph Development <ceph-devel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, "Jon D. Mason" <jdmason@kudzu.us>, Muli Ben-Yehuda <muli@il.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, discuss@x86-64.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Nov 28, 2014 at 11:33 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> Probably this code was syncing a lot more often then intended because
-> the do_sync variable wasn't set to zero.
->
-> Fixes: c62988ec0910 ('ceph: avoid meaningless calling ceph_caps_revoking if sync_mode = WB_SYNC_ALL.')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Static checker stuff.  Not tested.  It's surprising that GCC doesn't
-> catch this.
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 18c06bb..481529b 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -673,7 +673,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->         int rc = 0;
->         unsigned wsize = 1 << inode->i_blkbits;
->         struct ceph_osd_request *req = NULL;
-> -       int do_sync;
-> +       int do_sync = 0;
->         u64 truncate_size, snap_size;
->         u32 truncate_seq;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Nov 2014 12:55:28 +0100
 
-Applied, also added a stable tag for 3.11+.
+The free_tce_table() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Thanks,
+This issue was detected by using the Coccinelle software.
 
-                Ilya
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/x86/kernel/pci-calgary_64.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/pci-calgary_64.c b/arch/x86/kernel/pci-calgary_64.c
+index 0497f71..d22a386 100644
+--- a/arch/x86/kernel/pci-calgary_64.c
++++ b/arch/x86/kernel/pci-calgary_64.c
+@@ -1476,8 +1476,7 @@ cleanup:
+ 	for (--bus; bus >= 0; --bus) {
+ 		struct calgary_bus_info *info = &bus_info[bus];
+ 
+-		if (info->tce_space)
+-			free_tce_table(info->tce_space);
++		free_tce_table(info->tce_space);
+ 	}
+ 	return -ENOMEM;
+ }
+-- 
+2.1.3
+
