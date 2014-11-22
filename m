@@ -1,30 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 28 Nov 2014 08:30:40 +0000
-Subject: [patch] ocfs2: remove unneeded NULL check
-Message-Id: <20141128083040.GA10252@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Nov 2014 15:26:37 +0000
+Subject: [PATCH 1/1] PowerPC-83xx: Deletion of an unnecessary check before the function call "of_node_put"
+Message-Id: <5470AB2D.705@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Kumar Gala <galak@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Paul Mackerras <paulus@samba.org>, Scott Wood <scottwood@freescale.com>, linuxppc-dev@lists.ozlabs.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-In 1faf289454b9 ('ocfs2_dlm: disallow a domain join if node maps
-mismatch') then we introduced a new earlier NULL check so this one is
-not needed.  Also static checkers complain because we dereference it
-first and then check for NULL.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Nov 2014 16:18:20 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The of_node_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
-index 02d315f..50a59d2 100644
---- a/fs/ocfs2/dlm/dlmdomain.c
-+++ b/fs/ocfs2/dlm/dlmdomain.c
-@@ -877,7 +877,7 @@ static int dlm_query_join_handler(struct o2net_msg *msg, u32 len, void *data,
- 	 * to be put in someone's domain map.
- 	 * Also, explicitly disallow joining at certain troublesome
- 	 * times (ie. during recovery). */
--	if (dlm && dlm->dlm_state != DLM_CTXT_LEAVING) {
-+	if (dlm->dlm_state != DLM_CTXT_LEAVING) {
- 		int bit = query->node_idx;
- 		spin_lock(&dlm->spinlock);
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/powerpc/platforms/83xx/usb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/platforms/83xx/usb.c b/arch/powerpc/platforms/83xx/usb.c
+index 1ad748b..5c31d82 100644
+--- a/arch/powerpc/platforms/83xx/usb.c
++++ b/arch/powerpc/platforms/83xx/usb.c
+@@ -162,8 +162,7 @@ int mpc831x_usb_cfg(void)
  
+ 	iounmap(immap);
+ 
+-	if (immr_node)
+-		of_node_put(immr_node);
++	of_node_put(immr_node);
+ 
+ 	/* Map USB SOC space */
+ 	ret = of_address_to_resource(np, 0, &res);
+-- 
+2.1.3
+
