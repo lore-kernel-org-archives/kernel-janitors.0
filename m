@@ -1,70 +1,46 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 17 Nov 2014 12:53:25 +0000
-Subject: Re: [PATCH 1/1] ALSA: powermac: Deletion of an unnecessary check before the function call "pci_dev_p
-Message-Id: <s5hfvdikmyi.wl-tiwai@suse.de>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Nov 2014 14:05:27 +0000
+Subject: [PATCH 1/1] s390/pci: Deletion of unnecessary checks before the function call "debug_unregister"
+Message-Id: <54709827.4050408@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <5469ECEF.7000408@users.sourceforge.net>
-In-Reply-To: <5469ECEF.7000408@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Coccinelle <cocci@systeme.lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Sebastian Ott <sebott@linux.vnet.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-At Mon, 17 Nov 2014 13:41:19 +0100,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 17 Nov 2014 13:35:54 +0100
-> 
-> The pci_dev_put() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Nov 2014 15:00:55 +0100
 
-Applied, thanks.
+The debug_unregister() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
+This issue was detected by using the Coccinelle software.
 
-Takashi
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ arch/s390/pci/pci_debug.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> ---
->  sound/ppc/pmac.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/sound/ppc/pmac.c b/sound/ppc/pmac.c
-> index 8a431bc..5a13b22 100644
-> --- a/sound/ppc/pmac.c
-> +++ b/sound/ppc/pmac.c
-> @@ -887,8 +887,7 @@ static int snd_pmac_free(struct snd_pmac *chip)
->  		}
->  	}
->  
-> -	if (chip->pdev)
-> -		pci_dev_put(chip->pdev);
-> +	pci_dev_put(chip->pdev);
->  	of_node_put(chip->node);
->  	kfree(chip);
->  	return 0;
-> -- 
-> 2.1.3
-> 
-> 
+diff --git a/arch/s390/pci/pci_debug.c b/arch/s390/pci/pci_debug.c
+index eec598c..18403a7 100644
+--- a/arch/s390/pci/pci_debug.c
++++ b/arch/s390/pci/pci_debug.c
+@@ -158,10 +158,8 @@ int __init zpci_debug_init(void)
+ 
+ void zpci_debug_exit(void)
+ {
+-	if (pci_debug_msg_id)
+-		debug_unregister(pci_debug_msg_id);
+-	if (pci_debug_err_id)
+-		debug_unregister(pci_debug_err_id);
++	debug_unregister(pci_debug_msg_id);
++	debug_unregister(pci_debug_err_id);
+ 
+ 	debugfs_remove(debugfs_root);
+ }
+-- 
+2.1.3
+
