@@ -1,46 +1,54 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 13:25:45 +0000
-Subject: Re: thermal: Exynos: Deletion of unnecessary checks before two function calls
-Message-Id: <546F3D59.2060504@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 22 Nov 2014 14:56:47 +0000
+Subject: [PATCH] usb: dwc3: return error code from the most recent call
+Message-Id: <1416668207-10770-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546F1017.5080403@users.sourceforge.net>
- <alpine.DEB.2.10.1411211116580.2554@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1411211116580.2554@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
->>  	for (i = 0; i < th_zone->cool_dev_size; i++) {
->> -		if (th_zone->cool_dev[i])
->> -			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
->> +		cpufreq_cooling_unregister(th_zone->cool_dev[i]);
->>  	}
-> 
-> Now you have unnecessary {}
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-How are the chances that your source code transformation tool
-can also consider the deletion of curly brackets in such an use case?
+Copy-paste error from the previous block of error handling code.
 
-Can any more pretty-printing rules be integrated from a specific
-coding style configuration?
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Regards,
-Markus
+// <smpl>
+@@
+expression e,e1;
+@@
+
+if (IS_ERR(e)) {
+  ...
+(
+  ret = PTR_ERR(e);
+|
+*  ret = PTR_ERR(e1);
+)
+  ...
+  return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/usb/dwc3/dwc3-st.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/dwc3/dwc3-st.c b/drivers/usb/dwc3/dwc3-st.c
+index c7602b5..4a1a543 100644
+--- a/drivers/usb/dwc3/dwc3-st.c
++++ b/drivers/usb/dwc3/dwc3-st.c
+@@ -243,7 +243,7 @@ static int st_dwc3_probe(struct platform_device *pdev)
+ 	dwc3_data->rstc_rst = devm_reset_control_get(dev, "softreset");
+ 	if (IS_ERR(dwc3_data->rstc_rst)) {
+ 		dev_err(&pdev->dev, "could not get reset controller\n");
+-		ret = PTR_ERR(dwc3_data->rstc_pwrdn);
++		ret = PTR_ERR(dwc3_data->rstc_rst);
+ 		goto undo_powerdown;
+ 	}
+ 
 
