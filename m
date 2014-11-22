@@ -1,56 +1,32 @@
-From: Johan Hovold <johan@kernel.org>
-Date: Mon, 24 Nov 2014 09:10:03 +0000
-Subject: Re: USB: serial: Deletion of an unnecessary check before the function call "release_firmware"
-Message-Id: <20141124091003.GA6875@localhost>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 22 Nov 2014 18:36:28 +0000
+Subject: [patch] crypto: sha-mb - remove a bogus NULL check
+Message-Id: <20141122183628.GD6994@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <546F5831.5060404@users.sourceforge.net>
- <alpine.DEB.2.10.1411211625380.2433@hadrien>
- <546F5ED7.1000206@users.sourceforge.net>
- <alpine.DEB.2.10.1411211857590.2433@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1411211857590.2433@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, Tim Chen <tim.c.chen@linux.intel.com>, Fengguang Wu <fengguang.wu@intel.com>, linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Nov 21, 2014 at 06:59:00PM +0100, Julia Lawall wrote:
-> On Fri, 21 Nov 2014, SF Markus Elfring wrote:
-> 
-> > >> diff --git a/drivers/usb/serial/mxuport.c b/drivers/usb/serial/mxuport.c
-> > >> index ab1d690..3653ec1 100644
-> > >> --- a/drivers/usb/serial/mxuport.c
-> > >> +++ b/drivers/usb/serial/mxuport.c
-> > >> @@ -1101,8 +1101,7 @@ static int mxuport_probe(struct usb_serial *serial,
-> > >>  	 */
-> > >>  	usb_set_serial_data(serial, (void *)id->driver_info);
-> > >>  out:
-> > >> -	if (fw_p)
-> > >> -		release_firmware(fw_p);
-> > >> +	release_firmware(fw_p);
-> > >
-> > > I think that the if should stay.
-> >
-> > I have got an other opinion.
-> >
-> >
-> > > There were two cases on the allocation, so there should be two cases
-> > > on the release.
-> >
-> > I find that this implementation detail does not really matter for the
-> > necessity of a null pointer check directly before such a function call.
-> 
-> Conceptually, if it is clear 10 lines above that nothing was allocated,
-> and there is a fallback to existing data (according to the comment above)
-> it is strange to be releasing something.
+This can't be NULL and we dereferenced it earlier.  Smatch used to
+ignore these things where the pointer was obviously non-NULL but I've
+found that sometimes the intention was to check something else so we
+were maybe missing bugs.
 
-I agree with Julia here and will not apply this one.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks,
-Johan
+diff --git a/arch/x86/crypto/sha-mb/sha1_mb.c b/arch/x86/crypto/sha-mb/sha1_mb.c
+index 99eefd8..a225a5ca 100644
+--- a/arch/x86/crypto/sha-mb/sha1_mb.c
++++ b/arch/x86/crypto/sha-mb/sha1_mb.c
+@@ -204,8 +204,7 @@ static struct sha1_hash_ctx *sha1_ctx_mgr_resubmit(struct sha1_ctx_mgr *mgr, str
+ 			continue;
+ 		}
+ 
+-		if (ctx)
+-			ctx->status = HASH_CTX_STS_IDLE;
++		ctx->status = HASH_CTX_STS_IDLE;
+ 		return ctx;
+ 	}
+ 
