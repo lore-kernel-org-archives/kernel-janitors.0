@@ -1,32 +1,65 @@
-From: Boris Bodemann <bobo.barbarossa@gmail.com>
-Date: Thu, 27 Nov 2014 16:13:01 +0000
-Subject: [PATCH 1/1] esas2r: Correct typos of "validate" in a comment
-Message-Id: <54774D8D.2030204@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sat, 22 Nov 2014 14:39:17 +0000
+Subject: [PATCH 4/6] solos-pci: fix error return code
+Message-Id: <1416667159-9808-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1416667159-9808-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416667159-9808-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bradley Grove <linuxdrivers@attotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, trivial@kernel.org
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chas Williams <chas@cmf.nrl.navy.mil>
+Cc: kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Boris Bodemann <bobo.barbarossa@gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Correct typos of "validate" in a comment
+Return a negative error code on failure.
 
-Signed-off-by: Boris Bodemann <bobo.barbarossa@gmail.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
-diff -up a/drivers/scsi/esas2r/esas2r_flash.c b/drivers/scsi/esas2r/esas2r_flash.c
---- a/drivers/scsi/esas2r/esas2r_flash.c        2014-11-21 18:24:10.000000000 +0100
-+++ b/drivers/scsi/esas2r/esas2r_flash.c        2014-11-27 14:49:03.029899303 +0100
-@@ -684,9 +684,9 @@ static u16 calc_fi_checksum(struct esas2
-  *              1)  verify the fi_version is correct
-  *              2)  verify the checksum of the entire image.
-  *              3)  validate the adap_typ, action and length fields.
-- *              4)  valdiate each component header. check the img_type and
-+ *              4)  validate each component header. check the img_type and
-  *                  length fields
-- *              5)  valdiate each component image.  validate signatures and
-+ *              5)  validate each component image.  validate signatures and
-  *                  local checksums
-  */
- static bool verify_fi(struct esas2r_adapter *a,
+ drivers/atm/solos-pci.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/atm/solos-pci.c b/drivers/atm/solos-pci.c
+index 7652e8d..21b0bc6 100644
+--- a/drivers/atm/solos-pci.c
++++ b/drivers/atm/solos-pci.c
+@@ -1225,11 +1225,13 @@ static int fpga_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	card->config_regs = pci_iomap(dev, 0, CONFIG_RAM_SIZE);
+ 	if (!card->config_regs) {
+ 		dev_warn(&dev->dev, "Failed to ioremap config registers\n");
++		err = -ENOMEM;
+ 		goto out_release_regions;
+ 	}
+ 	card->buffers = pci_iomap(dev, 1, DATA_RAM_SIZE);
+ 	if (!card->buffers) {
+ 		dev_warn(&dev->dev, "Failed to ioremap data buffers\n");
++		err = -ENOMEM;
+ 		goto out_unmap_config;
+ 	}
+ 
+
