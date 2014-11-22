@@ -1,39 +1,30 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 16 Nov 2014 16:57:24 +0000
-Subject: Re: [Cocci] [PATCH 1/1] kprobes: Deletion of an unnecessary check before the function call "module_p
-Message-Id: <5468D774.60901@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 22 Nov 2014 18:30:59 +0000
+Subject: [patch -next] bpf: null dereference allocating large arrays
+Message-Id: <20141122183059.GC6994@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546899CF.8020808@users.sourceforge.net>
- <alpine.DEB.2.10.1411161428190.2364@hadrien>
- <5468B3FD.20409@users.sourceforge.net>
- <alpine.DEB.2.10.1411161639310.2364@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1411161639310.2364@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Alexei Starovoitov <ast@kernel.org>
+Cc: netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> The if around the module_put is helpful to the reader to understand
-> that this possibility exists.
+There is a typo here, "array" is null so we can't dereference it and
+also the size calculation should match the kzalloc() on the lines
+before.
 
-I have got a different opinion. I would still prefer a small code clean-up there.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Regards,
-Markus
-
+diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+index 58b80c1..662a412 100644
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -38,7 +38,7 @@ static struct bpf_map *array_map_alloc(union bpf_attr *attr)
+ 	array = kzalloc(sizeof(*array) + attr->max_entries * elem_size,
+ 			GFP_USER | __GFP_NOWARN);
+ 	if (!array) {
+-		array = vzalloc(array->map.max_entries * array->elem_size);
++		array = vzalloc(sizeof(*array) + attr->max_entries * elem_size);
+ 		if (!array)
+ 			return ERR_PTR(-ENOMEM);
+ 	}
