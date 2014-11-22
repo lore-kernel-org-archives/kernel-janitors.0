@@ -1,73 +1,89 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 20 Nov 2014 17:33:57 +0000
-Subject: [PATCH 1/7] umem: fix error return code
-Message-Id: <1416504842-18548-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Nov 2014 10:00:35 +0000
+Subject: [PATCH 1/1] ARM: OMAP2: Deletion of unnecessary checks before three function calls
+Message-Id: <54705EC3.90708@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 22 Nov 2014 10:50:33 +0100
 
-Return a negative error code on failure.
+The functions clk_disable(), of_node_put() and omap_device_delete() test
+whether their argument is NULL and then return immediately.
+Thus the test around the call is not needed.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+This issue was detected by using the Coccinelle software.
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-The patches in this series are independent of each other.
+ arch/arm/mach-omap2/omap_device.c | 3 +--
+ arch/arm/mach-omap2/omap_hwmod.c  | 3 +--
+ arch/arm/mach-omap2/timer.c       | 3 +--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
- drivers/block/umem.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/umem.c b/drivers/block/umem.c
-index 4cf81b5..371e819 100644
---- a/drivers/block/umem.c
-+++ b/drivers/block/umem.c
-@@ -881,6 +881,7 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	if (card->mm_pages[0].desc = NULL ||
- 	    card->mm_pages[1].desc = NULL) {
- 		dev_printk(KERN_ERR, &card->dev->dev, "alloc failed\n");
-+		ret = -ENOMEM;
- 		goto failed_alloc;
+diff --git a/arch/arm/mach-omap2/omap_device.c b/arch/arm/mach-omap2/omap_device.c
+index d22c30d..5108859 100644
+--- a/arch/arm/mach-omap2/omap_device.c
++++ b/arch/arm/mach-omap2/omap_device.c
+@@ -199,8 +199,7 @@ static int _omap_device_notifier_call(struct notifier_block *nb,
+ 
+ 	switch (event) {
+ 	case BUS_NOTIFY_DEL_DEVICE:
+-		if (pdev->archdata.od)
+-			omap_device_delete(pdev->archdata.od);
++		omap_device_delete(pdev->archdata.od);
+ 		break;
+ 	case BUS_NOTIFY_ADD_DEVICE:
+ 		if (pdev->dev.of_node)
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index 9e91a4e..e2406c4 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -917,8 +917,7 @@ static int _disable_clocks(struct omap_hwmod *oh)
+ 
+ 	pr_debug("omap_hwmod: %s: disabling clocks\n", oh->name);
+ 
+-	if (oh->_clk)
+-		clk_disable(oh->_clk);
++	clk_disable(oh->_clk);
+ 
+ 	p = oh->slave_ports.next;
+ 
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index 43d03fb..5b428a0 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -205,8 +205,7 @@ static void __init omap_dmtimer_init(void)
+ 	/* If we are a secure device, remove any secure timer nodes */
+ 	if ((omap_type() != OMAP2_DEVICE_TYPE_GP)) {
+ 		np = omap_get_timer_dt(omap_timer_match, "ti,timer-secure");
+-		if (np)
+-			of_node_put(np);
++		of_node_put(np);
  	}
- 	reset_page(&card->mm_pages[0]);
-@@ -891,8 +892,10 @@ static int mm_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	card->biotail = &card->bio;
+ }
  
- 	card->queue = blk_alloc_queue(GFP_KERNEL);
--	if (!card->queue)
-+	if (!card->queue) {
-+		ret = -ENOMEM;
- 		goto failed_alloc;
-+	}
- 
- 	blk_queue_make_request(card->queue, mm_make_request);
- 	card->queue->queue_lock = &card->lock;
+-- 
+2.1.3
 
