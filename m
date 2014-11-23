@@ -1,74 +1,59 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 14:51:31 +0000
-Subject: [PATCH 1/1] fs-proc: One function call less in proc_sys_lookup() after error detection
-Message-Id: <546B5CF3.1070203@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Nov 2014 13:11:16 +0000
+Subject: [PATCH 3/5] electra_cf: fix error return code
+Message-Id: <1416748278-22881-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: linux-pcmcia@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 15:42:43 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The sysctl_head_finish() function was called in an inefficient way by the
-implementation of the proc_sys_lookup() function in case of a lookup failure.
-The corresponding source code was improved by deletion of an unnecessary
-null pointer check and a few adjustments for jump labels.
+Return a negative error code on failure.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- fs/proc/proc_sysctl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pcmcia/electra_cf.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index f92d5dd..6606aaf 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -457,21 +457,21 @@ static struct dentry *proc_sys_lookup(struct inode *dir, struct dentry *dentry,
- 		ret = sysctl_follow_link(&h, &p, current->nsproxy);
- 		err = ERR_PTR(ret);
- 		if (ret)
--			goto out;
-+			goto inode_failure;
- 	}
+diff --git a/drivers/pcmcia/electra_cf.c b/drivers/pcmcia/electra_cf.c
+index 7f9950d..6a67a00 100644
+--- a/drivers/pcmcia/electra_cf.c
++++ b/drivers/pcmcia/electra_cf.c
+@@ -250,6 +250,7 @@ static int electra_cf_probe(struct platform_device *ofdev)
  
- 	err = ERR_PTR(-ENOMEM);
- 	inode = proc_sys_make_inode(dir->i_sb, h ? h : head, p);
- 	if (!inode)
--		goto out;
-+		goto inode_failure;
+ 	cf->socket.pci_irq = cf->irq;
  
- 	err = NULL;
- 	d_set_d_op(dentry, &proc_sys_dentry_operations);
- 	d_add(dentry, inode);
- 
-+inode_failure:
-+	sysctl_head_finish(h);
- out:
--	if (h)
--		sysctl_head_finish(h);
- 	sysctl_head_finish(head);
- 	return err;
- }
--- 
-2.1.3
++	status = -EINVAL;
+ 	prop = of_get_property(np, "card-detect-gpio", NULL);
+ 	if (!prop)
+ 		goto fail1;
 
