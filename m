@@ -1,72 +1,60 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Fri, 21 Nov 2014 10:17:15 +0000
-Subject: Re: [PATCH 1/1] thermal: Exynos: Deletion of unnecessary checks before two function calls
-Message-Id: <alpine.DEB.2.10.1411211116580.2554@hadrien>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Nov 2014 13:11:17 +0000
+Subject: [PATCH 4/5] drm/rcar-du: fix error return code
+Message-Id: <1416748278-22881-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546F1017.5080403@users.sourceforge.net>
-In-Reply-To: <546F1017.5080403@users.sourceforge.net>
+References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 21 Nov 2014, SF Markus Elfring wrote:
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 21 Nov 2014 11:06:33 +0100
->
-> The functions cpufreq_cooling_unregister() and thermal_zone_device_unregister()
-> test whether their argument is NULL and then return immediately.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/thermal/samsung/exynos_thermal_common.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
-> index 3f5ad25..1cbb9d0 100644
-> --- a/drivers/thermal/samsung/exynos_thermal_common.c
-> +++ b/drivers/thermal/samsung/exynos_thermal_common.c
-> @@ -417,12 +417,10 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf)
->
->  	th_zone = sensor_conf->pzone_data;
->
-> -	if (th_zone->therm_dev)
-> -		thermal_zone_device_unregister(th_zone->therm_dev);
-> +	thermal_zone_device_unregister(th_zone->therm_dev);
->
->  	for (i = 0; i < th_zone->cool_dev_size; i++) {
-> -		if (th_zone->cool_dev[i])
-> -			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
-> +		cpufreq_cooling_unregister(th_zone->cool_dev[i]);
->  	}
+Propagate the error code on failure.
 
-Now you have unnecessary {}
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-julia
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
->
->  	dev_info(sensor_conf->dev,
-> --
-> 2.1.3
->
->
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 088bfd8..23cc910 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -586,7 +586,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int index)
+ 
+ 	if (irq < 0) {
+ 		dev_err(rcdu->dev, "no IRQ for CRTC %u\n", index);
+-		return ret;
++		return irq;
+ 	}
+ 
+ 	ret = devm_request_irq(rcdu->dev, irq, rcar_du_crtc_irq, irqflags,
+
