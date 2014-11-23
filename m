@@ -1,50 +1,62 @@
-From: Octavian Purdila <octavian.purdila@intel.com>
-Date: Thu, 13 Nov 2014 11:01:27 +0000
-Subject: Re: [patch 1/2 -next] mfd: dln2: add a limit check for invalid "echo"
-Message-Id: <CAE1zot+cvXbAYOZn444J=XakDLzWgZaDmMHMeUUwLHWavc9UAQ@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Nov 2014 12:48:06 +0000
+Subject: [PATCH 6/9] sound/pci/ctxfi/ctatc.c: fix error return code
+Message-Id: <1416746890-22719-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141113103525.GA17038@mwanda>
-In-Reply-To: <20141113103525.GA17038@mwanda>
+References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, lkml <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Thu, Nov 13, 2014 at 12:35 PM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
-> We check the other variables and traditionally we don't trust data from
-> USB devices so adding a check here is normal.  This silences a static
-> checker warning.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I am unsure if this fix is correct and I don't have the hardware.
-> Please review this one carefully.  The "goto out;" seems to use the
-> invalid data and I don't understand why.
->
-> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-> index 9765a17..3101e5e 100644
-> --- a/drivers/mfd/dln2.c
-> +++ b/drivers/mfd/dln2.c
-> @@ -280,6 +280,11 @@ static void dln2_rx(struct urb *urb)
->                 goto out;
->         }
->
-> +       if (echo >= DLN2_MAX_RX_SLOTS) {
-> +               dev_warn(dev, "invalid echo %d\n", echo);
-> +               goto out;
-> +       }
-> +
->         data = urb->transfer_buffer + sizeof(struct dln2_header);
->         len = urb->actual_length - sizeof(struct dln2_header);
->
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Hi Dan,
+Initialize err before returning on failure, as done elsewhere in the
+function.
 
-Thanks for the patch. You are right that we need to check echo, but
-only in the case that it is not an event. In that case the echo
-counter increments for every event and can easily be greater the
-DLN2_MAX_RX_SLOTS. So the correct patch is to check in
-dln2_transfer_complete() that rx_slot is valid. I will follow-up with
-a patch for that shortly.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/pci/ctxfi/ctatc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
+index 58b235c..a2f997a 100644
+--- a/sound/pci/ctxfi/ctatc.c
++++ b/sound/pci/ctxfi/ctatc.c
+@@ -1725,8 +1725,10 @@ int __devinit ct_atc_create(struct snd_card *card, struct pci_dev *pci,
+ 	atc_connect_resources(atc);
+ 
+ 	atc->timer = ct_timer_new(atc);
+-	if (!atc->timer)
++	if (!atc->timer) {
++		err = -ENOMEM;
+ 		goto error1;
++	}
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, atc, &ops);
+ 	if (err < 0)
+
