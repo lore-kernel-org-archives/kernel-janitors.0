@@ -1,79 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 18:14:12 +0000
-Subject: [PATCH 1/4] target: remove unneeded array
-Message-Id: <1417371255-2282-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Nov 2014 14:20:18 +0000
+Subject: [PATCH 1/1] video: mx3fb: Deletion of an unnecessary check before the function call "backlight_devic
+Message-Id: <5471ED22.40307@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Nov 2014 15:15:29 +0100
 
-Delete a local array that is only used to be initialized by memset.
+The backlight_device_unregister() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-A semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+This issue was detected by using the Coccinelle software.
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
-
-{
-... when any
--T x[...];
-<+... when != x
-- memset(x,...);
-...+>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/target/target_core_pr.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/mx3fb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/target/target_core_pr.c b/drivers/target/target_core_pr.c
-index 4c261c3..a0f850b 100644
---- a/drivers/target/target_core_pr.c
-+++ b/drivers/target/target_core_pr.c
-@@ -1429,14 +1429,12 @@ core_scsi3_decode_spec_i_port(
- 	struct target_core_fabric_ops *tmp_tf_ops;
- 	unsigned char *buf;
- 	unsigned char *ptr, *i_str = NULL, proto_ident, tmp_proto_ident;
--	char *iport_ptr = NULL, dest_iport[64], i_buf[PR_REG_ISID_ID_LEN];
-+	char *iport_ptr = NULL, i_buf[PR_REG_ISID_ID_LEN];
- 	sense_reason_t ret;
- 	u32 tpdl, tid_len = 0;
- 	int dest_local_nexus;
- 	u32 dest_rtpi = 0;
+diff --git a/drivers/video/fbdev/mx3fb.c b/drivers/video/fbdev/mx3fb.c
+index c645a0a..b2d2151 100644
+--- a/drivers/video/fbdev/mx3fb.c
++++ b/drivers/video/fbdev/mx3fb.c
+@@ -334,8 +334,7 @@ static void mx3fb_init_backlight(struct mx3fb_data *fbd)
  
--	memset(dest_iport, 0, 64);
--
- 	local_se_deve = se_sess->se_node_acl->device_list[cmd->orig_fe_lun];
- 	/*
- 	 * Allocate a struct pr_transport_id_holder and setup the
-@@ -3059,7 +3057,7 @@ core_scsi3_emulate_pro_register_and_move(struct se_cmd *cmd, u64 res_key,
- 	struct t10_reservation *pr_tmpl = &dev->t10_pr;
- 	unsigned char *buf;
- 	unsigned char *initiator_str;
--	char *iport_ptr = NULL, dest_iport[64], i_buf[PR_REG_ISID_ID_LEN];
-+	char *iport_ptr = NULL, i_buf[PR_REG_ISID_ID_LEN];
- 	u32 tid_len, tmp_tid_len;
- 	int new_reg = 0, type, scope, matching_iname;
- 	sense_reason_t ret;
-@@ -3071,7 +3069,6 @@ core_scsi3_emulate_pro_register_and_move(struct se_cmd *cmd, u64 res_key,
- 		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
- 	}
+ static void mx3fb_exit_backlight(struct mx3fb_data *fbd)
+ {
+-	if (fbd->bl)
+-		backlight_device_unregister(fbd->bl);
++	backlight_device_unregister(fbd->bl);
+ }
  
--	memset(dest_iport, 0, 64);
- 	memset(i_buf, 0, PR_REG_ISID_ID_LEN);
- 	se_tpg = se_sess->se_tpg;
- 	tf_ops = se_tpg->se_tpg_tfo;
+ static void mx3fb_dma_done(void *);
+-- 
+2.1.3
 
