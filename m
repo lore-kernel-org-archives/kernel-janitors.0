@@ -1,43 +1,73 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 22:03:11 +0000
-Subject: [PATCH 1/1] staging: olpc_dcon: Deletion of a check before backlight_device_unregister()
-Message-Id: <5473AB1F.7090303@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Nov 2014 13:11:15 +0000
+Subject: [PATCH 2/5] drm/exynos/ipp: fix error return code
+Message-Id: <1416748278-22881-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Drake <dsd@laptop.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jens Frederich <jfrederich@gmail.com>, Jon Nettleton <jon.nettleton@gmail.com>, devel@driverdev.osuosl.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 22:58:48 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The backlight_device_unregister() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Propagate the returned error code on failure.
 
-This issue was detected by using the Coccinelle software.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/olpc_dcon/olpc_dcon.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/staging/olpc_dcon/olpc_dcon.c b/drivers/staging/olpc_dcon/olpc_dcon.c
-index eb83b28..6a9a881 100644
---- a/drivers/staging/olpc_dcon/olpc_dcon.c
-+++ b/drivers/staging/olpc_dcon/olpc_dcon.c
-@@ -682,8 +682,7 @@ static int dcon_remove(struct i2c_client *client)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index 00d74b1..d5ad17d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -426,18 +426,21 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
+ 	c_node->start_work = ipp_create_cmd_work();
+ 	if (IS_ERR(c_node->start_work)) {
+ 		DRM_ERROR("failed to create start work.\n");
++		ret = PTR_ERR(c_node->start_work);
+ 		goto err_remove_id;
+ 	}
  
- 	free_irq(DCON_IRQ, dcon);
+ 	c_node->stop_work = ipp_create_cmd_work();
+ 	if (IS_ERR(c_node->stop_work)) {
+ 		DRM_ERROR("failed to create stop work.\n");
++		ret = PTR_ERR(c_node->stop_work);
+ 		goto err_free_start;
+ 	}
  
--	if (dcon->bl_dev)
--		backlight_device_unregister(dcon->bl_dev);
-+	backlight_device_unregister(dcon->bl_dev);
+ 	c_node->event_work = ipp_create_event_work();
+ 	if (IS_ERR(c_node->event_work)) {
+ 		DRM_ERROR("failed to create event work.\n");
++		ret = PTR_ERR(c_node->event_work);
+ 		goto err_free_stop;
+ 	}
  
- 	if (dcon_device != NULL)
- 		platform_device_unregister(dcon_device);
--- 
-2.1.3
 
