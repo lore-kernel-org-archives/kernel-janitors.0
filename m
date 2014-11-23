@@ -1,80 +1,64 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 16:59:29 +0000
-Subject: [PATCH 3/8] crypto: replace memset by memzero_explicit
-Message-Id: <1417366774-32412-4-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Nov 2014 13:14:10 +0000
+Subject: [PATCH 1/1] video: fbdev-OMAP2: Deletion of unnecessary checks before the function call "i2c_put_ada
+Message-Id: <5471DDA2.1060000@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: dborkman@redhat.com, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <julia@diku.dk>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Nov 2014 14:07:22 +0100
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+The i2c_put_adapter() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
+This issue was detected by using the Coccinelle software.
 
-{
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
-}
-// </smpl>
-
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
+ drivers/video/fbdev/omap2/displays-new/connector-dvi.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
- arch/x86/crypto/sha256_ssse3_glue.c |    2 +-
- arch/x86/crypto/sha512_ssse3_glue.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/crypto/sha512_ssse3_glue.c b/arch/x86/crypto/sha512_ssse3_glue.c
-index 26a5898..0b6af26 100644
---- a/arch/x86/crypto/sha512_ssse3_glue.c
-+++ b/arch/x86/crypto/sha512_ssse3_glue.c
-@@ -219,7 +219,7 @@ static int sha384_ssse3_final(struct shash_desc *desc, u8 *hash)
- 	sha512_ssse3_final(desc, D);
+diff --git a/drivers/video/fbdev/omap2/displays-new/connector-dvi.c b/drivers/video/fbdev/omap2/displays-new/connector-dvi.c
+index 74de2bc..196c61a 100644
+--- a/drivers/video/fbdev/omap2/displays-new/connector-dvi.c
++++ b/drivers/video/fbdev/omap2/displays-new/connector-dvi.c
+@@ -262,8 +262,7 @@ static int dvic_probe_pdata(struct platform_device *pdev)
  
- 	memcpy(hash, D, SHA384_DIGEST_SIZE);
--	memset(D, 0, SHA512_DIGEST_SIZE);
-+	memzero_explicit(D, SHA512_DIGEST_SIZE);
+ 	in = omap_dss_find_output(pdata->source);
+ 	if (in = NULL) {
+-		if (ddata->i2c_adapter)
+-			i2c_put_adapter(ddata->i2c_adapter);
++		i2c_put_adapter(ddata->i2c_adapter);
+ 
+ 		dev_err(&pdev->dev, "Failed to find video source\n");
+ 		return -EPROBE_DEFER;
+@@ -352,8 +351,7 @@ static int dvic_probe(struct platform_device *pdev)
+ err_reg:
+ 	omap_dss_put_device(ddata->in);
+ 
+-	if (ddata->i2c_adapter)
+-		i2c_put_adapter(ddata->i2c_adapter);
++	i2c_put_adapter(ddata->i2c_adapter);
+ 
+ 	return r;
+ }
+@@ -371,8 +369,7 @@ static int __exit dvic_remove(struct platform_device *pdev)
+ 
+ 	omap_dss_put_device(in);
+ 
+-	if (ddata->i2c_adapter)
+-		i2c_put_adapter(ddata->i2c_adapter);
++	i2c_put_adapter(ddata->i2c_adapter);
  
  	return 0;
  }
-diff --git a/arch/x86/crypto/sha256_ssse3_glue.c b/arch/x86/crypto/sha256_ssse3_glue.c
-index 4dc100d..8fad72f 100644
---- a/arch/x86/crypto/sha256_ssse3_glue.c
-+++ b/arch/x86/crypto/sha256_ssse3_glue.c
-@@ -211,7 +211,7 @@ static int sha224_ssse3_final(struct shash_desc *desc, u8 *hash)
- 	sha256_ssse3_final(desc, D);
- 
- 	memcpy(hash, D, SHA224_DIGEST_SIZE);
--	memset(D, 0, SHA256_DIGEST_SIZE);
-+	memzero_explicit(D, SHA256_DIGEST_SIZE);
- 
- 	return 0;
- }
+-- 
+2.1.3
 
