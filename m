@@ -1,34 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 19 Nov 2014 08:45:42 +0000
-Subject: Re: [PATCH 1/1] net: xfrm: Deletion of an unnecessary check before the function call "ipcomp_free_tf
-Message-Id: <20141119084542.GK4905@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Nov 2014 12:48:09 +0000
+Subject: [PATCH 9/9] sound/ppc/snd_ps3.c: fix error return code
+Message-Id: <1416746890-22719-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <546BAFF5.5020603@users.sourceforge.net>
-In-Reply-To: <546BAFF5.5020603@users.sourceforge.net>
+References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Geoff Levand <geoff@infradead.org>
+Cc: kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linuxppc-dev@lists.ozlabs.org, cbe-oss-dev@lists.ozlabs.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 18, 2014 at 09:45:41PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 18 Nov 2014 21:41:26 +0100
-> 
-> The ipcomp_free_tfms() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
-> 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-It doesn't though...
+Initialize ret before returning on failure, as done elsewhere in the
+function.
 
-regards,
-dan carpenter
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/ppc/snd_ps3.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/ppc/snd_ps3.c b/sound/ppc/snd_ps3.c
+index 1aa52ef..9b18b52 100644
+--- a/sound/ppc/snd_ps3.c
++++ b/sound/ppc/snd_ps3.c
+@@ -1040,6 +1040,7 @@ static int __devinit snd_ps3_driver_probe(struct ps3_system_bus_device *dev)
+ 				   GFP_KERNEL);
+ 	if (!the_card.null_buffer_start_vaddr) {
+ 		pr_info("%s: nullbuffer alloc failed\n", __func__);
++		ret = -ENOMEM;
+ 		goto clean_preallocate;
+ 	}
+ 	pr_debug("%s: null vaddr=%p dma=%#llx\n", __func__,
 
