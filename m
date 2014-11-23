@@ -1,40 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 23 Nov 2014 18:37:29 +0000
-Subject: Re: net: Hyper-V: Deletion of an unnecessary check before the function call "vfree"
-Message-Id: <20141123.133729.642772258617830867.davem@davemloft.net>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Nov 2014 16:40:11 +0000
+Subject: [PATCH 1/1] backlight: lp8788: Deletion of an unnecessary check before the function call "backlight_
+Message-Id: <54720DEB.4060109@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54712F8C.10206@users.sourceforge.net>
-	<20141122.233654.279540319568229037.davem@davemloft.net>
-	<54718A47.20301@users.sourceforge.net>
-In-Reply-To: <54718A47.20301@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: elfring@users.sourceforge.net
-Cc: haiyangz@microsoft.com, kys@microsoft.com, devel@linuxdriverproject.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, julia.lawall@lip6.fr
+To: Bryan Wu <cooloney@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jg1.han@samsung.com>, Lee Jones <lee.jones@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 08:18:31 +0100
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Nov 2014 17:33:08 +0100
 
->> Whereas if you learn how to base your changes cleanly on the correct
->> base now, all of your future submissions will go quickly and smoothly
->> into my tree.
-> 
-> My reluctance to work with more Linux repositories will evolve
-> over time. The faster affected software versions can be rebuilt
-> the more it will become interesting to try even more source
-> code improvements out, won't it?
-> 
-> I find it nice that you could accept update suggestions for
-> a few other Linux components already.
+The backlight_device_unregister() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-You are seriously starting to waste our time.
+This issue was detected by using the Coccinelle software.
 
-Either resubmit your changes against a clean base, or more on.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/backlight/lp8788_bl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Seriously, all I am purely interested in is seeing properly submitted
-patches, reviewing them, and then integrating them.  Anything else is
-pure noise to me.
-
-Thanks.
+diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backlight/lp8788_bl.c
+index d6c4f6a..24a055c 100644
+--- a/drivers/video/backlight/lp8788_bl.c
++++ b/drivers/video/backlight/lp8788_bl.c
+@@ -221,8 +221,7 @@ static void lp8788_backlight_unregister(struct lp8788_bl *bl)
+ {
+ 	struct backlight_device *bl_dev = bl->bl_dev;
+ 
+-	if (bl_dev)
+-		backlight_device_unregister(bl_dev);
++	backlight_device_unregister(bl_dev);
+ }
+ 
+ static ssize_t lp8788_get_bl_ctl_mode(struct device *dev,
+-- 
+2.1.3
 
