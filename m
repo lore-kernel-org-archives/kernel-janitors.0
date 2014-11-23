@@ -1,119 +1,70 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Nov 2014 10:51:44 +0000
-Subject: Re: [PATCH with SmPL?] staging: rtl8188eu: Adjustments around jump labels
-Message-Id: <54633BC0.3030700@users.sourceforge.net>
+Date: Sun, 23 Nov 2014 12:00:23 +0000
+Subject: [PATCH 1/1] video: fbdev-SIS: Deletion of unnecessary checks before the function call "pci_dev_put"
+Message-Id: <5471CC57.8040603@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
- <20141029084702.GA18675@kroah.com> <5453CD0D.9010206@users.sourceforge.net>
- <alpine.DEB.2.10.1410311900201.2481@hadrien>
- <5453D013.9000007@users.sourceforge.net>
- <alpine.DEB.2.10.1410311911070.2481@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1410311911070.2481@hadrien>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Thomas Winischhofer <thomas@winischhofer.net>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->>>> @@ -212,8 +212,7 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16
->>>> _size_byte, u8  *pbuf)
->>>>  exit:
->>>>  	kfree(efuseTbl);
->>>>
->>>> -	if (eFuseWord)
->>>> -		kfree(eFuseWord);
->>>> +	kfree(eFuseWord);
->>>
->>> I think that this code has been updated already.  It would be better to
->>> add labels so that kfree is only executed when needed.
->>
->> Are there any chances to achieve the suggested fine-tuning for jump labels
->> also with another semantic patch approach?
-> 
-> No, I don't think so.  The pattern is not regular enough.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 23 Nov 2014 12:55:25 +0100
 
-Now I have got a different impression for corresponding improvement possibilities.
+The pci_dev_put() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call
+is not needed.
 
+This issue was detected by using the Coccinelle software.
 
-elfring@Sonne:~/Projekte/Linux/stable-patched> spatch.opt -debug -sp-file ~/Projekte/Coccinelle/janitor/move_function_call_before_jump_label1.cocci drivers/staging/rtl8188eu/core/rtw_efuse.c
-init_defs_builtins: /usr/local/share/coccinelle/standard.h
------------------------------------------------------------------------
-processing semantic patch file: /home/elfring/Projekte/Coccinelle/janitor/move_function_call_before_jump_label1.cocci
-with isos from: /usr/local/share/coccinelle/standard.iso
------------------------------------------------------------------------
-@move_function_call_before_jump_label@
-expression x;
-identifier fu, label;
-type t;
-@@
- t fu(...)
- {
-  ... when any
-  x = kzalloc(...);
-  if (x = NULL) {
-     ...
-     goto label;
-  }
-  ... when any
-+    kfree(x);
-  label:
--    kfree(x);
-  ...
- }
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/video/fbdev/sis/sis_main.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-HANDLING: drivers/staging/rtl8188eu/core/rtw_efuse.c
------------------------------------------------------------------------
-let's go
------------------------------------------------------------------------
------------------------------------------------------------------------
------------------------------------------------------------------------
-move_function_call_before_jump_label = 
------------------------------------------------------------------------
-dependencies for rule move_function_call_before_jump_label satisfied:
-binding in = []
-binding relevant in = []
-     (ONCE) USING optional_storage builtin isomorphism
-     transformation info returned:
-          transform state: 5
-               with rule_elem: 
-                                 <<< kfree(move_function_call_before_jump_label:x);
-                               move_function_call_before_jump_label:label:
-               with binding: [move_function_call_before_jump_label.x --> efuseTbl]
-          transform state: 204
-               with rule_elem: -kfree-(-move_function_call_before_jump_label:x-)-;
-               with binding: [move_function_call_before_jump_label.x --> efuseTbl]
-     binding out = []
-     transform one node: 204
-     transform one node: 5
------------------------------------------------------------------------
-Finished
------------------------------------------------------------------------
-diff = 
---- drivers/staging/rtl8188eu/core/rtw_efuse.c
-+++ /tmp/cocci-output-4498-349827-rtw_efuse.c
-@@ -209,8 +209,8 @@ efuse_phymap_to_logical(u8 *phymap, u16
-        /*  5. Calculate Efuse utilization. */
-        /*  */
+diff --git a/drivers/video/fbdev/sis/sis_main.c b/drivers/video/fbdev/sis/sis_main.c
+index 3f12a2d..6548a3e 100644
+--- a/drivers/video/fbdev/sis/sis_main.c
++++ b/drivers/video/fbdev/sis/sis_main.c
+@@ -5989,7 +5989,7 @@ static int sisfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
  
-+kfree(efuseTbl);
- exit:
--       kfree(efuseTbl);
+ 	if(!ivideo->sisvga_enabled) {
+ 		if(pci_enable_device(pdev)) {
+-			if(ivideo->nbridge) pci_dev_put(ivideo->nbridge);
++			pci_dev_put(ivideo->nbridge);
+ 			framebuffer_release(sis_fb_info);
+ 			return -EIO;
+ 		}
+@@ -6202,10 +6202,8 @@ error_0:	iounmap(ivideo->video_vbase);
+ error_1:	release_mem_region(ivideo->video_base, ivideo->video_size);
+ error_2:	release_mem_region(ivideo->mmio_base, ivideo->mmio_size);
+ error_3:	vfree(ivideo->bios_abase);
+-		if(ivideo->lpcdev)
+-			pci_dev_put(ivideo->lpcdev);
+-		if(ivideo->nbridge)
+-			pci_dev_put(ivideo->nbridge);
++		pci_dev_put(ivideo->lpcdev);
++		pci_dev_put(ivideo->nbridge);
+ 		if(!ivideo->sisvga_enabled)
+ 			pci_disable_device(pdev);
+ 		framebuffer_release(sis_fb_info);
+@@ -6505,11 +6503,9 @@ static void sisfb_remove(struct pci_dev *pdev)
  
-        kfree(eFuseWord);
- }
-Check duplication for 1 files
+ 	vfree(ivideo->bios_abase);
+ 
+-	if(ivideo->lpcdev)
+-		pci_dev_put(ivideo->lpcdev);
++	pci_dev_put(ivideo->lpcdev);
+ 
+-	if(ivideo->nbridge)
+-		pci_dev_put(ivideo->nbridge);
++	pci_dev_put(ivideo->nbridge);
+ 
+ #ifdef CONFIG_MTRR
+ 	/* Release MTRR region */
+-- 
+2.1.3
 
-
-
-Can my update suggestion be generalised a bit more for the movement of specific jump labels
-towards the end of a function implementation like in the use case "efuse_phymap_to_logical()"?
-
-Regards,
-Markus
