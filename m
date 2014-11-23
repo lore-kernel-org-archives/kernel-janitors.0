@@ -1,55 +1,57 @@
-From: Hannes Reinecke <hare@suse.de>
-Date: Thu, 06 Nov 2014 06:53:20 +0000
-Subject: Re: [patch] scsi: missing braces in scsi_extd_sense_format()
-Message-Id: <545B1AE0.9000407@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Nov 2014 12:48:08 +0000
+Subject: [PATCH 3/10] sound/atmel/abdac.c: fix error return code
+Message-Id: <1416746890-22719-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141105203837.GA26314@mwanda>
-In-Reply-To: <20141105203837.GA26314@mwanda>
+References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>, "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-On 11/05/2014 09:38 PM, Dan Carpenter wrote:
-> There were missing curly braces so we always return the first
-> additional2[] string.
->=20
-> Fixes: 7046d2fa6dbd ('scsi: use sdev as argument for sense code printing')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/scsi/constants.c b/drivers/scsi/constants.c
-> index a1a7fca..0cf43f6 100644
-> --- a/drivers/scsi/constants.c
-> +++ b/drivers/scsi/constants.c
-> @@ -1282,9 +1282,10 @@ scsi_extd_sense_format(unsigned char asc, unsigned=
- char ascq, const char **fmt)
->  	for (i =3D 0; additional2[i].fmt; i++) {
->  		if (additional2[i].code1 =3D asc &&
->  		    ascq >=3D additional2[i].code2_min &&
-> -		    ascq <=3D additional2[i].code2_max)
-> +		    ascq <=3D additional2[i].code2_max) {
->  			*fmt =3D additional2[i].fmt;
->  			return additional2[i].str;
-> +		}
->  	}
->  #endif
->  	return NULL;
->=20
-D'oh.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Initialize retval before returning from a failed call to ioremap.
 
-Cheers,
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Hannes
---=20
-Dr. Hannes Reinecke		      zSeries & Storage
-hare@suse.de			      +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: J. Hawn, J. Guild, F. Imend=F6rffer, HRB 21284 (AG N=FCrnberg)
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+// <smpl>
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/atmel/abdac.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/atmel/abdac.c b/sound/atmel/abdac.c
+index 98554f4..277ebce 100644
+--- a/sound/atmel/abdac.c
++++ b/sound/atmel/abdac.c
+@@ -452,6 +452,7 @@ static int __devinit atmel_abdac_probe(struct platform_device *pdev)
+ 	dac->regs = ioremap(regs->start, resource_size(regs));
+ 	if (!dac->regs) {
+ 		dev_dbg(&pdev->dev, "could not remap register memory\n");
++		retval = -ENOMEM;
+ 		goto out_free_card;
+ 	}
+ 
+
