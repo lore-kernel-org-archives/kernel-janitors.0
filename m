@@ -1,64 +1,83 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 13:14:10 +0000
-Subject: [PATCH 1/1] video: fbdev-OMAP2: Deletion of unnecessary checks before the function call "i2c_put_ada
-Message-Id: <5471DDA2.1060000@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 23 Nov 2014 13:11:18 +0000
+Subject: [PATCH 5/5] drivers/gpu/drm: fix error return code
+Message-Id: <1416748278-22881-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 14:07:22 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The i2c_put_adapter() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Return a negative error code on failure.
 
-This issue was detected by using the Coccinelle software.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/video/fbdev/omap2/displays-new/connector-dvi.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/gma500/psb_drv.c         |    8 ++++++--
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/omap2/displays-new/connector-dvi.c b/drivers/video/fbdev/omap2/displays-new/connector-dvi.c
-index 74de2bc..196c61a 100644
---- a/drivers/video/fbdev/omap2/displays-new/connector-dvi.c
-+++ b/drivers/video/fbdev/omap2/displays-new/connector-dvi.c
-@@ -262,8 +262,7 @@ static int dvic_probe_pdata(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index 6ec3a90..e405414 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -306,12 +306,16 @@ static int psb_driver_load(struct drm_device *dev, unsigned long flags)
+ 		goto out_err;
  
- 	in = omap_dss_find_output(pdata->source);
- 	if (in = NULL) {
--		if (ddata->i2c_adapter)
--			i2c_put_adapter(ddata->i2c_adapter);
-+		i2c_put_adapter(ddata->i2c_adapter);
+ 	dev_priv->mmu = psb_mmu_driver_init(dev, 1, 0, 0);
+-	if (!dev_priv->mmu)
++	if (!dev_priv->mmu) {
++		ret = -ENOMEM;
+ 		goto out_err;
++	}
  
- 		dev_err(&pdev->dev, "Failed to find video source\n");
- 		return -EPROBE_DEFER;
-@@ -352,8 +351,7 @@ static int dvic_probe(struct platform_device *pdev)
- err_reg:
- 	omap_dss_put_device(ddata->in);
+ 	dev_priv->pf_pd = psb_mmu_alloc_pd(dev_priv->mmu, 1, 0);
+-	if (!dev_priv->pf_pd)
++	if (!dev_priv->pf_pd) {
++		ret = -ENOMEM;
+ 		goto out_err;
++	}
  
--	if (ddata->i2c_adapter)
--		i2c_put_adapter(ddata->i2c_adapter);
-+	i2c_put_adapter(ddata->i2c_adapter);
+ 	ret = psb_do_init(dev);
+ 	if (ret)
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index 56c6055..c0fb5fa 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -678,6 +678,7 @@ static int omap_dmm_probe(struct platform_device *dev)
+ 				&omap_dmm->refill_pa, GFP_KERNEL);
+ 	if (!omap_dmm->refill_va) {
+ 		dev_err(&dev->dev, "could not allocate refill memory\n");
++		ret = -ENOMEM;
+ 		goto fail;
+ 	}
  
- 	return r;
- }
-@@ -371,8 +369,7 @@ static int __exit dvic_remove(struct platform_device *pdev)
- 
- 	omap_dss_put_device(in);
- 
--	if (ddata->i2c_adapter)
--		i2c_put_adapter(ddata->i2c_adapter);
-+	i2c_put_adapter(ddata->i2c_adapter);
- 
- 	return 0;
- }
--- 
-2.1.3
 
