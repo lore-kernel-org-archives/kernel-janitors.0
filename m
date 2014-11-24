@@ -1,73 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 13:11:15 +0000
-Subject: [PATCH 2/5] drm/exynos/ipp: fix error return code
-Message-Id: <1416748278-22881-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Nov 2014 17:31:05 +0000
+Subject: [PATCH 6/6] Documentation-SCSI: Fix a typo for the word "destroy"
+Message-Id: <54736B59.7040108@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <54736422.90409@users.sourceforge.net>
+In-Reply-To: <54736422.90409@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Inki Dae <inki.dae@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>, linux-doc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Nov 2014 17:25:30 +0100
 
-Propagate the returned error code on failure.
+An identifier was corrected in a change log entry because it contained a typo.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c |    3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/scsi/ChangeLog.lpfc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 00d74b1..d5ad17d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -426,18 +426,21 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
- 	c_node->start_work = ipp_create_cmd_work();
- 	if (IS_ERR(c_node->start_work)) {
- 		DRM_ERROR("failed to create start work.\n");
-+		ret = PTR_ERR(c_node->start_work);
- 		goto err_remove_id;
- 	}
- 
- 	c_node->stop_work = ipp_create_cmd_work();
- 	if (IS_ERR(c_node->stop_work)) {
- 		DRM_ERROR("failed to create stop work.\n");
-+		ret = PTR_ERR(c_node->stop_work);
- 		goto err_free_start;
- 	}
- 
- 	c_node->event_work = ipp_create_event_work();
- 	if (IS_ERR(c_node->event_work)) {
- 		DRM_ERROR("failed to create event work.\n");
-+		ret = PTR_ERR(c_node->event_work);
- 		goto err_free_stop;
- 	}
- 
+diff --git a/Documentation/scsi/ChangeLog.lpfc b/Documentation/scsi/ChangeLog.lpfc
+index 2f6d595..24d6508 100644
+--- a/Documentation/scsi/ChangeLog.lpfc
++++ b/Documentation/scsi/ChangeLog.lpfc
+@@ -1263,7 +1263,7 @@ Changes from 20040515 to 20040526
+ 	* Switch from using internal bus/id/lun to similar data from
+ 	  scsi_device structure.
+ 	* Eliminate one-line function lpfc_find_target()
+-	* Added slave_alloc, slave_destory
++	* Added slave_alloc, slave_destroy
+ 	* lpfc_scsi_cmd_start can now acquire lun pointer from
+ 	  scsi_device->hostdata, which is setup in slave_alloc.
+ 	* Eliminate unnecessary checking on every cmd just to see if we
+-- 
+2.1.3
 
