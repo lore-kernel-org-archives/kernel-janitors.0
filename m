@@ -1,35 +1,35 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 17 Nov 2014 13:45:15 +0000
-Subject: Re: [PATCH 1/1] kernel-audit: Deletion of an unnecessary check before the function call "audit_log_e
-Message-Id: <20141117134515.GE4905@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Nov 2014 17:00:18 +0000
+Subject: [PATCH 0/6] Fix a few typos around the word "destroy"
+Message-Id: <54736422.90409@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54687F1A.1010809@users.sourceforge.net>
- <20141116111023.GA4905@mwanda> <20141116111446.GA4956@mwanda>
- <54688F15.9070703@users.sourceforge.net>
- <20141117073408.GC4905@mwanda>
- <5469B836.8030507@users.sourceforge.net>
-In-Reply-To: <5469B836.8030507@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: kernel-janitors@vger.kernel.org
+Cc: trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 17, 2014 at 09:56:22AM +0100, SF Markus Elfring wrote:
-> > You removed the statement from "if (foo) kfree_fsm(foo);" so now it
-> > prints a warning.
-> > 
-> > drivers/s390/net/fsm.c
-> 
-> Would it be better to continue the clarification of affected implementation details
-> under the discussion topic "s390/net: Deletion of unnecessary checks before two function calls"?
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Nov 2014 17:34:23 +0100
+Subject: [PATCH 0/6] Fix a few typos around the word "destroy"
 
-What do you want me to clarify?  Do you still not see the bug?
+The word "destroy" was mistyped in some files.
 
-regards,
-dan carpenter
+Markus Elfring (6):
+  isci: Fix a typo for the word "destroy"
+  SCSI-libfc: Fix typos for the word "destroy"
+  video: fbdev-MMP: Fix typos for the word "destroy"
+  f2fs: Fix typos for the word "destroy" in jump labels
+  video: fbdev-MMP: Fix a typo for the word "destroyed"
+  Documentation-SCSI: Fix a typo for the word "destroy"
+
+ Documentation/scsi/ChangeLog.lpfc | 2 +-
+ drivers/scsi/isci/remote_device.c | 2 +-
+ drivers/scsi/libfc/fc_fcp.c       | 4 ++--
+ drivers/video/fbdev/mmp/core.c    | 6 +++---
+ fs/f2fs/node.c                    | 8 ++++----
+ 5 files changed, 11 insertions(+), 11 deletions(-)
+
+-- 
+2.1.3
 
