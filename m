@@ -1,36 +1,20 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Sat, 22 Nov 2014 18:42:01 +0000
-Subject: [patch] KEYS: remove a bogus NULL check
-Message-Id: <20141122184201.GE6994@mwanda>
+From: David Howells <dhowells@redhat.com>
+Date: Mon, 24 Nov 2014 13:42:23 +0000
+Subject: Re: [patch] KEYS: remove a bogus NULL check
+Message-Id: <16495.1416836543@warthog.procyon.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141122184201.GE6994@mwanda>
+In-Reply-To: <20141122184201.GE6994@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We already checked if "desc" was NULL at the beginning of the function
-and we've dereferenced it so this causes a static checker warning.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> We already checked if "desc" was NULL at the beginning of the function
+> and we've dereferenced it so this causes a static checker warning.
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index e17ba6a..aee2ec5 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -276,12 +276,10 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 	if (!key)
- 		goto no_memory_2;
- 
--	if (desc) {
--		key->index_key.desc_len = desclen;
--		key->index_key.description = kmemdup(desc, desclen + 1, GFP_KERNEL);
--		if (!key->description)
--			goto no_memory_3;
--	}
-+	key->index_key.desc_len = desclen;
-+	key->index_key.description = kmemdup(desc, desclen + 1, GFP_KERNEL);
-+	if (!key->description)
-+		goto no_memory_3;
- 
- 	atomic_set(&key->usage, 1);
- 	init_rwsem(&key->sem);
+Yeah - keys were originally allowed to have no description.
+
+Applied.
