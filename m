@@ -1,92 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Nov 2014 18:42:31 +0000
-Subject: [PATCH 1/1] ntfs: Deletion of unnecessary checks before the function call "iput"
-Message-Id: <54679E97.5000801@users.sourceforge.net>
+Date: Mon, 24 Nov 2014 17:08:32 +0000
+Subject: [PATCH 1/6] isci: Fix a typo for the word "destroy"
+Message-Id: <54736610.9090203@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <54736422.90409@users.sourceforge.net>
+In-Reply-To: <54736422.90409@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Artur Paszkiewicz <artur.paszkiewicz@intel.com>, Dave Jiang <dave.jiang@intel.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, intel-linux-scu@intel.com
+Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Nov 2014 19:35:05 +0100
+Date: Mon, 24 Nov 2014 15:35:48 +0100
 
-The iput() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
+A word was corrected in the description for
+the sci_remote_device_destruct() function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- fs/ntfs/super.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ drivers/scsi/isci/remote_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ntfs/super.c b/fs/ntfs/super.c
-index 6c3296e..8f22a47 100644
---- a/fs/ntfs/super.c
-+++ b/fs/ntfs/super.c
-@@ -2204,17 +2204,12 @@ get_ctx_vol_failed:
- 	return true;
- #ifdef NTFS_RW
- iput_usnjrnl_err_out:
--	if (vol->usnjrnl_j_ino)
--		iput(vol->usnjrnl_j_ino);
--	if (vol->usnjrnl_max_ino)
--		iput(vol->usnjrnl_max_ino);
--	if (vol->usnjrnl_ino)
--		iput(vol->usnjrnl_ino);
-+	iput(vol->usnjrnl_j_ino);
-+	iput(vol->usnjrnl_max_ino);
-+	iput(vol->usnjrnl_ino);
- iput_quota_err_out:
--	if (vol->quota_q_ino)
--		iput(vol->quota_q_ino);
--	if (vol->quota_ino)
--		iput(vol->quota_ino);
-+	iput(vol->quota_q_ino);
-+	iput(vol->quota_ino);
- 	iput(vol->extend_ino);
- #endif /* NTFS_RW */
- iput_sec_err_out:
-@@ -2223,8 +2218,7 @@ iput_root_err_out:
- 	iput(vol->root_ino);
- iput_logfile_err_out:
- #ifdef NTFS_RW
--	if (vol->logfile_ino)
--		iput(vol->logfile_ino);
-+	iput(vol->logfile_ino);
- iput_vol_err_out:
- #endif /* NTFS_RW */
- 	iput(vol->vol_ino);
-@@ -2254,8 +2248,7 @@ iput_mftbmp_err_out:
- 	iput(vol->mftbmp_ino);
- iput_mirr_err_out:
- #ifdef NTFS_RW
--	if (vol->mftmirr_ino)
--		iput(vol->mftmirr_ino);
-+	iput(vol->mftmirr_ino);
- #endif /* NTFS_RW */
- 	return false;
- }
+diff --git a/drivers/scsi/isci/remote_device.c b/drivers/scsi/isci/remote_device.c
+index cc51f38..f54bb98 100644
+--- a/drivers/scsi/isci/remote_device.c
++++ b/drivers/scsi/isci/remote_device.c
+@@ -1008,7 +1008,7 @@ static void sci_remote_device_initial_state_enter(struct sci_base_state_machine
+  * successfully destructed or if some failure occurred. enum sci_status This value
+  * is returned if the device is successfully destructed.
+  * SCI_FAILURE_INVALID_REMOTE_DEVICE This value is returned if the supplied
+- * device isn't valid (e.g. it's already been destoryed, the handle isn't
++ * device isn't valid (e.g. it's already been destroyed, the handle isn't
+  * valid, etc.).
+  */
+ static enum sci_status sci_remote_device_destruct(struct isci_remote_device *idev)
 -- 
 2.1.3
-
 
