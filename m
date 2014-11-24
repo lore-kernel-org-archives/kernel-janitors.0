@@ -1,24 +1,31 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Nov 2014 14:30:57 +0000
-Subject: Re: s390/net: Deletion of unnecessary checks before two function calls
-Message-Id: <546A06A1.3060203@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 24 Nov 2014 12:53:00 +0000
+Subject: [patch] kvm: x86: potential shift wrapping bug
+Message-Id: <20141124125300.GA11942@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54687F1A.1010809@users.sourceforge.net> <20141116111023.GA4905@mwanda> <20141116111446.GA4956@mwanda> <54688F15.9070703@users.sourceforge.net> <20141117073408.GC4905@mwanda> <5469B836.8030507@users.sourceforge.net> <20141117134515.GE4905@mwanda>
-In-Reply-To: <20141117134515.GE4905@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>, Eric Paris <eparis@redhat.com>, Frank Blaschka <blaschka@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Ursula Braun <ursula.braun@de.ibm.com>, linux390@de.ibm.com, linux-s390@vger.kernel.org
+To: Gleb Natapov <gleb@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> What do you want me to clarify?  Do you still not see the bug?
+cs.base is declared as a __u64 variable and vector is a u32 so this
+causes a static checker warning.  I'm not very familiar with this code
+but my understanding is that the user can set "sipi_vector" to any u32
+value in kvm_vcpu_ioctl_x86_set_vcpu_events().
 
-Would you like to point out that you notice the warning message
-"fsm: kfree_fsm called with NULL argument" after my update suggestion?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-How do you think about to share a bit more information about the
-corresponding function call graph from your test system?
-
-Regards,
-Markus
-
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 34c8f94..6608115 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7000,7 +7000,7 @@ void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, unsigned int vector)
+ 
+ 	kvm_get_segment(vcpu, &cs, VCPU_SREG_CS);
+ 	cs.selector = vector << 8;
+-	cs.base = vector << 12;
++	cs.base = (u64)vector << 12;
+ 	kvm_set_segment(vcpu, &cs, VCPU_SREG_CS);
+ 	kvm_rip_write(vcpu, 0);
+ }
