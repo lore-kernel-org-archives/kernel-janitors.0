@@ -1,84 +1,40 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 03 Nov 2014 18:40:51 +0000
-Subject: [PATCH v2] kconfig: Deletion of unnecessary checks before the function call "sym_calc_value"
-Message-Id: <5457CC33.4050906@users.sourceforge.net>
+Date: Mon, 24 Nov 2014 17:28:09 +0000
+Subject: [PATCH 5/6] video: fbdev-MMP: Fix a typo for the word "destroyed"
+Message-Id: <54736AA9.9020305@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54568924.5010008@users.sourceforge.net>
-In-Reply-To: <54568924.5010008@users.sourceforge.net>
+References: <54736422.90409@users.sourceforge.net>
+In-Reply-To: <54736422.90409@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Nov 2014 15:55:23 +0100
 
-The sym_calc_value() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
+A word was corrected in the description for a parameter of
+the mmp_unregister_path() function.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-Acked-by: Paul Bolle <pebolle@tiscali.nl>
 ---
- scripts/kconfig/confdata.c | 6 ++----
- scripts/kconfig/symbol.c   | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/video/fbdev/mmp/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-index f88d90f..3073cb6 100644
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -262,8 +262,7 @@ int conf_read_simple(const char *name, int def)
- 			goto load;
- 		sym_add_change_count(1);
- 		if (!sym_defconfig_list) {
--			if (modules_sym)
--				sym_calc_value(modules_sym);
-+			sym_calc_value(modules_sym);
- 			return 1;
- 		}
+diff --git a/drivers/video/fbdev/mmp/core.c b/drivers/video/fbdev/mmp/core.c
+index 43ed576..a0f4960 100644
+--- a/drivers/video/fbdev/mmp/core.c
++++ b/drivers/video/fbdev/mmp/core.c
+@@ -224,7 +224,7 @@ EXPORT_SYMBOL_GPL(mmp_register_path);
  
-@@ -399,8 +398,7 @@ setsym:
- 	free(line);
- 	fclose(in);
- 
--	if (modules_sym)
--		sym_calc_value(modules_sym);
-+	sym_calc_value(modules_sym);
- 	return 0;
- }
- 
-diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index 7caabdb..3f7797b 100644
---- a/scripts/kconfig/symbol.c
-+++ b/scripts/kconfig/symbol.c
-@@ -447,8 +447,7 @@ void sym_clear_all_valid(void)
- 	for_all_symbols(i, sym)
- 		sym->flags &= ~SYMBOL_VALID;
- 	sym_add_change_count(1);
--	if (modules_sym)
--		sym_calc_value(modules_sym);
-+	sym_calc_value(modules_sym);
- }
- 
- void sym_set_changed(struct symbol *sym)
+ /*
+  * mmp_unregister_path - unregister and destroy path
+- * @p: path to be destoried.
++ * @p: path to be destroyed.
+  *
+  * this function registers path and destroys it.
+  */
 -- 
 2.1.3
-
 
