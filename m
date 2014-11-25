@@ -1,66 +1,41 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 16:59:32 +0000
-Subject: [PATCH 6/8] crypto: replace memset by memzero_explicit
-Message-Id: <1417366774-32412-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Nov 2014 15:55:57 +0000
+Subject: [patch 1/2] usb: gadget: udc: clean up a printk
+Message-Id: <20141125155557.GA19894@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: dborkman@redhat.com, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+We already know what "value" is, so there is no need to check.  It
+puzzles static checkers to have the unneeded condition.
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
-
-{
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
-}
-// </smpl>
-
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
----
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
-
- arch/powerpc/crypto/sha1.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/crypto/sha1.c b/arch/powerpc/crypto/sha1.c
-index 0f88c7b..d3feba5 100644
---- a/arch/powerpc/crypto/sha1.c
-+++ b/arch/powerpc/crypto/sha1.c
-@@ -66,7 +66,7 @@ static int sha1_update(struct shash_desc *desc, const u8 *data,
- 			src = data + done;
- 		} while (done + 63 < len);
+diff --git a/drivers/usb/gadget/udc/bdc/bdc_ep.c b/drivers/usb/gadget/udc/bdc/bdc_ep.c
+index 15da5b1..2f4ac6e 100644
+--- a/drivers/usb/gadget/udc/bdc/bdc_ep.c
++++ b/drivers/usb/gadget/udc/bdc/bdc_ep.c
+@@ -880,8 +880,8 @@ static int ep_set_halt(struct bdc_ep *ep, u32 value)
  
--		memset(temp, 0, sizeof(temp));
-+		memzero_explicit(temp, sizeof(temp));
- 		partial = 0;
- 	}
- 	memcpy(sctx->buffer + partial, src, len - done);
-
+ 		ret = bdc_ep_set_stall(bdc, ep->ep_num);
+ 		if (ret)
+-			dev_err(bdc->dev, "failed to %s STALL on %s\n",
+-				value ? "set" : "clear", ep->name);
++			dev_err(bdc->dev, "failed to set STALL on %s\n",
++				ep->name);
+ 		else
+ 			ep->flags |= BDC_EP_STALL;
+ 	} else {
+@@ -889,8 +889,8 @@ static int ep_set_halt(struct bdc_ep *ep, u32 value)
+ 		dev_dbg(bdc->dev, "Before Clear\n");
+ 		ret = bdc_ep_clear_stall(bdc, ep->ep_num);
+ 		if (ret)
+-			dev_err(bdc->dev, "failed to %s STALL on %s\n",
+-				value ? "set" : "clear", ep->name);
++			dev_err(bdc->dev, "failed to clear STALL on %s\n",
++				ep->name);
+ 		else
+ 			ep->flags &= ~BDC_EP_STALL;
+ 		dev_dbg(bdc->dev, "After  Clear\n");
