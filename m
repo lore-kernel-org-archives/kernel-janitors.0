@@ -1,67 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 16:17:26 +0000
-Subject: [PATCH v2] thermal: Exynos: Deletion of unnecessary checks before two function calls
-Message-Id: <546F6596.6010103@users.sourceforge.net>
+Date: Tue, 25 Nov 2014 15:16:11 +0000
+Subject: [PATCH 1/1] IMX-DRM-core: Deletion of a check before drm_fbdev_cma_restore_mode()
+Message-Id: <54749D3B.5000008@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546F1017.5080403@users.sourceforge.net>
- <alpine.DEB.2.10.1411211116580.2554@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1411211116580.2554@hadrien>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 17:11:49 +0100
+Date: Tue, 25 Nov 2014 16:06:19 +0100
 
-The functions cpufreq_cooling_unregister() and thermal_zone_device_unregister()
-test whether their argument is NULL and then return immediately.
-Thus the test around the call is not needed.
+The drm_fbdev_cma_restore_mode() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/thermal/samsung/exynos_thermal_common.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/staging/imx-drm/imx-drm-core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
-index 3f5ad25..b6be572 100644
---- a/drivers/thermal/samsung/exynos_thermal_common.c
-+++ b/drivers/thermal/samsung/exynos_thermal_common.c
-@@ -417,13 +417,10 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf)
+diff --git a/drivers/staging/imx-drm/imx-drm-core.c b/drivers/staging/imx-drm/imx-drm-core.c
+index 6b22106..0a1ecef 100644
+--- a/drivers/staging/imx-drm/imx-drm-core.c
++++ b/drivers/staging/imx-drm/imx-drm-core.c
+@@ -64,8 +64,7 @@ static void imx_drm_driver_lastclose(struct drm_device *drm)
+ #if IS_ENABLED(CONFIG_DRM_IMX_FB_HELPER)
+ 	struct imx_drm_device *imxdrm = drm->dev_private;
  
- 	th_zone = sensor_conf->pzone_data;
+-	if (imxdrm->fbhelper)
+-		drm_fbdev_cma_restore_mode(imxdrm->fbhelper);
++	drm_fbdev_cma_restore_mode(imxdrm->fbhelper);
+ #endif
+ }
  
--	if (th_zone->therm_dev)
--		thermal_zone_device_unregister(th_zone->therm_dev);
-+	thermal_zone_device_unregister(th_zone->therm_dev);
- 
--	for (i = 0; i < th_zone->cool_dev_size; i++) {
--		if (th_zone->cool_dev[i])
--			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
--	}
-+	for (i = 0; i < th_zone->cool_dev_size; ++i)
-+		cpufreq_cooling_unregister(th_zone->cool_dev[i]);
- 
- 	dev_info(sensor_conf->dev,
- 		"Exynos: Kernel Thermal management unregistered\n");
 -- 
 2.1.3
 
