@@ -1,59 +1,28 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 12:48:02 +0000
-Subject: [PATCH 2/10] sound/soc/fsl/imx-sgtl5000.c: fix error return code
-Message-Id: <1416746890-22719-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Nov 2014 16:44:39 +0000
+Subject: [patch] x86_64, traps: always true condition
+Message-Id: <20141125164439.GE19894@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Liam Girdwood <lrg@ti.com>
-Cc: kernel-janitors@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+We should be checking IS_ERR() here.  PTR_ERR() is always true.
 
-Initialize ret on the second call to imx_audmux_v2_configure_port so that
-the subsequent test checks that result and not the previous one.
+Fixes: b645af2d5905 ('x86_64, traps: Rework bad_iret')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/soc/fsl/imx-sgtl5000.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/fsl/imx-sgtl5000.c b/sound/soc/fsl/imx-sgtl5000.c
-index fb21b17..199408e 100644
---- a/sound/soc/fsl/imx-sgtl5000.c
-+++ b/sound/soc/fsl/imx-sgtl5000.c
-@@ -94,7 +94,7 @@ static int __devinit imx_sgtl5000_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "audmux internal port setup failed\n");
- 		return ret;
- 	}
--	imx_audmux_v2_configure_port(ext_port,
-+	ret = imx_audmux_v2_configure_port(ext_port,
- 			IMX_AUDMUX_V2_PTCR_SYN,
- 			IMX_AUDMUX_V2_PDCR_RXDSEL(int_port));
- 	if (ret) {
-
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 67d817e..f176d96 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -331,7 +331,7 @@ dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
+ 		break; /* Success, it was handled */
+ 	case 1: /* Bound violation. */
+ 		info = mpx_generate_siginfo(regs, xsave_buf);
+-		if (PTR_ERR(info)) {
++		if (IS_ERR(info)) {
+ 			/*
+ 			 * We failed to decode the MPX instruction.  Act as if
+ 			 * the exception was not caused by MPX.
