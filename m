@@ -1,68 +1,29 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 08:35:46 +0000
-Subject: [PATCH 1/1] fs-eventpoll: Deletion of unnecessary checks before the function call "__pm_stay_awake"
-Message-Id: <546B04E2.80000@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 25 Nov 2014 16:43:47 +0000
+Subject: [patch] ocfs2: remove bogus NULL check in ocfs2_move_extents()
+Message-Id: <20141125164347.GD19894@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: ocfs2-devel@oss.oracle.com
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 09:27:16 +0100
+"inode" isn't NULL here, and also we dereference it on the previous line
+so static checkers get annoyed.
 
-The __pm_stay_awake() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/eventpoll.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 7bcfff9..eec2e85 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -555,8 +555,7 @@ static inline void ep_pm_stay_awake(struct epitem *epi)
- {
- 	struct wakeup_source *ws = ep_wakeup_source(epi);
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 74caffe..56a768d 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -904,9 +904,6 @@ static int ocfs2_move_extents(struct ocfs2_move_extents_context *context)
+ 	struct buffer_head *di_bh = NULL;
+ 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
  
--	if (ws)
--		__pm_stay_awake(ws);
-+	__pm_stay_awake(ws);
- }
+-	if (!inode)
+-		return -ENOENT;
+-
+ 	if (ocfs2_is_hard_readonly(osb) || ocfs2_is_soft_readonly(osb))
+ 		return -EROFS;
  
- static inline bool ep_has_wakeup_source(struct epitem *epi)
-@@ -571,8 +570,7 @@ static inline void ep_pm_stay_awake_rcu(struct epitem *epi)
- 
- 	rcu_read_lock();
- 	ws = rcu_dereference(epi->ws);
--	if (ws)
--		__pm_stay_awake(ws);
-+	__pm_stay_awake(ws);
- 	rcu_read_unlock();
- }
- 
--- 
-2.1.3
-
