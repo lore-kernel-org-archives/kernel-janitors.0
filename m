@@ -1,112 +1,45 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sat, 15 Nov 2014 20:18:25 +0000
-Subject: Re: [PATCH 1/1] fs-fat: Less function calls in fat_fill_super() after error detection
-Message-Id: <alpine.DEB.2.02.1411152117540.2225@localhost6.localdomain6>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Nov 2014 21:55:34 +0000
+Subject: [PATCH v2] net: Hyper-V: Deletion of an unnecessary check before the function call "vfree"
+Message-Id: <5474FAD6.4060704@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <5467B12C.4010602@users.sourceforge.net>
-In-Reply-To: <5467B12C.4010602@users.sourceforge.net>
+References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.sourceforge.net>	<546DF9D7.6080801@users.sourceforge.net> <20141121.151503.1986113223309494197.davem@davemloft.net>
+In-Reply-To: <20141121.151503.1986113223309494197.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: David Miller <davem@davemloft.net>, devel@linuxdriverproject.org, netdev@vger.kernel.org
+Cc: Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sat, 15 Nov 2014, SF Markus Elfring wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 25 Nov 2014 22:33:45 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 15 Nov 2014 20:55:23 +0100
-> 
-> The iput() function was called in an inefficient way by the implementation
-> of the fat_fill_super() function in case of an allocation failure.
-> The corresponding source code was improved by deletion of two unnecessary
-> null pointer checks and a few adjustments for jump labels.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/fat/inode.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-> index 756aead..138ab9a 100644
-> --- a/fs/fat/inode.c
-> +++ b/fs/fat/inode.c
-> @@ -1716,20 +1716,20 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
->  
->  	fsinfo_inode = new_inode(sb);
->  	if (!fsinfo_inode)
-> -		goto out_fail;
-> +		goto fsinfo_inode_failure;
->  	fsinfo_inode->i_ino = MSDOS_FSINFO_INO;
->  	sbi->fsinfo_inode = fsinfo_inode;
->  	insert_inode_hash(fsinfo_inode);
->  
->  	root_inode = new_inode(sb);
->  	if (!root_inode)
-> -		goto out_fail;
-> +		goto other_failure;
+The vfree() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-Other_failure is not such a good name.  The one above is better.
+This issue was detected by using the Coccinelle software.
 
-julia
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+---
+ drivers/net/hyperv/netvsc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->  	root_inode->i_ino = MSDOS_ROOT_INO;
->  	root_inode->i_version = 1;
->  	error = fat_read_root(root_inode);
->  	if (error < 0) {
->  		iput(root_inode);
-> -		goto out_fail;
-> +		goto other_failure;
->  	}
->  	error = -ENOMEM;
->  	insert_inode_hash(root_inode);
-> @@ -1737,7 +1737,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
->  	sb->s_root = d_make_root(root_inode);
->  	if (!sb->s_root) {
->  		fat_msg(sb, KERN_ERR, "get root inode failed");
-> -		goto out_fail;
-> +		goto other_failure;
->  	}
->  
->  	if (sbi->options.discard) {
-> @@ -1756,11 +1756,13 @@ out_invalid:
->  	if (!silent)
->  		fat_msg(sb, KERN_INFO, "Can't find a valid FAT filesystem");
->  
-> +other_failure:
-> +	iput(fsinfo_inode);
-> +
-> +fsinfo_inode_failure:
-> +	iput(fat_inode);
-> +
->  out_fail:
-> -	if (fsinfo_inode)
-> -		iput(fsinfo_inode);
-> -	if (fat_inode)
-> -		iput(fat_inode);
->  	unload_nls(sbi->nls_io);
->  	unload_nls(sbi->nls_disk);
->  	if (sbi->options.iocharset != fat_default_iocharset)
-> -- 
-> 2.1.3
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index 6b46311..6fc834e 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -561,9 +561,7 @@ int netvsc_device_remove(struct hv_device *device)
+ 	vmbus_close(device->channel);
+ 
+ 	/* Release all resources */
+-	if (net_device->sub_cb_buf)
+-		vfree(net_device->sub_cb_buf);
+-
++	vfree(net_device->sub_cb_buf);
+ 	free_netvsc_device(net_device);
+ 	return 0;
+ }
+-- 
+2.1.3
+
