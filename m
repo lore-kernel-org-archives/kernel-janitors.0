@@ -1,83 +1,26 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 13:11:18 +0000
-Subject: [PATCH 5/5] drivers/gpu/drm: fix error return code
-Message-Id: <1416748278-22881-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Theodore Ts'o <tytso@mit.edu>
+Date: Wed, 26 Nov 2014 01:16:23 +0000
+Subject: Re: [1/1] fs-ext4: Deletion of an unnecessary check before the function call "iput"
+Message-Id: <20141126011623.GA20977@thunk.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <54679938.3020106@users.sourceforge.net>
+In-Reply-To: <54679938.3020106@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: cocci@systeme.lip6.fr
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+On Sat, Nov 15, 2014 at 07:19:36PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 15 Nov 2014 19:04:06 +0100
+> 
+> The iput() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Return a negative error code on failure.
+Thanks, applied.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/gpu/drm/gma500/psb_drv.c         |    8 ++++++--
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    1 +
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
-index 6ec3a90..e405414 100644
---- a/drivers/gpu/drm/gma500/psb_drv.c
-+++ b/drivers/gpu/drm/gma500/psb_drv.c
-@@ -306,12 +306,16 @@ static int psb_driver_load(struct drm_device *dev, unsigned long flags)
- 		goto out_err;
- 
- 	dev_priv->mmu = psb_mmu_driver_init(dev, 1, 0, 0);
--	if (!dev_priv->mmu)
-+	if (!dev_priv->mmu) {
-+		ret = -ENOMEM;
- 		goto out_err;
-+	}
- 
- 	dev_priv->pf_pd = psb_mmu_alloc_pd(dev_priv->mmu, 1, 0);
--	if (!dev_priv->pf_pd)
-+	if (!dev_priv->pf_pd) {
-+		ret = -ENOMEM;
- 		goto out_err;
-+	}
- 
- 	ret = psb_do_init(dev);
- 	if (ret)
-diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-index 56c6055..c0fb5fa 100644
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -678,6 +678,7 @@ static int omap_dmm_probe(struct platform_device *dev)
- 				&omap_dmm->refill_pa, GFP_KERNEL);
- 	if (!omap_dmm->refill_va) {
- 		dev_err(&dev->dev, "could not allocate refill memory\n");
-+		ret = -ENOMEM;
- 		goto fail;
- 	}
- 
-
+						- Ted
