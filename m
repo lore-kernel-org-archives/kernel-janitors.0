@@ -1,52 +1,57 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Wed, 26 Nov 2014 14:43:06 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Nov 2014 15:05:41 +0000
 Subject: Re: [patch] tracing: off by one in __trace_array_vprintk()
-Message-Id: <20141126094306.4f465616@gandalf.local.home>
+Message-Id: <20141126150541.GU4893@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141126140621.GA18740@mwanda>
-	<20141126092706.5d4038d4@gandalf.local.home>
-	<20141126143719.GT4893@mwanda>
-In-Reply-To: <20141126143719.GT4893@mwanda>
+ <20141126092706.5d4038d4@gandalf.local.home>
+ <20141126143719.GT4893@mwanda>
+ <20141126094306.4f465616@gandalf.local.home>
+In-Reply-To: <20141126094306.4f465616@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Steven Rostedt <rostedt@goodmis.org>
 Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, 26 Nov 2014 17:37:19 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> On Wed, Nov 26, 2014 at 09:27:06AM -0500, Steven Rostedt wrote:
-> > On Wed, 26 Nov 2014 17:06:21 +0300
-> > Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > 
-> > > This check says "goto out;" if we had to truncate the string.
-> > > 
-> > > The "tbuffer" buffer has TRACE_BUF_SIZE bytes.  The vsnprintf() function
-> > > returns the number of characters (not counting the NUL char) which would
-> > > have been printed if there were space.  If we we tried to print
-> > > TRACE_BUF_SIZE characters, the last character would have been truncated
-> > > to make space for the NUL character so we should "goto out;".
-> > > 
-> > 
-> > Oh, and the NUL character is never copied. We copy the string into the
-> > buffer with:
-> > 
-> > 	memcpy(&entry->buf, tbuffer, len);
-> > 
-> > Where len does not include NUL, and why we add it ourselves.
+On Wed, Nov 26, 2014 at 09:43:06AM -0500, Steven Rostedt wrote:
+> I highly doubt it's much of a speed up. And we do that by sacrificing
+> that one byte of buffer, which would lose the printk if len does equal
+> TRACE_BUF_SIZE.
 > 
-> Yeah.  I noticed that.  Probably we should change the memcpy() to:
-> 
-> 	memcpy(&entry->buf, tbuffer, len + 1);
-> 
-> and remove separate NUL assignment?  It's a speedup!  I'll do it in v2.
-> 
+> I don't see a bug here. What exactly are you trying to fix?
 
-I highly doubt it's much of a speed up. And we do that by sacrificing
-that one byte of buffer, which would lose the printk if len does equal
-TRACE_BUF_SIZE.
+Heh.  vsnprintf() is going to put a NUL char at the end of the string
+even if you don't plan to use it.  :P
 
-I don't see a bug here. What exactly are you trying to fix?
+Another option would be to just print truncated output.  We could use
+vscnprintf() and remove the off by one limit check.
 
--- Steve
+regards,
+dan carpenter
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 42a822d..ab76b7b 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2160,9 +2160,7 @@ __trace_array_vprintk(struct ring_buffer *buffer,
+ 		goto out;
+ 	}
+ 
+-	len = vsnprintf(tbuffer, TRACE_BUF_SIZE, fmt, args);
+-	if (len > TRACE_BUF_SIZE)
+-		goto out;
++	len = vscnprintf(tbuffer, TRACE_BUF_SIZE, fmt, args);
+ 
+ 	local_save_flags(flags);
+ 	size = sizeof(*entry) + len + 1;
+@@ -2173,8 +2171,7 @@ __trace_array_vprintk(struct ring_buffer *buffer,
+ 	entry = ring_buffer_event_data(event);
+ 	entry->ip = ip;
+ 
+-	memcpy(&entry->buf, tbuffer, len);
+-	entry->buf[len] = '\0';
++	memcpy(&entry->buf, tbuffer, len + 1);
+ 	if (!call_filter_check_discard(call, entry, buffer, event)) {
+ 		__buffer_unlock_commit(buffer, event);
+ 		ftrace_trace_stack(buffer, flags, 6, pc);
