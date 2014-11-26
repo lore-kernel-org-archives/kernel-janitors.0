@@ -1,68 +1,36 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 17:03:42 +0000
-Subject: [PATCH 1/8 v2] purgatory/sha256: replace memset by memzero_explicit
-Message-Id: <1417367029-32762-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 26 Nov 2014 14:06:49 +0000
+Subject: [patch] USB: adutux: NULL dereferences on disconnect
+Message-Id: <20141126140649.GB18740@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Both "dev->udev" and "interface->dev" are NULL.  These printks are not
+very interesting so I just deleted them.
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+Fixes: 03270634e242 ('USB: Add ADU support for Ontrak ADU devices')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
-
-{
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
-}
-// </smpl>
-
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
-
-v2: fixed email address
-
- arch/x86/purgatory/sha256.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/purgatory/sha256.c b/arch/x86/purgatory/sha256.c
-index 548ca67..8271ca5 100644
---- a/arch/x86/purgatory/sha256.c
-+++ b/arch/x86/purgatory/sha256.c
-@@ -205,7 +205,7 @@ static void sha256_transform(u32 *state, const u8 *input)
+diff --git a/drivers/usb/misc/adutux.c b/drivers/usb/misc/adutux.c
+index 493c7f2..3071c0e 100644
+--- a/drivers/usb/misc/adutux.c
++++ b/drivers/usb/misc/adutux.c
+@@ -814,15 +814,10 @@ static void adu_disconnect(struct usb_interface *interface)
+ 	usb_set_intfdata(interface, NULL);
  
- 	/* clear any sensitive info... */
- 	a = b = c = d = e = f = g = h = t1 = t2 = 0;
--	memset(W, 0, 64 * sizeof(u32));
-+	memzero_explicit(W, 64 * sizeof(u32));
+ 	/* if the device is not opened, then we clean up right now */
+-	dev_dbg(&dev->udev->dev, "%s : open count %d\n",
+-		__func__, dev->open_count);
+ 	if (!dev->open_count)
+ 		adu_delete(dev);
+ 
+ 	mutex_unlock(&adutux_mutex);
+-
+-	dev_info(&interface->dev, "ADU device adutux%d now disconnected\n",
+-		 (minor - ADU_MINOR_BASE));
  }
  
- int sha256_init(struct sha256_state *sctx)
-
+ /* usb specific object needed to register this driver with the usb subsystem */
