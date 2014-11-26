@@ -1,18 +1,18 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 26 Nov 2014 14:34:04 +0000
+Date: Wed, 26 Nov 2014 14:37:19 +0000
 Subject: Re: [patch] tracing: off by one in __trace_array_vprintk()
-Message-Id: <20141126143404.GS4893@mwanda>
+Message-Id: <20141126143719.GT4893@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141126140621.GA18740@mwanda>
- <20141126092537.14b6ea9f@gandalf.local.home>
-In-Reply-To: <20141126092537.14b6ea9f@gandalf.local.home>
+ <20141126092706.5d4038d4@gandalf.local.home>
+In-Reply-To: <20141126092706.5d4038d4@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Steven Rostedt <rostedt@goodmis.org>
 Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Nov 26, 2014 at 09:25:37AM -0500, Steven Rostedt wrote:
+On Wed, Nov 26, 2014 at 09:27:06AM -0500, Steven Rostedt wrote:
 > On Wed, 26 Nov 2014 17:06:21 +0300
 > Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > 
@@ -24,35 +24,19 @@ On Wed, Nov 26, 2014 at 09:25:37AM -0500, Steven Rostedt wrote:
 > > TRACE_BUF_SIZE characters, the last character would have been truncated
 > > to make space for the NUL character so we should "goto out;".
 > > 
-> > My other concern here was that a few lines later we do:
-> > 
-> > 	entry->buf[len] = '\0';
-> > 
-> > I worried that maybe we were putting the NUL char past the end of the
-> > array but I wasn't smart enough to figure out the size of entry->buf[].
 > 
-> entry is of type struct print_entry *, which is defined by macro magic
-> (sorry),
+> Oh, and the NUL character is never copied. We copy the string into the
+> buffer with:
+> 
+> 	memcpy(&entry->buf, tbuffer, len);
+> 
+> Where len does not include NUL, and why we add it ourselves.
 
-I figure this bit out using make devel/kernel/trace/trace.i.
+Yeah.  I noticed that.  Probably we should change the memcpy() to:
 
-> and would look like this:
-> 
-> struct print_entry {
-> 	unsigned long		ip;
-> 	char			buf[];
-> };
-> 
-> But then it is allocated like so:
-> 
-> 	size = sizeof(*entry) + len + 1;
-> 	event = trace_buffer_lock_reserve(buffer, TRACE_PRINT, size,
-> 					  flags, pc);
-> 
-> 	entry = ring_buffer_event_data(event);
+	memcpy(&entry->buf, tbuffer, len + 1);
 
-I was so close to figuring this out on my own...  Let me send a v2 with
-an amended changelog.
+and remove separate NUL assignment?  It's a speedup!  I'll do it in v2.
 
 regards,
 dan carpenter
