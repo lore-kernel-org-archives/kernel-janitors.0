@@ -1,7 +1,7 @@
 From: Steven Rostedt <rostedt@goodmis.org>
-Date: Wed, 26 Nov 2014 14:25:37 +0000
+Date: Wed, 26 Nov 2014 14:27:06 +0000
 Subject: Re: [patch] tracing: off by one in __trace_array_vprintk()
-Message-Id: <20141126092537.14b6ea9f@gandalf.local.home>
+Message-Id: <20141126092706.5d4038d4@gandalf.local.home>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141126140621.GA18740@mwanda>
 In-Reply-To: <20141126140621.GA18740@mwanda>
@@ -22,52 +22,12 @@ Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > TRACE_BUF_SIZE characters, the last character would have been truncated
 > to make space for the NUL character so we should "goto out;".
 > 
-> My other concern here was that a few lines later we do:
-> 
-> 	entry->buf[len] = '\0';
-> 
-> I worried that maybe we were putting the NUL char past the end of the
-> array but I wasn't smart enough to figure out the size of entry->buf[].
 
-entry is of type struct print_entry *, which is defined by macro magic
-(sorry), and would look like this:
+Oh, and the NUL character is never copied. We copy the string into the
+buffer with:
 
-struct print_entry {
-	unsigned long		ip;
-	char			buf[];
-};
+	memcpy(&entry->buf, tbuffer, len);
 
-But then it is allocated like so:
-
-	size = sizeof(*entry) + len + 1;
-	event = trace_buffer_lock_reserve(buffer, TRACE_PRINT, size,
-					  flags, pc);
-
-	entry = ring_buffer_event_data(event);
-
-Now that size is the key. The "len + 1" covers the string. Which means
-
-	entry->buf[len] = '\0';
-
-is fine.
+Where len does not include NUL, and why we add it ourselves.
 
 -- Steve
-
-
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 42a822d..22af2ae 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -2161,7 +2161,7 @@ __trace_array_vprintk(struct ring_buffer *buffer,
->  	}
->  
->  	len = vsnprintf(tbuffer, TRACE_BUF_SIZE, fmt, args);
-> -	if (len > TRACE_BUF_SIZE)
-> +	if (len >= TRACE_BUF_SIZE)
->  		goto out;
->  
->  	local_save_flags(flags);
-
