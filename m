@@ -1,55 +1,32 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 19:11:15 +0000
-Subject: Re: [PATCH 6/9] sound/pci/ctxfi/ctatc.c: fix error return code
-Message-Id: <alpine.DEB.2.02.1411232010410.2071@localhost6.localdomain6>
+From: Boris Bodemann <bobo.barbarossa@gmail.com>
+Date: Thu, 27 Nov 2014 16:13:01 +0000
+Subject: [PATCH 1/1] esas2r: Correct typos of "validate" in a comment
+Message-Id: <54774D8D.2030204@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr> <1416746890-22719-6-git-send-email-Julia.Lawall@lip6.fr> <20141123171505.GA8265@sudip-PC>
-In-Reply-To: <20141123171505.GA8265@sudip-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Bradley Grove <linuxdrivers@attotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, trivial@kernel.org
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Boris Bodemann <bobo.barbarossa@gmail.com>
 
+Correct typos of "validate" in a comment
 
-On Sun, 23 Nov 2014, Sudip Mukherjee wrote:
-
-> On Sun, Nov 23, 2014 at 01:48:06PM +0100, Julia Lawall wrote:
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > Initialize err before returning on failure, as done elsewhere in the
-> > function.
-> <snip>
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > ---
-> >  sound/pci/ctxfi/ctatc.c |    4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/sound/pci/ctxfi/ctatc.c b/sound/pci/ctxfi/ctatc.c
-> > index 58b235c..a2f997a 100644
-> > --- a/sound/pci/ctxfi/ctatc.c
-> > +++ b/sound/pci/ctxfi/ctatc.c
-> > @@ -1725,8 +1725,10 @@ int __devinit ct_atc_create(struct snd_card *card, struct pci_dev *pci,
-> >  	atc_connect_resources(atc);
-> >  
-> >  	atc->timer = ct_timer_new(atc);
-> > -	if (!atc->timer)
-> > +	if (!atc->timer) {
-> > +		err = -ENOMEM;
-> >  		goto error1;
-> > +	}
-> >  
-> >  	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, atc, &ops);
-> >  	if (err < 0)
-> > 
-> just a small doubt..
-> looks like this patch you have already sent on 19 Aug 2012 and has been already applied via 4d8ce1c9966663bad69e738952179f3cc52710bf
-> 
-> or am i missing something?
-
-Yes, very sorry.  I sent out the wrong patch series.
-
-julia
+Signed-off-by: Boris Bodemann <bobo.barbarossa@gmail.com>
+---
+diff -up a/drivers/scsi/esas2r/esas2r_flash.c b/drivers/scsi/esas2r/esas2r_flash.c
+--- a/drivers/scsi/esas2r/esas2r_flash.c        2014-11-21 18:24:10.000000000 +0100
++++ b/drivers/scsi/esas2r/esas2r_flash.c        2014-11-27 14:49:03.029899303 +0100
+@@ -684,9 +684,9 @@ static u16 calc_fi_checksum(struct esas2
+  *              1)  verify the fi_version is correct
+  *              2)  verify the checksum of the entire image.
+  *              3)  validate the adap_typ, action and length fields.
+- *              4)  valdiate each component header. check the img_type and
++ *              4)  validate each component header. check the img_type and
+  *                  length fields
+- *              5)  valdiate each component image.  validate signatures and
++ *              5)  validate each component image.  validate signatures and
+  *                  local checksums
+  */
+ static bool verify_fi(struct esas2r_adapter *a,
