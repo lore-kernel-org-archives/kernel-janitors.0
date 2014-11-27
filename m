@@ -1,30 +1,22 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 26 Nov 2014 22:35:16 +0000
-Subject: [patch] ASoC: sigmadsp: uninitialized variable in sigmadsp_activate_ctrl()
-Message-Id: <20141126223516.GB443@mwanda>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Date: Thu, 27 Nov 2014 08:09:41 +0000
+Subject: Re: [patch] ASoC: sigmadsp: uninitialized variable in sigmadsp_activate_ctrl()
+Message-Id: <5476DC45.6030809@metafoo.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141126223516.GB443@mwanda>
+In-Reply-To: <20141126223516.GB443@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
-The "changed" variable should be set to false at the start.
+On 11/26/2014 11:35 PM, Dan Carpenter wrote:
+> The "changed" variable should be set to false at the start.
+>
+> Fixes: a35daac77a03 ('ASoC: sigmadsp: Add support for fw v2')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Fixes: a35daac77a03 ('ASoC: sigmadsp: Add support for fw v2')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Lars-Peter Clausen <lars@metafoo.de>
 
-diff --git a/sound/soc/codecs/sigmadsp.c b/sound/soc/codecs/sigmadsp.c
-index 34fdc40..d53680a 100644
---- a/sound/soc/codecs/sigmadsp.c
-+++ b/sound/soc/codecs/sigmadsp.c
-@@ -661,7 +661,8 @@ static void sigmadsp_activate_ctrl(struct sigmadsp *sigmadsp,
- 	struct snd_card *card = sigmadsp->component->card->snd_card;
- 	struct snd_kcontrol_volatile *vd;
- 	struct snd_ctl_elem_id id;
--	bool active, changed;
-+	bool active;
-+	bool changed = false;
- 
- 	active = sigmadsp_samplerate_valid(ctrl->samplerates, samplerate_mask);
- 
+Thanks.
