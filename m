@@ -1,22 +1,39 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Date: Thu, 27 Nov 2014 08:09:41 +0000
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 27 Nov 2014 10:59:41 +0000
 Subject: Re: [patch] ASoC: sigmadsp: uninitialized variable in sigmadsp_activate_ctrl()
-Message-Id: <5476DC45.6030809@metafoo.de>
+Message-Id: <20141127105941.GF7712@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="2br5ESIskQR/DsXr"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141126223516.GB443@mwanda>
 In-Reply-To: <20141126223516.GB443@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On 11/26/2014 11:35 PM, Dan Carpenter wrote:
+
+--2br5ESIskQR/DsXr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Nov 27, 2014 at 01:35:16AM +0300, Dan Carpenter wrote:
 > The "changed" variable should be set to false at the start.
->
-> Fixes: a35daac77a03 ('ASoC: sigmadsp: Add support for fw v2')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Applied, thanks.
 
-Thanks.
+--2br5ESIskQR/DsXr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUdwQdAAoJECTWi3JdVIfQvO4H/3TRnw0fyBYi0iJOkOtdh3Rj
++pwLMgavF/Ha+lrPe0mgS5RC/7WSS9QZ+OyfeX2VCPDezUdQr4jH7G/Zw4jTGDSc
+O2kstEhbrw8IbvrZFZP3SelHjB29ccKBsXmop9KA9HJXvtBCYkZ1HvUXv5VybVm1
+tyYooNJVabN+/HiZQ7rQhm+jiiYJQWsasyy7EXdsbzjNZvBgOM7NmDTo5xTGlQyM
+jISkvVYknAH6W5UVaQtI9OKOdjKTUsJvN4k3oAyajZ1CZIySwqRff+YkpanNT3bv
+//ha9tbvcWjQM67iXB/5Sbdz9qA0nUaCZrFN7LjMwE78EPgqPKtTaUx0vYjzKlM=
+=MFKq
+-----END PGP SIGNATURE-----
+
+--2br5ESIskQR/DsXr--
