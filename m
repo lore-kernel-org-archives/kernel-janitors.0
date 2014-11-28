@@ -1,51 +1,33 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sat, 22 Nov 2014 20:49:29 +0000
-Subject: Re: [patch] sound: oss: uart401: remove unneeded NULL check
-Message-Id: <s5hy4r39d0m.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Nov 2014 08:33:34 +0000
+Subject: [patch] ceph: do_sync is never initialized
+Message-Id: <20141128083334.GB10252@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141122182901.GA6994@mwanda>
-In-Reply-To: <20141122182901.GA6994@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Himangi Saraogi <himangi774@gmail.com>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Sage Weil <sage@inktank.com>, majianpeng@gmail.com
+Cc: ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Sat, 22 Nov 2014 21:29:01 +0300,
-Dan Carpenter wrote:
-> 
-> "devc" can't be NULL here so there is no need to check.  Also I removed
-> the "devc = NULL" assignment because devc is stored on stack so it's
-> a no-op.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Probably this code was syncing a lot more often then intended because
+the do_sync variable wasn't set to zero.
 
-Thanks, applied.
+Fixes: c62988ec0910 ('ceph: avoid meaningless calling ceph_caps_revoking if sync_mode = WB_SYNC_ALL.')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Not tested.  It's surprising that GCC doesn't
+catch this.
 
-
-Takashi
-
-> 
-> diff --git a/sound/oss/uart401.c b/sound/oss/uart401.c
-> index 279bc56..dae4d43 100644
-> --- a/sound/oss/uart401.c
-> +++ b/sound/oss/uart401.c
-> @@ -412,13 +412,10 @@ void unload_uart401(struct address_info *hw_config)
->  
->  	if (!devc->share_irq)
->  		free_irq(devc->irq, devc);
-> -	if (devc)
-> -	{
-> -		kfree(midi_devs[devc->my_dev]->converter);
-> -		kfree(midi_devs[devc->my_dev]);
-> -		kfree(devc);
-> -		devc = NULL;
-> -	}
-> +	kfree(midi_devs[devc->my_dev]->converter);
-> +	kfree(midi_devs[devc->my_dev]);
-> +	kfree(devc);
-> +
->  	/* This kills midi_devs[x] */
->  	sound_unload_mididev(hw_config->slots[4]);
->  }
-> 
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 18c06bb..481529b 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -673,7 +673,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 	int rc = 0;
+ 	unsigned wsize = 1 << inode->i_blkbits;
+ 	struct ceph_osd_request *req = NULL;
+-	int do_sync;
++	int do_sync = 0;
+ 	u64 truncate_size, snap_size;
+ 	u32 truncate_seq;
+ 
