@@ -1,79 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 12:48:07 +0000
-Subject: [PATCH 5/9] sound/atmel/ac97c.c: fix error return code
-Message-Id: <1416746890-22719-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Nov 2014 08:30:40 +0000
+Subject: [patch] ocfs2: remove unneeded NULL check
+Message-Id: <20141128083040.GA10252@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: ocfs2-devel@oss.oracle.com
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+In 1faf289454b9 ('ocfs2_dlm: disallow a domain join if node maps
+mismatch') then we introduced a new earlier NULL check so this one is
+not needed.  Also static checkers complain because we dereference it
+first and then check for NULL.
 
-In the first case, the second test of whether retval is negative is
-redundant.  It is dropped and the previous and subsequent tests are
-combined.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-In the second case, add an initialization of retval on failure of ioremap.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/atmel/ac97c.c |   12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/sound/atmel/ac97c.c b/sound/atmel/ac97c.c
-index 3c8d3ba..9052aff 100644
---- a/sound/atmel/ac97c.c
-+++ b/sound/atmel/ac97c.c
-@@ -278,14 +278,9 @@ static int atmel_ac97c_capture_hw_params(struct snd_pcm_substream *substream,
- 	if (retval < 0)
- 		return retval;
- 	/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
--	if (cpu_is_at32ap7000()) {
--		if (retval < 0)
--			return retval;
--		/* snd_pcm_lib_malloc_pages returns 1 if buffer is changed. */
--		if (retval = 1)
--			if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
--				dw_dma_cyclic_free(chip->dma.rx_chan);
--	}
-+	if (cpu_is_at32ap7000() && retval = 1)
-+		if (test_and_clear_bit(DMA_RX_READY, &chip->flags))
-+			dw_dma_cyclic_free(chip->dma.rx_chan);
+diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+index 02d315f..50a59d2 100644
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -877,7 +877,7 @@ static int dlm_query_join_handler(struct o2net_msg *msg, u32 len, void *data,
+ 	 * to be put in someone's domain map.
+ 	 * Also, explicitly disallow joining at certain troublesome
+ 	 * times (ie. during recovery). */
+-	if (dlm && dlm->dlm_state != DLM_CTXT_LEAVING) {
++	if (dlm->dlm_state != DLM_CTXT_LEAVING) {
+ 		int bit = query->node_idx;
+ 		spin_lock(&dlm->spinlock);
  
- 	/* Set restrictions to params. */
- 	mutex_lock(&opened_mutex);
-@@ -980,6 +975,7 @@ static int __devinit atmel_ac97c_probe(struct platform_device *pdev)
- 
- 	if (!chip->regs) {
- 		dev_dbg(&pdev->dev, "could not remap register memory\n");
-+		retval = -ENOMEM;
- 		goto err_ioremap;
- 	}
- 
-
