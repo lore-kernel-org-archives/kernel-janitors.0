@@ -1,57 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 12:48:08 +0000
-Subject: [PATCH 3/10] sound/atmel/abdac.c: fix error return code
-Message-Id: <1416746890-22719-8-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 28 Nov 2014 09:43:40 +0000
+Subject: [patch] brcmsmac: NULL dereferences in brcms_c_detach_mfree()
+Message-Id: <20141128094340.GA10364@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416746890-22719-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: Brett Rudley <brudley@broadcom.com>
+Cc: Arend van Spriel <arend@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>, Hante Meuleman <meuleman@broadcom.com>, "John W. Linville" <linville@tuxdriver.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, Markus Elfring <elfring@users.sourceforge.net>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, linux-wireless@vger.kernel.org, brcm80211-dev-list@broadcom.com, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+The brcms_c_attach_malloc() function can call this with a NULL
+"wlc->corestate" or "wlc->hw".
 
-Initialize retval before returning from a failed call to ioremap.
+Also I threw in a bonus cleanup by deleting an obvious comment and a
+no-op NULL assignment.  :)
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-(
-if@p1 (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret@p1 = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/atmel/abdac.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/atmel/abdac.c b/sound/atmel/abdac.c
-index 98554f4..277ebce 100644
---- a/sound/atmel/abdac.c
-+++ b/sound/atmel/abdac.c
-@@ -452,6 +452,7 @@ static int __devinit atmel_abdac_probe(struct platform_device *pdev)
- 	dac->regs = ioremap(regs->start, resource_size(regs));
- 	if (!dac->regs) {
- 		dev_dbg(&pdev->dev, "could not remap register memory\n");
-+		retval = -ENOMEM;
- 		goto out_free_card;
- 	}
+diff --git a/drivers/net/wireless/brcm80211/brcmsmac/main.c b/drivers/net/wireless/brcm80211/brcmsmac/main.c
+index 738cfac..a104d7a 100644
+--- a/drivers/net/wireless/brcm80211/brcmsmac/main.c
++++ b/drivers/net/wireless/brcm80211/brcmsmac/main.c
+@@ -445,18 +445,18 @@ static void brcms_c_detach_mfree(struct brcms_c_info *wlc)
+ 	kfree(wlc->protection);
+ 	kfree(wlc->stf);
+ 	kfree(wlc->bandstate[0]);
+-	kfree(wlc->corestate->macstat_snapshot);
++	if (wlc->corestate)
++		kfree(wlc->corestate->macstat_snapshot);
+ 	kfree(wlc->corestate);
+-	kfree(wlc->hw->bandstate[0]);
++	if (wlc->hw)
++		kfree(wlc->hw->bandstate[0]);
+ 	kfree(wlc->hw);
+ 	if (wlc->beacon)
+ 		dev_kfree_skb_any(wlc->beacon);
+ 	if (wlc->probe_resp)
+ 		dev_kfree_skb_any(wlc->probe_resp);
  
-
+-	/* free the wlc */
+ 	kfree(wlc);
+-	wlc = NULL;
+ }
+ 
+ static struct brcms_bss_cfg *brcms_c_bsscfg_malloc(uint unit)
