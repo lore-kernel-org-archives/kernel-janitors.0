@@ -1,73 +1,44 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 18:14:13 +0000
-Subject: [PATCH 2/4] drivers/scsi/bfa/bfa_svc.c: remove unneeded structure
-Message-Id: <1417371255-2282-3-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Nov 2014 17:40:28 +0000
+Subject: [PATCH 1/1] SPI-txx9: Deletion of an unnecessary check before the function call "clk_disable"
+Message-Id: <547A050C.5040906@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
-Cc: kernel-janitors@vger.kernel.org, Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Nov 2014 18:34:20 +0100
 
-Delete a local structure that is only used to be initialized by memset.
+The clk_disable() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-A semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+This issue was detected by using the Coccinelle software.
 
-// <smpl>
-@@
-identifier x,i;
-@@
-
-{
-... when any
--struct i x;
-<+... when != x
-- memset(&x,...);
-...+>
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/bfa/bfa_svc.c |    6 ------
- 1 file changed, 6 deletions(-)
+ drivers/spi/spi-txx9.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/bfa/bfa_svc.c b/drivers/scsi/bfa/bfa_svc.c
-index 625225f..cf46683 100644
---- a/drivers/scsi/bfa/bfa_svc.c
-+++ b/drivers/scsi/bfa/bfa_svc.c
-@@ -404,13 +404,10 @@ bfa_plog_fchdr(struct bfa_plog_s *plog, enum bfa_plog_mid mid,
- 			enum bfa_plog_eid event,
- 			u16 misc, struct fchs_s *fchdr)
- {
--	struct bfa_plog_rec_s  lp;
- 	u32	*tmp_int = (u32 *) fchdr;
- 	u32	ints[BFA_PL_INT_LOG_SZ];
- 
- 	if (plog->plog_enabled) {
--		memset(&lp, 0, sizeof(struct bfa_plog_rec_s));
--
- 		ints[0] = tmp_int[0];
- 		ints[1] = tmp_int[1];
- 		ints[2] = tmp_int[4];
-@@ -424,13 +421,10 @@ bfa_plog_fchdr_and_pl(struct bfa_plog_s *plog, enum bfa_plog_mid mid,
- 		      enum bfa_plog_eid event, u16 misc, struct fchs_s *fchdr,
- 		      u32 pld_w0)
- {
--	struct bfa_plog_rec_s  lp;
- 	u32	*tmp_int = (u32 *) fchdr;
- 	u32	ints[BFA_PL_INT_LOG_SZ];
- 
- 	if (plog->plog_enabled) {
--		memset(&lp, 0, sizeof(struct bfa_plog_rec_s));
--
- 		ints[0] = tmp_int[0];
- 		ints[1] = tmp_int[1];
- 		ints[2] = tmp_int[4];
+diff --git a/drivers/spi/spi-txx9.c b/drivers/spi/spi-txx9.c
+index 0da7c67..9190124 100644
+--- a/drivers/spi/spi-txx9.c
++++ b/drivers/spi/spi-txx9.c
+@@ -402,8 +402,7 @@ exit_busy:
+ exit:
+ 	if (c->workqueue)
+ 		destroy_workqueue(c->workqueue);
+-	if (c->clk)
+-		clk_disable(c->clk);
++	clk_disable(c->clk);
+ 	spi_master_put(master);
+ 	return ret;
+ }
+-- 
+2.1.3
 
