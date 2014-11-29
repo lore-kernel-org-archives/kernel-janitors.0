@@ -1,67 +1,43 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Mon, 24 Nov 2014 10:10:06 +0000
-Subject: Re: [PATCH 1/1] backlight: lp8788: Deletion of an unnecessary check before the function call "backli
-Message-Id: <20141124101006.GD4241@x1>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Nov 2014 15:30:27 +0000
+Subject: [PATCH 1/1] net-ipvlan: Deletion of an unnecessary check before the function call "free_percpu"
+Message-Id: <5479E693.3010200@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54720DEB.4060109@users.sourceforge.net>
-In-Reply-To: <54720DEB.4060109@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Bryan Wu <cooloney@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jingoo Han <jg1.han@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, 23 Nov 2014, SF Markus Elfring wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Nov 2014 16:23:20 +0100
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 23 Nov 2014 17:33:08 +0100
->=20
-> The backlight_device_unregister() function tests whether its argument is =
-NULL
-> and then returns immediately. Thus the test around the call is not needed.
+The free_percpu() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Also the $SUBJECT should be less than 75 chars.
+This issue was detected by using the Coccinelle software.
 
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/video/backlight/lp8788_bl.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/video/backlight/lp8788_bl.c b/drivers/video/backligh=
-t/lp8788_bl.c
-> index d6c4f6a..24a055c 100644
-> --- a/drivers/video/backlight/lp8788_bl.c
-> +++ b/drivers/video/backlight/lp8788_bl.c
-> @@ -221,8 +221,7 @@ static void lp8788_backlight_unregister(struct lp8788=
-_bl *bl)
->  {
->  	struct backlight_device *bl_dev =3D bl->bl_dev;
-> =20
-> -	if (bl_dev)
-> -		backlight_device_unregister(bl_dev);
-> +	backlight_device_unregister(bl_dev);
->  }
-> =20
->  static ssize_t lp8788_get_bl_ctl_mode(struct device *dev,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ipvlan/ipvlan_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
+index 96b71b0..feb1853 100644
+--- a/drivers/net/ipvlan/ipvlan_main.c
++++ b/drivers/net/ipvlan/ipvlan_main.c
+@@ -125,8 +125,7 @@ static void ipvlan_uninit(struct net_device *dev)
+ 	struct ipvl_dev *ipvlan = netdev_priv(dev);
+ 	struct ipvl_port *port = ipvlan->port;
+ 
+-	if (ipvlan->pcpu_stats)
+-		free_percpu(ipvlan->pcpu_stats);
++	free_percpu(ipvlan->pcpu_stats);
+ 
+ 	port->count -= 1;
+ 	if (!port->count)
+-- 
+2.1.3
+
