@@ -1,67 +1,47 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Thu, 13 Nov 2014 08:47:01 +0000
-Subject: Re: [PATCH v2 1/2] staging: rtl8188eu: Deletion of unnecessary checks before three function calls
-Message-Id: <alpine.DEB.2.10.1411130945151.2389@hadrien>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Nov 2014 18:00:17 +0000
+Subject: [PATCH 1/1] net-PA Semi: Deletion of unnecessary checks before the function call "pci_dev_put"
+Message-Id: <547A09B1.9090102@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
- <20141029084702.GA18675@kroah.com> <5453CD0D.9010206@users.sourceforge.net>
- <alpine.DEB.2.10.1410311900201.2481@hadrien>
- <5463C10D.6020409@users.sourceforge.net>
- <5463C22B.7060405@users.sourceforge.net>
-In-Reply-To: <5463C22B.7060405@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Olof Johansson <olof@lixom.net>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 29 Nov 2014 18:55:40 +0100
 
+The pci_dev_put() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call
+is not needed.
 
-On Wed, 12 Nov 2014, SF Markus Elfring wrote:
+This issue was detected by using the Coccinelle software.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 12 Nov 2014 20:25:49 +0100
->
-> The functions kfree(), rtw_free_netdev() and vfree() test whether their
-> argument is NULL and then return immediately. Thus the test around the call
-> is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/staging/rtl8188eu/core/rtw_efuse.c   | 3 +--
->  drivers/staging/rtl8188eu/core/rtw_mlme.c    | 3 +--
->  drivers/staging/rtl8188eu/core/rtw_sta_mgt.c | 3 +--
->  drivers/staging/rtl8188eu/core/rtw_xmit.c    | 6 ++----
->  drivers/staging/rtl8188eu/os_dep/usb_intf.c  | 6 +++---
->  5 files changed, 8 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> index 5b997b2..697876b 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-> @@ -212,8 +212,7 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
->  exit:
->  	kfree(efuseTbl);
->
-> -	if (eFuseWord)
-> -		kfree(eFuseWord);
-> +	kfree(eFuseWord);
->  }
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/pasemi/pasemi_mac.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-As far as I can tell, the 2/2 patch in this series proposes a completely
-different fix for this code.  When you send a series, patch n+1/m is
-supposed to apply to the result of patch n/m.
+diff --git a/drivers/net/ethernet/pasemi/pasemi_mac.c b/drivers/net/ethernet/pasemi/pasemi_mac.c
+index 30d934d..44e8d7d 100644
+--- a/drivers/net/ethernet/pasemi/pasemi_mac.c
++++ b/drivers/net/ethernet/pasemi/pasemi_mac.c
+@@ -1837,10 +1837,8 @@ pasemi_mac_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	return err;
+ 
+ out:
+-	if (mac->iob_pdev)
+-		pci_dev_put(mac->iob_pdev);
+-	if (mac->dma_pdev)
+-		pci_dev_put(mac->dma_pdev);
++	pci_dev_put(mac->iob_pdev);
++	pci_dev_put(mac->dma_pdev);
+ 
+ 	free_netdev(dev);
+ out_disable_device:
+-- 
+2.1.3
 
-In any case, you can let this one go, because the problem has been fixed
-already.
-
-julia
