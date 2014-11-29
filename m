@@ -1,36 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Date: Wed, 12 Nov 2014 20:04:59 +0000
-Subject: Re: [patch -next] amd-xgbe: fix ->rss_hash_type
-Message-Id: <20141112.150459.233340605780805877.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 29 Nov 2014 12:48:01 +0000
+Subject: [patch] usb: storage: debug: uninitialized var in usb_stor_show_sense()
+Message-Id: <20141129124801.GA27251@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141112083135.GA12795@mwanda>
-In-Reply-To: <20141112083135.GA12795@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dan.carpenter@oracle.com
-Cc: thomas.lendacky@amd.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Matthew Dharm <mdharm-usb@one-eyed-alien.net>, Hannes Reinecke <hare@suse.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, =?iso-8859-1?Q?J=F6rn?= Engel <joern@purestorage.com>
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 12 Nov 2014 11:31:35 +0300
+The "fmt" variable might be used uninitialized, it should be set to NULL
+at the start.
 
-> There was a missing break statement so we set everything to
-> PKT_HASH_TYPE_L3 even when we intended to use PKT_HASH_TYPE_L4.
-> 
-> Fixes: 5b9dfe299e55 ('amd-xgbe: Provide support for receive side scaling')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This driver has a lot of Sparse endian warnings.
-> http://lwn.net/Articles/205624/
-> 
-> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
-> index 7daa2cd..55ba1dc 100644
-> --- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
-> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
-> @@ -1601,6 +1601,7 @@ static int xgbe_dev_read(struct xgbe_channel *channel)
->  		case RX_DESC3_L34T_IPV6_UDP:
->  			packet->rss_hash_type = PKT_HASH_TYPE_L4;
->  
-> +			break;
+Fixes: d811b848ebb7 ('scsi: use sdev as argument for sense code printing')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Please don't add this spurious empty line before the break;, thanks.
+diff --git a/drivers/usb/storage/debug.c b/drivers/usb/storage/debug.c
+index 57bf3ad..fd00509 100644
+--- a/drivers/usb/storage/debug.c
++++ b/drivers/usb/storage/debug.c
+@@ -164,7 +164,8 @@ void usb_stor_show_sense(const struct us_data *us,
+ 			 unsigned char asc,
+ 			 unsigned char ascq)
+ {
+-	const char *what, *keystr, *fmt;
++	const char *fmt = NULL;
++	const char *what, *keystr;
+ 
+ 	keystr = scsi_sense_key_string(key);
+ 	what = scsi_extd_sense_format(asc, ascq, &fmt);
