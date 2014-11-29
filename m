@@ -1,9 +1,17 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Nov 2014 20:20:29 +0000
-Subject: [PATCH v2 0/2] staging: rtl8188eu: Deletion of a few unnecessary checks
-Message-Id: <5463C10D.6020409@users.sourceforge.net>
+Date: Sat, 29 Nov 2014 13:42:02 +0000
+Subject: [PATCH 1/1] HID: Wacom: Deletion of an unnecessary check before the function call "vfree"
+Message-Id: <5479CD2A.9030009@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.10.1402251014170.2080@hadrien>
  <530CD2C4.4050903@users.sourceforge.net>
  <alpine.DEB.2.10.1402251840450.7035@hadrien>
@@ -11,34 +19,40 @@ References: <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <544954FD.8040607@users.sourceforge.net>
- <20141029084702.GA18675@kroah.com> <5453CD0D.9010206@users.sourceforge.net>
- <alpine.DEB.2.10.1410311900201.2481@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1410311900201.2481@hadrien>
+ <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 12 Nov 2014 20:42:18 +0100
+Date: Sat, 29 Nov 2014 14:34:59 +0100
 
-Another update suggestion was taken into account after patches were applied
-from static source code analysis.
+The vfree() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-Markus Elfring (2):
-  staging: rtl8188eu: Deletion of unnecessary checks before three
-    function calls
-  staging: rtl8188eu: Better memory clean-up in efuse_phymap_to_logical()
+This issue was detected by using the Coccinelle software.
 
- drivers/staging/rtl8188eu/core/rtw_efuse.c   | 13 ++++++++-----
- drivers/staging/rtl8188eu/core/rtw_mlme.c    |  3 +--
- drivers/staging/rtl8188eu/core/rtw_sta_mgt.c |  3 +--
- drivers/staging/rtl8188eu/core/rtw_xmit.c    |  6 ++----
- drivers/staging/rtl8188eu/os_dep/usb_intf.c  |  6 +++---
- 5 files changed, 15 insertions(+), 16 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ethernet/sun/cassini.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/net/ethernet/sun/cassini.c b/drivers/net/ethernet/sun/cassini.c
+index 37f87ff..d745808 100644
+--- a/drivers/net/ethernet/sun/cassini.c
++++ b/drivers/net/ethernet/sun/cassini.c
+@@ -5179,8 +5179,7 @@ static void cas_remove_one(struct pci_dev *pdev)
+ 	cp = netdev_priv(dev);
+ 	unregister_netdev(dev);
+ 
+-	if (cp->fw_data)
+-		vfree(cp->fw_data);
++	vfree(cp->fw_data);
+ 
+ 	mutex_lock(&cp->pm_mutex);
+ 	cancel_work_sync(&cp->reset_task);
 -- 
 2.1.3
-
 
