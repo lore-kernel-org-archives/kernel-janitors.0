@@ -1,64 +1,37 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Nov 2014 08:39:27 +0000
-Subject: [PATCH 3/3] [media] si2168: One function call less in si2168_init() after error detection
-Message-Id: <546DA8BF.70005@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Sat, 29 Nov 2014 12:49:54 +0000
+Subject: [patch] USB: mos7720: delete some unneeded code
+Message-Id: <20141129124954.GC27251@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <546DA419.7050405@users.sourceforge.net>
-In-Reply-To: <546DA419.7050405@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Nov 2014 23:23:15 +0100
+The "status" is uninitialized so this creates a static checker warning.
+But it's harmless, we can just delete it.
 
-The release_firmware() function was called in some cases by the
-si2168_init() function during error handling even if the passed variable
-contained still a null pointer. This implementation detail could be improved
-by the introduction of another jump label.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/dvb-frontends/si2168.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
-index 6a455f9..b8c6372 100644
---- a/drivers/media/dvb-frontends/si2168.c
-+++ b/drivers/media/dvb-frontends/si2168.c
-@@ -428,7 +428,7 @@ static int si2168_init(struct dvb_frontend *fe)
- 			dev_err(&s->client->dev,
- 					"%s: firmware file '%s' not found\n",
- 					KBUILD_MODNAME, fw_file);
--			goto err;
-+			goto error_fw_release;
- 		}
+diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
+index 312b0fe..4f70df3 100644
+--- a/drivers/usb/serial/mos7720.c
++++ b/drivers/usb/serial/mos7720.c
+@@ -1299,8 +1299,6 @@ static void mos7720_throttle(struct tty_struct *tty)
+ 		mos7720_port->shadowMCR &= ~UART_MCR_RTS;
+ 		write_mos_reg(port->serial, port->port_number, MCR,
+ 			      mos7720_port->shadowMCR);
+-		if (status != 0)
+-			return;
  	}
- 
-@@ -448,7 +448,7 @@ static int si2168_init(struct dvb_frontend *fe)
- 			dev_err(&s->client->dev,
- 					"%s: firmware download failed=%d\n",
- 					KBUILD_MODNAME, ret);
--			goto err;
-+			goto error_fw_release;
- 		}
- 	}
- 
-@@ -468,9 +468,10 @@ static int si2168_init(struct dvb_frontend *fe)
- 	s->active = true;
- 
- 	return 0;
--err:
--	release_firmware(fw);
- 
-+error_fw_release:
-+	release_firmware(fw);
-+err:
- 	dev_dbg(&s->client->dev, "%s: failed=%d\n", __func__, ret);
- 	return ret;
  }
--- 
-2.1.3
-
+ 
+@@ -1331,8 +1329,6 @@ static void mos7720_unthrottle(struct tty_struct *tty)
+ 		mos7720_port->shadowMCR |= UART_MCR_RTS;
+ 		write_mos_reg(port->serial, port->port_number, MCR,
+ 			      mos7720_port->shadowMCR);
+-		if (status != 0)
+-			return;
+ 	}
+ }
+ 
