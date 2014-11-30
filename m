@@ -1,53 +1,68 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 18 Nov 2014 09:40:23 +0000
-Subject: Re: ASoC: omap-mcbsp: Deletion of an unnecessary check before the function call "kfree"
-Message-Id: <20141118094023.GG22111@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="lHGcFxmlz1yfXmOs"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 17:03:46 +0000
+Subject: [PATCH 5/8 v2] dm: replace memset by memzero_explicit
+Message-Id: <1417367029-32762-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <5469F4D5.9050908@users.sourceforge.net>
-In-Reply-To: <5469F4D5.9050908@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jarkko Nikula <jarkko.nikula@bitmer.com>, Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Takashi Iwai <tiwai@suse.de>, linux-omap@vger.kernel.org, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
+References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Alasdair Kergon <agk@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
---lHGcFxmlz1yfXmOs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
-On Mon, Nov 17, 2014 at 02:15:01PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 17 Nov 2014 14:05:27 +0100
->=20
-> The kfree() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
+// <smpl>
+@@
+identifier x;
+type T;
+@@
 
-Applied, thanks.
+{
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
+}
+// </smpl>
 
---lHGcFxmlz1yfXmOs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-iQEcBAEBAgAGBQJUaxQCAAoJECTWi3JdVIfQZU0H/356TKBrEHx9HSKrWeApVsta
-Vyw6L73dZOV9Zaz6tW5YN4jFmgMY+ukFjXaNjliD0aWDW5CoZ7dL5cxa2Fh4p1UB
-CUWrnBANHwWtuC9RnN8tjQufkon1+wCylbxFy7MfLybR3eAPaf1d0CKXGHLMshAV
-eFElkPCOaxDUqOcdsOMW5s7iul46voFGAPnVzlE47SUHjGLlRWv7+fgblUO0amav
-16KdKBnwVBwRkkQ1oXe3CnMB5XmVqVBw4akfQRTELPYiBfYKgpwlHOmiA04lXae5
-X7lnWENrPDL+lHC0rSfQXuKAXQ/+bf1Re8W/+/OaXS6qiJg9g7DU8p9lPRfVgQQ=
-=I3wy
------END PGP SIGNATURE-----
+---
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
 
---lHGcFxmlz1yfXmOs--
+v2: fixed email address
+
+ drivers/md/dm-crypt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index fc93b93..08981be 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -705,7 +705,7 @@ static int crypt_iv_tcw_whitening(struct crypt_config *cc,
+ 	for (i = 0; i < ((1 << SECTOR_SHIFT) / 8); i++)
+ 		crypto_xor(data + i * 8, buf, 8);
+ out:
+-	memset(buf, 0, sizeof(buf));
++	memzero_explicit(buf, sizeof(buf));
+ 	return r;
+ }
+ 
+
