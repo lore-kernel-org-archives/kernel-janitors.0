@@ -1,68 +1,62 @@
-From: Anil Gurumurthy <Anil.Gurumurthy@qlogic.com>
-Date: Fri, 21 Nov 2014 04:20:04 +0000
-Subject: RE: [PATCH 1/1] SCSI-bfa: Deletion of an unnecessary check before the function call "vfree"
-Message-Id: <20B1A3CBD98F3845B3F5F56D8597EF59FD4B5D@avmb2.qlogic.org>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 30 Nov 2014 16:44:30 +0000
+Subject: [PATCH 1/3] net-PPP: Deletion of unnecessary checks before the function call "kfree"
+Message-Id: <547B496E.604@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <546E6F5C.6050604@users.sourceforge.net>
-In-Reply-To: <546E6F5C.6050604@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net>
+In-Reply-To: <547B4886.4080406@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "James E. J. Bottomley" <JBottomley@parallels.com>, Sudarsana Kalluru <Sudarsana.Kalluru@qlogic.com>, linux-scsi <linux-scsi@vger.kernel.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>
-
-Patch looks good. 
-Thanks!
-Acked-by: Anil Gurumurthy <anil.gurumurthy@qlogic.com>
-
------Original Message-----
-From: SF Markus Elfring [mailto:elfring@users.sourceforge.net] 
-Sent: 21 November 2014 04:17
-To: Anil Gurumurthy; James E. J. Bottomley; Sudarsana Kalluru; linux-scsi
-Cc: linux-kernel; kernel-janitors@vger.kernel.org; Julia Lawall
-Subject: [PATCH 1/1] SCSI-bfa: Deletion of an unnecessary check before the function call "vfree"
+To: Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Nov 2014 23:43:17 +0100
+Date: Sun, 30 Nov 2014 17:02:07 +0100
 
-The vfree() function performs also input parameter validation. Thus the test around the call is not needed.
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/scsi/bfa/bfad_debugfs.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ppp/ppp_mppe.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/bfa/bfad_debugfs.c b/drivers/scsi/bfa/bfad_debugfs.c index 8e83d04..a72170f 100644
---- a/drivers/scsi/bfa/bfad_debugfs.c
-+++ b/drivers/scsi/bfa/bfad_debugfs.c
-@@ -399,8 +399,7 @@ bfad_debugfs_release_fwtrc(struct inode *inode, struct file *file)
- 	if (!fw_debug)
- 		return 0;
+diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
+index 911b216..7e44212 100644
+--- a/drivers/net/ppp/ppp_mppe.c
++++ b/drivers/net/ppp/ppp_mppe.c
+@@ -238,8 +238,7 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+ 	return (void *)state;
  
--	if (fw_debug->debug_buffer)
--		vfree(fw_debug->debug_buffer);
-+	vfree(fw_debug->debug_buffer);
+ 	out_free:
+-	    if (state->sha1_digest)
+-		kfree(state->sha1_digest);
++	kfree(state->sha1_digest);
+ 	    if (state->sha1)
+ 		crypto_free_hash(state->sha1);
+ 	    if (state->arc4)
+@@ -256,13 +255,12 @@ static void mppe_free(void *arg)
+ {
+ 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
+ 	if (state) {
+-	    if (state->sha1_digest)
+ 		kfree(state->sha1_digest);
+-	    if (state->sha1)
+-		crypto_free_hash(state->sha1);
+-	    if (state->arc4)
+-		crypto_free_blkcipher(state->arc4);
+-	    kfree(state);
++		if (state->sha1)
++			crypto_free_hash(state->sha1);
++		if (state->arc4)
++			crypto_free_blkcipher(state->arc4);
++		kfree(state);
+ 	}
+ }
  
- 	file->private_data = NULL;
- 	kfree(fw_debug);
---
+-- 
 2.1.3
 
