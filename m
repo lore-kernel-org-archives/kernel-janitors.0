@@ -1,52 +1,57 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Nov 2014 15:57:03 +0000
-Subject: [PATCH 1/1] staging: ozwpan: Deletion of unnecessary checks before the function call "oz_free_urb_li
-Message-Id: <5474A6CF.1040000@users.sourceforge.net>
+Date: Sun, 30 Nov 2014 20:25:44 +0000
+Subject: [PATCH 1/2] [media] tuners: Deletion of unnecessary checks before the function call "release_firmwar
+Message-Id: <547B7D48.1010507@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B7C36.1070600@users.sourceforge.net>
+In-Reply-To: <547B7C36.1070600@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shigekatsu Tateno <shigekatsu.tateno@atmel.com>, devel@driverdev.osuosl.org
+To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 25 Nov 2014 16:51:08 +0100
+Date: Sun, 30 Nov 2014 19:05:48 +0100
 
-The oz_free_urb_link() function tests whether its argument is NULL
+The release_firmware() function tests whether its argument is NULL
 and then returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/ozwpan/ozhcd.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/media/tuners/si2157.c | 3 +--
+ drivers/media/tuners/xc5000.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/ozwpan/ozhcd.c b/drivers/staging/ozwpan/ozhcd.c
-index 30bd928..c9b6d98 100644
---- a/drivers/staging/ozwpan/ozhcd.c
-+++ b/drivers/staging/ozwpan/ozhcd.c
-@@ -411,8 +411,7 @@ static void oz_complete_urb(struct usb_hcd *hcd, struct urb *urb,
- 	}
- 	spin_lock(&g_tasklet_lock);
- 	spin_unlock_irqrestore(&g_tasklet_lock, irq_state);
--	if (cancel_urbl)
--		oz_free_urb_link(cancel_urbl);
-+	oz_free_urb_link(cancel_urbl);
- }
+diff --git a/drivers/media/tuners/si2157.c b/drivers/media/tuners/si2157.c
+index 8e57696..e17ab1f 100644
+--- a/drivers/media/tuners/si2157.c
++++ b/drivers/media/tuners/si2157.c
+@@ -196,8 +196,7 @@ warm:
+ 	return 0;
  
- /*
-@@ -581,8 +580,7 @@ static int oz_dequeue_ep_urb(struct oz_port *port, u8 ep_addr, int in_dir,
- 		}
+ err:
+-	if (fw)
+-		release_firmware(fw);
++	release_firmware(fw);
+ 
+ 	dev_dbg(&s->client->dev, "failed=%d\n", ret);
+ 	return ret;
+diff --git a/drivers/media/tuners/xc5000.c b/drivers/media/tuners/xc5000.c
+index 705c258..2a039de 100644
+--- a/drivers/media/tuners/xc5000.c
++++ b/drivers/media/tuners/xc5000.c
+@@ -1336,8 +1336,7 @@ static int xc5000_release(struct dvb_frontend *fe)
+ 
+ 	if (priv) {
+ 		cancel_delayed_work(&priv->timer_sleep);
+-		if (priv->firmware)
+-			release_firmware(priv->firmware);
++		release_firmware(priv->firmware);
+ 		hybrid_tuner_release_state(priv);
  	}
- 	spin_unlock_bh(&port->ozhcd->hcd_lock);
--	if (urbl)
--		oz_free_urb_link(urbl);
-+	oz_free_urb_link(urbl);
- 	return urbl ? 0 : -EIDRM;
- }
  
 -- 
 2.1.3
