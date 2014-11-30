@@ -1,40 +1,62 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 17:08:32 +0000
-Subject: [PATCH 1/6] isci: Fix a typo for the word "destroy"
-Message-Id: <54736610.9090203@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 18:14:14 +0000
+Subject: [PATCH 3/4] staging: unisys: remove unneeded structure
+Message-Id: <1417371255-2282-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54736422.90409@users.sourceforge.net>
-In-Reply-To: <54736422.90409@users.sourceforge.net>
+References: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Artur Paszkiewicz <artur.paszkiewicz@intel.com>, Dave Jiang <dave.jiang@intel.com>, "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, intel-linux-scu@intel.com
-Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Benjamin Romer <benjamin.romer@unisys.com>
+Cc: kernel-janitors@vger.kernel.org, David Kershner <david.kershner@unisys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sparmaintainer@unisys.com, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 24 Nov 2014 15:35:48 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-A word was corrected in the description for
-the sci_remote_device_destruct() function.
+Delete a local structure that is only used to be initialized by memset.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+A semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier x,i;
+@@
+
+{
+... when any
+-struct i x;
+<+... when != x
+- memset(&x,...);
+...+>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/scsi/isci/remote_device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/unisys/visorchipset/visorchipset_main.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/scsi/isci/remote_device.c b/drivers/scsi/isci/remote_device.c
-index cc51f38..f54bb98 100644
---- a/drivers/scsi/isci/remote_device.c
-+++ b/drivers/scsi/isci/remote_device.c
-@@ -1008,7 +1008,7 @@ static void sci_remote_device_initial_state_enter(struct sci_base_state_machine
-  * successfully destructed or if some failure occurred. enum sci_status This value
-  * is returned if the device is successfully destructed.
-  * SCI_FAILURE_INVALID_REMOTE_DEVICE This value is returned if the supplied
-- * device isn't valid (e.g. it's already been destoryed, the handle isn't
-+ * device isn't valid (e.g. it's already been destroyed, the handle isn't
-  * valid, etc.).
-  */
- static enum sci_status sci_remote_device_destruct(struct isci_remote_device *idev)
--- 
-2.1.3
+diff --git a/drivers/staging/unisys/visorchipset/visorchipset_main.c b/drivers/staging/unisys/visorchipset/visorchipset_main.c
+index c8f7bea..7e6be32 100644
+--- a/drivers/staging/unisys/visorchipset/visorchipset_main.c
++++ b/drivers/staging/unisys/visorchipset/visorchipset_main.c
+@@ -1940,7 +1940,6 @@ static HOSTADDRESS controlvm_get_channel_address(void)
+ static void
+ controlvm_periodic_work(struct work_struct *work)
+ {
+-	struct visorchipset_channel_info chanInfo;
+ 	struct controlvm_message inmsg;
+ 	BOOL gotACommand = FALSE;
+ 	BOOL handle_command_failed = FALSE;
+@@ -1955,8 +1954,6 @@ controlvm_periodic_work(struct work_struct *work)
+ 	if (visorchipset_clientregwait && !clientregistered)
+ 		goto Away;
+ 
+-	memset(&chanInfo, 0, sizeof(struct visorchipset_channel_info));
+-
+ 	Poll_Count++;
+ 	if (Poll_Count >= 250)
+ 		;	/* keep going */
 
