@@ -1,55 +1,29 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 17:47:29 +0000
+From: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Date: Sun, 30 Nov 2014 19:27:22 +0000
 Subject: Re: [PATCH 1/1] net-PA Semi: Deletion of unnecessary checks before the function call "pci_dev_put"
-Message-Id: <alpine.DEB.2.10.1411301846560.2522@hadrien>
+Message-Id: <547B6F9A.8030806@gmx.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <547A09B1.9090102@users.sourceforge.net> <547B579F.10709@gmx.de>
-In-Reply-To: <547B579F.10709@gmx.de>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547A09B1.9090102@users.sourceforge.net> <547B579F.10709@gmx.de> <alpine.DEB.2.10.1411301846560.2522@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1411301846560.2522@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+To: Julia Lawall <julia.lawall@lip6.fr>
 Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Olof Johansson <olof@lixom.net>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
+On 30.11.2014 18:47, Julia Lawall wrote:
 
+> 
+> I have heard of at least one case where the problem you are raising
+> happened in practice...
+> 
+> julia
 
-On Sun, 30 Nov 2014, Lino Sanfilippo wrote:
+If one case is known then there are probably a lot more that have not
+been discovered yet.
+Maybe this topic should be clarified somewhere (e.g. in "CodingStyle")?
+On the other hand i always found it obvious that its the callers
+responsibility to only pass sane parameters to the called functions...
 
-> On 29.11.2014 19:00, SF Markus Elfring wrote:
->
-> >  out:
-> > -	if (mac->iob_pdev)
-> > -		pci_dev_put(mac->iob_pdev);
-> > -	if (mac->dma_pdev)
-> > -		pci_dev_put(mac->dma_pdev);
-> > +	pci_dev_put(mac->iob_pdev);
-> > +	pci_dev_put(mac->dma_pdev);
-> >
-> >  	free_netdev(dev);
-> >  out_disable_device:
-> >
->
-> Hi,
->
-> I know there has been some criticism about those kind of "code
-> improvements" already but i would like to point out just one more thing:
->
-> Some of those NULL pointer checks on input parameters may have been
-> added subsequently to functions. So there may be older kernel versions
-> out there in which those checks dont exists in some cases. If some of
-> the now "cleaned up" code is backported to such a kernel chances are
-> good that those missing checks are overseen. And then neither caller nor
-> callee is doing the NULL pointer check.
->
-> Quite frankly i would vote for the opposite approach: Never rely on the
-> callee do to checks for NULL and do it always in the caller. An
-> exception could be for calls on a fast path. But most of those checks
-> are done on error paths anyway.
-
-I have heard of at least one case where the problem you are raising
-happened in practice...
-
-julia
+Regards,
+Lino
