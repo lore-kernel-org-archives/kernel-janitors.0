@@ -1,68 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 30 Nov 2014 17:03:47 +0000
-Subject: [PATCH 6/8 v2] crypto: replace memset by memzero_explicit
-Message-Id: <1417367029-32762-7-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 30 Nov 2014 20:21:10 +0000
+Subject: [PATCH 0/2] [media] tuners: Deletion of two unnecessary checks
+Message-Id: <547B7C36.1070600@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 30 Nov 2014 20:50:15 +0100
 
-Memset on a local variable may be removed when it is called just before the
-variable goes out of scope.  Using memzero_explicit defeats this
-optimization.  A simplified version of the semantic patch that makes this
-change is as follows: (http://coccinelle.lip6.fr/)
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-// <smpl>
-@@
-identifier x;
-type T;
-@@
+Markus Elfring (2):
+  Deletion of unnecessary checks before the function call "release_firmware"
+  One function call less in si2157_init() after error detection
 
-{
-... when any
-T x[...];
-... when any
-    when exists
-- memset
-+ memzero_explicit
-  (x,
--0,
-  ...)
-... when != x
-    when strict
-}
-// </smpl>
+ drivers/media/tuners/si2157.c | 9 ++++-----
+ drivers/media/tuners/xc5000.c | 3 +--
+ 2 files changed, 5 insertions(+), 7 deletions(-)
 
-This change was suggested by Daniel Borkmann <dborkman@redhat.com>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-Daniel Borkmann suggested that these patches could go through Herbert Xu's
-cryptodev tree.
-
-v2: fixed email address
-
- arch/powerpc/crypto/sha1.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/crypto/sha1.c b/arch/powerpc/crypto/sha1.c
-index 0f88c7b..d3feba5 100644
---- a/arch/powerpc/crypto/sha1.c
-+++ b/arch/powerpc/crypto/sha1.c
-@@ -66,7 +66,7 @@ static int sha1_update(struct shash_desc *desc, const u8 *data,
- 			src = data + done;
- 		} while (done + 63 < len);
- 
--		memset(temp, 0, sizeof(temp));
-+		memzero_explicit(temp, sizeof(temp));
- 		partial = 0;
- 	}
- 	memcpy(sctx->buffer + partial, src, len - done);
+-- 
+2.1.3
 
