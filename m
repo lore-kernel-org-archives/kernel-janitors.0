@@ -1,58 +1,30 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 21:03:35 +0000
-Subject: [PATCH 1/1] keys: Deletion of an unnecessary check before the function call "key_put"
-Message-Id: <546BB427.2050101@users.sourceforge.net>
+Date: Sun, 30 Nov 2014 16:40:38 +0000
+Subject: [PATCH 0/3] net-PPP: Deletion of a few unnecessary checks
+Message-Id: <547B4886.4080406@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
 In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 21:57:14 +0100
+Date: Sun, 30 Nov 2014 17:25:40 +0100
 
-The key_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Further update suggestions were taken into account after a patch was applied
+from static source code analysis.
 
-This issue was detected by using the Coccinelle software.
+Markus Elfring (3):
+  Deletion of unnecessary checks before the function call "kfree"
+  Less function calls in mppe_alloc() after error detection
+  Delete an unnecessary assignment
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- security/keys/process_keys.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ppp/ppp_mppe.c | 32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index 0cf8a13..ce00e11 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -242,8 +242,7 @@ int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
- 	old = cred->session_keyring;
- 	rcu_assign_pointer(cred->session_keyring, keyring);
- 
--	if (old)
--		key_put(old);
-+	key_put(old);
- 
- 	return 0;
- }
 -- 
 2.1.3
 
