@@ -1,61 +1,80 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Thu, 20 Nov 2014 17:34:00 +0000
-Subject: [PATCH 5/7] rsxx: fix error return code
-Message-Id: <1416504842-18548-6-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 16:59:29 +0000
+Subject: [PATCH 3/8] crypto: replace memset by memzero_explicit
+Message-Id: <1417366774-32412-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416504842-18548-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joshua Morris <josh.h.morris@us.ibm.com>
-Cc: kernel-janitors@vger.kernel.org, Philip Kelleher <pjk1939@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: dborkman@redhat.com, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Julia Lawall <julia@diku.dk>
 
-Return a negative error code on failure.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-identifier ret; expression e1,e2;
+identifier x;
+type T;
 @@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
+
 {
-  ... when != ret = e2
-      when forall
- return ret;
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
 }
 // </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
-The patches in this series are independent of each other.
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
 
- drivers/block/rsxx/core.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/crypto/sha256_ssse3_glue.c |    2 +-
+ arch/x86/crypto/sha512_ssse3_glue.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index d8b2488..3801721 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -893,6 +893,7 @@ static int rsxx_pci_probe(struct pci_dev *dev,
- 	card->event_wq = create_singlethread_workqueue(DRIVER_NAME"_event");
- 	if (!card->event_wq) {
- 		dev_err(CARD_TO_DEV(card), "Failed card event setup.\n");
-+		st = -ENOMEM;
- 		goto failed_event_handler;
- 	}
+diff --git a/arch/x86/crypto/sha512_ssse3_glue.c b/arch/x86/crypto/sha512_ssse3_glue.c
+index 26a5898..0b6af26 100644
+--- a/arch/x86/crypto/sha512_ssse3_glue.c
++++ b/arch/x86/crypto/sha512_ssse3_glue.c
+@@ -219,7 +219,7 @@ static int sha384_ssse3_final(struct shash_desc *desc, u8 *hash)
+ 	sha512_ssse3_final(desc, D);
  
+ 	memcpy(hash, D, SHA384_DIGEST_SIZE);
+-	memset(D, 0, SHA512_DIGEST_SIZE);
++	memzero_explicit(D, SHA512_DIGEST_SIZE);
+ 
+ 	return 0;
+ }
+diff --git a/arch/x86/crypto/sha256_ssse3_glue.c b/arch/x86/crypto/sha256_ssse3_glue.c
+index 4dc100d..8fad72f 100644
+--- a/arch/x86/crypto/sha256_ssse3_glue.c
++++ b/arch/x86/crypto/sha256_ssse3_glue.c
+@@ -211,7 +211,7 @@ static int sha224_ssse3_final(struct shash_desc *desc, u8 *hash)
+ 	sha256_ssse3_final(desc, D);
+ 
+ 	memcpy(hash, D, SHA224_DIGEST_SIZE);
+-	memset(D, 0, SHA256_DIGEST_SIZE);
++	memzero_explicit(D, SHA256_DIGEST_SIZE);
+ 
+ 	return 0;
+ }
 
