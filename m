@@ -1,66 +1,22 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Thu, 20 Nov 2014 14:41:48 +0000
-Subject: Re: [PATCH 1/1] [media] firewire: Deletion of an unnecessary check before the function call "dvb_unr
-Message-Id: <20141120154148.724ab462@kant>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 30 Nov 2014 20:40:23 +0000
+Subject: Re: net-PA Semi: Deletion of unnecessary checks before the function call "pci_dev_put"
+Message-Id: <547B80B7.5030707@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<546DBA8E.6080401@users.sourceforge.net>
-In-Reply-To: <546DBA8E.6080401@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547A09B1.9090102@users.sourceforge.net> <547B579F.10709@gmx.de> <alpine.DEB.2.10.1411301846560.2522@hadrien> <547B6F9A.8030806@gmx.de>
+In-Reply-To: <547B6F9A.8030806@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, linux1394-devel@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Olof Johansson <olof@lixom.net>, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Nov 20 SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Nov 2014 10:49:07 +0100
-> 
-> The dvb_unregister_device() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Maybe this topic should be clarified somewhere (e.g. in "CodingStyle")?
+> On the other hand i always found it obvious that its the callers
+> responsibility to only pass sane parameters to the called functions...
 
-Reviewed-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Can you imagine that any more source code places which would benefit from
+check adjustments because of defensive programming?
 
-> ---
->  drivers/media/firewire/firedtv-ci.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/firewire/firedtv-ci.c b/drivers/media/firewire/firedtv-ci.c
-> index e5ebdbf..e63f582 100644
-> --- a/drivers/media/firewire/firedtv-ci.c
-> +++ b/drivers/media/firewire/firedtv-ci.c
-> @@ -253,6 +253,5 @@ int fdtv_ca_register(struct firedtv *fdtv)
->  
->  void fdtv_ca_release(struct firedtv *fdtv)
->  {
-> -	if (fdtv->cadev)
-> -		dvb_unregister_device(fdtv->cadev);
-> +	dvb_unregister_device(fdtv->cadev);
->  }
-
-
-
--- 
-Stefan Richter
--===-==- =-= =-=--
-http://arcgraph.de/sr/
+Regards,
+Markus
