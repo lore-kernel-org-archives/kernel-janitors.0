@@ -1,29 +1,61 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 25 Nov 2014 16:43:47 +0000
-Subject: [patch] ocfs2: remove bogus NULL check in ocfs2_move_extents()
-Message-Id: <20141125164347.GD19894@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 18:14:15 +0000
+Subject: [PATCH 4/4] usbip: remove unneeded structure
+Message-Id: <1417371255-2282-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Valentina Manea <valentina.manea.m@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Shuah Khan <shuah.kh@samsung.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-"inode" isn't NULL here, and also we dereference it on the previous line
-so static checkers get annoyed.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Delete a local structure that is only used to be initialized by memset.
 
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index 74caffe..56a768d 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -904,9 +904,6 @@ static int ocfs2_move_extents(struct ocfs2_move_extents_context *context)
- 	struct buffer_head *di_bh = NULL;
- 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
+A semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+identifier x,i;
+@@
+
+{
+... when any
+-struct i x;
+<+... when != x
+- memset(&x,...);
+...+>
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ tools/usb/usbip/src/usbipd.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/tools/usb/usbip/src/usbipd.c b/tools/usb/usbip/src/usbipd.c
+index 2f87f2d..2a7cd2b 100644
+--- a/tools/usb/usbip/src/usbipd.c
++++ b/tools/usb/usbip/src/usbipd.c
+@@ -91,7 +91,6 @@ static void usbipd_help(void)
+ static int recv_request_import(int sockfd)
+ {
+ 	struct op_import_request req;
+-	struct op_common reply;
+ 	struct usbip_exported_device *edev;
+ 	struct usbip_usb_device pdu_udev;
+ 	struct list_head *i;
+@@ -100,7 +99,6 @@ static int recv_request_import(int sockfd)
+ 	int rc;
  
--	if (!inode)
--		return -ENOENT;
--
- 	if (ocfs2_is_hard_readonly(osb) || ocfs2_is_soft_readonly(osb))
- 		return -EROFS;
+ 	memset(&req, 0, sizeof(req));
+-	memset(&reply, 0, sizeof(reply));
  
+ 	rc = usbip_net_recv(sockfd, &req, sizeof(req));
+ 	if (rc < 0) {
+
