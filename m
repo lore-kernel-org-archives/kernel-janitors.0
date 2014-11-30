@@ -1,47 +1,66 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 09 Nov 2014 09:06:33 +0000
-Subject: [PATCH 2/3] staging: lustre: libcfs_debug.h: remove final uses of the GOTO macro
-Message-Id: <1415523994-12520-3-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 16:59:31 +0000
+Subject: [PATCH 5/8] dm: replace memset by memzero_explicit
+Message-Id: <1417366774-32412-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1415523994-12520-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1415523994-12520-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Drokin <oleg.drokin@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+To: Alasdair Kergon <agk@redhat.com>
+Cc: dborkman@redhat.com, herbert@gondor.apana.org.au, kernel-janitors@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Julia Lawall <julia@diku.dk>
 
-Remove the GOTO macro, as it is no longer used.
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+// <smpl>
+@@
+identifier x;
+type T;
+@@
+
+{
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
+}
+// </smpl>
+
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 
 ---
- drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h |   12 ------------
- 1 file changed, 12 deletions(-)
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
 
-diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
-index 8888b27..2e5a9e5 100644
---- a/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
-+++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
-@@ -242,18 +242,6 @@ do {									\
+ drivers/md/dm-crypt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index fc93b93..08981be 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -705,7 +705,7 @@ static int crypt_iv_tcw_whitening(struct crypt_config *cc,
+ 	for (i = 0; i < ((1 << SECTOR_SHIFT) / 8); i++)
+ 		crypto_xor(data + i * 8, buf, 8);
+ out:
+-	memset(buf, 0, sizeof(buf));
++	memzero_explicit(buf, sizeof(buf));
+ 	return r;
+ }
  
- #define LCONSOLE_EMERG(format, ...) CDEBUG(D_CONSOLE | D_EMERG, format, ## __VA_ARGS__)
- 
--void libcfs_log_goto(struct libcfs_debug_msg_data *, const char *, long_ptr_t);
--#define GOTO(label, rc)							\
--do {									\
--	if (cfs_cdebug_show(D_TRACE, DEBUG_SUBSYSTEM)) {		\
--		LIBCFS_DEBUG_MSG_DATA_DECL(msgdata, D_TRACE, NULL);	\
--		libcfs_log_goto(&msgdata, #label, (long_ptr_t)(rc));	\
--	} else {							\
--		(void)(rc);						\
--	}								\
--	goto label;							\
--} while (0)
--
- int libcfs_debug_msg(struct libcfs_debug_msg_data *msgdata,
- 			    const char *format1, ...)
- 	__attribute__ ((format (printf, 2, 3)));
 
