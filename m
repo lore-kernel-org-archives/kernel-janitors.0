@@ -1,53 +1,82 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 11:33:40 +0000
-Subject: [PATCH 1/1] video: smscufx: Deletion of unnecessary checks before the function call "vfree"
-Message-Id: <5471C614.2030806@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 17:03:44 +0000
+Subject: [PATCH 3/8 v2] crypto: replace memset by memzero_explicit
+Message-Id: <1417367029-32762-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Steve Glendinning <steve.glendinning@shawell.net>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 12:30:33 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The vfree() function performs also input parameter validation. Thus the test
-around the call is not needed.
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+identifier x;
+type T;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+{
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
+}
+// </smpl>
+
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/video/fbdev/smscufx.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
 
-diff --git a/drivers/video/fbdev/smscufx.c b/drivers/video/fbdev/smscufx.c
-index d513ed6..9279e5f 100644
---- a/drivers/video/fbdev/smscufx.c
-+++ b/drivers/video/fbdev/smscufx.c
-@@ -1142,8 +1142,7 @@ static void ufx_free_framebuffer_work(struct work_struct *work)
- 		fb_dealloc_cmap(&info->cmap);
- 	if (info->monspecs.modedb)
- 		fb_destroy_modedb(info->monspecs.modedb);
--	if (info->screen_base)
--		vfree(info->screen_base);
-+	vfree(info->screen_base);
+v2: fixed email address
+
+ arch/x86/crypto/sha256_ssse3_glue.c |    2 +-
+ arch/x86/crypto/sha512_ssse3_glue.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/crypto/sha512_ssse3_glue.c b/arch/x86/crypto/sha512_ssse3_glue.c
+index 26a5898..0b6af26 100644
+--- a/arch/x86/crypto/sha512_ssse3_glue.c
++++ b/arch/x86/crypto/sha512_ssse3_glue.c
+@@ -219,7 +219,7 @@ static int sha384_ssse3_final(struct shash_desc *desc, u8 *hash)
+ 	sha512_ssse3_final(desc, D);
  
- 	fb_destroy_modelist(&info->modelist);
+ 	memcpy(hash, D, SHA384_DIGEST_SIZE);
+-	memset(D, 0, SHA512_DIGEST_SIZE);
++	memzero_explicit(D, SHA512_DIGEST_SIZE);
  
-@@ -1743,8 +1742,7 @@ error:
- 				fb_dealloc_cmap(&info->cmap);
- 			if (info->monspecs.modedb)
- 				fb_destroy_modedb(info->monspecs.modedb);
--			if (info->screen_base)
--				vfree(info->screen_base);
-+			vfree(info->screen_base);
+ 	return 0;
+ }
+diff --git a/arch/x86/crypto/sha256_ssse3_glue.c b/arch/x86/crypto/sha256_ssse3_glue.c
+index 4dc100d..8fad72f 100644
+--- a/arch/x86/crypto/sha256_ssse3_glue.c
++++ b/arch/x86/crypto/sha256_ssse3_glue.c
+@@ -211,7 +211,7 @@ static int sha224_ssse3_final(struct shash_desc *desc, u8 *hash)
+ 	sha256_ssse3_final(desc, D);
  
- 			fb_destroy_modelist(&info->modelist);
+ 	memcpy(hash, D, SHA224_DIGEST_SIZE);
+-	memset(D, 0, SHA256_DIGEST_SIZE);
++	memzero_explicit(D, SHA256_DIGEST_SIZE);
  
--- 
-2.1.3
+ 	return 0;
+ }
 
