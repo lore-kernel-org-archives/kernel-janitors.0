@@ -1,62 +1,68 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 23 Nov 2014 13:11:14 +0000
-Subject: [PATCH 1/5] mptfusion: fix error return code
-Message-Id: <1416748278-22881-2-git-send-email-Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 17:03:47 +0000
+Subject: [PATCH 6/8 v2] crypto: replace memset by memzero_explicit
+Message-Id: <1417367029-32762-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
-Cc: kernel-janitors@vger.kernel.org, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 
 From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Return a negative error code on failure.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-identifier ret; expression e1,e2;
+identifier x;
+type T;
 @@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
+
 {
-  ... when != ret = e2
-      when forall
- return ret;
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
 }
 // </smpl>
+
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/message/fusion/mptfc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
 
-diff --git a/drivers/message/fusion/mptfc.c b/drivers/message/fusion/mptfc.c
-index d8bf84a..629df6d 100644
---- a/drivers/message/fusion/mptfc.c
-+++ b/drivers/message/fusion/mptfc.c
-@@ -1325,8 +1325,10 @@ mptfc_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		 "mptfc_wq_%d", sh->host_no);
- 	ioc->fc_rescan_work_q  		create_singlethread_workqueue(ioc->fc_rescan_work_q_name);
--	if (!ioc->fc_rescan_work_q)
-+	if (!ioc->fc_rescan_work_q) {
-+		error = -ENOMEM;
- 		goto out_mptfc_probe;
-+	}
+v2: fixed email address
+
+ arch/powerpc/crypto/sha1.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/crypto/sha1.c b/arch/powerpc/crypto/sha1.c
+index 0f88c7b..d3feba5 100644
+--- a/arch/powerpc/crypto/sha1.c
++++ b/arch/powerpc/crypto/sha1.c
+@@ -66,7 +66,7 @@ static int sha1_update(struct shash_desc *desc, const u8 *data,
+ 			src = data + done;
+ 		} while (done + 63 < len);
  
- 	/*
- 	 *  Pre-fetch FC port WWN and stuff...
+-		memset(temp, 0, sizeof(temp));
++		memzero_explicit(temp, sizeof(temp));
+ 		partial = 0;
+ 	}
+ 	memcpy(sctx->buffer + partial, src, len - done);
 
