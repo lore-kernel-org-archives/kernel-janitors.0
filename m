@@ -1,59 +1,84 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Nov 2014 18:19:36 +0000
-Subject: [PATCH 1/1] fs-ext4: Deletion of an unnecessary check before the function call "iput"
-Message-Id: <54679938.3020106@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 17:03:43 +0000
+Subject: [PATCH 2/8 v2] sparc64: replace memset by memzero_explicit
+Message-Id: <1417367029-32762-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: cocci@systeme.lip6.fr
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 15 Nov 2014 19:04:06 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The iput() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+identifier x;
+type T;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+{
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
+}
+// </smpl>
+
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- fs/ext4/mballoc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 8b0f9ef..e1a2521 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -2712,8 +2712,7 @@ int ext4_mb_release(struct super_block *sb)
- 	}
- 	kfree(sbi->s_mb_offsets);
- 	kfree(sbi->s_mb_maxs);
--	if (sbi->s_buddy_cache)
--		iput(sbi->s_buddy_cache);
-+	iput(sbi->s_buddy_cache);
- 	if (sbi->s_mb_stats) {
- 		ext4_msg(sb, KERN_INFO,
- 		       "mballoc: %u blocks %u reqs (%u success)",
--- 
-2.1.3
+I was not able to compile these.
 
+v2: fixed email address
+
+ arch/sparc/crypto/sha256_glue.c |    2 +-
+ arch/sparc/crypto/sha512_glue.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/sparc/crypto/sha512_glue.c b/arch/sparc/crypto/sha512_glue.c
+index 9fff885..11eb36c 100644
+--- a/arch/sparc/crypto/sha512_glue.c
++++ b/arch/sparc/crypto/sha512_glue.c
+@@ -139,7 +139,7 @@ static int sha384_sparc64_final(struct shash_desc *desc, u8 *hash)
+ 	sha512_sparc64_final(desc, D);
+ 
+ 	memcpy(hash, D, 48);
+-	memset(D, 0, 64);
++	memzero_explicit(D, 64);
+ 
+ 	return 0;
+ }
+diff --git a/arch/sparc/crypto/sha256_glue.c b/arch/sparc/crypto/sha256_glue.c
+index 41f27cc..285268c 100644
+--- a/arch/sparc/crypto/sha256_glue.c
++++ b/arch/sparc/crypto/sha256_glue.c
+@@ -135,7 +135,7 @@ static int sha224_sparc64_final(struct shash_desc *desc, u8 *hash)
+ 	sha256_sparc64_final(desc, D);
+ 
+ 	memcpy(hash, D, SHA224_DIGEST_SIZE);
+-	memset(D, 0, SHA256_DIGEST_SIZE);
++	memzero_explicit(D, SHA256_DIGEST_SIZE);
+ 
+ 	return 0;
+ }
 
