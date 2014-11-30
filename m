@@ -1,43 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 15:00:06 +0000
-Subject: [PATCH 1/1] video: fbdev-MMP: Deletion of an unnecessary check before the function call "mmp_unregis
-Message-Id: <5471F676.9070501@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 17:03:45 +0000
+Subject: [PATCH 4/8 v2] cifs: replace memset by memzero_explicit
+Message-Id: <1417367029-32762-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Steve French <sfrench@samba.org>
+Cc: kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 23 Nov 2014 15:45:03 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The mmp_unregister_path() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+identifier x;
+type T;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+{
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
+}
+// </smpl>
+
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
 
-diff --git a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-index 8621a9f..3c12bd8 100644
---- a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-+++ b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
-@@ -441,8 +441,7 @@ static void path_deinit(struct mmphw_path_plat *path_plat)
- 	if (!path_plat)
- 		return;
+v2: fixed email address
+
+ fs/cifs/smbencrypt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/cifs/smbencrypt.c b/fs/cifs/smbencrypt.c
+index 6c15663..6512c19 100644
+--- a/fs/cifs/smbencrypt.c
++++ b/fs/cifs/smbencrypt.c
+@@ -221,7 +221,7 @@ E_md4hash(const unsigned char *passwd, unsigned char *p16,
+ 	}
  
--	if (path_plat->path)
--		mmp_unregister_path(path_plat->path);
-+	mmp_unregister_path(path_plat->path);
+ 	rc = mdfour(p16, (unsigned char *) wpwd, len * sizeof(__le16));
+-	memset(wpwd, 0, 129 * sizeof(__le16));
++	memzero_explicit(wpwd, 129 * sizeof(__le16));
+ 
+ 	return rc;
  }
- 
- static int mmphw_probe(struct platform_device *pdev)
--- 
-2.1.3
 
