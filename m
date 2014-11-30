@@ -1,44 +1,68 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 08:20:28 +0000
-Subject: [PATCH 1/1] SCSI-libcxgbi: Deletion of an unnecessary check before the function call "dst_release"
-Message-Id: <546EF5CC.1050308@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 17:03:42 +0000
+Subject: [PATCH 1/8 v2] purgatory/sha256: replace memset by memzero_explicit
+Message-Id: <1417367029-32762-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "James E. J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 09:15:10 +0100
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-The dst_release() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+identifier x;
+type T;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+{
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
+}
+// </smpl>
+
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/scsi/cxgbi/libcxgbi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
 
-diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
-index addd1dd..95d2654 100644
---- a/drivers/scsi/cxgbi/libcxgbi.c
-+++ b/drivers/scsi/cxgbi/libcxgbi.c
-@@ -798,8 +798,7 @@ void cxgbi_sock_closed(struct cxgbi_sock *csk)
- 		return;
- 	if (csk->saddr.sin_port)
- 		sock_put_port(csk);
--	if (csk->dst)
--		dst_release(csk->dst);
-+	dst_release(csk->dst);
- 	csk->cdev->csk_release_offload_resources(csk);
- 	cxgbi_sock_set_state(csk, CTP_CLOSED);
- 	cxgbi_inform_iscsi_conn_closing(csk);
--- 
-2.1.3
+v2: fixed email address
+
+ arch/x86/purgatory/sha256.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/purgatory/sha256.c b/arch/x86/purgatory/sha256.c
+index 548ca67..8271ca5 100644
+--- a/arch/x86/purgatory/sha256.c
++++ b/arch/x86/purgatory/sha256.c
+@@ -205,7 +205,7 @@ static void sha256_transform(u32 *state, const u8 *input)
+ 
+ 	/* clear any sensitive info... */
+ 	a = b = c = d = e = f = g = h = t1 = t2 = 0;
+-	memset(W, 0, 64 * sizeof(u32));
++	memzero_explicit(W, 64 * sizeof(u32));
+ }
+ 
+ int sha256_init(struct sha256_state *sctx)
 
