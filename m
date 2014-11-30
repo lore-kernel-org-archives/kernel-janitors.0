@@ -1,71 +1,86 @@
-From: Lee Jones <lee.jones@linaro.org>
-Date: Tue, 18 Nov 2014 15:53:57 +0000
-Subject: Re: [patch 2/2 -next] mfd: dln2: a couple endian fixes
-Message-Id: <20141118155357.GC13959@x1>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 30 Nov 2014 16:59:34 +0000
+Subject: [PATCH 8/8] wusb: replace memset by memzero_explicit
+Message-Id: <1417366774-32412-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141113103607.GB17038@mwanda>
-In-Reply-To: <20141113103607.GB17038@mwanda>
+References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Octavian Purdila <octavian.purdila@intel.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: dborkman@redhat.com, herbert@gondor.apana.org.au, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-On Thu, 13 Nov 2014, Dan Carpenter wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Sparse catches a couple endian bugs.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Not tested.
+Memset on a local variable may be removed when it is called just before the
+variable goes out of scope.  Using memzero_explicit defeats this
+optimization.  A simplified version of the semantic patch that makes this
+change is as follows: (http://coccinelle.lip6.fr/)
 
-Applied until someone screams.
+// <smpl>
+@@
+identifier x;
+type T;
+@@
 
-> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-> index 3101e5e..babf7b6 100644
-> --- a/drivers/mfd/dln2.c
-> +++ b/drivers/mfd/dln2.c
-> @@ -437,6 +437,7 @@ static int _dln2_transfer(struct dln2_dev *dln2, u16 =
-handle, u16 cmd,
->  	struct device *dev =3D &dln2->interface->dev;
->  	const unsigned long timeout =3D DLN2_USB_TIMEOUT * HZ / 1000;
->  	struct dln2_mod_rx_slots *rxs =3D &dln2->mod_rx_slots[handle];
-> +	int size;
-> =20
->  	spin_lock(&dln2->disconnect_lock);
->  	if (!dln2->disconnect)
-> @@ -476,8 +477,9 @@ static int _dln2_transfer(struct dln2_dev *dln2, u16 =
-handle, u16 cmd,
-> =20
->  	/* if we got here we know that the response header has been checked */
->  	rsp =3D rxc->urb->transfer_buffer;
-> +	size =3D le16_to_cpu(rsp->hdr.size);
-> =20
-> -	if (rsp->hdr.size < sizeof(*rsp)) {
-> +	if (size < sizeof(*rsp)) {
->  		ret =3D -EPROTO;
->  		goto out_free_rx_slot;
->  	}
-> @@ -494,8 +496,8 @@ static int _dln2_transfer(struct dln2_dev *dln2, u16 =
-handle, u16 cmd,
->  		goto out_free_rx_slot;
->  	}
-> =20
-> -	if (*ibuf_len > rsp->hdr.size - sizeof(*rsp))
-> -		*ibuf_len =3D rsp->hdr.size - sizeof(*rsp);
-> +	if (*ibuf_len > size - sizeof(*rsp))
-> +		*ibuf_len =3D size - sizeof(*rsp);
-> =20
->  	memcpy(ibuf, rsp + 1, *ibuf_len);
-> =20
+{
+... when any
+T x[...];
+... when any
+    when exists
+- memset
++ memzero_explicit
+  (x,
+-0,
+  ...)
+... when != x
+    when strict
+}
+// </smpl>
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
+---
+Daniel Borkmann suggested that these patches could go through Herbert Xu's
+cryptodev tree.
+
+ drivers/usb/wusbcore/dev-sysfs.c |    2 +-
+ drivers/usb/wusbcore/security.c  |    8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/usb/wusbcore/dev-sysfs.c b/drivers/usb/wusbcore/dev-sysfs.c
+index 1018345..415b140 100644
+--- a/drivers/usb/wusbcore/dev-sysfs.c
++++ b/drivers/usb/wusbcore/dev-sysfs.c
+@@ -101,7 +101,7 @@ static ssize_t wusb_ck_store(struct device *dev,
+ 	if (wusbhc = NULL)
+ 		return -ENODEV;
+ 	result = wusb_dev_4way_handshake(wusbhc, usb_dev->wusb_dev, &ck);
+-	memset(&ck, 0, sizeof(ck));
++	memzero_explicit(&ck, sizeof(ck));
+ 	wusbhc_put(wusbhc);
+ 	return result < 0 ? result : size;
+ }
+diff --git a/drivers/usb/wusbcore/security.c b/drivers/usb/wusbcore/security.c
+index cc74d66..b66faaf 100644
+--- a/drivers/usb/wusbcore/security.c
++++ b/drivers/usb/wusbcore/security.c
+@@ -522,10 +522,10 @@ error_hs3:
+ error_hs2:
+ error_hs1:
+ 	memset(hs, 0, 3*sizeof(hs[0]));
+-	memset(&keydvt_out, 0, sizeof(keydvt_out));
+-	memset(&keydvt_in, 0, sizeof(keydvt_in));
+-	memset(&ccm_n, 0, sizeof(ccm_n));
+-	memset(mic, 0, sizeof(mic));
++	memzero_explicit(&keydvt_out, sizeof(keydvt_out));
++	memzero_explicit(&keydvt_in, sizeof(keydvt_in));
++	memzero_explicit(&ccm_n, sizeof(ccm_n));
++	memzero_explicit(mic, sizeof(mic));
+ 	if (result < 0)
+ 		wusb_dev_set_encryption(usb_dev, 0);
+ error_dev_set_encryption:
+
