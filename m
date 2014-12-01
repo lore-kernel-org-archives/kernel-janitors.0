@@ -1,53 +1,43 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:38 +0000
-Subject: [PATCH 7/27] cw1200: main: Use setup_timer
-Message-Id: <1419604558-29743-8-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Dec 2014 17:18:59 +0000
+Subject: [PATCH 1/1] block-skd: Deletion of an unnecessary check before the function call "kfree"
+Message-Id: <547CA303.9000001@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Solomon Peachy <pizza@shaftnet.org>
-Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Dec 2014 18:15:46 +0100
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-// <smpl>
-@@
-expression t,f,d;
-@@
+This issue was detected by using the Coccinelle software.
 
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.data = d;
--t.function = f;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/cw1200/main.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/block/skd_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/cw1200/main.c b/drivers/net/wireless/cw1200/main.c
-index 3e78cc3..fa965ee 100644
---- a/drivers/net/wireless/cw1200/main.c
-+++ b/drivers/net/wireless/cw1200/main.c
-@@ -374,9 +374,8 @@ static struct ieee80211_hw *cw1200_init_common(const u8 *macaddr,
- 	INIT_WORK(&priv->update_filtering_work, cw1200_update_filtering_work);
- 	INIT_WORK(&priv->set_beacon_wakeup_period_work,
- 		  cw1200_set_beacon_wakeup_period_work);
--	init_timer(&priv->mcast_timeout);
--	priv->mcast_timeout.data = (unsigned long)priv;
--	priv->mcast_timeout.function = cw1200_mcast_timeout;
-+	setup_timer(&priv->mcast_timeout, cw1200_mcast_timeout,
-+		    (unsigned long)priv);
+diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
+index 1e46eb2..c4b0259 100644
+--- a/drivers/block/skd_main.c
++++ b/drivers/block/skd_main.c
+@@ -3998,8 +3998,7 @@ static int skd_acquire_msix(struct skd_device *skdev)
+ 	return 0;
  
- 	if (cw1200_queue_stats_init(&priv->tx_queue_stats,
- 				    CW1200_LINK_ID_MAX,
+ msix_out:
+-	if (entries)
+-		kfree(entries);
++	kfree(entries);
+ 	skd_release_msix(skdev);
+ 	return rc;
+ }
+-- 
+2.1.3
 
