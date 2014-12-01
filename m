@@ -1,33 +1,29 @@
-From: David Sterba <dsterba@suse.cz>
-Date: Mon, 01 Dec 2014 15:20:48 +0000
-Subject: Re: [PATCH 1/8] purgatory/sha256: replace memset by memzero_explicit
-Message-Id: <20141201152047.GG12140@twin.jikos.cz>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Dec 2014 22:30:13 +0000
+Subject: [PATCH 0/2] [media] mn88473: Delete an unnecessary check
+Message-Id: <547CEBF5.4040004@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
- <1417366774-32412-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417366774-32412-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Thomas Gleixner <tglx@linutronix.de>, dborkman@redhat.com, herbert@gondor.apana.org.au, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Sun, Nov 30, 2014 at 05:59:27PM +0100, Julia Lawall wrote:
-> @@ -205,7 +205,7 @@ static void sha256_transform(u32 *state, const u8 *input)
->  
->  	/* clear any sensitive info... */
->  	a = b = c = d = e = f = g = h = t1 = t2 = 0;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Dec 2014 23:16:34 +0100
 
-All of these get optimized away.
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
 
-How to clear them effectively is another question.  Setting them one by
-one casting to volatile would generate 10 instructions. Although this
-might be quick as there are no dependencies, the function
-sha256_transform is called repeatedly and the small overhead may add up.
+Markus Elfring (2):
+  Deletion of an unnecessary check before the function call "release_firmware"
+  One function call less in mn88473_init() after error detection
 
-Other attempts to fix it require restructuring the code so all the
-variables are eg. stored in an array that gets cleared in one go. Here
-the indirect access could be hidden into the macros (e0, e1, s0, s1).
+ drivers/staging/media/mn88473/mn88473.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> -	memset(W, 0, 64 * sizeof(u32));
-> +	memzero_explicit(W, 64 * sizeof(u32));
+-- 
+2.1.3
+
