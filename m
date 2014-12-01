@@ -1,67 +1,65 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Tue, 02 Dec 2014 09:59:22 +0000
-Subject: Re: [PATCH 1/2] staging: android: ion: Deletion of unnecessary checks before two function calls
-Message-Id: <20141202095921.GD6135@ulmo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cQXOx3fnlpmgJsTP"
+From: Valentina Manea <valentina.manea.m@gmail.com>
+Date: Mon, 01 Dec 2014 08:39:19 +0000
+Subject: Re: [PATCH 4/4] usbip: remove unneeded structure
+Message-Id: <CABdoFFem4O8X1R1-DBftpxaPSo83hcmhF-WGUjUGY_fUJjGEUg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54722893.6020301@users.sourceforge.net>
- <547229DB.8030606@users.sourceforge.net>
-In-Reply-To: <547229DB.8030606-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+References: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1417371255-2282-5-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417371255-2282-5-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Shuah Khan <shuah.kh@samsung.com>, linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-
---cQXOx3fnlpmgJsTP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Nov 23, 2014 at 07:39:23PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 23 Nov 2014 18:48:15 +0100
->=20
-> The functions ion_heap_destroy() and vfree() perform also input
-> parameter validation. Thus the test around the call is not needed.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On Sun, Nov 30, 2014 at 8:14 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> Delete a local structure that is only used to be initialized by memset.
+>
+> A semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @@
+> identifier x,i;
+> @@
+>
+> {
+> ... when any
+> -struct i x;
+> <+... when != x
+> - memset(&x,...);
+> ...+>
+> }
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
 > ---
->  drivers/staging/android/ion/ion.c              | 6 ++----
->  drivers/staging/android/ion/ion_dummy_driver.c | 6 ++----
->  drivers/staging/android/ion/tegra/tegra_ion.c  | 6 ++----
->  3 files changed, 6 insertions(+), 12 deletions(-)
+>  tools/usb/usbip/src/usbipd.c |    2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/tools/usb/usbip/src/usbipd.c b/tools/usb/usbip/src/usbipd.c
+> index 2f87f2d..2a7cd2b 100644
+> --- a/tools/usb/usbip/src/usbipd.c
+> +++ b/tools/usb/usbip/src/usbipd.c
+> @@ -91,7 +91,6 @@ static void usbipd_help(void)
+>  static int recv_request_import(int sockfd)
+>  {
+>         struct op_import_request req;
+> -       struct op_common reply;
+>         struct usbip_exported_device *edev;
+>         struct usbip_usb_device pdu_udev;
+>         struct list_head *i;
+> @@ -100,7 +99,6 @@ static int recv_request_import(int sockfd)
+>         int rc;
+>
+>         memset(&req, 0, sizeof(req));
+> -       memset(&reply, 0, sizeof(reply));
+>
+>         rc = usbip_net_recv(sockfd, &req, sizeof(req));
+>         if (rc < 0) {
+>
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---cQXOx3fnlpmgJsTP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUfY15AAoJEN0jrNd/PrOhdfMP/j0vtnDk52TOCUhnT9mI7fXl
-liIa3qDK4hrHiZnIQ9/lhTF9bB+0gu3LWtfOUhF9JbGt7mX7dGf7qwJlm7Zhm7i5
-CKnMzAG7G/CtL7QyfDz5toB+PEeQb/t+i8ChuC2652CdfxZ85cFzqbXv7OGMqjJO
-2yM7Vli+lLVJaZi/lOmFgCM2c+nlamNPu7QCt8YOCwp8KIACUZIWPS7JfqhHm83k
-+lrrpMpw/D1E/0ZVlmwUFa2EtcfcpBh7fYBQX4Xw95UzkBlfo4ABNhzAZcI+2bzT
-kLLwgBoXavn/uH4H9LTI/PiBa1ZOCy1E0g8MX8PC/k+BWRabx+uSuUpA4q7pVqhJ
-D5Tkew9zneC4XEzdT/ojZ86OAEnonU5OZDUiaJyvoaNpjx12GurocXv9rZh7wnfg
-+olGbsaGQQEbAEK1E617Ljebbk/McBn9pA7mIGvRHnfNEr8uNITh0eBZ4uwGxAjI
-9Oqg1xtdWZdZqxXXk7JmXP9nrOuvsknTFL8Z3TJphLprlikBm2asebgXbk1QK5G4
-C4O8d7240hKB9RXARawrX376Tth6xzoq0qJBY6TShDjDkJat8phyBM8NX81sscKS
-s+9XGnOx3ESxzaci6ZJYflX43+410HP2ZxCZG5MAI2F48oYAVHyBcXMMYuJ+N0HN
-2vt6g5gH+MMEyQen8Z79
-=vLiW
------END PGP SIGNATURE-----
-
---cQXOx3fnlpmgJsTP--
+Acked-by: Valentina Manea <valentina.manea.m@gmail.com>
