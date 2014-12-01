@@ -1,77 +1,44 @@
-From: Lucas Tanure <tanure@linux.com>
-Date: Wed, 10 Dec 2014 13:21:34 +0000
-Subject: Re: List my Staging Drivers
-Message-Id: <CAJyon0uUjeXWpaxmuOmMpvF8XOtGPU+aYSQ87w8PBbOn_pjTSw@mail.gmail.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Dec 2014 10:23:51 +0000
+Subject: [PATCH 1/1] block-rbd: Delete a check before ceph_put_snap_context()
+Message-Id: <547C41B7.1060604@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CAJyon0tny1BjTUDN3WF=cXAKQ5u6_jHUAfOuW6m7NzLsnxmGvQ@mail.gmail.com>
-	<42976981.0zcCP3BMYl@mayhem>
-	<CAK25hWMJJJ_ChunXcZEgbuo1EHQEPF+dWnp5CwXtxcz7=1QZWQ@mail.gmail.com>
-	<CAJyon0u7J7x2+7syeEZUpwNHjemYO14Gp2LELcpm-dkrE3pEmA@mail.gmail.com>
-	<CAJyon0vqHauxYxy0=efGr1Hpk6pE5mQUUTutDj5jMSf6u_Ysgw@mail.gmail.com>
-	<72569.1418176247@turing-police.cc.vt.edu>
-In-Reply-To: <72569.1418176247@turing-police.cc.vt.edu>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernelnewbies@lists.kernelnewbies.org
+To: Alex Elder <elder@kernel.org>, Sage Weil <sage@inktank.com>, Yehuda Sadeh <yehuda@inktank.com>, Ceph <ceph-devel@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Dec 9, 2014 at 11:50 PM,  <Valdis.Kletnieks@vt.edu> wrote:
-> On Tue, 09 Dec 2014 22:18:48 -0200, Lucas Tanure said:
->
->> This command:
->>
->> $ lsmod  | grep -Eo '^[^ ]+' | sed 1d | xargs modinfo | grep filename
->
-> Note that only finds stuff that's been built with CONFIG_FOOMOD=m,  Modules
-> that were built into the kernel with =y won't show on an lsmod.  On my laptop
-> at the moment:
->
-> % lsmod | wc -l
-> 34
-> % ls /sys/module | wc -l
-> 129
->
-> Quite obviously, relying on lsmod isn't going to help.
->
-> So you really want something like:
->
-> % ls /sys/module | xargs modinfo 2> /dev/null | grep filename
-> % echo the following are built-in; echo `ls /sys/module | xargs modinfo 2>&1 > /dev/null | awk '{print $4}'`
->
-> The following *seems* to work.  I admit I haven't tested it against a distro kernel
-> where the build/ and source/ symlinks may point different places, etc etc...
->
-> find /lib/modules/`uname -r`/build/ `ls /sys/module | xargs modinfo 2>&1 > /dev/null | awk '{print " -name " $4".o -o"} END {print "-name null"}'`
->
-> (And even the 129 entries in /sys/module doesn't cover the whole story.
->
-> find /lib/modules/3.18.0-next-20141208/build/ -name '*.o' | wc -l
-> 4257
-> zgrep =y /proc/config.gz | wc -l
-> 1072
->
-> So there's *lots* more chunks of code that are builtin as options that
-> simply don't identify as "modules".  At that point, it's time to re-ask
-> what question you *really* wanted answered. "Find drivers that I'm using"
-> is *not* the same thing as "what modules do I have"....
->
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Dec 2014 11:18:21 +0100
 
+The ceph_put_snap_context() function tests whether its argument is NULL
+and then returns immediately. Thus the test around the call is not needed.
 
-Hi,
+This issue was detected by using the Coccinelle software.
 
-I'm interested only in drivers that my machine uses, just because I can test it.
-lsmod seems a good start.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/block/rbd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-In /sys/modules I can find more drivers to work too. With :
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 27b71a0..3c34ab5 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3405,8 +3405,7 @@ err_rq:
+ 	if (result)
+ 		rbd_warn(rbd_dev, "%s %llx at %llx result %d",
+ 			 obj_op_name(op_type), length, offset, result);
+-	if (snapc)
+-		ceph_put_snap_context(snapc);
++	ceph_put_snap_context(snapc);
+ 	blk_end_request_all(rq, result);
+ }
+ 
+-- 
+2.1.3
 
-$ ls -l /sys/module/ | awk '{print $9}' | xargs modinfo > /dev/null
-
-I can find drivers that are not modules. And for these I will need to
-lookup for the source inside kernel.
-
-Thanks
-
---
-Lucas Tanure
-+55 (19) 988176559
