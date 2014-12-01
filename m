@@ -1,113 +1,55 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 13:10:43 +0000
-Subject: [PATCH 1/1] NFS: Deletion of unnecessary checks before the function call "nfs_put_client"
-Message-Id: <546B4553.5040404@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Dec 2014 06:52:21 +0000
+Subject: Re: [PATCH v2] fs-fat: Less function calls in fat_fill_super() after error detection
+Message-Id: <20141201065221.GA4994@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+References: <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+ <5467B12C.4010602@users.sourceforge.net>
+ <alpine.DEB.2.02.1411152117540.2225@localhost6.localdomain6>
+ <54796B5E.5040707@users.sourceforge.net>
+ <87sih22sn8.fsf@devron.myhome.or.jp>
+ <alpine.DEB.2.10.1411291338530.2378@hadrien>
+ <87lhmu2jl8.fsf@devron.myhome.or.jp>
+In-Reply-To: <87lhmu2jl8.fsf@devron.myhome.or.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 18 Nov 2014 13:23:43 +0100
+On Sat, Nov 29, 2014 at 10:59:47PM +0900, OGAWA Hirofumi wrote:
+> Julia Lawall <julia.lawall@lip6.fr> writes:
+> 
+> >> iput() checks NULL of inode. What is wrong just remove NULL check,
+> >> instead of adding new jump labels?
+> >
+> > Personally, I prefer that code that can be statically determined not to
+> > need to be executed not to be executed.  It can make the code easier to
+> > understand, because each function is only called when doing so is useful,
+> > and it can be helpful to static analysis.
+> 
+> Hm, first of all, we want to prevent the bugs. More labels are more
+> chances of bug (and we don't care micro optimize on this error path),
+> isn't it?  Increasing the chance of bugs and bothers developers for
+> analyzer sounds like strange.
 
-The nfs_put_client() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+Oh wow!  Absolutely not.  "One Err Bugs" are one of the most common
+kinds of bugs we have in the kernel.  This is where you have just one
+error label and the bugs look like this:
 
-This issue was detected by using the Coccinelle software.
+err:
+	kfree(foo->bar);
+	kfree(foo);
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/nfs/filelayout/filelayoutdev.c |  3 +--
- fs/nfs/nfs4client.c               | 15 +++++----------
- 2 files changed, 6 insertions(+), 12 deletions(-)
+but foo is NULL.  Mixing the error paths together it always creates
+confusion.  I fix so many of these bugs...  We get a few new ones every
+week.
 
-diff --git a/fs/nfs/filelayout/filelayoutdev.c b/fs/nfs/filelayout/filelayoutdev.c
-index 8540516..cc5e7d6 100644
---- a/fs/nfs/filelayout/filelayoutdev.c
-+++ b/fs/nfs/filelayout/filelayoutdev.c
-@@ -204,8 +204,7 @@ destroy_ds(struct nfs4_pnfs_ds *ds)
- 	ifdebug(FACILITY)
- 		print_ds(ds);
- 
--	if (ds->ds_clp)
--		nfs_put_client(ds->ds_clp);
-+	nfs_put_client(ds->ds_clp);
- 
- 	while (!list_empty(&ds->ds_addrs)) {
- 		da = list_first_entry(&ds->ds_addrs,
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index ffdb28d..5f07a0e 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -498,8 +498,7 @@ int nfs40_walk_client_list(struct nfs_client *new,
- 			atomic_inc(&pos->cl_count);
- 			spin_unlock(&nn->nfs_client_lock);
- 
--			if (prev)
--				nfs_put_client(prev);
-+			nfs_put_client(prev);
- 			prev = pos;
- 
- 			status = nfs_wait_client_init_complete(pos);
-@@ -517,8 +516,7 @@ int nfs40_walk_client_list(struct nfs_client *new,
- 		atomic_inc(&pos->cl_count);
- 		spin_unlock(&nn->nfs_client_lock);
- 
--		if (prev)
--			nfs_put_client(prev);
-+		nfs_put_client(prev);
- 		prev = pos;
- 
- 		status = nfs4_proc_setclientid_confirm(pos, &clid, cred);
-@@ -549,8 +547,7 @@ int nfs40_walk_client_list(struct nfs_client *new,
- 
- 	/* No match found. The server lost our clientid */
- out:
--	if (prev)
--		nfs_put_client(prev);
-+	nfs_put_client(prev);
- 	dprintk("NFS: <-- %s status = %d\n", __func__, status);
- 	return status;
- }
-@@ -641,8 +638,7 @@ int nfs41_walk_client_list(struct nfs_client *new,
- 			atomic_inc(&pos->cl_count);
- 			spin_unlock(&nn->nfs_client_lock);
- 
--			if (prev)
--				nfs_put_client(prev);
-+			nfs_put_client(prev);
- 			prev = pos;
- 
- 			status = nfs_wait_client_init_complete(pos);
-@@ -675,8 +671,7 @@ int nfs41_walk_client_list(struct nfs_client *new,
- 	/* No matching nfs_client found. */
- 	spin_unlock(&nn->nfs_client_lock);
- 	dprintk("NFS: <-- %s status = %d\n", __func__, status);
--	if (prev)
--		nfs_put_client(prev);
-+	nfs_put_client(prev);
- 	return status;
- }
- #endif	/* CONFIG_NFS_V4_1 */
--- 
-2.1.3
+Meanwhile Markus's error labels are absolutely useless.  They give no
+indication of what going to the label does.
+
+regards,
+dan carpenter
 
