@@ -1,9 +1,17 @@
 From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 01 Dec 2014 16:09:58 +0000
+Date: Mon, 01 Dec 2014 16:14:35 +0000
 Subject: Re: [PATCH 1/1] GPU-DRM-MSM: Deletion of unnecessary checks before two function calls
-Message-Id: <CAF6AEGupvi4tm=MrrYybDSMnrps-8rEqjZwhzbSW+85eBsa63w@mail.gmail.com>
+Message-Id: <CAF6AEGt+tgWjYydTUv+5L2d1r8EMKWhOv=j=T8eoHEOkm8Cciw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.10.1402251014170.2080@hadrien>
  <530CD2C4.4050903@users.sourceforge.net>
  <alpine.DEB.2.10.1402251840450.7035@hadrien>
@@ -13,51 +21,67 @@ References: <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
  <54748541.4000600@users.sourceforge.net>
- <20141201160442.GG11943@ulmo.nvidia.com>
-In-Reply-To: <20141201160442.GG11943@ulmo.nvidia.com>
+In-Reply-To: <54748541.4000600@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, SF Markus Elfring <elfring@users.sourceforge.net>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-On Mon, Dec 1, 2014 at 11:04 AM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Tue, Nov 25, 2014 at 02:33:53PM +0100, SF Markus Elfring wrote:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Tue, 25 Nov 2014 14:30:28 +0100
->>
->> The functions framebuffer_release() and vunmap() perform also input
->> parameter validation. Thus the test around the call is not needed.
->>
->> This issue was detected by using the Coccinelle software.
->>
->> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->> ---
->>  drivers/gpu/drm/msm/msm_fbdev.c | 3 +--
->>  drivers/gpu/drm/msm/msm_gem.c   | 3 +--
->>  2 files changed, 2 insertions(+), 4 deletions(-)
->
-> This needs the same fix for the subject prefix that I mentioned for your
-> other patch, otherwise:
->
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
->
-> Perhaps a good idea would be to send all of these patches with the
-> subject prefix fixed up as a second version and threaded in a series.
-> That makes it easier for people to pick them up (assuming Dave will take
-> them directly).
->
-
-no worries, I'll fix up the subject lines when I apply..
+btw, I have these two queued up on msm-next, thanks
 
 BR,
 -R
 
-> Thierry
+On Tue, Nov 25, 2014 at 8:33 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 25 Nov 2014 14:30:28 +0100
 >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> The functions framebuffer_release() and vunmap() perform also input
+> parameter validation. Thus the test around the call is not needed.
 >
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/drm/msm/msm_fbdev.c | 3 +--
+>  drivers/gpu/drm/msm/msm_gem.c   | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
+> index ab5bfd2..fd5a6f3 100644
+> --- a/drivers/gpu/drm/msm/msm_fbdev.c
+> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
+> @@ -193,8 +193,7 @@ fail_unlock:
+>  fail:
+>
+>         if (ret) {
+> -               if (fbi)
+> -                       framebuffer_release(fbi);
+> +               framebuffer_release(fbi);
+>                 if (fb) {
+>                         drm_framebuffer_unregister_private(fb);
+>                         drm_framebuffer_remove(fb);
+> diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+> index 4b1b82a..157cf21 100644
+> --- a/drivers/gpu/drm/msm/msm_gem.c
+> +++ b/drivers/gpu/drm/msm/msm_gem.c
+> @@ -543,8 +543,7 @@ void msm_gem_free_object(struct drm_gem_object *obj)
+>                         drm_free_large(msm_obj->pages);
+>
+>         } else {
+> -               if (msm_obj->vaddr)
+> -                       vunmap(msm_obj->vaddr);
+> +               vunmap(msm_obj->vaddr);
+>                 put_pages(obj);
+>         }
+>
+> --
+> 2.1.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
