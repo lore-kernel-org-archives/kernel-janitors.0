@@ -1,17 +1,11 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 03 Dec 2014 08:15:52 +0000
-Subject: [PATCH] ARM: DaVinci: Deletion of an unnecessary check before the function call "__clk_disable"
-Message-Id: <547EC6B8.6000001@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 01 Dec 2014 19:25:40 +0000
+Subject: Re: [PATCH 1/1] SPI-txx9: Deletion of an unnecessary check before the function call "clk_disable"
+Message-Id: <20141201192540.GM7712@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="3dMOQFbIPOCGfYdm"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
+References: <530C5E18.1020800@users.sourceforge.net>
  <alpine.DEB.2.10.1402251014170.2080@hadrien>
  <530CD2C4.4050903@users.sourceforge.net>
  <alpine.DEB.2.10.1402251840450.7035@hadrien>
@@ -20,39 +14,41 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
  <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+ <547A050C.5040906@users.sourceforge.net>
+In-Reply-To: <547A050C.5040906@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-spi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 3 Dec 2014 09:01:33 +0100
 
-The __clk_disable() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+--3dMOQFbIPOCGfYdm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This issue was detected by using the Coccinelle software.
+On Sat, Nov 29, 2014 at 06:40:28PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 29 Nov 2014 18:34:20 +0100
+>=20
+> The clk_disable() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- arch/arm/mach-davinci/clock.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Applied, but please do try to use subject lines matching the style for
+the subsystem.
 
-diff --git a/arch/arm/mach-davinci/clock.c b/arch/arm/mach-davinci/clock.c
-index c70bb0a..8f2c2d8 100644
---- a/arch/arm/mach-davinci/clock.c
-+++ b/arch/arm/mach-davinci/clock.c
-@@ -55,8 +55,7 @@ static void __clk_disable(struct clk *clk)
- 		else if (clk->clk_disable)
- 			clk->clk_disable(clk);
- 	}
--	if (clk->parent)
--		__clk_disable(clk->parent);
-+	__clk_disable(clk->parent);
- }
- 
- int davinci_clk_reset(struct clk *clk, bool reset)
--- 
-2.1.3
+--3dMOQFbIPOCGfYdm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUfMCzAAoJECTWi3JdVIfQ0T4H/0xhWZpQIq2arup2m4KilsRg
+zwchhHnOwmPcomLlJMa/6evEBP2drBpJkpzPs5vwpPI+0/ctiNFuxyq9f4OWlGJ8
+hrnCL0N/Qz6B9Y5GnJDSQL+sZwr1GFkM5T0nba72dc32HTuibwqvjPwhbZsekw2A
++ekjRnL0qk0jfS2VNHNFzR+0WN8TX0B2GfVWNRhpLlGIsN7z5+ociFKLZvC57vsN
+BKebhg2bzf1nWepTcSa9NIJEXG7TB8X8F1z7WBuJmot8NxP3o0yWdIhyicP1H2tk
+3eXMIy17TM192FNyPv1fbeIeYjYZ3zM6XOylZlZPtsw0NRUId+miywL7Vb8/jgM=
+=wFaD
+-----END PGP SIGNATURE-----
+
+--3dMOQFbIPOCGfYdm--
