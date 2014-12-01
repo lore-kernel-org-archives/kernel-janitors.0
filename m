@@ -1,39 +1,43 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 12 Dec 2014 19:30:00 +0000
-Subject: [patch] Btrfs, scrub: uninitialized variable in scrub_extent_for_parity()
-Message-Id: <20141212193000.GC22234@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Dec 2014 22:33:45 +0000
+Subject: [PATCH 1/2] [media] mn88473: Deletion of an unnecessary check before the function call "release_firm
+Message-Id: <547CECC9.1080508@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547CEBF5.4040004@users.sourceforge.net>
+In-Reply-To: <547CEBF5.4040004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Chris Mason <clm@fb.com>, Miao Xie <miaox@cn.fujitsu.com>
-Cc: Josef Bacik <jbacik@fb.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The only way that "ret" is set is when we call scrub_pages_for_parity()
-so the skip to "if (ret) " test doesn't make sense and causes a static
-checker warning.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Dec 2014 22:55:29 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The release_firmware() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
-Static checker work.  Not tested.  There are some other valid looking
-warnings from the same file:
+ drivers/staging/media/mn88473/mn88473.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-fs/btrfs/scrub.c:2933 scrub_raid56_parity() warn: XXX passing uninitialized 'extent_physical'
-fs/btrfs/scrub.c:2933 scrub_raid56_parity() warn: XXX passing uninitialized 'extent_dev'
-fs/btrfs/scrub.c:2933 scrub_raid56_parity() warn: XXX passing uninitialized 'extent_mirror_num'
+diff --git a/drivers/staging/media/mn88473/mn88473.c b/drivers/staging/media/mn88473/mn88473.c
+index 1659335..52180bb 100644
+--- a/drivers/staging/media/mn88473/mn88473.c
++++ b/drivers/staging/media/mn88473/mn88473.c
+@@ -262,8 +262,7 @@ static int mn88473_init(struct dvb_frontend *fe)
+ 
+ 	return 0;
+ err:
+-	if (fw)
+-		release_firmware(fw);
++	release_firmware(fw);
+ 
+ 	dev_dbg(&client->dev, "failed=%d\n", ret);
+ 	return ret;
+-- 
+2.1.3
 
-diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index f2bb13a..9e1569f 100644
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -2607,9 +2607,9 @@ static int scrub_extent_for_parity(struct scrub_parity *sparity,
- 		ret = scrub_pages_for_parity(sparity, logical, l, physical, dev,
- 					     flags, gen, mirror_num,
- 					     have_csum ? csum : NULL);
--skip:
- 		if (ret)
- 			return ret;
-+skip:
- 		len -= l;
- 		logical += l;
- 		physical += l;
