@@ -1,30 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Dec 2014 07:51:52 +0000
-Subject: [patch] scsi: gdth: fix bad integer overflow check
-Message-Id: <20141222075152.GB9737@mwanda>
+From: Joe Thornber <thornber@redhat.com>
+Date: Mon, 01 Dec 2014 13:56:12 +0000
+Subject: Re: [patch] dm space map metadata: fix sm_bootstrap_get_nr_blocks()
+Message-Id: <20141201135611.GA3151@debian>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141129125021.GD27251@mwanda>
+In-Reply-To: <20141129125021.GD27251@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Achim Leubner <achim_leubner@adaptec.com>
-Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org, =?iso-8859-1?Q?J=F6rn?= Engel <joern@purestorage.com>, kernel-janitors@vger.kernel.org
 
-The integer overflow check was written incorrectly so it doesn't work.
-Whoever wrote this clearly didn't know what they were doing.  (I suck).
+Ack, thanks.
 
-Fixes: f63ae56e4e97 ('[SCSI] gdth: integer overflow in ioctl')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
-index 71e1380..0539147 100644
---- a/drivers/scsi/gdth.c
-+++ b/drivers/scsi/gdth.c
-@@ -4175,7 +4175,7 @@ static int ioc_general(void __user *arg, char *cmnd)
-         return -EINVAL;
-     if (gen.sense_len > INT_MAX)
-         return -EINVAL;
--    if (gen.data_len + gen.sense_len > INT_MAX)
-+    if (gen.data_len > INT_MAX - gen.sense_len)
-         return -EINVAL;
- 
-     if (gen.data_len + gen.sense_len != 0) {
+On Sat, Nov 29, 2014 at 03:50:21PM +0300, Dan Carpenter wrote:
+> This function isn't right and it causes a static checker warning:
+> 
+> 	drivers/md/dm-thin.c:3016 maybe_resize_data_dev()
+> 	error: potentially using uninitialized 'sb_data_size'.
+> 
+> It should set "*count" and return zero on success the same as the
+> sm_metadata_get_nr_blocks() function does earlier.
+> 
+> Fixes: 3241b1d3e0aa ('dm: add persistent data library')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Static checker stuff.  Not tested.
+> 
+> diff --git a/drivers/md/persistent-data/dm-space-map-metadata.c b/drivers/md/persistent-data/dm-space-map-metadata.c
+> index 786b689..f4e22bc 100644
+> --- a/drivers/md/persistent-data/dm-space-map-metadata.c
+> +++ b/drivers/md/persistent-data/dm-space-map-metadata.c
+> @@ -564,7 +564,9 @@ static int sm_bootstrap_get_nr_blocks(struct dm_space_map *sm, dm_block_t *count
+>  {
+>  	struct sm_metadata *smm = container_of(sm, struct sm_metadata, sm);
+>  
+> -	return smm->ll.nr_blocks;
+> +	*count = smm->ll.nr_blocks;
+> +
+> +	return 0;
+>  }
+>  
+>  static int sm_bootstrap_get_nr_free(struct dm_space_map *sm, dm_block_t *count)
