@@ -1,52 +1,34 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 14 Dec 2014 15:05:59 +0000
-Subject: Re: [patch 2/2] ALSA: oxfw: fix detect_loud_models() return value
-Message-Id: <s5hh9wy5l0o.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 01 Dec 2014 10:42:46 +0000
+Subject: Re: [patch] usb: storage: debug: uninitialized var in usb_stor_show_sense()
+Message-Id: <20141201104246.GD4994@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141212192810.GB22234@mwanda>
-	<548BC483.4090703@sakamocchi.jp>
-In-Reply-To: <548BC483.4090703@sakamocchi.jp>
+References: <20141129124801.GA27251@mwanda>
+ <1417277275.2202.35.camel@HansenPartnership.com>
+In-Reply-To: <1417277275.2202.35.camel@HansenPartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: alsa-devel@alsa-project.org, Clemens Ladisch <clemens@ladisch.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Matthew Dharm <mdharm-usb@one-eyed-alien.net>, Hannes Reinecke <hare@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, =?iso-8859-1?Q?J=F6rn?= Engel <joern@purestorage.com>
 
-At Sat, 13 Dec 2014 13:45:55 +0900,
-Takashi Sakamoto wrote:
-> 
-> On Dec 13 2014 04:28, Dan Carpenter wrote:
-> > This code causes a static checker warning:
+On Sat, Nov 29, 2014 at 08:07:55AM -0800, James Bottomley wrote:
+> On Sat, 2014-11-29 at 15:48 +0300, Dan Carpenter wrote:
+> > The "fmt" variable might be used uninitialized, it should be set to NULL
+> > at the start.
 > > 
-> > 	sound/firewire/oxfw/oxfw.c:46 detect_loud_models()
-> > 	warn: signedness bug returning '(-2)'
-> > 
-> > The detect_loud_models() function should return false on falure, so that
-> > we don't try to set up the loud code for hardware that doesn't support
-> > it.
-> > 
+> > Fixes: d811b848ebb7 ('scsi: use sdev as argument for sense code printing')
 > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > 
-> > diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
-> > index cf1d0b5..60e5cad 100644
-> > --- a/sound/firewire/oxfw/oxfw.c
-> > +++ b/sound/firewire/oxfw/oxfw.c
-> > @@ -43,7 +43,7 @@ static bool detect_loud_models(struct fw_unit *unit)
-> >  	err = fw_csr_string(unit->directory, CSR_MODEL,
-> >  			    model, sizeof(model));
-> >  	if (err < 0)
-> > -		return err;
-> > +		return false;
-> >  
-> >  	for (i = 0; i < ARRAY_SIZE(models); i++) {
-> >  		if (strcmp(models[i], model) = 0)
 > 
-> Reviewd-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+> Hm, that' falls into the category of an interface that's hard to get
+> right if every caller has to remember to set fmt to NULL.
+> 
+> Could you instead set *fmt to NULL in scsi_extd_sense_format()?  That
+> way the interface is much easier.
+> 
 
-Applied this one now.  Thanks.
+Sure.  I will send that tomorrow.
 
-(The second one is still pending, waiting for the final decision for a
- while.)
+regards,
+dan carpenter
 
-
-Takashi
