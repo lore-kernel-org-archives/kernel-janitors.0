@@ -1,33 +1,100 @@
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Date: Sun, 28 Dec 2014 18:57:37 +0000
-Subject: Re: [patch -next] iwlwifi: use a format string for an snprintf()
-Message-Id: <1419793057.15213.2.camel@egrumbacBox>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Dec 2014 11:12:17 +0000
+Subject: Determination for the number of named function parameters (with SmPL)
+Message-Id: <547C4D11.1050206@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141204110220.GE22643@mwanda>
-In-Reply-To: <20141204110220.GE22643@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linville@tuxdriver.com" <linville@tuxdriver.com>, "ilw@linux.intel.com" <ilw@linux.intel.com>, "Berg, Johannes" <johannes.berg@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: cocci@systeme.lip6.fr
 
-T24gVGh1LCAyMDE0LTEyLTA0IGF0IDE0OjAyICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGlzIHdpbGwgbWFrZSBLZWVzIENvb2sgaGFwcHkgaWYgd2Ugc3BlY2lmeSBhIGZvcm1hdCBz
-dHJpbmcgYW5kLCB3aG8NCj4ga25vd3MsIG1heWJlIHNvbWVkYXkgdGhlcmUgd2lsbCBiZSBhIGZp
-cm13YXJlIHZlcnNpb24gd2l0aCBhIHBlcmNlbnQNCj4gY2hhcmFjdGVyIGFuZCB3ZSdsbCBiZSBn
-bGFkIGZvciB0aGlzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNh
-cnBlbnRlckBvcmFjbGUuY29tPg0KPiANCg0KVGhlIHBhdGNoIHRoYXQgaW50cm9kdWNlcyB0aGlz
-IGNvZGUgaGFzIGJlZW4gcmV2ZXJ0ZWQgaW4gLW5leHQsIHNvIHRoaXMNCmRvZXNuJ3QgYXBwbHkg
-dGhlcmUuDQoNClRoYW5rIHlvdS4NCg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxl
-c3MvaXdsd2lmaS9pd2wtZHJ2LmMgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9pd2x3aWZpL2l3bC1k
-cnYuYw0KPiBpbmRleCAzOGRlMTUxLi42OGVmZTk3IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25l
-dC93aXJlbGVzcy9pd2x3aWZpL2l3bC1kcnYuYw0KPiArKysgYi9kcml2ZXJzL25ldC93aXJlbGVz
-cy9pd2x3aWZpL2l3bC1kcnYuYw0KPiBAQCAtMTI5Niw3ICsxMjk2LDcgQEAgc3RhdGljIHZvaWQg
-aXdsX3JlcV9md19jYWxsYmFjayhjb25zdCBzdHJ1Y3QgZmlybXdhcmUgKnVjb2RlX3Jhdywgdm9p
-ZCAqY29udGV4dCkNCj4gIAkJaXdsX2RlYWxsb2NfdWNvZGUoZHJ2KTsNCj4gIA0KPiAgCQkvKiBC
-dWlsZCBuYW1lIG9mIGNvcnJlY3Qtc3RlcCBGVyAqLw0KPiAtCQlzbnByaW50ZihmaXJtd2FyZV9u
-YW1lLCBzaXplb2YoZmlybXdhcmVfbmFtZSksDQo+ICsJCXNucHJpbnRmKGZpcm13YXJlX25hbWUs
-IHNpemVvZihmaXJtd2FyZV9uYW1lKSwgIiVzIiwNCj4gIAkJCSBzdHJyY2hyKGRydi0+ZmlybXdh
-cmVfbmFtZSwgJy0nKSk7DQo+ICAJCXNucHJpbnRmKGRydi0+ZmlybXdhcmVfbmFtZSwgc2l6ZW9m
-KGRydi0+ZmlybXdhcmVfbmFtZSksDQo+ICAJCQkgIiVzJXMiLCBkcnYtPmNmZy0+ZndfbmFtZV9w
-cmUsIGZpcm13YXJlX25hbWUpOw0KDQo
+Hello,
+
+Would you like to know how many named function parameters are used in the source files?
+
+How do you think about to try the following semantic query approach out a bit more?
+
+@initialize:python@
+@@
+import sys
+import sqlite3 as SQLite
+connection = SQLite.connect(":memory:")
+c = connection.cursor()
+c.execute("""create table numbers (number integer)""")
+delimiter = "|"
+
+def store_number(count):
+    """Add an integer to an internal list."""
+    c.execute("""insert into numbers (number) values (?)""",
+              (count, )
+             )
+
+@counting_parameters@
+identifier work;
+parameter list[number] pl;
+type return_type;
+@@
+ return_type work(pl)
+ {
+  ...
+ }
+
+@script:python collection@
+count << counting_parameters.number;
+@@
+store_number(count)
+
+@finalize:python@
+@@
+c.execute("""select count(*) nr from numbers""")
+result = c.fetchone()
+
+if result[0] > 0:
+   c.execute("""create index x on numbers (number)""")
+   c.execute("select number, count(*) nr from numbers group by number")
+   sys.stdout.write(delimiter.join( ("number", "counter") ))
+   sys.stdout.write("\r\n")
+   for result in c:
+      sys.stdout.write(delimiter.join((str(result[0]),
+                                       str(result[1])
+                                      )))
+      sys.stdout.write("\r\n")
+else:
+   sys.stderr.write("No result for this analysis!\n")
+
+connection.close()
+
+
+
+elfring@Sonne:~/Projekte/Coccinelle/Probe> XX=$(date) && spatch.opt -timeout 12 -sp-file list_parameter_numbers1.cocci -dir /usr/src/linux-stable > list_parameter_numbers1.txt 2> list_parameter_numbers1-errors.txt ; YY=$(date) && echo "$XX * $YY"
+...
+elfring@Sonne:~/Projekte/Coccinelle/Probe> cat list_parameter_numbers1.txt
+number|counter
+0|29
+1|18261
+2|15374
+3|12237
+4|8159
+5|4339
+6|2701
+7|1183
+8|518
+9|260
+10|146
+11|83
+12|42
+13|21
+14|9
+15|7
+16|2
+17|4
+18|1
+21|1
+22|1
+
+
+Do you find such an analysis result from the source files for Linux 3.17.4
+interesting for further considerations?
+
+Regards,
+Markus
