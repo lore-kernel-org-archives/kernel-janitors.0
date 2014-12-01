@@ -1,121 +1,94 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Dec 2014 19:20:51 +0000
-Subject: [PATCH 9/20] drivers/scsi: fix misspelling of current function in string
-Message-Id: <1417980062-25151-10-git-send-email-Julia.Lawall@lip6.fr>
+From: Thierry Reding <thierry.reding@gmail.com>
+Date: Mon, 01 Dec 2014 16:01:26 +0000
+Subject: Re: [PATCH 1/1] GPU-DRM-MSM-Adreno: Deletion of unnecessary checks before the function call "release
+Message-Id: <20141201160123.GF11943@ulmo.nvidia.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="QNDPHrPUIc00TOLW"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <54747B11.9070104@users.sourceforge.net>
+In-Reply-To: <54747B11.9070104@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-Replace a misspelled function name by %s and then __func__.
 
-This was done using Coccinelle, including the use of Levenshtein distance,
-as proposed by Rasmus Villemoes.
+--QNDPHrPUIc00TOLW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+On Tue, Nov 25, 2014 at 01:50:25PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
 
----
-The semantic patch is difficult to summarize, but is available in the cover
-letter of this patch series.
+You can probably get rid of this if you configure your emailer properly.
 
- drivers/scsi/atp870u.c   |   10 +++++-----
- drivers/scsi/imm.c       |    2 +-
- drivers/scsi/initio.c    |    2 +-
- drivers/scsi/ncr53c8xx.c |    3 ++-
- drivers/scsi/ppa.c       |    2 +-
- 5 files changed, 10 insertions(+), 9 deletions(-)
+> Date: Tue, 25 Nov 2014 13:44:20 +0100
 
-diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
-index e5dae7b..85fd163 100644
---- a/drivers/scsi/initio.c
-+++ b/drivers/scsi/initio.c
-@@ -1034,7 +1034,7 @@ static int initio_bad_seq(struct initio_host * host)
- {
- 	struct scsi_ctrl_blk *scb;
- 
--	printk("initio_bad_seg c=%d\n", host->index);
-+	printk("%s c=%d\n", __func__, host->index);
- 
- 	if ((scb = host->active) != NULL) {
- 		initio_unlink_busy_scb(host, scb);
-diff --git a/drivers/scsi/ncr53c8xx.c b/drivers/scsi/ncr53c8xx.c
-index 5b93ed8..347fb49 100644
---- a/drivers/scsi/ncr53c8xx.c
-+++ b/drivers/scsi/ncr53c8xx.c
-@@ -772,7 +772,8 @@ static int __init sym53c8xx__setup(char *str)
- 			break;
- #endif
- 		default:
--			printk("sym53c8xx_setup: unexpected boot option '%.*s' ignored\n", (int)(pc-cur+1), cur);
-+			printk("%s: unexpected boot option '%.*s' ignored\n",
-+			       __func__, (int)(pc-cur+1), cur);
- 			break;
- 		}
- 
-diff --git a/drivers/scsi/ppa.c b/drivers/scsi/ppa.c
-index 1db8b26..4c1f08e 100644
---- a/drivers/scsi/ppa.c
-+++ b/drivers/scsi/ppa.c
-@@ -365,7 +365,7 @@ static int ppa_in(ppa_struct *dev, char *buffer, int len)
- 		break;
- 
- 	default:
--		printk(KERN_ERR "PPA: bug in ppa_ins()\n");
-+		printk(KERN_ERR "PPA: bug in %s()\n", __func__);
- 		r = 0;
- 		break;
- 	}
-diff --git a/drivers/scsi/atp870u.c b/drivers/scsi/atp870u.c
-index a795d81..ebb4556 100644
---- a/drivers/scsi/atp870u.c
-+++ b/drivers/scsi/atp870u.c
-@@ -3016,12 +3016,12 @@ flash_ok_885:
- 			goto scsi_add_fail;
- 		scsi_scan_host(shpnt);
- #ifdef ED_DBGP			
--		printk("atp870u_prob : exit\n");
-+		printk("%s : exit\n", __func__);
- #endif		
- 		return 0;
- 
- scsi_add_fail:
--	printk("atp870u_prob:scsi_add_fail\n");
-+	printk("%s:scsi_add_fail\n", __func__);
- 	if(ent->device=ATP885_DEVID) {
- 		release_region(base_io, 0xff);
- 	} else if((ent->device=ATP880_DEVID1)||(ent->device=ATP880_DEVID2)) {
-@@ -3030,13 +3030,13 @@ scsi_add_fail:
- 		release_region(base_io, 0x40);
- 	}
- request_io_fail:
--	printk("atp870u_prob:request_io_fail\n");
-+	printk("%s:request_io_fail\n", __func__);
- 	free_irq(pdev->irq, shpnt);
- free_tables:
--	printk("atp870u_prob:free_table\n");
-+	printk("%s:free_table\n", __func__);
- 	atp870u_free_tables(shpnt);
- unregister:
--	printk("atp870u_prob:unregister\n");
-+	printk("%s:unregister\n", __func__);
- 	scsi_host_put(shpnt);
- 	return -1;		
- err_eio:
-diff --git a/drivers/scsi/imm.c b/drivers/scsi/imm.c
-index 89a8266..1f2a668 100644
---- a/drivers/scsi/imm.c
-+++ b/drivers/scsi/imm.c
-@@ -439,7 +439,7 @@ static int imm_in(imm_struct *dev, char *buffer, int len)
- 		break;
- 
- 	default:
--		printk("IMM: bug in imm_ins()\n");
-+		printk("IMM: bug in %s()\n", __func__);
- 		r = 0;
- 		break;
- 	}
+This is odd. I've never seen git send-email generate these.
 
+I didn't notice with your earlier patches, but the subject prefix is
+wrong. Please use something more consistent with existing patches, in
+this case: "drm/msm: ..." or "drm/msm/adreno: ..."
+
+> The release_firmware() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/ms=
+m/adreno/adreno_gpu.c
+> index 655ce5b..757052c 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -404,9 +404,7 @@ void adreno_gpu_cleanup(struct adreno_gpu *gpu)
+>  			msm_gem_put_iova(gpu->memptrs_bo, gpu->base.id);
+>  		drm_gem_object_unreference(gpu->memptrs_bo);
+>  	}
+> -	if (gpu->pm4)
+> -		release_firmware(gpu->pm4);
+> -	if (gpu->pfp)
+> -		release_firmware(gpu->pfp);
+> +	release_firmware(gpu->pm4);
+> +	release_firmware(gpu->pfp);
+>  	msm_gpu_cleanup(&gpu->base);
+>  }
+
+Besides the subject prefix,
+
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+--QNDPHrPUIc00TOLW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUfJDTAAoJEN0jrNd/PrOhJpwQALGxMfJdXJBBBWY42M9Q2749
+D/WTe5gSLtRxxSF1Qc8cjQf06M+RbvXl+ZZOheEBC1IdSbNmPFqVj4uEanh0AXB2
+3v2yTA5ig/A/hu2Sv7+iCJ0tvhU/J/GmW12nNIadZNcnV3U6YMu/QKNxspFjL5U6
+HmGHHpVPzb57Sohcis0r/TO5twZZuSY6PM7Z8Ztt/6rpxN4HHpOlew8fbsVQDcJx
+Cu9zGKouWaTRXCLv/NoMFxcZL2k6yjPJIWVfkknbgweo+/I9UH3XhLIs/keNutH/
+Qnz22bgZrQwnFjy02S6DQKneYcYLn+3IMoWpsss4xE5586Pw8zR9BNtxufOSbFL3
+qwSjP74tGtke+MOrLEg2R8Ar9J4Ywnx204UF3qOFWynumpg8GH7O1DTolqWEbGy5
+iAK0s+SB86xM6ZC5lsUkQznw22w0nT/C8dqouYIIYODeIxC5Sj475vAZfZhSlNMQ
+5WZvXC50vcVLJU4nR+z9IUK9pXv8IIYzoUnfZ3sVeUHNCEXNTkRRtW+vOdfFed6D
+C26ZZWJec3BifbbGZdNip+0BXVxVEcKI8Gditdj7LIdXxD/KFRfVqNY3l2QxvG0I
+9wQu+iwiv/1avl7SetaVVAwm7s6JiJ+99JUKDDj3+s0B3I8uUPNm2OiJnbkvKKqE
+CITy27kWJObkVmypEDMp
+=dCpw
+-----END PGP SIGNATURE-----
+
+--QNDPHrPUIc00TOLW--
