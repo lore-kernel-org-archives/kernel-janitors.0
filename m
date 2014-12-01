@@ -1,80 +1,54 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Date: Thu, 04 Dec 2014 14:19:10 +0000
-Subject: Re: [PATCH 1/1] video: fbdev-LCDC: Deletion of an unnecessary check before the function call "vfree"
-Message-Id: <54806D5E.9030501@ti.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="mJBrljmQeWEn4CTEHjwHlnDqCcuh8Icug"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Dec 2014 22:35:54 +0000
+Subject: [PATCH 2/2] [media] mn88473: One function call less in mn88473_init() after error detection
+Message-Id: <547CED4A.9000207@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <5470B315.8000507@users.sourceforge.net>
-In-Reply-To: <5470B315.8000507@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547CEBF5.4040004@users.sourceforge.net>
+In-Reply-To: <547CEBF5.4040004@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
---mJBrljmQeWEn4CTEHjwHlnDqCcuh8Icug
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Dec 2014 23:15:20 +0100
 
-Hi,
+The release_firmware() function was called by the mn88473_init() function even
+if a previous function call "request_firmware" failed.
+This implementation detail could be improved by the introduction of another
+jump label.
 
-On 22/11/14 18:00, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 22 Nov 2014 16:51:31 +0100
->=20
-> The vfree() function performs also input parameter validation.
-> Thus the test around the call is not needed.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/video/fbdev/sh_mobile_lcdcfb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbd=
-ev/sh_mobile_lcdcfb.c
-> index 2bcc84a..cfde21d 100644
-> --- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
-> +++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-> @@ -2181,8 +2181,7 @@ sh_mobile_lcdc_channel_fb_cleanup(struct sh_mobil=
-e_lcdc_chan *ch)
->  	if (!info || !info->device)
->  		return;
-> =20
-> -	if (ch->sglist)
-> -		vfree(ch->sglist);
-> +	vfree(ch->sglist);
-> =20
->  	fb_dealloc_cmap(&info->cmap);
->  	framebuffer_release(info);
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/staging/media/mn88473/mn88473.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks, I've applied the fbdev patches. Next time, please use
-git-format-patch and git-send-email to send a proper patch series.
+diff --git a/drivers/staging/media/mn88473/mn88473.c b/drivers/staging/media/mn88473/mn88473.c
+index 52180bb..a333744 100644
+--- a/drivers/staging/media/mn88473/mn88473.c
++++ b/drivers/staging/media/mn88473/mn88473.c
+@@ -225,7 +225,7 @@ static int mn88473_init(struct dvb_frontend *fe)
+ 	ret = request_firmware(&fw, fw_file, &client->dev);
+ 	if (ret) {
+ 		dev_err(&client->dev, "firmare file '%s' not found\n", fw_file);
+-		goto err;
++		goto err_request_firmware;
+ 	}
+ 
+ 	dev_info(&client->dev, "downloading firmware from file '%s'\n",
+@@ -261,9 +261,10 @@ static int mn88473_init(struct dvb_frontend *fe)
+ 	dev->warm = true;
+ 
+ 	return 0;
++
+ err:
+ 	release_firmware(fw);
+-
++err_request_firmware:
+ 	dev_dbg(&client->dev, "failed=%d\n", ret);
+ 	return ret;
+ }
+-- 
+2.1.3
 
- Tomi
-
-
-
---mJBrljmQeWEn4CTEHjwHlnDqCcuh8Icug
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUgG1eAAoJEPo9qoy8lh71ixYP/jguEFFPRW4p6hiaH7YF0e5s
-LZlX0rudf7ViZelSYCPVBI3p+8B+5YtRWqa+bSpYfdg1pSWZACVX8wCZuASKLm0L
-o49jXIx/h71CaMVW0UUdqahfLjRdu36c30cgW99NsBrG1R6ih1VuYtv5egiZPhkY
-agDstCZ+IWdVeUQGDRNDTzP+4cF2rdx4U8tndLmMfsPNqAbug9Btrf6rLRXMpE5h
-J6fTn5oAZosTDpWnmLtI7K0Kin5/PiqnXB4262r8jwz2yfqJVLUE6KUTdNGb9VKf
-f08UqO16CPAoVpl4jzZ3Rm5xORHk8YrFD00MKubGGFo2i2bzYZSUVHaLo2mGrMVX
-8v8u9n2UB46fSwhBPeZik88yUg9kZQq5IbywrUZQv0ss8WyWcQheReQ354+o7L0Z
-SgWklKC80TTtCimbUyhHqHZoxwiTWX7ZliDme6S7WW04lGZIc8aUT60rQxIrBjrc
-UZPIqdz0UbpctzqucZJRE6GEnpR3hb6APNWYAdggXip+xaplU0mh8g4cEYQyHrxa
-c8akOhr7u7OTNQGs4nIfhlf7vr59Rk/QUbXM9EH8HRASeo2hCL8e5ZaLdgkK3NLk
-SAzSkrBbw7bBZCaX9hnTK9EyExjFr1UCTbtnMq4t8nWSfzD83C4R8ZC61/1SNOvP
-st2/YcKuBk5umgFyTw9E
-=IWwX
------END PGP SIGNATURE-----
-
---mJBrljmQeWEn4CTEHjwHlnDqCcuh8Icug--
