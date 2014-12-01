@@ -1,7 +1,7 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Mon, 01 Dec 2014 08:43:50 +0000
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Dec 2014 15:30:44 +0000
 Subject: Re: [PATCH v2] fs-fat: Less function calls in fat_fill_super() after error detection
-Message-Id: <alpine.DEB.2.02.1412010942270.2036@localhost6.localdomain6>
+Message-Id: <547C89A4.40002@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
@@ -17,56 +17,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: cocci@systeme.lip6.fr
 
+> Mixing the error paths together it always creates confusion.
+> I fix so many of these bugs...  We get a few new ones every week.
+
+Would you like to get help here from any other automatic semantic
+patch approaches?
 
 
-On Mon, 1 Dec 2014, Dan Carpenter wrote:
+> Meanwhile Markus's error labels are absolutely useless.  They give no
+> indication of what going to the label does.
 
-> On Sat, Nov 29, 2014 at 10:59:47PM +0900, OGAWA Hirofumi wrote:
-> > Julia Lawall <julia.lawall@lip6.fr> writes:
-> > 
-> > >> iput() checks NULL of inode. What is wrong just remove NULL check,
-> > >> instead of adding new jump labels?
-> > >
-> > > Personally, I prefer that code that can be statically determined not to
-> > > need to be executed not to be executed.  It can make the code easier to
-> > > understand, because each function is only called when doing so is useful,
-> > > and it can be helpful to static analysis.
-> > 
-> > Hm, first of all, we want to prevent the bugs. More labels are more
-> > chances of bug (and we don't care micro optimize on this error path),
-> > isn't it?  Increasing the chance of bugs and bothers developers for
-> > analyzer sounds like strange.
-> 
-> Oh wow!  Absolutely not.  "One Err Bugs" are one of the most common
-> kinds of bugs we have in the kernel.  This is where you have just one
-> error label and the bugs look like this:
-> 
-> err:
-> 	kfree(foo->bar);
-> 	kfree(foo);
-> 
-> but foo is NULL.  Mixing the error paths together it always creates
-> confusion.  I fix so many of these bugs...  We get a few new ones every
-> week.
+Which names would be better acceptable for you?
 
-Just for concreteness, from drivers/clk/st/clkgen-mux.c (- indicates 
-lines of interest, not lines to remove):
-
-@@ -722,7 +722,6 @@ void __init st_of_clkgen_vcc_setup(struc
-                return;
-
-        clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
--       if (!clk_data)
-                goto err;
-
-        clk_data->clk_num = VCC_MAX_CHANNELS;
-@@ -808,7 +807,6 @@ void __init st_of_clkgen_vcc_setup(struc
-        return;
-
- err:
--       for (i = 0; i < clk_data->clk_num; i++) {
-                struct clk_composite *composite;
-
-                if (!clk_data->clks[i])
-
-julia
+Regards,
+Markus
