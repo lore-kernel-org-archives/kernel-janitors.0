@@ -1,24 +1,56 @@
-From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Date: Sat, 27 Dec 2014 19:55:21 +0000
-Subject: Re: [PATCH 12/27] iwlwifi: dvm: main: Use setup_timer
-Message-Id: <1419710121.6140.0.camel@egrumbacBox>
+From: Olof Johansson <olof@lixom.net>
+Date: Mon, 01 Dec 2014 20:36:33 +0000
+Subject: Re: [PATCH 1/1] net-PA Semi: Deletion of unnecessary checks before the function call "pci_dev_put"
+Message-Id: <CAOesGMi+=ue34aQcDH0wPBjrvi+3cSJG1=m9fbj+tgds_twkPg@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1419604558-29743-14-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-14-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+	<530A086E.8010901@users.sourceforge.net>
+	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+	<530A72AA.3000601@users.sourceforge.net>
+	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+	<530B5FB6.6010207@users.sourceforge.net>
+	<alpine.DEB.2.10.1402241710370.2074@hadrien>
+	<530C5E18.1020800@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251014170.2080@hadrien>
+	<530CD2C4.4050903@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251840450.7035@hadrien>
+	<530CF8FF.8080600@users.sourceforge.net>
+	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+	<530DD06F.4090703@users.sourceforge.net>
+	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<547A09B1.9090102@users.sourceforge.net>
+In-Reply-To: <547A09B1.9090102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "Julia.Lawall@lip6.fr" <Julia.Lawall@lip6.fr>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ilw@linux.intel.com" <ilw@linux.intel.com>, "Berg, Johannes" <johannes.berg@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-T24gRnJpLCAyMDE0LTEyLTI2IGF0IDE1OjM1ICswMTAwLCBKdWxpYSBMYXdhbGwgd3JvdGU6DQo+
-IENvbnZlcnQgYSBjYWxsIHRvIGluaXRfdGltZXIgYW5kIGFjY29tcGFueWluZyBpbnRpYWxpemF0
-aW9ucyBvZg0KPiB0aGUgdGltZXIncyBkYXRhIGFuZCBmdW5jdGlvbiBmaWVsZHMgdG8gYSBjYWxs
-IHRvIHNldHVwX3RpbWVyLg0KPiANCj4gQSBzaW1wbGlmaWVkIHZlcnNpb24gb2YgdGhlIHNlbWFu
-dGljIG1hdGNoIHRoYXQgZml4ZXMgdGhpcyBwcm9ibGVtIGlzIGFzDQo+IGZvbGxvd3M6IChodHRw
-Oi8vY29jY2luZWxsZS5saXA2LmZyLykNCj4gDQo+IC8vIDxzbXBsPg0KPiBAQA0KPiBleHByZXNz
-aW9uIHQsZixkOw0KPiBAQA0KPiANCj4gLWluaXRfdGltZXIoJnQpOw0KPiArc2V0dXBfdGltZXIo
-JnQsZixkKTsNCj4gLXQuZGF0YSA9IGQ7DQo+IC10LmZ1bmN0aW9uID0gZjsNCj4gLy8gPC9zbXBs
-Pg0KPiANCj4gU2lnbmVkLW9mZi1ieTogSnVsaWEgTGF3YWxsIDxKdWxpYS5MYXdhbGxAbGlwNi5m
-cj4NCj4gDQoNCkJvdGggYXBwbGllZCAtIHRoYW5rcy4NCg=
+On Sat, Nov 29, 2014 at 10:00 AM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 29 Nov 2014 18:55:40 +0100
+>
+> The pci_dev_put() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call
+> is not needed.
+>
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+For this particular case:
+
+Acked-by: Olof Johansson <olof@lixom.net>
+
+Note that the "this might cause problems with backports" case is
+mostly academic in the scope of _this particular driver_. It's still a
+very valid discussion and issue though.
+
+So I'll be happy to give the ack on this driver, but the larger
+problem needs consideration still.
+
+
+-Olof
