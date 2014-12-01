@@ -1,81 +1,47 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 29 Dec 2014 17:04:39 +0000
-Subject: [PATCH 4/8] drm: fix error return code
-Message-Id: <1419872683-32709-5-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 01 Dec 2014 18:55:57 +0000
+Subject: [PATCH 1/1] [media] lirc_zilog: Deletion of unnecessary checks before the function call "vfree"
+Message-Id: <547CB9BD.5050101@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Airlie <airlied@linux.ie>
-Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jarod Wilson <jarod@wilsonet.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Return a negative error code on failure.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 1 Dec 2014 19:49:39 +0100
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The vfree() function performs also input parameter validation. Thus the test
+around the call is not needed.
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/gpu/drm/gma500/psb_drv.c         |    8 ++++++--
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    1 +
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/staging/media/lirc/lirc_zilog.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
-index 92e7e57..4eff0d6 100644
---- a/drivers/gpu/drm/gma500/psb_drv.c
-+++ b/drivers/gpu/drm/gma500/psb_drv.c
-@@ -326,12 +326,16 @@ static int psb_driver_load(struct drm_device *dev, unsigned long flags)
- 		goto out_err;
+diff --git a/drivers/staging/media/lirc/lirc_zilog.c b/drivers/staging/media/lirc/lirc_zilog.c
+index 3259aac..50b255a 100644
+--- a/drivers/staging/media/lirc/lirc_zilog.c
++++ b/drivers/staging/media/lirc/lirc_zilog.c
+@@ -729,11 +729,9 @@ static int send_boot_data(struct IR_tx *tx)
+ static void fw_unload_locked(void)
+ {
+ 	if (tx_data) {
+-		if (tx_data->code_sets)
+-			vfree(tx_data->code_sets);
++		vfree(tx_data->code_sets);
  
- 	dev_priv->mmu = psb_mmu_driver_init(dev, 1, 0, 0);
--	if (!dev_priv->mmu)
-+	if (!dev_priv->mmu) {
-+		ret = -ENOMEM;
- 		goto out_err;
-+	}
+-		if (tx_data->datap)
+-			vfree(tx_data->datap);
++		vfree(tx_data->datap);
  
- 	dev_priv->pf_pd = psb_mmu_alloc_pd(dev_priv->mmu, 1, 0);
--	if (!dev_priv->pf_pd)
-+	if (!dev_priv->pf_pd) {
-+		ret = -ENOMEM;
- 		goto out_err;
-+	}
- 
- 	ret = psb_do_init(dev);
- 	if (ret)
-diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-index 56c6055..c0fb5fa 100644
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -678,6 +678,7 @@ static int omap_dmm_probe(struct platform_device *dev)
- 				&omap_dmm->refill_pa, GFP_KERNEL);
- 	if (!omap_dmm->refill_va) {
- 		dev_err(&dev->dev, "could not allocate refill memory\n");
-+		ret = -ENOMEM;
- 		goto fail;
- 	}
- 
+ 		vfree(tx_data);
+ 		tx_data = NULL;
+-- 
+2.1.3
 
