@@ -1,65 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:54 +0000
-Subject: [PATCH 20/27] usb: r8a66597-hcd: Use setup_timer
-Message-Id: <1419604558-29743-24-git-send-email-Julia.Lawall@lip6.fr>
+From: David Sterba <dsterba@suse.cz>
+Date: Mon, 01 Dec 2014 15:20:48 +0000
+Subject: Re: [PATCH 1/8] purgatory/sha256: replace memset by memzero_explicit
+Message-Id: <20141201152047.GG12140@twin.jikos.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1417366774-32412-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417366774-32412-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Thomas Gleixner <tglx@linutronix.de>, dborkman@redhat.com, herbert@gondor.apana.org.au, kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+On Sun, Nov 30, 2014 at 05:59:27PM +0100, Julia Lawall wrote:
+> @@ -205,7 +205,7 @@ static void sha256_transform(u32 *state, const u8 *input)
+>  
+>  	/* clear any sensitive info... */
+>  	a = b = c = d = e = f = g = h = t1 = t2 = 0;
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+All of these get optimized away.
 
-// <smpl>
-@@
-expression t,f,d;
-@@
+How to clear them effectively is another question.  Setting them one by
+one casting to volatile would generate 10 instructions. Although this
+might be quick as there are no dependencies, the function
+sha256_transform is called repeatedly and the small overhead may add up.
 
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.function = f;
--t.data = d;
-// </smpl>
+Other attempts to fix it require restructuring the code so all the
+variables are eg. stored in an array that gets cleared in one go. Here
+the indirect access could be hidden into the macros (e0, e1, s0, s1).
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/usb/host/r8a66597-hcd.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
-index c4bcfae..a048b8e 100644
---- a/drivers/usb/host/r8a66597-hcd.c
-+++ b/drivers/usb/host/r8a66597-hcd.c
-@@ -2483,9 +2483,8 @@ static int r8a66597_probe(struct platform_device *pdev)
- 		r8a66597->max_root_hub = 2;
- 
- 	spin_lock_init(&r8a66597->lock);
--	init_timer(&r8a66597->rh_timer);
--	r8a66597->rh_timer.function = r8a66597_timer;
--	r8a66597->rh_timer.data = (unsigned long)r8a66597;
-+	setup_timer(&r8a66597->rh_timer, r8a66597_timer,
-+		    (unsigned long)r8a66597);
- 	r8a66597->reg = reg;
- 
- 	/* make sure no interrupts are pending */
-@@ -2496,9 +2495,8 @@ static int r8a66597_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < R8A66597_MAX_NUM_PIPE; i++) {
- 		INIT_LIST_HEAD(&r8a66597->pipe_queue[i]);
--		init_timer(&r8a66597->td_timer[i]);
--		r8a66597->td_timer[i].function = r8a66597_td_timer;
--		r8a66597->td_timer[i].data = (unsigned long)r8a66597;
-+		setup_timer(&r8a66597->td_timer[i], r8a66597_td_timer,
-+			    (unsigned long)r8a66597);
- 		setup_timer(&r8a66597->interval_timer[i],
- 				r8a66597_interval_timer,
- 				(unsigned long)r8a66597);
-
+> -	memset(W, 0, 64 * sizeof(u32));
+> +	memzero_explicit(W, 64 * sizeof(u32));
