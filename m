@@ -1,58 +1,80 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:48 +0000
-Subject: [PATCH 18/27] iwl4965: Use setup_timer
-Message-Id: <1419604558-29743-18-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 Dec 2014 21:00:20 +0000
+Subject: [PATCH 2/2] ALSA: ctxfi: One function call less in get_daio_rsc() after error detection
+Message-Id: <547E2864.9080903@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <547E2612.6010304@users.sourceforge.net>
+In-Reply-To: <547E2612.6010304@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Dec 2014 20:33:51 +0100
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The kfree() function was called in two cases by the get_daio_rsc() function
+during error handling even if the passed variable contained still
+a null pointer. This implementation detail could be improved
+by adjustments for jump labels.
 
-// <smpl>
-@@
-expression t,f,d;
-@@
-
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.data = d;
--t.function = f;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/iwlegacy/4965-mac.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ sound/pci/ctxfi/ctdaio.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/wireless/iwlegacy/4965-mac.c b/drivers/net/wireless/iwlegacy/4965-mac.c
-index 2748fde..976f65f 100644
---- a/drivers/net/wireless/iwlegacy/4965-mac.c
-+++ b/drivers/net/wireless/iwlegacy/4965-mac.c
-@@ -6247,13 +6247,10 @@ il4965_setup_deferred_work(struct il_priv *il)
+diff --git a/sound/pci/ctxfi/ctdaio.c b/sound/pci/ctxfi/ctdaio.c
+index 1712332..a12489e 100644
+--- a/sound/pci/ctxfi/ctdaio.c
++++ b/sound/pci/ctxfi/ctdaio.c
+@@ -549,22 +549,22 @@ static int get_daio_rsc(struct daio_mgr *mgr,
+ 		dao = kzalloc(sizeof(*dao), GFP_KERNEL);
+ 		if (!dao) {
+ 			err = -ENOMEM;
+-			goto error;
++			goto alloc_error;
+ 		}
+ 		err = dao_rsc_init(dao, desc, mgr);
+ 		if (err)
+-			goto error;
++			goto dao_init_error;
  
- 	INIT_WORK(&il->txpower_work, il4965_bg_txpower_work);
+ 		*rdaio = &dao->daio;
+ 	} else {
+ 		dai = kzalloc(sizeof(*dai), GFP_KERNEL);
+ 		if (!dai) {
+ 			err = -ENOMEM;
+-			goto error;
++			goto alloc_error;
+ 		}
+ 		err = dai_rsc_init(dai, desc, mgr);
+ 		if (err)
+-			goto error;
++			goto dai_init_error;
  
--	init_timer(&il->stats_periodic);
--	il->stats_periodic.data = (unsigned long)il;
--	il->stats_periodic.function = il4965_bg_stats_periodic;
-+	setup_timer(&il->stats_periodic, il4965_bg_stats_periodic,
-+		    (unsigned long)il);
+ 		*rdaio = &dai->daio;
+ 	}
+@@ -574,12 +574,12 @@ static int get_daio_rsc(struct daio_mgr *mgr,
  
--	init_timer(&il->watchdog);
--	il->watchdog.data = (unsigned long)il;
--	il->watchdog.function = il_bg_watchdog;
-+	setup_timer(&il->watchdog, il_bg_watchdog, (unsigned long)il);
+ 	return 0;
  
- 	tasklet_init(&il->irq_tasklet,
- 		     (void (*)(unsigned long))il4965_irq_tasklet,
+-error:
+-	if (dao)
+-		kfree(dao);
+-	else
+-		kfree(dai);
+-
++dao_init_error:
++	kfree(dao);
++	goto alloc_error;
++dai_init_error:
++	kfree(dai);
++alloc_error:
+ 	spin_lock_irqsave(&mgr->mgr_lock, flags);
+ 	daio_mgr_put_rsc(&mgr->mgr, desc->type);
+ 	spin_unlock_irqrestore(&mgr->mgr_lock, flags);
+-- 
+2.1.3
 
