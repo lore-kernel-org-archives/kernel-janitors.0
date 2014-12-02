@@ -1,44 +1,69 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 Dec 2014 17:56:30 +0000
-Subject: [PATCH 1/1] ALSA: trident: Deletion of a check before snd_util_memhdr_free()
-Message-Id: <547DFD4E.50207@users.sourceforge.net>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Tue, 02 Dec 2014 19:11:18 +0000
+Subject: Re: [PATCH 1/1] ALSA: trident: Deletion of a check before snd_util_memhdr_free()
+Message-Id: <s5h1toh98a1.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+	<530A086E.8010901@users.sourceforge.net>
+	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+	<530A72AA.3000601@users.sourceforge.net>
+	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+	<530B5FB6.6010207@users.sourceforge.net>
+	<alpine.DEB.2.10.1402241710370.2074@hadrien>
+	<530C5E18.1020800@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251014170.2080@hadrien>
+	<530CD2C4.4050903@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251840450.7035@hadrien>
+	<530CF8FF.8080600@users.sourceforge.net>
+	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+	<530DD06F.4090703@users.sourceforge.net>
+	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<547DFD4E.50207@users.sourceforge.net>
+In-Reply-To: <547DFD4E.50207@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 Dec 2014 18:52:21 +0100
+At Tue, 02 Dec 2014 18:56:30 +0100,
+SF Markus Elfring wrote:
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 2 Dec 2014 18:52:21 +0100
+> 
+> The snd_util_memhdr_free() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The snd_util_memhdr_free() function tests whether its argument is NULL
-and then returns immediately. Thus the test around the call is not needed.
+Applied, thanks.
 
-This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/pci/trident/trident_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Takashi
 
-diff --git a/sound/pci/trident/trident_main.c b/sound/pci/trident/trident_main.c
-index da875dc..57cd757 100644
---- a/sound/pci/trident/trident_main.c
-+++ b/sound/pci/trident/trident_main.c
-@@ -3702,8 +3702,7 @@ static int snd_trident_free(struct snd_trident *trident)
- 		free_irq(trident->irq, trident);
- 	if (trident->tlb.buffer.area) {
- 		outl(0, TRID_REG(trident, NX_TLBC));
--		if (trident->tlb.memhdr)
--			snd_util_memhdr_free(trident->tlb.memhdr);
-+		snd_util_memhdr_free(trident->tlb.memhdr);
- 		if (trident->tlb.silent_page.area)
- 			snd_dma_free_pages(&trident->tlb.silent_page);
- 		vfree(trident->tlb.shadow_entries);
--- 
-2.1.3
-
+> ---
+>  sound/pci/trident/trident_main.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/sound/pci/trident/trident_main.c b/sound/pci/trident/trident_main.c
+> index da875dc..57cd757 100644
+> --- a/sound/pci/trident/trident_main.c
+> +++ b/sound/pci/trident/trident_main.c
+> @@ -3702,8 +3702,7 @@ static int snd_trident_free(struct snd_trident *trident)
+>  		free_irq(trident->irq, trident);
+>  	if (trident->tlb.buffer.area) {
+>  		outl(0, TRID_REG(trident, NX_TLBC));
+> -		if (trident->tlb.memhdr)
+> -			snd_util_memhdr_free(trident->tlb.memhdr);
+> +		snd_util_memhdr_free(trident->tlb.memhdr);
+>  		if (trident->tlb.silent_page.area)
+>  			snd_dma_free_pages(&trident->tlb.silent_page);
+>  		vfree(trident->tlb.shadow_entries);
+> -- 
+> 2.1.3
+> 
