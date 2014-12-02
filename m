@@ -1,27 +1,43 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 05 Dec 2014 21:00:27 +0000
-Subject: Re: [PATCH v2 5/6] net-PPP: Delete an unnecessary assignment in mppe_alloc()
-Message-Id: <54821CEB.2020002@users.sourceforge.net>
+Date: Tue, 02 Dec 2014 20:55:20 +0000
+Subject: [PATCH 1/2] ALSA: ctxfi: Deletion of an unnecessary check before the function call "kfree"
+Message-Id: <547E2738.1090708@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net> <547B496E.604@users.sourceforge.net> <547C5CBC.6060607@cogentembedded.com> <547C82A6.2030808@users.sourceforge.net> <547CA157.1080401@cogentembedded.com> <5480DA32.8000201@users.sourceforge.net> <5480DDC1.6040101@users.sourceforge.net> <20141205122214.GB4912@mwanda> <5481A8AE.9050506@users.sourceforge.net> <20141205135723.GE4912@mwanda>
-In-Reply-To: <20141205135723.GE4912@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <547E2612.6010304@users.sourceforge.net>
+In-Reply-To: <547E2612.6010304@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
->> That is true.
-> 
-> In that case, I misunderstood what you wrote.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Dec 2014 20:00:33 +0100
 
-I find it a bit interesting how this misunderstanding could happen here somehow.
+The kfree() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
+This issue was detected by using the Coccinelle software.
 
-> Looking at it now, this patch is actually ok.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/ctxfi/ctdaio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Does that mean that you would like to add any tag like "Acked-by" or "Reviewed-by"
-to any of the proposed six update steps?
+diff --git a/sound/pci/ctxfi/ctdaio.c b/sound/pci/ctxfi/ctdaio.c
+index c1c3f88..1712332 100644
+--- a/sound/pci/ctxfi/ctdaio.c
++++ b/sound/pci/ctxfi/ctdaio.c
+@@ -577,7 +577,7 @@ static int get_daio_rsc(struct daio_mgr *mgr,
+ error:
+ 	if (dao)
+ 		kfree(dao);
+-	else if (dai)
++	else
+ 		kfree(dai);
+ 
+ 	spin_lock_irqsave(&mgr->mgr_lock, flags);
+-- 
+2.1.3
 
-Regards,
-Markus
