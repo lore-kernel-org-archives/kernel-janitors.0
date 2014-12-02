@@ -1,46 +1,30 @@
-From: Simon Horman <horms@verge.net.au>
-Date: Wed, 10 Dec 2014 08:47:21 +0000
-Subject: Re: [patch v2] ipvs: uninitialized data with IP_VS_IPV6
-Message-Id: <20141210084721.GA15585@verge.net.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 Dec 2014 20:50:26 +0000
+Subject: [PATCH 0/2] ALSA: ctxfi: Delete an unnecessary check before kfree()
+Message-Id: <547E2612.6010304@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141206134924.GA17278@mwanda>
- <alpine.LFD.2.11.1412072032420.1885@ja.home.ssi.bg>
- <20141209005215.GH8897@verge.net.au>
- <20141209064947.GH4912@mwanda>
-In-Reply-To: <20141209064947.GH4912@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Julian Anastasov <ja@ssi.bg>, Wensong Zhang <wensong@linux-vs.org>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Tue, Dec 09, 2014 at 09:49:47AM +0300, Dan Carpenter wrote:
-> On Tue, Dec 09, 2014 at 09:52:15AM +0900, Simon Horman wrote:
-> > On Sun, Dec 07, 2014 at 08:39:35PM +0200, Julian Anastasov wrote:
-> > > 
-> > > 	Hello,
-> > > 
-> > > On Sat, 6 Dec 2014, Dan Carpenter wrote:
-> > > 
-> > > > The app_tcp_pkt_out() function expects "*diff" to be set and ends up
-> > > > using uninitialized data if CONFIG_IP_VS_IPV6 is turned on.
-> > > > 
-> > > > The same issue is there in app_tcp_pkt_in().  Thanks to Julian Anastasov
-> > > > for noticing that.
-> > > > 
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > > ---
-> > > > v2: fix app_tcp_pkt_in() as well.  This is an old bug.
-> > > 
-> > > 	Thanks! It will not break seqs for IPv6 control
-> > > connection, only that we do not support FTP yet :( I have
-> > > the doubt whether this should be classified as bugfix :)
-> > > I guess, it is a net-next material, right?
-> > 
-> > Agreed, I have queued it up in ipvs-next.
-> > I'll send a pull request to Pablo if Dan doesn't object
-> > to it going there.
-> 
-> No objections from me.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Dec 2014 20:35:41 +0100
 
-Thanks, I have sent a pull-request.
+Another update suggestion was taken into account after a patch was applied
+from static source code analysis.
+
+Markus Elfring (2):
+  Deletion of an unnecessary check before the function call "kfree"
+  One function call less in get_daio_rsc() after error detection
+
+ sound/pci/ctxfi/ctdaio.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+-- 
+2.1.3
+
