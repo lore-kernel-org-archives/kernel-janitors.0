@@ -1,54 +1,68 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:41 +0000
-Subject: [PATCH 9/27] xhci: Use setup_timer
-Message-Id: <1419604558-29743-11-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 Dec 2014 10:51:15 +0000
+Subject: [PATCH 1/1] lustre: Deletion of unnecessary checks before three function calls
+Message-Id: <547D99A3.7070506@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mathias Nyman <mathias.nyman@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, devel@driverdev.osuosl.org, HPDD-discuss@lists.01.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Dec 2014 11:40:33 +0100
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The functions free_ll_remote_perm(), free_rmtperm_hash() and iput() test
+whether their argument is NULL and then return immediately.
+Thus the test around their calls is not needed.
 
-// <smpl>
-@@
-expression t,f,d;
-@@
+This issue was detected by using the Coccinelle software.
 
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.data = d;
--t.function = f;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/usb/host/xhci.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/staging/lustre/lustre/llite/remote_perm.c | 5 ++---
+ drivers/staging/lustre/lustre/llite/statahead.c   | 3 +--
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 01fcbb5..ae6d650 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -473,10 +473,8 @@ static void compliance_mode_recovery(unsigned long arg)
- static void compliance_mode_recovery_timer_init(struct xhci_hcd *xhci)
- {
- 	xhci->port_status_u0 = 0;
--	init_timer(&xhci->comp_mode_recovery_timer);
--
--	xhci->comp_mode_recovery_timer.data = (unsigned long) xhci;
--	xhci->comp_mode_recovery_timer.function = compliance_mode_recovery;
-+	setup_timer(&xhci->comp_mode_recovery_timer,
-+		    compliance_mode_recovery, (unsigned long)xhci);
- 	xhci->comp_mode_recovery_timer.expires = jiffies +
- 			msecs_to_jiffies(COMP_MODE_RCVRY_MSECS);
+diff --git a/drivers/staging/lustre/lustre/llite/remote_perm.c b/drivers/staging/lustre/lustre/llite/remote_perm.c
+index c05a912..a581826 100644
+--- a/drivers/staging/lustre/lustre/llite/remote_perm.c
++++ b/drivers/staging/lustre/lustre/llite/remote_perm.c
+@@ -194,7 +194,7 @@ int ll_update_remote_perm(struct inode *inode, struct mdt_remote_perm *perm)
  
+ 	if (!lli->lli_remote_perms)
+ 		lli->lli_remote_perms = perm_hash;
+-	else if (perm_hash)
++	else
+ 		free_rmtperm_hash(perm_hash);
+ 
+ 	head = lli->lli_remote_perms + remote_perm_hashfunc(perm->rp_uid);
+@@ -209,8 +209,7 @@ again:
+ 			continue;
+ 		if (tmp->lrp_fsgid != perm->rp_fsgid)
+ 			continue;
+-		if (lrp)
+-			free_ll_remote_perm(lrp);
++		free_ll_remote_perm(lrp);
+ 		lrp = tmp;
+ 		break;
+ 	}
+diff --git a/drivers/staging/lustre/lustre/llite/statahead.c b/drivers/staging/lustre/lustre/llite/statahead.c
+index 227854b..6ad9dd0 100644
+--- a/drivers/staging/lustre/lustre/llite/statahead.c
++++ b/drivers/staging/lustre/lustre/llite/statahead.c
+@@ -334,8 +334,7 @@ static void ll_sa_entry_put(struct ll_statahead_info *sai,
+ 		LASSERT(ll_sa_entry_unhashed(entry));
+ 
+ 		ll_sa_entry_cleanup(sai, entry);
+-		if (entry->se_inode)
+-			iput(entry->se_inode);
++		iput(entry->se_inode);
+ 
+ 		OBD_FREE(entry, entry->se_size);
+ 		atomic_dec(&sai->sai_cache_count);
+-- 
+2.1.3
 
