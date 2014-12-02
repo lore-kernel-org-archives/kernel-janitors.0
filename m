@@ -1,28 +1,29 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 09 Dec 2014 21:14:38 +0000
-Subject: Re: [PATCH 5/20] isdn: fix misspelling of current function in string
-Message-Id: <20141209.161438.1929426728064530302.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 02 Dec 2014 21:17:10 +0000
+Subject: [patch] Input: lm8323 - missing error check in lm8323_set_disable()
+Message-Id: <20141202211710.GA19955@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1417980062-25151-6-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-6-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: isdn@linux-pingi.de, kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Fugang Duan <B38611@freescale.com>, Johan Hovold <johan@kernel.org>, Bryan Wu <cooloney@gmail.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun,  7 Dec 2014 20:20:47 +0100
+The missing error handling here is not especially harmful but static
+checkers complain that "i" can be used uninitialized.
 
-> Replace a misspelled function name by %s and then __func__.
-> 
-> In the first case, the print is just dropped, because kmalloc itself does
-> enough error reporting.
-> 
-> This was done using Coccinelle, including the use of Levenshtein distance,
-> as proposed by Rasmus Villemoes.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+diff --git a/drivers/input/keyboard/lm8323.c b/drivers/input/keyboard/lm8323.c
+index cb32e2b..21bea52 100644
+--- a/drivers/input/keyboard/lm8323.c
++++ b/drivers/input/keyboard/lm8323.c
+@@ -616,6 +616,8 @@ static ssize_t lm8323_set_disable(struct device *dev,
+ 	unsigned int i;
+ 
+ 	ret = kstrtouint(buf, 10, &i);
++	if (ret)
++		return ret;
+ 
+ 	mutex_lock(&lm->lock);
+ 	lm->kp_enabled = !i;
