@@ -1,69 +1,46 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Tue, 02 Dec 2014 19:11:18 +0000
-Subject: Re: [PATCH 1/1] ALSA: trident: Deletion of a check before snd_util_memhdr_free()
-Message-Id: <s5h1toh98a1.wl-tiwai@suse.de>
+From: Bradley Grove <bgrove@attotech.com>
+Date: Tue, 02 Dec 2014 19:37:07 +0000
+Subject: Re: [PATCH 1/1] esas2r: Correct typos of "validate" in a comment
+Message-Id: <547E14E3.1070303@attotech.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<547DFD4E.50207@users.sourceforge.net>
-In-Reply-To: <547DFD4E.50207@users.sourceforge.net>
+References: <54774D8D.2030204@gmail.com>
+In-Reply-To: <54774D8D.2030204@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Bradley Grove <linuxdrivers@attotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, trivial@kernel.org
+Cc: Boris Bodemann <bobo.barbarossa@gmail.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Tue, 02 Dec 2014 18:56:30 +0100,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 2 Dec 2014 18:52:21 +0100
-> 
-> The snd_util_memhdr_free() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Acked-by: Bradley Grove <bgrove@attotech.com>
 
-Applied, thanks.
+Thanks,
+Brad
 
-
-Takashi
-
+On 11/27/2014 11:13 AM, Boris Bodemann wrote:
+> From: Boris Bodemann <bobo.barbarossa@gmail.com>
+>
+> Correct typos of "validate" in a comment
+>
+> Signed-off-by: Boris Bodemann <bobo.barbarossa@gmail.com>
 > ---
->  sound/pci/trident/trident_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/trident/trident_main.c b/sound/pci/trident/trident_main.c
-> index da875dc..57cd757 100644
-> --- a/sound/pci/trident/trident_main.c
-> +++ b/sound/pci/trident/trident_main.c
-> @@ -3702,8 +3702,7 @@ static int snd_trident_free(struct snd_trident *trident)
->  		free_irq(trident->irq, trident);
->  	if (trident->tlb.buffer.area) {
->  		outl(0, TRID_REG(trident, NX_TLBC));
-> -		if (trident->tlb.memhdr)
-> -			snd_util_memhdr_free(trident->tlb.memhdr);
-> +		snd_util_memhdr_free(trident->tlb.memhdr);
->  		if (trident->tlb.silent_page.area)
->  			snd_dma_free_pages(&trident->tlb.silent_page);
->  		vfree(trident->tlb.shadow_entries);
-> -- 
-> 2.1.3
-> 
+> diff -up a/drivers/scsi/esas2r/esas2r_flash.c b/drivers/scsi/esas2r/esas2r_flash.c
+> --- a/drivers/scsi/esas2r/esas2r_flash.c        2014-11-21 18:24:10.000000000 +0100
+> +++ b/drivers/scsi/esas2r/esas2r_flash.c        2014-11-27 14:49:03.029899303 +0100
+> @@ -684,9 +684,9 @@ static u16 calc_fi_checksum(struct esas2
+>    *              1)  verify the fi_version is correct
+>    *              2)  verify the checksum of the entire image.
+>    *              3)  validate the adap_typ, action and length fields.
+> - *              4)  valdiate each component header. check the img_type and
+> + *              4)  validate each component header. check the img_type and
+>    *                  length fields
+> - *              5)  valdiate each component image.  validate signatures and
+> + *              5)  validate each component image.  validate signatures and
+>    *                  local checksums
+>    */
+>   static bool verify_fi(struct esas2r_adapter *a,
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
