@@ -1,44 +1,44 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Date: Mon, 01 Dec 2014 23:00:38 +0000
-Subject: Re: [PATCH 5/8 v2] dm: replace memset by memzero_explicit
-Message-Id: <20141201230037.GA9761@redhat.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 02 Dec 2014 13:00:51 +0000
+Subject: [PATCH 1/1] of-unittest: Deletion of an unnecessary check before the function call "of_node_put"
+Message-Id: <547DB803.1080406@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
- <1417367029-32762-6-git-send-email-Julia.Lawall@lip6.fr>
- <547CD7B9.5030000@gmail.com>
-In-Reply-To: <547CD7B9.5030000@gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Milan Broz <gmazyland@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>, dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Mon, Dec 01 2014 at  4:03pm -0500,
-Milan Broz <gmazyland@gmail.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 Dec 2014 13:54:00 +0100
 
-> On 11/30/2014 06:03 PM, Julia Lawall wrote:
-> > From: Julia Lawall <Julia.Lawall@lip6.fr>
-> >=20
-> > Memset on a local variable may be removed when it is called just before=
- the
-> > variable goes out of scope.  Using memzero_explicit defeats this
-> > optimization.  A simplified version of the semantic patch that makes th=
-is
-> > change is as follows: (http://coccinelle.lip6.fr/)
->=20
-> Ack, but I submitted the same patch a week ago....
->=20
-> https://www.redhat.com/archives/dm-devel/2014-November/msg00084.html
->=20
-> Mike, please could you add this to linux-next tree or you want this
-> to go through Herbert's tree?
-> (I do not think it is good idea for DM patches.)
+The of_node_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-I staged it in linux-next for 3.19 inclusion, see:
-https://git.kernel.org/cgit/linux/kernel/git/device-mapper/linux-dm.git/com=
-mit/?h=3Ddm-for-3.19&id=A722201f9075b28be140bc13f8ec07bf6a42edd4
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/of/unittest.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index cc0c5ec..06ebe9d 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -486,8 +486,7 @@ static void __init of_selftest_changeset(void)
+ 	/* Make sure node names are constructed correctly */
+ 	selftest((np = of_find_node_by_path("/testcase-data/changeset/n2/n21")),
+ 		 "'%s' not added\n", n21->full_name);
+-	if (np)
+-		of_node_put(np);
++	of_node_put(np);
+ 
+ 	mutex_lock(&of_mutex);
+ 	selftest(!of_changeset_revert(&chgset), "revert failed\n");
+-- 
+2.1.3
+
