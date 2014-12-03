@@ -1,52 +1,26 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 03 Dec 2014 14:14:08 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Dec 2014 14:18:51 +0000
 Subject: Re: [patch] mpt2sas: issue reset is not uninitialized
-Message-Id: <547F1AB0.30705@bfs.de>
+Message-Id: <20141203141851.GU5048@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141203100941.GB29583@mwanda>
-In-Reply-To: <20141203100941.GB29583@mwanda>
+ <547F1AB0.30705@bfs.de>
+In-Reply-To: <547F1AB0.30705@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: walter harms <wharms@bfs.de>
 Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-
-
-Am 03.12.2014 11:09, schrieb Dan Carpenter:
-> The issue_reset variables were never set to zero.  This bug was found
-> with static analysis.
+On Wed, Dec 03, 2014 at 03:14:08PM +0100, walter harms wrote:
+> hi Dan,
+> just a minor question:
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> did you forget to mention that you also changed from u8 to bool or was this unintentional ?
 > 
-> diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c b/drivers/scsi/mpt2sas/mpt2sas_base.c
-> index 58e4521..98bd546 100644
-> --- a/drivers/scsi/mpt2sas/mpt2sas_base.c
-> +++ b/drivers/scsi/mpt2sas/mpt2sas_base.c
-> @@ -3236,7 +3236,7 @@ mpt2sas_base_sas_iounit_control(struct MPT2SAS_ADAPTER *ioc,
->  	u16 smid;
->  	u32 ioc_state;
->  	unsigned long timeleft;
-> -	u8 issue_reset;
-> +	bool issue_reset = 0;
->  	int rc;
->  	void *request;
->  	u16 wait_state_count;
-> @@ -3341,7 +3341,7 @@ mpt2sas_base_scsi_enclosure_processor(struct MPT2SAS_ADAPTER *ioc,
->  	u16 smid;
->  	u32 ioc_state;
->  	unsigned long timeleft;
-> -	u8 issue_reset;
-> +	bool issue_reset = 0;
->  	int rc;
->  	void *request;
->  	u16 wait_state_count;
 
+That's a trivial thing and I didn't think it was worth mentioning.
 
-hi Dan,
-just a minor question:
+regards,
+dan carpenter
 
-did you forget to mention that you also changed from u8 to bool or was this unintentional ?
-
-re,
- wh
