@@ -1,49 +1,57 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 07 Dec 2014 21:05:10 +0000
-Subject: Re: [PATCH 19/20] TTY: fix misspelling of current function in string
-Message-Id: <alpine.DEB.2.02.1412072201430.2235@localhost6.localdomain6>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 03 Dec 2014 00:14:08 +0000
+Subject: Re: [PATCH 8/8] wusb: replace memset by memzero_explicit
+Message-Id: <20141203001408.GB21569@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr> <1417980062-25151-20-git-send-email-Julia.Lawall@lip6.fr> <20141207205437.GD5360@hudson.localdomain>
-In-Reply-To: <20141207205437.GD5360@hudson.localdomain>
+References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1417366774-32412-9-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417366774-32412-9-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeremiah Mahler <jmmahler@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: dborkman@redhat.com, herbert@gondor.apana.org.au, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-On Sun, 7 Dec 2014, Jeremiah Mahler wrote:
-
-> Julia,
+On Sun, Nov 30, 2014 at 05:59:34PM +0100, Julia Lawall wrote:
+> From: Julia Lawall <julia@diku.dk>
 > 
-> On Sun, Dec 07, 2014 at 08:21:01PM +0100, Julia Lawall wrote:
-> > Replace a misspelled function name by %s and then __func__.
-> > 
-> > This was done using Coccinelle, including the use of Levenshtein distance,
-> > as proposed by Rasmus Villemoes.
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> > 
-> > ---
-> > The semantic patch is difficult to summarize, but is available in the cover
-> [...]
-> > @@ -1458,7 +1458,7 @@ static void rp_wait_until_sent(struct tty_struct *tty, int timeout)
-> >  
-> >  	orig_jiffies = jiffies;
-> >  #ifdef ROCKET_DEBUG_WAIT_UNTIL_SENT
-> > -	printk(KERN_INFO "In RP_wait_until_sent(%d) (jiff=%lu)...\n", timeout,
-> > +	printk(KERN_INFO "In %s(%d) (jiff=%lu)...\n", __func__, timeout,
-> >  	       jiffies);
-> >  	printk(KERN_INFO "cps=%d...\n", info->cps);
-> >  #endif
-> > 
-> More printk, pr_info, I'm sure you get the idea :-)
+> Memset on a local variable may be removed when it is called just before the
+> variable goes out of scope.  Using memzero_explicit defeats this
+> optimization.  A simplified version of the semantic patch that makes this
+> change is as follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> identifier x;
+> type T;
+> @@
+> 
+> {
+> ... when any
+> T x[...];
+> ... when any
+>     when exists
+> - memset
+> + memzero_explicit
+>   (x,
+> -0,
+>   ...)
+> ... when != x
+>     when strict
+> }
+> // </smpl>
+> 
+> This change was suggested by Daniel Borkmann <dborkman@redhat.com>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
+> 
+> ---
+> Daniel Borkmann suggested that these patches could go through Herbert Xu's
+> cryptodev tree.
 
-Well, these are drivers, so it should probably be dev_info, etc.
+Why?  There's no dependancy on anything in the cryptodev tree,
+memzero_explicit is in Linus's tree now.
 
-I have the impression that satisfying checkpatch would require a more 
-complicated change than the original patch.
+thanks,
 
-I would still find it better to makes these changes in another patch 
-series.
-
-julia
+greg k-h
