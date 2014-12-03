@@ -1,52 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:33 +0000
-Subject: [PATCH 1/27] [media] s2255drv: Use setup_timer
-Message-Id: <1419604558-29743-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Dec 2014 10:09:18 +0000
+Subject: [patch] mpt3sas: issue_reset is uninitialized
+Message-Id: <20141203100918.GA29583@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
+Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+We never set "issue_reset" to zero.
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-expression t,f,d;
-@@
-
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.function = f;
--t.data = d;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/media/usb/s2255/s2255drv.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
-index de55e96..0f3c34d 100644
---- a/drivers/media/usb/s2255/s2255drv.c
-+++ b/drivers/media/usb/s2255/s2255drv.c
-@@ -2274,9 +2274,7 @@ static int s2255_probe(struct usb_interface *interface,
- 		dev_err(&interface->dev, "Could not find bulk-in endpoint\n");
- 		goto errorEP;
- 	}
--	init_timer(&dev->timer);
--	dev->timer.function = s2255_timer;
--	dev->timer.data = (unsigned long)dev->fw_data;
-+	setup_timer(&dev->timer, s2255_timer, (unsigned long)dev->fw_data);
- 	init_waitqueue_head(&dev->fw_data->wait_fw);
- 	for (i = 0; i < MAX_CHANNELS; i++) {
- 		struct s2255_vc *vc = &dev->vc[i];
-
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 1560115..a6d471a 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -3419,7 +3419,7 @@ mpt3sas_base_sas_iounit_control(struct MPT3SAS_ADAPTER *ioc,
+ 	u16 smid;
+ 	u32 ioc_state;
+ 	unsigned long timeleft;
+-	u8 issue_reset;
++	bool issue_reset = 0;
+ 	int rc;
+ 	void *request;
+ 	u16 wait_state_count;
+@@ -3523,7 +3523,7 @@ mpt3sas_base_scsi_enclosure_processor(struct MPT3SAS_ADAPTER *ioc,
+ 	u16 smid;
+ 	u32 ioc_state;
+ 	unsigned long timeleft;
+-	u8 issue_reset;
++	bool issue_reset = 0;
+ 	int rc;
+ 	void *request;
+ 	u16 wait_state_count;
