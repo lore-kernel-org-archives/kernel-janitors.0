@@ -1,39 +1,25 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 05 Dec 2014 13:58:13 +0000
-Subject: Re: [PATCH v2 6/6] net-PPP: Delete another unnecessary assignment in mppe_alloc()
-Message-Id: <20141205135813.GF4912@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 Dec 2014 11:38:51 +0000
+Subject: Re: ALSA: ctxfi: Delete an unnecessary check before kfree()
+Message-Id: <547EF64B.1080403@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <547B4886.4080406@users.sourceforge.net>
- <547B496E.604@users.sourceforge.net>
- <547C5CBC.6060607@cogentembedded.com>
- <547C82A6.2030808@users.sourceforge.net>
- <547CA157.1080401@cogentembedded.com>
- <5480DA32.8000201@users.sourceforge.net>
- <5480DE25.2020802@users.sourceforge.net>
- <20141205122315.GC4912@mwanda>
-In-Reply-To: <20141205122315.GC4912@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>	<530A086E.8010901@users.sourceforge.net>	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>	<530A72AA.3000601@users.sourceforge.net>	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>	<530B5FB6.6010207@users.sourceforge.net>	<alpine.DEB.2.10.1402241710370.2074@hadrien>	<530C5E18.1020800@users.sourceforge.net>	<alpine.DEB.2.10.1402251014170.2080@hadrien>	<530CD2C4.4050903@users.sourceforge.net>	<alpine.DEB.2.10.1402251840450.7035@hadrien>	<530CF8FF.8080600@users.sourceforge.net>	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>	<530DD06F.4090703@users.sourceforge.net>	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>	<5317A59D.4@users.so
+ urceforge.net>	<547E2612.6010304@users.sourceforge.net> <s5hvblt6xav.wl-tiwai@suse.de>
+In-Reply-To: <s5hvblt6xav.wl-tiwai@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Fri, Dec 05, 2014 at 03:23:15PM +0300, Dan Carpenter wrote:
-> On Thu, Dec 04, 2014 at 11:20:21PM +0100, SF Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Thu, 4 Dec 2014 22:42:30 +0100
-> > 
-> > The data structure element "sha1" was assigned a null pointer by the
-> > mppe_alloc() after a function call "crypto_alloc_hash" failed.
+>>   Deletion of an unnecessary check before the function call "kfree"
+>>   One function call less in get_daio_rsc() after error detection
 > 
-> This patch is also buggy.
+> In these cases, the changes aren't so straightforward, and they don't
+> improve the readability.
 
-Actually it's ok.  I was just confused by the changelog.
+How do you prefer to improve the affected source code here?
 
-Sorry about that, Markus.
-
-regards,
-dan carpenter
+Regards,
+Markus
 
