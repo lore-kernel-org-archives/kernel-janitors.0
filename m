@@ -1,50 +1,53 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 Dec 2014 13:41:47 +0000
-Subject: [PATCH 1/1] ASoC: fsi: Deletion of unnecessary checks before the function call "clk_disable"
-Message-Id: <547DC19B.5080302@users.sourceforge.net>
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 03 Dec 2014 18:29:18 +0000
+Subject: Re: [PATCH 1/1] ASoC: fsi: Deletion of unnecessary checks before the function call "clk_disable"
+Message-Id: <20141203182918.GH7712@sirena.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="4A79KfPqnT9qCbac"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+References: <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net>
+ <547DC19B.5080302@users.sourceforge.net>
+In-Reply-To: <547DC19B.5080302@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 Dec 2014 14:34:30 +0100
 
-The clk_disable() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+--4A79KfPqnT9qCbac
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This issue was detected by using the Coccinelle software.
+On Tue, Dec 02, 2014 at 02:41:47PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 2 Dec 2014 14:34:30 +0100
+>=20
+> The clk_disable() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/soc/sh/fsi.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Applied, thanks.
 
-diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
-index 88e5df4..8869971 100644
---- a/sound/soc/sh/fsi.c
-+++ b/sound/soc/sh/fsi.c
-@@ -842,12 +842,9 @@ static int fsi_clk_disable(struct device *dev,
- 		return -EINVAL;
- 
- 	if (1 = clock->count--) {
--		if (clock->xck)
--			clk_disable(clock->xck);
--		if (clock->ick)
--			clk_disable(clock->ick);
--		if (clock->div)
--			clk_disable(clock->div);
-+		clk_disable(clock->xck);
-+		clk_disable(clock->ick);
-+		clk_disable(clock->div);
- 	}
- 
- 	return 0;
--- 
-2.1.3
+--4A79KfPqnT9qCbac
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUf1Z9AAoJECTWi3JdVIfQuJwH/ikDBQtMU7vue/j0KBYF+E5D
+ETRJtPZTvAqYxBT2qAQ21xW/gtrP+HKNrkHIVm8+z/cWIl8+u1Tc1cHP+M/5FxPf
+ezb0c1Eu/W7GgY/86+n8o/p/DzkMadUKCwmj3aD2/WyPZMHEtNnRQqahixaC8LJB
+45+0ETFvnmseetn2kn4qcZiDTwrrndaF+ILKmflhktRKs7YMSz30nPV0bJu7Navo
++bIRQhwJHMBkvrtOxQNYbGV+Ag+OSGni7TbkLbsqp8xkA1FownW3mcxMKjdDm0M4
+YRaIyM9nRUYPF2O8t9o4MHxFTWXNYOJeqVnY2MUZf2h+3Ni/MQcAslLyxJOVQhM=
+=oX5d
+-----END PGP SIGNATURE-----
+
+--4A79KfPqnT9qCbac--
