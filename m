@@ -1,21 +1,40 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Date: Wed, 17 Dec 2014 02:18:49 +0000
-Subject: Re: [patch] gpio: grgpio: off by one in grgpio_to_irq()
-Message-Id: <CAAVeFuLtWzjWO91R8YwqSnnUTD1kjPvY-FFpWEjqxNhtjbkn6w@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 03 Dec 2014 10:12:13 +0000
+Subject: [patch] ipvs: uninitialized data with IP_VS_IPV6
+Message-Id: <20141203101213.GC29583@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141216235358.GD31467@mwanda>
-In-Reply-To: <20141216235358.GD31467@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Wensong Zhang <wensong@linux-vs.org>
+Cc: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-On Wed, Dec 17, 2014 at 8:53 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> "gc->ngpio" is a number between 1 and GRGPIO_MAX_NGPIO.  If "offset" is
-> GRGPIO_MAX_NGPIO then we're going one step beyond the end of the
-> priv->lirqs[] array.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The app_tcp_pkt_out() function expects "*diff" to be set and ends up
+using uninitialized data if CONFIG_IP_VS_IPV6 is turned on.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This bug is very old.
+
+diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
+index 1d5341f..f93f974 100644
+--- a/net/netfilter/ipvs/ip_vs_ftp.c
++++ b/net/netfilter/ipvs/ip_vs_ftp.c
+@@ -183,6 +183,8 @@ static int ip_vs_ftp_out(struct ip_vs_app *app, struct ip_vs_conn *cp,
+ 	struct nf_conn *ct;
+ 	struct net *net;
+ 
++	*diff = 0;
++
+ #ifdef CONFIG_IP_VS_IPV6
+ 	/* This application helper doesn't work with IPv6 yet,
+ 	 * so turn this into a no-op for IPv6 packets
+@@ -191,8 +193,6 @@ static int ip_vs_ftp_out(struct ip_vs_app *app, struct ip_vs_conn *cp,
+ 		return 1;
+ #endif
+ 
+-	*diff = 0;
+-
+ 	/* Only useful for established sessions */
+ 	if (cp->state != IP_VS_TCP_S_ESTABLISHED)
+ 		return 1;
