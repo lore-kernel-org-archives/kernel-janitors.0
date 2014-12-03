@@ -1,52 +1,50 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:47 +0000
-Subject: [PATCH 16/27] ath6kl: Use setup_timer
-Message-Id: <1419604558-29743-17-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 03 Dec 2014 09:10:41 +0000
+Subject: Re: ARM: DaVinci: Deletion of an unnecessary check before the function call "__clk_disable"
+Message-Id: <547ED391.1050507@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <547EC6B8.6000001@users.sourceforge.net>
+In-Reply-To: <547EC6B8.6000001@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: linux-arm-kernel@lists.infradead.org
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+> The __clk_disable() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+I was a bit too quick to send you this notification. I stumbled once more
+on the detail that my source code analysis approach is incomplete for
+static functions so far.
 
-// <smpl>
-@@
-expression t,f,d;
-@@
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/arch/=
+arm/mach-davinci/clock.c?id=A7ca2bcf2d2ef15c343a12f2a4c2e06380a0f495#n47
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/d=
+rivers/clk/clk.c?idMc7ed32f398fa76b9e1d243a852420b1dad0150#n846
 
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.function = f;
--t.data = d;
-// </smpl>
+I would like to apologise for confusion I introduced here.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Regards,
+Markus
 
----
- drivers/net/wireless/ath/ath6kl/txrx.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath6kl/txrx.c b/drivers/net/wireless/ath/ath6kl/txrx.c
-index 40432fe..3bc3aa7 100644
---- a/drivers/net/wireless/ath/ath6kl/txrx.c
-+++ b/drivers/net/wireless/ath/ath6kl/txrx.c
-@@ -1757,9 +1757,7 @@ void aggr_conn_init(struct ath6kl_vif *vif, struct aggr_info *aggr_info,
- 
- 	aggr_conn->aggr_sz = AGGR_SZ_DEFAULT;
- 	aggr_conn->dev = vif->ndev;
--	init_timer(&aggr_conn->timer);
--	aggr_conn->timer.function = aggr_timeout;
--	aggr_conn->timer.data = (unsigned long) aggr_conn;
-+	setup_timer(&aggr_conn->timer, aggr_timeout, (unsigned long)aggr_conn);
- 	aggr_conn->aggr_info = aggr_info;
- 
- 	aggr_conn->timer_scheduled = false;
-
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
