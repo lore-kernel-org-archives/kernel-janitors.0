@@ -1,50 +1,71 @@
-From: Joe Perches <joe@perches.com>
-Date: Wed, 03 Dec 2014 17:14:48 +0000
+From: Takashi Iwai <tiwai@suse.de>
+Date: Wed, 03 Dec 2014 17:30:08 +0000
 Subject: Re: ALSA: ctxfi: Delete an unnecessary check before kfree()
-Message-Id: <1417626888.2902.13.camel@perches.com>
+Message-Id: <s5hh9xcr68v.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	 <530A086E.8010901@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	 <530A72AA.3000601@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	 <530B5FB6.6010207@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402241710370.2074@hadrien>
-	 <530C5E18.1020800@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402251014170.2080@hadrien>
-	 <530CD2C4.4050903@users.sourceforge.net>
-	 <alpine.DEB.2.10.1402251840450.7035@hadrien>
-	 <530CF8FF.8080600@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	 <530DD06F.4090703@users.sourceforge.net>
-	 <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	 <5317A59D.4@users.sourceforge.net> <547E2612.6010304@users.sourceforge.net>
-	 <s5hvblt6xav.wl-tiwai@suse.de> <547EF64B.1080403@users.sourceforge.net>
-	 <s5h61dssy5n.wl-tiwai@suse.de>
-In-Reply-To: <s5h61dssy5n.wl-tiwai@suse.de>
+	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+	<530A086E.8010901@users.sourceforge.net>
+	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+	<530A72AA.3000601@users.sourceforge.net>
+	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+	<530B5FB6.6010207@users.sourceforge.net>
+	<alpine.DEB.2.10.1402241710370.2074@hadrien>
+	<530C5E18.1020800@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251014170.2080@hadrien>
+	<530CD2C4.4050903@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251840450.7035@hadrien>
+	<530CF8FF.8080600@users.sourceforge.net>
+	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+	<530DD06F.4090703@users.sourceforge.net>
+	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<547E2612.6010304@users.sourceforge.net>
+	<s5hvblt6xav.wl-tiwai@suse.de>
+	<547EF64B.1080403@users.sourceforge.net>
+	<s5h61dssy5n.wl-tiwai@suse.de>
+	<1417626888.2902.13.camel@perches.com>
+In-Reply-To: <1417626888.2902.13.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Takashi Iwai <tiwai@suse.de>
+To: Joe Perches <joe@perches.com>
 Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On Wed, 2014-12-03 at 13:41 +0100, Takashi Iwai wrote:
-> At Wed, 03 Dec 2014 12:38:51 +0100,
-> SF Markus Elfring wrote:
-> > 
-> > >>   Deletion of an unnecessary check before the function call "kfree"
-> > >>   One function call less in get_daio_rsc() after error detection
-> > > 
-> > > In these cases, the changes aren't so straightforward, and they don't
-> > > improve the readability.
-> > 
-> > How do you prefer to improve the affected source code here?
+At Wed, 03 Dec 2014 09:14:48 -0800,
+Joe Perches wrote:
 > 
-> Don't touch then.  There are no bugs to fix there.
+> On Wed, 2014-12-03 at 13:41 +0100, Takashi Iwai wrote:
+> > At Wed, 03 Dec 2014 12:38:51 +0100,
+> > SF Markus Elfring wrote:
+> > > 
+> > > >>   Deletion of an unnecessary check before the function call "kfree"
+> > > >>   One function call less in get_daio_rsc() after error detection
+> > > > 
+> > > > In these cases, the changes aren't so straightforward, and they don't
+> > > > improve the readability.
+> > > 
+> > > How do you prefer to improve the affected source code here?
+> > 
+> > Don't touch then.  There are no bugs to fix there.
+> 
+> Takashi, what did you think of this?
+> https://lkml.org/lkml/2014/12/2/771
+> 
+> Just unnecessary?
 
-Takashi, what did you think of this?
-https://lkml.org/lkml/2014/12/2/771
+Well, this one looks more consistent.  But honestly speaking, it's
+rather a matter of taste.  So I'm not so much inclined to merge the
+stuff, too, sorry.  If it's proven to reduce the compiled size, etc,
+I'll happily apply it, though.
 
-Just unnecessary?
+FWIW, what wasn't good in the original patch was to break the balance.
+It removed only the check for dai, and not for dao.  One would wonder
+why there is a check only for one.
 
+It could be two simple kfree() calls instead.  But then this won't be
+an improvement, as it gets one more function call, which is more
+expensive than a conditional.
+
+
+Takashi
