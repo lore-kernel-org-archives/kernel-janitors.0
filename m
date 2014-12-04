@@ -1,40 +1,31 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Dec 2014 10:12:13 +0000
-Subject: [patch] ipvs: uninitialized data with IP_VS_IPV6
-Message-Id: <20141203101213.GC29583@mwanda>
+From: Julian Anastasov <ja@ssi.bg>
+Date: Thu, 04 Dec 2014 21:19:34 +0000
+Subject: Re: [patch] ipvs: uninitialized data with IP_VS_IPV6
+Message-Id: <alpine.LFD.2.11.1412042308100.4841@ja.home.ssi.bg>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141203101213.GC29583@mwanda>
+In-Reply-To: <20141203101213.GC29583@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Wensong Zhang <wensong@linux-vs.org>
-Cc: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
 
-The app_tcp_pkt_out() function expects "*diff" to be set and ends up
-using uninitialized data if CONFIG_IP_VS_IPV6 is turned on.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This bug is very old.
+	Hello,
 
-diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
-index 1d5341f..f93f974 100644
---- a/net/netfilter/ipvs/ip_vs_ftp.c
-+++ b/net/netfilter/ipvs/ip_vs_ftp.c
-@@ -183,6 +183,8 @@ static int ip_vs_ftp_out(struct ip_vs_app *app, struct ip_vs_conn *cp,
- 	struct nf_conn *ct;
- 	struct net *net;
- 
-+	*diff = 0;
-+
- #ifdef CONFIG_IP_VS_IPV6
- 	/* This application helper doesn't work with IPv6 yet,
- 	 * so turn this into a no-op for IPv6 packets
-@@ -191,8 +193,6 @@ static int ip_vs_ftp_out(struct ip_vs_app *app, struct ip_vs_conn *cp,
- 		return 1;
- #endif
- 
--	*diff = 0;
--
- 	/* Only useful for established sessions */
- 	if (cp->state != IP_VS_TCP_S_ESTABLISHED)
- 		return 1;
+On Wed, 3 Dec 2014, Dan Carpenter wrote:
+
+> The app_tcp_pkt_out() function expects "*diff" to be set and ends up
+> using uninitialized data if CONFIG_IP_VS_IPV6 is turned on.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This bug is very old.
+
+	I guess ip_vs_ftp_in() needs the same fix?
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
