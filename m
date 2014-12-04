@@ -1,56 +1,76 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:36 +0000
-Subject: [PATCH 5/27] [media] usbvision: Use setup_timer
-Message-Id: <1419604558-29743-6-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 04 Dec 2014 22:13:24 +0000
+Subject: [PATCH v2 2/6] net-PPP: Fix indentation
+Message-Id: <5480DC84.1020601@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net> <547B496E.604@users.sourceforge.net> <547C5CBC.6060607@cogentembedded.com> <547C82A6.2030808@users.sourceforge.net> <547CA157.1080401@cogentembedded.com> <5480DA32.8000201@users.sourceforge.net>
+In-Reply-To: <5480DA32.8000201@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: kernel-janitors@vger.kernel.org, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 4 Dec 2014 22:15:20 +0100
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The implementations of the functions "mppe_alloc" and "mppe_free" contained
+unwanted space characters.
 
-// <smpl>
-@@
-expression t,f,d;
-@@
+Let us improve the indentation according to the Linux coding style convention.
 
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.data = d;
--t.function = f;
-// </smpl>
-
-The semantic patch also changes the cast to long to a cast to unsigned
-long in the data initializer, as unsigned long is the type of the data field.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/media/usb/usbvision/usbvision-core.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/ppp/ppp_mppe.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/media/usb/usbvision/usbvision-core.c b/drivers/media/usb/usbvision/usbvision-core.c
-index 302aa07..64c63d3 100644
---- a/drivers/media/usb/usbvision/usbvision-core.c
-+++ b/drivers/media/usb/usbvision/usbvision-core.c
-@@ -2194,9 +2194,8 @@ static void usbvision_power_off_timer(unsigned long data)
+diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
+index 84b7bce..b80af29 100644
+--- a/drivers/net/ppp/ppp_mppe.c
++++ b/drivers/net/ppp/ppp_mppe.c
+@@ -236,15 +236,15 @@ static void *mppe_alloc(unsigned char *options, int optlen)
  
- void usbvision_init_power_off_timer(struct usb_usbvision *usbvision)
- {
--	init_timer(&usbvision->power_off_timer);
--	usbvision->power_off_timer.data = (long)usbvision;
--	usbvision->power_off_timer.function = usbvision_power_off_timer;
-+	setup_timer(&usbvision->power_off_timer, usbvision_power_off_timer,
-+		    (unsigned long)usbvision);
+ 	return (void *)state;
+ 
+-	out_free:
+-	    if (state->sha1_digest)
++out_free:
++	if (state->sha1_digest)
+ 		kfree(state->sha1_digest);
+-	    if (state->sha1)
++	if (state->sha1)
+ 		crypto_free_hash(state->sha1);
+-	    if (state->arc4)
++	if (state->arc4)
+ 		crypto_free_blkcipher(state->arc4);
+-	    kfree(state);
+-	out:
++	kfree(state);
++out:
+ 	return NULL;
  }
  
- void usbvision_set_power_off_timer(struct usb_usbvision *usbvision)
+@@ -255,13 +255,13 @@ static void mppe_free(void *arg)
+ {
+ 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
+ 	if (state) {
+-	    if (state->sha1_digest)
+-		kfree(state->sha1_digest);
+-	    if (state->sha1)
+-		crypto_free_hash(state->sha1);
+-	    if (state->arc4)
+-		crypto_free_blkcipher(state->arc4);
+-	    kfree(state);
++		if (state->sha1_digest)
++			kfree(state->sha1_digest);
++		if (state->sha1)
++			crypto_free_hash(state->sha1);
++		if (state->arc4)
++			crypto_free_blkcipher(state->arc4);
++		kfree(state);
+ 	}
+ }
+ 
+-- 
+2.1.3
 
