@@ -1,71 +1,62 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 03 Dec 2014 17:30:08 +0000
-Subject: Re: ALSA: ctxfi: Delete an unnecessary check before kfree()
-Message-Id: <s5hh9xcr68v.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 04 Dec 2014 10:57:05 +0000
+Subject: [patch v2] mpt3sas: issue_reset is uninitialized
+Message-Id: <20141204105705.GB22643@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
-	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
-	<530A086E.8010901@users.sourceforge.net>
-	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
-	<530A72AA.3000601@users.sourceforge.net>
-	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
-	<530B5FB6.6010207@users.sourceforge.net>
-	<alpine.DEB.2.10.1402241710370.2074@hadrien>
-	<530C5E18.1020800@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251014170.2080@hadrien>
-	<530CD2C4.4050903@users.sourceforge.net>
-	<alpine.DEB.2.10.1402251840450.7035@hadrien>
-	<530CF8FF.8080600@users.sourceforge.net>
-	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
-	<530DD06F.4090703@users.sourceforge.net>
-	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
-	<5317A59D.4@users.sourceforge.net>
-	<547E2612.6010304@users.sourceforge.net>
-	<s5hvblt6xav.wl-tiwai@suse.de>
-	<547EF64B.1080403@users.sourceforge.net>
-	<s5h61dssy5n.wl-tiwai@suse.de>
-	<1417626888.2902.13.camel@perches.com>
-In-Reply-To: <1417626888.2902.13.camel@perches.com>
+References: <20141203100918.GA29583@mwanda>
+In-Reply-To: <20141203100918.GA29583@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
+Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Wed, 03 Dec 2014 09:14:48 -0800,
-Joe Perches wrote:
-> 
-> On Wed, 2014-12-03 at 13:41 +0100, Takashi Iwai wrote:
-> > At Wed, 03 Dec 2014 12:38:51 +0100,
-> > SF Markus Elfring wrote:
-> > > 
-> > > >>   Deletion of an unnecessary check before the function call "kfree"
-> > > >>   One function call less in get_daio_rsc() after error detection
-> > > > 
-> > > > In these cases, the changes aren't so straightforward, and they don't
-> > > > improve the readability.
-> > > 
-> > > How do you prefer to improve the affected source code here?
-> > 
-> > Don't touch then.  There are no bugs to fix there.
-> 
-> Takashi, what did you think of this?
-> https://lkml.org/lkml/2014/12/2/771
-> 
-> Just unnecessary?
+The "issue_reset" can be used uninitialized.  It should be set to false
+at the start.
 
-Well, this one looks more consistent.  But honestly speaking, it's
-rather a matter of taste.  So I'm not so much inclined to merge the
-stuff, too, sorry.  If it's proven to reduce the compiled size, etc,
-I'll happily apply it, though.
+Also I cleaned up the types a little by using bool.
 
-FWIW, what wasn't good in the original patch was to break the balance.
-It removed only the check for dai, and not for dao.  One would wonder
-why there is a check only for one.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: style fix.  use true/false instead of 1/0.
 
-It could be two simple kfree() calls instead.  But then this won't be
-an improvement, as it gets one more function call, which is more
-expensive than a conditional.
-
-
-Takashi
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 1560115..b9c2739 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -3419,7 +3419,7 @@ mpt3sas_base_sas_iounit_control(struct MPT3SAS_ADAPTER *ioc,
+ 	u16 smid;
+ 	u32 ioc_state;
+ 	unsigned long timeleft;
+-	u8 issue_reset;
++	bool issue_reset = false;
+ 	int rc;
+ 	void *request;
+ 	u16 wait_state_count;
+@@ -3483,7 +3483,7 @@ mpt3sas_base_sas_iounit_control(struct MPT3SAS_ADAPTER *ioc,
+ 		_debug_dump_mf(mpi_request,
+ 		    sizeof(Mpi2SasIoUnitControlRequest_t)/4);
+ 		if (!(ioc->base_cmds.status & MPT3_CMD_RESET))
+-			issue_reset = 1;
++			issue_reset = true;
+ 		goto issue_host_reset;
+ 	}
+ 	if (ioc->base_cmds.status & MPT3_CMD_REPLY_VALID)
+@@ -3523,7 +3523,7 @@ mpt3sas_base_scsi_enclosure_processor(struct MPT3SAS_ADAPTER *ioc,
+ 	u16 smid;
+ 	u32 ioc_state;
+ 	unsigned long timeleft;
+-	u8 issue_reset;
++	bool issue_reset = false;
+ 	int rc;
+ 	void *request;
+ 	u16 wait_state_count;
+@@ -3581,7 +3581,7 @@ mpt3sas_base_scsi_enclosure_processor(struct MPT3SAS_ADAPTER *ioc,
+ 		_debug_dump_mf(mpi_request,
+ 		    sizeof(Mpi2SepRequest_t)/4);
+ 		if (!(ioc->base_cmds.status & MPT3_CMD_RESET))
+-			issue_reset = 1;
++			issue_reset = false;
+ 		goto issue_host_reset;
+ 	}
+ 	if (ioc->base_cmds.status & MPT3_CMD_REPLY_VALID)
