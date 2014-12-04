@@ -1,50 +1,47 @@
-From: Murali Karicheri <m-karicheri2@ti.com>
-Date: Mon, 08 Dec 2014 15:14:05 +0000
-Subject: Re: [PATCH 2/20] PCI: keystone: fix misspelling of current function in string
-Message-Id: <5485C03D.1020309@ti.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 04 Dec 2014 22:10:38 +0000
+Subject: [PATCH v2 1/6] net-PPP: Replacement of a printk() call by pr_warn() in mppe_rekey()
+Message-Id: <5480DBDE.7040604@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
- <1417980062-25151-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net> <547B496E.604@users.sourceforge.net> <547C5CBC.6060607@cogentembedded.com> <547C82A6.2030808@users.sourceforge.net> <547CA157.1080401@cogentembedded.com> <5480DA32.8000201@users.sourceforge.net>
+In-Reply-To: <5480DA32.8000201@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 12/07/2014 02:20 PM, Julia Lawall wrote:
-> Replace a misspelled function name by %s and then __func__.
->
-> The function name contains pcie, not pci as in the string.
->
-> This was done using Coccinelle, including the use of Levenshtein distance,
-> as proposed by Rasmus Villemoes.
->
-> Signed-off-by: Julia Lawall<Julia.Lawall@lip6.fr>
->
-> ---
-> The semantic patch is difficult to summarize, but is available in the cover
-> letter of this patch series.
->
->   drivers/pci/host/pci-keystone.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
-> index 78f79e3..e2f600e 100644
-> --- a/drivers/pci/host/pci-keystone.c
-> +++ b/drivers/pci/host/pci-keystone.c
-> @@ -119,7 +119,7 @@ static void ks_pcie_msi_irq_handler(unsigned int irq, struct irq_desc *desc)
->   	struct pcie_port *pp =&ks_pcie->pp;
->   	struct irq_chip *chip = irq_desc_get_chip(desc);
->
-> -	dev_dbg(pp->dev, "ks_pci_msi_irq_handler, irq %d\n", irq);
-> +	dev_dbg(pp->dev, "%s, irq %d\n", __func__, irq);
->
->   	/*
->   	 * The chained irq handler installation would have replaced normal
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 4 Dec 2014 18:28:52 +0100
 
-Acked-By: Murali Karicheri <m-karicheri2@ti.com>
+The mppe_rekey() function contained a few update candidates.
+* Curly brackets were still used around a single function call "printk".
+* Unwanted space characters
 
+Let us improve these implementation details according to the current Linux
+coding style convention.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/net/ppp/ppp_mppe.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
+index 911b216..84b7bce 100644
+--- a/drivers/net/ppp/ppp_mppe.c
++++ b/drivers/net/ppp/ppp_mppe.c
+@@ -172,9 +172,8 @@ static void mppe_rekey(struct ppp_mppe_state * state, int initial_key)
+ 		setup_sg(sg_in, state->sha1_digest, state->keylen);
+ 		setup_sg(sg_out, state->session_key, state->keylen);
+ 		if (crypto_blkcipher_encrypt(&desc, sg_out, sg_in,
+-					     state->keylen) != 0) {
+-    		    printk(KERN_WARNING "mppe_rekey: cipher_encrypt failed\n");
+-		}
++					     state->keylen) != 0)
++			pr_warn("mppe_rekey: cipher_encrypt failed\n");
+ 	} else {
+ 		memcpy(state->session_key, state->sha1_digest, state->keylen);
+ 	}
 -- 
-Murali Karicheri
-Linux Kernel, Texas Instruments
+2.1.3
+
