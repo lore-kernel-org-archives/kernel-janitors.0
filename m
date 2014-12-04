@@ -1,77 +1,53 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 29 Dec 2014 17:04:36 +0000
-Subject: [PATCH 1/8] net: Xilinx: fix error return code
-Message-Id: <1419872683-32709-2-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 04 Dec 2014 22:15:10 +0000
+Subject: [PATCH v2 3/6] net-PPP: Deletion of unnecessary checks before the function call "kfree"
+Message-Id: <5480DCEE.4070803@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net> <547B496E.604@users.sourceforge.net> <547C5CBC.6060607@cogentembedded.com> <547C82A6.2030808@users.sourceforge.net> <547CA157.1080401@cogentembedded.com> <5480DA32.8000201@users.sourceforge.net>
+In-Reply-To: <5480DA32.8000201@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Return a negative error code on failure.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 4 Dec 2014 22:22:23 +0100
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The kfree() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/ethernet/xilinx/ll_temac_main.c   |    2 ++
- drivers/net/ethernet/xilinx/xilinx_emaclite.c |    1 +
- 2 files changed, 3 insertions(+)
+ drivers/net/ppp/ppp_mppe.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index 9c2d91e..dbcbf0c 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -1043,6 +1043,7 @@ static int temac_of_probe(struct platform_device *op)
- 	lp->regs = of_iomap(op->dev.of_node, 0);
- 	if (!lp->regs) {
- 		dev_err(&op->dev, "could not map temac regs.\n");
-+		rc = -ENOMEM;
- 		goto nodev;
- 	}
+diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
+index b80af29..94ff216 100644
+--- a/drivers/net/ppp/ppp_mppe.c
++++ b/drivers/net/ppp/ppp_mppe.c
+@@ -237,8 +237,7 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+ 	return (void *)state;
  
-@@ -1062,6 +1063,7 @@ static int temac_of_probe(struct platform_device *op)
- 	np = of_parse_phandle(op->dev.of_node, "llink-connected", 0);
- 	if (!np) {
- 		dev_err(&op->dev, "could not find DMA node\n");
-+		rc = -ENODEV;
- 		goto err_iounmap;
- 	}
- 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-index 2485879..9d4ce38 100644
---- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-@@ -1109,6 +1109,7 @@ static int xemaclite_of_probe(struct platform_device *ofdev)
- 	res = platform_get_resource(ofdev, IORESOURCE_IRQ, 0);
- 	if (!res) {
- 		dev_err(dev, "no IRQ found\n");
-+		rc = -ENXIO;
- 		goto error;
- 	}
- 
+ out_free:
+-	if (state->sha1_digest)
+-		kfree(state->sha1_digest);
++	kfree(state->sha1_digest);
+ 	if (state->sha1)
+ 		crypto_free_hash(state->sha1);
+ 	if (state->arc4)
+@@ -255,8 +254,7 @@ static void mppe_free(void *arg)
+ {
+ 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
+ 	if (state) {
+-		if (state->sha1_digest)
+-			kfree(state->sha1_digest);
++		kfree(state->sha1_digest);
+ 		if (state->sha1)
+ 			crypto_free_hash(state->sha1);
+ 		if (state->arc4)
+-- 
+2.1.3
 
