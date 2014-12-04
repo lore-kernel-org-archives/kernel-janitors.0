@@ -1,42 +1,42 @@
-From: Richard Weinberger <richard@nod.at>
-Date: Mon, 08 Dec 2014 09:16:37 +0000
-Subject: Re: [PATCH 1/20] mtd: s3c2410: fix misspelling of current function in string
-Message-Id: <54856C75.1050309@nod.at>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Thu, 04 Dec 2014 21:33:42 +0000
+Subject: Re: [patch v2] x86_64, traps: always true condition
+Message-Id: <5480D336.3000806@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
- <1417980062-25151-2-git-send-email-Julia.Lawall@lip6.fr>
- <CAFLxGvyiqxQ6U6p-A-JW8Nv8OvXFGsna93afUu-Gek0EV3gATA@mail.gmail.com>
- <alpine.DEB.2.02.1412080809400.2100@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1412080809400.2100@localhost6.localdomain6>
+References: <20141125172114.GA24535@mwanda>
+In-Reply-To: <20141125172114.GA24535@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: kernel-janitors@vger.kernel.org
 
-Am 08.12.2014 um 08:11 schrieb Julia Lawall:
->>> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
->>> index 35aef5e..0a9c41f 100644
->>> --- a/drivers/mtd/nand/s3c2410.c
->>> +++ b/drivers/mtd/nand/s3c2410.c
->>> @@ -948,7 +948,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
->>>
->>>         cpu_type = platform_get_device_id(pdev)->driver_data;
->>>
->>> -       pr_debug("s3c2410_nand_probe(%p)\n", pdev);
->>> +       pr_debug("%s(%p)\n", __func__, pdev);
->>
->> I think we can drop the line completely.
->> We have ftrace to trace function calls...
+On 11/25/2014 09:21 AM, Dan Carpenter wrote:
+> We should be checking IS_ERR() here.  PTR_ERR() is always true.
 > 
-> Should the "initialised ok" at the end of the function be remove as well?
+> Fixes: fe3d197f8431 ('x86, mpx: On-demand kernel allocation of bounds tables')
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: Use correct fixes tag.
 > 
-> Will it be confusing if this cleanup is done in this function, but not in 
-> others where it may be useful?  Perhaps s3c2410_nand_update_chip, for 
-> example?
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index 67d817e..f176d96 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -331,7 +331,7 @@ dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
+>  		break; /* Success, it was handled */
+>  	case 1: /* Bound violation. */
+>  		info = mpx_generate_siginfo(regs, xsave_buf);
+> -		if (PTR_ERR(info)) {
+> +		if (IS_ERR(info)) {
+>  			/*
+>  			 * We failed to decode the MPX instruction.  Act as if
+>  			 * the exception was not caused by MPX.
 
-Hmm, this driver seems to have a lot of debugging printks().
-IMHO we can remove them.
-Let's see what Brain says.
+I checked that this works on real hardware.  The si_addr field in the
+generated siginfo was empty without this patch applied.  With this
+patch, it has good (looking at least) contents.
 
-Thanks,
-//richard
+Thanks for catching this!
+
+Tested-by: Dave Hansen <dave.hansen@intel.com>
+
