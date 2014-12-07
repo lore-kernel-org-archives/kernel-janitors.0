@@ -1,33 +1,43 @@
-From: Ashwin Chaugule <ashwin.chaugule@linaro.org>
-Date: Sat, 20 Dec 2014 14:56:47 +0000
-Subject: Re: Mailbox: Add support for Platform Communication Channel
-Message-Id: <CAJ5Y-eYmjzuUQggLM-Mqz+CB46cb8=Vf06oSYh2jMf8cwusgFA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:20:45 +0000
+Subject: [PATCH 3/20] PCI: fix misspelling of current function in string
+Message-Id: <1417980062-25151-4-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141215215643.GA2882@mwanda>
-In-Reply-To: <20141215215643.GA2882@mwanda>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+Replace a misspelled function name by %s and then __func__.
 
-On 17 December 2014 at 13:56, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Wed, Dec 17, 2014 at 11:46:09AM -0500, Ashwin Chaugule wrote:
->> > Also this file has some Sparse warnings:
->>
->> I've looked at these previously too and I believe they're false
->> positives.  Will send a follow up patch at the earliest.
->>
->
-> They're not bugs, it just means that there are some __iomem annotations
-> missing and some functions should be made static or declared in a .h
-> file or whatever.
+The function name begins with pci, not cpci.
 
-True. We've been testing this driver on a non X86 platform in the past
-few days and had to make a few modifications which make some of these
-changes go away. Will send out a patch after some more testing. Very
-much appreciate your review!
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
 
-Cheers,
-Ashwin
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
+
+ drivers/pci/hotplug/pci_hotplug_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/hotplug/pci_hotplug_core.c b/drivers/pci/hotplug/pci_hotplug_core.c
+index 56d8486..d3f8330 100644
+--- a/drivers/pci/hotplug/pci_hotplug_core.c
++++ b/drivers/pci/hotplug/pci_hotplug_core.c
+@@ -532,7 +532,7 @@ static int __init pci_hotplug_init(void)
+ 
+ 	result = cpci_hotplug_init(debug);
+ 	if (result) {
+-		err("cpci_hotplug_init with error %d\n", result);
++		err("%s with error %d\n", __func__, result);
+ 		return result;
+ 	}
+ 
+
