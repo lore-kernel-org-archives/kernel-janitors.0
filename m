@@ -1,50 +1,44 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Date: Tue, 02 Dec 2014 06:12:47 +0000
-Subject: Re: [PATCH 1/4] target: remove unneeded array
-Message-Id: <1417500767.11477.2.camel@haakon3.risingtidesystems.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 20:59:56 +0000
+Subject: [PATCH 10/20 v2] uli526x: fix misspelling of current function in string
+Message-Id: <alpine.DEB.2.02.1412072158040.2235@localhost6.localdomain6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417371255-2282-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1417371255-2282-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417371255-2282-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr> <1417980062-25151-11-git-send-email-Julia.Lawall@lip6.fr> <CAP6odjh4Gnc0uAcPTsUMFPTRj7=NYZvMgmL=Rre_kCNah+YcNg@mail.gmail.com>
+In-Reply-To: <CAP6odjh4Gnc0uAcPTsUMFPTRj7=NYZvMgmL=Rre_kCNah+YcNg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Grant Grundler <grantgrundler@gmail.com>
+Cc: Grant Grundler <grundler@parisc-linux.org>, kernel-janitors@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>, joe@perches.com, "open list:TULIP NETWORK DRI..." <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-On Sun, 2014-11-30 at 19:14 +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Delete a local array that is only used to be initialized by memset.
-> 
-> A semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @@
-> identifier x;
-> type T;
-> @@
-> 
-> {
-> ... when any
-> -T x[...];
-> <+... when != x
-> - memset(x,...);
-> ...+>
-> }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
->  drivers/target/target_core_pr.c |    7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
+The function is named uli526x_cleanup_module, rather than uli526x_clean_module.
 
-Applied to target-pending/for-next.
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
 
-Thanks Julia!
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Acked-by: Grant Grundler <grantgrundler@gmail.com>
 
---nab
+---
+v2: fixed commit message
+
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
+
+ drivers/net/ethernet/dec/tulip/uli526x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/dec/tulip/uli526x.c b/drivers/net/ethernet/dec/tulip/uli526x.c
+index 4061f9b..1c5916b 100644
+--- a/drivers/net/ethernet/dec/tulip/uli526x.c
++++ b/drivers/net/ethernet/dec/tulip/uli526x.c
+@@ -1837,7 +1837,7 @@ static int __init uli526x_init_module(void)
+ 
+ static void __exit uli526x_cleanup_module(void)
+ {
+-	ULI526X_DBUG(0, "uli526x_clean_module() ", debug);
++	ULI526X_DBUG(0, "uli526x_cleanup_module() ", debug);
+ 	pci_unregister_driver(&uli526x_driver);
+ }
+ 
 
