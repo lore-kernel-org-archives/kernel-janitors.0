@@ -1,43 +1,35 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Dec 2014 19:20:45 +0000
-Subject: [PATCH 3/20] PCI: fix misspelling of current function in string
-Message-Id: <1417980062-25151-4-git-send-email-Julia.Lawall@lip6.fr>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Date: Sun, 07 Dec 2014 20:41:28 +0000
+Subject: Re: [PATCH 3/20] PCI: fix misspelling of current function in string
+Message-Id: <87lhmj42h3.fsf@rasmusvillemoes.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1417980062-25151-4-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417980062-25151-4-git-send-email-Julia.Lawall@lip6.fr> (Julia
+	Lawall's message of "Sun, 7 Dec 2014 20:20:45 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, kernel-janitors@vger.kernel.org, joe@perches.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace a misspelled function name by %s and then __func__.
+On Sun, Dec 07 2014, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-The function name begins with pci, not cpci.
+> Replace a misspelled function name by %s and then __func__.
+>
+> The function name begins with pci, not cpci.
+...
+>  	result = cpci_hotplug_init(debug);
+>  	if (result) {
+> -		err("cpci_hotplug_init with error %d\n", result);
+> +		err("%s with error %d\n", __func__, result);
+>  		return result;
+>  	}
 
-This was done using Coccinelle, including the use of Levenshtein distance,
-as proposed by Rasmus Villemoes.
+This one seems to be a false positive; I think the err() is reporting on
+the result from the call of the function which is indeed called
+cpci_hotplug_init.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+I just skimmed the rest quickly, but they seem ok.
 
----
-The semantic patch is difficult to summarize, but is available in the cover
-letter of this patch series.
-
- drivers/pci/hotplug/pci_hotplug_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/hotplug/pci_hotplug_core.c b/drivers/pci/hotplug/pci_hotplug_core.c
-index 56d8486..d3f8330 100644
---- a/drivers/pci/hotplug/pci_hotplug_core.c
-+++ b/drivers/pci/hotplug/pci_hotplug_core.c
-@@ -532,7 +532,7 @@ static int __init pci_hotplug_init(void)
- 
- 	result = cpci_hotplug_init(debug);
- 	if (result) {
--		err("cpci_hotplug_init with error %d\n", result);
-+		err("%s with error %d\n", __func__, result);
- 		return result;
- 	}
- 
-
+Rasmus
