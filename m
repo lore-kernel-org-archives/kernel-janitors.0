@@ -1,28 +1,42 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Date: Tue, 02 Dec 2014 14:50:48 +0000
-Subject: Re: [patch v2] scsi: set fmt to NULL scsi_extd_sense_format() by default
-Message-Id: <1417531848.2424.0.camel@HansenPartnership.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:20:44 +0000
+Subject: [PATCH 2/20] PCI: keystone: fix misspelling of current function in string
+Message-Id: <1417980062-25151-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141202110729.GA17562@mwanda>
-In-Reply-To: <20141202110729.GA17562@mwanda>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-On Tue, 2014-12-02 at 14:07 +0300, Dan Carpenter wrote:
-> One of the two callers passes an unintialized pointer as "fmt" and
-> expects it to be set to NULL if there is no format string.  Let's make
-> this function work as expected.
-> 
-> Fixes: d811b848ebb7 ('scsi: use sdev as argument for sense code printing')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2:  Change scsi_extd_sense_format() instead of the caller
+Replace a misspelled function name by %s and then __func__.
 
-Reviewed-by: James Bottomley <JBottomley@Parallels.com>
+The function name contains pcie, not pci as in the string.
 
-James
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
+
+ drivers/pci/host/pci-keystone.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
+index 78f79e3..e2f600e 100644
+--- a/drivers/pci/host/pci-keystone.c
++++ b/drivers/pci/host/pci-keystone.c
+@@ -119,7 +119,7 @@ static void ks_pcie_msi_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 	struct pcie_port *pp = &ks_pcie->pp;
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 
+-	dev_dbg(pp->dev, "ks_pci_msi_irq_handler, irq %d\n", irq);
++	dev_dbg(pp->dev, "%s, irq %d\n", __func__, irq);
+ 
+ 	/*
+ 	 * The chained irq handler installation would have replaced normal
 
