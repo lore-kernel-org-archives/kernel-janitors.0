@@ -1,34 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 01 Dec 2014 10:42:46 +0000
-Subject: Re: [patch] usb: storage: debug: uninitialized var in usb_stor_show_sense()
-Message-Id: <20141201104246.GD4994@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:20:49 +0000
+Subject: [PATCH 7/20] drm/i915: fix misspelling of current function in string
+Message-Id: <1417980062-25151-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141129124801.GA27251@mwanda>
- <1417277275.2202.35.camel@HansenPartnership.com>
-In-Reply-To: <1417277275.2202.35.camel@HansenPartnership.com>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Matthew Dharm <mdharm-usb@one-eyed-alien.net>, Hannes Reinecke <hare@suse.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, =?iso-8859-1?Q?J=F6rn?= Engel <joern@purestorage.com>
+To: Daniel Vetter <daniel.vetter@intel.com>
+Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, Jani Nikula <jani.nikula@linux.intel.com>, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-On Sat, Nov 29, 2014 at 08:07:55AM -0800, James Bottomley wrote:
-> On Sat, 2014-11-29 at 15:48 +0300, Dan Carpenter wrote:
-> > The "fmt" variable might be used uninitialized, it should be set to NULL
-> > at the start.
-> > 
-> > Fixes: d811b848ebb7 ('scsi: use sdev as argument for sense code printing')
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Hm, that' falls into the category of an interface that's hard to get
-> right if every caller has to remember to set fmt to NULL.
-> 
-> Could you instead set *fmt to NULL in scsi_extd_sense_format()?  That
-> way the interface is much easier.
-> 
+Replace a misspelled function name by %s and then __func__.
 
-Sure.  I will send that tomorrow.
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
 
-regards,
-dan carpenter
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
+
+The message is sort of ambiguous, but I assume that it is intended to refer
+to the function in which the problem is detected.
+
+ drivers/gpu/drm/i915/i915_gem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index d2ba315..fa21d1c 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -4335,7 +4335,7 @@ i915_gem_unpin_ioctl(struct drm_device *dev, void *data,
+ 	}
+ 
+ 	if (obj->pin_filp != file) {
+-		DRM_DEBUG("Not pinned by caller in i915_gem_pin_ioctl(): %d\n",
++		DRM_DEBUG("Not pinned by caller in %s(): %d\n", __func__,
+ 			  args->handle);
+ 		ret = -EINVAL;
+ 		goto out;
 
