@@ -1,81 +1,196 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 31 Dec 2014 08:40:00 +0000
-Subject: Re: [patch] ALSA: asihpi: fix an information leak in asihpi_hpi_ioctl()
-Message-Id: <s5hoaqkgqlb.wl-tiwai@suse.de>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:20:42 +0000
+Subject: [PATCH 0/20] fix misspelling of current function in string
+Message-Id: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141222074946.GA9737@mwanda>
-	<s5hmw6ais9g.wl-tiwai@suse.de>
-	<54A25D49.4000502@blennerhassett.gen.nz>
-	<54A3972B.5010703@blennerhassett.gen.nz>
-In-Reply-To: <54A3972B.5010703@blennerhassett.gen.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eliot Blennerhassett <eliot@blennerhassett.gen.nz>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: linux-wireless@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org, linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, joe@perches.com, linux-arm-kernel@lists.infradead.org
 
-At Wed, 31 Dec 2014 19:26:51 +1300,
-Eliot Blennerhassett wrote:
-> 
-> Add missing limits to keep copied data within allocated buffer.
-> 
-> Signed-off-by: Eliot Blennerhassett <eliot@blennerhassett.gen.nz>
+These patches replace what appears to be a reference to the name of the
+current function but is misspelled in some way by either the name of the
+function itself, or by %s and then __func__ in an argument list.
 
-hpi6000.c changes can't be applied.  I guess it's for your development
-branch?
+// <smpl>
+// sudo apt-get install python-pip
+// sudo pip install python-Levenshtein
+// spatch requires the argument --in-place
 
-Please split and send the currently applicable one (for hpioctl.c) for
-merging to 3.19-rc kernel, and include the rest to the next update
-batch.
+virtual after_start
 
+@initialize:ocaml@
+@@
 
-thanks,
+let extensible_functions = ref ([] : string list)
+let restarted = ref false
 
-Takashi
+let restart _   restarted := true;
+  let it = new iteration() in
+  it#add_virtual_rule After_start;
+  Printf.eprintf "restarting\n";
+  it#register()
 
-> ---
->  sound/pci/asihpi/hpi6000.c | 6 +++++-
->  sound/pci/asihpi/hpioctl.c | 2 ++
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/pci/asihpi/hpi6000.c b/sound/pci/asihpi/hpi6000.c
-> index e0c6715..794df30 100644
-> --- a/sound/pci/asihpi/hpi6000.c
-> +++ b/sound/pci/asihpi/hpi6000.c
-> @@ -46,6 +46,7 @@
->  
->  /* operational/messaging errors */
->  #define HPI6000_ERROR_MSG_RESP_IDLE_TIMEOUT		901
-> +#define HPI6000_ERROR_RESP_GET_LEN			902
->  #define HPI6000_ERROR_MSG_RESP_GET_RESP_ACK		903
->  #define HPI6000_ERROR_MSG_GET_ADR			904
->  #define HPI6000_ERROR_RESP_GET_ADR			905
-> @@ -1363,7 +1364,10 @@ static short hpi6000_message_response_sequence(struct hpi_adapter_obj *pao,
->  		length = hpi_read_word(pdo, HPI_HIF_ADDR(length));
->  	} while (hpi6000_check_PCI2040_error_flag(pao, H6READ) && --timeout);
->  	if (!timeout)
-> -		length = sizeof(struct hpi_response);
-> +		return HPI6000_ERROR_RESP_GET_LEN;
-> +
-> +	if (length > phr->size)
-> +		return HPI_ERROR_RESPONSE_BUFFER_TOO_SMALL;
->  
->  	/* get the response */
->  	p_data = (u32 *)phr;
-> diff --git a/sound/pci/asihpi/hpioctl.c b/sound/pci/asihpi/hpioctl.c
-> index 6aa677e..72af66b 100644
-> --- a/sound/pci/asihpi/hpioctl.c
-> +++ b/sound/pci/asihpi/hpioctl.c
-> @@ -153,6 +153,8 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  		goto out;
->  	}
->  
-> +	res_max_size = min_t(size_t, res_max_size, sizeof(*hr));
-> +
->  	switch (hm->h.function) {
->  	case HPI_SUBSYS_CREATE_ADAPTER:
->  	case HPI_ADAPTER_DELETE:
-> -- 
-> 1.9.1
-> 
-> 
+@initialize:python@
+@@
+import re
+from Levenshtein import distance
+mindist = 1 // 1 to find only misspellings
+maxdist = 2
+ignore_leading = True
+
+// ---------------------------------------------------------------------
+
+@r0@
+constant char [] c;
+identifier f;
+@@
+
+f(...,c,...)
+
+@script:ocaml@
+c << r0.c;
+f << r0.f;
+@@
+
+(if not !restarted then restart());
+match Str.split_delim (Str.regexp "%") c with
+  _::_::_ ->
+    if not (List.mem f !extensible_functions)
+    then extensible_functions := f :: !extensible_functions
+| _ -> ()
+
+// ---------------------------------------------------------------------
+
+@r depends on after_start@
+constant char [] c;
+position p;
+identifier f;
+@@
+
+f(...,c@p,...)
+
+@script:python flt@
+c << r.c;
+p << r.p;
+matched;
+@@
+
+func = p[0].current_element
+wpattern = "[a-zA-Z_][a-zA-Z0-9_]*"
+if ignore_leading:
+   func = func.strip("_")
+   wpattern = "[a-zA-Z][a-zA-Z0-9_]*"
+lf = len(func)
+cocci.include_match(False)
+// ignore extremely short function names
+if lf > 3:
+   words = [w for w in re.findall(wpattern, c) if abs(len(w) - lf) <= maxdist]
+   for w in words:
+       d = distance(w, func) 
+       if mindist <= d and d <= maxdist:
+          coccinelle.matched = w
+          cocci.include_match(True)
+     	  //print "%s:%d:%s():%d: %s" % (p[0].file, int(p[0].line), func, d, c)
+	  break
+
+@script:ocaml r2@
+c << r.c;
+f << r.f;
+matched << flt.matched;
+fixed;
+@@
+
+let pieces = Str.split_delim (Str.regexp_string matched) c in
+match pieces with
+  [before;after] ->
+    let preceeding       List.length(Str.split (Str.regexp_string "%") before) > 1 in
+    if preceeding
+    then Coccilib.include_match false
+    else
+      if List.mem f !extensible_functions
+      then fixed := before ^ "%s" ^ after
+      else Coccilib.include_match false
+| _ -> Coccilib.include_match false
+
+@changed1@
+constant char [] r.c;
+identifier r2.fixed;
+position r.p;
+identifier r.f;
+@@
+
+f(...,
+-c@p
++fixed,__func__
+ ,...)
+
+// -------------------------------------------------------------------
+
+@s depends on after_start@
+constant char [] c;
+position p;
+identifier f;
+@@
+
+f(...,c@p,...)
+
+@script:python flt2@
+c << s.c;
+p << s.p;
+matched;
+@@
+
+func = p[0].current_element
+wpattern = "[a-zA-Z_][a-zA-Z0-9_]*"
+if ignore_leading:
+   func = func.strip("_")
+   wpattern = "[a-zA-Z][a-zA-Z0-9_]*"
+lf = len(func)
+cocci.include_match(False)
+// ignore extremely short function names
+if lf > 3:
+   words = [w for w in re.findall(wpattern, c) if abs(len(w) - lf) <= maxdist]
+   for w in words:
+       d = distance(w, func) 
+       if mindist <= d and d <= maxdist:
+          coccinelle.matched = w
+          cocci.include_match(True)
+     	  //print "%s:%d:%s():%d: %s" % (p[0].file, int(p[0].line), func, d, c)
+	  break
+
+@script:ocaml s2@
+c << s.c;
+f << s.f;
+p << s.p;
+matched << flt2.matched;
+fixed;
+@@
+
+let ce = (List.hd p).current_element in
+let pieces = Str.split_delim (Str.regexp_string matched) c in
+match pieces with
+  [before;after] ->
+    let preceeding       List.length(Str.split (Str.regexp_string "%") before) > 1 in
+    if preceeding
+    then Coccilib.include_match false
+    else
+      if List.mem f !extensible_functions
+      then Coccilib.include_match false
+      else fixed := before ^ ce ^ after
+| _ -> Coccilib.include_match false
+
+@changed2@
+constant char [] s.c;
+identifier s2.fixed;
+position s.p;
+identifier s.f;
+@@
+
+f(...,
+-c@p
++fixed
+ ,...)
+// </smpl>
+
