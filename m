@@ -1,72 +1,43 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Fri, 05 Dec 2014 13:19:43 +0000
-Subject: Re: [patch] drm/tegra: checking IS_ERR() instead of NULL
-Message-Id: <20141205131942.GB18747@ulmo.nvidia.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="b5gNqxB1S1yM7hjW"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:20:50 +0000
+Subject: [PATCH 8/20] USB: isp1760: fix misspelling of current function in string
+Message-Id: <1417980062-25151-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141204110035.GC22643@mwanda>
- <20141204132349.GD7262@ulmo.nvidia.com>
- <54819FFF.4000907@users.sourceforge.net>
-In-Reply-To: <54819FFF.4000907-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-To: SF Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Replace a misspelled function name by %s and then __func__.
 
---b5gNqxB1S1yM7hjW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The function name starts with isp, not ips.
 
-On Fri, Dec 05, 2014 at 01:07:27PM +0100, SF Markus Elfring wrote:
-> >> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> >> index e549afe..fa16048 100644
-> >> --- a/drivers/gpu/drm/tegra/drm.c
-> >> +++ b/drivers/gpu/drm/tegra/drm.c
-> >> @@ -36,8 +36,8 @@ static int tegra_drm_load(struct drm_device *drm, un=
-signed long flags)
-> >> =20
-> >>  	if (iommu_present(&platform_bus_type)) {
-> >>  		tegra->domain =3D iommu_domain_alloc(&platform_bus_type);
-> >> -		if (IS_ERR(tegra->domain)) {
-> >> -			err =3D PTR_ERR(tegra->domain);
-> >> +		if (!tegra->domain) {
-> >> +			err =3D -ENOMEM;
-> >>  			goto free;
-> >>  		}
-> >=20
-> > Oh, good catch. Applied, thanks.
->=20
-> How do you think about to amend the commit title?
->=20
-> Is the following wording more appropriate?
-> drm/tegra: Checking for NULL pointer instead of IS_ERR() usage
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
 
-Sounds better yes. I've gone with:
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-	drm/tegra: Check for NULL pointer instead of IS_ERR()
+---
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
 
-Thierry
+ drivers/usb/host/isp1760-if.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---b5gNqxB1S1yM7hjW
-Content-Type: application/pgp-signature
+diff --git a/drivers/usb/host/isp1760-if.c b/drivers/usb/host/isp1760-if.c
+index 09254a4..939d376 100644
+--- a/drivers/usb/host/isp1760-if.c
++++ b/drivers/usb/host/isp1760-if.c
+@@ -318,7 +318,7 @@ static void isp1761_pci_remove(struct pci_dev *dev)
+ 
+ static void isp1761_pci_shutdown(struct pci_dev *dev)
+ {
+-	printk(KERN_ERR "ips1761_pci_shutdown\n");
++	printk(KERN_ERR "%s\n", __func__);
+ }
+ 
+ static const struct pci_device_id isp1760_plx [] = {
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUgbDuAAoJEN0jrNd/PrOh5LsP/jDnI79+dvc7PQMcrhokHdwr
-S8itrVwYfvz1rMivEpwi8YG9layPEAvtSiYqzgx61CYpcKxEnlk/nvvfasz+SCrX
-N9BcD4ebXy0GYqP8Jba0lueMPPgEHGZEqng30qVCDhD9P7l1GqHxNdhsn7rnVhz6
-uM54P3jxe6KdPhkVv+7hIOGfB3+xK+KTX2+6kiMXB8TALhtBMotE9OmAI/3HLopQ
-qHWKYv1ZroYje1yK/E6tFYXDhAOPvbmhHRo63xTOZSVHSdNJY1eiIKsX0l97miqR
-qV4AR65mb8lJFhj8lSPFLW4+iaeuQ6yiU7v81ohFmT7zIe0Po9sACaXiltREKi9Y
-e+X9Q75ExnbSrp0tE8HGdxOG9rej6SgfTAab5Di/TC/Mlhu5rIPhdUmEoVQqQXhD
-5vAYW0ZzgS1xihSdd4Y++R0wx/ba8MVNlhDsCN1QQ7XyF2eeXFV/Uayo1hJ46kf4
-VHH5r02SK62MBNkgLH+1HeC+j1XGRKCHXjKEFI1Yodci4Sz1+QPue1BJojm8F8AC
-s7ItBFpRQyDIkg//F3fXVKmyoHdyV4kNYbBLZYCVKxoPWxlYO/KzS9RnhmJdsjyd
-KZpdGdVSXSRd7mTFiFxmk2EAAUv3WAxAmwbY546l3wH3Oy0coIqGZzzTfPQ4qvZk
-Z/5E+01uE+bEvB+UI8N7
-=9l6T
------END PGP SIGNATURE-----
-
---b5gNqxB1S1yM7hjW--
