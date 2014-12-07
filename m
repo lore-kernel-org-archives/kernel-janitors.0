@@ -1,46 +1,121 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 19 Dec 2014 11:13:00 +0000
-Subject: [PATCH 2/3] [SCSI] mpt2sas: Simplify the code of mpt2sas_scsih_tm_flag
-Message-Id: <20141219111300.GA19924@sloth>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:20:51 +0000
+Subject: [PATCH 9/20] drivers/scsi: fix misspelling of current function in string
+Message-Id: <1417980062-25151-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Since skip was only used to pass through the rest of the loop,
-a break statment is called where skip was previously assigned 1.
+Replace a misspelled function name by %s and then __func__.
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/scsi/mpt2sas/mpt2sas_scsih.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
 
-diff --git a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-index a6f89fd..6162a89 100644
---- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-+++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-@@ -2265,18 +2265,15 @@ mpt2sas_scsih_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle, u8 action)
+ drivers/scsi/atp870u.c   |   10 +++++-----
+ drivers/scsi/imm.c       |    2 +-
+ drivers/scsi/initio.c    |    2 +-
+ drivers/scsi/ncr53c8xx.c |    3 ++-
+ drivers/scsi/ppa.c       |    2 +-
+ 5 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
+index e5dae7b..85fd163 100644
+--- a/drivers/scsi/initio.c
++++ b/drivers/scsi/initio.c
+@@ -1034,7 +1034,7 @@ static int initio_bad_seq(struct initio_host * host)
  {
- 	struct MPT2SAS_DEVICE *sas_device_priv_data;
- 	struct scsi_device *sdev;
--	u8 skip = 0;
+ 	struct scsi_ctrl_blk *scb;
  
- 	shost_for_each_device(sdev, ioc->shost) {
--		if (skip)
--			continue;
- 		sas_device_priv_data = sdev->hostdata;
- 		if (!sas_device_priv_data)
- 			continue;
- 		if (sas_device_priv_data->sas_target->handle = handle) {
- 			sas_device_priv_data->sas_target->tm_busy = action;
--			skip = 1;
- 			ioc->ignore_loginfos = action;
-+			break;
+-	printk("initio_bad_seg c=%d\n", host->index);
++	printk("%s c=%d\n", __func__, host->index);
+ 
+ 	if ((scb = host->active) != NULL) {
+ 		initio_unlink_busy_scb(host, scb);
+diff --git a/drivers/scsi/ncr53c8xx.c b/drivers/scsi/ncr53c8xx.c
+index 5b93ed8..347fb49 100644
+--- a/drivers/scsi/ncr53c8xx.c
++++ b/drivers/scsi/ncr53c8xx.c
+@@ -772,7 +772,8 @@ static int __init sym53c8xx__setup(char *str)
+ 			break;
+ #endif
+ 		default:
+-			printk("sym53c8xx_setup: unexpected boot option '%.*s' ignored\n", (int)(pc-cur+1), cur);
++			printk("%s: unexpected boot option '%.*s' ignored\n",
++			       __func__, (int)(pc-cur+1), cur);
+ 			break;
  		}
+ 
+diff --git a/drivers/scsi/ppa.c b/drivers/scsi/ppa.c
+index 1db8b26..4c1f08e 100644
+--- a/drivers/scsi/ppa.c
++++ b/drivers/scsi/ppa.c
+@@ -365,7 +365,7 @@ static int ppa_in(ppa_struct *dev, char *buffer, int len)
+ 		break;
+ 
+ 	default:
+-		printk(KERN_ERR "PPA: bug in ppa_ins()\n");
++		printk(KERN_ERR "PPA: bug in %s()\n", __func__);
+ 		r = 0;
+ 		break;
  	}
- }
--- 
-1.9.1
+diff --git a/drivers/scsi/atp870u.c b/drivers/scsi/atp870u.c
+index a795d81..ebb4556 100644
+--- a/drivers/scsi/atp870u.c
++++ b/drivers/scsi/atp870u.c
+@@ -3016,12 +3016,12 @@ flash_ok_885:
+ 			goto scsi_add_fail;
+ 		scsi_scan_host(shpnt);
+ #ifdef ED_DBGP			
+-		printk("atp870u_prob : exit\n");
++		printk("%s : exit\n", __func__);
+ #endif		
+ 		return 0;
+ 
+ scsi_add_fail:
+-	printk("atp870u_prob:scsi_add_fail\n");
++	printk("%s:scsi_add_fail\n", __func__);
+ 	if(ent->device=ATP885_DEVID) {
+ 		release_region(base_io, 0xff);
+ 	} else if((ent->device=ATP880_DEVID1)||(ent->device=ATP880_DEVID2)) {
+@@ -3030,13 +3030,13 @@ scsi_add_fail:
+ 		release_region(base_io, 0x40);
+ 	}
+ request_io_fail:
+-	printk("atp870u_prob:request_io_fail\n");
++	printk("%s:request_io_fail\n", __func__);
+ 	free_irq(pdev->irq, shpnt);
+ free_tables:
+-	printk("atp870u_prob:free_table\n");
++	printk("%s:free_table\n", __func__);
+ 	atp870u_free_tables(shpnt);
+ unregister:
+-	printk("atp870u_prob:unregister\n");
++	printk("%s:unregister\n", __func__);
+ 	scsi_host_put(shpnt);
+ 	return -1;		
+ err_eio:
+diff --git a/drivers/scsi/imm.c b/drivers/scsi/imm.c
+index 89a8266..1f2a668 100644
+--- a/drivers/scsi/imm.c
++++ b/drivers/scsi/imm.c
+@@ -439,7 +439,7 @@ static int imm_in(imm_struct *dev, char *buffer, int len)
+ 		break;
+ 
+ 	default:
+-		printk("IMM: bug in imm_ins()\n");
++		printk("IMM: bug in %s()\n", __func__);
+ 		r = 0;
+ 		break;
+ 	}
 
