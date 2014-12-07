@@ -1,87 +1,77 @@
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 01 Dec 2014 16:14:35 +0000
-Subject: Re: [PATCH 1/1] GPU-DRM-MSM: Deletion of unnecessary checks before two function calls
-Message-Id: <CAF6AEGt+tgWjYydTUv+5L2d1r8EMKWhOv=j=T8eoHEOkm8Cciw@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:21:02 +0000
+Subject: [PATCH 20/20] drm/radeon: fix misspelling of current function in string
+Message-Id: <1417980062-25151-21-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54748541.4000600@users.sourceforge.net>
-In-Reply-To: <54748541.4000600@users.sourceforge.net>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-btw, I have these two queued up on msm-next, thanks
+Replace a misspelled function name by %s and then __func__.
 
-BR,
--R
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
 
-On Tue, Nov 25, 2014 at 8:33 AM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 25 Nov 2014 14:30:28 +0100
->
-> The functions framebuffer_release() and vunmap() perform also input
-> parameter validation. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/msm/msm_fbdev.c | 3 +--
->  drivers/gpu/drm/msm/msm_gem.c   | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/msm_fbdev.c b/drivers/gpu/drm/msm/msm_fbdev.c
-> index ab5bfd2..fd5a6f3 100644
-> --- a/drivers/gpu/drm/msm/msm_fbdev.c
-> +++ b/drivers/gpu/drm/msm/msm_fbdev.c
-> @@ -193,8 +193,7 @@ fail_unlock:
->  fail:
->
->         if (ret) {
-> -               if (fbi)
-> -                       framebuffer_release(fbi);
-> +               framebuffer_release(fbi);
->                 if (fb) {
->                         drm_framebuffer_unregister_private(fb);
->                         drm_framebuffer_remove(fb);
-> diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-> index 4b1b82a..157cf21 100644
-> --- a/drivers/gpu/drm/msm/msm_gem.c
-> +++ b/drivers/gpu/drm/msm/msm_gem.c
-> @@ -543,8 +543,7 @@ void msm_gem_free_object(struct drm_gem_object *obj)
->                         drm_free_large(msm_obj->pages);
->
->         } else {
-> -               if (msm_obj->vaddr)
-> -                       vunmap(msm_obj->vaddr);
-> +               vunmap(msm_obj->vaddr);
->                 put_pages(obj);
->         }
->
-> --
-> 2.1.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
+
+ drivers/gpu/drm/radeon/cik.c |   16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/radeon/cik.c b/drivers/gpu/drm/radeon/cik.c
+index 6dcde37..24d5e43 100644
+--- a/drivers/gpu/drm/radeon/cik.c
++++ b/drivers/gpu/drm/radeon/cik.c
+@@ -7367,34 +7367,38 @@ int cik_irq_set(struct radeon_device *rdev)
+ 	}
+ 	if (atomic_read(&rdev->irq.ring_int[CAYMAN_RING_TYPE_CP1_INDEX])) {
+ 		struct radeon_ring *ring = &rdev->ring[CAYMAN_RING_TYPE_CP1_INDEX];
+-		DRM_DEBUG("si_irq_set: sw int cp1\n");
++		DRM_DEBUG("%s: sw int cp1\n", __func__);
+ 		if (ring->me = 1) {
+ 			switch (ring->pipe) {
+ 			case 0:
+ 				cp_m1p0 |= TIME_STAMP_INT_ENABLE;
+ 				break;
+ 			default:
+-				DRM_DEBUG("si_irq_set: sw int cp1 invalid pipe %d\n", ring->pipe);
++				DRM_DEBUG("%s: sw int cp1 invalid pipe %d\n",
++					  __func__, ring->pipe);
+ 				break;
+ 			}
+ 		} else {
+-			DRM_DEBUG("si_irq_set: sw int cp1 invalid me %d\n", ring->me);
++			DRM_DEBUG("%s: sw int cp1 invalid me %d\n", __func__,
++				  ring->me);
+ 		}
+ 	}
+ 	if (atomic_read(&rdev->irq.ring_int[CAYMAN_RING_TYPE_CP2_INDEX])) {
+ 		struct radeon_ring *ring = &rdev->ring[CAYMAN_RING_TYPE_CP2_INDEX];
+-		DRM_DEBUG("si_irq_set: sw int cp2\n");
++		DRM_DEBUG("%s: sw int cp2\n", __func__);
+ 		if (ring->me = 1) {
+ 			switch (ring->pipe) {
+ 			case 0:
+ 				cp_m1p0 |= TIME_STAMP_INT_ENABLE;
+ 				break;
+ 			default:
+-				DRM_DEBUG("si_irq_set: sw int cp2 invalid pipe %d\n", ring->pipe);
++				DRM_DEBUG("%s: sw int cp2 invalid pipe %d\n",
++					  __func__, ring->pipe);
+ 				break;
+ 			}
+ 		} else {
+-			DRM_DEBUG("si_irq_set: sw int cp2 invalid me %d\n", ring->me);
++			DRM_DEBUG("%s: sw int cp2 invalid me %d\n", __func__,
++				  ring->me);
+ 		}
+ 	}
+ 
+
