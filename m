@@ -1,75 +1,44 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Dec 2014 07:52:39 +0000
-Subject: [patch] Staging: lustre: error handling tweaks in obd_ioctl_getdata()
-Message-Id: <20141222075239.GC9737@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:20:53 +0000
+Subject: [PATCH 11/20] vme: fix misspelling of current function in string
+Message-Id: <1417980062-25151-12-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Martyn Welch <martyn.welch@ge.com>
+Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, Manohar Vanga <manohar.vanga@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
-1)  The places which called copy_from_user() were returning the number
-of bytes not copied instead of -EFAULT.
+Replace a misspelled function name by %s and then __func__.
 
-2) The user could trigger a memory leak if the condition
-"(hdr.ioc_len != data->ioc_len)" was true.  Instead of adding a new call
-to OBD_FREE_LARGE(), I created a free_buf label and changed everything
-to use that label.
+This is the get function, not the set function, as was indicated by the
+string.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-index 66ceab2..346b75a 100644
---- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-+++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
-@@ -83,9 +83,8 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
- 	int err;
- 	int offset = 0;
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
+
+ drivers/vme/vme.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/vme/vme.c b/drivers/vme/vme.c
+index 7516030..d95fb84 100644
+--- a/drivers/vme/vme.c
++++ b/drivers/vme/vme.c
+@@ -502,7 +502,7 @@ int vme_master_get(struct vme_resource *resource, int *enabled,
+ 	image = list_entry(resource->entry, struct vme_master_resource, list);
  
--	err = copy_from_user(&hdr, (void *)arg, sizeof(hdr));
--	if (err)
--		return err;
-+	if (copy_from_user(&hdr, (void *)arg, sizeof(hdr)))
-+		return -EFAULT;
- 
- 	if (hdr.ioc_version != OBD_IOCTL_VERSION) {
- 		CERROR("Version mismatch kernel (%x) vs application (%x)\n",
-@@ -117,18 +116,19 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
- 	*len = hdr.ioc_len;
- 	data = (struct obd_ioctl_data *)*buf;
- 
--	err = copy_from_user(*buf, (void *)arg, hdr.ioc_len);
--	if (err) {
--		OBD_FREE_LARGE(*buf, hdr.ioc_len);
--		return err;
-+	if (copy_from_user(*buf, (void *)arg, hdr.ioc_len)) {
-+		err = -EFAULT;
-+		goto free_buf;
-+	}
-+	if (hdr.ioc_len != data->ioc_len) {
-+		err = -EINVAL;
-+		goto free_buf;
- 	}
--	if (hdr.ioc_len != data->ioc_len)
--		return -EINVAL;
- 
- 	if (obd_ioctl_is_invalid(data)) {
- 		CERROR("ioctl not correctly formatted\n");
--		OBD_FREE_LARGE(*buf, hdr.ioc_len);
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto free_buf;
+ 	if (bridge->master_get = NULL) {
+-		printk(KERN_WARNING "vme_master_set not supported\n");
++		printk(KERN_WARNING "%s not supported\n", __func__);
+ 		return -EINVAL;
  	}
  
- 	if (data->ioc_inllen1) {
-@@ -151,6 +151,10 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
- 	}
- 
- 	return 0;
-+
-+free_buf:
-+	OBD_FREE_LARGE(*buf, hdr.ioc_len);
-+	return err;
- }
- EXPORT_SYMBOL(obd_ioctl_getdata);
- 
+
