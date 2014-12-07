@@ -1,57 +1,43 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Wed, 10 Dec 2014 02:56:23 +0000
-Subject: Re: [PATCH 0/20] fix misspelling of current function in string
-Message-Id: <CAGRGNgVGEo8qqpjDvYOJRBtEjXsKmFtXSQrS_Q+tDEYS+nAQqA@mail.gmail.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Sun, 07 Dec 2014 19:20:43 +0000
+Subject: [PATCH 1/20] mtd: s3c2410: fix misspelling of current function in string
+Message-Id: <1417980062-25151-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAGRGNgWDJqV=XD+6q26Ma=m1sEi1kvLWsjq6=RjRVSFTxow0Qg@mail.gmail.com>
- <alpine.DEB.2.02.1412080738210.2100@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1412080738210.2100@localhost6.localdomain6>
+In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, linux-samsung-soc@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, linux-pci@vger.kernel.org, linux-wireless <linux-wireless@vger.kernel.org>, intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, netdev <netdev@vger.kernel.org>, linux-mtd@lists.infradead.org, linux@rasmusvillemoes.dk, Joe Perches <joe@perches.com>, "Mailing List,
- Arm" <linux-arm-kernel@lists.infradead.org>
+To: linux-arm-kernel@lists.infradead.org
 
-Hi Julia,
+Replace a misspelled function name by %s and then __func__.
 
-On Mon, Dec 8, 2014 at 5:43 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
-> On Mon, 8 Dec 2014, Julian Calaby wrote:
->
->> Hi Julia,
->>
->> On Mon, Dec 8, 2014 at 6:20 AM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
->> > These patches replace what appears to be a reference to the name of the
->> > current function but is misspelled in some way by either the name of the
->> > function itself, or by %s and then __func__ in an argument list.
->>
->> Would there be any value in doing this for _all_ cases where the
->> function name is written in a format string?
->
-> Probably.  But there are a lot of them.  Even for the misspellings, I have
-> only don about 1/3 of the cases.
->
-> On the other hand, the misspelling have to be checked carefully, because a
-> misspelling of one thing could be the correct spelling of the thing thst
-> was actually intended.
->
-> Joe, however, points out that a lot of these prints are just for function
-> tracing, and could be removed.  I worked on another semantic patch that
-> tries to do that.  It might be better to remove those prints completely,
-> rather than sending one patch to transform them and then one patch to
-> remove them after that.  That is why for this series I did only the ones
-> where there was actually a problem.
+s3c2410 is the name of the file, but using the exact function name should
+make it easier to connect the error message to the code.
 
-Ok, that makes sense.
+This was done using Coccinelle, including the use of Levenshtein distance,
+as proposed by Rasmus Villemoes.
 
-Either way though, this is a really interesting application of the
-semantic patching. Nice work!
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Thanks,
+---
+The semantic patch is difficult to summarize, but is available in the cover
+letter of this patch series.
 
--- 
-Julian Calaby
+ drivers/mtd/nand/s3c2410.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index 35aef5e..0a9c41f 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -948,7 +948,7 @@ static int s3c24xx_nand_probe(struct platform_device *pdev)
+ 
+ 	cpu_type = platform_get_device_id(pdev)->driver_data;
+ 
+-	pr_debug("s3c2410_nand_probe(%p)\n", pdev);
++	pr_debug("%s(%p)\n", __func__, pdev);
+ 
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+ 	if (info = NULL) {
+
