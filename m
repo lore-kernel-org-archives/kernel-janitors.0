@@ -1,53 +1,40 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Mon, 08 Dec 2014 10:24:27 +0000
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Mon, 08 Dec 2014 14:15:06 +0000
 Subject: Re: [PATCH 7/20] drm/i915: fix misspelling of current function in string
-Message-Id: <87fvcqo2w4.fsf@intel.com>
+Message-Id: <20141208141506.GQ20350@phenom.ffwll.local>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr> <1417980062-25151-8-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-8-git-send-email-Julia.Lawall@lip6.fr>
+References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1417980062-25151-8-git-send-email-Julia.Lawall@lip6.fr>
+ <87fvcqo2w4.fsf@intel.com>
+In-Reply-To: <87fvcqo2w4.fsf@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Daniel Vetter <daniel.vetter@intel.com>
-Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: linux@rasmusvillemoes.dk, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Julia Lawall <Julia.Lawall@lip6.fr>, joe@perches.com, Daniel Vetter <daniel.vetter@intel.com>
 
-On Sun, 07 Dec 2014, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
-> Replace a misspelled function name by %s and then __func__.
->
-> This was done using Coccinelle, including the use of Levenshtein distance,
-> as proposed by Rasmus Villemoes.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
-> The semantic patch is difficult to summarize, but is available in the cover
-> letter of this patch series.
->
-> The message is sort of ambiguous, but I assume that it is intended to refer
-> to the function in which the problem is detected.
+On Mon, Dec 08, 2014 at 12:24:27PM +0200, Jani Nikula wrote:
+> On Sun, 07 Dec 2014, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+> > Replace a misspelled function name by %s and then __func__.
+> >
+> > This was done using Coccinelle, including the use of Levenshtein distance,
+> > as proposed by Rasmus Villemoes.
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> >
+> > ---
+> > The semantic patch is difficult to summarize, but is available in the cover
+> > letter of this patch series.
+> >
+> > The message is sort of ambiguous, but I assume that it is intended to refer
+> > to the function in which the problem is detected.
+> 
+> Hmm, DRM_DEBUG prints __func__ too.
 
-Hmm, DRM_DEBUG prints __func__ too.
-
-Jani.
-
->
->  drivers/gpu/drm/i915/i915_gem.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-> index d2ba315..fa21d1c 100644
-> --- a/drivers/gpu/drm/i915/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/i915_gem.c
-> @@ -4335,7 +4335,7 @@ i915_gem_unpin_ioctl(struct drm_device *dev, void *data,
->  	}
->  
->  	if (obj->pin_filp != file) {
-> -		DRM_DEBUG("Not pinned by caller in i915_gem_pin_ioctl(): %d\n",
-> +		DRM_DEBUG("Not pinned by caller in %s(): %d\n", __func__,
->  			  args->handle);
->  		ret = -EINVAL;
->  		goto out;
->
-
+We've killed the pin ioctl for 3.20 hence didn't even bother to come up
+with an opinion ;-)
+-Daniel
 -- 
-Jani Nikula, Intel Open Source Technology Center
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
