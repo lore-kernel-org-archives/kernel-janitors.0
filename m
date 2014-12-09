@@ -1,7 +1,7 @@
 From: David Miller <davem@davemloft.net>
-Date: Tue, 09 Dec 2014 21:13:18 +0000
+Date: Tue, 09 Dec 2014 21:14:09 +0000
 Subject: Re: [PATCH 12/20] hp100: fix misspelling of current function in string
-Message-Id: <20141209.161318.2286665465014165364.davem@davemloft.net>
+Message-Id: <20141209.161409.314736163110308481.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 	<1417980062-25151-13-git-send-email-Julia.Lawall@lip6.fr>
