@@ -1,7 +1,7 @@
 From: David Miller <davem@davemloft.net>
-Date: Tue, 09 Dec 2014 21:13:24 +0000
+Date: Tue, 09 Dec 2014 21:14:18 +0000
 Subject: Re: [PATCH 14/20] chelsio: fix misspelling of current function in string
-Message-Id: <20141209.161324.925660433643018767.davem@davemloft.net>
+Message-Id: <20141209.161418.956404204470791145.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
 	<1417980062-25151-15-git-send-email-Julia.Lawall@lip6.fr>
