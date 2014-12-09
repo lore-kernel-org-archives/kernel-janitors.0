@@ -1,35 +1,29 @@
-From: Joe Perches <joe@perches.com>
-Date: Fri, 19 Dec 2014 12:26:31 +0000
-Subject: Re: [PATCH 3/3] [SCSI] mpt2sas: Remove unnecessary use of a boolean variable
-Message-Id: <1418991991.25129.10.camel@perches.com>
+From: Lucas Tanure <tanure@linux.com>
+Date: Tue, 09 Dec 2014 20:45:59 +0000
+Subject: List my Staging Drivers
+Message-Id: <CAJyon0tny1BjTUDN3WF=cXAKQ5u6_jHUAfOuW6m7NzLsnxmGvQ@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141219111345.GA19938@sloth>
-In-Reply-To: <20141219111345.GA19938@sloth>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Quentin Lambert <lambert.quentin@gmail.com>
-Cc: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernelnewbies@lists.kernelnewbies.org
 
-On Fri, 2014-12-19 at 12:13 +0100, Quentin Lambert wrote:
-[]
-> diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c b/drivers/scsi/mpt2sas/mpt2sas_base.c
-[]
-> @@ -1414,12 +1414,8 @@ _base_enable_msix(struct MPT2SAS_ADAPTER *ioc)
->  	struct msix_entry *entries, *a;
->  	int r;
->  	int i;
-> -	u8 try_msix = 0;
->  
-> -	if (msix_disable = -1 || msix_disable = 0)
-> -		try_msix = 1;
-> -
-> -	if (!try_msix)
-> +	if (msix_disable != -1 || msix_disable != 0)
->  		goto try_ioapic;
+Hi,
 
-logic not the same.
+How do I list where are the modules that I'm using inside kernel ?
 
-Now needs && not ||
+Goal: find drivers that I could start improving ( understand, develop,
+test , submit )
+How : If my machine uses a driver, I can read the code, modify and
+test in my machine
 
+So, if I'm able to see where is located the source for a driver that
+my machine uses, I can modify and test.
 
+Ideas ?
+
+Thanks
+
+--
+Lucas Tanure
++55 (19) 988176559
