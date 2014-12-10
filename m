@@ -1,34 +1,28 @@
-From: David Ung <davidu@nvidia.com>
-Date: Mon, 29 Dec 2014 21:51:23 +0000
-Subject: RE: [patch] fbdev: off by one test (harmless)
-Message-Id: <410219d77f8c4d0982cc9e99d0364acb@DRHQMAIL102.nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Dec 2014 13:06:46 +0000
+Subject: [patch] ALSA: lola: NULL dereference on probe failure
+Message-Id: <20141210130646.GA18593@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141226172657.GA14762@mwanda>
-In-Reply-To: <20141226172657.GA14762@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-fbdev@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Taine <benoit.taine@lip6.fr>, Bjorn Helgaas <bhelgaas@google.com>
 
+"card" is NULL if snd_card_new() fails.
 
-> > test is really a no-op.  But it's still off by one and upsets the
-> > static checkers so we may as well correct it.
-> 
-> 'idx' should be 0~63, because cea_modes array is defined as
-> 'cea_modes[64]'.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-According to CEA/EIA-861E, there are 64 defined modes, but idx is valid for 1-64, 0 is reserved hence the check for 
-
-        If (!idx || idx > 63) {
-
-Think idx check really should be !idx || idx > 64 if following CEA/EIA-861E
-
-CEA/EIA-861F add additional entries and idx is valid from 1-107
-
-David
------------------------------------------------------------------------------------
-This email message is for the sole use of the intended recipient(s) and may contain
-confidential information.  Any unauthorized review, use, disclosure or distribution
-is prohibited.  If you are not the intended recipient, please contact the sender by
-reply email and destroy all copies of the original message.
------------------------------------------------------------------------------------
+diff --git a/sound/pci/lola/lola.c b/sound/pci/lola/lola.c
+index a75c8dc..4cf4be5 100644
+--- a/sound/pci/lola/lola.c
++++ b/sound/pci/lola/lola.c
+@@ -719,7 +719,7 @@ static int lola_probe(struct pci_dev *pci,
+ 	err = snd_card_new(&pci->dev, index[dev], id[dev], THIS_MODULE,
+ 			   0, &card);
+ 	if (err < 0) {
+-		dev_err(card->dev, "Error creating card!\n");
++		dev_err(&pci->dev, "Error creating card!\n");
+ 		return err;
+ 	}
+ 
