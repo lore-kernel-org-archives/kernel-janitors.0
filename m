@@ -1,43 +1,28 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Mon, 01 Dec 2014 17:11:51 +0000
-Subject: Re: [PATCH 1/3] net-PPP: Deletion of unnecessary checks before the function call "kfree"
-Message-Id: <547CA157.1080401@cogentembedded.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 10 Dec 2014 13:26:21 +0000
+Subject: [patch] ALSA: pcxhr: NULL dereference on probe failure
+Message-Id: <20141210132620.GB18593@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net> <547B496E.604@users.sourceforge.net> <547C5CBC.6060607@cogentembedded.com> <547C82A6.2030808@users.sourceforge.net>
-In-Reply-To: <547C82A6.2030808@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Aya Mahfouz <mahfouz.saif.elyazal@gmail.com>, Benoit Taine <benoit.taine@lip6.fr>, Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-On 12/01/2014 06:00 PM, SF Markus Elfring wrote:
+"card" is NULL if snd_card_new() fails.
 
->>> diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
->>> index 911b216..7e44212 100644
->>> --- a/drivers/net/ppp/ppp_mppe.c
->>> +++ b/drivers/net/ppp/ppp_mppe.c
->>> @@ -238,8 +238,7 @@ static void *mppe_alloc(unsigned char *options, int optlen)
->>>        return (void *)state;
->>>
->>>        out_free:
->>> -        if (state->sha1_digest)
->>> -        kfree(state->sha1_digest);
->>> +    kfree(state->sha1_digest);
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
->>     Please keep this line aligned to the others.
-
-> Can it be that the previous source code contained unwanted space
-> characters at this place?
-
-    Yes, it seems so.
-
-> Do you want indentation fixes as a separate update step?
-
-    Yes, that would be better to keep it separate.
-
-> Regards,
-> Markus
-
-WBR, Sergei
-
+diff --git a/sound/pci/pcxhr/pcxhr.c b/sound/pci/pcxhr/pcxhr.c
+index a602930..c6092e4 100644
+--- a/sound/pci/pcxhr/pcxhr.c
++++ b/sound/pci/pcxhr/pcxhr.c
+@@ -1638,7 +1638,7 @@ static int pcxhr_probe(struct pci_dev *pci,
+ 				   0, &card);
+ 
+ 		if (err < 0) {
+-			dev_err(card->dev, "cannot allocate the card %d\n", i);
++			dev_err(&pci->dev, "cannot allocate the card %d\n", i);
+ 			pcxhr_free(mgr);
+ 			return err;
+ 		}
