@@ -1,107 +1,39 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 23 Dec 2014 10:05:13 +0000
-Subject: [patch] mptfusion: buffer overflow in mptctl_do_mpt_command()
-Message-Id: <20141223100513.GB21469@mwanda>
+Date: Fri, 12 Dec 2014 19:30:00 +0000
+Subject: [patch] Btrfs, scrub: uninitialized variable in scrub_extent_for_parity()
+Message-Id: <20141212193000.GC22234@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
-Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Chris Mason <clm@fb.com>, Miao Xie <miaox@cn.fujitsu.com>
+Cc: Josef Bacik <jbacik@fb.com>, linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-The main problem is that this copy can overflow:
-
-	if (copy_from_user(mf, mfPtr, karg.dataSgeOffset * 4)) {
-
-We try to prevent an overflow by checking "if (sz > ioc->req_sz) {" but
-the problem is that "sz" is signed so the test can underflow or their
-could be an integer overflow.
-
-A second problem was this check which could underflow if "maxSenseBytes"
-was negative.
-
-	if (karg.maxSenseBytes > MPT_SENSE_BUFFER_SIZE)
-
-I made the variables unsigned to prevent underflow and I added a new
-test to prevent integer overflows.  I had to update a call to printk()
-and change some min() usages to min_t() as part of the fallout from the
-type changes.
+The only way that "ret" is set is when we call scrub_pages_for_parity()
+so the skip to "if (ret) " test doesn't make sense and causes a static
+checker warning.
 
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Static checker stuff, and not tested but I think it is safe.
+Static checker work.  Not tested.  There are some other valid looking
+warnings from the same file:
 
-diff --git a/drivers/message/fusion/mptctl.h b/drivers/message/fusion/mptctl.h
-index d564cc9..117fe89 100644
---- a/drivers/message/fusion/mptctl.h
-+++ b/drivers/message/fusion/mptctl.h
-@@ -324,11 +324,11 @@ struct mpt_ioctl_command {
- 	char		__user *dataInBufPtr;
- 	char		__user *dataOutBufPtr;
- 	char		__user *senseDataPtr;
--	int		maxReplyBytes;
--	int		dataInSize;
--	int		dataOutSize;
--	int		maxSenseBytes;
--	int		dataSgeOffset;
-+	unsigned int	maxReplyBytes;
-+	unsigned int	dataInSize;
-+	unsigned int	dataOutSize;
-+	unsigned int	maxSenseBytes;
-+	unsigned int	dataSgeOffset;
- 	char		MF[1];
- };
- 
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-index 70bb753..5646830 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -1829,7 +1829,8 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
- 	dma_addr_t	dma_addr_out;
- 	int		sgSize = 0;	/* Num SG elements */
- 	int		iocnum, flagsLength;
--	int		sz, rc = 0;
-+	size_t		sz;
-+	int		rc = 0;
- 	int		msgContext;
- 	u16		req_idx;
- 	ulong 		timeout;
-@@ -1861,6 +1862,9 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
- 
- 	/* Verify that the final request frame will not be too large.
- 	 */
-+	if (karg.dataSgeOffset > ioc->req_sz)
-+		return -EFAULT;
-+
- 	sz = karg.dataSgeOffset * 4;
- 	if (karg.dataInSize > 0)
- 		sz += ioc->SGE_size;
-@@ -1869,7 +1873,7 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
- 
- 	if (sz > ioc->req_sz) {
- 		printk(MYIOC_s_ERR_FMT "%s@%d::mptctl_do_mpt_command - "
--			"Request frame too large (%d) maximum (%d)\n",
-+			"Request frame too large (%ld) maximum (%d)\n",
- 			ioc->name, __FILE__, __LINE__, sz, ioc->req_sz);
- 		return -EFAULT;
- 	}
-@@ -2316,8 +2320,8 @@ retry_wait:
- 	 */
- 	if (ioc->ioctl_cmds.status & MPT_MGMT_STATUS_RF_VALID) {
- 		if (karg.maxReplyBytes < ioc->reply_sz) {
--			sz = min(karg.maxReplyBytes,
--				4*ioc->ioctl_cmds.reply[2]);
-+			sz = min_t(size_t, karg.maxReplyBytes,
-+				   4*ioc->ioctl_cmds.reply[2]);
- 		} else {
- 			 sz = min(ioc->reply_sz, 4*ioc->ioctl_cmds.reply[2]);
- 		}
-@@ -2337,7 +2341,7 @@ retry_wait:
- 	/* If valid sense data, copy to user.
- 	 */
- 	if (ioc->ioctl_cmds.status & MPT_MGMT_STATUS_SENSE_VALID) {
--		sz = min(karg.maxSenseBytes, MPT_SENSE_BUFFER_SIZE);
-+		sz = min_t(size_t, karg.maxSenseBytes, MPT_SENSE_BUFFER_SIZE);
- 		if (sz > 0) {
- 			if (copy_to_user(karg.senseDataPtr,
- 				ioc->ioctl_cmds.sense, sz)) {
+fs/btrfs/scrub.c:2933 scrub_raid56_parity() warn: XXX passing uninitialized 'extent_physical'
+fs/btrfs/scrub.c:2933 scrub_raid56_parity() warn: XXX passing uninitialized 'extent_dev'
+fs/btrfs/scrub.c:2933 scrub_raid56_parity() warn: XXX passing uninitialized 'extent_mirror_num'
+
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index f2bb13a..9e1569f 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -2607,9 +2607,9 @@ static int scrub_extent_for_parity(struct scrub_parity *sparity,
+ 		ret = scrub_pages_for_parity(sparity, logical, l, physical, dev,
+ 					     flags, gen, mirror_num,
+ 					     have_csum ? csum : NULL);
+-skip:
+ 		if (ret)
+ 			return ret;
++skip:
+ 		len -= l;
+ 		logical += l;
+ 		physical += l;
