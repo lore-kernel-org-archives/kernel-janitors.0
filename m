@@ -1,25 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 09 Dec 2014 21:14:09 +0000
-Subject: Re: [PATCH 12/20] hp100: fix misspelling of current function in string
-Message-Id: <20141209.161409.314736163110308481.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 12 Dec 2014 19:28:10 +0000
+Subject: [patch 2/2] ALSA: oxfw: fix detect_loud_models() return value
+Message-Id: <20141212192810.GB22234@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1417980062-25151-13-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-13-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia.Lawall@lip6.fr
-Cc: perex@perex.cz, kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun,  7 Dec 2014 20:20:54 +0100
+This code causes a static checker warning:
 
-> Replace a misspelled function name by %s and then __func__.
-> 
-> This was done using Coccinelle, including the use of Levenshtein distance,
-> as proposed by Rasmus Villemoes.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+	sound/firewire/oxfw/oxfw.c:46 detect_loud_models()
+	warn: signedness bug returning '(-2)'
 
-Applied.
+The detect_loud_models() function should return false on falure, so that
+we don't try to set up the loud code for hardware that doesn't support
+it.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
+index cf1d0b5..60e5cad 100644
+--- a/sound/firewire/oxfw/oxfw.c
++++ b/sound/firewire/oxfw/oxfw.c
+@@ -43,7 +43,7 @@ static bool detect_loud_models(struct fw_unit *unit)
+ 	err = fw_csr_string(unit->directory, CSR_MODEL,
+ 			    model, sizeof(model));
+ 	if (err < 0)
+-		return err;
++		return false;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(models); i++) {
+ 		if (strcmp(models[i], model) = 0)
