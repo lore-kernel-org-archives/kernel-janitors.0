@@ -1,54 +1,34 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Dec 2014 22:35:54 +0000
-Subject: [PATCH 2/2] [media] mn88473: One function call less in mn88473_init() after error detection
-Message-Id: <547CED4A.9000207@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 16 Dec 2014 23:52:26 +0000
+Subject: [patch] NFS: a couple off by ones
+Message-Id: <20141216235225.GB31467@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547CEBF5.4040004@users.sourceforge.net>
-In-Reply-To: <547CEBF5.4040004@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Trond Myklebust <trond.myklebust@primarydata.com>
+Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Dec 2014 23:15:20 +0100
+These tests are off by one because if len = sizeof(nfs_export_path)
+then we have truncated the name.
 
-The release_firmware() function was called by the mn88473_init() function even
-if a previous function call "request_firmware" failed.
-This implementation detail could be improved by the introduction of another
-jump label.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/staging/media/mn88473/mn88473.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/mn88473/mn88473.c b/drivers/staging/media/mn88473/mn88473.c
-index 52180bb..a333744 100644
---- a/drivers/staging/media/mn88473/mn88473.c
-+++ b/drivers/staging/media/mn88473/mn88473.c
-@@ -225,7 +225,7 @@ static int mn88473_init(struct dvb_frontend *fe)
- 	ret = request_firmware(&fw, fw_file, &client->dev);
- 	if (ret) {
- 		dev_err(&client->dev, "firmare file '%s' not found\n", fw_file);
--		goto err;
-+		goto err_request_firmware;
- 	}
+diff --git a/fs/nfs/nfsroot.c b/fs/nfs/nfsroot.c
+index cd3c910..9bc9f04 100644
+--- a/fs/nfs/nfsroot.c
++++ b/fs/nfs/nfsroot.c
+@@ -261,11 +261,11 @@ static int __init root_nfs_data(char *cmdline)
+ 	 */
+ 	len = snprintf(nfs_export_path, sizeof(nfs_export_path),
+ 				tmp, utsname()->nodename);
+-	if (len > (int)sizeof(nfs_export_path))
++	if (len >= (int)sizeof(nfs_export_path))
+ 		goto out_devnametoolong;
+ 	len = snprintf(nfs_root_device, sizeof(nfs_root_device),
+ 				"%pI4:%s", &servaddr, nfs_export_path);
+-	if (len > (int)sizeof(nfs_root_device))
++	if (len >= (int)sizeof(nfs_root_device))
+ 		goto out_devnametoolong;
  
- 	dev_info(&client->dev, "downloading firmware from file '%s'\n",
-@@ -261,9 +261,10 @@ static int mn88473_init(struct dvb_frontend *fe)
- 	dev->warm = true;
- 
- 	return 0;
-+
- err:
- 	release_firmware(fw);
--
-+err_request_firmware:
- 	dev_dbg(&client->dev, "failed=%d\n", ret);
- 	return ret;
- }
--- 
-2.1.3
-
+ 	retval = 0;
