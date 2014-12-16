@@ -1,62 +1,69 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 03 Dec 2014 10:30:43 +0000
+Date: Tue, 16 Dec 2014 19:30:35 +0000
 Subject: Re: Determination for the number of named function parameters (with SmPL)
-Message-Id: <547EE653.5000901@users.sourceforge.net>
+Message-Id: <5490885B.4030000@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <547C4D11.1050206@users.sourceforge.net>
- <8DDAD79C-96D4-43BA-BC3F-F9EE237D2C60@gmail.com>
-In-Reply-To: <8DDAD79C-96D4-43BA-BC3F-F9EE237D2C60@gmail.com>
+In-Reply-To: <547C4D11.1050206@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: cocci@systeme.lip6.fr
 
->> elfring@Sonne:~/Projekte/Coccinelle/Probe> cat list_parameter_numbers1.txt
->> number|counter
->> 0|29
-> 
-> I think the results are dubious. Only 29 functions with no parameters?
-> That can't be right.
+Hello,
 
-How do you think about to experiment a bit more with the following
-semantic query approach?
+Would you like to know how many named function parameters are used in the s=
+ource files?
+
+How do you think about to try the following semantic query approach out a b=
+it more?
 
 @initialize:python@
 @@
 import sys
-import sqlite3 as SQLite
-connection = SQLite.connect(":memory:")
-c = connection.cursor()
-c.execute("""
-create table numbers
-(parameter_number integer,
- function text,
- source_file text,
- line integer,
- column integer,
- constraint c
- primary key (function, source_file, line, column)
-)
-without rowid""")
+import sqlalchemy
+sys.stderr.write("\n".join( ("Using SQLAlchemy version:",
+                             sqlalchemy.__version__) ))
+sys.stderr.write("\n")
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import sessionmaker
+engine =3D create_engine("sqlite:///:memory:", echo=FAlse)
+base =3D declarative_base()
 
-def store_number(count, fun, places):
-    """Add an integer to an internal list."""
-    for place in places:
-        c.execute("""insert into numbers
-(parameter_number,
- function,
- source_file,
- line,
- column
-)
-values (?, ?, ?, ?, ?)""",
-                  (count,
-                   fun,
-                   place.file,
-                   place.line,
-                   int(place.column) + 1
-                  )
-                 )
+class function(base):
+   __tablename__ =3D "numbers"
+   name =3D Column(String, primary_key=3DTrue)
+   source_file =3D Column(String, primary_key=3DTrue)
+   line =3D Column(Integer, primary_key=3DTrue)
+   column =3D Column(Integer, primary_key=3DTrue)
+   parameter_number =3D Column(Integer)
+  =20
+   def __repr__(self):
+      return """<function(name=3D'%s',
+source_file=3D'%s',
+line=3D'%s',
+column=3D'%s',
+parameter_number=3D'%s')>""" % (self.name,
+                              self.source_file,
+                              self.line,
+                              self.column,
+                              self.parameter_number)
+
+configured_session =3D sessionmaker(bind=3Dengine)
+session =3D configured_session()
+base.metadata.create_all(engine)
+
+def store_number(fun, source, count):
+    """Add an integer to an internal table."""
+    for place in source:
+       entry =3D function(name =3D fun,
+                        source_file =3D place.file,
+                        line =3D place.line,
+                        column =3D int(place.column) + 1,
+                        parameter_number =3D count)
+       session.add(entry)
 
 @counting_parameters@
 identifier work;
@@ -70,59 +77,71 @@ type return_type;
  }
 
 @script:python collection@
-count << counting_parameters.number;
 fun << counting_parameters.work;
-places << counting_parameters.pos;
+count << counting_parameters.number;
+place << counting_parameters.pos;
 @@
-store_number(count, fun, places)
+store_number(fun, place, count)
 
 @finalize:python@
 @@
-c.execute("""select count(*) nr from numbers""")
-result = c.fetchone()
+session.commit()
+from sqlalchemy import func
+entries =3D session.query(func.count("*")).select_from(function).scalar()
 
-if result[0] > 0:
-   c.execute("""create index x on numbers (parameter_number)""")
-   c.execute("""select *
-from numbers
-where parameter_number > 12
-order by parameter_number desc, function, source_file""")
-   delimiter = "|"
-   mark1 = ['"', '', '"']
-   mark2 = ['"', '', '"']
-   sys.stdout.write(delimiter.join(('"parameter number"',
-                                    "function",
-                                    '"source file"',
-                                    "line",
-                                    "column"
-                                   )))
+if entries > 0:
+   delimiter =3D "|"
+   sys.stdout.write(delimiter.join( ("number", "incidence") ))
    sys.stdout.write("\r\n")
-   for entry in c:
-      mark1[1] = entry[1]
-      mark2[1] = entry[2].replace('"', '""')
-      sys.stdout.write(delimiter.join((str(entry[0]),
-                                       ''.join(mark1),
-                                       ''.join(mark2),
-                                       str(entry[3]),
-                                       str(entry[4])
-                                      )))
+   for number, incidence in session.query(function.parameter_number,
+                                          func.count("*")).group_by(functio=
+n.parameter_number):
+      sys.stdout.write(delimiter.join( (str(number), str(incidence)) ))
       sys.stdout.write("\r\n")
 else:
    sys.stderr.write("No result for this analysis!\n")
 
-connection.close()
 
 
-elfring@Sonne:~/Projekte/Linux/next-patched> XX=$(date) && spatch.opt -timeout 12 -sp-file ~/Projekte/Coccinelle/Probe/list_parameter_numbers1b.cocci -dir . > list_parameter_numbers1b.txt 2> list_parameter_numbers1b-errors.txt ; YY=$(date) && echo "$XX * $YY"
-Mi 3. Dez 08:46:17 CET 2014 * Mi 3. Dez 09:13:14 CET 2014
-elfring@Sonne:~/Projekte/Linux/next-patched> cat list_parameter_numbers1b.txt
-"parameter number"|function|"source file"|line|column
-22|"send_cap_msg"|"./fs/ceph/caps.c"|968|12
-21|"dispc_ovl_setup_common"|"./drivers/video/fbdev/omap2/dss/dispc.c"|2414|12
+elfring@Sonne:~/Projekte/Coccinelle/Probe> XX=3D$(date) && spatch.opt -time=
+out 12 -sp-file list_parameter_numbers2.cocci -dir /usr/src/linux-stable > =
+list_parameter_numbers2.txt 2> list_parameter_numbers2-errors.txt ; YY=3D$(=
+date) && echo "$XX * $YY"
+Di 16. Dez 18:51:03 CET 2014 * Di 16. Dez 19:16:28 CET 2014
 ...
-13|"src_sync_cmd"|"./drivers/scsi/aacraid/src.c"|172|12
-13|"submit_extent_page"|"./fs/btrfs/extent_io.c"|2761|12
+elfring@Sonne:~/Projekte/Coccinelle/Probe> cat list_parameter_numbers2.txt
+number|incidence
+0|46
+1|161270
+2|103405
+3|55551
+4|25947
+5|9569
+6|4907
+7|1860
+8|738
+9|335
+10|177
+11|108
+12|64
+13|20
+14|11
+15|8
+16|4
+17|5
+18|1
+21|1
+22|1
 
+
+Do you find such an analysis result from the source files for Linux 3.18
+(with the help of the software "Coccinelle 1.0.0-rc23") interesting
+for further considerations?
 
 Regards,
 Markus
+--
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
