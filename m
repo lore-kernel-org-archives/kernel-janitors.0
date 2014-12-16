@@ -1,40 +1,29 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 10 Dec 2014 13:45:35 +0000
-Subject: Re: [patch] ALSA: lola: NULL dereference on probe failure
-Message-Id: <s5h7fxz8vpc.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 16 Dec 2014 23:54:42 +0000
+Subject: [patch] OMAPDSS: pll: NULL dereference in error handling
+Message-Id: <20141216235442.GE31467@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141210130646.GA18593@mwanda>
-In-Reply-To: <20141210130646.GA18593@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Benoit Taine <benoit.taine@lip6.fr>, Bjorn Helgaas <bhelgaas@google.com>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-At Wed, 10 Dec 2014 16:06:46 +0300,
-Dan Carpenter wrote:
-> 
-> "card" is NULL if snd_card_new() fails.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The regulator_disable() doesn't accept NULL pointers.
 
-Applied, thanks.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-Takashi
-
-> 
-> diff --git a/sound/pci/lola/lola.c b/sound/pci/lola/lola.c
-> index a75c8dc..4cf4be5 100644
-> --- a/sound/pci/lola/lola.c
-> +++ b/sound/pci/lola/lola.c
-> @@ -719,7 +719,7 @@ static int lola_probe(struct pci_dev *pci,
->  	err = snd_card_new(&pci->dev, index[dev], id[dev], THIS_MODULE,
->  			   0, &card);
->  	if (err < 0) {
-> -		dev_err(card->dev, "Error creating card!\n");
-> +		dev_err(&pci->dev, "Error creating card!\n");
->  		return err;
->  	}
->  
-> 
+diff --git a/drivers/video/fbdev/omap2/dss/pll.c b/drivers/video/fbdev/omap2/dss/pll.c
+index 50bc62c5..335ffac 100644
+--- a/drivers/video/fbdev/omap2/dss/pll.c
++++ b/drivers/video/fbdev/omap2/dss/pll.c
+@@ -97,7 +97,8 @@ int dss_pll_enable(struct dss_pll *pll)
+ 	return 0;
+ 
+ err_enable:
+-	regulator_disable(pll->regulator);
++	if (pll->regulator)
++		regulator_disable(pll->regulator);
+ err_reg:
+ 	clk_disable_unprepare(pll->clkin);
+ 	return r;
