@@ -1,61 +1,34 @@
-From: Daniel Borkmann <dborkman@redhat.com>
-Date: Wed, 03 Dec 2014 00:18:41 +0000
-Subject: Re: [PATCH 8/8] wusb: replace memset by memzero_explicit
-Message-Id: <547E56E1.2080105@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 16 Dec 2014 23:57:50 +0000
+Subject: [patch] mmc: mxs-mmc: remove unneeded NULL check
+Message-Id: <20141216235749.GH31467@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417366774-32412-1-git-send-email-Julia.Lawall@lip6.fr> <1417366774-32412-9-git-send-email-Julia.Lawall@lip6.fr> <20141203001408.GB21569@kroah.com>
-In-Reply-To: <20141203001408.GB21569@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, herbert@gondor.apana.org.au, kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Chris Ball <chris@printf.net>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <fabio.estevam@freescale.com>, Roman Peniaev <r.peniaev@gmail.com>, Peter Griffin <peter.griffin@linaro.org>, Daniel Willmann <daniel@totalueberwachung.de>, linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 12/03/2014 01:14 AM, Greg Kroah-Hartman wrote:
-> On Sun, Nov 30, 2014 at 05:59:34PM +0100, Julia Lawall wrote:
->> From: Julia Lawall <julia@diku.dk>
->>
->> Memset on a local variable may be removed when it is called just before the
->> variable goes out of scope.  Using memzero_explicit defeats this
->> optimization.  A simplified version of the semantic patch that makes this
->> change is as follows: (http://coccinelle.lip6.fr/)
->>
->> // <smpl>
->> @@
->> identifier x;
->> type T;
->> @@
->>
->> {
->> ... when any
->> T x[...];
->> ... when any
->>      when exists
->> - memset
->> + memzero_explicit
->>    (x,
->> -0,
->>    ...)
->> ... when != x
->>      when strict
->> }
->> // </smpl>
->>
->> This change was suggested by Daniel Borkmann <dborkman@redhat.com>
->>
->> Signed-off-by: Julia Lawall <julia@diku.dk>
->>
->> ---
->> Daniel Borkmann suggested that these patches could go through Herbert Xu's
->> cryptodev tree.
->
-> Why?  There's no dependancy on anything in the cryptodev tree,
-> memzero_explicit is in Linus's tree now.
+Static checkers complain about the inconsistent NULL checking here:
 
-Sorry, I guess this was not really clear, that comment actually only
-refers to the arch/*/crypto/ patches.
+	drivers/mmc/host/mxs-mmc.c:680 mxs_mmc_probe()
+	warn: variable dereferenced before check 'ssp->dmach' (see line 660)
 
-Anyway, thanks for queueing this up, Greg.
+The variable can't actually be NULL so we can remove the check.
 
-Cheers,
-Daniel
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+index 60c4ca9..a82411a 100644
+--- a/drivers/mmc/host/mxs-mmc.c
++++ b/drivers/mmc/host/mxs-mmc.c
+@@ -677,8 +677,7 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ out_free_dma:
+-	if (ssp->dmach)
+-		dma_release_channel(ssp->dmach);
++	dma_release_channel(ssp->dmach);
+ out_clk_disable:
+ 	clk_disable_unprepare(ssp->clk);
+ out_mmc_free:
