@@ -1,7 +1,7 @@
-From: Ashwin Chaugule <ashwin.chaugule@linaro.org>
-Date: Wed, 17 Dec 2014 16:46:09 +0000
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 17 Dec 2014 18:56:53 +0000
 Subject: Re: Mailbox: Add support for Platform Communication Channel
-Message-Id: <CAJ5Y-eaU1Sc6yjL56u6v7D8FkqZMi-_0cf4wcGBtQnmGnZPycA@mail.gmail.com>
+Message-Id: <20141217185653.GR4911@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20141215215643.GA2882@mwanda>
 In-Reply-To: <20141215215643.GA2882@mwanda>
@@ -10,88 +10,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Wed, Dec 17, 2014 at 11:46:09AM -0500, Ashwin Chaugule wrote:
+> > Also this file has some Sparse warnings:
+> 
+> I've looked at these previously too and I believe they're false
+> positives.  Will send a follow up patch at the earliest.
+> 
 
-On 15 December 2014 at 16:56, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Hello Ashwin Chaugule,
->
-> The patch 86c22f8c9a3b: "Mailbox: Add support for Platform
-> Communication Channel" from Nov 12, 2014, leads to the following
-> static checker warning:
->
->         drivers/mailbox/pcc.c:119 pcc_mbox_request_channel()
->         error: 'chan' dereferencing possible ERR_PTR()
->
-> drivers/mailbox/pcc.c
->    110          /*
->    111           * Each PCC Subspace is a Mailbox Channel.
->    112           * The PCC Clients get their PCC Subspace ID
->    113           * from their own tables and pass it here.
->    114           * This returns a pointer to the PCC subspace
->    115           * for the Client to operate on.
->    116           */
->    117          chan = get_pcc_channel(subspace_id);
->    118
->    119          if (!chan || chan->cl) {
->                     ^^^^^
-> Should be checking IS_ERR().  Also is the error message correct?
->
->    120                  dev_err(dev, "%s: PCC mailbox not free\n", __func__);
->    121                  return ERR_PTR(-EBUSY);
->    122          }
+They're not bugs, it just means that there are some __iomem annotations
+missing and some functions should be made static or declared in a .h
+file or whatever.
 
-Will fix.
+Something like this:
 
->
->         drivers/mailbox/pcc.c:220 pcc_send_data()
->         warn: impossible condition '(ss_idx < 0) => (0-65535 < 0)'
->
->    215          u16 cmd = *(u16 *) data;
->    216          u16 ss_idx = -1;
->                 ^^^^^^^^^^^^^^^^
->
-> Make this an int.  Remove the bogus initializer.
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index 6dbf6fc..ccf0b18 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -171,8 +171,8 @@ EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
+ static bool pcc_tx_done(struct mbox_chan *chan)
+ {
+ 	struct acpi_pcct_hw_reduced *pcct_ss = chan->con_priv;
+-	struct acpi_pcct_shared_memory *generic_comm_base -		(struct acpi_pcct_shared_memory *) pcct_ss->base_address;
++	struct acpi_pcct_shared_memory __iomem *generic_comm_base +		(struct acpi_pcct_shared_memory __iomem *) pcct_ss->base_address;
+ 	u16 cmd_delay = pcct_ss->latency;
+ 	unsigned int retries = 0;
+ 
+@@ -206,8 +206,8 @@ static bool pcc_tx_done(struct mbox_chan *chan)
+ static int pcc_send_data(struct mbox_chan *chan, void *data)
+ {
+ 	struct acpi_pcct_hw_reduced *pcct_ss = chan->con_priv;
+-	struct acpi_pcct_shared_memory *generic_comm_base -		(struct acpi_pcct_shared_memory *) pcct_ss->base_address;
++	struct acpi_pcct_shared_memory __iomem *generic_comm_base +		(struct acpi_pcct_shared_memory __iomem *) pcct_ss->base_address;
+ 	struct acpi_generic_address doorbell;
+ 	u64 doorbell_preserve;
+ 	u64 doorbell_val;
 
-Sure.
 
->
->    217
->    218          ss_idx = get_subspace_id(chan);
->    219
->
-> Don't put a blank line between the function calls and the error
-> handling, they are part of the same paragraph.
-
-Ok.
->
->    220          if (ss_idx < 0) {
->    221                  pr_err("Invalid Subspace ID from PCC client\n");
->    222                  return -EINVAL;
->    223          }
->    224
->
-> Also this file has some Sparse warnings:
-
-I've looked at these previously too and I believe they're false
-positives.  Will send a follow up patch at the earliest.
-
->
-> drivers/mailbox/pcc.c:103:18: warning: symbol 'pcc_mbox_request_channel' was not declared. Should it be static?
-> drivers/mailbox/pcc.c:146:6: warning: symbol 'pcc_mbox_free_channel' was not declared. Should it be static?
-> drivers/mailbox/pcc.c:180:18: warning: incorrect type in argument 1 (different address spaces)
-> drivers/mailbox/pcc.c:180:18:    expected void const volatile [noderef] <asn:2>*addr
-> drivers/mailbox/pcc.c:180:18:    got unsigned short *<noident>
-> drivers/mailbox/pcc.c:230:22: warning: incorrect type in argument 2 (different address spaces)
-> drivers/mailbox/pcc.c:230:22:    expected void volatile [noderef] <asn:2>*addr
-> drivers/mailbox/pcc.c:230:22:    got unsigned short *<noident>
-> drivers/mailbox/pcc.c:233:47: warning: incorrect type in argument 2 (different address spaces)
-> drivers/mailbox/pcc.c:233:47:    expected void volatile [noderef] <asn:2>*addr
-> drivers/mailbox/pcc.c:233:47:    got unsigned int *<noident>
-> drivers/mailbox/pcc.c:236:20: warning: incorrect type in argument 2 (different address spaces)
-> drivers/mailbox/pcc.c:236:20:    expected void volatile [noderef] <asn:2>*addr
-> drivers/mailbox/pcc.c:236:20:    got unsigned short *<noident>
-> drivers/mailbox/pcc.c:369:24: warning: symbol 'pcc_mbox_driver' was not declared. Should it be static?
->
-
-Thanks,
-Ashwin
