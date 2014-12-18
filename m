@@ -1,49 +1,37 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Dec 2014 06:17:53 +0000
+Date: Thu, 18 Dec 2014 17:23:08 +0000
 Subject: Re: [PATCH v2 0/6] net-PPP: Deletion of a few unnecessary checks
-Message-Id: <548BDA11.1030707@users.sourceforge.net>
+Message-Id: <54930D7C.3000901@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <548B1E44.6050005@users.sourceforge.net>	<20141212.115922.687789059853236747.davem@davemloft.net>	<548B2468.5050402@users.sourceforge.net> <20141212.150741.2169710971698369167.davem@davemloft.net>
-In-Reply-To: <20141212.150741.2169710971698369167.davem@davemloft.net>
+References: <548B0A29.8050503@users.sourceforge.net>	<20141212.105106.1162681032492664308.davem@davemloft.net>	<548B1E44.6050005@users.sourceforge.net> <20141212.115922.687789059853236747.davem@davemloft.net>
+In-Reply-To: <20141212.115922.687789059853236747.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: David Miller <davem@davemloft.net>
 Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-> I'd like to honestly ask why you are being so difficult?
+>> Where should "the error pointers" be stored instead?
+> 
+> A local variable, before you assign it into the datastructure.
 
-There are several factors which contribute to your perception of
-difficulty here.
+I have looked at the affected software infrastructure once more.
+Now I find still that your data reorgansisation wish can not be resolved
+in a simple way.
 
-1. I try to extract from every feedback the information about the amount
-of acceptance or rejection for a specific update suggestion.
-   A terse feedback (like yours for this issue) makes it occasionally
-harder to see the next useful steps. So another constructive discussion
-is evolving around the clarification of some implementation details.
+I imagine that your update suggestion would mean that the corresponding
+pointers will be passed around by function parameters instead,
+wouldn't it?
 
-2. I prefer also different communication styles at some points.
+Two pointers were stored as the members "arc4" and "sha1" of the
+data structure "ppp_mppe_state" for a specific reason. A pointer to
+this structure is passed to the ppp_register_compressor() function.
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/include/linux/ppp-comp.h?id`7ca46e97a1b6594b29647d98a32d545c24bdff#n32
 
-3. I reached a point where the desired software updates were not
-immediately obvious for me while other contributors might have achieved
-a better understanding for the affected issues already.
+The data structure "compressor" manages some function pointers.
+I assume that this interface should not be changed at the moment, should it?
 
-4. I am on the way at the moment to get my Linux software development
-system running again.
-  
-https://forums.opensuse.org/showthread.php/503327-System-startup-does-not-continue-after-hard-disk-detection
-
-
-> Everyone gets their code reviewed, everyone has to modify their
-> changes to adhere to the subsystem maintainer's wishes.
-
-That is fine as usual.
-
-
-> You are not being treated specially, and quite frankly nobody
-> is asking anything unreasonable of you.
-
-That is also true as the software development process will be continued.
+Are further ideas needed here?
 
 Regards,
 Markus
