@@ -1,43 +1,113 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Dec 2014 18:24:46 +0000
-Subject: [PATCH 1/1] block-rsxx: Deletion of an unnecessary check before the function call "vfree"
-Message-Id: <547CB26E.6060500@users.sourceforge.net>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 19 Dec 2014 12:38:58 +0000
+Subject: [PATCH v2 1/3] [SCSI] mpt2sas: Merge two similar functions
+Message-Id: <20141219123858.GA20271@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joshua Morris <josh.h.morris@us.ibm.com>, Philip Kelleher <pjk1939@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: joe@perches.com
+Cc: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Dec 2014 19:19:25 +0100
+mpt2sas_scsih_set_tm_flag and mpt2sas_scsih_clear_tm_flag
+shared a lot of code. Therefore, they are merged into one
+function whose behaviour is given by a new parameter
+named action.
 
-The vfree() function performs also input parameter validation.
-Thus the test around the call is not needed.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 ---
- drivers/block/rsxx/dma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/mpt2sas/mpt2sas_scsih.c | 43 +++++++-----------------------------
+ 1 file changed, 8 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/block/rsxx/dma.c b/drivers/block/rsxx/dma.c
-index cf8cd29..0181387 100644
---- a/drivers/block/rsxx/dma.c
-+++ b/drivers/block/rsxx/dma.c
-@@ -960,8 +960,7 @@ failed_dma_setup:
- 			ctrl->done_wq = NULL;
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+index 6a1c036..a6f89fd 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+@@ -2253,14 +2253,15 @@ _scsih_tm_done(struct MPT2SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
+ }
+ 
+ /**
+- * mpt2sas_scsih_set_tm_flag - set per target tm_busy
++ * mpt2sas_scsih_tm_flag - set/clear per target tm_busy
+  * @ioc: per adapter object
+  * @handle: device handle
++ * @action: 1 set per target tm_busy, 0 clear per target tm_busy
+  *
+  * During taskmangement request, we need to freeze the device queue.
+  */
+ void
+-mpt2sas_scsih_set_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle)
++mpt2sas_scsih_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle, u8 action)
+ {
+ 	struct MPT2SAS_DEVICE *sas_device_priv_data;
+ 	struct scsi_device *sdev;
+@@ -2273,37 +2274,9 @@ mpt2sas_scsih_set_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle)
+ 		if (!sas_device_priv_data)
+ 			continue;
+ 		if (sas_device_priv_data->sas_target->handle = handle) {
+-			sas_device_priv_data->sas_target->tm_busy = 1;
++			sas_device_priv_data->sas_target->tm_busy = action;
+ 			skip = 1;
+-			ioc->ignore_loginfos = 1;
+-		}
+-	}
+-}
+-
+-/**
+- * mpt2sas_scsih_clear_tm_flag - clear per target tm_busy
+- * @ioc: per adapter object
+- * @handle: device handle
+- *
+- * During taskmangement request, we need to freeze the device queue.
+- */
+-void
+-mpt2sas_scsih_clear_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle)
+-{
+-	struct MPT2SAS_DEVICE *sas_device_priv_data;
+-	struct scsi_device *sdev;
+-	u8 skip = 0;
+-
+-	shost_for_each_device(sdev, ioc->shost) {
+-		if (skip)
+-			continue;
+-		sas_device_priv_data = sdev->hostdata;
+-		if (!sas_device_priv_data)
+-			continue;
+-		if (sas_device_priv_data->sas_target->handle = handle) {
+-			sas_device_priv_data->sas_target->tm_busy = 0;
+-			skip = 1;
+-			ioc->ignore_loginfos = 0;
++			ioc->ignore_loginfos = action;
  		}
+ 	}
+ }
+@@ -2401,7 +2374,7 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
+ 	mpi_request->TaskType = type;
+ 	mpi_request->TaskMID = cpu_to_le16(smid_task);
+ 	int_to_scsilun(lun, (struct scsi_lun *)mpi_request->LUN);
+-	mpt2sas_scsih_set_tm_flag(ioc, handle);
++	mpt2sas_scsih_tm_flag(ioc, handle, 1);
+ 	init_completion(&ioc->tm_cmds.done);
+ 	mpt2sas_base_put_smid_hi_priority(ioc, smid);
+ 	timeleft = wait_for_completion_timeout(&ioc->tm_cmds.done, timeout*HZ);
+@@ -2415,7 +2388,7 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
+ 			    FORCE_BIG_HAMMER);
+ 			rc = (!rc) ? SUCCESS : FAILED;
+ 			ioc->tm_cmds.status = MPT2_CMD_NOT_USED;
+-			mpt2sas_scsih_clear_tm_flag(ioc, handle);
++			mpt2sas_scsih_tm_flag(ioc, handle, 0);
+ 			goto err_out;
+ 		}
+ 	}
+@@ -2465,7 +2438,7 @@ mpt2sas_scsih_issue_tm(struct MPT2SAS_ADAPTER *ioc, u16 handle, uint channel,
+ 		break;
+ 	}
  
--		if (ctrl->trackers)
--			vfree(ctrl->trackers);
-+		vfree(ctrl->trackers);
- 
- 		if (ctrl->status.buf)
- 			pci_free_consistent(card->dev, STATUS_BUFFER_SIZE8,
+-	mpt2sas_scsih_clear_tm_flag(ioc, handle);
++	mpt2sas_scsih_tm_flag(ioc, handle, 0);
+ 	ioc->tm_cmds.status = MPT2_CMD_NOT_USED;
+ 	if (m_type = TM_MUTEX_ON)
+ 		mutex_unlock(&ioc->tm_cmds.mutex);
 -- 
-2.1.3
+1.9.1
 
