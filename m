@@ -1,63 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 29 Dec 2014 17:04:37 +0000
-Subject: [PATCH 2/8] myri10ge: fix error return code
-Message-Id: <1419872683-32709-3-git-send-email-Julia.Lawall@lip6.fr>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 19 Dec 2014 12:40:21 +0000
+Subject: [PATCH v2 2/3] [SCSI] mpt2sas: Simplify the code of mpt2sas_scsih_tm_flag
+Message-Id: <20141219124021.GA20285@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Hyong-Youb Kim <hykim@myri.com>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: joe@perches.com
+Cc: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Return a negative error code on failure.
+Since skip was only used to pass through the rest of the loop,
+a break statment is called where skip was previously assigned 1.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-The patch also modifies the test of mgp->cmd to satisfy checkpatch.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 ---
- drivers/net/ethernet/myricom/myri10ge/myri10ge.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/mpt2sas/mpt2sas_scsih.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-index af09905..71af98b 100644
---- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-+++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-@@ -4033,8 +4033,10 @@ static int myri10ge_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	(void)pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
- 	mgp->cmd = dma_alloc_coherent(&pdev->dev, sizeof(*mgp->cmd),
- 				      &mgp->cmd_bus, GFP_KERNEL);
--	if (mgp->cmd = NULL)
-+	if (!mgp->cmd) {
-+		status = -ENOMEM;
- 		goto abort_with_enabled;
-+	}
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+index a6f89fd..6162a89 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+@@ -2265,18 +2265,15 @@ mpt2sas_scsih_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle, u8 action)
+ {
+ 	struct MPT2SAS_DEVICE *sas_device_priv_data;
+ 	struct scsi_device *sdev;
+-	u8 skip = 0;
  
- 	mgp->board_span = pci_resource_len(pdev, 0);
- 	mgp->iomem_base = pci_resource_start(pdev, 0);
+ 	shost_for_each_device(sdev, ioc->shost) {
+-		if (skip)
+-			continue;
+ 		sas_device_priv_data = sdev->hostdata;
+ 		if (!sas_device_priv_data)
+ 			continue;
+ 		if (sas_device_priv_data->sas_target->handle = handle) {
+ 			sas_device_priv_data->sas_target->tm_busy = action;
+-			skip = 1;
+ 			ioc->ignore_loginfos = action;
++			break;
+ 		}
+ 	}
+ }
+-- 
+1.9.1
 
