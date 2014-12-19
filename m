@@ -1,52 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:49 +0000
-Subject: [PATCH 17/27] iwl3945: Use setup_timer
-Message-Id: <1419604558-29743-19-git-send-email-Julia.Lawall@lip6.fr>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 19 Dec 2014 13:00:25 +0000
+Subject: [PATCH v2 0/1] int to bool conversion
+Message-Id: <20141219130025.GA20426@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stanislaw Gruszka <sgruszka@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+The second version of this patch did not treat the cases where the use
+of boolean variable was unnecessary. These cases are now treated in
+a patchset that was already submitted.
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+It also left out the cases treated by one Dan Carpenter's patch currently
+being reviewed:
+http://www.spinics.net/lists/linux-kernel-janitors/msg20627.html
 
-// <smpl>
-@@
-expression t,f,d;
-@@
+Quentin Lambert (1):
+  [SCSI] mpt2sas: Convert non-returned local variable to boolean when
+    relevant
 
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.data = d;
--t.function = f;
-// </smpl>
+ drivers/scsi/mpt2sas/mpt2sas_base.c      | 12 ++++++------
+ drivers/scsi/mpt2sas/mpt2sas_config.c    |  5 +++--
+ drivers/scsi/mpt2sas/mpt2sas_ctl.c       | 22 ++++++++++------------
+ drivers/scsi/mpt2sas/mpt2sas_scsih.c     |  8 ++++----
+ drivers/scsi/mpt2sas/mpt2sas_transport.c | 27 ++++++++++++++-------------
+ 5 files changed, 37 insertions(+), 37 deletions(-)
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/wireless/iwlegacy/3945-mac.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/iwlegacy/3945-mac.c b/drivers/net/wireless/iwlegacy/3945-mac.c
-index dc1d20c..e566580 100644
---- a/drivers/net/wireless/iwlegacy/3945-mac.c
-+++ b/drivers/net/wireless/iwlegacy/3945-mac.c
-@@ -3429,9 +3429,7 @@ il3945_setup_deferred_work(struct il_priv *il)
- 
- 	il3945_hw_setup_deferred_work(il);
- 
--	init_timer(&il->watchdog);
--	il->watchdog.data = (unsigned long)il;
--	il->watchdog.function = il_bg_watchdog;
-+	setup_timer(&il->watchdog, il_bg_watchdog, (unsigned long)il);
- 
- 	tasklet_init(&il->irq_tasklet,
- 		     (void (*)(unsigned long))il3945_irq_tasklet,
+-- 
+1.9.1
 
