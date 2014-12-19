@@ -1,33 +1,37 @@
 From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 19 Dec 2014 11:10:08 +0000
-Subject: [PATCH 0/3]  Minor clean up in mpt2sas
-Message-Id: <20141219111008.GA17968@sloth>
+Date: Fri, 19 Dec 2014 12:41:10 +0000
+Subject: [PATCH v2 3/3] [SCSI] mpt2sas: Remove unnecessary use of a boolean variable
+Message-Id: <20141219124110.GA20299@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: joe@perches.com
+Cc: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The first patch merges two similar functions. Since the resulting
-function is only called three times, it adds a parameter to differenciate
-between the two behaviours.
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+---
+ drivers/scsi/mpt2sas/mpt2sas_base.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-The second patch proposes a simplification of the function code. The function
-previously used a variable to skip through the rest of the loop. It now
-uses a break statement to exit it.
-
-The third patch simplifies an unnecesary complicated use of a boolean variable.
-
-Quentin Lambert (3):
-  [SCSI] mpt2sas: Merge two similar functions
-  [SCSI] mpt2sas: Simplify the code of mpt2sas_scsih_tm_flag
-  [SCSI] mpt2sas: Remove unnecessary use of a boolean variable
-
- drivers/scsi/mpt2sas/mpt2sas_base.c  |  6 +----
- drivers/scsi/mpt2sas/mpt2sas_scsih.c | 48 +++++++-----------------------------
- 2 files changed, 10 insertions(+), 44 deletions(-)
-
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c b/drivers/scsi/mpt2sas/mpt2sas_base.c
+index 58e4521..6cc0591 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_base.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_base.c
+@@ -1414,12 +1414,8 @@ _base_enable_msix(struct MPT2SAS_ADAPTER *ioc)
+ 	struct msix_entry *entries, *a;
+ 	int r;
+ 	int i;
+-	u8 try_msix = 0;
+ 
+-	if (msix_disable = -1 || msix_disable = 0)
+-		try_msix = 1;
+-
+-	if (!try_msix)
++	if (msix_disable != -1 && msix_disable != 0)
+ 		goto try_ioapic;
+ 
+ 	if (_base_check_enable_msix(ioc) != 0)
 -- 
 1.9.1
 
