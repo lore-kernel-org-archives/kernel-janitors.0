@@ -1,57 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 29 Dec 2014 17:04:41 +0000
-Subject: [PATCH 6/8] adm8211: fix error return code
-Message-Id: <1419872683-32709-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Quentin Lambert <lambert.quentin@gmail.com>
+Date: Fri, 19 Dec 2014 11:13:00 +0000
+Subject: [PATCH 2/3] [SCSI] mpt2sas: Simplify the code of mpt2sas_scsih_tm_flag
+Message-Id: <20141219111300.GA19924@sloth>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>
+Cc: MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Return a negative error code on failure.
+Since skip was only used to pass through the rest of the loop,
+a break statment is called where skip was previously assigned 1.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
 ---
- drivers/net/wireless/adm8211.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/mpt2sas/mpt2sas_scsih.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/adm8211.c b/drivers/net/wireless/adm8211.c
-index 17fcaab..f07a618 100644
---- a/drivers/net/wireless/adm8211.c
-+++ b/drivers/net/wireless/adm8211.c
-@@ -1837,6 +1837,7 @@ static int adm8211_probe(struct pci_dev *pdev,
- 	if (!priv->map) {
- 		printk(KERN_ERR "%s (adm8211): Cannot map device memory\n",
- 		       pci_name(pdev));
-+		err = -ENOMEM;
- 		goto err_free_dev;
- 	}
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+index a6f89fd..6162a89 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+@@ -2265,18 +2265,15 @@ mpt2sas_scsih_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle, u8 action)
+ {
+ 	struct MPT2SAS_DEVICE *sas_device_priv_data;
+ 	struct scsi_device *sdev;
+-	u8 skip = 0;
  
+ 	shost_for_each_device(sdev, ioc->shost) {
+-		if (skip)
+-			continue;
+ 		sas_device_priv_data = sdev->hostdata;
+ 		if (!sas_device_priv_data)
+ 			continue;
+ 		if (sas_device_priv_data->sas_target->handle = handle) {
+ 			sas_device_priv_data->sas_target->tm_busy = action;
+-			skip = 1;
+ 			ioc->ignore_loginfos = action;
++			break;
+ 		}
+ 	}
+ }
+-- 
+1.9.1
 
