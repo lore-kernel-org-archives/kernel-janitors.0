@@ -1,73 +1,75 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Dec 2014 20:41:50 +0000
-Subject: [PATCH 2/8] fs/9p: One function call less in v9fs_create() after error detection
-Message-Id: <54A06B0E.4080709@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Dec 2014 07:52:39 +0000
+Subject: [patch] Staging: lustre: error handling tweaks in obd_ioctl_getdata()
+Message-Id: <20141222075239.GC9737@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54A01326.3050306@users.sourceforge.net>
-In-Reply-To: <54A01326.3050306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, v9fs-developer@lists.sourceforge.net
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Dec 2014 08:28:51 +0100
+1)  The places which called copy_from_user() were returning the number
+of bytes not copied instead of -EFAULT.
 
-The p9_client_clunk() function was called in two cases by the v9fs_create()
-function during error handling even if the passed variable "fid"
-contained a null pointer. This implementation detail could be improved
-by the introduction of another jump label.
+2) The user could trigger a memory leak if the condition
+"(hdr.ioc_len != data->ioc_len)" was true.  Instead of adding a new call
+to OBD_FREE_LARGE(), I created a free_buf label and changed everything
+to use that label.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/9p/vfs_inode.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index a787d4c..81b945a 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -672,7 +672,7 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
- 	err = p9_client_fcreate(ofid, name, perm, mode, extension);
- 	if (err < 0) {
- 		p9_debug(P9_DEBUG_VFS, "p9_client_fcreate failed %d\n", err);
--		goto error;
-+		goto ofid_clunk;
+diff --git a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+index 66ceab2..346b75a 100644
+--- a/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
++++ b/drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+@@ -83,9 +83,8 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
+ 	int err;
+ 	int offset = 0;
+ 
+-	err = copy_from_user(&hdr, (void *)arg, sizeof(hdr));
+-	if (err)
+-		return err;
++	if (copy_from_user(&hdr, (void *)arg, sizeof(hdr)))
++		return -EFAULT;
+ 
+ 	if (hdr.ioc_version != OBD_IOCTL_VERSION) {
+ 		CERROR("Version mismatch kernel (%x) vs application (%x)\n",
+@@ -117,18 +116,19 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
+ 	*len = hdr.ioc_len;
+ 	data = (struct obd_ioctl_data *)*buf;
+ 
+-	err = copy_from_user(*buf, (void *)arg, hdr.ioc_len);
+-	if (err) {
+-		OBD_FREE_LARGE(*buf, hdr.ioc_len);
+-		return err;
++	if (copy_from_user(*buf, (void *)arg, hdr.ioc_len)) {
++		err = -EFAULT;
++		goto free_buf;
++	}
++	if (hdr.ioc_len != data->ioc_len) {
++		err = -EINVAL;
++		goto free_buf;
+ 	}
+-	if (hdr.ioc_len != data->ioc_len)
+-		return -EINVAL;
+ 
+ 	if (obd_ioctl_is_invalid(data)) {
+ 		CERROR("ioctl not correctly formatted\n");
+-		OBD_FREE_LARGE(*buf, hdr.ioc_len);
+-		return -EINVAL;
++		err = -EINVAL;
++		goto free_buf;
  	}
  
- 	if (!(perm & P9_DMLINK)) {
-@@ -682,8 +682,7 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
- 			err = PTR_ERR(fid);
- 			p9_debug(P9_DEBUG_VFS,
- 				   "p9_client_walk failed %d\n", err);
--			fid = NULL;
--			goto error;
-+			goto ofid_clunk;
- 		}
- 		/*
- 		 * instantiate inode and assign the unopened fid to the dentry
-@@ -693,16 +692,17 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
- 			err = PTR_ERR(inode);
- 			p9_debug(P9_DEBUG_VFS,
- 				   "inode creation failed %d\n", err);
--			goto error;
-+			goto fid_clunk;
- 		}
- 		v9fs_fid_add(dentry, fid);
- 		d_instantiate(dentry, inode);
+ 	if (data->ioc_inllen1) {
+@@ -151,6 +151,10 @@ int obd_ioctl_getdata(char **buf, int *len, void *arg)
  	}
- 	return ofid;
--error:
--	p9_client_clunk(ofid);
  
-+fid_clunk:
- 	p9_client_clunk(fid);
-+ofid_clunk:
-+	p9_client_clunk(ofid);
- 
- 	return ERR_PTR(err);
+ 	return 0;
++
++free_buf:
++	OBD_FREE_LARGE(*buf, hdr.ioc_len);
++	return err;
  }
--- 
-2.2.1
-
+ EXPORT_SYMBOL(obd_ioctl_getdata);
+ 
