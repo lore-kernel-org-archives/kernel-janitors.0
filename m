@@ -1,53 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 03 Dec 2014 18:29:18 +0000
-Subject: Re: [PATCH 1/1] ASoC: fsi: Deletion of unnecessary checks before the function call "clk_disable"
-Message-Id: <20141203182918.GH7712@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="4A79KfPqnT9qCbac"
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Dec 2014 07:49:46 +0000
+Subject: [patch] ALSA: asihpi: fix an information leak in asihpi_hpi_ioctl()
+Message-Id: <20141222074946.GA9737@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <547DC19B.5080302@users.sourceforge.net>
-In-Reply-To: <547DC19B.5080302@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Eliot Blennerhassett <eliot@blennerhassett.gen.nz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
+So far as I can see "hr->h.size" is set to "res_max_size" which is a
+user controlled value between 12 and USHRT_MAX.  If it's larger than
+sizeof(*hr), then that leads to an information leak.
 
---4A79KfPqnT9qCbac
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am not very familiar with this code, my other question here is that
+on lines before we set "hr->h.size = sizeof(hr->h)".  It think this is
+a bug.  I also think this particular code is never executed and I added
+a comment to that effect.  But we do it in earlier in the function as
+well:
 
-On Tue, Dec 02, 2014 at 02:41:47PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 2 Dec 2014 14:34:30 +0100
->=20
-> The clk_disable() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
+	copy_to_user(puhr, hr, sizeof(hr->h));
 
-Applied, thanks.
+It doesn't make sense to me.
 
---4A79KfPqnT9qCbac
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Anyway, I think my patch is safe and it seems to fix a real information
+leak.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-iQEcBAEBAgAGBQJUf1Z9AAoJECTWi3JdVIfQuJwH/ikDBQtMU7vue/j0KBYF+E5D
-ETRJtPZTvAqYxBT2qAQ21xW/gtrP+HKNrkHIVm8+z/cWIl8+u1Tc1cHP+M/5FxPf
-ezb0c1Eu/W7GgY/86+n8o/p/DzkMadUKCwmj3aD2/WyPZMHEtNnRQqahixaC8LJB
-45+0ETFvnmseetn2kn4qcZiDTwrrndaF+ILKmflhktRKs7YMSz30nPV0bJu7Navo
-+bIRQhwJHMBkvrtOxQNYbGV+Ag+OSGni7TbkLbsqp8xkA1FownW3mcxMKjdDm0M4
-YRaIyM9nRUYPF2O8t9o4MHxFTWXNYOJeqVnY2MUZf2h+3Ni/MQcAslLyxJOVQhM=
-=oX5d
------END PGP SIGNATURE-----
-
---4A79KfPqnT9qCbac--
+diff --git a/sound/pci/asihpi/hpioctl.c b/sound/pci/asihpi/hpioctl.c
+index 6aa677e..f88109a 100644
+--- a/sound/pci/asihpi/hpioctl.c
++++ b/sound/pci/asihpi/hpioctl.c
+@@ -283,6 +283,7 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		goto out;
+ 	}
+ 
++	/* FIXME:  isn't this a no-op? */
+ 	if (hr->h.size > res_max_size) {
+ 		HPI_DEBUG_LOG(ERROR, "response too big %d %d\n", hr->h.size,
+ 			res_max_size);
+@@ -290,6 +291,9 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		hr->h.specific_error = hr->h.size;
+ 		hr->h.size = sizeof(hr->h);
+ 	}
++	/* prevent an information leak */
++	if (hr->h.size > sizeof(*hr))
++		hr->h.size = sizeof(*hr);
+ 
+ 	uncopied_bytes = copy_to_user(puhr, hr, hr->h.size);
+ 	if (uncopied_bytes) {
