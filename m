@@ -1,60 +1,30 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 29 Dec 2014 17:04:40 +0000
-Subject: [PATCH 5/8] net: sun4i-emac: fix error return code
-Message-Id: <1419872683-32709-6-git-send-email-Julia.Lawall@lip6.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 22 Dec 2014 07:51:52 +0000
+Subject: [patch] scsi: gdth: fix bad integer overflow check
+Message-Id: <20141222075152.GB9737@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Achim Leubner <achim_leubner@adaptec.com>
+Cc: "James E.J. Bottomley" <JBottomley@parallels.com>, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Return a negative error code on failure.
+The integer overflow check was written incorrectly so it doesn't work.
+Whoever wrote this clearly didn't know what they were doing.  (I suck).
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Fixes: f63ae56e4e97 ('[SCSI] gdth: integer overflow in ioctl')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/ethernet/allwinner/sun4i-emac.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/allwinner/sun4i-emac.c b/drivers/net/ethernet/allwinner/sun4i-emac.c
-index 1fcd556..cfdf7de 100644
---- a/drivers/net/ethernet/allwinner/sun4i-emac.c
-+++ b/drivers/net/ethernet/allwinner/sun4i-emac.c
-@@ -850,8 +850,10 @@ static int emac_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
+index 71e1380..0539147 100644
+--- a/drivers/scsi/gdth.c
++++ b/drivers/scsi/gdth.c
+@@ -4175,7 +4175,7 @@ static int ioc_general(void __user *arg, char *cmnd)
+         return -EINVAL;
+     if (gen.sense_len > INT_MAX)
+         return -EINVAL;
+-    if (gen.data_len + gen.sense_len > INT_MAX)
++    if (gen.data_len > INT_MAX - gen.sense_len)
+         return -EINVAL;
  
- 	db->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(db->clk))
-+	if (IS_ERR(db->clk)) {
-+		ret = PTR_ERR(db->clk);
- 		goto out;
-+	}
- 
- 	clk_prepare_enable(db->clk);
- 
-
+     if (gen.data_len + gen.sense_len != 0) {
