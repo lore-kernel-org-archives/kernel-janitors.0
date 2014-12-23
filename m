@@ -1,76 +1,107 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Dec 2014 22:13:24 +0000
-Subject: [PATCH v2 2/6] net-PPP: Fix indentation
-Message-Id: <5480DC84.1020601@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Tue, 23 Dec 2014 10:05:13 +0000
+Subject: [patch] mptfusion: buffer overflow in mptctl_do_mpt_command()
+Message-Id: <20141223100513.GB21469@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net> <547B496E.604@users.sourceforge.net> <547C5CBC.6060607@cogentembedded.com> <547C82A6.2030808@users.sourceforge.net> <547CA157.1080401@cogentembedded.com> <5480DA32.8000201@users.sourceforge.net>
-In-Reply-To: <5480DA32.8000201@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
+Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Dec 2014 22:15:20 +0100
+The main problem is that this copy can overflow:
 
-The implementations of the functions "mppe_alloc" and "mppe_free" contained
-unwanted space characters.
+	if (copy_from_user(mf, mfPtr, karg.dataSgeOffset * 4)) {
 
-Let us improve the indentation according to the Linux coding style convention.
+We try to prevent an overflow by checking "if (sz > ioc->req_sz) {" but
+the problem is that "sz" is signed so the test can underflow or their
+could be an integer overflow.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+A second problem was this check which could underflow if "maxSenseBytes"
+was negative.
+
+	if (karg.maxSenseBytes > MPT_SENSE_BUFFER_SIZE)
+
+I made the variables unsigned to prevent underflow and I added a new
+test to prevent integer overflows.  I had to update a call to printk()
+and change some min() usages to min_t() as part of the fallout from the
+type changes.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/net/ppp/ppp_mppe.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+Static checker stuff, and not tested but I think it is safe.
 
-diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
-index 84b7bce..b80af29 100644
---- a/drivers/net/ppp/ppp_mppe.c
-+++ b/drivers/net/ppp/ppp_mppe.c
-@@ -236,15 +236,15 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+diff --git a/drivers/message/fusion/mptctl.h b/drivers/message/fusion/mptctl.h
+index d564cc9..117fe89 100644
+--- a/drivers/message/fusion/mptctl.h
++++ b/drivers/message/fusion/mptctl.h
+@@ -324,11 +324,11 @@ struct mpt_ioctl_command {
+ 	char		__user *dataInBufPtr;
+ 	char		__user *dataOutBufPtr;
+ 	char		__user *senseDataPtr;
+-	int		maxReplyBytes;
+-	int		dataInSize;
+-	int		dataOutSize;
+-	int		maxSenseBytes;
+-	int		dataSgeOffset;
++	unsigned int	maxReplyBytes;
++	unsigned int	dataInSize;
++	unsigned int	dataOutSize;
++	unsigned int	maxSenseBytes;
++	unsigned int	dataSgeOffset;
+ 	char		MF[1];
+ };
  
- 	return (void *)state;
+diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
+index 70bb753..5646830 100644
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -1829,7 +1829,8 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
+ 	dma_addr_t	dma_addr_out;
+ 	int		sgSize = 0;	/* Num SG elements */
+ 	int		iocnum, flagsLength;
+-	int		sz, rc = 0;
++	size_t		sz;
++	int		rc = 0;
+ 	int		msgContext;
+ 	u16		req_idx;
+ 	ulong 		timeout;
+@@ -1861,6 +1862,9 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
  
--	out_free:
--	    if (state->sha1_digest)
-+out_free:
-+	if (state->sha1_digest)
- 		kfree(state->sha1_digest);
--	    if (state->sha1)
-+	if (state->sha1)
- 		crypto_free_hash(state->sha1);
--	    if (state->arc4)
-+	if (state->arc4)
- 		crypto_free_blkcipher(state->arc4);
--	    kfree(state);
--	out:
-+	kfree(state);
-+out:
- 	return NULL;
- }
+ 	/* Verify that the final request frame will not be too large.
+ 	 */
++	if (karg.dataSgeOffset > ioc->req_sz)
++		return -EFAULT;
++
+ 	sz = karg.dataSgeOffset * 4;
+ 	if (karg.dataInSize > 0)
+ 		sz += ioc->SGE_size;
+@@ -1869,7 +1873,7 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
  
-@@ -255,13 +255,13 @@ static void mppe_free(void *arg)
- {
- 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
- 	if (state) {
--	    if (state->sha1_digest)
--		kfree(state->sha1_digest);
--	    if (state->sha1)
--		crypto_free_hash(state->sha1);
--	    if (state->arc4)
--		crypto_free_blkcipher(state->arc4);
--	    kfree(state);
-+		if (state->sha1_digest)
-+			kfree(state->sha1_digest);
-+		if (state->sha1)
-+			crypto_free_hash(state->sha1);
-+		if (state->arc4)
-+			crypto_free_blkcipher(state->arc4);
-+		kfree(state);
+ 	if (sz > ioc->req_sz) {
+ 		printk(MYIOC_s_ERR_FMT "%s@%d::mptctl_do_mpt_command - "
+-			"Request frame too large (%d) maximum (%d)\n",
++			"Request frame too large (%ld) maximum (%d)\n",
+ 			ioc->name, __FILE__, __LINE__, sz, ioc->req_sz);
+ 		return -EFAULT;
  	}
- }
- 
--- 
-2.1.3
-
+@@ -2316,8 +2320,8 @@ retry_wait:
+ 	 */
+ 	if (ioc->ioctl_cmds.status & MPT_MGMT_STATUS_RF_VALID) {
+ 		if (karg.maxReplyBytes < ioc->reply_sz) {
+-			sz = min(karg.maxReplyBytes,
+-				4*ioc->ioctl_cmds.reply[2]);
++			sz = min_t(size_t, karg.maxReplyBytes,
++				   4*ioc->ioctl_cmds.reply[2]);
+ 		} else {
+ 			 sz = min(ioc->reply_sz, 4*ioc->ioctl_cmds.reply[2]);
+ 		}
+@@ -2337,7 +2341,7 @@ retry_wait:
+ 	/* If valid sense data, copy to user.
+ 	 */
+ 	if (ioc->ioctl_cmds.status & MPT_MGMT_STATUS_SENSE_VALID) {
+-		sz = min(karg.maxSenseBytes, MPT_SENSE_BUFFER_SIZE);
++		sz = min_t(size_t, karg.maxSenseBytes, MPT_SENSE_BUFFER_SIZE);
+ 		if (sz > 0) {
+ 			if (copy_to_user(karg.senseDataPtr,
+ 				ioc->ioctl_cmds.sense, sz)) {
