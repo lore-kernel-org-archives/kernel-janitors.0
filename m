@@ -1,44 +1,58 @@
-From: Julia Lawall <julia.lawall@lip6.fr>
-Date: Sun, 07 Dec 2014 20:59:56 +0000
-Subject: [PATCH 10/20 v2] uli526x: fix misspelling of current function in string
-Message-Id: <alpine.DEB.2.02.1412072158040.2235@localhost6.localdomain6>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:48 +0000
+Subject: [PATCH 18/27] iwl4965: Use setup_timer
+Message-Id: <1419604558-29743-18-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr> <1417980062-25151-11-git-send-email-Julia.Lawall@lip6.fr> <CAP6odjh4Gnc0uAcPTsUMFPTRj7=NYZvMgmL=Rre_kCNah+YcNg@mail.gmail.com>
-In-Reply-To: <CAP6odjh4Gnc0uAcPTsUMFPTRj7=NYZvMgmL=Rre_kCNah+YcNg@mail.gmail.com>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Grant Grundler <grantgrundler@gmail.com>
-Cc: Grant Grundler <grundler@parisc-linux.org>, kernel-janitors@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>, joe@perches.com, "open list:TULIP NETWORK DRI..." <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The function is named uli526x_cleanup_module, rather than uli526x_clean_module.
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-This was done using Coccinelle, including the use of Levenshtein distance,
-as proposed by Rasmus Villemoes.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression t,f,d;
+@@
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.data = d;
+-t.function = f;
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Acked-by: Grant Grundler <grantgrundler@gmail.com>
 
 ---
-v2: fixed commit message
+ drivers/net/wireless/iwlegacy/4965-mac.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-The semantic patch is difficult to summarize, but is available in the cover
-letter of this patch series.
-
- drivers/net/ethernet/dec/tulip/uli526x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/dec/tulip/uli526x.c b/drivers/net/ethernet/dec/tulip/uli526x.c
-index 4061f9b..1c5916b 100644
---- a/drivers/net/ethernet/dec/tulip/uli526x.c
-+++ b/drivers/net/ethernet/dec/tulip/uli526x.c
-@@ -1837,7 +1837,7 @@ static int __init uli526x_init_module(void)
+diff --git a/drivers/net/wireless/iwlegacy/4965-mac.c b/drivers/net/wireless/iwlegacy/4965-mac.c
+index 2748fde..976f65f 100644
+--- a/drivers/net/wireless/iwlegacy/4965-mac.c
++++ b/drivers/net/wireless/iwlegacy/4965-mac.c
+@@ -6247,13 +6247,10 @@ il4965_setup_deferred_work(struct il_priv *il)
  
- static void __exit uli526x_cleanup_module(void)
- {
--	ULI526X_DBUG(0, "uli526x_clean_module() ", debug);
-+	ULI526X_DBUG(0, "uli526x_cleanup_module() ", debug);
- 	pci_unregister_driver(&uli526x_driver);
- }
+ 	INIT_WORK(&il->txpower_work, il4965_bg_txpower_work);
  
+-	init_timer(&il->stats_periodic);
+-	il->stats_periodic.data = (unsigned long)il;
+-	il->stats_periodic.function = il4965_bg_stats_periodic;
++	setup_timer(&il->stats_periodic, il4965_bg_stats_periodic,
++		    (unsigned long)il);
+ 
+-	init_timer(&il->watchdog);
+-	il->watchdog.data = (unsigned long)il;
+-	il->watchdog.function = il_bg_watchdog;
++	setup_timer(&il->watchdog, il_bg_watchdog, (unsigned long)il);
+ 
+ 	tasklet_init(&il->irq_tasklet,
+ 		     (void (*)(unsigned long))il4965_irq_tasklet,
 
