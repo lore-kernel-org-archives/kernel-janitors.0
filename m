@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:45 +0000
-Subject: [PATCH 14/27] leds: Use setup_timer
-Message-Id: <1419604558-29743-15-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:58 +0000
+Subject: [PATCH 25/27] mwifiex: tdls: Use setup_timer
+Message-Id: <1419604558-29743-28-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Bryan Wu <cooloney@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: kernel-janitors@vger.kernel.org, Avinash Patil <patila@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Convert a call to init_timer and accompanying intializations of
 the timer's data and function fields to a call to setup_timer.
@@ -31,23 +31,23 @@ expression t,f,d;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/leds/led-class.c |    5 ++---
+ drivers/net/wireless/mwifiex/tdls.c |    5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index dbeebac..291ca45 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -239,9 +239,8 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
+diff --git a/drivers/net/wireless/mwifiex/tdls.c b/drivers/net/wireless/mwifiex/tdls.c
+index 22884b4..5a64681 100644
+--- a/drivers/net/wireless/mwifiex/tdls.c
++++ b/drivers/net/wireless/mwifiex/tdls.c
+@@ -1367,9 +1367,8 @@ void mwifiex_check_auto_tdls(unsigned long context)
  
- 	INIT_WORK(&led_cdev->set_brightness_work, set_brightness_delayed);
- 
--	init_timer(&led_cdev->blink_timer);
--	led_cdev->blink_timer.function = led_timer_function;
--	led_cdev->blink_timer.data = (unsigned long)led_cdev;
-+	setup_timer(&led_cdev->blink_timer, led_timer_function,
-+		    (unsigned long)led_cdev);
- 
- #ifdef CONFIG_LEDS_TRIGGERS
- 	led_trigger_set_default(led_cdev);
+ void mwifiex_setup_auto_tdls_timer(struct mwifiex_private *priv)
+ {
+-	init_timer(&priv->auto_tdls_timer);
+-	priv->auto_tdls_timer.function = mwifiex_check_auto_tdls;
+-	priv->auto_tdls_timer.data = (unsigned long)priv;
++	setup_timer(&priv->auto_tdls_timer, mwifiex_check_auto_tdls,
++		    (unsigned long)priv);
+ 	priv->auto_tdls_timer_active = true;
+ 	mod_timer(&priv->auto_tdls_timer,
+ 		  jiffies + msecs_to_jiffies(MWIFIEX_TIMER_10S));
 
