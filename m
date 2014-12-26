@@ -1,37 +1,53 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 19 Dec 2014 12:41:10 +0000
-Subject: [PATCH v2 3/3] [SCSI] mpt2sas: Remove unnecessary use of a boolean variable
-Message-Id: <20141219124110.GA20299@sloth>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:56 +0000
+Subject: [PATCH 27/27] mwifiex: main: Use setup_timer
+Message-Id: <1419604558-29743-26-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: joe@perches.com
-Cc: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: kernel-janitors@vger.kernel.org, Avinash Patil <patila@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
+
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression t,f,d;
+@@
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.function = f;
+-t.data = d;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/scsi/mpt2sas/mpt2sas_base.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/net/wireless/mwifiex/main.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.c b/drivers/scsi/mpt2sas/mpt2sas_base.c
-index 58e4521..6cc0591 100644
---- a/drivers/scsi/mpt2sas/mpt2sas_base.c
-+++ b/drivers/scsi/mpt2sas/mpt2sas_base.c
-@@ -1414,12 +1414,8 @@ _base_enable_msix(struct MPT2SAS_ADAPTER *ioc)
- 	struct msix_entry *entries, *a;
- 	int r;
- 	int i;
--	u8 try_msix = 0;
+diff --git a/drivers/net/wireless/mwifiex/main.c b/drivers/net/wireless/mwifiex/main.c
+index d4d2223..53f4202 100644
+--- a/drivers/net/wireless/mwifiex/main.c
++++ b/drivers/net/wireless/mwifiex/main.c
+@@ -83,9 +83,8 @@ static int mwifiex_register(void *card, struct mwifiex_if_ops *if_ops,
+ 	}
+ 	mwifiex_init_lock_list(adapter);
  
--	if (msix_disable = -1 || msix_disable = 0)
--		try_msix = 1;
--
--	if (!try_msix)
-+	if (msix_disable != -1 && msix_disable != 0)
- 		goto try_ioapic;
+-	init_timer(&adapter->cmd_timer);
+-	adapter->cmd_timer.function = mwifiex_cmd_timeout_func;
+-	adapter->cmd_timer.data = (unsigned long) adapter;
++	setup_timer(&adapter->cmd_timer, mwifiex_cmd_timeout_func,
++		    (unsigned long)adapter);
  
- 	if (_base_check_enable_msix(ioc) != 0)
--- 
-1.9.1
+ 	return 0;
+ 
 
