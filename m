@@ -1,46 +1,215 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 19 Dec 2014 12:40:21 +0000
-Subject: [PATCH v2 2/3] [SCSI] mpt2sas: Simplify the code of mpt2sas_scsih_tm_flag
-Message-Id: <20141219124021.GA20285@sloth>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:31 +0000
+Subject: [PATCH 0/27] Use setup_timer
+Message-Id: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: joe@perches.com
-Cc: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: wil6210@qca.qualcomm.com
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-usb@vger.kernel.org
 
-Since skip was only used to pass through the rest of the loop,
-a break statment is called where skip was previously assigned 1.
+These patches group a call to init_timer and initialization of the function
+and data fields into a call to setup_timer.  Is there is no initialization
+of the data field before add_timer is called, the the data value is set to
+0UL.  If the data value has a cast to something other than unsigned long,
+it is changes to a cast to unsigned long, which is the type of the data
+field.
 
-Signed-off-by: Quentin Lambert <lambert.quentin@gmail.com>
----
- drivers/scsi/mpt2sas/mpt2sas_scsih.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+The semantic patch that performs this change is shown below
+(http://coccinelle.lip6.fr/).  This semantic patch is fairly restrictive on
+what appears between the init_timer call and the two field initializations,
+to ensure that the there is no code that the initializations depend on.
 
-diff --git a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-index a6f89fd..6162a89 100644
---- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-+++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
-@@ -2265,18 +2265,15 @@ mpt2sas_scsih_tm_flag(struct MPT2SAS_ADAPTER *ioc, u16 handle, u8 action)
- {
- 	struct MPT2SAS_DEVICE *sas_device_priv_data;
- 	struct scsi_device *sdev;
--	u8 skip = 0;
- 
- 	shost_for_each_device(sdev, ioc->shost) {
--		if (skip)
--			continue;
- 		sas_device_priv_data = sdev->hostdata;
- 		if (!sas_device_priv_data)
- 			continue;
- 		if (sas_device_priv_data->sas_target->handle = handle) {
- 			sas_device_priv_data->sas_target->tm_busy = action;
--			skip = 1;
- 			ioc->ignore_loginfos = action;
-+			break;
- 		}
- 	}
- }
--- 
-1.9.1
+// <smpl>
+@@
+expression t,d,f,e1,e2;
+identifier x1,x2;
+statement S1,S2;
+@@
+
+(
+-t.data = d;
+|
+-t.function = f;
+|
+-init_timer(&t);
++setup_timer(&t,f,d);
+|
+-init_timer_on_stack(&t);
++setup_timer_on_stack(&t,f,d);
+)
+<... when != S1
+t.x1 = e1;
+...>
+(
+-t.data = d;
+|
+-t.function = f;
+|
+-init_timer(&t);
++setup_timer(&t,f,d);
+|
+-init_timer_on_stack(&t);
++setup_timer_on_stack(&t,f,d);
+)
+<... when != S2
+t.x2 = e2;
+...>
+(
+-t.data = d;
+|
+-t.function = f;
+|
+-init_timer(&t);
++setup_timer(&t,f,d);
+|
+-init_timer_on_stack(&t);
++setup_timer_on_stack(&t,f,d);
+)
+
+// ----------------------
+
+@@
+expression t,d,f,e1,e2;
+identifier x1,x2;
+statement S1,S2;
+@@
+
+(
+-t->data = d;
+|
+-t->function = f;
+|
+-init_timer(t);
++setup_timer(t,f,d);
+|
+-init_timer_on_stack(t);
++setup_timer_on_stack(t,f,d);
+)
+<... when != S1
+t->x1 = e1;
+...>
+(
+-t->data = d;
+|
+-t->function = f;
+|
+-init_timer(t);
++setup_timer(t,f,d);
+|
+-init_timer_on_stack(t);
++setup_timer_on_stack(t,f,d);
+)
+<... when != S2
+t->x2 = e2;
+...>
+(
+-t->data = d;
+|
+-t->function = f;
+|
+-init_timer(t);
++setup_timer(t,f,d);
+|
+-init_timer_on_stack(t);
++setup_timer_on_stack(t,f,d);
+)
+
+// ---------------------------------------------------------------------
+// no initialization of data field
+
+@@
+expression t,d1,d2,f;
+@@
+
+(
+-init_timer(&t);
++setup_timer(&t,f,0UL);
+|
+-init_timer_on_stack(&t);
++setup_timer_on_stack(&t,f,0UL);
+)
+... when != t.data = d1;
+-t.function = f;
+... when != t.data = d2;
+add_timer(&t);
+
+@@
+expression t,d,f,fn;
+type T;
+@@
+
+-t.function = f;
+... when != t.data
+    when != fn(...,(T)t,...)
+(
+-init_timer(&t);
++setup_timer(&t,f,d);
+|
+-init_timer_on_stack(&t);
++setup_timer_on_stack(&t,f,0UL);
+)
+... when != t.data = d;
+add_timer(&t);
+
+// ----------------------
+
+@@
+expression t,d1,d2,f;
+@@
+
+(
+-init_timer(t);
++setup_timer(t,f,0UL);
+|
+-init_timer_on_stack(t);
++setup_timer_on_stack(t,f,0UL);
+)
+... when != t->data = d1;
+-t->function = f;
+... when != t->data = d2;
+add_timer(t);
+
+@@
+expression t,d,f,fn;
+type T;
+@@
+
+-t->function = f;
+... when != t.data
+    when != fn(...,(T)t,...)
+(
+-init_timer(t);
++setup_timer(t,f,d);
+|
+-init_timer_on_stack(t);
++setup_timer_on_stack(t,f,0UL);
+)
+... when != t->data = d;
+add_timer(t);
+
+// ---------------------------------------------------------------------
+// change data field type
+
+@@
+expression d;
+type T;
+@@
+
+(
+setup_timer
+|
+setup_timer_on_stack
+)
+ (...,
+(
+  (unsigned long)d
+|
+- (T)
++ (unsigned long)
+  d
+)
+ )
+// </smpl>
 
