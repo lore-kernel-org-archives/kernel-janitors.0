@@ -1,23 +1,53 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 05 Dec 2014 07:25:32 +0000
-Subject: Re: [patch] ipvs: uninitialized data with IP_VS_IPV6
-Message-Id: <20141205072531.GA4912@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:35 +0000
+Subject: [PATCH 3/27] atl1e: Use setup_timer
+Message-Id: <1419604558-29743-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20141203101213.GC29583@mwanda>
- <alpine.LFD.2.11.1412042308100.4841@ja.home.ssi.bg>
-In-Reply-To: <alpine.LFD.2.11.1412042308100.4841@ja.home.ssi.bg>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julian Anastasov <ja@ssi.bg>
-Cc: Wensong Zhang <wensong@linux-vs.org>, Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>, Patrick McHardy <kaber@trash.net>, Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, kernel-janitors@vger.kernel.org
+To: Jay Cliburn <jcliburn@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, Chris Snook <chris.snook@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Dec 04, 2014 at 11:19:34PM +0200, Julian Anastasov wrote:
-> 
-> 	I guess ip_vs_ftp_in() needs the same fix?
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-Good catch.  Thanks for noticing that.  I'll send a v2.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-regards,
-dan carpenter
+// <smpl>
+@@
+expression t,f,d;
+@@
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.function = f;
+-t.data = d;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/atheros/atl1e/atl1e_main.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/atl1e/atl1e_main.c b/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
+index 2326579..c88abf5 100644
+--- a/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
++++ b/drivers/net/ethernet/atheros/atl1e/atl1e_main.c
+@@ -2373,9 +2373,8 @@ static int atl1e_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	netif_napi_add(netdev, &adapter->napi, atl1e_clean, 64);
+ 
+-	init_timer(&adapter->phy_config_timer);
+-	adapter->phy_config_timer.function = atl1e_phy_config;
+-	adapter->phy_config_timer.data = (unsigned long) adapter;
++	setup_timer(&adapter->phy_config_timer, atl1e_phy_config,
++		    (unsigned long)adapter);
+ 
+ 	/* get user settings */
+ 	atl1e_check_options(adapter);
 
