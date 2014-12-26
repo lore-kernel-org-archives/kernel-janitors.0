@@ -1,74 +1,52 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Dec 2014 19:20:57 +0000
-Subject: [PATCH 15/20] hostap_cs: fix misspelling of current function in string
-Message-Id: <1417980062-25151-16-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:33 +0000
+Subject: [PATCH 1/27] [media] s2255drv: Use setup_timer
+Message-Id: <1419604558-29743-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jouni Malinen <j@w1.fi>
-Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace a misspelled function name by %s and then __func__.
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-This was done using Coccinelle, including the use of Levenshtein distance,
-as proposed by Rasmus Villemoes.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression t,f,d;
+@@
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.function = f;
+-t.data = d;
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The semantic patch is difficult to summarize, but is available in the cover
-letter of this patch series.
+ drivers/media/usb/s2255/s2255drv.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/net/wireless/hostap/hostap_cs.c |   15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/wireless/hostap/hostap_cs.c b/drivers/net/wireless/hostap/hostap_cs.c
-index b6ec519..50033aa 100644
---- a/drivers/net/wireless/hostap/hostap_cs.c
-+++ b/drivers/net/wireless/hostap/hostap_cs.c
-@@ -381,18 +381,15 @@ static void prism2_pccard_genesis_reset(local_info_t *local, int hcr)
- 
- 	res = pcmcia_read_config_byte(hw_priv->link, CISREG_COR, &old_cor);
- 	if (res != 0) {
--		printk(KERN_DEBUG "prism2_pccard_genesis_sreset failed 1 "
--		       "(%d)\n", res);
-+		printk(KERN_DEBUG "%s failed 1 (%d)\n", __func__, res);
- 		return;
+diff --git a/drivers/media/usb/s2255/s2255drv.c b/drivers/media/usb/s2255/s2255drv.c
+index de55e96..0f3c34d 100644
+--- a/drivers/media/usb/s2255/s2255drv.c
++++ b/drivers/media/usb/s2255/s2255drv.c
+@@ -2274,9 +2274,7 @@ static int s2255_probe(struct usb_interface *interface,
+ 		dev_err(&interface->dev, "Could not find bulk-in endpoint\n");
+ 		goto errorEP;
  	}
--	printk(KERN_DEBUG "prism2_pccard_genesis_sreset: original COR %02x\n",
--		old_cor);
-+	printk(KERN_DEBUG "%s: original COR %02x\n", __func__, old_cor);
- 
- 	res = pcmcia_write_config_byte(hw_priv->link, CISREG_COR,
- 				old_cor | COR_SOFT_RESET);
- 	if (res != 0) {
--		printk(KERN_DEBUG "prism2_pccard_genesis_sreset failed 2 "
--		       "(%d)\n", res);
-+		printk(KERN_DEBUG "%s failed 2 (%d)\n", __func__, res);
- 		return;
- 	}
- 
-@@ -401,8 +398,7 @@ static void prism2_pccard_genesis_reset(local_info_t *local, int hcr)
- 	/* Setup Genesis mode */
- 	res = pcmcia_write_config_byte(hw_priv->link, CISREG_CCSR, hcr);
- 	if (res != 0) {
--		printk(KERN_DEBUG "prism2_pccard_genesis_sreset failed 3 "
--		       "(%d)\n", res);
-+		printk(KERN_DEBUG "%s failed 3 (%d)\n", __func__, res);
- 		return;
- 	}
- 	mdelay(10);
-@@ -410,8 +406,7 @@ static void prism2_pccard_genesis_reset(local_info_t *local, int hcr)
- 	res = pcmcia_write_config_byte(hw_priv->link, CISREG_COR,
- 				old_cor & ~COR_SOFT_RESET);
- 	if (res != 0) {
--		printk(KERN_DEBUG "prism2_pccard_genesis_sreset failed 4 "
--		       "(%d)\n", res);
-+		printk(KERN_DEBUG "%s failed 4 (%d)\n", __func__, res);
- 		return;
- 	}
- 
+-	init_timer(&dev->timer);
+-	dev->timer.function = s2255_timer;
+-	dev->timer.data = (unsigned long)dev->fw_data;
++	setup_timer(&dev->timer, s2255_timer, (unsigned long)dev->fw_data);
+ 	init_waitqueue_head(&dev->fw_data->wait_fw);
+ 	for (i = 0; i < MAX_CHANNELS; i++) {
+ 		struct s2255_vc *vc = &dev->vc[i];
 
