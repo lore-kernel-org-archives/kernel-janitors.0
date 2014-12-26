@@ -1,33 +1,59 @@
-From: Quentin Lambert <lambert.quentin@gmail.com>
-Date: Fri, 19 Dec 2014 13:00:25 +0000
-Subject: [PATCH v2 0/1] int to bool conversion
-Message-Id: <20141219130025.GA20426@sloth>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:32 +0000
+Subject: [PATCH 2/27] [media] au0828: Use setup_timer
+Message-Id: <1419604558-29743-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>, Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>
-Cc: MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The second version of this patch did not treat the cases where the use
-of boolean variable was unnecessary. These cases are now treated in
-a patchset that was already submitted.
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-It also left out the cases treated by one Dan Carpenter's patch currently
-being reviewed:
-http://www.spinics.net/lists/linux-kernel-janitors/msg20627.html
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Quentin Lambert (1):
-  [SCSI] mpt2sas: Convert non-returned local variable to boolean when
-    relevant
+// <smpl>
+@@
+expression t,f,d;
+@@
 
- drivers/scsi/mpt2sas/mpt2sas_base.c      | 12 ++++++------
- drivers/scsi/mpt2sas/mpt2sas_config.c    |  5 +++--
- drivers/scsi/mpt2sas/mpt2sas_ctl.c       | 22 ++++++++++------------
- drivers/scsi/mpt2sas/mpt2sas_scsih.c     |  8 ++++----
- drivers/scsi/mpt2sas/mpt2sas_transport.c | 27 ++++++++++++++-------------
- 5 files changed, 37 insertions(+), 37 deletions(-)
+-t.function = f;
+-t.data = d;
+-init_timer(&t);
++setup_timer(&t,f,d);
+// </smpl>
 
--- 
-1.9.1
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/media/usb/au0828/au0828-video.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
+index 5f337b1..0b24791 100644
+--- a/drivers/media/usb/au0828/au0828-video.c
++++ b/drivers/media/usb/au0828/au0828-video.c
+@@ -2043,13 +2043,10 @@ int au0828_analog_register(struct au0828_dev *dev,
+ 	INIT_LIST_HEAD(&dev->vbiq.active);
+ 	INIT_LIST_HEAD(&dev->vbiq.queued);
+ 
+-	dev->vid_timeout.function = au0828_vid_buffer_timeout;
+-	dev->vid_timeout.data = (unsigned long) dev;
+-	init_timer(&dev->vid_timeout);
+-
+-	dev->vbi_timeout.function = au0828_vbi_buffer_timeout;
+-	dev->vbi_timeout.data = (unsigned long) dev;
+-	init_timer(&dev->vbi_timeout);
++	setup_timer(&dev->vid_timeout, au0828_vid_buffer_timeout,
++		    (unsigned long)dev);
++	setup_timer(&dev->vbi_timeout, au0828_vbi_buffer_timeout,
++		    (unsigned long)dev);
+ 
+ 	dev->width = NTSC_STD_W;
+ 	dev->height = NTSC_STD_H;
 
