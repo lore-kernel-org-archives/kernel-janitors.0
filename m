@@ -1,15 +1,15 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:56 +0000
-Subject: [PATCH 27/27] mwifiex: main: Use setup_timer
-Message-Id: <1419604558-29743-26-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:39 +0000
+Subject: [PATCH 6/27] cw1200: queue: Use setup_timer
+Message-Id: <1419604558-29743-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <akarwar@marvell.com>
-Cc: kernel-janitors@vger.kernel.org, Avinash Patil <patila@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Solomon Peachy <pizza@shaftnet.org>
+Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Convert a call to init_timer and accompanying intializations of
 the timer's data and function fields to a call to setup_timer.
@@ -24,30 +24,29 @@ expression t,f,d;
 
 -init_timer(&t);
 +setup_timer(&t,f,d);
--t.function = f;
 -t.data = d;
+-t.function = f;
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/net/wireless/mwifiex/main.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/wireless/cw1200/queue.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/mwifiex/main.c b/drivers/net/wireless/mwifiex/main.c
-index d4d2223..53f4202 100644
---- a/drivers/net/wireless/mwifiex/main.c
-+++ b/drivers/net/wireless/mwifiex/main.c
-@@ -83,9 +83,8 @@ static int mwifiex_register(void *card, struct mwifiex_if_ops *if_ops,
- 	}
- 	mwifiex_init_lock_list(adapter);
+diff --git a/drivers/net/wireless/cw1200/queue.c b/drivers/net/wireless/cw1200/queue.c
+index 9c3925f..0ba5ef9 100644
+--- a/drivers/net/wireless/cw1200/queue.c
++++ b/drivers/net/wireless/cw1200/queue.c
+@@ -179,9 +179,7 @@ int cw1200_queue_init(struct cw1200_queue *queue,
+ 	INIT_LIST_HEAD(&queue->pending);
+ 	INIT_LIST_HEAD(&queue->free_pool);
+ 	spin_lock_init(&queue->lock);
+-	init_timer(&queue->gc);
+-	queue->gc.data = (unsigned long)queue;
+-	queue->gc.function = cw1200_queue_gc;
++	setup_timer(&queue->gc, cw1200_queue_gc, (unsigned long)queue);
  
--	init_timer(&adapter->cmd_timer);
--	adapter->cmd_timer.function = mwifiex_cmd_timeout_func;
--	adapter->cmd_timer.data = (unsigned long) adapter;
-+	setup_timer(&adapter->cmd_timer, mwifiex_cmd_timeout_func,
-+		    (unsigned long)adapter);
- 
- 	return 0;
- 
+ 	queue->pool = kzalloc(sizeof(struct cw1200_queue_item) * capacity,
+ 			GFP_KERNEL);
 
