@@ -1,71 +1,52 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Dec 2014 19:20:58 +0000
-Subject: [PATCH 16/20] rtlwifi: rtl8821ae: fix misspelling of current function in string
-Message-Id: <1417980062-25151-17-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:49 +0000
+Subject: [PATCH 17/27] iwl3945: Use setup_timer
+Message-Id: <1419604558-29743-19-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, Chaoming Li <chaoming_li@realsil.com.cn>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace a misspelled function name by %s and then __func__.
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-8821 was written as 8812.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-This was done using Coccinelle, including the use of Levenshtein distance,
-as proposed by Rasmus Villemoes.
+// <smpl>
+@@
+expression t,f,d;
+@@
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.data = d;
+-t.function = f;
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The semantic patch is difficult to summarize, but is available in the cover
-letter of this patch series.
+ drivers/net/wireless/iwlegacy/3945-mac.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/net/wireless/rtlwifi/rtl8821ae/dm.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+diff --git a/drivers/net/wireless/iwlegacy/3945-mac.c b/drivers/net/wireless/iwlegacy/3945-mac.c
+index dc1d20c..e566580 100644
+--- a/drivers/net/wireless/iwlegacy/3945-mac.c
++++ b/drivers/net/wireless/iwlegacy/3945-mac.c
+@@ -3429,9 +3429,7 @@ il3945_setup_deferred_work(struct il_priv *il)
+ 
+ 	il3945_hw_setup_deferred_work(il);
+ 
+-	init_timer(&il->watchdog);
+-	il->watchdog.data = (unsigned long)il;
+-	il->watchdog.function = il_bg_watchdog;
++	setup_timer(&il->watchdog, il_bg_watchdog, (unsigned long)il);
+ 
+ 	tasklet_init(&il->irq_tasklet,
+ 		     (void (*)(unsigned long))il3945_irq_tasklet,
 
-diff --git a/drivers/net/wireless/rtlwifi/rtl8821ae/dm.c b/drivers/net/wireless/rtlwifi/rtl8821ae/dm.c
-index 9be1061..ba30b0d 100644
---- a/drivers/net/wireless/rtlwifi/rtl8821ae/dm.c
-+++ b/drivers/net/wireless/rtlwifi/rtl8821ae/dm.c
-@@ -2078,8 +2078,7 @@ void rtl8821ae_dm_txpwr_track_set_pwr(struct ieee80211_hw *hw,
- 	if (rtldm->tx_rate != 0xFF)
- 		tx_rate = rtl8821ae_hw_rate_to_mrate(hw, rtldm->tx_rate);
- 
--	RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--		 "==>rtl8812ae_dm_txpwr_track_set_pwr\n");
-+	RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD, "==>%s\n", __func__);
- 
- 	if (tx_rate != 0xFF) { /* Mimic Modify High Rate BBSwing Limit.*/
- 		/*CCK*/
-@@ -2128,7 +2127,7 @@ void rtl8821ae_dm_txpwr_track_set_pwr(struct ieee80211_hw *hw,
- 
- 	if (method = BBSWING) {
- 		RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--			 "==>rtl8812ae_dm_txpwr_track_set_pwr\n");
-+			 "==>%s\n", __func__);
- 		if (rf_path = RF90_PATH_A) {
- 			final_swing_idx[RF90_PATH_A]  				(rtldm->ofdm_index[RF90_PATH_A] >
-@@ -2260,7 +2259,8 @@ void rtl8821ae_dm_txpower_tracking_callback_thermalmeter(
- 	rtldm->txpower_trackinginit = true;
- 
- 	RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--		 "==>rtl8812ae_dm_txpower_tracking_callback_thermalmeter,\n pDM_Odm->BbSwingIdxCckBase: %d,pDM_Odm->BbSwingIdxOfdmBase[A]:%d, pDM_Odm->DefaultOfdmIndex: %d\n",
-+		 "==>%s,\n pDM_Odm->BbSwingIdxCckBase: %d,pDM_Odm->BbSwingIdxOfdmBase[A]:%d, pDM_Odm->DefaultOfdmIndex: %d\n",
-+		 __func__,
- 		 rtldm->swing_idx_cck_base,
- 		 rtldm->swing_idx_ofdm_base[RF90_PATH_A],
- 		 rtldm->default_ofdm_index);
-@@ -2539,8 +2539,7 @@ void rtl8821ae_dm_txpower_tracking_callback_thermalmeter(
- 		}
- 	}
- 
--	RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD,
--		 "<==rtl8812ae_dm_txpower_tracking_callback_thermalmeter\n");
-+	RT_TRACE(rtlpriv, COMP_POWER_TRACKING, DBG_LOUD, "<==%s\n", __func__);
- }
- 
- void rtl8821ae_dm_check_txpower_tracking_thermalmeter(struct ieee80211_hw *hw)
