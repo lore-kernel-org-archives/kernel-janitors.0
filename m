@@ -1,64 +1,53 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 29 Dec 2014 17:04:42 +0000
-Subject: [PATCH 7/8] net: axienet: fix error return code
-Message-Id: <1419872683-32709-8-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:57 +0000
+Subject: [PATCH 26/27] mwifiex: 11n_rxreorder: Use setup_timer
+Message-Id: <1419604558-29743-27-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: kernel-janitors@vger.kernel.org, Avinash Patil <patila@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Return a negative error code on failure.
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-A simplified version of the semantic match that finds this problem is as
+A simplified version of the semantic match that fixes this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-identifier ret; expression e1,e2;
+expression t,f,d;
 @@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.function = f;
+-t.data = d;
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/mwifiex/11n_rxreorder.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 4ea2d4e..6ca4a52 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1501,6 +1501,7 @@ static int axienet_of_probe(struct platform_device *op)
- 	lp->regs = of_iomap(op->dev.of_node, 0);
- 	if (!lp->regs) {
- 		dev_err(&op->dev, "could not map Axi Ethernet regs.\n");
-+		ret = -ENOMEM;
- 		goto nodev;
- 	}
- 	/* Setup checksum offload, but default to off if not specified */
-@@ -1567,6 +1568,7 @@ static int axienet_of_probe(struct platform_device *op)
- 	np = of_parse_phandle(op->dev.of_node, "axistream-connected", 0);
- 	if (!np) {
- 		dev_err(&op->dev, "could not find DMA node\n");
-+		ret = -ENODEV;
- 		goto err_iounmap;
- 	}
- 	lp->dma_regs = of_iomap(np, 0);
+diff --git a/drivers/net/wireless/mwifiex/11n_rxreorder.c b/drivers/net/wireless/mwifiex/11n_rxreorder.c
+index d73fda3..f33dc81 100644
+--- a/drivers/net/wireless/mwifiex/11n_rxreorder.c
++++ b/drivers/net/wireless/mwifiex/11n_rxreorder.c
+@@ -391,10 +391,8 @@ mwifiex_11n_create_rx_reorder_tbl(struct mwifiex_private *priv, u8 *ta,
+ 	new_node->timer_context.priv = priv;
+ 	new_node->timer_context.timer_is_set = false;
+ 
+-	init_timer(&new_node->timer_context.timer);
+-	new_node->timer_context.timer.function = mwifiex_flush_data;
+-	new_node->timer_context.timer.data -			(unsigned long) &new_node->timer_context;
++	setup_timer(&new_node->timer_context.timer, mwifiex_flush_data,
++		    (unsigned long)&new_node->timer_context);
+ 
+ 	for (i = 0; i < win_size; ++i)
+ 		new_node->rx_reorder_ptr[i] = NULL;
 
