@@ -1,52 +1,73 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 22 Dec 2014 07:49:46 +0000
-Subject: [patch] ALSA: asihpi: fix an information leak in asihpi_hpi_ioctl()
-Message-Id: <20141222074946.GA9737@mwanda>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Fri, 26 Dec 2014 11:07:23 +0000
+Subject: Re: [patch] ALSA: asihpi: fix an information leak in asihpi_hpi_ioctl()
+Message-Id: <s5hmw6ais9g.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20141222074946.GA9737@mwanda>
+In-Reply-To: <20141222074946.GA9737@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>, Eliot Blennerhassett <eliot@blennerhassett.gen.nz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Eliot Blennerhassett <eliot@blennerhassett.gen.nz>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
 
-So far as I can see "hr->h.size" is set to "res_max_size" which is a
-user controlled value between 12 and USHRT_MAX.  If it's larger than
-sizeof(*hr), then that leads to an information leak.
+At Mon, 22 Dec 2014 10:49:46 +0300,
+Dan Carpenter wrote:
+> 
+> So far as I can see "hr->h.size" is set to "res_max_size" which is a
+> user controlled value between 12 and USHRT_MAX.  If it's larger than
+> sizeof(*hr), then that leads to an information leak.
+> 
+> I am not very familiar with this code, my other question here is that
+> on lines before we set "hr->h.size = sizeof(hr->h)".  It think this is
+> a bug.  I also think this particular code is never executed and I added
+> a comment to that effect.  But we do it in earlier in the function as
+> well:
+> 
+> 	copy_to_user(puhr, hr, sizeof(hr->h));
+> 
+> It doesn't make sense to me.
+> 
+> Anyway, I think my patch is safe and it seems to fix a real information
+> leak.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/sound/pci/asihpi/hpioctl.c b/sound/pci/asihpi/hpioctl.c
+> index 6aa677e..f88109a 100644
+> --- a/sound/pci/asihpi/hpioctl.c
+> +++ b/sound/pci/asihpi/hpioctl.c
+> @@ -283,6 +283,7 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  		goto out;
+>  	}
+>  
+> +	/* FIXME:  isn't this a no-op? */
 
-I am not very familiar with this code, my other question here is that
-on lines before we set "hr->h.size = sizeof(hr->h)".  It think this is
-a bug.  I also think this particular code is never executed and I added
-a comment to that effect.  But we do it in earlier in the function as
-well:
+The whole union member may be overwritten by a response.
 
-	copy_to_user(puhr, hr, sizeof(hr->h));
+>  	if (hr->h.size > res_max_size) {
+>  		HPI_DEBUG_LOG(ERROR, "response too big %d %d\n", hr->h.size,
+>  			res_max_size);
+> @@ -290,6 +291,9 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  		hr->h.specific_error = hr->h.size;
+>  		hr->h.size = sizeof(hr->h);
+>  	}
+> +	/* prevent an information leak */
+> +	if (hr->h.size > sizeof(*hr))
+> +		hr->h.size = sizeof(*hr);
 
-It doesn't make sense to me.
+Checking the size is good, but there is already a check against
+res_max_size.  So, we'd rather need to check res_max_size itself
+whether it's in a sane range.  The more fitting place would be at the
+beginning of the function where it checks already res_max_size <
+sizeof(struct hpi_response_header)).
 
-Anyway, I think my patch is safe and it seems to fix a real information
-leak.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+thanks,
 
-diff --git a/sound/pci/asihpi/hpioctl.c b/sound/pci/asihpi/hpioctl.c
-index 6aa677e..f88109a 100644
---- a/sound/pci/asihpi/hpioctl.c
-+++ b/sound/pci/asihpi/hpioctl.c
-@@ -283,6 +283,7 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		goto out;
- 	}
- 
-+	/* FIXME:  isn't this a no-op? */
- 	if (hr->h.size > res_max_size) {
- 		HPI_DEBUG_LOG(ERROR, "response too big %d %d\n", hr->h.size,
- 			res_max_size);
-@@ -290,6 +291,9 @@ long asihpi_hpi_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		hr->h.specific_error = hr->h.size;
- 		hr->h.size = sizeof(hr->h);
- 	}
-+	/* prevent an information leak */
-+	if (hr->h.size > sizeof(*hr))
-+		hr->h.size = sizeof(*hr);
- 
- 	uncopied_bytes = copy_to_user(puhr, hr, hr->h.size);
- 	if (uncopied_bytes) {
+Takashi
+
+>  
+>  	uncopied_bytes = copy_to_user(puhr, hr, hr->h.size);
+>  	if (uncopied_bytes) {
+> 
