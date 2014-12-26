@@ -1,87 +1,65 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Dec 2014 22:16:48 +0000
-Subject: [PATCH v2 4/6] net-PPP: Less function calls in mppe_alloc() after error detection
-Message-Id: <5480DD50.5060805@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:40 +0000
+Subject: [PATCH 10/27] xhci-mem: Use setup_timer
+Message-Id: <1419604558-29743-10-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net> <547B496E.604@users.sourceforge.net> <547C5CBC.6060607@cogentembedded.com> <547C82A6.2030808@users.sourceforge.net> <547CA157.1080401@cogentembedded.com> <5480DA32.8000201@users.sourceforge.net>
-In-Reply-To: <5480DA32.8000201@users.sourceforge.net>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Mathias Nyman <mathias.nyman@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Dec 2014 22:30:20 +0100
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-The functions crypto_free_blkcipher((), crypto_free_hash() and kfree() could be
-called in some cases by the mppe_alloc() function during error handling even
-if the passed data structure element contained still a null pointer.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-This implementation detail could be improved by adjustments for jump labels.
+// <smpl>
+@@
+expression t,f,d;
+@@
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.data = d;
+-t.function = f;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/net/ppp/ppp_mppe.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ drivers/usb/host/xhci-mem.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
-index 94ff216..c82198f 100644
---- a/drivers/net/ppp/ppp_mppe.c
-+++ b/drivers/net/ppp/ppp_mppe.c
-@@ -196,11 +196,11 @@ static void *mppe_alloc(unsigned char *options, int optlen)
- 
- 	if (optlen != CILEN_MPPE + sizeof(state->master_key) ||
- 	    options[0] != CI_MPPE || options[1] != CILEN_MPPE)
--		goto out;
-+		return NULL;
- 
- 	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (state = NULL)
--		goto out;
-+		return NULL;
- 
- 
- 	state->arc4 = crypto_alloc_blkcipher("ecb(arc4)", 0, CRYPTO_ALG_ASYNC);
-@@ -212,16 +212,16 @@ static void *mppe_alloc(unsigned char *options, int optlen)
- 	state->sha1 = crypto_alloc_hash("sha1", 0, CRYPTO_ALG_ASYNC);
- 	if (IS_ERR(state->sha1)) {
- 		state->sha1 = NULL;
--		goto out_free;
-+		goto out_free_blkcipher;
- 	}
- 
- 	digestsize = crypto_hash_digestsize(state->sha1);
- 	if (digestsize < MPPE_MAX_KEY_LEN)
--		goto out_free;
-+		goto out_free_hash;
- 
- 	state->sha1_digest = kmalloc(digestsize, GFP_KERNEL);
- 	if (!state->sha1_digest)
--		goto out_free;
-+		goto out_free_hash;
- 
- 	/* Save keys. */
- 	memcpy(state->master_key, &options[CILEN_MPPE],
-@@ -236,14 +236,12 @@ static void *mppe_alloc(unsigned char *options, int optlen)
- 
- 	return (void *)state;
- 
-+out_free_hash:
-+	crypto_free_hash(state->sha1);
-+out_free_blkcipher:
-+	crypto_free_blkcipher(state->arc4);
- out_free:
--	kfree(state->sha1_digest);
--	if (state->sha1)
--		crypto_free_hash(state->sha1);
--	if (state->arc4)
--		crypto_free_blkcipher(state->arc4);
- 	kfree(state);
--out:
- 	return NULL;
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index 5cb3d7a..e72265c 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -833,9 +833,8 @@ void xhci_free_stream_info(struct xhci_hcd *xhci,
+ static void xhci_init_endpoint_timer(struct xhci_hcd *xhci,
+ 		struct xhci_virt_ep *ep)
+ {
+-	init_timer(&ep->stop_cmd_timer);
+-	ep->stop_cmd_timer.data = (unsigned long) ep;
+-	ep->stop_cmd_timer.function = xhci_stop_endpoint_command_watchdog;
++	setup_timer(&ep->stop_cmd_timer, xhci_stop_endpoint_command_watchdog,
++		    (unsigned long)ep);
+ 	ep->xhci = xhci;
  }
  
--- 
-2.1.3
+@@ -2509,9 +2508,8 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
+ 	xhci_print_ir_set(xhci, 0);
+ 
+ 	/* init command timeout timer */
+-	init_timer(&xhci->cmd_timer);
+-	xhci->cmd_timer.data = (unsigned long) xhci;
+-	xhci->cmd_timer.function = xhci_handle_command_timeout;
++	setup_timer(&xhci->cmd_timer, xhci_handle_command_timeout,
++		    (unsigned long)xhci);
+ 
+ 	/*
+ 	 * XXX: Might need to set the Interrupter Moderation Register to
 
