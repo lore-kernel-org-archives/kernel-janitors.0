@@ -1,26 +1,59 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 07 Dec 2014 12:42:10 +0000
-Subject: Re: [PATCH v2 1/6] net-PPP: Replacement of a printk() call by pr_warn() in mppe_rekey()
-Message-Id: <1417956130.31745.27.camel@perches.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:44 +0000
+Subject: [PATCH 12/27] iwlwifi: dvm: main: Use setup_timer
+Message-Id: <1419604558-29743-14-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417731809.2721.17.camel@perches.com>
-	 <alpine.DEB.2.02.1412050820290.2059@localhost6.localdomain6>
-	 <1417765287.2721.39.camel@perches.com>
-	 <alpine.DEB.2.02.1412071140290.2044@localhost6.localdomain6>
-	 <1417955413.31745.25.camel@perches.com>
-	 <alpine.DEB.2.02.1412071335140.2030@localhost6.localdomain6>
-In-Reply-To: <alpine.DEB.2.02.1412071335140.2030@localhost6.localdomain6>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: SF Markus Elfring <elfring@users.sourceforge.net>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2014-12-07 at 13:36 +0100, Julia Lawall wrote:
-> the semantic patch is only using __func__ and only in cases where 
-> the string wanted is similar to the name of the current function, so I 
-> think it should be OK?
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-Yes, it'd be a good thing.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
+// <smpl>
+@@
+expression t,f,d;
+@@
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.data = d;
+-t.function = f;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/wireless/iwlwifi/dvm/main.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/iwlwifi/dvm/main.c b/drivers/net/wireless/iwlwifi/dvm/main.c
+index 0b7f46f..75ec691 100644
+--- a/drivers/net/wireless/iwlwifi/dvm/main.c
++++ b/drivers/net/wireless/iwlwifi/dvm/main.c
+@@ -1011,13 +1011,11 @@ static void iwl_setup_deferred_work(struct iwl_priv *priv)
+ 	if (priv->lib->bt_params)
+ 		iwlagn_bt_setup_deferred_work(priv);
+ 
+-	init_timer(&priv->statistics_periodic);
+-	priv->statistics_periodic.data = (unsigned long)priv;
+-	priv->statistics_periodic.function = iwl_bg_statistics_periodic;
++	setup_timer(&priv->statistics_periodic, iwl_bg_statistics_periodic,
++		    (unsigned long)priv);
+ 
+-	init_timer(&priv->ucode_trace);
+-	priv->ucode_trace.data = (unsigned long)priv;
+-	priv->ucode_trace.function = iwl_bg_ucode_trace;
++	setup_timer(&priv->ucode_trace, iwl_bg_ucode_trace,
++		    (unsigned long)priv);
+ }
+ 
+ void iwl_cancel_deferred_work(struct iwl_priv *priv)
 
