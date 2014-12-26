@@ -1,41 +1,65 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Dec 2014 19:20:59 +0000
-Subject: [PATCH 17/20] drm/i2c: tda998x: fix misspelling of current function in string
-Message-Id: <1417980062-25151-18-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:54 +0000
+Subject: [PATCH 20/27] usb: r8a66597-hcd: Use setup_timer
+Message-Id: <1419604558-29743-24-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace a misspelled function name by %s and then __func__.
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-This was done using Coccinelle, including the use of Levenshtein distance,
-as proposed by Rasmus Villemoes.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression t,f,d;
+@@
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.function = f;
+-t.data = d;
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The semantic patch is difficult to summarize, but is available in the cover
-letter of this patch series.
+ drivers/usb/host/r8a66597-hcd.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
- drivers/gpu/drm/i2c/tda998x_drv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
-index d476279..14acac8 100644
---- a/drivers/gpu/drm/i2c/tda998x_drv.c
-+++ b/drivers/gpu/drm/i2c/tda998x_drv.c
-@@ -385,7 +385,7 @@ set_page(struct tda998x_priv *priv, uint16_t reg)
- 		};
- 		int ret = i2c_master_send(client, buf, sizeof(buf));
- 		if (ret < 0) {
--			dev_err(&client->dev, "setpage %04x err %d\n",
-+			dev_err(&client->dev, "%s %04x err %d\n", __func__,
- 					reg, ret);
- 			return ret;
- 		}
+diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
+index c4bcfae..a048b8e 100644
+--- a/drivers/usb/host/r8a66597-hcd.c
++++ b/drivers/usb/host/r8a66597-hcd.c
+@@ -2483,9 +2483,8 @@ static int r8a66597_probe(struct platform_device *pdev)
+ 		r8a66597->max_root_hub = 2;
+ 
+ 	spin_lock_init(&r8a66597->lock);
+-	init_timer(&r8a66597->rh_timer);
+-	r8a66597->rh_timer.function = r8a66597_timer;
+-	r8a66597->rh_timer.data = (unsigned long)r8a66597;
++	setup_timer(&r8a66597->rh_timer, r8a66597_timer,
++		    (unsigned long)r8a66597);
+ 	r8a66597->reg = reg;
+ 
+ 	/* make sure no interrupts are pending */
+@@ -2496,9 +2495,8 @@ static int r8a66597_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < R8A66597_MAX_NUM_PIPE; i++) {
+ 		INIT_LIST_HEAD(&r8a66597->pipe_queue[i]);
+-		init_timer(&r8a66597->td_timer[i]);
+-		r8a66597->td_timer[i].function = r8a66597_td_timer;
+-		r8a66597->td_timer[i].data = (unsigned long)r8a66597;
++		setup_timer(&r8a66597->td_timer[i], r8a66597_td_timer,
++			    (unsigned long)r8a66597);
+ 		setup_timer(&r8a66597->interval_timer[i],
+ 				r8a66597_interval_timer,
+ 				(unsigned long)r8a66597);
 
