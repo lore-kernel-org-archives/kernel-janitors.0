@@ -1,52 +1,53 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Sun, 07 Dec 2014 19:20:55 +0000
-Subject: [PATCH 13/20] zd1211rw: fix misspelling of current function in string
-Message-Id: <1417980062-25151-14-git-send-email-Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:37 +0000
+Subject: [PATCH 8/27] wireless: cw1200: Use setup_timer
+Message-Id: <1419604558-29743-7-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniel Drake <dsd@gentoo.org>
-Cc: kernel-janitors@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, Ulrich Kunitz <kune@deine-taler.de>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Solomon Peachy <pizza@shaftnet.org>
+Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Replace a misspelled function name by %s and then __func__.
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-This was done using Coccinelle, including the use of Levenshtein distance,
-as proposed by Rasmus Villemoes.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
+
+// <smpl>
+@@
+expression t,f,d;
+@@
+
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.data = d;
+-t.function = f;
+// </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-The semantic patch is difficult to summarize, but is available in the cover
-letter of this patch series.
+ drivers/net/wireless/cw1200/pm.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- drivers/net/wireless/zd1211rw/zd_chip.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/zd1211rw/zd_chip.c b/drivers/net/wireless/zd1211rw/zd_chip.c
-index 73a49b8..07b94ed 100644
---- a/drivers/net/wireless/zd1211rw/zd_chip.c
-+++ b/drivers/net/wireless/zd1211rw/zd_chip.c
-@@ -129,7 +129,7 @@ int zd_ioread32v_locked(struct zd_chip *chip, u32 *values, const zd_addr_t *addr
- 	r = zd_ioread16v_locked(chip, v16, a16, count16);
- 	if (r) {
- 		dev_dbg_f(zd_chip_dev(chip),
--			  "error: zd_ioread16v_locked. Error number %d\n", r);
-+			  "error: %s. Error number %d\n", __func__, r);
- 		return r;
- 	}
+diff --git a/drivers/net/wireless/cw1200/pm.c b/drivers/net/wireless/cw1200/pm.c
+index 6907c8f..d2202ae 100644
+--- a/drivers/net/wireless/cw1200/pm.c
++++ b/drivers/net/wireless/cw1200/pm.c
+@@ -101,9 +101,8 @@ int cw1200_pm_init(struct cw1200_pm_state *pm,
+ {
+ 	spin_lock_init(&pm->lock);
  
-@@ -256,8 +256,8 @@ int zd_iowrite32a_locked(struct zd_chip *chip,
- 		if (r) {
- 			zd_usb_iowrite16v_async_end(&chip->usb, 0);
- 			dev_dbg_f(zd_chip_dev(chip),
--				"error _zd_iowrite32v_locked."
--				" Error number %d\n", r);
-+				"error _%s. Error number %d\n", __func__,
-+				r);
- 			return r;
- 		}
- 	}
+-	init_timer(&pm->stay_awake);
+-	pm->stay_awake.data = (unsigned long)pm;
+-	pm->stay_awake.function = cw1200_pm_stay_awake_tmo;
++	setup_timer(&pm->stay_awake, cw1200_pm_stay_awake_tmo,
++		    (unsigned long)pm);
+ 
+ 	return 0;
+ }
 
