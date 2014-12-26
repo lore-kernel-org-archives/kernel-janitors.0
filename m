@@ -1,65 +1,52 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Dec 2014 20:48:27 +0000
-Subject: [PATCH 7/8] fs/9p: One function call less in v9fs_vfs_symlink_dotl() after error detection
-Message-Id: <54A06C9B.7050109@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:53 +0000
+Subject: [PATCH 21/27] usb: oxu210hp-hcd: Use setup_timer
+Message-Id: <1419604558-29743-23-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54A01326.3050306@users.sourceforge.net>
-In-Reply-To: <54A01326.3050306@users.sourceforge.net>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, v9fs-developer@lists.sourceforge.net
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 28 Dec 2014 13:00:54 +0100
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-The p9_client_clunk() function was called in two cases by the
-v9fs_vfs_symlink_dotl() function during error handling even if the passed
-variable "fid" contained a null pointer.
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-* This implementation detail could be improved by the introduction of another
-  jump label.
+// <smpl>
+@@
+expression t,f,d;
+@@
 
-* Let us delete also an unnecessary variable assignment there.
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.function = f;
+-t.data = d;
+// </smpl>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- fs/9p/vfs_inode_dotl.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/usb/host/oxu210hp-hcd.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 672d84f..3b38dda 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -701,7 +701,7 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
+diff --git a/drivers/usb/host/oxu210hp-hcd.c b/drivers/usb/host/oxu210hp-hcd.c
+index 036924e..ea0ecbc 100644
+--- a/drivers/usb/host/oxu210hp-hcd.c
++++ b/drivers/usb/host/oxu210hp-hcd.c
+@@ -2598,9 +2598,7 @@ static int oxu_hcd_init(struct usb_hcd *hcd)
  
- 	if (err < 0) {
- 		p9_debug(P9_DEBUG_VFS, "p9_client_symlink failed %d\n", err);
--		goto error;
-+		goto exit;
- 	}
+ 	spin_lock_init(&oxu->lock);
  
- 	v9fs_invalidate_inode_attr(dir);
-@@ -712,8 +712,7 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
- 			err = PTR_ERR(fid);
- 			p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
- 				 err);
--			fid = NULL;
--			goto error;
-+			goto exit;
- 		}
+-	init_timer(&oxu->watchdog);
+-	oxu->watchdog.function = oxu_watchdog;
+-	oxu->watchdog.data = (unsigned long) oxu;
++	setup_timer(&oxu->watchdog, oxu_watchdog, (unsigned long)oxu);
  
- 		/* instantiate inode and assign the unopened fid to dentry */
-@@ -740,7 +739,7 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
- 
- error:
- 	p9_client_clunk(fid);
--
-+exit:
- 	return err;
- }
- 
--- 
-2.2.1
+ 	/*
+ 	 * hw default: 1K periodic list heads, one per frame.
 
