@@ -1,34 +1,58 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Date: Mon, 01 Dec 2014 00:58:17 +0000
-Subject: Re: [PATCH 6/8 v2] crypto: replace memset by memzero_explicit
-Message-Id: <1417395497.16178.0.camel@concordia>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 14:35:43 +0000
+Subject: [PATCH 13/27] iwlwifi: dvm: tt: Use setup_timer
+Message-Id: <1419604558-29743-13-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417367029-32762-1-git-send-email-Julia.Lawall@lip6.fr>
-	 <1417367029-32762-7-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417367029-32762-7-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+To: Johannes Berg <johannes.berg@intel.com>
+Cc: kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, 2014-11-30 at 18:03 +0100, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> Memset on a local variable may be removed when it is called just before the
-> variable goes out of scope.  Using memzero_explicit defeats this
-> optimization.  A simplified version of the semantic patch that makes this
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
-> Daniel Borkmann suggested that these patches could go through Herbert Xu's
-> cryptodev tree.
+Convert a call to init_timer and accompanying intializations of
+the timer's data and function fields to a call to setup_timer.
 
-That's fine by me:
+A simplified version of the semantic match that fixes this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+// <smpl>
+@@
+expression t,f,d;
+@@
 
-cheers
+-init_timer(&t);
++setup_timer(&t,f,d);
+-t.data = d;
+-t.function = f;
+// </smpl>
 
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/wireless/iwlwifi/dvm/tt.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/wireless/iwlwifi/dvm/tt.c b/drivers/net/wireless/iwlwifi/dvm/tt.c
+index acb981a..c4736c8 100644
+--- a/drivers/net/wireless/iwlwifi/dvm/tt.c
++++ b/drivers/net/wireless/iwlwifi/dvm/tt.c
+@@ -612,15 +612,10 @@ void iwl_tt_initialize(struct iwl_priv *priv)
+ 	memset(tt, 0, sizeof(struct iwl_tt_mgmt));
+ 
+ 	tt->state = IWL_TI_0;
+-	init_timer(&priv->thermal_throttle.ct_kill_exit_tm);
+-	priv->thermal_throttle.ct_kill_exit_tm.data = (unsigned long)priv;
+-	priv->thermal_throttle.ct_kill_exit_tm.function -		iwl_tt_check_exit_ct_kill;
+-	init_timer(&priv->thermal_throttle.ct_kill_waiting_tm);
+-	priv->thermal_throttle.ct_kill_waiting_tm.data -		(unsigned long)priv;
+-	priv->thermal_throttle.ct_kill_waiting_tm.function -		iwl_tt_ready_for_ct_kill;
++	setup_timer(&priv->thermal_throttle.ct_kill_exit_tm,
++		    iwl_tt_check_exit_ct_kill, (unsigned long)priv);
++	setup_timer(&priv->thermal_throttle.ct_kill_waiting_tm,
++		    iwl_tt_ready_for_ct_kill, (unsigned long)priv);
+ 	/* setup deferred ct kill work */
+ 	INIT_WORK(&priv->tt_work, iwl_bg_tt_work);
+ 	INIT_WORK(&priv->ct_enter, iwl_bg_ct_enter);
 
