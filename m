@@ -1,59 +1,24 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:44 +0000
-Subject: [PATCH 12/27] iwlwifi: dvm: main: Use setup_timer
-Message-Id: <1419604558-29743-14-git-send-email-Julia.Lawall@lip6.fr>
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Date: Sat, 27 Dec 2014 19:55:21 +0000
+Subject: Re: [PATCH 12/27] iwlwifi: dvm: main: Use setup_timer
+Message-Id: <1419710121.6140.0.camel@egrumbacBox>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+	 <1419604558-29743-14-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-14-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Julia.Lawall@lip6.fr" <Julia.Lawall@lip6.fr>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ilw@linux.intel.com" <ilw@linux.intel.com>, "Berg, Johannes" <johannes.berg@intel.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
-
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression t,f,d;
-@@
-
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.data = d;
--t.function = f;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/wireless/iwlwifi/dvm/main.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/iwlwifi/dvm/main.c b/drivers/net/wireless/iwlwifi/dvm/main.c
-index 0b7f46f..75ec691 100644
---- a/drivers/net/wireless/iwlwifi/dvm/main.c
-+++ b/drivers/net/wireless/iwlwifi/dvm/main.c
-@@ -1011,13 +1011,11 @@ static void iwl_setup_deferred_work(struct iwl_priv *priv)
- 	if (priv->lib->bt_params)
- 		iwlagn_bt_setup_deferred_work(priv);
- 
--	init_timer(&priv->statistics_periodic);
--	priv->statistics_periodic.data = (unsigned long)priv;
--	priv->statistics_periodic.function = iwl_bg_statistics_periodic;
-+	setup_timer(&priv->statistics_periodic, iwl_bg_statistics_periodic,
-+		    (unsigned long)priv);
- 
--	init_timer(&priv->ucode_trace);
--	priv->ucode_trace.data = (unsigned long)priv;
--	priv->ucode_trace.function = iwl_bg_ucode_trace;
-+	setup_timer(&priv->ucode_trace, iwl_bg_ucode_trace,
-+		    (unsigned long)priv);
- }
- 
- void iwl_cancel_deferred_work(struct iwl_priv *priv)
-
+T24gRnJpLCAyMDE0LTEyLTI2IGF0IDE1OjM1ICswMTAwLCBKdWxpYSBMYXdhbGwgd3JvdGU6DQo+
+IENvbnZlcnQgYSBjYWxsIHRvIGluaXRfdGltZXIgYW5kIGFjY29tcGFueWluZyBpbnRpYWxpemF0
+aW9ucyBvZg0KPiB0aGUgdGltZXIncyBkYXRhIGFuZCBmdW5jdGlvbiBmaWVsZHMgdG8gYSBjYWxs
+IHRvIHNldHVwX3RpbWVyLg0KPiANCj4gQSBzaW1wbGlmaWVkIHZlcnNpb24gb2YgdGhlIHNlbWFu
+dGljIG1hdGNoIHRoYXQgZml4ZXMgdGhpcyBwcm9ibGVtIGlzIGFzDQo+IGZvbGxvd3M6IChodHRw
+Oi8vY29jY2luZWxsZS5saXA2LmZyLykNCj4gDQo+IC8vIDxzbXBsPg0KPiBAQA0KPiBleHByZXNz
+aW9uIHQsZixkOw0KPiBAQA0KPiANCj4gLWluaXRfdGltZXIoJnQpOw0KPiArc2V0dXBfdGltZXIo
+JnQsZixkKTsNCj4gLXQuZGF0YSA9IGQ7DQo+IC10LmZ1bmN0aW9uID0gZjsNCj4gLy8gPC9zbXBs
+Pg0KPiANCj4gU2lnbmVkLW9mZi1ieTogSnVsaWEgTGF3YWxsIDxKdWxpYS5MYXdhbGxAbGlwNi5m
+cj4NCj4gDQoNCkJvdGggYXBwbGllZCAtIHRoYW5rcy4NCg=
