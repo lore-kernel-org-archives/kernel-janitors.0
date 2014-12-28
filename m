@@ -1,172 +1,62 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 29 Dec 2014 17:04:35 +0000
-Subject: [PATCH 0/8] fix error return code
-Message-Id: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 20:46:06 +0000
+Subject: [PATCH 5/8] fs/9p: One function call less in v9fs_vfs_atomic_open_dotl() after error detection
+Message-Id: <54A06C0E.4030105@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54A01326.3050306@users.sourceforge.net>
+In-Reply-To: <54A01326.3050306@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, ath10k@lists.infradead.org, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, v9fs-developer@lists.sourceforge.net
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-The complate semantic patch that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 09:29:40 +0100
 
-// <smpl>
-@ok exists@
-identifier f,ret,i;
-expression e;
-constant c;
-@@
+The p9_client_clunk() function was called in three cases by the
+v9fs_vfs_atomic_open_dotl() function during error handling even if the passed
+variable "fid" contained a null pointer.
 
-// identify a function that returns a negative return value at least once.
-f(...) {
-... when any
-(
-return -c@i;
-|
-ret =3D -c@i;
-... when !=3D ret =3D e
-return ret;
-|
-if (ret < 0) { ... return ret; }
-)
-... when any
-}
+This implementation detail could be improved by the adjustment of jump targets.
+Let us delete also an unnecessary variable assignment there.
 
-@r exists@
-identifier ret,ok.f,fn;
-expression e1,e2,e3,e4,e5,e6,x;
-statement S,S1;
-position p1,p2,p3;
-@@
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/9p/vfs_inode_dotl.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-// identify a case where the return variable is set to a non-negative value
-// and then returned in error-handling code
-f(...) {
-... when any
-(
-if@p1 (\(ret < 0\|ret !=3D 0\))
- { ... return ret; }
-|
-ret@p1 =3D 0
-)
-... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
-    when !=3D &ret
-    when any
-(
- if (<+... ret =3D e5 ...+>) S1
-|
- if (<+... &ret ...+>) S1
-|
-if@p2(<+...x =3D fn(...)...+>)
- {
-  ... when !=3D ret =3D e6
-      when forall
- return@p3 ret;
-}
-|
-break;
-|
-x =3D fn(...)
-... when !=3D \(ret =3D e4\|ret++\|ret--\|ret+=E4\|ret-=E4\)
-    when !=3D &ret
-(
- if (<+... ret =3D e3 ...+>) S
-|
- if (<+... &ret ...+>) S
-|
-if@p2(<+...\(x !=3D 0\|x < 0\|x =3D NULL\|IS_ERR(x)\)...+>)
- {
-  ... when !=3D ret =3D e2
-      when forall
- return@p3 ret;
-}
-)
-)
-... when any
-}
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 3611b0f..ce1f5bb 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -297,14 +297,14 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 	if (err) {
+ 		p9_debug(P9_DEBUG_VFS, "Failed to get acl values in creat %d\n",
+ 			 err);
+-		goto error;
++		goto err_clunk_old_fid;
+ 	}
+ 	err = p9_client_create_dotl(ofid, name, v9fs_open_to_dotl_flags(flags),
+ 				    mode, gid, &qid);
+ 	if (err < 0) {
+ 		p9_debug(P9_DEBUG_VFS, "p9_client_open_dotl failed in creat %d\n",
+ 			 err);
+-		goto error;
++		goto err_clunk_old_fid;
+ 	}
+ 	v9fs_invalidate_inode_attr(dir);
+ 
+@@ -313,8 +313,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 	if (IS_ERR(fid)) {
+ 		err = PTR_ERR(fid);
+ 		p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n", err);
+-		fid = NULL;
+-		goto error;
++		goto err_clunk_old_fid;
+ 	}
+ 	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
+ 	if (IS_ERR(inode)) {
+-- 
+2.2.1
 
-@printer depends on r@
-position p;
-identifier ok.f,pr;
-constant char [] c;
-@@
-
-f(...) { <...pr@p(...,c,...)...> }
-
-@bad0 exists@
-identifier r.ret,ok.f,g !=3D {ERR_PTR,IS_ERR};
-position p !=3D printer.p;
-@@
-
-f(...) { ... when any
-g@p(...,ret,...)
-... when any
- }
-
-@bad depends on !bad0 exists@
-position r.p1,r.p2;
-statement S1,S2;
-identifier r.ret;
-expression e1;
-@@
-
-// ignore the above if there is some path where the variable is set to
-// something else
-(
-if@p1 (\(ret < 0\|ret !=3D 0\)) S1
-|
-ret@p1 =3D 0
-)
-... when any
- \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\|&ret\)
-... when any
-if@p2(...) S2
-
-@bad1 depends on !bad0 && !bad exists@
-position r.p2;
-statement S2;
-identifier r.ret;
-expression e1;
-constant c;
-@@
-
-ret =3D -c
-... when !=3D \(ret =3D e1\|ret++\|ret--\|ret+=E1\|ret-=E1\)
-    when !=3D &ret
-    when any
-if@p2(...) S2
-
-@bad2 depends on !bad0 && !bad && !bad1 exists@
-position r.p1,r.p2;
-identifier r.ret;
-expression e1;
-statement S2;
-constant c;
-@@
-
-// likewise ignore it if there has been an intervening return
-ret@p1 =3D 0
-... when !=3D if (...) { ... ret =3D e1 ... return ret; }
-    when !=3D if (...) { ... return -c; }
-    when any
-if@p2(...) S2
-
-
-@script:python depends on !bad0 && !bad && !bad1 && !bad2@
-p1 << r.p1;
-p2 << r.p2;
-p3 << r.p3;
-@@
-
-cocci.print_main("",p1)
-cocci.print_secs("",p2)
-cocci.print_secs("",p3)
-// </smpl>
-
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
