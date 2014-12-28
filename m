@@ -1,58 +1,38 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:43 +0000
-Subject: [PATCH 13/27] iwlwifi: dvm: tt: Use setup_timer
-Message-Id: <1419604558-29743-13-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 14:26:46 +0000
+Subject: [PATCH 0/8] fs/9p: Deletion of some unnecessary checks
+Message-Id: <54A01326.3050306@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: kernel-janitors@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Intel Linux Wireless <ilw@linux.intel.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, v9fs-developer@lists.sourceforge.net
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 14:50:08 +0100
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Further update suggestions were taken into account after a patch was applied
+from static source code analysis.
 
-// <smpl>
-@@
-expression t,f,d;
-@@
+Markus Elfring (8):
+  Deletion of unnecessary checks before the function call "p9_client_clunk"
+  One function call less in v9fs_create() after error detection
+  One function call less in v9fs_vfs_atomic_open() after error detection
+  One function call less in v9fs_fid_xattr_get() after error detection
+  One function call less in v9fs_vfs_atomic_open_dotl() after error detection
+  Less function calls in v9fs_vfs_mkdir_dotl() after error detection
+  One function call less in v9fs_vfs_symlink_dotl() after error detection
+  Less function calls in v9fs_vfs_mknod_dotl() after error detection
 
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.data = d;
--t.function = f;
-// </smpl>
+ fs/9p/vfs_dir.c        |  3 +--
+ fs/9p/vfs_inode.c      | 25 ++++++++++--------------
+ fs/9p/vfs_inode_dotl.c | 52 +++++++++++++++++++++-----------------------------
+ fs/9p/xattr.c          |  6 ++----
+ 4 files changed, 35 insertions(+), 51 deletions(-)
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/net/wireless/iwlwifi/dvm/tt.c |   13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/wireless/iwlwifi/dvm/tt.c b/drivers/net/wireless/iwlwifi/dvm/tt.c
-index acb981a..c4736c8 100644
---- a/drivers/net/wireless/iwlwifi/dvm/tt.c
-+++ b/drivers/net/wireless/iwlwifi/dvm/tt.c
-@@ -612,15 +612,10 @@ void iwl_tt_initialize(struct iwl_priv *priv)
- 	memset(tt, 0, sizeof(struct iwl_tt_mgmt));
- 
- 	tt->state = IWL_TI_0;
--	init_timer(&priv->thermal_throttle.ct_kill_exit_tm);
--	priv->thermal_throttle.ct_kill_exit_tm.data = (unsigned long)priv;
--	priv->thermal_throttle.ct_kill_exit_tm.function -		iwl_tt_check_exit_ct_kill;
--	init_timer(&priv->thermal_throttle.ct_kill_waiting_tm);
--	priv->thermal_throttle.ct_kill_waiting_tm.data -		(unsigned long)priv;
--	priv->thermal_throttle.ct_kill_waiting_tm.function -		iwl_tt_ready_for_ct_kill;
-+	setup_timer(&priv->thermal_throttle.ct_kill_exit_tm,
-+		    iwl_tt_check_exit_ct_kill, (unsigned long)priv);
-+	setup_timer(&priv->thermal_throttle.ct_kill_waiting_tm,
-+		    iwl_tt_ready_for_ct_kill, (unsigned long)priv);
- 	/* setup deferred ct kill work */
- 	INIT_WORK(&priv->tt_work, iwl_bg_tt_work);
- 	INIT_WORK(&priv->ct_enter, iwl_bg_ct_enter);
+-- 
+2.2.1
 
