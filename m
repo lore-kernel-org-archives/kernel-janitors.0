@@ -1,53 +1,73 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:37 +0000
-Subject: [PATCH 8/27] wireless: cw1200: Use setup_timer
-Message-Id: <1419604558-29743-7-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 20:41:50 +0000
+Subject: [PATCH 2/8] fs/9p: One function call less in v9fs_create() after error detection
+Message-Id: <54A06B0E.4080709@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54A01326.3050306@users.sourceforge.net>
+In-Reply-To: <54A01326.3050306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Solomon Peachy <pizza@shaftnet.org>
-Cc: kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, v9fs-developer@lists.sourceforge.net
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 08:28:51 +0100
 
-A simplified version of the semantic match that fixes this problem is as
-follows: (http://coccinelle.lip6.fr/)
+The p9_client_clunk() function was called in two cases by the v9fs_create()
+function during error handling even if the passed variable "fid"
+contained a null pointer. This implementation detail could be improved
+by the introduction of another jump label.
 
-// <smpl>
-@@
-expression t,f,d;
-@@
-
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.data = d;
--t.function = f;
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/net/wireless/cw1200/pm.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/9p/vfs_inode.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/cw1200/pm.c b/drivers/net/wireless/cw1200/pm.c
-index 6907c8f..d2202ae 100644
---- a/drivers/net/wireless/cw1200/pm.c
-+++ b/drivers/net/wireless/cw1200/pm.c
-@@ -101,9 +101,8 @@ int cw1200_pm_init(struct cw1200_pm_state *pm,
- {
- 	spin_lock_init(&pm->lock);
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index a787d4c..81b945a 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -672,7 +672,7 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
+ 	err = p9_client_fcreate(ofid, name, perm, mode, extension);
+ 	if (err < 0) {
+ 		p9_debug(P9_DEBUG_VFS, "p9_client_fcreate failed %d\n", err);
+-		goto error;
++		goto ofid_clunk;
+ 	}
  
--	init_timer(&pm->stay_awake);
--	pm->stay_awake.data = (unsigned long)pm;
--	pm->stay_awake.function = cw1200_pm_stay_awake_tmo;
-+	setup_timer(&pm->stay_awake, cw1200_pm_stay_awake_tmo,
-+		    (unsigned long)pm);
+ 	if (!(perm & P9_DMLINK)) {
+@@ -682,8 +682,7 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
+ 			err = PTR_ERR(fid);
+ 			p9_debug(P9_DEBUG_VFS,
+ 				   "p9_client_walk failed %d\n", err);
+-			fid = NULL;
+-			goto error;
++			goto ofid_clunk;
+ 		}
+ 		/*
+ 		 * instantiate inode and assign the unopened fid to the dentry
+@@ -693,16 +692,17 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
+ 			err = PTR_ERR(inode);
+ 			p9_debug(P9_DEBUG_VFS,
+ 				   "inode creation failed %d\n", err);
+-			goto error;
++			goto fid_clunk;
+ 		}
+ 		v9fs_fid_add(dentry, fid);
+ 		d_instantiate(dentry, inode);
+ 	}
+ 	return ofid;
+-error:
+-	p9_client_clunk(ofid);
  
- 	return 0;
++fid_clunk:
+ 	p9_client_clunk(fid);
++ofid_clunk:
++	p9_client_clunk(ofid);
+ 
+ 	return ERR_PTR(err);
  }
+-- 
+2.2.1
 
