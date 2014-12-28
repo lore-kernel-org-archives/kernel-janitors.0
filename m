@@ -1,215 +1,46 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:31 +0000
-Subject: [PATCH 0/27] Use setup_timer
-Message-Id: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 20:44:52 +0000
+Subject: [PATCH 4/8] fs/9p: One function call less in v9fs_fid_xattr_get() after error detection
+Message-Id: <54A06BC4.5030200@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54A01326.3050306@users.sourceforge.net>
+In-Reply-To: <54A01326.3050306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wil6210@qca.qualcomm.com
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-usb@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, v9fs-developer@lists.sourceforge.net
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-These patches group a call to init_timer and initialization of the function
-and data fields into a call to setup_timer.  Is there is no initialization
-of the data field before add_timer is called, the the data value is set to
-0UL.  If the data value has a cast to something other than unsigned long,
-it is changes to a cast to unsigned long, which is the type of the data
-field.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 09:05:25 +0100
 
-The semantic patch that performs this change is shown below
-(http://coccinelle.lip6.fr/).  This semantic patch is fairly restrictive on
-what appears between the init_timer call and the two field initializations,
-to ensure that the there is no code that the initializations depend on.
+The p9_client_clunk() function was called in one case by the
+v9fs_fid_xattr_get() function during error handling even if the passed
+variable "attr_fid" contained a null pointer.
 
-// <smpl>
-@@
-expression t,d,f,e1,e2;
-identifier x1,x2;
-statement S1,S2;
-@@
+Let us delete an unnecessary variable assignment there and return from
+this implementation directly after a failure detection for
+a p9_client_xattrwalk() call.
 
-(
--t.data = d;
-|
--t.function = f;
-|
--init_timer(&t);
-+setup_timer(&t,f,d);
-|
--init_timer_on_stack(&t);
-+setup_timer_on_stack(&t,f,d);
-)
-<... when != S1
-t.x1 = e1;
-...>
-(
--t.data = d;
-|
--t.function = f;
-|
--init_timer(&t);
-+setup_timer(&t,f,d);
-|
--init_timer_on_stack(&t);
-+setup_timer_on_stack(&t,f,d);
-)
-<... when != S2
-t.x2 = e2;
-...>
-(
--t.data = d;
-|
--t.function = f;
-|
--init_timer(&t);
-+setup_timer(&t,f,d);
-|
--init_timer_on_stack(&t);
-+setup_timer_on_stack(&t,f,d);
-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/9p/xattr.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-// ----------------------
-
-@@
-expression t,d,f,e1,e2;
-identifier x1,x2;
-statement S1,S2;
-@@
-
-(
--t->data = d;
-|
--t->function = f;
-|
--init_timer(t);
-+setup_timer(t,f,d);
-|
--init_timer_on_stack(t);
-+setup_timer_on_stack(t,f,d);
-)
-<... when != S1
-t->x1 = e1;
-...>
-(
--t->data = d;
-|
--t->function = f;
-|
--init_timer(t);
-+setup_timer(t,f,d);
-|
--init_timer_on_stack(t);
-+setup_timer_on_stack(t,f,d);
-)
-<... when != S2
-t->x2 = e2;
-...>
-(
--t->data = d;
-|
--t->function = f;
-|
--init_timer(t);
-+setup_timer(t,f,d);
-|
--init_timer_on_stack(t);
-+setup_timer_on_stack(t,f,d);
-)
-
-// ---------------------------------------------------------------------
-// no initialization of data field
-
-@@
-expression t,d1,d2,f;
-@@
-
-(
--init_timer(&t);
-+setup_timer(&t,f,0UL);
-|
--init_timer_on_stack(&t);
-+setup_timer_on_stack(&t,f,0UL);
-)
-... when != t.data = d1;
--t.function = f;
-... when != t.data = d2;
-add_timer(&t);
-
-@@
-expression t,d,f,fn;
-type T;
-@@
-
--t.function = f;
-... when != t.data
-    when != fn(...,(T)t,...)
-(
--init_timer(&t);
-+setup_timer(&t,f,d);
-|
--init_timer_on_stack(&t);
-+setup_timer_on_stack(&t,f,0UL);
-)
-... when != t.data = d;
-add_timer(&t);
-
-// ----------------------
-
-@@
-expression t,d1,d2,f;
-@@
-
-(
--init_timer(t);
-+setup_timer(t,f,0UL);
-|
--init_timer_on_stack(t);
-+setup_timer_on_stack(t,f,0UL);
-)
-... when != t->data = d1;
--t->function = f;
-... when != t->data = d2;
-add_timer(t);
-
-@@
-expression t,d,f,fn;
-type T;
-@@
-
--t->function = f;
-... when != t.data
-    when != fn(...,(T)t,...)
-(
--init_timer(t);
-+setup_timer(t,f,d);
-|
--init_timer_on_stack(t);
-+setup_timer_on_stack(t,f,0UL);
-)
-... when != t->data = d;
-add_timer(t);
-
-// ---------------------------------------------------------------------
-// change data field type
-
-@@
-expression d;
-type T;
-@@
-
-(
-setup_timer
-|
-setup_timer_on_stack
-)
- (...,
-(
-  (unsigned long)d
-|
-- (T)
-+ (unsigned long)
-  d
-)
- )
-// </smpl>
+diff --git a/fs/9p/xattr.c b/fs/9p/xattr.c
+index 8e72269..05ef790 100644
+--- a/fs/9p/xattr.c
++++ b/fs/9p/xattr.c
+@@ -34,8 +34,7 @@ ssize_t v9fs_fid_xattr_get(struct p9_fid *fid, const char *name,
+ 		retval = PTR_ERR(attr_fid);
+ 		p9_debug(P9_DEBUG_VFS, "p9_client_attrwalk failed %zd\n",
+ 			 retval);
+-		attr_fid = NULL;
+-		goto error;
++		return retval;
+ 	}
+ 	if (!buffer_size) {
+ 		/* request to get the attr_size */
+-- 
+2.2.1
 
