@@ -1,47 +1,82 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Dec 2014 18:55:57 +0000
-Subject: [PATCH 1/1] [media] lirc_zilog: Deletion of unnecessary checks before the function call "vfree"
-Message-Id: <547CB9BD.5050101@users.sourceforge.net>
+Date: Sun, 28 Dec 2014 20:47:17 +0000
+Subject: [PATCH 6/8] fs/9p: Less function calls in v9fs_vfs_mkdir_dotl() after error detection
+Message-Id: <54A06C55.7060409@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54A01326.3050306@users.sourceforge.net>
+In-Reply-To: <54A01326.3050306@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jarod Wilson <jarod@wilsonet.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+To: Eric Van Hensbergen <ericvh@gmail.com>, Latchesar Ionkov <lucho@ionkov.net>, Ron Minnich <rminnich@sandia.gov>, v9fs-developer@lists.sourceforge.net
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Dec 2014 19:49:39 +0100
+Date: Sun, 28 Dec 2014 12:44:22 +0100
 
-The vfree() function performs also input parameter validation. Thus the test
-around the call is not needed.
+The p9_client_clunk() function was called in some cases by the
+v9fs_vfs_mkdir_dotl() function during error handling even if the passed
+variable "fid" contained a null pointer.
 
-This issue was detected by using the Coccinelle software.
+* Corresponding details could be improved by the introduction of another
+  jump label.
+
+* Let us delete also two unnecessary variable assignments there.
+
+* Return from this implementation directly after failure detection for
+  the function calls "v9fs_fid_lookup" and "v9fs_acl_mode".
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/staging/media/lirc/lirc_zilog.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/9p/vfs_inode_dotl.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/media/lirc/lirc_zilog.c b/drivers/staging/media/lirc/lirc_zilog.c
-index 3259aac..50b255a 100644
---- a/drivers/staging/media/lirc/lirc_zilog.c
-+++ b/drivers/staging/media/lirc/lirc_zilog.c
-@@ -729,11 +729,9 @@ static int send_boot_data(struct IR_tx *tx)
- static void fw_unload_locked(void)
- {
- 	if (tx_data) {
--		if (tx_data->code_sets)
--			vfree(tx_data->code_sets);
-+		vfree(tx_data->code_sets);
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index ce1f5bb..672d84f 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -403,8 +403,7 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
+ 	if (IS_ERR(dfid)) {
+ 		err = PTR_ERR(dfid);
+ 		p9_debug(P9_DEBUG_VFS, "fid lookup failed %d\n", err);
+-		dfid = NULL;
+-		goto error;
++		return err;
+ 	}
  
--		if (tx_data->datap)
--			vfree(tx_data->datap);
-+		vfree(tx_data->datap);
+ 	gid = v9fs_get_fsgid_for_create(dir);
+@@ -414,20 +413,19 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
+ 	if (err) {
+ 		p9_debug(P9_DEBUG_VFS, "Failed to get acl values in mkdir %d\n",
+ 			 err);
+-		goto error;
++		return err;
+ 	}
+ 	name = (char *) dentry->d_name.name;
+ 	err = p9_client_mkdir_dotl(dfid, name, mode, gid, &qid);
+ 	if (err < 0)
+-		goto error;
++		goto put_acl;
  
- 		vfree(tx_data);
- 		tx_data = NULL;
+ 	fid = p9_client_walk(dfid, 1, &name, 1);
+ 	if (IS_ERR(fid)) {
+ 		err = PTR_ERR(fid);
+ 		p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n",
+ 			 err);
+-		fid = NULL;
+-		goto error;
++		goto put_acl;
+ 	}
+ 
+ 	/* instantiate inode and assign the unopened fid to the dentry */
+@@ -462,6 +460,7 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
+ 	v9fs_invalidate_inode_attr(dir);
+ error:
+ 	p9_client_clunk(fid);
++put_acl:
+ 	v9fs_put_acl(dacl, pacl);
+ 	return err;
+ }
 -- 
-2.1.3
+2.2.1
 
