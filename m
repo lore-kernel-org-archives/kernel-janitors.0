@@ -1,52 +1,77 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:55 +0000
-Subject: [PATCH 24/27] orinoco_usb: Use setup_timer
-Message-Id: <1419604558-29743-25-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 29 Dec 2014 17:04:36 +0000
+Subject: [PATCH 1/8] net: Xilinx: fix error return code
+Message-Id: <1419872683-32709-2-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+Return a negative error code on failure.
 
-A simplified version of the semantic match that fixes this problem is as
+A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression t,f,d;
+identifier ret; expression e1,e2;
 @@
-
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.function = f;
--t.data = d;
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/net/wireless/orinoco/orinoco_usb.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/xilinx/ll_temac_main.c   |    2 ++
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c |    1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/orinoco/orinoco_usb.c b/drivers/net/wireless/orinoco/orinoco_usb.c
-index 9958464..61612a6 100644
---- a/drivers/net/wireless/orinoco/orinoco_usb.c
-+++ b/drivers/net/wireless/orinoco/orinoco_usb.c
-@@ -364,9 +364,7 @@ static struct request_context *ezusb_alloc_ctx(struct ezusb_priv *upriv,
- 	atomic_set(&ctx->refcount, 1);
- 	init_completion(&ctx->done);
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index 9c2d91e..dbcbf0c 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -1043,6 +1043,7 @@ static int temac_of_probe(struct platform_device *op)
+ 	lp->regs = of_iomap(op->dev.of_node, 0);
+ 	if (!lp->regs) {
+ 		dev_err(&op->dev, "could not map temac regs.\n");
++		rc = -ENOMEM;
+ 		goto nodev;
+ 	}
  
--	init_timer(&ctx->timer);
--	ctx->timer.function = ezusb_request_timerfn;
--	ctx->timer.data = (u_long) ctx;
-+	setup_timer(&ctx->timer, ezusb_request_timerfn, (u_long)ctx);
- 	return ctx;
- }
+@@ -1062,6 +1063,7 @@ static int temac_of_probe(struct platform_device *op)
+ 	np = of_parse_phandle(op->dev.of_node, "llink-connected", 0);
+ 	if (!np) {
+ 		dev_err(&op->dev, "could not find DMA node\n");
++		rc = -ENODEV;
+ 		goto err_iounmap;
+ 	}
+ 
+diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+index 2485879..9d4ce38 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
++++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+@@ -1109,6 +1109,7 @@ static int xemaclite_of_probe(struct platform_device *ofdev)
+ 	res = platform_get_resource(ofdev, IORESOURCE_IRQ, 0);
+ 	if (!res) {
+ 		dev_err(dev, "no IRQ found\n");
++		rc = -ENXIO;
+ 		goto error;
+ 	}
  
 
