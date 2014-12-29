@@ -1,53 +1,60 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 04 Dec 2014 22:15:10 +0000
-Subject: [PATCH v2 3/6] net-PPP: Deletion of unnecessary checks before the function call "kfree"
-Message-Id: <5480DCEE.4070803@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 29 Dec 2014 17:04:40 +0000
+Subject: [PATCH 5/8] net: sun4i-emac: fix error return code
+Message-Id: <1419872683-32709-6-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <547B4886.4080406@users.sourceforge.net> <547B496E.604@users.sourceforge.net> <547C5CBC.6060607@cogentembedded.com> <547C82A6.2030808@users.sourceforge.net> <547CA157.1080401@cogentembedded.com> <5480DA32.8000201@users.sourceforge.net>
-In-Reply-To: <5480DA32.8000201@users.sourceforge.net>
+References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 4 Dec 2014 22:22:23 +0100
+Return a negative error code on failure.
 
-The kfree() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/net/ppp/ppp_mppe.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/allwinner/sun4i-emac.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
-index b80af29..94ff216 100644
---- a/drivers/net/ppp/ppp_mppe.c
-+++ b/drivers/net/ppp/ppp_mppe.c
-@@ -237,8 +237,7 @@ static void *mppe_alloc(unsigned char *options, int optlen)
- 	return (void *)state;
+diff --git a/drivers/net/ethernet/allwinner/sun4i-emac.c b/drivers/net/ethernet/allwinner/sun4i-emac.c
+index 1fcd556..cfdf7de 100644
+--- a/drivers/net/ethernet/allwinner/sun4i-emac.c
++++ b/drivers/net/ethernet/allwinner/sun4i-emac.c
+@@ -850,8 +850,10 @@ static int emac_probe(struct platform_device *pdev)
+ 	}
  
- out_free:
--	if (state->sha1_digest)
--		kfree(state->sha1_digest);
-+	kfree(state->sha1_digest);
- 	if (state->sha1)
- 		crypto_free_hash(state->sha1);
- 	if (state->arc4)
-@@ -255,8 +254,7 @@ static void mppe_free(void *arg)
- {
- 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
- 	if (state) {
--		if (state->sha1_digest)
--			kfree(state->sha1_digest);
-+		kfree(state->sha1_digest);
- 		if (state->sha1)
- 			crypto_free_hash(state->sha1);
- 		if (state->arc4)
--- 
-2.1.3
+ 	db->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(db->clk))
++	if (IS_ERR(db->clk)) {
++		ret = PTR_ERR(db->clk);
+ 		goto out;
++	}
+ 
+ 	clk_prepare_enable(db->clk);
+ 
 
