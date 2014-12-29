@@ -1,68 +1,64 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 02 Dec 2014 10:51:15 +0000
-Subject: [PATCH 1/1] lustre: Deletion of unnecessary checks before three function calls
-Message-Id: <547D99A3.7070506@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 29 Dec 2014 17:04:42 +0000
+Subject: [PATCH 7/8] net: axienet: fix error return code
+Message-Id: <1419872683-32709-8-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andreas Dilger <andreas.dilger@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Oleg Drokin <oleg.drokin@intel.com>, devel@driverdev.osuosl.org, HPDD-discuss@lists.01.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: linux-arm-kernel@lists.infradead.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 Dec 2014 11:40:33 +0100
+Return a negative error code on failure.
 
-The functions free_ll_remote_perm(), free_rmtperm_hash() and iput() test
-whether their argument is NULL and then return immediately.
-Thus the test around their calls is not needed.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-This issue was detected by using the Coccinelle software.
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
 ---
- drivers/staging/lustre/lustre/llite/remote_perm.c | 5 ++---
- drivers/staging/lustre/lustre/llite/statahead.c   | 3 +--
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/lustre/lustre/llite/remote_perm.c b/drivers/staging/lustre/lustre/llite/remote_perm.c
-index c05a912..a581826 100644
---- a/drivers/staging/lustre/lustre/llite/remote_perm.c
-+++ b/drivers/staging/lustre/lustre/llite/remote_perm.c
-@@ -194,7 +194,7 @@ int ll_update_remote_perm(struct inode *inode, struct mdt_remote_perm *perm)
- 
- 	if (!lli->lli_remote_perms)
- 		lli->lli_remote_perms = perm_hash;
--	else if (perm_hash)
-+	else
- 		free_rmtperm_hash(perm_hash);
- 
- 	head = lli->lli_remote_perms + remote_perm_hashfunc(perm->rp_uid);
-@@ -209,8 +209,7 @@ again:
- 			continue;
- 		if (tmp->lrp_fsgid != perm->rp_fsgid)
- 			continue;
--		if (lrp)
--			free_ll_remote_perm(lrp);
-+		free_ll_remote_perm(lrp);
- 		lrp = tmp;
- 		break;
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 4ea2d4e..6ca4a52 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -1501,6 +1501,7 @@ static int axienet_of_probe(struct platform_device *op)
+ 	lp->regs = of_iomap(op->dev.of_node, 0);
+ 	if (!lp->regs) {
+ 		dev_err(&op->dev, "could not map Axi Ethernet regs.\n");
++		ret = -ENOMEM;
+ 		goto nodev;
  	}
-diff --git a/drivers/staging/lustre/lustre/llite/statahead.c b/drivers/staging/lustre/lustre/llite/statahead.c
-index 227854b..6ad9dd0 100644
---- a/drivers/staging/lustre/lustre/llite/statahead.c
-+++ b/drivers/staging/lustre/lustre/llite/statahead.c
-@@ -334,8 +334,7 @@ static void ll_sa_entry_put(struct ll_statahead_info *sai,
- 		LASSERT(ll_sa_entry_unhashed(entry));
- 
- 		ll_sa_entry_cleanup(sai, entry);
--		if (entry->se_inode)
--			iput(entry->se_inode);
-+		iput(entry->se_inode);
- 
- 		OBD_FREE(entry, entry->se_size);
- 		atomic_dec(&sai->sai_cache_count);
--- 
-2.1.3
+ 	/* Setup checksum offload, but default to off if not specified */
+@@ -1567,6 +1568,7 @@ static int axienet_of_probe(struct platform_device *op)
+ 	np = of_parse_phandle(op->dev.of_node, "axistream-connected", 0);
+ 	if (!np) {
+ 		dev_err(&op->dev, "could not find DMA node\n");
++		ret = -ENODEV;
+ 		goto err_iounmap;
+ 	}
+ 	lp->dma_regs = of_iomap(np, 0);
 
