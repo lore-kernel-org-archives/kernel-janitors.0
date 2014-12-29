@@ -1,29 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 01 Dec 2014 22:30:13 +0000
-Subject: [PATCH 0/2] [media] mn88473: Delete an unnecessary check
-Message-Id: <547CEBF5.4040004@users.sourceforge.net>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 29 Dec 2014 17:04:43 +0000
+Subject: [PATCH 8/8] ath10k: fix error return code
+Message-Id: <1419872683-32709-9-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Antti Palosaari <crope@iki.fi>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, devel@driverdev.osuosl.org, linux-media@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org, netdev@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 Dec 2014 23:16:34 +0100
+Return a negative error code on failure.
 
-Another update suggestion was taken into account after a patch was applied
-from static source code analysis.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Markus Elfring (2):
-  Deletion of an unnecessary check before the function call "release_firmware"
-  One function call less in mn88473_init() after error detection
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
 
- drivers/staging/media/mn88473/mn88473.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-2.1.3
+---
+ drivers/net/wireless/ath/ath10k/htt_tx.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/htt_tx.c b/drivers/net/wireless/ath/ath10k/htt_tx.c
+index 4bc51d8..2836f4c 100644
+--- a/drivers/net/wireless/ath/ath10k/htt_tx.c
++++ b/drivers/net/wireless/ath/ath10k/htt_tx.c
+@@ -480,8 +480,10 @@ int ath10k_htt_tx(struct ath10k_htt *htt, struct sk_buff *msdu)
+ 
+ 	skb_cb->htt.txbuf = dma_pool_alloc(htt->tx_pool, GFP_ATOMIC,
+ 					   &paddr);
+-	if (!skb_cb->htt.txbuf)
++	if (!skb_cb->htt.txbuf) {
++		res = -ENOMEM;
+ 		goto err_free_msdu_id;
++	}
+ 	skb_cb->htt.txbuf_paddr = paddr;
+ 
+ 	skb_cb->paddr = dma_map_single(dev, msdu->data, msdu->len,
 
