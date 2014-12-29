@@ -1,37 +1,81 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 03 Dec 2014 10:09:18 +0000
-Subject: [patch] mpt3sas: issue_reset is uninitialized
-Message-Id: <20141203100918.GA29583@mwanda>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 29 Dec 2014 17:04:39 +0000
+Subject: [PATCH 4/8] drm: fix error return code
+Message-Id: <1419872683-32709-5-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Nagalakshmi Nandigama <nagalakshmi.nandigama@avagotech.com>
-Cc: Praveen Krishnamoorthy <praveen.krishnamoorthy@avagotech.com>, Sreekanth Reddy <sreekanth.reddy@avagotech.com>, Abhijit Mahajan <abhijit.mahajan@avagotech.com>, "James E.J. Bottomley" <JBottomley@parallels.com>, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-We never set "issue_reset" to zero.
+Return a negative error code on failure.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 1560115..a6d471a 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -3419,7 +3419,7 @@ mpt3sas_base_sas_iounit_control(struct MPT3SAS_ADAPTER *ioc,
- 	u16 smid;
- 	u32 ioc_state;
- 	unsigned long timeleft;
--	u8 issue_reset;
-+	bool issue_reset = 0;
- 	int rc;
- 	void *request;
- 	u16 wait_state_count;
-@@ -3523,7 +3523,7 @@ mpt3sas_base_scsi_enclosure_processor(struct MPT3SAS_ADAPTER *ioc,
- 	u16 smid;
- 	u32 ioc_state;
- 	unsigned long timeleft;
--	u8 issue_reset;
-+	bool issue_reset = 0;
- 	int rc;
- 	void *request;
- 	u16 wait_state_count;
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpu/drm/gma500/psb_drv.c         |    8 ++++++--
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index 92e7e57..4eff0d6 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -326,12 +326,16 @@ static int psb_driver_load(struct drm_device *dev, unsigned long flags)
+ 		goto out_err;
+ 
+ 	dev_priv->mmu = psb_mmu_driver_init(dev, 1, 0, 0);
+-	if (!dev_priv->mmu)
++	if (!dev_priv->mmu) {
++		ret = -ENOMEM;
+ 		goto out_err;
++	}
+ 
+ 	dev_priv->pf_pd = psb_mmu_alloc_pd(dev_priv->mmu, 1, 0);
+-	if (!dev_priv->pf_pd)
++	if (!dev_priv->pf_pd) {
++		ret = -ENOMEM;
+ 		goto out_err;
++	}
+ 
+ 	ret = psb_do_init(dev);
+ 	if (ret)
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index 56c6055..c0fb5fa 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -678,6 +678,7 @@ static int omap_dmm_probe(struct platform_device *dev)
+ 				&omap_dmm->refill_pa, GFP_KERNEL);
+ 	if (!omap_dmm->refill_va) {
+ 		dev_err(&dev->dev, "could not allocate refill memory\n");
++		ret = -ENOMEM;
+ 		goto fail;
+ 	}
+ 
+
