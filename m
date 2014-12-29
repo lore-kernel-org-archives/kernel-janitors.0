@@ -1,53 +1,63 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Fri, 26 Dec 2014 14:35:57 +0000
-Subject: [PATCH 26/27] mwifiex: 11n_rxreorder: Use setup_timer
-Message-Id: <1419604558-29743-27-git-send-email-Julia.Lawall@lip6.fr>
+Date: Mon, 29 Dec 2014 17:04:37 +0000
+Subject: [PATCH 2/8] myri10ge: fix error return code
+Message-Id: <1419872683-32709-3-git-send-email-Julia.Lawall@lip6.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Amitkumar Karwar <akarwar@marvell.com>
-Cc: kernel-janitors@vger.kernel.org, Avinash Patil <patila@marvell.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hyong-Youb Kim <hykim@myri.com>
+Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Convert a call to init_timer and accompanying intializations of
-the timer's data and function fields to a call to setup_timer.
+Return a negative error code on failure.
 
-A simplified version of the semantic match that fixes this problem is as
+A simplified version of the semantic match that finds this problem is as
 follows: (http://coccinelle.lip6.fr/)
 
 // <smpl>
 @@
-expression t,f,d;
+identifier ret; expression e1,e2;
 @@
-
--init_timer(&t);
-+setup_timer(&t,f,d);
--t.function = f;
--t.data = d;
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
 // </smpl>
+
+The patch also modifies the test of mgp->cmd to satisfy checkpatch.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/net/wireless/mwifiex/11n_rxreorder.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mwifiex/11n_rxreorder.c b/drivers/net/wireless/mwifiex/11n_rxreorder.c
-index d73fda3..f33dc81 100644
---- a/drivers/net/wireless/mwifiex/11n_rxreorder.c
-+++ b/drivers/net/wireless/mwifiex/11n_rxreorder.c
-@@ -391,10 +391,8 @@ mwifiex_11n_create_rx_reorder_tbl(struct mwifiex_private *priv, u8 *ta,
- 	new_node->timer_context.priv = priv;
- 	new_node->timer_context.timer_is_set = false;
+diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+index af09905..71af98b 100644
+--- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
++++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+@@ -4033,8 +4033,10 @@ static int myri10ge_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	(void)pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+ 	mgp->cmd = dma_alloc_coherent(&pdev->dev, sizeof(*mgp->cmd),
+ 				      &mgp->cmd_bus, GFP_KERNEL);
+-	if (mgp->cmd = NULL)
++	if (!mgp->cmd) {
++		status = -ENOMEM;
+ 		goto abort_with_enabled;
++	}
  
--	init_timer(&new_node->timer_context.timer);
--	new_node->timer_context.timer.function = mwifiex_flush_data;
--	new_node->timer_context.timer.data -			(unsigned long) &new_node->timer_context;
-+	setup_timer(&new_node->timer_context.timer, mwifiex_flush_data,
-+		    (unsigned long)&new_node->timer_context);
- 
- 	for (i = 0; i < win_size; ++i)
- 		new_node->rx_reorder_ptr[i] = NULL;
+ 	mgp->board_span = pci_resource_len(pdev, 0);
+ 	mgp->iomem_base = pci_resource_start(pdev, 0);
 
