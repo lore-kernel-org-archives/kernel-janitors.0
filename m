@@ -1,50 +1,37 @@
-From: GIRISH K S <ks.giri@samsung.com>
-Date: Mon, 29 Dec 2014 04:50:57 +0000
+From: David Miller <davem@davemloft.net>
+Date: Tue, 30 Dec 2014 23:34:55 +0000
 Subject: Re: [PATCH 15/27] net: sxgbe: Use setup_timer
-Message-Id: <451468949.291671419828656924.JavaMail.weblogic@epmlwas09c>
+Message-Id: <20141230.183455.719651086250317259.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419604558-29743-16-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1419604558-29743-16-git-send-email-Julia.Lawall@lip6.fr>
 In-Reply-To: <1419604558-29743-16-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <Julia.Lawall@lip6.fr>, ByungHo An <bh74.an@samsung.com>
-Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Vipul Chandrakant <vipul.pandya@samsung.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Julia.Lawall@lip6.fr
+Cc: bh74.an@samsung.com, kernel-janitors@vger.kernel.org, ks.giri@samsung.com, vipul.pandya@samsung.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-DQoNCi0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tDQpTZW5kZXIgOiBKdWxpYSBMYXdh
-bGw8SnVsaWEuTGF3YWxsQGxpcDYuZnI+DQpEYXRlIDogRGVjIDI2LCAyMDE0IDIwOjA1IChHTVQr
-MDU6MzApDQpUaXRsZSA6IFtQQVRDSCAxNS8yN10gbmV0OiBzeGdiZTogVXNlIHNldHVwX3RpbWVy
-DQoNCkNvbnZlcnQgYSBjYWxsIHRvIGluaXRfdGltZXIgYW5kIGFjY29tcGFueWluZyBpbnRpYWxp
-emF0aW9ucyBvZg0KdGhlIHRpbWVyJ3MgZGF0YSBhbmQgZnVuY3Rpb24gZmllbGRzIHRvIGEgY2Fs
-bCB0byBzZXR1cF90aW1lci4NCg0KQSBzaW1wbGlmaWVkIHZlcnNpb24gb2YgdGhlIHNlbWFudGlj
-IG1hdGNoIHRoYXQgZml4ZXMgdGhpcyBwcm9ibGVtIGlzIGFzDQpmb2xsb3dzOiAoaHR0cDovL2Nv
-Y2NpbmVsbGUubGlwNi5mci8pDQoNCi8vIA0KQEANCmV4cHJlc3Npb24gdCxmLGQ7DQpAQA0KDQot
-aW5pdF90aW1lcigmdCk7DQorc2V0dXBfdGltZXIoJnQsZixkKTsNCi10LmZ1bmN0aW9uID0gZjsN
-Ci10LmRhdGEgPSBkOw0KLy8gDQoNClNpZ25lZC1vZmYtYnk6IEp1bGlhIExhd2FsbCANCg0KLS0t
-DQpkcml2ZXJzL25ldC9ldGhlcm5ldC9zYW1zdW5nL3N4Z2JlL3N4Z2JlX21haW4uYyB8ICAgMTAg
-KysrKy0tLS0tLQ0KMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMo
-LSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3NhbXN1bmcvc3hnYmUvc3hn
-YmVfbWFpbi5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvc2Ftc3VuZy9zeGdiZS9zeGdiZV9tYWlu
-LmMNCmluZGV4IDY5ODQ5NDQuLmI2NjEyZDYgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25ldC9ldGhl
-cm5ldC9zYW1zdW5nL3N4Z2JlL3N4Z2JlX21haW4uYw0KKysrIGIvZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvc2Ftc3VuZy9zeGdiZS9zeGdiZV9tYWluLmMNCkBAIC0xMzMsOSArMTMzLDggQEAgYm9vbCBz
-eGdiZV9lZWVfaW5pdChzdHJ1Y3Qgc3hnYmVfcHJpdl9kYXRhICogY29uc3QgcHJpdikNCnJldHVy
-biBmYWxzZTsNCg0KcHJpdi0+ZWVlX2FjdGl2ZSA9IDE7DQotIGluaXRfdGltZXIoJnByaXYtPmVl
-ZV9jdHJsX3RpbWVyKTsNCi0gcHJpdi0+ZWVlX2N0cmxfdGltZXIuZnVuY3Rpb24gPSBzeGdiZV9l
-ZWVfY3RybF90aW1lcjsNCi0gcHJpdi0+ZWVlX2N0cmxfdGltZXIuZGF0YSA9ICh1bnNpZ25lZCBs
-b25nKXByaXY7DQorIHNldHVwX3RpbWVyKCZwcml2LT5lZWVfY3RybF90aW1lciwgc3hnYmVfZWVl
-X2N0cmxfdGltZXIsDQorICAgICAodW5zaWduZWQgbG9uZylwcml2KTsNCnByaXYtPmVlZV9jdHJs
-X3RpbWVyLmV4cGlyZXMgPSBTWEdCRV9MUElfVElNRVIoZWVlX3RpbWVyKTsNCmFkZF90aW1lcigm
-cHJpdi0+ZWVlX2N0cmxfdGltZXIpOw0KDQpAQCAtMTAwOSwxMCArMTAwOCw5IEBAIHN0YXRpYyB2
-b2lkIHN4Z2JlX3R4X2luaXRfY29hbGVzY2Uoc3RydWN0IHN4Z2JlX3ByaXZfZGF0YSAqcHJpdikN
-CnN0cnVjdCBzeGdiZV90eF9xdWV1ZSAqcCA9IHByaXYtPnR4cVtxdWV1ZV9udW1dOw0KcC0+dHhf
-Y29hbF9mcmFtZXMgPSAgU1hHQkVfVFhfRlJBTUVTOw0KcC0+dHhfY29hbF90aW1lciA9IFNYR0JF
-X0NPQUxfVFhfVElNRVI7DQotIGluaXRfdGltZXIoJnAtPnR4dGltZXIpOw0KKyBzZXR1cF90aW1l
-cigmcC0+dHh0aW1lciwgc3hnYmVfdHhfdGltZXIsDQorICAgICAodW5zaWduZWQgbG9uZykmcHJp
-di0+dHhxW3F1ZXVlX251bV0pOw0KcC0+dHh0aW1lci5leHBpcmVzID0gU1hHQkVfQ09BTF9USU1F
-UihwLT50eF9jb2FsX3RpbWVyKTsNCi0gcC0+dHh0aW1lci5kYXRhID0gKHVuc2lnbmVkIGxvbmcp
-JnByaXYtPnR4cVtxdWV1ZV9udW1dOw0KLSBwLT50eHRpbWVyLmZ1bmN0aW9uID0gc3hnYmVfdHhf
-dGltZXI7DQphZGRfdGltZXIoJnAtPnR4dGltZXIpOw0KfQ0KfQ0KTG9va3MgZ29vZCB0byBtZS4N
-CkFja2VkIGJ5OiBHaXJpc2ggSyBTIDxrcy5naXJpQHNhbXN1bmcuY29tPg0K
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Fri, 26 Dec 2014 15:35:46 +0100
 
+> Convert a call to init_timer and accompanying intializations of
+> the timer's data and function fields to a call to setup_timer.
+> 
+> A simplified version of the semantic match that fixes this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> @@
+> expression t,f,d;
+> @@
+> 
+> -init_timer(&t);
+> +setup_timer(&t,f,d);
+> -t.function = f;
+> -t.data = d;
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
+Applied.
