@@ -1,46 +1,24 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Date: Fri, 09 Jan 2015 18:31:48 +0000
-Subject: Re: [PATCH 2/20] PCI: keystone: fix misspelling of current function in string
-Message-Id: <20150109183148.GH6575@google.com>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 01 Jan 2015 00:20:14 +0000
+Subject: Re: [PATCH 1/8] net: Xilinx: fix error return code
+Message-Id: <20141231.192014.628446769859477158.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
- <1417980062-25151-3-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1417980062-25151-3-git-send-email-Julia.Lawall@lip6.fr>
+References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1419872683-32709-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419872683-32709-2-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-arm-kernel@lists.infradead.org
 
-On Sun, Dec 07, 2014 at 08:20:44PM +0100, Julia Lawall wrote:
-> Replace a misspelled function name by %s and then __func__.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Date: Mon, 29 Dec 2014 18:04:36 +0100
+
+> Return a negative error code on failure.
 > 
-> The function name contains pcie, not pci as in the string.
-> 
-> This was done using Coccinelle, including the use of Levenshtein distance,
-> as proposed by Rasmus Villemoes.
-> 
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+ ...
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Applied with Murali's ack to pci/host-keystone for v3.20, thanks!
-
-> ---
-> The semantic patch is difficult to summarize, but is available in the cover
-> letter of this patch series.
-> 
->  drivers/pci/host/pci-keystone.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pci-keystone.c b/drivers/pci/host/pci-keystone.c
-> index 78f79e3..e2f600e 100644
-> --- a/drivers/pci/host/pci-keystone.c
-> +++ b/drivers/pci/host/pci-keystone.c
-> @@ -119,7 +119,7 @@ static void ks_pcie_msi_irq_handler(unsigned int irq, struct irq_desc *desc)
->  	struct pcie_port *pp = &ks_pcie->pp;
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
->  
-> -	dev_dbg(pp->dev, "ks_pci_msi_irq_handler, irq %d\n", irq);
-> +	dev_dbg(pp->dev, "%s, irq %d\n", __func__, irq);
->  
->  	/*
->  	 * The chained irq handler installation would have replaced normal
-> 
+Applied.
