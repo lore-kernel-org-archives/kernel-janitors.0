@@ -1,32 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 23 Jan 2015 11:24:21 +0000
-Subject: [patch] ocfs2: o2net: silence uninitialized variable warning
-Message-Id: <20150123112421.GA14552@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jan 2015 13:28:17 +0000
+Subject: [PATCH 10/13] ALSA: sb: Delete an unnecessary check before the function call "snd_emux_free"
+Message-Id: <54A93FF1.3050108@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
+In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: ocfs2-devel@oss.oracle.com
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Smatch complains that, if o2net_tx_can_proceed() returns false, then
-"sc" and "ret" are uninialized or maybe we are re-using the data from
-previous iteration.  I do not know if we can hit this bug in real life
-but checking the return value is harmless and we may as well silence the
-static checker warning.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jan 2015 21:02:32 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The snd_emux_free() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-diff --git a/fs/ocfs2/cluster/tcp.c b/fs/ocfs2/cluster/tcp.c
-index 2e355e0..56c403a 100644
---- a/fs/ocfs2/cluster/tcp.c
-+++ b/fs/ocfs2/cluster/tcp.c
-@@ -1016,7 +1016,8 @@ void o2net_fill_node_map(unsigned long *map, unsigned bytes)
- 
- 	memset(map, 0, bytes);
- 	for (node = 0; node < O2NM_MAX_NODES; ++node) {
--		o2net_tx_can_proceed(o2net_nn_from_num(node), &sc, &ret);
-+		if (!o2net_tx_can_proceed(o2net_nn_from_num(node), &sc, &ret))
-+			continue;
- 		if (!ret) {
- 			set_bit(node, map);
- 			sc_put(sc);
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/isa/sb/emu8000_synth.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/isa/sb/emu8000_synth.c b/sound/isa/sb/emu8000_synth.c
+index 95b39be..72332df 100644
+--- a/sound/isa/sb/emu8000_synth.c
++++ b/sound/isa/sb/emu8000_synth.c
+@@ -103,8 +103,7 @@ static int snd_emu8000_delete_device(struct snd_seq_device *dev)
+ 	hw = dev->driver_data;
+ 	if (hw->pcm)
+ 		snd_device_free(dev->card, hw->pcm);
+-	if (hw->emu)
+-		snd_emux_free(hw->emu);
++	snd_emux_free(hw->emu);
+ 	snd_util_memhdr_free(hw->memhdr);
+ 	hw->emu = NULL;
+ 	hw->memhdr = NULL;
+-- 
+2.2.1
+
