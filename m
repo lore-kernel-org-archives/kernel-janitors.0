@@ -1,49 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Fri, 16 Jan 2015 11:12:24 +0000
-Subject: Re: [patch] drm/tegra: gem: oops in error handling
-Message-Id: <20150116111222.GB4885@ulmo.nvidia.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="/NkBOFFp2J2Af1nK"
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jan 2015 12:43:11 +0000
+Subject: [PATCH 0/13] ALSA: Deletion of some unnecessary checks
+Message-Id: <54A9355F.4050102@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150116104342.GA4860@mwanda>
-In-Reply-To: <20150116104342.GA4860@mwanda>
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Jan 2015 11:50:12 +0100
 
---/NkBOFFp2J2Af1nK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Further update suggestions were taken into account after several patches
+were applied from static source code analysis.
 
-On Fri, Jan 16, 2015 at 01:43:42PM +0300, Dan Carpenter wrote:
-> kfree(ERR_PTR(-ENOMEM)) will not work very well.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Markus Elfring (3):
+  seq: Deletion of unnecessary checks before the function call "snd_midi_event_free"
+  oss: Deletion of unnecessary checks before the function call "vfree"
+  emu10k1: Delete an unnecessary check before the function call "kfree"
+  oxygen: Delete an unnecessary check before the function call "snd_pcm_suspend"
+  emux: Delete an unnecessary check before the function call "snd_sf_free"
+  ASoC: Intel: Delete an unnecessary check before the function call "sst_dma_free"
+  ASoC: fsi: Deletion of unnecessary checks before the function call "clk_enable"
+  ASoC: Intel: Delete an unnecessary check before the function call "release_firmware"
+  i2sbus: Delete an unnecessary check before the function call "snd_pcm_suspend_all"
+  sb: Delete an unnecessary check before the function call "snd_emux_free"
+  Deletion of checks before the function call "iounmap"
+  msnd: One function call less in snd_msnd_attach() after error detection
+  msnd: Fix centralized exiting from snd_msnd_attach()
 
-Applied, thanks.
+ sound/aoa/soundbus/i2sbus/core.c | 13 ++++++-------
+ sound/arm/aaci.c                 |  4 ++--
+ sound/drivers/ml403-ac97cr.c     |  3 +--
+ sound/isa/msnd/msnd_pinnacle.c   | 31 ++++++++++++++++---------------
+ sound/parisc/harmony.c           |  4 +---
+ sound/pci/ad1889.c               |  5 +----
+ sound/pci/asihpi/hpioctl.c       |  6 ++----
+ sound/pci/atiixp.c               |  3 +--
+ sound/pci/atiixp_modem.c         |  3 +--
+ sound/pci/aw2/aw2-alsa.c         |  4 +---
+ sound/pci/bt87x.c                |  3 +--
+ sound/pci/cs4281.c               |  6 ++----
+ sound/pci/cs46xx/cs46xx_lib.c    |  4 ++--
+ sound/pci/ctxfi/cthw20k1.c       |  5 +----
+ sound/pci/ctxfi/cthw20k2.c       |  5 +----
+ sound/pci/echoaudio/echoaudio.c  |  6 +-----
+ sound/pci/hda/hda_intel.c        |  3 +--
+ sound/pci/lola/lola.c            |  6 ++----
+ sound/pci/mixart/mixart.c        |  7 +++----
+ sound/pci/nm256/nm256.c          |  6 ++----
+ sound/pci/rme9652/hdsp.c         |  4 +---
+ sound/pci/rme9652/hdspm.c        |  4 +---
+ sound/pci/rme9652/rme9652.c      |  3 +--
+ sound/pci/sis7019.c              |  5 +----
+ sound/pci/ymfpci/ymfpci_main.c   |  3 +--
+ sound/ppc/pmac.c                 | 15 +++++----------
+ 26 files changed, 58 insertions(+), 103 deletions(-)
 
-Thierry
+-- 
+2.2.1
 
---/NkBOFFp2J2Af1nK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUuPIWAAoJEN0jrNd/PrOhY+EP/RodiJ4aN2oiUR51X2RBwbk5
-epU+SxyG9PQ/qh3g47X7o3b1kUIoHtvxD7vKFupUrLqthCahtLY5lDqWJ6xGlMNs
-fohToLy7/Hs/eQWNorw/ccZYXpxy3VkhKFY+5wOfx/Ix+jbn5saZQbvNXtiF2mpR
-RK9xyoI/vHGGklD/QVp8XxwpOkHosbQ3NeQWlYdbLqeACKOKbaydC0L/EmHNWBKJ
-u7ywBlBpeIA/toXn+zz0Hips38aOv/NnTMTNYrIYQ1qckUYPPrQ1glBaUR6MafvI
-MrslwYqSG6aFxbQ5kRCb0x+/pV+kzKJOLv7AlyQkOyGvWYUar16ECCYR6xaUMjaT
-0dhR6OGQflY50rhWBZlN4G6J7aceseHvCLeb6Nx9NuxEG5TodL9p9p+a+DaJXWG9
-DTuCvlNywucldesDNTQeiVZItLGV5AC8Rz40LD0FyHEJvw0yOisX0UQG865qTUX3
-iLNZR0nBcvmuICjyMNz5f2dCC9Madbkin1zInJag4PuhYhGmjarKK1l/HaYHDQF7
-8eKhr9CVuMSGqyS13NrlIDLrF3mkBP4/seHk64CAIPQ/2dA446i+3Cw4JdQhHrl8
-s+CbXeVbuaAFsBcK5wXZs1U8wrV8V3sUkcKLbv33SVWkoAOtuDBjZCrNZQoGzZW4
-Bsn9erIc8nHWDfl1Q7lm
-=JSzl
------END PGP SIGNATURE-----
-
---/NkBOFFp2J2Af1nK--
