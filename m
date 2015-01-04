@@ -1,38 +1,103 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Thu, 22 Jan 2015 16:21:36 +0000
-Subject: Re: [patch] Input: cyapa - off by on in cyapa_update_fw_store()
-Message-Id: <20150122162136.GB18153@dtor-ws>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jan 2015 13:38:38 +0000
+Subject: [PATCH 12/13] ALSA: msnd: One function call less in snd_msnd_attach() after error detection
+Message-Id: <54A9425E.1030107@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150122074801.GA11491@mwanda>
-In-Reply-To: <20150122074801.GA11491@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
+In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Henrik Rydberg <rydberg@bitmath.org>, Dudley Du <dudl@cypress.com>, Jingoo Han <jg1.han@samsung.com>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 22, 2015 at 10:48:01AM +0300, Dan Carpenter wrote:
-> If "(count = NAME_MAX)" then we could end up putting the NUL terminator
-> one space beyond the end of the fw_name[] array.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 4 Jan 2015 11:00:11 +0100
 
-Applied, thank you.
+The iounmap() function was called in one case by the snd_msnd_attach() function
+even if a previous call of the ioremap_nocache() function failed.
 
-> 
-> diff --git a/drivers/input/mouse/cyapa.c b/drivers/input/mouse/cyapa.c
-> index 64c6128..58f4f6f 100644
-> --- a/drivers/input/mouse/cyapa.c
-> +++ b/drivers/input/mouse/cyapa.c
-> @@ -1013,7 +1013,7 @@ static ssize_t cyapa_update_fw_store(struct device *dev,
->  	char fw_name[NAME_MAX];
->  	int ret, error;
->  
-> -	if (count > NAME_MAX) {
-> +	if (count >= NAME_MAX) {
->  		dev_err(dev, "File name too long\n");
->  		return -EINVAL;
->  	}
+This implementation detail could be improved by the introduction of another
+jump label.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/isa/msnd/msnd_pinnacle.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.c
+index 4c07266..e2e940d 100644
+--- a/sound/isa/msnd/msnd_pinnacle.c
++++ b/sound/isa/msnd/msnd_pinnacle.c
+@@ -575,23 +575,23 @@ static int snd_msnd_attach(struct snd_card *card)
+ 
+ 	err = snd_msnd_dsp_full_reset(card);
+ 	if (err < 0)
+-		goto err_release_region;
++		goto io_unmap;
+ 
+ 	/* Register device */
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+ 	if (err < 0)
+-		goto err_release_region;
++		goto io_unmap;
+ 
+ 	err = snd_msnd_pcm(card, 0);
+ 	if (err < 0) {
+ 		printk(KERN_ERR LOGNAME ": error creating new PCM device\n");
+-		goto err_release_region;
++		goto io_unmap;
+ 	}
+ 
+ 	err = snd_msndmix_new(card);
+ 	if (err < 0) {
+ 		printk(KERN_ERR LOGNAME ": error creating new Mixer device\n");
+-		goto err_release_region;
++		goto io_unmap;
+ 	}
+ 
+ 
+@@ -607,7 +607,7 @@ static int snd_msnd_attach(struct snd_card *card)
+ 		if (err < 0) {
+ 			printk(KERN_ERR LOGNAME
+ 				": error creating new Midi device\n");
+-			goto err_release_region;
++			goto io_unmap;
+ 		}
+ 		mpu = chip->rmidi->private_data;
+ 
+@@ -622,12 +622,13 @@ static int snd_msnd_attach(struct snd_card *card)
+ 
+ 	err = snd_card_register(card);
+ 	if (err < 0)
+-		goto err_release_region;
++		goto io_unmap;
+ 
+ 	return 0;
+ 
+-err_release_region:
++io_unmap:
+ 	iounmap(chip->mappedbase);
++err_release_region:
+ 	release_mem_region(chip->base, BUFFSIZE);
+ 	release_region(chip->io, DSP_NUMIO);
+ 	free_irq(chip->irq, chip);
 -- 
-Dmitry
+2.2.1
+
