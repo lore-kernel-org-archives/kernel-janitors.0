@@ -1,39 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Thu, 08 Jan 2015 11:49:00 +0000
-Subject: Re: [patch] [media] coda: improve safety in coda_register_device()
-Message-Id: <20150108114900.GL15033@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jan 2015 13:14:37 +0000
+Subject: [PATCH 8/13] ASoC: Intel: Delete an unnecessary check before the function call "release_firmware"
+Message-Id: <54A93CBD.7090905@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150108100708.GA10597@mwanda>
- <54AE6434.4070805@bfs.de>
-In-Reply-To: <54AE6434.4070805@bfs.de>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
+In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: walter harms <wharms@bfs.de>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 08, 2015 at 12:04:20PM +0100, walter harms wrote:
-> > @@ -1844,10 +1844,11 @@ static int coda_register_device(struct coda_dev *dev, int i)
-> >  {
-> >  	struct video_device *vfd = &dev->vfd[i];
-> >  
-> > -	if (i > ARRAY_SIZE(dev->vfd))
-> > +	if (i >= dev->devtype->num_vdevs)
-> >  		return -EINVAL;
-> 
-> hi,
->  just a minor question. if i can not be trusted, i feel you should move the
->  array access:
->    struct video_device *vfd = &dev->vfd[i];
->  after the check
->    i >= dev->devtype->num_vdevs
-> at least that would improve the readability by not trigger my internal alarm
-> "check after access"
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jan 2015 19:49:37 +0100
 
-The "access" is just taking the address, not dereferencing so it's ok.
-This kind of code is fairly common and CodingStyle doesn't have an
-opinion here so I left it how the original author wrote it.
+The release_firmware() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-regards,
-dan carpenter
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/intel/sst/sst_loader.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/sst/sst_loader.c b/sound/soc/intel/sst/sst_loader.c
+index b580f96..7888cd7 100644
+--- a/sound/soc/intel/sst/sst_loader.c
++++ b/sound/soc/intel/sst/sst_loader.c
+@@ -324,8 +324,7 @@ void sst_firmware_load_cb(const struct firmware *fw, void *context)
+ 
+ 	if (ctx->sst_state != SST_RESET ||
+ 			ctx->fw_in_mem != NULL) {
+-		if (fw != NULL)
+-			release_firmware(fw);
++		release_firmware(fw);
+ 		mutex_unlock(&ctx->sst_lock);
+ 		return;
+ 	}
+-- 
+2.2.1
 
