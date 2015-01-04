@@ -1,7 +1,7 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 04 Jan 2015 13:38:38 +0000
-Subject: [PATCH 12/13] ALSA: msnd: One function call less in snd_msnd_attach() after error detection
-Message-Id: <54A9425E.1030107@users.sourceforge.net>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Sun, 04 Jan 2015 14:18:57 +0000
+Subject: Re: [PATCH 12/13] ALSA: msnd: One function call less in snd_msnd_attach() after error detection
+Message-Id: <s5h4ms6eii6.wl-tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
@@ -19,85 +19,102 @@ References: <5307CAA2.8060406@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
  <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
-In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
+ <5317A59D.4@users.sourceforge.net>
+ <54A9355F.4050102@users.sourceforge.net>
+ <54A9425E.1030107@users.sourceforge.net>
+In-Reply-To: <54A9425E.1030107@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 4 Jan 2015 11:00:11 +0100
+At Sun, 04 Jan 2015 14:38:38 +0100,
+SF Markus Elfring wrote:
+> 
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 4 Jan 2015 11:00:11 +0100
+> 
+> The iounmap() function was called in one case by the snd_msnd_attach() function
+> even if a previous call of the ioremap_nocache() function failed.
+> 
+> This implementation detail could be improved by the introduction of another
+> jump label.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The iounmap() function was called in one case by the snd_msnd_attach() function
-even if a previous call of the ioremap_nocache() function failed.
+I didn't apply this and the next one.  Using goto label isn't bad for
+the error paths in general, but using too much nested labels worsens
+the readability significantly.  (Though, it's almost a matter of
+taste, so I don't want to spend my time for discussing this.)
 
-This implementation detail could be improved by the introduction of another
-jump label.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- sound/isa/msnd/msnd_pinnacle.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+thanks,
 
-diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.c
-index 4c07266..e2e940d 100644
---- a/sound/isa/msnd/msnd_pinnacle.c
-+++ b/sound/isa/msnd/msnd_pinnacle.c
-@@ -575,23 +575,23 @@ static int snd_msnd_attach(struct snd_card *card)
- 
- 	err = snd_msnd_dsp_full_reset(card);
- 	if (err < 0)
--		goto err_release_region;
-+		goto io_unmap;
- 
- 	/* Register device */
- 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
- 	if (err < 0)
--		goto err_release_region;
-+		goto io_unmap;
- 
- 	err = snd_msnd_pcm(card, 0);
- 	if (err < 0) {
- 		printk(KERN_ERR LOGNAME ": error creating new PCM device\n");
--		goto err_release_region;
-+		goto io_unmap;
- 	}
- 
- 	err = snd_msndmix_new(card);
- 	if (err < 0) {
- 		printk(KERN_ERR LOGNAME ": error creating new Mixer device\n");
--		goto err_release_region;
-+		goto io_unmap;
- 	}
- 
- 
-@@ -607,7 +607,7 @@ static int snd_msnd_attach(struct snd_card *card)
- 		if (err < 0) {
- 			printk(KERN_ERR LOGNAME
- 				": error creating new Midi device\n");
--			goto err_release_region;
-+			goto io_unmap;
- 		}
- 		mpu = chip->rmidi->private_data;
- 
-@@ -622,12 +622,13 @@ static int snd_msnd_attach(struct snd_card *card)
- 
- 	err = snd_card_register(card);
- 	if (err < 0)
--		goto err_release_region;
-+		goto io_unmap;
- 
- 	return 0;
- 
--err_release_region:
-+io_unmap:
- 	iounmap(chip->mappedbase);
-+err_release_region:
- 	release_mem_region(chip->base, BUFFSIZE);
- 	release_region(chip->io, DSP_NUMIO);
- 	free_irq(chip->irq, chip);
--- 
-2.2.1
+Takashi
 
+
+> ---
+>  sound/isa/msnd/msnd_pinnacle.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.c
+> index 4c07266..e2e940d 100644
+> --- a/sound/isa/msnd/msnd_pinnacle.c
+> +++ b/sound/isa/msnd/msnd_pinnacle.c
+> @@ -575,23 +575,23 @@ static int snd_msnd_attach(struct snd_card *card)
+>  
+>  	err = snd_msnd_dsp_full_reset(card);
+>  	if (err < 0)
+> -		goto err_release_region;
+> +		goto io_unmap;
+>  
+>  	/* Register device */
+>  	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+>  	if (err < 0)
+> -		goto err_release_region;
+> +		goto io_unmap;
+>  
+>  	err = snd_msnd_pcm(card, 0);
+>  	if (err < 0) {
+>  		printk(KERN_ERR LOGNAME ": error creating new PCM device\n");
+> -		goto err_release_region;
+> +		goto io_unmap;
+>  	}
+>  
+>  	err = snd_msndmix_new(card);
+>  	if (err < 0) {
+>  		printk(KERN_ERR LOGNAME ": error creating new Mixer device\n");
+> -		goto err_release_region;
+> +		goto io_unmap;
+>  	}
+>  
+>  
+> @@ -607,7 +607,7 @@ static int snd_msnd_attach(struct snd_card *card)
+>  		if (err < 0) {
+>  			printk(KERN_ERR LOGNAME
+>  				": error creating new Midi device\n");
+> -			goto err_release_region;
+> +			goto io_unmap;
+>  		}
+>  		mpu = chip->rmidi->private_data;
+>  
+> @@ -622,12 +622,13 @@ static int snd_msnd_attach(struct snd_card *card)
+>  
+>  	err = snd_card_register(card);
+>  	if (err < 0)
+> -		goto err_release_region;
+> +		goto io_unmap;
+>  
+>  	return 0;
+>  
+> -err_release_region:
+> +io_unmap:
+>  	iounmap(chip->mappedbase);
+> +err_release_region:
+>  	release_mem_region(chip->base, BUFFSIZE);
+>  	release_region(chip->io, DSP_NUMIO);
+>  	free_irq(chip->irq, chip);
+> -- 
+> 2.2.1
+> 
