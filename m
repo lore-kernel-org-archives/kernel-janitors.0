@@ -1,47 +1,59 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Jan 2015 09:57:08 +0000
-Subject: [patch] staging: lustre: potential underflow in mdc_iocontrol()
-Message-Id: <20150106095708.GB8698@mwanda>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jan 2015 13:08:42 +0000
+Subject: [PATCH 6/13] ASoC: Intel: Delete an unnecessary check before the function call "sst_dma_free"
+Message-Id: <54A93B5A.9050504@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
+In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Smatch complains that "data->ioc_plen2" is a user controlled value and,
-since we cast to signed int, the limit check can underflow.  It's not
-very serious because probably the copy_to_user() would return -EFAULT
-on every arch that matters instead of creating an info leak.  Also I
-haven't followed it through to see if the value is really user
-controlled.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jan 2015 19:03:55 +0100
 
-But definitely it would be safer to cast to unsigned so let's do that.
+The sst_dma_free() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This issue was detected by using the Coccinelle software.
 
-diff --git a/drivers/staging/lustre/lustre/mdc/mdc_request.c b/drivers/staging/lustre/lustre/mdc/mdc_request.c
-index 3b0f245..05d05ce 100644
---- a/drivers/staging/lustre/lustre/mdc/mdc_request.c
-+++ b/drivers/staging/lustre/lustre/mdc/mdc_request.c
-@@ -1908,8 +1908,8 @@ static int mdc_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/soc/intel/sst-dsp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/sst-dsp.c b/sound/soc/intel/sst-dsp.c
+index 86e4108..64e9421 100644
+--- a/sound/soc/intel/sst-dsp.c
++++ b/sound/soc/intel/sst-dsp.c
+@@ -410,8 +410,7 @@ void sst_dsp_free(struct sst_dsp *sst)
+ 	if (sst->ops->free)
+ 		sst->ops->free(sst);
  
- 		/* copy UUID */
- 		if (copy_to_user(data->ioc_pbuf2, obd2cli_tgt(obd),
--				     min((int) data->ioc_plen2,
--					 (int) sizeof(struct obd_uuid)))) {
-+				 min_t(size_t, data->ioc_plen2,
-+					       sizeof(struct obd_uuid)))) {
- 			rc = -EFAULT;
- 			goto out;
- 		}
-@@ -1921,8 +1921,8 @@ static int mdc_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
- 			goto out;
+-	if (sst->dma)
+-		sst_dma_free(sst->dma);
++	sst_dma_free(sst->dma);
+ }
+ EXPORT_SYMBOL_GPL(sst_dsp_free);
  
- 		if (copy_to_user(data->ioc_pbuf1, &stat_buf,
--				     min((int) data->ioc_plen1,
--					 (int) sizeof(stat_buf)))) {
-+				 min_t(size_t, data->ioc_plen1,
-+					       sizeof(stat_buf)))) {
- 			rc = -EFAULT;
- 			goto out;
- 		}
+-- 
+2.2.1
+
