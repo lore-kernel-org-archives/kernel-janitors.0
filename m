@@ -1,40 +1,59 @@
-From: Eli Cohen <eli@dev.mellanox.co.il>
-Date: Mon, 12 Jan 2015 08:54:57 +0000
-Subject: Re: [patch] IB/mlx5: fix error code in get_port_caps()
-Message-Id: <20150112085457.GA5319@mtldesk30>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Date: Sun, 04 Jan 2015 13:00:22 +0000
+Subject: [PATCH 4/13] ALSA: oxygen: Delete an unnecessary check before the function call "snd_pcm_suspend"
+Message-Id: <54A93966.7050900@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150112081429.GA11818@mwanda>
-In-Reply-To: <20150112081429.GA11818@mwanda>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
+In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Acked-by: Eli Cohen <eli@mellanox.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 3 Jan 2015 17:37:28 +0100
 
-Thanks!
+The snd_pcm_suspend() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-On Mon, Jan 12, 2015 at 11:14:29AM +0300, Dan Carpenter wrote:
-> We should return -ENOMEM on allocation failure instead of success.
-> 
-> Fixes: e126ba97dba9 ('mlx5: Add driver for Mellanox Connect-IB adapters')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-> index 8a87404..cc4ac1e 100644
-> --- a/drivers/infiniband/hw/mlx5/main.c
-> +++ b/drivers/infiniband/hw/mlx5/main.c
-> @@ -997,7 +997,7 @@ static int get_port_caps(struct mlx5_ib_dev *dev)
->  	struct ib_device_attr *dprops = NULL;
->  	struct ib_port_attr *pprops = NULL;
->  	struct mlx5_general_caps *gen;
-> -	int err = 0;
-> +	int err = -ENOMEM;
->  	int port;
->  
->  	gen = &dev->mdev->caps.gen;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ sound/pci/oxygen/oxygen_lib.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/pci/oxygen/oxygen_lib.c b/sound/pci/oxygen/oxygen_lib.c
+index b67e306..61a62c0 100644
+--- a/sound/pci/oxygen/oxygen_lib.c
++++ b/sound/pci/oxygen/oxygen_lib.c
+@@ -736,8 +736,7 @@ static int oxygen_pci_suspend(struct device *dev)
+ 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
+ 
+ 	for (i = 0; i < PCM_COUNT; ++i)
+-		if (chip->streams[i])
+-			snd_pcm_suspend(chip->streams[i]);
++		snd_pcm_suspend(chip->streams[i]);
+ 
+ 	if (chip->model.suspend)
+ 		chip->model.suspend(chip);
+-- 
+2.2.1
+
