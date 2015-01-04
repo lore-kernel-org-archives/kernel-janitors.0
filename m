@@ -1,44 +1,62 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Jan 2015 14:37:42 +0000
-Subject: [PATCH 1/3] block-cciss: Deletion of an unnecessary check before the function call "put_disk"
-Message-Id: <54BBC536.5010006@users.sourceforge.net>
+Date: Sun, 04 Jan 2015 13:21:43 +0000
+Subject: [PATCH 9/13] ALSA: i2sbus: Delete an unnecessary check before the function call "snd_pcm_suspend_all
+Message-Id: <54A93E67.8070105@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <54BBC3AB.6040207@users.sourceforge.net>
-In-Reply-To: <54BBC3AB.6040207@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54A9355F.4050102@users.sourceforge.net>
+In-Reply-To: <54A9355F.4050102@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Don Brace <don.brace@pmcs.com>, iss_storagedev@hp.com, storagedev@pmcs.com, linux-scsi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Jaroslav Kysela <perex@perex.cz>, Johannes Berg <johannes@sipsolutions.net>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 18 Jan 2015 11:14:16 +0100
+Date: Sat, 3 Jan 2015 20:43:01 +0100
 
-The put_disk() function tests whether its argument is NULL and then
+The snd_pcm_suspend_all() function tests whether its argument is NULL and then
 returns immediately. Thus the test around the call is not needed.
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/block/cciss.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/aoa/soundbus/i2sbus/core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
-index ff20f19..4be0de0 100644
---- a/drivers/block/cciss.c
-+++ b/drivers/block/cciss.c
-@@ -4424,8 +4424,7 @@ static void free_hba(ctlr_info_t *h)
+diff --git a/sound/aoa/soundbus/i2sbus/core.c b/sound/aoa/soundbus/i2sbus/core.c
+index 4e2b4fb..837ba99 100644
+--- a/sound/aoa/soundbus/i2sbus/core.c
++++ b/sound/aoa/soundbus/i2sbus/core.c
+@@ -381,10 +381,8 @@ static int i2sbus_suspend(struct macio_dev* dev, pm_message_t state)
  
- 	hba[h->ctlr] = NULL;
- 	for (i = 0; i < h->highest_lun + 1; i++)
--		if (h->gendisk[i] != NULL)
--			put_disk(h->gendisk[i]);
-+		put_disk(h->gendisk[i]);
- 	kfree(h);
- }
+ 	list_for_each_entry(i2sdev, &control->list, item) {
+ 		/* Notify Alsa */
+-		if (i2sdev->sound.pcm) {
+-			/* Suspend PCM streams */
+-			snd_pcm_suspend_all(i2sdev->sound.pcm);
+-		}
++		/* Suspend PCM streams */
++		snd_pcm_suspend_all(i2sdev->sound.pcm);
  
+ 		/* Notify codecs */
+ 		list_for_each_entry(cii, &i2sdev->sound.codec_list, list) {
 -- 
-2.2.2
+2.2.1
 
