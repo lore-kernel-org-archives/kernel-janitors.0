@@ -1,46 +1,54 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Date: Tue, 27 Jan 2015 07:56:49 +0000
-Subject: Re: [PATCH] drivers: gpu: drm: i915: intel_fifo_underrun.c: Fix a typo in comment
-Message-Id: <87siewfygu.fsf@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 05 Jan 2015 15:52:42 +0000
+Subject: Re: net: sxgbe: add basic framework for Samsung 10Gb ethernet driver
+Message-Id: <20150105155242.GA14982@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1422290852-4060-1-git-send-email-gmate.amit@gmail.com>
-In-Reply-To: <1422290852-4060-1-git-send-email-gmate.amit@gmail.com>
+References: <20141015135354.GA15342@mwanda>
+In-Reply-To: <20141015135354.GA15342@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kumar Amit Mehta <gmate.amit@gmail.com>, daniel.vetter@intel.com
-Cc: airlied@linux.ie, intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 26 Jan 2015, Kumar Amit Mehta <gmate.amit@gmail.com> wrote:
-> The comment for intel_cpu_fifo_underrun_irq_handler() is not consistent
-> with the code and the rest of the comment for this routine. This patch
-> fixes this typo in comment.
->
-> Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
+Whatever happened with this?  Who is maintaining this now that Silva
+isn't around?
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+regards,
+dan carpenter
 
-
-> ---
->  drivers/gpu/drm/i915/intel_fifo_underrun.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_fifo_underrun.c b/drivers/gpu/drm/i915/intel_fifo_underrun.c
-> index 77af512..04e248d 100644
-> --- a/drivers/gpu/drm/i915/intel_fifo_underrun.c
-> +++ b/drivers/gpu/drm/i915/intel_fifo_underrun.c
-> @@ -341,7 +341,7 @@ bool intel_set_pch_fifo_underrun_reporting(struct drm_i915_private *dev_priv,
->  }
->  
->  /**
-> - * intel_pch_fifo_underrun_irq_handler - handle PCH fifo underrun interrupt
-> + * intel_cpu_fifo_underrun_irq_handler - handle CPU fifo underrun interrupt
->   * @dev_priv: i915 device instance
->   * @pipe: (CPU) pipe to set state for
->   *
-> -- 
-> 2.1.0
->
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+On Wed, Oct 15, 2014 at 05:15:41PM +0300, Dan Carpenter wrote:
+> Silva's email bounces.
+> 
+> On Wed, Oct 15, 2014 at 04:53:54PM +0300, Dan Carpenter wrote:
+> > Hello Siva Reddy,
+> > 
+> > The patch 1edb9ca69e8a: "net: sxgbe: add basic framework for Samsung
+> > 10Gb ethernet driver" from Mar 25, 2014, leads to the following
+> > static checker warning:
+> > 
+> > 	drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c:505 init_rx_ring()
+> > 	warning: passing freed memory 'rx_ring->rx_skbuff'
+> > 
+> > drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+> >    500          return 0;
+> >    501  
+> >    502  err_init_rx_buffers:
+> >    503          while (--desc_index >= 0)
+> >    504                  free_rx_ring(priv->device, rx_ring, desc_index);
+> >                                                    ^^^^^^^
+> > We free "rx_ring->rx_skbuff" and "rx_ring->rx_skbuff_dma" here so the
+> > next two kfree() calls are double frees.
+> > 
+> >    505          kfree(rx_ring->rx_skbuff);
+> >    506  rxbuff_err:
+> >    507          kfree(rx_ring->rx_skbuff_dma);
+> >    508  dmamem_err:
+> >    509          dma_free_coherent(priv->device,
+> >    510                            rx_rsize * sizeof(struct sxgbe_rx_norm_desc),
+> >    511                            rx_ring->dma_rx, rx_ring->dma_rx_phy);
+> >    512  error:
+> >    513          return -ENOMEM;
+> >    514  }
+> > 
+> > regards,
+> > dan carpenter
