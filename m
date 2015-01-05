@@ -1,11 +1,13 @@
 From: Mark Brown <broonie@kernel.org>
-Date: Mon, 05 Jan 2015 18:22:28 +0000
+Date: Mon, 05 Jan 2015 19:02:44 +0000
 Subject: Re: [PATCH 6/13] ASoC: Intel: Delete an unnecessary check before the function call "sst_dma_free"
-Message-Id: <20150105182228.GB2634@sirena.org.uk>
+Message-Id: <20150105190244.GD2634@sirena.org.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="3lcZGd9BuhuYXNfi"
+Content-Type: multipart/mixed; boundary="PHCdUe6m4AxPMzOu"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
+References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
  <530CF8FF.8080600@users.sourceforge.net>
  <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
  <530DD06F.4090703@users.sourceforge.net>
@@ -13,41 +15,39 @@ References: <alpine.DEB.2.10.1402251840450.7035@hadrien>
  <5317A59D.4@users.sourceforge.net>
  <54A9355F.4050102@users.sourceforge.net>
  <54A93B5A.9050504@users.sourceforge.net>
- <20150105143551.GQ11764@sirena.org.uk>
- <s5hwq51fe8g.wl-tiwai@suse.de>
-In-Reply-To: <s5hwq51fe8g.wl-tiwai@suse.de>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@lip6.fr>, SF Markus Elfring <elfring@users.sourceforge.net>
+In-Reply-To: <54A93B5A.9050504@users.sourceforge.net>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
 
---3lcZGd9BuhuYXNfi
+--PHCdUe6m4AxPMzOu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 05, 2015 at 04:18:07PM +0100, Takashi Iwai wrote:
-> Mark Brown wrote:
+On Sun, Jan 04, 2015 at 02:08:42PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 3 Jan 2015 19:03:55 +0100
+>=20
+> The sst_dma_free() function tests whether its argument is NULL and then
+> returns immediately. Thus the test around the call is not needed.
 
-> > I'm missing aptches 1-5, are there any dependencies?
+Applied, thanks.
 
-> No, all individual fixes.
-
-OK.  SF, in future please always send at least the cover letter to
-everyone getting patches in the series so they know what's going on.
-
---3lcZGd9BuhuYXNfi
+--PHCdUe6m4AxPMzOu
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUqtZjAAoJECTWi3JdVIfQeNcH/3X8H4IzkkQQ5jiXGlyJmMh5
-PNJuWtY07rolZEkeAOIz0VmMwEST1buBcrqUIvhvX0UbsYeQsqOzhtZMqzgMkK4Q
-ZaytOezwik61dmI4fNXAzUTyU0vQ+ydYFwulygLYi/t5D07wp2UeAziPRrCcAHal
-rfRR59FAzaoLmsRz8zrEwsf3aMip993bU9Yemf1YAM6X8+8zjRor4P+AtGPZCR0z
-7f1kOsk/P7HSEW6KC6egCOHNxM1dHOCP3zNO+nnUBBPDiqOxBtMxQQODy/TuwMro
-IVclQPJTDr91gOKMAnr9vmEgKXULKLtp/4eXZ2LWXn9n7ao96vd9KPTHWWaSQqc=
-=xW1v
+iQEcBAEBAgAGBQJUqt/UAAoJECTWi3JdVIfQbzEH/2AfD0z7SEF1hyaG2XpkbGwp
+3iLOAbTCG053WAJ9C0fJuwkewVKS0SrmiP6aiKW16k8OEG+sebPgaOtWKGU5w9xY
+aWon59S/QUgGBXJL44W46S/pTLuj3DVMKuzRbYpVNdxyYQl0xJqg/1/fsDitIY4A
+3ULmylY77/2zK9AOJ5tquCmiXbIpyD9DbGuBbeQPyyxWhf3PUmJUi8VeekfzSckk
+zPImyBDWHEajvRwR4xHag3AD3x0eSmPhpfFWwAqztS6GnGHspVmagQLRxQJRGxBm
+C6//ImuyKc4H5gessBwByApMpSL8MikA9wfAyPEd/RjhCGuKLu/Z2APKvo34aN8=
+=gKx4
 -----END PGP SIGNATURE-----
 
---3lcZGd9BuhuYXNfi--
+--PHCdUe6m4AxPMzOu--
