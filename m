@@ -1,53 +1,59 @@
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 05 Jan 2015 19:02:44 +0000
-Subject: Re: [PATCH 6/13] ASoC: Intel: Delete an unnecessary check before the function call "sst_dma_free"
-Message-Id: <20150105190244.GD2634@sirena.org.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PHCdUe6m4AxPMzOu"
+From: Andrey Utkin <andrey.krieger.utkin@gmail.com>
+Date: Tue, 06 Jan 2015 22:48:15 +0000
+Subject: lustre/lnet/lnet/lib-move.c: memcpy with (struct iovec*)->iov_base, which is __user
+Message-Id: <CANZNk80SoQZU994psVKuuGRGGHnGgO7bcFpPBQoGyg=CjW77xw@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54A9355F.4050102@users.sourceforge.net>
- <54A93B5A.9050504@users.sourceforge.net>
-In-Reply-To: <54A93B5A.9050504@users.sourceforge.net>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: oleg.drokin@intel.com, andreas.dilger@intel.com, HPDD-discuss@ml01.01.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OSUOSL Drivers <devel@driverdev.osuosl.org>, kernel-janitors@vger.kernel.org
 
+Dear maintainers of LustreFS and other experienced kernel developers!
 
---PHCdUe6m4AxPMzOu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am working on fixing some sparse warnings as a task of Eudyptula Challenge.
+There's a thing that look suspiciously to me (or I just don't
+understand it). This looks same both in upstream kernel code in
+drivers/staging/ and in https://github.com/Xyratex/lustre-stable.git
+(it doesn't fetch from http://git.whamcloud.com/fs/lustre-release.git,
+but I guess it is similar with Xyratex repo).
 
-On Sun, Jan 04, 2015 at 02:08:42PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 3 Jan 2015 19:03:55 +0100
->=20
-> The sst_dma_free() function tests whether its argument is NULL and then
-> returns immediately. Thus the test around the call is not needed.
+In lnet/lnet/lib-move.c, in lnet_copy_iov2iov(), at line 209, there is
 
-Applied, thanks.
+                memcpy((char *)diov->iov_base + doffset,
+                        (char *)siov->iov_base + soffset, this_nob);
 
---PHCdUe6m4AxPMzOu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diov and siov are struct iovec *, and iov_base in it is void __user *.
+Are diov and siov really used semantically correctly here, holding
+userspace addresses in iov_base?
+Is it semantically correct to use memcpy to copy bytes from one
+userspace address to another?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+How to treat the comment "/* NB diov, siov are READ-ONLY */" at line
+177 in the same procedure? Is it adequate?
 
-iQEcBAEBAgAGBQJUqt/UAAoJECTWi3JdVIfQbzEH/2AfD0z7SEF1hyaG2XpkbGwp
-3iLOAbTCG053WAJ9C0fJuwkewVKS0SrmiP6aiKW16k8OEG+sebPgaOtWKGU5w9xY
-aWon59S/QUgGBXJL44W46S/pTLuj3DVMKuzRbYpVNdxyYQl0xJqg/1/fsDitIY4A
-3ULmylY77/2zK9AOJ5tquCmiXbIpyD9DbGuBbeQPyyxWhf3PUmJUi8VeekfzSckk
-zPImyBDWHEajvRwR4xHag3AD3x0eSmPhpfFWwAqztS6GnGHspVmagQLRxQJRGxBm
-C6//ImuyKc4H5gessBwByApMpSL8MikA9wfAyPEd/RjhCGuKLu/Z2APKvo34aN8=
-=gKx4
------END PGP SIGNATURE-----
+This above-mentioned memcpy operation causes sparse warnings "warning:
+cast removes address space of expression" for both first and second
+line. When i change it to
 
---PHCdUe6m4AxPMzOu--
+                memcpy((void __user *)((char __user *)diov->iov_base + doffset),
+                        (void __user *)((char __user *)siov->iov_base
++ soffset), this_nob);
+
+It gives other sparse warnings:
+drivers/staging/lustre/lnet/lnet/lib-move.c:208:25: warning: incorrect
+type in argument 1 (different address spaces)
+drivers/staging/lustre/lnet/lnet/lib-move.c:208:25:    expected void *to
+drivers/staging/lustre/lnet/lnet/lib-move.c:208:25:    got void
+[noderef] <asn:1>*<noident>
+drivers/staging/lustre/lnet/lnet/lib-move.c:209:26: warning: incorrect
+type in argument 2 (different address spaces)
+drivers/staging/lustre/lnet/lnet/lib-move.c:209:26:    expected void const *from
+drivers/staging/lustre/lnet/lnet/lib-move.c:209:26:    got void
+[noderef] <asn:1>*<noident>
+
+What is supposed way to avoid warnings in this case?
+
+Thanks.
+
+-- 
+Andrey Utkin
