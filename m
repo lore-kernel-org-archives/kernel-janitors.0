@@ -1,36 +1,50 @@
-From: Kumar Amit Mehta <gmate.amit@gmail.com>
-Date: Mon, 26 Jan 2015 15:44:53 +0000
-Subject: [PATCH] staging: lustre: lustre: mdc: lproc_mdc.c: Fix for potential NULL pointer dereference
-Message-Id: <1422287093-3241-1-git-send-email-gmate.amit@gmail.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Date: Wed, 07 Jan 2015 17:53:57 +0000
+Subject: Re: [PATCH 8/27] wireless: cw1200: Use setup_timer
+Message-Id: <87fvbmqxxm.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1419604558-29743-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1419604558-29743-7-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419604558-29743-7-git-send-email-Julia.Lawall@lip6.fr> (Julia
+	Lawall's message of "Fri, 26 Dec 2014 15:35:37 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: oleg.drokin@intel.com, andreas.dilger@intel.com
-Cc: gregkh@linuxfoundation.org, srikrishanmalik@gmail.com, rd@radekdostal.com, tristan@lelong.xyz, HPDD-discuss@ml01.01.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Solomon Peachy <pizza@shaftnet.org>, kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In mdc_kuc_write(), OBD_ALLOC(lh, len) may leave 'lh' to NULL as kmalloc
-may fail to allocate memory. This fix adds a check to avoid, dereferencing
-a NULL pointer.
+Julia Lawall <Julia.Lawall@lip6.fr> writes:
 
-Signed-off-by: Kumar Amit Mehta <gmate.amit@gmail.com>
----
- drivers/staging/lustre/lustre/mdc/lproc_mdc.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Convert a call to init_timer and accompanying intializations of
+> the timer's data and function fields to a call to setup_timer.
+>
+> A simplified version of the semantic match that fixes this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @@
+> expression t,f,d;
+> @@
+>
+> -init_timer(&t);
+> +setup_timer(&t,f,d);
+> -t.data = d;
+> -t.function = f;
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/drivers/staging/lustre/lustre/mdc/lproc_mdc.c b/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
-index c420219..c791941 100644
---- a/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
-+++ b/drivers/staging/lustre/lustre/mdc/lproc_mdc.c
-@@ -106,6 +106,8 @@ static ssize_t mdc_kuc_write(struct file *file,
- 		/* for mockup below */ 2 * cfs_size_round(sizeof(*hai));
- 
- 	OBD_ALLOC(lh, len);
-+	if (!lh)
-+		return -ENOMEM;
- 
- 	lh->kuc_magic = KUC_MAGIC;
- 	lh->kuc_transport = KUC_TRANSPORT_HSM;
+Thanks, I applied the wireless-drivers patches below to
+wireless-drivers-next.git.
+
+e4a1c3f88e65 mwifiex: 11n_rxreorder: Use setup_timer
+c6c33e772407 mwifiex: main: Use setup_timer
+99a1b74395a5 orinoco_usb: Use setup_timer
+1a94ace406ad iwl3945: Use setup_timer
+af68b87f7211 iwl4965: Use setup_timer
+0be01bf29721 cw1200: queue: Use setup_timer
+dabefea6937d cw1200: main: Use setup_timer
+983988ec0a24 wireless: cw1200: Use setup_timer
+
 -- 
-2.1.0
-
+Kalle Valo
