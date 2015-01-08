@@ -1,34 +1,39 @@
-From: Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Date: Sat, 31 Jan 2015 22:51:25 +0000
-Subject: Re: [PATCH] net: sched: One function call less in em_meta_change() after error detection
-Message-Id: <54CD5C6D.2040704@gmx.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Jan 2015 10:07:08 +0000
+Subject: [patch] [media] coda: improve safety in coda_register_device()
+Message-Id: <20150108100708.GA10597@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54CD042E.6030606@users.sourceforge.net> <54CD115C.8070801@gmx.de> <54CD4D91.9080801@users.sourceforge.net> <54CD5404.1010004@gmx.de> <54CD5529.5060209@users.sourceforge.net>
-In-Reply-To: <54CD5529.5060209@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>, "David S. Miller" <davem@davemloft.net>, Jamal Hadi Salim <jhs@mojatatu.com>, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 31.01.2015 23:20, SF Markus Elfring wrote:
->>> I find that all these cases correspond to the current Linux coding
->>> style documentation, doesn't it?
->> 
->> Sure, I think it does.
-> 
-> Thanks for your acknowledgement.
-> 
-> 
->> But it was not coding style violation what I was reffering to.
-> 
-> Do you suggest any fine-tuning for the affected documentation
-> so that I would tweak my update suggestion once more?
-> 
+The "i" variable is used as an offset into both the dev->vfd[] and the
+dev->devtype->vdevs[] arrays.  The second array is smaller so we should
+use that as a limit instead of ARRAY_SIZE(dev->vfd).  Also the original
+check was off by one.
 
-No I dont think that any documentation has to be adjusted. If you agree
-with me you should adjust the patch accordingly and resend it. Otherwise
-keep it as it is.
+We should use a format string as well in case the ->name has any funny
+characters and also to stop static checkers from complaining.
 
-Regards,
-Lino
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
+index 39330a7..5dd6cae 100644
+--- a/drivers/media/platform/coda/coda-common.c
++++ b/drivers/media/platform/coda/coda-common.c
+@@ -1844,10 +1844,11 @@ static int coda_register_device(struct coda_dev *dev, int i)
+ {
+ 	struct video_device *vfd = &dev->vfd[i];
+ 
+-	if (i > ARRAY_SIZE(dev->vfd))
++	if (i >= dev->devtype->num_vdevs)
+ 		return -EINVAL;
+ 
+-	snprintf(vfd->name, sizeof(vfd->name), dev->devtype->vdevs[i]->name);
++	snprintf(vfd->name, sizeof(vfd->name), "%s",
++		 dev->devtype->vdevs[i]->name);
+ 	vfd->fops	= &coda_fops;
+ 	vfd->ioctl_ops	= &coda_ioctl_ops;
+ 	vfd->release	= video_device_release_empty,
