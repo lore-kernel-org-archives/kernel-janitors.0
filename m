@@ -1,35 +1,56 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Sat, 17 Jan 2015 23:54:58 +0000
-Subject: Re: lustre/lnet/lnet/lib-move.c: memcpy with (struct iovec*)->iov_base, which is __user
-Message-Id: <20150117235458.GA23280@kroah.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 08 Jan 2015 10:52:12 +0000
+Subject: [patch -next] net: eth: xgene: devm_ioremap() returns NULL on error
+Message-Id: <20150108105211.GB10597@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <CANZNk80SoQZU994psVKuuGRGGHnGgO7bcFpPBQoGyg=CjW77xw@mail.gmail.com>
- <20150107083654.GK15033@mwanda>
- <D0D2667E.D2C25%andreas.dilger@intel.com>
- <CANZNk83Y5T75H86VZ4dMVigPiaVADZB60yc6QWWCWdJ=SdT+sQ@mail.gmail.com>
-In-Reply-To: <CANZNk83Y5T75H86VZ4dMVigPiaVADZB60yc6QWWCWdJ=SdT+sQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrey Utkin <andrey.krieger.utkin@gmail.com>
-Cc: "Dilger, Andreas" <andreas.dilger@intel.com>, OSUOSL Drivers <devel@driverdev.osuosl.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Drokin, Oleg" <oleg.drokin@intel.com>, "HPDD-discuss@ml01.01.org" <HPDD-discuss@ml01.01.org>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Iyappan Subramanian <isubramanian@apm.com>, Feng Kan <fkan@apm.com>
+Cc: Keyur Chudgar <kchudgar@apm.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Jan 07, 2015 at 02:28:12PM +0200, Andrey Utkin wrote:
-> 2015-01-07 13:32 GMT+02:00 Dilger, Andreas <andreas.dilger@intel.com>:
-> > On 2015/01/07, 1:36 AM, "Dan Carpenter" <dan.carpenter@oracle.com> wrote:
-> >> Didn't Al change these to kvec instead of iovec?  You have to look at
-> >> the callers to figure out if it's actually a user space pointer or a
-> >> kernel pointer.
-> >
-> > A patch was sent by Al on Dec 2 to replace iovec with kvec, in a thread
-> > titled "[PATCH] staging:lustre:lnet: Incorrect type in assignment".  Greg
-> > replied on Dec 10 in another thread (also fixing this same warning) titled
-> > "[PATCH] staging: lustre: Fix the warning messages about casting without
-> > __user macro" that Al's patch was in the staging tree for 3.19-rc1.
-> 
-> In current linux-next, I see none of the mentioned patches. Also I
-> don't see them mentioned in GKH's merge commit "Merge tag
-> 'staging-3.19-rc1'..."
-> Is it ok?
+devm_ioremap() returns NULL on failure, it doesn't return an ERR_PTR.
 
-Al's patch is now merged.
+Fixes: de7b5b3d790a ('net: eth: xgene: change APM X-Gene SoC platform ethernet to support ACPI')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+index 1e56bf3..02add38 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+@@ -804,9 +804,9 @@ static int xgene_enet_get_resources(struct xgene_enet_pdata *pdata)
+ 		return -ENODEV;
+ 	}
+ 	pdata->base_addr = devm_ioremap(dev, res->start, resource_size(res));
+-	if (IS_ERR(pdata->base_addr)) {
++	if (!pdata->base_addr) {
+ 		dev_err(dev, "Unable to retrieve ENET Port CSR region\n");
+-		return PTR_ERR(pdata->base_addr);
++		return -ENOMEM;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, RES_RING_CSR);
+@@ -816,9 +816,9 @@ static int xgene_enet_get_resources(struct xgene_enet_pdata *pdata)
+ 	}
+ 	pdata->ring_csr_addr = devm_ioremap(dev, res->start,
+ 							resource_size(res));
+-	if (IS_ERR(pdata->ring_csr_addr)) {
++	if (!pdata->ring_csr_addr) {
+ 		dev_err(dev, "Unable to retrieve ENET Ring CSR region\n");
+-		return PTR_ERR(pdata->ring_csr_addr);
++		return -ENOMEM;
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, RES_RING_CMD);
+@@ -828,9 +828,9 @@ static int xgene_enet_get_resources(struct xgene_enet_pdata *pdata)
+ 	}
+ 	pdata->ring_cmd_addr = devm_ioremap(dev, res->start,
+ 							resource_size(res));
+-	if (IS_ERR(pdata->ring_cmd_addr)) {
++	if (!pdata->ring_cmd_addr) {
+ 		dev_err(dev, "Unable to retrieve ENET Ring command region\n");
+-		return PTR_ERR(pdata->ring_cmd_addr);
++		return -ENOMEM;
+ 	}
+ 
+ 	ret = platform_get_irq(pdev, 0);
