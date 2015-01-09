@@ -1,48 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Fri, 09 Jan 2015 12:32:31 +0000
-Subject: [patch] HID: roccat: potential out of bounds in pyra_sysfs_write_settings()
-Message-Id: <20150109123231.GA25224@mwanda>
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Fri, 09 Jan 2015 13:42:06 +0000
+Subject: Re: [patch] HID: roccat: potential out of bounds in pyra_sysfs_write_settings()
+Message-Id: <alpine.LNX.2.00.1501091441480.15299@pobox.suse.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20150109123231.GA25224@mwanda>
+In-Reply-To: <20150109123231.GA25224@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Stefan Achatz <erazor_de@users.sourceforge.net>
-Cc: Jiri Kosina <jkosina@suse.cz>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Stefan Achatz <erazor_de@users.sourceforge.net>, linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This is a static checker fix.  We write some binary settings to the
-sysfs file.  One of the settings is the "->startup_profile".  There
-isn't any checking to make sure it fits into the
-pyra->profile_settings[] array in the profile_activated() function.
+On Fri, 9 Jan 2015, Dan Carpenter wrote:
 
-I added a check to pyra_sysfs_write_settings() in both places because
-I wasn't positive that the other callers were correct.
+> This is a static checker fix.  We write some binary settings to the
+> sysfs file.  One of the settings is the "->startup_profile".  There
+> isn't any checking to make sure it fits into the
+> pyra->profile_settings[] array in the profile_activated() function.
+> 
+> I added a check to pyra_sysfs_write_settings() in both places because
+> I wasn't positive that the other callers were correct.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied to hid.git#for-3.19/upstream-fixes. Thanks,
 
-diff --git a/drivers/hid/hid-roccat-pyra.c b/drivers/hid/hid-roccat-pyra.c
-index 1a07e07..47d7e74 100644
---- a/drivers/hid/hid-roccat-pyra.c
-+++ b/drivers/hid/hid-roccat-pyra.c
-@@ -35,6 +35,8 @@ static struct class *pyra_class;
- static void profile_activated(struct pyra_device *pyra,
- 		unsigned int new_profile)
- {
-+	if (new_profile >= ARRAY_SIZE(pyra->profile_settings))
-+		return;
- 	pyra->actual_profile = new_profile;
- 	pyra->actual_cpi = pyra->profile_settings[pyra->actual_profile].y_cpi;
- }
-@@ -257,9 +259,11 @@ static ssize_t pyra_sysfs_write_settings(struct file *fp,
- 	if (off != 0 || count != PYRA_SIZE_SETTINGS)
- 		return -EINVAL;
- 
--	mutex_lock(&pyra->pyra_lock);
--
- 	settings = (struct pyra_settings const *)buf;
-+	if (settings->startup_profile >= ARRAY_SIZE(pyra->profile_settings))
-+		return -EINVAL;
-+
-+	mutex_lock(&pyra->pyra_lock);
- 
- 	retval = pyra_set_settings(usb_dev, settings);
- 	if (retval) {
+-- 
+Jiri Kosina
+SUSE Labs
