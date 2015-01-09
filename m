@@ -1,34 +1,18 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Mon, 12 Jan 2015 08:56:58 +0000
-Subject: [patch v2] IB/mlx5: fix error code in get_port_caps()
-Message-Id: <20150112085657.GA7568@mwanda>
+From: BARR ALHARIRI <barr24@gmail.com>
+Date: Fri, 09 Jan 2015 20:36:32 +0000
+Subject: =?UTF-8?Q?=D9=84=D8=B3=D9=84=D8=A7=D9=85=20=D8=B9=D9=84=D9=8A?= =?UTF-8?Q?=D9=83=20=D9=88=D8=B1=D8=A
+Message-Id: <6c6dc36d308d4e198f55bccf25c5ffad@ulib.sk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.DEB.2.10.1501120934540.2476@hadrien>
-In-Reply-To: <alpine.DEB.2.10.1501120934540.2476@hadrien>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Eli Cohen <eli@mellanox.com>
-Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
-The current code returns success when kmalloc() fails.  It should return
-an error code, -ENOMEM.
 
-Fixes: e126ba97dba9 ('mlx5: Add driver for Mellanox Connect-IB adapters')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: re-write changelog
+لسلام عليكم
+مرحبا اخي  انا المدام براءه الحريري من سوريا والحين عندي مشروع بدي اعرضه 
+عليك فارجوا منك ترسل لي رساله بالايميل مشان اقدراحكي معك وخبرك بالتفاصيل 
+وبانتظار ردك
+وفيك تتواصل معي علي هالايميل : barralhariri24@gmail.com
+براءه الحريري
 
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index 8a87404..cc4ac1e 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -997,7 +997,7 @@ static int get_port_caps(struct mlx5_ib_dev *dev)
- 	struct ib_device_attr *dprops = NULL;
- 	struct ib_port_attr *pprops = NULL;
- 	struct mlx5_general_caps *gen;
--	int err = 0;
-+	int err = -ENOMEM;
- 	int port;
- 
- 	gen = &dev->mdev->caps.gen;
