@@ -1,33 +1,29 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Tue, 06 Jan 2015 08:15:24 +0000
-Subject: Re: Fwd: Re: Re: net: sxgbe: add basic framework for Samsung 10Gb ethernet driver
-Message-Id: <20150106081524.GC14982@mwanda>
+Date: Mon, 12 Jan 2015 08:14:29 +0000
+Subject: [patch] IB/mlx5: fix error code in get_port_caps()
+Message-Id: <20150112081429.GA11818@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <071b01d02950$443411d0$cc9c3570$@kernel.org>
-In-Reply-To: <071b01d02950$443411d0$cc9c3570$@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Eli Cohen <eli@mellanox.com>
+Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-> > > On Wed, Oct 15, 2014 at 04:53:54PM +0300, Dan Carpenter wrote:
-> > > > Hello Siva Reddy,
-> > > > 
-> > > > The patch 1edb9ca69e8a: "net: sxgbe: add basic framework for Samsung
-> > > > 10Gb ethernet driver" from Mar 25, 2014, leads to the following
-> > > > static checker warning:
-> > > > 
-> > > > drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c:505 init_rx_ring()
-> > > > warning: passing freed memory 'rx_ring->rx_skbuff'
-> > > > 
-> Yeah, the checker is right and it should be fixed. I'm sorry to be in my
-> carelessness. To be honest I've missed the warning messages...
-> 
+We should return -ENOMEM on allocation failure instead of success.
 
-No no.  No problems.  This is a Smatch warning and you need the cross
-function database configured.  I wasn't expecting that you would see the
-warnings.
+Fixes: e126ba97dba9 ('mlx5: Add driver for Mellanox Connect-IB adapters')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-regards,
-dan carpenter
-
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index 8a87404..cc4ac1e 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -997,7 +997,7 @@ static int get_port_caps(struct mlx5_ib_dev *dev)
+ 	struct ib_device_attr *dprops = NULL;
+ 	struct ib_port_attr *pprops = NULL;
+ 	struct mlx5_general_caps *gen;
+-	int err = 0;
++	int err = -ENOMEM;
+ 	int port;
+ 
+ 	gen = &dev->mdev->caps.gen;
