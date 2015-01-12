@@ -1,24 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 01 Jan 2015 00:20:14 +0000
-Subject: Re: [PATCH 1/8] net: Xilinx: fix error return code
-Message-Id: <20141231.192014.628446769859477158.davem@davemloft.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Mon, 12 Jan 2015 08:56:58 +0000
+Subject: [patch v2] IB/mlx5: fix error code in get_port_caps()
+Message-Id: <20150112085657.GA7568@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
- <1419872683-32709-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1419872683-32709-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <alpine.DEB.2.10.1501120934540.2476@hadrien>
+In-Reply-To: <alpine.DEB.2.10.1501120934540.2476@hadrien>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-arm-kernel@lists.infradead.org
+To: Eli Cohen <eli@mellanox.com>
+Cc: Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Date: Mon, 29 Dec 2014 18:04:36 +0100
+The current code returns success when kmalloc() fails.  It should return
+an error code, -ENOMEM.
 
-> Return a negative error code on failure.
-> 
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
- ...
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Fixes: e126ba97dba9 ('mlx5: Add driver for Mellanox Connect-IB adapters')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: re-write changelog
 
-Applied.
+diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+index 8a87404..cc4ac1e 100644
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -997,7 +997,7 @@ static int get_port_caps(struct mlx5_ib_dev *dev)
+ 	struct ib_device_attr *dprops = NULL;
+ 	struct ib_port_attr *pprops = NULL;
+ 	struct mlx5_general_caps *gen;
+-	int err = 0;
++	int err = -ENOMEM;
+ 	int port;
+ 
+ 	gen = &dev->mdev->caps.gen;
