@@ -1,32 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 28 Jan 2015 19:13:20 +0000
-Subject: [patch] gpio: ge: fix error code in gef_gpio_probe()
-Message-Id: <20150128191320.GB10259@mwanda>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Tue, 13 Jan 2015 14:16:40 +0000
+Subject: Re: [PATCH 8/8] ath10k: fix error return code
+Message-Id: <87ppai6a0n.fsf@kamboji.qca.qualcomm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1419872683-32709-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1419872683-32709-9-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1419872683-32709-9-git-send-email-Julia.Lawall@lip6.fr> (Julia
+ Lawall's message of "Mon, 29 Dec 2014 18:04:43 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linus Walleij <linus.walleij@linaro.org>, Kamlakant Patel <kamlakant.patel@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, ath10k@lists.infradead.org, netdev@vger.kernel.org
 
-If kstrdup() fails then we should return -ENOMEM but instead the current
-code returns success.
+Julia Lawall <Julia.Lawall@lip6.fr> writes:
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Return a negative error code on failure.
+>
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+>
+> // <smpl>
+> @@
+> identifier ret; expression e1,e2;
+> @@
+> (
+> if (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
-index 6ea9303..07e9b39 100644
---- a/drivers/gpio/gpio-ge.c
-+++ b/drivers/gpio/gpio-ge.c
-@@ -77,8 +77,10 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
- 
- 	/* Setup pointers to chip functions */
- 	bgc->gc.label = kstrdup(pdev->dev.of_node->full_name, GFP_KERNEL);
--	if (!bgc->gc.label)
-+	if (!bgc->gc.label) {
-+		ret = -ENOMEM;
- 		goto err0;
-+	}
- 
- 	bgc->gc.base = -1;
- 	bgc->gc.ngpio = (u16)(uintptr_t)of_id->data;
+Thanks, applied to ath.git.
+
+-- 
+Kalle Valo
