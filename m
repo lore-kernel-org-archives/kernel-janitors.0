@@ -1,166 +1,71 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Date: Wed, 14 Jan 2015 21:03:52 +0000
-Subject: [patch 5/6] usb: gadget: uvc: make a bunch of stuff static
-Message-Id: <20150114210352.GE23203@mwanda>
+From: Felipe Balbi <balbi@ti.com>
+Date: Wed, 14 Jan 2015 22:45:25 +0000
+Subject: Re: [patch 5/6] usb: gadget: uvc: make a bunch of stuff static
+Message-Id: <20150114224525.GX16533@saruman>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="EqJFqkXZidocywul"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20150114210352.GE23203@mwanda>
+In-Reply-To: <20150114210352.GE23203@mwanda>
 To: kernel-janitors@vger.kernel.org
 
-Sparse rightly complains that these things should be static since they
-are only used in the one .c file.
+--EqJFqkXZidocywul
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Thu, Jan 15, 2015 at 12:03:52AM +0300, Dan Carpenter wrote:
+> Sparse rightly complains that these things should be static since they
+> are only used in the one .c file.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-index 1af2686..a0443a2 100644
---- a/drivers/usb/gadget/function/uvc_configfs.c
-+++ b/drivers/usb/gadget/function/uvc_configfs.c
-@@ -43,7 +43,8 @@ struct uvcg_control_header {
- 	unsigned			linked;
- };
- 
--struct uvcg_control_header *to_uvcg_control_header(struct config_item *item)
-+static struct uvcg_control_header *to_uvcg_control_header(struct config_item
-+							  *item)
- {
- 	return container_of(item, struct uvcg_control_header, item);
- }
-@@ -135,7 +136,7 @@ static struct configfs_attribute *uvcg_control_header_attrs[] = {
- 	NULL,
- };
- 
--struct config_item_type uvcg_control_header_type = {
-+static struct config_item_type uvcg_control_header_type = {
- 	.ct_item_ops	= &uvcg_control_header_item_ops,
- 	.ct_attrs	= uvcg_control_header_attrs,
- 	.ct_owner	= THIS_MODULE,
-@@ -161,7 +162,7 @@ static struct config_item *uvcg_control_header_make(struct config_group *group,
- 	return &h->item;
- }
- 
--void uvcg_control_header_drop(struct config_group *group,
-+static void uvcg_control_header_drop(struct config_group *group,
- 			      struct config_item *item)
- {
- 	struct uvcg_control_header *h = to_uvcg_control_header(item);
-@@ -718,7 +719,7 @@ struct uvcg_format {
- 	__u8			bmaControls[UVCG_STREAMING_CONTROL_SIZE];
- };
- 
--struct uvcg_format *to_uvcg_format(struct config_item *item)
-+static struct uvcg_format *to_uvcg_format(struct config_item *item)
- {
- 	return container_of(to_config_group(item), struct uvcg_format, group);
- }
-@@ -795,7 +796,8 @@ struct uvcg_streaming_header {
- 	unsigned					num_fmt;
- };
- 
--struct uvcg_streaming_header *to_uvcg_streaming_header(struct config_item *item)
-+static struct uvcg_streaming_header *to_uvcg_streaming_header(struct config_item
-+							      *item)
- {
- 	return container_of(item, struct uvcg_streaming_header, item);
- }
-@@ -947,7 +949,7 @@ static struct configfs_attribute *uvcg_streaming_header_attrs[] = {
- 	NULL,
- };
- 
--struct config_item_type uvcg_streaming_header_type = {
-+static struct config_item_type uvcg_streaming_header_type = {
- 	.ct_item_ops	= &uvcg_streaming_header_item_ops,
- 	.ct_attrs	= uvcg_streaming_header_attrs,
- 	.ct_owner	= THIS_MODULE,
-@@ -973,7 +975,7 @@ static struct config_item
- 	return &h->item;
- }
- 
--void uvcg_streaming_header_drop(struct config_group *group,
-+static void uvcg_streaming_header_drop(struct config_group *group,
- 			      struct config_item *item)
- {
- 	struct uvcg_streaming_header *h = to_uvcg_streaming_header(item);
-@@ -1017,7 +1019,7 @@ struct uvcg_frame {
- 	struct config_item	item;
- };
- 
--struct uvcg_frame *to_uvcg_frame(struct config_item *item)
-+static struct uvcg_frame *to_uvcg_frame(struct config_item *item)
- {
- 	return container_of(item, struct uvcg_frame, item);
- }
-@@ -1260,7 +1262,7 @@ static struct configfs_attribute *uvcg_frame_attrs[] = {
- 	NULL,
- };
- 
--struct config_item_type uvcg_frame_type = {
-+static struct config_item_type uvcg_frame_type = {
- 	.ct_item_ops	= &uvcg_frame_item_ops,
- 	.ct_attrs	= uvcg_frame_attrs,
- 	.ct_owner	= THIS_MODULE,
-@@ -1311,7 +1313,8 @@ static struct config_item *uvcg_frame_make(struct config_group *group,
- 	return &h->item;
- }
- 
--void uvcg_frame_drop(struct config_group *group, struct config_item *item)
-+static void uvcg_frame_drop(struct config_group *group,
-+			    struct config_item *item)
- {
- 	struct uvcg_frame *h = to_uvcg_frame(item);
- 	struct uvcg_format *fmt;
-@@ -1334,7 +1337,7 @@ struct uvcg_uncompressed {
- 	struct uvc_format_uncompressed	desc;
- };
- 
--struct uvcg_uncompressed *to_uvcg_uncompressed(struct config_item *item)
-+static struct uvcg_uncompressed *to_uvcg_uncompressed(struct config_item *item)
- {
- 	return container_of(
- 		container_of(to_config_group(item), struct uvcg_format, group),
-@@ -1544,7 +1547,7 @@ static struct configfs_attribute *uvcg_uncompressed_attrs[] = {
- 	NULL,
- };
- 
--struct config_item_type uvcg_uncompressed_type = {
-+static struct config_item_type uvcg_uncompressed_type = {
- 	.ct_item_ops	= &uvcg_uncompressed_item_ops,
- 	.ct_group_ops	= &uvcg_uncompressed_group_ops,
- 	.ct_attrs	= uvcg_uncompressed_attrs,
-@@ -1582,7 +1585,7 @@ static struct config_group *uvcg_uncompressed_make(struct config_group *group,
- 	return &h->fmt.group;
- }
- 
--void uvcg_uncompressed_drop(struct config_group *group,
-+static void uvcg_uncompressed_drop(struct config_group *group,
- 			    struct config_item *item)
- {
- 	struct uvcg_uncompressed *h = to_uvcg_uncompressed(item);
-@@ -1606,7 +1609,7 @@ struct uvcg_mjpeg {
- 	struct uvc_format_mjpeg		desc;
- };
- 
--struct uvcg_mjpeg *to_uvcg_mjpeg(struct config_item *item)
-+static struct uvcg_mjpeg *to_uvcg_mjpeg(struct config_item *item)
- {
- 	return container_of(
- 		container_of(to_config_group(item), struct uvcg_format, group),
-@@ -1757,7 +1760,7 @@ static struct configfs_attribute *uvcg_mjpeg_attrs[] = {
- 	NULL,
- };
- 
--struct config_item_type uvcg_mjpeg_type = {
-+static struct config_item_type uvcg_mjpeg_type = {
- 	.ct_item_ops	= &uvcg_mjpeg_item_ops,
- 	.ct_group_ops	= &uvcg_mjpeg_group_ops,
- 	.ct_attrs	= uvcg_mjpeg_attrs,
-@@ -1789,7 +1792,7 @@ static struct config_group *uvcg_mjpeg_make(struct config_group *group,
- 	return &h->fmt.group;
- }
- 
--void uvcg_mjpeg_drop(struct config_group *group,
-+static void uvcg_mjpeg_drop(struct config_group *group,
- 			    struct config_item *item)
- {
- 	struct uvcg_mjpeg *h = to_uvcg_mjpeg(item);
+fails to apply on top of my testing/next
+
+checking file drivers/usb/gadget/function/uvc_configfs.c
+Hunk #1 FAILED at 43.
+Hunk #2 FAILED at 135.
+Hunk #3 FAILED at 161.
+Hunk #4 FAILED at 718.
+Hunk #5 FAILED at 795.
+Hunk #6 FAILED at 947.
+Hunk #7 FAILED at 973.
+Hunk #8 FAILED at 1017.
+Hunk #9 FAILED at 1260.
+Hunk #10 FAILED at 1311.
+Hunk #11 FAILED at 1334.
+Hunk #12 FAILED at 1544.
+Hunk #13 FAILED at 1582.
+Hunk #14 FAILED at 1606.
+Hunk #15 FAILED at 1757.
+Hunk #16 FAILED at 1789.
+16 out of 16 hunks FAILED
+
+please rebase on that branch.
+
+--=20
+balbi
+
+--EqJFqkXZidocywul
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUtvGFAAoJEIaOsuA1yqREYrkP/1TcaJUspfGwFZ6+jNFFp+Z5
+8EhNY0H8QHMUdpNfEaAE/eReNneQNTYXKbc1xBgbL/VhF4f7jfC6GxpRusyLB/ay
+7ykqdELc0iqilgRo6AAIzoYkwGkRK/D/oz6aMMmzWGbXtsmEXXMjMavGxRO9dXp5
+fdN5hum0cPrEwNBlSt+G7kCLVgGMdpc7o6XgpvNEz8XokdS8U0eHi8G8OUN4eCsQ
++OaCEg+Kq6tKMvqhkPZnBmrhTtpp20pcDVGikunZzefHx2xFkOtDvppW3RCg1HOf
+GE4mulYWSTimWCgHduNmsWuITBi/MLRQQ95euhY73QZGqo6DviOXVnTCNSDqhWTU
+IkKemVgfb/96cM3M7HDSkqM46KRb1klxXl+gAk6DJkF243Wx1hzYFwezsNIaKD0X
+0e7Zqmfb0mO94oVe2BGle9Hcsl8mQWQ5HMXefM+yV8kXjyWh3KltHoXsV+aYnZbv
+PotSAsG9v+y375z6eHRKTf4Mg7pHnMZ5bkWm0Whht24vs7yntXESS2wZ5uba9g9F
++VebFGVS+rO+s9/0fKNM8TLI3QmyNG0nD5tNcayrU8U8wIVhUvetXQJOtBa6o8IG
+Tln2t27tte5vYiqhVhoPepuNltfUlruJoIrtmPU0x6icl1OzAQ6S7Re8Fcyc5d4E
+lLJpCMAA/m4sy+ut4Qhx
+=pqh2
+-----END PGP SIGNATURE-----
+
+--EqJFqkXZidocywul--
