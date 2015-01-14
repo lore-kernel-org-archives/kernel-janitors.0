@@ -1,31 +1,32 @@
-From: Johannes Weiner <hannes@cmpxchg.org>
-Date: Thu, 22 Jan 2015 15:25:35 +0000
-Subject: Re: [patch] mm: memcontrol: uninitialized "ret" variables
-Message-Id: <20150122152535.GB27368@phnom.home.cmpxchg.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Wed, 14 Jan 2015 21:08:40 +0000
+Subject: [patch] mcb: request_mem_region() returns NULL on error
+Message-Id: <20150114210840.GG23203@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150122133044.GA23668@mwanda>
-In-Reply-To: <20150122133044.GA23668@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Michal Hocko <mhocko@suse.cz>, cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-janitors@vger.kernel.org
+To: Johannes Thumshirn <johannes.thumshirn@men.de>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Helgaas <bhelgaas@google.com>
 
-Hi Dan,
+The code here is checking for IS_ERR() when request_mem_region() only
+returns NULL on error and never an ERR_PTR.
 
-On Thu, Jan 22, 2015 at 04:30:44PM +0300, Dan Carpenter wrote:
-> We recently re-arranged the code in these functions and now static
-> checkers complain that "ret" is uninitialized.  Oddly enough GCC is fine
-> with this code.
-> 
-> Fixes: d1ebc463cf89 ('mm: page_counter: pull "-1" handling out of page_counter_memparse()')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This code was again re-arranged in -mm, and that
-
-  ret = page_counter_memparse()
-
-is now happening unconditionally, so I think it should be fine.  The
-latest mmots snapshot (mmots-2015-01-21-16-38) has it.
-
-Thanks!
+diff --git a/drivers/mcb/mcb-pci.c b/drivers/mcb/mcb-pci.c
+index 5e1bd5d..2d6524a 100644
+--- a/drivers/mcb/mcb-pci.c
++++ b/drivers/mcb/mcb-pci.c
+@@ -56,9 +56,9 @@ static int mcb_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	res = request_mem_region(priv->mapbase, CHAM_HEADER_SIZE,
+ 				 KBUILD_MODNAME);
+-	if (IS_ERR(res)) {
++	if (!res) {
+ 		dev_err(&pdev->dev, "Failed to request PCI memory\n");
+-		ret = PTR_ERR(res);
++		ret = -EBUSY;
+ 		goto err_start;
+ 	}
+ 
