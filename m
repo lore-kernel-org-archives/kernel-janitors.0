@@ -1,24 +1,28 @@
-From: David Rientjes <rientjes@google.com>
-Date: Wed, 21 Jan 2015 23:01:18 +0000
-Subject: Re: [PATCH 1/2] mm/slub: fix typo
-Message-Id: <alpine.DEB.2.10.1501211459370.2716@chino.kir.corp.google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Jan 2015 08:21:34 +0000
+Subject: [patch] x86: ksysfs: small memory leak on error
+Message-Id: <20150115082134.GA2130@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150120140142.cd2e32d83d66459562bd1717@freescale.com>
-In-Reply-To: <20150120140142.cd2e32d83d66459562bd1717@freescale.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kim Phillips <kim.phillips@freescale.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 20 Jan 2015, Kim Phillips wrote:
+The "> 0" should be ">= 0" so that we free the last entry.
 
-> 
-> Signed-off-by: Kim Phillips <kim.phillips@freescale.com>
+Fixes: 5039e316dde3 ('x86: Export x86 boot_params to sysfs')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: David Rientjes <rientjes@google.com>
-
-Although the patch description or title should probably say this is a typo 
-in the comment of __slab_free().  It's good to differentiate typos in code 
-vs comments for commit message readers who have to decide if they have to 
-backport something.
+diff --git a/arch/x86/kernel/ksysfs.c b/arch/x86/kernel/ksysfs.c
+index c2bedae..b0cfb64 100644
+--- a/arch/x86/kernel/ksysfs.c
++++ b/arch/x86/kernel/ksysfs.c
+@@ -299,7 +299,7 @@ static int __init create_setup_data_nodes(struct kobject *parent)
+ 	return 0;
+ 
+ out_clean_nodes:
+-	for (j = i - 1; j > 0; j--)
++	for (j = i - 1; j >= 0; j--)
+ 		cleanup_setup_data_node(*(kobjp + j));
+ 	kfree(kobjp);
+ out_setup_data_kobj:
