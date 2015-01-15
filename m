@@ -1,7 +1,7 @@
 From: Dave Young <dyoung@redhat.com>
-Date: Thu, 15 Jan 2015 09:57:09 +0000
+Date: Thu, 15 Jan 2015 12:23:43 +0000
 Subject: Re: [patch] x86: ksysfs: small memory leak on error
-Message-Id: <20150115095709.GB15197@darkstar.redhat.com>
+Message-Id: <20150115122343.GB16485@darkstar.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20150115082134.GA2130@mwanda>
 In-Reply-To: <20150115082134.GA2130@mwanda>
@@ -13,10 +13,6 @@ To: kernel-janitors@vger.kernel.org
 On 01/15/15 at 11:21am, Dan Carpenter wrote:
 > The "> 0" should be ">= 0" so that we free the last entry.
 > 
-
-ditto as the another patch, i=0 case has been handled in previous code so it
-is not necessary to do it under goto label.
-
 > Fixes: 5039e316dde3 ('x86: Export x86 boot_params to sysfs')
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > 
@@ -33,3 +29,8 @@ is not necessary to do it under goto label.
 >  		cleanup_setup_data_node(*(kobjp + j));
 >  	kfree(kobjp);
 >  out_setup_data_kobj:
+
+Acked-by: Dave Young <dyoung@redhat.com>
+
+Thanks
+Dave
