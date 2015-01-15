@@ -1,40 +1,29 @@
-From: Jim Davis <jim.epost@gmail.com>
-Date: Fri, 23 Jan 2015 19:45:14 +0000
-Subject: Re: [patch] staging: fbtft: fix allyesconfig build
-Message-Id: <CA+r1Zhhy4E8L-4T5U8DZCSixLCRCT1V4wj+WuJj-JJx+Fw_FMA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Jan 2015 09:21:21 +0000
+Subject: [patch] efi: small leak on error
+Message-Id: <20150115092121.GA17976@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20150123142025.GA9974@mwanda>
-In-Reply-To: <20150123142025.GA9974@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matt Fleming <matt.fleming@intel.com>, Dave Young <dyoung@redhat.com>
+Cc: linux-efi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Jan 23, 2015 at 7:20 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> There are two functions call reset() so the allyesconfig breaks.  Let's
-> make this one static.
->
-> Reported-by: Jim Davis <jim.epost@gmail.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Hi Jim, can you test this patch and see if it fixes the build issue?
->
-> diff --git a/drivers/staging/fbtft/fb_agm1264k-fl.c b/drivers/staging/fbtft/fb_agm1264k-fl.c
-> index 7fe4fa0..9cc7d25 100644
-> --- a/drivers/staging/fbtft/fb_agm1264k-fl.c
-> +++ b/drivers/staging/fbtft/fb_agm1264k-fl.c
-> @@ -89,7 +89,7 @@ static int init_display(struct fbtft_par *par)
->         return 0;
->  }
->
-> -void reset(struct fbtft_par *par)
-> +static void reset(struct fbtft_par *par)
->  {
->         if (par->gpio.reset = -1)
->                 return;
-> --
+The "> 0" here should ">= 0" so we free map_entries[0].
 
-Looks good -- make allyesconfig with next-20150123 builds cleanly with
-that patch.  Thanks!
+Fixes: 926172d46038 ('efi: Export EFI runtime memory mapping to sysfs')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Tested-by: Jim Davis <jim.epost@gmail.com>
+diff --git a/drivers/firmware/efi/runtime-map.c b/drivers/firmware/efi/runtime-map.c
+index 018c29a..87b8e3b 100644
+--- a/drivers/firmware/efi/runtime-map.c
++++ b/drivers/firmware/efi/runtime-map.c
+@@ -191,7 +191,7 @@ int __init efi_runtime_map_init(struct kobject *efi_kobj)
+ 
+ 	return 0;
+ out_add_entry:
+-	for (j = i - 1; j > 0; j--) {
++	for (j = i - 1; j >= 0; j--) {
+ 		entry = *(map_entries + j);
+ 		kobject_put(&entry->kobj);
+ 	}
