@@ -1,43 +1,104 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 31 Jan 2015 21:34:53 +0000
-Subject: [PATCH 1/3] netlabel: Deletion of an unnecessary check before the function call "cipso_v4_doi_putdef
-Message-Id: <54CD4A7D.8000802@users.sourceforge.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Thu, 15 Jan 2015 11:42:27 +0000
+Subject: [patch] ti-st: clean up data types (fix harmless memory corruption)
+Message-Id: <20150115114227.GB17976@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.sourceforge.net> <54CD45B6.6010703@users.sourceforge.net>
-In-Reply-To: <54CD45B6.6010703@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: "David S. Miller" <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gigi Joseph <gigi.joseph@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, bvijay <bvijay@ti.com>, Eyal Reizer <eyalr@ti.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 31 Jan 2015 19:09:50 +0100
+The big issue here is:
 
-The cipso_v4_doi_putdef() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+	of_property_read_u32(np, "flow_cntrl", (u32 *)&dt_pdata->flow_cntrl);
 
-This issue was detected by using the Coccinelle software.
+"->flow_cntrl" is a char so when we write a 32 bit number to it then it
+corrupts past the end of the char.  It's probably hard to notice because
+the struct has padding so the code works on little endian systems. But
+on a big endian system the code would fail and on a 64 bit, big endian
+systems then "nshutdown_gpio" and "baud_rate" would be buggy as well.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- net/netlabel/netlabel_mgmt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
-index 8b3b789..f5807f5 100644
---- a/net/netlabel/netlabel_mgmt.c
-+++ b/net/netlabel/netlabel_mgmt.c
-@@ -242,8 +242,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
- 	return 0;
+diff --git a/include/linux/ti_wilink_st.h b/include/linux/ti_wilink_st.h
+index 9072d9f..c78dcfe 100644
+--- a/include/linux/ti_wilink_st.h
++++ b/include/linux/ti_wilink_st.h
+@@ -262,7 +262,7 @@ struct kim_data_s {
+ 	struct completion kim_rcvd, ldisc_installed;
+ 	char resp_buffer[30];
+ 	const struct firmware *fw_entry;
+-	long nshutdown;
++	unsigned nshutdown;
+ 	unsigned long rx_state;
+ 	unsigned long rx_count;
+ 	struct sk_buff *rx_skb;
+@@ -270,8 +270,8 @@ struct kim_data_s {
+ 	struct chip_version version;
+ 	unsigned char ldisc_install;
+ 	unsigned char dev_name[UART_DEV_NAME_LEN + 1];
+-	unsigned char flow_cntrl;
+-	unsigned long baud_rate;
++	unsigned flow_cntrl;
++	unsigned baud_rate;
+ };
  
- add_failure:
--	if (cipsov4)
--		cipso_v4_doi_putdef(cipsov4);
-+	cipso_v4_doi_putdef(cipsov4);
- 	if (entry)
- 		kfree(entry->domain);
- 	kfree(addrmap);
--- 
-2.2.2
-
+ /**
+@@ -437,10 +437,10 @@ struct gps_event_hdr {
+  *
+  */
+ struct ti_st_plat_data {
+-	long nshutdown_gpio;
++	u32 nshutdown_gpio;
+ 	unsigned char dev_name[UART_DEV_NAME_LEN]; /* uart name */
+-	unsigned char flow_cntrl; /* flow control flag */
+-	unsigned long baud_rate;
++	u32 flow_cntrl; /* flow control flag */
++	u32 baud_rate;
+ 	int (*suspend)(struct platform_device *, pm_message_t);
+ 	int (*resume)(struct platform_device *);
+ 	int (*chip_enable) (struct kim_data_s *);
+diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
+index 7109d28..104f271 100644
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -635,7 +635,7 @@ static ssize_t show_baud_rate(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct kim_data_s *kim_data = dev_get_drvdata(dev);
+-	return sprintf(buf, "%ld\n", kim_data->baud_rate);
++	return sprintf(buf, "%d\n", kim_data->baud_rate);
+ }
+ 
+ static ssize_t show_flow_cntrl(struct device *dev,
+@@ -757,9 +757,9 @@ static struct ti_st_plat_data *get_platform_data(struct device *dev)
+ 	if (dt_property)
+ 		memcpy(&dt_pdata->dev_name, dt_property, len);
+ 	of_property_read_u32(np, "nshutdown_gpio",
+-			     (u32 *)&dt_pdata->nshutdown_gpio);
+-	of_property_read_u32(np, "flow_cntrl", (u32 *)&dt_pdata->flow_cntrl);
+-	of_property_read_u32(np, "baud_rate", (u32 *)&dt_pdata->baud_rate);
++			     &dt_pdata->nshutdown_gpio);
++	of_property_read_u32(np, "flow_cntrl", &dt_pdata->flow_cntrl);
++	of_property_read_u32(np, "baud_rate", &dt_pdata->baud_rate);
+ 
+ 	return dt_pdata;
+ }
+@@ -809,14 +809,14 @@ static int kim_probe(struct platform_device *pdev)
+ 	kim_gdata->nshutdown = pdata->nshutdown_gpio;
+ 	err = gpio_request(kim_gdata->nshutdown, "kim");
+ 	if (unlikely(err)) {
+-		pr_err(" gpio %ld request failed ", kim_gdata->nshutdown);
++		pr_err(" gpio %d request failed ", kim_gdata->nshutdown);
+ 		return err;
+ 	}
+ 
+ 	/* Configure nShutdown GPIO as output=0 */
+ 	err = gpio_direction_output(kim_gdata->nshutdown, 0);
+ 	if (unlikely(err)) {
+-		pr_err(" unable to configure gpio %ld", kim_gdata->nshutdown);
++		pr_err(" unable to configure gpio %d", kim_gdata->nshutdown);
+ 		return err;
+ 	}
+ 	/* get reference of pdev for request_firmware
