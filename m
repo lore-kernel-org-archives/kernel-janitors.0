@@ -1,120 +1,39 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Sun, 04 Jan 2015 14:18:57 +0000
-Subject: Re: [PATCH 12/13] ALSA: msnd: One function call less in snd_msnd_attach() after error detection
-Message-Id: <s5h4ms6eii6.wl-tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Date: Fri, 16 Jan 2015 10:43:42 +0000
+Subject: [patch] drm/tegra: gem: oops in error handling
+Message-Id: <20150116104342.GA4860@mwanda>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net>
- <54A9355F.4050102@users.sourceforge.net>
- <54A9425E.1030107@users.sourceforge.net>
-In-Reply-To: <54A9425E.1030107@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 
-At Sun, 04 Jan 2015 14:38:38 +0100,
-SF Markus Elfring wrote:
-> 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 4 Jan 2015 11:00:11 +0100
-> 
-> The iounmap() function was called in one case by the snd_msnd_attach() function
-> even if a previous call of the ioremap_nocache() function failed.
-> 
-> This implementation detail could be improved by the introduction of another
-> jump label.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+kfree(ERR_PTR(-ENOMEM)) will not work very well.
 
-I didn't apply this and the next one.  Using goto label isn't bad for
-the error paths in general, but using too much nested labels worsens
-the readability significantly.  (Though, it's almost a matter of
-taste, so I don't want to spend my time for discussing this.)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-
-thanks,
-
-Takashi
-
-
-> ---
->  sound/isa/msnd/msnd_pinnacle.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/sound/isa/msnd/msnd_pinnacle.c b/sound/isa/msnd/msnd_pinnacle.c
-> index 4c07266..e2e940d 100644
-> --- a/sound/isa/msnd/msnd_pinnacle.c
-> +++ b/sound/isa/msnd/msnd_pinnacle.c
-> @@ -575,23 +575,23 @@ static int snd_msnd_attach(struct snd_card *card)
->  
->  	err = snd_msnd_dsp_full_reset(card);
->  	if (err < 0)
-> -		goto err_release_region;
-> +		goto io_unmap;
->  
->  	/* Register device */
->  	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
->  	if (err < 0)
-> -		goto err_release_region;
-> +		goto io_unmap;
->  
->  	err = snd_msnd_pcm(card, 0);
->  	if (err < 0) {
->  		printk(KERN_ERR LOGNAME ": error creating new PCM device\n");
-> -		goto err_release_region;
-> +		goto io_unmap;
->  	}
->  
->  	err = snd_msndmix_new(card);
->  	if (err < 0) {
->  		printk(KERN_ERR LOGNAME ": error creating new Mixer device\n");
-> -		goto err_release_region;
-> +		goto io_unmap;
->  	}
->  
->  
-> @@ -607,7 +607,7 @@ static int snd_msnd_attach(struct snd_card *card)
->  		if (err < 0) {
->  			printk(KERN_ERR LOGNAME
->  				": error creating new Midi device\n");
-> -			goto err_release_region;
-> +			goto io_unmap;
->  		}
->  		mpu = chip->rmidi->private_data;
->  
-> @@ -622,12 +622,13 @@ static int snd_msnd_attach(struct snd_card *card)
->  
->  	err = snd_card_register(card);
->  	if (err < 0)
-> -		goto err_release_region;
-> +		goto io_unmap;
->  
->  	return 0;
->  
-> -err_release_region:
-> +io_unmap:
->  	iounmap(chip->mappedbase);
-> +err_release_region:
->  	release_mem_region(chip->base, BUFFSIZE);
->  	release_region(chip->io, DSP_NUMIO);
->  	free_irq(chip->irq, chip);
-> -- 
-> 2.2.1
-> 
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 8777b7f..28215e4 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -244,10 +244,8 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
+ 	for_each_sg(sgt->sgl, s, sgt->nents, i)
+ 		sg_dma_address(s) = sg_phys(s);
+ 
+-	if (dma_map_sg(drm->dev, sgt->sgl, sgt->nents, DMA_TO_DEVICE) = 0) {
+-		sgt = ERR_PTR(-ENOMEM);
++	if (dma_map_sg(drm->dev, sgt->sgl, sgt->nents, DMA_TO_DEVICE) = 0)
+ 		goto release_sgt;
+-	}
+ 
+ 	bo->sgt = sgt;
+ 
+@@ -256,6 +254,7 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
+ release_sgt:
+ 	sg_free_table(sgt);
+ 	kfree(sgt);
++	sgt = ERR_PTR(-ENOMEM);
+ put_pages:
+ 	drm_gem_put_pages(&bo->gem, bo->pages, false, false);
+ 	return PTR_ERR(sgt);
